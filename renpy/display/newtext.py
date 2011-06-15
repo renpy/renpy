@@ -429,11 +429,17 @@ class Layout(object):
             
             # Tag the glyphs that are eligible for line breaking, and if
             # they should be included or excluded from the end of a line.
-            if style.language == "eastasian":
-                textsupport.annotate_asian(line_glyphs)
-            else:            
+            language = style.language
+            
+            if language == "unicode" or language == "eastasian":
+                textsupport.annotate_unicode(line_glyphs, False)
+            elif language == "korean-with-spaces":
+                textsupport.annotate_unicode(line_glyphs, True)
+            elif language == "western":
                 textsupport.annotate_western(line_glyphs)
-                     
+            else:
+                raise Exception("Unknown language: {}".format(language))
+                    
             # Break the paragraph up into lines.
             # TODO: subtitle linebreak.
             textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)

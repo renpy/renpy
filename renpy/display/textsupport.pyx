@@ -1,3 +1,5 @@
+include "linebreak.pxi"
+
 cdef class Glyph:
     
     def __repr__(self):
@@ -95,110 +97,108 @@ def annotate_western(list glyphs):
             g.split = SPLIT_NONE
 
 
-cdef unsigned char asian_type[65536]
-cdef unsigned char ASIAN_NOT_BEFORE = 1
-cdef unsigned char ASIAN_NOT_AFTER = 2
-cdef unsigned char ASIAN_WESTERN = 4
-
-def asian_set_character_type(unicode s, unsigned char flag):
+def annotate_unicode(list glyphs, bint no_ideographs):
     """
-    Flag the contents of s with flag. s may contain single characters, 
-    or ranges of characters separated with a -. (For simplicity's sake,
-    it may not contain a - itself.
+    Annotate unicode characters with information as to if they can be used
+    for linebreaking.
     """
     
-    cdef Py_UNICODE old = 0
-    cdef Py_UNICODE c = 0
-    cdef int pos = 0
-    cdef int len_s = len(s)
-    cdef int i
+    cdef char old_type, new_type
+    cdef int space_pos, pos
+    cdef int len_glyphs = len(glyphs)
+    cdef int c
+    cdef char bc
+    cdef Glyph g, g1, old_g
+ 
+    old_type = BC_WJ
+    pos = 1
+    space_pos = 0
     
-    while pos < len_s:
+    if not glyphs:
+        return
+    
+    for pos from 1 <= pos < len_glyphs:
         
-        c = ord(s[pos])
+        g = glyphs[pos]
+        c = g.character
         
-        if c == 44: # ord('-') is 45. 
-            pos += 1
-            c = ord(s[pos])
+        if 0x20000 <= c <= 0x2ffff: # Supplemental Ideographic Plane
+            new_type = BC_ID
+        elif c > 65535: # Other non-basic planes.
+            new_type = BC_AL
+        else: # Basic plane - use lookup table.
+            new_type = break_classes[c]
             
-            for old <= i <= c:
-                asian_type[i] |= flag
-                
+        # Normalize the class by turning various groups into AL.
+        if (new_type >= BC_PITCH and new_type != BC_SP):                
+            new_type = BC_AL
+            
+        # If given no-ideographs, then turn ideographs and hangul syllables
+        # into alphabetic characters.
+        if no_ideographs and (
+            new_type == BC_H2 or
+            new_type == BC_H3 or
+            new_type == BC_ID or
+            new_type == BC_JL or
+            new_type == BC_JV or
+            new_type == BC_JT):
+            
+            new_type = BC_AL
+            
+        # If we have a space, record it and continue.
+        if new_type == BC_SP:
+            g.split = SPLIT_NONE
+            space_pos = pos
+            continue
+        
+        # If we have a combining mark, continue.
+        if new_type == BC_CM:
+            g.split = SPLIT_NONE
+            continue
+        
+        # Figure out the type of break opportunity we have here.
+        # ^ Prohibited break.
+        # % Indirect break.
+        # @ Prohibited break (combining mark)
+        # # Indirect break (combining mark)
+        # _ Direct break.
+        
+        bc = break_rules[ old_type * BC_PITCH + new_type]
+
+        if bc == "%": # Indirect break.
+            if space_pos:
+                g1 = glyphs[space_pos]
+                g1.split = SPLIT_INSTEAD
+
+            g.split = SPLIT_NONE
+
+        elif bc == "_": # Direct break.
+            if space_pos:
+                g1 = glyphs[space_pos]
+                g1.split = SPLIT_INSTEAD
+                g.split = SPLIT_NONE
+            else:
+                g.split = SPLIT_BEFORE
+
         else:
-            asian_type[c] |= flag
-            
-        old = c
-        pos += 1
-
-def init_asian():
-
-    # These are characters for which line breaking is forbidden before them. In
-    # our algorithm, they try to cling to the back of a word.
-    not_before = u'\'\!\"\%\)\,\.\:\;\?\]\u2010\u2019\u201d\u2030\u2032\u2033' + \
-        u'\u2103\u2212\u3001\u3002\u3005\u3009\u300b\u300d\u300f\u3011' + \
-        u'\u3015\u3017\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085' + \
-        u'\u3087\u308e\u309b\u309c\u309d\u309e\u30a1\u30a3\u30a5\u30a7' + \
-        u'\u30a9\u30c3\u30e3\u30e5\u30e7\u30ee\u30f5\u30f6\u30fc\u30fd' + \
-        u'\u30fe\uff01\uff02\uff05\uff09\uff09\uff0c\uff0d\uff0e\uff1a' + \
-        u'\uff1b\uff1f\uff3d\uff5d\uff5d\uff61\uff63\uff9e\uff9f'
+            g.split = SPLIT_NONE
     
-    # These are characters for which line breaking is forbidden after them. In
-    # our algorithm, they try to cling to the front of a word.
-    not_after = u'\'\"\#\$\(\@\[\u00a2\u00a3\u00a5\u00a7\u2018\u201c\u266f' + \
-        u'\u3008\u300a\u300c\u300e\u3010\u3012\u3014\u3016\uff03\uff04' + \
-        u'\uff08\uff08\uff20\uff3b\uff5b\uff5b\uff62\uffe0\uffe1\uffe5'
-    
-    # These are ranges of characters that are treated as western. (And hence are
-    # always grouped together as a word.
-    western = ur'\u0021-\u007a\u007c\u007e\u024f\uff10-\uff19\uff20-\uff2a\uff41-\uff5a'
+        old_type = new_type
+        space_pos = 0
 
-    cdef int i
-    for i from 0 <= i < 65536:
-        asian_type[i] = 0
-        
-    asian_type[ord('-')] = ASIAN_NOT_BEFORE
-        
-    asian_set_character_type(not_before, ASIAN_NOT_BEFORE)
-    asian_set_character_type(not_after, ASIAN_NOT_AFTER)
-    asian_set_character_type(western, ASIAN_WESTERN)
-            
-init_asian()
-        
-def annotate_asian(list glyphs):
-    
-    cdef Glyph g
-    cdef int c, old_c
-    cdef bint not_before, not_after
-
-    old_c = 0
-    not_after = False
+    # Deal with ruby, by marking it as non-spacing.    
+    old_g = glyphs[0]
+    old_g.split = SPLIT_NONE
 
     for g in glyphs:
         
-        not_before = not_after
-        
-        c = g.character
-        
-        if c > 0xffff:
-            c = 0x4E00 # A random CJK character, as a proxy for out-of-range ones.
-        
-        if (asian_type[c] & ASIAN_NOT_BEFORE):
-            not_before = True
-            
-        if (asian_type[old_c] & ASIAN_WESTERN) and (asian_type[c] & ASIAN_WESTERN):
-            not_before = True
-            
-        if (asian_type[c] & ASIAN_NOT_AFTER):
-            not_after = True
-        else:
-            not_after = False
-        
-        if g.character == 0x20 or g.character == 0x200b:
-            g.split = SPLIT_INSTEAD
-        elif not_before:
+        if g.ruby == RUBY_TOP:
             g.split = SPLIT_NONE
-        else:
-            g.split = SPLIT_BEFORE
+
+        elif g.ruby == RUBY_BOTTOM and old_g.ruby == RUBY_BOTTOM:
+            g.split = SPLIT_NONE
+            
+        old_g = g
 
 
 def linebreak_greedy(list glyphs, int first_width, int rest_width):
