@@ -21,7 +21,7 @@
 
 # This code was originally public domain, as described below. I've 
 
-from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_NONE
+from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE
 
 """wordwrap.py -- public domain code from David Eppstein
 
@@ -54,130 +54,59 @@ D. Eppstein, March 2002, significantly revised August 2005
 """
 
 cdef class Word(object):
+
+    cdef Glyph g
+    cdef int start_x
+    cdef int end_x
     
-    cdef public list glyphs
+    def __init__(self, Glyph g, int start_x, int end_x):
+        self.start_x = start_x
+        self.end_x = end_x
+        self.g = g
         
-    # The width of this, always.
-    cdef public short width
-
-    # Additional width iff this is not the first word in a line.
-    cdef public short not_first
-
-    def __init__(self, list glyphs):
-        cdef Glyph g
-        
-        self.glyphs = glyphs
-        
-        self.width = 0 
-        self.not_first = 0
-        
-        if not glyphs:
-            return
-                
-        for g in glyphs:
             
-            if g.split == SPLIT_INSTEAD:
-                self.not_first += <short> g.advance
-            else:            
-                self.width += <short> g.advance
-              
-    def __repr__(self):
-        
-        rv = u""
-        
-        for g in self.glyphs:
-            rv += unichr(g.character)
-            
-        return "<Word: {!r}>".format(rv)
-      
-            
-def make_word_list(list glyphs):
+cdef make_word_list(list glyphs):
     """
     Break the list of words into a list of glyphs, on the 
     split points.
     """
     
-    cdef Glyph g
+    cdef int start_x, x = 0
+    cdef Glyph g, start_g = None
     cdef list rv
-    cdef list line
     
     rv = [ ]
-    line = [ ]
+
+    if not glyphs:
+        return rv
     
     for g in glyphs:
 
-        if line and g.split:
-            rv.append(Word(line))
-            line = [ ]
+        if start_g is None:
+            start_g = g
+            continue
+
+        if g.split == SPLIT_INSTEAD:
+            rv.append(Word(start_g, start_x, x))
             
-        line.append(g)
+            start_x = x + <int> g.advance
+            start_g = g
+
+        elif g.split == SPLIT_BEFORE:
+
+            rv.append(Word(start_g, start_x, x))
             
-    if line:
-        rv.append(Word(line))
+            start_x = x
+            start_g = g
+        
+        x += <int> g.advance
+
+    rv.append(Word(start_g, start_x, x))
         
     return rv
-        
-            
 
 
-def ConcaveMinima(RowIndices,ColIndices,Matrix):
-    """
-    Search for the minimum value in each column of a matrix.
-    The return value is a dictionary mapping ColIndices to pairs
-    (value,rowindex). We break ties in favor of earlier rows.
-    
-    The matrix is defined implicitly as a function, passed
-    as the third argument to this routine, where Matrix(i,j)
-    gives the matrix value at row index i and column index j.
-    The matrix must be concave, that is, satisfy the property
-        Matrix(i,j) > Matrix(i',j) => Matrix(i,j') > Matrix(i',j')
-    for every i<i' and j<j'; that is, in every submatrix of
-    the input matrix, the positions of the column minima
-    must be monotonically nondecreasing.
-    
-    The rows and columns of the matrix are labeled by the indices
-    given in order by the first two arguments. In most applications,
-    these arguments can simply be integer ranges.
-    """
-
-    # Base case of recursion
-    if not ColIndices: return {}
-    
-    # Reduce phase: make number of rows at most equal to number of cols
-    stack = []
-    for r in RowIndices:
-        while len(stack) >= 1 and \
-                Matrix(stack[-1], ColIndices[len(stack)-1]) \
-                > Matrix(r, ColIndices[len(stack)-1]):
-            stack.pop()
-        if len(stack) != len(ColIndices):
-            stack.append(r)
-    RowIndices = stack
-    
-    # Recursive call to search for every odd column
-    minima = ConcaveMinima(RowIndices,
-                [ColIndices[i] for i in xrange(1,len(ColIndices),2)],
-                Matrix)
-
-    # Go back and fill in the even rows
-    r = 0
-    for c in xrange(0,len(ColIndices),2):
-        col = ColIndices[c]
-        row = RowIndices[r]
-        if c == len(ColIndices) - 1:
-            lastrow = RowIndices[-1]
-        else:
-            lastrow = minima[ColIndices[c+1]][1]
-        pair = (Matrix(row,col),row)
-        while row != lastrow:
-            r += 1
-            row = RowIndices[r]
-            pair = min(pair,(Matrix(row,col),row))
-        minima[col] = pair
-
-    return minima
-
-class OnlineConcaveMinima:
+cdef class OnlineConcaveMinima:
     """
     Online concave minimization algorithm of Galil and Park.
     
@@ -201,13 +130,36 @@ class OnlineConcaveMinima:
     to return a flag value such as None for large j, because the ties
     formed by the equalities among such flags may violate concavity.
     """
+
+    cdef:
+        list _values
+        list _indices
+        int _finished    
+        object _matrix
+        int _base
+        int _tentative
     
-    def __init__(self,Matrix,initial):
+        int first_width
+        int rest_width
+        bint subtitle
+        list words
+        int len_words
+        
+        int len_values
+    
+    def __init__(self, initial, list words, int first_width, int rest_width, bint subtitle):
         """Initialize a OnlineConcaveMinima object."""
 
+        self.words = words
+        self.len_words = len(words)
+        self.first_width = first_width
+        self.rest_width = rest_width
+        self.subtitle = subtitle
+
         # State used by self.value(), self.index(), and iter(self)
-        self._values = [initial]    # tentative solution values...
-        self._indices = [None]      # ...and their indices
+        self._values = [ initial ]   # tentative solution values...
+        self.len_values = 1
+        self._indices = [ None ]     # ...and their indices
         self._finished = 0          # index of last non-tentative value
 
         # State used by the internal algorithm
@@ -222,23 +174,96 @@ class OnlineConcaveMinima:
         # (3) if i <= tentative, and the eventual correct value of
         #     self.index(i) <= finished, then self._values[i] is correct.
         #
-        self._matrix = Matrix
         self._base = 0
         self._tentative = 0
 
-    def value(self,j):
+    cdef dict concave_minima(self, list RowIndices, list ColIndices):
+        """
+        Search for the minimum value in each column of a matrix.
+        The return value is a dictionary mapping ColIndices to pairs
+        (value,rowindex). We break ties in favor of earlier rows.
+        
+        The matrix is defined implicitly as a function, passed
+        as the third argument to this routine, where Matrix(i,j)
+        gives the matrix value at row index i and column index j.
+        The matrix must be concave, that is, satisfy the property
+            Matrix(i,j) > Matrix(i',j) => Matrix(i,j') > Matrix(i',j')
+        for every i<i' and j<j'; that is, in every submatrix of
+        the input matrix, the positions of the column minima
+        must be monotonically nondecreasing.
+        
+        The rows and columns of the matrix are labeled by the indices
+        given in order by the first two arguments. In most applications,
+        these arguments can simply be integer ranges.
+        """
+    
+        cdef list stack
+        cdef int len_stack
+        cdef int len_colindices = len(ColIndices)
+        cdef dict minima
+        cdef int c, r, row, col, lastrow
+    
+        # Base case of recursion
+        if not ColIndices: 
+            return {}
+        
+        # Reduce phase: make number of rows at most equal to number of cols
+        stack = []
+        len_stack = 0
+        
+        for r in RowIndices:
+            while len_stack >= 1 and self.penalty(stack[-1], ColIndices[len_stack - 1]) > self.penalty(r, ColIndices[len_stack - 1]):
+                stack.pop()
+                len_stack -= 1
+           
+            if len_stack != len_colindices:
+                stack.append(r)
+                len_stack += 1
+        
+        RowIndices = stack
+        
+        # Recursive call to search for every odd column
+        minima = self.concave_minima(RowIndices, ColIndices[1::2])
+    
+        # Go back and fill in the even rows
+        r = 0
+
+        for c in range(0, len_colindices ,2):
+            
+            col = ColIndices[c]
+            row = RowIndices[r]
+            
+            if c == len_colindices - 1:
+                lastrow = RowIndices[-1]
+            else:
+                lastrow = minima[ColIndices[c+1]][1]
+            
+            pair = (self.penalty(row,col),row)
+
+            while row != lastrow:
+                r += 1
+                row = RowIndices[r]
+                pair = min(pair,(self.penalty(row,col),row))
+            
+            minima[col] = pair
+    
+        return minima
+    
+    cdef int value(self, int j):
         """Return min { Matrix(i,j) | i < j }."""
         while self._finished < j:
             self._advance()
         return self._values[j]
 
-    def index(self,j):
+    cdef int index(self, int j):
         """Return argmin { Matrix(i,j) | i < j }."""
         while self._finished < j:
             self._advance()
         return self._indices[j]
 
-    def _advance(self):
+    cdef _advance(self):
+        cdef int i
+                
         """Finish another value,index pair."""
         # First case: we have already advanced past the previous tentative
         # value.  We make a new tentative value by applying ConcaveMinima
@@ -246,15 +271,26 @@ class OnlineConcaveMinima:
         i = self._finished + 1
         if i > self._tentative:
             rows = range(self._base,self._finished+1)
+            
             self._tentative = self._finished+len(rows)
+            
             cols = range(self._finished+1,self._tentative+1)
-            minima = ConcaveMinima(rows,cols,self._matrix)
+            
+            minima = self.concave_minima(rows, cols)
+            
             for col in cols:
-                if col >= len(self._values):
-                    self._values.append(minima[col][0])
-                    self._indices.append(minima[col][1])
-                elif minima[col][0] < self._values[col]:
-                    self._values[col],self._indices[col] = minima[col]
+                val, idx = minima[col]
+            
+                if col >= self.len_values:
+                    
+                    self._values.append(val)
+                    self._indices.append(idx)
+                    self.len_values += 1                
+
+                elif val < self._values[col]:
+                    self._values[col] = val
+                    self._indices[col] = idx
+
             self._finished = i
             return
         
@@ -263,7 +299,7 @@ class OnlineConcaveMinima:
         # so we can clear out all our work from higher rows.
         # As in the fourth case, the loss of tentative is
         # amortized against the increase in base.
-        diag = self._matrix(i-1,i)
+        diag = self.penalty(i-1,i)
         if diag < self._values[i]:
             self._values[i] = diag
             self._indices[i] = self._base = i-1
@@ -273,7 +309,7 @@ class OnlineConcaveMinima:
         # Third case: row i-1 does not supply a column minimum in
         # any column up to tentative. We simply advance finished
         # while maintaining the invariant.
-        if self._matrix(i-1,self._tentative) >= self._values[self._tentative]:
+        if self.penalty(i-1,self._tentative) >= self._values[self._tentative]:
             self._finished = i
             return
         
@@ -287,185 +323,85 @@ class OnlineConcaveMinima:
         self._tentative = self._finished = i
         return
 
-
-def texwrap(lines,                 # lines of string or unicode to be wrapped
-         target = 76,           # maximum length of a wrapped line
-         longlast = False,      # True if last line should be as long as others
-         frenchspacing = False, # Single space instead of double after periods
-         measure = len,         # how to measure the length of a word
-         overpenalty = 1000,    # penalize long lines by overpen*(len-target)
-         nlinepenalty = 1000,   # penalize more lines than optimal
-         onewordpenalty = 25,   # penalize really short last line
-         hyphenpenalty = 25):   # penalize breaking hyphenated words
-    """Wrap the given text, returning a sequence of lines."""
-
-    # Make sequence of tuples (word, spacing if no break, cum.measure).
-    words = []
-    total = 0
-    spacings = [0, measure(' '), measure('  ')]
-    for line in lines:
-        for hyphenword in line.split():
-            if words:
-                total += spacings[words[-1][1]]
-            parts = hyphenword.split('-')
-            for word in parts[:-1]:
-                word += '-'
-                total += measure(word)
-                words.append((word,0,total))
-            word = parts[-1]
-            total += measure(word)
-            spacing = 1
-            if word.endswith('.') and (len(hyphenword) > 2 or
-                                       not hyphenword[0].isupper()):
-                spacing = 2 - frenchspacing
-            words.append((word,spacing,total))
-
-    # Define penalty function for breaking on line words[i:j]
-    # Below this definition we will set up cost[i] to be the
-    # total penalty of all lines up to a break prior to word i.
-    def penalty(i,j):
-        if j > len(words): return -i    # concave flag for out of bounds
-        total = cost.value(i) + nlinepenalty
-        prevmeasure = i and words[i-1][2]
-        linemeasure = words[j-1][2] - prevmeasure
-
-        if linemeasure > target:
-            total += overpenalty * (linemeasure - target)
-        elif j < len(words) or longlast:
-            total += (target - linemeasure)**2
-        elif i == j-1:
-            total += onewordpenalty
-        if not words[j-1][1]:
-            total += hyphenpenalty
+    cdef int penalty(self, int i, int j):
         
-        if i >= j:
-            return 0
-
-        return total
-
-    # Apply concave minima algorithm and backtrack to form lines
-    cost = OnlineConcaveMinima(penalty,0)
-    pos = len(words)
-    lines = []
-    while pos:
-        breakpoint = cost.index(pos)
-        line = []
-        for i in range(breakpoint,pos):
-            line.append(words[i][0])
-            if i < pos-1 and words[i][1]:
-                line.append(' '*words[i][1])
-        lines.append(''.join(line))
-        pos = breakpoint
-
-    # lines.reverse()
-    # return lines
-    
-    for i in range(0, len(words)):
-        for j in range(0, len(words)):
-            print "{:d}x{:d} {:d}  ".format(i, j, penalty(i, j)),
-            
-        print 
-
-    if True:
-        return
-    
-    for i in range(0, len(words)):
-        for j in range(0, len(words)):
-            
-            print i, j
-            
-            if j <= i:
-                continue
-            
-            for iprime in range(i + 1, len(words)):
-                for jprime in range(j + 1, len(words)):
-                    
-                    if iprime >= jprime:
-                        continue
-                    
-                    if i >= jprime:
-                        continue
-                                        
-                    if penalty(i, j) > penalty(iprime, j) \
-                        and not penalty(i, jprime) > penalty(iprime, jprime):
-                            print "Double Fail", i, j, "vs", iprime, jprime
-                            
-                            print penalty(i, j), penalty(i, jprime)
-                            print penalty(iprime, j), penalty(iprime, jprime)
-
-
-def linebreak_tex(glyphs, first_width, rest_width, bint subtitle):    
-    cdef Word w
-    cdef Glyph g
-    cdef list words
-    cdef int i
-
-    words = make_word_list(glyphs)        
-    len_words = len(words)
-
-    def word_width(i, j):
-
-        cdef Word w
-        cdef int rv = 0
+        cdef int total
+        cdef int lw
+        cdef int width
+        cdef Word word_i, word_j
         
-        for w in words[i:j]:
-            rv += w.width
-            rv += w.not_first
-
-        # print words[i:j], rv / 10.0
-
-        return rv
-
-    def penalty(i, j):
-        
-        if j > len_words:
+        if j > self.len_words:
             return -i
         
-        # Figure out the lenght of the line.
+        # Figure out the length of the line.
         if i == 0:
-            lw = first_width
+            lw = self.first_width
         else:
-            lw = rest_width
+            lw = self.rest_width
         
         # The total cost, includes the cost for the new line.
-        total = cost.value(i) + 100000
+        total = self.value(i) + 100000
 
         # The width of the current words.
-        width = word_width(i, j)
+        word_i = self.words[i]
+        word_j = self.words[j-1]
+        width = word_j.end_x - word_i.start_x
         
         # Figure out penalties to give.        
         if width > lw:
             total += 100000 * (width - lw)
 
-        elif j < len_words or subtitle:
+        elif j < self.len_words or self.subtitle:
             total += (lw - width) ** 2
-            
+           
         # This is more for testing than anything.
         if i >= j:
             return 0
             
         return total
-        
-    cost = OnlineConcaveMinima(penalty, 0)
-    pos = len_words
+
+cdef int word_width(list words, int i, int j):
+
+    cdef int k
+    cdef Word w
+    cdef int rv = 0
+    
+    for k from i <= k < j:
+        w = words[k]
+        rv += w.width
+
+        if k != i:
+            rv += w.not_first
+
+    return rv
+
+
+def linebreak_tex(list glyphs, int first_width, int rest_width, bint subtitle):    
+    cdef Word w
+    cdef Glyph g
+    cdef list words
+    cdef int i, start, pos
+    cdef OnlineConcaveMinima cost
+
+    words = make_word_list(glyphs)        
+
+    cost = OnlineConcaveMinima(0, words, first_width, rest_width, subtitle)
+    pos = len(words)
 
     while pos:
         
         start = cost.index(pos)
 
         for i from start + 1 <= i < pos:
-
             w = words[i]
-            if w.glyphs:
-                g = w.glyphs[0]
-                g.split = SPLIT_NONE
+            w.g.split = SPLIT_NONE
         
         pos = start
 
     #===========================================================================
     # for i in range(0, len(words)):
     #    for j in range(0, len(words)):
-    #        print "{:d}x{:d} {:d}  ".format(i, j, penalty(i, j)),
+    #        print "{:d}x{:d} {:d}  ".format(i, j, cost.penalty(i, j)),
     #        
     #    print 
     #    
@@ -482,32 +418,32 @@ def linebreak_tex(glyphs, first_width, rest_width, bint subtitle):
     # print
     #===========================================================================
 
-    IF 0:
-
-         for i in range(0, len(words)):
-            for j in range(0, len(words)):
-                
-                if j <= i:
-                    continue
-                
-                for iprime in range(i + 1, len(words)):
-                    for jprime in range(j + 1, len(words)):
-                 
-                        if penalty(iprime, j) <= 0:
-                            continue
-                        
-                        if iprime >= jprime:
-                            continue
-                        
-                        if i >= jprime:
-                            continue
-                                            
-                        if penalty(i, j) > penalty(iprime, j) \
-                            and not penalty(i, jprime) > penalty(iprime, jprime):
-                                print "Fail", i, j, "vs", iprime, jprime
-                                
-                                print penalty(i, j), penalty(i, jprime)
-                                print penalty(iprime, j), penalty(iprime, jprime)
+    #===========================================================================
+    # for i in range(0, len(words)):
+    #    for j in range(0, len(words)):
+    #        
+    #        if j <= i:
+    #            continue
+    #        
+    #        for iprime in range(i + 1, len(words)):
+    #            for jprime in range(j + 1, len(words)):
+    #         
+    #                if cost.penalty(iprime, j) <= 0:
+    #                    continue
+    #                
+    #                if iprime >= jprime:
+    #                    continue
+    #                
+    #                if i >= jprime:
+    #                    continue
+    #                                    
+    #                if cost.penalty(i, j) > cost.penalty(iprime, j) \
+    #                    and not cost.penalty(i, jprime) > cost.penalty(iprime, jprime):
+    #                        print "Fail", i, j, "vs", iprime, jprime
+    #                        
+    #                        print cost.penalty(i, j), cost.penalty(i, jprime)
+    #                        print cost.penalty(iprime, j), cost.penalty(iprime, jprime)
+    #===========================================================================
     
   
   #=============================================================================

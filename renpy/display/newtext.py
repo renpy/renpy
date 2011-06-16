@@ -454,7 +454,7 @@ class Layout(object):
             elif layout == "greedy":
                 textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
                         
-            print layout, time.time() - start_time
+            print layout, 1000.0 * (time.time() - start_time)
                         
             # Figure out the time each glyph will be drawn. 
             for ts, glyphs in seg_glyphs:
