@@ -21,6 +21,7 @@
 
 # This code was originally public domain, as described below. I've 
 
+import time
 from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE
 
 """wordwrap.py -- public domain code from David Eppstein
@@ -53,6 +54,9 @@ by Wilbur (J. Algorithms 1988) and Eppstein (J. Algorithms 1990).
 D. Eppstein, March 2002, significantly revised August 2005
 """
 
+import collections
+times = collections.defaultdict(float)
+
 cdef class Word(object):
 
     cdef Glyph g
@@ -71,7 +75,7 @@ cdef make_word_list(list glyphs):
     split points.
     """
     
-    cdef int start_x, x = 0
+    cdef int start_x = 0, x = 0
     cdef Glyph g, start_g = None
     cdef list rv
     
@@ -104,7 +108,6 @@ cdef make_word_list(list glyphs):
     rv.append(Word(start_g, start_x, x))
         
     return rv
-
 
 cdef class OnlineConcaveMinima:
     """
@@ -201,7 +204,10 @@ cdef class OnlineConcaveMinima:
         cdef int len_stack
         cdef int len_colindices = len(ColIndices)
         cdef dict minima
-        cdef int c, r, row, col, lastrow
+        cdef int c, row, col, lastrow, r
+        cdef int pen, min_pen, min_row
+    
+        start = time.time()
     
         # Base case of recursion
         if not ColIndices: 
@@ -238,14 +244,21 @@ cdef class OnlineConcaveMinima:
             else:
                 lastrow = minima[ColIndices[c+1]][1]
             
-            pair = (self.penalty(row,col),row)
+            min_pen = self.penalty(row, col)
+            min_row = row
 
             while row != lastrow:
                 r += 1
                 row = RowIndices[r]
-                pair = min(pair,(self.penalty(row,col),row))
-            
-            minima[col] = pair
+
+                pen = self.penalty(row, col)
+                if pen < min_pen:
+                    min_row = row
+                    min_pen = pen
+
+            minima[col] = (min_pen, min_row)
+    
+        times["minima"] += time.time() - start
     
         return minima
     
@@ -383,6 +396,8 @@ def linebreak_tex(list glyphs, int first_width, int rest_width, bint subtitle):
     cdef int i, start, pos
     cdef OnlineConcaveMinima cost
 
+    times.clear()
+    
     words = make_word_list(glyphs)        
 
     cost = OnlineConcaveMinima(0, words, first_width, rest_width, subtitle)
@@ -397,6 +412,9 @@ def linebreak_tex(list glyphs, int first_width, int rest_width, bint subtitle):
             w.g.split = SPLIT_NONE
         
         pos = start
+
+    for k, v in times.iteritems():
+        print k, v * 1000
 
     #===========================================================================
     # for i in range(0, len(words)):
