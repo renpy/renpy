@@ -1,9 +1,11 @@
+import time
 import renpy.display
 
 from renpy.display.textsupport import \
     TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
 import renpy.display.textsupport as textsupport
+import renpy.display.texwrap as texwrap
 import renpy.display.ftfont as ftfont
 
 ftfont.init()
@@ -439,10 +441,20 @@ class Layout(object):
                 textsupport.annotate_western(line_glyphs)
             else:
                 raise Exception("Unknown language: {}".format(language))
-                    
-            # Break the paragraph up into lines.
-            # TODO: subtitle linebreak.
-            textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
+
+            # Break the paragraph up into lines.                    
+            layout = style.layout
+
+            start_time = time.time()
+            
+            if layout == "tex":                
+                texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, False)
+            elif layout == "subtitle" or layout == "tex-subtitle":
+                texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, True)            
+            elif layout == "greedy":
+                textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
+                        
+            print layout, time.time() - start_time
                         
             # Figure out the time each glyph will be drawn. 
             for ts, glyphs in seg_glyphs:
@@ -1103,7 +1115,6 @@ class NewText(renpy.display.core.Displayable):
         we know about, and an updated list of tokens with all image tags turned
         into displayables.
         """
-        
         
         displayables = set()        
         new_tokens = [ ]

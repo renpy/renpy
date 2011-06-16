@@ -282,6 +282,7 @@ display("glrtt_copy", glew_libs)
 display("glrtt_fbo", glew_libs)
 
 display("textsupport")
+display("texwrap")
 
 extensions.append(distutils.core.Extension(
     "renpy.display.ftfont",

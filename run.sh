@@ -46,7 +46,7 @@ display glrtt_fbo
 
 display ftfont
 display textsupport
-
+display texwrap
 
 echo Compiling...
 
