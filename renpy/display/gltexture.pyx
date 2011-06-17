@@ -22,6 +22,7 @@
 
 from gl cimport *
 from pygame cimport *
+from cpython.string cimport PyString_FromStringAndSize
 
 import collections
 import renpy
@@ -841,21 +842,16 @@ def premultiply(
     for the (x, y, w, h) box inside pysurf. The various border_
     parameters control the addition of a border on the sides.
     """
-
     # Adjust the alpha if we have an alpha-free image.
-    cdef unsigned char alpha_and
     cdef unsigned char alpha_or
     
     if pysurf.get_masks()[3]:
-        alpha_and = 255
         alpha_or = 0
     else:
-        alpha_and = 0
         alpha_or = 255
 
     # Allocate an uninitialized string.
-    cdef unsigned char *null = NULL
-    rv = null[:w*h*4]
+    rv = PyString_FromStringAndSize(<char *>NULL, w * h * 4)
     
     # Out is where we put the output.
     cdef unsigned char *out = rv
@@ -863,7 +859,7 @@ def premultiply(
     # The pixels in the source image.
     cdef unsigned char *pixels = NULL
     cdef SDL_Surface *surf
-
+ 
     # Pointer to the current pixel.
     cdef unsigned char *p
 
@@ -886,18 +882,24 @@ def premultiply(
     pixels += x * 4
 
     op = out
-    
+
     for y from 0 <= y < h:
         p = pixels + y * surf.pitch
         pend = p + w * 4
-
+ 
         while p < pend:
-            a = (p[3] & alpha_and) | alpha_or
-
-            op[0] = p[0] * a / 255
-            op[1] = p[1] * a / 255
-            op[2] = p[2] * a / 255
-            op[3] = a
+            a = p[3] | alpha_or
+ 
+            if a:     
+                op[0] = (p[0] * a + a) >> 8
+                op[1] = (p[1] * a + a) >> 8
+                op[2] = (p[2] * a + a) >> 8
+                op[3] = a
+            else:
+                op[0] = 0
+                op[1] = 0
+                op[2] = 0
+                op[3] = 0
             
             p += 4
             op += 4
@@ -924,7 +926,7 @@ def premultiply(
             pp[0] = pp[w]
             pp += 1
 
-    if border_top:
+    if border_bottom:
         pp = <unsigned int *> (out)
         pp += (y - 2) * w
 
