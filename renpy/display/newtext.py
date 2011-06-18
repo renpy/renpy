@@ -8,6 +8,16 @@ import renpy.display.textsupport as textsupport
 import renpy.display.texwrap as texwrap
 import renpy.display.ftfont as ftfont
 
+import time
+import contextlib
+
+@contextlib.contextmanager
+def timed(name):
+    start = time.time()
+    yield
+    print name, (time.time() - start) * 1000.0, "ms"
+
+
 ftfont.init()
 
 # TODO: Move fonts over to their own file.
@@ -445,16 +455,12 @@ class Layout(object):
             # Break the paragraph up into lines.                    
             layout = style.layout
 
-            start_time = time.time()
-            
             if layout == "tex":                
                 texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, False)
             elif layout == "subtitle" or layout == "tex-subtitle":
                 texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, True)            
             elif layout == "greedy":
                 textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
-                        
-            print layout, 1000.0 * (time.time() - start_time)
                         
             # Figure out the time each glyph will be drawn. 
             for ts, glyphs in seg_glyphs:
@@ -527,9 +533,10 @@ class Layout(object):
             for ts, glyphs in par_seg_glyphs:
                 ts.draw(glyphs, di)
     
-            renpy.display.draw.mutated_surface(surf)
-            tex = renpy.display.draw.load_texture(surf)
-        
+            with timed("texture load"):
+                renpy.display.draw.mutated_surface(surf)
+                tex = renpy.display.draw.load_texture(surf)
+    
             self.textures[key] = tex
         
         # Compute the max time for all lines, and the max max time.
@@ -546,7 +553,7 @@ class Layout(object):
         
         # TODO: Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
-                
+        
         
     def segment(self, tokens, style, renders):
         """
@@ -1024,6 +1031,8 @@ class NewText(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
+        start = time.time()
+
         # Render all of the child displayables.
         renders = { }
 
@@ -1081,6 +1090,8 @@ class NewText(renpy.display.core.Displayable):
         # Figure out if we need to redraw.
         if self.slow and redraw is not None:
             renpy.display.render.redraw(self, redraw)
+        
+        print "NEW", (time.time() - start) * 1000.0
         
         return rv
        

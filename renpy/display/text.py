@@ -22,6 +22,7 @@
 import re
 import renpy.display
 import sys
+import time
 
 try:
     from _renpybidi import log2vis, WRTL, RTL, ON
@@ -1372,6 +1373,8 @@ class Text(renpy.display.core.Displayable):
                 
         if self.slow:
             renpy.display.render.redraw(self, 0)
+
+        print "OLD", (time.time() - start) * 1000.0
 
         return rv
 

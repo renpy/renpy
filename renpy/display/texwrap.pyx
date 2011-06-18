@@ -22,7 +22,7 @@
 # cython: boundscheck=False, wraparound=False
 
 import time
-from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE
+from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP
 from libc.stdlib cimport calloc, malloc, free
 
 import collections
@@ -185,6 +185,9 @@ cdef class WordWrapper(object):
 
             g = <Glyph> <object> glyphs[i]
                     
+            if g.ruby == RUBY_TOP:
+                continue
+                    
             if g.split == SPLIT_INSTEAD:
                 word.glyph = <void *> start_glyph
                 word.start_x = start_x
@@ -217,148 +220,7 @@ cdef class WordWrapper(object):
 
    
 
-#===============================================================================
-# cdef int penalty(self, int i, int j):
-#    
-#    cdef int total
-#    cdef int lw
-#    cdef int width
-#    cdef Word word_i, word_j
-#    
-#    if j > self.len_words:
-#        return -i
-#    
-#    # Figure out the length of the line.
-#    if i == 0:
-#        lw = self.first_width
-#    else:
-#        lw = self.rest_width
-#    
-#    # The total cost, includes the cost for the new line.
-#    total = self.value(i) + 100000
-# 
-#    # The width of the current words.
-#    word_i = self.words[i]
-#    word_j = self.words[j-1]
-#    width = word_j.end_x - word_i.start_x
-#    
-#    # Figure out penalties to give.        
-#    if width > lw:
-#        total += 100000 * (width - lw)
-# 
-#    elif j < self.len_words or self.subtitle:
-#        total += (lw - width) ** 2
-#       
-#    # This is more for testing than anything.
-#    if i >= j:
-#        return 0
-#        
-#    return total
-# 
-# cdef int word_width(list words, int i, int j):
-# 
-#    cdef int k
-#    cdef Word w
-#    cdef int rv = 0
-#    
-#    for k from i <= k < j:
-#        w = words[k]
-#        rv += w.width
-# 
-#        if k != i:
-#            rv += w.not_first
-# 
-#    return rv
-#===============================================================================
-
 def linebreak_tex(glyphs, first_width, rest_width, subtitle):
     WordWrapper(glyphs)
 
 
-#===============================================================================
-# def linebreak_tex(list glyphs, int first_width, int rest_width, bint subtitle):    
-#    cdef Word w
-#    cdef Glyph g
-#    cdef list words
-#    cdef int i, start, pos
-#    cdef OnlineConcaveMinima cost
-# 
-#    times.clear()
-#    
-#    words = make_word_list(glyphs)        
-#===============================================================================
-#===============================================================================
-#    cost = OnlineConcaveMinima(0, words, first_width, rest_width, subtitle)
-#    pos = len(words)
-# 
-#    while pos:
-#        
-#        start = cost.index(pos)
-# 
-#        for i from start + 1 <= i < pos:
-#            w = words[i]
-#            w.g.split = SPLIT_NONE
-#        
-#        pos = start
-# 
-#    for k, v in times.iteritems():
-#        print k, v * 1000
-#===============================================================================
-
-    #===========================================================================
-    # for i in range(0, len(words)):
-    #    for j in range(0, len(words)):
-    #        print "{:d}x{:d} {:d}  ".format(i, j, cost.penalty(i, j)),
-    #        
-    #    print 
-    #    
-    # print
-    #===========================================================================
-    
-    #===========================================================================
-    # for i in range(0, len(words)):
-    #    for j in range(0, len(words)):
-    #        print "{:d}x{:d} {:d}   ".format(i, j, word_width(i, j)),
-    #        
-    #    print
-    # 
-    # print
-    #===========================================================================
-
-    #===========================================================================
-    # for i in range(0, len(words)):
-    #    for j in range(0, len(words)):
-    #        
-    #        if j <= i:
-    #            continue
-    #        
-    #        for iprime in range(i + 1, len(words)):
-    #            for jprime in range(j + 1, len(words)):
-    #         
-    #                if cost.penalty(iprime, j) <= 0:
-    #                    continue
-    #                
-    #                if iprime >= jprime:
-    #                    continue
-    #                
-    #                if i >= jprime:
-    #                    continue
-    #                                    
-    #                if cost.penalty(i, j) > cost.penalty(iprime, j) \
-    #                    and not cost.penalty(i, jprime) > cost.penalty(iprime, jprime):
-    #                        print "Fail", i, j, "vs", iprime, jprime
-    #                        
-    #                        print cost.penalty(i, j), cost.penalty(i, jprime)
-    #                        print cost.penalty(iprime, j), cost.penalty(iprime, jprime)
-    #===========================================================================
-    
-  
-  #=============================================================================
-  #  for j in range(0, len(words)):
-  #      for i in range(0, len(words)):
-  #          
-  #          pen = penalty(i, j)
-  #          print i, j, words[i:j], pen
-  # 
-  #=============================================================================
-                        
