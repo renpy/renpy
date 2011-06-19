@@ -1147,7 +1147,9 @@ def parse_menu(stmtl, loc):
 
         # A string on a line by itself is a caption.
         if l.eol():
-            l.expect_noblock('caption menuitem')
+            
+            if l.subblock:
+                l.error("Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?")
 
             if label and has_say:
                 l.error("Captions and say menuitems may not exist in the same menu.")
