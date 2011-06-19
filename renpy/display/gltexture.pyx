@@ -22,6 +22,7 @@
 
 from gl cimport *
 from pygame cimport *
+from cpython.string cimport PyString_FromStringAndSize
 
 import collections
 import renpy
@@ -841,29 +842,28 @@ def premultiply(
     for the (x, y, w, h) box inside pysurf. The various border_
     parameters control the addition of a border on the sides.
     """
-
+    
+    # Iterator y and x.
+    cdef int ix, iy
+    
     # Adjust the alpha if we have an alpha-free image.
-    cdef unsigned char alpha_and
     cdef unsigned char alpha_or
     
     if pysurf.get_masks()[3]:
-        alpha_and = 255
         alpha_or = 0
     else:
-        alpha_and = 0
         alpha_or = 255
 
     # Allocate an uninitialized string.
-    cdef unsigned char *null = NULL
-    rv = null[:w*h*4]
+    rv = PyString_FromStringAndSize(<char *>NULL, w * h * 4)
     
     # Out is where we put the output.
     cdef unsigned char *out = rv
     
     # The pixels in the source image.
-    cdef unsigned char *pixels = NULL
+    cdef unsigned char *pixels, *pixels_end
     cdef SDL_Surface *surf
-
+ 
     # Pointer to the current pixel.
     cdef unsigned char *p
 
@@ -878,57 +878,76 @@ def premultiply(
 
     # pixel pointer.
     cdef unsigned int *pp
+    cdef unsigned int *ppend
 
     surf = PySurface_AsSurface(pysurf)
     pixels = <unsigned char *> surf.pixels
 
+    # The start of the pixel data to read out.
     pixels += y * surf.pitch
     pixels += x * 4
 
+    # A pointer to the row past the last pixel data we read out.
+    pixels_end = pixels + h * surf.pitch
+
+    # A pointer to the output byte to write.
     op = out
-    
-    for y from 0 <= y < h:
-        p = pixels + y * surf.pitch
+
+    while pixels < pixels_end:
+
+        # The start and end of the current row.        
+        p = pixels
         pend = p + w * 4
-
+        
+        # Advance to the next row.
+        pixels += surf.pitch
+      
         while p < pend:
-            a = (p[3] & alpha_and) | alpha_or
-
-            op[0] = p[0] * a / 255
-            op[1] = p[1] * a / 255
-            op[2] = p[2] * a / 255
-            op[3] = a
             
+            a = p[3] | alpha_or
+  
+            if a:     
+                op[0] = (p[0] * a + a) >> 8
+                op[1] = (p[1] * a + a) >> 8
+                op[2] = (p[2] * a + a) >> 8
+                op[3] = a
+            else:
+                (<unsigned int *> op)[0] = 0
+                            
             p += 4
             op += 4
 
     if border_left:
         pp = <unsigned int *> (out)
+        ppend = pp + w * h
 
-        for y from 0 <= y < h:
+        while pp < ppend:
             pp[0] = pp[1]
             pp += w
 
     if border_right:
         pp = <unsigned int *> (out)
         pp += w - 2
+        ppend = pp + w * h
         
-        for y from 0 <= y < h:
+        while pp < ppend:
             pp[1] = pp[0]
             pp += w
 
     if border_top:
         pp = <unsigned int *> (out)
+        ppend = pp + w
 
-        for x from 0 <= x < w:
+        while pp < ppend:
             pp[0] = pp[w]
             pp += 1
 
-    if border_top:
+    if border_bottom:
         pp = <unsigned int *> (out)
-        pp += (y - 2) * w
+        pp += (h - 2) * w
+        ppend = pp + w
 
-        for x from 0 <= x < w:
+        while pp < ppend:
             pp[w] = pp[0]
             pp += 1
             
