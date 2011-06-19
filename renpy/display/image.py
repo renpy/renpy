@@ -238,7 +238,6 @@ class ShownImageInfo(renpy.object.Object):
         """
         
         return self.attributes.get((layer, tag), ())
-
                     
     def showing(self, layer, name):
         """
@@ -274,16 +273,22 @@ class ShownImageInfo(renpy.object.Object):
 
         self.shown = set((l, t) for l, t in self.shown if l != layer)
 
-    def predict_show(self, layer, name):
+    def predict_show(self, layer, name, show=True):
         """
         Predicts name being shown on layer.
+        
+        `show`
+            If True, the image will be flagged as being shown to the user. If 
+            False, only the attributes will be updated.
         """
 
         tag = name[0]
         rest = name[1:]
 
         self.attributes[layer, tag] = rest
-        self.shown.add((layer, tag))
+
+        if show:
+            self.shown.add((layer, tag))
 
     def predict_hide(self, layer, name):
         tag = name[0]

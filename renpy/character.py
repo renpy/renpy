@@ -715,8 +715,9 @@ class ADVCharacter(object):
                     renpy.exports.with_statement(trans)
 
         else:
+            
             # Otherwise, just record the attributes of the image. 
-            images.predict_show("master", tagged_attrs)
+            images.predict_show("master", tagged_attrs, show=False)
         
     def __call__(self, what, interact=True, **kwargs):
 
