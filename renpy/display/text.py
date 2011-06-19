@@ -704,6 +704,7 @@ class Text(renpy.display.core.Displayable):
         self.ctc = None
 
         if isinstance(replaces, Text):
+                
             self.slow = replaces.slow
             self.slow_param = replaces.slow_param
             self.slow_start = replaces.slow_start
@@ -1268,9 +1269,6 @@ class Text(renpy.display.core.Displayable):
         Called to call slow_done, and also to update slow_done_time.
         """
 
-        if not self.slow:
-            return
-
         self.slow = False
         
         if self.slow_done:
@@ -1280,6 +1278,9 @@ class Text(renpy.display.core.Displayable):
         self.slow_done_time = st
             
     def render(self, width, height, st, at):
+
+        if self.slow_done and not self.slow:
+            self.call_slow_done(st)
 
         if self.slow:
 

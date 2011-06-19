@@ -313,7 +313,7 @@ class SlowDone(object):
         self.delay = delay
         
     def __call__(self):
-        
+
         if self.ctc and self.ctc_position == "fixed":
             renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
             renpy.exports.restart_interaction()
