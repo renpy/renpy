@@ -673,17 +673,42 @@ class SWDraw(object):
         pygame.display.init()
         renpy.display.interface.post_init()
         
-        # Scaling?
-        renpy.display.scale.init()
+        self.display_info = pygame.display.Info()
+
         
         
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
-        width, height = virtual_size
-        fsflag = 0
+        # Reset before resize.
+        renpy.display.interface.kill_textures_and_surfaces()
 
+        width, height = virtual_size
+
+        # Set up scaling, if necessary.
+        screen_width = self.display_info.current_w
+        screen_height = self.display_info.current_h
+
+        if not fullscreen:
+            screen_height -= 102
+            screen_width -= 102
+
+        scale_factor = min(1.0 * screen_width / width, 1.0 * screen_height / height, 1.0)
+
+        # Pick an even scale factor, which seems to help w/ visual artifacts.)
+        for i in range(100, 45, -5):
+            i /= 100.0
+            
+            if scale_factor >= i:
+                scale_factor = i
+                break
+        
+        renpy.display.scale.init(scale_factor)        
+
+        # Figure out the fullscreen info.
         if fullscreen:
             fsflag = pygame.FULLSCREEN
+        else:
+            fsflag = 0
               
         # If a window exists of the right size and flags, use it. Otherwise,
         # make our own window.
