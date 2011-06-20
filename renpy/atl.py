@@ -138,6 +138,9 @@ def interpolate_spline(t, spline):
 
     if isinstance(spline[-1], tuple):
         return tuple(interpolate_spline(t, i) for i in zip(*spline))
+
+    if spline[0] is None:
+        return spline[-1]
         
     if len(spline) == 2:
         t_p = 1.0 - t        
