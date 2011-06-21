@@ -622,6 +622,8 @@ def text_layout(triples, width, style):
     else:
         return greedy_text_layout(triples, width, style)
 
+# Bumping this number will cause Ren'Py to re-layout the text.
+layout_generation = 0
 
 class Text(renpy.display.core.Displayable):
     """
@@ -857,8 +859,10 @@ class Text(renpy.display.core.Displayable):
 
         self.update()
         
-        if self.laidout and self.width == width:
+        if self.laidout and self.width == width and self.layout_generation == layout_generation:
             return
+
+        self.layout_generation = layout_generation
 
         # Set this, so caching works.
         self.width = width

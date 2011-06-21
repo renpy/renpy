@@ -1117,6 +1117,7 @@ void PSS_periodic() {
  * surface to display the movie on. */
 void PSS_alloc_event(PyObject *surface) {
     int i;
+
     for (i = 0; i < num_channels; i++) {
         if (channels[i].playing) {
             ffpy_alloc_event(channels[i].playing, surface);

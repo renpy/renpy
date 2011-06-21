@@ -1256,6 +1256,7 @@ class Interface(object):
         renpy.display.render.free_memory()
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None
+        renpy.display.text.layout_generation += 1
         
         
     def set_mode(self, physical_size=None):

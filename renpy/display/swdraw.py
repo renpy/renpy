@@ -682,6 +682,9 @@ class SWDraw(object):
         # Reset before resize.
         renpy.display.interface.kill_textures_and_surfaces()
 
+        # Clear out the old fonts.
+        renpy.display.font.font_cache.clear()
+
         width, height = virtual_size
 
         # Set up scaling, if necessary.
