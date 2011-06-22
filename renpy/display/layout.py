@@ -603,7 +603,7 @@ class MultiBox(Container):
         y = 0              
               
         full_width = False
-        full_height = True
+        full_height = False
                     
         if layout == "horizontal":
 
