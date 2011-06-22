@@ -626,8 +626,11 @@ class Transform(Container):
 
         if d.function is not None:
             d.function(d, st, at)
-            
-        new_child = d.child._hide(st, at, kind)
+       
+        if d.child is not None:   
+            new_child = d.child._hide(st, at, kind)
+        else:
+            new_child = None
 
         if new_child is not None:
             d.child = new_child

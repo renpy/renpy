@@ -653,6 +653,7 @@ class Text(renpy.display.core.Displayable):
     def after_setstate(self):
         self.laidout = None
         self.needs_update = True
+        self.slow_done_time = None
 
     def __init__(self, text, slow=None, slow_done=None,
                  slow_start=0, pause=None, tokenized=False,
@@ -702,7 +703,7 @@ class Text(renpy.display.core.Displayable):
         # The width we've been laid out for.
         self.width = -1
 
-        # The displayable that was added to us to supporte nestled ctc.
+        # The displayable that was added to us to support nestled ctc.
         self.ctc = None
 
         if isinstance(replaces, Text):
@@ -714,7 +715,7 @@ class Text(renpy.display.core.Displayable):
             self.slow_done = replaces.slow_done
             self.slow_done_time = replaces.slow_done_time
             self.ctc = replaces.ctc
-            
+                        
         self.needs_update = True
 
     def per_interact(self):
