@@ -36,9 +36,6 @@ SIZES = [ 1024, 512, 256, 128, 64 ]
 # A list of texture number allocated.
 texture_numbers = [ ]
 
-cdef enum: 
-    RENPY_THIRD_TEXTURE
-
 cdef int rtt_format = GL_RGBA
 cdef int rtt_internalformat = GL_RGBA
 
@@ -1163,9 +1160,9 @@ cdef void draw_rectangle(
         glClientActiveTexture(GL_TEXTURE1)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
 
-
     if RENPY_THIRD_TEXTURE:
         if has_tex2:
+            
             tex2coords[0] = t2u0
             tex2coords[1] = t2v0
             tex2coords[2] = t2u1
