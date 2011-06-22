@@ -131,6 +131,10 @@ class Clipper(object):
 
         for x0, y0, x1, y1, (sx0, sy0, sx1, sy1) in changes:
 
+            # Round up by a pixel, to prevent visual artifacts when scaled down.
+            x1 += 1
+            y1 += 1
+
             if x0 < sx0:
                 x0 = sx0
             if y0 < sy0:

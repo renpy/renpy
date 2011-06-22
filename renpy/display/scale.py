@@ -470,8 +470,6 @@ def load_scaling():
 
     pygame.Surface = pygame_surface
     
-    
-    
     old_update = pygame.display.update
 
     def update(rects=None):
@@ -483,7 +481,7 @@ def load_scaling():
             rects = [ rects ]
 
         old_update([ v2pplus(i) for i in rects])
-
+        
     pygame.display.update = update
 
     old_get_surface = pygame.display.get_surface
