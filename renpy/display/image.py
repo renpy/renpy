@@ -132,13 +132,11 @@ class ImageReference(renpy.display.core.Displayable):
         error("Image '%s' not found." % ' '.join(self.name))
         return False
 
- #==============================================================================
- #   def parameterize(self, name, parameters):
- #       if not self.target:
- #           self.find_target()
- # 
- #       return self.target.parameterize(name, parameters)
- #==============================================================================
+    def parameterize(self, name, parameters):
+        if not self.target:
+            self.find_target()
+  
+        return self.target.parameterize(name, parameters)
 
     def _hide(self, st, at, kind):
         if not self.target:

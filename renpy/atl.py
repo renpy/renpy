@@ -256,6 +256,9 @@ class ATLTransformBase(renpy.object.Object):
 
         positional = list(self.parameters.positional)
         args = list(args)
+
+        if not self.child:
+            self.execute(self, 0, 0)
         
         child = self.child
 
@@ -299,7 +302,7 @@ class ATLTransformBase(renpy.object.Object):
             parameters=parameters)
 
         rv.take_state(self)
-
+        
         return rv
 
     
