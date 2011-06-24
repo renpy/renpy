@@ -138,6 +138,9 @@ def interpolate_spline(t, spline):
 
     if isinstance(spline[-1], tuple):
         return tuple(interpolate_spline(t, i) for i in zip(*spline))
+
+    if spline[0] is None:
+        return spline[-1]
         
     if len(spline) == 2:
         t_p = 1.0 - t        
@@ -253,6 +256,9 @@ class ATLTransformBase(renpy.object.Object):
 
         positional = list(self.parameters.positional)
         args = list(args)
+
+        if not self.child:
+            self.execute(self, 0, 0)
         
         child = self.child
 
@@ -296,7 +302,7 @@ class ATLTransformBase(renpy.object.Object):
             parameters=parameters)
 
         rv.take_state(self)
-
+        
         return rv
 
     

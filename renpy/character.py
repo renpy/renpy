@@ -313,7 +313,7 @@ class SlowDone(object):
         self.delay = delay
         
     def __call__(self):
-        
+
         if self.ctc and self.ctc_position == "fixed":
             renpy.display.screen.show_screen("_ctc", _transient=True, ctc=self.ctc)
             renpy.exports.restart_interaction()
@@ -715,8 +715,9 @@ class ADVCharacter(object):
                     renpy.exports.with_statement(trans)
 
         else:
+            
             # Otherwise, just record the attributes of the image. 
-            images.predict_show("master", tagged_attrs)
+            images.predict_show("master", tagged_attrs, show=False)
         
     def __call__(self, what, interact=True, **kwargs):
 

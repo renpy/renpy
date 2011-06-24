@@ -567,7 +567,7 @@ class AlphaDissolve(Transition):
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = self.alpha
         rv.operation_complete = 256.0 / (256.0 + 256.0)
-        rv.operation_parameter = 256.0
+        rv.operation_parameter = 256
 
         rv.blit(control, (0, 0), focus=False, main=False)
 

@@ -122,7 +122,9 @@ def load_rpe(fn):
 def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
-        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split(",")) + [ None ]
+        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ]
+    else:
+        renpy.config.variants = [ None ]
     
     if renpy.android: #@UndefinedVariable
         import android #@UnresolvedImport
@@ -136,11 +138,15 @@ def choose_variants():
         
         print "Screen diagonal is", diag, "inches."
         
-        if diag >= 6:
-            renpy.config.variants.append('tablet')
-        else:
-            renpy.config.variants.append('phone')
+        renpy.config.variants.insert(0, 'touch')
         
+        if diag >= 6:
+            renpy.config.variants.insert(0, 'tablet')
+        else:
+            renpy.config.variants.insert(0, 'phone')
+        
+    else:
+        renpy.config.variants.insert(0, 'pc')
     
         
 def main():

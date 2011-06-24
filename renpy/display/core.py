@@ -1247,6 +1247,16 @@ class Interface(object):
 
         rv = [ draws.get(i, None) for i in dl ]
         return [ i for i in rv if i is not None ]
+
+    def kill_textures_and_surfaces(self):
+        """
+        Kill all textures and surfaces that are loaded.
+        """
+        
+        renpy.display.render.free_memory()
+        renpy.display.im.cache.clear()
+        renpy.display.module.bo_cache = None
+        renpy.display.text.layout_generation += 1
         
         
     def set_mode(self, physical_size=None):
@@ -1258,12 +1268,9 @@ class Interface(object):
             renpy.display.draw.deinit()
             renpy.display.draw.quit()
             renpy.display.draw = None
-
-            renpy.display.render.free_memory()
-            renpy.display.im.cache.clear()
-
-            renpy.display.module.bo_cache = None
             
+            self.kill_textures_and_surfaces()
+                        
         self.display_reset = False
         
         # Ensure that we kill off the movie when changing screen res.

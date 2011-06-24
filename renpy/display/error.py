@@ -28,11 +28,19 @@ import os
 # Initialized approach.
 
 def call_exception_screen(screen_name, **kwargs):
-    for i in renpy.config.layers:
-        renpy.game.context().scene_lists.clear(i)
+    try:
 
-    renpy.exports.show_screen(screen_name, _transient=True, **kwargs)
-    return renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
+        old_quit = renpy.config.quit_action
+        renpy.config.quit_action = renpy.exports.quit
+
+        for i in renpy.config.layers:
+            renpy.game.context().scene_lists.clear(i)
+    
+        renpy.exports.show_screen(screen_name, _transient=True, **kwargs)
+        return renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
+
+    finally:
+        renpy.config.quit_action = old_quit
 
 def rollback_action():
     renpy.exports.rollback(force=True)
@@ -77,6 +85,7 @@ def report_exception(short, full):
     else:
         ignore_action = None
      
+     
     renpy.game.invoke_in_new_context(
         call_exception_screen,
         "_exception", 
@@ -85,8 +94,7 @@ def report_exception(short, full):
         reload_action=reload_action,
         ignore_action=ignore_action,
         )
-
-
+        
 
 def report_parse_errors(errors):
     """

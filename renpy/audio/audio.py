@@ -764,6 +764,9 @@ def alloc_surface(force):
         surf = renpy.display.draw.fullscreen_surface
     else:
         surf = renpy.display.video.surface
+
+        # Get the real surface, not the scaled one.    
+        surf = renpy.display.scale.real(surf)
         
     if (surf is not last_alloc_surface) or force:
         last_alloc_surface = surf

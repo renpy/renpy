@@ -1358,6 +1358,8 @@ cdef extern from "glcompat.h":
         GL_ZOOM_X
         GL_ZOOM_Y
 
+        RENPY_THIRD_TEXTURE
+
 import renpy
 
 cdef inline gl_check(where):

@@ -33,7 +33,6 @@ Commonly Used
     The default game template sets this to True. We suggest setting it
     to False before releasing a game.
 
-
 .. var:: config.help = "README.html"
 
     This controls the functionality of the help system invoked by the
