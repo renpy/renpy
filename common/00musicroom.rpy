@@ -35,6 +35,8 @@ init -1135 python:
     
     class MusicRoom(object):
         """
+        :doc: music_room class
+        
         A music room that contains a series of songs that can be unlocked
         by the user, and actions that can play entries from the list in
         order.
@@ -72,6 +74,8 @@ init -1135 python:
             
         def add(self, filename, always_unlocked=False):
             """
+            :doc: music_room method
+            
             Adds the music file `filename` to this music room. The music room
             will play unlocked files in the order that they are added to the
             room.
@@ -90,6 +94,8 @@ init -1135 python:
                 
         def is_unlocked(self, filename):
             """
+            :doc: music_room method
+            
             Returns true if the filename has been unlocked (or is always
             unlocked), and false if it is still locked.
             """
@@ -165,6 +171,8 @@ init -1135 python:
             
         def Play(self, filename=None):
             """
+            :doc: music_room method
+                        
             Causes the music room to start playing. If `filename` is given, that
             file begins playing. Otherwise, the currently playing file starts 
             over (if it's unlocked), or the first file starts playing.
@@ -184,6 +192,8 @@ init -1135 python:
         
         def Stop(self):
             """
+            :doc: music_room method
+            
             Stops the music.
             """
             
@@ -192,6 +202,8 @@ init -1135 python:
         
         def Next(self):
             """
+            :doc: music_room method
+            
             An action that causes the music room to play the next unlocked file
             in the playlist.
             """
@@ -200,13 +212,10 @@ init -1135 python:
         
         def Previous(self):
             """
+            :doc: music_room method
+            
             An action that causes the music room to play the previous unlocked 
             file in the playlist.
             """
             
             return self.previous
-        
-            
-            
-            
-    
