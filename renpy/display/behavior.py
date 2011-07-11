@@ -1413,7 +1413,7 @@ class Timer(renpy.display.layout.Null):
 
             renpy.game.interface.timeout(state.next_event - st)
 
-        return self.function(*self.args, **self.kwargs)
+        return run(self.function, *self.args, **self.kwargs)
 
     
 class MouseArea(renpy.display.core.Displayable):
