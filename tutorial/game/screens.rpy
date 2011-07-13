@@ -371,7 +371,7 @@ screen preferences:
                 style_group "pref"
                 has vbox
 
-                textbutton _("Joystick...") action ShowMenu("joystick_preferences")
+                textbutton _("Joystick...") action Preference("joystick")
 
         vbox:
             frame:
