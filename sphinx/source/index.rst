@@ -53,6 +53,7 @@ Customizing Ren'Py
    screen_special
    side_image
    config
+   rooms
 
 Advanced Displayables
 ---------------------

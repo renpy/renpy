@@ -626,7 +626,7 @@ class Transform(Container):
 
         if d.function is not None:
             d.function(d, st, at)
-            
+       
         new_child = d.child._hide(st, at, kind)
 
         if new_child is not None:
@@ -712,7 +712,6 @@ class Transform(Container):
                 return rv
                 
         return None
-
     
     def __call__(self, child=None, take_state=True):
 
@@ -728,7 +727,6 @@ class Transform(Container):
         rv.take_state(self)
 
         return rv
-
     
     def get_placement(self):
 
@@ -742,11 +740,9 @@ class Transform(Container):
         
         rv = self.state.get_placement(cxoffset, cyoffset)
         return rv
-        
 
     def update(self):
         renpy.display.render.invalidate(self)
-        
 
     def parameterize(self, name, parameters):
         if parameters:
@@ -755,7 +751,6 @@ class Transform(Container):
 
         # Note the call here.
         return self()
-
     
     def _show(self):
         self.update_state()

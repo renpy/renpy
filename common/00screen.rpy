@@ -1489,7 +1489,10 @@ init -1140 python:
 
         elif name == "joystick" or name == "joystick...":
 
-            return ShowMenu("joystick_preferences")
+            if renpy.display.joystick.enabled or config.always_has_joystick:
+                return ShowMenu("joystick_preferences")
+            else:
+                return None
 
         elif name == "skip":
             

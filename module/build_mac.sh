@@ -4,6 +4,8 @@ try () {
     "$@" || exit -1
 }
 
+
+
 BASE=/Users/tom
 
 . $BASE/newbuild.i386/env.sh

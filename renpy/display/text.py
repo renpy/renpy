@@ -623,6 +623,8 @@ def text_layout(triples, width, style):
     else:
         return greedy_text_layout(triples, width, style)
 
+# Bumping this number will cause Ren'Py to re-layout the text.
+layout_generation = 0
 
 class Text(renpy.display.core.Displayable):
     """
@@ -652,6 +654,7 @@ class Text(renpy.display.core.Displayable):
     def after_setstate(self):
         self.laidout = None
         self.needs_update = True
+        self.slow_done_time = None
 
     def __init__(self, text, slow=None, slow_done=None,
                  slow_start=0, pause=None, tokenized=False,
@@ -701,10 +704,11 @@ class Text(renpy.display.core.Displayable):
         # The width we've been laid out for.
         self.width = -1
 
-        # The displayable that was added to us to supporte nestled ctc.
+        # The displayable that was added to us to support nestled ctc.
         self.ctc = None
 
         if isinstance(replaces, Text):
+                
             self.slow = replaces.slow
             self.slow_param = replaces.slow_param
             self.slow_start = replaces.slow_start
@@ -712,7 +716,7 @@ class Text(renpy.display.core.Displayable):
             self.slow_done = replaces.slow_done
             self.slow_done_time = replaces.slow_done_time
             self.ctc = replaces.ctc
-            
+                        
         self.needs_update = True
 
     def per_interact(self):
@@ -857,8 +861,10 @@ class Text(renpy.display.core.Displayable):
 
         self.update()
         
-        if self.laidout and self.width == width:
+        if self.laidout and self.width == width and self.layout_generation == layout_generation:
             return
+
+        self.layout_generation = layout_generation
 
         # Set this, so caching works.
         self.width = width
@@ -1269,9 +1275,6 @@ class Text(renpy.display.core.Displayable):
         Called to call slow_done, and also to update slow_done_time.
         """
 
-        if not self.slow:
-            return
-
         self.slow = False
         
         if self.slow_done:
@@ -1284,6 +1287,9 @@ class Text(renpy.display.core.Displayable):
 
         import time
         start = time.time()
+
+        if self.slow_done and not self.slow:
+            self.call_slow_done(st)
 
         if self.slow:
 
@@ -1395,7 +1401,6 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus:
             hyperlink_focus(None)
-        
 
     
 class ParameterizedText(object):

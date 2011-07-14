@@ -38,11 +38,24 @@ import renpy.audio
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
 
+class NoRollback(object):
+    """
+    Objects inheriting from this object do not participate in Rollback.
+    """
+    
+    pass
+
+# parents = [ ]
+
 def reached(obj, reachable, wait):
     """
     @param obj: The object that was reached.
     @param path: The path from the store via which it was reached.
-    @param reachable: A map from reachable object id to path.
+
+    `reachable`
+        A map from id(obj) to int. The int is 1 if the object was reached
+        normally, and 0 if it was reached, but inherits from NoRollback.
+
     """
 
     if wait:
@@ -53,13 +66,13 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
+    if isinstance(obj, NoRollback):
+        reachable[idobj] = 0
+        return
+
     reachable[idobj] = 1
 
-    # if not isinstance(obj, (tuple, RevertableList, RevertableDict, RevertableSet, RevertableObject)):
-    #    return
-
-    # if isinstance(obj, (type, sys.__class__)):
-    #    return
+    # parents.append(obj)
     
     try:
         # Treat as fields, indexed by strings.
@@ -83,7 +96,8 @@ def reached(obj, reachable, wait):
             reached(v, reachable, wait)
     except:
         pass
-
+            
+    # parents.pop()
             
 def reached_vars(store, reachable, wait):
     """
@@ -537,7 +551,7 @@ class Rollback(renpy.object.Object):
         new_objects = [ ]
 
         for o, rb in self.objects:
-            if id(o) in reachable:
+            if reachable.get(id(o), 0):
                 new_objects.append((o, rb))
                 reached(rb, reachable, wait)
             else:

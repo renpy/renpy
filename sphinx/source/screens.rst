@@ -1320,23 +1320,51 @@ Screen Variants
 
 Ren'Py runs both on traditional mouse-oriented devices such as Windows,
 Mac, and Linux PCs, and newer touch-oriented devices such as Android-based
-smartphones and tablets.
+smartphones and tablets. Screen variants allow a game to supply
+multiple versions of a screen, and use the version that best matches
+the hardware it is running on.
 
-When multiple variants of a screen exist, will search for variants in
-the following order, and will use the first screen variant that exists. The
-known variants are.
+Ren'Py chooses a screen variant to use by searching variants in the
+order they are listed in :var:`config.variants`. The first variant
+that exists is used.
+
+If the RENPY_VARIANT environment variable is present, config.variants
+is initialized by splitting the value of the variable on whitespace,
+and then appending ``None``. Setting RENPY_VARIANT to a value such as
+``"tablet touch"`` or ``"phone touch"`` allows screens intended for
+Android devices to be tested on a PC.
+
+If the environment variable is not present, a list of variants is
+built up automatically, by going through the following list in order
+and choosing the entries that apply to the current platform.
+
+``"tablet"``
+
+   Defined on touchscreen based devices where the screen has a
+   diagonal size of 6 inches or more.
+
+``"phone"``
+
+   Defined on touchscren-based devices where the diagonal size of
+   the screen is less than 6 inches. On such a small device, it's
+   important to make buttons large enough a user can easily choose
+   them.
 
 ``"touch"``
 
-   Defined on touchscreen-based devices, such as smartphones and
-   tablets. The game creator should ensure thall all buttons should be
-   large enough to be comfortably touched, even on small devices.
+   Defined on touchscreen-based devices, such as those running the
+   Android platform.
 
+``"pc"``
+
+   Defined on Windows, Mac OS X, and Linux. A PC is expected to have
+   a mouse and keyboard present, to allow buttons to be hovered, and
+   to allow precise pointing.
+   
 ``None``
 
-   Always defined. The default variant is used on mouse- and keyboard-based
-   computers, and when no more specific variant is defined.
-
+   Always defined.
+   
 An example of defining a screen variant is:
    
 ::

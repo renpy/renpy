@@ -122,7 +122,7 @@ def real_smoothscale(src, size, dest=None):
 smoothscale = real_smoothscale
     
     
-def init():    
+def init(scale_factor):    
     global factor
     global scale_fast
     
@@ -136,17 +136,7 @@ def init():
             factor = 1.0
 
     else:
-
-        # Automatically scale to screen if too small.
-        
-        info = pygame.display.Info()
-
-        factor = min(1.0,
-                     1.0 * info.current_w / renpy.config.screen_width,
-                     1.0 * info.current_h / renpy.config.screen_height)
-
-        if factor <= 0:
-            factor = 1.0
+        factor = scale_factor
 
     factor = max(0.5, factor)
             
@@ -480,8 +470,6 @@ def load_scaling():
 
     pygame.Surface = pygame_surface
     
-    
-    
     old_update = pygame.display.update
 
     def update(rects=None):
@@ -493,7 +481,7 @@ def load_scaling():
             rects = [ rects ]
 
         old_update([ v2pplus(i) for i in rects])
-
+        
     pygame.display.update = update
 
     old_get_surface = pygame.display.get_surface

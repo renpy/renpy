@@ -111,7 +111,7 @@ def get_movie_texture(size):
     playing = renpy.audio.music.get_playing("movie")
 
     if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
-        surface = renpy.display.pgrender.surface(size, False)
+        surface = renpy.display.pgrender.surface(size, True)
         surface_file = playing
         surface.fill((0, 0, 0, 255))
 
@@ -149,7 +149,7 @@ class Movie(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(width, height, opaque=True)
         
         tex = get_movie_texture(size)
-
+        
         if tex is not None:
             rv.blit(tex, (0, 0))
             

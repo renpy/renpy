@@ -62,6 +62,9 @@ def event(ev):
 
     if ev.type == pygame.JOYAXISMOTION:
 
+        if not renpy.display.interface.focused:
+            return None
+
         if ev.value >= 0.5:
             state = "Positive"
         elif ev.value <= -0.5:
@@ -93,11 +96,17 @@ def event(ev):
                                   press=press, release=release)
 
     if ev.type == pygame.JOYBUTTONDOWN:
+        
+        if not renpy.display.interface.focused:
+            return None
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
                                   press="Button %d.%d" % (ev.joy, ev.button),
                                   release=None)
     if ev.type == pygame.JOYBUTTONUP:
+
+        if not renpy.display.interface.focused:
+            return None
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
                                   press=None,
