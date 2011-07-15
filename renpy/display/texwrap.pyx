@@ -52,13 +52,14 @@ cdef class WordWrapper(object):
     cdef long long *scores
     cdef int *splits
 
-    def __init__(self, list glyphs):
+    def __init__(self, list glyphs, first_width, rest_width, subtitle):
+
         if not glyphs:
             return
         
         self.glyphs = glyphs        
         self.make_word_list(glyphs)
-        self.knuth_plass(800, 800, False)        
+        self.knuth_plass(first_width, rest_width, False)        
         self.unmark_splits()
             
     def __dealloc__(self):
@@ -221,6 +222,6 @@ cdef class WordWrapper(object):
    
 
 def linebreak_tex(glyphs, first_width, rest_width, subtitle):
-    WordWrapper(glyphs)
+    WordWrapper(glyphs, first_width, rest_width, subtitle)
 
 
