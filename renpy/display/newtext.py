@@ -11,6 +11,12 @@ import renpy.display.ftfont as ftfont
 import time
 import contextlib
 
+try:
+    from _renpybidi import log2vis, WRTL, RTL, ON
+except:
+    pass
+
+
 @contextlib.contextmanager
 def timed(name):
     start = time.time()
@@ -188,7 +194,6 @@ class TextSegment(object):
             self.cps = 0
             self.ruby_top = False
             self.ruby_bottom = False
-            
             
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}>".format(**self.__dict__)
@@ -417,6 +422,11 @@ class Layout(object):
 
             # TODO: RTL - apply RTL to the text of each segment, then 
             # reverse the order of the segments in each paragraph.
+            
+            if renpy.config.rtl:            
+                p, rtl = self.rtl_paragraph(p)
+            else:
+                rtl = False
                     
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
@@ -436,8 +446,13 @@ class Layout(object):
                 line_glyphs.extend(glyphs)
                 all_glyphs.extend(glyphs)
 
-            # TODO: RTL - Reverse the segments and the glyphs within each
-            # segment, so that we can use LTR linebreaking algorithms.
+            # TODO: RTL - Reverse each line, segment, so that we can use LTR
+            # linebreaking algorithms.
+            if rtl:
+                line_glyphs.reverse()
+                for ts, glyphs in seg_glyphs:
+                    glyphs.reverse()
+
             
             # Tag the glyphs that are eligible for line breaking, and if
             # they should be included or excluded from the end of a line.
@@ -462,9 +477,7 @@ class Layout(object):
             elif layout == "greedy":
                 textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
                         
-            # Figure out the time each glyph will be drawn. 
-            for ts, glyphs in seg_glyphs:
-                
+            for ts, glyphs in seg_glyphs:                
                 # Only assign a time if we're past the start segment.
                 if self.start_segment is not None:
                     print id(self.start_segment), id(ts)
@@ -475,10 +488,12 @@ class Layout(object):
                         continue
                 
                 gt = ts.assign_times(gt, glyphs)
-                                      
-            # TODO: RTL - Reverse the glyphs in each line, back to RTL order,
+                                
+            # RTL - Reverse the glyphs in each line, back to RTL order,
             # now that we have lines. 
-            
+            if rtl:
+                line_glyphs = textsupport.reverse_lines(line_glyphs)
+                        
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
             
@@ -499,7 +514,6 @@ class Layout(object):
         # per-outline basis.)
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
-
 
         textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
 
@@ -755,6 +769,27 @@ class Layout(object):
 
         return paragraphs
 
+    def rtl_paragraph(self, p):
+        """
+        Given a paragraph (a list of segment, text tuples) handles 
+        RTL and ligaturization. This returns the reversed RTL paragraph, 
+        which differers from the LTR one. It also returns a flag that is 
+        True if this is an rtl paragraph.
+        """
+        
+        direction = ON
+        
+        l = [ ]
+        
+        for ts, s in p:
+            s, direction = log2vis(s, direction)
+            l.append((ts, s))
+            
+        rtl = (direction == RTL or direction == WRTL)
+
+        return l, rtl
+
+
     def figure_outlines(self, style):
         """
         Return a list containing the outlines, including an outline
@@ -901,9 +936,9 @@ def layout_cache_tick():
     
 class NewText(renpy.display.core.Displayable):
     
-    def __init__(self, text, slow=None, style='default', replaces=None, **properties):
+    def __init__(self, text, slow=None, replaces=None, **properties):
                 
-        super(NewText, self).__init__(style=style, **properties)
+        super(NewText, self).__init__(**properties)
         
         # We need text to be a list, so if it's not, wrap it.   
         if not isinstance(text, list):
@@ -954,8 +989,8 @@ class NewText(renpy.display.core.Displayable):
         """
 
         key = id(self)        
-        layout_cache_old.pop(self.id, None)
-        layout_cache_new.pop(self.id, None)
+        layout_cache_old.pop(key, None)
+        layout_cache_new.pop(key, None)
     
     def get_layout(self):
         """

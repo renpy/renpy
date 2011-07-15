@@ -3,7 +3,7 @@ include "linebreak.pxi"
 cdef class Glyph:
     
     def __repr__(self):
-        return "<Glyph {!r}, width={}, advance={}>".format(self.character, self.width, self.advance)
+        return "<Glyph {0!r} time={1}>".format(self.character, self.time)
 
 cdef class Line:
 
@@ -14,7 +14,7 @@ cdef class Line:
         self.eop = False
 
     def __repr__(self):
-        return "<Line y={}, height={}>".format(self.y, self.height)
+        return "<Line y={0}, height={1}>".format(self.y, self.height)
     
 
 TEXT=1
@@ -694,3 +694,35 @@ def align_and_justify(list lines, short width, float text_align, bint justify):
                     continue
 
                 g.x += offset
+                
+def reverse_lines(list glyphs):
+    """
+    Reverses each line in glyphs, while keeping the lines themselves in 
+    the original order.
+    """
+    
+    cdef list rv
+    cdef list block
+    cdef Glyph g
+    
+    rv = [ ]
+    block = [ ]
+    
+    for g in glyphs:
+        
+        if g.split == SPLIT_INSTEAD:
+            block.reverse()
+            rv.extend(block)
+            rv.append(g)
+            block = [ ]
+            
+            continue
+        
+        block.append(g)
+        
+    block.reverse()
+    rv.extend(block)
+    
+    return rv
+            
+            
