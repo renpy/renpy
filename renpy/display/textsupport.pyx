@@ -262,6 +262,16 @@ def linebreak_greedy(list glyphs, int first_width, int rest_width):
     if split_g is not None:
         split_g.split = SPLIT_NONE
 
+def linebreak_nobreak(list glyphs):
+    """
+    Linebreak without linebreaking.
+    """
+    
+    cdef Glyph g 
+    
+    for g in glyphs:
+        g.split = SPLIT_NONE
+        
             
 def linebreak_debug(list glyphs):
     """

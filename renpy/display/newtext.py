@@ -476,6 +476,8 @@ class Layout(object):
                 texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, True)            
             elif layout == "greedy":
                 textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
+            elif layout == "nobreak":
+                textsupport.linebreak_nobreak(line_glyphs)
                         
             for ts, glyphs in seg_glyphs:                
                 # Only assign a time if we're past the start segment.
