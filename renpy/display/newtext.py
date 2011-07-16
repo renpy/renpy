@@ -374,8 +374,10 @@ class Layout(object):
         self.has_ruby = False
                 
         # Slow text that is not before the start segment is displayed
-        # instantaneously.
+        # instantaneously. Text after the end segment is not displayed
+        # at all. These are controlled by the {_start} and {_end} tags.
         self.start_segment = None
+        self.end_segment = None
 
         self.width = width
         self.height = height
@@ -452,7 +454,6 @@ class Layout(object):
                 line_glyphs.reverse()
                 for ts, glyphs in seg_glyphs:
                     glyphs.reverse()
-
             
             # Tag the glyphs that are eligible for line breaking, and if
             # they should be included or excluded from the end of a line.
@@ -465,7 +466,7 @@ class Layout(object):
             elif language == "western":
                 textsupport.annotate_western(line_glyphs)
             else:
-                raise Exception("Unknown language: {}".format(language))
+                raise Exception("Unknown language: {0}".format(language))
 
             # Break the paragraph up into lines.                    
             layout = style.layout
@@ -478,16 +479,20 @@ class Layout(object):
                 textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
             elif layout == "nobreak":
                 textsupport.linebreak_nobreak(line_glyphs)
+            else:
+                raise Exception("Unknown layout: {0}".format(layout))
                         
             for ts, glyphs in seg_glyphs:                
                 # Only assign a time if we're past the start segment.
                 if self.start_segment is not None:
-                    print id(self.start_segment), id(ts)
-                    
                     if self.start_segment is ts:
                         self.start_segment = None
                     else:
                         continue
+
+                # A hack to prevent things past the end segment from displaying.
+                if ts is self.end_segment:
+                    gt += 10000000000
                 
                 gt = ts.assign_times(gt, glyphs)
                                 
@@ -593,7 +598,6 @@ class Layout(object):
         
         ts.take_style(style)
                 
-                
         # The text segement stack.
         tss = [ ts ]
 
@@ -643,6 +647,11 @@ class Layout(object):
                 ts = push()
                 tss.pop(-2)
                 self.start_segment = ts
+                
+            elif tag == "_end":
+                ts = push()
+                tss.pop(-2)
+                self.end_segment = ts
                 
             elif tag == "p":
                 # Duplicated from the newline tag.
