@@ -47,7 +47,7 @@ def get_font(font, size, bold, italic, outline, antialias):
     font_cache[key] = rv
     
     return rv
-
+    
 
 class Blit(object):
     """
