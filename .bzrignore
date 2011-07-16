@@ -107,3 +107,7 @@ renpy/vc_version.py
 .pydevproject
 .project
 .settings
+LICENSE.txt
+template/README.html
+the_question/README.html
+tutorial/README.html
