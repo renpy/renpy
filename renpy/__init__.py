@@ -110,23 +110,31 @@ def import_all():
     import renpy.display.scale # Must be before module. @UnresolvedImport
     import renpy.display.module #@UnresolvedImport
 
-    # Now that render is pre-compiled, we want to use the
-    # location of renpy.display.module to find it.
-    import _renpy #@UnresolvedImport
-    libexec = os.path.dirname(_renpy.__file__)
-    renpy.display.__path__.insert(0, os.path.join(libexec, "renpy", "display")) #@UndefinedVariable
 
-    # Also find encodings, to deal with the way py2exe lays things out.
-    import encodings
-    libexec = os.path.dirname(encodings.__path__[0])
-    renpy.display.__path__.insert(1, os.path.join(libexec, "renpy", "display")) #@UndefinedVariable
+    def update_path(package):
+        """
+        Update the __path__ of package, to import binary modules from a libexec
+        directory.
+        """
+        
+        name = package.__name__.split(".")
+        
+        import _renpy #@UnresolvedImport
+        libexec = os.path.dirname(_renpy.__file__)
+        package.__path__.insert(0, os.path.join(libexec, *name))
+    
+        # Also find encodings, to deal with the way py2exe lays things out.
+        import encodings
+        libexec = os.path.dirname(encodings.__path__[0])
+        package.__path__.insert(1, os.path.join(libexec, *name))
+    
+    update_path(renpy.display)
     
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
 
     import renpy.display.core # object @UnresolvedImport
     import renpy.display.font #@UnresolvedImport
     import renpy.display.text # core, font @UnresolvedImport
-    import renpy.display.newtext # core, font @UnresolvedImport
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
@@ -146,6 +154,14 @@ def import_all():
     import renpy.display.predict #@UnresolvedImport
     
     import renpy.display.error #@UnresolvedImport
+    
+    import renpy.text #@UnresolvedImport
+    update_path(renpy.text)
+    
+    import renpy.text.ftfont #@UnresolvedImport
+    import renpy.text.textsupport #@UnresolvedImport
+    import renpy.text.texwrap #@UnresolvedImport
+    import renpy.text.text #@UnresolvedImport
     
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 

@@ -1,12 +1,12 @@
 import time
 import renpy.display
 
-from renpy.display.textsupport import \
+from renpy.text.textsupport import \
     TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
-import renpy.display.textsupport as textsupport
-import renpy.display.texwrap as texwrap
-import renpy.display.ftfont as ftfont
+import renpy.text.textsupport as textsupport
+import renpy.text.texwrap as texwrap
+import renpy.text.ftfont as ftfont
 
 import time
 import contextlib

@@ -248,20 +248,24 @@ elif android:
 else:
     glew_libs = [ 'glew32', "opengl32" ]
 
-def display(name, libs=[]):
+def module(package, name, libs=[]):
     """
-    Adds code to compile a module that's defined by a cython file in
-    the display directory, and turned into a cython file in this
-    directory by the run.sh script.
+    Adds code to compile a cython-defined module in package.
     """
 
     extensions.append(distutils.core.Extension(
-        "renpy.display." + name,
+        "renpy." + package + "." + name,
         [name + ".c"],
         extra_compile_args=extra_compile_args,
         include_dirs=include_dirs,
         library_dirs=library_dirs,
         libraries=libs))
+
+def display(name, libs=[]):
+    module("display", name, libs)
+
+def text(name, libs=[]):
+    module("text", name, libs)
 
 display("render", [ 'z', 'm' ])
 display("accelerator", [ 'z', 'm' ])
@@ -280,11 +284,11 @@ display("glenviron_limited", glew_libs)
 display("glrtt_copy", glew_libs)
 display("glrtt_fbo", glew_libs)
 
-display("textsupport")
-display("texwrap")
+text("textsupport")
+text("texwrap")
 
 extensions.append(distutils.core.Extension(
-    "renpy.display.ftfont",
+    "renpy.text.ftfont",
     [ "ftfont.c", "ftsupport.c"],
     include_dirs=include_dirs,
     library_dirs=library_dirs,

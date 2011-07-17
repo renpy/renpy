@@ -8,45 +8,46 @@ try () {
     "$@" || exit -1
 }
 
-# Builds the module in renpy/display named name.
-display () {
+# build <package> <module>
+# Builds the module in renpy/package named module.
+build () {
 
     build=0
 
-    for i in renpy/display/*.pxd; do
-        if [ $i -nt module/$1.c ]; then
+    for i in renpy/$1/*.pxd; do
+        if [ $i -nt module/$2.c ]; then
            build=1
         fi
     done
         
-    if [ renpy/display/$1.pyx -nt module/$1.c ]; then
+    if [ renpy/$1/$2.pyx -nt module/$2.c ]; then
         build=1
     fi
 
     if [ $build != 0 ]; then    
-        echo renpy.display.$1 is out of date.
-        try cython -Imodule -a renpy/display/$1.pyx -o module/$1.c
+        echo renpy.$1.$2 is out of date.
+        try cython -Imodule -a renpy/$1/$2.pyx -o module/$2.c
     fi
 }
 
 # Build the modules. To build a new module, it must be listed here
 # and in module/setup.py
-display render
-display accelerator
+build display render
+build display accelerator
 
-display gldraw
-display gltexture
-display glenviron
-display glenviron_fixed
-display glenviron_shader
-display glenviron_limited
-display glshader
-display glrtt_copy
-display glrtt_fbo
+build display gldraw
+build display gltexture
+build display glenviron
+build display glenviron_fixed
+build display glenviron_shader
+build display glenviron_limited
+build display glshader
+build display glrtt_copy
+build display glrtt_fbo
 
-display ftfont
-display textsupport
-display texwrap
+build text ftfont
+build text textsupport
+build text texwrap
 
 echo Compiling...
 
