@@ -50,7 +50,7 @@ bytecode_version = 1
 first_utter_start = True
 
 def setup_modulefinder(modulefinder):
-    import _renpy
+    import _renpy #@UnresolvedImport
     libexec = os.path.dirname(_renpy.__file__)
     displaypath = os.path.join(libexec, "renpy", "display")
     modulefinder.AddPackagePath('renpy.display', displaypath)
@@ -102,6 +102,7 @@ def import_all():
     import renpy.script #@UnresolvedImport
     import renpy.statements #@UnresolvedImport
     import renpy.style #@UnresolvedImport
+    import renpy.substitutions #@UnresolvedImport
 
     import renpy.display.presplash #@UnresolvedImport
     import renpy.display.iliad # Must be before scale and pgrender. @UnresolvedImport
@@ -111,7 +112,7 @@ def import_all():
 
     # Now that render is pre-compiled, we want to use the
     # location of renpy.display.module to find it.
-    import _renpy
+    import _renpy #@UnresolvedImport
     libexec = os.path.dirname(_renpy.__file__)
     renpy.display.__path__.insert(0, os.path.join(libexec, "renpy", "display")) #@UndefinedVariable
 

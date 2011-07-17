@@ -22,14 +22,15 @@
 # This file contains support for string translation and string formatting
 # operations.
 
-# TODO: If a string doesn't have a [ in it, there's no need to format it - and 
-# the test for [ is a quick one.
-
+import renpy
 import string
 
-
-
 class Formatter(string.Formatter):
+    """
+    A string formatter that uses Ren'Py's formatting rules. Ren'Py uses 
+    square brackets to introduce formatting, and it supports a q conversion
+    that quotes the text being shown to the user.
+    """
     
     def parse(self, s):
         """
@@ -38,11 +39,9 @@ class Formatter(string.Formatter):
         the method we're overriding. 
         """
 
-
         # States for the parse state machine.
         LITERAL = 0
         OPEN_BRACKET = 1
-        CLOSE_BRACKET = 2
         VALUE = 3
         FORMAT = 4
         CONVERSION = 5
@@ -172,5 +171,39 @@ class Formatter(string.Formatter):
             
         return value
             
+# The instance of Formatter we use.
+formatter = Formatter()
 
+def MultipleDict(object):
+    def __init__(self, *dicts):
+        self.dicts = dicts
+        
+    def __getitem__(self, key):
+        for d in self.dicts:
+            if key in d:
+                return d[key]
+            
+        raise KeyError(key)
 
+def substitute(s, scope=None):
+    """
+    Performs translation and formatting on `s`, as necessary.
+    
+    `scope`
+        The scope which is used in formatting, in addition to the default
+        store.
+    """
+
+    # TODO: Translation.
+    
+    if "[" in s:
+        
+        if scope is not None:
+            kwargs = MultipleDict(scope, renpy.store.__dict__) #@UndefinedVariable
+        else:
+            kwargs = renpy.store.__dict__ #@UndefinedVariable
+            
+        s = formatter.vformat(s, (), kwargs)
+
+    return s
+        

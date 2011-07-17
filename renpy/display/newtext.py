@@ -947,7 +947,7 @@ def layout_cache_tick():
     
 class NewText(renpy.display.core.Displayable):
     
-    def __init__(self, text, slow=None, replaces=None, **properties):
+    def __init__(self, text, slow=None, replaces=None, scope=None, substitute=True, **properties):
                 
         super(NewText, self).__init__(**properties)
         
@@ -968,8 +968,15 @@ class NewText(renpy.display.core.Displayable):
         # True if we're using slow text mode.
         self.slow = slow
 
+        # The scope substitutions are performed in, in addition to renpy.store.
+        self.scope = scope
+
+        # Should substitutions be done?
+        self.substitute = substitute
+
         # Call update to retokenize.
         self.update()
+
 
     def update(self):
         """
@@ -977,9 +984,19 @@ class NewText(renpy.display.core.Displayable):
         any layout objects are created.
         """
         
-        # TODO: Expand text with scope substitutions, if necessary.
+        text = [ ]
         
-        tokens = self.tokenize(self.text)
+        # Perform substitution as necessary.
+        for i in self.text:
+            if isinstance(i, basestring):
+                if self.substitute:
+                    i = renpy.substitutions.substitute(i, self.scope)
+                
+                i = unicode(i)
+                
+            text.append(i)
+        
+        tokens = self.tokenize(text)
         
         # self.tokens is a list of pairs, where the first component of 
         # each pair is TEXT, NEWLINE, TAG, or DISPLAYABLE, and the second 
