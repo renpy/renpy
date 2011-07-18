@@ -489,10 +489,6 @@ class Layout(object):
                         self.start_segment = None
                     else:
                         continue
-
-                # A hack to prevent things past the end segment from displaying.
-                if ts is self.end_segment:
-                    gt += 10000000000
                 
                 gt = ts.assign_times(gt, glyphs)
                                 
@@ -552,6 +548,9 @@ class Layout(object):
                 di.displayable_blits = None
             
             for ts, glyphs in par_seg_glyphs:
+                if ts is self.end_segment:
+                    break
+                
                 ts.draw(glyphs, di)
     
             with timed("texture load"):
@@ -945,11 +944,11 @@ def layout_cache_tick():
     layout_cache_old = layout_cache_new
     layout_cache_new = { }
     
-class NewText(renpy.display.core.Displayable):
+class Text(renpy.display.core.Displayable):
     
     def __init__(self, text, slow=None, replaces=None, scope=None, substitute=True, **properties):
                 
-        super(NewText, self).__init__(**properties)
+        super(Text, self).__init__(**properties)
         
         # We need text to be a list, so if it's not, wrap it.   
         if not isinstance(text, list):

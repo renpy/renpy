@@ -534,7 +534,7 @@ def _image(im, **properties):
 image = Wrapper(_image)
 
 null = Wrapper(renpy.display.layout.Null)
-text = Wrapper(renpy.display.text.Text, style="text", replaces=True)
+text = Wrapper(renpy.text.text.Text, style="text", replaces=True)
 hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
 vbox = Wrapper(renpy.display.layout.MultiBox, layout="vertical", style="vbox", many=True)
 fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", style="fixed", many=True)
