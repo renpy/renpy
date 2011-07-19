@@ -413,6 +413,9 @@ class Layout(object):
         # The time at which the next glyph will be displayed.
         gt = 0.0
 
+        # True if we've encountered the end segment while assigning times.
+        ended = False
+
         # 2. Breaks the text into a list of paragraphs, where each paragraph is 
         # represented as a list of (Segment, text string) tuples. 
         #
@@ -490,7 +493,13 @@ class Layout(object):
                     else:
                         continue
                 
-                gt = ts.assign_times(gt, glyphs)
+                if ts is self.end_segment:
+                    ended = True
+                    
+                if ended:
+                    textsupport.assign_times(gt, 0.0, glyphs)
+                else:                
+                    gt = ts.assign_times(gt, glyphs)
                                 
             # RTL - Reverse the glyphs in each line, back to RTL order,
             # now that we have lines. 
@@ -656,14 +665,14 @@ class Layout(object):
                 # Duplicated from the newline tag.
                 
                 if not line:
-                    line.append((ts[-1], " "))
+                    line.append((ts[-1], u" "))
                 
                 paragraphs.append(line)
                 line = [ ]
 
             elif tag == "space":
                 width = int(value)                
-                line.append((SpaceSegment(tss[-1], width=width), ""))
+                line.append((SpaceSegment(tss[-1], width=width), u""))
 
             elif tag == "vspace":
                 # Duplicates from the newline tag.
@@ -673,7 +682,7 @@ class Layout(object):
                 if line:
                     paragraphs.append(line)
 
-                line = [ (SpaceSegment(tss[-1], height=height), "") ]
+                line = [ (SpaceSegment(tss[-1], height=height), u"") ]
                 paragraphs.append(line)
                 
                 line = [ ]
@@ -773,7 +782,7 @@ class Layout(object):
                 raise Exception("Unknown text tag %r" % text)
             
         if not line:
-            line.append((ts, ""))
+            line.append((ts, u""))
                 
         paragraphs.append(line)
 
@@ -946,7 +955,7 @@ def layout_cache_tick():
     
 class Text(renpy.display.core.Displayable):
     
-    def __init__(self, text, slow=None, replaces=None, scope=None, substitute=True, **properties):
+    def __init__(self, text, slow=None, replaces=None, scope=None, substitute=True, slow_done=None, **properties):
                 
         super(Text, self).__init__(**properties)
         
@@ -967,11 +976,18 @@ class Text(renpy.display.core.Displayable):
         # True if we're using slow text mode.
         self.slow = slow
 
+        # The callback to be called when slow-text mode ends.
+        self.slow_done = None
+
         # The scope substitutions are performed in, in addition to renpy.store.
         self.scope = scope
 
         # Should substitutions be done?
         self.substitute = substitute
+        
+        if replaces is not None:
+            self.slow = replaces.slow
+            self.slow_done = replaces.slow_done
 
         # Call update to retokenize.
         self.update()
@@ -1060,14 +1076,25 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus:
             return hyperlink_focus(None)
+     
+    def call_slow_done(self, st):
+        """
+        Called when slow is finished.
+        """
+
+        self.slow = False
         
+        if self.slow_done:
+            self.slow_done()
+            self.slow_done = None
+       
     def event(self, ev, x, y, st):
         """
         Space, Enter, or Click ends slow, if it's enabled.
         """
         
-        if self.slow and self.style.slow_abortable and renpy.display.behavior.map_event(ev, "dismiss"):
-            # self.call_slow_done(st)
+        if self.slow and renpy.display.behavior.map_event(ev, "dismiss") and self.style.slow_abortable:
+            self.call_slow_done(st)
             self.slow = False
             raise renpy.display.core.IgnoreEvent()
         
@@ -1092,8 +1119,6 @@ class Text(renpy.display.core.Displayable):
                 return rv
 
     def render(self, width, height, st, at):
-
-        start = time.time()
 
         # Render all of the child displayables.
         renders = { }
@@ -1149,11 +1174,12 @@ class Text(renpy.display.core.Displayable):
         for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
             rv.add_focus(self, hyperlink, hx + layout.xoffset, hy + layout.yoffset, hw, hh)
         
-        # Figure out if we need to redraw.
-        if self.slow and redraw is not None:
-            renpy.display.render.redraw(self, redraw)
-        
-        print "NEW", (time.time() - start) * 1000.0
+        # Figure out if we need to redraw or call slow_done.
+        if self.slow:            
+            if redraw is not None:
+                renpy.display.render.redraw(self, redraw)
+            else:
+                self.call_slow_done(st)
         
         return rv
        

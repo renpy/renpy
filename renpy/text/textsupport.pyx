@@ -43,7 +43,7 @@ def tokenize(unicode s):
 
         if s[pos] == u"\n":
             pos += 1
-            rv.append((PARAGRAPH, ""))
+            rv.append((PARAGRAPH, u""))
             continue
                     
         # Do we have a text tag?

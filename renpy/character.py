@@ -430,7 +430,34 @@ def display_say(
             
         what_string = start_string + mid_string + end_string
 
+        # This will be given to as the what argument to the show function.
         what_list = [ what_string ]
+        
+        # Figure out the CTC to use, if any.
+        if last_pause:
+            what_ctc = ctc
+        else:
+            if delay is not None:
+                what_ctc = ctc_timedpause or ctc_pause
+            else:
+                what_ctc = ctc_pause
+            
+        if not (interact or ctc_force):
+            what_ctc = None
+            
+        what_ctc = renpy.easy.displayable_or_none(what_ctc)
+
+        if what_ctc is not None:
+            what_ctc = what_ctc.parameterize(('ctc',), ())
+
+        if delay == 0:
+            what_ctc = None
+        
+        if what_ctc and ctc_position == "nestled":
+            what_list.append(what_ctc)
+
+        # Create the callback that is called when the slow text is done.
+        slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
         
         # Run the show callback.
         for c in callback:
@@ -439,44 +466,12 @@ def display_say(
         # Show the text.
         what_text = show_function(who, what_list)
 
-        # if not isinstance(what_text, renpy.display.text.Text):
-        #     raise Exception("The say screen (or show_function) must return a Text object.")
-
-        # TODO: (Re)Implement all this to work w/ newtext.          
-        if False:
+        if not isinstance(what_text, renpy.text.text.Text):
+            raise Exception("The say screen (or show_function) must return a Text object.")
                     
-            # Update the properties of the what_text widget.
-    
-            if last_pause:
-                what_ctc = ctc
-            else:
-                if delay is not None:
-                    what_ctc = ctc_timedpause or ctc_pause
-                else:
-                    what_ctc = ctc_pause
-                
-            if not (interact or ctc_force):
-                what_ctc = None
-                
-            what_ctc = renpy.easy.displayable_or_none(what_ctc)
-    
-            if what_ctc is not None:
-                what_ctc = what_ctc.parameterize(('ctc',), ())
-    
-            if delay == 0:
-                what_ctc = None
-            
-            # This object is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
-            
-            what_text.slow = slow
-            what_text.slow_param = slow
-            what_text.slow_done = slow_done
-            what_text.slow_start = start
-            what_text.slow_end = end
-    
-            if what_ctc and ctc_position == "nestled":
-                what_text.set_ctc(what_ctc)
+        # Update the properties of the what_text widget.
+        what_text.slow = slow
+        what_text.slow_done = slow_done
 
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)
