@@ -155,6 +155,7 @@ style_properties = dict(
     line_spacing = None,
     mouse = None,
     min_width = None,
+    newline_indent = None,
     outlines = expand_outlines,
     rest_indent = None,
     right_margin = None,

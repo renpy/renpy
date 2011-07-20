@@ -423,6 +423,9 @@ class Layout(object):
         # and so needs to be redone when the style of the text changes.
         self.paragraphs = self.segment(text.tokens, style, renders)
       
+        first_indent = style.first_indent
+        rest_indent = style.rest_indent
+      
         for p in self.paragraphs:
 
             # TODO: RTL - apply RTL to the text of each segment, then 
@@ -475,11 +478,11 @@ class Layout(object):
             layout = style.layout
 
             if layout == "tex":                
-                texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, False)
+                texwrap.linebreak_tex(line_glyphs, width - first_indent, width - rest_indent, False)
             elif layout == "subtitle" or layout == "tex-subtitle":
-                texwrap.linebreak_tex(line_glyphs, width - style.first_indent, width - style.rest_indent, True)            
+                texwrap.linebreak_tex(line_glyphs, width - first_indent, width - rest_indent, True)            
             elif layout == "greedy":
-                textsupport.linebreak_greedy(line_glyphs, width - style.first_indent, width - style.rest_indent)
+                textsupport.linebreak_greedy(line_glyphs, width - first_indent, width - rest_indent)
             elif layout == "nobreak":
                 textsupport.linebreak_nobreak(line_glyphs)
             else:
@@ -509,7 +512,7 @@ class Layout(object):
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
             
-            w = textsupport.place_horizontal(line_glyphs, 0, style.first_indent, style.rest_indent)
+            w = textsupport.place_horizontal(line_glyphs, 0, first_indent, rest_indent)
             if w > maxx:
                 maxx = w
            
@@ -517,6 +520,13 @@ class Layout(object):
             # glyph. 
             l, y = textsupport.place_vertical(line_glyphs, y, style.line_spacing, style.line_leading)
             lines.extend(l)
+
+
+            # Figure out the indent of the next line.
+            first_indent = style.newline_indent
+            if first_indent is None:
+                first_indent = rest_indent
+
 
         if style.min_width > maxx + self.xborder:
             maxx = style.min_width - self.xborder

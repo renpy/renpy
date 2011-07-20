@@ -1389,6 +1389,8 @@ init -1140 python:
 
             return (self.width, self.height) == renpy.get_physical_size()
                     
+                    
+    config.always_has_joystick = False
 
     def Preference(name, value=None):
         """
