@@ -386,8 +386,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                 
                 else:
                     # Glyphs without ascents are displayables, which get 
-                    # aligned to the top of the line. (Or they're image-font
-                    # glyphs, which are the same.)                   
+                    # aligned to the top of the line.             
                     gg.y = y
               
             l = Line(y - leading, leading + line_spacing + spacing, glyphs[sol:pos])

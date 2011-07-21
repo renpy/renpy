@@ -28,6 +28,7 @@ except:
     
 import renpy.display
 import renpy.text.ftfont as ftfont
+import renpy.text.textsupport as textsupport
 
 ftfont.init()
 
@@ -48,66 +49,110 @@ class ImageFont(object):
     # offsets - The x and y offsets of each character.
     # chars - A map from a character to the surface containing that character.
     
-    def size(self, text):
-
-        if not text:
-            return (0, self.height)
-
-        xoff, _ = self.offsets[text[0]]
-        w = -xoff
+    
+    def glyphs(self, s):
         
-        for a, b in zip(text, text[1:]):
-            try:
-                w += self.advance[a] + self.kerns.get(a + b, self.default_kern)
-            except KeyError:
-                raise Exception("Character %r not found in %s." % (a, type(self).__name__))
-                
-        w += self.width[text[-1]]
-
-        return (w, self.height)
+        rv = [ ]
+        
+        if not s:
+            return rv
+        
+        for c in s:
+            g = textsupport.Glyph()
             
-    def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
+            g.character = ord(c)
+            g.ascent = self.height
+            g.line_spacing = self.height
 
-        if not text:
-            return renpy.display.pgrender.surface((0, self.height), True)
-
-        xoff, _ = self.offsets[text[0]]
-        x = -xoff
-        y = 0
-
-        surf = renpy.display.pgrender.surface(self.size(text), True)
-
-        for a, b in zip(text, text[1:]):
-            xoff, yoff = self.offsets[a]
-            surf.blit(self.chars[a], (x + xoff, y + yoff))
-            x += self.advance[a] + self.kerns.get(a + b, self.default_kern)
-
-        xoff, yoff = self.offsets[text[-1]]
-        surf.blit(self.chars[text[-1]], (x + xoff, y + yoff))
-
-        if renpy.config.recolor_sfonts and \
-               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255)):
-
-            newsurf = renpy.display.pgrender.surface(surf.get_size(), True)
-            renpy.display.module.twomap(surf, newsurf, color, black_color)
-
-            surf = newsurf
-
-        renpy.display.render.mutated_surface(surf)
-        return surf
-
-    def get_linesize(self):
-        return self.height + 10
-
-    def get_height(self):
-        return self.height
-
-    def get_ascent(self):
-        return self.baseline
-
+            width = self.width.get(c, None)
+            if width is None:
+                raise Exception("Character {0!r} not found in image-based font.".format(c))
+            
+            g.width = self.width[c]
+            g.advance = self.width[c]
+            
+            rv.append(g)
+            
+        # TODO: Kerning.
         
-    def get_descent(self):
-        return -(self.height - self.baseline)
+        return rv
+    
+    def draw(self, target, xo, yo, color, glyphs, underline, strikethrough):
+        
+        for g in glyphs:
+            c = unichr(g.character)
+            
+            cxo, cyo = self.offsets[c]
+            x = g.x + xo + cxo
+            y = g.y + yo + cyo - g.ascent
+            
+            # TODO: Tinting as necessary.
+            
+            target.blit(self.chars[c], (x, y))
+
+#===============================================================================
+#    
+#    def size(self, text):
+# 
+#        if not text:
+#            return (0, self.height)
+# 
+#        xoff, _ = self.offsets[text[0]]
+#        w = -xoff
+#        
+#        for a, b in zip(text, text[1:]):
+#            try:
+#                w += self.advance[a] + self.kerns.get(a + b, self.default_kern)
+#            except KeyError:
+#                raise Exception("Character %r not found in %s." % (a, type(self).__name__))
+#                
+#        w += self.width[text[-1]]
+# 
+#        return (w, self.height)
+#            
+#    def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
+# 
+#        if not text:
+#            return renpy.display.pgrender.surface((0, self.height), True)
+# 
+#        xoff, _ = self.offsets[text[0]]
+#        x = -xoff
+#        y = 0
+# 
+#        surf = renpy.display.pgrender.surface(self.size(text), True)
+# 
+#        for a, b in zip(text, text[1:]):
+#            xoff, yoff = self.offsets[a]
+#            surf.blit(self.chars[a], (x + xoff, y + yoff))
+#            x += self.advance[a] + self.kerns.get(a + b, self.default_kern)
+# 
+#        xoff, yoff = self.offsets[text[-1]]
+#        surf.blit(self.chars[text[-1]], (x + xoff, y + yoff))
+# 
+#        if renpy.config.recolor_sfonts and \
+#               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255)):
+# 
+#            newsurf = renpy.display.pgrender.surface(surf.get_size(), True)
+#            renpy.display.module.twomap(surf, newsurf, color, black_color)
+# 
+#            surf = newsurf
+# 
+#        renpy.display.render.mutated_surface(surf)
+#        return surf
+# 
+#    def get_linesize(self):
+#        return self.height + 10
+# 
+#    def get_height(self):
+#        return self.height
+# 
+#    def get_ascent(self):
+#        return self.baseline
+# 
+#        
+#    def get_descent(self):
+#        return -(self.height - self.baseline)
+#===============================================================================
 
 class SFont(ImageFont):
 
@@ -355,7 +400,6 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     sf = SFont(filename, spacewidth, default_kern, kerns, charset)
     image_fonts[(name, size, bold, italics)] = sf
 
-
 def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
    
@@ -370,7 +414,6 @@ def register_bmfont(name=None, size=None, bold=False, italics=False, underline=F
 
     bmf = BMFont(filename)
     image_fonts[(name, size, bold, italics)] = bmf
-
 
 # A map from face name to ftfont.FTFace
 face_cache = { }
@@ -427,11 +470,19 @@ def load_face(fn):
 image_fonts = { }
 font_cache = { }
 
+
+loaded = False
+
+
 def get_font(fn, size, bold, italics, outline, antialias):
     
     t = (fn, bold, italics)
     fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
+    # TODO: Move to an init method.
+    global loaded
+    for i in image_fonts.itervalues():
+        i.load()
 
     rv = image_fonts.get((fn, size, bold, italics), None)
     if rv is not None:
@@ -444,7 +495,6 @@ def get_font(fn, size, bold, italics, outline, antialias):
     
     # If we made it here, we need to load a ttf.
     face = load_face(fn)
-    
 
     rv = ftfont.FTFont(face, size, bold, italics, outline, antialias)
     
