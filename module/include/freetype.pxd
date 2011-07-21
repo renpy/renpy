@@ -601,8 +601,6 @@ cdef extern from "pyfreetype.h":
         
     void FT_Stroker_Done(FT_Stroker)
        
-    void FT_Glyph_StrokeBorder(FT_Glyph *, FT_Stroker, FT_Bool, FT_Bool)
-        
     cdef FT_Long FT_MulFix(FT_Long, FT_Long)
     cdef FT_Long FT_CEIL(FT_Long)
     cdef FT_Long FT_FLOOR(FT_Long)

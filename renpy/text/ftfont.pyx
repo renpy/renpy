@@ -414,7 +414,7 @@ cdef class FTFont:
         
         return rv
     
-    def draw(self, pysurf, float xo, int yo, color, list glyphs, bint underline, bint strikethrough):
+    def draw(self, pysurf, float xo, int yo, color, list glyphs, bint underline, bint strikethrough, black_color):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """

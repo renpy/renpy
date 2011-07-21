@@ -226,11 +226,13 @@ class TextSegment(object):
         
         if di.override_color:
             color = di.override_color
+            black_color = None
         else:
             color = self.color
+            black_color = self.black_color
         
         fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias)
-        fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough)
+        fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
         """

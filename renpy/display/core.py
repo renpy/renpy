@@ -24,6 +24,7 @@
 
 import renpy.display
 import renpy.audio
+import renpy.text
 
 import pygame #@UnusedImport
 
@@ -1147,6 +1148,9 @@ class Interface(object):
 
         # Setup the video mode.
         self.set_mode()
+
+        # Load the image fonts.
+        renpy.text.font.load_image_fonts()
 
         # Setup the android keymap.
         if android is not None:
