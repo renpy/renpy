@@ -605,8 +605,8 @@ class ADVCharacter(object):
             self.cb_args = kind.cb_args.copy()
 
         else:
-            self.who_args = { }
-            self.what_args = { }
+            self.who_args = { "substitute" : False }
+            self.what_args = { "substitute" : False }
             self.window_args = { }
             self.show_args = { }
             self.cb_args = { }
@@ -768,8 +768,10 @@ class ADVCharacter(object):
                 who = renpy.python.py_eval(who)
     
             if who is not None:
+                who = renpy.substitutions.substitute(who)
                 who = self.who_prefix + who + self.who_suffix
     
+            what = renpy.substitutions.substitute(what)
             what = self.what_prefix + what + self.what_suffix
     
             # Run the add_function, to add this character to the
