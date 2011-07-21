@@ -1006,6 +1006,15 @@ class Text(renpy.display.core.Displayable):
         self.update()
 
 
+    def set_text(self, text):
+        if not isinstance(text, list):
+            text = [ text ]
+        
+        self.text = text
+        
+        self.kill_layout()
+        self.update()
+    
     def update(self):
         """
         This needs to be called after text has been updated, but before
@@ -1140,7 +1149,7 @@ class Text(renpy.display.core.Displayable):
         renders = { }
 
         for i in self.displayables:
-            renders[i] = renpy.display.render.render(i, width, height, st, at)
+            renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
         
         # Find the layout, and update to the new size and width if necessary.
         layout = self.get_layout()

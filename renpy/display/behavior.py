@@ -714,7 +714,7 @@ class HoveredProxy(object):
             return self.b()
     
                 
-class Input(renpy.display.text.Text):
+class Input(renpy.text.text.Text):
     """
     This is a Displayable that takes text as input.
     """
@@ -736,7 +736,7 @@ class Input(renpy.display.text.Text):
                  replaces=None,
                  **properties):
 
-        super(Input, self).__init__("", style=style, replaces=replaces, **properties)
+        super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
 
         self.content = unicode(default)
         self.length = length
@@ -751,6 +751,7 @@ class Input(renpy.display.text.Text):
         self.editable = True
 
         caretprops = { 'color' : None}
+        
         for i in properties:
             if i.endswith("color"):
                 caretprops[i] = properties[i]

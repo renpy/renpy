@@ -143,6 +143,7 @@ def import_all():
     import renpy.text.textsupport #@UnresolvedImport
     import renpy.text.texwrap #@UnresolvedImport
     import renpy.text.text #@UnresolvedImport
+    import renpy.text.extras #@UnresolvedImport
     
     import renpy.display.text # core, font @UnresolvedImport
     import renpy.display.layout # core @UnresolvedImport
