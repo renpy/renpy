@@ -24,6 +24,11 @@
 import renpy.display
 
 def color(c):
+    """
+    This function returns a color tuple, from a hexcode string or a 
+    color tuple.
+    """
+    
     if isinstance(c, tuple) and len(c) == 4:
         return c
 
@@ -31,7 +36,33 @@ def color(c):
         return c
 
     if isinstance(c, basestring):
-        return renpy.display.text.color(c)
+        if c[0] == '#':
+            c = c[1:]
+    
+        if len(c) == 6:
+            r = int(c[0]+c[1], 16)
+            g = int(c[2]+c[3], 16)
+            b = int(c[4]+c[5], 16)
+            a = 255
+        elif len(c) == 8:
+            r = int(c[0]+c[1], 16)
+            g = int(c[2]+c[3], 16)
+            b = int(c[4]+c[5], 16)
+            a = int(c[6]+c[7], 16)
+        elif len(c) == 3:
+            r = int(c[0], 16) * 0x11
+            g = int(c[1], 16) * 0x11
+            b = int(c[2], 16) * 0x11
+            a = 255
+        elif len(c) == 4:
+            r = int(c[0], 16) * 0x11
+            g = int(c[1], 16) * 0x11
+            b = int(c[2], 16) * 0x11
+            a = int(c[3], 16) * 0x11
+        else:
+            raise Exception("Color string must be 3, 4, 6, or 8 hex digits long.")
+
+        return (r, g, b, a)
 
     raise Exception("Not a color: %r" % (c,))
 

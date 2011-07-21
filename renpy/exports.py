@@ -30,7 +30,7 @@ _file = file
 import renpy.display
 import renpy.audio
 
-from renpy.display.text import ParameterizedText
+from renpy.text.extras import ParameterizedText
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame

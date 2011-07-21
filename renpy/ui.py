@@ -28,6 +28,7 @@
 
 import sys
 import renpy.display
+import renpy.text
 
 ##############################################################################
 # Special classes that can be subclassed from the outside.

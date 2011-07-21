@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import renpy.text
 import codecs
 import time
 import re
@@ -282,10 +283,8 @@ def check_user(node):
     except:
         report("Didn't properly report what the next statement should be.")
 
-check_text_tags = renpy.display.text.check_text_tags
-        
 def text_checks(s):
-    msg = renpy.display.text.check_text_tags(s)
+    msg = renpy.text.extras.check_text_tags(s)
     if msg:
         report("%s (in %s)", msg, repr(s)[1:])
 

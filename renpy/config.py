@@ -250,7 +250,7 @@ say_sustain_callbacks = [ ]
 say_allow_dismiss = None
 
 # A function that is called to tokenize text.
-text_tokenizer = renpy.display.text.text_tokenizer
+text_tokenizer = None
 
 # The number of characters per AFM time period.
 afm_characters = 250
@@ -316,7 +316,7 @@ hyperlink_focus = None
 recolor_sfonts = True
 
 # Function that is called to layout text.
-text_layout = renpy.display.text.text_layout
+text_layout = None
 
 # A callback that is called 20 times a second.
 periodic_callback = None

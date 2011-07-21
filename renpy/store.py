@@ -28,6 +28,7 @@
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
 import renpy.display
+import renpy.text
 
 import renpy.ui as ui
 import renpy.display.im as im
@@ -145,8 +146,8 @@ Movie = renpy.display.video.Movie
 Particles = renpy.display.particle.Particles
 SnowBlossom = renpy.display.particle.SnowBlossom
 
-Text = renpy.display.text.Text
-ParameterizedText = renpy.display.text.ParameterizedText
+Text = renpy.text.text.Text
+ParameterizedText = renpy.text.extras.ParameterizedText
 
 Drag = renpy.display.dragdrop.Drag
 DragGroup = renpy.display.dragdrop.DragGroup
