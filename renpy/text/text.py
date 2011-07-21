@@ -6,7 +6,7 @@ from renpy.text.textsupport import \
 
 import renpy.text.textsupport as textsupport
 import renpy.text.texwrap as texwrap
-import renpy.text.ftfont as ftfont
+import renpy.text.font as font
 
 import time
 import contextlib
@@ -22,32 +22,6 @@ def timed(name):
     start = time.time()
     yield
     print name, (time.time() - start) * 1000.0, "ms"
-
-
-ftfont.init()
-
-# TODO: Move fonts over to their own file.
-font_cache = { }
-font_face_cache = { }
-
-def get_font(font, size, bold, italic, outline, antialias):
-    key = (font, size, bold, italic, outline, antialias)
-
-    rv = font_cache.get(key, None)    
-    if rv is not None:
-        return rv
-    
-    face = font_face_cache.get(font, None)
-    if face is None:
-        face = ftfont.FTFace(renpy.loader.load(font), 0)
-        font_face_cache[font] = face
-        
-        
-    rv = ftfont.FTFont(face, size, bold, italic, outline, antialias)
-    font_cache[key] = rv
-    
-    return rv
-    
 
 class Blit(object):
     """
@@ -227,7 +201,7 @@ class TextSegment(object):
         Return the list of glyphs corresponding to unicode string s.
         """
 
-        fo = get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
         rv = fo.glyphs(s)
         
         # Apply kerning to the glyphs.
@@ -255,7 +229,7 @@ class TextSegment(object):
         else:
             color = self.color
         
-        fo = get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias)
         fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough)
 
     def assign_times(self, gt, glyphs):
@@ -266,7 +240,6 @@ class TextSegment(object):
         """
         
         return textsupport.assign_times(gt, self.cps, glyphs)
-
 
 
 class SpaceSegment(object):
@@ -1065,11 +1038,14 @@ class Text(renpy.display.core.Displayable):
         Called when a hyperlink gains focus.
         """
 
-        self.kill_layout()
-        renpy.display.render.redraw(self, 0)
+
+        layout = self.get_layout()
 
         hyperlink_focus = self.style.hyperlink_functions[2]
-        target = self.layout.hyperlink_targets.get(renpy.display.focus.argument, None)
+        target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
+
+        self.kill_layout()
+        renpy.display.render.redraw(self, 0)
 
         if hyperlink_focus:
             return hyperlink_focus(target)

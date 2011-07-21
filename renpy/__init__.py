@@ -134,6 +134,16 @@ def import_all():
 
     import renpy.display.core # object @UnresolvedImport
     import renpy.display.font #@UnresolvedImport
+
+    import renpy.text #@UnresolvedImport
+    update_path(renpy.text)
+    
+    import renpy.text.ftfont #@UnresolvedImport
+    import renpy.text.font #@UnresolvedImport
+    import renpy.text.textsupport #@UnresolvedImport
+    import renpy.text.texwrap #@UnresolvedImport
+    import renpy.text.text #@UnresolvedImport
+    
     import renpy.display.text # core, font @UnresolvedImport
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
@@ -155,13 +165,6 @@ def import_all():
     
     import renpy.display.error #@UnresolvedImport
     
-    import renpy.text #@UnresolvedImport
-    update_path(renpy.text)
-    
-    import renpy.text.ftfont #@UnresolvedImport
-    import renpy.text.textsupport #@UnresolvedImport
-    import renpy.text.texwrap #@UnresolvedImport
-    import renpy.text.text #@UnresolvedImport
     
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 
