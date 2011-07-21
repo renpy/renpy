@@ -403,9 +403,8 @@ class Layout(object):
       
         for p in self.paragraphs:
 
-            # TODO: RTL - apply RTL to the text of each segment, then 
+            # RTL - apply RTL to the text of each segment, then 
             # reverse the order of the segments in each paragraph.
-            
             if renpy.config.rtl:            
                 p, rtl = self.rtl_paragraph(p)
             else:
@@ -429,7 +428,7 @@ class Layout(object):
                 line_glyphs.extend(glyphs)
                 all_glyphs.extend(glyphs)
 
-            # TODO: RTL - Reverse each line, segment, so that we can use LTR
+            # RTL - Reverse each line, segment, so that we can use LTR
             # linebreaking algorithms.
             if rtl:
                 line_glyphs.reverse()
@@ -565,10 +564,17 @@ class Layout(object):
         else:
             self.hyperlinks = [ ]
         
-        # TODO: Log an overflow if the laid out width or height is larger than the
-        # size of the provided area.
-        
-        
+        # Log an overflow if the laid out width or height is larger than the
+        # size of the provided area.        
+        if renpy.config.debug_text_overflow:
+            if sw > width or sh > height:
+                filename, line = renpy.exports.get_filename_line()
+                
+                renpy.display.to_log.write("")
+                renpy.display.to_log.write("File \"%s\", line %d, text overflow:", filename, line)
+                renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
+                renpy.display.to_log.write("     Text: %r", text.text)
+
     def segment(self, tokens, style, renders):
         """
         Breaks the text up into segments. This creates a list of paragraphs,
