@@ -270,7 +270,7 @@ class FunctionStatementParser(Parser):
     This is responsible for parsing function statements.
     """
 
-    def __init__(self, name, function, nchildren=0, unevaluated=False):
+    def __init__(self, name, function, nchildren=0, unevaluated=False, scope=False):
 
         super(FunctionStatementParser, self).__init__(name)
         
@@ -290,6 +290,8 @@ class FunctionStatementParser(Parser):
 
         if nchildren != 0:
             childbearing_statements.append(self)
+
+        self.scope = scope
 
     def parse_layout(self, l, name):
         return self.parse(l, name, True)
@@ -446,6 +448,9 @@ class FunctionStatementParser(Parser):
         if "id" not in seen_keywords:
             call_node.keywords.append(ast.keyword(arg="id", value=self.parse_eval(name, lineno)))
             
+        if "scope" not in seen_keywords and self.scope:
+            call_node.keywords.append(ast.keyword(arg="scope", value=self.parse_eval("_scope", lineno)))
+            
         return rv
 
         
@@ -499,14 +504,18 @@ text_properties = [ Style(i) for i in [
         "kerning",
         "language",
         "layout",
+        "line_leading",
         "line_spacing",
         "minwidth",
         "min_width",
-        "outlines",
+        "newline_indent",
+        "outlines",        
         "rest_indent",
+        "ruby_style",
         "slow_cps",
         "slow_cps_multiplier",
         "slow_abortable",
+        "strikethrough",
         "text_align",
         "text_y_fudge",
         "underline",
@@ -596,9 +605,12 @@ add(ui_properties)
 add(position_properties)
 
 
-FunctionStatementParser("text", "ui.text", 0)
+FunctionStatementParser("text", "ui.text", 0, scope=True)
 Positional("text")
 Keyword("slow")
+Keyword("slow_done")
+Keyword("substitute")
+Keyword("scope")
 add(ui_properties)
 add(position_properties)
 add(text_properties)
@@ -696,13 +708,15 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-FunctionStatementParser("textbutton", "ui.textbutton", 0)
+FunctionStatementParser("textbutton", "ui.textbutton", 0, scope=True)
 Positional("label")
 Keyword("action")
 Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("text_style")
+Keyword("substitute")
+Keyword("scope")
 add(ui_properties)
 add(position_properties)
 add(window_properties)

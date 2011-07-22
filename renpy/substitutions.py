@@ -174,7 +174,7 @@ class Formatter(string.Formatter):
 # The instance of Formatter we use.
 formatter = Formatter()
 
-def MultipleDict(object):
+class MultipleDict(object):
     def __init__(self, *dicts):
         self.dicts = dicts
         
