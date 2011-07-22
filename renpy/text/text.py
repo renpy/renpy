@@ -967,6 +967,24 @@ def layout_cache_tick():
     layout_cache_new = { }
     
 class Text(renpy.display.core.Displayable):
+        
+    __version__ = 4
+    
+    def after_upgrade(self, version):
+        
+        
+        
+        if version < 4:
+        
+            print "Upgrading!"
+            
+            if not isinstance(self.text, list):
+                self.text = [ self.text ]
+                
+            self.scope = None
+            self.substitute = False
+    
+            self.update()
     
     def __init__(self, text, slow=None, replaces=None, scope=None, substitute=True, slow_done=None, **properties):
                 

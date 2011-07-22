@@ -22,6 +22,7 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
+import sys
 import os
 
 # Version numbers.
@@ -131,9 +132,7 @@ def import_all():
     update_path(renpy.display)
     
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
-
     import renpy.display.core # object @UnresolvedImport
-    import renpy.display.font #@UnresolvedImport
 
     import renpy.text #@UnresolvedImport
     update_path(renpy.text)
@@ -145,7 +144,8 @@ def import_all():
     import renpy.text.text #@UnresolvedImport
     import renpy.text.extras #@UnresolvedImport
     
-    import renpy.display.text # core, font @UnresolvedImport
+    sys.modules['renpy.display.text'] = renpy.text.text
+    
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
