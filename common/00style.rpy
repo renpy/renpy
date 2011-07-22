@@ -131,7 +131,7 @@ init -1090 python:
 
     # Text properties.
     style.default.font = "DejaVuSans.ttf"
-    style.default.language = "western"
+    style.default.language = "unicode"
     style.default.antialias = True
     style.default.size = 22
     style.default.color = (255, 255, 255, 255)
@@ -152,7 +152,7 @@ init -1090 python:
     style.default.rest_indent = 0
     style.default.line_spacing = 0
     style.default.line_leading = 0
-    style.default.layout = "greedy"
+    style.default.layout = "tex"
     style.default.subtitle_width = 0.9
     style.default.slow_cps = None
     style.default.slow_cps_multiplier = 1.0

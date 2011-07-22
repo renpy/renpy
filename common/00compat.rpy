@@ -55,6 +55,11 @@ init -1210 python:
             config.new_character_image_argument = False
             config.save_physical_size = False
             
+        if version <= (6, 13, 0):
+            style.default.language = "western"
+            style.default.layout = "greedy"
+            
+            
 init 1210 python hide::
 
     # This returns true if the script_version is <= the
