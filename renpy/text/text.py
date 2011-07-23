@@ -30,20 +30,10 @@ import renpy.text.texwrap as texwrap
 import renpy.text.font as font
 import renpy.text.extras as extras
 
-import time
-import contextlib
-
 try:
     from _renpybidi import log2vis, WRTL, RTL, ON
 except:
     pass
-
-
-@contextlib.contextmanager
-def timed(name):
-    start = time.time()
-    yield
-    print name, (time.time() - start) * 1000.0, "ms"
 
 class Blit(object):
     """
@@ -568,9 +558,8 @@ class Layout(object):
                 
                 ts.draw(glyphs, di)
     
-            with timed("texture load"):
-                renpy.display.draw.mutated_surface(surf)
-                tex = renpy.display.draw.load_texture(surf)
+            renpy.display.draw.mutated_surface(surf)
+            tex = renpy.display.draw.load_texture(surf)
     
             self.textures[key] = tex
         
@@ -972,11 +961,7 @@ class Text(renpy.display.core.Displayable):
     
     def after_upgrade(self, version):
         
-        
-        
         if version < 4:
-        
-            print "Upgrading!"
             
             if not isinstance(self.text, list):
                 self.text = [ self.text ]
@@ -1095,7 +1080,6 @@ class Text(renpy.display.core.Displayable):
         Called when a hyperlink gains focus.
         """
 
-
         layout = self.get_layout()
 
         hyperlink_focus = self.style.hyperlink_functions[2]
@@ -1162,7 +1146,7 @@ class Text(renpy.display.core.Displayable):
                 return rv
 
     def render(self, width, height, st, at):
-
+        
         # Render all of the child displayables.
         renders = { }
 
@@ -1223,7 +1207,7 @@ class Text(renpy.display.core.Displayable):
                 renpy.display.render.redraw(self, redraw)
             else:
                 self.call_slow_done(st)
-        
+
         return rv
        
        

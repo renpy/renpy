@@ -22,6 +22,8 @@
 # Functions that make the user's life easier.
 
 import renpy.display
+import contextlib
+import time
 
 def color(c):
     """
@@ -123,4 +125,9 @@ def predict(d):
     if d is not None:
         renpy.display.predict.displayable(d)
         
+@contextlib.contextmanager
+def timed(name):
+    start = time.time()
+    yield
+    print name, (time.time() - start) * 1000.0, "ms"
     
