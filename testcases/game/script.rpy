@@ -78,7 +78,9 @@ label start:
     call screen text1
     
     
-    "..."
+    $ a = 42
+    $ b = "{b}"
+    "42 =/= [a], {{b} =/= [b!q]"
     
     "This line is displayed at normal speed. {cps=200}This is displayed at faster speed.{/cps} {cps=50}This is displayed at slower speed.{/cps} {cps=*.5}This is displayed at half speed.{/cps}"
     

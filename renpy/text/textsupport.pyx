@@ -24,56 +24,75 @@ DISPLAYABLE=4
 
 def tokenize(unicode s):
     """
-    This tokenizes a unicode string into text tags and tokens. It returns a list of 
-    pairs, where each pair begins with either TEXT or TAG, and then has the contents 
-    of the text run or tag.
+    This tokenizes a unicode string into text tags and tokens. It returns a list
+    of pairs, where each pair begins with TEXT, TAG or PARAGRAPH, and then has
+    the contents of the text run or tag.
     """      
     
-    cdef int start
-    cdef int pos
-    cdef int len_s
-    cdef list rv
+    cdef int TEXT_STATE = 1
+    cdef int LEFT_BRACE_STATE = 2
+    cdef int TAG_STATE = 3
+    cdef int state = TEXT_STATE
     
-    pos = 0
-    len_s = len(s)
-    
-    rv = [ ]
-    
-    while pos < len_s:
+    cdef Py_UNICODE c
+    cdef unicode buf = u''
 
-        if s[pos] == u"\n":
-            pos += 1
-            rv.append((PARAGRAPH, u""))
-            continue
-                    
-        # Do we have a text tag?
-        if s[pos] == u"{" and (pos == len_s - 1 or s[pos+1] != u"{"):
-            
-            start = pos + 1
-            
-            while pos < len_s:
-                if s[pos] == u"}":
-                    break
+    cdef list rv = [ ]
 
-                pos += 1
-                
-            if pos >= len_s:
-                raise Exception("Text tag open at end of string: %r" % s)
-                
-            rv.append((TAG, s[start:pos]))
-            pos += 1
-            
-            continue
+    for c in s:
         
-        start = pos 
-        pos += 1
-        
-        while pos < len_s:
-            if s[pos] == u"{" or s[pos] == u"\n":
-                break
-            pos += 1
+        if state == TEXT_STATE:
             
-        rv.append((TEXT, s[start:pos]))
+            if c == u'\n':
+                if buf:
+                    rv.append((TEXT, buf))
+
+                rv.append((PARAGRAPH, u''))
+                buf = u''
+                
+                continue
+            
+            elif c == u'{':
+                state = LEFT_BRACE_STATE
+                continue
+            
+            else:
+                buf += c
+                continue
+            
+        elif state == LEFT_BRACE_STATE:
+            if c == u'{':
+                buf += c
+                state = TEXT_STATE
+                continue
+            
+            elif c == u'}':
+                raise Exception("Empty text tag in {0!r}.".format(s))
+            
+            else:
+                if buf:
+                    rv.append((TEXT, buf))
+
+                buf = c
+                state = TAG_STATE
+                continue
+                
+        elif state == TAG_STATE:
+            
+            if c == u'}':
+                rv.append((TAG, buf))
+                buf = u''
+                state = TEXT_STATE
+                continue
+            
+            else:
+                buf += c
+                
+    if state != TEXT_STATE:
+        raise Exception("Open text tag at end of string {0!r}.".format(s))
+    
+    if buf:
+        rv.append((TEXT, buf))
         
     return rv
     
@@ -561,8 +580,8 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
     cdef Glyph g
     cdef ruby_t last_ruby = RUBY_NONE
     cdef int len_glyphs = len(glyphs)
-    cdef float x, width, min_x, max_x
-    cdef int y
+    cdef float x, width, min_x = 0, max_x = 0
+    cdef int y = 0
     cdef int start_top
     cdef int pos = 0
     cdef int i
