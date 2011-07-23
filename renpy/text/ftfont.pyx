@@ -292,8 +292,14 @@ cdef class FTFont:
                 
                 FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
     
-            if self.stroker != NULL:
-                FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+    
+            try:
+                if self.stroker != NULL:
+                    FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+            except:
+                import traceback
+                traceback.print_exc()
+
 
             if self.antialias:
                 FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)

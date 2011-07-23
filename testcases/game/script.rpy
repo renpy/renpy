@@ -1,89 +1,119 @@
-﻿screen text_test:
-    
-    window:    
-       has vbox
-  
-       add renpy.display.newtext.NewText(s, slow=True, **kwargs)
-
-       if old:
-           add Text(s, **kwargs)
-
-init python:
+﻿init python:
     _preferences.text_cps = 100
-
-init python:
-
-    TEST = ": We are not now that strength which in old days moved earth and heaven; that which we are, we are; One equal temper of heroic hearts, made weak by time and fate, but strong in will. To strive, to seek, to find, and not to yield."
-
-
-    def text_test(s, test=TEST, old=True, **kwargs):
-        ui.saybehavior()
-        kwargs.update(text_extra)
-        renpy.call_screen("text_test", s=s + test, old=old, kwargs=kwargs)
         
     style.red = Style(style.default)
     style.red.color = "#f00"
         
+    style.ruby_style = Style(style.default)
+    style.ruby_style.size = 12
+    style.ruby_style.xoffset = -18
+        
+define ruby = Character(None, what_line_leading=10, what_ruby_style=style.ruby_style)
+
 label main_menu:
     return
 
+screen text1:
+    frame:
+        has vbox
+        
+        text "Testing bold, color, italics, underline, and strikethrough.":
+            bold True
+            italic True
+            underline True
+            strikethrough True
+            color "#000"
+
+        text "Testing font and size.":
+            font "mikachan.ttf"
+            size 30
+
+        text "Testing drop_shadow.":
+            drop_shadow [ (2, 2) ]
+            drop_shadow_color "#000"
+            
+        text "Testing outlines.":
+           outlines [ (2, "#000", 0, 0) ]
+            
+        text "Testing changing the kerning value, with AA turned off.":
+            kerning 2
+            antialias False
+            
+        null height 10
+            
+        text "Justification: The quick brown fox jumped over the lazy dogs. The quick brown fox jumped over the lazy dogs. The quick brown fox jumped over the lazy dogs.":
+            justify True
+
+        null height 10
+
+        text "Greedy: The quick brown fox jumped over the lazy dogs. The quick brown fox jumped over the lazy dogs. The quick brown fox jumped over the lazy dogs.":
+            layout "greedy"
+            justify True
+
+        null height 10
+
+        text "Subtitle: The quick brown fox jumped over the lazy dogs. The quick brown fox jumped over the lazy dogs. The quick brown fox jumped over the lazy dogs.":
+            language "korean-with-spaces"
+            layout "subtitle"
+            xalign 0.5
+            text_align 0.5
+            
+        text "ビジュアルノベル、ヴィジュアルノベル（visual novel）とは、コンピュータゲームの一ジャンルである。ビジュアルノベルそれ自体もアドベンチャーゲームの一種に分類される。ノベルゲームやサウンドノベルと呼ばれることもある。":
+            font "mikachan.ttf"
+        
+        text "Min-width & Text_align":
+            min_width 400
+            text_align 1.0
+            
+        text "This will be typed out slowly.":
+            slow_cps 40
+            
+
+
 label start:
-
-    $ text_extra = dict()
-
-    $ text_test("CPS Tag", test=": Adjusts cps, {cps=5}absolutely{/cps} or {cps=*.1}relatively{/cps}.", old=False)
-
-    $ text_test("_Start", test=": Testing out the use of the _start tag, {_start}which controls where slow text starts from.")
     
-    $ text_test("Tags", test=": {b}Bold {plain}Plain{/plain} Bold{/b} {i}Italics{/i} {color=#f00}color{/color} {font=mikachan.ttf}Font{/font} {image=arrow.png} {s}strikeout{/s} {u}underline{/u} {=red}red style{/=red}")
-    $ text_test("Size Tag", test=": {size=30}absolute{/size} {size=+10}relative bigger{/size} {size=-10}relative smaller{/size}")
-    $ text_test("Spacing", test=":{space=100}horizontal{vspace=30}vertical", old=False)
+    # Text tag tests.
     
-    $ text_test("Font", font="mikachan.ttf")
-    $ text_test("Justify", justify=True)        
-    $ text_test("Normal")
-    $ text_test("Aliased", antialias=False)
-    $ text_test("Bold", bold=True)
-    $ text_test("Color", color="#ff0")
-    $ text_test("First Indent", first_indent=250)
-    $ text_test("Size", size=30)
-    $ text_test("Italic", italic=True)
-    $ text_test("Justify", justify=True)        
-    $ text_test("Min_width, should be right-aligned.", test="", min_width=780, text_align=1.0)
-    $ text_test("Rest Indent", rest_indent=250)
-    $ text_test("Slow CPS", slow_cps=10)
-    $ text_test("Slow CPS Mul", slow_cps_multiplier=2.0)
-    $ text_test("Right-align", text_align=1.0)
-    $ text_test("Center-align", text_align=0.5)
-    $ text_test("Underline", underline=True)
-    $ text_test("Strikethrough", strikethrough=True)
+    $ ui.saybehavior()
+    call screen text1
     
-    $ text_extra = dict(outlines=[ (1, "#00f", 1, 1), (1, "#f00") ])
-
-    $ text_test("Font", font="mikachan.ttf")
-    $ text_test("Justify", justify=True)        
-    $ text_test("Normal")
-    $ text_test("Aliased", antialias=False)
-    $ text_test("Bold", bold=True)
-    $ text_test("Color", color="#ff0")
-    $ text_test("First Indent", first_indent=250)
-    $ text_test("Size", size=30)
-    $ text_test("Italic", italic=True)
-    $ text_test("Justify", justify=True)        
-    $ text_test("Min_width, should be right-aligned.", test="", min_width=780, text_align=1.0)
-    $ text_test("Rest Indent", rest_indent=250)
-    $ text_test("Slow CPS", slow_cps=10)
-    $ text_test("Slow CPS Mul", slow_cps_multiplier=2.0)
-    $ text_test("Right-align", text_align=1.0)
-    $ text_test("Center-align", text_align=0.5)
-    $ text_test("Underline", underline=True)
-    $ text_test("Strikethrough", strikethrough=True)
-
     
-    # TODO: Test language.
-    # TODO: Test layout.
-    # TODO: test black_color
+    "..."
+    
+    "This line is displayed at normal speed. {cps=200}This is displayed at faster speed.{/cps} {cps=50}This is displayed at slower speed.{/cps} {cps=*.5}This is displayed at half speed.{/cps}"
+    
+    ruby "Testing ruby: S{rt}s{/rt}ingle, {rb}Word{/rb}{rt}word{/rt}."
+    
+    "{k=-.5}Kerning can be adjusted by the k tag.{/k}\nKerning can be adjusted by the k tag.\n{k=.5}Kerning can be adjusted by the k tag.{/k}"
+    
+    "Testing color {color=#f00}red{/color}, {color=#ff0f}yellow{/color}, {color=#00ff00}green{/color}, {color=#0000ffff}blue{/color}."
+    
+    "Testing size {size=18}absolute{/size}, {size=-6}smaller{/size}, {size=+6}bigger{/size}."
+    
+    "Testing an {font=mikachan.ttf}alternate font{/font}."
+    
+    "Testing a {=red}custom text tag{/=red}."
+    
+    "Testing {b}bold{/b}, {i}italics{/i}, {u}underline{/u}, and {s}strikethrough{/s}."
+    "Testing {b}{i}bold italic{/i} and {plain}plain{/plain} tags.{/b}"
+    
+    "Testing the {a=http://www.renpy.org}hyperlink{/a} tag."
 
+    "Testing the space{space=40}and vspace{vspace=40}tags."
+
+    "Testing paragraph{p}and non-paragraph {w}waits."
+    "Testing paragraph{p=1}and non-paragraph {w=1}timed waits."
+    "Testing the {w}fast display tag. {fast}There should not have been any waits."
+    
+    "Testing no-wait mode{nw}"    
+    "No-wait mode worked."
+    
+    
+    
+    return
+    
+    
+        
         
         
     

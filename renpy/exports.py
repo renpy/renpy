@@ -407,9 +407,17 @@ def menu(items, set_expr):
     choice. Also handles conditions and the menuset.
     """
 
+    if renpy.config.old_substitutions:
+        def substitute(s):
+            return s % tag_quoting_dict
+    else:
+        def substitute(s):
+            return s
+
+
     # Filter the list of items to only include ones for which the
     # condition is true.
-    items = [ (label % tag_quoting_dict, value)
+    items = [ (substitute(label), value)
               for label, condition, value in items
               if renpy.python.py_eval(condition) ]
 
@@ -672,8 +680,9 @@ def say(who, what, interact=True):
     say method is called on the who object with what as a parameter.
     """
     
-    # Interpolate variables.
-    what = what % tag_quoting_dict
+    if renpy.config.old_substitutions:
+        # Interpolate variables.
+        what = what % tag_quoting_dict
 
     if who is None:
         who = renpy.store.narrator # E1101 @UndefinedVariable

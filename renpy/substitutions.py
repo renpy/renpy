@@ -195,6 +195,9 @@ def substitute(s, scope=None):
     """
 
     # TODO: Translation.
+
+    if not renpy.config.new_substitutions:
+        return s
     
     if "[" in s:
         

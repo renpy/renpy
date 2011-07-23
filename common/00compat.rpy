@@ -58,6 +58,8 @@ init -1210 python:
         if version <= (6, 13, 0):
             style.default.language = "western"
             style.default.layout = "greedy"
+            config.old_substitutions = True
+            config.new_substitutions = False
             
             
 init 1210 python hide::

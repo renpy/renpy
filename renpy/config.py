@@ -499,6 +499,12 @@ debug_text_overflow = False
 # Should we save the window size in the preferences?
 save_physical_size = True
 
+# Do we use new text substitutions?
+new_substitutions = True
+
+# Do we use old text substitutions?
+old_substitutions = False
+
 del renpy
 del os
 

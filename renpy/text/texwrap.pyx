@@ -59,7 +59,7 @@ cdef class WordWrapper(object):
         
         self.glyphs = glyphs        
         self.make_word_list(glyphs)
-        self.knuth_plass(first_width, rest_width, False)        
+        self.knuth_plass(first_width, rest_width, subtitle)        
         self.unmark_splits()
             
     def __dealloc__(self):
