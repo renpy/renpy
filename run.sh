@@ -48,7 +48,7 @@ echo Compiling...
 
 # Build the module, then come back here and run Ren'Py.
 try cd module
-try python setup.py install # > /dev/null
+try python setup.py -q install # > /dev/null
 try cd ..
 
 exec ./renpy.py "$@"
