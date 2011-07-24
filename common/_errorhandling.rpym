@@ -18,7 +18,7 @@ init python:
     style.fixed = style._default
     
     style._default.font = "DejaVuSans.ttf"
-    style._default.language = "western"
+    style._default.language = "unicode"
     style._default.antialias = True
     style._default.size = 14
     style._default.color = "#111"
@@ -27,6 +27,7 @@ init python:
     style._default.italic = False
     style._default.underline = False
     style._default.strikethrough = False
+    style._default.kerning = 0.0
     style._default.drop_shadow = None
     style._default.drop_shadow_color = (0, 0, 0, 255)
     style._default.outlines = [ ]
@@ -37,7 +38,8 @@ init python:
     style._default.first_indent = 0
     style._default.rest_indent = 0
     style._default.line_spacing = 4
-    style._default.layout = "greedy"
+    style._default.line_leading = 0
+    style._default.layout = "tex"
     style._default.subtitle_width = 0.9
     style._default.slow_cps = None
     style._default.slow_cps_multiplier = 1.0

@@ -26,18 +26,14 @@ try:
 except:
     pass
     
-import _renpy_font
-pygame.font = _renpy_font
-    
 import renpy.display
+import renpy.text.ftfont as ftfont
+import renpy.text.textsupport as textsupport
 
-# This contains a map from (fn, size, bold, italics, underline) to the
-# unloaded font object corresponding to that specification. 
-fonts = { }
+ftfont.init()
 
-# This contains a map from (fn, size, bold, italics, underline) to the
-# loaded font object corresponding to that specification.
-font_cache = { }
+WHITE = (255, 255, 255, 255)
+BLACK = (0, 0, 0, 255)
 
 class ImageFont(object):
 
@@ -46,7 +42,7 @@ class ImageFont(object):
 
     # Font global:
     # height - The line height, the height of each character cell.
-    # kerns - The kern between wach pair of characters.
+    # kerns - The kern between each pair of characters.
     # default_kern - The default kern.
     # baseline - The y offset of the font baseline.
 
@@ -56,66 +52,60 @@ class ImageFont(object):
     # offsets - The x and y offsets of each character.
     # chars - A map from a character to the surface containing that character.
     
-    def size(self, text):
-
-        if not text:
-            return (0, self.height)
-
-        xoff, _ = self.offsets[text[0]]
-        w = -xoff
+    
+    def glyphs(self, s):
         
-        for a, b in zip(text, text[1:]):
-            try:
-                w += self.advance[a] + self.kerns.get(a + b, self.default_kern)
-            except KeyError:
-                raise Exception("Character %r not found in %s." % (a, type(self).__name__))
-                
-        w += self.width[text[-1]]
-
-        return (w, self.height)
+        rv = [ ]
+        
+        if not s:
+            return rv
+        
+        for c in s:
+            g = textsupport.Glyph()
             
-    def render(self, text, antialias, color, black_color=(0, 0, 0, 255), background=None):
+            g.character = ord(c)
+            g.ascent = self.height
+            g.line_spacing = self.height
 
-        if not text:
-            return renpy.display.pgrender.surface((0, self.height), True)
-
-        xoff, _ = self.offsets[text[0]]
-        x = -xoff
-        y = 0
-
-        surf = renpy.display.pgrender.surface(self.size(text), True)
-
-        for a, b in zip(text, text[1:]):
-            xoff, yoff = self.offsets[a]
-            surf.blit(self.chars[a], (x + xoff, y + yoff))
-            x += self.advance[a] + self.kerns.get(a + b, self.default_kern)
-
-        xoff, yoff = self.offsets[text[-1]]
-        surf.blit(self.chars[text[-1]], (x + xoff, y + yoff))
-
-        if renpy.config.recolor_sfonts and \
-               (color != (255, 255, 255, 255) or black_color != (0, 0, 0, 255)):
-
-            newsurf = renpy.display.pgrender.surface(surf.get_size(), True)
-            renpy.display.module.twomap(surf, newsurf, color, black_color)
-
-            surf = newsurf
-
-        renpy.display.render.mutated_surface(surf)
-        return surf
-
-    def get_linesize(self):
-        return self.height + 10
-
-    def get_height(self):
-        return self.height
-
-    def get_ascent(self):
-        return self.baseline
-
+            width = self.width.get(c, None)
+            if width is None:
+                raise Exception("Character {0!r} not found in image-based font.".format(c))
+            
+            g.width = self.width[c]
+            g.advance = self.width[c]
+            
+            rv.append(g)
+            
+        # Compute kerning.
+        for i in range(len(s) - 1):
+            kern = self.kerns.get(s[i] + s[i+1], self.default_kern)
+            rv[i].advance += kern
         
-    def get_descent(self):
-        return -(self.height - self.baseline)
+        return rv
+    
+    def draw(self, target, xo, yo, color, glyphs, underline, strikethrough, black_color):
+        
+        if black_color is None:
+            return
+        
+        for g in glyphs:
+            c = unichr(g.character)
+            
+            cxo, cyo = self.offsets[c]
+            x = g.x + xo + cxo
+            y = g.y + yo + cyo - g.ascent
+            
+            char_surf = self.chars[c]
+
+            if renpy.config.recolor_sfonts:            
+                if color != WHITE or black_color != BLACK:                    
+                    new_surf = renpy.display.pgrender.surface(char_surf.get_size(), True)
+                    renpy.display.module.twomap(char_surf, new_surf, color, black_color)
+    
+                    char_surf = new_surf
+            
+            target.blit(char_surf, (x, y))
+
 
 class SFont(ImageFont):
 
@@ -361,8 +351,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
 
     sf = SFont(filename, spacewidth, default_kern, kerns, charset)
-    fonts[(name, size, bold, italics, underline)] = sf
-
+    image_fonts[(name, size, bold, italics)] = sf
 
 def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
@@ -371,15 +360,23 @@ def register_mudgefont(name=None, size=None, bold=False, italics=False, underlin
         raise Exception("When registering a Mudge Font, the font name, font size, filename, and xml filename are required.")
 
     mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns)
-    fonts[(name, size, bold, italics, underline)] = mf
+    image_fonts[(name, size, bold, italics)] = mf
 
 def register_bmfont(name=None, size=None, bold=False, italics=False, underline=False, 
                     filename=None):
 
     bmf = BMFont(filename)
-    fonts[(name, size, bold, italics, underline)] = bmf
+    image_fonts[(name, size, bold, italics)] = bmf
 
-def load_ttf(fn, size, bold, italics, underline, expand):
+# A map from face name to ftfont.FTFace
+face_cache = { }
+
+def load_face(fn):
+
+    if fn in face_cache:
+        return face_cache[fn]
+
+    orig_fn = fn
 
     # Figure out the font index.
     index = 0
@@ -388,13 +385,10 @@ def load_ttf(fn, size, bold, italics, underline, expand):
         index, fn = fn.split("@", 1)
         index = int(index)
     
+    font_file = None
+    
     try:
-        f = renpy.loader.load(fn)
-        rv = _renpy_font.Font(f, size, index)
-
-        rv.set_bold(bold)
-        rv.set_italic(italics)
-
+        font_file = renpy.loader.load(fn)
     except IOError:
         
         # Let's try to find the font on our own.
@@ -402,55 +396,54 @@ def load_ttf(fn, size, bold, italics, underline, expand):
 
         pygame.sysfont.initsysfonts()
 
-        rv = None
-
         for v in pygame.sysfont.Sysfonts.itervalues():
             for _flags, ffn in v.iteritems():
                 for i in fonts:
                     if ffn.lower().endswith(i):
-                        rv = _renpy_font.Font(ffn, size, index)
-                        rv.set_bold(bold)
-                        rv.set_italic(italics)
+                        font_file = file(ffn, "rb")
                         break
-                if rv:
+            
+                if font_file:
                     break
-            if rv:
+
+            if font_file:
                 break
-        else:
-            # Let pygame try to find the font for us.
-            rv = pygame.sysfont.SysFont(fn, size, bold, italics)
 
-    rv.set_underline(underline)
-
-    try:
-        rv.set_expand(expand)
-    except AttributeError:
-        pass
+            
+    if font_file is None:
+        raise Exception("Could not find font {0!r}.".format(orig_fn))
+    
+    rv = ftfont.FTFace(font_file, index)
+    
+    face_cache[orig_fn] = rv
     
     return rv
     
+# Caches of fonts.
+image_fonts = { }
+font_cache = { }
 
-def get_font(origfn, size, origbold=False, origitalics=False, underline=False, expand=0):
+def get_font(fn, size, bold, italics, outline, antialias):
+    
+    t = (fn, bold, italics)
+    fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
-    rv = font_cache.get((origfn, size, origbold, origitalics, underline, expand), None)
+    rv = image_fonts.get((fn, size, bold, italics), None)
     if rv is not None:
         return rv
 
-    t = (origfn, origbold, origitalics)
-    fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
-
-    rv = fonts.get((fn, size, bold, italics, underline), None)
+    key = (fn, size, bold, italics, outline, antialias)
+    rv = font_cache.get(key, None)
     if rv is not None:
-        rv.load()
-    else:
-        try:
-            rv = load_ttf(fn, size, bold, italics, underline, expand)
-        except:
-            renpy.game.exception_info = "Finding font: %r" % ((fn, size, bold, italics, underline),)
-            raise
+        return rv
+    
+    # If we made it here, we need to load a ttf.
+    face = load_face(fn)
 
-    font_cache[(origfn, size, origbold, origitalics, underline, expand)] = rv
-
+    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias)
+    
+    font_cache[key] = rv
+    
     return rv
 
 def free_memory():
@@ -459,3 +452,10 @@ def free_memory():
     """
 
     font_cache.clear()
+    face_cache.clear()
+    
+def load_image_fonts():
+    for i in image_fonts.itervalues():
+        i.load()
+    
+    

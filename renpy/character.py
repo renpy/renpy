@@ -415,18 +415,25 @@ def display_say(
         else:
             behavior = None
 
-        # Run the show callback.
-        for c in callback:
-            c("show", interact=interact, type=type, **cb_args)
+        
+        # Decide the portion of the text to show quickly, the part to 
+        # show slowly, and the part not to show (but to lay out).
+        start_string = dtt.text[:start]
+        mid_string = dtt.text[start:end]
+        end_string = dtt.text[end:]
+        
+        if start_string:
+            start_string = start_string + "{_start}"
+            
+        if end_string:
+            end_string = "{_end}" + end_string
+            
+        what_string = start_string + mid_string + end_string
 
-        # Show the text.
-        what_text = show_function(who, dtt.text)
-
-        if not isinstance(what_text, renpy.display.text.Text):
-            raise Exception("The say screen (or show_function) must return a Text object.")
-                
-        # Update the properties of the what_text widget.
-
+        # This will be given to as the what argument to the show function.
+        what_list = [ what_string ]
+        
+        # Figure out the CTC to use, if any.
         if last_pause:
             what_ctc = ctc
         else:
@@ -446,17 +453,25 @@ def display_say(
         if delay == 0:
             what_ctc = None
         
-        # This object is called when the slow text is done.
+        if what_ctc and ctc_position == "nestled":
+            what_list.append(what_ctc)
+
+        # Create the callback that is called when the slow text is done.
         slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
         
-        what_text.slow = slow
-        what_text.slow_param = slow
-        what_text.slow_done = slow_done
-        what_text.slow_start = start
-        what_text.slow_end = end
+        # Run the show callback.
+        for c in callback:
+            c("show", interact=interact, type=type, **cb_args)
 
-        if what_ctc and ctc_position == "nestled":
-            what_text.set_ctc(what_ctc)
+        # Show the text.
+        what_text = show_function(who, what_list)
+
+        if not isinstance(what_text, renpy.text.text.Text):
+            raise Exception("The say screen (or show_function) must return a Text object.")
+                    
+        # Update the properties of the what_text widget.
+        what_text.slow = slow
+        what_text.slow_done = slow_done
 
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)
@@ -590,8 +605,8 @@ class ADVCharacter(object):
             self.cb_args = kind.cb_args.copy()
 
         else:
-            self.who_args = { }
-            self.what_args = { }
+            self.who_args = { "substitute" : False }
+            self.what_args = { "substitute" : False }
             self.window_args = { }
             self.show_args = { }
             self.cb_args = { }
@@ -753,8 +768,10 @@ class ADVCharacter(object):
                 who = renpy.python.py_eval(who)
     
             if who is not None:
+                who = renpy.substitutions.substitute(who)
                 who = self.who_prefix + who + self.who_suffix
     
+            what = renpy.substitutions.substitute(what)
             what = self.what_prefix + what + self.what_suffix
     
             # Run the add_function, to add this character to the

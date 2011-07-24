@@ -72,6 +72,7 @@ init -1200 python hide:
 
     style.hyperlink = Style(style.default, help=None) # ignored
     style.hyperlink_text = Style(style.default, help='hyperlinked text')
+    style.ruby_text = Style(style.default, help='ruby text')
 
     style.viewport = Style(style.default, help='default style of viewports')
     style.transform = Style(style.motion, help='default style of transforms')
@@ -130,7 +131,7 @@ init -1090 python:
 
     # Text properties.
     style.default.font = "DejaVuSans.ttf"
-    style.default.language = "western"
+    style.default.language = "unicode"
     style.default.antialias = True
     style.default.size = 22
     style.default.color = (255, 255, 255, 255)
@@ -139,6 +140,7 @@ init -1090 python:
     style.default.italic = False
     style.default.underline = False
     style.default.strikethrough = False
+    style.default.kerning = 0.0
     style.default.drop_shadow = None
     style.default.drop_shadow_color = (0, 0, 0, 255)
     style.default.outlines = [ ]
@@ -149,7 +151,8 @@ init -1090 python:
     style.default.first_indent = 0
     style.default.rest_indent = 0
     style.default.line_spacing = 0
-    style.default.layout = "greedy"
+    style.default.line_leading = 0
+    style.default.layout = "tex"
     style.default.subtitle_width = 0.9
     style.default.slow_cps = None
     style.default.slow_cps_multiplier = 1.0
@@ -260,6 +263,11 @@ init -1090 python:
     style.hyperlink_text.underline = True
     style.hyperlink_text.hover_color = "#0ff"
     style.hyperlink_text.idle_color = "#08f"
+    
+    # Ruby.
+    style.ruby_text.size = 22
+    style.ruby_text.xoffset = 0
+    style.default.ruby_style = style.ruby_text
     
     # Bars.
     style.default.bar_invert = False

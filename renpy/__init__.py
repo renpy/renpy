@@ -22,6 +22,7 @@
 # This file ensures that renpy packages will be imported in the right
 # order.
 
+import sys
 import os
 
 # Version numbers.
@@ -35,7 +36,7 @@ except ImportError:
 #
 # Be sure to change script_version in launcher/script_version.rpy.
 # Be sure to change config.version in tutorial/options.rpy.
-version_tuple = (6, 12, 2, vc_version)
+version_tuple = (6, 13, 0, vc_version)
 
 # A verbose string computed from that version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
@@ -50,7 +51,7 @@ bytecode_version = 1
 first_utter_start = True
 
 def setup_modulefinder(modulefinder):
-    import _renpy
+    import _renpy #@UnresolvedImport
     libexec = os.path.dirname(_renpy.__file__)
     displaypath = os.path.join(libexec, "renpy", "display")
     modulefinder.AddPackagePath('renpy.display', displaypath)
@@ -102,6 +103,7 @@ def import_all():
     import renpy.script #@UnresolvedImport
     import renpy.statements #@UnresolvedImport
     import renpy.style #@UnresolvedImport
+    import renpy.substitutions #@UnresolvedImport
 
     import renpy.display.presplash #@UnresolvedImport
     import renpy.display.iliad # Must be before scale and pgrender. @UnresolvedImport
@@ -109,22 +111,41 @@ def import_all():
     import renpy.display.scale # Must be before module. @UnresolvedImport
     import renpy.display.module #@UnresolvedImport
 
-    # Now that render is pre-compiled, we want to use the
-    # location of renpy.display.module to find it.
-    import _renpy
-    libexec = os.path.dirname(_renpy.__file__)
-    renpy.display.__path__.insert(0, os.path.join(libexec, "renpy", "display")) #@UndefinedVariable
 
-    # Also find encodings, to deal with the way py2exe lays things out.
-    import encodings
-    libexec = os.path.dirname(encodings.__path__[0])
-    renpy.display.__path__.insert(1, os.path.join(libexec, "renpy", "display")) #@UndefinedVariable
+    def update_path(package):
+        """
+        Update the __path__ of package, to import binary modules from a libexec
+        directory.
+        """
+        
+        name = package.__name__.split(".")
+        
+        import _renpy #@UnresolvedImport
+        libexec = os.path.dirname(_renpy.__file__)
+        package.__path__.insert(0, os.path.join(libexec, *name))
+    
+        # Also find encodings, to deal with the way py2exe lays things out.
+        import encodings
+        libexec = os.path.dirname(encodings.__path__[0])
+        package.__path__.insert(1, os.path.join(libexec, *name))
+    
+    update_path(renpy.display)
     
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
-
     import renpy.display.core # object @UnresolvedImport
-    import renpy.display.font #@UnresolvedImport
-    import renpy.display.text # core, font @UnresolvedImport
+
+    import renpy.text #@UnresolvedImport
+    update_path(renpy.text)
+    
+    import renpy.text.ftfont #@UnresolvedImport
+    import renpy.text.font #@UnresolvedImport
+    import renpy.text.textsupport #@UnresolvedImport
+    import renpy.text.texwrap #@UnresolvedImport
+    import renpy.text.text #@UnresolvedImport
+    import renpy.text.extras #@UnresolvedImport
+    
+    sys.modules['renpy.display.text'] = renpy.text.text
+    
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
@@ -144,6 +165,7 @@ def import_all():
     import renpy.display.predict #@UnresolvedImport
     
     import renpy.display.error #@UnresolvedImport
+    
     
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 

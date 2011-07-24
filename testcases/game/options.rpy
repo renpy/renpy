@@ -1,4 +1,4 @@
-## This file contains some of the options that can be changed to customize
+﻿## This file contains some of the options that can be changed to customize
 ## your Ren'Py game. It only contains the most common options... there
 ## is quite a bit more customization you can do.
 ##
@@ -23,19 +23,23 @@ init -1 python hide:
     ## This controls the title of the window, when Ren'Py is
     ## running in a window.
 
-    config.window_title = u"The Ren'Py Tutorial Game"
+    config.window_title = u"A Ren'Py Game"
 
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
-    config.name = "Ren'Py Tutorial"
-    config.version = "6.13 \"Meat\""
+    config.name = "A Ren'Py Game"
+    config.version = "0.0"
 
+    #########################################
+    # Themes
+    
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
+
     theme.roundrect(
 
         ## The color of an idle widget face.
@@ -70,30 +74,19 @@ init -1 python hide:
         ## The background of the main menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
-        mm_root = "main_menu",
+        mm_root = "#dcebff",
 
         ## The background of the game menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
         gm_root = "#dcebff",
 
-        ## If True, buttons, frames, and windows will rounded using a
-        ## 6px radius, rather then 12.
-        less_rounded = True,
-
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
         ## do so below.            
         )
 
-    # For the demo, we use the nicer-looking bars from the outline
-    # theme.
-    theme.outline_bars(
-        inside="#8cf",
-        idle="#003c78",
-        hover="#0050a0")
 
-        
     #########################################
     ## These settings let you customize the window containing the
     ## dialogue and narration, by replacing it with an image.
@@ -179,23 +172,23 @@ init -1 python hide:
 
     ## Sounds that are used when button and imagemaps are clicked.
 
-    style.button.activate_sound = "click.wav"
-    style.imagemap.activate_sound = "click.wav"
+    # style.button.activate_sound = "click.wav"
+    # style.imagemap.activate_sound = "click.wav"
 
     ## Sounds that are used when entering and exiting the game menu.
 
-    config.enter_sound = "click.wav"
-    config.exit_sound = "click.wav"
+    # config.enter_sound = "click.wav"
+    # config.exit_sound = "click.wav"
 
     ## A sample sound that can be played to check the sound volume.
 
-    config.sample_sound = "tower_clock.ogg"
+    # config.sample_sound = "click.wav"
 
     ## Music that is played while the user is at the main menu.
 
     # config.main_menu_music = "main_menu_theme.ogg"
 
-    
+
     #########################################
     ## Help.
 
@@ -208,48 +201,49 @@ init -1 python hide:
     ## - None, to disable help.   
     config.help = "README.html"
 
-    
+
     #########################################
     ## Transitions.
 
     ## Used when entering the game menu from the game.
-    config.enter_transition = dissolve
+    config.enter_transition = None
 
     ## Used when exiting the game menu to the game.
-    config.exit_transition = dissolve
+    config.exit_transition = None
 
     ## Used between screens of the game menu.
-    config.intra_transition = Dissolve(.25)
+    config.intra_transition = None
 
     ## Used when entering the game menu from the main menu.
-    config.main_game_transition = Dissolve(.25)
+    config.main_game_transition = None
 
     ## Used when returning to the main menu from the game.
-    config.game_main_transition = Dissolve(.25)
+    config.game_main_transition = None
 
     ## Used when entering the main menu from the splashscreen.
     config.end_splash_transition = None
 
     ## Used when entering the main menu after the game has ended.
-    config.end_game_transition = fade
+    config.end_game_transition = None
 
     ## Used when a game is loaded.
-    config.after_load_transition = dissolve
+    config.after_load_transition = None
 
     ## Used when the window is shown.
-    config.window_show_transition = Dissolve(.25)
+    config.window_show_transition = None
 
     ## Used when the window is hidden.
-    config.window_hide_transition = Dissolve(.25)
-    
+    config.window_hide_transition = None
+
+
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code
     ## is run, so the persisten information can be found by the init code.)
 python early:
-    config.save_directory = "tutorial-1"
+    config.save_directory = "template-1220804310"
 
-init -1 python hide:    
+init -1 python hide:
     #########################################
     ## Default values of Preferences.
 
@@ -258,31 +252,14 @@ init -1 python hide:
     ## game/saves/persistent
 
     ## Should we start in fullscreen mode?
+
     config.default_fullscreen = False
 
     ## The default text speed in characters per second. 0 is infinite.
+
     config.default_text_cps = 0
 
-    config.window_icon = "logo.png"
-    config.windows_icon = "logo32.png"
+    #########################################
+    ## More customizations can go here.
     
-# This is the main menu image we use.
-image main_menu:
-    contains:
-        "#000"
-
-    contains:
-        "concert2.jpg"
-        size (800, 509)
-
-    contains:
-        Text("Ren'Py " + config.version, size=18)
-        yalign .98
-        xalign .02
-    
-# Demo game specific customizations.
-init python:
-    style.mm_menu_frame.yalign = .98
-    style.mm_menu_frame.xalign = .98
-
     

@@ -30,8 +30,8 @@ _file = file
 import renpy.display
 import renpy.audio
 
-from renpy.display.text import ParameterizedText
-from renpy.display.font import register_sfont, register_mudgefont, register_bmfont
+from renpy.text.extras import ParameterizedText
+from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
@@ -407,9 +407,17 @@ def menu(items, set_expr):
     choice. Also handles conditions and the menuset.
     """
 
+    if renpy.config.old_substitutions:
+        def substitute(s):
+            return s % tag_quoting_dict
+    else:
+        def substitute(s):
+            return s
+
+
     # Filter the list of items to only include ones for which the
     # condition is true.
-    items = [ (label % tag_quoting_dict, value)
+    items = [ (substitute(label), value)
               for label, condition, value in items
               if renpy.python.py_eval(condition) ]
 
@@ -672,8 +680,9 @@ def say(who, what, interact=True):
     say method is called on the who object with what as a parameter.
     """
     
-    # Interpolate variables.
-    what = what % tag_quoting_dict
+    if renpy.config.old_substitutions:
+        # Interpolate variables.
+        what = what % tag_quoting_dict
 
     if who is None:
         who = renpy.store.narrator # E1101 @UndefinedVariable

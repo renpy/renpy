@@ -24,6 +24,7 @@
 
 import renpy.display
 import renpy.audio
+import renpy.text
 
 import pygame #@UnusedImport
 
@@ -1148,6 +1149,9 @@ class Interface(object):
         # Setup the video mode.
         self.set_mode()
 
+        # Load the image fonts.
+        renpy.text.font.load_image_fonts()
+
         # Setup the android keymap.
         if android is not None:
             android.map_key(android.KEYCODE_BACK, pygame.K_PAGEUP)
@@ -1268,6 +1272,12 @@ class Interface(object):
             renpy.display.draw.deinit()
             renpy.display.draw.quit()
             renpy.display.draw = None
+
+            renpy.display.render.free_memory()
+            renpy.display.im.cache.clear()
+            renpy.text.text.layout_cache_clear()
+
+            renpy.display.module.bo_cache = None
             
             self.kill_textures_and_surfaces()
                         
@@ -1813,6 +1823,7 @@ class Interface(object):
             
         # Tick time forward.
         renpy.display.im.cache.tick()
+        renpy.text.text.layout_cache_tick()
         renpy.display.predict.reset()
         
         # Cleare the size groups.

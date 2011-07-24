@@ -28,6 +28,7 @@
 
 import sys
 import renpy.display
+import renpy.text
 
 ##############################################################################
 # Special classes that can be subclassed from the outside.
@@ -534,7 +535,7 @@ def _image(im, **properties):
 image = Wrapper(_image)
 
 null = Wrapper(renpy.display.layout.Null)
-text = Wrapper(renpy.display.text.Text, style="text", replaces=True)
+text = Wrapper(renpy.text.text.Text, style="text", replaces=True)
 hbox = Wrapper(renpy.display.layout.MultiBox, layout="horizontal", style="hbox", many=True)
 vbox = Wrapper(renpy.display.layout.MultiBox, layout="vertical", style="vbox", many=True)
 fixed = Wrapper(renpy.display.layout.MultiBox, layout="fixed", style="fixed", many=True)
@@ -731,7 +732,7 @@ def get_text_style(style, default):
 
     return rv
 
-def textbutton(label, clicked=None, style=None, text_style=None, **kwargs):
+def textbutton(label, clicked=None, style=None, substitute=True, scope=None, text_style=None, **kwargs):
 
     if style is None:
         style = style_group_style('button', NoStyleGroupGiven)
@@ -740,7 +741,7 @@ def textbutton(label, clicked=None, style=None, text_style=None, **kwargs):
         text_style = get_text_style(style, style_group_style('button_text', NoStyleGroupGiven))
         
     button(style=style, clicked=clicked, **kwargs)
-    text(label, style=text_style)
+    text(label, style=text_style, substitute=substitute, scope=scope)
 
 def label(label, style=None, text_style=None, **kwargs):
 
