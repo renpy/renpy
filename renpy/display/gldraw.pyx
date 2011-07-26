@@ -558,8 +558,7 @@ cdef class GLDraw:
             
         return rv
 
-    # private
-    
+    # private    
     def clip_mode_screen(self):
         """
         This does two things. First, it shuts down clipping, and clears

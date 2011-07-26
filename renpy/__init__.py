@@ -37,7 +37,7 @@ except ImportError:
 
 # The tuple giving the version. This needs to be updated when
 # we bump the version.
-version_tuple = (6, 12, 1, vc_version)
+version_tuple = (6, 12, 2, vc_version)
 
 # A verbose string computed from that version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
