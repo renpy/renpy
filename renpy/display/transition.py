@@ -156,6 +156,13 @@ class MultipleTransition(Transition):
         for i in self.visit():
             i.per_interact()
     
+    def event(self, ev, x, y, st):
+        
+        if self.events or ev.type == renpy.display.core.TIMEEVENT:
+            return self.transitions[-1].event(ev, x, y, st)
+        else:
+            return None
+    
     def render(self, width, height, st, at):
 
         if renpy.game.less_updates:
@@ -172,6 +179,9 @@ class MultipleTransition(Transition):
 
             trans = self.transitions[-1]
             self.events = True
+            
+        if trans is not self.transitions[-1]:
+            renpy.display.render.render(self.transitions[-1], width, height, 0, 0)
             
         surf = renpy.display.render.render(trans, width, height, st, at)
         width, height = surf.get_size()
