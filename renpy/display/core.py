@@ -1609,6 +1609,11 @@ class Interface(object):
 
         if renpy.config.quit_action is not None:
             self.quit_time = time.time()
+
+            # Make the screen more suitable for interactions.
+            renpy.exports.movie_stop(only_fullscreen=True)
+            renpy.store.mouse_visible = True
+
             renpy.display.behavior.run(renpy.config.quit_action)
         else:
             raise renpy.game.QuitException()
