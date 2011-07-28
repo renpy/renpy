@@ -1488,7 +1488,10 @@ class Interface(object):
         if self.suppress_transition and not force:
             return
 
-        self.transition[layer] = transition
+        if transition is None:
+            self.transition.pop(layer, None)
+        else:
+            self.transition[layer] = transition
         
 
     def event_peek(self):
@@ -1781,7 +1784,7 @@ class Interface(object):
             self.ongoing_transition.clear()
             self.transition_from.clear()
             self.transition_time.clear()
-        
+ 
         ## Safety condition, prevents deadlocks.
         if trans_pause:
             if not self.ongoing_transition:
