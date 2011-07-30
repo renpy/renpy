@@ -257,10 +257,7 @@ class ATLTransformBase(renpy.object.Object):
         positional = list(self.parameters.positional)
         args = list(args)
 
-        if not self.child:
-            self.execute(self, 0, 0)
-        
-        child = self.child
+        child = None
 
         if not positional and args:
             child = args.pop(0)
@@ -290,6 +287,9 @@ class ATLTransformBase(renpy.object.Object):
                 child = v
             else:
                 raise Exception('Parameter %r is not known by ATL Transform.' % k)
+
+        if child is None:
+            child = self.child
 
         # Create a new ATL Transform.
         parameters = renpy.ast.ParameterInfo({}, positional, None, None)

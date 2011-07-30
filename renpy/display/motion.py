@@ -531,7 +531,10 @@ class Transform(Container):
         self.child_st_base = 0
 
     def visit(self):
-        return [ self.child ]
+        if self.child is None:
+            return [ ]
+        else:        
+            return [ self.child ]
     
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.
@@ -603,7 +606,10 @@ class Transform(Container):
 
     def _change_transform_child(self, child):
         rv = self.copy()
-        rv.set_child(self.child._change_transform_child(child))
+        
+        if self.child is not None:
+            rv.set_child(self.child._change_transform_child(child))
+        
         return rv
     
     def _hide(self, st, at, kind):
@@ -733,7 +739,11 @@ class Transform(Container):
         if not self.active:
             self.update_state()
             
-        _cxpos, _cypos, _cxanchor, _cyanchor, cxoffset, cyoffset, _csubpixel = self.child.get_placement()
+        if self.child is not None:
+            _cxpos, _cypos, _cxanchor, _cyanchor, cxoffset, cyoffset, _csubpixel = self.child.get_placement()
+        else:
+            cxoffset = 0
+            cyoffset = 0
 
         cxoffset = cxoffset or 0
         cyoffset = cyoffset or 0 

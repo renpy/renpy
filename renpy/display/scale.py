@@ -207,7 +207,7 @@ def load_scaling():
         else:
             scaled = real_smoothscale(full, v2p(full.get_size()))
 
-            return ScaledSurface(scaled, wh=full.get_size())
+        return ScaledSurface(scaled, wh=full.get_size())
 
         
     # Project a tuple from virtual to physical coordinates.

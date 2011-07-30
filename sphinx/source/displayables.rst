@@ -81,7 +81,7 @@ Image-Like Displayables
 We call these displayables image-like because they take up a
 rectangular area of the screen, and do not react to input.  These
 differ from normal images by varying their size to fill an area
-(Frame, LiveTile, and Sold), or by allowing the user to specify their
+(Frame, LiveTile, and Solid), or by allowing the user to specify their
 size (LiveComposite, LiveCrop, Null). They are not image manipulators.
 
 Image-like displayables take :ref:`position-style-properties`.

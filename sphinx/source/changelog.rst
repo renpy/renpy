@@ -2,6 +2,29 @@
 Full Changelog
 ==============
 
+Ren'Py 6.12.2
+=============
+
+This release contains the following changes:
+
+* ATL Transforms with parameters compile correctly. 
+* MultipleTransition works in conjunction with pauses.
+* The mouse is shown when a quit action is run while a movie is playing.
+* A fix for a lockup that occured when the user entered the game menu while a transition was running.
+* RENPY_SCALE_FAST works again.
+* Ren'Py compiles with newer versions of ffmpeg.
+* Skipping ends when the game restarts.
+* Fixed a problem with texture upload that made games noticeably slower.
+* Choose a better default size for windows on small monitors, like netbooks.
+* xfill and yfill now work for vbox and hbox, respectively.
+* Click-to-continue fixes.
+* Side image fixes.
+* Documentation fixes.
+
+Thanks to David Gowers and zhangning for contributing patches to this
+release.
+
+
 Ren'Py 6.12.1
 =============
 

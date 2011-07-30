@@ -81,6 +81,8 @@ def run(restart):
     # Run the game.
     while True:
 
+        renpy.config.skipping = None
+
         renpy.exports.log("--- " + time.ctime())
         renpy.exports.log("")
 

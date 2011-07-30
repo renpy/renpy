@@ -854,7 +854,7 @@ property. Otherwise, the pos property will be set.
 External Events
 ===============
 
-The following events can triggered automatically:
+The following events can be triggered automatically:
 
 ``start``
     A pseudo-event, triggered on entering an on statement, if no

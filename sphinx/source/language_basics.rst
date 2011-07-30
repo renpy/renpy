@@ -78,9 +78,9 @@ line, while some statements consist of multiple lines.
     even when the line ends."
 
    $ a = [ "Because of parenthesis, this line also",
-           "spans more than one line. ]
+           "spans more than one line." ]
 
-Empty logicial lines are ignored.
+Empty logical lines are ignored.
            
 
 Indentation and Blocks

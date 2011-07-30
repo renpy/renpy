@@ -158,7 +158,8 @@
     `ramplen`
         The length of the ramp to use. This must be an integer power 
         of 2. When this is the default value of 8, when a white pixel
-        is fully dissolved, a pixel 8 shades of gray darker will be
+        is fully dissolved, a pixel 8 shades of gray darker will have
+        completed one step of dissolving in.
         
     `reverse`
         If true, black pixels will dissolve in before white pixels.

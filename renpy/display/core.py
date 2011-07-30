@@ -1498,7 +1498,10 @@ class Interface(object):
         if self.suppress_transition and not force:
             return
 
-        self.transition[layer] = transition
+        if transition is None:
+            self.transition.pop(layer, None)
+        else:
+            self.transition[layer] = transition
         
 
     def event_peek(self):
@@ -1616,6 +1619,11 @@ class Interface(object):
 
         if renpy.config.quit_action is not None:
             self.quit_time = time.time()
+
+            # Make the screen more suitable for interactions.
+            renpy.exports.movie_stop(only_fullscreen=True)
+            renpy.store.mouse_visible = True
+
             renpy.display.behavior.run(renpy.config.quit_action)
         else:
             raise renpy.game.QuitException()
@@ -1791,7 +1799,7 @@ class Interface(object):
             self.ongoing_transition.clear()
             self.transition_from.clear()
             self.transition_time.clear()
-        
+ 
         ## Safety condition, prevents deadlocks.
         if trans_pause:
             if not self.ongoing_transition:
