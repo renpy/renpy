@@ -20,6 +20,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+DEF ANGLE = False
+
 from pygame cimport *
 from gl cimport *
 
@@ -149,7 +151,12 @@ cdef class GLDraw:
         self.redraw_period = .2
         
         # Info.
-        self.info = { "renderer" : "gl", "resizable" : True }
+        self.info = { "resizable" : True }
+
+        if not ANGLE:
+            self.info["renderer"] = "gl"
+        else:
+            self.info["renderer"] = "angle"
 
         # Old value of fullscreen.
         self.old_fullscreen = None
@@ -505,6 +512,8 @@ cdef class GLDraw:
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
             self.rtt.init()
+
+        renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
         self.rtt.deinit()
         self.environ.deinit()

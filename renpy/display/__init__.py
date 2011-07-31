@@ -34,7 +34,7 @@ interface = None
 gl_giveup = None
 
 # The renderers we prefer to use.
-prefer_renderers = "gl,sw"
+prefer_renderers = "angle,gl,sw"
 
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False

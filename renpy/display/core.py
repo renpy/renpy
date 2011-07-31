@@ -1234,6 +1234,12 @@ class Interface(object):
         draws = { }
 
         try:
+            import renpy.angle.gldraw as angledraw #@UnresolvedImport
+            draws["angle"] = angledraw.GLDraw
+        except:
+            renpy.display.log.write("Couldn't import angle renderer.")
+
+        try:
             import renpy.gl.gldraw as gldraw #@UnresolvedImport
             draws["gl"] = gldraw.GLDraw
         except:

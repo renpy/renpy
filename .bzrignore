@@ -88,3 +88,12 @@ template/README.html
 the_question/README.html
 tutorial/README.html
 trace.txt
+renpy/angle/gldraw.pxd
+renpy/angle/gldraw.pyx
+renpy/angle/glenviron.pyx
+renpy/angle/glenviron_shader.pyx
+renpy/angle/gl.pxd
+renpy/angle/glrtt_fbo.pyx
+renpy/angle/glshader.pyx
+renpy/angle/gltexture.pxd
+renpy/angle/gltexture.pyx

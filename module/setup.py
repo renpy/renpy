@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import platform
 import sys
 import os
@@ -9,7 +8,7 @@ import os
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
 import setuplib
-from setuplib import android, include, library, cython, cmodule, pymodule 
+from setuplib import android, include, library, cython, cmodule, pymodule, copyfile
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -108,6 +107,30 @@ if not android:
 cython("renpy.gl.glenviron_limited", libs=glew_libs)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
+
+# Angle
+def anglecopy(fn):
+    copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
+    
+anglecopy("gldraw.pxd")
+anglecopy("gldraw.pyx")
+anglecopy("glenviron.pyx")
+anglecopy("glenviron_shader.pyx")
+anglecopy("gl.pxd")
+anglecopy("glrtt_fbo.pyx")
+anglecopy("glshader.pyx")
+anglecopy("gltexture.pxd")
+anglecopy("gltexture.pyx")
+anglecopy("__init__.py")
+
+windows = True
+
+cython("renpy.angle.gldraw", libs=glew_libs )
+cython("renpy.angle.gltexture", libs=glew_libs)
+cython("renpy.angle.glenviron", libs=glew_libs)
+cython("renpy.angle.glenviron_shader", libs=glew_libs)
+cython("renpy.angle.glshader", libs=glew_libs)
+cython("renpy.angle.glrtt_fbo", libs=glew_libs)
 
 # Text.
 cython("renpy.text.textsupport")
