@@ -1232,9 +1232,9 @@ class Interface(object):
         """
 
         draws = { }
-        
+
         try:
-            import renpy.display.gldraw as gldraw #@UnresolvedImport
+            import renpy.gl.gldraw as gldraw #@UnresolvedImport
             draws["gl"] = gldraw.GLDraw
         except:
             renpy.display.log.write("Couldn't import gl renderer.")
@@ -1244,7 +1244,6 @@ class Interface(object):
             draws["sw"] = swdraw.SWDraw
         except:
             renpy.display.log.write("Couldn't import sw renderer.")
-            
         
         default = renpy.display.prefer_renderers        
         dl = os.environ.get("RENPY_RENDERER", default).split(",")
@@ -1259,9 +1258,8 @@ class Interface(object):
         
         renpy.display.render.free_memory()
         renpy.display.im.cache.clear()
-        renpy.display.module.bo_cache = None
-        renpy.display.text.layout_generation += 1
-        
+        renpy.display.module.bo_cache = None       
+        renpy.text.text.layout_cache_clear()
         
     def set_mode(self, physical_size=None):
         """

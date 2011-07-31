@@ -22,8 +22,8 @@
 
 from gl cimport *
 
-from renpy.display.glenviron import *
-import renpy.display.glshader as glshader
+from glenviron import *
+import glshader
 
 class ShaderEnviron(Environ):
     """

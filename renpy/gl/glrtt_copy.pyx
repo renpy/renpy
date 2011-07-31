@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from renpy.display.glenviron import *
+from glenviron import *
 
 class CopyRtt(Rtt):
     """

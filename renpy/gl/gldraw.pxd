@@ -1,4 +1,4 @@
-cimport render
+cimport renpy.display.render as render
 
 cdef class GLDraw:
 

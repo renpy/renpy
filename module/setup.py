@@ -68,7 +68,6 @@ if has_fribidi and not android:
         "_renpybidi", 
         [ "renpybidicore.c" ],
         ['fribidi'])
-        
 
 # Sound.
 pymodule("pysdlsound.__init__")
@@ -86,6 +85,10 @@ if not android:
 
 
 # Display.
+cython("renpy.display.render", libs=[ 'z', 'm' ])
+cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+
+# Gl.
 if android:
     glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
 elif has_libglew:
@@ -93,23 +96,18 @@ elif has_libglew:
 else:
     glew_libs = [ 'glew32', "opengl32" ]
 
-cython("renpy.display.render", libs=[ 'z', 'm' ])
-cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
-
-cython("renpy.display.gldraw", libs=glew_libs )
-cython("renpy.display.gltexture", libs=glew_libs)
-cython("renpy.display.glenviron", libs=glew_libs)
+cython("renpy.gl.gldraw", libs=glew_libs )
+cython("renpy.gl.gltexture", libs=glew_libs)
+cython("renpy.gl.glenviron", libs=glew_libs)
 
 if not android:
-    cython("renpy.display.glenviron_fixed", libs=glew_libs)
-    cython("renpy.display.glenviron_shader", libs=glew_libs)
-    cython("renpy.display.glshader", libs=glew_libs)
+    cython("renpy.gl.glenviron_fixed", libs=glew_libs)
+    cython("renpy.gl.glenviron_shader", libs=glew_libs)
+    cython("renpy.gl.glshader", libs=glew_libs)
 
-cython("renpy.display.glenviron_limited", libs=glew_libs)
-
-cython("renpy.display.glrtt_copy", libs=glew_libs)
-cython("renpy.display.glrtt_fbo", libs=glew_libs)
-
+cython("renpy.gl.glenviron_limited", libs=glew_libs)
+cython("renpy.gl.glrtt_copy", libs=glew_libs)
+cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
 # Text.
 cython("renpy.text.textsupport")

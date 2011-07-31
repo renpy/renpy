@@ -128,7 +128,7 @@ def import_all():
         import encodings
         libexec = os.path.dirname(encodings.__path__[0])
         package.__path__.insert(1, os.path.join(libexec, *name))
-    
+
     update_path(renpy.display)
     
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
@@ -145,6 +145,9 @@ def import_all():
     import renpy.text.extras #@UnresolvedImport
     
     sys.modules['renpy.display.text'] = renpy.text.text
+    
+    import renpy.gl
+    update_path(renpy.gl)
     
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
@@ -165,8 +168,7 @@ def import_all():
     import renpy.display.predict #@UnresolvedImport
     
     import renpy.display.error #@UnresolvedImport
-    
-    
+
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 
     import renpy.audio.audio #@UnresolvedImport

@@ -31,30 +31,30 @@ import weakref
 import array
 import time
 
-cimport renpy.display.gltexture as gltexture
 cimport renpy.display.render as render
 
-import renpy.display.gltexture as gltexture
-import renpy.display.glenviron as glenviron
-import renpy.display.glrtt_copy as glrtt_copy
+cimport gltexture
+import gltexture
+import glenviron
+import glrtt_copy
 
 try:
-    import renpy.display.glenviron_fixed as glenviron_fixed
+    import glenviron_fixed
 except ImportError:
     glenviron_fixed = None
 
 try:
-    import renpy.display.glenviron_shader as glenviron_shader
+    import glenviron_shader
 except ImportError:
     glenviron_shader = None
 
 try:
-    import renpy.display.glenviron_limited as glenviron_limited
+    import glenviron_limited
 except ImportError:
     glenviron_limited = None
 
 try:
-    import renpy.display.glrtt_fbo as glrtt_fbo
+    import glrtt_fbo
 except ImportError:
     glrtt_fbo = None
 
