@@ -101,7 +101,9 @@ void main()
 }
 """
 
-def check_status(handle, type):
+
+
+def check_status(shader, handle, type):
     """
     Checks the status of a shader or program. If it fails, then an
     exception is raised.
@@ -110,15 +112,25 @@ def check_status(handle, type):
     cdef GLint status = 0
     cdef GLint log_length = 0
     
-    glGetObjectParameterivARB(handle, type, &status)
+    if shader:
+        glGetShaderiv(handle, type, &status)
+    else:    
+        glGetProgramiv(handle, type, &status)
 
     if status == 1: # 0 for problems.
         return
         
-    glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &log_length)
+    if shader:
+        glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &log_length)
+    else:
+        glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &log_length)
 
     log = ' ' * log_length
-    glGetInfoLogARB(handle, log_length, &log_length, <char *> log)
+    
+    if shader:
+        glGetShaderInfoLog(handle, log_length, &log_length, <char *> log)
+    else:
+        glGetProgramInfoLog(handle, log_length, &log_length, <char *> log)
 
     raise Exception("Shader error: %s" % log)
 
@@ -135,7 +147,7 @@ def compile_shader(kind, source):
     glShaderSourceARB(handle, 1, <GLchar **> &sourceptr, &lensource)
     glCompileShaderARB(handle)
 
-    check_status(handle, GL_OBJECT_COMPILE_STATUS_ARB)
+    check_status(True, handle, GL_OBJECT_COMPILE_STATUS_ARB)
 
     return handle
 
@@ -155,12 +167,12 @@ def compile_program(vertex, fragment):
 
     glLinkProgramARB(program)
 
-    check_status(program, GL_OBJECT_LINK_STATUS_ARB)
+    check_status(False, program, GL_OBJECT_LINK_STATUS_ARB)
 
     glUseProgramObjectARB(program)
     
-    glDeleteObjectARB(vertex_shader)
-    glDeleteObjectARB(fragment_shader)
+    glDeleteShader(vertex_shader)
+    glDeleteShader(fragment_shader)
     
     return program
 
@@ -210,7 +222,7 @@ cdef class Program(object):
         self.Color = glGetUniformLocationARB(self.program, "Color")
 
     def delete(self):
-        glDeleteObjectARB(self.program)
+        glDeleteProgram(self.program)
 
         
 cdef class ShaderEnviron(Environ):

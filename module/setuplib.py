@@ -110,7 +110,7 @@ def library(name, optional=False):
 # A list of extension objects that we use.
 extensions = [ ]
 
-def cmodule(name, source, libs=[]):
+def cmodule(name, source, libs=[], define_macros=[]):
     """
     Compiles the python module `name` from the files given in 
     `source`, and the libraries in `libs`.
@@ -124,9 +124,10 @@ def cmodule(name, source, libs=[]):
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
         libraries=libs,
+        define_macros=define_macros,
         ))
 
-def cython(name, source=[], libs=[], compile_if=True):
+def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -222,7 +223,7 @@ def cython(name, source=[], libs=[], compile_if=True):
             
     # Build the module normally once we have the c file.
     if compile_if:    
-        cmodule(name, [ c_fn ] + source, libs=libs)
+        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros)
 
 
 py_modules = [ ]

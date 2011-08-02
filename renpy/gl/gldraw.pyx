@@ -316,11 +316,12 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        if self.use_clipping_planes:
-            glEnable(GL_CLIP_PLANE0)
-            glEnable(GL_CLIP_PLANE1)
-            glEnable(GL_CLIP_PLANE2)
-            glEnable(GL_CLIP_PLANE3)
+        IF not ANGLE:
+            if self.use_clipping_planes:
+                glEnable(GL_CLIP_PLANE0)
+                glEnable(GL_CLIP_PLANE1)
+                glEnable(GL_CLIP_PLANE2)
+                glEnable(GL_CLIP_PLANE3)
         
         # Prepare a mouse display.
         self.mouse_old_visible = None
@@ -442,9 +443,9 @@ cdef class GLDraw:
         # Count the number of clip planes.
         cdef GLint clip_planes = 0
         
-        glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
-        renpy.display.log.write("Number of clipping planes: %d", clip_planes)
-
+        IF not ANGLE:
+            glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
+            renpy.display.log.write("Number of clipping planes: %d", clip_planes)
 
         # Pick a texture environment subsystem.
         
@@ -619,10 +620,12 @@ cdef class GLDraw:
 
         if self.use_clipping_planes:
         
-            gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
-            gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
-            gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
-            gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
+            IF not ANGLE:
+            
+                gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
+                gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
+                gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
+                gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
 
         else:
 

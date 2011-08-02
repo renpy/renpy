@@ -550,6 +550,12 @@ cdef extern from "glcompat.h":
     void glBindAttribLocationARB(GLhandleARB, GLuint, GLchar *)
     void glGetActiveAttribARB(GLhandleARB, GLuint, GLsizei, GLsizei *, GLint *, GLenum *, GLchar *)
     GLint glGetAttribLocationARB(GLhandleARB, GLchar *)
+    void glGetProgramiv(GLuint, GLenum, GLint *)
+    void glGetShaderiv(GLuint, GLenum, GLint *)
+    void glDeleteProgram(GLuint)
+    void glDeleteShader(GLuint)
+    void glGetProgramInfoLog(GLhandleARB, GLsizei, GLsizei *, GLchar *)
+    void glGetShaderInfoLog(GLhandleARB, GLsizei, GLsizei *, GLchar *)
     GLboolean glIsRenderbufferEXT(GLuint)
     void glBindRenderbufferEXT(GLenum, GLuint)
     void glDeleteRenderbuffersEXT(GLsizei, GLuint *)
@@ -850,6 +856,7 @@ cdef extern from "glcompat.h":
         GL_INDEX_OFFSET
         GL_INDEX_SHIFT
         GL_INDEX_WRITEMASK
+        GL_INFO_LOG_LENGTH
         GL_INT
         GL_INTENSITY
         GL_INTENSITY12
@@ -1516,10 +1523,10 @@ cdef extern from "glcompat.h":
 
 
 cdef inline gl_check(where):
-    import renpy
-
     cdef GLenum error
     error = glGetError()
     if error:
+        import renpy
         renpy.display.log.write("GL error 0x%X at %s", error, where)
+
 

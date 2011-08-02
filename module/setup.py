@@ -120,19 +120,24 @@ anglecopy("glenviron.pyx")
 anglecopy("glenviron_shader.pyx")
 anglecopy("gl.pxd")
 anglecopy("glrtt_fbo.pyx")
-anglecopy("glshader.pyx")
+anglecopy("glrtt_copy.pyx")
+# anglecopy("glshader.pyx")
 anglecopy("gltexture.pxd")
 anglecopy("gltexture.pyx")
 anglecopy("__init__.py")
 
 angle_libs = [ "EGL", "GLESv2" ]
 
-cython("renpy.angle.gldraw", libs=angle_libs, compile_if=has_angle)
-cython("renpy.angle.gltexture", libs=angle_libs, compile_if=has_angle)
-cython("renpy.angle.glenviron", libs=angle_libs, compile_if=has_angle)
-cython("renpy.angle.glenviron_shader", libs=angle_libs, compile_if=has_angle)
-cython("renpy.angle.glshader", libs=angle_libs, compile_if=has_angle)
-cython("renpy.angle.glrtt_fbo", libs=angle_libs, compile_if=has_angle)
+def anglecython(name):
+    cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ])
+
+anglecython("renpy.angle.gldraw")
+anglecython("renpy.angle.gltexture")
+anglecython("renpy.angle.glenviron")
+anglecython("renpy.angle.glenviron_shader")
+# anglecython("renpy.angle.glshader")
+anglecython("renpy.angle.glrtt_fbo")
+anglecython("renpy.angle.glrtt_copy")
 
 # Text.
 cython("renpy.text.textsupport")

@@ -55,7 +55,11 @@
 #if defined RENPY_GLES_2
 
 #include <EGL/egl.h>
-#include <GLES2/gl2.h">
+#include <GLES2/gl2.h>
+
+typedef GLuint GLhandleARB;
+
+#define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
@@ -65,25 +69,22 @@
 #define glDeleteFramebuffersEXT glDeleteFramebuffers
 #define glCheckFramebufferStatusEXT glCheckFramebufferStatus
 
-#define GL_OBJECT_INFO_LOG_LENGTH_ARB GL_OBJECT_INFO_LOG_LENGTH
-#define GL_OBJECT_COMPILE_STATUS_ARB GL_OBJECT_COMPILE_STATUS
+#define GL_OBJECT_INFO_LOG_LENGTH_ARB GL_INFO_LOG_LENGTH
+#define GL_OBJECT_COMPILE_STATUS_ARB GL_COMPILE_STATUS
 #define GL_VERTEX_SHADER_ARB GL_VERTEX_SHADER
 #define GL_FRAGMENT_SHADER_ARB GL_FRAGMENT_SHADER
-#define GL_OBJECT_LINK_STATUS_ARB GL_OBJECT_LINK_STATUS
+#define GL_OBJECT_LINK_STATUS_ARB GL_LINK_STATUS
 
-#define glGetObjectParameterivARB glGetObjectParameteriv
-#define glGetInfoLogARB glGetInfoLog
-#define glCreateShaderObjectARB glCreateShaderObject
+#define glCreateShaderObjectARB glCreateShader
 #define glShaderSourceARB glShaderSource
 #define glCompileShaderARB glCompileShader
-#define glCreateProgramObjectARB glCreateProgramObject
-#define glAttachObjectARB glAttachObject
+#define glCreateProgramObjectARB glCreateProgram
+#define glAttachObjectARB glAttachShader
 #define glLinkProgramARB glLinkProgram
-#define glUseProgramObjectARB glUseProgramObject
-#define glDeleteObjectARB glDeleteObject
+#define glUseProgramObjectARB glUseProgram
 #define glGetAttribLocationARB glGetAttribLocation
 #define glGetUniformLocationARB glGetUniformLocation
-#define glUniformMatrix4fvARB glUnifomMatrix4fv
+#define glUniformMatrix4fvARB glUniformMatrix4fv
 #define glUniform1iARB glUniform1i
 #define glUniform1fARB glUniform1f
 #define glUniform4fARB glUniform4f
@@ -109,10 +110,10 @@ typedef GLfloat GLdouble;
 // This isn't defined on GL ES, but that's okay, since we'll disable
 // screenshots on Android.
 #define GL_PACK_ROW_LENGTH 0
-#define glReadBuffer(x)
 
 #define glClientActiveTextureARB glClientActiveTexture
 #define glActiveTextureARB glActiveTexture
+
 
 #endif
 
@@ -121,8 +122,24 @@ typedef GLfloat GLdouble;
 
 #include <GL/glew.h>
 
-// #define GL_RGB565_OES 0
 #define RENPY_THIRD_TEXTURE 1
+
+// These have to be written 2.0-style, since the ARB-style doesn't
+// include the object type.
+#undef GL_INFO_LOG_LENGTH
+#define GL_INFO_LOG_LENGTH GL_OBJECT_INFO_LOG_LENGTH_ARB
+#undef glDeleteShader
+#define glDeleteShader glDeleteObjectARB
+#undef glDeleteProgram
+#define glDeleteProgram glDeleteObjectARB
+#undef glGetShaderiv 
+#define glGetShaderiv glGetObjectParameterivARB
+#undef glGetProgramiv
+#define glGetProgramiv glGetObjectParameterivARB
+#undef glGetShaderInfoLog
+#define glGetShaderInfoLog glGetInfoLogARB
+#undef glGetProgramInfoLog
+#define glGetProgramInfoLog glGetInfoLogARB
 
 #endif
 
