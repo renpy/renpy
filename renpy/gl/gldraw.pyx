@@ -927,7 +927,7 @@ cdef class GLDraw:
 
         self.upscale_factor = 1.0
 
-        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
+        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt, self.environ)
 
         return rv
         

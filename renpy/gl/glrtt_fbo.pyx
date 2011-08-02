@@ -56,7 +56,7 @@ class FboRtt(Rtt):
         RTT mode.
         """
 
-    def render(self, texture, x, y, w, h, draw_func):
+    def render(self, environ, texture, x, y, w, h, draw_func):
         """
         This function is called to trigger a rendering to a texture.
         `x`, `y`, `w`, and `h` specify the location and dimensions of
@@ -75,10 +75,7 @@ class FboRtt(Rtt):
 
         glViewport(0, 0, w, h)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(x, x + w, y, y + h, -1, 1)
-        glMatrixMode(GL_MODELVIEW)
+        environ.ortho(x, x + w, y, y + h, -1, 1)
 
         draw_func(x, y, w, h)
 

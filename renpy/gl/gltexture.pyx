@@ -220,7 +220,7 @@ cdef class TextureCore:
             self.premult_size = None
 
             
-    def render_to(self, x, y, draw_func, rtt):
+    def render_to(self, x, y, draw_func, rtt, environ):
 
         self.allocate()
         
@@ -242,7 +242,7 @@ cdef class TextureCore:
 
             self.format = rtt_format
          
-        rtt.render(self.number, x, y, self.width, self.height, draw_func)
+        rtt.render(environ, self.number, x, y, self.width, self.height, draw_func)
 
         self.xadd = 0
         self.yadd = 0
@@ -588,7 +588,7 @@ def texture_grid_from_surface(surf):
     return rv
 
 
-def texture_grid_from_drawing(width, height, draw_func, rtt):    
+def texture_grid_from_drawing(width, height, draw_func, rtt, environ):    
     """
     This creates a texture grid of `width` by `height` by using
     draw_func to draw to the screen.
@@ -608,7 +608,7 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
         for x, width, texwidth in texcolumns:
             
             tex = alloc_texture(texwidth, texheight)
-            tex.render_to(x, y, draw_func, rtt)
+            tex.render_to(x, y, draw_func, rtt, environ)
             
             row.append(tex)
             
