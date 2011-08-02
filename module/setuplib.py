@@ -126,7 +126,7 @@ def cmodule(name, source, libs=[]):
         libraries=libs,
         ))
 
-def cython(name, source=[], libs=[], build_if=True):
+def cython(name, source=[], libs=[], compile_if=True):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -221,7 +221,7 @@ def cython(name, source=[], libs=[], build_if=True):
             sys.exit(-1)
             
     # Build the module normally once we have the c file.
-    if build_if:    
+    if compile_if:    
         cmodule(name, [ c_fn ] + source, libs=libs)
 
 

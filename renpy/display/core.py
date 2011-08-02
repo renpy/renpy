@@ -2051,7 +2051,7 @@ class Interface(object):
                     if renpy.config.profile :
                         new_time = get_time()
 
-                        if new_time - self.profile_time > .02:
+                        if new_time - self.profile_time > .015:
                             print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
                             print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
 

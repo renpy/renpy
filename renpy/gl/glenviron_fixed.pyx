@@ -21,15 +21,21 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from glenviron import *
+from glenviron import NONE, BLIT, BLEND, IMAGEBLEND
+from glenviron cimport Environ
 
-class FixedFunctionEnviron(Environ):
+cdef class FixedFunctionEnviron(Environ):
     """
     This is an OpenGL environment that uses the fixed-function pipeline.
 
     It requires ARB_texture_env_combine and ARB_texture_env_crossbar to
     work.
     """
+
+    cdef object last
+    cdef object last_ramp
+    cdef object last_ramplen
+    cdef object ramp_setup
 
     def init(self):
         
@@ -270,3 +276,10 @@ class FixedFunctionEnviron(Environ):
         cdef float *offsets = [ offset, offset, offset, offset ]
 
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, offsets)
+    
+    def ortho(self, left, right, bottom, top, near, far):
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(left, right, bottom, top, near, far)
+        glMatrixMode(GL_MODELVIEW)

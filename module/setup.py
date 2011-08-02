@@ -41,8 +41,9 @@ has_swscale = library("swscale", optional=True)
 library("freetype")
 has_fribidi = library("fribidi", optional=True)            
 library("z")
-has_libglew = library("GLEW", True)
-has_libglew32 = library("glew32", True)
+has_libglew = library("GLEW", optional=True)
+has_libglew32 = library("glew32", optional=True)
+has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
 
 if android:
     sdl = [ 'sdl', 'GLESv1_CM', 'log' ]
@@ -114,6 +115,7 @@ def anglecopy(fn):
     
 anglecopy("gldraw.pxd")
 anglecopy("gldraw.pyx")
+anglecopy("glenviron.pxd")
 anglecopy("glenviron.pyx")
 anglecopy("glenviron_shader.pyx")
 anglecopy("gl.pxd")
@@ -123,14 +125,14 @@ anglecopy("gltexture.pxd")
 anglecopy("gltexture.pyx")
 anglecopy("__init__.py")
 
-windows = True
+angle_libs = [ "EGL", "GLESv2" ]
 
-cython("renpy.angle.gldraw", libs=glew_libs )
-cython("renpy.angle.gltexture", libs=glew_libs)
-cython("renpy.angle.glenviron", libs=glew_libs)
-cython("renpy.angle.glenviron_shader", libs=glew_libs)
-cython("renpy.angle.glshader", libs=glew_libs)
-cython("renpy.angle.glrtt_fbo", libs=glew_libs)
+cython("renpy.angle.gldraw", libs=angle_libs, compile_if=has_angle)
+cython("renpy.angle.gltexture", libs=angle_libs, compile_if=has_angle)
+cython("renpy.angle.glenviron", libs=angle_libs, compile_if=has_angle)
+cython("renpy.angle.glenviron_shader", libs=angle_libs, compile_if=has_angle)
+cython("renpy.angle.glshader", libs=angle_libs, compile_if=has_angle)
+cython("renpy.angle.glrtt_fbo", libs=angle_libs, compile_if=has_angle)
 
 # Text.
 cython("renpy.text.textsupport")
@@ -146,6 +148,8 @@ cython(
 sys.path.append('..')
 import renpy
 
-setuplib.setup(
-    "Ren'Py",
-    renpy.version[7:])
+setuplib.setup("Ren'Py", renpy.version[7:])
+
+print
+print "Fribidi:", has_fribidi
+print "ANGLE:", has_angle

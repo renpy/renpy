@@ -24,6 +24,7 @@
 # environments to implement various effects.
 
 from gl cimport *
+from glenviron cimport *
 
 # Constants, that are used to store the last kind of blend a class was
 # used for. (So we can avoid changing the GL state unnecessarily.)
@@ -32,7 +33,7 @@ BLIT = 1
 BLEND = 2
 IMAGEBLEND = 3
 
-class Environ(object):
+cdef class Environ(object):
 
     def blit(self):
         """
@@ -62,7 +63,15 @@ class Environ(object):
         """
 
         raise Exception("Not implemented.")
-        
+
+    cdef void set_vertex(self, float *vertices):
+        return
+     
+    cdef void set_texture(self, int unit, float *coords):
+        return
+    
+    cdef void set_color(self, float r, float g, float b, float a):
+        return
 
 class Rtt(object):
     """

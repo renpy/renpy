@@ -48,6 +48,7 @@ except ImportError:
 try:
     import glenviron_shader
 except ImportError:
+    raise
     glenviron_shader = None
 
 try:
@@ -93,11 +94,17 @@ cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
 
     cdef GLdouble equation[4]
 
-    equation[0] = a
-    equation[1] = b
-    equation[2] = c
-    equation[3] = d
-    glClipPlane(plane, equation)
+    if not ANGLE:
+    
+        equation[0] = a
+        equation[1] = b
+        equation[2] = c
+        equation[3] = d
+        glClipPlane(plane, equation)
+        
+    else:
+        # Angle can't use this function.
+        pass
         
 
 cdef int round(double d):
@@ -140,7 +147,7 @@ cdef class GLDraw:
 
         # The (x, y) and texture of the software mouse.
         self.mouse_info = (0, 0, None)
-        
+
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
@@ -174,8 +181,11 @@ cdef class GLDraw:
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
-        # Should we use clipping planes or stencils?
-        self.use_clipping_planes = True
+        if not ANGLE:
+            # Should we use clipping planes or stencils?
+            self.use_clipping_planes = True
+        else:
+            self.use_clipping_planes = False
 
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android
@@ -360,12 +370,14 @@ cdef class GLDraw:
         which subsystems to use.
         """
 
-        # Init glew.
-        err = glewInit()
+        if not ANGLE:
 
-        if err != GLEW_OK:
-            renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
-            return False
+            # Init glew.
+            err = glewInit()
+    
+            if err != GLEW_OK:
+                renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
+                return False
             
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -652,11 +664,7 @@ cdef class GLDraw:
 
         glViewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
         
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
-
-        glMatrixMode(GL_MODELVIEW)
+        self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
         self.clip_mode_screen()
 
@@ -749,7 +757,7 @@ cdef class GLDraw:
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
         cdef render.Matrix2D child_reverse
-        
+
         if not isinstance(what, render.Render):
 
             if isinstance(what, gltexture.TextureGrid):
@@ -778,7 +786,7 @@ cdef class GLDraw:
         rend = what
         
         # Other draw modes.
-        
+
         if rend.operation == DISSOLVE:
             
             if self.fast_dissolve:
@@ -944,10 +952,7 @@ cdef class GLDraw:
         
         glClear(GL_COLOR_BUFFER_BIT)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, 1, 0, 1, -1, 1)
-        glMatrixMode(GL_MODELVIEW)
+        self.environ.ortho(0, 1, 0, 1, -1, 1)
 
         self.clip_mode_rtt(0, 0, 1, 1)
         
@@ -1064,10 +1069,7 @@ cdef class GLDraw:
         
         glViewport(0, 0, pw, ph)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, pw, ph, 0, -1.0, 1.0)
-        glMatrixMode(GL_MODELVIEW)
+        self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
         self.set_clip((0, 0, pw, ph))

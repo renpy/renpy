@@ -21,10 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from glenviron import *
+from glenviron cimport Environ
+from glenviron import NONE, BLIT, BLEND, IMAGEBLEND
 import renpy
 
-class LimitedEnviron(Environ):
+cdef class LimitedEnviron(Environ):
     """
     This is an OpenGL environment that uses a limited fixed-function
     pipeline. This will work with any GL or GLES system that has at
@@ -34,6 +35,8 @@ class LimitedEnviron(Environ):
      alpha of an imagedissolve or dissolve, and the ability to
      imagedissolve.)
     """
+    
+    cdef object last
 
     def init(self):
         
@@ -148,3 +151,11 @@ class LimitedEnviron(Environ):
     def imageblend(self, fraction, ramp):
         # Imageblend doesn't work on GLES.
         pass
+            
+    def ortho(self, left, right, bottom, top, near, far):
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(left, right, bottom, top, near, far)
+        glMatrixMode(GL_MODELVIEW)
+
