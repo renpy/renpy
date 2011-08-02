@@ -58,7 +58,7 @@ cdef class LimitedEnviron(Environ):
         Disables the given texture combiner.
         """
 
-        glActiveTexture(unit)
+        glActiveTextureARB(unit)
         glDisable(GL_TEXTURE_2D)
         
     def combine_mode(self, unit,
@@ -81,7 +81,7 @@ cdef class LimitedEnviron(Environ):
                      enable=True):
 
         
-        glActiveTexture(unit)
+        glActiveTextureARB(unit)
 
         if enable:
             glEnable(GL_TEXTURE_2D)
@@ -145,7 +145,7 @@ cdef class LimitedEnviron(Environ):
 
         cdef float *fractions = [ fraction, fraction, fraction, fraction ]
                     
-        glActiveTexture(GL_TEXTURE1)
+        glActiveTextureARB(GL_TEXTURE1)
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, fractions)
                 
     def imageblend(self, fraction, ramp):
@@ -158,11 +158,11 @@ cdef class LimitedEnviron(Environ):
      
     cdef void set_texture(self, int unit, float *coords):
         if unit == 0:
-            glClientActiveTexture(GL_TEXTURE0)    
+            glClientActiveTextureARB(GL_TEXTURE0)    
         elif unit == 1:
-            glClientActiveTexture(GL_TEXTURE1)            
+            glClientActiveTextureARB(GL_TEXTURE1)            
         elif RENPY_THIRD_TEXTURE and unit == 2:
-            glClientActiveTexture(GL_TEXTURE2)
+            glClientActiveTextureARB(GL_TEXTURE2)
         else:
             return
         

@@ -1065,7 +1065,7 @@ cdef void draw_rectangle(
 
         has_tex0 = 1
 
-        glActiveTexture(GL_TEXTURE0)
+        glActiveTextureARB(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex0.number)
         
         xadd = tex0.xadd
@@ -1085,7 +1085,7 @@ cdef void draw_rectangle(
 
         has_tex1 = 1
 
-        glActiveTexture(GL_TEXTURE1)
+        glActiveTextureARB(GL_TEXTURE1)
         glBindTexture(GL_TEXTURE_2D, tex1.number)
         
         xadd = tex1.xadd
@@ -1106,7 +1106,7 @@ cdef void draw_rectangle(
         
             has_tex2 = 1
         
-            glActiveTexture(GL_TEXTURE2)
+            glActiveTextureARB(GL_TEXTURE2)
             glBindTexture(GL_TEXTURE_2D, tex2.number)
             
             xadd = tex2.xadd

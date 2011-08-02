@@ -284,11 +284,11 @@ cdef class FixedFunctionEnviron(Environ):
     cdef void set_texture(self, int unit, float *coords):
 
         if unit == 0:
-            glClientActiveTexture(GL_TEXTURE0)    
+            glClientActiveTextureARB(GL_TEXTURE0)    
         elif unit == 1:
-            glClientActiveTexture(GL_TEXTURE1)            
+            glClientActiveTextureARB(GL_TEXTURE1)            
         elif RENPY_THIRD_TEXTURE and unit == 2:
-            glClientActiveTexture(GL_TEXTURE2)
+            glClientActiveTextureARB(GL_TEXTURE2)
         else:
             return
         
