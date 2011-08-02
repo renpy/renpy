@@ -277,6 +277,30 @@ cdef class FixedFunctionEnviron(Environ):
 
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, offsets)
     
+    cdef void set_vertex(self, float *vertices):
+        glVertexPointer(2, GL_FLOAT, 0, <GLubyte *> vertices)
+        glEnableClientState(GL_VERTEX_ARRAY)    
+     
+    cdef void set_texture(self, int unit, float *coords):
+
+        if unit == 0:
+            glClientActiveTexture(GL_TEXTURE0)    
+        elif unit == 1:
+            glClientActiveTexture(GL_TEXTURE1)            
+        elif RENPY_THIRD_TEXTURE and unit == 2:
+            glClientActiveTexture(GL_TEXTURE2)
+        else:
+            return
+        
+        if coords is not NULL:
+            glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> coords)
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        else:
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+    
+    cdef void set_color(self, float r, float g, float b, float a):
+        glColor4f(r, g, b, a)
+    
     def ortho(self, left, right, bottom, top, near, far):
 
         glMatrixMode(GL_PROJECTION)

@@ -301,8 +301,10 @@ cdef class ShaderEnviron(Environ):
             tex = self.program.VertexTexCoord0
         elif unit == 1:
             tex = self.program.VertexTexCoord1
-        elif unit == 2:
+        elif unit == 2 and RENPY_THIRD_TEXTURE:
             tex = self.program.VertexTexCoord2
+        else:
+            return
 
         if tex < 0:
             return

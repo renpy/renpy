@@ -1115,7 +1115,6 @@ cdef class GLDraw:
         else:
 
             renpy.display.log.write("Could not take screenshot - GL_PACK_ROW_LENGTH is 0.")
-            
 
         # Crop and flip it, since it's upside down.
         rv = full.subsurface(self.physical_box)
@@ -1132,3 +1131,4 @@ cdef class GLDraw:
         
     def get_physical_size(self):
         return self.physical_size
+
