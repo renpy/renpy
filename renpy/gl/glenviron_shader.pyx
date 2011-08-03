@@ -20,10 +20,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+DEF ANGLE = False
+
 from gl cimport *
 from glenviron cimport *
 
-VERTEX_SHADER = """
+VERTEX_SHADER = """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -39,14 +41,25 @@ void main() {
     TexCoord0 = VertexTexCoord0;
     TexCoord1 = VertexTexCoord1;
     TexCoord2 = VertexTexCoord2;
+"""
 
-    gl_ClipVertex = Vertex;
+IF not ANGLE:    
+    VERTEX_SHADER += """\
+        gl_ClipVertex = Vertex;
+    """
+ELSE:
+    print "Using ANGLE!"
 
+VERTEX_SHADER += """\
     gl_Position = Projection * Vertex;
 }
 """
 
 BLIT_SHADER = """
+#ifdef GL_ES
+precision highp float;
+#endif
+
 uniform vec4 Color;
 uniform sampler2D tex0;
 
@@ -60,6 +73,10 @@ void main()
 """
 
 BLEND_SHADER = """
+#ifdef GL_ES
+precision highp float;
+#endif
+
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -78,6 +95,10 @@ void main()
 """
 
 IMAGEBLEND_SHADER = """
+#ifdef GL_ES
+precision highp float;
+#endif
+
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;

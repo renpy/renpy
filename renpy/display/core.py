@@ -1237,19 +1237,22 @@ class Interface(object):
             import renpy.angle.gldraw as angledraw #@UnresolvedImport
             draws["angle"] = angledraw.GLDraw
         except:
-            renpy.display.log.write("Couldn't import angle renderer.")
+            renpy.display.log.write("Couldn't import angle renderer:")
+            renpy.display.log.exception()
 
         try:
             import renpy.gl.gldraw as gldraw #@UnresolvedImport
             draws["gl"] = gldraw.GLDraw
         except:
-            renpy.display.log.write("Couldn't import gl renderer.")
+            renpy.display.log.write("Couldn't import gl renderer:")
+            renpy.display.log.exception()
 
         try:
             import renpy.display.swdraw as swdraw
             draws["sw"] = swdraw.SWDraw
         except:
-            renpy.display.log.write("Couldn't import sw renderer.")
+            renpy.display.log.write("Couldn't import sw renderer:")
+            renpy.display.log.exception()
         
         default = renpy.display.prefer_renderers        
         dl = os.environ.get("RENPY_RENDERER", default).split(",")

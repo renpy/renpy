@@ -149,6 +149,9 @@ def import_all():
     import renpy.gl
     update_path(renpy.gl)
     
+    import renpy.angle
+    update_path(renpy.angle)
+    
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport

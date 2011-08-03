@@ -70,6 +70,14 @@ cdef extern from "glcompat.h":
     enum:
         GLEW_OK
 
+IF ANGLE:
+
+    cdef extern:
+        char *egl_init()
+        void egl_swap()
+        void egl_quit()
+
+
 # This is used by gl_error_check in gl.pxd.
 class GLError(Exception):
     """
@@ -198,6 +206,8 @@ cdef class GLDraw:
         working for some reason.
         """
         
+        cdef char *egl_error
+        
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
             return False
@@ -250,22 +260,44 @@ cdef class GLDraw:
         pheight = max(pheight, 256)
 
         # Handle swap control.
-        vsync = os.environ.get("RENPY_GL_VSYNC", "1")
-        pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
-        pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
+
+        # Switch the 
+        IF not ANGLE:
+            opengl = pygame.OPENGL
+            vsync = os.environ.get("RENPY_GL_VSYNC", "1")
+            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
+            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
+        ELSE:
+            opengl = 0            
+            # EGL automatically handles vsync for us.
         
         try:
             if fullscreen:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | opengl | pygame.DOUBLEBUF)
 
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
             return False
         
+        # In ANGLE mode, we have to use EGL to get the OpenGL ES 2 context.
+        IF ANGLE:
+        
+            # This ensures the display is shown.
+            pygame.display.flip()
+        
+            egl_error = egl_init()
+            
+            if egl_error is not NULL:
+                renpy.display.log.write("Initializing EGL: %s" % egl_error)
+                return False
+        
+        # Get the size of the created screen.        
         pwidth, pheight = self.window.get_size()
         self.physical_size = (pwidth, pheight)
 
@@ -449,7 +481,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
         
-        if use_subsystem(
+        if ANGLE or use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
@@ -693,7 +725,13 @@ cdef class GLDraw:
             # Release the CPU while we're waiting for things to actually
             # draw to the screen.        
             renpy.display.core.cpu_idle.set()
-            pygame.display.flip()
+            
+            IF not ANGLE:
+                pygame.display.flip()
+            ELSE:
+                egl_swap()
+
+            # Grab the CPU again.            
             renpy.display.core.cpu_idle.clear()
 
         gl_check("draw_screen")
@@ -1134,4 +1172,3 @@ cdef class GLDraw:
         
     def get_physical_size(self):
         return self.physical_size
-
