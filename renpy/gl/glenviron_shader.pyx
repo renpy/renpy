@@ -280,7 +280,7 @@ cdef class ShaderEnviron(Environ):
         self.program = program
 
         glUseProgramObjectARB(program.program)
-        glUniformMatrix4fvARB(program.Projection, 1, GL_TRUE, self.projection)
+        glUniformMatrix4fvARB(program.Projection, 1, GL_FALSE, self.projection)
 
     def blit(self):
 
@@ -354,23 +354,23 @@ cdef class ShaderEnviron(Environ):
     def ortho(self, float left, float right, float bottom, float top, float near, float far):
         
         self.projection[ 0] = 2 / (right - left)
-        self.projection[ 1] = 0
-        self.projection[ 2] = 0
-        self.projection[ 3] = -(right + left) / (right - left)
-        
         self.projection[ 4] = 0
-        self.projection[ 5] = 2 / (top - bottom)
-        self.projection[ 6] = 0
-        self.projection[ 7] = -(top + bottom) / (top - bottom)
-
         self.projection[ 8] = 0
+        self.projection[12] = -(right + left) / (right - left)
+        
+        self.projection[ 1] = 0
+        self.projection[ 5] = 2 / (top - bottom)
         self.projection[ 9] = 0
-        self.projection[10] = -2 / (far - near)
-        self.projection[11] = -(far + near) / (far - near)
+        self.projection[13] = -(top + bottom) / (top - bottom)
 
-        self.projection[12] = 0
-        self.projection[13] = 0
-        self.projection[14] = 0
+        self.projection[ 2] = 0
+        self.projection[ 6] = 0
+        self.projection[10] = -2 / (far - near)
+        self.projection[14] = -(far + near) / (far - near)
+
+        self.projection[ 3] = 0
+        self.projection[ 7] = 0
+        self.projection[11] = 0
         self.projection[15] = 1
         
         self.program = None
