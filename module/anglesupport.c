@@ -4,9 +4,14 @@
 #include "EGL/egl.h"
 #include "GLES2/gl2.h"
 
+HWND window;
 
 EGLDisplay display;
 EGLSurface surface;
+EGLConfig config;
+EGLContext context;
+
+int initialized = 0;
 
 char error_message[100];
 
@@ -34,8 +39,6 @@ char *egl_init() {
     SDL_SysWMinfo wminfo;
     EGLint major, minor;
     EGLint num_config;
-    EGLConfig config;
-    EGLContext context;
     
     const EGLint attrs[] = {
          EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
@@ -47,29 +50,46 @@ char *egl_init() {
         EGL_CONTEXT_CLIENT_VERSION, 2,
         EGL_NONE
     };
-    
+
     SDL_VERSION(&wminfo.version);
     SDL_GetWMInfo(&wminfo);
 
-    display = eglGetDisplay(GetDC(wminfo.window));
+    if (! initialized) {
 
-    eglInitialize(display, &major, &minor);
-    egl_check("initializing EGL");
+    	display = eglGetDisplay(GetDC(wminfo.window));
+		egl_check("getting display");
 
-    eglBindAPI(EGL_OPENGL_ES_API);
-	egl_check("binding OpenGL ES");
-    
-    eglChooseConfig(display, attrs, &config, 1, &num_config);
-    egl_check("choosing EGL config");
+		eglInitialize(display, &major, &minor);
+		egl_check("initializing EGL");
 
-    surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
-    egl_check("creating EGL surface");
+		eglBindAPI(EGL_OPENGL_ES_API);
+		egl_check("binding OpenGL ES");
 
-    context = eglCreateContext(display, config, EGL_NO_CONTEXT, context_attrs);
-    egl_check("creating EGL context");
+		eglChooseConfig(display, attrs, &config, 1, &num_config);
+		egl_check("choosing EGL config");
 
-    eglMakeCurrent(display, surface, surface, context);
-    egl_check("making EGL context current");
+		context = eglCreateContext(display, config, EGL_NO_CONTEXT, context_attrs);
+		egl_check("creating EGL context");
+
+    	surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
+    	egl_check("creating EGL surface");
+
+
+    } else if (window != wminfo.window) {
+
+    	eglDestroySurface(display, surface);
+    	egl_check("destroying existing EGL surface")
+
+    	surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
+    	egl_check("creating EGL surface");
+
+    }
+
+	eglMakeCurrent(display, surface, surface, context);
+	egl_check("making EGL context current");
+
+	initialized = 1;
+	window = wminfo.window;
 
     return NULL;
 }
@@ -79,5 +99,5 @@ void egl_swap() {
 }
 
 void egl_quit() {
-	eglTerminate(display);
+	// Does nothing at the moment.
 }

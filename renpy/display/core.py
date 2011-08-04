@@ -1260,15 +1260,19 @@ class Interface(object):
         rv = [ draws.get(i, None) for i in dl ]
         return [ i for i in rv if i is not None ]
 
+    def kill_textures(self):
+        renpy.display.render.free_memory()
+        renpy.text.text.layout_cache_clear()
+
     def kill_textures_and_surfaces(self):
         """
         Kill all textures and surfaces that are loaded.
         """
+
+        self.kill_textures()
         
-        renpy.display.render.free_memory()
         renpy.display.im.cache.clear()
         renpy.display.module.bo_cache = None       
-        renpy.text.text.layout_cache_clear()
         
     def set_mode(self, physical_size=None):
         """

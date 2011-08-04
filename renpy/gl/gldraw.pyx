@@ -189,10 +189,10 @@ cdef class GLDraw:
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
-        if not ANGLE:
+        IF not ANGLE:
             # Should we use clipping planes or stencils?
-            self.use_clipping_planes = True
-        else:
+            self.use_clipping_planes = "RENPY_NO_CLIPPING_PLANES" not in os.environ
+        ELSE:
             self.use_clipping_planes = False
 
         # Should we always report pixels as being always opaque?
@@ -371,8 +371,7 @@ cdef class GLDraw:
         quit. Flushes out all the textures while it's at it.
         """
     
-        # This should get rid of all of the cached textures.
-        renpy.display.render.free_memory()
+        renpy.display.interface.kill_textures()
         
         self.texture_cache.clear()
 
@@ -660,11 +659,12 @@ cdef class GLDraw:
                 gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
 
         else:
-
+            
             if self.clip_rtt_box is None:
 
                 vwidth, vheight = self.virtual_size
                 px, py, pw, ph = self.physical_box
+                psw, psh = self.physical_size
 
                 minx = px + (minx / vwidth) * pw
                 maxx = px + (maxx / vwidth) * pw
@@ -672,8 +672,8 @@ cdef class GLDraw:
                 miny = py + (miny / vheight) * ph
                 maxy = py + (maxy / vheight) * ph
 
-                miny = ph - miny
-                maxy = ph - maxy
+                miny = psh - miny
+                maxy = psh - maxy
 
                 glEnable(GL_SCISSOR_TEST)
                 glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
@@ -683,8 +683,10 @@ cdef class GLDraw:
                 cx, cy, cw, ch = self.clip_rtt_box
 
                 glEnable(GL_SCISSOR_TEST)
+                                
+                # TODO: Improve the correctness of this.
                 glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
-
+                
             
     def draw_screen(self, surftree, fullscreen_video, flip=True):
         """
