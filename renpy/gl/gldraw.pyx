@@ -22,6 +22,7 @@
 
 DEF ANGLE = False
 
+from libc.stdlib cimport malloc, free
 from pygame cimport *
 from gl cimport *
 
@@ -1044,37 +1045,48 @@ cdef class GLDraw:
             False)
 
     def screenshot(self, surftree, fullscreen_video):
-        cdef unsigned char *pixels = NULL
+        cdef unsigned char *pixels
         cdef SDL_Surface *surf
 
+        cdef unsigned char *raw_pixels
+        cdef unsigned char *rpp
+        cdef int x, y, pitch
+
         # A surface the size of the framebuffer.
-        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)        
+        surf = PySurface_AsSurface(full)
 
-        if GL_PACK_ROW_LENGTH != 0:
+        # Create an array that can hold densely-packed pixels.
+        raw_pixels = <unsigned char *> malloc(surf.w * surf.h * 4)
+
+        # Draw the last screen to the back buffer.
+        if surftree is not None:
+            self.draw_screen(surftree, fullscreen_video, flip=False)
+            glFinish()
+
+        # Read the pixels.
+        glReadPixels(
+            0,
+            0,
+            surf.w,
+            surf.h,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            raw_pixels)
+
+        # Copy the pixels from raw_pixels to the surface. 
+        pixels = <unsigned char *> surf.pixels
+        pitch = surf.pitch
+        rpp = raw_pixels
+
+        for y from 0 <= y < surf.h:
+            for x from 0 <= x < (surf.w * 4):
+                pixels[x] = rpp[x]
             
-            # Use GL to read the full framebuffer in.
-            surf = PySurface_AsSurface(full)
-            pixels = <unsigned char *> surf.pixels
+            pixels += pitch
+            rpp += surf.w * 4
 
-            # Draw the last screen to the back buffer.
-            if surftree is not None:
-                self.draw_screen(surftree, fullscreen_video, flip=False)
-                glFinish()
-
-            glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
-
-            glReadPixels(
-                0,
-                0,
-                surf.w,
-                surf.h,
-                GL_RGBA,
-                GL_UNSIGNED_BYTE,
-                pixels)
-
-        else:
-
-            renpy.display.log.write("Could not take screenshot - GL_PACK_ROW_LENGTH is 0.")
+        free(raw_pixels)
 
         # Crop and flip it, since it's upside down.
         rv = full.subsurface(self.physical_box)
