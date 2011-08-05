@@ -95,28 +95,7 @@ PIXELLATE = renpy.display.render.PIXELLATE
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
-cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
-    """
-    Utility function that takes care of setting up an OpenGL clip plane.
-    """
-
-    cdef GLdouble equation[4]
-
-    if not ANGLE:
-    
-        equation[0] = a
-        equation[1] = b
-        equation[2] = c
-        equation[3] = d
-        glClipPlane(plane, equation)
         
-    else:
-        # Angle can't use this function.
-        pass
-        
-
-cdef int round(double d):
-    return <int> (d + .5)
     
 # A list of cards that cause system/software crashes. There's no
 # reason to put merely slow or incapable cards here, only ones for
@@ -188,12 +167,6 @@ cdef class GLDraw:
 
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
-
-        IF not ANGLE:
-            # Should we use clipping planes or stencils?
-            self.use_clipping_planes = "RENPY_NO_CLIPPING_PLANES" not in os.environ
-        ELSE:
-            self.use_clipping_planes = False
 
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android
@@ -348,13 +321,6 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        IF not ANGLE:
-            if self.use_clipping_planes:
-                glEnable(GL_CLIP_PLANE0)
-                glEnable(GL_CLIP_PLANE1)
-                glEnable(GL_CLIP_PLANE2)
-                glEnable(GL_CLIP_PLANE3)
-        
         # Prepare a mouse display.
         self.mouse_old_visible = None
 
@@ -427,7 +393,6 @@ cdef class GLDraw:
 
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
-            self.use_clipping_planes = False
             self.always_opaque = True
             gltexture.use_gles()
 
@@ -470,13 +435,6 @@ cdef class GLDraw:
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &texture_units)
 
         renpy.display.log.write("Number of texture units: %d", texture_units)
-
-        # Count the number of clip planes.
-        cdef GLint clip_planes = 0
-        
-        IF not ANGLE:
-            glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
-            renpy.display.log.write("Number of clipping planes: %d", clip_planes)
 
         # Pick a texture environment subsystem.
         
@@ -622,8 +580,10 @@ cdef class GLDraw:
 
         self.clip_cache = None
         self.clip_rtt_box = None
-        glDisable(GL_SCISSOR_TEST)
         
+        self.environ.unset_clip(self)
+
+    # private        
     def clip_mode_rtt(self, x, y, w, h):
         """
         The same thing, except the screen is projected in RTT mode.
@@ -631,61 +591,18 @@ cdef class GLDraw:
 
         self.clip_cache = None
         self.clip_rtt_box = (x, y, w, h)
-        glDisable(GL_SCISSOR_TEST)
 
+        self.environ.unset_clip(self)
         
     # private
     cpdef set_clip(GLDraw self, tuple clip):
-
-        cdef double minx, miny, maxx, maxy
-        cdef double vwidth, vheight
-        cdef double px, py, pw, ph
-        cdef int cx, cy, cw, ch
         
         if self.clip_cache == clip:
             return
 
         self.clip_cache = clip
 
-        minx, miny, maxx, maxy = clip
-
-        if self.use_clipping_planes:
-        
-            IF not ANGLE:
-            
-                gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
-                gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
-                gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
-                gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
-
-        else:
-            
-            if self.clip_rtt_box is None:
-
-                vwidth, vheight = self.virtual_size
-                px, py, pw, ph = self.physical_box
-                psw, psh = self.physical_size
-
-                minx = px + (minx / vwidth) * pw
-                maxx = px + (maxx / vwidth) * pw
-
-                miny = py + (miny / vheight) * ph
-                maxy = py + (maxy / vheight) * ph
-
-                miny = psh - miny
-                maxy = psh - maxy
-
-                glEnable(GL_SCISSOR_TEST)
-                glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
-
-            else:
-
-                cx, cy, cw, ch = self.clip_rtt_box
-
-                glEnable(GL_SCISSOR_TEST)
-                                
-                # TODO: Improve the correctness of this.
-                glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
+        self.environ.set_clip(clip, self)
                 
             
     def draw_screen(self, surftree, fullscreen_video, flip=True):
@@ -1043,7 +960,7 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt)
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         what.half_cache = rv
 

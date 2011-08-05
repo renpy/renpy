@@ -23,6 +23,22 @@
 from gl cimport *
 from glenviron import NONE, BLIT, BLEND, IMAGEBLEND
 from glenviron cimport Environ
+from glenviron cimport GLDraw
+
+
+cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
+    """
+    Utility function that takes care of setting up an OpenGL clip plane.
+    """
+
+    cdef GLdouble equation[4]
+    
+    equation[0] = a
+    equation[1] = b
+    equation[2] = c
+    equation[3] = d
+    glEnable(plane)
+    glClipPlane(plane, equation)
 
 cdef class FixedFunctionEnviron(Environ):
     """
@@ -307,3 +323,21 @@ cdef class FixedFunctionEnviron(Environ):
         glLoadIdentity()
         glOrtho(left, right, bottom, top, near, far)
         glMatrixMode(GL_MODELVIEW)
+
+    def set_clip(self, tuple clip_box, GLDraw draw):
+        
+        cdef double minx, miny, maxx, maxy
+
+        minx, miny, maxx, maxy = clip_box
+
+        gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
+        gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
+        gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
+        gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
+  
+    def unset_clip(self, GLDraw draw):
+        glDisable(GL_CLIP_PLANE0)
+        glDisable(GL_CLIP_PLANE1)
+        glDisable(GL_CLIP_PLANE2)
+        glDisable(GL_CLIP_PLANE3)
+        

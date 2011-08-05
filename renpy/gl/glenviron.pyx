@@ -73,6 +73,9 @@ cdef class Environ(object):
     cdef void set_color(self, float r, float g, float b, float a):
         return
 
+    def set_clip(self, tuple clip_box, GLDraw draw):
+        return
+
 class Rtt(object):
     """
     Subclasses of this class handle rendering to a texture.

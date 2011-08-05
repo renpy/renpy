@@ -25,6 +25,9 @@ DEF ANGLE = False
 from gl cimport *
 from glenviron cimport *
 
+cdef int round(double d):
+    return <int> (d + .5)
+
 VERTEX_SHADER = """\
 uniform mat4 Projection;
 
@@ -37,20 +40,14 @@ varying vec2 TexCoord0;
 varying vec2 TexCoord1;
 varying vec2 TexCoord2;
 
+varying vec2 pos;
+
 void main() {
     TexCoord0 = VertexTexCoord0;
     TexCoord1 = VertexTexCoord1;
     TexCoord2 = VertexTexCoord2;
-"""
 
-IF not ANGLE:    
-    VERTEX_SHADER += """\
-        gl_ClipVertex = Vertex;
-    """
-ELSE:
-    print "Using ANGLE!"
-
-VERTEX_SHADER += """\
+    pos = Vertex;
     gl_Position = Projection * Vertex;
 }
 """
@@ -64,9 +61,17 @@ uniform vec4 Color;
 uniform sampler2D tex0;
 
 varying vec2 TexCoord0;
+
+varying vec2 pos;
+uniform vec2 clip0;
+uniform vec2 clip1;
         
 void main()
 {
+    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
+        discard;
+    }
+
     vec4 color0 = texture2D(tex0, TexCoord0.st);
     gl_FragColor = color0 * Color;
 }
@@ -84,9 +89,17 @@ uniform float done;
 
 varying vec2 TexCoord0;
 varying vec2 TexCoord1;
-        
+
+varying vec2 pos;
+uniform vec2 clip0;
+uniform vec2 clip1;
+
 void main()
 {
+    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
+        discard;
+    }
+
     vec4 color0 = texture2D(tex0, TexCoord0.st);
     vec4 color1 = texture2D(tex1, TexCoord1.st);
 
@@ -110,8 +123,16 @@ varying vec2 TexCoord0;
 varying vec2 TexCoord1;
 varying vec2 TexCoord2;
 
+varying vec2 pos;
+uniform vec2 clip0;
+uniform vec2 clip1;
+
 void main()
 {
+    if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
+        discard;
+    }
+
     vec4 color0 = texture2D(tex0, TexCoord0.st);
     vec4 color1 = texture2D(tex1, TexCoord1.st);
     vec4 color2 = texture2D(tex2, TexCoord2.st);
@@ -211,7 +232,6 @@ cdef class Program(object):
     cdef GLint VertexTexCoord1
     cdef GLint VertexTexCoord2
     
-    
     # Uniforms.
     cdef GLint Projection
     cdef GLint Color    
@@ -219,6 +239,9 @@ cdef class Program(object):
     cdef GLint tex0
     cdef GLint tex1
     cdef GLint tex2
+    
+    cdef GLint clip0
+    cdef GLint clip1
     
     cdef GLint offset
     cdef GLint multiplier
@@ -241,6 +264,8 @@ cdef class Program(object):
         self.multiplier = glGetUniformLocationARB(self.program, "multiplier")
         self.done = glGetUniformLocationARB(self.program, "done")
         self.Color = glGetUniformLocationARB(self.program, "Color")
+        self.clip0 = glGetUniformLocationARB(self.program, "clip0")
+        self.clip1 = glGetUniformLocationARB(self.program, "clip1")
 
     def delete(self):
         glDeleteProgram(self.program)
@@ -257,6 +282,11 @@ cdef class ShaderEnviron(Environ):
     cdef Program blit_program
     cdef Program blend_program
     cdef Program imageblend_program
+
+    cdef double clip_x0
+    cdef double clip_y0
+    cdef double clip_x1
+    cdef double clip_y1
 
     def init(self):
 
@@ -281,6 +311,8 @@ cdef class ShaderEnviron(Environ):
 
         glUseProgramObjectARB(program.program)
         glUniformMatrix4fvARB(program.Projection, 1, GL_FALSE, self.projection)
+        glUniform2fARB(program.clip0, self.clip_x0, self.clip_y0)
+        glUniform2fARB(program.clip1, self.clip_x1, self.clip_y1)
 
     def blit(self):
 
@@ -374,4 +406,74 @@ cdef class ShaderEnviron(Environ):
         self.projection[15] = 1
         
         self.program = None
+        
+    def set_clip(self, tuple clip_box, GLDraw draw):
+        
+        cdef double minx, miny, maxx, maxy
+        cdef double vwidth, vheight
+        cdef double px, py, pw, ph
+        cdef int cx, cy, cw, ch
+        cdef int psw, psh
+        
+        minx, miny, maxx, maxy = clip_box
+        psw, psh = draw.physical_size
+      
+        # The clipping box.  
+        self.clip_x0 = minx
+        self.clip_y0 = miny
+        self.clip_x1 = maxx
+        self.clip_y1 = maxy 
+        
+        # Set the scissor rectangle to be slightly larger than the 
+        # clipping box. This ensures everything that needs to be drawn
+        # is drawn, and we don't spend a lot of time shading clipped 
+        # fragments.
+        
+        if draw.clip_rtt_box is None:
             
+            vwidth, vheight = draw.virtual_size
+            px, py, pw, ph = draw.physical_box
+
+            minx = px + (minx / vwidth) * pw
+            maxx = px + (maxx / vwidth) * pw
+
+            miny = py + (miny / vheight) * ph
+            maxy = py + (maxy / vheight) * ph
+
+            miny = psh - miny
+            maxy = psh - maxy
+
+            # Increase the bounding box, to ensure every relevant pixel is 
+            # in it. The shader will take care of enforcing the actual box.
+            minx -= 1
+            maxx += 1            
+            miny += 1
+            maxy -= 1
+
+            glEnable(GL_SCISSOR_TEST)
+            glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
+
+        else:
+
+            cx, cy, cw, ch = draw.clip_rtt_box
+
+            glEnable(GL_SCISSOR_TEST)                            
+            glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
+
+        self.program = None
+  
+    def unset_clip(self, GLDraw draw):
+        
+        cdef int psw, psh
+        psw, psh = draw.physical_size
+
+        glDisable(GL_SCISSOR_TEST)
+        
+        self.clip_x0 = 0
+        self.clip_y0 = 0
+        self.clip_x1 = 0
+        self.clip_x1 = 0
+        
+        self.program = None
+        
+        

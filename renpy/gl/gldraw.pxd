@@ -8,8 +8,8 @@ cdef class GLDraw:
     cdef object window
     cdef tuple virtual_size
     cdef public tuple physical_size
-    cdef tuple virtual_box
-    cdef tuple physical_box
+    cdef public tuple virtual_box
+    cdef public tuple physical_box
     cdef object mouse_old_visible
     cdef object mouse_info
     cdef object texture_cache
@@ -22,10 +22,9 @@ cdef class GLDraw:
     cdef double upscale_factor
     cdef tuple clip_cache
     cdef bint fast_dissolve
-    cdef bint use_clipping_planes
     cdef bint always_opaque
         
-    cdef tuple clip_rtt_box
+    cdef public tuple clip_rtt_box
     
     cpdef set_clip(GLDraw self, tuple clip)
 
@@ -42,5 +41,4 @@ cdef class GLDraw:
         double yo,
         double alpha,
         render.Matrix2D reverse)
-
     

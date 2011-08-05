@@ -22,8 +22,12 @@
 
 from gl cimport *
 from glenviron cimport Environ
+from glenviron cimport GLDraw
 from glenviron import NONE, BLIT, BLEND, IMAGEBLEND
 import renpy
+
+cdef int round(double d):
+    return <int> (d + .5)
 
 cdef class LimitedEnviron(Environ):
     """
@@ -183,3 +187,41 @@ cdef class LimitedEnviron(Environ):
         glOrtho(left, right, bottom, top, near, far)
         glMatrixMode(GL_MODELVIEW)
 
+    def set_clip(self, tuple clip_box, GLDraw draw):
+        
+        cdef double minx, miny, maxx, maxy
+        cdef double vwidth, vheight
+        cdef double px, py, pw, ph
+        cdef int cx, cy, cw, ch
+        cdef int psw, psh
+        
+        minx, miny, maxx, maxy = clip_box
+        psw, psh = draw.physical_size
+        
+        if draw.clip_rtt_box is None:
+            
+            vwidth, vheight = draw.virtual_size
+            px, py, pw, ph = draw.physical_box
+
+            minx = px + (minx / vwidth) * pw
+            maxx = px + (maxx / vwidth) * pw
+
+            miny = py + (miny / vheight) * ph
+            maxy = py + (maxy / vheight) * ph
+
+            miny = psh - miny
+            maxy = psh - maxy
+
+            glEnable(GL_SCISSOR_TEST)
+            glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
+
+        else:
+
+            cx, cy, cw, ch = draw.clip_rtt_box
+
+            glEnable(GL_SCISSOR_TEST)                            
+            glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
+  
+    def unset_clip(self, GLDraw draw):
+        glDisable(GL_SCISSOR_TEST)
+        
