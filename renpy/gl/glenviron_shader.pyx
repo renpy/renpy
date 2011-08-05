@@ -47,7 +47,7 @@ void main() {
     TexCoord1 = VertexTexCoord1;
     TexCoord2 = VertexTexCoord2;
 
-    pos = Vertex;
+    pos = Vertex.xy;
     gl_Position = Projection * Vertex;
 }
 """
@@ -186,7 +186,7 @@ def compile_shader(kind, source):
     cdef int lensource = len(source)
     
     handle = glCreateShaderObjectARB(kind)
-    glShaderSourceARB(handle, 1, <GLchar **> &sourceptr, &lensource)
+    glShaderSourceARB(handle, 1, <GLcharARB **> &sourceptr, &lensource)
     glCompileShaderARB(handle)
 
     check_status(True, handle, GL_OBJECT_COMPILE_STATUS_ARB)

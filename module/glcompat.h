@@ -58,6 +58,7 @@
 #include <GLES2/gl2.h>
 
 typedef GLuint GLhandleARB;
+typedef GLchar GLcharARB;
 
 #define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
@@ -87,6 +88,7 @@ typedef GLuint GLhandleARB;
 #define glUniformMatrix4fvARB glUniformMatrix4fv
 #define glUniform1iARB glUniform1i
 #define glUniform1fARB glUniform1f
+#define glUniform2fARB glUniform2f
 #define glUniform4fARB glUniform4f
 #define glVertexAttribPointerARB glVertexAttribPointer
 #define glEnableVertexAttribArrayARB glEnableVertexAttribArray
