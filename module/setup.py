@@ -103,7 +103,6 @@ cython("renpy.gl.glenviron", libs=glew_libs)
 if not android:
     cython("renpy.gl.glenviron_fixed", libs=glew_libs)
     cython("renpy.gl.glenviron_shader", libs=glew_libs)
-    cython("renpy.gl.glshader", libs=glew_libs)
 
 cython("renpy.gl.glenviron_limited", libs=glew_libs)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
@@ -152,6 +151,8 @@ sys.path.append('..')
 import renpy
 
 setuplib.setup("Ren'Py", renpy.version[7:])
+
+warnings = False
 
 print
 print "Fribidi:", has_fribidi
