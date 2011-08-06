@@ -53,8 +53,11 @@ first_utter_start = True
 def setup_modulefinder(modulefinder):
     import _renpy #@UnresolvedImport
     libexec = os.path.dirname(_renpy.__file__)
-    displaypath = os.path.join(libexec, "renpy", "display")
-    modulefinder.AddPackagePath('renpy.display', displaypath)
+
+    for i in [ "display", "gl", "angle", "text" ]:
+    
+        displaypath = os.path.join(libexec, "renpy", i)
+        modulefinder.AddPackagePath('renpy.' + i, displaypath)
 
 def import_cython():
     """

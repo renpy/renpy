@@ -1256,7 +1256,7 @@ class Interface(object):
         
         default = renpy.display.prefer_renderers        
         dl = os.environ.get("RENPY_RENDERER", default).split(",")
-
+        
         rv = [ draws.get(i, None) for i in dl ]
         return [ i for i in rv if i is not None ]
 
