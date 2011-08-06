@@ -50,7 +50,7 @@ cdef extern from "glcompat.h":
 IF ANGLE:
 
     cdef extern:
-        char *egl_init()
+        char *egl_init(int)
         void egl_swap()
         void egl_quit()
 
@@ -210,13 +210,12 @@ cdef class GLDraw:
         pheight = max(pheight, 256)
 
         # Handle swap control.
-
+        vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
 
         # Switch the 
         IF not ANGLE:
             opengl = pygame.OPENGL
-            vsync = os.environ.get("RENPY_GL_VSYNC", "1")
-            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
+            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
         ELSE:
@@ -241,7 +240,7 @@ cdef class GLDraw:
             # This ensures the display is shown.
             pygame.display.flip()
         
-            egl_error = egl_init()
+            egl_error = egl_init(vsync)
             
             if egl_error is not NULL:
                 renpy.display.log.write("Initializing EGL: %s" % egl_error)

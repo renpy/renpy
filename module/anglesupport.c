@@ -35,7 +35,7 @@ char *egl_error(char *where) {
 /* Sets up an OpenGL ES 2 context. Returnes NULL if it succeeds, or
  * an error message on failure.
  */
-char *egl_init() {
+char *egl_init(int interval) {
     SDL_SysWMinfo wminfo;
     EGLint major, minor;
     EGLint num_config;
@@ -87,6 +87,9 @@ char *egl_init() {
 
 	eglMakeCurrent(display, surface, surface, context);
 	egl_check("making EGL context current");
+
+    eglSwapInterval(display, interval);
+    egl_check("setting swap interval")
 
 	initialized = 1;
 	window = wminfo.window;
