@@ -1,10 +1,12 @@
 cimport renpy.display.render as render
 
+cdef class Environ
+
 cdef class GLDraw:
 
     cdef bint did_init
-    cdef object environ
-    cdef object rtt
+    cdef Environ environ
+    cdef public object rtt
     cdef object window
     cdef tuple virtual_size
     cdef public tuple physical_size
@@ -41,4 +43,15 @@ cdef class GLDraw:
         double yo,
         double alpha,
         render.Matrix2D reverse)
+    
+cdef class Environ:
+    cdef void blit(self)
+    cdef void blend(self, double fraction)
+    cdef void imageblend(self, double fraction, int ramp)
+    cdef void set_vertex(self, float *vertices)
+    cdef void set_texture(self, int unit, float *coords)
+    cdef void set_color(self, float r, float g, float b, float a)
+    cdef void set_clip(self, tuple clip_box, GLDraw draw)
+    cdef void unset_clip(self, GLDraw draw)
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far)
     

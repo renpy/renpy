@@ -21,7 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from glenviron import *
+from gldraw cimport *
+from gldraw import Rtt
 
 class CopyRtt(Rtt):
     """
@@ -34,7 +35,7 @@ class CopyRtt(Rtt):
     def deinit(self):
         return
 
-    def render(self, environ, texture, x, y, w, h, draw_func):
+    def render(self, Environ environ, texture, x, y, w, h, draw_func):
         """
         This function is called to trigger a rendering to a texture.
         `x`, `y`, `w`, and `h` specify the location and dimensions of

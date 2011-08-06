@@ -21,10 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from glenviron import NONE, BLIT, BLEND, IMAGEBLEND
-from glenviron cimport Environ
-from glenviron cimport GLDraw
+from gldraw cimport *
 
+NONE = 0
+BLIT = 1
+BLEND = 2
+IMAGEBLEND = 3
 
 cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
     """
@@ -49,8 +51,8 @@ cdef class FixedFunctionEnviron(Environ):
     """
 
     cdef object last
-    cdef object last_ramp
-    cdef object last_ramplen
+    cdef int last_ramp
+    cdef int last_ramplen
     cdef object ramp_setup
 
     def init(self):
@@ -97,6 +99,7 @@ cdef class FixedFunctionEnviron(Environ):
         glActiveTextureARB(unit)
         glDisable(GL_TEXTURE_2D)
         
+    # As this takes keyword arguments, it can't be a cdef function.
     def combine_mode(self, unit,
                      color_function=GL_MODULATE,
                      color_arg0=GL_TEXTURE,
@@ -146,7 +149,7 @@ cdef class FixedFunctionEnviron(Environ):
         glTexEnvf(GL_TEXTURE_ENV, GL_ALPHA_SCALE, alpha_scale)
 
         
-    def blit(self):
+    cdef void blit(self):
 
         if self.last != BLIT:
 
@@ -164,7 +167,7 @@ cdef class FixedFunctionEnviron(Environ):
             
             self.last = BLIT
         
-    def blend(self, fraction):
+    cdef void blend(self, double fraction):
 
         if self.last != BLEND:
 
@@ -206,7 +209,7 @@ cdef class FixedFunctionEnviron(Environ):
 
         
         
-    def imageblend(self, fraction, ramp):
+    cdef void imageblend(self, double fraction, int ramp):
 
         if self.last != IMAGEBLEND or self.last_ramp != ramp:
 
@@ -317,14 +320,14 @@ cdef class FixedFunctionEnviron(Environ):
     cdef void set_color(self, float r, float g, float b, float a):
         glColor4f(r, g, b, a)
     
-    def ortho(self, left, right, bottom, top, near, far):
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(left, right, bottom, top, near, far)
         glMatrixMode(GL_MODELVIEW)
 
-    def set_clip(self, tuple clip_box, GLDraw draw):
+    cdef void set_clip(self, tuple clip_box, GLDraw draw):
         
         cdef double minx, miny, maxx, maxy
 
@@ -335,7 +338,7 @@ cdef class FixedFunctionEnviron(Environ):
         gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
         gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
   
-    def unset_clip(self, GLDraw draw):
+    cdef void unset_clip(self, GLDraw draw):
         glDisable(GL_CLIP_PLANE0)
         glDisable(GL_CLIP_PLANE1)
         glDisable(GL_CLIP_PLANE2)

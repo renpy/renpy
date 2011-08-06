@@ -21,10 +21,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from glenviron cimport Environ
-from glenviron cimport GLDraw
-from glenviron import NONE, BLIT, BLEND, IMAGEBLEND
+from gldraw cimport *
 import renpy
+
+NONE = 0
+BLIT = 1
+BLEND = 2
+IMAGEBLEND = 3
 
 cdef int round(double d):
     return <int> (d + .5)
@@ -114,7 +117,7 @@ cdef class LimitedEnviron(Environ):
         glTexEnvf(GL_TEXTURE_ENV, GL_ALPHA_SCALE, alpha_scale)
 
         
-    def blit(self):
+    cdef void blit(self):
 
         if self.last != BLIT:
 
@@ -130,7 +133,7 @@ cdef class LimitedEnviron(Environ):
             
             self.last = BLIT
         
-    def blend(self, fraction):
+    cdef void blend(self, double fraction):
 
         if self.last != BLEND:
 
@@ -152,7 +155,7 @@ cdef class LimitedEnviron(Environ):
         glActiveTextureARB(GL_TEXTURE1)
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, fractions)
                 
-    def imageblend(self, fraction, ramp):
+    cdef void imageblend(self, double fraction, int ramp):
         # Imageblend doesn't work on GLES.
         pass
 
@@ -180,14 +183,14 @@ cdef class LimitedEnviron(Environ):
         glColor4f(r, g, b, a)
     
             
-    def ortho(self, left, right, bottom, top, near, far):
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(left, right, bottom, top, near, far)
         glMatrixMode(GL_MODELVIEW)
 
-    def set_clip(self, tuple clip_box, GLDraw draw):
+    cdef void set_clip(self, tuple clip_box, GLDraw draw):
         
         cdef double minx, miny, maxx, maxy
         cdef double vwidth, vheight
@@ -222,6 +225,6 @@ cdef class LimitedEnviron(Environ):
             glEnable(GL_SCISSOR_TEST)                            
             glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
   
-    def unset_clip(self, GLDraw draw):
+    cdef void unset_clip(self, GLDraw draw):
         glDisable(GL_SCISSOR_TEST)
         

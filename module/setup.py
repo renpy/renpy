@@ -94,16 +94,12 @@ if android:
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
 else:
-    glew_libs = [ 'glew32', "opengl32" ]
+    glew_libs = [ 'glew32', 'opengl32' ]
 
 cython("renpy.gl.gldraw", libs=glew_libs )
 cython("renpy.gl.gltexture", libs=glew_libs)
-cython("renpy.gl.glenviron", libs=glew_libs)
-
-if not android:
-    cython("renpy.gl.glenviron_fixed", libs=glew_libs)
-    cython("renpy.gl.glenviron_shader", libs=glew_libs)
-
+cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
+cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not android)
 cython("renpy.gl.glenviron_limited", libs=glew_libs)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
@@ -114,15 +110,12 @@ def anglecopy(fn):
     
 anglecopy("gldraw.pxd")
 anglecopy("gldraw.pyx")
-anglecopy("glenviron.pxd")
-anglecopy("glenviron.pyx")
 anglecopy("glenviron_shader.pyx")
 anglecopy("gl.pxd")
 anglecopy("glrtt_fbo.pyx")
 anglecopy("glrtt_copy.pyx")
 anglecopy("gltexture.pxd")
 anglecopy("gltexture.pyx")
-anglecopy("__init__.py")
 
 angle_libs = [ "SDL", "EGL", "GLESv2" ]
 
@@ -131,7 +124,6 @@ def anglecython(name, source=[]):
 
 anglecython("renpy.angle.gldraw", source=[ "anglesupport.c" ])
 anglecython("renpy.angle.gltexture")
-anglecython("renpy.angle.glenviron")
 anglecython("renpy.angle.glenviron_shader")
 anglecython("renpy.angle.glrtt_fbo")
 anglecython("renpy.angle.glrtt_copy")

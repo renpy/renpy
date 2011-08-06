@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from glenviron cimport *
+from gldraw cimport *
 from pygame cimport *
 from cpython.string cimport PyString_FromStringAndSize
 
@@ -1035,9 +1035,9 @@ cdef void draw_rectangle(
     cdef int has_tex0, has_tex1, has_tex2
 
     # Texture coordinates.
-    cdef double t0u0, t0v0, t0u1, t0v1
-    cdef double t1u0, t1v0, t1u1, t1v1
-    cdef double t2u0, t2v0, t2u1, t2v1    
+    cdef double t0u0 = 0, t0v0 = 0, t0u1 = 0, t0v1 = 0
+    cdef double t1u0 = 0, t1v0 = 0, t1u1 = 0, t1v1 = 0
+    cdef double t2u0 = 0, t2v0 = 0, t2u1 = 0, t2v1 = 0    
     
     # Pull apart the transform.
     cdef double xdx = transform.xdx

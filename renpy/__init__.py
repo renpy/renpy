@@ -63,19 +63,21 @@ def import_cython():
     """
 
     import renpy.display.accelerator #@UnresolvedImport
-    import renpy.display.gldraw #@UnresolvedImport
-    import renpy.display.glenviron #@UnresolvedImport
-    import renpy.display.glenviron_fixed #@UnresolvedImport
-    import renpy.display.glenviron_limited #@UnresolvedImport
-    import renpy.display.glenviron_shader #@UnresolvedImport
-    import renpy.display.glrtt_copy #@UnresolvedImport
-    import renpy.display.glrtt_fbo #@UnresolvedImport
-    import renpy.display.glshader #@UnresolvedImport
-    import renpy.display.gltexture #@UnresolvedImport
     import renpy.display.render #@UnresolvedImport
 
-    # Prevent a pyflakes warning.
-    renpy
+    import renpy.gl.gldraw #@UnresolvedImport
+    import renpy.gl.glenviron_fixed #@UnresolvedImport
+    import renpy.gl.glenviron_limited #@UnresolvedImport
+    import renpy.gl.glenviron_shader #@UnresolvedImport
+    import renpy.gl.glrtt_copy #@UnresolvedImport
+    import renpy.gl.glrtt_fbo #@UnresolvedImport
+    import renpy.gl.gltexture #@UnresolvedImport
+
+    import renpy.angle.gldraw #@UnresolvedImport
+    import renpy.angle.glenviron_shader #@UnresolvedImport
+    import renpy.angle.glrtt_copy #@UnresolvedImport
+    import renpy.angle.glrtt_fbo #@UnresolvedImport
+    import renpy.angle.gltexture #@UnresolvedImport
     
     
 def import_all():
@@ -146,10 +148,10 @@ def import_all():
     
     sys.modules['renpy.display.text'] = renpy.text.text
     
-    import renpy.gl
+    import renpy.gl #@UnresolvedImport
     update_path(renpy.gl)
     
-    import renpy.angle
+    import renpy.angle #@UnresolvedImport
     update_path(renpy.angle)
     
     import renpy.display.layout # core @UnresolvedImport

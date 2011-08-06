@@ -35,32 +35,8 @@ import array
 import time
 
 cimport renpy.display.render as render
-
 cimport gltexture
 import gltexture
-import glenviron
-import glrtt_copy
-
-try:
-    import glenviron_fixed
-except ImportError:
-    glenviron_fixed = None
-
-try:
-    import glenviron_shader
-except ImportError:
-    raise
-    glenviron_shader = None
-
-try:
-    import glenviron_limited
-except ImportError:
-    glenviron_limited = None
-
-try:
-    import glrtt_fbo
-except ImportError:
-    glrtt_fbo = None
 
 
 cdef extern from "glcompat.h":
@@ -1103,3 +1079,115 @@ cdef class GLDraw:
         
     def get_physical_size(self):
         return self.physical_size
+
+
+class Rtt(object):
+    """
+    Subclasses of this class handle rendering to a texture.
+    """
+
+    def init(self):
+        return
+
+    def deinit(self):
+        return
+
+    def render(self, texture, x, y, w, h, draw_func):
+        """
+        This function is called to trigger a rendering to a texture.
+        `x`, `y`, `w`, and `h` specify the location and dimensions of
+        the sub-image to render to the texture. `draw_func` is called
+        to render the texture.
+        """
+
+        raise Exception("Not implemented.")
+
+    def get_size_limit(self, dimension):
+        """
+        Get the maximum size of a texture.
+        """
+        
+        raise Exception("Not implemented.")
+
+    
+cdef class Environ(object):
+
+    cdef void blit(self):
+        """
+        Set up a normal blit environment. The texture to be blitted should
+        be TEXTURE0.
+        """
+
+    cdef void blend(self, double fraction):
+        """
+        Set up an environment that blends from TEXTURE0 to TEXTURE1.
+
+        `fraction` is the fraction of the blend complete.
+        """
+
+    cdef void imageblend(self, double fraction, int ramp):
+        """
+        Setup an environment that does an imageblend from TEXTURE1 to TEXTURE2.
+        The controlling image is TEXTURE0.
+
+        `fraction` is the fraction of the blend complete.
+        `ramp` is the length of the ramp.
+        """
+
+    cdef void set_vertex(self, float *vertices):
+        """
+        Sets the array of vertices to be shown. Vertices should be an packed
+        array of 2`n` floats. 
+        """
+     
+    cdef void set_texture(self, int unit, float *coords):
+        """
+        Sets the array of texture coordinates for unit `unit`.
+        """
+    
+    cdef void set_color(self, float r, float g, float b, float a):
+        """
+        Sets the color to be shown.
+        """
+
+    cdef void set_clip(self, tuple clip_box, GLDraw draw):
+        """
+        Sets the clipping rectangle.
+        """
+        
+    cdef void unset_clip(self, GLDraw draw):
+        """
+        Removes the clipping rectangle.
+        """
+
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
+        """
+        Enables orthographic projection. `left`, `right`, `top`, `bottom` are the coordinates of the various
+        sides of the viewport. `top` and `bottom` are the depth limits.
+        """
+
+# These imports need to be down at the bottom, after the Rtt and Environ 
+# classes have been created.
+import glrtt_copy
+
+try:
+    import glrtt_fbo
+except ImportError:
+    glrtt_fbo = None
+
+try:
+    import glenviron_fixed
+except ImportError:
+    glenviron_fixed = None
+
+try:
+    import glenviron_shader
+except ImportError:
+    raise
+    glenviron_shader = None
+
+try:
+    import glenviron_limited
+except ImportError:
+    glenviron_limited = None
+

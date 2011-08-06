@@ -1,5 +1,5 @@
 cimport renpy.display.render as render
-from glenviron cimport Environ
+from gldraw cimport Environ
 
 cdef class TextureCore:
     cdef public int width

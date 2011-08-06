@@ -23,7 +23,7 @@
 DEF ANGLE = False
 
 from gl cimport *
-from glenviron cimport *
+from gldraw cimport *
 
 cdef int round(double d):
     return <int> (d + .5)
@@ -314,7 +314,7 @@ cdef class ShaderEnviron(Environ):
         glUniform2fARB(program.clip0, self.clip_x0, self.clip_y0)
         glUniform2fARB(program.clip1, self.clip_x1, self.clip_y1)
 
-    def blit(self):
+    cdef void blit(self):
 
         program = self.blit_program
 
@@ -322,7 +322,7 @@ cdef class ShaderEnviron(Environ):
             self.activate(program)
             glUniform1iARB(program.tex0, 0)
         
-    def blend(self, fraction):
+    cdef void blend(self, double fraction):
         program = self.blend_program
 
         if self.program is not program:
@@ -332,7 +332,7 @@ cdef class ShaderEnviron(Environ):
 
         glUniform1fARB(program.done, fraction)
         
-    def imageblend(self, fraction, ramp):
+    cdef void imageblend(self, double fraction, int ramp):
 
         program = self.imageblend_program
 
@@ -383,7 +383,7 @@ cdef class ShaderEnviron(Environ):
     cdef void set_color(self, float r, float g, float b, float a):
         glUniform4fARB(self.program.Color, r, g, b, a)
             
-    def ortho(self, float left, float right, float bottom, float top, float near, float far):
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
         
         self.projection[ 0] = 2 / (right - left)
         self.projection[ 4] = 0
@@ -407,7 +407,7 @@ cdef class ShaderEnviron(Environ):
         
         self.program = None
         
-    def set_clip(self, tuple clip_box, GLDraw draw):
+    cdef void set_clip(self, tuple clip_box, GLDraw draw):
         
         cdef double minx, miny, maxx, maxy
         cdef double vwidth, vheight
@@ -462,7 +462,7 @@ cdef class ShaderEnviron(Environ):
 
         self.program = None
   
-    def unset_clip(self, GLDraw draw):
+    cdef void unset_clip(self, GLDraw draw):
         
         cdef int psw, psh
         psw, psh = draw.physical_size
