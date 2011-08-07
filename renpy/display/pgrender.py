@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This module wraps the pygame surface class (and associated functions).
+# This module wraps the pygame surface class (and associated functions). It 
+# ensures that returned surfaces have a 2px border around them.
 
 import sys
 import pygame
@@ -115,8 +116,6 @@ class Surface(opygame.Surface):
     def subsurface(self, rect):
         rv = opygame.Surface.subsurface(self, rect)
         return rv
-
-    
 
 def surface((width, height), alpha):
     """

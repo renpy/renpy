@@ -112,7 +112,7 @@ init -1024:
                 
             null height 10
 
-            text _("The graphics drivers are not operating correctly. This may lead to slow or incorrect graphics display. {a=[url]}Learn how to fix graphics problems.{/a}") substitute True
+            text _("Its graphics drivers may be out of date or not operating correctly. This may lead to slow or incorrect graphics display. {a=[url]}Learn how to fix graphics problems.{/a}") substitute True
             
             null height 10
             

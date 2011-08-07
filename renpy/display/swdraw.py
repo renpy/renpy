@@ -24,6 +24,7 @@ import pygame
 import math
 import weakref
 import time
+import os
 
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE
 
@@ -615,7 +616,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
 
 
-def do_draw_screen(screen_render, full_redraw):
+def do_draw_screen(screen_render, full_redraw, swdraw):
     """
     Draws the render produced by render_screen to the screen.
     """
@@ -636,7 +637,7 @@ def do_draw_screen(screen_render, full_redraw):
 
     x, y, _w, _h = cliprect
 
-    dest = pygame.display.get_surface().subsurface(cliprect)
+    dest = swdraw.window.subsurface(cliprect)
     draw(dest, None, screen_render, -x, -y, True)
 
     return updates
@@ -679,6 +680,19 @@ class SWDraw(object):
         
         self.display_info = pygame.display.Info()
 
+        # The scale factor we use for this display.
+        self.scale_factor = 1.0
+        
+        # Should we scale fast, or scale good-looking?
+        self.scale_fast = "RENPY_SCALE_FAST" in os.environ
+        
+        # The screen returned to us from pygame.
+        self.screen = None
+        
+        # The window that we render into, if not the screen. This has a 
+        # 1px border around it iff we're scaling.
+        self.window = None
+        
         
         
     def set_mode(self, virtual_size, physical_size, fullscreen):
@@ -697,16 +711,9 @@ class SWDraw(object):
             screen_width -= 102
 
         scale_factor = min(1.0 * screen_width / width, 1.0 * screen_height / height, 1.0)
-
-        # Pick an even scale factor, which seems to help w/ visual artifacts.)
-        for i in range(100, 45, -5):
-            i /= 100.0
-            
-            if scale_factor >= i:
-                scale_factor = i
-                break
-        
-        renpy.display.scale.init(scale_factor)        
+        if "RENPY_SCALE_FACTOR" in os.environ:
+            scale_factor = float(os.environ["RENPY_SCALE_FACTOR"])
+        self.scale_factor = scale_factor
 
         # Figure out the fullscreen info.
         if fullscreen:
@@ -716,25 +723,33 @@ class SWDraw(object):
               
         # If a window exists of the right size and flags, use it. Otherwise,
         # make our own window.
-        old_window = pygame.display.get_surface()
+        old_screen = pygame.display.get_surface()
 
-        if ((old_window is not None) and 
-            (old_window.get_size() == (width, height)) and
-            (old_window.get_flags() & pygame.FULLSCREEN == fsflag)):
+        scaled_width = int(width * scale_factor)
+        scaled_height = int(height * scale_factor)
+
+        if ((old_screen is not None) and 
+            (old_screen.get_size() == (scaled_width, scaled_height)) and
+            (old_screen.get_flags() & pygame.FULLSCREEN == fsflag)):
             
-            self.window = old_window
+            self.screen = old_screen
                     
         else:
-            self.window = renpy.display.pgrender.set_mode(
-                (width, height),
+            self.screen = renpy.display.pgrender.set_mode(
+                (scaled_width, scaled_height),
                 fsflag,
                 32)
+            
+        if scale_factor != 1.0:
+            self.window = renpy.display.pgrender.surface((width, height), True)
+        else:
+            self.window = self.screen
             
         # Should we redraw the screen from scratch?
         self.full_redraw = True
 
         # The surface used to display fullscreen video.
-        self.fullscreen_surface = renpy.display.scale.real(self.window)
+        self.fullscreen_surface = self.screen
 
         # Reset this on a mode change.
         self.mouse_location = None
@@ -743,7 +758,6 @@ class SWDraw(object):
         self.mouse_info = None
 
         return True
-        
 
     # private
     def show_mouse(self, pos, info):
@@ -766,7 +780,7 @@ class SWDraw(object):
         self.mouse_backing = renpy.display.pgrender.surface((mw, mh), False)
         self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
 
-        self.window.blit(tex, (bx, by))
+        self.screen.blit(tex, (bx, by))
 
         return bx, by, mw, mh
 
@@ -777,7 +791,7 @@ class SWDraw(object):
         """
         
         size = self.mouse_backing.get_size()
-        self.window.blit(self.mouse_backing, self.mouse_backing_pos)
+        self.screen.blit(self.mouse_backing, self.mouse_backing_pos)
 
         rv = self.mouse_backing_pos + size
 
@@ -837,10 +851,20 @@ class SWDraw(object):
             
     def mouse_event(self, ev):        
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+        
+        x /= self.scale_factor
+        y /= self.scale_factor
+        
         return x, y
         
     def get_mouse_pos(self):
-        return pygame.mouse.get_pos()
+        x, y = pygame.mouse.get_pos()
+        
+        x /= self.scale_factor
+        y /= self.scale_factor
+        
+        return x, y
+    
     
     def screenshot(self, surftree, fullscreen_video):
         """
@@ -897,15 +921,27 @@ class SWDraw(object):
 
             updates.extend(self.draw_mouse(False))
 
-            damage = do_draw_screen(surftree, self.full_redraw)
+            damage = do_draw_screen(surftree, self.full_redraw, self)
 
             if damage:
                 updates.extend(damage)
 
             self.full_redraw = False
 
-            updates.extend(self.draw_mouse(True))
-            pygame.display.update(updates)
+            if self.window is self.screen:
+
+                updates.extend(self.draw_mouse(True))
+                pygame.display.update(updates)
+
+            else:
+                
+                if self.scale_fast:
+                    renpy.display.pgrender.opygame.transform.scale(self.window, self.screen.get_size(), self.screen)
+                else:
+                    renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
+                
+                self.draw_mouse(True)                
+                pygame.display.flip()
             
         else:
             pygame.display.flip()
