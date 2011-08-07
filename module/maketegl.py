@@ -63,8 +63,8 @@ GL_ARB_TEXTURE_MIRRORED_REPEAT = False
 GL_ARB_DEPTH_TEXTURE = False
 GL_ARB_SHADOW = False
 GL_ARB_SHADOW_AMBIENT = False
-GL_ARB_VERTEX_PROGRAM = False
-GL_ARB_FRAGMENT_PROGRAM = False
+GL_ARB_VERTEX_PROGRAM = True
+GL_ARB_FRAGMENT_PROGRAM = True
 GL_ARB_VERTEX_BUFFER_OBJECT = True
 GL_ARB_OCCLUSION_QUERY = False
 GL_ARB_SHADER_OBJECTS = True
@@ -983,6 +983,13 @@ def generate_tegl():
     if GL_ARB_COLOR_BUFFER_FLOAT:
         declare("ClampColorARB",GLenum,GLenum)
 
+    # Things we force to exist via GL trickery.
+    declare("GetProgramiv",GLuint,GLenum,GLint[1].asreturn())
+    declare("GetShaderiv",GLuint,GLenum,GLint[1].asreturn())
+    declare("DeleteProgram",GLuint)
+    declare("DeleteShader",GLuint)
+    declare("GetProgramInfoLog",GLhandleARB,GLsizei,GLsizei[1].asreturn(),GLstring.asreturn())
+    declare("GetShaderInfoLog",GLhandleARB,GLsizei,GLsizei[1].asreturn(),GLstring.asreturn())
 
     # -------- GL Constants --------
 
@@ -2523,6 +2530,9 @@ def generate_tegl():
         constant("MAX_COLOR_ATTACHMENTS_EXT")
         constant("MAX_RENDERBUFFER_SIZE_EXT")
 
+    constant("INFO_LOG_LENGTH")
+
+
 class gltype(object):
 
     def __init__(self, s):
@@ -2609,12 +2619,12 @@ cdef extern from "glcompat.h":
 """
 
 FOOTER = """\
-import renpy
 
 cdef inline gl_check(where):
     cdef GLenum error
     error = glGetError()
     if error:
+        import renpy
         renpy.display.log.write("GL error 0x%X at %s", error, where)
 
 """
@@ -2627,6 +2637,8 @@ def main():
     constant("BGRA")
     
     constants.sort()
+    constants.append("RENPY_THIRD_TEXTURE")
+    
     print 
     print "    enum:"
     for i in constants:

@@ -5,6 +5,6 @@ try () {
     "$@" || exit -1
 }
 
-try python module/setup.py --quiet install
+try python module/setup.py --quiet build $RENPY_BUILD_ARGS install 
 
 exec ./renpy.py "$@"

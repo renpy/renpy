@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
+from gldraw cimport *
 from pygame cimport *
 from cpython.string cimport PyString_FromStringAndSize
 
@@ -219,7 +220,7 @@ cdef class TextureCore:
             self.premult_size = None
 
             
-    def render_to(self, x, y, draw_func, rtt):
+    def render_to(self, x, y, draw_func, rtt, environ):
 
         self.allocate()
         
@@ -241,7 +242,7 @@ cdef class TextureCore:
 
             self.format = rtt_format
          
-        rtt.render(self.number, x, y, self.width, self.height, draw_func)
+        rtt.render(environ, self.number, x, y, self.width, self.height, draw_func)
 
         self.xadd = 0
         self.yadd = 0
@@ -587,7 +588,7 @@ def texture_grid_from_surface(surf):
     return rv
 
 
-def texture_grid_from_drawing(width, height, draw_func, rtt):    
+def texture_grid_from_drawing(width, height, draw_func, rtt, environ):    
     """
     This creates a texture grid of `width` by `height` by using
     draw_func to draw to the screen.
@@ -607,7 +608,7 @@ def texture_grid_from_drawing(width, height, draw_func, rtt):
         for x, width, texwidth in texcolumns:
             
             tex = alloc_texture(texwidth, texheight)
-            tex.render_to(x, y, draw_func, rtt)
+            tex.render_to(x, y, draw_func, rtt, environ)
             
             row.append(tex)
             
@@ -671,7 +672,7 @@ def align_axes(*args):
     return rv
             
 
-cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, double alpha, environ, bint nearest):
+cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, double alpha, Environ environ, bint nearest):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
     the upper-left corner of the screen.
@@ -688,7 +689,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
     tg.make_ready(nearest)
     
     environ.blit()
-    glColor4f(alpha, alpha, alpha, alpha)
+    environ.set_color(alpha, alpha, alpha, alpha)
     
     y = 0
 
@@ -700,6 +701,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
             tex = tg.tiles[rowindex][colindex]
 
             draw_rectangle(
+                environ,
                 sx, sy,
                 x, y,
                 texw, texh, 
@@ -713,7 +715,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
 
         y += texh
  
-cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, environ):
+cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, Environ environ):
     """
     Blends two textures to the screen.
 
@@ -733,7 +735,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
     tg1.make_ready(False)
     
     environ.blend(fraction)
-    glColor4f(alpha, alpha, alpha, alpha)
+    environ.set_color(alpha, alpha, alpha, alpha)
 
     y = 0
 
@@ -753,6 +755,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
             t1 = tg1.tiles[t1ri][t1ci]
             
             draw_rectangle(
+                environ,
                 sx, sy,
                 x, y,
                 t0w, t0h, 
@@ -766,7 +769,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
 
         y += t0h
 
-cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, int ramp, environ):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, int ramp, Environ environ):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -791,7 +794,7 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
     tg2.make_ready(False)
     
     environ.imageblend(fraction, ramp)
-    glColor4f(alpha, alpha, alpha, alpha)
+    environ.set_color(alpha, alpha, alpha, alpha)
 
     y = 0
 
@@ -812,6 +815,7 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
             t2 = tg2.tiles[t2ri][t2ci]
 
             draw_rectangle(
+                environ,
                 sx, sy,
                 x, y,
                 t0w, t0h, 
@@ -987,6 +991,7 @@ def load_premultiplied(
             <GLubyte *> pixels)
 
 cdef void draw_rectangle(
+    Environ environ,
     double sx,
     double sy,
     double x,
@@ -1030,9 +1035,9 @@ cdef void draw_rectangle(
     cdef int has_tex0, has_tex1, has_tex2
 
     # Texture coordinates.
-    cdef double t0u0, t0v0, t0u1, t0v1
-    cdef double t1u0, t1v0, t1u1, t1v1
-    cdef double t2u0, t2v0, t2u1, t2v1    
+    cdef double t0u0 = 0, t0v0 = 0, t0u1 = 0, t0v1 = 0
+    cdef double t1u0 = 0, t1v0 = 0, t1u1 = 0, t1v1 = 0
+    cdef double t2u0 = 0, t2v0 = 0, t2u1 = 0, t2v1 = 0    
     
     # Pull apart the transform.
     cdef double xdx = transform.xdx
@@ -1060,7 +1065,7 @@ cdef void draw_rectangle(
 
         has_tex0 = 1
 
-        glActiveTexture(GL_TEXTURE0)
+        glActiveTextureARB(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex0.number)
         
         xadd = tex0.xadd
@@ -1080,7 +1085,7 @@ cdef void draw_rectangle(
 
         has_tex1 = 1
 
-        glActiveTexture(GL_TEXTURE1)
+        glActiveTextureARB(GL_TEXTURE1)
         glBindTexture(GL_TEXTURE_2D, tex1.number)
         
         xadd = tex1.xadd
@@ -1101,7 +1106,7 @@ cdef void draw_rectangle(
         
             has_tex2 = 1
         
-            glActiveTexture(GL_TEXTURE2)
+            glActiveTextureARB(GL_TEXTURE2)
             glBindTexture(GL_TEXTURE_2D, tex2.number)
             
             xadd = tex2.xadd
@@ -1135,12 +1140,9 @@ cdef void draw_rectangle(
         tex0coords[6] = t0u1
         tex0coords[7] = t0v1
 
-        glClientActiveTexture(GL_TEXTURE0)
-        glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> tex0coords)
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        environ.set_texture(0, tex0coords)
     else:
-        glClientActiveTexture(GL_TEXTURE0)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+        environ.set_texture(0, NULL)
 
        
     if has_tex1:
@@ -1153,12 +1155,9 @@ cdef void draw_rectangle(
         tex1coords[6] = t1u1
         tex1coords[7] = t1v1
 
-        glClientActiveTexture(GL_TEXTURE1)
-        glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> tex1coords)
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        environ.set_texture(1, tex1coords)
     else:
-        glClientActiveTexture(GL_TEXTURE1)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+        environ.set_texture(1, NULL)
 
     if RENPY_THIRD_TEXTURE:
         if has_tex2:
@@ -1171,13 +1170,10 @@ cdef void draw_rectangle(
             tex2coords[5] = t2v1
             tex2coords[6] = t2u1
             tex2coords[7] = t2v1
-    
-            glClientActiveTexture(GL_TEXTURE2)
-            glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> tex2coords)
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+
+            environ.set_texture(2, tex2coords)
         else:
-            glClientActiveTexture(GL_TEXTURE2)
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+            environ.set_texture(2, NULL)
 
     vcoords[0] = x0
     vcoords[1] = y0
@@ -1187,7 +1183,7 @@ cdef void draw_rectangle(
     vcoords[5] = y2
     vcoords[6] = x3
     vcoords[7] = y3
-
-    glVertexPointer(2, GL_FLOAT, 0, <GLubyte *> vcoords)
-    glEnableClientState(GL_VERTEX_ARRAY)    
+    
+    environ.set_vertex(vcoords)
+    
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)

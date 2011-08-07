@@ -971,7 +971,7 @@ class Text(renpy.display.core.Displayable):
     
             self.update()
     
-    def __init__(self, text, slow=None, replaces=None, scope=None, substitute=True, slow_done=None, **properties):
+    def __init__(self, text, slow=None, replaces=None, scope=None, substitute=None, slow_done=None, **properties):
                 
         super(Text, self).__init__(**properties)
         
@@ -1029,8 +1029,8 @@ class Text(renpy.display.core.Displayable):
         # Perform substitution as necessary.
         for i in self.text:
             if isinstance(i, basestring):
-                if self.substitute:
-                    i = renpy.substitutions.substitute(i, self.scope)
+                if self.substitute is not False:
+                    i = renpy.substitutions.substitute(i, self.scope, self.substitute)
                 
                 i = unicode(i)
                 

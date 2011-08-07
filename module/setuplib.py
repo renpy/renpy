@@ -5,6 +5,7 @@ import os
 import sys
 import re
 import subprocess
+import shutil
 
 import distutils.core
 
@@ -109,7 +110,7 @@ def library(name, optional=False):
 # A list of extension objects that we use.
 extensions = [ ]
 
-def cmodule(name, source, libs=[]):
+def cmodule(name, source, libs=[], define_macros=[]):
     """
     Compiles the python module `name` from the files given in 
     `source`, and the libraries in `libs`.
@@ -123,9 +124,10 @@ def cmodule(name, source, libs=[]):
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
         libraries=libs,
+        define_macros=define_macros,
         ))
 
-def cython(name, source=[], libs=[]):
+def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -133,7 +135,6 @@ def cython(name, source=[], libs=[]):
     
     # Find the pyx file.
     split_name = name.split(".")
-    module_name = split_name[-1]
     
     fn = "/".join(split_name) + ".pyx"
     
@@ -173,7 +174,7 @@ def cython(name, source=[], libs=[]):
     deps = [ i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) ]
     
     # Determine if any of the dependencies are newer than the c file.
-    c_fn = os.path.join("gen", module_name + ".c")
+    c_fn = os.path.join("gen", name + ".c")
     
     if os.path.exists(c_fn):
         c_mtime = os.path.getmtime(c_fn)
@@ -221,7 +222,8 @@ def cython(name, source=[], libs=[]):
             sys.exit(-1)
             
     # Build the module normally once we have the c file.
-    cmodule(name, [ c_fn ] + source, libs=libs)
+    if compile_if:    
+        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros)
 
 
 py_modules = [ ]
@@ -233,6 +235,31 @@ def pymodule(name):
     
     py_modules.append(name)
 
+def copyfile(source, dest, replace=None, replace_with=None):
+    """
+    Copy `source` to `dest`, preserving the modification time.
+    
+    If `replace` is given, instances of `replace` in the file contents are
+    replaced with `replace_with`.
+    """
+    
+    sfn = os.path.join("..", source)
+    dfn = os.path.join("..", dest)
+    
+    sf = file(sfn, "rb")
+    data = sf.read()
+    sf.close()
+    
+    if replace:
+        data = data.replace(replace, replace_with)
+        
+    df = file(dfn, "wb")
+    df.write("# This file was automatically generated from " + source + "\n")
+    df.write("# Modifications will be automatically overwritten.\n\n")    
+    df.write(data)
+    df.close()
+    
+    shutil.copystat(sfn, dfn)
 
 def setup(name, version):
     """

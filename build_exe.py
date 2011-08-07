@@ -49,7 +49,6 @@ def main():
                                                 'pygame.surfarray',
                                                 'pygame.mixer',
                                                 'pygame.mixer_music',
-                                                'pygame.font',
                                                 '_ssl',
                                                 '_hashlib',
                                                 'win32con',

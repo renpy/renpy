@@ -20,6 +20,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+DEF ANGLE = False
+
+from libc.stdlib cimport malloc, free
 from pygame cimport *
 from gl cimport *
 
@@ -31,32 +34,9 @@ import weakref
 import array
 import time
 
-cimport renpy.display.gltexture as gltexture
 cimport renpy.display.render as render
-
-import renpy.display.gltexture as gltexture
-import renpy.display.glenviron as glenviron
-import renpy.display.glrtt_copy as glrtt_copy
-
-try:
-    import renpy.display.glenviron_fixed as glenviron_fixed
-except ImportError:
-    glenviron_fixed = None
-
-try:
-    import renpy.display.glenviron_shader as glenviron_shader
-except ImportError:
-    glenviron_shader = None
-
-try:
-    import renpy.display.glenviron_limited as glenviron_limited
-except ImportError:
-    glenviron_limited = None
-
-try:
-    import renpy.display.glrtt_fbo as glrtt_fbo
-except ImportError:
-    glrtt_fbo = None
+cimport gltexture
+import gltexture
 
 
 cdef extern from "glcompat.h":
@@ -66,6 +46,14 @@ cdef extern from "glcompat.h":
     
     enum:
         GLEW_OK
+
+IF ANGLE:
+
+    cdef extern:
+        char *egl_init(int)
+        void egl_swap()
+        void egl_quit()
+
 
 # This is used by gl_error_check in gl.pxd.
 class GLError(Exception):
@@ -84,22 +72,7 @@ PIXELLATE = renpy.display.render.PIXELLATE
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
-cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
-    """
-    Utility function that takes care of setting up an OpenGL clip plane.
-    """
-
-    cdef GLdouble equation[4]
-
-    equation[0] = a
-    equation[1] = b
-    equation[2] = c
-    equation[3] = d
-    glClipPlane(plane, equation)
         
-
-cdef int round(double d):
-    return <int> (d + .5)
     
 # A list of cards that cause system/software crashes. There's no
 # reason to put merely slow or incapable cards here, only ones for
@@ -138,7 +111,7 @@ cdef class GLDraw:
 
         # The (x, y) and texture of the software mouse.
         self.mouse_info = (0, 0, None)
-        
+
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
@@ -149,7 +122,12 @@ cdef class GLDraw:
         self.redraw_period = .2
         
         # Info.
-        self.info = { "renderer" : "gl", "resizable" : True }
+        self.info = { "resizable" : True }
+
+        if not ANGLE:
+            self.info["renderer"] = "gl"
+        else:
+            self.info["renderer"] = "angle"
 
         # Old value of fullscreen.
         self.old_fullscreen = None
@@ -167,9 +145,6 @@ cdef class GLDraw:
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
-        # Should we use clipping planes or stencils?
-        self.use_clipping_planes = True
-
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android
         
@@ -180,6 +155,8 @@ cdef class GLDraw:
         can. It returns True if it was succesful, or False if OpenGL isn't
         working for some reason.
         """
+        
+        cdef char *egl_error
         
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
@@ -233,22 +210,43 @@ cdef class GLDraw:
         pheight = max(pheight, 256)
 
         # Handle swap control.
-        vsync = os.environ.get("RENPY_GL_VSYNC", "1")
-        pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, int(vsync))
-        pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+        vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
+
+        # Switch the 
+        IF not ANGLE:
+            opengl = pygame.OPENGL
+            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
+            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
+        ELSE:
+            opengl = 0            
+            # EGL automatically handles vsync for us.
         
         try:
             if fullscreen:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.OPENGL | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | pygame.OPENGL | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | opengl | pygame.DOUBLEBUF)
 
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
             return False
         
+        # In ANGLE mode, we have to use EGL to get the OpenGL ES 2 context.
+        IF ANGLE:
+        
+            # This ensures the display is shown.
+            pygame.display.flip()
+        
+            egl_error = egl_init(vsync)
+            
+            if egl_error is not NULL:
+                renpy.display.log.write("Initializing EGL: %s" % egl_error)
+                return False
+        
+        # Get the size of the created screen.        
         pwidth, pheight = self.window.get_size()
         self.physical_size = (pwidth, pheight)
 
@@ -299,12 +297,6 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        if self.use_clipping_planes:
-            glEnable(GL_CLIP_PLANE0)
-            glEnable(GL_CLIP_PLANE1)
-            glEnable(GL_CLIP_PLANE2)
-            glEnable(GL_CLIP_PLANE3)
-        
         # Prepare a mouse display.
         self.mouse_old_visible = None
 
@@ -321,8 +313,7 @@ cdef class GLDraw:
         quit. Flushes out all the textures while it's at it.
         """
     
-        # This should get rid of all of the cached textures.
-        renpy.display.render.free_memory()
+        renpy.display.interface.kill_textures()
         
         self.texture_cache.clear()
 
@@ -353,12 +344,14 @@ cdef class GLDraw:
         which subsystems to use.
         """
 
-        # Init glew.
-        err = glewInit()
+        if not ANGLE:
 
-        if err != GLEW_OK:
-            renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
-            return False
+            # Init glew.
+            err = glewInit()
+    
+            if err != GLEW_OK:
+                renpy.display.log.write("Glew init failed: %s" % <char *> glewGetErrorString(err))
+                return False
             
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -376,7 +369,6 @@ cdef class GLDraw:
 
         if version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
-            self.use_clipping_planes = False
             self.always_opaque = True
             gltexture.use_gles()
 
@@ -420,16 +412,9 @@ cdef class GLDraw:
 
         renpy.display.log.write("Number of texture units: %d", texture_units)
 
-        # Count the number of clip planes.
-        cdef GLint clip_planes = 0
-        
-        glGetIntegerv(GL_MAX_CLIP_PLANES, &clip_planes)
-        renpy.display.log.write("Number of clipping planes: %d", clip_planes)
-
-
         # Pick a texture environment subsystem.
         
-        if use_subsystem(
+        if ANGLE or use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
@@ -487,12 +472,20 @@ cdef class GLDraw:
                 renpy.display.log.write("Can't find a workable environment.")
                 return False
 
-
-        if use_subsystem(
-            glrtt_fbo,
-            "RENPY_GL_RTT",
-            "fbo",
-            "GL_OES_framebuffer_object"):
+        # Pick a Render-to-texture method.
+        if (ANGLE or 
+            
+            use_subsystem(
+                glrtt_fbo,
+                "RENPY_GL_RTT",
+                "fbo",
+                "GL_OES_framebuffer_object") or 
+            
+            use_subsystem(
+                glrtt_fbo,
+                "RENPY_GL_RTT",
+                "fbo",
+                "GL_ARB_framebuffer_object")):
 
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
@@ -500,11 +493,12 @@ cdef class GLDraw:
             self.rtt.init()
 
         else:                        
-            # Pick a Render-to-texture subsystem.        
             renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
             self.rtt.init()
+
+        renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
         self.rtt.deinit()
         self.environ.deinit()
@@ -569,8 +563,10 @@ cdef class GLDraw:
 
         self.clip_cache = None
         self.clip_rtt_box = None
-        glDisable(GL_SCISSOR_TEST)
         
+        self.environ.unset_clip(self)
+
+    # private        
     def clip_mode_rtt(self, x, y, w, h):
         """
         The same thing, except the screen is projected in RTT mode.
@@ -578,57 +574,19 @@ cdef class GLDraw:
 
         self.clip_cache = None
         self.clip_rtt_box = (x, y, w, h)
-        glDisable(GL_SCISSOR_TEST)
 
+        self.environ.unset_clip(self)
         
     # private
     cpdef set_clip(GLDraw self, tuple clip):
-
-        cdef double minx, miny, maxx, maxy
-        cdef double vwidth, vheight
-        cdef double px, py, pw, ph
-        cdef int cx, cy, cw, ch
         
         if self.clip_cache == clip:
             return
 
         self.clip_cache = clip
 
-        minx, miny, maxx, maxy = clip
-
-        if self.use_clipping_planes:
-        
-            gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
-            gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
-            gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
-            gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
-
-        else:
-
-            if self.clip_rtt_box is None:
-
-                vwidth, vheight = self.virtual_size
-                px, py, pw, ph = self.physical_box
-
-                minx = px + (minx / vwidth) * pw
-                maxx = px + (maxx / vwidth) * pw
-
-                miny = py + (miny / vheight) * ph
-                maxy = py + (maxy / vheight) * ph
-
-                miny = ph - miny
-                maxy = ph - maxy
-
-                glEnable(GL_SCISSOR_TEST)
-                glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
-
-            else:
-
-                cx, cy, cw, ch = self.clip_rtt_box
-
-                glEnable(GL_SCISSOR_TEST)
-                glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
-
+        self.environ.set_clip(clip, self)
+                
             
     def draw_screen(self, surftree, fullscreen_video, flip=True):
         """
@@ -643,11 +601,7 @@ cdef class GLDraw:
 
         glViewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
         
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
-
-        glMatrixMode(GL_MODELVIEW)
+        self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
         self.clip_mode_screen()
 
@@ -673,7 +627,13 @@ cdef class GLDraw:
             # Release the CPU while we're waiting for things to actually
             # draw to the screen.        
             renpy.display.core.cpu_idle.set()
-            pygame.display.flip()
+            
+            IF not ANGLE:
+                pygame.display.flip()
+            ELSE:
+                egl_swap()
+
+            # Grab the CPU again.            
             renpy.display.core.cpu_idle.clear()
 
         gl_check("draw_screen")
@@ -740,7 +700,7 @@ cdef class GLDraw:
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
         cdef render.Matrix2D child_reverse
-        
+
         if not isinstance(what, render.Render):
 
             if isinstance(what, gltexture.TextureGrid):
@@ -769,7 +729,7 @@ cdef class GLDraw:
         rend = what
         
         # Other draw modes.
-        
+
         if rend.operation == DISSOLVE:
             
             if self.fast_dissolve:
@@ -910,7 +870,7 @@ cdef class GLDraw:
 
         self.upscale_factor = 1.0
 
-        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt)
+        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt, self.environ)
 
         return rv
         
@@ -935,10 +895,7 @@ cdef class GLDraw:
         
         glClear(GL_COLOR_BUFFER_BIT)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, 1, 0, 1, -1, 1)
-        glMatrixMode(GL_MODELVIEW)
+        self.environ.ortho(0, 1, 0, 1, -1, 1)
 
         self.clip_mode_rtt(0, 0, 1, 1)
         
@@ -986,7 +943,7 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt)
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         what.half_cache = rv
 
@@ -1055,10 +1012,7 @@ cdef class GLDraw:
         
         glViewport(0, 0, pw, ph)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, pw, ph, 0, -1.0, 1.0)
-        glMatrixMode(GL_MODELVIEW)
+        self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
         self.set_clip((0, 0, pw, ph))
@@ -1073,38 +1027,48 @@ cdef class GLDraw:
             False)
 
     def screenshot(self, surftree, fullscreen_video):
-        cdef unsigned char *pixels = NULL
+        cdef unsigned char *pixels
         cdef SDL_Surface *surf
 
+        cdef unsigned char *raw_pixels
+        cdef unsigned char *rpp
+        cdef int x, y, pitch
+
         # A surface the size of the framebuffer.
-        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)        
+        surf = PySurface_AsSurface(full)
 
-        if GL_PACK_ROW_LENGTH != 0:
+        # Create an array that can hold densely-packed pixels.
+        raw_pixels = <unsigned char *> malloc(surf.w * surf.h * 4)
+
+        # Draw the last screen to the back buffer.
+        if surftree is not None:
+            self.draw_screen(surftree, fullscreen_video, flip=False)
+            glFinish()
+
+        # Read the pixels.
+        glReadPixels(
+            0,
+            0,
+            surf.w,
+            surf.h,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            raw_pixels)
+
+        # Copy the pixels from raw_pixels to the surface. 
+        pixels = <unsigned char *> surf.pixels
+        pitch = surf.pitch
+        rpp = raw_pixels
+
+        for y from 0 <= y < surf.h:
+            for x from 0 <= x < (surf.w * 4):
+                pixels[x] = rpp[x]
             
-            # Use GL to read the full framebuffer in.
-            surf = PySurface_AsSurface(full)
-            pixels = <unsigned char *> surf.pixels
+            pixels += pitch
+            rpp += surf.w * 4
 
-            # Draw the last screen to the back buffer.
-            if surftree is not None:
-                self.draw_screen(surftree, fullscreen_video, flip=False)
-                glFinish()
-
-            glPixelStorei(GL_PACK_ROW_LENGTH, surf.pitch / 4)
-
-            glReadPixels(
-                0,
-                0,
-                surf.w,
-                surf.h,
-                GL_RGBA,
-                GL_UNSIGNED_BYTE,
-                pixels)
-
-        else:
-
-            renpy.display.log.write("Could not take screenshot - GL_PACK_ROW_LENGTH is 0.")
-            
+        free(raw_pixels)
 
         # Crop and flip it, since it's upside down.
         rv = full.subsurface(self.physical_box)
@@ -1121,3 +1085,115 @@ cdef class GLDraw:
         
     def get_physical_size(self):
         return self.physical_size
+
+
+class Rtt(object):
+    """
+    Subclasses of this class handle rendering to a texture.
+    """
+
+    def init(self):
+        return
+
+    def deinit(self):
+        return
+
+    def render(self, texture, x, y, w, h, draw_func):
+        """
+        This function is called to trigger a rendering to a texture.
+        `x`, `y`, `w`, and `h` specify the location and dimensions of
+        the sub-image to render to the texture. `draw_func` is called
+        to render the texture.
+        """
+
+        raise Exception("Not implemented.")
+
+    def get_size_limit(self, dimension):
+        """
+        Get the maximum size of a texture.
+        """
+        
+        raise Exception("Not implemented.")
+
+    
+cdef class Environ(object):
+
+    cdef void blit(self):
+        """
+        Set up a normal blit environment. The texture to be blitted should
+        be TEXTURE0.
+        """
+
+    cdef void blend(self, double fraction):
+        """
+        Set up an environment that blends from TEXTURE0 to TEXTURE1.
+
+        `fraction` is the fraction of the blend complete.
+        """
+
+    cdef void imageblend(self, double fraction, int ramp):
+        """
+        Setup an environment that does an imageblend from TEXTURE1 to TEXTURE2.
+        The controlling image is TEXTURE0.
+
+        `fraction` is the fraction of the blend complete.
+        `ramp` is the length of the ramp.
+        """
+
+    cdef void set_vertex(self, float *vertices):
+        """
+        Sets the array of vertices to be shown. Vertices should be an packed
+        array of 2`n` floats. 
+        """
+     
+    cdef void set_texture(self, int unit, float *coords):
+        """
+        Sets the array of texture coordinates for unit `unit`.
+        """
+    
+    cdef void set_color(self, float r, float g, float b, float a):
+        """
+        Sets the color to be shown.
+        """
+
+    cdef void set_clip(self, tuple clip_box, GLDraw draw):
+        """
+        Sets the clipping rectangle.
+        """
+        
+    cdef void unset_clip(self, GLDraw draw):
+        """
+        Removes the clipping rectangle.
+        """
+
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
+        """
+        Enables orthographic projection. `left`, `right`, `top`, `bottom` are the coordinates of the various
+        sides of the viewport. `top` and `bottom` are the depth limits.
+        """
+
+# These imports need to be down at the bottom, after the Rtt and Environ 
+# classes have been created.
+import glrtt_copy
+
+try:
+    import glrtt_fbo
+except ImportError:
+    glrtt_fbo = None
+
+try:
+    import glenviron_fixed
+except ImportError:
+    glenviron_fixed = None
+
+try:
+    import glenviron_shader
+except ImportError:
+    raise
+    glenviron_shader = None
+
+try:
+    import glenviron_limited
+except ImportError:
+    glenviron_limited = None
+

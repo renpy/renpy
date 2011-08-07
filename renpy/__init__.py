@@ -53,8 +53,11 @@ first_utter_start = True
 def setup_modulefinder(modulefinder):
     import _renpy #@UnresolvedImport
     libexec = os.path.dirname(_renpy.__file__)
-    displaypath = os.path.join(libexec, "renpy", "display")
-    modulefinder.AddPackagePath('renpy.display', displaypath)
+
+    for i in [ "display", "gl", "angle", "text" ]:
+    
+        displaypath = os.path.join(libexec, "renpy", i)
+        modulefinder.AddPackagePath('renpy.' + i, displaypath)
 
 def import_cython():
     """
@@ -63,19 +66,21 @@ def import_cython():
     """
 
     import renpy.display.accelerator #@UnresolvedImport
-    import renpy.display.gldraw #@UnresolvedImport
-    import renpy.display.glenviron #@UnresolvedImport
-    import renpy.display.glenviron_fixed #@UnresolvedImport
-    import renpy.display.glenviron_limited #@UnresolvedImport
-    import renpy.display.glenviron_shader #@UnresolvedImport
-    import renpy.display.glrtt_copy #@UnresolvedImport
-    import renpy.display.glrtt_fbo #@UnresolvedImport
-    import renpy.display.glshader #@UnresolvedImport
-    import renpy.display.gltexture #@UnresolvedImport
     import renpy.display.render #@UnresolvedImport
 
-    # Prevent a pyflakes warning.
-    renpy
+    import renpy.gl.gldraw #@UnresolvedImport
+    import renpy.gl.glenviron_fixed #@UnresolvedImport
+    import renpy.gl.glenviron_limited #@UnresolvedImport
+    import renpy.gl.glenviron_shader #@UnresolvedImport
+    import renpy.gl.glrtt_copy #@UnresolvedImport
+    import renpy.gl.glrtt_fbo #@UnresolvedImport
+    import renpy.gl.gltexture #@UnresolvedImport
+
+    import renpy.angle.gldraw #@UnresolvedImport
+    import renpy.angle.glenviron_shader #@UnresolvedImport
+    import renpy.angle.glrtt_copy #@UnresolvedImport
+    import renpy.angle.glrtt_fbo #@UnresolvedImport
+    import renpy.angle.gltexture #@UnresolvedImport
     
     
 def import_all():
@@ -128,7 +133,7 @@ def import_all():
         import encodings
         libexec = os.path.dirname(encodings.__path__[0])
         package.__path__.insert(1, os.path.join(libexec, *name))
-    
+
     update_path(renpy.display)
     
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
@@ -145,6 +150,12 @@ def import_all():
     import renpy.text.extras #@UnresolvedImport
     
     sys.modules['renpy.display.text'] = renpy.text.text
+    
+    import renpy.gl #@UnresolvedImport
+    update_path(renpy.gl)
+    
+    import renpy.angle #@UnresolvedImport
+    update_path(renpy.angle)
     
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
@@ -165,8 +176,7 @@ def import_all():
     import renpy.display.predict #@UnresolvedImport
     
     import renpy.display.error #@UnresolvedImport
-    
-    
+
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module. 
     import renpy.audio.audio #@UnresolvedImport
@@ -221,3 +231,21 @@ def reload_all():
     renpy.display.draw = None
     
     import_all()
+
+# Information about the platform we're running on. We break the platforms
+# up into 4 groups - windows-like, mac-like, linux-like, and android-like.
+windows = False
+macintosh = False
+linux = False
+android = False
+
+import platform
+
+if platform.win32_ver()[0]:
+    windows = True
+elif platform.mac_ver()[0]:
+    macintosh = True
+else:
+    linux = True
+    
+# The android init code in renpy.py will set linux=False and android=True.

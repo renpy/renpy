@@ -1,4 +1,5 @@
 cimport renpy.display.render as render
+from gldraw cimport Environ
 
 cdef class TextureCore:
     cdef public int width
@@ -41,7 +42,7 @@ cpdef blit(
     double sy,
     render.Matrix2D transform,
     double alpha,
-    environ,
+    Environ environ,
     bint nearest)
 
 cpdef blend(
@@ -52,7 +53,7 @@ cpdef blend(
     render.Matrix2D transform,
     double alpha,
     double fraction,
-    environ)
+    Environ environ)
 
 cpdef imageblend(
     TextureGrid tg0,
@@ -64,4 +65,4 @@ cpdef imageblend(
     double alpha,
     double fraction,
     int ramp,
-    environ)
+    Environ environ)

@@ -505,6 +505,9 @@ new_substitutions = True
 # Do we use old text substitutions?
 old_substitutions = False
 
+# The graphics renderer we use.
+renderer = "auto"
+
 del renpy
 del os
 

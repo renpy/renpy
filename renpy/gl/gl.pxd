@@ -439,6 +439,67 @@ cdef extern from "glcompat.h":
     void glMultiTexCoord4ivARB(GLenum, GLint *)
     void glMultiTexCoord4sARB(GLenum, GLshort, GLshort, GLshort, GLshort)
     void glMultiTexCoord4svARB(GLenum, GLshort *)
+    void glVertexAttrib1dARB(GLuint, GLdouble)
+    void glVertexAttrib1dvARB(GLuint, GLdouble *)
+    void glVertexAttrib1fARB(GLuint, GLfloat)
+    void glVertexAttrib1fvARB(GLuint, GLfloat *)
+    void glVertexAttrib1sARB(GLuint, GLshort)
+    void glVertexAttrib1svARB(GLuint, GLshort *)
+    void glVertexAttrib2dARB(GLuint, GLdouble, GLdouble)
+    void glVertexAttrib2dvARB(GLuint, GLdouble *)
+    void glVertexAttrib2fARB(GLuint, GLfloat, GLfloat)
+    void glVertexAttrib2fvARB(GLuint, GLfloat *)
+    void glVertexAttrib2sARB(GLuint, GLshort, GLshort)
+    void glVertexAttrib2svARB(GLuint, GLshort *)
+    void glVertexAttrib3dARB(GLuint, GLdouble, GLdouble, GLdouble)
+    void glVertexAttrib3dvARB(GLuint, GLdouble *)
+    void glVertexAttrib3fARB(GLuint, GLfloat, GLfloat, GLfloat)
+    void glVertexAttrib3fvARB(GLuint, GLfloat *)
+    void glVertexAttrib3sARB(GLuint, GLshort, GLshort, GLshort)
+    void glVertexAttrib3svARB(GLuint, GLshort *)
+    void glVertexAttrib4NbvARB(GLuint, GLbyte *)
+    void glVertexAttrib4NivARB(GLuint, GLint *)
+    void glVertexAttrib4NsvARB(GLuint, GLshort *)
+    void glVertexAttrib4NubARB(GLuint, GLubyte, GLubyte, GLubyte, GLubyte)
+    void glVertexAttrib4NubvARB(GLuint, GLubyte *)
+    void glVertexAttrib4NuivARB(GLuint, GLuint *)
+    void glVertexAttrib4NusvARB(GLuint, GLushort *)
+    void glVertexAttrib4bvARB(GLuint, GLbyte *)
+    void glVertexAttrib4dARB(GLuint, GLdouble, GLdouble, GLdouble, GLdouble)
+    void glVertexAttrib4dvARB(GLuint, GLdouble *)
+    void glVertexAttrib4fARB(GLuint, GLfloat, GLfloat, GLfloat, GLfloat)
+    void glVertexAttrib4fvARB(GLuint, GLfloat *)
+    void glVertexAttrib4ivARB(GLuint, GLint *)
+    void glVertexAttrib4sARB(GLuint, GLshort, GLshort, GLshort, GLshort)
+    void glVertexAttrib4svARB(GLuint, GLshort *)
+    void glVertexAttrib4ubvARB(GLuint, GLubyte *)
+    void glVertexAttrib4uivARB(GLuint, GLuint *)
+    void glVertexAttrib4usvARB(GLuint, GLushort *)
+    void glVertexAttribPointerARB(GLuint, GLint, GLenum, GLboolean, GLsizei, GLubyte *)
+    void glEnableVertexAttribArrayARB(GLuint)
+    void glDisableVertexAttribArrayARB(GLuint)
+    void glProgramStringARB(GLenum, GLenum, GLsizei, GLubyte *)
+    void glBindProgramARB(GLenum, GLuint)
+    void glDeleteProgramsARB(GLsizei, GLuint *)
+    void glGenProgramsARB(GLsizei, GLuint *)
+    void glProgramEnvParameter4dARB(GLenum, GLuint, GLdouble, GLdouble, GLdouble, GLdouble)
+    void glProgramEnvParameter4dvARB(GLenum, GLuint, GLdouble *)
+    void glProgramEnvParameter4fARB(GLenum, GLuint, GLfloat, GLfloat, GLfloat, GLfloat)
+    void glProgramEnvParameter4fvARB(GLenum, GLuint, GLfloat *)
+    void glProgramLocalParameter4dARB(GLenum, GLuint, GLdouble, GLdouble, GLdouble, GLdouble)
+    void glProgramLocalParameter4dvARB(GLenum, GLuint, GLdouble *)
+    void glProgramLocalParameter4fARB(GLenum, GLuint, GLfloat, GLfloat, GLfloat, GLfloat)
+    void glProgramLocalParameter4fvARB(GLenum, GLuint, GLfloat *)
+    void glGetProgramEnvParameterdvARB(GLenum, GLuint, GLdouble *)
+    void glGetProgramEnvParameterfvARB(GLenum, GLuint, GLfloat *)
+    void glGetProgramLocalParameterdvARB(GLenum, GLuint, GLdouble *)
+    void glGetProgramLocalParameterfvARB(GLenum, GLuint, GLfloat *)
+    void glGetProgramivARB(GLenum, GLenum, GLint *)
+    void glGetProgramStringARB(GLenum, GLenum, GLchar *)
+    void glGetVertexAttribdvARB(GLuint, GLenum, GLdouble *)
+    void glGetVertexAttribfvARB(GLuint, GLenum, GLfloat *)
+    void glGetVertexAttribivARB(GLuint, GLenum, GLint *)
+    GLboolean glIsProgramARB(GLuint)
     void glBindBufferARB(GLenum, GLuint)
     GLboolean glIsBufferARB(GLuint)
     void glBufferDataARB(GLenum, GLsizeiptrARB, GLubyte *, GLenum)
@@ -489,6 +550,12 @@ cdef extern from "glcompat.h":
     void glBindAttribLocationARB(GLhandleARB, GLuint, GLchar *)
     void glGetActiveAttribARB(GLhandleARB, GLuint, GLsizei, GLsizei *, GLint *, GLenum *, GLchar *)
     GLint glGetAttribLocationARB(GLhandleARB, GLchar *)
+    void glGetProgramiv(GLuint, GLenum, GLint *)
+    void glGetShaderiv(GLuint, GLenum, GLint *)
+    void glDeleteProgram(GLuint)
+    void glDeleteShader(GLuint)
+    void glGetProgramInfoLog(GLhandleARB, GLsizei, GLsizei *, GLchar *)
+    void glGetShaderInfoLog(GLhandleARB, GLsizei, GLsizei *, GLchar *)
     GLboolean glIsRenderbufferEXT(GLuint)
     void glBindRenderbufferEXT(GLenum, GLuint)
     void glDeleteRenderbuffersEXT(GLsizei, GLuint *)
@@ -635,6 +702,7 @@ cdef extern from "glcompat.h":
         GL_COLOR_MATERIAL
         GL_COLOR_MATERIAL_FACE
         GL_COLOR_MATERIAL_PARAMETER
+        GL_COLOR_SUM_ARB
         GL_COLOR_WRITEMASK
         GL_COMBINE
         GL_COMBINE_ALPHA
@@ -662,6 +730,8 @@ cdef extern from "glcompat.h":
         GL_CURRENT_BIT
         GL_CURRENT_COLOR
         GL_CURRENT_INDEX
+        GL_CURRENT_MATRIX_ARB
+        GL_CURRENT_MATRIX_STACK_DEPTH_ARB
         GL_CURRENT_NORMAL
         GL_CURRENT_RASTER_COLOR
         GL_CURRENT_RASTER_DISTANCE
@@ -670,6 +740,7 @@ cdef extern from "glcompat.h":
         GL_CURRENT_RASTER_POSITION_VALID
         GL_CURRENT_RASTER_TEXTURE_COORDS
         GL_CURRENT_TEXTURE_COORDS
+        GL_CURRENT_VERTEX_ATTRIB_ARB
         GL_CW
         GL_DECAL
         GL_DECR
@@ -742,6 +813,7 @@ cdef extern from "glcompat.h":
         GL_FOG_INDEX
         GL_FOG_MODE
         GL_FOG_START
+        GL_FRAGMENT_PROGRAM_ARB
         GL_FRAGMENT_SHADER_ARB
         GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB
         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT
@@ -784,6 +856,7 @@ cdef extern from "glcompat.h":
         GL_INDEX_OFFSET
         GL_INDEX_SHIFT
         GL_INDEX_WRITEMASK
+        GL_INFO_LOG_LENGTH
         GL_INT
         GL_INTENSITY
         GL_INTENSITY12
@@ -879,6 +952,38 @@ cdef extern from "glcompat.h":
         GL_MAP2_VERTEX_4
         GL_MAP_COLOR
         GL_MAP_STENCIL
+        GL_MATRIX0_ARB
+        GL_MATRIX10_ARB
+        GL_MATRIX11_ARB
+        GL_MATRIX12_ARB
+        GL_MATRIX13_ARB
+        GL_MATRIX14_ARB
+        GL_MATRIX15_ARB
+        GL_MATRIX16_ARB
+        GL_MATRIX17_ARB
+        GL_MATRIX18_ARB
+        GL_MATRIX19_ARB
+        GL_MATRIX1_ARB
+        GL_MATRIX20_ARB
+        GL_MATRIX21_ARB
+        GL_MATRIX22_ARB
+        GL_MATRIX23_ARB
+        GL_MATRIX24_ARB
+        GL_MATRIX25_ARB
+        GL_MATRIX26_ARB
+        GL_MATRIX27_ARB
+        GL_MATRIX28_ARB
+        GL_MATRIX29_ARB
+        GL_MATRIX2_ARB
+        GL_MATRIX30_ARB
+        GL_MATRIX31_ARB
+        GL_MATRIX3_ARB
+        GL_MATRIX4_ARB
+        GL_MATRIX5_ARB
+        GL_MATRIX6_ARB
+        GL_MATRIX7_ARB
+        GL_MATRIX8_ARB
+        GL_MATRIX9_ARB
         GL_MATRIX_MODE
         GL_MAX_3D_TEXTURE_SIZE
         GL_MAX_ATTRIB_STACK_DEPTH
@@ -896,13 +1001,36 @@ cdef extern from "glcompat.h":
         GL_MAX_MODELVIEW_STACK_DEPTH
         GL_MAX_NAME_STACK_DEPTH
         GL_MAX_PIXEL_MAP_TABLE
+        GL_MAX_PROGRAM_ADDRESS_REGISTERS_ARB
+        GL_MAX_PROGRAM_ALU_INSTRUCTIONS_ARB
+        GL_MAX_PROGRAM_ATTRIBS_ARB
+        GL_MAX_PROGRAM_ENV_PARAMETERS_ARB
+        GL_MAX_PROGRAM_INSTRUCTIONS_ARB
+        GL_MAX_PROGRAM_LOCAL_PARAMETERS_ARB
+        GL_MAX_PROGRAM_MATRICES_ARB
+        GL_MAX_PROGRAM_MATRIX_STACK_DEPTH_ARB
+        GL_MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB
+        GL_MAX_PROGRAM_NATIVE_ALU_INSTRUCTIONS_ARB
+        GL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB
+        GL_MAX_PROGRAM_NATIVE_INSTRUCTIONS_ARB
+        GL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB
+        GL_MAX_PROGRAM_NATIVE_TEMPORARIES_ARB
+        GL_MAX_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB
+        GL_MAX_PROGRAM_NATIVE_TEX_INSTRUCTIONS_ARB
+        GL_MAX_PROGRAM_PARAMETERS_ARB
+        GL_MAX_PROGRAM_TEMPORARIES_ARB
+        GL_MAX_PROGRAM_TEX_INDIRECTIONS_ARB
+        GL_MAX_PROGRAM_TEX_INSTRUCTIONS_ARB
         GL_MAX_PROJECTION_STACK_DEPTH
         GL_MAX_RENDERBUFFER_SIZE_EXT
+        GL_MAX_TEXTURE_COORDS_ARB
+        GL_MAX_TEXTURE_IMAGE_UNITS_ARB
         GL_MAX_TEXTURE_SIZE
         GL_MAX_TEXTURE_STACK_DEPTH
         GL_MAX_TEXTURE_UNITS
         GL_MAX_TEXTURE_UNITS_ARB
         GL_MAX_VARYING_FLOATS_ARB
+        GL_MAX_VERTEX_ATTRIBS_ARB
         GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB
         GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB
         GL_MAX_VIEWPORT_DIMS
@@ -1029,7 +1157,31 @@ cdef extern from "glcompat.h":
         GL_PREVIOUS_ARB
         GL_PRIMARY_COLOR
         GL_PRIMARY_COLOR_ARB
+        GL_PROGRAM_ADDRESS_REGISTERS_ARB
+        GL_PROGRAM_ALU_INSTRUCTIONS_ARB
+        GL_PROGRAM_ATTRIBS_ARB
+        GL_PROGRAM_BINDING_ARB
+        GL_PROGRAM_ERROR_POSITION_ARB
+        GL_PROGRAM_ERROR_STRING_ARB
+        GL_PROGRAM_FORMAT_ARB
+        GL_PROGRAM_FORMAT_ASCII_ARB
+        GL_PROGRAM_INSTRUCTIONS_ARB
+        GL_PROGRAM_LENGTH_ARB
+        GL_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB
+        GL_PROGRAM_NATIVE_ALU_INSTRUCTIONS_ARB
+        GL_PROGRAM_NATIVE_ATTRIBS_ARB
+        GL_PROGRAM_NATIVE_INSTRUCTIONS_ARB
+        GL_PROGRAM_NATIVE_PARAMETERS_ARB
+        GL_PROGRAM_NATIVE_TEMPORARIES_ARB
+        GL_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB
+        GL_PROGRAM_NATIVE_TEX_INSTRUCTIONS_ARB
         GL_PROGRAM_OBJECT_ARB
+        GL_PROGRAM_PARAMETERS_ARB
+        GL_PROGRAM_STRING_ARB
+        GL_PROGRAM_TEMPORARIES_ARB
+        GL_PROGRAM_TEX_INDIRECTIONS_ARB
+        GL_PROGRAM_TEX_INSTRUCTIONS_ARB
+        GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB
         GL_PROJECTION
         GL_PROJECTION_MATRIX
         GL_PROJECTION_STACK_DEPTH
@@ -1307,6 +1459,7 @@ cdef extern from "glcompat.h":
         GL_TEXTURE_WRAP_T
         GL_TRANSFORM_BIT
         GL_TRANSPOSE_COLOR_MATRIX
+        GL_TRANSPOSE_CURRENT_MATRIX_ARB
         GL_TRANSPOSE_MODELVIEW_MATRIX
         GL_TRANSPOSE_PROJECTION_MATRIX
         GL_TRANSPOSE_TEXTURE_MATRIX
@@ -1348,6 +1501,15 @@ cdef extern from "glcompat.h":
         GL_VERTEX_ARRAY_STRIDE
         GL_VERTEX_ARRAY_TYPE
         GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB
+        GL_VERTEX_ATTRIB_ARRAY_ENABLED_ARB
+        GL_VERTEX_ATTRIB_ARRAY_NORMALIZED_ARB
+        GL_VERTEX_ATTRIB_ARRAY_POINTER_ARB
+        GL_VERTEX_ATTRIB_ARRAY_SIZE_ARB
+        GL_VERTEX_ATTRIB_ARRAY_STRIDE_ARB
+        GL_VERTEX_ATTRIB_ARRAY_TYPE_ARB
+        GL_VERTEX_PROGRAM_ARB
+        GL_VERTEX_PROGRAM_POINT_SIZE_ARB
+        GL_VERTEX_PROGRAM_TWO_SIDE_ARB
         GL_VERTEX_SHADER_ARB
         GL_VIEWPORT
         GL_VIEWPORT_BIT
@@ -1357,15 +1519,14 @@ cdef extern from "glcompat.h":
         GL_ZERO
         GL_ZOOM_X
         GL_ZOOM_Y
-
         RENPY_THIRD_TEXTURE
 
-import renpy
 
 cdef inline gl_check(where):
     cdef GLenum error
     error = glGetError()
     if error:
+        import renpy
         renpy.display.log.write("GL error 0x%X at %s", error, where)
 
 

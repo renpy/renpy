@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import platform
 import sys
 import os
@@ -9,7 +8,7 @@ import os
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
 import setuplib
-from setuplib import android, include, library, cython, cmodule, pymodule 
+from setuplib import android, include, library, cython, cmodule, pymodule, copyfile
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -42,8 +41,9 @@ has_swscale = library("swscale", optional=True)
 library("freetype")
 has_fribidi = library("fribidi", optional=True)            
 library("z")
-has_libglew = library("GLEW", True)
-has_libglew32 = library("glew32", True)
+has_libglew = library("GLEW", optional=True)
+has_libglew32 = library("glew32", optional=True)
+has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
 
 if android:
     sdl = [ 'sdl', 'GLESv1_CM', 'log' ]
@@ -68,7 +68,6 @@ if has_fribidi and not android:
         "_renpybidi", 
         [ "renpybidicore.c" ],
         ['fribidi'])
-        
 
 # Sound.
 pymodule("pysdlsound.__init__")
@@ -86,30 +85,46 @@ if not android:
 
 
 # Display.
+cython("renpy.display.render", libs=[ 'z', 'm' ])
+cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+
+# Gl.
 if android:
     glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
 else:
-    glew_libs = [ 'glew32', "opengl32" ]
+    glew_libs = [ 'glew32', 'opengl32' ]
 
-cython("renpy.display.render", libs=[ 'z', 'm' ])
-cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+cython("renpy.gl.gldraw", libs=glew_libs )
+cython("renpy.gl.gltexture", libs=glew_libs)
+cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
+cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not android)
+cython("renpy.gl.glenviron_limited", libs=glew_libs)
+cython("renpy.gl.glrtt_copy", libs=glew_libs)
+cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
-cython("renpy.display.gldraw", libs=glew_libs )
-cython("renpy.display.gltexture", libs=glew_libs)
-cython("renpy.display.glenviron", libs=glew_libs)
+# Angle
+def anglecopy(fn):
+    copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
+    
+anglecopy("gldraw.pxd")
+anglecopy("gldraw.pyx")
+anglecopy("glenviron_shader.pyx")
+anglecopy("gl.pxd")
+anglecopy("glrtt_fbo.pyx")
+anglecopy("gltexture.pxd")
+anglecopy("gltexture.pyx")
 
-if not android:
-    cython("renpy.display.glenviron_fixed", libs=glew_libs)
-    cython("renpy.display.glenviron_shader", libs=glew_libs)
-    cython("renpy.display.glshader", libs=glew_libs)
+angle_libs = [ "SDL", "EGL", "GLESv2" ]
 
-cython("renpy.display.glenviron_limited", libs=glew_libs)
+def anglecython(name, source=[]):
+    cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ], source=source)
 
-cython("renpy.display.glrtt_copy", libs=glew_libs)
-cython("renpy.display.glrtt_fbo", libs=glew_libs)
-
+anglecython("renpy.angle.gldraw", source=[ "anglesupport.c" ])
+anglecython("renpy.angle.gltexture")
+anglecython("renpy.angle.glenviron_shader")
+anglecython("renpy.angle.glrtt_fbo")
 
 # Text.
 cython("renpy.text.textsupport")
@@ -125,6 +140,10 @@ cython(
 sys.path.append('..')
 import renpy
 
-setuplib.setup(
-    "Ren'Py",
-    renpy.version[7:])
+setuplib.setup("Ren'Py", renpy.version[7:])
+
+warnings = False
+
+print
+print "Fribidi:", has_fribidi
+print "ANGLE:", has_angle

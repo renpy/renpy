@@ -88,3 +88,5 @@ template/README.html
 the_question/README.html
 tutorial/README.html
 trace.txt
+renpy/angle/*.pyx
+renpy/angle/*.pxd

@@ -7,36 +7,37 @@
 #define GL_COMPAT_H
 
 // Environ is defined on windows, but our GL code uses it as an
-// identifier.
+// identifier. So get rid of it here.
 #undef environ
 
+#if defined ANDROID
+
+#define RENPY_GLES_1
+
+#elif defined ANGLE
+
+#define RENPY_GLES_2
+
+#else
+
+#define RENPY_OPENGL
+
+#endif
 
 
-#ifdef ANDROID
+#if defined RENPY_GLES_1
 
 #include <GLES/gl.h>
 #include <GLES/glext.h>
 
-typedef GLfloat GLdouble;
-#define glewInit() (1)
-#define GLEW_OK (1)
-#define glewGetErrorString(x) ("Unknown Error")
-#define glewIsSupported(x) (1)
 #define glOrtho glOrthof
-#define glClipPlane glClipPlanef
 
 #define GL_SOURCE0_ALPHA GL_SRC0_ALPHA
 #define GL_SOURCE1_ALPHA GL_SRC1_ALPHA
 #define GL_SOURCE2_ALPHA GL_SRC2_ALPHA
-
 #define GL_SOURCE0_RGB GL_SRC0_RGB
 #define GL_SOURCE1_RGB GL_SRC1_RGB
 #define GL_SOURCE2_RGB GL_SRC2_RGB
-
-// This isn't defined on GL ES, but that's okay, since we'll disable
-// screenshots on Android.
-#define GL_PACK_ROW_LENGTH 0
-#define glReadBuffer(x)
 
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER_OES
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0_OES
@@ -48,19 +49,100 @@ typedef GLfloat GLdouble;
 
 #define RENPY_THIRD_TEXTURE 0
 
+#endif
 
-#else
-#include <GL/glew.h>
 
-#undef glClientActiveTexture
-#define glClientActiveTexture glClientActiveTextureARB
+#if defined RENPY_GLES_2
 
-#undef glActiveTexture
-#define glActiveTexture glActiveTextureARB
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
 
-#define GL_RGB565_OES 0
+typedef GLuint GLhandleARB;
+typedef GLchar GLcharARB;
+
+#define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
+
+#define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
+#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
+#define glBindFramebufferEXT glBindFramebuffer
+#define glFramebufferTexture2DEXT glFramebufferTexture2D
+#define glGenFramebuffersEXT glGenFramebuffers
+#define glDeleteFramebuffersEXT glDeleteFramebuffers
+#define glCheckFramebufferStatusEXT glCheckFramebufferStatus
+
+#define GL_OBJECT_INFO_LOG_LENGTH_ARB GL_INFO_LOG_LENGTH
+#define GL_OBJECT_COMPILE_STATUS_ARB GL_COMPILE_STATUS
+#define GL_VERTEX_SHADER_ARB GL_VERTEX_SHADER
+#define GL_FRAGMENT_SHADER_ARB GL_FRAGMENT_SHADER
+#define GL_OBJECT_LINK_STATUS_ARB GL_LINK_STATUS
+
+#define glCreateShaderObjectARB glCreateShader
+#define glShaderSourceARB glShaderSource
+#define glCompileShaderARB glCompileShader
+#define glCreateProgramObjectARB glCreateProgram
+#define glAttachObjectARB glAttachShader
+#define glLinkProgramARB glLinkProgram
+#define glUseProgramObjectARB glUseProgram
+#define glGetAttribLocationARB glGetAttribLocation
+#define glGetUniformLocationARB glGetUniformLocation
+#define glUniformMatrix4fvARB glUniformMatrix4fv
+#define glUniform1iARB glUniform1i
+#define glUniform1fARB glUniform1f
+#define glUniform2fARB glUniform2f
+#define glUniform4fARB glUniform4f
+#define glVertexAttribPointerARB glVertexAttribPointer
+#define glEnableVertexAttribArrayARB glEnableVertexAttribArray
+#define glDisableVertexAttribArrayARB glDisableVertexAttribArray
+
 #define RENPY_THIRD_TEXTURE 1
 
 #endif
 
+
+#if defined RENPY_GLES_1 || defined RENPY_GLES_2
+
+typedef GLfloat GLdouble;
+
+#define glewInit() (1)
+#define GLEW_OK (1)
+#define glewGetErrorString(x) ("Unknown Error")
+#define glewIsSupported(x) (1)
+#define glClipPlane glClipPlanef
+
+// This isn't defined on GL ES, but that's okay, since we'll disable
+// screenshots on Android.
+#define GL_PACK_ROW_LENGTH 0
+
+#define glClientActiveTextureARB glClientActiveTexture
+#define glActiveTextureARB glActiveTexture
+
+
 #endif
+
+
+#if defined RENPY_OPENGL
+
+#include <GL/glew.h>
+
+#define RENPY_THIRD_TEXTURE 1
+
+// These have to be written 2.0-style, since the ARB-style doesn't
+// include the object type.
+#undef GL_INFO_LOG_LENGTH
+#define GL_INFO_LOG_LENGTH GL_OBJECT_INFO_LOG_LENGTH_ARB
+#undef glDeleteShader
+#define glDeleteShader glDeleteObjectARB
+#undef glDeleteProgram
+#define glDeleteProgram glDeleteObjectARB
+#undef glGetShaderiv 
+#define glGetShaderiv glGetObjectParameterivARB
+#undef glGetProgramiv
+#define glGetProgramiv glGetObjectParameterivARB
+#undef glGetShaderInfoLog
+#define glGetShaderInfoLog glGetInfoLogARB
+#undef glGetProgramInfoLog
+#define glGetProgramInfoLog glGetInfoLogARB
+
+#endif
+
+#endif // GL_COMPAT_H

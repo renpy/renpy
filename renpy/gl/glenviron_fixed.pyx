@@ -21,15 +21,39 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from gl cimport *
-from renpy.display.glenviron import *
+from gldraw cimport *
 
-class FixedFunctionEnviron(Environ):
+NONE = 0
+BLIT = 1
+BLEND = 2
+IMAGEBLEND = 3
+
+cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
+    """
+    Utility function that takes care of setting up an OpenGL clip plane.
+    """
+
+    cdef GLdouble equation[4]
+    
+    equation[0] = a
+    equation[1] = b
+    equation[2] = c
+    equation[3] = d
+    glEnable(plane)
+    glClipPlane(plane, equation)
+
+cdef class FixedFunctionEnviron(Environ):
     """
     This is an OpenGL environment that uses the fixed-function pipeline.
 
     It requires ARB_texture_env_combine and ARB_texture_env_crossbar to
     work.
     """
+
+    cdef object last
+    cdef int last_ramp
+    cdef int last_ramplen
+    cdef object ramp_setup
 
     def init(self):
         
@@ -75,6 +99,7 @@ class FixedFunctionEnviron(Environ):
         glActiveTextureARB(unit)
         glDisable(GL_TEXTURE_2D)
         
+    # As this takes keyword arguments, it can't be a cdef function.
     def combine_mode(self, unit,
                      color_function=GL_MODULATE,
                      color_arg0=GL_TEXTURE,
@@ -124,7 +149,7 @@ class FixedFunctionEnviron(Environ):
         glTexEnvf(GL_TEXTURE_ENV, GL_ALPHA_SCALE, alpha_scale)
 
         
-    def blit(self):
+    cdef void blit(self):
 
         if self.last != BLIT:
 
@@ -142,7 +167,7 @@ class FixedFunctionEnviron(Environ):
             
             self.last = BLIT
         
-    def blend(self, fraction):
+    cdef void blend(self, double fraction):
 
         if self.last != BLEND:
 
@@ -184,7 +209,7 @@ class FixedFunctionEnviron(Environ):
 
         
         
-    def imageblend(self, fraction, ramp):
+    cdef void imageblend(self, double fraction, int ramp):
 
         if self.last != IMAGEBLEND or self.last_ramp != ramp:
 
@@ -270,3 +295,52 @@ class FixedFunctionEnviron(Environ):
         cdef float *offsets = [ offset, offset, offset, offset ]
 
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, offsets)
+    
+    cdef void set_vertex(self, float *vertices):
+        glVertexPointer(2, GL_FLOAT, 0, <GLubyte *> vertices)
+        glEnableClientState(GL_VERTEX_ARRAY)    
+     
+    cdef void set_texture(self, int unit, float *coords):
+
+        if unit == 0:
+            glClientActiveTextureARB(GL_TEXTURE0)    
+        elif unit == 1:
+            glClientActiveTextureARB(GL_TEXTURE1)            
+        elif RENPY_THIRD_TEXTURE and unit == 2:
+            glClientActiveTextureARB(GL_TEXTURE2)
+        else:
+            return
+        
+        if coords is not NULL:
+            glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> coords)
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        else:
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+    
+    cdef void set_color(self, float r, float g, float b, float a):
+        glColor4f(r, g, b, a)
+    
+    cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(left, right, bottom, top, near, far)
+        glMatrixMode(GL_MODELVIEW)
+
+    cdef void set_clip(self, tuple clip_box, GLDraw draw):
+        
+        cdef double minx, miny, maxx, maxy
+
+        minx, miny, maxx, maxy = clip_box
+
+        gl_clip(GL_CLIP_PLANE0, 1.0, 0.0, 0.0, -minx)
+        gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
+        gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
+        gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
+  
+    cdef void unset_clip(self, GLDraw draw):
+        glDisable(GL_CLIP_PLANE0)
+        glDisable(GL_CLIP_PLANE1)
+        glDisable(GL_CLIP_PLANE2)
+        glDisable(GL_CLIP_PLANE3)
+        

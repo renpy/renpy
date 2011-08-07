@@ -115,7 +115,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 3
+    __version__ = 4
 
     def after_upgrade(self, version):
         if version < 1:
@@ -124,36 +124,39 @@ class Preferences(renpy.object.Object):
             self.using_afm_enable = False
         if version < 3:
             self.physical_size = None
+        if version < 4:
+            self.renderer = "auto"
+            self.performance_test = True
             
     def __init__(self):
-        self.fullscreen = False # W0201
-        self.skip_unseen = False # W0201
-        self.text_cps = 0 # W0201
-        self.afm_time = 0 # W0201
-        self.afm_enable = True # W0201
+        self.fullscreen = False 
+        self.skip_unseen = False
+        self.text_cps = 0
+        self.afm_time = 0
+        self.afm_enable = True
         
         # These will be going away soon.
-        self.sound = True # W0201
-        self.music = True # W0201
+        self.sound = True
+        self.music = True
 
         # 2 - All transitions.
         # 1 - Only non-default transitions.
         # 0 - No transitions.
-        self.transitions = 2 # W0201
+        self.transitions = 2
 
-        self.skip_after_choices = False # W0201
+        self.skip_after_choices = False
 
         # Mixer channel info.
 
         # A map from channel name to the current volume (between 0 and 1).
-        self.volumes = { } # W0201
+        self.volumes = { }
 
         # True if the channel should not play music. False
         # otherwise. (Not used anymore.)
-        self.mute = { } # W0201
+        self.mute = { }
 
         # Joystick mappings.
-        self.joymap = dict( # W0201
+        self.joymap = dict(
             joy_left="Axis 0.0 Negative",
             joy_right="Axis 0.0 Positive",
             joy_up="Axis 0.1 Negative",
@@ -162,6 +165,12 @@ class Preferences(renpy.object.Object):
         
         # The size of the window, or None if we don't know it yet.
         self.physical_size = None
+        
+        # The graphics renderer we use.
+        self.renderer = "auto"
+        
+        # Should we do a performance test on startup?
+        self.performance_test = True
         
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume
