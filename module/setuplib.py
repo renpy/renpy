@@ -127,6 +127,9 @@ def cmodule(name, source, libs=[], define_macros=[]):
         define_macros=define_macros,
         ))
 
+
+necessary_gen = [ ]
+
 def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
@@ -175,6 +178,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     
     # Determine if any of the dependencies are newer than the c file.
     c_fn = os.path.join("gen", name + ".c")
+    necessary_gen.append(name + ".c")
     
     if os.path.exists(c_fn):
         c_mtime = os.path.getmtime(c_fn)
@@ -225,6 +229,17 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     if compile_if:    
         cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros)
 
+def find_unnecessary_gen():
+    
+    for i in os.listdir("gen"):
+        if not i.endswith(".c"):
+            continue
+        
+        if i in necessary_gen:
+            continue
+        
+        print "Unnecessary file", os.path.join("gen", i)
+    
 
 py_modules = [ ]
 

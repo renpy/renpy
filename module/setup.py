@@ -8,7 +8,7 @@ import os
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
 import setuplib
-from setuplib import android, include, library, cython, cmodule, pymodule, copyfile
+from setuplib import android, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -135,6 +135,7 @@ cython(
     [ "ftsupport.c" ],
     libs = sdl + [ 'freetype', 'z', 'm' ])
 
+find_unnecessary_gen()
 
 # Figure out the version, and call setup.
 sys.path.append('..')
