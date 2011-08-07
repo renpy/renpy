@@ -208,6 +208,12 @@ init -1024 python:
         if not config.performance_test:
             return
 
+        _gl_performance_test()
+
+    def _gl_performance_test():
+    
+        import os
+
         if not _preferences.performance_test and "RENPY_PERFORMANCE_TEST" not in os.environ:
             return
 

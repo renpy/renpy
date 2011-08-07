@@ -113,7 +113,6 @@ anglecopy("gldraw.pyx")
 anglecopy("glenviron_shader.pyx")
 anglecopy("gl.pxd")
 anglecopy("glrtt_fbo.pyx")
-anglecopy("glrtt_copy.pyx")
 anglecopy("gltexture.pxd")
 anglecopy("gltexture.pyx")
 
@@ -126,7 +125,6 @@ anglecython("renpy.angle.gldraw", source=[ "anglesupport.c" ])
 anglecython("renpy.angle.gltexture")
 anglecython("renpy.angle.glenviron_shader")
 anglecython("renpy.angle.glrtt_fbo")
-anglecython("renpy.angle.glrtt_copy")
 
 # Text.
 cython("renpy.text.textsupport")
