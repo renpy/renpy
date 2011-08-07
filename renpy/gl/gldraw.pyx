@@ -472,12 +472,20 @@ cdef class GLDraw:
                 renpy.display.log.write("Can't find a workable environment.")
                 return False
 
-
-        if use_subsystem(
-            glrtt_fbo,
-            "RENPY_GL_RTT",
-            "fbo",
-            "GL_OES_framebuffer_object"):
+        # Pick a Render-to-texture method.
+        if (ANGLE or 
+            
+            use_subsystem(
+                glrtt_fbo,
+                "RENPY_GL_RTT",
+                "fbo",
+                "GL_OES_framebuffer_object") or 
+            
+            use_subsystem(
+                glrtt_fbo,
+                "RENPY_GL_RTT",
+                "fbo",
+                "GL_ARB_framebuffer_object")):
 
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
@@ -485,7 +493,6 @@ cdef class GLDraw:
             self.rtt.init()
 
         else:                        
-            # Pick a Render-to-texture subsystem.        
             renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
