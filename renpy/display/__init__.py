@@ -29,13 +29,6 @@ draw = None
 # The interface object.
 interface = None
 
-# Should we give up on opengl? This is controlled by shift on initial
-# start.
-gl_giveup = None
-
-# The renderers we prefer to use.
-prefer_renderers = "gl,sw"
-
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False
 

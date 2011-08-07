@@ -185,18 +185,21 @@ class MultipleDict(object):
             
         raise KeyError(key)
 
-def substitute(s, scope=None):
+def substitute(s, scope=None, force=False):
     """
     Performs translation and formatting on `s`, as necessary.
     
     `scope`
         The scope which is used in formatting, in addition to the default
         store.
+        
+    `force`
+        Force substitution to occur, even if it's disabled in the config.
     """
 
     # TODO: Translation.
 
-    if not renpy.config.new_substitutions:
+    if not renpy.config.new_substitutions and not force:
         return s
     
     if "[" in s:

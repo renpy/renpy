@@ -231,3 +231,21 @@ def reload_all():
     renpy.display.draw = None
     
     import_all()
+
+# Information about the platform we're running on. We break the platforms
+# up into 4 groups - windows-like, mac-like, linux-like, and android-like.
+windows = False
+macintosh = False
+linux = False
+android = False
+
+import platform
+
+if platform.win32_ver()[0]:
+    windows = True
+elif platform.mac_ver()[0]:
+    macintosh = True
+else:
+    linux = True
+    
+# The android init code in renpy.py will set linux=False and android=True.

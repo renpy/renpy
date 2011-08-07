@@ -34,8 +34,6 @@ import time
 import cStringIO
 import threading
 
-on_windows = (sys.platform == 'win32')
-
 try:
     import pygame.macosx
 except:
@@ -1191,7 +1189,7 @@ class Interface(object):
         # Window icon.
         icon = renpy.config.window_icon
 
-        if on_windows and renpy.config.windows_icon:
+        if renpy.windows and renpy.config.windows_icon:
             icon = renpy.config.windows_icon
             
         if icon:
@@ -1209,7 +1207,7 @@ class Interface(object):
             square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
             im = square_im
 
-            if on_windows and im.get_size() != (32, 32):
+            if renpy.windows and im.get_size() != (32, 32):
                 im = renpy.display.scale.real_smoothscale(im, (32, 32))
                 
             pygame.display.set_icon(im)
@@ -1230,34 +1228,47 @@ class Interface(object):
         """
         Figures out the list of draw constructors to try.
         """
+        
+        renderer = renpy.game.preferences.renderer
+        renderer = os.environ.get("RENPY_RENDERER", renderer)
+        
+        if self.safe_mode:
+            renderer = "sw"
+            
+        renpy.config.renderer = renderer
+
+        if renderer == "auto":
+            renderers = [ "angle", "gl", "sw" ]
+        else:
+            renderers = [ renderer ]
 
         draws = { }
 
-        try:
-            import renpy.angle.gldraw as angledraw #@UnresolvedImport
-            draws["angle"] = angledraw.GLDraw
-        except:
-            renpy.display.log.write("Couldn't import angle renderer:")
-            renpy.display.log.exception()
+        if renpy.windows and ("angle" in renderers):
+            try:
+                import renpy.angle.gldraw as angledraw #@UnresolvedImport
+                draws["angle"] = angledraw.GLDraw
+            except:
+                renpy.display.log.write("Couldn't import angle renderer:")
+                renpy.display.log.exception()
 
-        try:
-            import renpy.gl.gldraw as gldraw #@UnresolvedImport
-            draws["gl"] = gldraw.GLDraw
-        except:
-            renpy.display.log.write("Couldn't import gl renderer:")
-            renpy.display.log.exception()
+        if "gl" in renderers:
+            try:
+                import renpy.gl.gldraw as gldraw #@UnresolvedImport
+                draws["gl"] = gldraw.GLDraw
+            except:
+                renpy.display.log.write("Couldn't import gl renderer:")
+                renpy.display.log.exception()
 
-        try:
-            import renpy.display.swdraw as swdraw
-            draws["sw"] = swdraw.SWDraw
-        except:
-            renpy.display.log.write("Couldn't import sw renderer:")
-            renpy.display.log.exception()
+        if "sw" in renderers:
+            try:
+                import renpy.display.swdraw as swdraw
+                draws["sw"] = swdraw.SWDraw
+            except:
+                renpy.display.log.write("Couldn't import sw renderer:")
+                renpy.display.log.exception()
         
-        default = renpy.display.prefer_renderers        
-        dl = os.environ.get("RENPY_RENDERER", default).split(",")
-        
-        rv = [ draws.get(i, None) for i in dl ]
+        rv = [ draws.get(i, None) for i in renderers ]
         return [ i for i in rv if i is not None ]
 
     def kill_textures(self):
@@ -2227,7 +2238,7 @@ class Interface(object):
                         if len(evs):
                             ev = evs[-1]
 
-                        if on_windows:
+                        if renpy.windows:
                             self.focused = True
                             
                     # Handle focus notifications.

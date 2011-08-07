@@ -28,8 +28,6 @@ import warnings
 
 # Functions to be customized by distributors. ################################
 
-android = ("ANDROID_PRIVATE" in os.environ)
-
 # Given the Ren'Py base directory (usually the directory containing
 # this file), this is expected to return the path to the common directory.
 def path_to_common(renpy_base):
@@ -56,15 +54,15 @@ def path_to_saves(gamedir):
             break
         path = newpath
 
-    # Otherwise, put the saves in a standard place.
-    if android:
+    # Otherwise, put the saves in a platform-specific location.
+    if renpy.android:
         return gamedir + "/saves"
 
-    elif platform.mac_ver()[0]:
+    elif renpy.macintosh:
         rv = "~/Library/RenPy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
 
-    elif sys.platform == "win32":
+    elif renpy.windows:
         if 'APPDATA' in os.environ:
             return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
         else:
@@ -85,7 +83,6 @@ def path_to_renpy_base():
 
     return renpy_base
 
-
 ##############################################################################
 
 # The version of the Mac Launcher and py4renpy that we require.
@@ -100,6 +97,8 @@ except:
     raise
     print "Ren'Py requires at least python 2.6."
     sys.exit(0)
+
+android = ("ANDROID_PRIVATE" in os.environ)
 
 # Android requires us to add code to the main module, and to command some
 # renderers.
@@ -136,7 +135,9 @@ def main():
         print >>sys.stderr, "correctly, preserving the directory structure."
         raise
 
-    renpy.android = android
+    if android:
+        renpy.linux = False
+        renpy.android = True
     
     renpy.bootstrap.bootstrap(renpy_base)
 
