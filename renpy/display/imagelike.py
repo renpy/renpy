@@ -47,10 +47,7 @@ class Solid(renpy.display.core.Displayable):
             self.color = None
 
     def visit(self):
-        if self.color:
-            return [ renpy.display.im.SolidImage(self.color, 4, 4) ]
-        else:
-            return [ ]
+        return [ ]
         
     def render(self, width, height, st, at):
 
@@ -61,14 +58,13 @@ class Solid(renpy.display.core.Displayable):
         if color is None or width <= 0 or height <= 0:
             return rv
 
-        SIZE = 10
-        
-        si = renpy.display.im.SolidImage(color, SIZE, SIZE)
-        sr = render(si, SIZE, SIZE, st, at)
+        SIZE = 10.0
+
+        tex = renpy.display.draw.solid_texture(SIZE, SIZE, color)
 
         rv.forward = Matrix2D(1.0 * SIZE / width, 0, 0, 1.0 * SIZE / height)
         rv.reverse = Matrix2D(1.0 * width / SIZE, 0, 0, 1.0 * height / SIZE)
-        rv.blit(sr, (0, 0))
+        rv.blit(tex, (0, 0))
 
         return rv
         
@@ -121,7 +117,7 @@ class Frame(renpy.display.core.Displayable):
 
         crend = render(self.image, width, height, st, at)
 
-        if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
+        if renpy.display.draw.info["renderer"] == "sw":
             return self.sw_render(crend, width, height)
 
         def draw(x0, x1, y0, y1):

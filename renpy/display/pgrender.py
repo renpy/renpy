@@ -26,41 +26,9 @@ import sys
 import pygame
 import renpy.display
 
-# This class is used to make a copy of a pygame module's functions. We
-# can then access those functions, and be relatively sure that those
-# have not changed.
-class ModuleProxy(object):
-    def __init__(self, module):
-        self.__dict__.update(module.__dict__)
-
-opygame = ModuleProxy(pygame)
-opygame.display = ModuleProxy(pygame.display) # W0201
-opygame.transform = ModuleProxy(pygame.transform) # W0201
-opygame.image = ModuleProxy(pygame.image) # W0201
-
-
 # Sample surfaces, with and without alpha.
 sample_alpha = None
 sample_noalpha = None
-
-def set_mode(resolution, flags=0, depth=0):
-    """
-    Sets the mode of the pygame screen, and creates the sample
-    surfaces.
-    """
-
-    global sample_alpha
-    global sample_noalpha
-    
-    rv = opygame.display.set_mode(resolution, flags, depth)
-
-    s = opygame.Surface((10, 10))
-    sample_alpha = s.convert_alpha(rv)
-    sample_noalpha = s.convert(rv)
-
-    return rv
-
-set_mode_unscaled = set_mode
 
 def set_rgba_masks():
     """
@@ -75,7 +43,7 @@ def set_rgba_masks():
     global sample_noalpha
 
     # Create a sample surface.
-    s = opygame.Surface((10, 10), 0, 32)
+    s = pygame.Surface((10, 10), 0, 32)
     sample_alpha = s.convert_alpha()
 
     # Sort the components by absolute value.
@@ -89,11 +57,11 @@ def set_rgba_masks():
         masks = ( masks[0], masks[1], masks[2], masks[3] )
 
     # Create the sample surface.
-    sample_alpha = opygame.Surface((10, 10), 0, 32, masks)
-    sample_noalpha = opygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
+    sample_alpha = pygame.Surface((10, 10), 0, 32, masks)
+    sample_noalpha = pygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
     
 
-class Surface(opygame.Surface):
+class Surface(pygame.Surface):
     """
     This allows us to wrap around pygame's surface, to change
     its mode, as necessary.
@@ -114,7 +82,7 @@ class Surface(opygame.Surface):
         return copy_surface(self, self)
 
     def subsurface(self, rect):
-        rv = opygame.Surface.subsurface(self, rect)
+        rv = pygame.Surface.subsurface(self, rect)
         return rv
 
 def surface((width, height), alpha):
@@ -125,7 +93,7 @@ def surface((width, height), alpha):
     `alpha` - True if the new surface should have an alpha channel.
     """
 
-    if isinstance(alpha, opygame.Surface):
+    if isinstance(alpha, pygame.Surface):
         alpha = alpha.get_masks()[3]
     
     if alpha:
@@ -136,13 +104,12 @@ def surface((width, height), alpha):
     # We might not have initialized properly yet. This is enough
     # to get us underway.
     if sample is None:
-        sample = opygame.Surface((4, 4), opygame.SRCALPHA, 32)
+        sample = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
         
     surf = Surface((width + 4, height + 4), 0, sample)
     return surf.subsurface((2, 2, width, height)) # E1101
 
 surface_unscaled = surface
-
 
 def copy_surface(surf, alpha=True):
     """
@@ -163,7 +130,7 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 def load_image(f, filename):
-    surf = opygame.image.load(f, filename)
+    surf = pygame.image.load(f, filename)
     return copy_surface_unscaled(surf)
 
 load_image_unscaled = load_image
@@ -172,7 +139,7 @@ load_image_unscaled = load_image
 # Wrapper around functions we use from pygame.surface.
 
 def flip(surf, horizontal, vertical):
-    surf = opygame.transform.flip(surf, horizontal, vertical)
+    surf = pygame.transform.flip(surf, horizontal, vertical)
     return copy_surface_unscaled(surf)
 
 flip_unscaled = flip
@@ -180,21 +147,21 @@ flip_unscaled = flip
 
 def rotozoom(surf, angle, zoom):
 
-    surf = opygame.transform.rotozoom(surf, angle, zoom)
+    surf = pygame.transform.rotozoom(surf, angle, zoom)
     return copy_surface_unscaled(surf)
 
 rotozoom_unscaled = rotozoom
 
 
 def transform_scale(surf, size):
-    surf = opygame.transform.scale(surf, size)
+    surf = pygame.transform.scale(surf, size)
     return copy_surface_unscaled(surf, surf)
 
 transform_scale_unscaled = transform_scale
 
 
 def transform_rotate(surf, angle):
-    surf = opygame.transform.rotate(surf, angle)
+    surf = pygame.transform.rotate(surf, angle)
     return copy_surface(surf)
 
 transform_rotate_unscaled = transform_rotate

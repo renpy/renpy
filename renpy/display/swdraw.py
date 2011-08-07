@@ -234,6 +234,26 @@ class Clipper(object):
             
 clippers = [ Clipper() ]        
 
+def surface(w, h, alpha):
+    """
+    Creates a surface that shares a pixel format with the screen. The created
+    surface will 
+    """
+        
+    if alpha:
+        rv = pygame.Surface((w + 4, h + 4), pygame.SRCALPHA)
+    else:
+        rv = pygame.Surface((w + 4, h + 4), 0)
+        
+    return rv.subsurface((2, 2, w, h))
+
+def copy_surface(surf):
+    w, h = surf.get_size()
+    
+    rv = surface(w, h, True)
+    rv.blit(surf, (0, 0))
+    
+    return rv
 
 def draw_special(what, dest, x, y):
     """
@@ -256,7 +276,7 @@ def draw_special(what, dest, x, y):
         top = what.children[1][0].render_to_texture(True)
         
         if what.operation_alpha:
-            target = renpy.display.pgrender.surface((w, h), True)
+            target = surface(w, h, True)
         else:
             target = dest.subsurface((0, 0, w, h))
         
@@ -276,7 +296,7 @@ def draw_special(what, dest, x, y):
         top = what.children[2][0].render_to_texture(True)
 
         if what.operation_alpha:
-            target = renpy.display.pgrender.surface((w, h), True)
+            target = surface(w, h, True)
         else:
             target = dest.subsurface((0, 0, w, h))
 
@@ -735,15 +755,14 @@ class SWDraw(object):
             self.screen = old_screen
                     
         else:
-            self.screen = renpy.display.pgrender.set_mode(
-                (scaled_width, scaled_height),
-                fsflag,
-                32)
+            self.screen = pygame.display.set_mode((scaled_width, scaled_height), fsflag, 32)
             
         if scale_factor != 1.0:
-            self.window = renpy.display.pgrender.surface((width, height), True)
+            self.window = surface(width, height, True)
         else:
             self.window = self.screen
+            
+        renpy.display.pgrender.set_rgba_masks()
             
         # Should we redraw the screen from scratch?
         self.full_redraw = True
@@ -777,7 +796,7 @@ class SWDraw(object):
         by = my - myo
 
         self.mouse_backing_pos = (bx, by)
-        self.mouse_backing = renpy.display.pgrender.surface((mw, mh), False)
+        self.mouse_backing = surface(mw, mh, False)
         self.mouse_backing.blit(self.window, (0, 0), (bx, by, mw, mh))
 
         self.screen.blit(tex, (bx, by))
@@ -936,7 +955,7 @@ class SWDraw(object):
             else:
                 
                 if self.scale_fast:
-                    renpy.display.pgrender.opygame.transform.scale(self.window, self.screen.get_size(), self.screen)
+                    pygame.transform.scale(self.window, self.screen.get_size(), self.screen)
                 else:
                     renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
                 
@@ -951,7 +970,8 @@ class SWDraw(object):
 
         
     def render_to_texture(self, render, alpha):
-        rv = renpy.display.pgrender.surface((render.width, render.height), alpha)
+  
+        rv = surface(render.width, render.height, alpha)
         draw(rv, None, render, 0, 0, False)
 
         return rv
@@ -1003,6 +1023,9 @@ class SWDraw(object):
         is in the RLE cache.
         """
 
+        surf = copy_surface(surf)
+        self.mutated_surface(surf)
+
         if transient:
             return surf
 
@@ -1010,7 +1033,7 @@ class SWDraw(object):
             return surf
 
         if surf not in rle_cache:
-            rle_surf = renpy.display.pgrender.copy_surface(surf)
+            rle_surf = copy_surface(surf)
             rle_surf.set_alpha(255, pygame.RLEACCEL)
             self.mutated_surface(rle_surf)
 
@@ -1018,6 +1041,18 @@ class SWDraw(object):
         
         return surf
 
+    def solid_texture(self, w, h, color):
+        """
+        Creates a texture filled to the edges with color.
+        """
+        
+        surf = surface(w + 4, h + 4, True)
+        surf.fill(color)
+        surf = surf.subsurface((2, 2, w, h))
+        
+        self.mutated_surface(surf)
+        return surf
+        
         
     def free_memory(self):
         """

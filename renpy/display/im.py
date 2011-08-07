@@ -587,30 +587,6 @@ class Composite(ImageBase):
 
         return rv
 
-
-class SolidImage(ImageBase):
-    """
-    This is an image that is a solid rectangle with a given size. It's
-    used to implement Solid.
-    """
-
-    def __init__(self, color, width, height):
-        super(SolidImage, self).__init__(color, width, height)
-        self.color = color
-        self.width = int(width)
-        self.height = int(height)
-
-    def get_mtime(self):
-        return 0
-       
-    def load(self):
-
-        surf = renpy.display.pgrender.surface((self.width + 4, self.height + 4), True)
-        surf.fill(self.color)
-        rv = surf.subsurface((2, 2, self.width, self.height))
-        
-        return rv  
-
 class Scale(ImageBase):
     """
     :doc: im_im

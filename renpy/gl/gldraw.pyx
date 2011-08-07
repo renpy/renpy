@@ -552,6 +552,13 @@ cdef class GLDraw:
             
         return rv
 
+    def solid_texture(self, w, h, color):
+        surf = renpy.display.pgrender.surface((w + 4, h + 4), True)
+        surf.fill(color)
+        surf = surf.subsurface((2, 2, w, h))
+        
+        return self.load_texture(surf)
+
     # private    
     def clip_mode_screen(self):
         """
@@ -718,7 +725,7 @@ cdef class GLDraw:
 
                 return 0
 
-            if isinstance(what, renpy.display.pgrender.opygame.Surface):
+            if isinstance(what, pygame.Surface):
 
                 tex = self.load_texture(what)
                 self.draw_transformed(tex, clip, xo, yo, alpha, reverse)
