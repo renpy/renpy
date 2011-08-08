@@ -1105,6 +1105,12 @@ class Text(renpy.display.core.Displayable):
         if hyperlink_focus:
             return hyperlink_focus(target)
 
+    def set_style_prefix(self, prefix, root):
+        if prefix != self.style.prefix:
+            self.kill_layout()
+
+        super(Text, self).set_style_prefix(prefix, root)
+
     def unfocus(self, default=False):
         """
         Called when a hyperlink loses focus, or isn't focused to begin with.
