@@ -1,0 +1,162 @@
+# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
+# This file contains code for the style preferences system, which allows
+# the user to define preferences that update styles. 
+
+init -1135 python:
+
+    # A map from preference name to list of (alternative, style, property, value) 
+    # tuples.
+    __preferences = { }
+
+    # A map from preference name to the list of alternatives for that preference.
+    __alternatives = { }
+
+    # Are style preferences dirty? If so, we need to update them at the start of
+    # the next operation.
+    __dirty = True
+
+    # A map from preference name to alternative.
+    if persistent._style_preferences is None:      
+        persistent._style_preferences = { } 
+        
+
+    def __register_style_preference(preference, alternative, style, property, value):
+        """
+        Registers information about an alternative for a style preference.
+        
+        `preference`
+            A string, the name of the style property.
+        
+        `alternative`
+            A string, the name of the alternative.
+        
+        `style`
+            The style that will be updated. This may be a style object or a string giving the style name.
+        
+        `property`
+            A string giving the name of the style property that will be update.
+        
+        `value`
+            The value that will be assigned to the style property.
+        """
+
+        if preference not in __preferences:
+            __preferences[preference] = [ ]
+            __alternatives[preference] = [ ]
+            
+        if alternative not in __alternatives:
+            __alternatives[preference].append(alternative)
+            
+        __preferences[preference].append((alternative, style, property, value))
+        
+    def __init():
+        """
+        Called at the end of the init phase, to ensure that each preference
+        has a valid value.
+        """
+        
+        for preference, alternatives in __alternatives.iteritems():
+            alt = persistent._style_preferences.get(preference, None)
+            
+            if alt not in alternatives:
+                persistent._style_preferences[preference] = alternatives[0]
+                
+    def __update():
+        """
+        Called at least once per interaction, to update the styles if necessary.
+        """
+    
+        global __dirty
+    
+        if not __dirty:
+            return
+            
+        for preference, alternatives in __preferences.iteritems():
+
+            alt = persistent._style_preferences.get(preference, None)
+
+            for alternative, style, property, value in alternatives:
+                if alternative == alt:
+                    setattr(style, property, value)
+                    
+        renpy.style.rebuild()
+        
+        __dirty = False
+        
+    def __check(preference, alternative=None):
+        
+        if preference not in __alternatives:
+            raise Exception("{0} is not a known style preference.".format(preference))
+        
+        if alternative is not None:        
+            if alternative not in __alternatives[preference]:           
+                raise Exception("{0} is not a known alternative for style preference {1}.".format(alternative, preference))
+    
+        
+    def __set_style_preference(preference, alternative):
+        """
+        Sets the selected alternative for the style preference.
+    
+        `preference`
+            A string giving the name of the style preference.
+    
+        `alternative`
+            A string giving the name of the alternative.
+        """
+        
+        global __dirty
+        
+        __check(preference, alternative)
+        
+        persistent._style_preferences[preference] = alternative
+        __dirty = True
+        
+        renpy.restart_interaction()
+        
+    def __get_style_preference(preference):
+        """
+        Returns a string giving the name of the selected alternative for the named style preference. 
+    
+        `preference`
+            A string giving the name of the style preference.
+        """
+    
+        __check(preference)
+        
+        return persistent._style_preferences[preference]
+        
+    class StylePreference(Action):
+        """
+        An action that causes `alternative` to become the selected alternative for the given style preference.
+    
+        `preference`
+            A string giving the name of the style preference.
+    
+        `alternative`
+            A string giving the name of the alternative.        
+        """
+                
+        def __init__(self, preference, alternative):
+            
+            __check(preference, alternative)
+            
+            self.preference = preference
+            self.alternative = alternative
+            
+        def __call__(self):
+            __set_style_preference(self.preference, self.alternative)
+            
+        def get_selected(self):
+            return __get_style_preference(self.preference) == self.alternative
+    
+    renpy.register_style_preference = __register_style_preference
+    renpy.set_style_preference = __set_style_preference
+    renpy.get_style_preference = __get_style_preference
+    
+    config.interact_callbacks.append(__update)
+    
+init 1135 python:
+    
+    __init()
