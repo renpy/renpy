@@ -427,12 +427,10 @@ def display_say(
             
         if end_string:
             end_string = "{_end}" + end_string
-            
+
+        # The string to show.            
         what_string = start_string + mid_string + end_string
 
-        # This will be given to as the what argument to the show function.
-        what_list = [ what_string ]
-        
         # Figure out the CTC to use, if any.
         if last_pause:
             what_ctc = ctc
@@ -453,9 +451,6 @@ def display_say(
         if delay == 0:
             what_ctc = None
         
-        if what_ctc and ctc_position == "nestled":
-            what_list.append(what_ctc)
-
         # Create the callback that is called when the slow text is done.
         slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay)
         
@@ -464,10 +459,13 @@ def display_say(
             c("show", interact=interact, type=type, **cb_args)
 
         # Show the text.
-        what_text = show_function(who, what_list)
+        what_text = show_function(who, what_string)
 
         if not isinstance(what_text, renpy.text.text.Text):
             raise Exception("The say screen (or show_function) must return a Text object.")
+
+        if what_ctc and ctc_position == "nestled":
+            what_text.set_ctc(what_ctc)
                     
         # Update the properties of the what_text widget.
         what_text.slow = slow

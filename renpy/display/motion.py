@@ -355,7 +355,6 @@ class Proxy(object):
     def __set__(self, instance, value):
         return setattr(instance.state, self.name, value)
     
-
 class Transform(Container):
 
     __version__ = 5
@@ -614,6 +613,9 @@ class Transform(Container):
     
     def _hide(self, st, at, kind):
 
+        if not self.child:
+            return None
+
         if not (self.hide_request or self.replaced_request):
             d = self.copy()
         else:
@@ -677,7 +679,7 @@ class Transform(Container):
 
         # Use non-None elements of the child placement as defaults.
         child = self.child
-        if child and renpy.config.transform_uses_child_position:
+        if child is not None and renpy.config.transform_uses_child_position:
 
             pos = child.get_placement()
 
@@ -723,6 +725,10 @@ class Transform(Container):
 
         if child is None:
             child = self.child
+
+        # If we don't have a child for some reason, set it to null.            
+        if child is None:
+            child = renpy.display.layout.Null()
         
         rv = Transform(
             child=child,

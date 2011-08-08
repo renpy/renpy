@@ -190,8 +190,8 @@ class ATLTransformBase(renpy.object.Object):
     
     def __init__(self, atl, context, parameters):
 
-        super(ATLTransformBase, self).__init__()
-        
+        # The constructor will be called by atltransform.
+
         if parameters is None:
             parameters = ATLTransformBase.parameters
 
@@ -290,6 +290,9 @@ class ATLTransformBase(renpy.object.Object):
 
         if child is None:
             child = self.child
+            
+        if child is None:
+            child = renpy.display.layout.Null()
 
         # Create a new ATL Transform.
         parameters = renpy.ast.ParameterInfo({}, positional, None, None)

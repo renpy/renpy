@@ -386,7 +386,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
         
     while True:
         
-        if pos == len_glyphs:
+        if pos >= len_glyphs:
             end_line = True
         else:
             g = glyphs[pos]
@@ -423,9 +423,13 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
             if g.split == SPLIT_INSTEAD:                
                 sol += 1
                 pos += 1
-                continue
+                
+                if pos >= len_glyphs:
+                    break
+                else:                
+                    continue
             
-        if pos == len_glyphs:
+        if pos >= len_glyphs:
             break
                     
         if g.ascent > ascent:

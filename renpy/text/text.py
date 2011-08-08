@@ -667,7 +667,7 @@ class Layout(object):
                 # Duplicated from the newline tag.
                 
                 if not line:
-                    line.append((ts[-1], u" "))
+                    line.append((tss[-1], u" "))
                 
                 paragraphs.append(line)
                 line = [ ]
@@ -961,6 +961,9 @@ class Text(renpy.display.core.Displayable):
     
     def after_upgrade(self, version):
         
+        if version < 3:
+            self.ctc = None
+        
         if version < 4:
             
             if not isinstance(self.text, list):
@@ -1001,13 +1004,16 @@ class Text(renpy.display.core.Displayable):
         # Should substitutions be done?
         self.substitute = substitute
         
+        # The ctc indicator associated with this text.
+        self.ctc = None
+        
         if replaces is not None:
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
+            self.ctc = replaces.ctc
 
         # Call update to retokenize.
         self.update()
-
 
     def set_text(self, text):
         if not isinstance(text, list):
@@ -1017,7 +1023,12 @@ class Text(renpy.display.core.Displayable):
         
         self.kill_layout()
         self.update()
-    
+
+    def set_ctc(self, ctc):
+        self.ctc = ctc
+        self.kill_layout()
+        self.update()
+        
     def update(self):
         """
         This needs to be called after text has been updated, but before
@@ -1035,6 +1046,9 @@ class Text(renpy.display.core.Displayable):
                 i = unicode(i)
                 
             text.append(i)
+        
+        if self.ctc is not None:
+            text.append(self.ctc)
         
         tokens = self.tokenize(text)
         
