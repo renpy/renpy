@@ -111,11 +111,9 @@ def import_all():
     import renpy.substitutions #@UnresolvedImport
 
     import renpy.display.presplash #@UnresolvedImport
-    import renpy.display.iliad # Must be before scale and pgrender. @UnresolvedImport
     import renpy.display.pgrender #@UnresolvedImport
-    import renpy.display.scale # Must be before module. @UnresolvedImport
+    import renpy.display.scale #@UnresolvedImport
     import renpy.display.module #@UnresolvedImport
-
 
     def update_path(package):
         """
