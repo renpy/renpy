@@ -217,6 +217,10 @@ init -1024 python:
         if not _preferences.performance_test and "RENPY_PERFORMANCE_TEST" not in os.environ:
             return
 
+        # Don't bother on androuid - there's nothing the user can do.
+        if renpy.renpy.android:
+            return
+
         renpy.renpy.display.log.write("Performance test:")
             
         # This will cause the screen to start displaying.
@@ -245,8 +249,15 @@ init -1024 python:
         if problem is None:
             return
     
+        if renpy.renpy.windows:
+            platform = "windows"
+        elif renpy.renpy.macintosh:
+            platform = "macintosh"
+        else:
+            platform = "linux"
+    
         # Give the warning message to the user.            
-        url = "http://www.renpy.org/display-problems?v=" + renpy.version()
+        url = "http://www.renpy.org/display-problems?p={0}&v={1}".format(platform, renpy.version())
         result = renpy.call_screen("_performance_warning", problem=problem, url=url)
 
         # Store the user's choice, and continue.        
