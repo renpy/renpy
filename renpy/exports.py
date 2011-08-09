@@ -45,7 +45,7 @@ from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, 
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
-from renpy.easy import predict
+from renpy.easy import predict, displayable
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
