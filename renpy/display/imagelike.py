@@ -84,13 +84,18 @@ class Frame(renpy.display.core.Displayable):
     `image`
         An image manipulator that will be resized by this frame.
 
-    `xborder`
-        The width of the border on the left and right sides of the 
-        image.
-
-    `yborder`
-        The height of the border on the top and bottom sides of the
-        image.
+    `left`
+        The size of the border on the left side.
+        
+    `top`
+        The size of the border on the top.
+        
+    `right`
+        The size of the border on the right side. If None, defaults 
+        to `left`.
+        
+    `bottom`
+        The side of the border on the bottom. If None, defaults to `top`.
 
     `tile`
         If true, tiling is used to resize sections of the image,
@@ -105,20 +110,59 @@ class Frame(renpy.display.core.Displayable):
         
     __version__ = 1
 
-    def __init__(self, image, xborder, yborder, bilinear=True, tile=False, **properties):
+    def after_upgrade(self, version):
+        if version < 2:
+            self.left = self.xborder
+            self.right = self.xborder
+            self.top = self.yborder
+            self.bottom = self.yborder
+
+    def __init__(self, image, left, top, right=None, bottom=None, bilinear=True, tile=False, **properties):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
-        self.xborder = xborder
-        self.yborder = yborder
         self.tile = tile
+
+        if right is None:
+            right = left
+        if bottom is None:
+            bottom = top
+
+        self.left = left
+        self.top = top
+        self.right = right
+        self.bottom = bottom
 
     def render(self, width, height, st, at):
 
         crend = render(self.image, width, height, st, at)
 
+        sw, sh = crend.get_size()
+        
+        dw = int(width)
+        dh = int(height)
+        
+        bw = self.left + self.right
+        bh = self.top + self.bottom
+        
+        xborder = min(bw, sw, dw)
+        if xborder:
+            left = self.left * xborder / bw
+            right = self.right * xborder / bw
+        else:
+            left = 0
+            right = 0
+            
+        yborder = min(bh, sh, dh)
+        if yborder:
+            top = self.top * yborder / bh
+            bottom = self.bottom * yborder / bh
+        else:
+            top = 0
+            bottom = 0 
+
         if renpy.display.draw.info["renderer"] == "sw":
-            return self.sw_render(crend, width, height)
+            return self.sw_render(crend, dw, dh, left, top, right, bottom)
 
         def draw(x0, x1, y0, y1):
 
@@ -200,74 +244,52 @@ class Frame(renpy.display.core.Displayable):
             rv.blit(cr, (dx0, dy0))
             return
         
-
-        sw, sh = crend.get_size()
-        dw = int(width)
-        dh = int(height)
-        
-        xb = min(self.xborder, sw / 2 - 1, width / 2 - 1)
-        yb = min(self.yborder, sh / 2 - 1, height / 2 - 1) 
-        
         rv = Render(dw, dh)
 
-        self.draw_pattern(draw, xb, yb)
+        self.draw_pattern(draw, left, top, right, bottom)
         
         return rv
 
-    def draw_pattern(self, draw, xb, yb):
+    def draw_pattern(self, draw, left, top, right, bottom):
         # Top row.
-        if yb:
+        if top:
 
-            if xb:
-                draw(0, xb, 0, yb)
+            if left:
+                draw(0, left, 0, top)
 
-            draw(xb, -xb, 0, yb)
+            draw(left, -right, 0, top)
 
-            if xb:
-                draw(-xb, 0, 0, yb)
+            if right:
+                draw(-right, 0, 0, top)
 
         # Middle row.
-        if xb:
-            draw(0, xb, yb, -yb)
+        if left:
+            draw(0, left, top, -bottom)
 
-        draw(xb, -xb, yb, -yb)
+        draw(left, -right, top, -bottom)
 
-        if xb:
-            draw(-xb, 0, yb, -yb)
+        if right:
+            draw(-right, 0, top, -bottom)
 
         # Bottom row.
-        if yb:
-            if xb:
-                draw(0, xb, -yb, 0)
+        if bottom:
+            if left:
+                draw(0, left, -bottom, 0)
 
-            draw(xb, -xb, -yb, 0)
+            draw(left, -right, -bottom, 0)
 
-            if xb:
-                draw(-xb, 0, -yb, 0)
+            if right:
+                draw(-right, 0, -bottom, 0)
 
         
     
-    def sw_render(self, crend, width, height):
+    def sw_render(self, crend, dw, dh, left, top, right, bottom):
 
         source = crend.render_to_texture(True)
-
-        dw = int(width)
-        dh = int(height)
+        sw, sh = source.get_size()
 
         dest = renpy.display.pgrender.surface((dw, dh), True)
         rv = dest
-
-        dest = renpy.display.scale.real(dest)
-        source = renpy.display.scale.real(source)
-        
-        xb = renpy.display.scale.scale(self.xborder)
-        yb = renpy.display.scale.scale(self.yborder)
-
-        sw, sh = source.get_size()
-        dw, dh = dest.get_size()
-
-        xb = min(xb, sw / 2 - 1, dw / 2 - 1)
-        yb = min(yb, sh / 2 - 1, dh / 2 - 1) 
 
         def draw(x0, x1, y0, y1):
 
@@ -342,9 +364,9 @@ class Frame(renpy.display.core.Displayable):
             # Blit.
             dest.blit(surf, (dx0, dy0))
 
-        self.draw_pattern(draw, xb, yb)
+        self.draw_pattern(draw, left, top, right, bottom)
 
-        rrv = renpy.display.render.Render(width, height)
+        rrv = renpy.display.render.Render(dw, dh)
         rrv.blit(rv, (0, 0))
         rrv.depends_on(crend)
                       
