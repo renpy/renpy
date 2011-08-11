@@ -750,7 +750,7 @@ class Input(renpy.text.text.Text):
 
         self.editable = True
 
-        caretprops = { 'color' : None}
+        caretprops = { 'color' : None }
         
         for i in properties:
             if i.endswith("color"):
@@ -782,11 +782,23 @@ class Input(renpy.text.text.Text):
                 self.changed(content)
                 
         self.editable = editable
+
+        # Choose the caret.
+        caret = self.style.caret
+        if caret is None:
+            caret = self.caret
                                             
         if editable:
-            self.set_text([self.prefix, content.replace("{", "{{"), self.suffix, self.caret])
+            self.set_text([self.prefix, content.replace("{", "{{"), self.suffix, caret])
         else:
             self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+
+    # This is needed to ensure the caret updates properly.
+    def set_style_prefix(self, prefix, root):
+        if prefix != self.style.prefix:
+            self.update_text(self.content, self.editable)
+
+        super(Input, self).set_style_prefix(prefix, root)
 
     def enable(self):
         self.update_text(self.content, True)
