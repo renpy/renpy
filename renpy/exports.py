@@ -1332,9 +1332,7 @@ def layer_at_list(at_list, layer='master'):
 
 def free_memory():
     force_full_redraw()
-    renpy.display.im.free_memory()
-    renpy.display.font.free_memory()
-    renpy.display.render.free_memory() # @UndefinedVariable
+    renpy.display.interface.kill_textures_and_surfaces()
 
 def easy_displayable(d, none=False):
     if none:
