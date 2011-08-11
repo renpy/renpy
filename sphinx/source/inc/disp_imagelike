@@ -13,13 +13,18 @@
     `image`
         An image manipulator that will be resized by this frame.
     
-    `xborder`
-        The width of the border on the left and right sides of the 
-        image.
-    
-    `yborder`
-        The height of the border on the top and bottom sides of the
-        image.
+    `left`
+        The size of the border on the left side.
+        
+    `top`
+        The size of the border on the top.
+        
+    `right`
+        The size of the border on the right side. If None, defaults 
+        to `left`.
+        
+    `bottom`
+        The side of the border on the bottom. If None, defaults to `top`.
     
     `tile`
         If true, tiling is used to resize sections of the image,

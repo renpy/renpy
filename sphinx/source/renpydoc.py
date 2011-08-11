@@ -66,16 +66,6 @@ def parse_style_node(env, sig, signode):
         
     return ref
 
-# def parse_tp_node(env, sig, signode):
-#     m = re.match(r'(\S+)(.*)', sig)
-
-#     signode += sphinx.addnodes.desc_name(m.group(1), m.group(1))
-#     signode += docutils.nodes.Text(m.group(2), m.group(2))
-
-#     ref = m.group(1)
-#     return ref
-
-
 
 def setup(app):
     # app.add_description_unit('property', 'propref')

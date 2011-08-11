@@ -517,7 +517,6 @@ before releasing it:
    We think that the games people make are the best advertising for Ren'Py, and we hope that by including this, you'll help more people learn how to make visual novels in Ren'Py.
 
 **Check for a new version of Ren'Py.**
-
    New versions of Ren'Py are released on a regular basis, to fix bugs
    and add new features. You should check the
    `download page <http://www.renpy.org/wiki/renpy/Download_Ren'Py>`_
@@ -544,7 +543,6 @@ before releasing it:
    you can't.
 
 **Release.**
-
    You should post the generated files (for Windows, Mac, and Linux) up
    on the web somewhere, and tell people where to download them
    from. Congratulations, you've released a game!

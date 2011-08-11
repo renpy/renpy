@@ -181,7 +181,7 @@ Assuming we have the following images defined::
     image mary night sad = "mary_night_sad.png"
     image moon = "moon.png"
     
-Some example show statements are:
+Some example show statements are::
 
     # Basic show
     show mary night sad

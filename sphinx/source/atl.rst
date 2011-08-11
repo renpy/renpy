@@ -172,9 +172,7 @@ with only a single interpolation statement, without a warper, splines,
 or circular motion. The properties from the transform are processed as
 if they were included in this statement.
 
-Some sample interpolations are:
-
-::
+Some sample interpolations are::
 
     show logo base:
          # Show the logo at the upper right side of the screen.
@@ -304,9 +302,8 @@ will execute at most twice.)
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
 
-The repeat statement must be the last statement in a block.
+The repeat statement must be the last statement in a block. ::
 
-::
     show logo base:
         xalign 0.0
         linear 1.0 xalign 1.0

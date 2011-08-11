@@ -128,7 +128,6 @@ Elements of Statements
 Ren'Py statements are made of a few basic parts.
 
 :dfn:`Keyword`
-
     A keyword is a word that must literally appear in the source
     code. They're used to introduce statements and properties.
 
@@ -138,14 +137,12 @@ Ren'Py statements are made of a few basic parts.
     file-specfic version of that name.
     
 :dfn:`Name`
-
     A name begins with a letter or underscore, which is followed by
     zero or more letters, numbers, and underscores. For our purpose,
     unicode characters between U+00a0 and U+fffd are considered to be
     letters.
 
 :dfn:`Image Name`
-
     An image name consists of one or more names, separated by
     spaces. The name ends at the end of the statement, or when a
     keyword is encountered.
@@ -160,7 +157,6 @@ Ren'Py statements are made of a few basic parts.
     ``beach``, and ``night``.
     
 :dfn:`String`
-
     A string begins with a quote character (one of ", ', or \`),
     contains some sequence of characters, and ends with the same quote
     character.
@@ -176,7 +172,6 @@ Ren'Py statements are made of a few basic parts.
         'Strings can\'t contain their delimiter, unless you escape it.' 
 
 :dfn:`Simple Expression`
-
     A simple expression is a Python expression, used to include Python
     in some parts of the Ren'Py script. A simple expression begins
     with:
@@ -196,11 +191,9 @@ Ren'Py statements are made of a few basic parts.
     expression ends at the end of a string.
 
 :dfn:`At List`
-
     An at list is a list of simple expressions, separated by commas.
 
 :dfn:`Python Expression`
-
     A python expression is an arbitrary python expression, that may
     not include a colon. These are used to express the conditions in
     the if and while statements.
@@ -242,30 +235,25 @@ necessary to write a basic Ren'Py game.
 Here's a synopsis of python expressions. 
 
 :dfn:`Integer`
-
     An integer is a number without a decimal point. ``3`` and ``42``
     are integers.
 
 :dfn:`Float`
-
     A float (short for floating-point number) is a number with a
     decimal point. ``.5``, ``7.``, and ``9.0`` are all floats.
 
 :dfn:`String`
-
     Python strings begin with " or ', and end with the same
     character. \\ is used to escape the end character, and to
     introduce special characters like newlines (\\n). Unlike Ren'Py
     strings, python strings can't span lines.
 
 :dfn:`True, False, None`
-
     There are three special values. ``True`` is a true value, ``False`` is
     a false value. ``None`` represents the absence of a value. For
     example, 
     
 :dfn:`Tuple`
-
     Tuples are used to represent containers where the number of items
     is important. For example, one might use a 2-tuple (also called a
     pair) to represent width and height, or a 4-tuple (x, y, width,
@@ -282,7 +270,6 @@ Here's a synopsis of python expressions.
         (32, 24, 200, 100)
 
 :dfn:`List`
-
     Lists are used to represent containers where the number of items
     may vary. A list begins with a ``[``, contains a comma-separated
     list of expressions, and ends with ``]``. For example::
@@ -293,7 +280,6 @@ Here's a synopsis of python expressions.
         [ 1, 2, 3 ]
 
 :dfn:`Variable`
-
     Python expressions can use variables, that store values defined
     using the define statement or python statements. A variable begins
     with a letter or underscore, and then has zero or more letters,
@@ -307,7 +293,6 @@ Here's a synopsis of python expressions.
     shouldn't be used by user code.
 
 :dfn:`Field Access`
-
     Python modules and objects have fields, which can be accessed
     with by following an expression (usually a variable) with a
     dot and the field name. For example::
@@ -318,7 +303,6 @@ Here's a synopsis of python expressions.
     (screen_width). 
     
 :dfn:`Call`
-
     Python expressions can call a function which returns a value. They
     begin with an expression (usually a variable), followed by a
     left-parenthesis, a comma-separated list of arguments, and a

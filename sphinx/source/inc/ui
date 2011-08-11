@@ -21,7 +21,7 @@
         defaults to 1/10th of a page, if set. Otherwise, defaults
         to the 1/20th of the range.
     
-       This is used when scrolling a viewport with the mouse wheel.
+        This is used when scrolling a viewport with the mouse wheel.
         
     `page`
         The page size of the adjustment. If None, this is set
@@ -30,28 +30,28 @@
     
         It's can be used when clicking on a scrollbar.
     
-     The following parameters control the behavior of the adjustment.
+    The following parameters control the behavior of the adjustment.
     
-     `adjustable`
-          If True, this adjustment can be changed by a bar. If False,
-          it can't.
+    `adjustable`
+         If True, this adjustment can be changed by a bar. If False,
+         it can't.
     
-          It defaults to being adjustable if a `changed` function
-          is given or if the adjustment is associated with a viewport,
-          and not adjustable otherwise.
+         It defaults to being adjustable if a `changed` function
+         is given or if the adjustment is associated with a viewport,
+         and not adjustable otherwise.
     
-     `changed`
-         This function is called with the new value when the value of
-         the adjustment changes.
+    `changed`
+        This function is called with the new value when the value of
+        the adjustment changes.
     
-     `ranged`
-         This function is called with the adjustment object when
-         the range of the adjustment is set by a viewport.
+    `ranged`
+        This function is called with the adjustment object when
+        the range of the adjustment is set by a viewport.
     
-     .. method:: change(value)
+    .. method:: change(value)
     
-         Changes the value of the adjustment to `value`, updating
-         any bars and viewports that use the adjustment.
+        Changes the value of the adjustment to `value`, updating
+        any bars and viewports that use the adjustment.
      
 
 .. function:: ui.at(transform)

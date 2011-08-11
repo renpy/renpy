@@ -159,7 +159,6 @@ All user interface statements take the following common properties:
     second transform is not given events.
 
 `default`
-
     If given and true, the displayable is focused by default. Only one
     displayable should have this.
     
@@ -1339,30 +1338,25 @@ built up automatically, by going through the following list in order
 and choosing the entries that apply to the current platform.
 
 ``"tablet"``
-
    Defined on touchscreen based devices where the screen has a
    diagonal size of 6 inches or more.
 
 ``"phone"``
-
    Defined on touchscren-based devices where the diagonal size of
    the screen is less than 6 inches. On such a small device, it's
    important to make buttons large enough a user can easily choose
    them.
 
 ``"touch"``
-
    Defined on touchscreen-based devices, such as those running the
    Android platform.
 
 ``"pc"``
-
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
    a mouse and keyboard present, to allow buttons to be hovered, and
    to allow precise pointing.
    
 ``None``
-
    Always defined.
    
 An example of defining a screen variant is:

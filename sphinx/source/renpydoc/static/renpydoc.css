@@ -19,17 +19,14 @@ html {
 }
 
 body {
-    font-family: sans-serif;
-    font-size: 95%;
-    width: 63em;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0px;
-    line-height: 150%;
     background: white;
-    1px solid #ddd;
+    font-size: 14px;
+    line-spacing: 21px;
 }
 
+UL {
+	list-style-type: square;	
+}
 
 div.bodywrapper {
     margin: 0 240px 0 0;

@@ -836,13 +836,11 @@ def Character(name=NotSet, kind=None, **properties):
     and feel of dialogue and narration.
 
     `name`
-
         If a string, the name of the character for dialogue. When
         `name` is ``None``, display of the name is omitted, as for
         narration.
 
     `kind`
-
         The Character to base this Character off of. When used, the
         default value of any argument not supplied to this Character
         is the value of that argument supplied to `kind`. This can
@@ -856,7 +854,6 @@ def Character(name=NotSet, kind=None, **properties):
     image to show when this character speaks.
 
     `image`
- 
          A string giving the image tag that is linked with this 
          character.
  
@@ -866,22 +863,18 @@ def Character(name=NotSet, kind=None, **properties):
     example, to add quotes before and after each line of dialogue.
 
     `what_prefix`
-
         A string that is prepended to the dialogue being spoken before
         it is shown.
 
     `what_suffix`
-
         A string that is appended to the dialogue being spoken before
         it is shown.
     
     `who_prefix`
-
         A string that is prepended to the name of the character before
         it is shown.
 
     `who_suffix`
-
         A string that is appended to the name of the character before
         it is shown.
             
@@ -889,7 +882,6 @@ def Character(name=NotSet, kind=None, **properties):
     These options help to control the display of the name.
 
     `dynamic`
-
         If true, then `name` should be a string containing a python
         expression. That string will be evaluated before each line
         of dialogue, and the result used as the name of the character.
@@ -899,24 +891,20 @@ def Character(name=NotSet, kind=None, **properties):
     interaction occurs, and the mode that is entered upon display.
 
     `condition`
-
         If given, this should be a string containing a python
         expression. If the expression is false, the dialogue
         does not occur, as if the say statement did not happen.
 
     `interact`
-
         If true, the default, an interaction occurs whenever the
         dialogue is shown. If false, an interaction will not occur,
         and additional elements can be added to the screen.
 
     `mode`
-
         A string giving the mode to enter when this character
         speaks. See the section on :ref:`modes <modes>` for more details.
 
     `callback`
-
         A function that is called when events occur while the
         character is speaking. See the section on
         :ref:`character callbacks` fore more information.
@@ -926,24 +914,20 @@ def Character(name=NotSet, kind=None, **properties):
     finished displaying, to prompt the user to advance.
 
     `ctc`
-    
         A Displayable to use as the click-to-continue indicator, unless
         a more specific indicator is used.
 
     `ctc_pause`
-    
         A Displayable to use a the click-to-continue indicator when the
         display of text is paused by the {p} or {w} text tags.
 
     `ctc_timedpause`
-    
         A Displayable to use a the click-to-continue indicator when the
         display of text is paused by the {p=} or {w=} text tags. When
         None, this takes its default from ctc_pause, use ``Null()``
         when you want a ctc_pause but no ctc_timedpause.
         
     `ctc_position`
-    
         Controls the location of the click-to-continue indicator. If
         ``"nestled"``, the indicator is displayed as part of the text
         being shown, immediately after the last character. If ``"fixed"``,
@@ -956,7 +940,6 @@ def Character(name=NotSet, kind=None, **properties):
     allow you to select that screen, and to provide arguments to it.
 
     `screen`
-
         The name of the screen that is used to display the dialogue.
 
     Keyword arguments beginning with ``show_`` have the prefix
@@ -967,7 +950,6 @@ def Character(name=NotSet, kind=None, **properties):
     Some useful ``show_`` variables implemented by the default screens are:
 
     `show_side_image`
-    
         When given a Displayable, shows that displayable when the
         dialogue is shown. The position of that displayable is
         controlled by its position properties. This is often used
@@ -975,7 +957,6 @@ def Character(name=NotSet, kind=None, **properties):
         of the dialogue.
     
     `show_two_window`
-
         If true, restructures the layout so that the name of the
         character is placed in one window, and the dialogue text in a
         second window.

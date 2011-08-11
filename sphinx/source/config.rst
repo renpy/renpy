@@ -54,16 +54,18 @@ Commonly Used
 
 .. var:: config.save_directory = "..."
 
-    This is used to generate the directory in which games and
-    persistent information are saved. The name generated depends on
-    the platform:
+   This is used to generate the directory in which games and
+   persistent information are saved. The name generated depends on
+   the platform:
 
-    Windows
-        %APPDATA%/RenPy/`save_directory`
-    Mac OS X
-        ~/Library/RenPy/`save_directory`
-    Linux/Other:
-        ~/.renpy/`save_directory`
+   Windows
+       %APPDATA%/RenPy/`save_directory`
+
+   Mac OS X
+       ~/Library/RenPy/`save_directory`
+
+   Linux/Other
+       ~/.renpy/`save_directory`
 
    Setting this to None creates a "saves" directory underneath the
    game directory. This is not recommended, as it prevents the game
@@ -557,20 +559,16 @@ Rarely or Internally Used
     pressed. The following substitutions make sense here:
 
     %(filename)s
-
         The filename of the most interesting file to be edited. This
         is the file that should be shown to the user.
 
     %(line)d
-    
         The line number of the most interesting file to show to the user.
 
     %(otherfiles)s
-
         Other, less-interesting files to show to the user.
 
     %(allfiles)s
- 
         All the files.
 
 

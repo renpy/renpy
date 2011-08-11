@@ -31,11 +31,9 @@ arguments, returns a displayable that performs the transition effect.
 The two keyword arguments are:
 
 `old_widget`
-
     A displayable representing the old screen.
 
 `new_widget`
-
     A displayable representing the new screen.
 
 The returned displayable should have a ``delay`` field, which gives

@@ -25,7 +25,7 @@ The Ren'Py Language
 -------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    language_basics
    dialogue
@@ -36,7 +36,7 @@ Displayables, Transforms, and Transitions
 -----------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
     
    displayables
    transitions
@@ -45,7 +45,7 @@ Customizing Ren'Py
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    style
    screens
@@ -68,7 +68,7 @@ Python and Ren'Py
 -----------------
    
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    statement_equivalents
    trans_trans_python

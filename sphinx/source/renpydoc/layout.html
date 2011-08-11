@@ -27,9 +27,14 @@
              {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
           {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
         {%- endfor %}
+
+        <li> <img src="_static/logo.png" width=19 height=21 align=center> 
+        <li> <a href="http://www.renpy.org/">Ren'Py Home</a> |
+
         {%- block rootrellink %}
         <li><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a></li>
         {%- endblock %}
+            
         {%- for parent in parents %}
           <li><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
         {%- endfor %}
@@ -85,7 +90,7 @@
 
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset={{ encoding }}" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     {{ metatags }}
     {%- if not embedded and docstitle %}
       {%- set titlesuffix = " &mdash; "|safe + docstitle|e %}
@@ -95,6 +100,13 @@
     {%- block htmltitle %}
     <title>{{ title|striptags }}{{ titlesuffix }}</title>
     {%- endblock %}
+    <link rel="stylesheet" href="{{ pathto('_static/screen.css', 1) }}" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="{{ pathto('_static/renpydoc.css', 1) }}" type="text/css" media="print" />
+
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="{{ pathto('_static/renpydoc.css', 1) }}" type="text/css" media="screen, projection"/>
+    <![endif]-->
+
     <link rel="stylesheet" href="{{ pathto('_static/renpydoc.css', 1) }}" type="text/css" />
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
     {%- for cssfile in css_files %}
@@ -154,11 +166,15 @@
 {%- block relbar1 %}{{ relbar() }}{% endblock %}
 
 {%- block content %}
+  <div class="container">
+  <div class="span4">
   {%- block sidebar1 %}
     {{ sidebar() }}
   {% endblock %}
+  </div>
+  
     
-    <div class="document">
+    <div class="document span20 last">
   {%- block document %}
       <div class="documentwrapper">
       {%- if render_sidebar %}
@@ -174,14 +190,16 @@
   {%- endblock %}
 
   {%- block sidebar2 %}{% endblock %}
-      <div class="clearer"></div>
     </div>
 {%- endblock %}
 
-{%- block relbar2 %}{{ relbar() }}
-{% endblock %}
     
 {%- block footer %}
 {%- endblock %}
+    </div>
+
+{%- block relbar2 %}{{ relbar() }}
+{% endblock %}
+
   </body>
 </html>

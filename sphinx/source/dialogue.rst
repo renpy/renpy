@@ -141,24 +141,20 @@ characters can change the behavior of Ren'Py, but accidentally using
 them can be a problem.
 
 ``adv``
-
     The default kind of character used by Character. This sets up a
     character such that one line is displayed on the screen at a
     time.
 
 ``nvl``
-
     A kind of Character that causes dialogue to be displayed in
     :ref:`NVL-mode`, with multiple lines of text on the screen
     at once.
 
 ``narrator``
-
     The character that's used to display narration, by say statements
     without a character name.
 
 ``name_only``
-
     A character that is used to display dialogue in which the
     character name is given as a string. This character is copied to a
     new character with the given name, and then that new character is
