@@ -196,9 +196,12 @@ def substitute(s, scope=None, force=False):
     `force`
         Force substitution to occur, even if it's disabled in the config.
     """
+    
+    # Translate.
+    if renpy.config.translator is not None:
+        s = renpy.config.translator.translate(s)
 
-    # TODO: Translation.
-
+    # Substitute.
     if not renpy.config.new_substitutions and not force:
         return s
     
@@ -212,4 +215,71 @@ def substitute(s, scope=None, force=False):
         s = formatter.vformat(s, (), kwargs)
 
     return s
+        
+
+class Translator(renpy.object.Object):
+    
+    def unquote(self, s):
+        s = s.replace("\\\n", "\\n")
+        s = s.replace("\\\\", "\\")
+        return s
+    
+    def __init__(self, language):
+        """
+        Loads the translation from the file `language`.rpt
+        """
+
+        self.translations = { }
+        
+        f = renpy.loader.load(language + ".rpt")
+        
+        old = None
+        
+        for l in f:
+            l = l.decode("utf-8")
+            l = l.rstrip()
+            
+            if not l:
+                continue
+            
+            if l[0] == '#':
+                continue
+            
+            s = self.unquote(l[2:])
+            
+            if l[0] == '<':
+                if old:
+                    raise Exception("String {0!r} does not have a translation.".format(old))
+                
+                old = s
+                
+            if l[0] == ">":
+                if old is None:
+                    raise Exception("Translation {0!r} doesn't belong to a string.".format(s))
+                
+                if old in self.translations:
+                    raise Exception("Multiple translations for {0!r}.".format(old))
+
+                self.translations[old] = s        
+                old = None
+        
+        f.close()
+        
+        if old is not None:
+            raise Exception("String {0!r} does not have a translation.".format(old))
+                
+    def translate(self, s):
+        """
+        Looks up `s` in the translation database. Returns the translation, or
+        `s` if no translation is found.
+        """
+        
+        old = s.rstrip()
+        
+        if not old:
+            return s
+        
+        return self.translations.get(old, s)
+    
+        
         

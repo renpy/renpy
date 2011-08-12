@@ -46,6 +46,7 @@ from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable
+from renpy.substitutions import Translator
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
@@ -78,6 +79,8 @@ def public_api():
     current_screen, get_screen, get_widget
     focus_coordinates
     predict, predict_screen
+    displayable
+    Translator
     
 del public_api
 
@@ -880,7 +883,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
 globals()["with"] = with_statement
 
-def rollback(force=False):
+def rollback(force=False, checkpoints=1):
     """
     Rolls the state of the game back to the last checkpoint.
     """
@@ -898,7 +901,7 @@ def rollback(force=False):
         
     renpy.config.skipping = None
     renpy.game.log.complete()
-    renpy.game.log.rollback(1)
+    renpy.game.log.rollback(checkpoints)
 
 def toggle_fullscreen():
     """

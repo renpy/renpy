@@ -508,6 +508,9 @@ old_substitutions = False
 # The graphics renderer we use. (Ren'Py sets this.)
 renderer = "auto"
 
+# The translator to use, if any.
+translator = None
+
 del renpy
 del os
 

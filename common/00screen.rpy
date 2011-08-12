@@ -1722,7 +1722,35 @@ init -1140 python:
             return __TooltipAction(self, value)
     
         action = Action
+
+    #########################################################################    
+
+    class Language(Action):
+        """
+        :doc: other_actions
         
+        Changes the language of the game to `language`. A language change
+        causes the current statement to be restarted, and all contexts but 
+        the outermost being exited.
+        
+        `language`
+            A string giving the language to translate to, or None to use
+            the language given in the game script.
+        """
+
+        def __init__(self, language):
+            self.language = language
+            
+        def __call__(self):
+            persistent._language = self.language
+            _language_activate()
+            renpy.restart_interaction()
+            renpy.rollback(True, 0)
+            
+        def get_selected(self):
+            return persistent._language == self.language
+            
+            
 # This is used to ensure a fixed click-to-continue indicator is shown on
 # its own layer.
 screen _ctc:

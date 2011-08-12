@@ -886,3 +886,21 @@ label _developer:
 
     jump expression "_developer_screen"
 
+
+# Translations.
+init -1180 python:
+
+    def _language_activate():
+
+        if persistent._language:
+            language = persistent._language 
+        else:
+            language = "translations"
+    
+        if renpy.loadable(language + ".rpt"):
+            config.translator = renpy.Translator(language)
+        else:
+            config.translator = None
+            
+    _language_activate()
+            
