@@ -10,7 +10,7 @@
     a button using an action creadted by the tooltip is hovered, the 
     value field changes to the value associated with the action. 
 
-    .. method:: action(value)
+    .. method:: Action(value)
         
         Returns an action that is generally used as the hovered property
         of a button. When the button is hovered, the value field of this 

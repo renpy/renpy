@@ -159,8 +159,6 @@ init -1140 python:
         def __call__(self):
             renpy.notify(self.message)
             
-            
-            
     class InvertSelected(Action):
         """
          :doc: other_action
@@ -186,6 +184,7 @@ init -1140 python:
 
         def predict(self):
             self.action.predict()
+
         
     def If(expression, true=None, false=None):
         """
@@ -201,6 +200,55 @@ init -1140 python:
             return true
         else:
             return false
+
+
+    class SelectedIf(Action):
+        """
+        :doc: other_action
+        
+        This allows an expression to control if a button should be marked
+        as selected. It should be used as part of a list with one or more
+        actions. For example::
+        
+            # The button is selected if mars_flag is True
+            textbutton "Marsopolis": 
+                action [ Jump("mars"), SelectedIf(mars_flag) ]
+        """
+        
+        def __init__(self, expression):
+            self.expression = expression
+            
+        def __call__(self):
+            return None
+            
+        def get_selected(self):
+            return self.expression
+
+
+    def Rollback():
+        """
+        :doc: other_action
+        
+        This action causes a rollback to occur, when a rollback is possible.
+        Otherwise, nothing happens.
+        """
+    
+        return renpy.rollback
+         
+    class RollForward(Action):
+        """
+        :doc: other_action
+        
+        This action causes a rollforward to occur, if a roll forward is 
+        possible. Otherwise, it is insensitive.
+        """
+        
+        def __call__(self):
+            return renpy.roll_forward_info()
+            
+        def get_sensitive(self):
+            return renpy.roll_forward_info() is not None
+         
          
     ##########################################################################
     # Menu-related actions.
@@ -679,8 +727,31 @@ init -1140 python:
             renpy.music.stop(channel=self.channel, **self.kwargs)
             renpy.restart_interaction()
 
+    class SetMixer(Action):
+        """
+        :doc: audio_action
         
+        Sets the volume of `mixer` to `value`. 
+        
+        `mixer`
+            The mixer to set the volume of. A string, usually one of 
+            "music", "sfx", or "voice".
+        `value`
+            The value to set the volume to. A number between 0.0 and 1.0, 
+            inclusive.
+        """
     
+        def __init__(self, mixer, volume):
+            self.mixer = mixer
+            self.volume = volume
+            
+        def __call__(self):
+            _preferences.set_volume(self.mixer, self.volume)
+            renpy.restart_interaction()
+            
+        def get_selected(self):
+            return _preferences.get_volume(self.mixer) == self.volume
+                
     ##########################################################################
     # BarValues
 
@@ -1446,6 +1517,10 @@ init -1140 python:
          * Preference("voice mute", "enable") - Mute the voice mixer.
          * Preference("voice mute", "disable") - Un-mute the voice mixer.
          * Preference("voice mute", "toggle") - Toggle voice  mute.
+
+         * Preference("music volume", 0.5) - Set the music volume.
+         * Preference("sound volume", 0.5) - Set the sound volume.
+         * Preference("volice volume", 0.5) - Set the voice volume.
          
          Values that can be used with bars are:
 
@@ -1547,16 +1622,22 @@ init -1140 python:
 
             if value is None:
                 return MixerValue('music')
+            else:
+                return SetMixer('music', value)
 
         elif name == "sound volume":
 
             if value is None:
                 return MixerValue('sfx')
+            else:
+                return SetMixer('sfx', value)
 
         elif name == "voice volume":
 
             if value is None:
                 return MixerValue('voice')
+            else:
+                return SetMixer('voice', value)
 
         elif name == "music mute":
 
@@ -1627,9 +1708,10 @@ init -1140 python:
             self.value = default
             self.default = default
 
-        def action(self, value):
+        def Action(self, value):
             """
             :doc: tooltips method
+            :name: Action
             
             Returns an action that is generally used as the hovered property
             of a button. When the button is hovered, the value field of this 
@@ -1639,6 +1721,8 @@ init -1140 python:
         
             return __TooltipAction(self, value)
     
+        action = Action
+        
 # This is used to ensure a fixed click-to-continue indicator is shown on
 # its own layer.
 screen _ctc:

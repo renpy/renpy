@@ -22,6 +22,17 @@
     
     Any keyword arguments are passed to :func:`renpy.music.queue`
 
+.. function:: SetMixer(mixer, volume)
+    
+    Sets the volume of `mixer` to `value`. 
+    
+    `mixer`
+        The mixer to set the volume of. A string, usually one of 
+        "music", "sfx", or "voice".
+    `value`
+        The value to set the volume to. A number between 0.0 and 1.0, 
+        inclusive.
+
 .. function:: Stop(channel, **kwargs)
     
     Causes an audio channel to be stopped.
