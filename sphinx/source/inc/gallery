@@ -1,0 +1,95 @@
+.. Automatically generated file - do not modify.
+
+.. class:: Gallery(self)
+    
+    This class supports the creation of an image gallery by handling the 
+    locking of images, providing an action that can show one or more images, 
+    and a providing method that creates buttons that use that action. 
+
+    .. method:: Action(name)
+        
+        An action that displays the images associated with the given button
+        name.
+    
+    .. method:: allprior(self)
+        
+        A condition that is true if all prior images associated with the 
+        current button have been unlocked.
+    
+    .. method:: button(name)
+        
+        Creates a new button, named `name`. 
+        
+        `name`
+            The name of the button being created.
+    
+    .. method:: condition(expression)
+        
+        A condition that is satisfied when an expression evaluates to true.
+        
+        `expression`
+            A string giving a python expression.
+    
+    .. method:: display(*displayables)
+        
+        Adds a new image to the current button, where an image consists 
+        of one or more displayables.
+    
+    .. method:: image(*displayables)
+        
+        Adds a new image to the current button, where an image consists 
+        of one or more displayables.
+    
+    .. method:: make_button(name, unlocked, locked=None, hover_border=None, idle_border=None, **properties)
+        
+        This creates a button that displays the images associated with the given 
+        button name. 
+        
+        `name`
+            The name of the button that will be created.
+            
+        `unlocked`
+            A displayable that is displayed for this button when it is 
+            unlocked.
+            
+        `locked`
+            A displayable that is displayed for this button when it is 
+            locked. If None, the locked_button field of the gallery 
+            object is used instead.
+            
+        `hover_border`
+            A displayable that is used to overlay this button when when 
+            it is unlocked and has focus. If None, the hover_border
+            field of the gallery object is used. 
+        
+        `idle_border`
+            A displayable that is used to overlay this button when when 
+            it is unlocked but unfocused. If None, the idle_border
+            field of the gallery object is used. 
+        
+        Additional keyword arguments become style properties of the 
+        created button object.
+    
+    .. method:: transform(*transforms)
+        
+        Applies transforms to the last image registered. This should be
+        called with the same number of transforms as the image has 
+        displayables. The transforms are applied to the corresponding 
+        displayables. 
+        
+        If a transform is None, the default transform is used.
+    
+    .. method:: unlock(*images)
+        
+        A condition that takes one or more image names as argument, and 
+        is satisfied when all the named images have been seen by the 
+        player. The image names should be given as strings.            
+    
+    .. method:: unlock_image(*images)
+            
+        A convenience method that is equivalent to calling image and unlock
+        with the same parameters. This will cause an image to be displayed 
+        if it has been seen before.
+        
+        The images should be specified as strings giving image names.            
+    

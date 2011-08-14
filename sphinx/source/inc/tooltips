@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: Tooltip(default)
+.. class:: Tooltip(default)
     
     A tooltip object can be used to define a portion of a screen that is 
     updated when the mouse hovers an area. 

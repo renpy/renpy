@@ -1693,7 +1693,7 @@ init -1140 python:
 
     class Tooltip(object):
         """
-        :doc: tooltips
+        :doc: tooltips class
         
         A tooltip object can be used to define a portion of a screen that is 
         updated when the mouse hovers an area. 
@@ -1727,7 +1727,7 @@ init -1140 python:
 
     class Language(Action):
         """
-        :doc: other_actions
+        :doc: other_action
         
         Changes the language of the game to `language`. A language change
         causes the current statement to be restarted, and all contexts but 

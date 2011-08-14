@@ -144,14 +144,14 @@ is also possible.
                 
             textbutton "One.":
                 action Return(1)
-                hovered tt.action("The loneliest number.")
+                hovered tt.Action("The loneliest number.")
     
             textbutton "Two.":
                 action Return(2)
-                hovered tt.action("Is what it takes.")
+                hovered tt.Action("Is what it takes.")
                 
             textbutton "Three.":
                 action Return(3)                
-                hovered tt.action("A crowd.")
+                hovered tt.Action("A crowd.")
                 
             text tt.value
