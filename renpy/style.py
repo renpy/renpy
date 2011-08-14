@@ -420,7 +420,7 @@ class StyleManager(object):
             pass
 
         # Automatically create styles, maybe.
-        if not styles_built:
+        if "_" in name:
 
             rest = name
             
@@ -431,7 +431,7 @@ class StyleManager(object):
                     self.__setattr__(name, s)                    
                     return s
 
-            raise Exception("The style %s does not exist, and couldn't be auto-created because %s doesn't exist, either." % (name, rest))                
+            raise Exception("The style %s does not exist, and couldn't be auto-created because %s doesn't exist, either." % (name, rest))
                 
         raise Exception('The style %s does not exist.' % name)
 
@@ -552,7 +552,11 @@ def build_style(style):
                 if left_base:
                     break
 
-                ss = style_map[first]
+                try:
+                    ss = style_map[first]
+                except KeyError:
+                    ss = getattr(renpy.game.style, first)
+                
                 down_base.insert(0, ss)
                 first = ss.parent and ss.parent[0]
 
