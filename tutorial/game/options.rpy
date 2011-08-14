@@ -98,11 +98,10 @@ init -1 python hide:
     ## These settings let you customize the window containing the
     ## dialogue and narration, by replacing it with an image.
 
-    ## The background of the window. In a Frame, the two numbers
-    ## are the size of the left/right and top/bottom borders,
-    ## respectively.
+    ## The background of the window. In a Frame, the four numbers are
+    ## the size of the left, top, right, and bottom borders, respectively.
 
-    # style.window.background = Frame("frame.png", 12, 12)
+    # style.window.background = Frame("frame.png", 8, 0, 8, 0)
 
     ## Margin is space surrounding the window, where the background
     ## is not drawn.

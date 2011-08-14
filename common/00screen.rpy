@@ -1089,18 +1089,23 @@ init -1140 python:
 
          `newest`
              If true, then this file will be marked as the newest save
-             file when it's saved. (Set this to false for a quicksave,
-             for example.)
+             file when it's saved.
 
          `page`
              The name of the page that it will be saved to.
+
+         `cycle`
+             If true, then saves on the supplied page will be cycled before
+             being shown to the user.
          """
 
-        def __init__(self, name, confirm=True, newest=True, page=None):
+        def __init__(self, name, confirm=True, newest=True, page=None, cycle=False):
             self.name = name
             self.confirm = confirm
             self.page = page
             self.newest = newest
+            self.page = page
+            self.cycle = cycle
             
         def __call__(self):
 
@@ -1108,6 +1113,9 @@ init -1140 python:
                 return
             
             fn = __filename(self.name, self.page)
+
+            if self.cycle:
+                renpy.renpy.loadsave.cycle_saves(self.page + "-", 10)
 
             if renpy.scan_saved_game(fn):
                 if self.confirm:
@@ -1118,6 +1126,7 @@ init -1140 python:
 
             if self.newest:
                 persistent._file_newest = fn
+                persistent._file_page = self.page
                 
             renpy.restart_interaction()
 
@@ -1143,12 +1152,16 @@ init -1140 python:
 
          `confirm`
              If true, prompt if loading the file will end the game.
+
+         `newest`
+             If true, the button is selected if this is the newest file.
          """
         
-        def __init__(self, name, confirm=True, page=None):
+        def __init__(self, name, confirm=True, page=None, newest=True):
             self.name = name
             self.confirm = confirm
             self.page = page
+            self.newest = newest
             
         def __call__(self):
 
@@ -1168,7 +1181,7 @@ init -1140 python:
             return renpy.scan_saved_game(__filename(self.name, self.page))
 
         def get_selected(self):
-            if not self.confirm:
+            if not self.confirm or not self.newest:
                 return False
 
             return persistent._file_newest == __filename(self.name, self.page)
@@ -1239,15 +1252,7 @@ init -1140 python:
 
             persistent._file_page = self.page
             renpy.restart_interaction()
-
-        def get_sensitive(self):
-            if self.page == "auto" and not config.has_autosave:
-                return False
-            elif self.page == "quick" and not config.has_quicksave:
-                return False
-            else:
-                return True
-
+            
         def get_selected(self):
             return self.page == persistent._file_page
                 

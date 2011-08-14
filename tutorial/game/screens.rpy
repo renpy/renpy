@@ -55,6 +55,38 @@ screen say:
     else:
         add SideImage() xalign 0.0 yalign 1.0
 
+    # Add an in-game quick menu.
+    hbox:
+        style_group "quick"
+    
+        xalign 1.0
+        yalign 1.0
+
+        textbutton _("Q.Save") action [ FileSave(1, page="quick", confirm=False, cycle=True), Notify("Quick save complete.") ]
+        textbutton _("Q.Load") action FileLoad(1, page="quick", confirm=True, newest=False)
+        textbutton _("Save") action ShowMenu('save')
+        textbutton _("Skip") action Skip()
+        textbutton _("Auto") action Preference("auto-forward", "toggle")
+        textbutton _("Prefs") action ShowMenu('preferences')
+        
+init -2 python:
+    style.quick_button.set_parent('default')
+    style.quick_button.background = None
+    style.quick_button.xpadding = 5
+
+    style.quick_button_text.set_parent('default')
+    style.quick_button_text.size = 12
+    style.quick_button_text.idle_color = "#8888"
+    style.quick_button_text.hover_color = "#ccc"
+    style.quick_button_text.selected_idle_color = "#cc08"
+    style.quick_button_text.selected_hover_color = "#cc0"
+    style.quick_button_text.insensitive_color = "#4448"
+    
+    # Set a default value for the auto-forward time, and note that AFM is
+    # turned off by default.
+    config.default_afm_time = 10
+    config.default_afm_enable = False
+
 
 ##############################################################################
 # Choice
@@ -256,6 +288,9 @@ screen file_picker:
 
             textbutton _("Auto"):
                 action FilePage("auto")
+
+            textbutton _("Quick"):
+                action FilePage("quick")
 
             for i in range(1, 9):
                 textbutton str(i):

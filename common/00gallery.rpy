@@ -113,6 +113,22 @@ init -1135 python:
         This class supports the creation of an image gallery by handling the 
         locking of images, providing an action that can show one or more images, 
         and a providing method that creates buttons that use that action. 
+
+        .. field:: transition
+
+            The transition that is used when changing images.
+
+        .. field:: locked_button
+        
+            The default displayable used by make_button for a locked button.
+            
+        .. field:: hover_border
+
+            The default hover border used by make_button.
+            
+        .. field:: idle_border
+        
+            The default idle border used by make_button.
         """
 
         transition = None
