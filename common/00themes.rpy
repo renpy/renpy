@@ -401,7 +401,11 @@ init -1110 python hide:
     roundrect_based_theme("diamond", "_theme_diamond/d")
     roundrect_based_theme("tv", "_theme_tv/t")
     roundrect_based_theme("glow", "_theme_glow/g", None, "_outline.png")
-
+    roundrect_based_theme("regal", "_theme_regal/re")
+    roundrect_based_theme("crayon", "_theme_crayon/cry")
+    roundrect_based_theme("threeD", "_theme_threeD/th")
+    roundrect_based_theme("marker", "_theme_marker/ink")
+    roundrect_based_theme("austen", "_theme_austen/au")
         
     @theme
     def ancient():

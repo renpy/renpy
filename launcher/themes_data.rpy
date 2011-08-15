@@ -5,8 +5,13 @@ init 1 python:
         ("Roundrect", "roundrect", "Basic Blue"),
         ("Bordered", "bordered", "Dramatic Flesh"),
         ("Diamond", "diamond", "Colorblind"),
-        ("TV", "tv", "Fine China"),
+        ("Regal", "regal", "Fine China"),
+        ("Austen", "austen", "White Chocolate"),
+        ("TV", "tv", "Old Polaroid"),
+        ("3D", "threeD", "Colorblind"),
         ("Glow", "glow", "Really Red"),
+        ("Marker", "marker", "Creamsicle"),
+        ("Crayon", "crayon", "First Valentines"),
         ]
 
     # This is a map from theme function to template text that sensibly calls
@@ -65,6 +70,11 @@ init 1 python:
     theme_templates["diamond"] = theme_templates["roundrect"].replace("roundrect", "diamond")
     theme_templates["tv"] = theme_templates["roundrect"].replace("roundrect", "tv")
     theme_templates["glow"] = theme_templates["roundrect"].replace("roundrect", "glow")
+    theme_templates["regal"] = theme_templates["roundrect"].replace("roundrect", "regal")
+    theme_templates["crayon"] = theme_templates["roundrect"].replace("roundrect", "crayon")
+    theme_templates["threeD"] = theme_templates["roundrect"].replace("roundrect", "threeD")
+    theme_templates["marker"] = theme_templates["roundrect"].replace("roundrect", "marker")
+    theme_templates["austen"] = theme_templates["roundrect"].replace("roundrect", "austen")
     
     # This is a map from theme name to the code needed to implement that
     # theme.
