@@ -314,18 +314,23 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, alpha=False)
+    :args: (time, alpha=False, time_warp=None)
     :name: Dissolve
     
     Returns a transition that dissolves from the old scene to the new scene.
     
     `time`
         The time the dissolve will take.
-        
+
     `alpha`
         If true, the dissolve will alpha-composite the the result of the 
         transition with the screen. If false, the result of the transition
         will replace the screen, which is more efficient.
+
+    `time_warp`
+        A function that adjusts the timeline. If not None, this should be a 
+        function that takes a fractional time between 0.0 and 1.0, and returns 
+        a number in the same range. 
     """
 
     __version__ = 1
@@ -334,7 +339,9 @@ class Dissolve(Transition):
         if version < 1:
             self.alpha = False
     
-    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, **properties):
+    time_warp = None
+    
+    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, time_warp=None, **properties):
         super(Dissolve, self).__init__(time, **properties)
 
         self.time = time
@@ -342,6 +349,7 @@ class Dissolve(Transition):
         self.new_widget = new_widget
         self.events = False
         self.alpha = alpha
+        self.time_warp = time_warp
 
 
     def render(self, width, height, st, at):
@@ -354,6 +362,9 @@ class Dissolve(Transition):
             return render(self.new_widget, width, height, st, at)
 
         complete = min(1.0, st / self.time)
+
+        if self.time_warp is not None:
+            complete = self.time_warp(complete)
 
         bottom = render(self.old_widget, width, height, st, at)
         top = render(self.new_widget, width, height, st, at)
@@ -378,7 +389,7 @@ class Dissolve(Transition):
 class ImageDissolve(Transition):
     """
     :doc: transition function
-    :args: (image, time, ramplen=8, reverse=False, alpha=True)
+    :args: (image, time, ramplen=8, reverse=False, alpha=True, time_warp=None)
     :name: ImageDissolve
 
     Returns a transition that dissolves the old scene into the new scene, using
@@ -406,7 +417,12 @@ class ImageDissolve(Transition):
         If true, the dissolve will alpha-composite the the result of the 
         transition with the screen. If false, the result of the transition
         will replace the screen, which is more efficient.
-        
+
+    `time_warp`
+        A function that adjusts the timeline. If not None, this should be a 
+        function that takes a fractional time between 0.0 and 1.0, and returns 
+        a number in the same range.         
+ 
     ::
     
         define circirisout = ImageDissolve("circiris.png", 1.0)
@@ -420,6 +436,8 @@ class ImageDissolve(Transition):
         if version < 1:
             self.alpha = False
     
+    time_warp = None
+    
     def __init__(
         self,
         image,
@@ -431,6 +449,7 @@ class ImageDissolve(Transition):
         alpha=False,
         old_widget=None,
         new_widget=None,
+        time_warp=None,
         **properties):
 
         # ramptype and ramp are now unused, but are kept for compatbility with
@@ -442,6 +461,7 @@ class ImageDissolve(Transition):
         self.new_widget = new_widget
         self.events = False
         self.alpha = alpha
+        self.time_warp = time_warp
         
         if not reverse:
 
@@ -492,9 +512,14 @@ class ImageDissolve(Transition):
 
         rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
 
+        complete = st / self.delay
+        
+        if self.time_warp is not None:
+            complete = self.time_warp(complete)
+
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = self.alpha
-        rv.operation_complete = st / self.delay
+        rv.operation_complete = complete
         rv.operation_parameter = self.ramplen
 
         rv.blit(image, (0, 0), focus=False, main=False)
@@ -529,7 +554,7 @@ class AlphaDissolve(Transition):
     `reverse`
         If true, the alpha channel is reversed. Opaque areas are taken
         from the old image, while transparent areas are taken from the
-        new image.
+        new image. 
      """
 
     def __init__(
