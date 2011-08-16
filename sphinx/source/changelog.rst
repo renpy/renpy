@@ -2,6 +2,142 @@
 Full Changelog
 ==============
 
+Ren'Py 6.13
+===========
+
+Text Rewrite
+------------
+
+:ref:`Text display <text>` has been rewritten from scratch. In
+addition to supporting many new features, the new implementation of
+Text is much faster at text layout and display, and contains much
+cleaner code.
+
+Some of the new features that are now supported by the text display
+system are:
+
+* Interpolation of variables enclosed in square brackets. It's now
+  possible to write code like::
+
+      "You scored [score] out of a possible [max_score] points."
+
+  The new string interpolation takes place on all text that is
+  displayed, rather than just say and menu statements. When used as
+  part of a screen, interpolation has access to screen-local
+  variables. 
+      
+  PEP 3101-style string formatting is supported, which means that
+  this syntax can be used to display fields and items, as well as
+  variables. 
+
+* Kerning support was added, both as the :propref:`kerning` style
+  property and the :tt:`k` text tag.
+  
+* Support for ruby text (also known as furigana), via the :tt:`rt` and
+  :tt:`rb` text tags, and the :propref:`ruby_style` style property. 
+
+* The new :tt:`space` and :tt:`vspace` text tags make it easy to
+  whitespace into the text.
+
+* The new :tt:`cps` text tag controls the speed of text display.
+  
+* By default, Ren'Py uses the unicode linebreaking algorithm to find
+  points at which a line can be broken. This algorithm should
+  correctly break lines that contain a mix of western and eastern
+  languages. Since that algorithm is incorrect on some Korean texts,
+  Ren'Py also implements a korean-with-spaces variant, that only
+  breaks runs of Korean text at whitespace. These algorithms can be
+  selected by the :propref:`language` style property.
+  
+* Ren'Py now uses the Knuth-Plass linebreaking algorithm to choose the
+  points at which it actually splits lines. This algorithm attempts to
+  minimize the unevenness of all lines except the last. Ren'Py also
+  supports a nobreak mode, which allows one to create a Text larger
+  than the screen without it being automatically wrapped. These can be
+  selected using the :propref:`layout` style property.
+
+* The new :propref:`newline_indent` style property determines if
+  Ren'Py adds indentation after a newline in text.
+  
+* The new :propref:`line_leading` style property inserts space above a
+  line of text. (Ruby text can be placed into this space.)
+
+* Text can be automatically translated before it is displayed. (This
+  support will be improved in a future major release.)
+  
+DirectX Support
+---------------
+
+On Windows systems that have the February 2010 DirectX update
+installed, Ren'Py will use DirectX via the ANGLE adaptation layer, in
+preference to OpenGL or software rendering. The ANGLE layer is used by
+popular web browsers such as Firefox and Google Chrome.  This allows
+hardware rendering to be used on systems with built-in graphics, where
+drivers often support DirectX far better than OpenGL.
+
+At startup, Ren'Py will test the graphics capabilities of the computer
+it is running on. If the software render is being used, or the game
+renders at an unacceptably slow speed, Ren'Py will display a warning
+message to the user. The warning message includes a link to a page on
+renpy.org that explains how to update the graphics drivers.
+
+This version of Ren'Py will only use the software renderer if both
+DirectX and OpenGL are incapable of rendering Ren'Py games.
+Screen-scaling in the software renderer has been replaced by a
+simpler but slower version.
+
+Other Changes
+-------------
+
+Ren'Py now includes a :ref:`style preference <style-preferences>`
+system. This system allows styles to be changed after the init phase
+has finished. These changes are saved with the persistent data. Among
+other things, style preferences allow a game to offer the user the
+option to change the font, size, and color of dialogue text.
+
+Support has been added for screen-based :ref:`image galleries
+<image-gallery>` and :ref:`music rooms <music-room>`. This support
+consists of a classes that provides actions that make it easy to
+present the user with graphics and music. The creator is responsible
+for creating screens that use the supplied actions.
+
+The default screens.rpy file, used when a new game is created,
+contains support for a "quick menu". This menu adds buttons to screens
+that allow the user to quick save, quick load, save, toggle skipping,
+toggle auto-forward mode, and access the preferences menu.
+
+Ren'Py includes 5 new themes, and a number of new color schemes.
+
+Several new actions have been added. The :func:`SelectedIf` action
+allows the creator to control if a button is displayed in the selected
+state. The :func:`SetMixer` action allows a mixer to be set to a
+specific value. The :func:`Rollback` and :func:`RollForward` actions
+allow the creator to bind rollback to buttons.
+
+The behavior of the xfill and yfill style properties was accidentally
+changed in the 6.12 series. It has been returned to the historical
+behavior. 
+
+The :func:`Dissolve` and :func:`ImageDissolve` transitions now take a
+time_warp parameter.
+
+The :func:`Frame` displayable now allows the user to specify the
+left, top, right, and bottom borders independently. 
+
+The :propref:`caret` style property allows the user to customize the
+caret of an input widget.
+
+The :func:`renpy.displayable` function has been exposed to the
+user.
+
+Timers can now take a list of actions, rather than just a single
+callable. 
+
+Removed support for the iLiad platform.
+
+Thanks to Aleema for contributing the new themes and color schemes.
+
+
 Ren'Py 6.12.2
 =============
 
@@ -10,7 +146,8 @@ This release contains the following changes:
 * ATL Transforms with parameters compile correctly. 
 * MultipleTransition works in conjunction with pauses.
 * The mouse is shown when a quit action is run while a movie is playing.
-* A fix for a lockup that occured when the user entered the game menu while a transition was running.
+* A fix for a lockup that occured when the user entered the game menu while a
+  transition was running.
 * RENPY_SCALE_FAST works again.
 * Ren'Py compiles with newer versions of ffmpeg.
 * Skipping ends when the game restarts.

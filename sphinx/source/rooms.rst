@@ -2,6 +2,11 @@
 Image Gallery and Music Room Actions
 ====================================
 
+.. _image-gallery:
+
+Image Gallery
+-------------
+
 A image gallery is a screen that allows the player to unlock images, 
 and then view those images. The screen has one or more buttons associated
 with it, and each button has one or more associated images. Buttons and 
@@ -168,7 +173,8 @@ to the main menu screen.
 .. include:: inc/gallery
    
    
-   
+.. _music-room:
+
 Music Room
 ==========
 

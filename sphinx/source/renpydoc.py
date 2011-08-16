@@ -73,4 +73,5 @@ def setup(app):
     app.add_object_type("var", "var", "single: %s (variable)",  parse_node=parse_var_node)
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
+    app.add_object_type("text-tag", "tt", "single: %s (text tag)")
     

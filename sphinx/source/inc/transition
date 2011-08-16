@@ -20,7 +20,7 @@
     `reverse`
         If true, the alpha channel is reversed. Opaque areas are taken
         from the old image, while transparent areas are taken from the
-        new image.
+        new image. 
      
 
 .. function:: ComposeTransition(trans, before, after)
@@ -112,17 +112,22 @@
         define irisout = CropMove(1.0, "irisout")
         define irisin = CropMove(1.0, "irisin")
 
-.. function:: Dissolve(time, alpha=False)
+.. function:: Dissolve(time, alpha=False, time_warp=None)
     
     Returns a transition that dissolves from the old scene to the new scene.
     
     `time`
         The time the dissolve will take.
-        
+    
     `alpha`
         If true, the dissolve will alpha-composite the the result of the 
         transition with the screen. If false, the result of the transition
         will replace the screen, which is more efficient.
+    
+    `time_warp`
+        A function that adjusts the timeline. If not None, this should be a 
+        function that takes a fractional time between 0.0 and 1.0, and returns 
+        a number in the same range. 
 
 .. function:: Fade(out_time, hold_time, old_time, color="#000")
     
@@ -141,7 +146,7 @@
         # Camera flash - quickly fades to white, then back to the scene.
         define flash = Fade(0.1, 0.0, 0.5, color="#fff")
 
-.. function:: ImageDissolve(image, time, ramplen=8, reverse=False, alpha=True)
+.. function:: ImageDissolve(image, time, ramplen=8, reverse=False, alpha=True, time_warp=None)
     
     Returns a transition that dissolves the old scene into the new scene, using
     an image to control the dissolve process. This means that white pixels will
@@ -168,7 +173,12 @@
         If true, the dissolve will alpha-composite the the result of the 
         transition with the screen. If false, the result of the transition
         will replace the screen, which is more efficient.
-        
+    
+    `time_warp`
+        A function that adjusts the timeline. If not None, this should be a 
+        function that takes a fractional time between 0.0 and 1.0, and returns 
+        a number in the same range.         
+    
     ::
     
         define circirisout = ImageDissolve("circiris.png", 1.0)

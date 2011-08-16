@@ -12,12 +12,15 @@
     `confirm`
         If true, prompts before deleting a file.
 
-.. function:: FileLoad(name, confirm=True, page=None)
+.. function:: FileLoad(name, confirm=True, page=None, newest=True)
     
     Loads the file.
     
     `confirm`
         If true, prompt if loading the file will end the game.
+    
+    `newest`
+        If true, the button is selected if this is the newest file.
 
 .. function:: FilePage(page)
     
@@ -36,7 +39,7 @@
     
     Goes to the previous file page, if possible.
 
-.. function:: FileSave(name, confirm=True, newest=True, page=None)
+.. function:: FileSave(name, confirm=True, newest=True, page=None, cycle=False)
     
     Saves the file.
     
@@ -48,11 +51,14 @@
     
     `newest`
         If true, then this file will be marked as the newest save
-        file when it's saved. (Set this to false for a quicksave,
-        for example.)
+        file when it's saved.
     
     `page`
         The name of the page that it will be saved to.
+    
+    `cycle`
+        If true, then saves on the supplied page will be cycled before
+        being shown to the user.
 
 .. function:: FileTakeScreenshot()
     
