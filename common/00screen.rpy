@@ -866,14 +866,19 @@ init -1140 python:
              This is used internally, for some preferences.
          `style`
              The styles of the bar created.
+         `offset`
+             An offset to add to the value.
          """
         
-        def __init__(self, object, field, range, max_is_zero=False, style="bar"):
+        offset = 0
+        
+        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0):
             self.object = object
             self.field = field
             self.range = range
             self.max_is_zero = max_is_zero
             self.style = style
+            self.offset = offset
             
         def changed(self, value):
 
@@ -883,11 +888,15 @@ init -1140 python:
                 else:
                     value = value + 1
             
+            value += self.offset
+            
             setattr(self.object, self.field, value)
             
         def get_adjustment(self):
 
             value = getattr(self.object, self.field)
+            
+            value -= self.offset
             
             if self.max_is_zero:
                 if value == 0:
@@ -1610,7 +1619,12 @@ init -1140 python:
         elif name == "auto-forward time":
 
             if value is None:
-                return FieldValue(_preferences, "afm_time", range=40, max_is_zero=True, style="slider")
+                
+                if config.default_afm_enable is None:
+                    return FieldValue(_preferences, "afm_time", range=30.0, max_is_zero=True, style="slider")
+                else:
+                    return FieldValue(_preferences, "afm_time", range=29.9, style="slider", offset=.1)
+                    
             elif isinstance(value, int):
                 return SetField(_preferences, "afm_time", value)
 
