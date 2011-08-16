@@ -591,6 +591,9 @@ class MultiBox(Container):
 
                 x += i * xperchild
                 y += i * yperchild
+
+                sw += xperchild
+                sh += yperchild
                 
                 placements.append((child, x, y, sw, sh, surf))
             
