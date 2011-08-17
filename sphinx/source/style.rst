@@ -338,6 +338,12 @@ Text Style Properties
     this usually involves synthetically increasing the font weight. It
     can also cause the font to be remapped, using
     :var:`config.font_replacement_map`.
+
+.. style-property:: caret displayable or None
+
+    If not None, this should be a displayable. The input widget will
+    use this as the caret at the end of the text. If None, a 1 pixel
+    wide line is used as the caret.
     
 .. style-property:: color color
 
@@ -380,37 +386,70 @@ Text Style Properties
     the left and right margins of each line are even. This is not
     performed on the last line of a paragraph.
 
+.. style-property:: kerning float
+
+    A kerning adjustment, the number of pixels of space that's added
+    between each pair of characters. (This can be negative to remove
+    space between characters.)
+    
 .. style-property:: language string
 
     Controls the language family used to break text into lines. Legal
     values are:
 
+    ``"unicode"`` (default)
+        Uses the unicode linebreaking algorithm, which is suitable for
+        most languages.
+
+    ``"korean-with-spaces"``
+        Used for Korean text delimited by whitespace. This prevents linebreaking
+        between adjacent Korean characters.
+    
     ``"western``
         Allows breaking only at whitespace. Suitable for most
         languages.
 
     ``"eastasian"``
-        Allows breaking between any two characters, with the exception
-        that punctuation will not be placed at the start of a
-        line. Suitable for ideographic languages like Chinese and
-        Japanese.
+        Legacy alias for "unicode".
 
 .. style-property:: layout string
 
     Controls how words are allocated to lines. Legal values are:
 
+    ``"tex"`` (default)
+        Uses the Knuth-Plass linebreaking algorithm, which attempts to minimize
+        the difference in line lengths of all but the last line.
+    
+    ``"subtitle"``
+        Uses the Knuth-Plass linebreaking algorithm, but attempts to even out
+        the lengths of all lines.
+
     ``"greedy"``
         A word is placed on the first line that has room for it.
 
-    ``"subtitle"``
-        Words are placed to create lines of even length.
-    
+    ``"nowrap"``
+        Do not line-break.
+        
+.. style-property:: line_leading int
+
+    The number of pixels of spacing to include above each line.
+        
+.. style-property:: line_spacing int
+
+    The number of pixels of spacing to include below each line.
+
 .. style-property:: min_width int
 
     Sets the minimum width of each line of that. If a line is shorter
     than this, it is padded to this length, with text_align used to
     specify where such padding is placed. 
 
+.. style-property:: newline_indent boolean
+
+    If true, the :propref:`first_indent` indentation is used after
+    each newline in a string. Otherwise, the :propref:`rest_indent`
+    indentation is used.
+    
 .. style-property:: outlines list of tuple of (int, color, int, int)
 
     This is a list of outlines that are drawn behind the text. Each
@@ -431,6 +470,11 @@ Text Style Properties
 
     Specifies the number of pixels the second and later lines in a
     paragraph are indented by.
+
+.. style-property:: ruby_style style or None
+
+    If not None, this should be a style object. The style that's used for
+    ruby text.
     
 .. style-property:: slow_cps int or True
 
@@ -444,6 +488,10 @@ Text Style Properties
     used to have a character that speeks at a faster-than-normal rate
     of speed.
 
+.. style-property:: strikethrough boolean
+
+    If True, a line is drawn through the text.
+    
 .. style-property:: text_align float
 
     This is used when a line is shorter than the width of the text
@@ -574,7 +622,7 @@ Button Style Properties
 
     A sound that is played when the button is clicked.
 
-.. style-property:: mouse
+.. style-property:: mouse string
 
     The mouse style that is used when the button is focused. This
     should be one of the styles in :var:`config.mouse`. 
