@@ -24,6 +24,9 @@
 
 import renpy
 import string
+import os
+
+update_translations = "RENPY_UPDATE_TRANSLATIONS" in os.environ
 
 class Formatter(string.Formatter):
     """
@@ -224,11 +227,17 @@ class Translator(renpy.object.Object):
         s = s.replace("\\\\", "\\")
         return s
     
+    def quote(self, s):
+        s = s.replace("\\", "\\\\")
+        s = s.replace("\n", "\\n")
+        return s
+    
     def __init__(self, language):
         """
         Loads the translation from the file `language`.rpt
         """
 
+        self.language = language
         self.translations = { }
         
         f = renpy.loader.load(language + ".rpt")
@@ -267,6 +276,22 @@ class Translator(renpy.object.Object):
         
         if old is not None:
             raise Exception("String {0!r} does not have a translation.".format(old))
+         
+    def update_translations(self, s):
+        """
+        Update the translations file.
+        """
+        
+        f = file(os.path.join(renpy.config.gamedir, self.language + ".rpt"), "ab")
+        
+        encoded = self.quote(s).encode("utf-8")
+        
+        f.write("\r\n")
+        f.write("< " + encoded + "\r\n")
+        f.write("> " + encoded + "\r\n")
+        f.close()
+        
+        self.translations[s] = s
                 
     def translate(self, s):
         """
@@ -279,7 +304,15 @@ class Translator(renpy.object.Object):
         if not old:
             return s
         
-        return self.translations.get(old, s)
-    
+        new = self.translations.get(old, None)
+        
+        if new is not None:
+            return new
+        
+        if update_translations:        
+            self.update_translations(old)
+        
+        return s
+  
         
         
