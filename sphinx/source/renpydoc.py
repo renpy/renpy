@@ -33,6 +33,7 @@ class RenPyLexer(PythonLexer):
 import re
 import sphinx.addnodes
 import docutils.nodes
+import sphinx.domains
 
 def parse_var_node(env, sig, signode):
     m = re.match(r'(\S+)(.*)', sig)
@@ -66,6 +67,53 @@ def parse_style_node(env, sig, signode):
         
     return ref
 
+class CustomIndex(sphinx.domains.Index):
+
+    name = ""
+    localname = ""
+    shortname = ""
+    kind = ""
+
+    def generate(self, docnames=None):
+
+        if not isinstance(self.domain, sphinx.domains.std.StandardDomain):
+            return [ ], False
+
+        entries = [ ]
+
+        for (kind, name), (docname, anchor) in self.domain.data["objects"].iteritems():
+            
+            if self.kind != kind:
+                continue
+            
+            if docnames is not None and docname not in docnames:
+                continue
+            
+            entries.append((name, 0, docname, anchor, None, None, ''))
+            
+        content = { }
+            
+        for name, subtype, docname, anchor, extra, qualifier, descr in entries:
+            c = name[0]
+
+            if c not in content:
+                content[c] = [ ]
+
+            content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
+         
+        self.domain.data['labels'][self.kind + "-index"] = ("std-" + self.kind + "-index", '', self.localname)
+        
+        return sorted(content.items()), False
+
+def add_index(app, domain, object_type, title):
+    
+    class MyIndex(CustomIndex):
+        name = object_type + "-index"
+        localname = title
+        kind = object_type
+        
+    app.domains[domain].indices.append(MyIndex)
+    
 
 def setup(app):
     # app.add_description_unit('property', 'propref')
@@ -74,4 +122,8 @@ def setup(app):
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
     app.add_object_type("text-tag", "tt", "single: %s (text tag)")
+    
+    add_index(app, "std", "style-property", "Style Property Index")
+    add_index(app, "std", "transform-property", "Transform Property Index")
+    add_index(app, "std", "var", "Variable Index")
     

@@ -104,5 +104,11 @@ Changes and License
    distributor
    license
 
-:ref:`genindex`
+Indices
+-------
+
+* :ref:`General Index <genindex>`
+* :ref:`style-property-index`
+* :ref:`transform-property-index`
+* :ref:`var-index`
 

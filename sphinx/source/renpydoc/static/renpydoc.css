@@ -246,6 +246,15 @@ table {
     margin: 0 -0.5em 0 -0.5em;
 }
 
+table.field-list {
+	width: auto;	
+}
+
+table.field-list td {
+	background: none !important;
+	
+}
+
 table td, table th {
     padding: 0.2em 0.5em 0.2em 0.5em;
 }
