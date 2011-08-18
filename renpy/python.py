@@ -178,6 +178,8 @@ def set_filename(filename, offset, tree):
         worklist.extend(node.getChildNodes())
 
 
+unicode_re = re.compile(ur'[\u0080-\uffff]')
+
 def unicode_sub(m):
     """
     If the string s contains a unicode character, make it into a
@@ -186,7 +188,7 @@ def unicode_sub(m):
 
     s = m.group(0)
 
-    if "\\u" not in s:
+    if not unicode_re.search(s):
         return s
     
     prefix = m.group(1)
@@ -197,17 +199,16 @@ def unicode_sub(m):
         prefix = 'u' + prefix
 
     rv = prefix + sep + body + sep
+
     return rv
     
 
 string_re = re.compile(r'([uU]?[rR]?)("""|"|\'\'\'|\')((\\.|.)*?)\2')
 
-def escape_unicode(s):
-    s = s.encode("raw_unicode_escape")
-    
-    if "\\u" in s:
+def escape_unicode(s):    
+    if unicode_re.search(s):
         s = string_re.sub(unicode_sub, s)
-
+    
     return s
 
 def py_compile(source, mode, filename='<none>', lineno=1):

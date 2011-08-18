@@ -24,6 +24,7 @@
 # of the stuff thar uses images remaining.
 
 import renpy.display
+import renpy.text
 from renpy.display.render import render, Render
 
 import collections
@@ -100,7 +101,7 @@ class ImageReference(renpy.display.core.Displayable):
         parameters = [ ]
 
         def error(msg):
-            self.target = renpy.display.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
+            self.target = renpy.text.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
 
             if renpy.config.debug:
                 raise Exception(msg)

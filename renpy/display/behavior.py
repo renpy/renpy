@@ -647,7 +647,7 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style='button', text_style='button_text',
                clicked=None, **properties):
 
-    text = renpy.display.text.Text(text, style=text_style)
+    text = renpy.text.text.Text(text, style=text_style)
     return Button(text, style=style, clicked=clicked, **properties)
 
 class ImageButton(Button):
