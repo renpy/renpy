@@ -32,12 +32,13 @@ The Ren'Py Language
    displaying_images
    atl
 
-Displayables, Transforms, and Transitions
------------------------------------------
+Text, Displayables, Transforms, and Transitions
+-----------------------------------------------
 
 .. toctree::
    :maxdepth: 1
     
+   text
    displayables
    transitions
    

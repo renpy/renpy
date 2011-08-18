@@ -349,11 +349,37 @@ style:
 * black_color
 * kerning
 
-Slow Text Concerns
-==================
 
 Non-English Languages
 =====================
+
+The default font for Ren'Py contains characters for English and many
+other languages. For size reasons, it doesn't contain the characters
+required to render other languages, including Chinese, Japanese, and
+Korean. In order to support these language, a project must first
+change the default font, using code like::
+
+    init python:
+        style.default.font = "mikachan.ttf"
+
+Ren'Py should then support most world languages without further
+configuration. However, Korean can be written with or without spacing
+between words. Ren'Py has a special mode to support Korean with
+spaces, which can be enabled with the code::
+
+    init python:
+         style.default.language = "korean-with-spaces"
+
+Finally, ideographic languages provide a large number of opportunities
+for line breaking. To enable a faster line-breaking algorithm, use the
+code::
+
+    init python:
+         style.default.layout = "greedy"
+
+The faster line-breaking algorithm is not be necessary unless the
+game is displaying huge amounts of text, such as in NVL-mode.
+
 
 Ruby Text
 =========
@@ -364,7 +390,25 @@ Fonts
 Image-Based Fonts
 -----------------
 
-
 Text Displayable
 ================
 
+Slow Text Concerns
+==================
+
+Ren'Py allows the creator or user to indicate that text should be
+displayed slowly. In this case, Ren'Py will render the text to a
+texture, and then draw rectangles from the texture to the screen.
+
+Unfortunately, this means that it's possible to get rendering
+artifacts when characters overlap. To minimize these rendering
+artifacts, ensure that the :propref:`line_leading` and
+:propref:`line_spacing` properties are large enough that lines
+overlap.
+
+Horizontal artifacts are also possible when characters are kerned
+together, but these artifacts are less severe, as they exist for only
+a single frame.
+
+Artifacts aren't a problem for static text, like the text in menus and
+other parts of the user interface.
