@@ -866,6 +866,55 @@ turn inherits from ``style.default``, then the properties of
 With the property value taken from the lowest numbered style with the
 property defined.
 
+.. _style-preferences:
+
+Style Preferences
+-----------------
+
+It's often desireable to allow the user to customize aspects of the
+user interface that are best expressed as styles. For example, a
+creator may want to give players of his game the ability to adjust the
+look, color, and size of the text. Style preferences allow for this
+customization.
+
+A style preference is a preference that controls one or more style
+properties. A style preference has a name and one or more
+alternatives. At any given time, one of the alternatives is the
+selected alternative for the style preference. The selected
+alternative is saved in the persistent data, and defaults to the
+first alternative registered for a style property.
+
+An alternative has one or more associations of style, property, and
+value associated with it, and represents a promise that when the
+alternative becomes the selected alternative for the style preference,
+the property on the style will be assigned the given value. This
+occurs when Ren'Py first initializes, and then whenever a new
+alternative is selected.
+
+One should ensure that every alternative for a given style preference
+updates the same set of styles and properties. Otherwise, some styles
+may not be assigned values, and the result will not be deterministic.
+
+The style preference functions are:
+
+.. include:: inc/style_preferences
+
+Here's an example of registering a style property that allows the user
+to choose between large, simple text and smaller outlined text.
+
+::
+
+    init python:
+        renpy.register_style_property("text", "decorated", style.say_dialogue, "outlines", [ (1, "#000", 0, 0) ])
+        renpy.register_style_property("text", "decorated", style.say_dialogue, "size", 22)
+
+        renpy.register_style_property("text", "large", style.say_dialogue, "outlines", [ ])
+        renpy.register_style_property("text", "large", style.say_dialogue, "size", 24)
+
+The following code will allow the user to select these buttons::
+
+    textbutton "Decorated" action StylePreference("text", "decorated")
+    textbutton "Large" action StylePreference("text", "large")
 
 Other Style Functions
 ---------------------

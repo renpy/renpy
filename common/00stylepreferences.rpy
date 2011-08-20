@@ -24,6 +24,9 @@ init -1135 python:
 
     def __register_style_preference(preference, alternative, style, property, value):
         """
+        :doc: style_preferences
+        :name: renpy.register_style_preference
+        
         Registers information about an alternative for a style preference.
         
         `preference`
@@ -97,6 +100,9 @@ init -1135 python:
         
     def __set_style_preference(preference, alternative):
         """
+        :doc: style_preferences
+        :name: renpy.set_style_preference
+        
         Sets the selected alternative for the style preference.
     
         `preference`
@@ -117,6 +123,9 @@ init -1135 python:
         
     def __get_style_preference(preference):
         """
+        :doc: style_preferences
+        :name: renpy.get_style_preference
+        
         Returns a string giving the name of the selected alternative for the named style preference. 
     
         `preference`
@@ -129,6 +138,8 @@ init -1135 python:
         
     class StylePreference(Action):
         """
+        :doc: style_preferences
+        
         An action that causes `alternative` to become the selected alternative for the given style preference.
     
         `preference`

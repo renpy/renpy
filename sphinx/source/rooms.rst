@@ -166,7 +166,7 @@ Here's an example of the first three steps::
 Step 4 will vary based on how your game is structured, but one way of
 accomplishing it is to add the following line::
 
-        textbutton "Music Room" action ShowMenu("gallery")
+        textbutton "Gallery" action ShowMenu("gallery")
 
 to the main menu screen.
 

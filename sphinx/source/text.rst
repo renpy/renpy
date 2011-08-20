@@ -5,7 +5,7 @@ Text
 ====
 
 Ren'Py contains several ways of displaying text. The :ref:`say <say-statement>`
-and :ref:`menu <menu-statments>` are primarily concerned with the
+and :ref:`menu <menu-statment>` are primarily concerned with the
 display of text to the user. The user interface often contains text,
 displayed using the :ref:`text <sl-text>`, :ref:`textbutton <sl-textbutton>`, 
 and :ref:`label <sl-label>` screen language statements. These
@@ -36,21 +36,21 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     The backslash character is used to introduce when writing a Ren'Py
     or Python string. Some common escape codes are:
 
-    ``\"`` (backslash-doublequote)
+    \\" (backslash-doublequote)
         Includes a doublequote in a double-quoted string.
 
-    ``\'`` (backslash-quote)
+    \\' (backslash-quote)
         Includes a single quote in a single-quoted string.
     
-    ``\\ `` (backslash-space)
+    \\\  (backslash-space)
         Includes an additional space in a Ren'Py string. By default,
         Ren'Py script text collapses adjacent whitespace into a single
         space character.
 
-    ``\n`` (backslash-n)
+    \\n (backslash-n)
         Includes a newline character in the text.
 
-    ``\\`` (backslash-backslash)
+    \\\\ (backslash-backslash)
         Includes a backslash character in the text.
 
 [ (left bracket)
@@ -381,17 +381,116 @@ The faster line-breaking algorithm is not be necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
 
 
+.. _ruby-text:
+
 Ruby Text
 =========
+
+Ruby text (also known as furigana or interlinear annotations) is a way
+of placing small text above a character or word. There are several
+steps required for your game to support Ruby text.
+
+First, you must set up styles for the ruby text. The following style
+changes are required:
+
+1. The :propref:`line_leading` property must be used to leave enough
+   vertical space for the ruby text.
+2. A new named style must be created. The properties of this style,
+   such as :propref:`size` should be set in a fashion appropriate
+   for ruby text.
+3. The yoffset of the new style should be set, in order to move the
+   ruby text above the baseline.   
+4. The :propref:`ruby_style` field of the text's style should be set
+   to the newly-created style.
+
+For example::
+
+    init python:
+        style.default.line_leading = 12
+
+        style.ruby_style = Style(style.default)
+        style.ruby_style.size = 12
+        style.ruby_style.yoffset = -20
+                        
+        style.default.ruby_style = style.ruby_style
+
+Once Ren'Py has been configured, ruby text can be included using the
+rt and rb text tags. The rt tag is used to mark one or more characters
+to be displayed as ruby text. If the ruby text is preceded by text
+enclosed in the rb tag, the ruby text is centered over that
+text. Otherwise, it is centered over the preceding character.
+
+For example::
+
+    e "Ruby can be used for furigana (東{rt}とう{/rt} 京{rt}きょう{/rt})."
+
+    e "It's also used for translations ({rb}東京{/rb}{rt}Tokyo{/rt})."
+
+It's the creator's responsibility to ensure that ruby text does not
+leave the boundaries of the text. It may be necessary to add leading
+or spaces to the left and right of the text to prevent these errors
+from occurring.
 
 Fonts
 =====
 
+Ren'Py supports Truetype and Image-Based fonts.
+
+A Truetype font is specified by giving the name of the font file. The
+file must be present in the game directory, or one of the archive
+files.
+
+Ren'Py also supports Truetype collections that define more than one
+font. When accessing a collection, use the 0-based font index,
+followed by an at-sign and the file name. For example, "0@font.ttc" is
+the first font in a collection, "1@font.ttc" the second, and so on.
+
+The :var:`config.font_replacement_map` variable is used to map
+fonts. The combination of font filename, boldness, and italics is
+mapped to a similar combination. This allows a font with proper
+italics to be used instead of the automatically-generated italics.
+
+Once such mapping would be to replace the italic version of the Deja
+Vu Sans font with the official oblique version. (You'll need to
+download the oblique font from the web.) ::
+
+    init python:
+        config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False) 
+
+This mapping can improve the look of italic text.
+
 Image-Based Fonts
 -----------------
 
+Image based fonts can be registered by calling one of the following
+registration functions. Registering an image-based font requires the
+specification of a name, size, boldness, italicness, and
+underline. When all of these properties match the registered font,
+the registered font is used.
+
+.. include:: inc/image_fonts
+
+As BMFont is the most complete of the three image font formats Ren'Py
+supports, it's the one recommended for new projects. An example of
+BMFont use is::
+
+    init python:
+        renpy.register_bmfont("bmfont", 22, filename="bmfont.fnt")
+
+    define ebf = Character('Eileen', what_font="bmfont", what_size=22)
+
+    label demo_bmfont:
+                           
+        ebf "Finally, Ren'Py supports BMFonts."
+
 Text Displayable
 ================
+
+Text can also be used as a :ref:`displayable <displayables>`, which
+allows you to apply transforms to text, displaying it as if it was an
+image and moving it around the screen.
+
+.. include:: inc/text
 
 Slow Text Concerns
 ==================
@@ -412,3 +511,51 @@ a single frame.
 
 Artifacts aren't a problem for static text, like the text in menus and
 other parts of the user interface.
+
+Translations
+============
+
+Ren'Py supports the automatic translation of text. The translation
+occurs whenever text is displayed, and before text interpolation
+occurs.
+
+Ren'Py reads translations out of .rpt files. A .rpt file is a text
+file containing lines beginning with the following characters:
+
+#
+    Lines beginning with the hash mark are comment lines, that are
+    ignored.
+
+<
+    Lines beginning with a less-than followed by a space are
+    translation source lines, giving strings to be translated.
+
+>
+    Lines beginning with a greater-than followed by a space are
+    translation lines, giving the translation of the previous
+    translation source.
+
+Inside a translation line, newlines are escaped with \\n, and
+backslashes are escaped with \\\\.
+
+By default, Ren'Py reads translations out of a file called
+translations.rpt, if it exists. The :func:`Language` action can be
+used to change the translation file.
+
+Creating Translation Files
+--------------------------
+
+Ren'Py has support for automatically creating translation
+files. Taking advantage of this is a three-step process.
+
+1. Create an empty translation file, such as translations.rpt, in the
+   game directory.
+
+2. Set the RENPY_UPDATE_TRANSLATIONS environment variable to a
+   non-empty string.
+
+3. Play through the game until all text is seen.
+
+Ren'Py will add an entry to the translations file for each unit of
+text shown. This text can then be translated.
+

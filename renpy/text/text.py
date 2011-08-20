@@ -526,7 +526,7 @@ class Layout(object):
         textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
 
         if self.has_ruby:
-            textsupport.place_ruby(all_glyphs, style.ruby_style.xoffset, sw, sh)
+            textsupport.place_ruby(all_glyphs, style.ruby_style.yoffset, sw, sh)
         
         # A map from (outline, color) to a texture.
         self.textures = { }
@@ -956,6 +956,30 @@ def layout_cache_tick():
     layout_cache_new = { }
     
 class Text(renpy.display.core.Displayable):
+    
+    """
+    :doc: text
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
+    
+    A displayable that displays text on the screen.
+    
+    `text`
+        The text to display on the screen. This may be a string, or a list of 
+        strings and displayables.
+        
+    `slow`
+        Determines if the text is displayed slowly, being typed out one character at the time.  
+        If None, slow text mode is determined by the :propref:`slow_cps` style property. Otherwise,
+        the truth value of this parameter determines if slow text mode is used.
+    
+    `scope`
+        If not None, this should be a dictionary that provides an additional scope for text
+        interpolation to occur in. 
+        
+    `substitute`
+        If true, text interpolation occurs. If false, it will not occur. If
+        None, they are controlled by :var:`config.new_substitutions`.
+    """
         
     __version__ = 4
     
@@ -974,7 +998,7 @@ class Text(renpy.display.core.Displayable):
     
             self.update()
     
-    def __init__(self, text, slow=None, replaces=None, scope=None, substitute=None, slow_done=None, **properties):
+    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, **properties):
                 
         super(Text, self).__init__(**properties)
         

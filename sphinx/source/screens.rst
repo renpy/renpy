@@ -207,6 +207,7 @@ text is given the hover_size property, it sets the text size when the
 text is hovered.
 
 
+.. _sl-add:
 
 Add
 ---
@@ -224,6 +225,8 @@ This does not take any children.
         add "logo.png" xalign 1.0 yalign 0.0
 
 
+.. _sl-bar:
+        
 Bar
 ---
 
@@ -269,6 +272,8 @@ This does not take children.
             bar value Preference("sound volume")
             bar value Preference("music volume")
             bar value Preference("voice volume")
+
+.. _sl-button:
             
 Button
 ------
@@ -296,6 +301,8 @@ It also takes:
 It takes one children. If zero, two, or more children are supplied,
 they are implicitly added to a fixed, which is added to the button.
 
+
+.. _sl-fixed:
 
 Fixed
 -----
@@ -329,6 +336,9 @@ have two or more children.
              textbutton "Yes" xalign 0.33 yalign 0.5 action Return(True)
              textbutton "No" xalign 0.66 yalign 0.5 action Return(False)
 
+             
+.. _sl-frame:
+             
 Frame
 -----
 
@@ -358,6 +368,8 @@ a fixed is created to contain them.
                 textbutton "Fullscreen" action Preference("display", "fullscreen") 
                 textbutton "Window" action Preference("display", "window") 
 
+.. _sl-grid:
+                
 Grid
 ----
 
@@ -396,7 +408,7 @@ number of children is an error.
              text "Bottom-Left"
              text "Bottom-Right"
 
-
+.. _sl-hbox:
              
 Hbox
 ----
@@ -417,6 +429,9 @@ UI displayable children are added to the box.
             text "Left"
             text "Right"
 
+            
+.. _sl-imagebutton:
+            
 Imagebutton
 -----------
 
@@ -482,7 +497,7 @@ This takes no children.
               imagebutton auto "afm_%s.png" action Preference("auto-forward mode", "toggle")
                 
               
-              
+.. _sl-input:              
             
 Input
 -----
@@ -532,6 +547,9 @@ This does not take any children.
             text "Enter your name."
             input default "Joseph P. Blow, ESQ."
 
+            
+.. _sl-key:
+            
 Key
 ---
 
@@ -556,6 +574,8 @@ It takes no children.
         key "p" action ShowMenu('preferences')
         key "s" action Screenshot()
 
+
+.. _sl-label:
         
 Label
 -----
@@ -589,6 +609,9 @@ It does not take children.
             label "Display"
             textbutton "Fullscreen" action Preference("display", "fullscreen")
             textbutton "Window" action Preference("display", "window")
+
+
+.. _sl-null:
             
 Null
 ----
@@ -619,6 +642,7 @@ It does not take children.
              text "This body text."
 
 .. _mousearea:
+.. _sl-mousearea:
 
 Mousearea
 ---------
@@ -670,7 +694,8 @@ take up the entire screen, a less useful behavior.
     label start:
         show screen button_overlay
              
-
+.. _sl-side:
+        
 Side
 ----
 
@@ -711,6 +736,8 @@ the same number of children as there are entries in the places list.
               text "Top-Left"
               text "Bottom-Right"
 
+.. _sl-text:
+              
 Text
 ----
 
@@ -728,6 +755,8 @@ It does not take children.
     screen hello_world:
         text "Hello, World." size 40
 
+.. _sl-textbutton:
+        
 Textbutton
 ----------
 
@@ -767,6 +796,8 @@ It does not take children.
             textbutton "Women" action Jump("women")
             textbutton "Song" action Jump("song")
 
+.. _sl-timer:
+            
 Timer
 -----
 
@@ -791,7 +822,9 @@ It takes no children.
              textbutton "No." action Jump("no")
 
         timer 3.0 action Jump("too_slow")
-    
+
+.. _sl-transform:
+        
 Transform
 ---------
 
@@ -803,6 +836,8 @@ following property groups :
 
 This should take a single child.
 
+
+.. _sl-vbar:
 
 Vbar
 ----
@@ -821,6 +856,8 @@ as `bar`.
              vbar value Preference("voice volume")
 
 
+.. _sl-vbox:
+             
 Vbox
 ----
 
@@ -841,6 +878,8 @@ UI displayable children are added to the box.
              text "Top."
              text "Bottom."
 
+
+.. _sl-viewport:
 
 Viewport
 --------
@@ -891,6 +930,8 @@ id.
 
              bar value XScrollValue("vp")
              vbar value YScrollValue("vp")
+
+.. _sl-window:
              
 Window
 ------
@@ -948,6 +989,9 @@ Here's an example of a preferences screen that uses imagemaps.
             hotbar (667, 535, 161, 20) value Preference("voice volume")
             hotbar (1001, 535, 161, 20) value Preference("text speed")
 
+            
+.. _sl-imagemap:
+            
 Imagemap
 --------
 
@@ -1008,6 +1052,9 @@ It takes the following groups of properties:
 An imagemap creates a fixed, allowing any child to be added to it (not
 just hotspots and hotbars).
 
+
+.. _sl-hotspot:
+
 Hotspot
 -------
 
@@ -1035,6 +1082,8 @@ A hotspot creates a fixed, allowing children to be added to it. The
 fixed has an area that is the same size as the hotspot, meaning that
 the children will be positioned relative to the hotpsot.
 
+
+.. _sl-hotbar:
 
 Hotbar
 ------
@@ -1085,6 +1134,8 @@ The advanced displayable statements are:
     drags as its children.
     
 
+.. _sl-has:
+    
 Has Statement
 =============
 
@@ -1134,6 +1185,8 @@ The screen language includes control statements for conditional
 execution, iteration, including other screens, executing actions when
 events occur, and executing arbitrary python code.
 
+.. _sl-default:
+
 Default
 -------
 
@@ -1148,6 +1201,8 @@ us using the use statement.
          text message
 
 
+.. _sl-for:
+         
 For
 ---
 
@@ -1165,6 +1220,8 @@ it does not support the else clause. It supports assignment to
                 textbutton numeral action Return(i + 1)
 
 
+.. _sl-if:
+                
 If
 --
 
@@ -1178,7 +1235,9 @@ statement. It supports the if, elif, and else clauses.
              text "Skipping."
         else:
              text "Not Skipping."
-                
+
+.. _sl-on:
+             
 On
 --
 
@@ -1208,6 +1267,8 @@ occurs.
         on "hide" action Hide("navigation")
 
 
+.. _sl-use:
+        
 Use
 ---
 
@@ -1237,6 +1298,8 @@ values.
          grid 2 5:
              for i in range(1, 11):
                   use file_slot(slot=i)
+
+.. _sl-python:
                   
 Python
 ------
