@@ -6,6 +6,10 @@
 
 init -1024:
 
+    python hide:
+        import os
+        store.__dxwebsetup = os.path.join(config.renpy_base, "lib", "dxwebsetup.exe")
+
     python:
         class _SetRenderer(Action):
             """
@@ -80,6 +84,7 @@ init -1024:
     # `problem` is the kind of problem that is occuring. It can be:
     # - "sw" if the software renderer was selected.
     # - "slow" if the performance test failed.
+    # - "fixed" if we're operating w/o shaders.
     # - other things, added in the future.
     #
     # `url` is the url of a web page on renpy.org that will include
@@ -105,14 +110,26 @@ init -1024:
             
             if problem == "sw":
                 text _("This computer is using software rendering.")
+            elif problem == "fixed":
+                text _("This computer is not using shaders.")
             elif problem == "slow":
                 text _("This computer is displaying graphics slowly.")
             else:
-                text _("This computer has a problem displaying graphics: [problem].")                
+                text _("This computer has a problem displaying graphics: [problem].") substitute True     
                 
             null height 10
 
-            text _("Its graphics drivers may be out of date or not operating correctly. This may lead to slow or incorrect graphics display. {a=[url]}Learn how to fix graphics problems.{/a}") substitute True
+            if directx_update:
+                text _("Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem.")
+            else:            
+                text _("Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display.")
+
+            if directx_update:
+                null height 10
+                
+                textbutton _("Update DirectX"):
+                    action directx_update
+                    xfill True
             
             null height 10
             
@@ -129,6 +146,35 @@ init -1024:
             textbutton _("Quit"): 
                 action Quit(confirm=False)
                 xfill True
+
+    # Used while a directx update is ongoing.
+    screen _directx_update:
+        
+        frame:
+            style_group ""
+            
+            xalign .5
+            yalign .33
+
+            xpadding 20
+            ypadding 20
+
+            xmaximum 400
+
+            has vbox
+                    
+            label _("Updating DirectX.")
+
+            null height 10
+
+            text _("The DirectX web setup program has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX.")
+            
+            null height 10
+                    
+            text _("When setup finishes, please click below to restart this program.")
+
+            textbutton _("Restart") action Return(True)
+
 
 
 init -1024 python:
@@ -230,35 +276,44 @@ init -1024 python:
         # The problem we have.
         problem = None
 
-        if config.renderer != "sw" and renpy.get_renderer_info()["renderer"] == "sw":
+        renderer_info = renpy.get_renderer_info()
+
+        # Software renderer check.
+        if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
         
-        # The parameters of the performance test. If we do not hit FPS fps
-        # over FRAMES frames before DELAY seconds are up, we fail. 
-        FRAMES = 5
-        FPS = 15
-        DELAY = 1.5
-        
-        renpy.transition(Dissolve(DELAY), always=True, force=True)
-        ui.add(__GLTest(FRAMES, FPS, DELAY))
-        result = ui.interact(suppress_overlay=True, suppress_underlay=True)
+        # Speed check.
+        if problem is None:
+            
+            # The parameters of the performance test. If we do not hit FPS fps
+            # over FRAMES frames before DELAY seconds are up, we fail. 
+            FRAMES = 5
+            FPS = 15
+            DELAY = 1.5
+            
+            renpy.transition(Dissolve(DELAY), always=True, force=True)
+            ui.add(__GLTest(FRAMES, FPS, DELAY))
+            result = ui.interact(suppress_overlay=True, suppress_underlay=True)
+    
+            if not result:
+                problem = "slow"
 
-        if not result:
-            problem = "slow"
+        # Lack of shaders check.
+        if problem is None:
+            if not "RENPY_GL_ENVIRON" in os.environ:    
+                if renderer_info["renderer"] == "gl" and renderer_info["environ"] == "fixed":
+                    problem = "fixed"
             
         if problem is None:
             return
-    
-        if renpy.renpy.windows:
-            platform = "windows"
-        elif renpy.renpy.macintosh:
-            platform = "macintosh"
+
+        if renpy.renpy.windows and os.path.exists(__dxwebsetup):
+            directx_update = Jump("_directx_update")
         else:
-            platform = "linux"
+            directx_update = None
     
         # Give the warning message to the user.            
-        url = "http://www.renpy.org/display-problems?p={0}&v={1}".format(platform, renpy.version())
-        result = renpy.call_screen("_performance_warning", problem=problem, url=url)
+        result = renpy.call_screen("_performance_warning", problem=problem, directx_update=directx_update)
 
         # Store the user's choice, and continue.        
         _preferences.performance_test = result
@@ -277,4 +332,23 @@ label _gl_test:
     scene
 
     return
+
+# We can assume we're on windows here. We're also always restart once we 
+# make it here.
+label _directx_update:
+
+    python hide:
+        import subprocess
+        import sys
+        
+        # Start dxsetup. We have to go through start to ensure that UAC
+        # doesn't cause problems.
+        subprocess.Popen(["start", __dxwebsetup], shell=True)
+
+        renpy.call_screen("_directx_update")
+        
+        # Restart the current program.
+        subprocess.Popen(sys.argv)
+        renpy.quit()
+    
 

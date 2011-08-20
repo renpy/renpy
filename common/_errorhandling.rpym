@@ -389,8 +389,8 @@ screen _exception:
             
             has vbox
 
-            text fmt_short
-            text fmt_full
+            text fmt_short substitute False
+            text fmt_full substitute False
       
         bar:
             style "_vscrollbar"

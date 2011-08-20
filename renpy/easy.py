@@ -96,6 +96,15 @@ def displayable_or_none(d):
     raise Exception("Not a displayable: %r" % (d,))
 
 def displayable(d):
+    """
+    :doc: other
+    :name: renpy.displayable
+    
+    This takes `d`, which may be a displayable object or a string. If it's 
+    a string, it converts that string into a displayable using the usual 
+    rules.
+    """
+
 
     if isinstance(d, renpy.display.core.Displayable):
         return d
