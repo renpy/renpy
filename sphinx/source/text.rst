@@ -559,3 +559,18 @@ files. Taking advantage of this is a three-step process.
 Ren'Py will add an entry to the translations file for each unit of
 text shown. This text can then be translated.
 
+
+Text Overflow Logging
+---------------------
+
+Ren'Py can log cases where text expands outside of the area allocated
+for it. To enable text overflow logging, the following steps are
+necessary.
+
+1. Set the :var:`config.debug_text_overflow` variable to true.
+2. Set the :propref:`xmaximum` and :propref:`ymaximum` style properties on either the Text
+   displayable, or a container enclosing it.
+3. Run the game.
+
+Whenever text is displayed that overflows the available area, Ren'Py
+will log an error to the ``text_overflow.txt`` file.

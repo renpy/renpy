@@ -472,7 +472,6 @@ Occasionally Used
     A list of overlay functions that are only called when the window
     is shown. 
 
-
 .. var:: config.window_show_transition = None
 
     The transition used by the window show statement when no
@@ -537,7 +536,6 @@ Rarely or Internally Used
     Roughly, the number of interactions that will occur before an
     autosave occurs. To disable autosaving, set :var:`config.has_autosave` to
     False, don't change this variable.
-
 
 .. var:: config.character_callback = None
 
@@ -610,7 +608,6 @@ Rarely or Internally Used
     This is the amount of time in seconds to spend fading the old
     track out before a new music track starts. This should probably be
     fairly short, so the wrong music doesn't play for too long.
-
 
 .. var:: config.fast_skipping = False
 
@@ -755,7 +752,6 @@ Rarely or Internally Used
     manipulator. If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
 
-
 .. var:: config.mouse_hide_time = 30
 
     The mouse is hidden after this number of seconds has elapsed
@@ -764,6 +760,16 @@ Rarely or Internally Used
     will not experience the mouse appearing then disappearing between
     clicks.
 
+.. var:: config.new_substitutions = True
+
+    If true, Ren'Py will apply new-style (square-bracket)
+    substitutions to all text displayed.
+
+.. var:: config.old_substitutions = False
+
+    If true, Ren'Py will apply old-style (percent) substitutions to
+    text displayed by the say and menu statements.
+    
 .. var:: config.overlay_during_with = True
 
     True if we want overlays to be shown during with statements, or
@@ -824,6 +830,11 @@ Rarely or Internally Used
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
 
+.. var:: config.save_physical_size = True
+
+    If true, the physical size of the window will be saved in the
+    preferences, and restored when the game resumes.
+    
 .. var:: config.savedir = ...
 
     The complete path to the directory in which the game is
