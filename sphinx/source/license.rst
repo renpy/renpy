@@ -41,7 +41,7 @@ Ren'Py binaries include code from the following projects:
 * Freetype (LGPL)
 * FFmpeg (LGPL)
 * Fribidi (LGPL)
-* jpeg (JPEG License)
+* libjpeg-turbo (LGPL)
 * libpng (PNG license)
 * zlib (Zlib License)
 * bzip2 (Bzip2 License)

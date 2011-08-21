@@ -133,6 +133,11 @@ user.
 Timers can now take a list of actions, rather than just a single
 callable. 
 
+Ren'Py now uses the libjpeg-turbo library, for faster jpeg loading.
+
+Ren'Py now uses ffmpeg 0.8.2, for improved compatibility with movie
+formats.
+
 Removed support for the iLiad platform.
 
 Thanks to Aleema for contributing the new themes and color schemes.
