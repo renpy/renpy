@@ -9,6 +9,34 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.13:
+
+6.13
+----
+
+The changes to text behavior can affect games in development in many
+ways. The biggest change is the introduction of new-style
+(square-bracket) text substitutions, and the elimination of old-style
+(percent-based) substitutions. These changes can be reverted with the
+code::
+
+    init python:
+        config.old_substitutions = True
+        config.new_substitutions = False
+
+New- and old-style substitutions can coexist in the same game, by
+setting both variables to True.
+
+Ren'Py has also change the default line-wrapping behavior. While
+the new behavior should never increase the number of lines in a
+paragraph, it may change which words fall on each line. To restore
+the old behavior, add the code::
+
+    init python:
+        style.default.layout = "greedy"
+        style.default.language = "western"
+
+
 .. _incompatible-6.12.1:
 
 6.12.1

@@ -152,8 +152,7 @@ typedef struct VideoState {
     unsigned int audio_buf_size; /* in bytes */
     int audio_buf_index; /* in bytes */
     AVPacket audio_pkt;
-    uint8_t *audio_pkt_data;
-    int audio_pkt_size;
+    AVPacket audio_pkt_temp;
 
     // AVAudioConvert *reformat_ctx;
     ReSampleContext *reformat_ctx;
@@ -1334,9 +1333,17 @@ static int video_thread(void *arg)
         /* NOTE: ipts is the PTS of the _first_ picture beginning in
            this packet, if any */
         is->video_st->codec->reordered_opaque= pkt->pts;
+
+#if LIBAVCODEC_VERSION_MAJOR >= 53
+        len1 = avcodec_decode_video2(is->video_st->codec,
+                                    frame, &got_picture,
+                                    pkt);
+#else
         len1 = avcodec_decode_video(is->video_st->codec,
                                     frame, &got_picture,
                                     pkt->data, pkt->size);
+#endif
+
 
         if(   (decoder_reorder_pts || pkt->dts == AV_NOPTS_VALUE)
            && frame->reordered_opaque != AV_NOPTS_VALUE)
@@ -1398,11 +1405,16 @@ static int subtitle_thread(void *arg)
         if (pkt->pts != AV_NOPTS_VALUE)
             pts = av_q2d(is->subtitle_st->time_base)*pkt->pts;
 
+#if LIBAVCODEC_VERSION_MAJOR >= 53
+        len1 = avcodec_decode_subtitle2(is->subtitle_st->codec,
+                                    &sp->sub, &got_subtitle,
+                                    pkt);
+#else
         len1 = avcodec_decode_subtitle(is->subtitle_st->codec,
                                     &sp->sub, &got_subtitle,
                                     pkt->data, pkt->size);
-//            if (len1 < 0)
-//                break;
+#endif
+
         if (got_subtitle && sp->sub.format == 0) {
             sp->pts = pts;
 
@@ -1512,26 +1524,36 @@ static int synchronize_audio(VideoState *is, short *samples,
 /* decode one audio frame and returns its uncompressed size */
 static int audio_decode_frame(VideoState *is, double *pts_ptr)
 {
-    AVPacket *pkt = &is->audio_pkt;
-    AVCodecContext *dec= is->audio_st->codec;
+	AVPacket *pkt = &is->audio_pkt;
+	AVPacket *pkt_temp = &is->audio_pkt_temp;
+	AVCodecContext *dec= is->audio_st->codec;
     int len1, data_size;
     double pts;
 
     for(;;) {
         /* NOTE: the audio packet can contain several frames */
-        while (is->audio_pkt_size > 0) {
+        while (pkt_temp->size > 0) {
             data_size = sizeof(is->audio_buf1);
+
+#if LIBAVCODEC_VERSION_MAJOR >= 53
+            len1 = avcodec_decode_audio3(dec,
+                                        (int16_t *)is->audio_buf1, &data_size,
+                                        pkt_temp);
+#else
             len1 = avcodec_decode_audio2(dec,
                                         (int16_t *)is->audio_buf1, &data_size,
-                                        is->audio_pkt_data, is->audio_pkt_size);
+                                        pkt_temp->data, pkt_temp->size);
+#endif
+
             if (len1 < 0) {
                 /* if error, we skip the frame */
-                is->audio_pkt_size = 0;
+                pkt_temp->size = 0;
                 break;
             }
 
-            is->audio_pkt_data += len1;
-            is->audio_pkt_size -= len1;
+            pkt_temp->data += len1;
+            pkt_temp->size -= len1;
+
             if (data_size <= 0)
                 continue;
 
@@ -1686,8 +1708,8 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             continue;
         }
 
-        is->audio_pkt_data = pkt->data;
-        is->audio_pkt_size = pkt->size;
+        pkt_temp->data = pkt->data;
+        pkt_temp->size = pkt->size;
 
         /* if update the audio clock with the pts */
         if (pkt->pts != AV_NOPTS_VALUE) {
