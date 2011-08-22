@@ -212,6 +212,10 @@ vc_version = {revno}
     files.sort()
     more_files.sort()
 
+    for fn in files + more_files:
+        if "~" in fn or "#" in fn:
+            raise Exception("Bad filename {0}.".format(fn))
+
     # zipup("dists/" + prefix + "-win32.zip", prefix, files)
     # print "----"
     zipup("dists/" + prefix + "-sdk.zip", prefix, files + more_files)
