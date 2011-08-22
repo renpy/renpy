@@ -183,11 +183,12 @@ vc_version = {revno}
     more_files.extend(tree("lib/linux-x86"))
     
     module_files = [
-        "*.c",
-        "*.h",
-        "*.py",
-        "*.pyx",
         "README.txt",
+        "*.c",
+        "gen/*.c",
+        "*.h",
+        "*.py*",
+        "include/*.py*"
         "lib/pysdlsound/*.py",
         ]
 
