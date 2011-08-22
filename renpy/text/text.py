@@ -406,7 +406,7 @@ class Layout(object):
         # 2. Breaks the text into a list of paragraphs, where each paragraph is 
         # represented as a list of (Segment, text string) tuples. 
         #
-        # This takes information from the various styles that apply to thr text,
+        # This takes information from the various styles that apply to the text,
         # and so needs to be redone when the style of the text changes.
         self.paragraphs = self.segment(text.tokens, style, renders)
       
@@ -784,7 +784,7 @@ class Layout(object):
                 raise Exception("Unknown text tag %r" % text)
             
         if not line:
-            line.append((ts, u""))
+            line.append((ts, u" "))
                 
         paragraphs.append(line)
 

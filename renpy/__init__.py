@@ -57,7 +57,9 @@ def setup_modulefinder(modulefinder):
     for i in [ "display", "gl", "angle", "text" ]:
     
         displaypath = os.path.join(libexec, "renpy", i)
-        modulefinder.AddPackagePath('renpy.' + i, displaypath)
+        
+        if os.path.exists(displaypath):
+            modulefinder.AddPackagePath('renpy.' + i, displaypath)
 
 def import_cython():
     """
