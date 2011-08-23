@@ -16,7 +16,7 @@ label demo_persistent:
 
         plays = persistent.plays
         
-    "For example, I can tell you that you've see this line %(plays)d time(s) since you cleared the per-game persistent data."
+    "For example, I can tell you that you've see this line [plays] time(s) since you cleared the per-game persistent data."
 
     "Multipersistent data is shared between games, which lets one game unlock features in a second."
 
@@ -32,6 +32,6 @@ label demo_persistent:
         mp.save()
         plays = mp.plays
 
-    "According to the multipersistent data, you've seen this line %(plays)d times total."
+    "According to the multipersistent data, you've seen this line [plays] times total."
 
     return

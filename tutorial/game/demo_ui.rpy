@@ -209,7 +209,7 @@ label demo_ui:
 
         $ povname = renpy.input("What is your name?") or "Guy Shy"
 
-        pov "My name is %(povname)s."
+        pov "My name is [povname]."
 
     
     e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"

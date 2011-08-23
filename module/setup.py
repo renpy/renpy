@@ -143,8 +143,5 @@ import renpy
 
 setuplib.setup("Ren'Py", renpy.version[7:])
 
-warnings = False
-
-print
-print "Fribidi:", has_fribidi
-print "ANGLE:", has_angle
+if not has_fribidi:
+    print "Warning: Did not include fribidi."
