@@ -722,7 +722,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-FunctionStatementParser("label", "ui.label", 0)
+FunctionStatementParser("label", "ui.label", 0, scope=True)
 Positional("label")
 Keyword("text_style")
 add(ui_properties)

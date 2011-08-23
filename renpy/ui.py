@@ -732,7 +732,7 @@ def get_text_style(style, default):
 
     return rv
 
-def textbutton(label, clicked=None, style=None, substitute=True, scope=None, text_style=None, **kwargs):
+def textbutton(label, clicked=None, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
     if style is None:
         style = style_group_style('button', NoStyleGroupGiven)
@@ -743,7 +743,7 @@ def textbutton(label, clicked=None, style=None, substitute=True, scope=None, tex
     button(style=style, clicked=clicked, **kwargs)
     text(label, style=text_style, substitute=substitute, scope=scope)
 
-def label(label, style=None, text_style=None, **kwargs):
+def label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
     if style is None:
         style = style_group_style('label', NoStyleGroupGiven)
@@ -752,7 +752,7 @@ def label(label, style=None, text_style=None, **kwargs):
         text_style = get_text_style(style, style_group_style('label_text', NoStyleGroupGiven))
         
     window(style=style, **kwargs)
-    text(label, style=text_style)
+    text(label, style=text_style, substitute=substitute, scope=scope)
 
 adjustment = renpy.display.behavior.Adjustment
 
