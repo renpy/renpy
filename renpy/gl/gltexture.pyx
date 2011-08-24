@@ -627,9 +627,14 @@ def align_axes(*args):
     This is used to combine the grids of two or more texgrids into a
     single grid.
     """
-
+    
     # The lists we're building.
     rv = [ [] for i in args ]
+
+    # If we have an empty list, do nothing.
+    for i in args:
+        if not i:
+            return rv
 
     # The index of the current element, for each member of args.
     cur = [ 0 for i in args ]

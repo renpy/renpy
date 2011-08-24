@@ -70,17 +70,18 @@ class LogFile(object):
         
             if self.append:
                 self.file = codecs.open(fn, "a", "utf-8")
-                print >>self.file
-                print >>self.file, "=" * 78
-                print >>self.file
+                
+                self.write('')
+                self.write('=' * 78)
+                self.write('')
             else:
                 self.file = codecs.open(fn, "w", "utf-8")
 
-            print >>self.file, time.ctime()                
-            print >>self.file, platform.platform()
-            print >>self.file, renpy.version #@UndefinedVariable
-            print >>self.file, renpy.config.name + " " + renpy.config.version
-            print >>self.file
+            self.write("%s", time.ctime())
+            self.write("%s", platform.platform())
+            self.write("%s", renpy.version)
+            self.write("%s %s", renpy.config.name, renpy.config.version)
+            self.write("")
             
             return True
 
@@ -94,7 +95,7 @@ class LogFile(object):
 
         if self.open():
             s = msg % args
-            self.file.write(s + "\n")
+            self.file.write(s + "\r\n")
             
     def exception(self):
         """

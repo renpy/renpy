@@ -12,6 +12,7 @@ import subprocess
 import makeupdate
 import glob
 import time
+import argparse
 
 zlib.Z_DEFAULT_COMPRESSION = 9
 
@@ -114,6 +115,12 @@ def tree(root):
 
 def main():
 
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fast", action="store_true")
+    ap.add_argument("prefix")
+    
+    args = ap.parse_args()
+
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.
     
@@ -143,12 +150,7 @@ vc_version = {revno}
 """.format(revno=revno))
     f.close()
     
-    # Check to be sure we have the right arguments.
-    if len(sys.argv) != 2:
-        print "Usage: %s <prefix>" % sys.argv[0]
-        return
-
-    prefix = sys.argv[1]
+    prefix = args.prefix
 
     # Copy over the screens, to keep them up to date.
     shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
@@ -216,38 +218,38 @@ vc_version = {revno}
         if "~" in fn or "#" in fn:
             raise Exception("Bad filename {0}.".format(fn))
 
-    # zipup("dists/" + prefix + "-win32.zip", prefix, files)
-    # print "----"
     zipup("dists/" + prefix + "-sdk.zip", prefix, files + more_files)
-    print "----"
-    tarup("dists/" + prefix + "-sdk.tar.bz2", prefix, files + more_files)
-    print "----"
-    tarup("dists/" + prefix + "-source.tar.bz2", prefix, files)
-    print "----"
 
-    # Make the 7zip.
-    os.chdir("dists")
-    os.system("unzip " + prefix + "-sdk.zip")
+    if not args.fast:
+        print "----"
+        tarup("dists/" + prefix + "-sdk.tar.bz2", prefix, files + more_files)
+        print "----"
+        tarup("dists/" + prefix + "-source.tar.bz2", prefix, files)
+        print "----"
 
-    try:
+        # Make the 7zip.
+        os.chdir("dists")
+        os.system("unzip " + prefix + "-sdk.zip")
+    
+        try:
+            os.unlink(prefix + "-sdk.7z")
+        except:
+            pass
+    
+        os.system("7z a " + prefix + "-sdk.7z " + prefix)
+        os.system("cat ../7z.sfx " + prefix + "-sdk.7z > " + prefix + "-sdk.7z.exe""")
         os.unlink(prefix + "-sdk.7z")
-    except:
-        pass
-
-    os.system("7z a " + prefix + "-sdk.7z " + prefix)
-    os.system("cat ../7z.sfx " + prefix + "-sdk.7z > " + prefix + "-sdk.7z.exe""")
-    os.unlink(prefix + "-sdk.7z")
-
-    os.chdir("..")
-
-    if os.path.exists("updates/prerelease"):
-        shutil.rmtree("updates/prerelease")
-
-    os.rename("dists/" + prefix, "updates/prerelease")
-    os.unlink("updates/prerelease/lib/update-version.txt")
-
-    makeupdate.make_update("updates/prerelease", str(revno))
-
+    
+        os.chdir("..")
+    
+        if os.path.exists("updates/prerelease"):
+            shutil.rmtree("updates/prerelease")
+    
+        os.rename("dists/" + prefix, "updates/prerelease")
+        os.unlink("updates/prerelease/lib/update-version.txt")
+    
+        makeupdate.make_update("updates/prerelease", str(revno))
+    
     os.chmod("renpy.py", 0755)
 
     print

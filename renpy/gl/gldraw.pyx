@@ -492,11 +492,16 @@ cdef class GLDraw:
             self.info["rtt"] = "fbo"
             self.rtt.init()
 
-        else:                        
+        elif glrtt_copy:                        
             renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
             self.rtt.init()
+
+        else:
+            renpy.display.log.write("Can't find a workable rtt.")
+            return False
+
 
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
@@ -1181,7 +1186,10 @@ cdef class Environ(object):
 
 # These imports need to be down at the bottom, after the Rtt and Environ 
 # classes have been created.
-import glrtt_copy
+try:
+    import glrtt_copy
+except:
+    glrtt_copy = None
 
 try:
     import glrtt_fbo
