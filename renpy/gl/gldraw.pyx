@@ -367,7 +367,7 @@ cdef class GLDraw:
                 renpy.display.log.write("Blacklisted renderer/version.")
                 return False
 
-        if version.startswith("OpenGL ES"):
+        if not ANGLE and version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
             self.always_opaque = True
             gltexture.use_gles()
@@ -473,7 +473,7 @@ cdef class GLDraw:
                 return False
 
         # Pick a Render-to-texture method.
-        if (ANGLE or 
+        if ((ANGLE and not "RENPY_GL_RTT" in os.environ) or 
             
             use_subsystem(
                 glrtt_fbo,

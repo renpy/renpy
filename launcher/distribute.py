@@ -397,7 +397,7 @@ def distribute(
         win_files.append((rb + "Microsoft.VC90.CRT.manifest", "/Microsoft.VC90.CRT.manifest"))
 
         win_files.append((rb + "lib", "/lib"))
-        win_files.append((rb + "lib", "/lib/dxwebsetup.exe"))
+        win_files.append((rb + "lib/dxwebsetup.exe", "/lib/dxwebsetup.exe"))
         win_files.extend(tree(rb + "lib/windows-x86", "/lib/windows-x86"))
         
         if os.path.exists(project_path + "/icon.ico"):
