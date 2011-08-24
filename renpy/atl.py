@@ -292,7 +292,7 @@ class ATLTransformBase(renpy.object.Object):
             child = self.child
             
         if child is None:
-            child = renpy.display.layout.Null()
+            child = renpy.display.motion.get_null()
 
         # Create a new ATL Transform.
         parameters = renpy.ast.ParameterInfo({}, positional, None, None)
@@ -793,9 +793,9 @@ class Child(Statement):
         
         old_child = trans.raw_child
 
-        if old_child is not None and self.transition is not None:
+        if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child,
-                                          new_widget=self.child)
+                                    new_widget=self.child)
         else:
             child = self.child
 

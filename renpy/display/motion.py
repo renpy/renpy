@@ -30,6 +30,17 @@ from renpy.display.layout import Container
 
 import renpy.display.accelerator
 
+# The null object that's used if we don't have a defined child.
+null = None 
+
+def get_null():
+    global null
+    
+    if null is None:
+        null = renpy.display.layout.Null()
+        
+    return null
+
 # Convert a position from cartesian to polar coordinates.
 def cartesian_to_polar(x, y, xaround, yaround):
     """
@@ -728,7 +739,7 @@ class Transform(Container):
 
         # If we don't have a child for some reason, set it to null.            
         if child is None:
-            child = renpy.display.layout.Null()
+            child = get_null()
         
         rv = Transform(
             child=child,
