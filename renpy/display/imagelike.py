@@ -58,7 +58,7 @@ class Solid(renpy.display.core.Displayable):
         if color is None or width <= 0 or height <= 0:
             return rv
 
-        SIZE = 10.0
+        SIZE = 10
 
         tex = renpy.display.draw.solid_texture(SIZE, SIZE, color)
 

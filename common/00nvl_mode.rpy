@@ -119,6 +119,7 @@ init -1100 python:
          """
 
         widget_properties, dialogue = __nvl_screen_dialogue()        
+
         renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope) 
         renpy.shown_window()
 
@@ -126,7 +127,7 @@ init -1100 python:
         
     def nvl_show_core(who=None, what=None):
 
-        # Screen version.
+         # Screen version.
         if renpy.has_screen("nvl"):
             return __nvl_show_screen("nvl", items=[ ])
         
@@ -214,6 +215,7 @@ init -1100 python:
                 **properties)
 
         def do_add(self, who, what):
+        
             if store.nvl_list is None:
                 store.nvl_list = [ ]
                 

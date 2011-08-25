@@ -1048,6 +1048,8 @@ class SWDraw(object):
         
         surf = surface(w + 4, h + 4, True)
         surf.fill(color)
+        self.mutated_surface(surf)
+
         surf = surf.subsurface((2, 2, w, h))
         
         self.mutated_surface(surf)

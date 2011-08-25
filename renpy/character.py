@@ -212,7 +212,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     This function is required to return the ui.text() widget
     displaying the what text.
     """
-
+    
     props = compute_widget_properties(who_args, what_args, window_args, variant=variant)
         
     def handle_who():
@@ -416,20 +416,8 @@ def display_say(
             behavior = None
 
         
-        # Decide the portion of the text to show quickly, the part to 
-        # show slowly, and the part not to show (but to lay out).
-        start_string = dtt.text[:start]
-        mid_string = dtt.text[start:end]
-        end_string = dtt.text[end:]
-        
-        if start_string:
-            start_string = start_string + "{_start}"
-            
-        if end_string:
-            end_string = "{_end}" + end_string
-
         # The string to show.            
-        what_string = start_string + mid_string + end_string
+        what_string = dtt.text
 
         # Figure out the CTC to use, if any.
         if last_pause:
@@ -468,6 +456,8 @@ def display_say(
             what_text.set_ctc(what_ctc)
                     
         # Update the properties of the what_text widget.
+        what_text.start = start
+        what_text.end = end
         what_text.slow = slow
         what_text.slow_done = slow_done
 

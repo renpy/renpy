@@ -995,8 +995,9 @@ class Text(renpy.display.core.Displayable):
                 
             self.scope = None
             self.substitute = False
-    
-            self.update()
+            self.start = None
+            self.end = None
+            self.dirty = True
     
     def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, **properties):
                 
@@ -1031,33 +1032,41 @@ class Text(renpy.display.core.Displayable):
         # The ctc indicator associated with this text.
         self.ctc = None
         
+        # The index of the start and end strings in the first segment of text.
+        # (None to show the whole text.)
+        self.start = None
+        self.end = None
+        
         if replaces is not None:
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
             self.ctc = replaces.ctc
+            self.start = replaces.start
+            self.end = replaces.end
 
-        # Call update to retokenize.
-        self.update()
+        # Do we need to update ourselves?
+        self.dirty = True
 
     def set_text(self, text):
         if not isinstance(text, list):
             text = [ text ]
         
         self.text = text
-        
-        self.kill_layout()
-        self.update()
+        self.dirty = True
 
     def set_ctc(self, ctc):
         self.ctc = ctc
-        self.kill_layout()
-        self.update()
+        self.dirty = True
         
     def update(self):
         """
         This needs to be called after text has been updated, but before
         any layout objects are created.
         """
+
+        self.dirty = False
+        
+        self.kill_layout()
         
         text = [ ]
         
@@ -1070,10 +1079,43 @@ class Text(renpy.display.core.Displayable):
                 i = unicode(i)
                 
             text.append(i)
-        
-        if self.ctc is not None:
-            text.append(self.ctc)
-        
+
+        # Decide the portion of the text to show quickly, the part to 
+        # show slowly, and the part not to show (but to lay out).
+        if self.start is not None:              
+            start_string = text[0][:self.start]
+            mid_string = text[0][self.start:self.end]
+            end_string = text[0][self.end:]
+            
+            if start_string:
+                start_string = start_string + "{_start}"
+                
+            if end_string:
+                end_string = "{_end}" + end_string
+
+            text_split = [ ]
+            
+            if start_string:
+                text_split.append(start_string)
+            
+            text_split.append(mid_string)
+            
+            if self.ctc is not None:
+                text_split.append(self.ctc)
+
+            if end_string:            
+                text_split.append(end_string)
+            
+            text_split.extend(text[1:])
+            
+            text = text_split
+
+        else:
+            # Add the CTC.
+            if self.ctc is not None:
+                text.append(self.ctc)
+
+        # Tokenize the text.        
         tokens = self.tokenize(text)
         
         # self.tokens is a list of pairs, where the first component of 
@@ -1084,9 +1126,13 @@ class Text(renpy.display.core.Displayable):
         # Text.        
         self.tokens, self.displayables = self.get_displayables(tokens)
 
-        for i in self.displayables:
-            i.per_interact()
 
+    def visit(self):
+        
+        if self.dirty:
+            self.update()
+            
+        return list(self.displayables)
 
     def kill_layout(self):
         """
@@ -1190,6 +1236,9 @@ class Text(renpy.display.core.Displayable):
                 return rv
 
     def render(self, width, height, st, at):
+
+        if self.dirty:
+            self.update()
         
         # Render all of the child displayables.
         renders = { }
