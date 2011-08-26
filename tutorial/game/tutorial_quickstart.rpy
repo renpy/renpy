@@ -117,7 +117,7 @@ label tutorial_dialogue:
 
     e "Define is followed by a short name for the character, like \"l\". We'll be able to use that short name when writing dialogue."
 
-    e "This is followed by an equals sign, and the thing that we're defining. In this cases, it's a Character."
+    e "This is followed by an equals sign, and the thing that we're defining. In this case, it's a Character."
 
     e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
 

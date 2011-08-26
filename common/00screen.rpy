@@ -1135,7 +1135,9 @@ init -1140 python:
 
             if self.newest:
                 persistent._file_newest = fn
-                persistent._file_page = self.page
+
+                if self.page is not None:
+                    persistent._file_page = self.page
                 
             renpy.restart_interaction()
 
