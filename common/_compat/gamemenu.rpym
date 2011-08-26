@@ -10,11 +10,11 @@ init python:
     # The contents of the game menu choices.
     config.game_menu = [
             ( "return", u"Return", ui.jumps("_return"), 'True'),
-            ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context().main_menu'),
+            ( "skipping", u"Begin Skipping", ui.jumps("_return_skipping"), 'config.allow_skipping and not renpy.context()._main_menu'),
             ( "prefs", u"Preferences", _intra_jumps("_prefs_screen", "intra_transition"), 'True' ),
-            ( "save", u"Save Game", _intra_jumps("_save_screen", "intra_transition"), 'not renpy.context().main_menu' ),
+            ( "save", u"Save Game", _intra_jumps("_save_screen", "intra_transition"), 'not renpy.context()._main_menu' ),
             ( "load", u"Load Game", _intra_jumps("_load_screen", "intra_transition"), 'True'),
-            ( "mainmenu", u"Main Menu", lambda : _mainmenu_prompt(), 'not renpy.context().main_menu' ),
+            ( "mainmenu", u"Main Menu", lambda : _mainmenu_prompt(), 'not renpy.context()._main_menu' ),
             ( "quit", u"Quit", lambda : _quit_prompt("quit"), 'True' ),
             ]
 
@@ -463,7 +463,7 @@ label _load_screen:
 
         fn, exists = _file_picker("load", False )
 
-        if not renpy.context().main_menu and _load_prompt:
+        if not renpy.context()._main_menu and _load_prompt:
             if _yesno_prompt("load", u"Loading will lose unsaved progress.\nAre you sure you want to do this?"):
                 renpy.load(fn)
         else:                        
