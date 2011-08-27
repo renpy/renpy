@@ -47,6 +47,19 @@ init:
     $ style.pink = Style(style.default)
     $ style.pink.color = "#ffc0c0"
     
+init python:
+    style.ruby_style = Style(style.default)
+    style.ruby_style.yoffset = -20
+    style.ruby_style.size = 12
+   
+define eruby = Character(
+    "Eileen",
+    color="#c8ffc8",
+    what_ruby_style=style.ruby_style,
+    what_line_leading=10)
+    
+       
+    
 label demo_text:
     
     e "Ren'Py gives you quite a bit of control over how text appears."
@@ -72,7 +85,13 @@ label demo_text:
 
     # e "There are also bold, italic, strikethrough, and underline style properties, which can be styled onto any text."
 
+    e "The kerning tag lets you adjust the spacing between characters.\n{k=.5}The spacing between characters can be increased.{/k}\n{k=-.5}The spacing between characters can be decreased.{/k}"
+    
+    eruby "You are able to write ruby text, which can help clarify how to pronounce words, like {rb}Ren'Py{/rb}{rt}ren-pie{/rt}."
+
     e "{a=define_hyperlink}Hyperlinks{/a} let buttons be defined using text tags."
+
+    e "The space and vspace tags add {space=30} horizontal and {vspace=20}vertical space, respectively."
 
     e "You can define your own text tags, {=pink}that use a style you define.{/=pink}"
     

@@ -28,7 +28,7 @@ init python:
         ("demo_transitions", "Transition Gallery", "6.11.1"),
         ("demo_imageops", "Image Operations", "6.5.0"),
         ("demo_ui", "User Interaction", "6.5.0"),
-        ("demo_text", "Fonts and Text Tags", "6.8.0"),
+        ("demo_text", "Fonts and Text Tags", "6.13.0"),
         ("demo_character", "Character Objects", "6.2.0"), 
         ("demo_layers", "Layers & Advanced Show", "5.6.5"),
         ("demo_nvlmode", "NVL Mode", "6.4.0"),
