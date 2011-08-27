@@ -1,6 +1,8 @@
 # This builds out of date modules using the default C compiler, and then
 # runs them.
 
+export RENPY_CYTHON=cython
+
 try () {
     "$@" || exit -1
 }

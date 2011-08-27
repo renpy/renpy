@@ -12,6 +12,9 @@ import distutils.core
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
 
+# The cython command.
+cython_command = os.environ.get("RENPY_CYTHON", None)
+
 # Note that the android build sets up CFLAGS for us, and ensures
 # that necessary libraries are present. So autoconfiguration is 
 # unnecessary on that platform.
@@ -206,13 +209,17 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
         if os.path.getmtime(dep_fn) > c_mtime:
             out_of_date = True
 
+    if out_of_date and not cython_command:
+        print "WARNING:", name, "is out of date, but RENPY_CYTHON isn't set."
+        out_of_date = False
+
     # If the file is out of date, regenerate it.
     if out_of_date:
         print name, "is out of date."
 
         try:    
             subprocess.check_call([
-                "cython",
+                cython_command,
                 "-Iinclude",
                 "-a",
                 fn,
