@@ -140,6 +140,9 @@ formats.
 
 Removed support for the iLiad platform.
 
+PowerPC support has been removed from the main Ren'Py distribution. It's
+available as a download from the Ren'Py web site.
+
 Thanks to Aleema for contributing the new themes and color schemes.
 
 

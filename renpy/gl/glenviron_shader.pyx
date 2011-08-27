@@ -28,7 +28,59 @@ from gldraw cimport *
 cdef int round(double d):
     return <int> (d + .5)
 
-VERTEX_SHADER = """\
+
+VERTEX_SHADER1 = """\
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform mat4 Projection;
+
+attribute vec4 Vertex;
+attribute vec2 VertexTexCoord0;
+
+varying vec2 TexCoord0;
+
+varying vec2 pos;
+
+void main() {
+    TexCoord0 = VertexTexCoord0;
+
+    pos = Vertex.xy;
+    gl_Position = Projection * Vertex;
+}
+"""
+
+VERTEX_SHADER2 = """\
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform mat4 Projection;
+
+attribute vec4 Vertex;
+attribute vec2 VertexTexCoord0;
+attribute vec2 VertexTexCoord1;
+
+varying vec2 TexCoord0;
+varying vec2 TexCoord1;
+
+varying vec2 pos;
+
+void main() {
+    TexCoord0 = VertexTexCoord0;
+    TexCoord1 = VertexTexCoord1;
+
+    pos = Vertex.xy;
+    gl_Position = Projection * Vertex;
+}
+"""
+
+VERTEX_SHADER3 = """\
+#ifdef GL_ES
+precision highp float;
+#endif
+
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -51,6 +103,9 @@ void main() {
     gl_Position = Projection * Vertex;
 }
 """
+
+
+
 
 BLIT_SHADER = """
 #ifdef GL_ES
@@ -290,9 +345,9 @@ cdef class ShaderEnviron(Environ):
 
     def init(self):
 
-        self.blit_program = Program(VERTEX_SHADER, BLIT_SHADER)
-        self.blend_program = Program(VERTEX_SHADER, BLEND_SHADER)
-        self.imageblend_program = Program(VERTEX_SHADER, IMAGEBLEND_SHADER)
+        self.blit_program = Program(VERTEX_SHADER1, BLIT_SHADER)
+        self.blend_program = Program(VERTEX_SHADER2, BLEND_SHADER)
+        self.imageblend_program = Program(VERTEX_SHADER3, IMAGEBLEND_SHADER)
 
         # The current program.
         self.program = None        
