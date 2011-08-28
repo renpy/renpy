@@ -1,5 +1,6 @@
 init python:
 
+    import urllib
     import urllib2
     import bz2
     import os
@@ -71,6 +72,7 @@ init python:
             bz = os.path.join(self.local, relative + ".new.bz2")
             new = os.path.join(self.local, relative + ".new")
 
+            relative = urllib.quote(relative)
             url = self.remote + "/" + relative + ".bz2"
             
             try:
