@@ -1047,6 +1047,9 @@ class Text(renpy.display.core.Displayable):
         # Do we need to update ourselves?
         self.dirty = True
 
+        # The list of displayables we use.
+        self.displayables = None
+
     def set_text(self, text):
         if not isinstance(text, list):
             text = [ text ]
@@ -1129,7 +1132,7 @@ class Text(renpy.display.core.Displayable):
 
     def visit(self):
         
-        if self.dirty:
+        if self.dirty or self.displayables is None:
             self.update()
             
         return list(self.displayables)
@@ -1237,7 +1240,7 @@ class Text(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        if self.dirty:
+        if self.dirty or self.displayables is None:
             self.update()
         
         # Render all of the child displayables.

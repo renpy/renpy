@@ -53,6 +53,13 @@ class LogFile(object):
         self.developer = developer
         self.file = None
         
+        # File-like attributes.
+        self.softspace = 0
+        self.newlines = None
+        
+        # Should we emulate file's write method? We do so if this is True.
+        self.raw_write = False
+        
     def open(self):
 
         if self.file:
@@ -88,22 +95,32 @@ class LogFile(object):
         except:
             return False
 
-    def write(self, msg, *args):
+    def write(self, s, *args):
         """
-        Formats msg with args, and writes it to the logfile.
+        Formats `s` with args, and writes it to the logfile.
         """
 
         if self.open():
-            s = msg % args
-            self.file.write(s + "\r\n")
+        
+            if not self.raw_write:
+                s = s % args
+                s += "\n"
+
+            if not isinstance(s, unicode):
+                s = s.decode("latin-1")
+
+            s = s.replace("\n", "\r\n")            
+            
+            self.file.write(s)
             
     def exception(self):
         """
         Writes the exception to the logfile.
         """
-
-        if self.open():
-            traceback.print_exc(None, self.file)
+        
+        self.raw_write = True
+        traceback.print_exc(None, self)
+        self.raw_write = False
 
 # A map from the log name to a log object.
 log_cache = { }
