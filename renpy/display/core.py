@@ -1651,6 +1651,91 @@ class Interface(object):
             raise renpy.game.QuitException()
 
         
+    def get_mouse_info(self):
+        # Figure out if the mouse visibility algorithm is hiding the mouse.
+        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
+            visible = False
+        else:
+            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
+            
+        visible = visible and self.show_mouse
+
+        # If not visible, hide the mouse.
+        if not visible:
+            return False, 0, 0, None
+        
+        # Deal with a hardware mouse, the easy way.
+        if not renpy.config.mouse:
+            return True, 0, 0, None
+
+        # Deal with the mouse going offscreen.
+        if not self.focused:
+            return False, 0, 0, None
+        
+        mouse_kind = renpy.display.focus.get_mouse() or self.mouse 
+        
+        # Figure out the mouse animation.
+        if mouse_kind in renpy.config.mouse:
+            anim = renpy.config.mouse[mouse_kind]
+        else:
+            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
+
+        img, x, y = anim[self.ticks % len(anim)]
+        tex = renpy.display.im.load_image(img)
+
+        return False, x, y, tex
+
+    def drawn_since(self, seconds_ago):
+        """
+        Returns true if the screen has been drawn in the last `seconds_ago`,
+        and false otherwise.
+        """
+
+        return (get_time() - self.frame_time) <= seconds_ago
+
+    def android_check_suspend(self):
+        
+        if android.check_pause():
+
+            import android_sound #@UnresolvedImport
+            android_sound.pause_all()
+
+            pygame.time.set_timer(PERIODIC, 0)
+            pygame.time.set_timer(REDRAW, 0)
+            pygame.time.set_timer(TIMEEVENT, 0)
+
+            # The game has to be saved.
+            renpy.loadsave.save("_reload-1")
+
+            android.wait_for_resume()
+
+            # Since we came back to life, we can get rid of the
+            # auto-reload.
+            renpy.loadsave.unlink_save("_reload-1")
+
+            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+            android_sound.unpause_all()
+            
+    def iconified(self):
+        """
+        Called when we become an icon.
+        """
+        
+        pass
+    
+    def restored(self):
+        """
+        Called when we are restored from being an icon.
+        """
+        
+        # This is necessary on Windows/DirectX/Angle, as otherwise we get
+        # a blank screen.
+
+        if renpy.windows:
+            self.display_reset = True
+            self.set_mode(self.last_resize)
+    
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -1705,74 +1790,6 @@ class Interface(object):
             self.restart_interaction = True
 
             renpy.game.context().scene_lists.shown_window = False
-            
-
-    def get_mouse_info(self):
-        # Figure out if the mouse visibility algorithm is hiding the mouse.
-        if self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time():
-            visible = False
-        else:
-            visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
-            
-        visible = visible and self.show_mouse
-
-        # If not visible, hide the mouse.
-        if not visible:
-            return False, 0, 0, None
-        
-        # Deal with a hardware mouse, the easy way.
-        if not renpy.config.mouse:
-            return True, 0, 0, None
-
-        # Deal with the mouse going offscreen.
-        if not self.focused:
-            return False, 0, 0, None
-        
-        mouse_kind = renpy.display.focus.get_mouse() or self.mouse 
-        
-        # Figure out the mouse animation.
-        if mouse_kind in renpy.config.mouse:
-            anim = renpy.config.mouse[mouse_kind]
-        else:
-            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
-
-        img, x, y = anim[self.ticks % len(anim)]
-        tex = renpy.display.im.load_image(img)
-
-        return False, x, y, tex
-
-    def drawn_since(self, seconds_ago):
-        """
-        Returns true if the screen has been drawn in the last `seconds_ago`,
-        and false otherwise.
-        """
-
-        return (get_time() - self.frame_time) <= seconds_ago
-        
-
-    def android_check_suspend(self):
-        
-        if android.check_pause():
-
-            import android_sound #@UnresolvedImport
-            android_sound.pause_all()
-
-            pygame.time.set_timer(PERIODIC, 0)
-            pygame.time.set_timer(REDRAW, 0)
-            pygame.time.set_timer(TIMEEVENT, 0)
-
-            # The game has to be saved.
-            renpy.loadsave.save("_reload-1")
-
-            android.wait_for_resume()
-
-            # Since we came back to life, we can get rid of the
-            # auto-reload.
-            renpy.loadsave.unlink_save("_reload-1")
-
-            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
-
-            android_sound.unpause_all()
             
     def interact_core(self,
                       show_mouse=True,
@@ -2245,6 +2262,13 @@ class Interface(object):
                     if ev.type == pygame.ACTIVEEVENT:
                         if ev.state & 1:
                             self.focused = ev.gain
+
+                        if ev.state & 4:                            
+                            if ev.gain:
+                                self.restored()
+                            else:
+                                self.iconified()
+
 
                     # This returns the event location. It also updates the
                     # mouse state as necessary.
