@@ -38,6 +38,7 @@ def extra_imports():
     import encodings.utf_16; encodings.utf_16
     import encodings.utf_16_be; encodings.utf_16_be
     import encodings.utf_16_le; encodings.utf_16_le
+    import encodings.latin_1; encodings.latin_1
     import math; math
     import glob; glob
     import pickle; pickle

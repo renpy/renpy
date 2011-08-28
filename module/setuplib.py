@@ -93,7 +93,7 @@ def library(name, optional=False):
         
         for ldir in [i, os.path.join(i, "lib") ]:
             
-            for suffix in ( ".so", ".a", ".dylib" ):
+            for suffix in ( ".so", ".a", ".dll.a", ".dylib" ):
 
                 fn = os.path.join(ldir, "lib" + name + suffix)
                 
