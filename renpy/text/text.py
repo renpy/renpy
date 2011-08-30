@@ -103,6 +103,9 @@ def outline_blits(blits, outline):
         
         y0 = b.y
         y1 = b.y + b.h + outline * 2
+
+        # Prevents some visual artifacting, where the two lines can overlap.
+        y1 -= 1
     
         if line_y != y0:
             line_y = y0
