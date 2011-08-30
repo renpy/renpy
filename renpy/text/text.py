@@ -49,7 +49,7 @@ class Blit(object):
         self.alpha = alpha
 
     def __repr__(self):
-        return "<Blit ({}, {}, {}, {}) {}>".format(self.x, self.y, self.w, self.h, self.alpha)
+        return "<Blit ({0}, {1}, {2}, {3}) {4}>".format(self.x, self.y, self.w, self.h, self.alpha)
 
         
 def outline_blits(blits, outline):
@@ -1053,6 +1053,7 @@ class Text(renpy.display.core.Displayable):
         # The list of displayables we use.
         self.displayables = None
 
+
     def set_text(self, text):
         if not isinstance(text, list):
             text = [ text ]
@@ -1172,11 +1173,14 @@ class Text(renpy.display.core.Displayable):
 
         layout = self.get_layout()
 
-        hyperlink_focus = self.style.hyperlink_functions[2]
-        target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
-
         self.kill_layout()
         renpy.display.render.redraw(self, 0)
+
+        if layout is None:
+            return
+
+        hyperlink_focus = self.style.hyperlink_functions[2]
+        target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
 
         if hyperlink_focus:
             return hyperlink_focus(target)
@@ -1329,7 +1333,7 @@ class Text(renpy.display.core.Displayable):
                 tokens.append((DISPLAYABLE, i))
                 
             else:
-                raise Exception("Can't display {!r} as Text.".format(i))
+                raise Exception("Can't display {0!r} as Text.".format(i))
                 
         return tokens    
     

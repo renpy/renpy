@@ -313,7 +313,9 @@ init -1024 python:
             directx_update = None
     
         # Give the warning message to the user.            
-        result = renpy.call_screen("_performance_warning", problem=problem, directx_update=directx_update)
+        renpy.show_screen("_performance_warning", problem=problem, directx_update=directx_update, _transient=True)
+        result = ui.interact(suppress_overlay=True, suppress_underlay=True)
+        
 
         # Store the user's choice, and continue.        
         _preferences.performance_test = result
@@ -345,7 +347,8 @@ label _directx_update:
         # doesn't cause problems.
         subprocess.Popen(["start", __dxwebsetup], shell=True)
 
-        renpy.call_screen("_directx_update")
+        renpy.show_screen("_directx_update")
+        ui.interact(suppress_overlay=True, supporess_underlay=True)
         
         # Restart the current program.
         subprocess.Popen(sys.argv)
