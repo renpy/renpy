@@ -31,6 +31,7 @@ import random
 import weakref
 import re
 import sets
+import codecs
 
 import renpy.audio
 
@@ -235,6 +236,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
 
     source = source.replace("\r", "")
     source = escape_unicode(source)
+    source = codecs.BOM_UTF8 + source.encode("utf-8")
         
     try:
         line_offset = lineno - 1
