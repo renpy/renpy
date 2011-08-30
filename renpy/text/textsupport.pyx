@@ -110,7 +110,9 @@ def annotate_western(list glyphs):
         if g.ruby != RUBY_NONE:
             continue
         
-        if g.character == 0x20 or g.character == 0x200b:
+        if g.character == 0:
+            g.split = SPLIT_BEFORE
+        elif g.character == 0x20 or g.character == 0x200b:
             g.split = SPLIT_INSTEAD
         else:
             g.split = SPLIT_NONE
@@ -210,6 +212,9 @@ def annotate_unicode(list glyphs, bint no_ideographs):
     old_g.split = SPLIT_NONE
 
     for g in glyphs:
+
+        if g.character == 0:
+            g.split = SPLIT_BEFORE
         
         if g.ruby == RUBY_TOP:
             g.split = SPLIT_NONE
