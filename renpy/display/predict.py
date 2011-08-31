@@ -97,8 +97,11 @@ def prediction_coroutine(root_widget):
         sls = renpy.game.contexts[-2].scene_lists
 
         for l in sls.layers.itervalues():
-            for sle in l:
-                displayable(sle.displayable)
+            for sle in l:                
+                try:
+                    displayable(sle.displayable)
+                except:
+                    pass
 
     else:
         for i in renpy.config.predict_callbacks:
@@ -112,7 +115,10 @@ def prediction_coroutine(root_widget):
     # an action.
     predicting = True
 
-    root_widget.visit_all(lambda i : i.predict_one_action())
+    try:
+        root_widget.visit_all(lambda i : i.predict_one_action())
+    except:
+        pass
 
     predicting = False
 
