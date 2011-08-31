@@ -1365,6 +1365,8 @@ class Interface(object):
         # Assume we have focus until told otherwise.
         self.focused = True
         
+        # Assume we're not minimized.
+        self.minimized = False
 
     def draw_screen(self, root_widget, fullscreen_video):
         
@@ -1721,8 +1723,14 @@ class Interface(object):
         """
         Called when we become an icon.
         """
+
+        if self.minimized:
+            return
+
+        self.minimized = True
+
+        renpy.display.log.write("The window was minimized.")
         
-        pass
     
     def restored(self):
         """
@@ -1731,6 +1739,13 @@ class Interface(object):
         
         # This is necessary on Windows/DirectX/Angle, as otherwise we get
         # a blank screen.
+
+        if not self.minimized:
+            return
+        
+        self.minimized = False
+
+        renpy.display.log.write("The window was restored.")
 
         if renpy.windows:
             self.display_reset = True
