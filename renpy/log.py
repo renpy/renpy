@@ -112,6 +112,7 @@ class LogFile(object):
             s = s.replace("\n", "\r\n")            
             
             self.file.write(s)
+            self.file.flush()
             
     def exception(self):
         """
