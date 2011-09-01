@@ -152,7 +152,7 @@ class PyCode(object):
         if isinstance(code, renpy.python.ast.AST): #@UndefinedVariable
             code = renpy.python.ast.dump(code) #@UndefinedVariable
         
-        self.hash = chr(renpy.bytecode_version) + md5.md5(code.encode("utf-8")).digest()
+        self.hash = chr(renpy.bytecode_version) + md5.md5(repr(self.location) + code.encode("utf-8")).digest()
         return self.hash
             
             
