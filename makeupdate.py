@@ -41,6 +41,8 @@ def make_update(root, version):
             
     for dir, dirs, files in os.walk(root):
 
+        all = set(dirs + files)
+
         for fn in dirs + files:
 
             path = os.path.join(dir, fn)
@@ -59,7 +61,7 @@ def make_update(root, version):
             elif relpath.endswith(".rpyb.bz2"):
                 continue            
 
-            elif relpath.endswith(".pyo.bz2"):
+            elif relpath.endswith(".pyo.bz2") and relpath.replace(".pyo", ".py") in all:
                 continue            
                 
             elif relpath.endswith(".bz2"):

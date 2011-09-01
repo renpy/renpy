@@ -72,7 +72,7 @@ class ImageFont(object):
                 raise Exception("Character {0!r} not found in image-based font.".format(c))
             
             g.width = self.width[c]
-            g.advance = self.width[c]
+            g.advance = self.advance[c]
             
             rv.append(g)
             
