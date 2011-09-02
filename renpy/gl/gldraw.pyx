@@ -915,9 +915,11 @@ cdef class GLDraw:
         
         self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
 
-        cdef unsigned char a = 0
+        cdef unsigned char pixel[4]
         
-        glReadPixels(0, 0, 1, 1, GL_ALPHA, GL_BYTE, &a)
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_BYTE, pixel)
+        
+        a = pixel[3]
 
         what.kill()
 
