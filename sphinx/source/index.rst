@@ -108,8 +108,8 @@ Changes and License
 Indices
 -------
 
-* :ref:`General Index <genindex>`
-* :ref:`style-property-index`
-* :ref:`transform-property-index`
-* :ref:`var-index`
-
+* `Style Property Index <std-style-property-index.html>`_
+* `Transform Property Index <std-transform-property-index.html>`_
+* `Variable and Definition Index <std-var-index.html>`_
+* `Function and Class Index <py-function-class-index.html>`_
+* `General Index <genindex.html>`_

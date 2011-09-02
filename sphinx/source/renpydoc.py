@@ -67,6 +67,41 @@ def parse_style_node(env, sig, signode):
         
     return ref
 
+
+class PythonIndex(sphinx.domains.Index):
+    name = "function-class-index"
+    localname = "Function and Class Index"
+    shortname = ""
+    
+    def generate(self, docnames=None):
+
+        if not isinstance(self.domain, sphinx.domains.python.PythonDomain):
+            return [ ], False
+        
+        entries = [ ]
+
+        for name, (docname, kind) in self.domain.data['objects'].iteritems():
+            
+            if kind == "function" or kind == "class":
+                entries.append((name, 0, docname, name, None, None, ''))
+        
+        content = { }
+        
+        for name, subtype, docname, anchor, extra, qualifier, descr in entries:
+            c = name[0].upper()
+
+            if c not in content:
+                content[c] = [ ]
+
+            content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
+         
+        # self.domain.data['labels']["py-function-class-index"] = ("py-function-class-index", '', self.localname)
+        
+        return sorted(content.items()), False
+
+
+
+
 class CustomIndex(sphinx.domains.Index):
 
     name = ""
@@ -94,7 +129,7 @@ class CustomIndex(sphinx.domains.Index):
         content = { }
             
         for name, subtype, docname, anchor, extra, qualifier, descr in entries:
-            c = name[0]
+            c = name[0].upper()
 
             if c not in content:
                 content[c] = [ ]
@@ -115,6 +150,8 @@ def add_index(app, domain, object_type, title):
     app.domains[domain].indices.append(MyIndex)
     
 
+
+
 def setup(app):
     # app.add_description_unit('property', 'propref')
     app.add_lexer('renpy', RenPyLexer())
@@ -127,3 +164,5 @@ def setup(app):
     add_index(app, "std", "transform-property", "Transform Property Index")
     add_index(app, "std", "var", "Variable Index")
     
+    app.domains['py'].indices.append(PythonIndex)
+    # app.domains['std'].data['labels']['py-function-class-index'] = ('py-function-class-index', '', 'Function and Class Index')

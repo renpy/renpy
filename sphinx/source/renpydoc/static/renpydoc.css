@@ -83,17 +83,10 @@ div.sphinxsidebar {
 }
 
 div.sphinxsidebar h3, div.sphinxsidebar h4 {
-    margin: 1em 0 0.5em 0;
-    font-size: 1em;
-    padding: 0.1em 0 0.1em 0.5em;
-    color: white;
-    border: 1px solid #86989B;
-    background-color: #AFC1C4;
+    margin: 21px 0 0 0;
+    border-bottom: 1px solid #ACD;
 }
 
-div.sphinxsidebar h3 a {
-    color: white;
-}
 
 div.sphinxsidebar ul {
     padding-left: 1.5em;
@@ -104,6 +97,12 @@ div.sphinxsidebar ul {
 
 div.sphinxsidebar ul ul {
     margin-left: 20px;
+}
+
+/* -- search styles --------------------------------------------------------- */
+
+.gsc-search-button, .gsc-clear-button, .gsc-branding-text, .gsc-branding-img {
+	display: none;	
 }
 
 /* -- body styles ----------------------------------------------------------- */
@@ -202,11 +201,6 @@ hr {
 
 a tt {
     border: 0;
-    color: #CA7900;
-}
-
-a tt:hover {
-    color: #2491CF;
 }
 
 pre {
@@ -334,3 +328,10 @@ pre {
     margin-top: 2em;
 }
 
+table.indextable tbody tr.cap, table.indextable tbody tr.pcap {
+	background: #ffd;
+}
+
+table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
+	background: none;	
+}

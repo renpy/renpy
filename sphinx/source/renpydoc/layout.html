@@ -47,8 +47,6 @@
       {%- if render_sidebar %}
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-          <a href="http://www.renpy.org/">Ren'Py Home Page</a>
-
           {%- block sidebarlogo %}
           {%- if logo %}
             <p class="logo"><a href="{{ pathto(master_doc) }}">
@@ -73,7 +71,9 @@
             {%- include customsidebar %}
             {%- endif %}
             {%- block sidebarsearch %}
-            {%- include "searchbox.html" %}
+            <h4>Search</h4>
+            {# {%- include "searchbox.html" %} #}
+            <div id="cse-search-form" style="width: 100%;"></div>
             {%- endblock %}
           {%- endif %}
 
@@ -200,6 +200,18 @@
 
 {%- block relbar2 %}{{ relbar() }}
 {% endblock %}
+
+	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+	<script type="text/javascript"> 
+	  google.load('search', '1', {language : 'en', style : google.loader.themes.SHINY});
+	  google.setOnLoadCallback(function() {
+	    var customSearchControl = new google.search.CustomSearchControl('012476843541036121001:gx3sqkoaxkm');
+	    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+	    var options = new google.search.DrawOptions();
+	    options.enableSearchboxOnly("http://www.google.com/cse?cx=012476843541036121001:gx3sqkoaxkm");
+	    customSearchControl.draw('cse-search-form', options);
+	  }, true);
+	</script>
 
   </body>
 </html>
