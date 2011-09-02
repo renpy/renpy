@@ -138,5 +138,5 @@ def predict(d):
 def timed(name):
     start = time.time()
     yield
-    print name, (time.time() - start) * 1000.0, "ms"
+    print "{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0)
     
