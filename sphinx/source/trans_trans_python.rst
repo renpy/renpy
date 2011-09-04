@@ -23,6 +23,54 @@ For example::
              else:
                  return left(d)
 
+The python equivalent of an ATL transform is a Transform object.
+
+.. class:: Transform(child=None, function=None, **properties)
+    
+    A transform applies operations such as cropping, rotation, scaling, and
+    alpha-blending to its child. A transform object has fields corresponding 
+    to the :ref:`transform properties <transform-properties>`, which it applies
+    to its child.
+    
+    `child`
+        The child the transform applies to.
+        
+    `function`
+        If not none, this is a function that is called when the transform
+        is rendered. The function is called with three arguments:
+        
+        * The transform object.
+        * The shown timebase, in seconds.
+        * The animation timebase, in sections.
+      
+        The function should return a delay, in seconds, after which it will
+        be called again, or None to never be called again.
+        
+    Additional arguments are taken as values to set transform properties to.
+    
+    .. attribute:: hide_request
+    
+        This is set to true when the function is caled, to indicate that the
+        transform is being hidden.
+        
+    .. attribute:: hide_response
+
+        If hide request is true, this can be set to false to prevent the 
+        transform from being hidden.
+
+    .. method:: set_child(child)
+    
+        Call this method with a new `child` to change the child of
+        this transform.
+
+    .. method:: update()
+    
+        This should be called when a transform property field is
+        updated outside of the callback method, to ensure that the
+        change takes effect.
+
+        
+                 
 Transitions
 -----------
 

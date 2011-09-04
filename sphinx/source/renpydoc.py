@@ -95,6 +95,9 @@ class PythonIndex(sphinx.domains.Index):
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
          
+        for i in content.itervalues():
+            i.sort()
+
         # self.domain.data['labels']["py-function-class-index"] = ("py-function-class-index", '', self.localname)
         
         return sorted(content.items()), False
@@ -136,6 +139,9 @@ class CustomIndex(sphinx.domains.Index):
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
          
+        for i in content.itervalues():
+            i.sort()
+
         self.domain.data['labels'][self.kind + "-index"] = ("std-" + self.kind + "-index", '', self.localname)
         
         return sorted(content.items()), False

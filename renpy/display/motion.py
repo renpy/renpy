@@ -367,6 +367,9 @@ class Proxy(object):
         return setattr(instance.state, self.name, value)
     
 class Transform(Container):
+    """
+    Documented in sphinx, because we can't scan this object.
+    """
 
     __version__ = 5
     transform_event_responder = True
@@ -660,6 +663,7 @@ class Transform(Container):
         return None
         
     def set_child(self, child):
+        
         child = renpy.easy.displayable(child)
         
         self.child = child
@@ -769,6 +773,13 @@ class Transform(Container):
         return rv
 
     def update(self):
+        """
+        :doc: transform method
+        
+        This should be called when a transform property field is updated outside
+        of the callback method, to ensure that the change takes effect.
+        """
+        
         renpy.display.render.invalidate(self)
 
     def parameterize(self, name, parameters):

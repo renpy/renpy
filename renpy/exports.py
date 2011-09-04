@@ -1371,6 +1371,14 @@ def error(msg):
     _error_handlers[-1](msg)
     
 def timeout(seconds):
+    """
+    :doc: udd_utility
+    
+    Causes an event to be generated before `seconds` seconds have elapsed.
+    This ensures that the event method of a user-defined displayable will be
+    called.
+    """
+    
     renpy.game.interface.timeout(seconds)
 
 def scry():

@@ -24,6 +24,15 @@ init -1110:
 
     transform truecenter:
         xpos 0.5 xanchor 0.5 ypos 0.5 yanchor 0.5
+
+    transform topleft:
+        xpos 0.0 xanchor 0.0 ypos 0.0 yanchor 0.0
+        
+    transform topright:
+        xpos 1.0 xanchor 1.0 ypos 0.0 yanchor 0.0
+        
+    transform top:
+        xpos 0.5 xanchor 0.5 ypos 0.0 yanchor 0.0
         
     # Offscreen positions for use with the move transition. Images at
     # these positions are still shown (and consume

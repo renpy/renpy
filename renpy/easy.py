@@ -97,7 +97,7 @@ def displayable_or_none(d):
 
 def displayable(d):
     """
-    :doc: other
+    :doc: udd_utility
     :name: renpy.displayable
     
     This takes `d`, which may be a displayable object or a string. If it's 

@@ -94,10 +94,23 @@ def check_at_shutdown():
     
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
-    Causes the displayable `d` to be rendered in an area of size
-    width, height.  st and at are the times of this render, but once
-    rendered the Render will remain cached until the displayable needs
-    to be redrawn.
+    :doc: udd_utility
+    :args: (d, width, height, st, at)
+    
+    Causes a displayable to be rendered, and a renpy.Render object to
+    be returned.
+    
+    `d`
+        The displayable to render.
+        
+    `width`, `height`
+        The width and height available for the displayable to render into. 
+        
+    `st`, `at`
+        The shown and animation timebases.
+
+    Renders returned by this object may be cached, and should not be modified
+    once they have been retrieved.
     """
 
     cdef int width, height
@@ -245,7 +258,10 @@ def redraw_time():
 
 def redraw(d, when):
     """
-    Called to cause `d` to be redrawn in `when` seconds.
+    :doc: udd_utility
+    
+    Causes the displayable `d` to be redrawn after `when` seconds have
+    elapsed.
     """
 
     if not renpy.game.interface:

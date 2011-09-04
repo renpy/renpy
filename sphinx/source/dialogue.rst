@@ -50,13 +50,12 @@ to dismiss it, then to remove that dialogue on the screen.
 
 Certain characters have special meaning to Ren'Py, and so can't be
 used in dialogue strings. The ``{`` character begins a text tag, and
-the ``%`` character begins a substitution. To use them in dialogue,
-precede them with the backslash (``\``) character. It may also be
-necessary to precede a quote with a backslash to prevent it from
-closing the string. For example::
+the ``[`` character begins a substitution. To use them in dialogue,
+double them. It may also be necessary to precede a quote with a
+backslash to prevent it from closing the string. For example::
 
    ###
-       "I walked past a sign saying, \"Let's give it 100\%!\""
+       "I walked past a sign saying, \"Let's give it 100%!\""
 
 
 Defining Character Objects

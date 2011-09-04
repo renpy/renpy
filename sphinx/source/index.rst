@@ -30,8 +30,8 @@ The Ren'Py Language
    language_basics
    dialogue
    displaying_images
-   atl
-
+   menus
+   
 Text, Displayables, Transforms, and Transitions
 -----------------------------------------------
 
@@ -40,7 +40,9 @@ Text, Displayables, Transforms, and Transitions
     
    text
    displayables
+   transforms
    transitions
+   atl
    
 Customizing Ren'Py
 ------------------
@@ -75,6 +77,7 @@ Python and Ren'Py
    trans_trans_python
    screen_python
    modes
+   udd
    other
 
 Other Platforms
