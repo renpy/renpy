@@ -1010,6 +1010,11 @@ class Text(renpy.display.core.Displayable):
         if not isinstance(text, list):
             text = [ text ]
 
+        # Check that the text is all text-able things.            
+        for i in text:
+            if not isinstance(i, (basestring, renpy.display.core.Displayable)):
+                raise Exception("Cannot display {0!r} as text.".format(i))
+
         # A list of text and displayables we're showing.                
         self.text = text
                            
