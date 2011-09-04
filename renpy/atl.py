@@ -115,7 +115,10 @@ def interpolate(t, a, b, type):
         return b
     
     # Recurse into tuples.
-    if isinstance(b, tuple):
+    if isinstance(b, tuple):        
+        if a is None:
+            a = [ None ] * len(b)
+        
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
     # Deal with booleans, nones, etc.
