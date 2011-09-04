@@ -89,59 +89,71 @@ simpler but slower version.
 Other Changes
 -------------
 
-Ren'Py now includes a :ref:`style preference <style-preferences>`
-system. This system allows styles to be changed after the init phase
-has finished. These changes are saved with the persistent data. Among
-other things, style preferences allow a game to offer the user the
-option to change the font, size, and color of dialogue text.
+* Ren'Py now includes a :ref:`style preference <style-preferences>`
+  system. This system allows styles to be changed after the init phase
+  has finished. These changes are saved with the persistent
+  data. Among other things, style preferences allow a game to offer
+  the user the option to change the font, size, and color of dialogue
+  text.
 
-Support has been added for screen-based :ref:`image galleries
-<image-gallery>` and :ref:`music rooms <music-room>`. This support
-consists of a classes that provides actions that make it easy to
-present the user with graphics and music. The creator is responsible
-for creating screens that use the supplied actions.
+* Support has been added for screen-based :ref:`image galleries
+  <image-gallery>` and :ref:`music rooms <music-room>`. This support
+  consists of a classes that provides actions that make it easy to
+  present the user with graphics and music. The creator is responsible
+  for creating screens that use the supplied actions.
 
-The default screens.rpy file, used when a new game is created,
-contains support for a "quick menu". This menu adds buttons to screens
-that allow the user to quick save, quick load, save, toggle skipping,
-toggle auto-forward mode, and access the preferences menu.
+* The default screens.rpy file, used when a new game is created,
+  contains support for a "quick menu". This menu adds buttons to screens
+  that allow the user to quick save, quick load, save, toggle skipping,
+  toggle auto-forward mode, and access the preferences menu.
 
-Ren'Py includes 5 new themes, and a number of new color schemes.
+* Ren'Py includes 5 new themes, and a number of new color schemes.
 
-Several new actions have been added. The :func:`SelectedIf` action
-allows the creator to control if a button is displayed in the selected
-state. The :func:`SetMixer` action allows a mixer to be set to a
-specific value. The :func:`Rollback` and :func:`RollForward` actions
-allow the creator to bind rollback to buttons.
+* Several new actions have been added. The :func:`SelectedIf` action
+  allows the creator to control if a button is displayed in the selected
+  state. The :func:`SetMixer` action allows a mixer to be set to a
+  specific value. The :func:`Rollback` and :func:`RollForward` actions
+  allow the creator to bind rollback to buttons.
 
-The behavior of the xfill and yfill style properties was accidentally
-changed in the 6.12 series. It has been returned to the historical
-behavior. 
+* The behavior of the xfill and yfill style properties was
+  accidentally changed in the 6.12 series. It has been returned to the
+  historical behavior.
 
-The :func:`Dissolve` and :func:`ImageDissolve` transitions now take a
-time_warp parameter.
+* The :func:`Dissolve` and :func:`ImageDissolve` transitions now take a
+  time_warp parameter.
 
-The :func:`Frame` displayable now allows the user to specify the
-left, top, right, and bottom borders independently. 
+* The :func:`Frame` displayable now allows the user to specify the left,
+  top, right, and bottom borders independently.
 
-The :propref:`caret` style property allows the user to customize the
-caret of an input widget.
+* The :propref:`caret` style property allows the user to customize the
+  caret of an input widget.
 
-The :func:`renpy.displayable` function has been exposed to the
-user.
+* The :func:`renpy.displayable` function has been exposed to the
+  user.
 
-Timers can now take a list of actions, rather than just a single
-callable. 
+* Timers can now take a list of actions, rather than just a single
+  callable. 
 
-Ren'Py now uses the libjpeg-turbo library, for faster jpeg loading.
+* Three transforms were added to the default library: :var:`top`,
+  :var:`topleft`, and :var:`topright`.
 
-Ren'Py now uses ffmpeg 0.8.2, for improved compatibility with movie
-formats.
+* Wrote documentation for:
 
-Removed support for the iLiad platform.
+  * :ref:`Menus <menus>`
+  * :ref:`Transforms <transforms>`
+  * :ref:`Creator-Defined Displayables <cdd>`
 
-PowerPC support has been removed from the main Ren'Py distribution. It's
-available as a download from the Ren'Py web site.
+  Several indexes were added to the documentation, and the style was
+  updated.
+
+* Ren'Py now uses the libjpeg-turbo library, for faster jpeg
+  loading. Ren'Py now uses ffmpeg 0.8.2, for improved compatibility
+  with movie formats.
+
+* Removed support for the iLiad platform.
+
+* PowerPC support has been removed from the main Ren'Py distribution. It's
+  available as a download from the Ren'Py web site.
 
 Thanks to Aleema for contributing the new themes and color schemes.
 

@@ -774,8 +774,6 @@ class Transform(Container):
 
     def update(self):
         """
-        :doc: transform method
-        
         This should be called when a transform property field is updated outside
         of the callback method, to ensure that the change takes effect.
         """

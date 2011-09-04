@@ -17,7 +17,7 @@ the eileen happy displayable.::
 
 Multiple transforms can be applied by separating them with commas. These
 transforms are applied from left-to-right, with the rightmost
-transform taking precendece in the case of conflicts.
+transform taking precendece in the case of conflicts. ::
 
     show eileen happy at halfsize, right
 
