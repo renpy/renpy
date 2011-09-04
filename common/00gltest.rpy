@@ -56,15 +56,15 @@ init -1024:
                 xfill True
                 
             if renpy.renpy.windows:
-                textbutton _("Prefer Angle/DirectX Renderer"):
+                textbutton _("Force Angle/DirectX Renderer"):
                     action _SetRenderer("angle")
                     xfill True
                 
-            textbutton _("Prefer OpenGL Renderer"):
+            textbutton _("Force OpenGL Renderer"):
                 action _SetRenderer("gl")
                 xfill True
 
-            textbutton _("Prefer Software Renderer"):
+            textbutton _("Force Software Renderer"):
                 action _SetRenderer("sw")
                 xfill True
 
@@ -348,7 +348,7 @@ label _directx_update:
         subprocess.Popen(["start", __dxwebsetup], shell=True)
 
         renpy.show_screen("_directx_update")
-        ui.interact(suppress_overlay=True, supporess_underlay=True)
+        ui.interact(suppress_overlay=True, suppress_underlay=True)
         
         # Restart the current program.
         subprocess.Popen(sys.argv)
