@@ -1937,7 +1937,10 @@ class Interface(object):
 
         # If necessary, load all images here.
         for w in scene.itervalues():
-            renpy.display.predict.displayable(w)
+            try:
+                renpy.display.predict.displayable(w)
+            except:
+                pass
 
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
