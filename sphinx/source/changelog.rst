@@ -147,7 +147,7 @@ Other Changes
   updated.
 
 * Ren'Py now uses the libjpeg-turbo library, for faster jpeg
-  loading. Ren'Py now uses ffmpeg 0.8.2, for improved compatibility
+  loading. Ren'Py now uses libav 0.7.1, for improved compatibility
   with movie formats.
 
 * Removed support for the iLiad platform.

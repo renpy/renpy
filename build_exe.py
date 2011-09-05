@@ -58,7 +58,6 @@ def main():
                                                 'gettext',
                                                 'os2emxpath',
                                                 'macpath',
-                                                'posixpath',
                                                 ],
                                  'optimize' : 2,
                                  } },
