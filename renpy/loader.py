@@ -26,6 +26,15 @@ from cStringIO import StringIO
 import sys
 import types
 
+try:
+    import android.apk
+    apks = [ 
+        android.apk.APK(prefix='assets/x-game/'),
+        android.apk.APK(prefix='assets/x-common/'),
+        ]
+except ImportError:
+    apks = [ ]
+
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.
 archives = [ ]
@@ -136,18 +145,30 @@ def listdirfiles():
     rv = [ ]
 
     seen = set()
-
+    
+    for apk in apks:
+        for f in apk.list():
+            
+            # Strip off the "x-" in front of each filename, which is there
+            # to ensure that aapt actually includes every file.
+            f = "/".join(i[2:] for i in f.split("/"))
+            
+            if f not in seen:
+                rv.append((None, f))
+    
     for i in renpy.config.searchpath:
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
-            rv.append((i, j))
-            seen.add(j)
+            if j not in seen:            
+                rv.append((i, j))
+                seen.add(j)
 
     for _prefix, index in archives:
         for j in index.iterkeys():            
             if j not in seen:            
                 rv.append((None, j))
                 seen.add(j)
+            
             
     return rv
     
@@ -297,6 +318,15 @@ def load(name):
         rv = renpy.config.file_open_callback(name)
         if rv is not None:
             return rv
+    
+    # Look for the file in the apk.
+    for apk in apks:
+        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+        
+        try:
+            return apk.open(prefixed_name)
+        except IOError:
+            pass
     
     # Look for the file directly.
     if not renpy.config.force_archives:

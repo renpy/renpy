@@ -41,6 +41,7 @@ except:
 
 try:
     import android #@UnresolvedImport
+    import android.sound #@UnresolvedImport
 except:
     android = None
 
@@ -1699,8 +1700,7 @@ class Interface(object):
         
         if android.check_pause():
 
-            import android_sound #@UnresolvedImport
-            android_sound.pause_all()
+            android.sound.pause_all()
 
             pygame.time.set_timer(PERIODIC, 0)
             pygame.time.set_timer(REDRAW, 0)
@@ -1717,7 +1717,7 @@ class Interface(object):
 
             pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
-            android_sound.unpause_all()
+            android.sound.unpause_all()
             
     def iconified(self):
         """

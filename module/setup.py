@@ -106,6 +106,9 @@ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
 # Angle
 def anglecopy(fn):
+    if android:
+        return
+    
     copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
     
 anglecopy("gldraw.pxd")

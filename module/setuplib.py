@@ -4,8 +4,6 @@
 import os
 import sys
 import re
-import subprocess
-import shutil
 
 import distutils.core
 
@@ -218,6 +216,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
         print name, "is out of date."
 
         try:    
+            import subprocess            
             subprocess.check_call([
                 cython_command,
                 "-Iinclude",
@@ -281,6 +280,7 @@ def copyfile(source, dest, replace=None, replace_with=None):
     df.write(data)
     df.close()
     
+    import shutil
     shutil.copystat(sfn, dfn)
 
 def setup(name, version):

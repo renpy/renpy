@@ -75,6 +75,9 @@ class LogFile(object):
             base = os.environ.get("RENPY_LOG_BASE", renpy.config.renpy_base)
             fn = os.path.join(base, self.name + ".txt")
         
+            if renpy.android:
+                print "Logging to", fn
+        
             if self.append:
                 self.file = codecs.open(fn, "a", "utf-8")
                 

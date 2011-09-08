@@ -1206,7 +1206,6 @@ except ImportError:
 try:
     import glenviron_shader
 except ImportError:
-    raise
     glenviron_shader = None
 
 try:

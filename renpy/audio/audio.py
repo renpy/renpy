@@ -48,8 +48,8 @@ if 'pss' not in disable:
 
     if pss is None:
         try:
-            import android_sound as pss #@UnresolvedImport @Reimport
-            print "Imported android_sound."
+            import android.sound as pss #@UnresolvedImport @Reimport
+            print "Imported android.sound."
         except:
             pass
 
