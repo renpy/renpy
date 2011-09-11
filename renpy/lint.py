@@ -335,6 +335,9 @@ def check_say(node):
 
     text_checks(node.what)
 
+    if not node.who_fast:
+        return
+
     # Code to check image attributes. (If we're lucky.)
     if node.who is None:
         return
