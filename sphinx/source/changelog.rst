@@ -137,6 +137,12 @@ Other Changes
 * Three transforms were added to the default library: :var:`top`,
   :var:`topleft`, and :var:`topright`.
 
+* Ren'Py can now load files (including images, music, and fonts) from
+  an Android package.
+
+* User-defined statements can now take a block, which the statement is
+  responsible for parsing.
+  
 * Wrote documentation for:
 
   * :ref:`Menus <menus>`
