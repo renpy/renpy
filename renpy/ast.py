@@ -1380,16 +1380,21 @@ class If(Node):
 
 class UserStatement(Node):
 
-    __slots__ = [ 'line', 'parsed' ]
+    __slots__ = [ 'line', 'parsed', 'block' ]
 
-    def __init__(self, loc, line):
+    def __setstate__(self, state):
+        self.block = [ ]
+        Node.__setstate__(self, state)
+
+    def __init__(self, loc, line, block):
 
         super(UserStatement, self).__init__(loc)
         self.line = line
+        self.block = block
         self.parsed = None
 
         # Do not store the parse quite yet.
-        renpy.statements.parse(self, self.line)
+        renpy.statements.parse(self, self.line, self.block)
         
     def diff_info(self):
         return (UserStatement, self.line)
@@ -1407,7 +1412,7 @@ class UserStatement(Node):
         
         parsed = self.parsed        
         if parsed is None:
-            parsed = renpy.statements.parse(self, self.line)
+            parsed = renpy.statements.parse(self, self.line, self.block)
             self.parsed = parsed
 
         renpy.statements.call(method, parsed, *args, **kwargs)

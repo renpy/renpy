@@ -29,7 +29,7 @@ registry = { }
 
 parsers = renpy.parser.ParseTrie()
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None):
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False):
 
     name = tuple(name.split())
     
@@ -45,11 +45,19 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         renpy.exports.push_error_handler(l.error)
 
         try:
-            rv = renpy.ast.UserStatement(loc, l.text)
-            l.expect_noblock(" ".join(name) + " statement.")
-            l.advance()
+            rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
+
+            if not block:
+                l.expect_noblock(" ".join(name) + " statement")
+                l.advance()
+            else:
+                l.expect_block(" ".join(name) + " statement")
+                l.advance()
         finally:
             renpy.exports.pop_error_handler()
+
+        if init and not l.init:
+            rv = renpy.ast.Init(loc, [ rv ], 0)
 
         return rv
             
@@ -63,9 +71,9 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
     parsers.add(name, parse_data)
 
 
-def parse(node, line):
+def parse(node, line, subblock):
 
-    block = [ (node.filename, node.linenumber, line, [ ]) ]
+    block = [ (node.filename, node.linenumber, line, subblock) ]
     l = renpy.parser.Lexer(block)
     l.advance()
 

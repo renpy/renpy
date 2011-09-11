@@ -7,7 +7,8 @@
 # Statements can be defined by calling renpy.statements.register. This
 # function takes a string giving the keywords at the start of the
 # statement, and then up to 4 functions defining the behavior of the
-# statement: parse, execute, predict, and lint
+# statement: parse, execute, predict, and lint. If given the keyword
+# argument block=True, the statement will take a block.
 #
 # The parse function takes a lexer object as an argument, and is
 # expected to return some parser data. The lexer has the following
@@ -30,6 +31,13 @@
 # point in the parse.
 # l.revert(o) - Given the object returned by l.checkpoint(), returns
 # there.
+#
+# l.subblock_lexer() - Return a lexer that gives a sub-block for the 
+# block associated with the current statement.
+# l.advance() - In a subblock lexer, advance to the next line. This needs
+# to be called before the above functions can be called on the first line. 
+# 
+#
 #
 # The parse function is expected to return an object, which is passed
 # to the other functions. Parse should call renpy.error with the error
