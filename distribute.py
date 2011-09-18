@@ -192,6 +192,7 @@ vc_version = {revno}
         "*.py*",
         "include/*.py*"
         "lib/pysdlsound/*.py",
+        "lib/pysdlsound/*.pyx",
         ]
 
     for i in module_files:
