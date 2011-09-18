@@ -414,6 +414,8 @@ class StyleManager(object):
     """
 
     def __getattr__(self, name):
+        global styles_built
+        
         try:
             return style_map[name]
         except:
@@ -426,9 +428,17 @@ class StyleManager(object):
             
             while "_" in rest:
                 _first, rest = rest.split("_", 1)
+
                 if rest in style_map:
+                    
+                    old_styles_built = styles_built
+                    styles_built = False
+                    
                     s = Style(rest)
                     self.__setattr__(name, s)                    
+
+                    styles_built = old_styles_built
+                    
                     return s
 
             raise Exception("The style %s does not exist, and couldn't be auto-created because %s doesn't exist, either." % (name, rest))
