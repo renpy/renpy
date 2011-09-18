@@ -473,14 +473,18 @@ cdef class GLDraw:
                 return False
 
         # Pick a Render-to-texture method.
-        if ((ANGLE and not "RENPY_GL_RTT" in os.environ) or 
-            
-            use_subsystem(
+        
+        if glrtt_copy and (not "RENPY_GL_RTT" in os.environ) or (os.environ["RENPY_GL_RTT"] == "copy"):
+            renpy.display.log.write("Using copy RTT.")
+            self.rtt = glrtt_copy.CopyRtt()
+            self.info["rtt"] = "copy"
+            self.rtt.init()
+        
+        elif (use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
-                "GL_OES_framebuffer_object") or 
-            
+                "GL_OES_framebuffer_object") or             
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
@@ -490,12 +494,6 @@ cdef class GLDraw:
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
-            self.rtt.init()
-
-        elif glrtt_copy:                        
-            renpy.display.log.write("Using copy RTT.")
-            self.rtt = glrtt_copy.CopyRtt()
-            self.info["rtt"] = "copy"
             self.rtt.init()
 
         else:
