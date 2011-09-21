@@ -282,7 +282,6 @@ cdef class Program(object):
 
     # Attributes.
     cdef GLint Vertex
-    cdef GLint VertexTex
     cdef GLint VertexTexCoord0
     cdef GLint VertexTexCoord1
     cdef GLint VertexTexCoord2
@@ -306,7 +305,6 @@ cdef class Program(object):
         self.program = compile_program(vertex, fragment)
         
         self.Vertex = glGetAttribLocationARB(self.program, "Vertex")
-        self.VertexTex = glGetAttribLocationARB(self.program, "VertexTex")
         self.VertexTexCoord0 = glGetAttribLocationARB(self.program, "VertexTexCoord0")
         self.VertexTexCoord1 = glGetAttribLocationARB(self.program, "VertexTexCoord1")
         self.VertexTexCoord2 = glGetAttribLocationARB(self.program, "VertexTexCoord2")
@@ -321,6 +319,21 @@ cdef class Program(object):
         self.Color = glGetUniformLocationARB(self.program, "Color")
         self.clip0 = glGetUniformLocationARB(self.program, "clip0")
         self.clip1 = glGetUniformLocationARB(self.program, "clip1")
+
+    def disable_attribs(self):
+        # Disable the vertex attributes used by this program.
+        
+        if self.Vertex != -1:
+            glDisableVertexAttribArrayARB(self.Vertex)
+
+        if self.VertexTexCoord0 != -1:
+            glDisableVertexAttribArrayARB(self.VertexTexCoord0)
+        
+        if self.VertexTexCoord1 != -1:
+            glDisableVertexAttribArrayARB(self.VertexTexCoord1)
+
+        if self.VertexTexCoord2 != -1:
+            glDisableVertexAttribArrayARB(self.VertexTexCoord2)
 
     def delete(self):
         glDeleteProgram(self.program)
@@ -357,11 +370,19 @@ cdef class ShaderEnviron(Environ):
         Called before changing the GL context.
         """
 
+        if self.program is not None:
+            self.program.disable_attribs()
+            self.program = None
+        
         self.blit_program.delete()
         self.blend_program.delete()
         self.imageblend_program.delete()
         
     def activate(self, Program program):
+
+        if self.program is not None:
+            self.program.disable_attribs()
+
         self.program = program
 
         glUseProgramObjectARB(program.program)
@@ -411,9 +432,9 @@ cdef class ShaderEnviron(Environ):
         glUniform1fARB(program.offset, offset)
 
     cdef void set_vertex(self, float *vertices):
-        glVertexAttribPointerARB(self.program.Vertex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> vertices)
         glEnableVertexAttribArrayARB(self.program.Vertex)
-        
+        glVertexAttribPointerARB(self.program.Vertex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> vertices)
+
     cdef void set_texture(self, int unit, float *coords):
         cdef tex
         
@@ -459,7 +480,10 @@ cdef class ShaderEnviron(Environ):
         self.projection[ 7] = 0
         self.projection[11] = 0
         self.projection[15] = 1
-        
+
+        if self.program is not None:
+            self.program.disable_attribs()
+
         self.program = None
         
     cdef void set_clip(self, tuple clip_box, GLDraw draw):
@@ -515,6 +539,9 @@ cdef class ShaderEnviron(Environ):
             glEnable(GL_SCISSOR_TEST)                            
             glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
 
+        if self.program is not None:
+            self.program.disable_attribs()
+
         self.program = None
   
     cdef void unset_clip(self, GLDraw draw):
@@ -528,6 +555,9 @@ cdef class ShaderEnviron(Environ):
         self.clip_y0 = 0
         self.clip_x1 = 0
         self.clip_x1 = 0
+
+        if self.program is not None:
+            self.program.disable_attribs()
         
         self.program = None
         
