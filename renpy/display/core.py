@@ -1235,42 +1235,50 @@ class Interface(object):
         
         if self.safe_mode:
             renderer = "sw"
-            
+
         renpy.config.renderer = renderer
 
         if renderer == "auto":
-            renderers = [ "angle", "gl", "sw" ]
+            if renpy.windows:
+                renderers = [ "gl", "angle", "gl1", "sw" ]
+            else:
+                renderers = [ "gl", "gl1", "sw" ]                
         else:
-            renderers = [ renderer ]
-
-        draws = { }
-
-        if renpy.windows and ("angle" in renderers):
-            try:
-                import renpy.angle.gldraw as angledraw #@UnresolvedImport
-                draws["angle"] = angledraw.GLDraw
-            except:
-                renpy.display.log.write("Couldn't import angle renderer:")
-                renpy.display.log.exception()
-
-        if "gl" in renderers:
-            try:
-                import renpy.gl.gldraw as gldraw #@UnresolvedImport
-                draws["gl"] = gldraw.GLDraw
-            except:
-                renpy.display.log.write("Couldn't import gl renderer:")
-                renpy.display.log.exception()
-
-        if "sw" in renderers:
-            try:
-                import renpy.display.swdraw as swdraw
-                draws["sw"] = swdraw.SWDraw
-            except:
-                renpy.display.log.write("Couldn't import sw renderer:")
-                renpy.display.log.exception()
+            renderers = [ renderer, "sw" ]
         
-        rv = [ draws.get(i, None) for i in renderers ]
-        return [ i for i in rv if i is not None ]
+        RENDERER_ARGS = {
+            "gl" : ("renpy.gl.gldraw", "GLDraw", False),
+            "angle" : ("renpy.angle.gldraw", "GLDraw", True),
+            "gl1" : ("renpy.gl.gldraw", "GLDraw", True),
+            "sw" : ("renpy.display.swdraw", "SWDraw"),
+            }
+
+        rv = [ ]
+        
+        def make_draw(name):
+            if name not in RENDERER_ARGS:
+                raise Exception("Unknown renderer: {0}".format(name))
+            
+            mod = RENDERER_ARGS[name][0]
+            cls = RENDERER_ARGS[name][1]
+            args = RENDERER_ARGS[name][2:]
+            
+            try:
+                
+                __import__(mod)
+                module = sys.modules[mod]
+                draw_class = getattr(module, cls)
+                
+                rv.append(draw_class(*args))
+            except:
+                renpy.display.log.write("Couldn't import {0} renderer:".format(name))
+                renpy.display.log.exception()
+
+        for i in renderers:
+            make_draw(i)
+
+        return rv
+
 
     def kill_textures(self):
         renpy.display.render.free_memory()
@@ -1337,18 +1345,13 @@ class Interface(object):
         else:
             draws = self.get_draw_constructors()
 
-        for i in draws:
-
-            draw = i()
-            
+        for draw in draws:
             if draw.set_mode(virtual_size, physical_size, fullscreen):
                 renpy.display.draw = draw
                 break
             else:
                 pygame.display.quit()
-
         else:
-            
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
             raise Exception("Could not set video mode.")

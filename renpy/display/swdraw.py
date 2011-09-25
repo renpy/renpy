@@ -713,7 +713,8 @@ class SWDraw(object):
         # 1px border around it iff we're scaling.
         self.window = None
         
-        
+    def get_priority(self):
+        return 1
         
     def set_mode(self, virtual_size, physical_size, fullscreen):
 

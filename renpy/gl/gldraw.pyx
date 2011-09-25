@@ -86,7 +86,7 @@ BLACKLIST = [
 
 cdef class GLDraw:
 
-    def __init__(self):
+    def __init__(self, allow_gl1):
 
         # Did we do the first-time init?
         self.did_init = False
@@ -147,7 +147,9 @@ cdef class GLDraw:
 
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android
-        
+
+        # Should we allow OpenGL 1?
+        self.allow_gl1 = allow_gl1
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
@@ -361,6 +363,9 @@ cdef class GLDraw:
         renpy.display.log.write("Renderer: %r", renderer)
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
+
+        if version.startswith("1.") and not self.allow_gl1:
+            return False
 
         for r, v in BLACKLIST:
             if renderer == r and version.startswith(v):
