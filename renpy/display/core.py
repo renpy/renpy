@@ -1240,42 +1240,49 @@ class Interface(object):
 
         if renderer == "auto":
             if renpy.windows:
-                renderers = [ "gl", "angle", "gl1", "sw" ]
+                renderers = [ "gl", "angle", "sw" ]
             else:
-                renderers = [ "gl", "gl1", "sw" ]                
+                renderers = [ "gl", "sw" ]                
         else:
             renderers = [ renderer, "sw" ]
-        
-        RENDERER_ARGS = {
-            "gl" : ("renpy.gl.gldraw", "GLDraw", False),
-            "angle" : ("renpy.angle.gldraw", "GLDraw", True),
-            "gl1" : ("renpy.gl.gldraw", "GLDraw", True),
-            "sw" : ("renpy.display.swdraw", "SWDraw"),
-            }
-
-        rv = [ ]
-        
-        def make_draw(name):
-            if name not in RENDERER_ARGS:
-                raise Exception("Unknown renderer: {0}".format(name))
             
-            mod = RENDERER_ARGS[name][0]
-            cls = RENDERER_ARGS[name][1]
-            args = RENDERER_ARGS[name][2:]
+        draw_objects = { }
+
+        def make_draw(name, mod, cls, *args):
+            if name not in renderers:
+                return False
             
             try:
-                
                 __import__(mod)
                 module = sys.modules[mod]
-                draw_class = getattr(module, cls)
-                
-                rv.append(draw_class(*args))
+                draw_class = getattr(module, cls)                
+                draw_objects[name] = draw_class(*args)
+                return True
+
             except:
                 renpy.display.log.write("Couldn't import {0} renderer:".format(name))
                 renpy.display.log.exception()
 
+                return False
+
+        if renpy.windows:
+            has_angle = make_draw("angle", "renpy.angle.gldraw", "GLDraw")
+        else:
+            has_angle = False
+        
+        make_draw("gl", "renpy.gl.gldraw", "GLDraw", not has_angle)
+        make_draw("sw", "renpy.display.swdraw", "SWDraw")
+
+        rv = [ ]
+
+        def append_draw(name):
+            if name in draw_objects:
+                rv.append(draw_objects[name])
+            else:
+                renpy.display.log.write("Unknown renderer: {0}.format(name)")
+
         for i in renderers:
-            make_draw(i)
+            append_draw(i)
 
         return rv
 

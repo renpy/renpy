@@ -25,8 +25,7 @@ cdef class GLDraw:
     cdef tuple clip_cache
     cdef bint fast_dissolve
     cdef bint always_opaque
-
-    cdef bint allow_gl1
+    cdef bint allow_fixed
         
     cdef public tuple clip_rtt_box
     

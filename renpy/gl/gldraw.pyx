@@ -86,7 +86,7 @@ BLACKLIST = [
 
 cdef class GLDraw:
 
-    def __init__(self, allow_gl1):
+    def __init__(self, allow_fixed=True):
 
         # Did we do the first-time init?
         self.did_init = False
@@ -147,9 +147,9 @@ cdef class GLDraw:
 
         # Should we always report pixels as being always opaque?
         self.always_opaque = renpy.android
-
-        # Should we allow OpenGL 1?
-        self.allow_gl1 = allow_gl1
+            
+        # Should we allow the fixed-function environment?
+        self.allow_fixed = allow_fixed
             
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
@@ -364,9 +364,6 @@ cdef class GLDraw:
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
 
-        if version.startswith("1.") and not self.allow_gl1:
-            return False
-
         for r, v in BLACKLIST:
             if renderer == r and version.startswith(v):
                 renpy.display.log.write("Blacklisted renderer/version.")
@@ -439,7 +436,7 @@ cdef class GLDraw:
                 
         if self.environ is None:
             
-            if use_subsystem(
+            if self.allow_fixed and use_subsystem(
                 glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
@@ -451,7 +448,7 @@ cdef class GLDraw:
                 self.info["environ"] = "fixed"
                 self.environ.init()
 
-            elif use_subsystem(
+            elif self.allow_fixed and use_subsystem(
                 glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
@@ -665,7 +662,7 @@ cdef class GLDraw:
         if not isinstance(what, render.Render):
             return 0
 
-        rend = <render.Render> what        
+        rend = <render.Render> what
 
         render_what = False
 
