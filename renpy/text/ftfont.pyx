@@ -239,6 +239,7 @@ cdef class FTFont:
             self.height = self.ascent - self.descent
             
             self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
+            
             if self.height > self.lineskip:
                 self.lineskip = self.height                
 

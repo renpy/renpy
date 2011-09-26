@@ -1023,13 +1023,14 @@ cdef class GLDraw:
         y -= my
         
         pw, ph = self.physical_size
+        pbx, pby, pbw, pbh = self.physical_box
         
         glViewport(0, 0, pw, ph)
 
         self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
-        self.set_clip((0, 0, pw, ph))
+        self.set_clip((-pbx, -pby, pw, ph))
         
         gltexture.blit(
             tex,

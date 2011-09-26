@@ -546,15 +546,12 @@ cdef class ShaderEnviron(Environ):
   
     cdef void unset_clip(self, GLDraw draw):
         
-        cdef int psw, psh
-        psw, psh = draw.physical_size
-
         glDisable(GL_SCISSOR_TEST)
         
         self.clip_x0 = 0
         self.clip_y0 = 0
         self.clip_x1 = 0
-        self.clip_x1 = 0
+        self.clip_y1 = 0
 
         if self.program is not None:
             self.program.disable_attribs()
