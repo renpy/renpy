@@ -438,7 +438,7 @@ cdef class FTFont:
         cdef FT_UInt index
         cdef int error
         cdef int bmx, bmy, px, py,         
-        cdef int ly, lh
+        cdef int ly, lh, rows, width
                 
         cdef unsigned char *pixels
         cdef unsigned char *line
@@ -474,12 +474,15 @@ cdef class FTFont:
             bmx = <int> (x + .5) + cache.bitmap_left
             bmy = y - cache.bitmap_top
 
-            for py from 0 <= py < cache.bitmap.rows:                    
+            rows = min(cache.bitmap.rows, surf.h - bmy)
+            width = min(cache.bitmap.width, surf.w - bmx)
+
+            for py from 0 <= py < rows:                    
 
                 line = pixels + bmy * pitch + bmx * 4
                 gline = cache.bitmap.buffer + py * cache.bitmap.pitch
                 
-                for px from 0 <= px < cache.bitmap.width:
+                for px from 0 <= px < width:
                     
                     alpha = gline[0]
                     

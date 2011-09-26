@@ -1348,7 +1348,7 @@ class Interface(object):
             self.fullscreen = renpy.game.preferences.fullscreen
         
         if renpy.display.draw:
-            draws = [ lambda : renpy.display.draw ]
+            draws = [ renpy.display.draw ]
         else:
             draws = self.get_draw_constructors()
 
