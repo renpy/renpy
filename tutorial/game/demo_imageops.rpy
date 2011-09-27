@@ -115,7 +115,7 @@ label demo_imageops:
 
     e "The im.Map operation lets us mess with the red, green, blue, and alpha channels of an image."
 
-    e "In this case, we removed all the blue from the image, leaving only the red and green channels."
+    e "In this case, we removed all the red from the image, leaving only the blue and green channels."
 
     show logo base at logopos
     with dissolve

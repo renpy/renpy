@@ -174,7 +174,7 @@ label tutorial_images:
 
     e "The image statement begins with the keyword \"image\", which is followed by an image name, a space-separated list of words."
 
-    e "The first word in the image name is the image tag. For the first two images, the tag is \"bg\", and for the others, it's \"lucy\"."
+    e "The first word in the image name is the image tag. For the first image the tag is \"bg\", and for the others, it's \"lucy\"."
 
     e "This is followed by an equals sign, and a string giving an image name."
 
