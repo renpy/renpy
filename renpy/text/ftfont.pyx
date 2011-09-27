@@ -234,16 +234,23 @@ cdef class FTFont:
 
             scale = face.size.metrics.y_scale
 
-            self.ascent = FT_CEIL(face.size.metrics.ascender) + self.expand
-            self.descent = FT_FLOOR(face.size.metrics.descender) - self.expand
+            self.ascent = FT_CEIL(face.size.metrics.ascender)
+            self.descent = FT_FLOOR(face.size.metrics.descender)           
+
+            if self.descent > 0:
+                self.descent = -self.descent
+
+            self.ascent += self.expand
+            self.descent -= self.expand
+            
             self.height = self.ascent - self.descent
 
+            # This is probably more correct, but isn't what 6.12.1 did.
             # self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
-            #
+           
             # if self.height > self.lineskip:
             #     self.lineskip = self.height                
 
-            # For compat w/ Ren'Py 6.12.1.
             self.lineskip = self.height
             
             self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
