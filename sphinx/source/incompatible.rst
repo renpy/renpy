@@ -27,7 +27,7 @@ code::
 New- and old-style substitutions can coexist in the same game, by
 setting both variables to True.
 
-Ren'Py has also change the default line-wrapping behavior. While
+Ren'Py has also changed the default line-wrapping behavior. While
 the new behavior should never increase the number of lines in a
 paragraph, it may change which words fall on each line. To restore
 the old behavior, add the code::
@@ -36,7 +36,16 @@ the old behavior, add the code::
         style.default.layout = "greedy"
         style.default.language = "western"
 
+A bug with negative line_spacing was fixed. This fix can cause blocks of
+text to shrink in height. To revert to the old behavior, use::
 
+    init python:
+        config.broken_line_spacing = True
+
+Finally, the new text code may lead to artifacts when displaying slow
+text, especially in conjunction with a negative line spacing. Consider
+adjusting :prop:`line_overlap_split` to fix this.
+        
 .. _incompatible-6.12.1:
 
 6.12.1

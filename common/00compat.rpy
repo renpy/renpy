@@ -60,6 +60,7 @@ init -1210 python:
             style.default.layout = "greedy"
             config.old_substitutions = True
             config.new_substitutions = False
+            config.broken_line_spacing = True
             
             
 init 1210 python hide::

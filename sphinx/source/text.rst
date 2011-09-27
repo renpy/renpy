@@ -16,6 +16,7 @@ The Text displayable is responsible for managing the process of
 showing the text to the user. The text displayable performs actions in
 the following order:
 
+
 1. Translating text.
 2. Interpolating data into the text.
 3. Styling the text using styles and text tags.
@@ -502,8 +503,10 @@ texture, and then draw rectangles from the texture to the screen.
 Unfortunately, this means that it's possible to get rendering
 artifacts when characters overlap. To minimize these rendering
 artifacts, ensure that the :propref:`line_leading` and
-:propref:`line_spacing` properties are large enough that lines
-overlap.
+:propref:`line_spacing` properties are large enough that lines do not
+overlap. If the bottoms of characters on the first line are clipped,
+espeically if line_spacing is negative, consider increasing
+:propref:`line_overlap_split`.
 
 Horizontal artifacts are also possible when characters are kerned
 together, but these artifacts are less severe, as they exist for only

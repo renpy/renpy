@@ -193,6 +193,7 @@ style_properties = dict(
     yoffset = None,
     ypos = None, 
     hyperlink_functions=None,   
+    line_overlap_split=None,
     )
 
 

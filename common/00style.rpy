@@ -152,6 +152,7 @@ init -1090 python:
     style.default.rest_indent = 0
     style.default.line_spacing = 0
     style.default.line_leading = 0
+    style.default.line_overlap_split = 0
     style.default.layout = "tex"
     style.default.subtitle_width = 0.9
     style.default.slow_cps = None

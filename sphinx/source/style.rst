@@ -434,6 +434,12 @@ Text Style Properties
 
     The number of pixels of spacing to include above each line.
         
+.. style-property:: line_overlap_split int
+
+    When in slow text mode, and two lines overlap, this many pixels of
+    the overlap are allocated to the top line. Increase this if the
+    bottoms of characters on the top line are clipped.
+    
 .. style-property:: line_spacing int
 
     The number of pixels of spacing to include below each line.

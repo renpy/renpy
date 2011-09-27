@@ -237,12 +237,15 @@ cdef class FTFont:
             self.ascent = FT_CEIL(face.size.metrics.ascender) + self.expand
             self.descent = FT_FLOOR(face.size.metrics.descender) - self.expand
             self.height = self.ascent - self.descent
-            
-            self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
-            
-            if self.height > self.lineskip:
-                self.lineskip = self.height                
 
+            # self.lineskip = FT_CEIL(face.size.metrics.height) + self.expand
+            #
+            # if self.height > self.lineskip:
+            #     self.lineskip = self.height                
+
+            # For compat w/ Ren'Py 6.12.1.
+            self.lineskip = self.height
+            
             self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
             self.underline_height = FT_FLOOR(FT_MulFix(face.underline_thickness, scale))
 

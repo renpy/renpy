@@ -356,6 +356,8 @@ class Layout(object):
         """
         
         style = text.style
+                        
+        self.line_overlap_split = style.line_overlap_split
                 
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
@@ -510,12 +512,18 @@ class Layout(object):
             l, y = textsupport.place_vertical(line_glyphs, y, style.line_spacing, style.line_leading)
             lines.extend(l)
 
-
             # Figure out the indent of the next line.
             first_indent = style.newline_indent
             if first_indent is None:
                 first_indent = rest_indent
 
+        if style.line_spacing < 0:
+            if renpy.config.broken_line_spacing:            
+                y += -style.line_spacing * len(lines)
+            else:
+                y += -style.line_spacing
+
+            lines[-1].height = y - lines[-1].y 
 
         if style.min_width > maxx + self.xborder:
             maxx = style.min_width - self.xborder
@@ -876,7 +884,7 @@ class Layout(object):
         can be used to blit those objects.
         """
         
-        width, _height = self.size
+        width, max_height = self.size
         
         rv = [ ]
         
@@ -887,7 +895,7 @@ class Layout(object):
             if l.max_time > st:
                 break
             
-            max_y = l.y + l.height
+            max_y = min(l.y + l.height + self.line_overlap_split, max_height)
             
         else:
             l = None
@@ -915,8 +923,10 @@ class Layout(object):
             if g.x  < min_x:
                 min_x = g.x
                 
+        ly = min(l.y + l.height + self.line_overlap_split, max_height)
+                
         if min_x < max_x:
-            rv.append(Blit(min_x, l.y, max_x - min_x, l.height))
+            rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y))
             
         return rv
         

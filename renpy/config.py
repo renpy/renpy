@@ -511,6 +511,9 @@ renderer = "auto"
 # The translator to use, if any.
 translator = None
 
+# Should we use the old, broken line spacing code?
+broken_line_spacing = False
+
 del renpy
 del os
 
