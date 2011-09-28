@@ -223,7 +223,7 @@ def substitute(s, scope=None, force=False):
 class Translator(renpy.object.Object):
     
     def unquote(self, s):
-        s = s.replace("\\\n", "\\n")
+        s = s.replace("\\n", "\n")
         s = s.replace("\\\\", "\\")
         return s
     
