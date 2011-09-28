@@ -546,7 +546,7 @@ translations.rpt, if it exists. The :func:`Language` action can be
 used to change the translation file.
 
 Creating Translation Files
---------------------------
+==========================
 
 Ren'Py has support for automatically creating translation
 files. Taking advantage of this is a three-step process.

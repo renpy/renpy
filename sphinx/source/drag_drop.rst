@@ -82,8 +82,9 @@ send a character to a location::
         # A map as background.
         add "europe.jpg"
 
-        # A drag group ensures that the detectives and the cities.
-        drag_group:
+        # A drag group ensures that the detectives and the cities can be
+        # dragged to each other.
+        draggroup:
 
             # Our detectives.
             drag:
@@ -116,7 +117,7 @@ send a character to a location::
 
         call screen send_detective_screen
 
-        "Okay, we'll send %(detective)s to %(city)s."
+        "Okay, we'll send [detective] to [city]."
                 
 More complicated systems take significant programming skill to get
 right. The `Ren'Py cardgame framework <http://www.renpy.org/wiki/renpy/Frameworks#Cardgame>`_
