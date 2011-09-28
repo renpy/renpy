@@ -49,10 +49,6 @@ class Transition(renpy.display.core.Displayable):
     def visit(self):
         return [ self.new_widget, self.old_widget ] # E1101
 
-    def per_interact(self):
-        self.new_widget.per_interact()
-        self.old_widget.per_interact()
-    
 
 def null_render(d, width, height, st, at):
 
@@ -151,13 +147,9 @@ class MultipleTransition(Transition):
 
     def visit(self):
         return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
-
-    def per_interact(self):
-        for i in self.visit():
-            i.per_interact()
     
     def event(self, ev, x, y, st):
-        
+
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
             return self.transitions[-1].event(ev, x, y, st)
         else:
