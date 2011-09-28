@@ -1420,7 +1420,7 @@ class Timer(renpy.display.layout.Null):
         if not self.repeat:
             state.next_event = None
         else:
-            state.next_event = state.next_event + st
+            state.next_event = state.next_event + self.delay
             if state.next_event < st:
                 state.next_event = st + self.delay
 
