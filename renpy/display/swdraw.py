@@ -669,6 +669,9 @@ class SWDraw(object):
     """
 
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         
         # Should we draw the screen?
         self.suppressed_blit = False
@@ -712,14 +715,12 @@ class SWDraw(object):
         # The window that we render into, if not the screen. This has a 
         # 1px border around it iff we're scaling.
         self.window = None
-        
-    def get_priority(self):
-        return 1
-        
+                
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
         # Reset before resize.
         renpy.display.interface.kill_textures_and_surfaces()
+        self.reset()
 
         width, height = virtual_size
 
