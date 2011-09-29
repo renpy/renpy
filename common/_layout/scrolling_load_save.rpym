@@ -227,10 +227,3 @@ label load_screen:
                     continue
 
             renpy.load(fn)
-            
-            
-init python hide:
-    def auto_save_extra_info():
-        return save_name
-    config.auto_save_extra_info = auto_save_extra_info
-    

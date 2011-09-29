@@ -219,7 +219,6 @@ cdef class GLDraw:
             opengl = pygame.OPENGL
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
-
         ELSE:
             opengl = 0            
             # EGL automatically handles vsync for us.

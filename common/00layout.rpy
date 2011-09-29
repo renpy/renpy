@@ -425,4 +425,10 @@ init -1105 python hide:
         else:
             if no is not None:
                 no()
+    
+    
+    def __auto_save_extra_info():
+        return save_name
+    
+    config.auto_save_extra_info = __auto_save_extra_info
                 
