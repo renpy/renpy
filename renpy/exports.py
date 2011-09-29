@@ -1526,9 +1526,11 @@ def call_screen(_screen_name, **kwargs):
 
     roll_forward = renpy.exports.roll_forward_info()
 
-    rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
-    
-    renpy.exports.checkpoint(rv)
+    try:
+        rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
+        renpy.exports.checkpoint(rv)
+    except renpy.game.JumpException:
+        rv = None
 
     with_none = renpy.config.implicit_with_none
     if with_none:
