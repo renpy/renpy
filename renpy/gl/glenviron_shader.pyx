@@ -486,9 +486,18 @@ cdef class ShaderEnviron(Environ):
 
         self.program = None
         
+    cdef void project(self, x, y, z, double *rv_x, double *rv_y, double *rv_z):
+        """
+        Given a point, projects it using the projection.
+        """
+        
+        rv_x[0] = x * self.projection[0] + y * self.projection[4] + z * self.projection[8] + self.projection[12]
+        rv_y[0] = x * self.projection[1] + y * self.projection[5] + z * self.projection[9] + self.projection[13]
+        rv_z[0] = x * self.projection[2] + y * self.projection[6] + z * self.projection[10] + self.projection[14]
+
     cdef void set_clip(self, tuple clip_box, GLDraw draw):
         
-        cdef double minx, miny, maxx, maxy
+        cdef double minx, miny, maxx, maxy, z
         cdef double vwidth, vheight
         cdef double px, py, pw, ph
         cdef int cx, cy, cw, ch
@@ -510,25 +519,25 @@ cdef class ShaderEnviron(Environ):
         
         if draw.clip_rtt_box is None:
             
-            vwidth, vheight = draw.virtual_size
-            px, py, pw, ph = draw.physical_box
-
-            minx = px + (minx / vwidth) * pw
-            maxx = px + (maxx / vwidth) * pw
-
-            miny = py + (miny / vheight) * ph
-            maxy = py + (maxy / vheight) * ph
-
-            miny = psh - miny
-            maxy = psh - maxy
-
+            z = 0
+            
+            # Project to normalized coordinates.            
+            self.project(minx, miny, z, &minx, &miny, &z)
+            self.project(maxx, maxy, z, &maxx, &maxy, &z)
+            
+            # Convert to window coordinates.
+            minx = (minx + 1) * psw / 2
+            maxx = (maxx + 1) * psw / 2
+            miny = (miny + 1) * psh / 2
+            maxy = (maxy + 1) * psh / 2
+                    
             # Increase the bounding box, to ensure every relevant pixel is 
             # in it. The shader will take care of enforcing the actual box.
             minx -= 1
-            maxx += 1            
+            maxx += 1          
             miny += 1
             maxy -= 1
-
+            
             glEnable(GL_SCISSOR_TEST)
             glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
 
