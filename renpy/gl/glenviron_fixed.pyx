@@ -344,3 +344,5 @@ cdef class FixedFunctionEnviron(Environ):
         glDisable(GL_CLIP_PLANE2)
         glDisable(GL_CLIP_PLANE3)
         
+    cdef void viewport(self, int x, int y, int width, int height):
+        glViewport(x, y, width, height)

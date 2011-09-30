@@ -228,3 +228,5 @@ cdef class LimitedEnviron(Environ):
     cdef void unset_clip(self, GLDraw draw):
         glDisable(GL_SCISSOR_TEST)
         
+    cdef void viewport(self, int x, int y, int width, int height):
+        glViewport(x, y, width, height)

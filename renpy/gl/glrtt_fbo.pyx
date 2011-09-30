@@ -75,8 +75,7 @@ class FboRtt(Rtt):
             texture,
             0)
 
-        glViewport(0, 0, w, h)
-
+        environ.viewport(0, 0, w, h)
         environ.ortho(x, x + w, y, y + h, -1, 1)
 
         draw_func(x, y, w, h)

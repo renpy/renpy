@@ -610,8 +610,7 @@ cdef class GLDraw:
 
         self.draw_render_textures(surftree, 0)
 
-        glViewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
-        
+        self.environ.viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])        
         self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
         self.clip_mode_screen()
@@ -901,7 +900,7 @@ cdef class GLDraw:
         
         forward = reverse = IDENTITY
 
-        glViewport(0, 0, 1, 1)
+        self.environ.viewport(0, 0, 1, 1)
         glClearColor(0.0, 0.0, 0.0, 0.0)
         
         glClear(GL_COLOR_BUFFER_BIT)
@@ -1024,8 +1023,7 @@ cdef class GLDraw:
         pw, ph = self.physical_size
         pbx, pby, pbw, pbh = self.physical_box
         
-        glViewport(0, 0, pw, ph)
-
+        self.environ.viewport(0, 0, pw, ph)
         self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
@@ -1185,6 +1183,12 @@ cdef class Environ(object):
         Enables orthographic projection. `left`, `right`, `top`, `bottom` are the coordinates of the various
         sides of the viewport. `top` and `bottom` are the depth limits.
         """
+    
+    cdef void viewport(self, int x, int y, int w, int h):
+        """
+        Sets the GL viewport.
+        """
+
 
 # These imports need to be down at the bottom, after the Rtt and Environ 
 # classes have been created.

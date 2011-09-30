@@ -356,6 +356,11 @@ cdef class ShaderEnviron(Environ):
     cdef double clip_x1
     cdef double clip_y1
 
+    cdef int viewport_x
+    cdef int viewport_y
+    cdef int viewport_w
+    cdef int viewport_h
+
     def init(self):
 
         self.blit_program = Program(VERTEX_SHADER1, BLIT_SHADER)
@@ -526,10 +531,10 @@ cdef class ShaderEnviron(Environ):
             self.project(maxx, maxy, z, &maxx, &maxy, &z)
             
             # Convert to window coordinates.
-            minx = (minx + 1) * psw / 2
-            maxx = (maxx + 1) * psw / 2
-            miny = (miny + 1) * psh / 2
-            maxy = (maxy + 1) * psh / 2
+            minx = (minx + 1) * self.viewport_w / 2 + self.viewport_x
+            maxx = (maxx + 1) * self.viewport_w / 2 + self.viewport_x
+            miny = (miny + 1) * self.viewport_h / 2 + self.viewport_y
+            maxy = (maxy + 1) * self.viewport_h / 2 + self.viewport_y
                     
             # Increase the bounding box, to ensure every relevant pixel is 
             # in it. The shader will take care of enforcing the actual box.
@@ -566,5 +571,10 @@ cdef class ShaderEnviron(Environ):
             self.program.disable_attribs()
         
         self.program = None
-        
-        
+
+    cdef void viewport(self, int x, int y, int width, int height):
+        glViewport(x, y, width, height)
+        self.viewport_x = x
+        self.viewport_y = y
+        self.viewport_w = width
+        self.viewport_h = height
