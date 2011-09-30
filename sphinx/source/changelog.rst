@@ -69,11 +69,11 @@ DirectX Support
 ---------------
 
 On Windows systems that have the February 2010 DirectX update
-installed, Ren'Py will use DirectX via the ANGLE adaptation layer, in
-preference to OpenGL or software rendering. The ANGLE layer is used by
-popular web browsers such as Firefox and Google Chrome.  This allows
-hardware rendering to be used on systems with built-in graphics, where
-drivers often support DirectX far better than OpenGL.
+installed, Ren'Py will use DirectX via the ANGLE adaptation layer, if
+OpenGL 2.0 or later is not found. The ANGLE layer is used by popular
+web browsers such as Firefox and Google Chrome.  This allows hardware
+rendering to be used on netbooks, where drivers often support DirectX
+far better than OpenGL.
 
 At startup, Ren'Py will test the graphics capabilities of the computer
 it is running on. If the software render is being used, or the game

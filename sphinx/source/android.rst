@@ -49,7 +49,7 @@ Ren'Py for Android available:
 
 The beta version will be updated when a new version of Ren'Py is
 undergoing test. While we will attempt to maintain compatibility
-between Ren'Py versions, the beta version will games to be tested with
+between Ren'Py versions, the beta version allows games to be tested with
 newer code.
      
 
