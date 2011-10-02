@@ -167,9 +167,13 @@ init -1024:
 
             null height 10
 
-            text _("The DirectX web setup program has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX.")
+            text _("DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX.")
             
             null height 10
+        
+            text _("{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box.")
+
+            null height 10      
                     
             text _("When setup finishes, please click below to restart this program.")
 
@@ -303,7 +307,7 @@ init -1024 python:
             if not "RENPY_GL_ENVIRON" in os.environ:    
                 if renderer_info["renderer"] == "gl" and renderer_info["environ"] == "fixed":
                     problem = "fixed"
-            
+         
         if problem is None:
             return
 
@@ -338,6 +342,11 @@ label _gl_test:
 # We can assume we're on windows here. We're also always restart once we 
 # make it here.
 label _directx_update:
+
+    if renpy.has_label("directx_update"):
+        jump expression "directx_update"
+
+label _directx_update_main:
 
     python hide:
         import subprocess
