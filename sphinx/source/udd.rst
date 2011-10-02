@@ -14,7 +14,7 @@ cannot be expressed with the tools Ren'Py gives you. (But see also the
 section :ref:`sprites <sprites>`, which describes a higher-level way
 of accomplishing many of the same things.)
 
-creator-defined displayables are programmed entirely in Python, and we
+Creator-defined displayables are programmed entirely in Python, and we
 encourage you to have a reasonable degree of skill at object-oriented
 Python programming before you begin creating one.
 
@@ -38,7 +38,7 @@ distance of the mouse pointer from the center of the child. ::
                 super(Appearing, self).__init__(**kwargs)
             
                 # The child.
-                self.child = child            
+                self.child = renpy.displayable(child)
                 
                 # The distance at which the child will become fully opaque, and 
                 # where it will become fully transparent. The former must be less
@@ -258,7 +258,7 @@ the implicit `self` parameter.
         `rect`
             A (x, y, width, height) tuple.
 
-    
+            
 Utility Functions
 =================
 
