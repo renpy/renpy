@@ -1029,8 +1029,8 @@ class Text(renpy.display.core.Displayable):
                     text = [ "" ]
                     break
 
-        # A list of text and displayables we're showing.                
-        self.text = text
+        # Sets the text we're showing, and performs substitutions.
+        self.set_text(text, scope, substitute)
                            
         # If slow is None, the style decides if we're in slow text mode.
         if slow is None and self.style.slow_cps:
@@ -1045,12 +1045,6 @@ class Text(renpy.display.core.Displayable):
         # The callback to be called when slow-text mode ends.
         self.slow_done = None
 
-        # The scope substitutions are performed in, in addition to renpy.store.
-        self.scope = scope
-
-        # Should substitutions be done?
-        self.substitute = substitute
-        
         # The ctc indicator associated with this text.
         self.ctc = None
         
@@ -1072,12 +1066,23 @@ class Text(renpy.display.core.Displayable):
         # The list of displayables we use.
         self.displayables = None
 
-
-    def set_text(self, text):
+    def set_text(self, text, scope=None, substitute=False):
+        
         if not isinstance(text, list):
             text = [ text ]
         
-        self.text = text
+        self.text = [ ]
+        
+        # Perform substitution as necessary.
+        for i in text:
+            if isinstance(i, basestring):
+                if substitute is not False:
+                    i = renpy.substitutions.substitute(i, scope, substitute)
+                
+                i = unicode(i)
+                
+            self.text.append(i)
+
         self.dirty = True
 
     def set_ctc(self, ctc):
@@ -1094,17 +1099,7 @@ class Text(renpy.display.core.Displayable):
         
         self.kill_layout()
         
-        text = [ ]
-        
-        # Perform substitution as necessary.
-        for i in self.text:
-            if isinstance(i, basestring):
-                if self.substitute is not False:
-                    i = renpy.substitutions.substitute(i, self.scope, self.substitute)
-                
-                i = unicode(i)
-                
-            text.append(i)
+        text = self.text
 
         # Decide the portion of the text to show quickly, the part to 
         # show slowly, and the part not to show (but to lay out).
