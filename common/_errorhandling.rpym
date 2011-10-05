@@ -39,6 +39,7 @@ init python:
     style._default.rest_indent = 0
     style._default.line_spacing = 4
     style._default.line_leading = 0
+    style._default.line_overlap_split = 0
     style._default.layout = "tex"
     style._default.subtitle_width = 0.9
     style._default.slow_cps = None
@@ -434,7 +435,7 @@ screen _exception:
             # Tooltip.
             text tt.value size 12
             
-    if config.developer:
+    if config.developer and reload_action:
         key "R" action reload_action
             
 # The screen that is used for error handling.
@@ -497,6 +498,6 @@ screen _parse_errors:
             # Tooltip.
             text tt.value size 12
 
-    if config.developer:
+    if config.developer and reload_action:
         key "R" action reload_action
             
