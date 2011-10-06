@@ -190,9 +190,9 @@ vc_version = {revno}
         "gen/*.c",
         "*.h",
         "*.py*",
-        "include/*.py*"
-        "lib/pysdlsound/*.py",
-        "lib/pysdlsound/*.pyx",
+        "include/*.pxd",
+        "pysdlsound/*.py",
+        "pysdlsound/*.pyx",
         ]
 
     for i in module_files:
