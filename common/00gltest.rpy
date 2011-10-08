@@ -78,6 +78,11 @@ init -1024:
                 action Quit(confirm=False)
                 xfill True
 
+            if not renpy.display.interface.safe_mode:
+                textbutton _("Return"): 
+                    action Return(0)
+                    xfill True
+
 
     # This is displayed when a display performance problem occurs. 
     # 
@@ -253,7 +258,7 @@ init -1024 python:
             return
     
         if renpy.display.interface.safe_mode:
-            renpy.call_screen("_choose_renderer")
+            renpy.call_in_new_context("_choose_renderer")
 
         if not config.performance_test:
             return
@@ -362,5 +367,11 @@ label _directx_update_main:
         # Restart the current program.
         subprocess.Popen(sys.argv)
         renpy.quit()
+    
+label _choose_renderer:    
+    scene expression "#000"
+
+    $ renpy.call_screen("_choose_renderer")    
+    return
     
 

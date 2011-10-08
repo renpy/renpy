@@ -183,6 +183,7 @@ keymap = dict(
     quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
     iconify = [ 'meta_m', 'alt_m' ],
     help = [ 'K_F1', 'meta_shift_/' ],
+    choose_renderer = [ 'G' ],
     
     # Say.
     rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

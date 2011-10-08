@@ -305,6 +305,7 @@ init -1180 python hide:
         quit = renpy.quit_event,
         iconify = renpy.iconify,
         help = _help,
+        choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
         )
 
     config.underlay = [ km ]
