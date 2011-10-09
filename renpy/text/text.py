@@ -1258,10 +1258,11 @@ class Text(renpy.display.core.Displayable):
     def render(self, width, height, st, at):
 
         # If slow is None, the style decides if we're in slow text mode.
-        if self.slow is None and not self.style.slow_cps:
-            self.slow = True
-        else:
-            self.slow = False
+        if self.slow is None:
+            if self.style.slow_cps:
+                self.slow = True
+            else:
+                self.slow = False
 
         if self.dirty or self.displayables is None:
             self.update()
