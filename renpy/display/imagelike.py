@@ -60,10 +60,13 @@ class Solid(renpy.display.core.Displayable):
 
         SIZE = 10
 
-        tex = renpy.display.draw.solid_texture(SIZE, SIZE, color)
-
-        rv.forward = Matrix2D(1.0 * SIZE / width, 0, 0, 1.0 * SIZE / height)
-        rv.reverse = Matrix2D(1.0 * width / SIZE, 0, 0, 1.0 * height / SIZE)
+        if width < SIZE or height < SIZE:
+            tex = renpy.display.draw.solid_texture(width, height, color)
+        else:
+            tex = renpy.display.draw.solid_texture(SIZE, SIZE, color)
+            rv.forward = Matrix2D(1.0 * SIZE / width, 0, 0, 1.0 * SIZE / height)
+            rv.reverse = Matrix2D(1.0 * width / SIZE, 0, 0, 1.0 * height / SIZE)
+        
         rv.blit(tex, (0, 0))
 
         return rv
@@ -337,8 +340,6 @@ class Frame(renpy.display.core.Displayable):
             # Compute sizes.
             srcsize = (sx1 - sx0, sy1 - sy0)
             dstsize = (int(dx1 - dx0), int(dy1 - dy0))
-
-            
             
             # Get a subsurface.
             surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
