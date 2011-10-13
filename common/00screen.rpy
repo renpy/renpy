@@ -1433,6 +1433,30 @@ init -1140 python:
         def __call__(self):
             renpy.take_screenshot()
         
+    def QuickSave(message="Quick save complete."):
+        """
+        :doc: file_action
+        
+        Performs a quick save.
+        
+        `message`
+            A message to display to the user when the quick save finishes.
+        """
+    
+        return [ 
+            FileTakeScreenshot(),
+            FileSave(1, page="quick", confirm=False, cycle=True), 
+            Notify("Quick save complete.") ]
+        
+    def QuickLoad():
+        """
+        :doc: file_action
+    
+        Performs a quick load.
+        """
+    
+        return FileLoad(1, page="quick", confirm=True, newest=False)
+
     
     ##########################################################################
     # Side Images

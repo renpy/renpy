@@ -516,8 +516,8 @@ screen quick_menu:
         xalign 1.0
         yalign 1.0
 
-        textbutton _("Q.Save") action [ FileSave(1, page="quick", confirm=False, cycle=True), Notify("Quick save complete.") ]
-        textbutton _("Q.Load") action FileLoad(1, page="quick", confirm=True, newest=False)
+        textbutton _("Q.Save") action QuickSave()
+        textbutton _("Q.Load") action QuickLoad()
         textbutton _("Save") action ShowMenu('save')
         textbutton _("Skip") action Skip()
         textbutton _("Auto") action Preference("auto-forward", "toggle")
