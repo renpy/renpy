@@ -432,13 +432,8 @@ class StyleManager(object):
 
                 if rest in style_map:
                     
-                    old_styles_built = styles_built
-                    styles_built = False
-                    
                     s = Style(rest)
-                    self.__setattr__(name, s)                    
-
-                    styles_built = old_styles_built
+                    self.__setattr__(name, s, False)                    
                     
                     return s
 
@@ -446,9 +441,9 @@ class StyleManager(object):
                 
         raise Exception('The style %s does not exist.' % name)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name, value, check_built=True):
 
-        if styles_built:
+        if check_built and styles_built:
             raise Exception("Cannot assign to style outside of the init phase.")
         
         if isinstance(value, Style):
