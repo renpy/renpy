@@ -66,3 +66,14 @@
     be used to ensure that the screenshot is accurate, by taking
     a pictue of the screen before a file save screen is shown.
 
+.. function:: QuickLoad()
+    
+    Performs a quick load.
+
+.. function:: QuickSave(message='Quick save complete.')
+    
+    Performs a quick save.
+    
+    `message`
+        A message to display to the user when the quick save finishes.
+
