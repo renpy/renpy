@@ -2224,6 +2224,13 @@ class Interface(object):
                         old_timeout_time = None
                         pygame.event.clear([TIMEEVENT])
                             
+                    # On Android, where we have multiple mouse buttons, we can
+                    # merge a mouse down and mouse up event with its successor. This 
+                    # prevents us from getting overwhelmed with too many events on 
+                    # a multitouch screen.
+                    if android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
+                        pygame.event.clear(ev.type)
+                            
                     # Handle redraw timeouts.
                     if ev.type == REDRAW:
                         old_redraw_time = None
