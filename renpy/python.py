@@ -35,7 +35,6 @@ import codecs
 
 import renpy.audio
 
-
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
 
@@ -45,6 +44,7 @@ class NoRollback(object):
     """
     
     pass
+
 
 # parents = [ ]
 
@@ -434,6 +434,7 @@ class RevertableObject(object):
     def rollback(self, old):
         self.__dict__.clear()
         self.__dict__.update(old)
+
 
 ##### An object that handles deterministic randomness, or something.
 

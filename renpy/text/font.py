@@ -524,14 +524,15 @@ def load_face(fn):
         pygame.sysfont.initsysfonts()
 
         for v in pygame.sysfont.Sysfonts.itervalues():
-            for _flags, ffn in v.iteritems():
-                for i in fonts:
-                    if ffn.lower().endswith(i):
-                        font_file = file(ffn, "rb")
+            if v is not None:
+                for _flags, ffn in v.iteritems():
+                    for i in fonts:
+                        if ffn.lower().endswith(i):
+                            font_file = file(ffn, "rb")
+                            break
+                
+                    if font_file:
                         break
-            
-                if font_file:
-                    break
 
             if font_file:
                 break
