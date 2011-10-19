@@ -133,3 +133,4 @@ init -1 python hide:
     config.window_icon = "logo.png"
     config.windows_icon = "logo32.png"
     
+    config.new_substitutions = False
