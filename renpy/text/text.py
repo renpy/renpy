@@ -945,8 +945,8 @@ class Layout(object):
         else:
             return None
         
-        return min(i.time for i in l.glyphs if i.time > st) - st
-
+        return 0
+    
 layout_cache_old = { }
 layout_cache_new = { }
 
