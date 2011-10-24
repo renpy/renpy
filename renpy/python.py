@@ -32,9 +32,108 @@ import weakref
 import re
 import sets
 import codecs
+import sys
 
 import renpy.audio
 
+##############################################################################
+# Code that implements the store.
+
+# Deleted is a singleton object that's used to represent an object that has
+# been deleted from the store.
+
+class StoreDeleted(object):
+    def __reduce__(self):
+        return "deleted"
+    
+deleted = StoreDeleted()
+
+class StoreModule(object):
+    """
+    This class represents one of the modules containing the store of data.
+    """
+
+    # Set our dict to be the StoreDict. Then proxy over setattr and delattr,
+    # since Python won't call them by default.
+
+    def __reduce__(self):
+        return (get_store_module, (self.__name__,))
+
+    def __init__(self, dict):
+        object.__setattr__(self, "__dict__", dict)
+
+    def __setattr__(self, key, value):
+        self.__dict__[key] = value
+        
+    def __delattr__(self, key):
+        del self.__dict__[key]
+        
+# Used to unpickle a store module.
+def get_store_module(name):
+    return sys.modules[name]
+
+class StoreDict(dict):
+    """
+    This class represents the dictionary of a store module. It logs
+    sets and deletes.
+    """
+    
+    def __reduce__(self):
+        raise Exception("Cannot pickle a reference to a store dictionary.")
+    
+    def __init__(self):
+
+        # A copy of this dict as it was at the end of the init phase.
+        self.clean = { }
+        
+        # When a variable changes during the current rollback period, its
+        # initial value is stored here. If the object was created during
+        # the period, its value is deleted.
+        self.changes = { }
+        
+        # The set of variables in this StoreDict that changed since the 
+        # end of the init phase.
+        self.ever_been_changed = set()
+        
+    def __setitem__(self, key, value):
+        if key not in self.changes:
+            self.ever_been_changed.add(key)
+           
+            if key in self:
+                self.changes[key] = self[key]
+            else:
+                self.changes[key] = deleted
+
+        dict.__setitem__(self, key, value)
+        
+    def __delitem__(self, key):        
+        if key not in self.changes and key in self:
+            self.ever_been_changed.add(key)
+            self.changes[key] = self[key]
+                
+        dict.__delitem__(key)
+        
+# A map from the name of a store dict to the corresponding StoreDict object.
+store_dicts = { }
+
+def create_store(name):
+    """
+    Creates the store with `name`.
+    """    
+
+    # Create the dict.
+    d = StoreDict()
+    store_dicts[name] = d
+    
+    # Set it up so we can eval code in it.
+    d["__name__"] = name
+    eval("1", d)
+    
+    # Create the corresponding module.
+    sys.modules[name] = StoreModule(d)
+    
+create_store("store")
+                
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
 
@@ -89,7 +188,6 @@ def reached(obj, reachable, wait):
                 reached(v, reachable, wait)
     except:
         pass
-        
 
     try:
         # Treat as dict.
