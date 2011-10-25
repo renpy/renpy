@@ -46,9 +46,7 @@ def run(restart):
     """
 
     # Reset the store to a clean version of itself.
-    store = renpy.store.__dict__ #@UndefinedVariable
-    store.clear()
-    store.update(renpy.game.clean_store)
+    renpy.python.clean_stores()
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -204,7 +202,7 @@ def main():
     game.log = renpy.python.RollbackLog()
 
     # Initialize the store.
-    renpy.store.store = renpy.python.StoreProxy()
+    renpy.store.store = sys.modules['store']
 
     # Set up styles.
     renpy.style.reset()
@@ -314,9 +312,6 @@ def main():
     # may have changed.
     renpy.loader.index_archives()
 
-    # Make a clean copy of the store.
-    game.clean_store = renpy.store.__dict__.copy() #@UndefinedVariable
-
     # Check some environment variables.
     renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
     renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
@@ -334,6 +329,9 @@ def main():
 
     # Remove the list of all statements from the script.
     game.script.all_stmts = None
+
+    # Make a clean copy of the store.
+    renpy.python.make_clean_stores()
 
     # Initialize image cache.
     renpy.display.im.cache.init()

@@ -634,7 +634,7 @@ def display_menu(items,
 class TagQuotingDict(object):
     def __getitem__(self, key):
 
-        store = vars(renpy.store)
+        store = renpy.store.__dict__
         
         if key in store:
             rv = store[key]

@@ -57,7 +57,7 @@ label _debugger_screen:
 
         entries = [ ]
         
-        ebc = renpy.game.log.ever_been_changed
+        ebc = store.__dict__.ever_been_changed
         ebc = list(ebc)
         ebc.sort()
 

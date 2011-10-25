@@ -45,11 +45,6 @@ options = None
 # The game's script.
 script = None
 
-# A shallow copy of the store dictionary made at the end of the init
-# phase. If a key in here points to the same value here as it does in
-# the store, it is not saved.
-clean_store = None
-
 # A stack of execution contexts.
 contexts = [ ]
 
@@ -260,7 +255,7 @@ def context(index=-1):
 
     return contexts[index]
 
-def invoke_in_new_context(callable, *args, **kwargs):
+def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
     """
     This pushes the current context, and invokes the given python
     function in a new context. When that function returns or raises an
@@ -324,7 +319,7 @@ def call_in_new_context(label, *args, **kwargs):
         context.goto_label(label)
         context.run()
 
-        rv = renpy.store._return        
+        rv = renpy.store._return #@UndefinedVariable
         context.pop_all_dynamic()
         contexts.pop()
 

@@ -163,8 +163,8 @@ class Context(renpy.object.Object):
         their current value (if not already dynamic in the current call).
         """
 
-        store = vars(renpy.store)
-
+        store = renpy.store.__dict__
+        
         if context:
             index = 0
         else:
@@ -187,7 +187,7 @@ class Context(renpy.object.Object):
         statement is run.
         """
         
-        store = vars(renpy.store)
+        store = renpy.store.__dict__
 
         dynamic = self.dynamic_stack.pop()
 

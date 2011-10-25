@@ -31,7 +31,6 @@ import random
 import weakref
 import re
 import sets
-import codecs
 import sys
 
 import renpy.audio
@@ -59,8 +58,8 @@ class StoreModule(object):
     def __reduce__(self):
         return (get_store_module, (self.__name__,))
 
-    def __init__(self, dict):
-        object.__setattr__(self, "__dict__", dict)
+    def __init__(self, d):
+        object.__setattr__(self, "__dict__", d)
 
     def __setattr__(self, key, value):
         self.__dict__[key] = value
@@ -107,11 +106,16 @@ class StoreDict(dict):
         dict.__setitem__(self, key, value)
         
     def __delitem__(self, key):        
+        
         if key not in self.changes and key in self:
             self.ever_been_changed.add(key)
             self.changes[key] = self[key]
                 
-        dict.__delitem__(key)
+        dict.__delitem__(self, key)
+
+    def update(self, d):
+        for k, v in d.iteritems():
+            self.__setitem__(k, v)
         
 # A map from the name of a store dict to the corresponding StoreDict object.
 store_dicts = { }
@@ -125,12 +129,34 @@ def create_store(name):
     d = StoreDict()
     store_dicts[name] = d
     
-    # Set it up so we can eval code in it.
+    # Set the name.
     d["__name__"] = name
+    
+    # This sets up __builtins__ and friends.
     eval("1", d)
     
     # Create the corresponding module.
     sys.modules[name] = StoreModule(d)
+
+def make_clean_stores():
+    """
+    Copy the clean stores.
+    """
+    
+    for i in store_dicts.itervalues():
+        i.clean.update(i)
+        i.ever_been_changed.clear()
+        
+def clean_stores():
+    """
+    Revert the store to the clean copy.
+    """
+    
+    for i in store_dicts.itervalues():
+        i.clear()
+        i.update(i.clean)
+        i.ever_been_changed.clear()
+
     
 create_store("store")
                 
@@ -171,6 +197,11 @@ def reached(obj, reachable, wait):
         return
 
     reachable[idobj] = 1
+
+    # Since the store module is the roots, there's no need to 
+    # look into it.
+    if isinstance(obj, StoreModule):
+        return
 
     # parents.append(obj)
     
@@ -604,17 +635,35 @@ class Rollback(renpy.object.Object):
     execution of this element.
     """
 
+    __version__ = 2
+
     def __init__(self):
 
         super(Rollback, self).__init__()
 
         self.context = renpy.game.contexts[0].rollback_copy()
         self.objects = [ ]
-        self.store = [ ]
         self.checkpoint = False
         self.purged = False
         self.random = [ ]
         self.forward = None
+        
+        # A map of maps name -> (variable -> value)
+        self.stores = { }
+        
+    def after_upgrade(self, version):
+        
+        if version < 2:
+            self.stores = { "store" : { } }
+
+            for i in self.store:
+                if len(i) == 2:
+                    k, v = i
+                    self.stores["store"][k] = v
+                else:
+                    k, = i
+                    self.stores["store"][k] = deleted
+            
         
     def purge_unreachable(self, reachable, wait):
         """
@@ -631,14 +680,12 @@ class Rollback(renpy.object.Object):
 
         self.purged = True
 
-        # Add objects reachable from the store.
-        for i in self.store:
-            if len(i) != 2:
-                continue
-
-            _k, v = i
-            reached(v, reachable, wait)
-
+        # Add objects reachable from the stores. (Objects that might be 
+        # unreachable at the moment.)
+        for changes in self.stores.itervalues():
+            for _k, v in changes.iteritems():
+                if v is not deleted:
+                    reached(v, reachable, wait)
 
         # Add in objects reachable through the context.
         reached(self.context.info, reachable, wait)
@@ -676,13 +723,17 @@ class Rollback(renpy.object.Object):
         for obj, roll in reversed(self.objects):
             obj.rollback(roll)
 
-        for t in self.store:
-            if len(t) == 2:
-                k, v = t
-                vars(renpy.store)[k] = v
-            else:
-                k, = t
-                del vars(renpy.store)[k]
+        for name, changes in self.stores.iteritems():
+            store = store_dicts.get(name, None)
+            if store is None:
+                return
+            
+            for name, value in changes.iteritems():
+                if value is deleted:
+                    if name in store:
+                        del store[name]
+                else:
+                    store[name] = value
 
         renpy.game.contexts = [ self.context ]
         rng.pushback(self.random)
@@ -697,21 +748,17 @@ class RollbackLog(renpy.object.Object):
     @ivar current: The current rollback object. (Equivalent to
     log[-1])
 
-    @ivar ever_been_changed: A dictionary containing a key for each
-    variable in the store that has ever been changed. (These variables
-    become the roots of what is changed or rolled-back.)
-
     @ivar rollback_limit: The number of steps left that we can
     interactively rollback.
 
     Not serialized:
     
-    @ivar old_store: A copy of the store as it was when begin was
-    last called.
-
     @ivar mutated: A dictionary that maps object ids to a tuple of
     (weakref to object, information needed to rollback that object)
     """
+    
+    __version__ = 2
+
 
     nosave = [ 'old_store', 'mutated' ]
 
@@ -722,11 +769,10 @@ class RollbackLog(renpy.object.Object):
         self.log = [ ]
         self.current = None
         self.mutated = { }
-        self.ever_been_changed = { }
         self.rollback_limit = 0
         self.forward = [ ]
         self.old_store = { }
-        
+
         # Did we just do a roll forward?
         self.rolled_forward = False
         
@@ -736,7 +782,10 @@ class RollbackLog(renpy.object.Object):
     def after_setstate(self):
         self.mutated = { }
         self.rolled_forward = False
-        
+
+    def after_upgrade(self, version):
+        if version < 2:
+            self.ever_been_changed = { "store" : set(self.ever_been_changed) }
         
     def begin(self):
         """
@@ -763,7 +812,6 @@ class RollbackLog(renpy.object.Object):
         self.log.append(self.current)
 
         self.mutated = { }
-        self.old_store = renpy.store.__dict__.copy() #@UndefinedVariable
 
         # Flag a mutation as having happened. This is used by the
         # save code.
@@ -771,6 +819,12 @@ class RollbackLog(renpy.object.Object):
         mutate_flag = True
 
         self.rolled_forward = False
+
+        # Reset the list of changes.
+        for name, sd in store_dicts.iteritems():
+            sd.changes = { }            
+            self.current.stores[name] = sd.changes
+
         
     def complete(self):
         """
@@ -781,60 +835,9 @@ class RollbackLog(renpy.object.Object):
         occurs.
         """
 
-        new_store = renpy.store.__dict__ #@UndefinedVariable
-        store = [ ]
+        # This is now done by StoreDict.
         
-        # Find store values that have changed since the last call to
-        # begin, and use them to update the store. Also, update the
-        # list of store keys that have ever been changed.
-
-        for k, v in self.old_store.iteritems():
-            if k not in new_store or new_store[k] is not v:
-                store.append((k, v))
-                self.ever_been_changed[k] = True
-
-        for _ in range(4):
-
-            try:
-            
-                for k in new_store:
-                    if k not in self.old_store:
-                        store.append((k, ))
-                        self.ever_been_changed[k] = True
-
-                break
-                        
-            except RuntimeError:
-                # This can occur when new_store is updated as we're
-                # iterating over it.
-                pass
-                        
-                        
-        self.current.store = store
-
-        # Update the list of mutated objects, and what we need to do
-        # to restore them.
-        
-        for _i in xrange(4):
-
-            self.current.objects = [ ]
-
-            try:
-                for k, (ref, roll) in self.mutated.iteritems():
-
-                    obj = ref()
-                    if obj is None:
-                        continue
-
-                    self.current.objects.append((obj, roll))
-
-                break
-
-            except RuntimeError:
-                # This can occur when self.mutated is changed as we're
-                # iterating over it.
-                pass
-                    
+                  
     def get_roots(self):
         """
         Return a map giving the current roots of the store. This is a
@@ -844,13 +847,14 @@ class RollbackLog(renpy.object.Object):
         """
 
         rv = { }
-
-        store = vars(renpy.store)
-
-        for k in self.ever_been_changed.keys():
-            if k in store:
-                rv[k] = store[k]
-
+        
+        for store_name, sd in store_dicts.iteritems():
+            for name in sd.ever_been_changed:
+                if name in sd:
+                    rv[store_name + "." + name] = sd[name]
+                else:
+                    rv[store_name + "." + name] = deleted
+        
         return rv
 
     def purge_unreachable(self, roots, wait=None):
@@ -885,12 +889,13 @@ class RollbackLog(renpy.object.Object):
         """
         
         if self.forward:
+            
             name, data = self.forward[0]
+            
             if self.current.context.current == name:
                 return data
 
         return None
-            
 
     def checkpoint(self, data=None, keep_rollback=False):
         """
@@ -912,6 +917,7 @@ class RollbackLog(renpy.object.Object):
         self.current.checkpoint = True
 
         if data is not None:
+
             if self.forward:
 
                 # If the data is the same, pop it from the forward stack.
@@ -1015,14 +1021,15 @@ class RollbackLog(renpy.object.Object):
         unfreeze (called after a serialization reload) or discard_freeze()
         (called after the save is complete). 
         """
-        
+
+        # Purge unreachable objects, so we don't save them.        
         self.complete()
         roots = self.get_roots()
         self.purge_unreachable(roots, wait=wait)
 
         # The current is not purged.
         self.current.purged = False
-
+        
         return roots
         
     def discard_freeze(self):
@@ -1045,88 +1052,98 @@ class RollbackLog(renpy.object.Object):
 
         # Set us up as the game log.
         renpy.game.log = self
+
+        clean_stores()
+                
+        for name, value in roots.iteritems():
+            
+            if "." in name:
+                store_name, name = name.rsplit(".", 1)
+            else:
+                store_name = "store"
+                
+            if store_name not in store_dicts:
+                print "This path"
+                continue
+            
+            store = store_dicts[store_name]
+            store.ever_been_changed.add(name)
+            
+            if value is deleted:
+                if name in store:
+                    del store[name]
+            else:
+                store[name] = value
         
-        # Restore the store.
-        store = renpy.store.__dict__ #@UndefinedVariable
-        store.clear()
-        store.update(renpy.game.clean_store)
-
-        for k in self.ever_been_changed:
-            if k in store:
-                del store[k]
-
-        store.update(roots)
-
         # Now, rollback to an acceptable point.
         self.rollback(0, force=True, label=label)
 
-        # We never make it this far.
+        # Beccause of the rollback, we never make it this far.
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None):
+
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None): #@ReservedAssignment
 
     if hide:
-        locals = { }
+        locals = { } #@ReservedAssignment
 
     if globals is None:
-        globals = renpy.store.__dict__ #@UndefinedVariable
+        globals = store_dicts["store"] #@ReservedAssignment
 
     if locals is None:
-        locals = globals
+        locals = globals #@ReservedAssignment
 
     exec bytecode in globals, locals
 
-        
+
 def py_exec(source, hide=False, store=None):
 
     if store is None:
-        store = vars(renpy.store)
+        store = store_dicts["store"]
 
     if hide:
-        locals = { }
+        locals = { } #@ReservedAssignment
     else:
-        locals = store
+        locals = store #@ReservedAssignment
 
     exec py_compile(source, 'exec') in store, locals
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None):
+def py_eval_bytecode(bytecode, globals=None, locals=None): #@ReservedAssignment
 
     if globals is None:
-        globals = renpy.store.__dict__ #@UndefinedVariable
+        globals = store_dicts["store"] #@ReservedAssignment
 
     if locals is None:
-        locals = globals
+        locals = globals #@ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
-
-def py_eval(source, globals=None, locals=None):
+def py_eval(source, globals=None, locals=None): #@ReservedAssignment
     
-    # source = source.strip()
-
     if globals is None:
-        globals = renpy.store.__dict__ #@UndefinedVariable
+        globals = store_dicts["store"] #@ReservedAssignment
 
     if locals is None:
-        locals = globals
+        locals = globals #@ReservedAssignment
     
     return eval(py_compile(source, 'eval'), globals, locals)
-
-# This is used to proxy accesses to the store.
+        
+        
+# This was used to proxy accesses to the store. Now it's kept around to deal
+# with cases where it might have leaked into a pickle.
 class StoreProxy(object):
 
     def __getattr__(self, k):
-        return getattr(renpy.store, k)
+        return getattr(renpy.store, k) #@UndefinedVariable
 
     def __setattr__(self, k, v):
-        setattr(renpy.store, k, v)
+        setattr(renpy.store, k, v) #@UndefinedVariable
 
     def __delattr__(self, k):
-        delattr(renpy.store, k)
-
+        delattr(renpy.store, k) #@UndefinedVariable
         
-# Code for pickling bound methods.
 
+# Code for pickling bound methods.
 def method_pickle(method):
     name = method.im_func.__name__
 

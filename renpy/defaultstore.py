@@ -359,11 +359,6 @@ _last_say_what = None
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
-    
-__name__ = 'store'
-
-import sys
-sys.modules['store'] = sys.modules['renpy.store']
 
 def public_api():
     ui

@@ -193,13 +193,22 @@ def import_all():
     import renpy.character # depends on exports. @UnresolvedImport
 
     import renpy.config # depends on lots. @UnresolvedImport
-    import renpy.store  # depends on everything. @UnresolvedImport
+    import renpy.defaultstore  # depends on everything. @UnresolvedImport
     import renpy.main #@UnresolvedImport
+
+    # Import the contents of renpy.defaultstore into renpy.store, and set 
+    # up an alias as we do.
+    renpy.store = sys.modules['store']
+    sys.modules['renpy.store'] = sys.modules['store']
+    
+    for k, v in renpy.defaultstore.__dict__.iteritems():
+        renpy.store.__dict__.setdefault(k, v)
 
     # Import everything into renpy.exports, provided it isn't
     # already there.
     for k, v in globals().iteritems():
         vars(renpy.exports).setdefault(k, v)
+
 
 # This reloads all modules.
 def reload_all():
@@ -217,12 +226,14 @@ def reload_all():
                   "renpy.log",
                   "renpy.bootstrap",
                   "renpy.display",
-                  "renpy.display.iliad",
                   "renpy.display.pgrender",
                   "renpy.display.scale" ]
     
     for i in sys.modules.keys():
         if i.startswith("renpy") and i not in blacklist:
+            del sys.modules[i]
+            
+        if i.startswith("store"):
             del sys.modules[i]
 
     import gc

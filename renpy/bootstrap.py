@@ -43,10 +43,10 @@ def extra_imports():
     import math; math
     import glob; glob
     import pickle; pickle
-    import pysdlsound; pysdlsound
-    import pysdlsound.sound; pysdlsound.sound
-    import pysdlsound.winmixer; pysdlsound.winmixer
-    import pysdlsound.linmixer; pysdlsound.linmixer
+    import pysdlsound; pysdlsound #@UnresolvedImport
+    import pysdlsound.sound; pysdlsound.sound #@UnresolvedImport
+    import pysdlsound.winmixer; pysdlsound.winmixer #@UnresolvedImport
+    import pysdlsound.linmixer; pysdlsound.linmixer #@UnresolvedImport
     import difflib; difflib
     import shutil; shutil
     import renpy.tools.archiver; renpy.tools.archiver
@@ -67,6 +67,7 @@ def extra_imports():
     import copy; copy
     import urllib; urllib
     import urllib2; urllib2
+    import codecs; codecs
     
 trace_file = None
 trace_local = None
@@ -366,7 +367,7 @@ def report_exception(e, editor=True):
     import codecs
     import traceback
 
-    type, _value, tb = sys.exc_info()
+    exc_type, _value, tb = sys.exc_info()
 
     def safe_utf8(e):
         try:
@@ -385,12 +386,12 @@ def report_exception(e, editor=True):
     
     print >>simple, renpy.game.exception_info
     report_tb(simple, tb)
-    print >>simple, type.__name__ + ":", 
+    print >>simple, exc_type.__name__ + ":", 
     print >>simple, safe_utf8(e)
 
     print >>full, "Full traceback:"
     traceback.print_tb(tb, None, full)
-    print >>full, type.__name__ + ":", 
+    print >>full, exc_type.__name__ + ":", 
     print >>full, safe_utf8(e)
     
     # Write to stdout/stderr.
