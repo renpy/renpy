@@ -320,8 +320,6 @@ class Script(object):
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)
 
-        early = [ ]
-        
         # Check each node individually.
         for node in all_stmts:
 
@@ -344,14 +342,11 @@ class Script(object):
             if init:
                 initcode.append(init)
 
-            if isinstance(node, renpy.ast.EarlyPython):
-                early.append(node)
-            
         # Compile bytecode from the file.
         self.update_bytecode()
 
         # Exec early python.
-        for node in early:
+        for node in all_stmts:
             node.early_execute()
         
         self.all_stmts.extend(all_stmts)

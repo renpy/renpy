@@ -125,6 +125,9 @@ def create_store(name):
     Creates the store with `name`.
     """    
 
+    if name in store_dicts:
+        return
+
     # Create the dict.
     d = StoreDict()
     store_dicts[name] = d
@@ -137,6 +140,11 @@ def create_store(name):
     
     # Create the corresponding module.
     sys.modules[name] = StoreModule(d)
+
+    # If we're a module in the store, add us to the store.
+    if name.startswith("store."):
+        store_dicts["store"][name[6:]] = sys.modules[name]
+        
 
 def make_clean_stores():
     """
@@ -1081,13 +1089,13 @@ class RollbackLog(renpy.object.Object):
         # Beccause of the rollback, we never make it this far.
 
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None): #@ReservedAssignment
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): #@ReservedAssignment
 
     if hide:
         locals = { } #@ReservedAssignment
 
     if globals is None:
-        globals = store_dicts["store"] #@ReservedAssignment
+        globals = store_dicts[store] #@ReservedAssignment
 
     if locals is None:
         locals = globals #@ReservedAssignment

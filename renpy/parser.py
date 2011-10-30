@@ -1676,19 +1676,23 @@ def one_line_python(l, loc):
     l.expect_noblock('one-line python statement')
     l.advance()
 
-    return ast.Python(loc, python_code)
+    return ast.Python(loc, python_code, store="store")
 
 
 @statement("python")
 def python_statement(l, loc):
     hide = False
     early = False
+    store = 'store'
 
     if l.keyword('early'):
         early = True
 
     if l.keyword('hide'):
         hide = True
+
+    if l.keyword('in'):
+        store = "store." + l.require(l.name)
 
     l.require(':')
     l.expect_block('python block')
@@ -1698,9 +1702,9 @@ def python_statement(l, loc):
     l.advance()
 
     if early:
-        return ast.EarlyPython(loc, python_code, hide)
+        return ast.EarlyPython(loc, python_code, hide, store=store)
     else:
-        return ast.Python(loc, python_code, hide)
+        return ast.Python(loc, python_code, hide, store=store)
 
 
 @statement("label")

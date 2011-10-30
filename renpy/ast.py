@@ -276,6 +276,11 @@ class Node(object):
 
         assert False, "Node subclass forgot to define execute."
 
+    def early_execute(self):
+        """
+        Called when the module is loaded.
+        """
+
     def predict(self):
         """
         This is called to predictively load images from this node.  It
@@ -607,9 +612,14 @@ class Python(Node):
     __slots__ = [
         'hide',
         'code',
+        'store',
         ]
 
-    def __init__(self, loc, python_code, hide=False):
+    def __setstate__(self, state):
+        self.store = "store"
+        super(Python, self).__setstate__(state)
+
+    def __init__(self, loc, python_code, hide=False, store="store"):
         """
         @param code: A PyCode object.
 
@@ -621,13 +631,17 @@ class Python(Node):
 
         self.hide = hide
         self.code = PyCode(python_code, loc=loc, mode='exec')
+        self.store = store
 
     def diff_info(self):
         return (Python, self.code.source)
 
+    def early_execute(self):
+        renpy.python.create_store(self.store)
+
     def execute(self):
         next_node(self.next)
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
 
     def scry(self):
         rv = Node.scry(self)
@@ -639,9 +653,14 @@ class EarlyPython(Node):
     __slots__ = [
         'hide',
         'code',
+        'store',
         ]
 
-    def __init__(self, loc, python_code, hide=False):
+    def __setstate__(self, state):
+        self.store = "store"
+        super(EarlyPython, self).__setstate__(state)
+
+    def __init__(self, loc, python_code, hide=False, store="store"):
         """
         @param code: A PyCode object.
 
@@ -653,6 +672,7 @@ class EarlyPython(Node):
 
         self.hide = hide
         self.code = PyCode(python_code, loc=loc, mode='exec')
+        self.store = store
 
     def diff_info(self):
         return (EarlyPython, self.code.source)
@@ -661,7 +681,8 @@ class EarlyPython(Node):
         next_node(self.next)
 
     def early_execute(self):
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
+        renpy.python.create_store(self.store)
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
 
 class Image(Node):
 
