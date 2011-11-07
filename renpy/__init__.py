@@ -193,8 +193,12 @@ def import_all():
     import renpy.character # depends on exports. @UnresolvedImport
 
     import renpy.config # depends on lots. @UnresolvedImport
+    import renpy.minstore # depends on lots.
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
     import renpy.main #@UnresolvedImport
+
+    # Create the store.
+    renpy.python.create_store("store")
 
     # Import the contents of renpy.defaultstore into renpy.store, and set 
     # up an alias as we do.

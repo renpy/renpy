@@ -95,27 +95,7 @@ style = None
 config = _Config()
 library = config
 
-python_list = _list = list
-python_dict = _dict = dict
-python_object = _object = object
-python_set = _set = set
-
-from renpy.python import RevertableList as __renpy__list__
-list = __renpy__list__
-
-from renpy.python import RevertableDict as __renpy__dict__
-dict = __renpy__dict__
-
-from renpy.python import RevertableSet as set
-Set = set
-from renpy.python import RevertableObject as object
-
-from renpy.python import revertable_range as range
-from renpy.python import revertable_sorted as sorted
-
 eval = renpy.python.py_eval
-
-
 
 # Displayables.
 Bar = renpy.display.behavior.Bar

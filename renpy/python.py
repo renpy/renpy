@@ -125,6 +125,8 @@ def create_store(name):
     Creates the store with `name`.
     """    
 
+    name = str(name)
+
     if name in store_dicts:
         return
 
@@ -134,9 +136,14 @@ def create_store(name):
     
     # Set the name.
     d["__name__"] = name
+    d["__package__"] = name
     
-    # This sets up __builtins__ and friends.
+    # Set up the default contents of the store.
     eval("1", d)
+    
+    for k, v in renpy.minstore.__dict__.iteritems():
+        if k not in d:
+            d[k] = v
     
     # Create the corresponding module.
     sys.modules[name] = StoreModule(d)
@@ -165,8 +172,6 @@ def clean_stores():
         i.update(i.clean)
         i.ever_been_changed.clear()
 
-    
-create_store("store")
                 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.

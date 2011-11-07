@@ -1738,7 +1738,13 @@ def init_statement(l, loc):
 
         hide = False
         if l.keyword('hide'):
+
             hide = True
+    
+        if l.keyword('in'):
+            store = "store." + l.require(l.name)
+        else:
+            store = "store"
 
         l.require(':')
         l.expect_block('python block')
@@ -1746,7 +1752,7 @@ def init_statement(l, loc):
         python_code = l.python_block()
 
         l.advance()
-        block = [ ast.Python(loc, python_code, hide) ]
+        block = [ ast.Python(loc, python_code, hide, store=store) ]
 
     else:
         l.require(':')
