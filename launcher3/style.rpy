@@ -34,7 +34,7 @@ init python:
     style.topnav_button_text = Style(style.launcher_button_text)
     style.topnav_button_text.xalign = 1.0
     style.topnav_button_text.size = 24
-    style.topnav_button_text.kerning = -1.5
+    # style.topnav_button_text.kerning = -1.5
     
     # The secondary navigation bar.
 

@@ -1,6 +1,6 @@
 init -10 python in nav:
     
-    from store import renpy, Action
+    from store import renpy, Action, MoveTransition, MoveIn, MoveOut
     
     # The screen that's currently showing.
     current = None
@@ -17,6 +17,17 @@ init -10 python in nav:
     # A map from screen name to the secondary navigation that should be
     # shown when that screen is shown.
     screen_secondary = { }
+
+    # Transitions.
+    right_to_left = MoveTransition(
+        0.25, 
+        enter_factory=MoveIn((1.0, None, 0.0, None)), 
+        leave_factory=MoveOut((0.0, None, 1.0, None)))
+    
+    left_to_right = MoveTransition(
+        0.25, 
+        enter_factory=MoveIn((0.0, None, 1.0, None)), 
+        leave_factory=MoveOut((1.0, None, 0.0, None)))
     
     def page(screen, secondary):
         """
@@ -37,9 +48,18 @@ init -10 python in nav:
             
         renpy.restart_interaction()
             
-        # TODO: Set up the appropriate transition.
-            
         if current is not None:
+        
+            current_idx = screens.index(current)
+            new_idx = screens.index(screen)
+                        
+            if new_idx > current_idx:
+                trans = right_to_left
+            else:
+                trans = left_to_right
+        
+            renpy.transition(trans, layer="screens")
+
             renpy.hide_screen(current)
             
         renpy.show_screen(screen)

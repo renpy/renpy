@@ -2,6 +2,7 @@ image bg mugen = "bgs/mugen-park.jpg"
 
 init python:
     config.developer = True
+    config.quit_action = Quit(confirm=False)
 
 label start:
     scene bg mugen
