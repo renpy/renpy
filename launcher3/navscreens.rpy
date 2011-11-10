@@ -42,7 +42,14 @@ screen projects:
     frame:
         style_group "launcher"
         
+        has vbox
+
         text "Projects"
+        
+        hbox:
+            style_group "command"
+            textbutton "Test Button" action Return(True)
+        
         
 screen settings:
     frame:
