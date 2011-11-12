@@ -1,4 +1,5 @@
 screen topnav:
+    zorder 100
 
     frame:
         style_group "topnav"
@@ -11,10 +12,17 @@ screen topnav:
         textbutton "Tools" action nav.TopPage("tool1")
         textbutton "Distribute" action Return(None)
         
-        textbutton "Launch":
-            xfill True
-            action None
-            xalign 1.0
+    textbutton "Launch":
+        style "command_button"
+
+        text_font "DejaVuSans-ExtraLight.ttf"
+        text_size 18
+
+        xalign 1.0
+        xmargin 5
+        ymargin 5
+
+        action Return(None)
 
 screen secnav_welcome:
 
