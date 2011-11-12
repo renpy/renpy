@@ -47,7 +47,6 @@ init python in styles:
     style.topnav_button_text.font = "DejaVuSans-ExtraLight.ttf"
     style.topnav_button_text.size = 28
     style.topnav_button_text.kerning = -2
-    style.topnav_button_text.xalign = 1.0
     style.topnav_button_text.color = "#666"
     style.topnav_button_text.selected_color = "#000"
     style.topnav_button_text.insensitive_color = "#ddd"

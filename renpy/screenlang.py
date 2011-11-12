@@ -85,12 +85,12 @@ class Keyword(object):
     
     def __init__(self, name):
         self.name = name
-        self.style = False
 
         all_keyword_names.add(self.name) 
        
         if parser:
             parser.add(self)
+
         
 class Style(object):
     """
@@ -99,10 +99,24 @@ class Style(object):
 
     def __init__(self, name):
         self.name = name
-        self.style = True
 
         for j in renpy.style.prefix_subs:
             all_keyword_names.add(j + self.name)
+
+        if parser:
+            parser.add(self)
+
+
+class TextStyle(object):
+    """
+    This represents a style parameter to a function.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+        for j in renpy.style.prefix_subs:
+            all_keyword_names.add("text_" + j + self.name)
 
         if parser:
             parser.add(self)
@@ -147,6 +161,10 @@ class Parser(object):
             for j in renpy.style.prefix_subs:
                 self.keyword[j + i.name] = i
 
+        elif isinstance(i, TextStyle):
+            for j in renpy.style.prefix_subs:
+                self.keyword["text_" + j + i.name] = i
+                
         elif isinstance(i, Parser):
             self.children[i.name] = i
 
@@ -464,7 +482,7 @@ styles = [ ]
 all_statements = [ ]
 childbearing_statements = [ ]
 
-position_properties = [ Style(i) for i in [
+position_property_names = [
         "anchor",
         "xanchor",
         "yanchor",
@@ -486,9 +504,12 @@ position_properties = [ Style(i) for i in [
         # no center, since it can conflict with the center transform.
         "xcenter",
         "ycenter",        
-        ] ]
+        ]
 
-text_properties = [ Style(i) for i in [
+position_properties = [ Style(i) for i in position_property_names ]
+text_position_properties = [ TextStyle(i) for i in position_property_names ]
+
+text_property_names = [
         "antialias",
         "black_color",
         "bold",
@@ -522,7 +543,10 @@ text_properties = [ Style(i) for i in [
         "minimum",
         "xminimum",
         "yminimum",
-        ] ]
+        ]
+
+text_properties = [ Style(i) for i in text_property_names ]
+text_text_properties = [ TextStyle(i) for i in text_property_names ]
 
 window_properties = [ Style(i) for i in [
         "background",
@@ -721,6 +745,8 @@ add(ui_properties)
 add(position_properties)
 add(window_properties)
 add(button_properties)
+add(text_position_properties)
+add(text_text_properties)
 
 FunctionStatementParser("label", "ui.label", 0, scope=True)
 Positional("label")
@@ -728,6 +754,8 @@ Keyword("text_style")
 add(ui_properties)
 add(position_properties)
 add(window_properties)
+add(text_position_properties)
+add(text_text_properties)
 
 for name in [ "bar", "vbar" ]:
     FunctionStatementParser(name, "ui." + name, 0)    

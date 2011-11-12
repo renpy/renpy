@@ -592,6 +592,10 @@ the property:
     and the `style` property is a string, then ``"_text"`` is appended
     to that string to give the default text style.
     
+`text_`-
+   Other properties prefixed with text_ have this prefix stripped, and
+   are then passed to the text displayable.
+    
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -778,6 +782,10 @@ following properties:
     The name of the style to use for the button text. If not supplied,
     and the `style` property is a string, then ``"_text"`` is appended
     to that string to give the default text style.
+
+`text_`-
+   Other properties prefixed with text_ have this prefix stripped, and are
+   then passed to the text displayable.
     
 It also takes:
 

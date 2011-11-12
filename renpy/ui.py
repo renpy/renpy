@@ -734,16 +734,34 @@ def get_text_style(style, default):
 
 def textbutton(label, clicked=None, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
+    button_kwargs = { }
+    text_kwargs = { }
+
+    for k, v in kwargs.iteritems():
+        if k.startswith("text_"):
+            text_kwargs[k[5:]] = v
+        else:
+            button_kwargs[k] = v
+
     if style is None:
         style = style_group_style('button', NoStyleGroupGiven)
     
     if text_style is None:
         text_style = get_text_style(style, style_group_style('button_text', NoStyleGroupGiven))
         
-    button(style=style, clicked=clicked, **kwargs)
-    text(label, style=text_style, substitute=substitute, scope=scope)
+    button(style=style, clicked=clicked, **button_kwargs)
+    text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
 
 def label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
+
+    label_kwargs = { }
+    text_kwargs = { }
+
+    for k, v in kwargs.iteritems():
+        if k.startswith("text_"):
+            text_kwargs[k[5:]] = v
+        else:
+            label_kwargs[k] = v
 
     if style is None:
         style = style_group_style('label', NoStyleGroupGiven)
@@ -751,8 +769,8 @@ def label(label, style=None, text_style=None, substitute=True, scope=None, **kwa
     if text_style is None:
         text_style = get_text_style(style, style_group_style('label_text', NoStyleGroupGiven))
         
-    window(style=style, **kwargs)
-    text(label, style=text_style, substitute=substitute, scope=scope)
+    window(style=style, **label_kwargs)
+    text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
 
 adjustment = renpy.display.behavior.Adjustment
 
