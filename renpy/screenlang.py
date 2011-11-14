@@ -322,7 +322,7 @@ class FunctionStatementParser(Parser):
         # The line number of the current node.
         lineno = l.number
         
-        if layout_mode and self.nchildren is not many:
+        if layout_mode and self.nchildren == 0:
             l.error("The %s statement cannot be used as a layout." % self.name)
         
         func = self.parse_eval(self.function, lineno)        
@@ -391,15 +391,22 @@ class FunctionStatementParser(Parser):
         # The index of the child we're adding to this statement.
         child_index = 0
 
+        # A list of lexers we need to parse the contents of.
+        lexers = [ ]
+        
+        if block:
+            lexers.append(l.subblock_lexer())
+
+        if layout_mode:
+            lexers.append(l)
+
         # The variable we store the child's name in.
         with new_variable() as child_name:
 
-            old_l = l
+            # If we have a block, parse it. This also takes care of parsing the
+            # block of a has clause.
             
-            # If we have a block, then parse each line.
-            if block:
-
-                l = l.subblock_lexer()
+            for l in lexers:
                 
                 while l.advance():
 
@@ -443,23 +450,6 @@ class FunctionStatementParser(Parser):
                     while not l.eol():
                         parse_keyword(l)
 
-            l = old_l
-
-            if layout_mode:
-            
-                while l.advance():
-                    c = self.parse_statement(l, child_name)
-
-                    if c is not None:
-
-                        rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
-                        rv.extend(c)
-
-                        child_index += 1
-
-                    else:
-                        l.error("Expected a screen language statement.")
-                        
         if needs_close:
             rv.extend(self.parse_exec("ui.close()"))        
 
@@ -777,6 +767,7 @@ Keyword("mousewheel")
 Keyword("draggable")
 Keyword("xadjustment")
 Keyword("yadjustment")
+Keyword("scrollbars")
 add(ui_properties)
 add(position_properties)
 

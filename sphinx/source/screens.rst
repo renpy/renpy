@@ -912,7 +912,16 @@ following properties:
 `yadjustment`
     The :func:`ui.adjustment` used for the y-axis of the
     viewport. When omitted, a new adjustment is created.
-
+`scrollbars`
+    If not None, scrollbars are added allong with this viewport.
+    This works by creating a side layout, and placing the created
+    viewport in the center of the side. If `scrollbars` is "horizontal",
+    a horizontal scrollbar is placed beneath the viewport. If `scrollbars`
+    is "vertical", a vertical scrollbar is placed to the right of the
+    viewport. If `scrollbars` is "both", both horizontal and vertical
+    scrollbars are created.
+    
+    
 In addition, it takes the following groups of style properties:
 
 * :ref:`Common Properties <common-properties>`
@@ -1154,10 +1163,11 @@ may only be used inside a statement that takes one child. The keyword
 must be a statement that creates a container displayable, one that
 takes more than one child.
 
-The has statement changes the way in which the block that contains
-it is parsed. Child displayables created in that block are added to
-the container, rather than the parent displayable. Keyword arguments
-to the parent displayable are not allowed after the has statement.
+The has statement changes the way in which the block that contains it
+is parsed. Child displayables created in that block are added to the
+container, rather than the parent displayable. Keyword arguments to
+the parent displayable are not allowed after the has
+statement. Multiple has statements can be used in the same block.
 
 The has statement can be supplied as a child of the following
 statements:

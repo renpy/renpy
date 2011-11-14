@@ -5,9 +5,10 @@
 # module (as opposed to a .rpy file) because that allows us to ensure 
 # that it is fully loaded or run before any other Ren'Py code runs. 
 
+
+
 # These styles define the look of the Ren'Py in-game interface (the 
-# amie2 look). Despite being defined here (so they're available for 
-# error handling), they may be used in other code, like the launcher.
+# amie2-inspired look). They're also used in the launcher.
 init python:
     # default
     style._default = Style(None)
@@ -37,7 +38,7 @@ init python:
     style._default.text_y_fudge = 0
     style._default.first_indent = 0
     style._default.rest_indent = 0
-    style._default.line_spacing = 4
+    style._default.line_spacing = 0
     style._default.line_leading = 0
     style._default.line_overlap_split = 0
     style._default.layout = "tex"
@@ -97,16 +98,14 @@ init python:
     style._default.activate_sound = None
     style._default.clipping = False
 
-
-
     ##########################################################################
 
     # frame
     style._frame = Style(style._default)
-    style._frame.background = Frame("_theme_amie2/frame.png", 40, 40)
-    style._frame.xmargin = 10
-    style._frame.ymargin = 10
-    style._frame.xpadding = 20
+    style._frame.background = Frame("_theme_launcher/frame.png", 40, 40)
+    style._frame.xmargin = 0
+    style._frame.ymargin = 0
+    style._frame.xpadding = 15
     style._frame.ypadding = 10
 
     # text    
@@ -127,34 +126,34 @@ init python:
     # button
     style._button = Style(style._default)
     style._button_text = Style(style._default)
-    style._button.xpadding = 8
-    style._button.ypadding = 6
-    style._button.xoffset = -5
 
-    style._button.background = Frame("_theme_amie2/button.png", 10, 10)
-    style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
-    style._button_text.size = 16
-    style._button_text.color = "#111"
-    style._button_text.selected_color = "#11f"
-    style._button_text.xalign = 0.5
-    style._button_text.yoffset = 2
+    style._button.background = Frame("_theme_launcher/frame.png", 10, 10)
+    style._button.hover_background = Frame("_theme_launcher/hover_frame.png", 10, 10)
+    style._button.xpadding = 10
+    style._button.ypadding = 9
+    style._button.ymargin = 5
+
+    style._button_text.insensitive_color = "#ccc"
 
     # label
     style._label = Style(style._default)
     style._label_text = Style(style._default)
     
+    style._label.top_margin = 10
     style._label.bottom_margin = 5
-    style._label_text.size = 20
+
     style._label_text.color = "#000"
+    style._label_text.bold = True
     
     # bar
     style._bar = Style(style._default)
     style._scrollbar = Style(style._bar)
     style._vscrollbar = Style(style._bar)
 
-    style._bar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
-    style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
-    style._bar.thumb = Frame("_theme_amie2/button.png", 10, 10)
+    style._bar.left_bar = Frame("_theme_launcher/bar.png", 10, 10)
+    style._bar.right_bar = Frame("_theme_launcher/bar.png", 10, 10)
+    style._bar.thumb = Frame("_theme_launcher/frame.png", 10, 10)
+    style._bar.hover_thumb = Frame("_theme_launcher/hover_frame.png", 10, 10)
     style._bar.thumb_offset = 10
     style._bar.left_gutter = 5
     style._bar.right_gutter = 5
@@ -187,10 +186,8 @@ init python hide:
             line = int(line)
             
             renpy.launch_editor([ filename ], line)
-            
     
     style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
-
 
 init python:
 

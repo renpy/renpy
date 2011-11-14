@@ -11,6 +11,11 @@ The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take
 properties prefixed with ``text_``. These properties have the text_
 prefix stripped, and are then passed to the internal text displayable.
 
+The :ref:`sl-viewport` screen language statement now takes a `scrollbars`
+parameter. If given, scrollbars that manipulate the viewport are created.
+
+Screen language blocks may now contain multiple has statements.
+
 
 Ren'Py 6.13
 ===========

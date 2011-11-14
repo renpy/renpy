@@ -1,6 +1,6 @@
 image bg mugen = "bgs/mugen-park.jpg"
 
-init python:
+init -1 python:
     config.developer = True
     config.quit_action = Quit(confirm=False)
 

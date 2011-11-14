@@ -840,13 +840,58 @@ def _autobar(range, start, end, time, **properties):
 
 autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
-viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style='viewport')
+_viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style='viewport')
+
+def viewport(scrollbars=None, **properties):
+
+    if scrollbars is None:
+        return _viewport(**properties)
+
+    elif scrollbars == "vertical":
+        side("c r")
+        
+        rv = _viewport(**properties)
+        addable = stack.pop()
+        
+        vscrollbar(adjustment=rv.yadjustment)
+        close()
+
+        stack.append(addable)
+        
+        return rv
+        
+    elif scrollbars == "horizontal":
+        side("c b")
+        
+        rv = _viewport(**properties)
+        addable = stack.pop()
+        
+        scrollbar(adjustment=rv.xadjustment)
+        close()
+
+        stack.append(addable)
+        
+        return rv
+
+    else:
+    
+        side("c r b")
+        
+        rv = _viewport(**properties)
+        addable = stack.pop()
+        
+        vscrollbar(adjustment=rv.yadjustment)
+        scrollbar(adjustment=rv.xadjustment)
+        close()
+
+        stack.append(addable)
+        
+        return rv
+
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer, replaces=True)
-
 drag = Wrapper(renpy.display.dragdrop.Drag, replaces=True, one=True)
 draggroup = Wrapper(renpy.display.dragdrop.DragGroup, replaces=True, many=True)
-
 mousearea = Wrapper(renpy.display.behavior.MouseArea, replaces=True)
 
 
