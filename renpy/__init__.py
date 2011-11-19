@@ -108,7 +108,6 @@ def import_all():
     import renpy.loadsave #@UnresolvedImport
     import renpy.parser #@UnresolvedImport
     import renpy.python #@UnresolvedImport
-    import renpy.remote #@UnresolvedImport
     import renpy.script #@UnresolvedImport
     import renpy.statements #@UnresolvedImport
     import renpy.style #@UnresolvedImport

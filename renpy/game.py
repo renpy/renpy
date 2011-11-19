@@ -22,13 +22,6 @@
 # This module is intended to be used as a singleton object.
 # It's purpose is to store in one global all of the data that would
 # be to annoying to lug around otherwise. 
-#
-# Many modules will probablt want to import this using a command like:
-#
-# import renpy.game as game
-#
-# These modules will then be able to access the various globals defined
-# in this module as fields on game.
 
 import renpy.display
 
@@ -40,7 +33,7 @@ basepath = None
 searchpath = [ ]
 
 # The options that were read off the command line.
-options = None
+args = None
 
 # The game's script.
 script = None
@@ -340,6 +333,3 @@ if False:
     script = renpy.script.Script()
     interface = renpy.display.core.Interface()
     log = renpy.python.RollbackLog()
-    
-    
-    

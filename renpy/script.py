@@ -98,13 +98,10 @@ class Script(object):
         # we're loading.
         renpy.game.script = self
         
-        # A key that's used to lock the script file, should that
-        # prove necessary.
-        self.key = renpy.game.options.lock #@UndefinedVariable
-
-        if self.key is None:
-            if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
-                self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
+        if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
+            self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
+        else:
+            self.key = None
 
         self.namemap = { }
         self.all_stmts = [ ]
@@ -374,7 +371,7 @@ class Script(object):
             rpycdigest = f.read(md5.digest_size)
             f.close()
 
-            if rpydigest == rpycdigest and not renpy.game.options.compile: #@UndefinedVariable
+            if rpydigest == rpycdigest and not renpy.game.args.compile: #@UndefinedVariable
 
                 if self.load_file(dir, fn + compiled, initcode):
                     return

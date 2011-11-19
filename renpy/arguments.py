@@ -33,14 +33,14 @@ import renpy
 # The argument parser we use.
 parser = None
 
-def create_parser():
+def create_parser(add_help):
     """
     Creates a parser, and adds an initial set of arguments to it.
     """
     
     global parser
     
-    ap = parser = argparse.ArgumentParser()
+    ap = parser = argparse.ArgumentParser(add_help=add_help)
     
     ap.add_argument(
         "--version", action='version', version=renpy.version,
@@ -68,8 +68,8 @@ def create_parser():
         help="If present, Ren'Py will report the amount of time it takes to draw the screen.")
 
     ap.add_argument(
-        '--trace', dest='trace', action='count', default=0,
-        help="If present, Ren'Py will log a function call trace to trace.txt. Supply this twice for a more detailed trace.")
+        '--trace', dest='trace', action='store', default=0, type=int,
+        help="The level of trace Ren'Py will log to trace.txt. (1=per-call, 2=per-line)")
 
     ap.add_argument(
         '--log-startup', dest='log_startup', action='store_true', default=os.environ.get("RENPY_LOG_STARTUP", None),
@@ -79,11 +79,10 @@ def create_parser():
         "--log-image-cache", '--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
         help="If present, Ren'Py will log information regarding the contents of the image cache.")
 
-#    ap.add_argument(
-#        '--warp', dest='warp', default=None,
-#        help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
-#
-#
+    ap.add_argument(
+        '--warp', dest='warp', default=None,
+        help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
+
 #    op.add_option('--lint', dest='lint', default=False, action='store_true',
 #                  help='Run a number of expensive tests, to try to detect errors in the script.')
 #
@@ -100,7 +99,7 @@ def bootstrap():
     unknown arguments. Returns the parsed arguments, and a list of unknown arguments.
     """
     
-    create_parser()
+    create_parser(False)
     return parser.parse_known_args()
 
 def pre_init():
@@ -108,7 +107,7 @@ def pre_init():
     Called before init, to set up argument parsing.
     """
     
-    create_parser()
+    create_parser(True)
     
 def post_init():
     """
@@ -117,8 +116,12 @@ def post_init():
     if execution should continue and False otherwise. 
     """
     
-    args = parser.parse_args()    
-    renpy.game.args = args
+    args, rest = parser.parse_known_args()
+
+    if rest:
+        parser.error("Unknown argument: " + rest[0])
     
-    # TODO: Commands.
+    renpy.game.args = args
         
+    # TODO: Command handling.
+    

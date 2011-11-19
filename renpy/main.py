@@ -62,19 +62,20 @@ def run(restart):
 
     game.context().goto_label(start_label)
 
+    # OPTION
     # Perhaps warp.
-    if renpy.game.options.warp: #@UndefinedVariable
-        label = renpy.warp.warp(renpy.game.options.warp) #@UndefinedVariable
-
-        renpy.game.options.warp = None
-
-        if not label:
-            raise Exception("Could not find line to warp to.")
-
-        game.context().goto_label(label)
-
-        if game.script.has_label('after_warp'):
-            game.context().call('after_warp')
+#    if renpy.game.options.warp: #@UndefinedVariable
+#        label = renpy.warp.warp(renpy.game.options.warp) #@UndefinedVariable
+#
+#        renpy.game.options.warp = None
+#
+#        if not label:
+#            raise Exception("Could not find line to warp to.")
+#
+#        game.context().goto_label(label)
+#
+#        if game.script.has_label('after_warp'):
+#            game.context().call('after_warp')
 
     # Run the game.
     while True:
@@ -190,9 +191,8 @@ def main():
         
     renpy.config.archives.reverse()
 
-
     # Note the profile option.
-    if renpy.game.options.profile: #@UndefinedVariable
+    if renpy.game.args.profile: #@UndefinedVariable
         renpy.config.profile = True
 
     # Initialize archives.
@@ -226,8 +226,8 @@ def main():
     if renpy.config.savedir is None:
         renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
 
-    if renpy.game.options.savedir: #@UndefinedVariable
-        renpy.config.savedir = renpy.game.options.savedir #@UndefinedVariable
+    if renpy.game.args.savedir: #@UndefinedVariable
+        renpy.config.savedir = renpy.game.args.savedir #@UndefinedVariable
     
     # Make the save directory.
     try:
@@ -235,14 +235,15 @@ def main():
     except:
         pass
 
+    # OPTION
     # Perhaps delete the persistent data and exit.
-    if renpy.game.options.rmpersistent: #@UndefinedVariable
-        try:
-            os.unlink(renpy.config.savedir + "/persistent")
-        except:
-            pass
-
-        return
+#    if renpy.game.options.rmpersistent: #@UndefinedVariable
+#        try:
+#            os.unlink(renpy.config.savedir + "/persistent")
+#        except:
+#            pass
+#
+#        return
     
     # Unserialize the persistent data.
     try:
@@ -316,16 +317,18 @@ def main():
     renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
     renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
     renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
-    
-    if renpy.game.options.compile: #@UndefinedVariable
-        return
 
-    if renpy.game.options.lint: #@UndefinedVariable
-        try:
-            renpy.lint.lint()
-            return
-        except:
-            raise
+    # OPTION    
+#    if renpy.game.options.compile: #@UndefinedVariable
+#        return
+
+    # OPTION
+#    if renpy.game.options.lint: #@UndefinedVariable
+#        try:
+#            renpy.lint.lint()
+#            return
+#        except:
+#            raise
 
     # Remove the list of all statements from the script.
     game.script.all_stmts = None
