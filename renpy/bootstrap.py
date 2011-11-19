@@ -1,4 +1,4 @@
-# 2004-2008 PyTom <pytom@bishoujo.us>
+# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,7 @@ import os.path
 import sys
 import cStringIO
 import platform
+
 
 # Extra things used for distribution.
 def extra_imports():
@@ -132,89 +133,28 @@ def bootstrap(renpy_base):
     if name.find(".") != -1:
         name = name[:name.find(".")]
 
-    op = optparse.OptionParser()
+    # Parse the arguments.
+    import renpy.arguments
+    args, rest_args = renpy.arguments.bootstrap()
 
-    op.add_option('--arg', dest='args', default=[], action='append',
-                  help='Append an argument to a list that can be accessed as config.args.')
-
-    op.add_option('--version', dest='version', default=False, action='store_true',
-                  help="Display the version of Ren'Py")
-
-    op.add_option('--game', dest='game', default=None,
-                  help='The directory the game is in.')
-
-    op.add_option("--savedir", dest='savedir', default=None, action='store',
-                  help='The directory in which to save data. Defaults to the saves directory under the game directory.')
-
-    op.add_option('--lock', dest='lock', default=None, action='store',
-                  help=optparse.SUPPRESS_HELP)
-
-    op.add_option('--python', dest='python', default=None,
-                  help=optparse.SUPPRESS_HELP)
-
-    op.add_option('--compile', dest='compile', default=False, action='store_true',
-                  help="Causes Ren'Py to compile all .rpy files to .rpyc files, and then quit.")
-
-    op.add_option('--lint', dest='lint', default=False, action='store_true',
-                  help='Run a number of expensive tests, to try to detect errors in the script.')
-
-    op.add_option('--profile', dest='profile', action='store_true', default=False,
-                  help='Causes the amount of time it takes to draw the screen to be profiled.')
-
-    op.add_option('--trace', dest='trace', action='count', default=0,
-                  help='Dump internal trace data to trace.txt. Use twice to dump in absurd detail.')
-    
-    op.add_option('--leak', dest='leak', action='store_true', default=False,
-                  help=optparse.SUPPRESS_HELP)
-
-    op.add_option('--warp', dest='warp', default=None,
-                  help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
-
-    op.add_option('--remote', dest='remote', action='store_true',
-                  help="Allows Ren'Py to be fed commands on stdin.")
-
-    op.add_option('--rmpersistent', dest='rmpersistent', action='store_true',
-                  help="Deletes the persistent data, and exits.")
-
-    op.add_option('--presplash', dest='presplash', default=None,
-                  help="Used internally to display the presplash screen.")
-
-    op.add_option('--log-startup', dest='log_startup', action='store_true', default=os.environ.get("RENPY_LOG_STARTUP", None),
-                  help="Causes Ren'Py to log startup timings to its log.")
-
-    op.add_option('--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
-                  help="Causes Ren'Py to log startup timings to its log.")
-                  
-    options, args = op.parse_args()
-
-    if options.presplash:
+    # Since we don't have time to fully initialize before running the presplash
+    # command, handle it specially.
+    if len(rest_args) == 2 and rest_args[0] == "presplash":
         import renpy.display.presplash
-        renpy.display.presplash.show(options.presplash)
+        renpy.display.presplash.show(rest_args[1])
     
-    if options.trace:
-        enable_trace(options.trace)
-    
-    if options.python:
-        import __main__
-        sys.argv = [ options.python ] + args
-        execfile(options.python, __main__.__dict__, __main__.__dict__)
-        sys.exit(0)
+    if args.trace:
+        enable_trace(args.trace)
 
-    args = list(args)
-            
-    if len(args) >= 1:
-        basedir = os.path.abspath(args[0])
+    if args.basedir:
+        basedir = os.path.abspath(args.basedir)
     else:
         basedir = renpy_base
-        
-    # If we made it this far, we will be running the game, or at least
-    # doing a lint.
-
-    # os.chdir(renpy_base)
+    
 
     # Look for the game directory.
-    if options.game:
-        gamedir = options.game
+    if args.gamedir:
+        gamedir = args.gamedir
 
     else:
         gamedirs = [ name ]
@@ -243,36 +183,32 @@ def bootstrap(renpy_base):
     sys.path.insert(0, basedir)
             
     # Force windib on windows, unless the user explicitly overrides.
-    if hasattr(sys, 'winver') and not 'SDL_VIDEODRIVER' in os.environ:
+    if renpy.windows and not 'SDL_VIDEODRIVER' in os.environ:
         os.environ['SDL_VIDEODRIVER'] = 'windib'
 
-    # Show the presplash.
-    if not options.lint and not options.compile and not options.version and not options.rmpersistent:
+    # If we're not given a command, show the presplash.
+    if not rest_args:
         import renpy.display.presplash #@Reimport
-        renpy.display.presplash.start(gamedir)
+        renpy.display.presplash.start(basedir, gamedir)
 
     # If we're on a mac, install our own os.start.
-    if sys.platform == "darwin":
+    if renpy.macintosh:
         os.startfile = mac_start
         
-    # Load up all of Ren'Py, in the right order.
+    # Import the rest of Ren'Py.
     import renpy #@Reimport
     renpy.import_all()
-
-    if options.version:
-        print renpy.version
-        sys.exit(0)
 
     keep_running = True
 
     try:
         while keep_running:
             try:
-                renpy.game.options = options    
+                renpy.game.args = args
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
-                renpy.config.args = options.args
+                renpy.config.args = [ ]
 
                 renpy.main.main()
                 keep_running = False
@@ -318,9 +254,6 @@ def bootstrap(renpy_base):
         # __del__ method during shutdown.
         import subprocess # W0403
         subprocess.Popen.__del__ = popen_del # E1101
-
-        if options.leak:
-            memory_profile()
 
 def report_line(out, filename, line, what):
     out.write('  File "%s", line %d, in %s\n' % (filename, line, what))
@@ -450,29 +383,3 @@ def report_exception(e, editor=True):
         pass
 
     return simple.decode("utf-8"), full.decode("utf-8")
-
-
-def memory_profile():
-
-    print "Memory Profile"
-    print
-    print "Showing all objects in memory at program termination."
-    print
-
-    import gc
-    gc.collect()
-
-    objs = gc.get_objects()
-
-    c = { } # count
-
-    for i in objs:
-        t = type(i)
-        c[t] = c.get(t, 0) + 1
-
-    results = [ (count, ty) for ty, count in c.iteritems() ]
-    results.sort()
-
-    for count, ty in results:
-        print count, str(ty)
-

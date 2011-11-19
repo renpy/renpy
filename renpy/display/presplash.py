@@ -30,7 +30,7 @@ proc = None
 # we're even doing presplash, and if so what will be shown to the
 # user. If it decides to show something to the user, uses subprocess
 # to actually handle the showing.
-def start(gamedir):
+def start(basedir, gamedir):
     import os.path
 
     if "RENPY_LESS_UPDATES" in os.environ:
@@ -51,9 +51,9 @@ def start(gamedir):
         import sys
 
         if sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE) # W0631
+            proc = subprocess.Popen([sys.argv[0], basedir, "presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE) # W0631
+            proc = subprocess.Popen([sys.executable, sys.argv[0], basedir, "presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
         pass
             

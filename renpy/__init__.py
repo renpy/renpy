@@ -67,6 +67,8 @@ def import_cython():
     grab the various cython modules.
     """
 
+    import renpy.arguments #@UnresolvedImport
+
     import renpy.display.accelerator #@UnresolvedImport
     import renpy.display.render #@UnresolvedImport
 
