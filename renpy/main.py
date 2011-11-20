@@ -29,7 +29,7 @@ from cPickle import loads, dumps
 import __main__
 
 def save_persistent():
-
+    
     try:
         f = file(renpy.config.savedir + "/persistent", "wb")
         f.write(dumps(game.persistent).encode("zlib"))
@@ -62,20 +62,19 @@ def run(restart):
 
     game.context().goto_label(start_label)
 
-    # OPTION
     # Perhaps warp.
-#    if renpy.game.options.warp: #@UndefinedVariable
-#        label = renpy.warp.warp(renpy.game.options.warp) #@UndefinedVariable
-#
-#        renpy.game.options.warp = None
-#
-#        if not label:
-#            raise Exception("Could not find line to warp to.")
-#
-#        game.context().goto_label(label)
-#
-#        if game.script.has_label('after_warp'):
-#            game.context().call('after_warp')
+    if renpy.game.args.warp: #@UndefinedVariable
+        label = renpy.warp.warp(renpy.game.args.warp) #@UndefinedVariable
+
+        renpy.game.args.warp = None
+
+        if not label:
+            raise Exception("Could not find line to warp to.")
+
+        game.context().goto_label(label)
+
+        if game.script.has_label('after_warp'):
+            game.context().call('after_warp')
 
     # Run the game.
     while True:
@@ -153,6 +152,9 @@ def choose_variants():
 def main():
 
     renpy.game.exception_info = 'Before loading the script.'
+
+    # Get ready to accept new arguments.
+    renpy.arguments.pre_init()
 
     # Init the config after load.
     renpy.config.init()
@@ -318,17 +320,9 @@ def main():
     renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
     renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
 
-    # OPTION    
-#    if renpy.game.options.compile: #@UndefinedVariable
-#        return
-
-    # OPTION
-#    if renpy.game.options.lint: #@UndefinedVariable
-#        try:
-#            renpy.lint.lint()
-#            return
-#        except:
-#            raise
+    # Handle arguments and commands. 
+    if not renpy.arguments.post_init():
+        return
 
     # Remove the list of all statements from the script.
     game.script.all_stmts = None

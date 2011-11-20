@@ -33,6 +33,12 @@ import renpy
 # The argument parser we use.
 parser = None
 
+# The subparsers object.
+subparser = None
+
+# The unknown arguments from the initial parse.
+rest = [ ]
+
 def create_parser(add_help):
     """
     Creates a parser, and adds an initial set of arguments to it.
@@ -83,15 +89,49 @@ def create_parser(add_help):
         '--warp', dest='warp', default=None,
         help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
-#    op.add_option('--lint', dest='lint', default=False, action='store_true',
-#                  help='Run a number of expensive tests, to try to detect errors in the script.')
-#
-#    op.add_option('--remote', dest='remote', action='store_true',
-#                  help="Allows Ren'Py to be fed commands on stdin.")
-#
 #    op.add_option('--rmpersistent', dest='rmpersistent', action='store_true',
 #                  help="Deletes the persistent data, and exits.")
 
+    # ap.set_defaults(function=None)
+
+
+def quit(args): #@ReservedAssignment
+    """
+    This command is used to quit without doing anything.
+    """
+    
+    return False
+
+def rmpersistent(args):
+    """
+    This command is used to delete the persistent data.
+    """
+
+    try:
+        os.unlink(renpy.config.savedir + "/persistent")
+    except:
+        pass
+
+    return False
+
+
+def register_command(name, function, **kwargs):
+    """
+    Registers a command that can be invoked when Ren'Py is run on the command
+    line. When the command is run, `function` is called with an arguments object.
+    If it returns true, normal execution continues. Otherwise, Ren'Py terminates.
+    
+    This function returns a ArgumentParser object that arguments can be added 
+    to.
+    
+    Additional keyword arguments are passed to the parser creation call, so
+    help for the command can be supplied.
+    """
+    
+    ap = subparsers.add_parser(name, **kwargs)
+    ap.set_defaults(function=function)
+    
+    return ap
 
 def bootstrap():
     """
@@ -99,15 +139,26 @@ def bootstrap():
     unknown arguments. Returns the parsed arguments, and a list of unknown arguments.
     """
     
+    global rest
+    
     create_parser(False)
-    return parser.parse_known_args()
+    args, rest = parser.parse_known_args()
+    return args, rest
 
 def pre_init():
     """
     Called before init, to set up argument parsing.
     """
     
+    global subparsers    
+
     create_parser(True)
+    subparsers = parser.add_subparsers()
+    
+    register_command("lint", renpy.lint.lint, help="Check the project for potential errors.")
+    register_command("quit", quit, help="Quit without doing anything. Use with --compile to recompile from a script.")
+    register_command("rmpersistent", rmpersistent, help="Delete the persistent data.")
+    
     
 def post_init():
     """
@@ -116,12 +167,15 @@ def post_init():
     if execution should continue and False otherwise. 
     """
     
-    args, rest = parser.parse_known_args()
-
-    if rest:
-        parser.error("Unknown argument: " + rest[0])
+    # In this case, we have no subcommand.
+    if not rest:
+        return True
     
+    # Re-parse the arguments.
+    args = parser.parse_args()
     renpy.game.args = args
         
-    # TODO: Command handling.
+    # Call the subcommand.
+    return args.function(args)
+
     

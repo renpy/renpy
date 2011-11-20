@@ -466,7 +466,7 @@ def humanize(n):
     return ''.join(rv)
 
         
-def lint():
+def lint(args):
     """
     The master lint function, that's responsible for staging all of the
     other checks.
@@ -566,3 +566,6 @@ def lint():
         
     print "Lint is not a substitute for thorough testing. Remember to update Ren'Py"
     print "before releasing. New releases fix bugs and improve compatibility."
+
+    return False
+
