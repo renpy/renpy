@@ -71,13 +71,13 @@ init python in styles:
     style.secnav_button_text = Style(style.launcher_button_text)
     style.secnav_button_text.size = 14
     
-    # Main frame.
-    style.main_frame = Style(style._frame)
-    style.main_frame.top_margin = 55
-    style.main_frame.yfill = False
-    style.main_frame.xfill = False
-    style.main_frame.xalign = 0.6
-    style.main_frame.xminimum = 500
+    # Page frame.
+    style.page = Style(style._frame)
+    style.page.top_margin = 55
+    style.page.yfill = False
+    style.page.xfill = False
+    style.page.xalign = 0.6
+    style.page.xminimum = 500
 
     # Link buttons.
     style.link = Style(style._default)
@@ -115,3 +115,15 @@ init 10:
                 text_align 0.5
     
         timer 1.625 action Hide('notify')
+
+# A screen that is shown when an error occurs. It takes two parameters:
+#
+# message: The message to show to the user.
+# action: The action to take when the error is dismissed.     
+screen error:
+
+    frame:
+        label "Error"
+        text "[message]" 
+        
+        textbutton "Dismiss" action action

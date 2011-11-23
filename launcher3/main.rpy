@@ -10,7 +10,7 @@ label start:
     show screen topnav
     
     python:
-        nav.show_page("projects")
+        page.open("projects")
         ui.interact()
     
     

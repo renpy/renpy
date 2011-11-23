@@ -158,6 +158,7 @@ def pre_init():
     register_command("lint", renpy.lint.lint, help="Check the project for potential errors.")
     register_command("quit", quit, help="Quit without doing anything. Use with --compile to recompile from a script.")
     register_command("rmpersistent", rmpersistent, help="Delete the persistent data.")
+    register_command("jsondump", renpy.jsondump.command, help="Dump information about the game to navigate.json.")
     
     
 def post_init():

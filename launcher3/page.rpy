@@ -1,8 +1,15 @@
-init -10 python in nav:
+# Management of "pages" - major modes of the launcher. This handles defining
+# pages, changing the current page, and showing / hinding the page.
+
+init -10 python in page:
     
     from store import renpy, Action, MoveTransition, MoveIn, MoveOut
     
-    # The screen that's currently showing.
+    # True if the current page is being shown. False if it's being hidden.
+    showing = False
+    
+    # The name of the currently selected page that's currently showing. This
+    # 
     current = None
     
     # The secondary navigation screen that's currently showing.
@@ -29,7 +36,7 @@ init -10 python in nav:
         enter_factory=MoveIn((0.0, None, 1.0, None)), 
         leave_factory=MoveOut((1.0, None, 0.0, None)))
     
-    def page(screen, secondary):
+    def define(screen, secondary):
         """
         Defines a page we can navigate to. `Screen` is the screen corresponding
         to that page, while secondary is the secondary navigation page to show
@@ -39,9 +46,18 @@ init -10 python in nav:
         screens.append(screen)
         screen_secondary[screen] = "secnav_" + secondary
         
-    def show_page(screen):
+    def open(screen):
+        """
+        Changes the page that we're showing.
+        """
+    
         global current
         global secondary
+        global showing
+
+        if not showing:
+            current = None
+            showing = True
         
         if current == screen:
             return
@@ -77,7 +93,28 @@ init -10 python in nav:
         secondary = new_secondary
             
         
-    class TopPage(Action):
+    def show():
+        """
+        Shows the current page, if it's not showing already. 
+        """
+        
+        global showing
+        showing = True
+        
+        renpy.show_screen(current)
+        
+    def hide():
+        """
+        Hides the curent page.
+        """
+        
+        global showing
+        showing = False
+        
+        renpy.hide_screen(current)
+        
+        
+    class Primary(Action):
         """
         An action that causes the user to be navigated to the named page.
         This should be used in the top navigation bar. 
@@ -88,13 +125,13 @@ init -10 python in nav:
             self.secondary = screen_secondary[self.screen]
         
         def __call__(self):
-            show_page(self.screen)
+            open(self.screen)
             
         def get_selected(self):
             return secondary == self.secondary
 
             
-    class SecPage(Action):
+    class Secondary(Action):
         """
         An action that causes the user to be navigated to the named page. 
         This should be used in the secondary navigation bar.
@@ -104,7 +141,37 @@ init -10 python in nav:
             self.screen = page
             
         def __call__(self):
-            show_page(self.screen)
+            open(self.screen)
             
         def get_selected(self):
             return current == self.screen
+
+# The top navigation screen.
+screen topnav:
+    zorder 100
+
+    frame:
+        style_group "topnav"
+
+        has hbox
+        
+        textbutton "Ren'Py" action page.Primary("projects")
+        
+    textbutton "Launch":
+        style_group ""
+        style "_button"
+        text_font "DejaVuSans-ExtraLight.ttf"
+        text_size 25
+        text_kerning -1.5
+
+        xalign 1.0
+        top_margin 2
+
+        action project.Launch()
+
+init python:
+    page.define("projects", "renpy")
+    page.define("settings", "renpy")
+
+            
+            

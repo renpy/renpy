@@ -193,8 +193,10 @@ def import_all():
     import renpy.exports #@UnresolvedImport
     import renpy.character # depends on exports. @UnresolvedImport
 
+    import renpy.jsondump #@UnresolvedImport
+
     import renpy.config # depends on lots. @UnresolvedImport
-    import renpy.minstore # depends on lots.
+    import renpy.minstore # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
     import renpy.main #@UnresolvedImport
 
