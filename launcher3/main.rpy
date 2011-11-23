@@ -11,6 +11,13 @@ label start:
     
     python:
         page.open("projects")
+
+label main:
+    
+    python:
+        page.hide_overlay()
         ui.interact()
+    
+    jump main
     
     

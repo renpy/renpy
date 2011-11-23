@@ -76,8 +76,51 @@ screen settings:
         style_group ""
         style "page"
 
+        has vbox
+        
+        label "Settings"
+        
+        textbutton "Test" action Jump("test")
+
         text "Settings page."
         
+        
+screen p1:
+    frame:
+        style_group ""
+        style "page"
+        
+        label "Page 1"
+
+screen p2:
+    frame:
+        style_group ""
+        style "page"
+        
+        label "Page 2"
+
+screen p3:
+    frame:
+        style_group ""
+        style "page"
+        
+        label "Page 3"
+
+
+label test:
+    $ page.overlay("p1")
+    pause
+    
+    $ page.overlay("p2")
+    pause
+    
+    $ page.overlay("p3")
+    pause
+    
+    $ print "Jump to main!"
+    
+    jump main
+
 
 
 # Projects directory handling.
@@ -120,7 +163,6 @@ label choose_projects_directory:
         else:
 
             try:
-
                 env = os.environ.copy()
     
                 if 'RENPY_OLD_LD_LIBRARY_PATH' in env:

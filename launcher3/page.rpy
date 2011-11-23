@@ -4,12 +4,12 @@
 init -10 python in page:
     
     from store import renpy, Action, MoveTransition, MoveIn, MoveOut
-    
-    # True if the current page is being shown. False if it's being hidden.
-    showing = False
-    
-    # The name of the currently selected page that's currently showing. This
-    # 
+
+    # The name of an overlay page that is open instead of the currently
+    # selected page.
+    current_overlay = None
+
+    # The name of the currently selected page that's currently showing.
     current = None
     
     # The secondary navigation screen that's currently showing.
@@ -52,13 +52,14 @@ init -10 python in page:
         """
     
         global current
+        global current_overlay
         global secondary
-        global showing
 
-        if not showing:
-            current = None
-            showing = True
-        
+        if current_overlay is not None:
+            renpy.hide_screen(current_overlay)
+            renpy.show_screen(current)
+            current_overlay = None
+
         if current == screen:
             return
             
@@ -75,7 +76,6 @@ init -10 python in page:
                 trans = left_to_right
         
             renpy.transition(trans, layer="screens")
-
             renpy.hide_screen(current)
             
         renpy.show_screen(screen)
@@ -92,27 +92,34 @@ init -10 python in page:
         renpy.show_screen(new_secondary)
         secondary = new_secondary
             
-        
-    def show():
+    def overlay(screen, **kwargs):
         """
-        Shows the current page, if it's not showing already. 
-        """
-        
-        global showing
-        showing = True
-        
-        renpy.show_screen(current)
-        
-    def hide():
-        """
-        Hides the curent page.
+        Shows an overlay page.
         """
         
-        global showing
-        showing = False
+        global current_overlay
         
-        renpy.hide_screen(current)
+        if current_overlay is not None:
+            renpy.hide_screen(current_overlay)
+        else:
+            renpy.hide_screen(current)
+
+        renpy.show_screen(screen, **kwargs)
+        current_overlay = screen
+
+    def hide_overlay():
+        """
+        Hides the overlay page.
+        """
+
+        global current_overlay
         
+        if current_overlay is not None:
+            renpy.hide_screen(current_overlay)
+            renpy.show_screen(current)
+            current_overlay = None
+            
+        return
         
     class Primary(Action):
         """
