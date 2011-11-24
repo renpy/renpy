@@ -60,12 +60,9 @@ init python in project:
         """
         
         def __init__(self):
-           
+
            # The projects directory.
-           self.projects_directory = persistent.projects_directory
-            
-           if self.projects_directory and not os.path.isdir(self.projects_directory):
-               self.projects_directory = None
+           self.projects_directory = ""
            
            # Normal projects, in alpabetical order by lowercase name.
            self.projects = [ ]
@@ -79,12 +76,18 @@ init python in project:
            # Directories that have been scanned.
            self.scanned = set()
            
-           self.scan_projects()
+           self.scan()
            
-        def scan_projects(self):
+        def scan(self):
             """
             Scans for projects.
             """
+           
+            # The projects directory.
+            self.projects_directory = persistent.projects_directory
+            
+            if self.projects_directory is None or not os.path.isdir(self.projects_directory):
+                self.projects_directory = persistent.projects_directory = os.path.dirname(config.renpy_base)
            
             self.projects = [ ]
             self.templates = [ ]
@@ -156,12 +159,10 @@ init python in project:
                     
             return None
                 
-                
     manager = ProjectManager()            
 
     # The current project.
     current = None
-    
 
     # Actions
     class Select(Action):
@@ -206,3 +207,58 @@ init python in project:
         def __call__(self):
             self.project.launch()
             renpy.notify("Launching {0}...".format(self.project.name))
+
+
+###############################################################################
+# Code to choose the projects directory.
+            
+screen choose_projects_directory:
+    
+    frame:
+        style "page"
+        style_group ""
+        
+        label "Choose projects directory"    
+        text "Please choose the directory containing your projects."
+
+label choose_projects_directory:
+    
+    python hide:
+
+        page.overlay("choose_projects_directory")
+        
+        path = persistent.projects_directory
+        
+        if EasyDialogs:
+
+            choice = EasyDialogs.AskFolder(defaultLocation=path, wanted=str)
+            if choice is not None:
+                path = choice                
+
+        else:
+
+            try:
+                env = os.environ.copy()
+    
+                if 'RENPY_OLD_LD_LIBRARY_PATH' in env:
+                    env['LD_LIBRARY_PATH'] = env['RENPY_OLD_LD_LIBRARY_PATH']
+                
+                zen = subprocess.Popen(
+                    [ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + path ],
+                    env=env, stdout=subprocess.PIPE)
+
+                choice = zen.stdout.read()        
+                zen.wait()
+
+                if choice:
+                    path = choice[:-1]
+            
+            except:
+                path = None
+                page.warning(_(u"Could not run zenity to choose the path.\n\nThe projects directory has been set to the parent of the Ren'Py directory."))
+
+        persistent.projects_directory = path                    
+        project.manager.scan()
+        
+    jump main
+    

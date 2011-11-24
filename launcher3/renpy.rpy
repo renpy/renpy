@@ -78,21 +78,15 @@ screen settings:
 
         has vbox
         
-        label "Settings"
+        label "My Projects"
         
-        textbutton "Test" action Jump("test")
-
-        text "Settings page."
+        textbutton "Select 'My Projects' directory" action Jump("choose_projects_directory")
         
-        textbutton "Choose pantyshots?":
+        label "Launcher Settings"
+        
+        textbutton "Launcher uses transitions":
             style "checkbox"
-            action ToggleField(persistent, "test")
-
-        textbutton "Choose pantyshots?":
-            style "checkbox"
-            action ToggleField(persistent, "test")
-
-
+            action ToggleField(persistent, "launcher_uses_transitions")
 
 # Projects directory handling.
 
@@ -109,50 +103,6 @@ init python:
         except:
             EasyDialogs = None
 
-screen choose_projects_directory:
-    
-    frame:
-        label "Choose projects directory."    
-        text "Please choose the directory containing your projects."
-
-label choose_projects_directory:
-    
-    show screen choose_projects_directory
-    pause 0
-    hide screen choose_projects_directory
-            
-    python hide:
-        
-        path = persistent.projects_directory
-        
-        if EasyDialogs:
-
-            choice = EasyDialogs.AskFolder(defaultLocation=path, wanted=str)
-            if choice is not None:
-                path = choice                
-
-        else:
-
-            try:
-                env = os.environ.copy()
-    
-                if 'RENPY_OLD_LD_LIBRARY_PATH' in env:
-                    env['LD_LIBRARY_PATH'] = env['RENPY_OLD_LD_LIBRARY_PATH']
-                
-                zen = subprocess.Popen(
-                    [ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + path ],
-                    env=env, stdout=subprocess.PIPE)
-
-                choice = zen.stdout.read()        
-                zen.wait()
-
-                if choice:
-                    path = choice[:-1]
-            
-            except:
-                error(_(u"Could not run zenity. The projects directory has been set to the directory immediately above the directory containing Ren'Py."), None)
-
-        persistent.projects_directory = path                    
     
     
     

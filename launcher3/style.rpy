@@ -91,8 +91,8 @@ init python in styles:
     style.checkbox = Style(style._default)
     style.checkbox.background = "_theme_launcher/bar.png"
     style.checkbox.hover_background = "_theme_launcher/hover_bar.png"
-    style.checkbox.background = "_theme_launcher/check.png"
-    style.checkbox.hover_background = "_theme_launcher/hover_check.png"
+    style.checkbox.selected_background = "_theme_launcher/check.png"
+    style.checkbox.selected_hover_background = "_theme_launcher/hover_check.png"
     style.checkbox.left_padding = 25
     style.checkbox.top_padding = 5
     
@@ -125,14 +125,3 @@ init 10:
     
         timer 1.625 action Hide('notify')
 
-# A screen that is shown when an error occurs. It takes two parameters:
-#
-# message: The message to show to the user.
-# action: The action to take when the error is dismissed.     
-screen error:
-
-    frame:
-        label "Error"
-        text "[message]" 
-        
-        textbutton "Dismiss" action action

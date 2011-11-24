@@ -3,7 +3,7 @@
 
 init -10 python in page:
     
-    from store import renpy, Action, MoveTransition, MoveIn, MoveOut
+    from store import renpy, Action, MoveTransition, MoveIn, MoveOut, Dissolve, persistent
 
     # The name of an overlay page that is open instead of the currently
     # selected page.
@@ -75,7 +75,12 @@ init -10 python in page:
             else:
                 trans = left_to_right
         
-            renpy.transition(trans, layer="screens")
+            # TODO: Fix the above transitions.
+            trans = Dissolve(.25, alpha=True)
+        
+            if persistent.launcher_uses_transitions:
+                renpy.transition(trans, layer="screens")
+    
             renpy.hide_screen(current)
             
         renpy.show_screen(screen)
@@ -153,6 +158,25 @@ init -10 python in page:
         def get_selected(self):
             return current == self.screen
 
+    def error(message):
+        """
+        Displays an error message to the user, and then returns to main
+        loop.
+        """
+        
+        overlay("error", message=message)
+
+    def warning(message):
+        """
+        Displays a warning message that the user can dismiss.
+        """
+        
+        overlay("warning", message=message)
+        ui.interact()
+        
+    if persistent.launcher_uses_transitions is None:
+        persistent.launcher_uses_transitions = True
+
 # The top navigation screen.
 screen topnav:
     zorder 100
@@ -175,6 +199,31 @@ screen topnav:
         top_margin 2
 
         action project.Launch()
+
+# The error handling screen.
+screen error:
+
+    frame:
+        style "page"
+        style_group ""
+
+        label "Error"
+        text "[message]" 
+        
+        textbutton "Ok" action Jump("main")
+
+# The warning screen.
+screen warning:
+
+    frame:
+        style "page"
+        style_group ""
+    
+        label "Warning"
+        text "[message]"
+        
+        textbutton "Ok" action Return(True)
+
 
 init python:
     page.define("projects", "renpy")
