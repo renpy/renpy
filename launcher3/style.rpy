@@ -86,6 +86,15 @@ init python in styles:
     style.link_text = Style(style._default)
     style.link_text.color = "#44c"
     style.link_text.hover_underline = True
+
+    # Checkbox buttons.
+    style.checkbox = Style(style._default)
+    style.checkbox.background = "_theme_launcher/bar.png"
+    style.checkbox.hover_background = "_theme_launcher/hover_bar.png"
+    style.checkbox.background = "_theme_launcher/check.png"
+    style.checkbox.hover_background = "_theme_launcher/hover_check.png"
+    style.checkbox.left_padding = 25
+    style.checkbox.top_padding = 5
     
 init 10:                   
 

@@ -84,42 +84,13 @@ screen settings:
 
         text "Settings page."
         
-        
-screen p1:
-    frame:
-        style_group ""
-        style "page"
-        
-        label "Page 1"
+        textbutton "Choose pantyshots?":
+            style "checkbox"
+            action ToggleField(persistent, "test")
 
-screen p2:
-    frame:
-        style_group ""
-        style "page"
-        
-        label "Page 2"
-
-screen p3:
-    frame:
-        style_group ""
-        style "page"
-        
-        label "Page 3"
-
-
-label test:
-    $ page.overlay("p1")
-    pause
-    
-    $ page.overlay("p2")
-    pause
-    
-    $ page.overlay("p3")
-    pause
-    
-    $ print "Jump to main!"
-    
-    jump main
+        textbutton "Choose pantyshots?":
+            style "checkbox"
+            action ToggleField(persistent, "test")
 
 
 
