@@ -274,7 +274,7 @@ def draw_special(what, dest, x, y):
     
         bottom = what.children[0][0].render_to_texture(True)
         top = what.children[1][0].render_to_texture(True)
-        
+                
         if what.operation_alpha:
             target = surface(w, h, True)
         else:
@@ -479,7 +479,7 @@ def draw(dest, clip, what, xo, yo, screen):
             dest = dest.subsurface((x, y, width, height))
         
     # Deal with alpha and transforms by passing them off to draw_transformed.
-    if what.alpha != 1 or what.forward:
+    if what.alpha != 1 or (what.forward is not None and what.forward is not IDENTITY):
         for child, cxo, cyo, _focus, _main in what.visible_children:
             draw_transformed(dest, clip, child, xo + cxo, yo + cyo,
                              what.alpha, what.forward, what.reverse)
