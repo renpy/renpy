@@ -187,6 +187,7 @@ screen topnav:
         has hbox
         
         textbutton "Ren'Py" action page.Primary("projects")
+        textbutton "Navigate" action page.Primary("files")
         
     textbutton "Launch":
         style_group ""
@@ -228,6 +229,6 @@ screen warning:
 init python:
     page.define("projects", "renpy")
     page.define("settings", "renpy")
-
+    page.define("files", "navigate")
             
             
