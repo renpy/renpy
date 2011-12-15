@@ -19,11 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This is the Ren'Py store. It's the module in which the user code
-# is executed.
-
-# NOTE: This should not include any objects that will have fields
-# changed by the user, as we only do a shallow copy.
+from renpy.minstore import *
 
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
