@@ -1467,6 +1467,11 @@ init -1140 python:
     
         Returns the side image associated with the currently speaking character, 
         or a Null displayable if no such side image exists.
+
+        `tag`
+            If tag is present, the side image corresponding to the character with
+            the given tag is used, rather then the image corresponding to the
+            speaking character.
         """
         
         name = renpy.get_side_image(tag)
