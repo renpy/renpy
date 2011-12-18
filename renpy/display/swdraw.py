@@ -269,9 +269,9 @@ def draw_special(what, dest, x, y):
 
     if w <= 0 or h <= 0:
         return
-    
-    if what.operation == DISSOLVE:
 
+    if what.operation == DISSOLVE:
+    
         bottom = what.children[0][0].render_to_texture(True)
         top = what.children[1][0].render_to_texture(True)
         
@@ -614,12 +614,10 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
             dest = dest.subsurface((x, y, width, height))
         
-        
-    if what.draw_func:
+    if what.draw_func or what.operation != BLIT:
         child = what.pygame_surface(True)
         draw_transformed(dest, clip, child, xo, yo, alpha, forward, reverse)
-        
-        # raise Exception("Using a draw_func on a transformed surface is not supported.")
+        return
 
     for child, cxo, cyo, _focus, _main in what.visible_children:
 
