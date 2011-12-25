@@ -30,7 +30,7 @@ import renpy.display
 import renpy.text.ftfont as ftfont
 import renpy.text.textsupport as textsupport
 
-ftfont.init()
+ftfont.init() #@UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
@@ -61,7 +61,7 @@ class ImageFont(object):
             return rv
         
         for c in s:
-            g = textsupport.Glyph()
+            g = textsupport.Glyph() #@UndefinedVariable
             
             g.character = ord(c)
             g.ascent = self.height
@@ -284,7 +284,7 @@ def parse_bmfont_line(l):
     if w:
         line.append(w)
 
-    map = dict(i.split("=", 1) for i in line[1:])
+    map = dict(i.split("=", 1) for i in line[1:]) #@ReservedAssignment
     return line[0], map
             
 class BMFont(ImageFont):
@@ -541,7 +541,7 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
     
-    rv = ftfont.FTFace(font_file, index)
+    rv = ftfont.FTFace(font_file, index) #@UndefinedVariable
     
     face_cache[orig_fn] = rv
     
@@ -568,7 +568,7 @@ def get_font(fn, size, bold, italics, outline, antialias):
     # If we made it here, we need to load a ttf.
     face = load_face(fn)
 
-    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias)
+    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias) #@UndefinedVariable
     
     font_cache[key] = rv
     

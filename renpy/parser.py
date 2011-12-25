@@ -615,7 +615,7 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?\d+')
 
-    def float(self):
+    def float(self): #@ReservedAssignment
         """
         Tries to parse a number (float). Returns a string containing the
         number, or None.
@@ -1084,7 +1084,7 @@ def parse_menu(stmtl, loc):
     has_caption = False
 
     with_ = None
-    set = None
+    set = None #@ReservedAssignment
 
     say_who = None
     say_what = None
@@ -1105,7 +1105,7 @@ def parse_menu(stmtl, loc):
             continue
 
         if l.keyword('set'):
-            set = l.require(l.simple_expression)
+            set = l.require(l.simple_expression) #@ReservedAssignment
             l.expect_eol()
             l.expect_noblock('set menuitem')
             l.advance()

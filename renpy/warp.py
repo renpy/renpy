@@ -51,7 +51,7 @@ def warp(spec):
     seenset = sets.Set(workset)
 
     # This is called to indicate that next can be executed following node.
-    def add(node, next):
+    def add(node, next): #@ReservedAssignment
         if next not in seenset:
             seenset.add(next)
             workset.add(next)

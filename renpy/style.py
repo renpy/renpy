@@ -781,7 +781,7 @@ class Style(object):
         self.parent = parent
         
         
-    def __init__(self, parent, properties=None, heavy=True, name=None, help=None):
+    def __init__(self, parent, properties=None, heavy=True, name=None, help=None): #@ReservedAssignment
 
         self.prefix = 'insensitive_'
         self.offset = prefix_offset['insensitive_']
@@ -815,16 +815,16 @@ class Style(object):
         self.prefix = prefix
         self.offset = prefix_offset[prefix]
             
-    def setattr(self, name, value):
+    def setattr(self, name, value): #@ReservedAssignment
         self.properties.append({ name : value })
  
-    def delattr(self, name):
+    def delattr(self, name): #@ReservedAssignment
 
         for p in self.properties:
             if name in p:
                 del p[name]
 
-    def getattr(self, name):
+    def getattr(self, name): #@ReservedAssignment
         return self.cache[expansions[name][0][1]]
                     
     def clear(self):

@@ -1279,7 +1279,7 @@ class Interface(object):
             if name in draw_objects:
                 rv.append(draw_objects[name])
             else:
-                renpy.display.log.write("Unknown renderer: {0}.format(name)")
+                renpy.display.log.write("Unknown renderer: {0}".format(name))
 
         for i in renderers:
             append_draw(i)

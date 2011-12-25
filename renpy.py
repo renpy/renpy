@@ -23,7 +23,6 @@
 
 import os
 import sys
-import platform
 import warnings
 
 # Functions to be customized by distributors. ################################

@@ -1,3 +1,5 @@
+#@PydevCodeAnalysisIgnore
+
 from pygame cimport *
 from freetype cimport *
 from textsupport cimport Glyph, SPLIT_INSTEAD

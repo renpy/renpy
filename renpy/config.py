@@ -24,14 +24,14 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 # This will be deleted by the end of this file.
-import renpy.display
+import renpy.display #@UnusedImport
 import os
 
 # Can we add more config variables?
 locked = False
 
 # Contains help for config variables.
-help = [ ]
+help = [ ] #@ReservedAssignment
 
 # The title of the game window.
 window_title = "A Ren'Py Game"
