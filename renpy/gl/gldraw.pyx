@@ -234,7 +234,7 @@ cdef class GLDraw:
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
             return False
-        
+
         # In ANGLE mode, we have to use EGL to get the OpenGL ES 2 context.
         IF ANGLE:
         
@@ -503,6 +503,9 @@ cdef class GLDraw:
 
 
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
+
+        # Figure out the sizes of texture that render properly.
+        gltexture.test_texture_sizes(self.environ, self)
 
         self.rtt.deinit()
         self.environ.deinit()

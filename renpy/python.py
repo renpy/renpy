@@ -963,18 +963,18 @@ class RollbackLog(renpy.object.Object):
 
         # We never make it this far.
 
-def py_exec_bytecode(bytecode, hide=False, globals_=None, locals_=None):
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None):
 
     if hide:
-        locals_ = { }
+        locals = { }
 
-    if globals_ is None:
-        globals_ = renpy.store.__dict__ #@UndefinedVariable
+    if globals is None:
+        globals = renpy.store.__dict__ #@UndefinedVariable
 
-    if locals_ is None:
-        locals_ = globals_
+    if locals is None:
+        locals = globals
 
-    exec bytecode in globals_, locals_
+    exec bytecode in globals, locals
 
         
 def py_exec(source, hide=False, store=None):
@@ -983,35 +983,35 @@ def py_exec(source, hide=False, store=None):
         store = vars(renpy.store)
 
     if hide:
-        locals_ = { }
+        locals = { }
     else:
-        locals_ = store
+        locals = store
 
-    exec py_compile(source, 'exec') in store, locals_
-
-
-def py_eval_bytecode(bytecode, globals_=None, locals_=None):
-
-    if globals_ is None:
-        globals_ = renpy.store.__dict__ #@UndefinedVariable
-
-    if locals_ is None:
-        locals_ = globals_
-
-    return eval(bytecode, globals_, locals_)
+    exec py_compile(source, 'exec') in store, locals
 
 
-def py_eval(source, globals_=None, locals_=None):
+def py_eval_bytecode(bytecode, globals=None, locals=None):
+
+    if globals is None:
+        globals = renpy.store.__dict__ #@UndefinedVariable
+
+    if locals is None:
+        locals = globals
+
+    return eval(bytecode, globals, locals)
+
+
+def py_eval(source, globals=None, locals=None):
     
     # source = source.strip()
 
-    if globals_ is None:
-        globals_ = renpy.store.__dict__ #@UndefinedVariable
+    if globals is None:
+        globals = renpy.store.__dict__ #@UndefinedVariable
 
-    if locals_ is None:
-        locals_ = globals_
+    if locals is None:
+        locals = globals
     
-    return eval(py_compile(source, 'eval'), globals_, locals_)
+    return eval(py_compile(source, 'eval'), globals, locals)
 
 # This is used to proxy accesses to the store.
 class StoreProxy(object):

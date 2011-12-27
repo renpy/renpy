@@ -23,16 +23,19 @@
 from gl cimport *
 from gldraw cimport *
 from pygame cimport *
+
 from cpython.string cimport PyString_FromStringAndSize
+from libc.stdlib cimport calloc, free
 
 import collections
 import renpy
-    
+
 # The maximum size of a texture.
 MAX_SIZE = 512
 
-# Possible sizes for a texture.
-SIZES = [ 1024, 512, 256, 128, 64 ]
+# Possible sizes for a texture, ordered from largest to smallest.
+# (Now set in test_texture_sizes.)
+SIZES = [ 64 ]
 
 # A list of texture number allocated.
 texture_numbers = [ ]
@@ -50,6 +53,132 @@ def use_gles():
     rtt_format = GL_RGB 
     rtt_internalformat = GL_RGB 
 
+def test_texture_sizes(Environ environ, draw):
+    """
+    Tests each possible texture size to see if it can be used. We test the 
+    texture by creating a texture of the appropriate size, drawing it to the
+    screen, and then checking to see if the texture was drawn properly.
+    """
+    
+    cdef int i
+    cdef int size
+    cdef GLuint tex
+    cdef unsigned char *bitmap
+    cdef GLfloat coords[6]
+    cdef GLfloat texcoords[6]
+    cdef unsigned char pixel[4]
+    
+    global MAX_SIZE
+    global SIZES
+    
+    renpy.display.log.write("Texture testing:")
+    
+    SIZES = [ ]
+    
+    size = 64
+    while size <= 1024:
+   
+        # Create an all-red bitmap of the given size.
+        bitmap = <unsigned char *> calloc(size * size, 4)
+        
+        if not bitmap:
+            renpy.display.log.write("- Could not allocate {0}px bitmap.".format(size))
+            break
+        
+        for i from 0 <= i < size * size:
+            bitmap[i * 4 + 0] = 0xff
+            bitmap[i * 4 + 1] = 0x00
+            bitmap[i * 4 + 2] = 0x00
+            bitmap[i * 4 + 3] = 0xff
+            
+        # Create a texture of the given size.
+        glActiveTextureARB(GL_TEXTURE0)
+        glGenTextures(1, &tex)
+        glBindTexture(GL_TEXTURE_2D, tex)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap)
+
+        # Free the bitmap.
+        free(bitmap)
+        
+        error = glGetError()
+        if error != GL_NO_ERROR:
+            renpy.display.log.write("- Error loading {0}px bitmap: {1:x}".format(size, error))
+            glDeleteTextures(1, &tex)
+            break
+            
+        # Vertex coordinates.
+        coords[0] = 0
+        coords[1] = 0
+        
+        coords[2] = 0
+        coords[3] = size
+        
+        coords[4] = size
+        coords[5] = 0
+        
+        # Texture coordinates.
+        texcoords[0] = 0
+        texcoords[1] = 0
+        
+        texcoords[2] = 0
+        texcoords[3] = 1.0
+        
+        texcoords[4] = 1.0
+        texcoords[5] = 0
+                
+        # Draw the triangles.            
+        environ.viewport(0, 0, 800, 600)
+        environ.ortho(0, 800, 0, 600, -1.0, 1.0)
+        
+        environ.unset_clip(draw)        
+        environ.blit()
+        environ.set_color(1.0, 1.0, 1.0, 1.0)
+        environ.set_texture(0, texcoords)
+        environ.set_vertex(coords)
+        glDrawArrays(GL_TRIANGLES, 0, 3)
+
+        # Delete the texture.
+        glDeleteTextures(1, &tex)
+        
+        error = glGetError()
+        if error != GL_NO_ERROR:
+            renpy.display.log.write("- Error drawing {0}px texture: {1:x}".format(size, error))
+            break
+        
+        # Check the pixel color.
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+
+        error = glGetError()
+        if error != GL_NO_ERROR:
+            renpy.display.log.write("- Error reading {0}px texture: {1:x}".format(size, error))
+            break
+
+        if pixel[0] != 0xff or pixel[1] != 0x00 or pixel[2] != 0x00:
+            renpy.display.log.write("- Incorrect pixel color in {0}px texture: ({1:x}, {1:x}, {1:x})".format(size, pixel[0], pixel[1], pixel[2]))
+            break
+
+        # Record success.
+        renpy.display.log.write("- {0}px textures work.".format(size))
+        
+        SIZES.append(size)
+        MAX_SIZE = size
+        
+        # Double the size and try again.
+        size *= 2
+        
+    # Clean up.
+    environ.set_texture(0, NULL)
+        
+    if MAX_SIZE > 512:
+        MAX_SIZE = 512
+            
+    if not SIZES:
+        raise Exception("Textures are not rendering properly.")
+    
+    SIZES.reverse()
+    
 
 cdef class TextureCore:
     """
@@ -393,7 +522,7 @@ cdef class TextureGrid(object):
     area.   
     """
 
-    def __init__(self, width, height):
+    def __init__(self, width, height): #@DuplicatedSignature
 
         # The width and height of this TextureGrid
         self.width = width
@@ -420,13 +549,13 @@ cdef class TextureGrid(object):
         # one.
         self.half_cache = None
 
-    def __getstate__(self):
+    def __getstate__(self): #@DuplicatedSignature
         if renpy.config.developer:
             raise Exception("Can't pickle a texture.")
         else:
             return { }
         
-    def __setstate__(self, state):
+    def __setstate__(self, state): #@DuplicatedSignature
         return
                 
     def get_size(self):
