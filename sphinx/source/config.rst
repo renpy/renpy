@@ -431,6 +431,21 @@ Occasionally Used
     A list of functions. When called, each function is expected to
     use ui functions to add displayables to the overlay layer.
 
+.. var:: config.python_callbacks = [ ]
+
+    A list of functions. The functions in this list are called, without
+    any arguments, whenever a python block is run outside of the init 
+    phase. 
+    
+    One possible use of this would be to have a function limit a variable
+    to within a range each time it is adjusted.
+    
+    The functions may be called during internal Ren'Py code, before the
+    start of the game proper, and potentially before the variables the 
+    function depends on are intialized. The functions are required to deal 
+    with this, perhaps by using ``hasattr(store, 'varname')`` to check if 
+    a variable is defined.
+
 .. var:: config.quit_action = ...
 
     The action that is called when the user clicks the quit button on

@@ -627,7 +627,15 @@ class Python(Node):
 
     def execute(self):
         next_node(self.next)
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
+        
+        try:        
+            renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
+        finally:
+            
+            if not renpy.game.context().init_phase:
+                for i in renpy.config.python_callbacks:
+                    i()
+                    
 
     def scry(self):
         rv = Node.scry(self)

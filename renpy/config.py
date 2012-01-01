@@ -515,6 +515,10 @@ translator = None
 # Should we use the old, broken line spacing code?
 broken_line_spacing = False
 
+# A list of callbacks that are called after each non-init-phase python
+# block.
+python_callbacks = [ ]
+
 del renpy
 del os
 
