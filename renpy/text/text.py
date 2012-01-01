@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import time
+import math
 import renpy.display
 
 from renpy.text.textsupport import \
@@ -527,6 +528,8 @@ class Layout(object):
 
         if style.min_width > maxx + self.xborder:
             maxx = style.min_width - self.xborder
+            
+        maxx = math.ceil(maxx)
             
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a 
