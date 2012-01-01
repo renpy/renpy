@@ -23,7 +23,7 @@
 
 import renpy.text
 
-from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
+from renpy.text.textsupport import TAG
 import renpy.text.textsupport as textsupport
 
 
@@ -63,7 +63,7 @@ def check_text_tags(s):
 
     tag_stack = [ ]
 
-    for type, text in tokens:
+    for type, text in tokens: #@ReservedAssignment
         if type != TAG:
             continue
 

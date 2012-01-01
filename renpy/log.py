@@ -60,7 +60,7 @@ class LogFile(object):
         # Should we emulate file's write method? We do so if this is True.
         self.raw_write = False
         
-    def open(self):
+    def open(self): #@ReservedAssignment
 
         if self.file:
             return True
@@ -129,7 +129,7 @@ class LogFile(object):
 # A map from the log name to a log object.
 log_cache = { }
 
-def open(name, append=False, developer=False):
+def open(name, append=False, developer=False): #@ReservedAssignment
     rv = log_cache.get(name, None)
     
     if rv is None:

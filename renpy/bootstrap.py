@@ -366,7 +366,7 @@ def report_exception(e, editor=True):
     import codecs
     import traceback
 
-    type, _value, tb = sys.exc_info()
+    type, _value, tb = sys.exc_info() #@ReservedAssignment
 
     def safe_utf8(e):
         try:

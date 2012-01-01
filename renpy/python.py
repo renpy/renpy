@@ -963,16 +963,16 @@ class RollbackLog(renpy.object.Object):
 
         # We never make it this far.
 
-def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None):
+def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None): #@ReservedAssignment
 
     if hide:
-        locals = { }
+        locals = { } #@ReservedAssignment
 
     if globals is None:
-        globals = renpy.store.__dict__ #@UndefinedVariable
+        globals = renpy.store.__dict__ #@UndefinedVariable @ReservedAssignment
 
     if locals is None:
-        locals = globals
+        locals = globals #@ReservedAssignment
 
     exec bytecode in globals, locals
 
@@ -983,33 +983,33 @@ def py_exec(source, hide=False, store=None):
         store = vars(renpy.store)
 
     if hide:
-        locals = { }
+        locals = { } #@ReservedAssignment
     else:
-        locals = store
+        locals = store #@ReservedAssignment
 
     exec py_compile(source, 'exec') in store, locals
 
 
-def py_eval_bytecode(bytecode, globals=None, locals=None):
+def py_eval_bytecode(bytecode, globals=None, locals=None): #@ReservedAssignment
 
     if globals is None:
-        globals = renpy.store.__dict__ #@UndefinedVariable
+        globals = renpy.store.__dict__ #@UndefinedVariable @ReservedAssignment
 
     if locals is None:
-        locals = globals
+        locals = globals #@ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
 
-def py_eval(source, globals=None, locals=None):
+def py_eval(source, globals=None, locals=None): #@ReservedAssignment
     
     # source = source.strip()
 
     if globals is None:
-        globals = renpy.store.__dict__ #@UndefinedVariable
+        globals = renpy.store.__dict__ #@UndefinedVariable @ReservedAssignment
 
     if locals is None:
-        locals = globals
+        locals = globals #@ReservedAssignment
     
     return eval(py_compile(source, 'eval'), globals, locals)
 

@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
+import renpy.log
 
 # The draw object through which all drawing is routed. This object
 # contains all of the distinction between the software and GL
@@ -36,3 +36,4 @@ less_imagedissolve = False
 log = renpy.log.open("log", developer=False, append=False)
 ic_log = renpy.log.open("image_cache", developer=True, append=False)
 to_log = renpy.log.open("text_overflow", developer=True, append=True)
+

@@ -180,12 +180,8 @@ class ImageMapCache(renpy.object.Object):
             if renpy.loader.get_mtime(filename) >= mtime:
                 return
         
-        # We can't make an image when scaled.
-        if renpy.display.scale.factor != 1.0:
-            return
-
         fn = os.path.join(renpy.config.gamedir, filename)
-        dir = os.path.dirname(fn)
+        dir = os.path.dirname(fn) #@ReservedAssignment
         
         if not os.path.exists(dir):
             os.makedirs(dir)

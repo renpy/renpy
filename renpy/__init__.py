@@ -210,7 +210,6 @@ def reload_all():
     renpy.display.im.cache.quit()
         
     # Cleans out the RenpyImporter.
-    import sys
     sys.meta_path.pop()
 
     blacklist = [ "renpy",

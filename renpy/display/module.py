@@ -153,7 +153,7 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 
 save_png = _renpy.save_png
 
-def map(src, dst, rmap, gmap, bmap, amap):
+def map(src, dst, rmap, gmap, bmap, amap): #@ReservedAssignment
     """
     This maps the colors between two surfaces. The various map
     parameters must be 256 character long strings, with the value

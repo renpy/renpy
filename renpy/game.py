@@ -260,7 +260,7 @@ def context(index=-1):
 
     return contexts[index]
 
-def invoke_in_new_context(callable, *args, **kwargs):
+def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
     """
     This pushes the current context, and invokes the given python
     function in a new context. When that function returns or raises an

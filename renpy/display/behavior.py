@@ -647,7 +647,7 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style='button', text_style='button_text',
                clicked=None, **properties):
 
-    text = renpy.text.text.Text(text, style=text_style)
+    text = renpy.text.text.Text(text, style=text_style) #@UndefinedVariable
     return Button(text, style=style, clicked=clicked, **properties)
 
 class ImageButton(Button):
@@ -714,7 +714,7 @@ class HoveredProxy(object):
             return self.b()
     
                 
-class Input(renpy.text.text.Text):
+class Input(renpy.text.text.Text): #@UndefinedVariable
     """
     This is a Displayable that takes text as input.
     """
@@ -861,7 +861,7 @@ class Adjustment(renpy.object.Object):
     
     """
     
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None):
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None): #@ReservedAssignment
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -941,7 +941,7 @@ class Adjustment(renpy.object.Object):
         if self.ranged:
             self.ranged(self)
         
-    range = property(get_range, set_range)
+    range = property(get_range, set_range) #@ReservedAssignment
 
     def get_page(self):
         if self._page is not None:
@@ -1012,7 +1012,7 @@ class Bar(renpy.display.core.Displayable):
             self.value = None
             
     def __init__(self,
-                 range=None,
+                 range=None, #@ReservedAssignment
                  value=None,
                  width=None,
                  height=None,
@@ -1117,7 +1117,7 @@ class Bar(renpy.display.core.Displayable):
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
-        range = self.adjustment.range
+        range = self.adjustment.range #@ReservedAssignment
         value = self.adjustment.value
         page = self.adjustment.page
 
@@ -1246,7 +1246,7 @@ class Bar(renpy.display.core.Displayable):
         if self.hidden:
             return None
         
-        range = self.adjustment.range
+        range = self.adjustment.range #@ReservedAssignment
         old_value = self.adjustment.value
         value = old_value
 

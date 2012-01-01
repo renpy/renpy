@@ -54,7 +54,7 @@ def index_archives():
     # Update lower_map.
     lower_map.clear()
     
-    for dir, fn in listdirfiles():
+    for dir, fn in listdirfiles(): #@ReservedAssignment
         lower_map[fn.lower()] = fn
 
     # Index the archives.
@@ -120,7 +120,7 @@ def index_archives():
             if renpy.config.debug:
                 raise
 
-def walkdir(dir):
+def walkdir(dir): #@ReservedAssignment
     rv = [ ]
 
     for i in os.listdir(dir):
@@ -262,7 +262,7 @@ class SubFile(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def next(self): #@ReservedAssignment
         rv = self.readline()
 
         if not rv:

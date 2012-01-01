@@ -16,7 +16,7 @@ def sha(s):
     Hashes s into a string.
     """
 
-    hash = hashlib.sha256()
+    hash = hashlib.sha256() #@ReservedAssignment
     hash.update(s)
     return hash.hexdigest()
 
@@ -26,7 +26,7 @@ def make_update(root, version):
     # A list of command strings.
     commands = [ ]
 
-    for dir, dirs, files in os.walk(root):
+    for dir, dirs, files in os.walk(root): #@ReservedAssignment
         for fn in files:
             fn = os.path.join(dir, fn)
 
@@ -39,9 +39,9 @@ def make_update(root, version):
             shutil.copymode(fn, fn + ".bz2")
             os.unlink(fn)
             
-    for dir, dirs, files in os.walk(root):
+    for dir, dirs, files in os.walk(root): #@ReservedAssignment
 
-        all = set(dirs + files)
+        all = set(dirs + files) #@ReservedAssignment
 
         for fn in dirs + files:
 
@@ -66,7 +66,7 @@ def make_update(root, version):
                 
             elif relpath.endswith(".bz2"):
 
-                hash = sha(bz2.BZ2File(path, "r").read())
+                hash = sha(bz2.BZ2File(path, "r").read()) #@ReservedAssignment
                 size = "%d" % (os.path.getsize(path))
 
                 commands.append(('file', hash, size, "base", relpath[:-4]))
@@ -76,7 +76,7 @@ def make_update(root, version):
 
 
     out = bz2.BZ2File(os.path.join(root, "catalog1.bz2"), "w")
-    hash = hashlib.sha256()
+    hash = hashlib.sha256() #@ReservedAssignment
 
     for i in commands:
 

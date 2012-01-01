@@ -29,7 +29,7 @@ registry = { }
 
 parsers = renpy.parser.ParseTrie()
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False):
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False): #@ReservedAssignment
 
     name = tuple(name.split())
     

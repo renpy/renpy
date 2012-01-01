@@ -1072,7 +1072,7 @@ class SWDraw(object):
         
         return
         
-    def quit(self):
+    def quit(self): #@ReservedAssignment
         """
         Shuts down the drawing system.
         """

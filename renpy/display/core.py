@@ -40,7 +40,7 @@ except:
     pass
 
 try:
-    import android #@UnresolvedImport
+    import android #@UnresolvedImport @UnusedImport
     import android.sound #@UnresolvedImport
 except:
     android = None
@@ -855,7 +855,7 @@ class SceneLists(renpy.object.Object):
         time with the given time.
         """
 
-        for l, (t, list) in self.layer_at_list.items():
+        for l, (t, list) in self.layer_at_list.items(): #@ReservedAssignment
             self.layer_at_list[l] = (t or time, list)
         
         for l, ll in self.layers.iteritems():

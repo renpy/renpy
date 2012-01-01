@@ -614,7 +614,7 @@ def init():
         renpy.game.preferences.mute.setdefault(m, False)
 
 
-def quit():
+def quit(): #@ReservedAssignment
 
     global pcm_ok
     global mix_ok

@@ -542,7 +542,7 @@ def use_screen(_screen_name, _name=(), **kwargs):
 def current_screen():
     return _current_screen
 
-def get_widget(screen, id, layer='screens'):
+def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     """
     :doc: screens
 

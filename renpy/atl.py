@@ -23,12 +23,12 @@ import renpy.display
 import random
 
 def compiling(loc):
-    file, number = loc
+    file, number = loc #@ReservedAssignment
 
     renpy.game.exception_info = "Compiling ATL code at %s:%d" % (file, number)
 
 def executing(loc):
-    file, number = loc
+    file, number = loc #@ReservedAssignment
     
     renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
 
@@ -106,7 +106,7 @@ def correct_type(v, b, ty):
         return ty(v)
 
 
-def interpolate(t, a, b, type):
+def interpolate(t, a, b, type): #@ReservedAssignment
     """
     Linearly interpolate the arguments. 
     """
@@ -179,7 +179,7 @@ class Context(object):
     def __init__(self, context):
         self.context = context
 
-    def eval(self, expr):
+    def eval(self, expr): #@ReservedAssignment
         expr = renpy.python.escape_unicode(expr)
         return eval(expr, renpy.store.__dict__, self.context) #@UndefinedVariable
     
@@ -312,7 +312,7 @@ class ATLTransformBase(renpy.object.Object):
         return rv
 
     
-    def compile(self):
+    def compile(self): #@ReservedAssignment
         """
         Compiles the ATL code into a block. As necessary, updates the
         properties.
@@ -403,7 +403,7 @@ class RawStatement(renpy.object.Object):
         
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         raise Exception("Compile not implemented.")
 
     # Predicts the images used by this statement.
@@ -464,7 +464,7 @@ class RawBlock(RawStatement):
         
         self.animation = animation
         
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         compiling(self.loc)
 
         statements = [ i.compile(ctx) for i in self.statements ]
@@ -645,7 +645,7 @@ class RawMultipurpose(RawStatement):
     def add_spline(self, name, exprs):
         self.splines.append((name, exprs))
         
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
 
         compiling(self.loc)
         
@@ -756,7 +756,7 @@ class RawContainsExpr(RawStatement):
 
         self.expression = expr
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         compiling(self.loc)
         child = ctx.eval(self.expression)
         return Child(self.loc, child, None)
@@ -771,7 +771,7 @@ class RawChild(RawStatement):
 
         self.children = [ child ]
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         box = renpy.display.layout.MultiBox(layout='fixed')
 
         for i in self.children:
@@ -954,7 +954,7 @@ class RawRepeat(RawStatement):
 
         self.repeats = repeats
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
 
         compiling(self.loc)
 
@@ -986,7 +986,7 @@ class RawParallel(RawStatement):
         super(RawParallel, self).__init__(loc)
         self.blocks = [ block ]
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         return Parallel(self.loc, [i.compile(ctx) for i in self.blocks])
 
     def predict(self, ctx):
@@ -1048,7 +1048,7 @@ class RawChoice(RawStatement):
 
         self.choices = [ (chance, block) ]
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         compiling(self.loc)
         return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
@@ -1106,7 +1106,7 @@ class RawTime(RawStatement):
         super(RawTime, self).__init__(loc)
         self.time = time
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         compiling(self.loc)
         return Time(self.loc, ctx.eval(self.time))
 
@@ -1130,7 +1130,7 @@ class RawOn(RawStatement):
 
         self.handlers = { name : block }
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
 
         compiling(self.loc)
 
@@ -1232,7 +1232,7 @@ class RawEvent(RawStatement):
 
         self.name = name
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         return Event(self.loc, self.name)
 
     
@@ -1254,7 +1254,7 @@ class RawFunction(RawStatement):
 
         self.expr = expr
 
-    def compile(self, ctx):
+    def compile(self, ctx): #@ReservedAssignment
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
 

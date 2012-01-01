@@ -347,7 +347,7 @@ def watch(expression, style='default', **properties):
 
     renpy.config.overlay_functions.append(overlay_func)
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None):
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None): #@ReservedAssignment
     """
     This pops up a window requesting that the user enter in some text.
     It returns the entered text.
@@ -426,12 +426,12 @@ def menu(items, set_expr):
 
     # Filter the list of items on the set_expr:
     if set_expr:
-        set = renpy.python.py_eval(set_expr)
+        set = renpy.python.py_eval(set_expr) #@ReservedAssignment
         items = [ (label, value)
                   for label, value in items
                   if label not in set ]
     else:
-        set = None
+        set = None #@ReservedAssignment
 
     # Check to see if there's at least one choice in set of items:
     choices = [ value for label, value in items if value is not None ]
@@ -497,7 +497,7 @@ def display_menu(items,
                  scope={ },
                  widget_properties=None,
                  screen="choice",
-                 type="menu",
+                 type="menu", #@ReservedAssignment
                  predict_only=False,
                  **kwargs):
     """
@@ -964,7 +964,7 @@ def utter_restart():
 
     raise renpy.game.UtterRestartException()
 
-def quit():
+def quit(): #@ReservedAssignment
     """
     This causes Ren'Py to exit entirely.
     """
@@ -1279,10 +1279,10 @@ def current_interact_type():
 def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
-def dynamic(*vars):
+def dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars)
 
-def context_dynamic(*vars):
+def context_dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars, context=True)
     
 def seen_label(label):
@@ -1297,7 +1297,7 @@ def seen_image(name):
     
     return name in renpy.game.persistent._seen_images
 
-def file(fn):
+def file(fn): #@ReservedAssignment
     return renpy.loader.load(fn)
 
 def image_size(im):
@@ -1558,7 +1558,7 @@ def list_files(common=False):
 
     rv = [ ]
     
-    for dir, fn in renpy.loader.listdirfiles():
+    for dir, fn in renpy.loader.listdirfiles(): #@ReservedAssignment
 
         if not common and dir == renpy.config.commondir:
             continue

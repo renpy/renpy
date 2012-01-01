@@ -1,3 +1,4 @@
+#@PydevCodeAnalysisIgnore
 #!/usr/bin/env python
 
 # Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>

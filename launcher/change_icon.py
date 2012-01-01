@@ -53,7 +53,7 @@ class BinFile(object):
     def tostring(self):
         return self.a.tostring()
 
-    def substring(self, start, len):
+    def substring(self, start, len): #@ReservedAssignment
         return self.a[start:start+len].tostring()
     
     def __init__(self, data):

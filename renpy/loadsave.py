@@ -128,7 +128,7 @@ class SaveAbort(Exception):
     pass
 
 def save(filename, extra_info='',
-         file=file, StringIO=cStringIO.StringIO,
+         file=file, StringIO=cStringIO.StringIO, #@ReservedAssignment
          mutate_flag=False, wait=None):
     """
     Saves the game in the given filename. This will save the game
