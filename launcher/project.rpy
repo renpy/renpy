@@ -38,7 +38,8 @@ init python:
 
     # Quotes an arbitrary string (without knowing the encoding) for display.
     def quote(s):
-        s ="".join(quote_char(i) for i in s)
+        s = "".join(quote_char(i) for i in s)
+        s = s.replace("[", "[[")
         s = s.replace("/", "/" + ZWSP)
         s = s.replace("\\", "\\" + ZWSP)
         return s
