@@ -6,7 +6,7 @@ Post 6.13
 =========
 
 Added :var:`config.python_callbacks`, a list of python functions that are 
-called at the end of the init phase.
+called at the end of each python block.
 
 
 Ren'Py 6.13
