@@ -492,9 +492,13 @@ cdef class FTFont:
 
             for py from 0 <= py < rows:                    
 
+                if bmy < 0:
+                    bmy += 1
+                    continue
+
                 line = pixels + bmy * pitch + bmx * 4
                 gline = cache.bitmap.buffer + py * cache.bitmap.pitch
-                
+                                
                 for px from 0 <= px < width:
                     
                     alpha = gline[0]

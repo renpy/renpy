@@ -475,7 +475,7 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture method.
         
-        if glrtt_copy and (not "RENPY_GL_RTT" in os.environ) or (os.environ["RENPY_GL_RTT"] == "copy"):
+        if glrtt_copy and os.environ.get("RENPY_GL_RTT", "copy") == "copy":
             renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
