@@ -87,6 +87,9 @@ del public_api
 import collections
 
 def roll_forward_info():
+    if renpy.game.log.in_rollback():
+        return None
+    
     return renpy.game.log.forward_info()
 
 def in_rollback():
