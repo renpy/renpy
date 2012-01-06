@@ -123,6 +123,9 @@ def index_archives():
 def walkdir(dir): #@ReservedAssignment
     rv = [ ]
 
+    if not os.path.exists(dir) and not renpy.config.developer:
+        return rv
+
     for i in os.listdir(dir):
         if i[0] == ".":
             continue
