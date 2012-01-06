@@ -2,8 +2,11 @@
 Full Changelog
 ==============
 
-Post 6.13
-=========
+Ren'Py 6.13.8
+=============
+
+Old-style string interpolation is now enabled by default, alongside new-style
+string interpolation. 
 
 Added :var:`config.python_callbacks`, a list of python functions that are 
 called at the end of each python block.

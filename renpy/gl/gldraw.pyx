@@ -1,4 +1,5 @@
 #cython: profile=False
+#@PydevCodeAnalysisIgnore
 # Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person

@@ -504,7 +504,7 @@ save_physical_size = True
 new_substitutions = True
 
 # Do we use old text substitutions?
-old_substitutions = False
+old_substitutions = True
 
 # The graphics renderer we use. (Ren'Py sets this.)
 renderer = "auto"

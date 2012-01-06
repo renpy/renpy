@@ -11,6 +11,16 @@ features.
 
 .. _incompatible-6.13:
 
+6.13.8
+------
+
+Old-style string interpolation has been re-enabled by default. If you 
+wrote code (between 6.13 and 6.13.7) that uses % in say or menu statements, you should either
+write %% instead, or include the code::
+
+    init python:
+        config.old_substitutions = False
+
 6.13
 ----
 
@@ -160,7 +170,7 @@ be upgraded to use or ignore these additional parameters.
 
 .. _incompatible-6.9.2: 
     
-6.9.2 
+6.9.2
 -----
 
 * To migrate your game from Ren'Py 6.9.2 or later, copy the directory
