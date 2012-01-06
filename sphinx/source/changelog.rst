@@ -11,6 +11,9 @@ string interpolation.
 Added :var:`config.python_callbacks`, a list of python functions that are 
 called at the end of each python block.
 
+Ren'Py is now compatible with libpng 1.5. Thanks to James Broadhead for the
+patch.
+
 
 Ren'Py 6.13
 ===========
