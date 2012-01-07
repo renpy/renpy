@@ -83,8 +83,11 @@ def run(restart):
 
         renpy.config.skipping = None
 
-        renpy.exports.log("--- " + time.ctime())
-        renpy.exports.log("")
+        try:
+            renpy.exports.log("--- " + time.ctime())
+            renpy.exports.log("")
+        except:
+            pass
 
         # Note if this is a restart.
         renpy.store._restart = restart
