@@ -254,6 +254,21 @@ def bootstrap(renpy_base):
     if sys.platform == "darwin":
         os.startfile = mac_start
         
+    # Check that we have installed pygame properly. This also deals with
+    # weird cases on Windows and Linux where we can't import modules. (On
+    # windows ";" is a directory separator in PATH, so if it's in a parent
+    # directory, we won't get the libraries in the PATH, and hence pygame
+    # won't import.)
+    try:
+        import pygame; pygame
+    except:
+        print >>sys.stderr, """\
+Could not import pygame. Please ensure that this program has been built 
+and unpacked properly. Also, make sure that the directories containing 
+this program do not contain : or ; in their names.
+"""
+        raise
+        
     # Load up all of Ren'Py, in the right order.
     import renpy #@Reimport
     renpy.import_all()
