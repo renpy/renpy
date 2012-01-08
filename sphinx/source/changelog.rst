@@ -5,6 +5,7 @@ Full Changelog
 Ren'Py 6.13.8
 =============
 
+
 Side images can now be limited to showing a single character, or only showing
 characters that are not on the screen. See :var:`config.side_image_tag` and 
 :var:`config.side_image_only_not_showing`.
@@ -22,7 +23,16 @@ string interpolation.
 Ren'Py is now compatible with libpng 1.5. Thanks to James Broadhead for the
 patch.
 
-Various minor bug and compatibility fixes.
+Fixed the following bugs:
+
+* A crash when dealing with certain invalid fonts.
+* Pausing too long when typing out text.
+* Cutting one pixel off a block of text when fractional kerning was used. 
+* Crashing when the time was set in the far future or past.
+* Immediately exiting when rolling forward at the quit prompt.
+* Crashing when a non-existing directory is added to the search path. (This 
+  prevented Katawa Shoujo from starting in the latest version.)
+* Save-file size was overly large due to screens being included in save files.
 
 
 Ren'Py 6.13
