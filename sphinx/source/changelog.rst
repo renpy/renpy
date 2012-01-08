@@ -5,14 +5,24 @@ Full Changelog
 Ren'Py 6.13.8
 =============
 
-Old-style string interpolation is now enabled by default, alongside new-style
-string interpolation. 
+Side images can now be limited to showing a single character, or only showing
+characters that are not on the screen. See :var:`config.side_image_tag` and 
+:var:`config.side_image_only_not_showing`.
 
 Added :var:`config.python_callbacks`, a list of python functions that are 
 called at the end of each python block.
 
+Ren'Py now tests the video card it is running on for functionality. If it 
+can't draw textured rectangles to the screen, it will proceed to a different
+renderer.
+
+Old-style string interpolation is now enabled by default, alongside new-style
+string interpolation. 
+
 Ren'Py is now compatible with libpng 1.5. Thanks to James Broadhead for the
 patch.
+
+Various minor bug and compatibility fixes.
 
 
 Ren'Py 6.13

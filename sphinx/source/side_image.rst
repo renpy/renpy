@@ -74,6 +74,33 @@ For example::
         p "This is also shown with 'side player happy'."
         
         p concerned "This is shown with 'side player concerned'."
+
+Variations
+----------
+
+There are two variants of side image support that can be selected - either alone
+or together - using config variables:
+
+.. var:: config.side_image_tag = None
+
+    If this is given, then the side image will track the given image tag, 
+    rather than the image associated with currently speaking character. For example,
+    
+    ::
+
+        define e = Character("Eileen", image="eileen")
+
+        init python:
+             config.side_image_tag = "eileen"
+             
+    Will make the side image track the "eileen" image tag, which is associated
+    with the ``e`` character.
+    
+.. var:: config.side_image_only_not_showing = False
+
+    When set to true, the side image will only show if an image with that tag
+    is not already being shown on the screen.
+        
         
 Leaving Room / Customization
 ----------------------------

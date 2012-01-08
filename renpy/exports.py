@@ -1691,25 +1691,40 @@ def get_say_attributes():
 
 side_image_attributes = None
 
-def get_side_image(tag):
+def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
     """
     :doc: other
     
-    This attempts to find an image to show as the side image. It attempts to
-    find an image that begins with tag, and matches side_image_attributes. It
-    returns the name of the image (as a tuple of strings) if possible, or 
-    None if that's not possible.
+    This attempts to find an image to show as the side image. 
+   
+    It begins by determining a set of image attributes. If `image_tag` is 
+    given, it gets the image attributes from the tag. Otherwise, it gets
+    them from the currently showing character.
+    
+    It then looks up an image with the tag `prefix_tag` and those attributes,
+    and returns it if it exists. 
+    
+    If not_showing is True, this only returns a side image if the image the
+    attributes are taken from is not on the screen.
     """
-    
-    if side_image_attributes is None:
-        return
-    
+
     images = renpy.game.context().images
+
+    if image_tag is not None:
+        attrs = (image_tag,) + images.get_attributes(layer, image_tag)
+    else:
+        attrs = side_image_attributes
+        
+    if not attrs:
+        return None
+    
+    if not_showing and images.showing(layer, (attrs[0], )):
+        return None
     
     required = set()
-    optional = set(side_image_attributes)
+    optional = set(attrs)
     
-    return images.choose_image(tag, required, optional, None)
+    return images.choose_image(prefix_tag, required, optional, None)
 
 def get_physical_size():
     """

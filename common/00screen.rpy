@@ -1461,20 +1461,18 @@ init -1140 python:
     ##########################################################################
     # Side Images
     
-    def SideImage(tag="side"):
+    config.side_image_tag = None
+    config.side_image_only_not_showing = False
+    
+    def SideImage(prefix_tag="side"):
         """
         :doc: side_image_function
     
         Returns the side image associated with the currently speaking character, 
         or a Null displayable if no such side image exists.
-
-        `tag`
-            If tag is present, the side image corresponding to the character with
-            the given tag is used, rather then the image corresponding to the
-            speaking character.
         """
         
-        name = renpy.get_side_image(tag)
+        name = renpy.get_side_image(prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
         if name is None:
             return Null()
         else:

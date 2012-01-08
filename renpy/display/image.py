@@ -334,9 +334,7 @@ class ShownImageInfo(renpy.object.Object):
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
-        """
-        Choose a single unique image for 
-        
+        """        
         """
 
         # The longest length of an image that matches.
