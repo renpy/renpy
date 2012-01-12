@@ -78,7 +78,10 @@ label _debugger_screen:
                 continue
 
             val = aRepr.repr(getattr(store, var))
-            entries.append((0, (var + " = " + val).replace("{", "{{")))
+            s = (var + " = " + val)
+            s = s.replace("{", "{{")
+            s = s.replace("[", "[[")
+            entries.append((0, s))
 
         if entries:
             vp = ui.viewport(mousewheel=True)
