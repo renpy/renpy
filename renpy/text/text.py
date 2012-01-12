@@ -1306,10 +1306,33 @@ class Text(renpy.display.core.Displayable):
                 oblits = blits            
         
             for b in oblits:
+                
+                b_x = b.x
+                b_y = b.y 
+                b_w = b.w
+                b_h = b.h
+                
+                # Bound to inside texture rectangle.
+                if b_x < 0:
+                    b_w += b.x
+                    b_x = 0
+                    
+                if b_y < 0:
+                    b_h += b_y
+                    b_y = 0
+                    
+                if b_w > w - b_x:
+                    b_w = w - b_x
+                if b_h > h - b_y:
+                    b_h = h - b_y
+
+                if b_w <= 0 or b_h <= 0:
+                    continue
             
+                # Bound blits to the surface.
                 rv.blit(
-                    tex.subsurface((b.x, b.y, b.w, b.h)),
-                    (b.x + xo + layout.xoffset - o, b.y + yo + layout.yoffset - o))
+                    tex.subsurface((b_x, b_y, b_w, b_h)),
+                    (b_x + xo + layout.xoffset - o, b_y + yo + layout.yoffset - o))
 
         # Blit displayables.
         for d, xo, yo, t in layout.displayable_blits:
