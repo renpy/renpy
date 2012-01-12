@@ -127,12 +127,12 @@ def import_all():
         
         import _renpy #@UnresolvedImport
         libexec = os.path.dirname(_renpy.__file__)
-        package.__path__.insert(0, os.path.join(libexec, *name))
+        package.__path__.append(os.path.join(libexec, *name))
     
         # Also find encodings, to deal with the way py2exe lays things out.
         import encodings
         libexec = os.path.dirname(encodings.__path__[0])
-        package.__path__.insert(1, os.path.join(libexec, *name))
+        package.__path__.append(os.path.join(libexec, *name))
 
     update_path(renpy.display)
     
