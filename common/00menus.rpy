@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # Common stuff that's used by the various Ren'Py menus. This includes

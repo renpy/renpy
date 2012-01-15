@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # This file contains warpers that are used by ATL. They need to be defined
