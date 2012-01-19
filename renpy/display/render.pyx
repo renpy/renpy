@@ -1048,7 +1048,7 @@ cdef class Render:
         """
 
         color = renpy.easy.color(color)
-        solid = renpy.display.im.SolidImage(color, self.width, self.height)
+        solid = renpy.display.imagelike.Solid(color)
         surf = render(solid, self.width, self.height, 0, 0)
         self.blit(surf, (0, 0), focus=False, main=False)
 
