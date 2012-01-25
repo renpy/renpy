@@ -38,7 +38,7 @@ import time
 cimport renpy.display.render as render
 cimport gltexture
 import gltexture
-
+import glblacklist
 
 cdef extern from "glcompat.h":
     GLenum glewInit()
@@ -72,18 +72,6 @@ PIXELLATE = renpy.display.render.PIXELLATE
 
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
-
-        
-    
-# A list of cards that cause system/software crashes. There's no
-# reason to put merely slow or incapable cards here, only ones for
-# which GL operation is unsafe.
-#
-# 
-
-BLACKLIST = [
-    ("S3 Graphics DeltaChrome", "1.4 20.00"),
-    ]
 
 cdef class GLDraw:
 
@@ -364,10 +352,24 @@ cdef class GLDraw:
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
 
-        for r, v in BLACKLIST:
-            if renderer == r and version.startswith(v):
-                renpy.display.log.write("Blacklisted renderer/version.")
-                return False
+        
+        allow_shader = True
+        allow_fixed = self.allow_fixed 
+        
+        for r, v, allow_shader_, allow_fixed_ in glblacklist.BLACKLIST:            
+            if r in renderer and v in version:
+                allow_shader = allow_shader and allow_shader_
+                allow_fixed = allow_fixed and allow_fixed_
+                break
+
+        if not allow_shader:
+            renpy.display.log.write("Shaders are blacklisted.")
+        if not allow_fixed:
+            renpy.display.log.write("Fixed-function is blacklisted.")
+
+        if not allow_shader and not allow_fixed:
+            renpy.display.log.write("GL is totally blacklisted.")
+            return False
 
         if not ANGLE and version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
@@ -416,12 +418,12 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
         
-        if ANGLE or use_subsystem(
+        if ANGLE or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
             "GL_ARB_vertex_shader",
-            "GL_ARB_fragment_shader"):
+            "GL_ARB_fragment_shader")):
 
             try:
                 renpy.display.log.write("Using shader environment.")
@@ -436,7 +438,7 @@ cdef class GLDraw:
                 
         if self.environ is None:
             
-            if self.allow_fixed and use_subsystem(
+            if allow_fixed and use_subsystem(
                 glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
@@ -448,7 +450,7 @@ cdef class GLDraw:
                 self.info["environ"] = "fixed"
                 self.environ.init()
 
-            elif self.allow_fixed and use_subsystem(
+            elif allow_fixed and use_subsystem(
                 glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
@@ -506,10 +508,13 @@ cdef class GLDraw:
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
         # Figure out the sizes of texture that render properly.
-        gltexture.test_texture_sizes(self.environ, self)
+        rv = gltexture.test_texture_sizes(self.environ, self)
 
         self.rtt.deinit()
         self.environ.deinit()
+
+        if not rv:
+            return False
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()

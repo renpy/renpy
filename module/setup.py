@@ -111,6 +111,7 @@ def anglecopy(fn):
     
     copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
     
+anglecopy("glblacklist.py")
 anglecopy("gldraw.pxd")
 anglecopy("gldraw.pyx")
 anglecopy("glenviron_shader.pyx")

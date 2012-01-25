@@ -176,10 +176,11 @@ def test_texture_sizes(Environ environ, draw):
         MAX_SIZE = 512
             
     if not SIZES:
-        raise Exception("Textures are not rendering properly.")
+        renpy.display.log.write("Textures are not rendering properly.")
+        return False
     
     SIZES.reverse()
-    
+    return True
 
 cdef class TextureCore:
     """
