@@ -38,13 +38,12 @@ BLACKLIST = [
     ("S3 Graphics DeltaChrome", "1.4 20.00", False, False),
 
     # A bug in Mesa 7.9 and 7.10 (before 7.10.3) causes the system to
-    # fail to initialize the GLSL compiler. https://bugs.freedesktop.org/show_bug.cgi?id=35603    
+    # fail to initialize the GLSL compiler. 
+    # https://bugs.freedesktop.org/show_bug.cgi?id=35603    
     ("Mesa", "Mesa 7.9", False, True),
     ("Mesa", "Mesa 7.10.3", True, True), 
     ("Mesa", "Mesa 7.10", False, True),
 
-    ("GeForce", "280.13", False, True),
-    
     # Default to allowing everything.    
     ("", "", True, True),
     ]
