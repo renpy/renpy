@@ -451,7 +451,7 @@ PIXELLATE = 3
 
 cdef class Render:
 
-    def __init__(Render self, int width, int height, draw_func=None, layer_name=None, bint opaque=None):
+    def __init__(Render self, int width, int height, draw_func=None, layer_name=None, bint opaque=None): #@DuplicatedSignature
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
@@ -549,16 +549,16 @@ cdef class Render:
         
         live_renders.append(self)
         
-    def __repr__(self):
+    def __repr__(self): #@DuplicatedSignature
         return "<Render %x of %r>" % (id(self), self.render_of)
 
-    def __getstate__(self):
+    def __getstate__(self): #@DuplicatedSignature
         if renpy.config.developer:
             raise Exception("Can't pickle a Render.")
         else:
             return { }
         
-    def __setstate__(self, state):
+    def __setstate__(self, state): #@DuplicatedSignature
         return
 
     cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
@@ -841,7 +841,7 @@ cdef class Render:
         else:
             self.focuses.append(t)
 
-    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):
+    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses): #@DuplicatedSignature
         """
         This adds to focuses Focus objects corresponding to the focuses
         added to this object and its children, transformed into screen
@@ -902,7 +902,7 @@ cdef class Render:
             for child in self.pass_focuses:
                 child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
         
-    def focus_at_point(self, x, y):
+    def focus_at_point(self, x, y): #@DuplicatedSignature
         """
         This returns the focus of this object at the given point.
         """
@@ -1069,7 +1069,7 @@ cdef class Render:
         
 class Canvas(object):
 
-    def __init__(self, surf):
+    def __init__(self, surf): #@DuplicatedSignature
         self.surf = surf
         
     def rect(self, color, rect, width=0):

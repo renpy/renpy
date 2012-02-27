@@ -95,9 +95,9 @@ cdef class WordWrapper(object):
 
     cdef void knuth_plass(self, int first_width, int rest_width, bint subtitle):
     
-        cdef long long *scores
-        cdef int *splits
-        cdef Word *words = self.words
+        cdef long long *scores #@DuplicatedSignature
+        cdef int *splits #@DuplicatedSignature
+        cdef Word *words = self.words #@DuplicatedSignature
         cdef int len_words = self.len_words
         cdef int line_width
         

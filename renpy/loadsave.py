@@ -33,6 +33,7 @@ import re
 import threading
 import sys
 import platform
+import types
 
 import renpy.display
 
@@ -57,56 +58,118 @@ def loads(s):
 # files.
 savegame_suffix = renpy.savegame_suffix
 
-# def debug_dump(prefix, o, seen):
+def dump_save(roots, log):
+    """
+    Dumps information about the save to save_dump.txt. We dump the size
+    of the object (including unique children), the path to the object,
+    and the type or repr of the object.
+    """
 
-#     if isinstance(o, (int, str, float, bool)):
-#         print prefix, o
-#         return
+    o_repr_cache = { }
 
-#     if id(o) in seen:
-#         print prefix, "@%x" % id(o), type(o)
-#         return
+ 
+    def visit(o, path):
+        ido = id(o)
+        
+        if ido in o_repr_cache:
+            f.write("{: 7d} {} = alias {}\n".format(0, path, o_repr_cache[ido]))
+            return 0
+                
+        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+            o_repr = repr(o)
+            
+        elif isinstance(o, (str, unicode)):
+            if len(o) <= 80:
+                o_repr = repr(o).encode("utf-8")
+            else:
+                o_repr = repr(o[:80] + "...").encode("utf-8")
+                
+        elif isinstance(o, (tuple, list)):
+            o_repr = "<" + o.__class__.__name__ + ">"
 
-#     seen[id(o)] = True
+        elif isinstance(o, dict):
+            o_repr = "<" + o.__class__.__name__ + ">"
+        
+        elif isinstance(o, types.MethodType):
+            o_repr = "<method {}.{}>".format(o.im_class.__name__, o.im_func.__name__)
+        
+        elif isinstance(o, object):
+            o_repr = "<{}>".format(type(o).__name__)
 
-#     if isinstance(o, tuple):
-#         print prefix, "("
-#         for i in o:
-#             debug_dump(prefix + "  ", i, seen)
-#         print prefix, ")"
+        else:
+            o_repr = "BAD TYPE <{}>".format(type(o).__name__)
+            
 
-#     elif isinstance(o, list):
-#         print prefix, "["
-#         for i in o:
-#             debug_dump(prefix + "  ", i, seen)
-#         print prefix, "]"
+        o_repr_cache[ido] = o_repr
+        
+        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+            size = 1
+            
+        elif isinstance(o, (str, unicode)):
+            size = len(o) / 40 + 1
 
-#     elif isinstance(o, dict):
-#         print prefix, "{"
-#         for k, v in o.iteritems():
-#             print prefix, repr(k), "="
-#             debug_dump(prefix + "    ", v, seen)
-#         print prefix, "}"
+        elif isinstance(o, (tuple, list)):
+            size = 1
+            for i, oo in enumerate(o):
+                size += 1
+                size += visit(oo, "{}[{!r}]".format(path, i))
 
-#     elif isinstance(o, renpy.style.Style):
-#         print "<style>"
+        elif isinstance(o, dict):
+            size = 2
+            for k, v in o.iteritems():
+                size += 2
+                size += visit(v, "{}[{!r}]".format(path, k))
+
+        elif isinstance(o, types.MethodType):
+            size = 1 + visit(o.im_self, path + ".im_self")
+            
+        else:
+        
+            try:
+                reduction = o.__reduce_ex__(2)
+            except:
+                reduction = [ ]
+                o_repr = "BAD REDUCTION " + o_repr
+
+            # Gets an element from the reduction, or o if we don't have
+            # such an element.
+            def get(idx, default):
+                if idx < len(reduction) and reduction[idx] is not None:
+                    return reduction[idx]
+                else:
+                    return default
     
-#     elif hasattr(o, "__dict__"):
+            # An estimate of the size of the object, in arbitrary units. (These units are about 20-25 bytes on 
+            # my computer.)
+            size = 1
 
-#         ignored = getattr(o, "nosave", [ ])
+            state = get(2, { })
+            if isinstance(state, dict):
+                for k, v in state.iteritems():
+                    size += 2
+                    size += visit(v, path + "." + k)
+            else:
+                size += visit(state, path + ".__getstate__()")
+                
+            for i, oo in enumerate(get(3, [])):
+                size += 1
+                size += visit(oo, "{}[{}]".format(path, i))
+                
+            for k, v in get(4, []):
+                size += 2
+                size += visit(v, "{}[{!r}]".format(path, k))
 
-#         print prefix, repr(o), "{{"
-#         for k, v in vars(o).iteritems():
-#             if k in ignored:
-#                 continue
+            
+        f.write("{: 7d} {} = {}\n".format(size, path, o_repr_cache[ido]))
+        
+        return size
 
-#             print prefix, repr(k), "="
-#             debug_dump(prefix + "    ", v, seen)
-#         print prefix, "}}"
+    f = file("save_dump.txt", "w")
 
-#     else:
-#         print prefix, repr(o)
+    visit(roots, "roots")
+    visit(log, "log")
 
+    f.close()
 
 # A file that can only be written to while the cpu is idle.
 class IdleFile(file):
@@ -158,6 +221,8 @@ def save(filename, extra_info='',
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
+
+    dump_save(roots, renpy.game.log)
 
     rf = file(renpy.config.savedir + "/" + filename, "wb")
     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
