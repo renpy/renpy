@@ -69,11 +69,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
     class is responsible for managing the display of a screen.
     """
 
-    no_save = [ 'screen', 'child' ]
+    no_save = [ 'screen', 'child', 'transforms', 'widgets' ]
 
     def after_setstate(self):
         self.screen = get_screen_variant(self.screen_name[0])
         self.child = None
+        self.transforms = { }
+        self.widgets = { }
         
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
