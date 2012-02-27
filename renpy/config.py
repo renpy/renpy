@@ -519,6 +519,9 @@ broken_line_spacing = False
 # block.
 python_callbacks = [ ]
 
+# If true, we dump information about a save upon save.
+save_dump = False
+
 del renpy
 del os
 

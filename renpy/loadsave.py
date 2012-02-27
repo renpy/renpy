@@ -58,7 +58,7 @@ def loads(s):
 # files.
 savegame_suffix = renpy.savegame_suffix
 
-def dump_save(roots, log):
+def save_dump(roots, log):
     """
     Dumps information about the save to save_dump.txt. We dump the size
     of the object (including unique children), the path to the object,
@@ -222,7 +222,8 @@ def save(filename, extra_info='',
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
 
-    dump_save(roots, renpy.game.log)
+    if renpy.config.save_dump:
+        save_dump(roots, renpy.game.log)
 
     rf = file(renpy.config.savedir + "/" + filename, "wb")
     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)

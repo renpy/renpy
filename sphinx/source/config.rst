@@ -2,15 +2,15 @@
 Configuration Variables
 =======================
 
-Configuration variables control the behavior of Ren'Py's
-implementation, allowing Ren'Py itself to be customized in a myriad of
-ways. These range from the common (such as changing the screen size) to the
-obscure (adding new kinds of archive file).
+Configuration variables control the behavior of Ren'Py's implementation,
+allowing Ren'Py itself to be customized in a myriad of ways. These range from
+the common (such as changing the screen size) to the obscure (adding new kinds
+of archive file).
 
-Ren'Py's implementation makes the assumption that, once the GUI system
-has initialized, configuration variables will not change. Changing
-configuration variables outside of init blocks can lead to undefined
-behavior. Configuration variables are not part of the save data.
+Ren'Py's implementation makes the assumption that, once the GUI system has
+initialized, configuration variables will not change. Changing configuration
+variables outside of init blocks can lead to undefined behavior. Configuration
+variables are not part of the save data.
 
 Configuration variables are often changed in init python blocks::
 
@@ -844,6 +844,14 @@ Rarely or Internally Used
     A list of functions that are called, without arguments, before the
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
+
+.. var:: config.save_dump = False
+
+   If set to true, Ren'Py will create the file save_dump.txt whenever it
+   saves a game. This file contains information about the objects contained
+   in the save file. Each line consists of a relative size estimate, the path
+   to the object, information about if the object is an alias, and a 
+   representation of the object.
 
 .. var:: config.save_physical_size = True
 
