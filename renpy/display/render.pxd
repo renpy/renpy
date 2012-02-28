@@ -10,7 +10,7 @@ cdef class Render:
 
     cdef public bint mark, cache_killed
 
-    cdef public int width, height
+    cdef public float width, height
     cdef public object layer_name
 
     cdef public list children

@@ -1044,5 +1044,3 @@ def method_unpickle(obj, name):
 import copy_reg
 import types
 copy_reg.pickle(types.MethodType, method_pickle, method_unpickle)
-
-

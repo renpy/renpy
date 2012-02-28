@@ -4,13 +4,13 @@ Configuration Variables
 
 Configuration variables control the behavior of Ren'Py's implementation,
 allowing Ren'Py itself to be customized in a myriad of ways. These range from
-the common (such as changing the screen size) to the obscure (adding new kinds
-of archive file).
+the common (such as changing the screen size) to the obscure (adding new
+kinds of archive file).
 
 Ren'Py's implementation makes the assumption that, once the GUI system has
 initialized, configuration variables will not change. Changing configuration
-variables outside of init blocks can lead to undefined behavior. Configuration
-variables are not part of the save data.
+variables outside of init blocks can lead to undefined behavior.
+Configuration variables are not part of the save data.
 
 Configuration variables are often changed in init python blocks::
 
@@ -961,8 +961,9 @@ Rarely or Internally Used
 .. var:: config.with_callback = None
 
     If not None, this should be a function that is called when a with
-    statement occurs. This function can be responsible for putting up
-    transient things on the screen during the transition. The function
-    is called with a single argument, which is the transition that is
-    occuring. It is expected to return a transition, which may or may
-    not be the transition supplied as its argument.
+    statement occurs. This function can be responsible for putting up transient
+    things on the screen during the transition. The function is called with a
+    single argument, which is the transition that is occurring. It is expected
+    to return a transition, which may or may not be the transition supplied as
+    its argument.
+

@@ -113,8 +113,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     once they have been retrieved.
     """
 
-    cdef int width, height
-    cdef int orig_width, orig_height
+    cdef float width, height
+    cdef float orig_width, orig_height
     cdef tuple orig_wh, wh
     cdef dict render_cache_d
     cdef Render rv
@@ -136,13 +136,13 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     
     if xmaximum is not None:
         if isinstance(xmaximum, float):
-            width = int(width * xmaximum)
+            width = width * xmaximum
         else:
             width = min(xmaximum, width)
 
     if ymaximum is not None:
         if isinstance(ymaximum, float):
-            height = int(height * ymaximum)
+            height = height * ymaximum
         else:
             height = min(ymaximum, height)
 
@@ -451,7 +451,7 @@ PIXELLATE = 3
 
 cdef class Render:
 
-    def __init__(Render self, int width, int height, draw_func=None, layer_name=None, bint opaque=None): #@DuplicatedSignature
+    def __init__(Render self, float width, float height, draw_func=None, layer_name=None, bint opaque=None): #@DuplicatedSignature
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
