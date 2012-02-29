@@ -50,7 +50,7 @@ cdef extern from "glcompat.h":
 
 IF ANGLE:
 
-    cdef extern:
+    cdef extern from "anglesupport.h":
         char *egl_init(int)
         void egl_swap()
         void egl_quit()

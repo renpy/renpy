@@ -67,7 +67,7 @@ if has_fribidi and not android:
     cython(
         "_renpybidi", 
         [ "renpybidicore.c" ],
-        ['fribidi'])
+        ['fribidi'], define_macros=[ ("FRIBIDI_ENTRY", "") ])
 
 # Sound.
 pymodule("pysdlsound.__init__")

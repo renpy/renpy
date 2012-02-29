@@ -1,3 +1,4 @@
+
 #@PydevCodeAnalysisIgnore
 
 from pygame cimport *
@@ -5,7 +6,8 @@ from freetype cimport *
 from textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
 
-cdef extern char *freetype_error_to_string(int error)
+cdef extern from "ftsupport.h":
+    char *freetype_error_to_string(int error)
 
 # The freetype library object we use.
 cdef FT_Library library
