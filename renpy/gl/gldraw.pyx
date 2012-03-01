@@ -924,7 +924,7 @@ cdef class GLDraw:
 
         cdef unsigned char pixel[4]
         
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_BYTE, pixel)
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
         
         a = pixel[3]
 
