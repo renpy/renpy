@@ -103,6 +103,8 @@ def bootstrap(renpy_base):
     import renpy.log #@UnusedImport
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
+
+    renpy_base = unicode(renpy_base, sys.getfilesystemencoding(), "replace")
     
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
@@ -202,7 +204,7 @@ def bootstrap(renpy_base):
     args = list(args)
             
     if len(args) >= 1:
-        basedir = os.path.abspath(args[0])
+        basedir = os.path.abspath(args[0]).decode(sys.getfilesystemencoding())
     else:
         basedir = renpy_base
         
@@ -213,7 +215,7 @@ def bootstrap(renpy_base):
 
     # Look for the game directory.
     if options.game:
-        gamedir = options.game
+        gamedir = options.game.decode(sys.getfilesystemencoding())
 
     else:
         gamedirs = [ name ]

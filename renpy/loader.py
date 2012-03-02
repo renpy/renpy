@@ -412,8 +412,8 @@ def transfn(name):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    if isinstance(name, unicode):
-        name = name.encode("utf-8")
+    if isinstance(name, str):
+        name = name.decode("utf-8")
     
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)

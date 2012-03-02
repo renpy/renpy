@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2011, PyTom'
+copyright = u'2012, Tom Rothamel' #@ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -49,7 +49,6 @@ copyright = u'2011, PyTom'
 #
 # The short X.Y version.
 
-import sys
 sys.path.insert(0, '../..')
 import renpy
 

@@ -994,7 +994,7 @@ def screenshot(filename):
     """
     Saves a screenshot in the named filename.
     """
-    
+
     renpy.game.interface.save_screenshot(filename)
     
 def windows():

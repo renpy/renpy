@@ -2577,9 +2577,9 @@ def declare(*args):
     args = list(args)
 
     if isinstance(args[0], gltype):
-        type = args.pop(0)
+        type = args.pop(0) #@ReservedAssignment
     else:
-        type = "void"
+        type = "void" #@ReservedAssignment
 
     name = args.pop(0)
 
