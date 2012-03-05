@@ -596,7 +596,7 @@ def display_menu(items,
 
     # Log the chosen choice.
     for label, val in items:
-        if val:
+        if val is not None:
             log("Choice: " + label)
         else:
             log(label)
