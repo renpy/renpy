@@ -750,7 +750,7 @@ class SizeGroup(renpy.object.Object):
         for i in self.members:
             rend = renpy.display.render.render(i, width, height, st, at)
             maxwidth = max(rend.width, maxwidth)
-            rend.kill()
+            renpy.display.render.invalidate(i)
             
         self._width = maxwidth
         self.computing_width = False
