@@ -91,3 +91,5 @@ trace.txt
 renpy/angle/*.pyx
 renpy/angle/*.pxd
 renpy-ppc.zip
+dse/game/saves
+efence.sh

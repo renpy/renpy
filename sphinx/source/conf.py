@@ -85,7 +85,7 @@ exclude_patterns = []
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'renpy'
+pygments_style = 'default'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -261,3 +261,14 @@ highlight_language = "renpy"
 
 extlinks = {'lpbug': ('https://bugs.launchpad.net/renpy/+bug/%s',
                       'launchpad bug ')}
+
+rst_prolog = """\
+.. |PGS4A| replace:: RAPT
+.. |PGS4A_URL| replace:: http://www.renpy.org/dl/android/
+"""
+
+def setup(app):
+    app.add_config_value('is_renpy', '', True)
+
+is_renpy = False
+
