@@ -72,7 +72,7 @@ def save_dump(roots, log):
         ido = id(o)
         
         if ido in o_repr_cache:
-            f.write("{: 7d} {} = alias {}\n".format(0, path, o_repr_cache[ido]))
+            f.write("{0: 7d} {1} = alias {2}\n".format(0, path, o_repr_cache[ido]))
             return 0
                 
         if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
@@ -91,13 +91,13 @@ def save_dump(roots, log):
             o_repr = "<" + o.__class__.__name__ + ">"
         
         elif isinstance(o, types.MethodType):
-            o_repr = "<method {}.{}>".format(o.im_class.__name__, o.im_func.__name__)
+            o_repr = "<method {0}.{1}>".format(o.im_class.__name__, o.im_func.__name__)
         
         elif isinstance(o, object):
-            o_repr = "<{}>".format(type(o).__name__)
+            o_repr = "<{0}>".format(type(o).__name__)
 
         else:
-            o_repr = "BAD TYPE <{}>".format(type(o).__name__)
+            o_repr = "BAD TYPE <{0}>".format(type(o).__name__)
             
 
         o_repr_cache[ido] = o_repr
@@ -112,13 +112,13 @@ def save_dump(roots, log):
             size = 1
             for i, oo in enumerate(o):
                 size += 1
-                size += visit(oo, "{}[{!r}]".format(path, i))
+                size += visit(oo, "{0}[{1!r}]".format(path, i))
 
         elif isinstance(o, dict):
             size = 2
             for k, v in o.iteritems():
                 size += 2
-                size += visit(v, "{}[{!r}]".format(path, k))
+                size += visit(v, "{0}[{1!r}]".format(path, k))
 
         elif isinstance(o, types.MethodType):
             size = 1 + visit(o.im_self, path + ".im_self")
@@ -153,14 +153,14 @@ def save_dump(roots, log):
                 
             for i, oo in enumerate(get(3, [])):
                 size += 1
-                size += visit(oo, "{}[{}]".format(path, i))
+                size += visit(oo, "{0}[{1}]".format(path, i))
                 
             for k, v in get(4, []):
                 size += 2
-                size += visit(v, "{}[{!r}]".format(path, k))
+                size += visit(v, "{0}[{1!r}]".format(path, k))
 
             
-        f.write("{: 7d} {} = {}\n".format(size, path, o_repr_cache[ido]))
+        f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
         
         return size
 
