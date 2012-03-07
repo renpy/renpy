@@ -207,9 +207,9 @@ label launch_tutorial:
     python hide:
     
         if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.FsPopen([sys.argv[0], tutorial_path])
+            proc = FsPopen([sys.argv[0], tutorial_path])
         else:
-            proc = subprocess.FsPopen([sys.executable, sys.argv[0], tutorial_path])
+            proc = FsPopen([sys.executable, sys.argv[0], tutorial_path])
 
         set_tooltip(_(u"Tutorial game has been launched."))
 
