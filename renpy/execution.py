@@ -216,21 +216,25 @@ class Context(renpy.object.Object):
         self.current = node_name
 
     def report_tb(self, out):
-
+        
+        rv = [ ]
+        
         for i in self.call_location_stack:
             try:
                 node = renpy.game.script.lookup(i)
                 if not node.filename.replace("\\", "/").startswith("common/"):
-                    renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script call")
+                    rv.append((node.filename, node.linenumber, "script call", None))
             except:
                 pass
                 
         try:
             node = renpy.game.script.lookup(self.current)
             if not node.filename.replace("\\", "/").startswith("common/"):
-                renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script")
+                rv.append((node.filename, node.linenumber, "script", None))
         except:
             pass
+            
+        return rv
             
     def run(self, node=None):
         """

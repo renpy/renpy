@@ -51,9 +51,18 @@ def start(gamedir):
         import sys
 
         if sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE) # W0631
+            cmd = [sys.argv[0], "--presplash", fn]
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], "--presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE) # W0631
+            cmd = [sys.executable, sys.argv[0], "--presplash", fn]
+            
+        def fsencode(s):
+            if isinstance(s, str):
+                return s
+            
+            return unicode.decode(sys.getfilesystemencoding() or "utf-8", "replace")
+            
+        proc = subprocess.Popen([ fsencode(i) for i in cmd ], 
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
         pass
             

@@ -1198,6 +1198,7 @@ def launch_editor(filenames, line=1, transient=0):
         return
 
     filenames = [ renpy.parser.unelide_filename(i) for i in filenames ]
+    filenames = [ fsencode(i) for i in filenames ]
     filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
     filename = filenames[0]
 
@@ -1747,4 +1748,27 @@ def set_physical_size(size):
     
     if get_renderer_info()["resizable"]:
         renpy.display.interface.set_mode(size)
-                
+        
+def fsencode(s):
+    """
+    Returns s in the filesystem encoding.
+    """
+    
+    if isinstance(s, str):
+        return s
+    
+    import sys
+    fsencoding = sys.getfilesystemencoding() or "utf-8"
+    return s.encode(fsencoding)
+
+def fsdecode(s):
+    """
+    Converts s from filesystem encoding to normal encoding.
+    """
+    
+    if isinstance(s, unicode):
+        return s
+    
+    import sys
+    fsencoding = sys.getfilesystemencoding() or "utf-8"
+    return s.decode(fsencoding)

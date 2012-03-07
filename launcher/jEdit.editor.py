@@ -6,12 +6,14 @@ import os
 import os.path
 import sys
 
-editor = os.path.normpath(base + "/../jedit/jedit.jar")
-editor = renpy.shell_escape(editor)
 
 if sys.platform == 'win32':
-    config.editor = 'javaw.exe -jar "' + editor + '" -reuseview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
-    config.editor_transient = 'javaw.exe -jar "' + editor + '" -newplainview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
+    editor = os.path.normpath(base + "/../jedit/jedit.exe")
+    editor = renpy.shell_escape(editor)
+    config.editor = '"' + editor + '" -reuseview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
+    config.editor_transient = '"' + editor + '" -newplainview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
 else:
+    editor = os.path.normpath(base + "/../jedit/jedit.jar")
+    editor = renpy.shell_escape(editor)
     config.editor = 'java -jar "' + editor + '" -reuseview "%(filename)s" +line:%(line)d "%(otherfiles)s"'
     config.editor_transient = 'java -jar "' + editor + '" -newplainview "%(filename)s" +line:%(line)d "%(otherfiles)s"'

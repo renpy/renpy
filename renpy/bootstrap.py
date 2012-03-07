@@ -24,6 +24,9 @@ import os.path
 import sys
 import cStringIO
 import platform
+import traceback
+
+FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
 # Extra things used for distribution.
 def extra_imports():
@@ -104,7 +107,7 @@ def bootstrap(renpy_base):
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
 
-    renpy_base = unicode(renpy_base, sys.getfilesystemencoding() or "utf-8", "replace")
+    renpy_base = unicode(renpy_base, FSENCODING, "replace")
     
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
@@ -204,7 +207,7 @@ def bootstrap(renpy_base):
     args = list(args)
             
     if len(args) >= 1:
-        basedir = os.path.abspath(args[0]).decode(sys.getfilesystemencoding() or "utf-8")
+        basedir = os.path.abspath(args[0]).decode(FSENCODING)
     else:
         basedir = renpy_base
         
@@ -215,7 +218,7 @@ def bootstrap(renpy_base):
 
     # Look for the game directory.
     if options.game:
-        gamedir = options.game.decode(sys.getfilesystemencoding() or "utf-8")
+        gamedir = options.game.decode(FSENCODING)
 
     else:
         gamedirs = [ name ]
@@ -294,7 +297,6 @@ this program do not contain : or ; in their names.
                 keep_running = False
 
             except KeyboardInterrupt:
-                import traceback
                 traceback.print_exc()
                 break
 
@@ -349,7 +351,40 @@ def report_line(out, filename, line, what):
         pass
          
 
-def report_tb(out, tb):
+def write_utf8_traceback_list(out, l):
+    """
+    Given the traceback list l, writes it to out as utf-8.
+    """
+
+    ul = [ ]
+
+    for filename, line, what, text in l:
+        
+        # Filename is either unicode or an fsecoded string.
+        if not isinstance(filename, unicode):
+            filename = unicode(filename, FSENCODING, "replace")
+        
+        # Line is a number.
+        
+        # Assume what is in a unicode encoding, since it is either python,
+        # or comes from inside Ren'Py.    
+        
+        if isinstance(text, str):
+            text = text.decode("utf-8", "replace")
+            
+        ul.append((filename, line, what, text))
+        
+    for t in traceback.format_list(ul):
+        out.write(t.encode("utf-8", "replace"))
+        
+
+def script_level_traceback(out, tb):
+    """
+    Writes a script-level traceback to out, based on the traceback 
+    object tb.
+    """
+
+    tbl = [ ]
 
     while tb:
         f = tb.tb_frame
@@ -358,7 +393,7 @@ def report_tb(out, tb):
         filename = co.co_filename
         
         if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
-            report_line(out, filename, line, "python")
+            tbl.append((filename, line, "python", None))
 
         elif 'self' in f.f_locals:
             obj = f.f_locals['self']
@@ -366,9 +401,12 @@ def report_tb(out, tb):
             import renpy
             
             if isinstance(obj, renpy.execution.Context):
-                obj.report_tb(out)
+                tbl.extend(obj.report_tb(out))
 
         tb = tb.tb_next
+
+    write_utf8_traceback_list(out, tbl)
+
 
 def report_exception(e, editor=True):
     """
@@ -381,7 +419,6 @@ def report_exception(e, editor=True):
     """
     
     import codecs
-    import traceback
 
     type, _value, tb = sys.exc_info() #@ReservedAssignment
 
@@ -392,7 +429,7 @@ def report_exception(e, editor=True):
             m = str(e)
             
         if isinstance(m, unicode):
-            return m.encode("utf-8")
+            return m.encode("utf-8", "replace")
         else:
             return m
     
@@ -401,12 +438,13 @@ def report_exception(e, editor=True):
     full = cStringIO.StringIO()
     
     print >>simple, renpy.game.exception_info
-    report_tb(simple, tb)
+    script_level_traceback(simple, tb)
     print >>simple, type.__name__ + ":", 
     print >>simple, safe_utf8(e)
 
     print >>full, "Full traceback:"
-    traceback.print_tb(tb, None, full)
+    tbl = traceback.extract_tb(tb)
+    write_utf8_traceback_list(full, tbl)
     print >>full, type.__name__ + ":", 
     print >>full, safe_utf8(e)
     
@@ -465,7 +503,7 @@ def report_exception(e, editor=True):
     except:
         pass
 
-    return simple.decode("utf-8"), full.decode("utf-8")
+    return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace")
 
 
 def memory_profile():
