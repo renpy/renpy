@@ -487,11 +487,7 @@ def report_exception(e, editor=True):
         
         try:
             if editor:
-                if renpy.config.editor:
-                    renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
-                else:
-                    if hasattr(os, 'startfile'):
-                        os.startfile('traceback.txt') #@UndefinedVariable
+                renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
         except:
             pass
 

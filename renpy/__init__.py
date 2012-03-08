@@ -189,6 +189,7 @@ def import_all():
     import renpy.lint #@UnresolvedImport
     import renpy.warp #@UnresolvedImport
 
+    import renpy.editor #@UnresolvedImport
     import renpy.exports #@UnresolvedImport
     import renpy.character # depends on exports. @UnresolvedImport
 

@@ -209,8 +209,7 @@ init python:
         rv = [ "{b}" + lines[0] + "{/b}" ]
         
         for i in lines[1:]:
-            if config.editor:
-                i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
+            i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
             rv.append(i)
             
         return "\n".join(rv)
@@ -256,8 +255,7 @@ init python:
             rv += "\n"
 
              
-        if config.editor:
-            rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
+        rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
              
         return rv
             
@@ -265,33 +263,19 @@ init python:
     # Opens the traceback.txt file in an editor.
     def __open_traceback():
         try:
-            if config.editor:
-                renpy.launch_editor([ 'traceback.txt' ], 1, transient=1)
-            else:
-                os.startfile('traceback.txt')
+            renpy.launch_editor([ 'traceback.txt' ], 1, transient=1)
         except:
             pass
 
     # Opens the errors.txt file in an editor.
     def __open_parse_errors():
         try:
-            if config.editor:
-                renpy.launch_editor([ 'errors.txt' ], 1, transient=1)
-            else:
-                os.startfile('errors.txt')
+            renpy.launch_editor([ 'errors.txt' ], 1, transient=1)
         except:
             pass
 
     def __can_open_traceback():
-        if config.editor:
-            return True
-            
-        import os
-        
-        if hasattr(os, 'startfile'):
-            return True
-            
-        return False
+        return True
 
     # The transform used for errors. ATL isn't ready yet.    
     def __transform_function(state, st, at):

@@ -1146,82 +1146,6 @@ def get_filename_line():
     else:
         return n.filename, n.linenumber
 
-def shell_escape(s):
-    s = s.replace("\\", "\\\\")
-    s = s.replace("\"", "\\\"")
-    return s
-
-def split_args(s):
-
-    rv = [ ]
-    word = ""
-    quoted = False
-        
-    i = 0
-    while i < len(s):
-        c = s[i]
-        i += 1
-
-        if not quoted and c == ' ' and word:
-            if word:
-                rv.append(word)
-                word = ""
-            continue
-            
-        if c == '"':
-            quoted = not quoted
-            continue
-
-        if c == '\\':
-            c = s[i]
-            i += 1
-
-        word += c
-
-    if word:
-        rv.append(word)
-
-    return rv
-
-def launch_editor(filenames, line=1, transient=0):
-    """
-    This causes an editor to be launched at the location of the current
-    statement.
-    """
-
-    import renpy.subprocess as subprocess
-    import os.path
-
-    if not renpy.config.editor:
-        return
-
-    if not len(filenames):
-        return
-
-    filenames = [ renpy.parser.unelide_filename(i) for i in filenames ]
-    filenames = [ fsencode(i) for i in filenames ]
-    filenames = [ shell_escape(os.path.normpath(i)) for i in filenames ]
-    filename = filenames[0]
-
-    allfiles = renpy.config.editor_file_separator.join(filenames)
-    otherfiles = renpy.config.editor_file_separator.join(filenames[1:])
-    
-    subs = dict(filename=filename, line=line, allfiles=allfiles, otherfiles=otherfiles)
-    if transient and (renpy.config.editor_transient is not None):
-        cmd = renpy.config.editor_transient % subs
-    else:
-        cmd = renpy.config.editor % subs
-
-    cmd = cmd.replace('""', '')
-
-    try:
-        subprocess.Popen(split_args(cmd)) # E1101 @UndefinedVariable
-        return True
-    except:
-        if renpy.config.debug:
-            raise
-        return False
-
 # A file that log logs to.
 logfile = None
     
@@ -1771,4 +1695,6 @@ def fsdecode(s):
         
     fsencoding = sys.getfilesystemencoding() or "utf-8"
     return s.decode(fsencoding)
+
+from renpy.editor import launch_editor
 
