@@ -54,8 +54,8 @@ def image_load_unscaled(f, hint, convert=True):
     return rv
 
 # Saves an image without rescaling.
-def image_save_unscaled(surf, dest):
-    pygame.image.save(surf, dest)
+def image_save_unscaled(surf, filename):
+    pygame.image.save(surf, renpy.exports.fsencode(filename))
 
 # Scales down a surface.
 def surface_scale(full):

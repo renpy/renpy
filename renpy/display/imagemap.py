@@ -194,7 +194,7 @@ class ImageMapCache(renpy.object.Object):
             surf = renpy.display.im.cache.get(d).subsurface(rect)
             cache.blit(surf, (x, y))
             
-        pygame.image.save(cache, fn)
+        pygame.image.save(cache, renpy.exports.fsencode(fn))
         
     def finish(self):
         if not self.areas:

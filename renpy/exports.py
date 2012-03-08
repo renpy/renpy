@@ -54,6 +54,7 @@ import renpy.audio.sound as sound
 import renpy.audio.music as music
 
 import time
+import sys
 
 def public_api():
     """
@@ -1751,24 +1752,23 @@ def set_physical_size(size):
         
 def fsencode(s):
     """
-    Returns s in the filesystem encoding.
+    Converts s from unicode to the filesystem encoding.
     """
     
-    if isinstance(s, str):
+    if not isinstance(s, unicode):
         return s
     
-    import sys
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding)
+    return s.encode(fsencoding, "replace")
 
 def fsdecode(s):
     """
-    Converts s from filesystem encoding to normal encoding.
+    Converts s from filesystem encoding to unicode.
     """
     
-    if isinstance(s, unicode):
+    if not isinstance(s, str):
         return s
-    
-    import sys
+        
     fsencoding = sys.getfilesystemencoding() or "utf-8"
     return s.decode(fsencoding)
+

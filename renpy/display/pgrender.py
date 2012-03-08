@@ -130,7 +130,7 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 def load_image(f, filename):
-    surf = pygame.image.load(f, filename)
+    surf = pygame.image.load(f, renpy.exports.fsencode(filename))
     return copy_surface_unscaled(surf)
 
 load_image_unscaled = load_image
