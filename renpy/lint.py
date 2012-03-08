@@ -465,6 +465,21 @@ def humanize(n):
 
     return ''.join(rv)
 
+def check_filename_encodings():
+    """
+    Checks files to ensure that they are displayable in unicode.
+    """
+
+    for _dirname, filename in renpy.loader.listdirfiles():
+        try:
+            filename.encode("ascii")
+            continue
+        except:
+            pass
+
+        report("%s contains non-ASCII characters in its filename.", filename)
+        add("(ZIP file distributions can only reliably include ASCII filenames.)")
+
         
 def lint():
     """
@@ -545,6 +560,7 @@ def lint():
     report_node = None
             
     check_styles()
+    check_filename_encodings()
             
     for f in renpy.config.lint_hooks:
         f()
