@@ -109,10 +109,7 @@ init python:
             "base" : os.path.dirname(renpy.fsencode(ef)),
             }
 
-        ef_data = file(ef, "r").read() 
-        exec ef_data in ctx, ctx
-
-        fsencoding = sys.getfilesystemencoding() or "utf-8"
+        execfile(renpy.fsencode(ef), ctx, ctx)
 
         if set_editor:
             if config.editor:
