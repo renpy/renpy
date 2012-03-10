@@ -565,59 +565,6 @@ Rarely or Internally Used
 
     A list of layers that are cleared when entering a new context.
 
-.. var:: config.editor = None
-
-    If not None, this is expected to be a command line for an editor
-    that is invoked when the launch_editor (normally shift-E) key is
-    pressed. The following substitutions make sense here:
-
-    %(filename)s
-        The filename of the most interesting file to be edited. This
-        is the file that should be shown to the user.
-
-    %(line)d
-        The line number of the most interesting file to show to the user.
-
-    %(otherfiles)s
-        Other, less-interesting files to show to the user.
-
-    %(allfiles)s
-        All the files.
-
-
-    Filename, otherfiles, and allfiles have shell-relevant characters
-    escaped with backslashes. otherfiles and allfiles separate files
-    with config.editor_file_separator (by default '" "', a
-    double-quote, a space, and a quote). Since all filenames should be
-    enclosed in double-quotes, this means that otherfiles and allfiles
-    will create several quoted files. If two double-quotes occur in a
-    row the string, then they are both removed. (This allows an empty
-    allfiles to be used.)
-
-    A reasonable example is::
-
-        init python:
-            config.editor = 'myeditor "%(filename)s" +line:%(line)d "%(otherfiles)s"'
-
-    This defaults to the value of the RENPY_EDITOR environment
-    variable. If not defined by that variable or user code, this is
-    set automatically by the Ren'Py launcher.
-
-.. var:: config.editor_file_separator = '" "'
-
-    The separator used between filenames when lists of files are
-    provided to the editor.
-
-.. var:: config.editor_transient = None
-
-    If not None, this is expected to be a command line for an editor
-    that is invoked on transient files, such as lint results, parse
-    errors, and tracebacks. Substitutions are as for config.editor.
-
-    This defaults to the value of the RENPY_EDITOR_TRANSIENT
-    environment variable. If not defined by that variable or user
-    code, this is set automatically by the Ren'Py launcher.
-
 .. var:: config.fade_music = 0.0
 
     This is the amount of time in seconds to spend fading the old

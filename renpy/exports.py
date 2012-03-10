@@ -1,3 +1,4 @@
+
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -1676,6 +1677,8 @@ def set_physical_size(size):
         
 def fsencode(s):
     """
+    :doc: other
+    
     Converts s from unicode to the filesystem encoding.
     """
     
@@ -1687,6 +1690,8 @@ def fsencode(s):
 
 def fsdecode(s):
     """
+    :doc: other
+    
     Converts s from filesystem encoding to unicode.
     """
     

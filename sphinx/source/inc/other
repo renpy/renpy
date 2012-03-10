@@ -6,6 +6,14 @@
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
 
+.. function:: renpy.fsdecode(s)
+    
+    Converts s from filesystem encoding to unicode.
+
+.. function:: renpy.fsencode(s)
+    
+    Converts s from unicode to the filesystem encoding.
+
 .. function:: renpy.get_physical_size()
     
     Returns the size of the physical window.

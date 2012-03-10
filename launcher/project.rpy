@@ -254,7 +254,7 @@ label edit_script:
 
     python hide:
 
-        if not config.editor:
+        if not "RENPY_EDIT_PY" in os.environ:
             error(_(u"No editor has been selected."))
                     
         files = [ project.gamedir + "/" + i for i in os.listdir(project.gamedir) if i.endswith(".rpy") if not i[0] == "."]

@@ -9,6 +9,10 @@ The new RAPT tool makes it far easier to package a Ren'Py game for Android.
 It can semi-automatically set up an Android build environment on your
 system, build a package, and install that package on your Android device.
 
+To fix some editor-related problems, backported the 6.14 editor system. This
+changes how editors are configured. Please see :ref:`text-editor-integration`
+for a description of the new system.
+
 The new :var:`config.save_dump` variable causes Ren'Py to write out
 save_dump.txt each time it saves. This file describes the contents of the
 save, making it possible to figure out what's causing an overly large save

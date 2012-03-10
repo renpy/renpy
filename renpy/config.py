@@ -284,16 +284,16 @@ framerate = 100
 # The number of frames that Ren'Py has shown.
 frames = 0
 
-# A text editor that is launched at the location of the current
+# NOT USED: A text editor that is launched at the location of the current
 # statement.
-editor = os.environ.get('RENPY_EDITOR', None)
+editor = None # os.environ.get('RENPY_EDITOR', None)
 
-# Text editor, with arguments to reload or clobber the file - used,
+# NOT USED: Text editor, with arguments to reload or clobber the file - used,
 # for example, to display traceback.txt.
-editor_transient = os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
+editor_transient = None # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 
-# The separator used between files in the text editor.
-editor_file_separator = os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
+# NOT USED: The separator used between files in the text editor.
+editor_file_separator = None # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
 developer = False

@@ -45,44 +45,43 @@ class Editor(object):
     Each operation takes a path to operate on. If the editor has a buffer
     corresponding to that path, that buffer is used. Otherwise, the editor 
     is implicitly opened.
+
+    We reserve the right to add new keyword arguments to methods of this class,
+    so please ensure that subclasses accept and ignore unknown keyword
+    arguments.
     """
 
-    def open(self, path): #@ReservedAssignment
-        """
-        Ensures `path` is open in the editor.
-        """
-        
-    def reopen(self, path):
-        """
-        Causes the editor to reopen the file at `path`.
-        """
-        
-    def line(self, path, number):
-        """
-        Moves the cursor for `path` to `line`. Lines in a file are numbered
-        starting with 1.
-        """
-        
-    def focus(self, path):
-        """
-        Focuses `path`, which means that the buffer containing it should be
-        presented to the user. Ideally, the window containing it will also 
-        pop to the top of the OS's window stack.
-        """
-        
-    def begin(self):
+    def begin(self, new_window=False, **kwargs):
         """
         Begins an editor transaction.
+
+        `new_window`
+            If True, a new editor window will be created and presented to the
+            user. Otherwise, and existing editor window will be used.
         """
         
-    def end(self):
+    def end(self, **kwargs):
         """
         Ends an editor transaction.
         """
+
+    def open(self, filename, line=None, **kwargs): #@ReservedAssignment
+        """
+        Ensures `path` is open in the editor. This may be called multiple
+        times per transaction.
+
+        `line`
+            If not None, this should be a line number to open in the
+            editor.
+
+        The first open call in a transaction is somewhat special - that file
+        should be given focus in a tabbed editor environment.
+        """
+        
         
 class SystemEditor(Editor):
     
-    def open(self, filename): #@ReservedAssignment
+    def open(self, filename, line=None, **kwargs): #@ReservedAssignment
         
         filename = renpy.exports.fsencode(filename)
         
@@ -104,32 +103,25 @@ editor = None
 
 def init():
     """
-    Creates the editor object, based on the contents of the RENPY_EDITOR_PY 
+    Creates the editor object, based on the contents of the RENPY_EDIT_PY 
     file.
     """
     
     global editor
     editor = SystemEditor()
     
-    path = os.environ.get("RENPY_EDITOR_PY", None)
+    path = os.environ.get("RENPY_EDIT_PY", None)
     if path is None:
         return
     
-    try:
-        f = file(path, "rU")
-        code = f.read()
-        f.close()
-    except:
-        raise Exception("{0} could not be opened.".format(path))
-    
-    scope = { }    
-    exec code in scope
+    scope = { "__file__" : path }    
+    execfile(path, scope, scope)
             
-    if "editor" in scope:
-        editor = scope["editor"]
+    if "Editor" in scope:
+        editor = scope["Editor"]()
         return 
     
-    raise Exception("{0} did not create an editor variable.".format(path))
+    raise Exception("{0} did not define an Editor class.".format(path))
 
 def launch_editor(filenames, line=1, transient=False):
     """
@@ -137,33 +129,24 @@ def launch_editor(filenames, line=1, transient=False):
     """
     
     if editor is None:
+        init()
+    
+    if editor is None:
         return False
     
     filenames = [ renpy.parser.unelide_filename(i) for i in filenames ]
     
     try:
-    
-        editor.begin()
+        editor.begin(new_window=transient)
         
         for i in filenames:
-            
-            if transient:
-                editor.open(i)
-            else:
-                editor.reopen(i)
-            
-        editor.line(filenames[0], line)
-        editor.focus(filenames[0])
+            editor.open(i, line)
+            line = None # The line number only applies to the first filename.
         
         editor.end()
         
         return True
     
     except:
-        
-        if renpy.config.debug:
-            raise
-        
+        traceback.print_exc()
         return False
-    
-init()
