@@ -141,6 +141,8 @@ class Frame(renpy.display.core.Displayable):
         crend = render(self.image, width, height, st, at)
 
         sw, sh = crend.get_size()
+        sw = int(sw)
+        sh = int(sh)
         
         dw = int(width)
         dh = int(height)
