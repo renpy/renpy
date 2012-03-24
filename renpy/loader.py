@@ -442,34 +442,44 @@ class RenpyImporter(object):
     searches for data files.
     """
 
-    def translate(self, fullname):
+    def __init__(self, prefix=""):
+        self.prefix = ""
+
+    def translate(self, fullname, prefix=""):
         
-        fn = fullname.replace(".", "/") + ".py"
-        if loadable(fn):
-            return fn
+        fn = prefix + fullname.replace(".", "/")
+        
+        if loadable(fn + ".py"):
+            return fn + ".py"
 
-        fn = fullname.replace(".", "/") + "/__init__.py"
-
-        if loadable(fn):
-            return fn
+        if loadable(fn + "/__init__.py"):
+            return fn + "/__init__.py"
 
         return None
 
     def find_module(self, fullname, path=None):
+        if path is not None:
+            for i in path:
+                if self.translate(fullname, i):
+                    return RenpyImporter(i)
+        
         if self.translate(fullname):
             return self
 
     def load_module(self, fullname):
 
-        filename = self.translate(fullname)
+        filename = self.translate(fullname, self.prefix)
         
         mod = sys.modules.setdefault(fullname, types.ModuleType(fullname))
+        mod.__name__ = fullname
         mod.__file__ = filename
         mod.__loader__ = self
-        mod.__path__ = [ ]
+
+        if filename.endswith("__init__.py"):
+            mod.__path__ = [ filename[:-len("__init__.py")] ]
 
         source = load(filename).read().decode("utf8")
-        if source[0] == u'\ufeff':
+        if source and source[0] == u'\ufeff':
             source = source[1:]
         source = source.encode("raw_unicode_escape")
         
