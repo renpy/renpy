@@ -653,12 +653,7 @@ class RollbackLog(renpy.object.Object):
 
         # If the log is too long, try pruning it to a label.
         if len(self.log) > renpy.config.rollback_length:
-            rb = self.log[-renpy.config.rollback_length]
-
-            # Checks to see if this is a real name, rather than a
-            # tuple.
-            if isinstance(rb.context.current, basestring):
-                self.log = self.log[-renpy.config.rollback_length:]
+            self.log = self.log[-renpy.config.rollback_length:]
 
         self.current = Rollback()
         self.log.append(self.current)
