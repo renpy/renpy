@@ -449,7 +449,7 @@ screen _parse_errors:
             mousewheel True
             
             has vbox
-            text fmt_errors
+            text fmt_errors substitute False
       
         bar:
             style "_vscrollbar"
