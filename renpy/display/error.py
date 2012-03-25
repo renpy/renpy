@@ -62,7 +62,7 @@ def report_exception(short, full):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
-    the appropriate exception.
+    the appropriate exception to cause a reload or quit or rollback.
     """
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -73,6 +73,9 @@ def report_exception(short, full):
     
     init_display()    
           
+    if renpy.display.draw is None:
+        return True
+    
     ignore_action = None
     rollback_action = None
     reload_action = None
