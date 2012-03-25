@@ -1306,10 +1306,12 @@ class Interface(object):
         This sets the video mode. It also picks the draw object.
         """
         
+        # Ensure that we kill off the movie when changing screen res.
+        renpy.display.video.movie_stop(clear=False)
+
         if self.display_reset:
             renpy.display.draw.deinit()
             renpy.display.draw.quit()
-            renpy.display.draw = None
 
             renpy.display.render.free_memory()
             renpy.display.im.cache.clear()
@@ -1320,9 +1322,6 @@ class Interface(object):
             self.kill_textures_and_surfaces()
                         
         self.display_reset = False
-        
-        # Ensure that we kill off the movie when changing screen res.
-        renpy.display.video.movie_stop(clear=False)
 
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
