@@ -36,7 +36,7 @@ except ImportError:
 #
 # Be sure to change script_version in launcher/script_version.rpy.
 # Be sure to change config.version in tutorial/game/options.rpy.
-version_tuple = (6, 13, 9, vc_version)
+version_tuple = (6, 13, 10, vc_version)
 
 # A verbose string computed from that version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
