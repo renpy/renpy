@@ -71,8 +71,11 @@ def report_exception(short, full):
     if not renpy.exports.has_screen("_exception"):
         return True
     
-    init_display()    
-          
+    try:
+        init_display()    
+    except:
+        return True
+    
     if renpy.display.draw is None:
         return True
     
