@@ -994,9 +994,14 @@ class SWDraw(object):
                     return True
 
             else:
+                cx = int(cx)
+                cy = int(cy)
+                
                 cw, ch = child.get_size()
                 if cx >= cw or cy >= ch:
                     return False
+
+                
 
                 if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
                     return True
