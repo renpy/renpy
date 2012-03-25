@@ -270,8 +270,13 @@ class Context(renpy.object.Object):
                 except Exception, e:
                     short, full = renpy.bootstrap.report_exception(e, editor=False)
 
-                    if renpy.display.error.report_exception(short, full):
-                        raise
+                    try:
+                        if renpy.display.error.report_exception(short, full):
+                            raise
+                    except renpy.game.CONTROL_EXCEPTIONS, ce:
+                        raise ce
+                    except Exception, ce:
+                        raise e
                               
                 node = self.next_node
             
