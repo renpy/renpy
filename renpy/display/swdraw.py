@@ -667,6 +667,8 @@ class SWDraw(object):
     """
 
     def __init__(self):
+        self.display_info = None
+
         self.reset()
 
     def reset(self):
@@ -698,8 +700,9 @@ class SWDraw(object):
 
         pygame.display.init()
         renpy.display.interface.post_init()
-        
-        self.display_info = pygame.display.Info()
+
+        if self.display_info is None:       
+            self.display_info = pygame.display.Info()
 
         # The scale factor we use for this display.
         self.scale_factor = 1.0
