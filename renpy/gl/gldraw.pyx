@@ -160,17 +160,20 @@ cdef class GLDraw:
             fullscreen = False
             
         if fullscreen != self.old_fullscreen:
-
+            
+            self.did_init = False
+            
             if self.old_fullscreen is not None:
                 pygame.display.quit()
-
+            
             pygame.display.init()
             
-            self.display_info = pygame.display.Info()
-            
-            renpy.display.interface.post_init()
+            if self.display_info is None:
+                self.display_info = pygame.display.Info()
             
             self.old_fullscreen = fullscreen
+
+            renpy.display.interface.post_init()
 
         renpy.display.log.write("")
         
@@ -327,6 +330,8 @@ cdef class GLDraw:
         renpy.display.log.write("About to quit GL.")
         pygame.display.quit()
         renpy.display.log.write("Finished quit GL.")
+        
+        self.old_fullscreen = None
         
     def init(self):
         """

@@ -1210,7 +1210,7 @@ class Interface(object):
 
             if renpy.windows and im.get_size() != (32, 32):
                 im = renpy.display.scale.real_smoothscale(im, (32, 32))
-                
+            
             pygame.display.set_icon(im)
 
             
@@ -1311,7 +1311,9 @@ class Interface(object):
 
         if self.display_reset:
             renpy.display.draw.deinit()
-            renpy.display.draw.quit()
+
+            if renpy.display.draw.info["renderer"] == "angle":
+                renpy.display.draw.quit()
 
             renpy.display.render.free_memory()
             renpy.display.im.cache.clear()
