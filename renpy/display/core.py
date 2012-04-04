@@ -2304,7 +2304,8 @@ class Interface(object):
                                 self.restored()
                             else:
                                 self.iconified()
-
+                    
+                        pygame.key.set_mods(0)
 
                     # This returns the event location. It also updates the
                     # mouse state as necessary.
@@ -2318,6 +2319,7 @@ class Interface(object):
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
+
 
                     if rv is None:
                         rv = root_widget.event(ev, x, y, 0)
