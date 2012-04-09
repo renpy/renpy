@@ -1380,6 +1380,10 @@ class Interface(object):
         # Assume we're not minimized.
         self.minimized = False
 
+        # Force an interaction restart.
+        self.restart_interaction = True
+
+
     def draw_screen(self, root_widget, fullscreen_video):
         
         surftree = renpy.display.render.render_screen(
