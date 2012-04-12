@@ -194,14 +194,14 @@ def run(var, *args, **kwargs):
         rv = None
 
         for i in var:
-            new_rv = i(*args)
+            new_rv = run(i, *args, **kwargs)
 
             if new_rv is not None:
                 rv = new_rv
 
         return rv
 
-    return var(*args)
+    return var(*args, **kwargs)
 
 def run_unhovered(var):
     """
@@ -213,10 +213,7 @@ def run_unhovered(var):
 
     if isinstance(var, (list, tuple)):
         for i in var:
-
-            f = getattr(i, "unhovered", None)
-            if f is not None:
-                f()
+            run_unhovered(i)
 
         return
 
@@ -958,11 +955,11 @@ class Adjustment(renpy.object.Object):
         if self._step is not None:
             return self._step
 
-        if self._page is not None:
+        if self._page is not None and self.page > 0:
             return self._page / 10
 
         if isinstance(self._range, float):
-            return self._range / 20
+            return self._range / 10
         else:
             return 1
 
