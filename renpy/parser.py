@@ -205,7 +205,7 @@ def list_logical_lines(filename):
             c = data[pos]
 
             if c == '\t':
-                raise Exception("%s contains a tab character on line %d. Tab characters are not allowed in Ren'Py scripts." % (filename, number))
+                raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
 
             if c == '\n':
                 number += 1
@@ -1916,7 +1916,7 @@ def report_parse_errors():
     
     full_text = ""
     
-    f = file("errors.txt", "w")
+    f, error_fn = renpy.bootstrap.open_error_file("errors.txt", "w")
     f.write(codecs.BOM_UTF8)
 
     print >>f, "I'm sorry, but errors were detected in your script. Please correct the"
@@ -1944,10 +1944,10 @@ def report_parse_errors():
 
     f.close()
 
-    renpy.display.error.report_parse_errors(full_text)
+    renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        renpy.exports.launch_editor([ 'errors.txt' ], 1, transient=1)
+        renpy.exports.launch_editor([ error_fn ], 1, transient=1)
     except:
         pass
         

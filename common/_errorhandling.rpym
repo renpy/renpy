@@ -259,21 +259,16 @@ init python:
              
         return rv
             
-
-    # Opens the traceback.txt file in an editor.
-    def __open_traceback():
-        try:
-            renpy.launch_editor([ 'traceback.txt' ], 1, transient=1)
-        except:
-            pass
-
-    # Opens the errors.txt file in an editor.
-    def __open_parse_errors():
-        try:
-            renpy.launch_editor([ 'errors.txt' ], 1, transient=1)
-        except:
-            pass
-
+    class __EditFile(Action):
+        def __init__(self, filename):
+            self.filename = filename
+            
+        def __call__(self):
+            try:
+                renpy.launch_editor([ self.filename ], 1, transient=1)
+            except:
+                pass
+        
     def __can_open_traceback():
         return True
 
@@ -405,10 +400,9 @@ screen _exception:
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
                         
-                if __can_open_traceback():                    
-                    textbutton _("Open Traceback"):
-                        action __open_traceback
-                        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+                textbutton _("Open Traceback"):
+                    action __EditFile(traceback_fn)
+                    hovered tt.action(_("Opens the traceback.txt file in a text editor."))
                     
                 null width 30
                 
@@ -468,10 +462,9 @@ screen _parse_errors:
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
                         
-                if __can_open_traceback():                    
-                    textbutton _("Open Parse Errors"):
-                        action __open_parse_errors
-                        hovered tt.action(_("Opens the errors.txt file in a text editor."))
+                textbutton _("Open Parse Errors"):
+                    action __EditFile(error_fn)
+                    hovered tt.action(_("Opens the errors.txt file in a text editor."))
                     
                 null width 30
                 

@@ -407,6 +407,22 @@ def script_level_traceback(out, tb):
 
     write_utf8_traceback_list(out, tbl)
 
+def open_error_file(fn, mode):
+    """
+    Opens an error/log/file. Returns the open file, and the filename that
+    was opened.
+    """
+    
+    import tempfile
+    
+    try:
+        f = file(fn, mode)
+        return f, fn
+    except:
+        pass
+    
+    fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
+    return file(fn, mode), fn
 
 def report_exception(e, editor=True):
     """
@@ -469,7 +485,7 @@ def report_exception(e, editor=True):
     # Inside of the file, which may not be openable.
     try:
 
-        f = file("traceback.txt", "w")
+        f, traceback_fn = open_error_file("traceback.txt", "w")
 
         f.write(codecs.BOM_UTF8)
 
@@ -487,7 +503,7 @@ def report_exception(e, editor=True):
         
         try:
             if editor:
-                renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
+                renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
         except:
             pass
 
@@ -499,7 +515,7 @@ def report_exception(e, editor=True):
     except:
         pass
 
-    return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace")
+    return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace"), traceback_fn
 
 
 def memory_profile():

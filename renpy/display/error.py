@@ -58,7 +58,7 @@ def init_display():
 
     renpy.ui.reset()
         
-def report_exception(short, full):
+def report_exception(short, full, traceback_fn):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
@@ -100,10 +100,11 @@ def report_exception(short, full):
         rollback_action=rollback_action,
         reload_action=reload_action,
         ignore_action=ignore_action,
+        traceback_fn=traceback_fn,
         )
         
 
-def report_parse_errors(errors):
+def report_parse_errors(errors, error_fn):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
@@ -125,5 +126,6 @@ def report_parse_errors(errors):
         "_parse_errors",
         reload_action=reload_action,
         errors=errors,
+        error_fn = error_fn,
         )
 

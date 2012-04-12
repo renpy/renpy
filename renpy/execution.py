@@ -268,10 +268,10 @@ class Context(renpy.object.Object):
                     raise
 
                 except Exception, e:
-                    short, full = renpy.bootstrap.report_exception(e, editor=False)
+                    short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
 
                     try:
-                        if renpy.display.error.report_exception(short, full):
+                        if renpy.display.error.report_exception(short, full, traceback_fn):
                             raise
                     except renpy.game.CONTROL_EXCEPTIONS, ce:
                         raise ce
