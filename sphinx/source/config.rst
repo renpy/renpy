@@ -830,6 +830,14 @@ Rarely or Internally Used
     If not None, this should be a (`x`, `y`, `height`, `width`)
     tuple. Screenshots are cropped to this rectangle before being
     saved. 
+
+.. var:: config.screenshot_pattern = "screenshot%04d.png"
+
+    The pattern used to create screenshot files. This pattern is applied (using
+    python's %-formatting rules) to the natural numbers to generate a sequence 
+    of filenames. The filenames may be absolute, or relative to 
+    config.renpy_base. The first filename that does not exist is used as the 
+    name of the screenshot. 
     
 .. var:: config.script_version = None
 
