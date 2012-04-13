@@ -26,6 +26,7 @@ import codecs
 import traceback
 import platform
 import time
+import tempfile
 
 import renpy
 
@@ -75,17 +76,26 @@ class LogFile(object):
             base = os.environ.get("RENPY_LOG_BASE", renpy.config.renpy_base)
             fn = os.path.join(base, self.name + ".txt")
         
+            altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
+            
+        
             if renpy.android:
                 print "Logging to", fn
-        
+
             if self.append:
-                self.file = codecs.open(fn, "a", "utf-8")
-                
+                mode = "a"
+            else:
+                mode = "w"
+
+            try:        
+                self.file = codecs.open(fn, mode, "utf-8")
+            except:
+                self.file = codecs.open(altfn, mode, "utf-8")
+
+            if self.append:                
                 self.write('')
                 self.write('=' * 78)
                 self.write('')
-            else:
-                self.file = codecs.open(fn, "w", "utf-8")
 
             self.write("%s", time.ctime())
             self.write("%s", platform.platform())
