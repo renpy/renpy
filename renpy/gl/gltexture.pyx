@@ -73,6 +73,12 @@ def test_texture_sizes(Environ environ, draw):
     global SIZES
     
     renpy.display.log.write("Texture testing:")
+
+    # There could be an error queued up from an ANGLE reset. Purge it before we do the 
+    # texture testing.
+    error = glGetError()
+    if error != GL_NO_ERROR:
+        renpy.display.log.write("- Ignored error at start of testing: {0:x}".format(error))
     
     SIZES = [ ]
     
