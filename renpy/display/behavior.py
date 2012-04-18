@@ -100,13 +100,20 @@ def compile_event(key, keydown):
         rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
     if len(part) == 1:
-        if len(part[0]) != 1:
-            raise Exception("Invalid key specifier %s" % key)
+        if len(part[0]) != 1:            
+            if renpy.config.developer:
+                raise Exception("Invalid key specifier %s" % key)
+            else:
+                return "(False)"
+
         rv += " and ev.unicode == %r)" % part[0]        
 
     else:
         if part[0] != "K":
-            raise Exception("Invalid key specifier %s" % key)
+            if renpy.config.developer:
+                raise Exception("Invalid key specifier %s" % key)
+            else:
+                return "(False)"
 
         key = "_".join(part)
         
