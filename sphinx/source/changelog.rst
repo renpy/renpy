@@ -17,6 +17,76 @@ parameter. If given, scrollbars that manipulate the viewport are created.
 Screen language blocks may now contain multiple has statements.
 
 
+Ren'Py 6.13.9
+=============
+
+The new RAPT tool makes it far easier to package a Ren'Py game for Android.
+It can semi-automatically set up an Android build environment on your
+system, build a package, and install that package on your Android device.
+
+To fix some editor-related problems, backported the 6.14 editor system. This
+changes how editors are configured. Please see :ref:`text-editor-integration`
+for a description of the new system.
+
+The new :var:`config.save_dump` variable causes Ren'Py to write out
+save_dump.txt each time it saves. This file describes the contents of the
+save, making it possible to figure out what's causing an overly large save
+file.
+
+Worked around a bug in Mesa that can cause crashes on certain Linux systems.
+
+Fixed the following bugs in Ren'Py.
+
+* The (default) texwrap layout represents character widths as floating-point
+  numbers. This fixes a bug where non-integer kerning would lead to text
+  overflowing its bounding box.
+* Menu choices are logged correctly.
+* All file access is now done in unicode, rather than the system's native
+  encoding. This prevents crashes that occured when Ren'Py was placed
+  in a directory that had non-ASCII characters in it.
+* Fixed focus_mask on the ANGLE renderer.
+* Displayables can now have fractional-pixel sizes. This allows a zooming
+  image to remain precisely centered on the screen.
+* Fixed a problem where Ren'Py would save unnecessary trees of displayables
+  each time it saved a screen. This would lead to overly large save files and
+  slow save performance.
+* Ren'Py would not attempt an alternate rendering method if the texture
+  test failed, leading a "Textures are not rendering properly." exception.
+* A crash in Render.fill.
+
+Ren'Py 6.13.8
+=============
+
+
+Side images can now be limited to showing a single character, or only showing
+characters that are not on the screen. See :var:`config.side_image_tag` and
+:var:`config.side_image_only_not_showing`.
+
+Added :var:`config.python_callbacks`, a list of python functions that are
+called at the end of each python block.
+
+Ren'Py now tests the video card it is running on for functionality. If it
+can't draw textured rectangles to the screen, it will proceed to a different
+renderer.
+
+Old-style string interpolation is now enabled by default, alongside new-style
+string interpolation.
+
+Ren'Py is now compatible with libpng 1.5. Thanks to James Broadhead for the
+patch.
+
+Fixed the following bugs:
+
+* A crash when dealing with certain invalid fonts.
+* Pausing too long when typing out text.
+* Cutting one pixel off a block of text when fractional kerning was used.
+* Crashing when the time was set in the far future or past.
+* Immediately exiting when rolling forward at the quit prompt.
+* Crashing when a non-existing directory is added to the search path. (This
+  prevented Katawa Shoujo from starting in the latest version.)
+* Save-file size was overly large due to screens being included in save files.
+
+
 Ren'Py 6.13
 ===========
 
@@ -39,23 +109,23 @@ system are:
   The new string interpolation takes place on all text that is
   displayed, rather than just say and menu statements. When used as
   part of a screen, interpolation has access to screen-local
-  variables. 
-      
+  variables.
+
   PEP 3101-style string formatting is supported, which means that
   this syntax can be used to display fields and items, as well as
-  variables. 
+  variables.
 
 * Kerning support was added, both as the :propref:`kerning` style
   property and the :tt:`k` text tag.
-  
+
 * Support for ruby text (also known as furigana), via the :tt:`rt` and
-  :tt:`rb` text tags, and the :propref:`ruby_style` style property. 
+  :tt:`rb` text tags, and the :propref:`ruby_style` style property.
 
 * The new :tt:`space` and :tt:`vspace` text tags make it easy to
   whitespace into the text.
 
 * The new :tt:`cps` text tag controls the speed of text display.
-  
+
 * By default, Ren'Py uses the unicode linebreaking algorithm to find
   points at which a line can be broken. This algorithm should
   correctly break lines that contain a mix of western and eastern
@@ -63,7 +133,7 @@ system are:
   Ren'Py also implements a korean-with-spaces variant, that only
   breaks runs of Korean text at whitespace. These algorithms can be
   selected by the :propref:`language` style property.
-  
+
 * Ren'Py now uses the Knuth-Plass linebreaking algorithm to choose the
   points at which it actually splits lines. This algorithm attempts to
   minimize the unevenness of all lines except the last. Ren'Py also
@@ -73,13 +143,13 @@ system are:
 
 * The new :propref:`newline_indent` style property determines if
   Ren'Py adds indentation after a newline in text.
-  
+
 * The new :propref:`line_leading` style property inserts space above a
   line of text. (Ruby text can be placed into this space.)
 
 * Text can be automatically translated before it is displayed. (This
   support will be improved in a future major release.)
-  
+
 DirectX Support
 ---------------
 
@@ -147,7 +217,7 @@ Other Changes
   user.
 
 * Timers can now take a list of actions, rather than just a single
-  callable. 
+  callable.
 
 * Three transforms were added to the default library: :var:`top`,
   :var:`topleft`, and :var:`topright`.
@@ -157,7 +227,7 @@ Other Changes
 
 * User-defined statements can now take a block, which the statement is
   responsible for parsing.
-  
+
 * Wrote documentation for:
 
   * :ref:`Menus <menus>`
@@ -184,7 +254,7 @@ Ren'Py 6.12.2
 
 This release contains the following changes:
 
-* ATL Transforms with parameters compile correctly. 
+* ATL Transforms with parameters compile correctly.
 * MultipleTransition works in conjunction with pauses.
 * The mouse is shown when a quit action is run while a movie is playing.
 * A fix for a lockup that occured when the user entered the game menu while a
@@ -243,7 +313,7 @@ attributes are retained. Now, one can write::
 
 to display Eileen on the right side of the screen, without changing
 the attributes supplied to an image.
-    
+
 **Say Attributes.**
 Image attributes can be updated as part of a say statement. A
 character can be given an `image` argument, giving the name of an
@@ -267,8 +337,8 @@ is equivalent to::
 whenever an image with the tag eileen is being shown.
 
 **Side Image.**
-This release features a new implementation of :ref:`side-images`, which 
-allows side images to be defined like other images, and allows side 
+This release features a new implementation of :ref:`side-images`, which
+allows side images to be defined like other images, and allows side
 images to be integrated with screens easily.
 
 **Sticky Transforms.**
@@ -324,20 +394,20 @@ Ren'Py now attempts to elide personal information from filenames. Where
 possible, filenames are reported relative to the base or Ren'Py base
 directories,  rather than the root of the filesystem.
 
-The new :propref:`box_wrap` style property allows hboxes and vboxes to 
+The new :propref:`box_wrap` style property allows hboxes and vboxes to
 automatically wrap when they reach the edge of their enclosing area.
 
 Actions now can have an :func:`Action.unhovered` method. This method is
 called when an action supplied as a `hovered` parameter loses focus.
 
-Added the :class:`Tooltip` class, which makes it easier to define tooltips 
+Added the :class:`Tooltip` class, which makes it easier to define tooltips
 as part of a screen.
 
 Added :var:`config.debug_text_overflow`, which controls the logging of cases
 where text exceeds its allocated area.
 
 Ren'Py no longer attempts to adjust the system level mixer controls, which
-means that it's no longer possible to raise the volume from within Ren'Py. 
+means that it's no longer possible to raise the volume from within Ren'Py.
 Controlling the system volume exhibited bugs on all three platforms, including
 hard-to-predict volume changes that affect other applications.
 
@@ -363,11 +433,11 @@ Ren'Py now supports the Android platform. This includes support for a
 large fraction of Ren'Py's functionality, although we were unable to
 add support for imagedissolves and movie playback. It should be
 possible to package a Ren'Py game and distribute it through the
-Android market. 
+Android market.
 
 Android support required several changes in Ren'Py:
 
-* The OpenGL renderer has been extended to support OpenGL ES. 
+* The OpenGL renderer has been extended to support OpenGL ES.
 
 * For performance reasons, much of the display system has been
   rewritten in the Cython language. This also should improve
@@ -454,7 +524,7 @@ changed. That's why games must opt-in to them.
 
 The definition of the `items` parameter of the :ref:`choice-screen` and
 :ref:`nvl-screen` screens has changed, and games will need to be updated to work
-with the new version. 
+with the new version.
 
 Character arguments beginning with ``show_`` are passed to the
 :ref:`say-screen` screen. This allows things like show_side_image and
@@ -468,7 +538,7 @@ imagemaps and imagebuttons.
 The imagemap caching behavior described above applies only to screens.
 
 The :func:`FilePageName` and :func:`FileSlotName` functions make it easier
-to name slots 
+to name slots
 
 Other Improvements
 ------------------
@@ -481,7 +551,7 @@ Ren'Py 6.12 includes a number of other improvements:
 * When taking a screenshot, :var:`config.screenshot_callback` is
   called. The default implementation of this function notifies the
   user of the location of the screenshot.
-  
+
 * The :func:`Solid` and :func:`Frame` displayables are now tiny and
   no longer take up (much) space in the image cache.
 
@@ -555,14 +625,14 @@ Fixed :lpbug:`647324`, where ImageDissolves are rendered as if
 specified with alpha=True whether or not alpha=True was set.
 
 Fixed a problem that caused the game to start when picking "No" after
-clicking the (window-level) quit button. 
+clicking the (window-level) quit button.
 
 Fixed a problem that prevented AnimatedValue from functioning properly
 when delay was not 1.0. Thanks to Scout for the fix.
 
 Fixed a problem that caused movies to display incorrectly when the
 screen was scaled using OpenGL scaling.
-  
+
 Ren'Py 6.11.1
 =============
 
@@ -668,7 +738,7 @@ You can test that Ren'Py is in OpenGL mode by attempting to resize the
 window. If it's resizable, it's OpenGL, otherwise, software rendering
 is being used.
 
-  
+
 Screens and Screen Language
 ---------------------------
 
@@ -716,12 +786,12 @@ Transform Changes
 * Transform (and ui.transform) have been changed so that their
   arguments can now be prefixed with a style prefix. One can write
   ui.transform(idle_rotate=30, hover_rotate=90) and have it
-  work. 
+  work.
 
 * Added the rotate_pad transform property, which controls how
   Transform pads rotated displayables. When set to False, _not_ the
   default, it's now possible to rotate a (100, 50) displayable by 90
-  degrees, and have the result be (50, 100) in size. 
+  degrees, and have the result be (50, 100) in size.
 
 Other Changes
 -------------
@@ -739,14 +809,14 @@ Other Changes
   * align - takes a pair, and uses it to set xalign and yalign. (And
     hence xpos, ypos, xanchor, and yanchor.)
   * area - take (x, y, height, width) pair, and tries to set properties
-    such that the displayable will be placed inside the rectangle. This 
+    such that the displayable will be placed inside the rectangle. This
     sets the xpos, ypos, xanchor, yanchor, xfill, yfill, xminimum, yminimum,
     xmaximum, and ymaximum properties.
 
 * ui.add can now take transform properties as keyword arguments. If at
   least one transform property is present, ui.add will create a
   transform that wraps the displayable it's adding to the
-  screen. 
+  screen.
 
 * The new :func:`LiveTile` displayable tiles its child, without consuming a
   large amount of memory to do so.
@@ -754,16 +824,16 @@ Other Changes
 * :var:`config.quit_action` allows one to specify an action that is run when
   the quit button (in the corner of the window) is pressed.
   config.game_menu_action allows one to specify an action that is run
-  when entering the game menu. 
+  when entering the game menu.
 
 * The :var:`config.screenshot_crop` configuration variable controls the area of
-  the screen that it stored when the user presses the screenshot key. 
+  the screen that it stored when the user presses the screenshot key.
 
 * The :func:`renpy.music.register_channel` method now has two additional
   parameters, file_prefix and file_suffix. These are prepended and
   appended to filenames provided to the registered channel,
   respectively.
-  
+
 * The new :func:`renpy.list_files` method returns a list of files in the game
   directory and archives. This can be used to write your own automatic
   image loading method, among other things.
@@ -772,7 +842,7 @@ Other Changes
   that text is only tokenized once. This required changing a few of the
   methods on ADVCharacter and NVLCharacter, so code that inherits from
   those classes should be checked.
-  
+
 * The distribution code has been moved into launcher/distribute.py. This
   file can be run from the command line to build distributions in shell
   scripts and other automated processes.
@@ -782,12 +852,12 @@ Other Changes
   with a checkerboard pattern.
 
 * The new ``input``, ``side``, ``grid``, and ``fixed`` styles were created,
-  and the corresponding displayables use them by default. 
+  and the corresponding displayables use them by default.
 
 * When a style is accessed at init-time, and doesn't exist, we divide it
   into two parts at the first underscore. If the second part corresponds
   to an existing style, we create a new style instead of causing an error.
-  
+
 * The python compiler has been rewritten to use the python ast module.
   This should both improve performance, and improve error handling for
   python syntax.
@@ -801,9 +871,9 @@ Other Changes
   * 543785 - Launcher bug on select Projects Directory
   * 583112 - rollback while a movie displayable is shown leaves a video frame onscreen
   * 595532 - Wrong text in tutorial game. (Thanks to Viliam Búr.)
-  
+
 * The following other bugs were fixed:
-  
+
   * Renamed the internal show and hide methods of Displayable, so those
     names can once again be used by user-defined displayables.
 

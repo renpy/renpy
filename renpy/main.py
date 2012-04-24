@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -81,8 +81,11 @@ def run(restart):
 
         renpy.config.skipping = None
 
-        renpy.exports.log("--- " + time.ctime())
-        renpy.exports.log("")
+        try:
+            renpy.exports.log("--- " + time.ctime())
+            renpy.exports.log("")
+        except:
+            pass
 
         # Note if this is a restart.
         renpy.store._restart = restart
@@ -176,7 +179,7 @@ def main():
         renpy.config.commondir = None
         
     # Load Ren'Py extensions.
-    for dir in renpy.config.searchpath:
+    for dir in renpy.config.searchpath: #@ReservedAssignment
         for fn in os.listdir(dir):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)

@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -55,7 +55,7 @@ class Formatter(string.Formatter):
         # The parts we've seen.
         literal = ''
         value = ''
-        format = ''
+        format = '' #@ReservedAssignment
         conversion = None
         
         state = LITERAL
@@ -101,7 +101,7 @@ class Formatter(string.Formatter):
                         state = LITERAL
                         literal = ''
                         value = ''
-                        format = ''
+                        format = '' #@ReservedAssignment
                         conversion = None
                         continue
                     
@@ -125,7 +125,7 @@ class Formatter(string.Formatter):
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = ''
+                    format = '' #@ReservedAssignment
                     conversion = None
                     continue
 
@@ -145,7 +145,7 @@ class Formatter(string.Formatter):
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = ''
+                    format = '' #@ReservedAssignment
                     conversion = None
                     continue
 
@@ -202,7 +202,7 @@ def substitute(s, scope=None, force=False):
     
     # Translate.
     if renpy.config.translator is not None:
-        s = renpy.config.translator.translate(s)
+        s = renpy.config.translator.translate(s) #@UndefinedVariable
 
     # Substitute.
     if not renpy.config.new_substitutions and not force:

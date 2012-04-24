@@ -19,11 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import optparse
 import os.path
 import sys
 import cStringIO
 import platform
+import traceback
+
+FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
 
 # Extra things used for distribution.
@@ -105,6 +107,8 @@ def bootstrap(renpy_base):
     import renpy.log #@UnusedImport
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
+
+    renpy_base = unicode(renpy_base, FSENCODING, "replace")
     
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
@@ -147,14 +151,14 @@ def bootstrap(renpy_base):
         enable_trace(args.trace)
 
     if args.basedir:
-        basedir = os.path.abspath(args.basedir)
+        basedir = os.path.abspath(args.basedir).decode(FSENCODING)
     else:
         basedir = renpy_base
     
 
     # Look for the game directory.
     if args.gamedir:
-        gamedir = args.gamedir
+        gamedir = args.gamedir.decode(FSENCODING)
 
     else:
         gamedirs = [ name ]
@@ -195,7 +199,23 @@ def bootstrap(renpy_base):
     if renpy.macintosh:
         os.startfile = mac_start
         
-    # Import the rest of Ren'Py.
+    # Check that we have installed pygame properly. This also deals with
+    # weird cases on Windows and Linux where we can't import modules. (On
+    # windows ";" is a directory separator in PATH, so if it's in a parent
+    # directory, we won't get the libraries in the PATH, and hence pygame
+    # won't import.)
+    try:
+        import pygame; pygame
+    except:
+        print >>sys.stderr, """\
+Could not import pygame. Please ensure that this program has been built 
+and unpacked properly. Also, make sure that the directories containing 
+this program do not contain : or ; in their names.
+"""
+        raise
+        
+    # Load up all of Ren'Py, in the right order.
+
     import renpy #@Reimport
     renpy.import_all()
 
@@ -214,7 +234,6 @@ def bootstrap(renpy_base):
                 keep_running = False
 
             except KeyboardInterrupt:
-                import traceback
                 traceback.print_exc()
                 break
 
@@ -266,7 +285,40 @@ def report_line(out, filename, line, what):
         pass
          
 
-def report_tb(out, tb):
+def write_utf8_traceback_list(out, l):
+    """
+    Given the traceback list l, writes it to out as utf-8.
+    """
+
+    ul = [ ]
+
+    for filename, line, what, text in l:
+        
+        # Filename is either unicode or an fsecoded string.
+        if not isinstance(filename, unicode):
+            filename = unicode(filename, FSENCODING, "replace")
+        
+        # Line is a number.
+        
+        # Assume what is in a unicode encoding, since it is either python,
+        # or comes from inside Ren'Py.    
+        
+        if isinstance(text, str):
+            text = text.decode("utf-8", "replace")
+            
+        ul.append((filename, line, what, text))
+        
+    for t in traceback.format_list(ul):
+        out.write(t.encode("utf-8", "replace"))
+        
+
+def script_level_traceback(out, tb):
+    """
+    Writes a script-level traceback to out, based on the traceback 
+    object tb.
+    """
+
+    tbl = [ ]
 
     while tb:
         f = tb.tb_frame
@@ -275,7 +327,7 @@ def report_tb(out, tb):
         filename = co.co_filename
         
         if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
-            report_line(out, filename, line, "python")
+            tbl.append((filename, line, "python", None))
 
         elif 'self' in f.f_locals:
             obj = f.f_locals['self']
@@ -283,9 +335,28 @@ def report_tb(out, tb):
             import renpy
             
             if isinstance(obj, renpy.execution.Context):
-                obj.report_tb(out)
+                tbl.extend(obj.report_tb(out))
 
         tb = tb.tb_next
+
+    write_utf8_traceback_list(out, tbl)
+
+def open_error_file(fn, mode):
+    """
+    Opens an error/log/file. Returns the open file, and the filename that
+    was opened.
+    """
+    
+    import tempfile
+    
+    try:
+        f = file(fn, mode)
+        return f, fn
+    except:
+        pass
+    
+    fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
+    return file(fn, mode), fn
 
 def report_exception(e, editor=True):
     """
@@ -298,9 +369,8 @@ def report_exception(e, editor=True):
     """
     
     import codecs
-    import traceback
 
-    exc_type, _value, tb = sys.exc_info()
+    type, _value, tb = sys.exc_info() #@ReservedAssignment
 
     def safe_utf8(e):
         try:
@@ -309,7 +379,7 @@ def report_exception(e, editor=True):
             m = str(e)
             
         if isinstance(m, unicode):
-            return m.encode("utf-8")
+            return m.encode("utf-8", "replace")
         else:
             return m
     
@@ -318,13 +388,14 @@ def report_exception(e, editor=True):
     full = cStringIO.StringIO()
     
     print >>simple, renpy.game.exception_info
-    report_tb(simple, tb)
-    print >>simple, exc_type.__name__ + ":", 
+    script_level_traceback(simple, tb)
+    print >>simple, type.__name__ + ":", 
     print >>simple, safe_utf8(e)
 
     print >>full, "Full traceback:"
-    traceback.print_tb(tb, None, full)
-    print >>full, exc_type.__name__ + ":", 
+    tbl = traceback.extract_tb(tb)
+    write_utf8_traceback_list(full, tbl)
+    print >>full, type.__name__ + ":", 
     print >>full, safe_utf8(e)
     
     # Write to stdout/stderr.
@@ -348,7 +419,7 @@ def report_exception(e, editor=True):
     # Inside of the file, which may not be openable.
     try:
 
-        f = file("traceback.txt", "w")
+        f, traceback_fn = open_error_file("traceback.txt", "w")
 
         f.write(codecs.BOM_UTF8)
 
@@ -366,11 +437,7 @@ def report_exception(e, editor=True):
         
         try:
             if editor:
-                if renpy.config.editor:
-                    renpy.exports.launch_editor([ 'traceback.txt' ], 1, transient=1)
-                else:
-                    if hasattr(os, 'startfile'):
-                        os.startfile('traceback.txt') #@UndefinedVariable
+                renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
         except:
             pass
 
@@ -382,4 +449,29 @@ def report_exception(e, editor=True):
     except:
         pass
 
-    return simple.decode("utf-8"), full.decode("utf-8")
+    return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace"), traceback_fn
+
+
+def memory_profile():
+
+    print "Memory Profile"
+    print
+    print "Showing all objects in memory at program termination."
+    print
+
+    import gc
+    gc.collect()
+
+    objs = gc.get_objects()
+
+    c = { } # count
+
+    for i in objs:
+        t = type(i)
+        c[t] = c.get(t, 0) + 1
+
+    results = [ (count, ty) for ty, count in c.iteritems() ]
+    results.sort()
+
+    for count, ty in results:
+        print count, str(ty)

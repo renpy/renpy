@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,11 +58,11 @@ def init_display():
 
     renpy.ui.reset()
         
-def report_exception(short, full):
+def report_exception(short, full, traceback_fn):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
-    the appropriate exception.
+    the appropriate exception to cause a reload or quit or rollback.
     """
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -71,8 +71,14 @@ def report_exception(short, full):
     if not renpy.exports.has_screen("_exception"):
         return True
     
-    init_display()    
-          
+    try:
+        init_display()    
+    except:
+        return True
+    
+    if renpy.display.draw is None:
+        return True
+    
     ignore_action = None
     rollback_action = None
     reload_action = None
@@ -94,10 +100,11 @@ def report_exception(short, full):
         rollback_action=rollback_action,
         reload_action=reload_action,
         ignore_action=ignore_action,
+        traceback_fn=traceback_fn,
         )
         
 
-def report_parse_errors(errors):
+def report_parse_errors(errors, error_fn):
     """
     Reports an exception to the user. Returns True if the exception should
     be raised by the normal reporting mechanisms. Otherwise, should raise
@@ -119,5 +126,6 @@ def report_parse_errors(errors):
         "_parse_errors",
         reload_action=reload_action,
         errors=errors,
+        error_fn = error_fn,
         )
 

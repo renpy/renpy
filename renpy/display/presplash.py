@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -51,9 +51,17 @@ def start(basedir, gamedir):
         import sys
 
         if sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], basedir, "presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            cmd = [sys.argv[0], "presplash", fn]
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], basedir, "presplash", fn], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            cmd = [sys.executable, sys.argv[0], "presplash", fn]
+            
+        def fsencode(s):
+            if isinstance(s, str):
+                return s
+            
+            return unicode.decode(sys.getfilesystemencoding() or "utf-8", "replace")
+            
+        proc = subprocess.Popen([ fsencode(i) for i in cmd ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
         pass
             

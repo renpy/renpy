@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -465,6 +465,21 @@ def humanize(n):
 
     return ''.join(rv)
 
+def check_filename_encodings():
+    """
+    Checks files to ensure that they are displayable in unicode.
+    """
+
+    for _dirname, filename in renpy.loader.listdirfiles():
+        try:
+            filename.encode("ascii")
+            continue
+        except:
+            pass
+
+        report("%s contains non-ASCII characters in its filename.", filename)
+        add("(ZIP file distributions can only reliably include ASCII filenames.)")
+
         
 def lint(args):
     """
@@ -545,6 +560,7 @@ def lint(args):
     report_node = None
             
     check_styles()
+    check_filename_encodings()
             
     for f in renpy.config.lint_hooks:
         f()

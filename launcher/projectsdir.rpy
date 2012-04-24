@@ -31,9 +31,11 @@ label choose_projects_directory:
 
         if EasyDialogs:
 
-            choice = EasyDialogs.AskFolder(defaultLocation=path, wanted=str)
+            
+
+            choice = EasyDialogs.AskFolder(defaultLocation=renpy.fsencode(path), wanted=str)
             if choice is not None:
-                path = choice                
+                path = renpy.fsdecode(choice)                
 
         else:
 
@@ -43,14 +45,18 @@ label choose_projects_directory:
                 if 'RENPY_OLD_LD_LIBRARY_PATH' in env:
                     env['LD_LIBRARY_PATH'] = env['RENPY_OLD_LD_LIBRARY_PATH']
                 
-                zen = subprocess.Popen([ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + path ],
-                                       env=env, stdout=subprocess.PIPE)
+                zen = subprocess.Popen([ 
+                "zenity", 
+                "--title=Select Projects Directory", 
+                "--file-selection", 
+                "--directory", 
+                "--filename=" + renpy.fsencode(path) ], env=env, stdout=subprocess.PIPE)
 
                 choice = zen.stdout.read()        
                 zen.wait()
 
                 if choice:
-                    path = choice[:-1]
+                    path = renpy.fsdecode(choice[:-1])
             
             except:
                 error(_(u"Could not run zenity. The projects directory has been set to the directory immediately above the directory containing Ren'Py."), None)

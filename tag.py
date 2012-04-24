@@ -1,4 +1,5 @@
 #!/usr/bin/env renpython
+#@PydevCodeAnalysisIgnore
 
 import renpy
 import renpy.subprocess

@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -131,7 +131,7 @@ class Script(object):
         # Similar, but for modules:
         self.module_files = [ ]
         
-        for dir, fn in dirlist:
+        for dir, fn in dirlist: #@ReservedAssignment
 
             if fn.endswith(".rpy"):
                 if dir is None:
@@ -166,7 +166,7 @@ class Script(object):
 
         initcode = [ ]
         
-        for fn, dir in script_files:
+        for fn, dir in script_files: #@ReservedAssignment
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
         # Make the sort stable.
@@ -180,7 +180,7 @@ class Script(object):
 
     def load_module(self, name):
 
-        files = [ (fn, dir) for fn, dir in self.module_files if fn == name ]
+        files = [ (fn, dir) for fn, dir in self.module_files if fn == name ] #@ReservedAssignment
 
         if not files:
             raise Exception("Module %s could not be loaded." % name)
@@ -188,7 +188,7 @@ class Script(object):
         if len(files) > 2:
             raise Exception("Module %s ambiguous, multiple variants exist." % name)
 
-        fn, dir = files[0]
+        fn, dir = files[0] #@ReservedAssignment
         initcode = [ ]
 
         self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
@@ -230,7 +230,7 @@ class Script(object):
                 if new.name is None:
                     new.name = old.name
 
-    def load_file_core(self, dir, fn):
+    def load_file_core(self, dir, fn): #@ReservedAssignment
         
         if fn.endswith(".rpy") or fn.endswith(".rpym"):
 
@@ -296,7 +296,7 @@ class Script(object):
 
         return data, stmts
     
-    def load_file(self, dir, fn, initcode):
+    def load_file(self, dir, fn, initcode): #@ReservedAssignment
 
         # Actually do the loading.
         data, stmts = self.load_file_core(dir, fn)
@@ -351,7 +351,7 @@ class Script(object):
         return True
 
     
-    def load_appropriate_file(self, compiled, source, dir, fn, initcode):
+    def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
         if dir is None:

@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -667,6 +667,8 @@ class SWDraw(object):
     """
 
     def __init__(self):
+        self.display_info = None
+
         self.reset()
 
     def reset(self):
@@ -698,8 +700,9 @@ class SWDraw(object):
 
         pygame.display.init()
         renpy.display.interface.post_init()
-        
-        self.display_info = pygame.display.Info()
+
+        if self.display_info is None:       
+            self.display_info = pygame.display.Info()
 
         # The scale factor we use for this display.
         self.scale_factor = 1.0
@@ -994,9 +997,14 @@ class SWDraw(object):
                     return True
 
             else:
+                cx = int(cx)
+                cy = int(cy)
+                
                 cw, ch = child.get_size()
                 if cx >= cw or cy >= ch:
                     return False
+
+                
 
                 if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
                     return True
@@ -1072,7 +1080,7 @@ class SWDraw(object):
         
         return
         
-    def quit(self):
+    def quit(self): #@ReservedAssignment
         """
         Shuts down the drawing system.
         """

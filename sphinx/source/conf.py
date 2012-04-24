@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2011, PyTom'
+copyright = u'2012, Tom Rothamel' #@ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -49,7 +49,6 @@ copyright = u'2011, PyTom'
 #
 # The short X.Y version.
 
-import sys
 sys.path.insert(0, '../..')
 import renpy
 
@@ -86,7 +85,7 @@ exclude_patterns = []
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'renpy'
+pygments_style = 'default'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -262,3 +261,14 @@ highlight_language = "renpy"
 
 extlinks = {'lpbug': ('https://bugs.launchpad.net/renpy/+bug/%s',
                       'launchpad bug ')}
+
+rst_prolog = """\
+.. |PGS4A| replace:: RAPT
+.. |PGS4A_URL| replace:: http://www.renpy.org/dl/android/
+"""
+
+def setup(app):
+    app.add_config_value('is_renpy', '', True)
+
+is_renpy = False
+

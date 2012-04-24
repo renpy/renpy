@@ -38,7 +38,8 @@ init python:
 
     # Quotes an arbitrary string (without knowing the encoding) for display.
     def quote(s):
-        s ="".join(quote_char(i) for i in s)
+        s = "".join(quote_char(i) for i in s)
+        s = s.replace("[", "[[")
         s = s.replace("/", "/" + ZWSP)
         s = s.replace("\\", "\\" + ZWSP)
         return s
@@ -160,11 +161,13 @@ init python:
         if projects:
             projects[0].select()
             return
-
         
     def select_project(p):
         p.select()
         renpy.jump("top")
+
+    def FsPopen(cmd, **kwargs):
+        return subprocess.Popen([ renpy.fsencode(i) for i in cmd], **kwargs)
         
     curried_select_project = renpy.curry(select_project)
         
@@ -204,9 +207,9 @@ label launch_tutorial:
     python hide:
     
         if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], tutorial_path])
+            proc = FsPopen([sys.argv[0], tutorial_path])
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], tutorial_path])
+            proc = FsPopen([sys.executable, sys.argv[0], tutorial_path])
 
         set_tooltip(_(u"Tutorial game has been launched."))
 
@@ -218,9 +221,9 @@ label launch:
     python hide:
         
         if sys.platform == "win32" and sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([sys.argv[0], project.path])
+            proc = FsPopen([sys.argv[0], project.path])
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], project.path])
+            proc = FsPopen([sys.executable, sys.argv[0], project.path])
 
         set_tooltip(_(u"%s has been launched.") % project.name.capitalize())
 
@@ -237,9 +240,9 @@ label game_directory:
         if sys.platform == "win32":
             os.startfile(gamedir)
         elif platform.mac_ver()[0]:
-            subprocess.Popen([ "open", gamedir ])
+            FsPopen([ "open", gamedir ])
         else:
-            subprocess.Popen([ "xdg-open", gamedir ])
+            FsPopen([ "xdg-open", gamedir ])
 
         gamedir = quote(gamedir)
         set_tooltip(_(u"Opening game directory:\n%s") % gamedir)
@@ -251,7 +254,7 @@ label edit_script:
 
     python hide:
 
-        if not config.editor:
+        if not "RENPY_EDIT_PY" in os.environ:
             error(_(u"No editor has been selected."))
                     
         files = [ project.gamedir + "/" + i for i in os.listdir(project.gamedir) if i.endswith(".rpy") if not i[0] == "."]
@@ -290,9 +293,9 @@ label lint:
 
         if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
             CREATE_NO_WINDOW=0x08000000
-            proc = subprocess.Popen([config.renpy_base + "/console.exe", "--lint", project.path], stdin=lf, stdout=lf, stderr=lf, creationflags=CREATE_NO_WINDOW)
+            proc = FsPopen([config.renpy_base + "/console.exe", "--lint", project.path], stdin=lf, stdout=lf, stderr=lf, creationflags=CREATE_NO_WINDOW)
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
+            proc = FsPopen([sys.executable, sys.argv[0], "--lint", project.path], stdout=lf)
 
         proc.wait()
 
@@ -320,9 +323,9 @@ label delete_persistent:
         info(_(u"Delete Persistent"), _(u"Deleting persistent data."))
     
         if hasattr(sys, "winver") and sys.argv[0].lower().endswith(".exe"):
-            proc = subprocess.Popen([config.renpy_base + "/console.exe", "--rmpersistent", project.path])
+            proc = FsPopen([config.renpy_base + "/console.exe", "--rmpersistent", project.path])
         else:
-            proc = subprocess.Popen([sys.executable, sys.argv[0], "--rmpersistent", project.path])
+            proc = FsPopen([sys.executable, sys.argv[0], "--rmpersistent", project.path])
         
         proc.wait()
 

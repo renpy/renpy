@@ -6,6 +6,14 @@
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
 
+.. function:: renpy.fsdecode(s)
+    
+    Converts s from filesystem encoding to unicode.
+
+.. function:: renpy.fsencode(s)
+    
+    Converts s from unicode to the filesystem encoding.
+
 .. function:: renpy.get_physical_size()
     
     Returns the size of the physical window.
@@ -33,12 +41,19 @@
     
     This is only valid when executing or predicting a say statement.
 
-.. function:: renpy.get_side_image(tag)
+.. function:: renpy.get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master')
     
-    This attempts to find an image to show as the side image. It attempts to
-    find an image that begins with tag, and matches side_image_attributes. It
-    returns the name of the image (as a tuple of strings) if possible, or 
-    None if that's not possible.
+    This attempts to find an image to show as the side image. 
+    
+    It begins by determining a set of image attributes. If `image_tag` is 
+    given, it gets the image attributes from the tag. Otherwise, it gets
+    them from the currently showing character.
+    
+    It then looks up an image with the tag `prefix_tag` and those attributes,
+    and returns it if it exists. 
+    
+    If not_showing is True, this only returns a side image if the image the
+    attributes are taken from is not on the screen.
 
 .. function:: renpy.image_size(im)
     

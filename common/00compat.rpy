@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 init -1210 python:
@@ -58,9 +58,11 @@ init -1210 python:
         if version <= (6, 12, 2):
             style.default.language = "western"
             style.default.layout = "greedy"
-            config.old_substitutions = True
             config.new_substitutions = False
             config.broken_line_spacing = True
+    
+        if (6, 12, 2) < version <= (6, 13, 8):
+            config.old_substitutions = False
             
             
 init 1210 python hide::

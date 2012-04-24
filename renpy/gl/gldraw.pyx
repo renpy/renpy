@@ -1,5 +1,6 @@
 #cython: profile=False
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+#@PydevCodeAnalysisIgnore
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,7 +38,7 @@ import time
 cimport renpy.display.render as render
 cimport gltexture
 import gltexture
-
+import glblacklist
 
 cdef extern from "glcompat.h":
     GLenum glewInit()
@@ -49,7 +50,7 @@ cdef extern from "glcompat.h":
 
 IF ANGLE:
 
-    cdef extern:
+    cdef extern from "anglesupport.h":
         char *egl_init(int)
         void egl_swap()
         void egl_quit()
@@ -71,18 +72,6 @@ PIXELLATE = renpy.display.render.PIXELLATE
 
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
-
-        
-    
-# A list of cards that cause system/software crashes. There's no
-# reason to put merely slow or incapable cards here, only ones for
-# which GL operation is unsafe.
-#
-# 
-
-BLACKLIST = [
-    ("S3 Graphics DeltaChrome", "1.4 20.00"),
-    ]
 
 cdef class GLDraw:
 
@@ -171,17 +160,20 @@ cdef class GLDraw:
             fullscreen = False
             
         if fullscreen != self.old_fullscreen:
-
+            
+            self.did_init = False
+            
             if self.old_fullscreen is not None:
                 pygame.display.quit()
-
+            
             pygame.display.init()
             
-            self.display_info = pygame.display.Info()
-            
-            renpy.display.interface.post_init()
+            if self.display_info is None:
+                self.display_info = pygame.display.Info()
             
             self.old_fullscreen = fullscreen
+
+            renpy.display.interface.post_init()
 
         renpy.display.log.write("")
         
@@ -234,7 +226,7 @@ cdef class GLDraw:
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
             return False
-        
+
         # In ANGLE mode, we have to use EGL to get the OpenGL ES 2 context.
         IF ANGLE:
         
@@ -339,6 +331,8 @@ cdef class GLDraw:
         pygame.display.quit()
         renpy.display.log.write("Finished quit GL.")
         
+        self.old_fullscreen = None
+        
     def init(self):
         """
         This does the first-time initialization of OpenGL, deciding
@@ -363,10 +357,24 @@ cdef class GLDraw:
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
 
-        for r, v in BLACKLIST:
-            if renderer == r and version.startswith(v):
-                renpy.display.log.write("Blacklisted renderer/version.")
-                return False
+        
+        allow_shader = True
+        allow_fixed = self.allow_fixed 
+        
+        for r, v, allow_shader_, allow_fixed_ in glblacklist.BLACKLIST:            
+            if r in renderer and v in version:
+                allow_shader = allow_shader and allow_shader_
+                allow_fixed = allow_fixed and allow_fixed_
+                break
+
+        if not allow_shader:
+            renpy.display.log.write("Shaders are blacklisted.")
+        if not allow_fixed:
+            renpy.display.log.write("Fixed-function is blacklisted.")
+
+        if not allow_shader and not allow_fixed:
+            renpy.display.log.write("GL is totally blacklisted.")
+            return False
 
         if not ANGLE and version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
@@ -415,12 +423,12 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
         
-        if ANGLE or use_subsystem(
+        if ANGLE or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
             "GL_ARB_vertex_shader",
-            "GL_ARB_fragment_shader"):
+            "GL_ARB_fragment_shader")):
 
             try:
                 renpy.display.log.write("Using shader environment.")
@@ -435,7 +443,7 @@ cdef class GLDraw:
                 
         if self.environ is None:
             
-            if self.allow_fixed and use_subsystem(
+            if allow_fixed and use_subsystem(
                 glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
@@ -447,7 +455,7 @@ cdef class GLDraw:
                 self.info["environ"] = "fixed"
                 self.environ.init()
 
-            elif self.allow_fixed and use_subsystem(
+            elif allow_fixed and use_subsystem(
                 glenviron_fixed,
                 "RENPY_GL_ENVIRON",
                 "fixed",
@@ -475,7 +483,7 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture method.
         
-        if glrtt_copy and (not "RENPY_GL_RTT" in os.environ) or (os.environ["RENPY_GL_RTT"] == "copy"):
+        if glrtt_copy and os.environ.get("RENPY_GL_RTT", "copy") == "copy":
             renpy.display.log.write("Using copy RTT.")
             self.rtt = glrtt_copy.CopyRtt()
             self.info["rtt"] = "copy"
@@ -504,8 +512,14 @@ cdef class GLDraw:
 
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
+        # Figure out the sizes of texture that render properly.
+        rv = gltexture.test_texture_sizes(self.environ, self)
+
         self.rtt.deinit()
         self.environ.deinit()
+
+        if not rv:
+            return False
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
@@ -915,7 +929,7 @@ cdef class GLDraw:
 
         cdef unsigned char pixel[4]
         
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_BYTE, pixel)
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
         
         a = pixel[3]
 

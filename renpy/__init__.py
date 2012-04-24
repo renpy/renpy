@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,7 +36,7 @@ except ImportError:
 #
 # Be sure to change script_version in launcher/script_version.rpy.
 # Be sure to change config.version in tutorial/game/options.rpy.
-version_tuple = (6, 13, 7, vc_version)
+version_tuple = (6, 13, 12, vc_version)
 
 # A verbose string computed from that version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
@@ -128,12 +128,12 @@ def import_all():
         
         import _renpy #@UnresolvedImport
         libexec = os.path.dirname(_renpy.__file__)
-        package.__path__.insert(0, os.path.join(libexec, *name))
+        package.__path__.append(os.path.join(libexec, *name))
     
         # Also find encodings, to deal with the way py2exe lays things out.
         import encodings
         libexec = os.path.dirname(encodings.__path__[0])
-        package.__path__.insert(1, os.path.join(libexec, *name))
+        package.__path__.append(os.path.join(libexec, *name))
 
     update_path(renpy.display)
     
@@ -227,7 +227,6 @@ def reload_all():
     renpy.display.im.cache.quit()
         
     # Cleans out the RenpyImporter.
-    import sys
     sys.meta_path.pop()
 
     blacklist = [ "renpy",

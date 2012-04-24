@@ -27,16 +27,16 @@ python_object = _object = object
 python_set = _set = set
 
 from renpy.python import RevertableList as __renpy__list__
-list = __renpy__list__
+list = __renpy__list__ #@ReservedAssignment
 
 from renpy.python import RevertableDict as __renpy__dict__
-dict = __renpy__dict__
+dict = __renpy__dict__ #@ReservedAssignment
 
 from renpy.python import RevertableSet as set
 Set = set
-from renpy.python import RevertableObject as object
+from renpy.python import RevertableObject as object #@UnusedImport
 
-from renpy.python import revertable_range as range
-from renpy.python import revertable_sorted as sorted
+from renpy.python import revertable_range as range #@UnusedImport
+from renpy.python import revertable_sorted as sorted #@UnusedImport
 
 del renpy

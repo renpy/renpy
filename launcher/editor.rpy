@@ -13,75 +13,54 @@ init python:
     if persistent.editor is None:
         persistent.editor = "jEdit"
     
-    # A map from editor name to the file containing information about
-    # that editor.
+    # Should we set up the editor?
+    set_editor = "RENPY_EDIT_PY" not in os.environ
+
+    # A map from editor name to EditorInfo object.
     editors = { }
-
-    # A map from editor to the version of that editor.
-    editor_versions = { }
-
-    # A map from editor to a description of that editor.
-    editor_descriptions = { }
+ 
+    class EditorInfo(object):
+        def __init__(self, filename):
+            # The path to the editor info file.
+            self.filename = filename
+            
+            # The name of the editor.
+            self.name = os.path.basename(filename)[:-len(".edit.py")]
+            
+            # The time the editor file was last modified. We use this
+            # to decide if we should update the editors mat when we 
+            # have multiple versions of an editor in contention.
+            self.mtime = os.path.getmtime(filename)
     
-    # Should we set up the editor? How about the transient editor?
-    set_editor = "RENPY_EDITOR" not in os.environ
-    set_editor_transient = "RENPY_EDITOR_TRANSIENT" not in os.environ
 
-    if set_editor and not set_editor_transient:
-        config.editor_transient = config.editor
-        os.environ['RENPY_EDITOR_TRANSIENT'] = config.editor
-        set_editor_transient = False
-
-    def scan_editor(ef):
+    def scan_editor(filename):
         """
-         Scans a single editor file to get the meta-information. If it
-         checks out, adds it to editors. Uses editor_versions as a cache
-         so we only add the newest version of each editor.
-         """
+        Inserts an editor into editors if there isn't a newer
+        editor there already.
+        """
 
-        info = { }
+        ei = EditorInfo(filename)
+         
+        if ei.name in editors:
+           if editors[ei.name].mtime >= ei.mtime:
+               return
+                
+        editors[ei.name] = ei
         
-        f = file(ef, "r")
-        for l in f:
-            m = re.match("#\s*(\w+):\s*(.*?)\s*$", l)
-            if not m:
-                break
-
-            info[m.group(1)] = m.group(2)
-
-        f.close()
-            
-        try:
-            name = info["Name"]
-            version = int(info["Version"])
-            description = info.get("Description", "")
-        except:
-            traceback.print_exc()
-            print >>sys.stderr, ef
-            
-
-        if version > editor_versions.get(name, -1):
-            editors[name] = ef
-            editor_versions[name] = version
-            editor_descriptions[name] = description
-            
-    
     def scan_editors():
         """
-         Finds all *.editor.py files, and uses them to populate the list
-         of editors.
-         """
+        Finds all *.edit.py files, and uses them to populate the list
+        of editors.
+        """
 
         editors.clear()
-        editor_versions.clear()
-        editor_descriptions.clear()
         
         for d in [ config.renpy_base, persistent.projects_directory ]:
             if d is None:
                 continue
             
-            for ef in glob.glob(d + "/*/*.editor.py"):
-                scan_editor(ef)
+            for filename in glob.glob(d + "/*/*.edit.py"):
+                scan_editor(filename)
 
 
     def setup_editor():
@@ -93,44 +72,24 @@ init python:
         if not set_editor:
             return
         
-        ef = None
+        ei = None
         
         for i in [ persistent.editor, "jEdit", "None" ]:
             if i in editors:
-                ef = editors[i]
+                ei = editors[i]
                 break
         else:
             return
 
-        ctx = {
-           "renpy" : renpy,
-            "config" : config,
-            "persistent" : persistent,
-            "base" : os.path.dirname(ef),
-            }
-        
-        execfile(ef, ctx, ctx)
-
-        if set_editor:
-            if config.editor:
-                os.environ['RENPY_EDITOR'] = config.editor
-            else:
-                if 'RENPY_EDITOR' in os.environ:
-                    del os.environ['RENPY_EDITOR']
-
-        if set_editor_transient:
-            if config.editor_transient:
-                os.environ['RENPY_EDITOR_TRANSIENT'] = config.editor_transient
-            else:
-                if 'RENPY_EDITOR_TRANSIENT' in os.environ:
-                    del os.environ['RENPY_EDITOR_TRANSIENT']
+        os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+        renpy.editor.init()
 
 label editor:
 
     python hide:
 
         if not set_editor:
-            error(_(u"The editor has been set from the RENPY_EDITOR environment variable, and cannot be changed."), "options")
+            error(_(u"The editor has been set from the RENPY_EDIT_PY environment variable, and cannot be changed."), "options")
         
         set_tooltip("")
 
@@ -147,9 +106,7 @@ label editor:
         ui.vbox()
 
         for i in sorted(editors, key=lambda a : a.lower()):
-            button(i,
-                   ui.returns(i),
-                   editor_descriptions[i])
+            button(i, ui.returns(i))
 
         ui.close() # Vbox
         ui.close() # Scrolled

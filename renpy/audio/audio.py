@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -614,7 +614,7 @@ def init():
         renpy.game.preferences.mute.setdefault(m, False)
 
 
-def quit():
+def quit(): #@ReservedAssignment
 
     global pcm_ok
     global mix_ok

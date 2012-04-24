@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 #
 # This file contains the code for in-game Ren'Py error handling. It's a 
@@ -206,8 +206,7 @@ init python:
         rv = [ "{b}" + lines[0] + "{/b}" ]
         
         for i in lines[1:]:
-            if config.editor:
-                i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
+            i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
             rv.append(i)
             
         return "\n".join(rv)
@@ -253,42 +252,22 @@ init python:
             rv += "\n"
 
              
-        if config.editor:
-            rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
+        rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
              
         return rv
             
-
-    # Opens the traceback.txt file in an editor.
-    def __open_traceback():
-        try:
-            if config.editor:
-                renpy.launch_editor([ 'traceback.txt' ], 1, transient=1)
-            else:
-                os.startfile('traceback.txt')
-        except:
-            pass
-
-    # Opens the errors.txt file in an editor.
-    def __open_parse_errors():
-        try:
-            if config.editor:
-                renpy.launch_editor([ 'errors.txt' ], 1, transient=1)
-            else:
-                os.startfile('errors.txt')
-        except:
-            pass
-
-    def __can_open_traceback():
-        if config.editor:
-            return True
+    class __EditFile(Action):
+        def __init__(self, filename):
+            self.filename = filename
             
-        import os
+        def __call__(self):
+            try:
+                renpy.launch_editor([ self.filename ], 1, transient=1)
+            except:
+                pass
         
-        if hasattr(os, 'startfile'):
-            return True
-            
-        return False
+    def __can_open_traceback():
+        return True
 
     # The transform used for errors. ATL isn't ready yet.    
     def __transform_function(state, st, at):
@@ -418,10 +397,9 @@ screen _exception:
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
                         
-                if __can_open_traceback():                    
-                    textbutton _("Open Traceback"):
-                        action __open_traceback
-                        hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+                textbutton _("Open Traceback"):
+                    action __EditFile(traceback_fn)
+                    hovered tt.action(_("Opens the traceback.txt file in a text editor."))
                     
                 null width 30
                 
@@ -462,7 +440,7 @@ screen _parse_errors:
             mousewheel True
             
             has vbox
-            text fmt_errors
+            text fmt_errors substitute False
       
         bar:
             style "_vscrollbar"
@@ -481,10 +459,9 @@ screen _parse_errors:
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
                         
-                if __can_open_traceback():                    
-                    textbutton _("Open Parse Errors"):
-                        action __open_parse_errors
-                        hovered tt.action(_("Opens the errors.txt file in a text editor."))
+                textbutton _("Open Parse Errors"):
+                    action __EditFile(error_fn)
+                    hovered tt.action(_("Opens the errors.txt file in a text editor."))
                     
                 null width 30
                 

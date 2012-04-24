@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -100,13 +100,20 @@ def compile_event(key, keydown):
         rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
     if len(part) == 1:
-        if len(part[0]) != 1:
-            raise Exception("Invalid key specifier %s" % key)
+        if len(part[0]) != 1:            
+            if renpy.config.developer:
+                raise Exception("Invalid key specifier %s" % key)
+            else:
+                return "(False)"
+
         rv += " and ev.unicode == %r)" % part[0]        
 
     else:
         if part[0] != "K":
-            raise Exception("Invalid key specifier %s" % key)
+            if renpy.config.developer:
+                raise Exception("Invalid key specifier %s" % key)
+            else:
+                return "(False)"
 
         key = "_".join(part)
         
@@ -194,14 +201,14 @@ def run(var, *args, **kwargs):
         rv = None
 
         for i in var:
-            new_rv = i(*args)
+            new_rv = run(i, *args, **kwargs)
 
             if new_rv is not None:
                 rv = new_rv
 
         return rv
 
-    return var(*args)
+    return var(*args, **kwargs)
 
 def run_unhovered(var):
     """
@@ -213,10 +220,7 @@ def run_unhovered(var):
 
     if isinstance(var, (list, tuple)):
         for i in var:
-
-            f = getattr(i, "unhovered", None)
-            if f is not None:
-                f()
+            run_unhovered(i)
 
         return
 
@@ -647,7 +651,7 @@ class Button(renpy.display.layout.Window):
 def TextButton(text, style='button', text_style='button_text',
                clicked=None, **properties):
 
-    text = renpy.text.text.Text(text, style=text_style)
+    text = renpy.text.text.Text(text, style=text_style) #@UndefinedVariable
     return Button(text, style=style, clicked=clicked, **properties)
 
 class ImageButton(Button):
@@ -714,7 +718,7 @@ class HoveredProxy(object):
             return self.b()
     
                 
-class Input(renpy.text.text.Text):
+class Input(renpy.text.text.Text): #@UndefinedVariable
     """
     This is a Displayable that takes text as input.
     """
@@ -861,7 +865,7 @@ class Adjustment(renpy.object.Object):
     
     """
     
-    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None):
+    def __init__(self, range=1, value=0, step=None, page=0, changed=None, adjustable=None, ranged=None): #@ReservedAssignment
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -941,7 +945,7 @@ class Adjustment(renpy.object.Object):
         if self.ranged:
             self.ranged(self)
         
-    range = property(get_range, set_range)
+    range = property(get_range, set_range) #@ReservedAssignment
 
     def get_page(self):
         if self._page is not None:
@@ -958,11 +962,11 @@ class Adjustment(renpy.object.Object):
         if self._step is not None:
             return self._step
 
-        if self._page is not None:
+        if self._page is not None and self.page > 0:
             return self._page / 10
 
         if isinstance(self._range, float):
-            return self._range / 20
+            return self._range / 10
         else:
             return 1
 
@@ -1012,7 +1016,7 @@ class Bar(renpy.display.core.Displayable):
             self.value = None
             
     def __init__(self,
-                 range=None,
+                 range=None, #@ReservedAssignment
                  value=None,
                  width=None,
                  height=None,
@@ -1117,7 +1121,7 @@ class Bar(renpy.display.core.Displayable):
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
-        range = self.adjustment.range
+        range = self.adjustment.range #@ReservedAssignment
         value = self.adjustment.value
         page = self.adjustment.page
 
@@ -1246,7 +1250,7 @@ class Bar(renpy.display.core.Displayable):
         if self.hidden:
             return None
         
-        range = self.adjustment.range
+        range = self.adjustment.range #@ReservedAssignment
         old_value = self.adjustment.value
         value = old_value
 

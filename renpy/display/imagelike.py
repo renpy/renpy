@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -141,6 +141,8 @@ class Frame(renpy.display.core.Displayable):
         crend = render(self.image, width, height, st, at)
 
         sw, sh = crend.get_size()
+        sw = int(sw)
+        sh = int(sh)
         
         dw = int(width)
         dh = int(height)

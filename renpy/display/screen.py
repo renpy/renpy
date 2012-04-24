@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -69,10 +69,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
     class is responsible for managing the display of a screen.
     """
 
-    no_save = [ 'screen' ]
+    no_save = [ 'screen', 'child', 'transforms', 'widgets' ]
 
     def after_setstate(self):
         self.screen = get_screen_variant(self.screen_name[0])
+        self.child = None
+        self.transforms = { }
+        self.widgets = { }
         
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
@@ -541,7 +544,7 @@ def use_screen(_screen_name, _name=(), **kwargs):
 def current_screen():
     return _current_screen
 
-def get_widget(screen, id, layer='screens'):
+def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     """
     :doc: screens
 

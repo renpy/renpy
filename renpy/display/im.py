@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -106,7 +106,7 @@ class Cache(object):
         self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
         renpy.config.debug_image_cache = renpy.config.debug_image_cache or renpy.game.args.debug_image_cache #@UndefinedVariable
         
-    def quit(self):
+    def quit(self): #@ReservedAssignment
         if not self.preload_thread.isAlive():
             return
 

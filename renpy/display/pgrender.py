@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -130,7 +130,7 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 def load_image(f, filename):
-    surf = pygame.image.load(f, filename)
+    surf = pygame.image.load(f, renpy.exports.fsencode(filename))
     return copy_surface_unscaled(surf)
 
 load_image_unscaled = load_image

@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -54,7 +54,7 @@ def index_archives():
     # Update lower_map.
     lower_map.clear()
     
-    for dir, fn in listdirfiles():
+    for dir, fn in listdirfiles(): #@ReservedAssignment
         lower_map[fn.lower()] = fn
 
     # Index the archives.
@@ -120,8 +120,11 @@ def index_archives():
             if renpy.config.debug:
                 raise
 
-def walkdir(dir):
+def walkdir(dir): #@ReservedAssignment
     rv = [ ]
+
+    if not os.path.exists(dir) and not renpy.config.developer:
+        return rv
 
     for i in os.listdir(dir):
         if i[0] == ".":
@@ -262,7 +265,7 @@ class SubFile(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def next(self): #@ReservedAssignment
         rv = self.readline()
 
         if not rv:
@@ -409,8 +412,8 @@ def transfn(name):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    if isinstance(name, unicode):
-        name = name.encode("utf-8")
+    if isinstance(name, str):
+        name = name.decode("utf-8")
     
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)
@@ -439,34 +442,44 @@ class RenpyImporter(object):
     searches for data files.
     """
 
-    def translate(self, fullname):
+    def __init__(self, prefix=""):
+        self.prefix = ""
+
+    def translate(self, fullname, prefix=""):
         
-        fn = fullname.replace(".", "/") + ".py"
-        if loadable(fn):
-            return fn
+        fn = prefix + fullname.replace(".", "/")
+        
+        if loadable(fn + ".py"):
+            return fn + ".py"
 
-        fn = fullname.replace(".", "/") + "/__init__.py"
-
-        if loadable(fn):
-            return fn
+        if loadable(fn + "/__init__.py"):
+            return fn + "/__init__.py"
 
         return None
 
     def find_module(self, fullname, path=None):
+        if path is not None:
+            for i in path:
+                if self.translate(fullname, i):
+                    return RenpyImporter(i)
+        
         if self.translate(fullname):
             return self
 
     def load_module(self, fullname):
 
-        filename = self.translate(fullname)
+        filename = self.translate(fullname, self.prefix)
         
         mod = sys.modules.setdefault(fullname, types.ModuleType(fullname))
+        mod.__name__ = fullname
         mod.__file__ = filename
         mod.__loader__ = self
-        mod.__path__ = [ ]
+
+        if filename.endswith("__init__.py"):
+            mod.__path__ = [ filename[:-len("__init__.py")] ]
 
         source = load(filename).read().decode("utf8")
-        if source[0] == u'\ufeff':
+        if source and source[0] == u'\ufeff':
             source = source[1:]
         source = source.encode("raw_unicode_escape")
         

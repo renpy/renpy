@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -198,7 +198,7 @@ def Fade(out_time,
 
     """
     :doc: transition function
-    :args: (out_time, hold_time, old_time, color="#000")
+    :args: (out_time, hold_time, in_time, color="#000")
     :name: Fade
     
     Returns a transition that takes `out_time` seconds to fade to 

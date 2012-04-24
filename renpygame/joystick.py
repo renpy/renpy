@@ -1,3 +1,4 @@
+#@PydevCodeAnalysisIgnore
 # Copyright 2007 PyTom <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person

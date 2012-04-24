@@ -67,7 +67,7 @@ if has_fribidi and not android:
     cython(
         "_renpybidi", 
         [ "renpybidicore.c" ],
-        ['fribidi'])
+        ['fribidi'], define_macros=[ ("FRIBIDI_ENTRY", "") ])
 
 # Sound.
 pymodule("pysdlsound.__init__")
@@ -111,6 +111,7 @@ def anglecopy(fn):
     
     copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
     
+anglecopy("glblacklist.py")
 anglecopy("gldraw.pxd")
 anglecopy("gldraw.pyx")
 anglecopy("glenviron_shader.pyx")

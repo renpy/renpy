@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -205,7 +205,7 @@ def list_logical_lines(filename):
             c = data[pos]
 
             if c == '\t':
-                raise Exception("%s contains a tab character on line %d. Tab characters are not allowed in Ren'Py scripts." % (filename, number))
+                raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
 
             if c == '\n':
                 number += 1
@@ -615,7 +615,7 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?\d+')
 
-    def float(self):
+    def float(self): #@ReservedAssignment
         """
         Tries to parse a number (float). Returns a string containing the
         number, or None.
@@ -1084,7 +1084,7 @@ def parse_menu(stmtl, loc):
     has_caption = False
 
     with_ = None
-    set = None
+    set = None #@ReservedAssignment
 
     say_who = None
     say_what = None
@@ -1105,7 +1105,7 @@ def parse_menu(stmtl, loc):
             continue
 
         if l.keyword('set'):
-            set = l.require(l.simple_expression)
+            set = l.require(l.simple_expression) #@ReservedAssignment
             l.expect_eol()
             l.expect_noblock('set menuitem')
             l.advance()
@@ -1926,7 +1926,7 @@ def report_parse_errors():
     
     full_text = ""
     
-    f = file("errors.txt", "w")
+    f, error_fn = renpy.bootstrap.open_error_file("errors.txt", "w")
     f.write(codecs.BOM_UTF8)
 
     print >>f, "I'm sorry, but errors were detected in your script. Please correct the"
@@ -1954,13 +1954,10 @@ def report_parse_errors():
 
     f.close()
 
-    renpy.display.error.report_parse_errors(full_text)
+    renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.config.editor:
-            renpy.exports.launch_editor([ 'errors.txt' ], 1, transient=1)
-        else:
-            os.startfile('errors.txt') # E1101 @UndefinedVariable
+        renpy.exports.launch_editor([ error_fn ], 1, transient=1)
     except:
         pass
         

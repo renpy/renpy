@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # This file consists of renpy functions that aren't expected to be
@@ -196,15 +196,12 @@ init -1180 python:
         except:
             pass
 
-        
     # Called to make a screenshot happen.
     def _screenshot():
         import os.path
         import os
         import __main__
         
-        pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
-
         # Pick the directory to save into.
         dest = config.renpy_base.rstrip("/")
         
@@ -215,11 +212,11 @@ init -1180 python:
             dest = os.path.dirname(dest)
             dest = os.path.dirname(dest)
             dest = os.path.dirname(dest)
-
+            
         # Try to pick a filename.
         i = 1
         while True:
-            fn = dest + "/" + pattern % i
+            fn = os.path.join(dest, config.screenshot_pattern % i)
             if not os.path.exists(fn):
                 break
             i += 1
@@ -241,6 +238,9 @@ init -1180 python:
     _predict_screens = [ ]
         
 init -1180 python hide:
+    
+    import os
+    config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
 
     def dump_styles():
         if config.developer:

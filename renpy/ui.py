@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -218,7 +218,7 @@ def reset():
     
 renpy.game.post_init.append(reset)
     
-def interact(type='misc', **kwargs):
+def interact(type='misc', **kwargs): #@ReservedAssignment
     # Docs in wiki.
 
     if stack is None:
@@ -392,7 +392,7 @@ class Wrapper(renpy.object.Object):
         
         # Pull out the special kwargs, id, at, and style_group.
 
-        id = kwargs.pop("id", None)
+        id = kwargs.pop("id", None) #@ReservedAssignment
 
         at_list = kwargs.pop("at", [ ])
         if not isinstance(at_list, list):
@@ -622,7 +622,7 @@ def menu(menuitems,
             
     close()
     
-input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True)
+input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True) #@ReservedAssignment
 
 def imagemap_compat(ground,
                     selected,
@@ -777,13 +777,13 @@ adjustment = renpy.display.behavior.Adjustment
 def _bar(*args, **properties):
 
     if len(args) == 4:
-        width, height, range, value = args
+        width, height, range, value = args #@ReservedAssignment
     if len(args) == 2:
-        range, value = args
+        range, value = args #@ReservedAssignment
         width = None
         height = None
     else:
-        range = 1
+        range = 1 #@ReservedAssignment
         value = 0
         width = None
         height = None
@@ -795,7 +795,7 @@ def _bar(*args, **properties):
         height  = properties.pop("height")
 
     if "range" in properties:
-        range = properties.pop("range")
+        range = properties.pop("range") #@ReservedAssignment
          
     if "value" in properties:
         value = properties.pop("value")
@@ -821,7 +821,7 @@ vslider = Wrapper(_bar, style='vslider', replaces=True)
 scrollbar = Wrapper(_bar, style='scrollbar', replaces=True)
 vscrollbar = Wrapper(_bar, style='vscrollbar', replaces=True)
 
-def _autobar_interpolate(range, start, end, time, st, at, **properties):
+def _autobar_interpolate(range, start, end, time, st, at, **properties): #@ReservedAssignment
 
     if st > time:
         t = 1.0
@@ -835,7 +835,7 @@ def _autobar_interpolate(range, start, end, time, st, at, **properties):
 
 autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
 
-def _autobar(range, start, end, time, **properties):
+def _autobar(range, start, end, time, **properties): #@ReservedAssignment
     return renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties))
 
 autobar = Wrapper(_autobar)
@@ -1014,7 +1014,7 @@ def hotspot(*args, **kwargs):
     hotspot_with_child(*args, **kwargs)
     null()
 
-def _hotbar(spot, adjustment=None, range=None, value=None, **properties):
+def _hotbar(spot, adjustment=None, range=None, value=None, **properties): #@ReservedAssignment
 
     if (adjustment is None) and (range is None) and (value is None):
         raise Exception("hotbar requires either an adjustment or a range and value.")
@@ -1102,7 +1102,7 @@ def gamemenus(*args):
 
 ##############################################################################
 # The on statement.
-def on(event, action=[], id=None):
+def on(event, action=[], id=None): #@ReservedAssignment
     if renpy.display.screen.current_screen().current_transform_event != event:
         return
 

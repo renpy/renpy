@@ -78,7 +78,10 @@ label _debugger_screen:
                 continue
 
             val = aRepr.repr(getattr(store, var))
-            entries.append((0, (var + " = " + val).replace("{", "{{")))
+            s = (var + " = " + val)
+            s = s.replace("{", "{{")
+            s = s.replace("[", "[[")
+            entries.append((0, s))
 
         if entries:
             vp = ui.viewport(mousewheel=True)
@@ -478,8 +481,8 @@ label _filename_list:
             for fn in files:
                 fn = os.path.join(dirname, fn)
                 fn = fn[len(config.gamedir) + 1:]
-                print >>f, fn
-                print fn
+                print >>f, fn.encode("utf-8", "replace")
+                print fn.encode("utf-8", "replace")
                 
         f.close()
         

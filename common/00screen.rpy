@@ -868,11 +868,14 @@ init -1140 python:
              The styles of the bar created.
          `offset`
              An offset to add to the value.
+         `step`
+             The amount to change the bar by. If None, defaults to 1/10th of
+             the bar.
          """
         
         offset = 0
         
-        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0):
+        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None):
             self.object = object
             self.field = field
             self.range = range
@@ -880,6 +883,14 @@ init -1140 python:
             self.style = style
             self.offset = offset
             
+            if step is None:
+                if isinstance(range, float):
+                    step = range / 10.0
+                else:
+                    step = max(range / 10, 1)
+            
+            self.step = step
+                    
         def changed(self, value):
 
             if self.max_is_zero:
@@ -907,7 +918,8 @@ init -1140 python:
             return ui.adjustment(
                 range=self.range,
                 value=value,
-                changed=self.changed)
+                changed=self.changed,
+                step=self.step)
 
         def get_style(self):
             return self.style, "v" + self.style
@@ -1461,7 +1473,10 @@ init -1140 python:
     ##########################################################################
     # Side Images
     
-    def SideImage(tag="side"):
+    config.side_image_tag = None
+    config.side_image_only_not_showing = False
+    
+    def SideImage(prefix_tag="side"):
         """
         :doc: side_image_function
     
@@ -1469,7 +1484,7 @@ init -1140 python:
         or a Null displayable if no such side image exists.
         """
         
-        name = renpy.get_side_image(tag)
+        name = renpy.get_side_image(prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
         if name is None:
             return Null()
         else:

@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -535,14 +535,19 @@ cdef class ShaderEnviron(Environ):
             maxx = (maxx + 1) * self.viewport_w / 2 + self.viewport_x
             miny = (miny + 1) * self.viewport_h / 2 + self.viewport_y
             maxy = (maxy + 1) * self.viewport_h / 2 + self.viewport_y
-                    
+
             # Increase the bounding box, to ensure every relevant pixel is 
             # in it. The shader will take care of enforcing the actual box.
             minx -= 1
             maxx += 1          
             miny += 1
             maxy -= 1
-            
+
+            if minx < 0:
+                minx = 0
+            if miny < 0:
+                miny = 0
+
             glEnable(GL_SCISSOR_TEST)
             glScissor(<GLint> round(minx), <GLint> round(maxy), <GLint> round(maxx - minx), <GLsizei> round(miny - maxy))
 
@@ -559,13 +564,13 @@ cdef class ShaderEnviron(Environ):
         self.program = None
   
     cdef void unset_clip(self, GLDraw draw):
-        
+
         glDisable(GL_SCISSOR_TEST)
         
         self.clip_x0 = 0
         self.clip_y0 = 0
-        self.clip_x1 = 0
-        self.clip_y1 = 0
+        self.clip_x1 = 65535
+        self.clip_y1 = 65535
 
         if self.program is not None:
             self.program.disable_attribs()

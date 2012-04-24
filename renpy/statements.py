@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,7 @@ registry = { }
 
 parsers = renpy.parser.ParseTrie()
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False):
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False): #@ReservedAssignment
 
     name = tuple(name.split())
     

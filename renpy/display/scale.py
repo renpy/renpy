@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -54,8 +54,8 @@ def image_load_unscaled(f, hint, convert=True):
     return rv
 
 # Saves an image without rescaling.
-def image_save_unscaled(surf, dest):
-    pygame.image.save(surf, dest)
+def image_save_unscaled(surf, filename):
+    pygame.image.save(surf, renpy.exports.fsencode(filename))
 
 # Scales down a surface.
 def surface_scale(full):

@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -113,8 +113,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     once they have been retrieved.
     """
 
-    cdef int width, height
-    cdef int orig_width, orig_height
+    cdef float width, height
+    cdef float orig_width, orig_height
     cdef tuple orig_wh, wh
     cdef dict render_cache_d
     cdef Render rv
@@ -136,13 +136,13 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     
     if xmaximum is not None:
         if isinstance(xmaximum, float):
-            width = int(width * xmaximum)
+            width = width * xmaximum
         else:
             width = min(xmaximum, width)
 
     if ymaximum is not None:
         if isinstance(ymaximum, float):
-            height = int(height * ymaximum)
+            height = height * ymaximum
         else:
             height = min(ymaximum, height)
 
@@ -451,7 +451,7 @@ PIXELLATE = 3
 
 cdef class Render:
 
-    def __init__(Render self, int width, int height, draw_func=None, layer_name=None, bint opaque=None):
+    def __init__(Render self, float width, float height, draw_func=None, layer_name=None, bint opaque=None): #@DuplicatedSignature
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
@@ -549,16 +549,16 @@ cdef class Render:
         
         live_renders.append(self)
         
-    def __repr__(self):
+    def __repr__(self): #@DuplicatedSignature
         return "<Render %x of %r>" % (id(self), self.render_of)
 
-    def __getstate__(self):
+    def __getstate__(self): #@DuplicatedSignature
         if renpy.config.developer:
             raise Exception("Can't pickle a Render.")
         else:
             return { }
         
-    def __setstate__(self, state):
+    def __setstate__(self, state): #@DuplicatedSignature
         return
 
     cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
@@ -841,7 +841,7 @@ cdef class Render:
         else:
             self.focuses.append(t)
 
-    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses):
+    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses): #@DuplicatedSignature
         """
         This adds to focuses Focus objects corresponding to the focuses
         added to this object and its children, transformed into screen
@@ -902,7 +902,7 @@ cdef class Render:
             for child in self.pass_focuses:
                 child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
         
-    def focus_at_point(self, x, y):
+    def focus_at_point(self, x, y): #@DuplicatedSignature
         """
         This returns the focus of this object at the given point.
         """
@@ -1048,7 +1048,7 @@ cdef class Render:
         """
 
         color = renpy.easy.color(color)
-        solid = renpy.display.im.SolidImage(color, self.width, self.height)
+        solid = renpy.display.imagelike.Solid(color)
         surf = render(solid, self.width, self.height, 0, 0)
         self.blit(surf, (0, 0), focus=False, main=False)
 
@@ -1069,7 +1069,7 @@ cdef class Render:
         
 class Canvas(object):
 
-    def __init__(self, surf):
+    def __init__(self, surf): #@DuplicatedSignature
         self.surf = surf
         
     def rect(self, color, rect, width=0):

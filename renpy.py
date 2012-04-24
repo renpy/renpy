@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+#@PydevCodeAnalysisIgnore
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,6 @@
 
 import os
 import sys
-import platform
 import warnings
 
 # Functions to be customized by distributors. ################################

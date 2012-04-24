@@ -14,6 +14,8 @@ import glob
 import time
 import argparse
 
+CWD = os.getcwdu()
+
 zlib.Z_DEFAULT_COMPRESSION = 9
 
 # Gets the data for the given file.
@@ -238,15 +240,16 @@ vc_version = {revno}
             pass
     
         os.system("7z a " + prefix + "-sdk.7z " + prefix)
-        os.system("cat ../7z.sfx " + prefix + "-sdk.7z > " + prefix + "-sdk.7z.exe""")
-        os.unlink(prefix + "-sdk.7z")
-    
-        os.chdir("..")
+ 
+        os.chdir(CWD)
+        
+        os.system("cat 7z.sfx dists/" + prefix + "-sdk.7z > dists/" + prefix + "-sdk.7z.exe""")
+        os.unlink("dists/" + prefix + "-sdk.7z")
     
         if os.path.exists("updates/prerelease"):
             shutil.rmtree("updates/prerelease")
     
-        os.rename("dists/" + prefix, "updates/prerelease")
+        shutil.move("dists/" + prefix, "updates/prerelease")
         os.unlink("updates/prerelease/lib/update-version.txt")
     
         makeupdate.make_update("updates/prerelease", str(revno))
@@ -257,7 +260,6 @@ vc_version = {revno}
     print "Did you remember to rebuild the exe after the last change?"
     print "Did you run me with renpython -OO?"
     print "Did you update renpy.py and launcher/script_version.rpy?"
-    print "Did you run with a RENPY_SCALE_FACTOR?"
     
 if __name__ == "__main__":
     main()

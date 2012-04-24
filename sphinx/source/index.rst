@@ -12,7 +12,7 @@ Much of Ren'Py is only documented in the older documentation, which is
 stored in the Ren'Py Wiki:
 
     http://www.renpy.org/wiki/
-    
+
 
 Getting Started
 ---------------
@@ -69,7 +69,7 @@ Advanced Displayables
    
 Python and Ren'Py
 -----------------
-   
+
 .. toctree::
    :maxdepth: 1
 
@@ -88,7 +88,6 @@ Other Platforms
 
    android
    
-   
 End-User Documentation
 ----------------------
 
@@ -96,6 +95,15 @@ End-User Documentation
    :maxdepth: 1
 
    display_problems
+
+
+Engine Developer Documentation
+------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   editor
 
 Changes and License
 -------------------

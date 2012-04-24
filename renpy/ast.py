@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -156,7 +156,7 @@ class PyCode(object):
         return self.hash
             
             
-def chain_block(block, next):
+def chain_block(block, next): #@ReservedAssignment
     """
     This is called to chain together all of the nodes in a block. Node
     n is chained with node n+1, while the last node is chained with
@@ -182,7 +182,7 @@ class Scry(object):
     def __getattr__(self, name):
         return None
 
-    def next(self):
+    def next(self): #@ReservedAssignment
         if self._next is None:
             return None
         else:
@@ -256,7 +256,7 @@ class Node(object):
 
         return None
         
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
         """
         This is called with the Node node that should be followed after
         executing this node, and all nodes that this node
@@ -480,7 +480,7 @@ class Init(Node):
     # We handle chaining specially. We want to chain together the nodes in
     # the block, but we want that chain to end in None, and we also want
     # this node to just continue on to the next node in normal execution.
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
         self.next = next
 
         chain_block(self.block, None)
@@ -522,7 +522,7 @@ class Label(Node):
     def get_children(self):
         return self.block 
 
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
 
         if self.block:
             self.next = self.block[0]
@@ -641,7 +641,14 @@ class Python(Node):
 
     def execute(self):
         next_node(self.next)
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+        
+        try:        
+            renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+        finally:
+            
+            if not renpy.game.context().init_phase:
+                for i in renpy.config.python_callbacks:
+                    i()
 
     def scry(self):
         rv = Node.scry(self)
@@ -1126,7 +1133,7 @@ class Return(Node):
         return (Return, )
 
     # We don't care what the next node is.
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
         self.next = None
         return
 
@@ -1162,7 +1169,7 @@ class Menu(Node):
         'with_',
         ]
 
-    def __init__(self, loc, items, set, with_):
+    def __init__(self, loc, items, set, with_): #@ReservedAssignment
         super(Menu, self).__init__(loc)
 
         self.items = items
@@ -1182,7 +1189,7 @@ class Menu(Node):
         return rv
 
     # Blocks of statements in a choice continue after the menu.
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
 
         self.next = next
 
@@ -1267,7 +1274,7 @@ class Jump(Node):
         return (Jump, self.target, self.expression)
 
     # We don't care what our next node is.
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
         self.next = None
         return
 
@@ -1330,7 +1337,7 @@ class While(Node):
     def get_children(self):
         return self.block
 
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
         self.next = next
         chain_block(self.block, self)
 
@@ -1373,7 +1380,7 @@ class If(Node):
 
         return rv
 
-    def chain(self, next):
+    def chain(self, next): #@ReservedAssignment
         self.next = next
 
         for _condition, block in self.entries:

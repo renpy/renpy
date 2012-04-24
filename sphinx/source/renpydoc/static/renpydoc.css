@@ -335,3 +335,24 @@ table.indextable tbody tr.cap, table.indextable tbody tr.pcap {
 table.indextable tbody tr.cap td, table.indextable tbody tr.pcap td {
 	background: none;	
 }
+
+.highlight .k {
+    color: #804000 !important;
+    font-weight: normal !important;
+}
+
+.highlight .s {
+    color: #006000 !important;
+}
+
+.highlight .na {
+    color: #004080 !important;
+}
+
+.highlight .c {
+    color: #600000 !important;
+}
+
+.highlight .mi, .highlight .mf {
+    color: #222 !important;
+}

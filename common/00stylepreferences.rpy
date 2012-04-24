@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # This file contains code for the style preferences system, which allows
@@ -15,7 +15,8 @@ init -1135 python:
 
     # Are style preferences dirty? If so, we need to update them at the start of
     # the next operation.
-    __dirty = True
+    __dirty = object()
+    __dirty.flag = True
 
     # A map from preference name to alternative.
     if persistent._style_preferences is None:      
@@ -71,9 +72,7 @@ init -1135 python:
         Called at least once per interaction, to update the styles if necessary.
         """
     
-        global __dirty
-    
-        if not __dirty:
+        if not __dirty.flag:
             return
             
         for preference, alternatives in __preferences.iteritems():
@@ -86,7 +85,7 @@ init -1135 python:
                     
         renpy.style.rebuild()
         
-        __dirty = False
+        __dirty.flag = False
         
     def __check(preference, alternative=None):
         
@@ -112,12 +111,10 @@ init -1135 python:
             A string giving the name of the alternative.
         """
         
-        global __dirty
-        
         __check(preference, alternative)
         
         persistent._style_preferences[preference] = alternative
-        __dirty = True
+        __dirty.flag = True
         
         renpy.restart_interaction()
         

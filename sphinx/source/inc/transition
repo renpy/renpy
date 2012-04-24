@@ -129,7 +129,7 @@
         function that takes a fractional time between 0.0 and 1.0, and returns 
         a number in the same range. 
 
-.. function:: Fade(out_time, hold_time, old_time, color="#000")
+.. function:: Fade(out_time, hold_time, in_time, color="#000")
     
     Returns a transition that takes `out_time` seconds to fade to 
     a screen filled with `color`, holds at that screen for `hold_time`

@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,14 +24,14 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 # This will be deleted by the end of this file.
-import renpy.display
+import renpy.display #@UnusedImport
 import os
 
 # Can we add more config variables?
 locked = False
 
 # Contains help for config variables.
-help = [ ]
+help = [ ] #@ReservedAssignment
 
 # The title of the game window.
 window_title = "A Ren'Py Game"
@@ -284,16 +284,16 @@ framerate = 100
 # The number of frames that Ren'Py has shown.
 frames = 0
 
-# A text editor that is launched at the location of the current
+# NOT USED: A text editor that is launched at the location of the current
 # statement.
-editor = os.environ.get('RENPY_EDITOR', None)
+editor = None # os.environ.get('RENPY_EDITOR', None)
 
-# Text editor, with arguments to reload or clobber the file - used,
+# NOT USED: Text editor, with arguments to reload or clobber the file - used,
 # for example, to display traceback.txt.
-editor_transient = os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
+editor_transient = None # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 
-# The separator used between files in the text editor.
-editor_file_separator = os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
+# NOT USED: The separator used between files in the text editor.
+editor_file_separator = None # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
 developer = False
@@ -504,7 +504,7 @@ save_physical_size = True
 new_substitutions = True
 
 # Do we use old text substitutions?
-old_substitutions = False
+old_substitutions = True
 
 # The graphics renderer we use. (Ren'Py sets this.)
 renderer = "auto"
@@ -514,6 +514,13 @@ translator = None
 
 # Should we use the old, broken line spacing code?
 broken_line_spacing = False
+
+# A list of callbacks that are called after each non-init-phase python
+# block.
+python_callbacks = [ ]
+
+# If true, we dump information about a save upon save.
+save_dump = False
 
 del renpy
 del os

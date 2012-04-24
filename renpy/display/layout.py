@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -750,7 +750,7 @@ class SizeGroup(renpy.object.Object):
         for i in self.members:
             rend = renpy.display.render.render(i, width, height, st, at)
             maxwidth = max(rend.width, maxwidth)
-            rend.kill()
+            renpy.display.render.invalidate(i)
             
         self._width = maxwidth
         self.computing_width = False

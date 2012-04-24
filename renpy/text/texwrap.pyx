@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,6 +28,8 @@ from libc.stdlib cimport calloc, malloc, free
 import collections
 times = collections.defaultdict(float)
 
+DEF INFINITY = float("+inf")
+
 cdef struct Word:
 
     void *glyph
@@ -37,10 +39,10 @@ cdef struct Word:
 
     # The x coordinate of the start of this word, not including preceding
     # whitespace.
-    int start_x
+    double start_x
     
     # The x coordinate of the end of this word.
-    int end_x
+    double end_x
         
         
 cdef class WordWrapper(object):
@@ -49,7 +51,7 @@ cdef class WordWrapper(object):
     cdef Word *words
     cdef int len_words
     cdef list glyphs
-    cdef long long *scores
+    cdef double *scores
     cdef int *splits
 
     def __init__(self, list glyphs, first_width, rest_width, subtitle):
@@ -95,31 +97,31 @@ cdef class WordWrapper(object):
 
     cdef void knuth_plass(self, int first_width, int rest_width, bint subtitle):
     
-        cdef long long *scores
-        cdef int *splits
+        cdef double *scores 
+        cdef int *splits 
         cdef Word *words = self.words
         cdef int len_words = self.len_words
-        cdef int line_width
+        cdef double line_width
         
         cdef int i, j
-        cdef long long score, min_score
+        cdef double score, min_score
         cdef int split
-        cdef int j_x, width
+        cdef double j_x, width
         
-        scores = <long long *> calloc(self.len_words + 1, sizeof(long long))
+        scores = <double *> calloc(self.len_words + 1, sizeof(double))
         self.scores = scores
         splits = <int *> calloc(self.len_words + 1, sizeof(int))
         self.splits = splits
         
         # Base case, for a list of 0 length.
-        scores[0] = 0
+        scores[0] = 0.0
         splits[0] = 0
         
         for 1 <= j <= self.len_words:
             
             j_x = words[j-1].end_x
             
-            min_score = 1 << 63 - 1 # Max Long Long
+            min_score = INFINITY 
             split = j - 1
             i = j
             
@@ -144,7 +146,7 @@ cdef class WordWrapper(object):
                     if i < j - 1:
                         break
                     else:
-                        score += 100000LL * (width - line_width) 
+                        score += 100000.0 * (width - line_width) 
                                     
                 elif subtitle or j != len_words:
                     
@@ -167,7 +169,7 @@ cdef class WordWrapper(object):
         """
         
         cdef Word *words, *word
-        cdef int start_x = 0, x = 0
+        cdef double start_x = 0, x = 0
         cdef Glyph g, start_glyph
         cdef list rv
         cdef int i, start_g
@@ -180,7 +182,7 @@ cdef class WordWrapper(object):
         word = words
         
         start_glyph = glyphs[0]
-        x = <int> start_glyph.advance
+        x = start_glyph.advance
         
         for i from 1 <= i < len_glyphs:
 
@@ -196,7 +198,7 @@ cdef class WordWrapper(object):
                 len_words += 1
                 word += 1
                 
-                start_x = x + <int> g.advance
+                start_x = x + g.advance
                 start_glyph = g
         
             elif g.split == SPLIT_BEFORE:
@@ -209,7 +211,7 @@ cdef class WordWrapper(object):
                 start_x = x
                 start_glyph = g
             
-            x += <int> g.advance
+            x += g.advance
         
         word.glyph = <void *> start_glyph
         word.start_x = start_x

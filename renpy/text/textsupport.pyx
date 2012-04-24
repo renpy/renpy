@@ -299,10 +299,10 @@ def linebreak_nobreak(list glyphs):
             
 def linebreak_debug(list glyphs):
     """
-    Return a string giving the results of linebreaking a list of gylphs.
+    Return a string giving the results of linebreaking a list of glyphs.
     """
     
-    cdef Glyph g
+    cdef Glyph g 
      
     rv = ""
      

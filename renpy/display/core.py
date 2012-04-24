@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,7 +40,7 @@ except:
     pass
 
 try:
-    import android #@UnresolvedImport
+    import android #@UnresolvedImport @UnusedImport
     import android.sound #@UnresolvedImport
 except:
     android = None
@@ -855,7 +855,7 @@ class SceneLists(renpy.object.Object):
         time with the given time.
         """
 
-        for l, (t, list) in self.layer_at_list.items():
+        for l, (t, list) in self.layer_at_list.items(): #@ReservedAssignment
             self.layer_at_list[l] = (t or time, list)
         
         for l, ll in self.layers.iteritems():
@@ -1210,7 +1210,7 @@ class Interface(object):
 
             if renpy.windows and im.get_size() != (32, 32):
                 im = renpy.display.scale.real_smoothscale(im, (32, 32))
-                
+            
             pygame.display.set_icon(im)
 
             
@@ -1279,7 +1279,7 @@ class Interface(object):
             if name in draw_objects:
                 rv.append(draw_objects[name])
             else:
-                renpy.display.log.write("Unknown renderer: {0}.format(name)")
+                renpy.display.log.write("Unknown renderer: {0}".format(name))
 
         for i in renderers:
             append_draw(i)
@@ -1306,10 +1306,14 @@ class Interface(object):
         This sets the video mode. It also picks the draw object.
         """
         
+        # Ensure that we kill off the movie when changing screen res.
+        renpy.display.video.movie_stop(clear=False)
+
         if self.display_reset:
             renpy.display.draw.deinit()
-            renpy.display.draw.quit()
-            renpy.display.draw = None
+
+            if renpy.display.draw.info["renderer"] == "angle":
+                renpy.display.draw.quit()
 
             renpy.display.render.free_memory()
             renpy.display.im.cache.clear()
@@ -1320,9 +1324,6 @@ class Interface(object):
             self.kill_textures_and_surfaces()
                         
         self.display_reset = False
-        
-        # Ensure that we kill off the movie when changing screen res.
-        renpy.display.video.movie_stop(clear=False)
 
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
@@ -1378,6 +1379,10 @@ class Interface(object):
         
         # Assume we're not minimized.
         self.minimized = False
+
+        # Force an interaction restart.
+        self.restart_interaction = True
+
 
     def draw_screen(self, root_widget, fullscreen_video):
         
@@ -2303,7 +2308,8 @@ class Interface(object):
                                 self.restored()
                             else:
                                 self.iconified()
-
+                    
+                        pygame.key.set_mods(0)
 
                     # This returns the event location. It also updates the
                     # mouse state as necessary.
@@ -2317,6 +2323,7 @@ class Interface(object):
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
+
 
                     if rv is None:
                         rv = root_widget.event(ev, x, y, 0)

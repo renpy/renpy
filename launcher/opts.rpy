@@ -11,7 +11,7 @@ label options:
 
         editor = persistent.editor
         if not set_editor:
-            editor = _(u"Using RENPY_EDITOR")
+            editor = _(u"Using RENPY_EDIT_PY")
         
         text_variable(_("Text Editor"), editor, "editor",
                       _(u"Change the default text editor."))

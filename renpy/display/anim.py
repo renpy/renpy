@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -473,7 +473,7 @@ class Blink(renpy.display.core.Displayable):
     """
     """
 
-    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5,
+    def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5, #@ReservedAssignment
                  high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
 
         """

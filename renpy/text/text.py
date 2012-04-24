@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import time
+import math
 import renpy.display
 
 from renpy.text.textsupport import \
@@ -528,6 +528,8 @@ class Layout(object):
         if style.min_width > maxx + self.xborder:
             maxx = style.min_width - self.xborder
             
+        maxx = math.ceil(maxx)
+            
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a 
         # per-outline basis.)
@@ -633,7 +635,7 @@ class Layout(object):
             
             return ts
                 
-        for type, text in tokens:
+        for type, text in tokens: #@ReservedAssignment
             
             if type == PARAGRAPH:
                 
@@ -1304,10 +1306,33 @@ class Text(renpy.display.core.Displayable):
                 oblits = blits            
         
             for b in oblits:
+                
+                b_x = b.x
+                b_y = b.y 
+                b_w = b.w
+                b_h = b.h
+                
+                # Bound to inside texture rectangle.
+                if b_x < 0:
+                    b_w += b.x
+                    b_x = 0
+                    
+                if b_y < 0:
+                    b_h += b_y
+                    b_y = 0
+                    
+                if b_w > w - b_x:
+                    b_w = w - b_x
+                if b_h > h - b_y:
+                    b_h = h - b_y
+
+                if b_w <= 0 or b_h <= 0:
+                    continue
             
+                # Bound blits to the surface.
                 rv.blit(
-                    tex.subsurface((b.x, b.y, b.w, b.h)),
-                    (b.x + xo + layout.xoffset - o, b.y + yo + layout.yoffset - o))
+                    tex.subsurface((b_x, b_y, b_w, b_h)),
+                    (b_x + xo + layout.xoffset - o, b_y + yo + layout.yoffset - o))
 
         # Blit displayables.
         for d, xo, yo, t in layout.displayable_blits:

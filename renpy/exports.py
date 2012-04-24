@@ -1,4 +1,5 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -54,6 +55,7 @@ import renpy.audio.sound as sound
 import renpy.audio.music as music
 
 import time
+import sys
 
 def public_api():
     """
@@ -87,6 +89,9 @@ del public_api
 import collections
 
 def roll_forward_info():
+    if len(renpy.game.contexts) > 1:
+        return None
+    
     return renpy.game.log.forward_info()
 
 def in_rollback():
@@ -347,7 +352,7 @@ def watch(expression, style='default', **properties):
 
     renpy.config.overlay_functions.append(overlay_func)
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None):
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None): #@ReservedAssignment
     """
     This pops up a window requesting that the user enter in some text.
     It returns the entered text.
@@ -426,12 +431,12 @@ def menu(items, set_expr):
 
     # Filter the list of items on the set_expr:
     if set_expr:
-        set = renpy.python.py_eval(set_expr)
+        set = renpy.python.py_eval(set_expr) #@ReservedAssignment
         items = [ (label, value)
                   for label, value in items
                   if label not in set ]
     else:
-        set = None
+        set = None #@ReservedAssignment
 
     # Check to see if there's at least one choice in set of items:
     choices = [ value for label, value in items if value is not None ]
@@ -497,7 +502,7 @@ def display_menu(items,
                  scope={ },
                  widget_properties=None,
                  screen="choice",
-                 type="menu",
+                 type="menu", #@ReservedAssignment
                  predict_only=False,
                  **kwargs):
     """
@@ -593,7 +598,7 @@ def display_menu(items,
 
     # Log the chosen choice.
     for label, val in items:
-        if val:
+        if val is not None:
             log("Choice: " + label)
         else:
             log(label)
@@ -964,7 +969,7 @@ def utter_restart():
 
     raise renpy.game.UtterRestartException()
 
-def quit():
+def quit(): #@ReservedAssignment
     """
     This causes Ren'Py to exit entirely.
     """
@@ -991,7 +996,7 @@ def screenshot(filename):
     """
     Saves a screenshot in the named filename.
     """
-    
+
     renpy.game.interface.save_screenshot(filename)
     
 def windows():
@@ -1000,7 +1005,6 @@ def windows():
     test when setting styles.
     """
 
-    import sys
     return hasattr(sys, 'winver')
 
 def version():
@@ -1204,10 +1208,10 @@ def current_interact_type():
 def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
-def dynamic(*vars):
+def dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars)
 
-def context_dynamic(*vars):
+def context_dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars, context=True)
     
 def seen_label(label):
@@ -1222,7 +1226,7 @@ def seen_image(name):
     
     return name in renpy.game.persistent._seen_images
 
-def file(fn):
+def file(fn): #@ReservedAssignment
     return renpy.loader.load(fn)
 
 def image_size(im):
@@ -1483,7 +1487,7 @@ def list_files(common=False):
 
     rv = [ ]
     
-    for dir, fn in renpy.loader.listdirfiles():
+    for dir, fn in renpy.loader.listdirfiles(): #@ReservedAssignment
 
         if not common and dir == renpy.config.commondir:
             continue
@@ -1613,25 +1617,40 @@ def get_say_attributes():
 
 side_image_attributes = None
 
-def get_side_image(tag):
+def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
     """
     :doc: other
     
-    This attempts to find an image to show as the side image. It attempts to
-    find an image that begins with tag, and matches side_image_attributes. It
-    returns the name of the image (as a tuple of strings) if possible, or 
-    None if that's not possible.
+    This attempts to find an image to show as the side image. 
+   
+    It begins by determining a set of image attributes. If `image_tag` is 
+    given, it gets the image attributes from the tag. Otherwise, it gets
+    them from the currently showing character.
+    
+    It then looks up an image with the tag `prefix_tag` and those attributes,
+    and returns it if it exists. 
+    
+    If not_showing is True, this only returns a side image if the image the
+    attributes are taken from is not on the screen.
     """
-    
-    if side_image_attributes is None:
-        return
-    
+
     images = renpy.game.context().images
+
+    if image_tag is not None:
+        attrs = (image_tag,) + images.get_attributes(layer, image_tag)
+    else:
+        attrs = side_image_attributes
+        
+    if not attrs:
+        return None
+    
+    if not_showing and images.showing(layer, (attrs[0], )):
+        return None
     
     required = set()
-    optional = set(side_image_attributes)
+    optional = set(attrs)
     
-    return images.choose_image(tag, required, optional, None)
+    return images.choose_image(prefix_tag, required, optional, None)
 
 def get_physical_size():
     """
@@ -1654,6 +1673,32 @@ def set_physical_size(size):
     
     if get_renderer_info()["resizable"]:
         renpy.display.interface.set_mode(size)
+        
+def fsencode(s):
+    """
+    :doc: other
+    
+    Converts s from unicode to the filesystem encoding.
+    """
+    
+    if not isinstance(s, unicode):
+        return s
+    
+    fsencoding = sys.getfilesystemencoding() or "utf-8"
+    return s.encode(fsencoding, "replace")
 
-from renpy.editor import launch_editor
+def fsdecode(s):
+    """
+    :doc: other
+    
+    Converts s from filesystem encoding to unicode.
+    """
+    
+    if not isinstance(s, str):
+        return s
+        
+    fsencoding = sys.getfilesystemencoding() or "utf-8"
+    return s.decode(fsencoding)
+
+from renpy.editor import launch_editor #@UnusedImport
 

@@ -58,7 +58,7 @@ label day:
     # We may also want to compute the name for the day here, but
     # right now we don't bother.
 
-    "It's day %(day)d."
+    "It's day [day]."
 
     # Here, we want to set up some of the default values for the
     # day planner. In a more complicated game, we would probably

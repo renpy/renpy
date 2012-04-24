@@ -2,15 +2,15 @@
 Configuration Variables
 =======================
 
-Configuration variables control the behavior of Ren'Py's
-implementation, allowing Ren'Py itself to be customized in a myriad of
-ways. These range from the common (such as changing the screen size) to the
-obscure (adding new kinds of archive file).
+Configuration variables control the behavior of Ren'Py's implementation,
+allowing Ren'Py itself to be customized in a myriad of ways. These range from
+the common (such as changing the screen size) to the obscure (adding new
+kinds of archive file).
 
-Ren'Py's implementation makes the assumption that, once the GUI system
-has initialized, configuration variables will not change. Changing
-configuration variables outside of init blocks can lead to undefined
-behavior. Configuration variables are not part of the save data.
+Ren'Py's implementation makes the assumption that, once the GUI system has
+initialized, configuration variables will not change. Changing configuration
+variables outside of init blocks can lead to undefined behavior.
+Configuration variables are not part of the save data.
 
 Configuration variables are often changed in init python blocks::
 
@@ -431,6 +431,21 @@ Occasionally Used
     A list of functions. When called, each function is expected to
     use ui functions to add displayables to the overlay layer.
 
+.. var:: config.python_callbacks = [ ]
+
+    A list of functions. The functions in this list are called, without
+    any arguments, whenever a python block is run outside of the init 
+    phase. 
+    
+    One possible use of this would be to have a function limit a variable
+    to within a range each time it is adjusted.
+    
+    The functions may be called during internal Ren'Py code, before the
+    start of the game proper, and potentially before the variables the 
+    function depends on are intialized. The functions are required to deal 
+    with this, perhaps by using ``hasattr(store, 'varname')`` to check if 
+    a variable is defined.
+
 .. var:: config.quit_action = ...
 
     The action that is called when the user clicks the quit button on
@@ -549,59 +564,6 @@ Rarely or Internally Used
 .. var:: config.context_clear_layers = [ 'screens' ]
 
     A list of layers that are cleared when entering a new context.
-
-.. var:: config.editor = None
-
-    If not None, this is expected to be a command line for an editor
-    that is invoked when the launch_editor (normally shift-E) key is
-    pressed. The following substitutions make sense here:
-
-    %(filename)s
-        The filename of the most interesting file to be edited. This
-        is the file that should be shown to the user.
-
-    %(line)d
-        The line number of the most interesting file to show to the user.
-
-    %(otherfiles)s
-        Other, less-interesting files to show to the user.
-
-    %(allfiles)s
-        All the files.
-
-
-    Filename, otherfiles, and allfiles have shell-relevant characters
-    escaped with backslashes. otherfiles and allfiles separate files
-    with config.editor_file_separator (by default '" "', a
-    double-quote, a space, and a quote). Since all filenames should be
-    enclosed in double-quotes, this means that otherfiles and allfiles
-    will create several quoted files. If two double-quotes occur in a
-    row the string, then they are both removed. (This allows an empty
-    allfiles to be used.)
-
-    A reasonable example is::
-
-        init python:
-            config.editor = 'myeditor "%(filename)s" +line:%(line)d "%(otherfiles)s"'
-
-    This defaults to the value of the RENPY_EDITOR environment
-    variable. If not defined by that variable or user code, this is
-    set automatically by the Ren'Py launcher.
-
-.. var:: config.editor_file_separator = '" "'
-
-    The separator used between filenames when lists of files are
-    provided to the editor.
-
-.. var:: config.editor_transient = None
-
-    If not None, this is expected to be a command line for an editor
-    that is invoked on transient files, such as lint results, parse
-    errors, and tracebacks. Substitutions are as for config.editor.
-
-    This defaults to the value of the RENPY_EDITOR_TRANSIENT
-    environment variable. If not defined by that variable or user
-    code, this is set automatically by the Ren'Py launcher.
 
 .. var:: config.fade_music = 0.0
 
@@ -830,6 +792,14 @@ Rarely or Internally Used
     second and later interactions caused by a line of dialogue with
     pauses in it. Used to sustain voice through pauses.
 
+.. var:: config.save_dump = False
+
+   If set to true, Ren'Py will create the file save_dump.txt whenever it
+   saves a game. This file contains information about the objects contained
+   in the save file. Each line consists of a relative size estimate, the path
+   to the object, information about if the object is an alias, and a 
+   representation of the object.
+
 .. var:: config.save_physical_size = True
 
     If true, the physical size of the window will be saved in the
@@ -860,6 +830,14 @@ Rarely or Internally Used
     If not None, this should be a (`x`, `y`, `height`, `width`)
     tuple. Screenshots are cropped to this rectangle before being
     saved. 
+
+.. var:: config.screenshot_pattern = "screenshot%04d.png"
+
+    The pattern used to create screenshot files. This pattern is applied (using
+    python's %-formatting rules) to the natural numbers to generate a sequence 
+    of filenames. The filenames may be absolute, or relative to 
+    config.renpy_base. The first filename that does not exist is used as the 
+    name of the screenshot. 
     
 .. var:: config.script_version = None
 
@@ -938,8 +916,9 @@ Rarely or Internally Used
 .. var:: config.with_callback = None
 
     If not None, this should be a function that is called when a with
-    statement occurs. This function can be responsible for putting up
-    transient things on the screen during the transition. The function
-    is called with a single argument, which is the transition that is
-    occuring. It is expected to return a transition, which may or may
-    not be the transition supplied as its argument.
+    statement occurs. This function can be responsible for putting up transient
+    things on the screen during the transition. The function is called with a
+    single argument, which is the transition that is occurring. It is expected
+    to return a transition, which may or may not be the transition supplied as
+    its argument.
+

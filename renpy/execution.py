@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -216,21 +216,25 @@ class Context(renpy.object.Object):
         self.current = node_name
 
     def report_tb(self, out):
-
+        
+        rv = [ ]
+        
         for i in self.call_location_stack:
             try:
                 node = renpy.game.script.lookup(i)
                 if not node.filename.replace("\\", "/").startswith("common/"):
-                    renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script call")
+                    rv.append((node.filename, node.linenumber, "script call", None))
             except:
                 pass
                 
         try:
             node = renpy.game.script.lookup(self.current)
             if not node.filename.replace("\\", "/").startswith("common/"):
-                renpy.bootstrap.report_line(out, node.filename, node.linenumber, "script")
+                rv.append((node.filename, node.linenumber, "script", None))
         except:
             pass
+            
+        return rv
             
     def run(self, node=None):
         """
@@ -264,10 +268,15 @@ class Context(renpy.object.Object):
                     raise
 
                 except Exception, e:
-                    short, full = renpy.bootstrap.report_exception(e, editor=False)
+                    short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
 
-                    if renpy.display.error.report_exception(short, full):
-                        raise
+                    try:
+                        if renpy.display.error.report_exception(short, full, traceback_fn):
+                            raise
+                    except renpy.game.CONTROL_EXCEPTIONS, ce:
+                        raise ce
+                    except Exception, ce:
+                        raise e
                               
                 node = self.next_node
             

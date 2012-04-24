@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -303,7 +303,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 class SlowDone(object):
     delay = None
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay):
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay): #@ReservedAssignment
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -342,7 +342,7 @@ def display_say(
     cb_args,
     with_none,
     callback,
-    type,
+    type, #@ReservedAssignment
     checkpoint=True,
     ctc_timedpause=None,
     ctc_force=False):
@@ -449,7 +449,7 @@ def display_say(
         # Show the text.
         what_text = show_function(who, what_string)
 
-        if not isinstance(what_text, renpy.text.text.Text):
+        if not isinstance(what_text, renpy.text.text.Text): #@UndefinedVariable
             raise Exception("The say screen (or show_function) must return a Text object.")
 
         if what_ctc and ctc_position == "nestled":

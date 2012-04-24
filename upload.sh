@@ -1,3 +1,3 @@
 #!/bin/sh
 
-rsync -av updates tom@onegeek.org:/home/tom/WWW.update/renpy/
+rsync -av updates tom@erika.onegeek.org:/home/tom/WWW.update/renpy/

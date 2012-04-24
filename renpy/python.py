@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -814,12 +814,7 @@ class RollbackLog(renpy.object.Object):
 
         # If the log is too long, try pruning it to a label.
         if len(self.log) > renpy.config.rollback_length:
-            rb = self.log[-renpy.config.rollback_length]
-
-            # Checks to see if this is a real name, rather than a
-            # tuple.
-            if isinstance(rb.context.current, basestring):
-                self.log = self.log[-renpy.config.rollback_length:]
+            self.log = self.log[-renpy.config.rollback_length:]
 
         self.current = Rollback()
         self.log.append(self.current)
@@ -1091,7 +1086,7 @@ class RollbackLog(renpy.object.Object):
         # Now, rollback to an acceptable point.
         self.rollback(0, force=True, label=label)
 
-        # Beccause of the rollback, we never make it this far.
+        # Because of the rollback, we never make it this far.
 
 
 def py_exec_bytecode(bytecode, hide=False, globals=None, locals=None, store="store"): #@ReservedAssignment
@@ -1173,5 +1168,3 @@ def method_unpickle(obj, name):
 import copy_reg
 import types
 copy_reg.pickle(types.MethodType, method_pickle, method_unpickle)
-
-

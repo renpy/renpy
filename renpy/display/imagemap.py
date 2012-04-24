@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -180,12 +180,8 @@ class ImageMapCache(renpy.object.Object):
             if renpy.loader.get_mtime(filename) >= mtime:
                 return
         
-        # We can't make an image when scaled.
-        if renpy.display.scale.factor != 1.0:
-            return
-
         fn = os.path.join(renpy.config.gamedir, filename)
-        dir = os.path.dirname(fn)
+        dir = os.path.dirname(fn) #@ReservedAssignment
         
         if not os.path.exists(dir):
             os.makedirs(dir)
@@ -198,7 +194,7 @@ class ImageMapCache(renpy.object.Object):
             surf = renpy.display.im.cache.get(d).subsurface(rect)
             cache.blit(surf, (x, y))
             
-        pygame.image.save(cache, fn)
+        pygame.image.save(cache, renpy.exports.fsencode(fn))
         
     def finish(self):
         if not self.areas:

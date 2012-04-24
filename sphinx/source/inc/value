@@ -20,7 +20,7 @@
         AnimatedValue we replaced, if any. Otherwise, it is initialized
         to `value`.
 
-.. function:: FieldValue(object, field, range, max_is_zero=False, style='bar', offset=0)
+.. function:: FieldValue(object, field, range, max_is_zero=False, style='bar', offset=0, step=None)
     
     A value that allows the user to adjust the value of a field
     on an object.
@@ -42,6 +42,9 @@
         The styles of the bar created.
     `offset`
         An offset to add to the value.
+    `step`
+        The amount to change the bar by. If None, defaults to 1/10th of
+        the bar.
 
 .. function:: MixerValue(mixer)
     

@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,7 +56,7 @@ _widget_properties = { }
 
 class _Config(object):
 
-    def register(self, name, default, cat=None, help=None):
+    def register(self, name, default, cat=None, help=None): #@ReservedAssignment
         setattr(self, name, default)
         _config.help.append((cat, name, help))
 
@@ -91,7 +91,7 @@ style = None
 config = _Config()
 library = config
 
-eval = renpy.python.py_eval
+eval = renpy.python.py_eval #@ReservedAssignment
 
 # Displayables.
 Bar = renpy.display.behavior.Bar
@@ -335,7 +335,7 @@ _last_say_what = None
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
-
+    
 def public_api():
     ui
     im

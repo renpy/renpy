@@ -1,4 +1,4 @@
-# Copyright 2004-2011 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -153,7 +153,7 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 
 save_png = _renpy.save_png
 
-def map(src, dst, rmap, gmap, bmap, amap):
+def map(src, dst, rmap, gmap, bmap, amap): #@ReservedAssignment
     """
     This maps the colors between two surfaces. The various map
     parameters must be 256 character long strings, with the value
