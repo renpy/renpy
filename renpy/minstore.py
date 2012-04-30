@@ -19,8 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
-
 python_list = _list = list
 python_dict = _dict = dict
 python_object = _object = object
@@ -34,9 +32,11 @@ dict = __renpy__dict__ #@ReservedAssignment
 
 from renpy.python import RevertableSet as set
 Set = set
+
 from renpy.python import RevertableObject as object #@UnusedImport
 
 from renpy.python import revertable_range as range #@UnusedImport
 from renpy.python import revertable_sorted as sorted #@UnusedImport
 
-del renpy
+import renpy.ui as ui #@UnusedImport
+import renpy.exports as renpy #@Reimport @UnusedImport
