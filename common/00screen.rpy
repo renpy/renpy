@@ -119,6 +119,7 @@ init -1140 python:
         def __call__(self):
             _screenshot()
 
+            
     def HideInterface():
         """
          :doc other_action
@@ -128,7 +129,25 @@ init -1140 python:
 
         return ui.callsinnewcontext("_hide_windows")
 
-    
+        
+    class OpenURL(Action):
+        """
+        :doc: other_action
+        
+        Causes `url` to be opened in a web browser.
+        """
+        
+        def __init__(self, url):
+            self.url = url
+            
+        def __call__(self):
+            try:
+                import webbrowser
+                webbrowser.open_new(self.url)
+            except:
+                pass
+         
+        
     class With(Action):
         """
          :doc: other_action
