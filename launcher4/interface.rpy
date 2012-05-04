@@ -23,8 +23,23 @@ init python:
     style.l_default.size = 18
     
     style.l_text = Style(style.l_default)
+
     style.l_button = Style(style.l_default)
     style.l_button_text = Style(style.l_default)
+
+    # A small button, used at the bottom of the screen.
+    style.l_link = Style(style.l_default)
+    style.l_link_text = Style(style.l_default)
+    style.l_link_text.size = 14
+
+    # The bottom-right action button.
+    style.l_right_button = Style(style.l_default)
+    style.l_right_button.xalign = 1.0
+    style.l_right_button.ypos = 600 - 128 + 3
+    style.l_right_button.xmargin = 6
+    style.l_right_button_text = Style(style.l_default)
+    style.l_right_button_text.size = 30
+    
     
     # The root frame. This contains everything but the bottom navigation, back
     # button, and tooltip button.
@@ -95,3 +110,72 @@ init python:
     style.l_vscrollbar.bar_vertical = True
     style.l_vscrollbar.bar_invert = True
     
+
+    
+    # Should we display the bottom links?
+    links = True
+
+    
+################################################################################
+# Interface actions.
+init python in interface:
+    from store import OpenURL, config
+
+    import os.path
+    
+    RENPY_URL = "http://www.renpy.org"
+    RENPY_GAMES_URL = "http://games.renpy.org"    
+    DOC_PATH = os.path.join(config.renpy_base, "doc/index.html")
+    DOC_URL = "http://www.renpy.org/doc/html/"
+    
+    if os.path.exists(DOC_PATH):
+        DOC_LOCAL_URL = "file:///" + DOC_PATH
+    else:
+        DOC_LOCAL_URL = None
+    
+    def OpenDocumentation():
+        """
+        An action that opens the documentation.
+        """
+                    
+        if DOC_LOCAL_URL is not None:
+            return OpenURL(DOC_LOCAL_URL)
+        else:
+            return OpenURL(DOC_URL)
+    
+    
+# This displays the bottom of the screen. If the tooltip is not None, this displays the
+# tooltip. Otherwise, it displays a list of links (to various websites, and to the 
+# preferences and update screen), or is just blank.
+screen bottom_info:
+    
+    zorder 100
+    
+    if links:
+        
+        frame:
+            style_group "l"
+            style "l_default"
+            
+            xmargin 6
+            xfill True
+            ypos 536
+            yanchor 0.5
+            
+            hbox:
+                xfill True
+                
+                hbox:
+                    spacing INDENT
+                    textbutton _("Documentation") style "l_link" action interface.OpenDocumentation()
+                    textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
+                    textbutton _("Ren'Py Games List") style "l_link" action OpenURL(interface.RENPY_GAMES_URL)
+                    textbutton _("About") style "l_link"
+                
+                hbox:
+                    spacing INDENT
+                    xalign 1.0
+
+                    textbutton _("update") style "l_link"
+                    textbutton _("preferences") style "l_link"
+                    textbutton _("quit") style "l_link" action Quit(confirm=False)

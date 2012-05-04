@@ -108,6 +108,8 @@ init python in project:
             Scans for projects in directories directly underneath `d`.
             """
             
+            global current
+            
             d = os.path.abspath(d)
             
             if not os.path.isdir(d):
@@ -142,7 +144,23 @@ init python in project:
                     self.projects.append(p)  
                 
                 self.all_projects.append(p)
-
+                
+            # Select the default project.
+            if persistent.active_project is not None:
+                p = self.get(persistent.active_project)
+                
+                if p is not None:
+                    current = p
+                    return
+                    
+            p = self.get("tutorial")
+            if p is not None:
+                current = p
+                return
+                
+            current = None
+                
+            
         def get(self, name):
             """
             Gets the built-in project with the given name. We search for this
@@ -198,8 +216,12 @@ init python in project:
             
         def __call__(self):
             global current
+            
             current = self.project
+            persistent.active_project = self.project.name
+
             renpy.restart_interaction()
+
             if self.label is not None:
                 renpy.jump(self.label)
             

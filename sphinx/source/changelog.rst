@@ -16,6 +16,8 @@ parameter. If given, scrollbars that manipulate the viewport are created.
 
 Screen language blocks may now contain multiple has statements.
 
+Added the :func:`OpenURL` action, which opens a URL in a web browser.
+
 
 Ren'Py 6.13.9
 =============

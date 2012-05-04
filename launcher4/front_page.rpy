@@ -36,7 +36,7 @@ screen front_page:
                     add SEPARATOR
                     add HALF_SPACER
                     
-                    textbutton "+ Create New Project":
+                    textbutton _("+ Create New Project"):
                         left_margin (SCROLLBAR_SIZE + HALF_INDENT)
                         action Return()
                     
@@ -45,8 +45,11 @@ screen front_page:
 
         if project.current is not None:
             use front_page_project
-                        
-                        
+    
+    if project.current is not None:
+        textbutton _("Launch Project") action project.Launch() style "l_right_button"
+                                                                    
+        
                 
 # This is used by front_page to display the list of known projects on the screen.
 screen front_page_project_list:
@@ -84,35 +87,54 @@ screen front_page_project:
             text "[p.name!q]" style "l_label_text"
             label "Active Project" style "l_alternate"
 
-        grid 2 1:
-            xfill True
+        frame style "l_indent":
+
+            has grid 2 1 xfill True
             
-            frame style "l_indent":
-                has vbox
-    
+            vbox:
                 text _("Open Directory:")
                 textbutton _("game") action Return() style "l_list" 
                 textbutton _("base") action Return() style "l_list"
                 textbutton _("image") action Return() style "l_list"
                 textbutton _("save") action Return() style "l_list"
                 
-            frame style "l_indent":
-                has vbox
-    
+            vbox:
                 text _("Edit File:")
                 textbutton _("script.rpy") action Return() style "l_list"
                 textbutton _("options.rpy") action Return() style "l_list"
                 textbutton _("screens.rpy") action Return() style "l_list"
-                textbutton _("(open all files)") action Return() style "l_list"
+                textbutton _("All script files") action Return() style "l_list"
                 
+        add SPACER
+        add SEPARATOR
+        add SPACER
+        
+        frame style "l_indent":
+            has vbox
+            
+            textbutton _("Script Navigation") text_size 30
+        
+            add SPACER
+        
+            grid 2 1:
+                xfill True
                 
-                
+                vbox:
+                    textbutton _("Check Script (Lint)")
+                    textbutton _("Delete Persistent")
+                    
+                vbox:
+                    textbutton _("Build Distributions")
+                    
+            
         
         
 label main_menu:
     return
     
 label start:
+    show screen bottom_info
+    
 label front_page:
         
     call screen front_page 
