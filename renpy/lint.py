@@ -481,11 +481,13 @@ def check_filename_encodings():
         add("(ZIP file distributions can only reliably include ASCII filenames.)")
 
         
-def lint(args):
+def lint():
     """
     The master lint function, that's responsible for staging all of the
     other checks.
     """
+    
+    renpy.arguments.takes_no_arguments("Checks the script for errors and prints script statistics.")
     
     renpy.game.lint = True
     

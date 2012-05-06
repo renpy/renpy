@@ -139,13 +139,13 @@ def bootstrap(renpy_base):
 
     # Parse the arguments.
     import renpy.arguments
-    args, rest_args = renpy.arguments.bootstrap()
+    args = renpy.arguments.bootstrap()
 
     # Since we don't have time to fully initialize before running the presplash
     # command, handle it specially.
-    if len(rest_args) == 2 and rest_args[0] == "presplash":
+    if args.command == "presplash":
         import renpy.display.presplash
-        renpy.display.presplash.show(rest_args[1])
+        renpy.display.presplash.show(sys.argv[2])
     
     if args.trace:
         enable_trace(args.trace)
@@ -156,33 +156,28 @@ def bootstrap(renpy_base):
         basedir = renpy_base
     
 
-    # Look for the game directory.
-    if args.gamedir:
-        gamedir = args.gamedir.decode(FSENCODING)
+    gamedirs = [ name ]
+    game_name = name
 
+    while game_name:
+        prefix = game_name[0]
+        game_name = game_name[1:]
+
+        if prefix == ' ' or prefix == '_':
+            gamedirs.append(game_name)
+
+    gamedirs.extend([ 'game', 'data', 'launcher'])
+
+    for i in gamedirs:
+
+        if i == "renpy":
+            continue
+
+        gamedir = basedir + "/" + i
+        if os.path.isdir(gamedir):
+            break
     else:
-        gamedirs = [ name ]
-        game_name = name
-
-        while game_name:
-            prefix = game_name[0]
-            game_name = game_name[1:]
-
-            if prefix == ' ' or prefix == '_':
-                gamedirs.append(game_name)
-
-        gamedirs.extend([ 'game', 'data', 'launcher'])
-
-        for i in gamedirs:
-
-            if i == "renpy":
-                continue
-
-            gamedir = basedir + "/" + i
-            if os.path.isdir(gamedir):
-                break
-        else:
-            gamedir = basedir
+        gamedir = basedir
 
     sys.path.insert(0, basedir)
             
@@ -191,7 +186,7 @@ def bootstrap(renpy_base):
         os.environ['SDL_VIDEODRIVER'] = 'windib'
 
     # If we're not given a command, show the presplash.
-    if not rest_args:
+    if args.command == "run":
         import renpy.display.presplash #@Reimport
         renpy.display.presplash.start(basedir, gamedir)
 

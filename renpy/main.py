@@ -196,10 +196,6 @@ def main():
         
     renpy.config.archives.reverse()
 
-    # Note the profile option.
-    if renpy.game.args.profile: #@UndefinedVariable
-        renpy.config.profile = True
-
     # Initialize archives.
     renpy.loader.index_archives()
 

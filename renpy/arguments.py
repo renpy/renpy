@@ -30,64 +30,103 @@ import os
 import argparse 
 import renpy
 
-# The argument parser we use.
-parser = None
 
-# The subparsers object.
-subparser = None
+# A map from command name to a (function, flag) tuple. The flag is true if the
+# function will parse command line arguments, and false otherwise. 
+commands = { }
 
-# The unknown arguments from the initial parse.
-rest = [ ]
-
-def create_parser(add_help):
+class ArgumentParser(argparse.ArgumentParser):
     """
-    Creates a parser, and adds an initial set of arguments to it.
+    Creates an argument parser that is capable of parsing the standard Ren'Py
+    arguments, as well as arguments that are specific to a sub-command. 
     """
     
-    global parser
+    def __init__(self, second_pass=True, description=None):
+        """
+        Creates an argument parser.
+        
+        `second_pass`
+            True if this is the second pass through argument parsing. (The pass
+            that parses sub-commands.)
+            
+        `description`
+            If supplied, this will be used as a description of the subcommand
+            to run.
+        """
     
-    ap = parser = argparse.ArgumentParser(add_help=add_help)
-    
-    ap.add_argument(
-        "--version", action='version', version=renpy.version,
-        help="Displays the version of Ren'Py in use.")
-    
-    ap.add_argument(
-        "basedir", default=None, nargs='?',
-        help="The base directory."
-        )
-    
-    ap.add_argument(
-        "--gamedir", "--game", dest="gamedir", default=None,
-        help="The path to the game directory.")
-    
-    ap.add_argument(
-        "--savedir", dest='savedir', default=None,
-        help="The directory where saves and persistent data are placed.")
+        self.group = self
 
-    ap.add_argument(
-        '--compile', dest='compile', default=False, action='store_true',
-        help="If present, .rpy files to be compiled to .rpyc files whenever possible, before any command is run.")
+        argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
+        
+        self.add_argument(
+            "basedir", default=None, nargs='?', 
+            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable."
+            )
+        
+        command_names = ", ".join(sorted(commands))
+        
+        self.add_argument(
+            "command",
+            help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
+            default="run",
+            nargs='?')
+        
+        self.add_argument(
+            "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
+            help="The directory where saves and persistent data are placed.")
     
+        self.add_argument(
+            '--trace', dest='trace', action='store', default=0, type=int, metavar="LEVEL",
+            help="The level of trace Ren'Py will log to trace.txt. (1=per-call, 2=per-line)")
+
+        self.add_argument(
+            "--version", action='version', version=renpy.version,
+            help="Displays the version of Ren'Py in use.")
+        
+        self.add_argument("--lint", action="store_const", dest="command", const="lint", help=argparse.SUPPRESS)
+        
+        if second_pass:
+            self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
+
+            command = renpy.game.args.command #@UndefinedVariable
+            self.group = self.add_argument_group("{0} command".format(command), description)
+            
+    def add_argument(self, *args, **kwargs):
+        if self.group is self:
+            argparse.ArgumentParser.add_argument(self, *args, **kwargs)
+        else:
+            self.group.add_argument(*args, **kwargs)
+            
+            
+
+def run():
+    """
+    The default command, that (when called) leads to normal game startup.
+    """
+          
+    ap = ArgumentParser(description="Runs the current project normally.")
+            
     ap.add_argument(
-        '--profile', dest='profile', action='store_true', default=False,
+        '--profile-display', dest='profile_display', action='store_true', default=False,
         help="If present, Ren'Py will report the amount of time it takes to draw the screen.")
 
     ap.add_argument(
-        '--trace', dest='trace', action='store', default=0, type=int,
-        help="The level of trace Ren'Py will log to trace.txt. (1=per-call, 2=per-line)")
-
-    ap.add_argument(
-        '--log-startup', dest='log_startup', action='store_true', default=os.environ.get("RENPY_LOG_STARTUP", None),
-        help="If present, Ren'Py will log startup times to log.txt")
-
-    ap.add_argument(
-        "--log-image-cache", '--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
+        '--debug-image-cache', dest='debug_image_cache', action='store_true', default=False,
         help="If present, Ren'Py will log information regarding the contents of the image cache.")
 
     ap.add_argument(
         '--warp', dest='warp', default=None,
         help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
+
+    args = renpy.game.args = ap.parse_args()
+    
+    if args.profile_display: #@UndefinedVariable
+        renpy.config.profile = True
+
+    if args.debug_image_cache:
+        renpy.config.debug_image_cache = True
+
+    return True
 
 #    op.add_option('--rmpersistent', dest='rmpersistent', action='store_true',
 #                  help="Deletes the persistent data, and exits.")
@@ -95,17 +134,21 @@ def create_parser(add_help):
     # ap.set_defaults(function=None)
 
 
-def quit(args): #@ReservedAssignment
+def compile(): #@ReservedAssignment
     """
     This command is used to quit without doing anything.
     """
+
+    takes_no_arguments("Recompiles the game script.")
     
     return False
 
-def rmpersistent(args):
+def rmpersistent():
     """
     This command is used to delete the persistent data.
     """
+
+    takes_no_arguments("Deletes the persistent data.")
 
     try:
         os.unlink(renpy.config.savedir + "/persistent")
@@ -115,23 +158,20 @@ def rmpersistent(args):
     return False
 
 
-def register_command(name, function, **kwargs):
+def register_command(name, function):
     """
     Registers a command that can be invoked when Ren'Py is run on the command
-    line. When the command is run, `function` is called with an arguments object.
-    If it returns true, normal execution continues. Otherwise, Ren'Py terminates.
+    line. When the command is run, `function` is called with no arguments.
     
-    This function returns a ArgumentParser object that arguments can be added 
-    to.
+    If `function` needs to take additional command-line arguments, it should
+    instantiate a renpy.arguments.ArgumentParser(), and then call parse_args
+    on it. Otherwise, it should call renpy.arguments.takes_no_arguments().
     
-    Additional keyword arguments are passed to the parser creation call, so
-    help for the command can be supplied.
+    If `function` returns true, Ren'Py startup proceeds normally. Otherwise,
+    Ren'Py will terminate when function() returns.
     """
     
-    ap = subparsers.add_parser(name, **kwargs)
-    ap.set_defaults(function=function)
-    
-    return ap
+    commands[name] = function
 
 def bootstrap():
     """
@@ -141,9 +181,9 @@ def bootstrap():
     
     global rest
     
-    create_parser(False)
-    args, rest = parser.parse_known_args()
-    return args, rest
+    ap = ArgumentParser(False)
+    args, _rest = ap.parse_known_args()
+    return args
 
 def pre_init():
     """
@@ -151,14 +191,12 @@ def pre_init():
     """
     
     global subparsers    
-
-    create_parser(True)
-    subparsers = parser.add_subparsers()
     
-    register_command("lint", renpy.lint.lint, help="Check the project for potential errors.")
-    register_command("quit", quit, help="Quit without doing anything. Use with --compile to recompile from a script.")
-    register_command("rmpersistent", rmpersistent, help="Delete the persistent data.")
-    register_command("jsondump", renpy.jsondump.command, help="Dump information about the game to navigate.json.")
+    register_command("run", run)
+    register_command("lint", renpy.lint.lint)
+    register_command("compile", compile)
+    register_command("rmpersistent", rmpersistent)
+    # register_command("jsondump", renpy.jsondump.command, help="Dump information about the game to navigate.json.")
     
     
 def post_init():
@@ -167,16 +205,19 @@ def post_init():
     and its arguments. It then runs the command function, and returns True
     if execution should continue and False otherwise. 
     """
-    
-    # In this case, we have no subcommand.
-    if not rest:
-        return True
-    
-    # Re-parse the arguments.
-    args = parser.parse_args()
-    renpy.game.args = args
-        
-    # Call the subcommand.
-    return args.function(args)
 
+    command = renpy.game.args.command #@UndefinedVariable
+
+    if command not in commands:
+        ArgumentParser().error("Command {0} is unknown.".format(command))
+    
+    return commands[command]()
+
+def takes_no_arguments(description=None):
+    """
+    Used to report that a command takes no arguments. 
+    """
+    
+    ArgumentParser(description=description).parse_args()
+    
     

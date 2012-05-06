@@ -51,9 +51,9 @@ def start(basedir, gamedir):
         import sys
 
         if sys.argv[0].lower().endswith(".exe"):
-            cmd = [sys.argv[0], "presplash", fn]
+            cmd = [sys.argv[0], "show", "presplash", fn]
         else:
-            cmd = [sys.executable, sys.argv[0], "presplash", fn]
+            cmd = [sys.executable, sys.argv[0], "show", "presplash", fn]
             
         def fsencode(s):
             if isinstance(s, str):
