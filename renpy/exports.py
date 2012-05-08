@@ -1431,10 +1431,6 @@ def cache_unpin(*args):
     renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
-# This is a map from a definition to the place where it was
-# defined.
-definitions = collections.defaultdict(list)
-
 def call_screen(_screen_name, **kwargs):
     """
     :doc: screens

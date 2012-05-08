@@ -774,7 +774,7 @@ class Transform(Node):
             parameters = Transform.default_parameters
 
         trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
-        renpy.exports.definitions[self.varname].append((self.filename, self.linenumber, "transform"))
+        renpy.dump.transforms.append((self.varname, self.filename, self.linenumber))
         setattr(renpy.store, self.varname, trans)
 
     
@@ -1487,7 +1487,7 @@ class Define(Node):
         next_node(self.next)
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
-        renpy.exports.definitions[self.varname].append((self.filename, self.linenumber, "define"))
+        renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
         setattr(renpy.store, self.varname, value)    
 
 
@@ -1515,3 +1515,4 @@ class Screen(Node):
     def execute(self):
         next_node(self.next)
         self.screen.define()
+        renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
