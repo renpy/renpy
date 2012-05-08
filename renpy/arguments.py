@@ -196,7 +196,7 @@ def pre_init():
     register_command("lint", renpy.lint.lint)
     register_command("compile", compile)
     register_command("rmpersistent", rmpersistent)
-    # register_command("jsondump", renpy.jsondump.command, help="Dump information about the game to navigate.json.")
+    register_command("dump", renpy.dump.command)
     
     
 def post_init():

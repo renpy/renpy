@@ -136,10 +136,14 @@ def elide_filename(fn):
     or relative to the Ren'Py directory.
     """
     
-    if fn.startswith(renpy.config.basedir):
-        return fn[len(renpy.config.basedir)+1:]
-    elif fn.startswith(renpy.config.renpy_base):
-        return fn[len(renpy.config.renpy_base)+1:]
+    fn = os.path.abspath(fn)
+    basedir = os.path.abspath(renpy.config.basedir)
+    renpy_base = os.path.abspath(renpy.config.renpy_base)
+    
+    if fn.startswith(basedir):
+        return os.path.relpath(fn, basedir)
+    elif fn.startswith(renpy_base):
+        return os.path.relpath(fn, renpy_base)
     else:
         return fn
 
