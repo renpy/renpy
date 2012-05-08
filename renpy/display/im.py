@@ -104,7 +104,6 @@ class Cache(object):
         """
         
         self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
-        renpy.config.debug_image_cache = renpy.config.debug_image_cache or renpy.game.args.debug_image_cache #@UndefinedVariable
         
     def quit(self): #@ReservedAssignment
         if not self.preload_thread.isAlive():

@@ -27,14 +27,15 @@ init python:
     import re
     import keywords
     
+    KEYWORDS = set(keywords.keywords)
+    PROPERTIES = set(keywords.properties)
 
     KEYWORDS = [ re.escape(i) for i in keywords.keywords ]
     PROPERTIES = [ re.escape(i) for i in keywords.properties ]
     KWREGEX = r"|".join(KEYWORDS)
     PRREGEX = r"|".join(PROPERTIES)
     
-    regex = r"(?P<keyword>\b(" + KWREGEX + r")\b)" + \
-        r"|(?P<property>\b(" + PRREGEX + r")\b)" + \
+    regex = r"(?P<word>\b(\$|\w+)\b)" + \
         r"|(?P<string>\"([^\"]|\\.)*\")" + \
         r"|(?P<comment>#.*)"
     regex = re.compile(regex)
@@ -52,12 +53,15 @@ init python:
             if m.group("string"):
                 return "{color=#060}" + m.group(0) + "{/color}"
 
-            if m.group("keyword"):
-                return "{color=#840}" + m.group(0) + "{/color}"
-
-            if m.group("property"):
-                return "{color=#048}" + m.group(0) + "{/color}"
-
+            word = m.group("word")
+            if word:
+                if word in KEYWORDS:
+                    return "{color=#840}" + m.group(0) + "{/color}"
+                elif word in PROPERTIES:
+                    return "{color=#048}" + m.group(0) + "{/color}"
+                else:
+                    return m.group(0)
+                    
             if m.group("comment"):
                 return "{color=#600}" + m.group(0) + "{/color}"
             
