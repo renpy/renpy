@@ -26,6 +26,7 @@
 import inspect
 import json
 import sys
+import os
 
 import renpy
 
@@ -35,6 +36,22 @@ import renpy
 definitions = [ ]
 transforms = [ ]
 screens = [ ]
+
+
+# Does a file exist? We cache the result here.
+file_exists_cache = { }
+
+def file_exists(fn):
+    rv = file_exists_cache.get(fn, None)
+
+    if rv is None:
+        fullfn = renpy.parser.unelide_filename(fn)
+        
+        rv = os.path.exists(fullfn)
+        file_exists_cache[fn] = rv
+        
+    return rv
+
 
 def command():
     ap = renpy.arguments.ArgumentParser(description="Dumps information about the game to a JSON file.")
@@ -52,6 +69,9 @@ def command():
         
         if name.startswith("_") and not args.private:
             return False
+
+        if not file_exists(filename):
+            return False
         
         if filename.startswith("common/"):
             return args.common
@@ -60,15 +80,15 @@ def command():
             return False
         
         return True
+
+    result = { }
     
     # The JSON object we return.   
-    result = { }
+    location = { }
+    result["location"] = location
 
     # Labels.
-    # 
-    # result["label"] is a map from label name to filename, linenumber 
-    # tuple.
-    label = result["label"] = { }
+    label = location["label"] = { }
     
     for name, n in renpy.game.script.namemap.iteritems():
         filename = n.filename
@@ -76,7 +96,7 @@ def command():
         
         if not isinstance(name, basestring):
             continue
-        
+
         if not filter(name, filename):
             continue
         
@@ -84,9 +104,7 @@ def command():
         
         
     # Definitions.
-    #
-    # result["define"] is a map from name to [ filename, linenumber ].
-    define = result["define"] = { }
+    define = location["define"] = { }
     
     for name, filename, line in definitions:
         if not filter(name, filename):
@@ -95,9 +113,7 @@ def command():
         define[name] = [ filename, line ]
 
     # Screens.
-    #
-    # result["screen"] is a map from name to [ filename, linenumber ].
-    screen = result["screen"] = { }
+    screen = location["screen"] = { }
     
     for name, filename, line in screens:
         if not filter(name, filename):
@@ -106,9 +122,7 @@ def command():
         screen[name] = [ filename, line ]
 
     # Transforms.
-    #
-    # result["transform"] is a map from name to [ filename, linenumber ].
-    transform = result["transform"] = { }
+    transform = location["transform"] = { }
     
     for name, filename, line in transforms:
         if not filter(name, filename):
@@ -118,9 +132,7 @@ def command():
         
         
     # Code.
-    #
-    # result["code"] is a map from name to [ filename, linenumber ].
-    code = result["code"] = { }
+    code = location["code"] = { }
         
     for name, o in inspect.getmembers(renpy.store):
         
