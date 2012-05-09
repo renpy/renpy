@@ -39,6 +39,10 @@ init python:
     style.l_right_button.xmargin = 6
     style.l_right_button_text = Style(style.l_default)
     style.l_right_button_text.size = 30
+
+    style.l_left_button = Style(style.l_right_button)
+    style.l_left_button.xalign = 0.0
+    style.l_left_button_text = Style(style.l_right_button_text)
     
     
     # The root frame. This contains everything but the bottom navigation, back
@@ -110,10 +114,41 @@ init python:
     style.l_vscrollbar.bar_vertical = True
     style.l_vscrollbar.bar_invert = True
     
-
     
-    # Should we display the bottom links?
-    links = True
+    # Information window.
+    
+    
+    style.l_info_vbox = Style(style.vbox)
+    style.l_info_vbox.yalign = 0.5
+    style.l_info_vbox.xalign = 0.5
+    style.l_info_vbox.xfill = True
+    
+    style.l_info_frame = Style(style.l_default)
+    style.l_info_frame.ypadding = 21
+    style.l_info_frame.xfill = True
+    style.l_info_frame.background = Fixed(
+        "#f9f9f9",
+        Frame("pattern.png", 0, 0, tile=True, ymaximum=5, yalign=0.0, yoffset=8),
+        Frame("pattern.png", 0, 0, tile=True, ymaximum=5, yalign=1.0, yoffset=-8),
+        )    
+    style.l_info_frame.yminimum = 180
+    style.l_info_frame.ypos = 100
+    
+    style.l_info_label = Style(style.l_default)
+    style.l_info_label.xalign = 0.5
+    style.l_info_label.ypos = 100
+    style.l_info_label.yanchor = 1.0
+    style.l_info_label.yoffset = 12
+    style.l_info_label_text = Style(style.l_default)
+    style.l_info_label_text.size = 36
+    
+    style.l_info_text = Style(style.l_default)
+    style.l_info_text.xalign = 0.5
+        
+    style.l_info_button = Style(style.l_button)
+    style.l_info_button.xalign = 0.5
+    style.l_info_button_text = Style(style.l_button_text)
+    
 
     
 ################################################################################
@@ -122,6 +157,7 @@ init python in interface:
     from store import OpenURL, config
 
     import os.path
+    import contextlib
     
     RENPY_URL = "http://www.renpy.org"
     RENPY_GAMES_URL = "http://games.renpy.org"    
@@ -144,6 +180,19 @@ init python in interface:
             return OpenURL(DOC_URL)
     
     
+    # Should we display the bottom links?
+    links = True
+    
+    @contextlib.contextmanager
+    def nolinks():
+        global links
+        links = False
+        
+        try:
+            yield
+        finally:
+            links = True
+    
 # This displays the bottom of the screen. If the tooltip is not None, this displays the
 # tooltip. Otherwise, it displays a list of links (to various websites, and to the 
 # preferences and update screen), or is just blank.
@@ -151,7 +200,7 @@ screen bottom_info:
     
     zorder 100
     
-    if links:
+    if interface.links:
         
         frame:
             style_group "l"
@@ -179,3 +228,149 @@ screen bottom_info:
                     textbutton _("update") style "l_link"
                     textbutton _("preferences") style "l_link"
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
+
+                    
+screen info:
+    
+    frame:
+        style "l_root"
+
+        frame:
+            style_group "l_info"
+        
+            has vbox
+            
+            text message
+            
+            add SPACER 
+            add SPACER 
+            
+            textbutton _("Continue") action Return(True)
+            
+        label _("INFORMATION") style "l_info_label"
+
+screen processing:
+    
+    frame:
+        style "l_root"
+
+        frame:
+            style_group "l_info"
+        
+            has vbox
+            
+            text message
+            
+        label _("PROCESSING") style "l_info_label"
+        
+    use bottom_info
+
+    
+screen error:
+    frame:
+        style "l_root"
+
+        frame:
+            style_group "l_info"
+        
+            has vbox
+            
+            text message
+            
+            if submessage:
+                add SPACER
+                add SPACER
+                text submessage
+            
+        label _("ERROR") style "l_info_label" text_color "d15353"
+
+    textbutton _("Back") action Return(True) style "l_left_button"
+  
+init python in interface:
+
+    import traceback
+    
+    def info(message, **kwargs):
+        """
+        Displays an informational message to the user. The user will be asked to click to 
+        confirm that he has read the message.
+        
+        `message`
+            The message to display. 
+        
+        Keyword arguments are passed into the screen so that they can be substituted into
+        the message.
+        """
+        
+        ui.saybehavior()
+        renpy.call_screen("info", message=message, **kwargs)
+        
+    def processing(message, **kwargs):
+        """
+        Indicates to the user that processing is taking place. This should be used when
+        there is an indefinite amount of work to be done.
+        
+        `message`
+            The message to display. 
+        
+        Keyword arguments are passed into the screen so that they can be substituted into
+        the message.
+        """
+            
+        # We can show the links if we want, since the user won't be able to 
+        # click on them (the screen is not shown for long enough.)
+        
+        ui.pausebehavior(0)
+        renpy.call_screen("processing", message=message, **kwargs)
+    
+    def error(message, submessage=None, label="front_page", **kwargs):
+        """
+        Indicates to the user that an error has occured.
+        
+        `message`
+            The message to display. 
+
+        `submessage`
+            Optional secondary message information. For example, this may be 
+            used to display an exception string.
+            
+        `label`
+            The label to redirect to when the user finishes displaying the error.
+        
+        Keyword arguments are passed into the screen so that they can be substituted into
+        the message.
+        """
+        
+        ui.saybehavior()
+        renpy.call_screen("error", message=message, submessage=submessage, **kwargs)
+        renpy.jump(label)
+
+    @contextlib.contextmanager
+    def error_handling(what, label="front_page"):
+        """
+        This is a context manager that catches exceptions and displays them using 
+        interface.error.
+        
+        `what`
+            What we're doing when the error occurs. This is usually written using 
+            the present participle.
+            
+        `label`
+            The label to jump to when error handling finishes.
+           
+        As an example of usage::
+        
+            with interface.error_handling("opening the log file"):
+                f = open("log.txt", "w")            
+        """
+            
+                
+        try:
+            yield
+        except Exception, e:
+            error(_("While [what!q], an error occured:"), 
+                _("[exception!q]"), 
+                what=what, 
+                exception=traceback.format_exception_only(type(e), e)[-1][:-1])
+                
+            

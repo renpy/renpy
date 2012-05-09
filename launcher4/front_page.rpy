@@ -134,6 +134,11 @@ label main_menu:
     
 label start:
     show screen bottom_info
+
+    python:
+        with interface.error_handling("starting to do things"):
+            raise Exception("The core temperature is too high for torpedo cooling to remain functional at depths greather than 20,000 leagues under the seawater spigots.")
+    
     
 label front_page:
         

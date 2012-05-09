@@ -32,6 +32,10 @@ init python in project:
             except:
                 self.data = { }
                 
+            # This contains the result of dumping information about the game
+            # to disk.
+            self.dump = { }
+                
         def save(self):
             """
             Saves the project's data dictionary out to disk.
@@ -41,7 +45,7 @@ init python in project:
             json.dump(self.data, f)
             f.close()
             
-        def launch(self):
+        def launch(self, args=[], wait=False):
 
             if renpy.renpy.windows and sys.argv[0].endswith(".exe"):
                 cmd = [ os.path.join(config.renpy_base, "renpy.exe") ]
@@ -49,9 +53,30 @@ init python in project:
                 cmd = [ sys.executable, sys.argv[0] ]
             
             cmd.append(self.path)
+            cmd.extend(args)
             
-            subprocess.Popen(cmd)
+            cmd = [ renpy.fsencode(i) for i in cmd ]
+            
+            p = subprocess.Popen(cmd)
+            
+            if wait:
+                p.wait()
+                
+        def update_dump(self):
+            """
+            Updates self.dump to reflect the dump information from the project.
+            """
 
+            try:
+                os.unlink("navigation.json")
+            except:
+                pass
+                
+            self.launch(args=["dump", "navigation.json"], wait=True)
+
+            # TODO: Check to see if we can open and read in the dump.
+                
+            
     
     class ProjectManager(object):
         """

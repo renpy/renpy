@@ -40,3 +40,6 @@ from renpy.python import revertable_sorted as sorted #@UnusedImport
 
 import renpy.ui as ui #@UnusedImport
 import renpy.exports as renpy #@Reimport @UnusedImport
+
+def _(s):
+    return s
