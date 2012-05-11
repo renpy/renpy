@@ -74,9 +74,16 @@ init python in project:
                 
             self.launch(args=["dump", "navigation.json"], wait=True)
 
-            # TODO: Check to see if we can open and read in the dump.
+            try:
+                with open("navigation.json", "r") as f:
+                    self.dump = json.load(f)
+            except:
+                return False
                 
-            
+            return True
+                
+
+
     
     class ProjectManager(object):
         """

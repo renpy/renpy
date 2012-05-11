@@ -71,7 +71,7 @@ init python:
             project = self
             game_proc = None
 
-            # Load the informatrion dictionary.
+            # Load the information dictionary.
             info = dict()
             launcherinfo = os.path.join(self.path, "launcherinfo.py")
             

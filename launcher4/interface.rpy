@@ -5,7 +5,7 @@ init python:
     SEPARATOR = Frame("pattern.png", 0, 0, tile=True, ymaximum=5, yalign=1.0)
     SPACER = Null(height=12)
     HALF_SPACER = Null(height=6)
-    
+
     # Colors.
     TEXT = "#545454"
     IDLE = "#42637b"
@@ -241,13 +241,16 @@ screen info:
             has vbox
             
             text message
-            
-            add SPACER 
-            add SPACER 
-            
-            textbutton _("Continue") action Return(True)
+
+            if pause:
+
+                add SPACER 
+                add SPACER 
+                
+                textbutton _("Continue") action Return(True)
             
         label _("INFORMATION") style "l_info_label"
+
 
 screen processing:
     
@@ -290,7 +293,7 @@ init python in interface:
 
     import traceback
     
-    def info(message, **kwargs):
+    def info(message, pause=True, **kwargs):
         """
         Displays an informational message to the user. The user will be asked to click to 
         confirm that he has read the message.
@@ -298,12 +301,17 @@ init python in interface:
         `message`
             The message to display. 
         
+        `pause`
+            True if we should pause before 
+        
         Keyword arguments are passed into the screen so that they can be substituted into
         the message.
         """
         
-        ui.saybehavior()
-        renpy.call_screen("info", message=message, **kwargs)
+        if pause:
+            ui.saybehavior()
+        
+        renpy.call_screen("info", message=message, pause=pause, **kwargs)
         
     def processing(message, **kwargs):
         """

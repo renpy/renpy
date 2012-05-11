@@ -112,7 +112,7 @@ screen front_page_project:
         frame style "l_indent":
             has vbox
             
-            textbutton _("Script Navigation") text_size 30
+            textbutton _("Script Navigation") text_size 30 action Jump("navigation")
         
             add SPACER
         
@@ -126,19 +126,12 @@ screen front_page_project:
                 vbox:
                     textbutton _("Build Distributions")
                     
-            
-        
         
 label main_menu:
     return
     
 label start:
     show screen bottom_info
-
-    python:
-        with interface.error_handling("starting to do things"):
-            raise Exception("The core temperature is too high for torpedo cooling to remain functional at depths greather than 20,000 leagues under the seawater spigots.")
-    
     
 label front_page:
         
