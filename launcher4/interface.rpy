@@ -78,11 +78,18 @@ init python:
     style.l_alternate = Style(style.l_default)
     style.l_alternate.xalign = 1.0
     style.l_alternate.yalign = 1.0
+    style.l_alternate.yoffset = 4
     style.l_alternate.right_margin = INDENT
     style.l_alternate_text = Style(style.l_default)
-    style.l_alternate_text.yoffset = 4
     style.l_alternate_text.size = 14
     style.l_alternate_text.text_align = 1.0
+    
+    style.l_small_button = Style(style.l_button)
+    style.l_small_button_text = Style(style.l_button_text)
+    style.l_small_button_text.size = 14
+    style.l_small_text = Style(style.l_text)
+    style.l_small_text.size = 14
+    
     
     # Indents its contents by 16 pixels.
     style.l_indent = Style(style.l_default)
@@ -148,7 +155,17 @@ init python:
     style.l_info_button = Style(style.l_button)
     style.l_info_button.xalign = 0.5
     style.l_info_button_text = Style(style.l_button_text)
-    
+
+    # Code navigation
+    style.l_navigation_button = Style(style.l_button)
+    style.l_navigation_button.size_group = "navigation"
+    style.l_navigation_button.right_margin = HALF_INDENT
+    style.l_navigation_button_text = Style(style.l_button_text)
+    style.l_navigation_button_text.size = 14
+
+    style.l_navigation_text = Style(style.l_text)
+    style.l_navigation_text.size = 14
+    style.l_navigation_text.bold = True
 
     
 ################################################################################
