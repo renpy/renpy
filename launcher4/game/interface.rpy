@@ -13,6 +13,7 @@ init python:
     SCROLLBAR_IDLE = "#dfdfdf"
     HOVER = "#d86b45"
     WHITE = "#ffffff"
+    DISABLED = "#aaaaaa"
     
     # Default style.
     style.l_default = Style(style.default)
@@ -26,6 +27,7 @@ init python:
 
     style.l_button = Style(style.l_default)
     style.l_button_text = Style(style.l_default)
+    style.l_button_text.insensitive_color = DISABLED
 
     # A small button, used at the bottom of the screen.
     style.l_link = Style(style.l_default)
@@ -106,6 +108,7 @@ init python:
     style.l_list_text.hover_color = HOVER
     style.l_list_text.selected_idle_color = WHITE
     style.l_list_text.selected_hover_color = WHITE
+    style.l_list_text.insensitive_color = DISABLED
     
     # Scrollbar.
     style.l_vscrollbar = Style(style.l_default)
@@ -166,7 +169,7 @@ init python:
 
     style.l_navigation_text = Style(style.l_text)
     style.l_navigation_text.size = 12
-    style.l_navigation_text.color = "#aaaaaa"
+    style.l_navigation_text.color = DISABLED
 
     
 ################################################################################

@@ -1,5 +1,38 @@
 define PROJECT_ADJUSTMENT = ui.adjustment()
     
+init python:
+        
+    import os
+    import subprocess
+
+    class OpenDirectory(Action):
+        """
+        Opens `directory` in a file browser. `directory` is relative to
+        the project root.
+        """
+        
+        def __init__(self, directory, absolute=False):
+            if absolute:
+                self.directory = directory
+            else:
+                self.directory = os.path.join(project.current.path, directory)
+            
+        def get_sensitive(self):
+            return os.path.exists(self.directory)
+            
+        def __call__(self):
+
+            directory = renpy.fsencode(self.directory)
+            
+            if renpy.windows:
+                os.startfile(directory)
+            elif renpy.macintosh:
+                subprocess.Popen([ "open", directory ])
+            else:
+                subprocess.Popen([ "xdg-open", directory ])
+            
+            
+    
 screen front_page:
     frame:
         style_group "l"
@@ -93,10 +126,10 @@ screen front_page_project:
             
             vbox:
                 text _("Open Directory:")
-                textbutton _("game") action Return() style "l_list" 
-                textbutton _("base") action Return() style "l_list"
-                textbutton _("image") action Return() style "l_list"
-                textbutton _("save") action Return() style "l_list"
+                textbutton _("game") action OpenDirectory("game") style "l_list" 
+                textbutton _("base") action OpenDirectory(".") style "l_list"
+                textbutton _("images") action OpenDirectory("game/images") style "l_list"
+                textbutton _("save") action None style "l_list"
                 
             vbox:
                 text _("Edit File:")

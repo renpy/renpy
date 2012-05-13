@@ -1001,14 +1001,6 @@ def screenshot(filename):
 
     renpy.game.interface.save_screenshot(filename)
     
-def windows():
-    """
-    Returns true if we're running on Windows. This is generally used as a
-    test when setting styles.
-    """
-
-    return hasattr(sys, 'winver')
-
 def version():
     """
     Returns a string containing the current version of Ren'Py, prefixed with the
