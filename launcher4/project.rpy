@@ -81,7 +81,23 @@ init python in project:
                 return False
                 
             return True
+
+        def unelide_filename(self, fn):
+            """
+            Unelides the filename relative to the project base.
+            """
+            
+            fn1 = os.path.join(self.path, fn)
+            if os.path.exists(fn1):
+                return fn1
+
+            fn2 = os.path.join(config.renpy_base, fn)
+            if os.path.exists(fn2):
+                return fn2
                 
+            return fn
+                
+            
 
 
     

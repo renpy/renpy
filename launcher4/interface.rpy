@@ -162,10 +162,11 @@ init python:
     style.l_navigation_button.right_margin = HALF_INDENT
     style.l_navigation_button_text = Style(style.l_button_text)
     style.l_navigation_button_text.size = 14
+    style.l_navigation_button_text.font = "Roboto-Regular.ttf"
 
     style.l_navigation_text = Style(style.l_text)
-    style.l_navigation_text.size = 14
-    style.l_navigation_text.bold = True
+    style.l_navigation_text.size = 12
+    style.l_navigation_text.color = "#aaaaaa"
 
     
 ################################################################################

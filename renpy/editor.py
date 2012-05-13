@@ -109,6 +109,7 @@ def init():
     editor = SystemEditor()
     
     path = os.environ.get("RENPY_EDIT_PY", None)
+
     if path is None:
         return
     

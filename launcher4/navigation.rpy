@@ -1,7 +1,9 @@
 init python in navigation:
     import store.interface as interface
     import store.project as project
+    import store.editor as editor
     from store import persistent
+    
 
     # The last navigation screen we've seen. This is the scree we try to go
     # to the next time we enter navigation. (We may not be able to go there,
@@ -110,20 +112,16 @@ screen navigation:
                         
                             if group_name is not None:
                                 add HALF_SPACER
-                                text group_name bold True
+                                text group_name
                                 
                             hbox:
                                 box_wrap True
                                 
-                                for name, filename, lin in group:
-                                    textbutton name
-                                
-                        
+                                for name, filename, line in group:
+                                    textbutton name action editor.Edit(filename, line)
 
-    
-                
-
-
+    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Launch Project") action project.Launch() style "l_right_button"
 
 label navigation:
     
