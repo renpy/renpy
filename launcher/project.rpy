@@ -138,7 +138,6 @@ init python:
                 rv.append(Project(path))
                 
         return rv
-    
 
     def choose_default_project():
         """

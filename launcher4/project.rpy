@@ -2,6 +2,7 @@
 
 init python in project:
     from store import persistent, config, Action, renpy
+    import store.util as util
 
     import sys
     import os.path
@@ -97,8 +98,17 @@ init python in project:
                 
             return fn
                 
+        def script_files(self):
+            """
+            Return a list of the script files that make up the project. These
+            are elided, and so need to be passed to unelide_filename before they
+            can be included in the project.
+            """
             
+            rv = [ ]
+            rv.extend(i for i, isdir in util.walk(self.path) if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) )
 
+            return rv
 
     
     class ProjectManager(object):

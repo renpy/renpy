@@ -125,4 +125,32 @@ init python in editor:
             e.open(fn, line=self.line)
             e.end()
             
+    class EditAll(Action):
+        """
+        Opens all scripts that are part of the current project in a web browser.
+        """
+        
+        def __init__(self):
+            return
+            
+        def __call__(self):
+            scripts = project.current.script_files()            
+            scripts.sort(key=lambda fn : fn.lower())
+
+            for fn in [ "game/screens.rpy", "game/options.rpy", "game/script.rpy" ]:
+                if fn in scripts:
+                    scripts.remove(fn)
+                    scripts.insert(0, fn)
+                    
+            e = renpy.editor.editor
+            e.begin()
+            
+            for fn in scripts:
+                fn = project.current.unelide_filename(fn)
+                e.open(fn)
+                
+            e.end()
+            
+
+        
             
