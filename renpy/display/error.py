@@ -57,6 +57,17 @@ def init_display():
         renpy.display.im.cache.init()
 
     renpy.ui.reset()
+       
+def error_dump():
+    """
+    Handles dumps in the case where an error occurs.
+    """
+    
+    renpy.dump.dump(True)
+    
+    if renpy.game.args.command == "quit":
+        raise SystemExit()
+    
         
 def report_exception(short, full, traceback_fn):
     """
@@ -64,6 +75,8 @@ def report_exception(short, full, traceback_fn):
     be raised by the normal reporting mechanisms. Otherwise, should raise
     the appropriate exception to cause a reload or quit or rollback.
     """
+
+    error_dump()
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
@@ -110,6 +123,8 @@ def report_parse_errors(errors, error_fn):
     be raised by the normal reporting mechanisms. Otherwise, should raise
     the appropriate exception.
     """
+
+    error_dump()
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True

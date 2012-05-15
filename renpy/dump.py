@@ -53,28 +53,43 @@ def file_exists(fn):
     return rv
 
 
-def command():
-    ap = renpy.arguments.ArgumentParser(description="Dumps information about the game to a JSON file.")
+# Did we do a dump?
+completed_dump = False
+
+def dump(error):
+    """
+    Causes a JSON dump file to be written, if the user has requested it.
     
-    ap.add_argument("filename", action="store", default=None, nargs="?", help="The filename to write the information to. If left blank, stdout will be used.")
-    ap.add_argument("--private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
-    ap.add_argument("--common", action="store_true", default=False, help="Include names found in the common directory.")
+    `error`
+        An error flag that is added to the written file.
+    """
     
-    args = ap.parse_args()
     
+    global completed_dump
+    
+    args = renpy.game.args
+    
+    if completed_dump:
+       return
+   
+    completed_dump = True 
+    
+    if not args.json_dump:
+        return
+
     def filter(name, filename): #@ReservedAssignment
         """
         Returns true if the name is included by the filter, or false if it is excluded.
         """
         
-        if name.startswith("_") and not args.private:
+        if name.startswith("_") and not args.json_dump_private:
             return False
 
         if not file_exists(filename):
             return False
         
         if filename.startswith("common/"):
-            return args.common
+            return args.json_dump_common
         
         if not filename.startswith("game/"):
             return False
@@ -82,6 +97,9 @@ def command():
         return True
 
     result = { }
+
+    # Error flag.
+    result["error"] = error
     
     # The JSON object we return.   
     location = { }
@@ -132,24 +150,84 @@ def command():
         
         
     # Code.
-    code = location["code"] = { }
+
+    def get_line(o):
+        """
+        Returns the filename and the first line number of the class or function o. Returns
+        None, None if unknown.
         
-    for name, o in inspect.getmembers(renpy.store):
+        For a class, this doesn't return the first line number of the class, but rather
+        the line number of the first method in the class - hopefully.
+        """
         
-        if inspect.isclass(o) or inspect.isfunction(o):
-            try:
-                filename = inspect.getfile(o)
-                _lines, line = inspect.getsourcelines(o)
-            except:
-                pass
+        if inspect.isfunction(o):
+            return inspect.getfile(o), o.func_code.co_firstlineno
+        
+        if inspect.ismethod(o):
+            return get_line(o.im_func)
+        
+        if inspect.isclass(o):
+
+            filename = None
+            line = None
             
-            if not filter(name, filename):
-                continue
+            for _name, value in o.__dict__.items():
+                
+                newfile, newline = get_line(value)
+                
+                if newfile is None:
+                    continue
+                
+                if filename is None:
+                    filename = newfile
+                    line = newline
+                    continue
+                
+                # Each class must be defined in one file.
+                if newfile != filename:
+                    return None, None
+                
+                line = min(line, newline)
             
-            code[name] = [ filename, line ]
+            return filename, line
         
-    if args.filename is not None:
-        with file(args.filename, "w") as f:
+        return None, None
+    
+    code = location["callable"] = { }
+        
+    for modname, mod in sys.modules.items():
+
+        if mod is None: 
+            continue
+
+        if modname == "store":
+            prefix = ""
+        elif modname.startswith("store."):
+            prefix = modname[6:] + "."
+        else:
+            continue
+
+        for name, o in inspect.getmembers(mod):
+            
+            if inspect.isclass(o) or inspect.isfunction(o):
+                try:
+                    if inspect.getmodule(o) != mod:
+                        continue
+
+                    filename, line = get_line(o)
+ 
+                    if filename is None:
+                        continue
+                    
+                    if not filter(name, filename):
+                        continue
+    
+                    code[prefix + name] = [ filename, line ]
+                except:
+                    continue
+        
+    if args.json_dump != "-":
+        with file(args.json_dump, "w") as f:
             json.dump(result, f)
     else:
         json.dump(result, sys.stdout, indent=2)

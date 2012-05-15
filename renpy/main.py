@@ -236,16 +236,6 @@ def main():
     except:
         pass
 
-    # OPTION
-    # Perhaps delete the persistent data and exit.
-#    if renpy.game.options.rmpersistent: #@UndefinedVariable
-#        try:
-#            os.unlink(renpy.config.savedir + "/persistent")
-#        except:
-#            pass
-#
-#        return
-    
     # Unserialize the persistent data.
     try:
         f = file(renpy.config.savedir + "/persistent", "rb")
@@ -318,6 +308,8 @@ def main():
     renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
     renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
     renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
+
+    renpy.dump.dump(False)
 
     # Handle arguments and commands. 
     if not renpy.arguments.post_init():

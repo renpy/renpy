@@ -84,7 +84,12 @@ class ArgumentParser(argparse.ArgumentParser):
             help="Displays the version of Ren'Py in use.")
         
         self.add_argument("--lint", action="store_const", dest="command", const="lint", help=argparse.SUPPRESS)
-        
+
+        dump = self.add_argument_group("JSON Dump Arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
+        dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
+        dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
+        dump.add_argument("--json-dump-common", action="store_true", default=False, help="Include names defined in the common directory.")
+
         if second_pass:
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
@@ -128,13 +133,17 @@ def run():
 
     return True
 
-#    op.add_option('--rmpersistent', dest='rmpersistent', action='store_true',
-#                  help="Deletes the persistent data, and exits.")
-
-    # ap.set_defaults(function=None)
-
-
 def compile(): #@ReservedAssignment
+    """
+    This command forces the game script to be recompiled.
+    """
+
+    takes_no_arguments("Recompiles the game script.")
+    
+    return False
+
+
+def quit(): #@ReservedAssignment
     """
     This command is used to quit without doing anything.
     """
@@ -196,7 +205,7 @@ def pre_init():
     register_command("lint", renpy.lint.lint)
     register_command("compile", compile)
     register_command("rmpersistent", rmpersistent)
-    register_command("dump", renpy.dump.command)
+    register_command("quit", quit)
     
     
 def post_init():
