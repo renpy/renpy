@@ -13,11 +13,16 @@ init python:
     SCROLLBAR_IDLE = "#dfdfdf"
     HOVER = "#d86b45"
     WHITE = "#ffffff"
-    DISABLED = "#aaaaaa"
+    DISABLED = "#808080"
+    
+    # FONTS/WEIGHTS
+    LIGHT = "Roboto-Light.ttf"
+    REGULAR = "Roboto-Regular.ttf"
+    DARK = "Roboto-Medium.ttf"
     
     # Default style.
     style.l_default = Style(style.default)
-    style.l_default.font = "Roboto-Light.ttf"
+    style.l_default.font = LIGHT
     style.l_default.color = TEXT
     style.l_default.idle_color = IDLE
     style.l_default.hover_color = HOVER
@@ -28,17 +33,20 @@ init python:
     style.l_button = Style(style.l_default)
     style.l_button_text = Style(style.l_default)
     style.l_button_text.insensitive_color = DISABLED
+    style.l_button_text.selected_font = REGULAR
 
     # A small button, used at the bottom of the screen.
     style.l_link = Style(style.l_default)
     style.l_link_text = Style(style.l_default)
     style.l_link_text.size = 14
+    style.l_link_text.font = LIGHT
 
-    # The bottom-right action button.
+    # Action buttons on the bottom of the screen.
     style.l_right_button = Style(style.l_default)
     style.l_right_button.xalign = 1.0
-    style.l_right_button.ypos = 600 - 128 + 3
-    style.l_right_button.xmargin = 6
+    style.l_right_button.ypos = 600 - 128 + 12
+    style.l_right_button.left_margin = 8 + INDENT
+    style.l_right_button.right_margin = 10 + INDENT
     style.l_right_button_text = Style(style.l_default)
     style.l_right_button_text.size = 30
 
@@ -59,7 +67,6 @@ init python:
     style.l_window = Style(style.l_default)
     style.l_window.background = Frame("window.png", 0, 0, tile=True)
     style.l_window.left_padding = 6
-    style.l_window.right_margin = 0
     style.l_window.xfill = True
     style.l_window.yfill = True
     
@@ -84,6 +91,7 @@ init python:
     style.l_alternate.right_margin = INDENT
     style.l_alternate_text = Style(style.l_default)
     style.l_alternate_text.size = 14
+    style.l_alternate_text.font = LIGHT
     style.l_alternate_text.text_align = 1.0
     
     style.l_small_button = Style(style.l_button)
@@ -93,9 +101,13 @@ init python:
     style.l_small_text.size = 14
     
     
-    # Indents its contents by 16 pixels.
+    # Indents its contents.
     style.l_indent = Style(style.l_default)
     style.l_indent.left_margin = INDENT
+    
+    # Indents its contents and pads them vertically.
+    style.l_indent_margin = Style(style.l_indent)
+    style.l_indent_margin.ymargin = 6 
     
     # List button.
     style.l_list = Style(style.l_default)
@@ -126,8 +138,6 @@ init python:
     
     
     # Information window.
-    
-    
     style.l_info_vbox = Style(style.vbox)
     style.l_info_vbox.yalign = 0.5
     style.l_info_vbox.xalign = 0.5
@@ -162,13 +172,15 @@ init python:
     # Code navigation
     style.l_navigation_button = Style(style.l_button)
     style.l_navigation_button.size_group = "navigation"
-    style.l_navigation_button.right_margin = HALF_INDENT
+    style.l_navigation_button.right_margin = INDENT
+    style.l_navigation_button.top_margin = 3
     style.l_navigation_button_text = Style(style.l_button_text)
     style.l_navigation_button_text.size = 14
-    style.l_navigation_button_text.font = "Roboto-Regular.ttf"
+    style.l_navigation_button_text.font = REGULAR
 
     style.l_navigation_text = Style(style.l_text)
     style.l_navigation_text.size = 12
+    style.l_navigation_text.font = LIGHT
     style.l_navigation_text.color = DISABLED
 
     
@@ -227,10 +239,11 @@ screen bottom_info:
             style_group "l"
             style "l_default"
             
-            xmargin 6
+            left_margin (10 + INDENT)
+            right_margin (10 + INDENT)
             xfill True
             ypos 536
-            yanchor 0.5
+            yanchor 0.0
             
             hbox:
                 xfill True

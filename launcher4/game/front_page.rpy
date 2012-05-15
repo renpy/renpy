@@ -46,12 +46,14 @@ screen front_page:
             style "l_default"
             xmaximum 300
             right_margin 2
-            ymargin 26
+            
+            top_margin 20
+            bottom_margin 26
         
             side "t c b":
 
                 window style "l_label":
-                    text "PROJECTS:" style "l_label_text" size 32
+                    text "PROJECTS:" style "l_label_text" size 36 yoffset 10 
             
                 side "c l":
                     
