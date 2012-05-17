@@ -73,6 +73,7 @@ init python in editor:
         for i in [ persistent.editor, "Editra", "None" ]:
 
             if i in editors:
+                persistent.editor = i
                 ei = editors[i]
                 os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
                 renpy.editor.init()
@@ -151,6 +152,32 @@ init python in editor:
                 
             e.end()
             
-
+    class Select(Action):
+        """
+        Selects the text editor to use.
+        """
         
+        def __init__(self, name):
+            self.name = name
             
+        def __call__(self):
+            persistent.editor = self.name
+            setup()
+            renpy.restart_interaction()
+            
+        def get_selected(self):
+            return persistent.editor == self.name
+            
+            
+    def editor_action_list():
+        """
+        Gets a list of (editor name, select action) tuples, one for each
+        editor we know of.
+        """
+        
+        rv = [ ]
+        
+        for i in sorted(editors, key=lambda a : a.lower()):
+            rv.append((i, Select(i)))
+                
+        return rv
