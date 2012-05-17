@@ -181,7 +181,7 @@ init python:
     style.l_navigation_text = Style(style.l_text)
     style.l_navigation_text.size = 12
     style.l_navigation_text.font = LIGHT
-    style.l_navigation_text.color = DISABLED
+    style.l_navigation_text.color = TEXT
 
     
 ################################################################################
