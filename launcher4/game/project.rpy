@@ -3,6 +3,7 @@
 init python in project:
     from store import persistent, config, Action, renpy
     import store.util as util
+    import store.interface as interface
 
     import sys
     import os.path
@@ -33,10 +34,19 @@ init python in project:
             except:
                 self.data = { }
                 
+            # The project's temporary directory.
+            self.tmp = os.path.join(self.path, "tmp")
+                
+            # The path to the json dumpfile.
+            self.dump_filename = os.path.join(self.tmp, "navigation.json")
+                
             # This contains the result of dumping information about the game
             # to disk.
             self.dump = { }
                 
+            # The mtime of the last dump file loaded.
+            self.dump_mtime = 0
+
         def save(self):
             """
             Saves the project's data dictionary out to disk.
@@ -45,6 +55,17 @@ init python in project:
             f = open(os.path.join(path, "project.json"), "rb")
             json.dump(self.data, f)
             f.close()
+            
+        def make_tmp(self):
+            """
+            Makes the project's temporary directory, if it doesn't exist 
+            yet.
+            """
+            
+            try:
+                os.mkdir(self.tmp)
+            except:
+                pass
             
         def launch(self, args=[], wait=False):
 
@@ -56,32 +77,44 @@ init python in project:
             cmd.append(self.path)
             cmd.extend(args)
             
-            cmd = [ renpy.fsencode(i) for i in cmd ]
+            cmd.append("--json-dump")
+            cmd.append(self.dump_filename)
             
-            p = subprocess.Popen(cmd)
-            
-            if wait:
-                p.wait()
+            with interface.error_handling("launching the project"):
+                cmd = [ renpy.fsencode(i) for i in cmd ]
                 
-        def update_dump(self):
+                p = subprocess.Popen(cmd)
+                
+                if wait:
+                    p.wait()
+                
+        def update_dump(self, force=False):
             """
-            Updates self.dump to reflect the dump information from the project.
+            If the dumpfile does not exist, runs Ren'Py to create it. Otherwise, 
+            loads it in iff it's newer than the one that's already loaded.
             """
 
-            try:
-                os.unlink("navigation.json")
-            except:
-                pass
+            if force or not os.path.exists(self.dump_filename):
+                self.make_tmp()
                 
-            self.launch(args=["dump", "navigation.json"], wait=True)
+                interface.processing(_("Ren'Py is scanning the project..."))
+                self.launch(["quit"], wait=True)
+            
+            if not os.path.exists(self.dump_filename):
+                self.dump["error"] = True
+                return
+            
+            file_mtime = os.path.getmtime(self.dump_filename)
+            if file_mtime == self.dump_mtime:
+                return
+
+            self.dump_mtime = file_mtime
 
             try:
-                with open("navigation.json", "r") as f:
+                with open(self.dump_filename, "r") as f:
                     self.dump = json.load(f)
             except:
-                return False
-                
-            return True
+                self.dump["error"] = True
 
         def unelide_filename(self, fn):
             """

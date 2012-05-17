@@ -16,15 +16,8 @@ init python in navigation:
     if persistent.navigation_sort is None:
         persistent.navigation_sort = { }
     
-    # A map from kind of label to the name of that kind.
-    KINDS = { 
-        "file" : _("Navigate Files"),
-        "label" : _("Navigate Labels"),
-        "define" : _("Navigate Defines"),
-        "transform" : _("Navigate Transforms"),
-        "screen" : _("Navigate Screens"),
-        "callable" : _("Navigate Callables"),
-        }
+    # A list of kinds of navigation we support.
+    KINDS = [ "file", "label", "define", "transform", "screen", "callable" ]
 
     # A map from kind name to adjustment.
     adjustments = { }
@@ -42,7 +35,9 @@ init python in navigation:
         This returns a list of (group, list of (name, filename, line)). The 
         group may be a string or None.
         """
-        
+
+        project.current.update_dump()
+
         sort = persistent.navigation_sort[kind]
         
         name_map = project.current.dump.get("location", {}).get(kind, { })
@@ -111,7 +106,10 @@ init python in navigation:
             renpy.jump("navigation_loop")
 
     class ChangeSort(Action):
-        
+        """
+        Changes the sort order.
+        """
+
         def __init__(self, sort):
             self.sort = sort
             
@@ -125,6 +123,17 @@ init python in navigation:
             persistent.navigation_sort[persistent.navigation] = self.sort
             renpy.jump("navigation_loop")
 
+    class Refresh(Action):
+        """
+        Refreshes the navigation information.
+        """
+        
+        def __call__(self):
+            project.current.update_dump(True)
+            renpy.jump("navigation_loop")
+            
+
+    
 screen navigation:
     
     frame:
@@ -137,24 +146,26 @@ screen navigation:
     
             frame style "l_label":
                 has hbox xfill True
-                text "[title]" style "l_label_text"
+                text _("Navigate: [project.current.name]") style "l_label_text"
                 
-                
-                if persistent.navigation != "file":
-                
-                    frame:
-                        style "l_alternate"
-                        style_group "l_small"
+                frame:
+                    style "l_alternate"
+                    style_group "l_small"
+                    
+                    has hbox
                         
-                        has hbox
-                        
+                    if persistent.navigation != "file":
                         text _("Order: ")
                         textbutton _("alphabetical") action navigation.ChangeSort("alphabetical")
                         text " | "
                         textbutton _("by-file") action navigation.ChangeSort("by-file")
                         text " | "
                         textbutton _("natural") action navigation.ChangeSort("natural")
-            
+
+                        null width HALF_INDENT
+                        
+                    textbutton _("refresh") action navigation.Refresh()
+
             
             add HALF_SPACER
             
@@ -212,13 +223,6 @@ screen navigation:
     textbutton _("Launch Project") action project.Launch() style "l_right_button"
 
 label navigation:
-    
-    python in navigation:
-        interface.processing(_("Ren'Py is scanning the project..."))
-        
-        dump_worked = project.current.update_dump()
-        
-        
 label navigation_loop:
     
     python in navigation:
@@ -230,7 +234,6 @@ label navigation_loop:
         else:
             groups = group_and_sort(kind)
             
-        title = KINDS[kind]        
-        renpy.call_screen("navigation", title=title, groups=groups)
+        renpy.call_screen("navigation", groups=groups)
         
 
