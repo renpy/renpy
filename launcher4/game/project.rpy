@@ -79,7 +79,14 @@ init python in project:
             
             cmd.append("--json-dump")
             cmd.append(self.dump_filename)
-            
+
+            if persistent.navigate_private:
+                cmd.append("--json-dump-private")
+                
+            if persistent.navigate_library:
+                cmd.append("--json-dump-common")
+                
+
             with interface.error_handling("launching the project"):
                 cmd = [ renpy.fsencode(i) for i in cmd ]
                 

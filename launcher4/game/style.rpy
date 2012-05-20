@@ -199,6 +199,10 @@ init python:
     style.l_checkbox_text = Style(style.l_button_text)
     style.l_checkbox_text.selected_font = LIGHT
     
-
+    # A normal button that lines up with checkboxes.
+    style.l_nonbox = Style(style.l_button)
+    style.l_nonbox.xpadding = INDENT
+    style.l_nonbox_text = Style(style.l_button_text)
+    style.l_nonbox_text.selected_font = LIGHT
     
 

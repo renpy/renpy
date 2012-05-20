@@ -16,6 +16,12 @@ init python in navigation:
     if persistent.navigation_sort is None:
         persistent.navigation_sort = { }
     
+    if persistent.navigate_private is None:
+        persistent.navigate_private = False
+        
+    if persistent.navigate_library is None:
+        persistent.navigate_library = False
+    
     # A list of kinds of navigation we support.
     KINDS = [ "file", "label", "define", "transform", "screen", "callable" ]
 
@@ -123,16 +129,6 @@ init python in navigation:
             persistent.navigation_sort[persistent.navigation] = self.sort
             renpy.jump("navigation_loop")
 
-    class Refresh(Action):
-        """
-        Refreshes the navigation information.
-        """
-        
-        def __call__(self):
-            project.current.update_dump(True)
-            renpy.jump("navigation_loop")
-            
-
     
 screen navigation:
     
@@ -164,7 +160,7 @@ screen navigation:
 
                         null width HALF_INDENT
                         
-                    textbutton _("refresh") action navigation.Refresh()
+                    textbutton _("refresh") action Jump("navigation_refresh")
 
             
             add HALF_SPACER
@@ -236,4 +232,7 @@ label navigation_loop:
             
         renpy.call_screen("navigation", groups=groups)
         
+label navigation_refresh:
+    $ project.current.update_dump(True)
+    jump navigation_loop
 

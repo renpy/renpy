@@ -133,9 +133,42 @@ screen error:
                 add SPACER
                 text submessage
             
-        label _("ERROR") style "l_info_label" text_color "d15353"
+        label _("ERROR") style "l_info_label" text_color "#d15353"
 
-    textbutton _("Back") action Return(True) style "l_left_button"
+    if label:
+        textbutton _("Back") action Jump("label") style "l_left_button"
+    else:
+        textbutton _("Back") action Return(True) style "l_left_button"
+  
+
+screen launcher_input:
+
+    frame:
+        style "l_root"
+
+        frame:
+            style_group "l_info"
+        
+            has vbox
+            
+            text message
+
+            add SPACER
+
+            input style "l_default" size 24 xalign 0.5 default default
+
+            if filename:
+                add SPACER
+                text _("Due to package format limitations, non-ASCII file and directory names are not allowed.")
+            
+        label _("[title]") style "l_info_label" text_color "#d19753"
+
+    
+    if cancel:
+        textbutton _("Cancel") action cancel style "l_left_button"
+    
+    
+  
   
 init python in interface:
 
@@ -191,15 +224,18 @@ init python in interface:
             used to display an exception string.
             
         `label`
-            The label to redirect to when the user finishes displaying the error.
+            The label to redirect to when the user finishes displaying the error. None
+            to just return.
         
         Keyword arguments are passed into the screen so that they can be substituted into
         the message.
         """
         
         ui.saybehavior()
-        renpy.call_screen("error", message=message, submessage=submessage, **kwargs)
-        renpy.jump(label)
+        renpy.call_screen("error", message=message, submessage=submessage, label=label, **kwargs)
+
+        if label:
+            renpy.jump(label)
 
     @contextlib.contextmanager
     def error_handling(what, label="front_page"):
@@ -229,4 +265,32 @@ init python in interface:
                 what=what, 
                 exception=traceback.format_exception_only(type(e), e)[-1][:-1])
                 
+    def input(title, message, filename=False, sanitize=True, cancel=None, default=""):
+        """
+        Requests typewritten input from the user.
+        """
+        
+        rv = default
+        
+        while True:
+            
+            rv = renpy.call_screen("launcher_input", title=title, message=message, filename=filename, cancel=cancel, default=rv)
+            
+            if sanitize:
+                if ("[" in rv) or ("{" in rv):
+                    error(_("Text input may not contain the {{ or [[ characters."), label=None)
+                    continue
+                    
+            if filename:
+                if ("\\" in rv) or ("/" in rv):
+                    error(_("File and directory names may not contain / or \\."), label=None)
+                    continue
+                    
+                try:
+                    rv.encode("ascii")
+                except:
+                    error(_("File and directory names must consist of ASCII characters."), label=None)
+                    continue
+
+            return rv
             

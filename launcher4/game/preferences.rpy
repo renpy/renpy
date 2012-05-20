@@ -22,14 +22,52 @@ screen preferences:
                     xfill True
                     
                     has vbox
-                    
+                                        
+                    # Projects directory selection.
                     add SEPARATOR2
                     
                     frame:
                         style "l_indent"
+                        has vbox
                         
-                        text "Hello, World."
+                        text _("Projects Directory:")
                         
+                    add SPACER
+
+                    # Update URL selection.
+
+                    add SEPARATOR2
+                    
+                    frame:
+                        style "l_indent"
+                        has vbox
+                        
+                        text _("Update URL:")
+                        
+                    add SPACER
+
+                    # Navigation Options.
+
+                    add SEPARATOR2
+                    
+                    frame:
+                        style "l_indent"
+                        has vbox
+                        
+                        text _("Navigation Options:")
+                    
+                        add HALF_SPACER
+                    
+                        textbutton "Include private names." style "l_checkbox" action ToggleField(persistent, "navigate_private")
+                        textbutton "Include library names." style "l_checkbox" action ToggleField(persistent, "navigate_library")
+                        
+                        add HALF_SPACER
+                        
+                        textbutton "Open launcher project." style "l_nonbox" action project.Select("launcher4")
+                    
+                    
+                    
+
                     
                 frame:
                     style "l_indent"
