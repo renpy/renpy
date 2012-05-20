@@ -1,5 +1,16 @@
 # Code that manages projects.
 
+init python:
+    try:
+        import EasyDialogs
+    except ImportError:
+        try:
+            import EasyDialogsWin as EasyDialogs
+        except:
+            EasyDialogs = None
+    
+    import os
+
 init python in project:
     from store import persistent, config, Action, renpy
     import store.util as util
@@ -181,11 +192,10 @@ init python in project:
             Scans for projects.
             """
            
-            # The projects directory.
+            if persistent.projects_directory is not None and not os.path.isdir(persistent.projects_directory):
+                persistent.projects_directory = None
+           
             self.projects_directory = persistent.projects_directory
-            
-            if self.projects_directory is None or not os.path.isdir(self.projects_directory):
-                self.projects_directory = persistent.projects_directory = os.path.dirname(config.renpy_base)
            
             self.projects = [ ]
             self.templates = [ ]
@@ -350,53 +360,60 @@ init python in project:
 ###############################################################################
 # Code to choose the projects directory.
             
-screen choose_projects_directory:
-    
-    frame:
-        style "page"
-        style_group ""
-        
-        label "Choose projects directory"    
-        text "Please choose the directory containing your projects."
-
 label choose_projects_directory:
     
     python hide:
 
-        page.overlay("choose_projects_directory")
-        
+        interface.interaction(_("PROJECTS DIRECTORY"), _("Please choose the projects directory."), _("This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."))
+            
         path = persistent.projects_directory
+
+        try:
+            default_path = os.path.dirname(os.path.abspath(config.renpy_base))
+        except:
+            default_path = os.path.abspath(config.renpy_base)
         
+
         if EasyDialogs:
 
-            choice = EasyDialogs.AskFolder(defaultLocation=path, wanted=str)
+            choice = EasyDialogs.AskFolder(defaultLocation=default_path, wanted=unicode)
+
             if choice is not None:
                 path = choice                
+            else:
+                path = None
 
         else:
 
             try:
                 env = os.environ.copy()
     
-                if 'RENPY_OLD_LD_LIBRARY_PATH' in env:
-                    env['LD_LIBRARY_PATH'] = env['RENPY_OLD_LD_LIBRARY_PATH']
-                
-                zen = subprocess.Popen(
-                    [ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + path ],
-                    env=env, stdout=subprocess.PIPE)
+                if 'RENPY_ORIGINAL_LD_LIBRARY_PATH' in env:
+                    env['LD_LIBRARY_PATH'] = env['RENPY_ORIGINAL_LD_LIBRARY_PATH']
+
+                cmd = [ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + renpy.fsencode(default_path) ]
+
+                zen = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE)
 
                 choice = zen.stdout.read()        
                 zen.wait()
 
                 if choice:
-                    path = choice[:-1]
+                    path = renpy.fsdecode(choice[:-1])
             
             except:
+                import traceback
+                traceback.print_exc()
+                
                 path = None
-                page.warning(_(u"Could not run zenity to choose the path.\n\nThe projects directory has been set to the parent of the Ren'Py directory."))
+                interface.error(_("Ren'Py was unable to run zenity to choose the projects directory."), label=None)
+
+        if path is None:
+            path = default_path
+            interface.info(_("Ren'Py has set the projects directory to:"), "[path!q]", path=path)
 
         persistent.projects_directory = path                    
         project.manager.scan()
-        
-    jump main
+    
+    return
     

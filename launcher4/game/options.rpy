@@ -113,5 +113,8 @@ init -1 python hide:
 
     #########################################
     ## More customizations can go here.
+
+    config.sound = False
     
+    config.quit_action = Quit(confirm=False)
     

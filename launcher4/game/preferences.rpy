@@ -18,7 +18,7 @@ screen preferences:
             hbox:
                 frame:
                     style "l_indent"
-                    xmaximum 496
+                    xmaximum TWOTHIRDS
                     xfill True
                     
                     has vbox
@@ -31,6 +31,12 @@ screen preferences:
                         has vbox
                         
                         text _("Projects Directory:")
+            
+                        add HALF_SPACER
+            
+                        
+                        frame style "l_indent": 
+                            textbutton _("[persistent.projects_directory!q]") action Jump("projects_directory_preference")
                         
                     add SPACER
 
@@ -65,13 +71,9 @@ screen preferences:
                         
                         textbutton "Open launcher project." style "l_nonbox" action project.Select("launcher4")
                     
-                    
-                    
-
-                    
                 frame:
                     style "l_indent"
-                    xmaximum 258
+                    xmaximum ONETHIRD
                     xfill True
 
                     has vbox
@@ -96,16 +98,14 @@ screen preferences:
                                 textbutton "[name!q]":
                                     action action
                                     style "l_list"
-
-
-#            frame style "l_indent":
- 
-#                has vbox
- 
-#                textbutton _("Show symbols defined in common/") style "l_checkbox" action SetVariable("foo", 1)
-#                textbutton _("Show hidden symbols.") style "l_checkbox" action SetVariable("foo", 2)
                 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
 
+label projects_directory_preference:
+    call choose_projects_directory
+    jump preferences
+
+
 label preferences:
     call screen preferences
+    

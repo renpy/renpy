@@ -24,6 +24,11 @@ init python:
     REGULAR = "Roboto-Regular.ttf"
     DARK = "Roboto-Medium.ttf"
     
+    # DIVIDING THE SCREEN
+    ONETHIRD = 258
+    TWOTHIRDS = 496
+    
+    
     # Default style.
     style.l_default = Style(style.default)
     style.l_default.font = LIGHT

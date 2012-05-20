@@ -78,7 +78,7 @@ screen bottom_info:
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
 
                     
-screen info:
+screen common:
     
     frame:
         style "l_root"
@@ -88,58 +88,27 @@ screen info:
         
             has vbox
             
-            text message
-
-            if pause:
-
-                add SPACER 
-                add SPACER 
-                
-                textbutton _("Continue") action Return(True)
-            
-        label _("INFORMATION") style "l_info_label"
-
-
-screen processing:
-    
-    frame:
-        style "l_root"
-
-        frame:
-            style_group "l_info"
+            text message:
+                text_align 0.5
+                xalign 0.5
+                layout "subtitle"
         
-            has vbox
-            
-            text message
-            
-        label _("PROCESSING") style "l_info_label"
-        
-    use bottom_info
-
-    
-screen error:
-    frame:
-        style "l_root"
-
-        frame:
-            style_group "l_info"
-        
-            has vbox
-            
-            text message
-            
             if submessage:
                 add SPACER
-                add SPACER
-                text submessage
-            
-        label _("ERROR") style "l_info_label" text_color "#d15353"
 
-    if label:
-        textbutton _("Back") action Jump("label") style "l_left_button"
-    else:
-        textbutton _("Back") action Return(True) style "l_left_button"
-  
+                text submessage:
+                    text_align 0.5
+                    xalign 0.5
+                    layout "subtitle"
+
+        label title text_color title_color style "l_info_label"
+
+    if back:
+        textbutton _("Back") action Return(False) style "l_left_button"
+        
+    if continue_:
+        textbutton _("Continue") action Return(True) style "l_right_button"
+
 
 screen launcher_input:
 
@@ -155,7 +124,7 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" size 24 xalign 0.5 default default
+            input style "l_default" size 24 xalign 0.5 default default color "#d86b45"
 
             if filename:
                 add SPACER
@@ -166,51 +135,53 @@ screen launcher_input:
     
     if cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
-    
-    
-  
   
 init python in interface:
 
     import traceback
     
-    def info(message, pause=True, **kwargs):
+    def common(title, title_color, message, submessage=None, click=False, back=False, continue_=False, pause0=False, **kwargs):
         """
-        Displays an informational message to the user. The user will be asked to click to 
-        confirm that he has read the message.
+        Displays the info, interaction, and processing screens.
+
+        `title`
+            The title of the screen.
         
         `message`
-            The message to display. 
+            The main message that is displayed when the screen is.
         
-        `pause`
-            True if we should pause before 
+        `submessage`
+            If not None, a message that is displayed below the main message.
         
-        Keyword arguments are passed into the screen so that they can be substituted into
-        the message.
+        `click`
+            If not None, the saybehavior will be invoked. If a click occurs,
+            we will return True.
+        
+        `back`
+            If True, a back button will be present. If it's clicked, False will
+            be returned.
+        
+        `continue_`
+            If True, a continue button will be present. If it's clicked, True 
+            will be returned.
+        
+        `pause0`
+            If True, a zero-length pause will be inserted before calling the 
+            screen. This will display it to the user and then immediately 
+            return.
+        
+        
+        Other keyword arguments are passed to the screen itself.
         """
-        
-        if pause:
-            ui.saybehavior()
-        
-        renpy.call_screen("info", message=message, pause=pause, **kwargs)
-        
-    def processing(message, **kwargs):
-        """
-        Indicates to the user that processing is taking place. This should be used when
-        there is an indefinite amount of work to be done.
-        
-        `message`
-            The message to display. 
-        
-        Keyword arguments are passed into the screen so that they can be substituted into
-        the message.
-        """
+
+        if pause0:
+            ui.pausebehavior(0)
             
-        # We can show the links if we want, since the user won't be able to 
-        # click on them (the screen is not shown for long enough.)
-        
-        ui.pausebehavior(0)
-        renpy.call_screen("processing", message=message, **kwargs)
+        if click:
+            ui.saybehavior()
+            
+        return renpy.call_screen("common", title=title, title_color=title_color, message=message, submessage=submessage, back=back, continue_=continue_, **kwargs) 
+
     
     def error(message, submessage=None, label="front_page", **kwargs):
         """
@@ -230,9 +201,9 @@ init python in interface:
         Keyword arguments are passed into the screen so that they can be substituted into
         the message.
         """
+
+        common(_("ERROR"), "#d15353", message=message, submessage=submessage, click=True, back=True)
         
-        ui.saybehavior()
-        renpy.call_screen("error", message=message, submessage=submessage, label=label, **kwargs)
 
         if label:
             renpy.jump(label)
@@ -293,4 +264,61 @@ init python in interface:
                     continue
 
             return rv
-            
+
+        
+
+    def info(message, submessage=None, pause=True, **kwargs):
+        """
+        Displays an informational message to the user. The user will be asked to click to 
+        confirm that he has read the message.
+        
+        `message`
+            The message to display. 
+        
+        `pause`
+            True if we should pause while showing the info.
+        
+        Keyword arguments are passed into the screen so that they can be substituted into
+        the message.
+        """
+        
+        if pause:
+            common(_("INFORMATION"), "#545454", message, submessage, click=True, continue_=True, **kwargs)
+        else:
+            common(_("INFORMATION"), "#545454", message, submessage, pause=0, **kwargs)
+    
+    
+    def interaction(title, message, submessage=None, **kwargs):
+        """
+        Put up on the screen while an interaction with an external program occurs.
+        This shows the message, then immediately returns.
+
+        `title`
+            The title of the interaction.
+        
+        `message`
+            The message itself.
+        
+        `submessage`
+            An optional sub message.
+        """
+
+        common(title, "#d19753", message, submessage, pause0=True, **kwargs)
+        
+    def processing(message, submessage=None, **kwargs):
+        """
+        Indicates to the user that processing is taking place. This should be used when
+        there is an indefinite amount of work to be done.
+        
+        `message`
+            The message to display. 
+        
+        `submessage`
+            An additional message to display.
+        
+        Keyword arguments are passed into the screen so that they can be substituted into
+        the message.
+        """
+
+        common(_("PROCESSING"), "#545454", message, submessage, pause0=True, **kwargs) 
+
