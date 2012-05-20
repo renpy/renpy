@@ -269,16 +269,20 @@ init python in project:
             current = None
                 
             
-        def get(self, name):
+        def get(self, path):
             """
-            Gets the built-in project with the given name. We search for this
-            project relative to renpy_base.
+            Gets the project with the given path. We first search
+            relative to renpy_base, then absolutely.
 
             Returns None if the project doesn't exist.
             """
             
-            path = os.path.join(os.path.abspath(config.renpy_base), name)
+            full_path = os.path.join(os.path.abspath(config.renpy_base), path)
             
+            for p in self.all_projects:
+                if p.path == full_path:
+                    return p
+
             for p in self.all_projects:
                 if p.path == path:
                     return p

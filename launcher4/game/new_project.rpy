@@ -1,3 +1,9 @@
+init python:
+    import shutil
+    import os
+    import time
+    import re
+
 screen select_template:
 
     default result = project.manager.get("template")
@@ -37,33 +43,55 @@ screen select_template:
 
 label new_project:
     
-    $ print persistent.projects_directory
-    
     if persistent.projects_directory is None:
         call choose_projects_directory
     
     python hide:
         
-        project_name = ""
-        
-        while True:
-        
-            project_name = interface.input(
-                _("PROJECT NAME"), 
-                _("Please enter the name of your project:"),
-                filename=True,
-                cancel=Jump("front_page"),
-                default=project_name)
-            
+        project_name = interface.input(
+            _("PROJECT NAME"), 
+            _("Please enter the name of your project:"),
+            filename=True,
+            cancel=Jump("front_page"))
 
-            project_dir = os.path.join(persistent.projects_directory, project_name)
-            
-            if os.path.exists(project_dir):
-                pass
-                
+        project_dir = os.path.join(persistent.projects_directory, project_name)
+        
+        if project.manager.get(project_name) is not None:
+            interface.error(_("[project_name!q] already exists. Please choose a different project name."), project_name=project_name)
+        
+        if os.path.exists(project_dir):
+            interface.error(_("[project_name!q] already exists. Please choose a different project name."), project_name=project_dir)
 
         template = renpy.call_screen("select_template")
+        template_path = template.path
+        
+        with interface.error_handling("creating a new project"):
+            shutil.copytree(template_path, project_dir)
+        
+            # Delete the tmp directory, if it exists.
+            if os.path.isdir(os.path.join(project_dir, "tmp")):
+                os.path.rmtree(os.path.join(project_dir, "tmp"))
             
+            # Delete project.json, which must exist.
+            os.unlink(os.path.join(project_dir, "project.json"))
+                
+            # Change the save directory in options.rpy
+            fn = os.path.join(project_dir, "game/options.rpy")
+            with open(fn, "r") as f:
+                options = f.read().decode("utf-8")
+
+            save_dir = project_name + "-" + str(int(time.time()))
+            options = re.sub(r'template-\d+', save_dir, options)
+            
+            with open(fn, "w") as f:
+                f.write(options.encode("utf-8"))
+
+        # Activate the project.
+        with interface.error_handling("activating the new project"):
+            project.manager.scan()
+            project.Select(project.manager.get(project_dir))()
+        
+
     jump front_page
     
     

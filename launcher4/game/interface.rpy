@@ -202,7 +202,7 @@ init python in interface:
         the message.
         """
 
-        common(_("ERROR"), "#d15353", message=message, submessage=submessage, click=True, back=True)
+        common(_("ERROR"), "#d15353", message=message, submessage=submessage, click=True, back=True, **kwargs)
         
 
         if label:
@@ -231,6 +231,9 @@ init python in interface:
         try:
             yield
         except Exception, e:
+            import traceback
+            traceback.print_exc()
+
             error(_("While [what!q], an error occured:"), 
                 _("[exception!q]"), 
                 what=what, 
