@@ -785,6 +785,9 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             if self.changed:
                 self.changed(content)
                 
+        if content == "":
+            content = u"\u200b"
+                
         self.editable = editable
 
         # Choose the caret.
