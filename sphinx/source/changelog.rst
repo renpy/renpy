@@ -14,6 +14,10 @@ prefix stripped, and are then passed to the internal text displayable.
 The :ref:`sl-viewport` screen language statement now takes a `scrollbars`
 parameter. If given, scrollbars that manipulate the viewport are created.
 
+The :ref:`sl-viewport` screen language statement now takes `xinitial` and
+`yinitial` parameters. If given, these control the initial positioning of
+the viewport.
+
 Screen language blocks may now contain multiple has statements.
 
 Added the :func:`OpenURL` action, which opens a URL in a web browser.

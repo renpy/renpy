@@ -1166,6 +1166,8 @@ class Viewport(Container):
                  mousewheel=False,
                  draggable=False,
                  style='viewport',
+                 xinitial=None,
+                 yinitial=None,
                  replaces=None,
                  **properties):
 
@@ -1183,9 +1185,16 @@ class Viewport(Container):
         else:
             self.yadjustment = yadjustment
             
+            
         if isinstance(replaces, Viewport):
             self.xadjustment.value = replaces.xadjustment.value
             self.yadjustment.value = replaces.yadjustment.value
+            self.xoffset = replaces.xoffset
+            self.yoffset = replaces.yoffset
+        else:
+            self.xoffset = offsets[0] if (offsets[0] is not None) else xinitial
+            self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
+            
 
         if self.xadjustment.adjustable is None:
             self.xadjustment.adjustable = True
@@ -1196,7 +1205,7 @@ class Viewport(Container):
         self.set_adjustments = set_adjustments
         
         self.child_width, self.child_height = child_size
-        self.xoffset, self.yoffset = offsets
+
         self.mousewheel = mousewheel
         self.draggable = draggable
 

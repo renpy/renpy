@@ -53,7 +53,7 @@ screens. It consists of a statement that declares a new screen,
 statements that add displayables to that screen, and control
 statements.
 
-Here's an example of a screen. ::
+Here's an example of a screen.::
 
     screen say:
         window id "window":
@@ -73,7 +73,7 @@ that box is 10 pixels. It contains two text fields, one of the name of
 the speaker, and the other with the speaker's id.
 
 Screen Language Syntax
------------------------
+----------------------
 
 Most screen language statements share a common syntax. (Some of the
 control statements have other syntaxes.)  A statement starts at the
@@ -109,7 +109,7 @@ expression. It takes the following properties:
     If True, the screen is modal. A modal screen prevents the user
     from interacting with displayables below it, except
     for the default keymap.
-    
+
 `tag`
     Parsed as a name, not an expression. This specifies a tag
     associated with this screen. Showing a screen replaces other
@@ -123,8 +123,8 @@ expression. It takes the following properties:
 
 `variant`
     If present, this should be a string giving the variant of screen
-    to be defined. See :ref:`screen-variants`. 
-    
+    to be defined. See :ref:`screen-variants`.
+
 ::
 
    screen hello_world:
@@ -161,14 +161,14 @@ All user interface statements take the following common properties:
 `default`
     If given and true, the displayable is focused by default. Only one
     displayable should have this.
-    
+
 `id`
     An identifier for the user-interface statement. When a screen is
     shown, property values can be supplied for the displayables with a
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the id is automatically-generated. 
+    By default, the id is automatically-generated.
 
 `style`
     The name of the style applied to this displayable. This may be a
@@ -187,7 +187,7 @@ All user interface statements take the following common properties:
 
     Styles accessed in this way are automatically created, if they do
     not exist. This prevents an error from being signalled.
-    
+
     Setting a group of ``None`` disables this behavior for a
     displayable and all of its children.
 
@@ -199,7 +199,7 @@ All user interface statements take the following common properties:
     third button in that box is focused at the end of an interaction,
     the third button of a box with the same will be highlighted at
     the start of the next interaction.
-    
+
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
 associated with them, that determines when they apply. For example, if
@@ -386,7 +386,7 @@ following property:
 
 `spacing`
     The spacing between the rows and columns of the grid.
-    
+
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -451,11 +451,11 @@ properties:
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
-    
-    
+
+
 `insensitive`
     The image used when the button is insensitive.
-    
+
 `idle`
     The image used when the button is not focused.
 
@@ -591,11 +591,11 @@ the property:
     The name of the style to use for the button text. If not supplied,
     and the `style` property is a string, then ``"_text"`` is appended
     to that string to give the default text style.
-    
+
 `text_`-
    Other properties prefixed with text_ have this prefix stripped, and
    are then passed to the text displayable.
-    
+
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -730,7 +730,7 @@ area of 0, so it may be necessary to supply them a minimum size (using
 all.
 
 Children correspond to entries in the places list, so this must have
-the same number of children as there are entries in the places list. 
+the same number of children as there are entries in the places list.
 
 ::
 
@@ -786,7 +786,7 @@ following properties:
 `text_`-
    Other properties prefixed with text_ have this prefix stripped, and are
    then passed to the text displayable.
-    
+
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -912,6 +912,14 @@ following properties:
 `yadjustment`
     The :func:`ui.adjustment` used for the y-axis of the
     viewport. When omitted, a new adjustment is created.
+`xinitial`
+    The initial horizontal offset of the viewport. This may be an integer
+    giving the number of pixels, or a float giving a fraction of the
+    possible offset.
+`yinitial`
+    The initial vertical offset of the viewport. This may be an integer
+    giving the number of pixels, or a float giving a fraction of the
+    possible offset.
 `scrollbars`
     If not None, scrollbars are added allong with this viewport.
     This works by creating a side layout, and placing the created
@@ -920,8 +928,8 @@ following properties:
     is "vertical", a vertical scrollbar is placed to the right of the
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
-    
-    
+
+
 In addition, it takes the following groups of style properties:
 
 * :ref:`Common Properties <common-properties>`
@@ -1031,10 +1039,10 @@ parameters, and the following properties:
 `ground`
     The image used for portions of the imagemap that are not part of a
     hotspot or hotbar.
-   
+
 `insensitive`
     The image used when a hotspot or hotbar is insensitive.
-    
+
 `idle`
     The image used when a hotspot is not selected and not focused, and
     for the empty portion of unfocused hotbars.
@@ -1058,8 +1066,8 @@ parameters, and the following properties:
 
 `cache`
     If true, the default, hotspot data is cached in to improve performance
-    at the cost of some additional disk space. 
-    
+    at the cost of some additional disk space.
+
 It takes the following groups of properties:
 
 * :ref:`Common Properties <common-properties>`
@@ -1149,7 +1157,7 @@ The advanced displayable statements are:
 ``draggroup``
     Creates a :class:`DragGroup`. A drag group may have zero or more
     drags as its children.
-    
+
 
 .. _sl-has:
     
@@ -1226,7 +1234,7 @@ For
 
 The for statement is similar to the Python for statment, except that
 it does not support the else clause. It supports assignment to
-(optionally nested) tuple patterns, as well as variables. 
+(optionally nested) tuple patterns, as well as variables.
 
 ::
 
@@ -1436,12 +1444,12 @@ and choosing the entries that apply to the current platform.
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
    a mouse and keyboard present, to allow buttons to be hovered, and
    to allow precise pointing.
-   
+
 ``None``
    Always defined.
-   
+
 An example of defining a screen variant is:
-   
+
 ::
 
    # A variant hello_world screen, used on small touch-based
