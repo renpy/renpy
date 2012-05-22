@@ -192,11 +192,11 @@ init python in project:
             Scans for projects.
             """
            
-            if persistent.projects_directory is not None and not os.path.isdir(persistent.projects_directory):
+            if (persistent.projects_directory is not None) and not os.path.isdir(persistent.projects_directory):
                 persistent.projects_directory = None
            
             self.projects_directory = persistent.projects_directory
-           
+
             self.projects = [ ]
             self.templates = [ ]
             self.all_projects = [ ]
@@ -269,22 +269,15 @@ init python in project:
             current = None
                 
             
-        def get(self, path):
+        def get(self, name):
             """
-            Gets the project with the given path. We first search
-            relative to renpy_base, then absolutely.
-
+            Gets the project with the given name.
+            
             Returns None if the project doesn't exist.
             """
             
-            full_path = os.path.join(os.path.abspath(config.renpy_base), path)
-            
             for p in self.all_projects:
-                if p.path == full_path:
-                    return p
-
-            for p in self.all_projects:
-                if p.path == path:
+                if p.name == name:
                     return p
                     
             return None

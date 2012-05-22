@@ -7,8 +7,11 @@ init python:
     SEPARATOR = Frame("pattern.png", 0, 0, tile=True, ymaximum=5, yalign=1.0)
     SEPARATOR2 = Frame("pattern.png", 0, 0, tile=True, ymaximum=10, yalign=1.0)
 
-    SPACER = Null(height=12)
-    HALF_SPACER = Null(height=6)
+    SPACER_HEIGHT = 12
+    SPACER = Null(height=SPACER_HEIGHT)
+
+    HALF_SPACER_HEIGHT = 6
+    HALF_SPACER = Null(height=HALF_SPACER_HEIGHT)
 
     # Colors.
     TEXT = "#545454"

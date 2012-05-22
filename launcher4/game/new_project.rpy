@@ -89,7 +89,7 @@ label new_project:
         # Activate the project.
         with interface.error_handling("activating the new project"):
             project.manager.scan()
-            project.Select(project.manager.get(project_dir))()
+            project.Select(project.manager.get(project_name))()
         
 
     jump front_page

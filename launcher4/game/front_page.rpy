@@ -156,6 +156,7 @@ screen front_page_project:
                 
                 vbox:
                     textbutton _("Check Script (Lint)")
+                    textbutton _("Change Theme") action Jump("choose_theme")
                     textbutton _("Delete Persistent")
                     
                 vbox:
