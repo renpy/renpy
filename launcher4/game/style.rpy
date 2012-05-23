@@ -93,6 +93,17 @@ init python:
     style.l_label_text.size = 24
     style.l_label_text.xpos = INDENT
     style.l_label_text.yoffset = 6
+
+    # Small labels.
+    style.l_label_small = Style(style.l_default)
+    style.l_label_small.xfill = True
+    style.l_label_small.bottom_padding = 8
+    style.l_label_small.bottom_margin = HALF_SPACER_HEIGHT
+    style.l_label_small.background = SEPARATOR    
+    style.l_label_small_text = Style(style.l_default)
+    style.l_label_small_text.xpos = INDENT
+    style.l_label_small_text.yoffset = 6
+    style.l_label_small_text.size = 20
     
     # Alternate labels. This nests inside an l_label, and gives a button
     # or label that's nested inside another label.
@@ -133,7 +144,12 @@ init python:
     style.l_list_text.selected_idle_color = WHITE
     style.l_list_text.selected_hover_color = WHITE
     style.l_list_text.insensitive_color = DISABLED
-    
+
+    style.l_list2 = Style(style.l_list)
+    style.l_list2.left_padding = HALF_INDENT + INDENT
+    style.l_list2_text = Style(style.l_list_text)
+
+
     # Scrollbar.
     style.l_vscrollbar = Style(style.l_default)
     style.l_vscrollbar.thumb = Fixed(

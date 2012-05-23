@@ -291,7 +291,7 @@ screen theme_demo:
           
                     label _("Display")
                     textbutton _("Window") action SelectedIf(True)
-                    textbutton _("Fullscreen") action Return(None)
+                    textbutton _("Fullscreen") action ui.returns(None)
                     textbutton _("Planetarium") action None
                     
 
@@ -303,7 +303,7 @@ screen theme_demo:
                     bar value .75 range 1.0 changed value_changed
 
                     textbutton "Test":
-                        action Return(None)
+                        action ui.returns(None)
                         style "soundtest_button"
 
 
@@ -335,79 +335,63 @@ screen choose_theme:
 
             label _("Choose Theme")
 
-            grid 2 1:
-                xfill True
+            hbox:
                 yfill True
                 
-                grid 1 2:
-                    xfill True
-                    yfill True
+                # Theme selector.
+                frame:
+                    style "l_indent"
+                    bottom_margin HALF_SPACER_HEIGHT
+                    xmaximum 225
+
+                    has vbox
                     
-                    # Theme selector.
-                    frame:
-                        style "l_indent"
-                        bottom_margin HALF_SPACER_HEIGHT
+                    label _("Theme") style "l_label_small"
+
+                    viewport:
+                        scrollbars "vertical"
+                        yinitial theme_yinitial()
+                        mousewheel True
                         
                         has vbox
-                        
-                        add SEPARATOR
+            
+                        for i in theme_names():
+                            textbutton "[i]":
+                                action SetTheme(i)
+                                hovered PreviewTheme(i, current_scheme)
+                                style "l_list2" 
 
-                        frame style "l_indent":
-                            
-                            has vbox
-
-                            text _("Theme:")
-
-                            add HALF_SPACER
-                            
-                            viewport:
-                                scrollbars "vertical"
-                                yinitial theme_yinitial()
-                                mousewheel True
-                                
-                                has vbox
+                
+                # Color scheme selector.
+                frame:
+                    style "l_indent"
+                    bottom_margin HALF_SPACER_HEIGHT
+                    xmaximum 225
                     
-                                for i in theme_names():
-                                    textbutton "[i]":
-                                        action SetTheme(i)
-                                        hovered PreviewTheme(i, current_scheme)
-                                        style "l_list" 
-
+                    has vbox
                     
-                    # Color scheme selector.
-                    frame:
-                        style "l_indent"
-                        bottom_margin HALF_SPACER_HEIGHT
+                    label _("Color Scheme") style "l_label_small"
+                    
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        yinitial scheme_yinitial()
                         
                         has vbox
-                        
-                        add SEPARATOR
+            
+                        for i in scheme_names(current_theme):
+                            textbutton "[i]":  
+                                action SetScheme(i)
+                                hovered PreviewTheme(current_theme, i)
+                                style "l_list2" 
 
-                        frame style "l_indent":
-                            
-                            has vbox
-
-                            text _("Color Scheme:")
-
-                            add HALF_SPACER
-                            
-                            viewport:
-                                scrollbars "vertical"
-                                mousewheel True
-                                yinitial scheme_yinitial()
-                                
-                                has vbox
-                    
-                                for i in scheme_names(current_theme):
-                                    textbutton "[i]":  
-                                        action SetScheme(i)
-                                        hovered PreviewTheme(current_theme, i)
-                                        style "l_list" 
+                
+                # Preview
                 frame:
                     style "l_default"
                     background Frame("pattern.png", 0, 0, tile=True)
-                    xpadding 25
-                    ypadding 10
+                    xpadding 5
+                    ypadding 5
 
                     xfill True
                     yfill True
