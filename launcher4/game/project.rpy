@@ -24,6 +24,12 @@ init python in project:
     class Project(object):
     
         def __init__(self, path):
+
+            while path.endswith("/"):
+                path = path[:-1]
+
+            if not os.path.exists(path):
+                raise Exception("{} does not exist.".format(path))
             
             # The name of the project.
             self.name = os.path.basename(path)

@@ -160,7 +160,7 @@ screen front_page_project:
                     textbutton _("Delete Persistent")
                     
                 vbox:
-                    textbutton _("Build Distributions")
+                    textbutton _("Build Distributions") action Jump("distribute")
                     
         
 label main_menu:
