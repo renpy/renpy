@@ -13,7 +13,9 @@ init python in distribute:
 
     from change_icon import change_icons
 
+    import sys
     import os
+    import json
 
     # The default list of ignore patterns. The user should be able to 
     # add to this.
@@ -251,13 +253,48 @@ init python in distribute:
             self.insert(0, File(directory, None, True, False))
     
     
+        def mac_transform(self, app, documentation):
+            """
+            Creates a new file list that has the mac transform applied to it.
+            
+            The mac transform places all files that aren't already in <app> in
+            <app>/Contents/Resources/autorun. If it matches one of the documentation
+            patterns, then it appears both inside and outside of the app.
+            """
+            
+            rv = FileList()
+            
+            for f in self:
+            
+                # Already in the app.
+                if f.name == app or f.name.startswith(app + "/"):
+                    rv.append(f)
+                    continue
+                    
+                # If it's documentation, keep the file. (But also make 
+                # a copy.)
+                for pattern in documentation:
+                    if match(f.name, pattern):
+                        rv.append(f)
+                        
+                # Make a copy.
+                f = f.copy()
+                
+                f.name = app + "/Contents/Resources/autorun/" + f.name
+                rv.append(f)
+                
+            rv.append(File(app + "/Contents/Resources/autorun", None, True, False))
+            rv.sort()
+    
+            return rv
+
 
     class Distributor(object):
         """
         This manages the process of building distributions.
         """
         
-        def __init__(self, project, destination=None):
+        def __init__(self, project, destination=None, reporter=None):
     
             # The project we want to distribute.
             self.project = project
@@ -274,13 +311,19 @@ init python in distribute:
             else:
                 self.destination = destination
 
+            # Status reporter.
+            self.reporter = reporter
+
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
             self.exe = self.executable_name + ".exe"
             self.sh = self.executable_name + ".sh"
             self.py = self.executable_name + ".py"
 
+            self.reporter.info(_("Scanning project files."))
             self.scan_and_classify(project.path, IGNORE_PATTERNS + BASEDIR_PATTERNS)
+
+            self.reporter.info(_("Scanning Ren'Py files."))
             self.scan_and_classify(config.renpy_base, IGNORE_PATTERNS + ENGINE_PATTERNS)
 
             # Add the platform-specific files.
@@ -293,8 +336,14 @@ init python in distribute:
             # Rename the executable-like files.
             self.rename()
 
-            # Create the Linux package.
-            self.make_package("linux", "tar.bz2", "linux all")
+            # The time of the update version.
+            self.update_version = int(time.time())
+
+            # Create the normal packages.
+            self.make_package("linux-x86", "tar.bz2", "linux all")
+            self.make_package("win32", "zip", "windows all")
+            self.make_package("mac", "zip", "mac all", mac_transform=True)
+            self.make_package("all", "zip", "linux windows mac all")
 
 
         def scan_and_classify(self, directory, patterns):
@@ -493,20 +542,38 @@ init python in distribute:
             """
             
             fl = FileList.merge([ self.file_lists[i] for i in file_lists.split() ])
-            
-            # TODO: Write out the update JSON.
-            
-            fl.copy()
-            
-            # TODO: Mac transform.                        
+            fl = fl.copy()
+            fl.sort()
 
+            # Write the update information.
+            update_files = [ ]
+            update_xbit = [ ]
+    
+            for i in fl:
+                if not i.directory:
+                    update_files.append(i.name)
+                    
+                if i.executable:
+                    update_xbit.append(i.name)
+                    
+            update = { variant : { "version" : self.update_version, "files" : update_files, "xbit" : update_xbit } }
+
+            update_fn = self.temp_filename("update.json")
+            with open(update_fn, "w") as f:
+                json.dump(update, f)
+            
+            fl.append(File("update.json", update_fn, False, False))
+            
+            # The mac transform.
+            if mac_transform:
+                fl.mac_transform(self.app, [])
+            
+            # If we're not an update file, prepend the directory.
             filename = self.base_name + "-" + variant
 
-            # TODO: Only if not update?
-            fl.prepend_directory(filename)
+            if format != "update":
+                fl.prepend_directory(filename)
 
-            fl.sort()
-            
             filename = os.path.join(self.destination, filename)
             
             if format == "tar.bz2":
@@ -519,12 +586,16 @@ init python in distribute:
                 filename += ".zip"
                 pkg = ZipPackage(filename)
                 
-            for f in fl:
+            for i, f in enumerate(fl):
+                self.reporter.progress(variant + " " + format, i, len(fl))
+                        
                 if f.directory:
                     pkg.add_directory(f.name, f.path)
                 else:
                     pkg.add_file(f.name, f.path, f.executable)
-                    
+
+            self.reporter.progress_done()
+
             pkg.close()
 
         def dump(self):
@@ -537,6 +608,22 @@ init python in distribute:
                 for i in v:
                     print "   ", i.name, "xbit" if i.executable else ""
 
+
+    class TextReporter(object):
+        """
+        Displays progress on the command line.
+        """
+        
+        def info(self, msg):
+            print msg
+            
+        def progress(self, what, done, total):
+            sys.stdout.write("\rWriting {}: {} of {}".format(what, done, total))
+            sys.stdout.flush()
+            
+        def progress_done(self):
+            print
+
         
 
     def distribute_command():
@@ -548,7 +635,7 @@ init python in distribute:
         
         p = project.Project(args.project)
         
-        Distributor(p, destination=args.destination)
+        Distributor(p, destination=args.destination, reporter=TextReporter())
         
         return False
         

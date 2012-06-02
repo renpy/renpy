@@ -1,89 +1,19 @@
 init python in distribute:
     
     import time
-    
     import zipfile
     import tarfile
+    import zlib
+
+    zlib.Z_DEFAULT_COMPRESSION = 9
     
-    
-    class MyZipFile(zipfile.ZipFile):
-        """
-         Modified ZipFile class that can insert a file into the archive,
-         using a supplied ZipInfo object. Code comes from the writestr
-         and write methods of ZipFile.
-         """
-
-        def write_file_with_zipinfo(self, filename, path, zinfo, compress_type=None):
-            """Put the bytes from filename into the archive under the name
-            arcname."""
-            st = os.stat(path)
-
-            if compress_type is None:
-                zinfo.compress_type = self.compression
-            else:
-                zinfo.compress_type = compress_type
-
-            zinfo.file_size = st.st_size
-            zinfo.flag_bits = 0x00
-            zinfo.header_offset = self.fp.tell()    # Start of header bytes
-
-            self._writecheck(zinfo)
-            self._didModify = True
-
-            fp = open(path, "rb")
-
-            # Must overwrite CRC and sizes with correct data later
-            zinfo.CRC = CRC = 0
-            zinfo.compress_size = compress_size = 0
-            zinfo.file_size = file_size = 0
-
-            self.fp.write(zinfo.FileHeader())
-
-            if zinfo.compress_type == zipfile.ZIP_DEFLATED:
-                cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
-                     zlib.DEFLATED, -15)
-            else:
-                cmpr = None
-            while 1:
-                buf = fp.read(1024 * 64)
-                if not buf:
-                    break
-                file_size = file_size + len(buf)
-                CRC = binascii.crc32(buf, CRC)
-                if cmpr:
-                    buf = cmpr.compress(buf)
-                    compress_size = compress_size + len(buf)
-                self.fp.write(buf)
-            fp.close()
-            if cmpr:
-                buf = cmpr.flush()
-                compress_size = compress_size + len(buf)
-                self.fp.write(buf)
-                zinfo.compress_size = compress_size
-            else:
-                zinfo.compress_size = file_size
-
-            zinfo.CRC = CRC
-            zinfo.file_size = file_size
-
-            # Seek backwards and write CRC and file sizes
-            position = self.fp.tell()       # Preserve current position in file
-            self.fp.seek(zinfo.header_offset + 14, 0)
-            self.fp.write(struct.pack("<lLL", zinfo.CRC, zinfo.compress_size,
-                  zinfo.file_size))
-
-            self.fp.seek(position, 0)
-            self.filelist.append(zinfo)
-            self.NameToInfo[zinfo.filename] = zinfo
-
-
     class ZipPackage(object):
         """
         A class that creates a zip file.
         """
         
         def __init__(self, filename):
-            self.zipfile = MyZipFile(filename, "w", zipfile.ZIP_DEFLATED)
+            self.zipfile = zipfile.ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
             
         def add_file(self, name, path, xbit):
             
@@ -102,7 +32,10 @@ init python in distribute:
             else:
                 zi.external_attr = long(0100666) << 16 
 
-            self.zipfile.write_file_with_zipinfo(name, path, zi)
+            with open(path, "rb") as f:
+                data = f.read()
+                
+            self.zipfile.writestr(zi, data)
 
         def add_directory(self, name, path):
             return
