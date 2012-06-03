@@ -101,6 +101,7 @@ class Updater(threading.Thread):
             the same. (Used for testing.)
         """
 
+        threading.Thread.__init__(self)
 
         # The main state.
         self.state = Updater.CHECKING
@@ -138,6 +139,9 @@ class Updater(threading.Thread):
         # threads.
         self.condition = threading.Condition()
 
+        # The modules we'll be updating.
+        self.modules = [ ]
+
         # A list of files that have to be moved into place. This is a list of filenames,
         # where each file is moved from <file>.new to <file>.
         self.moves = [ ]
@@ -151,7 +155,8 @@ class Updater(threading.Thread):
         if os.path.exists(os.path.join(self.base, "run.sh")):
             raise Exception("Refusing to update a Ren'Py source checkout.")
 
-        self.update()
+        self.daemon = True
+        self.start()
  
     
     def run(self):
@@ -161,7 +166,7 @@ class Updater(threading.Thread):
         """
         
         try:
-            update()
+            self.update()
     
         except UpdateCancelled as e:
             self.can_cancel = True
@@ -184,7 +189,9 @@ class Updater(threading.Thread):
 
             if self.log:
                 traceback.print_exc(None, self.log)
-
+                
+        self.clean_old()
+        
         
     def update(self):
         """
@@ -201,11 +208,23 @@ class Updater(threading.Thread):
             self.can_proceed = True
             self.state = self.UPDATE_NOT_AVAILABLE
             return
+
+        # Confirm with the user that the update is available.
+        with self.condition:
+            self.can_cancel = True
+            self.can_proceed = True
+            self.state = self.UPDATE_AVAILABLE
+            
+            while True:
+                if self.cancelled or self.proceeded:
+                    break
+                
+                self.condition.wait()
         
-        # TODO: Enter and leave the update available state.
         if self.cancelled:
             raise UpdateCancelled()
         
+        # Perform the update.
         self.new_state = dict(self.current_state)
 
         self.progress = 0.0
@@ -220,6 +239,8 @@ class Updater(threading.Thread):
         for i in self.modules:
             self.download(i) 
 
+        self.clean_old()
+
         self.can_cancel = False
         self.progress = 0.0
         self.state = self.UNPACKING
@@ -233,8 +254,54 @@ class Updater(threading.Thread):
         self.move_files()
         self.delete_obsolete()
         self.save_state()
+        self.clean_new()
+
+        self.message = None
+        self.progress = None
+        self.can_proceed = True
+        self.can_cancel = False
+        self.state = self.DONE
         
         return
+        
+    def proceed(self):
+        """
+        Causes the upgraded to proceed with the next step in the process.
+        """
+
+        if not self.can_proceed:
+            return
+           
+        if self.state == self.UPDATE_NOT_AVAILABLE:
+            # Return to the main menu.
+            pass
+        
+        elif self.state == self.ERROR:
+            # Return to the main menu.
+            pass
+        
+        elif self.state == self.CANCELLED:
+            # Return to the main menu.            
+            pass
+
+        elif self.state == self.DONE:
+            # Restart the game.
+            pass
+
+        elif self.state == self.UPDATE_AVAILABLE:
+            with self.condition:
+                self.proceeded = True
+                self.condition.notify_all()
+        
+    def cancel(self):
+        
+        if not self.can_cancel:
+            return
+        
+        with self.condition:
+            self.cancelled = True
+            self.condition.notify_all()
+            
         
     def path(self, name):
         """
@@ -400,7 +467,7 @@ class Updater(threading.Thread):
             cmd.append("-i")
             cmd.append(self.update_filename(module, False))
             
-        cmd.append(urlparse.urljoin(self.url, module + ".zsync"))
+        cmd.append(urlparse.urljoin(self.url, self.updates[module]["url"]))
         
         cmd = [ fsencode(i) for i in cmd ]
         
@@ -609,26 +676,70 @@ class Updater(threading.Thread):
         with open(fn, "w") as f:
             json.dump(self.new_state, f)
         
+    def clean(self, fn):
+        """
+        Cleans the file named fn from the updates directory.
+        """
+        
+        fn = os.path.join(self.updatedir, fn)
+        if os.path.exists(fn):
+            try:
+                os.unlink(fn)
+            except:
+                pass
+            
+    def clean_old(self):
+        for i in self.modules:
+            self.clean(i + ".update")
+            
+    def clean_new(self):
+        for i in self.modules:
+            self.clean(i + ".update.new")
+            self.clean(i + ".zsync")
+   
    
 if __name__ == "__main__":
-   import argparse
-   ap = argparse.ArgumentParser()
+    import time
+    import argparse
+    ap = argparse.ArgumentParser()
    
-   ap.add_argument("url")
-   ap.add_argument("base")
+    ap.add_argument("url")
+    ap.add_argument("base")
+    ap.add_argument("--force", action="store_true")
    
-   args = ap.parse_args()
+    args = ap.parse_args()
    
-   Updater(args.url, args.base)
-                
+    u = Updater(args.url, args.base, args.force)
+
+    while True:
+        
+        state = u.state
+        
+        print "State:", state
+        
+        if u.progress:
+            print "Progress: {:.1f}%".format(u.progress * 100.0)
+        
+        if u.message:
+            print "Message:", u.message
+            
+        if state == u.ERROR:
+            break
+        elif state == u.UPDATE_NOT_AVAILABLE:
+            break
+        elif state == u.UPDATE_AVAILABLE:
+            u.proceed()
+        elif state == u.DONE:
+            break
+        elif state == u.CANCELLED:
+            break
+        
+        time.sleep(.1)
+        
+            
+            
         
         
         
-        
-    
-    
-    
-    
-    
-    
+
     

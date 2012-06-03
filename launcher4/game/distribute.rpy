@@ -652,7 +652,7 @@ init python in distribute:
                 with open(fn, "rb") as f:
                     digest = hashlib.sha256(f.read()).hexdigest()
                     
-                index[variant] = { "version" : self.update_version, "digest" : digest }
+                index[variant] = { "version" : self.update_version, "digest" : digest, "url" : variant + ".zsync" }
                 
                 os.unlink(fn)
 
