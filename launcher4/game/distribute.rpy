@@ -29,6 +29,7 @@ init python in distribute:
         ("**.bak", None),
         ("**.old", None),
         ("**.new", None),
+        ("**.rpa", None),
         ("*/#*", None),
         ("#*", None),
         ]
@@ -48,10 +49,10 @@ init python in distribute:
         
         ("/icon.ico", None),
         ("/icon.icns", None),
-        ("manifest.xml", None),
         ("/archived/", None),
         ("/tmp/", None),
         ("/launcherinfo.py", None),
+        ("/android.txt", None),
         ("/project.json", None),
             
         ("**", "all"),
@@ -186,7 +187,7 @@ init python in distribute:
             self.name = name
             self.path = path
             self.directory = directory
-            self.executable = False
+            self.executable = executable
             
         def __repr__(self):
             if self.directory:

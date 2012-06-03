@@ -53,7 +53,7 @@ init python in distribute:
             """
             
             self.tarfile = tarfile.open(filename, mode)
-            self.tarfile.deference = True            
+            self.tarfile.dereference = True            
             self.notime = notime
 
         def add_file(self, name, path, xbit):

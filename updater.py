@@ -51,45 +51,51 @@ class Updater(threading.Thread):
     
     # An error occured during the update process.
     # self.message is set to the error message.
-    ERROR = 0
+    ERROR = "ERROR"
     
     # Checking to see if an update is necessary.
-    CHECKING = 1
+    CHECKING = "CHECKING"
     
     # We are up to date. The update process has ended.
     # Calling proceed will return to the main menu.
-    UPDATE_NOT_AVAILABLE = 2
+    UPDATE_NOT_AVAILABLE = "UPDATE NOT AVAILABLE"
     
     # An update is available.
     # The interface should ask the user if he wants to upgrade, and call .proceed()
     # if he wants to continue. 
-    UPDATE_AVAILABLE = 3
+    UPDATE_AVAILABLE = "UPDATE AVAILABLE"
     
     # Preparing to update by packing the current files into a .update file.
     # self.progress is updated during this process.
-    PREPARING = 4
+    PREPARING = "PREPARING"
     
     # Downloading the update.
     # self.progress is updated during this process.
-    DOWNLOADING = 5
+    DOWNLOADING = "DOWNLOADING"
     
     # Unpacking the update.
     # self.progress is updated during this process.
-    UNPACKING = 6
+    UNPACKING = "UNPACKING"
     
     # Finishing up, by moving files around, deleting obsolete files, and writing out
     # the state.
-    FINISHING = 7
+    FINISHING = "FINISHING"
     
     # Done. The update completed successfully.
     # Calling .proceed() on the updater will trigger a game restart.
-    DONE = 8
+    DONE = "DONE"
     
     # The update was cancelled.
-    CANCELLED = 9
+    CANCELLED = "CANCELLED"
     
     def __init__(self, url, base, force=False):
         """
+        `url`
+            The URL to the updates.json file.
+            
+        `base`
+            The base directory that will be updated.
+        
         `force`
             Force the update to occur even if the version numbers are 
             the same. (Used for testing.)
@@ -132,15 +138,20 @@ class Updater(threading.Thread):
         # threads.
         self.condition = threading.Condition()
 
+        # A list of files that have to be moved into place. This is a list of filenames,
+        # where each file is moved from <file>.new to <file>.
+        self.moves = [ ]
+
         # The logfile that update errors are written to.
         try:
             self.log = open(os.path.join(self.updatedir, "log.txt"), "w")
         except:
             self.log = None
 
-        self.update()
+        if os.path.exists(os.path.join(self.base, "run.sh")):
+            raise Exception("Refusing to update a Ren'Py source checkout.")
 
-        
+        self.update()
  
     
     def run(self):
@@ -192,7 +203,6 @@ class Updater(threading.Thread):
             return
         
         # TODO: Enter and leave the update available state.
-
         if self.cancelled:
             raise UpdateCancelled()
         
@@ -209,13 +219,31 @@ class Updater(threading.Thread):
 
         for i in self.modules:
             self.download(i) 
+
+        self.can_cancel = False
+        self.progress = 0.0
+        self.state = self.UNPACKING
+        
+        for i in self.modules:
+            self.unpack(i) 
+
+        self.progress = None
+        self.state = self.FINISHING
+        
+        self.move_files()
+        self.delete_obsolete()
+        self.save_state()
         
         return
         
-    def url(self, suffix):
+    def path(self, name):
         """
-        Joins the URL together.
+        Converts a filename to a path on disk.
         """
+
+        # TODO: The mac transform.
+        return os.path.join(self.base, name)
+        
             
     def load_state(self):
         """
@@ -229,7 +257,7 @@ class Updater(threading.Thread):
         
         with open(fn, "r") as f:
             self.current_state = json.load(f)
-   
+
     def test_write(self):
         fn = os.path.join(self.updatedir, "test.txt")
 
@@ -247,7 +275,7 @@ class Updater(threading.Thread):
     def check_updates(self):
         """
         Downloads the list of updates from the server, parses it, and stores it in 
-        self.updates
+        self.updates.
         """
         
         fn = os.path.join(self.updatedir, "updates.json")
@@ -255,6 +283,9 @@ class Updater(threading.Thread):
         
         with open(fn, "r") as f:
             self.updates = json.load(f)
+
+        if "monkeypatch" in self.updates:
+            exec self.updates["monkeypatch"] in globals(), globals()
         
     def check_versions(self):
         """
@@ -304,7 +335,7 @@ class Updater(threading.Thread):
         directories.add("update")
         all.append("update/current.json")
 
-        tf = tarfile.TarFile(self.update_filename(module, False), "w")
+        tf = tarfile.open(self.update_filename(module, False), "w")
 
         for i, name in enumerate(all):
 
@@ -316,9 +347,7 @@ class Updater(threading.Thread):
             directory = name in directories
             xbit = name in xbits
             
-            # TODO: Mac translation support.
-
-            path = os.path.join(self.base, name)
+            path = self.path(name)
             
             if directory:
                 info = tarfile.TarInfo(name)
@@ -379,6 +408,10 @@ class Updater(threading.Thread):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=0)
 
         while True:
+
+            if self.cancelled:
+                p.kill()
+            
             l = p.stdout.readline()
             if not l:
                 break
@@ -399,13 +432,15 @@ class Updater(threading.Thread):
                     continue
                 
                 self.progress = (raw_progress - start_progress) / (1.0 - start_progress)
-                print self.progress
                 
             if l.startswith("ENDPROGRESS"):
                 start_progress = None
                 self.progress = None
-        
+
         p.wait()
+
+        if self.cancelled:
+            raise UpdateCancelled()
         
         # Check the existence of the downloaded file.
         if not os.path.exists(new_fn):
@@ -428,7 +463,151 @@ class Updater(threading.Thread):
             
         if digest != self.updates[module]["digest"]:
             raise UpdateError("The update file does not have the correct digest - it may have been corrupted.")
+
+        if self.cancelled:
+            raise UpdateCancelled()
+
+    
+    def unpack(self, module):
+        """
+        This unpacks the module. Directories are created immediately, while files are
+        created as filename.new, and marked to be moved into position when all packing
+        is done.
+        """
         
+        update_fn = self.update_filename(module, True)
+
+        # First pass, just figure out how many tarinfo objects are in the tarfile.
+        tf_len = 0
+        tf = tarfile.open(update_fn, "r")
+        for i in tf:
+            tf_len += 1
+        tf.close()
+        
+        tf = tarfile.open(update_fn, "r")
+        
+        for i, info in enumerate(tf):
+
+            self.progress = 1.0 * i / tf_len
+
+            if info.name == "update":
+                continue
+
+            # Process the status info for the current module.            
+            if info.name == "update/current.json":
+                tff = tf.extractfile(info)
+                state = json.load(tff)
+                tff.close()
+                
+                self.new_state[module] = state[module]
+                
+                continue
+
+            path = self.path(info.name)
+            
+            # Extract directories.
+            if info.isdir():
+                try:
+                    os.makedirs(path)
+                except:
+                    pass
+            
+                continue
+            
+            if not info.isreg():
+                raise UpdateError("While unpacking {}, unknown type {}.".format(info.name, info.type))
+
+            # Extract regular files.
+            tff = tf.extractfile(info)
+            new_path = path + ".new"
+            f = file(new_path, "wb")
+            
+            while True:
+                data = tff.read(1024 * 1024)
+                if not data:
+                    break
+                f.write(data)
+                
+            f.close()
+            tff.close()
+
+            if info.mode & 1:
+                # If the xbit is set in the tar info, set it on disk if we can.
+                try:
+                    umask = os.umask(0)
+                    os.umask(umask)
+                    
+                    os.chmod(new_path, 0777 & (~umask))
+                except:
+                    pass
+                
+            self.moves.append(path)
+
+    def move_files(self):
+        """
+        Move new files into place.
+        """
+        
+        for path in self.moves:
+            if os.path.exists(path):
+                os.unlink(path)
+            
+            os.rename(path + ".new", path)
+            
+    def delete_obsolete(self):
+        """
+        Delete files and directories that have been made obsolete by the upgrade. 
+        """
+        
+        def flatten_path(d, key):
+            rv = set()
+            
+            for i in d.itervalues():
+                for j in i[key]:
+                    rv.add(self.path(j))
+                    
+            return rv
+                    
+        old_files = flatten_path(self.current_state, 'files')
+        old_directories = flatten_path(self.current_state, 'directories')  
+
+        new_files = flatten_path(self.new_state, 'files')
+        new_directories = flatten_path(self.new_state, 'directories')  
+            
+        old_files -= new_files
+        old_directories -= new_directories
+    
+        old_files = list(old_files)
+        old_files.sort()
+        old_files.reverse()
+        
+        old_directories = list(old_directories)
+        old_directories.sort()
+        old_directories.reverse()
+        
+        for i in old_files:
+            try:
+                os.unlink(i)
+            except:
+                raise
+                pass
+
+        for i in old_directories:
+            try:
+                os.rmdir(i)
+            except:
+                raise
+                pass
+        
+    def save_state(self):
+        """
+        Saves the current state to update/current.json
+        """
+        
+        fn = os.path.join(self.updatedir, "current.json")
+        
+        with open(fn, "w") as f:
+            json.dump(self.new_state, f)
         
    
 if __name__ == "__main__":
