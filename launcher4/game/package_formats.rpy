@@ -77,10 +77,11 @@ init python in distribute:
             info.gname = "renpy"
 
             if self.notime:
-                self.mtime = 0
+                info.mtime = 0
 
             if info.isreg():
-                self.tarfile.addfile(info, open(path, "rb"))
+                with open(path, "rb") as f:
+                    self.tarfile.addfile(info, f)
             else:
                 self.tarfile.addfile(info)
 

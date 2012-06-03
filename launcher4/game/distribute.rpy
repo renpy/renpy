@@ -16,6 +16,8 @@ init python in distribute:
     import sys
     import os
     import json
+    import subprocess
+    import hashlib
 
     # The default list of ignore patterns. The user should be able to 
     # add to this.
@@ -42,6 +44,7 @@ init python in distribute:
         ("/renpy/", None),
         ("/update/", None),
         ("/common/", None),
+        ("/update/", None),
         
         ("/icon.ico", None),
         ("/icon.icns", None),
@@ -314,6 +317,12 @@ init python in distribute:
             # Status reporter.
             self.reporter = reporter
 
+            # The platforms we can build for.
+            self.linux = False
+            self.mac = False
+            self.windows = False
+            self.all = True
+
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
             self.exe = self.executable_name + ".exe"
@@ -340,10 +349,26 @@ init python in distribute:
             self.update_version = int(time.time())
 
             # Create the normal packages.
-            self.make_package("linux-x86", "tar.bz2", "linux all")
-            self.make_package("win32", "zip", "windows all")
-            self.make_package("mac", "zip", "mac all", mac_transform=True)
-            self.make_package("all", "zip", "linux windows mac all")
+            if self.linux:
+                self.make_package("linux", "tar.bz2", "linux all")
+            if self.windows:
+                self.make_package("windows", "zip", "windows all")
+            if self.mac:
+                self.make_package("mac", "zip", "mac all", mac_transform=True)
+            if self.all:
+                self.make_package("all", "zip", "linux windows mac all")
+
+            # Create the update packages.
+            if self.linux:
+                self.make_package("linux", "update", "linux all")
+            if self.windows:
+                self.make_package("windows", "update", "windows all")
+            if self.mac:
+                self.make_package("mac", "update", "mac all")
+            if self.all:
+                self.make_package("all", "update", "linux windows mac all")
+
+            self.finish_updates()
 
 
         def scan_and_classify(self, directory, patterns):
@@ -548,31 +573,37 @@ init python in distribute:
             # Write the update information.
             update_files = [ ]
             update_xbit = [ ]
-    
+            update_directories = [ ]
+
             for i in fl:
                 if not i.directory:
                     update_files.append(i.name)
+                else:
+                    update_directories.append(i.name)
                     
                 if i.executable:
                     update_xbit.append(i.name)
                     
-            update = { variant : { "version" : self.update_version, "files" : update_files, "xbit" : update_xbit } }
+            update = { variant : { "version" : self.update_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            update_fn = self.temp_filename("update.json")
+            update_fn = self.temp_filename("current.json")
             with open(update_fn, "w") as f:
                 json.dump(update, f)
             
-            fl.append(File("update.json", update_fn, False, False))
+            fl.append(File("update", None, True, False))
+            fl.append(File("update/current.json", update_fn, False, False))
             
             # The mac transform.
             if mac_transform:
                 fl.mac_transform(self.app, [])
             
             # If we're not an update file, prepend the directory.
-            filename = self.base_name + "-" + variant
 
             if format != "update":
+                filename = self.base_name + "-" + variant
                 fl.prepend_directory(filename)
+            else:
+                filename = variant
 
             filename = os.path.join(self.destination, filename)
             
@@ -595,8 +626,51 @@ init python in distribute:
                     pkg.add_file(f.name, f.path, f.executable)
 
             self.reporter.progress_done()
-
             pkg.close()
+
+
+            if format == "update":
+                # Build the zsync file.
+                # TODO: This should use an included copy of zsyncmake.
+                self.reporter.info(_("Making zsync file."))
+                subprocess.check_call([ 
+                    "zsyncmake", 
+                    "-z", renpy.fsencode(filename), 
+                    "-u", variant + ".update.gz", 
+                    "-o", renpy.fsencode(os.path.join(self.destination, variant + ".zsync")) ])
+
+        def finish_updates(self):
+            """
+            Indexes the updates, then removes the .update files.
+            """
+            
+            index = { }
+            
+            def add_variant(variant):
+                fn = renpy.fsencode(os.path.join(self.destination, variant + ".update"))
+                with open(fn, "rb") as f:
+                    digest = hashlib.sha256(f.read()).hexdigest()
+                    
+                index[variant] = { "version" : self.update_version, "digest" : digest }
+                
+                os.unlink(fn)
+
+            if self.linux:
+                add_variant("linux")
+                
+            if self.windows:
+                add_variant("windows")
+                
+            if self.mac:
+                add_variant("mac")
+                
+            if self.all:
+                add_variant("all")
+                
+            fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
+            with open(fn, "wb") as f:
+                json.dump(index, f)
+
 
         def dump(self):
             for k, v in sorted(self.file_lists.items()):
@@ -623,7 +697,6 @@ init python in distribute:
             
         def progress_done(self):
             print
-
         
 
     def distribute_command():

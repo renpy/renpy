@@ -57,6 +57,7 @@ import renpy.audio.music as music
 
 import time
 import sys
+import subprocess
 
 def public_api():
     """
