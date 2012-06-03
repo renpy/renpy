@@ -135,6 +135,18 @@ class Updater(threading.Thread):
         self.base = os.path.abspath(base)
         self.updatedir = os.path.join(self.base, "update")
 
+        # If we're a mac, the directory in which our app lives.
+        splitbase = self.base.split('/')        
+        if (len(splitbase) >= 4 and
+            splitbase[-1] == "autorun" and
+            splitbase[-2] == "Resources" and 
+            splitbase[-3] == "Contents" and
+            splitbase[-4].endswith(".app")):
+        
+            self.app = "/".join(splitbase[:-3])
+        else:
+            self.app = None
+
         # A condition that's used to coordinate things between the various 
         # threads.
         self.condition = threading.Condition()
@@ -308,7 +320,13 @@ class Updater(threading.Thread):
         Converts a filename to a path on disk.
         """
 
-        # TODO: The mac transform.
+        if self.app is not None:
+
+            path = name.split("/")
+            if path[0].endswith(".app"):
+                rv = os.path.join(self.app, "/".join(path[1:]))
+                return rv
+
         return os.path.join(self.base, name)
         
             
@@ -656,14 +674,12 @@ class Updater(threading.Thread):
             try:
                 os.unlink(i)
             except:
-                raise
                 pass
 
         for i in old_directories:
             try:
                 os.rmdir(i)
             except:
-                raise
                 pass
         
     def save_state(self):

@@ -320,7 +320,7 @@ init python in distribute:
 
             # The platforms we can build for.
             self.linux = False
-            self.mac = False
+            self.mac = True
             self.windows = False
             self.all = True
 
@@ -596,7 +596,7 @@ init python in distribute:
             
             # The mac transform.
             if mac_transform:
-                fl.mac_transform(self.app, [])
+                fl = fl.mac_transform(self.app, [])
             
             # If we're not an update file, prepend the directory.
 
