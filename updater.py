@@ -314,6 +314,23 @@ class Updater(threading.Thread):
             self.cancelled = True
             self.condition.notify_all()
             
+    def unlink(self, path):
+        """
+        Tries to unlink the file at `path`.
+        """
+        
+        if os.path.exists(path + ".old"):
+            os.unlink(path + ".old")
+            
+        if os.path.exists(path):
+            os.rename(path, path + ".old")
+
+            # This might fail because of a sharing violation on Windows.            
+            try:
+                os.unlink(path + ".old")            
+            except:
+                pass
+        
         
     def path(self, name):
         """
@@ -634,9 +651,7 @@ class Updater(threading.Thread):
         """
         
         for path in self.moves:
-            if os.path.exists(path):
-                os.unlink(path)
-            
+            self.unlink(path)
             os.rename(path + ".new", path)
             
     def delete_obsolete(self):
@@ -671,10 +686,7 @@ class Updater(threading.Thread):
         old_directories.reverse()
         
         for i in old_files:
-            try:
-                os.unlink(i)
-            except:
-                pass
+            self.unlink(i)
 
         for i in old_directories:
             try:
