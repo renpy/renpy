@@ -1,6 +1,7 @@
 # This code applies an update.
 
-# TODO: RSA support.
+# TODO: Do not allow an update to be launched if the project does not 
+# include its own renpy/ directory. (This should p
 
 import tarfile
 import threading
@@ -189,6 +190,8 @@ class Updater(threading.Thread):
         if os.path.exists(os.path.join(self.base, "run.sh")):
             raise Exception("Refusing to update a Ren'Py source checkout.")
 
+        self.simulate = simulate
+
         self.daemon = True
         self.start()
  
@@ -200,7 +203,10 @@ class Updater(threading.Thread):
         """
         
         try:
-            self.update()
+            if self.simulate:
+                self.simulation()
+            else:
+                self.update()
     
         except UpdateCancelled as e:
             self.can_cancel = True
@@ -289,6 +295,73 @@ class Updater(threading.Thread):
         self.delete_obsolete()
         self.save_state()
         self.clean_new()
+
+        self.message = None
+        self.progress = None
+        self.can_proceed = True
+        self.can_cancel = False
+        self.state = self.DONE
+        
+        return
+
+    
+    
+    def simulation(self):
+        """
+        Simulates the update.
+        """
+
+        def simulate_progress():
+            for i in range(0, 30):
+                self.progress = i / 30.0
+                time.sleep(.1)
+        
+        time.sleep(1.5)
+        
+        if self.simulate == "error":
+            raise UpdateError("An error is being simulated.")
+
+        if self.simulate == "not_available":
+            self.can_cancel = False
+            self.can_proceed = True
+            self.state = self.UPDATE_NOT_AVAILABLE
+            return
+
+        # Confirm with the user that the update is available.
+        with self.condition:
+            self.can_cancel = True
+            self.can_proceed = True
+            self.state = self.UPDATE_AVAILABLE
+            
+            while True:
+                if self.cancelled or self.proceeded:
+                    break
+                
+                self.condition.wait()
+        
+        if self.cancelled:
+            raise UpdateCancelled()
+        
+        self.progress = 0.0
+        self.state = self.PREPARING
+        
+        simulate_progress()
+
+        self.progress = 0.0
+        self.state = self.DOWNLOADING
+
+        simulate_progress()
+
+        self.can_cancel = False
+        self.progress = 0.0
+        self.state = self.UNPACKING
+        
+        simulate_progress()
+
+        self.progress = None
+        self.state = self.FINISHING
+        
+        time.sleep(1.5)
 
         self.message = None
         self.progress = None
@@ -773,7 +846,7 @@ if __name__ == "__main__":
    
     args = ap.parse_args()
    
-    u = Updater(args.url, args.base, args.force, public_key="launcher4/game/renpy_public.pem")
+    u = Updater(args.url, args.base, args.force, public_key="launcher4/game/renpy_public.pem", simulate="available")
 
     while True:
         
