@@ -10,7 +10,7 @@ ap.add_argument("private")
 ap.add_argument("public")
 args = ap.parse_args()
 
-private, public = rsa.newkeys(2048)
+public, private = rsa.newkeys(2048)
 
 with open(args.public, "wb") as f:
     f.write(public.save_pkcs1())

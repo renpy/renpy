@@ -1,5 +1,7 @@
 # This code applies an update.
 
+# TODO: RSA support.
+
 import tarfile
 import threading
 import traceback
@@ -9,6 +11,7 @@ import urllib
 import json
 import subprocess
 import hashlib
+import rsa
 
 try:
     from renpy.exports import fsencode
@@ -88,7 +91,7 @@ class Updater(threading.Thread):
     # The update was cancelled.
     CANCELLED = "CANCELLED"
     
-    def __init__(self, url, base, force=False):
+    def __init__(self, url, base, force=False, public_key=None, simulate=None):
         """
         `url`
             The URL to the updates.json file.
@@ -99,8 +102,20 @@ class Updater(threading.Thread):
         `force`
             Force the update to occur even if the version numbers are 
             the same. (Used for testing.)
+            
+        `public_key`
+            The path to a PEM file containing a public key that the 
+            update signature is checked against.
+            
+        `simulate`
+            This is used to test update guis without actually performing
+            an update. This can be:
+            
+            * None to perform an update.
+            * "available" to test the case where an update is available.
+            * "not_available" to test the case where no update is available.
+            * "error" to test an update error.
         """
-
         threading.Thread.__init__(self)
 
         # The main state.
@@ -158,6 +173,13 @@ class Updater(threading.Thread):
         # where each file is moved from <file>.new to <file>.
         self.moves = [ ]
 
+        # TODO: use renpy.file instead of open.
+        if public_key is not None:
+            with open(public_key, "rb") as f:
+                self.public_key = rsa.PublicKey.load_pkcs1(f.read())
+        else:
+            self.public_key = None
+
         # The logfile that update errors are written to.
         try:
             self.log = open(os.path.join(self.updatedir, "log.txt"), "w")
@@ -194,7 +216,7 @@ class Updater(threading.Thread):
             self.state = self.ERROR
         
         except Exception as e:
-            self.message = unicode(e)
+            self.message = type(e).__name__ + ": " + unicode(e)
             self.can_cancel = True
             self.can_proceed = False
             self.state = self.ERROR
@@ -384,7 +406,21 @@ class Updater(threading.Thread):
         urllib.urlretrieve(self.url, fn)
         
         with open(fn, "r") as f:
-            self.updates = json.load(f)
+            updates_json = f.read()
+            self.updates = json.loads(updates_json)
+
+        if self.public_key is not None:
+            fn = os.path.join(self.updatedir, "updates.json.sig")
+            urllib.urlretrieve(self.url + ".sig", fn)
+
+            with open(fn, "r") as f:
+                signature = f.read().decode("base64")
+
+            try:
+                rsa.verify(updates_json, signature, self.public_key)
+            except:
+                raise UpdateError("Could not verify update signature.")
+            
 
         if "monkeypatch" in self.updates:
             exec self.updates["monkeypatch"] in globals(), globals()
@@ -737,7 +773,7 @@ if __name__ == "__main__":
    
     args = ap.parse_args()
    
-    u = Updater(args.url, args.base, args.force)
+    u = Updater(args.url, args.base, args.force, public_key="launcher4/game/renpy_public.pem")
 
     while True:
         
