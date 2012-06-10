@@ -597,6 +597,10 @@ Rarely or Internally Used
 
     OpenGL can also be disabled by holding down shift at startup.
     
+.. var:: config.gl_resize = True
+
+    Determines if the user is allowed to resize an OpenGL-drawn window.
+    
 .. var:: config.hard_rollback_limit = 100
 
     This is the number of steps that Ren'Py will let the user

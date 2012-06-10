@@ -215,13 +215,18 @@ cdef class GLDraw:
             opengl = 0            
             # EGL automatically handles vsync for us.
         
+        if renpy.config.gl_resize:
+            resizable = pygame.RESIZABLE
+        else:
+            resizable = 0
+        
         try:
             if fullscreen:
                 renpy.display.log.write("Fullscreen mode.")
                 self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), pygame.RESIZABLE | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
 
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)

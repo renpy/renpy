@@ -164,3 +164,6 @@ init -1 python hide:
     
     config.quit_action = Quit(confirm=False)
     
+    config.gl_resize = False
+    
+

@@ -522,6 +522,9 @@ python_callbacks = [ ]
 # If true, we dump information about a save upon save.
 save_dump = False
 
+# Can we resize a gl window?
+gl_resize = True
+
 del renpy
 del os
 

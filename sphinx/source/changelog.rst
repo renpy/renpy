@@ -22,6 +22,9 @@ Screen language blocks may now contain multiple has statements.
 
 Added the :func:`OpenURL` action, which opens a URL in a web browser.
 
+Added the :var:`config.gl_resize` variable, which determines if the
+user can resize OpenGL windows.
+
 
 Ren'Py 6.13.9
 =============
