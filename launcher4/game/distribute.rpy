@@ -319,9 +319,9 @@ init python in distribute:
             self.reporter = reporter
 
             # The platforms we can build for.
-            self.linux = False
+            self.linux = True
             self.mac = True
-            self.windows = False
+            self.windows = True
             self.all = True
 
             # The various executables, which change names based on self.executable_name.
@@ -330,11 +330,14 @@ init python in distribute:
             self.sh = self.executable_name + ".sh"
             self.py = self.executable_name + ".py"
 
+            # add the game.
             self.reporter.info(_("Scanning project files."))
             self.scan_and_classify(project.path, IGNORE_PATTERNS + BASEDIR_PATTERNS)
 
+            # Add Ren'Py.
             self.reporter.info(_("Scanning Ren'Py files."))
             self.scan_and_classify(config.renpy_base, IGNORE_PATTERNS + ENGINE_PATTERNS)
+            self.add_renpy_files()
 
             # Add the platform-specific files.
             self.add_mac_files()
@@ -446,13 +449,22 @@ init python in distribute:
             for fl in file_list.split():
                 self.file_lists[fl].append(f)
                 
+        def add_renpy_files(self):
+            """
+            Add Ren'Py-generic files to the project.
+            """
+                
+            self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "game/script_version.rpy"))
+            self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "game/script_version.rpyc"))
+            self.add_file("all", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
+                
         def add_mac_files(self):
             """
             Add mac-specific files to the distro.
             """
             
             # Rename the executable.
-            self.add_file("mac", "renpy.app/Contents/MacOS/" + self.executable_name, "renpy.app/Contents/MacOS/Ren'Py Launcher")
+            self.add_file("mac", "renpy.app/Contents/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.app/Contents/MacOS/Ren'Py Launcher"))
             
             # Update the plist file.
             quoted_name = self.executable_name.replace("&", "&amp;").replace("<", "&lt;")
