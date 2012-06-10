@@ -30,7 +30,8 @@ init python:
     # DIVIDING THE SCREEN
     ONETHIRD = 258
     TWOTHIRDS = 496
-    
+    ONEHALF = 377
+
     
     # Default style.
     style.l_default = Style(style.default)
@@ -219,6 +220,7 @@ init python:
     style.l_checkbox.hover_background = Image("checkbox_hover.png", yalign=0.5)
     style.l_checkbox.selected_idle_background = Image("checkbox_selected_idle.png", yalign=0.5)
     style.l_checkbox.selected_hover_background = Image("checkbox_selected_hover.png", yalign=0.5)
+    style.l_checkbox.insensitive_background = Image("checkbox_insensitive.png", yalign=0.5)
 
     style.l_checkbox_text = Style(style.l_button_text)
     style.l_checkbox_text.selected_font = LIGHT

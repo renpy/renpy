@@ -50,7 +50,10 @@ init python in project:
                 f.close()
             except:
                 self.data = { }
-                
+
+            # Update the data.
+            self.update_data()
+
             # The project's temporary directory.
             self.tmp = os.path.join(self.path, "tmp")
                 
@@ -63,6 +66,32 @@ init python in project:
                 
             # The mtime of the last dump file loaded.
             self.dump_mtime = 0
+
+        def update_data(self):
+            data = self.data
+            
+            if "directory_name" not in data:
+                data["directory_name"] = self.name + "-1.0"
+                
+            if "executable_name" not in data:
+                data["executable_name"] = self.name
+                
+            if "ignore_patterns" not in data:
+                data["ignore_patterns"] = [ "**~", "**.bak" ]
+            
+            if "archive_patterns" not in data:
+                data["archive_patterns"] = [ ]
+                
+            if "documentation_patterns" not in data:
+                data["documentation_patterns"] = [ "*.html", "*.txt" ]
+                
+            data.setdefault("build_all", True)
+            data.setdefault("build_windows", False)
+            data.setdefault("build_mac", False)
+            data.setdefault("build_linux", True)
+            
+            data.setdefault("include_update", False)
+            data.setdefault("build_update", False)
 
         def save(self):
             """
