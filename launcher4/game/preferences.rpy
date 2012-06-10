@@ -36,7 +36,11 @@ screen preferences:
             
                         
                         frame style "l_indent": 
-                            textbutton _("[persistent.projects_directory!q]") action Jump("projects_directory_preference")
+                            if persistent.projects_directory:
+                                textbutton _("[persistent.projects_directory!q]") action Jump("projects_directory_preference")
+                            else:
+                                textbutton _("Not Set") action Jump("projects_directory_preference")
+                                
                         
                     add SPACER
 
