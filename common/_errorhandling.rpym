@@ -131,7 +131,7 @@ init python:
     style._button.hover_background = Frame("_theme_launcher/hover_frame.png", 10, 10)
     style._button.xpadding = 10
     style._button.ypadding = 9
-    style._button.ymargin = 5
+    style._button.ymargin = 0
 
     style._button_text.insensitive_color = "#ccc"
 
@@ -147,17 +147,24 @@ init python:
     
     # bar
     style._bar = Style(style._default)
-    style._scrollbar = Style(style._bar)
-    style._vscrollbar = Style(style._bar)
 
-    style._bar.left_bar = Frame("_theme_launcher/bar.png", 10, 10)
+    style._bar.left_bar = Frame("_theme_launcher/hover_frame.png", 10, 10)
     style._bar.right_bar = Frame("_theme_launcher/bar.png", 10, 10)
-    style._bar.thumb = Frame("_theme_launcher/frame.png", 10, 10)
-    style._bar.hover_thumb = Frame("_theme_launcher/hover_frame.png", 10, 10)
-    style._bar.thumb_offset = 10
-    style._bar.left_gutter = 5
-    style._bar.right_gutter = 5
-    style._bar.unscrollable = "hide"
+    style._bar.thumb = None
+    style._bar.hover_thumb = None
+    style._bar.ymaximum = 20
+    
+    style._scrollbar = Style(style._default)
+    style._vscrollbar = Style(style._default)
+
+    style._scrollbar.left_bar = Frame("_theme_launcher/bar.png", 10, 10)
+    style._scrollbar.right_bar = Frame("_theme_launcher/bar.png", 10, 10)
+    style._scrollbar.thumb = Frame("_theme_launcher/frame.png", 10, 10)
+    style._scrollbar.hover_thumb = Frame("_theme_launcher/hover_frame.png", 10, 10)
+    style._scrollbar.thumb_offset = 10
+    style._scrollbar.left_gutter = 5
+    style._scrollbar.right_gutter = 5
+    style._scrollbar.unscrollable = "hide"
     
     style._scrollbar.ymaximum = 20
     style._vscrollbar.xmaximum = 20   

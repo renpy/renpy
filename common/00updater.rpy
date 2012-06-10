@@ -1,10 +1,7 @@
 # This code applies an update.
 
-# TODO: Do not allow an update to be launched if the project does not 
-# include its own renpy/ directory. 
-
-init python 1000 in updater:
-    from store import renpy
+init -1000 python in updater:
+    from store import renpy, config, Action
 
     import tarfile
     import threading
@@ -15,13 +12,14 @@ init python 1000 in updater:
     import json
     import subprocess
     import hashlib
-    import rsa
+    import time
 
     try:
-        from renpy.exports import fsencode
+        import rsa
     except:
-        def fsencode(s):
-            return s
+        pass
+
+    from renpy.exports import fsencode
 
     class UpdateError(Exception):
         """
@@ -97,29 +95,9 @@ init python 1000 in updater:
         
         def __init__(self, url, base, force=False, public_key=None, simulate=None):
             """
-            `url`
-                The URL to the updates.json file.
-                
-            `base`
-                The base directory that will be updated.
-            
-            `force`
-                Force the update to occur even if the version numbers are 
-                the same. (Used for testing.)
-                
-            `public_key`
-                The path to a PEM file containing a public key that the 
-                update signature is checked against.
-                
-            `simulate`
-                This is used to test update guis without actually performing
-                an update. This can be:
-                
-                * None to perform an update.
-                * "available" to test the case where an update is available.
-                * "not_available" to test the case where no update is available.
-                * "error" to test an update error.
+            Takes the same arguments as update().
             """
+
             threading.Thread.__init__(self)
 
             # The main state.
@@ -151,6 +129,10 @@ init python 1000 in updater:
             
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
+
+            if base is None:
+                base = config.basedir
+
             self.base = os.path.abspath(base)
             self.updatedir = os.path.join(self.base, "update")
 
@@ -179,8 +161,9 @@ init python 1000 in updater:
 
             # TODO: use renpy.file instead of open.
             if public_key is not None:
-                with open(public_key, "rb") as f:
-                    self.public_key = rsa.PublicKey.load_pkcs1(f.read())
+                f = renpy.file("public_key")
+                self.public_key = rsa.PublicKey.load_pkcs1(f.read())
+                f.close()
             else:
                 self.public_key = None
 
@@ -189,9 +172,6 @@ init python 1000 in updater:
                 self.log = open(os.path.join(self.updatedir, "log.txt"), "w")
             except:
                 self.log = None
-
-            if os.path.exists(os.path.join(self.base, "run.sh")):
-                raise Exception("Refusing to update a Ren'Py source checkout.")
 
             self.simulate = simulate
 
@@ -206,6 +186,7 @@ init python 1000 in updater:
             """
             
             try:
+
                 if self.simulate:
                     self.simulation()
                 else:
@@ -235,12 +216,11 @@ init python 1000 in updater:
                     
             self.clean_old()
             
-            
         def update(self):
             """
             Performs the update.        
             """
-            
+
             self.load_state()
             self.test_write()
             self.check_updates()
@@ -263,6 +243,8 @@ init python 1000 in updater:
                         break
                     
                     self.condition.wait()
+
+            self.can_proceed = False
             
             if self.cancelled:
                 raise UpdateCancelled()
@@ -307,8 +289,6 @@ init python 1000 in updater:
             
             return
 
-        
-        
         def simulation(self):
             """
             Simulates the update.
@@ -318,9 +298,15 @@ init python 1000 in updater:
                 for i in range(0, 30):
                     self.progress = i / 30.0
                     time.sleep(.1)
-            
+                    
+                    if self.cancelled:
+                        raise UpdateCancelled()
+
             time.sleep(1.5)
-            
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
             if self.simulate == "error":
                 raise UpdateError("An error is being simulated.")
 
@@ -342,6 +328,8 @@ init python 1000 in updater:
                     
                     self.condition.wait()
             
+            self.can_proceed = False
+
             if self.cancelled:
                 raise UpdateCancelled()
             
@@ -383,20 +371,16 @@ init python 1000 in updater:
                 return
                
             if self.state == self.UPDATE_NOT_AVAILABLE:
-                # Return to the main menu.
-                pass
+                renpy.full_restart()
             
             elif self.state == self.ERROR:
-                # Return to the main menu.
-                pass
+                renpy.full_restart()
             
             elif self.state == self.CANCELLED:
-                # Return to the main menu.            
-                pass
+                renpy.full_restart()
 
             elif self.state == self.DONE:
-                # Restart the game.
-                pass
+                renpy.quit(relaunch=True)
 
             elif self.state == self.UPDATE_AVAILABLE:
                 with self.condition:
@@ -411,6 +395,8 @@ init python 1000 in updater:
             with self.condition:
                 self.cancelled = True
                 self.condition.notify_all()
+                
+            renpy.full_restart()
                 
         def unlink(self, path):
             """
@@ -836,19 +822,71 @@ init python 1000 in updater:
             for i in self.modules:
                 self.clean(i + ".update.new")
                 self.clean(i + ".zsync")
-       
-    def commandlineupdate():
+
+    def update(url, base=None, force=False, public_key=None, simulate=None):
+        """
+        :doc: updater
+        
+        Updates this Ren'Py game to the latest version.
+        
+        `url`
+            The URL to the updates.json file.
+            
+        `base`
+            The base directory that will be updated. Defaults to the base
+            of the current game.
+        
+        `force`
+            Force the update to occur even if the version numbers are 
+            the same. (Used for testing.)
+            
+        `public_key`
+            The path to a PEM file containing a public key that the 
+            update signature is checked against.
+            
+        `simulate`
+            This is used to test update guis without actually performing
+            an update. This can be:
+            
+            * None to perform an update.
+            * "available" to test the case where an update is available.
+            * "not_available" to test the case where no update is available.
+            * "error" to test an update error.
+        """  
+
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate)        
+        ui.timer(.1, repeat=True, action=renpy.restart_interaction)        
+        renpy.call_screen("updater", u=u)
+    
+    class Update(Action):
+        """
+        :doc: updater
+        
+        An action that calls :func:`updater.update`. All arguments are
+        stored and passed to that function.
+        """
+        
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+            
+        def __call__(self):
+            renpy.invoke_in_new_context(update, *args, **kwargs)
+            
+    def update_command():
         import time
-        import argparse
-        ap = argparse.ArgumentParser()
+
+        ap = renpy.argument.ArgumentParser()
        
         ap.add_argument("url")
-        ap.add_argument("base")
-        ap.add_argument("--force", action="store_true")
+        ap.add_argument("--base", action=store, help="The base directory of the game to update. Defaults to the current game.")
+        ap.add_argument("--force", action="store_true", help="Force the update to run even if the version numbers are the same.")
+        ap.add_argument("--key", action="store_true", help="A file giving the public key to use of the update.")
+        ap.add_argument("--simulate", help="The simulation mode to use. One of available, not_available, or error.")
        
         args = ap.parse_args()
        
-        u = Updater(args.url, args.base, args.force, public_key="launcher4/game/renpy_public.pem", simulate="available")
+        u = Updater(args.url, args.base, args.force, public_key=args.key, simulate=args.simulate)
 
         while True:
             
@@ -874,3 +912,76 @@ init python 1000 in updater:
                 break
             
             time.sleep(.1)
+
+        return False
+    
+    renpy.arguments.register_command("update", update_command)
+
+init -1000:
+    screen updater:
+        
+        add "#000"
+        
+        frame:
+            style_group ""
+            
+            xalign .5
+            ypos 100
+            xpadding 20
+            ypadding 20
+    
+            xmaximum 400
+            xfill True
+  
+            has vbox
+            
+            label _("Updater")
+
+            null height 10
+
+            if u.state == u.ERROR:
+                text _("An error has occured:")
+            elif u.state == u.CHECKING:
+                text _("Checking for updates.")
+            elif u.state == u.UPDATE_NOT_AVAILABLE:
+                text _("This program is up to date.")
+            elif u.state == u.UPDATE_AVAILABLE:
+                text _("An update is available. Do you want to install it?")
+            elif u.state == u.PREPARING:
+                text _("Preparing to download the update.")
+            elif u.state == u.DOWNLOADING:
+                text _("Downloading the update.")
+            elif u.state == u.UNPACKING:
+                text _("Unpacking the update.")
+            elif u.state == u.FINISHING:
+                text _("Finishing up.")
+            elif u.state == u.DONE:
+                text _("The update has been installed. The program will now restart.")
+            elif u.state == u.CANCELLED:
+                text _("The update was cancelled.")
+                
+            if u.message is not None:
+                null height 10
+                text "[u.message!q]"
+                
+            if u.progress is not None:
+                null height 10
+                bar value u.progress range 1.0 style "_bar"
+
+            if u.can_proceed or u.can_cancel:
+                null height 10
+
+            if u.can_proceed:
+                textbutton _("Proceed") action u.proceed xfill True
+                
+            if u.can_cancel:
+                textbutton _("Cancel") action u.cancel xfill True
+                
+                    
+                
+            
+                
+            
+            
+        
+        

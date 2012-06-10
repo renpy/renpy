@@ -972,12 +972,15 @@ def utter_restart():
 
     raise renpy.game.UtterRestartException()
 
-def quit(): #@ReservedAssignment
+def quit(relaunch=False): #@ReservedAssignment
     """
     This causes Ren'Py to exit entirely.
+    
+    `relaunch`
+        If true, Ren'Py will run a second copy of itself before quitting.
     """
 
-    raise renpy.game.QuitException()
+    raise renpy.game.QuitException(relaunch)
 
 def jump(label):
     """

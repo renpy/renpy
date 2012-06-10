@@ -204,8 +204,16 @@ class UtterRestartException(Exception):
 class QuitException(Exception):
     """
     An exception of this class will let us force a safe quit, from
-    anywhere in the program. Do not pass go, do not collect $200.
+    anywhere in the program.
+    
+    `relaunch`
+        If given, the program will run another copy of itself, with the
+        same arguments.
     """
+
+    def __init__(self, relaunch=False):
+        Exception.__init__(self)
+        self.relaunch = relaunch
 
 class JumpException(Exception):
     """

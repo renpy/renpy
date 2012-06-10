@@ -25,8 +25,10 @@ import os
 import sys
 import time
 import zipfile
+import subprocess
 from cPickle import loads, dumps
 import __main__
+
 
 def save_persistent():
     
@@ -343,7 +345,15 @@ def main():
                 save_persistent()
                 
         except game.QuitException, e:
+            
+            if e.relaunch:
+                if renpy.windows and sys.argv[0].endswith(".exe"):
+                    subprocess.Popen(sys.argv)
+                else:
+                    subprocess.Popen([sys.executable] + sys.argv)
+            
             break
+
         except game.FullRestartException, e:
             restart = e.reason
         finally:
