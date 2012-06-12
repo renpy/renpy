@@ -68,12 +68,12 @@ screen preferences:
                     
                         add HALF_SPACER
                     
-                        textbutton "Include private names." style "l_checkbox" action ToggleField(persistent, "navigate_private")
-                        textbutton "Include library names." style "l_checkbox" action ToggleField(persistent, "navigate_library")
+                        textbutton "Include private names" style "l_checkbox" action ToggleField(persistent, "navigate_private")
+                        textbutton "Include library names" style "l_checkbox" action ToggleField(persistent, "navigate_library")
                         
                         add HALF_SPACER
                         
-                        textbutton "Open launcher project." style "l_nonbox" action project.Select("launcher4")
+                        textbutton "Open launcher project" style "l_nonbox" action project.Select("launcher4")
                     
                 frame:
                     style "l_indent"

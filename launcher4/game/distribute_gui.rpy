@@ -161,6 +161,7 @@ screen build_distributions:
                             action PlatformToggle(True, "build_linux")
                                                            
                     add SPACER
+                    null height 6
 
                     add SEPARATOR2
                          
