@@ -1,3 +1,9 @@
+init python:
+    def PlatformToggle(condition, item):
+        if condition:
+            return [ ToggleDict(project.current.data, item), project.current.save_data ]
+        else:
+            return None
 
 # This represents a pattern list link.
 #
@@ -41,9 +47,7 @@ screen name_change_link:
         
         add HALF_SPACER
         
-        frame:
-            style "l_indent"
-            textbutton "[value!q]" action action
+        textbutton "[value!q]" action action xpadding INDENT
 
 
     add SPACER
@@ -144,10 +148,17 @@ screen build_distributions:
 
                         add HALF_SPACER
                         
-                        textbutton _("Combined Windows/Mac/Linux") style "l_checkbox"
-                        textbutton _("Windows x86") style "l_checkbox"
-                        textbutton _("Macintosh x86") style "l_checkbox"
-                        textbutton _("Linux x86/x86_64") style "l_checkbox"
+                        textbutton _("Combined Windows/Mac/Linux") style "l_checkbox": 
+                            action PlatformToggle(True, "build_all")
+                        
+                        textbutton _("Windows x86") style "l_checkbox":
+                            action PlatformToggle(True, "build_windows")
+                        
+                        textbutton _("Macintosh x86") style "l_checkbox":
+                            action PlatformToggle(True, "build_mac")
+
+                        textbutton _("Linux x86/x86_64") style "l_checkbox":
+                            action PlatformToggle(True, "build_linux")
                                                            
                     add SPACER
 
@@ -161,13 +172,48 @@ screen build_distributions:
 
                         add HALF_SPACER
                         
-                        textbutton _("Include update information") style "l_checkbox"
-                        textbutton _("Build update packages") style "l_checkbox"
+                        textbutton _("Include update information") style "l_checkbox":
+                            action PlatformToggle(True, "include_update")
+                        textbutton _("Build update packages") style "l_checkbox":
+                            action PlatformToggle(project.current.data["include_update"], "build_update")
                                                            
                     add SPACER
 
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
+
+label change_directory_name:
+    python:
+        name = interface.input(
+            _("DIRECTORY NAME"),
+            _("The name that will will be uses for directories containing the project."),
+            filename=True,
+            cancel=Jump("build_distributions"),
+            default=project.current.data["directory_name"])
+
+        name = name.strip()
+        if name:
+            project.current.data["directory_name"] = name
+            project.current.save_data()
+        
+    jump build_distributions
+
+label change_executable_name:
+    python:
+        project.current.data["executable_name"] = interface.input(
+            _("EXECUTABLE NAME"),
+            _("The name that will will be uses for executables that the user can run to start the project."),
+            filename=True,
+            cancel=Jump("build_distributions"),
+            default=project.current.data["executable_name"])
+
+        name = name.strip()
+        if name:
+            project.current.data["executable_name"] = name
+            project.current.save_data()
+
+    jump build_distributions
+
 
 label build_distributions:
     call screen build_distributions

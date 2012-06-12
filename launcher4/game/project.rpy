@@ -43,16 +43,9 @@ init python in project:
                 self.gamedir = gamedir
             else:
                 self.gamedir = path
-
-            try:
-                f = open(os.path.join(path, "project.json"), "rb")
-                self.data = json.load(f)
-                f.close()
-            except:
-                self.data = { }
-
-            # Update the data.
-            self.update_data()
+            
+            # Load the data.
+            self.load_data()
 
             # The project's temporary directory.
             self.tmp = os.path.join(self.path, "tmp")
@@ -66,6 +59,28 @@ init python in project:
                 
             # The mtime of the last dump file loaded.
             self.dump_mtime = 0
+
+        def load_data(self):
+            try:
+                f = open(os.path.join(path, "project.json"), "rb")
+                self.data = json.load(f)
+                f.close()
+            except:
+                self.data = { }
+
+            self.update_data()
+
+
+        def save_data(self):
+            """
+            Saves the project data.
+            """
+
+            try:
+                with open(os.path.join(self.path, "project.json"), "wb") as f:
+                    json.dump(self.data, f)
+            except:
+                self.load_data()
 
         def update_data(self):
             data = self.data
@@ -88,19 +103,10 @@ init python in project:
             data.setdefault("build_all", True)
             data.setdefault("build_windows", False)
             data.setdefault("build_mac", False)
-            data.setdefault("build_linux", True)
+            data.setdefault("build_linux", False)
             
             data.setdefault("include_update", False)
             data.setdefault("build_update", False)
-
-        def save(self):
-            """
-            Saves the project's data dictionary out to disk.
-            """
-
-            f = open(os.path.join(path, "project.json"), "rb")
-            json.dump(self.data, f)
-            f.close()
             
         def make_tmp(self):
             """
