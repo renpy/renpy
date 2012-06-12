@@ -148,16 +148,16 @@ screen build_distributions:
 
                         add HALF_SPACER
                         
-                        textbutton _("Combined Windows/Mac/Linux") style "l_checkbox": 
+                        textbutton _("Combined Windows/Mac/Linux zip") style "l_checkbox": 
                             action PlatformToggle(True, "build_all")
                         
-                        textbutton _("Windows x86") style "l_checkbox":
+                        textbutton _("Windows x86 zip") style "l_checkbox":
                             action PlatformToggle(True, "build_windows")
                         
-                        textbutton _("Macintosh x86") style "l_checkbox":
+                        textbutton _("Macintosh x86 application zip") style "l_checkbox":
                             action PlatformToggle(True, "build_mac")
 
-                        textbutton _("Linux x86/x86_64") style "l_checkbox":
+                        textbutton _("Linux x86/x86_64 tar.bz2") style "l_checkbox":
                             action PlatformToggle(True, "build_linux")
                                                            
                     add SPACER
@@ -179,8 +179,143 @@ screen build_distributions:
                                                            
                     add SPACER
 
-
     textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Build") action Jump("distribute") style "l_right_button"
+
+
+# Shows the list of file patterns to the user, and allows the user to
+# edit that list.
+#
+# title
+#     The title of this file patterns section.
+# patterns
+#     The list of file patterns that are being exited.
+# description
+#     A description of what the patterns are being used for.
+screen edit_file_patterns:
+    
+    frame:
+        style_group "l"
+        style "l_root"
+        
+        window:
+    
+            has vbox
+
+            label title
+            
+            add HALF_SPACER
+
+            hbox:
+                
+                # Left side.
+                frame:
+                    style "l_indent"
+                    xmaximum 300
+                    xfill True
+                    
+                    
+                    viewport:
+                        scrollbars "vertical"
+                        
+                        has vbox
+                        
+                        for p in patterns:
+                            
+                            hbox:
+                                xfill True
+
+                                text "[p!q]"
+
+                                textbutton "×":
+                                    xalign 1.0
+                                    action RemovePattern(patterns, p)
+                                    xpadding 6
+                                    text_hover_color HOVER
+                                    text_color DANGER
+                            
+                            
+                    
+                # Right side.
+                frame:
+                    style "l_indent"
+                    xmaximum 454
+                    xfill True
+
+                    has vbox
+
+                    text description
+                    
+                    add SPACER
+                    add SPACER
+                    
+                    input style "l_default" size 24 xalign 0.5 default "" color "#d86b45"
+
+                    add SPACER
+                    add SPACER
+   
+                    text _("To add a new pattern, type it and press enter.") style "l_small_text"
+   
+                    add HALF_SPACER
+                
+                    text _("In these patterns, / is the directory separator, * matches any character but the directory separator, and ** matches any character.") style "l_small_text"
+                    
+                    add HALF_SPACER
+                    
+                    text _("For example, background/*.jpg matches JPG files in the background directory, while bg/**.jpg includes files in subdirectories.") style "l_small_text"
+
+
+    textbutton _("Back") action Jump("build_distributions") style "l_left_button"
+
+init python:
+    
+    class RemovePattern(object):
+        def __init__(self, patterns, pattern):
+            self.patterns = patterns
+            self.pattern = pattern
+            
+        def __call__(self):
+            if self.pattern in self.patterns:
+                self.patterns.remove(self.pattern)
+                
+            project.current.save_data()
+            renpy.restart_interaction()
+    
+    def edit_file_patterns(patterns, title, description):
+        patterns.sort(key = lambda a : a.lower())
+        
+        while True:
+            rv = renpy.call_screen("edit_file_patterns", patterns=patterns, title=title, description=description)
+            patterns.append(rv)
+            patterns.sort(key = lambda a : a.lower())
+            
+            project.current.save_data()
+            
+        
+label edit_ignore_patterns:
+    
+    python:
+        edit_file_patterns(
+            project.current.data['ignore_patterns'],
+            title=_("Ignore Patterns"),
+            description=_("If a file is matched by an ignore pattern, it is not included in the distribution. Ignore patterns are relative to the base directory."))
+
+label edit_archive_patterns:
+    
+    python:
+        edit_file_patterns(
+            project.current.data['archive_patterns'],
+            title=_("Archive Patterns"),
+            description=_("If a file is matched by an archive pattern, it is added to an archive file. This prevents casual users from seeing the file. Archive patterns are relative to the game directory."))
+
+label edit_doc_patterns:
+    
+    python:
+        edit_file_patterns(
+            project.current.data['documentation_patterns'],
+            title=_("Documentation Patterns"),
+            description=_("If a file is matched by a documentation pattern, it is added to the root directory of a Macintosh zip, outside of the application. Documentation patterns are relative to the base directory."))
+
 
 label change_directory_name:
     python:

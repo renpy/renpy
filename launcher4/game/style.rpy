@@ -21,6 +21,7 @@ init python:
     HOVER = "#d86b45"
     WHITE = "#ffffff"
     DISABLED = "#808080"
+    DANGER = "#d15353"
     
     # FONTS/WEIGHTS
     LIGHT = "Roboto-Light.ttf"

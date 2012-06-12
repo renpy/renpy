@@ -23,15 +23,10 @@ init python in distribute:
     # add to this.
     IGNORE_PATTERNS = [
         ("**/.*", None),
-        ("**/thumbs.db", None),
-        ("thumbs.db", None),
-        ("**~", None),
-        ("**.bak", None),
         ("**.old", None),
         ("**.new", None),
         ("**.rpa", None),
-        ("*/#*", None),
-        ("#*", None),
+        ("**/thumbs.db", None),
         ]
     
     BASEDIR_PATTERNS = [
@@ -41,19 +36,19 @@ init python in distribute:
         ("*.dll", None),
         ("*.manifest", None),
         
-        ("/lib/", None),
-        ("/renpy/", None),
-        ("/update/", None),
-        ("/common/", None),
-        ("/update/", None),
+        ("lib/", None),
+        ("renpy/", None),
+        ("update/", None),
+        ("common/", None),
+        ("update/", None),
         
-        ("/icon.ico", None),
-        ("/icon.icns", None),
-        ("/archived/", None),
-        ("/tmp/", None),
-        ("/launcherinfo.py", None),
-        ("/android.txt", None),
-        ("/project.json", None),
+        ("icon.ico", None),
+        ("icon.icns", None),
+        ("archived/", None),
+        ("tmp/", None),
+        ("launcherinfo.py", None),
+        ("android.txt", None),
+        ("project.json", None),
             
         ("**", "all"),
         ]
@@ -61,29 +56,29 @@ init python in distribute:
     ENGINE_PATTERNS = [
         ( "**/*.pyc", None),
     
-        ( "/renpy.py", "all"),
-        ( "/renpy/**", "all"),
-        ( "/common/**", "all"),
+        ( "renpy.py", "all"),
+        ( "renpy/**", "all"),
+        ( "common/**", "all"),
 
         # Windows-specific patterns.
-        ( "/python*.dll", "windows" ),
-        ( "/msvcr*.dll", "windows"),
-        ( "/Microsoft.VC*.CRT.manifest", "windows"),
-        ( "/lib/dxwebsetup.exe", "windows"),
-        ( "/lib/windows-x86/**", "windows"),
+        ( "python*.dll", "windows" ),
+        ( "msvcr*.dll", "windows"),
+        ( "Microsoft.VC*.CRT.manifest", "windows"),
+        ( "lib/dxwebsetup.exe", "windows"),
+        ( "lib/windows-x86/**", "windows"),
         
         # Linux patterns. 
-        ( "/renpy.sh", "linux"),
-        ( "/lib/linux-x86/**", "linux"),
-        ( "/lib/linux-x64/**", "linux"),
-        ( "/lib/python", "linux"),
+        ( "renpy.sh", "linux"),
+        ( "lib/linux-x86/**", "linux"),
+        ( "lib/linux-x64/**", "linux"),
+        ( "lib/python", "linux"),
         
         # Mac patterns.
-        ( "/renpy.app/Contents/Ren'Py Launcher", None),
-        ( "/renpy.app/Contents/Info.plist", None),
-        ( "/renpy.app/Contents/Resources/launcher.py", None),
-        ( "/renpy.app/Contents/Resources/launcher.icns", None),
-        ( "/renpy.app/**", "mac"),
+        ( "renpy.app/Contents/Ren'Py Launcher", None),
+        ( "renpy.app/Contents/Info.plist", None),
+        ( "renpy.app/Contents/Resources/launcher.py", None),
+        ( "renpy.app/Contents/Resources/launcher.icns", None),
+        ( "renpy.app/**", "mac"),
         
         # Shared patterns.
         ( "/lib/", "windows linux"),
@@ -161,8 +156,11 @@ init python in distribute:
             
         if regexp.match(s):
             return True
-        else:
-            return False
+    
+        if regexp.match("/" + s):
+            return True
+
+        return False
 
     class File(object):
         """
@@ -394,9 +392,9 @@ init python in distribute:
                 is_dir = os.path.isdir(path)
 
                 if is_dir:
-                    match_name = "/" + name + "/"
+                    match_name = name + "/"
                 else:
-                    match_name = "/" + name
+                    match_name = name
 
                 for pattern, file_list in patterns:
                     if match(match_name, pattern):
@@ -454,8 +452,8 @@ init python in distribute:
             Add Ren'Py-generic files to the project.
             """
                 
-            self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "game/script_version.rpy"))
-            self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "game/script_version.rpyc"))
+            self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "script_version.rpy"))
+            self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
             self.add_file("all", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
                 
         def add_mac_files(self):

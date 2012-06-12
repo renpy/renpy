@@ -62,7 +62,7 @@ init python in project:
 
         def load_data(self):
             try:
-                f = open(os.path.join(path, "project.json"), "rb")
+                f = open(os.path.join(self.path, "project.json"), "rb")
                 self.data = json.load(f)
                 f.close()
             except:
@@ -85,20 +85,12 @@ init python in project:
         def update_data(self):
             data = self.data
             
-            if "directory_name" not in data:
-                data["directory_name"] = self.name + "-1.0"
-                
-            if "executable_name" not in data:
-                data["executable_name"] = self.name
-                
-            if "ignore_patterns" not in data:
-                data["ignore_patterns"] = [ "**~", "**.bak" ]
+            data.setdefault("directory_name", self.name + "-1.0")
+            data.setdefault("executable_name", self.name)
             
-            if "archive_patterns" not in data:
-                data["archive_patterns"] = [ ]
-                
-            if "documentation_patterns" not in data:
-                data["documentation_patterns"] = [ "*.html", "*.txt" ]
+            data.setdefault("ignore_patterns", [ "**~", "**.bak", "**/#*" ])
+            data.setdefault("archive_patterns", [ ])
+            data.setdefault("documentation_patterns", [ "*.html", "*.txt" ])
                 
             data.setdefault("build_all", True)
             data.setdefault("build_windows", False)
@@ -107,7 +99,7 @@ init python in project:
             
             data.setdefault("include_update", False)
             data.setdefault("build_update", False)
-            
+                                                                                                                                                                                                                                                                                                                                                                                                              
         def make_tmp(self):
             """
             Makes the project's temporary directory, if it doesn't exist 
