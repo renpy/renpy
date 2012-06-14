@@ -80,6 +80,9 @@ screen bottom_info:
                     
 screen common:
     
+    default complete = None
+    default total = None
+    
     frame:
         style "l_root"
 
@@ -92,6 +95,17 @@ screen common:
                 text_align 0.5
                 xalign 0.5
                 layout "subtitle"
+        
+            if complete is not None:
+                add SPACER
+                
+                frame:
+                    style "l_progress_frame"
+                    
+                    bar:
+                        range total
+                        value complete
+                        style "l_progress_bar"
         
             if submessage:
                 add SPACER
@@ -308,7 +322,7 @@ init python in interface:
 
         common(title, "#d19753", message, submessage, pause0=True, **kwargs)
         
-    def processing(message, submessage=None, **kwargs):
+    def processing(message, submessage=None, complete=None, total=None, **kwargs):
         """
         Indicates to the user that processing is taking place. This should be used when
         there is an indefinite amount of work to be done.
@@ -318,10 +332,18 @@ init python in interface:
         
         `submessage`
             An additional message to display.
+
+        `complete`
+            The fraction complete the step is.
+        
+        `total`
+            The total amount of work to do in this step.
         
         Keyword arguments are passed into the screen so that they can be substituted into
         the message.
         """
 
-        common(_("PROCESSING"), "#545454", message, submessage, pause0=True, **kwargs) 
+        common(_("PROCESSING"), "#545454", message, submessage, pause0=True, complete=complete, total=total, **kwargs) 
 
+        
+        

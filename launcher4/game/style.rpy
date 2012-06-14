@@ -231,5 +231,15 @@ init python:
     style.l_nonbox.xpadding = INDENT
     style.l_nonbox_text = Style(style.l_button_text)
     style.l_nonbox_text.selected_font = LIGHT
+        
+    # A progress bar and its frame.
+    style.l_progress_frame = Style(style.l_default)
+    style.l_progress_frame.background = Frame("pattern.png", 0, 0, tile=True)
+    style.l_progress_frame.ypadding = 5
     
+    style.l_progress_bar = Style(style.l_default)
+    style.l_progress_bar.left_bar = LIGHT_IDLE
+    style.l_progress_bar.right_bar = Null()
+    style.l_progress_bar.ymaximum = 24
+
 

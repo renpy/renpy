@@ -10,6 +10,7 @@ init python in distribute:
 
     from store import config, persistent
     import store.project as project
+    import store.interface as interface
 
     from change_icon import change_icons
 
@@ -26,7 +27,6 @@ init python in distribute:
         ("**.old", None),
         ("**.new", None),
         ("**.rpa", None),
-        ("**/thumbs.db", None),
         ]
     
     BASEDIR_PATTERNS = [
@@ -304,12 +304,17 @@ init python in distribute:
             # Map from file list name to file list.
             self.file_lists = collections.defaultdict(FileList)
 
-            self.base_name = project.name
-            self.executable_name = project.name
+            self.base_name = project.data['directory_name']
+            self.executable_name = project.data['executable_name']
     
             # The destination directory.
             if destination is None:
-                self.destination = persistent.projects_directory
+                parent = os.path.dirname(project.path)
+                self.destination = os.path.join(parent, self.base_name + "-dists")
+                try:
+                    os.makedirs(self.destination)
+                except:
+                    pass
             else:
                 self.destination = destination
 
@@ -317,10 +322,13 @@ init python in distribute:
             self.reporter = reporter
 
             # The platforms we can build for.
-            self.linux = True
-            self.mac = True
-            self.windows = True
-            self.all = True
+            self.linux = project.data['build_linux']
+            self.mac = project.data['build_mac']
+            self.windows = project.data['build_windows']
+            self.all = project.data['build_all']
+
+            self.include_update = project.data['include_update']
+            self.build_update = self.include_update and project.data['build_update']
 
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
@@ -328,9 +336,17 @@ init python in distribute:
             self.sh = self.executable_name + ".sh"
             self.py = self.executable_name + ".py"
 
+            self.documentation_patterns = project.data['documentation_patterns']
+
             # add the game.
             self.reporter.info(_("Scanning project files."))
-            self.scan_and_classify(project.path, IGNORE_PATTERNS + BASEDIR_PATTERNS)
+
+            patterns = [ ]
+            patterns.extend(IGNORE_PATTERNS)
+            patterns.extend((i, None) for i in project.data['ignore_patterns'])
+            patterns.extend(("game/" + i, "archive") for i in project.data['archive_patterns'])
+            patterns.extend(BASEDIR_PATTERNS)
+            self.scan_and_classify(project.path, patterns)
 
             # Add Ren'Py.
             self.reporter.info(_("Scanning Ren'Py files."))
@@ -351,24 +367,25 @@ init python in distribute:
             self.update_version = int(time.time())
 
             # Create the normal packages.
-            if self.linux:
-                self.make_package("linux", "tar.bz2", "linux all")
+            if self.all:
+                self.make_package("all", "zip", "linux windows mac all")
             if self.windows:
                 self.make_package("windows", "zip", "windows all")
             if self.mac:
                 self.make_package("mac", "zip", "mac all", mac_transform=True)
-            if self.all:
-                self.make_package("all", "zip", "linux windows mac all")
+            if self.linux:
+                self.make_package("linux", "tar.bz2", "linux all")
 
             # Create the update packages.
-            if self.linux:
-                self.make_package("linux", "update", "linux all")
-            if self.windows:
-                self.make_package("windows", "update", "windows all")
-            if self.mac:
-                self.make_package("mac", "update", "mac all")
-            if self.all:
-                self.make_package("all", "update", "linux windows mac all")
+            if self.build_update:
+                if self.all:
+                    self.make_package("all", "update", "linux windows mac all")
+                if self.windows:
+                    self.make_package("windows", "update", "windows all")
+                if self.mac:
+                    self.make_package("mac", "update", "mac all")
+                if self.linux:
+                    self.make_package("linux", "update", "linux all")
 
             self.finish_updates()
 
@@ -601,12 +618,13 @@ init python in distribute:
             with open(update_fn, "w") as f:
                 json.dump(update, f)
             
-            fl.append(File("update", None, True, False))
-            fl.append(File("update/current.json", update_fn, False, False))
+            if self.include_update:
+                fl.append(File("update", None, True, False))
+                fl.append(File("update/current.json", update_fn, False, False))
             
             # The mac transform.
             if mac_transform:
-                fl = fl.mac_transform(self.app, [])
+                fl = fl.mac_transform(self.app, self.documentation_patterns)
             
             # If we're not an update file, prepend the directory.
 
@@ -629,7 +647,7 @@ init python in distribute:
                 pkg = ZipPackage(filename)
                 
             for i, f in enumerate(fl):
-                self.reporter.progress(variant + " " + format, i, len(fl))
+                self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
                         
                 if f.directory:
                     pkg.add_directory(f.name, f.path)
@@ -643,7 +661,7 @@ init python in distribute:
             if format == "update":
                 # Build the zsync file.
                 # TODO: This should use an included copy of zsyncmake.
-                self.reporter.info(_("Making zsync file."))
+                self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
                 subprocess.check_call([ 
                     "zsyncmake", 
                     "-z", renpy.fsencode(filename), 
@@ -654,7 +672,10 @@ init python in distribute:
             """
             Indexes the updates, then removes the .update files.
             """
-            
+
+            if not self.build_update:
+                return
+
             index = { }
             
             def add_variant(variant):
@@ -693,22 +714,53 @@ init python in distribute:
                 for i in v:
                     print "   ", i.name, "xbit" if i.executable else ""
 
+    class GuiReporter(object):
+        """
+        Displays progress using the gui.
+        """
+        
+        def __init__(self):
+            # The time at which we should next report progress.
+            self.next_progress = 0
+
+        def info(self, what, **kwargs):
+            interface.processing(what, **kwargs)
+
+        def progress(self, what, complete, total, **kwargs):
+            
+            if (complete > 0) and (time.time() < self.next_progress):
+                return
+                
+            interface.processing(what, _("Processed {b}[complete]{/b} of {b}[total]{/b} files."), complete=complete, total=total, **kwargs)
+            
+            self.next_progress = time.time() + .05
+
+        def progress_done(self):
+            return
+
 
     class TextReporter(object):
         """
         Displays progress on the command line.
         """
         
-        def info(self, msg):
-            print msg
+        def info(self, what):
+            what = what.replace("[", "{")
+            what = what.replace("]", "}")
+            what = what.format(kwargs)
+            print what
             
-        def progress(self, what, done, total):
+        def progress(self, what, done, total, **kwargs):
+            what = what.replace("[", "{")
+            what = what.replace("]", "}")
+            what = what.format(kwargs)
+            
             sys.stdout.write("\rWriting {}: {} of {}".format(what, done, total))
             sys.stdout.flush()
             
         def progress_done(self):
             print
-        
+
 
     def distribute_command():
         ap = renpy.arguments.ArgumentParser()
@@ -727,7 +779,9 @@ init python in distribute:
             
 label distribute:
 
-    $ distribute.Distributor(project.current)
+    $ distribute.Distributor(project.current, reporter=distribute.GuiReporter())
+
+    # TODO: Done screen.
 
     jump front_page
     

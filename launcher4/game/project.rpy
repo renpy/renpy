@@ -88,7 +88,7 @@ init python in project:
             data.setdefault("directory_name", self.name + "-1.0")
             data.setdefault("executable_name", self.name)
             
-            data.setdefault("ignore_patterns", [ "**~", "**.bak", "**/#*" ])
+            data.setdefault("ignore_patterns", [ "**~", "**.bak", "**/#*", "**/thumbs.db" ])
             data.setdefault("archive_patterns", [ ])
             data.setdefault("documentation_patterns", [ "*.html", "*.txt" ])
                 
