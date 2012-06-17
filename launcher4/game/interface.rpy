@@ -1,7 +1,7 @@
 ################################################################################
 # Interface actions.
 init python in interface:
-    from store import OpenURL, config
+    from store import OpenURL, config, Return
 
     import os.path
     import contextlib
@@ -82,6 +82,8 @@ screen common:
     
     default complete = None
     default total = None
+    default yes = None
+    default no = None
     
     frame:
         style "l_root"
@@ -114,6 +116,16 @@ screen common:
                     text_align 0.5
                     xalign 0.5
                     layout "subtitle"
+
+            if yes:
+                add SPACER
+                
+                hbox:
+                    xalign 0.5
+                    textbutton _("Yes") style "l_button" action yes
+                    null width 160
+                    textbutton _("No") style "l_button" action no
+                
 
         label title text_color title_color style "l_info_label"
 
@@ -346,4 +358,19 @@ init python in interface:
         common(_("PROCESSING"), "#545454", message, submessage, pause0=True, complete=complete, total=total, **kwargs) 
 
         
+    def yesno(message, yes=Return(True), no=Return(False), **kwargs):
+        """
+        Asks the user a yes or no question.
+        
+        `message`
+            The question to ask.
+        
+        `yes`
+            The action to perform if the user answers yes.
+        
+        `no`
+            The action to perform if the user answer no.
+        """
+
+        return common(_("QUESTION"), "#d19753", message, yes=yes, no=no, **kwargs)
         

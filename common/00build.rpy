@@ -196,7 +196,7 @@ init -1000 python in build:
             raise Exception("Format {} not known.".format(format))
             
         if description is None:
-            description = Name
+            description = name
             
         d = {
             "name" : name,

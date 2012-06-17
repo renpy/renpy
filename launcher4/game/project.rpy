@@ -85,21 +85,9 @@ init python in project:
         def update_data(self):
             data = self.data
             
-            data.setdefault("directory_name", self.name + "-1.0")
-            data.setdefault("executable_name", self.name)
-            
-            data.setdefault("ignore_patterns", [ "**~", "**.bak", "**/#*", "**/thumbs.db" ])
-            data.setdefault("archive_patterns", [ ])
-            data.setdefault("documentation_patterns", [ "*.html", "*.txt" ])
-                
-            data.setdefault("build_all", True)
-            data.setdefault("build_windows", False)
-            data.setdefault("build_mac", False)
-            data.setdefault("build_linux", False)
-            
-            data.setdefault("include_update", False)
             data.setdefault("build_update", False)
-                                                                                                                                                                                                                                                                                                                                                                                                              
+            data.setdefault("packages", [ "all" ])
+
         def make_tmp(self):
             """
             Makes the project's temporary directory, if it doesn't exist 
@@ -139,7 +127,7 @@ init python in project:
                 if wait:
                     p.wait()
                 
-        def update_dump(self, force=False):
+        def update_dump(self, force=False, gui=True):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise, 
             loads it in iff it's newer than the one that's already loaded.
@@ -148,7 +136,9 @@ init python in project:
             if force or not os.path.exists(self.dump_filename):
                 self.make_tmp()
                 
-                interface.processing(_("Ren'Py is scanning the project..."))
+                if gui:
+                    interface.processing(_("Ren'Py is scanning the project..."))
+                
                 self.launch(["quit"], wait=True)
             
             if not os.path.exists(self.dump_filename):

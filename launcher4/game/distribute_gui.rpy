@@ -1,30 +1,101 @@
 init python:
-    def PlatformToggle(condition, item):
-        if condition:
-            return [ ToggleDict(project.current.data, item), project.current.save_data ]
-        else:
-            return None
-
-# This represents a pattern list link.
-#
-# Parameters:
-# patterns
-#     The list of patterns in question.
-# singular
-#     How we refer to the patterns in the singular.
-# plural
-#     How we refer to the patterns in the plural.
-# action
-#     What we do when the patterns are clicked.
-screen pattern_list_link:
+    class PackageToggle(Action):
+        def __init__(self, name):
+            self.name = name
+            
+        def get_selected(self):
+            return self.name in project.current.data['packages'] 
     
-    # Projects directory selection.
-    $ count = len(patterns)
+        def __call__(self):
+            packages = project.current.data['packages']
+    
+            if self.name in packages:
+                packages.remove(self.name)
+            else:
+                packages.append(self.name)
+                
+            project.current.save_data()
+            renpy.restart_interaction()
 
-    if count == 1:
-        textbutton singular action action
-    else:
-        textbutton plural action action
+    class DataToggle(Action):
+        def __init__(self, field):
+            self.field = field
+            
+        def get_selected(self):
+            return project.current.data[self.field]
+            
+        def __call__(self):
+            project.current.data[self.field] = not project.current.data[self.field]
+            
+            project.current.save_data()
+            renpy.restart_interaction()
+
+
+    DEFAULT_BUILD_INFO = """
+                         
+## This section contains information about how to build your project into 
+## distribution files.
+init python:
+    
+    ## The name that's used for directories and archive files. For example, if
+    ## this is 'mygame-1.0', the windows distribution will be in the
+    ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
+    build.directory_name = "PROJECTNAME-1.0"
+    
+    ## The name that's uses for executables - the program that users will run
+    ## to start the game. For example, if this is 'mygame', then on Windows,
+    ## users can click 'mygame.exe' to start the game.
+    build.executable_name = "PROJECTNAME"
+    
+    ## If True, Ren'Py will include update information into packages. This
+    ## allows the updater to run.
+    build.include_update = False
+    
+    ## File patterns:
+    ## 
+    ## The following functions take file patterns. File patterns are case-
+    ## insensitive, and matched against the path relative to the base
+    ## directory, with and without a leading /. If multiple patterns match,
+    ## the first is used.
+    ##    
+    ##
+    ## In a pattern:
+    ##
+    ## / 
+    ##     Is the directory separator.
+    ## *
+    ##     Matches all characters, except the directory separator.
+    ## **
+    ##     Matches all characters, including the directory separator.
+    ##
+    ## For example:
+    ##
+    ## *.txt
+    ##     Matches txt files in the base directory.
+    ## game/**.ogg
+    ##     Matches ogg files in the game directory or any of its subdirectories.
+    ## **.psd
+    ##    Matches psd files anywhere in the project.
+
+    ## Classify files as None to exclude them from the built distributions.
+
+    build.classify('**~', None)
+    build.classify('**.bak', None)
+    build.classify('**/.**', None)
+    build.classify('**/#**', None)
+    build.classify('**/thumbs.db', None)
+    
+    ## To archive files, classify them as 'archive'.
+    
+    # build.classify('game/**.png', 'archive')
+    # build.classify('game/**.jpg', 'archive')
+
+    ## Files matching documentation patterns are duplicated in a mac app
+    ## build, so they appear in both the app and the zip file.
+
+    build.documentation('*.html')
+    build.documentation('*.txt')
+    """
 
 # A screen that displays a file or directory name, and 
 # lets the user change it,
@@ -33,9 +104,7 @@ screen pattern_list_link:
 #     The title of the link.
 # value
 #     The value of the field.
-# action
-#     What to do when the link is clicked.
-screen name_change_link:
+screen distribute_name:
     
     add SEPARATOR2
          
@@ -47,8 +116,9 @@ screen name_change_link:
         
         add HALF_SPACER
         
-        textbutton "[value!q]" action action xpadding INDENT
-
+        frame:
+            style "l_indent"
+            text "[value!q]"
 
     add SPACER
 
@@ -77,15 +147,13 @@ screen build_distributions:
                     
                     has vbox
 
-                    use name_change_link(
+                    use distribute_name(
                         title=_("Directory Name:"),
-                        value=project.current.data["directory_name"],
-                        action=Jump("change_directory_name"))
-                    
-                    use name_change_link(
+                        value=project.current.dump["build"]["directory_name"])
+
+                    use distribute_name(
                         title=_("Executable Name:"),
-                        value=project.current.data["executable_name"],
-                        action=Jump("change_executable_name"))
+                        value=project.current.dump["build"]["executable_name"])
 
                     add SEPARATOR2
                          
@@ -93,41 +161,16 @@ screen build_distributions:
                         style "l_indent"
                         has vbox
                         
-                        text _("File Patterns:")
+                        text _("Actions:")
                         
                         add HALF_SPACER
-                        
-                        frame:
-                            style "l_indent"
+
+                        frame style "l_indent":
                             
                             has vbox
-                        
-                            use pattern_list_link(
-                                patterns=project.current.data["ignore_patterns"], 
-                                singular=_("[count] ignore pattern"),
-                                plural=_("[count] ignore patterns"),
-                                action=Jump("edit_ignore_patterns"),
-                                )
 
-                            add HALF_SPACER
-
-                            use pattern_list_link(
-                                patterns=project.current.data["archive_patterns"], 
-                                singular=_("[count] archive pattern"),
-                                plural=_("[count] archive patterns"),
-                                action=Jump("edit_archive_patterns"),
-                                )
-
-                            add HALF_SPACER
-
-                            use pattern_list_link(
-                                patterns=project.current.data["documentation_patterns"], 
-                                singular=_("[count] documentation pattern"),
-                                plural=_("[count] documentation patterns"),
-                                action=Jump("edit_doc_patterns"),
-                                )
-                        
-                    add SPACER
+                            textbutton _("Edit options.rpy") action editor.Edit("game/options.rpy", check=True)
+                            textbutton _("Refresh") action Jump("build_distributions")
                         
                     
                 # Right side.
@@ -144,213 +187,58 @@ screen build_distributions:
                         style "l_indent"
                         has vbox
                         
-                        text _("Build Platforms:")
+                        text _("Build Packages:")
 
                         add HALF_SPACER
-                        
-                        textbutton _("Combined Windows/Mac/Linux zip") style "l_checkbox": 
-                            action PlatformToggle(True, "build_all")
-                        
-                        textbutton _("Windows x86 zip") style "l_checkbox":
-                            action PlatformToggle(True, "build_windows")
-                        
-                        textbutton _("Macintosh x86 application zip") style "l_checkbox":
-                            action PlatformToggle(True, "build_mac")
 
-                        textbutton _("Linux x86/x86_64 tar.bz2") style "l_checkbox":
-                            action PlatformToggle(True, "build_linux")
+                        $ packages = project.current.dump["build"]["packages"]
+                        
+                        for pkg in packages:
+                            
+                            $ description = pkg["description"]
+                            
+                            textbutton "[description!q]" action PackageToggle(pkg["name"]) style "l_checkbox"
                                                            
-                    add SPACER
-                    null height 6
+                        add SPACER
 
-                    add SEPARATOR2
-                         
-                    frame:
-                        style "l_indent"
-                        has vbox
-                        
-                        text _("Build Options:")
+                        if project.current.dump["build"]["include_update"]:
+                            textbutton _("Build Updates") action DataToggle("build_update") style "l_checkbox"
 
-                        add HALF_SPACER
-                        
-                        textbutton _("Include update information") style "l_checkbox":
-                            action PlatformToggle(True, "include_update")
-                        textbutton _("Build update packages") style "l_checkbox":
-                            action PlatformToggle(project.current.data["include_update"], "build_update")
-                                                           
-                    add SPACER
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
     textbutton _("Build") action Jump("distribute") style "l_right_button"
 
-
-# Shows the list of file patterns to the user, and allows the user to
-# edit that list.
-#
-# title
-#     The title of this file patterns section.
-# patterns
-#     The list of file patterns that are being exited.
-# description
-#     A description of what the patterns are being used for.
-screen edit_file_patterns:
-    
-    frame:
-        style_group "l"
-        style "l_root"
+label build_update_dump:
+    python:
+        project.current.update_dump(True)
         
-        window:
-    
-            has vbox
-
-            label title
+        if project.current.dump.get("error", False):
+            interface.error(_("Errors were detected when running the project. Please ensure the project runs without errors before building distributions."))
             
-            add HALF_SPACER
-
-            hbox:
-                
-                # Left side.
-                frame:
-                    style "l_indent"
-                    xmaximum 300
-                    xfill True
-                    
-                    
-                    viewport:
-                        scrollbars "vertical"
-                        
-                        has vbox
-                        
-                        for p in patterns:
-                            
-                            hbox:
-                                xfill True
-
-                                text "[p!q]"
-
-                                textbutton "×":
-                                    xalign 1.0
-                                    action RemovePattern(patterns, p)
-                                    xpadding 6
-                                    text_hover_color HOVER
-                                    text_color DANGER
-                            
-                            
-                    
-                # Right side.
-                frame:
-                    style "l_indent"
-                    xmaximum 454
-                    xfill True
-
-                    has vbox
-
-                    text description
-                    
-                    add SPACER
-                    add SPACER
-                    
-                    input style "l_default" size 24 xalign 0.5 default "" color "#d86b45"
-
-                    add SPACER
-                    add SPACER
-   
-                    text _("To add a new pattern, type it and press enter.") style "l_small_text"
-   
-                    add HALF_SPACER
-                
-                    text _("In these patterns, / is the directory separator, * matches any character but the directory separator, and ** matches any character.") style "l_small_text"
-                    
-                    add HALF_SPACER
-                    
-                    text _("For example, background/*.jpg matches JPG files in the background directory, while bg/**.jpg includes files in subdirectories.") style "l_small_text"
-
-
-    textbutton _("Back") action Jump("build_distributions") style "l_left_button"
-
-init python:
-    
-    class RemovePattern(object):
-        def __init__(self, patterns, pattern):
-            self.patterns = patterns
-            self.pattern = pattern
-            
-        def __call__(self):
-            if self.pattern in self.patterns:
-                self.patterns.remove(self.pattern)
-                
-            project.current.save_data()
-            renpy.restart_interaction()
-    
-    def edit_file_patterns(patterns, title, description):
-        patterns.sort(key = lambda a : a.lower())
-        
-        while True:
-            rv = renpy.call_screen("edit_file_patterns", patterns=patterns, title=title, description=description)
-            patterns.append(rv)
-            patterns.sort(key = lambda a : a.lower())
-            
-            project.current.save_data()
-            
-        
-label edit_ignore_patterns:
-    
-    python:
-        edit_file_patterns(
-            project.current.data['ignore_patterns'],
-            title=_("Ignore Patterns"),
-            description=_("If a file is matched by an ignore pattern, it is not included in the distribution. Ignore patterns are relative to the base directory."))
-
-label edit_archive_patterns:
-    
-    python:
-        edit_file_patterns(
-            project.current.data['archive_patterns'],
-            title=_("Archive Patterns"),
-            description=_("If a file is matched by an archive pattern, it is added to an archive file. This prevents casual users from seeing the file. Archive patterns are relative to the game directory."))
-
-label edit_doc_patterns:
-    
-    python:
-        edit_file_patterns(
-            project.current.data['documentation_patterns'],
-            title=_("Documentation Patterns"),
-            description=_("If a file is matched by a documentation pattern, it is added to the root directory of a Macintosh zip, outside of the application. Documentation patterns are relative to the base directory."))
-
-
-label change_directory_name:
-    python:
-        name = interface.input(
-            _("DIRECTORY NAME"),
-            _("The name that will will be uses for directories containing the project."),
-            filename=True,
-            cancel=Jump("build_distributions"),
-            default=project.current.data["directory_name"])
-
-        name = name.strip()
-        if name:
-            project.current.data["directory_name"] = name
-            project.current.save_data()
-        
-    jump build_distributions
-
-label change_executable_name:
-    python:
-        project.current.data["executable_name"] = interface.input(
-            _("EXECUTABLE NAME"),
-            _("The name that will will be uses for executables that the user can run to start the project."),
-            filename=True,
-            cancel=Jump("build_distributions"),
-            default=project.current.data["executable_name"])
-
-        name = name.strip()
-        if name:
-            project.current.data["executable_name"] = name
-            project.current.save_data()
-
-    jump build_distributions
-
+    return
 
 label build_distributions:
+    
+    call build_update_dump
+    
+    if not project.current.dump["build"]["directory_name"]:
+        jump build_missing
+
     call screen build_distributions
+
+label build_missing:
+    
+    python hide:
+        
+        interface.yesno(_("Your project does not contain build information. Would you like to add build information to the end of options.rpy?"), yes=Return(True), no=Jump("front_page"))
+
+        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project.current.name)
+        
+        with open(os.path.join(project.current.path, "game", "options.rpy"), "a") as f:
+            f.write(build_info)
+
+    jump build_distributions
+    
+    
+
     
