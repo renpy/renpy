@@ -225,6 +225,12 @@ def dump(error):
                     code[prefix + name] = [ filename, line ]
                 except:
                     continue
+   
+    # Add the build info from 00build.rpy, if it's available.
+    try:
+        result["build"] = renpy.store.build.dump()
+    except:
+        pass
         
     if args.json_dump != "-":
         with file(args.json_dump, "w") as f:
