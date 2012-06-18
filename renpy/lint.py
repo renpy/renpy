@@ -24,6 +24,7 @@ import renpy.text
 import codecs
 import time
 import re
+import sys
 
 image_prefixes = None
 
@@ -487,7 +488,14 @@ def lint():
     other checks.
     """
     
-    renpy.arguments.takes_no_arguments("Checks the script for errors and prints script statistics.")
+    ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.")
+    ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
+    
+    args = ap.parse_args()
+
+    if args.filename:
+        f = open(args.filename, "wb")
+        sys.stdout = f
     
     renpy.game.lint = True
     

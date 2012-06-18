@@ -99,6 +99,14 @@ init python in project:
             except:
                 pass
             
+        def temp_filename(self, filename):
+            """
+            Returns a filename in the temporary directory.
+            """
+            
+            self.make_tmp()
+            return os.path.join(self.tmp, filename)
+            
         def launch(self, args=[], wait=False):
 
             if renpy.renpy.windows and sys.argv[0].endswith(".exe"):

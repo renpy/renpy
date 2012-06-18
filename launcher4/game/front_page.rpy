@@ -130,7 +130,7 @@ screen front_page_project:
                 text _("Open Directory:")
                 textbutton _("game") action OpenDirectory("game") style "l_list" 
                 textbutton _("base") action OpenDirectory(".") style "l_list"
-                textbutton _("images") action OpenDirectory("game/images") style "l_list"
+                # textbutton _("images") action OpenDirectory("game/images") style "l_list"
                 # textbutton _("save") action None style "l_list"
                 
             vbox:
@@ -155,7 +155,7 @@ screen front_page_project:
                 xfill True
                 
                 vbox:
-                    textbutton _("Check Script (Lint)")
+                    textbutton _("Check Script (Lint)") action Jump("lint")
                     textbutton _("Change Theme") action Jump("choose_theme")
                     textbutton _("Delete Persistent")
                     
@@ -175,3 +175,18 @@ label front_page:
         
     call screen front_page 
     
+    
+label lint:
+    python hide:
+
+        interface.processing(_("Checking script for potential problems..."))
+        lint_fn = project.current.temp_filename("lint.txt")
+        
+        project.current.launch([ 'lint', lint_fn ], wait=True)
+        
+        e = renpy.editor.editor
+        e.begin(True)
+        e.open(lint_fn)
+        e.end()
+
+    jump front_page
