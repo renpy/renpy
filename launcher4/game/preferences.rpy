@@ -52,8 +52,13 @@ screen preferences:
                         style "l_indent"
                         has vbox
                         
-                        text _("Update URL:")
+                        text _("Update Channel:")
+
+                        add HALF_SPACER 
                         
+                        for source, url in UPDATE_URLS:
+                            textbutton source action SetField(persistent, "update_url", url) style "l_list"
+
                     add SPACER
 
                     # Navigation Options.

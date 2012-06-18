@@ -4,6 +4,15 @@ init python:
     # It must be None for a release.
     UPDATE_SIMULATE = None
     
+    UPDATE_URLS = [
+        ("Release", "http://update.renpy.org/release/update.json" ),
+        ("Pre-Release", "http://update.renpy.org/prerelease/update.json" ),
+        ("Experimental", "http://update.renpy.org/experimental/update.json" ),
+        ]
+    
+    if persistent.update_url is None:
+        persistent.update_url = UPDATE_URLS[0][1]
+    
 screen updater:
         
     frame:
@@ -61,7 +70,7 @@ screen updater:
 label update:
     
     python:
-        updater.update("http://update.renpy.org/stable/update.json", simulate=UPDATE_SIMULATE)
+        updater.update(persistent.update_url, simulate=UPDATE_SIMULATE, key="renpy_public.pem")
     
     # This should never happen.
     jump front_page
