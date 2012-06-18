@@ -95,11 +95,13 @@ init -1000 python in build:
         ("update/", None),
         ("common/", None),
         ("update/", None),
-
+        
         ("icon.ico", None),
         ("icon.icns", None),
         ("project.json", None),
+
         ("tmp/", None),
+        ("game/saves/", None),
 
         ("archived/", None),
         ("launcherinfo.py", None),
@@ -129,6 +131,13 @@ init -1000 python in build:
         """
         
         base_patterns[:] = [ ]
+      
+    def remove(l, pattern):
+        """
+        Removes the pattern from the list.
+        """
+        
+        l[:] = [ (p, fl) for i in l if p != pattern ]
       
     # Archiving.
       

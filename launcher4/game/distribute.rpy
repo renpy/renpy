@@ -11,6 +11,7 @@ init python in distribute:
     from store import config, persistent
     import store.project as project
     import store.interface as interface
+    import store.archiver as archiver
 
     from change_icon import change_icons
 
@@ -357,6 +358,8 @@ init python in distribute:
 
             self.scan_and_classify(project.path, build["base_patterns"])
 
+            self.archive_files(build["archives"])
+
             # Add Ren'Py.
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
@@ -462,11 +465,47 @@ init python in distribute:
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
         
+            if isinstance(file_list, basestring):
+                file_list = file_list.split()
+        
             f = File(name, path, False, False)
         
-            for fl in file_list.split():
+            for fl in file_list:
                 self.file_lists[fl].append(f)
+
+        def archive_files(self, archives):
+            """
+            Add files to archives.
+            """
+            
+            for arcname, file_list in archives:
                 
+                if not self.file_lists[arcname]:
+                    continue
+                        
+                arcfn = arcname + ".rpa"
+                arcpath = self.temp_filename(arcfn)
+                    
+                af = archiver.Archive(arcpath)
+                    
+                fll = len(self.file_lists[arcname])
+                 
+                for i, entry in enumerate(self.file_lists[arcname]):
+
+                    if entry.directory:
+                        continue
+
+                    self.reporter.progress(_("Archiving files..."), i, fll)
+
+                    name = "/".join(entry.name.split("/")[1:])
+                    af.add(name, entry.path)
+                    
+                self.reporter.progress_done()
+                    
+                af.close()
+                
+                self.add_file(file_list, "game/" + arcfn, arcpath)
+
         def add_renpy_files(self):
             """
             Add Ren'Py-generic files to the project.
