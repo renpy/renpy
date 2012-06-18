@@ -1451,18 +1451,17 @@ def call_screen(_screen_name, **kwargs):
 
     try:
         rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
-        renpy.exports.checkpoint(rv)
-    except renpy.game.JumpException:
+    except renpy.game.JumpException, e:
+        rv = e 
 
-        with_none = renpy.config.implicit_with_none
-        if with_none:
-            renpy.game.interface.do_with(None, None)
-
-        raise
+    renpy.exports.checkpoint(rv)
 
     with_none = renpy.config.implicit_with_none
     if with_none:
         renpy.game.interface.do_with(None, None)
+
+    if isinstance(rv, renpy.game.JumpException):
+        raise rv
 
     return rv
     
