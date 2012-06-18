@@ -157,7 +157,7 @@ screen front_page_project:
                 vbox:
                     textbutton _("Check Script (Lint)") action Jump("lint")
                     textbutton _("Change Theme") action Jump("choose_theme")
-                    textbutton _("Delete Persistent")
+                    textbutton _("Delete Persistent") action Jump("rmpersistent")
                     
                 vbox:
                     
@@ -190,3 +190,12 @@ label lint:
         e.end()
 
     jump front_page
+
+label rmpersistent:
+    
+    python hide:
+        interface.processing(_("Deleting persistent data..."))
+        project.current.launch([ 'rmpersistent' ], wait=True)
+        
+    jump front_page
+    
