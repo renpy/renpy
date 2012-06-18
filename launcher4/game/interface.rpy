@@ -73,7 +73,9 @@ screen bottom_info:
                     spacing INDENT
                     xalign 1.0
 
-                    textbutton _("update") style "l_link"
+                    if ability.can_update:
+                        textbutton _("update") action Jump("update") style "l_link"
+                    
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
 

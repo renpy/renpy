@@ -232,6 +232,9 @@ init -1000 python in build:
     # Should we include update information into the archives?
     include_update = False
     
+    # A verbose version to include in the update.
+    version = None
+    
     # This function is called by the json_dump command to dump the build data 
     # into the json file.
     def dump():
@@ -246,5 +249,6 @@ init -1000 python in build:
         rv["documentation_patterns"] = documentation_patterns
         rv["base_patterns"] = early_base_patterns + base_patterns + late_base_patterns
         rv["renpy_patterns"] = renpy_patterns
+        rv["version"] = version or directory_name
     
         return rv

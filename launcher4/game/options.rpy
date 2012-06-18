@@ -28,7 +28,7 @@ init -1 python hide:
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     config.name = "Ren'Py Launcher"
-    config.version = "6.14.0"
+    config.version = renpy.version().split()[1]
 
     #########################################
     # Themes
@@ -182,7 +182,7 @@ init python:
     
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.
-    build.include_update = False
+    build.include_update = True
     
     ## File patterns:
     ## 
@@ -229,3 +229,4 @@ init python:
     build.documentation('*.html')
     build.documentation('*.txt')
     
+    build.version = "Ren'Py {}".format(config.version)

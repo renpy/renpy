@@ -12,6 +12,7 @@ init python in distribute:
     import store.project as project
     import store.interface as interface
     import store.archiver as archiver
+    import store as store
 
     from change_icon import change_icons
 
@@ -234,7 +235,10 @@ init python in distribute:
         
         def __init__(self, project, destination=None, reporter=None):
     
-    
+            # Safety - prevents us frome releasing a launcher that won't update.
+            if store.UPDATE_SIMULATE:
+                raise Exception("Cannot build distributions when UPDATE_SIMULATE is True.")
+        
             # The project we want to distribute.
             self.project = project
 
@@ -253,6 +257,7 @@ init python in distribute:
 
             self.base_name = build['directory_name']
             self.executable_name = build['executable_name']
+            self.pretty_version = build['version']
     
             # The destination directory.
             if destination is None:
@@ -590,7 +595,7 @@ init python in distribute:
                 if i.executable:
                     update_xbit.append(i.name)
                     
-            update = { variant : { "version" : self.update_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
+            update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
             update_fn = self.temp_filename("current.json")
             with open(update_fn, "w") as f:
@@ -660,7 +665,7 @@ init python in distribute:
                 with open(fn, "rb") as f:
                     digest = hashlib.sha256(f.read()).hexdigest()
                     
-                index[variant] = { "version" : self.update_version, "digest" : digest, "url" : variant + ".zsync" }
+                index[variant] = { "version" : self.update_version, "pretty_version" : self.pretty_version, "digest" : digest, "url" : variant + ".zsync" }
                 
                 os.unlink(fn)
 

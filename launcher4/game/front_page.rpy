@@ -160,7 +160,9 @@ screen front_page_project:
                     textbutton _("Delete Persistent")
                     
                 vbox:
-                    textbutton _("Build Distributions") action Jump("build_distributions")
+                    
+                    if ability.can_distribute:
+                        textbutton _("Build Distributions") action Jump("build_distributions")
                     
         
 label main_menu:

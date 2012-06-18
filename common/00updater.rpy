@@ -2,6 +2,7 @@
 
 init -1000 python in updater:
     from store import renpy, config, Action
+    import store.build as build
 
     import tarfile
     import threading
@@ -224,7 +225,7 @@ init -1000 python in updater:
             self.load_state()
             self.test_write()
             self.check_updates()
-            self.check_versions()
+            pretty_version = self.check_versions()
 
             if not self.modules:
                 self.can_cancel = False
@@ -237,6 +238,7 @@ init -1000 python in updater:
                 self.can_cancel = True
                 self.can_proceed = True
                 self.state = self.UPDATE_AVAILABLE
+                self.version = pretty_version
                 
                 while True:
                     if self.cancelled or self.proceeded:
@@ -321,6 +323,7 @@ init -1000 python in updater:
                 self.can_cancel = True
                 self.can_proceed = True
                 self.state = self.UPDATE_AVAILABLE
+                self.version = build.version or build.directory_name
                 
                 while True:
                     if self.cancelled or self.proceeded:
@@ -492,6 +495,8 @@ init -1000 python in updater:
             Decides what modules need to be updated, if any.
             """
             
+            rv = None
+            
             # A list of names of modules we want to update.
             self.modules = [ ]
             
@@ -506,6 +511,10 @@ init -1000 python in updater:
                         continue
                 
                 self.modules.append(name)
+
+                rv = data["pretty_version"]
+                
+            return rv
 
         def update_filename(self, module, new):
             """
@@ -946,7 +955,7 @@ init -1000:
             elif u.state == u.UPDATE_NOT_AVAILABLE:
                 text _("This program is up to date.")
             elif u.state == u.UPDATE_AVAILABLE:
-                text _("An update is available. Do you want to install it?")
+                text _("[u.version] is available. Do you want to install it?")
             elif u.state == u.PREPARING:
                 text _("Preparing to download the update.")
             elif u.state == u.DOWNLOADING:
