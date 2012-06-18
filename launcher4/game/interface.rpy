@@ -67,7 +67,7 @@ screen bottom_info:
                     textbutton _("Documentation") style "l_link" action interface.OpenDocumentation()
                     textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
                     textbutton _("Ren'Py Games List") style "l_link" action OpenURL(interface.RENPY_GAMES_URL)
-                    textbutton _("About") style "l_link"
+                    # textbutton _("About") style "l_link"
                 
                 hbox:
                     spacing INDENT

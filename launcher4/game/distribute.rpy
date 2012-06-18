@@ -20,70 +20,6 @@ init python in distribute:
     import json
     import subprocess
     import hashlib
-
-    # The default list of ignore patterns. The user should be able to 
-    # add to this.
-    IGNORE_PATTERNS = [
-        ("**/.*", None),
-        ("**.old", None),
-        ("**.new", None),
-        ("**.rpa", None),
-        ]
-    
-    BASEDIR_PATTERNS = [
-        ("*.py", None),
-        ("*.sh", None),
-        ("*.app/", None),
-        ("*.dll", None),
-        ("*.manifest", None),
-        
-        ("lib/", None),
-        ("renpy/", None),
-        ("update/", None),
-        ("common/", None),
-        ("update/", None),
-        
-        ("icon.ico", None),
-        ("icon.icns", None),
-        ("archived/", None),
-        ("tmp/", None),
-        ("launcherinfo.py", None),
-        ("android.txt", None),
-        ("project.json", None),
-            
-        ("**", "all"),
-        ]
-
-    ENGINE_PATTERNS = [
-        ( "**/*.pyc", None),
-    
-        ( "renpy.py", "all"),
-        ( "renpy/**", "all"),
-        ( "common/**", "all"),
-
-        # Windows-specific patterns.
-        ( "python*.dll", "windows" ),
-        ( "msvcr*.dll", "windows"),
-        ( "Microsoft.VC*.CRT.manifest", "windows"),
-        ( "lib/dxwebsetup.exe", "windows"),
-        ( "lib/windows-x86/**", "windows"),
-        
-        # Linux patterns. 
-        ( "renpy.sh", "linux"),
-        ( "lib/linux-x86/**", "linux"),
-        ( "lib/linux-x64/**", "linux"),
-        ( "lib/python", "linux"),
-        
-        # Mac patterns.
-        ( "renpy.app/Contents/Ren'Py Launcher", None),
-        ( "renpy.app/Contents/Info.plist", None),
-        ( "renpy.app/Contents/Resources/launcher.py", None),
-        ( "renpy.app/Contents/Resources/launcher.icns", None),
-        ( "renpy.app/**", "mac"),
-        
-        # Shared patterns.
-        ( "/lib/", "windows linux"),
-        ]
     
     # Patterns that match files that should be given the executable bit.
     XBIT_PATTERNS = [
@@ -814,9 +750,12 @@ init python in distribute:
             
 label distribute:
 
-    $ distribute.Distributor(project.current, reporter=distribute.GuiReporter())
+    python hide:
 
-    # TODO: Done screen.
+        d = distribute.Distributor(project.current, reporter=distribute.GuiReporter())
+        OpenDirectory(d.destination)()
+        
+        interface.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
     jump front_page
     

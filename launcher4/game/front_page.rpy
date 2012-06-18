@@ -131,7 +131,7 @@ screen front_page_project:
                 textbutton _("game") action OpenDirectory("game") style "l_list" 
                 textbutton _("base") action OpenDirectory(".") style "l_list"
                 textbutton _("images") action OpenDirectory("game/images") style "l_list"
-                textbutton _("save") action None style "l_list"
+                # textbutton _("save") action None style "l_list"
                 
             vbox:
                 text _("Edit File:")
