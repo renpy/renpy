@@ -34,10 +34,9 @@ IDENTITY = renpy.display.render.IDENTITY
 def transform_render(self, widtho, heighto, st, at):
 
     cdef double rxdx, rxdy, rydx, rydy
-    cdef double nxdx, nxdy, nydx, nydy
-    cdef double xdx, xdy, ydx, ydy
-    cdef double xo, x1, x2, x3
-    cdef double yo, y1, y2, y3
+    cdef double cosa, sina
+    cdef double xo, x1, x2, x3, px
+    cdef double yo, y1, y2, y3, py
     cdef float zoom, xzoom, yzoom
     cdef double cw, ch, nw, nh
     cdef Render rv, cr
@@ -92,37 +91,30 @@ def transform_render(self, widtho, heighto, st, at):
         x1, y1 = state.corner1
         x2, y2 = state.corner2
 
-        if x1 < x2:
-            minx = x1
-            maxx = x2
-        else:
-            minx = x2
-            maxx = x1
+        if x1 > x2:
+            x3 = x1
+            x1 = x2
+            x2 = x3
+        if y1 > y2:
+            y3 = y1
+            y1 = y2
+            y2 = y3
 
-        if y1 < y2:
-            miny = y1
-            maxy = y2
-        else:
-            miny = y2
-            maxy = y1
-
-        crop = (minx, miny, maxx - minx, maxy - miny)
+        crop = (x1, y1, x2-x1, y2-y1)
 
     if crop is not None:
 
         negative_xo, negative_yo, width, height = crop
-        xo = -negative_xo
-        yo = -negative_yo
-
-        clipping = True
 
         if state.rotate:
             clipcr = Render(width, height)
-            clipcr.subpixel_blit(cr, (xo, yo))
-            clipcr.clipping = clipping
-            xo = yo = 0
+            clipcr.subpixel_blit(cr, (-negative_xo, -negative_yo))
+            clipcr.clipping = True
             cr = clipcr
-            clipping = False
+        else:
+            xo = -negative_xo
+            yo = -negative_yo
+            clipping = True
 
     # Size.
     size = state.size 
@@ -134,10 +126,43 @@ def transform_render(self, widtho, heighto, st, at):
         rxdx = xzoom
         rydy = yzoom
 
-        xo = xo * xzoom
-        yo = yo * yzoom
+        xo *= xzoom
+        yo *= yzoom
 
         width, height = size
+
+    # zoom
+    zoom = state.zoom
+    xzoom = zoom * <double> state.xzoom
+    yzoom = zoom * <double> state.yzoom
+
+    if xzoom != 1:
+
+        rxdx *= xzoom
+
+        if xzoom < 0:
+            width *= -xzoom
+        else:
+            width *= xzoom
+
+        xo *= xzoom
+        # origin corrections for flipping
+        if xzoom < 0:
+            xo += width
+
+    if yzoom != 1:
+
+        rydy *= yzoom
+
+        if yzoom < 0:
+            height *= -yzoom
+        else:
+            height *= yzoom
+
+        yo *= yzoom
+        # origin corrections for flipping
+        if yzoom < 0:
+            yo += height
 
     # Rotation.
     rotate = state.rotate
@@ -148,41 +173,44 @@ def transform_render(self, widtho, heighto, st, at):
 
         angle = rotate * 3.1415926535897931 / 180
 
-        xdx = math.cos(angle)
-        xdy = -math.sin(angle)
-        ydx = -xdy 
-        ydy = xdx 
+        cosa = math.cos(angle)
+        sina = math.sin(angle)
 
         # reverse = Matrix2D(xdx, xdy, ydx, ydy) * reverse
 
         # We know that at this point, rxdy and rydx are both 0, so
         # we can simplify these formulae a bit.            
-        nxdx = rxdx * xdx
-        rxdy = rxdx * xdy
-        rydx = rydy * ydx
-        nydy = rydy * ydy
+        rxdy = rydy * -sina
+        rydx = rxdx * sina
+        rxdx *= cosa
+        rydy *= cosa
 
-        rxdx = nxdx
-        rydy = nydy
-
+        # first corner point (changes with flipping)
+        px = cw / 2.0
+        if xzoom < 0:
+            px = -px
+        py = ch / 2.0
+        if yzoom < 0:
+            py = -py
+        
         if state.rotate_pad:
             width = height = math.hypot(cw, ch)
 
-            xo = -cw / 2.0 * rxdx + -ch / 2.0 * rxdy
-            yo = -cw / 2.0 * rydx + -ch / 2.0 * rydy
+            xo = -px * cosa + py * sina
+            yo = -px * sina - py * cosa
 
         else:
-            xo = -cw / 2.0 * rxdx + -ch / 2.0 * rxdy
-            yo = -cw / 2.0 * rydx + -ch / 2.0 * rydy
+            xo = -px * cosa + py * sina
+            yo = -px * sina - py * cosa
 
-            x2 = -cw / 2.0 * rxdx + ch / 2.0 * rxdy
-            y2 = -cw / 2.0 * rydx + ch / 2.0 * rydy
+            x2 = -px * cosa - py * sina
+            y2 = -px * sina + py * cosa
 
-            x3 = cw / 2.0 * rxdx + ch / 2.0 * rxdy
-            y3 = cw / 2.0 * rydx + ch / 2.0 * rydy
+            x3 =  px * cosa - py * sina
+            y3 =  px * sina + py * cosa
 
-            x4 = cw / 2.0 * rxdx + -ch / 2.0 * rxdy
-            y4 = cw / 2.0 * rydx + -ch / 2.0 * rydy
+            x4 =  px * cosa + py * sina
+            y4 =  px * sina - py * cosa
 
             width = max(xo, x2, x3, x4) - min(xo, x2, x3, x4) 
             height = max(yo, y2, y3, y4) - min(yo, y2, y3, y4) 
@@ -190,33 +218,12 @@ def transform_render(self, widtho, heighto, st, at):
         xo += width / 2.0
         yo += height / 2.0
         
-    zoom = state.zoom
-    xzoom = zoom * <double> state.xzoom
-    yzoom = zoom * <double> state.yzoom
     alpha = state.alpha
-
-    if xzoom != 1 or yzoom != 1:
-
-        nxdx = rxdx * xzoom
-        nxdy = rxdy * yzoom
-        nydx = rydx * xzoom
-        nydy = rydy * yzoom
-
-        rxdx = nxdx
-        rxdy = nxdy
-        rydx = nydx
-        rydy = nydy
-
-        width *= xzoom
-        height *= yzoom
-
-        xo *= xzoom
-        yo *= yzoom
 
     rv = Render(width, height)
 
     # Default case - no transformation matrix.
-    if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 0:
+    if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
         self.forward = IDENTITY
 
     else:

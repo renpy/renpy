@@ -7,6 +7,25 @@ Ren'Py 6.14
 
 Multiple store support - needs documentation.
 
+
+Transform Changes
+-----------------
+
+This release changes the behavior of transforms to make them more correct
+and easier to use.
+
+The xzoom and yzoom properties are now applied before, rotation. This means
+that the shape of the image will remain consistent as the image is rotated.
+Previously, the image to change shape as it was rotated.
+
+The xzoom and yzoom properties may now be negative, with negative zoom
+values causing the images to be flipped. The positioning code now takes
+this into account, and positions a flipped image properly.
+
+Thanks to Edwin for contributing these changes.
+
+
+
 The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take
 properties prefixed with ``text_``. These properties have the text_
 prefix stripped, and are then passed to the internal text displayable.
@@ -24,6 +43,8 @@ Added the :func:`OpenURL` action, which opens a URL in a web browser.
 
 Added the :var:`config.gl_resize` variable, which determines if the
 user can resize OpenGL windows.
+
+
 
 
 Ren'Py 6.13.9

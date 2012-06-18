@@ -37,7 +37,7 @@ block with a priority of 0. The transform may have a list of
 parameters, which must be supplied when it is called.
 
 `Name` must be a python identifier. The transform created by the ATL
-block is bound to this name. ::
+block is bound to this name.::
 
    transform left_to_right:
        xalign 0.0
@@ -46,7 +46,7 @@ block is bound to this name. ::
 
 .. _atl-image-statement:
     
-Image Statement With ATL Block 
+Image Statement With ATL Block
 ------------------------------
 
 The second way to use ATL is as part of an image statement with ATL
@@ -71,7 +71,7 @@ ATL block is:
               
 Scene and Show Statements with ATL Block
 ----------------------------------------
-              
+
 The final way to use ATL is as part of a scene or show statement. This
 wraps the image being shown inside an ATL transformation.
 
@@ -304,7 +304,7 @@ will execute at most twice.)
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
 
-The repeat statement must be the last statement in a block. ::
+The repeat statement must be the last statement in a block.::
 
     show logo base:
         xalign 0.0
@@ -400,7 +400,7 @@ property, the result is undefined.
 
 Event Statement
 ---------------
-            
+
 The event statement is a simple statement that causes an event with
 the given name to be produced.
 
@@ -557,23 +557,23 @@ to t', where t and t' are floating point numbers between 0.0 and
 1.0. (If the statement has 0 duration, than t is 1.0 when it runs.)
 
 ``pause``
-    Pause, then jump to the new value. 
+    Pause, then jump to the new value.
     If t == 1.0, t = 1.0. Otherwise, t' = 0.0.
 
 ``linear``
-    Linear interpolation. 
+    Linear interpolation.
     t' = t
 
 ``ease``
-    Start slow, speed up, then slow down. 
-    t' = .5 - math.cos(math.pi * t) / 2.0 
+    Start slow, speed up, then slow down.
+    t' = .5 - math.cos(math.pi * t) / 2.0
 
 ``easein``
-    Start fast, then slow down. 
+    Start fast, then slow down.
     t' = math.cos((1.0 - t) * math.pi / 2.0
 
 ``easeout``
-    Start slow, then speed up. 
+    Start slow, then speed up.
     t' = 1.0 - math.cos(t * math.pi / 2.0)
 
 New warpers can be defined using the renpy.atl_warper decorator, in a
@@ -719,7 +719,7 @@ positions.
     :default: 1.0
 
     This causes the displayable to be zoomed by the supplied
-    factor. This should always be greater than .5.
+    factor.
 
 .. transform-property:: xzoom
 
@@ -727,15 +727,16 @@ positions.
     :default: 1.0
 
     This causes the displayable to be horizontally zoomed by the
-    supplied factor. This should always be greater than .5.
-
+    supplied factor. A negative value causes the image to be 
+    flipped horizontally.
+    
 .. transform-property:: yzoom
 
    :type: float
    :default: 1.0
 
    This causes the displayable to be vertically zoomed by the supplied
-   factor. This should always be greater than .5.
+   factor. A negative value causes the image to be flipped vertically.
 
 .. transform-property:: alpha
 
@@ -828,13 +829,13 @@ These properties are applied in the following order:
 
 #. crop, corner1, corner2
 #. size
-#. rotate
 #. zoom, xzoom, yzoom
+#. rotate
 #. position properties
 
 
 Circular Motion
-================
+===============
 
 When an interpolation statement contains the ``clockwise`` or
 ``counterclockwise`` keywords, the interpolation will cause circular
