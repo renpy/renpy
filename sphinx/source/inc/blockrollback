@@ -1,0 +1,7 @@
+.. Automatically generated file - do not modify.
+
+.. function:: renpy.block_rollback()
+    
+    Prevents the game from rolling back to before the current
+    statement.
+

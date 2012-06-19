@@ -1,0 +1,21 @@
+.. Automatically generated file - do not modify.
+
+.. function:: renpy.checkpoint(data=None)
+    
+    Makes the current statement a checkpoint that the user can rollback to. Once
+    this function has been called, there should be no more interaction with the
+    user in the current statement.
+    
+    `data`
+        This data is returned by :func:`renpy.roll_forward_info` when the 
+        game is being rolled back.
+
+.. function:: renpy.in_rollback()
+    
+    Returns true if the game has been rolled back.
+
+.. function:: renpy.roll_forward_info()
+    
+    When in rollback, returns the data that was supplied to :func:`renpy.checkpoint`
+    the last time this statement executed. Outside of rollback, returns None. 
+

@@ -194,12 +194,20 @@ def save(filename, extra_info='',
          file=file, StringIO=cStringIO.StringIO, #@ReservedAssignment
          mutate_flag=False, wait=None):
     """
-    Saves the game in the given filename. This will save the game
-    along with a screnshot and the given extra_info, which is just
-    serialized.
+    :doc: loadsave
+    :args: (filename, extra_info='')
+    
+    Saves the game state to a save slot. 
 
-    It's expected that a screenshot will be taken (with
-    renpy.take_screenshot) before this is called.
+    `filename`
+        A string giving the name of a save slot. Despite the variable name,
+        this corresponds only loosely to filenames.
+    
+    `extra_info`
+        An additional string that should be saved to the save file. Usually,
+        this is the value of :var:`save_name`.
+    
+    :func:`renpy.take_screenshot` should be called before this function.
     """
 
     cache.pop(filename, None)
@@ -284,16 +292,19 @@ def scan_saved_game(name):
 
 def list_saved_games(regexp=r'.'):
     """
-    This scans the savegames that we know about and returns
-    information about them. It returns a list of tuples, where each
-    tuple represents one savegame and consists of:
+    :doc: loadsave
     
-    - The filename of the save.
-    - The extra_info that was passed to renpy.save.
-    - A displayable, the screenshot used to show the game.
-    - The time the game was saved at, seconds since 1/1/1970 UTC.
+    Lists the save games. For each save game, returns a tuple containing:
     
-    The regexp matches at the start of the filename, and filters the list.
+    * The filename of the save.
+    * The extra_info that was passed in.
+    * A displayable that, when displayed, shows the screenshot that was 
+      used when saving the game.
+    * The time the game was stayed at, in seconds since the UNIX epoch.
+
+    `regexp`
+        A regular expression that is matched against the start of the
+        filename to filter the list.
     """
 
     try:
@@ -320,7 +331,9 @@ def list_saved_games(regexp=r'.'):
 
 def can_load(filename):
     """
-    Returns true if we can load the given savegame file, False otherwise.
+    :doc: loadsave
+    
+    Returns true if `filename` can be loaded, false otherwise.
     """
 
     try:
@@ -333,7 +346,9 @@ def can_load(filename):
 
 def load(filename):
     """
-    Loads the game from the given file. This function never returns.
+    :doc: loadsave
+    
+    Loads the game state from `filename`. This function never returns.
     """
     
     zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
@@ -343,6 +358,12 @@ def load(filename):
     log.unfreeze(roots, label="_after_load")
 
 def rename_save(old, new):
+    """
+    :doc: loadsave
+    
+    Renames a save from `old` to `new`.
+    """
+    
     unlink_save(new)
     os.rename(renpy.config.savedir + "/" + old + savegame_suffix, 
               renpy.config.savedir + "/" + new + savegame_suffix)
@@ -351,6 +372,12 @@ def rename_save(old, new):
     cache.pop(new, None)
 
 def unlink_save(filename):
+    """
+    :doc: loadsave
+    
+    Deletes the save with the given `filename`.
+    """
+    
     if os.path.exists(renpy.config.savedir + "/" + filename + savegame_suffix):
         os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
 
@@ -358,6 +385,15 @@ def unlink_save(filename):
         
 
 def cycle_saves(name, count):
+    """
+    :doc: loadsave
+
+    Rotates the first `count` saves beginning with `name`.
+    
+    For example, if the name is auto and the count is 10, then 
+    auto-9 will be renamed to auto-9, auto-8 will be renamed to auto-9, 
+    and so on until auto-1 is renamed to auto-2.
+    """
 
     for count in range(1, count + 1):
         if not os.path.exists(renpy.config.savedir + "/" + name + str(count) + savegame_suffix):
@@ -407,7 +443,6 @@ def autosave_thread(take_screenshot):
 def autosave():
     global autosave_counter
 
-    
     if not renpy.config.autosave_frequency:
         return 
 

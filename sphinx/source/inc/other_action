@@ -37,6 +37,10 @@
     
     Displays `message` using :func:`renpy.notify`. 
 
+.. function:: OpenURL(url)
+    
+    Causes `url` to be opened in a web browser.
+
 .. function:: RollForward()
     
     This action causes a rollforward to occur, if a roll forward is 

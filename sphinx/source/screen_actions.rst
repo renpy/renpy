@@ -1,3 +1,5 @@
+.. _screen-actions:
+
 =====================================
 Screen Actions, Values, and Functions
 =====================================
@@ -56,7 +58,7 @@ take the `name` and `page` arguments.
 `page`
     The page that this action acts on. This is one of "auto",
     "quick", or a positive integer. If None, the page is determined
-    automatically, based on a persistent page number. 
+    automatically, based on a persistent page number.
 
 .. include:: inc/file_action
 
@@ -120,14 +122,14 @@ The tooltip class changes the screen when a button is hovered.
 
 .. include:: inc/tooltips
 
-When using a tooltip with a screen, the usual behavior is to create a 
-tooltip object in a default statement. The value of the tooltip and 
-the action method can then be used within the screen. The order of 
+When using a tooltip with a screen, the usual behavior is to create a
+tooltip object in a default statement. The value of the tooltip and
+the action method can then be used within the screen. The order of
 use within a screen doesn't matter - it's possible to use the value
 before an action is used.
 
-Tooltips can take on any value. While in the example below we use the 
-text statement to display a string on the screen, it's also possible 
+Tooltips can take on any value. While in the example below we use the
+text statement to display a string on the screen, it's also possible
 to use the add statement to add a displayable. More complex behavior
 is also possible.
 

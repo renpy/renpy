@@ -92,21 +92,39 @@ del public_api
 import collections
 
 def roll_forward_info():
+    """
+    :doc: rollback
+    
+    When in rollback, returns the data that was supplied to :func:`renpy.checkpoint`
+    the last time this statement executed. Outside of rollback, returns None. 
+    """
+    
     if len(renpy.game.contexts) > 1:
         return None
     
     return renpy.game.log.forward_info()
 
 def in_rollback():
+    """
+    :doc: rollback
+    
+    Returns true if the game has been rolled back.
+    """
+    
     return renpy.game.log.in_rollback()
 
 def checkpoint(data=None, keep_rollback=False):
     """
-    This creates a checkpoint that the user can rollback to. The
-    checkpoint is placed at the statement after the last statement
-    that interacted with the user. Once this function has been called,
-    there should be no more interaction with the user in the current
-    statement.
+    :doc: rollback
+    :args: (data=None)
+    
+    Makes the current statement a checkpoint that the user can rollback to. Once
+    this function has been called, there should be no more interaction with the
+    user in the current statement.
+    
+    `data`
+        This data is returned by :func:`renpy.roll_forward_info` when the 
+        game is being rolled back.
     """
 
     if renpy.store._rollback:
@@ -114,6 +132,8 @@ def checkpoint(data=None, keep_rollback=False):
 
 def block_rollback():
     """
+    :doc: blockrollback
+    
     Prevents the game from rolling back to before the current
     statement.
     """
@@ -945,8 +965,10 @@ def get_all_labels():
 
 def take_screenshot(scale=None, background=False):
     """
-    This causes a screenshot to be taken. This screenshot will be
-    saved with a savegame when the game is saved.
+    :doc: loadsave
+
+    Causes a screenshot to be taken. This screenshot will be saved as part of 
+    a save game.
     """
 
     if scale is None:
