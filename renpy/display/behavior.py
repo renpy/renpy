@@ -1177,6 +1177,8 @@ class Bar(renpy.display.core.Displayable):
             fore_size = active * value / range
         else:
             fore_size = active
+
+        fore_size = int(fore_size)
             
         aft_size = active - fore_size
 

@@ -74,6 +74,7 @@ Python and Ren'Py
    :maxdepth: 1
 
    statement_equivalents
+   save_load_rollback
    trans_trans_python
    screen_python
    modes
