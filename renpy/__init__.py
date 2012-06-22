@@ -51,13 +51,14 @@ bytecode_version = 1
 first_utter_start = True
 
 def setup_modulefinder(modulefinder):
-    import _renpy #@UnresolvedImport
+    import _renpy 
+
     libexec = os.path.dirname(_renpy.__file__)
 
     for i in [ "display", "gl", "angle", "text" ]:
     
         displaypath = os.path.join(libexec, "renpy", i)
-        
+
         if os.path.exists(displaypath):
             modulefinder.AddPackagePath('renpy.' + i, displaypath)
 
