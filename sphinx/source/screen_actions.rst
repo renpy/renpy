@@ -10,7 +10,7 @@ for use with screens and the screen language.
 Actions
 =======
 
-Actions are be invoked when a button (including imagebuttons,
+Actions are invoked when a button (including imagebuttons,
 textbuttons, and hotspots) is activated, hovered, or
 unhovered. Actions may determine when a button is selected or
 insensitive.
@@ -20,8 +20,8 @@ take any arguments. The function is called when the action is
 invoked. If the action returns a value, then the value is returned
 from an interaction.
 
-An action may also be a list of actions, the actions in the list are
-run in order.
+An action may also be a list of actions, in which case the actions in
+the list are run in order.
 
 Control Actions
 ---------------

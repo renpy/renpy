@@ -1558,14 +1558,14 @@ init -1140 python:
          * Preference("transitions", "none") - do not show transitions.
          * Preference("transitions", "toggle") - toggle transitions.
 
-         * Preference("text speed", 0) - make test appear instantaneously.
+         * Preference("text speed", 0) - make text appear instantaneously.
          * Preference("text speed", 142) - set text speed to 142 characters per second.
 
          * Preference("joystick") - Show the joystick preferences.
 
          * Preference("skip", "seen") - Only skip seen messages.
          * Preference("skip", "all") - Skip unseen messages.
-         * Preference("skip", "toggle") - Toggle skipping.
+         * Preference("skip", "toggle") - Toggle between skip seen and skip all.
 
          * Preference("begin skipping") - Starts skipping.
 
@@ -1590,7 +1590,7 @@ init -1140 python:
 
          * Preference("voice mute", "enable") - Mute the voice mixer.
          * Preference("voice mute", "disable") - Un-mute the voice mixer.
-         * Preference("voice mute", "toggle") - Toggle voice  mute.
+         * Preference("voice mute", "toggle") - Toggle voice mute.
 
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
