@@ -1,20 +1,39 @@
 #!/bin/sh
 
-# We assume Darwin means Mac OS X. Sorry, Darwin guys.
-if [ "x`uname -s`" = "xDarwin" ]; then
-    dir=`dirname "$0"`
-    dir=`cd "$dir"; pwd`
-    base=`basename "$0"`
+# We assume we're on linux, or an OS that can run Linux binaries.
+# If that's not the case, you'll have to change this script.
 
-    export RENPY_LAUNCHER_DIR="$dir"
-
-    if [ -e "$dir/${base%.sh}.app/Contents/MacOS/${base%.sh}" ] ; then
-        launcher="$dir/${base%.sh}.app/Contents/MacOS/${base%.sh}"
-    else
-        launcher="$dir/${base%.sh}.app/Contents/MacOS/Ren'Py Launcher"
-    fi
-
-    exec "$launcher" "${0%.sh}.py" "$@"
+if [ -z "$RENPY_PLATFORM" ] ; then
+    case `uname -m` in
+        x86_64|amd64)
+            RENPY_PLATFORM="linux-x86_64"
+            ;;
+        i*86)
+            RENPY_PLATFORM="linux-x86"
+            ;;
+        *)
+            echo "Ren'Py could not detect that platform it's running on. Please set"
+            echo "the RENPY_PLATFORM environment variable to one of \"linux-86\" or"
+            echo "\"linux-x86_64\", and run this command again."
+            exit 1
+            ;;
+    esac
 fi
 
-exec "`dirname \"$0\"`/lib/python" "-OO" "${0%.sh}.py" "$@"
+ROOT="$(dirname $0)"
+BASE="${0%.sh}"
+LIB="$ROOT/lib/$RENPY_PLATFORM"
+
+RENPY_ORIGINAL_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+
+if [ -z "$LD_LIBRARY_PATH" ] ; then
+    LD_LIBRARY_PATH="$LIB"
+else
+    LD_LIBRARY_PATH="$LIB:$LD_LIBRARY_PATH"
+fi
+
+export LD_LIBRARY_PATH
+export RENPY_PLATFORM
+export RENPY_ORIGINAL_LD_LIBRARY_PATH
+
+exec $RENPY_GDB "$LIB/python" -OO "$BASE.py" "$@"

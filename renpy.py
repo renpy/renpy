@@ -85,8 +85,8 @@ def path_to_renpy_base():
 ##############################################################################
 
 # The version of the Mac Launcher and py4renpy that we require.
-macos_version = (6, 11, 1)
-linux_version = (6, 11, 1)
+macos_version = (6, 14, 0)
+linux_version = (6, 14, 0)
 
 # Doing the version check this way also doubles as an import of ast,
 # which helps py2exe et al.

@@ -27,7 +27,6 @@ import traceback
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
-
 # Extra things used for distribution.
 def extra_imports():
     import datetime; datetime
@@ -43,6 +42,7 @@ def extra_imports():
     import encodings.utf_16_le; encodings.utf_16_le
     import encodings.utf_32_be; encodings.utf_32_be
     import encodings.latin_1; encodings.latin_1
+    import encodings.hex_codec; encodings.hex_codec
     import math; math
     import glob; glob
     import pickle; pickle
@@ -60,7 +60,7 @@ def extra_imports():
     import pygame.locals; pygame.locals
     import pygame.color; pygame.color
     import pygame.colordict; pygame.colordict
-    import posixpath; posixpath # W0403
+    import posixpath; posixpath
     import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
     import EasyDialogs; EasyDialogs #@UnresolvedImport
@@ -71,6 +71,7 @@ def extra_imports():
     import urllib; urllib
     import urllib2; urllib2
     import codecs; codecs
+    import rsa; rsa
     
 trace_file = None
 trace_local = None
