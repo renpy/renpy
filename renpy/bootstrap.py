@@ -52,8 +52,6 @@ def extra_imports():
     import pysdlsound.linmixer; pysdlsound.linmixer #@UnresolvedImport
     import difflib; difflib
     import shutil; shutil
-    import renpy.tools.archiver; renpy.tools.archiver
-    import renpy.tools.add_from; renpy.tools.add_from
     import tarfile; tarfile
     import bz2; bz2
     import webbrowser; webbrowser

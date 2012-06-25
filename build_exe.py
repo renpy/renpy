@@ -98,7 +98,7 @@ def main():
 
     move_from_dist("lib/windows-x86")
     move_from_dist("console.exe")
-    move_from_dist("python26.dll")
+    move_from_dist("python27.dll")
     move_from_dist("renpy.exe")
     
     

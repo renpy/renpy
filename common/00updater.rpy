@@ -160,9 +160,8 @@ init -1000 python in updater:
             # where each file is moved from <file>.new to <file>.
             self.moves = [ ]
 
-            # TODO: use renpy.file instead of open.
             if public_key is not None:
-                f = renpy.file("public_key")
+                f = renpy.file(public_key)
                 self.public_key = rsa.PublicKey.load_pkcs1(f.read())
                 f.close()
             else:
@@ -616,25 +615,39 @@ init -1000 python in updater:
             self.log.flush()
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=0)
 
+            line = ""
+
             while True:
 
                 if self.cancelled:
                     p.kill()
                 
-                l = p.stdout.readline()
-                if not l:
+                c = p.stdout.read(1)
+                if not c:
                     break
             
-                self.log.write(l)
+                if c == "\r" or c == "\n":
+                    self.log.write(line + "\n")
+                    line = ""
+                    continue
+
+                line += c
                 
-                if l.startswith("PROGRESS "):
-                    _, raw_progress = l.split(' ', 1)
-                    raw_progress = float(raw_progress) / 100.0
-                    
+                if c != "%":
+                    continue
+
+                if line[0] not in "#-":
+                    continue
+                  
+                try:
+                    _bar, raw_progress = line.split()
+                    raw_progress = float(raw_progress[:-1]) / 100.0
+            
                     if raw_progress == 1.0:
+                        start_progress = None
                         self.progress = 1.0
                         continue
-                    
+
                     if start_progress is None:
                         start_progress = raw_progress
                         self.progress = 0.0
@@ -642,9 +655,8 @@ init -1000 python in updater:
                     
                     self.progress = (raw_progress - start_progress) / (1.0 - start_progress)
                     
-                if l.startswith("ENDPROGRESS"):
-                    start_progress = None
-                    self.progress = None
+                except:
+                    continue
 
             p.wait()
 
@@ -885,12 +897,12 @@ init -1000 python in updater:
     def update_command():
         import time
 
-        ap = renpy.argument.ArgumentParser()
+        ap = renpy.arguments.ArgumentParser()
        
         ap.add_argument("url")
-        ap.add_argument("--base", action=store, help="The base directory of the game to update. Defaults to the current game.")
+        ap.add_argument("--base", action='store', help="The base directory of the game to update. Defaults to the current game.")
         ap.add_argument("--force", action="store_true", help="Force the update to run even if the version numbers are the same.")
-        ap.add_argument("--key", action="store_true", help="A file giving the public key to use of the update.")
+        ap.add_argument("--key", action="store", help="A file giving the public key to use of the update.")
         ap.add_argument("--simulate", help="The simulation mode to use. One of available, not_available, or error.")
        
         args = ap.parse_args()

@@ -26,6 +26,8 @@ Thanks to Edwin for contributing these changes.
 
 
 
+64-bit Linux is now a supported Ren'Py platform.
+
 The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take
 properties prefixed with ``text_``. These properties have the text_
 prefix stripped, and are then passed to the internal text displayable.
