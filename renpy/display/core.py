@@ -1124,6 +1124,11 @@ class Interface(object):
         except:
             pass
 
+        try:
+            pygame.macosx.Video_AutoInit() #@UndefinedVariable
+        except:
+            pass
+        
         pygame.font.init()
         renpy.audio.audio.init()
         renpy.display.joystick.init()

@@ -96,6 +96,12 @@ def show(fn):
     except:
         pass
 
+    try:
+        import pygame.macosx
+        pygame.macosx.Video_AutoInit()
+    except:
+        pass
+
     pygame.display.init()
     
     img = pygame.image.load(fn, fn)
