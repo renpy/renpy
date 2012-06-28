@@ -70,7 +70,7 @@ screen updater:
 label update:
     
     python:
-        updater.update(persistent.update_url, simulate=UPDATE_SIMULATE, key="renpy_public.pem")
+        updater.update(persistent.update_url, simulate=UPDATE_SIMULATE, public_key="renpy_public.pem")
     
     # This should never happen.
     jump front_page

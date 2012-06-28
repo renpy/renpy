@@ -221,6 +221,9 @@ init -1000 python in updater:
             Performs the update.        
             """
 
+            if renpy.android:
+                raise UpdateError("The Ren'Py Updater is not supported on Android.")
+
             self.load_state()
             self.test_write()
             self.check_updates()
