@@ -102,7 +102,7 @@ init python:
 
     # frame
     style._frame = Style(style._default)
-    style._frame.background = Frame("_theme_launcher/frame.png", 40, 40)
+    style._frame.background = Frame("_theme_amie2/frame.png", 40, 40)
     style._frame.xmargin = 0
     style._frame.ymargin = 0
     style._frame.xpadding = 15
@@ -127,8 +127,8 @@ init python:
     style._button = Style(style._default)
     style._button_text = Style(style._default)
 
-    style._button.background = Frame("_theme_launcher/frame.png", 10, 10)
-    style._button.hover_background = Frame("_theme_launcher/hover_frame.png", 10, 10)
+    style._button.background = Frame("_theme_amie2/frame.png", 10, 10)
+    style._button.hover_background = Frame("_theme_amie2/hover_frame.png", 10, 10)
     style._button.xpadding = 10
     style._button.ypadding = 9
     style._button.ymargin = 0
@@ -148,8 +148,8 @@ init python:
     # bar
     style._bar = Style(style._default)
 
-    style._bar.left_bar = Frame("_theme_launcher/hover_frame.png", 10, 10)
-    style._bar.right_bar = Frame("_theme_launcher/bar.png", 10, 10)
+    style._bar.left_bar = Frame("_theme_amie2/hover_frame.png", 10, 10)
+    style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
     style._bar.thumb = None
     style._bar.hover_thumb = None
     style._bar.ymaximum = 20
@@ -157,10 +157,10 @@ init python:
     style._scrollbar = Style(style._default)
     style._vscrollbar = Style(style._default)
 
-    style._scrollbar.left_bar = Frame("_theme_launcher/bar.png", 10, 10)
-    style._scrollbar.right_bar = Frame("_theme_launcher/bar.png", 10, 10)
-    style._scrollbar.thumb = Frame("_theme_launcher/frame.png", 10, 10)
-    style._scrollbar.hover_thumb = Frame("_theme_launcher/hover_frame.png", 10, 10)
+    style._scrollbar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
+    style._scrollbar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
+    style._scrollbar.thumb = Frame("_theme_amie2/frame.png", 10, 10)
+    style._scrollbar.hover_thumb = Frame("_theme_amie2/hover_frame.png", 10, 10)
     style._scrollbar.thumb_offset = 10
     style._scrollbar.left_gutter = 5
     style._scrollbar.right_gutter = 5
