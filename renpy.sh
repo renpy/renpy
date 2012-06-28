@@ -9,11 +9,11 @@ if [ -z "$RENPY_PLATFORM" ] ; then
             RENPY_PLATFORM="linux-x86_64"
             ;;
         i*86)
-            RENPY_PLATFORM="linux-x86"
+            RENPY_PLATFORM="linux-i686"
             ;;
         *)
             echo "Ren'Py could not detect that platform it's running on. Please set"
-            echo "the RENPY_PLATFORM environment variable to one of \"linux-86\" or"
+            echo "the RENPY_PLATFORM environment variable to one of \"linux-i686\" or"
             echo "\"linux-x86_64\", and run this command again."
             exit 1
             ;;

@@ -5,3 +5,4 @@ ln -s ../help.html the_question/README.html
 ln -s ../help.html template/README.html
 
 ln -s sphinx/source/license.rst LICENSE.txt
+ln -s sphinx/build/html doc
