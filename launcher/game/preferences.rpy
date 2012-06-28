@@ -78,7 +78,7 @@ screen preferences:
                         
                         add HALF_SPACER
                         
-                        textbutton "Open launcher project" style "l_nonbox" action project.Select("launcher4")
+                        textbutton "Open launcher project" style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
                     
                 frame:
                     style "l_indent"
