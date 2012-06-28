@@ -27,12 +27,11 @@ init python in distribute:
         "renpy.sh",
         "lib/**/*.so.*",
         "lib/**/*.so",
-        "lib/**/.dylib",
         "renpy.app/**/*.so.*",
         "renpy.app/**/*.so",
+        "renpy.app/**/*.dylib",
         "renpy.app/Contents/MacOS/*",
-        "lib/python",
-        "lib/**/python.real",
+        "lib/**/python",
     ]
     
     import collections
@@ -304,17 +303,20 @@ init python in distribute:
             # Add Ren'Py.
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
-            self.add_renpy_files()
 
-            # Add the platform-specific files.
-            self.add_mac_files()
-            self.add_windows_files()
+
+            # Add generated/special files.
+            if not build['renpy']:
+                self.add_renpy_files()
+                self.add_mac_files()
+                self.add_windows_files()
 
             # Assign the x-bit as necessary.
             self.mark_executable()
 
             # Rename the executable-like files.
-            self.rename()
+            if not build['renpy']:
+                self.rename()
 
             # The time of the update version.
             self.update_version = int(time.time())

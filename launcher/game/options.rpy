@@ -161,72 +161,110 @@ init -1 python hide:
     ## More customizations can go here.
 
     config.sound = False
+
     config.quit_action = Quit(confirm=False)
+
     config.gl_resize = False
 
 
-                         
-## This section contains information about how to build your project into 
-## distribution files.
+## This section controls how to build Ren'Py. (Building the launcher is how
+## we build Ren'Py distributions.)
 init python:
+        
+    ## We're building Ren'Py tonight.
+    build.renpy = True
+    
+    ## The version number that's supplied to the updater.
+    build.version = "Ren'Py {}".format(config.version)
     
     ## The name that's used for directories and archive files. For example, if
     ## this is 'mygame-1.0', the windows distribution will be in the
     ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
-    build.directory_name = "launcher4-1.0"
+    build.directory_name = "renpy-" + config.version.rsplit('.', 1)[0]
     
     ## The name that's uses for executables - the program that users will run
     ## to start the game. For example, if this is 'mygame', then on Windows,
     ## users can click 'mygame.exe' to start the game.
-    build.executable_name = "launcher4"
+    build.executable_name = "renpy"
     
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.
     build.include_update = True
     
-    ## File patterns:
-    ## 
-    ## The following functions take file patterns. File patterns are case-
-    ## insensitive, and matched against the path relative to the base
-    ## directory, with and without a leading /. If multiple patterns match,
-    ## the first is used.
-    ##    
-    ##
-    ## In a pattern:
-    ##
-    ## / 
-    ##     Is the directory separator.
-    ## *
-    ##     Matches all characters, except the directory separator.
-    ## **
-    ##     Matches all characters, including the directory separator.
-    ##
-    ## For example:
-    ##
-    ## *.txt
-    ##     Matches txt files in the base directory.
-    ## game/**.ogg
-    ##     Matches ogg files in the game directory or any of its subdirectories.
-    ## **.psd
-    ##    Matches psd files anywhere in the project.
-
-    ## Classify files as None to exclude them from the built distributions.
-
-    build.classify('**~', None)
-    build.classify('**.bak', None)
-    build.classify('**/.**', None)
-    build.classify('**/#**', None)
-    build.classify('**/thumbs.db', None)
+    ## Clear out various file patterns.
+    build.renpy_patterns = [ ]
+    build.early_base_patterns = [ ]
+    build.base_patterns = [ ]
+    build.late_base_patterns = [ ]
     
-    ## To archive files, classify them as 'archive'.
+    # We don't need to clear out the executable patterns, since they're 
+    # correct for Ren'Py.
     
-    # build.classify('game/**.png', 'archive')
-    # build.classify('game/**.jpg', 'archive')
+    ## Now, add the Ren'Py distribution in using classify_renpy.    
+    build.classify_renpy("**~", None)
+    build.classify_renpy("**/#*", None)
+    build.classify_renpy("**/thumbs.db", None)
+    build.classify_renpy("**/.*", None)
 
-    ## Files matching documentation patterns are duplicated in a mac app
-    ## build, so they appear in both the app and the zip file.
+    build.classify_renpy("**.old", None)
+    build.classify_renpy("**.new", None)
+    build.classify_renpy("**.bak", None)
+    build.classify_renpy("**.pyc", None)
 
-    build.documentation('*.html')
-    build.documentation('*.txt')
+    build.classify_renpy("**/saves", None)
+    build.classify_renpy("**/tmp", None)
+
+    # main source.
+    build.classify_renpy("renpy.py", "source")
+    build.classify_renpy("renpy/**", "source")
+    build.classify_renpy("common/**", "source")
+
+    # games.
+    build.classify_renpy("launcher/**", "source")
+    build.classify_renpy("template/**", "source")
+    build.classify_renpy("the_question/**", "source")
+    build.classify_renpy("tutorial/**", "source")
+
+    # docs.    
+    build.classify_renpy("doc/", "source")
+    build.classify_renpy("doc/.doctrees/", None)
+    build.classify_renpy("doc/**", "source")
+    build.classify_renpy("LICENSE.txt", "source")
     
-    build.version = "Ren'Py {}".format(config.version)
+    # module.    
+    build.classify_renpy("module/", "source")
+    build.classify_renpy("module/*.c", "source")
+    build.classify_renpy("module/gen/*.c", "source")
+    build.classify_renpy("module/*.h", "source")
+    build.classify_renpy("module/*.py*", "source")
+    build.classify_renpy("module/include/*.pxd", "source")
+    build.classify_renpy("module/pysdlsound/*.py", "source")
+    build.classify_renpy("module/pysdlsound/*.pyx", "source")
+
+    # all-platforms binary.
+    build.classify_renpy("lib/**", "binary")
+    build.classify_renpy("python27.dll", "binary")
+    build.classify_renpy("msvcr90.dll", "binary")
+    build.classify_renpy("Microsoft.VC90.CRT.manifest", "binary")
+    build.classify_renpy("renpy.sh", "binary")
+    build.classify_renpy("renpy.app/**", "binary")
+    build.classify_renpy("renpy.exe", "binary")
+    build.classify_renpy("console.exe", "binary")
+
+    # jedit rules.
+    build.classify_renpy("jedit/**", "binary")
+
+    # editra rules.
+    build.classify_renpy("editra/", "binary")
+    build.classify_renpy("editra/Editra.edit.py", "binary")
+    build.classify_renpy("editra/Editra/**", "linux")
+    build.classify_renpy("editra/Editra-mac.app/**", "mac")
+    build.classify_renpy("editra/Editra-win32/**", "windows")
+
+    build.packages = [ ]
+
+    build.package("linux", "tar.bz2", "linux source binary", "Linux")
+    build.package("mac", "zip", "mac source binary", "Mac")
+    build.package("win", "zip", "windows source binary", "Windows")
+    build.package("source", "zip", "source")
+    

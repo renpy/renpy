@@ -38,6 +38,7 @@ init -1000 python in build:
     # Patterns that are used to classify Ren'Py.
     renpy_patterns = pattern_list([
         ( "**~", None),
+        ( "**/#*", None),
         ( "**/.*", None),
         ( "**.old", None),
         ( "**.new", None),
@@ -58,8 +59,8 @@ init -1000 python in build:
         
         # Linux patterns. 
         ( "renpy.sh", "linux"),
-        ( "lib/linux-x86/**", "linux"),
-        ( "lib/linux-x64/**", "linux"),
+        ( "lib/linux-x86_64/**", "linux"),
+        ( "lib/linux-i686/**", "linux"),
         ( "lib/python", "linux"),
         
         # Mac patterns.
@@ -79,7 +80,7 @@ init -1000 python in build:
         Classifies files in the Ren'Py base directory according to pattern.
         """
         
-        renpy_patterns.append(pattern, make_file_lists(groups))
+        renpy_patterns.append((pattern, make_file_lists(groups)))
 
     # Patterns that are relative to the base directory.
     
@@ -235,6 +236,9 @@ init -1000 python in build:
     # A verbose version to include in the update.
     version = None
     
+    # Are we building Ren'Py?
+    renpy = False
+    
     # This function is called by the json_dump command to dump the build data 
     # into the json file.
     def dump():
@@ -251,4 +255,6 @@ init -1000 python in build:
         rv["renpy_patterns"] = renpy_patterns
         rv["version"] = version or directory_name
     
+        rv["renpy"] = renpy
+        
         return rv
