@@ -342,6 +342,9 @@ init python in project:
             self.label = label
             
         def get_selected(self):
+            if self.project is None:
+                return False
+
             if current is None:
                 return False
                         
