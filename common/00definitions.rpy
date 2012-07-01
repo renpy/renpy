@@ -47,6 +47,20 @@ init -1110:
         alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None 
         xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
 
+    # These are used by the transitions to move things offscreen. We don't
+    # expect them to be used by user code.
+    transform _moveleft:
+        xpos 0.0 xanchor 1.0
+        
+    transform _moveright:
+        xpos 1.0 xanchor 0.0
+        
+    transform _movetop:
+        ypos 0.0 yanchor 1.0
+        
+    transform _movebottom:
+        ypos 1.0 yanchor 0.0
+
     python:
         config.default_transform = default
         
@@ -94,7 +108,12 @@ init -1110 python:
         import math
         return .5 - math.cos(math.pi * x) / 2.0
 
-    # This defines a family of move transitions.
+
+    # Back up the move transition, so that if MoveTransition gets replaced by
+    # renpy.compat, this still works.
+    __MoveTransition = MoveTransition
+
+    # This defines a family of move transitions, using the old-style methods.
     def move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
         """
         :doc: transition_family
@@ -132,10 +151,6 @@ init -1110 python:
         `layers`        
             The layers the transition will apply to.
 
-        Additional keyword arguments are passed (indirectly) to the moves. The
-        most useful additional keyword argument is probably subpixel=True,
-        which causes a subpixel move to be used.
-
         ::
 
             # This defines all of the pre-defined transitions beginning
@@ -150,63 +165,79 @@ init -1110 python:
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs)),
+                time_warp=time_warp),
 
             "inright" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp, **kwargs)),
+                enter=_moveright,
+                time_warp=time_warp,
+                enter_time_warp=in_time_warp,
+                ),
 
             "inleft" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp, **kwargs)),
-
+                enter=_moveleft,
+                time_warp=time_warp,
+                enter_time_warp=in_time_warp,
+                ),
+                
             "intop" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp, **kwargs)),
-
+                enter=_movetop,
+                time_warp=time_warp,
+                enter_time_warp=in_time_warp,
+                ),
+                
             "inbottom" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs),
-                enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp, **kwargs)),
+                enter=_movebottom,
+                time_warp=time_warp,
+                enter_time_warp=in_time_warp,
+                ),
 
             "outright" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp, **kwargs)),
+                leave=_moveright,
+                time_warp=time_warp,
+                leave_time_warp=out_time_warp,
+                ),
 
             "outleft" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp, **kwargs)),
+                leave=_moveleft,
+                time_warp=time_warp,
+                leave_time_warp=out_time_warp,
+                ),
 
             "outtop" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp, **kwargs)),
+                leave=_movetop,
+                time_warp=time_warp,
+                leave_time_warp=out_time_warp,
+                ),
 
             "outbottom" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
-                leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
+                leave=_movebottom,
+                time_warp=time_warp,
+                leave_time_warp=out_time_warp,
+                ),
             }
 
         for k, v in moves.iteritems():
@@ -218,10 +249,10 @@ init -1110 python:
     define.move_transitions("move", 0.5)
     define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp) 
 
-    # Zoom-based transitions.
-    zoomin = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
-    zoomout = MoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
-    zoominout = MoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
+    # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
+    zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
+    zoomout = OldMoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
+    zoominout = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
     
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.

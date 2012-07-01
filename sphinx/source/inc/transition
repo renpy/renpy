@@ -185,49 +185,40 @@
         define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
         define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
 
-.. function:: MoveTransition(delay, factory=None, enter_factory=None, leave_factory=None, old=False, layers=['master'])
+.. function:: MoveTransition(delay, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)
     
-    Returns a transition that attempts to find images that have changed
-    position, and moves them from the old position to the new transition, taking
-    delay seconds to complete the move.
+    Returns a transition that interpolates the position of images (with the
+    same tag) in the old and new scenes.
     
-    If `factory` is given, it is expected to be a function that takes as
-    arguments: an old position, a new position, the delay, and a
-    displayable, and to return a displayable as an argument. If not
-    given, the default behavior is to move the displayable from the
-    starting to the ending positions. Positions are always given as
-    (xpos, ypos, xanchor, yanchor) tuples.
+    `delay`
+        The time it takes for the interpolation to finish.
+        
+    `enter`
+        If not None, images entering the scene will also be moved. The value
+        of `enter` should be a transform that is applied to the image to 
+        get its starting position.
+         
+    `leave`
+        If not None, images leaving the scene will also be move. The value 
+        of `leave` should be a transform that is applied to the image to
+        get its ending position.
+        
+    `old`
+        If true, the old image will be used in preference to the new one.
+        
+    `layers`
+        A list of layers that moves are applied to.
+        
+    `time_warp`
+        A time warp function that's applied to the interpolation. This 
+        takes a number between 0.0 and 1.0, and should return a number in
+        the same range.
+        
+    `enter_time_warp`
+        A time warp function that's applied to images entering the scene.
     
-    If `enter_factory` or `leave_factory` are given, they are expected
-    to be functions that take as arguments a position, a delay, and a
-    displayable, and return a displayable. They are applied to
-    displayables that are entering or leaving the scene,
-    respectively. The default is to show in place displayables that
-    are entering, and not to show those that are leaving.
-    
-    If `old` is True, then factory moves the old displayable with the
-    given tag. Otherwise, it moves the new displayable with that
-    tag.
-    
-    `layers` is a list of layers that the transition will be applied
-    to.
-    
-    Images are considered to be the same if they have the same tag, in
-    the same way that the tag is used to determine which image to
-    replace or to hide. They are also considered to be the same if
-    they have no tag, but use the same displayable.
-    
-    Computing the order in which images are displayed is a three-step
-    process. The first step is to create a list of images that
-    preserves the relative ordering of entering and moving images. The
-    second step is to insert the leaving images such that each leaving
-    image is at the lowest position that is still above all images
-    that were below it in the original scene. Finally, the list 
-    is sorted by zorder, to ensure no zorder violations occur.
-    
-    If you use this transition to slide an image off the side of the
-    screen, remember to hide it when you are done. (Or just use
-    a leave_factory.)
+    `enter_time_warp`
+        A time warp function that's applied to images leaving the scene.
 
 .. function:: MultipleTransition(args)
     

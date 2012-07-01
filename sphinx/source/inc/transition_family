@@ -35,10 +35,6 @@
     `layers`        
         The layers the transition will apply to.
     
-    Additional keyword arguments are passed (indirectly) to the moves. The
-    most useful additional keyword argument is probably subpixel=True,
-    which causes a subpixel move to be used.
-    
     ::
     
         # This defines all of the pre-defined transitions beginning

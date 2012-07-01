@@ -63,8 +63,12 @@ init -1210 python:
     
         if (6, 12, 2) < version <= (6, 13, 8):
             config.old_substitutions = False
-            
-            
+    
+        if version <= (6, 13, 12):
+            global MoveTransition
+            MoveTransition = OldMoveTransition
+
+
 init 1210 python hide::
 
     # This returns true if the script_version is <= the
