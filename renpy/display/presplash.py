@@ -97,7 +97,7 @@ def show(fn):
         pass
 
     try:
-        import pygame.macosx
+        import pygame.macosx #@Reimport
         pygame.macosx.Video_AutoInit()
     except:
         pass

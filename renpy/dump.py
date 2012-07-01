@@ -70,7 +70,7 @@ def dump(error):
     args = renpy.game.args
     
     if completed_dump:
-       return
+        return
    
     completed_dump = True 
     
@@ -228,7 +228,7 @@ def dump(error):
    
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump()
+        result["build"] = renpy.store.build.dump() #@UndefinedVariable
     except:
         pass
         

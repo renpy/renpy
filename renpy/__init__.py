@@ -163,6 +163,7 @@ def import_all():
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
     import renpy.display.transition # core, layout @UnresolvedImport
+    import renpy.display.movetransition # core @UnresolvedImport
     import renpy.display.im #@UnresolvedImport
     import renpy.display.imagelike #@UnresolvedImport
     import renpy.display.image # core, behavior, im, imagelike @UnresolvedImport
@@ -209,6 +210,9 @@ def import_all():
     # up an alias as we do.
     renpy.store = sys.modules['store']
     sys.modules['renpy.store'] = sys.modules['store']
+
+    import subprocess
+    sys.modules['renpy.subprocess'] = subprocess
     
     for k, v in renpy.defaultstore.__dict__.iteritems():
         renpy.store.__dict__.setdefault(k, v)
@@ -218,6 +222,9 @@ def import_all():
     for k, v in globals().iteritems():
         vars(renpy.exports).setdefault(k, v)
 
+# Fool the analyzer.
+if False:
+    import renpy.defaultstore as store
 
 # This reloads all modules.
 def reload_all():

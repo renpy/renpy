@@ -144,7 +144,7 @@ cython(
 find_unnecessary_gen()
 
 # Figure out the version, and call setup.
-sys.path.append('..')
+sys.path.insert(0, '..')
 import renpy
 
 setuplib.setup("Ren'Py", renpy.version[7:])

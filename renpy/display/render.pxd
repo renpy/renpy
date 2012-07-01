@@ -44,3 +44,4 @@ cdef class Render:
 
     
 cpdef render(object d, object widtho, object heighto, double st, double at)
+

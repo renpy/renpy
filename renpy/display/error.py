@@ -64,10 +64,6 @@ def error_dump():
     """
     
     renpy.dump.dump(True)
-    
-    if renpy.game.args.command == "quit":
-        raise SystemExit()
-    
         
 def report_exception(short, full, traceback_fn):
     """

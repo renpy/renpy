@@ -26,7 +26,6 @@ from renpy.minstore import *
 import renpy.display
 import renpy.text
 
-import renpy.ui as ui
 import renpy.display.im as im
 import renpy.display.anim as anim
 
@@ -149,12 +148,16 @@ ImageDissolve = renpy.curry.curry(renpy.display.transition.ImageDissolve)
 AlphaDissolve = renpy.curry.curry(renpy.display.transition.AlphaDissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
-MoveTransition = renpy.curry.curry(renpy.display.transition.MoveTransition)
-MoveFactory = renpy.curry.curry(renpy.display.transition.MoveFactory)
-MoveIn = renpy.curry.curry(renpy.display.transition.MoveIn)
-MoveOut = renpy.curry.curry(renpy.display.transition.MoveOut)
-ZoomInOut = renpy.curry.curry(renpy.display.transition.ZoomInOut)
-RevolveInOut = renpy.curry.curry(renpy.display.transition.RevolveInOut)
+
+
+OldMoveTransition = renpy.curry.curry(renpy.display.movetransition.OldMoveTransition)
+MoveTransition = renpy.curry.curry(renpy.display.movetransition.MoveTransition)
+MoveFactory = renpy.curry.curry(renpy.display.movetransition.MoveFactory)
+MoveIn = renpy.curry.curry(renpy.display.movetransition.MoveIn)
+MoveOut = renpy.curry.curry(renpy.display.movetransition.MoveOut)
+ZoomInOut = renpy.curry.curry(renpy.display.movetransition.ZoomInOut)
+RevolveInOut = renpy.curry.curry(renpy.display.movetransition.RevolveInOut)
+
 MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransition)
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)

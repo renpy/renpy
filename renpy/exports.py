@@ -57,7 +57,6 @@ import renpy.audio.music as music
 
 import time
 import sys
-import subprocess
 
 def public_api():
     """
@@ -88,8 +87,6 @@ def public_api():
     unelide_filename
     
 del public_api
-
-import collections
 
 def roll_forward_info():
     """
