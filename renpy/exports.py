@@ -1714,3 +1714,42 @@ def fsdecode(s):
 
 from renpy.editor import launch_editor #@UnusedImport
 
+def get_image_load_log(age=None):
+    """
+    :doc: other
+    
+    A generator that yields a log of image loading activity. For the last 100
+    image loads, this returns:
+    
+    * The time the image was loaded (in seconds since the epoch).
+    * The filename of the image that was loaded.
+    * A boolean that is true if the image was preloaded, and false if the
+      game stalled to load it. 
+    
+    The entries are ordered from newest to oldest.
+    
+    `age`
+        If not None, only images that have been loaded in the past `age`
+        seconds are included.
+        
+    The image load log is only kept if config.developer = True.
+    """
+
+    if age is not None:
+        deadline = time.time() - age
+    else:
+        deadline = 0
+    
+
+    for i in renpy.display.im.cache.load_log:
+        if i[0] < deadline:
+            break
+        
+        yield i
+        
+        
+    
+    
+    
+    
+

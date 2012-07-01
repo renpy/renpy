@@ -29,6 +29,7 @@ import math
 import zipfile
 import cStringIO
 import threading
+import time
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -96,6 +97,16 @@ class Cache(object):
 
         # Have we been added this tick?
         self.added = set()
+
+        # A list of (time, filename, preload) tuples. This is updated when
+        # config.developer is True and an image is loaded. Preload is a 
+        # flag that is true if the image was loaded from the preload 
+        # thread. The log is limited to 100 entries, and the newest entry
+        # is first.
+        # 
+        # This is only updated when config.developer is True.
+        self.load_log = [ ]
+
                 
     def init(self):
         """
@@ -369,6 +380,19 @@ class Cache(object):
                     except:
                         self.preload_blacklist.add(image)
 
+    def add_load_log(self, filename):
+        
+        if not renpy.config.developer:
+            return
+        
+        preload = (threading.current_thread() is self.preload_thread)
+    
+        self.load_log.insert(0, (time.time(), filename, preload))
+    
+        while len(self.load_log) > 100:
+            self.load_log.pop()
+        
+
 
 # The cache object.
 cache = Cache()
@@ -463,7 +487,10 @@ class Image(ImageBase):
     def get_mtime(self):
         return renpy.loader.get_mtime(self.filename)
         
-    def load(self, unscaled=False): # W0221
+    def load(self, unscaled=False):
+
+        cache.add_load_log(self.filename)
+
         try:
 
             if unscaled:
