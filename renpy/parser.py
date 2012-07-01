@@ -1961,7 +1961,8 @@ def report_parse_errors():
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        renpy.exports.launch_editor([ error_fn ], 1, transient=1)
+        if renpy.game.args.command == "run": #@UndefinedVariable
+            renpy.exports.launch_editor([ error_fn ], 1, transient=1)
     except:
         pass
         

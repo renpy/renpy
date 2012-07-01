@@ -74,6 +74,9 @@ def report_exception(short, full, traceback_fn):
 
     error_dump()
 
+    if renpy.game.args.command != "run": #@UndefinedVariable
+        return True
+
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
        
@@ -121,6 +124,9 @@ def report_parse_errors(errors, error_fn):
     """
 
     error_dump()
+
+    if renpy.game.args.command != "run": #@UndefinedVariable
+        return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
