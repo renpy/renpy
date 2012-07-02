@@ -1080,6 +1080,7 @@ class Bar(renpy.display.core.Displayable):
 
         self.hovered = hovered
         self.unhovered = unhovered        
+
     def per_interact(self):
         self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)

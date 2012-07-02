@@ -424,9 +424,17 @@ class Wrapper(renpy.object.Object):
             if id in screen.hidden_widgets:
                 do_add = False
                 
+        grab = False
+                
         if old_transfers:
             if self.replaces:
-                keyword["replaces"] = screen.old_widgets.get(id, None)
+                w = screen.old_widgets.get(id, None)
+
+                if w is not None:
+                    keyword["replaces"] = w
+                    
+                    if renpy.display.focus.grab is w:
+                        grab = True
 
         if self.style and "style" not in keyword:
             keyword["style"] = style_group_style(self.style, style_group)
@@ -444,6 +452,9 @@ class Wrapper(renpy.object.Object):
 
         # Wrap the displayable based on the at_list and at_stack.
         atw = w 
+
+        if grab:
+            renpy.display.focus.new_grab = w
 
         while at_stack:
             at_list.append(at_stack.pop())

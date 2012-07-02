@@ -122,16 +122,19 @@ def focus_coordinates():
 
     return None, None, None, None
     
-    
+
 # This is called before each interaction. It's purpose is to choose
 # the widget that is focused, and to mark it as focused and all of
 # the other widgets as unfocused.
 
-def before_interact(roots):
+# The new grab widget. (The one that replaced the old grab widget at the start
+# of the interaction.)
+new_grab = None
 
-    # Clear out an old grab.
+def before_interact(roots):
+    
+    global new_grab
     global grab
-    grab = None
 
     # a list of focusable, name tuples.
     fwn = [ ]
@@ -187,6 +190,16 @@ def before_interact(roots):
 
     if current:
         current.focus(default=True)
+
+    # Migrate the grab.
+    if current is new_grab:
+        grab = new_grab
+    elif current is grab:
+        pass
+    else:
+        grab = None
+    
+    new_grab = None
     
 
 # This changes the focus to be the widget contained inside the new
