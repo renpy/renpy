@@ -435,6 +435,7 @@ class Wrapper(renpy.object.Object):
                     
                     if renpy.display.focus.grab is w:
                         grab = True
+                        
 
         if self.style and "style" not in keyword:
             keyword["style"] = style_group_style(self.style, style_group)
@@ -858,10 +859,19 @@ def viewport(scrollbars=None, **properties):
     if scrollbars is None:
         return _viewport(**properties)
 
-    elif scrollbars == "vertical":
-        side("c r")
+    viewport_properties = { }
+    side_properties = { }
+
+    for k, v in properties.iteritems():
+        if k.startswith("side_"):
+            side_properties[k[5:]] = v
+        else:
+            viewport_properties[k] = v
+
+    if scrollbars == "vertical":
+        side("c r", **side_properties)
         
-        rv = _viewport(**properties)
+        rv = _viewport(**viewport_properties)
         addable = stack.pop()
         
         vscrollbar(adjustment=rv.yadjustment)
@@ -872,9 +882,9 @@ def viewport(scrollbars=None, **properties):
         return rv
         
     elif scrollbars == "horizontal":
-        side("c b")
+        side("c b", **side_properties)
         
-        rv = _viewport(**properties)
+        rv = _viewport(**viewport_properties)
         addable = stack.pop()
         
         scrollbar(adjustment=rv.xadjustment)
@@ -886,9 +896,9 @@ def viewport(scrollbars=None, **properties):
 
     else:
     
-        side("c r b")
+        side("c r b", **side_properties)
         
-        rv = _viewport(**properties)
+        rv = _viewport(**viewport_properties)
         addable = stack.pop()
         
         vscrollbar(adjustment=rv.yadjustment)

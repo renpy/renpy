@@ -929,6 +929,9 @@ following properties:
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
 
+    If `scrollbars` is not None, the viewport takes properties prefixed
+    with "side_". These are passed to the created side layout.
+
 
 In addition, it takes the following groups of style properties:
 

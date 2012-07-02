@@ -107,16 +107,17 @@ class Style(object):
             parser.add(self)
 
 
-class TextStyle(object):
+class PrefixStyle(object):
     """
-    This represents a style parameter to a function.
+    This represents a prefixed style parameter to a function.
     """
 
-    def __init__(self, name):
+    def __init__(self, prefix, name):
+        self.prefix = prefix
         self.name = name
 
         for j in renpy.style.prefix_subs:
-            all_keyword_names.add("text_" + j + self.name)
+            all_keyword_names.add(prefix + j + self.name)
 
         if parser:
             parser.add(self)
@@ -161,9 +162,9 @@ class Parser(object):
             for j in renpy.style.prefix_subs:
                 self.keyword[j + i.name] = i
 
-        elif isinstance(i, TextStyle):
+        elif isinstance(i, PrefixStyle):
             for j in renpy.style.prefix_subs:
-                self.keyword["text_" + j + i.name] = i
+                self.keyword[i.prefix + j + i.name] = i
                 
         elif isinstance(i, Parser):
             self.children[i.name] = i
@@ -497,7 +498,8 @@ position_property_names = [
         ]
 
 position_properties = [ Style(i) for i in position_property_names ]
-text_position_properties = [ TextStyle(i) for i in position_property_names ]
+text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
+side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
 
 text_property_names = [
         "antialias",
@@ -536,7 +538,7 @@ text_property_names = [
         ]
 
 text_properties = [ Style(i) for i in text_property_names ]
-text_text_properties = [ TextStyle(i) for i in text_property_names ]
+text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
 
 window_properties = [ Style(i) for i in [
         "background",
@@ -770,8 +772,10 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+PrefixStyle("side_", "spacing")
 add(ui_properties)
 add(position_properties)
+add(side_position_properties)
 
 # Omit conditional. (behavior)
 

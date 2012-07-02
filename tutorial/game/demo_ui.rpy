@@ -1,6 +1,30 @@
 # This file contains a demonstration of the user interaction
 # functions.
+
+screen viewport_screen:
+    
+    viewport:
+        scrollbars "both"
+        xmaximum 400
+        ymaximum 400
         
+        side_xpos 100
+        side_ypos 100
+        side_spacing 5
+        
+        draggable True
+        mousewheel True
+
+        add "concert2.jpg"
+
+    textbutton "Dismiss":
+        xpos 300
+        xanchor 0.5
+        ypos 550
+        yanchor 0.5
+        
+        action Return(True)
+
 screen demo_imagemap:
     imagemap:
         auto "imagemap_%s.jpg"
@@ -255,20 +279,8 @@ label demo_ui:
     
     show eileen happy at right
     with move
-    
-    python hide:
 
-        ui.side(('c', 'b', 'r'), xpos=100, ypos=50, spacing=5)
-        
-        vp = ui.viewport(draggable=True, mousewheel=True, xmaximum=400, ymaximum=400)
-        ui.image("concert2.jpg")
-        ui.bar(adjustment=vp.xadjustment, style='scrollbar')
-        ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
-
-        ui.close()
-        
-        ui.textbutton("Dismiss", xpos=300, xanchor=0.5, ypos=550, yanchor=0.5, clicked=ui.returns(True))
-        ui.interact()
+    call screen viewport_screen
 
     show eileen happy at center
     with move
