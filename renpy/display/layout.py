@@ -1144,7 +1144,7 @@ class IgnoresEvents(Container):
 
 class Viewport(Container):
 
-    __version__ = 1
+    __version__ = 2
 
     def after_upgrade(self, version):
         if version < 1:
@@ -1155,6 +1155,9 @@ class Viewport(Container):
             self.draggable = False
             self.width = 0
             self.height = 0
+            
+        if version < 2:
+            self.drag_position = None
             
     def __init__(self,
                  child=None,
@@ -1191,10 +1194,11 @@ class Viewport(Container):
             self.yadjustment.value = replaces.yadjustment.value
             self.xoffset = replaces.xoffset
             self.yoffset = replaces.yoffset
+            self.drag_position = replaces.drag_position
         else:
             self.xoffset = offsets[0] if (offsets[0] is not None) else xinitial
             self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
-            
+            self.drag_position = None
 
         if self.xadjustment.adjustable is None:
             self.xadjustment.adjustable = True

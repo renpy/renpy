@@ -191,14 +191,7 @@ def before_interact(roots):
     if current:
         current.focus(default=True)
 
-    # Migrate the grab.
-    if current is new_grab:
-        grab = new_grab
-    elif current is grab:
-        pass
-    else:
-        grab = None
-    
+    grab = new_grab
     new_grab = None
     
 
