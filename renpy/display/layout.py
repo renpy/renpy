@@ -473,8 +473,8 @@ class MultiBox(Container):
 
             if adjust_times:
             
-                it = renpy.game.interface.interact_time
-                
+                it = renpy.game.interface.interact_time - st
+            
                 self.start_times = [ i or it for i in self.start_times ]
                 self.anim_times = [ i or it for i in self.anim_times ]
                             
