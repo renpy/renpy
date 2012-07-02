@@ -1,0 +1,47 @@
+.. Automatically generated file - do not modify.
+
+.. function:: build.archive(name, file_list='all')
+    
+    Declares the existence of an archive. If one or more files are 
+    classified with `name`, `name`.rpa is build as an archive. The 
+    archive is included in the named file lists.
+
+.. function:: build.classify(pattern, file_list)
+    
+    Classifies files that match `pattern` into `file_list`.
+
+.. function:: build.clear()
+    
+    Clears the list of patterns used to classify files.
+
+.. function:: build.documentation(pattern)
+    
+    Declares a pattern that matches documentation. In a mac app build, 
+    files matching the documentation pattern are stored twice - once
+    inside the app package, and again outside of it.
+
+.. function:: build.package(name, format, file_lists, description=None)
+    
+    Declares a package that can be built by the packaging
+    tool. 
+    
+    `name`
+        The name of the package.
+    
+    `format`
+        The format of the package. One of:
+    
+        zip
+            A zip file. 
+        app-zip
+            A zip file containing a macintosh application.
+        tar.bz2
+            A tar.bz2 file.
+    
+    `file_lists`
+        A list containing the file lists that will be contained
+        within the package.
+    
+    `description`
+        An optional description of the package to be built.
+

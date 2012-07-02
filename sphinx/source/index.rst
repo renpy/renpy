@@ -81,12 +81,13 @@ Python and Ren'Py
    udd
    other
 
-Other Platforms
----------------
+Building, Updating, and Other Platforms
+---------------------------------------
 
 .. toctree::
    :maxdepth: 1
 
+   build
    android
    
 End-User Documentation
