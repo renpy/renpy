@@ -578,6 +578,8 @@ init python in distribute:
                 True if we should apply the mac transform to the filenames before including 
                 them.
             """
+            filename = self.base_name + "-" + variant
+            path = os.path.join(self.destination, filename)
             
             fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
             fl = fl.copy()
@@ -599,37 +601,34 @@ init python in distribute:
                     
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            update_fn = self.temp_filename("current.json")
-            with open(update_fn, "w") as f:
-                json.dump(update, f)
-            
             if self.include_update:
-                fl.append(File("update", None, True, False))
-                fl.append(File("update/current.json", update_fn, False, False))
-            
+                update_fn = os.path.join(self.destination, filename + ".update.json")
+
+                with open(update_fn, "w") as f:
+                    json.dump(update, f)
+                    fl.append(File("update", None, True, False))
+                    fl.append(File("update/current.json", update_fn, False, False))
+
+                if not self.build_update:
+                    os.unlink(update_fn)
+
             # The mac transform.
             if format == "app-zip":
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
             
             # If we're not an update file, prepend the directory.
-
             if format != "update":
-                filename = self.base_name + "-" + variant
                 fl.prepend_directory(filename)
-            else:
-                filename = variant
-
-            filename = os.path.join(self.destination, filename)
             
             if format == "tar.bz2":
-                filename += ".tar.bz2"
-                pkg = TarPackage(filename, "w:bz2")
+                path += ".tar.bz2"
+                pkg = TarPackage(path, "w:bz2")
             elif format == "update":
-                filename += ".update"
-                pkg = TarPackage(filename, "w", notime=True)
+                path += ".update"
+                pkg = TarPackage(path, "w", notime=True)
             elif format == "zip" or format == "app-zip":
-                filename += ".zip"
-                pkg = ZipPackage(filename)
+                path += ".zip"
+                pkg = ZipPackage(path)
                 
             for i, f in enumerate(fl):
                 self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
@@ -645,12 +644,15 @@ init python in distribute:
             if format == "update":
                 # Build the zsync file.
                 # TODO: This should use an included copy of zsyncmake.
+                
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
+                
                 subprocess.check_call([ 
                     "zsyncmake", 
-                    "-z", renpy.fsencode(filename), 
-                    "-u", variant + ".update.gz", 
-                    "-o", renpy.fsencode(os.path.join(self.destination, variant + ".zsync")) ])
+                    "-z", renpy.fsencode(path), 
+                    "-u", filename + ".update.gz", 
+                    "-o", renpy.fsencode(os.path.join(self.destination, filename + ".zsync")) ])
+
 
         def finish_updates(self, packages):
             """
@@ -663,11 +665,18 @@ init python in distribute:
             index = { }
             
             def add_variant(variant):
-                fn = renpy.fsencode(os.path.join(self.destination, variant + ".update"))
+                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+
                 with open(fn, "rb") as f:
                     digest = hashlib.sha256(f.read()).hexdigest()
                     
-                index[variant] = { "version" : self.update_version, "pretty_version" : self.pretty_version, "digest" : digest, "url" : variant + ".zsync" }
+                index[variant] = { 
+                    "version" : self.update_version, 
+                    "pretty_version" : self.pretty_version, 
+                    "digest" : digest, 
+                    "zsync_url" : self.base_name + "-" + variant + ".zsync", 
+                    "json_url" : self.base_name + "-" + variant + ".update.json",
+                    }
                 
                 os.unlink(fn)
 

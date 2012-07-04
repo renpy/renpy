@@ -487,10 +487,9 @@ init -1000 python in updater:
                     rsa.verify(updates_json, signature, self.public_key)
                 except:
                     raise UpdateError("Could not verify update signature.")
-                
 
-            if "monkeypatch" in self.updates:
-                exec self.updates["monkeypatch"] in globals(), globals()
+                if "monkeypatch" in self.updates:
+                    exec self.updates["monkeypatch"] in globals(), globals()
             
         def check_versions(self):
             """
@@ -600,7 +599,7 @@ init -1000 python in updater:
             start_progress = None
             
             new_fn = self.update_filename(module, True)
-            
+
             cmd = [ 
                 "./zsync",
                 "-o", new_fn, 
@@ -611,7 +610,7 @@ init -1000 python in updater:
                 cmd.append("-i")
                 cmd.append(self.update_filename(module, False))
                 
-            cmd.append(urlparse.urljoin(self.url, self.updates[module]["url"]))
+            cmd.append(urlparse.urljoin(self.url, self.updates[module]["zsync_url"]))
             
             cmd = [ fsencode(i) for i in cmd ]
             
