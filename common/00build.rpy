@@ -174,7 +174,7 @@ init -1000 python in build:
         
     packages = [ ]
     
-    def package(name, format, file_lists, description=None):
+    def package(name, format, file_lists, description=None, update=True):
         """
         :doc: build
         
@@ -185,7 +185,8 @@ init -1000 python in build:
             The name of the package.
         
         `format`
-            The format of the package. One of:
+            The format of the package. A string containing a space separated
+            list of:
         
             zip
                 A zip file. 
@@ -194,25 +195,36 @@ init -1000 python in build:
             tar.bz2
                 A tar.bz2 file.
 
+            The empty string will not build any package formats (this 
+            makes dlc possible).
+        
         `file_lists`
             A list containing the file lists that will be contained
             within the package.
         
         `description`
             An optional description of the package to be built.
+        
+        `update`
+            If true and updates are being built, an update will be 
+            built for this package.
         """
 
-        if format not in [ "zip", "app-zip", "tar.bz2" ]:
-            raise Exception("Format {} not known.".format(format))
+        formats = format.split()
+        
+        for i in formats:
+            if i not in [ "zip", "app-zip", "tar.bz2" ]:
+                raise Exception("Format {} not known.".format(i))
             
         if description is None:
             description = name
             
         d = {
             "name" : name,
-            "format" : format,
+            "formats" : formats,
             "file_lists" : make_file_lists(file_lists),
-            "description" : description
+            "description" : description,
+            "update" : update,
             }
             
         packages.append(d)

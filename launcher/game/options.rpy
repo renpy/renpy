@@ -252,19 +252,22 @@ init python:
     build.classify_renpy("console.exe", "binary")
 
     # jedit rules.
-    build.classify_renpy("jedit/**", "binary")
+    build.classify_renpy("jedit/**", "jedit")
 
     # editra rules.
-    build.classify_renpy("editra/", "binary")
-    build.classify_renpy("editra/Editra.edit.py", "binary")
-    build.classify_renpy("editra/Editra/**", "linux")
-    build.classify_renpy("editra/Editra-mac.app/**", "mac")
-    build.classify_renpy("editra/Editra-win32/**", "windows")
+    build.classify_renpy("editra/", "editra-all")
+    build.classify_renpy("editra/Editra.edit.py", "editra-all")
+    build.classify_renpy("editra/Editra/**", "editra-linux")
+    build.classify_renpy("editra/Editra-mac.app/**", "editra-mac")
+    build.classify_renpy("editra/Editra-win32/**", "editra-windows")
 
     build.packages = [ ]
 
-    build.package("linux", "tar.bz2", "linux source binary", "Linux")
-    build.package("mac", "zip", "mac source binary", "Mac")
-    build.package("win", "zip", "windows source binary", "Windows")
-    build.package("source", "zip", "source")
-    
+    build.package("sdk", "tar.bz2 zip", "source binary")
+    build.package("source", "zip", "source", update=False)
+
+    build.package("jedit", "", "jedit")
+    build.package("editra-linux", "", "editra-all editra-linux")
+    build.package("editra-mac", "", "editra-all editra-mac")
+    build.package("editra-windows", "", "editra-all editra-windows")
+

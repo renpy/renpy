@@ -237,9 +237,12 @@ init python in distribute:
             # Safety - prevents us frome releasing a launcher that won't update.
             if store.UPDATE_SIMULATE:
                 raise Exception("Cannot build distributions when UPDATE_SIMULATE is True.")
-        
+
             # The project we want to distribute.
             self.project = project
+
+            # Logfile.
+            self.log = open(self.temp_filename("distribute.txt"), "w")
 
             # Start by scanning the project, to get the data and build
             # dictionaries.
@@ -304,7 +307,6 @@ init python in distribute:
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
 
-
             # Add generated/special files.
             if not build['renpy']:
                 self.add_renpy_files()
@@ -323,12 +325,13 @@ init python in distribute:
 
             for p in packages:
                 
-                self.make_package(
-                    p["name"],
-                    p["format"],
-                    p["file_lists"])
+                for f in p["formats"]:
+                    self.make_package(
+                        p["name"],
+                        f,
+                        p["file_lists"])
                 
-                if self.build_update:
+                if self.build_update and p["update"]:
                     self.make_package(
                         p["name"],
                         "update",
@@ -337,6 +340,8 @@ init python in distribute:
             
             if self.build_update:
                 self.finish_updates(packages)
+
+            self.log.close()
 
 
         def scan_and_classify(self, directory, patterns):
@@ -366,9 +371,13 @@ init python in distribute:
                     if match(match_name, pattern):
                         break
                 else:
+                    print >> self.log, match_name.encode("utf-8"), "doesn't match anything."
+
                     pattern = None
                     file_list = None
-                    
+
+                print >> self.log, match_name.encode("utf-8"), "matches", pattern, "(" + str(file_list) + ")."
+
                 if file_list is None:
                     return
 
@@ -681,7 +690,8 @@ init python in distribute:
                 os.unlink(fn)
 
             for p in packages:
-                add_variant(p["name"])
+                if p["update"]:
+                    add_variant(p["name"])
                 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
             with open(fn, "wb") as f:
