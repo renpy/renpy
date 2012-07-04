@@ -90,11 +90,15 @@ init -1000 python in updater:
         # Done. The update completed successfully.
         # Calling .proceed() on the updater will trigger a game restart.
         DONE = "DONE"
-        
+
+        # Done. The update completed successfully.
+        # Calling .proceed() on the updater will trigger a game restart.
+        DONE_NO_RESTART = "DONE_NO_RESTART"
+
         # The update was cancelled.
         CANCELLED = "CANCELLED"
         
-        def __init__(self, url, base, force=False, public_key=None, simulate=None):
+        def __init__(self, url, base, force=False, public_key=None, simulate=None, add=[], restart=True):
             """
             Takes the same arguments as update().
             """
@@ -127,6 +131,12 @@ init -1000 python in updater:
 
             # Force the update?
             self.force = force
+
+            # Do we need to restart Ren'Py at the end?
+            self.restart = restart
+
+            # Packages to add during the update.
+            self.add = add
             
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
@@ -227,6 +237,7 @@ init -1000 python in updater:
             self.load_state()
             self.test_write()
             self.check_updates()
+
             pretty_version = self.check_versions()
 
             if not self.modules:
@@ -235,23 +246,26 @@ init -1000 python in updater:
                 self.state = self.UPDATE_NOT_AVAILABLE
                 return
 
-            # Confirm with the user that the update is available.
-            with self.condition:
-                self.can_cancel = True
-                self.can_proceed = True
-                self.state = self.UPDATE_AVAILABLE
-                self.version = pretty_version
-                
-                while True:
-                    if self.cancelled or self.proceeded:
-                        break
-                    
-                    self.condition.wait()
+            if (not self.add) and (not self.remove):
 
-            self.can_proceed = False
-            
+                # Confirm with the user that the update is available.
+                with self.condition:
+                    self.can_cancel = True
+                    self.can_proceed = True
+                    self.state = self.UPDATE_AVAILABLE
+                    self.version = pretty_version
+                    
+                    while True:
+                        if self.cancelled or self.proceeded:
+                            break
+                        
+                        self.condition.wait()
+
             if self.cancelled:
                 raise UpdateCancelled()
+            
+            self.can_cancel = True
+            self.can_proceed = False
             
             # Perform the update.
             self.new_state = dict(self.current_state)
@@ -289,7 +303,11 @@ init -1000 python in updater:
             self.progress = None
             self.can_proceed = True
             self.can_cancel = False
-            self.state = self.DONE
+
+            if self.restart:
+                self.state = self.DONE
+            else:
+                self.state = self.DONE_NO_RESTART
             
             return
 
@@ -363,7 +381,11 @@ init -1000 python in updater:
             self.progress = None
             self.can_proceed = True
             self.can_cancel = False
-            self.state = self.DONE
+
+            if self.restart:
+                self.state = self.DONE
+            else:
+                self.state = self.DONE_NO_RESTART
             
             return
             
@@ -386,6 +408,9 @@ init -1000 python in updater:
 
             elif self.state == self.DONE:
                 renpy.quit(relaunch=True)
+
+            elif self.state == self.DONE_NO_RESTART:
+                return True
 
             elif self.state == self.UPDATE_AVAILABLE:
                 with self.condition:
@@ -491,6 +516,14 @@ init -1000 python in updater:
                 if "monkeypatch" in self.updates:
                     exec self.updates["monkeypatch"] in globals(), globals()
             
+        def add_dlc_state(self, name):
+            url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
+            f = urllib.urlopen(url)
+            d = json.load(f)
+            d[name]["version"] = 0 
+            self.current_state.update(d)
+            
+            
         def check_versions(self):
             """
             Decides what modules need to be updated, if any.
@@ -500,6 +533,19 @@ init -1000 python in updater:
             
             # A list of names of modules we want to update.
             self.modules = [ ]
+
+            # DLC?
+            if self.add:
+                for name in self.add:
+                    if name in self.updates:
+                        self.modules.append(name)
+
+                    if name not in self.current_state:
+                        self.add_dlc_state(name)
+
+                    rv = self.updates[name]["pretty_version"]
+                    
+                return rv
             
             # We update the modules that are in both versions, and that are out of date.
             for name, data in self.current_state.iteritems():
@@ -513,7 +559,7 @@ init -1000 python in updater:
                 
                 self.modules.append(name)
 
-                rv = data["pretty_version"]
+                rv = self.updates[name]["pretty_version"]
                 
             return rv
 
@@ -846,7 +892,34 @@ init -1000 python in updater:
                 self.clean(i + ".update.new")
                 self.clean(i + ".zsync")
 
-    def update(url, base=None, force=False, public_key=None, simulate=None):
+    installed_packages_cache = None
+    
+    def get_installed_packages(base=None):
+        """
+        Returns a list of installed DLC package names.
+        """
+        
+        global installed_packages_cache
+
+        if installed_packages_cache is not None:
+            return installed_packages_cache
+
+        if base is None:
+            base = config.basedir
+
+        fn = os.path.join(base, "update", "current.json")
+            
+        if not os.path.exists(fn):
+            raise UpdateError("Either this project does not support updating, or the update status file was deleted.")
+            
+        with open(fn, "r") as f:
+            state = json.load(f)
+
+        rv = list(state.keys())
+        installed_packages_cache = rv
+        return rv
+
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True):
         """
         :doc: updater
         
@@ -875,9 +948,18 @@ init -1000 python in updater:
             * "available" to test the case where an update is available.
             * "not_available" to test the case where no update is available.
             * "error" to test an update error.
+        
+        `add`
+            A list of packages to add during this update.
+        
+        `restart`
+            Restart the game after the update.
         """  
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate)        
+        global installed_packages_cache
+        installed_packages_cache = None
+
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart)
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)        
         renpy.call_screen("updater", u=u)
     
@@ -971,17 +1053,19 @@ init -1000:
             elif u.state == u.UPDATE_AVAILABLE:
                 text _("[u.version] is available. Do you want to install it?")
             elif u.state == u.PREPARING:
-                text _("Preparing to download the update.")
+                text _("Preparing to download the updates.")
             elif u.state == u.DOWNLOADING:
-                text _("Downloading the update.")
+                text _("Downloading the updates.")
             elif u.state == u.UNPACKING:
-                text _("Unpacking the update.")
+                text _("Unpacking the updates.")
             elif u.state == u.FINISHING:
                 text _("Finishing up.")
             elif u.state == u.DONE:
-                text _("The update has been installed. The program will now restart.")
+                text _("The updates have been installed. The program will now restart.")
+            elif u.state == u.DONE_NO_RESTART:
+                text _("The updates have been installed.")
             elif u.state == u.CANCELLED:
-                text _("The update was cancelled.")
+                text _("The updates were cancelled.")
                 
             if u.message is not None:
                 null height 10
@@ -999,12 +1083,3 @@ init -1000:
                 
             if u.can_cancel:
                 textbutton _("Cancel") action u.cancel xfill True
-                
-                    
-                
-            
-                
-            
-            
-        
-        

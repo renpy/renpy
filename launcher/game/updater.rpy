@@ -4,15 +4,36 @@ init python:
     # It must be None for a release.
     UPDATE_SIMULATE = None
     
+    PUBLIC_KEY = "renpy_public.pem"
+    
     UPDATE_URLS = [
-        ("Release", "http://update.renpy.org/release/update.json" ),
-        ("Pre-Release", "http://update.renpy.org/prerelease/update.json" ),
-        ("Experimental", "http://update.renpy.org/experimental/update.json" ),
+        ("Release", "http://update.renpy.org/release/updates.json" ),
+        ("Pre-Release", "http://update.renpy.org/prerelease/updates.json" ),
+        ("Experimental", "http://update.renpy.org/experimental/updates.json" ),
         ]
+    
+    DLC_URL = "http://localhost/tmp/renpy-dist/updates.json"
     
     if persistent.update_url is None:
         persistent.update_url = UPDATE_URLS[0][1]
     
+    def check_dlc(name):
+        """
+        Returns true if the named dlc package is present.
+        """
+        
+        return name in updater.get_installed_packages()
+        
+    def add_dlc(name):
+        """
+        Adds the DLC package, if it doesn't already exist.
+        """
+        
+        if check_dlc(name):
+            return None
+            
+        renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=False)
+
 screen updater:
         
     frame:
@@ -41,6 +62,8 @@ screen updater:
                 text _("Finishing up.")
             elif u.state == u.DONE:
                 text _("The update has been installed. Ren'Py will now restart.")
+            elif u.state == u.DONE_NO_RESTART:
+                text _("The update has been installed.")
             elif u.state == u.CANCELLED:
                 text _("The update was cancelled.")
 
@@ -70,7 +93,7 @@ screen updater:
 label update:
     
     python:
-        updater.update(persistent.update_url, simulate=UPDATE_SIMULATE, public_key="renpy_public.pem")
+        updater.update(persistent.update_url, simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY)
     
     # This should never happen.
     jump front_page
