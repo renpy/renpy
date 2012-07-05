@@ -43,6 +43,7 @@ def extra_imports():
     import encodings.utf_32_be; encodings.utf_32_be
     import encodings.latin_1; encodings.latin_1
     import encodings.hex_codec; encodings.hex_codec
+    import encodings.base64_codec; encodings.base64_codec
     import math; math
     import glob; glob
     import pickle; pickle
