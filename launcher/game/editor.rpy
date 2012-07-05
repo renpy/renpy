@@ -8,6 +8,7 @@ init python in editor:
     from store import Action, renpy, config, persistent
     import store.project as project
     import store.updater as updater
+    import store
     
     import glob
     import re
@@ -208,8 +209,11 @@ init python in editor:
             return
 
         if not fe.installed:
-            updater.add_dlc(fe.dlc)
-        
+            
+            # We don't check the status of this because fancy_activate_editor
+            # will fail if the editor is not installed.
+            store.add_dlc(fe.dlc)
+
         persistent.editor = fe.name
         fancy_activate_editor()
 

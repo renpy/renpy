@@ -27,12 +27,14 @@ init python:
     def add_dlc(name):
         """
         Adds the DLC package, if it doesn't already exist.
+        
+        Returns True if the DLC is installed, False otherwise.
         """
         
         if check_dlc(name):
-            return None
+            return True
             
-        renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=False)
+        return renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=False)
 
 screen updater:
         

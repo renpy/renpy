@@ -426,7 +426,10 @@ init -1000 python in updater:
                 self.cancelled = True
                 self.condition.notify_all()
                 
-            renpy.full_restart()
+            if self.restart:
+                renpy.full_restart()
+            else:
+                return False
                 
         def unlink(self, path):
             """
