@@ -896,7 +896,13 @@ init -1000 python in updater:
     
     def get_installed_packages(base=None):
         """
+        :doc: updater
+        
         Returns a list of installed DLC package names.
+        
+        `base`
+            The base directory to update. Defaults to the current project's
+            base directory.
         """
         
         global installed_packages_cache
@@ -910,14 +916,25 @@ init -1000 python in updater:
         fn = os.path.join(base, "update", "current.json")
             
         if not os.path.exists(fn):
-            raise UpdateError("Either this project does not support updating, or the update status file was deleted.")
-            
+            return [ ]
+ 
         with open(fn, "r") as f:
             state = json.load(f)
 
         rv = list(state.keys())
         installed_packages_cache = rv
         return rv
+
+    def can_update(base=None):
+        """
+        :doc: updater
+        
+        Returns true if it's possible that an update can succeed. Returns false
+        if updating is totally impossible. (For example, if the update directory
+        was deleted.)
+        """
+        
+        return not not get_installed_packages(base)
 
     def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True):
         """

@@ -1,1 +1,1 @@
-{"build_update": true, "packages": ["all", "linux", "mac", "win", "editra-linux", "sdk"], "type": "hidden"}
+{"build_update": true, "packages": ["all", "linux", "mac", "win", "sdk", "source", "jedit", "editra-mac", "editra-linux", "editra-windows"], "type": "hidden"}

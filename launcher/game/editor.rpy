@@ -7,7 +7,8 @@ init python in editor:
 
     from store import Action, renpy, config, persistent
     import store.project as project
-
+    import store.updater as updater
+    
     import glob
     import re
     import traceback
@@ -62,30 +63,192 @@ init python in editor:
             for filename in glob.glob(d + "/*/*.edit.py"):
                 scan_editor(filename)
 
-    def setup():
-        """
-        Sets up the editor contained in system.editor.
-        """
 
+    ########################################################################
+
+    # A list of fancy_editor_info objects.
+    fancy_editors = [ ]
+    
+    class FancyEditorInfo(object):
+        """
+        Represents an editor in the selection screen. A FEI knows if the 
+        editor is installed or not.
+        """
+    
+        def __init__(self, priority, name, description=None, dlc=None, dldescription=None):
+            # The priority of the editor. Lower priorities will come later
+            # in the list.
+            self.priority = priority
+            
+            # The name of the editor.
+            self.name = name
+            
+            # Is the editor installed?
+            self.installed = name in editors
+            
+            # The dlc needed to install the editor.
+            self.dlc = dlc
+            
+            # A description of the editor.
+            self.description = description
+            
+            # A description of the download.
+            self.dldescription = dldescription
+            
+    def fancy_scan_editors():
+        """
+        Creates the list of FancyEditorInfo objects.
+        """
+        
+        global fancy_editors
+        
+        scan_all()
+        
+        fei = fancy_editors = [ ]
+
+        # Editra.
+        ED  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking.")
+        EDL  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. On Linux, Editra requires wxPython.")
+
+        if renpy.windows:
+            dlc = "editra-windows"
+            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-win32"))
+            description = ED
+        elif renpy.macintosh:
+            dlc = "editra-mac"
+            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-mac.app"))
+            description = ED
+        else:
+            dlc = "editra-linux"
+            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra"))
+            description = EDL
+
+        e = FancyEditorInfo(
+            1,
+            "Editra", 
+            description,
+            dlc,
+            _("Up to 22 MB download required."))
+            
+        e.installed = e.installed or installed
+            
+        fei.append(e)
+        
+        # jEdit
+        fei.append(FancyEditorInfo(
+            2,
+            "jEdit",
+            "A mature editor that requires Java to be installed.",
+            "jedit",
+            _("1.8 MB download required.")))
+        
+        fei.append(FancyEditorInfo(
+            3,
+            "System Editor",
+            "Invokes the editor your operating system has associated with .rpy files.",
+            None))
+        
+        for k in editors:
+            if k in [ "Editra", "jEdit", "System Editor", "None" ]:
+                continue
+
+            fei.append(FancyEditorInfo(
+                4,
+                k,
+                None,
+                None))
+                    
+        fei.append(FancyEditorInfo(
+            5,
+            "None",
+            "Prevents Ren'Py from opening a text editor.",
+            None))
+                    
+        fei.sort(key=lambda e : (e.priority, e.name.lower()))
+
+        # If we're in a linux distro or something, assume all editors work.
+        if not updater.can_update():
+            for i in fei:
+                i.installed = True
+
+    def fancy_activate_editor():
+        """
+        Activates the editor in persistent.editor, if it's installed.
+        """
+    
         if not set_editor:
             return
         
-        for i in [ persistent.editor, "Editra", "None" ]:
-
-            if i in editors:
-                persistent.editor = i
-                ei = editors[i]
-                os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
-                renpy.editor.init()
-                return
-
-        os.environ.discard("RENPY_EDIT_PY") 
+        fancy_scan_editors()
+        
+        for i in fancy_editors:
+            
+            if i.name == persistent.editor:
+                if i.installed:
+                    ei = editors[i.name]
+                    os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+                    break
+                    
+        else:
+            persistent.editor = None
+            os.environ.pop("RENPY_EDIT_PY", None)
+            
         renpy.editor.init()
 
-    scan_all()
-    setup()
+    def fancy_select_editor(name):
+        """
+        Selects the editor with the given name, installing it if it
+        doesn't already exist. 
+        """
+        
+        for fe in fancy_editors:
+            if fe.name == name:
+                break
+        else:
+            return
 
+        if not fe.installed:
+            updater.add_dlc(fe.dlc)
+        
+        persistent.editor = fe.name
+        fancy_activate_editor()
+
+    # Call fancy_activate_editor on startup.
+    fancy_activate_editor()
     
+    class SelectEditor(Action):
+        def __init__(self, name):
+            self.name = name
+            
+        def get_selected(self):
+            return persistent.editor == self.name
+            
+        def __call__(self):
+            fancy_select_editor(self.name)
+            return True
+
+
+    def check_editor():
+        """
+        Checks to see if an editor is set. If one isn't asks the user to 
+        select one. 
+        
+        Returns True if the editor is set and editing can proceed, and 
+        False otherwise.
+        """
+        
+        if not set_editor:
+            return True
+            
+        if persistent.editor:
+            return True
+            
+        return renpy.invoke_in_new_context(renpy.call_screen, "editor")
+        
+    ##########################################################################
+    # Editing actions.
+
+
     class Edit(Action):
         def __init__(self, filename, line=None, check=False):
             """
@@ -119,6 +282,9 @@ init python in editor:
             if not self.get_sensitive():
                 return
             
+            if not check_editor():
+                return
+            
             fn = project.current.unelide_filename(self.filename)
             e = renpy.editor.editor
             
@@ -135,6 +301,10 @@ init python in editor:
             return
             
         def __call__(self):
+
+            if not check_editor():
+                return
+
             scripts = project.current.script_files()            
             scripts.sort(key=lambda fn : fn.lower())
 
@@ -151,33 +321,58 @@ init python in editor:
                 e.open(fn)
                 
             e.end()
-            
-    class Select(Action):
-        """
-        Selects the text editor to use.
-        """
+
+screen editor:
+    
+    frame:
+        style_group "l"
+        style "l_root"
         
-        def __init__(self, name):
-            self.name = name
+        window:
+    
+            has vbox
+
+            label _("Select Editor")
             
-        def __call__(self):
-            persistent.editor = self.name
-            setup()
-            renpy.restart_interaction()
+            add HALF_SPACER
             
-        def get_selected(self):
-            return persistent.editor == self.name
-            
-            
-    def editor_action_list():
-        """
-        Gets a list of (editor name, select action) tuples, one for each
-        editor we know of.
-        """
-        
-        rv = [ ]
-        
-        for i in sorted(editors, key=lambda a : a.lower()):
-            rv.append((i, Select(i)))
+            hbox:
+                frame:
+                    style "l_indent"
+                    xfill True
+                    
+                    viewport:
+                        scrollbars "vertical"
+                        mousewheel True
+                        
+                        has vbox
+                                            
+                        text _("A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will be used. If not already present, the editor will be automatically downloaded and installed.") style "l_small_text"
+
+                        for fe in editor.fancy_editors:
+                            
+                            add SPACER
+                            
+                            textbutton fe.name action editor.SelectEditor(fe.name)
+                            
+                            add HALF_SPACER
+                            
+                            frame:
+                                style "l_indent"
+                                has vbox
+                                
+                                if fe.description:
+                                    text fe.description style "l_small_text"
+                                    
+                                if not fe.installed:
+                                    add HALF_SPACER
+                                    text fe.dldescription style "l_small_text"
+
                 
-        return rv
+    textbutton _("Cancel") action Return(False) style "l_left_button"
+
+label editor_preference:
+    call screen editor
+    jump preferences
+
+    

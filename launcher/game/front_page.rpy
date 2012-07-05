@@ -169,12 +169,6 @@ label main_menu:
     return
     
 label start:
-    menu:
-        "TEST DLC":
-            $ add_dlc("editra-linux")
-        "CANCEL":
-            pass
-        
     show screen bottom_info
     
 label front_page:
