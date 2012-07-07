@@ -726,6 +726,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     changed = None
     prefix = ""
     suffix = ""
+    caret_pos = 0
     
     def __init__(self,
                  default="",
@@ -761,7 +762,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 caretprops[i] = properties[i]
 
         self.caret = renpy.display.image.Solid(xmaximum=1, style=style, **caretprops)
-        self.caret_pos = 0
+        self.caret_pos = len(self.content)
 
         if button:
             self.editable = False
@@ -771,6 +772,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         if isinstance(replaces, Input):
             self.content = replaces.content
             self.editable = replaces.editable
+            self.caret_pos = replaces.caret_pos
 
         self.update_text(self.content, self.editable)
 

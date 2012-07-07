@@ -39,6 +39,9 @@ The :ref:`sl-viewport` screen language statement now takes `xinitial` and
 `yinitial` parameters. If given, these control the initial positioning of
 the viewport.
 
+The input displayable now supports the use of the left and right arrow keys
+within the text. (Thanks to Edwin for this feature.)
+
 Screen language blocks may now contain multiple has statements.
 
 Added the :func:`OpenURL` action, which opens a URL in a web browser.
