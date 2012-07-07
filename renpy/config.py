@@ -205,6 +205,9 @@ keymap = dict(
     # Input.
     input_backspace = [ 'K_BACKSPACE' ],
     input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
+    input_left = [ 'K_LEFT' ],
+    input_right = [ 'K_RIGHT' ],
+    input_delete = [ 'K_DELETE' ],
 
     # Viewport.
     viewport_up = [ 'mousedown_4' ],
