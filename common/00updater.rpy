@@ -950,7 +950,7 @@ init -1000 python in updater:
             
         `base`
             The base directory that will be updated. Defaults to the base
-            of the current game.
+            of the current game. (This can usually be ignored.)
         
         `force`
             Force the update to occur even if the version numbers are 
@@ -958,7 +958,7 @@ init -1000 python in updater:
             
         `public_key`
             The path to a PEM file containing a public key that the 
-            update signature is checked against.
+            update signature is checked against. (This can usually be ignored.)
             
         `simulate`
             This is used to test update guis without actually performing
@@ -970,7 +970,8 @@ init -1000 python in updater:
             * "error" to test an update error.
         
         `add`
-            A list of packages to add during this update.
+            A list of packages to add during this update. This is only necessary
+            for dlc.
         
         `restart`
             Restart the game after the update.

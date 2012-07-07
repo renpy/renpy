@@ -88,6 +88,7 @@ Building, Updating, and Other Platforms
    :maxdepth: 1
 
    build
+   updater
    android
    
 End-User Documentation

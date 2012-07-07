@@ -162,3 +162,7 @@
     `no`
         An action that is run when the user chooses no.
 
+.. function:: updater.fsencode(s)
+    
+    Converts s from unicode to the filesystem encoding.
+

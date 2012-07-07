@@ -20,7 +20,7 @@
     files matching the documentation pattern are stored twice - once
     inside the app package, and again outside of it.
 
-.. function:: build.package(name, format, file_lists, description=None)
+.. function:: build.package(name, format, file_lists, description=None, update=True)
     
     Declares a package that can be built by the packaging
     tool. 
@@ -29,7 +29,8 @@
         The name of the package.
     
     `format`
-        The format of the package. One of:
+        The format of the package. A string containing a space separated
+        list of:
     
         zip
             A zip file. 
@@ -38,10 +39,17 @@
         tar.bz2
             A tar.bz2 file.
     
+        The empty string will not build any package formats (this 
+        makes dlc possible).
+    
     `file_lists`
         A list containing the file lists that will be contained
         within the package.
     
     `description`
         An optional description of the package to be built.
+    
+    `update`
+        If true and updates are being built, an update will be 
+        built for this package.
 
