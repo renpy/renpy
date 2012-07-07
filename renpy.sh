@@ -36,4 +36,4 @@ export LD_LIBRARY_PATH
 export RENPY_PLATFORM
 export RENPY_ORIGINAL_LD_LIBRARY_PATH
 
-exec $RENPY_GDB "$LIB/python" -OO "$BASE.py" "$@"
+exec $RENPY_GDB "$LIB/python" $RENPY_PYARGS -OO "$BASE.py" "$@"

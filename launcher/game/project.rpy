@@ -109,11 +109,11 @@ init python in project:
             
         def launch(self, args=[], wait=False):
 
-            if renpy.renpy.windows and sys.argv[0].endswith(".exe"):
+            if renpy.renpy.windows and sys.argv[0].endswith("renpy.exe"):
                 cmd = [ os.path.join(config.renpy_base, "renpy.exe") ]
             else:
-                cmd = [ sys.executable, sys.argv[0] ]
-            
+                cmd = [ sys.executable, "-OO", sys.argv[0] ]
+ 
             cmd.append(self.path)
             cmd.extend(args)
             

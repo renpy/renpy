@@ -350,7 +350,7 @@ def main():
                 if renpy.windows and sys.argv[0].endswith(".exe"):
                     subprocess.Popen(sys.argv)
                 else:
-                    subprocess.Popen([sys.executable] + sys.argv)
+                    subprocess.Popen([sys.executable, "-OO"] + sys.argv)
             
             break
 
