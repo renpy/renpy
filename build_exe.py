@@ -54,8 +54,6 @@ def main():
                                                 'win32con',
                                                 'win32api',
                                                 'Numeric',
-                                                'locale',
-                                                'gettext',
                                                 'os2emxpath',
                                                 'macpath',
                                                 ],
