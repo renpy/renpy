@@ -166,31 +166,6 @@ def dump(error):
         if inspect.ismethod(o):
             return get_line(o.im_func)
         
-        if inspect.isclass(o):
-
-            filename = None
-            line = None
-            
-            for _name, value in o.__dict__.items():
-                
-                newfile, newline = get_line(value)
-                
-                if newfile is None:
-                    continue
-                
-                if filename is None:
-                    filename = newfile
-                    line = newline
-                    continue
-                
-                # Each class must be defined in one file.
-                if newfile != filename:
-                    return None, None
-                
-                line = min(line, newline)
-            
-            return filename, line
-        
         return None, None
     
     code = location["callable"] = { }
@@ -209,7 +184,7 @@ def dump(error):
 
         for name, o in inspect.getmembers(mod):
             
-            if inspect.isclass(o) or inspect.isfunction(o):
+            if inspect.isfunction(o):
                 try:
                     if inspect.getmodule(o) != mod:
                         continue
@@ -225,6 +200,29 @@ def dump(error):
                     code[prefix + name] = [ filename, line ]
                 except:
                     continue
+
+            if inspect.isclass(o):
+
+                for methname, method in o.__dict__.iteritems():
+                
+                    try:
+                        if inspect.getmodule(method) != mod:
+                            continue
+    
+                        filename, line = get_line(method)
+     
+                        if filename is None:
+                            continue
+                        
+                        if not filter(name, filename):
+                            continue
+
+                        if not filter(methname, filename):
+                            continue
+        
+                        code[prefix + name + "." + methname] = [ filename, line ]
+                    except:
+                        continue
    
     # Add the build info from 00build.rpy, if it's available.
     try:
