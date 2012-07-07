@@ -14,6 +14,7 @@ init -1000 python in updater:
     import subprocess
     import hashlib
     import time
+    import sys
 
     try:
         import rsa
@@ -21,6 +22,18 @@ init -1000 python in updater:
         pass
 
     from renpy.exports import fsencode
+
+    def zsync_path(command):
+        """
+        Returns the full platform-specific path to command, which is one
+        of zsync or zsyncmake. 
+        """
+        
+        if renpy.windows:
+            return os.path.join(config.renpy_base, "lib", "windows-x86", command + ".exe")
+        else:
+            return os.path.join(os.path.dirname(sys.executable), command)
+        
 
     class UpdateError(Exception):
         """
@@ -650,7 +663,7 @@ init -1000 python in updater:
             new_fn = self.update_filename(module, True)
 
             cmd = [ 
-                "./zsync",
+                zsync_path("zsync"),
                 "-o", new_fn, 
                 "-k", os.path.join(self.updatedir, module + ".zsync")
                 ]

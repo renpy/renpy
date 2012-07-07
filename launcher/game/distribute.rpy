@@ -12,6 +12,7 @@ init python in distribute:
     import store.project as project
     import store.interface as interface
     import store.archiver as archiver
+    import store.updater as updater
     import store as store
 
     from change_icon import change_icons
@@ -657,7 +658,7 @@ init python in distribute:
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
                 
                 subprocess.check_call([ 
-                    "zsyncmake", 
+                    updater.zsync_path("zsyncmake"), 
                     "-z", renpy.fsencode(path), 
                     "-u", filename + ".update.gz", 
                     "-o", renpy.fsencode(os.path.join(self.destination, filename + ".zsync")) ])
