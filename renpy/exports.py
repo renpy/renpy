@@ -1024,11 +1024,18 @@ def screenshot(filename):
 
     renpy.game.interface.save_screenshot(filename)
     
-def version():
+def version(tuple=False): #@ReservedAssignment
     """
     Returns a string containing the current version of Ren'Py, prefixed with the
     string "Ren\'Py ".
+    
+    `tuple`
+        If True, returns a tuple giving each component of the version as an
+        integer.
     """
+
+    if tuple:
+        return renpy.version_tuple
 
     return renpy.version
 
