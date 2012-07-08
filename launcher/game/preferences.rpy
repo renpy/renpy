@@ -1,3 +1,13 @@
+init python:
+    if persistent.gl_enable is None:
+        persistent.gl_enable = True
+        
+    config.gl_enable = persistent.gl_enable
+    
+    if persistent.windows_console is None:
+        persistent.windows_console = False
+
+
 screen preferences:
     
     frame:
@@ -19,7 +29,7 @@ screen preferences:
                     style "l_indent"
                     xmaximum ONEHALF
                     xfill True
-                    
+ 
                     has vbox
 
                     # Projects directory selection.
@@ -27,6 +37,7 @@ screen preferences:
                     
                     frame:
                         style "l_indent"
+                        yminimum 75
                         has vbox
                         
                         text _("Projects Directory:")
@@ -48,6 +59,7 @@ screen preferences:
                     
                     frame:
                         style "l_indent"
+                        yminimum 75
                         has vbox
                         
                         text _("Text Editor:")
@@ -64,20 +76,18 @@ screen preferences:
 
                     # Update URL selection.
                     add SEPARATOR2
-                    
+
                     frame:
                         style "l_indent"
+                        yminimum 75
                         has vbox
                         
                         text _("Update Channel:")
-
-                        add HALF_SPACER 
+            
+                        add HALF_SPACER
                         
-                        for source, url in UPDATE_URLS:
-                            textbutton source action SetField(persistent, "update_url", url) style "l_list"
-
-                    add SPACER
-
+                        frame style "l_indent": 
+                            textbutton persistent.update_channel action Jump("update_preference")
                     
                 frame:
                     style "l_indent"
@@ -89,20 +99,39 @@ screen preferences:
                     
                     frame:
                         style "l_indent"
+                        yminimum 75
                         has vbox
                         
                         text _("Navigation Options:")
                     
                         add HALF_SPACER
                     
-                        textbutton "Include private names" style "l_checkbox" action ToggleField(persistent, "navigate_private")
-                        textbutton "Include library names" style "l_checkbox" action ToggleField(persistent, "navigate_library")
+                        textbutton _("Include private names") style "l_checkbox" action ToggleField(persistent, "navigate_private")
+                        textbutton _("Include library names") style "l_checkbox" action ToggleField(persistent, "navigate_library")
 
                     add SPACER
                     add SEPARATOR2
                     
                     frame:
                         style "l_indent"
+                        yminimum 75
+                        has vbox
+                        
+                        text _("Launcher Options:")
+                    
+                        add HALF_SPACER
+                    
+                        textbutton _("Hardware rendering") style "l_checkbox" action ToggleField(persistent, "gl_enable")
+                        
+                        if renpy.windows:
+                            textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+
+                    add SPACER
+                    add SEPARATOR2
+                    
+                    frame:
+                        style "l_indent"
+                        yminimum 75
                         has vbox
                         
                         text _("Actions:")

@@ -6,18 +6,20 @@ init python:
     
     PUBLIC_KEY = "renpy_public.pem"
     
-    UPDATE_URLS = [
-        ("Release", "http://update.renpy.org/release/updates.json" ),
-        ("Pre-Release", "http://update.renpy.org/prerelease/updates.json" ),
-        ("Experimental", "http://update.renpy.org/experimental/updates.json" ),
-        ]
+    UPDATE_URLS = {
+        "Release" : "http://update.renpy.org/release/updates.json",
+        "Prerelease" : "http://update.renpy.org/prerelease/updates.json",
+        "Experimental" : "http://update.renpy.org/experimental/updates.json" 
+        }
     
-    DLC_URL = "http://localhost/tmp/renpy-dist/updates.json"
+    version_tuple = renpy.version(tuple=True)
     
-    if persistent.update_url is None:
-        persistent.update_url = UPDATE_URLS[0][1]
+    DLC_URL = "http://update.renpy.org/{0}.{1}.{2}/updates.json".format(version_tuple[0], version_tuple[1], version_tuple[2])
     
-    def check_dlc(name):
+    if persistent.update_channel not in UPDATE_URLS:
+        persistent.update_channel = "Release"
+    
+    def check_dlc(name):        
         """
         Returns true if the named dlc package is present.
         """
@@ -35,6 +37,71 @@ init python:
             return True
             
         return renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=False)
+
+screen update_channel:
+    
+    frame:
+        style_group "l"
+        style "l_root"
+        
+        window:
+    
+            has vbox
+
+            label _("Select Update Channel")
+            
+            add HALF_SPACER
+            
+            
+            hbox:
+                frame:
+                    style "l_indent"
+                    xfill True
+                    
+                    has vbox
+
+                    text _("The update channel controls the version of Ren'Py the updater will download. Please select an update channel:") style "l_small_text"
+
+                    # Release
+                    add SPACER
+                    
+                    textbutton _("Release") action SetField(persistent, "update_channel", "Release")
+
+                    add HALF_SPACER
+                    
+                    frame:
+                        style "l_indent"
+                        text _("{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games.") style "l_small_text"
+
+                    # Prerelease
+                    add SPACER
+                    
+                    textbutton _("Prerelease") action SetField(persistent, "update_channel", "Prerelease")
+                    
+                    add HALF_SPACER
+
+                    frame:
+                        style "l_indent"
+                        text _("A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games.") style "l_small_text"
+
+
+                    # Experimental
+                    add SPACER
+
+                    textbutton _("Experimental") action SetField(persistent, "update_channel", "Experimental")
+                    
+                    add HALF_SPACER
+
+                    frame:
+                        style "l_indent"
+                        text _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.") style "l_small_text"
+
+                
+    textbutton _("Cancel") action Jump("preferences") style "l_left_button"
+
+label update_preference:
+    call screen update_channel
+    return
 
 screen updater:
         
@@ -95,7 +162,7 @@ screen updater:
 label update:
     
     python:
-        updater.update(persistent.update_url, simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY)
+        updater.update(UPDATE_URLS[persistent.update_channel], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY)
     
     # This should never happen.
     jump front_page
