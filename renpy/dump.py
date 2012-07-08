@@ -83,7 +83,10 @@ def dump(error):
         """
         
         if name.startswith("_") and not args.json_dump_private:
-            return False
+            if name.startswith("__") and name.endswith("__"):
+                pass
+            else:
+                return False
 
         if not file_exists(filename):
             return False
