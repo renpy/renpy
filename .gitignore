@@ -49,3 +49,5 @@ cache
 /module/gen
 /editra
 
+dl
+renpy/vc_version.py

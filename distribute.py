@@ -1,4 +1,4 @@
-#!/home/tom/bin/renpython -O
+#!/home/tom/bin/renpython
 # Builds a distributions of Ren'Py.
 
 import sys
@@ -9,8 +9,6 @@ import zlib
 import compileall
 import shutil
 import subprocess
-import makeupdate
-import glob
 import time
 import argparse
 
@@ -118,146 +116,139 @@ def tree(root):
 def main():
 
     ap = argparse.ArgumentParser()
+    ap.add_argument("version")
     ap.add_argument("--fast", action="store_true")
-    ap.add_argument("prefix")
     
     args = ap.parse_args()
 
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.
-    
+
     # Determine the version. We grab the current revision, and if any
     # file has changed, bump it by 1.
-    p = subprocess.Popen(["bzr", "revno"], stdout=subprocess.PIPE)
-    revno = p.stdout.read().strip()
-    revno = int(revno)
-    p.wait()
 
-    p = subprocess.Popen(["bzr", "status", "-V"], stdout=subprocess.PIPE)
-    status = p.stdout.read().strip()
-    p.wait()
+    s = subprocess.check_output([ "git", "describe", "--dirty" ])
+    parts = s.strip().split("-")
+    vc_version = int(parts[1])
     
-    if status:
-        revno += 1
+    if parts[-1] == "dirty":
+        vc_version += 1
+    
+    with open("renpy/vc_version.py", "w") as f:
+        f.write("vc_version = {}".format(vc_version))
+
+    # Check that the versions match.
+    import renpy
+    full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
+    if not full_version.startswith(args.version): 
+        raise Exception("The command-line and Ren'Py versions do not match.") 
+
+    print "Version {} ({})".format(args.version, full_version) 
         
-    # Write the revno to the necessary files.
-    f = file("lib/update-version.txt", "w")
-    f.write("{revno}-{now} base\n".format(revno=revno, now=time.time()))
-    f.close()
-
-    f = file("renpy/vc_version.py", "w")
-    f.write("""\
-# The version of Ren'Py reported by the version control software.
-vc_version = {revno}
-""".format(revno=revno))
-    f.close()
-    
-    prefix = args.prefix
-
     # Copy over the screens, to keep them up to date.
     shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
 
     # Compile all the python files.
-    compileall.compile_dir("renpy/", ddir="renpy/", force=1)
-
-    # os.environ['RENPY_PATH_ELIDE'] = '/home/tom/ab/renpy:' + prefix
-
-    # Chmod the mac app.
-    os.chmod("./renpy.app/Contents/MacOS/Ren'Py Launcher", 0755)
-
-    # Chmod down renpy.py, for now.
-    os.chmod("renpy.py", 0644)
+    compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
     
     # Compile the various games
-    for i in [ 'tutorial/game', 'launcher', 'template/game', 'the_question/game' ]:
-        os.system("./renpy.sh --compile --game " + i)
     
-    files = [ ]
-    more_files = [ ]
+    if not args.fast:
+        for i in [ 'tutorial', 'launcher', 'template', 'the_question' ]:
+            print "Compiling", i
+            subprocess.check_call(["./renpy.sh", i, "compile" ])
 
-    # files.append("CHANGELOG.txt")
-    files.append("LICENSE.txt")
-    files.extend(tree("common"))
-    files.extend(tree("launcher"))
-    files.extend(tree("tutorial"))
-    files.extend(tree("the_question"))
-
-    more_files.extend(tree("jedit"))
-    more_files.extend(tree("lib"))
-    more_files.extend(tree("lib/linux-x86"))
+    # The destination directory.
+    destination = os.path.join("dl", args.version)
     
-    module_files = [
-        "README.txt",
-        "*.c",
-        "gen/*.c",
-        "*.h",
-        "*.py*",
-        "include/*.pxd",
-        "pysdlsound/*.py",
-        "pysdlsound/*.pyx",
-        ]
+    if not os.path.exists(destination):
+        os.makedirs(destination)
 
-    for i in module_files:
-        files.extend(glob.glob('module/' + i))
+    if args.fast:
 
-    files.extend(tree('renpy'))
-    files.append('renpy.py')
+        cmd = [
+            "./renpy.sh", 
+            "launcher", 
+            "distribute", 
+            "launcher", 
+            "--package",
+            "sdk",
+            "--destination", 
+            destination,
+            "--no-update",
+            ]
 
-    more_files.append('python26.dll')
-    more_files.append('msvcr90.dll')
-    more_files.append('Microsoft.VC90.CRT.manifest')
-    more_files.extend(tree('renpy.app'))
-    more_files.append('renpy.exe')   
-    more_files.append("console.exe")
-    more_files.append('renpy.sh')
+    else:
+        cmd = [
+            "./renpy.sh", 
+            "launcher", 
+            "distribute", 
+            "launcher", 
+            "--destination", 
+            destination,
+            ]
+        
+    print
+    subprocess.check_call(cmd)
 
-    files.extend(tree('template'))
-    files.extend(tree('doc'))
+    # Sign the update.
+    if not args.fast:
+        subprocess.check_call([ 
+            "scripts/sign_update.py", 
+            "/home/tom/ab/keys/renpy_private.pem", 
+            os.path.join(destination, "updates.json"),
+            ])
 
-    files.sort()
-    more_files.sort()
 
-    for fn in files + more_files:
-        if "~" in fn or "#" in fn:
-            raise Exception("Bad filename {0}.".format(fn))
-
-    zipup("dists/" + prefix + "-sdk.zip", prefix, files + more_files)
+    # Write 7z.exe.
+    sdk = "renpy-{}-sdk".format(args.version)
 
     if not args.fast:
-        print "----"
-        tarup("dists/" + prefix + "-sdk.tar.bz2", prefix, files + more_files)
-        print "----"
-        tarup("dists/" + prefix + "-source.tar.bz2", prefix, files)
-        print "----"
 
-        # Make the 7zip.
-        os.chdir("dists")
-        os.system("unzip " + prefix + "-sdk.zip")
+        with open("7z.sfx", "rb") as f:
+            sfx = f.read()
     
-        try:
-            os.unlink(prefix + "-sdk.7z")
-        except:
-            pass
+        os.chdir(destination)
+
+        if os.path.exists(sdk):
+            shutil.rmtree(sdk)
     
-        os.system("7z a " + prefix + "-sdk.7z " + prefix)
- 
-        os.chdir(CWD)
+        subprocess.check_call([ "unzip", "-q", sdk + ".zip" ])
+    
+        if os.path.exists(sdk + ".7z"):
+            os.unlink(sdk + ".7z")
         
-        os.system("cat 7z.sfx dists/" + prefix + "-sdk.7z > dists/" + prefix + "-sdk.7z.exe""")
-        os.unlink("dists/" + prefix + "-sdk.7z")
-    
-        if os.path.exists("updates/prerelease"):
-            shutil.rmtree("updates/prerelease")
-    
-        shutil.move("dists/" + prefix, "updates/prerelease")
-        os.unlink("updates/prerelease/lib/update-version.txt")
-    
-        makeupdate.make_update("updates/prerelease", str(revno))
-    
-    os.chmod("renpy.py", 0755)
+        sys.stdout.write("Creating -sdk.7z")
 
-    print
-    print "Did you remember to rebuild the exe after the last change?"
+        
+        p = subprocess.Popen([ "7z", "a", sdk +".7z", sdk], stdout=subprocess.PIPE)
+        for i, _l in enumerate(p.stdout):
+            if i % 10 != 0:
+                continue
+            
+            sys.stdout.write(".")
+            sys.stdout.flush()
+
+        if p.wait() != 0:
+            raise Exception("7z failed")
+    
+        with open(sdk + ".7z", "rb") as f:
+            data = f.read()
+            
+        with open(sdk + "7z.exe", "wb") as f:
+            f.write(sfx)
+            f.write(data)
+            
+        os.unlink(sdk + ".7z")
+        shutil.rmtree(sdk)
+
+    else:
+        os.chdir(destination)
+    
+        if os.path.exists(sdk + ".7z.exe"):
+            os.unlink(sdk + ".7z.exe")
+      
+    print  
     print "Did you run me with renpython -OO?"
     print "Did you update renpy.py and launcher/script_version.rpy?"
     

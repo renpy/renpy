@@ -233,7 +233,25 @@ init python in distribute:
         This manages the process of building distributions.
         """
         
-        def __init__(self, project, destination=None, reporter=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True):
+            """
+            Distributes `project`.
+            
+            `destination`
+                The destination in which the distribution will be placed. If None,
+                uses a default location.
+            
+            `reporter`
+                An object that's used to report status and progress to the user.
+            
+            `packages`
+                If not None, a list of packages to distributed. If None, all
+                packages are distributed.
+            
+            `build_update`
+                Will updates be built?
+            """
+    
     
             # Safety - prevents us frome releasing a launcher that won't update.
             if store.UPDATE_SIMULATE:
@@ -277,7 +295,7 @@ init python in distribute:
             self.reporter = reporter
 
             self.include_update = build['include_update']
-            self.build_update = self.include_update and data['build_update']
+            self.build_update = self.include_update and build_update
 
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
@@ -287,13 +305,15 @@ init python in distribute:
 
             self.documentation_patterns = build['documentation_patterns']
 
-            packages = [ ]
+            build_packages = [ ]
             
             for i in build['packages']:
-                if i['name'] in data['packages']:
-                    packages.append(i)
+                name = i['name']
+                
+                if (packages is None) or (name in packages):
+                    build_packages.append(i)
                     
-            if not packages:
+            if not build_packages:
                 self.reporter.info(_("Nothing to do."), pause=True)
                 return
 
@@ -324,7 +344,7 @@ init python in distribute:
             # The time of the update version.
             self.update_version = int(time.time())
 
-            for p in packages:
+            for p in build_packages:
                 
                 for f in p["formats"]:
                     self.make_package(
@@ -340,7 +360,7 @@ init python in distribute:
             
             
             if self.build_update:
-                self.finish_updates(packages)
+                self.finish_updates(build_packages)
 
             self.log.close()
 
@@ -619,9 +639,6 @@ init python in distribute:
                     fl.append(File("update", None, True, False))
                     fl.append(File("update/current.json", update_fn, False, False))
 
-                if not self.build_update:
-                    os.unlink(update_fn)
-
             # The mac transform.
             if format == "app-zip":
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
@@ -762,14 +779,21 @@ init python in distribute:
 
     def distribute_command():
         ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
+        ap.add_argument("--no-update", default=True, action="store_false", dest="build_update", help="Prevents updates from being built.")
         ap.add_argument("project", help="The path to the project directory.")
-        ap.add_argument("--destination", default=None, action="store", help="The directory where the packaged files should be placed.")
+        ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.") 
 
         args = ap.parse_args()
-        
+
         p = project.Project(args.project)
         
-        Distributor(p, destination=args.destination, reporter=TextReporter())
+        if args.package:
+            packages = args.package
+        else:
+            packages = None
+
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update)
         
         return False
         
@@ -779,7 +803,8 @@ label distribute:
 
     python hide:
 
-        d = distribute.Distributor(project.current, reporter=distribute.GuiReporter())
+        data = project.current.data
+        d = distribute.Distributor(project.current, reporter=distribute.GuiReporter(), packages=data['packages'], build_update=data['build_update'])
         OpenDirectory(d.destination)()
         
         interface.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
