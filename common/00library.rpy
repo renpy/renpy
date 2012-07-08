@@ -870,11 +870,16 @@ init 1180 python hide:
         create_automatic_images()
 
 
-# Load the developer screen, if necessary.
+# After init, make some changes based on if config.developer is True.
 init 1180 python hide:
 
     if config.developer:
+        if config.debug_sound is None:
+            config.debug_sound = True
+        
         renpy.load_module("_developer")
+
+
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym
