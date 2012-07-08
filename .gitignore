@@ -11,6 +11,8 @@ saves
 tmp
 cache
 
+log.txt
+
 /build
 /dist
 /dists
@@ -44,7 +46,6 @@ cache
 /renpy/angle/*.pyx
 /renpy/angle/*.pxd
 /renpy-ppc.zip
-/log.txt
 /module/build
 /module/gen
 /editra
