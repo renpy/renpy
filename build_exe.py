@@ -56,6 +56,10 @@ def main():
                                                 'Numeric',
                                                 'os2emxpath',
                                                 'macpath',
+                                                'multiprocessing',
+                                                '_multiprocessing',
+                                                'ctypes',
+                                                '_ctypes',
                                                 ],
                                  'optimize' : 2,
                                  } },
@@ -98,7 +102,10 @@ def main():
     move_from_dist("console.exe")
     move_from_dist("python27.dll")
     move_from_dist("renpy.exe")
-    
+
+
+    shutil.copy("../zsync.exe", "lib/windows-x86/zsync.exe")
+    shutil.copy("../zsyncmake.exe", "lib/windows-x86/zsyncmake.exe")
     
 try:
     main()
