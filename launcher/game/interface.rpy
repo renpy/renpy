@@ -10,11 +10,19 @@ init python in interface:
     RENPY_GAMES_URL = "http://games.renpy.org"    
     DOC_PATH = os.path.join(config.renpy_base, "doc/index.html")
     DOC_URL = "http://www.renpy.org/doc/html/"
+
+    LICENSE_PATH = os.path.join(config.renpy_base, "doc/license.html")
+    LICENSE_URL = "http://www.renpy.org/doc/html/license.html"
     
     if os.path.exists(DOC_PATH):
         DOC_LOCAL_URL = "file:///" + DOC_PATH
     else:
         DOC_LOCAL_URL = None
+
+    if os.path.exists(LICENSE_PATH):
+        LICENSE_LOCAL_URL = "file:///" + LICENSE_PATH
+    else:
+        LICENSE_LOCAL_URL = None
     
     def OpenDocumentation():
         """
@@ -25,6 +33,16 @@ init python in interface:
             return OpenURL(DOC_LOCAL_URL)
         else:
             return OpenURL(DOC_URL)
+
+    def OpenLicense():
+        """
+        An action that opens the license.
+        """
+                    
+        if LICENSE_LOCAL_URL is not None:
+            return OpenURL(LICENSE_LOCAL_URL)
+        else:
+            return OpenURL(LICENSE_URL)
     
     
     # Should we display the bottom links?
@@ -67,7 +85,7 @@ screen bottom_info:
                     textbutton _("Documentation") style "l_link" action interface.OpenDocumentation()
                     textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
                     textbutton _("Ren'Py Games List") style "l_link" action OpenURL(interface.RENPY_GAMES_URL)
-                    # textbutton _("About") style "l_link"
+                    textbutton _("About") style "l_link" action Jump("about")
                 
                 hbox:
                     spacing INDENT
