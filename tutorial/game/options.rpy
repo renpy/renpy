@@ -28,7 +28,7 @@ init -1 python hide:
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     config.name = "Ren'Py Tutorial"
-    config.version = "6.13 \"Eye of the Storm\""
+    config.version = "6.14 \"Steampunk Hamster\""
 
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
