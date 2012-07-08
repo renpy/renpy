@@ -161,10 +161,17 @@ init -1 python hide:
     ## More customizations can go here.
 
     config.sound = False
-
     config.quit_action = Quit(confirm=False)
-
     config.gl_resize = False
+    config.window_icon = "logo.png"
+    config.windows_icon = "logo32.png"
+    config.has_autosave = False
+    config.log_enable = False
+    
+    _game_menu_screen = None
+    
+    config.underlay = [ ]
+    config.rollback_enabled = False
 
 
 ## This section controls how to build Ren'Py. (Building the launcher is how
