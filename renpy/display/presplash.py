@@ -59,7 +59,7 @@ def start(basedir, gamedir):
             if isinstance(s, str):
                 return s
             
-            return unicode.decode(sys.getfilesystemencoding() or "utf-8", "replace")
+            return s.encode(sys.getfilesystemencoding() or "utf-8", "replace")
             
         proc = subprocess.Popen([ fsencode(i) for i in cmd ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
@@ -103,7 +103,7 @@ def show(fn):
         pass
 
     pygame.display.init()
-    
+
     img = pygame.image.load(fn, fn)
     screen = pygame.display.set_mode(img.get_size(), pygame.constants.NOFRAME)
     screen.blit(img, (0, 0))

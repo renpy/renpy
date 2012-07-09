@@ -145,7 +145,7 @@ def bootstrap(renpy_base):
     # command, handle it specially.
     if args.command == "presplash":
         import renpy.display.presplash
-        renpy.display.presplash.show(sys.argv[2])
+        renpy.display.presplash.show(sys.argv[3])
     
     if args.trace:
         enable_trace(args.trace)
