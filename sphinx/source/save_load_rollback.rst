@@ -161,9 +161,17 @@ low-level save and load actions.
 
 .. include:: inc/loadsave
 
+Rollback
+========
+
+Rollback allows the user to revert the game to an earlier state in
+much the same way as undo/redo systems that are available in most
+modern applications. While the system takes care of maintaining the
+visuals and game variables during rollback events, there are several
+things that should be considered while creating a game.
 
 Supporting Rollback and Roll Forward
-====================================
+------------------------------------
 
 Most Ren'Py statements automatically support rollback and roll forward. If
 you call :func:`ui.interact` directly, you'll need to add support for rollback
@@ -188,23 +196,163 @@ has been called. (If you do, the user may not be able to rollback.)
 .. include:: inc/rollback
 
 Blocking Rollback
-=================
+-----------------
 
 .. warning:: 
 
-    Blocking rollback is a very user-unfriendly thing to do. If a user mistakenly
+    Blocking rollback is a user-unfriendly thing to do. If a user mistakenly
     clicks on an unintended choice, he or she will be unable to correct their
     mistake. Since rollback is equivalent to saving and loading, your users 
     will be forced to save more often, breaking game engagement.
-    
-    Blocking rollback to force users to view bad endings often reflects a
-    mistake in game design. Instead, we recommend making bad endings engaging
-    enough that users want to view them.
 
-Rollback can be disabled on a global basis by setting :var:`config.rollback_enabled`
-to false.
+It is possible to disable rollback in part or in full. If rollback is
+not wanted at all, it can simply be turned of through the
+:var:`config.rollback_enabled` option.
 
-The following functions can be used to block or restrict rollback:
+More common is a partial block of rollback. This can be achieved by the
+:func:`renpy.block_rollback` function. When called, it will instruct
+Ren'Py not to roll back before that point. For example::
+
+    label final_answer:
+        "Is that your final answer?"
+
+    menu:
+        "Yes":
+            jump no_return
+        "No":
+            "We have ways of making you talk."
+            "You should contemplate them."
+            "I'll ask you one more time..."
+            jump final_answer
+
+    label no_return:
+        $ renpy.block_rollback()
+
+        "So be it. There's no turning back now."
+
+When the label no_return is reached, Ren'Py won't allow a rollback
+back to the menu.
+ 
+
+Fixing Rollback
+---------------
+
+Fixing rollback provides for an intemediate choice between
+unconstrained rollback and blocking rollback entirely. Rollback is
+allowed, but the user is not allowed to make changes to their
+decisions. Fixing rollback is done with the :func:`renpy.fix_rollback`
+function, as shown in the following example::
+
+    label final_answer:
+        "Is that your final answer?"
+    menu:
+        "Yes":
+            jump no_return
+        "No":
+            "We have ways of making you talk."
+            "You should contemplate them."
+            "I'll ask you one more time..."
+            jump final_answer
+
+    label no_return:
+        $ renpy.fix_rollback()
+
+        "So be it. There's no turning back now."
+
+Now, after the fix_rollback function is called, it will still be
+possible for the user to roll back to the menu. However, it will not be
+possible to make a different choice.
+
+There are some caveats to consider when designing a game for
+fix_rollback. Ren'Py will automatically take care of locking any data
+that is given to :func:`checkpoint`. However, due to the generic nature
+of Ren'Py, it is possible to write Python code that bypasses this and
+changes things in ways that may have unpredictable results. It is up
+to the game designer to block rollback at problematic locations or
+write additional code to deal with it.
+
+The internal user interaction options for menus, :func:`renpy.input`
+and :func:`renpy.imagemap` are designed to fully work with fix_rollback.
+
+Styling Fixed Rollback
+----------------------
+
+Because fix_rollback changes the functionality of menus and imagemaps,
+it is advisable to reflect this in the appearance. To do this, it is
+important to understand how the widget states of the menu buttons are
+changed. There are two modes that can be selected through the
+:var:`config.fix_rollback_without_choice` option.
+
+The default option will set the chosen option to "selected", thereby
+activating the style properties with the "selected\_" prefix. All other
+buttons will be made insensitive and show using the properties with the
+"insensitive\_" prefix. Effectively this leaves the menu with a single
+selectable choice.
+
+When the :var:`config.fix_rollback_without_choice` option is set to
+False, all buttons are made insensitive. This means that the chosen
+option will use the "selected_insensitive\_" prefix for the style
+properties while the other buttons use properties with the
+"insensitive\_" prefix. 
+
+Fixed Rollback and Custom Screens
+---------------------------------
+
+When writing custom Python routines that must play nice with the
+fix_rollback system there are a few simple things to know. First of all
+the :func:`renpy.in_fixed_rollback` function can be used to determine whether
+the game is currently in fixed rollback state. Second, when in
+fixed rollback state, :func:`ui.interact` will always return the 
+supplied roll_forward data regardless of what action was performed. This
+effectively means that when the :func:`ui.interact`/:func:`renpy.checkpoint`
+functions are used, most of the work is done.
+
+To simplify the creation of custom screens, two actions are
+provided to help with the most common uses. The :func:`ui.ChoiceReturn` action
+returns the value when the button it is attached to is clicked. The
+:func:`ui.ChoiceJump` action can be used to jump to a script label. However, this
+action only works properly when the screen is called trough a
+``call screen`` statement.
+
+Example::
+
+    screen demo_imagemap:
+        imagemap:
+            ground "imagemap_ground.jpg"
+            hover "imagemap_hover.jpg"
+            selected_idle "imagemap_selected_idle.jpg"
+            selected_hover "imagemap_hover.jpg"
+            
+            hotspot (8, 200, 78, 78) action ui.ChoiceJump("swimming", "go_swimming", block_all=False)
+            hotspot (204, 50, 78, 78) action ui.ChoiceJump("science", "go_science_club", block_all=False)
+            hotspot (452, 79, 78, 78) action ui.ChoiceJump("art", "go_art_lessons", block_all=False)
+            hotspot (602, 316, 78, 78) action uiChoiceJump("home", "go_home", block_all=False)
+
+Example::
+
+    python:
+        roll_forward = renpy.roll_forward_info()
+        if roll_forward not in ("Rock", "Paper", "Scissors"):
+            roll_forward = None
+
+        ui.hbox()
+        ui.imagebutton("rock.png", "rock_hover.png", selected_insensitive="rock_hover.png", clicked=ui.ChoiceReturn("rock", "Rock", block_all=True))
+        ui.imagebutton("paper.png", "paper_hover.png", selected_insensitive="paper_hover.png", clicked=ui.ChoiceReturn("paper", "Paper", block_all=True))
+        ui.imagebutton("scissors.png", "scissors_hover.png", selected_insensitive="scissors_hover.png", clicked=ui.ChoiceReturn("scissors", "Scissors", block_all=True))
+        ui.close()
+
+        if renpy.in_fixed_rollback():
+            ui.saybehavior()
+
+        choice = ui.interact(roll_forward=roll_forward)
+        renpy.checkpoint(choice)
+
+    $ renpy.fix_rollback()
+    m "[choice]!"
+
+
+Rollback-blocking and -fixing Functions
+---------------------------------------
 
 .. include:: inc/blockrollback
 

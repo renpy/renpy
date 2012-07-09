@@ -283,7 +283,16 @@ Occasionally Used
     If not None, this variable should give a transition that will be
     performed when exiting the game menu.
 
+.. var:: config.fix_rollback_without_choice = False
 
+    This option determines how the built in menus or imagemaps behave 
+    during fixed rollback. The default value is False, which means that
+    menu only the previously selected option remains clickable. If set
+    to True, the selected option is marked but no options are clickable.
+    The user can progress forward through the rollback buffer by
+    clicking.
+
+    
 .. var:: config.font_replacement_map = { }
 
     This is a map from (font, bold, italics) to (font, bold, italics),

@@ -620,6 +620,43 @@ class ChoiceActionBase(Action):
             return False
     
 class ChoiceReturn(ChoiceActionBase):
+    """
+    :doc: blockrollback
+
+    A menu choice action that returns `value`, while managing the button
+    state in a manner consistent with fixed rollback. (See block_all for
+    a description of the behavior.)
+    
+    
+    `label`
+        The label text of the button. For imagebuttons and hotspots this
+        can be anything. This label is used as a unique identifier of
+        the options within the current screen. Together with `location`
+        it is used to store whether this option has been chosen.
+        
+    `value`
+        The value this is returned when the choice is chosen.
+
+    `location`
+        A unique location identifier for the current choices screen.
+        
+    `block_all`
+        If false, the button is given the selected role if it was
+        the chosen choice, and insensitive if it was not selected.        
+
+        If true, the button is always insensitive during fixed 
+        rollback. 
+
+        If None, the value is taken from the :var:`config.fix_rollback_without_choice`
+        variable.
+
+        When true is given to all items in a screen, it will
+        become unclickable (rolling forward will still work). This can
+        be changed by calling :func:`ui.saybehavior` before the call
+        to :func:`ui.interact`.
+    """
+    
+
     
     def __call__(self):
         if self.chosen:
@@ -628,6 +665,42 @@ class ChoiceReturn(ChoiceActionBase):
         return self.value
 
 class ChoiceJump(ChoiceActionBase):
+    """
+    :doc: blockrollback
+
+    A menu choice action that returns `value`, while managing the button
+    state in a manner consistent with fixed rollback. (See block_all for
+    a description of the behavior.)
+    
+    
+    `label`
+        The label text of the button. For imagebuttons and hotspots this
+        can be anything. This label is used as a unique identifier of
+        the options within the current screen. Together with `location`
+        it is used to store whether this option has been chosen.
+        
+    `value`
+        The location to jump to.
+        
+    `location`
+        A unique location identifier for the current choices screen.
+        
+    `block_all`
+        If false, the button is given the selected role if it was
+        the chosen choice, and insensitive if it was not selected.        
+
+        If true, the button is always insensitive during fixed 
+        rollback. 
+
+        If None, the value is taken from the :var:`config.fix_rollback_without_choice`
+        variable.
+
+        When true is given to all items in a screen, it will
+        become unclickable (rolling forward will still work). This can
+        be changed by calling :func:`ui.saybehavior` before the call
+        to :func:`ui.interact`.
+    """
+    
     
     def get_selected(self):
         roll_forward = renpy.exports.roll_forward_info()

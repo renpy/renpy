@@ -111,6 +111,13 @@ def in_rollback():
     return renpy.game.log.in_rollback()
 
 def in_fixed_rollback():
+    """
+    :doc: blockrollback
+    
+    Returns true if rollback is currently occurring and the current 
+    context is before an executed renpy.fix_rollback() statement.
+    """
+    
     return renpy.game.log.in_fixed_rollback()
 
 def checkpoint(data=None, keep_rollback=None):
@@ -145,10 +152,10 @@ def block_rollback():
 
 def fix_rollback():
     """
-    Prevents the action logged in the next checkpoint from being 
-    changed during rollback. This function provides an alternative to 
-    block_rollback() in cases where a user interaction should not be
-    changeable.
+    :doc: blockrollback
+    
+    Prevents the user from changing decisions made before the current
+    statement.
     """
     renpy.game.log.fix_rollback()    
 
