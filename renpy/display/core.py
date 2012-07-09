@@ -1184,6 +1184,11 @@ class Interface(object):
         
     def post_init(self):
         # Setup.
+
+        # Needed for Unity.
+        wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
+        os.environ['SDL_VIDEO_X11_WMCLASS'] = wmclass
+        
         self.set_window_caption(force=True)
         self.set_icon()
     
@@ -1215,7 +1220,7 @@ class Interface(object):
 
             if renpy.windows and im.get_size() != (32, 32):
                 im = renpy.display.scale.real_smoothscale(im, (32, 32))
-            
+
             pygame.display.set_icon(im)
 
             
