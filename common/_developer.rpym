@@ -528,27 +528,31 @@ screen _inspector:
     python:
         ui.saybehavior()
 
+init python:
+    def _image_load_log_function(st, at):
+        
+        ill = list(renpy.get_image_load_log(3))
+        
+        if not ill:
+            return Null(), .25
+        
+        vbox = VBox()
+        
+        for when, filename, preload in ill:
+            if preload:
+                color="#ffffff"
+            else:
+                color="#ffcccc"
+            
+            vbox.add(Text(filename.replace("{", "{{").replace("[", "[["), size=12, color=color, style="_default"))
+            
+        rv = Window(vbox, style="_frame", background="#0004", xpadding=5, ypadding=5, xminimum=200)
+        return rv, .25
 
 screen _image_load_log:
-    
     zorder 1000
-    
-    frame:
-        style_group ""
-        
-        background "#0004"
-        xpadding 5
-        ypadding 5
-        
-        has vbox
-        
-        for when, filename, preload in renpy.get_image_load_log(3):
-            if not preload:
-                text "[filename!q]" size 12 color "#ffcccc"
-            else:
-                text "[filename!q]" size 12 color "#ffffff"
-    
-    timer .25 repeat True action renpy.restart_interaction
+
+    add DynamicDisplayable(_image_load_log_function)
 
 
 init python:
