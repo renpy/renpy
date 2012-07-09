@@ -770,7 +770,7 @@ class RollbackLog(renpy.object.Object):
     (weakref to object, information needed to rollback that object)
     """
     
-    __version__ = 2
+    __version__ = 3
 
 
     nosave = [ 'old_store', 'mutated' ]
@@ -783,6 +783,8 @@ class RollbackLog(renpy.object.Object):
         self.current = None
         self.mutated = { }
         self.rollback_limit = 0
+        self.rollback_is_fixed = False
+        self.fixed_rollback_boundary = None
         self.forward = [ ]
         self.old_store = { }
 
@@ -799,6 +801,9 @@ class RollbackLog(renpy.object.Object):
     def after_upgrade(self, version):
         if version < 2:
             self.ever_been_changed = { "store" : set(self.ever_been_changed) }
+        if version < 3:
+            self.rollback_is_fixed = False
+            self.fixed_rollback_boundary = None
         
     def begin(self):
         """
@@ -812,9 +817,20 @@ class RollbackLog(renpy.object.Object):
         if not renpy.game.contexts[0].scene_lists.transient_is_empty():
             return
 
-        # If the log is too long, try pruning it to a label.
+        # If the log is too long, prune it.
         if len(self.log) > renpy.config.rollback_length:
             self.log = self.log[-renpy.config.rollback_length:]
+
+        # check for the end of fixed rollback
+        if self.log and self.log[-1] == self.current:
+
+            if self.current.context.current == self.fixed_rollback_boundary:
+                self.rollback_is_fixed = False
+
+            elif self.rollback_is_fixed and not self.forward:
+                # A lack of rollback data in fixed rollback mode ends rollback.
+                self.fixed_rollback_boundary = self.current.context.current
+                self.rollback_is_fixed = False
 
         self.current = Rollback()
         self.log.append(self.current)
@@ -891,6 +907,9 @@ class RollbackLog(renpy.object.Object):
         else:
             return False
             
+    def in_fixed_rollback(self):
+        return self.rollback_is_fixed
+
     def forward_info(self):
         """
         Returns the current forward info, if any.
@@ -924,10 +943,19 @@ class RollbackLog(renpy.object.Object):
 
         self.current.checkpoint = True
 
-        if data is not None:
+        
+        if self.in_fixed_rollback() and self.forward:
+            # use data from the forward stack
+            fwd_name, fwd_data = self.forward[0]
+            if self.current.context.current == fwd_name:
+                self.current.forward = fwd_data
+                self.forward.pop(0)
+            else:
+                self.current.forward = data
+                self.forward = [ ]
 
+        elif data is not None:
             if self.forward:
-
                 # If the data is the same, pop it from the forward stack.
                 # Otherwise, clear the forward stack.
                 fwd_name, fwd_data = self.forward[0]
@@ -950,6 +978,10 @@ class RollbackLog(renpy.object.Object):
         """
 
         self.rollback_limit = 0
+
+    def fix_rollback(self):
+        if not self.rollback_is_fixed and len(self.log) > 1:
+            self.fixed_rollback_boundary = self.log[-2].context.current
 
     def rollback(self, checkpoints, force=False, label=None):
         """
@@ -1002,6 +1034,8 @@ class RollbackLog(renpy.object.Object):
 
         for rb in revlog:
             rb.rollback()
+            if rb.context.current == self.fixed_rollback_boundary:
+                self.rollback_is_fixed = True
             if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
             

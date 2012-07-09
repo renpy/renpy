@@ -110,7 +110,10 @@ def in_rollback():
     
     return renpy.game.log.in_rollback()
 
-def checkpoint(data=None, keep_rollback=False):
+def in_fixed_rollback():
+    return renpy.game.log.in_fixed_rollback()
+
+def checkpoint(data=None, keep_rollback=None):
     """
     :doc: rollback
     :args: (data=None)
@@ -125,6 +128,9 @@ def checkpoint(data=None, keep_rollback=False):
     """
 
     if renpy.store._rollback:
+        if keep_rollback is None:
+            keep_rollback = renpy.config.keep_rollback_data
+        
         renpy.game.log.checkpoint(data, keep_rollback=keep_rollback)
 
 def block_rollback():
@@ -136,6 +142,15 @@ def block_rollback():
     """
 
     renpy.game.log.block()
+
+def fix_rollback():
+    """
+    Prevents the action logged in the next checkpoint from being 
+    changed during rollback. This function provides an alternative to 
+    block_rollback() in cases where a user interaction should not be
+    changeable.
+    """
+    renpy.game.log.fix_rollback()    
 
 scene_lists = renpy.display.core.scene_lists
     
@@ -396,9 +411,19 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     renpy.exports.mode('input')
     
+    roll_forward = renpy.exports.roll_forward_info()
+    if not isinstance(roll_forward, basestring):
+        roll_forward = None
+
+    # use previous data in rollback
+    if roll_forward is not None:
+        default = roll_forward
+
+    fixed = in_fixed_rollback();
+
     if has_screen("input"):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed)
 
         show_screen("input", _transient=True, _widget_properties=widget_properties, prompt=prompt)
 
@@ -408,15 +433,20 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         renpy.ui.vbox()
 
         renpy.ui.text(prompt, style='input_prompt')
-        renpy.ui.input(default, length=length, style='input_text', allow=allow, exclude=exclude)
+        
+        inputwidget = renpy.ui.input(default, length=length, style='input_text', allow=allow, exclude=exclude)
+
+        # disable input in fixed rollback
+        if fixed:
+            inputwidget.disable()
 
         renpy.ui.close()
 
     renpy.exports.shown_window()
         
-    roll_forward = renpy.exports.roll_forward_info()
-    if not isinstance(roll_forward, basestring):
-        roll_forward = None
+    # use normal "say" click behavior if input can't be changed
+    if fixed:
+        renpy.ui.saybehavior()
 
     rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
@@ -563,14 +593,12 @@ def display_menu(items,
         renpy.ui.pausebehavior(renpy.config.auto_choice_delay,
                                random.choice(choices))
 
-    # The chosen dictionary.
-    chosen = renpy.game.persistent._chosen
-    if chosen is None:
-        chosen = renpy.game.persistent._chosen = { }
-
     # The location
     location=renpy.game.context().current
      
+    # change behavior for fixed rollback
+    if in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
+        renpy.ui.saybehavior()
         
     # Show the menu.
     if has_screen(screen):
@@ -588,14 +616,12 @@ def display_menu(items,
                 value = None
 
             if value is not None:
-                action = renpy.ui.returns(value)
+                action = ChoiceReturn(label, value, location)
             else:
                 action = None
                 
-            label_chosen = ((location, label) in chosen)
-                
-            if renpy.config.choice_screen_chosen:
-                item_actions.append((label, action, label_chosen))
+            if renpy.config.choice_screen_chosen and action:
+                item_actions.append((label, action, action.get_chosen()))
             else:
                 item_actions.append((label, action))
 
@@ -629,12 +655,6 @@ def display_menu(items,
             
         rv = renpy.ui.interact(mouse='menu', type=type, roll_forward=roll_forward)
 
-        # Mark this as chosen.
-        for label, val in items:
-            if rv == val:
-                chosen[(location, label)] = True
-
-        
         for label, val in items:
             if rv == val:
                 log("User chose: " + label)
@@ -765,6 +785,9 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     if roll_forward not in [ result for _x0, _y0, _x1, _y1, result in hotspots]:
         roll_forward = None
     
+    if in_fixed_rollback() and renpy.config.fix_rollback_without_choice:
+        renpy.ui.saybehavior()
+
     rv = renpy.ui.interact(suppress_overlay=(not overlays),
                            type='imagemap',
                            mouse=mouse,
@@ -781,10 +804,11 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
     
 
-def pause(delay=None, music=None, with_none=None, hard=False):
+def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
     
-    if renpy.config.skipping == "fast":
-        return True
+    roll_forward = renpy.exports.roll_forward_info()
+    if roll_forward not in [ True, False ]:
+        roll_forward = None
 
     renpy.exports.mode('pause')
     
@@ -794,6 +818,9 @@ def pause(delay=None, music=None, with_none=None, hard=False):
         if newdelay is not None:
             delay = newdelay
 
+    if renpy.config.skipping == "fast" or (renpy.game.after_rollback and roll_forward is None):
+        delay = 0
+
     if hard:            
         renpy.ui.saybehavior(dismiss='dismiss_hard_pause')
     else:
@@ -802,13 +829,10 @@ def pause(delay=None, music=None, with_none=None, hard=False):
     if delay is not None:
         renpy.ui.pausebehavior(delay, False)
 
-    roll_forward = renpy.exports.roll_forward_info()
-    if roll_forward not in [ True, False ]:
-        roll_forward = None
-    
     rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward)
-    renpy.exports.checkpoint(rv, keep_rollback=True)
 
+    if checkpoint:
+        renpy.exports.checkpoint(rv, keep_rollback=True)
 
     if with_none is None:
         with_none = renpy.config.implicit_with_none

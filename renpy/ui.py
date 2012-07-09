@@ -218,7 +218,7 @@ def reset():
     
 renpy.game.post_init.append(reset)
     
-def interact(type='misc', **kwargs): #@ReservedAssignment
+def interact(type='misc', roll_forward=None, **kwargs): #@ReservedAssignment
     # Docs in wiki.
 
     if stack is None:
@@ -234,10 +234,14 @@ def interact(type='misc', **kwargs): #@ReservedAssignment
         raise Exception("ui.interact called with non-empty at stack.")
     
     renpy.game.context().info._current_interact_type = type
-    rv = renpy.game.interface.interact(**kwargs)
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
     renpy.game.context().mark_seen()
     renpy.game.context().info._last_interact_type = type
-    return rv
+    
+    if renpy.exports.in_fixed_rollback() and roll_forward is not None:
+        return roll_forward
+    else:
+        return rv
 
 def tag(name):
     global add_tag
@@ -575,6 +579,72 @@ def _key(key, action=None):
 
 key = Wrapper(_key)
 
+class ChoiceActionBase(Action):
+    """
+    Base class for choice actions. The choice is identified by a label
+    and value. The class will automatically determine the rollback state
+    and supply correct "sensitive" and "selected" information to the
+    widget.
+    If a location is supplied, it will check whether the choice was 
+    previously visited and mark it so if it is chosen.
+    """
+    def __init__(self, label, value, location=None, block_all=None):
+        self.label = label
+        self.value = value
+        self.location = location
+        
+        if block_all is None:
+            self.block_all = renpy.config.fix_rollback_without_choice
+        else:
+            self.block_all = block_all
+
+        self.chosen = None
+
+        if self.location:
+            self.chosen = renpy.game.persistent._chosen
+            if self.chosen is None:
+                self.chosen = renpy.game.persistent._chosen = { }
+
+
+    def get_sensitive(self):
+        return not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected())
+
+    def get_selected(self):
+        roll_forward = renpy.exports.roll_forward_info()
+        return renpy.exports.in_fixed_rollback() and roll_forward == self.value 
+
+    def get_chosen(self):
+        if self.chosen:
+            return (self.location, self.label) in self.chosen
+        else:
+            return False
+    
+class ChoiceReturn(ChoiceActionBase):
+    
+    def __call__(self):
+        if self.chosen:
+            self.chosen[(self.location, self.label)] = True
+        
+        return self.value
+
+class ChoiceJump(ChoiceActionBase):
+    
+    def get_selected(self):
+        roll_forward = renpy.exports.roll_forward_info()
+
+        # renpy.exports.call_screen create a checkpoint with the jump exception
+        if isinstance(roll_forward, renpy.game.JumpException):
+            roll_forward = roll_forward.args[0]
+
+        return renpy.exports.in_fixed_rollback() and roll_forward == self.value 
+
+    def __call__(self):
+        if self.chosen:
+            self.chosen[(self.location, self.label)] = True
+
+        renpy.exports.jump(self.value)
+
+
 def menu(menuitems,
          style = 'menu',
          caption_style='menu_caption',
@@ -599,23 +669,11 @@ def menu(menuitems,
             text = choice_style
             button = choice_button_style
                         
-            if location:
-                chosen_dict = renpy.game.persistent._chosen
+            clicked = ChoiceReturn(label, val, location)
 
-                if location not in chosen_dict or not isinstance(chosen_dict[location], set):
-                    chosen_dict[location] = set()
-
-                chosen = chosen_dict[location]
-                
-                if label in chosen:
+            if clicked.get_chosen():
                     text = choice_chosen_style
                     button = choice_chosen_button_style
-
-                def clicked(chosen=chosen, label=label, val=val):
-                    chosen.add(label)
-                    return val
-            else:
-                clicked = renpy.ui.returns(val)
 
             if isinstance(button, basestring):
                 button = getattr(renpy.game.style, button)
@@ -659,9 +717,15 @@ def imagemap_compat(ground,
         if result is None:
             continue
             
+        action = ChoiceReturn(result, result)
+        
+        selected_img = renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), selected)
+        
         imagebutton(renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), unselected),
-                    renpy.display.layout.LiveCrop((x0, y0, x1 - x0, y1 - y0), selected),
-                    clicked=returns(result),
+                    selected_img,
+                    selected_idle_image = selected_img,
+                    selected_insensitive_image = selected_img,
+                    clicked=action,
                     style=button_style[result],
                     xpos=x0,
                     xanchor=0,
@@ -926,18 +990,19 @@ class Imagemap(object):
 
     alpha = True
     
-    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, alpha, cache):
+    def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, selected_insensitive, alpha, cache):
         self.insensitive = renpy.easy.displayable(insensitive)
         self.idle = renpy.easy.displayable(idle)
         self.selected_idle = renpy.easy.displayable(selected_idle)
         self.hover = renpy.easy.displayable(hover)
         self.selected_hover = renpy.easy.displayable(selected_hover)
+        self.selected_insensitive = renpy.easy.displayable(selected_insensitive)
 
         self.alpha = alpha
 
         self.cache = renpy.display.imagemap.ImageMapCache(cache)
         
-def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, auto=None, alpha=True, cache=True, style='imagemap', **properties):
+def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, selected_insensitive=None, auto=None, alpha=True, cache=True, style='imagemap', **properties):
 
     def pick(variable, name, other):
         if variable:
@@ -960,6 +1025,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     hover = pick(hover, "hover", ground)
     selected_hover = pick(selected_hover, "selected_hover", hover)
     insensitive = pick(insensitive, "insensitive", ground)
+    selected_insensitive = pick(selected_insensitive, "selected_insensitive", hover)
 
     imagemap_stack.append(
         Imagemap(
@@ -968,6 +1034,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
             selected_idle,
             hover,
             selected_hover,
+            selected_insensitive,
             alpha,
             cache))
 
@@ -996,12 +1063,14 @@ def _hotspot(spot, style='imagemap_button', **properties):
     selected_idle = imagemap.selected_idle
     selected_hover = imagemap.selected_hover
     insensitive = imagemap.insensitive
+    selected_insensitive = imagemap.selected_insensitive
     
     idle = imagemap.cache.crop(idle, spot)
     hover = imagemap.cache.crop(hover, spot)
     selected_idle = imagemap.cache.crop(selected_idle, spot)
     selected_hover = imagemap.cache.crop(selected_hover, spot) 
     insensitive = imagemap.cache.crop(insensitive, spot)
+    selected_insensitive = imagemap.cache.crop(selected_insensitive, spot)
             
     properties.setdefault("xpos", x)
     properties.setdefault("xanchor", 0)
@@ -1026,6 +1095,7 @@ def _hotspot(spot, style='imagemap_button', **properties):
         hover_background=hover,
         selected_hover_background=selected_hover,
         insensitive_background=insensitive,
+        selected_insensitive_background=selected_insensitive,
         style=style,
         **properties)
 

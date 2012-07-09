@@ -63,6 +63,14 @@ rollback_enabled = True
 # If the rollback is longer than this, we may trim it.
 rollback_length = 128
 
+# If set to True, clicking while in rollback will keep the roll forward
+# buffer if the data has not changed.
+keep_rollback_data = False
+
+# If set to true, menus in fixed rollback will not have clickable 
+# options and a click anywhere or mouse wheel will roll forward.
+fix_rollback_without_choice = False
+
 # The maximum number of steps the user can rollback the game,
 # interactively.
 hard_rollback_limit = 100

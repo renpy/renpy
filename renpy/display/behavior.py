@@ -739,6 +739,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                  changed=None,
                  button=None,
                  replaces=None,
+                 editable=True,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -753,7 +754,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         self.changed = changed
 
-        self.editable = True
+        self.editable = editable
 
         caretprops = { 'color' : None }
         
