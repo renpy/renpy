@@ -293,7 +293,7 @@ class Frame(renpy.display.core.Displayable):
         source = crend.render_to_texture(True)
         sw, sh = source.get_size()
 
-        dest = renpy.display.pgrender.surface((dw, dh), True)
+        dest = renpy.display.swdraw.surface(dw, dh, True)
         rv = dest
 
         def draw(x0, x1, y0, y1):
