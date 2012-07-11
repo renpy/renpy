@@ -801,8 +801,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                                             
         if editable:
             l = len(content)
-            self.set_text([self.prefix, content[0:l-self.caret_pos].replace("{", "{{"), caret,
-                                        content[l-self.caret_pos:l].replace("{", "{{"), self.suffix])
+            self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), caret,
+                                        content[self.caret_pos:l].replace("{", "{{"), self.suffix])
         else:
             self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
 
@@ -828,8 +828,9 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         
         if map_event(ev, "input_backspace"):
 
-            if self.content and self.caret_pos < l:
-                content = self.content[0:l-self.caret_pos-1] + self.content[l-self.caret_pos:l]
+            if self.content and self.caret_pos > 0:
+                content = self.content[0:self.caret_pos-1] + self.content[self.caret_pos:l]
+                self.caret_pos -= 1
                 self.update_text(content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
@@ -839,23 +840,22 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 return self.content
 
         elif map_event(ev, "input_left"):
+            if self.caret_pos > 0:
+                self.caret_pos -= 1
+                self.update_text(self.content, self.editable)
+                                            
+            renpy.display.render.redraw(self, 0)
+
+        elif map_event(ev, "input_right"):
             if self.caret_pos < l:
                 self.caret_pos += 1
                 self.update_text(self.content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
 
-        elif map_event(ev, "input_right"):
-            if self.caret_pos > 0:
-                self.caret_pos -= 1
-                self.update_text(self.content, self.editable)
-                                            
-            renpy.display.render.redraw(self, 0)
-
         elif map_event(ev, "input_delete"):
-            if self.caret_pos > 0:
-                content = self.content[0:l-self.caret_pos] + self.content[l-self.caret_pos+1:l]
-                self.caret_pos -= 1
+            if self.caret_pos < l:
+                content = self.content[0:self.caret_pos] + self.content[self.caret_pos+1:l]
                 self.update_text(content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
@@ -873,7 +873,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             if self.exclude and ev.unicode in self.exclude:
                 raise renpy.display.core.IgnoreEvent()
 
-            content = self.content[0:l-self.caret_pos] + ev.unicode + self.content[l-self.caret_pos:l]
+            content = self.content[0:self.caret_pos] + ev.unicode + self.content[self.caret_pos:l]
+            self.caret_pos += 1
 
             self.update_text(content, self.editable)
 
