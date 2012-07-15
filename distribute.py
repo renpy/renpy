@@ -148,6 +148,10 @@ def main():
     # Copy over the screens, to keep them up to date.
     shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
 
+    # Copy in the windows version of zsync
+    shutil.copy("../zsync.exe", "lib/windows-x86/zsync.exe")
+    shutil.copy("../zsyncmake.exe", "lib/windows-x86/zsyncmake.exe")
+
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
     
