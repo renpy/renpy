@@ -173,6 +173,7 @@ label start:
     
 label front_page:
     call screen front_page 
+    jump front_page
     
     
 label lint:

@@ -150,4 +150,4 @@ label projects_directory_preference:
 
 label preferences:
     call screen preferences
-    
+    jump preferences
