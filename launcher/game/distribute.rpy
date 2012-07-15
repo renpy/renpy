@@ -486,9 +486,13 @@ init python in distribute:
             """
             Add Ren'Py-generic files to the project.
             """
-                
-            self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "script_version.rpy"))
-            self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
+
+            if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy")):
+                self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "script_version.rpy"))
+            
+            if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
+                self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
+            
             self.add_file("all", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
                 
         def add_mac_files(self):
