@@ -97,7 +97,10 @@ def report_exception(short, full, traceback_fn):
 
     try:    
         if not renpy.game.context().init_phase:
-            rollback_action = renpy.display.error.rollback_action
+
+            if renpy.config.rollback_enabled:
+                rollback_action = renpy.display.error.rollback_action
+
             reload_action = renpy.exports.curried_call_in_new_context("_save_reload_game")
 
         if renpy.game.context(-1).next_node is not None:
