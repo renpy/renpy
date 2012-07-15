@@ -56,7 +56,7 @@ A script file is broken up into :dfn:`logical lines`. A logical line
 always begins at the start of a line in the file. A logical line ends
 at the end of a line, unless:
 
-* The last character on the line is a backslash ('\').
+* The last character on the line is a backslash ('\\').
 
 * The line contains an open parenthesis character ('(', '{', or '['),
   that hasn't been matched by the cooresponding close parenthesis
