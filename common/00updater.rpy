@@ -1,5 +1,4 @@
 # This code applies an update.
-
 init -1000 python in updater:
     from store import renpy, config, Action
     import store.build as build
@@ -15,6 +14,8 @@ init -1000 python in updater:
     import hashlib
     import time
     import sys
+    import struct
+    import zlib
 
     try:
         import rsa
@@ -209,7 +210,6 @@ init -1000 python in updater:
             """
             
             try:
-
                 if self.simulate:
                     self.simulation()
                 else:
@@ -221,12 +221,20 @@ init -1000 python in updater:
                 self.progress = None
                 self.message = None
                 self.state = self.CANCELLED
-            
+
+                if self.log:
+                    traceback.print_exc(None, self.log)
+                    self.log.flush()
+
             except UpdateError as e:
                 self.message = e.message
                 self.can_cancel = True
                 self.can_proceed = False
                 self.state = self.ERROR
+
+                if self.log:
+                    traceback.print_exc(None, self.log)
+                    self.log.flush()
             
             except Exception as e:
                 self.message = type(e).__name__ + ": " + unicode(e)
@@ -236,9 +244,12 @@ init -1000 python in updater:
 
                 if self.log:
                     traceback.print_exc(None, self.log)
+                    self.log.flush()
                     
             self.clean_old()
-            
+
+            self.log.close()
+
         def update(self):
             """
             Performs the update.        
@@ -487,14 +498,14 @@ init -1000 python in updater:
             if not os.path.exists(fn):
                 raise UpdateError("Either this project does not support updating, or the update status file was deleted.")
             
-            with open(fn, "r") as f:
+            with open(fn, "rb") as f:
                 self.current_state = json.load(f)
 
         def test_write(self):
             fn = os.path.join(self.updatedir, "test.txt")
 
             try:
-                with open(fn, "w") as f:
+                with open(fn, "wb") as f:
                     f.write("Hello, World.")
                     
                 os.unlink(fn)
@@ -513,7 +524,7 @@ init -1000 python in updater:
             fn = os.path.join(self.updatedir, "updates.json")
             urllib.urlretrieve(self.url, fn)
             
-            with open(fn, "r") as f:
+            with open(fn, "rb") as f:
                 updates_json = f.read()
                 self.updates = json.loads(updates_json)
 
@@ -521,7 +532,7 @@ init -1000 python in updater:
                 fn = os.path.join(self.updatedir, "updates.json.sig")
                 urllib.urlretrieve(self.url + ".sig", fn)
 
-                with open(fn, "r") as f:
+                with open(fn, "rb") as f:
                     signature = f.read().decode("base64")
 
                 try:
@@ -662,12 +673,34 @@ init -1000 python in updater:
             
             new_fn = self.update_filename(module, True)
 
+
+            # Download the sums file.
+            sums = [ ]
+            
+            f = urllib.urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
+            while True:
+                data = f.read(4)
+                
+                if len(data) != 4:
+                    break
+                    
+                sums.append(struct.unpack("I", data)[0])
+                
+            f.close()
+
+            # Figure out the zsync command.
+
             cmd = [ 
                 zsync_path("zsync"),
                 "-o", new_fn, 
                 "-k", os.path.join(self.updatedir, module + ".zsync")
                 ]
             
+            if os.path.exists(new_fn + ".part") and not os.path.exists(new_fn + ".part.old"):
+                os.rename(new_fn + ".part", new_fn + ".part.old")
+                cmd.append("-i")
+                cmd.append(new_fn + ".part.old")
+
             for i in self.modules:
                 cmd.append("-i")
                 cmd.append(self.update_filename(module, False))
@@ -676,53 +709,76 @@ init -1000 python in updater:
             
             cmd = [ fsencode(i) for i in cmd ]
             
+            self.log.write("running %r\n" % cmd)
             self.log.flush()
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=0)
+            
+            if renpy.windows:
+            
+                CREATE_NO_WINDOW=0x08000000
+                p = subprocess.Popen(cmd, 
+                    stdin=subprocess.PIPE, 
+                    stdout=self.log, 
+                    stderr=self.log, 
+                    creationflags=CREATE_NO_WINDOW )
+            else:
 
-            line = ""
+                p = subprocess.Popen(cmd, 
+                    stdin=subprocess.PIPE, 
+                    stdout=self.log, 
+                    stderr=self.log)
+                
+            p.stdin.close()
 
             while True:
-
                 if self.cancelled:
                     p.kill()
-                
-                c = p.stdout.read(1)
-                if not c:
+                    break
+                    
+                time.sleep(1)
+            
+                if p.poll() is not None:
                     break
             
-                if c == "\r" or c == "\n":
-                    self.log.write(line + "\n")
-                    line = ""
-                    continue
-
-                line += c
-                
-                if c != "%":
-                    continue
-
-                if line[0] not in "#-":
-                    continue
-                  
                 try:
-                    _bar, raw_progress = line.split()
-                    raw_progress = float(raw_progress[:-1]) / 100.0
-            
-                    if raw_progress == 1.0:
-                        start_progress = None
-                        self.progress = 1.0
-                        continue
-
-                    if start_progress is None:
-                        start_progress = raw_progress
-                        self.progress = 0.0
-                        continue
-                    
-                    self.progress = (raw_progress - start_progress) / (1.0 - start_progress)
-                    
+                    f = file(new_fn + ".part", "rb")
                 except:
+                    self.log.write("partfile does not exist\n")
+                    continue
+                    
+                done_sums = 0
+
+                for i in sums:
+
+                    if self.cancelled:
+                        break
+
+                    data = f.read(65536)
+
+                    if not data:
+                        break
+                        
+                    if (zlib.adler32(data) & 0xffffffff) == i:
+                        done_sums += 1
+                        
+                f.close()
+
+                raw_progress = 1.0 * done_sums / len(sums)
+                
+                if raw_progress == 1.0:
+                    start_progress = None
+                    self.progress = 1.0
                     continue
 
+                if start_progress is None:
+                    start_progress = raw_progress
+                    self.progress = 0.0
+                    continue
+                    
+                self.progress = (raw_progress - start_progress) / (1.0 - start_progress)
+                    
             p.wait()
+
+            self.log.seek(0, 2)
 
             if self.cancelled:
                 raise UpdateCancelled()
@@ -733,7 +789,7 @@ init -1000 python in updater:
             
             # Check that the downloaded file has the right digest.    
             import hashlib    
-            with open(new_fn, "r") as f:
+            with open(new_fn, "rb") as f:
                 hash = hashlib.sha256()
                 
                 while True:
@@ -748,6 +804,9 @@ init -1000 python in updater:
                 
             if digest != self.updates[module]["digest"]:
                 raise UpdateError("The update file does not have the correct digest - it may have been corrupted.")
+
+            if os.path.exists(new_fn + ".part.old"):
+                os.unlink(new_fn + ".part.old")
 
             if self.cancelled:
                 raise UpdateCancelled()
@@ -884,7 +943,7 @@ init -1000 python in updater:
             
             fn = os.path.join(self.updatedir, "current.json")
             
-            with open(fn, "w") as f:
+            with open(fn, "wb") as f:
                 json.dump(self.new_state, f)
             
         def clean(self, fn):
@@ -934,7 +993,7 @@ init -1000 python in updater:
         if not os.path.exists(fn):
             return [ ]
  
-        with open(fn, "r") as f:
+        with open(fn, "rb") as f:
             state = json.load(f)
 
         rv = list(state.keys())

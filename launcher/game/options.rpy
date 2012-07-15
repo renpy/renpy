@@ -270,7 +270,7 @@ init python:
 
     build.packages = [ ]
 
-    build.package("sdk", "tar.bz2 zip", "source binary")
+    build.package("sdk", "zip tar.bz2", "source binary")
     build.package("source", "zip", "source", update=False)
 
     build.package("jedit", "", "jedit")

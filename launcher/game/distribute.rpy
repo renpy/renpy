@@ -22,7 +22,8 @@ init python in distribute:
     import json
     import subprocess
     import hashlib
-    
+    import struct
+
     # Patterns that match files that should be given the executable bit.
     XBIT_PATTERNS = [
         "renpy.sh",
@@ -33,6 +34,8 @@ init python in distribute:
         "renpy.app/**/*.dylib",
         "renpy.app/Contents/MacOS/*",
         "lib/**/python",
+        "lib/**/zsync",
+        "lib/**/zsyncmake",
     ]
     
     import collections
@@ -634,10 +637,11 @@ init python in distribute:
             if self.include_update:
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
-                with open(update_fn, "w") as f:
+                with open(update_fn, "wb") as f:
                     json.dump(update, f)
-                    fl.append(File("update", None, True, False))
-                    fl.append(File("update/current.json", update_fn, False, False))
+
+                fl.append(File("update", None, True, False))
+                fl.append(File("update/current.json", update_fn, False, False))
 
             # The mac transform.
             if format == "app-zip":
@@ -680,6 +684,22 @@ init python in distribute:
                     "-u", filename + ".update.gz", 
                     "-o", renpy.fsencode(os.path.join(self.destination, filename + ".zsync")) ])
 
+                # Build the sums file. This is a file with an adler32 hash of each 64k block
+                # of the zsync file. It's used to help us determine how much of the file is 
+                # downloaded.
+                with open(path, "rb") as src:
+                    with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
+                        while True:
+                            data = src.read(65536)
+                            
+                            if not data:
+                                break
+                                
+                            sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
+                            
+                            
+
+
 
         def finish_updates(self, packages):
             """
@@ -702,6 +722,7 @@ init python in distribute:
                     "pretty_version" : self.pretty_version, 
                     "digest" : digest, 
                     "zsync_url" : self.base_name + "-" + variant + ".zsync", 
+                    "sums_url" : self.base_name + "-" + variant + ".sums", 
                     "json_url" : self.base_name + "-" + variant + ".update.json",
                     }
                 

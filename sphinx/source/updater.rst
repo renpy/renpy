@@ -49,6 +49,9 @@ The update files consist of:
 updates.json
    An index of available updates and their versions.
 
+*package*.sums
+   Contains checksums for each block in the package.
+   
 *package*.update.gz
    Contains the update data for the given package.
 
