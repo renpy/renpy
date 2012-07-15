@@ -108,8 +108,8 @@ init python in editor:
         fei = fancy_editors = [ ]
 
         # Editra.
-        ED  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking.")
-        EDL  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. On Linux, Editra requires wxPython.")
+        ED  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input.")
+        EDL  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython.")
 
         if renpy.windows:
             dlc = "editra-windows"
@@ -139,7 +139,7 @@ init python in editor:
         fei.append(FancyEditorInfo(
             2,
             "jEdit",
-            "A mature editor that requires Java to be installed.",
+            "A mature editor that requires Java.",
             "jedit",
             _("1.8 MB download required.")))
         
