@@ -268,6 +268,10 @@ init python:
     build.classify_renpy("editra/Editra-mac.app/**", "editra-mac")
     build.classify_renpy("editra/Editra-win32/**", "editra-windows")
 
+    # Executable rules.
+    build.executable("editra/Editra/Editra")
+
+    # Packages.
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2", "source binary")

@@ -169,7 +169,28 @@ init -1000 python in build:
         files matching the documentation pattern are stored twice - once
         inside the app package, and again outside of it.
         """
+
+    xbit_patterns = [
+        "**.sh",
+        "**/*.so.*",
+        "**/*.so",
+        "**/*.dylib",
+        "**.app/Contents/MacOS/*",
+        "lib/**/python",
+        "lib/**/zsync",
+        "lib/**/zsyncmake",
+        ]
+    
+    def executable(pattern):
+        """
+        :doc: build
         
+        Adds a pattern marking files as executable on platforms that support it. 
+        (Linux and Macintosh)
+        """
+
+        xbit_patterns.append(pattern)
+
     # Packaging.
         
     packages = [ ]
@@ -265,6 +286,7 @@ init -1000 python in build:
         rv["documentation_patterns"] = documentation_patterns
         rv["base_patterns"] = early_base_patterns + base_patterns + late_base_patterns
         rv["renpy_patterns"] = renpy_patterns
+        rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
     
         rv["renpy"] = renpy

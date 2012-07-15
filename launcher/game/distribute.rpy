@@ -23,21 +23,6 @@ init python in distribute:
     import subprocess
     import hashlib
     import struct
-
-    # Patterns that match files that should be given the executable bit.
-    XBIT_PATTERNS = [
-        "renpy.sh",
-        "lib/**/*.so.*",
-        "lib/**/*.so",
-        "renpy.app/**/*.so.*",
-        "renpy.app/**/*.so",
-        "renpy.app/**/*.dylib",
-        "renpy.app/Contents/MacOS/*",
-        "lib/**/python",
-        "lib/**/zsync",
-        "lib/**/zsyncmake",
-    ]
-    
     import collections
     import os
     import io
@@ -274,7 +259,7 @@ init python in distribute:
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
 
-            build = project.dump['build']
+            self.build = build = project.dump['build']
 
             # Map from file list name to file list.
             self.file_lists = collections.defaultdict(FileList)
@@ -566,7 +551,7 @@ init python in distribute:
             
             for l in self.file_lists.values():
                 for f in l:
-                    for pat in XBIT_PATTERNS:                        
+                    for pat in self.build['xbit_patterns']:                        
                         if match(f.name, pat):    
                             f.executable = True
 
