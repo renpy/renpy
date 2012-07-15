@@ -216,6 +216,8 @@ init python in editor:
 
         persistent.editor = fe.name
         fancy_activate_editor()
+        
+        return persistent.editor is not None
 
     # Call fancy_activate_editor on startup.
     fancy_activate_editor()
@@ -228,8 +230,7 @@ init python in editor:
             return persistent.editor == self.name
             
         def __call__(self):
-            fancy_select_editor(self.name)
-            return True
+            return fancy_select_editor(self.name)
 
 
     def check_editor():
