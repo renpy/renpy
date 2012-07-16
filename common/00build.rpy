@@ -61,7 +61,7 @@ init -1000 python in build:
         ( "renpy.sh", "linux"),
         ( "lib/linux-x86_64/**", "linux"),
         ( "lib/linux-i686/**", "linux"),
-        ( "lib/python", "linux"),
+        ( "lib/python2.7/**", "linux"),
         
         # Mac patterns.
         ( "renpy.app/Contents/Ren'Py Launcher", None),

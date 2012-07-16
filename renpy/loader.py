@@ -107,7 +107,6 @@ def index_archives():
                 continue
 
             # 1.0 Branch.
-        
             f.close()
             
             fn = transfn(prefix + ".rpi")
