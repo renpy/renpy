@@ -1,1 +1,1 @@
-{ "type" : "hidden" }
+{"build_update": false, "packages": ["all", "linux", "mac", "win"], "type": "hidden"}
