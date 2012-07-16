@@ -197,11 +197,14 @@ init python in distribute:
                 if f.name == app or f.name.startswith(app + "/"):
                     rv.append(f)
                     continue
-                    
+
                 # If it's documentation, keep the file. (But also make 
                 # a copy.)
                 for pattern in documentation:
                     if match(f.name, pattern):
+                        rv.append(f)
+
+                    if match("/" + f.name, pattern):
                         rv.append(f)
                         
                 # Make a copy.
@@ -553,6 +556,9 @@ init python in distribute:
                 for f in l:
                     for pat in self.build['xbit_patterns']:                        
                         if match(f.name, pat):    
+                            f.executable = True
+                        
+                        if match("/" + f.name, pat):    
                             f.executable = True
 
         def rename(self):
