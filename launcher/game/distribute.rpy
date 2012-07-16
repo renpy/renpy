@@ -673,11 +673,16 @@ init python in distribute:
                 
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
                 
-                subprocess.check_call([ 
+                cmd = [                     
                     updater.zsync_path("zsyncmake"), 
-                    "-z", renpy.fsencode(path), 
+                    "-z",
+                    # -u url to gzipped data - not a local filename!
                     "-u", filename + ".update.gz", 
-                    "-o", renpy.fsencode(os.path.join(self.destination, filename + ".zsync")) ])
+                    "-o", os.path.join(self.destination, filename + ".zsync"),
+                    os.path.abspath(path), 
+                    ]
+
+                subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
 
                 # Build the sums file. This is a file with an adler32 hash of each 64k block
                 # of the zsync file. It's used to help us determine how much of the file is 
@@ -691,9 +696,6 @@ init python in distribute:
                                 break
                                 
                             sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
-                            
-                            
-
 
 
         def finish_updates(self, packages):
