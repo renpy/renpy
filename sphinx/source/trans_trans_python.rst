@@ -41,7 +41,7 @@ The python equivalent of an ATL transform is a Transform object.
         
         * The transform object.
         * The shown timebase, in seconds.
-        * The animation timebase, in sections.
+        * The animation timebase, in seconds.
       
         The function should return a delay, in seconds, after which it will
         be called again, or None to never be called again.

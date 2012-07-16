@@ -135,7 +135,7 @@ The interpolation statement is the main way that ATL controls transformations.
                : | "circles" simple_expression
                : | simple_expression )*
 
-The first part of a the interpolation statement is used to select a a
+The first part of a the interpolation statement is used to select a
 function that time-warps the interpolation. (That is, a function from
 linear time to non-linear time.) This can either be done by giving the
 name of a warper registered with ATL, or by giving the keyword "warp"
@@ -178,7 +178,7 @@ Some sample interpolations are::
 
     show logo base:
          # Show the logo at the upper right side of the screen.
-         xalign 0.0 yalign 1.0
+         xalign 1.0 yalign 0.0
 
          # Take 1.0 seconds to move things back to the left.
          linear 1.0 xalign 0.0

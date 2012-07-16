@@ -549,7 +549,7 @@ Rarely or Internally Used
 
 .. var:: config.auto_choice_delay = None
 
-    If not None,this variable gives a number of seconds that Ren'Py
+    If not None, this variable gives a number of seconds that Ren'Py
     will pause at an in-game menu before picking a random choice from
     that menu. We'd expect this variable to always be set to None in
     released games, but setting it to a number will allow for
@@ -636,7 +636,7 @@ Rarely or Internally Used
 .. var:: config.imagemap_cache = True
 
     If true, imagemap hotspots will be cached to PNG files,
-    reducting time and memory usage, but increasing the size of
+    reducing time and memory usage, but increasing the size of
     the game on disk. Set this to false to disable this behavior.
     
 .. var:: config.implicit_with_none = True
@@ -653,7 +653,7 @@ Rarely or Internally Used
 
 .. var:: config.joystick = True
 
-    If True, joystic support is enabled.
+    If True, joystick support is enabled.
 
 .. var:: config.keep_running_transform = True
 
