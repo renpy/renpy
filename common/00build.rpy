@@ -169,6 +169,8 @@ init -1000 python in build:
         files matching the documentation pattern are stored twice - once
         inside the app package, and again outside of it.
         """
+        
+        documentation_patterns.append(pattern)
 
     xbit_patterns = [
         "**.sh",
