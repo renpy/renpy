@@ -22,7 +22,7 @@ init python in archiver:
             self.f = open(filename, "wb")
             
             # The index to the file.
-            self.index = { }
+            self.index = _dict()
             
             # A fixed key minimizes difference between archive versions.
             self.key = 0x42424242
@@ -35,7 +35,7 @@ init python in archiver:
             Adds a file to the archive.
             """
 
-            self.index[name] = [ ]
+            self.index[name] = _list()
 
             with open(path, "rb") as df:
                 data = df.read()

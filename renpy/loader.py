@@ -71,8 +71,6 @@ def index_archives():
 
     for prefix in renpy.config.archives:
 
-        fn = transfn(prefix + ".rpa")
-
         try:
             fn = transfn(prefix + ".rpa")
             f = file(fn, "rb")
@@ -115,10 +113,8 @@ def index_archives():
             fn = transfn(prefix + ".rpi")
             index = loads(file(fn, "rb").read().decode("zlib")) 
             archives.append((prefix, index))
-
         except:
-            if renpy.config.debug:
-                raise
+            raise
 
 def walkdir(dir): #@ReservedAssignment
     rv = [ ]
