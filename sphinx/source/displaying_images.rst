@@ -163,7 +163,7 @@ The show statement takes the following properties:
 
 ``behind``
     Takes a comma-separated list of one or more names. Each name is
-    taken as an image tag. The image is show behind all images with
+    taken as an image tag. The image is shown behind all images with
     the given tags that are currently being shown.
 
 ``onlayer``

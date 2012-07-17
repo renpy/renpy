@@ -568,7 +568,7 @@ class Composite(ImageBase):
     ::
     
         image girl clothed happy = im.Composite(
-            (300, 600)
+            (300, 600),
             (0, 0), "girl_body.png",
             (0, 0), "girl_clothes.png",
             (100, 100), "girl_happy.png"
@@ -1211,7 +1211,7 @@ im.matrix(%f, %f, %f, %f, %f.
         :doc: im_matrixcolor
         :name: im.matrix.desaturate
 
-        Returns an im.matrix that desaturates the image (make it
+        Returns an im.matrix that desaturates the image (makes it
         grayscale). This is equivalent to calling
         im.matrix.saturation(0).
         """

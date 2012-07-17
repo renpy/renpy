@@ -135,12 +135,12 @@ The interpolation statement is the main way that ATL controls transformations.
                : | "circles" simple_expression
                : | simple_expression )*
 
-The first part of a the interpolation statement is used to select a
+The first part of the interpolation statement is used to select a
 function that time-warps the interpolation. (That is, a function from
 linear time to non-linear time.) This can either be done by giving the
 name of a warper registered with ATL, or by giving the keyword "warp"
 followed by an expression giving a function. Either case is followed
-by a number, giving the number of seconds the the interpolation should
+by a number, giving the number of seconds the interpolation should
 take.
 
 If no warp function is given, the interpolation is run for 0 seconds,
@@ -152,7 +152,7 @@ by the duration of the interpolation. This is clamped to the duration,
 and then passed to the warper. The result returned by the warper is
 the completion fraction.
 
-The interpolation statement can then contain a number of of other
+The interpolation statement can then contain a number of other
 clauses. When a property and value are present, then the value is the
 value the property will obtain at the end of the statement. The value
 can be obtained in several ways:

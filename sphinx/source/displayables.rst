@@ -45,7 +45,7 @@ properties.
     image logo = "logo.png"
     image logo = Image("logo.png")
 
-    # Using Image allows us to specify a default positon as part of
+    # Using Image allows us to specify a default position as part of
     # an image.
     image logo right = Image("logo.png", xalign=1.0)
     

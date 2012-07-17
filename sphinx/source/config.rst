@@ -5,7 +5,7 @@ Configuration Variables
 Configuration variables control the behavior of Ren'Py's implementation,
 allowing Ren'Py itself to be customized in a myriad of ways. These range from
 the common (such as changing the screen size) to the obscure (adding new
-kinds of archive file).
+kinds of archive files).
 
 Ren'Py's implementation makes the assumption that, once the GUI system has
 initialized, configuration variables will not change. Changing configuration
@@ -246,7 +246,7 @@ Occasionally Used
 
     This is called when _window is True, and no window has been shown
     on the screen. (That is, no call to :func:`renpy.shown_window` has
-    occured.) It's expected to show an empty window on the screen, and
+    occurred.) It's expected to show an empty window on the screen, and
     return without causing an interaction.
 
     The default implementation of this uses the narrator character to
@@ -407,7 +407,7 @@ Occasionally Used
     should always be present, as it is used when a more specific key
     is absent.
 
-    Each value in the disctionary should be a list of (`image`,
+    Each value in the dictionary should be a list of (`image`,
     `xoffset`, `offset`) tuples, representing frames.
 
     `image`
@@ -419,10 +419,9 @@ Occasionally Used
 
     `yoffset`
         The offset of the hotspot pixel from the top of the cursor.
-    
 
-     The frames are played back at 20hz, and the animation loops after
-     all frames have been shown.
+    The frames are played back at 20hz, and the animation loops after
+    all frames have been shown.
 
 .. var:: config.narrator_menu = False
 
