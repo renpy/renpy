@@ -178,8 +178,8 @@ Occasionally Used
 
 .. var:: config.debug_image_cache = False
 
-    If True, Ren'Py will print the contents of the image cache to
-    standard output (wherever that goes) whenever the contents of the
+    If True, Ren'Py will print the contents of the :ref:`image cache <images>`
+    to standard output (wherever that goes) whenever the contents of the
     image cache change.
 
 .. var:: config.debug_sound = False
@@ -348,9 +348,9 @@ Occasionally Used
 
 .. var:: config.image_cache_size = 8
 
-    This is used to set the size of the image cache, as a multiple of
-    the screen size. This number is multiplied by the size of the
-    screen, in pixels, to get the size of the image cache in pixels.
+    This is used to set the size of the :ref:`image cache <images>`, as a
+    multiple of the screen size. This number is multiplied by the size of
+    the screen, in pixels, to get the size of the image cache in pixels.
 
     If set too large, this can waste memory. If set too small, images
     can be repeatedly loaded, hurting performance.
@@ -381,9 +381,10 @@ Occasionally Used
 
 .. var:: config.missing_background = "black"
 
-    This is the background that is used when config.developer is True
-    and an undefined image is used in a scene statement. This should
-    be an image name (a string), not a displayable.
+    This is the background that is used when :var:`config.developer` is True
+    and an undefined image is used in a :ref:`scene statement
+    <scene-statement>`. This should be an image name (a string), not a
+    displayable.
 
 .. var:: config.mode_callbacks = [ ... ]
 
@@ -619,18 +620,19 @@ Rarely or Internally Used
 
 .. var:: config.hide = renpy.hide
 
-    A function that is called when the hide statement is
-    executed. This should take the same arguments as renpy.hide.
+    A function that is called when the :ref:`hide statement <hide-statement>`
+    is executed. This should take the same arguments as renpy.hide.
 
 .. var:: config.imagemap_auto_function = ...
 
     A function that expands the `auto` property of a screen language
-    imagebutton or imagemap statement into displayable. It takes the
-    value of the auto property, and the desired image, one of:
-    "insensitive", "idle", "hover", "selected_idle", "selected_hover",
-    or "ground". It should return a displayable or None.
+    :ref:`imagebutton <sl-imagebutton>` or :ref:`imagemap <sl-imagemap>`
+    statement into a displayable. It takes the value of the auto property,
+    and the desired image, one of: "insensitive", "idle", "hover",
+    "selected_idle", "selected_hover", or "ground". It should return a
+    displayable or None.
 
-    The default implementation formats the auto property with
+    The default implementation formats the `auto` property with
     the desired image, and then checks if the computed filename exists.
     
 .. var:: config.imagemap_cache = True
@@ -641,8 +643,8 @@ Rarely or Internally Used
     
 .. var:: config.implicit_with_none = True
 
-    If True, then by default the equivalent of a "with None" statement
-    will be performed after interactions caused by dialogue, menus
+    If True, then by default the equivalent of a :ref:`with None <with-none>`
+    statement will be performed after interactions caused by dialogue, menus
     input, and imagemaps. This ensures that old screens will not show
     up in transitions.
 
@@ -717,8 +719,8 @@ Rarely or Internally Used
 .. var:: config.log = None
 
     If not None, this is expected to be a filename. Much of the text
-    shown to the user by say or menu statements will be logged to this
-    file.
+    shown to the user by :ref:`say <say-statement>` or :ref:`menu
+    <menu-statement>` statements will be logged to this file.
 
 .. var:: config.missing_image_callback = None
 
@@ -743,13 +745,14 @@ Rarely or Internally Used
 .. var:: config.old_substitutions = False
 
     If true, Ren'Py will apply old-style (percent) substitutions to
-    text displayed by the say and menu statements.
+    text displayed by the :ref:`say <say-statement>` and :ref:`menu
+    <menu-statement>` statements.
     
 .. var:: config.overlay_during_with = True
 
-    True if we want overlays to be shown during with statements, or
-    False if we'd prefer that they be hidden during the with
-    statements.
+    True if we want overlays to be shown during :ref:`with statements
+    <with-statement>`, or False if we'd prefer that they be hidden during
+    the with statements.
 
 .. var:: config.overlay_layers = [ 'overlay' ]
 
@@ -789,15 +792,16 @@ Rarely or Internally Used
 .. var:: config.say_allow_dismiss = None
 
     If not None, this should be a function. The function is called
-    with no arguments when the user attempts to dismiss a say
-    statement. If this function returns true, the dismissal is
-    allowed, otherwise it is ignored.
+    with no arguments when the user attempts to dismiss a :ref:`say
+    statement <say-statement>`. If this function returns true, the
+    dismissal is allowed, otherwise it is ignored.
 
 .. var:: config.say_menu_text_filter = None
 
     If not None, then this is a function that is given the text found
-    in strings in the say and menu statements. It is expected to
-    return new (or the same) strings to replace them.
+    in strings in the :ref:`say <say-statement>` and :ref:`menu
+    <menu-statement>` statements. It is expected to return new
+    (or the same) strings to replace them.
 
 .. var:: config.say_sustain_callbacks = ...
 
@@ -827,9 +831,9 @@ Rarely or Internally Used
 
 .. var:: config.scene = renpy.scene
 
-    A function that's used in place of renpy.scene by the scene
-    statement. Note that this is used to clear the screen, and
-    config.show is used to show a new image. This should have the same
+    A function that's used in place of renpy.scene by the :ref:`scene
+    statement <scene-statement>`. Note that this is used to clear the screen,
+    and config.show is used to show a new image. This should have the same
     signature as renpy.scene.
 
 .. var:: config.screenshot_callback = ...
@@ -870,9 +874,9 @@ Rarely or Internally Used
 
 .. var:: config.show = renpy.show
 
-    A function that is used in place of renpy.show by the show and
-    scene statements. This should have the same signature as
-    renpy.show.
+    A function that is used in place of renpy.show by the :ref:`show
+    <show-statement>` and :ref:`scene <scene-statement>` statements. This
+    should have the same signature as renpy.show.
 
 .. var:: config.skip_delay = 75
 
@@ -917,8 +921,8 @@ Rarely or Internally Used
 
 .. var:: config.transform_uses_child_position = True
 
-    If True, transforms will inherit position properties from their
-    child. If not, they won't.
+    If True, transforms will inherit :ref:`position properties
+    <position-style-properties>` from their child. If not, they won't.
 
 .. var:: config.variants = [ ... ]
 
@@ -928,10 +932,10 @@ Rarely or Internally Used
     
 .. var:: config.with_callback = None
 
-    If not None, this should be a function that is called when a with
-    statement occurs. This function can be responsible for putting up transient
-    things on the screen during the transition. The function is called with a
-    single argument, which is the transition that is occurring. It is expected
-    to return a transition, which may or may not be the transition supplied as
-    its argument.
+    If not None, this should be a function that is called when a :ref:`with
+    statement <with-statement>` occurs. This function can be responsible for
+    putting up transient things on the screen during the transition. The
+    function is called with a single argument, which is the transition that
+    is occurring. It is expected to return a transition, which may or may not
+    be the transition supplied as its argument.
 

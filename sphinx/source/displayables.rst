@@ -25,6 +25,8 @@ four things that can be provided:
 * An image name. Any other string is interpreted as a reference to an
   image defined with the image statement.
 
+.. _images:
+
 Images
 ------
 
