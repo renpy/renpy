@@ -223,7 +223,6 @@ def main():
             os.unlink(sdk + ".7z")
         
         sys.stdout.write("Creating -sdk.7z")
-
         
         p = subprocess.Popen([ "7z", "a", sdk +".7z", sdk], stdout=subprocess.PIPE)
         for i, _l in enumerate(p.stdout):
@@ -239,7 +238,7 @@ def main():
         with open(sdk + ".7z", "rb") as f:
             data = f.read()
             
-        with open(sdk + "7z.exe", "wb") as f:
+        with open(sdk + ".7z.exe", "wb") as f:
             f.write(sfx)
             f.write(data)
             

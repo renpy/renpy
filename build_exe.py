@@ -95,13 +95,15 @@ def main():
     os.unlink("dist/lib/windows-x86/renpy.code")
     os.rename("dist/lib/windows-x86/renpy.code.new", "dist/lib/windows-x86/renpy.code")
 
-    shutil.copy("c:/Python27/Microsoft.VC90.CRT.manifest", "Microsoft.VC90.CRT.manifest")
-    shutil.copy("c:/Python27/msvcr90.dll", "msvcr90.dll")
+    # Take these files from the old python.
+    shutil.copy("c:/Python26/Microsoft.VC90.CRT.manifest", "Microsoft.VC90.CRT.manifest")
+    shutil.copy("c:/Python26/msvcr90.dll", "msvcr90.dll")
 
     move_from_dist("lib/windows-x86")
     move_from_dist("console.exe")
     move_from_dist("python27.dll")
     move_from_dist("renpy.exe")
+
 
 try:
     main()
