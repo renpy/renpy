@@ -228,6 +228,19 @@ class JumpOutException(Exception):
     the current context, and then raises a JumpException.
     """
 
+class CallException(Exception):
+    """
+    Raise this exception to cause the current statement to terminate, 
+    and control to be transferred to the named label.
+    """
+
+    def __init__(self, label, args, kwargs):
+        Exception.__init__(self)
+        
+        self.label = label
+        self.args = args
+        self.kwargs = kwargs
+
 class ParseErrorException(Exception):
     """
     This is raised when a parse error occurs, after it has been
@@ -243,6 +256,7 @@ CONTROL_EXCEPTIONS = (
     QuitException,
     JumpException,
     JumpOutException,
+    CallException,
     ParseErrorException,
     KeyboardInterrupt,
     )

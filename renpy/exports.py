@@ -623,7 +623,7 @@ def display_menu(items,
                 value = None
 
             if value is not None:
-                action = ChoiceReturn(label, value, location)
+                action = renpy.ui.ChoiceReturn(label, value, location)
             else:
                 action = None
                 
@@ -1047,6 +1047,17 @@ def jump_out_of_context(label):
     """
 
     raise renpy.game.JumpOutException(label)
+
+def call(label, *args, **kwargs):
+    """
+    :doc: other
+    
+    Causes the current Ren'Py statement to terminate, and a jump to a
+    `label` to occur. When the jump returns, control will be passed
+    to the statement following the current statement.
+    """
+
+    raise renpy.game.CallException(label, args, kwargs)
 
 def screenshot(filename):
     """
@@ -1508,7 +1519,7 @@ def call_screen(_screen_name, **kwargs):
 
     try:
         rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
-    except renpy.game.JumpException, e:
+    except (renpy.game.JumpException, renpy.game.CallException), e:
         rv = e 
 
     renpy.exports.checkpoint(rv)
@@ -1517,7 +1528,7 @@ def call_screen(_screen_name, **kwargs):
     if with_none:
         renpy.game.interface.do_with(None, None)
 
-    if isinstance(rv, renpy.game.JumpException):
+    if isinstance(rv, (renpy.game.JumpException, renpy.game.CallException)):
         raise rv
 
     return rv

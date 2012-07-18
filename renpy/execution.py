@@ -283,7 +283,17 @@ class Context(renpy.object.Object):
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
                 self.abnormal = True
-                                
+                         
+            except renpy.game.CallException, e:
+
+                if self.next_node is None:
+                    raise Exception("renpy.call can't be used when the next node is undefined.")
+
+                node = self.call(e.label, return_site=self.next_node.name)
+                self.abnormal = True
+                renpy.store._args = e.args
+                renpy.store._kwargs = e.kwargs
+        
             if self.seen:
                 renpy.game.seen_ever[self.current] = True
                 renpy.game.seen_session[self.current] = True
