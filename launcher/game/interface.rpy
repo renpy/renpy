@@ -189,7 +189,7 @@ init python in interface:
 
     import traceback
     
-    def common(title, title_color, message, submessage=None, click=False, back=False, continue_=False, pause0=False, **kwargs):
+    def common(title, title_color, message, submessage=None, back=False, continue_=False, pause0=False, **kwargs):
         """
         Displays the info, interaction, and processing screens.
 
@@ -201,10 +201,6 @@ init python in interface:
         
         `submessage`
             If not None, a message that is displayed below the main message.
-        
-        `click`
-            If not None, the saybehavior will be invoked. If a click occurs,
-            we will return True.
         
         `back`
             If True, a back button will be present. If it's clicked, False will
@@ -225,9 +221,6 @@ init python in interface:
 
         if pause0:
             ui.pausebehavior(0)
-            
-        if click:
-            ui.saybehavior()
             
         return renpy.call_screen("common", title=title, title_color=title_color, message=message, submessage=submessage, back=back, continue_=continue_, **kwargs) 
 
@@ -251,7 +244,7 @@ init python in interface:
         the message.
         """
 
-        common(_("ERROR"), "#d15353", message=message, submessage=submessage, click=True, back=True, **kwargs)
+        common(_("ERROR"), "#d15353", message=message, submessage=submessage, back=True, **kwargs)
         
 
         if label:
@@ -335,7 +328,7 @@ init python in interface:
         """
         
         if pause:
-            common(_("INFORMATION"), "#545454", message, submessage, click=True, continue_=True, **kwargs)
+            common(_("INFORMATION"), "#545454", message, submessage, continue_=True, **kwargs)
         else:
             common(_("INFORMATION"), "#545454", message, submessage, pause=0, **kwargs)
     
