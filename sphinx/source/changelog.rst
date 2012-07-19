@@ -5,7 +5,69 @@ Full Changelog
 Ren'Py 6.14
 ===========
 
-Multiple store support - needs documentation.
+Ren'Py Launcher Rewrite
+-----------------------
+
+The Ren'Py launcher has been rewritten. Some of the improvements are:
+
+* A new visual design by Doomfest of the Dischan visual novel team.
+
+* The launcher now includes direct access to open the script and
+  game directories, and common script files.
+
+* The launcher includes Script Navigation support. Clicking the
+  name of a label, define, transform, screen, or callable will open
+  the editor to the location where that name is defined.
+
+  Script navigation also provides access to individual script files.
+  
+* The launcher now supports one-click project building. Instead of
+  using multiple steps to build a project, a single click will now
+  cause the launcher to:
+
+  * Read the build process configuration from the game script.
+  * Build the archives needed.
+  * Generate the archive and update files.
+
+* The launcher can now use the Ren'Py updater to update Ren'Py, and to
+  download editors.
+
+Editra & Text Editing
+---------------------
+
+For most users, Ren'Py recommends the use of the Editra editor. We have
+developed an Editra plugin that communicates with the Ren'Py launcher and
+supports the editing of Ren'Py script.
+
+While still in beta, Editra is a fast and light editor with good code
+editing support. Editra also includes a spell-checker that can be enabled,
+and applies to dialogue and other strings.
+
+If Editra is selected by the user, and it is not installed, Ren'Py will
+automatically download it.
+
+The jEdit editor remains supported, and is preferred for use with
+languages (like Chinese, Japanese, and Korean) that Editra doesn't
+support fully. If selected, Ren'Py will download jEdit automatically.
+
+Ren'Py also supports editing files through system-specific file
+associations. (This support will not send the cursor to the correct
+line, however.)
+
+Ren'Py Web Updater
+------------------
+
+Ren'Py includes an updater that can update Ren'Py and individual
+Ren'Py games by downloading changes from a properly-configured web
+server with a small number of update files uploaded to it.
+
+The updater uses zsync to download the minimal set of changes between
+the local files on disk and the files stored on the server. A single
+set of files on the server supports updating from all prior versions
+of a project.
+
+Ren'Py includes a default updater interface that can be further
+configured by interested users.
 
 
 Transform Changes
@@ -24,32 +86,149 @@ this into account, and positions a flipped image properly.
 
 Thanks to Edwin for contributing these changes.
 
+Screen Language, Displayable, and Transition Enhancements
+---------------------------------------------------------
+
+* The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take
+  properties prefixed with ``text_``. These properties have the text_
+  prefix stripped, and are then passed to the internal text displayable.
+
+* The :ref:`sl-viewport` screen language statement now takes a `scrollbars`
+  parameter. If given, scrollbars that manipulate the viewport are created.
+
+* The :ref:`sl-viewport` screen language statement now takes `xinitial` and
+  `yinitial` parameters. If given, these control the initial positioning of
+  the viewport.
+
+* A screen language block may now contain multiple has statements.
+  Screen language widgets that take single children can now take a has
+  statement.
+
+* The input displayable now supports the use of the left and right arrow keys
+  within the text. (Thanks to Edwin for this feature.)
+
+* :func:`MoveTransition` has been rewritten. The new version now uses transforms to
+  control the positioning of entering and leaving images, and can interpolate
+  between the locations of moving images.
+
+Rollback Improvements
+---------------------
+
+* The new :func:`renpy.fix_rollback` function allows the game to fix
+  choices, even if they are made in rollback mode. The user can roll
+  back and roll forward, but is restricted to making the choices he
+  made the first time through the game.
+
+  Thanks to Edwin for contributing fix_rollback.
+
+* Rolling forward now works through a jump out of a ``call screen``
+  statement.
+
+Image Load Log
+--------------
+
+When :var:`config.developer` is true, Ren'Py keeps an internal log
+of image loads.
+
+This log can be access by showing the _image_load_log screen. This
+screen displays the name of an image file for a few seconds after that
+image has been loaded. The name is in white if the image was loaded by
+the image predictor, and pink if Ren'Py was unable to predict the image.
+
+  
+Multiple Store Support
+----------------------
+
+Ren'Py now supports multiple stores - multiple namespaces in which
+python code can be run. Variables in these stores are saved, loaded,
+and rolled-back in the same way that variables in the default store
+are.
+
+Stores are accessed by supplying an in-clause to a python block. For
+example::
+
+   init python in stats:
+
+       def reset():
+           """
+           Code to reset the statistics.
+           """
+
+User-created stores are placed into the "store" package, with the default
+store being the package itself. Names can be imported between packages. ::
 
 
-64-bit Linux is now a supported Ren'Py platform.
+   init python:
+       from store.stats import reset
 
-The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take
-properties prefixed with ``text_``. These properties have the text_
-prefix stripped, and are then passed to the internal text displayable.
+   init python in stats:
+       from store import ToggleField
 
-The :ref:`sl-viewport` screen language statement now takes a `scrollbars`
-parameter. If given, scrollbars that manipulate the viewport are created.
-
-The :ref:`sl-viewport` screen language statement now takes `xinitial` and
-`yinitial` parameters. If given, these control the initial positioning of
-the viewport.
-
-The input displayable now supports the use of the left and right arrow keys
-within the text. (Thanks to Edwin for this feature.)
-
-Screen language blocks may now contain multiple has statements.
-
-Added the :func:`OpenURL` action, which opens a URL in a web browser.
-
-Added the :var:`config.gl_resize` variable, which determines if the
-user can resize OpenGL windows.
+Note that stores do not affect the order in which init python blocks
+are run. A name must be defined in a block before the one that imports
+that name.
 
 
+Platform Support and Library Updates
+-------------------------------------
+
+Linux support has been changed.
+
+* The Linux platform supports the x86_64 CPU architecture in addition
+  to the x86 architecture. The Ren'Py shell script will automatically
+  determine the platform it is running on when it is launched.
+
+* The Linux version is now linked agains the libraries from the
+  2009-era Ubuntu 10.04 Lucid. (Previously, Ren'Py had been linked
+  against 2006's Dapper.) Older versions of Linux are no longer
+  supported.
+
+Many libraries that Ren'Py depends on have been updated. Some of the
+changes that have occured are:
+
+* Python has been updated to version 2.7.3.
+
+* Pygame has been updated to version 1.9.1.
+
+* GLEW has been updated to version 1.7.0. This may fix OpenGL problems
+  on some Linux systems.
+
+* LibAV has been updated to version 0.7.6, and has been compiled with
+  CPU detection enabled. This may fix the video playback problems some
+  users have been experiencing.
+
+Other Changes
+-------------
+
+* The :func:`renpy.call` function allows - with major and important
+  caveats - a call to a Ren'Py label to begin from inside python code.
+  Such a call immediately terminates the current statement.
+
+* When an action is expected, nested lists of actions can be
+  given. The lists are flattened and the action executed.
+
+* Added the :func:`OpenURL` action, which opens a URL in a web browser.
+
+* Added the :var:`config.gl_resize` variable, which determines if the
+  user can resize OpenGL windows.
+
+* Ren'Py's handling of command line argments has been rewritten. Most
+  notably, lint is now invoked with the ::
+
+    renpy.sh <gamename> lint
+
+  command. (Which also works with renpy.exe.) 
+  
+* Ren'Py can now dump information about the game to a json file when
+  starting up. The information dumped can assist other tools in
+  providing launcher-like code navigation.
+  
+* The little-used remote control feature has been removed from Ren'Py.
+
+* The :var:`config.gl_resize` variable now controls resizing of a game
+  running in GL mode.
+
+* Documentation fixes (by SleepKirby and others).
 
 
 Ren'Py 6.13.9

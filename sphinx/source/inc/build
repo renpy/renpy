@@ -20,6 +20,11 @@
     files matching the documentation pattern are stored twice - once
     inside the app package, and again outside of it.
 
+.. function:: build.executable(pattern)
+    
+    Adds a pattern marking files as executable on platforms that support it. 
+    (Linux and Macintosh)
+
 .. function:: build.package(name, format, file_lists, description=None, update=True)
     
     Declares a package that can be built by the packaging
