@@ -1,4 +1,4 @@
-# This file contains the spline motion code contributed by Aenakume, at
+﻿# This file contains the spline motion code contributed by Aenakume, at
 # http://lemmasoft.renai.us/forums/viewtopic.php?f=8&t=3977
 
 init -1080 python:

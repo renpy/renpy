@@ -1,4 +1,4 @@
-# This file demonstrates the built-in transitions which are defined in
+﻿# This file demonstrates the built-in transitions which are defined in
 # common/definitions.rpy, and also the new transitions given above.
 
 init:

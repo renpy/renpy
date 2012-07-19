@@ -1,4 +1,4 @@
-init:
+﻿init:
 
     image bg pong field = "pong_field.png"
 

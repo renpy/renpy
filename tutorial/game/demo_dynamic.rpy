@@ -1,4 +1,4 @@
-# This file demonstrates how to use DynamicDisplayable to make parts of the
+﻿# This file demonstrates how to use DynamicDisplayable to make parts of the
 # display that update without there being an interaction.
 
 init:

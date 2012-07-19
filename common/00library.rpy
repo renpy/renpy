@@ -1,4 +1,4 @@
-# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # This file consists of renpy functions that aren't expected to be

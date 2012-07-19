@@ -1,4 +1,4 @@
-init:
+﻿init:
     $ mp = MultiPersistent("demo.renpy.org")
 
 label demo_persistent:

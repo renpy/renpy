@@ -1,4 +1,4 @@
-# This file contains code for the menu that lets people select which demo
+﻿# This file contains code for the menu that lets people select which demo
 # they want to use. It uses quite a bit of the UI code, but it's probably
 # a bit complex for the average user.
 

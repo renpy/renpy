@@ -1,4 +1,4 @@
-# This is the code for the logo example.
+﻿# This is the code for the logo example.
 init python:
 
     # This spins the logo, while at the same time zooming it and decreasing the

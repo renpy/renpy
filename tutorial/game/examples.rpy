@@ -1,4 +1,4 @@
-# This file is responsible for displaying code examples. It expects to see
+﻿# This file is responsible for displaying code examples. It expects to see
 # comments like #begin foo and #end foo a the start of lines. The code is
 # then used to create example fragments.
 #

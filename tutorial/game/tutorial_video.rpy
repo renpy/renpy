@@ -1,4 +1,4 @@
-# This file contains demonstrations of Ren'Py's multimedia
+﻿# This file contains demonstrations of Ren'Py's multimedia
 # support. Right now, this is just showing off sound and music, but
 # Ren'Py does support movies, and we'll add them sometime later.
 

@@ -1,4 +1,4 @@
-image logo blue = "logosolid.png"
+﻿image logo blue = "logosolid.png"
 image magic = "magic.png"
 image bg band = "band.jpg"
 

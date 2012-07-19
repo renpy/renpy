@@ -1,4 +1,4 @@
-# This file demonstrates some of the text-layout and handling
+﻿# This file demonstrates some of the text-layout and handling
 # capabilities of Ren'Py.
 
 init:

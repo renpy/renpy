@@ -1,4 +1,4 @@
-# This file contains the script for the Ren'Py demo game. Execution starts at
+﻿# This file contains the script for the Ren'Py demo game. Execution starts at
 # the start label.
 
 # Here we define the backgrounds that are used.

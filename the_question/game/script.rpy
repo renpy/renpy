@@ -1,4 +1,4 @@
-# Declare images used by this game.
+﻿# Declare images used by this game.
 image bg lecturehall = "lecturehall.jpg"
 image bg uni = "uni.jpg"
 image bg meadow = "meadow.jpg"

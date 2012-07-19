@@ -1,4 +1,4 @@
-# This file demonstrates the use of image operators.
+﻿# This file demonstrates the use of image operators.
 
 init:
     image logo base = "logo.png"

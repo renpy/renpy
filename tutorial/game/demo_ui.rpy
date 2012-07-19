@@ -1,4 +1,4 @@
-# This file contains a demonstration of the user interaction
+﻿# This file contains a demonstration of the user interaction
 # functions.
 
 screen viewport_screen:

@@ -1,4 +1,4 @@
-# Defines a SnowBlossom object, which uses particle motion to show falling
+﻿# Defines a SnowBlossom object, which uses particle motion to show falling
 # cherry blossom petals.
 image sakura filmstrip = anim.Filmstrip("sakura.png", (20, 20), (2, 1), .15)
 image snowblossom = SnowBlossom("sakura filmstrip")

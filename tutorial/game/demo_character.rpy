@@ -1,4 +1,4 @@
-# This file demonstrates how Character objects can be used to customize the
+﻿# This file demonstrates how Character objects can be used to customize the
 # display of text.
 
 init:
