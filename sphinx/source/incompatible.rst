@@ -9,6 +9,26 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.14:
+
+6.14
+----
+
+Previously, Ren'Py moved archived files into the archived/
+directory. It would search this directory automatically when running a
+game or building archives. One-click builds make this unnecessary,
+and files in archived/ should be moved back into the game directory.
+
+:func:`MoveTransition` has changed its interface. The old version of
+MoveTransition can be accessed as OldMoveTransition, if you don't want
+to rewrite your code. (The changes only matter if you use factories with
+MoveTransition.)
+
+:func:`Transform` has changed its behavior with regards to
+asymmetrically scaled and rotated images. It's unlikely the old
+behavior was ever used.
+
+
 .. _incompatible-6.13:
 
 6.13.8
