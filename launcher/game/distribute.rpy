@@ -1,3 +1,6 @@
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This file contains code that manages the distribution of Ren'Py games 
 # and Ren'Py proper.
 #

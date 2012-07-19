@@ -1,3 +1,6 @@
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # This code applies an update.
 init -1000 python in updater:
     from store import renpy, config, Action

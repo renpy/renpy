@@ -1,3 +1,6 @@
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # Editor Support.
 #
 # This contains code for scanning for editors, and for allowing the user to

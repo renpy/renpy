@@ -1,3 +1,6 @@
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 init python:
     INDENT = 20
     HALF_INDENT = 10

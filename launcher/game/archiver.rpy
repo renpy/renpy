@@ -1,3 +1,6 @@
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 # Ren'Py archiver. This builds a Ren'Py archive file, and the
 # associated index file. These files are really easy to 
 # reverse-engineer, but are probably better than nothing.

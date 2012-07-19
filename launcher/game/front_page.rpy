@@ -1,3 +1,6 @@
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
 define PROJECT_ADJUSTMENT = ui.adjustment()
     
 init python:
