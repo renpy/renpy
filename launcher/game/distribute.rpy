@@ -700,6 +700,9 @@ init python in distribute:
                                 
                             sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
 
+            if self.include_update and not self.build_update:
+                os.unlink(update_fn)
+
 
         def finish_updates(self, packages):
             """
