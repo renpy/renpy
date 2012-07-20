@@ -110,12 +110,12 @@ def displayable(d):
         return d
 
     if isinstance(d, basestring):
-        if d[0] == '#':
+        if not d:
+            raise Exception("An empty string cannot be used as a displayable.")
+        elif d[0] == '#':
             return renpy.store.Solid(d)
         elif "." in d:
             return renpy.store.Image(d)
-        elif not d:
-            raise Exception("Displayable cannot be an empty string.")
         else:
             return renpy.store.ImageReference(tuple(d.split()))
 
