@@ -11,6 +11,7 @@ init python in editor:
     from store import Action, renpy, config, persistent
     import store.project as project
     import store.updater as updater
+    import store.interface as interface
     import store
     
     import glob
@@ -72,14 +73,17 @@ init python in editor:
 
     # A list of fancy_editor_info objects.
     fancy_editors = [ ]
-    
+
+    # The error message to display if an editor failed to start.
+    error_message = None
+
     class FancyEditorInfo(object):
         """
         Represents an editor in the selection screen. A FEI knows if the 
         editor is installed or not.
         """
     
-        def __init__(self, priority, name, description=None, dlc=None, dldescription=None):
+        def __init__(self, priority, name, description=None, dlc=None, dldescription=None, error_message=None):
             # The priority of the editor. Lower priorities will come later
             # in the list.
             self.priority = priority
@@ -98,6 +102,9 @@ init python in editor:
             
             # A description of the download.
             self.dldescription = dldescription
+            
+            # An error message to display if the editor failed to start.
+            self.error_message = error_message
             
     def fancy_scan_editors():
         """
@@ -118,21 +125,25 @@ init python in editor:
             dlc = "editra-windows"
             installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-win32"))
             description = ED
+            error_message = None
         elif renpy.macintosh:
             dlc = "editra-mac"
             installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-mac.app"))
             description = ED
+            error_message = None
         else:
             dlc = "editra-linux"
             installed = os.path.exists(os.path.join(config.basedir, "editra/Editra"))
             description = EDL
+            error_message = _("The may have occured because wxPython is not installed on this system.")
 
         e = FancyEditorInfo(
             1,
             "Editra", 
             description,
             dlc,
-            _("Up to 22 MB download required."))
+            _("Up to 22 MB download required."),
+            error_message)
             
         e.installed = e.installed or installed
             
@@ -144,7 +155,9 @@ init python in editor:
             "jEdit",
             "A mature editor that requires Java.",
             "jedit",
-            _("1.8 MB download required.")))
+            _("1.8 MB download required."),
+            _("This may have occured because Java is not installed on this system."),
+            ))
         
         fei.append(FancyEditorInfo(
             3,
@@ -180,6 +193,8 @@ init python in editor:
         Activates the editor in persistent.editor, if it's installed.
         """
     
+        global error_message
+    
         if not set_editor:
             return
         
@@ -191,6 +206,7 @@ init python in editor:
                 if i.installed:
                     ei = editors[i.name]
                     os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+                    error_message = i.error_message
                     break
                     
         else:
@@ -294,12 +310,21 @@ init python in editor:
                 return
             
             fn = project.current.unelide_filename(self.filename)
-            e = renpy.editor.editor
             
-            e.begin()
-            e.open(fn, line=self.line)
-            e.end()
-            
+            try:
+                
+                e = renpy.editor.editor
+
+                e.begin()
+                e.open(fn, line=self.line)
+                e.end()
+
+            except Exception, e:
+                exception = traceback.format_exception_only(type(e), e)[-1][:-1]
+                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+                
+                
+
     class EditAll(Action):
         """
         Opens all scripts that are part of the current project in a web browser.
@@ -321,14 +346,20 @@ init python in editor:
                     scripts.remove(fn)
                     scripts.insert(0, fn)
                     
-            e = renpy.editor.editor
-            e.begin()
-            
-            for fn in scripts:
-                fn = project.current.unelide_filename(fn)
-                e.open(fn)
+            try:
+
+                e = renpy.editor.editor
+                e.begin()
                 
-            e.end()
+                for fn in scripts:
+                    fn = project.current.unelide_filename(fn)
+                    e.open(fn)
+
+                e.end()
+
+            except Exception, e:
+                exception = traceback.format_exception_only(type(e), e)[-1][:-1]
+                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 screen editor:
     
