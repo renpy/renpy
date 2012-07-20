@@ -163,7 +163,7 @@ The show statement takes the following properties:
 
 ``behind``
     Takes a comma-separated list of one or more names. Each name is
-    taken as an image tag. The image is show behind all images with
+    taken as an image tag. The image is shown behind all images with
     the given tags that are currently being shown.
 
 ``onlayer``
@@ -238,6 +238,8 @@ instead of image names.
 When the image name is omitted entirely, the scene statement clears
 all displayables from a layer without showing another
 displayable. 
+
+.. _hide-statement:
 
 Hide Statement
 ==============
@@ -315,6 +317,8 @@ The second transition occurs after the Eileen and Lucy images are
 shown. It causes a dissolve from the scene consisting solely of the
 background to the scene consisting of all three images - the result is
 that the two new images appear to dissolve in simultaneously. 
+
+.. _with-none:
 
 With None
 ---------

@@ -176,7 +176,7 @@ to the main menu screen.
 .. _music-room:
 
 Music Room
-==========
+----------
 
 A music room is a screen that allows the user to select and play music
 tracks from the game. These tracks may start off locked when the user
