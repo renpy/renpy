@@ -223,6 +223,7 @@ init python:
 
     build.classify_renpy("**/saves", None)
     build.classify_renpy("**/tmp", None)
+    build.classify_renpy("**/.Editra", None)
 
     # main source.
     build.classify_renpy("renpy.py", "source")
