@@ -58,8 +58,6 @@ def main():
                                                 'macpath',
                                                 'multiprocessing',
                                                 '_multiprocessing',
-                                                'ctypes',
-                                                '_ctypes',
                                                 ],
                                  'optimize' : 2,
                                  } },
