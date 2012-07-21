@@ -964,6 +964,9 @@ class Adjustment(renpy.object.Object):
         self.ranged = ranged
         
     def get_value(self):
+        if self._value > self._range:
+            return self._range
+        
         return self._value
 
     def set_value(self, v):
@@ -976,8 +979,6 @@ class Adjustment(renpy.object.Object):
 
     def set_range(self, v):
         self._range = v
-        if self._value > v:
-            self._value = v
         if self.ranged:
             self.ranged(self)
         

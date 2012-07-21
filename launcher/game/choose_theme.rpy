@@ -44,7 +44,6 @@ init python:
             
         return 1.0 * names.index(current_scheme) / (len(names) - 1)
 
-
     def pick_theme(theme, scheme):
         """
         Returns a theme and scheme that are similar to `theme` and `scheme`. 
