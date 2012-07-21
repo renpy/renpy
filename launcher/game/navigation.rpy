@@ -56,7 +56,6 @@ init python in navigation:
         for name, loc in name_map.items():
             filename, line = loc
             
-            
             if sort == "alphabetical":
                 group = None
             else:

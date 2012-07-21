@@ -19,11 +19,15 @@ init python in util:
                 fullfn = os.path.join(subdir, fn)
                 relfn = os.path.relpath(fullfn, base)
                 
+                relfn = relfn.replace("\\", "/")
+                
                 yield relfn, True
 
             for fn in files:
                 fullfn = os.path.join(subdir, fn)
                 relfn = os.path.relpath(fullfn, base)
+
+                relfn = relfn.replace("\\", "/")
                 
                 yield relfn, False
     
