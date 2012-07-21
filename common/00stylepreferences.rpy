@@ -15,8 +15,8 @@ init -1135 python:
 
     # Are style preferences dirty? If so, we need to update them at the start of
     # the next operation.
-    __dirty = object()
-    __dirty.flag = True
+    __spdirty = object()
+    __spdirty.flag = True
 
     # A map from preference name to alternative.
     if persistent._style_preferences is None:      
@@ -72,7 +72,7 @@ init -1135 python:
         Called at least once per interaction, to update the styles if necessary.
         """
     
-        if not __dirty.flag:
+        if not __spdirty.flag:
             return
             
         for preference, alternatives in __preferences.iteritems():
@@ -85,7 +85,7 @@ init -1135 python:
                     
         renpy.style.rebuild()
         
-        __dirty.flag = False
+        __spdirty.flag = False
         
     def __check(preference, alternative=None):
         
@@ -114,7 +114,7 @@ init -1135 python:
         __check(preference, alternative)
         
         persistent._style_preferences[preference] = alternative
-        __dirty.flag = True
+        __spdirty.flag = True
         
         renpy.restart_interaction()
         
