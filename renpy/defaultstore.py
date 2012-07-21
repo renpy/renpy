@@ -339,11 +339,17 @@ _last_say_what = None
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
     
+# Make these available to user code.
+import sys
+import os
+    
 def public_api():
     ui
     im
     object
     range
     sorted
+    os
+    sys
     
 del public_api
