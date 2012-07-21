@@ -60,7 +60,10 @@ init python:
         schemes = theme_data.THEME[theme]
         
         if scheme not in schemes:
-            scheme = random.choice(list(schemes))
+            if theme in schemes:
+                scheme = theme
+            else:
+                scheme = random.choice(list(schemes))
             
         return theme, scheme
         

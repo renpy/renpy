@@ -293,7 +293,7 @@ init python in theme_data:
                        'widget_selected': '#fffeed',
                        'widget_text': '#ffffff'},
     
-       'Watermellon': {'disabled': '#f9cdad',
+       'Watermelon': {'disabled': '#f9cdad',
                        'disabled_text': '#fc9d9a',
                        'frame': '#f9cdad',
                        'gm_root': '#83af9b',
@@ -477,3 +477,61 @@ init python in theme_data:
             subs["scheme"] = scheme
                        
             THEME[theme][scheme] = ROUNDRECT_CODE % (subs)
+
+    AWT_CODE = """theme.a_white_tulip(
+        ## Theme: A White Tulip
+        ## Scheme %(scheme)s
+               
+        ## The color of an idle widget face.
+        widget = "%(widget)s",
+
+        ## The color of a focused widget face.
+        widget_hover = "%(widget_hover)s",
+
+        ## The color of the text in a selected widget. (For
+        ## example, the current value of a preference.)
+        widget_selected = "%(widget_selected)s",
+
+        ## The color of a disabled widget face. 
+        disabled = "%(disabled)s",
+
+        ## The color of a frame containing widgets.
+        frame = "%(frame)s",
+
+        ## The background of the main menu. This can be a color
+        ## beginning with '#', or an image filename. The latter
+        ## should take up the full height and width of the screen.
+        mm_root = "%(mm_root)s",
+
+        ## The background of the game menu. This can be a color
+        ## beginning with '#', or an image filename. The latter
+        ## should take up the full height and width of the screen.
+        gm_root = "%(gm_root)s",
+
+        ## And we're done with the theme. The theme will customize
+        ## various styles, so if we want to change them, we should
+        ## do so below.            
+        )"""
+    
+    THEME["A White Tulip"] = { }
+    THEME_FUNCTIONS.add("a_white_tulip")
+
+    for scheme, colors in ROUNDRECT_SCHEMES.iteritems():
+        subs = dict(colors)
+        subs["scheme"] = scheme
+                   
+        THEME["A White Tulip"][scheme] = AWT_CODE % (subs)
+
+    THEME["A White Tulip"]["A White Tulip"] = AWT_CODE % dict(
+            scheme = "A White Tulip",
+            widget = "#c1c6d3",
+            widget_hover = "#d7dbe5",
+            widget_text = "#6b6b6b",
+            widget_selected = "#c1c6d3",
+            disabled = "#b4b4b4",
+            disabled_text = "#6b6b6b",
+            label = "#6b6b6b",
+            frame = "#9391c9",
+            mm_root = "#ffffff",
+            gm_root = "#ffffff",
+    )
