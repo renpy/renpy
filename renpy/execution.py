@@ -22,6 +22,7 @@
 # This file contains code responsible for managing the execution of a
 # renpy object, as well as the context object.
 
+import sys
 import renpy.display
 
 class Delete(object):
@@ -268,6 +269,8 @@ class Context(renpy.object.Object):
                     raise
 
                 except Exception, e:
+                    exc_info = sys.exc_info()
+
                     short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
 
                     try:
@@ -276,7 +279,7 @@ class Context(renpy.object.Object):
                     except renpy.game.CONTROL_EXCEPTIONS, ce:
                         raise ce
                     except Exception, ce:
-                        raise e
+                        raise exc_info[0], exc_info[1], exc_info[2]
                               
                 node = self.next_node
             
