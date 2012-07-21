@@ -769,7 +769,7 @@ init -1110 python:
 
         return Frame(button_image, 4, 6)
 
-    def __AWTBullet(image, diameter):
+    def __AWTBullet(image):
         return Transform(image, yalign=0.5, xalign=0.0)
 
 init -1110 python hide:
@@ -877,11 +877,11 @@ init -1110 python hide:
                                                 (0, 0), "_theme_awt/radio_selected_hover.png"
                                                 )
 
-            s.background = __AWTBullet("_theme_awt/radio_unselected.png", 17)
-            s.hover_background = __AWTBullet("_theme_awt/radio_unselected_hover.png", 17)
-            s.insensitive_background = __AWTBullet("_theme_awt/radio_unselected.png", 17)
-            s.selected_background = __AWTBullet(selected, 17)
-            s.selected_hover_background = __AWTBullet(hover, 17)
+            s.background = __AWTBullet("_theme_awt/radio_unselected.png")
+            s.hover_background = __AWTBullet("_theme_awt/radio_unselected_hover.png")
+            s.insensitive_background = __AWTBullet("_theme_awt/radio_unselected.png")
+            s.selected_background = __AWTBullet(selected)
+            s.selected_hover_background = __AWTBullet(hover)
 
             s.left_padding = 23
             s.left_margin = 10
