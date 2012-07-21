@@ -724,6 +724,508 @@ init -1110 python hide:
     config.image_buttons = { }
     config.image_labels = { }
 
+# Theme: A White Tulip
+# Coding: Jake Staines (http://www.eviscerate.net/)
+# Graphics: Ren (http://renmazuo-.deviantart.com/)
+# Font: Andrew Paglinawan (www.andrewpaglinawan.com)
+init -1110 python:
+
+    def __AWTBox(colour):
+        base_image = im.MatrixColor("_theme_awt/frame.png", im.matrix.opacity(0.45))
+        colour_tint = im.MatrixColor("_theme_awt/frame.png", im.matrix.colorize(colour, colour))
+        colour_tint = im.MatrixColor(colour_tint, im.matrix.opacity(0.4))
+        frame_image = im.Composite(
+                                        (220, 147),
+                                        (0, 0), base_image,
+                                        (0, 0), colour_tint,
+                                        (0, 0), "_theme_awt/frame_overlay.png"
+                                        )
+
+        return Frame(frame_image, 4, 4)
+
+    def __AWTButton(image, colour, highlight, low_sat=False):
+        base_image = "_theme_awt/" + image + ".png"
+        colour_tint = im.MatrixColor("_theme_awt/" + image + ".png", im.matrix.colorize(colour, colour))
+        opacity = 0.5
+        if highlight:
+            opacity = 0.3
+        if low_sat:
+            opacity = opacity * 0.4
+        colour_tint = im.MatrixColor(colour_tint, im.matrix.opacity(opacity))
+        if highlight:
+            button_image = im.Composite(
+                                            (203, 47),
+                                            (0, 0), base_image,
+                                            (0, 0), colour_tint,
+                                            (0, 0), "_theme_awt/" + image + "_overlay_highlight.png"
+                                            )
+        else:
+            button_image = im.Composite(
+                                            (203, 47),
+                                            (0, 0), base_image,
+                                            (0, 0), colour_tint,
+                                            (0, 0), "_theme_awt/" + image + "_overlay.png"
+                                            )
+
+        return Frame(button_image, 4, 6)
+
+    def __AWTBullet(image, diameter):
+        return Transform(image, yalign=0.5, xalign=0.0)
+
+init -1110 python hide:
+
+    @theme
+    def a_white_tulip_frames(frame):
+
+        theme.clear_frames()
+
+        style.frame.background = __AWTBox(frame)
+
+        style.frame.xpadding = 9
+        style.frame.ypadding = 9
+
+    @theme
+    def a_white_tulip_buttons(text_size,
+            widget,
+            widget_hover,
+            widget_text,
+            widget_selected,
+            disabled,
+            disabled_text,
+            small):
+
+        theme.clear_buttons()
+
+        style.button.background = __AWTButton("button", widget, False)
+        style.button.hover_background = __AWTButton("button", widget_hover, True)
+        style.button.selected_background = __AWTButton("button_selected", widget_hover, False, low_sat=True)
+        style.button.selected_hover_background = __AWTButton("button_selected", widget_hover, True, low_sat=True)
+        style.button.insensitive_background = __AWTButton("button", disabled, False)
+
+        style.button_text.font = "_theme_awt/Quicksand-Regular.ttf"
+        style.button_text.size = text_size
+        style.button_text.color = widget_text
+
+        style.button_text.selected_color = widget_text
+        style.button_text.selected_xoffset = 2
+        style.button_text.selected_yoffset = 2
+
+        style.button_text.insensitive_color = "#0000"
+
+
+        style.button_text.outlines = [
+                                                        (2, "#20202008", 2, 2),
+                                                        (1, "#40404015", 2, 2),
+                                                        (0, "#80808030", 2, 2),
+                                                        (0, widget_text, 1, 0),
+
+                                                    ]
+
+        style.button_text.hover_outlines = [
+                                                        (2, "#20202008", 2, 2),
+                                                        (1, "#40404015", 2, 2),
+                                                        (0, "#80808030", 2, 2),
+                                                        (0, widget_text, 1, 0),
+                                                    ]
+
+        style.button_text.selected_outlines = [
+                                                        (2, "#20202008", 2, 2),
+                                                        (1, "#40404015", 2, 2),
+                                                        (0, "#80808030", 2, 2),
+                                                        (0, widget_text, 1, 0),
+                                                    ]
+
+        style.button_text.insensitive_outlines = [
+                                                        (1, "#fff4", 2, 1),
+                                                        (1, "#3334", 0, -1),
+                                                    ]
+
+
+        style.button.xpadding = 9
+
+        if small:
+            style.button.ypadding = 2
+        else:
+            style.button.ypadding = 6
+
+        style.button.xmargin = 3
+        style.button.ymargin = 3
+
+        style.button_text.xalign = 0.5
+        style.button_text.yalign = 0.5
+        style.button_text.text_align = 0.5
+
+        # Radio Buttons
+
+        def set_radio_style(s, colour):
+
+            selected = im.MatrixColor("_theme_awt/radio_base.png", im.matrix.colorize(colour, colour))
+            selected = im.MatrixColor(selected, im.matrix.opacity(0.75))
+            selected = im.Composite( (17, 18),
+                                                (0, 0), "_theme_awt/radio_unselected.png",
+                                                (0, 0), "_theme_awt/radio_base.png",
+                                                (0, 0), selected,
+                                                (0, 0), "_theme_awt/radio_base_overlay.png"
+                                                )
+
+            hover = im.MatrixColor("_theme_awt/radio_base.png", im.matrix.colorize(colour, colour))
+            hover = im.MatrixColor(hover, im.matrix.opacity(0.75))
+            hover = im.Composite( (17, 18),
+                                                (0, 0), "_theme_awt/radio_unselected.png",
+                                                (0, 0), "_theme_awt/radio_base.png",
+                                                (0, 0), hover,
+                                                (0, 0), "_theme_awt/radio_selected_hover.png"
+                                                )
+
+            s.background = __AWTBullet("_theme_awt/radio_unselected.png", 17)
+            s.hover_background = __AWTBullet("_theme_awt/radio_unselected_hover.png", 17)
+            s.insensitive_background = __AWTBullet("_theme_awt/radio_unselected.png", 17)
+            s.selected_background = __AWTBullet(selected, 17)
+            s.selected_hover_background = __AWTBullet(hover, 17)
+
+            s.left_padding = 23
+            s.left_margin = 10
+
+        def set_radio_text_style(s):
+            s.selected_color = widget_text
+            s.xoffset = 2
+            s.yoffset = 2
+
+
+            s.xalign = 0.0
+            s.text_align = 0.0
+
+        set_radio_style(style.radio_button, widget)
+        set_radio_text_style(style.radio_button_text)
+
+        set_radio_style(style.check_button, widget)
+        set_radio_text_style(style.check_button_text)
+
+    @theme
+    def a_white_tulip_large_buttons(text_size,
+            widget,
+            widget_hover,
+            widget_text,
+            widget_selected,
+            disabled,
+            disabled_text,
+            small):
+
+        theme.clear_large_buttons()
+
+        style.large_button.background = __AWTButton("button", widget, False)
+        style.large_button.hover_background = __AWTButton("button", widget_hover, True)
+        style.large_button.selected_background = __AWTButton("button_selected", widget_hover, False)
+        style.large_button.selected_hover_background = __AWTButton("button_selected", widget_hover, True)
+        style.large_button.insensitive_background = __AWTButton("button", disabled, False)
+
+        style.large_button_text.font = "_theme_awt/Quicksand-Regular.ttf"
+        style.large_button_text.size = text_size
+        style.large_button_text.color = widget_text
+        style.large_button_text.selected_color = widget_selected
+        style.large_button_text.insensitive_color = disabled_text
+
+        style.large_button_text.outlines = [
+                                                        (2, "#20202008", 2, 2),
+                                                        (1, "#40404015", 2, 2),
+                                                        (0, "#80808030", 2, 2),
+                                                        (0, widget_text, 1, 0),
+                                                    ]
+
+        style.large_button_text.selected_outlines = [
+                                                        (2, "#20202008", 2, 2),
+                                                        (1, "#40404015", 2, 2),
+                                                        (0, "#80808030", 2, 2),
+                                                        (0, widget_selected, 1, 0),
+                                                    ]
+
+        style.large_button_text.insensitive_outlines = [
+                                                        (2, "#20202008", 2, 2),
+                                                        (1, "#40404015", 2, 2),
+                                                        (0, "#80808030", 2, 2),
+                                                        (0, disabled_text, 1, 0),
+                                                    ]
+
+
+        style.large_button.xpadding = 9
+
+        if small:
+            style.large_button.top_padding = 2
+            style.large_button.bottom_padding = 4
+        else:
+            style.large_button.top_padding = 6
+            style.large_button.bottom_padding = 9
+
+        style.large_button.xmargin = 3
+        style.large_button.ymargin = 3
+
+        style.large_button_text.xalign = 0.5
+        style.large_button_text.yalign = 0.5
+        style.large_button_text.text_align = 0.5
+
+    @theme
+    def a_white_tulip_labels(
+        text_size,
+        label):
+
+        theme.clear_labels()
+
+        style.label_text.size = text_size
+        style.label_text.color = label
+        style.label_text.outlines = [
+                                                        (0, label, 1, 0),
+                                                        (1, "#FFF", 0, 0),
+                                                        (1, "#FFF", 1, 0),
+                                                        (2, "#FFF4", 0, 0),
+                                                        (2, "#FFF4", 1, 0),
+
+                                                    ]
+
+        style.label.bottom_margin = 5
+
+    @theme
+    def a_white_tulip_prompts(
+            text_size,
+            label):
+
+        theme.clear_prompts()
+
+        style.prompt_text.size = text_size
+        style.prompt_text.color = label
+
+        style.prompt.xalign = 0.5
+        style.prompt_text.text_align = 0.5
+        style.prompt_text.layout = "subtitle"
+
+    @theme
+    def a_white_tulip_bars(
+            widget,
+            widget_hover):
+
+        theme.clear_bars()
+
+        def img(name, colour, width, height, x, y):
+            i = im.MatrixColor("_theme_awt/" + name + ".png", im.matrix.colorize(colour, colour))
+            i = im.MatrixColor(i, im.matrix.opacity(0.5))
+            i = im.Composite(
+                (width, height),
+                (0, 0), "_theme_awt/" + name + ".png",
+                (0, 0), i,
+                )
+            if x is not None:
+                i = Frame(i, x, y, tile=True)
+            return i
+
+        def himg(name, colour, width, height, x, y):
+            i = im.MatrixColor("_theme_awt/" + name + ".png", im.matrix.colorize(colour, colour))
+            i = im.MatrixColor(i, im.matrix.opacity(0.5))
+            i = im.Composite(
+                (width, height),
+                (0, 0), "_theme_awt/" + name + ".png",
+                (0, 0), i,
+                (0, 0), "_theme_awt/" + name + "_overlay.png"
+                )
+            if x is not None:
+                i = Frame(i, x, y, tile=True)
+            return i
+
+        # Bars.
+        style.bar.ymaximum = 27
+        style.bar.left_gutter = 14
+        style.bar.right_gutter = 14
+        style.bar.thumb_offset = 15
+
+        style.bar.left_bar = himg("slider_full", widget, 42, 27, 11, 0)
+        style.bar.right_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        style.bar.thumb = himg("vthumb", widget, 29, 30, None, None)
+
+        style.bar.hover_left_bar = himg("slider_full", widget_hover, 42, 27, 11, 0)
+        style.bar.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
+
+        style.vbar.xmaximum = 27
+        style.vbar.top_gutter = 14
+        style.vbar.bottom_gutter = 12
+        style.vbar.thumb_offset = 15
+
+        style.vbar.right_bar = himg("vslider_full", widget, 27, 42, 0, 11)
+        style.vbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        style.vbar.thumb = himg("vthumb", widget, 29, 30, None, None)
+
+        style.vbar.hover_right_bar = himg("vslider_full", widget_hover, 27, 42, 0, 11)
+        style.vbar.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
+
+
+        # Sliders (Whatever the difference between these and bars is anyway...)
+        style.slider.ymaximum = 27
+        style.slider.left_gutter = 14
+        style.slider.right_gutter = 14
+        style.slider.thumb_offset = 15
+
+        style.slider.left_bar = himg("slider_full", widget, 42, 27, 11, 0)
+        style.slider.right_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        style.slider.thumb = himg("vthumb", widget, 29, 30, None, None)
+
+        style.slider.hover_left_bar = himg("slider_full", widget_hover, 42, 27, 11, 0)
+        style.slider.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
+
+        style.vslider.xmaximum = 27
+        style.vslider.top_gutter = 14
+        style.vslider.bottom_gutter = 12
+        style.vslider.thumb_offset = 15
+
+        style.vslider.right_bar = himg("vslider_full", widget, 27, 42, 0, 11)
+        style.vslider.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        style.vslider.thumb = himg("vthumb", widget, 29, 30, None, None)
+
+        style.vslider.hover_right_bar = himg("vslider_full", widget_hover, 27, 42, 0, 11)
+        style.vslider.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
+
+        # Scrollbars.
+        style.scrollbar.left_gutter = 31
+        style.scrollbar.right_gutter = 32
+        style.scrollbar.thumb_offset = 33
+        style.scrollbar.ymaximum = 27
+
+        style.scrollbar.left_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        style.scrollbar.right_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        style.scrollbar.thumb = himg("scroller", widget, 65, 29, None, None)
+
+        style.scrollbar.hover_left_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        style.scrollbar.hover_thumb = himg("scroller", widget_hover, 65, 29, None, None)
+
+        style.vscrollbar.top_gutter = 31
+        style.vscrollbar.bottom_gutter = 32
+        style.vscrollbar.thumb_offset = 33
+        style.vscrollbar.xmaximum = 27
+
+        style.vscrollbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        style.vscrollbar.right_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        style.vscrollbar.thumb = himg("vscroller", widget, 28, 65, None, None)
+
+        style.vscrollbar.hover_left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        style.vscrollbar.hover_thumb = himg("vscroller", widget_hover, 28, 65, None, None)
+
+    @theme
+    def a_white_tulip(
+            widget = "#c1c6d3",
+            widget_hover = "#d7dbe5",
+            widget_text = "#6b6b6b",
+            widget_selected = "#c1c6d3",
+            disabled = "#b4b4b4",
+            disabled_text = "#6b6b6b",
+            label = "#6b6b6b",
+            frame = "#9391c9",
+            text_size=None,
+            small_text_size=None,   
+            window = None,
+            button_menu = None,
+            mm_root = "#ffffff",
+            gm_root = "#ffffff",
+
+            # for compatibility - unused:
+            **properties
+            ):
+
+        # First off, we're hard-coding the text because we're already making everything
+        # brighter and whiter than it was before, so light-coloured text - even when it was
+        # previously over a dark background - just won't look right.
+
+        widget_text = "#6b6b6b"
+        disabled_text = "#6b6b6b"
+        label = "#6b6b6b"
+
+        if button_menu is None:
+            if (config.script_version is not None) and (config.script_version < (6, 9, 0)):
+                button_menu = True
+            else:
+                button_menu = False
+
+        layout.defaults()
+
+        small = False
+
+        if config.screen_width <= 640:
+            text_size = text_size or 12
+            small_text_size = small_text_size or 8
+            small = True
+        else:
+            text_size = text_size or 17
+            small_text_size = small_text_size or 12
+
+        theme.a_white_tulip_frames(frame)
+
+        theme.a_white_tulip_buttons(
+            text_size,
+            widget,
+            widget_hover,
+            widget_text,
+            widget_selected,
+            disabled,
+            disabled_text,
+            small)
+
+        theme.a_white_tulip_large_buttons(
+            small_text_size,
+            widget,
+            widget_hover,
+            widget_text,
+            widget_selected,
+            disabled,
+            disabled_text,
+            small)
+
+        theme.a_white_tulip_labels(
+            text_size,
+            label)
+
+        theme.a_white_tulip_prompts(
+            text_size,
+            label)
+
+        theme.a_white_tulip_bars(
+            widget,
+            widget_hover)
+
+        if mm_root is not None:
+            style.mm_root.background = mm_root
+
+        if gm_root is not None:
+            style.gm_root.background = gm_root
+
+        if window is None:
+            window = frame
+
+        style.window.background = __AWTBox(window)
+        style.window.xpadding = 9
+        style.window.xmargin = 6
+        style.window.top_padding = 9
+        style.window.bottom_padding = 35
+        style.window.ymargin = 6
+
+        style.say_dialogue.font = "_theme_awt/Quicksand-Regular.ttf"
+        style.say_dialogue.color = widget_text
+        style.say_dialogue.outlines = [
+                                                    (0, widget_text, 1, 0)
+                                                ]
+
+        style.say_label.font = "_theme_awt/Quicksand-Bold.ttf"
+        style.say_label.color = widget_text
+        style.say_label.outlines = [
+                                                    (2, "#20202008", 2, 2),
+                                                    (1, "#40404015", 2, 2),
+                                                    (0, "#80808030", 2, 2)
+                                                ]
+
+        if button_menu:
+            layout.button_menu()
+
+        style.quick_button.bottom_margin = 15
+        style.quick_button.right_margin = 15
+
+        style.file_picker_text.first_indent = 9
+        style.file_picker_text.rest_indent = 9
+
+
 init 1110 python:
 
     if not "compat" in _layout.provided:
