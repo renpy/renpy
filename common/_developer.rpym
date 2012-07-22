@@ -164,7 +164,7 @@ label _theme_test:
             
             ui.frame(style='menu_frame', xmaximum=0.95)
             ui.vbox(box_spacing=20)
-            layout.prompt("This a prompt. Hopefully, we've made this long enough to wrap around at least once.", None)
+            layout.prompt("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines.", None)
             ui.close()
 
             ui.close() # hbox
@@ -519,7 +519,7 @@ screen _inspector:
                         "style=%s, " % (__format_style(d.style),) + 
                         "size=(%dx%d)" % (width, height) ) 
                  
-                text t
+                text "[t!q]"
                   
         null height 20
         
