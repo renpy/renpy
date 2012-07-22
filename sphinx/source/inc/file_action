@@ -70,10 +70,14 @@
     
     Performs a quick load.
 
-.. function:: QuickSave(message='Quick save complete.')
+.. function:: QuickSave(message='Quick save complete.', newest=False)
     
     Performs a quick save.
     
     `message`
         A message to display to the user when the quick save finishes.
+    
+    `newest`
+        Set to true to mark the quicksave as the newest save.
+     
 

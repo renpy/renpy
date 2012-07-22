@@ -72,7 +72,7 @@
 
 .. function:: im.matrix.desaturate()
     
-    Returns an im.matrix that desaturates the image (make it
+    Returns an im.matrix that desaturates the image (makes it
     grayscale). This is equivalent to calling
     im.matrix.saturation(0).
 

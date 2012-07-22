@@ -28,7 +28,7 @@
     ::
     
         image girl clothed happy = im.Composite(
-            (300, 600)
+            (300, 600),
             (0, 0), "girl_body.png",
             (0, 0), "girl_clothes.png",
             (100, 100), "girl_happy.png"

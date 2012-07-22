@@ -19,6 +19,8 @@ init -1000 python in updater:
     import sys
     import struct
     import zlib
+    import codecs
+    import StringIO
 
     try:
         import rsa
@@ -26,6 +28,71 @@ init -1000 python in updater:
         pass
 
     from renpy.exports import fsencode
+
+    # A file containing deferred update commands, one per line. Right now, 
+    # there are two commands:
+    # R <path> 
+    #     Rename <path>.new to <path>.
+    # D <path>
+    #     Delete <path>.
+    # Deferred commands that cannot be accomplished on start are ignored.
+    DEFERRED_UPDATE_FILE = os.path.join(config.renpy_base, "update", "deferred.txt")
+    DEFERRED_UPDATE_LOG = os.path.join(config.renpy_base, "update", "log.txt")
+
+    def process_deferred_line(l):
+        cmd, _, fn = l.partition(" ")
+        
+        if cmd == "R":
+            if os.path.exists(fn + ".new"):
+                
+                if os.path.exists(fn):
+                    os.unlink(fn)
+                
+                os.rename(fn + ".new", fn)
+                
+        elif cmd == "D":
+           
+            if os.path.exists(fn):
+                os.unlink(fn)
+            
+        else:
+            raise Exception("Bad command.")
+
+    def process_deferred():
+        if not os.path.exists(DEFERRED_UPDATE_FILE):
+            return
+
+        # Give a previous process time to quit (and let go of the 
+        # open files.) 
+        time.sleep(3)
+
+        try:
+            log = file(DEFERRED_UPDATE_LOG, "wb")
+        except:
+            log = StringIO.StringIO()
+            
+        with open(DEFERRED_UPDATE_FILE, "rb") as f:
+            for l in f:
+            
+                l = l.rstrip("\r\n")
+                l = l.decode("utf-8")
+
+                log.write(l.encode("utf-8"))
+            
+                try:
+                    process_deferred_line(l)
+                except:
+                    traceback.print_exc(file=log)
+                
+        try:
+            os.unlink(DEFERRED_UPDATE_FILE)
+        except:
+            traceback.print_exc(file=log)
+        
+        log.close()
+
+    # Process deferred updates on startup, if any exist.
+    process_deferred()
 
     def zsync_path(command):
         """
@@ -900,7 +967,10 @@ init -1000 python in updater:
 
                 if os.path.exists(path):
                     self.log.write("could not rename file %s" % path.encode("utf-8"))
-                    os.unlink(path + ".new")
+
+                    with open(DEFERRED_UPDATE_FILE, "wb") as f:
+                        f.write("R " + path.encode("utf-8") + "\n")
+
                     continue
 
                 os.rename(path + ".new", path)
@@ -938,6 +1008,11 @@ init -1000 python in updater:
             
             for i in old_files:
                 self.unlink(i)
+
+                if os.path.exists(i):
+                    self.log.write("could not delete file %s" % path.encode("utf-8"))
+                    with open(DEFERRED_UPDATE_FILE, "wb") as f:
+                        f.write("D " + i.encode("utf-8") + "\n")
 
             for i in old_directories:
                 try:
