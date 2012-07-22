@@ -1032,79 +1032,73 @@ init -1110 python hide:
         # Bars.
         style.bar.ymaximum = 27
         style.bar.left_gutter = 14
-        style.bar.right_gutter = 14
-        style.bar.thumb_offset = 15
+        style.bar.right_gutter = 12
+        style.bar.thumb_offset = 10
 
-        style.bar.left_bar = himg("slider_full", widget, 42, 27, 11, 0)
-        style.bar.right_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
-        style.bar.thumb = himg("vthumb", widget, 29, 30, None, None)
-
-        style.bar.hover_left_bar = himg("slider_full", widget_hover, 42, 27, 11, 0)
-        style.bar.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
-
+        style.bar.left_bar = himg("bar_full", widget, 42, 27, 13, 0)
+        style.bar.right_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
+        style.bar.thumb = himg("bar_thumb", widget, 20, 25, None, None)
+        
         style.vbar.xmaximum = 27
         style.vbar.top_gutter = 14
         style.vbar.bottom_gutter = 12
-        style.vbar.thumb_offset = 15
+        style.vbar.thumb_offset = 10
 
-        style.vbar.right_bar = himg("vslider_full", widget, 27, 42, 0, 11)
-        style.vbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
-        style.vbar.thumb = himg("vthumb", widget, 29, 30, None, None)
-
-        style.vbar.hover_right_bar = himg("vslider_full", widget_hover, 27, 42, 0, 11)
-        style.vbar.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
-
-
-        # Sliders (Whatever the difference between these and bars is anyway...)
+        style.vbar.left_bar = himg("v_bar_full", widget, 27, 42, 0, 13)
+        style.vbar.right_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
+        style.vbar.thumb = himg("v_bar_thumb", widget, 25, 20, None, None)
+        
+        
+        # Sliders
         style.slider.ymaximum = 27
-        style.slider.left_gutter = 14
-        style.slider.right_gutter = 14
-        style.slider.thumb_offset = 15
+        style.slider.left_gutter = 13
+        style.slider.right_gutter = 12
+        style.slider.thumb_offset = 14.5
 
-        style.slider.left_bar = himg("slider_full", widget, 42, 27, 11, 0)
-        style.slider.right_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        style.slider.left_bar = himg("slider_full", widget, 42, 27, 13, 0)
+        style.slider.right_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.slider.thumb = himg("vthumb", widget, 29, 30, None, None)
-
-        style.slider.hover_left_bar = himg("slider_full", widget_hover, 42, 27, 11, 0)
+        
+        style.slider.hover_left_bar = himg("slider_full", widget_hover, 42, 27, 13, 0)
         style.slider.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
-
+        
         style.vslider.xmaximum = 27
         style.vslider.top_gutter = 14
-        style.vslider.bottom_gutter = 12
+        style.vslider.bottom_gutter = 10
         style.vslider.thumb_offset = 15
 
-        style.vslider.right_bar = himg("vslider_full", widget, 27, 42, 0, 11)
-        style.vslider.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        style.vslider.right_bar = himg("vslider_full", widget, 27, 42, 0, 13)
+        style.vslider.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vslider.thumb = himg("vthumb", widget, 29, 30, None, None)
-
-        style.vslider.hover_right_bar = himg("vslider_full", widget_hover, 27, 42, 0, 11)
+        
+        style.vslider.hover_right_bar = himg("vslider_full", widget_hover, 27, 42, 0, 13)
         style.vslider.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
 
         # Scrollbars.
-        style.scrollbar.left_gutter = 31
-        style.scrollbar.right_gutter = 32
-        style.scrollbar.thumb_offset = 33
+        style.scrollbar.left_gutter = 30
+        style.scrollbar.right_gutter = 30
+        style.scrollbar.thumb_offset = 32.5
         style.scrollbar.ymaximum = 27
-
-        style.scrollbar.left_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
-        style.scrollbar.right_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        
+        style.scrollbar.left_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
+        style.scrollbar.right_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.scrollbar.thumb = himg("scroller", widget, 65, 29, None, None)
-
-        style.scrollbar.hover_left_bar = Frame("_theme_awt/slider_empty_all.png", 11, 0, tile=True)
+        
+        style.scrollbar.hover_left_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.scrollbar.hover_thumb = himg("scroller", widget_hover, 65, 29, None, None)
-
-        style.vscrollbar.top_gutter = 31
-        style.vscrollbar.bottom_gutter = 32
-        style.vscrollbar.thumb_offset = 33
+        
+        style.vscrollbar.top_gutter = 30
+        style.vscrollbar.bottom_gutter = 29
+        style.vscrollbar.thumb_offset = 32.5
         style.vscrollbar.xmaximum = 27
-
-        style.vscrollbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
-        style.vscrollbar.right_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        
+        style.vscrollbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
+        style.vscrollbar.right_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vscrollbar.thumb = himg("vscroller", widget, 28, 65, None, None)
-
-        style.vscrollbar.hover_left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 11, tile=True)
+        
+        style.vscrollbar.hover_left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vscrollbar.hover_thumb = himg("vscroller", widget_hover, 28, 65, None, None)
-
+        
     @theme
     def a_white_tulip(
             widget = "#c1c6d3",
@@ -1130,7 +1124,7 @@ init -1110 python hide:
         # brighter and whiter than it was before, so light-coloured text - even when it was
         # previously over a dark background - just won't look right.
 
-        widget_text = "#6b6b6b"
+        widget_text = "#636363"
         disabled_text = "#6b6b6b"
         label = "#6b6b6b"
 
