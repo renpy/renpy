@@ -273,7 +273,7 @@ init -1000 python in updater:
                 self.state = self.UPDATE_NOT_AVAILABLE
                 return
 
-            if (not self.add) and (not self.remove):
+            if not self.add:
 
                 # Confirm with the user that the update is available.
                 with self.condition:
@@ -467,10 +467,10 @@ init -1000 python in updater:
                 os.unlink(path + ".old")
                 
             if os.path.exists(path):
-                os.rename(path, path + ".old")
 
                 # This might fail because of a sharing violation on Windows.            
                 try:
+                    os.rename(path, path + ".old")
                     os.unlink(path + ".old")            
                 except:
                     pass
@@ -489,7 +489,6 @@ init -1000 python in updater:
                     return rv
 
             return os.path.join(self.base, name)
-            
                 
         def load_state(self):
             """
@@ -896,7 +895,14 @@ init -1000 python in updater:
             """
             
             for path in self.moves:
+
                 self.unlink(path)
+
+                if os.path.exists(path):
+                    self.log.write("could not rename file %s" % path.encode("utf-8"))
+                    os.unlink(path + ".new")
+                    continue
+
                 os.rename(path + ".new", path)
                 
         def delete_obsolete(self):
