@@ -627,8 +627,11 @@ def display_menu(items,
             else:
                 action = None
                 
-            if renpy.config.choice_screen_chosen and action:
-                item_actions.append((label, action, action.get_chosen()))
+            if renpy.config.choice_screen_chosen:
+                if action is not None:
+                    item_actions.append((label, action, action.get_chosen()))
+                else:
+                    item_actions.append((label, action, False))
             else:
                 item_actions.append((label, action))
 
