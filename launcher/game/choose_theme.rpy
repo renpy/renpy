@@ -305,7 +305,7 @@ screen theme_demo:
                     has vbox
 
                     label _("Sound Volume")
-                    bar value .75 range 1.0 changed value_changed
+                    bar style "slider" value .75 range 1.0 changed value_changed
 
                     textbutton "Test":
                         action ui.returns(None)
