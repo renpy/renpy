@@ -67,7 +67,7 @@ init -1000 python in updater:
         time.sleep(3)
 
         try:
-            log = file(DEFERRED_UPDATE_LOG, "wb")
+            log = file(DEFERRED_UPDATE_LOG, "ab")
         except:
             log = StringIO.StringIO()
             
