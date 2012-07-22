@@ -56,6 +56,10 @@ label new_project:
             _("Please enter the name of your project:"),
             filename=True,
             cancel=Jump("front_page"))
+        
+        project_name = project_name.strip()
+        if not project_name:
+            interface.error(_("The project name may not be empty."))
 
         project_dir = os.path.join(persistent.projects_directory, project_name)
         
@@ -63,7 +67,7 @@ label new_project:
             interface.error(_("[project_name!q] already exists. Please choose a different project name."), project_name=project_name)
         
         if os.path.exists(project_dir):
-            interface.error(_("[project_name!q] already exists. Please choose a different project name."), project_name=project_dir)
+            interface.error(_("[project_dir!q] already exists. Please choose a different project name."), project_dir=project_dir)
 
         template = renpy.call_screen("select_template")
         template_path = template.path
@@ -94,6 +98,7 @@ label new_project:
             project.manager.scan()
             project.Select(project.manager.get(project_name))()
         
+    call choose_theme_callable
 
     jump front_page
     
