@@ -562,6 +562,8 @@ init -1180 python:
         ui.interact()
 
     def _enter_menu():
+        config.skipping = None
+        
         renpy.movie_stop(only_fullscreen=True)
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
