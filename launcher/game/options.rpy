@@ -222,8 +222,9 @@ init python:
     build.classify_renpy("**.bak", None)
     build.classify_renpy("**.pyc", None)
 
-    build.classify_renpy("**/saves", None)
-    build.classify_renpy("**/tmp", None)
+    build.classify_renpy("**/log.txt", None)
+    build.classify_renpy("**/saves/", None)
+    build.classify_renpy("**/tmp/", None)
     build.classify_renpy("**/.Editra", None)
 
     # main source.
@@ -240,6 +241,7 @@ init python:
     # docs.    
     build.classify_renpy("doc/", "source")
     build.classify_renpy("doc/.doctrees/", None)
+    build.classify_renpy("doc/_sources/", None)
     build.classify_renpy("doc/**", "source")
     build.classify_renpy("LICENSE.txt", "source")
     
