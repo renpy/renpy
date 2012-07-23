@@ -1238,7 +1238,7 @@ init -1000:
             elif u.state == u.FINISHING:
                 text _("Finishing up.")
             elif u.state == u.DONE:
-                text _("The updates have been installed. The program will now restart.")
+                text _("The updates have been installed. The program will restart.")
             elif u.state == u.DONE_NO_RESTART:
                 text _("The updates have been installed.")
             elif u.state == u.CANCELLED:

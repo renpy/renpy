@@ -133,7 +133,7 @@ screen updater:
             elif u.state == u.FINISHING:
                 text _("Finishing up.")
             elif u.state == u.DONE:
-                text _("The update has been installed. Ren'Py will now restart.")
+                text _("The update has been installed. Ren'Py will restart.")
             elif u.state == u.DONE_NO_RESTART:
                 text _("The update has been installed.")
             elif u.state == u.CANCELLED:
