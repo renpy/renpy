@@ -119,7 +119,7 @@ label end:
 
     e "Thank you for viewing this tutorial."
 
-    e "If you'd like to see a full Ren'Py game, go to the launcher and choose \"Select Project\", then \"the_question\"."
+    e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
     
     e "You can download new versions of Ren'Py from {a=http://www.renpy.org/}http://www.renpy.org/{/a}. For help and discussion, check out the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
 
@@ -129,7 +129,7 @@ label end:
     
     show eileen vhappy 
     
-    e "We look forward to seeing what you can make with Ren'Py. Good luck!"
+    e "We look forward to seeing what you can make with Ren'Py. Have fun!"
 
     window hide
 
