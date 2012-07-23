@@ -1040,12 +1040,12 @@ init -1110 python hide:
         style.bar.thumb = himg("bar_thumb", widget, 20, 25, None, None)
         
         style.vbar.xmaximum = 27
-        style.vbar.top_gutter = 14
-        style.vbar.bottom_gutter = 12
+        style.vbar.top_gutter = 11
+        style.vbar.bottom_gutter = 14
         style.vbar.thumb_offset = 10
 
-        style.vbar.left_bar = himg("v_bar_full", widget, 27, 42, 0, 13)
-        style.vbar.right_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
+        style.vbar.right_bar = himg("v_bar_full", widget, 27, 42, 0, 15)
+        style.vbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vbar.thumb = himg("v_bar_thumb", widget, 25, 20, None, None)
         
         
