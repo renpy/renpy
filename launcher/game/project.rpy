@@ -112,6 +112,8 @@ init python in project:
             
         def launch(self, args=[], wait=False):
 
+            self.make_tmp()
+
             if renpy.renpy.windows and sys.argv[0].endswith(".exe"):
                 if persistent.windows_console:
                     cmd = [ os.path.join(config.renpy_base, "console.exe") ]
