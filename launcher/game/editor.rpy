@@ -68,7 +68,6 @@ init python in editor:
             for filename in glob.glob(d + "/*/*.edit.py"):
                 scan_editor(filename)
 
-
     ########################################################################
 
     # A list of fancy_editor_info objects.
@@ -188,17 +187,21 @@ init python in editor:
             for i in fei:
                 i.installed = True
 
-    def fancy_activate_editor():
+    def fancy_activate_editor(default=False):
         """
         Activates the editor in persistent.editor, if it's installed.
+        
+        `default`
+            
         """
     
         global error_message
     
-        if not set_editor:
-            return
-        
         fancy_scan_editors()
+        
+        if default and not set_editor:
+            renpy.editor.init()
+            return
         
         for i in fancy_editors:
             
@@ -239,7 +242,7 @@ init python in editor:
         return persistent.editor is not None
 
     # Call fancy_activate_editor on startup.
-    fancy_activate_editor()
+    fancy_activate_editor(True)
     
     class SelectEditor(Action):
         def __init__(self, name):
@@ -386,7 +389,7 @@ screen editor:
                         
                         has vbox
                                             
-                        text _("A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will be used. If not already present, the editor will be automatically downloaded and installed.") style "l_small_text"
+                        text _("A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed.") style "l_small_text"
 
                         for fe in editor.fancy_editors:
                             

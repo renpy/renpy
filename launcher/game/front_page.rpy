@@ -34,7 +34,9 @@ init python:
             else:
                 subprocess.Popen([ "xdg-open", directory ])
             
-            
+    # Used for testing.
+    def Relaunch():
+        renpy.quit(relaunch=True)
     
 screen front_page:
     frame:
@@ -162,8 +164,9 @@ screen front_page_project:
                     textbutton _("Change Theme") action Jump("choose_theme")
                     textbutton _("Delete Persistent") action Jump("rmpersistent")
                     
+                    # textbutton "Relaunch" action Relaunch
+
                 vbox:
-                    
                     if ability.can_distribute:
                         textbutton _("Build Distributions") action Jump("build_distributions")
                     
