@@ -84,13 +84,13 @@ label new_project:
                 
             # Change the save directory in options.rpy
             fn = os.path.join(project_dir, "game/options.rpy")
-            with open(fn, "r") as f:
+            with open(fn, "rb") as f:
                 options = f.read().decode("utf-8")
 
             save_dir = project_name + "-" + str(int(time.time()))
             options = re.sub(r'template-\d+', save_dir, options)
             
-            with open(fn, "w") as f:
+            with open(fn, "wb") as f:
                 f.write(options.encode("utf-8"))
 
         # Activate the project.
