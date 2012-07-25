@@ -7,7 +7,8 @@
 init 1 python in ability:
     
     from store import config
-    import renpy.store as store
+    import store
+    import store.updater as updater
     
     import os
     
@@ -22,5 +23,5 @@ init 1 python in ability:
         
         
     # can_update - True if we can update.
-    can_update = os.path.exists(os.path.join(config.renpy_base, "update/current.json")) or (store.UPDATE_SIMULATE is not None)
+    can_update = updater.can_update() or (store.UPDATE_SIMULATE is not None)
     

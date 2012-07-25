@@ -77,20 +77,22 @@ screen preferences:
                         
                     add SPACER
 
-                    # Update URL selection.
-                    add SEPARATOR2
+                    if ability.can_update:
 
-                    frame:
-                        style "l_indent"
-                        yminimum 75
-                        has vbox
-                        
-                        text _("Update Channel:")
-            
-                        add HALF_SPACER
-                        
-                        frame style "l_indent": 
-                            textbutton persistent.update_channel action Jump("update_preference")
+                        # Update URL selection.
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            yminimum 75
+                            has vbox
+                            
+                            text _("Update Channel:")
+                
+                            add HALF_SPACER
+                            
+                            frame style "l_indent": 
+                                textbutton persistent.update_channel action Jump("update_preference")
                     
                 frame:
                     style "l_indent"

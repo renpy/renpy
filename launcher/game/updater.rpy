@@ -68,7 +68,7 @@ screen update_channel:
                     # Release
                     add SPACER
                     
-                    textbutton _("Release") action SetField(persistent, "update_channel", "Release")
+                    textbutton _("Release") action [ SetField(persistent, "update_channel", "Release"), Jump("preferences") ]
 
                     add HALF_SPACER
                     
@@ -79,7 +79,7 @@ screen update_channel:
                     # Prerelease
                     add SPACER
                     
-                    textbutton _("Prerelease") action SetField(persistent, "update_channel", "Prerelease")
+                    textbutton _("Prerelease") action [ SetField(persistent, "update_channel", "Prerelease"), Jump("preferences") ]
                     
                     add HALF_SPACER
 
@@ -91,7 +91,7 @@ screen update_channel:
                     # Experimental
                     add SPACER
 
-                    textbutton _("Experimental") action SetField(persistent, "update_channel", "Experimental")
+                    textbutton _("Experimental") action [ SetField(persistent, "update_channel", "Experimental"), Jump("preferences") ]
                     
                     add HALF_SPACER
 
