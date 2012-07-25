@@ -206,7 +206,7 @@ init python in editor:
         for i in fancy_editors:
             
             if i.name == persistent.editor:
-                if i.installed:
+                if i.installed and i.name in editors:
                     ei = editors[i.name]
                     os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
                     error_message = i.error_message
