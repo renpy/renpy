@@ -834,6 +834,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 self.update_text(content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
 
         elif map_event(ev, "input_enter"):
             if not self.changed:
@@ -845,6 +846,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 self.update_text(self.content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
 
         elif map_event(ev, "input_right"):
             if self.caret_pos < l:
@@ -852,6 +854,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 self.update_text(self.content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
 
         elif map_event(ev, "input_delete"):
             if self.caret_pos < l:
@@ -859,6 +862,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 self.update_text(content, self.editable)
                                             
             renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
 
         elif ev.type == pygame.KEYDOWN and ev.unicode:
             if ord(ev.unicode[0]) < 32:
