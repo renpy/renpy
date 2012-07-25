@@ -1153,7 +1153,7 @@ init -1000 python in updater:
             self.kwargs = kwargs
             
         def __call__(self):
-            renpy.invoke_in_new_context(update, *args, **kwargs)
+            renpy.invoke_in_new_context(update, *self.args, **self.kwargs)
             
     def update_command():
         import time
