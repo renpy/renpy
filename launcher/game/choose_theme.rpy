@@ -272,6 +272,43 @@ init python:
         else:
             os.unlink(filename + ".new")
             interface.error(_("Could not change the theme. Perhaps options.rpy was changed too much."))
+            
+
+        # Now give the theme's screen-ops function a chance to make any
+        # necessary changes to the screens.rpy file
+        filename = os.path.join(project.current.path, "game/screens.rpy")
+        changed = False
+
+        try:
+            with codecs.open(filename + ".new", "wb", "utf-8") as out:
+                lines = list_logical_lines(filename)
+
+                lines = theme_data.THEME_SCREEN_OPERATIONS[current_theme](lines)
+
+                print str(len(lines)) + " lines"
+
+                if lines != None:
+                    for l in lines:
+                        out.write(l + "\n")
+                    changed = True
+            
+            if changed:
+                try:
+                    os.unlink(filename + ".bak")
+                except:
+                    pass
+                    
+                os.rename(filename, filename + ".bak")
+                os.rename(filename + ".new", filename)
+
+        except Exception as inst:
+            try:
+                # just in case
+                os.unlink(filename + ".new")
+            except:
+                pass
+            pass
+
 
 init 100 python:
     style_backup = renpy.style.backup()
