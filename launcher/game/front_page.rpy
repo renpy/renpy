@@ -127,23 +127,33 @@ screen front_page_project:
             text "[p.name!q]" style "l_label_text"
             label "Active Project" style "l_alternate"
 
-        frame style "l_indent":
-
-            has grid 2 1 xfill True
+        grid 2 1:
+            xfill True
+            spacing HALF_INDENT
             
             vbox:
-                text _("Open Directory:")
-                textbutton _("game") action OpenDirectory("game") style "l_list" 
-                textbutton _("base") action OpenDirectory(".") style "l_list"
-                # textbutton _("images") action OpenDirectory("game/images") style "l_list"
-                # textbutton _("save") action None style "l_list"
+            
+                label _("Open Directory") style "l_label_small" 
+
+                frame style "l_indent":
+                    has vbox
+
+                    textbutton _("game") action OpenDirectory("game")
+                    textbutton _("base") action OpenDirectory(".")
+                    # textbutton _("images") action OpenDirectory("game/images") style "l_list"
+                    # textbutton _("save") action None style "l_list"
                 
             vbox:
-                text _("Edit File:")
-                textbutton _("script.rpy") action editor.Edit("game/script.rpy", check=True) style "l_list"
-                textbutton _("options.rpy") action editor.Edit("game/options.rpy", check=True) style "l_list"
-                textbutton _("screens.rpy") action editor.Edit("game/screens.rpy", check=True)  style "l_list"
-                textbutton _("All script files") action editor.EditAll() style "l_list"
+            
+                label _("Edit File") style "l_label_small"
+
+                frame style "l_indent":
+                    has vbox
+                
+                    textbutton _("script.rpy") action editor.Edit("game/script.rpy", check=True)
+                    textbutton _("options.rpy") action editor.Edit("game/options.rpy", check=True)
+                    textbutton _("screens.rpy") action editor.Edit("game/screens.rpy", check=True)
+                    textbutton _("All script files") action editor.EditAll()
                 
         add SPACER
         add SEPARATOR
@@ -152,23 +162,28 @@ screen front_page_project:
         frame style "l_indent":
             has vbox
             
-            textbutton _("Script Navigation") text_size 30 action Jump("navigation")
+            textbutton _("Navigate Script") text_size 30 action Jump("navigation")
         
-            add SPACER
+        add SPACER
         
-            grid 2 1:
-                xfill True
-                
-                vbox:
-                    textbutton _("Check Script (Lint)") action Jump("lint")
-                    textbutton _("Change Theme") action Jump("choose_theme")
-                    textbutton _("Delete Persistent") action Jump("rmpersistent")
-                    
-                    # textbutton "Relaunch" action Relaunch
+        grid 2 1:
+            xfill True
+            spacing HALF_INDENT
 
-                vbox:
-                    if ability.can_distribute:
-                        textbutton _("Build Distributions") action Jump("build_distributions")
+            frame style "l_indent":
+                has vbox
+
+                textbutton _("Check Script (Lint)") action Jump("lint")
+                textbutton _("Change Theme") action Jump("choose_theme")
+                textbutton _("Delete Persistent") action Jump("rmpersistent")
+                
+                # textbutton "Relaunch" action Relaunch
+
+            frame style "l_indent":
+                has vbox
+
+                if ability.can_distribute:
+                    textbutton _("Build Distributions") action Jump("build_distributions")
                     
         
 label main_menu:
