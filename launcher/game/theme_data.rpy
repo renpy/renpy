@@ -3,11 +3,56 @@
 
 init python in theme_data:
 
+    def __PerformScreenOperations(lines, file_picker_rows=5, file_picker_cols=2):
+
+        import re
+
+        x = 0
+        correct_section = False
+        
+        while x < len(lines):
+            l = lines[x]
+
+            m = re.match(r'^screen\s+\w+\s*:\s*$', l)
+            if m:
+                correct_section = False
+            
+            m = re.match(r'^screen\s+file_picker\s*:\s*$', l)
+            if m:
+                correct_section = True
+                    
+            if correct_section:
+                m = re.match(r'^\s+\$\s*columns\s*=\s*(\d+)\s*$', l)
+                if m:
+                    l = l.replace(str(m.group(1)), str(file_picker_cols))
+                m = re.match(r'^\s+\$\s*rows\s*=\s*(\d+)\s*$', l)
+                if m:
+                    l = l.replace(str(m.group(1)), str(file_picker_rows))
+                
+            lines[x] = l
+
+            x = x + 1
+
+        return lines
+
+    def roundrect_screen_ops(lines):
+        return __PerformScreenOperations(lines)
+                       
+    def awt_screen_ops(lines):
+        return __PerformScreenOperations(lines, file_picker_rows=3)
+
+
+
+
     # theme name -> (color scheme name -> code that implements it)
     THEME = { }
 
     # The set of theme functions.
     THEME_FUNCTIONS = set()
+    
+    # theme name -> function name to call to munge screens.rpy as appropriate
+    # for that theme.
+    THEME_SCREEN_OPERATIONS = { }
     
     # Color schemes that work (technically - some are eye-melting) with the 
     # roundrect-style themes.
@@ -469,6 +514,7 @@ init python in theme_data:
     for theme, function in ROUNDRECT_VARIANTS:
         THEME[theme] = { }
         THEME_FUNCTIONS.add(function)
+        THEME_SCREEN_OPERATIONS[theme] = roundrect_screen_ops
 
         for scheme, colors in ROUNDRECT_SCHEMES.iteritems():
             subs = dict(colors)
@@ -515,6 +561,8 @@ init python in theme_data:
     
     THEME["A White Tulip"] = { }
     THEME_FUNCTIONS.add("a_white_tulip")
+    THEME_SCREEN_OPERATIONS["A White Tulip"] = awt_screen_ops
+
 
     for scheme, colors in ROUNDRECT_SCHEMES.iteritems():
         subs = dict(colors)
@@ -535,3 +583,4 @@ init python in theme_data:
             mm_root = "#ffffff",
             gm_root = "#ffffff",
     )
+
