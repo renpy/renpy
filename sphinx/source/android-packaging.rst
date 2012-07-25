@@ -11,7 +11,7 @@ stores.
 Building your first package takes four steps:
 
 1. Download and install |PGS4A|, Python 2.7, the Java Development Kit,
-   and Android USB Drivers.
+   and Android USB Drivers (scroll down for links).
 
 2. Use the ``android.py installsdk`` command to install the Android SDK and
    set up your development environment.
