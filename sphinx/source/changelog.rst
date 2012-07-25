@@ -230,6 +230,8 @@ Other Changes
 
 * Documentation fixes (by SleepKirby and others).
 
+* Ren'Py now defaults to reporting errors with sound and music files when
+  config.developer is True.
 
 Ren'Py 6.13.9
 =============
