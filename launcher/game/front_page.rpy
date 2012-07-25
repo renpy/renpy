@@ -60,7 +60,7 @@ screen front_page:
                 window style "l_label":
                     text "PROJECTS:" style "l_label_text" size 36 yoffset 10 
             
-                side "c l":
+                side "c r":
                     
                     viewport:
                         yadjustment PROJECT_ADJUSTMENT
@@ -77,7 +77,7 @@ screen front_page:
                     add HALF_SPACER
                     
                     textbutton _("+ Create New Project"):
-                        left_margin (SCROLLBAR_SIZE + HALF_INDENT)
+                        left_margin (HALF_INDENT)
                         action Jump("new_project")
                     
                 
