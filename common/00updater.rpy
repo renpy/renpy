@@ -759,10 +759,18 @@ init -1000 python in updater:
 
             # Figure out the zsync command.
 
+            zsync_fn = os.path.join(self.updatedir, module + ".zsync")
+
+            # May not exist, but if it does, we want to delete it.
+            try:
+                os.unlink(zsync_fn + ".part")
+            except:
+                pass
+
             cmd = [ 
                 zsync_path("zsync"),
                 "-o", new_fn, 
-                "-k", os.path.join(self.updatedir, module + ".zsync")
+                "-k", zsync_fn,
                 ]
             
             if os.path.exists(new_fn + ".part") and not os.path.exists(new_fn + ".part.old"):
