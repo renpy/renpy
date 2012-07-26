@@ -26,7 +26,7 @@ init python in navigation:
         persistent.navigate_library = False
     
     # A list of kinds of navigation we support.
-    KINDS = [ "file", "label", "define", "transform", "screen", "callable" ]
+    KINDS = [ "file", "label", "define", "transform", "screen", "callable", "todo" ]
 
     # A map from kind name to adjustment.
     adjustments = { }
@@ -178,6 +178,7 @@ screen navigation:
                     textbutton _("transforms") action navigation.ChangeKind("transform")
                     textbutton _("screens") action navigation.ChangeKind("screen")
                     textbutton _("callables") action navigation.ChangeKind("callable")
+                    textbutton _("todos") action navigation.ChangeKind("todo")
                     
 
             add SPACER
@@ -199,12 +200,18 @@ screen navigation:
                             
                                 if group_name is not None:
                                     text group_name
-                                    
-                                hbox:
-                                    box_wrap True
-                                    
-                                    for name, filename, line in group:
-                                        textbutton name action editor.Edit(filename, line)
+                                 
+                                if persistent.navigation == "todo":    
+                                    vbox:
+                                        for name, filename, line in group:
+                                            textbutton name action editor.Edit(filename, line)
+                                        
+                                else:
+                                    hbox:
+                                        box_wrap True
+                                        
+                                        for name, filename, line in group:
+                                            textbutton name action editor.Edit(filename, line)
 
                                 if group_name is not None:
                                     add SPACER
