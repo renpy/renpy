@@ -23,6 +23,7 @@ init python in project:
     import os.path
     import json
     import subprocess
+    import re
     
     class Project(object):
     
@@ -170,8 +171,33 @@ init python in project:
             try:
                 with open(self.dump_filename, "r") as f:
                     self.dump = json.load(f)
+                # add todo list to dump data
+                self.update_todos()
+                
             except:
                 self.dump["error"] = True
+
+        def update_todos(self):
+            """
+            Scans the scriptfiles for lines # TODO comments and add them to
+            the dump data.
+            """
+
+            todos = self.dump.get("location", {})["todo"] = {}
+            
+            files = self.script_files()
+            for f in files:
+                data = file(self.unelide_filename(f))
+                l = 0
+                for line in data:
+                    l += 1
+                    m = re.match(".*#\s*[Tt][Oo][Dd][Oo](\s*:\s*|\s+)(.*)", line)
+                    if m is not None:
+                        todotext = m.group(2)
+                        while todotext in todos:
+                            todotext += " "
+                            
+                        todos[todotext] = [f, l]
 
         def unelide_filename(self, fn):
             """
