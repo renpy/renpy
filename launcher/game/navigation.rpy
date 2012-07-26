@@ -178,8 +178,7 @@ screen navigation:
                     textbutton _("transforms") action navigation.ChangeKind("transform")
                     textbutton _("screens") action navigation.ChangeKind("screen")
                     textbutton _("callables") action navigation.ChangeKind("callable")
-                    textbutton _("todos") action navigation.ChangeKind("todo")
-                    
+                    textbutton _("TODOs") action navigation.ChangeKind("todo")
 
             add SPACER
             add SEPARATOR
@@ -219,10 +218,19 @@ screen navigation:
                 else:
                     
                     fixed:
-                        text _("The list of names is empty."):
-                            xalign 0.5
-                            yalign 0.5
+                        
+                        if persistent.navigation == "todo":
+                            
+                            text _("No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."):
+                                text_align 0.5
+                                xalign 0.5
+                                yalign 0.5
 
+                        else:
+
+                            text _("The list of names is empty."):
+                                xalign 0.5
+                                yalign 0.5
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
     textbutton _("Launch Project") action project.Launch() style "l_right_button"

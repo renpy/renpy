@@ -672,7 +672,6 @@ init python in distribute:
 
             if format == "update":
                 # Build the zsync file.
-                # TODO: This should use an included copy of zsyncmake.
                 
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
                 

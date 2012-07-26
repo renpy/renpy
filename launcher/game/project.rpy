@@ -179,25 +179,37 @@ init python in project:
 
         def update_todos(self):
             """
-            Scans the scriptfiles for lines # TODO comments and add them to
+            Scans the scriptfiles for lines TODO comments and add them to
             the dump data.
             """
 
-            todos = self.dump.get("location", {})["todo"] = {}
+            todos = self.dump.setdefault("location", {})["todo"] = {}
             
             files = self.script_files()
+
             for f in files:
+
                 data = file(self.unelide_filename(f))
-                l = 0
-                for line in data:
+
+                for l, line in enumerate(data):
                     l += 1
-                    m = re.match(".*#\s*[Tt][Oo][Dd][Oo](\s*:\s*|\s+)(.*)", line)
-                    if m is not None:
-                        todotext = m.group(2)
-                        while todotext in todos:
-                            todotext += " "
-                            
-                        todos[todotext] = [f, l]
+    
+                    m = re.search(r".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
+    
+                    if m is None:
+                        continue
+                        
+                    raw_todo_text = m.group(2).strip()
+                    todo_text = raw_todo_text
+
+                    index = 0
+
+                    while not todo_text or todo_text in todos:
+                        index += 1
+                        todo_text = "{0} ({1})".format(raw_todo_text, index)
+                        
+                    todos[todo_text] = [f, l]
+
 
         def unelide_filename(self, fn):
             """
