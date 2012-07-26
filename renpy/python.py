@@ -859,7 +859,29 @@ class RollbackLog(renpy.object.Object):
         occurs.
         """
 
-        # This is now done by StoreDict.
+        # Update the list of mutated objects and what we need to do to 
+        # restore them.
+    
+        for _i in xrange(4):
+
+            self.current.objects = [ ]
+
+            try:
+                for _k, (ref, roll) in self.mutated.iteritems():
+
+                    obj = ref()
+                    if obj is None:
+                        continue
+
+                    self.current.objects.append((obj, roll))
+
+                break
+
+            except RuntimeError:
+                # This can occur when self.mutated is changed as we're
+                # iterating over it.
+                pass
+
         
                   
     def get_roots(self):
