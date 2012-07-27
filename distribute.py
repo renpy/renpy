@@ -126,8 +126,11 @@ def main():
 
     # Determine the version. We grab the current revision, and if any
     # file has changed, bump it by 1.
+    import renpy
 
-    s = subprocess.check_output([ "git", "describe", "--dirty" ])
+    match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) #@UndefinedVariable
+
+    s = subprocess.check_output([ "git", "describe", "--dirty", "--match", match_version ])
     parts = s.strip().split("-")
     vc_version = int(parts[1])
     
@@ -138,7 +141,6 @@ def main():
         f.write("vc_version = {}".format(vc_version))
 
     # Check that the versions match.
-    import renpy
     full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
     if not full_version.startswith(args.version): 
         raise Exception("The command-line and Ren'Py versions do not match.") 
