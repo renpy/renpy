@@ -326,6 +326,9 @@ class Grid(Container):
         
         super(Grid, self).__init__(style=style, **properties)
 
+        cols = int(cols)
+        rows = int(rows)
+        
         self.cols = cols
         self.rows = rows
 
