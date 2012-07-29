@@ -285,8 +285,6 @@ init python:
 
                 lines = theme_data.THEME_SCREEN_OPERATIONS[current_theme](lines)
 
-                print str(len(lines)) + " lines"
-
                 if lines != None:
                     for l in lines:
                         out.write(l + "\n")
