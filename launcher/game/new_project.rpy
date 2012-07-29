@@ -69,7 +69,11 @@ label new_project:
         if os.path.exists(project_dir):
             interface.error(_("[project_dir!q] already exists. Please choose a different project name."), project_dir=project_dir)
 
-        template = renpy.call_screen("select_template")
+        if len(project.manager.templates) == 1:
+            template = project.manager.templates[0]
+        else:
+            template = renpy.call_screen("select_template")
+
         template_path = template.path
         
         with interface.error_handling("creating a new project"):
