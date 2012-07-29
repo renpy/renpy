@@ -542,6 +542,25 @@ init -1000 python in updater:
                 except:
                     pass
             
+        def rename(self, old, new):
+            """
+            Renames the old name to the new name. Tries to enforce the unix semantics, even 
+            on windows.
+            """
+            
+            try:
+                os.rename(old, new)
+                return
+            except:
+                pass
+            
+            try:
+                os.unlink(new)
+            except:
+                pass
+                
+            os.rename(old, new)
+            
             
         def path(self, name):
             """
@@ -773,8 +792,8 @@ init -1000 python in updater:
                 "-k", zsync_fn,
                 ]
             
-            if os.path.exists(new_fn + ".part") and not os.path.exists(new_fn + ".part.old"):
-                os.rename(new_fn + ".part", new_fn + ".part.old")
+            if os.path.exists(new_fn + ".part"):
+                self.rename(new_fn + ".part", new_fn + ".part.old")
                 cmd.append("-i")
                 cmd.append(new_fn + ".part.old")
 
