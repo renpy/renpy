@@ -6,6 +6,10 @@
     `label` to occur. When the jump returns, control will be passed
     to the statement following the current statement.
 
+.. function:: renpy.clear_game_runtime()
+    
+    Resets the game runtime counter.
+
 .. function:: renpy.focus_coordinates()
     
     This attempts to find the coordinates of the currently-focused
@@ -19,6 +23,14 @@
 .. function:: renpy.fsencode(s)
     
     Converts s from unicode to the filesystem encoding.
+
+.. function:: renpy.get_game_runtime()
+    
+    Returns the game runtime counter.
+    
+    The game runtime counter counts the number of seconds that have 
+    elapsed while waiting for user input in the top-level context. 
+    (It does not count time spent in the main or game menus.)
 
 .. function:: renpy.get_image_load_log(age=None)
     

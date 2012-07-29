@@ -1,4 +1,3 @@
-
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -1113,26 +1112,25 @@ def get_transition(layer=None):
         
 def clear_game_runtime():
     """
-    Resets the game runtime timer down to 0.
+    :doc: other
 
-    The game runtime counter counts the number of seconds that have
-    elapsed while waiting for user input in the current context. (So
-    it doesn't count time spent in the game menu.)
+    Resets the game runtime counter.
     """
     
-    renpy.game.context().runtime = 0
+    renpy.game.contexts[0].runtime = 0
 
 def get_game_runtime():
     """
-    Returns the number of seconds that have elapsed in gameplay since
-    the last call to clear_game_timer, as a float.
+    :doc: other
 
-    The game runtime counter counts the number of seconds that have
-    elapsed while waiting for user input in the current context. (So
-    it doesn't count time spent in the game menu.)
+    Returns the game runtime counter.
+    
+    The game runtime counter counts the number of seconds that have 
+    elapsed while waiting for user input in the top-level context. 
+    (It does not count time spent in the main or game menus.)
     """
 
-    return renpy.game.context().runtime
+    return renpy.game.contexts[0].runtime
 
 def loadable(filename):
     """
