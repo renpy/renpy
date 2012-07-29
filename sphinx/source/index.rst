@@ -57,6 +57,7 @@ Customizing Ren'Py
    side_image
    config
    rooms
+   nvl_mode
 
 Advanced Displayables
 ---------------------
