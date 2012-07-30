@@ -1,10 +1,10 @@
 .. Automatically generated file - do not modify.
 
-.. function:: renpy.can_load(filename)
+.. function:: renpy.can_load(filename, test=False)
     
-    Returns true if `filename` can be loaded, false otherwise.
+    Returns true if `filename` exists as a save file, and False otherwise.
 
-.. function:: renpy.list_saved_games(regexp='.')
+.. function:: renpy.list_saved_games(regexp='.', fast=False)
     
     Lists the save games. For each save game, returns a tuple containing:
     
@@ -17,6 +17,10 @@
     `regexp`
         A regular expression that is matched against the start of the
         filename to filter the list.
+        
+    `fast`
+        If fast is true, the filename is returned instead of the 
+        tuple. 
 
 .. function:: renpy.load(filename)
     

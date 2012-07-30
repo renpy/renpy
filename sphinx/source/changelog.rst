@@ -135,7 +135,27 @@ screen displays the name of an image file for a few seconds after that
 image has been loaded. The name is in white if the image was loaded by
 the image predictor, and pink if Ren'Py was unable to predict the image.
 
+
+File Actions and Functions
+--------------------------
+
+Two screen functions have been added, and two screen actions have been
+changed:
+
+* The new :func:`FileUsedSlots` function returns a list of used file
+  slots on the current page.
+
+* The new :func:`FileCurrentPage` function returns the name of the
+  current page.
+
+* The :func:`FileSave` and :func:`FileAction` actions have been
+  modified so that if the slot name is None, an unused slot based
+  on the current time is used.
+
+Taken together, these changes make it possible to create a list of
+save slots where the user is able to add new slots to the list.
   
+
 Multiple Store Support
 ----------------------
 

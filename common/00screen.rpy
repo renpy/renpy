@@ -1038,8 +1038,62 @@ init -1140 python:
                 return str((page - 1) * config.linear_saves_page_size + name)
             except ValueError:
                 pass
-            
+
         return str(page) + "-" + str(name)
+
+    def __unused_slot_name(page):
+        """
+        Returns an unused slot name. 
+        """
+        
+        import time
+        
+        rv = int(time.time())
+        
+        while True:
+            if not renpy.can_load(__filename(str(rv), page)):
+                return str(rv)
+                
+            rv += 1
+
+    def FileCurrentPage():
+        """
+        :doc: file_action_function
+        
+        Returns the current file page as a string.
+        """
+        
+        return str(persistent._file_page)
+
+    def FileUsedSlots(page=None, highest_first=True):
+        """
+        :doc: file_action_function
+        
+        Returns a list of used numeric file slots on the page.
+        
+        `page`
+            The name of the page that will be scanned. If None, the current page 
+            is used.
+        
+        `highest_first`
+            If true, the highest-numbered file slot is listed first.
+            Otherwise, the lowest-numbered slot is listed first.
+        """
+        
+        regexp = __filename(r'\d+', page)
+        
+        rv = [ ]
+        
+        for fn in renpy.list_saved_games(regexp=regexp, fast=True):
+            _page, _, slot = fn.partition('-')
+            
+            rv.append(int(slot))
+            
+        rv.sort()
+        if highest_first:
+            rv.reverse()
+
+        return rv
 
     def FileLoadable(name, page=None):
         """
@@ -1049,10 +1103,7 @@ init -1140 python:
          if the file is loadable, and false otherwise.
          """
 
-        if renpy.scan_saved_game(__filename(name, page)):
-            return True
-        else:
-            return False
+        return renpy.can_load(__filename(name, page))
     
     def FileScreenshot(name, empty=None, page=None):
         """
@@ -1127,6 +1178,11 @@ init -1140 python:
          The button with this slot is selected if it's marked as the
          newest save file.
          
+         `name`
+             The name of the slot to save to. If None, an unused slot
+             (a large number based on the current time) will be 
+             will be used.
+        
          `confirm`
              If true, then we will prompt before overwriting a file.
 
@@ -1135,7 +1191,8 @@ init -1140 python:
              file when it's saved.
 
          `page`
-             The name of the page that it will be saved to.
+             The name of the page that the slot is on. If None, the current
+             page is used.
 
          `cycle`
              If true, then saves on the supplied page will be cycled before
@@ -1143,6 +1200,9 @@ init -1140 python:
          """
 
         def __init__(self, name, confirm=True, newest=True, page=None, cycle=False):
+            if name is None:
+                name = __unused_slot_name(page)
+
             self.name = name
             self.confirm = confirm
             self.page = page
@@ -1195,14 +1255,26 @@ init -1140 python:
 
          Loads the file.
 
+         `name`
+             The name of the slot to load from. If None, an unused slot
+             the file will not be loadable.
+        
          `confirm`
              If true, prompt if loading the file will end the game.
 
+         `page`
+             The page that the file will be loaded from. If None, the
+             current page is used.
+        
          `newest`
              If true, the button is selected if this is the newest file.
          """
         
         def __init__(self, name, confirm=True, page=None, newest=True):
+
+            if name is None:
+                name = __unused_slot_name(page)
+                
             self.name = name
             self.confirm = confirm
             self.page = page
@@ -1223,7 +1295,7 @@ init -1140 python:
             renpy.load(fn)
 
         def get_sensitive(self):
-            return renpy.scan_saved_game(__filename(self.name, self.page))
+            return renpy.can_load(__filename(self.name, self.page))
 
         def get_selected(self):
             if not self.confirm or not self.newest:
@@ -1260,7 +1332,7 @@ init -1140 python:
             renpy.unlink_save(fn)
 
         def get_sensitive(self):
-            return renpy.scan_saved_game(__filename(self.name, self.page))
+            return renpy.can_load(__filename(self.name, self.page))
 
         def get_selected(self):
             return persistent._file_newest == __filename(self.name, self.page)
@@ -1272,6 +1344,15 @@ init -1140 python:
 
          "Does the right thing" with the file. This means loading it if the
          load screen is showing, and saving to it otherwise.
+
+         `name`
+             The name of the slot to save to or load from. If None, an unused slot
+             (a large number based on the current time) will be 
+             will be used.
+         
+         `page`
+             The page that the file will be saved to or loaded from. If None, the
+             current page is used.
          """
         
         if renpy.current_screen().screen_name[0] == "load":

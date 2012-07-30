@@ -1,5 +1,9 @@
 .. Automatically generated file - do not modify.
 
+.. function:: FileCurrentPage()
+    
+    Returns the current file page as a string.
+
 .. function:: FileLoadable(name, page=None)
     
     This is a function that returns true
@@ -59,4 +63,16 @@
     returned.
     
     The return value is a string.
+
+.. function:: FileUsedSlots(page=None, highest_first=True)
+    
+    Returns a list of used numeric file slots on the page.
+    
+    `page`
+        The name of the page that will be scanned. If None, the current page 
+        is used.
+    
+    `highest_first`
+        If true, the highest-numbered file slot is listed first.
+        Otherwise, the lowest-numbered slot is listed first.
 

@@ -290,7 +290,7 @@ def scan_saved_game(name):
     
     
 
-def list_saved_games(regexp=r'.'):
+def list_saved_games(regexp=r'.', fast=False):
     """
     :doc: loadsave
     
@@ -305,6 +305,10 @@ def list_saved_games(regexp=r'.'):
     `regexp`
         A regular expression that is matched against the start of the
         filename to filter the list.
+        
+    `fast`
+        If fast is true, the filename is returned instead of the 
+        tuple. 
     """
 
     try:
@@ -316,6 +320,9 @@ def list_saved_games(regexp=r'.'):
     files = [ i[:-len(savegame_suffix)]
               for i in files
               if i.endswith(savegame_suffix) and re.match(regexp, i) ]
+
+    if fast:
+        return files
 
     rv = [ ]
 
@@ -329,19 +336,15 @@ def list_saved_games(regexp=r'.'):
 
     return rv
 
-def can_load(filename):
+def can_load(filename, test=False):
     """
     :doc: loadsave
-    
-    Returns true if `filename` can be loaded, false otherwise.
+
+    Returns true if `filename` exists as a save file, and False otherwise.
     """
 
-    try:
-        zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
-        zf.close()
-        return True
-    except:
-        return False
+    fn = renpy.config.savedir + "/" + filename + savegame_suffix
+    return os.path.exists(fn)
     
 
 def load(filename):
