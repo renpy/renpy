@@ -140,6 +140,9 @@ def main():
     with open("renpy/vc_version.py", "w") as f:
         f.write("vc_version = {}".format(vc_version))
 
+    reload(sys.modules['renpy.vc_version']) #@UndefinedVariable
+    reload(sys.modules['renpy'])
+
     # Check that the versions match.
     full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
     if not full_version.startswith(args.version): 
