@@ -7,6 +7,11 @@ try () {
     "$@" || exit -1
 }
 
-try python module/setup.py --quiet build $RENPY_BUILD_ARGS install 
+if [ -z "$PYTHONPATH" ] ; then
+    echo PYTHONPATH not set
+    exit 1
+fi
+
+try python module/setup.py --quiet build $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
 
 exec ./renpy.py "$@"
