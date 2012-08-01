@@ -24,6 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "pss.h"
 #include <Python.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 #include <stdio.h>
 
 /* Declarations of ffdecode functions. */
@@ -61,14 +62,20 @@ static void decref(PyObject *ref) {
     PyEval_ReleaseLock();
 }
 
+/* A mutex that protects the shared data structures. */
+SDL_mutex *mutex;
+
 /* Locking on entry from python... */
 // #define BEGIN() PyThreadState *_save;
 // #define ENTER() { printf("Locking by %s.\n", __FUNCTION__); _save = PyEval_SaveThread(); SDL_LockAudio(); printf("Lock by %s\n", __FUNCTION__);  }
 // #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); printf("Release by %s\n", __FUNCTION__); }
 
+#define LOCK() { SDL_LockMutex(mutex); }
+#define UNLOCK() { SDL_UnlockMutex(mutex); }
+
 #define BEGIN() PyThreadState *_save;
-#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
-#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
+#define ENTER() { _save = PyEval_SaveThread(); LOCK(); }
+#define EXIT() { UNLOCK(); PyEval_RestoreThread(_save); }
 
 /* Min and Max */
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -399,6 +406,8 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
 
+    LOCK();
+
     for (channel = 0; channel < num_channels; channel++) {
 
         
@@ -416,10 +425,13 @@ static void callback(void *userdata, Uint8 *stream, int length) {
         while (mixed < length && c->playing) {
             int mixleft = length - mixed;
             Uint8 buffer[mixleft];
+            int bytes;
 
             // Decode some amount of data.
 
-            int bytes = ffpy_audio_decode(c->playing, buffer, mixleft);
+            UNLOCK();
+            bytes = ffpy_audio_decode(c->playing, buffer, mixleft);
+            LOCK();
             
             // We have some data in the buffer.
             if (c->stop_bytes && bytes) {
@@ -475,6 +487,8 @@ static void callback(void *userdata, Uint8 *stream, int length) {
         }
 
     }
+
+    UNLOCK();
 }
 
 /*
@@ -1026,6 +1040,8 @@ void PSS_init(int freq, int stereo, int samples, int status) {
     if (initialized) {
         return;
     }
+
+    mutex = SDL_CreateMutex();
 
     PyEval_InitThreads();
 
