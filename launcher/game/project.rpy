@@ -445,10 +445,16 @@ label choose_projects_directory:
             
         path = persistent.projects_directory
 
-        try:
-            default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-        except:
-            default_path = os.path.abspath(config.renpy_base)
+        if path:
+            
+            default_path = path
+            
+        else:
+
+            try:
+                default_path = os.path.dirname(os.path.abspath(config.renpy_base))
+            except:
+                default_path = os.path.abspath(config.renpy_base)
         
 
         if EasyDialogs:
