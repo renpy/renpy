@@ -41,8 +41,6 @@
 
 #undef exit
 
-// #define DEBUG_SYNC
-
 #define MAX_VIDEOQ_SIZE (5 * 256 * 1024)
 #define MAX_AUDIOQ_SIZE (5 * 16 * 1024)
 
@@ -50,20 +48,8 @@
    A/V sync as SDL does not have hardware buffer fullness info. */
 #define SDL_AUDIO_BUFFER_SIZE 2048
 
-/* no AV sync correction is done if below the AV sync threshold */
-#define AV_SYNC_THRESHOLD 0.01
-/* no AV correction is done if too big error */
-#define AV_NOSYNC_THRESHOLD 0.0
-
-/* maximum audio speed change to get correct sync */
-#define SAMPLE_CORRECTION_PERCENT_MAX 10
-
-/* we use about AUDIO_DIFF_AVG_NB A-V differences to make the average */
-#define AUDIO_DIFF_AVG_NB   20
-
 /* NOTE: the size must be big enough to compensate the hardware audio buffersize size */
 #define SAMPLE_ARRAY_SIZE (2*65536)
-
 
 #if LIBAVCODEC_VERSION_MAJOR >= 53
 #define CODEC_TYPE_UNKNOWN    AVMEDIA_TYPE_UNKNOWN
@@ -101,12 +87,6 @@ typedef struct VideoPicture {
     int allocated;
 } VideoPicture;
 
-enum {
-    AV_SYNC_AUDIO_MASTER, /* default choice */
-    AV_SYNC_VIDEO_MASTER,
-    AV_SYNC_EXTERNAL_CLOCK, /* synchronize to an external clock */
-};
-
 typedef struct VideoState {
     SDL_Thread *parse_tid;
     SDL_Thread *video_tid;
@@ -123,15 +103,7 @@ typedef struct VideoState {
 
     int audio_stream;
 
-    int av_sync_type;
-    double external_clock; /* external clock base */
-    int64_t external_clock_time;
-
     double audio_clock;
-    double audio_diff_cum; /* used for AV difference average computation */
-    double audio_diff_avg_coef;
-    double audio_diff_threshold;
-    int audio_diff_avg_count;
     AVStream *audio_st;
     PacketQueue audioq;
     int audio_hw_buf_size;
@@ -212,7 +184,6 @@ static int frame_width = 0;
 static int frame_height = 0;
 static enum PixelFormat frame_pix_fmt = PIX_FMT_NONE;
 static int show_status;
-static int av_sync_type = AV_SYNC_AUDIO_MASTER;
 static int64_t start_time = AV_NOPTS_VALUE;
 static int debug = 0;
 static int debug_mv = 0;
@@ -230,10 +201,6 @@ static int error_concealment = 3;
 static int decoder_reorder_pts= 0;
 
 static AVPacket flush_pkt;
-
-#define FF_ALLOC_EVENT   (SDL_USEREVENT)
-#define FF_REFRESH_EVENT (SDL_USEREVENT + 1)
-// #define FF_QUIT_EVENT    (SDL_USEREVENT + 2)
 
 // The rate that audio will be resampled to.
 static int audio_sample_rate;
@@ -401,18 +368,6 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block)
     return ret;
 }
 
-static inline void fill_rectangle(SDL_Surface *screen,
-                                  int x, int y, int w, int h, int color)
-{
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = w;
-    rect.h = h;
-    SDL_FillRect(screen, &rect, color);
-}
-
-
 static void video_image_display(VideoState *is)
 {
     VideoPicture *vp;
@@ -524,98 +479,6 @@ static double get_audio_clock(VideoState *is)
         pts -= (double)hw_buf_size / bytes_per_sec;
 
     return pts;
-}
-
-/* get the current video clock value */
-static double get_video_clock(VideoState *is)
-{
-    double delta;
-    if (is->paused) {
-        delta = 0;
-    } else {
-        delta = (av_gettime() - is->video_current_pts_time) / 1000000.0;
-    }
-    return is->video_current_pts + delta;
-}
-
-/* get the current external clock value */
-static double get_external_clock(VideoState *is)
-{
-    int64_t ti;
-    ti = av_gettime();
-    return is->external_clock + ((ti - is->external_clock_time) * 1e-6);
-}
-
-/* get the current master clock value */
-static double get_master_clock(VideoState *is)
-{
-    double val;
-
-    if (is->av_sync_type == AV_SYNC_VIDEO_MASTER) {
-        if (is->video_st)
-            val = get_video_clock(is);
-        else
-            val = get_audio_clock(is);
-    } else if (is->av_sync_type == AV_SYNC_AUDIO_MASTER) {
-        if (is->audio_st)
-            val = get_audio_clock(is);
-        else
-            val = get_video_clock(is);
-    } else {
-        val = get_external_clock(is);
-    }
-    return val;
-}
-
-static double compute_frame_delay(double frame_current_pts, VideoState *is)
-{
-    double actual_delay, delay, sync_threshold, ref_clock, diff;
-
-    /* compute nominal delay */
-    delay = frame_current_pts - is->frame_last_pts;
-    if (delay <= 0 || delay >= 10.0) {
-        /* if incorrect delay, use previous one */
-        delay = is->frame_last_delay;
-    } else {
-        is->frame_last_delay = delay;
-    }
-    is->frame_last_pts = frame_current_pts;
-
-    /* update delay to follow master synchronisation source */
-    if (((is->av_sync_type == AV_SYNC_AUDIO_MASTER && is->audio_st) ||
-         is->av_sync_type == AV_SYNC_EXTERNAL_CLOCK)) {
-        /* if video is slave, we try to correct big delays by
-           duplicating or deleting a frame */
-        ref_clock = get_master_clock(is);
-        diff = frame_current_pts - ref_clock;
-
-        /* skip or repeat frame. We take into account the
-           delay to compute the threshold. I still don't know
-           if it is the best guess */
-        sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
-        if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
-            if (diff <= -sync_threshold)
-                delay = 0;
-            else if (diff >= sync_threshold)
-                delay = 2 * delay;
-        }
-    }
-
-    is->frame_timer += delay;
-    /* compute the REAL delay (we need to do that to avoid
-       long term errors */
-    actual_delay = is->frame_timer - (av_gettime() / 1000000.0);
-    if (actual_delay < 0.010) {
-        /* XXX: should skip picture */
-        actual_delay = 0.010;
-    }
-
-#if defined(DEBUG_SYNC)
-    printf("video: delay=%0.3f actual_delay=%0.3f pts=%0.3f A-V=%f\n",
-            delay, actual_delay, frame_current_pts, -diff);
-#endif
-
-    return actual_delay;
 }
 
 /* called to display each frame */
@@ -1016,17 +879,6 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             /*     (double)(n * dec->sample_rate); */
             is->audio_clock += data_size / (4.0 * audio_sample_rate);
 
-#if defined(DEBUG_SYNC)
-            {
-                static double last_clock;
-                printf("audio: delay=%0.3f clock=%0.3f pts=%0.3f\n",
-                       is->audio_clock - last_clock,
-                       is->audio_clock, pts);
-                last_clock = is->audio_clock;
-            }
-#endif
-
-
             // Deal with a reduced duration, like in an ogg file.
 
             if (is->audio_duration) {
@@ -1189,13 +1041,6 @@ static int stream_component_open(VideoState *is, int stream_index)
         is->audio_st = ic->streams[stream_index];
         is->audio_buf_size = 0;
         is->audio_buf_index = 0;
-
-        /* init averaging filter */
-        is->audio_diff_avg_coef = exp(log(0.01) / AUDIO_DIFF_AVG_NB);
-        is->audio_diff_avg_count = 0;
-        /* since we do not have a precise anough audio fifo fullness,
-           we correct audio sync only if larger than this threshold */
-        is->audio_diff_threshold = 2.0 * SDL_AUDIO_BUFFER_SIZE / enc->sample_rate;
 
         memset(&is->audio_pkt, 0, sizeof(is->audio_pkt));
         packet_queue_init(&is->audioq);
@@ -1564,8 +1409,6 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
     /* start video display */
     is->pictq_mutex = SDL_CreateMutex();
     is->pictq_cond = SDL_CreateCond();
-
-    is->av_sync_type = av_sync_type;
 
     is->quit_mutex = SDL_CreateMutex();
     is->quit_cond = SDL_CreateCond();
