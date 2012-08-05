@@ -46,7 +46,7 @@ cdef extern from "pss.h":
 
     void PSS_periodic()
     void PSS_alloc_event(object)
-    void PSS_refresh_event()
+    int PSS_refresh_event()
     
     char *PSS_get_error()
 
@@ -166,7 +166,7 @@ def alloc_event(surf):
     PSS_alloc_event(surf)
 
 def refresh_event():
-    PSS_refresh_event()
+    return PSS_refresh_event()
         
 def check_version(version):
     if version < 2 or version > 4:

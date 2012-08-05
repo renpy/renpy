@@ -504,7 +504,6 @@ class SceneLists(renpy.object.Object):
         # Either None, or a DragGroup that's used as the default for
         # drags with names.
         self.drag_group = None
-
         
         if oldsl:
 
@@ -2095,7 +2094,7 @@ class Interface(object):
                 # Check for suspend.
                 if android:
                     self.android_check_suspend()
-
+                    
                 # Redraw the screen.
                 if (self.force_redraw or
                     ((first_pass or not pygame.event.peek(ALL_EVENTS)) and 
@@ -2152,11 +2151,12 @@ class Interface(object):
                 if self.restart_interaction:                    
                     return True, None
 
-                # Determine if we need a redraw.
-                needs_redraw = needs_redraw or renpy.display.render.process_redraws()
+                # Determine if we need a redraw. (We want to run these 
+                # functions, so we put them first to prevent short-circuiting.) 
+                needs_redraw = renpy.display.render.process_redraws() or needs_redraw
+                needs_redraw = renpy.display.video.frequent() or needs_redraw
 
                 # Predict images, if we haven't done so already.
-
                 while (prediction_coroutine is not None) \
                         and not needs_redraw \
                         and not self.event_peek() \
@@ -2220,10 +2220,10 @@ class Interface(object):
                     if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .25 and timeout_in > .25:
                         renpy.loadsave.autosave()
                         did_autosave = True
-                        
+
                     # Get the event, if we don't have one already.
                     if ev is None:
-                        if needs_redraw:
+                        if needs_redraw or renpy.display.video.playing():
                             ev = self.event_poll()
                         else:
                             ev = self.event_wait()
@@ -2263,10 +2263,6 @@ class Interface(object):
                         renpy.audio.audio.periodic()
                         continue
 
-                    # Handle ffdecode events.
-                    if renpy.audio.audio.event(ev):
-                        continue
-                                            
                     # This can set the event to None, to ignore it.
                     ev = renpy.display.joystick.event(ev)
                     if not ev:
@@ -2297,7 +2293,6 @@ class Interface(object):
                             ev.type == pygame.MOUSEBUTTONUP:
             
                         self.mouse_event_time = renpy.display.core.get_time()
-
                     
                     # Merge mousemotion events.
                     if ev.type == pygame.MOUSEMOTION:

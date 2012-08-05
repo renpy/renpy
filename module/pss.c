@@ -33,7 +33,7 @@ struct VideoState;
 struct VideoState *ffpy_stream_open(SDL_RWops *, const char *);
 void ffpy_stream_close(struct VideoState *is);
 void ffpy_alloc_event(struct VideoState *vs, PyObject *surface);
-void ffpy_refresh_event(struct VideoState *vs);
+int ffpy_refresh_event(struct VideoState *vs);
 void ffpy_init(int rate, int status);
 int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len);
 
@@ -1142,13 +1142,16 @@ void PSS_alloc_event(PyObject *surface) {
 }
 
 /* This should be called in response to a FF_REFRESH_EVENT */
-void PSS_refresh_event(void) {
+int PSS_refresh_event(void) {
     int i;
+    int rv = 0;
     for (i = 0; i < num_channels; i++) {
         if (channels[i].playing) {
-            ffpy_refresh_event(channels[i].playing);
+        	rv = rv | ffpy_refresh_event(channels[i].playing);
         }
     }
+
+    return rv;
 }
 
 /*

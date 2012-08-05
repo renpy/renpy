@@ -49,7 +49,7 @@ void PSS_quit(void);
 
 void PSS_periodic(void);
 void PSS_alloc_event(PyObject *surface);
-void PSS_refresh_event(void);
+int PSS_refresh_event(void);
 
 const char *PSS_get_error(void);
 

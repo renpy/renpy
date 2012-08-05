@@ -119,7 +119,7 @@ def get_movie_texture(size):
 
     if playing is not None:
         renpy.display.render.mutated_surface(surface)
-        tex = renpy.display.draw.load_texture(surface)
+        tex = renpy.display.draw.load_texture(surface, True)
 
     return tex
 
@@ -152,16 +152,35 @@ class Movie(renpy.display.core.Displayable):
         
         if tex is not None:
             rv.blit(tex, (0, 0))
-            
+           
+        renpy.display.render.redraw(self, 0) 
         return rv
             
-    def event(self, ev, x, y, st):
-
-        if ev.type == renpy.audio.audio.REFRESH_EVENT:
-            renpy.display.render.redraw(self, 0)
-
     def per_interact(self):
         global fullscreen
         fullscreen = False
         
+            
+def playing():
+    return renpy.audio.music.get_playing("movie")
+
+def frequent():
+    """
+    Called to update the video playback. Returns true if a video refresh is 
+    needed, false otherwise.
+    """
+
+    if not playing():
+        return 0
+
+    pss = renpy.audio.audio.pss
+    
+    if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
+        surf = renpy.display.draw.fullscreen_surface
+    else:
+        surf = renpy.display.video.surface
+        surf = renpy.display.scale.real(surf)
+
+    pss.alloc_event(surf)
+    return pss.refresh_event()
             
