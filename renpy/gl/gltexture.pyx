@@ -32,7 +32,7 @@ import collections
 import renpy
 
 # The maximum size of a texture.
-MAX_SIZE = 512
+MAX_SIZE = 1024
 
 # Possible sizes for a texture, ordered from largest to smallest.
 # (Now set in test_texture_sizes.)
@@ -68,6 +68,7 @@ def test_texture_sizes(Environ environ, draw):
     cdef GLfloat coords[6]
     cdef GLfloat texcoords[6]
     cdef unsigned char pixel[4]
+    cdef int hw_max_size
     
     global MAX_SIZE
     global SIZES
@@ -80,10 +81,16 @@ def test_texture_sizes(Environ environ, draw):
     if error != GL_NO_ERROR:
         renpy.display.log.write("- Ignored error at start of testing: {0:x}".format(error))
     
+    
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &hw_max_size)
+    
+    renpy.display.log.write("- Hardware max texture size: %d", hw_max_size)
+    hw_max_size = min(2048, hw_max_size)
+    
     SIZES = [ ]
     
     size = 64
-    while size <= 1024:
+    while size <= hw_max_size:
    
         # Create an all-red bitmap of the given size.
         bitmap = <unsigned char *> calloc(size * size, 4)
@@ -174,12 +181,12 @@ def test_texture_sizes(Environ environ, draw):
         
         # Double the size and try again.
         size *= 2
-        
+
     # Clean up.
     environ.set_texture(0, NULL)
         
-    if MAX_SIZE > 512:
-        MAX_SIZE = 512
+    if MAX_SIZE > 1024:
+        MAX_SIZE = 1024
             
     if not SIZES:
         renpy.display.log.write("Textures are not rendering properly.")
@@ -682,17 +689,24 @@ def compute_tiling(width, max_size, min_fill_factor):
     return row, tiles
 
 
-def texture_grid_from_surface(surf):    
+def texture_grid_from_surface(surf, transient):    
     """
     This takes a Surface and turns it into a TextureGrid.
     """
 
+    if transient:
+        max_size = SIZES[0]
+        fill_factor = 0.5
+    else:
+        max_size = MAX_SIZE
+        fill_factor = .66
+ 
     width, height = surf.get_size()
 
     rv = TextureGrid(width, height)
 
-    rv.columns, texcolumns = compute_tiling(width, MAX_SIZE, .66)
-    rv.rows, texrows = compute_tiling(height, MAX_SIZE, .66)
+    rv.columns, texcolumns = compute_tiling(width, max_size, fill_factor)
+    rv.rows, texrows = compute_tiling(height, max_size, fill_factor)
 
     rownum = 0
     lastrow = len(texrows) - 1
@@ -736,8 +750,8 @@ def texture_grid_from_drawing(width, height, draw_func, rtt, environ):
     gldraw = renpy.display.draw    
     pwidth, pheight = gldraw.physical_size
     
-    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), .5)
-    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), .5)
+    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), 0.0)
+    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), 0.0)
     
     for y, height, texheight in texrows:
         row = [ ]

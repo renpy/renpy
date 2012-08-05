@@ -565,12 +565,16 @@ cdef class GLDraw:
             del self.texture_cache[surf]
 
     def load_texture(self, surf, transient=False):
+        """
+        Loads a texture into memory.
+        """
+        
         # Turn a surface into a texture grid.
 
         rv = self.texture_cache.get(surf, None)
 
         if rv is None:
-            rv = gltexture.texture_grid_from_surface(surf)
+            rv = gltexture.texture_grid_from_surface(surf, transient)
             self.texture_cache[surf] = rv
             
         return rv
