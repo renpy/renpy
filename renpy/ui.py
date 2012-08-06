@@ -602,6 +602,7 @@ class ChoiceActionBase(Action):
 
         if self.location:
             self.chosen = renpy.game.persistent._chosen
+
             if self.chosen is None:
                 self.chosen = renpy.game.persistent._chosen = { }
 
@@ -614,10 +615,7 @@ class ChoiceActionBase(Action):
         return renpy.exports.in_fixed_rollback() and roll_forward == self.value 
 
     def get_chosen(self):
-        if self.chosen:
-            return (self.location, self.label) in self.chosen
-        else:
-            return False
+        return (self.location, self.label) in self.chosen
     
 class ChoiceReturn(ChoiceActionBase):
     """
@@ -659,8 +657,7 @@ class ChoiceReturn(ChoiceActionBase):
 
     
     def __call__(self):
-        if self.chosen:
-            self.chosen[(self.location, self.label)] = True
+        self.chosen[(self.location, self.label)] = True
         
         return self.value
 
@@ -712,8 +709,7 @@ class ChoiceJump(ChoiceActionBase):
         return renpy.exports.in_fixed_rollback() and roll_forward == self.value 
 
     def __call__(self):
-        if self.chosen:
-            self.chosen[(self.location, self.label)] = True
+        self.chosen[(self.location, self.label)] = True
 
         renpy.exports.jump(self.value)
 
