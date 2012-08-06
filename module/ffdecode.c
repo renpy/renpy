@@ -154,7 +154,7 @@ typedef struct VideoState {
     
     int width, height, xleft, ytop;
 
-    int64_t audio_callback_time;
+    double audio_callback_time;
 
     char *filename;
 
@@ -173,6 +173,8 @@ typedef struct VideoState {
     // The amount of audio we've played, in samples.
     unsigned int audio_played;
     
+    double start_time;
+
 } VideoState;
 
 SDL_mutex *codec_mutex = NULL;
@@ -204,6 +206,7 @@ static AVPacket flush_pkt;
 
 // The rate that audio will be resampled to.
 static int audio_sample_rate;
+
 
 /* ByteIOContext <-> SDL_RWops mapping. */
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
@@ -253,6 +256,9 @@ static void rwops_close(SDL_RWops *rw) {
     rw->close(rw);
 }
 
+static double get_time() {
+	return av_gettime() * 1e-6;
+}
 
 /* packet queue handling */
 static void packet_queue_init(PacketQueue *q)
@@ -455,7 +461,6 @@ static inline int compute_mod(int a, int b)
         return a + b;
 }
 
-
 /* display the current picture, if any */
 static void video_display(VideoState *is)
 {
@@ -463,10 +468,14 @@ static void video_display(VideoState *is)
         video_image_display(is);
 }
 
-/* get the current audio clock value */
-static double get_audio_clock(VideoState *is)
+/* get the current audio clock value. If adjust is 1, also adjusts the
+ * offset. */
+static double get_audio_clock(VideoState *is, int adjust)
 {
+	double now;
     double pts;
+    double altpts;
+    double offset;
     int hw_buf_size, bytes_per_sec;
     pts = is->audio_clock;
     hw_buf_size = audio_write_get_buf_size(is);
@@ -478,7 +487,26 @@ static double get_audio_clock(VideoState *is)
     if (bytes_per_sec)
         pts -= (double)hw_buf_size / bytes_per_sec;
 
-    return pts;
+    now = get_time();
+    pts += (now - is->audio_callback_time);
+
+    altpts = now - is->start_time;
+    offset = altpts - pts;
+
+    if (fabs(offset) > .25) {
+    	is->start_time = now - pts;
+    	altpts = pts;
+    }
+
+    if (adjust) {
+		if (offset > 0) {
+			is->start_time += .00025;
+		} else {
+			is->start_time -= .00025;
+		}
+    }
+
+    return altpts;
 }
 
 /* called to display each frame */
@@ -506,12 +534,15 @@ static int video_refresh(void *opaque)
 		is->video_current_pts = vp->pts;
 		is->video_current_pts_time = av_gettime();
 
-		delay = get_audio_clock(is) - vp->pts;
+		delay = get_audio_clock(is, 0) - vp->pts;
 
 		/* The video is ahead of the audio. */
 		if (delay < 0) {
 			return 0;
 		}
+
+		// Adjust the audio clock.
+		get_audio_clock(is, 1);
 
 		if (delay < .1) {
 			video_display(is);
@@ -689,7 +720,7 @@ static int video_thread(void *arg)
         frame = avcodec_alloc_frame();
 
         while (is->paused && !is->videoq.abort_request) {
-            SDL_Delay(10);
+            SDL_Delay(2);
         }
         if (packet_queue_get(&is->videoq, pkt, 1) < 0)
             break;
@@ -712,7 +743,6 @@ static int video_thread(void *arg)
 								frame, &got_picture,
 								pkt->data, pkt->size);
 #endif
-
 
         if(   (decoder_reorder_pts || pkt->dts == AV_NOPTS_VALUE)
            && frame->reordered_opaque != AV_NOPTS_VALUE)
@@ -953,7 +983,7 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
         SDL_Delay(10);
     }
     
-    is->audio_callback_time = av_gettime();
+    is->audio_callback_time = get_time();
     
     while (len > 0) {
         if (is->audio_buf_index >= is->audio_buf_size) {
@@ -1315,9 +1345,9 @@ static int decode_thread(void *arg)
         if (is->audioq.size > MAX_AUDIOQ_SIZE ||
             is->videoq.size > MAX_VIDEOQ_SIZE) {
             
-            /* wait 10 ms - or wait for quit notify.*/
+            /* wait 2 ms - or wait for quit notify.*/
             SDL_LockMutex(is->quit_mutex);
-            SDL_CondWaitTimeout(is->quit_cond, is->quit_mutex, 10);
+            SDL_CondWaitTimeout(is->quit_cond, is->quit_mutex, 2);
             SDL_UnlockMutex(is->quit_mutex);
 
             continue;

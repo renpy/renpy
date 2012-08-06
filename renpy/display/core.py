@@ -2153,8 +2153,9 @@ class Interface(object):
 
                 # Determine if we need a redraw. (We want to run these 
                 # functions, so we put them first to prevent short-circuiting.) 
-                needs_redraw = renpy.display.render.process_redraws() or needs_redraw
                 needs_redraw = renpy.display.video.frequent() or needs_redraw
+                needs_redraw = renpy.display.render.process_redraws() or needs_redraw
+                # needs_redraw = True
 
                 # Predict images, if we haven't done so already.
                 while (prediction_coroutine is not None) \

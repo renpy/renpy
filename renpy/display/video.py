@@ -22,6 +22,9 @@
 import renpy.display
 import renpy.audio
 
+# The movie displayable that's currently being shown on the screen.
+current_movie = None
+
 # True if the movie that is currently displaying is in fullscreen mode,
 # False if it's a smaller size.
 fullscreen = False
@@ -79,7 +82,11 @@ def early_interact():
     """
 
     global fullscreen
+    global current_movie
+    
     fullscreen = True
+    current_movie = None
+    
 
 def interact():
     """
@@ -152,13 +159,19 @@ class Movie(renpy.display.core.Displayable):
         
         if tex is not None:
             rv.blit(tex, (0, 0))
-           
-        renpy.display.render.redraw(self, 0) 
+            
+            # Force a redraw in the case of the movie ending. 
+            renpy.display.render.redraw(self, 0.1)
+    
         return rv
+    
             
     def per_interact(self):
         global fullscreen
         fullscreen = False
+
+        global current_movie
+        current_movie = self
         
             
 def playing():
@@ -182,5 +195,9 @@ def frequent():
         surf = renpy.display.scale.real(surf)
 
     pss.alloc_event(surf)
-    return pss.refresh_event()
-            
+    rv = pss.refresh_event()
+
+    if rv and current_movie is not None:
+        renpy.display.render.redraw(current_movie, 0)
+         
+    return rv    
