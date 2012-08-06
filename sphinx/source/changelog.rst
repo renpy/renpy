@@ -124,6 +124,17 @@ Rollback Improvements
 * Rolling forward now works through a jump out of a ``call screen``
   statement.
 
+Video Improvements
+------------------
+
+Ren'Py's video playback support has been partially rewritten to
+improve robustness, speed, and framerate stability. These improvements
+should reduce the number of frame drops Ren'Py performs, and should
+also prevent Ren'Py from locking up if too many frames are dropped.
+
+Ren'Py now supports the WebM video format.
+
+  
 Image Load Log
 --------------
 
@@ -214,8 +225,7 @@ changes that have occured are:
   on some Linux systems.
 
 * LibAV has been updated to version 0.7.6, and has been compiled with
-  CPU detection enabled. This may fix the video playback problems some
-  users have been experiencing.
+  CPU detection enabled.
 
 Other Changes
 -------------
@@ -247,8 +257,10 @@ Other Changes
 
 * The :var:`config.gl_resize` variable now controls resizing of a game
   running in GL mode.
-
+  
 * Documentation fixes (by SleepKirby and others).
+
+* The NVL-Mode tutorial has been ported to Sphinx (by Apricotorange).
 
 * Ren'Py now defaults to reporting errors with sound and music files when
   config.developer is True.
