@@ -126,15 +126,19 @@ init python:
     # button
     style._button = Style(style._default)
     style._button_text = Style(style._default)
+    style._button.xpadding = 8
+    style._button.ypadding = 6
+    style._button.xoffset = -5
 
-    style._button.background = Frame("_theme_amie2/frame.png", 10, 10)
-    style._button.hover_background = Frame("_theme_amie2/hover_frame.png", 10, 10)
-    style._button.xpadding = 10
-    style._button.ypadding = 9
-    style._button.ymargin = 0
-
+    style._button.background = Frame("_theme_amie2/button.png", 10, 10)
+    style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
+    style._button_text.size = 16
+    style._button_text.color = "#111"
+    style._button_text.selected_color = "#11f"
     style._button_text.insensitive_color = "#ccc"
-
+    style._button_text.xalign = 0.5
+    style._button_text.yoffset = 0
+    
     # label
     style._label = Style(style._default)
     style._label_text = Style(style._default)
