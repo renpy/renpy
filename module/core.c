@@ -9,6 +9,10 @@
 #include "mmx.h"
 #endif
 
+/* Work around a compiler bug with transforms on 32-bit linux. */
+#if defined(__linux__) && defined(__i386__)
+#undef GCC_MMX
+#endif
 
 // Shows how to do this.
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
