@@ -28,6 +28,7 @@ from pygame cimport *
 from cpython.string cimport PyString_FromStringAndSize
 from libc.stdlib cimport calloc, free
 
+import time
 import collections
 import renpy
 
@@ -1003,13 +1004,13 @@ def premultiply(
     # Iterator y and x.
     cdef int ix, iy
     
-    # Adjust the alpha if we have an alpha-free image.
-    cdef unsigned char alpha_or
+    # Does the original image have an alpha channel?
+    cdef unsigned int alpha
     
     if pysurf.get_masks()[3]:
-        alpha_or = 0
+        alpha = True
     else:
-        alpha_or = 255
+        alpha = False
 
     # Allocate an uninitialized string.
     rv = PyString_FromStringAndSize(<char *>NULL, w * h * 4)
@@ -1059,21 +1060,30 @@ def premultiply(
         # Advance to the next row.
         pixels += surf.pitch
       
-        while p < pend:
-            
-            a = p[3] | alpha_or
-  
-            if a:     
+        if alpha:
+      
+            while p < pend:
+                
+                a = p[3]
+      
                 op[0] = (p[0] * a + a) >> 8
                 op[1] = (p[1] * a + a) >> 8
                 op[2] = (p[2] * a + a) >> 8
                 op[3] = a
-            else:
-                (<unsigned int *> op)[0] = 0
-                            
-            p += 4
-            op += 4
-
+                                
+                p += 4
+                op += 4
+                
+        else:
+            
+            while p < pend:
+                
+                (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
+                op[3] = 255
+                
+                p += 4
+                op += 4
+                
     if border_left:
         pp = <unsigned int *> (out)
         ppend = pp + w * h
