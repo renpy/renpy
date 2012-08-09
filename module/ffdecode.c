@@ -173,9 +173,6 @@ int ffpy_movie_width = 64;
 int ffpy_movie_height = 64;
 
 /* options specified by the user */
-static int frame_width = 0;
-static int frame_height = 0;
-static enum PixelFormat frame_pix_fmt = PIX_FMT_NONE;
 static int show_status;
 static int64_t start_time = AV_NOPTS_VALUE;
 static int debug = 0;
@@ -247,7 +244,7 @@ static void rwops_close(SDL_RWops *rw) {
     rw->close(rw);
 }
 
-static double get_time() {
+static double get_time(void) {
 	return av_gettime() * 1e-6;
 }
 
@@ -1146,19 +1143,9 @@ static int decode_thread(void *arg)
     int err, i, ret, video_index, audio_index;
     AVPacket pkt1, *pkt = &pkt1;
     AVFormatParameters params, *ap = &params;
-    AVProbeData probe_data, *pd = &probe_data;
-    int probe_size;
-    AVInputFormat *fmt = NULL;
-    AVIOContext *pb;
-    int signalled_start = 0;
     int codecs_locked = 0;
     
     // url_set_interrupt_cb(decode_interrupt_cb);
-    
-    /* TODO: Set somehow. */
-    pd->filename = is->filename;
-    pd->buf = NULL;
-    pd->buf_size = 0;
     
     video_index = -1;
     audio_index = -1;
@@ -1167,7 +1154,7 @@ static int decode_thread(void *arg)
 
     memset(ap, 0, sizeof(*ap));
 
-    pb = is->io_context = rwops_open(is->rwops);
+    is->io_context = rwops_open(is->rwops);
 
     codecs_locked = 1;
     SDL_LockMutex(codec_mutex);
@@ -1268,8 +1255,6 @@ static int decode_thread(void *arg)
     } else {
         is->show_audio = 0;
     }
-    
-    signalled_start = 1;
     
     if (is->video_stream < 0 && is->audio_stream < 0) {
         fprintf(stderr, "could not open codecs\n");

@@ -51,7 +51,7 @@ void PSS_periodic(void);
 void PSS_alloc_event(PyObject *surface);
 int PSS_refresh_event(void);
 
-const char *PSS_get_error(void);
+char *PSS_get_error(void);
 
 extern int ffpy_needs_alloc;
 extern int ffpy_movie_width;

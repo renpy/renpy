@@ -1111,8 +1111,6 @@ void PSS_quit() {
 void PSS_periodic() {
     BEGIN();
 
-    int i;
-
     if (!dying) {
         return;
     }
@@ -1158,18 +1156,18 @@ int PSS_refresh_event(void) {
  * Returns the error message string if an error has occured, or
  * NULL if no error has happened.
  */
-const char *PSS_get_error() {
+char *PSS_get_error() {
     switch(PSS_error) {
     case 0:
-        return "";
+        return (char *) "";
     case SDL_ERROR:
-        return SDL_GetError();
+        return (char *) SDL_GetError();
     case SOUND_ERROR:
-        return "Some sort of ffmpeg error.";
+        return (char *) "Some sort of codec error.";
     case PSS_ERROR:
-        return error_msg;
+        return (char *) error_msg;
     default:
-        return "Error getting error.";
+        return (char *) "Error getting error.";
     }
 }
 
