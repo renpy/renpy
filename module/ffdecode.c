@@ -51,17 +51,7 @@
 /* NOTE: the size must be big enough to compensate the hardware audio buffersize size */
 #define SAMPLE_ARRAY_SIZE (2*65536)
 
-#if LIBAVCODEC_VERSION_MAJOR >= 53
-#define CODEC_TYPE_UNKNOWN    AVMEDIA_TYPE_UNKNOWN
-#define CODEC_TYPE_VIDEO      AVMEDIA_TYPE_VIDEO
-#define CODEC_TYPE_AUDIO      AVMEDIA_TYPE_AUDIO
-#define CODEC_TYPE_DATA       AVMEDIA_TYPE_DATA
-#define CODEC_TYPE_SUBTITLE   AVMEDIA_TYPE_SUBTITLE
-#define CODEC_TYPE_ATTACHMENT AVMEDIA_TYPE_ATTACHMENT
-#define CODEC_TYPE_NB         AVMEDIA_TYPE_NB
-#endif
-
-AVCodecContext *avctx_opts[CODEC_TYPE_NB];
+AVCodecContext *avctx_opts[AVMEDIA_TYPE_NB];
 AVFormatContext *avformat_opts;
 
 static int sws_flags = SWS_BILINEAR;
@@ -150,7 +140,7 @@ typedef struct VideoState {
 
     //    QETimer *video_timer;
     SDL_RWops *rwops;
-    ByteIOContext *io_context;
+    AVIOContext *io_context;
     
     int width, height, xleft, ytop;
 
@@ -238,10 +228,10 @@ static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
 
 #define RWOPS_BUFFER 65536
 
-static ByteIOContext *rwops_open(SDL_RWops *rw) {
+static AVIOContext *rwops_open(SDL_RWops *rw) {
 
     unsigned char *buffer = av_malloc(RWOPS_BUFFER);
-    ByteIOContext *rv = av_alloc_put_byte(
+    AVIOContext *rv = avio_alloc_context(
         buffer,
         RWOPS_BUFFER,
         0,
@@ -742,15 +732,9 @@ static int video_thread(void *arg)
            this packet, if any */
         is->video_st->codec->reordered_opaque= pkt->pts;
 
-#if LIBAVCODEC_VERSION_MAJOR >= 53
         avcodec_decode_video2(is->video_st->codec,
 								frame, &got_picture,
 								pkt);
-#else
-        avcodec_decode_video(is->video_st->codec,
-								frame, &got_picture,
-								pkt->data, pkt->size);
-#endif
 
         if(   (decoder_reorder_pts || pkt->dts == AV_NOPTS_VALUE)
            && frame->reordered_opaque != AV_NOPTS_VALUE)
@@ -788,15 +772,9 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
         while (pkt_temp->size > 0) {
             data_size = sizeof(is->audio_buf1);
 
-#if LIBAVCODEC_VERSION_MAJOR >= 53
             len1 = avcodec_decode_audio3(dec,
                                         (int16_t *)is->audio_buf1, &data_size,
                                         pkt_temp);
-#else
-            len1 = avcodec_decode_audio2(dec,
-                                        (int16_t *)is->audio_buf1, &data_size,
-                                        pkt_temp->data, pkt_temp->size);
-#endif
 
             if (len1 < 0) {
                 /* if error, we skip the frame */
@@ -834,7 +812,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
 
             if (is->reformat_ctx) {
                 
-                int len = data_size / (av_get_bits_per_sample_format(dec->sample_fmt) / 8);
+                int len = data_size / av_get_bytes_per_sample(dec->sample_fmt);
                 len /= dec->channels;
 
                 len = audio_resample(is->reformat_ctx, (short *) is->audio_buf2, (short *) is->audio_buf1, len);
@@ -1033,7 +1011,7 @@ static int stream_component_open(VideoState *is, int stream_index)
     enc = ic->streams[stream_index]->codec;
     
     /* prepare audio output */
-    if (enc->codec_type == CODEC_TYPE_AUDIO) {
+    if (enc->codec_type == AVMEDIA_TYPE_AUDIO) {
         if (enc->channels > 0) {
             enc->request_channels = FFMIN(2, enc->channels);
         } else {
@@ -1061,7 +1039,7 @@ static int stream_component_open(VideoState *is, int stream_index)
         return -1;
     }
         
-    err = avcodec_open(enc, codec);
+    err = avcodec_open2(enc, codec, NULL);
     
     if (err < 0) {
         return -1;
@@ -1069,12 +1047,15 @@ static int stream_component_open(VideoState *is, int stream_index)
     
     is->audio_hw_buf_size = 2048;
     
+#if 0
     if(thread_count>1)
         avcodec_thread_init(enc, thread_count);
+#endif
+
     enc->thread_count= thread_count;
     ic->streams[stream_index]->discard = AVDISCARD_DEFAULT;
     switch(enc->codec_type) {
-    case CODEC_TYPE_AUDIO:
+    case AVMEDIA_TYPE_AUDIO:
         is->audio_stream = stream_index;
         is->audio_st = ic->streams[stream_index];
         is->audio_buf_size = 0;
@@ -1084,7 +1065,7 @@ static int stream_component_open(VideoState *is, int stream_index)
         packet_queue_init(&is->audioq);
         SDL_PauseAudio(0);
         break;
-    case CODEC_TYPE_VIDEO:
+    case AVMEDIA_TYPE_VIDEO:
         is->video_stream = stream_index;
         is->video_st = ic->streams[stream_index];
 
@@ -1111,13 +1092,13 @@ static void stream_component_close(VideoState *is, int stream_index)
     enc = ic->streams[stream_index]->codec;
 
     switch(enc->codec_type) {
-    case CODEC_TYPE_AUDIO:
+    case AVMEDIA_TYPE_AUDIO:
         packet_queue_abort(&is->audioq);
         packet_queue_end(&is->audioq);
         if (is->reformat_ctx)
             audio_resample_close(is->reformat_ctx);
         break;
-    case CODEC_TYPE_VIDEO:
+    case AVMEDIA_TYPE_VIDEO:
         packet_queue_abort(&is->videoq);
 
         /* note: we also signal this mutex to make sure we deblock the
@@ -1141,24 +1122,17 @@ static void stream_component_close(VideoState *is, int stream_index)
     SDL_UnlockMutex(codec_mutex);
     
     switch(enc->codec_type) {
-    case CODEC_TYPE_AUDIO:
+    case AVMEDIA_TYPE_AUDIO:
         is->audio_st = NULL;
         is->audio_stream = -1;
         break;
-    case CODEC_TYPE_VIDEO:
+    case AVMEDIA_TYPE_VIDEO:
         is->video_st = NULL;
         is->video_stream = -1;
         break;
     default:
         break;
     }
-}
-
-static void dump_stream_info(const AVFormatContext *s)
-{
-    AVMetadataTag *tag = NULL;
-    while ((tag=av_metadata_get(s->metadata,"",tag,AV_METADATA_IGNORE_SUFFIX)))
-        fprintf(stderr, "%s: %s\n", tag->key, tag->value);
 }
 
 #define PROBE_BUF_MIN 2048
@@ -1175,7 +1149,7 @@ static int decode_thread(void *arg)
     AVProbeData probe_data, *pd = &probe_data;
     int probe_size;
     AVInputFormat *fmt = NULL;
-    ByteIOContext *pb;
+    AVIOContext *pb;
     int signalled_start = 0;
     int codecs_locked = 0;
     
@@ -1193,49 +1167,26 @@ static int decode_thread(void *arg)
 
     memset(ap, 0, sizeof(*ap));
 
-    ap->width = frame_width;
-    ap->height= frame_height;
-    ap->time_base= (AVRational){1, 25};
-    ap->pix_fmt = frame_pix_fmt;
-
     pb = is->io_context = rwops_open(is->rwops);
 
     codecs_locked = 1;
     SDL_LockMutex(codec_mutex);
 
-    if (!fmt) {
-        for(probe_size= PROBE_BUF_MIN; probe_size<=PROBE_BUF_MAX && !fmt; probe_size<<=1){
+    ic = avformat_alloc_context();
 
-            /* read probe data */
-            pd->buf= av_realloc(pd->buf, probe_size + AVPROBE_PADDING_SIZE);
-            pd->buf_size = get_buffer(pb, pd->buf, probe_size);
-            memset(pd->buf+pd->buf_size, 0, AVPROBE_PADDING_SIZE);
-
-            /* Seek back to start. */
-            if (url_fseek(pb, 0, SEEK_SET) < 0) {
-                fprintf(stderr, "Could not seek in file.\n");
-                goto fail;
-            }
-
-            /* guess file format */
-            fmt = av_probe_input_format(pd, 1);
-        }
-        av_freep(&pd->buf);
+    if (!ic) {
+    	fprintf(stderr, "could not allocate context\n");
+    	ret = -1;
+    	goto fail;
     }
 
-    if (!fmt) {
-        fprintf(stderr, "Couldn't guess file format.\n");
-        goto fail;
-    }
-        
-    // err = av_open_input_file(&ic, "test.mkv", is->iformat, 0, ap);
+    ic->pb = is->io_context;
 
-    err = av_open_input_stream(
+    err = avformat_open_input(
         &ic,
-        is->io_context,
         is->filename,
-        fmt,
-        ap);
+        NULL,
+        NULL);
 
     // printf("Format name: %s\n", fmt->name);
     
@@ -1282,12 +1233,12 @@ static int decode_thread(void *arg)
         ic->streams[i]->discard = AVDISCARD_ALL;
 
         switch(enc->codec_type) {
-        case CODEC_TYPE_AUDIO:
+        case AVMEDIA_TYPE_AUDIO:
             /* if (wanted_audio_stream-- >= 0 && !audio_disable) */
             /*     audio_index = i; */
             audio_index = i;
             break;
-        case CODEC_TYPE_VIDEO:
+        case AVMEDIA_TYPE_VIDEO:
             /* if (wanted_video_stream-- >= 0 && !video_disable) */
             video_index = i;
             break;
@@ -1298,8 +1249,7 @@ static int decode_thread(void *arg)
 
     
     if (show_status) {
-        dump_format(ic, 0, is->filename, 0);
-        dump_stream_info(ic);
+        av_dump_format(ic, 0, is->filename, 0);
     }
 
     if (audio_index < 0) {
@@ -1361,14 +1311,10 @@ static int decode_thread(void *arg)
             continue;
         }
 
-        if(url_feof(ic->pb)) {
-            goto eof;
-        }
-
         ret = av_read_frame(ic, pkt);
         if (ret < 0) {
-            // Treat errors like end of stream.
-            goto eof;
+        	// End of stream and other errors.
+        	goto eof;
         }
 
         if (pkt->stream_index == is->audio_stream) {
