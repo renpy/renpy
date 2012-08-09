@@ -1316,7 +1316,8 @@ class Interface(object):
         """
         
         # Ensure that we kill off the movie when changing screen res.
-        renpy.display.video.movie_stop(clear=False)
+        if renpy.display.draw and renpy.display.draw.info["renderer"] == "sw":
+            renpy.display.video.movie_stop(clear=False)
 
         if self.display_reset:
             renpy.display.draw.deinit()
