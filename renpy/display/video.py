@@ -107,7 +107,7 @@ def interact():
     else:
         return False
 
-def get_movie_texture(size):
+def get_movie_texture():
     """
     Gets a movie texture we can draw to the screen.
     """
@@ -116,6 +116,13 @@ def get_movie_texture(size):
     global surface_file
 
     playing = renpy.audio.music.get_playing("movie")
+
+    pss = renpy.audio.audio.pss
+
+    if pss:
+        size = pss.movie_size()
+    else:
+        size = (64, 64)
 
     if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
         surface = renpy.display.pgrender.surface(size, False)
@@ -130,6 +137,26 @@ def get_movie_texture(size):
 
     return tex
 
+
+def render_movie(width, height):
+    tex = get_movie_texture()
+    
+    if tex is None:
+        return None
+    
+    sw, sh = tex.get_size()
+    
+    scale = min(1.0 * width / sw, 1.0 * height / sh)
+    
+    dw = scale * sw
+    dh = scale * sh
+    
+    rv = renpy.display.render.Render(width, height, opaque=True)
+    rv.forward = renpy.display.render.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
+    rv.reverse = renpy.display.render.Matrix2D(scale, 0.0, 0.0, scale)
+    rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
+
+    return rv
 
 class Movie(renpy.display.core.Displayable):
     """
@@ -153,14 +180,15 @@ class Movie(renpy.display.core.Displayable):
             size = default_size
 
         width, height = size
-        rv = renpy.display.render.Render(width, height, opaque=True)
+    
+        rv = render_movie(width, height)
         
-        tex = get_movie_texture(size)
-        
-        if tex is not None:
-            rv.blit(tex, (0, 0))
-            
-            # Force a redraw in the case of the movie ending. 
+        if rv is None:
+            rv = renpy.display.render.Render(0, 0)
+        else:
+
+            # Usually we get redrawn when the frame is ready - but we want
+            # the movie to disappear if it's ended.
             renpy.display.render.redraw(self, 0.1)
     
         return rv
@@ -187,14 +215,17 @@ def frequent():
         return 0
 
     pss = renpy.audio.audio.pss
+ 
+    if pss.needs_alloc():
     
-    if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
-        surf = renpy.display.draw.fullscreen_surface
-    else:
-        surf = renpy.display.video.surface
-        surf = renpy.display.scale.real(surf)
+        if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
+            surf = renpy.display.draw.fullscreen_surface
+        else:
+            get_movie_texture()
+            surf = renpy.display.scale.real(surface)
+    
+        pss.alloc_event(surf)
 
-    pss.alloc_event(surf)
     rv = pss.refresh_event()
 
     if rv and current_movie is not None:

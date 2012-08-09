@@ -53,4 +53,8 @@ int PSS_refresh_event(void);
 
 const char *PSS_get_error(void);
 
+extern int ffpy_needs_alloc;
+extern int ffpy_movie_width;
+extern int ffpy_movie_height;
+
 #endif

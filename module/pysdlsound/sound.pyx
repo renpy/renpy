@@ -50,6 +50,10 @@ cdef extern from "pss.h":
     
     char *PSS_get_error()
 
+    int ffpy_needs_alloc
+    int ffpy_movie_width
+    int ffpy_movie_height
+
 def check_error():
     e = PSS_get_error();
 
@@ -167,6 +171,12 @@ def alloc_event(surf):
 
 def refresh_event():
     return PSS_refresh_event()
+
+def needs_alloc():
+    return ffpy_needs_alloc
+
+def movie_size():
+    return ffpy_movie_width, ffpy_movie_height
         
 def check_version(version):
     if version < 2 or version > 4:

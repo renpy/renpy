@@ -164,9 +164,6 @@ typedef struct VideoState {
     // Have we finished decoding?
     int finished;
 
-    // Do we need to have a picture allocated?
-    int needs_alloc;
-
     // The audio duration.
     unsigned int audio_duration;
 
@@ -180,6 +177,10 @@ typedef struct VideoState {
 SDL_mutex *codec_mutex = NULL;
 
 static int audio_write_get_buf_size(VideoState *is);
+
+int ffpy_needs_alloc = 0;
+int ffpy_movie_width = 64;
+int ffpy_movie_height = 64;
 
 /* options specified by the user */
 static int frame_width = 0;
@@ -574,12 +575,15 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
 
     uint32_t pixel;
     uint8_t *bytes = (uint8_t *) &pixel;
+
+    SDL_LockMutex(is->pictq_mutex);
     
-    if (!is->needs_alloc) {
-        return;
+    if (!ffpy_needs_alloc) {
+        SDL_UnlockMutex(is->pictq_mutex);
+    	return;
     }
 
-    is->needs_alloc = 0;
+    ffpy_needs_alloc = 0;
     
     surf = PySurface_AsSurface(pysurf);
     is->width = surf->w;
@@ -603,8 +607,7 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
 
     pixel = SDL_MapRGBA(surf->format, 0, 0, 0, 255);
     SDL_FillRect(surf, NULL, pixel);
-    
-    SDL_LockMutex(is->pictq_mutex);
+
     vp->allocated = 1;
     SDL_CondSignal(is->pictq_cond);
     SDL_UnlockMutex(is->pictq_mutex);
@@ -642,11 +645,16 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
         vp->width != is->video_st->codec->width ||
         vp->height != is->video_st->codec->height) {
 
+    	SDL_LockMutex(is->pictq_mutex);
+
         vp->allocated = 0;
-        is->needs_alloc = 1;
+
+        ffpy_movie_width = is->video_st->codec->width;
+        ffpy_movie_height = is->video_st->codec->height;
+
+        ffpy_needs_alloc = 1;
 
         /* wait until the picture is allocated */
-        SDL_LockMutex(is->pictq_mutex);
         while (!vp->allocated && !is->videoq.abort_request) {
             SDL_CondWait(is->pictq_cond, is->pictq_mutex);
         }

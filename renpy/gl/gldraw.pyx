@@ -646,10 +646,10 @@ cdef class GLDraw:
         self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
-            tex = renpy.display.video.get_movie_texture(self.virtual_size)
+            surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
+            if surf is not None:
+                self.draw_transformed(surf, clip, 0, 0, 1.0, reverse)           
 
-            # self.load_texture(self.fullscreen_surface, transient=True)
-            self.draw_transformed(tex, clip, 0, 0, 1.0, reverse)           
         else:
             self.draw_transformed(surftree, clip, 0, 0, 1.0, reverse)
 
