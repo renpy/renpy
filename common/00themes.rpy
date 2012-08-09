@@ -726,7 +726,7 @@ init -1110 python hide:
 
 # Theme: A White Tulip
 # Coding: Jake Staines (http://www.eviscerate.net/)
-# Graphics: Ren (http://renmazuo-.deviantart.com/)
+# Graphics: Ren (http://x-Ren-x.deviantart.com/)
 # Font: Andrew Paglinawan (www.andrewpaglinawan.com)
 init -1110 python:
 
