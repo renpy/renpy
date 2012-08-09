@@ -186,7 +186,6 @@ static int idct = FF_IDCT_AUTO;
 static enum AVDiscard skip_frame= AVDISCARD_DEFAULT;
 static enum AVDiscard skip_idct= AVDISCARD_DEFAULT;
 static enum AVDiscard skip_loop_filter= AVDISCARD_DEFAULT;
-static int error_recognition = FF_ER_CAREFUL;
 static int error_concealment = 3;
 static int decoder_reorder_pts= 0;
 
@@ -786,7 +785,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 continue;
 
             if (!is->reformat_ctx &&
-                (dec->channels != 2 || dec->sample_fmt != SAMPLE_FMT_S16)) {
+                (dec->channels != 2 || dec->sample_fmt != AV_SAMPLE_FMT_S16)) {
 
                 is->reformat_ctx = av_audio_resample_init(
                     2,
@@ -794,7 +793,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                     // audio_sample_rate,
                     dec->sample_rate,
                     dec->sample_rate,
-                    SAMPLE_FMT_S16,
+                    AV_SAMPLE_FMT_S16,
                     dec->sample_fmt,
                     1, 0, 0, 1.0);
 
@@ -1027,7 +1026,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     enc->skip_frame= skip_frame;
     enc->skip_idct= skip_idct;
     enc->skip_loop_filter= skip_loop_filter;
-    enc->error_recognition= error_recognition;
     enc->error_concealment= error_concealment;
 
 //    set_context_opts(enc, avctx_opts[enc->codec_type], 0);
@@ -1189,7 +1187,7 @@ static int decode_thread(void *arg)
     if(genpts)
         ic->flags |= AVFMT_FLAG_GENPTS;
 
-    err = av_find_stream_info(ic);
+    err = avformat_find_stream_info(ic, NULL);
 
     if (err < 0) {
         fprintf(stderr, "could not find codec parameters\n");
