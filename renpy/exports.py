@@ -891,7 +891,6 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
         roll_forward = None
     
     rv = renpy.ui.interact(suppress_overlay=True,
-                           suppress_underlay=True,
                            show_mouse=False,
                            roll_forward=roll_forward)
 
