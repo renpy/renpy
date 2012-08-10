@@ -826,7 +826,7 @@ class Window(Container):
         yminimum = scale(style.yminimum, height)
 
         size_group = self.style.size_group
-        if size_group:
+        if size_group and size_group in size_groups:
             xminimum = max(xminimum, size_groups[size_group].width(width, height, st, at))
         
         left_margin = scale(style.left_margin, width)
