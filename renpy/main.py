@@ -361,5 +361,6 @@ def main():
             renpy.loadsave.autosave_not_running.wait()
             
     # This is stuff we do on a normal, non-error return.
-    renpy.display.render.check_at_shutdown()
+    if not renpy.display.error.error_handled:
+        renpy.display.render.check_at_shutdown()
 

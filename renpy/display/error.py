@@ -24,6 +24,8 @@
 import renpy.display
 import os
 
+error_handled = False
+
 ##############################################################################
 # Initialized approach.
 
@@ -71,6 +73,9 @@ def report_exception(short, full, traceback_fn):
     be raised by the normal reporting mechanisms. Otherwise, should raise
     the appropriate exception to cause a reload or quit or rollback.
     """
+
+    global error_handled
+    error_handled = True
 
     error_dump()
 
@@ -125,6 +130,9 @@ def report_parse_errors(errors, error_fn):
     be raised by the normal reporting mechanisms. Otherwise, should raise
     the appropriate exception.
     """
+
+    global error_handled
+    error_handled = True
 
     error_dump()
 
