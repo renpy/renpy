@@ -97,6 +97,7 @@ init -1110 python:
 
     # Ease images around. These are basically cosine-warped moves.
     def _ease_out_time_warp(x):
+        print "ZZZ"
         import math
         return 1.0 - math.cos(x * math.pi / 2.0)
 

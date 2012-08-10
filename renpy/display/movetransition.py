@@ -418,6 +418,9 @@ class MoveInterpolate(renpy.display.core.Displayable):
         else:
             done = self.st / self.delay
         
+        if self.time_warp is not None:
+            done = self.time_warp(done)
+        
         absolute = renpy.display.core.absolute
         
         def I(a, b):
