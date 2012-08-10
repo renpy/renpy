@@ -41,6 +41,13 @@ in Python.
 Screens are updated at the start of each interaction, and each time an
 interaction is restarted.
 
+**Screen code must not cause side effects that are visible from
+outside the screen.** Ren'Py will run screen code multiple times, as
+it deems necessary. It runs screen code as part of the image
+prediction process, before the screen is first shown. As a result, if
+screen code has side effects, those side effects may occur at
+unpredictable times.
+
 A screen has a scope associated with it, giving values to some
 variables. When a variable is accessed by a screen, it's first looked
 up in the scope, and then looked up as a global variable.
@@ -1335,7 +1342,13 @@ Python
 
 The screen language also includes single-line and multiple-line python
 statements, which can execute python code. This code runs in the scope
-of the statement.
+of the screen.
+
+**Python code must not cause side effects that are visible from
+outside the screen.** Ren'Py will run screen code multiple times, as it
+deems necessary. It runs screen code as part of the image prediction
+process, before the screen is first shown. As a result, if screen code
+has side effects, those side effects may occur at unpredictable times.
 
 ::
 
