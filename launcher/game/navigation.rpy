@@ -198,19 +198,19 @@ screen navigation:
                             for group_name, group in groups:
                             
                                 if group_name is not None:
-                                    text group_name
+                                    text "[group_name!q]"
                                  
                                 if persistent.navigation == "todo":    
                                     vbox:
                                         for name, filename, line in group:
-                                            textbutton name action editor.Edit(filename, line)
+                                            textbutton "[name!q]" action editor.Edit(filename, line)
                                         
                                 else:
                                     hbox:
                                         box_wrap True
                                         
                                         for name, filename, line in group:
-                                            textbutton name action editor.Edit(filename, line)
+                                            textbutton "[name!q]" action editor.Edit(filename, line)
 
                                 if group_name is not None:
                                     add SPACER
