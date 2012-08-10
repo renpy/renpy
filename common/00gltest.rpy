@@ -357,9 +357,9 @@ label _directx_update_main:
         import subprocess
         import sys
         
-        # Start dxsetup. We have to go through start to ensure that UAC
+        # Start dxsetup. We have to go through startfile to ensure that UAC
         # doesn't cause problems.
-        subprocess.Popen(["start", __dxwebsetup], shell=True)
+        os.startfile(__dxwebsetup)
 
         renpy.show_screen("_directx_update")
         ui.interact(suppress_overlay=True, suppress_underlay=True)
