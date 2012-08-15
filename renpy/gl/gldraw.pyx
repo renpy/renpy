@@ -381,10 +381,15 @@ cdef class GLDraw:
             renpy.display.log.write("GL is totally blacklisted.")
             return False
 
-        if not ANGLE and version.startswith("OpenGL ES"):
+        if ANGLE:
+            gltexture.use_angle()
+        elif version.startswith("OpenGL ES"):
             self.redraw_period = 1.0
             self.always_opaque = True
+
             gltexture.use_gles()
+        else:
+            gltexture.use_gl()
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)            
         extensions = set(extensions_string.split(" "))

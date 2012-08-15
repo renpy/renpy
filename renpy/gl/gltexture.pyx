@@ -28,6 +28,7 @@ from pygame cimport *
 from cpython.string cimport PyString_FromStringAndSize
 from libc.stdlib cimport calloc, free
 
+import sys
 import time
 import collections
 import renpy
@@ -42,18 +43,65 @@ SIZES = [ 64 ]
 # A list of texture number allocated.
 texture_numbers = [ ]
 
-cdef int rtt_format = GL_RGBA
-cdef int rtt_internalformat = GL_RGBA
+cdef GLenum tex_format = GL_RGBA
+cdef GLenum tex_internalformat = GL_RGBA
+cdef GLenum tex_type = GL_UNSIGNED_BYTE
+cdef GLenum rtt_format = GL_RGBA
+cdef GLenum rtt_internalformat = GL_RGBA
+cdef GLenum rtt_type = GL_UNSIGNED_BYTE
 
-def use_gles():
-    """
-    Called to trigger gles mode.
-    """
+def use_angle():
+    global tex_format
+    global tex_internalformat
+    global tex_type
     global rtt_format
     global rtt_internalformat
+    global rtt_type
     
+    tex_format = GL_RGBA
+    tex_internalformat = GL_RGBA
+    tex_type = GL_UNSIGNED_BYTE
+    rtt_format = GL_RGBA
+    rtt_internalformat = GL_RGBA
+    rtt_type = GL_UNSIGNED_BYTE
+
+def use_gles():
+    global tex_format
+    global tex_internalformat
+    global tex_type
+    global rtt_format
+    global rtt_internalformat
+    global rtt_type
+    
+    tex_format = GL_RGBA
+    tex_internalformat = GL_RGBA
+    tex_type = GL_UNSIGNED_BYTE
+
     rtt_format = GL_RGB 
     rtt_internalformat = GL_RGB 
+    rtt_type = GL_UNSIGNED_BYTE
+
+def use_gl():
+    global tex_format
+    global tex_internalformat
+    global tex_type
+    global rtt_format
+    global rtt_internalformat
+    global rtt_type
+    
+    # Optimize for the case of little-endian systems that use ARGB.
+    if sys.byteorder == 'little':    
+        tex_format = GL_BGRA
+        tex_internalformat = GL_RGBA
+        tex_type = GL_UNSIGNED_INT_8_8_8_8_REV
+    else:
+        tex_format = GL_RGBA
+        tex_internalformat = GL_RGBA
+        tex_type = GL_UNSIGNED_BYTE
+
+    rtt_format = GL_BGRA
+    rtt_internalformat = GL_RGBA 
+    rtt_type = GL_UNSIGNED_INT_8_8_8_8_REV
 
 def test_texture_sizes(Environ environ, draw):
     """
@@ -99,12 +147,22 @@ def test_texture_sizes(Environ environ, draw):
         if not bitmap:
             renpy.display.log.write("- Could not allocate {0}px bitmap.".format(size))
             break
+
+        if tex_format == GL_RGBA:
         
-        for i from 0 <= i < size * size:
-            bitmap[i * 4 + 0] = 0xff
-            bitmap[i * 4 + 1] = 0x00
-            bitmap[i * 4 + 2] = 0x00
-            bitmap[i * 4 + 3] = 0xff
+            for i from 0 <= i < size * size:
+                bitmap[i * 4 + 0] = 0xff # r
+                bitmap[i * 4 + 1] = 0x00 # g
+                bitmap[i * 4 + 2] = 0x00 # b 
+                bitmap[i * 4 + 3] = 0xff # a
+
+        else:
+            
+            for i from 0 <= i < size * size:
+                bitmap[i * 4 + 0] = 0x00 # b
+                bitmap[i * 4 + 1] = 0x00 # g
+                bitmap[i * 4 + 2] = 0xff # r
+                bitmap[i * 4 + 3] = 0xff # a
             
         # Create a texture of the given size.
         glActiveTextureARB(GL_TEXTURE0)
@@ -112,7 +170,7 @@ def test_texture_sizes(Environ environ, draw):
         glBindTexture(GL_TEXTURE_2D, tex)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap)
+        glTexImage2D(GL_TEXTURE_2D, 0, tex_internalformat, size, size, 0, tex_format, tex_type, bitmap)
 
         # Free the bitmap.
         free(bitmap)
@@ -331,29 +389,29 @@ cdef class TextureCore:
             # smaller than it, load in the empty texture.
             if w < self.width or h < self.height:
 
-                if self.format != GL_RGBA:
+                if self.format != tex_internalformat:
                     load_premultiplied(
                         None,
                         self.width,
                         self.height,
                         0,
-                        GL_RGBA,
-                        GL_RGBA)
-
-                    self.format = GL_RGBA
+                        False,
+                        )
+                    
+                    self.format = tex_internalformat
 
             # Otherwise, either load or replace the texture.
             load_premultiplied(
                 self.premult,
                 w,
                 h,
-                (self.format == GL_RGBA),
-                GL_RGBA,
-                GL_RGBA)
+                (self.format == tex_internalformat),
+                False,
+                )
 
             # Needs to be here twice, since we may not go through the w < SIDE
             # h < SIDE thing all the time.
-            self.format = GL_RGBA
+            self.format = tex_internalformat
 
             # Finally, load in the default math.
             self.xadd = self.yadd = 0
@@ -382,8 +440,7 @@ cdef class TextureCore:
                 self.width,
                 self.height,
                 0,
-                rtt_format,
-                rtt_internalformat)
+                True)
 
             self.format = rtt_format
          
@@ -1059,30 +1116,64 @@ def premultiply(
         
         # Advance to the next row.
         pixels += surf.pitch
+        
+        if tex_format == GL_RGBA:
       
-        if alpha:
+            # RGBA path.
       
-            while p < pend:
+            if alpha:
+          
+                while p < pend:
+                    
+                    a = p[3]
+          
+                    op[0] = (p[0] * a + a) >> 8
+                    op[1] = (p[1] * a + a) >> 8
+                    op[2] = (p[2] * a + a) >> 8
+                    op[3] = a
+                                    
+                    p += 4
+                    op += 4
+                    
+            else:
                 
-                a = p[3]
-      
-                op[0] = (p[0] * a + a) >> 8
-                op[1] = (p[1] * a + a) >> 8
-                op[2] = (p[2] * a + a) >> 8
-                op[3] = a
-                                
-                p += 4
-                op += 4
-                
+                while p < pend:
+                    
+                    (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
+                    op[3] = 255
+                    
+                    p += 4
+                    op += 4
+
         else:
-            
-            while p < pend:
-                
-                (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
-                op[3] = 255
-                
-                p += 4
-                op += 4
+
+            # BGRA Path.
+
+            if alpha:
+          
+                while p < pend:
+                    
+                    a = p[3]
+ 
+                    op[0] = (p[2] * a + a) >> 8 # b
+                    op[1] = (p[1] * a + a) >> 8 # g 
+                    op[2] = (p[0] * a + a) >> 8 # r
+                    op[3] = a
+                    
+                    p += 4
+                    op += 4
+                    
+            else:
+
+                while p < pend:
+
+                    op[0] = p[2] # b 
+                    op[1] = p[1] # g
+                    op[2] = p[0] # r
+                    op[3] = 0xff # a
+                    
+                    p += 4
+                    op += 4
                 
     if border_left:
         pp = <unsigned int *> (out)
@@ -1121,11 +1212,22 @@ def premultiply(
     return rv
 
 
-def load_premultiplied(
-    data, width, height, update, format, internalformat,
-    ):
+def load_premultiplied(data, width, height, update, rtt):
 
     cdef char *pixels
+
+    cdef GLenum internalformat
+    cdef GLenum format
+    cdef GLenum type
+
+    if rtt:
+        internalformat = rtt_internalformat
+        format = rtt_format
+        type = rtt_type
+    else:
+        internalformat = tex_internalformat
+        format = tex_format
+        type = tex_type
 
     if data:
         pixels = data
@@ -1141,7 +1243,7 @@ def load_premultiplied(
             width,
             height,
             format,
-            GL_UNSIGNED_BYTE,
+            type,
             <GLubyte *> pixels)
 
     else:
@@ -1153,7 +1255,7 @@ def load_premultiplied(
             height,
             0,
             format,
-            GL_UNSIGNED_BYTE,
+            type,
             <GLubyte *> pixels)
 
 cdef void draw_rectangle(
