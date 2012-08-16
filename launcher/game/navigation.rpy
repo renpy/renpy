@@ -55,7 +55,8 @@ init python in navigation:
         
         for name, loc in name_map.items():
             filename, line = loc
-            
+            filename = filename.replace("\\", "/")
+
             if sort == "alphabetical":
                 group = None
             else:
@@ -86,6 +87,8 @@ init python in navigation:
         
         for fn in project.current.script_files():
             shortfn = fn
+            shortfn = shortfn.replace("\\", "/")
+
             if shortfn.startswith("game/"):
                 shortfn = fn[5:]
                 

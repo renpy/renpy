@@ -81,6 +81,8 @@ def dump(error):
         """
         Returns true if the name is included by the filter, or false if it is excluded.
         """
+
+        filename = filename.replace("\\", "/")
         
         if name.startswith("_") and not args.json_dump_private:
             if name.startswith("__") and name.endswith("__"):
@@ -232,7 +234,7 @@ def dump(error):
         result["build"] = renpy.store.build.dump() #@UndefinedVariable
     except:
         pass
-        
+    
     if args.json_dump != "-":
         with file(args.json_dump, "w") as f:
             json.dump(result, f)
