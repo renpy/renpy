@@ -318,7 +318,8 @@ init -1000 python in updater:
                     
             self.clean_old()
 
-            self.log.close()
+            if self.log:
+                self.log.close()
 
         def update(self):
             """
