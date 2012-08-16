@@ -116,6 +116,8 @@ typedef GLfloat GLdouble;
 #define glClientActiveTextureARB glClientActiveTexture
 #define glActiveTextureARB glActiveTexture
 
+#define GL_BGRA GL_RGBA
+#define GL_UNSIGNED_INT_8_8_8_8_REV GL_UNSIGNED_BYTE
 
 #endif
 

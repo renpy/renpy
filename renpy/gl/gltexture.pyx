@@ -21,6 +21,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+DEF ANGLE = False
+
 from gl cimport *
 from gldraw cimport *
 from pygame cimport *
@@ -61,6 +63,7 @@ def use_angle():
     tex_format = GL_RGBA
     tex_internalformat = GL_RGBA
     tex_type = GL_UNSIGNED_BYTE
+
     rtt_format = GL_RGBA
     rtt_internalformat = GL_RGBA
     rtt_type = GL_UNSIGNED_BYTE
@@ -88,7 +91,7 @@ def use_gl():
     global rtt_format
     global rtt_internalformat
     global rtt_type
-    
+
     # Optimize for the case of little-endian systems that use ARGB.
     if sys.byteorder == 'little':    
         tex_format = GL_BGRA
@@ -99,9 +102,9 @@ def use_gl():
         tex_internalformat = GL_RGBA
         tex_type = GL_UNSIGNED_BYTE
 
-    rtt_format = GL_BGRA
+    rtt_format = GL_RGBA
     rtt_internalformat = GL_RGBA 
-    rtt_type = GL_UNSIGNED_INT_8_8_8_8_REV
+    rtt_type = GL_UNSIGNED_BYTE
 
 def test_texture_sizes(Environ environ, draw):
     """
