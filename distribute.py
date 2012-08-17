@@ -129,6 +129,7 @@ def main():
     import renpy
 
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) #@UndefinedVariable
+    zip_version = ".".join(str(i) for i in renpy.version_tuple[:3]) #@UndefinedVariable
 
     s = subprocess.check_output([ "git", "describe", "--dirty", "--match", match_version ])
     parts = s.strip().split("-")
@@ -145,7 +146,7 @@ def main():
 
     # Check that the versions match.
     full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
-    if not full_version.startswith(args.version): 
+    if args.version != "experimental" and not full_version.startswith(args.version): 
         raise Exception("The command-line and Ren'Py versions do not match.") 
 
     print "Version {} ({})".format(args.version, full_version) 
@@ -210,7 +211,7 @@ def main():
 
 
     # Write 7z.exe.
-    sdk = "renpy-{}-sdk".format(args.version)
+    sdk = "renpy-{}-sdk".format(zip_version)
 
     if not args.fast:
 
