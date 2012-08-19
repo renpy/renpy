@@ -503,6 +503,7 @@ side_position_properties = [ PrefixStyle("side_", i) for i in position_property_
 
 text_property_names = [
         "antialias",
+        "vertical",
         "black_color",
         "bold",
         "color",

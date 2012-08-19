@@ -3,6 +3,7 @@
 
 from pygame cimport *
 from freetype cimport *
+from ttgsubtable cimport *
 from textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
 
@@ -145,6 +146,7 @@ cdef class FTFont:
 
         FTFace face_object
         FT_Face face
+        TTGSUBTable gsubtable
 
         # A cache of various properties.
         float size
@@ -152,6 +154,7 @@ cdef class FTFont:
         bint italic
         int outline
         bint antialias
+        bint vertical
 
         # Information used to modify the font.
 
@@ -180,6 +183,8 @@ cdef class FTFont:
         for i from 0 <= i < 256:
             self.cache[i].index = -1
             FT_Bitmap_New(&(self.cache[i].bitmap))
+            
+        init_gsubtable(&self.gsubtable)
 
     def __dealloc__(self):
         for i from 0 <= i < 256:
@@ -187,9 +192,11 @@ cdef class FTFont:
         
         if self.stroker != NULL:
             FT_Stroker_Done(self.stroker)
+            
+        free_gsubtable(&self.gsubtable)
         
         
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical):
         
         if size < 1:
             size = 1
@@ -202,6 +209,10 @@ cdef class FTFont:
         self.italic = italic
         self.outline = outline
         self.antialias = antialias
+        self.vertical = vertical
+        
+        if self.face.face_flags & 32 == 32: # FT_HAS_VERTICAL(face)
+            LoadGSUBTable(&self.gsubtable, self.face)
         
         if outline == 0:        
             self.stroker = NULL;
@@ -257,7 +268,10 @@ cdef class FTFont:
 
             self.lineskip = self.height
             
-            self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
+            if self.vertical:
+                self.underline_offset = FT_FLOOR(FT_MulFix(face.ascender, scale))
+            else:
+                self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
             self.underline_height = FT_FLOOR(FT_MulFix(face.underline_thickness, scale))
 
             if self.underline_height < 1:
@@ -277,16 +291,25 @@ cdef class FTFont:
 
         cdef int error
         cdef glyph_cache *rv
+        cdef uint32_t vindex
 
         cdef int overhang
+        cdef FT_Glyph_Metrics metrics
+    
+        face = self.face
+
+        if self.vertical and self.gsubtable.loaded == 1:
+            glyph_rotate = True
+            if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
+                index = vindex
+        else:
+            glyph_rotate = False
 
         rv = &(self.cache[index & 255])        
         if rv.index == index:            
             return rv
     
         rv.index = index
-    
-        face = self.face
         
         error = FT_Load_Glyph(face, index, 0)
         if error:
@@ -307,6 +330,17 @@ cdef class FTFont:
                 
                 FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
     
+            if glyph_rotate:
+                metrics = face.glyph.metrics
+                # move the origin for vertical layout
+                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                shear.xx = 0
+                shear.xy = -(1 << 16)
+                shear.yx = 1 << 16
+                shear.yy = 0
+                FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
+                # set vertical baseline to a half of the height
+                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) / 2)
     
             try:
                 if self.stroker != NULL:
@@ -349,7 +383,10 @@ cdef class FTFont:
 
          
         # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
-        rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
+        if glyph_rotate:
+            rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
+        else:
+            rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
     
         rv.bitmap_left = bg.left + self.expand / 2
         rv.bitmap_top = bg.top - self.expand / 2

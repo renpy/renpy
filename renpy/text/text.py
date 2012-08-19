@@ -164,6 +164,7 @@ class TextSegment(object):
             
         if source is not None:
             self.antialias = source.antialias
+            self.vertical = source.vertical
             self.font = source.font
             self.size = source.size
             self.bold = source.bold
@@ -185,7 +186,7 @@ class TextSegment(object):
             self.ruby_bottom = False
             
     def __repr__(self):
-        return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}>".format(**self.__dict__)
+        return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
             
     def take_style(self, style):
         """
@@ -193,6 +194,7 @@ class TextSegment(object):
         """
         
         self.antialias = style.antialias
+        self.vertical = style.vertical
         self.font = style.font
         self.size = style.size
         self.bold = style.bold
@@ -216,7 +218,7 @@ class TextSegment(object):
         Return the list of glyphs corresponding to unicode string s.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical)
         rv = fo.glyphs(s)
         
         # Apply kerning to the glyphs.
@@ -246,7 +248,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
         
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical)
         fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -732,7 +734,10 @@ class Layout(object):
                     hls.set_prefix("idle_")
 
                 ts = push()
+                # inherit vertical style
+                vert_style = ts.vertical
                 ts.take_style(hls)
+                ts.vertical = vert_style
                 ts.hyperlink = link
 
                 hls.set_prefix(old_prefix)
@@ -777,7 +782,10 @@ class Layout(object):
             
             elif tag == "rt":
                 ts = push()
+                # inherit vertical style
+                vert_style = ts.vertical
                 ts.take_style(style.ruby_style)
+                ts.vertical = vert_style
                 ts.ruby_top = True
                 self.has_ruby = True
                 
@@ -792,6 +800,13 @@ class Layout(object):
                     ts.cps *= float(value[1:])
                 else:
                     ts.cps = float(value)
+ 
+            elif tag == "vert":
+                push().vertical = True
+ 
+            elif tag == "horiz":
+                ts = push()
+                ts.vertical = False
             
             else:
                 raise Exception("Unknown text tag %r" % text)
