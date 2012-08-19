@@ -495,7 +495,8 @@ void LoadGSUBTable(TTGSUBTable *table, FT_Face face)
     FT_Bytes gpos = NULL;
     FT_Bytes gsub = NULL;
     FT_Bytes jstf = NULL;
-    if(FT_OpenType_Validate(face, FT_VALIDATE_GSUB, &base, &gdef, &gpos, &gsub, &jstf) != 0)
+    FT_OpenType_Validate(face, FT_VALIDATE_GSUB, &base, &gdef, &gpos, &gsub, &jstf);
+    if(gsub == NULL)
     {
         table->loaded = 0;
         return;

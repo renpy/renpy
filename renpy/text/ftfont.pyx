@@ -211,8 +211,7 @@ cdef class FTFont:
         self.antialias = antialias
         self.vertical = vertical
         
-        if self.face.face_flags & 32 == 32: # FT_HAS_VERTICAL(face)
-            LoadGSUBTable(&self.gsubtable, self.face)
+        LoadGSUBTable(&self.gsubtable, self.face)
         
         if outline == 0:        
             self.stroker = NULL;
@@ -299,12 +298,12 @@ cdef class FTFont:
         face = self.face
 
         if self.vertical:
-            if self.gsubtable.loaded == 1:
+            if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
+                index = vindex
+            if self.face.face_flags & 32 == 32: # FT_HAS_VERTICAL(face)
                 glyph_rotate = 1
-                if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
-                    index = vindex
             else:
-                # font doesn't support vertical layout (simulate it)
+                # font doesn't have vertical metrics (simulate it)
                 glyph_rotate = 2
         else:
             glyph_rotate = 0
