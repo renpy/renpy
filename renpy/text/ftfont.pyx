@@ -298,12 +298,16 @@ cdef class FTFont:
     
         face = self.face
 
-        if self.vertical and self.gsubtable.loaded == 1:
-            glyph_rotate = True
-            if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
-                index = vindex
+        if self.vertical:
+            if self.gsubtable.loaded == 1:
+                glyph_rotate = 1
+                if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
+                    index = vindex
+            else:
+                # font doesn't support vertical layout (simulate vertical layout)
+                glyph_rotate = 2
         else:
-            glyph_rotate = False
+            glyph_rotate = 0
 
         rv = &(self.cache[index & 255])        
         if rv.index == index:            
@@ -330,10 +334,13 @@ cdef class FTFont:
                 
                 FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
     
-            if glyph_rotate:
+            if glyph_rotate != 0:
                 metrics = face.glyph.metrics
                 # move the origin for vertical layout
-                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                if glyph_rotate == 1:
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
+                else:
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance / 2 - metrics.horiBearingX, - metrics.horiBearingY)
                 shear.xx = 0
                 shear.xy = -(1 << 16)
                 shear.yx = 1 << 16
@@ -383,8 +390,10 @@ cdef class FTFont:
 
          
         # rv.width = FT_CEIL(face.glyph.metrics.width) + self.expand
-        if glyph_rotate:
+        if glyph_rotate == 1:
             rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
+        elif glyph_rotate == 2:
+            rv.advance = (face.ascender - face.descender) / 64.0 + self.expand + overhang
         else:
             rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
     
