@@ -304,7 +304,7 @@ cdef class FTFont:
                 if GetVerticalGlyph(&self.gsubtable, index, &vindex) == 0:
                     index = vindex
             else:
-                # font doesn't support vertical layout (simulate vertical layout)
+                # font doesn't support vertical layout (simulate it)
                 glyph_rotate = 2
         else:
             glyph_rotate = 0
