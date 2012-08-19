@@ -340,7 +340,7 @@ cdef class FTFont:
                 if glyph_rotate == 1:
                     FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
                 else:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance / 2 - metrics.horiBearingX, - metrics.horiBearingY)
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance / 2, - metrics.horiBearingY)
                 shear.xx = 0
                 shear.xy = -(1 << 16)
                 shear.yx = 1 << 16
