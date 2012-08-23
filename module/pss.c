@@ -1073,10 +1073,10 @@ void PSS_init(int freq, int stereo, int samples, int status) {
         return;
     }
 
-    SDL_PauseAudio(0);
-    
     ffpy_init(audio_spec.freq, status);
 
+    SDL_PauseAudio(0);
+    
     initialized = 1;
 
     error(SUCCESS);

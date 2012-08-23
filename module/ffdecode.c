@@ -1058,7 +1058,6 @@ static int stream_component_open(VideoState *is, int stream_index)
 
         memset(&is->audio_pkt, 0, sizeof(is->audio_pkt));
         packet_queue_init(&is->audioq);
-        SDL_PauseAudio(0);
         break;
     case AVMEDIA_TYPE_VIDEO:
         is->video_stream = stream_index;
