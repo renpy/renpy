@@ -149,10 +149,10 @@ typedef struct VideoState {
     char *filename;
 
     // Have we initialized fully?
-    int started;
+    volatile int started;
 
     // Have we finished decoding?
-    int finished;
+    volatile int finished;
 
     // The audio duration.
     unsigned int audio_duration;
@@ -1259,8 +1259,6 @@ static int decode_thread(void *arg)
         goto fail;
     }
 
-    is->started = 1;
-
     // Compute the number of samples we need to play back.
     {
         long long duration = ((long long) is->ic->duration) * audio_sample_rate;
@@ -1274,6 +1272,8 @@ static int decode_thread(void *arg)
     
     SDL_UnlockMutex(codec_mutex);
     codecs_locked = 0;
+
+    is->started = 1;
     
     for(;;) {
 

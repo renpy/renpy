@@ -63,19 +63,21 @@ static void decref(PyObject *ref) {
 }
 
 /* A mutex that protects the shared data structures. */
-SDL_mutex *mutex;
+SDL_mutex *name_mutex;
+
+#define LOCK_NAME() { SDL_LockMutex(name_mutex); }
+#define UNLOCK_NAME() { SDL_UnlockMutex(name_mutex); }
 
 /* Locking on entry from python... */
 // #define BEGIN() PyThreadState *_save;
 // #define ENTER() { printf("Locking by %s.\n", __FUNCTION__); _save = PyEval_SaveThread(); SDL_LockAudio(); printf("Lock by %s\n", __FUNCTION__);  }
 // #define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); printf("Release by %s\n", __FUNCTION__); }
 
-#define LOCK() { SDL_LockMutex(mutex); }
-#define UNLOCK() { SDL_UnlockMutex(mutex); }
-
 #define BEGIN() PyThreadState *_save;
-#define ENTER() { _save = PyEval_SaveThread(); LOCK(); }
-#define EXIT() { UNLOCK(); PyEval_RestoreThread(_save); }
+#define ENTER() { _save = PyEval_SaveThread(); SDL_LockAudio(); }
+#define EXIT() { SDL_UnlockAudio(); PyEval_RestoreThread(_save); }
+#define ALTENTER() { _save = PyEval_SaveThread(); }
+#define ALTEXIT() { PyEval_RestoreThread(_save); }
 
 /* Min and Max */
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -406,8 +408,6 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
 
-    LOCK();
-
     for (channel = 0; channel < num_channels; channel++) {
 
         
@@ -429,9 +429,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
             // Decode some amount of data.
 
-            UNLOCK();
             bytes = ffpy_audio_decode(c->playing, buffer, mixleft);
-            LOCK();
             
             // We have some data in the buffer.
             if (c->stop_bytes && bytes) {
@@ -468,6 +466,8 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 d->stream = c->playing;
                 dying = d;
                 
+                LOCK_NAME();
+
                 decref(c->playing_name);
 
                 c->playing = c->queued;
@@ -479,6 +479,8 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->queued_name = NULL;
                 c->queued_fadein = 0;
                 c->queued_tight = 0;
+
+                UNLOCK_NAME();
                 
                 start_sample(c, ! old_tight);
                 
@@ -488,7 +490,6 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
     }
 
-    UNLOCK();
 }
 
 /*
@@ -558,6 +559,8 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     c = &channels[channel];
     ENTER();
     
+    LOCK_NAME();
+
     /* Free playing and queued samples. */
     if (c->playing) {
         free_sample(c->playing);
@@ -574,13 +577,14 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
         c->queued_name = NULL;
         c->queued_tight = 0;
     }
-        
+
     /* Allocate playing sample. */
     
     c->playing = load_sample(rw, ext);
 
     if (! c->playing) {
-        EXIT();
+    	UNLOCK_NAME();
+    	EXIT();
         error(SOUND_ERROR);
         return;
     }
@@ -595,6 +599,8 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     start_sample(c, 1);    
 /*     update_pause(); */
         
+    UNLOCK_NAME();
+
     EXIT();
     error(SUCCESS);
 }
@@ -665,6 +671,7 @@ void PSS_stop(int channel) {
     c = &channels[channel];
 
     ENTER();
+    LOCK_NAME();
 
     if (c->playing) {
         post_event(c);
@@ -686,7 +693,8 @@ void PSS_stop(int channel) {
     }
     
 /*     update_pause(); */
-    
+
+    UNLOCK_NAME();
     EXIT();    
 
     error(SUCCESS);
@@ -757,8 +765,8 @@ int PSS_queue_depth(int channel) {
 }
 
 PyObject *PSS_playing_name(int channel) {
-    BEGIN();
-    PyObject *rv;
+	BEGIN();
+	PyObject *rv;
     
     struct Channel *c;
 
@@ -767,9 +775,12 @@ PyObject *PSS_playing_name(int channel) {
         return Py_None;
     }
 
-    ENTER();
 
     c = &channels[channel];
+
+    ALTENTER();
+    LOCK_NAME();
+    ALTEXIT();
 
     if (c->playing_name) {
         rv = c->playing_name;
@@ -777,9 +788,12 @@ PyObject *PSS_playing_name(int channel) {
         rv = Py_None;
     }
 
-    incref(rv);
+    Py_INCREF(rv);
 
-    EXIT();
+    ALTENTER();
+    UNLOCK_NAME();
+    ALTEXIT();
+
     error(SUCCESS);
         
     return rv;
@@ -1041,7 +1055,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
         return;
     }
 
-    mutex = SDL_CreateMutex();
+    name_mutex = SDL_CreateMutex();
 
     PyEval_InitThreads();
 
@@ -1068,7 +1082,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
     audio_spec.callback = callback;
     audio_spec.userdata = NULL;
 
-    if (SDL_OpenAudio(&audio_spec, &audio_spec)) {
+    if (SDL_OpenAudio(&audio_spec, NULL)) {
         error(SDL_ERROR);
         return;
     }
