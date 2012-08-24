@@ -248,10 +248,13 @@ init python:
     # module.    
     build.classify_renpy("module/", "source")
     build.classify_renpy("module/*.c", "source")
+    build.classify_renpy("module/gen/", "source")
     build.classify_renpy("module/gen/*.c", "source")
     build.classify_renpy("module/*.h", "source")
     build.classify_renpy("module/*.py*", "source")
+    build.classify_renpy("module/include/", "source")
     build.classify_renpy("module/include/*.pxd", "source")
+    build.classify_renpy("module/pysdlsound/", "source")
     build.classify_renpy("module/pysdlsound/*.py", "source")
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
 
