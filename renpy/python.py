@@ -84,38 +84,49 @@ class StoreDict(dict):
 
         # A copy of this dict as it was at the end of the init phase.
         self.clean = { }
-        
-        # When a variable changes during the current rollback period, its
-        # initial value is stored here. If the object was created during
-        # the period, its value is deleted.
-        self.changes = { }
+
+        # The value of this dictionary at the start of the current
+        # rollback period (when begin() was last called).
+        self.old = { }
         
         # The set of variables in this StoreDict that changed since the 
         # end of the init phase.
         self.ever_been_changed = set()
-        
-    def __setitem__(self, key, value):
-        if key not in self.changes:
-            self.ever_been_changed.add(key)
-           
-            if key in self:
-                self.changes[key] = self[key]
-            else:
-                self.changes[key] = deleted
 
-        dict.__setitem__(self, key, value)
+    def begin(self):
+        """
+        Called to mark the start of a rollback period.
+        """
         
-    def __delitem__(self, key):        
+        self.old = dict(self)
         
-        if key not in self.changes and key in self:
-            self.ever_been_changed.add(key)
-            self.changes[key] = self[key]
+    def get_changes(self):
+        """
+        For every key that has changed since begin() was called, returns a 
+        dictionary mapping the key to its value when begin was called, or 
+        deleted if it did not exist when begin was called.
+
+        As a side-effect, updates self.ever_been_changed.
+        """
+        
+        rv = { }
+        
+        for k in self:
+            if k not in self.old:
+                rv[k] = deleted
                 
-        dict.__delitem__(self, key)
+        for k, v in self.old.iteritems():
+            
+            new_v = self.get(k, deleted)
+            
+            if new_v is not v:
+                rv[k] = v
+                
+        for k in rv:
+            self.ever_been_changed.add(k)
 
-    def update(self, d):
-        for k, v in d.iteritems():
-            self.__setitem__(k, v)
+        return rv    
+        
         
 # A map from the name of a store dict to the corresponding StoreDict object.
 store_dicts = { }
@@ -844,11 +855,9 @@ class RollbackLog(renpy.object.Object):
 
         self.rolled_forward = False
 
-        # Reset the list of changes.
-        for name, sd in store_dicts.iteritems():
-            sd.changes = { }            
-            self.current.stores[name] = sd.changes
-
+        # Reset the point that changes are relative to.
+        for sd in store_dicts.itervalues():
+            sd.begin()
         
     def complete(self):
         """
@@ -858,6 +867,11 @@ class RollbackLog(renpy.object.Object):
         be called after an update to the store but before a rollback
         occurs.
         """
+
+        # Update self.current.stores with the changes from each store.
+        # Also updates .ever_been_changed.
+        for name, sd in store_dicts.iteritems():
+            self.current.stores[name] = sd.get_changes()
 
         # Update the list of mutated objects and what we need to do to 
         # restore them.
