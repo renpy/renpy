@@ -432,7 +432,10 @@ init python in project:
             self.project.launch()
 
     manager.scan()
-        
+
+    if isinstance(persistent.projects_directory, str):
+        persistent.projects_directory = renpy.fsdecode(persistent.projects_directory)
+
 
 ###############################################################################
 # Code to choose the projects directory.
@@ -495,8 +498,9 @@ label choose_projects_directory:
             path = default_path
             interface.info(_("Ren'Py has set the projects directory to:"), "[path!q]", path=path)
 
+        path = renpy.fsdecode(path)
+
         persistent.projects_directory = path                    
         project.manager.scan()
     
     return
-    
