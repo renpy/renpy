@@ -1120,14 +1120,13 @@ class RollbackLog(renpy.object.Object):
         clean_stores()
                 
         for name, value in roots.iteritems():
-            
+
             if "." in name:
                 store_name, name = name.rsplit(".", 1)
             else:
                 store_name = "store"
                 
             if store_name not in store_dicts:
-                print "This path"
                 continue
             
             store = store_dicts[store_name]
