@@ -268,7 +268,7 @@ cdef class FTFont:
             self.lineskip = self.height
             
             if self.vertical:
-                self.underline_offset = FT_FLOOR(FT_MulFix(face.ascender, scale))
+                self.underline_offset = FT_FLOOR(FT_MulFix(face.ascender + face.descender - face.underline_position, scale))
             else:
                 self.underline_offset = FT_FLOOR(FT_MulFix(face.underline_position, scale))
             self.underline_height = FT_FLOOR(FT_MulFix(face.underline_thickness, scale))
