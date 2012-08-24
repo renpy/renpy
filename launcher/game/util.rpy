@@ -10,10 +10,14 @@ init python in util:
         yielding (name, isdir) tuples. The names are given relative to 
         `base`, which defaults to `directory` if None.
         """
-    
+
+        directory = renpy.fsdecode(directory)
+        
         if base is None:
             base = directory
-    
+        else:
+            base = renpy.fsdecode(base)
+ 
         for subdir, directories, files in os.walk(directory):
             for fn in directories:
                 fullfn = os.path.join(subdir, fn)

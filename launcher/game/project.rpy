@@ -436,7 +436,6 @@ init python in project:
     if isinstance(persistent.projects_directory, str):
         persistent.projects_directory = renpy.fsdecode(persistent.projects_directory)
 
-
 ###############################################################################
 # Code to choose the projects directory.
             
