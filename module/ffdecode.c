@@ -563,8 +563,14 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
     uint8_t *bytes = (uint8_t *) &pixel;
 
     SDL_LockMutex(is->pictq_mutex);
-    
+
     if (!ffpy_needs_alloc) {
+        SDL_UnlockMutex(is->pictq_mutex);
+    	return;
+    }
+
+    if (! is->video_st) {
+    	ffpy_needs_alloc = 0;
         SDL_UnlockMutex(is->pictq_mutex);
     	return;
     }
@@ -1033,7 +1039,7 @@ static int stream_component_open(VideoState *is, int stream_index)
     if (!codec) {
         return -1;
     }
-        
+
     err = avcodec_open2(enc, codec, NULL);
     
     if (err < 0) {
@@ -1042,12 +1048,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     
     is->audio_hw_buf_size = 2048;
     
-#if 0
-    if(thread_count>1)
-        avcodec_thread_init(enc, thread_count);
-#endif
-
-    enc->thread_count= thread_count;
     ic->streams[stream_index]->discard = AVDISCARD_DEFAULT;
     switch(enc->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
