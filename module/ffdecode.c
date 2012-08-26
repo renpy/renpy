@@ -1356,7 +1356,8 @@ fail:
     if (is->video_stream >= 0)
         stream_component_close(is, is->video_stream);
     if (is->ic) {
-        avformat_close_input(&(is->ic));
+        av_close_input_stream(is->ic);
+        is->ic = NULL;
     }
         
     is->audio_stream = -1;
