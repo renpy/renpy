@@ -1152,7 +1152,6 @@ static int decode_thread(void *arg)
     AVFormatContext *ic;
     int err, i, ret, video_index, audio_index;
     AVPacket pkt1, *pkt = &pkt1;
-    AVFormatParameters params, *ap = &params;
     int codecs_locked = 0;
     
     // url_set_interrupt_cb(decode_interrupt_cb);
@@ -1161,8 +1160,6 @@ static int decode_thread(void *arg)
     audio_index = -1;
     is->video_stream = -1;
     is->audio_stream = -1;
-
-    memset(ap, 0, sizeof(*ap));
 
     is->io_context = rwops_open(is->rwops);
 
