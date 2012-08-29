@@ -1,4 +1,6 @@
-BBuilding Android Applications
+.. highlight:: none
+
+Building Android Applications
 =============================
 
 |PGS4A| contains tools that help you take a packaging-centric approach
@@ -23,9 +25,9 @@ Building your first package takes four steps:
    install the package on your device.
 
 Once you've finished these four steps, you'll have a runnable Android
-package. You'll only need to run step 3 when you decide to make changes to your game's configuration or when 
-
-configuring a new game entirely; you'll run step 4 most often, whenever you need to make a new build of your game. 
+package. You'll only need to run step 3 when you decide to make changes to your 
+game's configuration or when configuring a new game entirely; you'll run step 
+4 most often, whenever you need to make a new build of your game. 
 
 
 Host Platform Support
@@ -35,9 +37,8 @@ We've tested |PGS4A| on Linux and Windows computers. While it should
 work on Mac OS X, we haven't tested it there, so there may be problems
 encountered. The examples we give will be for Linux and Windows.
 
-The |PGS4A| tools are command-line based. We will try to assist you with examples to familiarise you with the 
-
-command line on Windows.
+The |PGS4A| tools are command-line based. We will try to assist you with 
+examples to familiarize you with the command line on Windows.
 
 
 Step 1: Installing |PGS4A| and its Dependencies
@@ -45,7 +46,6 @@ Step 1: Installing |PGS4A| and its Dependencies
 
 There are four things you may need to manually download and install
 before you can run |PGS4A|:
-
 
 **Java Development Kit.**
 The Java Development Kit (JDK) contains several tools that are used by
@@ -102,20 +102,16 @@ In all cases, you should run ``android.py`` from within the |PGS4A|
 directory. (That is, the directory containing ``android.py`` itself.)
 
 
-On Windows, to do this, you will need to open up the command line by pressing and holding down the Windows key 
+On Windows, to do this, you will need to open up the command line by pressing 
+and holding down the Windows key and 'R'. In the small window that pops up 
+write "cmd" and press Enter. This should bring up the command line.
 
-and 'R'. In the small window that pops up write "cmd" and press Enter. This should bring up the command line:
-
-.. image:: commandline.jpg
-   :align: center
-
-And to run the command from within the |PGS4A| directory you need to navigate to it from the command line. Find 
-
-out where you extracted |PGS4A| and copy the path from Explorer (just click in the address bar so the path turns 
-
-blue and press Ctrl+c). In the command prompt, write ``cd`` then a space, a double-quote, paste the path you just 
-
-copied from Explorer (right click and choose ``paste``), then another double-quote.
+To run the command from within the |PGS4A| directory you need to navigate to it 
+from the command line. Find out where you extracted |PGS4A| and copy the path 
+from Explorer (just click in the address bar so the path turns blue and 
+press Ctrl+c). In the command prompt, write ``cd`` then a space, a 
+double-quote, paste the path you just copied from Explorer (right click and 
+choose ``paste``), then another double-quote.
 
 Let's assume you extracted |PGS4A| to C:\tools\|PGS4A|. In the command line write::
 
@@ -128,17 +124,16 @@ just run::
 
     android.py test
 
-If you don't know what the above means or you don't want to do it, you will have to add the full path to Python to 
-
-each command in the following steps of this guide beginning with 'android.py'. If you installed Python to the default 
-
-location, the above command would become::
+If you don't know what the above means or you don't want to do it, you 
+will have to add the full path to Python to each command in 
+the following steps of this guide beginning with 'android.py'. If you 
+installed Python to the default location, the above command would become::
 
     C:\python27\python.exe android.py test
 
-If you installed Python to a different location, then find your Python install in Explorer, click in the address bar and 
-
-copy the path, then replace ``C:\python27`` with the path you copied instead - leaving ``\python.exe`` on the 
+If you installed Python to a different location, then find your Python install 
+in Explorer, click in the address bar and copy the path, then replace 
+``C:\python27`` with the path you copied instead - leaving ``\python.exe`` on the 
 
 end. So if your Python install is in ``C:\tools\python``, you would type::
 
@@ -347,7 +342,7 @@ This command runs the ``adb logcat`` command in a mode that selects
 only Python output.
 
 Troubleshooting and Support
---------------------
+---------------------------
 
 Here's a list of errors that you might encounter and possible solutions:
 
@@ -358,11 +353,10 @@ When trying to run::
 After having associated .py files with Python 2.7, if you get::
 
     Traceback (most recent call last):
-    File "C:\Visual Novels and Games\rapt-6.13.11.0\android.py", line 9, in <modul
-    e>
-    import subprocess
+    File "C:\Visual Novels and Games\rapt-6.13.11.0\android.py", line 9, in <module>
+        import subprocess
     File "C:\Python27\lib\subprocess.py", line 444, in <module>
-    from _subprocess import CREATE_NEW_CONSOLE, CREATE_NEW_PROCESS_GROUP
+        from _subprocess import CREATE_NEW_CONSOLE, CREATE_NEW_PROCESS_GROUP
     ImportError: cannot import name CREATE_NEW_PROCESS_GROUP
 
 This may be related to having more than one version of Python installed on your system. 
@@ -386,22 +380,22 @@ If while configuring your game you get something like::
 
     Tag <manifest> attribute package has invalid character '-'.
 
-You may have inserted an invalid character in the package name you used during configuration (in this case a 
-
-hyphen '-'). You'll have to use a different package name which does not contain anything other than letters and dots.
+You may have inserted an invalid character in the package name you used during 
+configuration (in this case a hyphen '-'). You'll have to use a different 
+package name which does not contain anything other than letters and dots.
 
 
 If while configuring you get something like::
 
     Traceback (most recent call last):
     File "android.py", line 66, in <module>
-    main()
+        main()
     File "android.py", line 44, in main
-    configure.configure(iface, directory)
+        configure.configure(iface, directory)
     File "buildlib\configure.py", line 108, in configure
-    config.save(directory)
+        config.save(directory)
     File "buildlib\configure.py", line 30, in save
-    with file(os.path.join(directory, ".android.json"), "w") as f:
+        with file(os.path.join(directory, ".android.json"), "w") as f:
     IOError: [Errno 2] No such file or directory: 'mygame\\.android.json'
 
 You should check whether you specified the correct path to your game directory. The easiest
@@ -418,18 +412,17 @@ You might want to check whether you have Android 2.2 (API 8) in the Android SDK 
 You can run it by navigating to the android-sdk/tools directory inside the |PGS4A| directory 
 and run android.bat.
 
-.. image::android_sdk_manager_001.jpg
-   :aligh: center
+.. image:: android_sdk_manager_001.jpg
+   :align: center
 
 If Android 2.2 (API 8) is missing like in the above image, click 'Updates' and then 'Install Updates'.
 
 Once the updates are installed, make sure Android 2.2 (API 8) and SDK platform are ticked:
 
-.. image::android_sdk_manager_005.jpg
-   :aligh: center
+.. image:: android_sdk_manager_005.jpg
+   :align: center
 
 And install the packages. Then, try building your game again.
-
 
 .. ifconfig:: is_renpy
 

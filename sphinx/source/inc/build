@@ -25,7 +25,7 @@
     Adds a pattern marking files as executable on platforms that support it. 
     (Linux and Macintosh)
 
-.. function:: build.package(name, format, file_lists, description=None, update=True)
+.. function:: build.package(name, format, file_lists, description=None, update=True, dlc=False)
     
     Declares a package that can be built by the packaging
     tool. 
@@ -57,4 +57,8 @@
     `update`
         If true and updates are being built, an update will be 
         built for this package.
+    
+    `dlc`
+        If true, any zip or tar.bz2 file will be built in 
+        standalone DLC mode, without an update directory.
 
