@@ -81,10 +81,18 @@ your device, you may need to read:
 However, modern versions of Linux and OS X should just work.
 
 
-**|PGS4A| Itself.**
-The latest version of |PGS4A| can be downloaded from:
+.. ifconfig:: is_renpy
 
-    |PGS4A_URL|
+    **RAPT Itself.** The latest version of |PGS4A| can be downloaded from:
+    
+        |PGS4A_URL|
+
+.. ifconfig:: not is_renpy
+
+    **PGS4A Itself.** The latest version of |PGS4A| can be downloaded from:
+    
+        |PGS4A_URL|
+
 
 Once |PGS4A| has been downloaded, you should extract it using an
 archive program. The directory contained in that archive is what we
@@ -113,9 +121,17 @@ press Ctrl+c). In the command prompt, write ``cd`` then a space, a
 double-quote, paste the path you just copied from Explorer (right click and 
 choose ``paste``), then another double-quote.
 
-Let's assume you extracted |PGS4A| to C:\tools\|PGS4A|. In the command line write::
+.. ifconfig:: is_renpy
 
-    cd "C:\tools\|PGS4A|"
+    Let's assume you extracted RAPT to C:\\tools\\RAPT. In the command line write::
+    
+        cd "C:\tools\RAPT"
+
+.. ifconfig:: not is_renpy
+
+    Let's assume you extracted PGS4A to C:\\tools\\PGS4A. In the command line write::
+    
+        cd "C:\tools\PGS4A"
 
 Now you're within the |PGS4A| directory.
 

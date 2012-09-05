@@ -270,5 +270,5 @@ rst_prolog = """\
 def setup(app):
     app.add_config_value('is_renpy', '', True)
 
-is_renpy = False
+is_renpy = True
 
