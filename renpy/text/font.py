@@ -585,5 +585,10 @@ def free_memory():
 def load_image_fonts():
     for i in image_fonts.itervalues():
         i.load()
+        
+        
+class FontGroup(object):
+    pass
+
     
     

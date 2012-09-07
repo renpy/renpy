@@ -178,6 +178,8 @@ class TextSegment(object):
             self.ruby_top = source.ruby_top
             self.ruby_bottom = source.ruby_bottom
 
+            self.has_font_group = isinstance(self.font, font.FontGroup)
+
         else:
             self.hyperlink = 0
             self.cps = 0
@@ -208,6 +210,8 @@ class TextSegment(object):
             self.cps = renpy.game.preferences.text_cps
             
         self.cps = self.cps * style.slow_cps_multiplier
+
+        self.has_font_group = isinstance(self.font, font.FontGroup)
 
     # From here down is the public glyph API.
 
@@ -258,6 +262,19 @@ class TextSegment(object):
         
         return textsupport.assign_times(gt, self.cps, glyphs)
 
+    def subsegment(self, s):
+        """
+        This is called to break the current text segment up into multiple
+        text segments. It yields one or more(TextSegement, string) tuples 
+        for each sub-segment it creates.
+        
+        This is used by the FontGroup code to create new text segments based
+        on the font group.
+        """
+
+        if not self.has_font_group:
+            yield (self, s)
+            return
 
 class SpaceSegment(object):
     """
@@ -639,9 +656,10 @@ class Layout(object):
             
             if type == PARAGRAPH:
                 
-                # Note that this code is duplicated for the p tag, below.
+                # Note that this code is duplicated for the p tag, and for
+                # the empty line case, below.
                 if not line:
-                    line.append((tss[-1], u" "))
+                    line.extend(tss[-1].subsegment(u" "))
                 
                 paragraphs.append(line)
                 line = [ ]
@@ -649,7 +667,7 @@ class Layout(object):
                 continue
                 
             elif type == TEXT:
-                line.append((tss[-1], text))
+                line.extend(tss[-1].subsegment(text))
                 continue
             
             elif type == DISPLAYABLE:
@@ -680,7 +698,7 @@ class Layout(object):
                 # Duplicated from the newline tag.
                 
                 if not line:
-                    line.append((tss[-1], u" "))
+                    line.extend(tss[-1].subsegment(u" "))
                 
                 paragraphs.append(line)
                 line = [ ]
@@ -797,7 +815,7 @@ class Layout(object):
                 raise Exception("Unknown text tag %r" % text)
             
         if not line:
-            line.append((ts, u" "))
+            line.extend(tss[-1].subsegment(u" "))
                 
         paragraphs.append(line)
 
