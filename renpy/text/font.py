@@ -588,7 +588,98 @@ def load_image_fonts():
         
         
 class FontGroup(object):
-    pass
+        
+    def __init__(self):
+        """
+        :doc: font_group
+        
+        Creates a new font group.
+        """
+        
+        
+        # A list of font names we know of.
+        self.fonts = [ ]
+        
+        # A map from character to the index of the font it's part of.
+        self.cache = { }
+        
+        # A list of (index, start, end) tuples.
+        self.patterns = [ ]
+        
+    def add(self, font, start, end):
+        """
+        :doc: font_group
+        
+        Associates a range of characters with a `font`. 
+        
+        `start`
+            The start of the range. This may be a single-character string, or 
+            an integer giving a unicode code point.
+            
+        `end`
+            The end of the range. This may be a single-character string, or an 
+            integer giving a unicode code point.
 
-    
-    
+        When multiple .add() calls include the same character, the first call
+        takes precedence.
+
+        This returns the FontGroup, so that multiple calls to .add() can be 
+        chained together.
+        """
+                
+        if not isinstance(start, int):
+            start = ord(start)
+            
+        if not isinstance(end, int):
+            end = ord(end)
+            
+        if end < start:
+            raise Exception("In FontGroup.add, the start of a character range must be before the end of the range.")
+            
+        if font not in self.fonts:
+            self.fonts.append(font)
+
+        index = self.fonts.index(font)
+        
+        self.patterns.append((index, start, end))
+        
+        return self
+        
+    def segment(self, s):
+        """
+        Segments `s` into fonts. Generates (font, string) tuples.
+        """
+        
+        mark = 0
+        pos = 0
+
+        old_index = 0 
+        
+        cache = self.cache
+        
+        for c in s:
+            
+            index = cache.get(c, None)
+            
+            if index is None:
+                n = ord(c)
+                
+                for index, start, end in self.patterns:
+                    if start <= n <= end:
+                        break
+                else:
+                    raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
+
+                cache[c] = index
+
+            if index != old_index:
+                if pos:
+                    yield self.fonts[old_index], s[mark:pos]
+                
+                old_index = index
+                mark = pos
+                
+            pos += 1
+            
+        yield self.fonts[old_index], s[mark:]
+
