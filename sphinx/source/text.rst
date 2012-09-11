@@ -446,6 +446,10 @@ font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0@font.ttc" is
 the first font in a collection, "1@font.ttc" the second, and so on.
 
+
+Font Replacement
+----------------
+
 The :var:`config.font_replacement_map` variable is used to map
 fonts. The combination of font filename, boldness, and italics is
 mapped to a similar combination. This allows a font with proper
@@ -483,6 +487,29 @@ BMFont use is::
     label demo_bmfont:
                            
         ebf "Finally, Ren'Py supports BMFonts."
+
+
+Font Groups
+-----------
+
+When creating a multilingual game, it may not be possible to find a single
+font that covers every writing system the game use while projecting the
+the mood the creator intends. To support this, Ren'Py supports font groups
+that can take characters from two or more fonts and combine them into a 
+single font. 
+
+To create a font group, create a FontGroup object and call the .add method 
+on it once or more. a FontGroup can be used wherever a font name can be 
+used. The add method takes the start and end of a range of unicode character
+points, and the first range to cover a point is used.
+
+For example::
+
+    init python:
+         style.default.font = FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+        
+.. include:: inc/font_group
+
 
 Text Displayable
 ================

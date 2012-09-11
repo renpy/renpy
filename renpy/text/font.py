@@ -588,14 +588,14 @@ def load_image_fonts():
         
         
 class FontGroup(object):
+    """
+    :doc: font_group
+    :args: ()
+    
+    A group of fonts that can be used as a single font.
+    """
         
     def __init__(self):
-        """
-        :doc: font_group
-        
-        Creates a new font group.
-        """
-        
         
         # A list of font names we know of.
         self.fonts = [ ]
