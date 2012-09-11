@@ -178,8 +178,6 @@ class TextSegment(object):
             self.ruby_top = source.ruby_top
             self.ruby_bottom = source.ruby_bottom
 
-            self.has_font_group = isinstance(self.font, font.FontGroup)
-
         else:
             self.hyperlink = 0
             self.cps = 0
@@ -210,8 +208,6 @@ class TextSegment(object):
             self.cps = renpy.game.preferences.text_cps
             
         self.cps = self.cps * style.slow_cps_multiplier
-
-        self.has_font_group = isinstance(self.font, font.FontGroup)
 
     # From here down is the public glyph API.
 
@@ -272,9 +268,24 @@ class TextSegment(object):
         on the font group.
         """
 
-        if not self.has_font_group:
+        if not isinstance(self.font, font.FontGroup):
             yield (self, s)
             return
+
+        segs = { }
+
+        for f, ss in self.font.segment(s):
+
+            seg = segs.get(f, None)
+            
+            if seg is None:
+                seg = TextSegment(self)
+                seg.font = f
+                
+                segs[f] = seg
+                
+            yield seg, ss
+
 
 class SpaceSegment(object):
     """
