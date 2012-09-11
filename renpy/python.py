@@ -1044,8 +1044,10 @@ class RollbackLog(renpy.object.Object):
         
         revlog = [ ]
 
+        # Find the place to roll back to.
         while self.log:
             rb = self.log.pop()
+
             revlog.append(rb)
 
             if rb.checkpoint:
@@ -1057,6 +1059,7 @@ class RollbackLog(renpy.object.Object):
                     break
 
         else:
+
             if force:
                 raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
                 
@@ -1067,6 +1070,19 @@ class RollbackLog(renpy.object.Object):
             revlog.reverse()
             self.log = self.log + revlog
             return
+
+        # Try to rollback to just after the previous checkpoint.
+        while self.log:
+
+            rb = self.log[-1]
+            
+            if rb.checkpoint:
+                break
+
+            if not renpy.game.script.has_label(rb.context.current):
+                break
+            
+            revlog.append(self.log.pop())
 
         for rb in revlog:
             rb.rollback()
