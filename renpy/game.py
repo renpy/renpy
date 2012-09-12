@@ -297,12 +297,16 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
 
     try:
         return callable(*args, **kwargs)
+
     finally:
+
         contexts.pop()
+        contexts[-1].do_deferred_rollback()
 
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
+        
         
 def call_in_new_context(label, *args, **kwargs):
     """
@@ -338,6 +342,8 @@ def call_in_new_context(label, *args, **kwargs):
         context.pop_all_dynamic()
         contexts.pop()
 
+        contexts[-1].do_deferred_rollback()
+
         return rv
         
     except renpy.game.JumpOutException, e:        
@@ -347,8 +353,11 @@ def call_in_new_context(label, *args, **kwargs):
         raise renpy.game.JumpException(e.args[0])
 
     finally:
+    
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
+
+
     
 # Type information.       
 if False:
