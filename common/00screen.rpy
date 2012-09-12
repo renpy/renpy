@@ -1911,7 +1911,7 @@ init -1140 python:
             persistent._language = self.language
             _language_activate()
             renpy.restart_interaction()
-            renpy.rollback(True, 0)
+            renpy.rollback(True, 0, True)
             
         def get_selected(self):
             return persistent._language == self.language
