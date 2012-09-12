@@ -1082,7 +1082,11 @@ class RollbackLog(renpy.object.Object):
             if not renpy.game.script.has_label(rb.context.current):
                 break
             
+            if self.rollback_limit <= 0:
+                break
+            
             revlog.append(self.log.pop())
+            self.rollback_limit -= 1
 
         for rb in revlog:
             rb.rollback()
