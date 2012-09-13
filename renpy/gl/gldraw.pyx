@@ -215,7 +215,7 @@ cdef class GLDraw:
             opengl = 0            
             # EGL automatically handles vsync for us.
         
-        if renpy.config.gl_resize:
+        if getattr(renpy.config, "gl_resize", False):
             resizable = pygame.RESIZABLE
         else:
             resizable = 0
