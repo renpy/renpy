@@ -1,0 +1,104 @@
+#RenPy Voice Enhancement Project
+-----------------------------------------
+
+This project is to add three funtions to RenPy's Voice System:
+
+* Toggle Characters Voices
+
+* File Format system for voice()
+
+* Two new actions for the screen language
+
+-----------------------------------------
+
+    def voice(filename, tag=None):
+        """
+        :doc: voice
+
+        Plays `filename` on the voice channel.
+
+        `filename`
+            The filename to play. This is formatted by
+            :var:`config.voice_filename_format` variable is used to format
+            this parameter.
+
+        `tag`
+            If this is not None, it should be a string giving a voice 
+            tag to be played. If None, this takes its default value from
+            the voice_tag of the Character that causes the next
+            interaction.
+
+            The voice tag is used to specify which character is speaking,
+            to allow a user to mute or unmute the voices of particular
+            characters.
+        """
+
+The filename will be that path of the voice file, yet if you wish to 
+change the format you would call up this confi. funtion:
+
+    config.voice_filename_format
+
+By default the config.voice_filename_format is defualt to {filename}, yet
+can be changed to other file formats you wish a couple of examples would
+be:
+
+    config.voice_filename_format = 'voice/{tag}/{filename}.ogg'
+
+With this example, if filename = '0001' and tag = 'eileen' then passed 
+the config.voice_filename_format it will look for it in the 
+'voice/eileen/0001.ogg' in your game directory and play it using the 
+voice_interact() whcih is called upon each interaction.
+
+Now with the tag is where the majic to toggle on and off character()'s 
+voices. Like stated above if tag is not equal to None it be what ever 
+you the user places in the voice statement.
+
+    voice eileen '0001.ogg'
+    e 'Hello World'
+
+Renpy will read the name eileen equal to the tag in the voice() and play
+the voice file using the voice_interact() function.
+
+Now if you keep the tag to equal None, it will look a the voice_tag of 
+the Character that causes the next interaction. Yet if neither one of 
+have a tag to the character. Renpy should ignore this unless you used it
+in config.voice_filename_format which is in the config.rpy
+
+An example of this would be like this:
+
+    define e = Character('Eileen', voice_tag = 'eileen')
+    
+    voice '0001.ogg'
+    e 'Hello World'
+
+Understand this will work as the same as the code example above this one
+it's just your choice weither you whish type more or less. Depending on 
+your style.
+
+To toggle off and on individual Character()'s voice, you will need to 
+add one of two actions in your preference screen or what ever screen you
+would perfer it in. These would be the:
+
+    SetVoiceMute(voice_tag , mute)
+    
+And the:
+
+    ToggleVoiceMute(voice_tag, invert_select=False)
+
+Which the way to use them would be like this:
+
+    vbox:
+        label "Eileen's Voice"
+        textbutton "Not Muted" action SetVoiceMute("eileen", False)
+        textbutton "Muted" action ToggleVoiceMute("eileen", True)
+        textbutton "Toggle Mute" action  ToggleVoiceMute("eileen")
+
+If these button are pressed it will either add or removed the voice_tag 
+from the:
+
+    persistent._voice_mute
+
+If it is the in the persistent._voice_mute RenPy will mute it, but if it
+is not in the persistent._voice_mute, RenPy will play it.Since the 
+variable is persistent, RenPy will remember what voices will be muted 
+when you continue the game next time.
