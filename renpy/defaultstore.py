@@ -123,6 +123,7 @@ SnowBlossom = renpy.display.particle.SnowBlossom
 
 Text = renpy.text.text.Text
 ParameterizedText = renpy.text.extras.ParameterizedText
+FontGroup = renpy.text.font.FontGroup
 
 Drag = renpy.display.dragdrop.Drag
 DragGroup = renpy.display.dragdrop.DragGroup
