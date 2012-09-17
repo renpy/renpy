@@ -38,9 +38,9 @@ change the format you would call up this confi. funtion:
 
     config.voice_filename_format
 
-By default the config.voice_filename_format is defualt to {filename}, yet
-can be changed to other file formats you wish a couple of examples would
-be:
+By default the config.voice_filename_format is defualt to {filename} for
+backward compatability sake, yet can be changed to other file formats 
+you wish. One example would be:
 
     config.voice_filename_format = 'voice/{tag}/{filename}.ogg'
 

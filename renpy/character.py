@@ -846,7 +846,16 @@ def Character(name=NotSet, kind=None, **properties):
     `image`
          A string giving the image tag that is linked with this 
          character.
- 
+         
+    **Voice Tag**
+    If a vocie tag is assign to a Character, the voice files that are
+    assosiated with it, can be mutted or played in the preference 
+    screen.
+
+    `voice_tag`
+        A String that enables the voice file assosiated with the 
+        Charcter to be muted or played in the 'vocie' channel.
+
     **Prefixes and Suffixes.**
     These allow a prefix and suffix to be applied to the name of the
     character, and to the text being shown. This can be used, for

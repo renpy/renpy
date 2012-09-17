@@ -31,15 +31,41 @@ init -1120:
         _voice.sustain = False
         _voice.seen_in_lint = False
 
-        # Call this to specify the voice file that will be played for
-        # the user.
-        def voice(file, **kwargs):
+        # This will set the config.voice_filename_format to "{filename}"
+        # for backward compatibilty sake, but it can be change in the 
+        # Options.rpy. Do not change it here unless you know what you
+        # are doing. 
+        config.voice_filename_format = "{filename}"
 
+        # Call this to specify the voice file that will be played for
+        # the user. This peice only gathers the information so 
+        # voice_interact can play the right file.
+        def voice(filename, tag=None):
+                """
+                :doc: voice
+
+                Plays `filename` on the voice channel.
+
+                `filename`
+                    The filename to play. This is formatted by
+                    :var:`config.voice_filename_format` variable is 
+                    used to format this parameter.
+
+                `tag`
+                    If this is not None, it should be a string giving a 
+                    voice tag to be played. If None, this takes its
+                    default value from the voice_tag of the Character 
+                    that causes the next interaction.
+
+                    The voice tag is used to specify which character is 
+                    speaking, to allow a user to mute or unmute the 
+                    voices of partdef voice(filename, tag=None):
+                """
             if not config.has_voice:
                 return
             
-            _voice.play = file
-            _last_voice_play = file 
+            _voice.play = config.voice_filename_format
+            _last_voice_play = config.voice_filename_format 
             
         # Call this to specify that the currently playing voice file
         # should be sustained through the current interaction.
@@ -55,18 +81,25 @@ init -1120:
 
         # Returns true if we can replay the voice.
         def voice_can_replay():
-            return _last_voice_play != None
+            return _last_voice_play != Nonedict mapping a voice tag to a "mute" state
             
     python hide:
 
         # basics: True if the game will have voice.
         config.has_voice = True
+        
+        # This will set the Dict persistent.voice_
+        persistent.voice_mute = {}
+        
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        
         def voice_interact():
             
             if not config.has_voice:
+                return
+            
+            if voice_tag in persistent.voice_mute:
                 return
             
             if _voice.play and not config.skipping:

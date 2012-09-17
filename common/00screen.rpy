@@ -6,7 +6,7 @@
 init -1140 python:
 
     class Return(Action):
-        """
+         """
          :doc: control_action
          
          Causes the current interaction to return the supplied value. This is
@@ -773,7 +773,27 @@ init -1140 python:
             
         def get_selected(self):
             return _preferences.get_volume(self.mixer) == self.volume
-                
+            
+
+#    class SetVoiceMute(Action):
+       """
+        :doc: Set_Voice_Mute
+        
+        This will set the voice assosiated with the Character()'s
+        voice_tag and either mute it or unmute it. You will have to set
+        two  different SetVoiceMute so that one will mute and the other
+        will unmute the voice file.
+
+#    class ToggleVoiceMute(Action):
+        """
+        :doc: Toggle_Vocie_Mute
+        
+        This will toggle the voice assosiated with the Character()'s
+        voice_tag and either mute or unmute. The difference with 
+        SetVoiceMute is that it can be contain within one button.
+        
+       """
+
     ##########################################################################
     # BarValues
 
