@@ -102,7 +102,7 @@ init -1120:
             if voice_tag in persistent.voice_mute:
                 return
             
-            if _voice.play and not config.skipping:
+            elif _voice.play and not config.skipping:
                 renpy.sound.play(_voice.play, channel="voice")
                 store._last_voice_play = _voice.play        
             elif not _voice.sustain:
