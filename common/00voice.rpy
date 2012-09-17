@@ -81,7 +81,7 @@ init -1120:
 
         # Returns true if we can replay the voice.
         def voice_can_replay():
-            return _last_voice_play != Nonedict mapping a voice tag to a "mute" state
+            return _last_voice_play != None
             
     python hide:
 

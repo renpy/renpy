@@ -776,13 +776,14 @@ init -1140 python:
             
 
 #    class SetVoiceMute(Action):
-       """
+        """
         :doc: Set_Voice_Mute
         
         This will set the voice assosiated with the Character()'s
         voice_tag and either mute it or unmute it. You will have to set
         two  different SetVoiceMute so that one will mute and the other
         will unmute the voice file.
+        """
 
 #    class ToggleVoiceMute(Action):
         """
