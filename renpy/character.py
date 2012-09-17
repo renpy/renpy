@@ -520,6 +520,8 @@ class ADVCharacter(object):
         'show_function',
         ]
 
+    voice_tag = None
+ 
     # When adding a new argument here, remember to add it to copy below.
     def __init__(
         self,
@@ -562,6 +564,8 @@ class ADVCharacter(object):
         self.dynamic = v('dynamic')
         self.screen = v('screen')
         self.mode = v('mode')
+
+        self.voice_tag = v('voice_tag')
 
         if renpy.config.new_character_image_argument:
             if "image" in properties:
@@ -738,6 +742,10 @@ class ADVCharacter(object):
             attrs = None
         
         renpy.exports.side_image_attributes = attrs
+
+
+        if renpy.config.voice_tag_callback is not None:
+            renpy.config.voice_tag_callback(self.voice_tag)
         
         try:
             

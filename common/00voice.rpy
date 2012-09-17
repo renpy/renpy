@@ -30,6 +30,7 @@ init -1120:
         _voice.play = None
         _voice.sustain = False
         _voice.seen_in_lint = False
+        _voice.tag = None
 
         # This will set the config.voice_filename_format to "{filename}"
         # for backward compatibilty sake, but it can be change in the 
@@ -41,26 +42,27 @@ init -1120:
         # the user. This peice only gathers the information so 
         # voice_interact can play the right file.
         def voice(filename, tag=None):
-                """
-                :doc: voice
+            """
+            :doc: voice
 
-                Plays `filename` on the voice channel.
+            Plays `filename` on the voice channel.
 
-                `filename`
-                    The filename to play. This is formatted by
-                    :var:`config.voice_filename_format` variable is 
-                    used to format this parameter.
+            `filename`
+                The filename to play. This is formatted by
+                :var:`config.voice_filename_format` variable is 
+                used to format this parameter.
 
-                `tag`
-                    If this is not None, it should be a string giving a 
-                    voice tag to be played. If None, this takes its
-                    default value from the voice_tag of the Character 
-                    that causes the next interaction.
+            `tag`
+                If this is not None, it should be a string giving a 
+                voice tag to be played. If None, this takes its
+                default value from the voice_tag of the Character 
+                that causes the next interaction.
 
-                    The voice tag is used to specify which character is 
-                    speaking, to allow a user to mute or unmute the 
-                    voices of partdef voice(filename, tag=None):
-                """
+                The voice tag is used to specify which character is 
+                speaking, to allow a user to mute or unmute the 
+                voices of partdef voice(filename, tag=None):
+            """
+
             if not config.has_voice:
                 return
             
@@ -99,7 +101,7 @@ init -1120:
             if not config.has_voice:
                 return
             
-            if voice_tag in persistent.voice_mute:
+            if _voice.tag in persistent.voice_mute:
                 return
             
             elif _voice.play and not config.skipping:
@@ -119,7 +121,12 @@ init -1120:
             return not renpy.sound.is_playing(channel="voice")
 
         config.afm_callback = voice_afm_callback
-                       
+
+        def voice_tag_callback(voice_tag):
+            _voice.tag = None
+            
+        config.voice_tag_callback = voice_tag_callback
+
 python early hide:
 
     def parse_voice(l):

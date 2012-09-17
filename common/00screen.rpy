@@ -6,7 +6,7 @@
 init -1140 python:
 
     class Return(Action):
-         """
+        """
          :doc: control_action
          
          Causes the current interaction to return the supplied value. This is

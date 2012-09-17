@@ -536,6 +536,9 @@ save_dump = False
 # Can we resize a gl window?
 gl_resize = True
 
+# A callback that is called with the character's voice_tag.
+voice_tag_callback = None
+
 del renpy
 del os
 
