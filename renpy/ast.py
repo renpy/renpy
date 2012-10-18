@@ -972,7 +972,7 @@ class Hide(Node):
             
         renpy.game.context().images.predict_hide(tag, layer)
 
-        return [ ]
+        return [ self.next ]
         
     def execute(self):
 
