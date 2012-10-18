@@ -1516,3 +1516,33 @@ class Screen(Node):
         next_node(self.next)
         self.screen.define()
         renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
+
+
+class Translate(Node):
+    """
+    A translation block, produced either by explicit translation statements 
+    or implicit translation blocs.
+    
+    If language is None, when executed this transfers control to the translate 
+    statement in the current language, if any, and otherwise runs the block.
+    If languge is not none, causes an error to occur if control reaches this 
+    statement.
+
+    When control normally leaves a translate statement, in any language, it 
+    goes to the end of the translate statement in the None language.
+    """
+    
+    __slots__ = [
+        "identifier",
+        "language",
+        ]
+    
+    def __init__(self, loc, identifier, language):
+        super(Translate, self).__int__(loc)
+        
+        self.identifier = identifier
+        self.language = language
+        
+    def diff_info(self):
+        return (Translate, self.identifier, self.language)
+    
