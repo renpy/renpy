@@ -61,6 +61,7 @@ def collapse_stmts(stmts):
             all_stmts.append(i)
             extend_all(i.get_children())
 
+
     extend_all(stmts)
 
     return all_stmts
@@ -309,6 +310,8 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
             
+        # Generate translate nodes.
+        renpy.translation.restructure(stmts)
 
         # All of the statements found in file, regardless of nesting
         # depth.

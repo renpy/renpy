@@ -29,7 +29,7 @@ registry = { }
 
 parsers = renpy.parser.ParseTrie()
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False): #@ReservedAssignment
+def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False): #@ReservedAssignment
 
     name = tuple(name.split())
     
@@ -46,6 +46,7 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
 
         try:
             rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
+            rv.translatable = translatable
 
             if not block:
                 l.expect_noblock(" ".join(name) + " statement")
@@ -63,7 +64,6 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
             
     renpy.parser.statements.add(name, parse_user_statement)
 
-    
     # The function that is called to get our parse data.
     def parse_data(l):
         return (name, registry[name]["parse"](l))
