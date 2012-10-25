@@ -42,12 +42,11 @@ def create_translate(block):
     
     for i in block:
         code = i.get_code()
-        print code
         md5.update(code + "\r\n")
         
     identifier = md5.hexdigest()
     loc = (block[0].filename, block[0].linenumber)
-    
+
     rv = renpy.ast.Translate(loc, identifier, None, block)
     rv.name = block[0].name + ("translate",)
     return rv

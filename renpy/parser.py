@@ -627,6 +627,13 @@ class Lexer(object):
 
         return self.match(r'(\+|\-)?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
 
+    def hash(self):
+        """
+        Matches the chatacters in an md5 hash, and then some.
+        """
+        
+        return self.match(r'\w+')
+
     def word(self):
         """
         Parses a name, which may be a keyword or not.
@@ -1790,6 +1797,24 @@ def screen_statement(l, loc):
     return rv
     
 
+@statement("translate")
+def translate_statement(l, loc):
+
+    identifier = l.require(l.hash)
+    language = l.name()
+    
+    l.require(':')
+    l.expect_eol()
+    
+    l.expect_block("translate statement")
+
+    block = parse_block(l.subblock_lexer())
+
+    l.advance()
+    
+    return ast.Translate(loc, identifier, language, block)
+     
+
 @statement("")
 def say_statement(l, loc):
     
@@ -1834,6 +1859,11 @@ def say_statement(l, loc):
         
     what = l.string()
 
+    if l.keyword('nointeract'):
+        interact = False
+    else:
+        interact = True
+
     if l.keyword('with'):
         with_ = l.require(l.simple_expression)
     else:
@@ -1843,7 +1873,7 @@ def say_statement(l, loc):
         l.expect_eol()
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, who, what, with_, attributes=attributes)
+        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact)
 
     # This reports a parse error for any bad statement.
     l.error('expected statement.')
