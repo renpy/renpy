@@ -67,8 +67,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         raise Exception("Can't play music during init phase.")
     
     if filenames is None:
-        filenames = [ ]
-        loop = False
+        return
         
     if isinstance(filenames, basestring):
         filenames = [ filenames ]

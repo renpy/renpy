@@ -940,10 +940,29 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
 globals()["with"] = with_statement
 
-def rollback(force=False, checkpoints=1):
+def rollback(force=False, checkpoints=1, defer=False):
     """
+    :doc: other
+    
     Rolls the state of the game back to the last checkpoint.
+
+    `force`
+        If true, the rollback will occur in all circumstances. Otherwise,
+        the rollback will only occur if rollback is enabled in the store,
+        context, and config.
+        
+    `checkpoints`
+        Ren'Py will roll back through this many calls to renpy.checkpoint. It
+        will roll back as far as it can, subject to this condition.
+        
+    `defer`
+        If true, the call will be deferred until code from the main context is
+        executed.
     """
+
+    if defer and len(renpy.game.contexts) > 1:
+        renpy.game.contexts[0].defer_rollback = (force, checkpoints)
+        return
 
     if not force:
     

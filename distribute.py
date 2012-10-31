@@ -215,6 +215,8 @@ def main():
 
     if not args.fast:
 
+        shutil.copy("renpy-ppc.zip", os.path.join(destination, "renpy-ppc.zip"))
+
         with open("7z.sfx", "rb") as f:
             sfx = f.read()
     

@@ -344,13 +344,15 @@ init python in distribute:
                     self.make_package(
                         p["name"],
                         f,
-                        p["file_lists"])
+                        p["file_lists"],
+                        dlc=p["dlc"])
                 
                 if self.build_update and p["update"]:
                     self.make_package(
                         p["name"],
                         "update",
-                        p["file_lists"])
+                        p["file_lists"],
+                        dlc=False)
             
             
             if self.build_update:
@@ -589,7 +591,7 @@ init python in distribute:
                 for f in l:
                     f.name = rename_one(f.name)
 
-        def make_package(self, variant, format, file_lists, mac_transform=False):
+        def make_package(self, variant, format, file_lists, dlc=False):
             """
             Creates a package file in the projects directory. 
 
@@ -605,9 +607,8 @@ init python in distribute:
                 A string containing a space-separated list of file_lists to include in this 
                 package.
                         
-            `mac_transform`
-                True if we should apply the mac transform to the filenames before including 
-                them.
+            `dlc`
+                True if we want to build a non-update file in DLC mode.
             """
             filename = self.base_name + "-" + variant
             path = os.path.join(self.destination, filename)
@@ -632,7 +633,7 @@ init python in distribute:
                     
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update:
+            if self.include_update and not dlc:
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
                 with open(update_fn, "wb") as f:
@@ -646,7 +647,7 @@ init python in distribute:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
             
             # If we're not an update file, prepend the directory.
-            if format != "update":
+            if (not dlc) and format != "update":
                 fl.prepend_directory(filename)
             
             if format == "tar.bz2":
@@ -699,7 +700,7 @@ init python in distribute:
                                 
                             sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
 
-            if self.include_update and not self.build_update:
+            if self.include_update and not self.build_update and not dlc:
                 os.unlink(update_fn)
 
 

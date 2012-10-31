@@ -149,10 +149,10 @@ typedef struct VideoState {
     char *filename;
 
     // Have we initialized fully?
-    int started;
+    volatile int started;
 
     // Have we finished decoding?
-    int finished;
+    volatile int finished;
 
     // The audio duration.
     unsigned int audio_duration;
@@ -161,6 +161,9 @@ typedef struct VideoState {
     unsigned int audio_played;
     
     double start_time;
+
+    // Should we force the display of the current video frame?
+    int first_frame;
 
 } VideoState;
 
@@ -177,7 +180,6 @@ static int show_status;
 static int64_t start_time = AV_NOPTS_VALUE;
 static int debug = 0;
 static int debug_mv = 0;
-static int thread_count = 1;
 static int workaround_bugs = 1;
 static int fast = 0;
 static int genpts = 0;
@@ -475,8 +477,16 @@ static double get_audio_clock(VideoState *is, int adjust)
         pts -= (double)hw_buf_size / bytes_per_sec;
 
     now = get_time();
-    pts += (now - is->audio_callback_time);
 
+    if (is->audio_callback_time == 0) {
+    	is->audio_callback_time = now;
+    }
+
+    if (is->start_time == 0) {
+    	is->start_time = now;
+    }
+
+    pts += (now - is->audio_callback_time);
     altpts = now - is->start_time;
     offset = altpts - pts;
 
@@ -486,7 +496,8 @@ static double get_audio_clock(VideoState *is, int adjust)
     }
 
     if (adjust) {
-		if (offset > 0) {
+
+    	if (offset > 0) {
 			is->start_time += .00025;
 		} else {
 			is->start_time -= .00025;
@@ -524,19 +535,21 @@ static int video_refresh(void *opaque)
 		delay = get_audio_clock(is, 0) - vp->pts;
 
 		/* The video is ahead of the audio. */
-		if (delay < 0) {
+		if (delay < 0 && !is->first_frame) {
 			return 0;
 		}
 
 		// Adjust the audio clock.
 		get_audio_clock(is, 1);
 
-		if (delay < .1) {
+		if (delay < .1 || is->first_frame) {
 			video_display(is);
 		}
 
 		av_free(vp->frame);
 		vp->frame = NULL;
+
+		is->first_frame = 0;
 
 		/* update queue size and signal for next picture */
 		if (++is->pictq_rindex == VIDEO_PICTURE_QUEUE_SIZE)
@@ -563,10 +576,15 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
     uint8_t *bytes = (uint8_t *) &pixel;
 
     SDL_LockMutex(is->pictq_mutex);
-    
+
     if (!ffpy_needs_alloc) {
-        SDL_UnlockMutex(is->pictq_mutex);
+    	SDL_UnlockMutex(is->pictq_mutex);
     	return;
+    }
+
+    if (! is->video_st) {
+        SDL_UnlockMutex(is->pictq_mutex);
+        return;
     }
 
     ffpy_needs_alloc = 0;
@@ -745,6 +763,7 @@ static int video_thread(void *arg)
             if (output_picture2(is, frame, pts) < 0)
                 goto the_end;
         }
+
         av_free_packet(pkt);
     }
  the_end:
@@ -1033,7 +1052,7 @@ static int stream_component_open(VideoState *is, int stream_index)
     if (!codec) {
         return -1;
     }
-        
+
     err = avcodec_open2(enc, codec, NULL);
     
     if (err < 0) {
@@ -1042,12 +1061,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     
     is->audio_hw_buf_size = 2048;
     
-#if 0
-    if(thread_count>1)
-        avcodec_thread_init(enc, thread_count);
-#endif
-
-    enc->thread_count= thread_count;
     ic->streams[stream_index]->discard = AVDISCARD_DEFAULT;
     switch(enc->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
@@ -1058,7 +1071,6 @@ static int stream_component_open(VideoState *is, int stream_index)
 
         memset(&is->audio_pkt, 0, sizeof(is->audio_pkt));
         packet_queue_init(&is->audioq);
-        SDL_PauseAudio(0);
         break;
     case AVMEDIA_TYPE_VIDEO:
         is->video_stream = stream_index;
@@ -1140,7 +1152,6 @@ static int decode_thread(void *arg)
     AVFormatContext *ic;
     int err, i, ret, video_index, audio_index;
     AVPacket pkt1, *pkt = &pkt1;
-    AVFormatParameters params, *ap = &params;
     int codecs_locked = 0;
     
     // url_set_interrupt_cb(decode_interrupt_cb);
@@ -1149,8 +1160,6 @@ static int decode_thread(void *arg)
     audio_index = -1;
     is->video_stream = -1;
     is->audio_stream = -1;
-
-    memset(ap, 0, sizeof(*ap));
 
     is->io_context = rwops_open(is->rwops);
 
@@ -1260,8 +1269,6 @@ static int decode_thread(void *arg)
         goto fail;
     }
 
-    is->started = 1;
-
     // Compute the number of samples we need to play back.
     {
         long long duration = ((long long) is->ic->duration) * audio_sample_rate;
@@ -1275,6 +1282,8 @@ static int decode_thread(void *arg)
     
     SDL_UnlockMutex(codec_mutex);
     codecs_locked = 0;
+
+    is->started = 1;
     
     for(;;) {
 
@@ -1345,7 +1354,7 @@ fail:
         stream_component_close(is, is->video_stream);
     if (is->ic) {
         av_close_input_stream(is->ic);
-        is->ic = NULL; /* safety */
+        is->ic = NULL;
     }
         
     is->audio_stream = -1;
@@ -1381,6 +1390,8 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
     is->quit_cond = SDL_CreateCond();
     
     is->parse_tid = SDL_CreateThread(decode_thread, is);
+
+    is->first_frame = 1;
 
     if (!is->parse_tid) {
         av_free(is);

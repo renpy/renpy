@@ -124,7 +124,10 @@ def run():
         help='This takes as an argument a filename:linenumber pair, and tries to warp to the statement before that line number.')
 
     args = renpy.game.args = ap.parse_args()
-    
+
+    if args.warp:
+        renpy.warp.warp_spec = args.warp
+
     if args.profile_display: #@UndefinedVariable
         renpy.config.profile = True
 

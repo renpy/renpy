@@ -242,7 +242,7 @@ init 1050 python:
                 renpy.show(name, what=config.missing_background)
             __missing_scene = False
                 
-            what = " ".join(what).replace("{", "{{")
+            what = " ".join(what).replace("{", "{{").replace("[", "[[")
             __missing()[name[0]] = what
             return True
 
@@ -440,7 +440,7 @@ label _image_location_picker:
 
             for fn in image_files:
                 ui.button(clicked=ui.returns(fn), size_group="files", xminimum=1.0)
-                ui.text(fn.replace("{", "{{"), style="button_text", xalign=0.0)
+                ui.text(fn.replace("{", "{{").replace("[", "[["), style="button_text", xalign=0.0)
                 
             ui.close()
 

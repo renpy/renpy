@@ -260,6 +260,34 @@ class TextSegment(object):
         
         return textsupport.assign_times(gt, self.cps, glyphs)
 
+    def subsegment(self, s):
+        """
+        This is called to break the current text segment up into multiple
+        text segments. It yields one or more(TextSegement, string) tuples 
+        for each sub-segment it creates.
+        
+        This is used by the FontGroup code to create new text segments based
+        on the font group.
+        """
+
+        if not isinstance(self.font, font.FontGroup):
+            yield (self, s)
+            return
+
+        segs = { }
+
+        for f, ss in self.font.segment(s):
+
+            seg = segs.get(f, None)
+            
+            if seg is None:
+                seg = TextSegment(self)
+                seg.font = f
+                
+                segs[f] = seg
+                
+            yield seg, ss
+
 
 class SpaceSegment(object):
     """
@@ -641,9 +669,10 @@ class Layout(object):
             
             if type == PARAGRAPH:
                 
-                # Note that this code is duplicated for the p tag, below.
+                # Note that this code is duplicated for the p tag, and for
+                # the empty line case, below.
                 if not line:
-                    line.append((tss[-1], u" "))
+                    line.extend(tss[-1].subsegment(u" "))
                 
                 paragraphs.append(line)
                 line = [ ]
@@ -651,7 +680,7 @@ class Layout(object):
                 continue
                 
             elif type == TEXT:
-                line.append((tss[-1], text))
+                line.extend(tss[-1].subsegment(text))
                 continue
             
             elif type == DISPLAYABLE:
@@ -682,7 +711,7 @@ class Layout(object):
                 # Duplicated from the newline tag.
                 
                 if not line:
-                    line.append((tss[-1], u" "))
+                    line.extend(tss[-1].subsegment(u" "))
                 
                 paragraphs.append(line)
                 line = [ ]
@@ -812,7 +841,7 @@ class Layout(object):
                 raise Exception("Unknown text tag %r" % text)
             
         if not line:
-            line.append((ts, u" "))
+            line.extend(tss[-1].subsegment(u" "))
                 
         paragraphs.append(line)
 

@@ -185,11 +185,11 @@ class Movie(renpy.display.core.Displayable):
         
         if rv is None:
             rv = renpy.display.render.Render(0, 0)
-        else:
 
-            # Usually we get redrawn when the frame is ready - but we want
-            # the movie to disappear if it's ended.
-            renpy.display.render.redraw(self, 0.1)
+        # Usually we get redrawn when the frame is ready - but we want
+        # the movie to disappear if it's ended, or if it hasn't started
+        # yet.
+        renpy.display.render.redraw(self, 0.1)
     
         return rv
     

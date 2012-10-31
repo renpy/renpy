@@ -56,8 +56,8 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 7
-
+    __version__ = 8
+    
     def after_upgrade(self, version):
         if version < 1:
             self.scene_lists.image_predict_info = self.predict_info.images
@@ -82,6 +82,9 @@ class Context(renpy.object.Object):
         if version < 7:
             self.init_phase = False
             self.next_node = None
+            
+        if version < 8:
+            self.defer_rollback = None
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -127,6 +130,9 @@ class Context(renpy.object.Object):
         
         # True if we're in the init phase. (Isn't inherited.)
         self.init_phase = False
+    
+        # When deferring a rollback, the arguments to pass to renpy.exports.rollback.
+        self.defer_rollback = None
         
         if context:
             oldsl = context.scene_lists
@@ -250,10 +256,11 @@ class Context(renpy.object.Object):
             node = renpy.game.script.lookup(self.current)
 
         while node:
-            
+
             self.current = node.name
             self.last_abnormal = self.abnormal
             self.abnormal = False
+            self.defer_rollback = None
             
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
@@ -436,3 +443,18 @@ class Context(renpy.object.Object):
             seen = renpy.game.seen_session
 
         return self.current in seen
+
+    def do_deferred_rollback(self):
+        """
+        Called to cause deferred rollback to occur.
+        """
+        
+        if not self.defer_rollback:
+            return
+        
+        force, checkpoints = self.defer_rollback
+        
+        self.defer_rollback = None
+        
+        renpy.exports.rollback(force, checkpoints)
+            

@@ -197,7 +197,7 @@ init -1000 python in build:
         
     packages = [ ]
     
-    def package(name, format, file_lists, description=None, update=True):
+    def package(name, format, file_lists, description=None, update=True, dlc=False):
         """
         :doc: build
         
@@ -231,6 +231,10 @@ init -1000 python in build:
         `update`
             If true and updates are being built, an update will be 
             built for this package.
+        
+        `dlc`
+            If true, any zip or tar.bz2 file will be built in 
+            standalone DLC mode, without an update directory.
         """
 
         formats = format.split()
@@ -248,6 +252,7 @@ init -1000 python in build:
             "file_lists" : make_file_lists(file_lists),
             "description" : description,
             "update" : update,
+            "dlc" : dlc,
             }
             
         packages.append(d)
