@@ -1618,4 +1618,22 @@ class Translate(Node):
         
     def diff_info(self):
         return (Translate, self.identifier, self.language)
+
+    def chain(self, next): #@ReservedAssignment
+        self.next = next
+        chain_block(self.block, next)
+
+    
+class EndTranslate(Node):
+    """
+    A node added implicitly after each translate block. It's responsible for
+    resetting the translation identifier.
+    """
+    
+    def __init__(self, loc):
+        super(EndTranslate, self).__init__(loc)
+        
+    def diff_info(self):
+        return (EndTranslate,)
+    
     

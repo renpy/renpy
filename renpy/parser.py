@@ -1812,7 +1812,7 @@ def translate_statement(l, loc):
 
     l.advance()
     
-    return ast.Translate(loc, identifier, language, block)
+    return [ ast.Translate(loc, identifier, language, block), ast.EndTranslate(loc) ]
      
 
 @statement("")

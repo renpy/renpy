@@ -114,8 +114,12 @@ class Script(object):
         self.bytecode_newcache = { }
         self.bytecode_dirty = False
 
+        self.translator = renpy.translation.ScriptTranslator()
+
         self.init_bytecode()
         self.scan_script_files()
+
+        self.translator.chain_translates()
 
     def scan_script_files(self):
         """
@@ -196,6 +200,8 @@ class Script(object):
 
         if renpy.parser.report_parse_errors():
             raise SystemExit(-1)
+
+        self.translator.chain_translates()
         
         return initcode
         
@@ -316,6 +322,9 @@ class Script(object):
         # All of the statements found in file, regardless of nesting
         # depth.
         all_stmts = collapse_stmts(stmts)
+
+        # Take the translations.
+        self.translator.take_translates(self, all_stmts)
 
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)
