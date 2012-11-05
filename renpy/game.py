@@ -103,7 +103,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 4
+    __version__ = 5
 
     def after_upgrade(self, version):
         if version < 1:
@@ -115,6 +115,8 @@ class Preferences(renpy.object.Object):
         if version < 4:
             self.renderer = "auto"
             self.performance_test = True
+        if version < 5:
+            self.language = None
             
     def __init__(self):
         self.fullscreen = False 
@@ -159,6 +161,9 @@ class Preferences(renpy.object.Object):
         
         # Should we do a performance test on startup?
         self.performance_test = True
+
+        # The language we use for translations.
+        self.language = None
         
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume

@@ -324,7 +324,7 @@ class Script(object):
         all_stmts = collapse_stmts(stmts)
 
         # Take the translations.
-        self.translator.take_translates(self, all_stmts)
+        self.translator.take_translates(all_stmts)
 
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)

@@ -1623,6 +1623,29 @@ class Translate(Node):
         self.next = next
         chain_block(self.block, next)
 
+    def execute(self):
+
+        if self.language is not None:
+            next_node(self.next)
+            raise Exception("Translation nodes cannot be run directly.")
+        
+        next_node(renpy.game.script.translator.lookup_translate(self.identifier))
+
+    def predict(self):
+        node = renpy.game.script.translator.lookup_translate(self.identifier)
+        return [ node ]
+    
+    def scry(self):
+        rv = Scry()
+        rv._next = renpy.game.script.translator.lookup_translate(self.identifier)
+        return rv
+    
+    def get_children(self):
+        return self.block
+    
+    def restructure(self, callback):
+        return callback(self.block)
+    
     
 class EndTranslate(Node):
     """
@@ -1636,4 +1659,5 @@ class EndTranslate(Node):
     def diff_info(self):
         return (EndTranslate,)
     
-    
+    def execute(self):
+        next_node(self.next)

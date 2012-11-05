@@ -51,8 +51,8 @@ class ScriptTranslator(object):
             if n.language is None:
                 self.default_translates[n.identifier] = n
             else:
-                self.language_translates[n.identifier] = n
-                self.chain_worklist.append(n.identifier, n.language)
+                self.language_translates[n.identifier, n.language] = n
+                self.chain_worklist.append((n.identifier, n.language))
         
         
     def chain_translates(self):
@@ -62,17 +62,32 @@ class ScriptTranslator(object):
         
         unchained = [ ]
         
-        for identifier, language in self.chain_worklists:
+        for identifier, language in self.chain_worklist:
 
             if identifier not in self.default_translates:
                 unchained.append((identifier, language))
+                continue
 
-            translate = self.language_translates[identifier]            
+            translate = self.language_translates[identifier, language]            
             next_node = self.default_translates[identifier].next
             
             renpy.ast.chain_block(translate.block, next_node)
 
-        self.chain_worklists = unchained
+        self.chain_worklist = unchained
+
+    def lookup_translate(self, identifier):
+         
+        language = renpy.game.preferences.language
+
+        if language is not None:
+            tl = self.language_translates.get((identifier, language), None)
+        else:
+            tl = None
+            
+        if tl is None:
+            tl = self.default_translates[identifier]
+        
+        return tl.block[0]
         
 
 def encode_say_string(s):
@@ -95,7 +110,7 @@ def create_translate(block):
     for i in block:
         code = i.get_code()
         md5.update(code + "\r\n")
-        
+
     identifier = md5.hexdigest()
     loc = (block[0].filename, block[0].linenumber)
 
@@ -133,7 +148,7 @@ def restructure(children):
         else:
             if group:
                 tl = create_translate(group)
-                new_children.append(tl)
+                new_children.extend(tl)
                 group = [ ]
 
             new_children.append(i)

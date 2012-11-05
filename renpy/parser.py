@@ -1917,6 +1917,7 @@ def parse_block(l):
         try:
 
             stmt = parse_statement(l)
+            
             if isinstance(stmt, list):
                 rv.extend(stmt)
             else:
