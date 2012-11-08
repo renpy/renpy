@@ -21,7 +21,7 @@
 
 import renpy
 import hashlib
-
+import re
 
 class ScriptTranslator(object):
 
@@ -53,7 +53,6 @@ class ScriptTranslator(object):
             else:
                 self.language_translates[n.identifier, n.language] = n
                 self.chain_worklist.append((n.identifier, n.language))
-        
         
     def chain_translates(self):
         """
@@ -88,16 +87,18 @@ class ScriptTranslator(object):
             tl = self.default_translates[identifier]
         
         return tl.block[0]
-        
 
 def encode_say_string(s):
     """
     Encodes a string in the format used by Ren'Py say statements.
     """
     
-    # TODO: Implement properly.
-    
-    return repr(s)
+    s = s.replace("\\", "\\\\")
+    s = s.replace("\n", "\\n")
+    s = s.replace("\"", "\\\"")
+    s = re.sub(r'(?<= ) ', '\\ ', s)
+
+    return "\"" + s + "\""
 
 def create_translate(block):
     """
