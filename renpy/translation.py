@@ -20,8 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
+
 import hashlib
 import re
+import collections
+import os
+import codecs
+import time
 
 class ScriptTranslator(object):
 
@@ -38,18 +43,34 @@ class ScriptTranslator(object):
         # A list of (identifier, language) tuples that we need to chain together.
         self.chain_worklist = [ ]
 
+        # A map from filename to a list of (label, translate) pairs found in 
+        # that file.
+        self.file_translates = collections.defaultdict(list)
+
     def take_translates(self, nodes):
         """
         Takes the translates out of the flattened list of statements, and stores
         them into the dicts above.
         """
+
+        label = None
+        filename = None
     
         for n in nodes:
+
+            if isinstance(n.name, basestring):
+                label = n.name
+
             if not isinstance(n, renpy.ast.Translate):
                 continue
+
+            if filename is None:
+                filename = renpy.exports.unelide_filename(n.filename)
+                filename = os.path.normpath(os.path.abspath(filename))
             
             if n.language is None:
                 self.default_translates[n.identifier] = n
+                self.file_translates[filename].append((label, n))
             else:
                 self.language_translates[n.identifier, n.language] = n
                 self.chain_worklist.append((n.identifier, n.language))
@@ -160,11 +181,90 @@ def restructure(children):
         group = [ ]
 
     children[:] = new_children
+
+
+class TranslateFile(object):
     
-
-                
-                
-
+    def __init__(self, filename, language):
+        self.filename = filename
+        self.language = language
+        
+        commondir = os.path.normpath(renpy.config.commondir)
+        gamedir = os.path.normpath(renpy.config.gamedir)
             
+        if filename.startswith(commondir):
+            self.tl_filename = os.path.join(renpy.config.gamedir, "tl", language, "common.rpy")
+        elif filename.startswith(gamedir):
+            fn = os.path.relpath(filename, gamedir)
+            self.tl_filename = os.path.join(renpy.config.gamedir, "tl", language, fn)
+        
+        self.f = None
+
+        # ...
+       
+        self.close()
             
+    def open(self):
+        """
+        Opens a translation file.
+        """
+        
+        if self.f is not None:
+            return
+        
+        if not os.path.exists(self.tl_filename):
+            dn = os.path.dirname(self.tl_filename)
+
+            try:
+                os.makedirs(dn)
+            except:
+                pass
+
+            f = open(self.tl_filename, "a")
+            f.write(codecs.BOM_UTF8)
+        
+        else:
+            f = open(self.tl_filename, "a")
+
+        self.f = codecs.EncodedFile(f, "utf-8")
+        
+        self.f.write(u"# Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
+        self.f.write(u"\n")
+
+    def close(self):
+        if self.f is not None:
+            return self.f
+
+    def write_translates(self):
+        
+        translator = renpy.game.script.translator
+
+        for label, t in translator.file_translates[self.filename]:
+            print label, t
+
+def translate_command():
+    """
+    The translate command. When called from the command line, this generates
+    the translations.
+    """
+    
+    ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
+    ap.add_argument("language", help="The language to generate translations for.")
+    args = ap.parse_args()
+    
+    for dirname, filename in renpy.loader.listdirfiles():
+        if dirname is None:
+            continue
+
+        filename = os.path.join(dirname, filename)
+        
+        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
+            continue
+        
+        filename = os.path.normpath(filename)
+        TranslateFile(filename, args.language)
+
+    return False
+
+renpy.arguments.register_command("translate", translate_command)
     
