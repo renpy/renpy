@@ -141,11 +141,11 @@ def elide_filename(fn):
     renpy_base = os.path.abspath(renpy.config.renpy_base)
     
     if fn.startswith(basedir):
-        return os.path.relpath(fn, basedir)
+        return os.path.relpath(fn, basedir).replace("\\", "/")
     elif fn.startswith(renpy_base):
-        return os.path.relpath(fn, renpy_base)
+        return os.path.relpath(fn, renpy_base).replace("\\", "/")
     else:
-        return fn
+        return fn.replace("\\", "/")
 
 def unelide_filename(fn):
     fn1 = os.path.join(renpy.config.basedir, fn)

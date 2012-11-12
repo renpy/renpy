@@ -127,7 +127,7 @@ def create_translate(block):
     translatable statements.
     """
     
-    md5 = hashlib.md5()
+    md5 = hashlib.md5(block[0].filename + "\r\n")
     
     for i in block:
         code = i.get_code()
@@ -200,7 +200,7 @@ class TranslateFile(object):
         
         self.f = None
 
-        # ...
+        self.write_translates()
        
         self.close()
             
@@ -232,15 +232,37 @@ class TranslateFile(object):
         self.f.write(u"\n")
 
     def close(self):
+        """
+        Closes the translation file, if it's open.
+        """
+        
         if self.f is not None:
-            return self.f
+            self.f.close()
 
     def write_translates(self):
+        """
+        Writes the translates to the file.
+        """
         
         translator = renpy.game.script.translator
 
         for label, t in translator.file_translates[self.filename]:
-            print label, t
+
+            if (t.identifier, self.language) in translator.language_translates:
+                continue
+
+            self.open()
+            
+            if label is None:
+                label = ""
+                
+            self.f.write("# {}:{} {}\n".format(t.filename, t.linenumber, label))
+            self.f.write("translate {} {}:\n".format(t.identifier, self.language))
+            self.f.write("\n")
+            
+            for n in t.block:
+                self.f.write("    " + n.get_code() + "\n")
+                self.f.write("\n")
 
 def translate_command():
     """
