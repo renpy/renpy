@@ -169,6 +169,9 @@ class Formatter(string.Formatter):
         elif "s" in conversion:
             value = str(value)
 
+        if "t" in conversion:
+            value = renpy.translation.translate_string(value)
+
         if "q" in conversion:
             value = value.replace("{", "{{")
             
