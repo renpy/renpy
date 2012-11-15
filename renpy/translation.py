@@ -28,6 +28,10 @@ import os
 import codecs
 import time
 
+################################################################################
+# Script
+################################################################################
+
 class ScriptTranslator(object):
 
     def __init__(self):
@@ -46,6 +50,9 @@ class ScriptTranslator(object):
         # A map from filename to a list of (label, translate) pairs found in 
         # that file.
         self.file_translates = collections.defaultdict(list)
+
+        # A map from language to the StringTranslator for that language.
+        self.strings = collections.defaultdict(StringTranslator)
 
     def take_translates(self, nodes):
         """
@@ -182,6 +189,130 @@ def restructure(children):
 
     children[:] = new_children
 
+################################################################################
+# String Translation
+################################################################################
+
+update_translations = ("RENPY_UPDATE_STRINGS" in os.environ)
+
+
+def quote_unicode(s):
+    s = s.replace("\\", "\\\\")
+    s = s.replace("\"", "\\\"")
+    s = s.replace("\a", "\\a")
+    s = s.replace("\b", "\\b")
+    s = s.replace("\f", "\\f")
+    s = s.replace("\n", "\\n")
+    s = s.replace("\r", "\\r")
+    s = s.replace("\t", "\\t")
+    s = s.replace("\v", "\\v")
+    
+    return s
+    
+
+class StringTranslator(object):
+    """
+    This object stores the translations for a single language. It can also
+    buffer unknown translations, and write them to a file at game's end, if
+    we want that to happen.
+    """
+    
+    def __init__(self):
+        
+        # A map from translation to translated string.
+        self.translations = { }
+        
+        # A list of unknown translations.
+        self.unknown = [ ]
+        
+    def add(self, old, new):
+        if old in self.translations:
+            raise Exception("A translation for %r already exists." % old)
+        
+        self.translations[old] = new
+        
+    def translate(self, old):
+        
+        new = self.translations.get(old, None)
+        
+        if new is not None:
+            return new
+        
+        if update_translations:
+            self.translations[old] = old
+            self.unknown.append(old)
+            
+        return old
+
+    def write_updated_strings(self, language):
+        
+        if not self.unknown:
+            return
+        
+        if language is None:
+            fn = os.path.join(renpy.config.gamedir, "strings.rpy")
+        else:
+            fn = os.path.join(renpy.config.gamedir, "tl", language, "strings.rpy")
+            
+        f = open_tl_file(fn)
+        
+        f.write("translate {} strings:\n".format(language))
+        f.write("\n")
+        
+        for i in self.unknown:
+            
+            i = quote_unicode(i)
+            
+            f.write("    old \"{}\"\n".format(i))
+            f.write("    new \"{}\"\n".format(i))
+            f.write("\n")
+            
+        f.close()
+
+def add_string_translation(language, old, new):
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+    stl.add(old, new)
+
+def translate_string(s):
+    """
+    Translates interface string `s`.
+    """
+    
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+    return stl.translate(s)
+
+def write_updated_strings():
+    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+    stl.write_updated_strings(renpy.game.preferences.language)
+    
+        
+################################################################################
+# Translation Generation
+################################################################################
+
+def open_tl_file(fn):
+
+    if not os.path.exists(fn):
+        dn = os.path.dirname(fn)
+
+        try:
+            os.makedirs(dn)
+        except:
+            pass
+
+        f = open(fn, "a")
+        f.write(codecs.BOM_UTF8)
+    
+    else:
+        f = open(fn, "a")
+
+    f = codecs.EncodedFile(f, "utf-8")
+    
+    f.write(u"# Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
+    f.write(u"\n")
+
+    return f
+
 
 class TranslateFile(object):
     
@@ -211,25 +342,8 @@ class TranslateFile(object):
         
         if self.f is not None:
             return
-        
-        if not os.path.exists(self.tl_filename):
-            dn = os.path.dirname(self.tl_filename)
 
-            try:
-                os.makedirs(dn)
-            except:
-                pass
-
-            f = open(self.tl_filename, "a")
-            f.write(codecs.BOM_UTF8)
-        
-        else:
-            f = open(self.tl_filename, "a")
-
-        self.f = codecs.EncodedFile(f, "utf-8")
-        
-        self.f.write(u"# Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
-        self.f.write(u"\n")
+        self.f = open_tl_file(self.tl_filename)
 
     def close(self):
         """
@@ -257,7 +371,7 @@ class TranslateFile(object):
                 label = ""
                 
             self.f.write("# {}:{} {}\n".format(t.filename, t.linenumber, label))
-            self.f.write("translate {} {}:\n".format(t.identifier, self.language))
+            self.f.write("translate {} {}:\n".format(self.language, t.identifier))
             self.f.write("\n")
             
             for n in t.block:

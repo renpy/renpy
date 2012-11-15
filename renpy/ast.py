@@ -1589,6 +1589,10 @@ class Screen(Node):
         renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
 
 
+################################################################################
+# Translations
+################################################################################
+
 class Translate(Node):
     """
     A translation block, produced either by explicit translation statements 
@@ -1661,3 +1665,29 @@ class EndTranslate(Node):
     
     def execute(self):
         next_node(self.next)
+
+
+class TranslateString(Node):
+    """
+    A node used for translated strings.
+    """
+    
+    __slots__ = [ 
+        "language",
+        "old",
+        "new"
+        ]
+    
+    def __init__(self, loc, language, old, new):
+        super(TranslateString, self).__init__(loc)
+        self.language = language
+        self.old = old
+        self.new = new
+        
+    def diff_info(self):
+        return (TranslateString,)
+    
+    def execute(self):
+        next_node(self.next)
+        renpy.translation.add_string_translation(self.language, self.old, self.new)
+            

@@ -1795,13 +1795,78 @@ def screen_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500)        
 
     return rv
+
+def translate_strings(init_loc, language, l):
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('translate strings statement')
+    
+    ll = l.subblock_lexer()
+    
+    block = [ ]
+    
+    old = None
+    loc = None
+    
+    def parse_string(s):
+        s = s.strip()
+        s = 'u' + s
+        
+        try:
+            return eval(s)
+        except:
+            ll.error('could not parse string')
+    
+    while ll.advance():
+        
+        if ll.keyword('old'):
+            
+            if old is not None:
+                ll.error("previous string is missing a translation")
+            
+            loc = ll.get_location()
+            old = parse_string(ll.rest())
+            
+        elif ll.keyword('new'):
+        
+            if old is None:
+                ll.error('no string to translate')
+
+            new = parse_string(ll.rest())
+            
+            block.append(renpy.ast.TranslateString(loc, language, old, new))
+
+            old = None
+            new = None
+            loc = None
+        
+        else:
+            ll.error('unknown statement')
+            
+    if old:
+        ll.error('final string is missing a translation')
+
+    l.advance()
+
+    if l.init:
+        return block
+    
+    return ast.Init(init_loc, block, 0)
     
 
 @statement("translate")
 def translate_statement(l, loc):
 
+    language = l.require(l.name)
+
+    if language == "None":
+        language = None
+    
     identifier = l.require(l.hash)
-    language = l.name()
+    
+    if identifier == "strings":
+        return translate_strings(loc, language, l)
+    
     
     l.require(':')
     l.expect_eol()
