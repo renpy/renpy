@@ -290,6 +290,39 @@ def write_updated_strings():
 # Translation Generation
 ################################################################################
 
+STRING_RE = r"""(?x)
+\n
+|\#[^\n]*
+|\b_\s*\(\s*[uU]?(
+\"\"\"(?:\\.|\"{1,2}|[^\\"])*?\"\"\"
+|'''(?:\\.|\'{1,2}|[^\\'])*?'''
+|"(?:\\.|[^\\"])*"
+|'(?:\\.|[^\\'])*'
+)\s*\)
+"""
+
+def scan_strings(filename):
+    """
+    Scans `filename`, a file containing Ren'Py script, for translatable 
+    strings.
+    
+    Generates a list of (line, string) tuples.
+    """
+ 
+    line = 1
+    
+    with open(filename, "r") as f:
+        data = f.read().decode("utf-8")
+
+    for m in re.finditer(STRING_RE, data):
+
+        s = m.group(1)
+        if s is not None:
+            yield line, s
+
+        line += m.group(0).count("\n")
+
+
 def open_tl_file(fn):
 
     if not os.path.exists(fn):
