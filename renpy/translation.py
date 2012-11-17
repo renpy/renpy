@@ -318,6 +318,9 @@ def scan_strings(filename):
 
         s = m.group(1)
         if s is not None:
+            s = s.strip()
+            s = "u" + s
+            s = eval(s)
             yield line, s
 
         line += m.group(0).count("\n")
@@ -357,15 +360,27 @@ class TranslateFile(object):
         gamedir = os.path.normpath(renpy.config.gamedir)
             
         if filename.startswith(commondir):
+            relfn = os.path.relpath(filename, commondir)
+            
+            if relfn == "_developer.rpym":
+                return
+            
+            if relfn.startswith("compat"):
+                return
+            
             self.tl_filename = os.path.join(renpy.config.gamedir, "tl", language, "common.rpy")
         elif filename.startswith(gamedir):
             fn = os.path.relpath(filename, gamedir)
             self.tl_filename = os.path.join(renpy.config.gamedir, "tl", language, fn)
         
+        if self.tl_filename.endswith(".rpym"):
+            self.tl_filename = self.tl_filename[:-1]
+        
         self.f = None
 
         self.write_translates()
-       
+        self.write_strings()
+        
         self.close()
             
     def open(self):
@@ -410,6 +425,40 @@ class TranslateFile(object):
             for n in t.block:
                 self.f.write("    " + n.get_code() + "\n")
                 self.f.write("\n")
+
+    def write_strings(self):
+        """
+        Writes strings to the file.
+        """
+        
+        started = False
+        filename = renpy.parser.elide_filename(self.filename)
+        
+        for line, s in scan_strings(self.filename):
+
+            stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+            
+            if s in stl.translations:
+                continue
+            
+            stl.translations[s] = s
+
+            if not started:
+                started = True
+
+                self.open()
+                self.f.write("translate {} strings:\n".format(self.language))
+                self.f.write("\n")
+                
+            qus = quote_unicode(s)
+            
+            print s
+            
+            self.f.write("    # {}:{}\n".format(filename, line))
+            self.f.write("    old \"{}\"\n".format(qus))
+            self.f.write("    new \"{}\"\n".format(qus))
+            self.f.write("\n")
+
 
 def translate_command():
     """
