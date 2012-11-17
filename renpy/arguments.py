@@ -41,7 +41,7 @@ class ArgumentParser(argparse.ArgumentParser):
     arguments, as well as arguments that are specific to a sub-command. 
     """
     
-    def __init__(self, second_pass=True, description=None):
+    def __init__(self, second_pass=True, description=None, require_command=True):
         """
         Creates an argument parser.
         
@@ -59,8 +59,9 @@ class ArgumentParser(argparse.ArgumentParser):
         argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
         
         self.add_argument(
-            "basedir", default=None, nargs='?', 
-            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable."
+            "basedir", default=None,
+            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
+            nargs=1 if require_command else '?'
             )
         
         command_names = ", ".join(sorted(commands))
@@ -69,7 +70,7 @@ class ArgumentParser(argparse.ArgumentParser):
             "command",
             help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
             default="run",
-            nargs='?')
+            nargs=1 if require_command else '?')
         
         self.add_argument(
             "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
@@ -109,7 +110,7 @@ def run():
     The default command, that (when called) leads to normal game startup.
     """
           
-    ap = ArgumentParser(description="Runs the current project normally.")
+    ap = ArgumentParser(description="Runs the current project normally.", require_command=False)
             
     ap.add_argument(
         '--profile-display', dest='profile_display', action='store_true', default=False,
@@ -190,7 +191,7 @@ def bootstrap():
     
     global rest
     
-    ap = ArgumentParser(False)
+    ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
     return args
 
