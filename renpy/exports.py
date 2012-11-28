@@ -47,6 +47,7 @@ from renpy.python import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable
 from renpy.parser import unelide_filename
+from renpy.translation import change_language, known_languages
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
@@ -82,7 +83,8 @@ def public_api():
     predict, predict_screen
     displayable
     unelide_filename
-    
+    change_language, known_languages
+
 del public_api
 
 def roll_forward_info():

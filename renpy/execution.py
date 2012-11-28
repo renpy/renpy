@@ -56,7 +56,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 8
+    __version__ = 9
     
     def after_upgrade(self, version):
         if version < 1:
@@ -85,6 +85,10 @@ class Context(renpy.object.Object):
             
         if version < 8:
             self.defer_rollback = None
+            
+        if version < 9:
+            self.translate_language = None
+            self.translate_identifier = None
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -161,7 +165,9 @@ class Context(renpy.object.Object):
         # A list of modes that the context has been in.
         self.modes = renpy.python.RevertableList([ "start" ])
         self.use_modes = True
-        
+
+        self.translate_language = None
+        self.translate_identifier = None
                 
         
     def make_dynamic(self, names, context=False):
@@ -264,7 +270,7 @@ class Context(renpy.object.Object):
             
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
-
+        
             self.seen = False
 
             try:
@@ -457,4 +463,5 @@ class Context(renpy.object.Object):
         self.defer_rollback = None
         
         renpy.exports.rollback(force, checkpoints)
-            
+
+

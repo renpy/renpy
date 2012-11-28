@@ -301,6 +301,9 @@ def main():
     for i in renpy.game.post_init:
         i()
         
+    # Init translation.
+    renpy.translation.init_translation()
+        
     # Rebuild the various style caches.
     renpy.style.build_styles()
 

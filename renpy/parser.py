@@ -1853,6 +1853,16 @@ def translate_strings(init_loc, language, l):
     
     return ast.Init(init_loc, block, 0)
     
+def translate_python(l, loc):
+    l.require(':')
+    l.expect_block('python block')
+
+    python_code = l.python_block()
+
+    l.advance()
+
+    return ast.TranslatePython(loc, language, python_code)
+    
 
 @statement("translate")
 def translate_statement(l, loc):
@@ -1866,7 +1876,8 @@ def translate_statement(l, loc):
     
     if identifier == "strings":
         return translate_strings(loc, language, l)
-    
+    elif identifier == "python":
+        return translate_python(loc, language, l)
     
     l.require(':')
     l.expect_eol()

@@ -1634,6 +1634,7 @@ class Translate(Node):
             raise Exception("Translation nodes cannot be run directly.")
         
         next_node(renpy.game.script.translator.lookup_translate(self.identifier))
+        renpy.game.context().translate_identifier = self.identifier
 
     def predict(self):
         node = renpy.game.script.translator.lookup_translate(self.identifier)
@@ -1665,7 +1666,8 @@ class EndTranslate(Node):
     
     def execute(self):
         next_node(self.next)
-
+        renpy.game.context().translate_identifier = None
+        
 
 class TranslateString(Node):
     """
@@ -1690,4 +1692,35 @@ class TranslateString(Node):
     def execute(self):
         next_node(self.next)
         renpy.translation.add_string_translation(self.language, self.old, self.new)
+
+class TranslatePython(Node):
+
+    __slots__ = [
+        'language',
+        'code',
+        ]
+
+    def __init__(self, loc, language, python_code):
+        """
+        @param code: A PyCode object.
+
+        @param hide: If True, the code will be executed with its
+        own local dictionary.
+        """
+        
+        super(TranslatePython, self).__init__(loc)
+
+        self.language = language
+        self.code = PyCode(python_code, loc=loc, mode='exec')
+
+    def diff_info(self):
+        return (TranslatePython, self.code.source)
+
+    def execute(self):
+        next_node(self.next)
+
+    # def early_execute(self):
+    #    renpy.python.create_store(self.store)
+    #    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+
             

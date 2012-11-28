@@ -95,6 +95,9 @@ init -1135 python:
         if alternative is not None:        
             if alternative not in __alternatives[preference]:           
                 raise Exception("{0} is not a known alternative for style preference {1}.".format(alternative, preference))
+
+    def __change_language():
+        __spdirty.flag = True
     
         
     def __set_style_preference(preference, alternative):
@@ -164,6 +167,7 @@ init -1135 python:
     renpy.get_style_preference = __get_style_preference
     
     config.interact_callbacks.append(__update)
+    config.change_language_callbacks.append(__change_language)
     
 init 1135 python:
     

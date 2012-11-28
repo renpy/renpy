@@ -520,7 +520,7 @@ old_substitutions = True
 # The graphics renderer we use. (Ren'Py sets this.)
 renderer = "auto"
 
-# The translator to use, if any.
+# The translator to use, if any. (Not used anymore.)
 translator = None
 
 # Should we use the old, broken line spacing code?
@@ -535,6 +535,9 @@ save_dump = False
 
 # Can we resize a gl window?
 gl_resize = True
+
+# Called when we change the translation.
+change_language_callbacks = [ ]
 
 del renpy
 del os

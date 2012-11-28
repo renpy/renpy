@@ -36,6 +36,9 @@ class ScriptTranslator(object):
 
     def __init__(self):
 
+        # All languages we know about.
+        self.languages = set()
+
         # A map from the translate identifier to the translate object used when the
         # language is None.
         self.default_translates = { }
@@ -54,6 +57,10 @@ class ScriptTranslator(object):
         # A map from language to the StringTranslator for that language.
         self.strings = collections.defaultdict(StringTranslator)
 
+        # A map from language to a list of TranslatePython objects for 
+        # that language.
+        self.python = collections.defaultdict(list)
+
     def take_translates(self, nodes):
         """
         Takes the translates out of the flattened list of statements, and stores
@@ -68,19 +75,22 @@ class ScriptTranslator(object):
             if isinstance(n.name, basestring):
                 label = n.name
 
-            if not isinstance(n, renpy.ast.Translate):
-                continue
+            if isinstance(n, renpy.ast.TranslatePython):
+                self.python[n.language].append(n)
 
-            if filename is None:
-                filename = renpy.exports.unelide_filename(n.filename)
-                filename = os.path.normpath(os.path.abspath(filename))
-            
-            if n.language is None:
-                self.default_translates[n.identifier] = n
-                self.file_translates[filename].append((label, n))
-            else:
-                self.language_translates[n.identifier, n.language] = n
-                self.chain_worklist.append((n.identifier, n.language))
+            elif isinstance(n, renpy.ast.Translate):
+    
+                if filename is None:
+                    filename = renpy.exports.unelide_filename(n.filename)
+                    filename = os.path.normpath(os.path.abspath(filename))
+                
+                if n.language is None:
+                    self.default_translates[n.identifier] = n
+                    self.file_translates[filename].append((label, n))
+                else:
+                    self.languages.add(n.language)
+                    self.language_translates[n.identifier, n.language] = n
+                    self.chain_worklist.append((n.identifier, n.language))
         
     def chain_translates(self):
         """
@@ -270,7 +280,9 @@ class StringTranslator(object):
         f.close()
 
 def add_string_translation(language, old, new):
-    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+    tl = renpy.game.script.translator
+    stl = tl.strings[renpy.game.preferences.language]
+    tl.language.add(language)
     stl.add(old, new)
 
 def translate_string(s):
@@ -285,7 +297,80 @@ def write_updated_strings():
     stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
     
+################################################################################
+# Changing language
+################################################################################
+ 
+style_backup = None
+ 
+def init_translation():
+    """
+    Called before the game starts.
+    """
+ 
+    global style_backup
+    style_backup = renpy.style.backup()
+ 
+def change_language(language):
+    """
+    :doc: translation
+    
+    Changes the current language to `language`.
+    """
+
+    renpy.game.preferences.language = language
+    
+    tl = renpy.game.script.translator
+
+    renpy.style.restore(style_backup)
+
+    for i in tl.python[language]:
+        renpy.python.py_exec_bytecode(i)
         
+    for i in renpy.config.change_language_callbacks:
+        i()
+        
+    # Reset various parts of the system. Most notably, this clears the image
+    # cache, letting us load translated images.
+    renpy.exports.free_memory()
+    
+    # Rebuild the styles.
+    renpy.style.rebuild()
+    
+    # Restart the interaction.
+    renpy.exports.restart_interaction()
+    
+def check_language():
+    """
+    Checks to see if the language has changed. If it has, jump to the start
+    of the current translation block.
+    """
+    
+    ctx = renpy.game.contexts[-1]
+    preferences = renpy.game.preferences
+    
+    # Deal with a changed language.
+    if ctx.translate_language != preferences.language:
+        ctx.translate_language = preferences.language
+        
+        tid = ctx.translate_identifier
+        
+        if tid is not None:
+            node = renpy.game.script.translator.lookup_translate(tid)
+            
+            if node is not None:
+                raise renpy.game.JumpException(node.name)
+            
+def known_languages():
+    """
+    :doc: translation
+    
+    Returns the set of known languages.
+    """
+    
+    return renpy.game.script.translator.languages
+    
+                     
 ################################################################################
 # Translation Generation
 ################################################################################

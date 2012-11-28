@@ -540,6 +540,10 @@ init -1180 python:
     # The screen that we go to when entering the game menu.
     _game_menu_screen = None
     
+    # The language we use when the game starts. None remembers the user's
+    # choice of language, and defaults to the game's native language.
+    config.language = None
+    
     style.error_root = Style(style.default)
     style.error_title = Style(style.default)
     style.error_body = Style(style.default)
@@ -586,6 +590,18 @@ init -1180 python:
 
         for i in config.clear_layers:
             renpy.scene(layer=i)
+        
+    def _init_language():
+        
+        if "RENPY_LANGUAGE" in os.environ:
+            language = os.environ["RENPY_LANGUAGE"]
+        elif config.language is not None:
+            language = config.language
+        else:
+            language = _preferences.language
+        
+        renpy.change_language(language)
+        
         
 # Run at the end of init, to set up autosaving based on the user's
 # choices.
@@ -723,6 +739,7 @@ label _start:
         for i in config.start_callbacks:
             i()
 
+    $ _init_language()
     $ renpy.block_rollback()
 
     call _gl_test
