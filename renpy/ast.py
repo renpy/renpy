@@ -319,10 +319,14 @@ class Node(object):
         # Does nothing for nodes that do not contain child blocks.
         return
 
-    def get_code(self):
+    def get_code(self, dialogue_filter=None):
         """
         Returns the canonical form of the code corresponding to this statement.
         This only needs to be defined if the statement is translatable.
+     
+        `filter`
+            If present, a filter that should be applied to human-readable
+            text in the statement.
         """
 
         raise Exception("Not Implemented")
@@ -390,7 +394,7 @@ class Say(Node):
         # speaking, or None to disable this behavior.
         self.attributes = attributes
 
-    def get_code(self):
+    def get_code(self, dialogue_filter=None):
         rv = [ ]
         
         if self.who:
@@ -399,7 +403,11 @@ class Say(Node):
         if self.attributes is not None:
             rv.extend(self.attributes)
             
-        rv.append(renpy.translation.encode_say_string(self.what))
+        what = self.what
+        if dialogue_filter is not None:
+            what = dialogue_filter(what)
+            
+        rv.append(renpy.translation.encode_say_string(what))
 
         if not self.interact:
             rv.append("nointeract")
@@ -1526,7 +1534,7 @@ class UserStatement(Node):
         self.call("scry", rv)
         return rv
      
-    def get_code(self):
+    def get_code(self, dialogue_filter=None):
         return self.line
                             
             

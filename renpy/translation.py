@@ -281,8 +281,8 @@ class StringTranslator(object):
 
 def add_string_translation(language, old, new):
     tl = renpy.game.script.translator
-    stl = tl.strings[renpy.game.preferences.language]
-    tl.language.add(language)
+    stl = tl.strings[language]
+    tl.languages.add(language)
     stl.add(old, new)
 
 def translate_string(s):
@@ -437,9 +437,10 @@ def open_tl_file(fn):
 
 class TranslateFile(object):
     
-    def __init__(self, filename, language):
+    def __init__(self, filename, language, filter):
         self.filename = filename
         self.language = language
+        self.filter = filter
         
         commondir = os.path.normpath(renpy.config.commondir)
         gamedir = os.path.normpath(renpy.config.gamedir)
@@ -508,7 +509,7 @@ class TranslateFile(object):
             self.f.write("\n")
             
             for n in t.block:
-                self.f.write("    " + n.get_code() + "\n")
+                self.f.write("    " + n.get_code(self.filter) + "\n")
                 self.f.write("\n")
 
     def write_strings(self):
@@ -521,7 +522,7 @@ class TranslateFile(object):
         
         for line, s in scan_strings(self.filename):
 
-            stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+            stl = renpy.game.script.translator.strings[self.language]
             
             if s in stl.translations:
                 continue
@@ -535,15 +536,113 @@ class TranslateFile(object):
                 self.f.write("translate {} strings:\n".format(self.language))
                 self.f.write("\n")
                 
-            qus = quote_unicode(s)
-            
-            print s
+            fs = self.filter(s)
             
             self.f.write("    # {}:{}\n".format(filename, line))
-            self.f.write("    old \"{}\"\n".format(qus))
-            self.f.write("    new \"{}\"\n".format(qus))
+            self.f.write("    old \"{}\"\n".format(quote_unicode(s)))
+            self.f.write("    new \"{}\"\n".format(quote_unicode(fs)))
             self.f.write("\n")
 
+def null_filter(s):
+    return s
+
+
+ROT13 = { }
+
+for i, j in zip("ABCDEFGHIJKLM", "NMOPQRSTUVWYZ"):
+    ROT13[i] = j
+    ROT13[j] = i
+
+    i = i.lower()
+    j = j.lower()
+    
+    ROT13[i] = j
+    ROT13[j] = i
+
+def rot13_filter(s):
+
+    def tag_pass(s):
+        
+        brace = False
+        first = False
+        rv = ""
+        
+        for i in s:
+            
+            if i == '{':
+                
+                if first:
+                    brace = False
+                else:
+                    brace = True
+                    first = True
+                    
+                rv += "{"
+
+            elif i == "}":
+                first = False
+                
+                if brace:
+                    brace = False
+        
+                rv += "}"
+            
+            else:
+                first = False
+                
+                if brace:
+                    rv += i
+                else:
+                    rv += ROT13.get(i, i)
+
+        return rv
+
+    def square_pass(s):
+        squares = 0
+        first = False
+        
+        rv = ""
+        buf = ""
+        
+        for i in s:
+            
+            if i == "[":
+                if first:
+                    squares = 0
+                else:
+                    rv += tag_pass(buf)
+                    buf = ""
+
+                    if squares == 0:
+                        first = True
+                    
+                    squares += 1
+                    
+                rv += "["
+                
+            elif i == "]":
+                
+                first = False
+                
+                squares -= 1
+                if squares < 0:
+                    squares += 1
+                    
+                rv += "]"
+            
+            else:
+                if squares:
+                    rv += i
+                else:
+                    buf += i
+                    
+        if buf:
+            rv += tag_pass(buf)
+
+        return rv
+    
+    
+    return square_pass(s)
 
 def translate_command():
     """
@@ -553,7 +652,13 @@ def translate_command():
     
     ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
     ap.add_argument("language", help="The language to generate translations for.")
+    ap.add_argument("--rot13", help="Apply rot13 while generating translations.", dest="rot13", action="store_true")
     args = ap.parse_args()
+    
+    if args.rot13:
+        filter = rot13_filter #@ReservedAssignment
+    else:
+        filter = null_filter #@ReservedAssignment
     
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:
@@ -565,7 +670,7 @@ def translate_command():
             continue
         
         filename = os.path.normpath(filename)
-        TranslateFile(filename, args.language)
+        TranslateFile(filename, args.language, filter)
 
     return False
 

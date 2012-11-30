@@ -1853,7 +1853,7 @@ def translate_strings(init_loc, language, l):
     
     return ast.Init(init_loc, block, 0)
     
-def translate_python(l, loc):
+def translate_python(loc, language, l):
     l.require(':')
     l.expect_block('python block')
 
