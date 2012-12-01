@@ -1895,9 +1895,7 @@ init -1140 python:
         """
         :doc: other_action
         
-        Changes the language of the game to `language`. A language change
-        causes the current statement to be restarted, and all contexts but 
-        the outermost being exited.
+        Changes the language of the game to `language`.
         
         `language`
             A string giving the language to translate to, or None to use
@@ -1908,14 +1906,16 @@ init -1140 python:
             self.language = language
             
         def __call__(self):
-            persistent._language = self.language
-            _language_activate()
-            renpy.restart_interaction()
-            renpy.rollback(True, 0, True)
+            renpy.change_language(self.language)
             
         def get_selected(self):
-            return persistent._language == self.language
+            return _preferences.language == self.language
             
+        def get_sensitive(self):
+            if self.language is None:
+                return True
+                
+            return self.language in renpy.known_languages()
             
 # This is used to ensure a fixed click-to-continue indicator is shown on
 # its own layer.
