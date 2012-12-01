@@ -61,6 +61,10 @@ class ScriptTranslator(object):
         # that language.
         self.python = collections.defaultdict(list)
 
+        # A map from filename to a list of additional strings we've found
+        # in that file.
+        self.additional_strings = collections.defaultdict(list)
+
     def take_translates(self, nodes):
         """
         Takes the translates out of the flattened list of statements, and stores
@@ -72,17 +76,28 @@ class ScriptTranslator(object):
     
         for n in nodes:
 
+            if filename is None:
+                filename = renpy.exports.unelide_filename(n.filename)
+                filename = os.path.normpath(os.path.abspath(filename))
+
             if isinstance(n.name, basestring):
                 label = n.name
 
             if isinstance(n, renpy.ast.TranslatePython):
                 self.python[n.language].append(n)
 
+            elif isinstance(n, renpy.ast.Menu):
+                
+                for i in n.items:
+                    s = i[0]
+                    
+                    if s is None:
+                        continue
+                    
+                    self.additional_strings[filename].append((n.linenumber, s))
+
             elif isinstance(n, renpy.ast.Translate):
     
-                if filename is None:
-                    filename = renpy.exports.unelide_filename(n.filename)
-                    filename = os.path.normpath(os.path.abspath(filename))
                 
                 if n.language is None:
                     self.default_translates[n.identifier] = n
@@ -393,6 +408,9 @@ def scan_strings(filename):
     
     Generates a list of (line, string) tuples.
     """
+ 
+    for line, s in renpy.game.script.translator.additional_strings[filename]:
+        yield line, s
  
     line = 1
     
