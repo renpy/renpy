@@ -279,9 +279,15 @@ class Context(renpy.object.Object):
                     node.execute()
                 
                 except renpy.game.CONTROL_EXCEPTIONS, e:
+
+                    # An exception ends the current translation.
+                    self.translate_interaction = None                    
+
                     raise
 
                 except Exception, e:
+                    self.translate_interaction = None                    
+
                     exc_info = sys.exc_info()
 
                     short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
