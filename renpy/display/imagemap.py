@@ -200,7 +200,13 @@ class ImageMapCache(renpy.object.Object):
         if not self.areas:
             return
 
-        filename = "cache/im-%s.png" % (self.md5.hexdigest())
+        filename = "im-%s.png" % (self.md5.hexdigest())
+
+        if renpy.game.preferences.language:
+            filename = renpy.game.preferences.language + "-" + filename
+
+        filename = "cache/" + filename
+
         self.md5 = None
 
         self.layout()
