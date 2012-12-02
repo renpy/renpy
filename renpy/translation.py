@@ -338,9 +338,10 @@ def change_language(language):
     tl = renpy.game.script.translator
 
     renpy.style.restore(style_backup)
+    renpy.style.rebuild()
 
     for i in tl.python[language]:
-        renpy.python.py_exec_bytecode(i)
+        renpy.python.py_exec_bytecode(i.code.bytecode)
         
     for i in renpy.config.change_language_callbacks:
         i()
