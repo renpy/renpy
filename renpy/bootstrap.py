@@ -214,6 +214,8 @@ this program do not contain : or ; in their names.
     import renpy #@Reimport
     renpy.import_all()
 
+    renpy.loader.init_importer()
+
     keep_running = True
 
     try:
