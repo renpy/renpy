@@ -410,7 +410,8 @@ python early hide:
     renpy.statements.register('nvl clear',
                               parse=parse_nvl_clear,
                               execute=execute_nvl_clear,
-                              scry=scry_nvl_clear)
+                              scry=scry_nvl_clear,
+                              translatable=True)
 
 
     
