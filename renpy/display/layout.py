@@ -1593,6 +1593,11 @@ class LiveTile(Container):
         cw, ch = cr.get_size()
         rv = renpy.display.render.Render(width, height)
 
+        width = int(width)
+        height = int(height)
+        cw = int(cw)
+        ch = int(ch)
+
         for y in range(0, height, ch):
             for x in range(0, width, cw):
                 rv.blit(cr, (x, y), focus=False)

@@ -220,7 +220,11 @@ def main():
     renpy.game.exception_info = 'While loading the script.'
     renpy.game.script = renpy.script.Script()
 
+    # Set up error handling.
     renpy.exports.load_module("_errorhandling")
+    renpy.style.build_styles(early=True)
+    
+    # Load all .rpy files.    
     renpy.game.script.load_script() # sets renpy.game.script.
 
     renpy.game.exception_info = 'After loading the script.'
