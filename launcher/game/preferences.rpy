@@ -10,8 +10,24 @@ init python:
     if persistent.windows_console is None:
         persistent.windows_console = False
 
+    def scan_translations():
+        
+        languages = renpy.known_languages()
+        
+        if not languages:
+            return None
+            
+        rv = [ ( "English", None) ]
+        
+        for i in languages:
+            rv.append((i.title(), i))
+            
+        return rv
+
 
 screen preferences:
+    
+    $ translations = scan_translations()
     
     frame:
         style_group "l"
@@ -24,13 +40,12 @@ screen preferences:
             label _("Launcher Preferences")
             
             add HALF_SPACER
-
             
             hbox:
 
                 frame:
                     style "l_indent"
-                    xmaximum ONEHALF
+                    xmaximum ONETHIRD
                     xfill True
  
                     has vbox
@@ -54,7 +69,8 @@ screen preferences:
                             else:
                                 textbutton _("Not Set") action Jump("projects_directory_preference")
                                 
-                        
+                   
+                   
                     add SPACER
 
                     # Text editor selection.
@@ -96,7 +112,7 @@ screen preferences:
                     
                 frame:
                     style "l_indent"
-                    xmaximum ONEHALF
+                    xmaximum ONETHIRD
                     xfill True
                     
                     has vbox
@@ -131,7 +147,14 @@ screen preferences:
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
 
-                    add SPACER
+
+                frame:
+                    style "l_indent"
+                    xmaximum ONETHIRD
+                    xfill True
+
+                    has vbox
+
                     add SEPARATOR2
                     
                     frame:
@@ -143,8 +166,29 @@ screen preferences:
                     
                         add HALF_SPACER
 
-                        textbutton _("Open launcher as project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+                        textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+                    
+                    if translations:
 
+                        add SPACER
+                        
+                        # Text editor selection.
+                        add SEPARATOR2
+                        
+                        frame:
+                            style "l_indent"
+                            yminimum 75
+                            has vbox
+                            
+                            text _("Language:")
+                
+                            add HALF_SPACER
+                            
+                            # frame style "l_indent": 
+        
+                            for tlname, tlvalue in translations:
+                                textbutton tlname action Language(tlvalue) style "l_list"
+                  
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
 
