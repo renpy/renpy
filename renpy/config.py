@@ -539,6 +539,9 @@ gl_resize = True
 # Called when we change the translation.
 change_language_callbacks = [ ]
 
+# The translation directory.
+tl_directory = "tl"
+
 del renpy
 del os
 

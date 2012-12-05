@@ -277,7 +277,7 @@ class StringTranslator(object):
         if language is None:
             fn = os.path.join(renpy.config.gamedir, "strings.rpy")
         else:
-            fn = os.path.join(renpy.config.gamedir, "tl", language, "strings.rpy")
+            fn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "strings.rpy")
             
         f = open_tl_file(fn)
         
@@ -473,10 +473,10 @@ class TranslateFile(object):
             if relfn.startswith("compat"):
                 return
             
-            self.tl_filename = os.path.join(renpy.config.gamedir, "tl", language, "common.rpy")
+            self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "common.rpy")
         elif filename.startswith(gamedir):
             fn = os.path.relpath(filename, gamedir)
-            self.tl_filename = os.path.join(renpy.config.gamedir, "tl", language, fn)
+            self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
         
         if self.tl_filename.endswith(".rpym"):
             self.tl_filename = self.tl_filename[:-1]

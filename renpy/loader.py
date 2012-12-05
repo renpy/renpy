@@ -375,7 +375,7 @@ def get_prefixes():
     language = renpy.game.preferences.language
     
     if language is not None:
-        rv.append("tl/" + language + "/")
+        rv.append(renpy.config.tl_directory + "/" + language + "/")
     
     rv.append("")
     
