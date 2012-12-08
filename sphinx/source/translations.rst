@@ -185,3 +185,74 @@ When a group of dialogue statements changes, the entire group needs to
 be re-translated. When writing a game, it might make sense to insert
 pass statements to break long stretches of dialogue into multiple
 parts. 
+
+While translation blocks may include python code, this code should not
+have side effects visible outside of the block. That's because
+changing languages will restart the translation block, causing the
+side effects to occur multiple times.
+
+Menu and String Translations
+============================
+
+In addition to dialogue, Ren'Py is able to translate text found in
+menus and other strings. Interface translations are a 1-to-1
+substitution. Wherever a string is found, it will be replaced by a
+single replacement.
+
+When generating translations, Ren'Py will scan the script files for
+menus, and for strings enclosed inside the _() function. It will then
+place the strings inside a translate strings block. For example, if we
+have the following script::
+
+  define e = Character(_("Eileen"))
+
+  # ...
+  
+  menu:
+
+       "Go West":
+          # ...
+
+       "Head East":
+          # ...
+
+Ren'Py will generate the following code::
+
+  translate piglatin strings:
+
+      old "Eileen"
+      new "Eileen"
+
+      old "Go West"
+      new "Go West"
+
+      old "Head East"
+      new "Head East"
+
+Which can then be translated::
+  
+  translate piglatin strings:
+
+      old "Eileen"
+      new "Eileenway"
+
+      old "Go West"
+      new "Ogay Estway"
+
+      old "Head East"
+      new "Eadhay Eastway"
+
+Translating substitutions
+-------------------------
+
+String substitutions can be translate by using the !t conversion
+flag. So the following code will be translatable using the dialogue
+and code translation systems::
+
+  if mood_points > 5:
+      $ mood = _("great")
+  else:
+      $ mood = _("awful")
+
+  "I'm feeling [mood!t]."
+  
