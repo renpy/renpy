@@ -186,6 +186,19 @@ be re-translated. When writing a game, it might make sense to insert
 pass statements to break long stretches of dialogue into multiple
 parts. 
 
+In this example::
+
+  "Line 1"
+  "Line 2"
+
+  pass
+
+  "Line 3"
+  "Line 4"
+
+lines 1 and 2 will be in one block, and lines 3 and 4 will be in a
+second block.
+
 While translation blocks may include python code, this code should not
 have side effects visible outside of the block. That's because
 changing languages will restart the translation block, causing the
@@ -242,6 +255,9 @@ Which can then be translated::
       old "Head East"
       new "Eadhay Eastway"
 
+String translations are also applied to dialogue strings that are not
+translated as dialogue.
+      
 Translating substitutions
 -------------------------
 
@@ -256,3 +272,114 @@ and code translation systems::
 
   "I'm feeling [mood!t]."
   
+
+Image and File Translations
+===========================
+
+When translating a game, it may may be necessary to replace a file
+with a translate version. For example, if an image contains text, it
+might make sense to replace it with a version of the image where the
+text is in another language.
+
+Ren'Py handles this by looking in the translation directory for the
+image. For example, if the "piglatin" language is in use, and
+"library.png" is loaded, Ren'Py will use "game/tl/piglatin/library.png"
+in preference to "game/library.png".
+
+Style Translations
+==================
+
+It may be necessary to change styles - especially font-related
+styles - when translating a game. Ren'Py handles this with translate
+python blocks. These blocks can contain code to change
+language-related styles::
+
+  translate piglatin python:
+       style.default.font = "stonecutter.ttf"
+
+When a language is activated - either at the start of the game, or
+after a language change - Ren'Py resets the styles to their contents
+at the end of the init phase. It then runs all translate python blocks
+associated with the current language, in some order. Finally, it
+rebuilds styles, allowing the changes to take effect.
+
+Style translations may be added to any .rpy file.
+
+Default Language
+================
+
+The default language is chosen using the following method:
+
+* If the RENPY_LANGUAGE environment variable is set, that language is
+  used.
+* If :var:`config.language` is set, that language is used.
+* If the game has ever chosen a language in the past, that language is
+  used.
+* Otherwise, the None language is used.
+
+Translation Actions, Functions, and Variables
+=============================================
+
+The main way to switch languages is with the Language action.
+
+.. include:: inc/language_action
+
+The Language action can be used to add a language preference to the
+preferences screen, using code like::
+
+            frame:
+                style_group "pref"
+                has vbox
+
+                label _("Language")
+                textbutton _("English") action Language(None)
+                textbutton _("Pig Latin") action Language("piglatin")
+
+There are two translation-related functions:
+
+.. include:: inc/translation_functions
+
+There are two language-relate variables. One is
+:var:`config.language`, which is used to change the default language
+of the game.
+
+.. var:: _preferences.language
+
+  The name of the current language, or None if the default language is
+  being used. This should be treated as a read-only variable. To
+  change the language, call :func:`renpy.change_language`.
+         
+            
+Unsanctioned Translations
+=========================
+
+.. note::
+
+    It's best to ask a game's creators for permission before
+    creating an unsanctioned translation. 
+
+Ren'Py includes a small amount of support for creating translations
+without the active assistance of the game's creators. This support
+consists of the ability to automatically create a string translation
+file from all of the strings in the game. Since string translations
+are used for untranslated dialogue, this technique makes it possible
+to translate a game.
+
+To create a string translation file, perform the following steps:
+
+* Set the RENPY_LANGUAGE environment variable to the language you want
+  to translate to.
+* Set the RENPY_UPDATE_STRINGS environment variable to a non-empty
+  value.
+* Play through the game until all text is seen.
+
+This will update the "game/tl/language/strings.rpy" file with a
+translation template that contains all of the strings in it.
+
+If a game doesn't include support for changing the language, it may be
+appropriate to use an init python block to set :var:`config.language`
+to the target language. 
+
+Along with the use of string translations for dialogue, unsanctioned
+translators may be interested in using the techniques described above
+to translate images and styles.

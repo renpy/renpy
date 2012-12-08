@@ -1893,13 +1893,13 @@ init -1140 python:
 
     class Language(Action):
         """
-        :doc: other_action
+        :doc: language_action
         
         Changes the language of the game to `language`.
         
         `language`
             A string giving the language to translate to, or None to use
-            the language given in the game script.
+            the default language of the game script.
         """
 
         def __init__(self, language):

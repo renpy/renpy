@@ -95,12 +95,21 @@ formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
 Along with the !s and !r conversion flags supported by Python, Ren'Py
-supports a !q conversion flag. The !q conversion flag ensures that
+supports !q and !t conversion flag. The !q conversion flag ensures that
 text tags are properly quoted, so that displaying a string will not
 introduce unwanted formatting constructs. For example::
 
     g "Don't pull a fast one on me, [playername!q]."
 
+The !t flag will translate the interpolated string::
+
+    if points > 5:
+        $ mood = _("happy")
+    else:
+        $ mood = _("annoyed")
+
+    g "I'm [mood!t] to see you."
+    
 
 Styling and Text Tags
 =====================
@@ -541,54 +550,6 @@ a single frame.
 
 Artifacts aren't a problem for static text, like the text in menus and
 other parts of the user interface.
-
-Translations
-============
-
-Ren'Py supports the automatic translation of text. The translation
-occurs whenever text is displayed, and before text interpolation
-occurs.
-
-Ren'Py reads translations out of .rpt files. A .rpt file is a text
-file containing lines beginning with the following characters:
-
-#
-    Lines beginning with the hash mark are comment lines, that are
-    ignored.
-
-<
-    Lines beginning with a less-than followed by a space are
-    translation source lines, giving strings to be translated.
-
->
-    Lines beginning with a greater-than followed by a space are
-    translation lines, giving the translation of the previous
-    translation source.
-
-Inside a translation line, newlines are escaped with \\n, and
-backslashes are escaped with \\\\.
-
-By default, Ren'Py reads translations out of a file called
-translations.rpt, if it exists. The :func:`Language` action can be
-used to change the translation file.
-
-Creating Translation Files
-==========================
-
-Ren'Py has support for automatically creating translation
-files. Taking advantage of this is a three-step process.
-
-1. Create an empty translation file, such as translations.rpt, in the
-   game directory.
-
-2. Set the RENPY_UPDATE_TRANSLATIONS environment variable to a
-   non-empty string.
-
-3. Play through the game until all text is seen.
-
-Ren'Py will add an entry to the translations file for each unit of
-text shown. This text can then be translated.
-
 
 Text Overflow Logging
 ---------------------

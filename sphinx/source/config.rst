@@ -355,6 +355,11 @@ Occasionally Used
     If set too large, this can waste memory. If set too small, images
     can be repeatedly loaded, hurting performance.
 
+.. var:: config.language = None
+
+    If not None, this should be a string giving the default language
+    that the game is translated into by the translation framework.
+    
 .. var:: config.main_game_transition = None
 
     The transition used when entering the game menu from the main

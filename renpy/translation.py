@@ -328,9 +328,10 @@ def init_translation():
  
 def change_language(language):
     """
-    :doc: translation
+    :doc: translation_functions
     
-    Changes the current language to `language`.
+    Changes the current language to `language`, which can be a string or 
+    None to use the default language.
     """
 
     renpy.game.preferences.language = language
@@ -379,9 +380,10 @@ def check_language():
             
 def known_languages():
     """
-    :doc: translation
+    :doc: translation_functions
     
-    Returns the set of known languages.
+    Returns the set of known languages. This does not include the default 
+    language, None.
     """
     
     return renpy.game.script.translator.languages
