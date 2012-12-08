@@ -733,6 +733,7 @@ label _after_load:
 label _start:
 
     python hide:
+        store.main_menu = False
         renpy.context()._menu = False
         renpy.context()._main_menu = False
         
