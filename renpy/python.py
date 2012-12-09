@@ -82,9 +82,6 @@ class StoreDict(dict):
     
     def __init__(self):
 
-        # A copy of this dict as it was at the end of the init phase.
-        self.clean = { }
-
         # The value of this dictionary at the start of the current
         # rollback period (when begin() was last called).
         self.old = { }
@@ -163,26 +160,66 @@ def create_store(name):
     if name.startswith("store."):
         store_dicts["store"][name[6:]] = sys.modules[name]
         
+class StoreBackup():
+    """
+    This creates a copy of the current store, as it was at the start of 
+    the current statement. 
+    """
+    
+    def __init__(self):
+        
+        # The contents of the store for each store.
+        self.store = { }
+        
+        # The contents of old for each store.
+        self.old = { }
+        
+        # The contents of ever_been_changed for each store.
+        self.ever_been_changed = { }
+        
+        
+        for k, v in store_dicts.iteritems():
+            self.store[k] = dict(v)
+            self.old[k] = dict(v.old)
+            self.ever_been_changed[k] = set(v.ever_been_changed)
+            
+    def restore(self):
+
+        for k, sd in store_dicts.iteritems():
+             
+            sd.clear()
+            sd.update(self.store[k])
+             
+            sd.old.clear()
+            sd.old.update(self.old[k])
+             
+            sd.ever_been_changed.clear()
+            sd.ever_been_changed.update(self.ever_been_changed[k])
+
+        
+
+clean_store_backup = None
 
 def make_clean_stores():
     """
     Copy the clean stores.
     """
     
-    for i in store_dicts.itervalues():
-        i.clean.update(i)
-        i.ever_been_changed.clear()
+    global clean_store_backup
+
+    for k, v in store_dicts.iteritems():
+    
+        v.old.clear()
+        v.ever_been_changed.clear()
+        
+    clean_store_backup = StoreBackup()
         
 def clean_stores():
     """
     Revert the store to the clean copy.
     """
     
-    for i in store_dicts.itervalues():
-        i.clear()
-        i.update(i.clean)
-        i.ever_been_changed.clear()
-
+    clean_store_backup.restore()
                 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
