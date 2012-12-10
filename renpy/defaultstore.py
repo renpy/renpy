@@ -177,6 +177,8 @@ Style = renpy.style.Style
 
 absolute = renpy.display.core.absolute
 
+NoRollback = renpy.python.NoRollback
+
 def layout(cls, doc, nargs=0, **extra_kwargs):
 
     def f(*args, **properties):
