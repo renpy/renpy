@@ -7,6 +7,10 @@ try () {
     "$@" || exit -1
 }
 
+if [ -n "$RENPY_VIRTUAL_ENV" ] ; then
+    . "$RENPY_VIRTUAL_ENV/bin/activate"
+fi
+
 if [ -z "$PYTHONPATH" -a -z "$VIRTUAL_ENV" ] ; then
     echo Neither PYTHONPATH nor VIRTUAL_ENV is set.
     exit 1
@@ -17,5 +21,9 @@ if [ -n "$PYTHONPATH" ]; then
 else
     try python module/setup.py --quiet build $RENPY_BUILD_ARGS install
 fi
-    
-exec ./renpy.py "$@"
+
+if  [ "$1" = "--build" ] ; then
+    echo "Ren'Py build complete."
+else
+    exec ./renpy.py "$@"
+fi
