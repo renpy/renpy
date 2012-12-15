@@ -1236,7 +1236,9 @@ init -1140 python:
             renpy.restart_interaction()
 
         def get_sensitive(self):
-            if renpy.context()._main_menu:
+            if _in_memory:
+                return False
+            elif renpy.context()._main_menu:
                 return False
             elif persistent._file_page == "auto":
                 return False
@@ -1295,6 +1297,9 @@ init -1140 python:
             renpy.load(fn)
 
         def get_sensitive(self):
+            if _in_memory:
+                return False
+            
             return renpy.can_load(__filename(self.name, self.page))
 
         def get_selected(self):
@@ -1927,19 +1932,30 @@ init -1140 python:
         """
         :doc: memory
         
-        Starts `label` as a memory.
+        An action that starts `label` as a memory.
         
         `scope`
             A dictionary mapping variable name to value. These variables are set
             when entering the memory.
+        
+        `locked`
+            If true, the memory is locked. If false, it is unlocked. If None, the 
+            memory is locked if the label has not been seen in any playthrough.
         """
         
-        def __init__(self, label, scope={}):
+        def __init__(self, label, scope={}, locked=None):
             self.label = label
             self.scope = scope
+            
+            if locked is None:
+                self.locked = not renpy.seen_label(label)
+            
+            self.locked = locked
 
-        
         def __call__(self):
+        
+            if self.locked:
+                return
         
             if config.enter_memory_transition:
                 renpy.transition(config.enter_memory_transition)
@@ -1947,9 +1963,23 @@ init -1140 python:
             renpy.call_memory(self.label, self.scope)
             
             if config.exit_memory_transition:
-                renpy.transition(config.enter_memory_transition)
+                renpy.transition(config.exit_memory_transition)
             
+        def get_sensitive(self):
+            return not self.locked
+        
+    class EndMemory(Action):
+        """
+        :doc: memory
+        
+        An action that ends the current memory.
+        """
+        
+        def __call__(self):
+            renpy.end_memory()
             
+        def get_sensitive(self):
+            return _in_memory
         
         
 

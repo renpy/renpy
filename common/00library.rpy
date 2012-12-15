@@ -762,9 +762,6 @@ label _start:
 
     call _start_store
 
-    # We're not in a memory.
-    $ store._in_memory = None
-
     $ _init_language()
     $ renpy.block_rollback()
 

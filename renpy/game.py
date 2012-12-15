@@ -253,6 +253,12 @@ class CallException(Exception):
         self.args = args
         self.kwargs = kwargs
 
+class EndMemory(Exception):
+    """
+    Raise this exception to end the current memory (the current call to 
+    call_memory).
+    """
+
 class ParseErrorException(Exception):
     """
     This is raised when a parse error occurs, after it has been
@@ -270,6 +276,7 @@ CONTROL_EXCEPTIONS = (
     JumpException,
     JumpOutException,
     CallException,
+    EndMemory,
     ParseErrorException,
     KeyboardInterrupt,
     )
@@ -399,6 +406,9 @@ def call_memory(label, scope={}):
 
         context.goto_label("_start_memory")
         renpy.execution.run_context(False)
+
+    except EndMemory:
+        pass
 
     finally:
         contexts.pop()

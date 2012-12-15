@@ -1816,6 +1816,16 @@ def get_image_load_log(age=None):
         
         yield i
         
+def end_memory():
+    """
+    :doc: memory
+    
+    If we're in a memory, ends the memory immediately. Otherwise, does
+    nothing.
+    """
+    
+    if renpy.store._in_memory:
+        raise renpy.game.EndMemory()
         
     
     

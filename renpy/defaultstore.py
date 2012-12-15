@@ -341,6 +341,9 @@ _last_say_what = None
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
+
+# If we're in a memory, the label of the start of the memory.
+_in_memory = None
     
 # Make these available to user code.
 import sys
