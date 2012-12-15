@@ -94,26 +94,8 @@ def run(restart):
         restart = None
         
         # We run until we get an exception.
-        try:
-            game.context().run()
-            game.context().pop_all_dynamic()
-            break
-
-        # We get this when the context has changed, and so we go and
-        # start running from the new context.
-        except game.RestartException, e:
-
-            renpy.game.contexts = e.contexts
-
-            label = e.label
-
-            if label:
-                if game.script.has_label(label):
-                    game.context().call(label)
-
-            continue
-            
-    # And, we're done.
+        renpy.execution.run_context(True)
+    
 
 def load_rpe(fn):
 

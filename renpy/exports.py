@@ -95,7 +95,7 @@ def roll_forward_info():
     the last time this statement executed. Outside of rollback, returns None. 
     """
     
-    if len(renpy.game.contexts) > 1:
+    if not renpy.game.context().rollback:
         return None
     
     return renpy.game.log.forward_info()
@@ -1368,6 +1368,7 @@ call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
 curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
+call_memory = renpy.game.call_memory
 
 # Error handling stuff.
 def _error(msg):

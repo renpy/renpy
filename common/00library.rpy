@@ -727,11 +727,9 @@ label _after_load:
     else:
         return
 
+# Common code for _start and _start_memory.
+label _start_store:
     
-# This is the true starting point of the program. Sssh... Don't
-# tell anyone.
-label _start:
-
     python hide:
         store.main_menu = False
         renpy.context()._menu = False
@@ -740,11 +738,37 @@ label _start:
         for i in config.start_callbacks:
             i()
 
+    return
+    
+    
+# Starts up a memory. This is called by renpy.game.call_memory, and 
+# is expected to be called with _in_memory set.
+label _start_memory:
+
+    call _start_store
+
+    if config.start_scene_black:        
+        scene black
+    else:
+        scene
+
+    $ renpy.block_rollback()
+    
+    jump expression _in_memory
+    
+# This is the true starting point of the program. Sssh... Don't
+# tell anyone.
+label _start:
+
+    call _start_store
+
+    # We're not in a memory.
+    $ store._in_memory = None
+
     $ _init_language()
     $ renpy.block_rollback()
 
     call _gl_test
-            
     call _load_reload_game from _call__load_reload_game_1
 
     if not _restart and config.auto_load and renpy.can_load(config.auto_load):

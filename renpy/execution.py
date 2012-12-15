@@ -471,3 +471,44 @@ class Context(renpy.object.Object):
         renpy.exports.rollback(force, checkpoints)
 
 
+def run_context(top):
+    """
+    Runs the current context until it can't be run anymore, while handling
+    the RestartContext and RestartTopContext exceptions.
+    """
+
+    label = None
+
+    while True:
+        
+        try:
+        
+            context = renpy.game.context()            
+            
+            if label and renpy.game.script.has_label(label):
+                context.call(label)
+            
+            context.run()
+            break
+
+        except renpy.game.RestartContext as e:
+
+            if e.label:
+                label = e.label
+            
+            continue
+        
+        except renpy.game.RestartTopContext as e:
+            if top:
+
+                if e.label:
+                    label = e.label
+                
+                continue
+            else:
+                raise
+            
+        finally:
+            context.pop_all_dynamic()
+    
+

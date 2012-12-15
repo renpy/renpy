@@ -1916,7 +1916,43 @@ init -1140 python:
                 return True
                 
             return self.language in renpy.known_languages()
+
+    #########################################################################    
+
+    # Transitions used when entering and leaving memories.
+    config.enter_memory_transition = None
+    config.exit_memory_transition = None
+
+    class Memory(Action):
+        """
+        :doc: memory
+        
+        Starts `label` as a memory.
+        
+        `scope`
+            A dictionary mapping variable name to value. These variables are set
+            when entering the memory.
+        """
+        
+        def __init__(self, label, scope={}):
+            self.label = label
+            self.scope = scope
+
+        
+        def __call__(self):
+        
+            if config.enter_memory_transition:
+                renpy.transition(config.enter_memory_transition)
+                
+            renpy.call_memory(self.label, self.scope)
             
+            if config.exit_memory_transition:
+                renpy.transition(config.enter_memory_transition)
+            
+            
+        
+        
+
 # This is used to ensure a fixed click-to-continue indicator is shown on
 # its own layer.
 screen _ctc:

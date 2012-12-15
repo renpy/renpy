@@ -702,7 +702,7 @@ class Rollback(renpy.object.Object):
 
         super(Rollback, self).__init__()
 
-        self.context = renpy.game.contexts[0].rollback_copy()
+        self.context = renpy.game.context().rollback_copy()
         self.objects = [ ]
         self.checkpoint = False
         self.purged = False
@@ -796,7 +796,9 @@ class Rollback(renpy.object.Object):
                 else:
                     store[name] = value
 
-        renpy.game.contexts = [ self.context ]
+        renpy.game.contexts.pop()
+        renpy.game.contexts.append(self.context)
+
         rng.pushback(self.random)
         
 
@@ -859,10 +861,14 @@ class RollbackLog(renpy.object.Object):
         state needs to be saved for rollbacking.
         """
 
+        context = renpy.game.context()        
+        if not context.rollback:
+            return
+
         # If the transient scene list is not empty, then we do
         # not begin a new rollback, as the TSL will be purged
         # after a rollback is complete.
-        if not renpy.game.contexts[0].scene_lists.transient_is_empty():
+        if not context.scene_lists.transient_is_empty():
             return
 
         # If the log is too long, prune it.
@@ -1007,15 +1013,13 @@ class RollbackLog(renpy.object.Object):
         if self.current.checkpoint:
             return
 
-        # Only allow checkpoints in the top-level context.
-        if len(renpy.game.contexts) > 1:
+        if not renpy.game.context().rollback:
             return
         
         if self.rollback_limit < renpy.config.hard_rollback_limit: 
             self.rollback_limit += 1
 
         self.current.checkpoint = True
-
         
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
@@ -1112,7 +1116,7 @@ class RollbackLog(renpy.object.Object):
         while self.log:
 
             rb = self.log[-1]
-            
+
             if rb.checkpoint:
                 break
 
@@ -1123,12 +1127,22 @@ class RollbackLog(renpy.object.Object):
                 break
             
             revlog.append(self.log.pop())
-            self.rollback_limit -= 1
 
+        # Decide if we're replacing the current context (rollback command),
+        # or creating a new set of contexts (loading).
+        if renpy.game.context().rollback:
+            replace_context = False
+        else:
+            replace_context = True
+            renpy.game.contexts = renpy.game.contexts[0:1]
+
+        # Actually roll things back.
         for rb in revlog:
             rb.rollback()
+
             if rb.context.current == self.fixed_rollback_boundary:
                 self.rollback_is_fixed = True
+            
             if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
             
@@ -1146,8 +1160,12 @@ class RollbackLog(renpy.object.Object):
         # Stop the sounds.
         renpy.audio.audio.rollback()
         
-        # Restart the game with the new state.
-        raise renpy.game.RestartException(renpy.game.contexts[:], label)
+        # Restart the context or the top context.
+        if replace_context:
+            raise renpy.game.RestartTopContext(label)
+        else:
+            raise renpy.game.RestartContext(label)
+        
 
     def freeze(self, wait=None):
         """
