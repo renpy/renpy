@@ -253,10 +253,10 @@ class CallException(Exception):
         self.args = args
         self.kwargs = kwargs
 
-class EndMemory(Exception):
+class EndReplay(Exception):
     """
-    Raise this exception to end the current memory (the current call to 
-    call_memory).
+    Raise this exception to end the current replay (the current call to 
+    call_replay).
     """
 
 class ParseErrorException(Exception):
@@ -276,7 +276,7 @@ CONTROL_EXCEPTIONS = (
     JumpException,
     JumpOutException,
     CallException,
-    EndMemory,
+    EndReplay,
     ParseErrorException,
     KeyboardInterrupt,
     )
@@ -378,7 +378,7 @@ def call_in_new_context(label, *args, **kwargs):
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
-def call_memory(label, scope={}):
+def call_replay(label, scope={}):
     """
     :doc: memory
     
@@ -400,14 +400,14 @@ def call_memory(label, scope={}):
     for k, v in scope.iteritems():
         setattr(renpy.store, k, v)
         
-    renpy.store._in_memory = label
+    renpy.store._in_replay = label
     
     try:
 
-        context.goto_label("_start_memory")
+        context.goto_label("_start_replay")
         renpy.execution.run_context(False)
 
-    except EndMemory:
+    except EndReplay:
         pass
 
     finally:

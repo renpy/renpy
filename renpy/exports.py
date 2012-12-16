@@ -1368,7 +1368,7 @@ call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
 curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
-call_memory = renpy.game.call_memory
+call_replay = renpy.game.call_replay
 
 # Error handling stuff.
 def _error(msg):
@@ -1816,16 +1816,16 @@ def get_image_load_log(age=None):
         
         yield i
         
-def end_memory():
+def end_replay():
     """
-    :doc: memory
+    :doc: replay
     
-    If we're in a memory, ends the memory immediately. Otherwise, does
+    If we're in a replay, ends the replay immediately. Otherwise, does
     nothing.
     """
     
-    if renpy.store._in_memory:
-        raise renpy.game.EndMemory()
+    if renpy.store._in_replay:
+        raise renpy.game.EndReplay()
         
     
     

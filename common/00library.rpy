@@ -743,7 +743,7 @@ label _start_store:
     
 # Starts up a memory. This is called by renpy.game.call_memory, and 
 # is expected to be called with _in_memory set.
-label _start_memory:
+label _start_replay:
 
     call _start_store
 
@@ -754,7 +754,7 @@ label _start_memory:
 
     $ renpy.block_rollback()
     
-    jump expression _in_memory
+    jump expression _in_replay
     
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.

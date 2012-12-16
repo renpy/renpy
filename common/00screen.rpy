@@ -1236,7 +1236,7 @@ init -1140 python:
             renpy.restart_interaction()
 
         def get_sensitive(self):
-            if _in_memory:
+            if _in_replay:
                 return False
             elif renpy.context()._main_menu:
                 return False
@@ -1297,7 +1297,7 @@ init -1140 python:
             renpy.load(fn)
 
         def get_sensitive(self):
-            if _in_memory:
+            if _in_replay:
                 return False
             
             return renpy.can_load(__filename(self.name, self.page))
@@ -1405,7 +1405,7 @@ init -1140 python:
         else:
             return page
 
-    def FileSlotName(slot, slots_per_page, auto="a", quick="q", format="%s%d"):
+    def FileSlotName(slot, slots_per_page, auto=_("a"), quick=_("q"), format="%s%d"):
         """
          :doc: file_action_function
 
@@ -1924,23 +1924,23 @@ init -1140 python:
 
     #########################################################################    
 
-    # Transitions used when entering and leaving memories.
-    config.enter_memory_transition = None
-    config.exit_memory_transition = None
+    # Transitions used when entering and leaving replays.
+    config.enter_replay_transition = None
+    config.exit_replay_transition = None
 
-    class Memory(Action):
+    class Replay(Action):
         """
         :doc: memory
         
-        An action that starts `label` as a memory.
+        An action that starts `label` as a replay.
         
         `scope`
             A dictionary mapping variable name to value. These variables are set
-            when entering the memory.
+            when entering the replay.
         
         `locked`
-            If true, the memory is locked. If false, it is unlocked. If None, the 
-            memory is locked if the label has not been seen in any playthrough.
+            If true, this replay is locked. If false, it is unlocked. If None, the 
+            replay is locked if the label has not been seen in any playthrough.
         """
         
         def __init__(self, label, scope={}, locked=None):
@@ -1957,18 +1957,18 @@ init -1140 python:
             if self.locked:
                 return
         
-            if config.enter_memory_transition:
-                renpy.transition(config.enter_memory_transition)
+            if config.enter_replay_transition:
+                renpy.transition(config.enter_replay_transition)
                 
-            renpy.call_memory(self.label, self.scope)
+            renpy.call_replay(self.label, self.scope)
             
-            if config.exit_memory_transition:
-                renpy.transition(config.exit_memory_transition)
+            if config.exit_replay_transition:
+                renpy.transition(config.exit_replay_transition)
             
         def get_sensitive(self):
             return not self.locked
         
-    class EndMemory(Action):
+    class EndReplay(Action):
         """
         :doc: memory
         
@@ -1976,10 +1976,10 @@ init -1140 python:
         """
         
         def __call__(self):
-            renpy.end_memory()
+            renpy.end_replay()
             
         def get_sensitive(self):
-            return _in_memory
+            return _in_replay
         
         
 
