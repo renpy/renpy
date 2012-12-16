@@ -1405,7 +1405,7 @@ init -1140 python:
         else:
             return page
 
-    def FileSlotName(slot, slots_per_page, auto=_("a"), quick=_("q"), format="%s%d"):
+    def FileSlotName(slot, slots_per_page, auto="a", quick="q", format="%s%d"):
         """
          :doc: file_action_function
 
