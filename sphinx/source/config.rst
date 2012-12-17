@@ -116,15 +116,16 @@ Commonly Used
     Ren'Py game. :var:`_window_subtitle` is appended to this to get
     the full title of the window.
 
-
 .. var:: config.version = ""
 
     This should be a string giving the version of the game. This is included 
     as part of tracebacks and other log files, helping to identify the 
     version of the game being used.
 
-Occasionally Used
------------------
+Transitions
+-----------
+
+These control transitions between various screens.
 
 .. var:: config.adv_nvl_transition = None
 
@@ -135,6 +136,71 @@ Occasionally Used
 
     A transition that is used after loading, when entering the loaded
     game.
+
+.. var:: config.end_game_transition = None
+
+    The transition that is used to display the main menu after the
+    game ends normally, either by invoking return with no place to
+    return to, or by calling :func:`renpy.full_restart`.
+
+.. var:: config.end_splash_transition = None
+
+    The transition that is used to display the main menu after the end
+    of the splashscreen.
+         
+.. var:: config.enter_replay_transition = None
+
+    If not None, a transition that is used when entering a replay.
+    
+.. var:: config.enter_transition = None
+
+    If not None, this variable should give a transition that will be
+    used when entering the game menu.
+
+.. var:: config.exit_replay_transition = None
+
+    If not None, a transition that is used when exiting a replay.
+    
+.. var:: config.exit_transition = None
+
+    If not None, this variable should give a transition that will be
+    performed when exiting the game menu.
+
+.. var:: config.game_main_transition = None
+
+    The transition that is used to display the main menu after leaving
+    the game menu. This is used when the load and preferences screens
+    are invoked from the main menu, and it's also used when the user
+    picks "Main Menu" from the game menu.
+
+.. var:: config.main_game_transition = None
+
+    The transition used when entering the game menu from the main
+    menu, as is done when clicking "Load Game" or "Preferences".
+
+.. var:: config.nvl_adv_transition = None
+
+    A transition that is used when showing ADV-mode text directly
+    after NVL-mode text.
+
+.. var:: config.say_attribute_transition = None
+
+    If not None, a transition to use when the image is changed by a 
+    say statement with image attributes.
+    
+.. var:: config.window_hide_transition = None
+
+    The transition used by the window hide statement when no
+    transition has been explicitly specified.
+
+.. var:: config.window_show_transition = None
+
+    The transition used by the window show statement when no
+    transition has been explicitly specified.
+
+    
+Occasionally Used
+-----------------
 
 .. var:: config.auto_load = None
 
@@ -252,36 +318,15 @@ Occasionally Used
     The default implementation of this uses the narrator character to
     display a blank line without interacting.
 
-.. var:: config.end_game_transition = None
-
-    The transition that is used to display the main menu after the
-    game ends normally, either by invoking return with no place to
-    return to, or by calling :func:`renpy.full_restart`.
-
-.. var:: config.end_splash_transition = None
-
-    The transition that is used to display the main menu after the end
-    of the splashscreen.
-
 .. var:: config.enter_sound = None
 
     If not None, this is a sound file that is played when entering the
     game menu.
 
-.. var:: config.enter_transition = None
-
-    If not None, this variable should give a transition that will be
-    used when entering the game menu.
-
 .. var:: config.exit_sound = None
 
     If not None, this is a sound file that is played when exiting the
     game menu.
-
-.. var:: config.exit_transition = None
-
-    If not None, this variable should give a transition that will be
-    performed when exiting the game menu.
 
 .. var:: config.fix_rollback_without_choice = False
 
@@ -315,13 +360,6 @@ Occasionally Used
     Ren'Py will attempt to display per second. This is only respected
     by the software renderer. The GL renderer will synchronize to
     vertical blank instead.
-
-.. var:: config.game_main_transition = None
-
-    The transition that is used to display the main menu after leaving
-    the game menu. This is used when the load and preferences screens
-    are invoked from the main menu, and it's also used when the user
-    picks "Main Menu" from the game menu.
 
 .. var:: config.game_menu = [ ... ]
 
@@ -360,11 +398,6 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
     
-.. var:: config.main_game_transition = None
-
-    The transition used when entering the game menu from the main
-    menu, as is done when clicking "Load Game" or "Preferences".
-
 .. var:: config.main_menu = [ ... ]
 
     The default main menu, when not using screens. For more details,
@@ -435,11 +468,6 @@ Occasionally Used
     character. Otherwise, narration is displayed as captions
     within the menu itself.
      
-.. var:: config.nvl_adv_transition = None
-
-    A transition that is used when showing ADV-mode text directly
-    after NVL-mode text.
-
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
@@ -466,11 +494,6 @@ Occasionally Used
     a window. The default action prompts the user to see if he wants
     to quit the game.
     
-.. var:: config.say_attribute_transition = None
-
-    If not None, a transition to use when the image is changed by a 
-    say statement with image attributes.
-    
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
@@ -491,20 +514,10 @@ Occasionally Used
 
     When using a load_save layout, a different default may be used. 
 
-.. var:: config.window_hide_transition = None
-
-    The transition used by the window hide statement when no
-    transition has been explicitly specified.
-
 .. var:: config.window_overlay_functions = []
 
     A list of overlay functions that are only called when the window
     is shown. 
-
-.. var:: config.window_show_transition = None
-
-    The transition used by the window show statement when no
-    transition has been explicitly specified.
 
 
 Rarely or Internally Used

@@ -1930,7 +1930,7 @@ init -1140 python:
 
     class Replay(Action):
         """
-        :doc: memory
+        :doc: replay
         
         An action that starts `label` as a replay.
         
@@ -1970,7 +1970,7 @@ init -1140 python:
         
     class EndReplay(Action):
         """
-        :doc: memory
+        :doc: replay
         
         An action that ends the current memory.
         """

@@ -380,7 +380,7 @@ def call_in_new_context(label, *args, **kwargs):
 
 def call_replay(label, scope={}):
     """
-    :doc: memory
+    :doc: replay
     
     Calls a label as a memory.
 
