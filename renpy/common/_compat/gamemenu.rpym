@@ -486,19 +486,6 @@ label _save_screen:
             else:
                 full_save_name = ""
 
-            try:
-                renpy.save(_fn, full_save_name)
-
-            except Exception, e:
-
-                if config.debug:
-                    raise
-                
-                message = ( _(u"The error message was:") + "\n\n" + 
-                            e.__class__.__name__  + ": " + unicode(e) + "\n\n" +
-                            _(u"You may want to try saving in a different slot, or playing for a while and trying again later.") )
-
-                _show_exception(_(u"Save Failed."), message)
-                
+            renpy.save(_fn, full_save_name)
                 
     jump _save_screen

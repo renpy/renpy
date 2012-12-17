@@ -22,7 +22,7 @@
 #     $ voice_sustain()
 #     e "...to play for two lines of dialogue."
 
-init -1120:
+init -1500:
 
     python:
 

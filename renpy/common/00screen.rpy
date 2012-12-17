@@ -3,7 +3,7 @@
 
 # Screen system support.
 
-init -1140 python:
+init -1500 python:
 
     class Return(Action):
         """

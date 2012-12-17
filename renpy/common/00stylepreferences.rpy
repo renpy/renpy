@@ -4,7 +4,7 @@
 # This file contains code for the style preferences system, which allows
 # the user to define preferences that update styles. 
 
-init -1135 python:
+init -1500 python:
 
     # A map from preference name to list of (alternative, style, property, value) 
     # tuples.
@@ -169,6 +169,6 @@ init -1135 python:
     config.interact_callbacks.append(__update)
     config.change_language_callbacks.append(__change_language)
     
-init 1135 python:
+init 1500 python:
     
     __init()

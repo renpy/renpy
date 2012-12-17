@@ -21,7 +21,7 @@
 ##############################################################################
 # The implementation of NVL mode lives below this line.
 
-init -1100 python:
+init -1500 python:
 
     # Styles that are used by nvl mode.
     style.create('nvl_window', 'default', 'the window containing nvl-mode dialogue')
