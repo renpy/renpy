@@ -48,7 +48,6 @@ init -1000 python in build:
 
         ( "renpy.py", "all"),
         ( "renpy/**", "all"),
-        ( "common/**", "all"),
 
         # Windows-specific patterns.
         ( "python*.dll", "windows" ),
