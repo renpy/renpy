@@ -173,75 +173,7 @@ focus_crossrange_penalty = 1024
 load_before_transition = True
 
 # The keymap that is used to change keypresses and mouse events.
-keymap = dict(
-    
-    # Bindings present almost everywhere, unless explicitly
-    # disabled.
-    rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
-    screenshot = [ 's' ],
-    toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-    toggle_music = [ 'm' ],
-    game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
-    hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
-    launch_editor = [ 'E' ],
-    dump_styles = [ 'Y' ],
-    reload_game = [ 'R' ],
-    inspector = [ 'I' ],
-    developer = [ 'D' ],
-    quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-    iconify = [ 'meta_m', 'alt_m' ],
-    help = [ 'K_F1', 'meta_shift_/' ],
-    choose_renderer = [ 'G' ],
-    
-    # Say.
-    rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
-    dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
-
-    # Pause.
-    dismiss_hard_pause = [ ],
-    
-    # Focus.
-    focus_left = [ 'K_LEFT', 'joy_left' ],
-    focus_right = [ 'K_RIGHT', 'joy_right' ],
-    focus_up = [ 'K_UP', 'joy_up' ],
-    focus_down = [ 'K_DOWN', 'joy_down' ],
-        
-    # Button.
-    button_ignore = [ 'mousedown_1' ],
-    button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-
-    # Input.
-    input_backspace = [ 'K_BACKSPACE' ],
-    input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-    input_left = [ 'K_LEFT' ],
-    input_right = [ 'K_RIGHT' ],
-    input_delete = [ 'K_DELETE' ],
-
-    # Viewport.
-    viewport_up = [ 'mousedown_4' ],
-    viewport_down = [ 'mousedown_5' ],
-    viewport_drag_start = [ 'mousedown_1' ],
-    viewport_drag_end = [ 'mouseup_1' ],
-    
-    # These keys control skipping.
-    skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
-    toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
-    fast_skip = [ '>' ],
-
-    # These control the bar.
-    bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-    bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-    bar_decrease = [ 'K_LEFT', 'joy_left' ],
-    bar_increase = [ 'K_RIGHT', 'joy_right' ],
-
-    # Delete a save.
-    save_delete = [ 'K_DELETE' ],
-
-    # Draggable.
-    drag_activate = [ 'mousedown_1' ],
-    drag_deactivate = [ 'mouseup_1' ],
-
-    )
+keymap = { }
 
 # Should we try to support joysticks?
 joystick = True
