@@ -1,7 +1,6 @@
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-
 ##############################################################################
 # Code that originated in 00mainmenu.rpy
 
@@ -15,9 +14,34 @@ init -1600 python hide:
     
     # Transition that's used after the game is loaded.
     config.after_load_transition = None
+
+    # menus: Transition that's used at the end of the splash screen, when
+    # it is shown.
+    config.end_splash_transition = None
+
+    # Should we start the game with scene black or just scene?
+    config.start_scene_black = False
+
+    # A save to automatically load, if it exists.
+    config.auto_load = None
     
-
-
+    # The language we use when the game starts. None remembers the user's
+    # choice of language, and defaults to the game's native language.
+    config.language = None
+    
+init -1600 python:
+    
+    def _init_language():
+        
+        if "RENPY_LANGUAGE" in os.environ:
+            language = os.environ["RENPY_LANGUAGE"]
+        elif config.language is not None:
+            language = config.language
+        else:
+            language = _preferences.language
+        
+        renpy.change_language(language)
+    
 # This fixes up the context, if necessary, then calls the real
 # after_load.
 label _after_load:
@@ -153,6 +177,11 @@ label _main_menu(_main_menu_screen="_main_menu_screen"):
         
 # This is called to show the main menu to the user.
 label _main_menu_screen:    
+    
+    # Let the user give code that runs in the main menu context before
+    # the main menu runs.
+    if renpy.has_label("before_main_menu"):
+        call expression "before_main_menu"
 
     # Let the user completely override the main menu. (But please note
     # it still lives in the menu context, rather than the game context.)

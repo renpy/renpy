@@ -3,6 +3,12 @@
 
 init -1400 python:
 
+    # basics: The width of a thumbnail.
+    config.thumbnail_width = 66
+
+    # basics: The height of a thumbnail.
+    config.thumbnail_height = 50
+
     class Layout():
         def __call__(self, func):
             setattr(self, func.func_name, func)
