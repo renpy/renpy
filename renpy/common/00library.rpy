@@ -116,9 +116,33 @@ init -1700 python:
             
     config.predict_callbacks.append(predict)
 
+init -1700 python:
+
+    ##########################################################################
+    # Side Images
+    
+    config.side_image_tag = None
+    config.side_image_only_not_showing = False
+    
+    def SideImage(prefix_tag="side"):
+        """
+        :doc: side_image_function
+    
+        Returns the side image associated with the currently speaking character, 
+        or a Null displayable if no such side image exists.
+        """
+        
+        name = renpy.get_side_image(prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
+        if name is None:
+            return Null()
+        else:
+            return ImageReference(name)
+
+
 init -1000:
     # Lock the library object.
     $ config.locked = True
+
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
@@ -140,5 +164,11 @@ label _developer:
     $ _enter_menu()
 
     jump expression "_developer_screen"
+
+
+# This is used to ensure a fixed click-to-continue indicator is shown on
+# its own layer.
+screen _ctc:
+    add ctc
 
 
