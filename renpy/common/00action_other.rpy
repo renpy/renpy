@@ -213,6 +213,7 @@ init -1500 python:
     
         action = Action
 
+
     #########################################################################    
 
     class Language(Action):
@@ -240,6 +241,7 @@ init -1500 python:
                 return True
                 
             return self.language in renpy.known_languages()
+
 
     #########################################################################    
 
