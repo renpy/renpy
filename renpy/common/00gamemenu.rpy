@@ -59,6 +59,9 @@ init -1700 python:
     # What we do on a quit, by default.
     config.quit_action = ui.gamemenus("_confirm_quit")
 
+    # What we do on a game menu invokcation.
+    config.game_menu_action = None
+
     # The screen that we go to when entering the game menu.
     _game_menu_screen = None
     
