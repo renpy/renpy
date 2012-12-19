@@ -163,7 +163,7 @@ def create_translate(block):
     
     for i in block:
         code = i.get_code()
-        md5.update(code + "\r\n")
+        md5.update(code.encode("utf-8") + "\r\n")
 
     identifier = md5.hexdigest()
     loc = (block[0].filename, block[0].linenumber)
