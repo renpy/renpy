@@ -24,6 +24,7 @@ init python in project:
     import json
     import subprocess
     import re
+    import tempfile
     
     class Project(object):
     
@@ -52,7 +53,7 @@ init python in project:
             self.load_data()
 
             # The project's temporary directory.
-            self.tmp = os.path.join(self.path, "tmp")
+            self.tmp = tempfile.mkdtemp()
                 
             # The path to the json dumpfile.
             self.dump_filename = os.path.join(self.tmp, "navigation.json")
