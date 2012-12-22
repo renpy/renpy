@@ -1193,6 +1193,8 @@ class Viewport(Container):
             
             
         if isinstance(replaces, Viewport):
+            self.xadjustment.range = replaces.xadjustment.range
+            self.yadjustment.range = replaces.yadjustment.range
             self.xadjustment.value = replaces.xadjustment.value
             self.yadjustment.value = replaces.yadjustment.value
             self.xoffset = replaces.xoffset
@@ -1218,6 +1220,7 @@ class Viewport(Container):
 
         self.width = 0
         self.height = 0
+
         
     def per_interact(self):
         self.xadjustment.register(self)
