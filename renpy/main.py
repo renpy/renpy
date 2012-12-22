@@ -78,23 +78,20 @@ def run(restart):
         if game.script.has_label('after_warp'):
             game.context().call('after_warp')
 
-    # Run the game.
-    while True:
-
         renpy.config.skipping = None
 
-        try:
-            renpy.exports.log("--- " + time.ctime())
-            renpy.exports.log("")
-        except:
-            pass
+    try:
+        renpy.exports.log("--- " + time.ctime())
+        renpy.exports.log("")
+    except:
+        pass
 
-        # Note if this is a restart.
-        renpy.store._restart = restart
-        restart = None
-        
-        # We run until we get an exception.
-        renpy.execution.run_context(True)
+    # Note if this is a restart.
+    renpy.store._restart = restart
+    restart = None
+    
+    # We run until we get an exception.
+    renpy.execution.run_context(True)
     
 
 def load_rpe(fn):
@@ -345,6 +342,7 @@ def main():
 
         except game.FullRestartException, e:
             restart = e.reason
+
         finally:
             renpy.display.core.cpu_idle.set()
             renpy.loadsave.autosave_not_running.wait()

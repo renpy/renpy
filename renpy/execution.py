@@ -201,7 +201,7 @@ class Context(renpy.object.Object):
         """
         
         store = renpy.store.__dict__
-
+        
         dynamic = self.dynamic_stack.pop()
 
         for k, v in dynamic.iteritems():
@@ -209,7 +209,7 @@ class Context(renpy.object.Object):
                 del store[k]
             else:
                 store[k] = v
-
+            
     def pop_all_dynamic(self):
         """
         Pops all levels of the dynamic stack. Called when we jump
@@ -510,5 +510,4 @@ def run_context(top):
             
         finally:
             context.pop_all_dynamic()
-    
 
