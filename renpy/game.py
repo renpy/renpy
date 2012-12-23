@@ -344,7 +344,14 @@ def call_in_new_context(label, *args, **kwargs):
     inside an interaction.
     """
 
-    context = renpy.execution.Context(False, contexts[-1], clear=True)
+    if "_rollback" in kwargs:
+        rollback = kwargs.pop("_rollback")
+    else:
+        rollback = False
+
+    renpy.game.log.complete()
+
+    context = renpy.execution.Context(rollback, contexts[-1], clear=True)
     contexts.append(context)
     
     if args:
@@ -387,6 +394,8 @@ def call_replay(label, scope={}):
     Keyword arguments are used to set the initial values of variables in the
     memory context.
     """
+
+    renpy.game.log.complete()
     
     old_log = renpy.game.log
     renpy.game.log = renpy.python.RollbackLog()
