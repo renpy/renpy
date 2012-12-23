@@ -70,6 +70,10 @@ init -1600 python:
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
         drag_deactivate = [ 'mouseup_1' ],
+    
+        # Debug console.
+        debug_console = [ 'K_BACKQUOTE', 'shift_K_BACKQUOTE' ],
+        
         )
 
 init -1600 python:
@@ -116,7 +120,6 @@ init -1600 python:
             webbrowser.open_new("file:///" + config.basedir + "/" + help)
         except:
             pass
-
 
     import os
     config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
@@ -185,6 +188,8 @@ init -1600 python:
         filename, line = renpy.get_filename_line()
         renpy.launch_editor([ filename ], line)
         
+init -1100 python:
+        
     # The default keymap. We might also want to put some of this into
     # the launcher.
     km = renpy.Keymap(
@@ -204,6 +209,7 @@ init -1600 python:
         iconify = renpy.iconify,
         help = _help,
         choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
+        debug_console = _debug_console.enter,
         )
 
     config.underlay = [ km ]

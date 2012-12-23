@@ -1,5 +1,4 @@
-# console.rpy
-# Ren'Py debug console
+# console.rpy # Ren'Py debug console
 # Copyright (C) 2012 Shiz, C, delta.
 #
 # This program is free software. It comes without any warranty, to the extent permitted by applicable law.
@@ -52,39 +51,30 @@
 # Tested on Ren'Py 6.13.11, 6.14.0 and 6.14.1. Not guaranteed to work on any other version.
 
 # Configuration and style initalization.
-python early:
-    # Create configuration variables.
-    locked = config.locked
-    config.locked = False
+init -1500 python:
+
+    # If true, the console is enabled despite config.developer being False.
+    config.debug_console = False
+
     config.debug_console_layer = 'debug_console'
     config.debug_console_history_size = 100
-    config.debug_console_keybind = 'shift_K_BACKQUOTE'
-    config.debug_console_custom_commands = { }
-    config.locked = locked
+    config.debug_console_commands = { }
     
     # Create default styles. See above for documentation.
-    style.create('debug_console', 'frame')
-    style.debug_console.background = "#00000000"
-    style.debug_console.xpos = 0
-    style.debug_console.ypos = 0
-    style.debug_console.xpadding = 0
-    style.debug_console.ypadding = 0
+    style.create('debug_console', '_default')
+    style.debug_console.background = None
     
-    style.create('debug_console_input', 'frame')
+    style.create('debug_console_input', '_default')
     style.debug_console_input.background = "#00000040"
-    style.debug_console_input.xpos = 0
-    style.debug_console_input.ypos = 0
-    style.debug_console_input.xpadding = 0
-    style.debug_console_input.ypadding = 0
     style.debug_console_input.xfill = True
     
     style.create('debug_console_prompt', 'text')
     style.debug_console_prompt.color = "#ffffff"
-    style.debug_console_prompt.xpos = 50
+    style.debug_console_prompt.minwidth = 25
+    style.debug_console_prompt.text_align = 1.0
     
     style.create('debug_console_input_text', 'input')
     style.debug_console_input_text.color = "#fafafa"
-    style.debug_console_input_text.xpos = 50
     
     style.create('debug_console_history', 'frame')
     style.debug_console_history.background = "#00000000"
@@ -133,41 +123,34 @@ python early:
     
     style.create('debug_console_trace_value', 'text')
 
-init 3735929054 python:
+init -1500 python in _debug_console:
+    from store import config
     import sys
     
-    # Simple circular buffer to hold the command history;
-    # will automatically delete older commands once the limit has reached.
-    class RingBuffer:
-        def __init__(self, size, default_value=None):
+    class BoundedList(list):
+        """
+        A list that's bounded at a certain size.
+        """
+        
+        def __init__(self, size):
             self.size = size
-            self.default_value = default_value
-            self.data = [ self.default_value for i in xrange(size)]
 
-        def push(self, value):
-            self.data.pop(0)
-            self.data.append(value)
+        def append(self, value):
+            super(BoundedList, self).append(value)
+    
+            while len(self) >= self.size:
+                self.data.pop(0)
         
-        def pop(self):
-            self.data.append(self.default_value)
-            return self.data.pop(0)
+        def clear(self):
+            self[:] = [ ]
 
-        def get(self, i):
-            return self.data[i]
+    class DebugConsole(object):
         
-        def put(self, i, value):
-            self.data[i] = value
-        
-    class DebugConsole:
-        def __init__(self, layer='debug_console', history_size=100):
-            self.enabled = False
-            self.layer = layer
+        def __init__(self):
             
-            self.history_size = history_size
-            self.history = RingBuffer(self.history_size, default_value=(None, None, None))
+            self.reset()
             
-            self.custom_commands = {}
-            self.traced_expressions = []
+            self.history = BoundedList(config.debug_console_history_size)
             
             self.parent_context = None
             self.parent_node = None
@@ -183,110 +166,151 @@ init 3735929054 python:
                 " clear                 - clear the command history.\n"
                 " crash                 - crash the game with an appropriate error message.\n"
                 " reload                - reload the game.\n"
-                " trace <expression>    - trace variable or expression in overlay.\n"
-                " untrace <expression>  - stop tracing variable or expression.\n"
-                " untraceall            - stop tracing any variable or expression.\n"
+                " watch <expression>    - watch variable or expression.\n"
+                " unwatch <expression>  - stop watching variable or expression.\n"
+                " unwatchall            - stop watching all variables and expressions.\n"
                 " help                  - show this message.\n"
                 " exit/quit/~           - close the console.")
+
+        def reset(self):
         
-        def enable(self):
-            if not self.enabled:
-                self.enabled = True
-                renpy.call_in_new_context('debug_console_trampoline')
-        
-        def disable(self):
-            if self.enabled:
-                ui.layer(self.layer)
-                ui.clear()
-                ui.close()
-                self.enabled = False
-        
-        def draw(self, input_lines = [], current_depth = 0):
-            # Clear out any existing content and draw the base frame.
-            ui.layer(self.layer)
-            ui.clear()
-            ui.frame(style='debug_console')
-            ui.vbox()
-        
-            # Draw current command input.
-            self.draw_input(input_lines, current_depth)
-            # Draw command history.
-            self.draw_history()
-            
-            # Close console vbox and frame, and the console layer.
-            ui.close()
-            ui.close()
-        
-        def draw_input(self, input_lines = [], current_depth = 0):
-            # Draw the input frame.
-            ui.frame(style='debug_console_input')
-            ui.vbox()
-            
-            # Draw prompt.
-            ui.hbox()
-            ui.text('> ', id='debug_console_prompt_0', style='debug_console_prompt')
-            
-            # Draw any previous input lines.
-            line_count = 0
-            for line, depth in input_lines:
-                # Draw input line content and close its hbox.
-                ui.text(line, id='debug_console_line_' + str(line_count), style='debug_console_input_text')
-                ui.close()
+            # The list of lines that have been entered by the user, but not yet
+            # processed.
+            self.lines = [ ]
+
+        def interact(self):
+
+            print self.lines
+
+            def get_indent(s):
+                """
+                Computes the indentation for the line following line s.
+                """
                 
-                # Figure out next line depth and print its appropriate prompt.
-                line_count += 1
-                if len(input_lines) > line_count:
-                    next_line, next_depth = input_lines[line_count]
-                else:
-                    next_depth = current_depth
-                ui.hbox()
-                ui.text('    ' + '....' * next_depth + ' ', id='debug_console_prompt_' + str(line_count), style='debug_console_prompt')
-            
-            # Draw input widget and close its hbox. Add a keymap to allow the same button that opened the console to instantly close it, 
-            # along with trapping the escape key, and disabling the right mouse click.
-            ui.input('', id='debug_console_input', style='debug_console_input_text')
-            ui.keymap(**{ config.debug_console_keybind: lambda: 'quit' })
-            ui.keymap(K_ESCAPE=lambda: 'quit')
-            ui.keymap(mouseup_3=None)
-            ui.close()
-            
-            # Close input vbox and frame.
-            ui.close()
-        
-        def draw_history(self):
-            # Draw command history, in reverse order.
-            commands = range(self.history_size)
-            commands.reverse()
-            
-            # Draw the history frame, and make it scrollable.
-            ui.frame(style='debug_console_history')
-            ui.viewport(mousewheel=True)
-            
-            ui.vbox(xpos=0, xfill=True)
-            for i in commands:
-                command, result, is_error = self.history.get(i)
-                if command is None:
-                    continue
+                rv = ""
                 
-                # Draw command if not none, and draw result if applicable.
-                ui.frame(style='debug_console_history_item')
-                ui.vbox(xpadding=0, ypadding=0)
-                
-                ui.frame(xfill=True, style='debug_console_command')
-                ui.text(self.sanitize(command), id='debug_console_command_' + str(i), style='debug_console_command_text')
-                
-                if result is not None:
-                    ui.frame(xfill=True, style='debug_console_result')
-                    if is_error:
-                        ui.text(self.sanitize(result), id='debug_console_response_' + str(i), style='debug_console_error_text')
+                for i in s:
+                    if i == " ":
+                        rv += " "
                     else:
-                        ui.text(self.sanitize(result), id='debug_console_response_' + str(i), style='debug_console_result_text')
+                        break
+
+                if s.rstrip().endswith(":"):
+                    rv += "    "
+                    
+                return rv
+                    
+            # Prompt the user for a line of code.
+            if self.lines:
+                indent = get_indent(self.lines[-1])
+            else:
+                indent = ""
+                
+            line = renpy.call_screen("_debug_console", lines=self.lines, indent=indent, history=self.history)
+            
+            print line
+            self.lines.append(line)
+            return True
+
+
+#        def enable(self):
+#            if not self.enabled:
+#                self.enabled = True
+#                renpy.call_in_new_context('_debug_console_trampoline')
+        
+#        def disable(self):
+#            if self.enabled:
+#                ui.layer(self.layer)
+#                ui.clear()
+#                ui.close()
+#                self.enabled = False
+        
+#        def draw(self, input_lines = [], current_depth = 0):
+#            # Clear out any existing content and draw the base frame.
+#            ui.layer(self.layer)
+#            ui.clear()
+#            ui.frame(style='debug_console')
+#            ui.vbox()
+        
+#            # Draw current command input.
+#            self.draw_input(input_lines, current_depth)
+#            # Draw command history.
+#            self.draw_history()
+            
+#            # Close console vbox and frame, and the console layer.
+#            ui.close()
+#            ui.close()
+        
+#        def draw_input(self, input_lines = [], current_depth = 0):
+#            # Draw the input frame.
+#            ui.frame(style='debug_console_input')
+#            ui.vbox()
+            
+#            # Draw prompt.
+#            ui.hbox()
+#            ui.text('> ', id='debug_console_prompt_0', style='debug_console_prompt')
+            
+#            # Draw any previous input lines.
+#            line_count = 0
+#            for line, depth in input_lines:
+#                # Draw input line content and close its hbox.
+#                ui.text(line, id='debug_console_line_' + str(line_count), style='debug_console_input_text')
+#                ui.close()
+                
+#                # Figure out next line depth and print its appropriate prompt.
+#                line_count += 1
+#                if len(input_lines) > line_count:
+#                    next_line, next_depth = input_lines[line_count]
+#                else:
+#                    next_depth = current_depth
+#                ui.hbox()
+#                ui.text('    ' + '....' * next_depth + ' ', id='debug_console_prompt_' + str(line_count), style='debug_console_prompt')
+            
+#            # Draw input widget and close its hbox. Add a keymap to allow the same button that opened the console to instantly close it, 
+#            # along with trapping the escape key, and disabling the right mouse click.
+#            ui.input('', id='debug_console_input', style='debug_console_input_text')
+#            ui.keymap(**{ config.debug_console_keybind: lambda: 'quit' })
+#            ui.keymap(K_ESCAPE=lambda: 'quit')
+#            ui.keymap(mouseup_3=None)
+#            ui.close()
+            
+#            # Close input vbox and frame.
+#            ui.close()
+        
+#        def draw_history(self):
+#            # Draw command history, in reverse order.
+#            commands = range(self.history_size)
+#            commands.reverse()
+            
+#            # Draw the history frame, and make it scrollable.
+#            ui.frame(style='debug_console_history')
+#            ui.viewport(mousewheel=True)
+            
+#            ui.vbox(xpos=0, xfill=True)
+#            for i in commands:
+#                command, result, is_error = self.history.get(i)
+#                if command is None:
+#                    continue
+                
+#                # Draw command if not none, and draw result if applicable.
+#                ui.frame(style='debug_console_history_item')
+#                ui.vbox(xpadding=0, ypadding=0)
+                
+#                ui.frame(xfill=True, style='debug_console_command')
+#                ui.text(self.sanitize(command), id='debug_console_command_' + str(i), style='debug_console_command_text')
+                
+#                if result is not None:
+#                    ui.frame(xfill=True, style='debug_console_result')
+#                    if is_error:
+#                        ui.text(self.sanitize(result), id='debug_console_response_' + str(i), style='debug_console_error_text')
+#                    else:
+#                        ui.text(self.sanitize(result), id='debug_console_response_' + str(i), style='debug_console_result_text')
                     
                 
-                # Close command vbox.
-                ui.close()
-            # Close history frame.
-            ui.close()
+#                # Close command vbox.
+#                ui.close()
+#            # Close history frame.
+#            ui.close()
 
         # Accept a command, allowing for recursive blocks.
         def take_command(self):
@@ -316,33 +340,33 @@ init 3735929054 python:
             # Clear all input lines now that we're done.
             return command.strip("\n")
         
-        def interact(self, **kwargs):
-            # Trick Ren'Py into thinking this context is rollback-able.
-            renpy.game.context().rollback = True
-            # Set script re-entry points and node list 'tail' for AST injection.
-            self.parent_context = renpy.game.context(-2)
-            self.parent_node = renpy.game.script.lookup(self.parent_context.current)
-            self.tail_node = self.parent_node
-            self.script_reentry_point = self.parent_node.next
+#        def interact(self, **kwargs):
+#            # Trick Ren'Py into thinking this context is rollback-able.
+#            renpy.game.context().rollback = True
+#            # Set script re-entry points and node list 'tail' for AST injection.
+#            self.parent_context = renpy.game.context(-2)
+#            self.parent_node = renpy.game.script.lookup(self.parent_context.current)
+#            self.tail_node = self.parent_node
+#            self.script_reentry_point = self.parent_node.next
             
-            # Enter read-eval-print loop.
-            while self.enabled:
-                command = self.take_command()
+#            # Enter read-eval-print loop.
+#            while self.enabled:
+#                command = self.take_command()
                 
-                # 'quit', 'exit', an empty string or '~' exit the console interaction.
-                if command == 'quit' or command == 'exit' or command == '~' or command == '':
-                    self.disable()
-                    return
-                # 'clear' clears the command history and thus the screen.
-                elif command == 'clear':
-                    for _ in range(self.history_size):
-                        self.history.push((None, None, None))
-                else:
-                    (result, is_error) = self.execute(command, command.startswith('init'))
-                    self.history.push((command, result, is_error))
+#                # 'quit', 'exit', an empty string or '~' exit the console interaction.
+#                if command == 'quit' or command == 'exit' or command == '~' or command == '':
+#                    self.disable()
+#                    return
+#                # 'clear' clears the command history and thus the screen.
+#                elif command == 'clear':
+#                    for _ in range(self.history_size):
+#                        self.history.push((None, None, None))
+#                else:
+#                    (result, is_error) = self.execute(command, command.startswith('init'))
+#                    self.history.push((command, result, is_error))
                     
-                # Allow the UI to adapt to its consequences.
-                renpy.restart_interaction()
+#                # Allow the UI to adapt to its consequences.
+#                renpy.restart_interaction()
          
         def execute(self, command, init = False):
             # Try custom commands first.
@@ -571,32 +595,148 @@ init 3735929054 python:
         def sanitize(self, str):
             return str.replace('[', '[[').replace('{', '{{')
     
-    if config.developer:
-        # Add the console layer.
-        if not config.debug_console_layer in config.top_layers:
-            config.top_layers.append(config.debug_console_layer)
+    debug_console = None
+    
+    def enter():
+        """
+        Called to enter the debug console.
+        """
+
+        global debug_console
+
+        if not (config.developer or config.debug_console):
+            return None
+    
+        if debug_console is None:
+            print "NDC"
+            debug_console = DebugConsole()
+    
+        debug_console.reset()
+
+        renpy.call_in_new_context("_debug_console_trampoline", _rollback=True)
+    
+    
+#init python 1500:
+    
+#    if config.developer:
         
-        debug_console = DebugConsole(layer=config.debug_console_layer, history_size=config.debug_console_history_size)
-        debug_console.custom_commands.update(config.debug_console_custom_commands)
-        
-        # Create proper debug overlay.
-        def debug_overlay():
-            ui.keymap(**{ config.debug_console_keybind: debug_console.enable })
+#        # Create proper debug overlay.
+#        def debug_overlay():
+#            ui.keymap(**{ config.debug_console_keybind: debug_console.enable })
             
-            if len(debug_console.traced_expressions) > 0:
-                ui.frame(style='debug_console_trace')
-                ui.vbox()
-                for expression in debug_console.traced_expressions:
-                    ui.hbox()
-                    ui.text(debug_console.sanitize(expression) + ": ", style='debug_console_trace_var')
-                    ui.text(debug_console.sanitize(debug_console.execute_python(expression)), style='debug_console_trace_value')
-                    ui.close()
-                ui.close()
+#            if len(debug_console.traced_expressions) > 0:
+#                ui.frame(style='debug_console_trace')
+#                ui.vbox()
+#                for expression in debug_console.traced_expressions:
+#                    ui.hbox()
+#                    ui.text(debug_console.sanitize(expression) + ": ", style='debug_console_trace_var')
+#                    ui.text(debug_console.sanitize(debug_console.execute_python(expression)), style='debug_console_trace_value')
+#                    ui.close()
+#                ui.close()
         
-        config.overlay_functions.append(debug_overlay)
+#        config.overlay_functions.append(debug_overlay)
+
+
+screen _debug_console:
+    # This screen takes as arguments:
+    #
+    # lines
+    #    The current set of lines in the input buffer.
+    # indent
+    #    Indentation to apply to the new line.
+    # history
+    #    A list of command, result, is_error tuples. 
+    
+
+    zorder 1000
+    modal True
+
+    vbox:
+
+        # Draw the current input.
+        frame style "debug_console_input":
+        
+            has vbox
+            
+            for line in lines:
+                hbox:
+                    spacing 4
+                    
+                    if line[:1] != " ":
+                        text "> " style "debug_console_prompt"
+                    else:
+                        text "... " style "debug_console_prompt"
+                    
+                    text "[line!q]" style "debug_console_input_text"
+                    
+            hbox:
+                spacing 4
+                
+                if not indent:
+                    text "> " style "debug_console_prompt"
+                else:
+                    text "... " style "debug_console_prompt"
+                                
+                input default indent style "debug_console_input_text"
+
+
+        # Draw historical console input.
+        $ rev_history = list(history)
+        $ rev_history.reverse()
+        
+        frame style "debug_console_history":
+            
+            has viewport:
+                mousewheel True
+                
+            has vbox:
+                xfill True
+                
+            for command, result, is_error in rev_history:
+                frame style "debug_console_history_item":
+                    has vbox
+                        
+                    frame style "debug_console_command":
+                        xfill True
+                        text "[command!q]" style "debug_console_command_text"
+                    
+                    if result is not None:
+                        frame style "debug_console_result"
+                        
+                        if is_error:
+                            text "[result!q]" style "debug_console_error_text"
+                        else:
+                            text "[result!q]" style "debug_console_result_text"
+    
+    key "game_menu" action Jump("_debug_console_return")
+    
+
+screen _trace_screen:
+    
+    if _debug_console.traced_expressions:
+    
+        frame style "debug_console_trace":
+            
+            for expr in _debug_console.traced_expressions:
+                python:
+                    try:
+                        value = repr(eval(expr))
+                    except:
+                        value = "eval failed"
+                
+                hbox:
+                    text "[expr!q]" style "debug_console_trace_var"
+                    text "[value!q]" style "debug_console_trace_value"
+                
+                
+    
 
 # This label is required for renpy.call_in_new_context(),
 # because renpy.invoke_in_new_context() has no support for renpy.jump_out_of_context() for jumps.
-label debug_console_trampoline:
-    $ debug_console.interact()
+label _debug_console_trampoline:
+    while True:
+        if not _debug_console.debug_console.interact():
+            return
 
+label _debug_console_return:
+    return
