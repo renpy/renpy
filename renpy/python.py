@@ -1060,7 +1060,7 @@ class RollbackLog(renpy.object.Object):
         if not self.rollback_is_fixed and len(self.log) > 1:
             self.fixed_rollback_boundary = self.log[-2].context.current
 
-    def rollback(self, checkpoints, force=False, label=None):
+    def rollback(self, checkpoints, force=False, label=None, greedy=True):
         """
         This rolls the system back to the first valid rollback point
         after having rolled back past the specified number of checkpoints.
@@ -1072,8 +1072,13 @@ class RollbackLog(renpy.object.Object):
         rolling back, otherwise if we run out of log this call has no
         effect.
 
-        @param label: The label that is jumped to in the game script
+        @param label: The label that is called in the game script
         after rollback has finished, if it exists.
+        
+        `greedy`
+            If true, rollback will keep going until just after the last
+            checkpoint. If False, it will stop immediately before the
+            current statement.
         """
 
         # If we have exceeded the rollback limit, and don't have force,
@@ -1088,7 +1093,6 @@ class RollbackLog(renpy.object.Object):
         # Find the place to roll back to.
         while self.log:
             rb = self.log.pop()
-
             revlog.append(rb)
 
             if rb.checkpoint:
@@ -1100,7 +1104,6 @@ class RollbackLog(renpy.object.Object):
                     break
 
         else:
-
             if force:
                 raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
                 
@@ -1113,7 +1116,7 @@ class RollbackLog(renpy.object.Object):
             return
 
         # Try to rollback to just after the previous checkpoint.
-        while self.log:
+        while greedy and self.log:
 
             rb = self.log[-1]
 

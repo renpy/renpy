@@ -940,7 +940,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
 globals()["with"] = with_statement
 
-def rollback(force=False, checkpoints=1, defer=False):
+def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
     """
     :doc: other
     
@@ -958,6 +958,13 @@ def rollback(force=False, checkpoints=1, defer=False):
     `defer`
         If true, the call will be deferred until code from the main context is
         executed.
+        
+    `greedy`
+        If true, rollback will occur just before the previous checkpoint.
+        If false, rollback occurs to just before the current checkpoint.
+        
+    `label`
+        If not None, a label that is called when rollback completes.
     """
 
     if defer and len(renpy.game.contexts) > 1:
@@ -977,7 +984,7 @@ def rollback(force=False, checkpoints=1, defer=False):
         
     renpy.config.skipping = None
     renpy.game.log.complete()
-    renpy.game.log.rollback(checkpoints)
+    renpy.game.log.rollback(checkpoints, greedy=greedy, label=label, force=force)
 
 def toggle_fullscreen():
     """
