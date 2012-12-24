@@ -121,6 +121,8 @@ class Script(object):
 
         self.translator.chain_translates()
 
+        self.serial = 0
+
     def scan_script_files(self):
         """
         Scan the directories for script files.
@@ -211,12 +213,11 @@ class Script(object):
         all_stmts = collapse_stmts(stmts)
 
         version = int(time.time())
-        serial = 0
 
         for s in all_stmts:
             if s.name is None:
-                s.name = (fn, version, serial)
-                serial += 1
+                s.name = (fn, version, self.serial)
+                self.serial += 1
 
 
     def merge_names(self, old_stmts, new_stmts):
