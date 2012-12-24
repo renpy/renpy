@@ -206,8 +206,10 @@ init -1500 python in _debug_console:
             else:
                 indent = ""
                 
-            line = renpy.call_screen("_debug_console", lines=self.lines, indent=indent, history=self.history)
-            
+            default = indent
+            renpy.show_screen("_debug_console", lines=self.lines, indent=indent, default=default, history=self.history, _transient=True)
+            line = ui.interact()
+
             print line
             self.lines.append(line)
             return True
@@ -602,19 +604,18 @@ init -1500 python in _debug_console:
         Called to enter the debug console.
         """
 
-        global debug_console
-
         if not (config.developer or config.debug_console):
             return None
     
-        if debug_console is None:
-            print "NDC"
-            debug_console = DebugConsole()
-    
-        debug_console.reset()
-
-        renpy.call_in_new_context("_debug_console_trampoline", _rollback=True)
-    
+        if renpy.game.context().rollback:
+            try:
+                renpy.rollback(checkpoints=0, force=True, greedy=False, label="_debug_console")
+            except renpy.game.CONTROL_EXCEPTIONS:
+                raise
+            except:
+                pass
+                
+        renpy.call_in_new_context("_debug_console")
     
 #init python 1500:
     
@@ -648,7 +649,7 @@ screen _debug_console:
     #    A list of command, result, is_error tuples. 
     
 
-    zorder 1000
+    zorder 1002
     modal True
 
     vbox:
@@ -677,7 +678,7 @@ screen _debug_console:
                 else:
                     text "... " style "debug_console_prompt"
                                 
-                input default indent style "debug_console_input_text"
+                input default default style "debug_console_input_text"
 
 
         # Draw historical console input.
@@ -712,7 +713,9 @@ screen _debug_console:
     
 
 screen _trace_screen:
-    
+
+    zorder 1001
+
     if _debug_console.traced_expressions:
     
         frame style "debug_console_trace":
@@ -733,10 +736,15 @@ screen _trace_screen:
 
 # This label is required for renpy.call_in_new_context(),
 # because renpy.invoke_in_new_context() has no support for renpy.jump_out_of_context() for jumps.
-label _debug_console_trampoline:
+label _debug_console:
+    
+    python in _debug_console:
+        if debug_console is None:
+            debug_console = DebugConsole()
+    
     while True:
-        if not _debug_console.debug_console.interact():
-            return
+        python in _debug_console:
+            debug_console.interact()
 
 label _debug_console_return:
     return
