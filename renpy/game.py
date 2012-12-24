@@ -344,14 +344,7 @@ def call_in_new_context(label, *args, **kwargs):
     inside an interaction.
     """
 
-    if "_rollback" in kwargs:
-        rollback = kwargs.pop("_rollback")
-    else:
-        rollback = False
-
-    renpy.game.log.complete()
-
-    context = renpy.execution.Context(rollback, contexts[-1], clear=True)
+    context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
     
     if args:
