@@ -158,16 +158,22 @@ def unelide_filename(fn):
     
     return fn
 
-def list_logical_lines(filename):
+def list_logical_lines(filename, filedata=None):
     """
-    This reads the specified filename, and divides it into logical
-    line. The return value of this function is a list of (filename,
-    line number, line text) triples.
+    Reads `filename`, and divides it into logical lines. 
+    
+    Returns a list of (filename, line number, line text) triples.
+
+    If `filedata` is given, it should be a unicode string giving the file
+    contents. In that case, `filename` need not exist.
     """
 
-    f = codecs.open(filename, "r", "utf-8")
-    data = f.read()
-    f.close()
+    if filedata:
+        data = filedata
+    else:
+        f = codecs.open(filename, "r", "utf-8")
+        data = f.read()
+        f.close()
 
     data = data.replace("\r\n", "\n")
     data = data.replace("\r", "\n")
@@ -2005,17 +2011,21 @@ def parse_block(l):
             
     return rv
 
-def parse(fn):
+def parse(fn, filedata=None):
     """
-    Parses a Ren'Py script contained within the file with the given
-    filename. Returns a list of AST objects representing the
-    statements that were found at the top level of the file.
+    Parses a Ren'Py script contained within the file `fn`. 
+    
+    Returns a list of AST objects representing the statements that were found 
+    at the top level of the file.
+    
+    If `filedata` is given, it should be a unicode string giving the file
+    contents.
     """
 
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
     try:
-        lines = list_logical_lines(fn)
+        lines = list_logical_lines(fn, filedata)
         nested = group_logical_lines(lines)
     except ParseError, e:
         parse_errors.append(e.message)

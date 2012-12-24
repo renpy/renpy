@@ -1446,6 +1446,36 @@ def load_module(name, **kwargs):
 
     renpy.config.locked = old_locked
 
+def load_string(s, filename="<string>"):
+    """
+    Loads `s` as Ren'Py script that can be called.
+    
+    Returns the name of the first statement in s.
+
+    `filename` is the name of the filename that statements in the string will
+    appear to be from.
+    """
+
+    old_locked = renpy.config.locked
+    renpy.config.locked = False
+    
+    stmts, initcode = renpy.game.script.load_string(filename, unicode(s))
+
+    context = renpy.execution.Context(False)
+    context.init_phase = True
+    renpy.game.contexts.append(context)
+    
+    for prio, node in initcode: #@UnusedVariable
+        renpy.game.context().run(node)
+
+    context.pop_all_dynamic()
+    renpy.game.contexts.pop()
+
+    renpy.config.locked = old_locked
+
+    return stmts[0].name
+
+
 def pop_return():
     renpy.game.context().pop_dynamic()
     renpy.game.context().lookup_return(pop=True)

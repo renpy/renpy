@@ -210,9 +210,7 @@ init -1500 python in _debug_console:
             renpy.show_screen("_debug_console", lines=self.lines, indent=indent, default=default, history=self.history, _transient=True)
             line = ui.interact()
 
-            print line
-            self.lines.append(line)
-            return True
+            print "LS", renpy.load_string(line)
 
 
 #        def enable(self):

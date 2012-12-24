@@ -315,6 +315,48 @@ class Script(object):
             self.key = data['key']
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
+
+        self.finish_load(stmts, initcode)
+        return True
+
+    def load_string(self, filename, filedata):
+        """
+        Loads Ren'Py script from a string.
+        
+        `filename`
+            The filename that's assigned to the data.
+            
+        `filedata`
+            A unicode string to be loaded.
+            
+        Return the list of statements making up the root block, and a
+        list of init statements that need to be run.
+        """
+        
+        stmts = renpy.parser.parse(filename, filedata)
+        self.assign_names(stmts, filename)
+        
+        initcode = [ ]
+        stmts = self.finish_load(stmts, initcode, False)
+        
+        return stmts, initcode
+
+
+    def finish_load(self, stmts, initcode, check_names=True):
+        """
+        Given `stmts`, a list of AST nodes comprising the root block, 
+        finishes loading it (this includes chaining statements and
+        adding them to the name map.)
+        
+        `initcode`
+            A list we append init statements to.
+        
+        `check_names`
+            If true, produce duplicate name errors.
+        
+        Returns a list of statements that corresponds to the top-level block
+        in initcode after transformation.
+        """
             
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
@@ -335,7 +377,8 @@ class Script(object):
             # Check to see if the name is defined twice. If it is,
             # report the error.
             name = node.name
-            if name in self.namemap:
+
+            if name in self.namemap and check_names:
                 old = self.namemap[name]
 
                 raise ScriptError("Name %s is defined twice: at %s:%d and %s:%d." %
@@ -358,10 +401,10 @@ class Script(object):
         for node in all_stmts:
             node.early_execute()
         
-        self.all_stmts.extend(all_stmts)
+        if self.all_stmts is not None:
+            self.all_stmts.extend(all_stmts)
 
-        return True
-
+        return stmts
     
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
