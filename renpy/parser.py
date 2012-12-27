@@ -141,11 +141,11 @@ def elide_filename(fn):
     renpy_base = os.path.abspath(renpy.config.renpy_base)
     
     if fn.startswith(basedir):
-        return os.path.relpath(fn, basedir)
+        return os.path.relpath(fn, basedir).replace("\\", "/")
     elif fn.startswith(renpy_base):
-        return os.path.relpath(fn, renpy_base)
+        return os.path.relpath(fn, renpy_base).replace("\\", "/")
     else:
-        return fn
+        return fn.replace("\\", "/")
 
 def unelide_filename(fn):
     fn1 = os.path.join(renpy.config.basedir, fn)
@@ -626,6 +626,13 @@ class Lexer(object):
         """
 
         return self.match(r'(\+|\-)?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?')
+
+    def hash(self):
+        """
+        Matches the chatacters in an md5 hash, and then some.
+        """
+        
+        return self.match(r'\w+')
 
     def word(self):
         """
@@ -1788,7 +1795,101 @@ def screen_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500)        
 
     return rv
+
+def translate_strings(init_loc, language, l):
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('translate strings statement')
     
+    ll = l.subblock_lexer()
+    
+    block = [ ]
+    
+    old = None
+    loc = None
+    
+    def parse_string(s):
+        s = s.strip()
+        s = 'u' + s
+        
+        try:
+            return eval(s)
+        except:
+            ll.error('could not parse string')
+    
+    while ll.advance():
+        
+        if ll.keyword('old'):
+            
+            if old is not None:
+                ll.error("previous string is missing a translation")
+            
+            loc = ll.get_location()
+            old = parse_string(ll.rest())
+            
+        elif ll.keyword('new'):
+        
+            if old is None:
+                ll.error('no string to translate')
+
+            new = parse_string(ll.rest())
+            
+            block.append(renpy.ast.TranslateString(loc, language, old, new))
+
+            old = None
+            new = None
+            loc = None
+        
+        else:
+            ll.error('unknown statement')
+            
+    if old:
+        ll.error('final string is missing a translation')
+
+    l.advance()
+
+    if l.init:
+        return block
+    
+    return ast.Init(init_loc, block, 0)
+    
+def translate_python(loc, language, l):
+    l.require(':')
+    l.expect_block('python block')
+
+    python_code = l.python_block()
+
+    l.advance()
+
+    return ast.TranslatePython(loc, language, python_code)
+    
+
+@statement("translate")
+def translate_statement(l, loc):
+
+    language = l.require(l.name)
+
+    if language == "None":
+        language = None
+    
+    identifier = l.require(l.hash)
+    
+    if identifier == "strings":
+        return translate_strings(loc, language, l)
+    elif identifier == "python":
+        return translate_python(loc, language, l)
+    
+    l.require(':')
+    l.expect_eol()
+    
+    l.expect_block("translate statement")
+
+    block = parse_block(l.subblock_lexer())
+
+    l.advance()
+    
+    return [ ast.Translate(loc, identifier, language, block), ast.EndTranslate(loc) ]
+     
 
 @statement("")
 def say_statement(l, loc):
@@ -1834,6 +1935,11 @@ def say_statement(l, loc):
         
     what = l.string()
 
+    if l.keyword('nointeract'):
+        interact = False
+    else:
+        interact = True
+
     if l.keyword('with'):
         with_ = l.require(l.simple_expression)
     else:
@@ -1843,7 +1949,7 @@ def say_statement(l, loc):
         l.expect_eol()
         l.expect_noblock('say statement')
         l.advance()
-        return ast.Say(loc, who, what, with_, attributes=attributes)
+        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact)
 
     # This reports a parse error for any bad statement.
     l.error('expected statement.')
@@ -1887,6 +1993,7 @@ def parse_block(l):
         try:
 
             stmt = parse_statement(l)
+            
             if isinstance(stmt, list):
                 rv.extend(stmt)
             else:

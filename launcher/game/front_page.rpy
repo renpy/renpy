@@ -125,7 +125,7 @@ screen front_page_project:
         frame style "l_label":
             has hbox xfill True
             text "[p.name!q]" style "l_label_text"
-            label "Active Project" style "l_alternate"
+            label _("Active Project") style "l_alternate"
 
         grid 2 1:
             xfill True
@@ -150,9 +150,9 @@ screen front_page_project:
                 frame style "l_indent":
                     has vbox
                 
-                    textbutton _("script.rpy") action editor.Edit("game/script.rpy", check=True)
-                    textbutton _("options.rpy") action editor.Edit("game/options.rpy", check=True)
-                    textbutton _("screens.rpy") action editor.Edit("game/screens.rpy", check=True)
+                    textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
+                    textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                    textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
                     textbutton _("All script files") action editor.EditAll()
                 
         add SPACER
@@ -184,7 +184,8 @@ screen front_page_project:
 
                 if ability.can_distribute:
                     textbutton _("Build Distributions") action Jump("build_distributions")
-                    
+
+                textbutton _("Generate Translations") action Jump("translate")
         
 label main_menu:
     return

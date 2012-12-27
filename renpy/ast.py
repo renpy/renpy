@@ -206,6 +206,10 @@ class Node(object):
         'next',
         ]
 
+    # True if this node is translatable, false otherwise. (This can be set on
+    # the class or the instance.)
+    translatable = False
+
     # Called to set the state of a Node, when necessary.
     def __setstate__(self, state):
         for k, v in state[1].iteritems():
@@ -303,6 +307,30 @@ class Node(object):
         rv._next = self.next # W0201
         return rv
 
+    def restructure(self, callback):
+        """
+        Called to restructure the AST.
+
+        When this method is called, callback is called once for each child 
+        block of the node. The block, a list, can be updated by the callback
+        using slice assignment to the list.
+        """
+        
+        # Does nothing for nodes that do not contain child blocks.
+        return
+
+    def get_code(self, dialogue_filter=None):
+        """
+        Returns the canonical form of the code corresponding to this statement.
+        This only needs to be defined if the statement is translatable.
+     
+        `filter`
+            If present, a filter that should be applied to human-readable
+            text in the statement.
+        """
+
+        raise Exception("Not Implemented")
+
 def say_menu_with(expression, callback):
     """
     This handles the with clause of a say or menu statement.
@@ -332,6 +360,8 @@ class Say(Node):
         'interact',
         'attributes',
         ]
+
+    translatable = True
 
     def diff_info(self):
         return (Say, self.who, self.what)
@@ -363,6 +393,30 @@ class Say(Node):
         # A tuple of attributes that are applied to the character that's
         # speaking, or None to disable this behavior.
         self.attributes = attributes
+
+    def get_code(self, dialogue_filter=None):
+        rv = [ ]
+        
+        if self.who:
+            rv.append(self.who)
+            
+        if self.attributes is not None:
+            rv.extend(self.attributes)
+            
+        what = self.what
+        if dialogue_filter is not None:
+            what = dialogue_filter(what)
+            
+        rv.append(renpy.translation.encode_say_string(what))
+
+        if not self.interact:
+            rv.append("nointeract")
+
+        if self.with_:           
+            rv.append("with")
+            rv.append(self.with_)
+
+        return " ".join(rv)
 
     def execute(self):
         
@@ -488,6 +542,9 @@ class Init(Node):
     def execute(self):
         next_node(self.next)
     
+    def restructure(self, callback):
+        callback(self.block)
+    
 
 class Label(Node):
 
@@ -605,6 +662,9 @@ class Label(Node):
 
         if renpy.config.label_callback:
             renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
+
+    def restructure(self, callback):
+        callback(self.block)
 
 
 class Python(Node):
@@ -972,7 +1032,7 @@ class Hide(Node):
             
         renpy.game.context().images.predict_hide(tag, layer)
 
-        return [ ]
+        return [ self.next ]
         
     def execute(self):
 
@@ -1252,6 +1312,11 @@ class Menu(Node):
         rv.interacts = True
         return rv
     
+    def restructure(self, callback):
+        for _label, _condition, block in self.items:
+            if block is not None:
+                callback(block)
+    
 setattr(Menu, "with", Menu.with_) # E1101
 
 
@@ -1356,6 +1421,9 @@ class While(Node):
         rv._next = None
         return rv
 
+    def restructure(self, callback):
+        callback(self.block)
+
 class If(Node):
 
     __slots__ = [ 'entries' ]
@@ -1405,15 +1473,23 @@ class If(Node):
         rv._next = None
         return rv
 
+    def restructure(self, callback):
+        for _condition, block in self.entries:
+            callback(block)
 
 class UserStatement(Node):
 
-    __slots__ = [ 'line', 'parsed', 'block' ]
+    __slots__ = [ 
+        'line', 
+        'parsed', 
+        'block', 
+        'translatable' ]
 
     def __setstate__(self, state):
         self.block = [ ]
+        self.translatable = False
         Node.__setstate__(self, state)
-
+     
     def __init__(self, loc, line, block):
 
         super(UserStatement, self).__init__(loc)
@@ -1422,7 +1498,7 @@ class UserStatement(Node):
         self.parsed = None
 
         # Do not store the parse quite yet.
-        renpy.statements.parse(self, self.line, self.block)
+        _parse_info = renpy.statements.parse(self, self.line, self.block)
         
     def diff_info(self):
         return (UserStatement, self.line)
@@ -1457,6 +1533,9 @@ class UserStatement(Node):
         rv._next = self.get_next()
         self.call("scry", rv)
         return rv
+     
+    def get_code(self, dialogue_filter=None):
+        return self.line
                             
             
 class Define(Node):
@@ -1516,3 +1595,140 @@ class Screen(Node):
         next_node(self.next)
         self.screen.define()
         renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
+
+
+################################################################################
+# Translations
+################################################################################
+
+class Translate(Node):
+    """
+    A translation block, produced either by explicit translation statements 
+    or implicit translation blocs.
+    
+    If language is None, when executed this transfers control to the translate 
+    statement in the current language, if any, and otherwise runs the block.
+    If language is not None, causes an error to occur if control reaches this 
+    statement.
+
+    When control normally leaves a translate statement, in any language, it 
+    goes to the end of the translate statement in the None language.
+    """
+    
+    __slots__ = [
+        "identifier",
+        "language",
+        "block",
+        ]
+    
+    def __init__(self, loc, identifier, language, block):
+        super(Translate, self).__init__(loc)
+        
+        self.identifier = identifier
+        self.language = language
+        self.block = block
+        
+    def diff_info(self):
+        return (Translate, self.identifier, self.language)
+
+    def chain(self, next): #@ReservedAssignment
+        self.next = next
+        chain_block(self.block, next)
+
+    def execute(self):
+
+        if self.language is not None:
+            next_node(self.next)
+            raise Exception("Translation nodes cannot be run directly.")
+        
+        next_node(renpy.game.script.translator.lookup_translate(self.identifier))
+        renpy.game.context().translate_identifier = self.identifier
+
+    def predict(self):
+        node = renpy.game.script.translator.lookup_translate(self.identifier)
+        return [ node ]
+    
+    def scry(self):
+        rv = Scry()
+        rv._next = renpy.game.script.translator.lookup_translate(self.identifier)
+        return rv
+    
+    def get_children(self):
+        return self.block
+    
+    def restructure(self, callback):
+        return callback(self.block)
+    
+    
+class EndTranslate(Node):
+    """
+    A node added implicitly after each translate block. It's responsible for
+    resetting the translation identifier.
+    """
+    
+    def __init__(self, loc):
+        super(EndTranslate, self).__init__(loc)
+        
+    def diff_info(self):
+        return (EndTranslate,)
+    
+    def execute(self):
+        next_node(self.next)
+        renpy.game.context().translate_identifier = None
+        
+
+class TranslateString(Node):
+    """
+    A node used for translated strings.
+    """
+    
+    __slots__ = [ 
+        "language",
+        "old",
+        "new"
+        ]
+    
+    def __init__(self, loc, language, old, new):
+        super(TranslateString, self).__init__(loc)
+        self.language = language
+        self.old = old
+        self.new = new
+        
+    def diff_info(self):
+        return (TranslateString,)
+    
+    def execute(self):
+        next_node(self.next)
+        renpy.translation.add_string_translation(self.language, self.old, self.new)
+
+class TranslatePython(Node):
+
+    __slots__ = [
+        'language',
+        'code',
+        ]
+
+    def __init__(self, loc, language, python_code):
+        """
+        @param code: A PyCode object.
+
+        @param hide: If True, the code will be executed with its
+        own local dictionary.
+        """
+        
+        super(TranslatePython, self).__init__(loc)
+
+        self.language = language
+        self.code = PyCode(python_code, loc=loc, mode='exec')
+
+    def diff_info(self):
+        return (TranslatePython, self.code.source)
+
+    def execute(self):
+        next_node(self.next)
+
+    # def early_execute(self):
+    #    renpy.python.create_store(self.store)
+    #    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+
+            

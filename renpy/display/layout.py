@@ -1193,6 +1193,8 @@ class Viewport(Container):
             
             
         if isinstance(replaces, Viewport):
+            self.xadjustment.range = replaces.xadjustment.range
+            self.yadjustment.range = replaces.yadjustment.range
             self.xadjustment.value = replaces.xadjustment.value
             self.yadjustment.value = replaces.yadjustment.value
             self.xoffset = replaces.xoffset
@@ -1218,6 +1220,7 @@ class Viewport(Container):
 
         self.width = 0
         self.height = 0
+
         
     def per_interact(self):
         self.xadjustment.register(self)
@@ -1592,6 +1595,11 @@ class LiveTile(Container):
         cr = renpy.display.render.render(self.child, width, height, st, at)
         cw, ch = cr.get_size()
         rv = renpy.display.render.Render(width, height)
+
+        width = int(width)
+        height = int(height)
+        cw = int(cw)
+        ch = int(ch)
 
         for y in range(0, height, ch):
             for x in range(0, width, cw):

@@ -640,7 +640,16 @@ def build_style(style):
                 
 # This builds all pending styles, recursing to ensure that they are built
 # in the right order.
-def build_styles():
+def build_styles(early=False):
+    """
+    Builds all pending styles.
+    
+    `early`
+        If true, builds the pending styles, but leaves the pending queue 
+        around, so the styles will be rebuilt later. If false, stops
+        using the pending queue - style changes will be processed
+        immediately.
+    """
 
     global styles_pending
     global styles_built
@@ -648,8 +657,9 @@ def build_styles():
     for s in styles_pending:
         build_style(s)
 
-    styles_pending = None
-    styles_built = True
+    if not early:
+        styles_pending = None
+        styles_built = True
 
 
 def rebuild():

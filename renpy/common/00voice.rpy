@@ -22,7 +22,7 @@
 #     $ voice_sustain()
 #     e "...to play for two lines of dialogue."
 
-init -1120:
+init -1500:
 
     python:
 
@@ -113,7 +113,8 @@ python early hide:
     renpy.statements.register('voice',
                               parse=parse_voice,
                               execute=execute_voice,
-                              lint=lint_voice)
+                              lint=lint_voice,
+                              translatable=True)
 
     def parse_voice_sustain(l):
         if not l.eol():
@@ -126,6 +127,7 @@ python early hide:
 
     renpy.statements.register('voice sustain',
                               parse=parse_voice_sustain,
-                              execute=execute_voice_sustain)
+                              execute=execute_voice_sustain,
+                              translatable=True)
 
 

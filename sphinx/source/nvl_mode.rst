@@ -1,3 +1,5 @@
+.. _nvl-mode:
+
 NVL-Mode Tutorial
 =================
 

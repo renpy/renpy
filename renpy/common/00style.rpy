@@ -17,7 +17,7 @@
 # to your script. No need to mess around here, it will just make your
 # life harder when a new version of Ren'Py is released.
 
-init -1200 python hide:
+init -1800 python hide:
 
     # Style Declarations #################################################
 
@@ -123,7 +123,7 @@ init -1200 python hide:
     style.gm_root = Style(style.default, help="game menu root window")
 
     
-init -1090 python:
+init -1800 python:
     
     # Colors #############################################################
 
@@ -311,18 +311,3 @@ init -1090 python:
 
     # Tile
     style.tile.clipping = True
-    
-    
-    ######################################################################
-
-    # Error messages.
-    style.error_root.background = Solid((220, 220, 255, 255))
-    style.error_root.xfill = True
-    style.error_root.yfill = True
-    style.error_root.xpadding = 20
-    style.error_root.ypadding = 20
-
-    style.error_title.color = (255, 128, 128, 255)
-    style.error_body.color = (128, 128, 255, 255)
-
-    

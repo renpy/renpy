@@ -39,6 +39,7 @@ Text, Displayables, Transforms, and Transitions
    :maxdepth: 1
     
    text
+   translations
    displayables
    transforms
    transitions
@@ -128,3 +129,12 @@ Indices
 * `Variable and Definition Index <std-var-index.html>`_
 * `Function and Class Index <py-function-class-index.html>`_
 * `General Index <genindex.html>`_
+
+Example Scripts
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   thequestion
+   thequestion_nvl

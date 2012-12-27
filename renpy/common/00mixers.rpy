@@ -4,7 +4,7 @@
 # This file contains code that sets up the various mixers, based on how
 # the user sets config.has_music, .has_sound, and .has_voice.
 
-init -1130 python hide:
+init -1600 python hide:
     
     # Set to true in the very unlikely event you want to manually init
     # the sound system.
@@ -15,6 +15,11 @@ init -1130 python hide:
 
     # basics: True if the game will have sound effects.
     config.has_sound = True
+    
+    # Sample sounds for various channels.
+    config.sample_sound = None
+    config.sample_voice = None
+    
 
     # Register 8 channels by default, for compatiblity with older version
     # of Ren'Py.
@@ -28,7 +33,7 @@ init -1130 python hide:
     renpy.music.alias_channel(7, "music")
     renpy.music.alias_channel(2, "voice")
     
-init 1130:
+init 1600:
 
     python hide:
 

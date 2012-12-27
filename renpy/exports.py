@@ -46,8 +46,8 @@ from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable
-from renpy.substitutions import Translator
 from renpy.parser import unelide_filename
+from renpy.translation import change_language, known_languages
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
@@ -82,9 +82,9 @@ def public_api():
     focus_coordinates
     predict, predict_screen
     displayable
-    Translator
     unelide_filename
-    
+    change_language, known_languages
+
 del public_api
 
 def roll_forward_info():
@@ -95,7 +95,7 @@ def roll_forward_info():
     the last time this statement executed. Outside of rollback, returns None. 
     """
     
-    if len(renpy.game.contexts) > 1:
+    if not renpy.game.context().rollback:
         return None
     
     return renpy.game.log.forward_info()
@@ -1368,6 +1368,7 @@ call_in_new_context = renpy.game.call_in_new_context
 curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
 invoke_in_new_context = renpy.game.invoke_in_new_context
 curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
+call_replay = renpy.game.call_replay
 
 # Error handling stuff.
 def _error(msg):
@@ -1815,6 +1816,16 @@ def get_image_load_log(age=None):
         
         yield i
         
+def end_replay():
+    """
+    :doc: replay
+    
+    If we're in a replay, ends the replay immediately. Otherwise, does
+    nothing.
+    """
+    
+    if renpy.store._in_replay:
+        raise renpy.game.EndReplay()
         
     
     

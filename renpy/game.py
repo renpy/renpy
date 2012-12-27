@@ -103,7 +103,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 4
+    __version__ = 5
 
     def after_upgrade(self, version):
         if version < 1:
@@ -115,6 +115,8 @@ class Preferences(renpy.object.Object):
         if version < 4:
             self.renderer = "auto"
             self.performance_test = True
+        if version < 5:
+            self.language = None
             
     def __init__(self):
         self.fullscreen = False 
@@ -159,6 +161,9 @@ class Preferences(renpy.object.Object):
         
         # Should we do a performance test on startup?
         self.performance_test = True
+
+        # The language we use for translations.
+        self.language = None
         
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume
@@ -175,16 +180,24 @@ class Preferences(renpy.object.Object):
 # The current preferences.
 preferences = Preferences()
 
-class RestartException(Exception):
+class RestartContext(Exception):
     """
-    This class will be used to convey to the system that the context has
-    been changed, and therefore execution needs to be restarted.
+    Restarts the current context. If `label` is given, calls that label
+    in the restarted context.
     """
 
-    def __init__(self, contexts, label): # W0231
-        self.contexts = contexts
+    def __init__(self, label):
         self.label = label
-    
+
+class RestartTopContext(Exception):
+    """
+    Restarts the top context. If `label` is given, calls that label
+    in the restarted context.
+    """
+
+    def __init__(self, label):
+        self.label = label
+   
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
@@ -194,7 +207,6 @@ class FullRestartException(Exception):
     def __init__(self, reason="end_game"): # W0231
         self.reason = reason
 
-    
 class UtterRestartException(Exception):
     """
     An exception of this type forces an even harder restart, causing
@@ -241,6 +253,12 @@ class CallException(Exception):
         self.args = args
         self.kwargs = kwargs
 
+class EndReplay(Exception):
+    """
+    Raise this exception to end the current replay (the current call to 
+    call_replay).
+    """
+
 class ParseErrorException(Exception):
     """
     This is raised when a parse error occurs, after it has been
@@ -250,13 +268,15 @@ class ParseErrorException(Exception):
 # A tuple of exceptions that should not be caught by the 
 # exception reporting mechanism.
 CONTROL_EXCEPTIONS = (
-    RestartException,
+    RestartContext,
+    RestartTopContext,
     FullRestartException,
     UtterRestartException,
     QuitException,
     JumpException,
     JumpOutException,
     CallException,
+    EndReplay,
     ParseErrorException,
     KeyboardInterrupt,
     )
@@ -296,7 +316,12 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
     contexts.append(context)
 
     try:
+
         return callable(*args, **kwargs)
+
+    except renpy.game.JumpOutException, e:        
+
+        raise renpy.game.JumpException(e.args[0])
 
     finally:
 
@@ -321,7 +346,6 @@ def call_in_new_context(label, *args, **kwargs):
 
     context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
-
     
     if args:
         renpy.store._args = args
@@ -336,28 +360,64 @@ def call_in_new_context(label, *args, **kwargs):
     try:
             
         context.goto_label(label)
-        context.run()
+        renpy.execution.run_context(False)
 
         rv = renpy.store._return #@UndefinedVariable
-        context.pop_all_dynamic()
-        contexts.pop()
-
-        contexts[-1].do_deferred_rollback()
 
         return rv
         
     except renpy.game.JumpOutException, e:        
 
-        context.pop_all_dynamic()
-        contexts.pop()
         raise renpy.game.JumpException(e.args[0])
 
     finally:
-    
+
+        contexts.pop()
+        contexts[-1].do_deferred_rollback()
+   
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
+def call_replay(label, scope={}):
+    """
+    :doc: replay
+    
+    Calls a label as a memory.
 
+    Keyword arguments are used to set the initial values of variables in the
+    memory context.
+    """
+    
+    old_log = renpy.game.log
+    renpy.game.log = renpy.python.RollbackLog()
+    
+    sb = renpy.python.StoreBackup()
+    renpy.python.clean_stores()
+    
+    context = renpy.execution.Context(True)
+    contexts.append(context)
+
+    for k, v in scope.iteritems():
+        setattr(renpy.store, k, v)
+        
+    renpy.store._in_replay = label
+    
+    try:
+
+        context.goto_label("_start_replay")
+        renpy.execution.run_context(False)
+
+    except EndReplay:
+        pass
+
+    finally:
+        contexts.pop()
+        renpy.game.log = old_log
+        sb.restore()
+         
+        if interface.restart_interaction and contexts:
+            contexts[-1].scene_lists.focused = None
+    
     
 # Type information.       
 if False:

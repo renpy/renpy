@@ -1,6 +1,6 @@
-====================================
-Image Gallery and Music Room Actions
-====================================
+=============================================
+Image Gallery, Music Room, and Replay Actions
+=============================================
 
 .. _image-gallery:
 
@@ -260,3 +260,80 @@ slider on the music screen.
 
 .. include:: inc/music_room
 
+
+.. _replay:
+
+Replay
+------
+
+Ren'Py also includes the ability to replay a scene from inside a the
+main or game menu. This can be used to create a "scene gallery", or
+memory gallery that allows the player to repeat important scenes.
+After the scene finishes, Ren'Py returns to the menu screen that
+launched the replay.
+
+Scene replay is also possible using the :func:`Start` action. The
+difference between the two modes are:
+
+* A replay can be launched from any screen while Start can only be
+  used in the main menu or screens shown by the main menu.
+
+* When a replay finishes, control returns to the point where the
+  replay was invoked. That point can be inside the main menu, game
+  menu. If a game is in progress when replay is called, game state is
+  preserved.
+
+* Saving is disabled while in replay mode.
+
+* While in replay mode, a call to :func:`renpy.end_replay` will end
+  the replay. In normal mode, end_replay does nothing.
+
+To take advantage of the replay mode, a scene should begin with a
+label, and end with a call to renpy.end_replay. The scene should make
+no assumption as to the state of the layers or variables, which can be
+very different in normal and replay mode. (In replay code, the label
+is invoked with a black screen.)
+
+For example::
+
+  ###
+
+       "And finally, I met the wizard himself."
+  
+  label meaning_of_life:
+
+       scene 
+  
+      "Mage" "What is the meaning of life, you say?"
+
+      "Mage" "I've thought about it long and hard. A long time, I've
+              spent pondering that very thing."
+
+      "Mage" "And I'll say - the answer - the meaning of life
+              itself..."
+
+      "Mage" "Is forty-three." 
+
+      $ renpy.end_replay()
+      
+      "Mage" "Something like that, anyway."
+
+With the scene define like that, the replay can be invoked with the
+Replay action::
+
+  textbutton "The meaning of life" action Replay("meaning_of_life")
+
+There is one store variable used by replay mode:
+
+.. var:: _in_replay
+
+   When in replay mode, this is sent to the label at which replay
+   mode was started. Outside of replay mode, this is None.
+
+In addition, :var:`config.enter_replay_mode` and
+:var:`config.exit_replay_mode` are used when entering and exiting
+replay mode, respectively.
+
+The following variables and actions are used in replay mode:
+
+.. include:: inc/replay

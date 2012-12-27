@@ -1,7 +1,7 @@
 ﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-init -1135 python:
+init -1500 python:
 
     class __GalleryAllPriorCondition(object):
 
@@ -304,7 +304,7 @@ init -1135 python:
             return Button(action=action, child=unlocked, insensitive_child=locked, hover_foreground=hover_border, idle_foreground=idle_border, **properties)
 
 
-init -1135:
+init -1500:
 
     # Displays a set of images in the gallery, or indicates that the images 
     # are locked. This is given the following arguments:

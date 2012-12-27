@@ -1890,6 +1890,9 @@ class Interface(object):
             if not self.old_scene:
                 return False, None
             
+        # Check to see if the language has changed.
+        renpy.translation.check_language()
+            
         # We just restarted.
         self.restart_interaction = False
 

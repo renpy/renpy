@@ -1,7 +1,7 @@
 ﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-init -1110 python:
+init -1400 python:
 
     class _Theme(object):
 
@@ -1220,7 +1220,7 @@ init -1110 python hide:
         style.file_picker_text.rest_indent = 9
 
 
-init 1110 python:
+init 1400 python:
 
     if not "compat" in _layout.provided:
         theme.image_buttons(config.image_buttons)
