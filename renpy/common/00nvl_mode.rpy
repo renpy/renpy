@@ -21,7 +21,7 @@
 ##############################################################################
 # The implementation of NVL mode lives below this line.
 
-init -1100 python:
+init -1500 python:
 
     # Styles that are used by nvl mode.
     style.create('nvl_window', 'default', 'the window containing nvl-mode dialogue')
@@ -410,7 +410,8 @@ python early hide:
     renpy.statements.register('nvl clear',
                               parse=parse_nvl_clear,
                               execute=execute_nvl_clear,
-                              scry=scry_nvl_clear)
+                              scry=scry_nvl_clear,
+                              translatable=True)
 
 
     

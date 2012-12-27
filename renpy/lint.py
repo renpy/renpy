@@ -190,12 +190,6 @@ def check_file(what, fn):
         return
 
     check_file_cache[fn] = True
-
-    try:
-        renpy.loader.transfn(fn)
-    except:
-        return
-
     
 
 def check_displayable(what, d):

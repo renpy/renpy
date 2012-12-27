@@ -177,6 +177,8 @@ Style = renpy.style.Style
 
 absolute = renpy.display.core.absolute
 
+NoRollback = renpy.python.NoRollback
+
 def layout(cls, doc, nargs=0, **extra_kwargs):
 
     def f(*args, **properties):
@@ -339,6 +341,9 @@ _last_say_what = None
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
+
+# If we're in a replay, the label of the start of the replay.
+_in_replay = None
     
 # Make these available to user code.
 import sys

@@ -302,16 +302,13 @@ class SubFile(object):
         raise Exception("Write not supported by SubFile")
     
 
-def load(name):
+def load_core(name):
     """
     Returns an open python file object of the given type.
     """
 
     name = lower_map.get(name.lower(), name)
     
-    if renpy.config.reject_backslash and "\\" in name:
-        raise Exception("Backslash in filename, use '/' instead: %r" % name)
-
     if renpy.config.file_open_callback:
         rv = renpy.config.file_open_callback(name)
         if rv is not None:
@@ -355,7 +352,7 @@ def load(name):
 
             rv = SubFile(f, offset, dlen, start)
 
-        # Compatability path.
+        # Compatibility path.
         else:
             for offset, dlen in index[name]:           
                 f.seek(offset)
@@ -366,11 +363,40 @@ def load(name):
             
         return rv
 
+    return None
+
+def get_prefixes():
+    """
+    Returns a list of prefixes to search for files.
+    """
+    
+    rv = [ ]
+    
+    language = renpy.game.preferences.language
+    
+    if language is not None:
+        rv.append(renpy.config.tl_directory + "/" + language + "/")
+    
+    rv.append("")
+    
+    return rv
+
+def load(name):
+    
+    if renpy.config.reject_backslash and "\\" in name:
+        raise Exception("Backslash in filename, use '/' instead: %r" % name)
+
+    for p in get_prefixes():
+        rv = load_core(p + name)
+        if rv is not None:
+            return rv
+    
     raise IOError("Couldn't find file '%s'." % name)
+
 
 loadable_cache = { }
 
-def loadable(name):
+def loadable_core(name):
     """
     Returns True if the name is loadable with load, False if it is not.
     """
@@ -395,6 +421,17 @@ def loadable(name):
     loadable_cache[name] = False
     return False
     
+def loadable(name):
+    
+    if renpy.config.reject_backslash and "\\" in name:
+        raise Exception("Backslash in filename, use '/' instead: %r" % name)
+
+    for p in get_prefixes():
+        if loadable_core(p + name):
+            return True
+        
+    return False
+
 
 def transfn(name):
     """
@@ -425,12 +462,16 @@ def get_mtime(name):
     doesn't exist or is archived.
     """
 
-    try:
-        fn = transfn(name)
-        return os.path.getmtime(fn)
-    except:
-        return 0
-
+    for p in get_prefixes():
+        try:
+            fn = transfn(p + name)
+            return os.path.getmtime(fn)
+        except:
+            pass
+        
+    return 0
+    
+    
 class RenpyImporter(object):
     """
     An importer, that tries to load modules from the places where Ren'Py
@@ -486,4 +527,5 @@ class RenpyImporter(object):
     def get_data(self, filename):
         return load(filename).read()
 
-sys.meta_path.append(RenpyImporter())
+def init_importer():
+    sys.meta_path.append(RenpyImporter())

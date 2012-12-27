@@ -74,42 +74,21 @@ def run(restart):
         if game.script.has_label('after_warp'):
             game.context().call('after_warp')
 
-    # Run the game.
-    while True:
-
         renpy.config.skipping = None
 
-        try:
-            renpy.exports.log("--- " + time.ctime())
-            renpy.exports.log("")
-        except:
-            pass
+    try:
+        renpy.exports.log("--- " + time.ctime())
+        renpy.exports.log("")
+    except:
+        pass
 
-        # Note if this is a restart.
-        renpy.store._restart = restart
-        restart = None
-        
-        # We run until we get an exception.
-        try:
-            game.context().run()
-            game.context().pop_all_dynamic()
-            break
-
-        # We get this when the context has changed, and so we go and
-        # start running from the new context.
-        except game.RestartException, e:
-
-            renpy.game.contexts = e.contexts
-
-            label = e.label
-
-            if label:
-                if game.script.has_label(label):
-                    game.context().call(label)
-
-            continue
-            
-    # And, we're done.
+    # Note if this is a restart.
+    renpy.store._restart = restart
+    restart = None
+    
+    # We run until we get an exception.
+    renpy.execution.run_context(True)
+    
 
 def load_rpe(fn):
 
@@ -216,7 +195,11 @@ def main():
     renpy.game.exception_info = 'While loading the script.'
     renpy.game.script = renpy.script.Script()
 
+    # Set up error handling.
     renpy.exports.load_module("_errorhandling")
+    renpy.style.build_styles(early=True)
+    
+    # Load all .rpy files.    
     renpy.game.script.load_script() # sets renpy.game.script.
 
     renpy.game.exception_info = 'After loading the script.'
@@ -293,6 +276,9 @@ def main():
     for i in renpy.game.post_init:
         i()
         
+    # Init translation.
+    renpy.translation.init_translation()
+        
     # Rebuild the various style caches.
     renpy.style.build_styles()
 
@@ -352,6 +338,7 @@ def main():
 
         except game.FullRestartException, e:
             restart = e.reason
+
         finally:
             renpy.display.core.cpu_idle.set()
             renpy.loadsave.autosave_not_running.wait()

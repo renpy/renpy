@@ -23,16 +23,6 @@
     This inverts the selection state of the provided action, while
     proxying over all of the other methods.
 
-.. function:: Language(language)
-    
-    Changes the language of the game to `language`. A language change
-    causes the current statement to be restarted, and all contexts but 
-    the outermost being exited.
-    
-    `language`
-        A string giving the language to translate to, or None to use
-        the language given in the game script.
-
 .. function:: Notify(message)
     
     Displays `message` using :func:`renpy.notify`. 

@@ -2,7 +2,7 @@
 # See LICENSE.txt for license details.
 
 # This code applies an update.
-init -1000 python in updater:
+init -1500 python in updater:
     from store import renpy, config, Action
     import store.build as build
 
@@ -1227,7 +1227,7 @@ init -1000 python in updater:
     
     renpy.arguments.register_command("update", update_command)
 
-init -1000:
+init -1500:
     screen updater:
         
         add "#000"

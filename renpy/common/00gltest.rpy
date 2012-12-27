@@ -4,7 +4,7 @@
 # This contains code to choose between OpenGL and Software rendering, when
 # a system supports both.
 
-init -1024:
+init -1500:
 
     python hide:
         import os
@@ -186,7 +186,7 @@ init -1024:
 
 
 
-init -1024 python:
+init -1500 python:
     # The image that we fill the screen with in GL-test mode.
     config.gl_test_image = "black"
 

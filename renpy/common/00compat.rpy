@@ -1,7 +1,7 @@
 ﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-init -1210 python:
+init -1900 python:
 
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.        
@@ -68,8 +68,13 @@ init -1210 python:
             global MoveTransition
             MoveTransition = OldMoveTransition
 
+    # The version of Ren'Py this script is intended for, or
+    # None if it's intended for the current version.
+    config.script_version = None
 
-init 1210 python hide::
+
+
+init 1900 python hide::
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version

@@ -310,8 +310,6 @@ init python in interface:
 
             return rv
 
-        
-
     def info(message, submessage=None, pause=True, **kwargs):
         """
         Displays an informational message to the user. The user will be asked to click to 

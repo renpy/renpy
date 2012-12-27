@@ -55,7 +55,6 @@ screen update_channel:
             
             add HALF_SPACER
             
-            
             hbox:
                 frame:
                     style "l_indent"

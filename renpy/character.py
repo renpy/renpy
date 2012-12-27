@@ -755,12 +755,21 @@ class ADVCharacter(object):
             if self.dynamic:
                 who = renpy.python.py_eval(who)
     
+            sub = renpy.substitutions.substitute
+
             if who is not None:
-                who = renpy.substitutions.substitute(who)
-                who = self.who_prefix + who + self.who_suffix
+                who_pattern = sub(self.who_prefix + "[[who]" + self.who_suffix)
+                who = who_pattern.replace("[who]", sub(who))
     
-            what = renpy.substitutions.substitute(what)
-            what = self.what_prefix + what + self.what_suffix
+            ctx = renpy.game.context()
+            
+            if (ctx.translate_language is not None) and (ctx.translate_identifier is not None):
+                translate = False
+            else:
+                translate = True
+
+            what_pattern = sub(self.what_prefix + "[[what]" + self.what_suffix)
+            what = what_pattern.replace("[what]", sub(what, translate=translate))
     
             # Run the add_function, to add this character to the
             # things like NVL-mode.

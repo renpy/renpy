@@ -82,9 +82,6 @@ class StoreDict(dict):
     
     def __init__(self):
 
-        # A copy of this dict as it was at the end of the init phase.
-        self.clean = { }
-
         # The value of this dictionary at the start of the current
         # rollback period (when begin() was last called).
         self.old = { }
@@ -163,26 +160,66 @@ def create_store(name):
     if name.startswith("store."):
         store_dicts["store"][name[6:]] = sys.modules[name]
         
+class StoreBackup():
+    """
+    This creates a copy of the current store, as it was at the start of 
+    the current statement. 
+    """
+    
+    def __init__(self):
+        
+        # The contents of the store for each store.
+        self.store = { }
+        
+        # The contents of old for each store.
+        self.old = { }
+        
+        # The contents of ever_been_changed for each store.
+        self.ever_been_changed = { }
+        
+        
+        for k, v in store_dicts.iteritems():
+            self.store[k] = dict(v)
+            self.old[k] = dict(v.old)
+            self.ever_been_changed[k] = set(v.ever_been_changed)
+            
+    def restore(self):
+
+        for k, sd in store_dicts.iteritems():
+             
+            sd.clear()
+            sd.update(self.store[k])
+             
+            sd.old.clear()
+            sd.old.update(self.old[k])
+             
+            sd.ever_been_changed.clear()
+            sd.ever_been_changed.update(self.ever_been_changed[k])
+
+        
+
+clean_store_backup = None
 
 def make_clean_stores():
     """
     Copy the clean stores.
     """
     
-    for i in store_dicts.itervalues():
-        i.clean.update(i)
-        i.ever_been_changed.clear()
+    global clean_store_backup
+
+    for k, v in store_dicts.iteritems():
+    
+        v.old.clear()
+        v.ever_been_changed.clear()
+        
+    clean_store_backup = StoreBackup()
         
 def clean_stores():
     """
     Revert the store to the clean copy.
     """
     
-    for i in store_dicts.itervalues():
-        i.clear()
-        i.update(i.clean)
-        i.ever_been_changed.clear()
-
+    clean_store_backup.restore()
                 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
@@ -665,7 +702,7 @@ class Rollback(renpy.object.Object):
 
         super(Rollback, self).__init__()
 
-        self.context = renpy.game.contexts[0].rollback_copy()
+        self.context = renpy.game.context().rollback_copy()
         self.objects = [ ]
         self.checkpoint = False
         self.purged = False
@@ -759,7 +796,9 @@ class Rollback(renpy.object.Object):
                 else:
                     store[name] = value
 
-        renpy.game.contexts = [ self.context ]
+        renpy.game.contexts.pop()
+        renpy.game.contexts.append(self.context)
+
         rng.pushback(self.random)
         
 
@@ -822,10 +861,14 @@ class RollbackLog(renpy.object.Object):
         state needs to be saved for rollbacking.
         """
 
+        context = renpy.game.context()        
+        if not context.rollback:
+            return
+
         # If the transient scene list is not empty, then we do
         # not begin a new rollback, as the TSL will be purged
         # after a rollback is complete.
-        if not renpy.game.contexts[0].scene_lists.transient_is_empty():
+        if not context.scene_lists.transient_is_empty():
             return
 
         # If the log is too long, prune it.
@@ -970,15 +1013,13 @@ class RollbackLog(renpy.object.Object):
         if self.current.checkpoint:
             return
 
-        # Only allow checkpoints in the top-level context.
-        if len(renpy.game.contexts) > 1:
+        if not renpy.game.context().rollback:
             return
         
         if self.rollback_limit < renpy.config.hard_rollback_limit: 
             self.rollback_limit += 1
 
         self.current.checkpoint = True
-
         
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
@@ -1075,7 +1116,7 @@ class RollbackLog(renpy.object.Object):
         while self.log:
 
             rb = self.log[-1]
-            
+
             if rb.checkpoint:
                 break
 
@@ -1086,12 +1127,22 @@ class RollbackLog(renpy.object.Object):
                 break
             
             revlog.append(self.log.pop())
-            self.rollback_limit -= 1
 
+        # Decide if we're replacing the current context (rollback command),
+        # or creating a new set of contexts (loading).
+        if renpy.game.context().rollback:
+            replace_context = False
+        else:
+            replace_context = True
+            renpy.game.contexts = renpy.game.contexts[0:1]
+
+        # Actually roll things back.
         for rb in revlog:
             rb.rollback()
+
             if rb.context.current == self.fixed_rollback_boundary:
                 self.rollback_is_fixed = True
+            
             if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
             
@@ -1109,8 +1160,12 @@ class RollbackLog(renpy.object.Object):
         # Stop the sounds.
         renpy.audio.audio.rollback()
         
-        # Restart the game with the new state.
-        raise renpy.game.RestartException(renpy.game.contexts[:], label)
+        # Restart the context or the top context.
+        if replace_context:
+            raise renpy.game.RestartTopContext(label)
+        else:
+            raise renpy.game.RestartContext(label)
+        
 
     def freeze(self, wait=None):
         """

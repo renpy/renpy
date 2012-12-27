@@ -1,7 +1,13 @@
 ﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-init -1105 python:
+init -1400 python:
+
+    # basics: The width of a thumbnail.
+    config.thumbnail_width = 66
+
+    # basics: The height of a thumbnail.
+    config.thumbnail_height = 50
 
     class Layout():
         def __call__(self, func):
@@ -13,8 +19,52 @@ init -1105 python:
 
     layout.compat_funcs = [ ]
     layout.provided = set()
-    
-init -1105 python hide:
+
+    # This is used to jump to a label with a transition.
+    def _intra_jumps_core(label, transition):
+        renpy.transition(getattr(config, transition))
+        renpy.jump(label)
+
+    _intra_jumps = renpy.curry(_intra_jumps_core)
+
+    # These are obsoleted by screens, but used by layout code.
+    config.main_menu = [
+        (u"Start Game", "start", "True"),
+        (u"Load Game", _intra_jumps("load_screen", "main_game_transition"), "True"),
+        (u"Preferences", _intra_jumps("preferences_screen", "main_game_transition"), "True"),
+        (u"Help", _help, "True", "config.help"),
+        (u"Quit", ui.jumps("_quit"), "True"),
+        ]
+
+    config.game_menu = [
+        ( None, u"Return", ui.jumps("_return"), 'True'),
+        ( "preferences", u"Preferences", _intra_jumps("preferences_screen", "intra_transition"), 'True' ),
+        ( "save", u"Save Game", _intra_jumps("save_screen", "intra_transition"), 'not main_menu' ),
+        ( "load", u"Load Game", _intra_jumps("load_screen", "intra_transition"), 'True'),
+        ( None, u"Main Menu", ui.callsinnewcontext("_main_menu_prompt"), 'not main_menu' ),
+        ( "help", u"Help", _help, "True", "config.help"),
+        ( None, u"Quit", ui.callsinnewcontext("_quit_prompt"), 'True' ),
+        ]
+
+# These are used by layout-based code, and also by the screens code when a layout
+# is used to invoke the screen.
+label _quit_prompt:
+    $ renpy.loadsave.force_autosave()
+
+    if layout.yesno_prompt(None, layout.QUIT):
+        jump _quit
+    else:
+        return
+
+label _main_menu_prompt:
+    $ renpy.loadsave.force_autosave()
+
+    if layout.yesno_prompt(None, layout.MAIN_MENU):
+        $ renpy.full_restart(transition=config.game_main_transition)
+    else:
+        return
+
+init -1400 python hide:
 
     # Called to indicate that the given kind of layout has been
     # provided.

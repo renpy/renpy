@@ -6,7 +6,7 @@
 # "music room"), and then a series of actions that let the player 
 # navigate through the music room.
 
-init -1135 python:
+init -1500 python:
 
     class __MusicRoomPlay(Action):
         """

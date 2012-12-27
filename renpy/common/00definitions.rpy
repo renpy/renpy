@@ -6,7 +6,7 @@
 # directory so that it's easy for an updated version of all of these
 # definitions.
 
-init -1110:
+init -1400:
 
     transform reset:
         alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None 
@@ -65,7 +65,7 @@ init -1110:
         config.default_transform = default
         
 
-init -1110 python:
+init -1400 python:
 
     _define = define = object()
         
@@ -265,10 +265,10 @@ init -1110 python:
     squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
 
 
-init -1110:
+init -1400:
     image black = Solid("#000")
 
-init 1110 python:
+init 1400 python:
     if not hasattr(store, 'narrator'):
         narrator = Character(None, kind=adv, what_style='say_thought')
 

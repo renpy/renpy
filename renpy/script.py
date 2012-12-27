@@ -61,6 +61,7 @@ def collapse_stmts(stmts):
             all_stmts.append(i)
             extend_all(i.get_children())
 
+
     extend_all(stmts)
 
     return all_stmts
@@ -113,8 +114,12 @@ class Script(object):
         self.bytecode_newcache = { }
         self.bytecode_dirty = False
 
+        self.translator = renpy.translation.ScriptTranslator()
+
         self.init_bytecode()
         self.scan_script_files()
+
+        self.translator.chain_translates()
 
     def scan_script_files(self):
         """
@@ -195,6 +200,8 @@ class Script(object):
 
         if renpy.parser.report_parse_errors():
             raise SystemExit(-1)
+
+        self.translator.chain_translates()
         
         return initcode
         
@@ -309,10 +316,15 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
             
+        # Generate translate nodes.
+        renpy.translation.restructure(stmts)
 
         # All of the statements found in file, regardless of nesting
         # depth.
         all_stmts = collapse_stmts(stmts)
+
+        # Take the translations.
+        self.translator.take_translates(all_stmts)
 
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)

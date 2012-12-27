@@ -230,7 +230,6 @@ init python:
     # main source.
     build.classify_renpy("renpy.py", "source")
     build.classify_renpy("renpy/**", "source")
-    build.classify_renpy("common/**", "source")
 
     # games.
     build.classify_renpy("launcher/**", "source")

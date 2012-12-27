@@ -2,7 +2,7 @@
 # Contains functions and variables that control the building of 
 # distributions.
 
-init -1000 python in build:
+init -1500 python in build:
     
     def make_file_lists(s):
         """
@@ -48,7 +48,6 @@ init -1000 python in build:
 
         ( "renpy.py", "all"),
         ( "renpy/**", "all"),
-        ( "common/**", "all"),
 
         # Windows-specific patterns.
         ( "python*.dll", "windows" ),

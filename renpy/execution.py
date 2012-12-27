@@ -56,7 +56,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 8
+    __version__ = 9
     
     def after_upgrade(self, version):
         if version < 1:
@@ -85,6 +85,10 @@ class Context(renpy.object.Object):
             
         if version < 8:
             self.defer_rollback = None
+            
+        if version < 9:
+            self.translate_language = None
+            self.translate_identifier = None
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -161,7 +165,9 @@ class Context(renpy.object.Object):
         # A list of modes that the context has been in.
         self.modes = renpy.python.RevertableList([ "start" ])
         self.use_modes = True
-        
+
+        self.translate_language = None
+        self.translate_identifier = None
                 
         
     def make_dynamic(self, names, context=False):
@@ -195,7 +201,7 @@ class Context(renpy.object.Object):
         """
         
         store = renpy.store.__dict__
-
+        
         dynamic = self.dynamic_stack.pop()
 
         for k, v in dynamic.iteritems():
@@ -203,7 +209,7 @@ class Context(renpy.object.Object):
                 del store[k]
             else:
                 store[k] = v
-
+            
     def pop_all_dynamic(self):
         """
         Pops all levels of the dynamic stack. Called when we jump
@@ -264,7 +270,7 @@ class Context(renpy.object.Object):
             
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
-
+        
             self.seen = False
 
             try:
@@ -273,9 +279,15 @@ class Context(renpy.object.Object):
                     node.execute()
                 
                 except renpy.game.CONTROL_EXCEPTIONS, e:
+
+                    # An exception ends the current translation.
+                    self.translate_interaction = None                    
+
                     raise
 
                 except Exception, e:
+                    self.translate_interaction = None                    
+
                     exc_info = sys.exc_info()
 
                     short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
@@ -457,4 +469,45 @@ class Context(renpy.object.Object):
         self.defer_rollback = None
         
         renpy.exports.rollback(force, checkpoints)
+
+
+def run_context(top):
+    """
+    Runs the current context until it can't be run anymore, while handling
+    the RestartContext and RestartTopContext exceptions.
+    """
+
+    label = None
+
+    while True:
+        
+        try:
+        
+            context = renpy.game.context()            
             
+            if label and renpy.game.script.has_label(label):
+                context.call(label)
+            
+            context.run()
+            break
+
+        except renpy.game.RestartContext as e:
+
+            if e.label:
+                label = e.label
+            
+            continue
+        
+        except renpy.game.RestartTopContext as e:
+            if top:
+
+                if e.label:
+                    label = e.label
+                
+                continue
+            else:
+                raise
+            
+        finally:
+            context.pop_all_dynamic()
+

@@ -214,6 +214,8 @@ this program do not contain : or ; in their names.
     import renpy #@Reimport
     renpy.import_all()
 
+    renpy.loader.init_importer()
+
     keep_running = True
 
     try:
@@ -263,6 +265,8 @@ this program do not contain : or ; in their names.
 
         if renpy.display.draw:
             renpy.display.draw.quit()
+
+        renpy.translation.write_updated_strings()
 
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
