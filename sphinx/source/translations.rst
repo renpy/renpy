@@ -87,7 +87,7 @@ code::
     
     e "Pretty much everything your game needs!"
 
-This is broken up into multiple translation blocks, each with it's own
+This is broken up into multiple translation blocks, each with its own
 identifier, based on the text in the block. The first block is
 automatically assigned the identifier
 ceac1acbc54d30814453d92842c5a215m, and contains the statement::
