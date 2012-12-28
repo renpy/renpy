@@ -253,6 +253,9 @@ init -1500 python in _debug_console:
                         
                 # TODO: Can we run Ren'Py code?
                 name = renpy.load_string(code + "\nreturn")
+
+                # TODO: Better error handling.
+                
                 if name is not None:
                     renpy.call(name)
 
