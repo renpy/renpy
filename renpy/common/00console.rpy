@@ -152,6 +152,25 @@ init -1500 python in _debug_console:
             self.result = result
             self.is_error = is_error
     
+    class ScriptErrorHandler(object):
+        """
+        Handles error in Ren'Py script.
+        """
+        
+        def __init__(self):
+            self.target_depth = renpy.call_stack_depth()
+            
+        def __call__(self, short, full, traceback_fn):
+            he = debug_console.history[-1] 
+            he.result = short.split("\n")[-2]
+            he.is_error = True
+
+            while renpy.call_stack_depth() > self.target_depth:
+                renpy.pop_call()
+                
+            renpy.jump("_debug_console")
+
+
     class DebugConsole(object):
         
         def __init__(self):
@@ -199,12 +218,12 @@ init -1500 python in _debug_console:
                 if s.rstrip().endswith(":"):
                     rv += "    "
 
-                print repr(s.rstrip())
-                
                 if not s.rstrip():
                     rv = rv[:-4]
                     
                 return rv
+            
+            renpy.game.context().exception_handler = None
                     
             # Prompt the user for a line of code.
             if self.lines:
@@ -254,9 +273,8 @@ init -1500 python in _debug_console:
                 # TODO: Can we run Ren'Py code?
                 name = renpy.load_string(code + "\nreturn")
 
-                # TODO: Better error handling.
-                
                 if name is not None:
+                    renpy.game.context().exception_handler = ScriptErrorHandler()
                     renpy.call(name)
 
                 he.result = "\n\n".join(renpy.get_parse_errors())
@@ -756,8 +774,6 @@ screen _debug_console:
                 
             for he in rev_history:
                 
-                $ print he.result
-                
                 frame style "debug_console_history_item":
                     has vbox
                         
@@ -767,7 +783,6 @@ screen _debug_console:
                             text "[he.command!q]" style "debug_console_command_text"
                     
                     if he.result is not None:
-                        $ print "HAS RESULT", he.result, he.is_error
                         
                         frame style "debug_console_result":
                             if he.is_error:

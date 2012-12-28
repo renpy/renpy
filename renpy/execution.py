@@ -321,8 +321,6 @@ class Context(renpy.object.Object):
                 if self.next_node is None:
                     raise Exception("renpy.call can't be used when the next node is undefined.")
 
-                print "Calling", e.label, self.next_node.name
-
                 node = self.call(e.label, return_site=self.next_node.name)
                 self.abnormal = True
                 renpy.store._args = e.args

@@ -1456,28 +1456,34 @@ def load_string(s, filename="<string>"):
     appear to be from.
     """
 
-    old_locked = renpy.config.locked
-    renpy.config.locked = False
+    old_exception_info = renpy.game.exception_info
+
+    try:
+
+        old_locked = renpy.config.locked
+        renpy.config.locked = False
+        
+        stmts, initcode = renpy.game.script.load_string(filename, unicode(s))
     
-    stmts, initcode = renpy.game.script.load_string(filename, unicode(s))
-
-    if stmts is None:
-        return None
-
-    context = renpy.execution.Context(False)
-    context.init_phase = True
-    renpy.game.contexts.append(context)
+        if stmts is None:
+            return None
     
-    for prio, node in initcode: #@UnusedVariable
-        renpy.game.context().run(node)
+        context = renpy.execution.Context(False)
+        context.init_phase = True
+        renpy.game.contexts.append(context)
+        
+        for prio, node in initcode: #@UnusedVariable
+            renpy.game.context().run(node)
+    
+        context.pop_all_dynamic()
+        renpy.game.contexts.pop()
+    
+        renpy.config.locked = old_locked
+    
+        return stmts[0].name
 
-    context.pop_all_dynamic()
-    renpy.game.contexts.pop()
-
-    renpy.config.locked = old_locked
-
-    return stmts[0].name
-
+    finally:
+        renpy.game.exception_info = old_exception_info
 
 def pop_call():
     renpy.game.context().pop_dynamic()
