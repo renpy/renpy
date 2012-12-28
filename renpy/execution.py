@@ -491,37 +491,40 @@ def run_context(top):
 
     label = None
 
-    try:
+    while True:
+        
+        try:
+        
+            context = renpy.game.context()            
+            
+            if label and renpy.game.script.has_label(label):
+                context.call(label)
+            label = None
+            
+            context.run()
+            context.pop_all_dynamic()
+            break
 
-        while True:
+        except renpy.game.RestartContext as e:
+
+            if e.label:
+                label = e.label
             
-            try:
-            
-                context = renpy.game.context()            
-                
-                if label and renpy.game.script.has_label(label):
-                    context.call(label)
-                
-                context.run()
-                break
-    
-            except renpy.game.RestartContext as e:
-    
+            continue
+        
+        except renpy.game.RestartTopContext as e:
+            if top:
+
                 if e.label:
                     label = e.label
                 
                 continue
+            else:
+                raise
+        
+        except:
+            context.pop_all_dynamic()
+            raise
+        
             
-            except renpy.game.RestartTopContext as e:
-                if top:
-    
-                    if e.label:
-                        label = e.label
-                    
-                    continue
-                else:
-                    raise
             
-    finally:
-        context.pop_all_dynamic()
-
