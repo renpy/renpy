@@ -99,18 +99,15 @@ init -1500 python:
     
     style.create('debug_console_command_text', 'text')
     style.debug_console_command_text.color = "#ffffff"
-    style.debug_console_command_text.xpos = 60
     
     style.create('debug_console_result', 'frame')
     style.debug_console_result.background = "#00000000"
     
     style.create('debug_console_result_text', 'text')
     style.debug_console_result_text.color = "#ffffff"
-    style.debug_console_result_text.xpos = 80
     
     style.create('debug_console_error_text', 'text')
     style.debug_console_error_text.color = "#ff0000"
-    style.debug_console_error_text.xpos = 80
     
     style.create('debug_console_trace', 'frame')
     style.debug_console_trace.background = "#00000040"
@@ -126,6 +123,7 @@ init -1500 python:
 init -1500 python in _debug_console:
     from store import config
     import sys
+    import traceback
     
     class BoundedList(list):
         """
@@ -144,6 +142,16 @@ init -1500 python in _debug_console:
         def clear(self):
             self[:] = [ ]
 
+    class HistoryEntry(object):
+        """
+        Represents an entry in the history list.
+        """
+        
+        def __init__(self, command, result=None, is_error=False):
+            self.command = command
+            self.result = result
+            self.is_error = is_error
+    
     class DebugConsole(object):
         
         def __init__(self):
@@ -151,11 +159,6 @@ init -1500 python in _debug_console:
             self.reset()
             
             self.history = BoundedList(config.debug_console_history_size)
-            
-            self.parent_context = None
-            self.parent_node = None
-            self.tail_node = None
-            self.script_reentry_point = None
             
             self.help_message = (""
                 "Ren\'Py debug console\n"
@@ -180,8 +183,6 @@ init -1500 python in _debug_console:
 
         def interact(self):
 
-            print self.lines
-
             def get_indent(s):
                 """
                 Computes the indentation for the line following line s.
@@ -197,6 +198,11 @@ init -1500 python in _debug_console:
 
                 if s.rstrip().endswith(":"):
                     rv += "    "
+
+                print repr(s.rstrip())
+                
+                if not s.rstrip():
+                    rv = rv[:-4]
                     
                 return rv
                     
@@ -210,7 +216,55 @@ init -1500 python in _debug_console:
             renpy.show_screen("_debug_console", lines=self.lines, indent=indent, default=default, history=self.history, _transient=True)
             line = ui.interact()
 
-            print "LS", renpy.load_string(line)
+            self.lines.append(line)
+
+            if get_indent(line) != "":
+                return
+
+            lines = self.lines
+            self.lines = [ ]
+            
+            self.run(lines)
+            
+        def run(self, lines):
+
+            line_count = len(lines)
+            code = "\n".join(lines)
+
+            he = HistoryEntry(code)
+            self.history.append(he)
+
+            try:
+
+                # If we have 1 line, try to parse it as a command.
+                if line_count == 1:
+                    block = [ ( "<console>", 1, code, [ ]) ]
+                    l = renpy.parser.Lexer(block)
+                    l.advance()
+                    
+                    # Command can be None, but that's okay, since the lookup will fail.
+                    command = l.name()
+                    
+                    command_fn = config.debug_console_commands.get(command, None)
+
+                    if command_fn is not None:
+                        he.result = command_fn(l)
+                        return
+                        
+                # TODO: Can we run Ren'Py code?
+                name = renpy.load_string(code + "\nreturn")
+                if name is not None:
+                    renpy.call(name)
+
+                he.result = "\n\n".join(renpy.get_parse_errors())
+                he.is_error = True
+
+            except renpy.game.CONTROL_EXCEPTIONS:
+                raise
+
+            except:
+                he.result = traceback.format_exc()
+                he.is_error = True
 
 
 #        def enable(self):
@@ -602,9 +656,9 @@ init -1500 python in _debug_console:
         Called to enter the debug console.
         """
 
-        if not (config.developer or config.debug_console):
-            return None
-    
+        if debug_console is None:
+            return
+
         if renpy.game.context().rollback:
             try:
                 renpy.rollback(checkpoints=0, force=True, greedy=False, label="_debug_console")
@@ -614,7 +668,13 @@ init -1500 python in _debug_console:
                 pass
                 
         renpy.call_in_new_context("_debug_console")
+
+init 1500 python in _debug_console:
     
+    if config.developer or config.debug_console:
+        debug_console = DebugConsole()
+
+
 #init python 1500:
     
 #    if config.developer:
@@ -691,21 +751,26 @@ screen _debug_console:
             has vbox:
                 xfill True
                 
-            for command, result, is_error in rev_history:
+            for he in rev_history:
+                
+                $ print he.result
+                
                 frame style "debug_console_history_item":
                     has vbox
                         
-                    frame style "debug_console_command":
-                        xfill True
-                        text "[command!q]" style "debug_console_command_text"
+                    if he.command is not None:
+                        frame style "debug_console_command":
+                            xfill True
+                            text "[he.command!q]" style "debug_console_command_text"
                     
-                    if result is not None:
-                        frame style "debug_console_result"
+                    if he.result is not None:
+                        $ print "HAS RESULT", he.result, he.is_error
                         
-                        if is_error:
-                            text "[result!q]" style "debug_console_error_text"
-                        else:
-                            text "[result!q]" style "debug_console_result_text"
+                        frame style "debug_console_result":
+                            if he.is_error:
+                                text "[he.result!q]" style "debug_console_error_text"
+                            else:
+                                text "[he.result!q]" style "debug_console_result_text"
     
     key "game_menu" action Jump("_debug_console_return")
     

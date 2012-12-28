@@ -46,7 +46,7 @@ from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable
-from renpy.parser import unelide_filename
+from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
@@ -82,7 +82,7 @@ def public_api():
     focus_coordinates
     predict, predict_screen
     displayable
-    unelide_filename
+    unelide_filename, get_parse_errors
     change_language, known_languages
 
 del public_api
@@ -1461,6 +1461,9 @@ def load_string(s, filename="<string>"):
     
     stmts, initcode = renpy.game.script.load_string(filename, unicode(s))
 
+    if stmts is None:
+        return None
+
     context = renpy.execution.Context(False)
     context.init_phase = True
     renpy.game.contexts.append(context)
@@ -1476,9 +1479,20 @@ def load_string(s, filename="<string>"):
     return stmts[0].name
 
 
-def pop_return():
+def pop_call():
     renpy.game.context().pop_dynamic()
     renpy.game.context().lookup_return(pop=True)
+
+pop_return = pop_call
+
+def call_stack_depth():
+    """
+    Returns the depth of the call stack.
+    """
+    
+    return len(renpy.game.context().return_stack)
+
+    
     
 def game_menu(screen=None):
     if screen is None:

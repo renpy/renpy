@@ -56,7 +56,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 9
+    __version__ = 10
     
     def after_upgrade(self, version):
         if version < 1:
@@ -89,6 +89,9 @@ class Context(renpy.object.Object):
         if version < 9:
             self.translate_language = None
             self.translate_identifier = None
+
+        if version < 10:
+            self.exception_handler = None
             
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -137,6 +140,10 @@ class Context(renpy.object.Object):
     
         # When deferring a rollback, the arguments to pass to renpy.exports.rollback.
         self.defer_rollback = None
+        
+        # The exception handler that is called when an exception occurs while executing
+        # code. If None, a default handler is used. This is reset when run is called.
+        self.exception_handler = None
         
         if context:
             oldsl = context.scene_lists
@@ -256,6 +263,8 @@ class Context(renpy.object.Object):
         looks up the node given in self.current, and executes from there.
         """
 
+        self.exception_handler = None
+
         self.abnormal = True
                 
         if node is None:
@@ -289,11 +298,12 @@ class Context(renpy.object.Object):
                     self.translate_interaction = None                    
 
                     exc_info = sys.exc_info()
-
                     short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
 
                     try:
-                        if renpy.display.error.report_exception(short, full, traceback_fn):
+                        if self.exception_handler is not None:
+                            self.exception_handler(short, full, traceback_fn)
+                        elif renpy.display.error.report_exception(short, full, traceback_fn):
                             raise
                     except renpy.game.CONTROL_EXCEPTIONS, ce:
                         raise ce
@@ -310,6 +320,8 @@ class Context(renpy.object.Object):
 
                 if self.next_node is None:
                     raise Exception("renpy.call can't be used when the next node is undefined.")
+
+                print "Calling", e.label, self.next_node.name
 
                 node = self.call(e.label, return_site=self.next_node.name)
                 self.abnormal = True
@@ -359,7 +371,7 @@ class Context(renpy.object.Object):
         Returns the node to return to, or None if there is no
         such node.
         """
-
+        
         if len(self.return_stack) == 0:
             return None
 

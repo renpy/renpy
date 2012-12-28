@@ -2039,7 +2039,13 @@ def parse(fn, filedata=None):
         return None
     
     return rv
-    
+
+def get_parse_errors():
+    global parse_errors
+    rv = parse_errors
+    parse_errors = [ ]
+    return rv
+       
 def report_parse_errors():
 
     if not parse_errors:

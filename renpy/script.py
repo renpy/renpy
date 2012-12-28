@@ -335,6 +335,10 @@ class Script(object):
         """
         
         stmts = renpy.parser.parse(filename, filedata)
+        
+        if stmts is None:
+            return None, None
+        
         self.assign_names(stmts, filename)
         
         initcode = [ ]
