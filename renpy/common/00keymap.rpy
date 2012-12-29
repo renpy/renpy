@@ -72,7 +72,7 @@ init -1600 python:
         drag_deactivate = [ 'mouseup_1' ],
     
         # Debug console.
-        debug_console = [ 'K_BACKQUOTE', 'shift_K_BACKQUOTE' ],
+        console = [ 'K_BACKQUOTE', 'shift_K_BACKQUOTE' ],
         
         )
 
@@ -209,7 +209,7 @@ init -1100 python:
         iconify = renpy.iconify,
         help = _help,
         choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
-        debug_console = _debug_console.enter,
+        console = _console.enter,
         )
 
     config.underlay = [ km ]
