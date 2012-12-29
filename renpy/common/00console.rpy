@@ -112,7 +112,7 @@ init -1500 python:
     style.create('debug_console_trace', 'frame')
     style.debug_console_trace.background = "#00000040"
     style.debug_console_trace.xalign = 1.0
-    style.debug_console_trace.top_margin = 10
+    style.debug_console_trace.top_margin = 20
     style.debug_console_trace.right_margin = 20
     
     style.create('debug_console_trace_var', 'text')
@@ -124,6 +124,7 @@ init -1500 python in _debug_console:
     from store import config
     import sys
     import traceback
+    import store
     
     class BoundedList(list):
         """
@@ -344,6 +345,8 @@ init -1500 python in _debug_console:
             except:
                 he.result = self.format_exception()
                 he.is_error = True
+
+        
 
 
 #        def enable(self):
@@ -729,7 +732,9 @@ init -1500 python in _debug_console:
             return str.replace('[', '[[').replace('{', '{{')
     
     debug_console = None
-    
+
+    traced_expressions = [ ]
+
     def enter():
         """
         Called to enter the debug console.
@@ -754,7 +759,93 @@ init 1500 python in _debug_console:
     
     if config.developer or config.debug_console:
         debug_console = DebugConsole()
+        
+init -1500 python in _debug_console:
 
+    def command(help=None):
+        def wrap(f):
+            f.help = help
+            config.debug_console_commands[f.__name__] = f
+            return f
+
+        return wrap
+
+    @command("help: show this help")
+    def help(l):
+        keys = list(config.debug_console_commands.iterkeys())
+        keys.sort()
+        
+        rv = "commands:\n"
+        
+        for k in keys:
+            f = config.debug_console_commands[k]
+            if f.help is None:
+                continue
+                
+            rv += " " + f.help + "\n" 
+        
+        return rv.rstrip()
+        
+    @command()
+    def halp(l):
+        return help(l).replace("e", "a")
+        
+    @command("clear: clear the console history")
+    def clear(l):
+        debug_console.history[:] = [ ]
+
+    @command("exit: exit the console")
+    def exit(l):
+        renpy.jump("_debug_console_return")
+        
+    @command()
+    def quit(l):
+        renpy.jump("_debug_console_return")
+ 
+    @command("reload: reload the game")
+    def reload(l):
+        store._reload_game()
+        
+    @command()
+    def R(l):
+        store._reload_game()
+        
+    @command("watch <expression>: watch a python expression")
+    def watch(l):
+        expr = l.rest()
+        expr.strip()
+        renpy.python.py_compile(expr, 'eval')
+        
+        traced_expressions.append(expr)
+        renpy.show_screen("_trace_screen")
+
+    @command("unwatch <expression>: stop watching an expression")
+    def unwatch(l):
+        expr = l.rest()
+        expr.strip()
+        
+        if expr in traced_expressions:
+            traced_expressions.remove(expr)
+
+    @command("unwatchall: stop watching all expressions")
+    def unwatchall(l):
+        traced_expressions[:] = [ ]
+        renpy.hide_screen("_trace_screen")
+        
+        
+    @command("jump <label>: jumps to label")
+    def jump(l):
+        label = l.name()
+        
+        if not debug_console.can_renpy():
+            raise Exception("Ren'Py script not enabled. Not jumping.")
+            
+        if not renpy.has_label(label):
+            raise Exception("Label %s not found." % label)
+            
+        renpy.pop_call()
+        renpy.jump(label)
+        
 
 #init python 1500:
     
@@ -788,7 +879,7 @@ screen _debug_console:
     #    A list of command, result, is_error tuples. 
     
 
-    zorder 1002
+    zorder 1500
     modal True
 
     vbox:
@@ -855,22 +946,24 @@ screen _debug_console:
 
 screen _trace_screen:
 
-    zorder 1001
+    zorder 1501
 
     if _debug_console.traced_expressions:
     
         frame style "debug_console_trace":
             
-            for expr in _debug_console.traced_expressions:
-                python:
-                    try:
-                        value = repr(eval(expr))
-                    except:
-                        value = "eval failed"
+            vbox:
                 
-                hbox:
-                    text "[expr!q]" style "debug_console_trace_var"
-                    text "[value!q]" style "debug_console_trace_value"
+                for expr in _debug_console.traced_expressions:
+                    python:
+                        try:
+                            value = repr(eval(expr))
+                        except:
+                            value = "eval failed"
+                    
+                    hbox:
+                        text "[expr!q]: " style "debug_console_trace_var"
+                        text "[value!q]" style "debug_console_trace_value"
     
 
 # This label is required for renpy.call_in_new_context(),

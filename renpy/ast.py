@@ -595,8 +595,9 @@ class Label(Node):
         args = renpy.store._args
         kwargs = renpy.store._kwargs
 
+
         if self.parameters is None:
-            if (args is not None) or (kwargs is not None):
+            if args or kwargs:
                 raise Exception("Arguments supplied, but label does not take parameters.")
             else:
                 if renpy.config.label_callback:
