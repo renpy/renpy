@@ -178,6 +178,7 @@ init -1500 python in _debug_console:
             self.reset()
             
             self.history = BoundedList(config.debug_console_history_size)
+            self.first_time = True
             
             self.help_message = (""
                 "Ren\'Py debug console\n"
@@ -193,6 +194,24 @@ init -1500 python in _debug_console:
                 " unwatchall            - stop watching all variables and expressions.\n"
                 " help                  - show this message.\n"
                 " exit/quit/~           - close the console.")
+
+        def start(self):
+            he = HistoryEntry(None)
+        
+            message = ""
+            
+            if self.first_time:      
+                message += renpy.version() + " console, originally by Shiz, C, and delta.\n"
+                message += "Press <esc> to exit console. Type help for help.\n"
+                self.first_time = None
+            
+            if self.can_renpy():
+                message += "Ren'Py script enabled."
+            else:
+                message += "Ren'Py script disabled."
+
+            he.result = message
+            self.history.append(he)
 
         def reset(self):
         
@@ -245,6 +264,17 @@ init -1500 python in _debug_console:
             
             self.run(lines)
             
+        def can_renpy(self):
+            """
+            Returns true if we can run Ren'Py code.
+            """
+            
+            return renpy.game.context().rollback
+            
+        def format_exception(self):
+            etype, evalue, etb = sys.exc_info()
+            return traceback.format_exception_only(etype, evalue)[-1]
+            
         def run(self, lines):
 
             line_count = len(lines)
@@ -269,22 +299,50 @@ init -1500 python in _debug_console:
                     if command_fn is not None:
                         he.result = command_fn(l)
                         return
+                    
+                error = None
+                    
+                # Try to run it as Ren'Py.
+                if self.can_renpy():
                         
-                # TODO: Can we run Ren'Py code?
-                name = renpy.load_string(code + "\nreturn")
+                    # TODO: Can we run Ren'Py code?
+                    name = renpy.load_string(code + "\nreturn")
 
-                if name is not None:
-                    renpy.game.context().exception_handler = ScriptErrorHandler()
-                    renpy.call(name)
-
-                he.result = "\n\n".join(renpy.get_parse_errors())
-                he.is_error = True
+                    if name is not None:
+                        renpy.game.context().exception_handler = ScriptErrorHandler()
+                        renpy.call(name)
+                    else:
+                        error = "\n\n".join(renpy.get_parse_errors())
+                
+                # Try to eval it. 
+                try:
+                    renpy.python.py_compile(code, 'eval')
+                except:
+                    pass
+                else:
+                    result = renpy.python.py_eval(code)
+                    he.result = repr(result)
+                    return
+ 
+                # Try to exec it.
+                try:
+                    renpy.python.py_compile(code, "exec")
+                except:
+                    if error is None:
+                        error = self.format_exception()
+                else:
+                    renpy.python.py_exec(code)
+                    return
+                        
+                if error is not None:
+                    he.result = error
+                    he.is_error = True
 
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
 
             except:
-                he.result = traceback.format_exc()
+                he.result = self.format_exception()
                 he.is_error = True
 
 
@@ -680,6 +738,8 @@ init -1500 python in _debug_console:
         if debug_console is None:
             return
 
+        debug_console.start()
+
         if renpy.game.context().rollback:
             try:
                 renpy.rollback(checkpoints=0, force=True, greedy=False, label="_debug_console")
@@ -811,8 +871,6 @@ screen _trace_screen:
                 hbox:
                     text "[expr!q]" style "debug_console_trace_var"
                     text "[value!q]" style "debug_console_trace_value"
-                
-                
     
 
 # This label is required for renpy.call_in_new_context(),
