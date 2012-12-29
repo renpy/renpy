@@ -52,7 +52,7 @@ init -1500 python:
     style._console_text.color = "#ffffff"
     
     style.create('_console_input', '_default')
-    style._console_input.background = "#00000040"
+    style._console_input.background = "#0000006f"
     style._console_input.xfill = True
     
     style.create('_console_prompt', '_console_text')
@@ -204,7 +204,6 @@ init -1500 python in _console:
                 self.lines = list(self.line_history[self.line_index])
                 
             renpy.jump("_console")
-            
             
         def older(self):
             self.recall_line(-1)
@@ -391,7 +390,12 @@ init -1500 python in _console:
                 
             rv += " " + f.help + "\n" 
         
-        return rv.rstrip()
+        if console.can_renpy():
+            rv += " <renpy script statement>: run the statement\n"
+            
+        rv += " <python expression or statement>: run the expression or statement"
+        
+        return rv
         
     @command()
     def halp(l):
