@@ -56,7 +56,7 @@ init -1500 python:
     style._console_input.xfill = True
     
     style.create('_console_prompt', '_console_text')
-    style._console_prompt.minwidth = 25
+    style._console_prompt.minwidth = 20
     style._console_prompt.text_align = 1.0
     
     style.create('_console_input_text', '_console_text')
@@ -64,36 +64,28 @@ init -1500 python:
     
     style.create('_console_history', '_default')
     style._console_history.background = "#00000000"
-    style._console_history.xpos = 0
-    style._console_history.ypos = 0
-    style._console_history.xpadding = 0
-    style._console_history.ypadding = 0
     style._console_history.xfill = True
     style._console_history.yfill = True 
     
     style.create('_console_history_item', '_default')
     style._console_history_item.background = "#00000040"
-    style._console_history_item.xpos = 0
-    style._console_history_item.ypos = 0
-    style._console_history_item.xpadding = 0
-    style._console_history_item.ypadding = 0
     style._console_history_item.top_margin = 4
     style._console_history_item.xfill = True
     
     style.create('_console_command', '_default')
     style._console_command.background = "#00000040"
+    style._console_command.left_padding = 24
     
-    style.create('_console_command_text', '_default')
-    style._console_command_text.color = "#ffffff"
+    style.create('_console_command_text', '_console_text')
     
     style.create('_console_result', '_default')
     style._console_result.background = "#00000000"
+    style._console_result.left_padding = 24
     
     style.create('_console_result_text', '_console_text')
-    style._console_result_text.color = "#ffffff"
     
     style.create('_console_error_text', '_console_text')
-    style._console_error_text.color = "#ff0000"
+    style._console_error_text.color = "#ff8080"
     
     style.create('_console_trace', '_default')
     style._console_trace.background = "#00000040"
@@ -162,10 +154,14 @@ init -1500 python in _console:
         
         def __init__(self):
             
+            self.history = BoundedList(config.console_history_size)
+            self.line_history = BoundedList(config.console_history_size)
+            self.line_index = 0
+
+            self.first_time = True
+            
             self.reset()
             
-            self.history = BoundedList(config.console_history_size)
-            self.first_time = True
             
         def start(self):
             he = HistoryEntry(None)
@@ -189,7 +185,32 @@ init -1500 python in _console:
         
             # The list of lines that have been entered by the user, but not yet
             # processed.
-            self.lines = [ ]
+            self.lines = [ "" ]
+            self.line_index = len(self.line_history)
+            
+        def recall_line(self, offset):
+            
+            self.line_index += offset
+
+            if self.line_index < 0:
+                self.line_index = 0
+                
+            if self.line_index > len(self.line_history):
+                self.line_index = len(self.line_history)
+                
+            if self.line_index == len(self.line_history):
+                self.lines = [ "" ]
+            else:
+                self.lines = list(self.line_history[self.line_index])
+                
+            renpy.jump("_console")
+            
+            
+        def older(self):
+            self.recall_line(-1)
+            
+        def newer(self):
+            self.recall_line(1)
 
         def interact(self):
 
@@ -216,22 +237,21 @@ init -1500 python in _console:
             
             renpy.game.context().exception_handler = None
                     
-            # Prompt the user for a line of code.
-            if self.lines:
-                indent = get_indent(self.lines[-1])
-            else:
-                indent = ""
-                
-            default = indent
-            renpy.show_screen("_console", lines=self.lines, indent=indent, default=default, history=self.history, _transient=True)
+            renpy.show_screen("_console", lines=self.lines[:-1], default=self.lines[-1], history=self.history, _transient=True)
             line = ui.interact()
 
+            self.lines.pop()
             self.lines.append(line)
 
-            if get_indent(line) != "":
+            indent = get_indent(line)
+            if indent:
+                self.lines.append(indent)
                 return
 
+            
             lines = self.lines
+            self.line_history.append(lines)
+            
             self.reset()
             
             self.run(lines)
@@ -470,7 +490,7 @@ screen _console:
             hbox:
                 spacing 4
                 
-                if not indent:
+                if default[:1] != " ":
                     text "> " style "_console_prompt"
                 else:
                     text "... " style "_console_prompt"
@@ -509,7 +529,9 @@ screen _console:
                                 text "[he.result!q]" style "_console_result_text"
     
     key "game_menu" action Jump("_console_return")
-    
+    key "console_older" action _console.console.older
+    key "console_newer" action _console.console.newer
+
 
 screen _trace_screen:
 

@@ -73,7 +73,8 @@ init -1600 python:
     
         # Debug console.
         console = [ 'K_BACKQUOTE', 'shift_K_BACKQUOTE' ],
-        
+        console_older = [ 'K_UP' ],
+        console_newer = [ 'K_DOWN' ],
         )
 
 init -1600 python:
