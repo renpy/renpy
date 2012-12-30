@@ -7,13 +7,13 @@
 # Version 2, as published by Sam Hocevar. See http://sam.zoy.org/wtfpl/COPYING for more details.
 #
 # Usage:
-#  With config.developer set to True, press the key assigned to config.console_keybind (~, the tilde, by default) to open the console.
-#  Type 'help' for in-console help. Press the same key again to close the console.
+#  With config.developer or config.console set to True, press the console key (`, the backtick, by default) to open the console.
+#  Type 'help' for in-console help. Press escape or right-click to close the console.
 #
 # The following configuration variables are offered for customization:
 #  - config.console_history_size: the number of commands to store in history. default: 100
-#  - config.console_custom_commands: a simple name -> function dictionary for custom commands. Command functions should take a single parameter, the full command and return a tuple of (result, no_error).
-#
+#  - config.console_custom_commands: a simple name -> function dictionary for custom commands. Command functions should take a 
+# lexer, and return result text.
 # The following styles are offered for customization:
 #  - _console: the debug console frame.
 #
@@ -162,7 +162,6 @@ init -1500 python in _console:
             
             self.reset()
             
-            
         def start(self):
             he = HistoryEntry(None)
         
@@ -171,7 +170,7 @@ init -1500 python in _console:
             if self.first_time:      
                 message += renpy.version() + " console, originally by Shiz, C, and delta.\n"
                 message += "Press <esc> to exit console. Type help for help.\n"
-                self.first_time = None
+                self.first_time = False
             
             if self.can_renpy():
                 message += "Ren'Py script enabled."
