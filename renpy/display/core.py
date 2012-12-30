@@ -1061,6 +1061,7 @@ class Interface(object):
         self.quit_time = 0
         
         self.time_event = pygame.event.Event(TIMEEVENT)
+        self.redraw_event = pygame.event.Event(REDRAW)
 
         # Are we focused?
         self.focused = True
@@ -2085,7 +2086,7 @@ class Interface(object):
         renpy.audio.audio.interact()
 
         # This try block is used to force cleanup even on termination
-        # caused by an exception propigating through this function.
+        # caused by an exception propagating through this function.
         try: 
 
             while rv is None:
@@ -2159,10 +2160,50 @@ class Interface(object):
                 # functions, so we put them first to prevent short-circuiting.) 
                 needs_redraw = renpy.display.video.frequent() or needs_redraw
                 needs_redraw = renpy.display.render.process_redraws() or needs_redraw
-                # needs_redraw = True
+
+                # How many seconds until we redraw or timeout.
+                redraw_in = 3600
+                timeout_in = 3600
+
+                # Handle the redraw timer.
+                redraw_time = renpy.display.render.redraw_time()
+
+                if redraw_time and not needs_redraw:
+                    if redraw_time != old_redraw_time:
+                        time_left = redraw_time - get_time()
+                        time_left = min(time_left, 3600)
+                        redraw_in = time_left
+                        
+                        if time_left <= 0:
+                            pygame.event.post(self.redraw_event)
+                            pygame.time.set_timer(REDRAW, 0)
+                        else:
+                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
+                        
+                        old_redraw_time = redraw_time
+                else:
+                    redraw_in = 0
+                    pygame.time.set_timer(REDRAW, 0)
+
+                # Handle the timeout timer.
+                if not self.timeout_time:
+                    pygame.time.set_timer(TIMEEVENT, 0)
+                else:
+                    time_left = self.timeout_time - get_time() 
+                    time_left = min(time_left, 3600)
+                    timeout_in = time_left
+                    
+                    if time_left <= 0:
+                        self.timeout_time = None
+                        pygame.time.set_timer(TIMEEVENT, 0)
+                        pygame.event.post(self.time_event)                    
+                    elif self.timeout_time != old_timeout_time:
+                        # Always set to at least 1ms.
+                        pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
+                        old_timeout_time = self.timeout_time
 
                 # Predict images, if we haven't done so already.
-                while (prediction_coroutine is not None) \
+                while False and (prediction_coroutine is not None) \
                         and not needs_redraw \
                         and not self.event_peek() \
                         and not renpy.audio.music.is_playing("movie"):
@@ -2179,157 +2220,116 @@ class Interface(object):
                         self.profile_time = get_time()
                     continue
 
+                # Handle autosaving, as necessary.
+                if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .25 and timeout_in > .25:
+                    renpy.loadsave.autosave()
+                    did_autosave = True
+
+                if needs_redraw or renpy.display.video.playing():
+                    ev = self.event_poll()
+                else:
+                    ev = self.event_wait()
+                    
+                if ev.type == pygame.NOEVENT:
+                    continue
+
+                if renpy.config.profile:
+                    self.profile_time = get_time()
+                
+                # Try to merge an TIMEEVENT with other timeevents.
+                if ev.type == TIMEEVENT:
+                    old_timeout_time = None
+                    pygame.event.clear([TIMEEVENT])
+
+                # On Android, where we have multiple mouse buttons, we can
+                # merge a mouse down and mouse up event with its successor. This 
+                # prevents us from getting overwhelmed with too many events on 
+                # a multitouch screen.
+                if android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
+                    pygame.event.clear(ev.type)
+                        
+                # Handle redraw timeouts.
+                if ev.type == REDRAW:
+                    pygame.event.clear([REDRAW])
+                    old_redraw_time = None
+                    continue
+
+                # Handle periodic events. This includes updating the mouse timers (and through the loop,
+                # the mouse itself), and the audio system periodic calls.
+                if ev.type == PERIODIC:
+                    events = 1 + len(pygame.event.get([PERIODIC]))
+                    self.ticks += events
+
+                    if renpy.config.periodic_callback:
+                        renpy.config.periodic_callback()
+
+                    renpy.audio.audio.periodic()
+                    continue
+
+                # This can set the event to None, to ignore it.
+                ev = renpy.display.joystick.event(ev)
+                if not ev:
+                    continue
+
+                # Handle skipping.
+                renpy.display.behavior.skipping(ev)
+                
+                # Handle quit specially for now.
+                if ev.type == pygame.QUIT:
+                    self.quit_event()
+                    continue
+                    
+                # Handle videoresize.
+                if ev.type == pygame.VIDEORESIZE:
+                    evs = pygame.event.get([pygame.VIDEORESIZE])
+                    if len(evs):
+                        ev = evs[-1]
+
+                    if self.last_resize != ev.size:
+                        self.last_resize = ev.size
+                        self.set_mode((ev.w, ev.h))
+
+                    continue
+
+                if ev.type == pygame.MOUSEMOTION or \
+                        ev.type == pygame.MOUSEBUTTONDOWN or \
+                        ev.type == pygame.MOUSEBUTTONUP:
+        
+                    self.mouse_event_time = renpy.display.core.get_time()
+                
+                # Merge mousemotion events.
+                if ev.type == pygame.MOUSEMOTION:
+                    evs = pygame.event.get([pygame.MOUSEMOTION])
+                    if len(evs):
+                        ev = evs[-1]
+
+                    if renpy.windows:
+                        self.focused = True
+                        
+                # Handle focus notifications.
+                if ev.type == pygame.ACTIVEEVENT:
+                    if ev.state & 1:
+                        self.focused = ev.gain
+
+                    if ev.state & 4:                            
+                        if ev.gain:
+                            self.restored()
+                        else:
+                            self.iconified()
+                
+                    pygame.key.set_mods(0)
+
+                # This returns the event location. It also updates the
+                # mouse state as necessary.
+                x, y = renpy.display.draw.mouse_event(ev)
+
+                if not self.focused:
+                    x = -1
+                    y = -1
+                
+                self.event_time = end_time = get_time()
+
                 try:
-
-                    # Times until events occur.
-                    # We use large values to approximate infinity.
-                    redraw_in = 3600
-                    timeout_in = 3600
-                    
-                    # Handle the redraw timer.
-                    redraw_time = renpy.display.render.redraw_time()
-
-                    if redraw_time and not needs_redraw:
-
-                        if redraw_time != old_redraw_time:
-                            time_left = redraw_time - get_time()
-                            time_left = min(time_left, 3600)
-                            redraw_in = time_left
-                            pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
-                            old_redraw_time = redraw_time
-                    else:
-                        pygame.time.set_timer(REDRAW, 0)
-
-                    # Handle the timeout timer.
-                    if not self.timeout_time:
-                        pygame.time.set_timer(TIMEEVENT, 0)
-                        ev = None
-                    else:
-                        time_left = self.timeout_time - get_time() 
-                        time_left = min(time_left, 3600)
-                        redraw_in = time_left
-                        
-                        if time_left < 0:
-                            self.timeout_time = None
-                            ev = self.time_event
-                            pygame.time.set_timer(TIMEEVENT, 0)
-                        else:
-                            ev = None
-
-                            if self.timeout_time != old_timeout_time:
-                                # Always set to at least 1ms.
-                                pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
-                                old_timeout_time = self.timeout_time
-
-                    # Handle autosaving, as necessary.
-                    if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .25 and timeout_in > .25:
-                        renpy.loadsave.autosave()
-                        did_autosave = True
-
-                    # Get the event, if we don't have one already.
-                    if ev is None:
-                        if needs_redraw or renpy.display.video.playing():
-                            ev = self.event_poll()
-                        else:
-                            ev = self.event_wait()
-                        
-                    if ev.type == pygame.NOEVENT:
-                        continue
-
-                    if renpy.config.profile:
-                        self.profile_time = get_time()
-                    
-                    # Try to merge an TIMEEVENT with the next event.
-                    if ev.type == TIMEEVENT:
-                        old_timeout_time = None
-                        pygame.event.clear([TIMEEVENT])
-                            
-                    # On Android, where we have multiple mouse buttons, we can
-                    # merge a mouse down and mouse up event with its successor. This 
-                    # prevents us from getting overwhelmed with too many events on 
-                    # a multitouch screen.
-                    if android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
-                        pygame.event.clear(ev.type)
-                            
-                    # Handle redraw timeouts.
-                    if ev.type == REDRAW:
-                        old_redraw_time = None
-                        continue
-
-                    # Handle periodic events. This includes updating the mouse timers (and through the loop,
-                    # the mouse itself), and the audio system periodic calls.
-                    if ev.type == PERIODIC:
-                        events = 1 + len(pygame.event.get([PERIODIC]))
-                        self.ticks += events
-
-                        if renpy.config.periodic_callback:
-                            renpy.config.periodic_callback()
-
-                        renpy.audio.audio.periodic()
-                        continue
-
-                    # This can set the event to None, to ignore it.
-                    ev = renpy.display.joystick.event(ev)
-                    if not ev:
-                        continue
-
-                    # Handle skipping.
-                    renpy.display.behavior.skipping(ev)
-                    
-                    # Handle quit specially for now.
-                    if ev.type == pygame.QUIT:
-                        self.quit_event()
-                        continue
-                        
-                    # Handle videoresize.
-                    if ev.type == pygame.VIDEORESIZE:
-                        evs = pygame.event.get([pygame.VIDEORESIZE])
-                        if len(evs):
-                            ev = evs[-1]
-
-                        if self.last_resize != ev.size:
-                            self.last_resize = ev.size
-                            self.set_mode((ev.w, ev.h))
-
-                        continue
-
-                    if ev.type == pygame.MOUSEMOTION or \
-                            ev.type == pygame.MOUSEBUTTONDOWN or \
-                            ev.type == pygame.MOUSEBUTTONUP:
-            
-                        self.mouse_event_time = renpy.display.core.get_time()
-                    
-                    # Merge mousemotion events.
-                    if ev.type == pygame.MOUSEMOTION:
-                        evs = pygame.event.get([pygame.MOUSEMOTION])
-                        if len(evs):
-                            ev = evs[-1]
-
-                        if renpy.windows:
-                            self.focused = True
-                            
-                    # Handle focus notifications.
-                    if ev.type == pygame.ACTIVEEVENT:
-                        if ev.state & 1:
-                            self.focused = ev.gain
-
-                        if ev.state & 4:                            
-                            if ev.gain:
-                                self.restored()
-                            else:
-                                self.iconified()
-                    
-                        pygame.key.set_mods(0)
-
-                    # This returns the event location. It also updates the
-                    # mouse state as necessary.
-                    x, y = renpy.display.draw.mouse_event(ev)
-
-                    if not self.focused:
-                        x = -1
-                        y = -1
-                    
-                    self.event_time = end_time = get_time()
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
@@ -2348,7 +2348,6 @@ class Interface(object):
                     if renpy.config.inspector and renpy.display.behavior.inspector(ev):
                         l = self.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.context_clear_layers + renpy.config.overlay_layers)
                         renpy.game.invoke_in_new_context(renpy.config.inspector, l)
-                        
             
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to

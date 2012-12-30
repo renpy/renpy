@@ -437,19 +437,17 @@ class SayBehavior(renpy.display.layout.Null):
             
         skip_delay = renpy.config.skip_delay / 1000.0
 
-        if renpy.config.allow_skipping and renpy.config.skipping and \
-           st >= skip_delay:
-
-            if renpy.game.preferences.skip_unseen:
-                return True
-            elif renpy.config.skipping == "fast":
-                return True
-            elif renpy.game.context().seen_current(True):
-                return True
-
-        if renpy.config.allow_skipping and renpy.config.skipping and \
-           st < skip_delay:
-            renpy.game.interface.timeout(skip_delay - st)
+        if renpy.config.allow_skipping and renpy.config.skipping:
+            
+            if st >= skip_delay:
+                if renpy.game.preferences.skip_unseen:
+                    return True
+                elif renpy.config.skipping == "fast":
+                    return True
+                elif renpy.game.context().seen_current(True):
+                    return True
+            else:
+                renpy.game.interface.timeout(skip_delay - st)
 
 
         return None
