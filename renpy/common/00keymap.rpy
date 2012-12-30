@@ -94,11 +94,13 @@ init -1600 python:
         else:            
             renpy.restart_interaction()
 
+    toggle_skipping = _toggle_skipping
+
     def _keymap_toggle_skipping():
         if renpy.context()._menu:
             return
 
-        toggle_skipping()
+        _toggle_skipping()
             
     config.help = None
             
