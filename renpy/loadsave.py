@@ -155,7 +155,13 @@ def save_dump(roots, log):
                 size += 1
                 size += visit(oo, "{0}[{1}]".format(path, i))
                 
-            for k, v in get(4, []):
+            for i in get(4, []):
+                
+                if len(i) != 2:
+                    continue
+                
+                k, v = i
+                
                 size += 2
                 size += visit(v, "{0}[{1!r}]".format(path, k))
 
