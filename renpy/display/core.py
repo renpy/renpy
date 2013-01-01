@@ -2203,7 +2203,7 @@ class Interface(object):
                         old_timeout_time = self.timeout_time
 
                 # Predict images, if we haven't done so already.
-                while False and (prediction_coroutine is not None) \
+                while (prediction_coroutine is not None) \
                         and not needs_redraw \
                         and not self.event_peek() \
                         and not renpy.audio.music.is_playing("movie"):
