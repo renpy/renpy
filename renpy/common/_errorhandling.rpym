@@ -179,6 +179,41 @@ init python:
     style._hyperlink.color = "#008"
     style._hyperlink.hover_underline = True
 
+    # The keymap we use before the 
+    config.keymap = dict(
+        
+        # Bindings present almost everywhere, unless explicitly
+        # disabled.
+        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
+        reload_game = [ 'R' ],
+        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
+        iconify = [ 'meta_m', 'alt_m' ],
+        choose_renderer = [ 'G' ],
+        
+        # Focus.
+        focus_left = [ 'K_LEFT', 'joy_left' ],
+        focus_right = [ 'K_RIGHT', 'joy_right' ],
+        focus_up = [ 'K_UP', 'joy_up' ],
+        focus_down = [ 'K_DOWN', 'joy_down' ],
+            
+        # Button.
+        button_ignore = [ 'mousedown_1' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+
+        # Viewport.
+        viewport_up = [ 'mousedown_4' ],
+        viewport_down = [ 'mousedown_5' ],
+        viewport_drag_start = [ 'mousedown_1' ],
+        viewport_drag_end = [ 'mouseup_1' ],
+        
+        # These control the bar.
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        bar_decrease = [ 'K_LEFT', 'joy_left' ],
+        bar_increase = [ 'K_RIGHT', 'joy_right' ],
+        )
+
+
 # Early hyperlink support.
 init python hide:
     def hyperlink_styler(target):
