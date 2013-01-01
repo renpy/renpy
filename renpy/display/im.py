@@ -308,6 +308,15 @@ class Cache(object):
         if in_cache and renpy.config.debug_image_cache:
             renpy.display.ic_log.write("Kept %r", im)
 
+    def end_prediction(self):
+        """
+        Called on the end of prediction, to kick of the thread so cleanup
+        can happen.
+        """
+        
+        with self.lock:
+            self.lock.notify()
+
     def preload_thread_main(self):
 
         while self.keep_preloading:
@@ -320,16 +329,18 @@ class Cache(object):
         
                 # If the size of the current generation is bigger than the
                 # total cache size, stop preloading.
-                if self.size_of_current_generation > self.cache_limit:
-
-                    if renpy.config.debug_image_cache:
-                        for i in self.preloads:
-                            renpy.display.ic_log.write("Overfull %r", i)
-
-                    self.preloads = [ ]
-                    break
-                
                 with self.lock:
+                    
+                    # If the cache is overfull, clean it out.
+                    if not self.cleanout():
+
+                        if renpy.config.debug_image_cache:
+                            for i in self.preloads:
+                                renpy.display.ic_log.write("Overfull %r", i)
+    
+                        self.preloads = [ ]
+                        break
+                
 
                     try:
                         image = self.preloads.pop(0)                    
@@ -343,9 +354,8 @@ class Cache(object):
                     except:
                         pass
 
-                    if not self.cleanout():
-                        self.preloads = [ ]
-
+            self.cleanout()
+            
             # If we have time, preload pinned images.
             if self.keep_preloading and not renpy.game.less_memory:
 

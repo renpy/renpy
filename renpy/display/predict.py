@@ -137,5 +137,7 @@ def prediction_coroutine(root_widget):
 
         predicting = False
             
+    renpy.display.im.cache.end_prediction()
+    
     yield False
                 
