@@ -249,6 +249,10 @@ class ATLTransformBase(renpy.object.Object):
         self.last_transform_event = t.last_transform_event
         self.last_child_transform_event = t.last_child_transform_event
 
+        if self.child is renpy.display.motion.null:
+            self.child = t.child
+        
+
     def __call__(self, *args, **kwargs):
 
         context = self.context.context.copy()

@@ -599,8 +599,9 @@ class Transform(Container):
         self.state.ypos = t.state.ypos
         self.state.xanchor = t.state.xanchor
         self.state.yanchor = t.state.yanchor
-        
-        return 
+
+        if isinstance(self.child, Transform) and isinstance(t.child, Transform):
+            self.child.take_execution_state(t.child)
 
 
     def copy(self):
