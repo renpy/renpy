@@ -187,16 +187,19 @@ def restructure(children):
     group = [ ]
 
     
-    def finish_group():
-        pass
-    
-    
     for i in children:
+        
         
         if not isinstance(i, renpy.ast.Translate):
             i.restructure(restructure)
-        
-        if i.translatable:
+
+        if isinstance(i, renpy.ast.Say):
+            group.append(i)
+            tl = create_translate(group)
+            new_children.extend(tl)
+            group = [ ]
+
+        elif i.translatable:
             group.append(i)
         
         else:
