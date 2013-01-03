@@ -361,8 +361,6 @@ class Say(Node):
         'attributes',
         ]
 
-    translatable = True
-
     def diff_info(self):
         return (Say, self.who, self.what)
 
@@ -552,13 +550,15 @@ class Label(Node):
         'name',
         'parameters',
         'block',
+        'hide',
         ]
 
     def __setstate__(self, state):
         self.parameters = None
+        self.hide = False
         Node.__setstate__(self, state)
     
-    def __init__(self, loc, name, block, parameters):
+    def __init__(self, loc, name, block, parameters, hide=False):
         """
         Constructs a new Label node.
 
@@ -572,6 +572,7 @@ class Label(Node):
         self.name = name
         self.block = block
         self.parameters = parameters
+        self.hide = hide
 
     def diff_info(self):
         return (Label, self.name)

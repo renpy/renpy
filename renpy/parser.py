@@ -1730,6 +1730,11 @@ def label_statement(l, loc):
 
     parameters = parse_parameters(l)
 
+    if l.keyword('hide'):
+        hide = True
+    else:
+        hide = False
+
     l.require(':')
     l.expect_eol()
 
@@ -1738,7 +1743,7 @@ def label_statement(l, loc):
     block = parse_block(l.subblock_lexer())
 
     l.advance()
-    return ast.Label(loc, name, block, parameters)
+    return ast.Label(loc, name, block, parameters, hide=hide)
 
 
 @statement("init")
