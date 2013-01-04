@@ -181,7 +181,6 @@ class Restructurer(object):
         
         for i in block:
             code = i.get_code()
-            print code
             md5.update(code.encode("utf-8") + "\r\n")
     
         if self.label:
@@ -503,7 +502,7 @@ def open_tl_file(fn):
 
 class TranslateFile(object):
     
-    def __init__(self, filename, language, filter):
+    def __init__(self, filename, language, filter): # @ReservedAssignment
         self.filename = filename
         self.language = language
         self.filter = filter
@@ -570,7 +569,7 @@ class TranslateFile(object):
             if label is None:
                 label = ""
                 
-            self.f.write("# {}:{} {}\n".format(t.filename, t.linenumber, label))
+            self.f.write("# {}:{}\n".format(t.filename, t.linenumber))
             self.f.write("translate {} {}:\n".format(self.language, t.identifier))
             self.f.write("\n")
             
