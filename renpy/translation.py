@@ -153,69 +153,111 @@ def encode_say_string(s):
 
     return "\"" + s + "\""
 
-def create_translate(block):
-    """
-    Creates an ast.Translate that wraps `block`. The block may only contain
-    translatable statements.
-    """
-    
-    md5 = hashlib.md5(block[0].filename + "\r\n")
-    
-    for i in block:
-        code = i.get_code()
-        md5.update(code.encode("utf-8") + "\r\n")
-
-    identifier = md5.hexdigest()
-    loc = (block[0].filename, block[0].linenumber)
-
-    tl = renpy.ast.Translate(loc, identifier, None, block)
-    tl.name = block[0].name + ("translate",)
-    
-    ed = renpy.ast.EndTranslate(loc)
-    ed.name = block[0].name + ("end_translate",)
-    
-    return [ tl, ed ]
 
 
-def restructure(children):
-    """
-    This should be called with a list of statements. It restructures the statements
-    in the list so that translatable statements are contained within translation blocks.
-    """
-    
-    new_children = [ ]
-    group = [ ]
+class Restructurer(object):
 
-    
-    for i in children:
+    def __init__(self, children):
+        self.label = None
+        self.identifiers = set()
+        self.callback(children)        
+
+    def id_exists(self, identifier):
+        if identifier in self.identifiers:
+            return True
         
+        if identifier in renpy.game.script.translator.default_translates:
+            return True
         
-        if not isinstance(i, renpy.ast.Translate):
-            i.restructure(restructure)
+        return False
 
-        if isinstance(i, renpy.ast.Say):
-            group.append(i)
-            tl = create_translate(group)
-            new_children.extend(tl)
-            group = [ ]
-
-        elif i.translatable:
-            group.append(i)
+    def create_translate(self, block):
+        """
+        Creates an ast.Translate that wraps `block`. The block may only contain
+        translatable statements.
+        """
         
+        md5 = hashlib.md5()
+        
+        for i in block:
+            code = i.get_code()
+            print code
+            md5.update(code.encode("utf-8") + "\r\n")
+    
+        if self.label:
+            base = self.label + "_" + md5.hexdigest()[:8]
         else:
-            if group:
-                tl = create_translate(group)
+            base = md5.hexdigest()[:8]
+    
+        i = 0
+        suffix = ""
+                
+        while True:
+            
+            identifier = base + suffix
+
+            if not self.id_exists(identifier):
+                break
+
+            i += 1
+            suffix = "_{0}".format(i)
+
+        self.identifiers.add(identifier)
+        loc = (block[0].filename, block[0].linenumber)
+    
+        tl = renpy.ast.Translate(loc, identifier, None, block)
+        tl.name = block[0].name + ("translate",)
+        
+        ed = renpy.ast.EndTranslate(loc)
+        ed.name = block[0].name + ("end_translate",)
+        
+        return [ tl, ed ]
+
+    def callback(self, children):
+        """
+        This should be called with a list of statements. It restructures the statements
+        in the list so that translatable statements are contained within translation blocks.
+        """
+        
+        new_children = [ ]
+        group = [ ]
+        
+        for i in children:
+            
+            if isinstance(i, renpy.ast.Label):
+                if not i.hide:
+                    self.label = i.name
+            
+            if not isinstance(i, renpy.ast.Translate):
+                i.restructure(self.callback)
+    
+            if isinstance(i, renpy.ast.Say):
+                group.append(i)
+                tl = self.create_translate(group)
                 new_children.extend(tl)
                 group = [ ]
+    
+            elif i.translatable:
+                group.append(i)
+            
+            else:
+                if group:
+                    tl = self.create_translate(group)
+                    new_children.extend(tl)
+                    group = [ ]
+    
+                new_children.append(i)
+                    
+        if group:
+            nodes = self.create_translate(group)
+            new_children.extend(nodes)
+            group = [ ]
+    
+        children[:] = new_children
 
-            new_children.append(i)
-                
-    if group:
-        nodes = create_translate(group)
-        new_children.extend(nodes)
-        group = [ ]
+def restructure(children):
+    Restructurer(children)
 
-    children[:] = new_children
 
 ################################################################################
 # String Translation
