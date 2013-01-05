@@ -277,6 +277,8 @@ init 1400 python:
 
     if not hasattr(store, 'centered'):
         centered = Character(None, what_style="centered_text", window_style="centered_window")
+    if not hasattr(store, 'vcentered'):
+        vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:

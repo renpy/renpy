@@ -71,5 +71,5 @@ init -1500 python:
 
 init -1500:
     image text = renpy.ParameterizedText(style="centered_text")
-
+    image vtext = renpy.ParameterizedText(style="centered_vtext")
 

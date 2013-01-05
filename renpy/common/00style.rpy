@@ -61,6 +61,7 @@ init -1800 python hide:
 
     style.centered_window = Style(style.default, help='window containing centered text')
     style.centered_text = Style(style.default, help='centered text')
+    style.centered_vtext = Style(style.default, help='centered text')
 
     style.imagemap = Style(style.image_placement, help='default style of imagemaps')
     style.hotspot = Style(style.default, help='default style of hotspots inside imagemaps')
@@ -260,6 +261,11 @@ init -1800 python:
     style.centered_text.yalign = 0.5
     style.centered_text.layout = "subtitle"
 
+    style.centered_vtext.textalign = 0.5
+    style.centered_vtext.xalign = 0.5
+    style.centered_vtext.yalign = 0.5
+    style.centered_vtext.vertical = True
+ 
     # Hyperlinks.
     style.hyperlink_text.underline = True
     style.hyperlink_text.hover_color = "#0ff"

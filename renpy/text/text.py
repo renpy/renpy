@@ -1014,6 +1014,9 @@ def layout_cache_tick():
     layout_cache_old = layout_cache_new
     layout_cache_new = { }
     
+VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
+VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
+    
 class Text(renpy.display.core.Displayable):
     
     """
@@ -1396,6 +1399,13 @@ class Text(renpy.display.core.Displayable):
                 renpy.display.render.redraw(self, redraw)
             else:
                 self.call_slow_done(st)
+
+        if self.style.vertical:
+            vrv = renpy.display.render.Render(rv.height, rv.width)
+            vrv.forward = VERT_FORWARD
+            vrv.reverse = VERT_REVERSE
+            vrv.blit(rv, (rv.height, 0))
+            rv = vrv
 
         return rv
        
