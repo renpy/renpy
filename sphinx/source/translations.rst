@@ -67,76 +67,83 @@ As Ren'Py is a visual novel engine, we expect most translation to
 involve dialogue. Ren'Py includes a flexible framework that allows
 dialogue to be split, combined, reordered, and omitted entirely.
 
-Translation Blocks
-------------------
+Translation Units
+-----------------
 
-The fundamental unit of translation is a block of consecutive dialogue
-statements. Dialogue statements include the say statement, voice
-statement, and nvl clear statement. As an example, take the following
-code::
+The fundamental unit of translation is a block of zero or more
+translatable statements, optionally followed by a single say
+statement. Translatable statements are the voice and nvl statements. For example
+take the following game::
 
-    scene bg washington
-    show eileen vhappy
-    with dissolve
+    label start:
+        e "Thank you for taking a look at the Ren'Py translation framework."
+    
+        show eileen happy
+    
+        e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
+    
+        e "Pretty much everything your game needs!"
+
+This is broken up into multiple translation units. Each unit has an
+identifier assigned to it, with the identifier being generated from
+the label preceding the unit, and the code inside the unit. (If
+multiple units would be assigned the same translation number, a serial
+number to the second and later units to distinguish them.)
+
+In the example above, the first unit generated is assigned the identifier     
+start_636ae3f5, and contains the statement::
 
     e "Thank you for taking a look at the Ren'Py translation framework."
-    
-    show eileen happy
-    
-    e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
-    
-    e "Pretty much everything your game needs!"
 
-This is broken up into multiple translation blocks, each with its own
-identifier, based on the text in the block. The first block is
-automatically assigned the identifier
-ceac1acbc54d30814453d92842c5a215, and contains the statement::
-
-    e "Thank you for taking a look at the Ren'Py translation framework."
-
-The second block has the identifier 4b85f371ca99b65c0f21da1bddfd4941,
-and contains::
+The second unit is given the identifier start_bd1ad9e1m and contains::
 
     e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
-    
+
+The third unit has the identifier start_9e949aac, and contains::
+
     e "Pretty much everything your game needs!"
 
-These blocks are created automatically by Ren'Py when the game script
+These units are created automatically by Ren'Py when the game script
 is loaded.
 
 Translate Statement
 -------------------
   
 When you generate translations for a language, Ren'Py will generate a
-translate statement corresponding to each translation block. When
+translate statement corresponding to each translation unit. When
 translating the code above, Ren'Py will generate::
 
-    # game/script.rpy:85 start
-    translate piglatin ceac1acbc54d30814453d92842c5a215:
+    # game/script.rpy:95
+    translate piglatin start_636ae3f5:
 
         e "Thank you for taking a look at the Ren'Py translation framework."
 
-    # game/script.rpy:89 start
-    translate piglatin 4b85f371ca99b65c0f21da1bddfd4941:
+    # game/script.rpy:99
+    translate piglatin start_bd1ad9e1:
 
         e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
+
+    # game/script.rpy:101
+    translate piglatin start_9e949aac:
 
         e "Pretty much everything your game needs!"
 
 This can be translated by editing the generated code. A finished
 translation might look like::
 
-    # game/script.rpy:85 start
-    translate piglatin ceac1acbc54d30814453d92842c5a215:
-
+    # game/script.rpy:95
+    translate piglatin start_636ae3f5:
         # e "Thank you for taking a look at the Ren'Py translation framework."
         e "Ankthay ouyay orfay akingtay away ooklay atway ethay En'Pyray anslationtray ameworkfray."
 
-    # game/script.rpy:89 start
-    translate piglatin 4b85f371ca99b65c0f21da1bddfd4941:
+    # game/script.rpy:99
+    translate piglatin start_bd1ad9e1:
 
         # e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
         e "Eway aimway otay ovidepray away omprehensivecay ameworkfray orfay anslatingtray ialogueday, ingsstray, imagesway, andway ylesstay."
+
+    # game/script.rpy:101
+    translate piglatin start_9e949aac:
 
         # e "Pretty much everything your game needs!"
         e "Ettypray uchmay everythingway ouryay amegay eedsnay!"
@@ -153,17 +160,20 @@ More Complex Translations
 Translate statements do not need to contain 1-to-1 translations of the
 original language. For example, a long line could be split::
 
-    # game/script.rpy:89 start
-    translate piglatin 4b85f371ca99b65c0f21da1bddfd4941:
-
+    # game/script.rpy:99
+    translate piglatin start_bd1ad9e1:
         # e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
         e "Eway aimway otay ovidepray away omprehensivecay ameworkfray..."
         e "...orfay anslatingtray ialogueday, ingsstray, imagesway, andway ylesstay."
 
-        # e "Pretty much everything your game needs!"
-        e "Ettypray uchmay everythingway ouryay amegay eedsnay!"
 
-Similarly, statements can be removed or reordered.
+Or a statement can be removed, by replacing it with the pass statement::
+
+    # game/script.rpy:101
+    translate piglatin start_9e949aac:
+
+         # e "Pretty much everything your game needs!"
+         pass
         
 It's also possible to run non-dialogue statements, such as
 conditionals or python code. For example, we can translate::
@@ -172,8 +182,10 @@ conditionals or python code. For example, we can translate::
 
 into::
 
-    translate piglatin f534048c0f62aaf9b78fef569f9a4fea:
+    # game/script.rpy:103
+    translate piglatin start_36562aba:
 
+        # e "You scored [points] points!"
         e $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
@@ -181,24 +193,21 @@ into::
 Tips
 ----
 
-When a group of dialogue statements changes, the entire group needs to
-be re-translated. When writing a game, it might make sense to insert
-pass statements to break long stretches of dialogue into multiple
-parts. 
+Be very careful when changing dialogue that has been translated,
+especially when that dialogue is repeated in more than one place
+inside a label. In some cases, it may be necessary to assign
+a translation identifier directly, using a statement like::
 
-In this example::
+    translate None mylable_03ac197e_1:
+        "..."
 
-  "Line 1"
-  "Line 2"
+Adding labels can also confuse the translation process. To prevent
+this, labels that are given the hide clause are ignored by the
+translation code. ::
 
-  pass
-
-  "Line 3"
-  "Line 4"
-
-lines 1 and 2 will be in one block, and lines 3 and 4 will be in a
-second block.
-
+    label ignored_by_translation hide:
+        "..."
+        
 While translation blocks may include python code, this code should not
 have side effects visible outside of the block. That's because
 changing languages will restart the translation block, causing the
