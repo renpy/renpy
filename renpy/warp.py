@@ -26,11 +26,21 @@
 import renpy
 import sets
 
-def warp(spec):
+warp_spec = None
+
+def warp():
     """
     Given a filename and line number, this attempts to warp the user
     to that filename and line number.
     """
+
+    global warp_spec
+
+    spec = warp_spec
+    warp_spec = None
+    
+    if warp_spec is None:
+        return None
 
     if ':' not in spec:
         raise Exception('No : found in warp location.')

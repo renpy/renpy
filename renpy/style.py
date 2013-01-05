@@ -118,6 +118,7 @@ style_properties = dict(
     aft_bar = none_is_null,
     aft_gutter = None,
     antialias = None,
+    vertical = None,
     background = renpy.easy.displayable_or_none,
     bar_invert = None,
     bar_resizing = None,

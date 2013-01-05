@@ -65,15 +65,11 @@ def run(restart):
     game.context().goto_label(start_label)
 
     # Perhaps warp.
-    if renpy.game.args.warp: #@UndefinedVariable
-        label = renpy.warp.warp(renpy.game.args.warp) #@UndefinedVariable
+    warp_label = renpy.warp.warp() 
+    
+    if warp_label is not None:
 
-        renpy.game.args.warp = None
-
-        if not label:
-            raise Exception("Could not find line to warp to.")
-
-        game.context().goto_label(label)
+        game.context().goto_label(warp_label)
 
         if game.script.has_label('after_warp'):
             game.context().call('after_warp')
