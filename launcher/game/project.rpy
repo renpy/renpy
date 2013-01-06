@@ -24,6 +24,7 @@ init python in project:
     import json
     import subprocess
     import re
+    import tempfile
     
     class Project(object):
     
@@ -52,10 +53,7 @@ init python in project:
             self.load_data()
 
             # The project's temporary directory.
-            self.tmp = os.path.join(self.path, "tmp")
-                
-            # The path to the json dumpfile.
-            self.dump_filename = os.path.join(self.tmp, "navigation.json")
+            self.tmp = None 
                 
             # This contains the result of dumping information about the game
             # to disk.
@@ -63,6 +61,10 @@ init python in project:
                 
             # The mtime of the last dump file loaded.
             self.dump_mtime = 0
+
+        def get_dump_filename(self):
+            self.make_tmp()
+            return os.path.join(self.tmp, "navigation.json")
 
         def load_data(self):
             try:
@@ -98,10 +100,21 @@ init python in project:
             yet.
             """
             
+            if self.tmp and os.path.isdir(self.tmp):
+                return
+            
+            tmp = os.path.join(self.path, "tmp")
+            
             try:
-                os.mkdir(self.tmp)
+                os.mkdir(tmp)
             except:
                 pass
+                
+            if os.path.isdir(tmp):
+                self.tmp = tmp
+                return
+                
+            self.tmp = tempfile.mkdtemp()
             
         def temp_filename(self, filename):
             """
@@ -127,7 +140,7 @@ init python in project:
             cmd.extend(args)
             
             cmd.append("--json-dump")
-            cmd.append(self.dump_filename)
+            cmd.append(self.get_dump_filename())
 
             if persistent.navigate_private:
                 cmd.append("--json-dump-private")
@@ -150,26 +163,27 @@ init python in project:
             loads it in iff it's newer than the one that's already loaded.
             """
 
-            if force or not os.path.exists(self.dump_filename):
-                self.make_tmp()
+            dump_filename = self.get_dump_filename()
+
+            if force or not os.path.exists(dump_filename):
                 
                 if gui:
                     interface.processing(_("Ren'Py is scanning the project..."))
                 
                 self.launch(["quit"], wait=True)
             
-            if not os.path.exists(self.dump_filename):
+            if not os.path.exists(dump_filename):
                 self.dump["error"] = True
                 return
             
-            file_mtime = os.path.getmtime(self.dump_filename)
+            file_mtime = os.path.getmtime(dump_filename)
             if file_mtime == self.dump_mtime:
                 return
 
             self.dump_mtime = file_mtime
 
             try:
-                with open(self.dump_filename, "r") as f:
+                with open(dump_filename, "r") as f:
                     self.dump = json.load(f)
                 # add todo list to dump data
                 self.update_todos()
