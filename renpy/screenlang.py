@@ -633,11 +633,13 @@ add(position_properties)
 add(text_properties)
 
 FunctionStatementParser("hbox", "ui.hbox", many)
+Keyword("box_reverse")
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
 FunctionStatementParser("vbox", "ui.vbox", many)
+Keyword("box_reverse")
 add(ui_properties)
 add(position_properties)
 add(box_properties)

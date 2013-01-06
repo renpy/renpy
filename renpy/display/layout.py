@@ -90,7 +90,12 @@ class Container(renpy.display.core.Displayable):
     # use RevertableLists if we want.
     _list_type = list
 
+    box_reverse = False
+
     def __init__(self, *args, **properties):
+
+        if "box_reverse" in properties:
+            self.box_reverse = properties.pop("box_reverse")
 
         self.children = self._list_type()
         self.child = None
@@ -114,7 +119,11 @@ class Container(renpy.display.core.Displayable):
 
         child = renpy.easy.displayable(d)
         
-        self.children.append(child)
+        if self.box_reverse:
+            self.children.insert(0, child)
+        else:
+            self.children.append(child)
+       
         self.child = child
         self.offsets = self._list_type()
 
