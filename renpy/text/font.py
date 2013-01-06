@@ -553,14 +553,18 @@ font_cache = { }
 
 def get_font(fn, size, bold, italics, outline, antialias, vertical):
     
-    t = (fn, bold, italics, vertical)
-    fn, bold, italics, vertical = renpy.config.font_replacement_map.get(t, t)
+    t = (fn, bold, italics)
+    fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
     rv = image_fonts.get((fn, size, bold, italics), None)
     if rv is not None:
         return rv
 
-    key = (fn, size, bold, italics, outline, antialias, vertical)
+    if vertical:
+        key = (fn, size, bold, italics, outline, antialias, True)
+    else:
+        key = (fn, size, bold, italics, outline, antialias)
+
     rv = font_cache.get(key, None)
     if rv is not None:
         return rv
