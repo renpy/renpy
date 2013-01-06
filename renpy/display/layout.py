@@ -94,9 +94,6 @@ class Container(renpy.display.core.Displayable):
 
     def __init__(self, *args, **properties):
 
-        if "box_reverse" in properties:
-            self.box_reverse = properties.pop("box_reverse")
-
         self.children = self._list_type()
         self.child = None
         self.offsets = self._list_type()
@@ -426,11 +423,19 @@ class MultiBox(Container):
 
     layer_name = None
     first = True
+    order_reverse = False
     
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
         if spacing is not None:
             properties['spacing'] = spacing
+
+        # The box_reverse code is mostly in Container.
+        if "box_reverse" in properties:
+            self.box_reverse = properties.pop("box_reverse")
+
+        if "order_reverse" in properties:
+            self.box_reverse = properties.pop("order_reverse")
 
         super(MultiBox, self).__init__(style=style, **properties)
 
@@ -517,8 +522,13 @@ class MultiBox(Container):
         if layout == "fixed":
 
             rv = None
+
+            if self.order_reverse:
+                iterator = zip(reversed(self.children), reversed(csts), reversed(cats))
+            else:
+                iterator = zip(self.children, csts, cats)
                         
-            for child, cst, cat in zip(self.children, csts, cats):
+            for child, cst, cat in iterator:
                 
                 surf = render(child, width, height, cst, cat)
                                 
@@ -695,6 +705,9 @@ class MultiBox(Container):
         
         if not yfill:
             height = maxy
+                    
+        if self.box_reverse ^ self.order_reverse:
+            placements.reverse()
                      
         rv = renpy.display.render.Render(width, height)
 
