@@ -321,8 +321,16 @@ and :propref:`ymaximum` properties can change this.
 The children are laid out according to their position style
 properties. They can overlap if not positioned properly.
 
-The fixed statement takes no parameters, and the following groups of
-properties:
+The fixed statement takes no parameters, and the following
+property:
+
+`order_reverse`
+    Reverses the order in which children are drawn to the screen.
+    By default, the last child added is above all other children.
+    When order_reverse is true, the last child added is below
+    all other children.
+
+It also takes:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
@@ -385,7 +393,7 @@ the same size, the size of the largest child.
 
 It takes two parameters. The first is the number of columns in the
 grid, and the second is the number of rows in the grid. It takes the
-following property:
+following properties:
 
 `transpose`
     If False (the default), rows are filled before columns. If True,
@@ -421,7 +429,19 @@ Hbox
 ----
 
 This displays its children side by side, in an invisible horizontal
-box. It takes no parameters, and the following groups of properties:
+box. It takes no parameters, and the following properties:
+
+`box_reverse`
+    If false, the default, children are added left-to-right. If true,
+    children are added right-to-left.
+
+`order_reverse`
+    Reverses the order in which children are drawn to the screen.
+    By default, the last child added is above all other children.
+    When order_reverse is true, the last child added is below
+    all other children.
+
+It also takes:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
@@ -877,8 +897,19 @@ Vbox
 ----
 
 This displays its children one above the other, in an invisible
-vertical box. It takes no parameters, and the following groups of
-properties:
+vertical box. It takes no parameters, and the following properties:
+
+`box_reverse`
+    If false, the default, children are added left-to-right. If true,
+    children are added right-to-left.
+
+`order_reverse`
+    Reverses the order in which children are drawn to the screen.
+    By default, the last child added is above all other children.
+    When order_reverse is true, the last child added is below
+    all other children.
+
+It also takes:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`

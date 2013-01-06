@@ -120,7 +120,7 @@
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.    
 
-.. function:: renpy.rollback(force=False, checkpoints=1, defer=False)
+.. function:: renpy.rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None)
     
     Rolls the state of the game back to the last checkpoint.
     
@@ -136,6 +136,13 @@
     `defer`
         If true, the call will be deferred until code from the main context is
         executed.
+        
+    `greedy`
+        If true, rollback will occur just before the previous checkpoint.
+        If false, rollback occurs to just before the current checkpoint.
+        
+    `label`
+        If not None, a label that is called when rollback completes.
 
 .. function:: renpy.set_physical_size(size)
     
