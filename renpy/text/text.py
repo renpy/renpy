@@ -492,6 +492,9 @@ class Layout(object):
                 textsupport.annotate_unicode(line_glyphs, True)
             elif language == "western":
                 textsupport.annotate_western(line_glyphs)
+            elif language == "japanese-alternate":
+                textsupport.annotate_unicode(line_glyphs, False)
+                textsupport.annotate_japanese(line_glyphs)
             else:
                 raise Exception("Unknown language: {0}".format(language))
 

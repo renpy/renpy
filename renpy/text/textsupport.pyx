@@ -1,4 +1,5 @@
 include "linebreak.pxi"
+include "eastasian.pxi"
 
 cdef class Glyph:
     
@@ -223,6 +224,40 @@ def annotate_unicode(list glyphs, bint no_ideographs):
             g.split = SPLIT_NONE
             
         old_g = g
+
+def annotate_japanese(list glyphs):
+    """
+    The line-breaking rules used in Japanese visual novels. We add a break
+    opportunity before and after each non-ruby wide character.
+    """
+
+    cdef Glyph g
+    cdef char width
+    cdef int c
+    
+    split = False
+    
+    for g in glyphs:
+        
+        if split and g.split == SPLIT_NONE:
+            g.split = SPLIT_BEFORE
+            
+        split = False
+        
+        if g.ruby != RUBY_NONE:
+            continue
+
+        c = g.character
+
+        if c <= 0xffff:
+            width = eastasian_width[g.character]
+        else:
+            width = EA_W
+
+        if (width == EA_W or width == EA_A):
+            if g.split == SPLIT_NONE:
+                g.split = SPLIT_BEFORE
+            split = True
 
 
 def linebreak_greedy(list glyphs, int first_width, int rest_width):

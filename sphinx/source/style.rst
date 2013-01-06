@@ -5,48 +5,47 @@
 Styles and Style Properties
 ===========================
 
-Styles allow the look of displayables to be customized. This is done
-by changing the value of style properties for displayables. For
-example, changing the :propref:`background` property allows the
-background of a window or button to be customized.
+Styles allow the look of displayables to be customized. This is done by
+changing the value of style properties for displayables. For example,
+changing the :propref:`background` property allows the background of a window
+or button to be customized.
 
-Each displayable has a style built-into it. When the displayable is
-created, either directly or using the screen system, style properties
-can be supplied to it, and these styles are used to update the look of
-the displayable. In the following example::
+Each displayable has a style built-into it. When the displayable is created,
+either directly or using the screen system, style properties can be supplied
+to it, and these styles are used to update the look of the displayable. In
+the following example::
 
     image big_hello_word = Text("Hello, World", size=40)
 
-the :propref:`size` property is supplied to a Text displayable,
-allowing us to change its text size. This will customize the look of
-the text displayable by displaying the text 40 pixels high.
+the :propref:`size` property is supplied to a Text displayable, allowing us to
+change its text size. This will customize the look of the text displayable by
+displaying the text 40 pixels high.
 
-Ren'Py also supports style inheritance. Each displayable takes a
-`style` property, that gives the name of the style to use. If a
-property is not defined for a style, Ren'Py will look it up in the
-named style, that style's parent, and so on. This allows us to
-customize a named style in a central place.
+Ren'Py also supports style inheritance. Each displayable takes a `style`
+property, that gives the name of the style to use. If a property is not
+defined for a style, Ren'Py will look it up in the named style, that style's
+parent, and so on. This allows us to customize a named style in a central
+place.
 
 A named style exists as a field on the global ``style`` object. Style
-properties exist as fields on styles. So to set the size property of
-the default style, one can use a python block::
+properties exist as fields on styles. So to set the size property of the
+default style, one can use a python block::
 
    init python:
        style.default.font = "mikachan.ttf"
        style.default.size = 23
 
-As Ren'Py caches styles, named styles should not be changed outside of
-init blocks.
-       
+As Ren'Py caches styles, named styles should not be changed outside of init
+blocks.
+
 
 Style Property Prefixes
 =======================
 
-Applying a prefix to a style property indicates allows a displayable
-to change it's look in response to its focus or selection status. For
-example, a button can change its color when the mouse hovers above it,
-or to indicate when the choice represented by the button is the
-currently selected one.
+Applying a prefix to a style property indicates allows a displayable to change
+it's look in response to its focus or selection status. For example, a button
+can change its color when the mouse hovers above it, or to indicate when the
+choice represented by the button is the currently selected one.
 
 There are five states a displayable can be it.
 
@@ -65,14 +64,14 @@ There are five states a displayable can be it.
 :dfn:`selected_hover`
     Used when the displayable is focused and selected.
 
-Button and Bar displayables (and their variants) update their state,
-and the state of their children, in response to events. For example,
-when the user puts his mouse over an unselected button, it and all its
-children will be put into the hover state.
+Button and Bar displayables (and their variants) update their state, and the
+state of their children, in response to events. For example, when the user
+puts his mouse over an unselected button, it and all its children will be put
+into the hover state.
 
-Style property prefixes allow one to set style properties for the
-different states. There is a system of implications set up, so that a
-prefix can imply setting the property for more than one state.
+Style property prefixes allow one to set style properties for the different
+states. There is a system of implications set up, so that a prefix can imply
+setting the property for more than one state.
 
 The implications are:
 
@@ -93,18 +92,18 @@ The implications are:
 
  * - ``selected_``
    - selected_idle, selected_hover
-   
+
  * - ``selected_idle_``
    - selected_idle
 
  * - ``selected_hover_``
    - selected_hover
-       
-Using a text button, we can show this in action. Text buttons use two
-styles by default: ``button`` for the button itself, and
-``button_text`` for the text inside the button. The
-:propref:`background` style property sets the background of a button,
-while the :propref:`color` property sets the color of text. ::
+
+Using a text button, we can show this in action. Text buttons use two styles
+by default: ``button`` for the button itself, and ``button_text`` for the
+text inside the button. The :propref:`background` style property sets the
+background of a button, while the :propref:`color` property sets the color of
+text.::
 
     init python:
 
@@ -123,15 +122,15 @@ Style Property Values
 =====================
 
 Each style property expects a specific kind of data. Many of these are
-standard python types, but a few are novel. Here are descriptions of
-the novel kinds of value a style property can expect.
+standard python types, but a few are novel. Here are descriptions of the
+novel kinds of value a style property can expect.
 
 `position`
     Positions are used to specify locations relative to the upper-left
-    corner of the containing area. (For positions, the containing area
-    is given by the layout the displayable is in, if one is given, or
-    the screen otherwise. For anchors, the containing area is the size
-    of the displayable itself.)
+    corner of the containing area. (For positions, the containing area is
+    given by the layout the displayable is in, if one is given, or the screen
+    otherwise. For anchors, the containing area is the size of the
+    displayable itself.)
 
     The way a position value is interpreted depends on the type of the
     value:
@@ -141,54 +140,53 @@ the novel kinds of value a style property can expect.
         or top side of the containing area.
     float (like 0.0, 0.5, or 1.0)
         A floating-point number is intepreted as a fraction of the
-        containing area. For example, 0.5 is a point halfway between
-        the sides of the containing area, while 1.0 is on the right
-        or bottom side.
+        containing area. For example, 0.5 is a point halfway between the
+        sides of the containing area, while 1.0 is on the right or bottom
+        side.
     renpy.absolute (like renpy.absolute(100.25))
         A renpy.absolute number is intepreted as the number of pixels
-        from the left or top side of the screen, when using
-        subpixel-precise rendering.
+        from the left or top side of the screen, when using subpixel-precise
+        rendering.
 
 `displayable`
     Any displayable.
-        
+
 `color`
-    Colors in Ren'Py can be expressed as strings beginning with the
-    hash mark (#), followed by a hex triple or hex quadruple, with
-    each of the three or four elements consisting of a one or two
-    hexidecimal character color code.
+    Colors in Ren'Py can be expressed as strings beginning with the hash
+    mark (#), followed by a hex triple or hex quadruple, with each of the
+    three or four elements consisting of a one or two hexidecimal character
+    color code.
 
     In a triple, the components represent red, green, and blue. In a
-    quadruple, the components represent red, green, blue, and alpha.
-    For example:
+    quadruple, the components represent red, green, blue, and alpha. For
+    example:
 
     * ``"#f00"`` and ``"#ff0000"`` represent an opaque red color.
-    * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent
-      green color.
+    * ``"#0f08"`` and ``#00ff0080"`` represent a semi-transparent green
+      color.
 
     The color triples are the same as used in HTML.
 
     Colors can also be represented as a 4-component tuple, with the 4
-    components being integers between 0 and 255. The components
-    correspond to red, green, blue, and alpha, in that order.
+    components being integers between 0 and 255. The components correspond to
+    red, green, blue, and alpha, in that order.
 
-    * ``(0, 0, 255, 255)`` represents an opaque blue color. 
-         
+    * ``(0, 0, 255, 255)`` represents an opaque blue color.
+
 List of All Style Properties
 ============================
 
-The style properties control the look of the various displayables. Not
-all style properties apply to all displayables, so we've divided them
-up into groups.
+The style properties control the look of the various displayables. Not all
+style properties apply to all displayables, so we've divided them up into
+groups.
 
 .. _position-style-properties:
 
 Position Style Properties
 -------------------------
 
-These are used to control the position of a displayable inside the
-area allocated to it by a layout, or on the screen when not inside a
-layout.
+These are used to control the position of a displayable inside the area
+allocated to it by a layout, or on the screen when not inside a layout.
 
 .. style-property:: xpos position
 
@@ -401,6 +399,13 @@ Text Style Properties
         Uses the unicode linebreaking algorithm, which is suitable for
         most languages.
 
+    ``"japanese-alternate"``
+        Allows linebreaking between any two non-ruby wide characters. This is 
+        an alternative to the unicode algorithm that is used by Japanese
+        visual novels. (The unicode algorithm is also appropriate for Japanese
+        text - it's up to the creator to decide which is more appropriate for
+        their game.)
+
     ``"korean-with-spaces"``
         Used for Korean text delimited by whitespace. This prevents linebreaking
         between adjacent Korean characters.
@@ -411,6 +416,7 @@ Text Style Properties
 
     ``"eastasian"``
         Legacy alias for "unicode".
+
 
 .. style-property:: layout string
 
@@ -538,8 +544,7 @@ Text Style Properties
 Window Style Properties
 -----------------------
 
-Window properties are used to specify the look of windows, frames, and
-buttons. 
+Window properties are used to specify the look of windows, frames, and buttons.
 
 .. style-property:: background displayable or None
 
@@ -652,21 +657,19 @@ Button Style Properties
 Bar Style Properties
 --------------------
 
-Bars are drawn with gutters on the left and right, that when clicked
-can cause the bart to move by a small amount. The remaining space is
-the portion of the bar that can change, with the amount on each side
-proportional to the bar's value as a fraction of the range.
+Bars are drawn with gutters on the left and right, that when clicked can cause
+the bart to move by a small amount. The remaining space is the portion of the
+bar that can change, with the amount on each side proportional to the bar's
+value as a fraction of the range.
 
-The thumb is an area in the center of the bar that can be dragged by
-the user.
+The thumb is an area in the center of the bar that can be dragged by the user.
 
-When a bar is drawn, the thumb's shadow is drawn first. Then the
-left/bottom and right/top sides of the bar, followed by the thumb
-itself. 
+When a bar is drawn, the thumb's shadow is drawn first. Then the left/bottom
+and right/top sides of the bar, followed by the thumb itself.
 
-Note that the valid sides of a bar depend on the value of the
-bar_vertical property. If it's True, the top and bottom sides are
-relevant. Otherwise, the left and right sides are used.
+Note that the valid sides of a bar depend on the value of the bar_vertical
+property. If it's True, the top and bottom sides are relevant. Otherwise, the
+left and right sides are used.
 
 .. style-property:: bar_vertical boolean
 
@@ -759,7 +762,7 @@ relevant. Otherwise, the left and right sides are used.
 Box Style Properties
 --------------------
 
-These are used for the horizontal and vertical box layouts. 
+These are used for the horizontal and vertical box layouts.
 
 .. style-property:: spacing int
 
@@ -792,16 +795,16 @@ These are used with the fixed layout.
 Creating New Named Styles
 =========================
 
-Named styles exists as fields on the global ``style`` object. To
-create a new style, create an instance of the Style class, and assign
-it to a field on the ``style`` object. ::
+Named styles exists as fields on the global ``style`` object. To create a new
+style, create an instance of the Style class, and assign it to a field on the
+``style`` object.::
 
     init python:
          style.big_text = Style(style.default)
          style.big_text.size = 42
          
-Once created, a named style can be applied to displayables by
-supplying it's name, or the style object. ::
+Once created, a named style can be applied to displayables by supplying it's
+name, or the style object.::
 
     screen two_big_lines:
          vbox:
@@ -835,18 +838,16 @@ supplying it's name, or the style object. ::
 Indexed Styles
 --------------
 
-Indexed styles are lightweight styles that can be used to customize
-the look of a displayable based on the data supplied to that
-displayable. An index style is created by indexing a style object with
-a string or integer. If an indexed style does not exist, indexing
-creates it. ::
+Indexed styles are lightweight styles that can be used to customize the look
+of a displayable based on the data supplied to that displayable. An index
+style is created by indexing a style object with a string or integer. If an
+indexed style does not exist, indexing creates it.::
 
     init python:
         style.button['Foo'].background = "#f00"
         style.button['Bar'].background = "#00f"
 
-An index style is used by supplying the indexed style to a
-displayable. ::
+An index style is used by supplying the indexed style to a displayable.::
 
     screen indexed_style_test:
         vbox:
@@ -857,10 +858,10 @@ displayable. ::
 Style Inheritance
 -----------------
 
-When a property is not defined by a style, it is inherited from the
-style's parent. When indexing is involved, properties are inherited
-first from the unindexed form of the style, then from the indexed form
-of the parent, then the unindexed form of the parent, and so on.
+When a property is not defined by a style, it is inherited from the style's
+parent. When indexing is involved, properties are inherited first from the
+unindexed form of the style, then from the indexed form of the parent, then
+the unindexed form of the parent, and so on.
 
 For example, when ``style.mm_button inherits`` from ``style.button``, which in
 turn inherits from ``style.default``, then the properties of
@@ -873,44 +874,41 @@ turn inherits from ``style.default``, then the properties of
 #. ``style.default["Start Game"]``
 #. ``style.default``
 
-With the property value taken from the lowest numbered style with the
-property defined.
+With the property value taken from the lowest numbered style with the property
+defined.
 
 .. _style-preferences:
 
 Style Preferences
 -----------------
 
-It's often desireable to allow the user to customize aspects of the
-user interface that are best expressed as styles. For example, a
-creator may want to give players of his game the ability to adjust the
-look, color, and size of the text. Style preferences allow for this
-customization.
+It's often desireable to allow the user to customize aspects of the user
+interface that are best expressed as styles. For example, a creator may want
+to give players of his game the ability to adjust the look, color, and size
+of the text. Style preferences allow for this customization.
 
-A style preference is a preference that controls one or more style
-properties. A style preference has a name and one or more
-alternatives. At any given time, one of the alternatives is the
-selected alternative for the style preference. The selected
-alternative is saved in the persistent data, and defaults to the
-first alternative registered for a style property.
+A style preference is a preference that controls one or more style properties.
+A style preference has a name and one or more alternatives. At any given
+time, one of the alternatives is the selected alternative for the style
+preference. The selected alternative is saved in the persistent data, and
+defaults to the first alternative registered for a style property.
 
-An alternative has one or more associations of style, property, and
-value associated with it, and represents a promise that when the
-alternative becomes the selected alternative for the style preference,
-the property on the style will be assigned the given value. This
-occurs when Ren'Py first initializes, and then whenever a new
-alternative is selected.
+An alternative has one or more associations of style, property, and value
+associated with it, and represents a promise that when the alternative
+becomes the selected alternative for the style preference, the property on
+the style will be assigned the given value. This occurs when Ren'Py first
+initializes, and then whenever a new alternative is selected.
 
-One should ensure that every alternative for a given style preference
-updates the same set of styles and properties. Otherwise, some styles
-may not be assigned values, and the result will not be deterministic.
+One should ensure that every alternative for a given style preference updates
+the same set of styles and properties. Otherwise, some styles may not be
+assigned values, and the result will not be deterministic.
 
 The style preference functions are:
 
 .. include:: inc/style_preferences
 
-Here's an example of registering a style property that allows the user
-to choose between large, simple text and smaller outlined text.
+Here's an example of registering a style property that allows the user to
+choose between large, simple text and smaller outlined text.
 
 ::
 
@@ -921,7 +919,8 @@ to choose between large, simple text and smaller outlined text.
         renpy.register_style_property("text", "large", style.say_dialogue, "outlines", [ ])
         renpy.register_style_property("text", "large", style.say_dialogue, "size", 24)
 
-The following code will allow the user to select these alternatives using buttons::
+The following code will allow the user to select these alternatives using
+buttons::
 
     textbutton "Decorated" action StylePreference("text", "decorated")
     textbutton "Large" action StylePreference("text", "large")
