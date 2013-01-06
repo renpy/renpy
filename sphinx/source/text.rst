@@ -360,6 +360,25 @@ style:
 * kerning
 
 
+Vertical Text
+=============
+
+When the :prop:`vertical` style property is set, Ren'Py will produce
+vertically oriented text. The text is written top-to-bottom,
+right-to-left.
+
+There are two text tags that interact with vertical text.
+
+.. text-tag:: horiz
+              
+    Includes horizontally-oriented text inside vertical text.
+
+.. text-tag:: vert
+              
+    Includes vertically-oriented text inside horizontal text. (This will
+    not rotate the text to the vertical orientation.)
+
+  
 Non-English Languages
 =====================
 

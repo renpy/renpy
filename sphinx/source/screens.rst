@@ -900,8 +900,8 @@ This displays its children one above the other, in an invisible
 vertical box. It takes no parameters, and the following properties:
 
 `box_reverse`
-    If false, the default, children are added left-to-right. If true,
-    children are added right-to-left.
+    If false, the default, children are added top-to-bottom. If true,
+    children are added bottom-to-top.
 
 `order_reverse`
     Reverses the order in which children are drawn to the screen.

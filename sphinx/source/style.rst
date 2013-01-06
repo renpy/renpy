@@ -529,6 +529,10 @@ Text Style Properties
     with None when it loses focus. If it returns a value other than None,
     the interaction returns that value
 
+.. style-property:: vertical boolean
+
+    If true, the text will be rendered vertically.
+    
 .. _window-style-properties:
 
 Window Style Properties
