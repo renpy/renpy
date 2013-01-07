@@ -429,7 +429,7 @@ screen choose_theme:
                 # Preview
                 frame:
                     style "l_default"
-                    background Frame("pattern.png", 0, 0, tile=True)
+                    background Frame(PATTERN, 0, 0, tile=True)
                     xpadding 5
                     ypadding 5
 

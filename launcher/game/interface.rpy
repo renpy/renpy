@@ -5,6 +5,7 @@
 # Interface actions.
 init python in interface:
     from store import OpenURL, config, Return
+    import store
 
     import os.path
     import contextlib
@@ -173,13 +174,13 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" size 24 xalign 0.5 default default color "#d86b45"
+            input style "l_default" size 24 xalign 0.5 default default color INPUT_COLOR 
 
             if filename:
                 add SPACER
                 text _("Due to package format limitations, non-ASCII file and directory names are not allowed.")
             
-        label _("[title]") style "l_info_label" text_color "#d19753"
+        label _("[title]") style "l_info_label" text_color QUESTION_COLOR
 
     
     if cancel:
@@ -244,7 +245,7 @@ init python in interface:
         the message.
         """
 
-        common(_("ERROR"), "#d15353", message=message, submessage=submessage, back=True, **kwargs)
+        common(_("ERROR"), ERROR_COLOR, message=message, submessage=submessage, back=True, **kwargs)
         
 
         if label:
@@ -326,9 +327,9 @@ init python in interface:
         """
         
         if pause:
-            common(_("INFORMATION"), "#545454", message, submessage, continue_=True, **kwargs)
+            common(_("INFORMATION"), store.INFO_COLOR, message, submessage, continue_=True, **kwargs)
         else:
-            common(_("INFORMATION"), "#545454", message, submessage, pause=0, **kwargs)
+            common(_("INFORMATION"), store.INFO_COLOR, message, submessage, pause=0, **kwargs)
     
     
     def interaction(title, message, submessage=None, **kwargs):
@@ -346,7 +347,7 @@ init python in interface:
             An optional sub message.
         """
 
-        common(title, "#d19753", message, submessage, pause0=True, **kwargs)
+        common(title, store.INTERACTION_COLOR, message, submessage, pause0=True, **kwargs)
         
     def processing(message, submessage=None, complete=None, total=None, **kwargs):
         """
@@ -369,7 +370,7 @@ init python in interface:
         the message.
         """
 
-        common(_("PROCESSING"), "#545454", message, submessage, pause0=True, complete=complete, total=total, **kwargs) 
+        common(_("PROCESSING"), store.INTERACTION_COLOR, message, submessage, pause0=True, complete=complete, total=total, **kwargs) 
 
         
     def yesno(message, yes=Return(True), no=Return(False), **kwargs):
@@ -386,5 +387,5 @@ init python in interface:
             The action to perform if the user answer no.
         """
 
-        return common(_("QUESTION"), "#d19753", message, yes=yes, no=no, **kwargs)
+        return common(_("QUESTION"), store.QUESTION_COLOR, message, yes=yes, no=no, **kwargs)
         

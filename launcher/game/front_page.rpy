@@ -48,12 +48,12 @@ screen front_page:
         # Projects list section - on left.
         
         frame:
-            style "l_default"
+            style "l_projects"
             xmaximum 300
             right_margin 2
             
-            top_margin 20
-            bottom_margin 26
+            top_padding 20
+            bottom_padding 26
         
             side "t c b":
 
