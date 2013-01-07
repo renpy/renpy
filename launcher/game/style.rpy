@@ -258,12 +258,19 @@ init 1 python:
     # Check boxes
     style.l_checkbox = Style(style.l_button)
     style.l_checkbox.left_padding = INDENT
-    style.l_checkbox.background = Image("checkbox_idle.png", yalign=0.5)
-    style.l_checkbox.hover_background = Image("checkbox_hover.png", yalign=0.5)
-    style.l_checkbox.selected_idle_background = Image("checkbox_selected_idle.png", yalign=0.5)
-    style.l_checkbox.selected_hover_background = Image("checkbox_selected_hover.png", yalign=0.5)
-    style.l_checkbox.insensitive_background = Image("checkbox_insensitive.png", yalign=0.5)
-
+    
+    def checkbox(full, color):
+        if full:
+            return im.Twocolor("checkbox_full.png", color, color, yalign=0.5)
+        else:
+            return im.Twocolor("checkbox_empty.png", color, color, yalign=0.5)
+    
+    style.l_checkbox.background = checkbox(False, IDLE)
+    style.l_checkbox.hover_background = checkbox(False, HOVER)
+    style.l_checkbox.selected_idle_background = checkbox(True, IDLE)
+    style.l_checkbox.selected_hover_background = checkbox(True, HOVER)
+    style.l_checkbox.insensitive_background = checkbox(False, DISABLED)
+    
     style.l_checkbox_text = Style(style.l_button_text)
     style.l_checkbox_text.selected_font = LIGHT
     
