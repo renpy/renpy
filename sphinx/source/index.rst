@@ -1,15 +1,14 @@
 Welcome to Ren'Py's documentation!
 ==================================
 
-We're in the process of rewriting Ren'Py's documentation. While what
-we have here is the most up-to-date documentation, it's also very
-incomplete. To find out more about Ren'Py, please visit the Ren'Py
-home page:
+We're in the process of rewriting Ren'Py's documentation. While what we have
+here is the most up-to-date documentation, it's also very incomplete. To find
+out more about Ren'Py, please visit the Ren'Py home page:
 
     http://www.renpy.org/
 
-Much of Ren'Py is only documented in the older documentation, which is
-stored in the Ren'Py Wiki:
+Much of Ren'Py is only documented in the older documentation, which is stored
+in the Ren'Py Wiki:
 
     http://www.renpy.org/wiki/
 
@@ -109,6 +108,7 @@ Engine Developer Documentation
    :maxdepth: 1
 
    editor
+   skins
 
 Changes and License
 -------------------
