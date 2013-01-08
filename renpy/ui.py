@@ -893,6 +893,13 @@ def textbutton(label, clicked=None, style=None, text_style=None, substitute=True
         else:
             button_kwargs[k] = v
 
+    # Deal with potentially bad keyword arguments. (We'd get these if the user
+    # writes text_align instead of text_text_align.)
+    if "align" in text_kwargs:
+        if isinstance(text_kwargs["align"], float):
+            text_kwargs.pop("align")
+    text_kwargs.pop("y_fudge", None)
+
     if style is None:
         style = style_group_style('button', NoStyleGroupGiven)
     
