@@ -136,7 +136,7 @@ init python in navigation:
 
     
 screen navigation:
-    
+        
     frame:
         style_group "l"
         style "l_root"
@@ -217,6 +217,10 @@ screen navigation:
 
                                 if group_name is not None:
                                     add SPACER
+
+                            if persistent.navigation == "file":
+                                add SPACER
+                                textbutton _("+ Add script file") action Jump("add_file") style "l_button"
 
                 else:
                     

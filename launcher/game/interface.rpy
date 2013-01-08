@@ -245,7 +245,7 @@ init python in interface:
         the message.
         """
 
-        common(_("ERROR"), ERROR_COLOR, message=message, submessage=submessage, back=True, **kwargs)
+        common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=True, **kwargs)
         
 
         if label:
@@ -299,7 +299,7 @@ init python in interface:
                     continue
                     
             if filename:
-                if ("\\" in rv) or ("/" in rv):
+                if filename and (filename != "withslash") and (("\\" in rv) or ("/" in rv)):
                     error(_("File and directory names may not contain / or \\."), label=None)
                     continue
                     
