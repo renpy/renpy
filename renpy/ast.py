@@ -543,7 +543,77 @@ class Init(Node):
     def restructure(self, callback):
         callback(self.block)
     
+def apply_arguments(params, args, kwargs):
+    """
+    Applies arguments to parameters to update scope.
+    
+    `scope`
+        A dict.
+        
+    `params`
+        The parameters object.
+        
+    `args`, `kwargs`
+        Positional and keyword arguments.
+    """
+    
+    values = { }
+    rv = { }
+    
+    if args is None:
+        args = ()
 
+    if kwargs is None:
+        kwargs = { }
+
+    if params is None:
+        if args or kwargs:
+            raise Exception("Arguments supplied, but parameter list not present")
+        else:
+            return rv
+    
+    for name, value in zip(params.positional, args):
+        if name in values:
+            raise Exception("Parameter %s has two values." % name)
+
+        values[name] = value
+
+    extrapos = tuple(args[len(params.positional):])
+
+    for name, value in kwargs.iteritems():
+        if name in values:
+            raise Exception("Parameter %s has two values." % name)
+
+        values[name] = value
+
+    for name, default in params.parameters:
+
+        if name not in values:
+            if default is None:
+                raise Exception("Required parameter %s has no value." % name)
+            else:
+                rv[name] = renpy.python.py_eval(default)
+        
+        else:
+            rv[name] = values[name]
+            del values[name]
+                
+    # Now, values has the left-over keyword arguments, and extrapos
+    # has the left-over positional arguments.
+
+    if params.extrapos:
+        rv[params.extrapos] = extrapos
+    elif extrapos:
+        raise Exception("Too many arguments in call (expected %d, got %d)." % (len(params.positional), len(args)))
+
+    if params.extrakw:
+        rv[params.extrakw] = values
+    else:
+        if values:
+            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+
+    return rv
+    
 class Label(Node):
 
     __slots__ = [
@@ -593,71 +663,11 @@ class Label(Node):
 
         renpy.game.context().mark_seen()
         
-        args = renpy.store._args
-        kwargs = renpy.store._kwargs
+        values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
 
-
-        if self.parameters is None:
-            if args or kwargs:
-                raise Exception("Arguments supplied, but label does not take parameters.")
-            else:
-                if renpy.config.label_callback:
-                    renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
-
-                return
-        else:
-            if args is None:
-                args = ()
-
-            if kwargs is None:
-                kwargs = { }
-            
-        values = { }        
-        params = self.parameters
-
-        for name, value in zip(params.positional, args):
-            if name in values:
-                raise Exception("Parameter %s has two values." % name)
-
-            values[name] = value
-
-        extrapos = tuple(args[len(params.positional):])
-
-        for name, value in kwargs.iteritems():
-            if name in values:
-                raise Exception("Parameter %s has two values." % name)
-
-            values[name] = value
-
-        for name, default in params.parameters:
-
-            if name not in values:
-                if default is None:
-                    raise Exception("Required parameter %s has no value." % name)
-                else:
-                    values[name] = renpy.python.py_eval(default)
-
-                    
-            renpy.exports.dynamic(name)
-            setattr(renpy.store, name, values[name])
-            del values[name]
-
-        # Now, values has the left-over keyword arguments, and extrapos
-        # has the left-over positional arguments.
-
-        if params.extrapos:
-            renpy.exports.dynamic(params.extrapos)
-            setattr(renpy.store, params.extrapos, extrapos)
-        else:
-            if extrapos:
-                raise Exception("Too many arguments in call (expected %d, got %d)." % (len(params.positional), len(args)))
-
-        if params.extrakw:
-            renpy.exports.dynamic(params.extrakw)
-            setattr(renpy.store, params.extrakw, renpy.python.RevertableDict(values))
-        else:
-            if values:
-                raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+        for k, v in values.iteritems():
+            renpy.exports.dynamic(k)
+            setattr(renpy.store, k, v)
 
         renpy.store._args = None
         renpy.store._kwargs = None
