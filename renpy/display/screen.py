@@ -34,7 +34,8 @@ class Screen(renpy.object.Object):
                  zorder="0",
                  tag=None,
                  predict=None,
-                 variant=None):
+                 variant=None,
+                 parameters=False):
     
         # The name of this screen.
         if isinstance(name, basestring):
@@ -62,6 +63,8 @@ class Screen(renpy.object.Object):
 
         self.predict = predict
         
+        # True if this screen takes parameters via _args and _kwargs.
+        self.parameters = parameters
 
 
 class ScreenDisplayable(renpy.display.layout.Container):
@@ -446,9 +449,6 @@ def show_screen(_screen_name, *_args, **kwargs):
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
 
-    kwargs["_kwargs" ] = kwargs.copy()
-    kwargs["_args"] = _args
-
     name = _screen_name
     
     if not isinstance(name, tuple):
@@ -462,7 +462,15 @@ def show_screen(_screen_name, *_args, **kwargs):
     if _tag is None:
         _tag = screen.tag
 
-    d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, kwargs)    
+    scope = { }
+    
+    if screen.parameters:
+        scope["_kwargs" ] = kwargs
+        scope["_args"] = _args
+    else:
+        scope.update(kwargs)
+    
+    d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)    
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
 
@@ -482,6 +490,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     """
 
     _widget_properties = kwargs.pop("_widget_properties", {})
+    _scope = kwargs.pop
 
     kwargs["_kwargs" ] = kwargs.copy()
     kwargs["_args"] = _args
@@ -495,6 +504,14 @@ def predict_screen(_screen_name, *_args, **kwargs):
         name = tuple(name.split())
 
     screen = get_screen_variant(name[0])
+
+    scope = { }
+
+    if screen.parameters:
+        scope["_kwargs" ] = kwargs
+        scope["_args"] = _args
+    else:
+        scope.update(kwargs)
         
     try:
     
@@ -504,7 +521,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
         if not screen.predict:
             return
 
-        d = ScreenDisplayable(screen, None, None, _widget_properties, kwargs)    
+        d = ScreenDisplayable(screen, None, None, _widget_properties, scope)    
 
         d.update()
         renpy.display.predict.displayable(d)
@@ -535,9 +552,6 @@ def hide_screen(tag, layer='screens'):
 
 def use_screen(_screen_name, *_args, **kwargs):
     
-    kwargs["_kwargs" ] = kwargs.copy()
-    kwargs["_args"] = _args
-
     _name = kwargs.pop("_name", ())
     
     name = _screen_name
@@ -554,7 +568,13 @@ def use_screen(_screen_name, *_args, **kwargs):
     _current_screen.old_transfers = True
         
     scope = kwargs["_scope"].copy() or { }
-    scope.update(kwargs)
+
+    if screen.parameters:
+        scope["_kwargs"] = kwargs
+        scope["_args"] = _args
+    else:
+        scope.update(kwargs)
+    
     scope["_scope"] = scope
     scope["_name"] = (_name, name)
 

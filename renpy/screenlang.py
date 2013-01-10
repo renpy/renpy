@@ -1198,11 +1198,23 @@ class ScreenLangScreen(renpy.object.Object):
             tag=self.tag,
             variant=renpy.python.py_eval(self.variant),
             predict=renpy.python.py_eval(self.predict),
+            parameters=self.parameters,
             )
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
+
+        if self.parameters:
+
+            args = scope.get("_args", ())
+            kwargs = scope.get("_kwargs", { })
+            
+            values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
+            scope.update(values)
+        
         renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
+        
+        
         
 
 class ScreenParser(Parser):
@@ -1241,7 +1253,7 @@ class ScreenParser(Parser):
         lineno = l.number
         
         screen.name = l.require(l.word)
-        self.parameters = renpy.parser.parse_parameters(l)
+        screen.parameters = renpy.parser.parse_parameters(l)
 
         while parse_keyword(l):
             continue
