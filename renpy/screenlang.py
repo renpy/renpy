@@ -910,7 +910,7 @@ class UseParser(Parser):
         
         target_name = l.require(l.word)
 
-        code = "renpy.use_screen(%r, _name=%s, _scope=_scope" % (target_name, name)
+        code = "renpy.use_screen(%r" % target_name
         
         args = renpy.parser.parse_arguments(l)
 
@@ -918,12 +918,16 @@ class UseParser(Parser):
 
             for k, v in args.arguments:
                 if k is None:
-                    l.error('The use statement only takes keyword arguments.')
-                    
-                code += ", %s=(%s)" % (k, v)
+                    code += ", (%s)" % v
+                else:
+                    code += ", %s=(%s)" % (k, v)
+        
+        code += ", _name=%s, _scope=_scope" % name
+                            
+        if args:
                     
             if args.extrapos:
-                l.error('The use statement only takes keyword arguments.')
+                code += ", *(%s)" % args.extrapos
 
             if args.extrakw:
                 code += ", **(%s)" % args.extrakw

@@ -553,6 +553,7 @@ def hide_screen(tag, layer='screens'):
 def use_screen(_screen_name, *_args, **kwargs):
     
     _name = kwargs.pop("_name", ())
+    _scope = kwargs.pop("_scope", { })
     
     name = _screen_name
     
@@ -567,7 +568,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     old_transfers = _current_screen.old_transfers
     _current_screen.old_transfers = True
         
-    scope = kwargs["_scope"].copy() or { }
+    scope = _scope.copy()
 
     if screen.parameters:
         scope["_kwargs"] = kwargs
