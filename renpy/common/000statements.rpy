@@ -478,32 +478,11 @@ python early hide:
         # Parse a name.
         name = l.require(l.name)
 
-        # Parse a parameter list. (name -> expression string)
-        parameters = { }
-        
-        if l.match(r"\("):
-
-            while True:
-                pname = l.name()
-                if not pname:
-                    break
-
-                l.require(r"=")
-
-                expr = l.delimited_python(",)")
-
-                if not expr:
-                    l.error("expected expression.")
-
-                parameters[pname] = expr
-
-                if not l.match(r','):
-                    break
-
-            l.require(r'\)')
-            l.expect_eol()
+        # Parse the list of arguments.
+        arguments = renpy.parser.parse_arguments(l)
+        l.expect_eol()
             
-        return dict(name=name, parameters=parameters)
+        return dict(name=name, arguments=arguments)
 
     def parse_hide_screen(l):
         name = l.require(l.name)
@@ -513,31 +492,51 @@ python early hide:
         return dict(name=name)
 
     def predict_screen(p):
-        if not p["parameters"]:
-            renpy.predict_screen(p["name"])
+        if not p["arguments"]:
+            renpy.predict_screen(p["arguments"])
     
     def execute_show_screen(p):
 
         name = p["name"]
-        parameters = p["parameters"]
+        a = p["arguments"]
 
+        args = [ ]
         kwargs = { }
 
-        for k, v in parameters.iteritems():
-            kwargs[k] = eval(v)
+        for k, v in a.arguments:
+            if k is not None:
+                kwargs[k] = eval(v)
+            else:
+                args.append(eval(v))
 
-        renpy.show_screen(name, **kwargs)
+        if a.extrapos is not None:
+            args.extend(eval(a.extrapos))
+            
+        if a.extrakw is not None:
+            kwargs.update(eval(a.extrakw))
+
+        renpy.show_screen(name, *args, **kwargs)
 
     def execute_call_screen(p):
         name = p["name"]
-        parameters = p["parameters"]
+        a = p["arguments"]
 
+        args = [ ]
         kwargs = { }
 
-        for k, v in parameters.iteritems():
-            kwargs[str(k)] = eval(v)
+        for k, v in a.arguments:
+            if k is not None:
+                kwargs[k] = eval(v)
+            else:
+                args.append(eval(v))
 
-        store._return = renpy.call_screen(name, **kwargs)
+        if a.extrapos is not None:
+            args.extend(eval(a.extrapos))
+            
+        if a.extrakw is not None:
+            kwargs.update(eval(a.extrakw))
+
+        store._return = renpy.call_screen(name, *args, **kwargs)
 
     def execute_hide_screen(p):
         name = p["name"]

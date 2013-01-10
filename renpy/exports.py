@@ -1574,7 +1574,7 @@ def cache_unpin(*args):
     renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
-def call_screen(_screen_name, **kwargs):
+def call_screen(_screen_name, *args, **kwargs):
     """
     :doc: screens
 
@@ -1590,7 +1590,7 @@ def call_screen(_screen_name, **kwargs):
 
     renpy.exports.mode('screen')
     
-    show_screen(_screen_name, _transient=True, **kwargs)
+    show_screen(_screen_name, _transient=True, *args, **kwargs)
 
     roll_forward = renpy.exports.roll_forward_info()
 

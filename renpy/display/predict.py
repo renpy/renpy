@@ -50,13 +50,13 @@ def displayable(d):
         predicted.add(d)
         d.visit_all(lambda i : i.predict_one())
 
-def screen(_screen_name, **kwargs):
+def screen(_screen_name, *args, **kwargs):
     """
     Called to predict that the named screen is about to be shown
     with the given arguments.
     """
 
-    screens.append((_screen_name, kwargs))
+    screens.append((_screen_name, args, kwargs))
 
     
 def reset():
@@ -123,13 +123,13 @@ def prediction_coroutine(root_widget):
     predicting = False
 
     # Predict the screens themselves.
-    for name, kwargs in screens:
+    for name, args, kwargs in screens:
         yield True
 
         predicting = True
         
         try:
-            renpy.display.screen.predict_screen(name, **kwargs)
+            renpy.display.screen.predict_screen(name, *args, **kwargs)
         except:
             if renpy.config.debug_image_cache:
                 renpy.display.ic_log.write("While predicting screen %s %r", name, kwargs)

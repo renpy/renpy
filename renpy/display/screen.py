@@ -63,6 +63,7 @@ class Screen(renpy.object.Object):
         self.predict = predict
         
 
+
 class ScreenDisplayable(renpy.display.layout.Container):
     """
     A screen is a collection of widgets that are displayed together. This
@@ -412,13 +413,13 @@ def has_screen(name):
     else:
         return False
 
-def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs):
+def show_screen(_screen_name, *_args, **kwargs):
     """
     :doc: screens
     
     The programmatic equivalent of the show screen statement.
 
-    Shows the named screen.
+    Shows the named screen. This takes the following keyword arguments:
 
     `_screen_name`
         The name of the  screen to show.
@@ -440,6 +441,14 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
     initialize the screen's scope.       
     """
 
+    _layer = kwargs.pop("_layer", "screens")
+    _tag = kwargs.pop("_tag", None)
+    _widget_properties = kwargs.pop("_widget_properties", {})
+    _transient = kwargs.pop("_transient", False)
+
+    kwargs["_kwargs" ] = kwargs.copy()
+    kwargs["_args"] = _args
+
     name = _screen_name
     
     if not isinstance(name, tuple):
@@ -457,7 +466,7 @@ def show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
 
-def predict_screen(_screen_name, _widget_properties={}, **kwargs):
+def predict_screen(_screen_name, *_args, **kwargs):
     """
     Predicts the displayables that make up the given screen.
 
@@ -471,6 +480,11 @@ def predict_screen(_screen_name, _widget_properties={}, **kwargs):
     Keyword arguments not beginning with underscore (_) are used to
     initialize the screen's scope.       
     """
+
+    _widget_properties = kwargs.pop("_widget_properties", {})
+
+    kwargs["_kwargs" ] = kwargs.copy()
+    kwargs["_args"] = _args
 
     name = _screen_name
 
@@ -519,7 +533,12 @@ def hide_screen(tag, layer='screens'):
     if screen is not None:
         renpy.exports.hide(screen.tag, layer=layer)
 
-def use_screen(_screen_name, _name=(), **kwargs):
+def use_screen(_screen_name, *_args, **kwargs):
+    
+    kwargs["_kwargs" ] = kwargs.copy()
+    kwargs["_args"] = _args
+
+    _name = kwargs.pop("_name", ())
     
     name = _screen_name
     

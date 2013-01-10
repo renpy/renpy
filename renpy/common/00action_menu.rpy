@@ -38,7 +38,6 @@ init -1500 python:
         def __init__(self, screen=None):
             self.screen = screen
 
-
         def predict(self):
             if renpy.has_screen(self.screen):
                 renpy.predict_screen(self.screen)

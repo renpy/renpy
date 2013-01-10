@@ -56,16 +56,20 @@ init -1500 python:
          If not None, `transition` is use to show the new screen.
          """
          
-        def __init__(self, screen, transition=None, **kwargs):
+         
+        args = None
+
+        def __init__(self, screen, transition=None, *args, **kwargs):
             self.screen = screen
-            self.kwargs = kwargs
             self.transition = transition
+            self.args = args
+            self.kwargs = kwargs
 
         def predict(self):
-            renpy.predict_screen(self.screen, **self.kwargs)
+            renpy.predict_screen(self.screen, *self.args, **self.kwargs)
             
         def __call__(self):
-            renpy.show_screen(self.screen, **self.kwargs)
+            renpy.show_screen(self.screen, *self.args, **self.kwargs)
 
             if self.transition is not None:
                 renpy.transition(self.transition)
@@ -76,7 +80,7 @@ init -1500 python:
             return renpy.showing(self.screen)
 
 
-    def ShowTransient(screen, **kwargs):
+    def ShowTransient(screen, *args, **kwargs):
         """
          :doc: control_action
 
@@ -84,7 +88,7 @@ init -1500 python:
          the current interaction completes.
          """
 
-        return Show(screen, _transient=True, **kwargs)
+        return Show(screen, _transient=True, *args, **kwargs)
         
         
     class Hide(Action):

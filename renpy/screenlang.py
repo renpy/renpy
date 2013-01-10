@@ -1152,6 +1152,8 @@ class ScreenLangScreen(renpy.object.Object):
     # prediction existed.
     predict = "False"
     
+    parameters = None
+    
     def __init__(self):
 
         # The name of the screen.
@@ -1175,6 +1177,9 @@ class ScreenLangScreen(renpy.object.Object):
         # Should we predict this screen?
         self.predict = "None" # expr.
         
+        # The parameters this screen takes.
+        self.parameters = None
+        
     def after_upgrade(self, version):
         if version < 1:
             self.modal = "False"
@@ -1182,7 +1187,7 @@ class ScreenLangScreen(renpy.object.Object):
         
     def define(self):
         """
-        Defines us as a screen.
+        Defines a screen.
         """
 
         renpy.display.screen.define_screen(
@@ -1192,11 +1197,12 @@ class ScreenLangScreen(renpy.object.Object):
             zorder=self.zorder,
             tag=self.tag,
             variant=renpy.python.py_eval(self.variant),
-            predict=renpy.python.py_eval(self.predict)
+            predict=renpy.python.py_eval(self.predict),
             )
 
-    def __call__(self, _scope=None, **kwargs):
-        renpy.python.py_exec_bytecode(self.code.bytecode, locals=_scope)
+    def __call__(self, *args, **kwargs):
+        scope = kwargs["_scope"]
+        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
         
 
 class ScreenParser(Parser):
@@ -1231,11 +1237,11 @@ class ScreenParser(Parser):
                 return True
                 
             return False
-
         
         lineno = l.number
         
         screen.name = l.require(l.word)
+        self.parameters = renpy.parser.parse_parameters(l)
 
         while parse_keyword(l):
             continue
