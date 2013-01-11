@@ -406,6 +406,11 @@ def loadable_core(name):
     if name in loadable_cache:
         return loadable_cache[name]
 
+    for apk in apks:
+        prefixed_name = "/".join("x-" + i for i in name.split("/"))
+        if prefixed_name in apk.info:
+            return True
+
     try:
         transfn(name)
         loadable_cache[name] = True
