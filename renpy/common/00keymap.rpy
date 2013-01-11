@@ -58,11 +58,13 @@ init -1600 python:
         toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
         fast_skip = [ '>' ],
 
-        # These control the bar.
+        # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_decrease = [ 'K_LEFT', 'joy_left' ],
-        bar_increase = [ 'K_RIGHT', 'joy_right' ],
+        bar_left = [ 'K_LEFT', 'joy_left' ],
+        bar_right = [ 'K_RIGHT', 'joy_right' ],
+        bar_up = [ 'K_UP', 'joy_up' ],
+        bar_down = [ 'K_DOWN', 'joy_down' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE' ],
