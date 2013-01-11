@@ -437,7 +437,7 @@ class Wrapper(renpy.object.Object):
                 if w is not None:
                     keyword["replaces"] = w
                     
-                    if renpy.display.focus.grab is w:
+                    if (renpy.display.focus.grab is w) and (not screen.hiding):
                         grab = True
                         
 

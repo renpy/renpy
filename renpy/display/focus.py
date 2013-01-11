@@ -193,7 +193,6 @@ def before_interact(roots):
 
     grab = new_grab
     new_grab = None
-    
 
 # This changes the focus to be the widget contained inside the new
 # focus object.
