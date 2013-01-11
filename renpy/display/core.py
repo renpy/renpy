@@ -751,6 +751,10 @@ class SceneLists(renpy.object.Object):
         
             d = oldsle.displayable._hide(now - st, now - at, prefix)
             
+            # _hide can mutate the layers, so we need to recompute 
+            # index.            
+            index = l.index(oldsle)
+
             if d is not None:
                 
                 sle = SceneListEntry(
