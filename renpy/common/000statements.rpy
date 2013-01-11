@@ -503,17 +503,19 @@ python early hide:
         args = [ ]
         kwargs = { }
 
-        for k, v in a.arguments:
-            if k is not None:
-                kwargs[k] = eval(v)
-            else:
-                args.append(eval(v))
+        if a is not None:
 
-        if a.extrapos is not None:
-            args.extend(eval(a.extrapos))
-            
-        if a.extrakw is not None:
-            kwargs.update(eval(a.extrakw))
+            for k, v in a.arguments:
+                if k is not None:
+                    kwargs[k] = eval(v)
+                else:
+                    args.append(eval(v))
+
+            if a.extrapos is not None:
+                args.extend(eval(a.extrapos))
+                
+            if a.extrakw is not None:
+                kwargs.update(eval(a.extrakw))
 
         renpy.show_screen(name, *args, **kwargs)
 
@@ -524,17 +526,19 @@ python early hide:
         args = [ ]
         kwargs = { }
 
-        for k, v in a.arguments:
-            if k is not None:
-                kwargs[k] = eval(v)
-            else:
-                args.append(eval(v))
+        if a is not None:
 
-        if a.extrapos is not None:
-            args.extend(eval(a.extrapos))
-            
-        if a.extrakw is not None:
-            kwargs.update(eval(a.extrakw))
+            for k, v in a.arguments:
+                if k is not None:
+                    kwargs[k] = eval(v)
+                else:
+                    args.append(eval(v))
+
+            if a.extrapos is not None:
+                args.extend(eval(a.extrapos))
+                
+            if a.extrakw is not None:
+                kwargs.update(eval(a.extrakw))
 
         store._return = renpy.call_screen(name, *args, **kwargs)
 
