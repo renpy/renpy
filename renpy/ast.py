@@ -761,7 +761,9 @@ class EarlyPython(Node):
 
     def early_execute(self):
         renpy.python.create_store(self.store)
-        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+        
+        if self.code.bytecode:
+            renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
 
 class Image(Node):
 
