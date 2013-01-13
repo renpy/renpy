@@ -239,9 +239,8 @@ def process_redraws():
         else:
             new_redraw_queue.append(t)
 
-        redraw_queue = new_redraw_queue
-
-        
+    redraw_queue = new_redraw_queue
+            
     return rv
 
 

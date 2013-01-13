@@ -2089,6 +2089,9 @@ class Interface(object):
         # Start sound.
         renpy.audio.audio.interact()
 
+        # How long until we redraw.
+        redraw_in = 3600
+                
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try: 
@@ -2165,14 +2168,13 @@ class Interface(object):
                 needs_redraw = renpy.display.video.frequent() or needs_redraw
                 needs_redraw = renpy.display.render.process_redraws() or needs_redraw
 
-                # How many seconds until we redraw or timeout.
-                redraw_in = 3600
+                # How many seconds until we timeout.
                 timeout_in = 3600
 
                 # Handle the redraw timer.
                 redraw_time = renpy.display.render.redraw_time()
 
-                if redraw_time and not needs_redraw:
+                if (redraw_time is not None) and not needs_redraw:
                     if redraw_time != old_redraw_time:
                         time_left = redraw_time - get_time()
                         time_left = min(time_left, 3600)
@@ -2186,7 +2188,7 @@ class Interface(object):
                         
                         old_redraw_time = redraw_time
                 else:
-                    redraw_in = 0
+                    redraw_in = 3600
                     pygame.time.set_timer(REDRAW, 0)
 
                 # Handle the timeout timer.
@@ -2362,7 +2364,6 @@ class Interface(object):
                     except:
                         pass
                         
-
                 # Check again after handling the event.
                 needs_redraw |= renpy.display.render.process_redraws()
 
