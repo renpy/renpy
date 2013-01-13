@@ -20,6 +20,8 @@ label translate:
 
         if language == "rot13":
             args.append("--rot13")
+        else:
+            args.append("--empty")
             
         interface.processing(_("Ren'Py is generating translations...."))
         project.current.launch(args, wait=True)

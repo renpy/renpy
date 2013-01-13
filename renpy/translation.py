@@ -580,8 +580,12 @@ class TranslateFile(object):
             self.f.write("\n")
             
             for n in t.block:
-                self.f.write("    " + n.get_code(self.filter) + "\n")
-                self.f.write("\n")
+                self.f.write("    # " + n.get_code().encode("utf-8") + "\n")
+
+            for n in t.block:
+                self.f.write("    " + n.get_code(self.filter).encode("utf-8") + "\n")
+
+            self.f.write("\n")
 
     def write_strings(self):
         """
@@ -617,6 +621,8 @@ class TranslateFile(object):
 def null_filter(s):
     return s
 
+def empty_filter(s):
+    return ""
 
 ROT13 = { }
 
@@ -724,10 +730,13 @@ def translate_command():
     ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
     ap.add_argument("language", help="The language to generate translations for.")
     ap.add_argument("--rot13", help="Apply rot13 while generating translations.", dest="rot13", action="store_true")
+    ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
     args = ap.parse_args()
     
     if args.rot13:
         filter = rot13_filter #@ReservedAssignment
+    elif args.empty:
+        filter = empty_filter # @ReservedAssignment
     else:
         filter = null_filter #@ReservedAssignment
     
