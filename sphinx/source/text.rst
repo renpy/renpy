@@ -7,7 +7,7 @@ Text
 Ren'Py contains several ways of displaying text. The :ref:`say <say-statement>`
 and :ref:`menu <menu-statement>` are primarily concerned with the
 display of text to the user. The user interface often contains text,
-displayed using the :ref:`text <sl-text>`, :ref:`textbutton <sl-textbutton>`, 
+displayed using the :ref:`text <sl-text>`, :ref:`textbutton <sl-textbutton>`,
 and :ref:`label <sl-label>` screen language statements. These
 functions, along with others, create :func:`Text` displayables, and
 show them on the screen.
@@ -31,7 +31,7 @@ Escape Characters
 
 There are three special characters that can control the way Ren'Py
 displays text. A creator needs to be aware of these characters to
-ensure that their writing is not accidentally misinterpreted by the engine. 
+ensure that their writing is not accidentally misinterpreted by the engine.
 
 \ (backslash)
     The backslash character is used to introduce when writing a Ren'Py
@@ -42,7 +42,7 @@ ensure that their writing is not accidentally misinterpreted by the engine.
 
     \\' (backslash-quote)
         Includes a single quote in a single-quoted string.
-    
+
     \\\  (backslash-space)
         Includes an additional space in a Ren'Py string. By default,
         Ren'Py script text collapses adjacent whitespace into a single
@@ -63,7 +63,7 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     The left brace is used to introduce a text tag. To include a left
     brace in your text, double it - write ``{{``.
 
-    
+
 Interpolating Data
 ==================
 
@@ -117,7 +117,7 @@ Styling and Text Tags
 In Ren'Py, text gains style information in two ways. The first is from
 the style that is applied to the entire block of text. Please see the
 section about the :ref:`style system <styles>` for more details,
-especially the section on :ref:`text style properties <text-style-properties>`.  
+especially the section on :ref:`text style properties <text-style-properties>`.
 
 The second way is through text tags. Text tags are suitable for
 styling a portion of text block, or a small fraction of the text
@@ -292,7 +292,13 @@ Tags that apply to all text are:
    the number of pixels of space to add. ::
 
       "Line 1{vspace=30}Line 2"
-       
+
+.. text-tag:: #
+
+   Text tags beginning with # are ignored, but can be included to distinguish
+   strings for the purpose of translation. ::
+   
+      "New{#playlist}" 
         
 Dialogue Text Tags
 ------------------
@@ -428,7 +434,7 @@ changes are required:
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
 3. The yoffset of the new style should be set, in order to move the
-   ruby text above the baseline.   
+   ruby text above the baseline.
 4. The :propref:`ruby_style` field of the text's style should be set
    to the newly-created style.
 
@@ -485,7 +491,7 @@ italics to be used instead of the automatically-generated italics.
 
 Once such mapping would be to replace the italic version of the Deja
 Vu Sans font with the official oblique version. (You'll need to
-download the oblique font from the web.) ::
+download the oblique font from the web.)::
 
     init python:
         config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False) 
@@ -523,11 +529,11 @@ Font Groups
 When creating a multilingual game, it may not be possible to find a single
 font that covers every writing system the game use while projecting the
 the mood the creator intends. To support this, Ren'Py supports font groups
-that can take characters from two or more fonts and combine them into a 
-single font. 
+that can take characters from two or more fonts and combine them into a
+single font.
 
-To create a font group, create a FontGroup object and call the .add method 
-on it once or more. a FontGroup can be used wherever a font name can be 
+To create a font group, create a FontGroup object and call the .add method
+on it once or more. a FontGroup can be used wherever a font name can be
 used. The add method takes the start and end of a range of unicode character
 points, and the first range to cover a point is used.
 

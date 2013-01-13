@@ -840,6 +840,9 @@ class Layout(object):
                 ts = push()
                 ts.vertical = False
             
+            elif tag[0] == "#":
+                pass
+            
             else:
                 raise Exception("Unknown text tag %r" % text)
             

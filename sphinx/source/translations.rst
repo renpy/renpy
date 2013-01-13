@@ -90,7 +90,7 @@ the label preceding the unit, and the code inside the unit. (If
 multiple units would be assigned the same translation number, a serial
 number to the second and later units to distinguish them.)
 
-In the example above, the first unit generated is assigned the identifier     
+In the example above, the first unit generated is assigned the identifier
 start_636ae3f5, and contains the statement::
 
     e "Thank you for taking a look at the Ren'Py translation framework."
@@ -108,7 +108,7 @@ is loaded.
 
 Translate Statement
 -------------------
-  
+
 When you generate translations for a language, Ren'Py will generate a
 translate statement corresponding to each translation unit. When
 translating the code above, Ren'Py will generate::
@@ -203,7 +203,7 @@ a translation identifier directly, using a statement like::
 
 Adding labels can also confuse the translation process. To prevent
 this, labels that are given the hide clause are ignored by the
-translation code. ::
+translation code.::
 
     label ignored_by_translation hide:
         "..."
@@ -229,7 +229,7 @@ have the following script::
   define e = Character(_("Eileen"))
 
   # ...
-  
+
   menu:
 
        "Go West":
@@ -266,11 +266,22 @@ Which can then be translated::
 
 String translations are also applied to dialogue strings that are not
 translated as dialogue.
-      
+
+When the same string is used in multiple places in the code, the string can
+be distinguished using the {#...} text tag. Even though they display the
+same, Ren'Py considers all of these distinct strings for the purpose
+of translation::
+
+    "New"
+    "New{#project}"
+    "New{#game}"
+    "New{#playlist}"
+
+
 Translating substitutions
 -------------------------
 
-String substitutions can be translate by using the !t conversion
+String substitutions can be translated using the !t conversion
 flag. So the following code will be translatable using the dialogue
 and code translation systems::
 
@@ -280,7 +291,7 @@ and code translation systems::
       $ mood = _("awful")
 
   "I'm feeling [mood!t]."
-  
+
 
 Image and File Translations
 ===========================
@@ -357,8 +368,8 @@ of the game.
   The name of the current language, or None if the default language is
   being used. This should be treated as a read-only variable. To
   change the language, call :func:`renpy.change_language`.
-         
-            
+
+
 Unsanctioned Translations
 =========================
 
@@ -387,7 +398,7 @@ translation template that contains all of the strings in it.
 
 If a game doesn't include support for changing the language, it may be
 appropriate to use an init python block to set :var:`config.language`
-to the target language. 
+to the target language.
 
 Along with the use of string translations for dialogue, unsanctioned
 translators may be interested in using the techniques described above

@@ -153,8 +153,6 @@ def encode_say_string(s):
 
     return "\"" + s + "\""
 
-
-
 class Restructurer(object):
 
     def __init__(self, children):
@@ -303,13 +301,21 @@ class StringTranslator(object):
     def translate(self, old):
         
         new = self.translations.get(old, None)
-        
+                
         if new is not None:
             return new
         
         if update_translations:
             self.translations[old] = old
             self.unknown.append(old)
+        
+        # Remove {#...} tags.
+        if new is None:
+            notags = re.sub(r"\{\#.*?\}", "", old)
+            new = self.translations.get(notags, None)
+
+        if new is not None:
+            return True
             
         return old
 

@@ -21,7 +21,7 @@
     
     When in a menu, this returns from the menu.
 
-.. function:: Show(screen, transition=None, **kwargs)
+.. function:: Show(screen, transition=None, *args, **kwargs)
     
     This causes another screen to be shown. `screen` is a string
     giving the name of the screen. The keyword arguments are
@@ -29,7 +29,7 @@
     
     If not None, `transition` is use to show the new screen.
 
-.. function:: ShowTransient(screen, **kwargs)
+.. function:: ShowTransient(screen, *args, **kwargs)
     
     Shows a transient screen. A transient screen will be hidden when
     the current interaction completes.

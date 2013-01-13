@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: renpy.call_screen(_screen_name, **kwargs)
+.. function:: renpy.call_screen(_screen_name, *args, **kwargs)
     
     The programmatic equivalent of the show screen statement.
     
@@ -65,11 +65,11 @@
     
     Hides the screen with `tag` on `layer`.
 
-.. function:: renpy.show_screen(_screen_name, _layer='screens', _tag=None, _widget_properties={}, _transient=False, **kwargs)
+.. function:: renpy.show_screen(_screen_name, *_args, **kwargs)
     
     The programmatic equivalent of the show screen statement.
     
-    Shows the named screen.
+    Shows the named screen. This takes the following keyword arguments:
     
     `_screen_name`
         The name of the  screen to show.
