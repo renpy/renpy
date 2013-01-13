@@ -361,6 +361,69 @@ def translate_string(s):
 def write_updated_strings():
     stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
+
+        
+################################################################################
+# RPT Support
+# 
+# RPT was the translation format used before 6.15.
+################################################################################
+
+def load_rpt(fn):        
+    """
+    Loads the .rpt file `fn`.
+    """
+
+    def unquote(s):
+        s = s.replace("\\n", "\n")
+        s = s.replace("\\\\", "\\")
+        return s
+
+    language = os.path.basename(fn).replace(".rpt", "")
+    
+    f = renpy.loader.load(fn)
+    
+    old = None
+    
+    for l in f:
+        l = l.decode("utf-8")
+        l = l.rstrip()
+        
+        if not l:
+            continue
+        
+        if l[0] == '#':
+            continue
+        
+        s = unquote(l[2:])
+        
+        if l[0] == '<':
+            if old:
+                raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
+            
+            old = s
+            
+        if l[0] == ">":
+            if old is None:
+                raise Exception("{0} translation {1!r} doesn't belong to a string.".format(language, s))
+            
+            add_string_translation(language, old, s)
+            old = None
+    
+    f.close()
+    
+    if old is not None:
+        raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
+    
+def load_all_rpts():
+    """
+    Loads all .rpt files.
+    """
+
+    for fn in renpy.exports.list_files():
+        if fn.endswith(".rpt"):
+            print fn
+            load_rpt(fn) 
     
 ################################################################################
 # Changing language
@@ -375,6 +438,8 @@ def init_translation():
  
     global style_backup
     style_backup = renpy.style.backup()
+ 
+    load_all_rpts()
  
 def change_language(language):
     """
