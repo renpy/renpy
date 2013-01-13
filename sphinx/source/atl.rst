@@ -674,6 +674,24 @@ positions.
 
     Equivalent to setting ypos and yanchor to this value.
 
+.. transform-property:: xoffset
+
+    :type: float
+    :default: 0.0
+    
+    The number of pixels the displayable is offset by in the horizontal 
+    direction. Positive values offset toward the right.
+
+.. transform-property:: yoffset
+
+    :type: float
+    :default: 0.0
+    
+    The number of pixels the displayable is offset by in the vertical
+    direction. Positive values offset toward the bottom.
+    
+    
+
 .. transform-property:: xcenter
 
     :type: float
