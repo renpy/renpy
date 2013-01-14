@@ -629,6 +629,13 @@ Window properties are used to specify the look of windows, frames, and buttons.
 Button Style Properties
 -----------------------
 
+.. style-property:: child displayable or None
+
+    If not None, this gives a displayable that replaces the child of the 
+    button. For example, this (as insensitive_child) can be used to replace the 
+    contents of an insensitive button with an image that indicates the button
+    is locked.
+
 .. style-property:: hover_sound string
 
     A sound that is played when the button gains focus.
