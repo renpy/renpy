@@ -138,7 +138,7 @@ cython("renpy.text.texwrap")
 
 cython(
     "renpy.text.ftfont", 
-    [ "ftsupport.c" ],
+    [ "ftsupport.c", "ttgsubtable.c" ],
     libs = sdl + [ 'freetype', 'z', 'm' ])
 
 find_unnecessary_gen()
