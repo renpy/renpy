@@ -71,6 +71,7 @@ def extra_imports():
     import urllib2; urllib2
     import codecs; codecs
     import rsa; rsa
+    import decimal; decimal
     
 trace_file = None
 trace_local = None
