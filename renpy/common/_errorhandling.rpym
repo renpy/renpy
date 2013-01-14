@@ -77,6 +77,8 @@ init python:
     style._default.first_spacing = None
     style._default.box_layout = None
     style._default.box_wrap = False
+    style._default.box_reverse = False
+    style._default.order_reverse = False
 
     # Focus properties.
     style._default.focus_mask = None

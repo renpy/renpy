@@ -773,11 +773,24 @@ These are used for the horizontal and vertical box layouts.
     If not None, the spacing between the first and second members of
     this box, in pixels. This overrides the spacing property.
 
+.. style-property:: box_reverse boolean
+
+    If true, the placement of the items in the box will be reversed. When 
+    this is true, a hbox will be filled right-to-left, and a vbox will
+    be filled bottom-to-top. This defaults to false.
+    
 .. style-property:: box_wrap boolean
 
     If true, then boxes will wrap when they reach the end of a line or column.
     If false (the default), they will extend past the end of the line.
     
+.. style-property:: order_reverse boolean
+
+    If false, the default the items in the box will be draw first-to-last,
+    with the first item in the box being below the second, and so on. If true,
+    this order will be reversed, and the first item in the box will be above
+    all other items in the box.
+
     
 .. _fixed-style-properties:
     

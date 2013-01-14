@@ -191,6 +191,8 @@ init -1800 python:
     style.default.first_spacing = None
     style.default.box_layout = None
     style.default.box_wrap = False
+    style.default.box_reverse = False
+    style.default.order_reverse = False
 
     # Focus properties.
     style.default.focus_mask = None

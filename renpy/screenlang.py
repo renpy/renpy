@@ -590,6 +590,8 @@ bar_properties = [ Style(i) for i in [
 box_properties = [ Style(i) for i in [
         "box_layout",
         "box_wrap",
+        "box_reverse",
+        "order_reverse",
         "spacing",
         "first_spacing",
         "fit_first",
@@ -633,21 +635,16 @@ add(position_properties)
 add(text_properties)
 
 FunctionStatementParser("hbox", "ui.hbox", many)
-Keyword("box_reverse")
-Keyword("order_reverse")
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
 FunctionStatementParser("vbox", "ui.vbox", many)
-Keyword("box_reverse")
-Keyword("order_reverse")
 add(ui_properties)
 add(position_properties)
 add(box_properties)
 
 FunctionStatementParser("fixed", "ui.fixed", many)
-Keyword("order_reverse")
 add(ui_properties)
 add(position_properties)
 add(box_properties)

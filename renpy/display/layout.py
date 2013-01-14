@@ -90,8 +90,6 @@ class Container(renpy.display.core.Displayable):
     # use RevertableLists if we want.
     _list_type = list
 
-    box_reverse = False
-
     def __init__(self, *args, **properties):
 
         self.children = self._list_type()
@@ -116,10 +114,7 @@ class Container(renpy.display.core.Displayable):
 
         child = renpy.easy.displayable(d)
         
-        if self.box_reverse:
-            self.children.insert(0, child)
-        else:
-            self.children.append(child)
+        self.children.append(child)
        
         self.child = child
         self.offsets = self._list_type()
@@ -430,13 +425,6 @@ class MultiBox(Container):
         if spacing is not None:
             properties['spacing'] = spacing
 
-        # The box_reverse code is mostly in Container.
-        if "box_reverse" in properties:
-            self.box_reverse = properties.pop("box_reverse")
-
-        if "order_reverse" in properties:
-            self.box_reverse = properties.pop("order_reverse")
-
         super(MultiBox, self).__init__(style=style, **properties)
 
         self.default_layout = layout
@@ -517,13 +505,13 @@ class MultiBox(Container):
             csts = [ st ] * len(self.children)
             cats = [ at ] * len(self.children)
 
-        self.offsets = [ ]
+        offsets = [ ]
 
         if layout == "fixed":
 
             rv = None
 
-            if self.order_reverse:
+            if self.style.order_reverse:
                 iterator = zip(reversed(self.children), reversed(csts), reversed(cats))
             else:
                 iterator = zip(self.children, csts, cats)
@@ -544,12 +532,17 @@ class MultiBox(Container):
 
                 if surf:
                     offset = child.place(rv, 0, 0, width, height, surf)
-                    self.offsets.append(offset)
+                    offsets.append(offset)
                 else:
-                    self.offsets.append((0, 0))
+                    offsets.append((0, 0))
 
             if rv is None:
                 rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)                                        
+
+            if self.style.order_reverse:
+                offsets.reverse()
+                
+            self.offsets = offsets
 
             return rv
 
@@ -575,6 +568,12 @@ class MultiBox(Container):
         # box.
         line_width = 0
         line_height = 0
+        
+        # The children to layout.
+        children = list(self.children)
+        if self.style.box_reverse:
+            children.reverse()
+            spacings.reverse()
         
         # a list of (child, x, y, w, h, surf) tuples that are turned into 
         # calls to child.place().
@@ -638,7 +637,7 @@ class MultiBox(Container):
             line = [ ]
             remwidth = width
 
-            for d, padding, cst, cat in zip(self.children, spacings, csts, cats):
+            for d, padding, cst, cat in zip(children, spacings, csts, cats):
                 
                 if box_wrap:                    
                     rw = width
@@ -674,7 +673,7 @@ class MultiBox(Container):
             line = [ ]
             remheight = height
 
-            for d, padding, cst, cat in zip(self.children, spacings, csts, cats):
+            for d, padding, cst, cat in zip(children, spacings, csts, cats):
                 
                 if box_wrap:                    
                     rh = height
@@ -699,17 +698,19 @@ class MultiBox(Container):
                 remheight -= (sh + padding)
                 
             maxx, maxy = layout_line(line, 0, remheight if yfill else 0)
-        
+
+        # Back to the common for vertical and horizontal.
+
         if not xfill:
             width = maxx
         
         if not yfill:
             height = maxy
                     
-        if self.box_reverse ^ self.order_reverse:
-            placements.reverse()
-                     
         rv = renpy.display.render.Render(width, height)
+
+        if self.style.box_reverse ^ self.style.order_reverse:
+            placements.reverse()
 
         for child, x, y, w, h, surf in placements:
             if full_width:
@@ -718,15 +719,24 @@ class MultiBox(Container):
                 h = height
                             
             offset = child.place(rv, x, y, w, h, surf)
-            self.offsets.append(offset)
+            offsets.append(offset)
+            
+        if self.style.order_reverse:
+            offsets.reverse()
+            
+        self.offsets = offsets
             
         return rv
 
         
     def event(self, ev, x, y, st):
+        
+        
         children_offsets = zip(self.children, self.offsets, self.start_times)
-        children_offsets.reverse()
 
+        if not self.style.order_reverse:
+            children_offsets.reverse()
+        
         try:
         
             for i, (xo, yo), t in children_offsets: 
