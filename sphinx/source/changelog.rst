@@ -20,7 +20,7 @@ The Ren'Py launcher has been rewritten. Some of the improvements are:
   the editor to the location where that name is defined.
 
   Script navigation also provides access to individual script files.
-  
+
 * The launcher now supports one-click project building. Instead of
   using multiple steps to build a project, a single click will now
   cause the launcher to:
@@ -134,7 +134,7 @@ also prevent Ren'Py from locking up if too many frames are dropped.
 
 Ren'Py now supports the WebM video format.
 
-  
+
 Image Load Log
 --------------
 
@@ -165,7 +165,7 @@ changed:
 
 Taken together, these changes make it possible to create a list of
 save slots where the user is able to add new slots to the list.
-  
+
 
 Multiple Store Support
 ----------------------
@@ -186,7 +186,7 @@ example::
            """
 
 User-created stores are placed into the "store" package, with the default
-store being the package itself. Names can be imported between packages. ::
+store being the package itself. Names can be imported between packages.::
 
 
    init python:
@@ -201,7 +201,7 @@ that name.
 
 
 Platform Support and Library Updates
--------------------------------------
+------------------------------------
 
 Linux support has been changed.
 
@@ -243,21 +243,21 @@ Other Changes
   user can resize OpenGL windows.
 
 * Ren'Py's handling of command line argments has been rewritten. Most
-  notably, lint is now invoked with the ::
+  notably, lint is now invoked with the::
 
     renpy.sh <gamename> lint
 
-  command. (Which also works with renpy.exe.) 
-  
+  command. (Which also works with renpy.exe.)
+
 * Ren'Py can now dump information about the game to a json file when
   starting up. The information dumped can assist other tools in
   providing launcher-like code navigation.
-  
+
 * The little-used remote control feature has been removed from Ren'Py.
 
 * The :var:`config.gl_resize` variable now controls resizing of a game
   running in GL mode.
-  
+
 * Documentation fixes (by SleepKirby and others).
 
 * The NVL-Mode tutorial has been ported to Sphinx (by Apricotorange).
@@ -1131,5 +1131,9 @@ Other Changes
   * Take the condition parameter to Character into account when determining
     if an nvl clear occurs before the next interaction.
 
+Older Changelogs
+================
 
+Older changelogs can be found at:
 
+    http://www.renpy.org/dl/6.10.2/CHANGELOG.txt
