@@ -107,11 +107,11 @@ init -2 python:
 
 screen input:
 
-    window:
+    window style "input_window":
         has vbox
 
-        text prompt
-        input id "input"
+        text prompt style "input_prompt"
+        input id "input" style "input_text"
 
     use quick_menu
         
