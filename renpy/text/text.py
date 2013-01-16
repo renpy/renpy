@@ -1478,6 +1478,9 @@ class Text(renpy.display.core.Displayable):
             new_tokens.append(t)
 
         return new_tokens, displayables
+
+language_tailor = textsupport.language_tailor
     
 # Compatibility, in case one of these was pickled.
 ParameterizedText = extras.ParameterizedText
+

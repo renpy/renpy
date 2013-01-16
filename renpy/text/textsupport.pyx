@@ -117,6 +117,35 @@ def annotate_western(list glyphs):
         else:
             g.split = SPLIT_NONE
 
+# This is used to tailor the unicode break algorithm. If a character in this
+# array is mapped to not 
+cdef char break_tailor[65536]
+
+for i in range(0, 65536):
+    break_tailor[i] = BC_XX
+
+def language_tailor(chars, cls):
+    """
+    :doc: other
+
+    This can be used to override the line breaking class of a character. For
+    example, the linebreaking class of a character can be set to ID to 
+    treat it as an ideograph, which allows breaks before and after that
+    character.
+    
+    `chars`
+        A list of characters to tailor.
+        
+    `cls`
+        The character class. This should be one of the classes defined in Table 
+        1 of `UAX #14: Unicode Line Breaking Algorithm <http://www.unicode.org/reports/tr14/tr14-30.html>`_.
+    """
+
+    ncls = CLASSES.get(cls, BC_XX)
+
+    for c in chars:
+        break_tailor[ord(c)] = ncls
+
 # cjk
 #
 # 0 = western
@@ -129,7 +158,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     for linebreaking.
     """
     
-    cdef char old_type, new_type
+    cdef char old_type, new_type, tailor_type
     cdef int space_pos, pos
     cdef int len_glyphs = len(glyphs)
     cdef int c
@@ -137,7 +166,6 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     cdef Glyph g, g1, old_g
     cdef char *break_classes
     
- 
     old_type = BC_WJ
     pos = 1
     space_pos = 0
@@ -153,6 +181,8 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         break_classes = break_cjk_normal
     elif cjk == 3:
         break_classes = break_cjk_strict
+    else:
+        break_classes = break_western
     
     for pos from 1 <= pos < len_glyphs:
         
@@ -161,10 +191,13 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         
         if 0x20000 <= c <= 0x2ffff: # Supplemental Ideographic Plane
             new_type = BC_ID
+            tailor_type = BC_XX
         elif c > 65535: # Other non-basic planes.
             new_type = BC_AL
+            tailor_type = BC_XX
         else: # Basic plane - use lookup table.
             new_type = break_classes[c]
+            tailor_type = break_tailor[c]
             
         # If given no-ideographs, then turn ideographs and hangul syllables
         # into alphabetic characters.
@@ -181,6 +214,9 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
         # Normalize the class by turning various groups into AL.
         if (new_type >= BC_PITCH and new_type != BC_SP):                
             new_type = BC_AL
+
+        if tailor_type != BC_XX:
+            new_type = tailor_type
             
         # If we have a space, record it and continue.
         if new_type == BC_SP:

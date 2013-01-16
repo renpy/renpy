@@ -32,6 +32,7 @@ import renpy.audio
 
 from renpy.text.extras import ParameterizedText
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
+from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
@@ -84,6 +85,7 @@ def public_api():
     displayable
     unelide_filename, get_parse_errors
     change_language, known_languages
+    language_tailor
 
 del public_api
 
