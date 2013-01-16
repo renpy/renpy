@@ -403,6 +403,10 @@ algorithm, use the code::
 The faster line-breaking algorithm is not be necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
 
+The line breaking algorithms can be further configured using the
+:func:`renpy.language_tailor` function.
+
+
 Vertical Text
 -------------
 
