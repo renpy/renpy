@@ -207,7 +207,7 @@ def make_clean_stores():
     
     global clean_store_backup
 
-    for k, v in store_dicts.iteritems():
+    for _k, v in store_dicts.iteritems():
     
         v.old.clear()
         v.ever_been_changed.clear()

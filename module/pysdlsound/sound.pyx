@@ -160,7 +160,7 @@ def init(freq, stereo, samples, status=False):
     PSS_init(freq, stereo, samples, status)
     check_error()
 
-def quit():
+def quit(): # @ReservedAssignment
     PSS_quit()
 
 def periodic():

@@ -1,7 +1,6 @@
 # Fixes line endings and adds UTF-8 BOM to all rpy files in a
 # directory.
 
-import codecs
 import sys
 
 def process(fn):
