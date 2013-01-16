@@ -1,5 +1,4 @@
 include "linebreak.pxi"
-include "eastasian.pxi"
 
 cdef class Glyph:
     
@@ -118,8 +117,13 @@ def annotate_western(list glyphs):
         else:
             g.split = SPLIT_NONE
 
-
-def annotate_unicode(list glyphs, bint no_ideographs):
+# cjk
+#
+# 0 = western
+# 1 = loose
+# 2 = normal
+# 3 = strict
+def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
     """
     Annotate unicode characters with information as to if they can be used
     for linebreaking.
@@ -131,6 +135,8 @@ def annotate_unicode(list glyphs, bint no_ideographs):
     cdef int c
     cdef char bc
     cdef Glyph g, g1, old_g
+    cdef char *break_classes
+    
  
     old_type = BC_WJ
     pos = 1
@@ -138,6 +144,15 @@ def annotate_unicode(list glyphs, bint no_ideographs):
     
     if not glyphs:
         return
+    
+    if cjk == 0:
+        break_classes = break_western
+    elif cjk == 1:
+        break_classes = break_cjk_loose
+    elif cjk == 2:
+        break_classes = break_cjk_normal
+    elif cjk == 3:
+        break_classes = break_cjk_strict
     
     for pos from 1 <= pos < len_glyphs:
         
@@ -151,10 +166,6 @@ def annotate_unicode(list glyphs, bint no_ideographs):
         else: # Basic plane - use lookup table.
             new_type = break_classes[c]
             
-        # Normalize the class by turning various groups into AL.
-        if (new_type >= BC_PITCH and new_type != BC_SP):                
-            new_type = BC_AL
-            
         # If given no-ideographs, then turn ideographs and hangul syllables
         # into alphabetic characters.
         if no_ideographs and (
@@ -165,6 +176,10 @@ def annotate_unicode(list glyphs, bint no_ideographs):
             new_type == BC_JV or
             new_type == BC_JT):
             
+            new_type = BC_AL
+            
+        # Normalize the class by turning various groups into AL.
+        if (new_type >= BC_PITCH and new_type != BC_SP):                
             new_type = BC_AL
             
         # If we have a space, record it and continue.
@@ -225,39 +240,6 @@ def annotate_unicode(list glyphs, bint no_ideographs):
             
         old_g = g
 
-def annotate_japanese(list glyphs):
-    """
-    The line-breaking rules used in Japanese visual novels. We add a break
-    opportunity before and after each non-ruby wide character.
-    """
-
-    cdef Glyph g
-    cdef char width
-    cdef int c
-    
-    split = False
-    
-    for g in glyphs:
-        
-        if split and g.split == SPLIT_NONE:
-            g.split = SPLIT_BEFORE
-            
-        split = False
-        
-        if g.ruby != RUBY_NONE:
-            continue
-
-        c = g.character
-
-        if c <= 0xffff:
-            width = eastasian_width[g.character]
-        else:
-            width = EA_W
-
-        if (width == EA_W or width == EA_A):
-            if g.split == SPLIT_NONE:
-                g.split = SPLIT_BEFORE
-            split = True
 
 
 def linebreak_greedy(list glyphs, int first_width, int rest_width):

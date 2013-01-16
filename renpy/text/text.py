@@ -487,14 +487,17 @@ class Layout(object):
             language = style.language
             
             if language == "unicode" or language == "eastasian":
-                textsupport.annotate_unicode(line_glyphs, False)
+                textsupport.annotate_unicode(line_glyphs, False, 0)
             elif language == "korean-with-spaces":
-                textsupport.annotate_unicode(line_glyphs, True)
+                textsupport.annotate_unicode(line_glyphs, True, 0)
             elif language == "western":
                 textsupport.annotate_western(line_glyphs)
-            elif language == "japanese-alternate":
-                textsupport.annotate_unicode(line_glyphs, False)
-                textsupport.annotate_japanese(line_glyphs)
+            elif language == "cjk-loose":
+                textsupport.annotate_unicode(line_glyphs, False, 1)
+            elif language == "cjk-normal":
+                textsupport.annotate_unicode(line_glyphs, False, 2)
+            elif language == "cjk-strict":
+                textsupport.annotate_unicode(line_glyphs, False, 3)
             else:
                 raise Exception("Unknown language: {0}".format(language))
 

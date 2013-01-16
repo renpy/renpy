@@ -399,12 +399,20 @@ Text Style Properties
         Uses the unicode linebreaking algorithm, which is suitable for
         most languages.
 
-    ``"japanese-alternate"``
-        Allows linebreaking between any two non-ruby wide characters. This is 
-        an alternative to the unicode algorithm that is used by Japanese
-        visual novels. (The unicode algorithm is also appropriate for Japanese
-        text - it's up to the creator to decide which is more appropriate for
-        their game.)
+    ``"japanese-strict"``
+        Formats Japanese text in a "strict" manner. It 
+        forbids breaks before small kana and prolonged sound marks. 
+
+    ``"japanese-normal"``
+        Formats Japanese text in a "normal" manner. It 
+        allows breaks before small kana, prolonged sound marks, and
+        certain hyphens. 
+        
+    ``"japanese-loose"``
+        Formats Japanese text in a "loose" manner. It allows breaks
+        before small kana , prolonged sound marks, iteration marks,
+        inseparable characters, centered punctuation marks, and postfixes;
+        and allows breaks before prefixes. 
 
     ``"korean-with-spaces"``
         Used for Korean text delimited by whitespace. This prevents linebreaking
@@ -414,9 +422,7 @@ Text Style Properties
         Allows breaking only at whitespace. Suitable for most
         languages.
 
-    ``"eastasian"``
-        Legacy alias for "unicode".
-
+    The three Japanese breaking modes are taken from the `CSS3 text module <http://www.w3.org/TR/css3-text/#line-break>`_.
 
 .. style-property:: layout string
 

@@ -366,25 +366,6 @@ style:
 * kerning
 
 
-Vertical Text
-=============
-
-When the :prop:`vertical` style property is set, Ren'Py will produce
-vertically oriented text. The text is written top-to-bottom,
-right-to-left.
-
-There are two text tags that interact with vertical text.
-
-.. text-tag:: horiz
-              
-    Includes horizontally-oriented text inside vertical text.
-
-.. text-tag:: vert
-              
-    Includes vertically-oriented text inside horizontal text. (This will
-    not rotate the text to the vertical orientation.)
-
-  
 Non-English Languages
 =====================
 
@@ -405,15 +386,40 @@ spaces, which can be enabled with the code::
     init python:
          style.default.language = "korean-with-spaces"
 
-Finally, ideographic languages provide a large number of opportunities
-for line breaking. To enable a faster line-breaking algorithm, use the
-code::
+Japanese has multiple rules for line breaking. We recommend starting with
+"japanese-normal", and moving to "japanese-loose" or "japanese-strict" for
+more or less break opportunities, respectively.::
+
+    init python:
+         style.default.language = "japanese-normal"
+
+Ideographic languages provide a large number of opportunities
+for line breaking. To enable a faster but less-accurate line-breaking
+algorithm, use the code::
 
     init python:
          style.default.layout = "greedy"
 
 The faster line-breaking algorithm is not be necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
+
+Vertical Text
+-------------
+
+When the :propref:`vertical` style property is set, Ren'Py will produce
+vertically oriented text. The text is written top-to-bottom,
+right-to-left.
+
+There are two text tags that interact with vertical text.
+
+.. text-tag:: horiz
+              
+    Includes horizontally-oriented text inside vertical text.
+
+.. text-tag:: vert
+              
+    Includes vertically-oriented text inside horizontal text. (This will
+    not rotate the text to the vertical orientation.)
 
 
 .. _ruby-text:

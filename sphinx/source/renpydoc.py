@@ -154,9 +154,6 @@ def add_index(app, domain, object_type, title):
         kind = object_type
         
     app.domains[domain].indices.append(MyIndex)
-    
-
-
 
 def setup(app):
     # app.add_description_unit('property', 'propref')
