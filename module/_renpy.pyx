@@ -136,7 +136,7 @@ def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 # and alpha. Instead, they are the first through fourth byte of data.
 # The mapping between byte and color/alpha varies from system to
 # system, and needs to be determined at a higher level.
-def map(pysrc, pydst, r, g, b, a):
+def map(pysrc, pydst, r, g, b, a): # @ReservedAssignment
 
     if not isinstance(pysrc, PygameSurface):
         raise Exception("map requires a pygame Surface as its first argument.")
