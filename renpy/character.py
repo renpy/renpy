@@ -467,6 +467,9 @@ def display_say(
         if behavior and afm:
             behavior.set_afm_length(end - start)
 
+        if not slow:
+            slow_done()
+
         if interact:            
             rv = renpy.ui.interact(mouse='say', type=type, roll_forward=roll_forward)
 
