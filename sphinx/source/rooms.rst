@@ -330,8 +330,8 @@ There is one store variable used by replay mode:
    When in replay mode, this is sent to the label at which replay
    mode was started. Outside of replay mode, this is None.
 
-In addition, :var:`config.enter_replay_mode` and
-:var:`config.exit_replay_mode` are used when entering and exiting
+In addition, :var:`config.enter_replay_transition` and
+:var:`config.exit_replay_transition` are used when entering and exiting
 replay mode, respectively.
 
 The following variables and actions are used in replay mode:

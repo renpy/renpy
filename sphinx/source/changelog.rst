@@ -77,6 +77,21 @@ and::
 
   show screen top_text("It works!")
 
+Replay Gallery
+--------------
+
+Ren'Py now includes support for :ref:`replaying <replay>` scenes. A
+scene replay can be invoked from anywhere in Ren'Py (for example, from
+a main menu or game menus screen, even when the game has
+started). When the replay ends, Ren'Py will return to the location the
+replay was invoked from, even if that location is in a screen or in
+python code. Rollback works inside a replay, but saving and loading
+is disabled.
+
+The :func:`Replay` action begins a replay. The
+:func:`renpy.end_replay` ends a replay if one is in progress, and is
+ignored otherwise.
+  
 Launcher Improvements
 ---------------------
 

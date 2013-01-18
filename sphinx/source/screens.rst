@@ -141,7 +141,12 @@ expression. It takes the following properties:
    
         text "Hello, World."
 
+A screen can take a parameter list::
 
+   screen center_text(s, size=42):
+        text s size size
+
+        
 User Interface Statements
 =========================
 
@@ -1310,7 +1315,7 @@ Use
 
 The use statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
-followed by a keyword argument list, in parenthesis.
+followed by an argument list, in parenthesis.
 
 The scope of the included code includes the scope of the current
 statement's code, updated by assinging the parameters their new
@@ -1318,7 +1323,7 @@ values.
 
 ::
 
-    screen file_slot:
+    screen file_slot(slot):
         button:
             action FileAction(slot)
 
@@ -1333,7 +1338,7 @@ values.
      screen save:
          grid 2 5:
              for i in range(1, 11):
-                  use file_slot(slot=i)
+                  use file_slot(i)
 
 .. _sl-python:
                   
