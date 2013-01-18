@@ -2,6 +2,152 @@
 Full Changelog
 ==============
 
+Ren'Py 6.15
+===========
+
+Translation Framework
+---------------------
+
+Ren'Py now includes a comprehensive :ref:`translation framework
+<translation>`. This framework includes support for using a single
+language selection to change dialogue, menus and other interface text,
+images and files, and styles.
+
+The dialogue translation support allows lines of dialogue to be split
+and combined at the translator's discretion. As most Ren'Py statements
+are allowed inside the new translation blocks, it's possible to use
+logic (like conditions) to tailor the translations to your language.
+
+The launcher includes a new "Generate Translations" buttons, which -
+as part of a sanctioned translation where the full script is present -
+will generate empty translation files for a new language.
+
+Improved Japanese Support
+-------------------------
+
+Ren'Py 6.15 includes two changes that improve it's support for
+Japanese-language games:
+
+* Support for vertical writing has been added to Ren'Py. Consisting of
+  the :propref:`vertical` style property for text, and the new
+  :propref:`box_reverse` property on hboxes, this support makes it
+  possible to display dialogue, menus, and other text in a vertical
+  orientation.
+
+  Vertical text support was written by Koichi Akabe.
+
+* The line-breaking algorithm has been updated to match Unicode
+  6.2. In addition, three new "languages" have been added. The new
+  "japanese-strict", "japanese-normal", and "japanese-loose" languages
+  (based on the line-break options in the CSS3 Text module) allow
+  greater control of how Ren'Py breaks lines with small kana and
+  other special characters.
+
+  Linebreaking can be further tailored using the new
+  :func:`renpy.language_tailor` function, which can change the
+  linebreaking class of a character.
+
+Console
+-------
+
+The new debug console makes it possible to interactively run Ren'Py
+script and Python statements, and immediately see the results. The
+console is available in developer mode or when :var:`config.console`
+is True, and can be accessed by pressing the backtick key.
+
+The console can be used to:
+
+* Jump to a label.
+* Interactively try out Ren'Py script statements.
+* Evaluate a python expression or statement to see the result.
+* Trace python expressions as the game progresses.
+
+The console was originally written by Shiz, C, and delta.
+
+Screen Parameters
+-----------------
+
+Screens now take named parameters, similar to the way that labels
+and transforms take named parameters. It's now possible to write::
+
+  screen top_text(s):
+       text s xalign 0.5
+
+and::
+
+  show screen top_text("It works!")
+
+Launcher Improvements
+---------------------
+
+There were a few launcher improvements in this release.
+
+* The files pane of the navigation page has a new button that
+  allows the user to create a new script file.
+
+* The launcher can generate translation templates, and can be
+  translated using the translation framework.
+
+* The Ren'Py launcher now has a small amount of support for
+  skins. While the basic layout of the launcher remains fixed, skins
+  allow the background images and colors to be changed. See the
+  :ref:`skin documentation <skins>` for more details.
+
+Other Changes
+-------------
+
+* The common directory has been moved to renpy/common, as it's
+  part of Ren'Py. The giant 00screens.rpy file has been broken
+  up into a large number of smaller files.
+
+* The new :propref:`box_reverse` and :propref:`order_reverse` style
+  properties allow the user to control the order in which children
+  of vbox and hboxes are placed and drawn, respectively.
+
+* The xoffset and yoffset transform properties now take floating point
+  numbers, allowing more precise positioning if subpixel is true. 
+  
+* The :propref:`child` style property of buttons is now exposed to
+  the screen language.
+
+* The python decimal module is now included in the default builds of
+  Ren'Py.
+
+Bugfixes
+--------
+
+Among others, the following bugs were fixed:
+
+* :ghbug:`37`: A crash with LiveTile when sizes were not integers.
+
+* :ghbug:`41`: :func:`renpy.loadable` failed to search for files
+  inside android packages.
+
+* :ghbug:`42`: The launcher can now run a game that's in a read-only
+  directory.
+  
+* :ghbug:`45`: Ren'Py would fail when the hiding of a screen caused a
+  screen beneath it to be hidden.
+
+* :ghbug:`46`: A bug that prevented Ren'Py from evicting images from
+  an over-full image cache, that manifested as a runaway memory leak.
+
+* :ghbug:`50`: Vertical bars would scroll with the left and right
+  arrow keys; and bars would remain grabbed even if they were
+  grabbed while leaving the screen, preventing further input.
+
+* :ghbug:`51`: The slow_done callback was not called after a rollback.
+  
+* It's now possible to :func:`renpy.call` a label that doesn't take
+  parameters.
+
+* Fixed an error handling failure when a style used by error handling
+  was not buildable.
+
+* Fixed an error handling failure when a python early block contained
+  a syntax error.
+
+
 Ren'Py 6.14
 ===========
 

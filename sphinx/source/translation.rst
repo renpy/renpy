@@ -12,7 +12,7 @@ Dialogue
     The main dialogue of the script can be translated, including a
     provision for splitting, combining, omitting, and reordering
     lines.
-Menus and other Strings
+Menus and Interface Strings
     All interface text can be translated.
 Images and Files
     It's possible to include variant images and other files that are

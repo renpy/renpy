@@ -38,7 +38,7 @@ Text, Displayables, Transforms, and Transitions
    :maxdepth: 1
     
    text
-   translations
+   translation
    displayables
    transforms
    transitions

@@ -260,7 +260,10 @@ epub_copyright = u'2011, PyTom'
 highlight_language = "renpy"
 
 extlinks = {'lpbug': ('https://bugs.launchpad.net/renpy/+bug/%s',
-                      'launchpad bug ')}
+                      'launchpad bug '),
+            'ghbug': ('https://github.com/renpy/renpy/issues/%s',
+                      'github bug'),
+            }
 
 rst_prolog = """\
 .. |PGS4A| replace:: RAPT
