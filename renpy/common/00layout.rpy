@@ -51,7 +51,7 @@ init -1400 python:
 label _quit_prompt:
     $ renpy.loadsave.force_autosave()
 
-    if layout.yesno_prompt(None, layout.QUIT):
+    if layout.invoke_yesno_prompt(None, layout.QUIT):
         jump _quit
     else:
         return
@@ -425,10 +425,23 @@ init -1400 python hide:
     layout.QUIT = u"Are you sure you want to quit?"
     layout.MAIN_MENU = u"Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
 
+    config.enter_yesno_transition = None
+    config.exit_yesno_transition = None
+
     @layout
     def invoke_yesno_prompt(*args):
+        
         _enter_menu()
-        return layout.yesno_prompt(*args)
+        
+        if config.enter_yesno_transition:
+            renpy.transition(config.enter_yesno_transition)
+        
+        rv = layout.yesno_prompt(*args)
+        
+        if config.enter_yesno_transition:
+            renpy.transition(config.exit_yesno_transition)
+        
+        return rv
 
     @layout
     def yesno_screen(message, yes=None, no=None):
@@ -451,13 +464,16 @@ init -1400 python hide:
 
         if renpy.has_screen("yesno_prompt"):
 
-            yes_action = [ Hide("yesno_prompt") ]
-            no_action = [ Hide("yesno_prompt") ]
+            yes_action = [ Hide("yesno_prompt", config.exit_yesno_transition) ]
+            no_action = [ Hide("yesno_prompt", config.exit_yesno_transition) ]
 
             if yes is not None:
                 yes_action.append(yes)
             if no is not None:
                 no_action.append(no)
+            
+            if config.enter_yesno_transition:
+                renpy.transition(config.enter_yesno_transition)
             
             renpy.show_screen(
                 "yesno_prompt", 

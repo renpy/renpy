@@ -125,6 +125,11 @@ Other Changes
 * The :propref:`child` style property of buttons is now exposed to
   the screen language.
 
+* The new :var:`config.enter_yesno_transition` and
+  :var:`config.exit_yesno_transition` variables allow a creator to
+  supply transitions that are used upon entering and exiting
+  yes/no prompts.
+  
 * The python decimal module is now included in the default builds of
   Ren'Py.
 

@@ -157,6 +157,11 @@ These control transitions between various screens.
     If not None, this variable should give a transition that will be
     used when entering the game menu.
 
+.. var:: config.enter_yesno_transition = None
+
+    If not None, a transition that is used when entering the yes/no
+    prompt screen.
+    
 .. var:: config.exit_replay_transition = None
 
     If not None, a transition that is used when exiting a replay.
@@ -166,6 +171,11 @@ These control transitions between various screens.
     If not None, this variable should give a transition that will be
     performed when exiting the game menu.
 
+.. var:: config.exiting_yesno_transition = None
+
+    If not None, a transition that is used when exiting the yes/no
+    prompt screen.
+    
 .. var:: config.game_main_transition = None
 
     The transition that is used to display the main menu after leaving
