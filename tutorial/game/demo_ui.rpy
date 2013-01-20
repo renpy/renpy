@@ -51,6 +51,7 @@ init:
         def day_planner():
 
             periods = [ _('Morning'), _('Afternoon'), _('Evening') ]
+            periods_small = {'Morning': _('morning'), 'Afternoon': _('afternoon'), 'Evening': _('evening') }
             choices = [ _('Study'), _('Exercise'),
                         _('Eat'), _('Drink'), _('Be Merry') ]
 
@@ -143,7 +144,8 @@ init:
                              )
                 
                     ui.vbox()
-                    ui.text(_("What will you do in the %s?") % editing.lower())
+                    renpy.store.periods_small_selected = periods_small[editing]
+                    ui.text(_("What will you do in the [periods_small_selected!t]?"))
                     ui.null(height=20)
 
                     for i in choices:
