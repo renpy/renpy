@@ -17,7 +17,7 @@ screen viewport_screen:
 
         add "concert2.jpg"
 
-    textbutton "Dismiss":
+    textbutton _("Dismiss"):
         xpos 300
         xanchor 0.5
         ypos 550
@@ -50,21 +50,21 @@ init:
     python:
         def day_planner():
 
-            periods = [ 'Morning', 'Afternoon', 'Evening' ]
-            choices = [ 'Study', 'Exercise',
-                        'Eat', 'Drink', 'Be Merry' ]
+            periods = [ _('Morning'), _('Afternoon'), _('Evening') ]
+            choices = [ _('Study'), _('Exercise'),
+                        _('Eat'), _('Drink'), _('Be Merry') ]
 
-            plan = { 'Morning' : 'Eat',
-                     'Afternoon' : 'Drink',
-                     'Evening' : 'Be Merry' }
+            plan = { _('Morning') : _('Eat'),
+                     _('Afternoon') : _('Drink'),
+                     _('Evening') : _('Be Merry') }
 
-            day = 'March 25th'
+            day = _('March 25th')
 
             stats = [
-                ('Strength', 100, 10),
-                ('Intelligence', 100, 25),
-                ('Moxie', 100, 100),
-                ('Chutzpah', 100, 75),
+                (_('Strength'), 100, 10),
+                (_('Intelligence'), 100, 25),
+                (_('Moxie'), 100, 100),
+                (_('Chutzpah'), 100, 75),
                 ]
 
             editing = None
@@ -93,7 +93,7 @@ init:
 
                 ui.vbox()
 
-                ui.text('Statistics')
+                ui.text(_('Statistics'))
                 ui.null(height=20)
 
                 for name, range, value in stats:
@@ -119,11 +119,12 @@ init:
                 ui.null(height=20)
                 
                 for i in periods:
-                    face = i + ": " + plan[i]
-                    button(face, editing == i, ("edit", i), xminimum=250)
+                    renpy.store.period_tmp = i
+                    renpy.store.plan_tmp = plan[i]
+                    button("[period_tmp!t]: [plan_tmp!t]", editing == i, ("edit", i), xminimum=250)
 
                 ui.null(height=20)
-                ui.textbutton("Continue",
+                ui.textbutton(_("Continue"),
                               clicked=ui.returns(("done", True)),
                               xminimum=250)
                 ui.null(height=20)
@@ -142,7 +143,7 @@ init:
                              )
                 
                     ui.vbox()
-                    ui.text("What will you do in the %s?" % editing.lower())
+                    ui.text(_("What will you do in the %s?") % editing.lower())
                     ui.null(height=20)
 
                     for i in choices:
@@ -156,7 +157,7 @@ init:
                     ui.close()
 
                 # Window at the bottom.
-                e("To get to the next screen, click the 'Continue' button.", interact=False)
+                e(_("To get to the next screen, click the 'Continue' button."), interact=False)
 
                 type, value = ui.interact()
 
@@ -231,9 +232,9 @@ label demo_ui:
 
         e "We can also prompt the user to enter some text."
 
-        $ povname = renpy.input("What is your name?") or "Guy Shy"
+        $ povname = renpy.input(_("What is your name?")) or _("Guy Shy")
 
-        pov "My name is [povname]."
+        pov "My name is [povname!t]."
 
     
     e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"

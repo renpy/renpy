@@ -50,7 +50,7 @@ label demo_layers:
 
     hide eileen2
 
-    show expression Text("This is text.", size=50, yalign=0.5, xalign=0.5, drop_shadow=(2, 2)) as text
+    show expression Text(_("This is text."), size=50, yalign=0.5, xalign=0.5, drop_shadow=(2, 2)) as text
     with dissolve
 
     e "You can use \"show expression\" to show things that aren't just images, like text."

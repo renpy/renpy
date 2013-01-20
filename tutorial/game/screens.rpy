@@ -427,7 +427,7 @@ screen preferences:
                 bar value Preference("sound volume")
 
                 if config.sample_sound:
-                    textbutton "Test":
+                    textbutton _("Test"):
                         action Play("sound", config.sample_sound)
                         style "soundtest_button"
 

@@ -8,17 +8,17 @@ init:
                            spacewidth=6)
 
     # Declare a character that uses the sfont.
-    $ esfont = Character("Eileen",
+    $ esfont = Character(_("Eileen"),
                          color="#c8ffc8",
                          what_font="new_sfont")
 
     # Slow text.
-    $ eslow = Character("Eileen",
+    $ eslow = Character(_("Eileen"),
                         color="#c8ffc8",
                         what_slow_cps=20)
 
     # Outlined text.
-    $ eoutline = Character("Eileen",
+    $ eoutline = Character(_("Eileen"),
                            color="#c8ffc8",
                            what_outlines=[ (1, "#282") ])
     
@@ -53,7 +53,7 @@ init python:
     style.ruby_style.size = 12
    
 define eruby = Character(
-    "Eileen",
+    _("Eileen"),
     color="#c8ffc8",
     what_ruby_style=style.ruby_style,
     what_line_leading=10)

@@ -2,7 +2,7 @@
 
 
 #begin characters
-define l = Character("Lucy", color="#ffcccc")
+define l = Character(_("Lucy"), color="#ffcccc")
 #end characters
 
 #begin images
