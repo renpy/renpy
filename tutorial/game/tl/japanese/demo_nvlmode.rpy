@@ -23,7 +23,7 @@ translate japanese demo_nvlmode_66cbcf75:
 
     # nvl clear
     # nvle "To use NVL-mode, you need to define Characters with a kind=nvl."
-    nvle "NVLモードを使うには、キャラクターを kind=nvl で宣言する必要があります。"
+    nvl clear
     nvle "NVLモードを使うには、キャラクターを kind=nvl で宣言する必要があります。"
 
 # game/demo_nvlmode.rpy:25
@@ -61,7 +61,7 @@ translate japanese demo_nvlmode_0f2b7d59:
 
     # nvl clear
     # nvle "Good!"
-    nvle "いいですね！"
+    nvl clear
     nvle "いいですね！"
 
 # game/demo_nvlmode.rpy:53
@@ -75,7 +75,7 @@ translate japanese demo_nvlmode_b64ad3b1:
 
     # nvl clear
     # nvle "Well, it might help if you take a look at the demo code."
-    nvle "えっと、多分デモコードを見れば分かるようになると思います。"
+    nvl clear
     nvle "えっと、多分デモコードを見れば分かるようになると思います。"
 
 # game/demo_nvlmode.rpy:61
