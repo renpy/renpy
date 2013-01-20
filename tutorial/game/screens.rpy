@@ -387,7 +387,7 @@ screen preferences:
 
                 label _("Language")
                 textbutton "English" action Language(None)
-                textbutton u"日本語" action Language("japanese")
+                textbutton u"日本語" text_font "VL-Gothic-Regular.ttf" action Language("japanese")
 
         vbox:
             frame:
