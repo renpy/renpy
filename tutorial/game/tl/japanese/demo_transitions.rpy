@@ -76,13 +76,13 @@ translate japanese demo_simple_transitions_bdfcd85a:
 translate japanese demo_simple_transitions_432f7224:
 
     # e "Motions can also be used as transitions."
-    "......"
+    e "動きのあるものもトランジションとして使えます。"
 
 # game/demo_transitions.rpy:118
 translate japanese demo_simple_transitions_a20cefa7:
 
     # "..."
-    "......"
+    "..."
 
 # game/demo_transitions.rpy:120
 translate japanese demo_simple_transitions_0fd4d656:
