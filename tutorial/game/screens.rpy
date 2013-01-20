@@ -381,6 +381,14 @@ screen preferences:
 
                 textbutton _("Joystick...") action Preference("joystick")
 
+            frame:
+                style_group "pref"
+                has vbox
+
+                label _("Language")
+                textbutton "English" action Language(None)
+                textbutton u"日本語" action Language("japanese")
+
         vbox:
             frame:
                 style_group "pref"
