@@ -270,6 +270,7 @@ class TextSegment(object):
         on the font group.
         """
 
+
         if not isinstance(self.font, font.FontGroup):
             yield (self, s)
             return
@@ -287,6 +288,8 @@ class TextSegment(object):
                 segs[f] = seg
                 
             yield seg, ss
+
+        
 
 
 class SpaceSegment(object):
@@ -369,6 +372,21 @@ class DisplayableSegment(object):
             gt += 1.0 / self.cps
         
         self.glyph.time = gt
+        return gt
+
+class FlagSegment(object):
+    """
+    A do-nothing segment that just exists so we can flag the start and end
+    of a run of text.
+    """
+    
+    def glyphs(self, s):
+        return [ ]
+    
+    def draw(self, glyphs, di):
+        return
+    
+    def assign_times(self, gt, glyphs):
         return gt
 
     
@@ -704,14 +722,14 @@ class Layout(object):
                     raise Exception("%r closes a text tag that isn't open." % text)
             
             elif tag == "_start":
-                ts = push()
-                tss.pop(-2)
-                self.start_segment = ts
+                fs = FlagSegment()
+                line.append((fs, ""))
+                self.start_segment = fs
                 
             elif tag == "_end":
-                ts = push()
-                tss.pop(-2)
-                self.end_segment = ts
+                fs = FlagSegment()
+                line.append((fs, ""))
+                self.end_segment = fs
                 
             elif tag == "p":
                 # Duplicated from the newline tag.
