@@ -1302,10 +1302,10 @@ class ScreenParser(Parser):
         # import dis
         # dis.dis(a)
         
-        # import unparse
-        # print
-        # print screen.name, "-----------------------------------------"
-        # unparse.Unparser(node)
+#        import unparse
+#        print
+#        print screen.name, "-----------------------------------------"
+#        unparse.Unparser(node)
         
         screen.code = renpy.ast.PyCode(node, location, 'exec')
 

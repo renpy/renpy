@@ -357,7 +357,7 @@ mmx_ok(void)
 
 #define	mmx_r2m(op, reg, mem) \
 	__asm__ __volatile__ (#op " %%" #reg ", %0" \
-			      : "=X" (mem) \
+			      : "=m" (mem) \
 			      : /* nothing */ )
 
 #define	mmx_r2r(op, regs, regd) \
@@ -394,7 +394,7 @@ mmx_ok(void)
 */
 #define	movd_m2r(var, reg)	mmx_m2r(movd, var, reg)
 #define	movd_r2m(reg, var)	mmx_r2m(movd, reg, var)
-#define	movd_r2r(regs, regd)	mmx_r2r(movd, regs, regd)
+#define	movd_r2r(regs, regd) mmx_r2r(movd, regs, regd)
 #define	movd(vars, vard) \
 	__asm__ __volatile__ ("movd %1, %%mm0\n\t" \
 			      "movd %%mm0, %0" \
