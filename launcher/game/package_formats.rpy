@@ -66,7 +66,7 @@ init python in distribute:
             else:
                 info = tarfile.TarInfo(name)
                 info.size = 0
-                info.mtime = time.time()
+                info.mtime = int(time.time())
                 info.type = tarfile.DIRTYPE
 
             if xbit:
