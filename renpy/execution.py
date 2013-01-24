@@ -162,7 +162,7 @@ class Context(renpy.object.Object):
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
         
-        self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay" ])
+        self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
         self.dynamic_stack.append({ })
 
         if clear:

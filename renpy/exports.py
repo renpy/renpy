@@ -1755,8 +1755,6 @@ def get_say_attributes():
 
     return say_attributes
 
-side_image_attributes = None
-
 def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
     """
     :doc: other
@@ -1779,7 +1777,7 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master')
     if image_tag is not None:
         attrs = (image_tag,) + images.get_attributes(layer, image_tag)
     else:
-        attrs = side_image_attributes
+        attrs = renpy.store._side_image_attributes
         
     if not attrs:
         return None

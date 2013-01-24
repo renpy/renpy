@@ -733,14 +733,14 @@ class ADVCharacter(object):
 
         self.resolve_say_attributes(False)
         
-        old_side_image_attributes = renpy.exports.side_image_attributes
+        old_side_image_attributes = renpy.store._side_image_attributes
             
         if self.image_tag:
             attrs = (self.image_tag,) + renpy.game.context().images.get_attributes("master", self.image_tag)
         else:
             attrs = None
         
-        renpy.exports.side_image_attributes = attrs
+        renpy.store._side_image_attributes = attrs
         
         try:
             
@@ -792,21 +792,22 @@ class ADVCharacter(object):
 
         finally:
             
-            renpy.exports.side_image_attributes = old_side_image_attributes
+            if interact:
+                renpy.store._side_image_attributes = old_side_image_attributes
             
                 
     def predict(self, what):
 
         self.resolve_say_attributes(True)
         
-        old_side_image_attributes = renpy.exports.side_image_attributes
+        old_side_image_attributes = renpy.store._side_image_attributes
             
         if self.image_tag:
             attrs = self.image_tag + renpy.game.context().images.get_attributes("master", self.image_tag)
         else:
             attrs = None
         
-        renpy.exports.side_image_attributes = attrs
+        renpy.store._side_image_attributes = attrs
 
         try:
 
@@ -818,7 +819,7 @@ class ADVCharacter(object):
             return self.do_predict(who, what)
 
         finally:            
-            renpy.exports.side_image_attributes = old_side_image_attributes            
+            renpy.store._side_image_attributes = old_side_image_attributes            
 
     def will_interact(self):
 

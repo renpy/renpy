@@ -345,6 +345,9 @@ _cache_pin_set = set()
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None
     
+# Used to store the side image attributes.
+_side_image_attributes = None
+    
 # Make these available to user code.
 import sys
 import os
