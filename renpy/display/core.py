@@ -1196,6 +1196,8 @@ class Interface(object):
         self.set_window_caption(force=True)
         self.set_icon()
     
+        pygame.key.set_repeat(200, 20)
+    
     def set_icon(self):
         """
         This is called to set up the window icon.
