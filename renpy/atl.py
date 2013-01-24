@@ -249,6 +249,11 @@ class ATLTransformBase(renpy.object.Object):
         self.last_transform_event = t.last_transform_event
         self.last_child_transform_event = t.last_child_transform_event
 
+        self.st = t.st
+        self.at = t.at
+        self.st_offset = t.st_offset
+        self.at_offset = t.at_offset
+
         if self.child is renpy.display.motion.null:
             self.child = t.child
         
@@ -567,12 +572,12 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
+                    if duration <= 0:
+                        raise Exception("ATL appears to be in an infinite loop.")
+
                     # Figure how many durations can occur between the
                     # start of the loop and now.
                     new_repeats = int((target - loop_start) / duration)
-
-                    if duration <= 0:
-                        raise Exception("ATL appears to be in an infinite loop.")
 
                     if count is not None:
                         if repeats + new_repeats >= count:

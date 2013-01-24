@@ -48,11 +48,12 @@ def transform_render(self, widtho, heighto, st, at):
     # Should we perform clipping?
     clipping = False
 
-    # Preserve the illusion of linear time.
-    if st == 0:
-        self.st_offset = self.st
-    if at == 0:
-        self.at_offset = self.at
+    # Prevent time from ticking backwards, as can happen if we replace a 
+    # transform but keep its state.
+    if st + self.st_offset <= self.st:
+        self.st_offset = self.st - st
+    if at + self.at_offset <= self.at:
+        self.at_offset = self.at - at
 
     self.st = st = st + self.st_offset
     self.at = at = at + self.at_offset

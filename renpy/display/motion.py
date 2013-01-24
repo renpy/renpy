@@ -637,7 +637,7 @@ class Transform(Container):
             d = self
 
         d.st_offset = self.st_offset
-        d.at_offset = self.at_offset            
+        d.at_offset = self.at_offset
 
         if kind == "hide":
             d.hide_request = True
@@ -648,7 +648,7 @@ class Transform(Container):
         d.replaced_response = True
 
         if d.function is not None:
-            d.function(d, st, at)
+            d.function(d, st + d.st_offset, at + d.at_offset)
        
         new_child = d.child._hide(st, at, kind)
 
@@ -804,7 +804,7 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         
     def _show(self):
         super(ATLTransform, self)._show()
-        self.execute(self, 0, 0)
+        self.execute(self, self.st, self.at)
     
     
 class Motion(Container):
