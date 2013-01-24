@@ -1135,9 +1135,11 @@ class RollbackLog(renpy.object.Object):
         # or creating a new set of contexts (loading).
         if renpy.game.context().rollback:
             replace_context = False
+            other_contexts = [ ]
         else:
             replace_context = True
-            renpy.game.contexts = renpy.game.contexts[0:1]
+            other_contexts = renpy.game.contexts[1:]
+            renpy.game.contexts = renpy.game.contexts[0:1] 
 
         # Actually roll things back.
         for rb in revlog:
@@ -1162,6 +1164,8 @@ class RollbackLog(renpy.object.Object):
 
         # Stop the sounds.
         renpy.audio.audio.rollback()
+        
+        renpy.game.contexts.extend(other_contexts)
         
         # Restart the context or the top context.
         if replace_context:
