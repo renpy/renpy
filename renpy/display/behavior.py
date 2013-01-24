@@ -1296,7 +1296,8 @@ class Bar(renpy.display.core.Displayable):
         old_value = self.adjustment.value
         value = old_value
 
-        invert = self.style.bar_invert ^ self.style.bar_vertical
+        vertical = self.style.bar_vertical
+        invert = self.style.bar_invert ^ vertical
         if invert:
             value = range - value
         
@@ -1310,16 +1311,13 @@ class Bar(renpy.display.core.Displayable):
 
         if grabbed:
 
-            if self.style.bar_vertical:
+            if vertical:
                 increase = "bar_down"
                 decrease = "bar_up"
             else:
                 increase = "bar_right"
                 decrease = "bar_left"
                 
-            if self.style.bar_invert:
-                increase, decrease = decrease, increase
-
             if map_event(ev, decrease):
                 value -= self.adjustment.step
 
@@ -1328,7 +1326,7 @@ class Bar(renpy.display.core.Displayable):
 
             if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
-                if self.style.bar_vertical:
+                if vertical:
 
                     tgutter = self.style.fore_gutter
                     bgutter = self.style.aft_gutter
