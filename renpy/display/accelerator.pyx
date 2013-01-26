@@ -77,6 +77,8 @@ def transform_render(self, widtho, heighto, st, at):
     width = cr.width
     height = cr.height
 
+    self.child_size = width, height
+
     # The reverse matrix.
     rxdx = 1
     rxdy = 0
@@ -226,11 +228,13 @@ def transform_render(self, widtho, heighto, st, at):
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
         self.forward = IDENTITY
+        self.reverse = IDENTITY
 
     else:
-        inv_det = rxdx * rydy - rxdy * rydx
 
-        rv.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+        self.reverse = rv.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+
+        inv_det = rxdx * rydy - rxdy * rydx
 
         if not inv_det:
             self.forward = rv.forward = Matrix2D(0, 0, 0, 0)
@@ -252,6 +256,7 @@ def transform_render(self, widtho, heighto, st, at):
         rv.blit(cr, pos)
 
     self.offsets = [ pos ]
+    self.render_size = (width, height)
 
     return rv
 

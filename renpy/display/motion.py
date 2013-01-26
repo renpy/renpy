@@ -771,6 +771,34 @@ class Transform(Container):
         cyoffset = cyoffset or 0 
         
         rv = self.state.get_placement(cxoffset, cyoffset)
+
+        # TODO: Condition on state.transform_anchor
+        if True:
+
+            xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
+            if (xanchor is not None) and (yanchor is not None):
+    
+                cw, ch = self.child_size
+                rw, rh = self.render_size
+                
+                if isinstance(xanchor, float):
+                    xanchor *= cw
+                if isinstance(yanchor, float):
+                    yanchor *= ch
+                
+                xanchor -= cw / 2.0
+                yanchor -= ch / 2.0
+            
+                xanchor, yanchor = self.reverse.transform(xanchor, yanchor)
+    
+                xanchor += rw / 2.0
+                yanchor += rh / 2.0
+    
+                xanchor = renpy.display.core.absolute(xanchor)
+                yanchor = renpy.display.core.absolute(yanchor)
+            
+                rv = (xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel)
+        
         return rv
 
     def update(self):
