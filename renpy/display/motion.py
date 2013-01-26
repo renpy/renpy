@@ -94,11 +94,13 @@ class TransformState(renpy.object.Object):
     default_yanchor = None
     default_xoffset = None
     default_yoffset = None
+    transform_anchor = False
     
     def __init__(self): # W0231
         self.alpha = 1
         self.rotate = None
         self.rotate_pad = True
+        self.transform_anchor = False
         self.zoom = 1
         self.xzoom = 1
         self.yzoom = 1
@@ -142,6 +144,7 @@ class TransformState(renpy.object.Object):
         self.alpha = ts.alpha
         self.rotate = ts.rotate
         self.rotate_pad = ts.rotate_pad
+        self.transform_anchor = ts.transform_anchor
         self.zoom = ts.zoom
         self.xzoom = ts.xzoom
         self.yzoom = ts.yzoom
@@ -195,6 +198,7 @@ class TransformState(renpy.object.Object):
         diff2("alpha", newts.alpha, self.alpha)
         diff2("rotate", newts.rotate, self.rotate)
         diff2("rotate_pad", newts.rotate_pad, self.rotate_pad)
+        diff2("transform_anchor", newts.transform_anchor, self.transform_anchor)
         diff2("zoom", newts.zoom, self.zoom)
         diff2("xzoom", newts.xzoom, self.xzoom)
         diff2("yzoom", newts.yzoom, self.yzoom)
@@ -378,6 +382,7 @@ class Transform(Container):
     alpha = Proxy("alpha")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
+    transform_anchor = Proxy("rotate_pad")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
@@ -772,8 +777,7 @@ class Transform(Container):
         
         rv = self.state.get_placement(cxoffset, cyoffset)
 
-        # TODO: Condition on state.transform_anchor
-        if True:
+        if self.state.transform_anchor:
 
             xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
             if (xanchor is not None) and (yanchor is not None):

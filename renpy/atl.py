@@ -70,6 +70,7 @@ PROPERTIES = {
         "yalign" : float,
         "rotate" : float,
         "rotate_pad" : bool,
+        "transform_anchor" : bool,
         "xzoom" : float,
         "yzoom" : float,
         "zoom" : float,
