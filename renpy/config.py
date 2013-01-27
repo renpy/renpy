@@ -474,6 +474,10 @@ change_language_callbacks = [ ]
 # The translation directory.
 tl_directory = "tl"
 
+# Key repeat timings. A tuple giving the initial delay and the delay between
+# repeats, in seconds.
+key_repeat = (.3, .03)
+
 del renpy
 del os
 

@@ -1196,7 +1196,9 @@ class Interface(object):
         self.set_window_caption(force=True)
         self.set_icon()
     
-        pygame.key.set_repeat(200, 20)
+        if renpy.config.key_repeat is not None:
+            delay, repeat_delay = renpy.config.key_repeat
+            pygame.key.set_repeat(int(1000 * delay), int(1000 * repeat_delay))
     
     def set_icon(self):
         """
