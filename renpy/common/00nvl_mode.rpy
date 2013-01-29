@@ -162,13 +162,13 @@ init -1500 python:
     def nvl_show(with_):
         nvl_show_core()
         renpy.with_statement(with_)
-        _last_say_who = "nvl"
+        store._last_say_who = "nvl"
 
     def nvl_hide(with_):
         nvl_show_core()
         renpy.with_statement(None)
         renpy.with_statement(with_)
-        _last_say_who = None
+        store._last_say_who = None
 
     def nvl_erase():
         if nvl_list:
