@@ -918,6 +918,26 @@ following properties:
     If True, the mouse wheel can be used to scroll the viewport.
 `draggable`
     If True, dragging the mouse will scroll the viewport.
+`edgescroll`
+    Controlls scrolling when the mouse reaches the edge of the
+    viewport. If not None, this should be a two- or three-element
+    tuple:
+
+    * The first element in the tuple is the distance from
+    the edge of the viewport that edgescrolling begins to take
+    effect, in pixels.
+
+    * The second element is the maximum scrolling rate, in pixels per
+      second.
+
+    * If present, the third element is a function that adjusts the
+      scrolling speed, based on how close to the pointer is to an
+      edge. The function should take a number between 0.0 and 1.0, and
+      return a number in the same range. The default function returns
+      its input, and implements proportional scrolling.  A function
+      that always returns 1.0 would implement constant-speed
+      scrolling.
+      
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
     viewport. When omitted, a new adjustment is created.

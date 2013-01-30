@@ -107,6 +107,9 @@ There were a few launcher improvements in this release.
 Other Changes
 -------------
 
+* The :ref:`viewport statement <sl-viewport>` now supports edge scrolling -
+  automatic scrolling when the mouse approaches the sides of the viewport.
+
 * The new :tpref:`transform_anchor` transform property makes the anchor the
   point around which a transform is scaled and rotated. (For example, it's
   now possible to rotate around the bottom-right corner of an image, rather

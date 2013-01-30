@@ -1177,9 +1177,16 @@ class IgnoresEvents(Container):
     def event(self, ev, x, y, st):
         return None
 
+def edgescroll_proportional(n):
+    """
+    An edgescroll function that causes the move speed to be proportional
+    from the edge distance.
+    """
+    return n
+
 class Viewport(Container):
 
-    __version__ = 2
+    __version__ = 3
 
     def after_upgrade(self, version):
         if version < 1:
@@ -1194,6 +1201,14 @@ class Viewport(Container):
         if version < 2:
             self.drag_position = None
             
+        if version < 3:
+            self.edge_size = False
+            self.edge_speed = False
+            self.edge_function = None
+            self.edge_xspeed = 0
+            self.edge_yspeed = 0
+            self.edge_last_st = None
+            
     def __init__(self,
                  child=None,
                  child_size=(None, None),
@@ -1203,6 +1218,7 @@ class Viewport(Container):
                  set_adjustments=True,
                  mousewheel=False,
                  draggable=False,
+                 edgescroll=None,
                  style='viewport',
                  xinitial=None,
                  yinitial=None,
@@ -1253,6 +1269,32 @@ class Viewport(Container):
         self.width = 0
         self.height = 0
 
+        # The speed at which we scroll in the x and y directions, in pixels
+        # per second.
+        self.edge_xspeed = 0
+        self.edge_yspeed = 0
+
+        # The last time we edgescrolled.
+        self.edge_last_st = None
+
+        if edgescroll is not None:
+
+            # The size of the edges that trigger scrolling.
+            self.edge_size = edgescroll[0]
+    
+            # How far from the edge we can scroll.
+            self.edge_speed = edgescroll[1]
+            
+            if len(edgescroll) >= 3:
+                self.edge_function = edgescroll[2]
+            else:
+                self.edge_function = edgescroll_proportional
+        
+        else:
+            self.edge_size = 0
+            self.edge_speed = 0
+            self.edge_function = edgescroll_proportional
+
         
     def per_interact(self):
         self.xadjustment.register(self)
@@ -1297,6 +1339,16 @@ class Viewport(Container):
             self.yadjustment.value = value
             self.yoffset = None
                 
+        if self.edge_size and self.edge_last_st and (self.edge_xspeed or self.edge_yspeed):
+             
+            duration = max(st - self.edge_last_st, 0)
+            self.xadjustment.change(self.xadjustment.value + duration * self.edge_xspeed)
+            self.yadjustment.change(self.yadjustment.value + duration * self.edge_yspeed)
+
+            self.check_edge_redraw()
+            
+        self.edge_last_st = st
+             
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
@@ -1306,6 +1358,23 @@ class Viewport(Container):
         rv.blit(surf, (cxo, cyo))
 
         return rv
+
+    def check_edge_redraw(self):
+        redraw = False
+        
+        if (self.edge_xspeed > 0) and (self.xadjustment.value < self.xadjustment.range):
+            redraw = True
+        if (self.edge_xspeed < 0) and (self.xadjustment.value > 0):
+            redraw = True
+
+        if (self.edge_yspeed > 0) and (self.yadjustment.value < self.yadjustment.range):
+            redraw = True
+        if (self.edge_yspeed < 0) and (self.yadjustment.value > 0):
+            redraw = True
+        
+        if redraw:
+            renpy.display.render.redraw(self, 0)
+            
 
     def event(self, ev, x, y, st):
 
@@ -1353,6 +1422,39 @@ class Viewport(Container):
                 self.drag_position = (x, y)
                 renpy.display.focus.set_grab(self)
                 raise renpy.display.core.IgnoreEvent()
+                
+        if self.edge_size:
+            
+            def speed(n, zero, one):
+                """
+                Given a position `n`, computes the speed. The speed is 0.0
+                when `n` == `zero`, 1.0 when `n` == `one`, and linearly 
+                interpolated when between.                
+                
+                Returns 0.0 when outside the bounds - in either direction.
+                """
+                
+                n = 1.0 * (n - zero) / (one - zero)
+                if n < 0.0:
+                    return 0.0
+                if n > 1.0:
+                    return 0.0
+                
+                return n
+
+            xspeed = speed(x, self.width - self.edge_size, self.width)            
+            xspeed -= speed(x, self.edge_size, 0)
+            self.edge_xspeed = self.edge_speed * self.edge_function(xspeed)
+            
+            yspeed = speed(y, self.height - self.edge_size, self.height)
+            yspeed -= speed(y, self.edge_size, 0)
+            self.edge_yspeed = self.edge_speed * self.edge_function(yspeed)
+            
+            if xspeed or yspeed:
+                self.check_edge_redraw()
+                self.edge_last_st = st
+            else:
+                self.edge_last_st = None
                 
         return None
     
