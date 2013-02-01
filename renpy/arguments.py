@@ -30,6 +30,12 @@ import os
 import argparse 
 import renpy
 
+try:
+    import site
+    site._renpy_argv_emulation() # @UndefinedVariable
+except:
+    pass
+
 
 # A map from command name to a (function, flag) tuple. The flag is true if the
 # function will parse command line arguments, and false otherwise. 

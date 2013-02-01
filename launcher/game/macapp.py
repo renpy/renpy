@@ -8,17 +8,27 @@ def write_plist(display_name, executable_name, version, filename):
         CFBundleDevelopmentRegion="English",
         CFBundleDisplayName=display_name,
         CFBundleExecutable=executable_name,
-        CFBundleIconFiles="icon.icns",
+        CFBundleIconFile="icon",
         CFBundleInfoDictionaryVersion="6.0",
         CFBundleName=display_name,
         CFBundlePackageType="APPL",
         CFBundleShortVersionString=version,
         CFBundleVersion="1.0.{0}".format(int(time.time())),
-        CFBundleDocumentTypes = {
-            "CFBundleTypeOSTypes" : [ "fold" ],
-            "CGBundleTypeRole" : "Viewer",
+        CFBundleDocumentTypes = [ 
+            {
+                "CFBundleTypeOSTypes" : [ "****", "fold", "disk" ],
+                "CFBundleTypeRole" : "Viewer",
+            }, 
+            ],
+        UTExportedTypeDeclarations = [ 
+            { 
+                "UTTypeConformsTo" : [ "public.python-script" ],
+                "UTTypeDescription" : "Ren'Py Script",
+                "UTTypeIdentifier" : "org.renpy.rpy",
+                "UTTypeTagSpecification" : { "public.filename-extension" : [ "rpy" ] }
             },
-            )
+            ],
+        )
     
     plistlib.writePlist(plist, filename)
     

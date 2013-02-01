@@ -10,26 +10,14 @@ BASEFILE=$(basename "$0" .sh)
 # The full path to the shell script, without the .sh at the end of it.
 BASE="$ROOT/$BASEFILE"
 
-# Assume Darwin means Mac OS X, and launch us using the OS X launcher.
-if [ "$(uname -s)" = "Darwin" ] ; then
-
-    RENPY_LAUNCHER_DIR="$ROOT"
-    export RENPY_LAUNCHER_DIR
-    
-    if [ -e "${BASE}.app/Contents/MacOS/${BASEFILE}" ] ; then
-        LAUNCHER="${BASE}.app/Contents/MacOS/${BASEFILE}"
-    else
-        LAUNCHER="${BASE}.app/Contents/MacOS/Ren'Py Launcher"
-    fi
-
-    exec $RENPY_GDB "${LAUNCHER}" "${BASE}.py" "$@"
-fi 
-
 # Otherwise, assume we're on linux, or an OS that can run Linux binaries.
 # If that's not the case, you'll have to change this script.
 
 if [ -z "$RENPY_PLATFORM" ] ; then
-    case `uname -m` in
+    case $(uname -s)-$(uname-m) in
+        Darwin-*)
+            RENPY_PLATFORM="darwin-x86_64"
+            ;;        
         x86_64|amd64)
             RENPY_PLATFORM="linux-x86_64"
             ;;
