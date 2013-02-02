@@ -7,22 +7,22 @@ ROOT=$(cd "$ROOT"; pwd)
 # The name of this shell script without the .sh on the end.
 BASEFILE=$(basename "$0" .sh)
 
-# The full path to the shell script, without the .sh at the end of it.
-BASE="$ROOT/$BASEFILE"
-
-# Otherwise, assume we're on linux, or an OS that can run Linux binaries.
-# If that's not the case, you'll have to change this script.
-
 if [ -z "$RENPY_PLATFORM" ] ; then
     case "$(uname -s)-$(uname -m)" in
         Darwin-*)
             RENPY_PLATFORM="darwin-x86_64"
-            ;;        
+            ROOT1="$ROOT/../Resources/autorun"
+            ROOT2="$ROOT/../../.."
+                        ;;        
         *-x86_64|amd64)
             RENPY_PLATFORM="linux-x86_64"
-            ;;
+            ROOT1="$ROOT"
+            ROOT2="$ROOT"
+                        ;;
         *-i*86)
             RENPY_PLATFORM="linux-i686"
+            ROOT1="$ROOT"
+            ROOT2="$ROOT"
             ;;
         *)
             echo "Ren'Py could not detect that platform it's running on. Please set"
@@ -33,5 +33,13 @@ if [ -z "$RENPY_PLATFORM" ] ; then
     esac
 fi
 
-LIB="$ROOT/lib/$RENPY_PLATFORM"
-exec $RENPY_GDB "$LIB/python" $RENPY_PYARGS -OO "$BASE.py" "$@"
+
+for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do 
+    LIB="$BASE/lib/$RENPY_PLATFORM"
+    echo $LIB
+		if test -d $LIB; then
+		    break
+		fi
+done
+
+exec $RENPY_GDB "$LIB/python" $RENPY_PYARGS -OO "$BASE/$BASEFILE.py" "$@"
