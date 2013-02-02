@@ -14,20 +14,20 @@ BASE="$ROOT/$BASEFILE"
 # If that's not the case, you'll have to change this script.
 
 if [ -z "$RENPY_PLATFORM" ] ; then
-    case $(uname -s)-$(uname-m) in
+    case "$(uname -s)-$(uname -m)" in
         Darwin-*)
             RENPY_PLATFORM="darwin-x86_64"
             ;;        
-        x86_64|amd64)
+        *-x86_64|amd64)
             RENPY_PLATFORM="linux-x86_64"
             ;;
-        i*86)
+        *-i*86)
             RENPY_PLATFORM="linux-i686"
             ;;
         *)
             echo "Ren'Py could not detect that platform it's running on. Please set"
             echo "the RENPY_PLATFORM environment variable to one of \"linux-i686\" or"
-            echo "\"linux-x86_64\", and run this command again."
+            echo "\"linux-x86_64\", or \"darwin-x86_64\" and run this command again."
             exit 1
             ;;
     esac
