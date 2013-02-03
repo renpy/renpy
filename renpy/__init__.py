@@ -277,3 +277,5 @@ else:
     linux = True
     
 # The android init code in renpy.py will set linux=False and android=True.
+
+

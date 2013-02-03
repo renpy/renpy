@@ -57,20 +57,16 @@ init -1500 python in build:
         ( "lib/windows-x86/**", "windows"),
         
         # Linux patterns. 
-        ( "renpy.sh", "linux"),
         ( "lib/linux-x86_64/**", "linux"),
         ( "lib/linux-i686/**", "linux"),
         ( "lib/python2.7/**", "linux"),
         
-        # Mac patterns.
-        ( "renpy.app/Contents/Ren'Py Launcher", None),
-        ( "renpy.app/Contents/Info.plist", None),
-        ( "renpy.app/Contents/Resources/launcher.py", None),
-        ( "renpy.app/Contents/Resources/launcher.icns", None),
-        ( "renpy.app/**", "mac"),
+        # Mac patterns
+        ( "lib/darwin-x86_64/**", "linux"),
         
         # Shared patterns.
         ( "/lib/", "windows linux"),
+        ( "renpy.sh", "linux mac"),
     ])
 
  
@@ -269,6 +265,9 @@ init -1500 python in build:
     # The name of executables.
     executable_name = ""
     
+    # A verbose name to include in package info.
+    display_name = ""
+    
     # Should we include update information into the archives?
     include_update = False
     
@@ -294,6 +293,7 @@ init -1500 python in build:
         rv["renpy_patterns"] = renpy_patterns
         rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
+        rv["display_name"] = display_name or executable_name
     
         rv["renpy"] = renpy
         

@@ -263,9 +263,9 @@ init python:
     build.classify_renpy("msvcr90.dll", "binary")
     build.classify_renpy("Microsoft.VC90.CRT.manifest", "binary")
     build.classify_renpy("renpy.sh", "binary")
-    build.classify_renpy("renpy.app/**", "binary")
     build.classify_renpy("renpy.exe", "binary")
     build.classify_renpy("console.exe", "binary")
+    # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.
     build.classify_renpy("jedit/**", "jedit")

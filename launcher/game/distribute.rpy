@@ -30,6 +30,7 @@ init python in distribute:
     import os
     import io
     import re
+    import plistlib
 
     match_cache = { }
     
@@ -322,10 +323,12 @@ init python in distribute:
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
 
+            # Build the mac app.
+            self.add_mac_files()
+                
             # Add generated/special files.
             if not build['renpy']:
                 self.add_renpy_files()
-                self.add_mac_files()
                 self.add_windows_files()
 
             # Assign the x-bit as necessary.
@@ -487,51 +490,70 @@ init python in distribute:
                 self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
             
             self.add_file("all", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
-                
+
+
+        def write_plist(self):
+
+            display_name = self.build['display_name']
+            executable_name = self.executable_name
+            version = self.build['version']
+
+            plist = dict(
+                CFBundleDevelopmentRegion="English",
+                CFBundleDisplayName=display_name,
+                CFBundleExecutable=executable_name,
+                CFBundleIconFile="icon",
+                CFBundleInfoDictionaryVersion="6.0",
+                CFBundleName=display_name,
+                CFBundlePackageType="APPL",
+                CFBundleShortVersionString=version,
+                CFBundleVersion="1.0.{0}".format(int(time.time())),
+                CFBundleDocumentTypes = [ 
+                    {
+                        "CFBundleTypeOSTypes" : [ "****", "fold", "disk" ],
+                        "CFBundleTypeRole" : "Viewer",
+                    }, 
+                    ],
+                UTExportedTypeDeclarations = [ 
+                    { 
+                        "UTTypeConformsTo" : [ "public.python-script" ],
+                        "UTTypeDescription" : "Ren'Py Script",
+                        "UTTypeIdentifier" : "org.renpy.rpy",
+                        "UTTypeTagSpecification" : { "public.filename-extension" : [ "rpy" ] }
+                    },
+                    ],
+                )
+            
+            rv = self.temp_filename("Info.plist")
+            plistlib.writePlist(plist, rv)
+            return rv
+
         def add_mac_files(self):
             """
             Add mac-specific files to the distro.
             """
-            
-            # Rename the executable.
-            self.add_file("mac", "renpy.app/Contents/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.app/Contents/MacOS/Ren'Py Launcher"))
-            
-            # Update the plist file.
-            quoted_name = self.executable_name.replace("&", "&amp;").replace("<", "&lt;")
-            fn = self.temp_filename("Info.plist")
-            
-            with io.open(os.path.join(config.renpy_base, "renpy.app/Contents/Info.plist"), "r", encoding="utf-8") as old:
-                data = old.read()
-                
-            data = data.replace("Ren'Py Launcher", quoted_name)
-                
-            with io.open(fn, "w", encoding="utf-8") as new:
-                new.write(data)
-                
-            self.add_file("mac", "renpy.app/Contents/Info.plist", fn)
 
-            # Update the launcher script.            
-            quoted_name = self.executable_name.replace("\"", "\\\"")
-            fn = self.temp_filename("launcher.py")
-            
-            with io.open(os.path.join(config.renpy_base, "renpy.app/Contents/Resources/launcher.py"), "r", encoding="utf-8") as old:
-                data = old.read()
-                
-            data = data.replace("Ren'Py Launcher", quoted_name)
-                
-            with io.open(fn, "w", encoding="utf-8") as new:
-                new.write(data)
-                
-            self.add_file("mac", "renpy.app/Contents/Resources/launcher.py", fn)
-
-            # Icon file.
-            custom_fn = os.path.join(self.project.path, "icon.icns")
-            default_fn = os.path.join(config.renpy_base, "renpy.app/Contents/Resources/launcher.icns")
-            
-            if os.path.exists(custom_fn):
-                self.add_file("mac", "renpy.app/Contents/Resources/launcher.icns", custom_fn)
+            if self.build['renpy']:
+                filelist = "binary"
             else:
-                self.add_file("mac", "renpy.app/Contents/Resources/launcher.icns", default_fn)
+                filelist = "mac"
+
+            contents = self.app + "/Contents"
+
+            plist_fn = self.write_plist()
+            self.add_file(filelist, contents + "/Info.plist", plist_fn) 
+            self.add_file(filelist, contents + "/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.sh"))
+
+            custom_fn = os.path.join(self.project.path, "icon.icns")
+            default_fn = os.path.join(config.renpy_base, "launcher/icon.icns")
+
+            if os.path.exists(custom_fn):
+                icon_fn = custom_fn
+            else:
+                icon_fn = default_fn
+            
+            self.add_file(filelist, contents + "/Resources/icon.icns", icon_fn)
+
 
         def add_windows_files(self):
             """
@@ -575,9 +597,7 @@ init python in distribute:
                 parts = fn.split('/')
                 p = parts[0]
                 
-                if p == "renpy.app":
-                    p = self.app
-                elif p == "renpy.exe":
+                if p == "renpy.exe":
                     p = self.exe
                 elif p == "renpy.sh":
                     p = self.sh

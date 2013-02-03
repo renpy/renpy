@@ -72,6 +72,7 @@ def extra_imports():
     import codecs; codecs
     import rsa; rsa
     import decimal; decimal
+    import plistlib; plistlib
     
 trace_file = None
 trace_local = None

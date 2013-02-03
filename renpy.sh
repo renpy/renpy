@@ -36,7 +36,6 @@ fi
 
 for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do 
     LIB="$BASE/lib/$RENPY_PLATFORM"
-    echo $LIB
 		if test -d $LIB; then
 		    break
 		fi
