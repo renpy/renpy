@@ -428,9 +428,6 @@ def loadable_core(name):
     
 def loadable(name):
     
-    if renpy.config.reject_backslash and "\\" in name:
-        raise Exception("Backslash in filename, use '/' instead: %r" % name)
-
     for p in get_prefixes():
         if loadable_core(p + name):
             return True

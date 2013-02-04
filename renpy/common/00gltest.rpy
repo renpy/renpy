@@ -8,7 +8,7 @@ init -1500:
 
     python hide:
         import os
-        store.__dxwebsetup = os.path.join(config.renpy_base, "lib", "dxwebsetup.exe")
+        store.__dxwebsetup = os.path.join(config.renpy_base, "lib", "windows-i686", "dxwebsetup.exe")
 
     python:
         class _SetRenderer(Action):
