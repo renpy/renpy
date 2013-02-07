@@ -101,9 +101,11 @@ init -1500 python in updater:
         """
         
         if renpy.windows:
-            return os.path.join(config.renpy_base, "lib", "windows-x86", command + ".exe")
+            suffix = ".exe"
         else:
-            return os.path.join(os.path.dirname(sys.executable), command)
+            suffix = ""
+            
+        return os.path.join(os.path.dirname(sys.executable), command + suffix)
         
 
     class UpdateError(Exception):

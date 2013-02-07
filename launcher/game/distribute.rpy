@@ -323,9 +323,12 @@ init python in distribute:
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
 
+            # Add Python (with the same name as our executables)
+            self.add_python()
+
             # Build the mac app.
             self.add_mac_files()
-                
+
             # Add generated/special files.
             if not build['renpy']:
                 self.add_renpy_files()
@@ -420,7 +423,7 @@ init python in distribute:
             self.project.make_tmp()
             return os.path.join(self.project.tmp, name)
 
-        def add_file(self, file_list, name, path):
+        def add_file(self, file_list, name, path, executable=False):
             """
             Adds a file to the file lists.
             
@@ -440,7 +443,7 @@ init python in distribute:
             if isinstance(file_list, basestring):
                 file_list = file_list.split()
         
-            f = File(name, path, False, False)
+            f = File(name, path, False, executable)
         
             for fl in file_list:
                 self.file_lists[fl].append(f)
@@ -527,6 +530,40 @@ init python in distribute:
             rv = self.temp_filename("Info.plist")
             plistlib.writePlist(plist, rv)
             return rv
+
+        def add_python(self):
+
+            if self.build['renpy']:
+                windows = 'binary'
+                linux = 'binary'
+                mac = 'binary'
+            else:
+                windows = 'windows'
+                linux = 'linux'
+                mac = 'mac'
+                
+            self.add_file(
+                linux, 
+                "lib/linux-i686/" + self.executable_name,
+                os.path.join(config.renpy_base, "lib/linux-i686/pythonw"),
+                True)
+
+            self.add_file(
+                linux, 
+                "lib/linux-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, "lib/linux-x86_64/pythonw"),
+                True)
+            
+            self.add_file(
+                mac, 
+                "lib/darwin-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, "lib/darwin-x86_64/pythonw"),
+                True)
+
+            self.add_file(
+                windows, 
+                "lib/windows-i686/" + self.executable_name + ".exe",
+                os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe"))
 
         def add_mac_files(self):
             """

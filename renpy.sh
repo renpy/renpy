@@ -41,4 +41,4 @@ for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
 		fi
 done
 
-exec $RENPY_GDB "$LIB/python" $RENPY_PYARGS -OO "$BASE/$BASEFILE.py" "$@"
+exec $RENPY_GDB "$LIB/$BASEFILE" $RENPY_PYARGS -OO "$BASE/$BASEFILE.py" "$@"

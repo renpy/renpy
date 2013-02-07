@@ -49,23 +49,23 @@ init -1500 python in build:
         ( "renpy.py", "all"),
         ( "renpy/**", "all"),
 
+        # Ignore Ren'Py and renpy.exe.
+        ( "lib/*/renpy", None),
+        ( "lib/*/renpy.exe", None),
+        
         # Windows-specific patterns.
-        ( "python*.dll", "windows" ),
-        ( "msvcr*.dll", "windows"),
-        ( "Microsoft.VC*.CRT.manifest", "windows"),
-        ( "lib/dxwebsetup.exe", "windows"),
-        ( "lib/windows-x86/**", "windows"),
+        ( "lib/windows-i686/**", "windows"),
         
         # Linux patterns. 
         ( "lib/linux-x86_64/**", "linux"),
         ( "lib/linux-i686/**", "linux"),
-        ( "lib/python2.7/**", "linux"),
         
         # Mac patterns
         ( "lib/darwin-x86_64/**", "linux"),
         
         # Shared patterns.
-        ( "/lib/", "windows linux"),
+        ( "lib/pythonlib2.7/**", "linux"),
+        ( "/lib/", "windows linux mac"),
         ( "renpy.sh", "linux mac"),
     ])
 
@@ -174,6 +174,7 @@ init -1500 python in build:
         "**/*.dylib",
         "**.app/Contents/MacOS/*",
         "lib/**/python",
+        "lib/**/pythonw",
         "lib/**/zsync",
         "lib/**/zsyncmake",
         ]

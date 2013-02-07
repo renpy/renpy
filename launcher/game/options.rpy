@@ -258,13 +258,11 @@ init python:
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
 
     # all-platforms binary.
+    build.classify_renpy("lib/*/renpy", None)
+    build.classify_renpy("lib/*/renpy.exe", None)
     build.classify_renpy("lib/**", "binary")
-    build.classify_renpy("python27.dll", "binary")
-    build.classify_renpy("msvcr90.dll", "binary")
-    build.classify_renpy("Microsoft.VC90.CRT.manifest", "binary")
     build.classify_renpy("renpy.sh", "binary")
     build.classify_renpy("renpy.exe", "binary")
-    build.classify_renpy("console.exe", "binary")
     # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.
