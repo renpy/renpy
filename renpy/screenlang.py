@@ -277,8 +277,7 @@ class Parser(object):
         current statement.
         """
 
-        raise NotImplemented()
-
+        raise Exception("Not Implemented")
     
             
 # A singleton value.

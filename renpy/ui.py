@@ -53,7 +53,7 @@ class Action(renpy.object.Object):
         return
     
     def __call__(self):
-        raise NotImplemented()
+        raise Exception("Not implemented")
     
 class BarValue(renpy.object.Object):
     """
@@ -67,7 +67,7 @@ class BarValue(renpy.object.Object):
         return
     
     def get_adjustment(self):
-        raise NotImplemented()
+        raise Exception("Not implemented")
 
     def get_style(self):
         return "bar", "vbar"
