@@ -508,6 +508,7 @@ class RevertableList(list):
     __add__ = wrapper(list.__add__)
     __getslice__ = wrapper(list.__getslice__)
     __mul__ = wrapper(list.__mul__)
+    __rmul__ = wrapper(list.__rmul__)
 
     del wrapper
     
