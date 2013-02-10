@@ -75,6 +75,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms' ]
 
+    restarting = False
+
     def after_setstate(self):
         self.screen = get_screen_variant(self.screen_name[0])
         self.child = None

@@ -1211,6 +1211,9 @@ class RollbackLog(renpy.object.Object):
         after rollback has finished, if it exists.
         """
 
+        # Fix up old screens.
+        renpy.display.screen.before_restart() # @UndefinedVariable
+
         # Set us up as the game log.
         renpy.game.log = self
 
