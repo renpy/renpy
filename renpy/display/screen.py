@@ -146,6 +146,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Are we hiding?
         self.hiding = False
 
+        # Are we restarting?
+        self.restarting = False
+
         # Modal and zorder.
         self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
         self.zorder = renpy.python.py_eval(self.screen.zorder, locals=self.scope)
@@ -227,6 +230,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return rv
     
     def update(self):
+
+        # If we're restarting, do not update - the update can use variables 
+        # that are no longer in scope.
+        if self.restarting:
+            if not self.child:
+                self.child = renpy.display.layout.Null()
+            
+            return self.widgets
 
         # Update _current_screen
         global _current_screen
@@ -608,3 +619,19 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     
     rv = screen.widgets.get(id, None)        
     return rv
+
+def before_restart():
+    """
+    This is called before Ren'Py restarts to put the screens into restart
+    mode, which prevents crashes due to variables being used that are no
+    longer defined.
+    """
+
+    for k, layer in renpy.display.interface.old_scene.iteritems():
+        if k is None:
+            continue
+        
+        for i in layer.children:
+            if isinstance(i, ScreenDisplayable):
+                i.restarting = True
+            

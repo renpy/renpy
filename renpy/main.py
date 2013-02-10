@@ -319,6 +319,10 @@ def main():
     renpy.first_utter_start = False
 
     while True:
+
+        if restart:
+            renpy.display.screen.before_restart()
+        
         try:
             try:
                 run(restart)
