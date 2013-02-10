@@ -31,6 +31,7 @@ init python in distribute:
     import io
     import re
     import plistlib
+    import time
 
     match_cache = { }
     
