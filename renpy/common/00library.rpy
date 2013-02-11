@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 # This is kind of a catch-all file for things that are defined in the library,
