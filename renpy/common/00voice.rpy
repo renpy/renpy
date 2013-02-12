@@ -22,109 +22,107 @@
 #     $ voice_sustain()
 #     e "...to play for two lines of dialogue."
 
-init -1500:
+init -1500 python:
 
-    python:
+    _voice = object()
+    _voice.play = None
+    _voice.sustain = False
+    _voice.seen_in_lint = False
+    _voice.tag = None
 
-        _voice = object()
+    # The voice filename format. This may contain the voice tag
+    
+    config.voice_filename_format = "{filename}"
+
+    # Call this to specify the voice file that will be played for
+    # the user. This peice only gathers the information so 
+    # voice_interact can play the right file.
+    def voice(filename, tag=None):
+        """
+        :doc: voice
+
+        Plays `filename` on the voice channel.
+
+        `filename`
+            The filename to play. This is used with 
+            :var:`config.voice_filename_format` to produce the 
+            filename that will be played.
+        
+        `tag`
+            If this is not None, it should be a string giving a 
+            voice tag to be played. If None, this takes its
+            default value from the voice_tag of the Character 
+            that causes the next interaction.
+
+            The voice tag is used to specify which character is 
+            speaking, to allow a user to mute or unmute the 
+            voices of particular characters.
+        """
+
+        if not config.has_voice:
+            return
+
+        fn = config.voice_filename_format.format(filename=filename)
+        _voice.play = fn
+        _last_voice_play = fn
+        
+    # Call this to specify that the currently playing voice file
+    # should be sustained through the current interaction.
+    def voice_sustain(ignored="", **kwargs):
+        if not config.has_voice:
+            return
+        
+        _voice.sustain = True
+
+    # Call this to replay the last bit of voice.
+    def voice_replay():
+        renpy.sound.play(_last_voice_play, channel="voice")
+
+    # Returns true if we can replay the voice.
+    def voice_can_replay():
+        return _last_voice_play != None
+            
+init -1500 python hide:
+
+    # basics: True if the game will have voice.
+    config.has_voice = True
+    
+    # The set of voice tags that are currently muted.
+    persistent._voice_mute = set()
+
+    # This is called on each interaction, to ensure that the
+    # appropriate voice file is played for the user.        
+    def voice_interact():
+        
+        if not config.has_voice:
+            return
+
+        if _voice.tag in persistent._voice_mute:
+            renpy.sound.stop(channel="voice")
+            return
+        
+        elif _voice.play and not config.skipping:
+            renpy.sound.play(_voice.play, channel="voice")
+            store._last_voice_play = _voice.play        
+        elif not _voice.sustain:
+            renpy.sound.stop(channel="voice")
+            store._last_voice_play = _voice.play        
+
         _voice.play = None
         _voice.sustain = False
-        _voice.seen_in_lint = False
-        _voice.tag = None
+    
+    config.start_interact_callbacks.append(voice_interact)
+    config.say_sustain_callbacks.append(voice_sustain)
 
-        # The voice filename format. This may contain the voice tag
+    def voice_afm_callback():
+        return not renpy.sound.is_playing(channel="voice")
+
+    config.afm_callback = voice_afm_callback
+
+    def voice_tag_callback(voice_tag):
+        _voice.tag = voice_tag
         
-        config.voice_filename_format = "{filename}"
-
-        # Call this to specify the voice file that will be played for
-        # the user. This peice only gathers the information so 
-        # voice_interact can play the right file.
-        def voice(filename, tag=None):
-            """
-            :doc: voice
-
-            Plays `filename` on the voice channel.
-
-            `filename`
-                The filename to play. This is used with 
-                :var:`config.voice_filename_format` to produce the 
-                filename that will be played.
-            
-            `tag`
-                If this is not None, it should be a string giving a 
-                voice tag to be played. If None, this takes its
-                default value from the voice_tag of the Character 
-                that causes the next interaction.
-
-                The voice tag is used to specify which character is 
-                speaking, to allow a user to mute or unmute the 
-                voices of particular characters.
-            """
-
-            if not config.has_voice:
-                return
-
-            fn = config.voice_filename_format.format(filename=filename)
-            _voice.play = fn
-            _last_voice_play = fn
-            
-        # Call this to specify that the currently playing voice file
-        # should be sustained through the current interaction.
-        def voice_sustain(ignored="", **kwargs):
-            if not config.has_voice:
-                return
-            
-            _voice.sustain = True
-
-        # Call this to replay the last bit of voice.
-        def voice_replay():
-            renpy.sound.play(_last_voice_play, channel="voice")
-
-        # Returns true if we can replay the voice.
-        def voice_can_replay():
-            return _last_voice_play != None
-            
-    python hide:
-
-        # basics: True if the game will have voice.
-        config.has_voice = True
-        
-        # The set of voice tags that are currently muted.
-        persistent._voice_mute = set()
-
-        # This is called on each interaction, to ensure that the
-        # appropriate voice file is played for the user.        
-        def voice_interact():
-            
-            if not config.has_voice:
-                return
-
-            if _voice.tag in persistent._voice_mute:
-                renpy.sound.stop(channel="voice")
-                return
-            
-            elif _voice.play and not config.skipping:
-                renpy.sound.play(_voice.play, channel="voice")
-                store._last_voice_play = _voice.play        
-            elif not _voice.sustain:
-                renpy.sound.stop(channel="voice")
-                store._last_voice_play = _voice.play        
-
-            _voice.play = None
-            _voice.sustain = False
-        
-        config.start_interact_callbacks.append(voice_interact)
-        config.say_sustain_callbacks.append(voice_sustain)
-
-        def voice_afm_callback():
-            return not renpy.sound.is_playing(channel="voice")
-
-        config.afm_callback = voice_afm_callback
-
-        def voice_tag_callback(voice_tag):
-            _voice.tag = voice_tag
-            
-        config.voice_tag_callback = voice_tag_callback
+    config.voice_tag_callback = voice_tag_callback
 
 python early hide:
 
