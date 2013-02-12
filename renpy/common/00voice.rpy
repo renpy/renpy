@@ -63,9 +63,10 @@ init -1500:
 
             if not config.has_voice:
                 return
-            
-            _voice.play = config.voice_filename_format
-            _last_voice_play = config.voice_filename_format 
+
+            fn = config.voice_filename_format.format(filename=filename)
+            _voice.play = fn
+            _last_voice_play = fn
             
         # Call this to specify that the currently playing voice file
         # should be sustained through the current interaction.
@@ -97,7 +98,7 @@ init -1500:
             
             if not config.has_voice:
                 return
-            
+
             if _voice.tag in persistent._voice_mute:
                 renpy.sound.stop(channel="voice")
                 return
@@ -121,7 +122,7 @@ init -1500:
         config.afm_callback = voice_afm_callback
 
         def voice_tag_callback(voice_tag):
-            _voice.tag = None
+            _voice.tag = voice_tag
             
         config.voice_tag_callback = voice_tag_callback
 
