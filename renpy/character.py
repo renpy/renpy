@@ -868,13 +868,13 @@ def Character(name=NotSet, kind=None, **properties):
          character.
          
     **Voice Tag**
-    If a vocie tag is assign to a Character, the voice files that are
-    assosiated with it, can be mutted or played in the preference 
+    If a voice tag is assign to a Character, the voice files that are
+    associated with it, can be muted or played in the preference 
     screen.
 
     `voice_tag`
         A String that enables the voice file assosiated with the 
-        Charcter to be muted or played in the 'vocie' channel.
+        Character to be muted or played in the 'voice' channel.
 
     **Prefixes and Suffixes.**
     These allow a prefix and suffix to be applied to the name of the

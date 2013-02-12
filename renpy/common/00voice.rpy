@@ -32,10 +32,8 @@ init -1500:
         _voice.seen_in_lint = False
         _voice.tag = None
 
-        # This will set the config.voice_filename_format to "{filename}"
-        # for backward compatibilty sake, but it can be change in the 
-        # Options.rpy. Do not change it here unless you know what you
-        # are doing. 
+        # The voice filename format. This may contain the voice tag
+        
         config.voice_filename_format = "{filename}"
 
         # Call this to specify the voice file that will be played for
@@ -48,10 +46,10 @@ init -1500:
             Plays `filename` on the voice channel.
 
             `filename`
-                The filename to play. This is formatted by
-                :var:`config.voice_filename_format` variable is 
-                used to format this parameter.
-
+                The filename to play. This is used with 
+                :var:`config.voice_filename_format` to produce the 
+                filename that will be played.
+            
             `tag`
                 If this is not None, it should be a string giving a 
                 voice tag to be played. If None, this takes its
@@ -60,7 +58,7 @@ init -1500:
 
                 The voice tag is used to specify which character is 
                 speaking, to allow a user to mute or unmute the 
-                voices of partdef voice(filename, tag=None):
+                voices of particular characters.
             """
 
             if not config.has_voice:
@@ -90,9 +88,8 @@ init -1500:
         # basics: True if the game will have voice.
         config.has_voice = True
         
-        # This will set the Dict persistent.voice_
-        persistent.voice_mute = {}
-        
+        # The set of voice tags that are currently muted.
+        persistent._voice_mute = set()
 
         # This is called on each interaction, to ensure that the
         # appropriate voice file is played for the user.        
@@ -101,7 +98,8 @@ init -1500:
             if not config.has_voice:
                 return
             
-            if _voice.tag in persistent.voice_mute:
+            if _voice.tag in persistent._voice_mute:
+                renpy.sound.stop(channel="voice")
                 return
             
             elif _voice.play and not config.skipping:
@@ -147,7 +145,12 @@ python early hide:
         _voice.seen_in_lint = True
 
         fn = _try_eval(fn, 'voice filename')
-        if isinstance(fn, basestring) and not renpy.loadable(fn):
+        if not isinstance(fn, basestring):
+            return
+            
+        fn = config.voice_filename_format.format(filename=fn)
+            
+        if not renpy.loadable(fn):
             renpy.error('voice file %r is not loadable' % fn)
 
     renpy.statements.register('voice',

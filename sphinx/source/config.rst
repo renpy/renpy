@@ -963,6 +963,13 @@ Rarely or Internally Used
     A list of screen variants that are searched when choosing a screen to
     display to the user. This should always end with None, to ensure
     that the default screens are chosen. See :ref:`screen-variants`.
+
+.. var:: config.voice_filename_format = "{filename}"
+
+    A string that is formatted with the string argument to the voice
+    statement to produce the filename that is played to the user. For
+    example, if this is "{filename}.ogg", the ``voice "test"`` statement
+    will play test.ogg.
     
 .. var:: config.with_callback = None
 
