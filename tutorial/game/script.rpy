@@ -11,32 +11,32 @@ image eileen vhappy = "eileen_vhappy.png"
 image eileen concerned = "eileen_concerned.png"
 
 # Now, we declare the characters.
-define e = Character('Eileen', color="#c8ffc8")
+define e = Character(_('Eileen'), color="#c8ffc8")
 
 init python:
 
     tutorials = [
-        ("tutorial_playing", "User Experience", "6.10.0"),
-        ("tutorial_dialogue", "Writing Dialogue", "6.10.0"),
-        ("tutorial_images", "Adding Images", "6.10.0"),
-        ("tutorial_transitions", "Transitions", "6.10.0"),
-        ("tutorial_music", "Music and Sound Effects", "6.10.0"),
-        ("tutorial_menus", "In-Game Menus and Python", "6.10.0"),
-        ("tutorial_positions", "Screen Positions", "6.10.0"),
-        ("tutorial_atl", "Animation and Transformation", "6.10.0"),
-        ("tutorial_video", "Video Playback", "6.10.0"),
-        ("demo_transitions", "Transition Gallery", "6.11.1"),
-        ("demo_imageops", "Image Operations", "6.5.0"),
-        ("demo_ui", "User Interaction", "6.5.0"),
-        ("demo_text", "Fonts and Text Tags", "6.13.0"),
-        ("demo_character", "Character Objects", "6.2.0"), 
-        ("demo_layers", "Layers & Advanced Show", "5.6.5"),
-        ("demo_nvlmode", "NVL Mode", "6.4.0"),
-        ("demo_dynamic", "Dynamic Displayables", "5.6.3"),
-        ("demo_minigame", "Minigames", "6.3.2"),
-        ("demo_persistent", "Persistent Data", "6.7.0"),
-        ("demo_transform", "Transform", "6.9.0"),
-        ("tutorial_sprite", "Sprites", "6.12.0"),
+        ("tutorial_playing", _("User Experience"), "6.10.0"),
+        ("tutorial_dialogue", _("Writing Dialogue"), "6.10.0"),
+        ("tutorial_images", _("Adding Images"), "6.10.0"),
+        ("tutorial_transitions", _("Transitions"), "6.10.0"),
+        ("tutorial_music", _("Music and Sound Effects"), "6.10.0"),
+        ("tutorial_menus", _("In-Game Menus and Python"), "6.10.0"),
+        ("tutorial_positions", _("Screen Positions"), "6.10.0"),
+        ("tutorial_atl", _("Animation and Transformation"), "6.10.0"),
+        ("tutorial_video", _("Video Playback"), "6.10.0"),
+        ("demo_transitions", _("Transition Gallery"), "6.11.1"),
+        ("demo_imageops", _("Image Operations"), "6.5.0"),
+        ("demo_ui", _("User Interaction"), "6.5.0"),
+        ("demo_text", _("Fonts and Text Tags"), "6.13.0"),
+        ("demo_character", _("Character Objects"), "6.2.0"), 
+        ("demo_layers", _("Layers & Advanced Show"), "5.6.5"),
+        ("demo_nvlmode", _("NVL Mode"), "6.4.0"),
+        ("demo_dynamic", _("Dynamic Displayables"), "5.6.3"),
+        ("demo_minigame", _("Minigames"), "6.3.2"),
+        ("demo_persistent", _("Persistent Data"), "6.7.0"),
+        ("demo_transform", _("Transform"), "6.9.0"),
+        ("tutorial_sprite", _("Sprites"), "6.12.0"),
         ]
 
 screen tutorials:
@@ -61,7 +61,7 @@ screen tutorials:
                             
                 null height 20
 
-                textbutton "That's enough for now.":
+                textbutton _("That's enough for now."):
                     xfill True
                     action Return(False) 
                 
@@ -98,9 +98,9 @@ label start:
         with move
 
         if tutorials_first_time:
-            $ e("What would you like to see?", interact=False) 
+            $ e(_("What would you like to see?"), interact=False) 
         else:
-            $ e("Is there anything else you'd like to see?", interact=False) 
+            $ e(_("Is there anything else you'd like to see?"), interact=False) 
 
         $ tutorials_first_time = False
 

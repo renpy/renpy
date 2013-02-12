@@ -208,7 +208,7 @@ label demo_transform:
 
     python hide:
         ui.transform(function=button_transform, xalign=0.5, yalign=0.5)
-        ui.textbutton("A Working Button", clicked=ui.returns(True))
+        ui.textbutton(_("A Working Button"), clicked=ui.returns(True))
         
     e "Finally, transforms can be applied to buttons, and work even while the button is zoomed."
 
