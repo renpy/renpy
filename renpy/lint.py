@@ -25,6 +25,8 @@ import codecs
 import time
 import re
 import sys
+import collections
+import textwrap
 
 image_prefixes = None
 
@@ -475,6 +477,37 @@ def check_filename_encodings():
         report("%s contains non-ASCII characters in its filename.", filename)
         add("(ZIP file distributions can only reliably include ASCII filenames.)")
 
+class Count(object):
+    """
+    Stores information about the word count.
+    """
+    
+    def __init__(self):
+        # The number of blocks of text.
+        self.blocks = 0
+        
+        # The number of whitespace-separated words.
+        self.words = 0
+        
+        # The number of characters.
+        self.characters = 0
+        
+    def add(self, s):
+        self.blocks += 1
+        self.words += len(s.split())
+        self.characters += len(s)
+
+def common(n):
+    """
+    Returns true if the node is in the common directory.
+    """
+    
+    filename = n.filename.replace("\\", "/")
+    
+    if filename.startswith("common/") or filename.startswith("renpy/common/"):
+        return True
+    else:
+        return False
         
 def lint():
     """
@@ -509,17 +542,27 @@ def lint():
     all_stmts = [ (i.filename, i.linenumber, i) for i in renpy.game.script.all_stmts ]
     all_stmts.sort()
 
-    say_words = 0
-    say_count = 0
+    # The current count.
+    counts = collections.defaultdict(Count)
+    
+    # The current language.
+    language = None
+    
     menu_count = 0
+    screen_count = 0
+    image_count = 0
 
     global report_node
     
     for _fn, _ln, node in all_stmts:
 
+        if common(node):
+            continue
+
         report_node = node
         
         if isinstance(node, renpy.ast.Image):
+            image_count += 1
             check_image(node)
 
         elif isinstance(node, renpy.ast.Show):
@@ -536,8 +579,9 @@ def lint():
 
         elif isinstance(node, renpy.ast.Say):
             check_say(node)
-            say_count += 1
-            say_words += len(node.what.split())
+            
+            counts[language].add(node.what)
+    
     
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -561,6 +605,15 @@ def lint():
         elif isinstance(node, renpy.ast.Label):
             check_label(node)
             
+        elif isinstance(node, renpy.ast.Translate):
+            language = node.language
+            
+        elif isinstance(node, renpy.ast.EndTranslate):
+            language = None
+            
+        elif isinstance(node, renpy.ast.Screen):
+            screen_count += 1
+            
     report_node = None
             
     check_styles()
@@ -569,17 +622,53 @@ def lint():
     for f in renpy.config.lint_hooks:
         f()
 
+    
+    lines = [ ]
+            
+    def report_language(language):
+
+        count = counts[language]
+        
+        if count.blocks <= 0:
+            return
+        
+        if language is None:
+            s = "The game"
+        else:
+            s = "The {0} translation".format(language)
+            
+        s += """ contains {0} dialogue blocks, containing {1} words
+and {2} characters, for an average of {3:.1f} words and {4:.0f}
+characters per block. """.format(
+            humanize(count.blocks),
+            humanize(count.words),
+            humanize(count.characters),
+            1.0 * count.words / count.blocks,
+            1.0 * count.characters / count.blocks)
+ 
+        lines.append(s)
+        
+            
     print
     print
     print "Statistics:"
     print
-    print "The game contains", humanize(say_count), "screens of dialogue."
-    print "These screens contain a total of", humanize(say_words), "words,"
-    if say_count > 0:
-        print "for an average of %.1f words per screen." % (1.0 * say_words / say_count) 
-    print "The game contains", humanize(menu_count), "menus."
-    print
+    
+    languages = list(counts)
+    languages.sort()
+    for i in languages:
+        report_language(i)
+        
+    lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
+        humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
+    for l in lines:
+        for ll in textwrap.wrap(l, 78):
+            print ll.encode("utf-8")
+            
+        print
+
+    print
     if renpy.config.developer:
         print "Remember to set config.developer to False before releasing."
         print

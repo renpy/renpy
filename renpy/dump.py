@@ -92,8 +92,8 @@ def dump(error):
 
         if not file_exists(filename):
             return False
-        
-        if filename.startswith("common/"):
+
+        if filename.startswith("common/") or filename.startswith("renpy/common/"):
             return args.json_dump_common
         
         if not filename.startswith("game/"):
