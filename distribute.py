@@ -79,7 +79,31 @@ def zipup(filename, prefix, files):
     sys.stdout.flush()
     
     
+def copy_tutorial_file(src, dest):
+    """
+    Copies a file from src to dst. Lines between  "# tutorial-only" and
+    "# end-tutorial-only" comments are omitted from the copy.
+    """
 
+    sf = open(src, "rb")
+    df = open(dest, "wb")
+    
+    # True if we want to copy the line.
+    copy = True
+    
+    for l in sf:
+        if "# tutorial-only" in l:
+            copy = False
+        elif "# end-tutorial-only" in l:
+            copy = True
+        else:
+            if copy:
+                df.write(l)
+                
+    sf.close()
+    df.close()
+        
+    
 def tree(root):
 
     rv = [ ]
@@ -95,7 +119,6 @@ def tree(root):
         if ".doctrees" in dirs:
             dirs.remove(".doctrees")
 
-            
         for f in filenames:
             if f[-1] == '~' or f[0] == '.':
                 continue
@@ -152,8 +175,8 @@ def main():
     print "Version {} ({})".format(args.version, full_version) 
         
     # Copy over the screens, to keep them up to date.
-    shutil.copy("tutorial/game/screens.rpy", "template/game/screens.rpy")
-
+    copy_tutorial_file("tutorial/game/screens.rpy", "template/game/screens.rpy")
+    
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
     
@@ -211,7 +234,7 @@ def main():
 
     if not args.fast:
 
-        shutil.copy("renpy-ppc.zip", os.path.join(destination, "renpy-ppc.zip"))
+        # shutil.copy("renpy-ppc.zip", os.path.join(destination, "renpy-ppc.zip"))
 
         with open("7z.sfx", "rb") as f:
             sfx = f.read()

@@ -381,6 +381,7 @@ screen preferences:
 
                 textbutton _("Joystick...") action Preference("joystick")
 
+            # tutorial-only
             frame:
                 style_group "pref"
                 has vbox
@@ -388,6 +389,7 @@ screen preferences:
                 label _("Language")
                 textbutton "English" action Language(None)
                 textbutton u"日本語" text_font "VL-Gothic-Regular-strip.ttf" action Language("japanese")
+            # end-tutorial-only
 
         vbox:
             frame:
