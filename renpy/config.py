@@ -478,6 +478,9 @@ tl_directory = "tl"
 # repeats, in seconds.
 key_repeat = (.3, .03)
 
+# A callback that is called with the character's voice_tag.
+voice_tag_callback = None
+
 del renpy
 del os
 

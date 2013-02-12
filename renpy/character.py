@@ -523,6 +523,8 @@ class ADVCharacter(object):
         'show_function',
         ]
 
+    voice_tag = None
+ 
     # When adding a new argument here, remember to add it to copy below.
     def __init__(
         self,
@@ -565,6 +567,8 @@ class ADVCharacter(object):
         self.dynamic = v('dynamic')
         self.screen = v('screen')
         self.mode = v('mode')
+
+        self.voice_tag = v('voice_tag')
 
         if renpy.config.new_character_image_argument:
             if "image" in properties:
@@ -741,6 +745,9 @@ class ADVCharacter(object):
             attrs = None
         
         renpy.store._side_image_attributes = attrs
+
+        if renpy.config.voice_tag_callback is not None:
+            renpy.config.voice_tag_callback(self.voice_tag)
         
         try:
             
@@ -859,7 +866,16 @@ def Character(name=NotSet, kind=None, **properties):
     `image`
          A string giving the image tag that is linked with this 
          character.
- 
+         
+    **Voice Tag**
+    If a vocie tag is assign to a Character, the voice files that are
+    assosiated with it, can be mutted or played in the preference 
+    screen.
+
+    `voice_tag`
+        A String that enables the voice file assosiated with the 
+        Charcter to be muted or played in the 'vocie' channel.
+
     **Prefixes and Suffixes.**
     These allow a prefix and suffix to be applied to the name of the
     character, and to the text being shown. This can be used, for
