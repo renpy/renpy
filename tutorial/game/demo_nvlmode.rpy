@@ -3,7 +3,7 @@
 init:
 
     # Declare an nvl-version of eileen.
-    $ nvle = Character("Eileen", color="#c8ffc8", kind=nvl)
+    $ nvle = Character(_("Eileen"), color="#c8ffc8", kind=nvl)
 
     $ config.adv_nvl_transition = dissolve
     $ config.nvl_adv_transition = dissolve
