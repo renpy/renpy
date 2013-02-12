@@ -294,13 +294,11 @@ screen file_picker:
                     # Add the screenshot.
                     add FileScreenshot(i)
                     
-                    # Format the description, and add it as text.
-                    $ description = "% 2s. %s\n%s" % (
-                        FileSlotName(i, columns * rows),
-                        FileTime(i, empty=_("Empty Slot.")),
-                        FileSaveName(i))
+                    $ file_name = FileSlotName(i, columns * rows)
+                    $ file_time = FileTime(i, empty=_("Empty Slot.")),
+                    $ save_name = FileSaveName(i)
 
-                    text description
+                    text "[file_name: 2s]. [file_time!t]\n[save_name!t]"
 
                     key "save_delete" action FileDelete(i)
                     
