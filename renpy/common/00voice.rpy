@@ -64,7 +64,6 @@ init -1500 python:
 
         fn = config.voice_filename_format.format(filename=filename)
         _voice.play = fn
-        _last_voice_play = fn
         
     # Call this to specify that the currently playing voice file
     # should be sustained through the current interaction.
@@ -76,19 +75,93 @@ init -1500 python:
 
     # Call this to replay the last bit of voice.
     def voice_replay():
-        renpy.sound.play(_last_voice_play, channel="voice")
+        if _last_voice_play is not None:
+            renpy.sound.play(_last_voice_play, channel="voice")
 
     # Returns true if we can replay the voice.
     def voice_can_replay():
-        return _last_voice_play != None
+        return _last_voice_play is not None
+
+    class SetVoiceMute(Action):
+        """
+        :doc: voice
+        
+        If `mute` is true, mutes voices that are played with the given
+        `voice_tag`. If `mute` is false, unmutes voices that are played 
+        with `voice_tag`.
+        """
+        
+        def __init__(self, voice_tag, mute):
+            self.voice_tag = voice_tag
+            self.mute = mute
             
+        def get_selected(self):
+            if self.mute:
+                return self.voice_tag in persistent._voice_mute
+            else:
+                return self.voice_tag not in persistent._voice_mute
+        
+        def __call__(self):
+            if self.mute:
+                persistent._voice_mute.add(self.voice_tag)
+            else:
+                persistent._voice_mute.discard(self.voice_tag)
+                
+            renpy.restart_interaction()
+            
+    class ToggleVoiceMute(Action):
+        """
+        :doc: voice
+        
+        Toggles the muting of `voice_tag`. This is selected if 
+        the given voice tag is muted, unless `invert` is true,
+        in which case it's selected if the voice is unmuted.
+        """
+        
+        def __init__(self, voice_tag, invert=False):
+            self.voice_tag = voice_tag
+            self.invert = invert
+            
+            
+        def get_selected(self):
+            rv = self.voice_tag in persistent._voice_mute
+            
+            if self.invert:
+                return not rv
+            else:
+                return rv
+        
+        def __call__(self):
+            if self.voice_tag not in persistent._voice_mute:
+                persistent._voice_mute.add(self.voice_tag)
+            else:
+                persistent._voice_mute.discard(self.voice_tag)
+                
+            renpy.restart_interaction()
+
+    class VoiceReplay(Action):
+        """
+        :doc: voice
+        
+        Replays the most recently played voice.
+        """
+        
+        def __call__(self):
+            voice_replay()
+            
+        def get_sensitive(self):
+            return voice_can_replay()
+            
+
+
 init -1500 python hide:
 
     # basics: True if the game will have voice.
     config.has_voice = True
     
     # The set of voice tags that are currently muted.
-    persistent._voice_mute = set()
+    if persistent._voice_mute is None:
+        persistent._voice_mute = set()
 
     # This is called on each interaction, to ensure that the
     # appropriate voice file is played for the user.        
@@ -99,8 +172,7 @@ init -1500 python hide:
 
         if _voice.tag in persistent._voice_mute:
             renpy.sound.stop(channel="voice")
-            return
-        
+            store._last_voice_play = _voice.play        
         elif _voice.play and not config.skipping:
             renpy.sound.play(_voice.play, channel="voice")
             store._last_voice_play = _voice.play        
