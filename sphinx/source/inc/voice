@@ -1,0 +1,34 @@
+.. Automatically generated file - do not modify.
+
+.. function:: voice(filename, tag=None)
+    
+    Plays `filename` on the voice channel. The equivalent of the voice
+    statement.
+    
+    `filename`
+        The filename to play. This is used with 
+        :var:`config.voice_filename_format` to produce the 
+        filename that will be played.
+    
+    `tag`
+        If this is not None, it should be a string giving a 
+        voice tag to be played. If None, this takes its
+        default value from the voice_tag of the Character 
+        that causes the next interaction.
+    
+        The voice tag is used to specify which character is 
+        speaking, to allow a user to mute or unmute the 
+        voices of particular characters.
+
+.. function:: voice_can_replay()
+    
+    Returns true if it's possible to replay the current voice.
+
+.. function:: voice_replay()
+    
+    Replays the current voice, if possible.
+
+.. function:: voice_sustain(ignored='', **kwargs)
+    
+    The equivalent of the voice sustain statement.
+

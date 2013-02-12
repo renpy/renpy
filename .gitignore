@@ -12,6 +12,9 @@ tmp
 cache
 
 log.txt
+errors.txt
+traceback.txt
+styles.txt
 
 /build
 /dist
@@ -20,20 +23,15 @@ log.txt
 /jedit
 /lint.txt
 /renpy.code
-/traceback.txt
 /testing*
 /screenshot*
-/errors.txt
-/styles.txt
 /Microsoft.VC90.CRT.manifest
 /console.exe
 /msvcr90.dll
 /python27.dll
 /renpy.exe
-/lib/windows-x86
-/lib/linux-x86_64
-/lib/linux-i686
-/lib/python2.7
+/lib
+/lib.old
 /doc
 /.pydevproject
 /.pydevproject.bak
@@ -49,6 +47,7 @@ log.txt
 /module/build
 /module/gen
 /editra
+/launcher/game/theme
 
 dl
 renpy/vc_version.py

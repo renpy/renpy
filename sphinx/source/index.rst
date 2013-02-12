@@ -30,7 +30,8 @@ The Ren'Py Language
    dialogue
    displaying_images
    menus
-   
+   voice
+     
 Text, Displayables, Transforms, and Transitions
 -----------------------------------------------
 

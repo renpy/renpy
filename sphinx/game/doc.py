@@ -37,6 +37,7 @@ pause
 define
 screen
 label
+voice
 """
 
 # Words that are sometimes statement keywords, like for ATL

@@ -41,7 +41,8 @@ init -1500 python:
         """
         :doc: voice
 
-        Plays `filename` on the voice channel.
+        Plays `filename` on the voice channel. The equivalent of the voice
+        statement.
 
         `filename`
             The filename to play. This is used with 
@@ -68,6 +69,12 @@ init -1500 python:
     # Call this to specify that the currently playing voice file
     # should be sustained through the current interaction.
     def voice_sustain(ignored="", **kwargs):
+        """
+        :doc: voice
+        
+        The equivalent of the voice sustain statement.
+        """
+        
         if not config.has_voice:
             return
         
@@ -75,16 +82,28 @@ init -1500 python:
 
     # Call this to replay the last bit of voice.
     def voice_replay():
+        """
+        :doc: voice
+        
+        Replays the current voice, if possible.
+        """
+        
         if _last_voice_play is not None:
             renpy.sound.play(_last_voice_play, channel="voice")
 
     # Returns true if we can replay the voice.
     def voice_can_replay():
+        """
+        :doc: voice
+        
+        Returns true if it's possible to replay the current voice.
+        """
+        
         return _last_voice_play is not None
 
     class SetVoiceMute(Action):
         """
-        :doc: voice
+        :doc: voice_action
         
         If `mute` is true, mutes voices that are played with the given
         `voice_tag`. If `mute` is false, unmutes voices that are played 
@@ -111,7 +130,7 @@ init -1500 python:
             
     class ToggleVoiceMute(Action):
         """
-        :doc: voice
+        :doc: voice_action
         
         Toggles the muting of `voice_tag`. This is selected if 
         the given voice tag is muted, unless `invert` is true,
@@ -141,7 +160,7 @@ init -1500 python:
 
     class VoiceReplay(Action):
         """
-        :doc: voice
+        :doc: voice_action
         
         Replays the most recently played voice.
         """
@@ -151,7 +170,6 @@ init -1500 python:
             
         def get_sensitive(self):
             return voice_can_replay()
-            
 
 
 init -1500 python hide:
