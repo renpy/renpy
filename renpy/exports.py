@@ -57,6 +57,7 @@ import renpy.audio.music as music
 
 import time
 import sys
+import locale
 
 def public_api():
     """
@@ -1884,8 +1885,19 @@ def end_replay():
     if renpy.store._in_replay:
         raise renpy.game.EndReplay()
         
+def set_locale(code):
+    """
+    :doc: locale
     
+    Sets the game's locale to `code`. The locale controls how numbers and dates
+    are rendered.
+    """
     
-    
-    
-
+    try:
+        locale.setlocale(locale.LC_ALL, (code, "utf-8"))
+    except locale.Error:
+        locale.setlocale(locale.LC_ALL, ("C", "utf-8"))
+        
+        if renpy.config.developer:
+            raise
+        

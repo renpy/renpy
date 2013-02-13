@@ -450,14 +450,16 @@ def change_language(language):
     None to use the default language.
     """
 
-    locale.setlocale(locale.LC_ALL, (language, "utf-8"))
-
     renpy.game.preferences.language = language
     
     tl = renpy.game.script.translator
 
     renpy.style.restore(style_backup)
     renpy.style.rebuild()
+
+    # Reset the locale back to the C locale, so the python blocks
+    # can change it to something else.
+    renpy.exports.set_locale("C")
 
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)

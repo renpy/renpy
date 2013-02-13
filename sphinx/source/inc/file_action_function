@@ -56,7 +56,7 @@
         The formatting code to use. This is given two arguments: A string
         giving the page prefix, and an integer giving the slot number.
 
-.. function:: FileTime(name, format='%b %d, %H:%M', empty='', page=None)
+.. function:: FileTime(name, format=None, empty='', page=None)
     
     Returns the time the file was saved, formatted according
     to the supplied `format`. If the file is not found, `empty` is

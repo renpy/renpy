@@ -347,3 +347,6 @@ init python:
     build.documentation('*.html')
     build.documentation('*.txt')
     
+translate japanese python:
+    renpy.set_locale("ja_JP")
+    

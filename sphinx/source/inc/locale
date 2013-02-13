@@ -1,0 +1,7 @@
+.. Automatically generated file - do not modify.
+
+.. function:: renpy.set_locale(code)
+    
+    Sets the game's locale to `code`. The locale controls how numbers and dates
+    are rendered.
+
