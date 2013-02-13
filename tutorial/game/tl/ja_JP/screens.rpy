@@ -1,6 +1,6 @@
 ﻿# Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # game/screens.rpy:192
     old "Start Game"

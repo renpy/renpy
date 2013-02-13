@@ -1,60 +1,60 @@
 ﻿# Translation updated at 2013-01-20 21:09
 
 # game/script.rpy:85
-translate japanese start_6da0fd1a:
+translate ja_JP start_6da0fd1a:
 
     # e "Hi! My name is Eileen, and I'd like to welcome you to the Ren'Py tutorial. You've come at a very interesting time."
     e "こんにちは! 私の名前はエイリーンです。Ren'Pyチュートリアルに歓迎します。楽しい時間を過ごしてくださいね。"
 
 # game/script.rpy:89
-translate japanese start_d8862081:
+translate ja_JP start_d8862081:
 
     # e "We're hard at work making Ren'Py 7, and that means we'll be turning the old Ren'Py demo game into the new tutorial."
     e "私たちは今頑張って Ren'Py 7 を作っているため、新しいチュートリアルに古いデモゲームを使い回しています。"
 
 # game/script.rpy:91
-translate japanese start_3f245da1:
+translate ja_JP start_3f245da1:
 
     # e "What we have now is a bit of a mix of the two. But please check it out, to see what Ren'Py is capable of."
     e "結果として両者を混ぜたものとなっていますが、Ren'Pyで何ができるか確認してください。"
 
 # game/script.rpy:120
-translate japanese end_b2482727:
+translate ja_JP end_b2482727:
 
     # e "Thank you for viewing this tutorial."
     e "このチュートリアルをご覧いただきありがとうございました。"
 
 # game/script.rpy:122
-translate japanese end_38362e36:
+translate ja_JP end_38362e36:
 
     # e "If you'd like to see a full Ren'Py game, select \"The Question\" in the launcher."
     e "Ren'Pyの完全なゲームを見たい場合は、ランチャーで、\"The Question\" を選んでください。"
 
 # game/script.rpy:124
-translate japanese end_894a9e66:
+translate ja_JP end_894a9e66:
 
     # e "You can download new versions of Ren'Py from {a=http://www.renpy.org/}http://www.renpy.org/{/a}. For help and discussion, check out the {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
     e "Ren'Pyの新しいバージョンは {a=http://www.renpy.org/}http://www.renpy.org/{/a} からダウンロードできます。ヘルプや相談は {a=http://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a} を参照して下さい。"
 
 # game/script.rpy:126
-translate japanese end_a898b369:
+translate ja_JP end_a898b369:
 
     # e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
     e "私のスプライトを描いてくれたPiroshki、ルーシーとバンドを描いてくれたMugenjohncel、魔方陣を描いてくれたJakeに感謝します。"
 
 # game/script.rpy:128
-translate japanese end_9b09af4e:
+translate ja_JP end_9b09af4e:
 
     # e "The background music is \"Happy Alley\" by Kevin MacLeod. The concert music is by Alessio."
     e "バックグラウンドミュージックはKevin MacLeodの\"Happy Alley\"。コンサートミュージックはAlessioの曲でした。"
 
 # game/script.rpy:132
-translate japanese end_57c21073:
+translate ja_JP end_57c21073:
 
     # e "We look forward to seeing what you can make with Ren'Py. Have fun!"
     e "私たちはあなたがRen'Pyで作品を作れることを楽しみにしています。頑張って！"
 
-translate japanese strings:
+translate ja_JP strings:
 
     # game/script.rpy:19
     old "User Experience"

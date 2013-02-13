@@ -295,10 +295,10 @@ screen file_picker:
                     add FileScreenshot(i)
                     
                     $ file_name = FileSlotName(i, columns * rows)
-                    $ file_time = FileTime(i, empty=_("Empty Slot.")),
+                    $ file_time = FileTime(i, empty=_("Empty Slot."))
                     $ save_name = FileSaveName(i)
 
-                    text "[file_name: 2s]. [file_time!t]\n[save_name!t]"
+                    text "[file_name]. [file_time!t]\n[save_name!t]"
 
                     key "save_delete" action FileDelete(i)
                     
@@ -386,7 +386,7 @@ screen preferences:
 
                 label _("Language")
                 textbutton "English" action Language(None)
-                textbutton u"日本語" text_font "VL-Gothic-Regular-strip.ttf" action Language("japanese")
+                textbutton u"日本語" text_font "tl/ja_JP/VL-Gothic-Regular-strip.ttf" action Language("ja_JP")
             # end-tutorial-only
 
         vbox:
