@@ -242,3 +242,31 @@ translate japanese strings:
     old "Restart"
     new "再起動"
 
+# Translation updated at 2013-02-13 13:14
+
+translate japanese strings:
+
+    # renpy/common/00layout.rpy:421
+    old "Are you sure?"
+    new "本当にいいですか？"
+
+    # renpy/common/00layout.rpy:422
+    old "Are you sure you want to delete this save?"
+    new "この保存データを本当に削除しますか？"
+
+    # renpy/common/00layout.rpy:423
+    old "Are you sure you want to overwrite your save?"
+    new "本当に保存データを上書きしますか？"
+
+    # renpy/common/00layout.rpy:424
+    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    new "読み込みによって未保存のゲームが失われます。\n本当に読み込みますか？"
+
+    # renpy/common/00layout.rpy:425
+    old "Are you sure you want to quit?"
+    new "本当にゲームを終了しますか？"
+
+    # renpy/common/00layout.rpy:426
+    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    new "本当にメインメニューに戻りますか？\nこれによって未保存のゲームが失われます。"
+
