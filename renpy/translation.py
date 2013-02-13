@@ -27,6 +27,7 @@ import collections
 import os
 import codecs
 import time
+import locale
 
 ################################################################################
 # Script
@@ -448,6 +449,8 @@ def change_language(language):
     Changes the current language to `language`, which can be a string or 
     None to use the default language.
     """
+
+    locale.setlocale(locale.LC_ALL, (language, "utf-8"))
 
     renpy.game.preferences.language = language
     
