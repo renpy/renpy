@@ -1,6 +1,6 @@
 ﻿# Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -56,7 +56,7 @@ translate japanese strings:
 
 # Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/00updater.rpy:1248
     old "Updater"
@@ -116,7 +116,7 @@ translate japanese strings:
 
 # Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/00keymap.rpy:167
     old "Saved screenshot as %s."
@@ -124,7 +124,7 @@ translate japanese strings:
 
 # Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/00library.rpy:77
     old "Skip Mode"
@@ -136,7 +136,7 @@ translate japanese strings:
 
 # Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
@@ -144,7 +144,7 @@ translate japanese strings:
 
 # Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/_layout/imagemap_load_save.rpym:115
     old "a"
@@ -156,7 +156,7 @@ translate japanese strings:
 
 # Translation updated at 2013-01-20 21:09
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/00gltest.rpy:50
     old "Graphics Acceleration"
@@ -244,7 +244,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-13 13:14
 
-translate japanese strings:
+translate ja_JP strings:
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
@@ -269,4 +269,12 @@ translate japanese strings:
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "本当にメインメニューに戻りますか？\nこれによって未保存のゲームが失われます。"
+
+# Translation updated at 2013-02-13 16:36
+
+translate ja_JP strings:
+
+    # renpy/common/00action_file.rpy:139
+    old "%b %d, %H:%M"
+    new "%b%d日, %H:%M"
 
