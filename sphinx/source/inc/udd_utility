@@ -6,6 +6,14 @@
     a string, it converts that string into a displayable using the usual 
     rules.
 
+.. function:: renpy.end_interaction(value)
+    
+    If `value` is not None, immediately ends the current interaction, causing
+    the interaction to return `value`. If `value` is None, does nothing.
+    
+    This can be called from inside the render and event methods of a 
+    creator-defined displayable.
+
 .. function:: renpy.render(d, width, height, st, at)
     
     Causes a displayable to be rendered, and a renpy.Render object to

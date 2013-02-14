@@ -1406,6 +1406,22 @@ def timeout(seconds):
     
     renpy.game.interface.timeout(seconds)
 
+def end_interaction(value):
+    """
+    :doc: udd_utility
+    
+    If `value` is not None, immediately ends the current interaction, causing
+    the interaction to return `value`. If `value` is None, does nothing.
+    
+    This can be called from inside the render and event methods of a 
+    creator-defined displayable.
+    """
+    
+    if value is None:
+        return
+    
+    raise renpy.display.core.EndInteraction(value)
+
 def scry():
     name = renpy.game.context().current
     node = renpy.game.script.lookup(name)

@@ -87,6 +87,15 @@ class IgnoreEvent(Exception):
 
     pass
 
+class EndInteraction(Exception):
+    """
+    Exception that can be raised (for example, during the render method of 
+    a displayable) to end the current interaction immediately.
+    """
+
+    def __init__(self, value):
+        self.value = value
+
 class absolute(float):
     """
     This represents an absolute float coordinate.
@@ -2383,6 +2392,9 @@ class Interface(object):
             # But wait, there's more! The finally block runs some cleanup
             # after this.
             return False, rv
+
+        except EndInteraction as e:
+            return False, e.value
 
         finally:
 
