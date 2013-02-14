@@ -171,7 +171,7 @@ These control transitions between various screens.
     If not None, this variable should give a transition that will be
     performed when exiting the game menu.
 
-.. var:: config.exiting_yesno_transition = None
+.. var:: config.exit_yesno_transition = None
 
     If not None, a transition that is used when exiting the yes/no
     prompt screen.

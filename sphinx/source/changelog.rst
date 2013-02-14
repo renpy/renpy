@@ -11,23 +11,28 @@ Translation Framework
 Ren'Py now includes a comprehensive
 :ref:`translation framework <translation>`. This framework includes support
 for using a single language selection to change dialogue, menus and other
-interface text, images and files, and styles.
+interface text, images and files, styles, and the locale.
 
 The dialogue translation support allows lines of dialogue to be split and
 combined at the translator's discretion. As most Ren'Py statements are
 allowed inside the new translation blocks, it's possible to use logic (like
 conditions) to tailor the translations to your language.
 
-The launcher includes a new "Generate Translations" buttons, which - as part
+The launcher includes a new "Generate Translations" button, which - as part
 of a sanctioned translation where the full script is present - will generate
 empty translation files for a new language.
 
 Improved Japanese Support
 -------------------------
 
-Ren'Py 6.15 includes two changes that improve it's support for
-Japanese-language games:
+Ren'Py 6.15 includes multiple changes to better support the Japanese
+language.
 
+* The tutorial game has been translated to Japanese, with the language
+  being selectable from the preferences menu.
+
+  The tutorial was translated by Koichi Akabe.
+  
 * Support for vertical writing has been added to Ren'Py. Consisting of the
   :propref:`vertical` style property for text, and the new
   :propref:`box_reverse` property on hboxes, this support makes it possible
@@ -88,6 +93,18 @@ but saving and loading is disabled.
 The :func:`Replay` action begins a replay. The :func:`renpy.end_replay` ends a
 replay if one is in progress, and is ignored otherwise.
 
+Voice Improvements
+------------------
+
+There have been several improvements to the voice playback system. The
+new :var:`config.voice_filename_format` variable makes it possible to
+use only part of the filename in a voice statement. The new voice_tag
+parameter to :func:`Character`, in conjunction with the
+:func:`SetVoiceMute` and :func:`ToggleVoiceMute` actions, makes it
+possible to selectively mute particular characters' voices. The new
+:func:`VoiceReplay` action makes it possible to replay the current
+voice.
+
 Launcher Improvements
 ---------------------
 
@@ -106,6 +123,19 @@ There were a few launcher improvements in this release.
 
 Other Changes
 -------------
+
+* :ref:`Viewports <sl-viewport>` now support edge scrolling, which
+  scrolls the viewport when the mouse is within a a configurable
+  distance of the viewport edge.
+
+* Most keyboard keys now automatically repeat. The repeat rate is
+  controlled by :var:`config.key_repeat`.
+
+* Side images can now be used with menus.
+  
+* The :ref:`config.enter_yesno_transition` and `config.exit_yesno_transition`
+  variables make it possible to define a transition that is run when
+  yes/no prompts appear and disappear, respectively.
 
 * The :ref:`viewport statement <sl-viewport>` now supports edge scrolling -
   automatic scrolling when the mouse approaches the sides of the viewport.
@@ -160,6 +190,18 @@ Among others, the following bugs were fixed:
 
 * :ghbug:`51`: The slow_done callback was not called after a rollback.
 
+* :ghbug:`56`, :ghbug:`57`: :func:`renpy.loadable` now works with Android assets.
+
+* :ghbug:`60`: Fixed a bug that prevented {p} and {w} from working properly when followed
+  immediately by a text tag.
+  
+* :ghbug:`61`: Ren'Py no longer crashes when an end_game_transition is
+  set and a screen uses a variable that is no longer defined when the
+  game restarts.
+
+* :ghbug:`65`: Multiplying a rollback list by a number now always produces
+  a rollback list.
+  
 * It's now possible to :func:`renpy.call` a label that doesn't take
   parameters.
 
@@ -169,6 +211,7 @@ Among others, the following bugs were fixed:
 * Fixed an error handling failure when a python early block contained a
   syntax error.
 
+  
 
 Ren'Py 6.14
 ===========
