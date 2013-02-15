@@ -73,8 +73,8 @@ Screen Parameters
 Screens now take named parameters, similar to the way that labels and
 transforms take named parameters. It's now possible to write::
 
-  screen top_text(s):
-       text s xalign 0.5
+  screen top_text(s, size=36):
+       text s xalign 0.5 size size
 
 and::
 
@@ -121,6 +121,26 @@ There were a few launcher improvements in this release.
   images and colors to be changed. See the :ref:`skin documentation <skins>`
   for more details.
 
+Packaging Improvements
+----------------------
+
+The file layout of Ren'Py games has been somewhat altered. With the
+exception of small launcher programs, all platform-dependent binaries
+are under the lib/ directory. Ren'Py itself has now been placed in the
+renpy/ directory. The common/ directory has been moved to
+renpy/common/, as it's considered an integral part of Ren'Py.
+
+Ren'Py now uses renamed but otherwise unmodified python binaries on
+all desktop platforms. (Previously, it used platform-specific
+binaries.) Portions of the library are shared between the desktop
+builds.
+
+A running Ren'Py process on Linux will now be named after the game,
+rather than having python as a name.
+
+
+
+  
 Other Changes
 -------------
 
@@ -201,6 +221,8 @@ Among others, the following bugs were fixed:
 
 * :ghbug:`65`: Multiplying a rollback list by a number now always produces
   a rollback list.
+
+* Editra should work better on Windows.
   
 * It's now possible to :func:`renpy.call` a label that doesn't take
   parameters.
