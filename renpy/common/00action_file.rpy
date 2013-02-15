@@ -115,7 +115,7 @@ init -1500 python:
         return displayable
 
             
-    def FileTime(name, format=None, empty="", page=None):
+    def FileTime(name, format=_("%b %d, %H:%M"), empty="", page=None):
         """
          :doc: file_action_function 
          
@@ -135,8 +135,7 @@ init -1500 python:
 
         extra_info, displayable, save_time = save_data
         
-        if not format:
-            format = renpy.translation.translate_string(_("%b %d, %H:%M"))
+        format = renpy.translation.translate_string(format)
 
         return time.strftime(format.encode("utf-8"), time.localtime(save_time)).decode("utf-8")
 

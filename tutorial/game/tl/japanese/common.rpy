@@ -276,5 +276,5 @@ translate japanese strings:
 
     # renpy/common/00action_file.rpy:139
     old "%b %d, %H:%M"
-    new "%b%d日, %H:%M"
+    new "%m月%d日, %H:%M"
 
