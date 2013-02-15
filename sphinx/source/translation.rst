@@ -325,24 +325,6 @@ rebuilds styles, allowing the changes to take effect.
 
 Style translations may be added to any .rpy file.
 
-Locales
-=======
-
-The locale of a program controls, among other things, the formatting of
-numbers and dates. To change the locale, call renpy.set_locale from a
-translate python block. For example, if the default language of a game
-is Japanese, one could write::
-
-  translate None python:
-      renpy.set_locale("ja_JP")
-
-If that game came with an English translation, one could change the locale
-to English when that translation is enabled::
-
-  translate english python:
-      renpy.set_locale("en_US")
-  
-.. include:: inc/locale
 
 Default Language
 ================

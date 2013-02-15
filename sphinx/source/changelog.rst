@@ -11,7 +11,7 @@ Translation Framework
 Ren'Py now includes a comprehensive
 :ref:`translation framework <translation>`. This framework includes support
 for using a single language selection to change dialogue, menus and other
-interface text, images and files, styles, and the locale.
+interface text, images and files, styles and styles.
 
 The dialogue translation support allows lines of dialogue to be split and
 combined at the translator's discretion. As most Ren'Py statements are
@@ -126,7 +126,6 @@ Macintosh Changes
 
 The Macintosh version of Ren'Py now requires a 64-bit capable processor,
 and Mac OS X 10.6 or newer.
-
   
 Packaging Improvements
 ----------------------
