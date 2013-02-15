@@ -1,4 +1,4 @@
-#!/home/tom/bin/renpython
+#!/home/tom/bin/renpython -OO
 # Builds a distributions of Ren'Py.
 
 import sys
