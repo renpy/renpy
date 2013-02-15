@@ -1,4 +1,8 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿translate japanese python:
+
+    eruby_ja = Character(kind=eruby, what_line_leading=11)
+
+# Translation updated at 2013-01-20 21:09
 
 # game/demo_text.rpy:65
 translate japanese demo_text_ff47a1f2:
@@ -70,7 +74,7 @@ translate japanese demo_text_6d050f89:
 translate japanese demo_text_e8835287:
 
     # eruby "You are able to write ruby text, which can help clarify how to pronounce words, like {rb}Ren'Py{/rb}{rt}ren-pie{/rt}."
-    eruby "文字の読みを表記するためのルビを書くことができます。{rb}Ren'Py{/rb}{rt}レンパイ{/rt}のように。"
+    eruby_ja "文字の読みを表記するためのルビを書くことができます。{rb}Ren'Py{/rb}{rt}レンパイ{/rt}のように。"
 
 # game/demo_text.rpy:92
 translate japanese demo_text_6e1b95f0:
