@@ -121,6 +121,13 @@ There were a few launcher improvements in this release.
   images and colors to be changed. See the :ref:`skin documentation <skins>`
   for more details.
 
+Macintosh Changes
+-----------------
+
+The Macintosh version of Ren'Py now requires a 64-bit capable processor,
+and Mac OS X 10.6 or newer.
+
+  
 Packaging Improvements
 ----------------------
 
