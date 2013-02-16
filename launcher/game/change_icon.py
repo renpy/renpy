@@ -5,7 +5,7 @@
 import struct
 import sys
 import array
-import pefile
+import pefile # @UnresolvedImport
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
