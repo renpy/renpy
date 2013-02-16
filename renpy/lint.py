@@ -521,7 +521,7 @@ def lint():
     args = ap.parse_args()
 
     if args.filename:
-        f = open(args.filename, "wb")
+        f = open(args.filename, "w")
         sys.stdout = f
     
     renpy.game.lint = True
