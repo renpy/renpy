@@ -1,6 +1,4 @@
-﻿translate japanese python:
-
-    eruby_ja = Character(kind=eruby, what_line_leading=11)
+﻿define eruby_ja = Character(kind=eruby, what_line_leading=11)
 
 # Translation updated at 2013-01-20 21:09
 
