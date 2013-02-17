@@ -25,7 +25,7 @@ init -1500 python in updater:
     try:
         import rsa
     except:
-        pass
+        rsa = None
 
     from renpy.exports import fsencode
 
@@ -1122,6 +1122,9 @@ init -1500 python in updater:
         if updating is totally impossible. (For example, if the update directory
         was deleted.)
         """
+        
+        if rsa is None:
+            return False
         
         return not not get_installed_packages(base)
 
