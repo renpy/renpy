@@ -94,7 +94,13 @@ init -1500 python in build:
         ("icon.ico", None),
         ("icon.icns", None),
         ("project.json", None),
-
+        
+        ("log.txt", None),
+        ("errors.txt", None),
+        ("traceback.txt", None),
+        ("image_cache.txt", None),
+        ("text_overflow.txt", None),
+        
         ("tmp/", None),
         ("game/saves/", None),
 
