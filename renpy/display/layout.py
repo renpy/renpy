@@ -1452,7 +1452,8 @@ class Viewport(Container):
             
             if xspeed or yspeed:
                 self.check_edge_redraw()
-                self.edge_last_st = st
+                if self.edge_last_st is None:
+                    self.edge_last_st = st
             else:
                 self.edge_last_st = None
                 
