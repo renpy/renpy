@@ -53,7 +53,7 @@ init -1500 python in build:
         ( "lib/*/renpy", None),
         ( "lib/*/renpy.exe", None),
         
-        # Windows-specific patterns.
+        # Windows patterns.
         ( "lib/windows-i686/**", "windows"),
         
         # Linux patterns. 
@@ -61,11 +61,10 @@ init -1500 python in build:
         ( "lib/linux-i686/**", "linux"),
         
         # Mac patterns
-        ( "lib/darwin-x86_64/**", "linux"),
+        ( "lib/darwin-x86_64/**", "mac"),
         
         # Shared patterns.
-        ( "lib/pythonlib2.7/**", "linux"),
-        ( "/lib/", "windows linux mac"),
+        ( "/lib/**", "windows linux mac"),
         ( "renpy.sh", "linux mac"),
     ])
 
