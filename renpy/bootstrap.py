@@ -24,6 +24,7 @@ import sys
 import cStringIO
 import platform
 import traceback
+import io
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
@@ -73,6 +74,27 @@ def extra_imports():
     import rsa; rsa
     import decimal; decimal
     import plistlib; plistlib
+    
+class NullFile(io.IOBase):
+    """
+    This file raises an error on input, and IOError on read.
+    """
+    
+    def write(self, s):
+        return
+    
+    def read(self, length=None):
+        raise IOError("Not implemented.")
+    
+def null_files():
+    if sys.stderr.fileno() < 0:
+        sys.stderr = NullFile()
+
+    if sys.stdout.fileno() < 0:
+        sys.stdout = NullFile()
+        
+null_files()
+    
     
 trace_file = None
 trace_local = None
