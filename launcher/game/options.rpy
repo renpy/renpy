@@ -272,10 +272,12 @@ init python:
     # editra rules.
     build.classify_renpy("editra/", "editra-all")
     build.classify_renpy("editra/Editra.edit.py", "editra-all")
-    build.classify_renpy("editra/Editra/**", "editra-linux")
+    build.classify_renpy("editra/Editra/**", "editra-linux editra-windows")
     build.classify_renpy("editra/Editra-mac.app/**", "editra-mac")
-    build.classify_renpy("editra/Editra-win32/**", "editra-windows")
-
+    build.classify_renpy("editra/lib/**", "editra-windows")
+    build.classify_renpy("editra/editra.exe", "editra-windows")
+    
+    
     # Executable rules.
     build.executable("editra/Editra/Editra")
 
