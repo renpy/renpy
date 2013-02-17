@@ -27,7 +27,7 @@ init python:
         ("tutorial_video", _("Video Playback"), "6.10.0"),
         ("demo_transitions", _("Transition Gallery"), "6.11.1"),
         ("demo_imageops", _("Image Operations"), "6.5.0"),
-        ("demo_ui", _("User Interaction"), "6.5.0"),
+        ("demo_ui", _("User Interaction"), "6.15.0"),
         ("demo_text", _("Fonts and Text Tags"), "6.13.0"),
         ("demo_character", _("Character Objects"), "6.2.0"), 
         ("demo_layers", _("Layers & Advanced Show"), "5.6.5"),
@@ -82,14 +82,12 @@ label start:
 
     window show
 
-    e "Hi! My name is Eileen, and I'd like to welcome you to the Ren'Py tutorial. You've come at a very interesting time."
+    e "Hi! My name is Eileen, and I'd like to welcome you to the Ren'Py tutorial."
 
     show eileen happy
     
-    e "We're hard at work making Ren'Py 7, and that means we'll be turning the old Ren'Py demo game into the new tutorial."
+    e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
     
-    e "What we have now is a bit of a mix of the two. But please check it out, to see what Ren'Py is capable of."
-
     $ tutorials_adjustment = ui.adjustment()
     $ tutorials_first_time = True
     

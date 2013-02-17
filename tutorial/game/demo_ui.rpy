@@ -25,6 +25,12 @@ screen viewport_screen:
         
         action Return(True)
 
+screen edgescroll_screen:
+    
+    viewport:
+        edgescroll (150, 500)
+        add "concert2.jpg"
+
 screen demo_imagemap:
     imagemap:
         auto "imagemap_%s.jpg"
@@ -285,8 +291,15 @@ label demo_ui:
 
     call screen viewport_screen
 
+    show screen edgescroll_screen
+    with dissolve
+    
+    
+    e "Viewports also support edge scrolling, which is automatic scrolling when the mouse reaches their edge."
+
+    hide screen edgescroll_screen
     show eileen happy at center
-    with move
+    with dissolve
 
     window show
     
