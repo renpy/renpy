@@ -125,20 +125,39 @@ init python in project:
             return os.path.join(self.tmp, filename)
             
         def launch(self, args=[], wait=False):
+            """
+            Launches the project. 
+            
+            `args`
+                Additional arguments to give to the project.
+            
+            `wait`
+                If true, waits for the launched project to terminate before
+                continuing.
+            """
 
             self.make_tmp()
 
-            if renpy.renpy.windows and sys.argv[0].endswith(".exe"):
-                if persistent.windows_console:
-                    cmd = [ os.path.join(config.renpy_base, "console.exe") ]
-                else:
-                    cmd = [ os.path.join(config.renpy_base, "renpy.exe") ]
+            # Find the python executable to run.
+            executable_path = os.path.dirname(sys.executable)
+            
+            if persistent.windows_console:
+                executable = "python"
             else:
-                cmd = [ sys.executable, "-OO", sys.argv[0] ]
+                executable = "pythonw"
+
+            if renpy.renpy.windows:
+                executable += ".exe"
+            
+            executable = os.path.join(executable_path, executable)
+            
+            # Put together the basic command line.
+            cmd = [ executable, "-OO", sys.argv[0] ]
  
             cmd.append(self.path)
             cmd.extend(args)
             
+            # Add flags to dump game info.
             cmd.append("--json-dump")
             cmd.append(self.get_dump_filename())
 
@@ -147,8 +166,8 @@ init python in project:
                 
             if persistent.navigate_library:
                 cmd.append("--json-dump-common")
-                
 
+            # Launch the project.
             with interface.error_handling("launching the project"):
                 cmd = [ renpy.fsencode(i) for i in cmd ]
                 
