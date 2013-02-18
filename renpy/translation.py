@@ -25,8 +25,8 @@ import hashlib
 import re
 import collections
 import os
-import codecs
 import time
+import io
 
 ################################################################################
 # Script
@@ -331,16 +331,16 @@ class StringTranslator(object):
             
         f = open_tl_file(fn)
         
-        f.write("translate {} strings:\n".format(language))
-        f.write("\n")
+        f.write(u"translate {} strings:\n".format(language))
+        f.write(u"\n")
         
         for i in self.unknown:
             
             i = quote_unicode(i)
             
-            f.write("    old \"{}\"\n".format(i))
-            f.write("    new \"{}\"\n".format(i))
-            f.write("\n")
+            f.write(u"    old \"{}\"\n".format(i))
+            f.write(u"    new \"{}\"\n".format(i))
+            f.write(u"\n")
             
         f.close()
 
@@ -422,7 +422,6 @@ def load_all_rpts():
 
     for fn in renpy.exports.list_files():
         if fn.endswith(".rpt"):
-            print fn
             load_rpt(fn) 
     
 ################################################################################
@@ -557,15 +556,13 @@ def open_tl_file(fn):
         except:
             pass
 
-        f = open(fn, "a")
-        f.write(codecs.BOM_UTF8)
+        f = io.open(fn, "a", encoding="utf-8")
+        f.write(u"\ufeff")
     
     else:
-        f = open(fn, "a")
+        f = io.open(fn, "a", encoding="utf-8")
 
-    f = codecs.EncodedFile(f, "utf-8")
-    
-    f.write(u"# Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
+    f.write(u"# TODO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
     f.write(u"\n")
 
     return f
@@ -640,17 +637,17 @@ class TranslateFile(object):
             if label is None:
                 label = ""
                 
-            self.f.write("# {}:{}\n".format(t.filename, t.linenumber))
-            self.f.write("translate {} {}:\n".format(self.language, t.identifier))
-            self.f.write("\n")
+            self.f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
+            self.f.write(u"translate {} {}:\n".format(self.language, t.identifier))
+            self.f.write(u"\n")
             
             for n in t.block:
-                self.f.write("    # " + n.get_code().encode("utf-8") + "\n")
+                self.f.write(u"    # " + n.get_code() + "\n")
 
             for n in t.block:
-                self.f.write("    " + n.get_code(self.filter).encode("utf-8") + "\n")
+                self.f.write(u"    " + n.get_code(self.filter) + "\n")
 
-            self.f.write("\n")
+            self.f.write(u"\n")
 
     def write_strings(self):
         """
@@ -673,15 +670,15 @@ class TranslateFile(object):
                 started = True
 
                 self.open()
-                self.f.write("translate {} strings:\n".format(self.language))
-                self.f.write("\n")
+                self.f.write(u"translate {} strings:\n".format(self.language))
+                self.f.write(u"\n")
                 
             fs = self.filter(s)
             
-            self.f.write("    # {}:{}\n".format(filename, line))
-            self.f.write("    old \"{}\"\n".format(quote_unicode(s)))
-            self.f.write("    new \"{}\"\n".format(quote_unicode(fs)))
-            self.f.write("\n")
+            self.f.write(u"    # {}:{}\n".format(filename, line))
+            self.f.write(u"    old \"{}\"\n".format(quote_unicode(s)))
+            self.f.write(u"    new \"{}\"\n".format(quote_unicode(fs)))
+            self.f.write(u"\n")
 
 def null_filter(s):
     return s
