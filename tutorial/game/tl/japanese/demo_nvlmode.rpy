@@ -1,4 +1,4 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
 
 # game/demo_nvlmode.rpy:14
 translate japanese demo_nvlmode_76b2fe88:
@@ -113,10 +113,4 @@ translate japanese demo_nvlmode_146d840b:
 
     # nvle "And that's it for NVL-mode."
     nvle "NVLモードについては以上です。"
-
-translate japanese strings:
-
-    # game/demo_nvlmode.rpy:6
-    old "Eileen"
-    new "エイリーン"
 

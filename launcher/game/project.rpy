@@ -144,7 +144,7 @@ init python in project:
             if persistent.windows_console:
                 executable = "python"
             else:
-                executable = "pythonw"
+                executable = "python"
 
             if renpy.renpy.windows:
                 executable += ".exe"

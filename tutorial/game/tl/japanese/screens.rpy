@@ -1,4 +1,4 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
 
 translate japanese strings:
 
@@ -50,39 +50,39 @@ translate japanese strings:
     old "Next"
     new "次"
 
-    # game/screens.rpy:300
+    # game/screens.rpy:298
     old "Empty Slot."
     new "空スロット"
 
-    # game/screens.rpy:359
+    # game/screens.rpy:357
     old "Display"
     new "表示"
 
-    # game/screens.rpy:360
+    # game/screens.rpy:358
     old "Window"
     new "ウィンドウ"
 
-    # game/screens.rpy:361
+    # game/screens.rpy:359
     old "Fullscreen"
     new "全画面"
 
-    # game/screens.rpy:368
+    # game/screens.rpy:366
     old "All"
     new "すべて"
 
-    # game/screens.rpy:369
+    # game/screens.rpy:367
     old "None"
     new "なし"
 
-    # game/screens.rpy:375
+    # game/screens.rpy:373
     old "Text Speed"
     new "テキスト速度"
 
-    # game/screens.rpy:382
+    # game/screens.rpy:380
     old "Joystick..."
     new "ジョイスティック..."
 
-    # game/screens.rpy:388
+    # game/screens.rpy:387
     old "Language"
     new "言語"
 
