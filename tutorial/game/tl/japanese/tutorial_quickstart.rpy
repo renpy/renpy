@@ -1,4 +1,4 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
 
 # game/tutorial_quickstart.rpy:20
 translate japanese tutorial_dialogue_f6d3ddd3:

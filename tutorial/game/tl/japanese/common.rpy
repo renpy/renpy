@@ -1,4 +1,112 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
+
+translate japanese strings:
+
+    # renpy/common/00library.rpy:77
+    old "Skip Mode"
+    new "スキップモード"
+
+    # renpy/common/00library.rpy:80
+    old "Fast Skip Mode"
+    new "高速スキップモード"
+
+# Translation updated at 2013-02-18 11:40
+
+translate japanese strings:
+
+    # renpy/common/00updater.rpy:1255
+    old "Updater"
+    new "アップデーター"
+
+    # renpy/common/00updater.rpy:1260
+    old "An error has occured:"
+    new "エラーが発生しました:"
+
+    # renpy/common/00updater.rpy:1262
+    old "Checking for updates."
+    new "アップデートを確認しています。"
+
+    # renpy/common/00updater.rpy:1264
+    old "This program is up to date."
+    new "このプログラムは最新版です。"
+
+    # renpy/common/00updater.rpy:1266
+    old "[u.version] is available. Do you want to install it?"
+    new "[u.version] が利用可能です。インストールしますか？"
+
+    # renpy/common/00updater.rpy:1268
+    old "Preparing to download the updates."
+    new "アップデートをダウンロードする準備をしています。"
+
+    # renpy/common/00updater.rpy:1270
+    old "Downloading the updates."
+    new "アップデートをダウンロードしています。"
+
+    # renpy/common/00updater.rpy:1272
+    old "Unpacking the updates."
+    new "アップデートを展開しています。"
+
+    # renpy/common/00updater.rpy:1274
+    old "Finishing up."
+    new "完了しました。"
+
+    # renpy/common/00updater.rpy:1276
+    old "The updates have been installed. The program will restart."
+    new "アップデートがインストールされました。プログラムを再起動します。"
+
+    # renpy/common/00updater.rpy:1278
+    old "The updates have been installed."
+    new "アップデートがインストールされました。"
+
+    # renpy/common/00updater.rpy:1280
+    old "The updates were cancelled."
+    new "アップデートがキャンセルされました。"
+
+    # renpy/common/00updater.rpy:1294
+    old "Proceed"
+    new "続行"
+
+    # renpy/common/00updater.rpy:1297
+    old "Cancel"
+    new "キャンセル"
+
+# Translation updated at 2013-02-18 11:40
+
+translate japanese strings:
+
+    # renpy/common/_compat/preferences.rpym:411
+    old "Joystick Mapping"
+    new "ジョイスティックのマッピング"
+
+# Translation updated at 2013-02-18 11:40
+
+translate japanese strings:
+
+    # renpy/common/00layout.rpy:421
+    old "Are you sure?"
+    new "本当にいいですか？"
+
+    # renpy/common/00layout.rpy:422
+    old "Are you sure you want to delete this save?"
+    new "この保存データを本当に削除しますか？"
+
+    # renpy/common/00layout.rpy:423
+    old "Are you sure you want to overwrite your save?"
+    new "本当に保存データを上書きしますか？"
+
+    # renpy/common/00layout.rpy:424
+    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    new "読み込みによって未保存のゲームが失われます。\n本当に読み込みますか？"
+
+    # renpy/common/00layout.rpy:425
+    old "Are you sure you want to quit?"
+    new "本当にゲームを終了しますか？"
+
+    # renpy/common/00layout.rpy:426
+    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
+    new "本当にメインメニューに戻りますか？\nこれによって未保存のゲームが失われます。"
+
+# Translation updated at 2013-02-18 11:40
 
 translate japanese strings:
 
@@ -54,67 +162,7 @@ translate japanese strings:
     old "Opens the errors.txt file in a text editor."
     new "テキストエディターで errors.txt を開きます。"
 
-# Translation updated at 2013-01-20 21:09
-
-translate japanese strings:
-
-    # renpy/common/00updater.rpy:1248
-    old "Updater"
-    new "アップデーター"
-
-    # renpy/common/00updater.rpy:1253
-    old "An error has occured:"
-    new "エラーが発生しました:"
-
-    # renpy/common/00updater.rpy:1255
-    old "Checking for updates."
-    new "アップデートを確認しています。"
-
-    # renpy/common/00updater.rpy:1257
-    old "This program is up to date."
-    new "このプログラムは最新版です。"
-
-    # renpy/common/00updater.rpy:1259
-    old "[u.version] is available. Do you want to install it?"
-    new "[u.version] が利用可能です。インストールしますか？"
-
-    # renpy/common/00updater.rpy:1261
-    old "Preparing to download the updates."
-    new "アップデートをダウンロードする準備をしています。"
-
-    # renpy/common/00updater.rpy:1263
-    old "Downloading the updates."
-    new "アップデートをダウンロードしています。"
-
-    # renpy/common/00updater.rpy:1265
-    old "Unpacking the updates."
-    new "アップデートを展開しています。"
-
-    # renpy/common/00updater.rpy:1267
-    old "Finishing up."
-    new "完了しました。"
-
-    # renpy/common/00updater.rpy:1269
-    old "The updates have been installed. The program will restart."
-    new "アップデートがインストールされました。プログラムを再起動します。"
-
-    # renpy/common/00updater.rpy:1271
-    old "The updates have been installed."
-    new "アップデートがインストールされました。"
-
-    # renpy/common/00updater.rpy:1273
-    old "The updates were cancelled."
-    new "アップデートがキャンセルされました。"
-
-    # renpy/common/00updater.rpy:1287
-    old "Proceed"
-    new "続行"
-
-    # renpy/common/00updater.rpy:1290
-    old "Cancel"
-    new "キャンセル"
-
-# Translation updated at 2013-01-20 21:09
+# Translation updated at 2013-02-18 11:40
 
 translate japanese strings:
 
@@ -122,39 +170,7 @@ translate japanese strings:
     old "Saved screenshot as %s."
     new "スクリーンショットを %s に保存しました。"
 
-# Translation updated at 2013-01-20 21:09
-
-translate japanese strings:
-
-    # renpy/common/00library.rpy:77
-    old "Skip Mode"
-    new "スキップモード"
-
-    # renpy/common/00library.rpy:80
-    old "Fast Skip Mode"
-    new "高速スキップモード"
-
-# Translation updated at 2013-01-20 21:09
-
-translate japanese strings:
-
-    # renpy/common/_compat/preferences.rpym:411
-    old "Joystick Mapping"
-    new "ジョイスティックのマッピング"
-
-# Translation updated at 2013-01-20 21:09
-
-translate japanese strings:
-
-    # renpy/common/_layout/imagemap_load_save.rpym:115
-    old "a"
-    new "a"
-
-    # renpy/common/_layout/imagemap_load_save.rpym:124
-    old "q"
-    new "q"
-
-# Translation updated at 2013-01-20 21:09
+# Translation updated at 2013-02-18 11:40
 
 translate japanese strings:
 
@@ -242,39 +258,23 @@ translate japanese strings:
     old "Restart"
     new "再起動"
 
-# Translation updated at 2013-02-13 13:14
+# Translation updated at 2013-02-18 11:40
 
 translate japanese strings:
 
-    # renpy/common/00layout.rpy:421
-    old "Are you sure?"
-    new "本当にいいですか？"
+    # renpy/common/_layout/imagemap_load_save.rpym:115
+    old "a"
+    new "a"
 
-    # renpy/common/00layout.rpy:422
-    old "Are you sure you want to delete this save?"
-    new "この保存データを本当に削除しますか？"
+    # renpy/common/_layout/imagemap_load_save.rpym:124
+    old "q"
+    new "q"
 
-    # renpy/common/00layout.rpy:423
-    old "Are you sure you want to overwrite your save?"
-    new "本当に保存データを上書きしますか？"
-
-    # renpy/common/00layout.rpy:424
-    old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "読み込みによって未保存のゲームが失われます。\n本当に読み込みますか？"
-
-    # renpy/common/00layout.rpy:425
-    old "Are you sure you want to quit?"
-    new "本当にゲームを終了しますか？"
-
-    # renpy/common/00layout.rpy:426
-    old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "本当にメインメニューに戻りますか？\nこれによって未保存のゲームが失われます。"
-
-# Translation updated at 2013-02-13 16:36
+# Translation updated at 2013-02-18 11:40
 
 translate japanese strings:
 
-    # renpy/common/00action_file.rpy:139
+    # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"
     new "%m月%d日, %H:%M"
 
