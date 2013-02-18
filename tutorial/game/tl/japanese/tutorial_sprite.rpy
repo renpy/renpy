@@ -1,4 +1,4 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
 
 # game/tutorial_sprite.rpy:63
 translate japanese tutorial_sprite_d2ca6a0c:

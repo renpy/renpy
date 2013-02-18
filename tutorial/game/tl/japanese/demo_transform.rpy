@@ -1,4 +1,4 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
 
 # game/demo_transform.rpy:156
 translate japanese demo_transform_f10e08f5:
