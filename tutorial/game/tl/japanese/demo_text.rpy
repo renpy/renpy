@@ -1,6 +1,6 @@
-define eruby_ja = Character(kind=eruby, what_line_leading=11)
-
 ﻿# Translation updated at 2013-02-18 11:40
+
+define eruby_ja = Character(kind=eruby, what_line_leading=11)
 
 # game/demo_text.rpy:65
 translate japanese demo_text_ff47a1f2:
