@@ -141,15 +141,24 @@ init python in project:
             # Find the python executable to run.
             executable_path = os.path.dirname(sys.executable)
             
-            if persistent.windows_console:
-                executable = "python"
-            else:
-                executable = "pythonw"
-
             if renpy.renpy.windows:
-                executable += ".exe"
+                extension = ".exe"
+            else:
+                extension = ""
+
+            if persistent.windows_console:
+                executables = [ "python" + extension ]
+            else:
+                executables = [ "pythonw" + extension ]
             
-            executable = os.path.join(executable_path, executable)
+            executables.append(sys.executable)
+
+            for i in executables:
+                executable = os.path.join(executable_path, i)
+                if os.path.exists(executable):
+                    break
+            else:
+                raise Exception("Python interpreter not found: %r", executables)
             
             # Put together the basic command line.
             cmd = [ executable, "-OO", sys.argv[0] ]
