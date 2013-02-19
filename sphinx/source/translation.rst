@@ -360,7 +360,25 @@ There are two translation-related functions:
 
 .. include:: inc/translation_functions
 
-There are two language-relate variables. One is
+In addition, there are two functions that are related to string
+translation:
+
+.. function:: _(s)
+
+   (Single underscore) Returns `s` unchanged. Ren'Py will scan for
+   strings enclosed in this function, and add them to the list of
+   translatable strings. The strings will not be translated until
+   they are displayed.
+
+.. function:: __(s)
+
+   (Double underscore) Returns `s` immediately translated into the
+   current language. Strings enclosed in this function will be added
+   to the list of translatable strings. Note that the string may be
+   double-translated, if it matches a string translation when it
+   is displayed.
+             
+There are two language-related variables. One is
 :var:`config.language`, which is used to change the default language
 of the game.
 
@@ -370,6 +388,8 @@ of the game.
   being used. This should be treated as a read-only variable. To
   change the language, call :func:`renpy.change_language`.
 
+
+  
 
 Unsanctioned Translations
 =========================
