@@ -35,11 +35,6 @@ import cStringIO
 import threading
 
 try:
-    import pygame.macosx
-except:
-    pass
-
-try:
     import android #@UnresolvedImport @UnusedImport
     import android.sound #@UnresolvedImport
 except:
@@ -1133,12 +1128,13 @@ class Interface(object):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
 
         try:
-            pygame.macosx.init() #@UndefinedVariable
+            import pygame.macosx as macosx
+            macosx.init() #@UndefinedVariable
         except:
             pass
 
         try:
-            pygame.macosx.Video_AutoInit() #@UndefinedVariable
+            macosx.Video_AutoInit() #@UndefinedVariable
         except:
             pass
         
