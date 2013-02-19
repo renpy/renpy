@@ -84,7 +84,6 @@ def run(restart):
 
     # Note if this is a restart.
     renpy.store._restart = restart
-    restart = None
     
     # We run until we get an exception.
     renpy.execution.run_context(True)

@@ -28,7 +28,7 @@ init -1600 python hide:
     # The language we use when the game starts. None remembers the user's
     # choice of language, and defaults to the game's native language.
     config.language = None
-    
+        
 init -1600 python:
     
     def _init_language():

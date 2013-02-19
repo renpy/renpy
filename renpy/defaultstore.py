@@ -29,6 +29,8 @@ import renpy.text
 import renpy.display.im as im
 import renpy.display.anim as anim
 
+_restart = None
+
 # Used by the call/return mechanism.
 _return = None
 _args = None

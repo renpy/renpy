@@ -515,8 +515,9 @@ def run_context(top):
 
                 if e.label:
                     label = e.label
-                
+
                 continue
+
             else:
                 raise
         
