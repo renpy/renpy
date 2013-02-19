@@ -1,4 +1,4 @@
-﻿# Translation updated at 2013-01-20 21:09
+﻿# Translation updated at 2013-02-18 11:40
 
 # game/demo_layers.rpy:15
 translate japanese demo_layers_c4715eb5:
