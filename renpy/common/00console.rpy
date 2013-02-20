@@ -116,7 +116,7 @@ init -1500 python in _console:
             super(BoundedList, self).append(value)
     
             while len(self) >= self.size:
-                self.data.pop(0)
+                self.pop(0)
         
         def clear(self):
             self[:] = [ ]
