@@ -498,7 +498,7 @@ screen _console:
                 else:
                     text "... " style "_console_prompt"
                                 
-                input default default style "_console_input_text"
+                input default default style "_console_input_text" exclude ""
 
 
         # Draw historical console input.
