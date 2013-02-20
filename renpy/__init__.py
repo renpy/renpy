@@ -236,9 +236,6 @@ def reload_all():
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
         
-    # Cleans out the RenpyImporter.
-    sys.meta_path.pop()
-
     blacklist = [ "renpy",
                   "renpy.log",
                   "renpy.bootstrap",
