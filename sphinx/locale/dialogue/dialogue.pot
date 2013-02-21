@@ -1,0 +1,443 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/dialogue.rst:5
+# b95361ddfa64494b95294f2f4a9b4892
+msgid "Dialogue and Narration"
+msgstr ""
+
+#: ../../source/dialogue.rst:7
+# 18c60422b6f545b9bfe95fea4216558d
+msgid "Text is fundamental to visual novels, and generally quite important to storytelling-based games. This text may consist of dialogue labeled with the character that is saying it, and narration, which does not have a speaker. (For convenience, we will lump both dialogue and narration together as dialogue, except where the differences are important.) It's also important that the user be able to customize the look of dialogue to suit their game."
+msgstr ""
+
+#: ../../source/dialogue.rst:15
+# 85042d512ea2489daad07215088c855b
+msgid "In Ren'Py, most dialogue is written using say statements. The look of dialogue may be customized on a per-character basis by using Character objects."
+msgstr ""
+
+#: ../../source/dialogue.rst:22
+# 9dbde0b1e31c4af9a5aaf777f5df4960
+msgid "Say Statement"
+msgstr ""
+
+#: ../../source/dialogue.rst:24
+# 89cd0db49a1d4ddeb039d5664b45cd16
+msgid "The say statement is used for dialogue and narration. Since it's almost always the most frequently used statement in Ren'Py scripts, the say statement has a syntax that minimizes the overhead in writing it. Some example say statements are::"
+msgstr ""
+
+#: ../../source/dialogue.rst:36
+# 96782f6ecd34483a9ec608b3c5156b1c
+msgid "The first form of the say statement consists of a string by itself. This form is used for narration, with the narration being the contents of the string."
+msgstr ""
+
+#: ../../source/dialogue.rst:40
+# b85a3687631447268626aa071d1cb828
+msgid "The second form consists of two strings. The first string is the name of the character who is speaking, and the second is the dialogue being spoken."
+msgstr ""
+
+#: ../../source/dialogue.rst:44
+# e7d8cc1487a24c858ae8216bc82ed66f
+msgid "The final form is consists of a simple expression followed by a string. The simple expression should evaluate to either a string giving a character name, or a Character object. In the latter case, the character object is used to control how the dialogue is shown."
+msgstr ""
+
+#: ../../source/dialogue.rst:49
+# a6ae438f32144eb5bf210ae86657aa73
+msgid "Although the precise details of what a say statement does is controlled by the character object used, the usual effect of a say statement is to display dialogue on the screen until the user clicks to dismiss it, then to remove that dialogue on the screen."
+msgstr ""
+
+#: ../../source/dialogue.rst:54
+# 1c2a345e94ba4983a8f16fea58e49953
+msgid "Certain characters have special meaning to Ren'Py, and so can't be used in dialogue strings. The ``{`` character begins a text tag, and the ``[`` character begins a substitution. To use them in dialogue, double them. It may also be necessary to precede a quote with a backslash to prevent it from closing the string. For example::"
+msgstr ""
+
+#: ../../source/dialogue.rst:65
+# 329d878cbcee4b45a655f0e7cfd2b998
+msgid "Defining Character Objects"
+msgstr ""
+
+#: ../../source/dialogue.rst:67
+# fd16513a7f824d72bbd3582922d5e686
+msgid "By creating a Character object and using it in a say statement, you can customize the look (and to some extent, the behavior) of dialogue. Characters are created by using the define statement to assign a Character to a variable. For example::"
+msgstr ""
+
+#: ../../source/dialogue.rst:76
+# 8b2e39ce25fb420cacf2524f3ecf1b0b
+msgid "Once this is done, the character can be used in a say statement::"
+msgstr ""
+
+#: ../../source/dialogue.rst:81
+# 3aeb755d797d4738933cd2e2456e1450
+msgid "Character is a python function, that takes a large number of keyword arguments. These keyword arguments control the behavior of the character."
+msgstr ""
+
+#: ../../source/inc/character:5
+# a7dc7def091c43b882e85f5ddb7bf2e1
+msgid "Creates and returns a Character object, which controls the look and feel of dialogue and narration."
+msgstr ""
+
+#: ../../source/inc/character:11
+# 7a3df1f75aae4a36a2c6f2c6a61d5d62
+msgid "`name`"
+msgstr ""
+
+#: ../../source/inc/character:9
+# d1a335730f0147499cfef080f7f4ceb2
+msgid "If a string, the name of the character for dialogue. When `name` is ``None``, display of the name is omitted, as for narration."
+msgstr ""
+
+#: ../../source/inc/character:18
+# f3f892e8869c4f2c8b21c22a2dbab94f
+msgid "`kind`"
+msgstr ""
+
+#: ../../source/inc/character:14
+# bd6541bbf76f47139c88247bcda7ef62
+msgid "The Character to base this Character off of. When used, the default value of any argument not supplied to this Character is the value of that argument supplied to `kind`. This can be used to define a template character, and then copy that character with changes."
+msgstr ""
+
+#: ../../source/inc/character:20
+# fa44cd19e2424caab16c4a82bd4fb2e0
+msgid "**Linked Image** An image tag may be associated with a Character. This allows a say statement involving this character to display an image with the tag, and also allows Ren'Py to automatically select a side image to show when this character speaks."
+msgstr ""
+
+#: ../../source/inc/character:28
+# 1480037d88544ef4acaae07706207e89
+msgid "`image`"
+msgstr ""
+
+#: ../../source/inc/character:27
+# e3484ce8653144d5bd53b7a45e9433d4
+msgid "A string giving the image tag that is linked with this character."
+msgstr ""
+
+#: ../../source/inc/character:30
+# 3e283ba82c014b5785bbcf240a61b084
+msgid "**Voice Tag** If a voice tag is assign to a Character, the voice files that are associated with it, can be muted or played in the preference screen."
+msgstr ""
+
+#: ../../source/inc/character:37
+# f7c61846751d47848f704b6274e24d54
+msgid "`voice_tag`"
+msgstr ""
+
+#: ../../source/inc/character:36
+# 903b01e0c3b24aee8abe556b6b37f017
+msgid "A String that enables the voice file assosiated with the Character to be muted or played in the 'voice' channel."
+msgstr ""
+
+#: ../../source/inc/character:39
+# 4da4f66e3c624e2ab6d2b9986089b7cf
+msgid "**Prefixes and Suffixes.** These allow a prefix and suffix to be applied to the name of the character, and to the text being shown. This can be used, for example, to add quotes before and after each line of dialogue."
+msgstr ""
+
+#: ../../source/inc/character:46
+# bcf249fab6014a3c9c9654dc16de51ac
+msgid "`what_prefix`"
+msgstr ""
+
+#: ../../source/inc/character:45
+# 2bede34b14034a179ba5d6cae595a958
+msgid "A string that is prepended to the dialogue being spoken before it is shown."
+msgstr ""
+
+#: ../../source/inc/character:50
+# 4e56c32f87e3475d84875b28f6185f75
+msgid "`what_suffix`"
+msgstr ""
+
+#: ../../source/inc/character:49
+# e7bf7ecaa8f44b128c58bd6dd97a2dd8
+msgid "A string that is appended to the dialogue being spoken before it is shown."
+msgstr ""
+
+#: ../../source/inc/character:54
+# 01a59cedc29246feb06b65d977505a4b
+msgid "`who_prefix`"
+msgstr ""
+
+#: ../../source/inc/character:53
+# b4c7bba61bf54f8785867b09340d8968
+msgid "A string that is prepended to the name of the character before it is shown."
+msgstr ""
+
+#: ../../source/inc/character:58
+# 68f8ce0a7e8b4f5681eb6178e32a9680
+msgid "`who_suffix`"
+msgstr ""
+
+#: ../../source/inc/character:57
+# 73887e2f25e447b291da3354b7693d19
+msgid "A string that is appended to the name of the character before it is shown."
+msgstr ""
+
+#: ../../source/inc/character:60
+# 12cc355a6b85468a860abec97ffd00ce
+msgid "**Changing Name Display.** These options help to control the display of the name."
+msgstr ""
+
+#: ../../source/inc/character:66
+# 8e2a169c3e8547f4aa8d575254b8e41c
+msgid "`dynamic`"
+msgstr ""
+
+#: ../../source/inc/character:64
+# 62d29fc60834472c809a1e2dff61cc95
+msgid "If true, then `name` should be a string containing a python expression. That string will be evaluated before each line of dialogue, and the result used as the name of the character."
+msgstr ""
+
+#: ../../source/inc/character:68
+# c5fd790907764f2bae4d3f1c594f7efe
+msgid "**Controlling Interactions.** These options control if the dialogue is displayed, if an interaction occurs, and the mode that is entered upon display."
+msgstr ""
+
+#: ../../source/inc/character:75
+# 41026c1d94264f6691d9c51d4e4feaec
+msgid "`condition`"
+msgstr ""
+
+#: ../../source/inc/character:73
+# a8068fecc2b94425bd3dd30b5985de2b
+msgid "If given, this should be a string containing a python expression. If the expression is false, the dialogue does not occur, as if the say statement did not happen."
+msgstr ""
+
+#: ../../source/inc/character:80
+# abaffa5b7dd54bf28f6a1d8a1bef70c0
+msgid "`interact`"
+msgstr ""
+
+#: ../../source/inc/character:78
+# 34b41fb9f02748a9a815f1acfcfb74a6
+msgid "If true, the default, an interaction occurs whenever the dialogue is shown. If false, an interaction will not occur, and additional elements can be added to the screen."
+msgstr ""
+
+#: ../../source/inc/character:84
+# b5dadaddbc2f4700ae37b72107a50732
+msgid "`mode`"
+msgstr ""
+
+#: ../../source/inc/character:83
+# 4c7ef7316a2c45f3859af5d2f7b5e53d
+msgid "A string giving the mode to enter when this character speaks. See the section on :ref:`modes <modes>` for more details."
+msgstr ""
+
+#: ../../source/inc/character:89
+# d1ebe15fa62947e69ab83ee092b0e477
+msgid "`callback`"
+msgstr ""
+
+#: ../../source/inc/character:87
+# 77b9fd78708045a799a577040c5cd7f8
+msgid "A function that is called when events occur while the character is speaking. See the section on :ref:`character callbacks` fore more information."
+msgstr ""
+
+#: ../../source/inc/character:91
+# abf986eb7b9043dc99523e046cca0717
+msgid "**Click-to-continue.** A click-to-continue indicator is displayed once all the text has finished displaying, to prompt the user to advance."
+msgstr ""
+
+#: ../../source/inc/character:97
+# 8f634d5807f34623827dc0d3caa0a83d
+msgid "`ctc`"
+msgstr ""
+
+#: ../../source/inc/character:96
+# 388dde6aa7004751bb3257744fc40abc
+msgid "A Displayable to use as the click-to-continue indicator, unless a more specific indicator is used."
+msgstr ""
+
+#: ../../source/inc/character:101
+# e0673d26f10648099006c30d9f16c2d6
+msgid "`ctc_pause`"
+msgstr ""
+
+#: ../../source/inc/character:100
+# 3f063040dca94f22b613b663448cb93e
+msgid "A Displayable to use a the click-to-continue indicator when the display of text is paused by the {p} or {w} text tags."
+msgstr ""
+
+#: ../../source/inc/character:107
+# 758791edcb4a4f2f83e52a5b1480deae
+msgid "`ctc_timedpause`"
+msgstr ""
+
+#: ../../source/inc/character:104
+# 720f84568a274a19ad440bbfc57fd59a
+msgid "A Displayable to use a the click-to-continue indicator when the display of text is paused by the {p=} or {w=} text tags. When None, this takes its default from ctc_pause, use ``Null()`` when you want a ctc_pause but no ctc_timedpause."
+msgstr ""
+
+#: ../../source/inc/character:115
+# 05226a1c27e4431dadcfeffd0bcc73de
+msgid "`ctc_position`"
+msgstr ""
+
+#: ../../source/inc/character:110
+# f07e6ff4bc4b420e806ecbd9455d43e8
+msgid "Controls the location of the click-to-continue indicator. If ``\"nestled\"``, the indicator is displayed as part of the text being shown, immediately after the last character. If ``\"fixed\"``, the indicator is added to the screen, and its position is controlled by the position style properties."
+msgstr ""
+
+#: ../../source/inc/character:117
+# 7e99de4f848d4ab8b21475a3cc445a2b
+msgid "**Screens.** The display of dialogue uses a :ref:`screen <screens>`. These arguments allow you to select that screen, and to provide arguments to it."
+msgstr ""
+
+#: ../../source/inc/character:122
+# 374629f7d85c40cca202f4d80d495adb
+msgid "`screen`"
+msgstr ""
+
+#: ../../source/inc/character:122
+# b8187244fd8a43a2b71f2c7eefbd542f
+msgid "The name of the screen that is used to display the dialogue."
+msgstr ""
+
+#: ../../source/inc/character:124
+# bf65c5ff6be244e4bac87d3c5b13a88f
+msgid "Keyword arguments beginning with ``show_`` have the prefix stripped off, and are passed to the screen as arguments. For example, the value of ``show_side_image`` will become the value of the ``side_image`` variable in the screen."
+msgstr ""
+
+#: ../../source/inc/character:129
+# 1734782d0287480d9c9ddb87e4c60144
+msgid "Some useful ``show_`` variables implemented by the default screens are:"
+msgstr ""
+
+#: ../../source/inc/character:136
+# 49e392cad9804878acaa51300053b350
+msgid "`show_side_image`"
+msgstr ""
+
+#: ../../source/inc/character:132
+# 1314e314e67f46f7817bc26e986e0fff
+msgid "When given a Displayable, shows that displayable when the dialogue is shown. The position of that displayable is controlled by its position properties. This is often used to show an image of the speaking character to the side of the dialogue."
+msgstr ""
+
+#: ../../source/inc/character:141
+# 7f22652514504b75b166853039a9b88e
+msgid "`show_two_window`"
+msgstr ""
+
+#: ../../source/inc/character:139
+# a0e44eb3d3aa45328eecf2387840c13b
+msgid "If true, restructures the layout so that the name of the character is placed in one window, and the dialogue text in a second window."
+msgstr ""
+
+#: ../../source/inc/character:143
+# d7152e9a80b449e7810913ebc4239411
+msgid "**Styling Text and Windows.** Keyword arguments beginning with ``who_``, ``what_``, and `window_`` have their prefix stripped, and are used to :ref:`style <styles>` the character name, the spoken text, and the window containing both, respectively."
+msgstr ""
+
+#: ../../source/inc/character:149
+# fc4ed4ea37194506b71ca7eade80dbe2
+msgid "For example, if a character is given the keyword argument ``who_color=\"#c8ffc8\"``, the color of the character's name is changed, in this case to green. ``window_background=\"frame.png\"`` sets the background of the window containing this character's dialogue."
+msgstr ""
+
+#: ../../source/inc/character:155
+# e0a958bf7f434ca5aacba021d49454ef
+msgid "The style applied to the character name, spoken text, and window can also be set this way, using the `who_style`, `what_style`, and `window_style` arguments, respectively."
+msgstr ""
+
+#: ../../source/dialogue.rst:88
+# dc2cbd2888d04ad08bacb57c4faf3338
+msgid "Say with Image Attributes"
+msgstr ""
+
+#: ../../source/dialogue.rst:90
+# 7af91a46e32e45a5ae4d160de1debe3e
+msgid "When a character is defined with an associated image tag, say statement involving that character may have image attributes placed between the character name and the second string."
+msgstr ""
+
+#: ../../source/dialogue.rst:94
+# b475a9a4c3c74ffbbe187a6effc6f492
+msgid "In this form, if an image with the given tag is showing, Ren'Py will issue a show command involving the character tag and the attributes. If the image is not shown, Ren'Py will store the attributes for use by side images, but will not show an image."
+msgstr ""
+
+#: ../../source/dialogue.rst:100
+# 2d25397be9e740c18174cebc40e5643e
+msgid "For example, the code::"
+msgstr ""
+
+#: ../../source/dialogue.rst:111
+# 7c28b8c83a6c4206ba5d36dfee03c1e1
+msgid "is equivalent to::"
+msgstr ""
+
+#: ../../source/dialogue.rst:123
+# 3d79e6bf19274b1f8f1f7fa567cfe705
+msgid "To cause a transition to occur whenever the images are changed in this way, set :var:`config.say_attribute_transition` to a transition."
+msgstr ""
+
+#: ../../source/dialogue.rst:127
+# 4bbbfb63f5b7488ea1d2af29e2442d64
+msgid "Example Characters"
+msgstr ""
+
+#: ../../source/dialogue.rst:129
+# c25d6ca958594f858cabd4dcd07841db
+msgid "Here are a few example characters::"
+msgstr ""
+
+#: ../../source/dialogue.rst:138
+# 3269dd894bc8463bbbfa7652f3049061
+msgid "Special Characters"
+msgstr ""
+
+#: ../../source/dialogue.rst:140
+# cea514d4cd634f198bcfeadf9071ce20
+msgid "A few character names are defined by default, and are used automatically in certain situations. Intentionally redefining these characters can change the behavior of Ren'Py, but accidentally using them can be a problem."
+msgstr ""
+
+#: ../../source/dialogue.rst:148
+# 53be90f979cd48318f3c61386e0076da
+msgid "``adv``"
+msgstr ""
+
+#: ../../source/dialogue.rst:146
+# 7e0cadf197254bb1919c9560ae56fb09
+msgid "The default kind of character used by Character. This sets up a character such that one line is displayed on the screen at a time."
+msgstr ""
+
+#: ../../source/dialogue.rst:153
+# af83cc4761984e198e75eaa8593eeb47
+msgid "``nvl``"
+msgstr ""
+
+#: ../../source/dialogue.rst:151
+# 5446677923304dd08ce0a5ae5b4a1489
+msgid "A kind of Character that causes dialogue to be displayed in :ref:`NVL-mode`, with multiple lines of text on the screen at once."
+msgstr ""
+
+#: ../../source/dialogue.rst:157
+# a022e9877a3a4159a9130b6a7e0cd284
+msgid "``narrator``"
+msgstr ""
+
+#: ../../source/dialogue.rst:156
+# 4c6e09140f804ea1b1c0c19c0abe5086
+msgid "The character that's used to display narration, by say statements without a character name."
+msgstr ""
+
+#: ../../source/dialogue.rst:164
+# 4452756e8f7f4c88bc78099b115fcb8d
+msgid "``name_only``"
+msgstr ""
+
+#: ../../source/dialogue.rst:160
+# fd4f9f7809f14ac4bfc302a43d62f073
+msgid "A character that is used to display dialogue in which the character name is given as a string. This character is copied to a new character with the given name, and then that new character is used to display the dialogue."
+msgstr ""
+

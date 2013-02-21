@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/license.rst:8
+# 11349ff10c7246fb8052f42c8bf46971
+msgid "License"
+msgstr ""
+
+#: ../../source/license.rst:10
+# b0cc0259dbed48b6882604c6dda4b9bc
+msgid "Most of Ren'Py is covered by the terms of the following (MIT) license:"
+msgstr ""
+
+#: ../../source/license.rst:12
+# eb521eb96ab94761b23a178aa384fa08
+msgid "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+msgstr ""
+
+#: ../../source/license.rst:20
+# a17f134929644b82aa6c3d40fb4fd99b
+msgid "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+msgstr ""
+
+#: ../../source/license.rst:23
+# d5d9fdb1f89e4b10857ab1557e0be3b1
+msgid "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+msgstr ""
+
+#: ../../source/license.rst:31
+# 297258113c0948d7bb746d158abd9ae3
+msgid "Portions of Ren'Py are derived from code that is copyright using the Lesser GNU Public License, so Ren'Py games must be distributed in a manner that satisfies the LGPL."
+msgstr ""
+
+#: ../../source/license.rst:35
+# 67f81dc5a7d64206bd738daf2cffa20f
+msgid "Please see each individual source file for a list of copyright holders. The artwork in the demo is released by various copyright holders, under the same terms."
+msgstr ""
+
+#: ../../source/license.rst:39
+# e3cd8b28eabe4492a3682ebe6f0e88b1
+msgid "Ren'Py binaries include code from the following projects:"
+msgstr ""
+
+#: ../../source/license.rst:41
+# e0866b231c0f43c68da1c2be2777a0fd
+msgid "Python (Python License)"
+msgstr ""
+
+#: ../../source/license.rst:42
+# d8f6eb50691041e2bca54b1aa8b74e04
+msgid "Pygame (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:43
+# 6732dbfe391c454db746e44f934c7aa8
+msgid "SDL (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:44
+# ab862a37025941b3ae8f14711f1d16e1
+msgid "SDL_image (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:45
+# ff76bbd0562c4bb6922efcc99f07eb19
+msgid "SDL_ttf (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:46
+# 36fa74d6f6074b5c99fffd8eef0e5b59
+msgid "Freetype (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:47
+# 467f9e1555ff42c282eafbfc434ac1e0
+msgid "Fribidi (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:48
+# 9038c9dfde084f4cada2e6d503bc4959
+msgid "libav (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:49
+# 7c5b6427088d48d08d4defd29104dade
+msgid "libjpeg-turbo (LGPL)"
+msgstr ""
+
+#: ../../source/license.rst:50
+# f182758f71994d0795b7b81f67549e71
+msgid "libpng (PNG license)"
+msgstr ""
+
+#: ../../source/license.rst:51
+# 4b436d79122f49479a1a2921522ceb1b
+msgid "zlib (Zlib License)"
+msgstr ""
+
+#: ../../source/license.rst:52
+# 6d0e1c838cef45639affe50cbcd34737
+msgid "bzip2 (Bzip2 License)"
+msgstr ""
+
+#: ../../source/license.rst:53
+# d719cbc8107740b28f6881ae946a5ccf
+msgid "pyobjc (MIT License)"
+msgstr ""
+
+#: ../../source/license.rst:54
+# c4922e466e2c41bc9780f2529e41b0a9
+msgid "py2exe (MIT License)"
+msgstr ""
+
+#: ../../source/license.rst:55
+# 3dedba1dd79c4ea2b359f061e0f1143c
+msgid "GLEW (Modified BSD, MIT)"
+msgstr ""
+
+#: ../../source/license.rst:56
+# 2910df8508ac4a818d61a5d724d0f6d0
+msgid "zsync (Artistic License)"
+msgstr ""
+
+#: ../../source/license.rst:58
+# d322b2215e484d7c97122367f9acfe72
+msgid "For the purpose of LGPL compliance, the source code to all LGPL software we depend on is either in the Ren'Py package (available from http://www.renpy.org/), or in the renpy-deps package (http://www.renpy.org/dl/lgpl/). We believe compliance can be achieved by including a copy of this license with every copy of Ren'Py you distribute, and referring to it in your project's README file."
+msgstr ""
+
+#: ../../source/license.rst:65
+# ba7a7307f3164a55b4821d991f8ad3a3
+msgid "Ren'Py may be distributed alongside the jEdit or Editra text editors. Editra is licensed under the wxWindows license, while jEdit is under the GNU General Public License."
+msgstr ""
+
+#: ../../source/license.rst:71
+# 67e973a6094247c6b203fde4c8933c9e
+msgid "GNU Lesser General Public License"
+msgstr ""
+
+#: ../../source/license.rst:585
+# 35ffe7414b1c44fda98aff91d0eaf6e2
+msgid "Python License"
+msgstr ""
+
+#: ../../source/license.rst:636
+# 5e9aa403ef964ff28b2041e818862e36
+msgid "Jpeg License"
+msgstr ""
+
+#: ../../source/license.rst:688
+# b9addea9b2a4460a9efb2fb23ce56dea
+msgid "PNG License"
+msgstr ""
+
+#: ../../source/license.rst:719
+# 67146eee9cf04526b834bfefc98bf4a7
+msgid "Zlib License"
+msgstr ""
+
+#: ../../source/license.rst:741
+# d2a576a3e47645c495c73d8b98ff1152
+msgid "Bzip2 License"
+msgstr ""
+
+#: ../../source/license.rst:782
+# bd70c836cc824fca9f190fbec756ef7f
+msgid "Modified BSD License"
+msgstr ""
+
+#: ../../source/license.rst:811
+# 523d37a199c542aa8150a15af9381bd8
+msgid "Artistic License"
+msgstr ""
+

@@ -1,0 +1,1827 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/screens.rst:8
+# af81bd9695cd4dbfab195d54dfa827f2
+msgid "Screens and Screen Language"
+msgstr ""
+
+#: ../../source/screens.rst:10
+# 9b35afdc5685438e99fcc964e66269e6
+msgid "The things that a user sees when looking at a Ren'Py game can be broken divided into images and user interface. Images are displayed to the user using the scene, show, and hide statements, and are generally part of the story being told. Everything else the user sees is part of the user interface, which is customized using screens."
+msgstr ""
+
+#: ../../source/screens.rst:16
+# 9032c1f40e8842499f3601edcd9bd719
+msgid "Screens can be displayed in four ways:"
+msgstr ""
+
+#: ../../source/screens.rst:18
+# b48b54defcd44481a60b3e510bf98f4a
+msgid "Implicitly, when script statements execute. For example, the say statement will cause the `say` screen to be displayed."
+msgstr ""
+
+#: ../../source/screens.rst:20
+# 422c1c42bdbb4475b05e0341244e14c4
+msgid "Automatically. For example, Ren'Py will display the `main_menu` screen when it starts running, or when the user returns to the main menu."
+msgstr ""
+
+#: ../../source/screens.rst:23
+# 69247fb791214f399b1b3a5650ca1104
+msgid "As an action, associated with a button, mouse button, or keyboard key. By default, the `save` screen is shown when the user right-clicks or presses escape. It's also possible to define an on-screen button that shows the `save` screen."
+msgstr ""
+
+#: ../../source/screens.rst:27
+# b52e74db75e84b38b43cb76231cc972d
+msgid "Explicitly, using statements that cause screens to be shown."
+msgstr ""
+
+#: ../../source/screens.rst:29
+# 195b896f96c5474e8447deb56c87ee6e
+msgid "More than one screen can be shown at a time."
+msgstr ""
+
+#: ../../source/screens.rst:31
+# c5d3f87b38354c45b8d8272f94a885a5
+msgid "Screens have two main functions. The first is to display information to the user. Information can be displayed using text, bars, and images. Some of the information displayed in this manner is vital to gameplay. The `say` screen, for example, is used to display dialogue to the user, including the character's name and what she is saying."
+msgstr ""
+
+#: ../../source/screens.rst:37
+# 114f48392dbd45a8bd340d89ccaa2c9c
+msgid "The other thing a screen can do is to allow the user to interact with the game. Buttons and bars allow the user to invoke actions and adjust values. Ren'Py includes a pool of pre-defined actions, allowing the user to advance the game, control preferences, load and save games, and invoke many other actions. A game-maker can also write new actions in Python."
+msgstr ""
+
+#: ../../source/screens.rst:44
+# 5b50c37a311a4f9fbb9f642c8b8832ff
+msgid "Screens are updated at the start of each interaction, and each time an interaction is restarted."
+msgstr ""
+
+#: ../../source/screens.rst:47
+# 58fe0cf11bdb473db1bd1e9c297a9c89
+msgid "**Screen code must not cause side effects that are visible from outside the screen.** Ren'Py will run screen code multiple times, as it deems necessary. It runs screen code as part of the image prediction process, before the screen is first shown. As a result, if screen code has side effects, those side effects may occur at unpredictable times."
+msgstr ""
+
+#: ../../source/screens.rst:54
+# fad1a33506374fab987a400b2ccc1a7f
+msgid "A screen has a scope associated with it, giving values to some variables. When a variable is accessed by a screen, it's first looked up in the scope, and then looked up as a global variable."
+msgstr ""
+
+#: ../../source/screens.rst:59
+# b1d400ad7f5a4b38b8ad34bee56b28f1
+msgid "Screen Language"
+msgstr ""
+
+#: ../../source/screens.rst:61
+# 22d445be4f2e4938962a7b8417fa59a0
+msgid "The screen language is a mostly-declarative way of displaying screens. It consists of a statement that declares a new screen, statements that add displayables to that screen, and control statements."
+msgstr ""
+
+#: ../../source/screens.rst:66
+# 016a19eb307b4769891f91c446f6aad5
+msgid "Here's an example of a screen.::"
+msgstr ""
+
+#: ../../source/screens.rst:76
+# 216ce322b4da49778adde8fe78f03f0c
+msgid "The first line of this is a screen statement, a Ren'Py language statement that's used to declare a screen. The name of the screen is `say`, so this is the screen that's used to display dialogue."
+msgstr ""
+
+#: ../../source/screens.rst:80
+# fa19300631604c2699639133dae730bf
+msgid "The screen contains a window, which has been given the id of \"window\". This window contains a vertical box, and the spacing inside that box is 10 pixels. It contains two text fields, one of the name of the speaker, and the other with the speaker's id."
+msgstr ""
+
+#: ../../source/screens.rst:86
+# 9da5bb9da67b431f99f24c193d66ad62
+msgid "Screen Language Syntax"
+msgstr ""
+
+#: ../../source/screens.rst:88
+# 7323f01b9b71470f88fa64099edec1d2
+msgid "Most screen language statements share a common syntax. (Some of the control statements have other syntaxes.)  A statement starts at the beginning of a line, with a keyword that introduces the statement."
+msgstr ""
+
+#: ../../source/screens.rst:92
+# e43d95b4d80946768bc128f5ff4b9f4b
+msgid "If a statement takes parameters, they immediately follow the keyword. The parameters are space-separated simple expressions, unless otherwise noted."
+msgstr ""
+
+#: ../../source/screens.rst:96
+# 905a5715f9b04ead9ea8917a97fbfaf8
+msgid "The positional parameters are followed by a property list. A property consists of the property name, followed by the value of that property. Property values are simple expressions, unless otherwise noted. A property list is a space-separated list of these properties."
+msgstr ""
+
+#: ../../source/screens.rst:101
+# 311ce45d7ca24101bd64d2a171ee1aef
+msgid "If a statement ends with a colon (:), then it takes a block. Each line in a block may be one of two things:"
+msgstr ""
+
+#: ../../source/screens.rst:104
+# b3d6d8c6e2f0456e98a12a041dfc9e8e
+msgid "A property list."
+msgstr ""
+
+#: ../../source/screens.rst:105
+# 449fca58b8644390841c391f20f61f23
+msgid "A screen language statement."
+msgstr ""
+
+#: ../../source/screens.rst:109
+# 4dab051580af42ecb94ae8a2da29fed0
+msgid "Screen Statement"
+msgstr ""
+
+#: ../../source/screens.rst:111
+# 0c896375e4f04c298b11c968de83cc92
+msgid "The `screen` statement is a Ren'Py script language statement that is used to declare a new screen. It is parsed using the screen language common syntax."
+msgstr ""
+
+#: ../../source/screens.rst:115
+# ef56d1b666374af09005902b161149c3
+msgid "It takes one parameter, the name of the screen. This is a name, not an expression. It takes the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:121
+# df2b30d5aece42b680c8dec66dd7d51b
+msgid "`modal`"
+msgstr ""
+
+#: ../../source/screens.rst:119
+# 0010d4e18e90410a87434d20a60d87e6
+msgid "If True, the screen is modal. A modal screen prevents the user from interacting with displayables below it, except for the default keymap."
+msgstr ""
+
+#: ../../source/screens.rst:127
+# d24131cb105346baae09a78d029aa9f7
+msgid "`tag`"
+msgstr ""
+
+#: ../../source/screens.rst:124
+# deb36a53aab74d6f9fceb0f7e11dd44d
+msgid "Parsed as a name, not an expression. This specifies a tag associated with this screen. Showing a screen replaces other screens with the same tag. This can be used to ensure that only one screen of a menu is shown at a time, in the same context."
+msgstr ""
+
+#: ../../source/screens.rst:132
+# 3c987a396dc94cedbefa3ca1b8ec23c1
+msgid "`zorder`"
+msgstr ""
+
+#: ../../source/screens.rst:130
+# c8da34b84cdb44a0a832dfcc2041da5b
+msgid "This controls how close to the user a screen is displayed. The larger the number, the closer the screen is displayed to the user. It defaults to 0."
+msgstr ""
+
+#: ../../source/screens.rst:136
+# d97b04d8035442869170cb67304717c5
+msgid "`variant`"
+msgstr ""
+
+#: ../../source/screens.rst:135
+# 479ddee393f24f0ab45a422f8ae94ec3
+msgid "If present, this should be a string giving the variant of screen to be defined. See :ref:`screen-variants`."
+msgstr ""
+
+#: ../../source/screens.rst:147
+# 003e68254e764b55aa8cfc3637ae9ad0
+msgid "A screen can take a parameter list::"
+msgstr ""
+
+#: ../../source/screens.rst:154
+# b62d480a57e741d0a5e44a25da57288c
+msgid "User Interface Statements"
+msgstr ""
+
+#: ../../source/screens.rst:156
+# f67c17b99625449db567723c138a8e39
+msgid "The user interface statements create displayables and add them either to the screen, or to an enclosing displayable. They allow the user to display information, allow the user to interact with the game, or allow the game to react to various events."
+msgstr ""
+
+#: ../../source/screens.rst:163
+# fcbfb2071edf4cd9ba3791c6035342f2
+msgid "All user interface statements take the following common properties:"
+msgstr ""
+
+#: ../../source/screens.rst:174
+# 2ea6871fc72846c4af555d8742ef3a4e
+msgid "`at`"
+msgstr ""
+
+#: ../../source/screens.rst:166
+# 92bb8867e9894017af8ac5a20c2ba85b
+msgid "A transform, or list of transforms, that are used to wrap this displayable. The show, hide, replace, and replaced external events are delivered to a transform if and only if it is added directly to the screen."
+msgstr ""
+
+#: ../../source/screens.rst:171
+# 3049a135e7664b558661fd2870231823
+msgid "For example, if a vbox is wrapped in a transform, and added directly to the screen, then events are delivered to that transform. But if a transform wraps a textbutton that is added to the vbox, this second transform is not given events."
+msgstr ""
+
+#: ../../source/screens.rst:178
+#: ../../source/screens.rst:525
+# 47e3f5a76fb9456590b095b691974efa
+# c3aefb47878e4d23aba93314325ec604
+msgid "`default`"
+msgstr ""
+
+#: ../../source/screens.rst:177
+# b641ab1b43b84465a82606721416e2d9
+msgid "If given and true, the displayable is focused by default. Only one displayable should have this."
+msgstr ""
+
+#: ../../source/screens.rst:186
+# cc9d6637182b4b6fbab83bfd204b4a29
+msgid "`id`"
+msgstr ""
+
+#: ../../source/screens.rst:181
+# 5ebab5de165f4f7d8e51c8f8cbe8d33b
+msgid "An identifier for the user-interface statement. When a screen is shown, property values can be supplied for the displayables with a given identifier. Some screens will require that a displayable with a given identifier is created."
+msgstr ""
+
+#: ../../source/screens.rst:186
+# ca35435caca14ab39548ba63aa3785af
+msgid "By default, the id is automatically-generated."
+msgstr ""
+
+#: ../../source/screens.rst:191
+# 6a61a89dac664e498cc478e207cc4449
+msgid "`style`"
+msgstr ""
+
+#: ../../source/screens.rst:189
+# 4881ff3db63541518015b07c63a42785
+msgid "The name of the style applied to this displayable. This may be a string name, or a style object. The style gives default values for style properties."
+msgstr ""
+
+#: ../../source/screens.rst:207
+# abae34fe1f9d4fe1b1ec2c7515766da5
+msgid "`style_group`"
+msgstr ""
+
+#: ../../source/screens.rst:194
+# 412efd6d7390410aa98558b793511180
+msgid "Style_group is used to provide a prefix to the style of a displayable, for this displayable and all of its children (unless they have a more specific group set)."
+msgstr ""
+
+#: ../../source/screens.rst:198
+# 06c9e409c10a430b94eda36efd3445c8
+msgid "For example, if a vbox has a group of ``\"pref\"``, then the vbox will have the style ``\"pref_vbox\"``, unless a more specific style is supplied to it. A button inside that vbox would default to the style ``\"pref_button\"``."
+msgstr ""
+
+#: ../../source/screens.rst:203
+# 1d5d261434994d4f97210bcd044f97b2
+msgid "Styles accessed in this way are automatically created, if they do not exist. This prevents an error from being signalled."
+msgstr ""
+
+#: ../../source/screens.rst:206
+# a221e5dbebd143da84ffaed84fb6de21
+msgid "Setting a group of ``None`` disables this behavior for a displayable and all of its children."
+msgstr ""
+
+#: ../../source/screens.rst:216
+# 6db3cd27cf72469e88e575056bd69a72
+msgid "`focus`"
+msgstr ""
+
+#: ../../source/screens.rst:210
+# 843d9947a5294e22a89c3d3acc1b6c17
+msgid "Takes a string or integer, and gives a name to the displayable for focus purposes. Ren'Py looks for structural similarity between focus names when deciding with displayable to give focus to at the start of an interaction. If a box is given a focus name, and the third button in that box is focused at the end of an interaction, the third button of a box with the same will be highlighted at the start of the next interaction."
+msgstr ""
+
+#: ../../source/screens.rst:218
+# 8cc400c34d854c7f953e0eb6ef49fb77
+msgid "Many user interface statements take classes of style properties, or transform properties. These properties can have a style prefix associated with them, that determines when they apply. For example, if text is given the hover_size property, it sets the text size when the text is hovered."
+msgstr ""
+
+#: ../../source/screens.rst:228
+# c5052d6ebc55430d8dc70e225eff4071
+msgid "Add"
+msgstr ""
+
+#: ../../source/screens.rst:230
+# 22324d26a3d242c79cab246c7d0973fc
+msgid "Adds an image or other displayable to the screen. This optionally takes :ref:`transform properties <transform-properties>`. If at least one transform property is given, a Transform is created to wrap the image, and the properties are given to the transform."
+msgstr ""
+
+#: ../../source/screens.rst:235
+#: ../../source/screens.rst:554
+# 4d96d3bc03064b6fa3ae7e1144031d8d
+# 862437d067e447fba6f1f63a54051524
+msgid "This does not take any children."
+msgstr ""
+
+#: ../../source/screens.rst:246
+# 0463d3696a9b42f8b6610e200e9a62b0
+msgid "Bar"
+msgstr ""
+
+#: ../../source/screens.rst:248
+# 13c4ed4d947349528b13d24a1e143d66
+msgid "Creates a horizontally-oriented bar that can be used to view or adjust data. It takes the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:253
+#: ../../source/screens.rst:1161
+# c1f718e004194a8ba6c51bf0dd3f30c7
+# 01cf8c7ab23d4c5abd9085df729a4e36
+msgid "`value`"
+msgstr ""
+
+#: ../../source/screens.rst:252
+# e6212b6743694ef8a494bf86b36f4c21
+msgid "The current value of the bar. This can be either a BarValue object, or a number."
+msgstr ""
+
+#: ../../source/screens.rst:257
+#: ../../source/screens.rst:1165
+# c617163d79c34cb5974012bb812d3354
+# 83fd79b6423c4d72834db367d1cd31f8
+msgid "`range`"
+msgstr ""
+
+#: ../../source/screens.rst:256
+#: ../../source/screens.rst:1164
+# 5f0b1c0e5b6d462f8d9499e4d6dbfbe6
+# 82e6bea5decd48d39f4300da969cc042
+msgid "The maximum value of the bar. This is required if `value` is a number."
+msgstr ""
+
+#: ../../source/screens.rst:260
+#: ../../source/screens.rst:1168
+# 016273e068834eacbdc6ca52689421e1
+# fede4bfe6cd9427ea02a6a98ee5f8838
+msgid "`adjustment`"
+msgstr ""
+
+#: ../../source/screens.rst:260
+#: ../../source/screens.rst:1168
+# b712a43960884ea3abd7fb841244942b
+# 8c77c9242a9740af89f375bfdb4df7bd
+msgid "A :func:`ui.adjustment` object that this bar adjusts."
+msgstr ""
+
+#: ../../source/screens.rst:264
+#: ../../source/screens.rst:546
+# 3c810d1adaf34e1a91526cc2d9287991
+# 3da10b1149b34817a4683d866632516f
+msgid "`changed`"
+msgstr ""
+
+#: ../../source/screens.rst:263
+# b67073a240314ff89ff426f6c9a1e092
+msgid "If given, this should be a python function. The function is called with the value of the adjustment when the adjustment is changed."
+msgstr ""
+
+#: ../../source/screens.rst:267
+#: ../../source/screens.rst:304
+#: ../../source/screens.rst:491
+#: ../../source/screens.rst:675
+#: ../../source/screens.rst:791
+#: ../../source/screens.rst:1134
+# b2a0dcbd2c1a47bcb385f09d3d3a4c77
+# 72ecabc0f984465ba17362412e30e070
+# 61f4e155dad745cbb0dbe8441aa2fab0
+# f2fe069c4b9945878c87500828ad4ce3
+# ad7fdf69113a4f02881fb19fe516b8aa
+# 1770f6d27d0a474b9390963a8259bcb9
+msgid "`hovered`"
+msgstr ""
+
+#: ../../source/screens.rst:267
+# 227e54613b2c4d8faafea81d5f3e70a8
+msgid "An action to run when the bar gains focus."
+msgstr ""
+
+#: ../../source/screens.rst:270
+#: ../../source/screens.rst:307
+#: ../../source/screens.rst:494
+#: ../../source/screens.rst:678
+#: ../../source/screens.rst:794
+#: ../../source/screens.rst:1137
+# 1a6594ff247d4a2f95db06da489a30d1
+# e36ce3cf38c04ea18bbe97be82f77363
+# 8ea7514e38bb4129a9f1de18093906a8
+# de51a45b537241fd8e4ae0c7e03e00e0
+# be5834f2527c459b9aadd3153b983c3d
+# 642d90b83a2c4e88895bab31e8397b06
+msgid "`unhovered`"
+msgstr ""
+
+#: ../../source/screens.rst:270
+# d17eee06429c48c1af1a20f74edfe8ed
+msgid "An action to run when the bar loses focus."
+msgstr ""
+
+#: ../../source/screens.rst:272
+#: ../../source/screens.rst:1170
+# d709f472c12c47d4ba852fdd9b9c0468
+# 1b847f766dc54209adac8933a1c32e46
+msgid "One of `value` or `adjustment` must be given. In addition, this function takes:"
+msgstr ""
+
+#: ../../source/screens.rst:275
+#: ../../source/screens.rst:311
+#: ../../source/screens.rst:335
+#: ../../source/screens.rst:364
+#: ../../source/screens.rst:407
+#: ../../source/screens.rst:434
+#: ../../source/screens.rst:498
+#: ../../source/screens.rst:550
+#: ../../source/screens.rst:616
+#: ../../source/screens.rst:650
+#: ../../source/screens.rst:682
+#: ../../source/screens.rst:738
+#: ../../source/screens.rst:766
+#: ../../source/screens.rst:807
+#: ../../source/screens.rst:857
+#: ../../source/screens.rst:891
+#: ../../source/screens.rst:973
+#: ../../source/screens.rst:1006
+#: ../../source/screens.rst:1111
+#: ../../source/screens.rst:1141
+#: ../../source/screens.rst:1173
+# 4dfe8c3ed65c47ef9d67b9370f6650fe
+# 02dfe874af534a0a97c004ac76d95bc2
+# 9dbe2ec65f2b4acb80f440add9624e2c
+# 23271683c2d34f80a65dd656902e355d
+# f00b41cfeea34138b00ddbd4684e41f6
+# 5c08576a17be440b971f9abfba24e34c
+# e1db5d05bcd144c7b94569cef391b715
+# 1d55e1103fc144e095e72c4444ba1af9
+# e1b228b3dede4a8792c180f2feb521f2
+# 578c936c8d5642ff99582dae758a8a47
+# c7a4757b9a3e4fdd9dd8bbb5a46ca63f
+# 915fdb4c4e904c52a8b7f6a1579192ef
+# 8c5fefb8b8484dcfaf45e033a4ddd7ce
+# 18e2a6ec66604d758ec6c60cddfc6a8e
+# 27f48858af924d6494e23e13813f4e01
+# d759752e4be04738949f0d1fc0a7fc14
+# ba0a8a6dc8934105ac35ddfe07efb2db
+# b1a37f2328524e87a5500508c757a5d3
+# 0090446858b04e0a94d6563325d9b630
+# c6adcb269cc14cd2b23a67fb546a7947
+# 1de0798c896243a9ab1b6055f7470de9
+msgid ":ref:`Common Properties <common-properties>`"
+msgstr ""
+
+#: ../../source/screens.rst:276
+#: ../../source/screens.rst:312
+#: ../../source/screens.rst:336
+#: ../../source/screens.rst:365
+#: ../../source/screens.rst:408
+#: ../../source/screens.rst:435
+#: ../../source/screens.rst:499
+#: ../../source/screens.rst:551
+#: ../../source/screens.rst:617
+#: ../../source/screens.rst:651
+#: ../../source/screens.rst:683
+#: ../../source/screens.rst:739
+#: ../../source/screens.rst:767
+#: ../../source/screens.rst:808
+#: ../../source/screens.rst:892
+#: ../../source/screens.rst:974
+#: ../../source/screens.rst:1007
+#: ../../source/screens.rst:1112
+# c2b988965e7b416885ba281c017a4388
+# c3b7e8969ad64761a7569e935e31b6f6
+# 21c38ee3ecfc42349db778fa29c1de12
+# 906bcbdb6c6747509be414470320c990
+# e9109522c3ba48048ab3d4ef8fbd02d9
+# 966ec9488160473e823d86dfaff8dedc
+# fd3b60a318824f44ab6bb5a4f7bef7d3
+# 65289d3b834f45e5936b849528f985f4
+# 14537643ee744fd4a17e4d81e5b3297c
+# bb51c1afd55246ddbb43806096161d99
+# 552d9e64b6ed4337aef44a519750879a
+# 08ded8cda4b246488b1ef3b70d7d6ed0
+# 4f54b2210326495bab45a8932605b01c
+# 2d33251fec284f178724bee26027d54a
+# a15bb61a4dd74e4e8703c88725b54a77
+# 6c0b82182e6e4946a8b8aed75f5eda44
+# ae9798a45f644c0c89bcad558bd89099
+# 85c4f2a4357b4bc38918e1202e67d15c
+msgid ":ref:`position-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:277
+#: ../../source/screens.rst:1174
+# b4b2cdc43e3c479f8f2fd258035d992d
+# b5cb339c9da3407ab3439acdf12b889f
+msgid ":ref:`bar-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:279
+#: ../../source/screens.rst:1176
+# 77a9267d8aab47bf9e9cc949c1767a4d
+# 36ce12eec4024b0fbf665aefd708eaff
+msgid "This does not take children."
+msgstr ""
+
+#: ../../source/screens.rst:294
+# 020265f3cd6546e1914daf7c71eeaa1e
+msgid "Button"
+msgstr ""
+
+#: ../../source/screens.rst:296
+# a62281541e7e48e999acc90c0f8d2e58
+msgid "Creates an area of the screen that can be activated to run an action. A button takes no parameters, and the following properties."
+msgstr ""
+
+#: ../../source/screens.rst:301
+#: ../../source/screens.rst:488
+#: ../../source/screens.rst:581
+#: ../../source/screens.rst:788
+#: ../../source/screens.rst:833
+#: ../../source/screens.rst:1131
+# dd65c32ea5fa45c6b821a0c39cf8d97b
+# e0ed6b1b45c54a04956584587f4ac706
+# 1a4b763ca2e14313a546580ba1dd2167
+# 6696a4135c524493a3af2d4ac612bc6b
+# 77982085352f4dadad87a2f817f586cc
+# 90d50ce026f64bbb929ced4f52c69be4
+msgid "`action`"
+msgstr ""
+
+#: ../../source/screens.rst:300
+#: ../../source/screens.rst:487
+#: ../../source/screens.rst:787
+#: ../../source/screens.rst:1130
+# d22ec43c919341eb9130ce5cb3bf00bc
+# 335bb3a1d3ca42328ad5052aaa47602d
+# 05700b49cc5c4c85ba140d48093f1120
+# 0d24041bbc3e4516ae151bf136825d6f
+msgid "The action to run when the button is activated. This also controls if the button is sensitive, and if the button is selected."
+msgstr ""
+
+#: ../../source/screens.rst:304
+#: ../../source/screens.rst:491
+#: ../../source/screens.rst:791
+#: ../../source/screens.rst:1134
+# 8d1d3610e5b048728aef0ec8df45a04d
+# c67f6655bc994777af0152aba8dc6764
+# c46fb30368e54559aa600bdf525061a7
+# f8a84968325d450181c9f07a0acf50c1
+msgid "An action to run when the button gains focus."
+msgstr ""
+
+#: ../../source/screens.rst:307
+#: ../../source/screens.rst:494
+#: ../../source/screens.rst:794
+#: ../../source/screens.rst:1137
+# e9a0e3e640b144c3b0162144c1a84985
+# e0349342ef0f4401b1766f51a8ec64a7
+# 6e8e3af6cbc44410a02a1f9ffec8fc65
+# db2c3ed651c5406b8947a8f741266126
+msgid "An action to run when the button loses focus."
+msgstr ""
+
+#: ../../source/screens.rst:309
+#: ../../source/screens.rst:405
+#: ../../source/screens.rst:496
+#: ../../source/screens.rst:548
+#: ../../source/screens.rst:614
+#: ../../source/screens.rst:648
+#: ../../source/screens.rst:680
+#: ../../source/screens.rst:805
+#: ../../source/screens.rst:1139
+# 673cefcaab584c6b863ff3ba6e004abb
+# cbda55d73d90422fbfbc6eb3d579b4aa
+# 0bb5bca869db4d478b7a5c6b28140234
+# 57f1e6991a8d40c6ab914e732a89b553
+# e81cf8db094d4ada8ef5f91dc09ea3fd
+# 0a35c7bc3c514e47b181dc887a82954e
+# 8bca4b6216bd4045b1f2b9b5f7f6b330
+# ce7b474ce9114453824503b92d46a7e7
+# 1d8725c8e3334e469d6c9888e3672d96
+msgid "It also takes:"
+msgstr ""
+
+#: ../../source/screens.rst:313
+#: ../../source/screens.rst:366
+#: ../../source/screens.rst:500
+#: ../../source/screens.rst:618
+#: ../../source/screens.rst:809
+#: ../../source/screens.rst:1008
+# dc30bbd0812b458faefee1b4525ae39c
+# 9bdc8643528649bda1a73f1d3064f257
+# a645abada6ff4dc282d409c8617c4286
+# 6fc8c3f3fe00423db3226f9e775cd4e9
+# 14fd2653f984492b9422e1e79514d3d3
+# d5892d0162b648aea6b5e2d5d12f2e2a
+msgid ":ref:`window-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:314
+#: ../../source/screens.rst:501
+#: ../../source/screens.rst:810
+#: ../../source/screens.rst:1142
+# 5b3f3e85f3c743ca9cfb33af72241e0f
+# 959f7c2b89784d098c1e0ed5bc5963f1
+# 9d126ad44c3f439cb1895fa4960356ef
+# e05216865b1f4512952c26c785c81066
+msgid ":ref:`button-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:316
+# fd67276b5d28411594170a147800bbb1
+msgid "It takes one children. If zero, two, or more children are supplied, they are implicitly added to a fixed, which is added to the button."
+msgstr ""
+
+#: ../../source/screens.rst:323
+# a9d7d1b6f8934de9980a7fbfc2a78d22
+msgid "Fixed"
+msgstr ""
+
+#: ../../source/screens.rst:325
+# 80c6816aac3c4b4c833d1404ff2332fe
+msgid "This creates an area to which children can be added. By default, the fixed expands to fill the available area, but the :propref:`xmaximum` and :propref:`ymaximum` properties can change this."
+msgstr ""
+
+#: ../../source/screens.rst:329
+# 5da1037784ef40db937c27fed4df94cf
+msgid "The children are laid out according to their position style properties. They can overlap if not positioned properly."
+msgstr ""
+
+#: ../../source/screens.rst:332
+# 966742d699a1437ebf0f9738a593f39f
+msgid "The fixed statement takes no parameters, and the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:337
+#: ../../source/screens.rst:1113
+# 724e5bf638d846ffa4de72695775812d
+# 97504f73b8034377adf2de51a17b2769
+msgid ":ref:`fixed-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:339
+# fc877ba0fe504b9a9193c0e68acf3e9d
+msgid "This takes any number of children, which are added to the fixed."
+msgstr ""
+
+#: ../../source/screens.rst:341
+# a62ccf2d97a6446ab735837566c5f5d7
+msgid "It's often unnecessary to explicitly create a fixed displayable. Each screen is contained within a fixed displayable, and many screen language statements automatically create a fixed displayable if they have two or more children."
+msgstr ""
+
+#: ../../source/screens.rst:358
+# 57c4648ed6a24e09924a1e3629501638
+msgid "Frame"
+msgstr ""
+
+#: ../../source/screens.rst:360
+# 4a613eb29e5e424fad5e6e6277c106a3
+msgid "A frame is a window that contains a background that is intended for displaying user-interface elements like buttons, bars, and text. It takes the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:368
+#: ../../source/screens.rst:976
+#: ../../source/screens.rst:1010
+# 887e5db25df24bb79a1e396f2bd8da9d
+# 0f17b1670eea4eeca027aa358c137d36
+# 740d0ea4273d46dbbabc396b515be669
+msgid "It takes one child. If zero, two, or more children are supplied, then a fixed is created to contain them."
+msgstr ""
+
+#: ../../source/screens.rst:389
+# f79b57d9af9e4134a990edc07480baab
+msgid "Grid"
+msgstr ""
+
+#: ../../source/screens.rst:391
+# a04573974203409e80d18f44352014da
+msgid "This displays its children in a grid. Each child is given an area of the same size, the size of the largest child."
+msgstr ""
+
+#: ../../source/screens.rst:394
+# bd05b57029534f99b34b106d751f2024
+msgid "It takes two parameters. The first is the number of columns in the grid, and the second is the number of rows in the grid. It takes the following property:"
+msgstr ""
+
+#: ../../source/screens.rst:400
+# 746330b85ef54514865ddb3de96126c1
+msgid "`transpose`"
+msgstr ""
+
+#: ../../source/screens.rst:399
+# 979a9f6ab18948309a461d7daa7c941d
+msgid "If False (the default), rows are filled before columns. If True, then columns are filled before rows."
+msgstr ""
+
+#: ../../source/screens.rst:403
+#: ../../source/screens.rst:734
+# 521efd553fef41b38da5264873d73bc2
+# 6e2ed87384714f3fa6044751d78dc034
+msgid "`spacing`"
+msgstr ""
+
+#: ../../source/screens.rst:403
+#: ../../source/screens.rst:733
+# 8cd50726588b469b9f7d6aa4e37f5d16
+# df0832b58bc346d58bb23df2c8bd2f92
+msgid "The spacing between the rows and columns of the grid."
+msgstr ""
+
+#: ../../source/screens.rst:410
+# f0d86a8e564243e1b9b685c9cc78dd3e
+msgid "This must be given columns * rows children. Giving it a different number of children is an error."
+msgstr ""
+
+#: ../../source/screens.rst:429
+# 56b2dd6c14fc453e8ed776f2330ce721
+msgid "Hbox"
+msgstr ""
+
+#: ../../source/screens.rst:431
+# e93ef72a4f4e4ee9ab85eacfc1a63dcb
+msgid "This displays its children side by side, in an invisible horizontal box. It takes no parameters, and the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:436
+#: ../../source/screens.rst:893
+# 0d326700d9274b519b9c8eb145748ded
+# bdce4e86fa8b441eaec73b1c29f3146e
+msgid ":ref:`box-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:438
+#: ../../source/screens.rst:895
+# 7145964b8abc463cb6f2508dc0804ed9
+# a61b7acdc0b54b539b4720f88894635d
+msgid "UI displayable children are added to the box."
+msgstr ""
+
+#: ../../source/screens.rst:451
+# d2279d10331848ff90ad886c269f6e7f
+msgid "Imagebutton"
+msgstr ""
+
+#: ../../source/screens.rst:453
+# 592ceba3382845e5b3cc3534492944e0
+msgid "Creates a button consisting of images, that change state when the user hovers over them. This takes no parameters, and the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:469
+#: ../../source/screens.rst:1075
+# 62390f8bf50b435f906a406b3375f773
+# bb883235b8cf496b82eac8ddf6446ec0
+msgid "`auto`"
+msgstr ""
+
+#: ../../source/screens.rst:458
+# 18ecb164eac5463db8b207e14a4dae03
+msgid "Used to automatically define the images used by this button. This should be a string that contains %s in it. If it is, and one of the image properties is omitted, %s is replaced with the name of that property, and the value is used as the default for that property."
+msgstr ""
+
+#: ../../source/screens.rst:464
+# e219d8d7723d4f66a06354b848721d54
+msgid "For example, if `auto` is \"button_%s.png\", and `idle` is omitted, then idle defaults to \"button_idle.png\"."
+msgstr ""
+
+#: ../../source/screens.rst:467
+#: ../../source/screens.rst:1074
+# 8537ad6a1104413abdae15955203fbaa
+# 4f3faf14173a41be93fd7b4264776a78
+msgid "The behavior of `auto` can be customized by changing :var:`config.imagemap_auto_function`."
+msgstr ""
+
+#: ../../source/screens.rst:472
+#: ../../source/screens.rst:1082
+# 4e42b2efc74a416196e937df0c530372
+# 1454ade9500343d7aeb5e3416069f960
+msgid "`insensitive`"
+msgstr ""
+
+#: ../../source/screens.rst:472
+# 7059ef52b7284c3e8b5b0d204a6f14c3
+msgid "The image used when the button is insensitive."
+msgstr ""
+
+#: ../../source/screens.rst:475
+#: ../../source/screens.rst:1086
+# 31fb5d836dd1497b850adf2795e1af1d
+# dd43b1618af3424b8422a025a1055abc
+msgid "`idle`"
+msgstr ""
+
+#: ../../source/screens.rst:475
+# 094da8bd497d498cb9a8e03eb91c2bc4
+msgid "The image used when the button is not focused."
+msgstr ""
+
+#: ../../source/screens.rst:478
+#: ../../source/screens.rst:1090
+# 25f345d10db247c9b55276fe314e9b2e
+# 99c889f78cf94660a9ec01ad449e9109
+msgid "`hover`"
+msgstr ""
+
+#: ../../source/screens.rst:478
+# 922e13a2cdbd40f7a27ff4235dba2f9e
+msgid "The image used when the button is focused."
+msgstr ""
+
+#: ../../source/screens.rst:481
+#: ../../source/screens.rst:1094
+# 4259a3471ca94f8f86b1c94640254199
+# ef867acc711c441a833827b886f8a3f5
+msgid "`selected_idle`"
+msgstr ""
+
+#: ../../source/screens.rst:481
+# 8c1d72540b50447cbd6281ecac716524
+msgid "The image used when the button is selected and idle."
+msgstr ""
+
+#: ../../source/screens.rst:484
+#: ../../source/screens.rst:1098
+# a7811d5fa5194dc7ab7b2db8c63cc92f
+# 0d4d4ec77e0f4544a7ddda270775cbd9
+msgid "`selected_hover`"
+msgstr ""
+
+#: ../../source/screens.rst:484
+# 748d8cfa5152472ea741417f669bb917
+msgid "The image used when the button is selected and hovered."
+msgstr ""
+
+#: ../../source/screens.rst:503
+# 5d3349fd84654c22b27d88b64df94ce0
+msgid "This takes no children."
+msgstr ""
+
+#: ../../source/screens.rst:518
+# 77db05644cd24e9db60c3893ab53b698
+msgid "Input"
+msgstr ""
+
+#: ../../source/screens.rst:520
+# c7256b1db272463e81c749367bf3e087
+msgid "Creates a text input area, which allows the user to enter text. When the user presses return, the text will be returned by the interaction. This takes no parameters, and the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:525
+# e7b393cd29154c68beae89fff2cf21a1
+msgid "The default text in this input."
+msgstr ""
+
+#: ../../source/screens.rst:528
+# af9a68497fc2454f97019e96ef3502e5
+msgid "`length`"
+msgstr ""
+
+#: ../../source/screens.rst:528
+# ad8f225dcf5c43f19a1f9f8dc7daf754
+msgid "The maximum length of the text in this input."
+msgstr ""
+
+#: ../../source/screens.rst:532
+# 73fd56a6949b4252beb979e81b117ab0
+msgid "`allow`"
+msgstr ""
+
+#: ../../source/screens.rst:531
+# 892b874c620c4b28adea03d884df2a23
+msgid "A string containing characters that are allowed to be typed into this input. (By default, allow all characters.)"
+msgstr ""
+
+#: ../../source/screens.rst:536
+# 5b43afe829214722b4a60dfde0dbc911
+msgid "`exclude`"
+msgstr ""
+
+#: ../../source/screens.rst:535
+# 226c0178f2cd41ef91983357f374ef94
+msgid "A string containing characters that are disallowed from being typed into this input. (By default, \"{}\".)"
+msgstr ""
+
+#: ../../source/screens.rst:539
+# aacb6ab475314313aaac2be22eabc2bd
+msgid "`prefix`"
+msgstr ""
+
+#: ../../source/screens.rst:539
+# ffa00ed11e5f412b9e2306433092951d
+msgid "An immutable string to prepend to what the user has typed."
+msgstr ""
+
+#: ../../source/screens.rst:542
+# 2360daa0ceeb4b5aa6ed4c226f642093
+msgid "`suffix`"
+msgstr ""
+
+#: ../../source/screens.rst:542
+# 3ab6a044f70b473faed399e88a64735e
+msgid "An immutable string to append to what the user has typed."
+msgstr ""
+
+#: ../../source/screens.rst:545
+# 7d259197e6b14dcf97184840d178a7e2
+msgid "A python function that is called with what the user has typed, when the string changes."
+msgstr ""
+
+#: ../../source/screens.rst:552
+#: ../../source/screens.rst:768
+# 0cbb6e3536cc46e089ec38f5bb0acaa7
+# c499aaf6540c4217b12069edbe31f17f
+msgid ":ref:`text-style-properties`"
+msgstr ""
+
+#: ../../source/screens.rst:569
+# 13f79697380145d7bddf3ae2139f4651
+msgid "Key"
+msgstr ""
+
+#: ../../source/screens.rst:571
+# 78cd0246d1e2475f9c9c0472daca955d
+msgid "This creates a keybinding that runs an action when a key is pressed. Key is used in a loose sense here, as it also allows joystick and mouse events."
+msgstr ""
+
+#: ../../source/screens.rst:575
+# 4514fd7e80d24a33aeb3f3ee630caf38
+msgid "Key takes one positional parameter, a string giving the key to bind. See the `Keymap`_ section for a description of available keysyms. It takes one property:"
+msgstr ""
+
+#: ../../source/screens.rst:580
+# 0004877ddd144b91af5c9fed22104213
+msgid "This gives an action that is run when the key is pressed. This property is mandatory."
+msgstr ""
+
+#: ../../source/screens.rst:583
+#: ../../source/screens.rst:838
+# 7615b16d37d54a3c99491ef65236afb3
+# 83a4312e369847f796d49785457a273d
+msgid "It takes no children."
+msgstr ""
+
+#: ../../source/screens.rst:596
+# 0868f6fbc34044bab0710ed704082740
+msgid "Label"
+msgstr ""
+
+#: ../../source/screens.rst:598
+# 3807769b980e4b00973025a070c32dca
+msgid "Creates a window in the label style, and then places text inside that window. Together, this combination is used to label things inside a frame."
+msgstr ""
+
+#: ../../source/screens.rst:602
+# a5a65d0d18e14c278933b056f73fe824
+msgid "It takes one positional argument, the text of the label. It takes the property:"
+msgstr ""
+
+#: ../../source/screens.rst:608
+#: ../../source/screens.rst:799
+# 271c58c5600c44b59300d23e9f1c5370
+# 2a3fae4af7da4458b2b768efee851072
+msgid "`text_style`"
+msgstr ""
+
+#: ../../source/screens.rst:606
+#: ../../source/screens.rst:797
+# 6832c61788dc4419a4822adfb0d2e351
+# 9788e40984ef481baa3be241e801e27c
+msgid "The name of the style to use for the button text. If not supplied, and the `style` property is a string, then ``\"_text\"`` is appended to that string to give the default text style."
+msgstr ""
+
+#: ../../source/screens.rst:612
+#: ../../source/screens.rst:803
+# 646267f9fa78452fb7366932b571a54c
+# fbb7ed99c1524f2d85193ea5c7518fed
+msgid "`text_`-"
+msgstr ""
+
+#: ../../source/screens.rst:611
+#: ../../source/screens.rst:802
+# bd91b67d98a34a93a98bf0328aa48f3e
+# 8b7603a7596d4a92a9504c1e2c3d544d
+msgid "Other properties prefixed with text_ have this prefix stripped, and are then passed to the text displayable."
+msgstr ""
+
+#: ../../source/screens.rst:620
+#: ../../source/screens.rst:653
+#: ../../source/screens.rst:685
+#: ../../source/screens.rst:770
+#: ../../source/screens.rst:812
+# 7392c5f8c032418b90987a7e843f92a8
+# a38a7fcfdcfd4e2cb95c52ab0faba70a
+# 257517667a024550a84cf7dc931d3327
+# ccf71577001b4ad18ef05eb729c02556
+# 737fe507e51d40f3b27ae9479e136b7c
+msgid "It does not take children."
+msgstr ""
+
+#: ../../source/screens.rst:636
+# 7ac03d4dd98f4ea28926bf41715b5424
+msgid "Null"
+msgstr ""
+
+#: ../../source/screens.rst:638
+# 4f7e6744c23347fa99b8282b140c1a47
+msgid "The null statement inserts an empty area on the screen. This can be used to space things out. The null statement takes no parameters, and the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:643
+# 120a89f1930c45d39373b38bb8086e55
+msgid "`width`"
+msgstr ""
+
+#: ../../source/screens.rst:643
+# a23c58e070344b58b27edfa0ce8b6939
+msgid "The width of the empty area, in pixels."
+msgstr ""
+
+#: ../../source/screens.rst:646
+# 425bfdb0f7fe41ec8c939add178bfada
+msgid "`height`"
+msgstr ""
+
+#: ../../source/screens.rst:646
+# 303d8841885e434083e6a016d90759ff
+msgid "The height of the empty area, in pixels."
+msgstr ""
+
+#: ../../source/screens.rst:667
+# 880c314a91b547529816b4f9edd30d67
+msgid "Mousearea"
+msgstr ""
+
+#: ../../source/screens.rst:669
+# ec603fbc715e452ea6bb8fe22f7444d9
+msgid "A mouse area is an area of the screen that can react to the mouse entering or leaving it. Unlike a button, a mouse area does not take focus, so it's possible to have a mouse area with buttons inside it. The mousearea statement takes not parameters, and the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:675
+# 1758947ae9e644ed8326257eaedb43d1
+msgid "An action to run when the mouse enters the mouse area."
+msgstr ""
+
+#: ../../source/screens.rst:678
+# 5d87403965bf42cb9e76c5597c9adf2d
+msgid "An action to run when the mouse leaves the mouse area."
+msgstr ""
+
+#: ../../source/screens.rst:687
+# 0ebed67e0de64e70841cc50a4ca0f32d
+msgid "Usually, a mousearea statement is given the :propref:`area` style property, which controls the size and position of the mouse area. Without some way of controlling its size, the mouse area would take up the entire screen, a less useful behavior."
+msgstr ""
+
+#: ../../source/screens.rst:694
+# 8519f946c3bd487a8a86ef84bddffc22
+msgid "Since Ren'Py games can be played using the keyboard and joystick, it often makes sense to duplicate mousearea functionality by some other means."
+msgstr ""
+
+#: ../../source/screens.rst:719
+# 5afea5515108431a909d2fbcdb80b6d7
+msgid "Side"
+msgstr ""
+
+#: ../../source/screens.rst:721
+# 287a8572dab8494b8573b038b71d6636
+msgid "This positions displayables in the corners or center of a grid. It takes a single parameter, string containing a space-separated list of places to place its children. Each component of this list should be one of:"
+msgstr ""
+
+#: ../../source/screens.rst:726
+# b8c2d27bc3144a8f8a3c200d34f9c6db
+msgid "'c', 't', 'b', 'l', 'r', 'tl', 'tr', 'bl', 'br'"
+msgstr ""
+
+#: ../../source/screens.rst:728
+# f6e8c758d8d6453ea04199ea59e46f64
+msgid "'c' means center, 't' top, 'tl' top left, 'br' bottom right, and so on."
+msgstr ""
+
+#: ../../source/screens.rst:730
+# efb4eec9b1ae45a59aa21ce6605c0ff9
+msgid "A side taks the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:736
+# 082c76af476846168d1ca74a77115ad2
+msgid "A side takes the following property groups:"
+msgstr ""
+
+#: ../../source/screens.rst:741
+# 60bc7ad1ad2245ba8bdfbd43db63dfd6
+msgid "When being rendered, this first sizes the corners, then the sides, then the center. The corners and sides are rendered with an available area of 0, so it may be necessary to supply them a minimum size (using :propref:`xminimum` or :propref:`yminimum`) to ensure they render at all."
+msgstr ""
+
+#: ../../source/screens.rst:747
+# 5e4df524ca26408b9a0a4383ff83c556
+msgid "Children correspond to entries in the places list, so this must have the same number of children as there are entries in the places list."
+msgstr ""
+
+#: ../../source/screens.rst:761
+# 872fac087cb242e48077eb215bb91567
+msgid "Text"
+msgstr ""
+
+#: ../../source/screens.rst:763
+# c2a77fb979be440193dbe5dcd8dd5742
+msgid "The text statement displays text. It takes a single parameter, the text to display. It also takes the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:780
+# 9f10b3afa35e4a5da1d2d872e1c866d4
+msgid "Textbutton"
+msgstr ""
+
+#: ../../source/screens.rst:782
+# 440410a041c24c8c967e2e137f9c9713
+msgid "Creates a button containing a text label. The button takes a single parameter, the text to include as part of the button. It takes the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:825
+# 6648b1932488462fae4070a15a37c752
+msgid "Timer"
+msgstr ""
+
+#: ../../source/screens.rst:827
+# aa7fe4a5007446c1847233ace94aae4d
+msgid "This creates a timer that runs an action when time runs out. It takes one positional parameter, giving the timeout time, in seconds. It takes the properties:"
+msgstr ""
+
+#: ../../source/screens.rst:832
+# f00e4dd014d64eafa93c5c0c019c5626
+msgid "This gives an action that is run when the timer expires. This property is mandatory."
+msgstr ""
+
+#: ../../source/screens.rst:836
+# ef2024572dc64bd9a5186e92d651dc3f
+msgid "`repeat`"
+msgstr ""
+
+#: ../../source/screens.rst:836
+# 087e0b56b5b24244b1a22937340d71d4
+msgid "If True, the timer repeats after it times out."
+msgstr ""
+
+#: ../../source/screens.rst:852
+# eeda041cb33844f68d466845fad1fea9
+msgid "Transform"
+msgstr ""
+
+#: ../../source/screens.rst:854
+# 21884584ae4344f7b0705a24836d4420
+msgid "Applies a transform to its child. This takes no parameters, and the following property groups :"
+msgstr ""
+
+#: ../../source/screens.rst:858
+# 777a0111abf84626be847e28efc77c97
+msgid ":ref:`Transform Properties <transform-properties>`"
+msgstr ""
+
+#: ../../source/screens.rst:860
+# 15e40ed797f7430eb36bb9abe46bbdaf
+msgid "This should take a single child."
+msgstr ""
+
+#: ../../source/screens.rst:866
+# 22ae61383b2d4b4a836ea26ea383bac3
+msgid "Vbar"
+msgstr ""
+
+#: ../../source/screens.rst:868
+# 712d4fc96f26482392252fa7f49f5d0a
+msgid "The vertically oriented equivalent of `bar`_. Properties are the same as `bar`."
+msgstr ""
+
+#: ../../source/screens.rst:885
+# c52d886c567c43c3a39e8df9bbcbf4e1
+msgid "Vbox"
+msgstr ""
+
+#: ../../source/screens.rst:887
+# 477a7156ed0a4f3cb5b66230d8ea142f
+msgid "This displays its children one above the other, in an invisible vertical box. It takes no parameters, and the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:908
+# 60661d0136d34e92ab7fcf41181a1ef7
+msgid "Viewport"
+msgstr ""
+
+#: ../../source/screens.rst:910
+# a995f0131c284726b678706ca888ea2a
+msgid "A viewport is area of the screen that can be scrolled by dragging, with the mouse wheel, or with scrollbars. It can be used to display part of something that is bigger than the screen. It takes the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:918
+# 9eb1c9882fd7418188cfe30a422b6a8e
+msgid "`child_size`"
+msgstr ""
+
+#: ../../source/screens.rst:916
+# 8cc5af1731974dc09d9226d6da883072
+msgid "The size that is offered to the child for rendering. An (`xsize`, `ysize`) tuple. This can usually be omitted, when the child can compute it's own size. If either component is None, the child's size is used."
+msgstr ""
+
+#: ../../source/screens.rst:920
+# a9dbb63a983742c5aaa28de3f7066717
+msgid "`mousewheel`"
+msgstr ""
+
+#: ../../source/screens.rst:921
+# 553f57c9f6d943d0a456e9652ee1ed04
+msgid "If True, the mouse wheel can be used to scroll the viewport."
+msgstr ""
+
+#: ../../source/screens.rst:922
+# 0cf91039f3a043308382a7b141d7acab
+msgid "`draggable`"
+msgstr ""
+
+#: ../../source/screens.rst:923
+# 831cbaf26282470c9e3eb01c1cc810b3
+msgid "If True, dragging the mouse will scroll the viewport."
+msgstr ""
+
+#: ../../source/screens.rst:942
+# 3d0cf27887f14b2fb499cd039cbfbab8
+msgid "`edgescroll`"
+msgstr ""
+
+#: ../../source/screens.rst:925
+# 575636168860426fa09d2a0235a4e740
+msgid "Controlls scrolling when the mouse reaches the edge of the viewport. If not None, this should be a two- or three-element tuple:"
+msgstr ""
+
+#: ../../source/screens.rst:929
+# dde51be7cfff4cd6a55fc719f9869e8c
+msgid "The first element in the tuple is the distance from"
+msgstr ""
+
+#: ../../source/screens.rst:930
+# fa1601025ccb43dc95b692a9b209e675
+msgid "the edge of the viewport that edgescrolling begins to take effect, in pixels."
+msgstr ""
+
+#: ../../source/screens.rst:933
+# 1461b6ace79343649a04ba34cfab8e63
+msgid "The second element is the maximum scrolling rate, in pixels per second."
+msgstr ""
+
+#: ../../source/screens.rst:936
+# 1a72003af50e438cbb3ebfef7760d565
+msgid "If present, the third element is a function that adjusts the scrolling speed, based on how close to the pointer is to an edge. The function should take a number between 0.0 and 1.0, and return a number in the same range. The default function returns its input, and implements proportional scrolling.  A function that always returns 1.0 would implement constant-speed scrolling."
+msgstr ""
+
+#: ../../source/screens.rst:945
+# f2ed979284724d9ba33be7fa482791ee
+msgid "`xadjustment`"
+msgstr ""
+
+#: ../../source/screens.rst:945
+# 4bfbb6305b16448d9748557ba9ff5663
+msgid "The :func:`ui.adjustment` used for the x-axis of the viewport. When omitted, a new adjustment is created."
+msgstr ""
+
+#: ../../source/screens.rst:948
+# b74ecfb1411b4aa29a7c5c7f0ac9c66b
+msgid "`yadjustment`"
+msgstr ""
+
+#: ../../source/screens.rst:948
+# a3dc3592d900464c91f6ebf1c70d8d2e
+msgid "The :func:`ui.adjustment` used for the y-axis of the viewport. When omitted, a new adjustment is created."
+msgstr ""
+
+#: ../../source/screens.rst:952
+# 8b5dab5c9ab74f41acbbe7ba01364dd7
+msgid "`xinitial`"
+msgstr ""
+
+#: ../../source/screens.rst:951
+# 91f7336cc24d48109762b3a4c22602b7
+msgid "The initial horizontal offset of the viewport. This may be an integer giving the number of pixels, or a float giving a fraction of the possible offset."
+msgstr ""
+
+#: ../../source/screens.rst:956
+# 39ccd97fa7594a5b906b1c65b7a697d2
+msgid "`yinitial`"
+msgstr ""
+
+#: ../../source/screens.rst:955
+# 7bb794bec27049c08af9d496532400e4
+msgid "The initial vertical offset of the viewport. This may be an integer giving the number of pixels, or a float giving a fraction of the possible offset."
+msgstr ""
+
+#: ../../source/screens.rst:969
+# 2939963a33a4420fbe1c60beadd78de9
+msgid "`scrollbars`"
+msgstr ""
+
+#: ../../source/screens.rst:959
+# 874ed421b91c40bd921b8a051a673012
+msgid "If not None, scrollbars are added allong with this viewport. This works by creating a side layout, and placing the created viewport in the center of the side. If `scrollbars` is \"horizontal\", a horizontal scrollbar is placed beneath the viewport. If `scrollbars` is \"vertical\", a vertical scrollbar is placed to the right of the viewport. If `scrollbars` is \"both\", both horizontal and vertical scrollbars are created."
+msgstr ""
+
+#: ../../source/screens.rst:967
+# 31032314f5bd4d24a24d0a40ce928ac9
+msgid "If `scrollbars` is not None, the viewport takes properties prefixed with \"side_\". These are passed to the created side layout."
+msgstr ""
+
+#: ../../source/screens.rst:971
+# 4be247dfecba4a02bd49764f6bafde2a
+msgid "In addition, it takes the following groups of style properties:"
+msgstr ""
+
+#: ../../source/screens.rst:979
+# 50097de5c35e439b9aca413612a98488
+msgid "To make a viewport scrollable, it's often best to assign an id to it, and then use :func:`XScrollValue` and :func:`YScrollValue` with that id."
+msgstr ""
+
+#: ../../source/screens.rst:1000
+# 170e1a6d141a4be58a64c2fe42156eff
+msgid "Window"
+msgstr ""
+
+#: ../../source/screens.rst:1002
+# 888f613f6588490d8381763673d99854
+msgid "A window is a window that contains a background that is intended for displaying in-game dialogue. It takes the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:1025
+# a482acc9b4264151af8f468a38e6547f
+msgid "Imagemap Statements"
+msgstr ""
+
+#: ../../source/screens.rst:1027
+# b786bfb030c14339b948c4e426edee32
+msgid "A convenient way of creating a screen, especially for those who think visually is to create an imagemap. When creating an imagemap, the imagemap statement is used to specify up to six images. The hotspot and hotbar images are used to carve rectangular areas out of the image, and apply actions and values to those areas."
+msgstr ""
+
+#: ../../source/screens.rst:1033
+# 65f5abb18a504a658ff764d8c4431762
+msgid "Here's an example of a preferences screen that uses imagemaps."
+msgstr ""
+
+#: ../../source/screens.rst:1059
+# 9341514ffdb74ba58ddb46b6cde8cb1f
+msgid "Imagemap"
+msgstr ""
+
+#: ../../source/screens.rst:1061
+# ac4a2208768049b2b31f6b31de3428ab
+msgid "The imagemap statement is used to specify an imagemap. It takes no parameters, and the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:1065
+# b2f22fb198e040b1a90a1897f0b815e7
+msgid "Used to automatically define the images used by this imagemap. This should be a string that contains %s in it. If it is, and one of the image properties is omitted, %s is replaced with the name of that property, and the value is used as the default for that property."
+msgstr ""
+
+#: ../../source/screens.rst:1071
+# 942316e804db44df8ccb9eff97bc8fdc
+msgid "For example, if `auto` is \"imagemap_%s.png\", and `idle` is omitted, then idle defaults to \"imagemap_idle.png\"."
+msgstr ""
+
+#: ../../source/screens.rst:1079
+# 0e7e00da544a46afb1d21a4dc63f4494
+msgid "`ground`"
+msgstr ""
+
+#: ../../source/screens.rst:1078
+# 1170e43e4d5d4f128bdfac27e09305b3
+msgid "The image used for portions of the imagemap that are not part of a hotspot or hotbar."
+msgstr ""
+
+#: ../../source/screens.rst:1082
+# 0e5c7e3be3e5438aa63e962ba1c1526f
+msgid "The image used when a hotspot or hotbar is insensitive."
+msgstr ""
+
+#: ../../source/screens.rst:1085
+# 87bbdb1c7b9f4626aa6ae4d41d03aa04
+msgid "The image used when a hotspot is not selected and not focused, and for the empty portion of unfocused hotbars."
+msgstr ""
+
+#: ../../source/screens.rst:1089
+# f82822c6fafe4c1e90362c9a6816c403
+msgid "The image used when a hotspot is not selected and focused, and for the empty portion of focused hotbars."
+msgstr ""
+
+#: ../../source/screens.rst:1093
+# 750429c236af4ad4a3bebfd711627034
+msgid "The image used when a hotspot is selected and not focused, and for the full portion of unfocused hotbars."
+msgstr ""
+
+#: ../../source/screens.rst:1097
+# 9c38802454b1494fa9a8010d3b5b9288
+msgid "The image used when a hotspot is selected and focused, and for the full portion of focused hotbars."
+msgstr ""
+
+#: ../../source/screens.rst:1103
+# 58b757022f0b4298adaeb5ab43992c87
+msgid "`alpha`"
+msgstr ""
+
+#: ../../source/screens.rst:1101
+# 8902a1a7879c487fb97fc090afc1e4cd
+msgid "If true, the default, a hotspot only gains focus when the mouse is in an area of the hover image that is opaque. If false, the hotspot gains focus whenever the mouse is within its rectangular boundary."
+msgstr ""
+
+#: ../../source/screens.rst:1107
+# 940b1b3319034a2f92796b60ef7082c2
+msgid "`cache`"
+msgstr ""
+
+#: ../../source/screens.rst:1106
+# 204703a0b1a04f9fa85c330705a5ef91
+msgid "If true, the default, hotspot data is cached in to improve performance at the cost of some additional disk space."
+msgstr ""
+
+#: ../../source/screens.rst:1109
+# dbeb0d7cc3d145948d8109538eae7bde
+msgid "It takes the following groups of properties:"
+msgstr ""
+
+#: ../../source/screens.rst:1115
+# 55b4b7bd0e4542feb6258e687e976896
+msgid "An imagemap creates a fixed, allowing any child to be added to it (not just hotspots and hotbars)."
+msgstr ""
+
+#: ../../source/screens.rst:1122
+# d6619033eb4a488fac2e1e7d332e68ec
+msgid "Hotspot"
+msgstr ""
+
+#: ../../source/screens.rst:1124
+# c34c7acccac24a9db51fe71fe2148076
+msgid "A hotspot is a button consisting of a portion of the imagemap that contains it. It takes a single parameter, a (x, y, width, height) tuple giving the area of the imagemap that makes up the button. It also takes the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:1144
+# d9bf9662eeb444fba6305944cac01097
+msgid "A hotspot creates a fixed, allowing children to be added to it. The fixed has an area that is the same size as the hotspot, meaning that the children will be positioned relative to the hotpsot."
+msgstr ""
+
+#: ../../source/screens.rst:1152
+# d84eb15fa33946fb88d43c088a28285b
+msgid "Hotbar"
+msgstr ""
+
+#: ../../source/screens.rst:1154
+# ae7604983ffb461e8ca397664eed5e02
+msgid "A hotbar is a bar that consists of a portion of the imagemap that contains it. It takes a single parameter, a (x, y, width, height) tuple giving the area of the imagemap that makes up the button. It also takes the following properties:"
+msgstr ""
+
+#: ../../source/screens.rst:1160
+# b2567c9382694b259631bd00b17493c9
+msgid "The current value of the bar. This can be either a Value object, or a number."
+msgstr ""
+
+#: ../../source/screens.rst:1179
+# 40bb3c6ca20b42f4b0bd514dd02c3316
+msgid "Advanced Displayables"
+msgstr ""
+
+#: ../../source/screens.rst:1181
+# 0606bddf85d245ad961da950598676cd
+msgid "In addition to the commonly-used statements, the screen language has statements that correspond to advanced displayables. The mapping from displayable to statement is simple. Positional parameters of the displayables become positional parameters of the statement. Keyword arguments and the relevant style properties become screen language properties."
+msgstr ""
+
+#: ../../source/screens.rst:1188
+# a22b2148e357475d97128073b6e54706
+msgid "The advanced displayable statements are:"
+msgstr ""
+
+#: ../../source/screens.rst:1193
+# fd871f0609cb4c55aca8dd2cc26f3c46
+msgid "``drag``"
+msgstr ""
+
+#: ../../source/screens.rst:1191
+# a93c13055ec042c29fd910a3763abaf3
+msgid "Creates a :class:`Drag`. A drag can be given an optional child, or the :propref:`child` style property can be used to supply the child, and its focused variants."
+msgstr ""
+
+#: ../../source/screens.rst:1198
+# 27e2a9dfebf441b780f62e90c762aa2a
+msgid "``draggroup``"
+msgstr ""
+
+#: ../../source/screens.rst:1196
+# 82f12a7f5a7d476e9d7000c8f58fa9b5
+msgid "Creates a :class:`DragGroup`. A drag group may have zero or more drags as its children."
+msgstr ""
+
+#: ../../source/screens.rst:1203
+# 511a4602f1c94840b131627f73ae4771
+msgid "Has Statement"
+msgstr ""
+
+#: ../../source/screens.rst:1205
+# 949c20c5df3d4c3084b73e59fcd1c8bb
+msgid "The has statment allows you to specify a container to use, instead of fixed, for statements that take only one child. The has statement may only be used inside a statement that takes one child. The keyword ``has`` is followed (on the same line) by another statement, which must be a statement that creates a container displayable, one that takes more than one child."
+msgstr ""
+
+#: ../../source/screens.rst:1212
+# ee2f582b024e44a089328003cefb10ce
+msgid "The has statement changes the way in which the block that contains it is parsed. Child displayables created in that block are added to the container, rather than the parent displayable. Keyword arguments to the parent displayable are not allowed after the has statement. Multiple has statements can be used in the same block."
+msgstr ""
+
+#: ../../source/screens.rst:1218
+# 700dbcc875f54aa69aa1f52b6cd5ce5f
+msgid "The has statement can be supplied as a child of the following statements:"
+msgstr ""
+
+#: ../../source/screens.rst:1221
+# de9153fec8e947b0bd2435c458a76af3
+msgid "button"
+msgstr ""
+
+#: ../../source/screens.rst:1222
+# 9fb2cf1e357c433a84f810537bbbaf3b
+msgid "frame"
+msgstr ""
+
+#: ../../source/screens.rst:1223
+# 501f0e7c84e145ab85be3e9165065339
+msgid "window"
+msgstr ""
+
+#: ../../source/screens.rst:1225
+# c1a8b78b874549d392f19f7429bd52d2
+msgid "The has statement can be given the following statements as a container."
+msgstr ""
+
+#: ../../source/screens.rst:1228
+# 6ce3d28cd3004770a78bedf48f26bab6
+msgid "fixed"
+msgstr ""
+
+#: ../../source/screens.rst:1229
+# 069f4f07c46e450fa6ed17a26ac19019
+msgid "grid"
+msgstr ""
+
+#: ../../source/screens.rst:1230
+# e6b22919b0214281ba59103adb5ba9bf
+msgid "hbox"
+msgstr ""
+
+#: ../../source/screens.rst:1231
+# 03f53fa6237c4854b8b65a1879d6285d
+msgid "side"
+msgstr ""
+
+#: ../../source/screens.rst:1232
+# c572a97c508547f9a446095724d38018
+msgid "vbox"
+msgstr ""
+
+#: ../../source/screens.rst:1246
+# 5c2230f86bb44bf9a9c4f67debacab32
+msgid "Control Statements"
+msgstr ""
+
+#: ../../source/screens.rst:1248
+# b3985049b52d4da4b13471ac837626df
+msgid "The screen language includes control statements for conditional execution, iteration, including other screens, executing actions when events occur, and executing arbitrary python code."
+msgstr ""
+
+#: ../../source/screens.rst:1255
+# 36dc3a097c1e462a89786f64abbe4152
+msgid "Default"
+msgstr ""
+
+#: ../../source/screens.rst:1257
+# c6fa936324f648a2b52d467634dec8cc
+msgid "The default statement sets the default value of a variable, if it is not passed as an argument to the screen, or inherited from a screen that calls us using the use statement."
+msgstr ""
+
+#: ../../source/screens.rst:1271
+# 5559fb07b684427c95e40782035951df
+msgid "For"
+msgstr ""
+
+#: ../../source/screens.rst:1273
+# 27c5a80d5b2f4009a5044fb15d7d47fa
+msgid "The for statement is similar to the Python for statment, except that it does not support the else clause. It supports assignment to (optionally nested) tuple patterns, as well as variables."
+msgstr ""
+
+#: ../../source/screens.rst:1290
+# ec2372b0a76d41aa9207045ca2e1a62e
+msgid "If"
+msgstr ""
+
+#: ../../source/screens.rst:1292
+# 10278e431b1f4cdcac051836e40cb938
+msgid "The screen language if statement is the same as the Python/Ren'Py if statement. It supports the if, elif, and else clauses."
+msgstr ""
+
+#: ../../source/screens.rst:1306
+# 94d7b339160b46c2840ac06fb5cb86ef
+msgid "On"
+msgstr ""
+
+#: ../../source/screens.rst:1308
+# 2ccca6353d194daa9ab5785c314eea7a
+msgid "The on statement allows the screen to execute an action when an event occurs. It takes one parameter, a string giving the name of an event. This should be one of:"
+msgstr ""
+
+#: ../../source/screens.rst:1312
+# c0dac608e4804506b14be7931621ee9f
+msgid "``\"show\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1313
+# a96ada43f7f44919a20f744ded4ebd8b
+msgid "``\"hide\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1314
+# ecce79a87873426488a5b73bde9a57b4
+msgid "``\"replace\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1315
+# db0a0d6f84e84a9b94e68e25ad45c3cf
+msgid "``\"replaced\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1317
+# bdf9c2e97560448e9b634eb6f7cdd457
+msgid "It then takes an action property, giving an action to run if the event occurs."
+msgstr ""
+
+#: ../../source/screens.rst:1337
+# 3c9a3fcbeca34b138ce71202771ce9e0
+msgid "Use"
+msgstr ""
+
+#: ../../source/screens.rst:1339
+# 0f6de9a2033c4df5b3008e2fe1c83f73
+msgid "The use statement allows a screen to include another. The use statement takes the name of the screen to use. This can optionally be followed by an argument list, in parenthesis."
+msgstr ""
+
+#: ../../source/screens.rst:1343
+# bba75fc0e2ca411d90ca52edb1440eba
+msgid "The scope of the included code includes the scope of the current statement's code, updated by assinging the parameters their new values."
+msgstr ""
+
+#: ../../source/screens.rst:1369
+# f71cf991b2c44fab95d84d4ff258c6b4
+msgid "Python"
+msgstr ""
+
+#: ../../source/screens.rst:1371
+# 2b74a13858434c839f6a80b21b3f30d5
+msgid "The screen language also includes single-line and multiple-line python statements, which can execute python code. This code runs in the scope of the screen."
+msgstr ""
+
+#: ../../source/screens.rst:1375
+# c9f58d2d5a9749b2b25279fed90922ba
+msgid "**Python code must not cause side effects that are visible from outside the screen.** Ren'Py will run screen code multiple times, as it deems necessary. It runs screen code as part of the image prediction process, before the screen is first shown. As a result, if screen code has side effects, those side effects may occur at unpredictable times."
+msgstr ""
+
+#: ../../source/screens.rst:1395
+# 1a2048dd5a304e0583864408e9599952
+msgid "Screen Statements"
+msgstr ""
+
+#: ../../source/screens.rst:1397
+# def2d5477a554232b43c38080368f020
+msgid "In addition to the screen statement, there are three Ren'Py script language statements that involve screens."
+msgstr ""
+
+#: ../../source/screens.rst:1400
+# 14b22d2406fd48f68b6d11b41465ec6c
+msgid "Two of these statements take a keyword argument list. This is a python argument list, in parenthesis, consisting of only keyword arguments. Positional arguments, extra positional arguments (*), and extra keyword arguments (**) are not allowed."
+msgstr ""
+
+#: ../../source/screens.rst:1406
+# 153d688ea9464ce493788bdd90f947fc
+msgid "Show Screen"
+msgstr ""
+
+#: ../../source/screens.rst:1408
+# 88e1b38971844b8688d335c99cf4acaa
+msgid "The show screen statement causes a screen to be shown. It takes an screen name, and an optional argument list. If present, the arguments are used to intialize the scope of the screen."
+msgstr ""
+
+#: ../../source/screens.rst:1412
+# 10d4696dd5ed4f6c83223ad6ba7ab8c7
+msgid "Screens shown in this way are displayed until they are explicitly hidden. This allows them to be used for overlay purposes."
+msgstr ""
+
+#: ../../source/screens.rst:1421
+# db9ebb4d85334a8d8bb6f3a3bd53f4bc
+msgid "Hide Screen"
+msgstr ""
+
+#: ../../source/screens.rst:1423
+# addf749631bc40109a87189fe6b2a093
+msgid "The hide screen statement is used to hide a screen that is currently being shown. If the screen is not being shown, nothing happens."
+msgstr ""
+
+#: ../../source/screens.rst:1433
+# b7ddf9e3735548f494dee0e5d9e5b8cb
+msgid "Call Screen"
+msgstr ""
+
+#: ../../source/screens.rst:1435
+# ac84590ce0274e15b08fc5e4a6fe1da0
+msgid "The call screen statement shows a screen, and then hides it again at the end of the current interaction. If the screen returns a value, then the value is placed in `_return`."
+msgstr ""
+
+#: ../../source/screens.rst:1439
+# 87993364f17e48bdba85ef784a5fdc01
+msgid "This can be used to display an imagemap. The imagemap can place a value into the `_return` variable using the :func:`Return` action, or can jump to a label using the :func:`Jump` action."
+msgstr ""
+
+#: ../../source/screens.rst:1451
+# a12d2978d41044a29662107945f48d92
+msgid "Screen Variants"
+msgstr ""
+
+#: ../../source/screens.rst:1453
+# e1208a9b26ad44ad82d88feab9ec53a7
+msgid "Ren'Py runs both on traditional mouse-oriented devices such as Windows, Mac, and Linux PCs, and newer touch-oriented devices such as Android-based smartphones and tablets. Screen variants allow a game to supply multiple versions of a screen, and use the version that best matches the hardware it is running on."
+msgstr ""
+
+#: ../../source/screens.rst:1459
+# aa9bb6af63104eceb50dfcb232b1322f
+msgid "Ren'Py chooses a screen variant to use by searching variants in the order they are listed in :var:`config.variants`. The first variant that exists is used."
+msgstr ""
+
+#: ../../source/screens.rst:1463
+# 1cf107157d984bdb8b5b4b2feaa0d6ea
+msgid "If the RENPY_VARIANT environment variable is present, config.variants is initialized by splitting the value of the variable on whitespace, and then appending ``None``. Setting RENPY_VARIANT to a value such as ``\"tablet touch\"`` or ``\"phone touch\"`` allows screens intended for Android devices to be tested on a PC."
+msgstr ""
+
+#: ../../source/screens.rst:1469
+# badbbea044fa490d832f16f3509c9416
+msgid "If the environment variable is not present, a list of variants is built up automatically, by going through the following list in order and choosing the entries that apply to the current platform."
+msgstr ""
+
+#: ../../source/screens.rst:1475
+# 2470a5b88da94808a093c1af82f2dca0
+msgid "``\"tablet\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1474
+# 4d3c92140b564eab86de12beac5152bf
+msgid "Defined on touchscreen based devices where the screen has a diagonal size of 6 inches or more."
+msgstr ""
+
+#: ../../source/screens.rst:1481
+# c1e9e4ce2efd4aac88e5189be6f1c1fc
+msgid "``\"phone\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1478
+# aec6c5f386fa41e2bad4add499257979
+msgid "Defined on touchscren-based devices where the diagonal size of the screen is less than 6 inches. On such a small device, it's important to make buttons large enough a user can easily choose them."
+msgstr ""
+
+#: ../../source/screens.rst:1485
+# 79266626a4524264906e8112820dbc34
+msgid "``\"touch\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1484
+# 4e187227e2f242099acdd65720c61cb7
+msgid "Defined on touchscreen-based devices, such as those running the Android platform."
+msgstr ""
+
+#: ../../source/screens.rst:1490
+# afbbde6f0d7644ea933715df329375f8
+msgid "``\"pc\"``"
+msgstr ""
+
+#: ../../source/screens.rst:1488
+# befac328e70c4bfcaa405b589e022ecf
+msgid "Defined on Windows, Mac OS X, and Linux. A PC is expected to have a mouse and keyboard present, to allow buttons to be hovered, and to allow precise pointing."
+msgstr ""
+
+#: ../../source/screens.rst:1493
+# a077ea2916524cbd845dcb83dc265f09
+msgid "``None``"
+msgstr ""
+
+#: ../../source/screens.rst:1493
+# b77339481fef4ca8bd48614995d84c33
+msgid "Always defined."
+msgstr ""
+
+#: ../../source/screens.rst:1495
+# 00b8d7da0f924d50bea856cf04dcf227
+msgid "An example of defining a screen variant is:"
+msgstr ""
+

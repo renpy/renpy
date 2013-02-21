@@ -1,0 +1,510 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/rooms.rst:6
+# ae03436543d343b1afb99c22ebfdb45a
+msgid "Image Gallery, Music Room, and Replay Actions"
+msgstr ""
+
+#: ../../source/rooms.rst:11
+# 8cfd2a6477394f33a739637678445372
+msgid "Image Gallery"
+msgstr ""
+
+#: ../../source/rooms.rst:13
+# 1f4f31c739af432d9dd7a1f9f995511d
+msgid "A image gallery is a screen that allows the player to unlock images, and then view those images. The screen has one or more buttons associated with it, and each button has one or more associated images. Buttons and images also have conditions that determine if they have unlocked."
+msgstr ""
+
+#: ../../source/rooms.rst:18
+# 2888da452098492389ddea0621cb2256
+msgid "Image galleries are managed by instances of the Gallery class. A single instance of the gallery class may be shared between multiple image gallery screens."
+msgstr ""
+
+#: ../../source/rooms.rst:22
+# 098b47eda11c4a968f80330ef59b0fa0
+msgid "A gallery has one or more buttons associated with it, a button has one or more images associated with it, and each image has one or more displayables associated with it. Conditions can be assigned to buttons and images. A button is unlocked when all of the conditions associated with it are satisfied and at least one image associated with that button is unlocked. An image is unlocked when all associated conditions are satisfied."
+msgstr ""
+
+#: ../../source/rooms.rst:29
+# 440f175c17464ec0987f17ee9ecda6c7
+msgid "Creating an image gallery consists of the following four steps."
+msgstr ""
+
+#: ../../source/rooms.rst:31
+# 8536db542f8e427d9fbf2ba770bc2a26
+msgid "Create an instance of Gallery."
+msgstr ""
+
+#: ../../source/rooms.rst:33
+# e42e445fb50341b6b2dfb6eeb4c5daae
+msgid "Add buttons and images to that gallery, along with conditions that determine if the buttons and images they belong to are unlocked. This is also a multi-step process."
+msgstr ""
+
+#: ../../source/rooms.rst:37
+# 420b315131774b7092ffae749518364d
+msgid "Declare a new button by calling :meth:`Gallery.button`."
+msgstr ""
+
+#: ../../source/rooms.rst:39
+# 690e03a266384eada00cfc1c076e9851
+msgid "Optionally, add one or more unlock conditions to the button by calling :meth:`Gallery.unlock` or :meth:`Gallery.condition`."
+msgstr ""
+
+#: ../../source/rooms.rst:42
+# 40177a3ab1654e31a793ba1e113bd5fc
+msgid "Declare an image by calling :meth:`Gallery.image` with one or displayables as arguments. Or call the convenience method :meth:`Gallery.unlock_image` instead."
+msgstr ""
+
+#: ../../source/rooms.rst:46
+# 13bbca2c1f844082a776a0099c5da89a
+msgid "Optionally, call :meth:`Gallery.transform` to associate transforms with the displayables."
+msgstr ""
+
+#: ../../source/rooms.rst:49
+# 65250d9bdc9e4bd19f1c18184fec4779
+msgid "Optionally, add one or more unlock conditions to the image by calling :meth:`Gallery.unlock`, :meth:`Gallery.condition`, or :meth:`Gallery.allprior`."
+msgstr ""
+
+#: ../../source/rooms.rst:53
+# 8c42d7675f0c4f75a524fa7d3dab1e77
+msgid "Additional images can be added to a button by repeating steps 3-5, while additional buttons can be added to the gallery by repeating all five steps."
+msgstr ""
+
+#: ../../source/rooms.rst:57
+# 2e090f6f2ec44f78802d1f27a4ea73d6
+msgid "Create an image gallery screen. The screen should display a background, and should contain navigation that allows the user to show other image galleries, or to return to the main or extras menu."
+msgstr ""
+
+#: ../../source/rooms.rst:61
+# 95e39488bcfa4e5dbec5d9fa25b3a436
+msgid "Add code to display the image gallery screen to the main or extras menu."
+msgstr ""
+
+#: ../../source/rooms.rst:63
+#: ../../source/rooms.rst:210
+# 44638e85b8fd44268688100722bbc8c5
+# 04ee321a7e104805a50f884654648fac
+msgid "Here's an example of the first three steps::"
+msgstr ""
+
+#: ../../source/rooms.rst:169
+#: ../../source/rooms.rst:253
+# b1c7e6bd9b604f3c8846e897a575e5af
+# ba5a8842e4fd4b18a77d286ffdf3b955
+msgid "Step 4 will vary based on how your game is structured, but one way of accomplishing it is to add the following line::"
+msgstr ""
+
+#: ../../source/rooms.rst:174
+#: ../../source/rooms.rst:258
+# 7f22cad99b724c4b911b9e73399c9f03
+# b728b4c0ac43460ea5d46c29eb91b365
+msgid "to the main menu screen."
+msgstr ""
+
+#: ../../source/inc/gallery:5
+# 9860f9a87c6048388cce8b1c7df54ccb
+msgid "This class supports the creation of an image gallery by handling the locking of images, providing an action that can show one or more images, and a providing method that creates buttons that use that action."
+msgstr ""
+
+#: ../../source/inc/gallery:11
+# 986c7875c73d4f278fd78269a717fdf4
+msgid "The transition that is used when changing images."
+msgstr ""
+
+#: ../../source/inc/gallery:15
+# bd35550dad6142c592ecbc2b93d2636e
+msgid "The default displayable used by make_button for a locked button."
+msgstr ""
+
+#: ../../source/inc/gallery:19
+# 96488d2c2aca442b8fe17ed12de40d29
+msgid "The default hover border used by make_button."
+msgstr ""
+
+#: ../../source/inc/gallery:23
+# 191872a247f14aa78d14374449168d53
+msgid "The default idle border used by make_button."
+msgstr ""
+
+#: ../../source/inc/gallery:27
+# 57aa03b12f634bc4b2d760c611b7aa7b
+msgid "An action that displays the images associated with the given button name."
+msgstr ""
+
+#: ../../source/inc/gallery:32
+# 19c912c2e97b4f129c2dbb8a13eff51e
+msgid "A condition that is true if all prior images associated with the current button have been unlocked."
+msgstr ""
+
+#: ../../source/inc/gallery:37
+# 68fbe5a3df6c4cbf857b54129bb3fa60
+msgid "Creates a new button, named `name`."
+msgstr ""
+
+#: ../../source/inc/gallery:39
+#: ../../source/inc/gallery:65
+# e49283378f9b4887896db91de8b85125
+# 42309db1d62f45e68857bc62c5369b6b
+msgid "`name`"
+msgstr ""
+
+#: ../../source/inc/gallery:40
+# a60f8d0561224dc2bff5ab5481d0fe69
+msgid "The name of the button being created."
+msgstr ""
+
+#: ../../source/inc/gallery:44
+# fcafe57d94b24dfc9a639b745ea3a82c
+msgid "A condition that is satisfied when an expression evaluates to true."
+msgstr ""
+
+#: ../../source/inc/gallery:46
+# b8c47e9b5d2b4b9aa0ba6c181b789110
+msgid "`expression`"
+msgstr ""
+
+#: ../../source/inc/gallery:47
+# f788d10b43e14bb0a93bb266f733e16b
+msgid "A string giving a python expression."
+msgstr ""
+
+#: ../../source/inc/gallery:51
+#: ../../source/inc/gallery:56
+# 59e98b70645242029c01b028d60b9974
+# b1a1d7297cd8428ea54e8565835bdee9
+msgid "Adds a new image to the current button, where an image consists of one or more displayables."
+msgstr ""
+
+#: ../../source/inc/gallery:61
+# e0a1fbb2f840432fa68cc16842af1d40
+msgid "This creates a button that displays the images associated with the given button name."
+msgstr ""
+
+#: ../../source/inc/gallery:65
+# 7032935390364f3bafa9f34fc0a9de7e
+msgid "The name of the button that will be created."
+msgstr ""
+
+#: ../../source/inc/gallery:69
+# 0e774e4c9be3429dbc3aefead00436de
+msgid "`unlocked`"
+msgstr ""
+
+#: ../../source/inc/gallery:68
+# cb64303e18d24cdb868292f18959a40f
+msgid "A displayable that is displayed for this button when it is unlocked."
+msgstr ""
+
+#: ../../source/inc/gallery:74
+#: ../../source/inc/replay:16
+# 8eef463d5d6a42e2856da1baa31adb17
+# 936cd5905f934e9c91e0b324af52537a
+msgid "`locked`"
+msgstr ""
+
+#: ../../source/inc/gallery:72
+# 071dda2d58484a5ca7677168d20bc5d2
+msgid "A displayable that is displayed for this button when it is locked. If None, the locked_button field of the gallery object is used instead."
+msgstr ""
+
+#: ../../source/inc/gallery:79
+# e91c89d9a7c04972b5b16533decd12f5
+msgid "`hover_border`"
+msgstr ""
+
+#: ../../source/inc/gallery:77
+# a89d715804c6495596026d4790f20fb9
+msgid "A displayable that is used to overlay this button when when it is unlocked and has focus. If None, the hover_border field of the gallery object is used."
+msgstr ""
+
+#: ../../source/inc/gallery:84
+# 34bac7c3f39443f0aac2ab5419c3d2f0
+msgid "`idle_border`"
+msgstr ""
+
+#: ../../source/inc/gallery:82
+# 957dff33595d490380c84878790a6e40
+msgid "A displayable that is used to overlay this button when when it is unlocked but unfocused. If None, the idle_border field of the gallery object is used."
+msgstr ""
+
+#: ../../source/inc/gallery:86
+# 12ffcd2add14404daadb475e42cbf900
+msgid "Additional keyword arguments become style properties of the created button object."
+msgstr ""
+
+#: ../../source/inc/gallery:91
+# 7935bb7dc62c46eabf55e43e4363e2ee
+msgid "Applies transforms to the last image registered. This should be called with the same number of transforms as the image has displayables. The transforms are applied to the corresponding displayables."
+msgstr ""
+
+#: ../../source/inc/gallery:96
+# 97a4d8b5f37a455b8b6445ed76762588
+msgid "If a transform is None, the default transform is used."
+msgstr ""
+
+#: ../../source/inc/gallery:100
+# ffd43a0a82544fed9be91033efe3114e
+msgid "A condition that takes one or more image names as argument, and is satisfied when all the named images have been seen by the player. The image names should be given as strings."
+msgstr ""
+
+#: ../../source/inc/gallery:106
+# 3b06e94ff49041c296b569ead081c8a8
+msgid "A convenience method that is equivalent to calling image and unlock with the same parameters. This will cause an image to be displayed if it has been seen before."
+msgstr ""
+
+#: ../../source/inc/gallery:110
+# 6e8fbd87cb464e98bf1e99a801bf3be1
+msgid "The images should be specified as strings giving image names."
+msgstr ""
+
+#: ../../source/rooms.rst:182
+# fb6c02f1d290459488aef58ffddbc169
+msgid "Music Room"
+msgstr ""
+
+#: ../../source/rooms.rst:184
+# c9cd2c090bb54d0390ecedd2486ba2f5
+msgid "A music room is a screen that allows the user to select and play music tracks from the game. These tracks may start off locked when the user first begins playing a particular game, and will be unlocked as the user listens to the music while playing the game."
+msgstr ""
+
+#: ../../source/rooms.rst:189
+# 3ff3c046f84a400e9e80ac8dbd7f5f78
+msgid "A music room is managed by an instance of the MusicRoom class. There can be more than one MusicRoom instance in a game, allowing a game to have multiple music rooms. Creating a music room consists of the following four steps:"
+msgstr ""
+
+#: ../../source/rooms.rst:194
+# 2025c62b16844168a807843861d34e71
+msgid "Create an instance of MusicRoom. The MusicRoom constructor takes parameters to control the channel on which music is played back, and how long it takes to fade music out and back in."
+msgstr ""
+
+#: ../../source/rooms.rst:198
+# 29ad1a8e0624480cbfc648d7b1a6855e
+msgid "Add music files to the instance."
+msgstr ""
+
+#: ../../source/rooms.rst:200
+# d8764f2e1f0c418ab157aa6a3626cac6
+msgid "Create a screen that uses the MusicRoom instance to create actions for buttons, imagebuttons, or hotspots. These actions can pick a track, the next or previous track, or stop and start the music."
+msgstr ""
+
+#: ../../source/rooms.rst:204
+# 9537289e35db41f09f491bc8c55982a3
+msgid "Note that the actions used are members of a MusicRoom instance, so if the MusicRoom instance is named ``mr``, then ``mr.Play(\"track1.ogg\")`` is how you'd use the play action."
+msgstr ""
+
+#: ../../source/rooms.rst:208
+# ed64ce497e4245e280390c62009a85ff
+msgid "Add the music room screen to the main menu, or an extras menu."
+msgstr ""
+
+#: ../../source/rooms.rst:260
+# 6f8916c7144140cba71e1a4bbc837930
+msgid "Using the :func:`Preferences` function, especially ``Preferences(\"music volume\")``, it's possible to include a volume slider on the music screen."
+msgstr ""
+
+#: ../../source/inc/music_room:5
+# 1b7a6883b18349669f67e7d209e2ac92
+msgid "A music room that contains a series of songs that can be unlocked by the user, and actions that can play entries from the list in order."
+msgstr ""
+
+#: ../../source/inc/music_room:10
+# a837ae074cf54ce3b8c7f7642839d241
+msgid "`channel`"
+msgstr ""
+
+#: ../../source/inc/music_room:10
+# 75ce90acf3624826aae6b11abf798e1a
+msgid "The channel that this music room will operate on."
+msgstr ""
+
+#: ../../source/inc/music_room:14
+# cb5bfe9923f34ac18ad962be3b8ae647
+msgid "`fadeout`"
+msgstr ""
+
+#: ../../source/inc/music_room:13
+# 8e77c43455f14ba68a40173342b22768
+msgid "The number of seconds it takes to fade out the old music when changing tracks."
+msgstr ""
+
+#: ../../source/inc/music_room:18
+# 909bf26ade4f46cf8cfc9fd5ab87f1e1
+msgid "`fadein`"
+msgstr ""
+
+#: ../../source/inc/music_room:17
+# bdbae106256c48e39da13b84d233bd9c
+msgid "The number of seconds it takes to fade in the new music when changing tracks."
+msgstr ""
+
+#: ../../source/inc/music_room:22
+# 426c1fc5e9e94302a4c483d8cfb0314c
+msgid "An action that causes the music room to play the next unlocked file in the playlist."
+msgstr ""
+
+#: ../../source/inc/music_room:27
+# 04628b8f3c2b430cb1ce6eaf4e6948a0
+msgid "Causes the music room to start playing. If `filename` is given, that file begins playing. Otherwise, the currently playing file starts over (if it's unlocked), or the first file starts playing."
+msgstr ""
+
+#: ../../source/inc/music_room:31
+# 84b440a40b9f4a449d406909847879ee
+msgid "If `filename` is given, buttons with this action will be insensitive while `filename` is locked, and will be selected when `filename` is playing."
+msgstr ""
+
+#: ../../source/inc/music_room:37
+# d047274736544f4996a93f752785b59f
+msgid "An action that causes the music room to play the previous unlocked file in the playlist."
+msgstr ""
+
+#: ../../source/inc/music_room:42
+# 72ad414872ea4f64b366c38d6558d4e0
+msgid "Stops the music."
+msgstr ""
+
+#: ../../source/inc/music_room:46
+# 0f589d7ffd944f8692185f7b0f7c9408
+msgid "Adds the music file `filename` to this music room. The music room will play unlocked files in the order that they are added to the room."
+msgstr ""
+
+#: ../../source/inc/music_room:52
+# 64bd9ae7298941389e5494fcd98f2323
+msgid "`always_unlocked`"
+msgstr ""
+
+#: ../../source/inc/music_room:51
+# 4ccaa2afba5f4564be6aa38e7e388938
+msgid "If true, the music file will be always unlocked. This allows the file to show up in the music room before it has been played in the game."
+msgstr ""
+
+#: ../../source/inc/music_room:57
+# 8110590001054e7cbe60059d080a3572
+msgid "Returns true if the filename has been unlocked (or is always unlocked), and false if it is still locked."
+msgstr ""
+
+#: ../../source/rooms.rst:270
+# 7e631f18b3924f5ba884bf5f185c8b36
+msgid "Replay"
+msgstr ""
+
+#: ../../source/rooms.rst:272
+# 010fd2cbdc30404fa794295cba4e9e27
+msgid "Ren'Py also includes the ability to replay a scene from inside a the main or game menu. This can be used to create a \"scene gallery\", or memory gallery that allows the player to repeat important scenes. After the scene finishes, Ren'Py returns to the menu screen that launched the replay."
+msgstr ""
+
+#: ../../source/rooms.rst:278
+# 60ea8a57f09a4c009991df3ec1db952e
+msgid "Scene replay is also possible using the :func:`Start` action. The difference between the two modes are:"
+msgstr ""
+
+#: ../../source/rooms.rst:281
+# 2a91865dde4d43998e2951e420d028d9
+msgid "A replay can be launched from any screen while Start can only be used in the main menu or screens shown by the main menu."
+msgstr ""
+
+#: ../../source/rooms.rst:284
+# 75bd94da844e450da12b99eec7613a9a
+msgid "When a replay finishes, control returns to the point where the replay was invoked. That point can be inside the main menu, game menu. If a game is in progress when replay is called, game state is preserved."
+msgstr ""
+
+#: ../../source/rooms.rst:289
+# f5e0b46556ba426d94fa93a7e704d34b
+msgid "Saving is disabled while in replay mode."
+msgstr ""
+
+#: ../../source/rooms.rst:291
+# edf2b06c9e5a40e89669ab3e7732e563
+msgid "While in replay mode, a call to :func:`renpy.end_replay` will end the replay. In normal mode, end_replay does nothing."
+msgstr ""
+
+#: ../../source/rooms.rst:294
+# 07ca7c4cb9a7486e838ef0188c311240
+msgid "To take advantage of the replay mode, a scene should begin with a label, and end with a call to renpy.end_replay. The scene should make no assumption as to the state of the layers or variables, which can be very different in normal and replay mode. (In replay code, the label is invoked with a black screen.)"
+msgstr ""
+
+#: ../../source/rooms.rst:300
+# 3764dfdb0aad44949e2ed30b54773e4c
+msgid "For example::"
+msgstr ""
+
+#: ../../source/rooms.rst:324
+# 957ac02d108d4684be72ec5e6e3d7520
+msgid "With the scene define like that, the replay can be invoked with the Replay action::"
+msgstr ""
+
+#: ../../source/rooms.rst:329
+# 05d576b7ed854c1a99861ff765780bfe
+msgid "There is one store variable used by replay mode:"
+msgstr ""
+
+#: ../../source/rooms.rst:333
+# 852db7429eab47ce8f62455a2d8f538f
+msgid "When in replay mode, this is sent to the label at which replay mode was started. Outside of replay mode, this is None."
+msgstr ""
+
+#: ../../source/rooms.rst:336
+# 2b9109e5d4944ba49ebde1f5dff7d686
+msgid "In addition, :var:`config.enter_replay_transition` and :var:`config.exit_replay_transition` are used when entering and exiting replay mode, respectively."
+msgstr ""
+
+#: ../../source/rooms.rst:340
+# 814a602e8ee94aadaaae7f99af0e53bb
+msgid "The following variables and actions are used in replay mode:"
+msgstr ""
+
+#: ../../source/inc/replay:5
+# 312ebe255e0e4f279c2cb3fc879d9593
+msgid "An action that ends the current memory."
+msgstr ""
+
+#: ../../source/inc/replay:9
+# b64f6fb1291d4c95a7d541846a908ac8
+msgid "An action that starts `label` as a replay."
+msgstr ""
+
+#: ../../source/inc/replay:13
+# 91617523bd314e5ea481767a59ef8ade
+msgid "`scope`"
+msgstr ""
+
+#: ../../source/inc/replay:12
+# 334a99a8b1ee41eda7aa3926343a3a59
+msgid "A dictionary mapping variable name to value. These variables are set when entering the replay."
+msgstr ""
+
+#: ../../source/inc/replay:16
+# ff6f4b7ae67b40929456919ec1d35261
+msgid "If true, this replay is locked. If false, it is unlocked. If None, the replay is locked if the label has not been seen in any playthrough."
+msgstr ""
+
+#: ../../source/inc/replay:21
+# 3a88adff731c40dbbdb122f83b5d5747
+msgid "Calls a label as a memory."
+msgstr ""
+
+#: ../../source/inc/replay:23
+# 15419e41d717492ab3f36090ab1df5ac
+msgid "Keyword arguments are used to set the initial values of variables in the memory context."
+msgstr ""
+
+#: ../../source/inc/replay:28
+# a1d1f430bf5d4cf1ac6cefd4f4f62403
+msgid "If we're in a replay, ends the replay immediately. Otherwise, does nothing."
+msgstr ""
+

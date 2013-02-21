@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/voice.rst:6
+# 749ac278510443dcb9f741bfb67e54be
+msgid "Voice"
+msgstr ""
+
+#: ../../source/voice.rst:8
+# e4a11faa990e4fdf9569e6cf203579fd
+msgid "Ren'Py includes support for playing back voice in conjunction with dialogue. This is done through the voice statement, which gives the voice filename to play::"
+msgstr ""
+
+#: ../../source/voice.rst:15
+# 2597f24b7428431ca799b938f376e1b3
+msgid "Normally, a playing voice is stopped at the start of the next interaction. The voice sustain statement can sustain voice playback through an interaction. ::"
+msgstr ""
+
+#: ../../source/voice.rst:25
+# aa2b70eb054c4314804daaf755aff078
+msgid "The :var:`config.voice_filename_format` variable allows you to customize the voice filename, making it possible to omit directories and extensions."
+msgstr ""
+
+#: ../../source/voice.rst:29
+# ab9844d270c143a0bccfdae91584b89e
+msgid "Voice Tags"
+msgstr ""
+
+#: ../../source/voice.rst:31
+# ac1e81d6f8b04600923d03820adf7a59
+msgid "Ren'Py includes a voice tag system that makes it possible to selectively mute or unmute a character's voice. To take advantage of this system, supply a voice_tag argument to each :func:`Character`, and use the :func:`SetVoiceMute` or :func:`ToggleVoiceMute` actions to allow the player to toggle the voice."
+msgstr ""
+
+#: ../../source/voice.rst:37
+# 4561d7e8ec194f458b64d6059cdac03b
+msgid "For example::"
+msgstr ""
+
+#: ../../source/voice.rst:60
+# ab493c56549440e29d6c289da9923632
+msgid "Voice Functions"
+msgstr ""
+
+#: ../../source/inc/voice:5
+# 7912df6160c84e60b83410e22b41d2e7
+msgid "Plays `filename` on the voice channel. The equivalent of the voice statement."
+msgstr ""
+
+#: ../../source/inc/voice:11
+# fdf52e89809049f8836ff8b45527a706
+msgid "`filename`"
+msgstr ""
+
+#: ../../source/inc/voice:9
+# 53b2adb6f86f4d7eb2c2bdd718c0919b
+msgid "The filename to play. This is used with :var:`config.voice_filename_format` to produce the filename that will be played."
+msgstr ""
+
+#: ../../source/inc/voice:20
+# 7568b1cc57cc439092fe1a14fec461b6
+msgid "`tag`"
+msgstr ""
+
+#: ../../source/inc/voice:14
+# 205b9635ceae48ba9b0f7666782a92b3
+msgid "If this is not None, it should be a string giving a voice tag to be played. If None, this takes its default value from the voice_tag of the Character that causes the next interaction."
+msgstr ""
+
+#: ../../source/inc/voice:19
+# d9963be2d0794499b0ac5c1e08bed881
+msgid "The voice tag is used to specify which character is speaking, to allow a user to mute or unmute the voices of particular characters."
+msgstr ""
+
+#: ../../source/inc/voice:25
+# bf3719e0260e49eb95f46b8ee12de5ba
+msgid "Returns true if it's possible to replay the current voice."
+msgstr ""
+
+#: ../../source/inc/voice:29
+# af44713fa01743a6a93d66d62fdeae42
+msgid "Replays the current voice, if possible."
+msgstr ""
+
+#: ../../source/inc/voice:33
+# 0c467c62fab24f349ee90d0747521e69
+msgid "The equivalent of the voice sustain statement."
+msgstr ""
+
+#: ../../source/voice.rst:65
+# 40de5564544a4d16bbff7195165ccfe9
+msgid "Voice Actions"
+msgstr ""
+
+#: ../../source/inc/voice_action:5
+# 541f620e1c454dc999cd9507acdd0ebe
+msgid "If `mute` is true, mutes voices that are played with the given `voice_tag`. If `mute` is false, unmutes voices that are played with `voice_tag`."
+msgstr ""
+
+#: ../../source/inc/voice_action:11
+# 576f6386f9014552ad066078883d5d16
+msgid "Toggles the muting of `voice_tag`. This is selected if the given voice tag is muted, unless `invert` is true, in which case it's selected if the voice is unmuted."
+msgstr ""
+
+#: ../../source/inc/voice_action:17
+# 5b3e1abc202941f8bcdd7812df545c51
+msgid "Replays the most recently played voice."
+msgstr ""
+

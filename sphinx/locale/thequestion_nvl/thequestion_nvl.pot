@@ -1,0 +1,28 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/thequestion_nvl.rst:7
+# 468aaf0636de47fd84b0997e9ded8a1b
+msgid "NVL-mode script for The Question"
+msgstr ""
+
+#: ../../source/thequestion_nvl.rst:9
+# 857e0a40990c4eb598353a9704e671a4
+msgid "Take \"The Question\" from the Ren'Py distribution, and replace the contents of the ``script.rpy`` file with the following code.  Also, this script uses a background image called ``nvl_window.png``, available `here <http://www.renpy.org/w/images/8/8f/nvl_window.png>`_."
+msgstr ""
+

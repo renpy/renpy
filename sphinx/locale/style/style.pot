@@ -1,0 +1,1307 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/style.rst:9
+# b1868b8b7d154c1482dfee038423dec8
+msgid "Styles and Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:11
+# 22d108ce0647489c87fb5b8060e7881c
+msgid "Styles allow the look of displayables to be customized. This is done by changing the value of style properties for displayables. For example, changing the :propref:`background` property allows the background of a window or button to be customized."
+msgstr ""
+
+#: ../../source/style.rst:16
+# a64c3a7615ea49c89af10b46f4f38216
+msgid "Each displayable has a style built-into it. When the displayable is created, either directly or using the screen system, style properties can be supplied to it, and these styles are used to update the look of the displayable. In the following example::"
+msgstr ""
+
+#: ../../source/style.rst:23
+# ba7e1f8c07024df588cb4b8f040faf2c
+msgid "the :propref:`size` property is supplied to a Text displayable, allowing us to change its text size. This will customize the look of the text displayable by displaying the text 40 pixels high."
+msgstr ""
+
+#: ../../source/style.rst:27
+# 257aba7f05f04cc6985665eca2f1ac48
+msgid "Ren'Py also supports style inheritance. Each displayable takes a `style` property, that gives the name of the style to use. If a property is not defined for a style, Ren'Py will look it up in the named style, that style's parent, and so on. This allows us to customize a named style in a central place."
+msgstr ""
+
+#: ../../source/style.rst:33
+# 874ac2a2de9843bc939e8aef00edb639
+msgid "A named style exists as a field on the global ``style`` object. Style properties exist as fields on styles. So to set the size property of the default style, one can use a python block::"
+msgstr ""
+
+#: ../../source/style.rst:41
+# 2f0ac57f4b204aab871ea9d1869ce2a9
+msgid "As Ren'Py caches styles, named styles should not be changed outside of init blocks."
+msgstr ""
+
+#: ../../source/style.rst:46
+# f4ce193843264847945bc4e95b84392a
+msgid "Style Property Prefixes"
+msgstr ""
+
+#: ../../source/style.rst:48
+# 526e1289b7ae495ca7298ac229e24062
+msgid "Applying a prefix to a style property indicates allows a displayable to change it's look in response to its focus or selection status. For example, a button can change its color when the mouse hovers above it, or to indicate when the choice represented by the button is the currently selected one."
+msgstr ""
+
+#: ../../source/style.rst:53
+# 4abe6a84bb474097907ad42153027081
+msgid "There are five states a displayable can be it."
+msgstr ""
+
+#: ../../source/style.rst:56
+# da9a4e81613541649596ff879e4d6067
+msgid ":dfn:`insensitive`"
+msgstr ""
+
+#: ../../source/style.rst:56
+# fb213558b39c416e9f09850ab37a20bb
+msgid "Used when the user cannot interact with the displayable."
+msgstr ""
+
+#: ../../source/style.rst:59
+# eb2df88efd1c42cfbe015fd24776937a
+msgid ":dfn:`idle`"
+msgstr ""
+
+#: ../../source/style.rst:59
+# 80ce22f8671140eb938e62fb29548948
+msgid "Used when the displayable is neither focused nor selected."
+msgstr ""
+
+#: ../../source/style.rst:62
+# 67b0b985216c494e93edc64ec72cb709
+msgid ":dfn:`hover`"
+msgstr ""
+
+#: ../../source/style.rst:62
+# e2b2815709f845e181f60d8c5f83287c
+msgid "Used when the displayable is focused, but not selected."
+msgstr ""
+
+#: ../../source/style.rst:65
+# f50c4545a5fc415f9d8cf4981c0bf919
+msgid ":dfn:`selected_idle`"
+msgstr ""
+
+#: ../../source/style.rst:65
+# 04b077d7e46b45879fc05a21cd8ed6f9
+msgid "Used when the displayable is not focused, and is selected."
+msgstr ""
+
+#: ../../source/style.rst:68
+# 7d247cf73c924df2a1e50dd14f17c333
+msgid ":dfn:`selected_hover`"
+msgstr ""
+
+#: ../../source/style.rst:68
+# f3a8dcf5e31644fbb66d689c8bc97869
+msgid "Used when the displayable is focused and selected."
+msgstr ""
+
+#: ../../source/style.rst:70
+# 5d9cfeb07de84473876cd2f7683a6d4a
+msgid "Button and Bar displayables (and their variants) update their state, and the state of their children, in response to events. For example, when the user puts his mouse over an unselected button, it and all its children will be put into the hover state."
+msgstr ""
+
+#: ../../source/style.rst:75
+# f34677806d8845dcbedfab402d063527
+msgid "Style property prefixes allow one to set style properties for the different states. There is a system of implications set up, so that a prefix can imply setting the property for more than one state."
+msgstr ""
+
+#: ../../source/style.rst:79
+# 0c4a310e20da4283b2abc507163fbfde
+msgid "The implications are:"
+msgstr ""
+
+#: ../../source/style.rst:84
+# 73f1932de47846a6964a9bb5e9620317
+msgid "prefix"
+msgstr ""
+
+#: ../../source/style.rst:85
+# 804e3f636ddc4114b692f0c4d51ea6f3
+msgid "states implied by prefix"
+msgstr ""
+
+#: ../../source/style.rst:87
+# edfa4ecb759a4e5bad8b040bb92efb8b
+msgid "(no prefix)"
+msgstr ""
+
+#: ../../source/style.rst:88
+# 64c749fb92e741ea985d68bd631fac74
+msgid "insensitive, idle, hover, selected_idle, selected_hover"
+msgstr ""
+
+#: ../../source/style.rst:90
+# 4f662a1c90ff4b538a8457589fe3b87d
+msgid "``insensitive_``"
+msgstr ""
+
+#: ../../source/style.rst:91
+# 53eac7993ca4411eb32ae985e430eb60
+msgid "insensitive"
+msgstr ""
+
+#: ../../source/style.rst:93
+# c20d676c965e431591448fe2a599142c
+msgid "``idle_``"
+msgstr ""
+
+#: ../../source/style.rst:94
+# f6ebecc5921841648a97cb0c47ae6a6b
+msgid "idle, selected_idle"
+msgstr ""
+
+#: ../../source/style.rst:96
+# c5dfcecb775744f59b64dc0a417c6122
+msgid "``selected_``"
+msgstr ""
+
+#: ../../source/style.rst:97
+# f1460f3d7bbe435b81ab42f9c6db8ba7
+msgid "selected_idle, selected_hover"
+msgstr ""
+
+#: ../../source/style.rst:99
+# 4fb65cadc358485a9bb22ffc71ccb95e
+msgid "``selected_idle_``"
+msgstr ""
+
+#: ../../source/style.rst:100
+# 9c0c3597051448ecaf7b610ca2734bc1
+msgid "selected_idle"
+msgstr ""
+
+#: ../../source/style.rst:102
+# 7811cb50276f46f3ade946a9034c8865
+msgid "``selected_hover_``"
+msgstr ""
+
+#: ../../source/style.rst:103
+# 3d1cba910fe44ddfb6c12fd42015cf17
+msgid "selected_hover"
+msgstr ""
+
+#: ../../source/style.rst:105
+# 0ca92e0af65044a4a5b469294c780b86
+msgid "Using a text button, we can show this in action. Text buttons use two styles by default: ``button`` for the button itself, and ``button_text`` for the text inside the button. The :propref:`background` style property sets the background of a button, while the :propref:`color` property sets the color of text.::"
+msgstr ""
+
+#: ../../source/style.rst:125
+# 38c9adb40126489787bdf16d9e68e899
+msgid "Style Property Values"
+msgstr ""
+
+#: ../../source/style.rst:127
+# 0a28c11c5f174a59ab44441b33b0513b
+msgid "Each style property expects a specific kind of data. Many of these are standard python types, but a few are novel. Here are descriptions of the novel kinds of value a style property can expect."
+msgstr ""
+
+#: ../../source/style.rst:152
+# 6122bfe668a344e5969be239e3549593
+msgid "`position`"
+msgstr ""
+
+#: ../../source/style.rst:132
+# 1562d06fd08d495c99c49ec9b121d9cd
+msgid "Positions are used to specify locations relative to the upper-left corner of the containing area. (For positions, the containing area is given by the layout the displayable is in, if one is given, or the screen otherwise. For anchors, the containing area is the size of the displayable itself.)"
+msgstr ""
+
+#: ../../source/style.rst:138
+# b5aa22d5be724895a8523d108ffcc7ad
+msgid "The way a position value is interpreted depends on the type of the value:"
+msgstr ""
+
+#: ../../source/style.rst:142
+# ee4d08122e3848a9b21d38cbace7829a
+msgid "int (like 0, 1, 37, or 42)"
+msgstr ""
+
+#: ../../source/style.rst:142
+# a2e5679c072f4e188c8f8dcc6019395a
+msgid "An integer is intepreted as the number of pixels from the left or top side of the containing area."
+msgstr ""
+
+#: ../../source/style.rst:147
+# 1d90169658c04076b4e17d2625b767c0
+msgid "float (like 0.0, 0.5, or 1.0)"
+msgstr ""
+
+#: ../../source/style.rst:145
+# addf8082283342cbb4b41b3b39070d52
+msgid "A floating-point number is intepreted as a fraction of the containing area. For example, 0.5 is a point halfway between the sides of the containing area, while 1.0 is on the right or bottom side."
+msgstr ""
+
+#: ../../source/style.rst:152
+# fe7e7edee6dd42d6a0183cf524c37bac
+msgid "renpy.absolute (like renpy.absolute(100.25))"
+msgstr ""
+
+#: ../../source/style.rst:150
+# 18d87fd743f749e5a9533cd26b158c92
+msgid "A renpy.absolute number is intepreted as the number of pixels from the left or top side of the screen, when using subpixel-precise rendering."
+msgstr ""
+
+#: ../../source/style.rst:155
+# de34cc172891425fbd3abd762002e463
+msgid "`displayable`"
+msgstr ""
+
+#: ../../source/style.rst:155
+# fb15cb3a1321479787b3d42eb4e22e1a
+msgid "Any displayable."
+msgstr ""
+
+#: ../../source/style.rst:177
+# 85488703ecc847acaac6c5ff8257c1dc
+msgid "`color`"
+msgstr ""
+
+#: ../../source/style.rst:158
+# e84ca5a716fd43ecbdce4c2da979ae51
+msgid "Colors in Ren'Py can be expressed as strings beginning with the hash mark (#), followed by a hex triple or hex quadruple, with each of the three or four elements consisting of a one or two hexidecimal character color code."
+msgstr ""
+
+#: ../../source/style.rst:163
+# 9bd5f8b95b894ae4a6db71b45999c210
+msgid "In a triple, the components represent red, green, and blue. In a quadruple, the components represent red, green, blue, and alpha. For example:"
+msgstr ""
+
+#: ../../source/style.rst:167
+# f8e0d86122cf4c979ce106d080796268
+msgid "``\"#f00\"`` and ``\"#ff0000\"`` represent an opaque red color."
+msgstr ""
+
+#: ../../source/style.rst:168
+# f0ea50ed05f74ca9953644e08d9e6f3b
+msgid "``\"#0f08\"`` and ``#00ff0080\"`` represent a semi-transparent green color."
+msgstr ""
+
+#: ../../source/style.rst:171
+# 0d1d48cf05b343fcb723e575971fe2bb
+msgid "The color triples are the same as used in HTML."
+msgstr ""
+
+#: ../../source/style.rst:173
+# 6301e15487db4104aea8cc51becc823b
+msgid "Colors can also be represented as a 4-component tuple, with the 4 components being integers between 0 and 255. The components correspond to red, green, blue, and alpha, in that order."
+msgstr ""
+
+#: ../../source/style.rst:177
+# dabc81b2aaf1474c833ee36e058afc24
+msgid "``(0, 0, 255, 255)`` represents an opaque blue color."
+msgstr ""
+
+#: ../../source/style.rst:180
+# 2e75e0d2d4784994adc0e745e7a4907d
+msgid "List of All Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:182
+# 3c792bdf42d24ddcbccb633a91012efd
+msgid "The style properties control the look of the various displayables. Not all style properties apply to all displayables, so we've divided them up into groups."
+msgstr ""
+
+#: ../../source/style.rst:189
+# 4b8cd274cd1a4710bce1752a44489478
+msgid "Position Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:191
+# fba3dc8ffcc44340ad6bbb1682b3754d
+msgid "These are used to control the position of a displayable inside the area allocated to it by a layout, or on the screen when not inside a layout."
+msgstr ""
+
+#: ../../source/style.rst:196
+# e3241777caf242f297fe4747f4029241
+msgid "The position of the displayable relative to the left side of the containing area."
+msgstr ""
+
+#: ../../source/style.rst:201
+# 4acbc7d7ee034a3c8f1c09156bbfc840
+msgid "The position of the displayable relative to the right side of the containing area."
+msgstr ""
+
+#: ../../source/style.rst:206
+# 6d522800c6cd470f87282ab9c5cebc82
+msgid "Equivalent to setting xpos to the first component of the tuple, and ypos to the second component of the tuple."
+msgstr ""
+
+#: ../../source/style.rst:211
+# 649348cf311144498511639dcf4bce52
+msgid "The position of the anchor relative to the left side of the displayable."
+msgstr ""
+
+#: ../../source/style.rst:216
+# 128efd2f0a8c4d2187f8a417adb2da2d
+msgid "The position of the anchor relative to the top side of the displayable."
+msgstr ""
+
+#: ../../source/style.rst:221
+# fe58d6ef3e1c4ecba47f5481655962b0
+msgid "Equivalent to setting xanchor to the first component of the tuple, and yanchor to the second component of the tuple."
+msgstr ""
+
+#: ../../source/style.rst:226
+# 6f0e0eec67aa4060a4f1c8d3bcab74e7
+msgid "Equivalent to setting xpos and xanchor to the same value. This has the effect of placing the displayable at a relative location on the screen, with 0.0 being the left side, 0.5 the center, and 1.0 being the right side."
+msgstr ""
+
+#: ../../source/style.rst:233
+# 27c9a26a42d948cfb0e23b71a633ecd6
+msgid "Equivalent to setting ypos and yanchor to the same value. This has the effect of placing the displayable at a relative location on the screen, with 0.0 being the top, 0.5 the center, and 1.0 the bottom."
+msgstr ""
+
+#: ../../source/style.rst:240
+# f95f150cb8a145e49ba89b8bf318b8f9
+msgid "Equivalent to setting xalign to the first component of the tuple, and yalign to the second."
+msgstr ""
+
+#: ../../source/style.rst:245
+# 608c97938d7f47259a6e409ab12f1876
+msgid "Equivalent to setting xpos to the value of this property, and xanchor to 0.5."
+msgstr ""
+
+#: ../../source/style.rst:250
+# 441d665dd2f6484da033f3331255147a
+msgid "Equivalent to setting ypos to the value of tihis property, and yanchor to 0.5."
+msgstr ""
+
+#: ../../source/style.rst:255
+# 7438bc920ef24838a45ebef25ef44d4b
+msgid "Gives a number of pixels that are added to the horizontal position computed using xpos and xalign."
+msgstr ""
+
+#: ../../source/style.rst:260
+# 226f01099fa54892b3fbed3987954863
+msgid "Gives a number of pixels that are added to the vertical position computed using ypos and yalign."
+msgstr ""
+
+#: ../../source/style.rst:265
+# 95653b3afbfd4cf8909d6b26de139f65
+msgid "Specifies the maximum horizontal size of the displayable, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:269
+# 2720d2863f7b4b0a8c28d899b24774dd
+msgid "Specifies the maximum vertical size of the displayable in pixels."
+msgstr ""
+
+#: ../../source/style.rst:273
+# 0afd1b3477b14820a493a0d22daef936
+msgid "Equivalent to setting xmaximum to the first component of the tuple, and ymaximum to the second."
+msgstr ""
+
+#: ../../source/style.rst:278
+# b49d65092dfe411aaf9d10b4b8d9c5b5
+msgid "Sets the minimum width of the displayable, in pixels. Only works with displayables that can vary their size."
+msgstr ""
+
+#: ../../source/style.rst:283
+# 62080b67d62a4fbeb85c76c2c54274aa
+msgid "Sets the minimum height of the displayables, in pixels. Only works with displayables that can vary their size."
+msgstr ""
+
+#: ../../source/style.rst:288
+# 88554f28ecd74bdf91c73e9484d91694
+msgid "Equivalent to setting xminimum to the first component of the tuple, and yminimum to the second."
+msgstr ""
+
+#: ../../source/style.rst:293
+#: ../../source/style.rst:301
+# 910ed1faed634df6b3061221b49b5a9e
+# c6609d98a41644a9bf5547d1fa3d6faf
+msgid "If true, the displayable will expand to fill all available horizontal space. If not true, it will only be large enough to contain its children."
+msgstr ""
+
+#: ../../source/style.rst:297
+#: ../../source/style.rst:305
+# bc53e2702d8449e7be097a51503b2673
+# 3563b5a025354923a5602785ee55d3c6
+msgid "This only works for displayables that can change size."
+msgstr ""
+
+#: ../../source/style.rst:309
+# 0fde1f89ff40492ea2f999a586d03f88
+msgid "The tuple is interpreted as (`xpos`, `ypos`, `width`, `height`). Attempts to position the displayable such that it's upper-left corner is at `xpos` and `ypos`, and its size is `width` and `height`."
+msgstr ""
+
+#: ../../source/style.rst:314
+# 5671c695b54d49b48a8d4d66fbf1e856
+msgid "It does this by setting the xpos, ypos, xanchor, yanchor, xmaximum, ymaximum, xminimum, yminimum, xfill, and yfill properties to appropriate values."
+msgstr ""
+
+#: ../../source/style.rst:318
+# d3d0d040e33d4125a353a4c2af1e98af
+msgid "This will not work with all displayables and all layouts."
+msgstr ""
+
+#: ../../source/style.rst:324
+# 038a7c4d9d994e05af1a3482ae6f1fee
+msgid "Text Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:328
+# 96cd450921994fee969f3b8410be7495
+msgid "If True, the default, truetype font text will be rendered anti-aliased."
+msgstr ""
+
+#: ../../source/style.rst:333
+# 0015e53b8b8c4ecdb5f7eacef11241c7
+msgid "When rendering an image-based font, black will be mapped to this color. This has no effect for truetype fonts."
+msgstr ""
+
+#: ../../source/style.rst:338
+# e1d3765ce6cc4fa2814ef9dc68fbef94
+msgid "If True, render the font in a bold style. For a truetype font, this usually involves synthetically increasing the font weight. It can also cause the font to be remapped, using :var:`config.font_replacement_map`."
+msgstr ""
+
+#: ../../source/style.rst:345
+# b8b01e4dc09a45a7a9a818b04c56efdc
+msgid "If not None, this should be a displayable. The input widget will use this as the caret at the end of the text. If None, a 1 pixel wide line is used as the caret."
+msgstr ""
+
+#: ../../source/style.rst:351
+# 143fb002844940629bb58882327634a2
+msgid "The color the text is rendered in. When using a truetype font, the font is rendered in this color. When using an image-based font, white is mapped to this color."
+msgstr ""
+
+#: ../../source/style.rst:357
+# c9d20ee9d4db4d0f93e4d1a789fbe45e
+msgid "The amount that the first line of text in a paragraph is indented by, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:362
+# b328bf7ee2524de9adf5b289a53725ba
+msgid "A string giving the name of the font used to render text."
+msgstr ""
+
+#: ../../source/style.rst:364
+# b760e639a89f4055ba1043c9828fa5d6
+msgid "For a truetype font file, this is usually the name of the file containing the font (like ``\"DejaVuSans.ttf\"``). To select a second font in a collection, this can be prefixed with a number and at sign (like ``\"0@font.ttc\"`` or ``\"1@font.ttc\"``). For an image-based font, this should be the name used to register the font."
+msgstr ""
+
+#: ../../source/style.rst:373
+# f12ed1260bf045dca5ab4d67e00a7a83
+msgid "The size of the font on the screen. While this is nominally in pixels, font files may have creative interpretations of this value."
+msgstr ""
+
+#: ../../source/style.rst:379
+# e0268eecd6934514b6d9e4c4b75818a5
+msgid "If true, the text will be rendered in italics. For a truetype font, this usually involves synthetically increasing the font slant. It can also cause the font to be remapped, using :var:`config.font_replacement_map`."
+msgstr ""
+
+#: ../../source/style.rst:386
+# a3919ef703b44cda8d8f162c8e36b66d
+msgid "If true, additional whitespace is inserted between words so that the left and right margins of each line are even. This is not performed on the last line of a paragraph."
+msgstr ""
+
+#: ../../source/style.rst:392
+# dfd9e03a572348b7848a75b6ec66938b
+msgid "A kerning adjustment, the number of pixels of space that's added between each pair of characters. (This can be negative to remove space between characters.)"
+msgstr ""
+
+#: ../../source/style.rst:398
+# 979dcecb499042ac8f2c70909a99e74f
+msgid "Controls the language family used to break text into lines. Legal values are:"
+msgstr ""
+
+#: ../../source/style.rst:403
+# 936465ee03d349daa409f2262b3b42d6
+msgid "``\"unicode\"`` (default)"
+msgstr ""
+
+#: ../../source/style.rst:402
+# 1c6afa5937a6496c9e5ca6deaa5db30c
+msgid "Uses the unicode linebreaking algorithm, which is suitable for most languages."
+msgstr ""
+
+#: ../../source/style.rst:407
+# 4dc4b9482dde4bc8b081d6b136021b60
+msgid "``\"japanese-strict\"``"
+msgstr ""
+
+#: ../../source/style.rst:406
+# ebde3a44512d47618792aedaf0025d73
+msgid "Formats Japanese text in a \"strict\" manner. It forbids breaks before small kana and prolonged sound marks."
+msgstr ""
+
+#: ../../source/style.rst:412
+# 1282701cc5d34fa680fa1de837756dae
+msgid "``\"japanese-normal\"``"
+msgstr ""
+
+#: ../../source/style.rst:410
+# b5e1a616e6c8479cb683febc51dfa619
+msgid "Formats Japanese text in a \"normal\" manner. It allows breaks before small kana, prolonged sound marks, and certain hyphens."
+msgstr ""
+
+#: ../../source/style.rst:418
+# 0ceb8371767e43268b51aa6b47031d1d
+msgid "``\"japanese-loose\"``"
+msgstr ""
+
+#: ../../source/style.rst:415
+# 9ea6a570de5e45d59cf0a6179857c31d
+msgid "Formats Japanese text in a \"loose\" manner. It allows breaks before small kana , prolonged sound marks, iteration marks, inseparable characters, centered punctuation marks, and postfixes; and allows breaks before prefixes."
+msgstr ""
+
+#: ../../source/style.rst:422
+# 37c0ff1400c9436b8c322c94308ef74f
+msgid "``\"korean-with-spaces\"``"
+msgstr ""
+
+#: ../../source/style.rst:421
+# 8ef40cd655f64a649ef8cde9ee1032d1
+msgid "Used for Korean text delimited by whitespace. This prevents linebreaking between adjacent Korean characters."
+msgstr ""
+
+#: ../../source/style.rst:426
+# edecd036b7c04341a192a9b2d7e8bc81
+msgid "``\"western``"
+msgstr ""
+
+#: ../../source/style.rst:425
+# 5c3cd1eb949247d29e246a286ca36717
+msgid "Allows breaking only at whitespace. Suitable for most languages."
+msgstr ""
+
+#: ../../source/style.rst:428
+# 2f421b19b6b7440ab8f138c046b1d38b
+msgid "The three Japanese breaking modes are taken from the `CSS3 text module <http://www.w3.org/TR/css3-text/#line-break>`_."
+msgstr ""
+
+#: ../../source/style.rst:432
+# f7e9684ab8a245db8a64fbac67b866ec
+msgid "Controls how words are allocated to lines. Legal values are:"
+msgstr ""
+
+#: ../../source/style.rst:436
+# dd9394562d3649c798adc93e171d1139
+msgid "``\"tex\"`` (default)"
+msgstr ""
+
+#: ../../source/style.rst:435
+# fc48e9eb3252480e92e1b5630fc0a5d4
+msgid "Uses the Knuth-Plass linebreaking algorithm, which attempts to minimize the difference in line lengths of all but the last line."
+msgstr ""
+
+#: ../../source/style.rst:440
+# add8ec4814564b24bfc5c04ab90f063f
+msgid "``\"subtitle\"``"
+msgstr ""
+
+#: ../../source/style.rst:439
+# d12516029d184a40b57def2de5059266
+msgid "Uses the Knuth-Plass linebreaking algorithm, but attempts to even out the lengths of all lines."
+msgstr ""
+
+#: ../../source/style.rst:443
+# 94b0047246f844c9910e992c9e4e6681
+msgid "``\"greedy\"``"
+msgstr ""
+
+#: ../../source/style.rst:443
+# d5f59dbc5dc84f19b4a99cb189121f00
+msgid "A word is placed on the first line that has room for it."
+msgstr ""
+
+#: ../../source/style.rst:445
+# c8a650e55af84c909a9ea27fc05f1c6c
+msgid "``\"nowrap\"``"
+msgstr ""
+
+#: ../../source/style.rst:446
+# 2eb7fae904be4d348abc305eb208b605
+msgid "Do not line-break."
+msgstr ""
+
+#: ../../source/style.rst:450
+# 2b113f1db6c04d8bb0fac989c03de033
+msgid "The number of pixels of spacing to include above each line."
+msgstr ""
+
+#: ../../source/style.rst:454
+# d280adc0935e486f87bfca1874b40236
+msgid "When in slow text mode, and two lines overlap, this many pixels of the overlap are allocated to the top line. Increase this if the bottoms of characters on the top line are clipped."
+msgstr ""
+
+#: ../../source/style.rst:460
+# 2308c67798754076afafb015764b2ccc
+msgid "The number of pixels of spacing to include below each line."
+msgstr ""
+
+#: ../../source/style.rst:464
+# b82cf723b246457fb902c822d4db557b
+msgid "Sets the minimum width of each line of that. If a line is shorter than this, it is padded to this length, with text_align used to specify where such padding is placed."
+msgstr ""
+
+#: ../../source/style.rst:470
+# 1621c19dae8f40ebba387d3be9df5b56
+msgid "If true, the :propref:`first_indent` indentation is used after each newline in a string. Otherwise, the :propref:`rest_indent` indentation is used."
+msgstr ""
+
+#: ../../source/style.rst:476
+# 601cc63d1f5b4c98b668d54929b30b56
+msgid "This is a list of outlines that are drawn behind the text. Each tuple specifies an outline, and outlines are drawn from back to front."
+msgstr ""
+
+#: ../../source/style.rst:480
+# 7f5f1621cf8b4873b935d98f9e75fe2c
+msgid "The list contains (`size`, `color`, `xoffset`, `yoffset`) tuples. `Size` is the amount the font is expanded by, in pixels. `Color` is the color of the outline. `xoffset` and `yoffset` are the amount the outline is shifted by, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:485
+# 094153b2f6a1448e81d32e150e6ba2a3
+msgid "The outline functionality can also be used to give drop-shadows to fonts, by specifiying a size of 0 and non-zero offsets."
+msgstr ""
+
+#: ../../source/style.rst:488
+# c6784ba041244917ae942ecf34af3493
+msgid "Outlines only work with truetype fonts."
+msgstr ""
+
+#: ../../source/style.rst:492
+# 935863b46e7a4b96966fc7cb5b7ef09b
+msgid "Specifies the number of pixels the second and later lines in a paragraph are indented by."
+msgstr ""
+
+#: ../../source/style.rst:497
+# 8d9677122e0b4359a4e238b6e1daaaaf
+msgid "If not None, this should be a style object. The style that's used for ruby text."
+msgstr ""
+
+#: ../../source/style.rst:502
+# 40937e577b604574a3e1d7054df0b981
+msgid "If a number, shows text at the rate of that many characters per second. If True, shows text at the speed taken from the \"Text Speed\" preference."
+msgstr ""
+
+#: ../../source/style.rst:508
+# 1664722ed9c940e9b43ba5990a6fa041
+msgid "The speed of the text is multiplied by this number. This can be used to have a character that speeks at a faster-than-normal rate of speed."
+msgstr ""
+
+#: ../../source/style.rst:514
+# ee410803bd2240cbbbe6a473316a7b48
+msgid "If True, a line is drawn through the text."
+msgstr ""
+
+#: ../../source/style.rst:518
+# c4e728d937a94712a1d5708514b65879
+msgid "This is used when a line is shorter than the width of the text displayable. It determines how much of the extra space is placed on the left side of the text. (And hence, the text alignment.)"
+msgstr ""
+
+#: ../../source/style.rst:522
+# 394acc595e0941fbafa14ef7a9ee0ba3
+msgid "0.0 will yield left-aligned text, 0.5 centered text, and 1.0 right-aligned text."
+msgstr ""
+
+#: ../../source/style.rst:527
+# 4fe0af2cdf044a63b9eb983f18467b58
+msgid "If true, an underline will be added to the text."
+msgstr ""
+
+#: ../../source/style.rst:531
+# 24b2bf21a8854ea5a37fe5783b98e994
+msgid "This is a tuple of three functions relating to hyperlinks in text."
+msgstr ""
+
+#: ../../source/style.rst:533
+# 46ed085565444b54bd6ca9ca79350fa4
+msgid "The first item is the hyperlink style function. When called with a single argument, the argument of the hyperlink, it must return a style object to use for the hyperlink, such as ``style.hyperlink_text``. Note that a style object is not a string."
+msgstr ""
+
+#: ../../source/style.rst:538
+# a74281d221314f68bc6799518cfa263c
+msgid "The second item is the hyperlink clicked function. This function is called when a hyperlink is chosen by the user. If it returns a value other than None, the interaction returns that value."
+msgstr ""
+
+#: ../../source/style.rst:542
+# e673d9f6db47427e8e3cb101fd476a61
+msgid "The third item is the hyperlink focus function. This function is called with the argument of the hyperlink when the hyperlink gains focus, and with None when it loses focus. If it returns a value other than None, the interaction returns that value"
+msgstr ""
+
+#: ../../source/style.rst:549
+# a6c7340261294dc981d6b384d3f50d99
+msgid "If true, the text will be rendered vertically."
+msgstr ""
+
+#: ../../source/style.rst:554
+# 9666b45bc7594945b2f4551f9b94257e
+msgid "Window Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:556
+# f2de07a2df024950a304df852ec0c841
+msgid "Window properties are used to specify the look of windows, frames, and buttons."
+msgstr ""
+
+#: ../../source/style.rst:560
+# 60e8f2f1acb448e88023899a9a43bc8f
+msgid "A displayable that is used as the background of the window. This is often a :func:`Frame`, allowing the size of the background to scale with the size of the window."
+msgstr ""
+
+#: ../../source/style.rst:564
+# 7846bf42ab24477eaef72309a6d7b80c
+msgid "If None, no background is drawn, but other properties function as if the background was present."
+msgstr ""
+
+#: ../../source/style.rst:569
+# 38e4bddc5f454565bc383d413768aadd
+msgid "If not None, this displayable is drawn above the contents of the window."
+msgstr ""
+
+#: ../../source/style.rst:574
+# 573d3bdc418846ae8e84d085c0e998c1
+msgid "The amount of transparent space to the left of the background, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:579
+# 8049c2376a8548beada8332915c236b7
+msgid "The amount of transparent space to the right of the background, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:584
+# 3186d31465714c91955fa1cabd1d2326
+msgid "Equivalent to setting left_margin and right_margin to the same value."
+msgstr ""
+
+#: ../../source/style.rst:589
+# a5f3e44edc4a4c02837ce20bcc8eaaab
+msgid "The amount of transparent space above the background, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:593
+# 333c538a02d94b84ae6c2b68be04e076
+msgid "The amount of transparent space below the background, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:597
+# d2c8638c5f364ac2804c05a8e8f62c12
+msgid "Equivalent to setting top_margin and bottom_margin to the same value."
+msgstr ""
+
+#: ../../source/style.rst:602
+# 2673afc4f9ee46a3a3db0b77b4ebeff5
+msgid "The amount of space between the background and the left side of the window content, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:607
+# 685e523dd14b4086ad82838158aabdd7
+msgid "The amount of space between the background and the right side of the window content, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:612
+# 205d558570fc486a93631dd1b1674b5a
+msgid "Equivalent to setting left_padding and right_padding to the same value."
+msgstr ""
+
+#: ../../source/style.rst:617
+# 2ed847026f0c436ca829673fa341d79d
+msgid "The amount of space between the background and the top side of the window content, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:622
+# dd05fd2b428a460096b8896e36c83754
+msgid "The amount of space between the background and the bottom side of the window content, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:627
+# ea7ca2b57f8246c18e2eeb8a274a4714
+msgid "Equivalent to setting top_padding and bottom_padding to the same value."
+msgstr ""
+
+#: ../../source/style.rst:632
+# 8a17939ba54848299c1abe87cff8016b
+msgid "If not None, this should be a string. Ren'Py will render all windows with the same size_group value at the same size."
+msgstr ""
+
+#: ../../source/style.rst:639
+# c6a59229cdeb41239493613b772302a6
+msgid "Button Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:643
+# babf3e3adba24d1780097ee3f0d07f1a
+msgid "If not None, this gives a displayable that replaces the child of the button. For example, this (as insensitive_child) can be used to replace the contents of an insensitive button with an image that indicates the button is locked."
+msgstr ""
+
+#: ../../source/style.rst:650
+# 0897da30d6154b7b80ebc3285312a904
+msgid "A sound that is played when the button gains focus."
+msgstr ""
+
+#: ../../source/style.rst:654
+# f28a7c8e8b8a4e9a84e51dbd3f60d36e
+msgid "A sound that is played when the button is clicked."
+msgstr ""
+
+#: ../../source/style.rst:658
+#: ../../source/style.rst:755
+# 01e16194225e436498363c6a79b2abf0
+# 1579da52592745aebd348ceddbd90228
+msgid "The mouse style that is used when the button is focused. This should be one of the styles in :var:`config.mouse`."
+msgstr ""
+
+#: ../../source/style.rst:663
+# f1027e3c71034ba6a0274e9ee6ee8719
+msgid "A mask that's used to control what portions of the button can be focused, and hence clicked on. If it's a displayable, then areas of the displayable that are not transparent can be focused. If it's True, then the button itself is used as the displayable (so non-transparent areas of the button can be focused.) Otherwise, the entire button can be focused."
+msgstr ""
+
+#: ../../source/style.rst:674
+# 8dc481d11caa4431a312f667d3fa7ad8
+msgid "Bar Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:676
+# 15df7cb8d2be401b82e67a4a5947edfb
+msgid "Bars are drawn with gutters on the left and right, that when clicked can cause the bart to move by a small amount. The remaining space is the portion of the bar that can change, with the amount on each side proportional to the bar's value as a fraction of the range."
+msgstr ""
+
+#: ../../source/style.rst:681
+# 25a45bb205a64030b28baf09e6a7fbd5
+msgid "The thumb is an area in the center of the bar that can be dragged by the user."
+msgstr ""
+
+#: ../../source/style.rst:683
+# b0e7fb2b72d444239cc716a53a6effd6
+msgid "When a bar is drawn, the thumb's shadow is drawn first. Then the left/bottom and right/top sides of the bar, followed by the thumb itself."
+msgstr ""
+
+#: ../../source/style.rst:686
+# 4338b38fa1274593932d20ac3dd0630e
+msgid "Note that the valid sides of a bar depend on the value of the bar_vertical property. If it's True, the top and bottom sides are relevant. Otherwise, the left and right sides are used."
+msgstr ""
+
+#: ../../source/style.rst:692
+# 466f6d1f9c7e42629f0bd79152c00f30
+msgid "If true, the bar has a vertical orientation. If false, it has a horizontal orientation."
+msgstr ""
+
+#: ../../source/style.rst:697
+# 652a4060c9674b78b45fca79e0827d71
+msgid "If true, the value of the bar is represented on the right/top side of the bar, rather than the left/bottom side."
+msgstr ""
+
+#: ../../source/style.rst:702
+# 8407cdd369dd4586a0a1cadf5020f8e8
+msgid "If true, we resize the sides of the bar. If false, we render the sides of the bar at full size, and then crop them."
+msgstr ""
+
+#: ../../source/style.rst:707
+# f429a779d12f4eb29f977c879b6085bf
+msgid "The size of the gutter on the left side of the bar, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:711
+# 73b66bee9e984dd7b98f935b9aa4d7eb
+msgid "The size of the gutter on the right side of the bar, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:715
+# a1a3a73b60504fe1ba5784cc23c255c9
+msgid "The size of the gutter on the top side of the bar, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:719
+# 00c8c05fdc8c411aa3b20f848b843edb
+msgid "The size of the gutter on the bottom side of the bar, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:723
+# b111606b72454aac8f2741f1c7230d8b
+msgid "The displayable used for the left side of the bar."
+msgstr ""
+
+#: ../../source/style.rst:727
+# ec1e9fa993ec424ba947beb7a5753ec4
+msgid "The displayable used for the right side of the bar."
+msgstr ""
+
+#: ../../source/style.rst:731
+# 29b51c8286a746cdaf96331efbbfa7f1
+msgid "The displayable used for the top side of the bar."
+msgstr ""
+
+#: ../../source/style.rst:735
+# 8f78699666f44e98ae4e4e7518c87334
+msgid "The displayable uses for the bottom side of the bar."
+msgstr ""
+
+#: ../../source/style.rst:739
+#: ../../source/style.rst:744
+# b21fae4f5bc04c31ae011196a1f05ee0
+# 6bc7b14be47f406496671751902e5fef
+msgid "If not None, this is a displayable that is drawn over the break between the sides of the bar."
+msgstr ""
+
+#: ../../source/style.rst:749
+# d00c00b8026c4218ba252565fac4aafa
+msgid "The amount that by which the thumb overlaps the bars, in pixels. To have the left and right bars continue unbroken, set this to half the width of the thumb in pixels."
+msgstr ""
+
+#: ../../source/style.rst:760
+# 94797a850e384a408bcd96b7ed7fed10
+msgid "Controls what happens if the bar is unscrollable (if the range is set to 0, as is the case with a viewport containing a displayable smaller than itself). There are three possible values:"
+msgstr ""
+
+#: ../../source/style.rst:765
+# b586ccdd937246eb9988d61eb2be0558
+msgid "``None``"
+msgstr ""
+
+#: ../../source/style.rst:765
+# 4b0008d70e4d46b79f8f381482e2cc8e
+msgid "Renders the bar normally."
+msgstr ""
+
+#: ../../source/style.rst:769
+# 729adfeec6564a02975217498c06eaa6
+msgid "``\"insensitive\"``"
+msgstr ""
+
+#: ../../source/style.rst:768
+# 931fd49fcfc84cd5a01560e6b7509a0c
+msgid "Renders the bar in the insensitive state. This allows the bat to change its style to reflect its lack of usefulness."
+msgstr ""
+
+#: ../../source/style.rst:772
+# 5b24fdc576f944bea9b4bd5590e41a5f
+msgid "``\"hide\"``"
+msgstr ""
+
+#: ../../source/style.rst:772
+# e7fe9a89417b4a7cac31af6db789c8b4
+msgid "Prevents the bar from rendering at all. Space will be allocated for the bar, but nothing will be drawn in that space."
+msgstr ""
+
+#: ../../source/style.rst:779
+# bfc4b4c209ce4b30bf05f4199bc2cfbb
+msgid "Box Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:781
+# 1b703fad23b94f1880ebd8aaecf8c23f
+msgid "These are used for the horizontal and vertical box layouts."
+msgstr ""
+
+#: ../../source/style.rst:785
+# 4e73501f70b5462ab8c706dc376b1bc2
+msgid "The spacing between members of this box, in pixels."
+msgstr ""
+
+#: ../../source/style.rst:789
+# 1c4b700108414d549b4bd957fa993c31
+msgid "If not None, the spacing between the first and second members of this box, in pixels. This overrides the spacing property."
+msgstr ""
+
+#: ../../source/style.rst:794
+# 082667c21b22474db07623e22f0c81c2
+msgid "If true, the placement of the items in the box will be reversed. When this is true, a hbox will be filled right-to-left, and a vbox will be filled bottom-to-top. This defaults to false."
+msgstr ""
+
+#: ../../source/style.rst:800
+# 64f93830dfca4c9989f20db04af1bc0f
+msgid "If true, then boxes will wrap when they reach the end of a line or column. If false (the default), they will extend past the end of the line."
+msgstr ""
+
+#: ../../source/style.rst:805
+# d3b2dcd8df464db08253c5f3e7a30918
+msgid "If false, the default the items in the box will be draw first-to-last, with the first item in the box being below the second, and so on. If true, this order will be reversed, and the first item in the box will be above all other items in the box."
+msgstr ""
+
+#: ../../source/style.rst:814
+# d3a7c5b1fbef4cb7baa0275fd7d5e03b
+msgid "Fixed Style Properties"
+msgstr ""
+
+#: ../../source/style.rst:816
+# 16bc86836219425c967a6582281bde40
+msgid "These are used with the fixed layout."
+msgstr ""
+
+#: ../../source/style.rst:820
+# 4b3e101396db4f7f855cf4cdc58634bf
+msgid "If true, then the size of the fixed layout is shrunk to be equal with the size of the first item in the layout."
+msgstr ""
+
+#: ../../source/style.rst:825
+# aa17f09a27044898910ae75a5ca10017
+msgid "Creating New Named Styles"
+msgstr ""
+
+#: ../../source/style.rst:827
+# 3ce8a22f195e4256a1669f9ba4e9e673
+msgid "Named styles exists as fields on the global ``style`` object. To create a new style, create an instance of the Style class, and assign it to a field on the ``style`` object.::"
+msgstr ""
+
+#: ../../source/style.rst:835
+# 5d27148ee03a42c085ec2fcc45a6755d
+msgid "Once created, a named style can be applied to displayables by supplying it's name, or the style object.::"
+msgstr ""
+
+#: ../../source/style.rst:845
+# 68753e6595764c9499f9c3e5d033b5ca
+msgid "Creates a new style object. Style properties can be assigned to the fields of this object."
+msgstr ""
+
+#: ../../source/style.rst:850
+# 5e21bbcd7b714da5bead03681b9ffb49
+msgid "`parent`"
+msgstr ""
+
+#: ../../source/style.rst:849
+# 520d4fac6fd6400391adeef11cbe8f98
+msgid "The styles parent. This can be another style object, or a string."
+msgstr ""
+
+#: ../../source/style.rst:854
+# 832495e19788496c89835f7625afb035
+msgid "This removes all style properties from this object. Values will be inherited from this object's parent."
+msgstr ""
+
+#: ../../source/style.rst:859
+# 02731661a995485d88eecdd53c001f1d
+msgid "Sets the parent of this style object to `parent`."
+msgstr ""
+
+#: ../../source/style.rst:863
+# 6e3c83cfe522495c90a929dc38005c6c
+msgid "This takes all style properties from `other`. `other` must be a style object."
+msgstr ""
+
+#: ../../source/style.rst:868
+# 026fb074f7914d5db23e59649ce53642
+msgid "Indexed Styles"
+msgstr ""
+
+#: ../../source/style.rst:870
+# 1d4685270c384966b0d10d2308746569
+msgid "Indexed styles are lightweight styles that can be used to customize the look of a displayable based on the data supplied to that displayable. An index style is created by indexing a style object with a string or integer. If an indexed style does not exist, indexing creates it.::"
+msgstr ""
+
+#: ../../source/style.rst:879
+# dcc2d769417146eeb63c94e4c23694fd
+msgid "An index style is used by supplying the indexed style to a displayable.::"
+msgstr ""
+
+#: ../../source/style.rst:888
+# 9fc110a5c0a04a8483e219af1463fd52
+msgid "Style Inheritance"
+msgstr ""
+
+#: ../../source/style.rst:890
+# 2c6942e823f046b291d289091183a2ad
+msgid "When a property is not defined by a style, it is inherited from the style's parent. When indexing is involved, properties are inherited first from the unindexed form of the style, then from the indexed form of the parent, then the unindexed form of the parent, and so on."
+msgstr ""
+
+#: ../../source/style.rst:895
+# 60e57bbdb59a4e818279abbf3f05fd2a
+msgid "For example, when ``style.mm_button inherits`` from ``style.button``, which in turn inherits from ``style.default``, then the properties of ``style.mm_button[\"Start Game\"]`` are taken from:"
+msgstr ""
+
+#: ../../source/style.rst:899
+# 1de39969dceb477983f32c36bd55fbc9
+msgid "``style.mm_button[\"Start Game\"]``"
+msgstr ""
+
+#: ../../source/style.rst:900
+# acc8a0e9c9c54aa393e1b4ea2168401c
+msgid "``style.mm_button``"
+msgstr ""
+
+#: ../../source/style.rst:901
+# cbc7ad9c295e42f182bfb09ef594ba69
+msgid "``style.button[\"Start Game\"]``"
+msgstr ""
+
+#: ../../source/style.rst:902
+# 332d8b3583514ffcb4fd172ec0d27dc2
+msgid "``style.button``"
+msgstr ""
+
+#: ../../source/style.rst:903
+# 7c478edc95ef414f8985d8aabee982e4
+msgid "``style.default[\"Start Game\"]``"
+msgstr ""
+
+#: ../../source/style.rst:904
+# 95d3863a2f474ef68ec48bbfbf174fab
+msgid "``style.default``"
+msgstr ""
+
+#: ../../source/style.rst:906
+# 5ed5f058864843a692d968f6c44af669
+msgid "With the property value taken from the lowest numbered style with the property defined."
+msgstr ""
+
+#: ../../source/style.rst:912
+# a44007dfebfa48cc942ca368ba038d43
+msgid "Style Preferences"
+msgstr ""
+
+#: ../../source/style.rst:914
+# 671279b5b68445408c4ec7cd99b1f1b8
+msgid "It's often desireable to allow the user to customize aspects of the user interface that are best expressed as styles. For example, a creator may want to give players of his game the ability to adjust the look, color, and size of the text. Style preferences allow for this customization."
+msgstr ""
+
+#: ../../source/style.rst:919
+# 1df95b9101314b46b27cd2b96e4da690
+msgid "A style preference is a preference that controls one or more style properties. A style preference has a name and one or more alternatives. At any given time, one of the alternatives is the selected alternative for the style preference. The selected alternative is saved in the persistent data, and defaults to the first alternative registered for a style property."
+msgstr ""
+
+#: ../../source/style.rst:925
+# b9ab386014334397be8664372223e76b
+msgid "An alternative has one or more associations of style, property, and value associated with it, and represents a promise that when the alternative becomes the selected alternative for the style preference, the property on the style will be assigned the given value. This occurs when Ren'Py first initializes, and then whenever a new alternative is selected."
+msgstr ""
+
+#: ../../source/style.rst:931
+# 4f8b0a5cd0004fc7ae345e5cc9e95af8
+msgid "One should ensure that every alternative for a given style preference updates the same set of styles and properties. Otherwise, some styles may not be assigned values, and the result will not be deterministic."
+msgstr ""
+
+#: ../../source/style.rst:935
+# df556fe2e2f1471b87f52771ee913521
+msgid "The style preference functions are:"
+msgstr ""
+
+#: ../../source/inc/style_preferences:5
+# cf29ac4acac34f13b9d2e7376a5e982e
+msgid "An action that causes `alternative` to become the selected alternative for the given style preference."
+msgstr ""
+
+#: ../../source/inc/style_preferences:8
+#: ../../source/inc/style_preferences:17
+#: ../../source/inc/style_preferences:25
+#: ../../source/inc/style_preferences:44
+# d81a77a44c9d450aa67e4f0be4e8478e
+# 297ec55e4e76444bba0e61aa1a0a5108
+# 8eb3d8ca0ce143939d9e3ca8f8098fce
+# 4799b8e7465047758296dd41ded9fa2b
+msgid "`preference`"
+msgstr ""
+
+#: ../../source/inc/style_preferences:8
+#: ../../source/inc/style_preferences:18
+#: ../../source/inc/style_preferences:44
+# b26bb6a814e946bab05455a05df042cc
+# e048a07fa78243e187bbc168d758faef
+# 3193d3f5ced64b609d09e9998760cdc8
+msgid "A string giving the name of the style preference."
+msgstr ""
+
+#: ../../source/inc/style_preferences:10
+#: ../../source/inc/style_preferences:28
+#: ../../source/inc/style_preferences:46
+# 85d64ecd9c6744a58be1647a7f3c0230
+# a57a0c39ab3a4c6588f9082a4a560b9c
+# 839ab9f16f464d4bbf0654024c031688
+msgid "`alternative`"
+msgstr ""
+
+#: ../../source/inc/style_preferences:11
+#: ../../source/inc/style_preferences:47
+# 12c7cf2515f645388a4b68cd3d23efb7
+# 176b3febe285416e8ade8b7af4fb3837
+msgid "A string giving the name of the alternative."
+msgstr ""
+
+#: ../../source/inc/style_preferences:15
+# 9d27064463cd464d8a5c8210b2f2c2bf
+msgid "Returns a string giving the name of the selected alternative for the named style preference."
+msgstr ""
+
+#: ../../source/inc/style_preferences:22
+# b09b5672d7084314a99756581a170693
+msgid "Registers information about an alternative for a style preference."
+msgstr ""
+
+#: ../../source/inc/style_preferences:25
+# cd4015b2d1f947cb937f9dcc9f69a812
+msgid "A string, the name of the style property."
+msgstr ""
+
+#: ../../source/inc/style_preferences:28
+# d39b48be32de4ebba3f04ca7a55c5aee
+msgid "A string, the name of the alternative."
+msgstr ""
+
+#: ../../source/inc/style_preferences:31
+# 2bb6f90463654ef2a800287fad8d2e6d
+msgid "`style`"
+msgstr ""
+
+#: ../../source/inc/style_preferences:31
+# 62874dffa0f545f18c4989a7cef511dc
+msgid "The style that will be updated. This may be a style object or a string giving the style name."
+msgstr ""
+
+#: ../../source/inc/style_preferences:34
+# 8fe844a059534d14958375178003b527
+msgid "`property`"
+msgstr ""
+
+#: ../../source/inc/style_preferences:34
+# 27262f35ea254342924ab58b67b484f0
+msgid "A string giving the name of the style property that will be update."
+msgstr ""
+
+#: ../../source/inc/style_preferences:36
+# 510b14b34a704215a01d1d5df6cc3c54
+msgid "`value`"
+msgstr ""
+
+#: ../../source/inc/style_preferences:37
+# ecfb59db285c41398c99a513b3765570
+msgid "The value that will be assigned to the style property."
+msgstr ""
+
+#: ../../source/inc/style_preferences:41
+# 256c3c341fa14e64b823b88ee084a30e
+msgid "Sets the selected alternative for the style preference."
+msgstr ""
+
+#: ../../source/style.rst:939
+# 7177f40ac80a4c9d944858bc0b26452b
+msgid "Here's an example of registering a style property that allows the user to choose between large, simple text and smaller outlined text."
+msgstr ""
+
+#: ../../source/style.rst:951
+# 9b2c7b4afd0543c08f526a5a14b2ad9c
+msgid "The following code will allow the user to select these alternatives using buttons::"
+msgstr ""
+
+#: ../../source/style.rst:958
+# cbac7e39cfc2488090fa82f8f8cca393
+msgid "Other Style Functions"
+msgstr ""
+
+#: ../../source/style.rst:962
+# 64cd7b7272904f88aa22c78e600750eb
+msgid "This causes named styles to be rebuilt, allowing styles to be changed outside of init code."
+msgstr ""
+
+#: ../../source/style.rst:967
+# b7563599b5154194989b9edf41d636b1
+msgid "Named styles are not saved as part of the per-game data. This means that changes to them will not be persisted through a save and load cycle."
+msgstr ""
+

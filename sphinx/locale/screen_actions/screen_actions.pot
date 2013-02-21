@@ -1,0 +1,1253 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/screen_actions.rst:8
+# 9ea62e2544eb4c2192d9f31a08fa26d9
+msgid "Screen Actions, Values, and Functions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:10
+# 67f41b45c50e4228b3f72413db66c0bb
+msgid "Ren'Py ships with a number of actions, values, and functions intended for use with screens and the screen language."
+msgstr ""
+
+#: ../../source/screen_actions.rst:14
+# 2bce5e1ed2f54946b661daf19584b760
+msgid "Actions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:16
+# 836a56d794a34bcfb3d01459e6472e2b
+msgid "Actions are invoked when a button (including imagebuttons, textbuttons, and hotspots) is activated, hovered, or unhovered. Actions may determine when a button is selected or insensitive."
+msgstr ""
+
+#: ../../source/screen_actions.rst:21
+# 67020f2122a349308f6221ad5176447c
+msgid "Along with these actions, an action may be a function that does not take any arguments. The function is called when the action is invoked. If the action returns a value, then the value is returned from an interaction."
+msgstr ""
+
+#: ../../source/screen_actions.rst:26
+# d861bb4be5d64edebc2e420d3c2fa307
+msgid "An action may also be a list of actions, in which case the actions in the list are run in order."
+msgstr ""
+
+#: ../../source/screen_actions.rst:30
+# 0f85f3f1d7464306ad1ceece92fb9b72
+msgid "Control Actions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:32
+# 946e75c2063b44bea604d0d67d8e268d
+msgid "These are actions that manage screens, interaction results, and control flow."
+msgstr ""
+
+#: ../../source/inc/control_action:5
+# 362ccb8b464d4829a1768a29934d97f5
+msgid "This causes the screen named `screen` to be hidden, if it is shown."
+msgstr ""
+
+#: ../../source/inc/control_action:7
+# d0e00aec3f03403e9e6558c855779db0
+msgid "`transition`"
+msgstr ""
+
+#: ../../source/inc/control_action:8
+# 6a8008d69f434b2096d45b5b2634956b
+msgid "If not None, a transition that occurs when hiding the screen."
+msgstr ""
+
+#: ../../source/inc/control_action:12
+# 85a302fae19740deb5fbbc1d9d91999a
+msgid "Causes control to transfer to the given label. This can be used in conjunction with renpy.run_screen to define an imagemap that jumps to a label when run."
+msgstr ""
+
+#: ../../source/inc/control_action:18
+# 1738ec207d7b4e57ac2a2ccb16ba589c
+msgid "Causes the current interaction to return the supplied value. This is often used with menus and imagemaps, to select what the return value of the interaction is."
+msgstr ""
+
+#: ../../source/inc/control_action:22
+# 449c2abd1e954a499f29d971d08fc818
+msgid "When in a menu, this returns from the menu."
+msgstr ""
+
+#: ../../source/inc/control_action:26
+# e1aed1af91514efc81d7cf66a9575852
+msgid "This causes another screen to be shown. `screen` is a string giving the name of the screen. The keyword arguments are passed to the screen being shown."
+msgstr ""
+
+#: ../../source/inc/control_action:30
+# 368a800c69ba48bb9a403ebf49cbaaec
+msgid "If not None, `transition` is use to show the new screen."
+msgstr ""
+
+#: ../../source/inc/control_action:34
+# cd426e281f994e519e18119de5e62124
+msgid "Shows a transient screen. A transient screen will be hidden when the current interaction completes."
+msgstr ""
+
+#: ../../source/screen_actions.rst:37
+# fa71d7a64328482786029bab178d7944
+msgid "Data Actions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:39
+# 5f27ce26a6944d3abee716d8910f8639
+msgid "These set or toggle data."
+msgstr ""
+
+#: ../../source/inc/data_action:5
+# d95346da5c7a41beb3326d7d8dea974b
+msgid "Causes the value of `key` in `dict` to be set to `value`."
+msgstr ""
+
+#: ../../source/inc/data_action:9
+# ba79b07e2e3b4db3a6375deef6a0b36a
+msgid "Causes the a field on an object to be set to a given value. `object` is the object, `field` is a string giving the name of the field to set, and `value` is the value to set it to."
+msgstr ""
+
+#: ../../source/inc/data_action:15
+# 22b6aa8525164c5b81a535176a1dd14e
+msgid "Causes the variable `name` associated with the current screen to be set to `value`."
+msgstr ""
+
+#: ../../source/inc/data_action:20
+# 01dfca71d8384cc1ac2c7a0d22ec48bb
+msgid "Causes `variable` to be set to `value`."
+msgstr ""
+
+#: ../../source/inc/data_action:24
+# f0c9f1065fc14aed948a4c095b6cd1f1
+msgid "Toggles the value of `key` in `dict`. Toggling means to invert the value when the action is performed."
+msgstr ""
+
+#: ../../source/inc/data_action:27
+#: ../../source/inc/data_action:37
+#: ../../source/inc/data_action:46
+#: ../../source/inc/data_action:55
+# d909d483b90a4ecf90e58702a373da6c
+# 76678901e0e0472ba14c8fda0ff44a41
+# cc18ecd9717b40528698d8923563c818
+# 0dd02f12bbb84af28ae9f4a50c791211
+msgid "`true_value`"
+msgstr ""
+
+#: ../../source/inc/data_action:28
+#: ../../source/inc/data_action:38
+#: ../../source/inc/data_action:47
+#: ../../source/inc/data_action:56
+# 8e11ebe945184c6baca67c87f757421e
+# b90c6a3c5f734e59a5ea45ba30b638b7
+# 0802486b89ff4a30862e0abefab24642
+# 6331c2edafb246fcad7467898b03e68d
+msgid "If not None, then this is the true value we use."
+msgstr ""
+
+#: ../../source/inc/data_action:29
+#: ../../source/inc/data_action:39
+#: ../../source/inc/data_action:48
+#: ../../source/inc/data_action:57
+# f52020343e644895a4be082c2a374f2c
+# 11b088a4f5e84304b1faa4444b2b28f0
+# 86b4def4b95f461c837218424039b207
+# 86f0f658e7724d5495fe4b5064856368
+msgid "`false_value`"
+msgstr ""
+
+#: ../../source/inc/data_action:30
+#: ../../source/inc/data_action:40
+#: ../../source/inc/data_action:49
+#: ../../source/inc/data_action:58
+# c0fd517149ad464b9d38f560c0b661f3
+# 2d35ddfd2f744800a5f77390395c6f5b
+# 0014b3bcd7b44a3c8f3692ad5fa7d71e
+# c19a7608d7a74f96a5e6927a03d1862d
+msgid "If not None, then this is the false value we use."
+msgstr ""
+
+#: ../../source/inc/data_action:34
+# 7632511f37b043399b8e62b8e99df648
+msgid "Toggles `field` on `object`. Toggling means to invert the boolean value of that field when the action is performed."
+msgstr ""
+
+#: ../../source/inc/data_action:44
+# 423f5155d4624ac8857ebc2648ca1726
+msgid "Toggles the value of the variable `name` in the current screen."
+msgstr ""
+
+#: ../../source/inc/data_action:53
+# d1010cbc472146408a9004d342caed1b
+msgid "Toggles `variable`."
+msgstr ""
+
+#: ../../source/screen_actions.rst:44
+# 076229a898914ce49ae5066f4e15300d
+msgid "Menu Actions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:46
+# a70962fb73e147f5b8920e1f84eccb86
+msgid "These actions invoke menus, or are primarily useful while in the main or game menus."
+msgstr ""
+
+#: ../../source/inc/menu_action:5
+# e38855006ebd4353b1e47a4488fd53dd
+msgid "Causes Ren'Py to return to the main menu."
+msgstr ""
+
+#: ../../source/inc/menu_action:9
+#: ../../source/inc/menu_action:17
+#: ../../source/inc/file_action:21
+#: ../../source/inc/file_action:33
+#: ../../source/inc/file_action:72
+# 13034a103ff64a939876811348630ef3
+# 24040780c475407382df14d33967b3ca
+# ff196f11de6741f4bb33b6129a1cc6b9
+# 5d743c5d3bbe43878102cf2f39421c45
+# 40339ec7f6b840659b05f63c4cf9b85b
+msgid "`confirm`"
+msgstr ""
+
+#: ../../source/inc/menu_action:8
+# 901b162d936b48429b74bf87bc8bc1b4
+msgid "If true, causes Ren'Py to ask the user if he wishes to return to the main menu, rather than returning directly."
+msgstr ""
+
+#: ../../source/inc/menu_action:14
+# 50a91fbe71674886990b2230a18b814e
+msgid "Quits the game."
+msgstr ""
+
+#: ../../source/inc/menu_action:17
+# 6b6908162fa54eae8b97a55b3773baaa
+msgid "If true, prompts the user if he wants to quit, rather than quitting directly."
+msgstr ""
+
+#: ../../source/inc/menu_action:22
+# 2693f895b21d4df89ff12920e76bc5fe
+msgid "Causes us to enter the game menu, if we're not there already. If we are in the game menu, then this shows a screen or jumps to a label."
+msgstr ""
+
+#: ../../source/inc/menu_action:25
+# 59f9da40f7f245af8e0b5d1fc5f6f2f9
+msgid "`screen` is usually the name of a screen, which is shown using the screen mechanism. If the screen doesn't exist, then \"_screen\" is appended to it, and that label is jumped to."
+msgstr ""
+
+#: ../../source/inc/menu_action:29
+# 0853ebb7f26845acbc0df03011e29b93
+msgid "ShowMenu(\"load\")"
+msgstr ""
+
+#: ../../source/inc/menu_action:30
+# 6f1efac28d264cb5b708069da5fd82f3
+msgid "ShowMenu(\"save\")"
+msgstr ""
+
+#: ../../source/inc/menu_action:31
+# 49526d6786fa41fdb0224e05d238383f
+msgid "ShowMenu(\"preferences\")"
+msgstr ""
+
+#: ../../source/inc/menu_action:33
+# d623fdbc93aa4bdf90dac7b6f2d4dd5a
+msgid "This can also be used to show user-defined menu screens. For example, if one has a \"stats\" screen defined, one can show it as part of the game menu using:"
+msgstr ""
+
+#: ../../source/inc/menu_action:37
+# 7fda18d1b8b143f38892bd4e7ffb4038
+msgid "ShowMenu(\"stats\")"
+msgstr ""
+
+#: ../../source/inc/menu_action:39
+# 54a1d4ea185f4959a9d67a09cd53a4fc
+msgid "ShowMenu without an argument will enter the game menu at the default screen, taken from _game_menu_screen."
+msgstr ""
+
+#: ../../source/inc/menu_action:44
+# c773a7f68d6d45b4b3e7c2641472ccba
+msgid "Causes Ren'Py to jump out of the menu context to the named label. The main use of this is to start a new game from the main menu. Common uses are:"
+msgstr ""
+
+#: ../../source/inc/menu_action:48
+# 85241475683d495bb4c8fc0064470619
+msgid "Start() - Start at the start label."
+msgstr ""
+
+#: ../../source/inc/menu_action:49
+# f33dd27343bf4092853ebf6a83fab550
+msgid "Start(\"foo\") - Start at the \"foo\" label."
+msgstr ""
+
+#: ../../source/screen_actions.rst:52
+# 501f63f9d0b445238e788af0a229b5d3
+msgid "File Actions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:54
+# 4a5ef69d97a742b093d440d81dd12b62
+msgid "These actions handle saving, loading, and deleting of files. Many of these take the `name` and `page` arguments."
+msgstr ""
+
+#: ../../source/screen_actions.rst:59
+#: ../../source/inc/file_action:11
+#: ../../source/inc/file_action:30
+#: ../../source/inc/file_action:69
+# 49493c9fd6de45c4bdfcd727030bd935
+# c3b8e8e2016c48a49e83267081929ff9
+# 9d7ab07b5ee44004b11b81619b247053
+# 159e3fdcb76b4e04b89d8a6e06d8262a
+msgid "`name`"
+msgstr ""
+
+#: ../../source/screen_actions.rst:58
+# 1d97f33fb80d4235a69dba68cf482adc
+msgid "The name of the file to save to. This can be a string or an integer. It's combined with the page to create the filename."
+msgstr ""
+
+#: ../../source/screen_actions.rst:64
+#: ../../source/inc/file_action:14
+#: ../../source/inc/file_action:37
+#: ../../source/inc/file_action:80
+#: ../../source/inc/file_action_function:73
+# cd9eec0b601745458af45065b5d670e8
+# 4b16171dd55f4aa59ade6c7f7ce23e98
+# 3e2dea9084334ce48934ec4c35c1ae2b
+# d9bcc53043c741299de59cf14eadba76
+# cbacc65c516b4e2c99addeea07d13dce
+msgid "`page`"
+msgstr ""
+
+#: ../../source/screen_actions.rst:62
+# 471d4787d87941f2ba941e3ea4f69cee
+msgid "The page that this action acts on. This is one of \"auto\", \"quick\", or a positive integer. If None, the page is determined automatically, based on a persistent page number."
+msgstr ""
+
+#: ../../source/inc/file_action:5
+# cbdd21ce1f834608a1a1be547b3ee900
+msgid "\"Does the right thing\" with the file. This means loading it if the load screen is showing, and saving to it otherwise."
+msgstr ""
+
+#: ../../source/inc/file_action:9
+# da32e4cb07ae457aa184ad30b4b57514
+msgid "The name of the slot to save to or load from. If None, an unused slot (a large number based on the current time) will be will be used."
+msgstr ""
+
+#: ../../source/inc/file_action:14
+# a8a880a294844dee852f0b4bd0c430a1
+msgid "The page that the file will be saved to or loaded from. If None, the current page is used."
+msgstr ""
+
+#: ../../source/inc/file_action:19
+# 8ea78e4d9d8f491c8f298732ce3dc817
+msgid "Deletes the file."
+msgstr ""
+
+#: ../../source/inc/file_action:22
+# 86efcacbfbb944aaaa038ba0f0df99d8
+msgid "If true, prompts before deleting a file."
+msgstr ""
+
+#: ../../source/inc/file_action:26
+# d7a7a501e1e0451682aa4a04d92bfe97
+msgid "Loads the file."
+msgstr ""
+
+#: ../../source/inc/file_action:29
+# cdf1d80c00e749ea8cdac8094b8fdba0
+msgid "The name of the slot to load from. If None, an unused slot the file will not be loadable."
+msgstr ""
+
+#: ../../source/inc/file_action:33
+# e8c7459f5709484094f712c3d218ab5b
+msgid "If true, prompt if loading the file will end the game."
+msgstr ""
+
+#: ../../source/inc/file_action:36
+# 8d6e06e07928484faff3aa3d61f298b3
+msgid "The page that the file will be loaded from. If None, the current page is used."
+msgstr ""
+
+#: ../../source/inc/file_action:39
+#: ../../source/inc/file_action:76
+#: ../../source/inc/file_action:103
+# c6fa35d7e73f47d984b2dc1681c06f74
+# 718389d16b1e429dacccbddb7e572837
+# c9efc522824c46e48ae18245ea5cd611
+msgid "`newest`"
+msgstr ""
+
+#: ../../source/inc/file_action:40
+# 680d7ae836f047f38ebd58cd582bfbfa
+msgid "If true, the button is selected if this is the newest file."
+msgstr ""
+
+#: ../../source/inc/file_action:44
+# ac72c0bb6f1b46e1802c5c23a7ba2c7f
+msgid "Sets the file page to `page`, which should be one of \"auto\", \"quick\", or an integer."
+msgstr ""
+
+#: ../../source/inc/file_action:49
+# a3b5615dea47470ba42597a1616bf525
+msgid "Goes to the next file page."
+msgstr ""
+
+#: ../../source/inc/file_action:52
+# 325a645413ba49059e61dab072c6d60c
+msgid "`max`"
+msgstr ""
+
+#: ../../source/inc/file_action:52
+# b57782b44e6f44f2b2fc0047a796fb3b
+msgid "If set, this should be an integer that gives the number of the maximum file page we can go to."
+msgstr ""
+
+#: ../../source/inc/file_action:57
+# 239f972a19ba43d4807eaf5dc35b153f
+msgid "Goes to the previous file page, if possible."
+msgstr ""
+
+#: ../../source/inc/file_action:61
+# 776eb15c30134d699adb4a3e3e2e9fca
+msgid "Saves the file."
+msgstr ""
+
+#: ../../source/inc/file_action:63
+# 3f9c66efad4e44608a36970d6f9dec8c
+msgid "The button with this slot is selected if it's marked as the newest save file."
+msgstr ""
+
+#: ../../source/inc/file_action:67
+# 570529a5f24a4bf781a006624aa3eed7
+msgid "The name of the slot to save to. If None, an unused slot (a large number based on the current time) will be will be used."
+msgstr ""
+
+#: ../../source/inc/file_action:72
+# 426b0961b92c4e738d6ff539cd321cd3
+msgid "If true, then we will prompt before overwriting a file."
+msgstr ""
+
+#: ../../source/inc/file_action:75
+# 1d6aac323ca3402787a33b6d40db2cec
+msgid "If true, then this file will be marked as the newest save file when it's saved."
+msgstr ""
+
+#: ../../source/inc/file_action:79
+# 7f9f44568dc4474fb964a672fd465992
+msgid "The name of the page that the slot is on. If None, the current page is used."
+msgstr ""
+
+#: ../../source/inc/file_action:83
+# 5a834eea3b2f4e1989a1d6bad72cd8c1
+msgid "`cycle`"
+msgstr ""
+
+#: ../../source/inc/file_action:83
+# 17faeaab909e40fbb9f506f6ef970bbf
+msgid "If true, then saves on the supplied page will be cycled before being shown to the user."
+msgstr ""
+
+#: ../../source/inc/file_action:88
+# 202baf57bd184bcaaa4cf96fd081fa10
+msgid "Take a screenshot to be used when the game is saved. This can be used to ensure that the screenshot is accurate, by taking a pictue of the screen before a file save screen is shown."
+msgstr ""
+
+#: ../../source/inc/file_action:94
+# d86ea11af8424cff97f05f169715fffd
+msgid "Performs a quick load."
+msgstr ""
+
+#: ../../source/inc/file_action:98
+# aefe9b24dda547beaf8e31bf3208eee1
+msgid "Performs a quick save."
+msgstr ""
+
+#: ../../source/inc/file_action:101
+# c7cad183163b4165bac861c3f7ce1d07
+msgid "`message`"
+msgstr ""
+
+#: ../../source/inc/file_action:101
+# 40f7621b3be74d4aa1f8891d25a6cdb7
+msgid "A message to display to the user when the quick save finishes."
+msgstr ""
+
+#: ../../source/inc/file_action:104
+# 7f755c499c474c418f04bd359023c320
+msgid "Set to true to mark the quicksave as the newest save."
+msgstr ""
+
+#: ../../source/screen_actions.rst:69
+# e98b6d57ff5f4eb59e1f06966fe1036a
+msgid "Audio Actions"
+msgstr ""
+
+#: ../../source/inc/audio_action:5
+# e7061b9b7242419784f92516475bbc94
+msgid "Causes an audio file to be played on a given channel."
+msgstr ""
+
+#: ../../source/inc/audio_action:7
+#: ../../source/inc/audio_action:18
+#: ../../source/inc/audio_action:40
+# a8082374bb4a4084916416e05c21479e
+# 90b15cf3df0f4f0c90d079256b2dba4c
+# 678e1c3518854b248069730ad67a17c4
+msgid "`channel`"
+msgstr ""
+
+#: ../../source/inc/audio_action:8
+#: ../../source/inc/audio_action:19
+#: ../../source/inc/audio_action:41
+# 55654c267869404bbed5c30ba0a40ee5
+# 31a7760e1b3c4f9a89d34c55821dda02
+# ddc2b97a67dc47caa1adc9c3b4c76d15
+msgid "The channel to play the sound on."
+msgstr ""
+
+#: ../../source/inc/audio_action:10
+#: ../../source/inc/audio_action:21
+#: ../../source/inc/audio_action:43
+# 2dc0aa3f634a4d77a97c68ca2f7ae62b
+# 763f622377794c5d87fa8898612bd261
+# 7459ce1ec00d4913ba86377a3349e2b0
+msgid "`file`"
+msgstr ""
+
+#: ../../source/inc/audio_action:10
+#: ../../source/inc/audio_action:21
+#: ../../source/inc/audio_action:43
+# 466df672de204f1ebee8940ff99ad5fd
+# 6f8cdcce1a1441b7b9b4bdf4336a2bec
+# e7ee37d30b3645abba4fbe6cae8535cf
+msgid "The file to play."
+msgstr ""
+
+#: ../../source/inc/audio_action:12
+#: ../../source/inc/audio_action:45
+# 8847945085144ebc8d0b6b40bddf57d5
+# b73060e3dfaf4cd49d90eee670386f8a
+msgid "Any keyword arguments are passed to :func:`renpy.music.play`"
+msgstr ""
+
+#: ../../source/inc/audio_action:16
+# f634542c9fcf4e0d8aab715bbb802707
+msgid "Causes an audio file to be queued on a given channel."
+msgstr ""
+
+#: ../../source/inc/audio_action:23
+# 77c701698e6e4dc68d57578c10c1c892
+msgid "Any keyword arguments are passed to :func:`renpy.music.queue`"
+msgstr ""
+
+#: ../../source/inc/audio_action:27
+# 50dafe9e0d2c46f8be836312d8ee2e63
+msgid "Sets the volume of `mixer` to `value`."
+msgstr ""
+
+#: ../../source/inc/audio_action:30
+#: ../../source/inc/value:55
+# 044ad25f73b5421080124d114450da5d
+# 0a9dc416ea8242ef9bfa39e77586c5c9
+msgid "`mixer`"
+msgstr ""
+
+#: ../../source/inc/audio_action:30
+# 971f5eec9ad3416d94bae602eb929d8e
+msgid "The mixer to set the volume of. A string, usually one of \"music\", \"sfx\", or \"voice\"."
+msgstr ""
+
+#: ../../source/inc/audio_action:33
+#: ../../source/inc/value:9
+#: ../../source/inc/value:63
+# 034b87cbb18c46c5b9493538eca26cc7
+# fe9d1fc4de5a46eab1b26d6b7091cebc
+# 60a540a916c3436da335a5b1c44769d6
+msgid "`value`"
+msgstr ""
+
+#: ../../source/inc/audio_action:33
+# 3f77279c3d714c4287fe2affe0901241
+msgid "The value to set the volume to. A number between 0.0 and 1.0, inclusive."
+msgstr ""
+
+#: ../../source/inc/audio_action:38
+# 54cf513095cb431385856970e944a7f4
+msgid "Causes an audio channel to be stopped."
+msgstr ""
+
+#: ../../source/screen_actions.rst:74
+# 3f2188f4fecd4dabb0ed3e676410518b
+msgid "Other Actions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:76
+# 1328a48cca034b31ac53ac753efc584d
+msgid "These are other actions, not found anywhere else."
+msgstr ""
+
+#: ../../source/inc/other_action:5
+# 281a9080c773478ab27ac4e2f5c7a2bc
+msgid "Displays help."
+msgstr ""
+
+#: ../../source/inc/other_action:11
+# 5991086db4104e47a6c740e4d8c90dde
+msgid "`help`"
+msgstr ""
+
+#: ../../source/inc/other_action:8
+# a9086a538f1c466c9fa9d518e63777af
+msgid "If this is a string giving a label in the programe, then that label is called in a new context when the button is chosen. Otherwise, it should be a string giving a file that is opened in a web browser. If None, the value of config.help is used in the same wayt."
+msgstr ""
+
+#: ../../source/inc/other_action:16
+# 410b29dc93c5445d96dbeb31dc184530
+msgid "This returns `true` if `expression` is true, and `false` otherwise. Use this to select an action based on an expression. Note that the default, None, can be used as an action that causes a button to be disabled."
+msgstr ""
+
+#: ../../source/inc/other_action:23
+# a69608e062544b8ea82a43bef2ce2278
+msgid "This inverts the selection state of the provided action, while proxying over all of the other methods."
+msgstr ""
+
+#: ../../source/inc/other_action:28
+# cf182d8cd16a42fc9af085449ec40121
+msgid "Displays `message` using :func:`renpy.notify`."
+msgstr ""
+
+#: ../../source/inc/other_action:32
+# e74e1d4ccd574784bca704f27a64f76a
+msgid "Causes `url` to be opened in a web browser."
+msgstr ""
+
+#: ../../source/inc/other_action:36
+# 5893355d0bab4f1ab8b1c13e7ecc890c
+msgid "This action causes a rollforward to occur, if a roll forward is possible. Otherwise, it is insensitive."
+msgstr ""
+
+#: ../../source/inc/other_action:41
+# 222ba46a6a7d403fa979471885cb624d
+msgid "This action causes a rollback to occur, when a rollback is possible. Otherwise, nothing happens."
+msgstr ""
+
+#: ../../source/inc/other_action:46
+# 7c5511e940a3456a90288bea1c280845
+msgid "Takes a screenshot."
+msgstr ""
+
+#: ../../source/inc/other_action:50
+# 9dc70ca729164ed699e41528f3ee7d9a
+msgid "This allows an expression to control if a button should be marked as selected. It should be used as part of a list with one or more actions. For example::"
+msgstr ""
+
+#: ../../source/inc/other_action:60
+# e23c404913224a06982221861a795bf5
+msgid "Causes the game to begin skipping. If the game is in a menu context, then this returns to the game. Otherwise, it just enables skipping."
+msgstr ""
+
+#: ../../source/inc/other_action:66
+# 353e70e5993e4d3b810b3a83a4a09890
+msgid "Causes `transition` to occur."
+msgstr ""
+
+#: ../../source/screen_actions.rst:81
+# 282c9a1ece5844f188b5bc64492fc53d
+msgid "Values"
+msgstr ""
+
+#: ../../source/screen_actions.rst:83
+# ccaa8f59acdf490eabb062119150d0cd
+msgid "Values are used with bars, to set the bar value, and to allow the bar to adjust an underlying property."
+msgstr ""
+
+#: ../../source/inc/value:5
+# 20d6d53f37b94d89bf021ab0c21bbf74
+msgid "This animates a value, taking `delay` seconds to vary the value from `old_value` to `value`."
+msgstr ""
+
+#: ../../source/inc/value:9
+#: ../../source/inc/value:63
+# a08e39212ba4491f8304ad47175b0bd4
+# 4e28a516c66945708b427017e73c2d7b
+msgid "The value itself, a number."
+msgstr ""
+
+#: ../../source/inc/value:12
+#: ../../source/inc/value:32
+#: ../../source/inc/value:65
+# 616a76266732437eb0abd851cec06c3a
+# 1c2f025bf7fe4d58b33d32e44d9f2f01
+# 7b3d23b6e7e04a2db0f7752a5a73d031
+msgid "`range`"
+msgstr ""
+
+#: ../../source/inc/value:12
+# 0738bc052c0f4100bad5ec9c6efefda2
+msgid "The range of the value, a number."
+msgstr ""
+
+#: ../../source/inc/value:16
+# 5c4e03493b4341ae9789b97b5d1d0c28
+msgid "`delay`"
+msgstr ""
+
+#: ../../source/inc/value:15
+# 370c120bae334c2daf28ff7f3a5f134e
+msgid "The time it takes to animate the value, in seconds. Defaults to 1.0."
+msgstr ""
+
+#: ../../source/inc/value:20
+# 45ed43256156444a8b0d45cc55559f8d
+msgid "`old_value`"
+msgstr ""
+
+#: ../../source/inc/value:19
+# 0395efda40254427b4cdc1f08e1736f2
+msgid "The old value. If this is None, then the value is taken from the AnimatedValue we replaced, if any. Otherwise, it is initialized to `value`."
+msgstr ""
+
+#: ../../source/inc/value:25
+# dba54cb418fa4c5393668cb383fe0042
+msgid "A value that allows the user to adjust the value of a field on an object."
+msgstr ""
+
+#: ../../source/inc/value:28
+# 30b1d3b44e1c48918783b10fcf31b963
+msgid "`object`"
+msgstr ""
+
+#: ../../source/inc/value:29
+# d3b254f67a964d589339930941dcb0e6
+msgid "The object."
+msgstr ""
+
+#: ../../source/inc/value:30
+# 2553176380d84c80b282e0d1bae5b839
+msgid "`field`"
+msgstr ""
+
+#: ../../source/inc/value:31
+# d580f38198f244a4b96de3edbdad6228
+msgid "The field, a string."
+msgstr ""
+
+#: ../../source/inc/value:33
+# 68ada5d0b01149c58e96de337a01761d
+msgid "The range to adjust over."
+msgstr ""
+
+#: ../../source/inc/value:39
+# da9b6cc621434920bccb07e53fcdb0d0
+msgid "`max_is_zero`"
+msgstr ""
+
+#: ../../source/inc/value:35
+# 1e7b7ecb28e344f49c4b6cf2e59538d4
+msgid "If True, then when the field is zero, the value of the bar will be range, and all other values will be shifted down by 1. This works both ways - when the bar is set to the maximum, the field is set to 0."
+msgstr ""
+
+#: ../../source/inc/value:40
+# d6e8a8e187ef42ffa5d9583a508c9752
+msgid "This is used internally, for some preferences."
+msgstr ""
+
+#: ../../source/inc/value:41
+# 7459499ae527412888adf158b054ae39
+msgid "`style`"
+msgstr ""
+
+#: ../../source/inc/value:42
+# fb9e49754da9480c8fd71aaa6d1db404
+msgid "The styles of the bar created."
+msgstr ""
+
+#: ../../source/inc/value:43
+# dd903af46154438787751766507ba347
+msgid "`offset`"
+msgstr ""
+
+#: ../../source/inc/value:44
+# c35ef85f72294310a7a8793782047ae1
+msgid "An offset to add to the value."
+msgstr ""
+
+#: ../../source/inc/value:46
+# fea0f1434b4841eb90f76064eac8242a
+msgid "`step`"
+msgstr ""
+
+#: ../../source/inc/value:46
+# 3884f04b30a44f5ea229cf9013724259
+msgid "The amount to change the bar by. If None, defaults to 1/10th of the bar."
+msgstr ""
+
+#: ../../source/inc/value:51
+# 1489c702b7e94b79adcbdc74eb785fbe
+msgid "The value of an audio mixer."
+msgstr ""
+
+#: ../../source/inc/value:54
+# 48d070c5a5344294a954cc1e08f89956
+msgid "The name of the mixer to adjust. This is usually one of \"music\", \"sfx\", or \"voice\", but user code can create new mixers."
+msgstr ""
+
+#: ../../source/inc/value:60
+# 02f465fd7c91479d82c21ba20498dbd4
+msgid "This allows a value to be specified statically."
+msgstr ""
+
+#: ../../source/inc/value:66
+# 2d9845db94dd4c359e10722c13e12a38
+msgid "The range of the value."
+msgstr ""
+
+#: ../../source/inc/value:70
+# 38f3fbe69d6d4b7cb4f0b7791c3e4e76
+msgid "The value of an adjustment that horizontally scrolls the the viewport with the given id, on the current screen. The viewport must be defined before a bar with this value is."
+msgstr ""
+
+#: ../../source/inc/value:76
+# d7a7fb8eeda24d55832e77ce7084e5c6
+msgid "The value of an adjustment that vertically scrolls the the viewport with the given id, on the current screen. The viewport must be defined before a bar with this value is."
+msgstr ""
+
+#: ../../source/screen_actions.rst:89
+# d0f5db4fc077455eae7eb8e41b2238a2
+msgid "Functions and Classes"
+msgstr ""
+
+#: ../../source/screen_actions.rst:91
+# 1e02bf282109438196a170fed916ce63
+msgid "These functions and classes are useful in association with screens."
+msgstr ""
+
+#: ../../source/screen_actions.rst:94
+# ab24a2d7171548088fdf92cd295d0fb4
+msgid "Preferences"
+msgstr ""
+
+#: ../../source/screen_actions.rst:96
+# 9c7de7f31a78434a954e8c888731540a
+msgid "While all preferences can be defined based on the Actions and Values given above, it requires some knowledge of Ren'Py to figure out the correct one to use. The preferences constructor makes this easy, by creation an action or value, as appropriate, based on the names used in the default preferences screen."
+msgstr ""
+
+#: ../../source/inc/preference_action:5
+# de9e930474a748b5acdf9a1e52c53a65
+msgid "This constructs the approprate action or value from a preference. The preference name should be the name given in the standard menus, while the value should be either the name of a choice, \"toggle\" to cycle through choices, a specific value, or left off in the case of buttons."
+msgstr ""
+
+#: ../../source/inc/preference_action:11
+# b6af7537ff4d4add86e5bab6b21e35e8
+msgid "Actions that can be used with buttons and hotspots are:"
+msgstr ""
+
+#: ../../source/inc/preference_action:13
+# 266b3d20e82a4da68db7a114aa7a6a52
+msgid "Preference(\"display\", \"fullscreen\") - displays in fullscreen mode."
+msgstr ""
+
+#: ../../source/inc/preference_action:14
+# 4676dcf3e2e94440aef3c6961e7b6096
+msgid "Preference(\"display\", \"window\") - displays in windowed mode at 1x normal size."
+msgstr ""
+
+#: ../../source/inc/preference_action:15
+# 048f64b3e73d4347afbe33b810bf4ad3
+msgid "Preference(\"display\", 2.0) - displays in windowed mode at 2.0x normal size."
+msgstr ""
+
+#: ../../source/inc/preference_action:16
+# 671724fdb08d478990c2f90a260d07ab
+msgid "Preference(\"display\", \"toggle\") - toggle display mode."
+msgstr ""
+
+#: ../../source/inc/preference_action:18
+# 33005f3036b542e4894155291e1792d6
+msgid "Preference(\"transitions\", \"all\") - show all transitions."
+msgstr ""
+
+#: ../../source/inc/preference_action:19
+# 4013dedbb9c545c98869030ad8613636
+msgid "Preference(\"transitions\", \"none\") - do not show transitions."
+msgstr ""
+
+#: ../../source/inc/preference_action:20
+# 3bae71a8cb88427698d37a9845ff2455
+msgid "Preference(\"transitions\", \"toggle\") - toggle transitions."
+msgstr ""
+
+#: ../../source/inc/preference_action:22
+# 1aea8141721e4d99ac182a44750c6b22
+msgid "Preference(\"text speed\", 0) - make text appear instantaneously."
+msgstr ""
+
+#: ../../source/inc/preference_action:23
+# 04b7c2f9534a4c25bb535050a735df86
+msgid "Preference(\"text speed\", 142) - set text speed to 142 characters per second."
+msgstr ""
+
+#: ../../source/inc/preference_action:25
+# 73c3124881af4848b3aed1d5d1d18436
+msgid "Preference(\"joystick\") - Show the joystick preferences."
+msgstr ""
+
+#: ../../source/inc/preference_action:27
+# cb58c881e6f14e03b1480a7b7afee4a2
+msgid "Preference(\"skip\", \"seen\") - Only skip seen messages."
+msgstr ""
+
+#: ../../source/inc/preference_action:28
+# 098ea161ec924e4794d1adb43d189cf3
+msgid "Preference(\"skip\", \"all\") - Skip unseen messages."
+msgstr ""
+
+#: ../../source/inc/preference_action:29
+# a8d9bae7bc9c4e15b58d7d5c10c6273c
+msgid "Preference(\"skip\", \"toggle\") - Toggle between skip seen and skip all."
+msgstr ""
+
+#: ../../source/inc/preference_action:31
+# 0893a8dbf8594ee3a335fdd7d02e21eb
+msgid "Preference(\"begin skipping\") - Starts skipping."
+msgstr ""
+
+#: ../../source/inc/preference_action:33
+# 7180673a0e0b49e5a712a336927ffacd
+msgid "Preference(\"after choices\", \"skip\") - Skip after choices."
+msgstr ""
+
+#: ../../source/inc/preference_action:34
+# 544eb64d4af94eff8c8e38d3afcd6fd8
+msgid "Preference(\"after choices\", \"stop\") - Stop skipping after choices."
+msgstr ""
+
+#: ../../source/inc/preference_action:35
+# f73681a1795245aaaa8f695790cb12f4
+msgid "Preference(\"after choices\", \"toggle\") - Toggle skipping after choices."
+msgstr ""
+
+#: ../../source/inc/preference_action:37
+# be8c589241ad4af3a0f8902d69165ad5
+msgid "Preference(\"auto-forward time\", 0) - Set the auto-forward time to infinite."
+msgstr ""
+
+#: ../../source/inc/preference_action:38
+# 3d49885d92c7461e93c231ef9a7094bb
+msgid "Preference(\"auto-forward time\", 10) - Set the auto-forward time (unit is seconds per 250 characters)."
+msgstr ""
+
+#: ../../source/inc/preference_action:40
+# 2dcbadaf93d34094997c0f453bebe9ad
+msgid "Preference(\"auto-forward\", \"enable\") - Enable auto-forward mode."
+msgstr ""
+
+#: ../../source/inc/preference_action:41
+# be4a9797902d4ab8ba91c1b4ffec2cbe
+msgid "Preference(\"auto-forward\", \"disable\") - Disable auto-forward mode."
+msgstr ""
+
+#: ../../source/inc/preference_action:42
+# b57a819a1f33492fa41134eff6534025
+msgid "Preference(\"auto-forward\", \"toggle\") - Toggle auto-forward mode."
+msgstr ""
+
+#: ../../source/inc/preference_action:44
+# 56e6b8bb8a5241d5a5f1e9416f268c47
+msgid "Preference(\"music mute\", \"enable\") - Mute the music mixer."
+msgstr ""
+
+#: ../../source/inc/preference_action:45
+# 33ad4bfa7d0a4ec8a27210d6b77163fb
+msgid "Preference(\"music mute\", \"disable\") - Un-mute the music mixer."
+msgstr ""
+
+#: ../../source/inc/preference_action:46
+# f1b17f950df64656902fbd6419f785f9
+msgid "Preference(\"music mute\", \"toggle\") - Toggle music mute."
+msgstr ""
+
+#: ../../source/inc/preference_action:48
+# efe72ab5e9d84946912d699b5d80c79c
+msgid "Preference(\"sound mute\", \"enable\") - Mute the sound mixer."
+msgstr ""
+
+#: ../../source/inc/preference_action:49
+# baafef70d4d9402db44cdc9d9a4ea06a
+msgid "Preference(\"sound mute\", \"disable\") - Un-mute the sound mixer."
+msgstr ""
+
+#: ../../source/inc/preference_action:50
+# 7f454c6b7f8b49b0818a6de70c05b3c6
+msgid "Preference(\"sound mute\", \"toggle\") - Toggle sound mute."
+msgstr ""
+
+#: ../../source/inc/preference_action:52
+# 35f3a486501c4476b9ddb6eaa02759ca
+msgid "Preference(\"voice mute\", \"enable\") - Mute the voice mixer."
+msgstr ""
+
+#: ../../source/inc/preference_action:53
+# 493ba76d4ef840d688a8f71c96cef8ca
+msgid "Preference(\"voice mute\", \"disable\") - Un-mute the voice mixer."
+msgstr ""
+
+#: ../../source/inc/preference_action:54
+# 26b0a22897884a32b7e37bed0c036ee9
+msgid "Preference(\"voice mute\", \"toggle\") - Toggle voice mute."
+msgstr ""
+
+#: ../../source/inc/preference_action:56
+# 8616f951adbe4175bc42fe0ac9575d91
+msgid "Preference(\"music volume\", 0.5) - Set the music volume."
+msgstr ""
+
+#: ../../source/inc/preference_action:57
+# 62b0fa4c4d2f4240b6a5f4048bac1c7d
+msgid "Preference(\"sound volume\", 0.5) - Set the sound volume."
+msgstr ""
+
+#: ../../source/inc/preference_action:58
+# 712052a6228f4289a525b12bfe4b0f08
+msgid "Preference(\"volice volume\", 0.5) - Set the voice volume."
+msgstr ""
+
+#: ../../source/inc/preference_action:60
+# 7c5ae9eb6887431888df1b2649f2ad82
+msgid "Values that can be used with bars are:"
+msgstr ""
+
+#: ../../source/inc/preference_action:62
+# 40d52cda79614126b99dd6732a14064d
+msgid "Preference(\"text speed\")"
+msgstr ""
+
+#: ../../source/inc/preference_action:63
+# 4348e92dcbff4d74a254ff412a5e79cc
+msgid "Preference(\"auto-forward time\")"
+msgstr ""
+
+#: ../../source/inc/preference_action:64
+# db37d68ca6554f6d87ac9a106f76d990
+msgid "Preference(\"music volume\")"
+msgstr ""
+
+#: ../../source/inc/preference_action:65
+# 27cd875ed1fd42bdac929230f0e7fa04
+msgid "Preference(\"sound volume\")"
+msgstr ""
+
+#: ../../source/inc/preference_action:66
+# 1a9cc371773247cc9deb797aeffe5746
+msgid "Preference(\"voice volume\")"
+msgstr ""
+
+#: ../../source/screen_actions.rst:106
+# a5fb865ec9fc459d85446568c4e85062
+msgid "File Functions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:108
+# a20c29d2a9a24541ad6fe78b21f269f8
+msgid "These functions return useful information about files. They use the same default page as the file actions."
+msgstr ""
+
+#: ../../source/inc/file_action_function:5
+# 91af556f7870483c8223157656b40726
+msgid "Returns the current file page as a string."
+msgstr ""
+
+#: ../../source/inc/file_action_function:9
+# 4a7a14501ba84d26a9b051dc48432576
+msgid "This is a function that returns true if the file is loadable, and false otherwise."
+msgstr ""
+
+#: ../../source/inc/file_action_function:14
+# c3b970489e9c4345b52e3a9b4383775c
+msgid "Returns the name of the current file page, as a string. If a normal page, this returns the page number. Otherwise, it returns `auto` or `quick`."
+msgstr ""
+
+#: ../../source/inc/file_action_function:20
+# f69d332c52294dc7ba657ef56563d02c
+msgid "Return the save_name that was in effect when the file was saved, or `empty` if the file does not exist."
+msgstr ""
+
+#: ../../source/inc/file_action_function:25
+# 6ee1e20da47b4114be9c7291ab13314c
+msgid "Returns the screenshot associated with the given file. If the file is not loadable, then `empty` is returned, unless it's None, in which case, a Null displayable is created."
+msgstr ""
+
+#: ../../source/inc/file_action_function:29
+# 18969d6ef35f406c8c0ab2696902a88b
+msgid "The return value is a displayable."
+msgstr ""
+
+#: ../../source/inc/file_action_function:33
+# 0cf7fc80aa22458198572897a6f5d73d
+msgid "Returns the name of the numbered slot. This assumes that slots on normal pages are numbered in a linear order starting with 1, and that page numbers start with 1. When slot is 2, and slots_per_page is 10, and the other variables are the defauts:"
+msgstr ""
+
+#: ../../source/inc/file_action_function:38
+# 484c1b06236d412288202dcc3378d27b
+msgid "When the first page is slowing, this returns \"2\"."
+msgstr ""
+
+#: ../../source/inc/file_action_function:39
+# 5f6575c1c57f417292f3a1ec6a527209
+msgid "When the second page is showing, this returns \"12\"."
+msgstr ""
+
+#: ../../source/inc/file_action_function:40
+# 716b48f1f32845e38bf71dc7a4d94b35
+msgid "When the auto page is showing, this returns \"a2\"."
+msgstr ""
+
+#: ../../source/inc/file_action_function:41
+# b5141e9924c94bb583fd5a09a521377e
+msgid "When the quicksave page is showing, this returns \"q2\"."
+msgstr ""
+
+#: ../../source/inc/file_action_function:44
+# 3f7c649be29040b69571fff6882461da
+msgid "`slot`"
+msgstr ""
+
+#: ../../source/inc/file_action_function:44
+# 5d665f3e4f7648e78cfd1f02db8dfec6
+msgid "The number of the slot to access."
+msgstr ""
+
+#: ../../source/inc/file_action_function:47
+# 63ddace3c4bd404f81d023e677941070
+msgid "`slots_per_page`"
+msgstr ""
+
+#: ../../source/inc/file_action_function:47
+# 3aa9a7a2c7714014b1eda015ff840a37
+msgid "The number of slots per page."
+msgstr ""
+
+#: ../../source/inc/file_action_function:50
+# 54ee143f61d74f169a22ba58bfbd91c4
+msgid "`auto`"
+msgstr ""
+
+#: ../../source/inc/file_action_function:50
+# 8a6c2b9088114c748b795446a4bb8036
+msgid "A prefix to use for the auto page."
+msgstr ""
+
+#: ../../source/inc/file_action_function:53
+# 17770a3748bd49df95b998143afbdda7
+msgid "`quick`"
+msgstr ""
+
+#: ../../source/inc/file_action_function:53
+# eba95b8b5f144e6fb19b2f49c5b76544
+msgid "A prefix to use for the quick page."
+msgstr ""
+
+#: ../../source/inc/file_action_function:56
+# ef12e535b14c4dffa1a978e065ded560
+msgid "`format`"
+msgstr ""
+
+#: ../../source/inc/file_action_function:56
+# efc07189996a4178855cd22d20e33bcb
+msgid "The formatting code to use. This is given two arguments: A string giving the page prefix, and an integer giving the slot number."
+msgstr ""
+
+#: ../../source/inc/file_action_function:61
+# a5dc809b73c0433893373d0c418d55da
+msgid "Returns the time the file was saved, formatted according to the supplied `format`. If the file is not found, `empty` is returned."
+msgstr ""
+
+#: ../../source/inc/file_action_function:65
+# 20ecd7acd1f04136be8c31241a6cf011
+msgid "The return value is a string."
+msgstr ""
+
+#: ../../source/inc/file_action_function:69
+# fd886ab6ff6043db8bfa97014cbabe10
+msgid "Returns a list of used numeric file slots on the page."
+msgstr ""
+
+#: ../../source/inc/file_action_function:72
+# d975988c1a004338a63cc3f8c2c6c266
+msgid "The name of the page that will be scanned. If None, the current page is used."
+msgstr ""
+
+#: ../../source/inc/file_action_function:76
+# d8da63e76306423281b1714cabc43887
+msgid "`highest_first`"
+msgstr ""
+
+#: ../../source/inc/file_action_function:76
+# c15c6a6064b34b378fe0154091cac9ca
+msgid "If true, the highest-numbered file slot is listed first. Otherwise, the lowest-numbered slot is listed first."
+msgstr ""
+
+#: ../../source/screen_actions.rst:114
+# eb63f642a3ab4c878428a31aede6f77e
+msgid "Side Image Functions"
+msgstr ""
+
+#: ../../source/screen_actions.rst:116
+# a9a2a0668b8241f7b1e0f4e98ba1eae7
+msgid "This function returns the side image to use."
+msgstr ""
+
+#: ../../source/inc/side_image_function:5
+# 61e990b98aa94f298344534f6ae04ecd
+msgid "Returns the side image associated with the currently speaking character, or a Null displayable if no such side image exists."
+msgstr ""
+
+#: ../../source/screen_actions.rst:122
+# b8787435f65c44e7a335e53f0b44e130
+msgid "Tooltips"
+msgstr ""
+
+#: ../../source/screen_actions.rst:124
+# 969f3cdcc14d422aa0d4b3333c6933a9
+msgid "The tooltip class changes the screen when a button is hovered."
+msgstr ""
+
+#: ../../source/inc/tooltips:5
+# 36bb9c7d823f4f86bf7686c636c54ed1
+msgid "A tooltip object can be used to define a portion of a screen that is updated when the mouse hovers an area."
+msgstr ""
+
+#: ../../source/inc/tooltips:8
+# c0e5cbf4c40341318c464efa0a1a3263
+msgid "A tooltip object has a ``value`` field, which is set to the `default` value passed to the constructor when the tooltip is created. When a button using an action creadted by the tooltip is hovered, the value field changes to the value associated with the action."
+msgstr ""
+
+#: ../../source/inc/tooltips:15
+# 4f2641c30f694235a3b90f8716bb58ef
+msgid "Returns an action that is generally used as the hovered property of a button. When the button is hovered, the value field of this tooltip is set to `value`. When the buttton loses focus, the value field of this tooltip reverts to the default."
+msgstr ""
+
+#: ../../source/screen_actions.rst:128
+# 65b931c3836140cd94ec2fb90de8b4bb
+msgid "When using a tooltip with a screen, the usual behavior is to create a tooltip object in a default statement. The value of the tooltip and the action method can then be used within the screen. The order of use within a screen doesn't matter - it's possible to use the value before an action is used."
+msgstr ""
+
+#: ../../source/screen_actions.rst:134
+# 3dcd4c9f2f104ee689a2de8461c7b7d4
+msgid "Tooltips can take on any value. While in the example below we use the text statement to display a string on the screen, it's also possible to use the add statement to add a displayable. More complex behavior is also possible."
+msgstr ""
+

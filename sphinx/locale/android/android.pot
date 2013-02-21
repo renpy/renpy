@@ -1,0 +1,603 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/android.rst:6
+# c9eab3ad60e442339263efdf754d2424
+msgid "Android"
+msgstr ""
+
+#: ../../source/android.rst:8
+# 906d9762987d450b9e6698c79f7b3d27
+msgid "Ren'Py support devices running the Android operating system, such as smartphones and tablets. While these devices do not support 100% of Ren'Py's functionality, with minimal modification code can be packaged and ported to these devices."
+msgstr ""
+
+#: ../../source/android.rst:13
+# 4bbf96c05b024adea35a171e5fcd3386
+msgid "RAPT - the Ren'Py Android Packaging Tool - is a program, downloaded separately from Ren'Py, that creates an Android package for testing or release purposes."
+msgstr ""
+
+#: ../../source/android.rst:18
+# b0c6b5267876446897fa48bfb4383808
+msgid "User Instructions"
+msgstr ""
+
+#: ../../source/android.rst:20
+# b1f2525624314106b8bb5227923067e7
+msgid "When a Ren'Py game has been launched on Android, the following keybindings work:"
+msgstr ""
+
+#: ../../source/android.rst:27
+# 40517f9c7a654a29b9cec8a1b25ca2b9
+msgid "`Home`"
+msgstr ""
+
+#: ../../source/android.rst:24
+# de484749740d473eb7a1a0ac973ffb09
+msgid "Returns to the Android home screen, suspending the Ren'Py game. As part of the suspend process, Ren'Py will automatically save the game. If necessary, the save will be automatically loaded when the user returns to the game."
+msgstr ""
+
+#: ../../source/android.rst:30
+# fbbe61730a304973820336671f1db925
+msgid "`Menu`"
+msgstr ""
+
+#: ../../source/android.rst:30
+# 2bad6e20329f4015b6aa7f46535ada5c
+msgid "Brings up the in-game menu, and returns to the game."
+msgstr ""
+
+#: ../../source/android.rst:33
+# 83bacd6cafe34de49ba1aaaf5d69de00
+msgid "`Back`"
+msgstr ""
+
+#: ../../source/android.rst:33
+# ebe9d860c7934b159a0ce3639cb4193e
+msgid "Rolls back."
+msgstr ""
+
+#: ../../source/android.rst:37
+# 36844f4911fb4b8b8c099073e95f7c38
+msgid "`Volume Up`, `Volume Down`"
+msgstr ""
+
+#: ../../source/android.rst:36
+# b7ec5f63f7d84d5f98cd0cdfdaff79b3
+msgid "Controls Android's media volume."
+msgstr ""
+
+#: ../../source/android.rst:40
+# 4dc63e3f990243a48ed1606c5328bdb9
+msgid "Platform Differences"
+msgstr ""
+
+#: ../../source/android.rst:42
+# f451641bc3684251bee133a23fefd2ce
+msgid "There are many important differences between the touch-based Android platform and the mouse-based platforms that Ren'Py supports. Changes due to the Android software and hardware are:"
+msgstr ""
+
+#: ../../source/android.rst:46
+# da4a7c904ec243d08345cf2a0e108f3d
+msgid "The touchscreen is treated as if it was a mouse. However, it will only produce mouse events when the user is actively touching the screen. When the user is not touching the screen, the virtual pointer will move to the upper-left corner of the screen."
+msgstr ""
+
+#: ../../source/android.rst:51
+# 2c0fc121dd4a436c9810d485f887f716
+msgid ":func:`ImageDissolve`, :func:`AlphaDissolve`, and :func:`AlphaBlend` are not supported."
+msgstr ""
+
+#: ../../source/android.rst:54
+# 203dc5c72c024745bdd8188993a19f10
+msgid "Functions that render to a texture can only render an opaque texture. This means that the :func:`Dissolve` and :func:`Pixellate` transitions will only produce opaque output."
+msgstr ""
+
+#: ../../source/android.rst:58
+# c19f5552118e4ffdb397acf41e0fd979
+msgid "The :propref:`focus_mask` property is not supported. It will be treated as if all pixels in the mask are opaque."
+msgstr ""
+
+#: ../../source/android.rst:61
+# 62399f27b77e43758d3d3dace84973d7
+msgid "Movie playback is not supported."
+msgstr ""
+
+#: ../../source/android.rst:63
+# ef9724be7c7b45da82986680eaab7408
+msgid "Launching the web browser is not supported."
+msgstr ""
+
+#: ../../source/android.rst:65
+# 0a0cc92c7e534186bfdf2ef1975d634c
+msgid "Some python modules (including network communication) modules are not supported."
+msgstr ""
+
+#: ../../source/android.rst:68
+# ad32b72615574aab91d95f4966d86e08
+msgid "Ren'Py cannot change the device volume. However, the android volume buttons work normally."
+msgstr ""
+
+#: ../../source/android.rst:71
+# 22d456e94456474a9869ca505d6f9571
+msgid "In addition, there are a few changes that may be necessary due to human factors:"
+msgstr ""
+
+#: ../../source/android.rst:74
+# 9a72bc02aace405ea3433d738218b521
+msgid "Since Android smartphones can be smaller than a computer monitor, it may be necessary to increase text size."
+msgstr ""
+
+#: ../../source/android.rst:77
+# 81779bd7fa344a16ae244400ccbd6a1a
+msgid "Since touch input is less accurate than mouse input, touch-based buttons need to be larger than mouse-based ones."
+msgstr ""
+
+#: ../../source/android.rst:80
+# b92c17e516334ba887e0c858fa0b0365
+msgid "To help you adapt to these differences, Ren'Py for Android automatically selects a screen variant of ``touch``. It also selects screen variants of ``phone`` or ``tablet`` based on the device's screen size. See :ref:`screen-variants` for more information."
+msgstr ""
+
+#: ../../source/android-packaging.rst:4
+# ee6a1253481947d6aa2a904c40ecdd94
+msgid "Building Android Applications"
+msgstr ""
+
+#: ../../source/android-packaging.rst:6
+# 585d2dede954416b97636eec1397e3d1
+msgid "|PGS4A| contains tools that help you take a packaging-centric approach to Android game development. In this approach, you will use a PC to build an Android package and upload it to your device. You can then run the game like any Android application. When it works correctly, you can upload the package you make to the Android Market or other app stores."
+msgstr ""
+
+#: ../../source/android-packaging.rst:13
+# 988682ef22bf48c6b67965518d0b7872
+msgid "Building your first package takes four steps:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:15
+# 4d11676b6cf640d7879881ed31e151d2
+msgid "Download and install |PGS4A|, Python 2.7, the Java Development Kit, and Android USB Drivers (scroll down for links)."
+msgstr ""
+
+#: ../../source/android-packaging.rst:18
+# b5f6886446e7456c92bfdb307a4efadd
+msgid "Use the ``android.py installsdk`` command to install the Android SDK and set up your development environment."
+msgstr ""
+
+#: ../../source/android-packaging.rst:21
+# 90040114c7394418b4464382bba35441
+msgid "Use the ``android.py configure`` command to configure Android-specific settings in your game."
+msgstr ""
+
+#: ../../source/android-packaging.rst:24
+# aacb83a1b5b646a29d9206478e3a2e91
+msgid "Use the ``android.py build`` command to build a package, and to install the package on your device."
+msgstr ""
+
+#: ../../source/android-packaging.rst:27
+# 341654f1140b42e9bbfb6e7a4957b93c
+msgid "Once you've finished these four steps, you'll have a runnable Android package. You'll only need to run step 3 when you decide to make changes to your game's configuration or when configuring a new game entirely; you'll run step 4 most often, whenever you need to make a new build of your game."
+msgstr ""
+
+#: ../../source/android-packaging.rst:34
+# a5506def6d0c45cc929d0d1f8283adb8
+msgid "Host Platform Support"
+msgstr ""
+
+#: ../../source/android-packaging.rst:36
+# 510129fe152a4e50a54a71850c12b4bd
+msgid "We've tested |PGS4A| on Linux and Windows computers. While it should work on Mac OS X, we haven't tested it there, so there may be problems encountered. The examples we give will be for Linux and Windows."
+msgstr ""
+
+#: ../../source/android-packaging.rst:40
+# 99f08e39931d468185af7d9d97a9d318
+msgid "The |PGS4A| tools are command-line based. We will try to assist you with examples to familiarize you with the command line on Windows."
+msgstr ""
+
+#: ../../source/android-packaging.rst:45
+# 9bc8775fed34445492e11bbcc5750d22
+msgid "Step 1: Installing |PGS4A| and its Dependencies"
+msgstr ""
+
+#: ../../source/android-packaging.rst:47
+# e9720f65a94d45ceae9370cf1dd21e21
+msgid "There are four things you may need to manually download and install before you can run |PGS4A|:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:50
+# 94edd1bccae94f30be396064dc7895ca
+msgid "**Java Development Kit.** The Java Development Kit (JDK) contains several tools that are used by |PGS4A|, including the tools used to generate keys and sign packages. It can be downloaded from:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:55
+# 3b9f00b56427470082ba2089d0c90bcd
+msgid "http://www.oracle.com/technetwork/java/javase/downloads/index.html"
+msgstr ""
+
+#: ../../source/android-packaging.rst:57
+# fb59c7c499aa40ff93e0a9dda98dde5b
+msgid "Please note that the developer-focused JDK is different from the user-focused JRE, and you'll need the JDK to create Android packages."
+msgstr ""
+
+#: ../../source/android-packaging.rst:61
+# 0a39e21d56104a1bb11058294f4a1aa0
+msgid "**Python 2.7.** Python 2.7 is required to run the android.py script that's included with |PGS4A|. It can be downloaded from:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:65
+# 308418fa56d94ac6bf63e02e93452c57
+msgid "http://python.org/download/releases/2.7.2/"
+msgstr ""
+
+#: ../../source/android-packaging.rst:67
+# cc62f9733f434e9cb4608f7a0081f90d
+msgid "|PGS4A| is not compatible with Python 3 at this time."
+msgstr ""
+
+#: ../../source/android-packaging.rst:70
+# 31f78d206b5541d0b94d7f1bd02147a7
+msgid "**Android Device Drivers.** On Windows, you may want to install a device driver to access your device, although this is not necessary. Links to android device drivers can be found at:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:74
+# 2872a4cd3640434080839aaa3d0ea7d8
+msgid "http://developer.android.com/sdk/oem-usb.html"
+msgstr ""
+
+#: ../../source/android-packaging.rst:76
+# a1f1389e5892451583978438b3f586a9
+msgid "On Linux or OS X, you won't need a device driver. If you can't access your device, you may need to read:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:79
+# 5fce184b6643466894d779fccd4c96cb
+msgid "http://developer.android.com/guide/developing/device.html#setting-up"
+msgstr ""
+
+#: ../../source/android-packaging.rst:81
+# 372430a0b73541f1ae977026d3fa4871
+msgid "However, modern versions of Linux and OS X should just work."
+msgstr ""
+
+#: ../../source/android-packaging.rst:86
+# ef42144a47054510bcae5b324a3fab7e
+msgid "**RAPT Itself.** The latest version of |PGS4A| can be downloaded from:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:88
+# 9bce309fc34440f88c0521917b50d526
+msgid "|PGS4A_URL|"
+msgstr ""
+
+#: ../../source/android-packaging.rst:97
+# 3bd2397cacde40339a6b1e8de680e4ea
+msgid "Once |PGS4A| has been downloaded, you should extract it using an archive program. The directory contained in that archive is what we will refer to as the |PGS4A| directory."
+msgstr ""
+
+#: ../../source/android-packaging.rst:103
+# a4c3e813b04e49ec85d86f83c63a5f29
+msgid "Aside: Running android.py"
+msgstr ""
+
+#: ../../source/android-packaging.rst:105
+# 667225ac9818413c9df191be89b1fc2d
+msgid "In this documentation, we'll ask you to run the ``android.py`` command. The technique we use to run this varies based on the system you're on."
+msgstr ""
+
+#: ../../source/android-packaging.rst:109
+# 4f3f505c3aeb41828374993ec807fdbd
+msgid "In all cases, you should run ``android.py`` from within the |PGS4A| directory. (That is, the directory containing ``android.py`` itself.)"
+msgstr ""
+
+#: ../../source/android-packaging.rst:113
+# 768bb7fa78cf4525ab17e4083d623f36
+msgid "On Windows, to do this, you will need to open up the command line by pressing and holding down the Windows key and 'R'. In the small window that pops up write \"cmd\" and press Enter. This should bring up the command line."
+msgstr ""
+
+#: ../../source/android-packaging.rst:117
+# aa73c154f3254060862991e2689f60c4
+msgid "To run the command from within the |PGS4A| directory you need to navigate to it from the command line. Find out where you extracted |PGS4A| and copy the path from Explorer (just click in the address bar so the path turns blue and press Ctrl+c). In the command prompt, write ``cd`` then a space, a double-quote, paste the path you just copied from Explorer (right click and choose ``paste``), then another double-quote."
+msgstr ""
+
+#: ../../source/android-packaging.rst:126
+# c4f04a3a84e74f0a810e07a70ec22e6e
+msgid "Let's assume you extracted RAPT to C:\\\\tools\\\\RAPT. In the command line write::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:136
+# c7c8145981ef4782b0e961602dd82944
+msgid "Now you're within the |PGS4A| directory."
+msgstr ""
+
+#: ../../source/android-packaging.rst:138
+# 111bab615af14d5893d4fb3ef1636208
+msgid "On Windows, if the .py extension is registered to Python 2.7, you then can just run::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:143
+# 4035d31f3ee34a338778317b0944bb0a
+msgid "If you don't know what the above means or you don't want to do it, you will have to add the full path to Python to each command in the following steps of this guide beginning with 'android.py'. If you installed Python to the default location, the above command would become::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:150
+# 8ce40d0c7db14640a143836427b5267a
+msgid "If you installed Python to a different location, then find your Python install in Explorer, click in the address bar and copy the path, then replace ``C:\\python27`` with the path you copied instead - leaving ``\\python.exe`` on the"
+msgstr ""
+
+#: ../../source/android-packaging.rst:154
+# 5828928abf094d92ae2f5e553f267dac
+msgid "end. So if your Python install is in ``C:\\tools\\python``, you would type::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:160
+# 6fee666e769c439c919c1677e8d81d8b
+msgid "If the path to Python that you copied has any spaces in - for example, if you had installed it in the ``Program Files`` directory - you will need to put double quotes at the beginning of the whole command and just after ``python.exe``::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:168
+# cbbc1bed89724470bd107557e19858b6
+msgid "On Linux, you may need to prefix the command with the current directory::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:173
+# 6e8a4af6315c40b38badd8da410e8bc1
+msgid "For the rest of this documentation, we'll just use ``android.py`` - if you had to include the path to Python in the example above, you will need to do the same thing every time you see ``android.py`` in these instructions."
+msgstr ""
+
+#: ../../source/android-packaging.rst:179
+# c8c57f25732144d988b2ec26af545cc1
+msgid "Step 2: Set up the Android SDK and Development Environment"
+msgstr ""
+
+#: ../../source/android-packaging.rst:181
+# 1abb15bfa3a84b8e82ac9706ac41c86b
+msgid "The next step is to set up the Android SDK and the rest of your development environment. This step will:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:184
+# b86fe4e2bb8c439a989f10e4cec2c188
+msgid "Check that the JDK is installed properly."
+msgstr ""
+
+#: ../../source/android-packaging.rst:185
+# 988c2f2906e04329a5569b7007d1c073
+msgid "Install Apache Ant."
+msgstr ""
+
+#: ../../source/android-packaging.rst:186
+# d25bc23a04094cc49e7d0b6fb1d0a7ef
+msgid "Install the Android SDK."
+msgstr ""
+
+#: ../../source/android-packaging.rst:187
+# 241547e7886e4b6baa5af9082ba40839
+msgid "Use the Android SDK to install the appropriate development packages."
+msgstr ""
+
+#: ../../source/android-packaging.rst:189
+# 5127fd20e7cc49a291248b96a7cf0e51
+msgid "Create a signing key that will be used to sign packages that are placed on the market (android.keystore: this will be generated in the |PGS4A| directory)."
+msgstr ""
+
+#: ../../source/android-packaging.rst:192
+# 012d357004374d75a7c14249ad0c8586
+msgid "This step requires Internet access."
+msgstr ""
+
+#: ../../source/android-packaging.rst:194
+# a8ebabcaecf34325995d099c54628f0e
+msgid "To perform this step, run::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:198
+# 301b64e2319d44368a1716d1c367285e
+msgid "|PGS4A| will report on what it's doing. It will also prompt you with warnings about licenses, and ask if you want it to generate a key."
+msgstr ""
+
+#: ../../source/android-packaging.rst:203
+# 5acdb014ad704d5d9d1afd5da7dbb684
+msgid "The key generated by |PGS4A| is created with a standard passphrase. You should really use keytool to generate your own signing keys."
+msgstr ""
+
+#: ../../source/android-packaging.rst:207
+# 5f4141fd11b84733a91aeb4b290a4d53
+msgid "http://docs.oracle.com/javase/1.3/docs/tooldocs/win32/keytool.html"
+msgstr ""
+
+#: ../../source/android-packaging.rst:209
+# 2f341605a1d24c48b2cbb63184c3686c
+msgid "At the very least, you should keep the android.keyring file in a safe place. You should also back it up, because without the key, you won't be able to upload the generated applications."
+msgstr ""
+
+#: ../../source/android-packaging.rst:296
+# c001606bcdb84de687817985a0968cee
+msgid "In the examples below, ``mygame`` is short for the path to the game you're working on, relative to the current directory. When you make your own game, you should change ``mygame`` to something else. The easiest way to do this, of course, is to make a copy of your game's directory inside the |PGS4A| directory and then replace ``mygame`` in the examples below with the name of your game's directory."
+msgstr ""
+
+#: ../../source/android-packaging.rst:304
+# 0d26050771de4dc69765a2042de16b5b
+msgid "Step 3: Configure Your Game"
+msgstr ""
+
+#: ../../source/android-packaging.rst:306
+# 1c5488913c5a4640bc9eca20dab60d81
+msgid "Before building a package, you must give |PGS4A| some information about your game. You can do this with the following command::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:311
+# 7733676206614c218bb1073d96554340
+msgid "This will ask you a series of questions about your game, and store that information in a file in the game directory."
+msgstr ""
+
+#: ../../source/android-packaging.rst:314
+# fbd9ca0ce80648baa2d04c4f316ec15c
+msgid "If you need to change the information - for example, if you release a new version of your game - you can re-run the configure command. Your previous choices will be remembered."
+msgstr ""
+
+#: ../../source/android-packaging.rst:320
+# 7b0736e0a1974569b4299a2098174c04
+msgid "Step 4: Build and Install the Package"
+msgstr ""
+
+#: ../../source/android-packaging.rst:322
+# 434dabd51141413abedf58936e9b0714
+msgid "Finally, you can build and install the package. This is done with a command like::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:327
+# 4be7c72c986448758811eace45e0f214
+msgid "This command will build a releasable version of your game, and then install it on the connected device. Please look at the output of this command to make sure it succeeds."
+msgstr ""
+
+#: ../../source/android-packaging.rst:331
+# bc1ee690447f4f6796f650744a1ba3fe
+msgid "Once the game successfully installs, you can touch its icon in your device's launcher to start it running."
+msgstr ""
+
+#: ../../source/android-packaging.rst:334
+# 9b2aa1b9d04e4bfeba6e851bf68c0ea0
+msgid "If you'd rather just copy the game's apk file to your Android device manually, you can just run::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:338
+# 1075ea02f0974c13a81cb422bded2817
+msgid "Then navigate to the 'bin' directory inside |PGS4A| and copy the file mygame-release.apk into your Android Device. You will then need to find the .apk file in your Android device using your file application and open it to install the"
+msgstr ""
+
+#: ../../source/android-packaging.rst:341
+# 678699fcff7e4705bb2422df292b0a57
+msgid "game."
+msgstr ""
+
+#: ../../source/android-packaging.rst:343
+# 47dcd85bfd43438b89e76362c2e022b7
+msgid "The build command passes the options after the game name to the ant tool, which is responsible for creating the Android package. Other commands are also possible - for a list, run::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:351
+# 211578d620b6443e92823b2bbdd3ea95
+msgid "Viewing Debug Output"
+msgstr ""
+
+#: ../../source/android-packaging.rst:353
+# 856a4f9bd6d543cda9d98503ecadbbdd
+msgid "To view debug output from your application, run the logcat command::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:357
+# 6e3f1a34fb0a4e9cb76a4a1bfaf897c9
+msgid "This command runs the ``adb logcat`` command in a mode that selects only Python output."
+msgstr ""
+
+#: ../../source/android-packaging.rst:361
+# 227f0d31aa5047a1a95438c15380d4f5
+msgid "Troubleshooting and Support"
+msgstr ""
+
+#: ../../source/android-packaging.rst:363
+# 3b94632cb4da4bc98051878fdec58c87
+msgid "Here's a list of errors that you might encounter and possible solutions:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:365
+# 0e6bd2f79bbd4f48bc2f0729947e7330
+msgid "When trying to run::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:369
+# f0326aa28e5749e4b1fb9c6e168993f0
+msgid "After having associated .py files with Python 2.7, if you get::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:378
+# d0d02b2df2fd4caf9afadc31c4ded166
+msgid "This may be related to having more than one version of Python installed on your system. Try running android.py with the full path to Python, e.g.::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:383
+# 0ee4d945c85949e88b2a21e13a001432
+msgid "(If this works, then you will need to include the full path to Python in every command, as if you didn't have the file type associated.)"
+msgstr ""
+
+#: ../../source/android-packaging.rst:387
+# fdeb901dc51c41789d0ae6b6b47ae625
+msgid "If while downloading Apache Ant you get::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:392
+# 610feb371a884a2a9d052b9c31def910
+msgid "Just try installing the sdk again with the same command."
+msgstr ""
+
+#: ../../source/android-packaging.rst:395
+# 395d7256667d429f9139c080ab618c8f
+msgid "If while configuring your game you get something like::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:399
+# d860e5c8732a426b846c0b1e3d9aea3e
+msgid "You may have inserted an invalid character in the package name you used during configuration (in this case a hyphen '-'). You'll have to use a different package name which does not contain anything other than letters and dots."
+msgstr ""
+
+#: ../../source/android-packaging.rst:404
+# 9d20062989a44eee9f4965e4691ccabe
+msgid "If while configuring you get something like::"
+msgstr ""
+
+#: ../../source/android-packaging.rst:417
+# 1ddc087096964d239c7b3889f8ab4384
+msgid "You should check whether you specified the correct path to your game directory. The easiest way to be sure is to put your game's directory inside the |PGS4A| directory, and simply supply the name of your game's directory. (If your game's directory name has spaces, you may need to surround it with double quotes.)"
+msgstr ""
+
+#: ../../source/android-packaging.rst:423
+# a4883bb2685b48189d8c75c351bcbbf0
+msgid "If building your game gives you an error like:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:425
+# 5fafc6ff265f46cea05573b8345e55ee
+msgid "Error: Target id android-8 is not valid. Use 'android list targets' to get the target ids"
+msgstr ""
+
+#: ../../source/android-packaging.rst:427
+# 142123da4cc34ccb8ed68b6574469e30
+msgid "You might want to check whether you have Android 2.2 (API 8) in the Android SDK manager. You can run it by navigating to the android-sdk/tools directory inside the |PGS4A| directory and run android.bat."
+msgstr ""
+
+#: ../../source/android-packaging.rst:434
+# 0638371d6b6b4b66a08a493a918c74f8
+msgid "If Android 2.2 (API 8) is missing like in the above image, click 'Updates' and then 'Install Updates'."
+msgstr ""
+
+#: ../../source/android-packaging.rst:436
+# 4ccfc4e95fda4bae8b0fe923f22b241c
+msgid "Once the updates are installed, make sure Android 2.2 (API 8) and SDK platform are ticked:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:441
+# ebf79ebecb3145a0a435575b77aaf5de
+msgid "And install the packages. Then, try building your game again."
+msgstr ""
+
+#: ../../source/android-packaging.rst:445
+# 6dad92e5ccb84f0ebeedf5b86513244e
+msgid "If you still have questions or doubts you can try searching through or posting on the |PGS4A| thread over at the Lemmasoft forums:"
+msgstr ""
+
+#: ../../source/android-packaging.rst:448
+# 991982d39d144aaf938f5f369455b736
+msgid "http://lemmasoft.renai.us/forums/viewtopic.php?f=32&t=13987&hilit=rapt"
+msgstr ""
+

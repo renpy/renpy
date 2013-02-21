@@ -1,0 +1,442 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/displaying_images.rst:8
+# 1804df3a79b2410e8834a43fb481ba37
+msgid "Displaying Images"
+msgstr ""
+
+#: ../../source/displaying_images.rst:10
+# 050031258e9f4f59919f43b652fd8b49
+msgid "The defining aspect of a visual novel, lending its name to the form, are the visuals. Ren'Py contains four statements that control the display of images, and a model that determines the order in which the images are displayed. This makes it convenient to display images in a manner that is suitable for use in visual novels and other storytelling games."
+msgstr ""
+
+#: ../../source/displaying_images.rst:16
+# 4f7ff323394b4b8bb3d6bd400443fba7
+msgid "The four statements that work with images are:"
+msgstr ""
+
+#: ../../source/displaying_images.rst:18
+# 82a6c9a9d44749529f2133a222fb5a93
+msgid "``image`` - defines a new image."
+msgstr ""
+
+#: ../../source/displaying_images.rst:19
+# 8209ed38fb0940378a418d794edb8a7e
+msgid "``show`` - shows an image on a layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:20
+# 7ebee13505ee4b07bbdecd7ab7c14e9d
+msgid "``scene`` - clears a layer, and optionally shows an image on that layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:21
+# a606287e9093452e9c4aca513d8b343e
+msgid "``hide`` - removes an image from a layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:23
+# 6d52e49a955e4a24a58f8bf5a83ac2bd
+msgid "As abrupt changes of image can be disconcerting to the user, Ren'Py has the ``with`` statement, which allows effects to be applied when the scene is changed."
+msgstr ""
+
+#: ../../source/displaying_images.rst:29
+# 64ad8b4d1cb04402bf5dfeff25f332db
+msgid "Concepts"
+msgstr ""
+
+#: ../../source/displaying_images.rst:32
+# ab119d8ac7fd4766b2aff20eb347b247
+msgid "Image"
+msgstr ""
+
+#: ../../source/displaying_images.rst:34
+# dbd0eddb466f40929ba3f0f446cb21af
+msgid "An image is something that can be show to the screen using the show statement. An image consists of a name and a displayable. When the image is shown on a layer, the displayable associated with it is displayed on that layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:39
+# 062c4aa4c9e5469c88ce2a6d7db33146
+msgid "An :dfn:`image name` consists of one or more names, separated by spaces. The first component of the image name is called the :dfn:`image tag`. The second and later components of the name are the :dfn:`image attributes`."
+msgstr ""
+
+#: ../../source/displaying_images.rst:44
+# a906f69a7ebc4ac685912dc469480dfe
+msgid "For example, take the image name ``mary beach night happy``. The image tag is ``mary``, while the image attributes are ``beach``, ``night``, and ``happy``."
+msgstr ""
+
+#: ../../source/displaying_images.rst:48
+# 53505242a4c345dfa06964d41110b822
+msgid "A displayable is something that can be shown on the screen. The most common thing to show is a static image, which can be specified by giving the filename of the image, as a string. In the example above, we might use ``\"mary_beach_night_happy.png\"`` as the filename. However, an image may refer to :ref:`any displayable Ren'Py supports <displayables>`, not just static images. Thus, the same statements that are used to display images can also be used for animations, solid colors, and the other types of displayables."
+msgstr ""
+
+#: ../../source/displaying_images.rst:58
+# 9f2101d2ac8b4b50973d0782c8f38416
+msgid "Layer"
+msgstr ""
+
+#: ../../source/displaying_images.rst:60
+# 90b2bfb128d0462ca02d6b40f005bc87
+msgid "A layer is a list of displayables that are shown on the screen. Ren'Py supports multiple layers, including user-defined layers. The order of the layers is fixed within a game (controlled by the :var:`config.layers` variable), while the order of displayables within a layer is controlled by the order in which the scene and show statements are called, and the properties given to those statements."
+msgstr ""
+
+#: ../../source/displaying_images.rst:67
+# 26239b5ea4c94537a17408917523ad92
+msgid "The following layers are defined as part of Ren'Py:"
+msgstr ""
+
+#: ../../source/displaying_images.rst:72
+# 47ed95ed06ef4ee08a3e57be57a046a2
+msgid "master"
+msgstr ""
+
+#: ../../source/displaying_images.rst:70
+# e4930d30d39746fba72e7f6a9525ec0e
+msgid "This is the default layer that is used by the scene, show, and hide statements. It's generally used for backgrounds and character sprites."
+msgstr ""
+
+#: ../../source/displaying_images.rst:76
+# fdee7059e46c4bcca48f25bc21d2aa4d
+msgid "transient"
+msgstr ""
+
+#: ../../source/displaying_images.rst:75
+# 1ea6c442a13144c58caac65b23f7d620
+msgid "The default layer used by ui functions. This layer is cleared at the end of each interaction."
+msgstr ""
+
+#: ../../source/displaying_images.rst:79
+# ab6624f0f97d494f83f6b0dc3726883c
+msgid "screens"
+msgstr ""
+
+#: ../../source/displaying_images.rst:79
+# 4fa18688c3c04daca9f42d58354ee49d
+msgid "This layer is used by the screen system."
+msgstr ""
+
+#: ../../source/displaying_images.rst:84
+# 4baf0d2d35a94f1790267784d78d60d5
+msgid "overlay"
+msgstr ""
+
+#: ../../source/displaying_images.rst:82
+# f067e667db9b425ca6651b5e2e5686be
+msgid "The default layer used when a ui function is called from within an overlay function. This layer is cleared when an interaction is restarted."
+msgstr ""
+
+#: ../../source/displaying_images.rst:86
+# adfa81f7371e49b7bb598e18ad6c53c2
+msgid "Additional layers can be defined by updating :var:`config.layers`, and the various other layer-related config variables. Using :func:`renpy.layer_at_list`, one or more transforms can be applied to a layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:94
+# 44f691b184374604b4a9cba0de93d20d
+msgid "Image Statement"
+msgstr ""
+
+#: ../../source/displaying_images.rst:96
+# 9fd636a484bc4c49a98e32b5147d8e5d
+msgid "An image statement is used to define an image. An image statement consists of a single logical line beginning with the keyword ``image``, followed by an image name, an equals sign (``=``), and a displayable. For example::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:110
+# be333bd690044ee1974f3300b194920e
+msgid "The image statement must be run at init-time, before game code runs. When not contained inside an init block, image statements are run at init-time, as if they were placed inside an init block of priority 0."
+msgstr ""
+
+#: ../../source/displaying_images.rst:115
+# 3cb3a9add5514bf1bbfdb14e996855fa
+msgid "See also the :ref:`ATL variant of the image statement. <atl-image-statement>`"
+msgstr ""
+
+#: ../../source/displaying_images.rst:121
+# ffa9a25bb4f8440aaad224190befba7b
+msgid "Show Statement"
+msgstr ""
+
+#: ../../source/displaying_images.rst:123
+# 9e424e5b17154080b12c4a7fbd384c34
+msgid "The show statement is used to display an image on a layer. A show statement consists of a single logical line beginning with the keyword ``show``, followed by an image name, followed by zero or more properties."
+msgstr ""
+
+#: ../../source/displaying_images.rst:128
+# a1ebee48abc64cdba06c923e4e78c62e
+msgid "If the show statement is given the exact name of an existing image, that image is the one that is shown. Otherwise, Ren'Py will attempt to find a unique image that:"
+msgstr ""
+
+#: ../../source/displaying_images.rst:132
+# 0337b96ece894ff38ee354df806af494
+msgid "Has the same tag as the one specified in the show statement."
+msgstr ""
+
+#: ../../source/displaying_images.rst:133
+# f030ed5dddba4868b4b755ba3f00c45f
+msgid "Has all of the attributes given in the show statement."
+msgstr ""
+
+#: ../../source/displaying_images.rst:134
+# f4a09732992f45529ebd3fdaf484a396
+msgid "If an image with the same tag is already showing, shares the largest number of attributes with that image."
+msgstr ""
+
+#: ../../source/displaying_images.rst:137
+# 892985ab33454fb494b14ab11992bf05
+msgid "If a unique image cannot be found, an exception occurs."
+msgstr ""
+
+#: ../../source/displaying_images.rst:139
+# f98f033d4fdd4f1fafb41d903d1d6f01
+msgid "If an image with the same image tag is already showing on the layer, the new image replaces it. Otherwise, the image is placed above all other images in the layer. (That is, closest to the user.) This order may be modified by the zorder and behind properties."
+msgstr ""
+
+#: ../../source/displaying_images.rst:144
+# 6db1a8f790f54482934b48d8d4834e4d
+msgid "The show statement does not cause an interaction to occur. For the image to actually be displayed to the user, a statement that causes an interaction (like the say, menu, pause, and with statements) must be run."
+msgstr ""
+
+#: ../../source/displaying_images.rst:149
+# bb3603cd578141c989a7b604e9008768
+msgid "The show statement takes the following properties:"
+msgstr ""
+
+#: ../../source/displaying_images.rst:154
+# 35cfb2ec1ba845f1a911a9fd2e70ed0f
+msgid "``as``"
+msgstr ""
+
+#: ../../source/displaying_images.rst:152
+# d50d2c1595ca4b14aa980d4e32272f84
+msgid "The as property takes a name. This name is used in place of the image tag when the image is shown. This allows the same image to be on the screen twice."
+msgstr ""
+
+#: ../../source/displaying_images.rst:165
+# 6ad8d39ebbb14ac88426d8d266663386
+msgid "``at``"
+msgstr ""
+
+#: ../../source/displaying_images.rst:157
+# ac655c0f556a4832bebf839462d8cae6
+msgid "The at property takes one or more comma-separated simple expressions. Each expression must evaluate to a transform. The transforms are applied to the image in left-to-right order."
+msgstr ""
+
+#: ../../source/displaying_images.rst:162
+# 55b01c5525ad433ca68a64abfc939c25
+msgid "If no at clause is given, Ren'Py will retain any existing transform that has been applied to the image. If no transform exists, the image will be displayed using the :var:`default` transform."
+msgstr ""
+
+#: ../../source/displaying_images.rst:170
+# 08077aa88f414052962c5cf36a80706b
+msgid "``behind``"
+msgstr ""
+
+#: ../../source/displaying_images.rst:168
+# 729d39bee5374e28a2070ade0afe298e
+msgid "Takes a comma-separated list of one or more names. Each name is taken as an image tag. The image is shown behind all images with the given tags that are currently being shown."
+msgstr ""
+
+#: ../../source/displaying_images.rst:173
+#: ../../source/displaying_images.rst:264
+# 018d882723e4409cb0a7f1609bf8a32f
+# 8b1345d612114b3e8c9a40d14c7803de
+msgid "``onlayer``"
+msgstr ""
+
+#: ../../source/displaying_images.rst:173
+# 1e109fbc2a1242ffa8a64feadb526fc4
+msgid "Takes a name. Shows the image on the named layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:179
+# 2b6fae051ff84d41a831acbe31661abf
+msgid "``zorder``"
+msgstr ""
+
+#: ../../source/displaying_images.rst:176
+# 0830379462514dee88031533a4625d8a
+msgid "Takes an integer. The integer specifies the relative ordering of images within a layer, with larger numbers being closer to the user. This isn't generally used in Ren'Py code, but can be useful when porting code from other engines."
+msgstr ""
+
+#: ../../source/displaying_images.rst:181
+# df56e52790cc42cda10dcd57e89bf9c9
+msgid "Assuming we have the following images defined::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:187
+# 7a2e8bd87d2e4bdb98c04af6dd257884
+msgid "Some example show statements are::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:209
+# 87e057455df14581974fae9dffa8ce33
+msgid "**Show Expression.** A variant of the show statement replaces the image name with the keyword ``expression``, followed by a simple expression. The expression must evaluate to a displayable, and the displayable is shown on the layer. To hide the displayable, a tag must be given with the as statement."
+msgstr ""
+
+#: ../../source/displaying_images.rst:216
+#: ../../source/displaying_images.rst:266
+# e309fcb64e4a4c8cbe543ee6669ceaf8
+# 20c4dc3bca04488ead6b5053990b8020
+msgid "For example::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:223
+# 96f66dcfb18b40b08938d7cd263df0c9
+msgid "Scene Statement"
+msgstr ""
+
+#: ../../source/displaying_images.rst:225
+# f1d7ed7d05d443cca5e8fdbea3fa619d
+msgid "The scene statement removes all displayables from a layer, and then shows an image on that layer. It consists of the keyword ``scene``, followed by an image name, followed by zero or more properties. The image is shown in the same way as in the show statement, and the scene statement takes the same properties as the show statement."
+msgstr ""
+
+#: ../../source/displaying_images.rst:231
+# 7dda846b3e1e4b0f85d4d36c4ab292dd
+msgid "The scene statement is often used to show an image on the background layer. For example::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:236
+# 352037965c1c4abc83dbf7a6e691bcda
+msgid "**Scene Expression.** Like the show statement, the scene statement can take expressions instead of image names."
+msgstr ""
+
+#: ../../source/displaying_images.rst:240
+# 37a882c85d9d4373acf945e36321c32b
+msgid "**Clearing a layer.** When the image name is omitted entirely, the scene statement clears all displayables from a layer without showing another displayable."
+msgstr ""
+
+#: ../../source/displaying_images.rst:248
+# 3dd857f3445a402a84320159720b15c4
+msgid "Hide Statement"
+msgstr ""
+
+#: ../../source/displaying_images.rst:250
+# b84598b7b1b24618896e758038db3b91
+msgid "The hide statement removes an image from a layer. It consists of the keyword ``hide``, followed by an image name, followed by an optional property. The hide statement takes the image tag from the image name, and then hides any image on the layer with that tag."
+msgstr ""
+
+#: ../../source/displaying_images.rst:255
+# d471e4f531024c818d22c7756574077e
+msgid "Hide statements are rarely necessary. If a sprite represents a character, then a hide statement is only necessary when the character leaves the scene. When the character changes her emotion, it is preferable to use the show statement instead, as the show statement will automatically replace an image with the same tag."
+msgstr ""
+
+#: ../../source/displaying_images.rst:261
+# 3038c7cced8a4ad39a09859c018009e9
+msgid "The hide statement takes the following property:"
+msgstr ""
+
+#: ../../source/displaying_images.rst:264
+# aa5ad3c02d6348138324293f4d7f0fec
+msgid "Takes a name. Hides the image from the named layer."
+msgstr ""
+
+#: ../../source/displaying_images.rst:272
+# 9d7a5bc084e64c619c38ce661b3c9085
+msgid "You should never write::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:277
+# ee65cfdb2c134407a97dd58f37b86758
+msgid "Instead, just write::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:285
+# 63fa2f8899b54cefb40da8e066cc8902
+msgid "With Statement"
+msgstr ""
+
+#: ../../source/displaying_images.rst:287
+# d5810d0346484cd38ce09d942d592fd9
+msgid "The with statement is used to apply a transition effect when the scene is changed, making showing and hiding images less abrupt. The with statement consists of the keyword ``with``, followed by a simple expression that evaluates either to a transition object or the special value ``None``."
+msgstr ""
+
+#: ../../source/displaying_images.rst:293
+# ae1d6902dfe64779b689b8517ef1b1e1
+msgid "The transition effect is applied between the contents of the screen at the end of the previous interaction (with transient screens and displayables hiddden), and the current contents of the scene, after the show and hide statements have executed."
+msgstr ""
+
+#: ../../source/displaying_images.rst:298
+# ef5abe7d98374d1f86f4fe0fb0a16821
+msgid "The with statement causes an interaction to occur. The duration of this interaction is controlled by the user, and the user can cause it to terminate early."
+msgstr ""
+
+#: ../../source/displaying_images.rst:302
+# 56fff266478644f89c2537f97c35dec0
+msgid "For a full list of transitions that can be used, see the chapter on :ref:`transitions <transitions>`."
+msgstr ""
+
+#: ../../source/displaying_images.rst:305
+# aa880e31f7bb4e219807b4f3d93224eb
+msgid "An example of the with statement is::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:314
+# 70feb70104154ac0a764419f183f8c57
+msgid "This causes two transitions to occur. The first with statement uses the ``dissolve`` transition to change the screen from what was previously shown to the washington background. (The ``dissolve`` transition is, by default, defined as a .5 second dissolve.)"
+msgstr ""
+
+#: ../../source/displaying_images.rst:319
+# 56a24797b5404fe48f2365925cf2b377
+msgid "The second transition occurs after the Eileen and Lucy images are shown. It causes a dissolve from the scene consisting solely of the background to the scene consisting of all three images - the result is that the two new images appear to dissolve in simultaneously."
+msgstr ""
+
+#: ../../source/displaying_images.rst:327
+# 7845be2b65534986ab99213eebf6dbb6
+msgid "With None"
+msgstr ""
+
+#: ../../source/displaying_images.rst:329
+# dee4f0071190467e889162f50e10452d
+msgid "In the above example, there are two dissolves. But what if we wanted the background to appear instantly, followed by a dissolve of the two characters? Simply omitting the first with statement would cause all three images to dissolve in - we need a way to say that the first should be show instantly."
+msgstr ""
+
+#: ../../source/displaying_images.rst:335
+# af8e6336b8404adb8c008705f1070a77
+msgid "The with statement changes behavior when given the special value ``None``. The ``with None`` statement causes an abbreviated interaction to occur, without changing what the user sees. When the next transition occurs, it will start from the scene as it appears at the end of this abbreviated interaction."
+msgstr ""
+
+#: ../../source/displaying_images.rst:341
+# d0ec1b0f80ca42b5957078ed9d7f7c2b
+msgid "For example, in the code::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:350
+# 510974d67c5043b7bf66abceb8b3258d
+msgid "Only a single transition occurs, from the washington background to the scene consisting of all three images."
+msgstr ""
+
+#: ../../source/displaying_images.rst:354
+# b4a612f5cd19417a80ce457da48099b3
+msgid "With Clause of Scene, Show, and Hide Statements"
+msgstr ""
+
+#: ../../source/displaying_images.rst:356
+# 56a07cd6852f418e97542d6f3853fa55
+msgid "The show, scene, and hide statements can take an optional with clause, which allows a transition to be combined with showing or hiding an image. This clause follows the statements at the end of the same logical line. It begins with the keyword ``with``, followed by a simple expression."
+msgstr ""
+
+#: ../../source/displaying_images.rst:362
+# 9e91c82f28fb494294cef76788354fef
+msgid "The with clause is equivalent to preceding the line with a ``with None`` statement, and following it by a :ref:`with statement <with-statement>` containing the text of the with clause. For example::"
+msgstr ""
+
+#: ../../source/displaying_images.rst:369
+# a15f1eb9315b4d0d99934c0ffefb333b
+msgid "is equivalent to::"
+msgstr ""
+

@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/distributor.rst:5
+# dbe37bb6f7934083b6734c069cfa8b9f
+msgid "Distributor Notes"
+msgstr ""
+
+#: ../../source/distributor.rst:8
+# c7f1baab9b57422b9fef048ddd5ecbb6
+msgid "6.12.0"
+msgstr ""
+
+#: ../../source/distributor.rst:10
+# 1437bc61dbe641aebdb5f133fb1a6a6c
+msgid "Ren'Py now creates a number of binary modules that live in the renpy.display package. As long as they go in the same place as _renpy.so, they should be picked up automatically."
+msgstr ""
+
+#: ../../source/distributor.rst:16
+# d5897fe3793a43b18444a88ebdacb501
+msgid "6.11.0"
+msgstr ""
+
+#: ../../source/distributor.rst:18
+# 2672f8636c6247bbbd0c0fd64322a144
+msgid "Ren'Py now depends on:"
+msgstr ""
+
+#: ../../source/distributor.rst:20
+# a8956a16e19d495080abebcfaebdfbe1
+msgid "Python 2.6"
+msgstr ""
+
+#: ../../source/distributor.rst:21
+# 2c6c54cb63f249a185bc3cdb29c48910
+msgid "OpenGL"
+msgstr ""
+
+#: ../../source/distributor.rst:22
+# 886200a3948142ac984168f79329e243
+msgid "The GL Extension Wrangler Library: http://glew.sourceforge.net/"
+msgstr ""
+
+#: ../../source/distributor.rst:23
+# b71c99fba5684a7b98ec0dabf81b0c20
+msgid "The argparse Python module: http://code.google.com/p/argparse/"
+msgstr ""
+

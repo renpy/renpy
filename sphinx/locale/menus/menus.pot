@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/menus.rst:9
+# 534c69ce58544b6c90183ffd541a5e14
+msgid "In-Game Menus"
+msgstr ""
+
+#: ../../source/menus.rst:11
+# 1e2071f5879440939aacd3108d0e2539
+msgid "In many visual novels, the player is asked to make choices that control the outcome of the story. The Ren'Py language contains a menus statement that makes it easy to present choices to the user."
+msgstr ""
+
+#: ../../source/menus.rst:15
+# daa4404c354b43a4babfde249ac3b7cf
+msgid "Here's an example of a menu statement::"
+msgstr ""
+
+#: ../../source/menus.rst:35
+# d7471b1e18234ab398719409b11c64dc
+msgid "The menu statement begins with the keyword menu. This may be followed by a label name, in which case it's equivalent to preceding the menu with that label. For example::"
+msgstr ""
+
+#: ../../source/menus.rst:42
+# dcfbb41599c546908bfcb9be8592d7e5
+msgid "The menu statement is followed by an indented block. This block may contain a :ref:`say statement <say-statement>`, and must contain at least one menu choice. If the say statement is present, it is displayed on the screen at the same time as the menu."
+msgstr ""
+
+#: ../../source/menus.rst:47
+# ce38b6b642984263a36dbdc76b6d42fa
+msgid "**Menu Choices.** A menu choice is an option the user can select from the in-game menu. A menu choice begins with a string. The string may be followed by an if-clause, which makes the choice conditional. The menu choice ends with a colon, and must be followed by a block of Ren'Py statements."
+msgstr ""
+
+#: ../../source/menus.rst:54
+# 812c527ba4e041239be9b6d107f83491
+msgid "When the choice is selected, the block of code is run. If execution reaches the end of this block of code, it continues with the statement after the end of the menu statement."
+msgstr ""
+
+#: ../../source/menus.rst:58
+# dc059faefc3740fba3f2a6fd7ca670f7
+msgid "An if-clause consists of the keyword ``if``, followed by a python expression. The menu choice is only displayed if the expression is true. In the following menu::"
+msgstr ""
+
+#: ../../source/menus.rst:70
+# a26b1d75f6fb45b98e74b88fe1658d29
+msgid "The third choice will only be presented if the drank_tea variable is true."
+msgstr ""
+

@@ -1,0 +1,239 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/statement_equivalents.rst:8
+# 6303b2e0428b4ed49ca5c4666e3ee4de
+msgid "Statement Equivalents"
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:10
+# 77846d5739524b9c94559ac5c903e906
+msgid "To allow Ren'Py to be scripted in python, each Ren'Py statement has equivalent Python code. This usually consists of a Python function, but may also consist of a code pattern that performs an action equivalent to the statement."
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:17
+# 8b80a638330a41a39ab02a99ea50a3de
+msgid "Dialogue"
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:19
+# 4f57cd04579f455aae7e3fa807f1e303
+msgid "The Ren'Py say statement is equivalent to calling the character object as a function. The following code displays the same line twice::"
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:26
+# 73415dfbad01470a9f668b7ec8b14e39
+msgid "Displaying narration can be done the same way, by using the ``narrator`` character. When calling a character, it's possible to supply the keyword argument `interact`. When interact is false, Ren'Py will display the character dialogue box, and will then return before performing an interaction."
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:32
+# 75de236d2bdd4081b9719e3d20532d21
+msgid "This equivalence of characters and function objects works in the other direction as well. It is possible to declare a python function, and then use that function in the place of a character object. For example, the following function uses a variable to choose between two characters. ::"
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:59
+# 9fe0536f02534077bf8c0c9cf1d15ff8
+msgid "A function used in this way should either ignore unknown keyword arguments, or pass them to a character function. Doing this will allow the game to continue working if Ren'Py adds additional keyword arguments to character calls."
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:66
+# 8b12920353d048c78916a374521f854c
+msgid "Displaying Images"
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:68
+# 513060eb45cb486196febe409f51c4df
+msgid "The image, scene, show, and hide statements each have an equivalent python function."
+msgstr ""
+
+#: ../../source/inc/se_images:5
+# 6813f458660042d48b49924320981a87
+msgid "Hides an image from a layer. The python equivalent of the hide statement."
+msgstr ""
+
+#: ../../source/inc/se_images:9
+#: ../../source/inc/se_images:20
+#: ../../source/inc/se_images:49
+# 5d60d3b7bf184e708899b6b685e0aab1
+# 9b3d0a16547a4b5e96e712282abf564c
+# 0b7e04e13c144c2bb198fc811809e768
+msgid "`name`"
+msgstr ""
+
+#: ../../source/inc/se_images:8
+# 8633727af9fb42bc9e5018391694a454
+msgid "The name of the image to hide. Only the image tag is used, and any image with the tag is hidden (the precise name does not matter)."
+msgstr ""
+
+#: ../../source/inc/se_images:11
+#: ../../source/inc/se_images:57
+# 7a74083544d6433c966d03024d5000be
+# 17e21cae50824e569ade2932470e2cb5
+msgid "`layer`"
+msgstr ""
+
+#: ../../source/inc/se_images:12
+# bd25b860b3854194b8e7fd9917af14cc
+msgid "The layer on which this function operates."
+msgstr ""
+
+#: ../../source/inc/se_images:16
+# a0a10e1592414339b29a04b4fff19416
+msgid "Defines an image. This function is the python equivalent of the image statement."
+msgstr ""
+
+#: ../../source/inc/se_images:20
+# 8f6afd6e7ae747e980cc36e57d3e19fe
+msgid "The name of the image to display, a string."
+msgstr ""
+
+#: ../../source/inc/se_images:23
+# 4a8615d220ce46819b87e5dd5f9cf815
+msgid "`d`"
+msgstr ""
+
+#: ../../source/inc/se_images:23
+# 156c25dc24b14963be16a46e095f0235
+msgid "The displayable to associate with that image name."
+msgstr ""
+
+#: ../../source/inc/se_images:25
+# 16746998a3cd4f96a848b4dd072f1844
+msgid "This function may only be run from inside an init block. It is an error to run this function once the game has started."
+msgstr ""
+
+#: ../../source/inc/se_images:30
+# 9dc29ee04c8748e9adf82b17a17e7745
+msgid "Removes all displayables from `layer`. This is equivalent to the scene statement, when the scene statement is not given an image to show."
+msgstr ""
+
+#: ../../source/inc/se_images:33
+# 4a7dd49afcab4766a9dc6e7e0c85cf48
+msgid "A full scene statement is equivalent to a call to renpy.scene followed by a call to :func:`renpy.show`. For example::"
+msgstr ""
+
+#: ../../source/inc/se_images:38
+# 542b9aa2200e416fbb5b4fbbd2ae58bc
+msgid "is equivalent to::"
+msgstr ""
+
+#: ../../source/inc/se_images:45
+# 35967c1eb05d40d99037f1c81b7e716d
+msgid "Shows an image on a layer. This is the programmatic equivalent of the show statement."
+msgstr ""
+
+#: ../../source/inc/se_images:49
+# 4e6604540d34441bbad67652a757dc73
+msgid "The name of the image to show, a string."
+msgstr ""
+
+#: ../../source/inc/se_images:53
+# 1610efa473cd4f9c9ff15c70a084fb5b
+msgid "`at_list`"
+msgstr ""
+
+#: ../../source/inc/se_images:52
+# cf823cf056954f3ebfcd638c37bd9bba
+msgid "A list of transforms that are applied to the image. The equivalent of the ``at`` property."
+msgstr ""
+
+#: ../../source/inc/se_images:56
+# f7c56bb0f7104175a0ead06fb740388f
+msgid "A string, giving the name of the layer on which the image will be shown. The equivalent of the ``onlayer`` property."
+msgstr ""
+
+#: ../../source/inc/se_images:63
+# 7e114628bf134a95a132e36cf289b330
+msgid "`what`"
+msgstr ""
+
+#: ../../source/inc/se_images:60
+# 5607700ed4f24cd2bf1f3f0fc8eef38a
+msgid "If not None, this is a displayable that will be shown in lieu of looking on the image. (This is the equivalent of the show expression statement.) When a `what` parameter is given, `name` can be used to associate a tag with the image."
+msgstr ""
+
+#: ../../source/inc/se_images:66
+# 54a1c06515e147609a48d2decc54d83d
+msgid "`zorder`"
+msgstr ""
+
+#: ../../source/inc/se_images:66
+# 956d32e2c23a4d4c9b3d58cf69a691c8
+msgid "An integer, the equivalent of the ``zorder`` property."
+msgstr ""
+
+#: ../../source/inc/se_images:70
+# 1f4e0fb1d3e24ea9a685001d7e09da8b
+msgid "`tag`"
+msgstr ""
+
+#: ../../source/inc/se_images:69
+# 5c3d121342924d8ba8d578d2c1c7d742
+msgid "A string, used to specify the the image tag of the shown image. The equivalent of the ``as`` property."
+msgstr ""
+
+#: ../../source/inc/se_images:73
+# 50136a4bd91f4d34838179cad1afe939
+msgid "`behind`"
+msgstr ""
+
+#: ../../source/inc/se_images:73
+# ee04e3cab4774d8eac8bbce5a58a7e8a
+msgid "A list of strings, giving image tags that this image is shown behind. The equivalent of the ``behind`` property."
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:74
+# e259baa0535d440cad3047a8a257a144
+msgid "Transitions"
+msgstr ""
+
+#: ../../source/statement_equivalents.rst:76
+# e417bc2a837a4855bc1a1aa3ab933fca
+msgid "The equivalent of the with statement is the renpy.with_statement function."
+msgstr ""
+
+#: ../../source/inc/se_with:5
+# 9bd5ab0e70b2453aaf6a56de57b8a413
+msgid "Causes a transition to occur. This is the python equivalent of the with statement."
+msgstr ""
+
+#: ../../source/inc/se_with:9
+# fc94d86fb19649e5acbb4d1682ac2442
+msgid "`trans`"
+msgstr ""
+
+#: ../../source/inc/se_with:9
+# 8cc68e3c4ced49b6a1a8bb0a72e553e2
+msgid "The transition."
+msgstr ""
+
+#: ../../source/inc/se_with:13
+# 63b3580d826c438dbadb2e69fa3d9972
+msgid "`always`"
+msgstr ""
+
+#: ../../source/inc/se_with:12
+# e997619d910242c9b4225e109e456b48
+msgid "If True, the transition will always occur, even if the user has disabled transitions."
+msgstr ""
+
+#: ../../source/inc/se_with:15
+# 3abfb1dac6b547a4925c462badf0892f
+msgid "This function returns true if the user chose to interrupt the transition, and false otherwise."
+msgstr ""
+

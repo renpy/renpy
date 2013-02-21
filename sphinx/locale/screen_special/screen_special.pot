@@ -1,0 +1,369 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/screen_special.rst:6
+# f03b0293984a4ba3969658b3bd221a50
+msgid "Special Screen Names"
+msgstr ""
+
+#: ../../source/screen_special.rst:8
+# 71e9e9c7605644ce8335ea1b189b58cb
+msgid "There are two kinds of special screen names in Ren'Py. The first are screens that will be automatically displayed when Ren'Py script language commands (or their programmatic equivalents) are run. The other type are menu screens. These have conventional names for conventional functionality, but screens can be omitted or changed as is deemed necessary."
+msgstr ""
+
+#: ../../source/screen_special.rst:15
+# 9a06e2c206944f899ca4dfc291fe7f5d
+msgid "On this page, we'll give example screens. It's important to realize that, while some screens must have minimal functionality, the screen system makes it possible to add additional functionality to screens. For example, while the standard say screen only displays text, the screen systen makes it easy to add features like skipping, auto-forward mode, or muting."
+msgstr ""
+
+#: ../../source/screen_special.rst:22
+# a9028735ffdd4202a743cd0eafb1127d
+msgid "Some special screens take parameters. These parameters can be accessed as variables in the screen's scope."
+msgstr ""
+
+#: ../../source/screen_special.rst:25
+# 6292731421cd4e7ebb6a6e161bc1787f
+msgid "Some of the screens also have special ids associated with them. A special id should be assigned to a displayable of a given type. It can cause properties to be assigned to that displayable, and can make that displayable accessible to calling code."
+msgstr ""
+
+#: ../../source/screen_special.rst:31
+# f24ea17d4c4a4be5af91f4963ff16d7f
+msgid "In-Game Screens"
+msgstr ""
+
+#: ../../source/screen_special.rst:33
+# 52a3346addba4d9dabdd068589c1bb58
+msgid "These screens are automatically displayed when certain Ren'Py statements execute."
+msgstr ""
+
+#: ../../source/screen_special.rst:39
+# deccaddca0d641c2a0fbbf82bea303e1
+msgid "Say"
+msgstr ""
+
+#: ../../source/screen_special.rst:41
+# 383fce6a4d444ceaa713d5b17d2e1a83
+msgid "The ``say`` screen is called by the say statement, when displaying ADV-mode dialogue. It is displayed with the following parameters:"
+msgstr ""
+
+#: ../../source/screen_special.rst:44
+# 99b0ee5e29bd45c78be1d97c7570d9fe
+msgid "`who`"
+msgstr ""
+
+#: ../../source/screen_special.rst:45
+# 65205c6f5bb9404193ad0b20fdd197ba
+msgid "The text of the name of the speaking character."
+msgstr ""
+
+#: ../../source/screen_special.rst:47
+# ebb71709fb884c9f98d7395dd81f6728
+msgid "`what`"
+msgstr ""
+
+#: ../../source/screen_special.rst:47
+# 81aa6727db2b4ce1b1157151ea711dd7
+msgid "The dialogue being said by the speaking character."
+msgstr ""
+
+#: ../../source/screen_special.rst:49
+# cc63e29cc9f2434abb9e46b15c28fb57
+msgid "It's expected to declare displayables with the following ids:"
+msgstr ""
+
+#: ../../source/screen_special.rst:54
+# 939ff03c0d3c453c80f550ef8ee7684c
+msgid "\"who\""
+msgstr ""
+
+#: ../../source/screen_special.rst:52
+# 44145b56a5bc4180818a4941a65f5306
+msgid "A text displayable, displaying the name of the speaking character. The character object can be given arguments that style this displayable."
+msgstr ""
+
+#: ../../source/screen_special.rst:61
+# a1c9aa923f6a4eac886059bf5be983ce
+msgid "\"what\""
+msgstr ""
+
+#: ../../source/screen_special.rst:57
+# c6db22ba9b79457e9cc517fc32b70815
+msgid "A text displayable, displaying the dialogue being said by the speaking character. The character object can be given arguments that style this displayable. **A displayable with this id must be defined**, as Ren'Py uses it to calculate auto-forward-mode time, click-to-continue, and other things."
+msgstr ""
+
+#: ../../source/screen_special.rst:66
+# 0c831da0bc9847f8bbaa82c16baa7bb0
+msgid "\"window\""
+msgstr ""
+
+#: ../../source/screen_special.rst:64
+# 18048ded5cd1407a993999bc570a391c
+msgid "A window or frame. This conventionally contains the who and what text. The character object can be given arguments that style this displayable."
+msgstr ""
+
+#: ../../source/screen_special.rst:84
+# 5f55c78603264a839baaebe919234842
+msgid "Choice"
+msgstr ""
+
+#: ../../source/screen_special.rst:86
+# 72baa25840cf4e918e08b79462445f34
+msgid "The ``choice`` screen is used to display the in-game choices created with the menu statement. It is given the following parameter:"
+msgstr ""
+
+#: ../../source/screen_special.rst:95
+#: ../../source/screen_special.rst:173
+# 57b35094bf034ca89f87155a785eabf3
+# dd8428366eb54281a1a4aea2c278080c
+msgid "`items`"
+msgstr ""
+
+#: ../../source/screen_special.rst:90
+#: ../../source/screen_special.rst:166
+# 08f1e6c9f9184d2a92883c674aa9f4ab
+# 9cf58c43382749e797c813f9434d97c6
+msgid "This is a list of (`caption`, `action`, `chosen`) tuples. For each choice, `caption` is the name of the choice, and `action` is the action to invoke for the choice, or None if this is a choice label. `Chosen` if a choice with this label has been chosen by the user before. (It doesn't have to be in the current game.)"
+msgstr ""
+
+#: ../../source/screen_special.rst:124
+# 869db1bffcce4a838b259e651bc08560
+msgid "Input"
+msgstr ""
+
+#: ../../source/screen_special.rst:126
+# 6223f493b6754d259cdaae86f145100b
+msgid "The ``input`` screen is used to display :func:`renpy.input`. It is given one parameter:"
+msgstr ""
+
+#: ../../source/screen_special.rst:130
+# c4c13b23bd714d958a15c76da0c34880
+msgid "`prompt`"
+msgstr ""
+
+#: ../../source/screen_special.rst:130
+# d4508e9283c6463caa6929b8ad35f703
+msgid "The prompt text supplied to renpy.input."
+msgstr ""
+
+#: ../../source/screen_special.rst:132
+# 0bb1f47f50214daf9c58a165b03f6a1b
+msgid "It is expected to declare a displayable with the following id:"
+msgstr ""
+
+#: ../../source/screen_special.rst:136
+# e2bd990a6db54ad48c16dedff7c3edd3
+msgid "\"input\""
+msgstr ""
+
+#: ../../source/screen_special.rst:135
+# 6f6bf61cbc1b4b31b5a577dbbb2359c1
+msgid "An input displayable, which must exist. This is given all the parameters supplied to renpy.input, so it must exist."
+msgstr ""
+
+#: ../../source/screen_special.rst:152
+# 1bbe1e45808c4033850452f25293216a
+msgid "NVL"
+msgstr ""
+
+#: ../../source/screen_special.rst:154
+# 22a9827c34534479bd7d047b7b4824a7
+msgid "The ``nvl`` screen is used to display NVL-mode dialogue. It is given the following parameter:"
+msgstr ""
+
+#: ../../source/screen_special.rst:163
+# d194eefb23d04984b2e76c953eb0eba2
+msgid "`dialogue`"
+msgstr ""
+
+#: ../../source/screen_special.rst:158
+# 997191d8b5174c108aca2861fb0eb283
+msgid "This is a list of ( `who`, `what`, `who_id`, `what_id`, `window_id`) tuples, each of which corresponds to a line of dialogue on the screen. `Who` and `what` are strings containing the speaking character and the line of dialogue, respectively. The ids should be assigned to the who and what text displayables, and a window containing each unit of dialogue."
+msgstr ""
+
+#: ../../source/screen_special.rst:173
+# 03d415b63b8044a9941c5ecd32c6dbe5
+msgid "If items is empty, the menu should not be shown."
+msgstr ""
+
+#: ../../source/screen_special.rst:175
+# 69d45d363b144074b822b90571941325
+msgid "Ren'Py also supports an ``nvl_choice`` screen, which takes the same parameters as ``nvl``, and is used in preference to ``nvl`` when an in-game choice is presented to the user, if it exists."
+msgstr ""
+
+#: ../../source/screen_special.rst:226
+# e77e13cf4e904cafb3ebd3931cfc7758
+msgid "Notify"
+msgstr ""
+
+#: ../../source/screen_special.rst:228
+# e9884d6fff1b4126b38241231dd69e30
+msgid "The ``notify`` screen is used by :func:`renpy.notify` to display notifications to the user. It's generally used in conjunction with a transform to handle the entire task of notification. It's given a single parameter:"
+msgstr ""
+
+#: ../../source/screen_special.rst:234
+#: ../../source/screen_special.rst:598
+# 98def757d4584f2fac52d18383b7c91f
+# caaa9be32283406892a7b390fe9ae1ba
+msgid "`message`"
+msgstr ""
+
+#: ../../source/screen_special.rst:234
+# 8e3593cc2315421e8699525241df006f
+msgid "The message to display."
+msgstr ""
+
+#: ../../source/screen_special.rst:236
+# f7058005489f49339dc4bca435efb005
+msgid "The default notify screen, and its associated transform, are::"
+msgstr ""
+
+#: ../../source/screen_special.rst:260
+# 6d2decc6e7e14a1e9935b3ffa50348cd
+msgid "Menu Screens"
+msgstr ""
+
+#: ../../source/screen_special.rst:262
+# 8b06754391334532b839eba37da8f1e6
+msgid "These are the menu screens. The ``main_menu`` and ``yesno_prompt`` are invoked implictly.  When the user invokes the game menu, the screen named in :data:`_game_menu_screen` will be displayed. (This defaults to ``save``.)"
+msgstr ""
+
+#: ../../source/screen_special.rst:267
+# 03e6bb1e2e284a3eb2ff42fcc17f6eaf
+msgid "Remember, menu screens can be combined and modified fairly freely."
+msgstr ""
+
+#: ../../source/screen_special.rst:272
+# 9a9b237a8fa3467d91ab8427611c5d2d
+msgid "Main Menu"
+msgstr ""
+
+#: ../../source/screen_special.rst:274
+# b475b5429b3540828db4bfb4392d8ddd
+msgid "The ``main_menu`` screen is the first screen shown when the game begins."
+msgstr ""
+
+#: ../../source/screen_special.rst:310
+# 4c36b80541f84f80baa3feeb177e74e0
+msgid "Navigation"
+msgstr ""
+
+#: ../../source/screen_special.rst:312
+# bda721b99aa045b4a94cbff9bc301a25
+msgid "The ``navigation`` screen isn't special to Ren'Py. But by convention, we place the game menu navigation in a screen named ``navigation``, and then use that screen from the save, load and preferences screens."
+msgstr ""
+
+#: ../../source/screen_special.rst:346
+# 1136a0edd10d4dc0a38a944bc32f07c9
+msgid "Save"
+msgstr ""
+
+#: ../../source/screen_special.rst:348
+# ed57a90b2d2b468292b5eeaccf5f3c8e
+msgid "The ``save`` screen is used to select a file in which to save the game."
+msgstr ""
+
+#: ../../source/screen_special.rst:401
+# fc3f63fc196345e29ac9461ff53e3542
+msgid "Load"
+msgstr ""
+
+#: ../../source/screen_special.rst:403
+# 09fc9afa9a964ae89e8529def3f2d142
+msgid "The ``load`` screen is used to select a file from which to load the game."
+msgstr ""
+
+#: ../../source/screen_special.rst:456
+# 61524ffb3b76472d96df9028bfb66454
+msgid "Preferences"
+msgstr ""
+
+#: ../../source/screen_special.rst:458
+# 930063d73c5345e8a2c4f67d4a34009a
+msgid "The ``preferences`` screen is used to select options that control the display of the game."
+msgstr ""
+
+#: ../../source/screen_special.rst:581
+# 906231a1ff15481493e9bfc9dc9a09a1
+msgid "Yesno_Prompt"
+msgstr ""
+
+#: ../../source/screen_special.rst:583
+# af37e9cd178c48969ca71486510cfb7a
+msgid "The ``yesno_prompt`` message is used to ask yes/no choices of the user. It takes the following parameters:"
+msgstr ""
+
+#: ../../source/screen_special.rst:587
+# b3a13e3fe61748c48eb46f7f5c4708e0
+msgid "The message to display to the user. This is one of:"
+msgstr ""
+
+#: ../../source/screen_special.rst:589
+# bec76255af6d42b7bed6163e741ca836
+msgid "layout.ARE_YOU_SURE - \"Are you sure?\" This should be the default if the message is unknown."
+msgstr ""
+
+#: ../../source/screen_special.rst:591
+# 50160fdedca240069f0cfa4154902a5b
+msgid "layout.DELETE_SAVE - \"Are you sure you want to delete this save?\""
+msgstr ""
+
+#: ../../source/screen_special.rst:592
+# b8b6920d5de4437195696ff2c40c7ced
+msgid "layout.OVERWRITE_SAVE - \"Are you sure you want to overwrite your save?\""
+msgstr ""
+
+#: ../../source/screen_special.rst:593
+# ffc7327b0ab8415a954c8a37dffb6875
+msgid "layout.LOADING - \"Loading will lose unsaved progress.\\nAre you sure you want to do this?\""
+msgstr ""
+
+#: ../../source/screen_special.rst:594
+# 7e32f973c6cc4374afa2a630e6d6c86f
+msgid "layout.QUIT - \"Are you sure you want to quit?\""
+msgstr ""
+
+#: ../../source/screen_special.rst:595
+# 87728d41f86a4e89ba078fbd188fd050
+msgid "layout.MAIN_MENU - \"Are you sure you want to return to the main\\nmenu? This will lose unsaved progress.\""
+msgstr ""
+
+#: ../../source/screen_special.rst:597
+# d747d350f73641d8bbedc0c9c683711a
+msgid "The values of the variables are strings, which means they can be displayed using a text displayable."
+msgstr ""
+
+#: ../../source/screen_special.rst:601
+# 0a56bcbe5c864430a7c9f23229319004
+msgid "`yes_action`"
+msgstr ""
+
+#: ../../source/screen_special.rst:601
+# 0d54c85be0e14839b38e7a15707aa7b6
+msgid "The action to run when the user picks \"Yes\"."
+msgstr ""
+
+#: ../../source/screen_special.rst:604
+# b624c2e1830f441aafdc5367f27712a9
+msgid "`no_action`"
+msgstr ""
+
+#: ../../source/screen_special.rst:604
+# ccd5e541a4354a77b13fb3cdd9520c4b
+msgid "The action to run when the user picks \"No\"."
+msgstr ""
+

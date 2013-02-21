@@ -1,0 +1,125 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/transforms.rst:8
+# 422fc00339484b4bb5cd16075f21766f
+msgid "Transforms"
+msgstr ""
+
+#: ../../source/transforms.rst:10
+# 4a59b056bce14d31873be9423a1e1160
+msgid "A transform can be applied to a displayable to yield another displayable. The built-in transforms are used to control where an object is placed on the screen, while user-defined transforms can cause more complex effects, like motion, zoom, and rotation."
+msgstr ""
+
+#: ../../source/transforms.rst:15
+# 9e40c7c5a98543918dff5076aea7798e
+msgid "Transforms can be applied by giving the at clause to the scene and show statements. The following code applies the \"right\" transform to the eileen happy displayable.::"
+msgstr ""
+
+#: ../../source/transforms.rst:21
+# a5b2cc22b85a45c1a03d691e073e225d
+msgid "Multiple transforms can be applied by separating them with commas. These transforms are applied from left-to-right, with the rightmost transform taking precendece in the case of conflicts. ::"
+msgstr ""
+
+#: ../../source/transforms.rst:27
+# 5a5c3aa3196f48d19ef6a4e924b2714f
+msgid "A displayable always has a transform associated with it. If no transform is given, the prior transform is used. When the transform is changed, undefined values are taken from the prior transform, or from ``default`` if there is no prior transform."
+msgstr ""
+
+#: ../../source/transforms.rst:33
+# 00cfc66314b04f69a24ee58820e13f7e
+msgid "Default Transforms"
+msgstr ""
+
+#: ../../source/transforms.rst:35
+# 21264699a0934cf697b88d10ebe7591f
+msgid "Ren'Py ships with a number of transforms defined by default. These transforms position things on the screen. Here's a depiction of where each default transform will position an image. ::"
+msgstr ""
+
+#: ../../source/transforms.rst:53
+# 9f6d6d1f53694b3c8be36964429fc936
+msgid "The offscreenleft and offscreenright transforms position images off the screen. These transforms can be used to move things off the screen (remember to hide them afterwards, to ensure that they do not consume resources)."
+msgstr ""
+
+#: ../../source/transforms.rst:58
+# 7138134ccede460591e4c4a78cf9db40
+msgid "The transforms are:"
+msgstr ""
+
+#: ../../source/transforms.rst:62
+# 2ce614bca3244c47a3777fab35e3560b
+msgid "Centers horizontally, and aligns to the bottom of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:66
+# 92af47f5e3294405bb81ee6065b78769
+msgid "Centers horizontally, and aligns to the bottom of the screen. This can be redefined to change the default placement of images shown with the show or scene statements."
+msgstr ""
+
+#: ../../source/transforms.rst:72
+# 4d6f96f65b034f4281179b2786b20bf3
+msgid "Aligns to the bottom-left corner of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:76
+#: ../../source/transforms.rst:81
+# 93befcfc539447b0aef64b47807d0f06
+# cd656bfb76e74b53a54c95bfab745dc1
+msgid "Places the displayable off the left side of the screen, aligned to the bottom of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:86
+# e83d75eb5e654ae6b42e1f29ee12641d
+msgid "Resets the transform. Places the displayable in the top-left corner of the scren, and also eliminates any zoom, rotation, or other effects."
+msgstr ""
+
+#: ../../source/transforms.rst:92
+# c23415be20794819bcb7299705e4e06b
+msgid "Aligns to the bottom-right corner of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:96
+# faa44e9abc074520bc9cc66db492e87b
+msgid "Centers horizontally, and aligns to the top of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:100
+# 40b683d888df414387754d77ff94ab9f
+msgid "Aligns to the top-left corner of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:104
+# 6f62f1f58fbc44c0b28a04c1f35353ca
+msgid "Aligns to the top-right corner of the screen."
+msgstr ""
+
+#: ../../source/transforms.rst:108
+# 86dde4d2fadf46689317eb0e2b6f8e8e
+msgid "Centers both horizontally and vertically."
+msgstr ""
+
+#: ../../source/transforms.rst:111
+# 6a5a7dd107b74f74bec8b04bf46ab78e
+msgid "Creator-Defined Transforms"
+msgstr ""
+
+#: ../../source/transforms.rst:113
+# 9b5efc89cb054bd1b10265a7ea2b9478
+msgid "A creator can define a transform using the :ref:`animation and transformation language <atl>`, or the :class:`Transform` function."
+msgstr ""
+

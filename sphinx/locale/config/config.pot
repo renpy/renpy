@@ -1,0 +1,959 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/config.rst:6
+# b76b47daaf1f4e779850c4c8df02078f
+msgid "Configuration Variables"
+msgstr ""
+
+#: ../../source/config.rst:8
+# ac5288bd8d524cf0a9308ca5727bd06b
+msgid "Configuration variables control the behavior of Ren'Py's implementation, allowing Ren'Py itself to be customized in a myriad of ways. These range from the common (such as changing the screen size) to the obscure (adding new kinds of archive files)."
+msgstr ""
+
+#: ../../source/config.rst:13
+# 4feef70588984b788d9331eb69abe658
+msgid "Ren'Py's implementation makes the assumption that, once the GUI system has initialized, configuration variables will not change. Changing configuration variables outside of init blocks can lead to undefined behavior. Configuration variables are not part of the save data."
+msgstr ""
+
+#: ../../source/config.rst:18
+# 00d54c5415ff4c73b097acd572ee1825
+msgid "Configuration variables are often changed in init python blocks::"
+msgstr ""
+
+#: ../../source/config.rst:28
+# fc350b197aa645d3a5710d33c655bea9
+msgid "Commonly Used"
+msgstr ""
+
+#: ../../source/config.rst:32
+# 0374bacf1e8248898ac96ad571371b7a
+msgid "If set to True, developer mode is enabled. Developer mode gives access to the shift+D developer menu, shift+R reloading, and various other features that are not intended for end users."
+msgstr ""
+
+#: ../../source/config.rst:36
+# 192bdfd3c3e2422aa284773bcc608683
+msgid "The default game template sets this to True. We suggest setting it to False before releasing a game."
+msgstr ""
+
+#: ../../source/config.rst:41
+# db74b70d024f426ea3168b468ba1e7d9
+msgid "This controls the functionality of the help system invoked by the help button on the main and game menus, or by pressing f1 or command-?."
+msgstr ""
+
+#: ../../source/config.rst:45
+# a66493299c274033a1078bfa8c756437
+msgid "If None, the help system is disabled and does not show up on menus.  If a string corresponding to a label found in the script, that label is invoked in a new context. This allows you to define an in-game help-screen.  Otherwise, this is interpreted as a filename relative to the base directory, that is opened in a web browser."
+msgstr ""
+
+#: ../../source/config.rst:54
+# 16cb326e40724302acc4f4012728efeb
+msgid "This should be a string giving the name of the game. This is included as part of tracebacks and other log files, helping to identify the version of the game being used."
+msgstr ""
+
+#: ../../source/config.rst:60
+# 1e81c603299a495fbdbf271e218fa369
+msgid "This is used to generate the directory in which games and persistent information are saved. The name generated depends on the platform:"
+msgstr ""
+
+#: ../../source/config.rst:65
+# 70b8b4dd333243649838193384886605
+msgid "Windows"
+msgstr ""
+
+#: ../../source/config.rst:65
+# d22dfea1f585470eb7f1d3b6a6bc37af
+msgid "%APPDATA%/RenPy/`save_directory`"
+msgstr ""
+
+#: ../../source/config.rst:68
+# 1131bd1f102a433395aa30101bb06318
+msgid "Mac OS X"
+msgstr ""
+
+#: ../../source/config.rst:68
+# 64cce080102547a1b4c037df0f4608a3
+msgid "~/Library/RenPy/`save_directory`"
+msgstr ""
+
+#: ../../source/config.rst:71
+# 365593457dc8484e8211699188c30384
+msgid "Linux/Other"
+msgstr ""
+
+#: ../../source/config.rst:71
+# 0bd99ba20a614fcf890c469c8d4778d4
+msgid "~/.renpy/`save_directory`"
+msgstr ""
+
+#: ../../source/config.rst:73
+# 410b5a9e9b4d4c9498f394774abd3a32
+msgid "Setting this to None creates a \"saves\" directory underneath the game directory. This is not recommended, as it prevents the game from being shared between multiple users on a system. It can also lead to problems when a game is installed as Administrator, but run as a user."
+msgstr ""
+
+#: ../../source/config.rst:79
+# 4fb26b9cccdc4f3584ec2024ae8d5778
+msgid "This must be set in a python early block, so that persistent information can be loaded before init code is run."
+msgstr ""
+
+#: ../../source/config.rst:82
+# 4d53e5ff33994ef8bf773ef256de4a59
+msgid "The user may change the directory. Code that needs to know the save directory should read :var:`config.savedir` instead of this variable."
+msgstr ""
+
+#: ../../source/config.rst:88
+# b2682fd8b577417a947583bd32dd244e
+msgid "The height of the screen."
+msgstr ""
+
+#: ../../source/config.rst:92
+# 382a93d092d9433193897dae0508c94c
+msgid "The width of the screen."
+msgstr ""
+
+#: ../../source/config.rst:96
+# 58469d246eaf4f14a8e7c1c6c96f30b0
+msgid "This is a map used to translate text in the game menu into your language. See Localizing Ren'Py for how to use it, and here for a list of available translations."
+msgstr ""
+
+#: ../../source/config.rst:102
+# 81341ed5c81b484c8c199792176f16b6
+msgid "If not None, this is expected to be the filename of an image giving an icon that is used for the window on Linux and Mac OS X. This should be a large image, with 8-bit alpha."
+msgstr ""
+
+#: ../../source/config.rst:106
+# 964542286e434b89b2cf53d8b7719603
+msgid "This should generally be a PNG format file."
+msgstr ""
+
+#: ../../source/config.rst:110
+# 5422a2ab55014d4fb4a9b3fe8e811c51
+msgid "If not None, this is expected to be the filename of an image giving an icon that is used for the window on Windows. This should be a 32x32 image with 1-bit alpha. (Opaque images work the best.)"
+msgstr ""
+
+#: ../../source/config.rst:114
+# 99ef5a0aa235403c8e2ad336e1062739
+msgid "This should be a PNG format file."
+msgstr ""
+
+#: ../../source/config.rst:118
+# 1127a5e8136a47b1b7c11504f95eeb4d
+msgid "The static portion of the title of the window containing the Ren'Py game. :var:`_window_subtitle` is appended to this to get the full title of the window."
+msgstr ""
+
+#: ../../source/config.rst:124
+# 2d4abe0ecc7a42318b26ec86ecfe0048
+msgid "This should be a string giving the version of the game. This is included as part of tracebacks and other log files, helping to identify the version of the game being used."
+msgstr ""
+
+#: ../../source/config.rst:129
+# b5bda464be6a407d9338ef34b770e277
+msgid "Transitions"
+msgstr ""
+
+#: ../../source/config.rst:131
+# db4eb1419c15479bb90583cd743a80a7
+msgid "These control transitions between various screens."
+msgstr ""
+
+#: ../../source/config.rst:135
+# cdedaabff0164e24919b7cb3331141cf
+msgid "A transition that is used when showing NVL-mode text directly after ADV-mode text."
+msgstr ""
+
+#: ../../source/config.rst:140
+# 2e4c8cd602394d449c2247e48aa9e1da
+msgid "A transition that is used after loading, when entering the loaded game."
+msgstr ""
+
+#: ../../source/config.rst:145
+# f5b229419c51475199749e03d9b28812
+msgid "The transition that is used to display the main menu after the game ends normally, either by invoking return with no place to return to, or by calling :func:`renpy.full_restart`."
+msgstr ""
+
+#: ../../source/config.rst:151
+# 69d3ddd22a4f4009b542adb5a725eeff
+msgid "The transition that is used to display the main menu after the end of the splashscreen."
+msgstr ""
+
+#: ../../source/config.rst:156
+# 06b44eb19bda49fc8b36388851717f9b
+msgid "If not None, a transition that is used when entering a replay."
+msgstr ""
+
+#: ../../source/config.rst:160
+# 6fb7abad16d94e819a2afa772594c4c8
+msgid "If not None, this variable should give a transition that will be used when entering the game menu."
+msgstr ""
+
+#: ../../source/config.rst:165
+# 023aa83ef8a64378bc2c65a8c4a58972
+msgid "If not None, a transition that is used when entering the yes/no prompt screen."
+msgstr ""
+
+#: ../../source/config.rst:170
+# d22d1b831e4145e9898fdefa5a5915d4
+msgid "If not None, a transition that is used when exiting a replay."
+msgstr ""
+
+#: ../../source/config.rst:174
+# 991e4ab032b84c049631b26c0f35ab77
+msgid "If not None, this variable should give a transition that will be performed when exiting the game menu."
+msgstr ""
+
+#: ../../source/config.rst:179
+# fa31e7eac5bc4f319c6fc9ba32d95973
+msgid "If not None, a transition that is used when exiting the yes/no prompt screen."
+msgstr ""
+
+#: ../../source/config.rst:184
+# 1cb0f0c321454f6b8e2e9f30e9fc336f
+msgid "The transition that is used to display the main menu after leaving the game menu. This is used when the load and preferences screens are invoked from the main menu, and it's also used when the user picks \"Main Menu\" from the game menu."
+msgstr ""
+
+#: ../../source/config.rst:191
+# 9dbc51ea41e54c89affee3448c3b672a
+msgid "The transition used when entering the game menu from the main menu, as is done when clicking \"Load Game\" or \"Preferences\"."
+msgstr ""
+
+#: ../../source/config.rst:196
+# 753129bbd337476d8b97e23b53714958
+msgid "A transition that is used when showing ADV-mode text directly after NVL-mode text."
+msgstr ""
+
+#: ../../source/config.rst:201
+# c329f97e07ce406c8014512c117098a5
+msgid "If not None, a transition to use when the image is changed by a say statement with image attributes."
+msgstr ""
+
+#: ../../source/config.rst:206
+# dc54cd966ed546afb4289a67c0f283ce
+msgid "The transition used by the window hide statement when no transition has been explicitly specified."
+msgstr ""
+
+#: ../../source/config.rst:211
+# 1ed2b7822cbf418b95b33a9286dab67c
+msgid "The transition used by the window show statement when no transition has been explicitly specified."
+msgstr ""
+
+#: ../../source/config.rst:216
+# 3fa937c6dd4044eb94cfa5e25e22324b
+msgid "Occasionally Used"
+msgstr ""
+
+#: ../../source/config.rst:220
+# 8420d9d5ccbb4defa8d994d2ada33a6a
+msgid "If not None, the name of a save file to automatically load when Ren'Py starts up. This is intended for developer use, rather than for end users. Setting this to \"1\" will automatically load the game in save slot 1."
+msgstr ""
+
+#: ../../source/config.rst:227
+# 3cae4673febb4b9e904f189b3db35eeb
+msgid "If not None, this causes Ren'Py to automatically define images."
+msgstr ""
+
+#: ../../source/config.rst:230
+# 81d892b4406b40eba41ebb081146c3e7
+msgid "When not set to None, this should be set to a list of separators. (For example, ``[ ' ', '_', '/' ]``.)"
+msgstr ""
+
+#: ../../source/config.rst:233
+# 358efd1c5e3546dd9823ba5cccca55cf
+msgid "Ren'Py will scan through the list of files on disk and in archives. When it finds a file ending with .png or .jpg, it will strip the extension, then break the name at separators, to creatge an image name. If the name consists of at least two components, and no image with that name already is defined, Ren'Py will define that image to refer to a filename."
+msgstr ""
+
+#: ../../source/config.rst:240
+# 96e0365e74964db2af7fe4efcca717b7
+msgid "With the example list of separators, if your game directory contains:"
+msgstr ""
+
+#: ../../source/config.rst:243
+# 4aa766cc72214e4db267e158d269a406
+msgid "eileen_happy.png, Ren'Py will define the image \"eileen happy\"."
+msgstr ""
+
+#: ../../source/config.rst:244
+# b48410bf3d994b34a523fa6589d9ad49
+msgid "lucy/mad.png, Ren'Py will define the image \"lucy mad\"."
+msgstr ""
+
+#: ../../source/config.rst:245
+# 168d0dd023ee45c788faeb20a917deb9
+msgid "mary.png, Ren'Py will do nothing. (As the image does not have two components.)"
+msgstr ""
+
+#: ../../source/config.rst:249
+# 7a4aa441e1324167b0920727538e6af6
+msgid "A list of strings giving prefixes that are stripped out when defining automatic images. This can be used to remove directory names, when directories contain images."
+msgstr ""
+
+#: ../../source/config.rst:255
+# 1b8e1133402949f0aea1e6a0e5372910
+msgid "Enables debugging functionality (mostly by turning some missing files into errors.) This should always be turned off in a release."
+msgstr ""
+
+#: ../../source/config.rst:260
+# a956f925164342bdb8669cb0c94f4fad
+msgid "If True, Ren'Py will print the contents of the :ref:`image cache <images>` to standard output (wherever that goes) whenever the contents of the image cache change."
+msgstr ""
+
+#: ../../source/config.rst:266
+# 2bcf1bd5749b4d798f30d62d473c4209
+msgid "Enables debugging of sound functionality. This disables the supression of errors when generating sound. However, if a sound card is missing or flawed, then such errors are normal, and enabling this may prevent Ren'Py from functioning normally. This should always be False in a released game."
+msgstr ""
+
+#: ../../source/config.rst:274
+# 316a85ec607944a99e8708e7d8eb9093
+msgid "When true, Ren'Py will log text overflows to text_overflow.txt. A text overflow occurs when a :class:`Text` displayable renders to a size larger than that allocated to it. By setting this to True and setting the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue window to the window size, this can be used to report cases where the dialogue is too large for its window."
+msgstr ""
+
+#: ../../source/config.rst:283
+# 0c28e8088aad47a2be03dffecb5b74b1
+msgid "If not None, this sets the default auto-forward-mode timeout. If not None, then this is the time in seconds we should delay when showing 250 characters. 0 is special-cased to be infinite time, disabling auto-forward mode."
+msgstr ""
+
+#: ../../source/config.rst:288
+#: ../../source/config.rst:299
+#: ../../source/config.rst:314
+# 66cde5ed5ffb46a0b68d4fcae325ae4a
+# 516e857e1526482abe132a646b07facf
+# a94f6d6960354513bb5f513e03b17dda
+msgid "Persistent data must be deleted for this to take effect."
+msgstr ""
+
+#: ../../source/config.rst:292
+# 77337908fb6b425bbe724d1c176af9be
+msgid "If not None, this should be a boolean that controls if auto-forward-mode is enabled by default. When it's False, auto-forwarding will not occur. Set this to False with caution, as the default Ren'Py UI does not provide a way of changing it's setting. (But one can use Preference action in a screen to create such a UI.)"
+msgstr ""
+
+#: ../../source/config.rst:303
+# 0316fd1528a84f3c8714f8039e1c71f0
+msgid "This sets the default value of the fullscreen preference. This should be True or False. If None, this is ignored, allowing other code to set the default value. (It's usually set to False in options.rpy.)"
+msgstr ""
+
+#: ../../source/config.rst:310
+# e2c2969ab6fd401ca414fd314bccfd12
+msgid "If not None, this sets the default number of characters per second to show. 0 is special cased to mean an infinite number of characters per second. (It's usually set to 0 in options.rpy.)"
+msgstr ""
+
+#: ../../source/config.rst:318
+# ebc7b9fa37584edf83eb22fa6d8912c3
+msgid "When a displayable is shown using the show or scene statements, the transform properties are taken from this transform and used to initialize the values of the displayable's transform."
+msgstr ""
+
+#: ../../source/config.rst:322
+# 37b76e83b4694550990229ea97439ea6
+msgid "The default default transform is :var:`center`."
+msgstr ""
+
+#: ../../source/config.rst:326
+# 512d3f8b417c4d138d4dabdf8dc5d25c
+msgid "This is called when _window is True, and no window has been shown on the screen. (That is, no call to :func:`renpy.shown_window` has occurred.) It's expected to show an empty window on the screen, and return without causing an interaction."
+msgstr ""
+
+#: ../../source/config.rst:331
+# 6d06710eaec54cc2ab626dedd1dd72d1
+msgid "The default implementation of this uses the narrator character to display a blank line without interacting."
+msgstr ""
+
+#: ../../source/config.rst:336
+# 7c41c4a0834e4429b300d549e8b94d61
+msgid "If not None, this is a sound file that is played when entering the game menu."
+msgstr ""
+
+#: ../../source/config.rst:341
+# 1bb66f129d6f45568d5883b4f5eadb6e
+msgid "If not None, this is a sound file that is played when exiting the game menu."
+msgstr ""
+
+#: ../../source/config.rst:346
+# 54331a640d1644fc94528cf68658d225
+msgid "This option determines how the built in menus or imagemaps behave during fixed rollback. The default value is False, which means that menu only the previously selected option remains clickable. If set to True, the selected option is marked but no options are clickable. The user can progress forward through the rollback buffer by clicking."
+msgstr ""
+
+#: ../../source/config.rst:356
+# f1eab768bdea4b3a8883c1d8bdbae8b5
+msgid "This is a map from (font, bold, italics) to (font, bold, italics), used to replace a font with one that's specialized as having bold and/or italics. For example, if you wanted to have everything using an italic version of \"Vera.ttf\" use \"VeraIt.ttf\" instead, you could write::"
+msgstr ""
+
+#: ../../source/config.rst:365
+# 0893532011944b2d9fc36eb79a6aa8a5
+msgid "Please note that these mappings only apply to specific variants of a font. In this case, requests for a bold italic version of vera will get a bold italic version of vera, rather than a bold version of the italic vera."
+msgstr ""
+
+#: ../../source/config.rst:372
+# 71153cae789a401eafc26860386b1cb2
+msgid "If not None, this is the upper limit on the number of frames Ren'Py will attempt to display per second. This is only respected by the software renderer. The GL renderer will synchronize to vertical blank instead."
+msgstr ""
+
+#: ../../source/config.rst:379
+# 7db28c46beaa40b6bc3b627d7c7c6211
+msgid "This is used to customize the choices on the game menu. Please read Main and Game Menus for more details on the contents of this variable."
+msgstr ""
+
+#: ../../source/config.rst:383
+# dbab4d4c26cf43da954c7c4f4d8342cc
+msgid "This is not used when the game menu is defined using screens."
+msgstr ""
+
+#: ../../source/config.rst:387
+# c082268ae10c4349ba573332c9618f6d
+msgid "If not None, a music file to play when at the game menu."
+msgstr ""
+
+#: ../../source/config.rst:391
+# 2e85a357f13e43ae961fdc015fc3d2b6
+msgid "The name of the image that is used when running the OpenGL performance test. This image will be shown for 5 frames or .25 seconds, on startup. It will then be automatically hidden."
+msgstr ""
+
+#: ../../source/config.rst:397
+# 0570e43217c942089e0fec20d5cd3218
+msgid "If true, the game will autosave. If false, no autosaving will occur."
+msgstr ""
+
+#: ../../source/config.rst:402
+# d287e48a6afc4659bab5585fb9eaef5e
+msgid "This is used to set the size of the :ref:`image cache <images>`, as a multiple of the screen size. This number is multiplied by the size of the screen, in pixels, to get the size of the image cache in pixels."
+msgstr ""
+
+#: ../../source/config.rst:406
+# 6f9eeb3cf99d48699542ed2e7493a4e7
+msgid "If set too large, this can waste memory. If set too small, images can be repeatedly loaded, hurting performance."
+msgstr ""
+
+#: ../../source/config.rst:411
+# f70d5f7016854ae2a9bd7bffdf4eeb1e
+msgid "Controls the rate of keyboard repeat. When key repeat is enabled, this should be a tuple. The first item in the tuple is the delay before the first repeat, and the second item is the delay between repeats. Both are in seconds. If None, keyboard repeat is disabled."
+msgstr ""
+
+#: ../../source/config.rst:418
+# ea94bba6f15a4488bc3e9e8439046c07
+msgid "If not None, this should be a string giving the default language that the game is translated into by the translation framework."
+msgstr ""
+
+#: ../../source/config.rst:423
+# ccf0508b3ce84a13b9aab7d67148be03
+msgid "The default main menu, when not using screens. For more details, see Main and Game Menus."
+msgstr ""
+
+#: ../../source/config.rst:428
+# fdb4769ad7bb4dbfbece4c2a20f29f71
+msgid "If not None, a music file to play when at the main menu."
+msgstr ""
+
+#: ../../source/config.rst:432
+# af5ca724dedc46b6afd8b51431a42ace
+msgid "A list of layer names (as strings) that are cleared when entering the game menu."
+msgstr ""
+
+#: ../../source/config.rst:437
+# e82bf296b356455c976fb0759156e33f
+msgid "The :var:`_window_subtitle` variable is set to this value when entering the main or game menus."
+msgstr ""
+
+#: ../../source/config.rst:442
+# 308bc353a07b447b97025a6b7260b909
+msgid "This is the background that is used when :var:`config.developer` is True and an undefined image is used in a :ref:`scene statement <scene-statement>`. This should be an image name (a string), not a displayable."
+msgstr ""
+
+#: ../../source/config.rst:449
+# f23928341b294e07a0c8954d66c1b963
+msgid "A list of callbacks called when entering a mode. For more documentation, see the section on :ref:`Modes`."
+msgstr ""
+
+#: ../../source/config.rst:452
+# c89fa8bafb5545a688e39c6ccade872e
+msgid "The default value includes a callback that implements :var:`config.adv_nvl_transition` and :var:`config.nvl_adv_transition`."
+msgstr ""
+
+#: ../../source/config.rst:457
+# c2bf53a7149540b2a1faf459a96bf151
+msgid "This variable controls the use of user-defined mouse cursors. If None, the system mouse is used, which is usually a black-and-white mouse cursor."
+msgstr ""
+
+#: ../../source/config.rst:461
+# de8ffbb7c6f5470fab7975b64aeaf861
+msgid "Otherwise, this should be a dictionary giving the mouse animations for various mouse types. Keys used by the default library include \"default\", \"say\", \"with\", \"menu\", \"prompt\", \"imagemap\", \"pause\", \"mainmenu\", and \"gamemenu\". The \"default\" key should always be present, as it is used when a more specific key is absent."
+msgstr ""
+
+#: ../../source/config.rst:468
+# 2ff3372953054038b8c306713cbc4a14
+msgid "Each value in the dictionary should be a list of (`image`, `xoffset`, `offset`) tuples, representing frames."
+msgstr ""
+
+#: ../../source/config.rst:472
+# ad59f6f36b724e54aad1e85b45015f66
+msgid "`image`"
+msgstr ""
+
+#: ../../source/config.rst:472
+# 0ef5e3c570314874a9428f4afc2ef3f2
+msgid "The mouse cursor image."
+msgstr ""
+
+#: ../../source/config.rst:476
+# 6373162e56e94e6a89bac8c745cff96e
+msgid "`xoffset`"
+msgstr ""
+
+#: ../../source/config.rst:475
+# 6348fc53834d4011a7871da85669e999
+msgid "The offset of the hotspot pixel from the left side of the cursor."
+msgstr ""
+
+#: ../../source/config.rst:479
+# ccf1345205ed42b1b3acc186d17a1866
+msgid "`yoffset`"
+msgstr ""
+
+#: ../../source/config.rst:479
+# 3d2f682e566f488391db343eb7193816
+msgid "The offset of the hotspot pixel from the top of the cursor."
+msgstr ""
+
+#: ../../source/config.rst:481
+# e57a6d427cca4355875f087582b34d6d
+msgid "The frames are played back at 20hz, and the animation loops after all frames have been shown."
+msgstr ""
+
+#: ../../source/config.rst:486
+# fa5faa83ec034c42abf59f59283fd499
+msgid "(This is set to True by the default screens.rpy file.) If true, then narration inside a menu is displayed using the narrator character. Otherwise, narration is displayed as captions within the menu itself."
+msgstr ""
+
+#: ../../source/config.rst:493
+# 7032c6bddd814b2dbe670aebd9e59214
+msgid "A list of functions. When called, each function is expected to use ui functions to add displayables to the overlay layer."
+msgstr ""
+
+#: ../../source/config.rst:498
+# e5e973f2653440d8a8325a04dedb9475
+msgid "A list of functions. The functions in this list are called, without any arguments, whenever a python block is run outside of the init phase."
+msgstr ""
+
+#: ../../source/config.rst:502
+# 5a81eeffb1974384834ef0652db6608a
+msgid "One possible use of this would be to have a function limit a variable to within a range each time it is adjusted."
+msgstr ""
+
+#: ../../source/config.rst:505
+# 5c8005e3600e43d9acad0932ca6b3b13
+msgid "The functions may be called during internal Ren'Py code, before the start of the game proper, and potentially before the variables the function depends on are intialized. The functions are required to deal with this, perhaps by using ``hasattr(store, 'varname')`` to check if a variable is defined."
+msgstr ""
+
+#: ../../source/config.rst:513
+# d7f282a260584ab9a12d6036b6a1c9e5
+msgid "The action that is called when the user clicks the quit button on a window. The default action prompts the user to see if he wants to quit the game."
+msgstr ""
+
+#: ../../source/config.rst:519
+# 32b14d52453f41a38ace4a2af6875d3a
+msgid "The height of the thumbnails that are taken when the game is saved. These thumbnails are shown when the game is loaded. Please note that the thumbnail is shown at the size it was taken at, rather than the value of this setting when the thumbnail is shown to the user."
+msgstr ""
+
+#: ../../source/config.rst:525
+#: ../../source/config.rst:535
+# ef73d2f205254c8291f4578d2f28ec51
+# 2d11f80fd2bd498591f396d321800b45
+msgid "When using a load_save layout, a different default may be used."
+msgstr ""
+
+#: ../../source/config.rst:529
+# 378476e65ca64797a4c48da4d11172fb
+msgid "The width of the thumbnails that are taken when the game is saved. These thumbnails are shown when the game is loaded. Please note that the thumbnail is shown at the size it was taken at, rather than the value of this setting when the thumbnail is shown to the user."
+msgstr ""
+
+#: ../../source/config.rst:539
+# c4720b0861cb48fcac3fa39587f76451
+msgid "A list of overlay functions that are only called when the window is shown."
+msgstr ""
+
+#: ../../source/config.rst:544
+# 014b00ee12f84848b8768da8e13bba96
+msgid "Rarely or Internally Used"
+msgstr ""
+
+#: ../../source/config.rst:548
+# 11d92bc265df45c29867814ed120dfe9
+msgid "The number of bonus characters added to every string when auto-forward mode is in effect."
+msgstr ""
+
+#: ../../source/config.rst:553
+# 2c4560e3d9314777bbd45cb75008914b
+msgid "If not None, a python function that is called to determine if it is safe to auto-forward. The intent is that this can be used by a voice system to disable auto-forwarding when a voice is playing."
+msgstr ""
+
+#: ../../source/config.rst:559
+# 72ac3717f11f4bb28fc2d892fb6de226
+msgid "The number of characters in a string it takes to cause the amount of time specified in the auto forward mode preference to be delayed before auto-forward mode takes effect."
+msgstr ""
+
+#: ../../source/config.rst:565
+# 7fb1baf85b694f6b929a915d9b57b810
+msgid "A list of callbacks that are called by all characters. This list is prepended to the list of character-specific callbacks."
+msgstr ""
+
+#: ../../source/config.rst:570
+# eb1fb4004a62444e82b985bdae7488b3
+msgid "If set to False, the user is not able to skip over the text of the game."
+msgstr ""
+
+#: ../../source/config.rst:575
+# ca9afaadb26a4470960de67a7eb17fce
+msgid "A list of archive files that will be searched for images and other data. The entries in this should consist of strings giving the base names of archive files, without the .rpa extension."
+msgstr ""
+
+#: ../../source/config.rst:579
+# a0c28dc3507f43fa92e1ae6bfab38ae2
+msgid "The archives are searched in the order they are found in this list. A file is taken from the first archive it is found in."
+msgstr ""
+
+#: ../../source/config.rst:582
+# 76c75d2f98d84f349a99bb29bc408fce
+msgid "At startup, Ren'Py will automatically populate this variable with the names of all archives found in the game directory, sorted in reverse ascii order. For example, if Ren'Py finds the files data.rpa, patch01.rpa, and patch02.rpa, this variable will be populated with ``['patch02', 'patch01', 'data']``."
+msgstr ""
+
+#: ../../source/config.rst:590
+# a92316ce5b6d44a2ad2bda50068984e7
+msgid "If not None, this variable gives a number of seconds that Ren'Py will pause at an in-game menu before picking a random choice from that menu. We'd expect this variable to always be set to None in released games, but setting it to a number will allow for automated demonstrations of games without much human interaction."
+msgstr ""
+
+#: ../../source/config.rst:598
+# df33eaea72464d9986d4ce6382b82780
+msgid "Roughly, the number of interactions that will occur before an autosave occurs. To disable autosaving, set :var:`config.has_autosave` to False, don't change this variable."
+msgstr ""
+
+#: ../../source/config.rst:604
+# e692098923ba48ce8487cbd4b006c69b
+msgid "The default value of the callback parameter of Character."
+msgstr ""
+
+#: ../../source/config.rst:608
+# 703c729cd9414d2f8df453fcb411869e
+msgid "A list of names of layers to clear when entering the main and game menus."
+msgstr ""
+
+#: ../../source/config.rst:613
+# 1feb1a48e5d64a088cee893dfa8b45f1
+msgid "A list of layers that are cleared when entering a new context."
+msgstr ""
+
+#: ../../source/config.rst:617
+# 8af5b64c39334fc3a3d03f76aee06551
+msgid "This is the amount of time in seconds to spend fading the old track out before a new music track starts. This should probably be fairly short, so the wrong music doesn't play for too long."
+msgstr ""
+
+#: ../../source/config.rst:623
+# 25c6c1bf8cb7463b866005c25b053d9e
+msgid "Set this to True to allow fast skipping outside of developer mode."
+msgstr ""
+
+#: ../../source/config.rst:627
+# 8c2b38b33c094f6b824979ef820d294f
+msgid "If not None, this is a function that is called with the file name when a file needs to be opened. It should return a file-like object, or None to load the file using the usual Ren'Py mechanisms. Your file-like object must implement at least the read, seek, tell, and close methods."
+msgstr ""
+
+#: ../../source/config.rst:635
+# 46c1d9ed4fe0483aaef2bac2b72bd70a
+msgid "This is the amount of penalty to apply to moves perpendicular to the selected direction of motion, when moving focus with the keyboard."
+msgstr ""
+
+#: ../../source/config.rst:641
+# e0ba05612b6b42a09fac4677c1350e47
+msgid "Set this to False to disable OpenGL acceleration. OpenGL acceleration will automatically be disabled if it's determined that the system cannot support it, so it usually isn't necessary to set this."
+msgstr ""
+
+#: ../../source/config.rst:645
+# 5db1328336a6440d93cc3e7df8f4e133
+msgid "OpenGL can also be disabled by holding down shift at startup."
+msgstr ""
+
+#: ../../source/config.rst:649
+# 2a57484f7161470dbceafb954f330f35
+msgid "Determines if the user is allowed to resize an OpenGL-drawn window."
+msgstr ""
+
+#: ../../source/config.rst:653
+# 405c3a8f099c44bf89baa86c1ddd7cb9
+msgid "This is the number of steps that Ren'Py will let the user interactively rollback. Set this to 0 to disable rollback entirely, although we don't recommend that, as rollback is useful to let the user see text he skipped by mistake."
+msgstr ""
+
+#: ../../source/config.rst:660
+# a30d4c3f791f434e858aa63d966bc9bf
+msgid "A function that is called when the :ref:`hide statement <hide-statement>` is executed. This should take the same arguments as renpy.hide."
+msgstr ""
+
+#: ../../source/config.rst:665
+# 9dbe9d3f7bc349dba19fd242b89f0495
+msgid "A function that expands the `auto` property of a screen language :ref:`imagebutton <sl-imagebutton>` or :ref:`imagemap <sl-imagemap>` statement into a displayable. It takes the value of the auto property, and the desired image, one of: \"insensitive\", \"idle\", \"hover\", \"selected_idle\", \"selected_hover\", or \"ground\". It should return a displayable or None."
+msgstr ""
+
+#: ../../source/config.rst:672
+# b0da06c74ac04075a1668ca5b9fd6371
+msgid "The default implementation formats the `auto` property with the desired image, and then checks if the computed filename exists."
+msgstr ""
+
+#: ../../source/config.rst:677
+# dba7520623f64f26b17408ec0d5fc0e5
+msgid "If true, imagemap hotspots will be cached to PNG files, reducing time and memory usage, but increasing the size of the game on disk. Set this to false to disable this behavior."
+msgstr ""
+
+#: ../../source/config.rst:683
+# ea7324ede7c84d01b32df2df28497d5f
+msgid "If True, then by default the equivalent of a :ref:`with None <with-none>` statement will be performed after interactions caused by dialogue, menus input, and imagemaps. This ensures that old screens will not show up in transitions."
+msgstr ""
+
+#: ../../source/config.rst:690
+# 110dc3b434554604be5d6d5873f221f4
+msgid "A list of functions that are called (without any arguments) when an interaction is started or restarted."
+msgstr ""
+
+#: ../../source/config.rst:695
+# f0603e7f4acb48fc840b6adfb4a0180c
+msgid "If True, joystick support is enabled."
+msgstr ""
+
+#: ../../source/config.rst:699
+# b215ecb282974796b41264b2e73a2ebf
+msgid "If true, showing an image without supplying a transform or ATL block will cause the image to continue the previous transform an image with that tag was using, if any. If false, the transform is stopped."
+msgstr ""
+
+#: ../../source/config.rst:706
+# d3f7597f1b1a4780b5b2010559846ffc
+msgid "This variable contains a keymap giving the keys and mouse buttons assigned to each possible operation. Please see the section on Keymaps for more information."
+msgstr ""
+
+#: ../../source/config.rst:712
+# d002e5538749428d97cb320299583253
+msgid "If not None, this is a function that is called whenever a label is reached. It is called with two parameters. The first is the name of the label. The second is true if the label was reached through jumping, calling, or creating a new context, and false otherwise."
+msgstr ""
+
+#: ../../source/config.rst:720
+# e021ac68235449fe91fde4d4f780bde2
+msgid "This variable gives a way of causing jumps and calls of labels in Ren'Py code to be redirected to other labels. For example, if you add a mapping from \"start\" to \"mystart\", all jumps and calls to \"start\" will go to \"mystart\" instead."
+msgstr ""
+
+#: ../../source/config.rst:727
+# dac48c43ae4f4a07a257c65aa5b2eeb6
+msgid "Controls layer clipping. This is a map from layer names to (x, y, height, width) tuples, where x and y are the coordinates of the upper-left corner of the layer, with height and width giving the layer size."
+msgstr ""
+
+#: ../../source/config.rst:732
+# 2b0d4e5245a64a1e94f77763f63c562f
+msgid "If a layer is not mentioned in config.layer_clipping, then it is assumed to take up the full screen."
+msgstr ""
+
+#: ../../source/config.rst:737
+# 5781c7f558fc4755abff15526ef9ae5b
+msgid "This variable gives a list of all of the layers that Ren'Py knows about, in the order that they will be displayed to the screen. (The lowest layer is the first entry in the list.) Ren'Py uses the layers \"master\", \"transient\", \"screens\", and \"overlay\" internally, so they should always be in this list."
+msgstr ""
+
+#: ../../source/config.rst:745
+# 46b1876fab764fa29e99df211cbe933b
+msgid "This is a list of functions that are called, with no arguments, when lint is run. The functions are expected to check the script data for errors, and print any they find to standard output (using the python print statement is fine in this case)."
+msgstr ""
+
+#: ../../source/config.rst:752
+# 2d37d6710185480c97c3cbab74237c5d
+msgid "If True, the start of an interaction will be delayed until all images used by that interaction have loaded. (Yeah, it's a lousy name.)"
+msgstr ""
+
+#: ../../source/config.rst:758
+# 2d51b0aa507d4608974d74f611c6b4dc
+msgid "If not None, this is expected to be a filename. Much of the text shown to the user by :ref:`say <say-statement>` or :ref:`menu <menu-statement>` statements will be logged to this file."
+msgstr ""
+
+#: ../../source/config.rst:764
+# 818fc73bc8b2472a8ba25cfc92485369
+msgid "If not None, this function is called when an attempt to load an image fails. It may return None, or it may return an image manipulator. If an image manipulator is returned, that image manipulator is loaded in the place of the missing image."
+msgstr ""
+
+#: ../../source/config.rst:771
+# eec92b949cbf4316836eed7b8888a73c
+msgid "The mouse is hidden after this number of seconds has elapsed without any mouse input. This should be set to longer then the expected time it will take to read a single screen, so mouse users will not experience the mouse appearing then disappearing between clicks."
+msgstr ""
+
+#: ../../source/config.rst:779
+# eb7e5a28211c435582f28356592f6a29
+msgid "If true, Ren'Py will apply new-style (square-bracket) substitutions to all text displayed."
+msgstr ""
+
+#: ../../source/config.rst:784
+# f5af23a451794413a47f4a8de7446d39
+msgid "If true, Ren'Py will apply old-style (percent) substitutions to text displayed by the :ref:`say <say-statement>` and :ref:`menu <menu-statement>` statements."
+msgstr ""
+
+#: ../../source/config.rst:790
+# e749c816fa504329a1930458da398b8a
+msgid "True if we want overlays to be shown during :ref:`with statements <with-statement>`, or False if we'd prefer that they be hidden during the with statements."
+msgstr ""
+
+#: ../../source/config.rst:796
+# c427eb80de5e464394af06ede08a856e
+msgid "This is a list of all of the overlay layers. Overlay layers are cleared before the overlay functions are called. \"overlay\" should always be in this list."
+msgstr ""
+
+#: ../../source/config.rst:802
+# b7a51b2b1f20446586b48260c740e929
+msgid "If not None, this should be a function. The function is called, with no arguments, at around 20hz."
+msgstr ""
+
+#: ../../source/config.rst:807
+# 271c550eb2a34e38b568b3fb5b423320
+msgid "This is the number of statements, including the current one, to consider when doing predictive image loading. A breadth-first search from the current statement is performed until this number of statements is considered, and any image referenced in those statements is potentially predictively loaded. Setting this to 0 will disable predictive loading of images."
+msgstr ""
+
+#: ../../source/config.rst:816
+# fd5d06ccd0204bcfab29e3e3ef23c39d
+msgid "If set to True, some profiling information will be output to stdout."
+msgstr ""
+
+#: ../../source/config.rst:821
+# 48436b49e439474592da659d4c40cdc7
+msgid "Should the user be allowed to rollback the game? If set to False, the user cannot interactively rollback."
+msgstr ""
+
+#: ../../source/config.rst:826
+# dbc15bf2858046e58ca42daa8d9b4d77
+msgid "When there are more than this many statements in the rollback log, Ren'Py will consider trimming the log."
+msgstr ""
+
+#: ../../source/config.rst:831
+# 6b18ab0b2124401a94a214f860c1e178
+msgid "If not None, this should be a function. The function is called with no arguments when the user attempts to dismiss a :ref:`say statement <say-statement>`. If this function returns true, the dismissal is allowed, otherwise it is ignored."
+msgstr ""
+
+#: ../../source/config.rst:838
+# 1b191a526b9d44ddb762c55101ecee84
+msgid "If not None, then this is a function that is given the text found in strings in the :ref:`say <say-statement>` and :ref:`menu <menu-statement>` statements. It is expected to return new (or the same) strings to replace them."
+msgstr ""
+
+#: ../../source/config.rst:845
+# 5eefee0278664fb1a1be47f14b74a96d
+msgid "A list of functions that are called, without arguments, before the second and later interactions caused by a line of dialogue with pauses in it. Used to sustain voice through pauses."
+msgstr ""
+
+#: ../../source/config.rst:851
+# 1a3b22b412fa420bb229d1f99b2ed5bc
+msgid "If set to true, Ren'Py will create the file save_dump.txt whenever it saves a game. This file contains information about the objects contained in the save file. Each line consists of a relative size estimate, the path to the object, information about if the object is an alias, and a representation of the object."
+msgstr ""
+
+#: ../../source/config.rst:859
+# 7b183fbe2f1546179f6d4ad53d87f5cf
+msgid "If true, the physical size of the window will be saved in the preferences, and restored when the game resumes."
+msgstr ""
+
+#: ../../source/config.rst:864
+# b698029b5f4144a6b090a7d495672319
+msgid "The complete path to the directory in which the game is saved. This should only be set in a python early block. See also config.save_directory, which generates the default value for this if it is not set during a python early block."
+msgstr ""
+
+#: ../../source/config.rst:871
+# 5a5bec4bd93e4597b04ec3e742c28fd0
+msgid "A function that's used in place of renpy.scene by the :ref:`scene statement <scene-statement>`. Note that this is used to clear the screen, and config.show is used to show a new image. This should have the same signature as renpy.scene."
+msgstr ""
+
+#: ../../source/config.rst:878
+# ad2b0468003f4f0189e425154d8dd255
+msgid "A function that is called when a screenshot is taken. The function is called with a single parameter, the full filename the screenshot was saved as."
+msgstr ""
+
+#: ../../source/config.rst:884
+# 9f3be759330f4e40b552012a5ee33f4a
+msgid "If not None, this should be a (`x`, `y`, `height`, `width`) tuple. Screenshots are cropped to this rectangle before being saved."
+msgstr ""
+
+#: ../../source/config.rst:890
+# ef1effc05a0542a9b8b8a02899f93498
+msgid "The pattern used to create screenshot files. This pattern is applied (using python's %-formatting rules) to the natural numbers to generate a sequence of filenames. The filenames may be absolute, or relative to config.renpy_base. The first filename that does not exist is used as the name of the screenshot."
+msgstr ""
+
+#: ../../source/config.rst:898
+# 2d6c6cba399a4eb4a383706afcf7a886
+msgid "If not None, this is interpreted as a script version. The library will use this script version to enable some compatibility features, if necessary. If None, we assume this is a latest-version script."
+msgstr ""
+
+#: ../../source/config.rst:903
+# 3d6ebfd6d5c6468f8661bfebae88329d
+msgid "This is normally set in a file added by the Ren'Py launcher when distributions are built."
+msgstr ""
+
+#: ../../source/config.rst:908
+# 57f51f34f4144942b4aafeb98bdfd6c3
+msgid "A list of directories that are searched for images, music, archives, and other media, but not scripts. This is initialized to a list containing \"common\" and the name of the game directory."
+msgstr ""
+
+#: ../../source/config.rst:914
+# 4681079caa5a4eb5ad9ca4fc0e252fb8
+msgid "A function that is used in place of renpy.show by the :ref:`show <show-statement>` and :ref:`scene <scene-statement>` statements. This should have the same signature as renpy.show."
+msgstr ""
+
+#: ../../source/config.rst:920
+# c84a35426cc94f8bae7eaab9e5bbfeba
+msgid "The amount of time that dialogue will be shown for, when skipping statements using ctrl, in milliseconds. (Although it's nowhere near that precise in practice.)"
+msgstr ""
+
+#: ../../source/config.rst:926
+# 4af2149e2ecf48e181cae3dbb5fd55d0
+msgid "If True, the library will display a skip indicator when skipping through the script."
+msgstr ""
+
+#: ../../source/config.rst:931
+# 0f143f8fc64c40a28481bbd0b6b1b000
+msgid "If True, sound works. If False, the sound/mixer subsystem is completely disabled."
+msgstr ""
+
+#: ../../source/config.rst:936
+# 793faad0d45542f2969608bafbcc3f7e
+msgid "The sample rate that the sound card will be run at. If all of your wav files are of a lower rate, changing this to that rate may make things more efficent."
+msgstr ""
+
+#: ../../source/config.rst:942
+# db66ae86180b409c8b88cdc60835e9b0
+msgid "A list of functions that are called (without any arguments) when an interaction is started. These callbacks are not called when an interaction is restarted."
+msgstr ""
+
+#: ../../source/config.rst:948
+# 56b9b51057294d5fbdd2e2ee2d311df4
+msgid "This is a list of names of layers that are displayed above all other layers, and do not participate in a transition that is applied to all layers. If a layer name is listed here, it should not be listed in config.layers."
+msgstr ""
+
+#: ../../source/config.rst:955
+# 820043b45baf426e8865418689ec4db5
+msgid "This variable gives a list of all of the transient layers. Transient layers are layers that are cleared after each interaction. \"transient\" should always be in this list."
+msgstr ""
+
+#: ../../source/config.rst:961
+# 41e03515225c41e4aa0944700291f1d2
+msgid "If True, transforms will inherit :ref:`position properties <position-style-properties>` from their child. If not, they won't."
+msgstr ""
+
+#: ../../source/config.rst:966
+# aca2052bc8da463ebc68972e64d220f0
+msgid "A list of screen variants that are searched when choosing a screen to display to the user. This should always end with None, to ensure that the default screens are chosen. See :ref:`screen-variants`."
+msgstr ""
+
+#: ../../source/config.rst:972
+# e220693dfe434f7596f8d58294c9a223
+msgid "A string that is formatted with the string argument to the voice statement to produce the filename that is played to the user. For example, if this is \"{filename}.ogg\", the ``voice \"test\"`` statement will play test.ogg."
+msgstr ""
+
+#: ../../source/config.rst:979
+# 3e9807ca2e584b58bb36034325bf7ff2
+msgid "If not None, this should be a function that is called when a :ref:`with statement <with-statement>` occurs. This function can be responsible for putting up transient things on the screen during the transition. The function is called with a single argument, which is the transition that is occurring. It is expected to return a transition, which may or may not be the transition supplied as its argument."
+msgstr ""
+

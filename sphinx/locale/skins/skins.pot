@@ -1,0 +1,58 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/skins.rst:8
+# ce1472fa88f2467e9df3469eeb5820d3
+msgid "Skins"
+msgstr ""
+
+#: ../../source/skins.rst:10
+# bda81e0f9716476fb9777e6687212038
+msgid "Ren'Py supports skinning the launcher - changing what the launcher looks like. To do this, follow the following steps:"
+msgstr ""
+
+#: ../../source/skins.rst:13
+# 629eab2bd7c3428799e89c85f662dac7
+msgid "Skins are specific to the Ren'Py version in use, and can't be expected to be forward or backwards compatible."
+msgstr ""
+
+#: ../../source/skins.rst:16
+# a9979829d822475895c612c8d7739ba1
+msgid "Open the launcher in the launcher. This can be done from the preferences screen."
+msgstr ""
+
+#: ../../source/skins.rst:19
+# d43121ea4e1c47d2a1a6b3ba92f0f422
+msgid "Create the skin.rpy script file."
+msgstr ""
+
+#: ../../source/skins.rst:21
+# 8372110431994ee9b6ef2b7a438286ea
+msgid "Copy the following code into skin.rpy::"
+msgstr ""
+
+#: ../../source/skins.rst:67
+# 2ef510de736542a2b0c600befa371293
+msgid "Modify skin.rpy to skin the launcher. Place the image files you use into the launcher's game directory."
+msgstr ""
+
+#: ../../source/skins.rst:70
+# c6bad7d21f284f62890827809c9f9864
+msgid "An incorrect skin.rpy file could prevent the launcher from starting. To fix it, you'll need to remove skin.rpy and skin.rpyc from the launcher's game directory, start the launcher, and then put them back."
+msgstr ""
+

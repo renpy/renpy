@@ -1,0 +1,48 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/thequestion.rst:7
+# 1ea869fb952141bd8b0a8273e02ad954
+msgid "Script of The Question"
+msgstr ""
+
+#: ../../source/thequestion.rst:9
+# 36f0cf18f20847128c49e4431db83b72
+msgid "The script is divided over two files."
+msgstr ""
+
+#: ../../source/thequestion.rst:11
+# b7a7366569ed40528e3091f1dfc05715
+msgid "`script.rpy`_ contains the main body of the game."
+msgstr ""
+
+#: ../../source/thequestion.rst:13
+# c93bdcfb812b4297a3bfd078773bf2b2
+msgid "`options.rpy`_ contains options which customize the display of parts of the game."
+msgstr ""
+
+#: ../../source/thequestion.rst:17
+# 82f5c7e6e11140cf9cd7bac87f59fdcb
+msgid "script.rpy"
+msgstr ""
+
+#: ../../source/thequestion.rst:244
+# c80c64e83e11439bbefa6e343141b4cd
+msgid "options.rpy"
+msgstr ""
+

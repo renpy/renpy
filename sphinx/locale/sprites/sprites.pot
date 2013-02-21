@@ -1,0 +1,248 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-21 10:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/sprites.rst:7
+# 4c11d1c27d7f410b9bff743c20a9aaf9
+msgid "Sprites"
+msgstr ""
+
+#: ../../source/sprites.rst:9
+# 5550df2275d344068a6da3afcaea3082
+msgid "To support the display of a large number of images at once, Ren'Py supports a sprite system. This system allows one to create sprites, where each sprite contains a displayable. The sprites can then have their location on the screen and vertical ordering changed."
+msgstr ""
+
+#: ../../source/sprites.rst:14
+# 5adfa095233842499133d848f4f3f126
+msgid "If one ignores performance, the sprite system is conceptually similar to a :func:`Fixed` wrapping :func:`Transform`\\s. Sprites are much faster than transforms, but also less flexible. The big performance improvement of sprites is that each Displayable is rendered only once per frame, even if that Displayable is used by many sprites. The limitation is that Sprites only allow one to change their xoffset and yoffset, rather than the many properties that a Transform has."
+msgstr ""
+
+#: ../../source/sprites.rst:22
+# e8e0e74cc4004bedb755baf2b8019cd6
+msgid "To use the sprite system, create a SpriteManager object, and then call its create method to create new particles. As necessary, update the xoffset, yoffset, and zorder fields of each sprite to move it around the screen. By supplying `update` and `event` arguments to SpriteManager, you can have the sprites change over time, and react to user input."
+msgstr ""
+
+#: ../../source/sprites.rst:30
+# c6dd9d5488e144ba8ce7bfc7884a7d3e
+msgid "Sprite Classes"
+msgstr ""
+
+#: ../../source/inc/sprites:5
+# 66cba72bb13c41628e350f69b855340a
+msgid "This represents a sprite that is managed by the SpriteManager. It contains fields that control the placement of the sprite on the screen. Sprites should not be created directly. Instead, they should be created by calling :meth:`SpriteManager.create`."
+msgstr ""
+
+#: ../../source/inc/sprites:10
+# 59c9b9e689384e009906d25ef865dd95
+msgid "The fields of a sprite object are:"
+msgstr ""
+
+#: ../../source/inc/sprites:14
+# 57eb6edcadc54dc79737b79ec1938168
+msgid "`x`, `y`"
+msgstr ""
+
+#: ../../source/inc/sprites:13
+# 13528ab43ba14fe699391a33b79fa130
+msgid "The x and y coordinates of the upper-left corner of the sprite, relative to the SpriteManager."
+msgstr ""
+
+#: ../../source/inc/sprites:19
+# 79480d592c39472ab5f5530d5da334a7
+msgid "`zorder`"
+msgstr ""
+
+#: ../../source/inc/sprites:17
+# 0c4a30d01eb6407b93ef10bc3471b957
+msgid "An integer that's used to control the order of this sprite in the relative to the other sprites in the SpriteManager. The larger the number is, the closer to the viewer the sprite is."
+msgstr ""
+
+#: ../../source/inc/sprites:24
+# 2c990b08f37842f38c2db0dcf0be1ddd
+msgid "`events`"
+msgstr ""
+
+#: ../../source/inc/sprites:22
+# 35e96259e0f84bf2aecd3ea282be7e53
+msgid "If True, then events are passed to child. If False, the default, the children igore events (and hence don't spend time processing them)."
+msgstr ""
+
+#: ../../source/inc/sprites:26
+# bd98f55dcae24811a352ee2ee652667b
+msgid "The methods of a Sprite object are:"
+msgstr ""
+
+#: ../../source/inc/sprites:31
+# 9597484b02e04339a6e801672e05f280
+msgid "Destroys this sprite, preventing it from being displayed and removing it from the SpriteManager."
+msgstr ""
+
+#: ../../source/inc/sprites:36
+# ab7e464721404cad8f680340f3d1dc15
+msgid "Changes the Displayable associated with this sprite to `d`."
+msgstr ""
+
+#: ../../source/inc/sprites:40
+# 5cba6dd9d2c64342b753cd1b95445a42
+msgid "This displayable manages a collection of sprites, and displays them at the fastest speed possible."
+msgstr ""
+
+#: ../../source/inc/sprites:49
+# 55eae9717d2e498987815b5136d4d5c1
+msgid "`update`"
+msgstr ""
+
+#: ../../source/inc/sprites:44
+# 8cdc6612e57347ecb15a42763fde45ce
+msgid "If not None, a function that is called each time a sprite is rendered by this sprite manager. It is called with one argument, the time in seconds since this sprite manager was first displayed.  It is expected to return the number of seconds until the function is called again, and the SpriteManager is rendered again."
+msgstr ""
+
+#: ../../source/inc/sprites:59
+# 7b863a1e2b8c4df6997f1d4601809820
+msgid "`event`"
+msgstr ""
+
+#: ../../source/inc/sprites:52
+# fe8647f6fac84374b2a3f3149f69ea7e
+msgid "If not None, a function that is called when an event occurs. It takes as arguments: * A pygame event object. * The x coordinate of the event. * The y coordinate of the event. * The time since the sprite manager was first shown. If it returns a non-None value, the interaction ends, and that value is returned."
+msgstr ""
+
+#: ../../source/inc/sprites:64
+# 18a18e5e629a4bb2b6c14c3bec618ea0
+msgid "`predict`"
+msgstr ""
+
+#: ../../source/inc/sprites:62
+# c854271e2ec34cab839bd39d6c94b53a
+msgid "If not None, a function that returns a list of displayables. These displayables are predicted when the sprite manager is."
+msgstr ""
+
+#: ../../source/inc/sprites:72
+# e92f536f400a4c7a88f0d18bc257d8c6
+msgid "`ignore_time`"
+msgstr ""
+
+#: ../../source/inc/sprites:67
+# 948ee1fbe46a496ab4a2f459a9dedafe
+msgid "If True, then time is ignored when rendering displayables. This should be used when the sprite manager is used with a relatively small pool of images, and those images do not change over time. This should only be used with a small number of displayables, as it will keep all displayables used in memory for the life of the SpriteManager."
+msgstr ""
+
+#: ../../source/inc/sprites:74
+# b5b62461c67441c48adae7f6f6cc9f76
+msgid "After being rendered once (before the `update` function is called), SpriteManagers have the following fields:"
+msgstr ""
+
+#: ../../source/inc/sprites:77
+# d4463c8d4e184d5eb2668ae6ceee0e3b
+msgid "`width`, `height`"
+msgstr ""
+
+#: ../../source/inc/sprites:79
+# 2c9f258bc17542ddb1b80898c85600a6
+msgid "The width and height of this SpriteManager, in pixels."
+msgstr ""
+
+#: ../../source/inc/sprites:82
+# 0c5aecc094ad48ba8eeb3ce4937b4105
+msgid "SpriteManagers have the following methods:"
+msgstr ""
+
+#: ../../source/inc/sprites:86
+# a68c86822ed14dfa893a38a0ff72582f
+msgid "Creates a new Sprite for the displayable `d`, and adds it to this SpriteManager."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:5
+# de6046aaff634c1c8e0f519a5c220492
+msgid "The snowblossom effect moves multiple instances of a sprite up, down, left or right on the screen. When a sprite leaves the screen, it is returned to the start."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:10
+# 9dc15f25c5484ee8be9f7715c6107b1b
+msgid "`d`"
+msgstr ""
+
+#: ../../source/inc/sprites_extra:10
+# 831b5fea449a4add998338bc703636c8
+msgid "The displayable to use for the sprites."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:15
+# 809f6eff41c646458625e36cc45521f2
+msgid "`border`"
+msgstr ""
+
+#: ../../source/inc/sprites_extra:13
+# 25b787c6a1014197bb7b751d8f1dee19
+msgid "The size of the border of the screen. The sprite is considered to be on the screen until it clears the border, ensuring that sprites do not disappear abruptly."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:22
+# bee7a41267c24e0bab951b2f2984259b
+msgid "`xspeed`, `yspeed`"
+msgstr ""
+
+#: ../../source/inc/sprites_extra:18
+# 25ab1dbc2b004ffaadda9cfb83414ad8
+msgid "The speed at which the sprites move, in the horizontal and vertical directions, respectively. These can be a single number or a tuple of two numbers. In the latter case, each particle is assigned a random speed between the two numbers. The speeds can be positive or negative, as long as the second number in a tuple is larger than the first."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:27
+# 1d87e1d4498f4612ba7c1e69d5bb5c49
+msgid "`start`"
+msgstr ""
+
+#: ../../source/inc/sprites_extra:25
+# d5b6f657fb064749a9410d24ad80770c
+msgid "The delay, in seconds, before each particle is added. This can be allows the particles to start at the top of the screen, while not looking like a \"wave\" effect."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:31
+# 05f5f964814b4b8abc81cb70d25d3ee7
+msgid "`fast`"
+msgstr ""
+
+#: ../../source/inc/sprites_extra:30
+# 4be4f91e1ed64c1991610bee8d9cf666
+msgid "If true, particles start in the center of the screen, rather than only at the edges."
+msgstr ""
+
+#: ../../source/inc/sprites_extra:34
+# 11dbaf0fc1a24ca9978758ba3b20e78a
+msgid "`horizontal`"
+msgstr ""
+
+#: ../../source/inc/sprites_extra:34
+# c2e7927333f64c4cb2a6d8e7c8d5afd7
+msgid "If true, particles appear on the left or right side of the screen, rather than the top or bottom."
+msgstr ""
+
+#: ../../source/sprites.rst:36
+# a5493d61d08f485594f6e63e65cb895b
+msgid "Sprite Examples"
+msgstr ""
+
+#: ../../source/sprites.rst:38
+# e8e711da2be941d9a44be92fc8193a20
+msgid "The SnowBlossom class is an easy-to use way of placing falling things on the screen."
+msgstr ""
+
+#: ../../source/sprites.rst:46
+# 65dae73c2055415b82ef809aaccab1fc
+msgid "This example shows how a SpriteManager can be used to create complex behaviors. In this case, it shows 400 particles, and has them avoid the mouse."
+msgstr ""
+
