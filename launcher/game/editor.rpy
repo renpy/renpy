@@ -342,6 +342,7 @@ init python in editor:
                 return
 
             scripts = project.current.script_files()            
+            scripts = [ i for i in scripts if not i.startswith("game/tl/") ]
             scripts.sort(key=lambda fn : fn.lower())
 
             for fn in [ "game/screens.rpy", "game/options.rpy", "game/script.rpy" ]:
