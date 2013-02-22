@@ -150,6 +150,7 @@ init -1500 python:
             value += self.offset
             
             setattr(self.object, self.field, value)
+            renpy.restart_interaction()
             
         def get_adjustment(self):
 
@@ -172,6 +173,31 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
+    def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None):
+        """
+         :doc: value
+        
+         `variable`
+             A string giving the name of the variable to adjust.
+         `range`
+             The range to adjust over.
+         `max_is_zero`
+             If True, then when the field is zero, the value of the
+             bar will be range, and all other values will be shifted
+             down by 1. This works both ways - when the bar is set to
+             the maximum, the field is set to 0.
+
+             This is used internally, for some preferences.
+         `style`
+             The styles of the bar created.
+         `offset`
+             An offset to add to the value.
+         `step`
+             The amount to change the bar by. If None, defaults to 1/10th of
+             the bar.
+        """
+        
+        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step)
         
     class MixerValue(BarValue):
         """
