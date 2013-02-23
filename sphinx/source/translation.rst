@@ -116,18 +116,21 @@ translating the code above, Ren'Py will generate::
     # game/script.rpy:95
     translate piglatin start_636ae3f5:
 
-        e "Thank you for taking a look at the Ren'Py translation framework."
-
+        # e "Thank you for taking a look at the Ren'Py translation framework."
+        e ""
+        
     # game/script.rpy:99
     translate piglatin start_bd1ad9e1:
 
-        e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
-
+        # e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
+        e ""
+        
     # game/script.rpy:101
     translate piglatin start_9e949aac:
 
-        e "Pretty much everything your game needs!"
-
+        # e "Pretty much everything your game needs!"
+        e ""
+        
 This can be translated by editing the generated code. A finished
 translation might look like::
 
@@ -243,13 +246,13 @@ Ren'Py will generate the following code::
   translate piglatin strings:
 
       old "Eileen"
-      new "Eileen"
+      new ""
 
       old "Go West"
-      new "Go West"
+      new ""
 
       old "Head East"
-      new "Head East"
+      new ""
 
 Which can then be translated::
   
@@ -296,7 +299,7 @@ and code translation systems::
 Image and File Translations
 ===========================
 
-When translating a game, it may may be necessary to replace a file
+When translating a game, it may be necessary to replace a file
 with a translate version. For example, if an image contains text, it
 might make sense to replace it with a version of the image where the
 text is in another language.
@@ -353,8 +356,8 @@ preferences screen, using code like::
                 has vbox
 
                 label _("Language")
-                textbutton _("English") action Language(None)
-                textbutton _("Pig Latin") action Language("piglatin")
+                textbutton "English" action Language(None)
+                textbutton "Igpay Atinlay" action Language("piglatin")
 
 There are two translation-related functions:
 
