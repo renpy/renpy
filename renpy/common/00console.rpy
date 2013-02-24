@@ -424,7 +424,31 @@ init -1500 python in _console:
     def quit(l):
         renpy.jump("_console_return")
  
-    @command("reload: reload the game")
+    @command("load <slot>: loads the game from slot")
+    def load(l):
+        name = l.rest().strip()
+        
+        if not name:
+            raise Exception("Slot name must not be empty")
+
+        try:
+            renpy.load(name)
+        finally:
+            console.history[-1].result = "Loading slot {!r}.".format(name)
+
+
+    @command("save <slot>: saves the game in slot")
+    def save(l):
+        name = l.rest().strip()
+        
+        if not name:
+            raise Exception("Slot name must not be empty")
+
+        renpy.save(name)
+
+        return "Saved slot {!r}.".format(name)
+
+    @command("reload: reloads the game, refreshing the scripts")
     def reload(l):
         store._reload_game()
         
