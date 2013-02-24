@@ -42,7 +42,13 @@ init -1500 python:
 
     config.console_history_size = 100
     config.console_commands = { }
-    
+
+    # If not None, this is called with the command that's about to be run 
+    # by the console. (The command is represented as a list of strings.) It
+    # is expected to return a list of strings, which is the command that will
+    # be actually run.
+    config.console_callback = None
+
     # Create default styles. See above for documentation.
     style.create('_console', '_default')
     style._console.background = None
@@ -251,7 +257,13 @@ init -1500 python in _console:
             self.line_history.append(lines)
             
             self.reset()
-            
+
+            if config.console_callback is not None: 
+                lines = config.console_callback(lines)
+
+                if not lines:
+                    return
+
             self.run(lines)
             
         def can_renpy(self):
