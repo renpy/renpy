@@ -74,7 +74,7 @@ init -1600 python:
         drag_deactivate = [ 'mouseup_1' ],
     
         # Debug console.
-        console = [ 'K_BACKQUOTE', 'shift_K_BACKQUOTE', 'shift_O' ],
+        console = [ 'shift_O' ],
         console_older = [ 'K_UP' ],
         console_newer = [ 'K_DOWN' ],
         )
