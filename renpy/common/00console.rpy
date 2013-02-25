@@ -42,7 +42,13 @@ init -1500 python:
 
     config.console_history_size = 100
     config.console_commands = { }
-    
+
+    # If not None, this is called with the command that's about to be run 
+    # by the console. (The command is represented as a list of strings.) It
+    # is expected to return a list of strings, which is the command that will
+    # be actually run.
+    config.console_callback = None
+
     # Create default styles. See above for documentation.
     style.create('_console', '_default')
     style._console.background = None
@@ -251,7 +257,13 @@ init -1500 python in _console:
             self.line_history.append(lines)
             
             self.reset()
-            
+
+            if config.console_callback is not None: 
+                lines = config.console_callback(lines)
+
+                if not lines:
+                    return
+
             self.run(lines)
             
         def can_renpy(self):
@@ -412,7 +424,31 @@ init -1500 python in _console:
     def quit(l):
         renpy.jump("_console_return")
  
-    @command("reload: reload the game")
+    @command("load <slot>: loads the game from slot")
+    def load(l):
+        name = l.rest().strip()
+        
+        if not name:
+            raise Exception("Slot name must not be empty")
+
+        try:
+            renpy.load(name)
+        finally:
+            console.history[-1].result = "Loading slot {!r}.".format(name)
+
+
+    @command("save <slot>: saves the game in slot")
+    def save(l):
+        name = l.rest().strip()
+        
+        if not name:
+            raise Exception("Slot name must not be empty")
+
+        renpy.save(name)
+
+        return "Saved slot {!r}.".format(name)
+
+    @command("reload: reloads the game, refreshing the scripts")
     def reload(l):
         store._reload_game()
         

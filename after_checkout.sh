@@ -1,8 +1,16 @@
 #!/bin/bash
 
-ln -s ../help.html tutorial/README.html
-ln -s ../help.html the_question/README.html
-ln -s ../help.html template/README.html
+ROOT="$(dirname $(readlink -f $0))"
 
-ln -s sphinx/source/license.rst LICENSE.txt
-ln -s sphinx/build/html doc
+ln -s "$ROOT/help.html" "$ROOT/tutorial/README.html"
+ln -s "$ROOT/help.html" "$ROOT/the_question/README.html"
+ln -s "$ROOT/help.html" "$ROOT/template/README.html"
+
+ln -s "$ROOT/sphinx/source/license.rst" "$ROOT/LICENSE.txt"
+ln -s "$ROOT/sphinx/build/html" "$ROOT/doc"
+
+if [ "$1" != "" ]; then
+    ln -s "$1/lib" "$ROOT/lib"
+    ln -s "$1/renpy.app" "$ROOT"
+    ln -s "$1/renpy.exe" "$ROOT"
+fi
