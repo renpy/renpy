@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-21 10:00\n"
+"POT-Creation-Date: 2013-02-25 09:05\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +93,7 @@ msgstr ""
 
 #: ../../source/changelog.rst:59
 # 7be1e4d5454b4c66ad0524527b3f3135
-msgid "The new debug console makes it possible to interactively run Ren'Py script and Python statements, and immediately see the results. The console is available in developer mode or when :var:`config.console` is True, and can be accessed by pressing the shift+O or the backtick key."
+msgid "The new debug console makes it possible to interactively run Ren'Py script and Python statements, and immediately see the results. The console is available in developer mode or when :var:`config.console` is True, and can be accessed by pressing shift+O."
 msgstr ""
 
 #: ../../source/changelog.rst:64

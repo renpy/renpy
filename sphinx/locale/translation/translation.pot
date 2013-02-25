@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-21 10:00\n"
+"POT-Creation-Date: 2013-02-25 09:05\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,177 +166,177 @@ msgstr ""
 msgid "When you generate translations for a language, Ren'Py will generate a translate statement corresponding to each translation unit. When translating the code above, Ren'Py will generate::"
 msgstr ""
 
-#: ../../source/translation.rst:134
+#: ../../source/translation.rst:137
 # 750243d2a3d74edab60fd3cdbb0288c8
 msgid "This can be translated by editing the generated code. A finished translation might look like::"
 msgstr ""
 
-#: ../../source/translation.rst:155
+#: ../../source/translation.rst:158
 # 86fe69ebd4a44a229bb4654d2723ab42
 msgid "When a block in the main script is encountered, Ren'Py checks to see if a translate statement corresponding to that block exists. If so, it executes the translate statement instead of the translated block, showing the user the translation."
 msgstr ""
 
-#: ../../source/translation.rst:161
+#: ../../source/translation.rst:164
 # 5aac2923917f4725823e6e6d40169f69
 msgid "More Complex Translations"
 msgstr ""
 
-#: ../../source/translation.rst:163
+#: ../../source/translation.rst:166
 # 95f0444b4d2640c0aceed4185cfc1ed4
 msgid "Translate statements do not need to contain 1-to-1 translations of the original language. For example, a long line could be split::"
 msgstr ""
 
-#: ../../source/translation.rst:173
+#: ../../source/translation.rst:176
 # ed1ac5f9445c4b6192a6c5f99bb7cfe7
 msgid "Or a statement can be removed, by replacing it with the pass statement::"
 msgstr ""
 
-#: ../../source/translation.rst:181
+#: ../../source/translation.rst:184
 # 648d2790ba7f4c15a068f0cdc5ad20ca
 msgid "It's also possible to run non-dialogue statements, such as conditionals or python code. For example, we can translate::"
 msgstr ""
 
-#: ../../source/translation.rst:186
+#: ../../source/translation.rst:189
 # b4208d5d4e8b499cbdfd32f20fdbb1f0
 msgid "into::"
 msgstr ""
 
-#: ../../source/translation.rst:197
+#: ../../source/translation.rst:200
 # ab7a540e801f45b0817dfa62ac84def4
 msgid "Tips"
 msgstr ""
 
-#: ../../source/translation.rst:199
+#: ../../source/translation.rst:202
 # 4c77f7cc5a02453ba6ebd66377275d5f
 msgid "Be very careful when changing dialogue that has been translated, especially when that dialogue is repeated in more than one place inside a label. In some cases, it may be necessary to assign a translation identifier directly, using a statement like::"
 msgstr ""
 
-#: ../../source/translation.rst:207
+#: ../../source/translation.rst:210
 # 9dd16d2ab3dc4a4ca7b37ea242a945eb
 msgid "Adding labels can also confuse the translation process. To prevent this, labels that are given the hide clause are ignored by the translation code.::"
 msgstr ""
 
-#: ../../source/translation.rst:214
+#: ../../source/translation.rst:217
 # 1674d1e05c424a25bd1df7da6152328e
 msgid "While translation blocks may include python code, this code should not have side effects visible outside of the block. That's because changing languages will restart the translation block, causing the side effects to occur multiple times."
 msgstr ""
 
-#: ../../source/translation.rst:220
+#: ../../source/translation.rst:223
 # 27882df778174a42bbbcb9fc2cc98b4d
 msgid "Menu and String Translations"
 msgstr ""
 
-#: ../../source/translation.rst:222
+#: ../../source/translation.rst:225
 # a99693db985a48b49360de0ad3ce1da5
 msgid "In addition to dialogue, Ren'Py is able to translate text found in menus and other strings. Interface translations are a 1-to-1 substitution. Wherever a string is found, it will be replaced by a single replacement."
 msgstr ""
 
-#: ../../source/translation.rst:227
+#: ../../source/translation.rst:230
 # 17f2d43c446245099247abe87a9a44f8
 msgid "When generating translations, Ren'Py will scan the script files for menus, and for strings enclosed inside the _() function. It will then place the strings inside a translate strings block. For example, if we have the following script::"
 msgstr ""
 
-#: ../../source/translation.rst:244
+#: ../../source/translation.rst:247
 # 9a50223c9bc14ae79bc068ed36e652d8
 msgid "Ren'Py will generate the following code::"
 msgstr ""
 
-#: ../../source/translation.rst:257
+#: ../../source/translation.rst:260
 # 1e700785a3824488be62bb5c453bc512
 msgid "Which can then be translated::"
 msgstr ""
 
-#: ../../source/translation.rst:270
+#: ../../source/translation.rst:273
 # f8339e487ede4a3abacae32d39c2b4be
 msgid "String translations are also applied to dialogue strings that are not translated as dialogue."
 msgstr ""
 
-#: ../../source/translation.rst:273
+#: ../../source/translation.rst:276
 # 4adfe82aa17a492bae807a751e55e24a
 msgid "When the same string is used in multiple places in the code, the string can be distinguished using the {#...} text tag. Even though they display the same, Ren'Py considers all of these distinct strings for the purpose of translation::"
 msgstr ""
 
-#: ../../source/translation.rst:285
+#: ../../source/translation.rst:288
 # 276b632c3fa0433f80f3fce18bbd2c6d
 msgid "Translating substitutions"
 msgstr ""
 
-#: ../../source/translation.rst:287
+#: ../../source/translation.rst:290
 # 6beea46c76cc454d8efa29fc7726ed9c
 msgid "String substitutions can be translated using the !t conversion flag. So the following code will be translatable using the dialogue and code translation systems::"
 msgstr ""
 
-#: ../../source/translation.rst:300
+#: ../../source/translation.rst:303
 # 856858a213d04e608e0d591a9a5a796c
 msgid "Image and File Translations"
 msgstr ""
 
-#: ../../source/translation.rst:302
+#: ../../source/translation.rst:305
 # 1b2259a7b7964e018524ca8fef09b5a6
-msgid "When translating a game, it may may be necessary to replace a file with a translate version. For example, if an image contains text, it might make sense to replace it with a version of the image where the text is in another language."
+msgid "When translating a game, it may be necessary to replace a file with a translate version. For example, if an image contains text, it might make sense to replace it with a version of the image where the text is in another language."
 msgstr ""
 
-#: ../../source/translation.rst:307
+#: ../../source/translation.rst:310
 # e4645098e4114cdc8f58d6f52eb2fec6
 msgid "Ren'Py handles this by looking in the translation directory for the image. For example, if the \"piglatin\" language is in use, and \"library.png\" is loaded, Ren'Py will use \"game/tl/piglatin/library.png\" in preference to \"game/library.png\"."
 msgstr ""
 
-#: ../../source/translation.rst:313
+#: ../../source/translation.rst:316
 # e6504642f6ab429da74f29570d52df8b
 msgid "Style Translations"
 msgstr ""
 
-#: ../../source/translation.rst:315
+#: ../../source/translation.rst:318
 # a919913c2e2f405fbc70b281b32e13bf
 msgid "It may be necessary to change styles - especially font-related styles - when translating a game. Ren'Py handles this with translate python blocks. These blocks can contain code to change language-related styles::"
 msgstr ""
 
-#: ../../source/translation.rst:323
+#: ../../source/translation.rst:326
 # 21de47f41a2f40c58da60baaa5ed1792
 msgid "When a language is activated - either at the start of the game, or after a language change - Ren'Py resets the styles to their contents at the end of the init phase. It then runs all translate python blocks associated with the current language, in some order. Finally, it rebuilds styles, allowing the changes to take effect."
 msgstr ""
 
-#: ../../source/translation.rst:329
+#: ../../source/translation.rst:332
 # 1f93919ee96942199a300ea92d7e6a00
 msgid "Style translations may be added to any .rpy file."
 msgstr ""
 
-#: ../../source/translation.rst:333
+#: ../../source/translation.rst:336
 # f9cc4a86b634428494b7eb0e23834cb0
 msgid "Default Language"
 msgstr ""
 
-#: ../../source/translation.rst:335
+#: ../../source/translation.rst:338
 # ee274ca18d8942cc853265b379046aab
 msgid "The default language is chosen using the following method:"
 msgstr ""
 
-#: ../../source/translation.rst:337
+#: ../../source/translation.rst:340
 # c88c249efc7f4f15adf83fc2eaa86813
 msgid "If the RENPY_LANGUAGE environment variable is set, that language is used."
 msgstr ""
 
-#: ../../source/translation.rst:339
+#: ../../source/translation.rst:342
 # c01d0200b9f848519dceb0d273a947c1
 msgid "If :var:`config.language` is set, that language is used."
 msgstr ""
 
-#: ../../source/translation.rst:340
+#: ../../source/translation.rst:343
 # 71e83ab160154d86a4c43b3849da7068
 msgid "If the game has ever chosen a language in the past, that language is used."
 msgstr ""
 
-#: ../../source/translation.rst:342
+#: ../../source/translation.rst:345
 # ea5cee84e0d548d690fc95a58318a15e
 msgid "Otherwise, the None language is used."
 msgstr ""
 
-#: ../../source/translation.rst:345
+#: ../../source/translation.rst:348
 # 62f047d214424a6f947bb5d702a6b96e
 msgid "Translation Actions, Functions, and Variables"
 msgstr ""
 
-#: ../../source/translation.rst:347
+#: ../../source/translation.rst:350
 # 8b237fc326d6482bb943e2647b104dae
 msgid "The main way to switch languages is with the Language action."
 msgstr ""
@@ -356,12 +356,12 @@ msgstr ""
 msgid "A string giving the language to translate to, or None to use the default language of the game script."
 msgstr ""
 
-#: ../../source/translation.rst:351
+#: ../../source/translation.rst:354
 # 9c1334cb84bd4d68b35268b71082e517
 msgid "The Language action can be used to add a language preference to the preferences screen, using code like::"
 msgstr ""
 
-#: ../../source/translation.rst:362
+#: ../../source/translation.rst:365
 # a06b297e1336443d92468bbaa1aa14d8
 msgid "There are two translation-related functions:"
 msgstr ""
@@ -376,77 +376,77 @@ msgstr ""
 msgid "Returns the set of known languages. This does not include the default language, None."
 msgstr ""
 
-#: ../../source/translation.rst:366
+#: ../../source/translation.rst:369
 # 79ced8cd8cef4c27a0df9cede64f876c
 msgid "In addition, there are two functions that are related to string translation:"
 msgstr ""
 
-#: ../../source/translation.rst:371
+#: ../../source/translation.rst:374
 # 978ef266f4274cfd8216a8141ba13792
 msgid "(Single underscore) Returns `s` unchanged. Ren'Py will scan for strings enclosed in this function, and add them to the list of translatable strings. The strings will not be translated until they are displayed."
 msgstr ""
 
-#: ../../source/translation.rst:378
+#: ../../source/translation.rst:381
 # f97dae2694b74f3e8bf67b89732d55dd
 msgid "(Double underscore) Returns `s` immediately translated into the current language. Strings enclosed in this function will be added to the list of translatable strings. Note that the string may be double-translated, if it matches a string translation when it is displayed."
 msgstr ""
 
-#: ../../source/translation.rst:384
+#: ../../source/translation.rst:387
 # c0a33f0c127944b7ad3d08065f714f4b
 msgid "There are two language-related variables. One is :var:`config.language`, which is used to change the default language of the game."
 msgstr ""
 
-#: ../../source/translation.rst:390
+#: ../../source/translation.rst:393
 # 60f4fe29acdb4b5f943235c0679a8f74
 msgid "The name of the current language, or None if the default language is being used. This should be treated as a read-only variable. To change the language, call :func:`renpy.change_language`."
 msgstr ""
 
-#: ../../source/translation.rst:398
+#: ../../source/translation.rst:401
 # 5788a3c6b3034c838c8f0831ab5183b4
 msgid "Unsanctioned Translations"
 msgstr ""
 
-#: ../../source/translation.rst:402
+#: ../../source/translation.rst:405
 # b3c19c02bf3e48ee8fd52ec01c83d1d4
 msgid "It's best to ask a game's creators for permission before creating an unsanctioned translation."
 msgstr ""
 
-#: ../../source/translation.rst:405
+#: ../../source/translation.rst:408
 # c266646c21c5460d88684690faec1a8e
 msgid "Ren'Py includes a small amount of support for creating translations without the active assistance of the game's creators. This support consists of the ability to automatically create a string translation file from all of the strings in the game. Since string translations are used for untranslated dialogue, this technique makes it possible to translate a game."
 msgstr ""
 
-#: ../../source/translation.rst:412
+#: ../../source/translation.rst:415
 # a7bf82f0399e459d867b448ae410a93e
 msgid "To create a string translation file, perform the following steps:"
 msgstr ""
 
-#: ../../source/translation.rst:414
+#: ../../source/translation.rst:417
 # d5305e9b78014afca8063ec8cb19717d
 msgid "Set the RENPY_LANGUAGE environment variable to the language you want to translate to."
 msgstr ""
 
-#: ../../source/translation.rst:416
+#: ../../source/translation.rst:419
 # 388d526c10344c008987d6104510bc46
 msgid "Set the RENPY_UPDATE_STRINGS environment variable to a non-empty value."
 msgstr ""
 
-#: ../../source/translation.rst:418
+#: ../../source/translation.rst:421
 # 5b0b635012364593a3ffde7f68b74e48
 msgid "Play through the game until all text is seen."
 msgstr ""
 
-#: ../../source/translation.rst:420
+#: ../../source/translation.rst:423
 # 8e5546af47164807860acf6691ec20dc
 msgid "This will update the \"game/tl/language/strings.rpy\" file with a translation template that contains all of the strings in it."
 msgstr ""
 
-#: ../../source/translation.rst:423
+#: ../../source/translation.rst:426
 # 910c7d69028948c99c040404cd94ea1f
 msgid "If a game doesn't include support for changing the language, it may be appropriate to use an init python block to set :var:`config.language` to the target language."
 msgstr ""
 
-#: ../../source/translation.rst:427
+#: ../../source/translation.rst:430
 # 19c60e6e3a424ac1b926f88475843e08
 msgid "Along with the use of string translations for dialogue, unsanctioned translators may be interested in using the techniques described above to translate images and styles."
 msgstr ""
