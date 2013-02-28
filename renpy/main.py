@@ -332,10 +332,7 @@ def main():
         except game.QuitException, e:
             
             if e.relaunch:
-                if renpy.windows and sys.argv[0].endswith(".exe"):
-                    subprocess.Popen(sys.argv)
-                else:
-                    subprocess.Popen([sys.executable, "-OO"] + sys.argv)
+                subprocess.Popen([sys.executable, "-EOO"] + sys.argv)
             
             break
 
