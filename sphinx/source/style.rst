@@ -418,7 +418,7 @@ Text Style Properties
         Used for Korean text delimited by whitespace. This prevents linebreaking
         between adjacent Korean characters.
     
-    ``"western``
+    ``"western"``
         Allows breaking only at whitespace. Suitable for most
         languages.
 
