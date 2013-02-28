@@ -296,7 +296,7 @@ allocated to it by a layout, or on the screen when not inside a layout.
 .. style-property:: yfill boolean
 
     If true, the displayable will expand to fill all available
-    horizontal space. If not true, it will only be large enough to
+    vertical space. If not true, it will only be large enough to
     contain its children.
 
     This only works for displayables that can change size.
