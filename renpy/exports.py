@@ -1819,8 +1819,8 @@ def set_physical_size(size):
     """
     :doc: other
     
-    Attempts to set the size of the physical window to size. This has the 
-    side effect of taking the screen out of windowed mode.
+    Attempts to set the size of the physical window to `size`. This has the 
+    side effect of taking the screen out of fullscreen mode.
     """
 
     renpy.game.preferences.fullscreen = False
