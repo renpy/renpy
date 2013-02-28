@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/thequestion_nvl.rst:7
-# 468aaf0636de47fd84b0997e9ded8a1b
+# 1766c4797d284ac592a4692db4ad5eef
 msgid "NVL-mode script for The Question"
 msgstr ""
 
 #: ../../source/thequestion_nvl.rst:9
-# 857e0a40990c4eb598353a9704e671a4
+# 80881b0d40c0429f9c853807e4d2777d
 msgid "Take \"The Question\" from the Ren'Py distribution, and replace the contents of the ``script.rpy`` file with the following code.  Also, this script uses a background image called ``nvl_window.png``, available `here <http://www.renpy.org/w/images/8/8f/nvl_window.png>`_."
 msgstr ""
 

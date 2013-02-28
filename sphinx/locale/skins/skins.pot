@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,42 +17,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/skins.rst:8
-# ce1472fa88f2467e9df3469eeb5820d3
+# b07707175154498895ab71eb23ba9a5e
 msgid "Skins"
 msgstr ""
 
 #: ../../source/skins.rst:10
-# bda81e0f9716476fb9777e6687212038
+# 84476a874491479387836a670cce6988
 msgid "Ren'Py supports skinning the launcher - changing what the launcher looks like. To do this, follow the following steps:"
 msgstr ""
 
 #: ../../source/skins.rst:13
-# 629eab2bd7c3428799e89c85f662dac7
+# 6956b61885244d4db2ceb2d5462ecbe3
 msgid "Skins are specific to the Ren'Py version in use, and can't be expected to be forward or backwards compatible."
 msgstr ""
 
 #: ../../source/skins.rst:16
-# a9979829d822475895c612c8d7739ba1
+# 320e7487b7b44db59a0184d9e8ebc02d
 msgid "Open the launcher in the launcher. This can be done from the preferences screen."
 msgstr ""
 
 #: ../../source/skins.rst:19
-# d43121ea4e1c47d2a1a6b3ba92f0f422
+# dccf971a8377439695c084e818f0be66
 msgid "Create the skin.rpy script file."
 msgstr ""
 
 #: ../../source/skins.rst:21
-# 8372110431994ee9b6ef2b7a438286ea
+# 5dac62f9bb3045b0a9c789a31c99c9d3
 msgid "Copy the following code into skin.rpy::"
 msgstr ""
 
 #: ../../source/skins.rst:67
-# 2ef510de736542a2b0c600befa371293
+# b050d4a50cc44778b2b00414085bf788
 msgid "Modify skin.rpy to skin the launcher. Place the image files you use into the launcher's game directory."
 msgstr ""
 
 #: ../../source/skins.rst:70
-# c6bad7d21f284f62890827809c9f9864
+# 4324e98c5a7b47b0b9fa78674f0d7092
 msgid "An incorrect skin.rpy file could prevent the launcher from starting. To fix it, you'll need to remove skin.rpy and skin.rpyc from the launcher's game directory, start the launcher, and then put them back."
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,32 +17,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/thequestion.rst:7
-# 1ea869fb952141bd8b0a8273e02ad954
+# 637c123a5dd94f6399d774831b7eee7f
 msgid "Script of The Question"
 msgstr ""
 
 #: ../../source/thequestion.rst:9
-# 36f0cf18f20847128c49e4431db83b72
+# 8da04d01b72e4465940a6f6818102bb2
 msgid "The script is divided over two files."
 msgstr ""
 
 #: ../../source/thequestion.rst:11
-# b7a7366569ed40528e3091f1dfc05715
+# 49c009f526a54451b6e74dec5abc0b0a
 msgid "`script.rpy`_ contains the main body of the game."
 msgstr ""
 
 #: ../../source/thequestion.rst:13
-# c93bdcfb812b4297a3bfd078773bf2b2
+# 3c7c6f4d003d4c839f46b0c0d625f266
 msgid "`options.rpy`_ contains options which customize the display of parts of the game."
 msgstr ""
 
 #: ../../source/thequestion.rst:17
-# 82f5c7e6e11140cf9cd7bac87f59fdcb
+# a92795f6a53c4f059c7ba38c9c1ae01c
 msgid "script.rpy"
 msgstr ""
 
 #: ../../source/thequestion.rst:244
-# c80c64e83e11439bbefa6e343141b4cd
+# 8ea25d77e409482b8dee8bcc35b037e2
 msgid "options.rpy"
 msgstr ""
 

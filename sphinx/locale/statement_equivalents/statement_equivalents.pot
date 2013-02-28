@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,223 +17,223 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/statement_equivalents.rst:8
-# 6303b2e0428b4ed49ca5c4666e3ee4de
+# 057eed6fd10049d88a2d4f704c8e4c69
 msgid "Statement Equivalents"
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:10
-# 77846d5739524b9c94559ac5c903e906
+# 18086a81c6f34f0cb8781cb77b82bff1
 msgid "To allow Ren'Py to be scripted in python, each Ren'Py statement has equivalent Python code. This usually consists of a Python function, but may also consist of a code pattern that performs an action equivalent to the statement."
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:17
-# 8b80a638330a41a39ab02a99ea50a3de
+# 5f4e5e24ccf84ed2810ac24b9dd82bfd
 msgid "Dialogue"
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:19
-# 4f57cd04579f455aae7e3fa807f1e303
+# 94dfb4bfbcb244cca8981a1d36b27f4c
 msgid "The Ren'Py say statement is equivalent to calling the character object as a function. The following code displays the same line twice::"
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:26
-# 73415dfbad01470a9f668b7ec8b14e39
+# 54909114182a47d9be737b6e15cb7dea
 msgid "Displaying narration can be done the same way, by using the ``narrator`` character. When calling a character, it's possible to supply the keyword argument `interact`. When interact is false, Ren'Py will display the character dialogue box, and will then return before performing an interaction."
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:32
-# 75de236d2bdd4081b9719e3d20532d21
+# cd2d17561293465896cb2983e85754ec
 msgid "This equivalence of characters and function objects works in the other direction as well. It is possible to declare a python function, and then use that function in the place of a character object. For example, the following function uses a variable to choose between two characters. ::"
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:59
-# 9fe0536f02534077bf8c0c9cf1d15ff8
+# 24e2a06214b242ecbd28464875cedfd4
 msgid "A function used in this way should either ignore unknown keyword arguments, or pass them to a character function. Doing this will allow the game to continue working if Ren'Py adds additional keyword arguments to character calls."
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:66
-# 8b12920353d048c78916a374521f854c
+# e1169544bbe74447ab8045746c546bd1
 msgid "Displaying Images"
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:68
-# 513060eb45cb486196febe409f51c4df
+# 58c6b91179544900a3baade96c650fae
 msgid "The image, scene, show, and hide statements each have an equivalent python function."
 msgstr ""
 
 #: ../../source/inc/se_images:5
-# 6813f458660042d48b49924320981a87
+# 2466739be3604ba8bf2679b7c643f2dc
 msgid "Hides an image from a layer. The python equivalent of the hide statement."
 msgstr ""
 
 #: ../../source/inc/se_images:9
 #: ../../source/inc/se_images:20
 #: ../../source/inc/se_images:49
-# 5d60d3b7bf184e708899b6b685e0aab1
-# 9b3d0a16547a4b5e96e712282abf564c
-# 0b7e04e13c144c2bb198fc811809e768
+# d61e73a11ec2410ab371ffbbf366a901
+# 6b972a9dbf734fe598b6d5dada68a27b
+# cb4f153f55a141d8bf8b7a129354320f
 msgid "`name`"
 msgstr ""
 
 #: ../../source/inc/se_images:8
-# 8633727af9fb42bc9e5018391694a454
+# e23d0952eb034c09a0bd4a6969181dc0
 msgid "The name of the image to hide. Only the image tag is used, and any image with the tag is hidden (the precise name does not matter)."
 msgstr ""
 
 #: ../../source/inc/se_images:11
 #: ../../source/inc/se_images:57
-# 7a74083544d6433c966d03024d5000be
-# 17e21cae50824e569ade2932470e2cb5
+# bf1d8852b7db495b9097396d1760b505
+# 50f1a347d87f4d17bc009f0b2cc30b78
 msgid "`layer`"
 msgstr ""
 
 #: ../../source/inc/se_images:12
-# bd25b860b3854194b8e7fd9917af14cc
+# 3d426e063bc4464fb66f8b3d7f97be89
 msgid "The layer on which this function operates."
 msgstr ""
 
 #: ../../source/inc/se_images:16
-# a0a10e1592414339b29a04b4fff19416
+# cce70a034d944d52aaaf472135e26cef
 msgid "Defines an image. This function is the python equivalent of the image statement."
 msgstr ""
 
 #: ../../source/inc/se_images:20
-# 8f6afd6e7ae747e980cc36e57d3e19fe
+# 9222706863fb47e6831f987eff22b621
 msgid "The name of the image to display, a string."
 msgstr ""
 
 #: ../../source/inc/se_images:23
-# 4a8615d220ce46819b87e5dd5f9cf815
+# 317f4bc383664fd99828b3cce04374af
 msgid "`d`"
 msgstr ""
 
 #: ../../source/inc/se_images:23
-# 156c25dc24b14963be16a46e095f0235
+# 8d113d6174964bacac4e04e9f8e7c64f
 msgid "The displayable to associate with that image name."
 msgstr ""
 
 #: ../../source/inc/se_images:25
-# 16746998a3cd4f96a848b4dd072f1844
+# cbb709b9dea7452bb6f3e0f3fdfa570e
 msgid "This function may only be run from inside an init block. It is an error to run this function once the game has started."
 msgstr ""
 
 #: ../../source/inc/se_images:30
-# 9dc29ee04c8748e9adf82b17a17e7745
+# ef53050955b44166acd94bc24a74bc81
 msgid "Removes all displayables from `layer`. This is equivalent to the scene statement, when the scene statement is not given an image to show."
 msgstr ""
 
 #: ../../source/inc/se_images:33
-# 4a7dd49afcab4766a9dc6e7e0c85cf48
+# 567151a3157d47bd8f1df2d4839501d5
 msgid "A full scene statement is equivalent to a call to renpy.scene followed by a call to :func:`renpy.show`. For example::"
 msgstr ""
 
 #: ../../source/inc/se_images:38
-# 542b9aa2200e416fbb5b4fbbd2ae58bc
+# 097056a010a14fa086e392b64e335359
 msgid "is equivalent to::"
 msgstr ""
 
 #: ../../source/inc/se_images:45
-# 35967c1eb05d40d99037f1c81b7e716d
+# e9c459cdbead46a0a1452b383eb8eab9
 msgid "Shows an image on a layer. This is the programmatic equivalent of the show statement."
 msgstr ""
 
 #: ../../source/inc/se_images:49
-# 4e6604540d34441bbad67652a757dc73
+# d25d5b46363e4ecc8a37a78c61d72494
 msgid "The name of the image to show, a string."
 msgstr ""
 
 #: ../../source/inc/se_images:53
-# 1610efa473cd4f9c9ff15c70a084fb5b
+# 42880af969e248928002cc3c89ccf3e8
 msgid "`at_list`"
 msgstr ""
 
 #: ../../source/inc/se_images:52
-# cf823cf056954f3ebfcd638c37bd9bba
+# 12c7d317f30b44bba22f106c1cd2d432
 msgid "A list of transforms that are applied to the image. The equivalent of the ``at`` property."
 msgstr ""
 
 #: ../../source/inc/se_images:56
-# f7c56bb0f7104175a0ead06fb740388f
+# f3c28c6e2dca4d9db3df436cc74585fb
 msgid "A string, giving the name of the layer on which the image will be shown. The equivalent of the ``onlayer`` property."
 msgstr ""
 
 #: ../../source/inc/se_images:63
-# 7e114628bf134a95a132e36cf289b330
+# fc03c76feba746ff9e422ff88aee5846
 msgid "`what`"
 msgstr ""
 
 #: ../../source/inc/se_images:60
-# 5607700ed4f24cd2bf1f3f0fc8eef38a
+# 6f2bc399f7754fc3ae8fa53f41681318
 msgid "If not None, this is a displayable that will be shown in lieu of looking on the image. (This is the equivalent of the show expression statement.) When a `what` parameter is given, `name` can be used to associate a tag with the image."
 msgstr ""
 
 #: ../../source/inc/se_images:66
-# 54a1c06515e147609a48d2decc54d83d
+# a66cf64a9fc84193ba5f4a9d3557f5d5
 msgid "`zorder`"
 msgstr ""
 
 #: ../../source/inc/se_images:66
-# 956d32e2c23a4d4c9b3d58cf69a691c8
+# 51bef2d3bf4a4548a3b8b346e51933eb
 msgid "An integer, the equivalent of the ``zorder`` property."
 msgstr ""
 
 #: ../../source/inc/se_images:70
-# 1f4e0fb1d3e24ea9a685001d7e09da8b
+# 5bdc571edc4044ff9a1c60314c9d4fd7
 msgid "`tag`"
 msgstr ""
 
 #: ../../source/inc/se_images:69
-# 5c3d121342924d8ba8d578d2c1c7d742
+# 16a1fce1c76143f2afef24e52caa52c0
 msgid "A string, used to specify the the image tag of the shown image. The equivalent of the ``as`` property."
 msgstr ""
 
 #: ../../source/inc/se_images:73
-# 50136a4bd91f4d34838179cad1afe939
+# 91906d07a5474a778e2c7fde9e976d9f
 msgid "`behind`"
 msgstr ""
 
 #: ../../source/inc/se_images:73
-# ee04e3cab4774d8eac8bbce5a58a7e8a
+# aacca96cb3334706a41b2aceb3711526
 msgid "A list of strings, giving image tags that this image is shown behind. The equivalent of the ``behind`` property."
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:74
-# e259baa0535d440cad3047a8a257a144
+# 585ae2c0df754f7b8b6e0fcb6bd786d2
 msgid "Transitions"
 msgstr ""
 
 #: ../../source/statement_equivalents.rst:76
-# e417bc2a837a4855bc1a1aa3ab933fca
+# 0ac67500485a448dad9f9b9812f1874d
 msgid "The equivalent of the with statement is the renpy.with_statement function."
 msgstr ""
 
 #: ../../source/inc/se_with:5
-# 9bd5ab0e70b2453aaf6a56de57b8a413
+# 364a1335abb641acad0c7508ae39305a
 msgid "Causes a transition to occur. This is the python equivalent of the with statement."
 msgstr ""
 
 #: ../../source/inc/se_with:9
-# fc94d86fb19649e5acbb4d1682ac2442
+# 5f78cf9432f141aa876bfef0a105f0a2
 msgid "`trans`"
 msgstr ""
 
 #: ../../source/inc/se_with:9
-# 8cc68e3c4ced49b6a1a8bb0a72e553e2
+# d7f4e67287974537b9c9191dc9515e86
 msgid "The transition."
 msgstr ""
 
 #: ../../source/inc/se_with:13
-# 63b3580d826c438dbadb2e69fa3d9972
+# 7a6912157ef04d288b837c712d58dde5
 msgid "`always`"
 msgstr ""
 
 #: ../../source/inc/se_with:12
-# e997619d910242c9b4225e109e456b48
+# 3b0aeae791b842779b66d56de3955afc
 msgid "If True, the transition will always occur, even if the user has disabled transitions."
 msgstr ""
 
 #: ../../source/inc/se_with:15
-# 3abfb1dac6b547a4925c462badf0892f
+# 7184d40b0a0f4778af40a4fefd87e766
 msgid "This function returns true if the user chose to interrupt the transition, and false otherwise."
 msgstr ""
 

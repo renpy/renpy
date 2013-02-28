@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,112 +17,112 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/index.rst:5
-# 948df3c8d7024556b08fc24bbdc3d70f
+# 03d813e557f4463194f11b1976079e9d
 msgid "Welcome to Ren'Py's documentation!"
 msgstr ""
 
 #: ../../source/index.rst:7
-# e3b3802aa9844657b52ef325583db8ed
+# 075756dd3dd04d9485ff4df7c471131f
 msgid "We're in the process of rewriting Ren'Py's documentation. While what we have here is the most up-to-date documentation, it's also very incomplete. To find out more about Ren'Py, please visit the Ren'Py home page:"
 msgstr ""
 
 #: ../../source/index.rst:11
-# 4040c734ae7f4395b04c30632019c294
+# a13d614c963f4ee6a5feaf6d862bf64e
 msgid "http://www.renpy.org/"
 msgstr ""
 
 #: ../../source/index.rst:13
-# a5172a968aee4193a2170fdb38205dbb
+# 952b1fa30dd04206becdc8db59425885
 msgid "Much of Ren'Py is only documented in the older documentation, which is stored in the Ren'Py Wiki:"
 msgstr ""
 
 #: ../../source/index.rst:16
-# 70e8a7fd09c4469b8f41cbc8ec44ce49
+# b2187987fe584da588a2d1c88e623597
 msgid "http://www.renpy.org/wiki/"
 msgstr ""
 
 #: ../../source/index.rst:20
-# 5ebdee039be844828ead8db0a6940beb
+# c815fc9c7af945e19f9a9cf852cb058b
 msgid "Getting Started"
 msgstr ""
 
 #: ../../source/index.rst:27
-# 7ac76c71f2634dc29ad89985865353c5
+# b10415d90c7b4bf5bf067e5549b5b38a
 msgid "The Ren'Py Language"
 msgstr ""
 
 #: ../../source/index.rst:39
-# d0bbc02ba2204673ac78d2d4835923d5
+# 2abb2ecb20ed4247a60bb58446ba502a
 msgid "Text, Displayables, Transforms, and Transitions"
 msgstr ""
 
 #: ../../source/index.rst:52
-# bb6f302325074b30b46c72d33284792f
+# 8dcc78aaa5814d38a10611982b262a27
 msgid "Customizing Ren'Py"
 msgstr ""
 
 #: ../../source/index.rst:67
-# 1a5099506e6243678fe344e765828766
+# 88df5eca91e64c64b10aff4bd6cb8f40
 msgid "Advanced Displayables"
 msgstr ""
 
 #: ../../source/index.rst:76
-# 2ec026d12fd34c68961abcd35e229bd8
+# e5f19bda62874c2cb3ceffae4fad1f1a
 msgid "Python and Ren'Py"
 msgstr ""
 
 #: ../../source/index.rst:90
-# 56f09735f9e742b8a0b0bca1214e1cf4
+# d27b55993e6044ce800de1a7a32c951b
 msgid "Building, Updating, and Other Platforms"
 msgstr ""
 
 #: ../../source/index.rst:100
-# 5047d06adb6d4ea7a79d186723f4253a
+# c8c7ddae544f44978e79f916139cc798
 msgid "End-User Documentation"
 msgstr ""
 
 #: ../../source/index.rst:109
-# 825c327e77fb4cfabdf692f38d45d5d7
+# 8f3f9885c8b04ca7816fd389a7a14c29
 msgid "Engine Developer Documentation"
 msgstr ""
 
 #: ../../source/index.rst:118
-# 6662c4068dc540479dff9c508ce7b5d8
+# 327765bc348049749f87732c26adbca6
 msgid "Changes and License"
 msgstr ""
 
 #: ../../source/index.rst:129
-# e407313b1c13426789ffa6b5f0485e48
+# 905507e6a4cd4ec0a74d5c9bea57da2c
 msgid "Indices"
 msgstr ""
 
 #: ../../source/index.rst:131
-# 1603b970d5df4a9f98122e3cd736ab1b
+# 1cb7bea93f4d4a9c8b92005ed74560ec
 msgid "`Style Property Index <std-style-property-index.html>`_"
 msgstr ""
 
 #: ../../source/index.rst:132
-# 783a9d5496e54828ba6a7da3c3138042
+# 5f48a919ab6745f7abd5e19815d7b6e0
 msgid "`Transform Property Index <std-transform-property-index.html>`_"
 msgstr ""
 
 #: ../../source/index.rst:133
-# fc8f7fc27ed34ed6ad9296de58f2fb0e
+# d9aa337935d94e1aafadc5a1b8560d2c
 msgid "`Variable and Definition Index <std-var-index.html>`_"
 msgstr ""
 
 #: ../../source/index.rst:134
-# c97fd05dfdd94b3fbbca0aa9c39c7cdd
+# 812f32ac5cf441a4ae3ed3797bd81d77
 msgid "`Function and Class Index <py-function-class-index.html>`_"
 msgstr ""
 
 #: ../../source/index.rst:135
-# 251f0ea3e36a4368854936121edf4939
+# c93d3e04b14d44aab50e68b840b583d4
 msgid "`General Index <genindex.html>`_"
 msgstr ""
 
 #: ../../source/index.rst:138
-# 423870ceef6c4e4881c44b7f6bf387b1
+# fb736305c67d4ce78a678eb1a01e8a3a
 msgid "Example Scripts"
 msgstr ""
 

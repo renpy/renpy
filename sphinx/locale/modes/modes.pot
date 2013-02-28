@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,187 +17,187 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/modes.rst:8
-# fd0534a6200d42c7b4d169b3323896e1
+# bf36e71705504c49b5c2113521a622ba
 msgid "Modes"
 msgstr ""
 
 #: ../../source/modes.rst:10
-# c3b92f60151c41589b2a448ba607815e
+# 759e8e36e59d430f920b7cc18d9aad1f
 msgid "In Ren'Py, a mode is a concise way of describing the type of an interaction. When a mode is reported to Ren'Py, user-defined callbacks can be run. These calbacks can be used to react to a change in mode, perhaps by reconfiguring the user interface. For example, one can cause a transition to occur when switching from ADV-mode to NVL-mode, or when going to a menu, etc."
 msgstr ""
 
 #: ../../source/modes.rst:17
-# 28e9ad005a674c49a484fa6a2d13c76c
+# 91c0b2a377c240e8badf32dc26941d17
 msgid "The goal of the mode systems is to provide a powerful and flexible way of detecting and responding to these changes."
 msgstr ""
 
 #: ../../source/modes.rst:21
-# 2026f1aad8a54a4ca67c0e673b99a625
+# a272ab41cbcc442a8ca59c129468e15e
 msgid "Default Modes"
 msgstr ""
 
 #: ../../source/modes.rst:23
-# b88c0ba392a644b9a35a74af1360dade
+# a8953a8a000141c783c8e730a0920241
 msgid "The following are the modes corresponding to built-in interactions:"
 msgstr ""
 
 #: ../../source/modes.rst:29
-# 92f9537f06354c52808be879b76d4e33
+# 790db1294c5c40dabf5db746e07c2659
 msgid "start"
 msgstr ""
 
 #: ../../source/modes.rst:26
-# 4c699c4c4f4d49d58a525bbfdd962535
+# b1671230574548da86c2fb541a2503f5
 msgid "This is the mode that Ren'Py is in when a new context is created, such as at the start of a game. Ren'Py never automatically enters this mode, but instead, initializes the list of modes to include start."
 msgstr ""
 
 #: ../../source/modes.rst:32
-# f0ddf3942ab34aebaefacb823fd6aff2
+# c6f3e8701b354b4ab41c257f527c3294
 msgid "say"
 msgstr ""
 
 #: ../../source/modes.rst:32
-# cd7d1f1fa4564813899ed46c2be4188c
+# 46e6d430070f41a0830a6ba93d8f4cc4
 msgid "The mode Ren'Py enters when an ADV-mode say executes."
 msgstr ""
 
 #: ../../source/modes.rst:35
-# e0f78ee0ba2e4cc097dbc4e649661ebb
+# 5e87a6367419421bb1d02e8a88a17696
 msgid "menu"
 msgstr ""
 
 #: ../../source/modes.rst:35
-# ccffd8dec7cf48fa8fecaa08565669bc
+# d1859e36fb544c6898e0469d8c435078
 msgid "The mode Ren'Py enters when an ADV-mode menu executes."
 msgstr ""
 
 #: ../../source/modes.rst:38
-# d9b8162e2cbe4af8baf1f6f402aba96f
+# 4e076035e2054924874c7fbded091e7d
 msgid "nvl"
 msgstr ""
 
 #: ../../source/modes.rst:38
-# a03b40dcfe6b44c8a5abb87b35dfcf30
+# 7785974590e84eae89e43c7c05dd44c0
 msgid "The mode Ren'Py enters when an NVL-mode say executes."
 msgstr ""
 
 #: ../../source/modes.rst:41
-# 7364c28d08b84fc895ee53a98d9a2a0f
+# dac15dca150347eea628260df7e760c3
 msgid "nvl_menu"
 msgstr ""
 
 #: ../../source/modes.rst:41
-# ba06c7f2900c4724b0e787254a356ffc
+# edc68da9b04b46c98c8071e5f8d9b9c4
 msgid "The mode Ren'Py enters when an NVL-mode menu executes."
 msgstr ""
 
 #: ../../source/modes.rst:46
-# ff6464a7346b4a8e956a229fa8650931
+# bb4958cf1a0d4d25be0201cefa6682b4
 msgid "pause"
 msgstr ""
 
 #: ../../source/modes.rst:44
-# a2b1df2fee6443059d85c202e7da455b
+# 1e4a04b693964543b3bc358bec2b35c8
 msgid "The mode Ren'Py enters when :func:`renpy.pause` is run. This is also the mode Ren'Py is in when a ``pause`` statement of indefinite duration occurs."
 msgstr ""
 
 #: ../../source/modes.rst:55
-# 2bb07c43909845e7bcac77dc5c2d61de
+# 9b8ac928178b4698aad247f93e584292
 msgid "with"
 msgstr ""
 
 #: ../../source/modes.rst:49
-# bb5e0f2c21f9454da6cf2780f58a1871
+# e678216e6f534b3795e6bab3d1c311a5
 msgid "The mode Ren'Py enters when a transition introduced by the ``with`` statement occurs. This is also used for ``pause`` statement with a duration specified."
 msgstr ""
 
 #: ../../source/modes.rst:53
-# 8f200fd052664ced98f581e748941676
+# 9483d441bb83406daad4739764a21078
 msgid "Note that the with mode is entered at the start of the with statement, which is after any preceding scene, show, or hide statements have been run."
 msgstr ""
 
 #: ../../source/modes.rst:59
-# 12fbbc0c6d1b40c792d4e635a61c9042
+# 697253d3de9a4ff0a9782d71340ef0bf
 msgid "screen"
 msgstr ""
 
 #: ../../source/modes.rst:58
-# 8496a36f9e5c44b7981246a578aa63cf
+# d4aa67c93462451a86f0909c1e3114ea
 msgid "The mode Ren'Py enters when a screen is invoked using the ``call screen`` statement."
 msgstr ""
 
 #: ../../source/modes.rst:63
-# f61b2e0d8e564cfba2e395b05e2e8c70
+# b9929dccb8c040c280cd1d123324c344
 msgid "imagemap"
 msgstr ""
 
 #: ../../source/modes.rst:62
-# 33e57c96837b4c6997294f643290b0c2
+# 5a020f75e8834f5c85153307db770b16
 msgid "The mode Ren'Py enters when an old-style imagemap is invoked using :func:`renpy.imagemap`."
 msgstr ""
 
 #: ../../source/modes.rst:67
-# fd98f5c54a3248f480ff01cb0027d47f
+# 37144bd42cbc428ab003ce3c456ebd77
 msgid "input"
 msgstr ""
 
 #: ../../source/modes.rst:66
-# cc59564e149a492f82f3139ee8393f8e
+# c6e1e85885c44b3da96d7f0b45f799bb
 msgid "The mode Ren'Py enters when text input is requested using the :func:`renpy.input` function."
 msgstr ""
 
 #: ../../source/modes.rst:69
-# eb205f11843b43cdb23cde7b48134fff
+# 7c060e30a8bd4fa38f525d77d2826949
 msgid "Other modes can be entered by calling the renpy.mode function."
 msgstr ""
 
 #: ../../source/inc/modes:5
-# 1bb78cd038ec4e9dbce3d31bace9e069
+# cd1326167d4a421c88977b51f521b1cd
 msgid "Causes Ren'Py to enter the named mode, or stay in that mode if it's already in it."
 msgstr ""
 
 #: ../../source/modes.rst:75
-# abf1ce81d4744dfc9f7c8496f36cca79
+# aa18f87349aa4818988a87f3f29f0960
 msgid "Mode Callbacks"
 msgstr ""
 
 #: ../../source/modes.rst:77
-# 394ba92a3258406b830ccc9d5a179351
+# 3c5ff92e888445b8991b3c80147ae506
 msgid "The :var:`config.mode_callbacks` variable contains a list of mode callbacks that are invoked whenever Ren'Py enters a mode. The mode callbacks are called with two parameters:"
 msgstr ""
 
 #: ../../source/modes.rst:82
-# d4a89fabe5ae47acb1292afc4f06fd8f
+# 6fb820fefc234dedafdb199139dfa925
 msgid "mode"
 msgstr ""
 
 #: ../../source/modes.rst:82
-# ef139f7c75814c11b7e8dc71e3ac4bdb
+# b39d7fc0c58e44dcba697da6a0fe07b1
 msgid "A string giving the name of the mode that we are entering."
 msgstr ""
 
 #: ../../source/modes.rst:86
-# f67ce25d2f294584afe1ba7311dd0aee
+# 039ff59365a24fe483ac6d65e98f3e7b
 msgid "old_modes"
 msgstr ""
 
 #: ../../source/modes.rst:85
-# 038d08977e9a4ba6893fb228ca1f0671
+# a06378dbdfe849f2afbb9283a9438869
 msgid "A list of strings, giving the modes that the system has previously entered, ordered from most recent to least recent."
 msgstr ""
 
 #: ../../source/modes.rst:88
-# 76f022ed884845c2b1915ebf5fec323f
+# 0a740c761b744e12964c34357b8f95d9
 msgid "Note that when entering a mode we're already in, the first item in `old_modes` will be equal to `mode`."
 msgstr ""
 
 #: ../../source/modes.rst:93
-# 7db3ad2a7ddb40d8a3b29529e9a047b4
+# 148d7b14a422456191ea447d38581341
 msgid "Example Mode Callbacks"
 msgstr ""
 
 #: ../../source/modes.rst:95
-# 175782b2310d435a91e55d87f6a32264
+# ecc6ad6b48b7450cb0c0030e7e2b6956
 msgid "This mode callback causes transitions to occur when switching from ADV to NVL mode, and vice-versa. This ships as part of Ren'Py, so there's no need to actually use it. ::"
 msgstr ""
 

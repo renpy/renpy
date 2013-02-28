@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,177 +17,177 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/nvl_mode.rst:7
-# a347173d487e4c1eace8bc848c8c0a21
+# 88286617d2f34395a79d13b322496a99
 msgid "NVL-Mode Tutorial"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:9
-# e2ed5424c2874c7e95cd965443eb27ca
+# 937d09f9ae754679835362201f255325
 msgid "There are two main styles of presentation used for visual novels. ADV-style games present dialogue and narration one line at a time, generally in a window at the bottom of the screen. NVL-style games present multiple lines on the screen at a time, in a window that takes up the entire screen."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:15
-# 84da7bac577b421d8be514b6eb9bb5b5
+# 5eea432892dc4f44be37124de535dae0
 msgid "In this tutorial, we will explain how to make an NVL-mode game using Ren'Py. This tutorial assumes that you are already familiar with the basics of Ren'Py, as explained in the :doc:`Quickstart manual<quickstart>`."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:20
-# 0235a0b20fce4d65af90e5f0a55b23cc
+# b1f99b8b9f8043709f3f40450d62d1c2
 msgid "Getting Started"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:22
-# 2e312b58788148f69dcc9636fe5d4d21
+# eb0d1eb4e0014d9ea809997eb2ae7dee
 msgid "NVL-mode can be added to a Ren'Py script in two steps. The first is to declare the characters to use NVL-mode, and the second is to add ``nvl clear`` statements at the end of each page."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:26
-# 1b59a1f09c5e449f942c7f5fa7527669
+# 9e5ccc2ae7aa49a4b9b1f8f662db0498
 msgid "Characters can be declared to use NVL-mode by adding a ``kind=nvl`` parameter to each of the Character declarations. For example, if we the character declarations from the Quickstart manual are::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:33
-# 4f63ab5b3dcd4457baa39f4bb367d669
+# 2de80edf9ca9458d8fe07cae6f026b0b
 msgid "Changed to use NVL-mode, those declarations become::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:39
-# 6db9c85c2ea54f52bddbf30113ff4d49
+# 0e9a3d33993b406197ce491702830cc7
 msgid "Note that we have also added an NVL-mode declaration of ``narrator``. The ``narrator`` character is used to speak lines that do not have another character name associated with it."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:43
-# d7298d256f26448d9d35488dbac398d1
+# 0ef36253489d43c1a77ceb0fced49eee
 msgid "If we ran the game like this, the first few lines would display normally, but after a while, lines would begin displaying below the bottom of the screen. To break the script into pages, include an ``nvl clear`` statement after each page."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:48
-# df6a344cb4324e479c6bab16374f6470
+# 3afb7275d4364ab4be8a443b99fabfc4
 msgid "The following is an example script with pagination::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:65
-# 6938a9e1d74c44bbb533b825795d749b
+# ca5f54cb095c46618d215a751a94e9f0
 msgid "While nvl-mode games generally have more text per paragraph, this example demonstrates a basic NVL-mode script. (Suitable for use in a kinetic novel that does not have transitions.)"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:70
-# 9711fc4827644a0c86a6fec961fa7b18
+# 8bc8d55ed4994b809acbebf5134f4a90
 msgid "Menus"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:72
-# 524eb717f46f4de8b76df0a0a69778e1
+# a53b6f3ce85e44e4986facfc0ba2a42f
 msgid "By default, menus are displayed in ADV-mode, taking up the full screen. There is also an alternate NVL-mode menu presentation, which displays the menus immediately after the current page of NVL-mode text."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:77
-# bfef5d4b0d294194b3873ce3f928cd9d
+# 107d342868f34fe996de5393ab4d31e2
 msgid "To access this alternate menu presentation, write::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:82
-# dc323f106b294f65b5398a650f22bfd1
+# 04a77ef4701d489b9932955e78aacb9c
 msgid "The menu will disappear after the choice has been made, so it usually makes sense to follow menus with an \"nvl clear\" or some sort of indication as to the choice."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:87
-# 9646394799714f2eb6c148f2f863d005
+# 9da5ac8b68ab4a8b92da17f4e8b6005b
 msgid "Showing and Hiding the NVL-mode Window"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:89
-# 6976fad75745401cbc367b8dcba19a8c
+# 6e06963a541246748372a8f84e41e603
 msgid "The NVL-mode window can be controlled with the standard ``window show`` and ``window hide`` statements. To enable this, add the following code to your game::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:98
-# 00eb322f99424782a5cebb7f08bea6e7
+# fe6220fbcb3b405cb8f5d06d1e0cc10f
 msgid "Setting :var:`config.empty_window` to ``nvl_show_core`` will cause the NVL-mode window to be displayed during a transition. (The last two lines select the default transitions to be used for showing and hiding the window.)"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:103
-# 0cb22334604943708458e3be5997999e
+# 887d8d0713d7431882f6cc9387a06127
 msgid "An example of using the window commands to show and hide the window is::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:131
-# 7bab9a7d362f49448f7f3db4a6862e07
+# 776653b89cef4a3ba1784336ea129e08
 msgid "Customizing Characters"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:133
-# fdc2a83191454daabc1c75b1621ca70b
+# 0ec595bdb76e471989461a59e390f281
 msgid "NVL-mode characters can be customized to have several looks, hopefully allowing you to pick the one that is most appropriate to the game you are creating."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:136
-# 5bc64f43e9a544308d5d7d88953ac6c2
+# 966fc9ee6f934ceb97637a533f2ef660
 msgid "The default look has a character's name to the left, and dialogue indented to the right of the name. The color of the name is controlled by the ''color'' parameter. ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:142
-# bc2134fc89a84cdebd0c94ca5403c9ca
+# 73aec46c52254da19cb46204e438fbe3
 msgid "A second look has the character's name embedded in with the text. Dialogue spoken by the character is enclosed in quotes. Note that here, the character's name is placed in the ''what_prefix'' parameter, along with the open quote. (The close quote is placed in the ''what_suffix'' parameter.) ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:151
-# 68b18a7e98cf45968cadecfaf9112388
+# 6de8f74cfe1f4815b016774d47e165a9
 msgid "A third look dispenses with the character name entirely, while putting the dialogue in quotes. ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:156
-# 618eb69276fb44b4bc1aa98859edbd8c
+# e0eedb0633ee4941bb91d4996c4345f9
 msgid "Since the third look might make it hard to distinguish who's speaking, we can tint the dialogue using the ''what_color'' parameter. ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:163
-# f06d5e9cec5d4e76aaecb79204a648ac
+# d94df14170b543e1a87ccba2521a025d
 msgid "Of course, a completely uncustomized NVL-mode character can be used, if you want to take total control of what is shown. (This is often used for the narrator.) ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:170
-# fcdf5e2bf57c49f3a1242fa621a1941c
+# d94361af040446be84b9f2cb2baa75db
 msgid "Customizing Menus"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:172
-# 3644678b6060497aab3e343193e526ce
+# 7ae413d13cd54163897e9742dc83f8c3
 msgid "There are a few styles that control the look of the menus. Here's some code showing how to customize them. See :doc:`style` for more information about styles. ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:196
-# eaa3686548304d8aa05637caf44f8337
+# 547fdea1f88e4618a0bdfb31485e7d61
 msgid "Customizing the NVL window"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:198
-# 28b2013b50514b5b87e8388f0bf1d00f
+# 7cb6a4929d7b4cee9a377ef13cb2c2ce
 msgid "There are a few styles that control the NVL window; here's some code showing how to customize them.  See :doc:`style` for more information about styles. ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:217
-# d925a6265b334351a46c4aa3b928cd0e
+# cc6d206d97a24385ba3d1f628fda6d42
 msgid "You can also completely customize the screen used to display NVL text, which is named ``nvl``; see :ref:`nvl-screen`."
 msgstr ""
 
 #: ../../source/nvl_mode.rst:222
-# a89c929c78204998955b210db12d1abf
+# 62e3a5590dfc45e289dc5429926d91d9
 msgid "Paged Rollback"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:224
-# 03b4aed360a34f448a7977712bb17a21
+# f31a3e97ef9b4b178fede285d854c84c
 msgid "Paged rollback causes Ren'Py to rollback one NVL-mode page at a time, rather than one block of text at a time.  It can be enabled by including the following code in your script. ::"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:232
-# 31507a2f1ee744d18bb2fa348e96db67
+# 3fa59f191ab6453a97a4784f4b32b71f
 msgid "Script of The Question (NVL-mode Edition)"
 msgstr ""
 
 #: ../../source/nvl_mode.rst:234
-# c26d6d8483914ba8bbf4362777bb6fab
+# 07abc0ad71c84ac3a2ccece0572e6f9d
 msgid "You can view the full script of the NVL-mode edition of ''The Question'' :ref:`here <thequestion_nvl>`."
 msgstr ""
 

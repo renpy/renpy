@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,284 +17,284 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/updater.rst:5
-# 0610e01847c64ca69a223fa7b0b98907
+# c9ef7b1f74f54e45aefe7ff42f2113d6
 msgid "Web Updater"
 msgstr ""
 
 #: ../../source/updater.rst:7
-# 5baf4d4436414f48bf53b08e220b3f97
+# e38452be12a3456fa9745b6e5965054a
 msgid "Ren'Py includes an updater that can automatically download and install updates to a Ren'Py game hosted at a website. This can be useful in keeping a large game up to date."
 msgstr ""
 
 #: ../../source/updater.rst:11
-# 0ad8dbec08a8477099d600f0b8b54cda
+# da5026ce6d9d48d88d7a10f43fbde33e
 msgid "The Ren'Py updater works by automatically performing the following steps:"
 msgstr ""
 
 #: ../../source/updater.rst:14
-# 774fff168b394542a7a9dd9f1e77e045
+# 075420eb6a9a444f92b191fd7b8ebd61
 msgid "Downloading an index file that controls what is updated."
 msgstr ""
 
 #: ../../source/updater.rst:15
-# da925f2bb7c54d62a6ca32be9a3fc987
+# ffb5992768ca4160a1f4056668fb164c
 msgid "Asking the user if he or she wants to proceed with the update."
 msgstr ""
 
 #: ../../source/updater.rst:16
-# 8e94c15f90e54e45ab1d355759835561
+# 7bb00db39c6a4cefa50749dd2b46fac5
 msgid "Producing an archive file from the files on disk."
 msgstr ""
 
 #: ../../source/updater.rst:17
-# eca7d9bfa9fa4a639c2c9067d44ba105
+# 263af8fb2bfd4263b6b354addef68f20
 msgid "Downloading a zsync control file from the server."
 msgstr ""
 
 #: ../../source/updater.rst:18
-# c1f944d166984d3c8539a666b97b7338
+# c34d7043c6b74b67a981c44bd49ef254
 msgid "Using the zsync tool to update the archive file to the version on the server. Zsync automatically computes the differences between the two files, and attempts to only download the portions that have changed."
 msgstr ""
 
 #: ../../source/updater.rst:22
-# a3b01ba6b66d454cb53371470fb7a563
+# 5914468d1ed4403f9f81237f465461cc
 msgid "Unpacking the archive, replacing the files on disk."
 msgstr ""
 
 #: ../../source/updater.rst:23
-# 3d850f0eb7f742bb978a08001d6e696a
+# 0a2b12674bf44de287cef0f4937eb950
 msgid "Deleting files that have been removed between the old and new versions."
 msgstr ""
 
 #: ../../source/updater.rst:25
-# 18c6bb09c29f48dbb7aabb4f1e7689d7
+# 90ab1b97f4864e5cab9123c428189372
 msgid "Restarting the game."
 msgstr ""
 
 #: ../../source/updater.rst:27
-# 1816b9b829244982a964642039084860
+# 7623f8cd102e4ac09152904a8d05cb71
 msgid "The Ren'Py updater shows an updater screen during this process, prompting the user to proceed and allowing the user to cancel when appropriate."
 msgstr ""
 
 #: ../../source/updater.rst:32
-# 6c282233a4f64a62b812228a64f14550
+# 5d47f7b412554757931ff5184d5cdcf7
 msgid "Server Requirements"
 msgstr ""
 
 #: ../../source/updater.rst:34
-# ac7f305ef0af4913a8d2fb1b60ce848d
+# e3626091a84e4abaae1d7a4746a15418
 msgid "The updater requires that you provide your own hosting. You should be able to download the update files by going to the appropriate URL directly, and your server must support HTTP range queries."
 msgstr ""
 
 #: ../../source/updater.rst:38
-# 0d08b3dc336244eaa325f099b3a41e5f
+# 50de07f0b5c94392bceaf48031faa71e
 msgid "(This means paying for web hosting, as \"sharing\" sites tend not to support the required features.)"
 msgstr ""
 
 #: ../../source/updater.rst:43
-# c6c3db359d5d4506a03bce1e805b7718
+# 526cad02abe641feb0366851c05dfaef
 msgid "Building an Update"
 msgstr ""
 
 #: ../../source/updater.rst:45
-# 61e3458573144294bd1e02a6b3c8c788
+# cab500bc7de741b48e17ec05ef48db27
 msgid "Updates are built automatically when distributions are built. To build an update, set build.include_updates to True in options.rpy. This will unlock the \"Build Updates\" option in options.rpy. Check this option, and Ren'Py will create the update files."
 msgstr ""
 
 #: ../../source/updater.rst:50
-# 97b7ca1c79694ed7af7599ea2102e58f
+# 69e22071cf444f298030addd5e94a62c
 msgid "The update files consist of:"
 msgstr ""
 
 #: ../../source/updater.rst:53
-# 06c425bdef594bfb9bdcc58d961bb267
+# 7c0384936197441a81076fdb9a3069c9
 msgid "updates.json"
 msgstr ""
 
 #: ../../source/updater.rst:53
-# ab6c647c69ef4d49a249f2572adce4ab
+# 8cff84c1781c42bf806fce30e2f8ef6c
 msgid "An index of available updates and their versions."
 msgstr ""
 
 #: ../../source/updater.rst:56
-# f0bffa6b42f74165b7d7b6a7f8deff4a
+# bcbfc5fe22944a919bbbf9a5c3300982
 msgid "*package*.sums"
 msgstr ""
 
 #: ../../source/updater.rst:56
-# 6191383d24db4e12a230b6410a61feb9
+# e823a37a34ee4ac6b50b0e9cbd75ff19
 msgid "Contains checksums for each block in the package."
 msgstr ""
 
 #: ../../source/updater.rst:59
-# d2037f9373ea46519300b5acdd395c15
+# 2c762b52c05b47c5b6063d7d77b84b6d
 msgid "*package*.update.gz"
 msgstr ""
 
 #: ../../source/updater.rst:59
-# 1154d849df6048c3aece7b0d440784c4
+# 7e14bc3d330c4ec0abe08231822282a0
 msgid "Contains the update data for the given package."
 msgstr ""
 
 #: ../../source/updater.rst:63
-# fbe98140cd344fc3b72a739c3ea63447
+# 3201e4977e45484ab4575429795daf84
 msgid "*package*.update.json"
 msgstr ""
 
 #: ../../source/updater.rst:62
-# 30a9d047894e401caf7f74c59e5a0c40
+# 51858dff18b84125bc8d78d4b2e01b62
 msgid "Contains a list of the files in each package, which the updater uses when downloading DLC."
 msgstr ""
 
 #: ../../source/updater.rst:66
-# fb31962b3e2d42f39725df2e3515b6ab
+# 3d36b0e0c07f4419ac8936983e9a156c
 msgid "*package*.zsync"
 msgstr ""
 
 #: ../../source/updater.rst:66
-# ab083880d67b487e8bc12025f4036644
+# 31e9d53d4c1f44199ee09e0fa351c22f
 msgid "This is a control file that's used by zsync to manage the download."
 msgstr ""
 
 #: ../../source/updater.rst:68
-# e4ee8223f9234d40a32fd7e22d0f871f
+# cf62f48c8d224c21a2a781e2672595fa
 msgid "You must upload all these files to a single directory on your web server."
 msgstr ""
 
 #: ../../source/updater.rst:73
-# dda46531d0214082914051318b5751dd
+# d405c6f8801e464597d0c24df70b64b5
 msgid "Functions"
 msgstr ""
 
 #: ../../source/updater.rst:75
-# 9e1e3564aeba4b66afa1ed6fead5ac31
+# ff8ed07161d54ec7b13e175e3cf5319f
 msgid "To cause an update to occur, invoke either updater.update or the updater.Update action."
 msgstr ""
 
 #: ../../source/inc/updater:5
-# aeea61944ff84f76bfb53c4205f6318d
+# f88ae7ac320243169afc8374ecada3cf
 msgid "An action that calls :func:`updater.update`. All arguments are stored and passed to that function."
 msgstr ""
 
 #: ../../source/inc/updater:10
-# aa882d371fda416a8d85563f8c0d5320
+# 848309e740b04d57acc047a4de1b51d6
 msgid "Returns true if it's possible that an update can succeed. Returns false if updating is totally impossible. (For example, if the update directory was deleted.)"
 msgstr ""
 
 #: ../../source/inc/updater:16
-# 8e6ea1e6935040e093929c9a9819c981
+# cbcf040beee3479589b7eb59731a39e4
 msgid "Returns a list of installed DLC package names."
 msgstr ""
 
 #: ../../source/inc/updater:19
 #: ../../source/inc/updater:31
-# f3d83f4ce2234541abbbae1eeff4644b
-# 3603309bd6c542019dbbba9ef89d765e
+# 5739009e7ad64903a6dbb96466a9cb1b
+# 4ed72c46aa174fcbb221e6b6f4606437
 msgid "`base`"
 msgstr ""
 
 #: ../../source/inc/updater:19
-# 0ba80c73ca7a4371be234b27dfad3f92
+# 3d252912ec40434cb5c202398e76f5b8
 msgid "The base directory to update. Defaults to the current project's base directory."
 msgstr ""
 
 #: ../../source/inc/updater:24
-# f6ed46153bb044e78994545a1fa40faa
+# 4ce1ce1096fc42edb31fb02200da64fc
 msgid "Updates this Ren'Py game to the latest version."
 msgstr ""
 
 #: ../../source/inc/updater:27
-# e347103d7f1049ebaa6bb4d0bd5a63c1
+# 0dfbac0ca9ce4c59a8c3ba70c1c7f5d1
 msgid "`url`"
 msgstr ""
 
 #: ../../source/inc/updater:27
-# 0896069dec044724a71bc3f63cbf1cab
+# 1560bb550c9d4d5ba786979fc70ab2ee
 msgid "The URL to the updates.json file."
 msgstr ""
 
 #: ../../source/inc/updater:30
-# 1d5dbe2085704101b827c3d112ad2edd
+# 99d7440bdd1843eeab6cd2acfb39e12f
 msgid "The base directory that will be updated. Defaults to the base of the current game. (This can usually be ignored.)"
 msgstr ""
 
 #: ../../source/inc/updater:35
-# 5ed0c8bfb44342eabd43a2b772ae3742
+# c3e026b68c6848a99e793836dceb25c3
 msgid "`force`"
 msgstr ""
 
 #: ../../source/inc/updater:34
-# 67a8eab0f4524b2aa055cfce630a0af1
+# e260ccefd9c14fbea7154c061b8cfdf8
 msgid "Force the update to occur even if the version numbers are the same. (Used for testing.)"
 msgstr ""
 
 #: ../../source/inc/updater:39
-# 30f564aefc4d4f8cbf39485612d1aaac
+# 44e3e54ce2b54f378237963fe0f55dbf
 msgid "`public_key`"
 msgstr ""
 
 #: ../../source/inc/updater:38
-# 26e58af62bb341519080da051dd0c30b
+# d45f54e1b3034d62b075cf3566e38c51
 msgid "The path to a PEM file containing a public key that the update signature is checked against. (This can usually be ignored.)"
 msgstr ""
 
 #: ../../source/inc/updater:48
-# c9c0b26b52ce45fe8cc615a4b0d72f8a
+# dfad2d391a4a441a9cb3e5b54f68b481
 msgid "`simulate`"
 msgstr ""
 
 #: ../../source/inc/updater:42
-# f8fb475835074cb0a68e4dab5bfba72e
+# d98b63d739f5487bace7b59e273720a3
 msgid "This is used to test update guis without actually performing an update. This can be:"
 msgstr ""
 
 #: ../../source/inc/updater:45
-# 34dd08a136794fe5abca12b4864017ba
+# fb131ebaf57c460298028059d838b4ac
 msgid "None to perform an update."
 msgstr ""
 
 #: ../../source/inc/updater:46
-# 78afc4f8ce374f9ab98230fc3e60e871
+# fa272843ed7f4ac7945e53443515fdba
 msgid "\"available\" to test the case where an update is available."
 msgstr ""
 
 #: ../../source/inc/updater:47
-# f1525796aec54b88b284d1251357cd5c
+# 86bbb5130af44803887656712c886fff
 msgid "\"not_available\" to test the case where no update is available."
 msgstr ""
 
 #: ../../source/inc/updater:48
-# 2bd0e58c9787427d8774744ccd8beb74
+# 115bfaa92a2d4e9fa9d0cef94924b1e1
 msgid "\"error\" to test an update error."
 msgstr ""
 
 #: ../../source/inc/updater:52
-# 84f07be07e92410397297a95823004a0
+# b5151a461c9041cfae3bebbed511bf9c
 msgid "`add`"
 msgstr ""
 
 #: ../../source/inc/updater:51
-# d19572cf8a334af0b91590cd9b359e6b
+# 9e2d4a11cd8a4c3eb954edfa1a54b3c3
 msgid "A list of packages to add during this update. This is only necessary for dlc."
 msgstr ""
 
 #: ../../source/inc/updater:54
-# 83ee2866df34458d8f80648fe399e861
+# 47f5f9cda0184adb96b07f0c97be05b9
 msgid "`restart`"
 msgstr ""
 
 #: ../../source/inc/updater:55
-# b05bd1964b59471f97f053e5e6c30f97
+# 3d126fe6e31944c4a739658c65b448a6
 msgid "Restart the game after the update."
 msgstr ""
 
 #: ../../source/updater.rst:81
-# 336e8572f2df489dbebf5a37be071bd5
+# 29fa479a5a4a461da0c858ee3795a8d5
 msgid "Screen"
 msgstr ""
 
 #: ../../source/updater.rst:83
-# 5a04ec21473f4a22b3be49db74c616fc
+# 673deb7bf8bb4bafb313d027d3e166d0
 msgid "To customize the look of the updater, you may override the ``updater`` screen. The default screen is defined in common/00updater.rpy."
 msgstr ""
 

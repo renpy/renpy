@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,227 +17,227 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/transitions.rst:8
-# 5127b21e8a2740b3b04ede44b6ae9f6b
+# 7f43f9684b4e47bab425c92bdfd83986
 msgid "Transitions"
 msgstr ""
 
 #: ../../source/transitions.rst:10
-# bdafe5f357904bb5b00e78888def5414
+# cdb11246baed40aca6e4595ee8b30967
 msgid "Transitions can be used as part of the :ref:`with statement <with-statement>`, as well as in other parts of Ren'Py, to apply effects to changes in the scene. Ren'Py comes with a small number of pre-defined transitions, which can be given directly to the with statement. It also includes transition classes, which can be used to create new transitions."
 msgstr ""
 
 #: ../../source/transitions.rst:18
-# 209469ace31446aabcdafd61320a92a3
+# ed6911e6e5754f8bbb9d8c6d98d3ad2b
 msgid "Pre-Defined Transitions"
 msgstr ""
 
 #: ../../source/transitions.rst:20
-# 0065e36c8a8545169c31534399bf3be5
+# 7742f06a9bed4cf6a794f281b60d6e7d
 msgid "Pre-defined transitions can be given directly to the with statement. For example::"
 msgstr ""
 
 #: ../../source/transitions.rst:28
-# 83e4d5ec2b4747478cac27cdeac4c103
+# f142b29dbb674b9eb00bf1e914ab4292
 msgid "Takes 0.5 seconds to fade to black, and then 0.5 seconds to fade to the new screen. An instance of the :func:`Fade` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:34
-# f49ed2b94e6a45fcac5d3001d9007ce6
+# a3200273b7b147daa0b8fdd78feb4b4f
 msgid "Takes 0.5 seconds to dissolve from the old to the new screen. An instance of the :func:`Dissolve` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:39
-# 4bcc649f2e374078aaa3b8fe1a8818ea
+# 52c4eec6450b4dfbac00ced3125fe416
 msgid "Pixellates the old scene for .5 seconds, and the new scene for another .5 seconds. An instance of the :func:`Pixellate` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:45
-# 379d7587a3b24f62a24cd3638bc91c80
+# 803bf730c4d6499aa0a95a4526ba63d0
 msgid "Takes 0.5 seconds to the move images that have changed location to their new locations. An instance of the :func:`MoveTransition` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:51
-# 67d587a2dc9344e2a4ce23895b92d963
+# 9592b6663e1949b28ac6af2d4f4f6b49
 msgid "Also: **moveinleft, moveintop, moveinbottom**"
 msgstr ""
 
 #: ../../source/transitions.rst:53
-# ba276d93bd604c40b3ae8895216f940d
+# f39ab1db51fb4628a39b52c564bc0912
 msgid "These move entering images onto the screen from the appropriate side, taking 0.5 seconds to do so."
 msgstr ""
 
 #: ../../source/transitions.rst:59
-# d37bf8dfdcf145e088855d5c2d872247
+# 6e0226830b8e44b8b68e3055899bf81a
 msgid "Also: **moveoutleft, moveouttop, moveoutbottom**"
 msgstr ""
 
 #: ../../source/transitions.rst:61
-# 4c56f4eec39d47b2bd765e3c9dbd15b2
+# d95488257e6f449e98f5ac28dc26319d
 msgid "These move leaving images off the screen via the appropriate side, taking 0.5 seconds to do so."
 msgstr ""
 
 #: ../../source/transitions.rst:66
-# 897fb7264b674c2e9f0add9a076815d4
+# 2863bea52a434d05bd0c89bdab1bd4a7
 msgid "Also: **easeinright, easeinleft, easeintop, easeinbottom, easeoutright, easeoutleft, easeouttop, easeoutbottom**"
 msgstr ""
 
 #: ../../source/transitions.rst:68
-# 177adecaedc0480eaf1a7e0e78e6746d
+# 3afc703bf0f54a63a835c4b5cff72868
 msgid "These are similar to the move- family of transitions, except that they use a cosine-based curve to slow down the start and end of the transition."
 msgstr ""
 
 #: ../../source/transitions.rst:74
-# 4f3e0c85b2b741e59196c7f2fe2851cb
+# 9621071c548f4ea8b2850ed7a1d2ec09
 msgid "This zooms in entering images, taking 0.5 seconds to do so."
 msgstr ""
 
 #: ../../source/transitions.rst:78
-# 4c443ad1353040e7b3d8e5dd1b9c7ea8
+# 7200780984c048a4b49e4b8e3312fb3a
 msgid "This zooms out leaving images, taking 0.5 seconds to do so."
 msgstr ""
 
 #: ../../source/transitions.rst:82
-# e97d6a01afa2473cb5b00cddb093525e
+# a10fe33215f04e37907b31b02c23db90
 msgid "This zooms in entering images and zooms out leaving images, taking 0.5 seconds to do so."
 msgstr ""
 
 #: ../../source/transitions.rst:86
-# 17e3eb45e1dd4edabc08c2a63485aacc
+# 2fed111724b949c68d7ff4e4c3ce313b
 msgid "When invoked, this transition shakes the screen vertically for a quarter second."
 msgstr ""
 
 #: ../../source/transitions.rst:91
-# e0a19d1f26824d4181cb58a739cca124
+# 73a538cc15994e53a20912bcafe61876
 msgid "When invoked, this transition shakes the screen horizontally for a quarter second."
 msgstr ""
 
 #: ../../source/transitions.rst:96
-# bce9c7df3f9a408f94951c1eb2da5751
+# b8e37ce76c9546ed8bd6d845dd4a9775
 msgid "Transitions the screen in a vertical blinds effect lasting 1 second. An instance of the :func:`ImageDissolve` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:101
-# 93af8e219b664ea08b4dbc86c0266695
+# 59f43cbda5f9441f9272da16dfa18c1e
 msgid "Transitions the screen in a squares effect lasting 1 second."
 msgstr ""
 
 #: ../../source/transitions.rst:105
-# a8a1353f616540708901044bf397f0eb
+# c84767e927604ae9a2468fb212e5c88b
 msgid "Also: **wiperight, wipeup, wipedown**"
 msgstr ""
 
 #: ../../source/transitions.rst:107
-# 33e990f34e0e4845b47fc6d27d1255f3
+# 54c7ffb69282423ea4cf39053e8215b1
 msgid "Wipes the scene in the given direction. Instances of the :func:`CropMove` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:112
-# a1c2ca95f8fb4432ba1abb2738f9a240
+# b208a50029a543b7a8ff7921985e98d5
 msgid "Also: **slideright, slideup, slidedown**"
 msgstr ""
 
 #: ../../source/transitions.rst:114
 #: ../../source/transitions.rst:121
-# 989490bbda88444491fbe02c4d9db781
-# a11253f05001437ab63fede9fca25156
+# dc02af31f4b74486b94789884d1050a6
+# d5da0ecd46fb4e45aedd5372e1ea7f50
 msgid "Slides the new scene in the given direction. Instances of the :func:`CropMove` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:119
-# 74cab3e3c56c40b2978120a8c99e413d
+# 226c4e6ef12740bbb862bb5919cf45f0
 msgid "Also: **slideawayright, slideawayup, slideawaydown**"
 msgstr ""
 
 #: ../../source/transitions.rst:126
-# ec1c92c8a8e246988f6776cffa99b71a
+# 77b23121008440bb99d993b03f395798
 msgid "Also: **irisout**"
 msgstr ""
 
 #: ../../source/transitions.rst:128
-# c267d8c6c99145bfbf5fb87480935956
+# 23a3dad190cc4c5fa78a47e9c01e0fbb
 msgid "Use a rectangular iris to display the new screen, or hide the old screen. Instances of the :func:`CropMove` transition class."
 msgstr ""
 
 #: ../../source/transitions.rst:132
-# 119ba22769b04a22868bd4446ddc9e9f
+# 77d9119a92ac4b468a56b56cda12a137
 msgid "Transition Classes"
 msgstr ""
 
 #: ../../source/transitions.rst:134
-# ff7cdf93bc154c109904464218ddc3f0
+# 9fdf2fb4342a432ea69b83cfca190194
 msgid "Transition classes are functions that can be called to create new transitions. These functions are parameterized, allowing entire families of transitions to be created."
 msgstr ""
 
 #: ../../source/transitions.rst:138
-# 2db7159c87ae4284af3a6eef767680b0
+# 27979e01060e48448c704080fce1fc5c
 msgid "Calling transition classes can be done as part of the with statement. For example::"
 msgstr ""
 
 #: ../../source/transitions.rst:144
-# 4e4f1e45a5db4b0b814597e8710939a2
+# 186c52eee5c04bdd8791dfdc40c77174
 msgid "If we find ourselves calling the same transition class repeatedly, we can use the :ref:`define statement <define-statement>` to assign the transition to a variable::"
 msgstr ""
 
 #: ../../source/inc/transition:5
-# 39e166dfc2824002bd9031b58a371e45
+# c2eb3999b9ff4c6ebd354a7295d75578
 msgid "Returns a transition that uses a control displayable (almost always some sort of animated transform) to transition from one screen to another. The transform is evaluated. The new screen is used where the transform is opaque, and the old image is used when it is transparent."
 msgstr ""
 
 #: ../../source/inc/transition:11
-# c063500b74ab4c188148a84e9e3b8578
+# 3bb03aeb4bee4d9c9f412801ccf47081
 msgid "`control`"
 msgstr ""
 
 #: ../../source/inc/transition:11
-# 125c6a1ff9df4a01ae5b7420a049ea81
+# 3527cdfa07884923bd94d7138af477e9
 msgid "The control transform."
 msgstr ""
 
 #: ../../source/inc/transition:14
 #: ../../source/inc/transition:194
-# 5b05fada846b481bb25728fb4f59ed82
-# bded223535a54c9689542f0becd8cb38
+# 91f28e6655dd4ac38362dd6454155b57
+# be5a26f358fe48a980c6dbffc68c6a53
 msgid "`delay`"
 msgstr ""
 
 #: ../../source/inc/transition:14
-# 71bb52975feb4d0cb916c0a73bd1686c
+# 49ae310fe1e64aad830dbc6a94a13a2b
 msgid "The time the transition takes, before ending."
 msgstr ""
 
 #: ../../source/inc/transition:18
 #: ../../source/inc/transition:125
 #: ../../source/inc/transition:175
-# bd4bf3f7c06548f7bbd61cde55f7a22a
-# 116ac3c1d76e45b38793ead67e6e50bb
-# cd6c023a5c564084b7c1fdefa5697f99
+# 0852257933024b11af9a3a79955f17c2
+# 9bd31816675a4911a2d2f0e6084d8702
+# f86446dc406746f9a7cbc88654b5a5a9
 msgid "`alpha`"
 msgstr ""
 
 #: ../../source/inc/transition:17
-# ac37decbb88145d987b75c2dd1b95298
+# a78445d1e1934739b21c2789296c3c7e
 msgid "If true, the image is composited with what's behind it. If false, the default, the image is opaque and overwrites what's behind it."
 msgstr ""
 
 #: ../../source/inc/transition:22
 #: ../../source/inc/transition:170
-# f55f0f47931843d2bb257ec20246ac33
-# df7fc1c8f7e14a8696d113298f477c71
+# 03cfb9e3cc814639abf90d18447d158e
+# 815abac8cd6f4cbb9dfddd3c224db3b3
 msgid "`reverse`"
 msgstr ""
 
 #: ../../source/inc/transition:21
-# 9d19701b42bc4899982a2348a8365d34
+# f8c865876a45402fb9128502688c3fa0
 msgid "If true, the alpha channel is reversed. Opaque areas are taken from the old image, while transparent areas are taken from the new image."
 msgstr ""
 
 #: ../../source/inc/transition:28
-# 2e5711e3887a40bd9505c0d64aac5fd2
+# a97f7cabe3fe4434acd55939f0c5233e
 msgid "Returns a transition that composes up to three transitions. If not None, the `before` and `after` transitions are applied to the old and new scenes, respectively. These updated old and new scenes are then supplied to the `trans` transition."
 msgstr ""
 
 #: ../../source/inc/transition:40
-# cdb452ff47e649c1be69eb0cec98c072
+# 1603ebc7de3c4bdea54df9afa0f2743a
 msgid "Returns a transition that works by cropping a scene and positioning it on the screen. This can be used to implement a variety of effects, all of which involved changing rectangular slices of scenes."
 msgstr ""
 
@@ -245,376 +245,376 @@ msgstr ""
 #: ../../source/inc/transition:120
 #: ../../source/inc/transition:161
 #: ../../source/inc/transition:263
-# 94b37fcd36ee47d290dbdaecfc331618
-# 6b8f03c4f1af4877a6e6d428cf92991e
-# 906f0852f7c24a949a80a39d280eac9d
-# 68cc7844200b446089e58ef7f5c9af2f
+# ab8660f899d3490486780cce3988ea27
+# 53f8f2c1ae824c3187b38a5405efed01
+# 15e77ee8013a495a9e52d56cba216ebb
+# 503c34c9d3f94560906377d1b7a396da
 msgid "`time`"
 msgstr ""
 
 #: ../../source/inc/transition:45
-# 19e9f128b49e4b5183608c436a36dde8
+# a8384293431a4a09b442588b8aebf826
 msgid "The time the transition takes."
 msgstr ""
 
 #: ../../source/inc/transition:68
-# 9b49bd9c6275499085cb3fd45bec047d
+# 4d565ae839414505b485ceb698cf3877
 msgid "`mode`"
 msgstr ""
 
 #: ../../source/inc/transition:48
-# 3a83e08c4b844cf59b1111e865b513c9
+# 51bde1353e474fc4a9fda4cf1222a6cd
 msgid "The name of the mode of the transition. There are three groups of modes: wipes, slides, and other. This can also be \"custom\", to allow a custom mode to be defined."
 msgstr ""
 
 #: ../../source/inc/transition:52
-# f972a4dd2c0b4c6ba689af4dcf63acc8
+# eb7d29d7315e4e6594d682e3e3abd2f8
 msgid "In a wipe, the image stays fixed, and more of it is revealed as the transition progresses. For example, in \"wiperight\", a wipe from left to right, first the left edge of the image is revealed at the left edge of the screen, then the center of the image, and finally the right side of the image at the right of the screen. Other supported wipes are \"wipeleft\", \"wipedown\", and \"wipeup\"."
 msgstr ""
 
 #: ../../source/inc/transition:58
-# f76732960d4d42fd8c7f038c133fa836
+# a1963177ddaf418280d9822b6d18b3d3
 msgid "In a slide, the image moves. So in a \"slideright\", the right edge of the image starts at the left edge of the screen, and moves to the right as the transition progresses. Other slides are \"slideleft\", \"slidedown\", and \"slideup\"."
 msgstr ""
 
 #: ../../source/inc/transition:63
-# cd595f5916014692a330913bed0c5bdf
+# 2c97223e289f4457914b206bf32517e9
 msgid "There are also slideaways, in which the old image moves on top of the new image. Slideaways include \"slideawayright\", \"slideawayleft\", \"slideawayup\", and \"slideawaydown\"."
 msgstr ""
 
 #: ../../source/inc/transition:67
-# c0cb189c73554818a027491ff09871dd
+# 4ea1ab48603d4a79af8d2752c325575a
 msgid "We also support a rectangular iris in with \"irisin\" and a rectangular iris out with \"irisout\"."
 msgstr ""
 
 #: ../../source/inc/transition:70
-# f554ce5d3ce04309b79fd31e717c0f08
+# 310d787b2f064c789be65ac21a6bf804
 msgid "The following parameters are only respected if the mode is \"custom\". Positions are relative to the size of the screen, while the crops are relative to the size of the image. So a crop of (0.25, 0.0, 0.5, 1.0) takes the middle half of an image."
 msgstr ""
 
 #: ../../source/inc/transition:77
-# d7aedb4d39f54a339c006d19ae52cd83
+# 93e79547317c48bca0f479580530f0eb
 msgid "`startcrop`"
 msgstr ""
 
 #: ../../source/inc/transition:76
-# 511879de875d490785610b10e9a964e2
+# 1bf7ca86e284461cb8d7e821c17c8919
 msgid "The starting rectangle that is cropped out of the top image. A 4-element tuple containing x, y, width, and height."
 msgstr ""
 
 #: ../../source/inc/transition:81
-# 5024e282f2e94bd697e01fc433d96a78
+# 458d2fbbd2794181b4f8f4e680bf5541
 msgid "`startpos`"
 msgstr ""
 
 #: ../../source/inc/transition:80
-# ef1e9271985e46e6b67ce2381ca10a67
+# 00d83c5b93584d1d9af95767bc0e69ed
 msgid "The starting place that the top image is drawn to the screen at, a 2-element tuple containing x and y."
 msgstr ""
 
 #: ../../source/inc/transition:85
-# dca4e0edf422462297fbbc52952387e8
+# 92f2fe3a6ace435e85149649c0932f63
 msgid "`endcrop`"
 msgstr ""
 
 #: ../../source/inc/transition:84
-# 3feb08107da94af89ca77f6f07b4be68
+# e7736fe123984ca588542cf7995993ef
 msgid "The ending rectangle that is cropped out of the top image. A 4-element tuple containing x, y, width, and height."
 msgstr ""
 
 #: ../../source/inc/transition:89
-# 488eb35696b94e179946d292a8eda9bd
+# b0514128ea844030a39680f0a6f8d9e0
 msgid "`endpos`"
 msgstr ""
 
 #: ../../source/inc/transition:88
-# 8dac74b5db684b929513450fb4061c56
+# 53c2ef8254a44ae587d7e825b7a672ec
 msgid "The ending place that the top image is drawn to the screen at, a 2-element tuple containing x and y."
 msgstr ""
 
 #: ../../source/inc/transition:93
-# 579e573aa60d4a5991b1e5df3e4ebf80
+# 630779b0a93b450dbbe6768bab31abfe
 msgid "`topnew`"
 msgstr ""
 
 #: ../../source/inc/transition:92
-# 2e976f52ff2a42f8acd7f6f516b2d833
+# 95fd6794b62a474b8899ea1f2dbefaa9
 msgid "If true, the scene that is cropped and moved (and is on top of the other scene) is the new scene. If false, it is the old scene."
 msgstr ""
 
 #: ../../source/inc/transition:117
-# 6f81f9c9c5d14888bc85670153092943
+# 7c35f54e64f14aa7a1cfe9a9fa855ff5
 msgid "Returns a transition that dissolves from the old scene to the new scene."
 msgstr ""
 
 #: ../../source/inc/transition:120
 #: ../../source/inc/transition:161
-# 352cc9d1b59b45d7af7578c7deb5de56
-# 146cb347580a4c1984d0845d44784812
+# 1170c250d13441c2bab34af852586e82
+# 09734d0369f9444da455b51e4cb89788
 msgid "The time the dissolve will take."
 msgstr ""
 
 #: ../../source/inc/transition:123
 #: ../../source/inc/transition:173
-# dda7917383224f22a3831b61a78e33c7
-# 84d3439d369c447ebd708af9227c9281
+# d87b8a62aeab4bc4833eb85be452ee70
+# 0370b5ca8b7b45539f8dc039ab99f3f8
 msgid "If true, the dissolve will alpha-composite the the result of the transition with the screen. If false, the result of the transition will replace the screen, which is more efficient."
 msgstr ""
 
 #: ../../source/inc/transition:129
 #: ../../source/inc/transition:180
 #: ../../source/inc/transition:215
-# 637c15cfb1e047d2bf3e881fc1a696a5
-# e4d321c7819347f2b6efdfc305b4cad5
-# 5ab1ce1956f0419580d34ca8a6183009
+# 124b0d66bbc04db697bbcf6e2c388d69
+# c2d2b22d025f4c1c97a4120ebe0ff440
+# 8ad12ac85cfa471dbe6726073739b864
 msgid "`time_warp`"
 msgstr ""
 
 #: ../../source/inc/transition:128
 #: ../../source/inc/transition:178
-# 8e7a0efdd0f54e64bac8f2b3dcf77907
-# 6cc44cf225f346ed9ea996ac4dda130b
+# 6f5ff0c40fdc44be88ff69e612dea9b9
+# 283a617157414bfb87967fef47e22b93
 msgid "A function that adjusts the timeline. If not None, this should be a function that takes a fractional time between 0.0 and 1.0, and returns a number in the same range."
 msgstr ""
 
 #: ../../source/inc/transition:134
-# 6e8b103b42604a699fa5cc1b6619bfde
+# 1c43ff1467ba4ce7b8bb56dd8d2254fa
 msgid "Returns a transition that takes `out_time` seconds to fade to a screen filled with `color`, holds at that screen for `hold_time` seconds, and then takes `in_time` to fade to then new screen."
 msgstr ""
 
 #: ../../source/inc/transition:151
-# 11c0da16b3e84e14bfe4dae637ddab30
+# de3663826d834c559daf36f89e8e3e3b
 msgid "Returns a transition that dissolves the old scene into the new scene, using an image to control the dissolve process. This means that white pixels will dissolve in first, and black pixels will dissolve in last."
 msgstr ""
 
 #: ../../source/inc/transition:158
-# 8a7201612b0f42c6863ed0951fa43b87
+# 389a9ff42f1d41a8a9b5104bbf997cfe
 msgid "`image`"
 msgstr ""
 
 #: ../../source/inc/transition:156
-# 20f015fe7f954bc8b2b7a3f9098a2db4
+# da1117f3db524754b28afe9c2a7c4725
 msgid "A control image to use. This must be either an image file or image manipulator. The control image should be the size of the scenes being dissolved."
 msgstr ""
 
 #: ../../source/inc/transition:167
-# a1946ab5afed40c7ae001415619c3290
+# 90207ff98137403b99854e8b02c34777
 msgid "`ramplen`"
 msgstr ""
 
 #: ../../source/inc/transition:164
-# 6111e64e54274df88656ef5cccd2cd2b
+# 739cccb0f5684afcb67c023cc2049c91
 msgid "The length of the ramp to use. This must be an integer power of 2. When this is the default value of 8, when a white pixel is fully dissolved, a pixel 8 shades of gray darker will have completed one step of dissolving in."
 msgstr ""
 
 #: ../../source/inc/transition:170
-# e026b89410e842c1b18eaffc559e2aaa
+# b06e6c6a7be54bc7a0fc72ea5566e908
 msgid "If true, black pixels will dissolve in before white pixels."
 msgstr ""
 
 #: ../../source/inc/transition:190
-# 5802021064cf4b899dcfdd338759e9fd
+# 912b7e79022646b686e5adf99ee93b32
 msgid "Returns a transition that interpolates the position of images (with the same tag) in the old and new scenes."
 msgstr ""
 
 #: ../../source/inc/transition:194
-# de538cc0ec394870b96f664794002a8f
+# 274972827eaa4e4eb3cb7d5fa658ff83
 msgid "The time it takes for the interpolation to finish."
 msgstr ""
 
 #: ../../source/inc/transition:199
-# d240c57c67a34af5b9977bf05c7c2bdd
+# 1cec74d4b5fc4c248f4c4a9a8f4ab0cc
 msgid "`enter`"
 msgstr ""
 
 #: ../../source/inc/transition:197
-# 7ff52a0c36e34f47bfefbcb33332ee45
+# f6653084eca84678a68d7dc23f12dd3b
 msgid "If not None, images entering the scene will also be moved. The value of `enter` should be a transform that is applied to the image to get its starting position."
 msgstr ""
 
 #: ../../source/inc/transition:204
-# e3611c61de79487f80a648332c3dcf07
+# 4ebd6c107294458182968b98642f11b5
 msgid "`leave`"
 msgstr ""
 
 #: ../../source/inc/transition:202
-# 2b83fcab8c334797b7ca2f6af23b3fc0
+# c21a9843c7d0401bb52ff18a0bc8cc38
 msgid "If not None, images leaving the scene will also be move. The value of `leave` should be a transform that is applied to the image to get its ending position."
 msgstr ""
 
 #: ../../source/inc/transition:207
 #: ../../source/inc/transition_family:33
-# c336160a619b441c9dd984f70ff13163
-# 805a7a0fe5764552bf792a901cd72642
+# cd398c6fad834b4faf30b97265b9d340
+# f1675f6118024d9992577babe9f204e3
 msgid "`old`"
 msgstr ""
 
 #: ../../source/inc/transition:207
-# 7ec7d1c5d9f74f1387b9f553da09fd50
+# 8a0c083debfa4dfe93214194cdec4a3b
 msgid "If true, the old image will be used in preference to the new one."
 msgstr ""
 
 #: ../../source/inc/transition:210
 #: ../../source/inc/transition_family:36
-# f38e1bc62f564257a2c27798c7c5b554
-# ba48affc30d74639a4f92ac71686e406
+# 81030350f3b547aba7d5639309de86c0
+# 7a4d88274e4b4e818fe2c81483b75a25
 msgid "`layers`"
 msgstr ""
 
 #: ../../source/inc/transition:210
-# 67635ac3f6e94cba833a1915b04da1da
+# 48ee0b9340c9430d82c900649e303513
 msgid "A list of layers that moves are applied to."
 msgstr ""
 
 #: ../../source/inc/transition:213
-# 99c0c4c44be64921949a3de62a6d4c4e
+# 29f05eb0f5644eaba765db360ba52f03
 msgid "A time warp function that's applied to the interpolation. This takes a number between 0.0 and 1.0, and should return a number in the same range."
 msgstr ""
 
 #: ../../source/inc/transition:218
 #: ../../source/inc/transition:220
-# f60860f3e03a45308f2c695cb5c10c6c
-# 78b43f19f8b34935be7dd14e6d0cd329
+# da51f61b3c4b405691cbf725e232b575
+# 863cd8f5a4da4eeea1895088438e8242
 msgid "`enter_time_warp`"
 msgstr ""
 
 #: ../../source/inc/transition:218
-# 8cf3a61e1aa54b50a35b21336a7b8137
+# b017fb41688248539e4234b21be2c0da
 msgid "A time warp function that's applied to images entering the scene."
 msgstr ""
 
 #: ../../source/inc/transition:221
-# 63ced76b4f354fdda6803f102c043260
+# 082e79b73f2a447088c41260257f4e5c
 msgid "A time warp function that's applied to images leaving the scene."
 msgstr ""
 
 #: ../../source/inc/transition:225
-# 9bf0b0a3efc343bfaebdf868205fe142
+# 3c390b11371f4bff9ba4ab843f202c28
 msgid "Returns a transition that allows multiple transitions to be displayed, one after the other."
 msgstr ""
 
 #: ../../source/inc/transition:237
-# d982ac8a799a4b99bc406043594b7ed4
+# 2425a1aa772342aea44337ca79593312
 msgid "`args`"
 msgstr ""
 
 #: ../../source/inc/transition:229
-# a9269f875262403a9b5e7533209cb8a6
+# c0a9d56b2fac4f7b87a021133022974f
 msgid "A list containing an odd number of items. The first, third, and other odd-numbered items must be scenes, and the even items must be transitions. A scene can be one of:"
 msgstr ""
 
 #: ../../source/inc/transition:233
-# 081ee626e57a4bf5a5b6a73b8bc01b02
+# 82dd4dffd1164122be585514bae6fc4b
 msgid "A displayable."
 msgstr ""
 
 #: ../../source/inc/transition:234
-# e7e70a4044ec446f8b45cf1719417fb5
+# d1e5f3be071240559d5305156366d862
 msgid "False, to use the old scene."
 msgstr ""
 
 #: ../../source/inc/transition:235
-# 126742e66fc84f569d023d07880fc055
+# 8ed0137bd8e94f95a90b91f2b296c684
 msgid "True, to use the new scene."
 msgstr ""
 
 #: ../../source/inc/transition:237
-# 69f82d67ebc546e8bcee2bbf1923eb9a
+# 35a0d6b6b2a242f79d03559b74dc83bc
 msgid "Almost always, the first argument will be False and the last True."
 msgstr ""
 
 #: ../../source/inc/transition:239
-# cb65290fe095407a8884fbf99be76d60
+# 34f175e783fd4401a3e04150eb6154c9
 msgid "The transitions in `args` are applied in order. For each transition, the old scene is the screen preceding it, and the new scene is the scene following it. For example::"
 msgstr ""
 
 #: ../../source/inc/transition:249
-# 1fbf806a97cc4a20833988493ff3eea6
+# 78884522e22149098927a64731136490
 msgid "This example will dissolve to logo.jpg, wait 1 second, and then dissolve to the new scene."
 msgstr ""
 
 #: ../../source/inc/transition:254
-# aeffc1cd78ea43ffbacaa45b8e308d16
+# dc57b5fda49941ba982fac7e1aef372d
 msgid "Returns a transition that only displays the new screen for `delay` seconds. It can be useful as part of a MultipleTransition."
 msgstr ""
 
 #: ../../source/inc/transition:259
-# bbea89a0743d42b9b0177e93e34a6cab
+# 6b3da888b2304b01afe7fc0e5d059990
 msgid "Returns a transition that pixellates out the old screen, and then pixellates in the new screen."
 msgstr ""
 
 #: ../../source/inc/transition:263
-# 57bfa6eadfd843f48efc1c93c70ed4dc
+# b41392b4c2224bfb99944cdee8f7fb49
 msgid "The total time the transition will take, in seconds."
 msgstr ""
 
 #: ../../source/inc/transition:267
-# bdb92e67f0744fcd9b3e6ec04bd14244
+# 1de6992b015a451188dad6b2bfa9f843
 msgid "`steps`"
 msgstr ""
 
 #: ../../source/inc/transition:266
-# 41ab3598bb604c13844aae69e1a19e5d
+# b7bff5050cba47e8a4406861d8b4ae02
 msgid "The number of steps that will occur, in each direction. Each step creates pixels about twice the size of those in the previous step, so a 5-step pixellation will create 32x32 pixels."
 msgstr ""
 
 #: ../../source/transitions.rst:158
-# a2bdd4facaf2496ba2ca3227718f9fc9
+# a276a34f538d42a084c41e3b0cc43ca6
 msgid "Transition Families"
 msgstr ""
 
 #: ../../source/transitions.rst:160
-# 3dbecaff1e11470cb3c881d892bb1452
+# 6c87c2afbf694b1399b883c19644feb3
 msgid "Transition families are functions that define a large family of related transitions."
 msgstr ""
 
 #: ../../source/inc/transition_family:5
-# c9ee61435d1f4dd096126a9c93cfdefb
+# d18ad4da296c42e09f3daf7844e5d320
 msgid "This defines a family of move transitions, similar to the move and ease transitions. For a given `prefix`, this defines the transitions:"
 msgstr ""
 
 #: ../../source/inc/transition_family:8
-# b3ae594191ab4de2ad25ff35db73e11f
+# 3370b0afe8264715a2a4362d2cfa318b
 msgid "*prefix*- A transition that takes `delay` seconds to move images that changed positions to their new locations."
 msgstr ""
 
 #: ../../source/inc/transition_family:11
-# be8cd06ed63f45748cc51ec41f39dbec
+# dd7b3b147bc248d2a6cc4b5cc8afd1ae
 msgid "*prefix*\\ inleft, *prefix*\\ inright, *prefix*\\ intop, *prefix*\\ inbottom - Transitions that take `delay` seconds to move images that changed positions to their new locations, with newly shown images coming in from the appropriate side."
 msgstr ""
 
 #: ../../source/inc/transition_family:16
-# 0c996133bcf34316b572a3565860b567
+# 8c9b0402e5154f11a7e1a3a3f4df166c
 msgid "*prefix*\\ outleft, *prefix*\\ outright, *prefix*\\ outtop, *prefix*\\ outbottom - Transitions that take `delay` seconds to move images that changed positions to their new locations, with newly hidden images leaving via the appropriate side."
 msgstr ""
 
 #: ../../source/inc/transition_family:30
-# 5b53ac158681419bb9cac6c9a4ee0292
+# 0d8df78bfa7c4622aaa605fdf588da58
 msgid "`time_warp`, `in_time_warp`, `out_time_warp`"
 msgstr ""
 
 #: ../../source/inc/transition_family:22
-# 26be05cc092c45f9b7beaff1f49daad6
+# e758c34add45410b9ab3647815dbecd4
 msgid "Time warp functions that are given a time from 0.0 to 1.0 representing the fraction of the move complete, and return a value in the same range giving the fraction of a linear move that is complete."
 msgstr ""
 
 #: ../../source/inc/transition_family:26
-# 404cee2ceaf845f985c6ec86fecdcdb2
+# b7e9618672294b81b5d2f2815311f232
 msgid "This can be used to define functions that ease the images around, rather than moving them at a constant speed."
 msgstr ""
 
 #: ../../source/inc/transition_family:29
-# 2a0c431813ec432ca2e761d1df275d7e
+# ccfa34d4379f487e88c2f8417f234715
 msgid "The three argument are used for images remaining on the screen, newly shown images, and newly hidden images, respectively."
 msgstr ""
 
 #: ../../source/inc/transition_family:33
-# be0a4efa69b343c396ba2ff751c169dd
+# c58f4713f2d54079bd90b49d69474cc2
 msgid "If true, the transitions to move the old displayables, rather than the new ones."
 msgstr ""
 
 #: ../../source/inc/transition_family:36
-# 5161ff0cf1f944b2b6072ef6effdfbcb
+# 5af4b317e086468d81af8c0f22faa898
 msgid "The layers the transition will apply to."
 msgstr ""
 

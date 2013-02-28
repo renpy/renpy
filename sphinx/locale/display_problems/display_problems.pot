@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,67 +17,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/display_problems.rst:5
-# c15593d713c04cea82cdffd606dbece0
+# 15bc4bbf4a9f425ab6219f8620b30efd
 msgid "Dealing With Display Problems"
 msgstr ""
 
 #: ../../source/display_problems.rst:7
-# 7c46218fafb5419094a489dd856f5bcd
+# a26cf6a3daeb4d849e3d1bc2ed29692a
 msgid "As of version 6.13, Ren'Py will take advantage of graphics acceleration hardware, if it's present and functional. Using hardware acceleration brings with it several advantages, such as allowing vertical-blank synchronization and scaling games to full-screen size while preserving aspect ratio."
 msgstr ""
 
 #: ../../source/display_problems.rst:13
-# 021b89e5c7ef4e419dcbb6120e505883
+# a06d4ca8d5b34212878121b71d3e8f44
 msgid "By default, Ren'Py selects a renderer to use in the following order:"
 msgstr ""
 
 #: ../../source/display_problems.rst:15
-# 623ca22a41914a9294d93b3a84771261
+# 7278de2d5fbb4c578267e9dd63da6f54
 msgid "OpenGL 2.0 or greater."
 msgstr ""
 
 #: ../../source/display_problems.rst:16
-# ce0e05987e4c41b48e7028fb1dedee55
+# ac30cdb27be5479ba189a8644d872976
 msgid "DirectX 9, provided that all libraries are available."
 msgstr ""
 
 #: ../../source/display_problems.rst:17
-# adc9f381470a4c82822c934e357a0e27
+# cc4b2502b2974cb7ab1f58424ed9cf09
 msgid "OpenGL 1.x."
 msgstr ""
 
 #: ../../source/display_problems.rst:18
-# d8aa758856714d79abced28da7be8f6b
+# 7f39baa317e74771a71d8e99f2fb3a83
 msgid "Software."
 msgstr ""
 
 #: ../../source/display_problems.rst:20
-# 79fcfb3353cd46839ea42317254c1a22
+# 0cd5f49289ac4a859dc18e2905bb76d8
 msgid "A small fraction of systems may experience problems when running hardware accelerated Ren'Py games.  These problems are often due to buggy graphics drivers, and so your first step to fixing them should be to check for an update to your graphics card drivers."
 msgstr ""
 
 #: ../../source/display_problems.rst:25
-# 209ff6c5d6334b7f8abd57a2d558dd87
+# 9902e65d290b4dfcbf996fc53c5a6b60
 msgid "If upgrading your video drivers does not fix the problem, you should consider switching video renderers, using the following steps."
 msgstr ""
 
 #: ../../source/display_problems.rst:28
-# 996f5ca5a9c34f47b98f85e1ace7b9f3
+# 1a37c4c33ead453592ef2ccd83177d42
 msgid "Hold down shift while starting Ren'Py, or press shift+G once Ren'Py has started."
 msgstr ""
 
 #: ../../source/display_problems.rst:29
-# e910b90cc46a45b29dd77842857be472
+# ad1dc21e5e2a43a5af314f3c5312cc8b
 msgid "From the \"Graphics Acceleration\" menu that appears, choose the renderer to use."
 msgstr ""
 
 #: ../../source/display_problems.rst:30
-# cf810f9d5377459ca3eb98a5dc729e52
+# 04e710a826bd46faa58d6a010df2f553
 msgid "Choose \"Quit\", then restart Ren'Py."
 msgstr ""
 
 #: ../../source/display_problems.rst:32
-# 7e283013356f44d698ac2462132cf6d7
+# 616827ec23504b36af725b2589d0046b
 msgid "We suggest trying OpenGL, DirectX, and Software, in that order."
 msgstr ""
 

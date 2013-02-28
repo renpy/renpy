@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,72 +17,72 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/editor.rst:8
-# 2e1ae405348a4d4ba22808d19a6b342a
+# 4724432e2c264badaa72edc222dcf152
 msgid "Text Editor Integration"
 msgstr ""
 
 #: ../../source/editor.rst:10
-# 4d6b0d5a520f48ba92fbed7239a7891a
+# 4cbdb51148c74e28a7e8b82088f6147f
 msgid "Ren'Py uses a text editor to allow the user to edit game scripts from the launcher, and to report errors to the user. By default, Ren'Py uses jEdit as the text editor when launched from the launcher and the system default editor otherwise. This can be customized by the user as necessary."
 msgstr ""
 
 #: ../../source/editor.rst:15
-# 1cb97329d0b846d99483603c2b0194aa
+# ffcaa968158c4c38975a143ec742de87
 msgid "The editor is customized by creating an Editor class in a .edit.py file. This class contains methods that are called to manage text editing."
 msgstr ""
 
 #: ../../source/editor.rst:18
-# 6af36ea409e249ae878c2c30be936986
+# 91ee262f8ddb43aaaecb66bdb441bfbb
 msgid "When run directly, Ren'Py first looks at the RENPY_EDIT_PY environment variable to find an .edit.py file to use. If it can find one, it uses the Editor class defined in that file. If not, it uses a built-in editor class that launches the editor in a system-specific manner."
 msgstr ""
 
 #: ../../source/editor.rst:23
-# 842c19492f3249c3b1de4a20578e3d2a
+# 476197c136c14877809dbbc61f65a8a0
 msgid "When the Ren'Py Launcher is run, it scans subdirectories of the projects directory and Ren'Py directory to find files of the form `name`.edit.py. (For example, it would find launcher/jEdit.edit.py and myeditor/MyEditor.edit.py.) The latest editor with a given `name` is presented to the creator as part of the launcher options. The launcher also sets RENPY_EDIT_PY to the selected file, so that games launched from the launcher will use the selected editor."
 msgstr ""
 
 #: ../../source/editor.rst:32
-# a302e2be9e5547be9da375171dc587b1
+# 25cf184099c6424f99b1c06f2a07957d
 msgid "Writing an .edit.py File"
 msgstr ""
 
 #: ../../source/editor.rst:34
-# ece3d8fc9e6c4273943ad55fc8e9d823
+# 3718149a5fd64da18dfd31adea63df64
 msgid "An edit.py file is a Python (not Ren'Py) file that must define a single class, named Editor. Ren'Py will call methods on this class to cause editing to occur."
 msgstr ""
 
 #: ../../source/editor.rst:38
-# 1ce9d4ae73fb471c9ec3075de10f3772
+# cefc9096fae848cbb7273307b98fc393
 msgid "Use of the editor is done as part of an editor transaction, which groups related operations together. For example, if an editor transaction asks for a new window, all of the files in that transaction should be opened in the same new window. An editor transaction starts with a call to the begin method, may contain one or more calls to operation methods, and ends with a call to the end method."
 msgstr ""
 
 #: ../../source/editor.rst:45
-# c5e7092558db4726aff965cc340824e7
+# fa6081641d984cb6addacb7983ef26b2
 msgid "The edit.py file should import renpy.editor, and the Editor class should inherit from renpy.editor.Editor. As additional keyword arguments may be added to methods, each method you define should ignore unknown keyword arguments. Since you're expected to define your own Editor subclass, we present the methods with the `self` parameter."
 msgstr ""
 
 #: ../../source/editor.rst:55
-# 5dd3574182bb47e18d309192b4381f55
+# 12dfcc8e754b442c9d0c4df95507cf97
 msgid "Starts an editor transaction."
 msgstr ""
 
 #: ../../source/editor.rst:57
-# a19fb63c989347cf8d4aa9c315541b93
+# 8b0ff2dca1a64135affd2ef50b2a289e
 msgid "If `new_window` is true, the editor should attempt to open a new window. Otherwise, it should attempt to perform the transaction in an existing editor window."
 msgstr ""
 
 #: ../../source/editor.rst:63
-# 62e6e095cc6e447893ad52f1481f03f4
+# 1d1dcf29fb914a24b9969e7c5084db88
 msgid "Ends a transaction."
 msgstr ""
 
 #: ../../source/editor.rst:67
-# 3d067d2f8c8c4952916ad1283c1d0070
+# 0e62f73774cc44d88656372d61221248
 msgid "Opens a `filename` in the editor."
 msgstr ""
 
 #: ../../source/editor.rst:69
-# c139cc660e6d4f6b831bfe12eb8f67ae
+# 660aa4ee3d4a4651a46fff202d7856dd
 msgid "If `line` is not None, attempts to position the editing cursor at `line`."
 msgstr ""
 

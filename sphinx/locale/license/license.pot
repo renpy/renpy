@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 09:05\n"
+"POT-Creation-Date: 2013-02-28 22:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,172 +17,172 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/license.rst:8
-# 11349ff10c7246fb8052f42c8bf46971
+# 0f9c6e32f0594e2caf47860dc91e2fbf
 msgid "License"
 msgstr ""
 
 #: ../../source/license.rst:10
-# b0cc0259dbed48b6882604c6dda4b9bc
+# 23d1be327a684703a71cb4cdfaf07a2b
 msgid "Most of Ren'Py is covered by the terms of the following (MIT) license:"
 msgstr ""
 
 #: ../../source/license.rst:12
-# eb521eb96ab94761b23a178aa384fa08
+# bd8bdcdcf65a413196b6af9b2f35f5a9
 msgid "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
 msgstr ""
 
 #: ../../source/license.rst:20
-# a17f134929644b82aa6c3d40fb4fd99b
+# edac9bd1d7484ec88f5a55aafa8321fd
 msgid "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
 msgstr ""
 
 #: ../../source/license.rst:23
-# d5d9fdb1f89e4b10857ab1557e0be3b1
+# 5efb83017ef3415086b9c93358d8d1d7
 msgid "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
 msgstr ""
 
 #: ../../source/license.rst:31
-# 297258113c0948d7bb746d158abd9ae3
+# 539835b4c71b4c69ad972b6de4e08685
 msgid "Portions of Ren'Py are derived from code that is copyright using the Lesser GNU Public License, so Ren'Py games must be distributed in a manner that satisfies the LGPL."
 msgstr ""
 
 #: ../../source/license.rst:35
-# 67f81dc5a7d64206bd738daf2cffa20f
+# 97f783fb01754208b1f4ae38dc6cfb4c
 msgid "Please see each individual source file for a list of copyright holders. The artwork in the demo is released by various copyright holders, under the same terms."
 msgstr ""
 
 #: ../../source/license.rst:39
-# e3cd8b28eabe4492a3682ebe6f0e88b1
+# b75e8b1210e24b7f8eca4529486008e8
 msgid "Ren'Py binaries include code from the following projects:"
 msgstr ""
 
 #: ../../source/license.rst:41
-# e0866b231c0f43c68da1c2be2777a0fd
+# 8b7c2f3eca17461383920c65a7a7903f
 msgid "Python (Python License)"
 msgstr ""
 
 #: ../../source/license.rst:42
-# d8f6eb50691041e2bca54b1aa8b74e04
+# 97758a1e91f942208ebc5100742442cf
 msgid "Pygame (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:43
-# 6732dbfe391c454db746e44f934c7aa8
+# 6d0d71c6079a49cd8f886e55324dcf7f
 msgid "SDL (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:44
-# ab862a37025941b3ae8f14711f1d16e1
+# 64724658ca3f45bd92bc53381a69e615
 msgid "SDL_image (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:45
-# ff76bbd0562c4bb6922efcc99f07eb19
+# 7a4a915b8d0748fe9dfce17e76298774
 msgid "SDL_ttf (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:46
-# 36fa74d6f6074b5c99fffd8eef0e5b59
+# 462abeb86d844988add684448da4c139
 msgid "Freetype (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:47
-# 467f9e1555ff42c282eafbfc434ac1e0
+# 7718347a42f442438d903f11cd6b6972
 msgid "Fribidi (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:48
-# 9038c9dfde084f4cada2e6d503bc4959
+# 9b71166580d5403d98ef39d40fe0a66f
 msgid "libav (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:49
-# 7c5b6427088d48d08d4defd29104dade
+# 62fa14c620d043c4a5baf7f7e26b7f93
 msgid "libjpeg-turbo (LGPL)"
 msgstr ""
 
 #: ../../source/license.rst:50
-# f182758f71994d0795b7b81f67549e71
+# 26b21494a8fc4e839b108647fd561b33
 msgid "libpng (PNG license)"
 msgstr ""
 
 #: ../../source/license.rst:51
-# 4b436d79122f49479a1a2921522ceb1b
+# 4561a287ad1f4661b9ff37a155dcd3bf
 msgid "zlib (Zlib License)"
 msgstr ""
 
 #: ../../source/license.rst:52
-# 6d0e1c838cef45639affe50cbcd34737
+# 1cc67d37063246e3bd91c7d5c68c21af
 msgid "bzip2 (Bzip2 License)"
 msgstr ""
 
 #: ../../source/license.rst:53
-# d719cbc8107740b28f6881ae946a5ccf
+# a391188031314275a9ff55100733d810
 msgid "pyobjc (MIT License)"
 msgstr ""
 
 #: ../../source/license.rst:54
-# c4922e466e2c41bc9780f2529e41b0a9
+# 669ece9cb44d4a699a78301cde3d3cdb
 msgid "py2exe (MIT License)"
 msgstr ""
 
 #: ../../source/license.rst:55
-# 3dedba1dd79c4ea2b359f061e0f1143c
+# 14440e6ce0874082ad513ec8e0c5c94d
 msgid "GLEW (Modified BSD, MIT)"
 msgstr ""
 
 #: ../../source/license.rst:56
-# 2910df8508ac4a818d61a5d724d0f6d0
+# 316abc2c262049829045148c9026feed
 msgid "zsync (Artistic License)"
 msgstr ""
 
 #: ../../source/license.rst:58
-# d322b2215e484d7c97122367f9acfe72
+# bc4fd0cbf4aa4b919fa2cea845ee22cd
 msgid "For the purpose of LGPL compliance, the source code to all LGPL software we depend on is either in the Ren'Py package (available from http://www.renpy.org/), or in the renpy-deps package (http://www.renpy.org/dl/lgpl/). We believe compliance can be achieved by including a copy of this license with every copy of Ren'Py you distribute, and referring to it in your project's README file."
 msgstr ""
 
 #: ../../source/license.rst:65
-# ba7a7307f3164a55b4821d991f8ad3a3
+# 055f50623e354f02bf47175385e07acc
 msgid "Ren'Py may be distributed alongside the jEdit or Editra text editors. Editra is licensed under the wxWindows license, while jEdit is under the GNU General Public License."
 msgstr ""
 
 #: ../../source/license.rst:71
-# 67e973a6094247c6b203fde4c8933c9e
+# e003c6eaf9cd4ebd82c98c3a5a730139
 msgid "GNU Lesser General Public License"
 msgstr ""
 
 #: ../../source/license.rst:585
-# 35ffe7414b1c44fda98aff91d0eaf6e2
+# 0bb996585a53477fb812cb61295eaf91
 msgid "Python License"
 msgstr ""
 
 #: ../../source/license.rst:636
-# 5e9aa403ef964ff28b2041e818862e36
+# be7052bf0bb44ea69539b2e4a5122212
 msgid "Jpeg License"
 msgstr ""
 
 #: ../../source/license.rst:688
-# b9addea9b2a4460a9efb2fb23ce56dea
+# 2826fc74f3ee4a3f877cf2bb9617fb9a
 msgid "PNG License"
 msgstr ""
 
 #: ../../source/license.rst:719
-# 67146eee9cf04526b834bfefc98bf4a7
+# 8ee1e8a95f3f4ae1817b0fedf47a9701
 msgid "Zlib License"
 msgstr ""
 
 #: ../../source/license.rst:741
-# d2a576a3e47645c495c73d8b98ff1152
+# 30a3507acf8046e681395b2240203aa6
 msgid "Bzip2 License"
 msgstr ""
 
 #: ../../source/license.rst:782
-# bd70c836cc824fca9f190fbec756ef7f
+# 8dbb00b2f9e14a26ac5041d20a160bf0
 msgid "Modified BSD License"
 msgstr ""
 
 #: ../../source/license.rst:811
-# 523d37a199c542aa8150a15af9381bd8
+# 4ee0ce4e41cd4b439d1039e257fbd234
 msgid "Artistic License"
 msgstr ""
 
