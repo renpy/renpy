@@ -452,7 +452,6 @@ def display_say(
         if not isinstance(what_text_lst, list):
             what_text_lst = [what_text_lst]
 
-        rv = True
         for what_text in what_text_lst:
             if not isinstance(what_text, renpy.text.text.Text): #@UndefinedVariable
                 raise Exception("The say screen (or show_function) must return a Text object.")
