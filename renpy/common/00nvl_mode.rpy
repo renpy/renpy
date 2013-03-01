@@ -74,7 +74,7 @@ init -1500 python:
     nvl_variant = None
 
     # Returns the appropriate variant style.
-    def __s(s):
+    def __ns(s):
         if nvl_variant:
             return s[nvl_variant]
         else:
@@ -132,11 +132,11 @@ init -1500 python:
             return __nvl_show_screen("nvl", items=[ ])
         
         if renpy.in_rollback():
-            nvl_window = __s(style.nvl_window)['rollback']
-            nvl_vbox = __s(style.nvl_vbox)['rollback']
+            nvl_window = __ns(style.nvl_window)['rollback']
+            nvl_vbox = __ns(style.nvl_vbox)['rollback']
         else:
-            nvl_window = __s(style.nvl_window)
-            nvl_vbox = __s(style.nvl_vbox)
+            nvl_window = __ns(style.nvl_window)
+            nvl_vbox = __ns(style.nvl_vbox)
         
         ui.window(style=nvl_window)
         ui.vbox(style=nvl_vbox)
@@ -302,11 +302,11 @@ init -1500 python:
                 widget_properties=widget_properties,
                 screen=screen,
                 scope={ "dialogue" : dialogue },
-                window_style=__s(style.nvl_menu_window),
-                choice_style=__s(style.nvl_menu_choice),
-                choice_chosen_style=__s(style.nvl_menu_choice_chosen),
-                choice_button_style=__s(style.nvl_menu_choice_button),
-                choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
+                window_style=__ns(style.nvl_menu_window),
+                choice_style=__ns(style.nvl_menu_choice),
+                choice_chosen_style=__ns(style.nvl_menu_choice_chosen),
+                choice_button_style=__ns(style.nvl_menu_choice_button),
+                choice_chosen_button_style=__ns(style.nvl_menu_choice_chosen_button),
                 type="nvl",                      
                 )
 
@@ -316,8 +316,8 @@ init -1500 python:
         ui.clear()
         ui.close()
 
-        ui.window(style=__s(style.nvl_window))
-        ui.vbox(style=__s(style.nvl_vbox))
+        ui.window(style=__ns(style.nvl_window))
+        ui.vbox(style=__ns(style.nvl_vbox))
 
         for i in nvl_list:
             if not i:
@@ -327,11 +327,11 @@ init -1500 python:
             rv = renpy.show_display_say(who, what, **kw)
 
         renpy.display_menu(items, interact=False,
-                           window_style=__s(style.nvl_menu_window),
-                           choice_style=__s(style.nvl_menu_choice),
-                           choice_chosen_style=__s(style.nvl_menu_choice_chosen),
-                           choice_button_style=__s(style.nvl_menu_choice_button),
-                           choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
+                           window_style=__ns(style.nvl_menu_window),
+                           choice_style=__ns(style.nvl_menu_choice),
+                           choice_chosen_style=__ns(style.nvl_menu_choice_chosen),
+                           choice_button_style=__ns(style.nvl_menu_choice_button),
+                           choice_chosen_button_style=__ns(style.nvl_menu_choice_chosen_button),
                            )
 
         ui.close()
@@ -356,11 +356,11 @@ init -1500 python:
 
         if config.adv_nvl_transition:
             if mode == "nvl" or mode == "nvl_menu":
-                if old == "say" or old == "menu":
+                if old == "say" or old == "multi" or old == "menu":
                     nvl_show(config.adv_nvl_transition)
                     
         if config.nvl_adv_transition:
-            if mode == "say" or mode == "menu":
+            if mode == "say" or mode == "multi" or mode == "menu":
                 if old == "nvl" or old == "nvl_menu":
                     nvl_hide(config.nvl_adv_transition)
                     

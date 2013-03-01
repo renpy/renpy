@@ -57,6 +57,31 @@ screen say:
     # Use the quick menu.
     use quick_menu
 
+##############################################################################
+# Multi
+#
+# Screen used for multi-mode dialogue.
+
+screen multi:
+
+    window:
+        style "multi_window"
+
+        has hbox:
+            style "multi_hbox"
+
+        # Display dialogue.
+        for who, what, who_id, what_id, window_id in dialogue:
+            window:
+                id window_id
+
+                has vbox:
+                    spacing 10
+
+                if who is not None:
+                    text who id who_id
+
+                text what id what_id
 
 ##############################################################################
 # Choice
