@@ -68,6 +68,11 @@ init -1900 python:
             global MoveTransition
             MoveTransition = OldMoveTransition
 
+            define.move_transitions = define.old_move_transitions
+            
+            define.move_transitions("move", 0.5)
+            define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp) 
+
         if version <= (6, 14, 1):
             config.key_repeat = None
 

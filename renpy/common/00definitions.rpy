@@ -244,8 +244,78 @@ init -1400 python:
         for k, v in moves.iteritems():
             setattr(store, prefix + k, v)
 
+    def old_move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
+        moves = {
+            "" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs)),
+
+            "inright" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp, **kwargs)),
+
+            "inleft" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp, **kwargs)),
+
+            "intop" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp, **kwargs)),
+
+            "inbottom" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
+                enter_factory=MoveIn((None, 1.0, None, 0.0), time_warp=in_time_warp, **kwargs)),
+
+            "outright" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp, **kwargs)),
+
+            "outleft" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp, **kwargs)),
+
+            "outtop" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp, **kwargs)),
+
+            "outbottom" : MoveTransition(
+                delay,
+                old=old,
+                layers=layers,
+                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
+            }
+
+        for k, v in moves.iteritems():
+            setattr(store, prefix + k, v)
+
     define.move_transitions = move_transitions
+    define.old_move_transitions = old_move_transitions
     del move_transitions
+    del old_move_transitions
 
     define.move_transitions("move", 0.5)
     define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp) 
