@@ -506,8 +506,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
 
-            rv.layers = { }
-
             for layer in renpy.config.layers:
 
                 f = new.layers[layer]
@@ -518,7 +516,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
                     
                     f = merge_slide(old.layers[layer], new.layers[layer])
 
-                rv.layers[layer] = f
                 rv.add(f)
 
             return rv
@@ -632,7 +629,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         layer = new.layer_name
         rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **renpy.game.interface.layer_properties[layer])
         rv.append_scene_list(rv_sl)
-        rv.layer_name = layer
 
         return rv
 
