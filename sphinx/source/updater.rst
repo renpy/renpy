@@ -40,7 +40,7 @@ Building an Update
 ------------------
 
 Updates are built automatically when distributions are built. To build
-an update, set build.include_updates to True in options.rpy. This will
+an update, set build.include_update to True in options.rpy. This will
 unlock the "Build Updates" option in options.rpy. Check this option, and
 Ren'Py will create the update files.
 
