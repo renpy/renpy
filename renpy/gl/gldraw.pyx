@@ -433,7 +433,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
         
-        if ANGLE or (allow_shader and use_subsystem(
+        if ANGLE or renpy.android or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
