@@ -87,12 +87,15 @@ class NullFile(io.IOBase):
         raise IOError("Not implemented.")
     
 def null_files():
-    if sys.stderr.fileno() < 0:
-        sys.stderr = NullFile()
+    try:
+        if sys.stderr.fileno() < 0:
+            sys.stderr = NullFile()
+    
+        if sys.stdout.fileno() < 0:
+            sys.stdout = NullFile()
+    except:
+        pass
 
-    if sys.stdout.fileno() < 0:
-        sys.stdout = NullFile()
-        
 null_files()
     
     
