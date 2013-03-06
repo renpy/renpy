@@ -76,12 +76,15 @@ screen multi:
                 id window_id
 
                 has vbox:
-                    spacing 10
+                    style "say_vbox"
 
                 if who is not None:
                     text who id who_id
 
                 text what id what_id
+
+    # Use the quick menu.
+    use quick_menu
 
 ##############################################################################
 # Choice
