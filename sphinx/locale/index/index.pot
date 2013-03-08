@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-28 22:41\n"
+"POT-Creation-Date: 2013-03-08 20:03\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,71 +57,76 @@ msgid "Text, Displayables, Transforms, and Transitions"
 msgstr ""
 
 #: ../../source/index.rst:52
+# c8c7ddae544f44978e79f916139cc798
+msgid "Other Functions"
+msgstr ""
+
+#: ../../source/index.rst:61
 # 8dcc78aaa5814d38a10611982b262a27
 msgid "Customizing Ren'Py"
 msgstr ""
 
-#: ../../source/index.rst:67
+#: ../../source/index.rst:76
 # 88df5eca91e64c64b10aff4bd6cb8f40
 msgid "Advanced Displayables"
 msgstr ""
 
-#: ../../source/index.rst:76
+#: ../../source/index.rst:85
 # e5f19bda62874c2cb3ceffae4fad1f1a
 msgid "Python and Ren'Py"
 msgstr ""
 
-#: ../../source/index.rst:90
+#: ../../source/index.rst:99
 # d27b55993e6044ce800de1a7a32c951b
 msgid "Building, Updating, and Other Platforms"
 msgstr ""
 
-#: ../../source/index.rst:100
+#: ../../source/index.rst:109
 # c8c7ddae544f44978e79f916139cc798
 msgid "End-User Documentation"
 msgstr ""
 
-#: ../../source/index.rst:109
+#: ../../source/index.rst:118
 # 8f3f9885c8b04ca7816fd389a7a14c29
 msgid "Engine Developer Documentation"
 msgstr ""
 
-#: ../../source/index.rst:118
+#: ../../source/index.rst:127
 # 327765bc348049749f87732c26adbca6
 msgid "Changes and License"
 msgstr ""
 
-#: ../../source/index.rst:129
+#: ../../source/index.rst:138
 # 905507e6a4cd4ec0a74d5c9bea57da2c
 msgid "Indices"
 msgstr ""
 
-#: ../../source/index.rst:131
-# 1cb7bea93f4d4a9c8b92005ed74560ec
+#: ../../source/index.rst:140
+# a8479b8313c74aafa5341bc8c67c0750
 msgid "`Style Property Index <std-style-property-index.html>`_"
 msgstr ""
 
-#: ../../source/index.rst:132
-# 5f48a919ab6745f7abd5e19815d7b6e0
+#: ../../source/index.rst:141
+# ad4aafa78eb64eb89770f0272719d5bf
 msgid "`Transform Property Index <std-transform-property-index.html>`_"
 msgstr ""
 
-#: ../../source/index.rst:133
-# d9aa337935d94e1aafadc5a1b8560d2c
+#: ../../source/index.rst:142
+# 8753e61d7a894c128b78a7d6c3a66a69
 msgid "`Variable and Definition Index <std-var-index.html>`_"
 msgstr ""
 
-#: ../../source/index.rst:134
-# 812f32ac5cf441a4ae3ed3797bd81d77
+#: ../../source/index.rst:143
+# 86f960cc01ca4f75ab78993460660fa4
 msgid "`Function and Class Index <py-function-class-index.html>`_"
 msgstr ""
 
-#: ../../source/index.rst:135
-# c93d3e04b14d44aab50e68b840b583d4
+#: ../../source/index.rst:144
+# 9dcf43d628cf4cea94223b77d045e4eb
 msgid "`General Index <genindex.html>`_"
 msgstr ""
 
-#: ../../source/index.rst:138
+#: ../../source/index.rst:147
 # fb736305c67d4ce78a678eb1a01e8a3a
 msgid "Example Scripts"
 msgstr ""

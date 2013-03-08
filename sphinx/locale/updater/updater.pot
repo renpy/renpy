@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-28 22:41\n"
+"POT-Creation-Date: 2013-03-08 20:03\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,7 +98,7 @@ msgstr ""
 
 #: ../../source/updater.rst:45
 # cab500bc7de741b48e17ec05ef48db27
-msgid "Updates are built automatically when distributions are built. To build an update, set build.include_updates to True in options.rpy. This will unlock the \"Build Updates\" option in options.rpy. Check this option, and Ren'Py will create the update files."
+msgid "Updates are built automatically when distributions are built. To build an update, set build.include_update to True in options.rpy. This will unlock the \"Build Updates\" option in options.rpy. Check this option, and Ren'Py will create the update files."
 msgstr ""
 
 #: ../../source/updater.rst:50

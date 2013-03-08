@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.0\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-28 22:41\n"
+"POT-Creation-Date: 2013-03-08 20:03\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -877,7 +877,7 @@ msgstr ""
 
 #: ../../source/style.rst:676
 # a570d2125e684af68469b6caa022e2a3
-msgid "Bars are drawn with gutters on the left and right, that when clicked can cause the bart to move by a small amount. The remaining space is the portion of the bar that can change, with the amount on each side proportional to the bar's value as a fraction of the range."
+msgid "Bars are drawn with gutters on the left and right, that when clicked can cause the bar to move by a small amount. The remaining space is the portion of the bar that can change, with the amount on each side proportional to the bar's value as a fraction of the range."
 msgstr ""
 
 #: ../../source/style.rst:681
@@ -984,7 +984,7 @@ msgstr ""
 
 #: ../../source/style.rst:768
 # 1a21c826b8954b3cb735966f2b61e78f
-msgid "Renders the bar in the insensitive state. This allows the bat to change its style to reflect its lack of usefulness."
+msgid "Renders the bar in the insensitive state. This allows the bar to change its style to reflect its lack of usefulness."
 msgstr ""
 
 #: ../../source/style.rst:772
@@ -1029,7 +1029,7 @@ msgstr ""
 
 #: ../../source/style.rst:805
 # c995b192100343a0ba0f96203201a989
-msgid "If false, the default the items in the box will be draw first-to-last, with the first item in the box being below the second, and so on. If true, this order will be reversed, and the first item in the box will be above all other items in the box."
+msgid "If false, the default, the items in the box will be draw first-to-last, with the first item in the box being below the second, and so on. If true, this order will be reversed, and the first item in the box will be above all other items in the box."
 msgstr ""
 
 #: ../../source/style.rst:814
@@ -1119,7 +1119,7 @@ msgstr ""
 
 #: ../../source/style.rst:895
 # 2a7fecb5cbd144cf952764492124e190
-msgid "For example, when ``style.mm_button inherits`` from ``style.button``, which in turn inherits from ``style.default``, then the properties of ``style.mm_button[\"Start Game\"]`` are taken from:"
+msgid "For example, when ``style.mm_button`` inherits from ``style.button``, which in turn inherits from ``style.default``, then the properties of ``style.mm_button[\"Start Game\"]`` are taken from:"
 msgstr ""
 
 #: ../../source/style.rst:899
