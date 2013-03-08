@@ -394,6 +394,9 @@ class Context(renpy.object.Object):
 
         rv.runtime = self.runtime
         rv.info = self.info
+
+        rv.translate_language = self.translate_language
+        rv.translate_identifier = self.translate_identifier
         
         return rv
 

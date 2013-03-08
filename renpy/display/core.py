@@ -1789,6 +1789,16 @@ class Interface(object):
         if renpy.windows:
             self.display_reset = True
             self.set_mode(self.last_resize)
+
+    def enter_context(self):
+        """
+        Called when we enter a new context.
+        """
+    
+        # Stop ongoing transitions.
+        self.ongoing_transition.clear()
+        self.transition_from.clear()
+        self.transition_time.clear()
     
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
@@ -1805,6 +1815,7 @@ class Interface(object):
             raise Exception("Cannot start an interaction in the middle of an interaction, without creating a new context.")
 
         context.interacting = True
+              
                 
         # Show a missing window.
         if not suppress_window:

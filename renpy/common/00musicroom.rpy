@@ -12,12 +12,12 @@ init -1500 python:
         """
         The action returned by MusicRoom.Play when called with a file.
         """
-                
+           
         def __init__(self, mr, filename):
             self.mr = mr
             self.filename = filename
             self.selected = self.get_selected()
-
+ 
         def __call__(self):
             self.mr.play(self.filename, 0)
         
@@ -42,7 +42,9 @@ init -1500 python:
         order.
         """
         
-        def __init__(self, channel="music", fadeout=0.0, fadein=0.0):
+        loop = False
+        
+        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=False):
             """
             `channel`
                 The channel that this music room will operate on.
@@ -54,6 +56,10 @@ init -1500 python:
             `fadein`
                 The number of seconds it takes to fade in the new
                 music when changing tracks.
+            
+            `loop`
+                If true, a music track will loop once played. If False, it 
+                will advance to the next track.
             """
     
             self.channel = channel
@@ -71,6 +77,8 @@ init -1500 python:
             # The set of songs that are always unlocked.
             self.always_unlocked = set()
             
+            # Should we loop rather than advancing to the next track?
+            self.loop = loop
             
         def add(self, filename, always_unlocked=False):
             """
@@ -144,7 +152,10 @@ init -1500 python:
                 
             idx = (idx + offset) % len(playlist)
             
-            playlist = playlist[idx:] + playlist[:idx]
+            if self.loop:
+                playlist = [ playlist[idx] ]
+            else:
+                playlist = playlist[idx:] + playlist[:idx]
             
             renpy.music.play(playlist, channel=self.channel, fadeout=self.fadeout, fadein=self.fadein)
             
