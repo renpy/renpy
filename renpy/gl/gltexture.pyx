@@ -52,7 +52,7 @@ cdef GLenum rtt_format = GL_RGBA
 cdef GLenum rtt_internalformat = GL_RGBA
 cdef GLenum rtt_type = GL_UNSIGNED_BYTE
 
-def use_angle():
+def use_gles():
     global tex_format
     global tex_internalformat
     global tex_type
@@ -66,22 +66,6 @@ def use_angle():
 
     rtt_format = GL_RGBA
     rtt_internalformat = GL_RGBA
-    rtt_type = GL_UNSIGNED_BYTE
-
-def use_gles():
-    global tex_format
-    global tex_internalformat
-    global tex_type
-    global rtt_format
-    global rtt_internalformat
-    global rtt_type
-    
-    tex_format = GL_RGBA
-    tex_internalformat = GL_RGBA
-    tex_type = GL_UNSIGNED_BYTE
-
-    rtt_format = GL_RGB 
-    rtt_internalformat = GL_RGB 
     rtt_type = GL_UNSIGNED_BYTE
 
 def use_gl():
@@ -985,6 +969,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
             x += t0w
 
         y += t0h
+     
 
 cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, int ramp, Environ environ):
     """
