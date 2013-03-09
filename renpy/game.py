@@ -315,6 +315,9 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
     context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
 
+    if renpy.display.interface is not None:
+        renpy.display.interface.enter_context()
+
     try:
 
         return callable(*args, **kwargs)
@@ -346,6 +349,9 @@ def call_in_new_context(label, *args, **kwargs):
 
     context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
+
+    if renpy.display.interface is not None:
+        renpy.display.interface.enter_context()
     
     if args:
         renpy.store._args = args
@@ -398,6 +404,9 @@ def call_replay(label, scope={}):
     
     context = renpy.execution.Context(True)
     contexts.append(context)
+
+    if renpy.display.interface is not None:
+        renpy.display.interface.enter_context()
 
     for k, v in scope.iteritems():
         setattr(renpy.store, k, v)

@@ -44,6 +44,15 @@ Text, Displayables, Transforms, and Transitions
    transforms
    transitions
    atl
+
+Other Functions
+---------------
+
+.. toctree::
+   :maxdepth: 1
+   
+   input
+              
    
 Customizing Ren'Py
 ------------------

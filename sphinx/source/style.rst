@@ -296,7 +296,7 @@ allocated to it by a layout, or on the screen when not inside a layout.
 .. style-property:: yfill boolean
 
     If true, the displayable will expand to fill all available
-    horizontal space. If not true, it will only be large enough to
+    vertical space. If not true, it will only be large enough to
     contain its children.
 
     This only works for displayables that can change size.
@@ -418,7 +418,7 @@ Text Style Properties
         Used for Korean text delimited by whitespace. This prevents linebreaking
         between adjacent Korean characters.
     
-    ``"western``
+    ``"western"``
         Allows breaking only at whitespace. Suitable for most
         languages.
 
@@ -671,7 +671,7 @@ Bar Style Properties
 --------------------
 
 Bars are drawn with gutters on the left and right, that when clicked can cause
-the bart to move by a small amount. The remaining space is the portion of the
+the bar to move by a small amount. The remaining space is the portion of the
 bar that can change, with the amount on each side proportional to the bar's
 value as a fraction of the range.
 
@@ -763,7 +763,7 @@ left and right sides are used.
 
     ``"insensitive"``
         Renders the bar in the insensitive state. This allows the
-        bat to change its style to reflect its lack of usefulness.
+        bar to change its style to reflect its lack of usefulness.
 
     ``"hide"``
        Prevents the bar from rendering at all. Space will be allocated
@@ -799,7 +799,7 @@ These are used for the horizontal and vertical box layouts.
     
 .. style-property:: order_reverse boolean
 
-    If false, the default the items in the box will be draw first-to-last,
+    If false, the default, the items in the box will be draw first-to-last,
     with the first item in the box being below the second, and so on. If true,
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
@@ -889,7 +889,7 @@ parent. When indexing is involved, properties are inherited first from the
 unindexed form of the style, then from the indexed form of the parent, then
 the unindexed form of the parent, and so on.
 
-For example, when ``style.mm_button inherits`` from ``style.button``, which in
+For example, when ``style.mm_button`` inherits from ``style.button``, which in
 turn inherits from ``style.default``, then the properties of
 ``style.mm_button["Start Game"]`` are taken from:
 

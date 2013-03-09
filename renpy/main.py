@@ -86,6 +86,7 @@ def run(restart):
     renpy.store._restart = restart
     
     # We run until we get an exception.
+    renpy.display.interface.enter_context()
     renpy.execution.run_context(True)
     
 

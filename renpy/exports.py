@@ -218,14 +218,15 @@ def copy_images(old, new):
     
 def showing(name, layer='master'):
     """
-    This returns true if an image with the same tag as that found in
-    the suppled image name is present on the given layer.
-
-    @param name may be a tuple of strings, or a single string. In the latter
-    case, it is split on whitespace to make a tuple. The first element
-    of the tuple is used as the image tag.
-
-    @param layer is the name of the layer.
+    :doc: image_func
+    
+    Returns true if an image with the same tag as `name` is showing on
+    `layer`
+    
+    `image`
+        May be a string giving the image name or a tuple giving each 
+        component of the image name. It may also be a string giving 
+        only the image tag.
     """
 
     if not isinstance(name, tuple):
@@ -397,24 +398,28 @@ def watch(expression, style='default', **properties):
 
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None): #@ReservedAssignment
     """
-    This pops up a window requesting that the user enter in some text.
-    It returns the entered text.
+    :doc: input
 
-    @param prompt: A prompt that is used to ask the user for the text.
-
-    @param default: A default for the text that this input can return.
-
-    @param length: If given, a limit to the amount of text that this
-    function will return.
-
-    @param allow: If not None, then if an input character is not in this
-    string, it is ignored.
-
-    @param exclude: If not None, then if an input character is in this
-    set, it is ignored.
-
-    @param with_none: If True, performs a with None after the input. If None,
-    takes the value from config.implicit_with_none.
+    Calling this function pops up a window asking the player to enter some
+    text. It returns the entered text. 
+    
+    `prompt`
+        A string giving a prompt to display to the player.
+        
+    `default`
+        A string giving the initial text that will be edited by the player.
+    
+    `allow`
+        If not None, a string giving a list of characters that will 
+        be allowed in the text. 
+        
+    `exclude`
+        If not None, if a character is present in this string, it is not
+        allowed in the text.
+        
+    `length`
+        If not None, this must be an integer giving the maximum length
+        of the input string.
     """
 
     renpy.exports.mode('input')
