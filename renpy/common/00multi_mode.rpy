@@ -138,27 +138,6 @@ init -1500 python:
         renpy.with_statement(with_)
         store._last_say_who = None
 
-    # Check to see if one of the next statements is multi clear.
-    def multi_clear_next():
-
-        # The number of statements forward to look.
-        count = 10
-
-        scry = renpy.scry()
-        scry = scry.next()
-
-        while count and scry:
-
-            count -= 1
-            if scry.multi_clear:
-                return True
-
-            if scry.interacts:
-                return False
-
-            scry = scry.next()
-
-
     class MultiCharacter(ADVCharacter):
 
         def __init__(self, 
@@ -216,12 +195,6 @@ init -1500 python:
 
         def do_display(self, who, what, **display_args):
 
-            page = multi_clear_next()
-
-            if config.multi_page_ctc and page:
-                display_args["ctc"] = config.multi_page_ctc
-                display_args["ctc_position"] = config.multi_page_ctc_position
-
             store.multi_current_group = self.group
 
             renpy.display_say(
@@ -263,6 +236,10 @@ init -1500 python:
             if mode == "say" or mode == "menu":
                 if old == "multi":
                     multi_hide(config.multi_adv_transition)
+
+        # Clear dialogues automatically
+        if old == "multi":
+            multi_clear()
 
     config.mode_callbacks.append(_multi_adv_callback)
 
