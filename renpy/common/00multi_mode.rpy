@@ -24,22 +24,16 @@ init -1500 python:
     style.multi_child_window_dual.xminimum = int(config.screen_width / 2) - 5
     style.multi_child_window_dual.xmaximum = int(config.screen_width / 2) - 5
 
-    # multimode: The CTC indicator to use when at the end of an Multi page.
-    config.multi_page_ctc = None
-
-    # multimode: The position of the CTC indicator used at the end of an Multi page.
-    config.multi_page_ctc_position = "nestled"
-
     # A hook that delta wanted, that is called instead of renpy.show_display_say
     config.multi_show_display_say = renpy.show_display_say
 
     # A list of arguments that have been passed to multi_record_show.
-    multi_list = {}
+    multi_list = []
     multi_cols = {}
 
     multi_current_col = []
 
-    multi_current_group = "dual"
+    multi_current_group = None
 
     # If set, then all of the multi-specific style get indexed with this.
     multi_variant = None
@@ -60,7 +54,7 @@ init -1500 python:
         widget_properties = { }
         dialogue = [ ]
 
-        for i, entry in enumerate(multi_list[multi_current_group]):
+        for i, entry in enumerate(multi_list):
             if not entry:
                 continue
 
@@ -109,7 +103,7 @@ init -1500 python:
 
         rv = []
 
-        for col, i in enumerate(multi_list[multi_current_group]):
+        for col, i in enumerate(multi_list):
             if not i:
                 continue
 
@@ -154,8 +148,7 @@ init -1500 python:
                 group = "dual"
             self.group = group
 
-            if not group in store.multi_list:
-                store.multi_list[group] = None
+            if not group in store.multi_cols:
                 store.multi_cols[group] = 1
 
             if store.multi_cols[group] <= col:
@@ -177,25 +170,23 @@ init -1500 python:
 
         def do_add(self, who, what):
 
-            if not store.multi_list[self.group]:
+            if store.multi_current_group != self.group or not store.multi_list:
                 kwargs = self.show_args.copy()
                 kwargs["what_args"] = self.what_args
                 kwargs["who_args"] = self.who_args
                 kwargs["window_args"] = self.window_args
-                store.multi_list[self.group] = [("", "", kwargs) for i in range(0, store.multi_cols[self.group])]
+                store.multi_list = [("", "", kwargs) for i in range(0, store.multi_cols[self.group])]
+                store.multi_current_group = self.group
 
             kwargs = self.show_args.copy()
             kwargs["what_args"] = self.what_args
             kwargs["who_args"] = self.who_args
             kwargs["window_args"] = self.window_args
 
-            store.multi_list = store.multi_list.copy()
-            store.multi_list[self.group][self.col] = (who, what, kwargs)
+            store.multi_list[self.col] = (who, what, kwargs)
             store.multi_current_col.append(self.col)
 
         def do_display(self, who, what, **display_args):
-
-            store.multi_current_group = self.group
 
             renpy.display_say(
                 who,
@@ -213,8 +204,7 @@ init -1500 python:
         kind=adv)
 
     def multi_clear():
-        for ml in store.multi_list:
-            store.multi_list[ml] = [ ]
+        store.multi_list = []
 
     # Run clear at the start of the game.
     config.start_callbacks.append(multi_clear)
