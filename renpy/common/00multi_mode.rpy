@@ -92,6 +92,8 @@ init -1500 python:
 
     def multi_show_core(who=None, what=None):
          # Screen version.
+        if renpy.has_screen("multi_%s" % multi_current_group):
+            return __multi_show_screen("multi_%s" % multi_current_group, items=[ ])
         if renpy.has_screen("multi"):
             return __multi_show_screen("multi", items=[ ])
 
@@ -105,14 +107,16 @@ init -1500 python:
         ui.window(style=multi_window)
         ui.hbox(style=multi_hbox)
 
-        rv = None
+        rv = []
 
-        for i in multi_list[multi_current_group]:
+        for col, i in enumerate(multi_list[multi_current_group]):
             if not i:
                 continue
 
             who, what, kw = i
-            rv = config.multi_show_display_say(who, what, variant=multi_variant, **kw)
+            rv_tmp = config.multi_show_display_say(who, what, variant=multi_variant, **kw)
+            if col in multi_current_col:
+                rv.append(rv_tmp)
 
         ui.close()
 
