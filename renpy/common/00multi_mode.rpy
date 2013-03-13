@@ -14,13 +14,11 @@ init -1500 python:
     # Styles that are used by multi mode.
     style.create('multi_window', 'say_window', 'the window containing multi-mode dialogue')
     style.create('multi_hbox', 'hbox', 'the hbox containing each box of multi-mode dialogue')
-    style.create('multi_child_label_dual', 'say_label', 'the name of the character speaking dialogue in dual-mode')
-    style.create('multi_child_dialogue_dual', 'say_dialogue', 'used for dialogue text in dual-mode')
-    style.create('multi_child_window_dual', 'default', 'windows containing dialogue and thoughts in dual-mode')
 
     style.multi_hbox.box_spacing = 10
 
     # Set up dual mode styles.
+    style.multi_child_window_dual = Style(style.default)
     style.multi_child_window_dual.xminimum = int(config.screen_width / 2) - 5
     style.multi_child_window_dual.xmaximum = int(config.screen_width / 2) - 5
 
@@ -154,6 +152,13 @@ init -1500 python:
             if store.multi_cols[group] <= col:
                 store.multi_cols[group] = col + 1
             self.col = col
+
+            if not style.exists("multi_child_label_%s" % group):
+                style.create("multi_child_label_%s" % group, "say_label")
+            if not style.exists("multi_child_dialogue_%s" % group):
+                style.create("multi_child_dialogue_%s" % group, "say_dialogue")
+            if not style.exists("multi_child_window_%s" % group):
+                style.create("multi_child_window_%s" % group, "default")
 
             if not "who_style" in properties:
                 properties["who_style"] = "multi_child_label_%s" % group
