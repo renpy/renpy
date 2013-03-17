@@ -525,6 +525,9 @@ cdef class FTFont:
             if glyph.split == SPLIT_INSTEAD:
                 continue
                         
+            if glyph.character == 0x200b:
+                continue
+                        
             x = glyph.x + xo
             y = glyph.y + yo
             
