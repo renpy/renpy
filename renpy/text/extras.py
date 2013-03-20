@@ -54,14 +54,14 @@ text_tags = dict(
 
 text_tags[""] = True
 
-    
+
 # This checks the text tags in a string to be sure they are all matched, and
 # properly nested. It returns an error message, or None if the line is okay.
 def check_text_tags(s):
-    
+
     tokens = textsupport.tokenize(unicode(s))
 
-    tag_stack = [ ]
+    tag_stack = []
 
     for type, text in tokens: #@ReservedAssignment
         if type != TAG:
@@ -70,7 +70,7 @@ def check_text_tags(s):
         # Strip off arguments for tags.
         if text.find('=') != -1:
             text = text[:text.find('=')]
-        
+
         # Closing tag.
         if text and text[0] == '/':
             if not tag_stack:
@@ -81,15 +81,15 @@ def check_text_tags(s):
 
             tag_stack.pop()
             continue
-                
+
         if text not in text_tags:
             return "Text tag '%s' is not known." % text
-        
+
         if text_tags[text]:
             tag_stack.append(text)
 
     if tag_stack:
-        return "One or more text tags were left open at the end of the string: " + ", ".join([ "'" + i + "'" for i in tag_stack])
+        return "One or more text tags were left open at the end of the string: " + ", ".join(["'" + i + "'" for i in tag_stack])
 
     return None
 
@@ -114,5 +114,3 @@ class ParameterizedText(object):
         string = renpy.python.py_eval(param)
 
         return renpy.text.text.Text(string, style=self.style, **self.properties)
-        
-

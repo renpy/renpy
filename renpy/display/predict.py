@@ -36,7 +36,8 @@ predicting = False
 
 # A list of (screen name, argument dict) tuples, giving the screens we'd
 # like to predict.
-screens = [ ]
+screens = []
+
 
 def displayable(d):
     """
@@ -48,7 +49,8 @@ def displayable(d):
 
     if d not in predicted:
         predicted.add(d)
-        d.visit_all(lambda i : i.predict_one())
+        d.visit_all(lambda i: i.predict_one())
+
 
 def screen(_screen_name, *args, **kwargs):
     """
@@ -58,14 +60,14 @@ def screen(_screen_name, *args, **kwargs):
 
     screens.append((_screen_name, args, kwargs))
 
-    
+
 def reset():
     global image
     image = renpy.display.im.cache.get
     predicted.clear()
     del screens[:]
 
-    
+
 def prediction_coroutine(root_widget):
     """
     The image prediction co-routine. This predicts the images that can
@@ -74,7 +76,7 @@ def prediction_coroutine(root_widget):
     """
 
     global predicting
-    
+
     # Set up the image prediction method.
     global image
     image = renpy.display.im.cache.preload_image
@@ -92,12 +94,12 @@ def prediction_coroutine(root_widget):
     # shortly. Otherwise, call the functions in
     # config.predict_callbacks.
     predicting = True
-    
+
     if len(renpy.game.contexts) >= 2:
         sls = renpy.game.contexts[-2].scene_lists
 
         for l in sls.layers.itervalues():
-            for sle in l:                
+            for sle in l:
                 try:
                     displayable(sle.displayable)
                 except:
@@ -106,9 +108,9 @@ def prediction_coroutine(root_widget):
     else:
         for i in renpy.config.predict_callbacks:
             i()
-                
+
     predicting = False
-                
+
     yield True
 
     # Predict things (especially screens) that are reachable through
@@ -116,7 +118,7 @@ def prediction_coroutine(root_widget):
     predicting = True
 
     try:
-        root_widget.visit_all(lambda i : i.predict_one_action())
+        root_widget.visit_all(lambda i: i.predict_one_action())
     except:
         pass
 
@@ -127,7 +129,7 @@ def prediction_coroutine(root_widget):
         yield True
 
         predicting = True
-        
+
         try:
             renpy.display.screen.predict_screen(name, *args, **kwargs)
         except:
@@ -136,8 +138,7 @@ def prediction_coroutine(root_widget):
                 renpy.display.ic_log.exception()
 
         predicting = False
-            
+
     renpy.display.im.cache.end_prediction()
-    
+
     yield False
-                

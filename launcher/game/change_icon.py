@@ -5,31 +5,32 @@
 import struct
 import sys
 import array
-import pefile # @UnresolvedImport
+import pefile  # @UnresolvedImport
+
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
 class BinFile(object):
 
     def set_u32(self, addr, value):
-        self.a[addr+0] = (value >> 0) & 0xff
-        self.a[addr+1] = (value >> 8) & 0xff
-        self.a[addr+2] = (value >> 16) & 0xff
-        self.a[addr+3] = (value >> 24) & 0xff
-    
+        self.a[addr + 0] = (value >> 0) & 0xff
+        self.a[addr + 1] = (value >> 8) & 0xff
+        self.a[addr + 2] = (value >> 16) & 0xff
+        self.a[addr + 3] = (value >> 24) & 0xff
+
     def u32(self):
         addr = self.addr
         rv = self.a[addr]
-        rv |= self.a[addr+1] << 8
-        rv |= self.a[addr+2] << 16
-        rv |= self.a[addr+3] << 24
+        rv |= self.a[addr + 1] << 8
+        rv |= self.a[addr + 2] << 16
+        rv |= self.a[addr + 3] << 24
         self.addr += 4
         return rv
 
     def u16(self):
         addr = self.addr
         rv = self.a[addr]
-        rv |= self.a[addr+1] << 8
+        rv |= self.a[addr + 1] << 8
         self.addr += 2
         return rv
 
@@ -46,16 +47,16 @@ class BinFile(object):
             rv += unichr(self.u16())
 
         return rv
-    
+
     def seek(self, addr):
         self.addr = addr
 
     def tostring(self):
         return self.a.tostring()
 
-    def substring(self, start, len): #@ReservedAssignment
-        return self.a[start:start+len].tostring()
-    
+    def substring(self, start, len):  #@ReservedAssignment
+        return self.a[start:start + len].tostring()
+
     def __init__(self, data):
         self.a = array.array('B')
         self.a.fromstring(data)
@@ -66,7 +67,8 @@ class BinFile(object):
 
 # The virtual address of the resource segment.
 resource_virtual = 0
-        
+
+
 # This parses a data block out of the resources.
 def parse_data(bf, offset):
     bf.seek(offset)
@@ -75,7 +77,7 @@ def parse_data(bf, offset):
     code_page = bf.u32()
     bf.u32()
 
-    l = [ ]
+    l = []
 
     bf.seek(data_offset - resource_virtual)
     for _i in range(data_len):
@@ -83,23 +85,24 @@ def parse_data(bf, offset):
 
     return (code_page, "".join(l))
 
+
 # This parses a resource directory.
 def parse_directory(bf, offset):
 
     bf.seek(offset)
-    char = bf.u32() #@UnusedVariable
-    timedate = bf.u32() #@UnusedVariable
-    major = bf.u16() #@UnusedVariable
-    minor = bf.u16() #@UnusedVariable
+    char = bf.u32()  #@UnusedVariable
+    timedate = bf.u32()  #@UnusedVariable
+    major = bf.u16()  #@UnusedVariable
+    minor = bf.u16()  #@UnusedVariable
     n_named = bf.u16()
     n_id = bf.u16()
 
-    entries = [ ]
-    
+    entries = []
+
     for _i in range(n_named + n_id):
         entries.append((bf.u32(), bf.u32()))
 
-    rv = { }
+    rv = {}
 
     for name, value in entries:
 
@@ -113,8 +116,8 @@ def parse_directory(bf, offset):
             value = parse_data(bf, value)
 
         rv[name] = value
-            
-    return rv 
+
+    return rv
 
 
 ##############################################################################
@@ -124,7 +127,7 @@ def show_resources(d, prefix):
     if not isinstance(d, dict):
         print prefix, "Codepage", d[0], "length", len(d[1])
         return
-        
+
     for k in d:
         print prefix, k
         show_resources(d[k], prefix + "  ")
@@ -132,6 +135,7 @@ def show_resources(d, prefix):
 ##############################################################################
 # These functions repack the resources into a new resource segment. Here,
 # the offset is relative to the start of the resource segment.
+
 
 class Packer(object):
 
@@ -141,7 +145,7 @@ class Packer(object):
 
         self.entries = ""
         self.entries_offset = 0
-        
+
         head = self.pack_dict(d, 0)
 
         self.data = ""
@@ -151,44 +155,44 @@ class Packer(object):
         self.entries_offset = len(head)
 
         return self.pack_dict(d, 0) + self.entries + self.data
-        
+
     def pack_name(self, s):
         rv = self.data_offset + len(self.data)
 
         l = len(s)
         s = s.encode("utf-16le")
         self.data += struct.pack("<H", l) + s + "\0\0"
-        
+
         return rv
 
     def pack_tuple(self, t):
         codepage, data = t
 
-        rv = len(self.entries) + self.entries_offset        
+        rv = len(self.entries) + self.entries_offset
 
         if len(self.data) % 2:
             self.data += "P"
 
         daddr = len(self.data) + self.data_offset
-        
+
         self.entries += struct.pack("<IIII", daddr + resource_virtual, len(data), codepage, 0)
         self.data += data
 
         # if len(self.data) % 1 == 1:
         #    self.data += 'P'
-        
+
         return rv
-    
+
     def pack_dict(self, d, offset):
         name_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, unicode))
         id_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, int))
-        
+
         rv = struct.pack("<IIHHHH", 0, 0, 4, 0, len(name_entries), len(id_entries))
-        
+
         offset += len(rv) + (len(name_entries) + len(id_entries)) * 8
-        
+
         rest = ""
-        
+
         for (name, value) in name_entries + id_entries:
             if isinstance(name, unicode):
                 name = 0x80000000 | self.pack_name(name)
@@ -200,11 +204,11 @@ class Packer(object):
                 rest += packed
             else:
                 addr = self.pack_tuple(value)
-                
+
             rv += struct.pack("<II", name, addr)
 
         return rv + rest
-        
+
 ##############################################################################
 # This loads in an icon file, and returns a dictionary that is suitable for
 # use in the resources of an exe file.
@@ -216,11 +220,11 @@ def load_icon(fn):
     f.u16()
     count = f.u16()
 
-    rv = { }
-    rv[3] = { }
+    rv = {}
+    rv[3] = {}
 
-    group = struct.pack("HHH", 0, 1, count)    
-    
+    group = struct.pack("HHH", 0, 1, count)
+
     for i in range(count):
         width = f.u8()
         height = f.u8()
@@ -235,17 +239,16 @@ def load_icon(fn):
         f.seek(offset + 16)
         if not f.u32():
             f.set_u32(offset + 20, 0)
-            
-        rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
 
+        rv[3][i + 1] = {0: (1252, f.substring(offset, size))}
 
         group += struct.pack("BBBBHHIH", width, height, colors, reserved,
                              planes, bpp, size, i + 1)
-        
+
         f.seek(addr)
 
-    rv[14] = { 1 : { 0 : (1252, group) } }
-        
+    rv[14] = {1: {0: (1252, group)}}
+
     return rv
 
 
@@ -269,25 +272,25 @@ def change_icons(oldexe, icofn):
 
     physize = rsrc_section.SizeOfRawData
     virsize = rsrc_section.Misc_VirtualSize
-    
+
     f = file(oldexe, "rb")
     f.seek(base)
     data = f.read(physize)
     f.close()
 
     bf = BinFile(data)
-    
+
     resources = parse_directory(bf, 0)
     # show_resources(resources, "")
     resources.update(load_icon(icofn))
     # show_resources(resources, "")
-    
+
     rsrc = Packer().pack(resources)
 
     alignment = pe.OPTIONAL_HEADER.SectionAlignment
-    
+
     # print "Alignment is", alignment
-    
+
     if len(rsrc) % alignment:
         pad = alignment - (len(rsrc) % alignment)
         padding = "RENPYVNE" * (pad / 8 + 1)
@@ -295,34 +298,33 @@ def change_icons(oldexe, icofn):
         rsrc += padding
 
     newsize = len(rsrc)
-    
+
     rsrc_section.Misc_VirtualSize += newsize - virsize
     rsrc_section.Misc_PhysicalAddress += newsize - virsize
     rsrc_section.Misc += newsize - virsize
     rsrc_section.SizeOfRawData += newsize - physize
-    
-    pe.OPTIONAL_HEADER.SizeOfInitializedData += newsize - physize 
+
+    pe.OPTIONAL_HEADER.SizeOfInitializedData += newsize - physize
 
     # Resource size.
     pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size += newsize - virsize
 
     # Compute the total size of the image.
     total_size = 0
-    
+
     for i in pe.sections:
 
         sec_size = i.Misc_VirtualSize
         sec_size = sec_size - (sec_size % alignment) + alignment
-            
+
         total_size += sec_size
 
     pe.OPTIONAL_HEADER.SizeOfImage = total_size
 
-    return pe.write()[:base] + rsrc 
-    
+    return pe.write()[:base] + rsrc
+
 if __name__ == "__main__":
 
     f = file(sys.argv[3], "wb")
     f.write(change_icons(sys.argv[1], sys.argv[2]))
     f.close()
-    

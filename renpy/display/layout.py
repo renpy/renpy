@@ -37,10 +37,11 @@ def scale(num, base):
     else:
         return num
 
+
 class Null(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
-        
+
     A displayable that creates an empty box on the screen. The size
     of the box is controlled by `width` and `height`. This can be used
     when a displayable requires a child, but no child is suitable, or
@@ -106,16 +107,16 @@ class Container(renpy.display.core.Displayable):
 
         for i in self.children:
             i.set_style_prefix(prefix, False)
-            
+
     def add(self, d):
         """
         Adds a child to this container.
         """
 
         child = renpy.easy.displayable(d)
-        
+
         self.children.append(child)
-       
+
         self.child = child
         self.offsets = self._list_type()
 
@@ -138,8 +139,7 @@ class Container(renpy.display.core.Displayable):
             self.child = self.children[-1]
         else:
             self.child = None
-        
-        
+
     def update(self):
         """
         This should be called if a child is added to this
@@ -148,12 +148,11 @@ class Container(renpy.display.core.Displayable):
 
         renpy.display.render.invalidate(self)
 
-        
     def render(self, width, height, st, at):
 
         rv = Render(width, height)
         self.offsets = self._list_type()
-        
+
         for c in self.children:
             cr = render(c, width, height, st, at)
             offset = c.place(rv, 0, 0, width, height, cr)
@@ -161,26 +160,25 @@ class Container(renpy.display.core.Displayable):
 
         return rv
 
-    
     def event(self, ev, x, y, st):
 
         children = self.children
         offsets = self.offsets
-        
+
         for i in xrange(len(offsets) - 1, -1, -1):
 
             d = children[i]
             xo, yo = offsets[i]
 
-            rv = d.event(ev, x - xo, y - yo, st)    
+            rv = d.event(ev, x - xo, y - yo, st)
             if rv is not None:
                 return rv
-                
+
         return None
 
     def visit(self):
         return self.children
-    
+
     # These interact with the ui functions to allow use as a context
     # manager.
 
@@ -193,14 +191,12 @@ class Container(renpy.display.core.Displayable):
 
         renpy.ui.context_exit(self)
         return False
-        
-        
-    
+
 
 def LiveComposite(size, *args, **properties):
     """
     :args: disp_imagelike
-    
+
     This creates a new displayable of `size`, by compositing other
     displayables. `size` is a (width, height) tuple.
 
@@ -211,7 +207,7 @@ def LiveComposite(size, *args, **properties):
     is composited at that position.
 
     Displayables are composited from back to front.
-    
+
     ::
 
        image eileen composite = LiveComposite(
@@ -236,6 +232,7 @@ def LiveComposite(size, *args, **properties):
                         xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
 
     return rv
+
 
 class Position(Container):
     """
@@ -262,15 +259,15 @@ class Position(Container):
 
         surf = render(self.child, width, height, st, at)
 
-        self.offsets = [ (0, 0) ]
+        self.offsets = [(0, 0)]
 
         rv = renpy.display.render.Render(surf.width, surf.height)
         rv.blit(surf, (0, 0))
-        
+
         return rv
 
     def get_placement(self):
-    
+
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.child.get_placement()
 
         v = self.style.xpos
@@ -303,7 +300,7 @@ class Position(Container):
 
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
 
-    
+
 class Grid(Container):
     """
     A grid is a widget that evenly allocates space to its children.
@@ -324,12 +321,12 @@ class Grid(Container):
 
         if padding is not None:
             properties.setdefault('spacing', padding)
-        
+
         super(Grid, self).__init__(style=style, **properties)
 
         cols = int(cols)
         rows = int(rows)
-        
+
         self.cols = cols
         self.rows = rows
 
@@ -342,23 +339,22 @@ class Grid(Container):
         cols = self.cols
         rows = self.rows
 
-        if len(self.children) != cols * rows:            
+        if len(self.children) != cols * rows:
             if len(self.children) < cols * rows:
                 raise Exception("Grid not completely full.")
             else:
                 raise Exception("Grid overfull.")
-            
+
         # If necessary, transpose the grid (kinda hacky, but it works here.)
         if self.transpose:
             self.transpose = False
 
             old_children = self.children[:]
-            
+
             for y in range(0, rows):
                 for x in range(0, cols):
-                    self.children[x + y * cols] = old_children[ y + x * rows ]
+                    self.children[x + y * cols] = old_children[y + x * rows]
 
-            
         # Now, start the actual rendering.
 
         renwidth = width
@@ -368,9 +364,9 @@ class Grid(Container):
             renwidth = (width - (cols - 1) * padding) / cols
         if self.style.yfill:
             renheight = (height - (rows - 1) * padding) / rows
-        
-        renders = [ render(i, renwidth, renheight, st, at) for i in self.children ]
-        sizes = [ i.get_size() for i in renders ]
+
+        renders = [render(i, renwidth, renheight, st, at) for i in self.children]
+        sizes = [i.get_size() for i in renders]
 
         cwidth = 0
         cheight = 0
@@ -390,12 +386,12 @@ class Grid(Container):
 
         rv = renpy.display.render.Render(width, height)
 
-        self.offsets = [ ]
-            
+        self.offsets = []
+
         for y in range(0, rows):
             for x in range(0, cols):
 
-                child = self.children[ x + y * cols ]
+                child = self.children[x + y * cols]
                 surf = renders[x + y * cols]
 
                 xpos = x * (cwidth + padding)
@@ -406,6 +402,7 @@ class Grid(Container):
 
         return rv
 
+
 class IgnoreLayers(Exception):
     """
     Raise this to have the event ignored by layers, but reach the
@@ -413,13 +410,14 @@ class IgnoreLayers(Exception):
     """
 
     pass
-    
+
+
 class MultiBox(Container):
 
     layer_name = None
     first = True
     order_reverse = False
-    
+
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
         if spacing is not None:
@@ -431,8 +429,8 @@ class MultiBox(Container):
 
         # The start and animation times for children of this
         # box.
-        self.start_times = [ ]
-        self.anim_times = [ ]
+        self.start_times = []
+        self.anim_times = []
 
         # A map from layer name to the widget corresponding to
         # that layer.
@@ -445,17 +443,17 @@ class MultiBox(Container):
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)
         self.anim_times.append(anim_time)
-        
+
     def append_scene_list(self, l):
 
         for sle in l:
             self.add(sle.displayable, sle.show_time, sle.animation_time)
 
         if self.scene_list is None:
-            self.scene_list = [ ]
-            
+            self.scene_list = []
+
         self.scene_list.extend(l)
-        
+
     def render(self, width, height, st, at):
 
         # Do we need to adjust the child times due to our being a layer?
@@ -471,18 +469,18 @@ class MultiBox(Container):
         yminimum = self.style.yminimum
         if yminimum is not None:
             height = max(height, scale(yminimum, height))
-            
+
         if self.first:
 
             self.first = False
 
             if adjust_times:
-            
+
                 it = renpy.game.interface.interact_time
-            
-                self.start_times = [ i or it for i in self.start_times ]
-                self.anim_times = [ i or it for i in self.anim_times ]
-                            
+
+                self.start_times = [i or it for i in self.start_times]
+                self.anim_times = [i or it for i in self.anim_times]
+
             layout = self.style.box_layout
 
             if layout is None:
@@ -493,19 +491,18 @@ class MultiBox(Container):
         else:
             layout = self.layout
 
-
         # Handle time adjustment, store the results in csts and cats.
-        if adjust_times:            
+        if adjust_times:
             t = renpy.game.interface.frame_time
 
-            csts = [ t - start for start in self.start_times ]
-            cats = [ t - anim for anim in self.anim_times ]
+            csts = [t - start for start in self.start_times]
+            cats = [t - anim for anim in self.anim_times]
 
         else:
-            csts = [ st ] * len(self.children)
-            cats = [ at ] * len(self.children)
+            csts = [st] * len(self.children)
+            cats = [at] * len(self.children)
 
-        offsets = [ ]
+        offsets = []
 
         if layout == "fixed":
 
@@ -515,11 +512,11 @@ class MultiBox(Container):
                 iterator = zip(reversed(self.children), reversed(csts), reversed(cats))
             else:
                 iterator = zip(self.children, csts, cats)
-                        
+
             for child, cst, cat in iterator:
-                
+
                 surf = render(child, width, height, cst, cat)
-                                
+
                 if rv is None:
 
                     if self.style.fit_first:
@@ -527,8 +524,7 @@ class MultiBox(Container):
                         width = min(width, sw)
                         height = min(height, sh)
 
-                        
-                    rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)                    
+                    rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
                 if surf:
                     offset = child.place(rv, 0, 0, width, height, surf)
@@ -537,74 +533,73 @@ class MultiBox(Container):
                     offsets.append((0, 0))
 
             if rv is None:
-                rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)                                        
+                rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
             if self.style.order_reverse:
                 offsets.reverse()
-                
+
             self.offsets = offsets
 
             return rv
 
         # If we're here, we have a box, either horizontal or vertical. Which is good,
         # as we can share some code between boxes.
- 
-            
+
         spacing = self.style.spacing
         first_spacing = self.style.first_spacing
 
         if first_spacing is None:
             first_spacing = spacing
 
-        spacings = [ first_spacing ] + [ spacing ] * (len(self.children) - 1)
-                    
+        spacings = [first_spacing] + [spacing] * (len(self.children) - 1)
+
         box_wrap = self.style.box_wrap
-             
+
         xfill = self.style.xfill
         yfill = self.style.yfill
-                    
+
         # The shared height and width of the current line. The line_height must
         # be 0 for a vertical box, and the line_width must be 0 for a horizontal
         # box.
         line_width = 0
         line_height = 0
-        
+
         # The children to layout.
         children = list(self.children)
         if self.style.box_reverse:
             children.reverse()
             spacings.reverse()
-        
-        # a list of (child, x, y, w, h, surf) tuples that are turned into 
+
+        # a list of (child, x, y, w, h, surf) tuples that are turned into
         # calls to child.place().
-        placements = [ ] 
-                
+        placements = []
+
         # The maximum x and y.
         maxx = 0
         maxy = 0
-                
+
         def layout_line(line, xfill, yfill):
             """
-            Lays out a single line. 
-            
-            `line` a list of (child, x, y, surf) tuples. 
+            Lays out a single line.
+
+            `line` a list of (child, x, y, surf) tuples.
             `xfill` the amount of space to add in the x direction.
             `yfill` the amount of space to add in the y direction.
             """
-            
+
             xfill = max(0, xfill)
             yfill = max(0, yfill)
-            
-            if line:            
+
+            if line:
                 xperchild = xfill / len(line)
                 yperchild = yfill / len(line)
             else:
                 xperchild = 0
                 yperchild = 0
-            
+
             maxxout = maxx
             maxyout = maxy
-            
+
             for i, (child, x, y, surf) in enumerate(line):
                 sw, sh = surf.get_size()
                 sw = max(line_width, sw)
@@ -615,98 +610,96 @@ class MultiBox(Container):
 
                 sw += xperchild
                 sh += yperchild
-                
+
                 placements.append((child, x, y, sw, sh, surf))
-            
+
                 maxxout = max(maxxout, x + sw)
                 maxyout = max(maxyout, y + sh)
-                
+
             return maxxout, maxyout
-            
+
         x = 0
-        y = 0              
-              
+        y = 0
+
         full_width = False
         full_height = False
-                    
+
         if layout == "horizontal":
 
             full_height = yfill
 
             line_height = 0
-            line = [ ]
+            line = []
             remwidth = width
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
-                
-                if box_wrap:                    
+
+                if box_wrap:
                     rw = width
                 else:
                     rw = remwidth
-                
+
                 surf = render(d, rw, height - y, cst, cat)
                 sw, sh = surf.get_size()
 
                 if box_wrap and remwidth - sw - padding <= 0 and line:
-                    maxx, maxy = layout_line(line, remwidth if xfill else 0, 0)                        
-                        
+                    maxx, maxy = layout_line(line, remwidth if xfill else 0, 0)
+
                     y += line_height
                     x = 0
                     line_height = 0
                     remwidth = width
-                    line = [ ]
-                    
+                    line = []
 
                 line.append((d, x, y, surf))
-                line_height = max(line_height, sh)                
+                line_height = max(line_height, sh)
                 x += sw + padding
                 remwidth -= (sw + padding)
-                
+
             maxx, maxy = layout_line(line, remwidth if xfill else 0, 0)
-            
-                  
+
         elif layout == "vertical":
 
             full_width = xfill
 
             line_width = 0
-            line = [ ]
+            line = []
             remheight = height
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
-                
-                if box_wrap:                    
+
+                if box_wrap:
                     rh = height
                 else:
                     rh = remheight
-                
+
                 surf = render(d, width - x, rh, cst, cat)
                 sw, sh = surf.get_size()
 
                 if box_wrap and remheight - sh - padding <= 0:
-                    maxx, maxy = layout_line(line, 0, remheight if yfill else 0)                        
-                        
+                    maxx, maxy = layout_line(line, 0, remheight if yfill else 0)
+
                     x += line_width
                     y = 0
                     line_width = 0
                     remheight = height
-                    line = [ ]
-                    
+                    line = []
+
                 line.append((d, x, y, surf))
-                line_width = max(line_width, sw)                
+                line_width = max(line_width, sw)
                 y += sh + padding
                 remheight -= (sh + padding)
-                
+
             maxx, maxy = layout_line(line, 0, remheight if yfill else 0)
 
         # Back to the common for vertical and horizontal.
 
         if not xfill:
             width = maxx
-        
+
         if not yfill:
             height = maxy
-                    
+
         rv = renpy.display.render.Render(width, height)
 
         if self.style.box_reverse ^ self.style.order_reverse:
@@ -717,36 +710,35 @@ class MultiBox(Container):
                 w = width
             if full_height:
                 h = height
-                            
+
             offset = child.place(rv, x, y, w, h, surf)
             offsets.append(offset)
-            
+
         if self.style.order_reverse:
             offsets.reverse()
-            
+
         self.offsets = offsets
-            
+
         return rv
 
-        
     def event(self, ev, x, y, st):
-        
-        
+
+
         children_offsets = zip(self.children, self.offsets, self.start_times)
 
         if not self.style.order_reverse:
             children_offsets.reverse()
-        
+
         try:
-        
-            for i, (xo, yo), t in children_offsets: 
+
+            for i, (xo, yo), t in children_offsets:
 
                 if t is None:
                     cst = st
                 else:
                     cst = renpy.game.interface.event_time - t
 
-                rv = i.event(ev, x - xo, y - yo, cst)    
+                rv = i.event(ev, x - xo, y - yo, cst)
                 if rv is not None:
                     return rv
 
@@ -755,22 +747,24 @@ class MultiBox(Container):
                 return None
             else:
                 raise
-                
+
         return None
+
 
 def Fixed(**properties):
     return MultiBox(layout='fixed', **properties)
+
 
 class SizeGroup(renpy.object.Object):
 
     def __init__(self):
 
         super(SizeGroup, self).__init__()
-        
-        self.members = [ ]
+
+        self.members = []
         self._width = None
         self.computing_width = False
-        
+
     def width(self, width, height, st, at):
         if self._width is not None:
             return self._width
@@ -779,22 +773,23 @@ class SizeGroup(renpy.object.Object):
             return 0
 
         self.computing_width = True
-        
+
         maxwidth = 0
 
         for i in self.members:
             rend = renpy.display.render.render(i, width, height, st, at)
             maxwidth = max(rend.width, maxwidth)
             renpy.display.render.invalidate(i)
-            
+
         self._width = maxwidth
         self.computing_width = False
 
         return maxwidth
-        
+
 
 size_groups = dict()
-    
+
+
 class Window(Container):
     """
     A window that has padding and margins, and can place a background
@@ -802,7 +797,7 @@ class Window(Container):
     displayable. All other properties are as for the :ref:`Window`
     screen language statement.
     """
-    
+
     def __init__(self, child, style='window', **properties):
 
         super(Window, self).__init__(style=style, **properties)
@@ -810,7 +805,7 @@ class Window(Container):
             self.add(child)
 
     def visit(self):
-        return [ self.style.background ] + self.children
+        return [self.style.background] + self.children
 
     def get_child(self):
         return self.style.child or self.child
@@ -848,7 +843,7 @@ class Window(Container):
         pd(style.hover_foreground)
         pd(style.selected_idle_foreground)
         pd(style.selected_hover_foreground)
-            
+
     def render(self, width, height, st, at):
 
         # save some typing.
@@ -860,7 +855,7 @@ class Window(Container):
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
             xminimum = max(xminimum, size_groups[size_group].width(width, height, st, at))
-        
+
         left_margin = scale(style.left_margin, width)
         left_padding = scale(style.left_padding, width)
 
@@ -884,7 +879,7 @@ class Window(Container):
 
         # Render the child.
         surf = render(child,
-                      width  - cxmargin - cxpadding,
+                      width - cxmargin - cxpadding,
                       height - cymargin - cypadding,
                       st, at)
 
@@ -911,23 +906,23 @@ class Window(Container):
             style.background.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
         offsets = child.place(rv,
-                              left_margin + left_padding, 
+                              left_margin + left_padding,
                               top_margin + top_padding,
-                              width  - cxmargin - cxpadding,
+                              width - cxmargin - cxpadding,
                               height - cymargin - cypadding,
                               surf)
 
         # Draw the foreground. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
         if style.foreground:
-            bw = width  - cxmargin
+            bw = width - cxmargin
             bh = height - cymargin
 
             back = render(style.foreground, bw, bh, st, at)
 
             style.foreground.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
-        self.offsets = [ offsets ]
+        self.offsets = [offsets]
 
         self.window_size = width, height # W0201
 
@@ -937,6 +932,7 @@ class Window(Container):
 def dynamic_displayable_compat(st, at, expr):
     child = renpy.python.py_eval(expr)
     return child, None
+
 
 class DynamicDisplayable(renpy.display.core.Displayable):
     """
@@ -979,8 +975,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         image tooltipper = DynamicDisplayable(show_tooltip)
 
     """
-    
-    nosave = [ 'child' ]
+
+    nosave = ['child']
 
     def after_setstate(self):
         self.child = None
@@ -991,63 +987,63 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.child = None
 
         if isinstance(function, basestring):
-            args = ( function, )
-            kwargs = { }
+            args = (function,)
+            kwargs = {}
             function = dynamic_displayable_compat
 
-        self.predict_function = kwargs.pop("_predict_function", None)            
+        self.predict_function = kwargs.pop("_predict_function", None)
         self.function = function
         self.args = args
         self.kwargs = kwargs
         self.st = 0
         self.at = 0
-        
+
     def visit(self):
-        return [ ]
+        return []
 
     def per_interact(self):
         child, _ = self.function(self.st, self.at, *self.args, **self.kwargs)
-        child = renpy.easy.displayable(child)        
-        child.visit_all(lambda a : a.per_interact())
+        child = renpy.easy.displayable(child)
+        child.visit_all(lambda a: a.per_interact())
 
         if child is not self.child:
             renpy.display.render.redraw(self, 0)
             self.child = child
-                    
+
     def render(self, w, h, st, at):
 
         self.st = st
         self.at = at
-        
+
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
-        child.visit_all(lambda c : c.per_interact())
+        child.visit_all(lambda c: c.per_interact())
 
         self.child = child
 
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
-        
+
         return renpy.display.render.render(self.child, w, h, st, at)
 
     def predict_one(self):
         if not self.predict_function:
             return
-        
+
         for i in self.predict_function(*self.args, **self.kwargs):
             if i is not None:
                 renpy.display.predict.displayable(i)
-        
+
     def get_placement(self):
         if not self.child:
             self.per_interact()
 
         return self.child.get_placement()
 
-    
     def event(self, ev, x, y, st):
         if self.child:
             return self.child.event(ev, x, y, st)
+
 
 # This chooses the first member of switch that's being shown on the
 # given layer.
@@ -1058,15 +1054,18 @@ def condition_switch_pick(switch):
 
     raise Exception("Switch could not choose a displayable.")
 
+
 def condition_switch_show(st, at, switch):
     return condition_switch_pick(switch), None
+
 
 def condition_switch_predict(switch):
 
     if renpy.game.lint:
-        return [ d for _cond, d in switch ]
+        return [d for _cond, d in switch]
 
-    return [ condition_switch_pick(switch) ]
+    return [condition_switch_pick(switch)]
+
 
 def ConditionSwitch(*args, **kwargs):
     """
@@ -1088,11 +1087,11 @@ def ConditionSwitch(*args, **kwargs):
             "jill_beers > 4", "jill_drunk.png",
             "True", "jill_sober.png")
     """
-        
+
     kwargs.setdefault('style', 'default')
-    
-    switch = [ ]
-    
+
+    switch = []
+
     if len(args) % 2 != 0:
         raise Exception('ConditionSwitch takes an even number of arguments')
 
@@ -1104,10 +1103,10 @@ def ConditionSwitch(*args, **kwargs):
     rv = DynamicDisplayable(condition_switch_show,
                             switch,
                             _predict_function=condition_switch_predict)
-                              
+
     return Position(rv, **kwargs)
 
-    
+
 def ShowingSwitch(*args, **kwargs):
     """
     :doc: disp_dynamic
@@ -1132,24 +1131,22 @@ def ShowingSwitch(*args, **kwargs):
                )
            )
     """
-    
+
     layer = kwargs.pop('layer', 'master')
-    
+
     if len(args) % 2 != 0:
         raise Exception('ShowingSwitch takes an even number of positional arguments')
 
-    condargs = [ ]
+    condargs = []
 
-    
     for name, d in zip(args[0::2], args[1::2]):
         if name is not None:
-            if not isinstance(name, tuple):        
+            if not isinstance(name, tuple):
                 name = tuple(name.split())
             cond = "renpy.showing(%r, layer=%r)" % (name, layer)
         else:
-            cond = None 
-            
- 
+            cond = None
+
         condargs.append(cond)
         condargs.append(d)
 
@@ -1161,7 +1158,7 @@ class IgnoresEvents(Container):
     def __init__(self, child, **properties):
         super(IgnoresEvents, self).__init__(**properties)
         self.add(child)
-    
+
     def render(self, w, h, st, at):
         cr = renpy.display.render.render(self.child, w, h, st, at)
         cw, ch = cr.get_size()
@@ -1177,12 +1174,14 @@ class IgnoresEvents(Container):
     def event(self, ev, x, y, st):
         return None
 
+
 def edgescroll_proportional(n):
     """
     An edgescroll function that causes the move speed to be proportional
     from the edge distance.
     """
     return n
+
 
 class Viewport(Container):
 
@@ -1197,10 +1196,10 @@ class Viewport(Container):
             self.draggable = False
             self.width = 0
             self.height = 0
-            
+
         if version < 2:
             self.drag_position = None
-            
+
         if version < 3:
             self.edge_size = False
             self.edge_speed = False
@@ -1208,7 +1207,7 @@ class Viewport(Container):
             self.edge_xspeed = 0
             self.edge_yspeed = 0
             self.edge_last_st = None
-            
+
     def __init__(self,
                  child=None,
                  child_size=(None, None),
@@ -1233,13 +1232,12 @@ class Viewport(Container):
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
         else:
             self.xadjustment = xadjustment
-            
+
         if yadjustment is None:
             self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
         else:
             self.yadjustment = yadjustment
-            
-            
+
         if isinstance(replaces, Viewport):
             self.xadjustment.range = replaces.xadjustment.range
             self.yadjustment.range = replaces.yadjustment.range
@@ -1260,7 +1258,7 @@ class Viewport(Container):
             self.yadjustment.adjustable = True
 
         self.set_adjustments = set_adjustments
-        
+
         self.child_width, self.child_height = child_size
 
         self.mousewheel = mousewheel
@@ -1281,30 +1279,29 @@ class Viewport(Container):
 
             # The size of the edges that trigger scrolling.
             self.edge_size = edgescroll[0]
-    
+
             # How far from the edge we can scroll.
             self.edge_speed = edgescroll[1]
-            
+
             if len(edgescroll) >= 3:
                 self.edge_function = edgescroll[2]
             else:
                 self.edge_function = edgescroll_proportional
-        
+
         else:
             self.edge_size = 0
             self.edge_speed = 0
             self.edge_function = edgescroll_proportional
 
-        
     def per_interact(self):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
-        
+
     def render(self, width, height, st, at):
 
         self.width = width
         self.height = height
-        
+
         child_width = self.child_width or width
         child_height = self.child_height or height
 
@@ -1326,33 +1323,33 @@ class Viewport(Container):
                 value = self.xoffset
             else:
                 value = max(cw - width, 0) * self.xoffset
-                
+
             self.xadjustment.value = value
             self.xoffset = None
-            
+
         if self.yoffset is not None:
             if isinstance(self.yoffset, int):
                 value = self.yoffset
             else:
-                value = max(ch - height, 0) * self.yoffset 
+                value = max(ch - height, 0) * self.yoffset
 
             self.yadjustment.value = value
             self.yoffset = None
-                
+
         if self.edge_size and self.edge_last_st and (self.edge_xspeed or self.edge_yspeed):
-             
+
             duration = max(st - self.edge_last_st, 0)
             self.xadjustment.change(self.xadjustment.value + duration * self.edge_xspeed)
             self.yadjustment.change(self.yadjustment.value + duration * self.edge_yspeed)
 
             self.check_edge_redraw()
-            
+
         self.edge_last_st = st
-             
+
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
-        self.offsets = [ (cxo, cyo) ]
+        self.offsets = [(cxo, cyo)]
 
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
@@ -1361,7 +1358,7 @@ class Viewport(Container):
 
     def check_edge_redraw(self):
         redraw = False
-        
+
         if (self.edge_xspeed > 0) and (self.xadjustment.value < self.xadjustment.range):
             redraw = True
         if (self.edge_xspeed < 0) and (self.xadjustment.value > 0):
@@ -1371,10 +1368,9 @@ class Viewport(Container):
             redraw = True
         if (self.edge_yspeed < 0) and (self.yadjustment.value > 0):
             redraw = True
-        
+
         if redraw:
             renpy.display.render.redraw(self, 0)
-            
 
     def event(self, ev, x, y, st):
 
@@ -1392,14 +1388,14 @@ class Viewport(Container):
             self.yadjustment.change(self.yadjustment.value - dy)
 
             self.drag_position = (x, y) # W0201
-            
+
             if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
                 renpy.display.focus.set_grab(None)
                 raise renpy.display.core.IgnoreEvent()
-                
+
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
             return
-                
+
         if self.mousewheel:
 
             if renpy.display.behavior.map_event(ev, 'viewport_up'):
@@ -1422,51 +1418,52 @@ class Viewport(Container):
                 self.drag_position = (x, y)
                 renpy.display.focus.set_grab(self)
                 raise renpy.display.core.IgnoreEvent()
-                
+
         if self.edge_size:
-            
+
             def speed(n, zero, one):
                 """
                 Given a position `n`, computes the speed. The speed is 0.0
-                when `n` == `zero`, 1.0 when `n` == `one`, and linearly 
-                interpolated when between.                
-                
+                when `n` == `zero`, 1.0 when `n` == `one`, and linearly
+                interpolated when between.
+
                 Returns 0.0 when outside the bounds - in either direction.
                 """
-                
+
                 n = 1.0 * (n - zero) / (one - zero)
                 if n < 0.0:
                     return 0.0
                 if n > 1.0:
                     return 0.0
-                
+
                 return n
 
-            xspeed = speed(x, self.width - self.edge_size, self.width)            
+            xspeed = speed(x, self.width - self.edge_size, self.width)
             xspeed -= speed(x, self.edge_size, 0)
             self.edge_xspeed = self.edge_speed * self.edge_function(xspeed)
-            
+
             yspeed = speed(y, self.height - self.edge_size, self.height)
             yspeed -= speed(y, self.edge_size, 0)
             self.edge_yspeed = self.edge_speed * self.edge_function(yspeed)
-            
+
             if xspeed or yspeed:
                 self.check_edge_redraw()
                 if self.edge_last_st is None:
                     self.edge_last_st = st
             else:
                 self.edge_last_st = None
-                
+
         return None
-    
+
     def set_xoffset(self, offset):
         self.xoffset = offset
         renpy.display.render.redraw(self, 0)
-        
+
     def set_yoffset(self, offset):
         self.yoffset = offset
         renpy.display.render.redraw(self, 0)
-        
+
+
 def LiveCrop(rect, child, **properties):
     """
     :doc: disp_imagelike
@@ -1474,12 +1471,13 @@ def LiveCrop(rect, child, **properties):
     This created a displayable by cropping `child` to `rect`, where
     `rect` is an (x, y, width, height) tuple. ::
 
-        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")    
+        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")
     """
-    
+
     x, y, w, h = rect
 
     return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
+
 
 class Side(Container):
 
@@ -1487,26 +1485,26 @@ class Side(Container):
 
     def after_setstate(self):
         self.sized = False
-    
+
     def __init__(self, positions, style='side', **properties):
 
         super(Side, self).__init__(style=style, **properties)
 
         if isinstance(positions, basestring):
             positions = positions.split()
-        
+
         for i in positions:
             if not i in Side.possible_positions:
                 raise Exception("Side used with impossible position '%s'." % (i,))
 
         self.positions = tuple(positions)
         self.sized = False
-        
+
     def render(self, width, height, st, at):
 
-        pos_d = { }
-        pos_i = { }
-        
+        pos_d = {}
+        pos_i = {}
+
         for i, (pos, d) in enumerate(zip(self.positions, self.children)):
             pos_d[pos] = d
             pos_i[pos] = i
@@ -1516,21 +1514,21 @@ class Side(Container):
 
         if not self.sized:
             self.sized = True
-            
+
             # Deal with various spacings.
             spacing = self.style.spacing
-            
+
             def spacer(a, b, c, axis):
                 if (a in pos_d) or (b in pos_d) or (c in pos_d):
                     return spacing, axis - spacing
                 else:
                     return 0, axis
-                
+
             self.left_space, width = spacer('tl', 'l', 'bl', width) # W0201
             self.right_space, width = spacer('tr', 'r', 'br', width) # W0201
             self.top_space, height = spacer('tl', 't', 'tr', height) # W0201
             self.bottom_space, height = spacer('bl', 'b', 'br', height) # W0201
-            
+
             # The sizes of the various borders.
             left = 0
             right = 0
@@ -1538,27 +1536,27 @@ class Side(Container):
             bottom = 0
             cwidth = 0
             cheight = 0
-            
+
             def sizeit(pos, width, height, owidth, oheight):
                 if pos not in pos_d:
                     return owidth, oheight
-                
+
                 rend = render(pos_d[pos], width, height, st, at)
                 rv = max(owidth, rend.width), max(oheight, rend.height)
                 rend.kill()
                 return rv
-                
+
             cwidth, cheight = sizeit('c', width, height, 0, 0)
             cwidth, top = sizeit('t', cwidth, height, cwidth, top)
             cwidth, bottom = sizeit('b', cwidth, height, cwidth, bottom)
-            left, cheight = sizeit('l', width, cheight, left, cheight) 
-            right, cheight = sizeit('r', width, cheight, right, cheight) 
+            left, cheight = sizeit('l', width, cheight, left, cheight)
+            right, cheight = sizeit('r', width, cheight, right, cheight)
 
             left, top = sizeit('tl', left, top, left, top)
             left, bottom = sizeit('bl', left, bottom, left, bottom)
             right, top = sizeit('tr', right, top, right, top)
             right, bottom = sizeit('br', right, bottom, right, bottom)
-            
+
             self.cwidth = cwidth # W0201
             self.cheight = cheight # W0201
 
@@ -1574,20 +1572,19 @@ class Side(Container):
             bottom = self.bottom
             left = self.left
             right = self.right
-        
+
         # Now, place everything onto the render.
-        
-        self.offsets = [ None ] * len(self.children)
+
+        self.offsets = [None] * len(self.children)
 
         lefts = self.left_space
         rights = self.right_space
         tops = self.top_space
         bottoms = self.bottom_space
 
-
         cwidth = min(cwidth, width - left - lefts - right - rights)
         cheight = min(cheight, height - top - tops - bottom - bottoms)
-        
+
         rv = renpy.display.render.Render(left + lefts + cwidth + rights + right,
                                          top + tops + cheight + bottoms + bottom)
 
@@ -1600,7 +1597,7 @@ class Side(Container):
             i = pos_i[pos]
             rend = render(d, w, h, st, at)
             self.offsets[i] = pos_d[pos].place(rv, x, y, w, h, rend)
-            
+
         col1 = 0
         col2 = left + lefts
         col3 = left + lefts + cwidth + rights
@@ -1622,7 +1619,8 @@ class Side(Container):
         place('bl', col1, row3, left, bottom)
 
         return rv
-        
+
+
 class Alpha(renpy.display.core.Displayable):
     def __init__(self, start, end, time, child=None, repeat=False, bounce=False,
                  anim_timebase=False, time_warp=None, **properties):
@@ -1636,16 +1634,16 @@ class Alpha(renpy.display.core.Displayable):
         self.repeat = repeat
         self.anim_timebase = anim_timebase
         self.time_warp = time_warp
-        
+
     def visit(self):
-        return [ self.child ]
+        return [self.child]
 
     def render(self, height, width, st, at):
         if self.anim_timebase:
             t = at
         else:
             t = st
-        
+
         if self.time:
             done = min(t / self.time, 1.0)
         else:
@@ -1658,12 +1656,12 @@ class Alpha(renpy.display.core.Displayable):
             renpy.display.render.redraw(self, 0)
         elif done != 1.0:
             renpy.display.render.redraw(self, 0)
-            
+
         if self.time_warp:
             done = self.time_warp(done)
 
         alpha = self.start + done * (self.end - self.start)
-            
+
         rend = renpy.display.render.render(self.child, height, width, st, at)
 
         w, h = rend.get_size()
@@ -1672,8 +1670,8 @@ class Alpha(renpy.display.core.Displayable):
         rv.alpha = alpha
 
         return rv
-        
-        
+
+
 class AdjustTimes(Container):
 
     def __init__(self, child, start_time, anim_time, **properties):
@@ -1683,7 +1681,7 @@ class AdjustTimes(Container):
         self.anim_time = anim_time
 
         self.add(child)
-    
+
     def render(self, w, h, st, at):
 
         if self.start_time is None:
@@ -1693,15 +1691,15 @@ class AdjustTimes(Container):
             self.anim_time = renpy.game.interface.frame_time
 
         st = renpy.game.interface.frame_time - self.start_time
-        at = renpy.game.interface.frame_time - self.anim_time       
-            
+        at = renpy.game.interface.frame_time - self.anim_time
+
         cr = renpy.display.render.render(self.child, w, h, st, at)
         cw, ch = cr.get_size()
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(cr, (0, 0))
 
-        self.offsets = [ (0, 0) ]
-        
+        self.offsets = [(0, 0)]
+
         return rv
 
     def get_placement(self):
@@ -1711,7 +1709,7 @@ class AdjustTimes(Container):
 class LiveTile(Container):
     """
     :doc: disp_imagelike
-    
+
     Tiles `child` until it fills the area allocated to this displayable.
 
     ::
@@ -1719,7 +1717,7 @@ class LiveTile(Container):
         image bg tile = LiveTile("bg.png")
 
     """
-    
+
     def __init__(self, child, style='tile', **properties):
         super(LiveTile, self).__init__(style=style, **properties)
 

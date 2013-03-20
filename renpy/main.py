@@ -31,7 +31,7 @@ import __main__
 
 
 def save_persistent():
-    
+
     try:
         f = file(renpy.config.savedir + "/persistent", "wb")
         f.write(dumps(game.persistent).encode("zlib"))
@@ -39,7 +39,7 @@ def save_persistent():
     except:
         if renpy.config.debug:
             raise
-        
+
 
 def run(restart):
     """
@@ -54,7 +54,7 @@ def run(restart):
     game.log = renpy.python.RollbackLog()
 
     # Switch contexts, begin logging.
-    game.contexts = [ renpy.execution.Context(True) ]
+    game.contexts = [renpy.execution.Context(True)]
 
     # Jump to an appropriate start label.
     if game.script.has_label("_start"):
@@ -65,8 +65,8 @@ def run(restart):
     game.context().goto_label(start_label)
 
     # Perhaps warp.
-    warp_label = renpy.warp.warp() 
-    
+    warp_label = renpy.warp.warp()
+
     if warp_label is not None:
 
         game.context().goto_label(warp_label)
@@ -84,11 +84,11 @@ def run(restart):
 
     # Note if this is a restart.
     renpy.store._restart = restart
-    
+
     # We run until we get an exception.
     renpy.display.interface.enter_context()
     renpy.execution.run_context(True)
-    
+
 
 def load_rpe(fn):
 
@@ -98,37 +98,38 @@ def load_rpe(fn):
 
     sys.path.insert(0, fn)
     exec autorun in dict()
-        
+
+
 def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
-        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ]
+        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [None]
     else:
-        renpy.config.variants = [ None ]
-    
+        renpy.config.variants = [None]
+
     if renpy.android: #@UndefinedVariable
         import android #@UnresolvedImport
         import math
         import pygame
-        
+
         pygame.display.init()
-        
-        info = pygame.display.Info()        
+
+        info = pygame.display.Info()
         diag = math.hypot(info.current_w, info.current_h) / android.get_dpi()
-        
+
         print "Screen diagonal is", diag, "inches."
-        
+
         renpy.config.variants.insert(0, 'touch')
-        
+
         if diag >= 6:
             renpy.config.variants.insert(0, 'tablet')
         else:
             renpy.config.variants.insert(0, 'phone')
-        
+
     else:
         renpy.config.variants.insert(0, 'pc')
-    
-        
+
+
 def main():
 
     renpy.game.exception_info = 'Before loading the script.'
@@ -141,10 +142,10 @@ def main():
 
     # Set up variants.
     choose_variants()
-    
+
     # Note the game directory.
     game.basepath = renpy.config.gamedir
-    renpy.config.searchpath = [ renpy.config.gamedir ]
+    renpy.config.searchpath = [renpy.config.gamedir]
 
     # Find the common directory.
     commondir = __main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
@@ -154,14 +155,13 @@ def main():
         renpy.config.commondir = commondir
     else:
         renpy.config.commondir = None
-        
+
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: #@ReservedAssignment
         for fn in os.listdir(dir):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
 
-        
     # The basename is the final component of the path to the gamedir.
     for i in sorted(os.listdir(renpy.config.gamedir)):
 
@@ -170,7 +170,7 @@ def main():
 
         i = i[:-4]
         renpy.config.archives.append(i)
-        
+
     renpy.config.archives.reverse()
 
     # Initialize archives.
@@ -188,7 +188,7 @@ def main():
     renpy.store.style = game.style
 
     # Run init code in its own context. (Don't log.)
-    game.contexts = [ renpy.execution.Context(False) ]
+    game.contexts = [renpy.execution.Context(False)]
     game.contexts[0].init_phase = True
 
     # Load the script.
@@ -198,8 +198,8 @@ def main():
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles(early=True)
-    
-    # Load all .rpy files.    
+
+    # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
 
     renpy.game.exception_info = 'After loading the script.'
@@ -210,7 +210,7 @@ def main():
 
     if renpy.game.args.savedir: #@UndefinedVariable
         renpy.config.savedir = renpy.game.args.savedir #@UndefinedVariable
-    
+
     # Make the save directory.
     try:
         os.makedirs(renpy.config.savedir)
@@ -228,23 +228,23 @@ def main():
 
     # Initialize the set of statements seen ever.
     if not game.persistent._seen_ever:
-        game.persistent._seen_ever = { }
+        game.persistent._seen_ever = {}
 
     game.seen_ever = game.persistent._seen_ever
 
     # Initialize the set of images seen ever.
     if not game.persistent._seen_images:
-        game.persistent._seen_images = { }
+        game.persistent._seen_images = {}
 
     # Initialize the set of chosen menu choices.
     if not game.persistent._chosen:
-        game.persistent._chosen = { }
+        game.persistent._chosen = {}
 
     if not game.persistent._seen_audio:
-        game.persistent._seen_audio = { }
-        
+        game.persistent._seen_audio = {}
+
     # Clear the list of seen statements in this game.
-    game.seen_session = { }
+    game.seen_session = {}
 
     # Initialize the preferences.
     if not game.persistent._preferences:
@@ -271,14 +271,14 @@ def main():
 
     # Check if we should simulate android.
     renpy.android = renpy.android or renpy.config.simulate_android #@UndefinedVariable
-    
+
     # Run the post init code, if any.
     for i in renpy.game.post_init:
         i()
-        
+
     # Init translation.
     renpy.translation.init_translation()
-        
+
     # Rebuild the various style caches.
     renpy.style.build_styles()
 
@@ -295,7 +295,7 @@ def main():
 
     renpy.dump.dump(False)
 
-    # Handle arguments and commands. 
+    # Handle arguments and commands.
     if not renpy.arguments.post_init():
         return
 
@@ -307,7 +307,7 @@ def main():
 
     # Initialize image cache.
     renpy.display.im.cache.init()
-    
+
     # (Perhaps) Initialize graphics.
     if not game.interface:
         renpy.display.core.Interface()
@@ -322,19 +322,19 @@ def main():
 
         if restart:
             renpy.display.screen.before_restart()
-        
+
         try:
             try:
                 run(restart)
             finally:
                 restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                 save_persistent()
-                
+
         except game.QuitException, e:
-            
+
             if e.relaunch:
                 subprocess.Popen([sys.executable, "-EOO"] + sys.argv)
-            
+
             break
 
         except game.FullRestartException, e:
@@ -343,8 +343,7 @@ def main():
         finally:
             renpy.display.core.cpu_idle.set()
             renpy.loadsave.autosave_not_running.wait()
-            
+
     # This is stuff we do on a normal, non-error return.
     if not renpy.display.error.error_handled:
         renpy.display.render.check_at_shutdown()
-

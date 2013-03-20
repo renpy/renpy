@@ -27,16 +27,18 @@ import warnings
 
 # Functions to be customized by distributors. ################################
 
+
 # Given the Ren'Py base directory (usually the directory containing
 # this file), this is expected to return the path to the common directory.
 def path_to_common(renpy_base):
     return renpy_base + "/renpy/common"
 
+
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
-    import renpy #@UnresolvedImport
-    
+    import renpy  #@UnresolvedImport
+
     if not renpy.config.save_directory:
         return gamedir + "/saves"
 
@@ -72,7 +74,7 @@ def path_to_saves(gamedir):
         rv = "~/.renpy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
 
-        
+
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
 def path_to_renpy_base():
@@ -108,9 +110,10 @@ if android:
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
     os.environ["RENPY_GL_ENVIRON"] = "limited"
-    
+
+
 def main():
-    
+
     renpy_base = path_to_renpy_base()
 
     # Add paths.
@@ -125,7 +128,7 @@ def main():
 
     # Ignore warnings that happen.
     warnings.simplefilter("ignore", DeprecationWarning)
-                
+
     # Start Ren'Py proper.
     try:
         import renpy.bootstrap
@@ -137,10 +140,8 @@ def main():
     if android:
         renpy.linux = False
         renpy.android = True
-    
+
     renpy.bootstrap.bootstrap(renpy_base)
 
 if __name__ == "__main__":
     main()
-
-    

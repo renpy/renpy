@@ -53,7 +53,7 @@ name_only = None
 
 # Used by the ui functions.
 _widget_by_id = None
-_widget_properties = { }
+_widget_properties = {}
 
 class _Config(object):
 
@@ -77,7 +77,7 @@ class _Config(object):
 
         if name == "script_version":
             renpy.store._set_script_version(value) # E1101 @UndefinedVariable
-        
+
         cvars[name] = value
 
     def __delattr__(self, name):
@@ -88,7 +88,7 @@ class _Config(object):
 
 # The styles object.
 style = None
-            
+
 config = _Config()
 library = config
 
@@ -181,13 +181,14 @@ absolute = renpy.display.core.absolute
 
 NoRollback = renpy.python.NoRollback
 
+
 def layout(cls, doc, nargs=0, **extra_kwargs):
 
     def f(*args, **properties):
 
         conargs = args[:nargs]
         kids = args[nargs:]
-        
+
         kwargs = extra_kwargs.copy()
         kwargs.update(properties)
 
@@ -197,7 +198,7 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
 
         return rv
 
-    f.__doc__ = doc 
+    f.__doc__ = doc
 
     return f
 
@@ -232,22 +233,23 @@ A layout that lays out displayables in a grid.
 def AlphaBlend(control, old, new, alpha=False):
     """
     :doc: disp_effects
-    
+
     This transition uses a `control` displayable (almost always some sort of
     animated transform) to transition from one displayable to another. The
     transform is evaluated. The `new` displayable is used where the transform
-    is opaque, and the `old` displayable is used when it is transparent. 
+    is opaque, and the `old` displayable is used when it is transparent.
 
     `alpha`
         If true, the image is composited with what's behind it. If false,
         the default, the image is opaque and overwrites what's behind it.
     """
 
-    return renpy.display.transition.AlphaDissolve(control, 0.0, old_widget=old, new_widget=new, alpha=alpha) 
+    return renpy.display.transition.AlphaDissolve(control, 0.0, old_widget=old, new_widget=new, alpha=alpha)
 
-    
+
 del layout
-        
+
+
 def At(d, *args):
     """
     :doc: disp_at
@@ -264,7 +266,7 @@ def At(d, *args):
 
         image birds = At("birds.png", birds_transform)
         """
-    
+
     rv = renpy.easy.displayable(d)
 
     for i in args:
@@ -328,13 +330,15 @@ adv = ADVCharacter(None,
 
                    kind=False)
 
+
 def predict_say(who, what):
     who = Character(who, kind=name_only)
     try:
         who.predict(what)
     except:
         pass
-    
+
+
 def say(who, what, interact=True):
     who = Character(who, kind=name_only)
     who(what, interact=interact)
@@ -348,14 +352,15 @@ _cache_pin_set = set()
 
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None
-    
+
 # Used to store the side image attributes.
 _side_image_attributes = None
-    
+
 # Make these available to user code.
 import sys
 import os
-    
+
+
 def public_api():
     ui
     im
@@ -364,5 +369,5 @@ def public_api():
     sorted
     os
     sys
-    
+
 del public_api

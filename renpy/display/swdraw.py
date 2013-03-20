@@ -31,6 +31,7 @@ from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSO
 # A map from cached surface to rle version of cached surface.
 rle_cache = weakref.WeakKeyDictionary()
 
+
 class Clipper(object):
     """
     This is used to calculate the clipping rectangle and update rectangles
@@ -41,14 +42,14 @@ class Clipper(object):
 
         # Lists of (x0, y0, x1, y1, clip, surface, transform) tuples,
         # representing how a displayable is drawn to the screen.
-        self.blits = [ ]
-        self.old_blits = [ ]
+        self.blits = []
+        self.old_blits = []
 
         # Sets of (x0, y0, x1, y1) tuples, representing areas that
         # aren't part of any displayable.
         self.forced = set()
         self.old_forced = set()
-        
+
         # The set of surfaces that have been mutated recently.
         self.mutated = set()
 
@@ -68,7 +69,7 @@ class Clipper(object):
         mutated = self.mutated
 
         self.old_blits = bl1
-        self.blits = [ ]
+        self.blits = []
         self.old_forced = forced
         self.forced = set()
         self.mutated = set()
@@ -79,32 +80,32 @@ class Clipper(object):
 
         # A tuple representing the size of the fullscreen.
         fullscreen = (0, 0, sw, sh)
-        
+
         # Check to see if a full redraw has been forced, and return
         # early.
         if full_redraw:
-            return fullscreen, [ fullscreen ]
-                    
+            return fullscreen, [fullscreen]
+
         # Quick checks to see if a dissolve is happening, or something like
         # that.
         changes = forced | old_forced
-        
+
         if fullscreen in changes:
-            return fullscreen, [ fullscreen ]
+            return fullscreen, [fullscreen]
 
         # Compute the differences between the two sets, and add those
         # to changes.
         i0 = 0
         i1 = 0
         bl1set = set(bl1)
-        
+
         while True:
             if i0 >= len(bl0) or i1 >= len(bl1):
                 break
 
             b0 = bl0[i0]
             b1 = bl1[i1]
-            
+
             if b0 == b1:
                 if id(b0[5]) in mutated:
                     changes.add(b0[:5])
@@ -125,10 +126,10 @@ class Clipper(object):
 
         # No changes? Quit.
         if not changes:
-            return None, [ ]
+            return None, []
 
-        # Compute the sizes of the updated rectangles.        
-        sized = [ ]
+        # Compute the sizes of the updated rectangles.
+        sized = []
 
         for x0, y0, x1, y1, (sx0, sy0, sx1, sy1) in changes:
 
@@ -154,14 +155,14 @@ class Clipper(object):
             area = w * h
 
             if area >= sa:
-                return fullscreen, [ fullscreen ]
-            
+                return fullscreen, [fullscreen]
+
             sized.append((area, x0, y0, x1, y1))
 
         sized.sort()
-            
+
         # The list of non-contiguous updates.
-        noncont = [ ]
+        noncont = []
 
         # The total area of noncont.
         nca = 0
@@ -171,16 +172,15 @@ class Clipper(object):
         while sized:
             area, x0, y0, x1, y1 = sized.pop()
 
-            
             merged = False
-            
+
             if nca + area >= sa:
-                return (0, 0, sw, sh), [ (0, 0, sw, sh) ]
+                return (0, 0, sw, sh), [(0, 0, sw, sh)]
 
             i = 0
 
             while i < len(sized):
-                _iarea, ix0, iy0, ix1, iy1 = sized[i] 
+                _iarea, ix0, iy0, ix1, iy1 = sized[i]
 
                 if (x0 <= ix0 <= x1 or x0 <= ix1 <= x1) and \
                    (y0 <= iy0 <= y1 or y0 <= iy1 <= y1):
@@ -197,16 +197,16 @@ class Clipper(object):
 
                 else:
                     i += 1
-                    
+
             if merged:
-                sized.append((area, x0, y0, x1, y1))                
+                sized.append((area, x0, y0, x1, y1))
             else:
                 noncont.append((x0, y0, x1, y1))
                 nca += area
 
         if not noncont:
-            return None, [ ]
-                
+            return None, []
+
         x0, y0, x1, y1 = noncont.pop()
         x0 = int(x0)
         y0 = int(y0)
@@ -214,7 +214,7 @@ class Clipper(object):
         y1 = int(math.ceil(y1))
 
         # A list of (x, y, w, h) tuples for each update.
-        updates = [ (x0, y0, x1 - x0, y1 - y0) ]
+        updates = [(x0, y0, x1 - x0, y1 - y0)]
 
         for ix0, iy0, ix1, iy1 in noncont:
 
@@ -222,7 +222,7 @@ class Clipper(object):
             iy0 = int(iy0)
             ix1 = int(math.ceil(ix1))
             iy1 = int(math.ceil(iy1))
-            
+
             x0 = min(x0, ix0)
             y0 = min(y0, iy0)
             x1 = max(x1, ix1)
@@ -231,29 +231,32 @@ class Clipper(object):
             updates.append((ix0, iy0, ix1 - ix0, iy1 - iy0))
 
         return (x0, y0, x1 - x0, y1 - y0), updates
-            
-clippers = [ Clipper() ]        
+
+clippers = [Clipper()]
+
 
 def surface(w, h, alpha):
     """
     Creates a surface that shares a pixel format with the screen. The created
-    surface will 
+    surface will
     """
-        
+
     if alpha:
         rv = pygame.Surface((w + 4, h + 4), pygame.SRCALPHA)
     else:
         rv = pygame.Surface((w + 4, h + 4), 0)
-        
+
     return rv.subsurface((2, 2, w, h))
+
 
 def copy_surface(surf):
     w, h = surf.get_size()
-    
+
     rv = surface(w, h, True)
     rv.blit(surf, (0, 0))
-    
+
     return rv
+
 
 def draw_special(what, dest, x, y):
     """
@@ -271,15 +274,15 @@ def draw_special(what, dest, x, y):
         return
 
     if what.operation == DISSOLVE:
-    
+
         bottom = what.children[0][0].render_to_texture(True)
         top = what.children[1][0].render_to_texture(True)
-                
+
         if what.operation_alpha:
             target = surface(w, h, True)
         else:
             target = dest.subsurface((0, 0, w, h))
-        
+
         renpy.display.module.blend(
             bottom.subsurface((-x, -y, w, h)),
             top.subsurface((-x, -y, w, h)),
@@ -301,7 +304,7 @@ def draw_special(what, dest, x, y):
             target = dest.subsurface((0, 0, w, h))
 
         ramplen = what.operation_parameter
-            
+
         ramp = "\x00" * 256
 
         for i in xrange(0, ramplen):
@@ -309,9 +312,9 @@ def draw_special(what, dest, x, y):
 
         ramp += "\xff" * 256
 
-        step = int( what.operation_complete * (256 + ramplen) )
-        ramp = ramp[step:step+256]
-            
+        step = int(what.operation_complete * (256 + ramplen))
+        ramp = ramp[step:step + 256]
+
         renpy.display.module.imageblend(
             bottom.subsurface((-x, -y, w, h)),
             top.subsurface((-x, -y, w, h)),
@@ -332,7 +335,7 @@ def draw_special(what, dest, x, y):
             surf.subsurface((-x, -y, w, h)),
             dest.subsurface((0, 0, w, h)),
             px, px, px, px)
-    
+
     else:
         raise Exception("Unknown operation: %d" % what.operation)
 
@@ -349,7 +352,7 @@ def draw(dest, clip, what, xo, yo, screen):
     `what` - The Render or Surface we're drawing to.
     `xo` - The X offset.
     `yo` - The Y offset.
-    `screen` - True if this is a blit to the screen, False otherwise.    
+    `screen` - True if this is a blit to the screen, False otherwise.
     """
 
     if not isinstance(what, renpy.display.render.Render):
@@ -368,13 +371,13 @@ def draw(dest, clip, what, xo, yo, screen):
                     dest.blit(what, (xo, yo))
                 finally:
                     blit_lock.release()
-            
+
         # Subpixel blit.
         else:
             if clip:
                 w, h = what.get_size()
                 dest.blits.append((xo, yo, xo + w, yo + h, clip, what, None))
-            else:            
+            else:
                 renpy.display.module.subpixel(what, dest, xo, yo)
 
         return
@@ -391,7 +394,7 @@ def draw(dest, clip, what, xo, yo, screen):
             dh = dy1 - dy0
         else:
             dw, dh = dest.get_size()
-        
+
         if xo >= 0:
             newx = 0
             subx = xo
@@ -413,7 +416,7 @@ def draw(dest, clip, what, xo, yo, screen):
         # subsurface. They can only be negative or 0, as otherwise we
         # would make a smaller subsurface.
 
-        subw = min(dw - subx, what.width + newx) 
+        subw = min(dw - subx, what.width + newx)
         subh = min(dh - suby, what.height + newy)
 
         if subw <= 0 or subh <= 0:
@@ -426,7 +429,6 @@ def draw(dest, clip, what, xo, yo, screen):
             # what.draw_func(newdest, newx, newy)
             draw_special(what, newdest, newx, newy)
 
-            
         return
 
     # Deal with clipping, if necessary.
@@ -442,31 +444,31 @@ def draw(dest, clip, what, xo, yo, screen):
 
             if cx0 > cx1 or cy0 > cy1:
                 return
-            
+
             clip = (cx0, cy0, cx1, cy1)
 
             dest.forced.add(clip + (clip,))
             return
-            
+
         else:
 
             # After this code, x and y are the coordinates of the subsurface
             # relative to the destination. xo and yo are the offset of the
             # upper-left corner relative to the subsurface.
-            
+
             if xo >= 0:
                 x = xo
                 xo = 0
             else:
                 x = 0
-                # xo = xo 
+                # xo = xo
 
             if yo >= 0:
                 y = yo
                 yo = 0
             else:
                 y = 0
-                # yo = yo 
+                # yo = yo
 
             dw, dh = dest.get_size()
 
@@ -475,29 +477,30 @@ def draw(dest, clip, what, xo, yo, screen):
 
             if width < 0 or height < 0:
                 return
-            
+
             dest = dest.subsurface((x, y, width, height))
-        
+
     # Deal with alpha and transforms by passing them off to draw_transformed.
     if what.alpha != 1 or (what.forward is not None and what.forward is not IDENTITY):
         for child, cxo, cyo, _focus, _main in what.visible_children:
             draw_transformed(dest, clip, child, xo + cxo, yo + cyo,
                              what.alpha, what.forward, what.reverse)
         return
-        
+
     for child, cxo, cyo, _focus, _main in what.visible_children:
         draw(dest, clip, child, xo + cxo, yo + cyo, screen)
+
 
 def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
     # If our alpha has hit 0, don't do anything.
-    if alpha <= 0.003: # (1 / 256)
+    if alpha <= 0.003:  # (1 / 256)
         return
-    
+
     if forward is None:
         forward = IDENTITY
         reverse = IDENTITY
-    
+
     if not isinstance(what, renpy.display.render.Render):
 
         # Figure out where the other corner of the transformed surface
@@ -511,7 +514,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
         else:
             dw, dh = dest.get_size()
-        
+
         x0, y0 = 0.0, 0.0
         x1, y1 = reverse.transform(sw, 0.0)
         x2, y2 = reverse.transform(sw, sh)
@@ -549,7 +552,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         else:
 
             dest = dest.subsurface((minx, miny, maxx - minx, maxy - miny))
-            
+
             renpy.display.module.transform(
                 what, dest,
                 cx, cy,
@@ -561,10 +564,10 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
     if what.clipping:
 
-        if reverse.xdy or reverse.ydx:        
+        if reverse.xdy or reverse.ydx:
             draw_transformed(dest, clip, what.pygame_surface(True), xo, yo, alpha, forward, reverse)
             return
-        
+
         width = what.width * reverse.xdx
         height = what.height * reverse.ydy
 
@@ -578,7 +581,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
             if cx0 > cx1 or cy0 > cy1:
                 return
-            
+
             clip = (cx0, cy0, cx1, cy1)
 
             dest.forced.add(clip + (clip,))
@@ -589,20 +592,20 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
             # After this code, x and y are the coordinates of the subsurface
             # relative to the destination. xo and yo are the offset of the
             # upper-left corner relative to the subsurface.
-            
+
             if xo >= 0:
                 x = xo
                 xo = 0
             else:
                 x = 0
-                # xo = xo 
+                # xo = xo
 
             if yo >= 0:
                 y = yo
                 yo = 0
             else:
                 y = 0
-                # yo = yo 
+                # yo = yo
 
             dw, dh = dest.get_size()
 
@@ -613,7 +616,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
                 return
 
             dest = dest.subsurface((x, y, width, height))
-        
+
     if what.draw_func or what.operation != BLIT:
         child = what.pygame_surface(True)
         draw_transformed(dest, clip, child, xo, yo, alpha, forward, reverse)
@@ -629,9 +632,8 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         else:
             child_forward = forward
             child_reverse = reverse
-            
-        draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
 
+        draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
 
 
 def do_draw_screen(screen_render, full_redraw, swdraw):
@@ -639,8 +641,8 @@ def do_draw_screen(screen_render, full_redraw, swdraw):
     Draws the render produced by render_screen to the screen.
     """
 
-    yoffset = xoffset = 0    
-    
+    yoffset = xoffset = 0
+
     screen_render.is_opaque()
 
     clip = (xoffset, yoffset, xoffset + screen_render.width, yoffset + screen_render.height)
@@ -651,7 +653,7 @@ def do_draw_screen(screen_render, full_redraw, swdraw):
     cliprect, updates = clipper.compute(full_redraw)
 
     if cliprect is None:
-        return [ ]
+        return []
 
     x, y, _w, _h = cliprect
 
@@ -672,7 +674,7 @@ class SWDraw(object):
         self.reset()
 
     def reset(self):
-        
+
         # Should we draw the screen?
         self.suppressed_blit = False
 
@@ -684,8 +686,7 @@ class SWDraw(object):
         self.mouse_backing = None
         self.mouse_backing_pos = None
         self.mouse_info = None
-        
-        
+
         # Is the mouse currently visible?
         self.mouse_old_visible = None
 
@@ -696,27 +697,27 @@ class SWDraw(object):
         self.fullscreen_surface = None
 
         # Info.
-        self.info = { "renderer" : "sw", "resizable" : False }
+        self.info = {"renderer": "sw", "resizable": False}
 
         pygame.display.init()
         renpy.display.interface.post_init()
 
-        if self.display_info is None:       
+        if self.display_info is None:
             self.display_info = pygame.display.Info()
 
         # The scale factor we use for this display.
         self.scale_factor = 1.0
-        
+
         # Should we scale fast, or scale good-looking?
         self.scale_fast = "RENPY_SCALE_FAST" in os.environ
-        
+
         # The screen returned to us from pygame.
         self.screen = None
-        
-        # The window that we render into, if not the screen. This has a 
+
+        # The window that we render into, if not the screen. This has a
         # 1px border around it iff we're scaling.
         self.window = None
-                
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
         # Reset before resize.
@@ -743,7 +744,7 @@ class SWDraw(object):
             fsflag = pygame.FULLSCREEN
         else:
             fsflag = 0
-              
+
         # If a window exists of the right size and flags, use it. Otherwise,
         # make our own window.
         old_screen = pygame.display.get_surface()
@@ -751,22 +752,22 @@ class SWDraw(object):
         scaled_width = int(width * scale_factor)
         scaled_height = int(height * scale_factor)
 
-        if ((old_screen is not None) and 
+        if ((old_screen is not None) and
             (old_screen.get_size() == (scaled_width, scaled_height)) and
             (old_screen.get_flags() & pygame.FULLSCREEN == fsflag)):
-            
+
             self.screen = old_screen
-                    
+
         else:
             self.screen = pygame.display.set_mode((scaled_width, scaled_height), fsflag, 32)
-            
+
         if scale_factor != 1.0:
             self.window = surface(width, height, True)
         else:
             self.window = self.screen
-            
+
         renpy.display.pgrender.set_rgba_masks()
-            
+
         # Should we redraw the screen from scratch?
         self.full_redraw = True
 
@@ -791,7 +792,7 @@ class SWDraw(object):
         self.mouse_info = info
 
         mxo, myo, tex = info
-        
+
         mx, my = pos
         mw, mh = tex.get_size()
 
@@ -811,7 +812,7 @@ class SWDraw(object):
         """
         Actually hides the mouse.
         """
-        
+
         size = self.mouse_backing.get_size()
         self.screen.blit(self.mouse_backing, self.mouse_backing_pos)
 
@@ -819,7 +820,7 @@ class SWDraw(object):
 
         self.mouse_backing = None
         self.mouse_backing_pos = None
-        self.mouse_location = None 
+        self.mouse_location = None
 
         return rv
 
@@ -832,69 +833,68 @@ class SWDraw(object):
         """
 
         hardware, x, y, tex = renpy.game.interface.get_mouse_info()
-        
+
         if self.mouse_old_visible != hardware:
             pygame.mouse.set_visible(hardware)
             self.mouse_old_visible = hardware
 
         # The rest of this is for the software mouse.
-        
+
         if self.suppressed_blit:
-            return [ ]
+            return []
 
         if not show_mouse:
             tex = None
 
         info = (x, y, tex)
         pos = pygame.mouse.get_pos()
-            
-        if (pos == self.mouse_location and tex and info == self.mouse_info):
-            return [ ]
 
-        updates = [ ]
+        if (pos == self.mouse_location and tex and info == self.mouse_info):
+            return []
+
+        updates = []
 
         if self.mouse_location:
             updates.append(self.hide_mouse())
-            
+
         if tex and pos and renpy.game.interface.focused:
             updates.append(self.show_mouse(pos, info))
-            
+
         return updates
 
     def update_mouse(self):
         """
         Draws the mouse, and then updates the screen.
         """
-        
+
         updates = self.draw_mouse(True)
 
         if updates:
             pygame.display.update(updates)
-            
-    def mouse_event(self, ev):        
+
+    def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-        
+
         x /= self.scale_factor
         y /= self.scale_factor
-        
+
         return x, y
-        
+
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
-        
+
         x /= self.scale_factor
         y /= self.scale_factor
-        
+
         return x, y
-    
-    
+
     def screenshot(self, surftree, fullscreen_video):
         """
         Returns a pygame surface containing a screenshot.
         """
 
         return self.window
-    
+
     def should_redraw(self, needs_redraw, first_pass):
         """
         Uses the framerate to determine if we can and should redraw.
@@ -902,12 +902,12 @@ class SWDraw(object):
 
         if not needs_redraw:
             return False
-        
+
         framerate = renpy.config.framerate
 
         if framerate is None:
             return True
-        
+
         next_frame = self.next_frame
         now = pygame.time.get_ticks()
 
@@ -918,9 +918,9 @@ class SWDraw(object):
             next_frame = now
 
         # It's not yet time for the next frame.
-        if now < next_frame and not first_pass:            
+        if now < next_frame and not first_pass:
             return False
-            
+
         # Otherwise, it is. Schedule the next frame.
         # if next_frame + frametime < now:
         next_frame = now + frametime
@@ -931,15 +931,14 @@ class SWDraw(object):
 
         return True
 
-
     def draw_screen(self, surftree, fullscreen_video):
         """
-        Draws the screen. 
+        Draws the screen.
         """
-        
+
         if not fullscreen_video:
 
-            updates = [ ]
+            updates = []
 
             updates.extend(self.draw_mouse(False))
 
@@ -956,24 +955,23 @@ class SWDraw(object):
                 pygame.display.update(updates)
 
             else:
-                
+
                 if self.scale_fast:
                     pygame.transform.scale(self.window, self.screen.get_size(), self.screen)
                 else:
                     renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
-                
-                self.draw_mouse(True)                
+
+                self.draw_mouse(True)
                 pygame.display.flip()
-            
+
         else:
             pygame.display.flip()
             self.full_redraw = True
 
         self.suppressed_blit = fullscreen_video
 
-        
     def render_to_texture(self, render, alpha):
-  
+
         rv = surface(render.width, render.height, alpha)
         draw(rv, None, render, 0, 0, False)
 
@@ -991,7 +989,6 @@ class SWDraw(object):
             if what.forward:
                 cx, cy = what.forward.transform(cx, cy)
 
-
             if isinstance(child, renpy.display.render.Render):
                 if self.is_pixel_opaque(child, x, y):
                     return True
@@ -999,19 +996,17 @@ class SWDraw(object):
             else:
                 cx = int(cx)
                 cy = int(cy)
-                
+
                 cw, ch = child.get_size()
                 if cx >= cw or cy >= ch:
                     return False
 
-                
 
                 if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
                     return True
 
         return False
 
-    
     def mutated_surface(self, surf):
         """
         Called to indicate that the given surface has changed.
@@ -1022,8 +1017,7 @@ class SWDraw(object):
 
         if surf in rle_cache:
             del rle_cache[surf]
-            
-            
+
     def load_texture(self, surf, transient=False):
         """
         Creates a texture from the surface. In the software implementation,
@@ -1046,49 +1040,48 @@ class SWDraw(object):
             self.mutated_surface(rle_surf)
 
             rle_cache[surf] = rle_surf
-        
+
         return surf
 
     def solid_texture(self, w, h, color):
         """
         Creates a texture filled to the edges with color.
         """
-        
+
         surf = surface(w + 4, h + 4, True)
         surf.fill(color)
         self.mutated_surface(surf)
 
         surf = surf.subsurface((2, 2, w, h))
-        
+
         self.mutated_surface(surf)
         return surf
-        
-        
+
     def free_memory(self):
         """
         Frees up memory.
         """
 
         rle_cache.clear()
-        
+
     def deinit(self):
         """
         Called when we're restarted.
         """
 
         renpy.display.render.free_memory()
-        
+
         return
-        
+
     def quit(self): #@ReservedAssignment
         """
         Shuts down the drawing system.
         """
 
         pygame.display.quit()
-        
+
         return
-            
+
     def event_peek_sleep(self):
         """
         Wait a little bit so the CPU doesn't speed up.

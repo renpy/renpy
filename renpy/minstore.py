@@ -42,13 +42,13 @@ import renpy.ui as ui #@UnusedImport
 import renpy.exports as renpy #@Reimport @UnusedImport
 from renpy.translation import translate_string as __ # @UnusedImport
 
+
 def _(s):
     """
     :doc: translate
 
-    Flags a string as translatable, and returns it immediately. The string 
+    Flags a string as translatable, and returns it immediately. The string
     will be translated when text displays it.
     """
-    
-    return s
 
+    return s

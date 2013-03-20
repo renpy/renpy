@@ -28,6 +28,7 @@ import sets
 
 warp_spec = None
 
+
 def warp():
     """
     Given a filename and line number, this attempts to warp the user
@@ -38,7 +39,7 @@ def warp():
 
     spec = warp_spec
     warp_spec = None
-    
+
     if warp_spec is None:
         return None
 
@@ -51,13 +52,13 @@ def warp():
     if not renpy.config.developer:
         raise Exception("Can't warp, developer mode disabled.")
 
-    
+
     # First, compute for each statement reachable from a scene statement,
     # one statement that reaches that statement.
 
-    prev = { }
+    prev = {}
 
-    workset = sets.Set([ n for n in renpy.game.script.namemap.itervalues() if isinstance(n, renpy.ast.Scene) ])
+    workset = sets.Set([n for n in renpy.game.script.namemap.itervalues() if isinstance(n, renpy.ast.Scene)])
     seenset = sets.Set(workset)
 
     # This is called to indicate that next can be executed following node.
@@ -106,9 +107,9 @@ def warp():
     # Now, attempt to find a statement preceding the line that the
     # user wants to warp to.
 
-    candidates = [ (n.linenumber, n)
+    candidates = [(n.linenumber, n)
                    for n in seenset
-                   if n.filename.endswith('/' + filename) and n.linenumber <= line ]
+                   if n.filename.endswith('/' + filename) and n.linenumber <= line]
 
     # We didn't find any candidate statements, so give up the warp.
     if not candidates:
@@ -118,14 +119,14 @@ def warp():
     candidates.sort()
 
     print candidates
-    
+
     # Pick the candidate immediately before (or on) the line.
     node = candidates[-1][1]
 
     # Now, determine a list of nodes to run while getting to this node.
-    run = [ ]
+    run = []
     n = node
-    
+
     while True:
         n = prev.get(n, None)
         if n:
@@ -138,7 +139,7 @@ def warp():
     # Determine which statements we want to execute, and then run
     # only them.
 
-    toexecute = ( renpy.ast.Scene, renpy.ast.Show, renpy.ast.Hide )
+    toexecute = (renpy.ast.Scene, renpy.ast.Show, renpy.ast.Hide)
 
     for n in run:
         if isinstance(n, toexecute):

@@ -24,6 +24,7 @@
 import renpy.display
 import random
 
+
 class State(object):
     """
     This creates a state that can be used in a SMAnimation.
@@ -58,7 +59,6 @@ class State(object):
         self.atlist = atlist
         self.properties = properties
 
-
     def add(self, sma):
         sma.states[self.name] = self
 
@@ -79,7 +79,7 @@ class State(object):
             child = self.image
 
         return State(self.name, child, *self.atlist)
-    
+
 
 class Edge(object):
     """
@@ -132,7 +132,7 @@ class SMAnimation(renpy.display.core.Displayable):
     Images are shown, perhaps with a transition, when we are
     transitioning into a state containing that image.
     """
-    
+
     def __init__(self, initial, *args, **properties):
         """
         @param initial: The name (a string) of the initial state we
@@ -176,10 +176,10 @@ class SMAnimation(renpy.display.core.Displayable):
         self.initial = initial
 
         # A map from state name to State object.
-        self.states = { }
+        self.states = {}
 
         # A map from state name to list of Edge objects.
-        self.edges = { }
+        self.edges = {}
 
         for i in args:
             i.add(self)
@@ -198,7 +198,7 @@ class SMAnimation(renpy.display.core.Displayable):
         self.state = None
 
     def visit(self):
-        return [ i.image for i in self.states.itervalues() ]
+        return [i.image for i in self.states.itervalues()]
 
     def pick_edge(self, state):
         """
@@ -215,14 +215,13 @@ class SMAnimation(renpy.display.core.Displayable):
         edges = self.edges[state]
         self.edge = random.choice(edges)
         self.state = self.edge.new
-        
+
     def update_cache(self):
         """
         Places the correct Displayable into the edge cache, based on
         what is contained in the given edge. This takes into account
         the old and new states, and any transition that is present.
         """
-
 
         if self.edge.trans:
             im = self.edge.trans(old_widget=self.states[self.edge.old].get_image(),
@@ -281,14 +280,13 @@ class SMAnimation(renpy.display.core.Displayable):
             if not renpy.game.less_updates:
                 renpy.display.render.redraw(self.edge_cache, self.edge.delay - (t - self.edge_start))
 
-
         iw, ih = im.get_size()
 
         rv = renpy.display.render.Render(iw, ih)
         rv.blit(im, (0, 0))
 
         return rv
-    
+
     def __call__(self, child=None, new_widget=None, old_widget=None):
         """
         Used when this SMAnimation is used as a SMMotion. This creates
@@ -299,7 +297,7 @@ class SMAnimation(renpy.display.core.Displayable):
         if child is None:
             child = new_widget
 
-        args = [ ]
+        args = []
 
         for state in self.states.itervalues():
             args.append(state.motion_copy(child))
@@ -346,7 +344,7 @@ class SMAnimation(renpy.display.core.Displayable):
 
 #         if len(self.images) > len(self.delays):
 #             self.delays.append(365.25 * 86400.0) # One year, give or take.
-                
+
 #     def render(self, width, height, st, at):
 
 #         if self.anim_timebase:
@@ -364,7 +362,7 @@ class SMAnimation(renpy.display.core.Displayable):
 #                 rv.blit(im, (0, 0))
 
 #                 return rv
-            
+
 #             else:
 #                 t = t - delay
 
@@ -372,7 +370,7 @@ class SMAnimation(renpy.display.core.Displayable):
 #         return self.images
 
 def Animation(*args, **kwargs):
-    newargs = [ ]
+    newargs = []
 
     for i, a in enumerate(args):
         newargs.append(a)
@@ -380,7 +378,7 @@ def Animation(*args, **kwargs):
             newargs.append(None)
 
     return TransitionAnimation(*newargs, **kwargs)
-    
+
 
 class TransitionAnimation(renpy.display.core.Displayable):
     """
@@ -405,7 +403,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
         a displayable (which is shown forever).
 
         There is one keyword argument, apart from the style properties:
-        
+
         @param anim_timebase: If True, the default, use the animation
         timebase. Otherwise, use the displayable timebase.
         """
@@ -415,10 +413,10 @@ class TransitionAnimation(renpy.display.core.Displayable):
 
         super(TransitionAnimation, self).__init__(**properties)
 
-        images = [ ]
-        delays = [ ]
-        transitions = [ ]
-        
+        images = []
+        delays = []
+        transitions = []
+
         for i, arg in enumerate(args):
 
             if i % 3 == 0:
@@ -429,16 +427,15 @@ class TransitionAnimation(renpy.display.core.Displayable):
                 transitions.append(arg)
 
         if len(images) > len(delays):
-            delays.append(365.25 * 86400.0) # One year, give or take.
+            delays.append(365.25 * 86400.0)  # One year, give or take.
         if len(images) > len(transitions):
             transitions.append(None)
 
         self.images = images
-        self.prev_images = [ images[-1] ] + images[:-1]
+        self.prev_images = [images[-1]] + images[:-1]
         self.delays = delays
-        self.transitions = [ transitions[-1] ] + transitions[:-1]
-            
-            
+        self.transitions = [transitions[-1]] + transitions[:-1]
+
     def render(self, width, height, st, at):
 
         if self.anim_timebase:
@@ -447,7 +444,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
             orig_t = st
 
         t = orig_t % sum(self.delays)
-            
+
         for image, prev, delay, trans in zip(self.images, self.prev_images, self.delays, self.transitions):
             if t < delay:
                 if not renpy.game.less_updates:
@@ -455,19 +452,20 @@ class TransitionAnimation(renpy.display.core.Displayable):
 
                 if trans and orig_t >= self.delays[0]:
                     image = trans(old_widget=prev, new_widget=image)
-                
+
                 im = renpy.display.render.render(image, width, height, t, at)
                 width, height = im.get_size()
                 rv = renpy.display.render.Render(width, height)
                 rv.blit(im, (0, 0))
 
                 return rv
-            
+
             else:
                 t = t - delay
 
     def visit(self):
         return self.images
+
 
 class Blink(renpy.display.core.Displayable):
     """
@@ -501,7 +499,7 @@ class Blink(renpy.display.core.Displayable):
 
         @param anim_timebase: If True, use the animation timebase, if false, the displayable timebase.
         """
-        
+
         super(Blink, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
@@ -516,9 +514,8 @@ class Blink(renpy.display.core.Displayable):
 
         self.cycle = on + set + off + rise
 
-
     def visit(self):
-        return [ self.image ]
+        return [self.image]
 
     def render(self, height, width, st, at):
 
@@ -537,7 +534,7 @@ class Blink(renpy.display.core.Displayable):
         time -= self.on
 
         if 0 <= time < self.set:
-            delay = 0            
+            delay = 0
             frac = time / self.set
             alpha = self.low * frac + self.high * (1.0 - frac)
 
@@ -551,7 +548,7 @@ class Blink(renpy.display.core.Displayable):
 
         if 0 <= time < self.rise:
             delay = 0
-            frac = time / self.rise 
+            frac = time / self.rise
             alpha = self.high * frac + self.low * (1.0 - frac)
 
 
@@ -561,12 +558,11 @@ class Blink(renpy.display.core.Displayable):
 
         rv.blit(rend, (0, 0))
         rv.alpha = alpha
-        
+
         if not renpy.game.less_updates:
             renpy.display.render.redraw(self, delay)
 
         return rv
-
 
 
 def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **properties):
@@ -610,7 +606,7 @@ def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **prope
     i = 0
 
     # Arguments to Animation
-    args = [ ]
+    args = []
 
     for r in range(0, rows):
         for c in range(0, cols):
@@ -627,7 +623,7 @@ def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **prope
 
         if i == frames:
             break
-            
+
     if not loop:
         args.pop()
 

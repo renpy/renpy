@@ -29,21 +29,21 @@
 # - True to allow shader rendering.
 # - True to allow fixed-function rendering.
 
-# If both of the last two entries are false, GL refuses to 
+# If both of the last two entries are false, GL refuses to
 # start.
 
 BLACKLIST = [
-    
+
     # Crashes for Mugenjohncel.
     ("S3 Graphics DeltaChrome", "1.4 20.00", False, False),
 
     # A bug in Mesa 7.9 and 7.10 (before 7.10.3) causes the system to
-    # fail to initialize the GLSL compiler. 
-    # https://bugs.freedesktop.org/show_bug.cgi?id=35603    
+    # fail to initialize the GLSL compiler.
+    # https://bugs.freedesktop.org/show_bug.cgi?id=35603
     ("Mesa", "Mesa 7.9", False, True),
-    ("Mesa", "Mesa 7.10.3", True, True), 
+    ("Mesa", "Mesa 7.10.3", True, True),
     ("Mesa", "Mesa 7.10", False, True),
 
-    # Default to allowing everything.    
+    # Default to allowing everything.
     ("", "", True, True),
     ]

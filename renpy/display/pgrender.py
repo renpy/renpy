@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This module wraps the pygame surface class (and associated functions). It 
+# This module wraps the pygame surface class (and associated functions). It
 # ensures that returned surfaces have a 2px border around them.
 
 import sys
@@ -30,6 +30,7 @@ import renpy.display
 sample_alpha = None
 sample_noalpha = None
 
+
 def set_rgba_masks():
     """
     This rebuilds the sample surfaces, to ones that use the given
@@ -38,7 +39,7 @@ def set_rgba_masks():
 
     # Annoyingly, the value for the big mask seems to vary from
     # platform to platform. So we read it out of a surface.
-    
+
     global sample_alpha
     global sample_noalpha
 
@@ -48,18 +49,18 @@ def set_rgba_masks():
 
     # Sort the components by absolute value.
     masks = list(sample_alpha.get_masks())
-    masks.sort(key=lambda a : abs(a))
+    masks.sort(key=lambda a: abs(a))
 
     # Choose the masks.
     if sys.byteorder == 'big':
-        masks = ( masks[3], masks[2], masks[1], masks[0] )
+        masks = (masks[3], masks[2], masks[1], masks[0])
     else:
-        masks = ( masks[0], masks[1], masks[2], masks[3] )
+        masks = (masks[0], masks[1], masks[2], masks[3])
 
     # Create the sample surface.
     sample_alpha = pygame.Surface((10, 10), 0, 32, masks)
     sample_noalpha = pygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
-    
+
 
 class Surface(pygame.Surface):
     """
@@ -68,10 +69,10 @@ class Surface(pygame.Surface):
     """
 
     opaque = False
-    
+
     def is_opaque(self):
         return self.opaque
-    
+
     def convert_alpha(self, surface=None):
         return copy_surface_unscaled(self, True)
 
@@ -85,6 +86,7 @@ class Surface(pygame.Surface):
         rv = pygame.Surface.subsurface(self, rect)
         return rv
 
+
 def surface((width, height), alpha):
     """
     Constructs a new surface. The allocated surface is actually a subsurface
@@ -95,7 +97,7 @@ def surface((width, height), alpha):
 
     if isinstance(alpha, pygame.Surface):
         alpha = alpha.get_masks()[3]
-    
+
     if alpha:
         sample = sample_alpha
     else:
@@ -105,17 +107,18 @@ def surface((width, height), alpha):
     # to get us underway.
     if sample is None:
         sample = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
-        
+
     surf = Surface((width + 4, height + 4), 0, sample)
     return surf.subsurface((2, 2, width, height)) # E1101
 
 surface_unscaled = surface
 
+
 def copy_surface(surf, alpha=True):
     """
     Creates a copy of the surface.
     """
-    
+
     rv = surface_unscaled(surf.get_size(), alpha)
 
     renpy.display.render.blit_lock.acquire()
@@ -165,6 +168,3 @@ def transform_rotate(surf, angle):
     return copy_surface(surf)
 
 transform_rotate_unscaled = transform_rotate
-
-
-
