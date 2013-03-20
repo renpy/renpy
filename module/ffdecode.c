@@ -41,8 +41,8 @@
 
 #undef exit
 
-#define MAX_VIDEOQ_SIZE (5 * 256 * 1024)
-#define MAX_AUDIOQ_SIZE (5 * 16 * 1024)
+#define MIN_AUDIOQ_SIZE (20 * 16 * 1024)
+#define MIN_FRAMES 5
 
 /* SDL audio buffer size, in samples. Should be small to have precise
    A/V sync as SDL does not have hardware buffer fullness info. */
@@ -635,7 +635,7 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
     SDL_LockMutex(is->pictq_mutex);
     while (is->pictq_size >= VIDEO_PICTURE_QUEUE_SIZE &&
            !is->videoq.abort_request) {
-        SDL_CondWait(is->pictq_cond, is->pictq_mutex);
+    	SDL_CondWait(is->pictq_cond, is->pictq_mutex);
     }
     SDL_UnlockMutex(is->pictq_mutex);
 
@@ -660,7 +660,7 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
 
         /* wait until the picture is allocated */
         while (!vp->allocated && !is->videoq.abort_request) {
-            SDL_CondWait(is->pictq_cond, is->pictq_mutex);
+        	SDL_CondWait(is->pictq_cond, is->pictq_mutex);
         }
         SDL_UnlockMutex(is->pictq_mutex);
 
@@ -1290,12 +1290,12 @@ static int decode_thread(void *arg)
         if (is->abort_request) {
             break;
         }
-            
+
         /* if the queue are full, no need to read more */
-        if (is->audioq.size > MAX_AUDIOQ_SIZE ||
-            is->videoq.size > MAX_VIDEOQ_SIZE) {
-            
-            /* wait 2 ms - or wait for quit notify.*/
+        if ((is->audioq.size > MIN_AUDIOQ_SIZE || is->audio_stream < 0) &&
+        	(is->videoq.nb_packets > MIN_FRAMES || is->video_stream < 0)) {
+
+        	/* wait 2 ms - or wait for quit notify.*/
             SDL_LockMutex(is->quit_mutex);
             SDL_CondWaitTimeout(is->quit_cond, is->quit_mutex, 2);
             SDL_UnlockMutex(is->quit_mutex);
