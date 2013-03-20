@@ -31,49 +31,50 @@ import os
 import renpy
 
 
-# A list of (name, filename, linenumber) tuples, for various types of 
+# A list of (name, filename, linenumber) tuples, for various types of
 # name. These are added to as the definitions occur.
-definitions = [ ]
-transforms = [ ]
-screens = [ ]
+definitions = []
+transforms = []
+screens = []
 
 
 # Does a file exist? We cache the result here.
-file_exists_cache = { }
+file_exists_cache = {}
+
 
 def file_exists(fn):
     rv = file_exists_cache.get(fn, None)
 
     if rv is None:
         fullfn = renpy.parser.unelide_filename(fn)
-        
+
         rv = os.path.exists(fullfn)
         file_exists_cache[fn] = rv
-        
+
     return rv
 
 
 # Did we do a dump?
 completed_dump = False
 
+
 def dump(error):
     """
     Causes a JSON dump file to be written, if the user has requested it.
-    
+
     `error`
         An error flag that is added to the written file.
     """
-    
-    
+
     global completed_dump
-    
+
     args = renpy.game.args
-    
+
     if completed_dump:
         return
-   
-    completed_dump = True 
-    
+
+    completed_dump = True
+
     if not args.json_dump:
         return
 
@@ -83,7 +84,7 @@ def dump(error):
         """
 
         filename = filename.replace("\\", "/")
-        
+
         if name.startswith("_") and not args.json_dump_private:
             if name.startswith("__") and name.endswith("__"):
                 pass
@@ -95,89 +96,86 @@ def dump(error):
 
         if filename.startswith("common/") or filename.startswith("renpy/common/"):
             return args.json_dump_common
-        
+
         if not filename.startswith("game/"):
             return False
-        
+
         return True
 
-    result = { }
+    result = {}
 
     # Error flag.
     result["error"] = error
-    
-    # The JSON object we return.   
-    location = { }
+
+    # The JSON object we return.
+    location = {}
     result["location"] = location
 
     # Labels.
-    label = location["label"] = { }
-    
+    label = location["label"] = {}
+
     for name, n in renpy.game.script.namemap.iteritems():
         filename = n.filename
         line = n.linenumber
-        
+
         if not isinstance(name, basestring):
             continue
 
         if not filter(name, filename):
             continue
-        
-        label[name] = [ filename, line ]
-        
-        
+
+        label[name] = [filename, line]
+
     # Definitions.
-    define = location["define"] = { }
-    
+    define = location["define"] = {}
+
     for name, filename, line in definitions:
         if not filter(name, filename):
             continue
-        
-        define[name] = [ filename, line ]
+
+        define[name] = [filename, line]
 
     # Screens.
-    screen = location["screen"] = { }
-    
+    screen = location["screen"] = {}
+
     for name, filename, line in screens:
         if not filter(name, filename):
             continue
-        
-        screen[name] = [ filename, line ]
+
+        screen[name] = [filename, line]
 
     # Transforms.
-    transform = location["transform"] = { }
-    
+    transform = location["transform"] = {}
+
     for name, filename, line in transforms:
         if not filter(name, filename):
             continue
-        
-        transform[name] = [ filename, line ]
-        
-        
-    # Code.
 
+        transform[name] = [filename, line]
+
+    # Code.
     def get_line(o):
         """
         Returns the filename and the first line number of the class or function o. Returns
         None, None if unknown.
-        
+
         For a class, this doesn't return the first line number of the class, but rather
         the line number of the first method in the class - hopefully.
         """
-        
+
         if inspect.isfunction(o):
             return inspect.getfile(o), o.func_code.co_firstlineno
-        
+
         if inspect.ismethod(o):
             return get_line(o.im_func)
-        
+
         return None, None
-    
-    code = location["callable"] = { }
-        
+
+    code = location["callable"] = {}
+
     for modname, mod in sys.modules.items():
 
-        if mod is None: 
+        if mod is None:
             continue
 
         if modname == "store":
@@ -188,57 +186,55 @@ def dump(error):
             continue
 
         for name, o in inspect.getmembers(mod):
-            
+
             if inspect.isfunction(o):
                 try:
                     if inspect.getmodule(o) != mod:
                         continue
 
                     filename, line = get_line(o)
- 
+
                     if filename is None:
                         continue
-                    
+
                     if not filter(name, filename):
                         continue
-    
-                    code[prefix + name] = [ filename, line ]
+
+                    code[prefix + name] = [filename, line]
                 except:
                     continue
 
             if inspect.isclass(o):
 
                 for methname, method in o.__dict__.iteritems():
-                
+
                     try:
                         if inspect.getmodule(method) != mod:
                             continue
-    
+
                         filename, line = get_line(method)
-     
+
                         if filename is None:
                             continue
-                        
+
                         if not filter(name, filename):
                             continue
 
                         if not filter(methname, filename):
                             continue
-        
-                        code[prefix + name + "." + methname] = [ filename, line ]
+
+                        code[prefix + name + "." + methname] = [filename, line]
                     except:
                         continue
-   
+
     # Add the build info from 00build.rpy, if it's available.
     try:
         result["build"] = renpy.store.build.dump() #@UndefinedVariable
     except:
         pass
-    
+
     if args.json_dump != "-":
         with file(args.json_dump, "w") as f:
             json.dump(result, f)
     else:
         json.dump(result, sys.stdout, indent=2)
-        
-    

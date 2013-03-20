@@ -21,7 +21,7 @@
 
 # This module is intended to be used as a singleton object.
 # It's purpose is to store in one global all of the data that would
-# be to annoying to lug around otherwise. 
+# be to annoying to lug around otherwise.
 
 import renpy.display
 
@@ -30,7 +30,7 @@ basepath = None
 
 # A list of paths that we search to load things. This is searched for
 # everything that can be loaded, before archives are used.
-searchpath = [ ]
+searchpath = []
 
 # The options that were read off the command line.
 args = None
@@ -39,7 +39,7 @@ args = None
 script = None
 
 # A stack of execution contexts.
-contexts = [ ]
+contexts = []
 
 # The interface that the game uses to interact with the user.
 interface = None
@@ -59,16 +59,16 @@ exception_info = ''
 style = None
 
 # The set of statements we've seen in this session.
-seen_session = { }
+seen_session = {}
 
 # The set of statements we've ever seen.
-seen_ever = { }
+seen_ever = {}
 
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
 # Code that's run after the init code.
-post_init = [ ]
+post_init = []
 
 # Should we attempt to run in a mode that uses less memory?
 less_memory = False
@@ -83,6 +83,7 @@ less_mouse = False
 # Should we not imagedissiolve?
 less_imagedissolve = False
 
+
 # The class that's used to hold the persistent data.
 class Persistent(object):
 
@@ -95,9 +96,10 @@ class Persistent(object):
     # Undefined attributes return None.
     def __getattr__(self, attr):
         return None
-        
+
 # The persistent data that's kept from session to session
 persistent = Persistent()
+
 
 class Preferences(renpy.object.Object):
     """
@@ -117,14 +119,14 @@ class Preferences(renpy.object.Object):
             self.performance_test = True
         if version < 5:
             self.language = None
-            
+
     def __init__(self):
-        self.fullscreen = False 
+        self.fullscreen = False
         self.skip_unseen = False
         self.text_cps = 0
         self.afm_time = 0
         self.afm_enable = True
-        
+
         # These will be going away soon.
         self.sound = True
         self.music = True
@@ -139,11 +141,11 @@ class Preferences(renpy.object.Object):
         # Mixer channel info.
 
         # A map from channel name to the current volume (between 0 and 1).
-        self.volumes = { }
+        self.volumes = {}
 
         # True if the channel should not play music. False
         # otherwise. (Not used anymore.)
-        self.mute = { }
+        self.mute = {}
 
         # Joystick mappings.
         self.joymap = dict(
@@ -152,33 +154,34 @@ class Preferences(renpy.object.Object):
             joy_up="Axis 0.1 Negative",
             joy_down="Axis 0.1 Positive",
             joy_dismiss="Button 0.0")
-        
+
         # The size of the window, or None if we don't know it yet.
         self.physical_size = None
-        
+
         # The graphics renderer we use.
         self.renderer = "auto"
-        
+
         # Should we do a performance test on startup?
         self.performance_test = True
 
         # The language we use for translations.
         self.language = None
-        
+
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume
 
     def get_volume(self, mixer):
         return self.volumes.get(mixer, 0)
-        
+
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute
 
     def get_mute(self, mixer):
         return self.mute[mixer]
-    
+
 # The current preferences.
 preferences = Preferences()
+
 
 class RestartContext(Exception):
     """
@@ -197,15 +200,18 @@ class RestartTopContext(Exception):
 
     def __init__(self, label):
         self.label = label
-   
+
+
 class FullRestartException(Exception):
     """
     An exception of this type forces a hard restart, completely
     destroying the store and config and so on.
     """
 
+
     def __init__(self, reason="end_game"): # W0231
         self.reason = reason
+
 
 class UtterRestartException(Exception):
     """
@@ -213,11 +219,12 @@ class UtterRestartException(Exception):
     Ren'Py and the script to be reloaded.
     """
 
+
 class QuitException(Exception):
     """
     An exception of this class will let us force a safe quit, from
     anywhere in the program.
-    
+
     `relaunch`
         If given, the program will run another copy of itself, with the
         same arguments.
@@ -227,6 +234,7 @@ class QuitException(Exception):
         Exception.__init__(self)
         self.relaunch = relaunch
 
+
 class JumpException(Exception):
     """
     This should be raised with a label as the only argument. This causes
@@ -234,30 +242,34 @@ class JumpException(Exception):
     to the named label.
     """
 
+
 class JumpOutException(Exception):
     """
     This should be raised with a label as the only argument. This exits
     the current context, and then raises a JumpException.
     """
 
+
 class CallException(Exception):
     """
-    Raise this exception to cause the current statement to terminate, 
+    Raise this exception to cause the current statement to terminate,
     and control to be transferred to the named label.
     """
 
     def __init__(self, label, args, kwargs):
         Exception.__init__(self)
-        
+
         self.label = label
         self.args = args
         self.kwargs = kwargs
 
+
 class EndReplay(Exception):
     """
-    Raise this exception to end the current replay (the current call to 
+    Raise this exception to end the current replay (the current call to
     call_replay).
     """
+
 
 class ParseErrorException(Exception):
     """
@@ -265,7 +277,7 @@ class ParseErrorException(Exception):
     reported to the user.
     """
 
-# A tuple of exceptions that should not be caught by the 
+# A tuple of exceptions that should not be caught by the
 # exception reporting mechanism.
 CONTROL_EXCEPTIONS = (
     RestartContext,
@@ -281,7 +293,7 @@ CONTROL_EXCEPTIONS = (
     KeyboardInterrupt,
     )
 
-    
+
 def context(index=-1):
     """
     Return the current execution context, or the context at the
@@ -289,6 +301,7 @@ def context(index=-1):
     """
 
     return contexts[index]
+
 
 def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
     """
@@ -322,7 +335,7 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
 
         return callable(*args, **kwargs)
 
-    except renpy.game.JumpOutException, e:        
+    except renpy.game.JumpOutException, e:
 
         raise renpy.game.JumpException(e.args[0])
 
@@ -334,8 +347,7 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
-        
-        
+
 def call_in_new_context(label, *args, **kwargs):
     """
     This code creates a new context, and starts executing code from
@@ -352,27 +364,27 @@ def call_in_new_context(label, *args, **kwargs):
 
     if renpy.display.interface is not None:
         renpy.display.interface.enter_context()
-    
+
     if args:
         renpy.store._args = args
     else:
         renpy.store._args = None
 
-    if kwargs:    
+    if kwargs:
         renpy.store._kwargs = renpy.python.RevertableDict(kwargs)
     else:
         renpy.store._kwargs = None
-    
+
     try:
-            
+
         context.goto_label(label)
         renpy.execution.run_context(False)
 
         rv = renpy.store._return #@UndefinedVariable
 
         return rv
-        
-    except renpy.game.JumpOutException, e:        
+
+    except renpy.game.JumpOutException, e:
 
         raise renpy.game.JumpException(e.args[0])
 
@@ -380,14 +392,15 @@ def call_in_new_context(label, *args, **kwargs):
 
         contexts.pop()
         contexts[-1].do_deferred_rollback()
-   
+
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
+
 
 def call_replay(label, scope={}):
     """
     :doc: replay
-    
+
     Calls a label as a memory.
 
     Keyword arguments are used to set the initial values of variables in the
@@ -395,13 +408,13 @@ def call_replay(label, scope={}):
     """
 
     renpy.game.log.complete()
-    
+
     old_log = renpy.game.log
     renpy.game.log = renpy.python.RollbackLog()
-    
+
     sb = renpy.python.StoreBackup()
     renpy.python.clean_stores()
-    
+
     context = renpy.execution.Context(True)
     contexts.append(context)
 
@@ -410,9 +423,9 @@ def call_replay(label, scope={}):
 
     for k, v in scope.iteritems():
         setattr(renpy.store, k, v)
-        
+
     renpy.store._in_replay = label
-    
+
     try:
 
         context.goto_label("_start_replay")
@@ -425,12 +438,12 @@ def call_replay(label, scope={}):
         contexts.pop()
         renpy.game.log = old_log
         sb.restore()
-         
+
         if interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
-    
-    
-# Type information.       
+
+
+# Type information.
 if False:
     script = renpy.script.Script()
     interface = renpy.display.core.Interface()

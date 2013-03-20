@@ -19,27 +19,26 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
 class Object(object):
     """
     Our own base class. Contains methods to simplify serialization.
     """
 
     __version__ = 0
-    
-    nosave = [ ]
+
+    nosave = []
 
     def __getstate__(self):
         rv = vars(self).copy()
-        
+
         for f in self.nosave:
             if f in rv:
                 del rv[f]
 
-
         rv["__version__"] = self.__version__
-                
-        return rv
 
+        return rv
 
     # None, to prevent this from being called when unnecessary.
     after_setstate = None
@@ -47,14 +46,14 @@ class Object(object):
     def __setstate__(self, new_dict):
 
         version = new_dict.pop("__version__", 0)
-        
+
         self.__dict__.update(new_dict)
-        
+
         if version != self.__version__:
-            self.after_upgrade(version) # E1101
-            
+            self.after_upgrade(version)  # E1101
+
         if self.after_setstate:
-            self.after_setstate() # E1102
+            self.after_setstate()  # E1102
 
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.

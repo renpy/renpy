@@ -31,11 +31,12 @@ import collections
 
 # A map from image name to the displayable object corresponding to that
 # image.
-images = { }
-    
+images = {}
+
 # A map from image tag to lists of possible attributes for images with that
 # tag.
 image_attributes = collections.defaultdict(list)
+
 
 def register_image(name, d):
     """
@@ -56,6 +57,7 @@ def wrap_render(child, w, h, st, at):
     rv.blit(rend, (0, 0))
     return rv
 
+
 class ImageReference(renpy.display.core.Displayable):
     """
     ImageReference objects are used to reference images by their name,
@@ -63,16 +65,16 @@ class ImageReference(renpy.display.core.Displayable):
     the image in an image statment.
     """
 
-    nosave = [ 'target' ]
+    nosave = ['target']
     target = None
     param_target = None
-    
+
     def __init__(self, name, **properties):
         """
         @param name: A tuple of strings, the name of the image. Or else
         a displayable, containing the image directly.
         """
-        
+
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
@@ -82,7 +84,7 @@ class ImageReference(renpy.display.core.Displayable):
             return self.param_target._get_parameterized()
 
         return self
-        
+
     def find_target(self):
 
         if self.param_target:
@@ -94,11 +96,11 @@ class ImageReference(renpy.display.core.Displayable):
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
             return True
-        
+
         if not isinstance(name, tuple):
             name = tuple(name.split())
-        
-        parameters = [ ]
+
+        parameters = []
 
         def error(msg):
             self.target = renpy.text.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
@@ -106,7 +108,6 @@ class ImageReference(renpy.display.core.Displayable):
             if renpy.config.debug:
                 raise Exception(msg)
 
-            
         # Scan through, searching for an image (defined with an
         # input statement) that is a prefix of the given name.
         while name:
@@ -136,7 +137,7 @@ class ImageReference(renpy.display.core.Displayable):
     def parameterize(self, name, parameters):
         if not self.target:
             self.find_target()
-  
+
         return self.target.parameterize(name, parameters)
 
     def _hide(self, st, at, kind):
@@ -150,13 +151,13 @@ class ImageReference(renpy.display.core.Displayable):
             self.find_target()
 
         return self.target.set_transform_event(event)
-    
+
     def event(self, ev, x, y, st):
         if not self.target:
             self.find_target()
 
         return self.target.event(ev, x, y, st)
-        
+
     def render(self, width, height, st, at):
         if not self.target:
             self.find_target()
@@ -169,7 +170,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         if not renpy.config.imagereference_respects_position:
             return self.target.get_placement()
-            
+
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.target.get_placement()
 
         if xpos is None:
@@ -183,24 +184,23 @@ class ImageReference(renpy.display.core.Displayable):
 
         if yanchor is None:
             yanchor = self.style.yanchor
-            
+
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
 
     def visit(self):
         if not self.target:
             self.find_target()
 
-        return [ self.target ]
+        return [self.target]
 
 
-    
 class ShownImageInfo(renpy.object.Object):
     """
     This class keeps track of which images are being shown right now,
     and what the attributes of those images are. (It's used for a similar
     purpose during prediction, regarding the state in the future.)
     """
-    
+
     __version__ = 2
 
     def __init__(self, old=None):
@@ -208,14 +208,14 @@ class ShownImageInfo(renpy.object.Object):
         Creates a new object. If `old` is given, copies the default state
         from old, otherwise initializes the object to a default state.
         """
-        
+
         if old is None:
 
             # A map from (layer, tag) -> tuple of attributes
             # This doesn't necessarily correspond to something that is
             # currently showing, as we can remember the state of a tag
             # for use in SideImage.
-            self.attributes = { }
+            self.attributes = {}
 
             # A set of (layer, tag) pairs that are being shown on the
             # screen right now.
@@ -224,27 +224,26 @@ class ShownImageInfo(renpy.object.Object):
         else:
             self.attributes = old.attributes.copy()
             self.shown = old.shown.copy()
-        
-    
+
     def after_upgrade(self, version):
         if version < 2:
 
-            self.attributes = { }
+            self.attributes = {}
             self.shown = set()
-            
+
             for layer in self.images:
                 for tag in self.images[layer]:
                     self.attributes[layer, tag] = self.images[layer][tag][1:]
                     self.shown.add((layer, tag))
-               
+
     def get_attributes(self, layer, tag):
         """
-        Get the attributes associated the image with tag on the given 
+        Get the attributes associated the image with tag on the given
         layer.
         """
-        
+
         return self.attributes.get((layer, tag), ())
-                    
+
     def showing(self, layer, name):
         """
         Returns true if name is the prefix of an image that is showing
@@ -256,9 +255,9 @@ class ShownImageInfo(renpy.object.Object):
 
         if (layer, tag) not in self.shown:
             return None
-       
+
         shown = self.attributes[layer, tag]
-        
+
         if len(shown) < len(rest):
             return False
 
@@ -272,7 +271,7 @@ class ShownImageInfo(renpy.object.Object):
         """
         Predicts the scene statement being called on layer.
         """
-        
+
         for l, t in self.attributes.keys():
             if l == layer:
                 del self.attributes[l, t]
@@ -282,9 +281,9 @@ class ShownImageInfo(renpy.object.Object):
     def predict_show(self, layer, name, show=True):
         """
         Predicts name being shown on layer.
-        
+
         `show`
-            If True, the image will be flagged as being shown to the user. If 
+            If True, the image will be flagged as being shown to the user. If
             False, only the attributes will be updated.
         """
 
@@ -304,7 +303,6 @@ class ShownImageInfo(renpy.object.Object):
 
         self.shown.discard((layer, tag))
 
-
     def apply_attributes(self, layer, tag, name):
         """
         Given a layer, tag, and an image name (with attributes),
@@ -316,14 +314,14 @@ class ShownImageInfo(renpy.object.Object):
         # If the name matches one that exactly exists, return it.
         if name in images:
             return name
-        
+
         nametag = name[0]
-        
+
         # The set of attributes a matching image must have.
         required = set(name[1:])
 
         # The set of attributes a matching image may have.
-        optional = set(self.attributes.get((layer, tag), [ ]))
+        optional = set(self.attributes.get((layer, tag), []))
 
         # Deal with banned attributes..
         for i in name[1:]:
@@ -334,7 +332,7 @@ class ShownImageInfo(renpy.object.Object):
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
-        """        
+        """
         """
 
         # The longest length of an image that matches.
@@ -342,7 +340,7 @@ class ShownImageInfo(renpy.object.Object):
 
         # The list of matching images.
         matches = None
-        
+
         for attrs in image_attributes[tag]:
 
             num_required = 0
@@ -356,21 +354,21 @@ class ShownImageInfo(renpy.object.Object):
                     break
 
             else:
-                
+
                 # We don't have any not-found attributes. But we might not
                 # have all of the attributes.
-                
+
                 if num_required != len(required):
                     continue
 
                 len_attrs = len(attrs)
-                
+
                 if len_attrs < max_len:
                     continue
 
                 if len_attrs > max_len:
                     max_len = len_attrs
-                    matches = [ ]
+                    matches = []
 
                 matches.append((tag, ) + attrs)
 
@@ -387,11 +385,10 @@ class ShownImageInfo(renpy.object.Object):
 
 renpy.display.core.ImagePredictInfo = ShownImageInfo
 
-                    
+
 # Functions that have moved from this module to other modules,
 # that live here for the purpose of backward-compatibility.
 Image = renpy.display.im.image
 Solid = renpy.display.imagelike.Solid
 Frame = renpy.display.imagelike.Frame
 ImageButton = renpy.display.behavior.ImageButton
-

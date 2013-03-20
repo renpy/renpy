@@ -25,6 +25,7 @@ from renpy.display.render import render, Render, Matrix2D
 # This file contains displayables that are image-like, because they take
 # up a rectangular area of the screen, and do not respond to input.
 
+
 class Solid(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
@@ -32,9 +33,9 @@ class Solid(renpy.display.core.Displayable):
     A displayable that fills the area its assigned with `color`.
 
     ::
-    
+
         image white = Solid("#fff")
-    
+
     """
 
     def __init__(self, color, **properties):
@@ -47,12 +48,12 @@ class Solid(renpy.display.core.Displayable):
             self.color = None
 
     def visit(self):
-        return [ ]
-        
+        return []
+
     def render(self, width, height, st, at):
 
         color = self.color or self.style.color
-        
+
         rv = Render(width, height)
 
         if color is None or width <= 0 or height <= 0:
@@ -66,16 +67,17 @@ class Solid(renpy.display.core.Displayable):
             tex = renpy.display.draw.solid_texture(SIZE, SIZE, color)
             rv.forward = Matrix2D(1.0 * SIZE / width, 0, 0, 1.0 * SIZE / height)
             rv.reverse = Matrix2D(1.0 * width / SIZE, 0, 0, 1.0 * height / SIZE)
-        
+
         rv.blit(tex, (0, 0))
 
         return rv
-        
+
+
 class Frame(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
     :args: (image, xborder, yborder, tile=False, **properties)
-    
+
     A displayable that resizes an image to fill the available area,
     while preserving the width and height of its borders.  is often
     used as the background of a window or button.
@@ -89,14 +91,14 @@ class Frame(renpy.display.core.Displayable):
 
     `left`
         The size of the border on the left side.
-        
+
     `top`
         The size of the border on the top.
-        
+
     `right`
-        The size of the border on the right side. If None, defaults 
+        The size of the border on the right side. If None, defaults
         to `left`.
-        
+
     `bottom`
         The side of the border on the bottom. If None, defaults to `top`.
 
@@ -106,11 +108,11 @@ class Frame(renpy.display.core.Displayable):
 
     ::
 
-         # Resize the background of the text window if it's too small.         
+         # Resize the background of the text window if it's too small.
          init python:
              style.window.background = Frame("frame.png", 10, 10)
         """
-        
+
     __version__ = 1
 
     def after_upgrade(self, version):
@@ -143,13 +145,13 @@ class Frame(renpy.display.core.Displayable):
         sw, sh = crend.get_size()
         sw = int(sw)
         sh = int(sh)
-        
+
         dw = int(width)
         dh = int(height)
-        
+
         bw = self.left + self.right
         bh = self.top + self.bottom
-        
+
         xborder = min(bw, sw - 2, dw)
         if xborder:
             left = self.left * xborder / bw
@@ -157,14 +159,14 @@ class Frame(renpy.display.core.Displayable):
         else:
             left = 0
             right = 0
-            
+
         yborder = min(bh, sh - 2, dh)
         if yborder:
             top = self.top * yborder / bh
             bottom = self.bottom * yborder / bh
         else:
             top = 0
-            bottom = 0 
+            bottom = 0
 
         if renpy.display.draw.info["renderer"] == "sw":
             return self.sw_render(crend, dw, dh, left, top, right, bottom)
@@ -198,7 +200,7 @@ class Frame(renpy.display.core.Displayable):
             else:
                 dy0 = dh + y0
                 sy0 = sh + y0
-        
+
             # bottom side
             if y1 > 0:
                 dy1 = y1
@@ -210,7 +212,7 @@ class Frame(renpy.display.core.Displayable):
             # Quick exit.
             if sx0 == sx1 or sy0 == sy1:
                 return
-            
+
             # Compute sizes.
             csw = sx1 - sx0
             csh = sy1 - sy0
@@ -219,25 +221,25 @@ class Frame(renpy.display.core.Displayable):
 
             if csw <= 0 or csh <= 0 or cdh <= 0 or cdw <= 0:
                 return
-            
+
             # Get a subsurface.
             cr = crend.subsurface((sx0, sy0, csw, csh))
-                        
+
             # Scale or tile if we have to.
             if csw != cdw or csh != cdh:
 
                 if self.tile:
                     newcr = Render(cdw, cdh)
                     newcr.clipping = True
-                    
+
                     for x in xrange(0, cdw, csw):
                         for y in xrange(0, cdh, csh):
                             newcr.blit(cr, (x, y))
 
                     cr = newcr
-                    
+
                 else:
-                    
+
                     newcr = Render(cdw, cdh)
                     newcr.forward = Matrix2D(1.0 * csw / cdw, 0, 0, 1.0 * csh / cdh)
                     newcr.reverse = Matrix2D(1.0 * cdw / csw, 0, 0, 1.0 * cdh / csh)
@@ -248,11 +250,11 @@ class Frame(renpy.display.core.Displayable):
             # Blit.
             rv.blit(cr, (dx0, dy0))
             return
-        
+
         rv = Render(dw, dh)
 
         self.draw_pattern(draw, left, top, right, bottom)
-        
+
         return rv
 
     def draw_pattern(self, draw, left, top, right, bottom):
@@ -286,8 +288,6 @@ class Frame(renpy.display.core.Displayable):
             if right:
                 draw(-right, 0, -bottom, 0)
 
-        
-    
     def sw_render(self, crend, dw, dh, left, top, right, bottom):
 
         source = crend.render_to_texture(True)
@@ -309,7 +309,7 @@ class Frame(renpy.display.core.Displayable):
             else:
                 dx0 = dw + x0
                 sx0 = sw + x0
-        
+
             # right side.
             if x1 > 0:
                 dx1 = x1
@@ -325,7 +325,7 @@ class Frame(renpy.display.core.Displayable):
             else:
                 dy0 = dh + y0
                 sy0 = sh + y0
-        
+
             # bottom side
             if y1 > 0:
                 dy1 = y1
@@ -342,7 +342,7 @@ class Frame(renpy.display.core.Displayable):
             # Compute sizes.
             srcsize = (sx1 - sx0, sy1 - sy0)
             dstsize = (int(dx1 - dx0), int(dy1 - dy0))
-            
+
             # Get a subsurface.
             surf = source.subsurface((sx0, sy0, srcsize[0], srcsize[1]))
 
@@ -358,12 +358,12 @@ class Frame(renpy.display.core.Displayable):
                         for x in range(0, dstw, tilew):
                             surf2.blit(surf, (x, y))
 
-                    surf = surf2 
+                    surf = surf2
 
                 else:
                     surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
                     surf = surf2
-                        
+
             # Blit.
             dest.blit(surf, (dx0, dy0))
 
@@ -372,11 +372,9 @@ class Frame(renpy.display.core.Displayable):
         rrv = renpy.display.render.Render(dw, dh)
         rrv.blit(rv, (0, 0))
         rrv.depends_on(crend)
-                      
+
         # And, finish up.
         return rrv
-    
+
     def visit(self):
-        return [ self.image ]
-
-
+        return [self.image]

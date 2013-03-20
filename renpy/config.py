@@ -67,7 +67,7 @@ rollback_length = 128
 # buffer if the data has not changed.
 keep_rollback_data = False
 
-# If set to true, menus in fixed rollback will not have clickable 
+# If set to true, menus in fixed rollback will not have clickable
 # options and a click anywhere or mouse wheel will roll forward.
 fix_rollback_without_choice = False
 
@@ -77,11 +77,11 @@ hard_rollback_limit = 100
 
 # A list of functions returning lists of displayables that will be
 # added to the end of the display list.
-overlay_functions = [ ]
+overlay_functions = []
 
 # A list of Displayables that should always be added to the start
 # of the scene list. (Mostly used for keymaps and the like.)
-underlay = [ ]
+underlay = []
 
 # True to enable profiling.
 profile = False
@@ -117,10 +117,10 @@ skipping = None
 skip_delay = 25
 
 # basic: Archive files that are searched for images.
-archives = [ ]
+archives = []
 
 # Searchpath.
-searchpath = [ ]
+searchpath = []
 
 # If True, we will only try loading from archives.
 # Only useful for debugging Ren'Py, don't document.
@@ -139,23 +139,23 @@ fade_music = 0.0
 sticky_positions = False
 
 # A list of all of the layers that we know about.
-layers = [ 'master', 'transient', 'screens', 'overlay' ]
+layers = ['master', 'transient', 'screens', 'overlay']
 
 # A list of layers that should be cleared when we replace
 # transients.
-transient_layers = [ 'transient' ]
+transient_layers = ['transient']
 
 # A list of layers that should be cleared when we recompute
 # overlays.
-overlay_layers = [ 'overlay' ]
+overlay_layers = ['overlay']
 
 # A list of layers that should be cleared whe we enter a
 # new context.
-context_clear_layers = [ 'screens' ]
+context_clear_layers = ['screens']
 
 # A list of layers that are displayed atop all other layers, and do
 # not participate in transitions.
-top_layers = [ ]
+top_layers = []
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
@@ -173,21 +173,21 @@ focus_crossrange_penalty = 1024
 load_before_transition = True
 
 # The keymap that is used to change keypresses and mouse events.
-keymap = { }
+keymap = {}
 
 # Should we try to support joysticks?
 joystick = True
 
 # A list of functions that are called when an interaction is
 # started or restarted.
-interact_callbacks = [ ]
+interact_callbacks = []
 
 # A list of functions that are called when an interaction is started.
-start_interact_callbacks = [ ]
+start_interact_callbacks = []
 
 # A list of functions that are called when a say statement
 # is sustained.
-say_sustain_callbacks = [ ]
+say_sustain_callbacks = []
 
 # A function that is called to see if say should allow
 # itself to be dismissed.
@@ -213,7 +213,7 @@ auto_choice_delay = None
 # A map from font, bold, italic to font, bold, italic. This is used
 # to replace (say) the italic version of a regular font with the regular
 # version of an italic font.
-font_replacement_map = { }
+font_replacement_map = {}
 
 # A callback that is called when a with statement (but not
 # the with clause of a say or menu statement) executes. If not None,
@@ -245,7 +245,7 @@ developer = False
 log = None
 
 # Lint hooks.
-lint_hooks = [ ]
+lint_hooks = []
 
 # Hyperlink styler.
 hyperlink_styler = None
@@ -277,7 +277,7 @@ check_properties = True
 implicit_with_none = True
 
 # A map from a layer to (x, y, w, h) tuples that the layer is clipped to.
-layer_clipping = { }
+layer_clipping = {}
 
 # Should we disable the fullscreen optimization?
 disable_fullscreen_opt = False
@@ -289,7 +289,7 @@ reject_midi = True
 character_callback = None
 
 # Character callback list.
-all_character_callbacks = [ ]
+all_character_callbacks = []
 
 # The number of autosave slots we have.
 autosave_slots = 10
@@ -325,7 +325,7 @@ missing_image_callback = None
 say_menu_text_filter = None
 
 # Used to replace one label with another.
-label_overrides = { }
+label_overrides = {}
 
 # Called to get the extra_info for an auto_save.
 auto_save_extra_info = None
@@ -346,7 +346,7 @@ label_callback = None
 empty_window = None
 
 # A list of functions that are called when the window is shown.
-window_overlay_functions = [ ]
+window_overlay_functions = []
 
 # Do we support right-to-left languages?
 rtl = False
@@ -384,7 +384,7 @@ commondir = None
 gl_enable = True
 
 # A list of callbacks that are called by renpy.mode.
-mode_callbacks = [ ]
+mode_callbacks = []
 
 # Should MoveTransition take offsets into account?
 movetransition_respects_offsets = True
@@ -400,7 +400,7 @@ simulate_android = False
 imagemap_cache = True
 
 # Callbacks that are called in order to predict images.
-predict_callbacks = [ ]
+predict_callbacks = []
 
 # Should screens be predicted?
 predict_screens = True
@@ -412,7 +412,7 @@ choice_screen_chosen = True
 narrator_menu = False
 
 # A list of screen variants to use.
-variants = [ None ]
+variants = [None]
 
 # A function from (auto_parameter, variant) -> displayable.
 imagemap_auto_function = None
@@ -460,7 +460,7 @@ broken_line_spacing = False
 
 # A list of callbacks that are called after each non-init-phase python
 # block.
-python_callbacks = [ ]
+python_callbacks = []
 
 # If true, we dump information about a save upon save.
 save_dump = False
@@ -469,7 +469,7 @@ save_dump = False
 gl_resize = True
 
 # Called when we change the translation.
-change_language_callbacks = [ ]
+change_language_callbacks = []
 
 # The translation directory.
 tl_directory = "tl"
@@ -484,7 +484,8 @@ voice_tag_callback = None
 del renpy
 del os
 
+
 def init():
-    import renpy # W0404 @Reimport
+    import renpy  # W0404 @Reimport
     global style_properties
     style_properties = renpy.style.style_properties

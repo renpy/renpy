@@ -25,14 +25,15 @@ import renpy
 
 # The statement registry. It's a map from tuples giving the prefixes of
 # statements to dictionaries giving the methods used for that statement.
-registry = { }
+registry = {}
 
 parsers = renpy.parser.ParseTrie()
+
 
 def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False): #@ReservedAssignment
 
     name = tuple(name.split())
-    
+
     registry[name] = dict(parse=parse,
                           lint=lint,
                           execute=execute,
@@ -58,22 +59,22 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
             renpy.exports.pop_error_handler()
 
         if init and not l.init:
-            rv = renpy.ast.Init(loc, [ rv ], 0)
+            rv = renpy.ast.Init(loc, [rv], 0)
 
         return rv
-            
+
     renpy.parser.statements.add(name, parse_user_statement)
 
     # The function that is called to get our parse data.
     def parse_data(l):
         return (name, registry[name]["parse"](l))
-    
+
     parsers.add(name, parse_data)
 
 
 def parse(node, line, subblock):
 
-    block = [ (node.filename, node.linenumber, line, subblock) ]
+    block = [(node.filename, node.linenumber, line, subblock)]
     l = renpy.parser.Lexer(block)
     l.advance()
 
@@ -88,13 +89,13 @@ def parse(node, line, subblock):
 
     finally:
         renpy.exports.pop_error_handler()
-        
-        
+
+
 def call(method, parsed, *args, **kwargs):
     name, parsed = parsed
 
     method = registry[name].get(method)
     if method is None:
         return None
-    
+
     return method(parsed, *args, **kwargs)

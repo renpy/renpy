@@ -38,6 +38,7 @@ surface_file = None
 # The surface to display the movie on, if not fullscreen.
 surface = None
 
+
 def movie_stop(clear=True, only_fullscreen=False):
     """
     Stops the currently playing movie.
@@ -48,21 +49,21 @@ def movie_stop(clear=True, only_fullscreen=False):
 
     renpy.audio.music.stop(channel='movie')
 
-    
+
 def movie_start(filename, size=None, loops=0):
     """
-    This starts a movie playing. 
+    This starts a movie playing.
     """
-    
+
     if renpy.game.less_updates:
         return
 
     global default_size
-    
+
     if size is not None:
         default_size = size
-    
-    filename = [ filename ]
+
+    filename = [filename]
 
     if loops == -1:
         loop = True
@@ -75,6 +76,7 @@ def movie_start(filename, size=None, loops=0):
 movie_start_fullscreen = movie_start
 movie_start_displayable = movie_start
 
+
 def early_interact():
     """
     Called early in the interact process, to clear out the fullscreen
@@ -83,10 +85,10 @@ def early_interact():
 
     global fullscreen
     global current_movie
-    
+
     fullscreen = True
     current_movie = None
-    
+
 
 def interact():
     """
@@ -96,22 +98,23 @@ def interact():
 
     global surface
     global surface_file
-    
+
     if not renpy.audio.music.get_playing("movie"):
         surface = None
         surface_file = None
         return False
-        
-    if fullscreen: 
+
+    if fullscreen:
         return True
     else:
         return False
+
 
 def get_movie_texture():
     """
     Gets a movie texture we can draw to the screen.
     """
-    
+
     global surface
     global surface_file
 
@@ -140,17 +143,17 @@ def get_movie_texture():
 
 def render_movie(width, height):
     tex = get_movie_texture()
-    
+
     if tex is None:
         return None
-    
+
     sw, sh = tex.get_size()
-    
+
     scale = min(1.0 * width / sw, 1.0 * height / sh)
-    
+
     dw = scale * sw
     dh = scale * sh
-    
+
     rv = renpy.display.render.Render(width, height, opaque=True)
     rv.forward = renpy.display.render.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
     rv.reverse = renpy.display.render.Matrix2D(scale, 0.0, 0.0, scale)
@@ -158,31 +161,32 @@ def render_movie(width, height):
 
     return rv
 
+
 class Movie(renpy.display.core.Displayable):
     """
     This is a displayable that shows the current movie.
     """
 
     fullscreen = False
-    
+
     def __init__(self, fps=24, size=None, **properties):
         """
         @param fps: The framerate that the movie should be shown at.
         """
         super(Movie, self).__init__(**properties)
         self.size = size
-        
+
     def render(self, width, height, st, at):
-        
+
         size = self.size
-        
+
         if size is None:
             size = default_size
 
         width, height = size
-    
+
         rv = render_movie(width, height)
-        
+
         if rv is None:
             rv = renpy.display.render.Render(0, 0)
 
@@ -190,24 +194,24 @@ class Movie(renpy.display.core.Displayable):
         # the movie to disappear if it's ended, or if it hasn't started
         # yet.
         renpy.display.render.redraw(self, 0.1)
-    
+
         return rv
-    
-            
+
     def per_interact(self):
         global fullscreen
         fullscreen = False
 
         global current_movie
         current_movie = self
-        
-            
+
+
 def playing():
     return renpy.audio.music.get_playing("movie")
 
+
 def frequent():
     """
-    Called to update the video playback. Returns true if a video refresh is 
+    Called to update the video playback. Returns true if a video refresh is
     needed, false otherwise.
     """
 
@@ -215,20 +219,20 @@ def frequent():
         return 0
 
     pss = renpy.audio.audio.pss
- 
+
     if pss.needs_alloc():
-    
+
         if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
             surf = renpy.display.draw.fullscreen_surface
         else:
             get_movie_texture()
             surf = renpy.display.scale.real(surface)
-    
+
         pss.alloc_event(surf)
 
     rv = pss.refresh_event()
 
     if rv and current_movie is not None:
         renpy.display.render.redraw(current_movie, 0)
-         
-    return rv    
+
+    return rv

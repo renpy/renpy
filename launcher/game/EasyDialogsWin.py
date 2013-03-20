@@ -105,6 +105,7 @@ LPTSTR = ctypes.c_char_p
 LPVOID = ctypes.c_voidp
 TCHAR = ctypes.c_char
 
+
 class OSVERSIONINFO(ctypes.Structure):
     _fields_ = [
                 ("dwOSVersionInfoSize", wintypes.DWORD),
@@ -112,11 +113,13 @@ class OSVERSIONINFO(ctypes.Structure):
                 ("dwMinorVersion", wintypes.DWORD),
                 ("dwBuildNumber", wintypes.DWORD),
                 ("dwPlatformId", wintypes.DWORD),
-                ("szCSDVersion", TCHAR*128)
+                ("szCSDVersion", TCHAR * 128)
                ]
+
     def __init__(self):
         ctypes.Structure.__init__(self)
         self.dwOSVersionInfoSize = ctypes.sizeof(self)
+
 
 class OPENFILENAME(ctypes.Structure):
     _fields_ = [
@@ -159,6 +162,7 @@ class OPENFILENAME(ctypes.Structure):
         else:
             self.lStructSize = ctypes.sizeof(OPENFILENAME) - 12
 
+
 class BROWSEINFO(ctypes.Structure):
     _fields_ = [
                 ("hwndOwner", wintypes.HWND),
@@ -176,8 +180,10 @@ class BROWSEINFO(ctypes.Structure):
 def HIWORD(x):
     return (x >> 16) & 0xffff
 
+
 def LOWORD(x):
     return x & 0xffff
+
 
 def MAKELONG(a, b):
     return (a & 0xffff) | ((b & 0xffff) << 16)
@@ -198,8 +204,10 @@ def CenterWindow(hwnd):
                         SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER
                        )
 
+
 def EnumChildWindows(hwnd):
     childWindows = []
+
     def enumChildProc(hwnd, lParam):
         childWindows.append(hwnd)
         return True
@@ -207,19 +215,23 @@ def EnumChildWindows(hwnd):
     user32.EnumChildWindows(hwnd, enumChildProc, 0)
     return childWindows
 
+
 def GetText(hwnd):
     length = user32.SendMessageA(hwnd, WM_GETTEXTLENGTH, 0, 0) + 1
     buffer = ctypes.c_char_p('\0' * length)
     user32.SendMessageA(hwnd, WM_GETTEXT, length, buffer)
     return buffer.value
 
+
 def GetWindowRect(hwnd):
     rect = wintypes.RECT()
     user32.GetWindowRect(hwnd, ctypes.byref(rect))
     return rect
 
+
 def width(rect):
     return rect.right-rect.left
+
 
 def height(rect):
     return rect.bottom-rect.top
@@ -246,7 +258,7 @@ def AutoSizeDialog(dialog, center=True):
         else:
             lineHeight = HIWORD(user32.SendMessageA(editBox, EM_POSFROMCHAR, 3, 0)) - HIWORD(user32.SendMessageA(editBox, EM_POSFROMCHAR, 0, 0))
             user32.SetWindowTextA(editBox, text)
-            newHeight = user32.SendMessageA(editBox, EM_GETLINECOUNT, 0, 0)*lineHeight + 2*LOWORD(user32.SendMessageA(editBox, EM_GETMARGINS, 0, 0))
+            newHeight = user32.SendMessageA(editBox, EM_GETLINECOUNT, 0, 0) * lineHeight + 2 * LOWORD(user32.SendMessageA(editBox, EM_GETMARGINS, 0, 0))
             editBoxRect = GetWindowRect(editBox)
             oldHeight = height(editBoxRect)
             if newHeight != oldHeight:
@@ -318,7 +330,7 @@ def Message(msg, id=260, ok=None):
     return user32.DialogBoxIndirectParamA(0, resources[id], 0, myDialogProc, 0)
 
 
-def AskString(prompt, default = '', id=261, ok=None, cancel=None):
+def AskString(prompt, default='', id=261, ok=None, cancel=None):
     """Display a PROMPT string and a text entry field with a DEFAULT string.
 
     Return the contents of the text entry field when the user clicks the
@@ -331,6 +343,7 @@ def AskString(prompt, default = '', id=261, ok=None, cancel=None):
     can be at most 255 characters long.
     """
     result = [None]
+
     def DlgProc(hwnd, uMsg, wParam, lParam):
         if uMsg == WM_INITDIALOG:
             user32.SetWindowTextA(user32.GetDlgItem(hwnd, 1003), lf2crlf(prompt))
@@ -442,6 +455,7 @@ def AskYesNoCancel(question, default=0, yes=None, no=None, cancel=None, id=262):
 class ProgressBar:
     def __init__(self, title="Working...", maxval=0, label="", id=263):
         self._label = lf2crlf(label)
+
         def DlgProc(hwnd, uMsg, wParam, lParam):
             if uMsg == WM_INITDIALOG:
                 user32.SetWindowTextA(hwnd, title)
@@ -480,14 +494,13 @@ class ProgressBar:
         user32.SetWindowTextA(self.hwnd, newstr)
         self._pump()
 
-    def label( self, *newstr ):
+    def label(self, *newstr):
         """label(text) - Set text in progress box"""
         if newstr:
             self._label = lf2crlf(newstr[0])
         user32.SetWindowTextA(user32.GetDlgItem(self.hwnd, 1002), self._label)
         AutoSizeDialog(self.hwnd, center=False)
         self._pump()
-
 
     def _pump(self):
         msg = wintypes.MSG()
@@ -499,7 +512,6 @@ class ProgressBar:
         if not user32.IsWindowVisible(self.hwnd):
             raise KeyboardInterrupt
 
-
     def _update(self, value):
         maxval = self.maxval
         progbar = user32.GetDlgItem(self.hwnd, 1003)
@@ -508,7 +520,7 @@ class ProgressBar:
             pass
             pos = user32.SendMessageA(progbar, PBM_GETPOS, 0, 0)
             user32.SendMessageA(progbar, PBM_SETRANGE, 0, MAKELPARAM(0, 10))
-            user32.SendMessageA(progbar, PBM_SETPOS, (pos+1) % 10, 0)
+            user32.SendMessageA(progbar, PBM_SETPOS, (pos + 1) % 10, 0)
         else:               # a determinate bar
             if maxval > 32767:
                 value = int(value/(maxval/32767.0))
@@ -521,7 +533,6 @@ class ProgressBar:
                 user32.SendMessageA(progbar, PBM_SETRANGE, 0, MAKELPARAM(0, maxval))
             user32.SendMessageA(progbar, PBM_SETPOS, value, 0)  # set the bar length
         self._pump()
-
 
     def set(self, value, max=None):
         """set(value) - Set progress bar position"""
@@ -597,7 +608,7 @@ def AskFileForOpen(
     """
 
     ofn = OPENFILENAME()
-    filename = defaultfn + '\0'*1024
+    filename = defaultfn + '\0' * 1024
     ofn.lpstrFile = filename
     ofn.nMaxFile = len(filename)
     ofn.flags = OFN_ENABLEHOOK | OFN_EXPLORER | OFN_ENABLESIZING | OFN_OVERWRITEPROMPT
@@ -610,7 +621,7 @@ def AskFileForOpen(
         lpstrFilter = ''
         for typeSpec in typeList:
             try:
-                lpstrFilter += '*.'+typeSpec+'\0*.'+typeSpec+'\0'
+                lpstrFilter += '*.' + typeSpec + '\0*.' + typeSpec + '\0'
                 if defaultext and not ofn.lpstrDefExt:
                     ofn.lpstrDefExt = typeSpec
             except TypeError:
@@ -628,6 +639,7 @@ def AskFileForOpen(
         ofn.hInstance = resources[270]
 
     hookProcInitDone = []
+
     def hookProc(hdlg, uiMsg, wParam, lParam):
         if uiMsg == WM_INITDIALOG:
             dialog = user32.GetParent(hdlg)
@@ -665,7 +677,7 @@ def AskFileForOpen(
                                       desktopRect.left + x,
                                       desktopRect.top + y, 0, 0,
                                       SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER)
-                else: # center
+                else:  # center
                     CenterWindow(dialog)
         return 0
 
@@ -767,7 +779,6 @@ def AskFolder(
     multiple, popupExtension, preferenceKey, version, wanted
     """
 
-
     def BrowseCallback(hwnd, uMsg, lParam, lpData):
         if uMsg == BFFM_INITIALIZED:
             if actionButtonLabel:
@@ -797,7 +808,7 @@ def AskFolder(
     callback = BrowseCallbackProc(BrowseCallback)
 
     browseInfo = BROWSEINFO()
-    browseInfo.pszDisplayName = ctypes.c_char_p('\0' * (MAX_PATH+1))
+    browseInfo.pszDisplayName = ctypes.c_char_p('\0' * (MAX_PATH + 1))
     browseInfo.lpszTitle = message
     browseInfo.lpfn = callback
     #~ browseInfo.ulFlags = BIF_EDITBOX
@@ -808,28 +819,29 @@ def AskFolder(
     if not pidl:
         result = None
     else:
-        path = ctypes.c_char_p('\0' * (MAX_PATH+1))
+        path = ctypes.c_char_p('\0' * (MAX_PATH + 1))
         shell32.SHGetPathFromIDList(pidl, path)
         ole32.CoTaskMemFree(pidl)
         result = path.value
     return result
 
 
-ARGV_ID=265
-ARGV_ITEM_OK=1
-ARGV_ITEM_CANCEL=2
-ARGV_OPTION_GROUP=3
-ARGV_OPTION_EXPLAIN=4
-ARGV_OPTION_VALUE=5
-ARGV_OPTION_ADD=6
-ARGV_COMMAND_GROUP=7
-ARGV_COMMAND_EXPLAIN=8
-ARGV_COMMAND_ADD=9
-ARGV_ADD_OLDFILE=10
-ARGV_ADD_NEWFILE=11
-ARGV_ADD_FOLDER=12
-ARGV_CMDLINE_GROUP=13
-ARGV_CMDLINE_DATA=14
+ARGV_ID = 265
+ARGV_ITEM_OK = 1
+ARGV_ITEM_CANCEL = 2
+ARGV_OPTION_GROUP = 3
+ARGV_OPTION_EXPLAIN = 4
+ARGV_OPTION_VALUE = 5
+ARGV_OPTION_ADD = 6
+ARGV_COMMAND_GROUP = 7
+ARGV_COMMAND_EXPLAIN = 8
+ARGV_COMMAND_ADD = 9
+ARGV_ADD_OLDFILE = 10
+ARGV_ADD_NEWFILE = 11
+ARGV_ADD_FOLDER = 12
+ARGV_CMDLINE_GROUP = 13
+ARGV_CMDLINE_DATA = 14
+
 
 def _setmenu(control, items):
     for item in items:
@@ -841,6 +853,7 @@ def _setmenu(control, items):
             label = label[:-1]
         user32.SendMessageA(control, CB_ADDSTRING, 0, label)
     user32.SendMessageA(control, CB_SETCURSEL, 0, 0)
+
 
 def _selectoption(d, optionlist, idx):
     if idx < 0 or idx >= len(optionlist):
@@ -874,6 +887,7 @@ def _selectoption(d, optionlist, idx):
         #~ d.SelectDialogItemText(ARGV_OPTION_VALUE, 0, 0)
     else:
         user32.ShowWindow(h, SW_HIDE)
+
 
 def GetArgv(optionlist=None, commandlist=None, addoldfile=1, addnewfile=1, addfolder=1, id=ARGV_ID):
     commandLineContents = []
@@ -1027,28 +1041,28 @@ def test():
                 ('flags=', 'Valued option'), ('f:', 'Short valued option'))
     commandlist = (('start', 'Start something'), ('stop', 'Stop something'))
     argv = GetArgv(optionlist=optionlist, commandlist=commandlist, addoldfile=0)
-    Message("Command line: %s"%' '.join(argv))
+    Message("Command line: %s" % ' '.join(argv))
     for i in range(len(argv)):
         print 'arg[%d] = %r' % (i, argv[i])
     ok = AskYesNoCancel("Do you want to proceed?")
     ok = AskYesNoCancel("Do you want to identify?", yes="Identify", no="No")
     if ok > 0:
         s = AskString("Enter your first name", "Joe")
-        s2 = AskPassword("Okay %s, tell us your nickname"%s, s, cancel="None")
+        s2 = AskPassword("Okay %s, tell us your nickname" % s, s, cancel="None")
         if not s2:
-            Message("%s has no secret nickname"%s)
+            Message("%s has no secret nickname" % s)
         else:
-            Message("Hello everybody!!\nThe secret nickname of %s is %s!!!"%(s, s2))
+            Message("Hello everybody!!\nThe secret nickname of %s is %s!!!" % (s, s2))
     else:
         s = 'Anonymous'
-    rv = AskFileForOpen(message="Gimme a file, %s"%s, wanted=Carbon.File.FSSpec)
+    rv = AskFileForOpen(message="Gimme a file, %s" % s, wanted=Carbon.File.FSSpec)
     Message("rv: %s"%rv)
-    rv = AskFileForSave(wanted=Carbon.File.FSRef, savedFileName="%s.txt"%s)
-    Message("rv: %s"%rv) # was: Message("rv.as_pathname: %s"%rv.as_pathname())
+    rv = AskFileForSave(wanted=Carbon.File.FSRef, savedFileName="%s.txt" % s)
+    Message("rv: %s" % rv)  # was: Message("rv.as_pathname: %s"%rv.as_pathname())
     rv = AskFolder()
-    Message("Folder name: %s"%rv)
-    text = ( "Working Hard...", "Hardly Working..." ,
-            "So far, so good!", "Keep on truckin'" )
+    Message("Folder name: %s" % rv)
+    text = ("Working Hard...", "Hardly Working...",
+            "So far, so good!", "Keep on truckin'")
     bar = ProgressBar("Progress, progress...", 0, label="Ramping up...")
     try:
         if hasattr(MacOS, 'SchedParams'):
@@ -1056,12 +1070,12 @@ def test():
         for i in xrange(20):
             bar.inc()
             time.sleep(0.05)
-        bar.set(0,100)
+        bar.set(0, 100)
         for i in xrange(100):
             bar.set(i)
             time.sleep(0.05)
             if i % 10 == 0:
-                bar.label(text[(i//10) % 4])
+                bar.label(text[(i // 10) % 4])
         bar.label("Done.")
         time.sleep(1.0)     # give'em a chance to see "Done."
     finally:
