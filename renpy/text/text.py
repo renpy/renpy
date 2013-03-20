@@ -402,7 +402,7 @@ class Layout(object):
         `width`, `height` 
             The height of the laid-out text.
         """
-        
+
         style = text.style
                         
         self.line_overlap_split = style.line_overlap_split

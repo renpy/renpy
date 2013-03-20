@@ -216,6 +216,8 @@ If the statement takes a block, the line ends with a colon
 (:). Otherwise, the line just ends.
 
 
+.. _python-basics:  
+
 Python Expression Syntax
 ========================
 
@@ -347,9 +349,11 @@ that the keyword arguments are described in the documentation.
 Python is a lot more powerful than we have space for in this manual.
 To learn Python in more detail, we recommend starting with the Python
 tutorial, which is available from
-`python.org <http://docs.python.org/release/2.6.6/tutorial/index.html>`_.
+`python.org <http://docs.python.org/release/2.7/tutorial/index.html>`_.
 While we don't think a deep knowledge of Python is necessary to work
-with Ren'Py, learning about python expressions is helpful.
+with Ren'Py, the basics of python statements and expressions is
+often helpful.
+
 
 
      

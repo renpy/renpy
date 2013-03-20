@@ -5,13 +5,10 @@
 
 init python:
     try:
-        import EasyDialogs
-    except ImportError:
-        try:
-            import EasyDialogsWin as EasyDialogs
-        except:
-            EasyDialogs = None
-    
+        import EasyDialogsWin as EasyDialogs
+    except:
+        EasyDialogs = None
+
     import os
 
 init python in project:
@@ -485,16 +482,13 @@ label choose_projects_directory:
     
     python hide:
 
-        interface.interaction(_("PROJECTS DIRECTORY"), _("Please choose the projects directory."), _("This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."))
+        interface.interaction(_("PROJECTS DIRECTORY"), _("Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"), _("This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."),)
             
         path = persistent.projects_directory
 
         if path:
-            
             default_path = path
-            
         else:
-
             try:
                 default_path = os.path.dirname(os.path.abspath(config.renpy_base))
             except:
@@ -513,27 +507,22 @@ label choose_projects_directory:
         else:
 
             try:
-                env = os.environ.copy()
-    
-                if 'RENPY_ORIGINAL_LD_LIBRARY_PATH' in env:
-                    env['LD_LIBRARY_PATH'] = env['RENPY_ORIGINAL_LD_LIBRARY_PATH']
-
-                cmd = [ "zenity", "--title=Select Projects Directory", "--file-selection", "--directory", "--filename=" + renpy.fsencode(default_path) ]
-
-                zen = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE)
-
-                choice = zen.stdout.read()        
-                zen.wait()
+            
+                cmd = [ "/usr/bin/python", os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
+                
+                p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+                choice = p.stdout.read()        
+                p.wait()
 
                 if choice:
-                    path = renpy.fsdecode(choice[:-1])
+                    path = renpy.fsdecode(choice)
             
             except:
                 import traceback
                 traceback.print_exc()
                 
                 path = None
-                interface.error(_("Ren'Py was unable to run zenity to choose the projects directory."), label=None)
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory."), label=None)
 
         if path is None:
             path = default_path
