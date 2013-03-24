@@ -396,7 +396,7 @@ def watch(expression, style='default', **properties):
 
     renpy.config.overlay_functions.append(overlay_func)
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None): #@ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}[]', length=None, with_none=None): #@ReservedAssignment
     """
     :doc: input
 
