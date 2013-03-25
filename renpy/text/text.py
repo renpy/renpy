@@ -1020,6 +1020,10 @@ class Layout(object):
         
         return 0
     
+# The maximum number of entries in the layout cache.
+LAYOUT_CACHE_SIZE = 50
+
+# Maps from a text to the layout of that text - in an old and new generation.
 layout_cache_old = { }
 layout_cache_new = { }
 
@@ -1087,9 +1091,9 @@ class Text(renpy.display.core.Displayable):
             self.start = None
             self.end = None
             self.dirty = True
-    
+
     def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, **properties):
-                
+        
         super(Text, self).__init__(**properties)
         
         # We need text to be a list, so if it's not, wrap it.   
@@ -1357,6 +1361,10 @@ class Text(renpy.display.core.Displayable):
 
         if layout is None or layout.width != width or layout.height != height:
             layout = Layout(self, width, height, renders)
+
+            if len(layout_cache_new) > LAYOUT_CACHE_SIZE:
+                layout_cache_new.clear()
+            
             layout_cache_new[id(self)] = layout
         
         # The laid-out size of this Text.
