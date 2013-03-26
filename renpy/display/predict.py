@@ -71,27 +71,37 @@ def prediction_coroutine(root_widget):
     The image prediction co-routine. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
     preload_image method to be queued up for loading.
+    
+    The .send should be called with True to do a expensive prediction,
+    and with False to either do an inexpensive prediction or no 
+    prediction at all.
+    
+    Returns True if there's more predicting to be done, or False
+    if there's no more predicting worth doing.
     """
 
     global predicting
-    
+
     # Set up the image prediction method.
     global image
     image = renpy.display.im.cache.preload_image
+
+    # Wait to be told to start.
+    yield True
 
     # Predict images that are going to be reached in the next few
     # clicks.
     predicting = True
 
-    renpy.game.context().predict()
+    for _i in renpy.game.context().predict():
 
-    predicting = False
-    yield True
-
+        predicting = False
+        yield True
+        predicting = True
+    
     # If there's a parent context, predict we'll be returning to it
     # shortly. Otherwise, call the functions in
     # config.predict_callbacks.
-    predicting = True
     
     if len(renpy.game.contexts) >= 2:
         sls = renpy.game.contexts[-2].scene_lists
@@ -109,7 +119,8 @@ def prediction_coroutine(root_widget):
                 
     predicting = False
                 
-    yield True
+    while not (yield True):
+        continue
 
     # Predict things (especially screens) that are reachable through
     # an action.
@@ -124,7 +135,8 @@ def prediction_coroutine(root_widget):
 
     # Predict the screens themselves.
     for name, args, kwargs in screens:
-        yield True
+        while not (yield True):
+            continue 
 
         predicting = True
         

@@ -310,7 +310,7 @@ class Cache(object):
 
     def end_prediction(self):
         """
-        Called on the end of prediction, to kick of the thread so cleanup
+        Called on the end of prediction, to kick off the thread so cleanup
         can happen.
         """
         

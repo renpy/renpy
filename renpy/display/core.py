@@ -2068,6 +2068,7 @@ class Interface(object):
             add_layer(root_widget, layer)
 
         prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
+        prediction_coroutine.send(None)
             
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
@@ -2229,14 +2230,18 @@ class Interface(object):
                         old_timeout_time = self.timeout_time
 
                 # Predict images, if we haven't done so already.
-                while (prediction_coroutine is not None) \
-                        and not needs_redraw \
-                        and not self.event_peek() \
-                        and not renpy.audio.music.is_playing("movie"):
+                while prediction_coroutine is not None:
                     
-                    result = prediction_coroutine.next()
+                    # Can we do expensive prediction?
+                    expensive_predict = not (needs_redraw or self.event_peek() or renpy.audio.music.is_playing("movie"))
+                    
+                    result = prediction_coroutine.send(expensive_predict)
+
                     if not result:
                         prediction_coroutine = None
+                        break
+
+                    if not expensive_predict:
                         break
 
                 # If we need to redraw again, do it if we don't have an
@@ -2425,6 +2430,9 @@ class Interface(object):
             # Restart the old interaction, which also causes a
             # redraw if needed.
             self.restart_interaction = True
+
+            # Kick off the cache cleanout thread.
+            renpy.display.im.cache.end_prediction()
 
             # print "It took", frames, "frames."
 
