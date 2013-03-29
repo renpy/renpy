@@ -1800,6 +1800,16 @@ class Interface(object):
         self.transition_from.clear()
         self.transition_time.clear()
     
+    def post_time_event(self):
+        """
+        Posts a time_event object to the queue.
+        """
+        
+        try:
+            pygame.event.post(self.time_event)
+        except:
+            pass
+    
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -1951,10 +1961,7 @@ class Interface(object):
                             REDRAW))
 
         # Add a single TIMEEVENT to the queue.
-        try:
-            pygame.event.post(self.time_event)
-        except:
-            pass
+        self.post_time_event()
         
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
@@ -2202,7 +2209,10 @@ class Interface(object):
                         redraw_in = time_left
                         
                         if time_left <= 0:
-                            pygame.event.post(self.redraw_event)
+                            try:
+                                pygame.event.post(self.redraw_event)
+                            except:
+                                pass
                             pygame.time.set_timer(REDRAW, 0)
                         else:
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
@@ -2223,7 +2233,7 @@ class Interface(object):
                     if time_left <= 0:
                         self.timeout_time = None
                         pygame.time.set_timer(TIMEEVENT, 0)
-                        pygame.event.post(self.time_event)                    
+                        self.post_time_event()
                     elif self.timeout_time != old_timeout_time:
                         # Always set to at least 1ms.
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
@@ -2384,10 +2394,8 @@ class Interface(object):
                     # An ignored event can change the timeout. So we want to
                     # process an TIMEEVENT to ensure that the timeout is
                     # set correctly.
-                    try:
-                        pygame.event.post(self.time_event)
-                    except:
-                        pass
+                    self.post_time_event()
+                        
                         
                 # Check again after handling the event.
                 needs_redraw |= renpy.display.render.process_redraws()
