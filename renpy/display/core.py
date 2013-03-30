@@ -2120,6 +2120,9 @@ class Interface(object):
         # How long until we redraw.
         redraw_in = 3600
                 
+        # Have we drawn a frame yet?
+        video_frame_drawn = False
+                
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try: 
@@ -2154,7 +2157,8 @@ class Interface(object):
                     if not self.interact_time:
                         self.interact_time = self.frame_time
 
-                    self.draw_screen(root_widget, fullscreen_video)
+                    if (not fullscreen_video) or video_frame_drawn:
+                        self.draw_screen(root_widget, fullscreen_video)
                         
                     if first_pass:
                         scene_lists.set_times(self.interact_time)
@@ -2193,6 +2197,11 @@ class Interface(object):
 
                 # Determine if we need a redraw. (We want to run these 
                 # functions, so we put them first to prevent short-circuiting.) 
+
+                if renpy.display.video.frequent():
+                    needs_redraw = True
+                    video_frame_drawn = True
+                
                 needs_redraw = renpy.display.video.frequent() or needs_redraw
                 needs_redraw = renpy.display.render.process_redraws() or needs_redraw
 
