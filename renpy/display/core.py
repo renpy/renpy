@@ -1408,7 +1408,7 @@ class Interface(object):
         self.restart_interaction = True
 
 
-    def draw_screen(self, root_widget, fullscreen_video):
+    def draw_screen(self, root_widget, fullscreen_video, draw):
         
         surftree = renpy.display.render.render_screen(
             root_widget,
@@ -1416,7 +1416,8 @@ class Interface(object):
             renpy.config.screen_height,
             )
 
-        renpy.display.draw.draw_screen(surftree, fullscreen_video)
+        if draw:
+            renpy.display.draw.draw_screen(surftree, fullscreen_video)
         
         renpy.display.render.mark_sweep()
         renpy.display.focus.take_focuses()
@@ -2157,8 +2158,7 @@ class Interface(object):
                     if not self.interact_time:
                         self.interact_time = self.frame_time
 
-                    if (not fullscreen_video) or video_frame_drawn:
-                        self.draw_screen(root_widget, fullscreen_video)
+                    self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
                         
                     if first_pass:
                         scene_lists.set_times(self.interact_time)
