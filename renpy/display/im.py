@@ -308,12 +308,12 @@ class Cache(object):
         if in_cache and renpy.config.debug_image_cache:
             renpy.display.ic_log.write("Kept %r", im)
 
-    def end_prediction(self):
+    def start_prediction(self):
         """
-        Called on the end of prediction, to kick off the thread so cleanup
-        can happen.
+        Called at the start of prediction, to ensure the thread runs 
+        at least once to clean out the cache.
         """
-        
+
         with self.lock:
             self.lock.notify()
 

@@ -2448,9 +2448,6 @@ class Interface(object):
             # redraw if needed.
             self.restart_interaction = True
 
-            # Kick off the cache cleanout thread.
-            renpy.display.im.cache.end_prediction()
-
             # print "It took", frames, "frames."
 
     def timeout(self, offset):
