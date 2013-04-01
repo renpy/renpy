@@ -446,7 +446,11 @@ class Context(renpy.object.Object):
 
                 # We accept that sometimes prediction won't work.
 
-        self.images = old_images
+            self.images = old_images
+
+            yield True
+
+        yield False
 
             
     def seen_current(self, ever):

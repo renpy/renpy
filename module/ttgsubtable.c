@@ -109,10 +109,11 @@ void free_gsubtable(TTGSUBTable *table)
         TSingleSubstFormat *subt = lup[i].SubTable;
         for(j = 0; j < ls_cnt; j++)
         {
-            if(subt[j].Coverage.CoverageFormat == 1)
+            if(subt[j].Coverage.CoverageFormat == 1) {
                 free(subt[j].Coverage.GlyphArray);
-            else if(subt[j].Coverage.CoverageFormat == 2)
-                free(subt[j].Coverage.RangeRecord);
+            } else if(subt[j].Coverage.CoverageFormat == 2) {
+            	free(subt[j].Coverage.RangeRecord);
+            }
             if(subt[j].SubstFormat == 2)
                 free(subt[j].Substitute);
         }
@@ -267,7 +268,7 @@ void ParseScriptList(TTGSUBTable *table, FT_Bytes raw, TScriptList *rec)
         rec->ScriptRecord = NULL;
         return;    
     }
-    rec->ScriptRecord = malloc(sizeof(TScriptRecord) * rec->ScriptCount);
+    rec->ScriptRecord = calloc(rec->ScriptCount, sizeof(TScriptRecord));
     for(i = 0; i < rec->ScriptCount; i++)
     {
         rec->ScriptRecord[i].ScriptTag = GetUInt32(&sp);
@@ -287,7 +288,7 @@ void ParseScript(TTGSUBTable *table, FT_Bytes raw, TScript *rec)
         rec->LangSysRecord = NULL;
         return;
     }
-    rec->LangSysRecord = malloc(sizeof(TLangSysRecord) * rec->LangSysCount);
+    rec->LangSysRecord = calloc(rec->LangSysCount, sizeof(TLangSysRecord));
     for(i = 0; i < rec->LangSysCount; i++)
     {
         rec->LangSysRecord[i].LangSysTag = GetUInt32(&sp);
@@ -317,7 +318,7 @@ void ParseFeatureList(TTGSUBTable *table, FT_Bytes raw, TFeatureList *rec)
         rec->FeatureRecord = NULL;
         return;
     }
-    rec->FeatureRecord = malloc(sizeof(TFeatureRecord) * rec->FeatureCount);
+    rec->FeatureRecord = calloc(rec->FeatureCount, sizeof(TFeatureRecord));
     for(i = 0; i < rec->FeatureCount; i++)
     {
         rec->FeatureRecord[i].FeatureTag = GetUInt32(&sp);
@@ -336,7 +337,7 @@ void ParseFeature(TTGSUBTable *table, FT_Bytes raw, TFeature *rec)
     {
         return;
     }
-    rec->LookupListIndex = malloc(sizeof(uint16_t) * rec->LookupCount);
+    rec->LookupListIndex = calloc(rec->LookupCount, sizeof(uint16_t));
     for(i = 0;i < rec->LookupCount; i++)
     {
         rec->LookupListIndex[i] = GetUInt16(&sp);
@@ -353,7 +354,7 @@ void ParseLookupList(TTGSUBTable *table, FT_Bytes raw, TLookupList *rec)
         rec->Lookup = NULL;
         return;
     }
-    rec->Lookup = malloc(sizeof(TLookup) * rec->LookupCount);
+    rec->Lookup = calloc(rec->LookupCount, sizeof(TLookup));
     for(i = 0; i < rec->LookupCount; i++)
     {
         uint16_t offset = GetUInt16(&sp);
@@ -373,7 +374,7 @@ void ParseLookup(TTGSUBTable *table, FT_Bytes raw, TLookup *rec)
         rec->SubTable = NULL;
         return;
     }
-    rec->SubTable = malloc(sizeof(TSingleSubstFormat) * rec->SubTableCount);
+    rec->SubTable = calloc(rec->SubTableCount, sizeof(TSingleSubstFormat));
     if(rec->LookupType != 1)
         return;
     for(i = 0; i < rec->SubTableCount; i++)
@@ -413,7 +414,7 @@ void ParseCoverageFormat1(TTGSUBTable *table, FT_Bytes raw, TCoverageFormat *rec
         rec->GlyphArray = NULL;
         return;
     }
-    rec->GlyphArray = malloc(sizeof(uint16_t) * rec->GlyphCount);
+    rec->GlyphArray = calloc(rec->GlyphCount, sizeof(uint16_t));
     for(i = 0; i < rec->GlyphCount; i++)
     {
         rec->GlyphArray[i] = GetUInt16(&sp);
@@ -431,7 +432,7 @@ void ParseCoverageFormat2(TTGSUBTable *table, FT_Bytes raw, TCoverageFormat *rec
         rec->RangeRecord = NULL;
         return;
     }
-    rec->RangeRecord = malloc(sizeof(TRangeRecord) * rec->RangeCount);
+    rec->RangeRecord = calloc(rec->RangeCount, sizeof(TRangeRecord));
     for(i = 0; i < rec->RangeCount; i++)
     {
         rec->RangeRecord[i].Start = GetUInt16(&sp);
@@ -481,7 +482,7 @@ void ParseSingleSubstFormat2(TTGSUBTable *table, FT_Bytes raw, TSingleSubstForma
         rec->Substitute = NULL;
         return;
     }
-    rec->Substitute = malloc(sizeof(uint16_t) * rec->GlyphCount);
+    rec->Substitute = calloc(rec->GlyphCount, sizeof(uint16_t));
     for(i = 0; i < rec->GlyphCount; i++)
     {
         rec->Substitute[i] = GetUInt16(&sp);

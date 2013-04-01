@@ -1271,15 +1271,17 @@ class Bar(renpy.display.core.Displayable):
         super(Bar, self).focus(default)
         self.set_transform_event("hover")
         
-        run(self.hovered)
+        if not default:
+            run(self.hovered)
         
         
     def unfocus(self, default=False):
         super(Bar, self).unfocus()
         self.set_transform_event("idle")
 
-        run_unhovered(self.hovered)
-        run(self.unhovered)
+        if not default:
+            run_unhovered(self.hovered)
+            run(self.unhovered)
     
     def event(self, ev, x, y, st):
 

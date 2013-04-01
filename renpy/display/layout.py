@@ -1328,7 +1328,6 @@ class Viewport(Container):
                 value = max(cw - width, 0) * self.xoffset
                 
             self.xadjustment.value = value
-            self.xoffset = None
             
         if self.yoffset is not None:
             if isinstance(self.yoffset, int):
@@ -1337,7 +1336,6 @@ class Viewport(Container):
                 value = max(ch - height, 0) * self.yoffset 
 
             self.yadjustment.value = value
-            self.yoffset = None
                 
         if self.edge_size and self.edge_last_st and (self.edge_xspeed or self.edge_yspeed):
              
@@ -1377,6 +1375,9 @@ class Viewport(Container):
             
 
     def event(self, ev, x, y, st):
+
+        self.xoffset = None
+        self.yoffset = None
 
         rv = super(Viewport, self).event(ev, x, y, st)
         if rv is not None:

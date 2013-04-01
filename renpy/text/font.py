@@ -145,6 +145,11 @@ class SFont(ImageFont):
         self.advance[u' '] = self.spacewidth
         self.offsets[u' '] = (0, 0)
 
+        self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, height), True)
+        self.width[u'\u200b'] = 0
+        self.advance[u'\u200b'] = 0
+        self.offsets[u'\u200b'] = (0, 0)
+
         self.chars[u'\u00a0'] = self.chars[u' ']
         self.width[u'\u00a0'] = self.width[u' ']
         self.advance[u'\u00a0'] = self.advance[u' ']
@@ -252,12 +257,18 @@ class MudgeFont(ImageFont):
             self.advance[u' '] = self.spacewidth
             self.offsets[u' '] = (0, 0)
             
-            
         if u'\u00a0' not in self.chars:
             self.chars[u'\u00a0'] = self.chars[u' ']
             self.width[u'\u00a0'] = self.width[u' ']
             self.advance[u'\u00a0'] = self.advance[u' ']
             self.offsets[u'\u00a0'] = self.offsets[u' ']
+
+        self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, height), True)
+        self.width[u'\u200b'] = 0
+        self.advance[u'\u200b'] = 0
+        self.offsets[u'\u200b'] = (0, 0)
+
+
 
 def parse_bmfont_line(l):
     w = ""
@@ -342,6 +353,12 @@ class BMFont(ImageFont):
             self.advance[u'\u00a0'] = self.advance[u' ']
             self.offsets[u'\u00a0'] = self.offsets[u' ']
             
+
+        self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, self.height), True)
+        self.width[u'\u200b'] = 0
+        self.advance[u'\u200b'] = 0
+        self.offsets[u'\u200b'] = (0, 0)
+
             
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False, 
                    filename=None, spacewidth=10, default_kern=0, kerns={},
