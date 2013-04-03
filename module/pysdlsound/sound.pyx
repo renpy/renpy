@@ -20,12 +20,15 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-cdef extern from "pss.h":
-
+cdef extern from "pygame/pygame.h":
     cdef struct SDL_RWops:
         pass
 
+    void import_pygame_rwobject()
     SDL_RWops* RWopsFromPythonThreaded(object obj)
+
+cdef extern from "pss.h":
+
     void PSS_play(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, int paused)
     void PSS_queue(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight)
     void PSS_stop(int channel)
@@ -181,3 +184,5 @@ def movie_size():
 def check_version(version):
     if version < 2 or version > 4:
         raise Exception("pysdlsound version mismatch.")
+
+import_pygame_rwobject()

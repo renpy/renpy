@@ -4,8 +4,6 @@
 #include <Python.h>
 #include <SDL/SDL.h>
 
-SDL_RWops* RWopsFromPython(PyObject* obj);
-
 void core_init(void);
 
 void save_png_core(PyObject *pysurf, SDL_RWops *file, int compress);
