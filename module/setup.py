@@ -80,7 +80,7 @@ if not android:
 
 # Display.
 cython("renpy.display.render", libs=[ 'z', 'm' ])
-cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 # Gl.
 if android:
