@@ -117,11 +117,7 @@ def copy_surface(surf, alpha=True):
     """
     
     rv = surface_unscaled(surf.get_size(), alpha)
-
-    renpy.display.render.blit_lock.acquire()
     rv.blit(surf, (0, 0))
-    renpy.display.render.blit_lock.release()
-
     return rv
 
 copy_surface_unscaled = copy_surface
@@ -131,7 +127,8 @@ copy_surface_unscaled = copy_surface
 
 def load_image(f, filename):
     surf = pygame.image.load(f, renpy.exports.fsencode(filename))
-    return copy_surface_unscaled(surf)
+    rv = copy_surface_unscaled(surf)
+    return rv
 
 load_image_unscaled = load_image
 
