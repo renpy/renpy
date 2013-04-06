@@ -1080,6 +1080,9 @@ class Interface(object):
         # Have we shown the window this interaction?
         self.shown_window = False
         
+        # Are we in fullscren mode?
+        self.fullscreen = False
+        
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -1366,6 +1369,7 @@ class Interface(object):
         if s and (s.get_flags() & pygame.FULLSCREEN):
             fullscreen = False
             
+        old_fullscreen = self.fullscreen
         self.fullscreen = fullscreen
 
         if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
@@ -1389,7 +1393,7 @@ class Interface(object):
             raise Exception("Could not set video mode.")
         
         # Save the video size.
-        if renpy.config.save_physical_size and not fullscreen: 
+        if renpy.config.save_physical_size and not fullscreen and not old_fullscreen: 
             renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
        
         if android:
