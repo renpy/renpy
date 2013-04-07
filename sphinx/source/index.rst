@@ -108,7 +108,7 @@ End-User Documentation
 .. toctree::
    :maxdepth: 1
 
-   display_problems
+   problems
 
 
 Engine Developer Documentation

@@ -1,5 +1,5 @@
 Dealing With Display Problems
-=============================
+-----------------------------
 
 As of version 6.13, Ren'Py will take advantage of graphics
 acceleration hardware, if it's present and functional. Using hardware
