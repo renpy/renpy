@@ -167,8 +167,8 @@ init python in distribute:
                 if (not i.directory) or (i.name in needed_dirs): 
                     rv.insert(0, i.copy())
                 
-                directory, _sep, _filename = i.name.rpartition("/")
-                needed_dirs.add(directory)
+                    directory, _sep, _filename = i.name.rpartition("/")
+                    needed_dirs.add(directory)
                 
             return rv
         
