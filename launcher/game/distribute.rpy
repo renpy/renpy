@@ -152,6 +152,26 @@ init python in distribute:
                 
             return rv
         
+        def filter_empty(self):
+            """
+            Makes a deep copy of this file list with empty directories
+            omitted.
+            """
+            
+            rv = FileList()
+            
+            needed_dirs = set()
+            
+            for i in reversed(self):
+                
+                if (not i.directory) or (i.name in needed_dirs): 
+                    rv.insert(0, i.copy())
+                
+                directory, _sep, _filename = i.name.rpartition("/")
+                needed_dirs.add(directory)
+                
+            return rv
+        
         @staticmethod
         def merge(l):
             """
@@ -674,6 +694,9 @@ init python in distribute:
             fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
             fl = fl.copy()
             fl.sort()
+
+            if self.build.get("exclude_empty_directories", True):
+                fl = fl.filter_empty()
 
             # Write the update information.
             update_files = [ ]
