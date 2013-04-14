@@ -54,14 +54,8 @@ else:
 # Modules directory.
 cython(
     "_renpy", 
-    [ "IMG_savepng.c", "core.c", "rwobject.c", "subpixel.c"],
+    [ "IMG_savepng.c", "core.c", "subpixel.c"],
     sdl + [ 'png', 'z', 'm' ])
-
-cmodule(
-    "_renpy_font",
-    [ "renpy_ttf.c", "renpy_font.c"],
-    sdl + [ 'freetype', 'z', 'm' ],
-    )
 
 if has_fribidi and not android:
     cython(
@@ -80,13 +74,13 @@ if not android:
 
     cython(
         "pysdlsound.sound",
-        [ "pss.c", "rwobject.c", "ffdecode.c" ],
+        [ "pss.c", "ffdecode.c" ],
         libs = sdl + sound)
 
 
 # Display.
 cython("renpy.display.render", libs=[ 'z', 'm' ])
-cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 # Gl.
 if android:

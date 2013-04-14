@@ -1080,6 +1080,9 @@ class Interface(object):
         # Have we shown the window this interaction?
         self.shown_window = False
         
+        # Are we in fullscren mode?
+        self.fullscreen = False
+        
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -1366,6 +1369,7 @@ class Interface(object):
         if s and (s.get_flags() & pygame.FULLSCREEN):
             fullscreen = False
             
+        old_fullscreen = self.fullscreen
         self.fullscreen = fullscreen
 
         if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
@@ -1389,7 +1393,7 @@ class Interface(object):
             raise Exception("Could not set video mode.")
         
         # Save the video size.
-        if renpy.config.save_physical_size and not fullscreen: 
+        if renpy.config.save_physical_size and not fullscreen and not old_fullscreen: 
             renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
        
         if android:
@@ -1418,7 +1422,7 @@ class Interface(object):
 
         if draw:
             renpy.display.draw.draw_screen(surftree, fullscreen_video)
-        
+
         renpy.display.render.mark_sweep()
         renpy.display.focus.take_focuses()
 
@@ -1890,7 +1894,7 @@ class Interface(object):
         @param suppress_overlay: This suppresses the display of the overlay.
         @param suppress_underlay: This suppresses the display of the underlay.
         """
-        
+
         self.roll_forward = roll_forward
         self.show_mouse = show_mouse
         
@@ -2175,7 +2179,6 @@ class Interface(object):
                         if new_time - self.profile_time > .015:
                             print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
                             print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
-
                         
                     if first_pass and self.last_event:
                         x, y = renpy.display.draw.get_mouse_pos()
@@ -2187,7 +2190,7 @@ class Interface(object):
                     pygame.time.set_timer(REDRAW, 0)
                     pygame.event.clear([REDRAW])
                     old_redraw_time = None
-                    
+
                 # Draw the mouse, if it needs drawing.
                 renpy.display.draw.update_mouse()
                     
@@ -2416,7 +2419,6 @@ class Interface(object):
             # transitions up to the next interaction.
             if trans_pause and rv:
                 self.suppress_transition = True
-
                 
             # But wait, there's more! The finally block runs some cleanup
             # after this.

@@ -42,25 +42,22 @@ After running this, the Ren'Py launcher should run.
    :align: right
    :width: 30%
 
-**Choosing and Launching a Project.**
-You should first see what the completed *The Question* game looks
-like. To do this, start the Ren'Py launcher, and choose "Select
-Project". A menu of projects will come up.  Choose "the_question" from
-it. You'll be returned to the main menu, and you can now choose
-"Launch" to start *The Question*.
+**Choosing and Launching a Project.** You should first see what the
+completed *The Question* game looks like. To do this, start the Ren'Py
+launcher, and choose "The Question" from the first screen. Choose
+"Launch Project" to start *The Question*.
 
 You can get back to the Ren'Py demo by doing the same thing, but
-choosing "demo" instead of "the_question".
+choosing "Tutorial" instead of "The Question".
 
 **Creating a new Project.**
-Create a new project by choosing "New Project" from the launcher. The
-launcher will ask you to choose a template.  Choose "template". The
-launcher will then ask you for a project name. Since "the_question" is
-already taken, you should enter something different, like
-"My Question". The launcher will then ask you to choose a color theme
-for the project. It doesn't matter what you pick at this point, just
-choose something that appeals to you. You'll be returned to the top
-menu of the launcher with your new game chosen.
+Create a new project by choosing "Create New Project" from the
+launcher. The launcher will then ask you for a project name. Since
+"the_question" is already taken, you should enter something different,
+like "My Question". The launcher will then ask you to choose a color
+theme for the project. It doesn't matter what you pick at this point,
+just choose something that appeals to you. You'll be returned to the
+top menu of the launcher with your new game chosen.
 
 A Simple Game
 -------------
@@ -82,17 +79,19 @@ This is perhaps one of the simplest Ren'Py games. It doesn't include
 any pictures or anything like that, but it does show a conversation
 between the two characters.
 
-To try this out, go into the launcher, change to the "My Question"
-project, and pick "Edit Script". This will open the script files in a
-text editor. Choose the script.rpy file, and erase everything in
-it. We're starting from scratch, so you don't need what's there. Copy
-the example above into script.rpy, and save it.
+To try this out, go into the launcher, select the "My Question
+Project", and choose "script.rpy" from under Edit Files. Ren'Py may
+ask you to select a text editor, after which it will download the
+editor you select. When it finishes, script.rpy will open in an
+editor.  Erase everything in script.rpy, as we're starting from
+scratch, so you don't need what's there. Copy the example above into
+script.rpy, and save it.
 
 You're now ready to run this example. Go back to the launcher, and
-click Run. Ren'Py will start up. Notice how, without any extra work,
-Ren'Py has given you menus that let you load and save the game, and
-change various preferences. When ready, click "Start Game", and play
-through this example game.
+choose "Launch Project". Ren'Py will start up. Notice how, without any
+extra work, Ren'Py has given you menus that let you load and save the
+game, and change various preferences. When ready, click "Launch Project",
+and play through this example game.
 
 This example shows some of the commonly-used Ren'Py statements.
 
@@ -512,9 +511,14 @@ before releasing it:
     any time.
 
 **Add a plug for Ren'Py.**
-   This step is completely optional, but we do ask that if you have credits in your game, you mention Ren'Py in them. We suggest using something like "Made with the Ren'Py visual novel engine.", but that's just a suggestion, and what you write is up to you. 
+   This step is completely optional, but we do ask that if you have
+   credits in your game, you mention Ren'Py in them. We suggest using
+   something like "Made with the Ren'Py visual novel engine.", but
+   that's just a suggestion, and what you write is up to you.
 
-   We think that the games people make are the best advertising for Ren'Py, and we hope that by including this, you'll help more people learn how to make visual novels in Ren'Py.
+   We think that the games people make are the best advertising for
+   Ren'Py, and we hope that by including this, you'll help more people
+   learn how to make visual novels in Ren'Py.
 
 **Check for a new version of Ren'Py.**
    New versions of Ren'Py are released on a regular basis, to fix bugs
@@ -525,16 +529,17 @@ before releasing it:
    available on that page.
 
 **Check the Script.**
-   In the Launcher, you should go to the Tools page, and pick "Check
-   Script (Lint)". This will check your games for errors that may
-   affect some users. These errors can affect users on the Mac and
-   Linux platforms, so it's important to fix them all, even if you
-   don't see them on your computer.
+   From the front page of the launcher, choose "Check Script
+   (Lint)". This will check your games for errors that may affect some
+   users. These errors can affect users on the Mac and Linux
+   platforms, so it's important to fix them all, even if you don't see
+   them on your computer.
 
 **Build Distributions.**
-   From the Tools page, click distribute. The launcher will check your
-   script again, ask you a few questions, and then build the
-   distribution of your game.
+   From the front page of the launcher, choose "Build Distributions". Based
+   on the information contained in options.rpy, the launcher will build one
+   or more archive files containing your game.
+   
 
 **Test.**
    Lint is not a substitute for thorough testing. It's your

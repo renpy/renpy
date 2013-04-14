@@ -2,6 +2,21 @@
 Full Changelog
 ==============
 
+Ren'Py 6.15.4
+-------------
+
+This release fixes a compile problem that prevented Ren'Py 6.14.x and
+Ren'Py 6.15.0-3 from running on most 64-bit Linux systems.
+
+Image prediction has become more fine-grained, and can take place
+while the screen is animating.
+
+The new :var:`build.exclude_empty_directories` determines if empty
+directories are include or excluded from the distribution. It defaults
+to true, previously the default was platform-dependant.
+
+
+
 Ren'Py 6.15
 ===========
 

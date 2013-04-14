@@ -934,6 +934,18 @@ Rarely or Internally Used
     wav files are of a lower rate, changing this to that rate may make
     things more efficent.
 
+.. var:: config.start_callbacks = [ ... ]
+
+    A list of callbacks functions that are called with no arguments
+    after the init phase, but before the game (including the
+    splashscreen) starts. This is intended to be used by frameworks
+    to initialize variables that will be saved.
+
+    The default value of this variable includes callbacks that Ren'Py
+    uses internally to implement features such as nvl-mode. New
+    callbacks can be appended to this list, but the existing callbacks
+    should not be removed.
+    
 .. var:: config.start_interact_callbacks = ...
 
     A list of functions that are called (without any arguments) when

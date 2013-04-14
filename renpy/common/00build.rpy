@@ -283,6 +283,9 @@ init -1500 python in build:
     # Are we building Ren'Py?
     renpy = False
     
+    # Should we exclude empty directories from the zip and tar files?
+    exclude_empty_directories = True
+    
     # This function is called by the json_dump command to dump the build data 
     # into the json file.
     def dump():
@@ -300,6 +303,8 @@ init -1500 python in build:
         rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
         rv["display_name"] = display_name or executable_name
+    
+        rv["exclude_empty_directories"] = exclude_empty_directories
     
         rv["renpy"] = renpy
         

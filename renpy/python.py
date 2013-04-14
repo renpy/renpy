@@ -1278,7 +1278,7 @@ class RollbackLog(renpy.object.Object):
                 store[name] = value
         
         # Now, rollback to an acceptable point.
-        self.rollback(0, force=True, label=label)
+        self.rollback(0, force=True, label=label, greedy=False)
 
         # Because of the rollback, we never make it this far.
 

@@ -110,8 +110,19 @@ init python in distribute:
             self.zipfile.write_with_info(zi, path)
 
         def add_directory(self, name, path):
-            return
-            
+            if path is None:
+                return
+
+            zi = zipfile.ZipInfo(name + "/")
+
+            s = os.stat(path)
+            zi.date_time = time.gmtime(s.st_mtime)[:6]
+            zi.compress_type = zipfile.ZIP_STORED
+            zi.create_system = 3
+            zi.external_attr = (long(0040777) << 16) | 0x10
+  
+            self.zipfile.write_with_info(zi, path)
+
         def close(self):
             self.zipfile.close()
 
