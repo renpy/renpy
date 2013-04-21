@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.1\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-08 20:03\n"
+"POT-Creation-Date: 2013-04-21 18:29\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -923,36 +923,46 @@ msgid "The sample rate that the sound card will be run at. If all of your wav fi
 msgstr ""
 
 #: ../../source/config.rst:942
+# 749484725d4e45798e06f29824bb0ac1
+msgid "A list of callbacks functions that are called with no arguments after the init phase, but before the game (including the splashscreen) starts. This is intended to be used by frameworks to initialize variables that will be saved."
+msgstr ""
+
+#: ../../source/config.rst:947
+# 3cb184045c024dd9b4c06b2178bb5952
+msgid "The default value of this variable includes callbacks that Ren'Py uses internally to implement features such as nvl-mode. New callbacks can be appended to this list, but the existing callbacks should not be removed."
+msgstr ""
+
+#: ../../source/config.rst:954
 # a34b18698872472385f31b3914ed1326
 msgid "A list of functions that are called (without any arguments) when an interaction is started. These callbacks are not called when an interaction is restarted."
 msgstr ""
 
-#: ../../source/config.rst:948
+#: ../../source/config.rst:960
 # 22fb31903def40b8a52eac3abde4d76e
 msgid "This is a list of names of layers that are displayed above all other layers, and do not participate in a transition that is applied to all layers. If a layer name is listed here, it should not be listed in config.layers."
 msgstr ""
 
-#: ../../source/config.rst:955
+#: ../../source/config.rst:967
 # a6de803060bc41ecb5b505fc2a0d4725
 msgid "This variable gives a list of all of the transient layers. Transient layers are layers that are cleared after each interaction. \"transient\" should always be in this list."
 msgstr ""
 
-#: ../../source/config.rst:961
+#: ../../source/config.rst:973
 # 11524f66ed9a48b79240c096d773d122
 msgid "If True, transforms will inherit :ref:`position properties <position-style-properties>` from their child. If not, they won't."
 msgstr ""
 
-#: ../../source/config.rst:966
+#: ../../source/config.rst:978
 # 8b8cd19765274dd28987b5cfe7aeb227
 msgid "A list of screen variants that are searched when choosing a screen to display to the user. This should always end with None, to ensure that the default screens are chosen. See :ref:`screen-variants`."
 msgstr ""
 
-#: ../../source/config.rst:972
+#: ../../source/config.rst:984
 # 09b090fd06284da4b8ada96d4844470a
 msgid "A string that is formatted with the string argument to the voice statement to produce the filename that is played to the user. For example, if this is \"{filename}.ogg\", the ``voice \"test\"`` statement will play test.ogg."
 msgstr ""
 
-#: ../../source/config.rst:979
+#: ../../source/config.rst:991
 # d1438b11f76a4f05b817ad91760a4a77
 msgid "If not None, this should be a function that is called when a :ref:`with statement <with-statement>` occurs. This function can be responsible for putting up transient things on the screen during the transition. The function is called with a single argument, which is the transition that is occurring. It is expected to return a transition, which may or may not be the transition supplied as its argument."
 msgstr ""

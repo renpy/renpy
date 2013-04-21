@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.1\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-08 20:03\n"
+"POT-Creation-Date: 2013-04-21 18:29\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -324,7 +324,7 @@ msgid "A music room that contains a series of songs that can be unlocked by the 
 msgstr ""
 
 #: ../../source/inc/music_room:10
-# e8e36647a2cf4d8f87d5035ef29c3168
+# 1d1798c3904645568d58e1ac17ab408e
 msgid "`channel`"
 msgstr ""
 
@@ -334,7 +334,7 @@ msgid "The channel that this music room will operate on."
 msgstr ""
 
 #: ../../source/inc/music_room:14
-# 97f72e811dd7405589b0ce729cfee43a
+# 04e76c219d954e24bc9ab6b0ae98a76d
 msgid "`fadeout`"
 msgstr ""
 
@@ -344,7 +344,7 @@ msgid "The number of seconds it takes to fade out the old music when changing tr
 msgstr ""
 
 #: ../../source/inc/music_room:18
-# cf2d5c6e1ec3454f9a519aa14d12d077
+# 294eba710f6a4a7cb68bdea357c26372
 msgid "`fadein`"
 msgstr ""
 
@@ -354,46 +354,56 @@ msgid "The number of seconds it takes to fade in the new music when changing tra
 msgstr ""
 
 #: ../../source/inc/music_room:22
+# 9d50c64aa7fe49fb8e20b41fe562f3eb
+msgid "`loop`"
+msgstr ""
+
+#: ../../source/inc/music_room:21
+# f91796ffd2fa4161bc9b79436e4f3d14
+msgid "If true, a music track will loop once played. If False, it will advance to the next track."
+msgstr ""
+
+#: ../../source/inc/music_room:26
 # 6a3c88c3db384f0d9cc1704c14196387
 msgid "An action that causes the music room to play the next unlocked file in the playlist."
 msgstr ""
 
-#: ../../source/inc/music_room:27
+#: ../../source/inc/music_room:31
 # 4825b861b3984cec84dde476feca5ad2
 msgid "Causes the music room to start playing. If `filename` is given, that file begins playing. Otherwise, the currently playing file starts over (if it's unlocked), or the first file starts playing."
 msgstr ""
 
-#: ../../source/inc/music_room:31
+#: ../../source/inc/music_room:35
 # 27fde953529241ff94f2e7f7b3af81c5
 msgid "If `filename` is given, buttons with this action will be insensitive while `filename` is locked, and will be selected when `filename` is playing."
 msgstr ""
 
-#: ../../source/inc/music_room:37
+#: ../../source/inc/music_room:41
 # 8989ec8b1e6e4fb1a703f1790016cfe9
 msgid "An action that causes the music room to play the previous unlocked file in the playlist."
 msgstr ""
 
-#: ../../source/inc/music_room:42
+#: ../../source/inc/music_room:46
 # 12c14f7c378b436d95f5933b1cb36396
 msgid "Stops the music."
 msgstr ""
 
-#: ../../source/inc/music_room:46
+#: ../../source/inc/music_room:50
 # 827c21dd3d13493eacc28a6fd1579ed8
 msgid "Adds the music file `filename` to this music room. The music room will play unlocked files in the order that they are added to the room."
 msgstr ""
 
-#: ../../source/inc/music_room:52
+#: ../../source/inc/music_room:56
 # de8cd4f3b3fb4b8bb36672ee4e55ab23
 msgid "`always_unlocked`"
 msgstr ""
 
-#: ../../source/inc/music_room:51
+#: ../../source/inc/music_room:55
 # f91796ffd2fa4161bc9b79436e4f3d14
 msgid "If true, the music file will be always unlocked. This allows the file to show up in the music room before it has been played in the game."
 msgstr ""
 
-#: ../../source/inc/music_room:57
+#: ../../source/inc/music_room:61
 # 181c3fce6d894aaa9d39d56314baa053
 msgid "Returns true if the filename has been unlocked (or is always unlocked), and false if it is still locked."
 msgstr ""
