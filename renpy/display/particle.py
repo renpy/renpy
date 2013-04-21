@@ -261,7 +261,7 @@ class SpriteManager(renpy.display.core.Displayable):
         if self.dead_child:
             self.children = [ i for i in self.children if i.live ]
 
-        self.children.sort()
+        self.children.sort(key=lambda sc:sc.zorder)
 
         caches = [ ]
 

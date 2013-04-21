@@ -479,13 +479,21 @@ def mutator(method):
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
             mutate_flag = True
-            
+                    
         return method(self, *args, **kwargs)
 
     return do_mutation
 
 class RevertableList(list):
 
+    def __init__(self, *args):
+        log = renpy.game.log
+        
+        if log is not None:
+            log.mutated[id(self)] = None
+
+        list.__init__(self, *args)
+        
     __delitem__ = mutator(list.__delitem__)
     __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
@@ -526,6 +534,14 @@ def revertable_sorted(*args, **kwargs):
 
 class RevertableDict(dict):
 
+    def __init__(self, *args, **kwargs):
+        log = renpy.game.log
+        
+        if log is not None:
+            log.mutated[id(self)] = None
+
+        dict.__init__(self, *args, **kwargs)
+
     __delitem__ = mutator(dict.__delitem__)
     __setitem__ = mutator(dict.__setitem__)
     clear = mutator(dict.clear)
@@ -560,6 +576,14 @@ class RevertableDict(dict):
             self[k] = v
 
 class RevertableSet(sets.Set):
+
+    def __init__(self, *args):
+        log = renpy.game.log
+
+        if log is not None:
+            log.mutated[id(self)] = None
+        
+        sets.Set.__init__(self, *args)
 
     __iand__ = mutator(sets.Set.__iand__)
     __ior__ = mutator(sets.Set.__ior__)
@@ -609,6 +633,15 @@ class RevertableSet(sets.Set):
     
 
 class RevertableObject(object):
+
+    def __new__(cls, *args, **kwargs):
+        self = super(RevertableObject, cls).__new__(cls, *args, **kwargs)
+
+        log = renpy.game.log
+        if log is not None:
+            log.mutated[id(self)] = None
+
+        return self
 
     def __setattr__(self, attr, value):
         object.__setattr__(self, attr, value)
@@ -783,7 +816,8 @@ class Rollback(renpy.object.Object):
         """
 
         for obj, roll in reversed(self.objects):
-            obj.rollback(roll)
+            if roll is not None:
+                obj.rollback(roll)
 
         for name, changes in self.stores.iteritems():
             store = store_dicts.get(name, None)
@@ -925,7 +959,12 @@ class RollbackLog(renpy.object.Object):
             self.current.objects = [ ]
 
             try:
-                for _k, (ref, roll) in self.mutated.iteritems():
+                for _k, v in self.mutated.iteritems():
+
+                    if v is None:
+                        continue
+
+                    (ref, roll) = v
 
                     obj = ref()
                     if obj is None:
@@ -1239,7 +1278,7 @@ class RollbackLog(renpy.object.Object):
                 store[name] = value
         
         # Now, rollback to an acceptable point.
-        self.rollback(0, force=True, label=label)
+        self.rollback(0, force=True, label=label, greedy=False)
 
         # Because of the rollback, we never make it this far.
 

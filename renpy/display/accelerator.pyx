@@ -22,8 +22,42 @@
 
 import renpy
 import math
-
 from renpy.display.render cimport Render, Matrix2D, render
+
+
+################################################################################
+# Surface copying
+################################################################################
+
+from pygame cimport *
+
+def nogil_copy(src, dest):
+    """
+    Does a gil-less blit of src to dest, with minimal locking.
+    """
+    
+    cdef SDL_Surface *src_surf
+    cdef SDL_Surface *dst_surf
+
+    src_surf = PySurface_AsSurface(src)
+    dest_surf = PySurface_AsSurface(dest)
+
+    old_alpha = src_surf.flags & SDL_SRCALPHA
+    
+    if old_alpha:
+        SDL_SetAlpha(src_surf, 0, 255)
+    
+    with nogil:
+        SDL_BlitSurface(src_surf, NULL, dest_surf, NULL)
+        
+    if old_alpha:
+        SDL_SetAlpha(src_surf, SDL_SRCALPHA, 255)
+    
+
+
+################################################################################
+# Transform render function
+################################################################################
 
 cdef Matrix2D IDENTITY
 IDENTITY = renpy.display.render.IDENTITY

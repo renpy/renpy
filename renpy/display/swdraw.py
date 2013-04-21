@@ -249,10 +249,9 @@ def surface(w, h, alpha):
 
 def copy_surface(surf):
     w, h = surf.get_size()
-    
     rv = surface(w, h, True)
-    rv.blit(surf, (0, 0))
-    
+
+    renpy.display.accelerator.nogil_copy(surf, rv) # @UndefinedVariable
     return rv
 
 def draw_special(what, dest, x, y):

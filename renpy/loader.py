@@ -28,10 +28,23 @@ import types
 
 try:
     import android.apk
-    apks = [ 
-        android.apk.APK(prefix='assets/x-game/'),
-        android.apk.APK(prefix='assets/x-common/'),
-        ]
+
+    expansion = os.environ.get("ANDROID_EXPANSION", None)
+    if expansion is not None:
+        print "Using expansion file", expansion
+
+        apks = [         
+            android.apk.APK(apk=expansion, prefix='assets/x-game/'),
+            android.apk.APK(apk=expansion, prefix='assets/x-common/'),
+            ]
+    else:
+        print "Not using expansion file."
+        
+        apks = [ 
+            android.apk.APK(prefix='assets/x-game/'),
+            android.apk.APK(prefix='assets/x-common/'),
+            ]
+
 except ImportError:
     apks = [ ]
 

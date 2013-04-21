@@ -46,7 +46,7 @@ has_libglew32 = library("glew32", optional=True)
 has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
 
 if android:
-    sdl = [ 'sdl', 'GLESv1_CM', 'log' ]
+    sdl = [ 'sdl', 'GLESv2', 'log' ]
 else:
     sdl = [ 'SDL' ]
 
@@ -54,14 +54,8 @@ else:
 # Modules directory.
 cython(
     "_renpy", 
-    [ "IMG_savepng.c", "core.c", "rwobject.c", "subpixel.c"],
+    [ "IMG_savepng.c", "core.c", "subpixel.c"],
     sdl + [ 'png', 'z', 'm' ])
-
-cmodule(
-    "_renpy_font",
-    [ "renpy_ttf.c", "renpy_font.c"],
-    sdl + [ 'freetype', 'z', 'm' ],
-    )
 
 if has_fribidi and not android:
     cython(
@@ -80,17 +74,17 @@ if not android:
 
     cython(
         "pysdlsound.sound",
-        [ "pss.c", "rwobject.c", "ffdecode.c" ],
+        [ "pss.c", "ffdecode.c" ],
         libs = sdl + sound)
 
 
 # Display.
 cython("renpy.display.render", libs=[ 'z', 'm' ])
-cython("renpy.display.accelerator", libs=[ 'z', 'm' ])
+cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 # Gl.
 if android:
-    glew_libs = [ 'GLESv1_CM', 'z', 'm' ]
+    glew_libs = [ 'GLESv2', 'z', 'm' ]
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
 else:
@@ -98,9 +92,9 @@ else:
 
 cython("renpy.gl.gldraw", libs=glew_libs )
 cython("renpy.gl.gltexture", libs=glew_libs)
+cython("renpy.gl.glenviron_shader", libs=glew_libs)
 cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
-cython("renpy.gl.glenviron_shader", libs=glew_libs, compile_if=not android)
-cython("renpy.gl.glenviron_limited", libs=glew_libs)
+cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not android)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 

@@ -886,7 +886,10 @@ init -1500 python in updater:
             
             # Check the existence of the downloaded file.
             if not os.path.exists(new_fn):
-                raise UpdateError("The update file was not downloaded.")
+                if os.path.exists(new_fn + ".part"):
+                    os.rename(new_fn + ".part", new_fn)
+                else:
+                    raise UpdateError("The update file was not downloaded.")
             
             # Check that the downloaded file has the right digest.    
             import hashlib    

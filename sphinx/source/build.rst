@@ -209,8 +209,19 @@ Please think twice about archiving your game. Keeping files open will
 help others run your game on future platforms - platforms that may not
 exist until after you're gone.
 
+
 Build Functions
 ---------------
      
 .. include:: inc/build
 
+Advanced Configuration
+----------------------
+
+The following variables provide further control of the build process:
+
+.. var:: build.exclude_empty_directories = True
+
+    If true, empty directories (including directories left empty by
+    file archiving) will be removed from generated packages. If false,
+    empty directories will be included.

@@ -725,6 +725,9 @@ class Transform(Container):
         children = self.children
         offsets = self.offsets
         
+        if not offsets:
+            return None
+        
         for i in xrange(len(self.children)-1, -1, -1):
 
             d = children[i]

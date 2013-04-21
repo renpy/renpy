@@ -206,19 +206,21 @@ cdef class GLDraw:
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
 
-        # Switch the 
-        IF not ANGLE:
+        if ANGLE:
+            opengl = 0
+            resizable = 0
+        elif renpy.android:
+            opengl = pygame.OPENGL
+            resizable = 0
+        else:
             opengl = pygame.OPENGL
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
-        ELSE:
-            opengl = 0            
-            # EGL automatically handles vsync for us.
         
-        if renpy.config.gl_resize:
-            resizable = pygame.RESIZABLE
-        else:
-            resizable = 0
+            if renpy.config.gl_resize:
+                resizable = pygame.RESIZABLE
+            else:
+                resizable = 0
         
         try:
             if fullscreen:
@@ -382,12 +384,13 @@ cdef class GLDraw:
             return False
 
         if ANGLE:
-            gltexture.use_angle()
-        elif version.startswith("OpenGL ES"):
+            gltexture.use_gles()
+
+        elif renpy.android:
             self.redraw_period = 1.0
             self.always_opaque = True
-
             gltexture.use_gles()
+        
         else:
             gltexture.use_gl()
 
@@ -433,7 +436,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
         
-        if ANGLE or (allow_shader and use_subsystem(
+        if ANGLE or renpy.android or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",

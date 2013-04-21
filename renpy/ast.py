@@ -852,7 +852,7 @@ class Transform(Node):
         setattr(renpy.store, self.varname, trans)
 
     
-def predict_imspec(imspec, scene=False):
+def predict_imspec(imspec, scene=False, atl=None):
     """
     Call this to use the given callback to predict the image named
     in imspec.
@@ -888,8 +888,16 @@ def predict_imspec(imspec, scene=False):
         renpy.game.context().images.predict_scene(layer)
         
     renpy.game.context().images.predict_show(tag or name, layer)
+    
+    if atl is not None:
+        try:
+            img = renpy.display.motion.ATLTransform(atl, child=img)
+        except:
+            import traceback
+            traceback.print_exc()
         
     renpy.display.predict.displayable(img)
+
 
     
 def show_imspec(imspec, atl=None):
@@ -955,7 +963,7 @@ class Show(Node):
         show_imspec(self.imspec, atl=getattr(self, "atl", None))
 
     def predict(self):
-        predict_imspec(self.imspec)
+        predict_imspec(self.imspec, atl=getattr(self, "atl", None))
         return [ self.next ]
         
 
@@ -1001,7 +1009,7 @@ class Scene(Node):
     def predict(self):
         
         if self.imspec:
-            predict_imspec(self.imspec, scene=True)
+            predict_imspec(self.imspec, atl=getattr(self, "atl", None), scene=True)
 
         return [ self.next ]
 

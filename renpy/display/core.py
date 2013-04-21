@@ -1080,6 +1080,9 @@ class Interface(object):
         # Have we shown the window this interaction?
         self.shown_window = False
         
+        # Are we in fullscren mode?
+        self.fullscreen = False
+        
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -1366,6 +1369,7 @@ class Interface(object):
         if s and (s.get_flags() & pygame.FULLSCREEN):
             fullscreen = False
             
+        old_fullscreen = self.fullscreen
         self.fullscreen = fullscreen
 
         if os.environ.get('RENPY_DISABLE_FULLSCREEN', False):
@@ -1389,7 +1393,7 @@ class Interface(object):
             raise Exception("Could not set video mode.")
         
         # Save the video size.
-        if renpy.config.save_physical_size and not fullscreen: 
+        if renpy.config.save_physical_size and not fullscreen and not old_fullscreen: 
             renpy.game.preferences.physical_size = renpy.display.draw.get_physical_size()
        
         if android:
@@ -1408,7 +1412,7 @@ class Interface(object):
         self.restart_interaction = True
 
 
-    def draw_screen(self, root_widget, fullscreen_video):
+    def draw_screen(self, root_widget, fullscreen_video, draw):
         
         surftree = renpy.display.render.render_screen(
             root_widget,
@@ -1416,8 +1420,9 @@ class Interface(object):
             renpy.config.screen_height,
             )
 
-        renpy.display.draw.draw_screen(surftree, fullscreen_video)
-        
+        if draw:
+            renpy.display.draw.draw_screen(surftree, fullscreen_video)
+
         renpy.display.render.mark_sweep()
         renpy.display.focus.take_focuses()
 
@@ -1800,6 +1805,16 @@ class Interface(object):
         self.transition_from.clear()
         self.transition_time.clear()
     
+    def post_time_event(self):
+        """
+        Posts a time_event object to the queue.
+        """
+        
+        try:
+            pygame.event.post(self.time_event)
+        except:
+            pass
+    
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -1879,7 +1894,7 @@ class Interface(object):
         @param suppress_overlay: This suppresses the display of the overlay.
         @param suppress_underlay: This suppresses the display of the underlay.
         """
-        
+
         self.roll_forward = roll_forward
         self.show_mouse = show_mouse
         
@@ -1951,10 +1966,7 @@ class Interface(object):
                             REDRAW))
 
         # Add a single TIMEEVENT to the queue.
-        try:
-            pygame.event.post(self.time_event)
-        except:
-            pass
+        self.post_time_event()
         
         # Figure out the scene list we want to show.        
         scene_lists = renpy.game.context().scene_lists
@@ -2068,6 +2080,7 @@ class Interface(object):
             add_layer(root_widget, layer)
 
         prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
+        prediction_coroutine.send(None)
             
         # Clean out the registered adjustments.
         renpy.display.behavior.adj_registered.clear()
@@ -2112,6 +2125,9 @@ class Interface(object):
         # How long until we redraw.
         redraw_in = 3600
                 
+        # Have we drawn a frame yet?
+        video_frame_drawn = False
+                
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try: 
@@ -2146,7 +2162,7 @@ class Interface(object):
                     if not self.interact_time:
                         self.interact_time = self.frame_time
 
-                    self.draw_screen(root_widget, fullscreen_video)
+                    self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
                         
                     if first_pass:
                         scene_lists.set_times(self.interact_time)
@@ -2163,7 +2179,6 @@ class Interface(object):
                         if new_time - self.profile_time > .015:
                             print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
                             print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
-
                         
                     if first_pass and self.last_event:
                         x, y = renpy.display.draw.get_mouse_pos()
@@ -2175,7 +2190,7 @@ class Interface(object):
                     pygame.time.set_timer(REDRAW, 0)
                     pygame.event.clear([REDRAW])
                     old_redraw_time = None
-                    
+
                 # Draw the mouse, if it needs drawing.
                 renpy.display.draw.update_mouse()
                     
@@ -2185,6 +2200,11 @@ class Interface(object):
 
                 # Determine if we need a redraw. (We want to run these 
                 # functions, so we put them first to prevent short-circuiting.) 
+
+                if renpy.display.video.frequent():
+                    needs_redraw = True
+                    video_frame_drawn = True
+                
                 needs_redraw = renpy.display.video.frequent() or needs_redraw
                 needs_redraw = renpy.display.render.process_redraws() or needs_redraw
 
@@ -2201,7 +2221,10 @@ class Interface(object):
                         redraw_in = time_left
                         
                         if time_left <= 0:
-                            pygame.event.post(self.redraw_event)
+                            try:
+                                pygame.event.post(self.redraw_event)
+                            except:
+                                pass
                             pygame.time.set_timer(REDRAW, 0)
                         else:
                             pygame.time.set_timer(REDRAW, max(int(time_left * 1000), 1))
@@ -2222,21 +2245,25 @@ class Interface(object):
                     if time_left <= 0:
                         self.timeout_time = None
                         pygame.time.set_timer(TIMEEVENT, 0)
-                        pygame.event.post(self.time_event)                    
+                        self.post_time_event()
                     elif self.timeout_time != old_timeout_time:
                         # Always set to at least 1ms.
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
                 # Predict images, if we haven't done so already.
-                while (prediction_coroutine is not None) \
-                        and not needs_redraw \
-                        and not self.event_peek() \
-                        and not renpy.audio.music.is_playing("movie"):
+                while prediction_coroutine is not None:
                     
-                    result = prediction_coroutine.next()
+                    # Can we do expensive prediction?
+                    expensive_predict = not (needs_redraw or self.event_peek() or renpy.audio.music.is_playing("movie"))
+                    
+                    result = prediction_coroutine.send(expensive_predict)
+
                     if not result:
                         prediction_coroutine = None
+                        break
+
+                    if not expensive_predict:
                         break
 
                 # If we need to redraw again, do it if we don't have an
@@ -2379,10 +2406,8 @@ class Interface(object):
                     # An ignored event can change the timeout. So we want to
                     # process an TIMEEVENT to ensure that the timeout is
                     # set correctly.
-                    try:
-                        pygame.event.post(self.time_event)
-                    except:
-                        pass
+                    self.post_time_event()
+                        
                         
                 # Check again after handling the event.
                 needs_redraw |= renpy.display.render.process_redraws()
@@ -2394,7 +2419,6 @@ class Interface(object):
             # transitions up to the next interaction.
             if trans_pause and rv:
                 self.suppress_transition = True
-
                 
             # But wait, there's more! The finally block runs some cleanup
             # after this.

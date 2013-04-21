@@ -228,7 +228,7 @@ init -1500 python:
                 return False
             elif renpy.context()._main_menu:
                 return False
-            elif persistent._file_page == "auto":
+            elif (self.page or persistent._file_page) == "auto":
                 return False
             else:
                 return True

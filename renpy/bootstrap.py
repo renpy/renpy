@@ -87,12 +87,15 @@ class NullFile(io.IOBase):
         raise IOError("Not implemented.")
     
 def null_files():
-    if sys.stderr.fileno() < 0:
-        sys.stderr = NullFile()
+    try:
+        if sys.stderr.fileno() < 0:
+            sys.stderr = NullFile()
+    
+        if sys.stdout.fileno() < 0:
+            sys.stdout = NullFile()
+    except:
+        pass
 
-    if sys.stdout.fileno() < 0:
-        sys.stdout = NullFile()
-        
 null_files()
     
     
@@ -475,13 +478,16 @@ def report_exception(e, editor=True):
     return simple.decode("utf-8", "replace"), full.decode("utf-8", "replace"), traceback_fn
 
 
+old_memory = { }
+
 def memory_profile():
-
-    print "Memory Profile"
-    print
-    print "Showing all objects in memory at program termination."
-    print
-
+    """
+    Calling this function displays the change in the number of instances of 
+    each type of object.
+    """
+    
+    print "- Memory Profile ---------------------------------------------------"
+    
     import gc
     gc.collect()
 
@@ -497,4 +503,7 @@ def memory_profile():
     results.sort()
 
     for count, ty in results:
-        print count, str(ty)
+        diff = count - old_memory.get(ty, 0)
+        old_memory[ty] = count
+        if diff:
+            print diff, ty

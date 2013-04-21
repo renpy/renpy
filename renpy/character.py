@@ -346,7 +346,7 @@ def display_say(
     checkpoint=True,
     ctc_timedpause=None,
     ctc_force=False):
-    
+
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
     if interact and renpy.config.skipping == "fast":
@@ -768,8 +768,11 @@ class ADVCharacter(object):
             sub = renpy.substitutions.substitute
 
             if who is not None:
-                who_pattern = sub(self.who_prefix + "[[who]" + self.who_suffix)
-                who = who_pattern.replace("[who]", sub(who))
+                if renpy.config.new_substitutions:
+                    who_pattern = sub(self.who_prefix + "[[who]" + self.who_suffix)
+                    who = who_pattern.replace("[who]", sub(who))
+                else:
+                    who = self.who_prefix + who + self.who_suffix
     
             ctx = renpy.game.context()
             
@@ -778,8 +781,11 @@ class ADVCharacter(object):
             else:
                 translate = True
 
-            what_pattern = sub(self.what_prefix + "[[what]" + self.what_suffix)
-            what = what_pattern.replace("[what]", sub(what, translate=translate))
+            if renpy.config.new_substitutions:
+                what_pattern = sub(self.what_prefix + "[[what]" + self.what_suffix)
+                what = what_pattern.replace("[what]", sub(what, translate=translate))
+            else:
+                what = self.what_prefix + what + self.what_suffix
     
             # Run the add_function, to add this character to the
             # things like NVL-mode.

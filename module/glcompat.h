@@ -12,7 +12,7 @@
 
 #if defined ANDROID
 
-#define RENPY_GLES_1
+#define RENPY_GLES_2
 
 #elif defined ANGLE
 

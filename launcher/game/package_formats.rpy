@@ -7,8 +7,80 @@ init python in distribute:
     import zipfile
     import tarfile
     import zlib
+    import struct
+    import stat
+
+    from zipfile import crc32
 
     zlib.Z_DEFAULT_COMPRESSION = 9
+    
+    class ZipFile(zipfile.ZipFile):
+
+        def write_with_info(self, zinfo, filename):
+            """Put the bytes from filename into the archive under the name
+            arcname."""
+            if not self.fp:
+                raise RuntimeError(
+                      "Attempt to write to ZIP archive that was already closed")
+
+            st = os.stat(filename)
+            isdir = stat.S_ISDIR(st.st_mode)
+
+            zinfo.file_size = st.st_size
+            zinfo.flag_bits = 0x00
+            zinfo.header_offset = self.fp.tell()    # Start of header bytes
+
+            self._writecheck(zinfo)
+            self._didModify = True
+
+            if isdir:
+                zinfo.file_size = 0
+                zinfo.compress_size = 0
+                zinfo.CRC = 0
+                self.filelist.append(zinfo)
+                self.NameToInfo[zinfo.filename] = zinfo
+                self.fp.write(zinfo.FileHeader())
+                return
+
+            with open(filename, "rb") as fp:
+                # Must overwrite CRC and sizes with correct data later
+                zinfo.CRC = CRC = 0
+                zinfo.compress_size = compress_size = 0
+                zinfo.file_size = file_size = 0
+                self.fp.write(zinfo.FileHeader())
+                if zinfo.compress_type == zipfile.ZIP_DEFLATED:
+                    cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
+                         zlib.DEFLATED, -15)
+                else:
+                    cmpr = None
+                while 1:
+                    buf = fp.read(1024 * 1024)
+                    if not buf:
+                        break
+                    file_size = file_size + len(buf)
+                    CRC = crc32(buf, CRC) & 0xffffffff
+                    if cmpr:
+                        buf = cmpr.compress(buf)
+                        compress_size = compress_size + len(buf)
+                    self.fp.write(buf)
+            if cmpr:
+                buf = cmpr.flush()
+                compress_size = compress_size + len(buf)
+                self.fp.write(buf)
+                zinfo.compress_size = compress_size
+            else:
+                zinfo.compress_size = file_size
+            zinfo.CRC = CRC
+            zinfo.file_size = file_size
+            # Seek backwards and write CRC and file sizes
+            position = self.fp.tell()       # Preserve current position in file
+            self.fp.seek(zinfo.header_offset + 14, 0)
+            self.fp.write(struct.pack("<LLL", zinfo.CRC, zinfo.compress_size,
+                  zinfo.file_size))
+            self.fp.seek(position, 0)
+            self.filelist.append(zinfo)
+            self.NameToInfo[zinfo.filename] = zinfo
+    
     
     class ZipPackage(object):
         """
@@ -16,7 +88,7 @@ init python in distribute:
         """
         
         def __init__(self, filename):
-            self.zipfile = zipfile.ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
+            self.zipfile = ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
             
         def add_file(self, name, path, xbit):
             
@@ -35,14 +107,22 @@ init python in distribute:
             else:
                 zi.external_attr = long(0100666) << 16 
 
-            with open(path, "rb") as f:
-                data = f.read()
-                
-            self.zipfile.writestr(zi, data)
+            self.zipfile.write_with_info(zi, path)
 
         def add_directory(self, name, path):
-            return
-            
+            if path is None:
+                return
+
+            zi = zipfile.ZipInfo(name + "/")
+
+            s = os.stat(path)
+            zi.date_time = time.gmtime(s.st_mtime)[:6]
+            zi.compress_type = zipfile.ZIP_STORED
+            zi.create_system = 3
+            zi.external_attr = (long(0040777) << 16) | 0x10
+  
+            self.zipfile.write_with_info(zi, path)
+
         def close(self):
             self.zipfile.close()
 

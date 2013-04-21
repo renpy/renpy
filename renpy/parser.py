@@ -1,3 +1,4 @@
+
 # Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -298,6 +299,10 @@ def list_logical_lines(filename, filedata=None):
                 word = prefix + rest
                 
             line += word
+
+            if len(line) > 65536:
+                raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
+                
             pos = m.end(0)
 
             # print repr(data[pos:])
