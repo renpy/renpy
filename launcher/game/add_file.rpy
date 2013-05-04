@@ -4,7 +4,7 @@ label add_file:
         import os
         import codecs
     
-        filename = interface.input(_("FILENAME"), _("Enter the name of the script file to create."), filename="withslash")
+        filename = interface.input(_("FILENAME"), _("Enter the name of the script file to create."), filename="withslash", cancel=Jump("navigation"))
        
         if "." in filename and not filename.endswith(".rpy"):
             interface.error(_("The filename must have the .rpy extension."), label="navigation")
