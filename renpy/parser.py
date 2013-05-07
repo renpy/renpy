@@ -1272,6 +1272,7 @@ def parse_parameters(l):
             names.add(name)
             
             if l.match(r'='):
+                l.skip_whitespace()
                 default = l.delimited_python("),")
             else:
                 default = None
@@ -1329,6 +1330,7 @@ def parse_arguments(l):
                 l.revert(state)
                 name = None
 
+            l.skip_whitespace()
             arguments.append((name, l.delimited_python("),")))
             
         if l.match(r'\)'):
