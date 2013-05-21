@@ -68,7 +68,7 @@ pymodule("pysdlsound.__init__")
 
 if not android:
 
-    sound = [ "avformat", "avcodec", "avutil", "z" ]
+    sound = [ "avformat", "avcodec", "avutil", "avresample", "z" ]
     if has_swscale:
         sound.insert(0, "swscale")
 
