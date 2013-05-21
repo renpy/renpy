@@ -37,6 +37,7 @@ library("png")
 library("avformat")
 library("avcodec")
 library("avutil")
+has_avresample = library("avresample", optional=True)
 has_swscale = library("swscale", optional=True)
 library("freetype")
 has_fribidi = library("fribidi", optional=True)            
@@ -69,13 +70,20 @@ pymodule("pysdlsound.__init__")
 if not android:
 
     sound = [ "avformat", "avcodec", "avutil", "z" ]
+    macros = [ ]
+
+    if has_avresample:
+        sound.insert(0, "avresample")
+        macros.append(("HAS_RESAMPLE", 1))
+
     if has_swscale:
         sound.insert(0, "swscale")
-
+    
     cython(
         "pysdlsound.sound",
         [ "pss.c", "ffdecode.c" ],
-        libs = sdl + sound)
+        libs = sdl + sound,
+        define_macros=macros)
 
 
 # Display.
