@@ -190,7 +190,6 @@ static int debug_mv = 0;
 static int workaround_bugs = 1;
 static int fast = 0;
 static int genpts = 0;
-static int lowres = 0;
 static int idct = FF_IDCT_AUTO;
 static enum AVDiscard skip_frame= AVDISCARD_DEFAULT;
 static enum AVDiscard skip_idct= AVDISCARD_DEFAULT;
@@ -1042,8 +1041,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     enc->debug_mv = debug_mv;
     enc->debug = debug;
     enc->workaround_bugs = workaround_bugs;
-    enc->lowres = lowres;
-    if(lowres) enc->flags |= CODEC_FLAG_EMU_EDGE;
     enc->idct_algo= idct;
     if(fast) enc->flags2 |= CODEC_FLAG2_FAST;
     enc->skip_frame= skip_frame;
