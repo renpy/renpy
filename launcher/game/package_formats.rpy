@@ -103,9 +103,9 @@ init python in distribute:
             zi.create_system = 3
 
             if xbit:
-                zi.external_attr = long(0100777) << 16
+                zi.external_attr = long(0100755) << 16
             else:
-                zi.external_attr = long(0100666) << 16 
+                zi.external_attr = long(0100644) << 16
 
             self.zipfile.write_with_info(zi, path)
 
@@ -119,7 +119,7 @@ init python in distribute:
             zi.date_time = time.gmtime(s.st_mtime)[:6]
             zi.compress_type = zipfile.ZIP_STORED
             zi.create_system = 3
-            zi.external_attr = (long(0040777) << 16) | 0x10
+            zi.external_attr = (long(0040755) << 16) | 0x10
   
             self.zipfile.write_with_info(zi, path)
 
@@ -150,9 +150,9 @@ init python in distribute:
                 info.type = tarfile.DIRTYPE
 
             if xbit:
-                info.mode = 0777
+                info.mode = 0755
             else:
-                info.mode = 0666
+                info.mode = 0644
 
             info.uid = 1000
             info.gid = 1000
