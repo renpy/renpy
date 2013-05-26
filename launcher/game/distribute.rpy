@@ -47,7 +47,7 @@ init python in distribute:
                 regexp += r'.*'
                 pattern = pattern[2:]
             elif pattern[0] == "*":
-                regexp += r'[^/]*'
+                regexp += r'[^/]*/?'
                 pattern = pattern[1:]
             elif pattern[0] == '[':
                 regexp += r'['
