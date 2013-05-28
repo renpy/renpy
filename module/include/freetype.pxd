@@ -373,25 +373,28 @@ cdef extern from "pyfreetype.h":
     FT_Error FT_Set_Char_Size(FT_Face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt hres, FT_UInt vres)
     FT_Error FT_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height)
 
+    ctypedef enum FT_Load_Flags:
+        FT_LOAD_DEFAULT
+        FT_LOAD_NO_SCALE
+        FT_LOAD_NO_HINTING
+        FT_LOAD_RENDER
+        FT_LOAD_NO_BITMAP
+        FT_LOAD_VERTICAL_LAYOUT
+        FT_LOAD_FORCE_AUTOHINT
+        FT_LOAD_CROP_BITMAP
+        FT_LOAD_PEDANTIC
+        FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH
+        FT_LOAD_NO_RECURSE
+        FT_LOAD_IGNORE_TRANSFORM
+        FT_LOAD_MONOCHROME
+        FT_LOAD_LINEAR_DESIGN
+        FT_LOAD_SBITS_ONLY
+        FT_LOAD_NO_AUTOHINT
+
     FT_Error FT_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 flags)
     FT_Error FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 flags)
 
-    DEF FT_LOAD_DEFAULT =                     0
-    DEF FT_LOAD_NO_SCALE =                    1 << 0
-    DEF FT_LOAD_NO_HINTING =                  1 << 1
-    DEF FT_LOAD_RENDER =                      1 << 2
-    DEF FT_LOAD_NO_BITMAP =                   1 << 3
-    DEF FT_LOAD_VERTICAL_LAYOUT =             1 << 4
-    DEF FT_LOAD_FORCE_AUTOHINT =              1 << 5
-    DEF FT_LOAD_CROP_BITMAP =                 1 << 6
-    DEF FT_LOAD_PEDANTIC =                    1 << 7
-    DEF FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH = 1 << 9
-    DEF FT_LOAD_NO_RECURSE =                  1 << 10
-    DEF FT_LOAD_IGNORE_TRANSFORM =            1 << 11
-    DEF FT_LOAD_MONOCHROME =                  1 << 12
-    DEF FT_LOAD_LINEAR_DESIGN =               1 << 13
-    DEF FT_LOAD_SBITS_ONLY =                  1 << 14
-    DEF FT_LOAD_NO_AUTOHINT =                 1 << 15
+
 
     void FT_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta)
     

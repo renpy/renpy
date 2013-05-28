@@ -314,7 +314,7 @@ cdef class FTFont:
     
         rv.index = index
         
-        error = FT_Load_Glyph(face, index, 0)
+        error = FT_Load_Glyph(face, index, FT_LOAD_FORCE_AUTOHINT)
         if error:
             raise FreetypeError(error)
         
