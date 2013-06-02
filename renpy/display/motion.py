@@ -514,7 +514,7 @@ class Transform(Container):
                 raise Exception("Unknown transform property prefix: %r" % prefix)
 
             if prop not in renpy.atl.PROPERTIES:
-                raise Exception("Unknown transform property: %r")
+                raise Exception("Unknown transform property: %r" % prop)
             
             self.arguments[prefix][prop] = v
 
