@@ -315,7 +315,7 @@ class StringTranslator(object):
             new = self.translations.get(notags, None)
 
         if new is not None:
-            return True
+            return new
             
         return old
 
