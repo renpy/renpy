@@ -458,7 +458,7 @@ class ImageBase(renpy.display.core.Displayable):
         would override this.
         """
 
-        assert False
+        raise Exception("load method not implemented.")
         
     def render(self, w, h, st, at):
         

@@ -943,9 +943,6 @@ class Lexer(object):
 
             for _fn, ln, text, subblock in block:
 
-                if o.line > ln:
-                    assert False
-
                 while o.line < ln:
                     rv.append(indent + '\n')
                     o.line += 1

@@ -213,7 +213,7 @@ class Displayable(renpy.object.Object):
         in seconds.        
         """
 
-        assert False, "Draw not implemented."
+        raise Exception("Render not implemented.")
 
     def event(self, ev, x, y, st):
         """

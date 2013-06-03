@@ -191,8 +191,6 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
         # for each layer.
         if new.layers:
 
-            assert old.layers
-
             rv = renpy.display.layout.MultiBox(layout='fixed')
             rv.layers = { }
 
@@ -501,8 +499,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         # If we're in the layers_root widget, merge the child widgets
         # for each layer.
         if new.layers:
-
-            assert old.layers
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
 

@@ -294,11 +294,9 @@ def horiz_line_dist(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1):
     # The right end of a is to the left of the left end of b.
     if ax0 <= ax1 <= bx0 <= bx1:
         return points_dist(ax1, ay1, bx0, by0, renpy.config.focus_crossrange_penalty, 1.0)
-
-    if bx0 <= bx1 <= ax0 <= ax1:
+    else:
         return points_dist(ax0, ay0, bx1, by1, renpy.config.focus_crossrange_penalty, 1.0)
 
-    assert False
 
 # This computes the distance between two vertical lines. (So the
 # distance is either hortizontal, or has a horizontal component to it.)
@@ -316,12 +314,8 @@ def verti_line_dist(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1):
     # The right end of a is to the left of the left end of b.
     if ay0 <= ay1 <= by0 <= by1:
         return points_dist(ax1, ay1, bx0, by0, 1.0, renpy.config.focus_crossrange_penalty)
-
-    if by0 <= by1 <= ay0 <= ay1:
+    else:
         return points_dist(ax0, ay0, bx1, by1, 1.0, renpy.config.focus_crossrange_penalty)
-
-    assert False
-
 
 
 # This focuses the widget that is nearest to the current widget. To

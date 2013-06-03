@@ -278,7 +278,7 @@ class Node(object):
         be executed after this one.
         """
 
-        assert False, "Node subclass forgot to define execute."
+        raise Exception("Node subclass forgot to define execute.")
 
     def early_execute(self):
         """
