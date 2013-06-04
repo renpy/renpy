@@ -108,6 +108,7 @@ Solid = renpy.display.imagelike.Solid
 LiveComposite = renpy.display.layout.LiveComposite
 LiveCrop = renpy.display.layout.LiveCrop
 LiveTile = renpy.display.layout.LiveTile
+Flatten = renpy.display.layout.Flatten
 
 Null = renpy.display.layout.Null
 Window = renpy.display.layout.Window

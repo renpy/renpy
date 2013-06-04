@@ -1743,3 +1743,40 @@ class LiveTile(Container):
 
         return rv
 
+
+class Flatten(Container):
+    """
+    :doc: disp_imagelike
+    
+    This flattens `child`, which may be made up of multiple textures, into
+    a single texture.
+    
+    Certain operations, like the alpha transform property, apply to every 
+    texture making up a displayable, which can yield incorrect results
+    when the textures overlap on screen. Flatten creates a single texture
+    from multiple textures, which can prevent this problem.
+    
+    Flatten is a relatively expensive operation, and so should only be used
+    when absolutely required.
+    """
+
+
+    def __init__(self, child, **properties):
+        super(Flatten, self).__init__(**properties)
+
+        self.add(child)
+
+    def render(self, width, height, st, at):
+        cr = renpy.display.render.render(self.child, width, height, st, at)
+        cw, ch = cr.get_size()
+        
+        tex = cr.render_to_texture(True)
+        
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(tex, (0, 0))
+        rv.depends_on(cr, focus=True)
+        
+        return rv
+        
+        
+        

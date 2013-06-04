@@ -1,5 +1,18 @@
 .. Automatically generated file - do not modify.
 
+.. function:: Flatten(child, **properties)
+    
+    This flattens `child`, which may be made up of multiple textures, into
+    a single texture.
+    
+    Certain operations, like the alpha transform property, apply to every 
+    texture making up a displayable, which can yield incorrect results
+    when the textures overlap on screen. Flatten creates a single texture
+    from multiple textures, which can prevent this problem.
+    
+    Flatten is a relatively expensive operation, and so should only be used
+    when absolutely required.
+
 .. function:: Frame(image, xborder, yborder, tile=False, **properties)
     
     A displayable that resizes an image to fill the available area,
