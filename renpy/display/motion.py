@@ -95,9 +95,11 @@ class TransformState(renpy.object.Object):
     default_xoffset = None
     default_yoffset = None
     transform_anchor = False
+    additive = 0.0
     
     def __init__(self): # W0231
         self.alpha = 1
+        self.additive = 0.0
         self.rotate = None
         self.rotate_pad = True
         self.transform_anchor = False
@@ -142,6 +144,7 @@ class TransformState(renpy.object.Object):
     def take_state(self, ts):
 
         self.alpha = ts.alpha
+        self.additive = ts.additive
         self.rotate = ts.rotate
         self.rotate_pad = ts.rotate_pad
         self.transform_anchor = ts.transform_anchor
@@ -196,6 +199,7 @@ class TransformState(renpy.object.Object):
                 rv[prop] = (old_value, new_value)
 
         diff2("alpha", newts.alpha, self.alpha)
+        diff2("additive", newts.additive, self.additive)
         diff2("rotate", newts.rotate, self.rotate)
         diff2("rotate_pad", newts.rotate_pad, self.rotate_pad)
         diff2("transform_anchor", newts.transform_anchor, self.transform_anchor)
@@ -380,6 +384,7 @@ class Transform(Container):
     
     # Proxying things over to our state.
     alpha = Proxy("alpha")
+    additive = Proxy("additive")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
     transform_anchor = Proxy("rotate_pad")

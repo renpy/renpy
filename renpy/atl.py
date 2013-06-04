@@ -75,6 +75,7 @@ PROPERTIES = {
         "yzoom" : float,
         "zoom" : float,
         "alpha" : float,
+        "additive" : float,
         "around" : (position, position),
         "alignaround" : (float, float),
         "angle" : float,

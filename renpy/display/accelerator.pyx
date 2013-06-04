@@ -255,8 +255,6 @@ def transform_render(self, widtho, heighto, st, at):
         xo += width / 2.0
         yo += height / 2.0
         
-    alpha = state.alpha
-
     rv = Render(width, height)
 
     # Default case - no transformation matrix.
@@ -279,7 +277,8 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det, 
                 rxdx / inv_det)
 
-    rv.alpha = alpha
+    rv.alpha = state.alpha
+    rv.over = 1.0 - state.additive
     rv.clipping = clipping
 
     pos = (xo, yo)
