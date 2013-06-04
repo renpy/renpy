@@ -43,6 +43,7 @@ cdef class GLDraw:
         double xo,
         double yo,
         double alpha,
+        double over,
         render.Matrix2D reverse)
     
 cdef class Environ:

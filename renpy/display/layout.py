@@ -1742,3 +1742,4 @@ class LiveTile(Container):
                 rv.blit(cr, (x, y), focus=False)
 
         return rv
+

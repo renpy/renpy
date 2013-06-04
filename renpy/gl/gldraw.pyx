@@ -111,7 +111,7 @@ cdef class GLDraw:
         self.redraw_period = .2
         
         # Info.
-        self.info = { "resizable" : True }
+        self.info = { "resizable" : True, "additive" : True }
 
         if not ANGLE:
             self.info["renderer"] = "gl"
@@ -656,10 +656,10 @@ cdef class GLDraw:
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
             if surf is not None:
-                self.draw_transformed(surf, clip, 0, 0, 1.0, reverse)           
+                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse)           
 
         else:
-            self.draw_transformed(surftree, clip, 0, 0, 1.0, reverse)
+            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse)
 
         if flip:
 
@@ -736,6 +736,7 @@ cdef class GLDraw:
         double xo,
         double yo,
         double alpha,
+        double over,
         render.Matrix2D reverse):
 
         cdef render.Render rend
@@ -754,6 +755,7 @@ cdef class GLDraw:
                     yo,
                     reverse,
                     alpha,
+                    over,
                     self.environ,
                     False)
 
@@ -762,7 +764,7 @@ cdef class GLDraw:
             if isinstance(what, pygame.Surface):
 
                 tex = self.load_texture(what)
-                self.draw_transformed(tex, clip, xo, yo, alpha, reverse)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse)
                 return 0
 
             raise Exception("Unknown drawing type. " + repr(what))
@@ -780,10 +782,10 @@ cdef class GLDraw:
                 # of dissolve on Ren'Py proper.
                 
                 self.draw_transformed(rend.children[0][0],
-                                      clip, xo, yo, alpha, reverse)
+                                      clip, xo, yo, alpha, over, reverse)
 
                 self.draw_transformed(rend.children[1][0],
-                                      clip, xo, yo, alpha * what.operation_complete, reverse)
+                                      clip, xo, yo, alpha * what.operation_complete, over, reverse)
 
             else:
                 
@@ -796,6 +798,7 @@ cdef class GLDraw:
                     yo,
                     reverse,
                     alpha,
+                    over,
                     rend.operation_complete,
                     self.environ)
 
@@ -813,6 +816,7 @@ cdef class GLDraw:
                 yo,
                 reverse,
                 alpha,
+                over,
                 rend.operation_complete,
                 rend.operation_parameter,
                 self.environ)
@@ -838,6 +842,7 @@ cdef class GLDraw:
                 yo,
                 reverse,
                 alpha,
+                over,
                 self.environ,
                 True)
 
@@ -850,7 +855,7 @@ cdef class GLDraw:
             # Non-aligned clipping uses RTT.
             if reverse.ydx != 0 or reverse.xdy != 0:
                 tex = what.render_to_texture(True)
-                self.draw_transformed(tex, clip, xo, yo, alpha, reverse)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse)
                 return 0
                 
             minx, miny, maxx, maxy = clip
@@ -867,7 +872,8 @@ cdef class GLDraw:
             clip = (minx, miny, maxx, maxy)
         
         alpha = alpha * rend.alpha
-            
+        over = over * rend.over
+        
         # If our alpha has hit 0, don't do anything.
         if alpha <= 0.003: # (1 / 256)
             return 0
@@ -881,7 +887,7 @@ cdef class GLDraw:
             tcxo = reverse.xdx * cxo + reverse.xdy * cyo
             tcyo = reverse.ydx * cxo + reverse.ydy * cyo
 
-            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, child_reverse)
+            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, over, child_reverse)
 
         return 0
 
@@ -904,7 +910,7 @@ cdef class GLDraw:
         
             clip = (0, 0, what.width, what.height)
         
-            self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse)
 
         if isinstance(what, render.Render):
             what.is_opaque()
@@ -942,7 +948,7 @@ cdef class GLDraw:
         
         clip = (0, 0, 1, 1)
         
-        self.draw_transformed(what, clip, 0, 0, 1.0, reverse)
+        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse)
 
         cdef unsigned char pixel[4]
         
@@ -981,7 +987,7 @@ cdef class GLDraw:
 
             clip = (0, 0, width, height)
             
-            draw.draw_transformed(what, clip, 0, 0, 1.0, reverse)
+            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse)
 
         if isinstance(what, render.Render):
             what.is_opaque()
@@ -1065,6 +1071,7 @@ cdef class GLDraw:
             x,
             y,
             IDENTITY,
+            1.0,
             1.0,
             self.environ,
             False)

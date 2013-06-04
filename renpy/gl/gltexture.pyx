@@ -873,7 +873,7 @@ def align_axes(*args):
     return rv
             
 
-cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, double alpha, Environ environ, bint nearest):
+cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, double alpha, double over, Environ environ, bint nearest):
     """
     This draws texgrid `tg` to the screen. `sx` and `sy` are offsets from
     the upper-left corner of the screen.
@@ -882,6 +882,8 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
     texgrid coordinates to screen coordinates.
 
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
+
+    `over` is the over blending factor.
     """
 
     cdef int x, y
@@ -890,7 +892,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
     tg.make_ready(nearest)
     
     environ.blit()
-    environ.set_color(alpha, alpha, alpha, alpha)
+    environ.set_color(alpha, alpha, alpha, over * alpha)
     
     y = 0
 
@@ -916,7 +918,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
 
         y += texh
  
-cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, Environ environ):
+cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, Environ environ):
     """
     Blends two textures to the screen.
 
@@ -929,6 +931,8 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
 
     `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
 
+    `over` is the over blending factor.
+
     `fraction` is the fraction of the second texture to show.
     """
 
@@ -936,7 +940,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
     tg1.make_ready(False)
     
     environ.blend(fraction)
-    environ.set_color(alpha, alpha, alpha, alpha)
+    environ.set_color(alpha, alpha, alpha, over * alpha)
 
     y = 0
 
@@ -971,7 +975,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
         y += t0h
      
 
-cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double fraction, int ramp, Environ environ):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, int ramp, Environ environ):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -983,7 +987,10 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
     `transform` is the transform to apply to the texgrid, when going from
     texgrid coordinates to screen coordinates.
 
-    `alpha` is the alpha multiplier applied, from 0.0 to 1.0.
+    `over` is the over blending factor.
+
+    `additive` is the additive blending factor, which is 1.0 for fully additive,
+    and 0.0 for fully over blending.
 
     `fraction` is the fraction of the second texture to show.
 
@@ -996,7 +1003,7 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
     tg2.make_ready(False)
     
     environ.imageblend(fraction, ramp)
-    environ.set_color(alpha, alpha, alpha, alpha)
+    environ.set_color(alpha, alpha, alpha, over * alpha)
 
     y = 0
 

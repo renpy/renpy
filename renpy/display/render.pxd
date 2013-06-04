@@ -24,6 +24,7 @@ cdef class Render:
 
     cdef public Matrix2D forward, reverse
     cdef public double alpha
+    cdef public double over
     
     cdef public list focuses
     cdef public list pass_focuses
