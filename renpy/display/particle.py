@@ -282,7 +282,7 @@ class SpriteManager(renpy.display.core.Displayable):
                 cst = st - cache.st
 
                 cache.render = r = render(cache.child, width, height, cst, cst)
-                cache.fast = (r.operation == BLIT) and (r.forward is None) and (r.alpha == 1.0)
+                cache.fast = (r.operation == BLIT) and (r.forward is None) and (r.alpha == 1.0) and (r.over == 1.0)
                 rv.depends_on(r)
                 
                 caches.append(cache)
