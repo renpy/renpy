@@ -478,10 +478,10 @@ def draw(dest, clip, what, xo, yo, screen):
             dest = dest.subsurface((x, y, width, height))
         
     # Deal with alpha and transforms by passing them off to draw_transformed.
-    if what.alpha != 1 or (what.forward is not None and what.forward is not IDENTITY):
+    if what.alpha != 1 or what.over != 1.0 or (what.forward is not None and what.forward is not IDENTITY):
         for child, cxo, cyo, _focus, _main in what.visible_children:
             draw_transformed(dest, clip, child, xo + cxo, yo + cyo,
-                             what.alpha, what.forward, what.reverse)
+                             what.alpha * what.over, what.forward, what.reverse)
         return
         
     for child, cxo, cyo, _focus, _main in what.visible_children:
@@ -629,7 +629,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
             child_forward = forward
             child_reverse = reverse
             
-        draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha, child_forward, child_reverse)
+        draw_transformed(dest, clip, child, xo + cxo, yo + cyo, alpha * what.alpha * what.over, child_forward, child_reverse)
 
 
 
