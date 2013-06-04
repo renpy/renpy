@@ -1668,8 +1668,11 @@ def get_renderer_info():
         One of ``"gl"`` or ``"sw"``, corresponding to the OpenGL and
         software renderers, respectively.
 
-    ``"resizable``
+    ``"resizable"``
         True if and only if the window is resizable.
+
+    ``"additive"``
+        True if and only if the renderer supports additive blending.
 
     Other, renderer-specific, keys may also exist. The dictionary should
     be treated as immutable. This should only be called once the display

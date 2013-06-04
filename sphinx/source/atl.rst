@@ -751,6 +751,37 @@ both horizontal and vertical positions.
 
     This controls the opacity of the displayable.
 
+    The alpha transform is applied to each image comprising the child of 
+    the transform independently. This can lead to unexpected results when
+    the children overlap, such as as seeing a character through clothing.
+    The :func:`Flatten` displayable can help with these problems.
+    
+.. transform-property:: additive
+
+    :type: float
+    :default: 0.0
+    
+    This controls how much additive blending Ren'Py performs. When 1.0,
+    Ren'Py draws using the ADD operator. When 0.0, Ren'Py draws using 
+    the OVER operator. 
+    
+    Additive blending is performed on each child of the transform independently.
+    
+    Fully additive blending doesn't alter the alpha channel of the destination, 
+    and additive images may not be visible if they're not drawn directly onto
+    an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`, 
+    and certain transitions may cause problems with additive blending.)
+    
+    .. warning::
+    
+        Additive blending is only supported by hardware-based renderers, such 
+        as the OpenGL and DirectX/ANGLE renderers. The software renderer will
+        draw additive images incorrectly.
+        
+        Once the graphics system has started, ``renpy.get_renderer_info()["additive"]``
+        will be true if additive blending is supported.
+
+
 .. transform-property:: around
 
     :type: (position, position)
