@@ -174,7 +174,14 @@ init -1 python hide:
     
     _game_menu_screen = None
     
-    config.underlay = [ ]
+    config.underlay = [
+        renpy.Keymap(
+            quit = renpy.quit_event,
+            iconify = renpy.iconify,
+            choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
+            ),
+    ]
+
     config.rollback_enabled = False
 
 
