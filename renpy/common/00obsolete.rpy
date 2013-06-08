@@ -49,6 +49,9 @@ init -1900 python:
 
     # Prefixes to strip from automatic images.
     config.automatic_images_strip = [ ]
+
+    # The minimum number of components which the image name consists of is 2 by default.
+    config.automatic_images_minimum_components = 2
     
 
 init 1900 python hide:
@@ -86,8 +89,8 @@ init 1900 python hide:
                 else:
                     break
                 
-            # Only names of 2 components or more.
-            if len(name) < 2:
+            # Only names of 2 components or more by default.
+            if len(name) < config.automatic_images_minimum_components:
                 continue
             
             # Reject if it already exists.
