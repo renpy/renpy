@@ -507,8 +507,12 @@ def run_context(top):
             label = None
             
             context.run()
+
+            rv = renpy.store._return
+
             context.pop_all_dynamic()
-            break
+
+            return rv
 
         except renpy.game.RestartContext as e:
 
@@ -532,5 +536,5 @@ def run_context(top):
             context.pop_all_dynamic()
             raise
         
-            
+    
             

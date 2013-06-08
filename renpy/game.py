@@ -366,11 +366,7 @@ def call_in_new_context(label, *args, **kwargs):
     try:
             
         context.goto_label(label)
-        renpy.execution.run_context(False)
-
-        rv = renpy.store._return #@UndefinedVariable
-
-        return rv
+        return renpy.execution.run_context(False)
         
     except renpy.game.JumpOutException, e:        
 
