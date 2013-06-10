@@ -447,3 +447,29 @@ And install the packages. Then, try building your game again.
 
         http://lemmasoft.renai.us/forums/viewtopic.php?f=32&t=13987&hilit=rapt
 
+Expansion APKs
+--------------
+
+|PGS4A| optionally supports the use of expansion APKs when used on a
+device supporting Google Play. Please see:
+
+    http://developer.android.com/google/play/expansion-files.html
+
+For information about expansion APKs work. Right now, only the
+main expansion APK is supported, giving a 2GB limit.
+
+.. ifconfig:: not is_renpy
+
+    When an android APK is created, all assets (from the assets
+    directory) are placed in the expansion APK. The assets can be
+    accessed through the :module:`android.assets` interface.
+
+.. ifconfig:: is_renpy
+
+    When an APK is created, all game files will be placed in the
+    expansion APK. Ren'Py will transparently use these files.
+
+|PGS4A| will place the expansion APK on the device when installing
+the APK package on the device. In normal operation, Google Play will
+place the expansion APK on the device automatically.
+

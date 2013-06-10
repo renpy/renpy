@@ -45,19 +45,7 @@ due to the Android software and hardware are:
   screen. When the user is not touching the screen, the virtual
   pointer will move to the upper-left corner of the screen.
 
-* :func:`ImageDissolve`, :func:`AlphaDissolve`, and :func:`AlphaBlend`
-  are not supported.
-
-* Functions that render to a texture can only render an opaque
-  texture. This means that the :func:`Dissolve` and :func:`Pixellate`
-  transitions will only produce opaque output.
-
-* The :propref:`focus_mask` property is not supported. It will be
-  treated as if all pixels in the mask are opaque.
-
 * Movie playback is not supported.
-
-* Launching the web browser is not supported.
 
 * Some python modules (including network communication) modules are
   not supported.
