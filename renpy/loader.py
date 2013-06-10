@@ -26,6 +26,10 @@ from cStringIO import StringIO
 import sys
 import types
 
+# Ensure the utf-8 codec is loaded, to prevent recursion when we use it 
+# to look up filenames.
+u"".encode("utf-8")
+
 try:
     import android.apk
 
