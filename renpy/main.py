@@ -154,6 +154,10 @@ def main():
         renpy.config.commondir = commondir
     else:
         renpy.config.commondir = None
+
+    if renpy.android:
+        renpy.config.searchpath = [ ]
+        renpy.config.commondir = None
         
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: #@ReservedAssignment
