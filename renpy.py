@@ -50,10 +50,10 @@ def path_to_saves(gamedir):
             ]
         
         for rv in paths:
-            print rv, os.path.exists(rv)
-            
             if os.path.isdir(rv):
                 break
+
+        print "Using savedir", rv
                     
         # We return the last path as the default.
                     
