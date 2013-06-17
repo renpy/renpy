@@ -123,6 +123,27 @@ uniform vec2 clip1;
         
 void main()
 {
+    vec4 color0 = texture2D(tex0, TexCoord0.st);
+    gl_FragColor = color0 * Color;
+}
+"""
+
+BLIT_CLIP_SHADER = """
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform vec4 Color;
+uniform sampler2D tex0;
+
+varying vec2 TexCoord0;
+
+varying vec2 pos;
+uniform vec2 clip0;
+uniform vec2 clip1;
+        
+void main()
+{
     if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
         discard;
     }
@@ -133,6 +154,33 @@ void main()
 """
 
 BLEND_SHADER = """
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform vec4 Color;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform float done;
+
+varying vec2 TexCoord0;
+varying vec2 TexCoord1;
+
+varying vec2 pos;
+uniform vec2 clip0;
+uniform vec2 clip1;
+
+void main()
+{
+    vec4 color0 = texture2D(tex0, TexCoord0.st);
+    vec4 color1 = texture2D(tex1, TexCoord1.st);
+
+    gl_FragColor = mix(color0, color1, done) * Color;
+}
+"""
+
+
+BLEND_CLIP_SHADER = """
 #ifdef GL_ES
 precision highp float;
 #endif
@@ -184,6 +232,38 @@ uniform vec2 clip1;
 
 void main()
 {
+    vec4 color0 = texture2D(tex0, TexCoord0.st);
+    vec4 color1 = texture2D(tex1, TexCoord1.st);
+    vec4 color2 = texture2D(tex2, TexCoord2.st);
+
+    float a = clamp((color0.a + offset) * multiplier, 0.0, 1.0);
+
+    gl_FragColor = mix(color1, color2, a) * Color;
+}
+"""
+
+IMAGEBLEND_CLIP_SHADER = """
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform vec4 Color;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
+uniform float offset;
+uniform float multiplier;
+        
+varying vec2 TexCoord0;
+varying vec2 TexCoord1;
+varying vec2 TexCoord2;
+
+varying vec2 pos;
+uniform vec2 clip0;
+uniform vec2 clip1;
+
+void main()
+{
     if (pos.x < clip0.x || pos.y < clip0.y || pos.x >= clip1.x || pos.y >= clip1.y) {
         discard;
     }
@@ -197,6 +277,7 @@ void main()
     gl_FragColor = mix(color1, color2, a) * Color;
 }
 """
+
 
 
 
@@ -351,6 +432,11 @@ cdef class ShaderEnviron(Environ):
     cdef Program blend_program
     cdef Program imageblend_program
 
+    cdef Program blit_clip_program
+    cdef Program blend_clip_program
+    cdef Program imageblend_clip_program
+
+    cdef bint clipping
     cdef double clip_x0
     cdef double clip_y0
     cdef double clip_x1
@@ -361,11 +447,17 @@ cdef class ShaderEnviron(Environ):
     cdef int viewport_w
     cdef int viewport_h
 
+
     def init(self):
 
         self.blit_program = Program(VERTEX_SHADER1, BLIT_SHADER)
+        self.blit_clip_program = Program(VERTEX_SHADER1, BLIT_CLIP_SHADER)
+
         self.blend_program = Program(VERTEX_SHADER2, BLEND_SHADER)
+        self.blend_clip_program = Program(VERTEX_SHADER2, BLEND_CLIP_SHADER)
+
         self.imageblend_program = Program(VERTEX_SHADER3, IMAGEBLEND_SHADER)
+        self.imageblend_clip_program = Program(VERTEX_SHADER3, IMAGEBLEND_CLIP_SHADER)
 
         # The current program.
         self.program = None        
@@ -392,19 +484,27 @@ cdef class ShaderEnviron(Environ):
 
         glUseProgramObjectARB(program.program)
         glUniformMatrix4fvARB(program.Projection, 1, GL_FALSE, self.projection)
-        glUniform2fARB(program.clip0, self.clip_x0, self.clip_y0)
-        glUniform2fARB(program.clip1, self.clip_x1, self.clip_y1)
+
+        if self.clipping:
+            glUniform2fARB(program.clip0, self.clip_x0, self.clip_y0)
+            glUniform2fARB(program.clip1, self.clip_x1, self.clip_y1)
 
     cdef void blit(self):
 
-        program = self.blit_program
+        if self.clipping:
+            program = self.blit_clip_program
+        else:
+            program = self.blit_program
 
         if self.program is not program:
             self.activate(program)
             glUniform1iARB(program.tex0, 0)
         
     cdef void blend(self, double fraction):
-        program = self.blend_program
+        if self.clipping:
+            program = self.blend_clip_program
+        else:
+            program = self.blend_program
 
         if self.program is not program:
             self.activate(program)
@@ -415,7 +515,10 @@ cdef class ShaderEnviron(Environ):
         
     cdef void imageblend(self, double fraction, int ramp):
 
-        program = self.imageblend_program
+        if self.clipping:
+            program = self.imageblend_program
+        else:
+            program = self.imageblend_clip_program
 
         if self.program is not program:
             self.activate(program)
@@ -508,10 +611,15 @@ cdef class ShaderEnviron(Environ):
         cdef int cx, cy, cw, ch
         cdef int psw, psh
         
+        if clip_box == draw.default_clip:
+            self.unset_clip(draw)
+            return
+        
         minx, miny, maxx, maxy = clip_box
         psw, psh = draw.physical_size
       
-        # The clipping box.  
+        # The clipping box.
+        self.clipping = True  
         self.clip_x0 = minx
         self.clip_y0 = miny
         self.clip_x1 = maxx
@@ -566,7 +674,8 @@ cdef class ShaderEnviron(Environ):
     cdef void unset_clip(self, GLDraw draw):
 
         glDisable(GL_SCISSOR_TEST)
-        
+
+        self.clipping = False
         self.clip_x0 = 0
         self.clip_y0 = 0
         self.clip_x1 = 65535

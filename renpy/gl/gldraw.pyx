@@ -649,7 +649,8 @@ cdef class GLDraw:
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
+        self.default_clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
+        clip = self.default_clip
 
         self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
 
@@ -908,7 +909,8 @@ cdef class GLDraw:
                 
             glClear(GL_COLOR_BUFFER_BIT)
         
-            clip = (0, 0, what.width, what.height)
+            self.default_clip = (0, 0, what.width, what.height)
+            clip = self.default_clip
         
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse)
 
