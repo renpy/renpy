@@ -41,6 +41,26 @@ def path_to_common(renpy_base):
 def path_to_saves(gamedir):
     import renpy #@UnresolvedImport
     
+    # Android.
+    if renpy.android:
+        paths = [
+            os.path.join(os.environ["ANDROID_OLD_PUBLIC"], "game/saves"),
+            os.path.join(os.environ["ANDROID_PRIVATE"], "saves"),
+            os.path.join(os.environ["ANDROID_PUBLIC"], "saves"),
+            ]
+        
+        for rv in paths:
+            print rv, os.path.exists(rv)
+            
+            if os.path.isdir(rv):
+                break
+                    
+        # We return the last path as the default.
+                    
+        return rv
+    
+    
+    # No save directory given.
     if not renpy.config.save_directory:
         return gamedir + "/saves"
 
@@ -58,10 +78,7 @@ def path_to_saves(gamedir):
         path = newpath
 
     # Otherwise, put the saves in a platform-specific location.
-    if renpy.android:
-        return gamedir + "/saves"
-
-    elif renpy.macintosh:
+    if renpy.macintosh:
         rv = "~/Library/RenPy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
 
@@ -111,7 +128,6 @@ if android:
     __main__.path_to_common = path_to_common
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
-    os.environ["RENPY_GL_ENVIRON"] = "limited"
     
 def main():
     
