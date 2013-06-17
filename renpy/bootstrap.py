@@ -253,6 +253,14 @@ this program do not contain : or ; in their names.
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
                 renpy.config.args = [ ]
+                
+                if renpy.android:
+                    renpy.config.logdir = os.environ['ANDROID_PUBLIC']
+                else:
+                    renpy.config.logdir = basedir
+
+                if not os.path.exists(renpy.config.logdir):
+                    os.makedirs(renpy.config.logdir, 0777)
 
                 renpy.main.main()
                 keep_running = False
@@ -373,13 +381,19 @@ def open_error_file(fn, mode):
     was opened.
     """
     
-    import tempfile
+    try:
+        f = file(os.path.join(renpy.config.logdir, fn), mode)
+        return f, fn
+    except:
+        pass
     
     try:
         f = file(fn, mode)
         return f, fn
     except:
         pass
+    
+    import tempfile
     
     fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
     return file(fn, mode), fn
