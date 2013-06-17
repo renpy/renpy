@@ -127,6 +127,10 @@ def launch_editor(filenames, line=1, transient=False):
     Causes the editor to be launched.
     """
     
+    # On android, we will never be able to launch the editor.
+    if renpy.android:
+        return True
+    
     if editor is None:
         init()
     
