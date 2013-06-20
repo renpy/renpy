@@ -107,9 +107,23 @@ def expand_anchor(v):
     """
     Turns an anchor into a number.
     """
-
-    return anchors.get(v, v)
-
+    
+    try:
+        return anchors.get(v, v)
+    except:
+        # This fixes some bugs in very old Ren'Pys.
+        
+        for n in anchors:
+            o = getattr(renpy.store, n, None)
+            if o is None:
+                continue
+            
+            if v is o:
+                return anchors[n]
+            
+        raise
+        
+        
 
 # A map of properties that we know about. The properties may take a
 # function that is called to convert the argument to something more

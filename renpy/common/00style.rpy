@@ -86,6 +86,9 @@ init -1800 python hide:
     style.list_text = Style(style.default)
 
     style.tile = Style(style.default, help='default style of tile')
+
+    # Not used - but some old games might customize it.
+    style.error_root = Style(style.default)    
     
 # The base styles that can be customized by themes.
 

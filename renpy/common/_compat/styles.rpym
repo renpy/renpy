@@ -1,7 +1,7 @@
 # Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-init python hide:
+init python:
 
     style.menu_button = Style(style.button, heavy=True, help='Buttons that are part of the main or game menus.')
     style.menu_button_text = Style(style.button_text, heavy=True, help='The label of buttons that are part of the main or game menus.')
@@ -42,7 +42,6 @@ init python hide:
     style.yesno_button_hbox = Style(style.thick_hbox, heavy=True, help="The box containing the Yes and No buttons.")
     style.yesno_button = Style(style.menu_button, heavy=True, help='A Yes/No button.')
     style.yesno_button_text = Style(style.menu_button_text, heavy=True, help='A Yes/No button label.')
-
 
     style.prefs_frame = Style(style.default, heavy=True, help='')
     style.prefs_pref_frame = Style(style.default, heavy=True, help='')
@@ -323,15 +322,25 @@ init python hide:
 
     store._selected_compat = [ ]
 
-    class _SelectedCompat(object):
+    class _SelectedCompat(renpy.style.Style):
 
         def __init__(self, target):
-            self.__dict__["target"] = target
-            self.__dict__["property_updates"] = [ ]
+            
+            self.target = target
+            self.property_updates = [ ]
 
+            super(_SelectedCompat, self).__init__(target)
+            
             store._selected_compat.append(self)
 
-        def __setattr__(self, k, v):
+        def setattr(self, k, v):
+            super(_SelectedCompat, self).setattr(k, v)
+            
+            try:
+                super(_SelectedCompat, self).setattr("selected_" + k, v)
+            except:
+                pass
+                
             self.property_updates.append((k, v))
 
         def apply(self):
@@ -340,7 +349,8 @@ init python hide:
                 setattr(target, "selected_" + k, v)
 
         def clear(self):
-            self.__dict__["property_updates"] = [ ]
+            super(_SelectedCompat, self).clear()
+            self.property_updates = [ ]
 
 
     style.selected_button = _SelectedCompat('button')
@@ -350,8 +360,8 @@ init python hide:
     style.prefs_selected_button = _SelectedCompat('prefs_button')
     style.prefs_selected_button_text = _SelectedCompat('prefs_button_text')
     
-    def apply_selected_compat():
+    def _apply_selected_compat():
         for scs in _selected_compat:
             scs.apply()
 
-    layout.compat_funcs.append(apply_selected_compat)
+    layout.compat_funcs.append(_apply_selected_compat)
