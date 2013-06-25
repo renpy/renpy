@@ -165,8 +165,16 @@ init -1500 python:
          Causes the game to begin skipping. If the game is in a menu
          context, then this returns to the game. Otherwise, it just
          enables skipping.
+        
+         `fast`
+               If True, skips directly to the next menu choice. 
          """
-                
+        
+        fast = False
+
+        def __init__(self, fast=False):
+            self.fast = fast
+
         def __call__(self):
             if not self.get_sensitive():
                 return
@@ -174,7 +182,15 @@ init -1500 python:
             if renpy.context()._menu:
                 renpy.jump("_return_skipping")
             else:
-                config.skipping = not config.skipping
+
+                if not config.skipping:
+                    if self.fast:
+                        config.skipping = "fast"
+                    else:
+                        config.skipping = "slow"
+                else:
+                    config.skipping = None
+
                 renpy.restart_interaction()
 
         def get_selected(self):

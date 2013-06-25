@@ -55,11 +55,14 @@
         textbutton "Marsopolis": 
             action [ Jump("mars"), SelectedIf(mars_flag) ]
 
-.. function:: Skip()
+.. function:: Skip(fast=False)
     
     Causes the game to begin skipping. If the game is in a menu
     context, then this returns to the game. Otherwise, it just
     enables skipping.
+    
+    `fast`
+          If True, skips directly to the next menu choice. 
 
 .. function:: With(transition)
     
