@@ -463,9 +463,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                     new_x = par_x - self.grab_x + xo
                     new_y = par_y - self.grab_y + yo
                     new_x = max(new_x, 0)
-                    new_x = min(new_x, i.parent_width - i.w)
+                    new_x = min(new_x, int(i.parent_width - i.w))
                     new_y = max(new_y, 0)
-                    new_y = min(new_y, i.parent_height - i.h)            
+                    new_y = min(new_y, int(i.parent_height - i.h))
 
                     if i.drag_group is not None and i.drag_name is not None:
                         i.drag_group.positions[i.drag_name] = (new_x, new_y)
