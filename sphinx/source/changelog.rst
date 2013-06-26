@@ -2,6 +2,30 @@
 Full Changelog
 ==============
 
+Ren'Py 6.15.6
+-------------
+
+This release includes improvements for the Android platform: 
+
+* Assets are now read exclusively from the APK and expansion file.
+* Logs and tracebacks are placed on external storage.
+* Saves are placed on external storage, except when saves from
+  older versions of Ren'Py exist.
+
+The GL2 shaders Ren'Py uses have been simplified in the (usual) case
+where no clipping is occuring. This leads to a noticable speed
+improvement on Android, and potentially other platforms as well.
+
+An issue with Drag-and-drop has been fixed. Thanks go to Kinsman
+for contributing this fixe.
+
+The :func:`Skip` action now triggers the skip indicator. It also
+supports a new fast parameter, which causes skipping to the
+next menu.
+
+This release includes various minor changes to improve compatibility
+with very old Ren'Py games. (It now runs the Ren'Py 5 demo.)
+
 
 Ren'Py 6.15.5
 -------------
