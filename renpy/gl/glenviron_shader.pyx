@@ -516,9 +516,9 @@ cdef class ShaderEnviron(Environ):
     cdef void imageblend(self, double fraction, int ramp):
 
         if self.clipping:
-            program = self.imageblend_program
-        else:
             program = self.imageblend_clip_program
+        else:
+            program = self.imageblend_program
 
         if self.program is not program:
             self.activate(program)
