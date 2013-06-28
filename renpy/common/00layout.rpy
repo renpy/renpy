@@ -49,7 +49,8 @@ init -1400 python:
 # These are used by layout-based code, and also by the screens code when a layout
 # is used to invoke the screen.
 label _quit_prompt:
-    $ renpy.loadsave.force_autosave()
+    if not renpy.context()._main_menu:
+        $ renpy.loadsave.force_autosave()
 
     if layout.invoke_yesno_prompt(None, layout.QUIT):
         jump _quit
@@ -57,7 +58,8 @@ label _quit_prompt:
         return
 
 label _main_menu_prompt:
-    $ renpy.loadsave.force_autosave()
+    if not renpy.context()._main_menu:
+        $ renpy.loadsave.force_autosave()
 
     if layout.yesno_prompt(None, layout.MAIN_MENU):
         $ renpy.full_restart(transition=config.game_main_transition)
