@@ -32,6 +32,20 @@ init -1500 python:
                 renpy.restart_interaction()
 
             return .1
+
+    class __MusicRoomRandomPlay(Action):
+        """
+        The action returned by MusicRoom.RandomPlay
+        """
+        def __init__(self, mr):
+            self.mr = mr
+
+        def __call__(self):
+            playlist = self.mr.unlocked_playlist()
+            
+            if not playlist:
+                return
+            self.mr.play(renpy.random.choice(playlist), 0)
     
     class MusicRoom(object):
         """
@@ -200,6 +214,16 @@ init -1500 python:
                 raise Exception("{0!r} is not a filename registered with this music room.".format(filename))
             
             return __MusicRoomPlay(self, filename)
+
+        def RandomPlay(self):
+            """
+            :doc: music_room method
+                        
+            Causes the music room to start playing.
+            The file played is choosen from unlocked_playlist
+            """
+                
+            return __MusicRoomRandomPlay(self)
         
         def Stop(self):
             """
