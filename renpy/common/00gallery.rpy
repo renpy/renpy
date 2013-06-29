@@ -303,6 +303,22 @@ init -1500 python:
                 
             return Button(action=action, child=unlocked, insensitive_child=locked, hover_foreground=hover_border, idle_foreground=idle_border, **properties)
 
+        def get_fraction(self, name):
+            """
+            :doc: gallery method
+            
+            This returns the rate of the images seen by the player all images associated with the given button name as a fraction.
+
+            `name`
+                The name of the button that will be analyzed.
+            """            
+            seen_image = 0
+            all_image = len(self.buttons[name].images)
+            for i in range(all_image):
+                if self.buttons[name].images[i].check_unlock(True):
+                    seen_image += 1
+            return "%d/%d" % (seen_image, all_image)
+
 
 init -1500:
 
