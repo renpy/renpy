@@ -46,6 +46,22 @@ init -1500 python:
             if not playlist:
                 return
             self.mr.play(renpy.random.choice(playlist), 0)
+
+    class __MusicRoomTogglePlay(Action):
+        """
+        The action returned by MusicRoom.TogglePlay
+        """
+        def __init__(self, mr):
+            self.mr = mr
+
+        def __call__(self):
+            if renpy.music.get_playing(self.mr.channel):
+                return self.mr.stop()
+            return self.mr.play()
+
+        def get_selected(self):
+            return renpy.music.get_playing(self.mr.channel) is not None
+
     
     class MusicRoom(object):
         """
@@ -225,6 +241,17 @@ init -1500 python:
                 
             return __MusicRoomRandomPlay(self)
         
+        def TogglePlay(self):
+            """
+            :doc: music_room method
+
+            Causes the music room to start playing if it's not playing.
+            otherwise, stop the music.
+
+            This is selected when playing
+            """
+            return __MusicRoomTogglePlay(self)
+
         def Stop(self):
             """
             :doc: music_room method
