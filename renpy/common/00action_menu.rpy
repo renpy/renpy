@@ -127,8 +127,7 @@ init -1500 python:
                 return
 
             if self.confirm:
-                if not renpy.context()._main_menu:
-                    renpy.loadsave.force_autosave()
+                renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.MAIN_MENU, MainMenu(False))
             else:
                 renpy.full_restart()

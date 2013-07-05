@@ -58,8 +58,7 @@ label _quit_prompt:
         return
 
 label _main_menu_prompt:
-    if not renpy.context()._main_menu:
-        $ renpy.loadsave.force_autosave()
+    $ renpy.loadsave.force_autosave()
 
     if layout.yesno_prompt(None, layout.MAIN_MENU):
         $ renpy.full_restart(transition=config.game_main_transition)
