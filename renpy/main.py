@@ -103,30 +103,61 @@ def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
         renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ]
-    else:
-        renpy.config.variants = [ None ]
+        return
+
+    renpy.config.variants = [ None ]
     
     if renpy.android: #@UndefinedVariable
+        
+        renpy.config.variants.insert(0, 'android')
+        
         import android #@UnresolvedImport
         import math
         import pygame
         
+        from jnius import autoclass  # @UnresolvedImport
+        
+        # Are we running on an OUYA?
+        try:
+            OuyaFacade = autoclass("tv.ouya.console.api.OuyaFacade")
+            of = OuyaFacade.getInstance()
+                
+            if of.isRunningOnOUYAHardware():
+                print "Running on an OUYA."
+                renpy.config.variants.insert(0, "ouya")
+        except:
+            pass
+
+        # Are we running on OUYA or Google TV or something similar?        
+        PythonActivity = autoclass('org.renpy.android.PythonActivity')
+        mActivity = PythonActivity.mActivity
+        package_manager = mActivity.getPackageManager()
+
+        if package_manager.hasSystemFeature("android.hardware.type.television"):
+            print "Running on a television."
+            renpy.config.variants.insert(0, "tv")
+            renpy.config.variants.insert(0, "small")
+            return
+            
+        # Otherwise, a phone or tablet.        
+        renpy.config.variants.insert(0, 'touch')
+
         pygame.display.init()
         
         info = pygame.display.Info()        
         diag = math.hypot(info.current_w, info.current_h) / android.get_dpi()
-        
         print "Screen diagonal is", diag, "inches."
-        
-        renpy.config.variants.insert(0, 'touch')
         
         if diag >= 6:
             renpy.config.variants.insert(0, 'tablet')
+            renpy.config.variants.insert(0, 'medium')
         else:
             renpy.config.variants.insert(0, 'phone')
+            renpy.config.variants.insert(0, 'small')
         
     else:
         renpy.config.variants.insert(0, 'pc')
+        renpy.config.variants.insert(0, 'large')
     
         
 def main():
