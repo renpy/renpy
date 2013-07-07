@@ -41,6 +41,9 @@ try:
             android.apk.APK(apk=expansion, prefix='assets/x-game/'),
             android.apk.APK(apk=expansion, prefix='assets/x-common/'),
             ]
+
+        game_apks = [ apks[0] ]
+        
     else:
         print "Not using expansion file."
         
@@ -49,8 +52,11 @@ try:
             android.apk.APK(prefix='assets/x-common/'),
             ]
 
+        game_apks = [ apks[0] ]
+
 except ImportError:
     apks = [ ]
+    game_apks = [ ]
 
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.
@@ -151,7 +157,7 @@ def walkdir(dir): #@ReservedAssignment
     return rv
         
     
-def listdirfiles():
+def listdirfiles(common=True):
     """
     Returns a list of directory, file tuples known to the system. If
     the file is in an archive, the directory is None.
@@ -161,17 +167,28 @@ def listdirfiles():
 
     seen = set()
     
-    for apk in apks:
+    if common:
+        list_apks = apks
+    else:
+        list_apks = game_apks
+    
+    for apk in list_apks:
+        
         for f in apk.list():
-            
+
             # Strip off the "x-" in front of each filename, which is there
             # to ensure that aapt actually includes every file.
             f = "/".join(i[2:] for i in f.split("/"))
             
             if f not in seen:
                 rv.append((None, f))
+                seen.add(f)
     
     for i in renpy.config.searchpath:
+
+        if (not common) and (renpy.config.commondir) and (i == renpy.config.commondir):
+            continue
+        
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
             if j not in seen:            

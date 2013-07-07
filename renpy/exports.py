@@ -1648,11 +1648,7 @@ def list_files(common=False):
 
     rv = [ ]
     
-    for dir, fn in renpy.loader.listdirfiles(): #@ReservedAssignment
-
-        if not common and dir == renpy.config.commondir:
-            continue
-
+    for dir, fn in renpy.loader.listdirfiles(common): #@ReservedAssignment
         rv.append(fn)
 
     return rv
