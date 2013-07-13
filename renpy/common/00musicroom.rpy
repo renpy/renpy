@@ -234,9 +234,9 @@ init -1500 python:
         def RandomPlay(self):
             """
             :doc: music_room method
-                        
-            Causes the music room to start playing.
-            The file played is choosen from unlocked_playlist
+
+            Causes the music room to start playin a randomly selected unlocked 
+            music track.
             """
                 
             return __MusicRoomRandomPlay(self)
@@ -245,10 +245,10 @@ init -1500 python:
             """
             :doc: music_room method
 
-            Causes the music room to start playing if it's not playing.
-            otherwise, stop the music.
+            If no music is currently playing, starts playing the first 
+            unlocked track. Otherwise, stops the currently playing music.
 
-            This is selected when playing
+            This button is selected when any music is playing.
             """
             return __MusicRoomTogglePlay(self)
 
