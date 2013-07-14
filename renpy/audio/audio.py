@@ -552,6 +552,7 @@ if renpy.android:
             # Ignored.
             self.synchro_start = False
             self.wait_stop = False
+            self.loop = [ ]
             
             # A prefix and suffix that are used to create the full filenames.
             self.file_prefix = file_prefix
