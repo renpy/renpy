@@ -730,7 +730,14 @@ class ADVCharacter(object):
             images.predict_show("master", tagged_attrs, show=False)
 
     def __str__(self):
-        return self.name
+        who = self.name
+
+        # If dynamic is set, evaluate the name expression.
+        if self.dynamic:
+            who = renpy.python.py_eval(who)
+
+        return who
+
 
     def __call__(self, what, interact=True, **kwargs):
 
