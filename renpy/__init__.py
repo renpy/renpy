@@ -179,6 +179,7 @@ def import_all():
     import renpy.display.dragdrop #@UnresolvedImport
     import renpy.display.imagemap #@UnresolvedImport
     import renpy.display.predict #@UnresolvedImport
+    import renpy.display.emulator # @UnresolvedImport
 
     import renpy.display.error #@UnresolvedImport
 

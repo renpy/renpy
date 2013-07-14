@@ -1193,6 +1193,8 @@ class Interface(object):
         # The background screenshot surface.
         self.bgscreenshot_surface = None
 
+        renpy.display.emulator.init_emulator()
+
 
     def post_init(self):
         # Setup.
@@ -2283,7 +2285,12 @@ class Interface(object):
                 else:
                     ev = self.event_wait()
 
+
                 if ev.type == pygame.NOEVENT:
+                    continue
+
+                ev = renpy.display.emulator.emulator(ev)
+                if ev is None:
                     continue
 
                 if renpy.config.profile:
