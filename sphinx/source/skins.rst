@@ -18,7 +18,7 @@ expected to be forward or backwards compatible.
 3. Copy the following code into skin.rpy::
 
     init python:
-    
+
         # The color of non-interactive text.
         TEXT = "#545454"
 
@@ -40,9 +40,9 @@ expected to be forward or backwards compatible.
         PATTERN = "pattern.png"
 
         # A displayable used for the background of everything.
-        BACKGROUND = "background.png"    
+        BACKGROUND = "background.png"
 
-        # A displayable used for the background of windows 
+        # A displayable used for the background of windows
         # containing commands, preferences, and navigation info.
         WINDOW = Frame("window.png", 0, 0, tile=True)
 

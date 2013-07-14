@@ -51,7 +51,7 @@ init -1 python hide:
         ## example, the current value of a preference.)
         widget_selected = "#ffffc8",
 
-        ## The color of a disabled widget face. 
+        ## The color of a disabled widget face.
         disabled = "#404040",
 
         ## The color of disabled widget text.
@@ -83,7 +83,7 @@ init -1 python hide:
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
-        ## do so below.            
+        ## do so below.
         )
 
     # For the demo, we use the nicer-looking bars from the outline
@@ -93,7 +93,7 @@ init -1 python hide:
         idle="#003c78",
         hover="#0050a0")
 
-        
+
     #########################################
     ## These settings let you customize the window containing the
     ## dialogue and narration, by replacing it with an image.
@@ -194,7 +194,7 @@ init -1 python hide:
 
     # config.main_menu_music = "main_menu_theme.ogg"
 
-    
+
     #########################################
     ## Help.
 
@@ -204,10 +204,10 @@ init -1 python hide:
     ##   show help to the user.
     ## - A file name relative to the base directory, which is opened in a
     ##   web browser.
-    ## - None, to disable help.   
+    ## - None, to disable help.
     config.help = "README.html"
 
-    
+
     #########################################
     ## Transitions.
 
@@ -240,7 +240,7 @@ init -1 python hide:
 
     ## Used when the window is hidden.
     config.window_hide_transition = Dissolve(.25)
-    
+
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code
@@ -248,7 +248,7 @@ init -1 python hide:
 python early:
     config.save_directory = "tutorial-1"
 
-init -1 python hide:    
+init -1 python hide:
     #########################################
     ## Default values of Preferences.
 
@@ -264,7 +264,7 @@ init -1 python hide:
 
     config.window_icon = "logo.png"
     config.windows_icon = "logo32.png"
-    
+
 # This is the main menu image we use.
 image main_menu:
     contains:
@@ -278,41 +278,41 @@ image main_menu:
         Text("Ren'Py " + config.version, size=18)
         yalign .98
         xalign .02
-    
+
 # Demo game specific customizations.
 init python:
     style.mm_menu_frame.yalign = .98
     style.mm_menu_frame.xalign = .98
-                         
-## This section contains information about how to build your project into 
+
+## This section contains information about how to build your project into
 ## distribution files.
 init python:
-    
+
     ## The name that's used for directories and archive files. For example, if
     ## this is 'mygame-1.0', the windows distribution will be in the
     ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
     build.directory_name = "tutorial-1.0"
-    
+
     ## The name that's uses for executables - the program that users will run
     ## to start the game. For example, if this is 'mygame', then on Windows,
     ## users can click 'mygame.exe' to start the game.
     build.executable_name = "tutorial"
-    
+
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.
     build.include_update = True
-    
+
     ## File patterns:
-    ## 
+    ##
     ## The following functions take file patterns. File patterns are case-
     ## insensitive, and matched against the path relative to the base
     ## directory, with and without a leading /. If multiple patterns match,
     ## the first is used.
-    ##    
+    ##
     ##
     ## In a pattern:
     ##
-    ## / 
+    ## /
     ##     Is the directory separator.
     ## *
     ##     Matches all characters, except the directory separator.
@@ -335,9 +335,9 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
-    
+
     ## To archive files, classify them as 'archive'.
-    
+
     # build.classify('game/**.png', 'archive')
     # build.classify('game/**.jpg', 'archive')
 

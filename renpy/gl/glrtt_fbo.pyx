@@ -29,7 +29,7 @@ import renpy
 
 # The framebuffer object we use.
 cdef GLuint fbo
-    
+
 class FboRtt(Rtt):
     """
     This class uses texture copying to implement Render-to-texture.
@@ -44,7 +44,7 @@ class FboRtt(Rtt):
         self.size_limit = i
 
         renpy.display.log.write("FBO Maximum Texture Size: %d", i)
-        
+
     def deinit(self):
         """
         Called before changing the GL context.
@@ -66,7 +66,7 @@ class FboRtt(Rtt):
         the sub-image to render to the texture. `draw_func` is called
         to render the texture.
         """
-        
+
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
 
         glFramebufferTexture2DEXT(
@@ -82,7 +82,7 @@ class FboRtt(Rtt):
         draw_func(x, y, w, h)
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
-        
+
 
     def get_size_limit(self, dimension):
         return self.size_limit

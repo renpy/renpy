@@ -25,14 +25,14 @@ class Curry(object):
     callable with the stored arguments and the additional arguments
     supplied to the call.
     """
-    
+
 
     def __init__(self, callable, *args, **kwargs): #@ReservedAssignment
         self.callable = callable
         self.args = args
         self.kwargs = kwargs
         self.__doc__ = getattr(self.callable, "__doc__", None)
-        
+
     def __call__(self, *args, **kwargs):
         return self.callable(*(self.args + args),
                              **dict(self.kwargs.items() + kwargs.items()))
@@ -42,14 +42,14 @@ class Curry(object):
     def __eq__(self, other):
 
         return (
-            isinstance(other, Curry) and 
+            isinstance(other, Curry) and
             self.callable == other.callable and
             self.args == other.args and
             self.kwargs == other.kwargs)
-        
+
     def __hash__(self):
         return hash(self.callable) ^ hash(self.args) ^ hash(self.kwargs)
-    
+
 def curry(fn):
     """
     Takes a callable, and returns something that, when called, returns
@@ -57,12 +57,12 @@ def curry(fn):
     basically, the thing returned from here when called twice does the
     same thing as the function called once.
     """
-    
+
     rv = Curry(Curry, fn)
     rv.__doc__ = getattr(fn, "__doc__", None)
     return rv
-    
-    
+
+
 def partial(function, *args, **kwargs):
     """
     Stores the arguments and keyword arguments of function, and

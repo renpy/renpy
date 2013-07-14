@@ -58,24 +58,24 @@ def screen(_screen_name, *args, **kwargs):
 
     screens.append((_screen_name, args, kwargs))
 
-    
+
 def reset():
     global image
     image = renpy.display.im.cache.get
     predicted.clear()
     del screens[:]
 
-    
+
 def prediction_coroutine(root_widget):
     """
     The image prediction co-routine. This predicts the images that can
     be loaded in the near future, and passes them to the image cache's
     preload_image method to be queued up for loading.
-    
+
     The .send should be called with True to do a expensive prediction,
-    and with False to either do an inexpensive prediction or no 
+    and with False to either do an inexpensive prediction or no
     prediction at all.
-    
+
     Returns True if there's more predicting to be done, or False
     if there's no more predicting worth doing.
     """
@@ -101,16 +101,16 @@ def prediction_coroutine(root_widget):
         predicting = False
         yield True
         predicting = True
-    
+
     # If there's a parent context, predict we'll be returning to it
     # shortly. Otherwise, call the functions in
     # config.predict_callbacks.
-    
+
     if len(renpy.game.contexts) >= 2:
         sls = renpy.game.contexts[-2].scene_lists
 
         for l in sls.layers.itervalues():
-            for sle in l:                
+            for sle in l:
                 try:
                     displayable(sle.displayable)
                 except:
@@ -119,9 +119,9 @@ def prediction_coroutine(root_widget):
     else:
         for i in renpy.config.predict_callbacks:
             i()
-                
+
     predicting = False
-                
+
     while not (yield True):
         continue
 
@@ -139,10 +139,10 @@ def prediction_coroutine(root_widget):
     # Predict the screens themselves.
     for name, args, kwargs in screens:
         while not (yield True):
-            continue 
+            continue
 
         predicting = True
-        
+
         try:
             renpy.display.screen.predict_screen(name, *args, **kwargs)
         except:
@@ -151,6 +151,6 @@ def prediction_coroutine(root_widget):
                 renpy.display.ic_log.exception()
 
         predicting = False
-    
+
     yield False
-                
+

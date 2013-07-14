@@ -57,7 +57,7 @@ class Context(renpy.object.Object):
     """
 
     __version__ = 10
-    
+
     def after_upgrade(self, version):
         if version < 1:
             self.scene_lists.image_predict_info = self.predict_info.images
@@ -78,29 +78,29 @@ class Context(renpy.object.Object):
 
         if version < 6:
             self.images = self.predict_info.images
-            
+
         if version < 7:
             self.init_phase = False
             self.next_node = None
-            
+
         if version < 8:
             self.defer_rollback = None
-            
+
         if version < 9:
             self.translate_language = None
             self.translate_identifier = None
 
         if version < 10:
             self.exception_handler = None
-            
+
     def __init__(self, rollback, context=None, clear=False):
         """
         `clear`
             True if we should clear out the context_clear_layers.
         """
-        
+
         super(Context, self).__init__()
-        
+
         self.current = None
         self.call_location_stack = [ ]
         self.return_stack = [ ]
@@ -134,22 +134,22 @@ class Context(renpy.object.Object):
         # will cause Ren'Py to generate an error if we call ui.interact
         # again.
         self.interacting = False
-        
+
         # True if we're in the init phase. (Isn't inherited.)
         self.init_phase = False
-    
+
         # When deferring a rollback, the arguments to pass to renpy.exports.rollback.
         self.defer_rollback = None
-        
+
         # The exception handler that is called when an exception occurs while executing
         # code. If None, a default handler is used. This is reset when run is called.
         self.exception_handler = None
-        
+
         if context:
             oldsl = context.scene_lists
             self.runtime = context.runtime
 
-            vars(self.info).update(vars(context.info))            
+            vars(self.info).update(vars(context.info))
 
             for k, v in context.music.iteritems():
                 self.music[k] = v.copy()
@@ -161,7 +161,7 @@ class Context(renpy.object.Object):
             self.images = renpy.display.image.ShownImageInfo(None)
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
-        
+
         self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
         self.dynamic_stack.append({ })
 
@@ -175,8 +175,8 @@ class Context(renpy.object.Object):
 
         self.translate_language = None
         self.translate_identifier = None
-                
-        
+
+
     def make_dynamic(self, names, context=False):
         """
         Makes the variable names listed in names dynamic, by backing up
@@ -184,17 +184,17 @@ class Context(renpy.object.Object):
         """
 
         store = renpy.store.__dict__
-        
+
         if context:
             index = 0
         else:
             index = -1
-        
+
         for i in names:
 
             if i in self.dynamic_stack[index]:
                 continue
-            
+
             if i in store:
                 self.dynamic_stack[index][i] = store[i]
             else:
@@ -206,9 +206,9 @@ class Context(renpy.object.Object):
         Pops one level of the dynamic stack. Called when the return
         statement is run.
         """
-        
+
         store = renpy.store.__dict__
-        
+
         dynamic = self.dynamic_stack.pop()
 
         for k, v in dynamic.iteritems():
@@ -216,7 +216,7 @@ class Context(renpy.object.Object):
                 del store[k]
             else:
                 store[k] = v
-            
+
     def pop_all_dynamic(self):
         """
         Pops all levels of the dynamic stack. Called when we jump
@@ -225,20 +225,20 @@ class Context(renpy.object.Object):
 
         while self.dynamic_stack:
             self.pop_dynamic()
-                
-        
+
+
     def goto_label(self, node_name):
         """
         Sets the name of the node that will be run when this context
         next executes.
         """
-        
+
         self.current = node_name
 
     def report_tb(self, out):
-        
+
         rv = [ ]
-        
+
         for i in self.call_location_stack:
             try:
                 node = renpy.game.script.lookup(i)
@@ -246,16 +246,16 @@ class Context(renpy.object.Object):
                     rv.append((node.filename, node.linenumber, "script call", None))
             except:
                 pass
-                
+
         try:
             node = renpy.game.script.lookup(self.current)
             if not node.filename.replace("\\", "/").startswith("common/"):
                 rv.append((node.filename, node.linenumber, "script", None))
         except:
             pass
-            
+
         return rv
-            
+
     def run(self, node=None):
         """
         Executes as many nodes as possible in the current context. If the
@@ -266,7 +266,7 @@ class Context(renpy.object.Object):
         self.exception_handler = None
 
         self.abnormal = True
-                
+
         if node is None:
             node = renpy.game.script.lookup(self.current)
 
@@ -276,26 +276,26 @@ class Context(renpy.object.Object):
             self.last_abnormal = self.abnormal
             self.abnormal = False
             self.defer_rollback = None
-            
+
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()
-        
+
             self.seen = False
 
             try:
                 try:
-                    self.next_node = None                    
+                    self.next_node = None
                     node.execute()
-                
+
                 except renpy.game.CONTROL_EXCEPTIONS, e:
 
                     # An exception ends the current translation.
-                    self.translate_interaction = None                    
+                    self.translate_interaction = None
 
                     raise
 
                 except Exception, e:
-                    self.translate_interaction = None                    
+                    self.translate_interaction = None
 
                     exc_info = sys.exc_info()
                     short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
@@ -309,13 +309,13 @@ class Context(renpy.object.Object):
                         raise ce
                     except Exception, ce:
                         raise exc_info[0], exc_info[1], exc_info[2]
-                              
+
                 node = self.next_node
-            
+
             except renpy.game.JumpException, e:
                 node = renpy.game.script.lookup(e.args[0])
                 self.abnormal = True
-                         
+
             except renpy.game.CallException, e:
 
                 if self.next_node is None:
@@ -325,7 +325,7 @@ class Context(renpy.object.Object):
                 self.abnormal = True
                 renpy.store._args = e.args
                 renpy.store._kwargs = e.kwargs
-        
+
             if self.seen:
                 renpy.game.seen_ever[self.current] = True
                 renpy.game.seen_session[self.current] = True
@@ -333,7 +333,7 @@ class Context(renpy.object.Object):
             if self.rollback and renpy.game.log:
                 renpy.game.log.complete()
 
-                    
+
     def mark_seen(self):
         """
         Marks the current statement as one that has been seen by the user.
@@ -361,7 +361,7 @@ class Context(renpy.object.Object):
         self.make_dynamic([ "_args", "_kwargs" ])
         renpy.store._args = None
         renpy.store._kwargs = None
-        
+
         return renpy.game.script.lookup(label)
 
     def lookup_return(self, pop=True):
@@ -369,7 +369,7 @@ class Context(renpy.object.Object):
         Returns the node to return to, or None if there is no
         such node.
         """
-        
+
         if len(self.return_stack) == 0:
             return None
 
@@ -380,7 +380,7 @@ class Context(renpy.object.Object):
             label = self.return_stack[-1]
 
         return renpy.game.script.lookup(label)
-            
+
     def rollback_copy(self):
         """
         Makes a copy of this object, suitable for rolling back to.
@@ -397,7 +397,7 @@ class Context(renpy.object.Object):
 
         rv.translate_language = self.translate_language
         rv.translate_identifier = self.translate_identifier
-        
+
         return rv
 
     def predict(self):
@@ -411,10 +411,10 @@ class Context(renpy.object.Object):
             return
 
         old_images = self.images
-        
+
         nodes = [ (renpy.game.script.lookup(self.current), self.images) ]
         node_set = set()
-        
+
         for i in range(0, renpy.config.predict_statements):
 
             if i >= len(nodes):
@@ -423,7 +423,7 @@ class Context(renpy.object.Object):
             node, images = nodes[i]
 
             self.images = renpy.display.image.ShownImageInfo(images)
-            
+
             # Ignore exceptions in prediction, so long as
             # prediction is not needed.
 
@@ -452,7 +452,7 @@ class Context(renpy.object.Object):
 
         yield False
 
-            
+
     def seen_current(self, ever):
         """
         Returns a true value if we have finshed the current statement
@@ -477,14 +477,14 @@ class Context(renpy.object.Object):
         """
         Called to cause deferred rollback to occur.
         """
-        
+
         if not self.defer_rollback:
             return
-        
+
         force, checkpoints = self.defer_rollback
-        
+
         self.defer_rollback = None
-        
+
         renpy.exports.rollback(force, checkpoints)
 
 
@@ -497,15 +497,15 @@ def run_context(top):
     label = None
 
     while True:
-        
+
         try:
-        
-            context = renpy.game.context()            
-            
+
+            context = renpy.game.context()
+
             if label and renpy.game.script.has_label(label):
                 context.call(label)
             label = None
-            
+
             context.run()
 
             rv = renpy.store._return
@@ -518,9 +518,9 @@ def run_context(top):
 
             if e.label:
                 label = e.label
-            
+
             continue
-        
+
         except renpy.game.RestartTopContext as e:
             if top:
 
@@ -531,10 +531,7 @@ def run_context(top):
 
             else:
                 raise
-        
+
         except:
             context.pop_all_dynamic()
             raise
-        
-    
-            

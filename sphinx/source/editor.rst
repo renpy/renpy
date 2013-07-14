@@ -45,7 +45,7 @@ added to methods, each method you define should ignore unknown keyword
 arguments. Since you're expected to define your own
 Editor subclass, we present the methods with the `self` parameter.
 
-.. class:: Editor 
+.. class:: Editor
 
   .. method:: begin(self, new_window=False, **kwargs)
 

@@ -12,22 +12,22 @@ screen _developer:
 
         label "Developer Menu"
 
-        textbutton _(u"Reload Game (Shift+R)"): 
+        textbutton _(u"Reload Game (Shift+R)"):
             action ui.callsinnewcontext("_save_reload_game")
             size_group "developer"
         textbutton _(u"Variable Viewer"):
             action Jump("_debugger_screen")
             size_group "developer"
-        textbutton _(u"Theme Test"): 
+        textbutton _(u"Theme Test"):
             action Jump("_theme_test")
             size_group "developer"
-        textbutton _(u"Style Hierarchy"): 
+        textbutton _(u"Style Hierarchy"):
             action Jump("_style_hierarchy")
             size_group "developer"
-        textbutton _(u"Image Location Picker"): 
+        textbutton _(u"Image Location Picker"):
             action Jump("_image_location_picker")
             size_group "developer"
-        textbutton _(u"Filename List"): 
+        textbutton _(u"Filename List"):
             action Jump("_filename_list")
             size_group "developer"
 
@@ -36,13 +36,13 @@ screen _developer:
         textbutton _(u"Return"):
             action Return()
             size_group "developer"
-         
+
 label _developer_screen:
 
     call screen _developer
-        
-    return 
-        
+
+    return
+
 label _debugger_screen:
 
     python hide:
@@ -56,7 +56,7 @@ label _debugger_screen:
         layout.label("Variable Viewer", None)
 
         entries = [ ]
-        
+
         ebc = store.__dict__.ever_been_changed
         ebc = list(ebc)
         ebc.sort()
@@ -94,9 +94,9 @@ label _debugger_screen:
         layout.button(u"Return to the developer menu", None, clicked=ui.returns(True))
 
         ui.close()
-        
+
         ui.interact()
-        
+
     jump _developer_screen
 
 label _theme_test:
@@ -109,10 +109,10 @@ label _theme_test:
                 return "selected_"
             else:
                 return ""
-        
+
         toggle_var = True
         adj = ui.adjustment(100, 25, page=25, adjustable=True)
-        
+
         while True:
 
             ui.window(style=style.gm_root)
@@ -152,7 +152,7 @@ label _theme_test:
             ui.bar(adjustment=adj, style='slider', xmaximum=200)
             ui.bar(adjustment=adj, style='scrollbar', xmaximum=200)
             ui.close()
-            
+
             ui.close() # vbox
 
             ui.frame(style='menu_frame')
@@ -161,7 +161,7 @@ label _theme_test:
             ui.bar(adjustment=adj, style='vslider', ymaximum=200)
             ui.bar(adjustment=adj, style='vscrollbar', ymaximum=200)
             ui.close()
-            
+
             ui.frame(style='menu_frame', xmaximum=0.95)
             ui.vbox(box_spacing=20)
             layout.prompt("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines.", None)
@@ -171,7 +171,7 @@ label _theme_test:
 
             ui.frame(style='menu_frame', xalign=.01, yalign=.99)
             ui.textbutton("Return to the developer menu", clicked=ui.returns("return"))
-            
+
             rv = ui.interact()
             if rv == "return":
                 renpy.jump("_developer_screen")
@@ -198,22 +198,22 @@ label _style_hierarchy:
         hier = renpy.style.style_hierarchy()
 
         entries = [ (i[0], i[1] + " - " + str(i[2])) for i in hier if i[2] ]
-        
+
         vp = ui.viewport(mousewheel=True)
         layout.list(entries)
         ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
 
         layout.button(u"Return to the developer menu", None, clicked=ui.returns(True))
-        
+
         ui.close()
-        
+
         ui.interact()
-        
+
     jump _developer_screen
 
 init -1050 python:
     config.missing_background = "black"
-    
+
 init 1050 python:
 
     if config.developer:
@@ -232,7 +232,7 @@ init 1050 python:
                 rv = dict()
                 renpy.context().__missing = rv
                 return rv
-        
+
         def __missing_show_callback(name, what, layer):
             if layer != 'master':
                 return False
@@ -241,7 +241,7 @@ init 1050 python:
             if __missing_scene:
                 renpy.show(name, what=config.missing_background)
             __missing_scene = False
-                
+
             what = " ".join(what).replace("{", "{{").replace("[", "[[")
             __missing()[name[0]] = what
             return True
@@ -255,7 +255,7 @@ init 1050 python:
 
             __missing().pop(name[0], None)
             return True
-            
+
         def __missing_scene_callback(layer):
             if layer != 'master':
                 return False
@@ -265,7 +265,7 @@ init 1050 python:
             __missing().clear()
 
             return True
-            
+
         def __missing_overlay():
             missing = __missing()
 
@@ -280,7 +280,7 @@ init 1050 python:
 
             ui.close()
 
-                
+
         config.missing_scene = __missing_scene_callback
         config.missing_show = __missing_show_callback
         config.missing_hide = __missing_hide_callback
@@ -309,13 +309,13 @@ init -1050 python:
             self.last_time = st
 
             return Text(text, xalign=1.0), .5
-    
+
 label _fps_meter:
 
     python hide:
         def fps_overlay():
             ui.add(DynamicDisplayable(__FPSMeter()))
-        
+
         # We normally don't want to change this at runtime... but here
         # it's okay, because we don't want to save the FPS meter anyway.
         #
@@ -325,20 +325,20 @@ label _fps_meter:
     return
 
 init python:
-    
+
     # This is a displayable that can keep track of the mouse coordinates,
     # and show them to the user.
     class __ImageLocationPicker(renpy.Displayable):
 
         def __init__(self, fn, **kwargs):
             super(__ImageLocationPicker, self).__init__(**kwargs)
-            
+
             self.child = Image(fn)
 
             self.mouse = None
             self.point1 = None
             self.point2 = None
-            
+
         def render(self, width, height, st, at):
             rv = renpy.Render(width, height)
 
@@ -346,7 +346,7 @@ init python:
             rv.blit(cr, (0, 0))
 
             text = [ ]
-            
+
 
             if self.point1 and self.point2 and not self.point1 == self.point2:
                 x1, y1 = self.point1
@@ -356,12 +356,12 @@ init python:
                 x2 = min(x2, cr.width)
                 y1 = min(y1, cr.height)
                 y2 = min(y2, cr.height)
-                
+
                 minx = min(x1, x2)
                 miny = min(y1, y2)
                 maxx = max(x1, x2)
                 maxy = max(y1, y2)
-                
+
                 w = maxx - minx
                 h = maxy - miny
 
@@ -372,19 +372,19 @@ init python:
 
                     # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
                     text.append("Rectangle: %r" % ((minx, miny, w, h),))
-                
+
             if self.mouse:
                 mx, my = self.mouse
                 if mx < cr.width and my < cr.height:
                     text.append(_("Mouse position: %r") % (self.mouse,))
-                    
+
             text.append(_("Right-click or escape to quit."))
-                
+
             td = Text("\n".join(text), size=14, color="#fff", outlines=[ (1, "#000", 0, 0 ) ])
             tr = renpy.render(td, width, height, st, at)
 
             rv.blit(tr, (0, height - tr.height))
-            
+
             return rv
 
         def event(self, ev, x, y, st):
@@ -399,15 +399,15 @@ init python:
 
             elif ev.type == pygame.MOUSEMOTION and ev.buttons[0]:
                 self.point2 = (x, y)
-                
+
             elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
                 self.point2 = (x, y)
-                
+
 
 label _image_location_picker:
 
     scene black
-    
+
     python hide:
 
         image_files = [
@@ -418,12 +418,12 @@ label _image_location_picker:
             ]
 
         image_files.sort()
-        
-        
+
+
         xadjustment = ui.adjustment()
         yadjustment = ui.adjustment()
 
-        
+
         while True:
 
             ui.frame()
@@ -432,7 +432,7 @@ label _image_location_picker:
             layout.label(u"Image Location Picker", None)
 
             ui.textbutton(_(u"Done"), clicked=ui.returns(False), size_group="files")
-            
+
             ui.side(['c', 'b', 'r'], spacing=5)
             vp = ui.viewport(xadjustment=xadjustment, yadjustment=yadjustment, mousewheel=True)
 
@@ -441,7 +441,7 @@ label _image_location_picker:
             for fn in image_files:
                 ui.button(clicked=ui.returns(fn), size_group="files", xminimum=1.0)
                 ui.text(fn.replace("{", "{{").replace("[", "[["), style="button_text", xalign=0.0)
-                
+
             ui.close()
 
             ui.bar(adjustment=xadjustment, style='scrollbar')
@@ -449,7 +449,7 @@ label _image_location_picker:
             ui.close()
 
             ui.close()
-            
+
             rv = ui.interact()
 
             if rv is False:
@@ -461,7 +461,7 @@ label _image_location_picker:
             ui.add(__ImageLocationPicker(rv))
             ui.interact()
 
-                
+
 
         # ...
 
@@ -477,75 +477,75 @@ label _filename_list:
 
             dirs.sort()
             files.sort()
-            
+
             for fn in files:
                 fn = os.path.join(dirname, fn)
                 fn = fn[len(config.gamedir) + 1:]
                 print >>f, fn.encode("utf-8", "replace")
                 print fn.encode("utf-8", "replace")
-                
+
         f.close()
-        
+
         renpy.launch_editor(["files.txt"], transient=1)
-        
-    
+
+
     jump _developer_screen
 
 # The style inspector.
 screen _inspector:
     zorder 1010
     modal True
-    
+
     frame:
         style_group ""
-        
+
         xfill True
         yfill True
-        
-        
+
+
         has vbox
-        
+
         label _("Style Inspector")
-        
+
         null height 20
-        
+
         if not tree:
             text _("Nothing to inspect.")
         else:
-            for depth, width, height, d in tree:      
-                $ t = ( "  " * depth + 
-                        u" \u2022 " + 
-                        d.__class__.__name__ + " : " + 
-                        "style=%s, " % (__format_style(d.style),) + 
-                        "size=(%dx%d)" % (width, height) ) 
-                 
+            for depth, width, height, d in tree:
+                $ t = ( "  " * depth +
+                        u" \u2022 " +
+                        d.__class__.__name__ + " : " +
+                        "style=%s, " % (__format_style(d.style),) +
+                        "size=(%dx%d)" % (width, height) )
+
                 text "[t!q]"
-                  
+
         null height 20
-        
+
         text _("(Click to continue.)")
-    
+
     python:
         ui.saybehavior()
 
 init python:
     def _image_load_log_function(st, at):
-        
+
         ill = list(renpy.get_image_load_log(3))
-        
+
         if not ill:
             return Null(), .25
-        
+
         vbox = VBox()
-        
+
         for when, filename, preload in ill:
             if preload:
                 color="#ffffff"
             else:
                 color="#ffcccc"
-            
+
             vbox.add(Text(filename.replace("{", "{{").replace("[", "[["), size=12, color=color, style="_default"))
-            
+
         rv = Window(vbox, style="_frame", background="#0004", xpadding=5, ypadding=5, xminimum=200)
         return rv, .25
 
@@ -558,27 +558,27 @@ screen _image_load_log:
 init python:
 
     def __format_style(s):
-        
+
         while s:
             if s.name:
                 break
-            
+
             if s.parent:
                 s = style.get(s.parent)
             else:
                 break
-                
-        return s.name[0] + "".join([ "[%r]" % i for i in s.name[1:] ]) 
-    
+
+        return s.name[0] + "".join([ "[%r]" % i for i in s.name[1:] ])
+
     def __inspect(tree):
         renpy.context_dynamic("_window")
         store._window = False
-        
+
         renpy.exports.show_screen("_inspector", _transient=True, tree=tree)
         renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
-             
+
     config.inspector = __inspect
 
 init python:
     config.underlay.append(im.Tile("_transparent_tile.png"))
-    
+

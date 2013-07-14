@@ -35,7 +35,7 @@ init -1 python hide:
 
     #########################################
     # Themes
-    
+
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
@@ -46,7 +46,7 @@ init -1 python hide:
     theme.roundrect(
         ## Theme: Roundrect
         ## Color scheme: Basic Blue
-                                    
+
         ## The color of an idle widget face.
         widget = "#003c78",
 
@@ -60,7 +60,7 @@ init -1 python hide:
         ## example, the current value of a preference.)
         widget_selected = "#ffffc8",
 
-        ## The color of a disabled widget face. 
+        ## The color of a disabled widget face.
         disabled = "#404040",
 
         ## The color of disabled widget text.
@@ -88,7 +88,7 @@ init -1 python hide:
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
-        ## do so below.            
+        ## do so below.
         )
 
     #########################################
@@ -100,7 +100,7 @@ init -1 python hide:
     ##   show help to the user.
     ## - A file name relative to the base directory, which is opened in a
     ##   web browser.
-    ## - None, to disable help.   
+    ## - None, to disable help.
     config.help = "README.html"
 
     #########################################
@@ -171,9 +171,9 @@ init -1 python hide:
     config.has_autosave = False
     config.log_enable = False
     config.mouse_hide_time = 86400 * 366
-    
+
     _game_menu_screen = None
-    
+
     config.underlay = [
         renpy.Keymap(
             quit = renpy.quit_event,
@@ -188,37 +188,37 @@ init -1 python hide:
 ## This section controls how to build Ren'Py. (Building the launcher is how
 ## we build Ren'Py distributions.)
 init python:
-        
+
     ## We're building Ren'Py tonight.
     build.renpy = True
-    
+
     ## The version number that's supplied to the updater.
     build.version = "Ren'Py {}".format(config.version)
-    
+
     ## The name that's used for directories and archive files. For example, if
     ## this is 'mygame-1.0', the windows distribution will be in the
     ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
     build.directory_name = "renpy-" + config.version.rsplit('.', 1)[0]
-    
+
     ## The name that's uses for executables - the program that users will run
     ## to start the game. For example, if this is 'mygame', then on Windows,
     ## users can click 'mygame.exe' to start the game.
     build.executable_name = "renpy"
-    
+
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.
     build.include_update = True
-    
+
     ## Clear out various file patterns.
     build.renpy_patterns = [ ]
     build.early_base_patterns = [ ]
     build.base_patterns = [ ]
     build.late_base_patterns = [ ]
-    
-    # We don't need to clear out the executable patterns, since they're 
+
+    # We don't need to clear out the executable patterns, since they're
     # correct for Ren'Py.
-    
-    ## Now, add the Ren'Py distribution in using classify_renpy.    
+
+    ## Now, add the Ren'Py distribution in using classify_renpy.
     build.classify_renpy("**~", None)
     build.classify_renpy("**/#*", None)
     build.classify_renpy("**/thumbs.db", None)
@@ -245,14 +245,14 @@ init python:
     build.classify_renpy("the_question/**", "source")
     build.classify_renpy("tutorial/**", "source")
 
-    # docs.    
+    # docs.
     build.classify_renpy("doc/", "source")
     build.classify_renpy("doc/.doctrees/", None)
     build.classify_renpy("doc/_sources/", None)
     build.classify_renpy("doc/**", "source")
     build.classify_renpy("LICENSE.txt", "source")
-    
-    # module.    
+
+    # module.
     build.classify_renpy("module/", "source")
     build.classify_renpy("module/*.c", "source")
     build.classify_renpy("module/gen/", "source")
@@ -283,8 +283,8 @@ init python:
     build.classify_renpy("editra/Editra-mac.app/**", "editra-mac")
     build.classify_renpy("editra/lib/**", "editra-windows")
     build.classify_renpy("editra/editra.exe", "editra-windows")
-    
-    
+
+
     # Executable rules.
     build.executable("editra/Editra/Editra")
 

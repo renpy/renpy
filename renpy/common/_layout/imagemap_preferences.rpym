@@ -5,7 +5,7 @@ init python:
 
     layout.provides('preferences')
     renpy.load_module("_layout/imagemap_common")
-    
+
     # The ground image.
     config.preferences_ground = None
 
@@ -55,8 +55,8 @@ init python:
             ime.button(
                 name,
                 __curried_set(_preferences, pref, value),
-                getattr(_preferences, pref) == value) 
-            
+                getattr(_preferences, pref) == value)
+
         pref("Window", "fullscreen", False)
         pref("Fullscreen", "fullscreen", True)
 
@@ -69,7 +69,7 @@ init python:
 
         if not main_menu:
             ime.button("Begin Skipping", ui.jumps("_return_skipping"), False)
-            
+
         pref("Stop Skipping", "skip_after_choices", False)
         pref("Keep Skipping", "skip_after_choices", True)
 
@@ -101,7 +101,7 @@ init python:
             _preferences.text_cps = v
 
         ime.bar("Text Speed", 150, v, set_text_cps)
-        
+
         v = _preferences.afm_time
         if v == 0:
             v = 40
@@ -115,7 +115,7 @@ init python:
                 v = v + 1
 
             _preferences.afm_time = v
-                
+
         ime.bar("Auto-Forward Time", 40, v, set_afm_time)
 
         def set_music(v):
@@ -126,22 +126,16 @@ init python:
             _preferences.set_volume('voice', v / 128.0)
 
         if config.has_music:
-            ime.bar("Music Volume", 128, int(_preferences.get_volume('music') * 128), set_music)            
+            ime.bar("Music Volume", 128, int(_preferences.get_volume('music') * 128), set_music)
         if config.has_sound:
             ime.bar("Sound Volume", 128, int(_preferences.get_volume('sfx') * 128), set_sound)
         if config.has_voice:
             ime.bar("Voice Volume", 128, int(_preferences.get_volume('voice') * 128), set_voice)
-        
+
         ime.close()
         ui.interact(mouse="gamemenu")
-        
+
 label preferences_screen:
 
     while True:
         $ __show_preferences()
-
-
-        
-        
-
-            

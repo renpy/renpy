@@ -12,12 +12,12 @@ init python:
     style.gm_nav_button_text = Style(style.button_text, help="game menu navigation button (text)")
 
     style.gm_nav_button.size_group = "gm_nav_button"
-    
+
     style.gm_nav_frame.xpos = 5.0/6.0
     style.gm_nav_frame.xanchor = 0.5
     style.gm_nav_frame.ypos = 0.95
     style.gm_nav_frame.yanchor = 1.0
-    
+
     def _navigation(screen=None):
 
         # Display the game menu background
@@ -41,7 +41,7 @@ init python:
 
             if not eval(shown):
                 continue
-                 
+
             layout.button(label,
                           "gm_nav",
                           selected=(screen==key),

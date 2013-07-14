@@ -6,7 +6,7 @@ label demo_persistent:
     "Ren'Py supports per-game and multi-game persistent data."
 
     "Persistent data can store flags and other per-game information that should be shared between plays of a single game."
-    
+
     # per-game persistent data example.
     python:
         if persistent.plays is None:
@@ -15,13 +15,13 @@ label demo_persistent:
             persistent.plays += 1
 
         plays = persistent.plays
-        
+
     "For example, I can tell you that you've see this line [plays] time(s) since you cleared the per-game persistent data."
 
     "Multipersistent data is shared between games, which lets one game unlock features in a second."
 
     "A sequel might play differently if the player has beaten the first game."
-    
+
     # multipersistent data example.
     python:
         if mp.plays is None:

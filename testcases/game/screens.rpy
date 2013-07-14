@@ -16,7 +16,7 @@ screen say:
     # Decide if we want to use the one-window or two-window varaint.
     if not two_window:
 
-        # The one window variant.        
+        # The one window variant.
         window:
             id "window"
 
@@ -34,13 +34,13 @@ screen say:
         vbox:
             style "say_two_window_vbox"
 
-            if who:            
+            if who:
                 window:
                     style "say_who_window"
 
                     text who:
                         id "who"
-                        
+
             window:
                 id "window"
 
@@ -48,7 +48,7 @@ screen say:
                     style "say_vbox"
 
                 text what id "what"
-              
+
     # If there's a side image, display it above the text.
     if side_image:
         add side_image
@@ -64,31 +64,31 @@ screen say:
 
 screen choice:
 
-    window: 
-        style "menu_window"        
+    window:
+        style "menu_window"
         xalign 0.5
         yalign 0.5
-        
+
         vbox:
             style "menu"
             spacing 2
-            
+
             for caption, action, chosen in items:
-                
-                if action:  
-                    
+
+                if action:
+
                     button:
                         action action
-                        style "menu_choice_button"                        
+                        style "menu_choice_button"
 
                         text caption style "menu_choice"
-                    
+
                 else:
                     text caption style "menu_caption"
 
 init -2 python:
     config.narrator_menu = True
-    
+
     style.menu_window.set_parent(style.default)
     style.menu_choice.set_parent(style.button_text)
     style.menu_choice.clear()
@@ -111,7 +111,7 @@ screen input:
         text prompt
         input id "input"
 
-        
+
 ##############################################################################
 # Nvl
 #
@@ -160,9 +160,9 @@ screen nvl:
                         text caption style "nvl_dialogue"
 
     add SideImage() xalign 0.0 yalign 1.0
-        
+
 ##############################################################################
-# Main Menu 
+# Main Menu
 #
 # Screen that's used to display the main menu, when Ren'Py first starts
 # http://www.renpy.org/doc/html/screen_special.html#main-menu
@@ -213,7 +213,7 @@ screen navigation:
         style_group "gm_nav"
         xalign .98
         yalign .98
-        
+
         has vbox
 
         textbutton _("Return") action Return()
@@ -226,7 +226,7 @@ screen navigation:
 
 init -2 python:
     style.gm_nav_button.size_group = "gm_nav"
-    
+
 
 ##############################################################################
 # Save, Load
@@ -238,7 +238,7 @@ init -2 python:
 # Since saving and loading are so similar, we combine them into
 # a single screen, file_picker. We then use the file_picker screen
 # from simple load and save screens.
-    
+
 screen file_picker:
 
     frame:
@@ -250,7 +250,7 @@ screen file_picker:
         # page of files.
         hbox:
             style_group "file_picker_nav"
-            
+
             textbutton _("Previous"):
                 action FilePagePrevious()
 
@@ -260,19 +260,19 @@ screen file_picker:
             for i in range(1, 9):
                 textbutton str(i):
                     action FilePage(i)
-                    
+
             textbutton _("Next"):
                 action FilePageNext()
 
         $ columns = 2
         $ rows = 5
-                
+
         # Display a grid of file slots.
         grid columns rows:
             transpose True
             xfill True
             style_group "file_picker"
-            
+
             # Display ten file slots, numbered 1 - 10.
             for i in range(1, columns * rows + 1):
 
@@ -285,7 +285,7 @@ screen file_picker:
 
                     # Add the screenshot.
                     add FileScreenshot(i)
-                    
+
                     # Format the description, and add it as text.
                     $ description = "% 2s. %s\n%s" % (
                         FileSlotName(i, columns * rows),
@@ -295,8 +295,8 @@ screen file_picker:
                     text description
 
                     key "save_delete" action FileDelete(i)
-                    
-                    
+
+
 screen save:
 
     # This ensures that any other menu screen is replaced.
@@ -322,14 +322,14 @@ init -2 python:
     style.file_picker_button = Style(style.large_button)
     style.file_picker_text = Style(style.large_button_text)
 
-    
+
 
 ##############################################################################
 # Preferences
 #
 # Screen that allows the user to change the preferences.
 # http://www.renpy.org/doc/html/screen_special.html#prefereces
-    
+
 screen preferences:
 
     tag menu
@@ -456,7 +456,7 @@ init -2 python:
 #
 # Screen that asks the user a yes or no question.
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
-    
+
 screen yesno_prompt:
 
     modal True
@@ -472,23 +472,23 @@ screen yesno_prompt:
         ypos .1
         yanchor 0
         ypadding .05
-        
+
         has vbox:
             xalign .5
             yalign .5
             spacing 30
-            
+
         label _(message):
             xalign 0.5
 
         hbox:
             xalign 0.5
             spacing 100
-            
+
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
 
-init -2 python:    
+init -2 python:
     style.yesno_button.size_group = "yesno"
     style.yesno_label_text.text_align = 0.5

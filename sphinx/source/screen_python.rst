@@ -37,7 +37,7 @@ Here's an example python screen:
             ui.close("return")
 
         renpy.define_screen("say", say_screen)
-         
+
 
 
 Screen Functions
@@ -147,7 +147,7 @@ sensitive, and when it is selected.
        This method must be overriden, as the default method will
        raise NotImplemented (and hence cause Ren'Py to report an
        error).
-       
+
    .. method:: get_sensitive(self)
 
        This is called to determine if the button with this action
@@ -157,12 +157,12 @@ sensitive, and when it is selected.
        Note that __call__ can be called, even if this returns False.
 
        The default implementation returns True.
-       
+
    .. method:: get_selected(self)
 
        This should return true if the button should be rendered as a
-       selected button, and false otherwise. 
- 
+       selected button, and false otherwise.
+
        The default implemention returns False.
 
    .. method:: periodic(self, st)
@@ -183,9 +183,9 @@ sensitive, and when it is selected.
            action is associated with was first shown.
 
    .. method:: unhovered(self):
-   
-       When the action is used as the `hovered` parameter to a button (or 
-       similar object), this method is called when the object loses focus. 
+
+       When the action is used as the `hovered` parameter to a button (or
+       similar object), this method is called when the object loses focus.
 
 BarValues
 =========
@@ -206,11 +206,11 @@ the adjustment and styles.
         bar. It should create the adjustment with
         :func:`ui.adjustment`, and then return the object created this
         way.
-    
+
         This method must be overriden, as the default method will
         raise NotImplemented (and hence cause Ren'Py to report an
         error).
-        
+
     .. method:: get_style(self)
 
         This is used to determine the style of bars that use this
@@ -224,7 +224,7 @@ the adjustment and styles.
 
         This is called when a BarValue replaces another BarValue, such
         as when a screen is updated. It can be used to update this
-        BarValue from the other. It is called before get_adjustment. 
+        BarValue from the other. It is called before get_adjustment.
 
         Note that `other` is not necessarily the same type as `self`.
 

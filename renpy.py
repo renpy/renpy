@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #@PydevCodeAnalysisIgnore
 
-# This file is part of Ren'Py. The license below applies to Ren'Py only. 
+# This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
@@ -40,7 +40,7 @@ def path_to_common(renpy_base):
 # the path to a directory that will hold save files.
 def path_to_saves(gamedir):
     import renpy #@UnresolvedImport
-    
+
     # Android.
     if renpy.android:
         paths = [
@@ -48,18 +48,18 @@ def path_to_saves(gamedir):
             os.path.join(os.environ["ANDROID_PRIVATE"], "saves"),
             os.path.join(os.environ["ANDROID_PUBLIC"], "saves"),
             ]
-        
+
         for rv in paths:
             if os.path.isdir(rv):
                 break
 
         print "Using savedir", rv
-                    
+
         # We return the last path as the default.
-                    
+
         return rv
-    
-    
+
+
     # No save directory given.
     if not renpy.config.save_directory:
         return gamedir + "/saves"
@@ -93,7 +93,7 @@ def path_to_saves(gamedir):
         rv = "~/.renpy/" + renpy.config.save_directory
         return os.path.expanduser(rv)
 
-        
+
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
 def path_to_renpy_base():
@@ -128,9 +128,9 @@ if android:
     __main__.path_to_common = path_to_common
     __main__.path_to_saves = path_to_saves
     os.environ["RENPY_RENDERER"] = "gl"
-    
+
 def main():
-    
+
     renpy_base = path_to_renpy_base()
 
     # Add paths.
@@ -145,7 +145,7 @@ def main():
 
     # Ignore warnings that happen.
     warnings.simplefilter("ignore", DeprecationWarning)
-                
+
     # Start Ren'Py proper.
     try:
         import renpy.bootstrap
@@ -157,10 +157,8 @@ def main():
     if android:
         renpy.linux = False
         renpy.android = True
-    
+
     renpy.bootstrap.bootstrap(renpy_base)
 
 if __name__ == "__main__":
     main()
-
-    

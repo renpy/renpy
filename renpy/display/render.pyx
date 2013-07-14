@@ -55,7 +55,7 @@ def free_memory():
     Frees memory used by the render system.
     """
 
-    global screen_render    
+    global screen_render
     screen_render = None
 
     mark_sweep()
@@ -64,7 +64,7 @@ def free_memory():
 
     # This can hang onto a render.
     renpy.display.interface.surftree = None
-    
+
 
 def check_at_shutdown():
     """
@@ -77,12 +77,12 @@ def check_at_shutdown():
 
     free_memory()
 
-    gc.collect()    
+    gc.collect()
     l = gc.get_objects()
 
     count = 0
     objects = gc.get_objects()
-    
+
     for i in objects:
         if isinstance(i, Render):
             count += 1
@@ -90,22 +90,22 @@ def check_at_shutdown():
     if count:
         raise Exception("%d Renders are alive at shutdown. This is probably a memory leak bug in Ren'Py." % count)
 
-    
-    
+
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
     :args: (d, width, height, st, at)
-    
+
     Causes a displayable to be rendered, and a renpy.Render object to
     be returned.
-    
+
     `d`
         The displayable to render.
-        
+
     `width`, `height`
-        The width and height available for the displayable to render into. 
-        
+        The width and height available for the displayable to render into.
+
     `st`, `at`
         The shown and animation timebases.
 
@@ -118,7 +118,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     cdef tuple orig_wh, wh
     cdef dict render_cache_d
     cdef Render rv
-    
+
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
 
     render_cache_d = render_cache[d]
@@ -129,11 +129,11 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     orig_width = width = widtho
     orig_height = height = heighto
-    
+
     style = d.style
     xmaximum = style.xmaximum
     ymaximum = style.ymaximum
-    
+
     if xmaximum is not None:
         if isinstance(xmaximum, float):
             width = width * xmaximum
@@ -151,7 +151,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     if height < 0:
         height = 0
 
-    if orig_width != width or orig_height != height:        
+    if orig_width != width or orig_height != height:
         widtho = width
         heighto = height
         wh = (widtho, heighto, frame_time-st, frame_time-at)
@@ -162,7 +162,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     else:
         wh = orig_wh
-            
+
     rv = d.render(widtho, heighto, st, at)
 
     rv.render_of.append(d)
@@ -191,14 +191,14 @@ def invalidate(d):
     """
 
     global invalidated
-    
+
     if d in render_cache:
         for v in render_cache[d].values():
             v.kill_cache()
 
         invalidated = True
 
-        
+
 def process_redraws():
     """
     Called to determine if any redraws are pending. Returns true if we
@@ -206,7 +206,7 @@ def process_redraws():
     """
 
     global redraw_queue
-    
+
     redraw_queue.sort()
 
     now = renpy.display.core.get_time()
@@ -225,7 +225,7 @@ def process_redraws():
 
         if d not in render_cache:
             continue
-        
+
         if when <= now:
             # Remove this displayable and all its parents from the
             # render cache. But don't kill them yet, as that will kill the
@@ -240,7 +240,7 @@ def process_redraws():
             new_redraw_queue.append(t)
 
     redraw_queue = new_redraw_queue
-            
+
     return rv
 
 
@@ -253,12 +253,12 @@ def redraw_time():
         return redraw_queue[0][0]
 
     return None
-    
+
 
 def redraw(d, when):
     """
     :doc: udd_utility
-    
+
     Causes the displayable `d` to be redrawn after `when` seconds have
     elapsed.
     """
@@ -267,7 +267,7 @@ def redraw(d, when):
         return
 
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
-    
+
 
 cdef class Matrix2D:
     """
@@ -287,7 +287,7 @@ cdef class Matrix2D:
         self.xdy = state['xdy']
         self.ydx = state['ydx']
         self.ydy = state['ydy']
-        
+
     def __init__(Matrix2D self, double xdx, double xdy, double ydx, double ydy):
         self.xdx = xdx
         self.xdy = xdy
@@ -306,7 +306,7 @@ cdef class Matrix2D:
 
     def __repr__(self):
         return "Matrix2D(xdx=%f, xdy=%f, ydx=%f, ydy=%f)" % (self.xdx, self.xdy, self.ydx, self.ydy)
-    
+
 IDENTITY = Matrix2D(1, 0, 0, 1)
 
 def take_focuses(focuses):
@@ -321,7 +321,7 @@ def take_focuses(focuses):
 # The result of focus_at_point for a modal render. This overrides any
 # specific focus from below us.
 Modal = object()
-    
+
 def focus_at_point(x, y):
     """
     Returns a focus object corresponding to the uppermost displayable
@@ -330,7 +330,7 @@ def focus_at_point(x, y):
 
     if screen_render is None:
         return None
-    
+
     cf = screen_render.focus_at_point(x, y)
     if cf is None or cf is Modal:
         return None
@@ -338,10 +338,10 @@ def focus_at_point(x, y):
         d, arg = cf
         return renpy.display.focus.Focus(d, arg, None, None, None, None)
 
-    
+
 def mutated_surface(surf):
     """
-    Called to indicate that the given surface has changed. 
+    Called to indicate that the given surface has changed.
     """
 
     renpy.display.draw.mutated_surface(surf)
@@ -354,21 +354,21 @@ def render_screen(root, width, height):
     """
 
 
-    
+
     global old_screen_render
     global screen_render
     global invalidated
     global frame_time
 
     frame_time = renpy.display.interface.frame_time
-    
+
     rv = render(root, width, height, 0, 0)
     screen_render = rv
-    
+
     invalidated = False
 
     rv.is_opaque()
-    
+
     return rv
 
 def mark_sweep():
@@ -382,7 +382,7 @@ def mark_sweep():
     cdef list worklist
     cdef int i
     cdef Render r, j
-    
+
     worklist = [ ]
 
     if screen_render is not None:
@@ -417,7 +417,7 @@ def compute_subline(sx0, sw, cx0, cw):
       the crop line, relative to the crop line.
     * The offset of the portion of the source line that overlaps with the
       the crop line, relative to the source line.
-    * The length of the overlap in pixels. (can be <= 0) 
+    * The length of the overlap in pixels. (can be <= 0)
     """
 
     sx1 = sx0 + sw
@@ -436,10 +436,10 @@ def compute_subline(sx0, sw, cx0, cw):
     else:
         width = cx1 - start
 
-        
+
     return offset, crop, width
 
-    
+
 
 
 # Possible operations that can be done as part of a render.
@@ -465,8 +465,8 @@ cdef class Render:
 
         # Is has this render been removed from the cache?
         self.cache_killed = False
-        
-        
+
+
         self.width = width
         self.height = height
 
@@ -482,7 +482,7 @@ cdef class Render:
 
         # The renders we depend on, including our children.
         self.depends_on_list = [ ]
-        
+
         # The operation we're performing. (BLIT, DISSOLVE, OR IMAGE_DISSOLVE)
         self.operation = BLIT
 
@@ -491,15 +491,15 @@ cdef class Render:
 
         # Should the dissolve operations preserve alpha?
         self.operation_alpha = False
-        
-        # The parameter to the operation. 
+
+        # The parameter to the operation.
         self.operation_parameter = 0
-        
+
         # Forward is used to transform from screen coordinates to child
         # coordinates.
         # Reverse is used to transform from child coordinates to screen
         # coordinates.
-        # 
+        #
         # For performance reasons, these aren't used to transform the
         # x and y offsets found in self.children. Those offsets should
         # be of the (0, 0) point in the child coordinate space.
@@ -512,13 +512,13 @@ cdef class Render:
         # The over blending factor. When this is 1.0, we get fully additive
         # blending. When set to 0.0, we get additive blending.
         self.over = 1.0
-        
+
         # A list of focus regions in this displayable.
         self.focuses = None
 
         # Other renders that we should pass focus onto.
         self.pass_focuses = None
-        
+
         # The displayable(s) that this is a render of. (Set by render)
         self.render_of = [ ]
 
@@ -535,7 +535,7 @@ cdef class Render:
         # including our uppermost opaque child.) If nothing is opaque,
         # includes all children.
         self.visible_children = self.children
-        
+
         # Should children be clipped to a rectangle?
         self.clipping = False
 
@@ -549,9 +549,9 @@ cdef class Render:
 
         # Are we modal?
         self.modal = False
-        
+
         live_renders.append(self)
-        
+
     def __repr__(self): #@DuplicatedSignature
         return "<Render %x of %r>" % (id(self), self.render_of)
 
@@ -560,7 +560,7 @@ cdef class Render:
             raise Exception("Can't pickle a Render.")
         else:
             return { }
-        
+
     def __setstate__(self, state): #@DuplicatedSignature
         return
 
@@ -576,10 +576,10 @@ cdef class Render:
         """
 
         (xo, yo) = pos
-        
+
         if source is self:
             raise Exception("Blitting to self.")
-        
+
         xo = int(xo)
         yo = int(yo)
 
@@ -587,13 +587,13 @@ cdef class Render:
             self.children.append((source, xo, yo, focus, main))
         else:
             self.children.insert(index, (source, xo, yo, focus, main))
-                    
+
         if isinstance(source, Render):
             self.depends_on_list.append(source)
             source.parents.add(self)
 
         return 0
-        
+
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
         Blits `source` (a Render or Surface) to this Render, offset by
@@ -606,21 +606,21 @@ cdef class Render:
         """
 
         (xo, yo) = pos
-        
+
         xo = float(xo)
         yo = float(yo)
-        
+
         if index is None:
             self.children.append((source, xo, yo, focus, main))
         else:
             self.children.insert(index, (source, xo, yo, focus, main))
-                        
+
         if isinstance(source, Render):
             self.depends_on_list.append(source)
             source.parents.add(self)
 
         return 0
-            
+
     def get_size(self):
         """
         Returns the size of this Render, a mostly ficticious value
@@ -630,7 +630,7 @@ cdef class Render:
 
         return self.width, self.height
 
-    
+
     def render_to_texture(self, alpha=True):
         """
         Returns a texture constructed from this render. This may return
@@ -638,7 +638,7 @@ cdef class Render:
 
         `alpha` is a hint that controls if the surface should have
         alpha or not.
-        """        
+        """
 
         if alpha:
             if self.alpha_surface is not None:
@@ -646,7 +646,7 @@ cdef class Render:
         else:
             if self.surface is not None:
                 return self.surface
-            
+
         rv = None
 
         opaque = self.is_opaque()
@@ -671,17 +671,17 @@ cdef class Render:
         if rv is None:
             # is_opaque has already been called.
             rv = renpy.display.draw.render_to_texture(self, alpha)
-            
+
         # Stash and return the surface.
         if alpha:
             self.alpha_surface = rv
         else:
             self.surface = rv
-            
+
         return rv
-    
+
     pygame_surface = render_to_texture
-    
+
     def subsurface(self, rect, focus=False):
         """
         Returns a subsurface of this render. If `focus` is true, then
@@ -692,7 +692,7 @@ cdef class Render:
         rv = Render(w, h)
 
         reverse = self.reverse
-        
+
         # This doesn't actually make a subsurface, as we can't easily do
         # so for non-rectangle-aligned renders.
         if (reverse is not None) and (
@@ -702,7 +702,7 @@ cdef class Render:
             reverse.ydy != 1.0):
 
             rv.clipping = True
-            rv.blit(self, (-x, -y), focus=focus, main=True)            
+            rv.blit(self, (-x, -y), focus=focus, main=True)
             return rv
 
         # This is the path that executes for rectangle-aligned surfaces,
@@ -710,10 +710,10 @@ cdef class Render:
 
         for child, cx, cy, cfocus, cmain in self.children:
 
-            cw, ch = child.get_size()            
+            cw, ch = child.get_size()
             xo, cx, cw = compute_subline(cx, cw, x, w)
             yo, cy, ch = compute_subline(cy, ch, y, h)
-            
+
             if cw <= 0 or ch <= 0:
                 continue
 
@@ -726,7 +726,7 @@ cdef class Render:
             else:
                 newchild = child.subsurface(crop)
                 renpy.display.draw.mutated_surface(newchild)
-                
+
             rv.blit(newchild, offset, focus=cfocus, main=cmain)
 
         if focus and self.focuses:
@@ -742,14 +742,14 @@ cdef class Render:
 
                 if cw <= 0 or ch <= 0:
                     continue
-                
+
                 if mx is not None:
 
                     mw, mh = mask.get_size()
 
-                    mx, mcx, mw = compute_subline(mx, mw, x, w) 
+                    mx, mcx, mw = compute_subline(mx, mw, x, w)
                     my, mcy, mh = compute_subline(my, mh, y, h)
-                    
+
                     if mw <= 0 or mh <= 0:
                         mx = None
                         my = None
@@ -764,10 +764,10 @@ cdef class Render:
         rv.operation = self.operation
         rv.operation_alpha = self.operation_alpha
         rv.operation_complete = self.operation_complete
-        
+
         return rv
-    
-        
+
+
     def depends_on(self, source, focus=False):
         """
         Used to indicate that this render depends on another
@@ -780,14 +780,14 @@ cdef class Render:
 
         self.depends_on_list.append(source)
         source.parents.add(self)
-        
+
         if focus:
             if self.pass_focuses is None:
                 self.pass_focuses = [ source ]
-            else:            
+            else:
                 self.pass_focuses.append(source)
 
-        
+
     def kill_cache(self):
         """
         Removes this render and its transitive parents from the cache.
@@ -802,7 +802,7 @@ cdef class Render:
             i.kill_cache()
 
         self.parents.clear()
-                
+
         for i in self.depends_on_list:
             if not i.cache_killed:
                 i.parents.discard(self)
@@ -812,7 +812,7 @@ cdef class Render:
             for k, v in cache.items():
                 if v is self:
                     del cache[k]
-                    
+
             if not cache:
                 del render_cache[ro]
 
@@ -820,7 +820,7 @@ cdef class Render:
         """
         Retained for compatibility.
         """
-                
+
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """
         This is called to indicate a region of the screen that can be
@@ -838,7 +838,7 @@ cdef class Render:
             self.depends_on(mask)
 
         t = (d, arg, x, y, w, h, mx, my, mask)
-            
+
         if self.focuses is None:
             self.focuses = [ t ]
         else:
@@ -855,10 +855,10 @@ cdef class Render:
         `x`, `y` - The offset of the upper-left corner of the render.
         `focuses` - The list of focuses to add to.
         """
-        
+
         if self.modal:
             focuses[:] = [ ]
-            
+
         if self.reverse:
             reverse = reverse * self.reverse
 
@@ -867,7 +867,7 @@ cdef class Render:
             for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
                 if xo is None:
-                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None)) 
+                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None))
                     continue
 
                 x1, y1 = reverse.transform(xo, yo)
@@ -886,7 +886,7 @@ cdef class Render:
                 if minx >= maxx or miny >= maxy:
                     continue
 
-                focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny)) 
+                focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny))
 
         if self.clipping:
             cminx = max(cminx, x)
@@ -904,7 +904,7 @@ cdef class Render:
         if self.pass_focuses:
             for child in self.pass_focuses:
                 child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
-        
+
     def focus_at_point(self, x, y): #@DuplicatedSignature
         """
         This returns the focus of this object at the given point.
@@ -913,7 +913,7 @@ cdef class Render:
         if self.clipping:
             if x < 0 or x >= self.width or y < 0 or y >= self.height:
                 return None
-        
+
         rv = None
 
         if self.focuses:
@@ -934,12 +934,12 @@ cdef class Render:
 
                 elif xo <= x < xo + w and yo <= y < yo + h:
                     rv = d, arg
-            
+
         for child, xo, yo, focus, main in self.children:
 
             if not focus or not isinstance(child, Render):
                 continue
-            
+
             cx = x - xo
             cy = y - yo
 
@@ -958,10 +958,10 @@ cdef class Render:
 
         if rv is None and self.modal:
             rv = Modal
-                
+
         return rv
-        
-            
+
+
     def main_displayables_at_point(self, x, y, layers, depth=None):
         """
         Returns the displayable at `x`, `y` on one of the layers in
@@ -991,10 +991,10 @@ cdef class Render:
                 cx, cy = self.forward.transform(cx, cy)
 
             cf = child.main_displayables_at_point(cx, cy, layers, depth)
-            rv.extend(cf)            
+            rv.extend(cf)
 
         return rv
-        
+
 
     def is_opaque(self):
         """
@@ -1010,10 +1010,10 @@ cdef class Render:
         if self.forward:
             self.opaque = False
             return False
-        
+
         rv = False
         vc = [ ]
-        
+
         for i in self.children:
             child, xo, yo, focus, main = i
 
@@ -1023,14 +1023,14 @@ cdef class Render:
                     if child.is_opaque():
                         vc = [ ]
                         rv = True
-              
+
             vc.append(i)
 
         self.visible_children = vc
         self.opaque = rv
         return rv
 
-    
+
     def is_pixel_opaque(self, x, y):
         """
         Determine if the pixel at x and y is opaque or not.
@@ -1044,7 +1044,7 @@ cdef class Render:
 
         return renpy.display.draw.is_pixel_opaque(self, x, y)
 
-    
+
     def fill(self, color):
         """
         Fills this Render with the given color.
@@ -1055,7 +1055,7 @@ cdef class Render:
         surf = render(solid, self.width, self.height, 0, 0)
         self.blit(surf, (0, 0), focus=False, main=False)
 
-        
+
     def canvas(self):
         """
         Returns a canvas object that draws to this Render.
@@ -1069,12 +1069,12 @@ cdef class Render:
 
         return Canvas(surf)
 
-        
+
 class Canvas(object):
 
     def __init__(self, surf): #@DuplicatedSignature
         self.surf = surf
-        
+
     def rect(self, color, rect, width=0):
 
         try:
@@ -1154,7 +1154,7 @@ class Canvas(object):
                               width)
         finally:
             blit_lock.release()
-    
+
     def aaline(self, color, startpos, endpos, blend=1):
         try:
             blit_lock.acquire()

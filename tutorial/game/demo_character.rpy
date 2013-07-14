@@ -76,7 +76,7 @@ label demo_character:
     centered "The \"centered\" character shows text at the center of the screen, without a window."
 
     centered "It's just a highly customized normal character, that's useful for dates and titles."
-    
+
     hide black
     with dissolve
 
@@ -95,5 +95,5 @@ label demo_character:
     e "That lets you have things happen in the middle of text. If you didn't notice, I was changing my expression."
 
     e "Hopefully, these characters, along with the ones you define, will lead to a very expressive game."
-    
+
     return

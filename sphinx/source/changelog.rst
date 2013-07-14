@@ -5,7 +5,7 @@ Full Changelog
 Ren'Py 6.15.6
 -------------
 
-This release includes improvements for the Android platform: 
+This release includes improvements for the Android platform:
 
 * Assets are now read exclusively from the APK and expansion file.
 * Logs and tracebacks are placed on external storage.
@@ -54,7 +54,7 @@ It also fixes the following issues:
   umask. (Info-zip had this problem.)
 
 * Auto-hinting for fonts is now enabled by default. This restores font
-  rendering compatibility with prior releases. 
+  rendering compatibility with prior releases.
 
 * Ren'Py now builds with and requires the current version of libav. It
   should also work with current versions of ffmpeg when libav is
@@ -63,8 +63,8 @@ It also fixes the following issues:
 * The version of SDL distributed with Ren'Py has been patched to
   prevent multiple windows from showing up in the Window menu
   when entering and leaving fullscreen mode.
-  
-  
+
+
 
 Ren'Py 6.15.4
 -------------
@@ -837,7 +837,7 @@ For example, say we had the following images::
 
    image eileen beach happy = "eileen_beach_happy.png"
    image eileen beach woozy = "eileen_beach_woozy.png"
-   
+
 We can now show the first image using the command::
 
    show eileen happy beach

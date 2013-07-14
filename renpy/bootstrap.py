@@ -74,31 +74,31 @@ def extra_imports():
     import rsa; rsa
     import decimal; decimal
     import plistlib; plistlib
-    
+
 class NullFile(io.IOBase):
     """
     This file raises an error on input, and IOError on read.
     """
-    
+
     def write(self, s):
         return
-    
+
     def read(self, length=None):
         raise IOError("Not implemented.")
-    
+
 def null_files():
     try:
         if sys.stderr.fileno() < 0:
             sys.stderr = NullFile()
-    
+
         if sys.stdout.fileno() < 0:
             sys.stdout = NullFile()
     except:
         pass
 
 null_files()
-    
-    
+
+
 trace_file = None
 trace_local = None
 
@@ -106,7 +106,7 @@ def trace_function(frame, event, arg):
     fn = os.path.basename(frame.f_code.co_filename)
     print >>trace_file, fn, frame.f_lineno, frame.f_code.co_name, event
     return trace_local
-    
+
 def enable_trace(level):
     global trace_file
     global trace_local
@@ -117,7 +117,7 @@ def enable_trace(level):
         trace_local = trace_function
     else:
         trace_local = None
- 
+
     sys.settrace(trace_function)
 
 def mac_start(fn):
@@ -136,7 +136,7 @@ def bootstrap(renpy_base):
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
 
     renpy_base = unicode(renpy_base, FSENCODING, "replace")
-    
+
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
@@ -150,14 +150,14 @@ def bootstrap(renpy_base):
     alt_path = os.path.abspath("renpy_base")
     if ".app" in alt_path:
         alt_path = alt_path[:alt_path.find(".app")+4]
-        
+
         if os.path.exists(alt_path + "/environment.txt"):
             evars = { }
             execfile(alt_path + "/environment.txt", evars)
             for k, v in evars.iteritems():
                 if k not in os.environ:
                     os.environ[k] = str(v)
-                    
+
     # Get a working name for the game.
     name = os.path.basename(sys.argv[0])
 
@@ -173,7 +173,7 @@ def bootstrap(renpy_base):
     if args.command == "presplash":
         import renpy.display.presplash
         renpy.display.presplash.show(sys.argv[3])
-    
+
     if args.trace:
         enable_trace(args.trace)
 
@@ -181,7 +181,7 @@ def bootstrap(renpy_base):
         basedir = os.path.abspath(args.basedir).decode(FSENCODING)
     else:
         basedir = renpy_base
-    
+
 
     gamedirs = [ name ]
     game_name = name
@@ -207,7 +207,7 @@ def bootstrap(renpy_base):
         gamedir = basedir
 
     sys.path.insert(0, basedir)
-            
+
     # Force windib on windows, unless the user explicitly overrides.
     if renpy.windows and not 'SDL_VIDEODRIVER' in os.environ:
         os.environ['SDL_VIDEODRIVER'] = 'windib'
@@ -220,7 +220,7 @@ def bootstrap(renpy_base):
     # If we're on a mac, install our own os.start.
     if renpy.macintosh:
         os.startfile = mac_start
-        
+
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
@@ -230,12 +230,12 @@ def bootstrap(renpy_base):
         import pygame; pygame
     except:
         print >>sys.stderr, """\
-Could not import pygame. Please ensure that this program has been built 
-and unpacked properly. Also, make sure that the directories containing 
+Could not import pygame. Please ensure that this program has been built
+and unpacked properly. Also, make sure that the directories containing
 this program do not contain : or ; in their names.
 """
         raise
-        
+
     # Load up all of Ren'Py, in the right order.
 
     import renpy #@Reimport
@@ -253,7 +253,7 @@ this program do not contain : or ; in their names.
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
                 renpy.config.args = [ ]
-                
+
                 if renpy.android:
                     renpy.config.logdir = os.environ['ANDROID_PUBLIC']
                 else:
@@ -274,7 +274,7 @@ this program do not contain : or ; in their names.
                 if renpy.display.draw:
                     renpy.display.draw.deinit()
                     renpy.display.draw.quit()
-                    
+
                 # On an UtterRestart, reload Ren'Py.
                 renpy.reload_all()
                 continue
@@ -292,7 +292,7 @@ this program do not contain : or ; in their names.
         sys.exit(0)
 
     finally:
-        
+
         if "RENPY_SHUTDOWN_TRACE" in os.environ:
             enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
 
@@ -312,12 +312,12 @@ def report_line(out, filename, line, what):
     out.write('  File "%s", line %d, in %s\n' % (filename, line, what))
     try:
         fn = renpy.parser.unelide_filename(filename)
-        f = file(fn, "rb")            
+        f = file(fn, "rb")
         lines = f.read().decode("utf-8").replace("\r", "").split("\n")
         out.write("    " + lines[line - 1].encode("utf-8") + "\n")
     except:
         pass
-         
+
 
 def write_utf8_traceback_list(out, l):
     """
@@ -327,28 +327,28 @@ def write_utf8_traceback_list(out, l):
     ul = [ ]
 
     for filename, line, what, text in l:
-        
+
         # Filename is either unicode or an fsecoded string.
         if not isinstance(filename, unicode):
             filename = unicode(filename, FSENCODING, "replace")
-        
+
         # Line is a number.
-        
+
         # Assume what is in a unicode encoding, since it is either python,
-        # or comes from inside Ren'Py.    
-        
+        # or comes from inside Ren'Py.
+
         if isinstance(text, str):
             text = text.decode("utf-8", "replace")
-            
+
         ul.append((filename, line, what, text))
-        
+
     for t in traceback.format_list(ul):
         out.write(t.encode("utf-8", "replace"))
-        
+
 
 def script_level_traceback(out, tb):
     """
-    Writes a script-level traceback to out, based on the traceback 
+    Writes a script-level traceback to out, based on the traceback
     object tb.
     """
 
@@ -359,15 +359,15 @@ def script_level_traceback(out, tb):
         line = tb.tb_lineno
         co = f.f_code
         filename = co.co_filename
-        
+
         if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
             tbl.append((filename, line, "python", None))
 
         elif 'self' in f.f_locals:
             obj = f.f_locals['self']
- 
+
             import renpy
-            
+
             if isinstance(obj, renpy.execution.Context):
                 tbl.extend(obj.report_tb(out))
 
@@ -380,34 +380,34 @@ def open_error_file(fn, mode):
     Opens an error/log/file. Returns the open file, and the filename that
     was opened.
     """
-    
+
     try:
         f = file(os.path.join(renpy.config.logdir, fn), mode)
         return f, fn
     except:
         pass
-    
+
     try:
         f = file(fn, mode)
         return f, fn
     except:
         pass
-    
+
     import tempfile
-    
+
     fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
     return file(fn, mode), fn
 
 def report_exception(e, editor=True):
     """
-    Reports an exception by writing it to standard error and 
-    traceback.txt. If `editor` is True, opens the traceback 
+    Reports an exception by writing it to standard error and
+    traceback.txt. If `editor` is True, opens the traceback
     up in a text editor.
-    
-    Returns a two-unicode tuple, with the first item being 
+
+    Returns a two-unicode tuple, with the first item being
     a simple message, and the second being a full traceback.
     """
-    
+
     import codecs
 
     type, _value, tb = sys.exc_info() #@ReservedAssignment
@@ -417,27 +417,27 @@ def report_exception(e, editor=True):
             m = unicode(e)
         except:
             m = str(e)
-            
+
         if isinstance(m, unicode):
             return m.encode("utf-8", "replace")
         else:
             return m
-    
+
     # Return values - which can be displayed to the user.
     simple = cStringIO.StringIO()
     full = cStringIO.StringIO()
-    
+
     print >>simple, renpy.game.exception_info
     script_level_traceback(simple, tb)
-    print >>simple, type.__name__ + ":", 
+    print >>simple, type.__name__ + ":",
     print >>simple, safe_utf8(e)
 
     print >>full, "Full traceback:"
     tbl = traceback.extract_tb(tb)
     write_utf8_traceback_list(full, tbl)
-    print >>full, type.__name__ + ":", 
+    print >>full, type.__name__ + ":",
     print >>full, safe_utf8(e)
-    
+
     # Write to stdout/stderr.
     sys.stdout.write("\n")
     sys.stdout.write(full.getvalue())
@@ -452,10 +452,10 @@ def report_exception(e, editor=True):
     except:
         pass
 
-    
+
     simple = simple.getvalue()
     full = full.getvalue()
- 
+
     # Inside of the file, which may not be openable.
     try:
 
@@ -467,14 +467,14 @@ def report_exception(e, editor=True):
         print >>f
 
         f.write(simple)
-        
+
         print >>f
         print >>f, "-- Full Traceback ------------------------------------------------------------"
-        print >>f  
+        print >>f
 
         f.write(full)
         f.close()
-        
+
         try:
             if editor and renpy.game.args.command == "run": #@UndefinedVariable
                 renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
@@ -496,12 +496,12 @@ old_memory = { }
 
 def memory_profile():
     """
-    Calling this function displays the change in the number of instances of 
+    Calling this function displays the change in the number of instances of
     each type of object.
     """
-    
+
     print "- Memory Profile ---------------------------------------------------"
-    
+
     import gc
     gc.collect()
 

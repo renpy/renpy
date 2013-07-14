@@ -11,5 +11,5 @@ init python hide:
             return ui.interact()
         finally:
             renpy.hide_screen('yesno_prompt')
-    
+
     layout.yesno_prompt = yesno_prompt

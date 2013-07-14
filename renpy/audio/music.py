@@ -56,7 +56,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
     True. If loop is False, then there are no last queued files.
 
     If tight is True, then fadeouts will span into the next-queued sound.
-    
+
     If if_changed is True, and the music file is currently playing,
     then it will not be stopped/faded out and faded back in again, but
     instead will be kept playing. (This will always queue up an additional
@@ -65,17 +65,17 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     if renpy.game.context().init_phase:
         raise Exception("Can't play music during init phase.")
-    
+
     if filenames is None:
         return
-        
+
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
 
-    try:        
+    try:
         c = get_channel(channel)
         ctx = c.context
-        
+
         if loop is None:
             loop = c.default_loop
 
@@ -90,22 +90,22 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             c.fadeout(fadeout)
 
         c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight)
-        
+
         t = get_serial()
         ctx.last_changed = t
         c.last_changed = t
 
         if loop:
-            ctx.last_filenames = filenames            
-            ctx.last_tight = tight            
+            ctx.last_filenames = filenames
+            ctx.last_tight = tight
         else:
             ctx.last_filenames = [ ]
             ctx.last_tight = False
-        
+
     except:
         if renpy.config.debug_sound:
             raise
-    
+
 
 def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tight=None):
     """
@@ -140,19 +140,19 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
 
-    try:        
+    try:
 
         c = get_channel(channel)
         ctx = c.context
-        
+
         if loop is None:
             loop = c.default_loop
-        
+
         if clear_queue:
             c.dequeue(True)
-            
+
         c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight)
-        
+
         t = get_serial()
         ctx.last_changed = t
         c.last_changed = t
@@ -163,7 +163,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         else:
             ctx.last_filenames = [ ]
             ctx.last_tight = False
-        
+
     except:
         if renpy.config.debug_sound:
             raise
@@ -175,43 +175,43 @@ def playable(filename, channel="music"):
     """
 
     c = get_channel(channel)
-       
+
     return renpy.loader.loadable(c.file_prefix + filename + c.file_suffix)
-    
-        
+
+
 def stop(channel="music", fadeout=None):
     """
     This stops the music that is currently playing, and dequeues all
     queued music. If fadeout is None, the music is faded out for the
     time given in config.fade_music, otherwise it is faded for fadeout
     seconds.
-    
+
     This sets the last queued file to None.
     """
 
     if renpy.game.context().init_phase:
         return
 
-    try:        
+    try:
         c = get_channel(channel)
         ctx = c.context
 
         if fadeout is None:
             fadeout = renpy.config.fade_music
 
-        c.fadeout(fadeout)        
-        
+        c.fadeout(fadeout)
+
         t = get_serial()
         ctx.last_changed = t
         c.last_changed = t
         ctx.last_filenames = [ ]
         ctx.last_tight = False
-        
+
     except:
         if renpy.config.debug_sound:
             raise
 
-    
+
 def set_music(channel, flag, default=False):
     """
     Determines if channel will loop by default.
@@ -224,7 +224,7 @@ def set_music(channel, flag, default=False):
 
     c.default_loop = flag
     c.default_loop_set = True
-    
+
 def get_delay(time, channel="music"):
     """
     Returns the number of seconds left until the given time in the
@@ -248,7 +248,7 @@ def get_delay(time, channel="music"):
             raise
 
         return None
-            
+
 def get_playing(channel="music"):
     """
     Returns true if the given channel is playing.
@@ -268,7 +268,7 @@ def is_playing(channel="music"):
     Returns True if the channel is currently playing a sound, False if
     it is not, or if the sound system isn't working.
     """
- 
+
     return (get_playing(channel=channel) is not None)
 
 
@@ -278,7 +278,7 @@ def set_volume(volume, delay=0, channel="music"):
     mixer controlling the channel.
     """
 
-    try:        
+    try:
         c = renpy.audio.audio.get_channel(channel)
         c.set_secondary_volume(volume, delay)
     except:
@@ -290,7 +290,7 @@ def set_pan(pan, delay, channel="music"):
     Sets the pan of this channel.
     """
 
-    try:        
+    try:
         c = renpy.audio.audio.get_channel(channel)
         c.set_pan(pan, delay)
     except:
@@ -308,7 +308,7 @@ def set_queue_empty_callback(callback, channel="music"):
     note that the callback may be called while a sound is playing, as
     long as a queue slot is empty.
     """
-    try:        
+    try:
         c = renpy.audio.audio.get_channel(channel)
         c.callback = callback
     except:
@@ -327,7 +327,7 @@ def set_mixer(channel, mixer, default=False):
     This function should only be called in an init block.
     """
 
-    try:        
+    try:
         c = renpy.audio.audio.get_channel(channel)
 
         if not default or c.mixer is None:
@@ -342,12 +342,12 @@ def channel_defined(channel):
     Returns True if the channel exists, or False otherwise.
     """
 
-    try:        
+    try:
         renpy.audio.audio.get_channel(channel)
         return True
     except:
         return False
-        
+
 
 # Music change logic:
 

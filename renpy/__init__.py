@@ -32,7 +32,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version. This needs to be updated when
-# we bump the version. 
+# we bump the version.
 #
 # Be sure to change script_version in launcher/game/script_version.rpy.
 # Be sure to change config.version in tutorial/game/options.rpy.
@@ -51,12 +51,12 @@ bytecode_version = 1
 first_utter_start = True
 
 def setup_modulefinder(modulefinder):
-    import _renpy 
+    import _renpy
 
     libexec = os.path.dirname(_renpy.__file__)
 
     for i in [ "display", "gl", "angle", "text" ]:
-    
+
         displaypath = os.path.join(libexec, "renpy", i)
 
         if os.path.exists(displaypath):
@@ -86,12 +86,12 @@ def import_cython():
     import renpy.angle.glrtt_copy #@UnresolvedImport
     import renpy.angle.glrtt_fbo #@UnresolvedImport
     import renpy.angle.gltexture #@UnresolvedImport
-    
-    
+
+
 def import_all():
 
     import renpy.log #@UnresolvedImport
-    
+
     import renpy.display #@UnresolvedImport
 
     # Should probably be early, as we will add it as a base to serialized things.
@@ -126,41 +126,41 @@ def import_all():
         Update the __path__ of package, to import binary modules from a libexec
         directory.
         """
-        
+
         name = package.__name__.split(".")
-        
+
         import _renpy #@UnresolvedImport
         libexec = os.path.dirname(_renpy.__file__)
         package.__path__.append(os.path.join(libexec, *name))
-    
+
         # Also find encodings, to deal with the way py2exe lays things out.
         import encodings
         libexec = os.path.dirname(encodings.__path__[0])
         package.__path__.append(os.path.join(libexec, *name))
 
     update_path(renpy.display)
-    
+
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
     import renpy.display.core # object @UnresolvedImport
 
     import renpy.text #@UnresolvedImport
     update_path(renpy.text)
-    
+
     import renpy.text.ftfont #@UnresolvedImport
     import renpy.text.font #@UnresolvedImport
     import renpy.text.textsupport #@UnresolvedImport
     import renpy.text.texwrap #@UnresolvedImport
     import renpy.text.text #@UnresolvedImport
     import renpy.text.extras #@UnresolvedImport
-    
+
     sys.modules['renpy.display.text'] = renpy.text.text
-    
+
     import renpy.gl #@UnresolvedImport
     update_path(renpy.gl)
-    
+
     import renpy.angle #@UnresolvedImport
     update_path(renpy.angle)
-    
+
     import renpy.display.layout # core @UnresolvedImport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
@@ -179,11 +179,11 @@ def import_all():
     import renpy.display.dragdrop #@UnresolvedImport
     import renpy.display.imagemap #@UnresolvedImport
     import renpy.display.predict #@UnresolvedImport
-    
+
     import renpy.display.error #@UnresolvedImport
 
     # Note: For windows to work, renpy.audio.audio needs to be after
-    # renpy.display.module. 
+    # renpy.display.module.
     import renpy.audio.audio #@UnresolvedImport
     import renpy.audio.music #@UnresolvedImport
     import renpy.audio.sound #@UnresolvedImport
@@ -208,14 +208,14 @@ def import_all():
     # Create the store.
     renpy.python.create_store("store")
 
-    # Import the contents of renpy.defaultstore into renpy.store, and set 
+    # Import the contents of renpy.defaultstore into renpy.store, and set
     # up an alias as we do.
     renpy.store = sys.modules['store']
     sys.modules['renpy.store'] = sys.modules['store']
 
     import subprocess
     sys.modules['renpy.subprocess'] = subprocess
-    
+
     for k, v in renpy.defaultstore.__dict__.iteritems():
         renpy.store.__dict__.setdefault(k, v)
 
@@ -230,23 +230,23 @@ if False:
 
 # This reloads all modules.
 def reload_all():
-    
+
     import renpy #@UnresolvedImport
 
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
-        
+
     blacklist = [ "renpy",
                   "renpy.log",
                   "renpy.bootstrap",
                   "renpy.display",
                   "renpy.display.pgrender",
                   "renpy.display.scale" ]
-    
+
     for i in sys.modules.keys():
         if i.startswith("renpy") and i not in blacklist:
             del sys.modules[i]
-            
+
         if i.startswith("store"):
             del sys.modules[i]
 
@@ -254,7 +254,7 @@ def reload_all():
     gc.collect()
 
     renpy.display.draw = None
-    
+
     import_all()
 
 # Information about the platform we're running on. We break the platforms
@@ -272,7 +272,5 @@ elif platform.mac_ver()[0]:
     macintosh = True
 else:
     linux = True
-    
+
 # The android init code in renpy.py will set linux=False and android=True.
-
-

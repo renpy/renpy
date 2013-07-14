@@ -57,13 +57,13 @@ print "CLASSES = {"
 for i, j in enumerate((lines[0] + other_classes).split()):
     print "    \"{}\" : {},".format(j, i)
     cl[j] = i
-    
+
 print "}"
-    
+
 rules = [ ]
 
 for l in lines[1:]:
-    for c in l.split()[1:]:        
+    for c in l.split()[1:]:
         rules.append(c)
 
 print
@@ -76,46 +76,46 @@ for l in file("LineBreak.txt"):
     if m:
         start = int(m.group(1), 16)
         end = int(m.group(2), 16)
-        
-        if start > 65535:
-            continue 
-        
-        if end > 65535:
-            end = 65535
-        
-        for i in range(start, end + 1):
-            cc[i] = m.group(3)
-            
-        continue
-    
-    m = re.match("(\w+);(\w\w)", l)
-    if m:
-        start = int(m.group(1), 16)        
 
         if start > 65535:
             continue
-        
-        cc[start] = m.group(2)            
+
+        if end > 65535:
+            end = 65535
+
+        for i in range(start, end + 1):
+            cc[i] = m.group(3)
+
+        continue
+
+    m = re.match("(\w+);(\w\w)", l)
+    if m:
+        start = int(m.group(1), 16)
+
+        if start > 65535:
+            continue
+
+        cc[start] = m.group(2)
         continue
 
 def generate(name, func):
-    
+
     ncc = [ ]
-    
+
     for i, ccl in enumerate(cc):
         ncc.append(func(i, ccl))
-    
+
     assert "CJ" not in ncc
     assert "AI" not in ncc
-    
+
     print "cdef char *break_" + name + " = \"" + "".join("\\x%02x" % cl[i] for i in ncc) + "\""
-            
+
 def western(i, cl):
     if cl == "CJ":
         return "ID"
     elif cl == "AI":
         return "AL"
-    
+
     return cl
 
 hyphens = [ 0x2010, 0x2013, 0x301c, 0x30a0 ]
@@ -128,28 +128,28 @@ postfixes = [ 0x0025, 0x00A2, 0x00B0, 0x2030, 0x2032, 0x2033, 0x2103, 0xff05, 0x
 prefixes = [ 0x0024, 0x00a3, 0x00a5, 0x20ac, 0x2116, 0xff04, 0xffe1, 0xffe5 ]
 
 def cjk_strict(i, cl):
-    
+
     if cl == "CJ":
         return "NS"
     if cl == "AI":
         return "ID"
-    
+
     return cl
 
 def cjk_normal(i, cl):
-    
+
     if i in hyphens:
         return "ID"
-    
+
     if cl == "CJ":
         return "ID"
     if cl == "AI":
         return "ID"
-    
+
     return cl
-    
+
 def cjk_loose(i, cl):
-    
+
     if i in hyphens:
         return "ID"
     if i in iteration:
@@ -162,14 +162,14 @@ def cjk_loose(i, cl):
         return "ID"
     if i in prefixes:
         return "ID"
-    
+
     if cl == "CJ":
         return "ID"
     if cl == "AI":
         return "ID"
-    
+
     return cl
-    
+
 generate("western", western)
 generate("cjk_strict", cjk_strict)
 generate("cjk_normal", cjk_normal)

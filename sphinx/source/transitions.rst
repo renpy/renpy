@@ -8,7 +8,7 @@ Transitions can be used as part of the :ref:`with statement
 <with-statement>`, as well as in other parts of Ren'Py, to apply
 effects to changes in the scene. Ren'Py comes with a small number of
 pre-defined transitions, which can be given directly to the with
-statement. It also includes transition classes, which can be used to 
+statement. It also includes transition classes, which can be used to
 create new transitions.
 
 Pre-Defined Transitions
@@ -24,19 +24,19 @@ statement. For example::
 
     Takes 0.5 seconds to fade to black, and then 0.5 seconds to
     fade to the new screen. An instance of the :func:`Fade` transition
-    class. 
+    class.
 
 .. var:: dissolve
 
     Takes 0.5 seconds to dissolve from the old to the new screen. An
     instance of the :func:`Dissolve` transition class.
 
-.. var:: pixellate	
+.. var:: pixellate
 
     Pixellates the old scene for .5 seconds, and the new scene for
     another .5 seconds. An instance of the :func:`Pixellate`
     transition class.
-    
+
 .. var:: move
 
     Takes 0.5 seconds to the move images that have changed location to
@@ -66,34 +66,34 @@ statement. For example::
     they use a cosine-based curve to slow down the start and end of
     the transition.
 
-.. var:: zoomin	
+.. var:: zoomin
 
     This zooms in entering images, taking 0.5 seconds to do so.
 
-.. var:: zoomout	
+.. var:: zoomout
 
     This zooms out leaving images, taking 0.5 seconds to do so.
 
-.. var:: zoominout	
+.. var:: zoominout
 
     This zooms in entering images and zooms out leaving images, taking 0.5 seconds to do so.
 
-.. var:: vpunch	
+.. var:: vpunch
 
     When invoked, this transition shakes the screen vertically for a
     quarter second.
 
-.. var:: hpunch	
+.. var:: hpunch
 
     When invoked, this transition shakes the screen horizontally for a
     quarter second.
 
-.. var:: blinds	
+.. var:: blinds
 
     Transitions the screen in a vertical blinds effect lasting 1
     second. An instance of the :func:`ImageDissolve` transition class.
 
-.. var:: squares	
+.. var:: squares
 
     Transitions the screen in a squares effect lasting 1 second.
 
@@ -148,7 +148,7 @@ transition to a variable::
          show bg washington
          with annoytheuser
 
-         
+
 .. include:: inc/transition
 
 Transition Families

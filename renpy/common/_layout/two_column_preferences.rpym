@@ -4,7 +4,7 @@
 init python:
 
     layout.provides('preferences')
-    
+
     # Load the common code.
     renpy.load_module("_layout/classic_preferences_common")
 
@@ -19,7 +19,7 @@ init python:
     style.prefs_left.xpos = 271
     style.prefs_left.xanchor = 0.5
     style.prefs_left.ypos = 10
-    
+
     style.prefs_right.xpos = 667
     style.prefs_right.xanchor = 0.5
     style.prefs_right.ypos = 10
@@ -29,14 +29,14 @@ init python:
 
     style.prefs_volume_slider.xmaximum = 200
     style.prefs_volume_slider.xalign = 1.0
-    
-    style.prefs_pref_box.xfill = True    
+
+    style.prefs_pref_box.xfill = True
     style.prefs_pref_choicebox.box_layout = 'horizontal'
     style.prefs_pref_choicebox.xalign = 1.0
     style.prefs_volume_box.xalign = 1.0
 
     style.prefs_jump.xfill = True
-    
+
     style.prefs_column.box_spacing = 5
 
     style.prefs_button.set_parent(style.small_button)
@@ -44,16 +44,16 @@ init python:
 
     style.soundtest_button.xalign = 1.0
     style.prefs_jump_button.xalign = 1.0
-    
-    
+
+
     config.sample_voice = "18005551212.ogg"
-    
+
     config.translations["Fullscreen 16:9"] = "16:9"
     config.translations["Fullscreen 16:10"] = "16:10"
 
-    
-    
-    
+
+
+
     # Place preferences into groups.
     config.preferences['prefs_left'] = [
         config.all_preferences[u'Display'],
@@ -76,6 +76,6 @@ init python:
 label preferences_screen:
 
     $ _prefs_screen_run(config.preferences)
-    
+
     jump preferences_screen
-    
+

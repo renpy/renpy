@@ -5,18 +5,18 @@ init:
     image popup prefs = "prefs.png"
     image popup mjcprefs = "mjcprefs.jpg"
     image popup save = "save.png"
-    
+
 
 transform onscreenshot:
     xpos 0.1 xanchor 0.0 ypos 0.1 yanchor 0.0
-    
-    
+
+
 label tutorial_playing:
 
     e "As someone who has played more than a few visual novels, there are many features that I expect all games to have."
 
     e "Features like saving, loading, changing preferences, and so on."
-    
+
     e "One of the nice things about Ren'Py is that the engine provides many of these features for you. You can spend your time creating your game, and let us provide these things."
 
     e "While you're in the game, you can access the game menu by right clicking or hitting the escape key."
@@ -44,7 +44,7 @@ label tutorial_playing:
 
     show popup mjcprefs at onscreenshot
     with dissolve
-    
+
     e "While the default game menus look a bit generic, with a little work they can be customized or even entirely replaced, allowing you to create menus as unique as your game."
 
     hide popup
@@ -82,7 +82,7 @@ label tutorial_rollback:
     e "While at a previous screen, you can roll forward by scrolling the mouse wheel down, or pushing the page down key."
 
     e "Rolling forward through a menu will make the same choice you did last time. But unlike other engines, Ren'Py's rollback system allows you to make a different choice."
-    
+
     e "You can try it by rolling back through the last menu, and saying 'No'."
 
     e "Press page up, or scroll up the mouse wheel."
@@ -96,9 +96,9 @@ label tutorial_rollback:
     e "Moving on."
 
     show eileen happy
-        
+
 label tutorial_rollback_done:
-    
+
     e "By allowing Ren'Py to take care of out-of-game issues like loading and saving, you can focus on making your game, while still giving users the experience they've come to expect."
 
     return

@@ -30,7 +30,7 @@ import _renpy
 
 ##############################################################################
 # The scaling API that's used if we don't enable scaling.
-    
+
 # Gets the real pygame surface.
 def real(s):
     return s
@@ -98,12 +98,12 @@ def real_smoothscale(src, size, dest=None):
 
     real_renpy_transform(src, dest,
                          0, 0,
-                         1.0 * iwidth / width , 0,                             
+                         1.0 * iwidth / width , 0,
                          0, 1.0 * iheight / height,
                          precise=1,
                          )
 
     return dest
-    
+
 smoothscale = real_smoothscale
-    
+

@@ -3,7 +3,7 @@
 Script of The Question
 ======================
 
-The script is divided over two files. 
+The script is divided over two files.
 
 * `script.rpy`_ contains the main body of the game.
 
@@ -24,12 +24,12 @@ script.rpy
     image sylvie normal = "sylvie_normal.png"
     image sylvie giggle = "sylvie_giggle.png"
     image sylvie smile = "sylvie_smile.png"
-    image sylvie surprised = "sylvie_surprised.png"    
+    image sylvie surprised = "sylvie_surprised.png"
 
     image sylvie2 normal = "sylvie2_normal.png"
     image sylvie2 giggle = "sylvie2_giggle.png"
-    image sylvie2 smile = "sylvie2_smile.png"  
-    image sylvie2 surprised = "sylvie2_surprised.png"    
+    image sylvie2 smile = "sylvie2_smile.png"
+    image sylvie2 surprised = "sylvie2_surprised.png"
 
     # Define characters used by this game.
     define s = Character('Sylvie', color="#c8ffc8")
@@ -176,7 +176,7 @@ script.rpy
         show sylvie2 normal
         with dissolve
 
-        s "Hey..."    
+        s "Hey..."
         m "Yes?"
 
         show sylvie2 giggle
@@ -291,7 +291,7 @@ options.rpy
                 ## example, the current value of a preference.)
                 widget_selected = "#58A1FF",
 
-                ## The color of a disabled widget face. 
+                ## The color of a disabled widget face.
                 disabled = "#404040",
 
                 ## The color of disabled widget text.
@@ -320,7 +320,7 @@ options.rpy
 
                 ## And we're done with the theme. The theme will customize
                 ## various styles, so if we want to change them, we should
-                ## do so below.            
+                ## do so below.
                 )
 
 

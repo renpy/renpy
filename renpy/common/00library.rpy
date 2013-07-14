@@ -14,7 +14,7 @@ init -1700 python:
     save_name = ''
 
     def _default_empty_window():
-        
+
         who = _last_say_who
 
         if who is not None:
@@ -27,9 +27,9 @@ init -1700 python:
             nvl_show_core()
         else:
             store.narrator("", interact=False)
-                
+
     config.empty_window = _default_empty_window
-        
+
     style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
     style.skip_indicator.xpos = 10
     style.skip_indicator.ypos = 10
@@ -46,22 +46,22 @@ init -1700 python:
             who = eval(who)
 
         if who is None:
-            who = narrator 
-            
+            who = narrator
+
         if isinstance(who, basestring):
             who = unknown.copy(who)
 
         # This ensures extend works even with NVL mode.
         who.do_extend()
-            
+
         what = _last_say_what + config.extend_interjection + what
-            
+
         renpy.exports.say(who, what, interact=interact)
         store._last_say_what = what
-        
+
     extend.record_say = False
 
-        
+
 init -1700 python:
 
     _predict_screens = [ ]
@@ -69,7 +69,7 @@ init -1700 python:
     def skip_indicator():
 
         ### skip_indicator default
-        # (text) The style and placement of the skip indicator.            
+        # (text) The style and placement of the skip indicator.
 
         if config.skip_indicator is True:
 
@@ -91,7 +91,7 @@ init -1700 python:
 
     config.overlay_functions.append(skip_indicator)
 
-    # Prediction of screens.    
+    # Prediction of screens.
     def predict():
 
         for s in _predict_screens:
@@ -113,25 +113,25 @@ init -1700 python:
                 renpy.predict_screen(s)
                 return
 
-            
+
     config.predict_callbacks.append(predict)
 
 init -1700 python:
 
     ##########################################################################
     # Side Images
-    
+
     config.side_image_tag = None
     config.side_image_only_not_showing = False
-    
+
     def SideImage(prefix_tag="side"):
         """
         :doc: side_image_function
-    
-        Returns the side image associated with the currently speaking character, 
+
+        Returns the side image associated with the currently speaking character,
         or a Null displayable if no such side image exists.
         """
-        
+
         name = renpy.get_side_image(prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
         if name is None:
             return Null()
@@ -151,7 +151,7 @@ init 1700 python hide:
 
         if config.debug_sound is None:
             config.debug_sound = True
-        
+
         renpy.load_module("_developer")
 
 # Entry point for the developer screen. The rest of it is loaded from
@@ -170,5 +170,3 @@ label _developer:
 # its own layer.
 screen _ctc:
     add ctc
-
-

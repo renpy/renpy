@@ -4,7 +4,7 @@
 init python hide:
 
     layout.provides('yesno_prompt')
-    
+
     # Define styles
     style.yesno_frame = Style(style.menu_frame, help="frame containing a yes/no prompt and yes/no buttons")
     style.yesno_frame_vbox = Style(style.vbox, help="box separating yes/no prompt from yes/no buttons")
@@ -22,16 +22,16 @@ init python hide:
     style.yesno_frame.ypos = .1
     style.yesno_frame.yanchor = 0
     style.yesno_frame.ypadding = .05
-    
+
     style.yesno_frame_vbox.xalign = 0.5
     style.yesno_frame_vbox.yalign = 0.5
     style.yesno_frame_vbox.box_spacing = 30
-    
+
     style.yesno_button_hbox.xalign = 0.5
     style.yesno_button_hbox.spacing = 100
 
     style.yesno_button.size_group = "yesno"
-    
+
     def yesno_prompt(screen, message):
         renpy.transition(config.intra_transition)
 
@@ -43,7 +43,7 @@ init python hide:
         layout.prompt(message, "yesno")
 
         ui.hbox(style='yesno_button_hbox')
-        
+
         # The extra nulls are because we want equal whitespace surrounding
         # the two buttons. It should work as long as we have xfill=True
         layout.button(u"Yes", 'yesno', clicked=ui.returns(True))
@@ -57,4 +57,4 @@ init python hide:
         return rv
 
     layout.yesno_prompt = yesno_prompt
-    
+

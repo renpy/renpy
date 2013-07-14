@@ -9,8 +9,5 @@ label preferences_screen:
 
     $ renpy.show_screen('preferences')
     $ ui.interact()
-    
+
     jump _noisy_return
-    
-
-

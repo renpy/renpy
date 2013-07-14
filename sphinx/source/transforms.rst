@@ -39,14 +39,14 @@ each default transform will position an image. ::
    |                                                           |
    |                                                           |
    |                                                           |
-   |                          truecenter                       | 
+   |                          truecenter                       |
    |                                                           |
    |                                                           |
    |                                                           |
    |                                                           |
    |left                   center, default                right|
    +-----------------------------------------------------------+
-   
+
 The offscreenleft and offscreenright transforms position images off the
 screen. These transforms can be used to move things off the screen
 (remember to hide them afterwards, to ensure that they do not consume
@@ -77,13 +77,13 @@ The transforms are:
 
     Places the displayable off the left side of the screen,
     aligned to the bottom of the screen.
-    
+
 .. var:: reset
 
     Resets the transform. Places the displayable in the top-left
     corner of the scren, and also eliminates any zoom, rotation, or
     other effects.
-    
+
 .. var:: right
 
     Aligns to the bottom-right corner of the screen.
@@ -91,7 +91,7 @@ The transforms are:
 .. var:: top
 
     Centers horizontally, and aligns to the top of the screen.
-    
+
 .. var:: topleft
 
     Aligns to the top-left corner of the screen.
@@ -103,12 +103,10 @@ The transforms are:
 .. var:: truecenter
 
     Centers both horizontally and vertically.
-    
+
 Creator-Defined Transforms
 ==========================
 
 A creator can define a transform using the
 :ref:`animation and transformation language <atl>`, or the
 :class:`Transform` function.
-
-

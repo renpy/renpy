@@ -20,7 +20,7 @@ Configuration variables are often changed in init python blocks::
         config.screen_width = 1024
         config.screen_height = 600
 
-        
+
 Commonly Used
 -------------
 
@@ -48,8 +48,8 @@ Commonly Used
 
 .. var:: config.name = ""
 
-    This should be a string giving the name of the game. This is included 
-    as part of tracebacks and other log files, helping to identify the 
+    This should be a string giving the name of the game. This is included
+    as part of tracebacks and other log files, helping to identify the
     version of the game being used.
 
 .. var:: config.save_directory = "..."
@@ -72,13 +72,13 @@ Commonly Used
    from being shared between multiple users on a system. It can also
    lead to problems when a game is installed as Administrator, but run
    as a user.
-        
+
    This must be set in a python early block, so that persistent
    information can be loaded before init code is run.
 
    The user may change the directory. Code that needs to know the save
    directory should read :var:`config.savedir` instead of this
-   variable. 
+   variable.
 
 .. var:: config.screen_height = 600
 
@@ -101,7 +101,7 @@ Commonly Used
     X. This should be a large image, with 8-bit alpha.
 
     This should generally be a PNG format file.
-    
+
 .. var:: config.windows_icon = None
 
     If not None, this is expected to be the filename of an image
@@ -109,7 +109,7 @@ Commonly Used
     be a 32x32 image with 1-bit alpha. (Opaque images work the best.)
 
     This should be a PNG format file.
-    
+
 .. var:: config.window_title = "A Ren'Py Game"
 
     The static portion of the title of the window containing the
@@ -118,8 +118,8 @@ Commonly Used
 
 .. var:: config.version = ""
 
-    This should be a string giving the version of the game. This is included 
-    as part of tracebacks and other log files, helping to identify the 
+    This should be a string giving the version of the game. This is included
+    as part of tracebacks and other log files, helping to identify the
     version of the game being used.
 
 Transitions
@@ -147,11 +147,11 @@ These control transitions between various screens.
 
     The transition that is used to display the main menu after the end
     of the splashscreen.
-         
+
 .. var:: config.enter_replay_transition = None
 
     If not None, a transition that is used when entering a replay.
-    
+
 .. var:: config.enter_transition = None
 
     If not None, this variable should give a transition that will be
@@ -161,11 +161,11 @@ These control transitions between various screens.
 
     If not None, a transition that is used when entering the yes/no
     prompt screen.
-    
+
 .. var:: config.exit_replay_transition = None
 
     If not None, a transition that is used when exiting a replay.
-    
+
 .. var:: config.exit_transition = None
 
     If not None, this variable should give a transition that will be
@@ -175,7 +175,7 @@ These control transitions between various screens.
 
     If not None, a transition that is used when exiting the yes/no
     prompt screen.
-    
+
 .. var:: config.game_main_transition = None
 
     The transition that is used to display the main menu after leaving
@@ -195,9 +195,9 @@ These control transitions between various screens.
 
 .. var:: config.say_attribute_transition = None
 
-    If not None, a transition to use when the image is changed by a 
+    If not None, a transition to use when the image is changed by a
     say statement with image attributes.
-    
+
 .. var:: config.window_hide_transition = None
 
     The transition used by the window hide statement when no
@@ -208,7 +208,7 @@ These control transitions between various screens.
     The transition used by the window show statement when no
     transition has been explicitly specified.
 
-    
+
 Occasionally Used
 -----------------
 
@@ -272,9 +272,9 @@ Occasionally Used
     overflow occurs when a :class:`Text` displayable renders to a size
     larger than that allocated to it. By setting this to True and setting
     the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
-    window to the window size, this can be used to report cases where the 
+    window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
-        
+
 .. var:: config.default_afm_time = None
 
     If not None, this sets the default auto-forward-mode timeout. If
@@ -291,7 +291,7 @@ Occasionally Used
     auto-forwarding will not occur. Set this to False with caution, as
     the default Ren'Py UI does not provide a way of changing it's
     setting. (But one can use Preference action in a screen to create
-    such a UI.) 
+    such a UI.)
 
     Persistent data must be deleted for this to take effect.
 
@@ -317,7 +317,7 @@ Occasionally Used
     initialize the values of the displayable's transform.
 
     The default default transform is :var:`center`.
-    
+
 .. var:: config.empty_window = ...
 
     This is called when _window is True, and no window has been shown
@@ -340,14 +340,14 @@ Occasionally Used
 
 .. var:: config.fix_rollback_without_choice = False
 
-    This option determines how the built in menus or imagemaps behave 
+    This option determines how the built in menus or imagemaps behave
     during fixed rollback. The default value is False, which means that
     menu only the previously selected option remains clickable. If set
     to True, the selected option is marked but no options are clickable.
     The user can progress forward through the rollback buffer by
     clicking.
 
-    
+
 .. var:: config.font_replacement_map = { }
 
     This is a map from (font, bold, italics) to (font, bold, italics),
@@ -388,7 +388,7 @@ Occasionally Used
     The name of the image that is used when running the OpenGL
     performance test. This image will be shown for 5 frames or .25
     seconds, on startup. It will then be automatically hidden.
-        
+
 .. var:: config.has_autosave = True
 
     If true, the game will autosave. If false, no autosaving will
@@ -405,16 +405,16 @@ Occasionally Used
 
 .. var:: config.key_repeat = (.3, .03)
 
-    Controls the rate of keyboard repeat. When key repeat is enabled, this 
-    should be a tuple. The first item in the tuple is the delay before the 
-    first repeat, and the second item is the delay between repeats. Both 
+    Controls the rate of keyboard repeat. When key repeat is enabled, this
+    should be a tuple. The first item in the tuple is the delay before the
+    first repeat, and the second item is the delay between repeats. Both
     are in seconds. If None, keyboard repeat is disabled.
 
 .. var:: config.language = None
 
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
-    
+
 .. var:: config.main_menu = [ ... ]
 
     The default main menu, when not using screens. For more details,
@@ -448,7 +448,7 @@ Occasionally Used
 
     The default value includes a callback that implements :var:`config.adv_nvl_transition`
     and :var:`config.nvl_adv_transition`.
-    
+
 .. var:: config.mouse = None
 
     This variable controls the use of user-defined mouse cursors. If
@@ -484,7 +484,7 @@ Occasionally Used
     then narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
-     
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
@@ -493,16 +493,16 @@ Occasionally Used
 .. var:: config.python_callbacks = [ ]
 
     A list of functions. The functions in this list are called, without
-    any arguments, whenever a python block is run outside of the init 
-    phase. 
-    
+    any arguments, whenever a python block is run outside of the init
+    phase.
+
     One possible use of this would be to have a function limit a variable
     to within a range each time it is adjusted.
-    
+
     The functions may be called during internal Ren'Py code, before the
-    start of the game proper, and potentially before the variables the 
-    function depends on are intialized. The functions are required to deal 
-    with this, perhaps by using ``hasattr(store, 'varname')`` to check if 
+    start of the game proper, and potentially before the variables the
+    function depends on are intialized. The functions are required to deal
+    with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
 
 .. var:: config.quit_action = ...
@@ -510,7 +510,7 @@ Occasionally Used
     The action that is called when the user clicks the quit button on
     a window. The default action prompts the user to see if he wants
     to quit the game.
-    
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
@@ -519,7 +519,7 @@ Occasionally Used
     rather than the value of this setting when the thumbnail is shown
     to the user.
 
-    When using a load_save layout, a different default may be used. 
+    When using a load_save layout, a different default may be used.
 
 .. var:: config.thumbnail_width = 100
 
@@ -529,12 +529,12 @@ Occasionally Used
     rather than the value of this setting when the thumbnail is shown
     to the user.
 
-    When using a load_save layout, a different default may be used. 
+    When using a load_save layout, a different default may be used.
 
 .. var:: config.window_overlay_functions = []
 
     A list of overlay functions that are only called when the window
-    is shown. 
+    is shown.
 
 
 Rarely or Internally Used
@@ -575,12 +575,12 @@ Rarely or Internally Used
 
     The archives are searched in the order they are found in this list.
     A file is taken from the first archive it is found in.
-    
+
     At startup, Ren'Py will automatically populate this variable with
     the names of all archives found in the game directory, sorted in
     reverse ascii order. For example, if Ren'Py finds the files
     data.rpa, patch01.rpa, and patch02.rpa, this variable will be
-    populated with ``['patch02', 'patch01', 'data']``. 
+    populated with ``['patch02', 'patch01', 'data']``.
 
 .. var:: config.auto_choice_delay = None
 
@@ -640,11 +640,11 @@ Rarely or Internally Used
     cannot support it, so it usually isn't necessary to set this.
 
     OpenGL can also be disabled by holding down shift at startup.
-    
+
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.
-    
+
 .. var:: config.hard_rollback_limit = 100
 
     This is the number of steps that Ren'Py will let the user
@@ -668,13 +668,13 @@ Rarely or Internally Used
 
     The default implementation formats the `auto` property with
     the desired image, and then checks if the computed filename exists.
-    
+
 .. var:: config.imagemap_cache = True
 
     If true, imagemap hotspots will be cached to PNG files,
     reducing time and memory usage, but increasing the size of
     the game on disk. Set this to false to disable this behavior.
-    
+
 .. var:: config.implicit_with_none = True
 
     If True, then by default the equivalent of a :ref:`with None <with-none>`
@@ -697,7 +697,7 @@ Rarely or Internally Used
     block will cause the image to continue the previous transform
     an image with that tag was using, if any. If false, the transform
     is stopped.
-    
+
 .. var:: config.keymap = dict(...)
 
     This variable contains a keymap giving the keys and mouse buttons
@@ -710,7 +710,7 @@ Rarely or Internally Used
     reached. It is called with two parameters. The first is the name
     of the label. The second is true if the label was reached through
     jumping, calling, or creating a new context, and false
-    otherwise. 
+    otherwise.
 
 .. var:: config.label_overrides = { }
 
@@ -781,7 +781,7 @@ Rarely or Internally Used
     If true, Ren'Py will apply old-style (percent) substitutions to
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
     <menu-statement>` statements.
-    
+
 .. var:: config.overlay_during_with = True
 
     True if we want overlays to be shown during :ref:`with statements
@@ -848,14 +848,14 @@ Rarely or Internally Used
    If set to true, Ren'Py will create the file save_dump.txt whenever it
    saves a game. This file contains information about the objects contained
    in the save file. Each line consists of a relative size estimate, the path
-   to the object, information about if the object is an alias, and a 
+   to the object, information about if the object is an alias, and a
    representation of the object.
 
 .. var:: config.save_physical_size = True
 
     If true, the physical size of the window will be saved in the
     preferences, and restored when the game resumes.
-    
+
 .. var:: config.savedir = ...
 
     The complete path to the directory in which the game is
@@ -875,21 +875,21 @@ Rarely or Internally Used
     A function that is called when a screenshot is taken. The function
     is called with a single parameter, the full filename the screenshot
     was saved as.
-    
+
 .. var:: config.screenshot_crop = None
 
     If not None, this should be a (`x`, `y`, `height`, `width`)
     tuple. Screenshots are cropped to this rectangle before being
-    saved. 
+    saved.
 
 .. var:: config.screenshot_pattern = "screenshot%04d.png"
 
     The pattern used to create screenshot files. This pattern is applied (using
-    python's %-formatting rules) to the natural numbers to generate a sequence 
-    of filenames. The filenames may be absolute, or relative to 
-    config.renpy_base. The first filename that does not exist is used as the 
-    name of the screenshot. 
-    
+    python's %-formatting rules) to the natural numbers to generate a sequence
+    of filenames. The filenames may be absolute, or relative to
+    config.renpy_base. The first filename that does not exist is used as the
+    name of the screenshot.
+
 .. var:: config.script_version = None
 
     If not None, this is interpreted as a script version. The library
@@ -945,7 +945,7 @@ Rarely or Internally Used
     uses internally to implement features such as nvl-mode. New
     callbacks can be appended to this list, but the existing callbacks
     should not be removed.
-    
+
 .. var:: config.start_interact_callbacks = ...
 
     A list of functions that are called (without any arguments) when
@@ -982,7 +982,7 @@ Rarely or Internally Used
     statement to produce the filename that is played to the user. For
     example, if this is "{filename}.ogg", the ``voice "test"`` statement
     will play test.ogg.
-    
+
 .. var:: config.with_callback = None
 
     If not None, this should be a function that is called when a :ref:`with

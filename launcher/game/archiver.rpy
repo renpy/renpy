@@ -2,7 +2,7 @@
 # See LICENSE.txt for license details.
 
 # Ren'Py archiver. This builds a Ren'Py archive file, and the
-# associated index file. These files are really easy to 
+# associated index file. These files are really easy to
 # reverse-engineer, but are probably better than nothing.
 
 init python in archiver:
@@ -23,16 +23,16 @@ init python in archiver:
 
             # The archive file.
             self.f = open(filename, "wb")
-            
+
             # The index to the file.
             self.index = _dict()
-            
+
             # A fixed key minimizes difference between archive versions.
             self.key = 0x42424242
 
             padding = "RPA-3.0 XXXXXXXXXXXXXXXX XXXXXXXX\n"
             self.f.write(padding)
-            
+
         def add(self, name, path):
             """
             Adds a file to the archive.
@@ -55,7 +55,7 @@ init python in archiver:
             self.index[name].append((offset ^ self.key, dlen ^ self.key, ""))
 
         def close(self):
-            
+
             indexoff = self.f.tell()
 
             self.f.write(dumps(self.index, HIGHEST_PROTOCOL).encode("zlib"))
@@ -64,4 +64,4 @@ init python in archiver:
             self.f.write("RPA-3.0 %016x %08x\n" % (indexoff, self.key))
 
             self.f.close()
-            
+

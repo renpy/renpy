@@ -7,16 +7,16 @@ init:
 
     # This lets us control if the editor button is shown or not.
     $ show_editor_button = False
-    
+
     python hide:
-        
-        # This function is called at least one per interaction. 
+
+        # This function is called at least one per interaction.
         def overlay():
 
             # If we don't want to show the editor button, do nothing.
             if not show_editor_button:
                 return
-            
+
             # Figure out the filename and the line number.
             import os.path
             filename, line = renpy.get_filename_line()
@@ -49,8 +49,8 @@ init:
             # The button contains this text. We can't use ui.textbutton,
             # since we want to restyle things.
             ui.text("%s:%d" % (filename, line),
-                    style="button_text", 
+                    style="button_text",
                     size=14)
-            
-        # Append the overlay function to the list of overlay functions. 
+
+        # Append the overlay function to the list of overlay functions.
         config.overlay_functions.append(overlay)

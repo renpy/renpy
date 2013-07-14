@@ -67,7 +67,7 @@ rollback_length = 128
 # buffer if the data has not changed.
 keep_rollback_data = False
 
-# If set to true, menus in fixed rollback will not have clickable 
+# If set to true, menus in fixed rollback will not have clickable
 # options and a click anywhere or mouse wheel will roll forward.
 fix_rollback_without_choice = False
 

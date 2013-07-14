@@ -37,23 +37,23 @@ cdef class LimitedEnviron(Environ):
     """
     This is an OpenGL environment that uses a limited fixed-function
     pipeline. This will work with any GL or GLES system that has at
-    least 2 texture units. 
+    least 2 texture units.
 
     (It's missing some functionality, like the ability to change the
      alpha of an imagedissolve or dissolve, and the ability to
      imagedissolve.)
     """
-    
+
     cdef object last
 
     def init(self):
-        
+
         # The last blend environ used.
         self.last = NONE
-        
+
         # Disable imagedissolve.
         renpy.display.less_imagedissolve = True
-        
+
     def deinit(self):
         """
         Called before changing the GL context.
@@ -68,7 +68,7 @@ cdef class LimitedEnviron(Environ):
 
         glActiveTextureARB(unit)
         glDisable(GL_TEXTURE_2D)
-        
+
     def combine_mode(self, unit,
                      color_function=GL_MODULATE,
                      color_arg0=GL_TEXTURE,
@@ -88,14 +88,14 @@ cdef class LimitedEnviron(Environ):
                      alpha_scale=1.0,
                      enable=True):
 
-        
+
         glActiveTextureARB(unit)
 
         if enable:
             glEnable(GL_TEXTURE_2D)
         else:
             glDisable(GL_TEXTURE_2D)
-            
+
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE)
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, color_function)
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, alpha_function)
@@ -117,7 +117,7 @@ cdef class LimitedEnviron(Environ):
         glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE, color_scale)
         glTexEnvf(GL_TEXTURE_ENV, GL_ALPHA_SCALE, alpha_scale)
 
-        
+
     cdef void blit(self):
 
         if self.last != BLIT:
@@ -131,9 +131,9 @@ cdef class LimitedEnviron(Environ):
 
             # Disable unit 1.
             self.disable(GL_TEXTURE1)
-            
+
             self.last = BLIT
-        
+
     cdef void blend(self, double fraction):
 
         if self.last != BLEND:
@@ -152,38 +152,38 @@ cdef class LimitedEnviron(Environ):
             self.last = BLEND
 
         cdef float *fractions = [ fraction, fraction, fraction, fraction ]
-                    
+
         glActiveTextureARB(GL_TEXTURE1)
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, fractions)
-                
+
     cdef void imageblend(self, double fraction, int ramp):
         # Imageblend doesn't work on GLES.
         pass
 
     cdef void set_vertex(self, float *vertices):
         glVertexPointer(2, GL_FLOAT, 0, <GLubyte *> vertices)
-        glEnableClientState(GL_VERTEX_ARRAY)    
-     
+        glEnableClientState(GL_VERTEX_ARRAY)
+
     cdef void set_texture(self, int unit, float *coords):
         if unit == 0:
-            glClientActiveTextureARB(GL_TEXTURE0)    
+            glClientActiveTextureARB(GL_TEXTURE0)
         elif unit == 1:
-            glClientActiveTextureARB(GL_TEXTURE1)            
+            glClientActiveTextureARB(GL_TEXTURE1)
         elif RENPY_THIRD_TEXTURE and unit == 2:
             glClientActiveTextureARB(GL_TEXTURE2)
         else:
             return
-        
+
         if coords is not NULL:
             glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> coords)
             glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         else:
             glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-    
+
     cdef void set_color(self, float r, float g, float b, float a):
         glColor4f(r, g, b, a)
-    
-            
+
+
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
 
         glMatrixMode(GL_PROJECTION)
@@ -192,18 +192,18 @@ cdef class LimitedEnviron(Environ):
         glMatrixMode(GL_MODELVIEW)
 
     cdef void set_clip(self, tuple clip_box, GLDraw draw):
-        
+
         cdef double minx, miny, maxx, maxy
         cdef double vwidth, vheight
         cdef double px, py, pw, ph
         cdef int cx, cy, cw, ch
         cdef int psw, psh
-        
+
         minx, miny, maxx, maxy = clip_box
         psw, psh = draw.physical_size
-        
+
         if draw.clip_rtt_box is None:
-            
+
             vwidth, vheight = draw.virtual_size
             px, py, pw, ph = draw.physical_box
 
@@ -223,11 +223,11 @@ cdef class LimitedEnviron(Environ):
 
             cx, cy, cw, ch = draw.clip_rtt_box
 
-            glEnable(GL_SCISSOR_TEST)                            
+            glEnable(GL_SCISSOR_TEST)
             glScissor(<GLint> round(minx - cx), <GLint> round(miny - cy), <GLint> round(maxx - minx), <GLint> round(maxy - miny))
-  
+
     cdef void unset_clip(self, GLDraw draw):
         glDisable(GL_SCISSOR_TEST)
-        
+
     cdef void viewport(self, int x, int y, int width, int height):
         glViewport(x, y, width, height)

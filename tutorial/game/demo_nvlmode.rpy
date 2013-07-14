@@ -13,13 +13,13 @@ label demo_nvlmode:
     window hide
     nvl clear
     nvl show dissolve
-    
+
     nvle "NVL-style games are games that cover the full screen with text, rather then placing it in a file at the bottom of the screen."
 
     nvle "Ren'Py ships with a file, nvl_mode.rpy, that implements NVL-style games. You're seeing an example of NVL-mode at work."
 
     nvl clear
-    
+
     nvle "To use NVL-mode, you need to define Characters with a kind=nvl."
 
     nvle "You use 'nvl clear' to clear the screen when that becomes necessary."
@@ -34,12 +34,12 @@ label demo_nvlmode:
     $ nvl_erase()
 
     nvle "Like that."
-    
+
     # Doing this during the game isn't recommended, it's better to do
     # it in an init block. We have to do it here because we need to use
     # both kinds of menus.
     $ menu = nvl_menu
-    
+
     menu:
 
         nvle "The nvl_mode also supports showing menus to the user, provided they are the last thing on the screen. Understand?"
@@ -51,7 +51,7 @@ label demo_nvlmode:
             nvle "Good!"
 
             nvl clear
-            
+
         "No.":
 
             nvl clear
@@ -59,7 +59,7 @@ label demo_nvlmode:
             nvle "Well, it might help if you take a look at the demo code."
 
             nvl clear
-            
+
     eside "You can specify transitions that occur when going from NVL-mode to ADV-mode."
 
     nvle "As well as when going from ADV-mode to NVL-mode."
@@ -69,13 +69,11 @@ label demo_nvlmode:
     extend " As does the \"extend\" special character."
 
     nvle "And that's it for NVL-mode."
-    
+
     $ menu = renpy.display_menu
 
     nvl hide dissolve
     $ _last_say_who = None
     window show dissolve
-    
+
     return
-        
-    

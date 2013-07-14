@@ -38,7 +38,7 @@ class SpriteCache(renpy.object.Object):
     # Private Fields:
     #
     # child - The child displayable.
-    # 
+    #
     # st - The shown time when this was first displayed, or None if it hasn't
     # been rendered.
     #
@@ -46,11 +46,11 @@ class SpriteCache(renpy.object.Object):
     #
     # If true, then the render is simple enough it can just be appended to
     # the manager's render's children list.
-    
+
 class Sprite(renpy.object.Object):
     """
     :doc: sprites class
-    
+
     This represents a sprite that is managed by the SpriteManager. It contains
     fields that control the placement of the sprite on the screen. Sprites
     should not be created directly. Instead, they should be created by
@@ -68,9 +68,9 @@ class Sprite(renpy.object.Object):
         number is, the closer to the viewer the sprite is.
 
     `events`
-        If True, then events are passed to child. If False, the default, 
+        If True, then events are passed to child. If False, the default,
         the children igore events (and hence don't spend time processing
-        them).     
+        them).
 
     The methods of a Sprite object are:
         """
@@ -90,7 +90,7 @@ class Sprite(renpy.object.Object):
         """
 
         id_d = id(d)
-                
+
         sc = self.manager.displayable_map.get(id_d, None)
         if sc is None:
             d = renpy.easy.displayable(d)
@@ -99,11 +99,11 @@ class Sprite(renpy.object.Object):
             sc.render = None
             sc.child = d
             sc.st = None
-            
+
             self.manager.displayable_map[id_d] = sc
 
         self.cache = sc
-            
+
     def destroy(self):
         """
         :doc: sprites method
@@ -115,17 +115,17 @@ class Sprite(renpy.object.Object):
         self.manager.dead_child = True
         self.live = False
         self.events = False
-        
-    
+
+
 
 class SpriteManager(renpy.display.core.Displayable):
     """
     :doc: sprites class
-    
+
     This displayable manages a collection of sprites, and displays
     them at the fastest speed possible.
     """
-    
+
     def __init__(self, update=None, event=None, predict=None, ignore_time=False, **properties):
         """
         `update`
@@ -150,7 +150,7 @@ class SpriteManager(renpy.display.core.Displayable):
             If not None, a function that returns a list of
             displayables. These displayables are predicted when the
             sprite manager is.
-            
+
         `ignore_time`
             If True, then time is ignored when rendering displayables. This
             should be used when the sprite manager is used with a relatively
@@ -163,10 +163,10 @@ class SpriteManager(renpy.display.core.Displayable):
         SpriteManagers have the following fields:
 
         `width`, `height`
-        
+
              The width and height of this SpriteManager, in pixels.
-            
-            
+
+
         SpriteManagers have the following methods:
         """
 
@@ -176,7 +176,7 @@ class SpriteManager(renpy.display.core.Displayable):
         self.event_function = event
         self.predict_function = predict
         self.ignore_time = ignore_time
-        
+
         # A map from a displayable to the SpriteDisplayable object
         # representing that displayable.
         self.displayable_map = { }
@@ -194,7 +194,7 @@ class SpriteManager(renpy.display.core.Displayable):
         # The width and height.
         self.width = None
         self.height = None
-        
+
     def create(self, d):
         """
         :doc: sprites method
@@ -204,7 +204,7 @@ class SpriteManager(renpy.display.core.Displayable):
         """
 
         id_d = id(d)
-        
+
         sc = self.displayable_map.get(id_d, None)
         if sc is None:
             d = renpy.easy.displayable(d)
@@ -223,7 +223,7 @@ class SpriteManager(renpy.display.core.Displayable):
         s.live = True
         s.manager = self
         s.events = False
-        
+
         self.children.append(s)
 
         return s
@@ -232,8 +232,8 @@ class SpriteManager(renpy.display.core.Displayable):
         if self.predict_function is not None:
             for i in self.predict_function():
                 renpy.display.predict.displayable(i)
-                
-    
+
+
     def redraw(self, delay=0):
         """
         :doc: sprite method
@@ -242,7 +242,7 @@ class SpriteManager(renpy.display.core.Displayable):
         """
 
         renpy.display.render.redraw(self, delay)
-        
+
     def render(self, width, height, st, at):
 
         self.width = width
@@ -254,10 +254,10 @@ class SpriteManager(renpy.display.core.Displayable):
 
             if redraw is not None:
                 renpy.display.render.redraw(self, redraw)
-            
+
         if not self.ignore_time:
             self.displayable_map.clear()
-        
+
         if self.dead_child:
             self.children = [ i for i in self.children if i.live ]
 
@@ -268,11 +268,11 @@ class SpriteManager(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(width, height)
 
         events = False
-        
+
         for i in self.children:
 
             events |= i.events
-            
+
             cache = i.cache
             r = i.cache.render
             if cache.render is None:
@@ -284,9 +284,9 @@ class SpriteManager(renpy.display.core.Displayable):
                 cache.render = r = render(cache.child, width, height, cst, cst)
                 cache.fast = (r.operation == BLIT) and (r.forward is None) and (r.alpha == 1.0) and (r.over == 1.0)
                 rv.depends_on(r)
-                
+
                 caches.append(cache)
-                
+
 
             if cache.fast:
                 for child, xo, yo, _focus, _main in r.children:
@@ -301,13 +301,13 @@ class SpriteManager(renpy.display.core.Displayable):
 
         for i in caches:
             i.render = None
-                
+
         return rv
-                
+
     def event(self, ev, x, y, st):
-        for i in xrange(len(self.children) -1, -1, -1): 
+        for i in xrange(len(self.children) -1, -1, -1):
             s = self.children[i]
-            
+
             if s.events:
                 rv = s.cache.child.event(ev, x - s.x, y - s.y, st - s.cache.st)
                 if rv is not None:
@@ -331,10 +331,10 @@ class SpriteManager(renpy.display.core.Displayable):
             pass
 
         return rv
-    
+
     def destroy_all(self):
         self.children = [ ]
-    
+
 
 class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
     """
@@ -342,13 +342,13 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
     """
 
     __version__ = 1
-    
+
     nosave = [ 'particles' ]
 
     def after_upgrade(self, version):
         if version < 1:
             self.sm = SpriteManager(update=self.update_callback, predict=self.predict_callback)
-        
+
     def after_setstate(self):
         self.particles = None
 
@@ -373,9 +373,9 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
             particles = [ ]
 
         add_parts = self.factory.create(particles, st)
-            
+
         new_particles = [ ]
-            
+
         for sprite, p in particles:
             update = p.update(st)
 
@@ -384,13 +384,13 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
                 continue
 
             x, y, _t, d = update
-            
+
             if d is not sprite.cache.child:
                 sprite.set_child(d)
 
             sprite.x = x
             sprite.y = y
-            
+
             new_particles.append((sprite, p))
 
         if add_parts:
@@ -399,7 +399,7 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
 
                 if update is None:
                     continue
-                
+
                 x, y, _t, d = update
 
                 if d is None:
@@ -410,21 +410,21 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
                 sprite.y = y
 
                 new_particles.append((sprite, p))
-            
+
         self.particles = new_particles
-        
+
         return 0
-            
+
     def predict_callback(self):
-        return self.factory.predict()            
-        
+        return self.factory.predict()
+
     def render(self, w, h, st, at):
         return renpy.display.render.render(self.sm, w, h, st, at)
-    
+
 class SnowBlossomFactory(renpy.python.NoRollback):
 
     rotate = False
-    
+
     def __setstate__(self, state):
         self.start = 0
         vars(self).update(state)
@@ -432,10 +432,10 @@ class SnowBlossomFactory(renpy.python.NoRollback):
 
     def __init__(self, image, count, xspeed, yspeed, border, start, fast, rotate=False):
         self.image = renpy.easy.displayable(image)
-        self.count = count 
+        self.count = count
         self.xspeed = xspeed
         self.yspeed = yspeed
-        self.border = border        
+        self.border = border
         self.start = start
         self.fast = fast
         self.rotate = rotate
@@ -445,7 +445,7 @@ class SnowBlossomFactory(renpy.python.NoRollback):
         self.starts = [ random.uniform(0, self.start) for _i in xrange(0, self.count) ] # W0201
         self.starts.append(self.start)
         self.starts.sort()
-    
+
     def create(self, particles, st):
 
         def ranged(n):
@@ -467,8 +467,8 @@ class SnowBlossomFactory(renpy.python.NoRollback):
                                               fast=True,
                                               rotate=self.rotate))
             return rv
-            
-        
+
+
         if particles is None or len(particles) < self.count:
 
             # Check to see if we have a particle ready to start. If not,
@@ -487,7 +487,7 @@ class SnowBlossomFactory(renpy.python.NoRollback):
 
     def predict(self):
         return [ self.image ]
-    
+
 
 class SnowBlossomParticle(renpy.python.NoRollback):
 
@@ -504,21 +504,21 @@ class SnowBlossomParticle(renpy.python.NoRollback):
         self.start = start
         self.offset = offset
         self.rotate = rotate
-        
-        
+
+
         if not rotate:
             sh = renpy.config.screen_height
             sw = renpy.config.screen_width
         else:
             sw = renpy.config.screen_height
             sh = renpy.config.screen_width
-            
-            
+
+
         if self.yspeed > 0:
             self.ystart = -border
         else:
             self.ystart = sh + border
-        
+
 
         travel_time = (2.0 * border + sh) / abs(yspeed)
 
@@ -543,7 +543,7 @@ class SnowBlossomParticle(renpy.python.NoRollback):
             sh = renpy.config.screen_height
         else:
             sh = renpy.config.screen_width
-        
+
         if ypos > sh + self.border:
             return None
 
@@ -554,7 +554,7 @@ class SnowBlossomParticle(renpy.python.NoRollback):
             return int(xpos), int(ypos), to + self.offset, self.image
         else:
             return int(ypos), int(xpos), to + self.offset, self.image
-        
+
 def SnowBlossom(d,
                 count=10,
                 border=50,
@@ -599,7 +599,7 @@ def SnowBlossom(d,
         If true, particles appear on the left or right side of the screen,
         rather than the top or bottom.
         """
-    
+
     # If going horizontal, swap the xspeed and the yspeed.
     if horizontal:
         xspeed, yspeed = yspeed, xspeed

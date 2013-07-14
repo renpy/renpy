@@ -35,7 +35,7 @@ init python:
     # The positions of file picker components.
     config.file_picker_positions = None
 
-    
+
     # This lets us disable the file pager. (So we only have one
     # page of files.)
     config.disable_file_pager = False
@@ -54,7 +54,7 @@ init python:
     # the first few screens but not after that.)
     _load_prompt = True
 
-    
+
     _game_menu_screen = "_save_screen"
 
     ######################################################################
@@ -230,7 +230,7 @@ init python:
 
         return rv
 
-    # Given a filename, returns the page that filename is on. 
+    # Given a filename, returns the page that filename is on.
     def _file_picker_file_page(filename):
 
         per_page = config.file_page_cols * config.file_page_rows
@@ -254,7 +254,7 @@ init python:
 
     def _file_picker_process_screenshot(s):
         return s
-    
+
     # This displays a file picker that can chose a save file from
     # the list of save files.
     def _file_picker(selected, save):
@@ -335,7 +335,7 @@ init python:
 
                 # Previous
                 tb(fpp > 0, _(u'Previous'), ui.returns(("fppdelta", -1)), selected=False)
-    
+
                 # Quick Access
                 for i, name in enumerate(_file_picker_pages()):
                     tb(True, name, ui.returns(("fppset", i)), fpp == i)
@@ -371,7 +371,7 @@ init python:
             for i, (filename, name, ro) in enumerate(_file_picker_page_files(fpp)):
                 entry(name, filename, i, ro)
 
-            if not config.file_picker_positions:                    
+            if not config.file_picker_positions:
                 ui.close() # slots
                 ui.close() # whole thing
 
@@ -389,7 +389,7 @@ init python:
 
 
     # This renders a yes/no prompt, as part of the game menu. If
-    # screen is None, then it omits the game menu navigation. 
+    # screen is None, then it omits the game menu navigation.
     def _yesno_prompt(screen, message):
         """
         @param screen: The screen button that should be highlighted when this prompt is shown. If None, then no game menu navigation is shown.
@@ -409,7 +409,7 @@ init python:
         _label_factory(message, "yesno")
 
         ui.hbox(style='yesno_button_hbox')
-        
+
         # The extra nulls are because we want equal whitespace surrounding
         # the two buttons. It should work as long as we have xfill=True
         _button_factory(u"Yes", 'yesno', clicked=ui.returns(True))
@@ -445,7 +445,7 @@ init python:
             renpy.full_restart(transition=config.game_main_transition)
         else:
             return
-        
+
 label _compat_confirm_quit:
     $ _quit_prompt(None)
     return
@@ -458,7 +458,7 @@ label _load_screen:
 
     if renpy.has_label("_load_screen_hook"):
         call expression "_load_screen_hook" from _call__load_screen_hook
-    
+
     python hide:
 
         fn, exists = _file_picker("load", False )
@@ -466,13 +466,13 @@ label _load_screen:
         if not renpy.context()._main_menu and _load_prompt:
             if _yesno_prompt("load", u"Loading will lose unsaved progress.\nAre you sure you want to do this?"):
                 renpy.load(fn)
-        else:                        
+        else:
             renpy.load(fn)
 
     jump _load_screen
 
 label _save_screen:
-    
+
     if renpy.has_label("_save_screen_hook"):
         call expression "_save_screen_hook" from _call__save_screen_hook
 
@@ -487,5 +487,5 @@ label _save_screen:
                 full_save_name = ""
 
             renpy.save(_fn, full_save_name)
-                
+
     jump _save_screen

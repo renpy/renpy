@@ -1,7 +1,7 @@
 ﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-# This file contains code that manages the distribution of Ren'Py games 
+# This file contains code that manages the distribution of Ren'Py games
 # and Ren'Py proper.
 #
 # In this module, all files and paths are stored in unicode. Full paths
@@ -34,14 +34,14 @@ init python in distribute:
     import time
 
     match_cache = { }
-    
+
     def compile_match(pattern):
         """
         Compiles a pattern for use with match.
         """
-        
+
         regexp = ""
-        
+
         while pattern:
             if pattern.startswith("**"):
                 regexp += r'.*'
@@ -52,20 +52,20 @@ init python in distribute:
             elif pattern[0] == '[':
                 regexp += r'['
                 pattern = pattern[1:]
-                
+
                 while pattern and pattern[0] != ']':
                     regexp += pattern[0]
                     pattern = pattern[1:]
-                    
+
                 pattern = pattern[1:]
                 regexp += ']'
-                
+
             else:
                 regexp += re.escape(pattern[0])
                 pattern = pattern[1:]
-                
+
         regexp += "$"
-        
+
         return re.compile(regexp, re.I)
 
     def match(s, pattern):
@@ -79,15 +79,15 @@ init python in distribute:
 
         Things are matched case-insensitively.
         """
-        
+
         regexp = match_cache.get(pattern, None)
         if regexp is None:
             regexp = compile_match(pattern)
             match_cache[pattern] = regexp
-            
+
         if regexp.match(s):
             return True
-    
+
         if regexp.match("/" + s):
             return True
 
@@ -96,28 +96,28 @@ init python in distribute:
     class File(object):
         """
         Represents a file that we can distribute.
-        
+
         self.name
             The name of the file as it will be stored in the archives.
-        
+
         self.path
             The path to the file on disk. None if it won't be stored
             on disk.
-        
+
         self.directory
             True if this is a directory.
-        
+
         self.executable
             True if this is an executable that should be distributed
             with the xbit set.
         """
-        
+
         def __init__(self, name, path, directory, executable):
             self.name = name
             self.path = path
             self.directory = directory
             self.executable = executable
-            
+
         def __repr__(self):
             if self.directory:
                 extra = "dir"
@@ -125,72 +125,72 @@ init python in distribute:
                 extra = "x-bit"
             else:
                 extra = ""
-            
+
             return "<File {!r} {!r} {}>".format(self.name, self.path, extra)
-    
+
         def copy(self):
             return File(self.name, self.path, self.directory, self.executable)
 
-    
+
     class FileList(list):
         """
         This represents a list of files that we know about.
         """
-    
+
         def sort(self):
             list.sort(self, key=lambda a : a.name)
-        
+
         def copy(self):
             """
             Makes a deep copy of this file list.
             """
-            
+
             rv = FileList()
-            
+
             for i in self:
                 rv.append(i.copy())
-                
+
             return rv
-        
+
         def filter_empty(self):
             """
             Makes a deep copy of this file list with empty directories
             omitted.
             """
-            
+
             rv = FileList()
-            
+
             needed_dirs = set()
-            
+
             for i in reversed(self):
-                
-                if (not i.directory) or (i.name in needed_dirs): 
+
+                if (not i.directory) or (i.name in needed_dirs):
                     rv.insert(0, i.copy())
-                
+
                     directory, _sep, _filename = i.name.rpartition("/")
                     needed_dirs.add(directory)
-                
+
             return rv
-        
+
         @staticmethod
         def merge(l):
             """
             Merges a list of file lists into a single file list with no
             duplicate entries.
             """
-            
+
             rv = FileList()
-            
+
             seen = set()
-            
+
             for fl in l:
                 for f in fl:
                     if f.name in seen:
                         continue
-            
+
                     rv.append(f)
                     seen.add(f.name)
-                    
+
             return rv
 
         def prepend_directory(self, directory):
@@ -198,32 +198,32 @@ init python in distribute:
             Modifies this file list such that every file in it has `directory`
             prepended.
             """
-            
+
             for i in self:
                 i.name = directory + "/" + i.name
-            
+
             self.insert(0, File(directory, None, True, False))
-    
-    
+
+
         def mac_transform(self, app, documentation):
             """
             Creates a new file list that has the mac transform applied to it.
-            
+
             The mac transform places all files that aren't already in <app> in
             <app>/Contents/Resources/autorun. If it matches one of the documentation
             patterns, then it appears both inside and outside of the app.
             """
-            
+
             rv = FileList()
-            
+
             for f in self:
-            
+
                 # Already in the app.
                 if f.name == app or f.name.startswith(app + "/"):
                     rv.append(f)
                     continue
 
-                # If it's documentation, keep the file. (But also make 
+                # If it's documentation, keep the file. (But also make
                 # a copy.)
                 for pattern in documentation:
                     if match(f.name, pattern):
@@ -231,16 +231,16 @@ init python in distribute:
 
                     if match("/" + f.name, pattern):
                         rv.append(f)
-                        
+
                 # Make a copy.
                 f = f.copy()
-                
+
                 f.name = app + "/Contents/Resources/autorun/" + f.name
                 rv.append(f)
-                
+
             rv.append(File(app + "/Contents/Resources/autorun", None, True, False))
             rv.sort()
-    
+
             return rv
 
 
@@ -248,27 +248,27 @@ init python in distribute:
         """
         This manages the process of building distributions.
         """
-        
+
         def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True):
             """
             Distributes `project`.
-            
+
             `destination`
                 The destination in which the distribution will be placed. If None,
                 uses a default location.
-            
+
             `reporter`
                 An object that's used to report status and progress to the user.
-            
+
             `packages`
                 If not None, a list of packages to distributed. If None, all
                 packages are distributed.
-            
+
             `build_update`
                 Will updates be built?
             """
-    
-    
+
+
             # Safety - prevents us frome releasing a launcher that won't update.
             if store.UPDATE_SIMULATE:
                 raise Exception("Cannot build distributions when UPDATE_SIMULATE is True.")
@@ -282,7 +282,7 @@ init python in distribute:
             # Start by scanning the project, to get the data and build
             # dictionaries.
             data = project.data
-            
+
             project.update_dump(force=True, gui=False)
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
@@ -295,7 +295,7 @@ init python in distribute:
             self.base_name = build['directory_name']
             self.executable_name = build['executable_name']
             self.pretty_version = build['version']
-    
+
             # The destination directory.
             if destination is None:
                 parent = os.path.dirname(project.path)
@@ -322,13 +322,13 @@ init python in distribute:
             self.documentation_patterns = build['documentation_patterns']
 
             build_packages = [ ]
-            
+
             for i in build['packages']:
                 name = i['name']
-                
+
                 if (packages is None) or (name in packages):
                     build_packages.append(i)
-                    
+
             if not build_packages:
                 self.reporter.info(_("Nothing to do."), pause=True)
                 return
@@ -366,22 +366,22 @@ init python in distribute:
             self.update_version = int(time.time())
 
             for p in build_packages:
-                
+
                 for f in p["formats"]:
                     self.make_package(
                         p["name"],
                         f,
                         p["file_lists"],
                         dlc=p["dlc"])
-                
+
                 if self.build_update and p["update"]:
                     self.make_package(
                         p["name"],
                         "update",
                         p["file_lists"],
                         dlc=False)
-            
-            
+
+
             if self.build_update:
                 self.finish_updates(build_packages)
 
@@ -391,18 +391,18 @@ init python in distribute:
         def scan_and_classify(self, directory, patterns):
             """
             Walks through the `directory`, finds files and directories that
-            match the pattern, and assds them to the appropriate file list. 
-            
+            match the pattern, and assds them to the appropriate file list.
+
             `patterns`
                 A list of pattern, file_list tuples. The pattern is a string
                 that is matched using match. File_list is either
-                a space-separated list of file lists to add the file to, 
+                a space-separated list of file lists to add the file to,
                 or None to ignore it.
-            
-                Directories are matched with a trailing /, but added to the 
+
+                Directories are matched with a trailing /, but added to the
                 file list with the trailing / removed.
             """
-            
+
             def walk(name, path):
                 is_dir = os.path.isdir(path)
 
@@ -426,9 +426,9 @@ init python in distribute:
                     return
 
                 for fl in file_list:
-                    f = File(name, path, is_dir, False)                
+                    f = File(name, path, is_dir, False)
                     self.file_lists[fl].append(f)
-                        
+
                 if is_dir:
 
                     for fn in os.listdir(path):
@@ -436,7 +436,7 @@ init python in distribute:
                             name + "/" + fn,
                             os.path.join(path, fn),
                             )
-                        
+
             for fn in os.listdir(directory):
                 walk(fn, os.path.join(directory, fn))
 
@@ -447,25 +447,25 @@ init python in distribute:
         def add_file(self, file_list, name, path, executable=False):
             """
             Adds a file to the file lists.
-            
+
             `file_list`
                 A space-separated list of file list names.
-            
+
             `name`
                 The name of the file to be added.
-            
+
             `path`
                 The path to that file on disk.
             """
-        
+
             if not os.path.exists(path):
                 raise Exception("{} does not exist.".format(path))
-        
+
             if isinstance(file_list, basestring):
                 file_list = file_list.split()
-        
+
             f = File(name, path, False, executable)
-        
+
             for fl in file_list:
                 self.file_lists[fl].append(f)
 
@@ -473,19 +473,19 @@ init python in distribute:
             """
             Add files to archives.
             """
-            
+
             for arcname, file_list in archives:
-                
+
                 if not self.file_lists[arcname]:
                     continue
-                        
+
                 arcfn = arcname + ".rpa"
                 arcpath = self.temp_filename(arcfn)
-                    
+
                 af = archiver.Archive(arcpath)
-                    
+
                 fll = len(self.file_lists[arcname])
-                 
+
                 for i, entry in enumerate(self.file_lists[arcname]):
 
                     if entry.directory:
@@ -495,11 +495,11 @@ init python in distribute:
 
                     name = "/".join(entry.name.split("/")[1:])
                     af.add(name, entry.path)
-                    
+
                 self.reporter.progress_done()
-                    
+
                 af.close()
-                
+
                 self.add_file(file_list, "game/" + arcfn, arcpath)
 
         def add_renpy_files(self):
@@ -509,10 +509,10 @@ init python in distribute:
 
             if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy")):
                 self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "script_version.rpy"))
-            
+
             if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
                 self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
-            
+
             self.add_file("all", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
 
 
@@ -532,14 +532,14 @@ init python in distribute:
                 CFBundlePackageType="APPL",
                 CFBundleShortVersionString=version,
                 CFBundleVersion="1.0.{0}".format(int(time.time())),
-                CFBundleDocumentTypes = [ 
+                CFBundleDocumentTypes = [
                     {
                         "CFBundleTypeOSTypes" : [ "****", "fold", "disk" ],
                         "CFBundleTypeRole" : "Viewer",
-                    }, 
+                    },
                     ],
-                UTExportedTypeDeclarations = [ 
-                    { 
+                UTExportedTypeDeclarations = [
+                    {
                         "UTTypeConformsTo" : [ "public.python-script" ],
                         "UTTypeDescription" : "Ren'Py Script",
                         "UTTypeIdentifier" : "org.renpy.rpy",
@@ -547,7 +547,7 @@ init python in distribute:
                     },
                     ],
                 )
-            
+
             rv = self.temp_filename("Info.plist")
             plistlib.writePlist(plist, rv)
             return rv
@@ -562,27 +562,27 @@ init python in distribute:
                 windows = 'windows'
                 linux = 'linux'
                 mac = 'mac'
-                
+
             self.add_file(
-                linux, 
+                linux,
                 "lib/linux-i686/" + self.executable_name,
                 os.path.join(config.renpy_base, "lib/linux-i686/pythonw"),
                 True)
 
             self.add_file(
-                linux, 
+                linux,
                 "lib/linux-x86_64/" + self.executable_name,
                 os.path.join(config.renpy_base, "lib/linux-x86_64/pythonw"),
                 True)
-            
+
             self.add_file(
-                mac, 
+                mac,
                 "lib/darwin-x86_64/" + self.executable_name,
                 os.path.join(config.renpy_base, "lib/darwin-x86_64/pythonw"),
                 True)
 
             self.add_file(
-                windows, 
+                windows,
                 "lib/windows-i686/" + self.executable_name + ".exe",
                 os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe"))
 
@@ -599,7 +599,7 @@ init python in distribute:
             contents = self.app + "/Contents"
 
             plist_fn = self.write_plist()
-            self.add_file(filelist, contents + "/Info.plist", plist_fn) 
+            self.add_file(filelist, contents + "/Info.plist", plist_fn)
             self.add_file(filelist, contents + "/MacOS/" + self.executable_name, os.path.join(config.renpy_base, "renpy.sh"))
 
             custom_fn = os.path.join(self.project.path, "icon.icns")
@@ -609,7 +609,7 @@ init python in distribute:
                 icon_fn = custom_fn
             else:
                 icon_fn = default_fn
-            
+
             self.add_file(filelist, contents + "/Resources/icon.icns", icon_fn)
 
 
@@ -617,80 +617,80 @@ init python in distribute:
             """
             Adds windows-specific files.
             """
-            
+
             icon_fn = os.path.join(self.project.path, "icon.ico")
             old_exe_fn = os.path.join(config.renpy_base, "renpy.exe")
-            
+
             if os.path.exists(icon_fn):
                 exe_fn = self.temp_filename("renpy.exe")
 
-                with open(exe_fn, "wb") as f:                    
+                with open(exe_fn, "wb") as f:
                     f.write(change_icons(old_exe_fn, icon_fn))
 
             else:
                 exe_fn = old_exe_fn
-            
-            self.add_file("windows", "renpy.exe", exe_fn) 
+
+            self.add_file("windows", "renpy.exe", exe_fn)
 
         def mark_executable(self):
             """
             Marks files as executable.
             """
-            
+
             for l in self.file_lists.values():
                 for f in l:
-                    for pat in self.build['xbit_patterns']:                        
-                        if match(f.name, pat):    
+                    for pat in self.build['xbit_patterns']:
+                        if match(f.name, pat):
                             f.executable = True
-                        
-                        if match("/" + f.name, pat):    
+
+                        if match("/" + f.name, pat):
                             f.executable = True
 
         def rename(self):
             """
             Rename files in all lists to match the executable names.
             """
-            
+
             def rename_one(fn):
                 parts = fn.split('/')
                 p = parts[0]
-                
+
                 if p == "renpy.exe":
                     p = self.exe
                 elif p == "renpy.sh":
                     p = self.sh
                 elif p == "renpy.py":
                     p = self.py
-                    
+
                 parts[0] = p
                 return "/".join(parts)
-            
+
             for l in self.file_lists.values():
                 for f in l:
                     f.name = rename_one(f.name)
 
         def make_package(self, variant, format, file_lists, dlc=False):
             """
-            Creates a package file in the projects directory. 
+            Creates a package file in the projects directory.
 
             `variant`
                 The name of the variant to package. This is appended to the base name to become
                 part of the file and directory names.
 
             `format`
-                The format things will be packaged in. This should be one of "zip", "tar.bz2", or 
-                "update". 
-            
+                The format things will be packaged in. This should be one of "zip", "tar.bz2", or
+                "update".
+
             `file_lists`
-                A string containing a space-separated list of file_lists to include in this 
+                A string containing a space-separated list of file_lists to include in this
                 package.
-                        
+
             `dlc`
                 True if we want to build a non-update file in DLC mode.
             """
             filename = self.base_name + "-" + variant
             path = os.path.join(self.destination, filename)
-            
+
             fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
             fl = fl.copy()
             fl.sort()
@@ -708,10 +708,10 @@ init python in distribute:
                     update_files.append(i.name)
                 else:
                     update_directories.append(i.name)
-                    
+
                 if i.executable:
                     update_xbit.append(i.name)
-                    
+
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
             if self.include_update and not dlc:
@@ -726,11 +726,11 @@ init python in distribute:
             # The mac transform.
             if format == "app-zip":
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
-            
+
             # If we're not an update file, prepend the directory.
             if (not dlc) and format != "update":
                 fl.prepend_directory(filename)
-            
+
             if format == "tar.bz2":
                 path += ".tar.bz2"
                 pkg = TarPackage(path, "w:bz2")
@@ -740,10 +740,10 @@ init python in distribute:
             elif format == "zip" or format == "app-zip":
                 path += ".zip"
                 pkg = ZipPackage(path)
-                
+
             for i, f in enumerate(fl):
                 self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
-                        
+
                 if f.directory:
                     pkg.add_directory(f.name, f.path)
                 else:
@@ -754,31 +754,31 @@ init python in distribute:
 
             if format == "update":
                 # Build the zsync file.
-                
+
                 self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
-                
-                cmd = [                     
-                    updater.zsync_path("zsyncmake"), 
+
+                cmd = [
+                    updater.zsync_path("zsyncmake"),
                     "-z",
                     # -u url to gzipped data - not a local filename!
-                    "-u", filename + ".update.gz", 
+                    "-u", filename + ".update.gz",
                     "-o", os.path.join(self.destination, filename + ".zsync"),
-                    os.path.abspath(path), 
+                    os.path.abspath(path),
                     ]
 
                 subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
 
                 # Build the sums file. This is a file with an adler32 hash of each 64k block
-                # of the zsync file. It's used to help us determine how much of the file is 
+                # of the zsync file. It's used to help us determine how much of the file is
                 # downloaded.
                 with open(path, "rb") as src:
                     with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
                         while True:
                             data = src.read(65536)
-                            
+
                             if not data:
                                 break
-                                
+
                             sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
 
             if self.include_update and not self.build_update and not dlc:
@@ -794,28 +794,28 @@ init python in distribute:
                 return
 
             index = { }
-            
+
             def add_variant(variant):
                 fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
 
                 with open(fn, "rb") as f:
                     digest = hashlib.sha256(f.read()).hexdigest()
-                    
-                index[variant] = { 
-                    "version" : self.update_version, 
-                    "pretty_version" : self.pretty_version, 
-                    "digest" : digest, 
-                    "zsync_url" : self.base_name + "-" + variant + ".zsync", 
-                    "sums_url" : self.base_name + "-" + variant + ".sums", 
+
+                index[variant] = {
+                    "version" : self.update_version,
+                    "pretty_version" : self.pretty_version,
+                    "digest" : digest,
+                    "zsync_url" : self.base_name + "-" + variant + ".zsync",
+                    "sums_url" : self.base_name + "-" + variant + ".sums",
                     "json_url" : self.base_name + "-" + variant + ".update.json",
                     }
-                
+
                 os.unlink(fn)
 
             for p in packages:
                 if p["update"]:
                     add_variant(p["name"])
-                
+
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
             with open(fn, "wb") as f:
                 json.dump(index, f)
@@ -835,7 +835,7 @@ init python in distribute:
         """
         Displays progress using the gui.
         """
-        
+
         def __init__(self):
             # The time at which we should next report progress.
             self.next_progress = 0
@@ -847,12 +847,12 @@ init python in distribute:
                 interface.processing(what, **kwargs)
 
         def progress(self, what, complete, total, **kwargs):
-            
+
             if (complete > 0) and (time.time() < self.next_progress):
                 return
-                
+
             interface.processing(what, _("Processed {b}[complete]{/b} of {b}[total]{/b} files."), complete=complete, total=total, **kwargs)
-            
+
             self.next_progress = time.time() + .05
 
         def progress_done(self):
@@ -863,21 +863,21 @@ init python in distribute:
         """
         Displays progress on the command line.
         """
-        
+
         def info(self, what, pause=False, **kwargs):
             what = what.replace("[", "{")
             what = what.replace("]", "}")
             what = what.format(**kwargs)
             print what
-            
+
         def progress(self, what, done, total, **kwargs):
             what = what.replace("[", "{")
             what = what.replace("]", "}")
             what = what.format(**kwargs)
-            
+
             sys.stdout.write("\r{} - {} of {}".format(what, done + 1, total))
             sys.stdout.flush()
-            
+
         def progress_done(self):
             sys.stdout.write("\n")
 
@@ -887,23 +887,23 @@ init python in distribute:
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
         ap.add_argument("--no-update", default=True, action="store_false", dest="build_update", help="Prevents updates from being built.")
         ap.add_argument("project", help="The path to the project directory.")
-        ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.") 
+        ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
 
         args = ap.parse_args()
 
         p = project.Project(args.project)
-        
+
         if args.package:
             packages = args.package
         else:
             packages = None
 
         Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update)
-        
+
         return False
-        
+
     renpy.arguments.register_command("distribute", distribute_command)
-            
+
 label distribute:
 
     python hide:
@@ -911,13 +911,7 @@ label distribute:
         data = project.current.data
         d = distribute.Distributor(project.current, reporter=distribute.GuiReporter(), packages=data['packages'], build_update=data['build_update'])
         OpenDirectory(d.destination)()
-        
+
         interface.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
     jump front_page
-    
-
- 
-        
-    
-    

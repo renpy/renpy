@@ -9,8 +9,8 @@
 init -1400:
 
     transform reset:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None 
-   
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None
+
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
     transform left:
@@ -27,16 +27,16 @@ init -1400:
 
     transform topleft:
         xpos 0.0 xanchor 0.0 ypos 0.0 yanchor 0.0
-        
+
     transform topright:
         xpos 1.0 xanchor 1.0 ypos 0.0 yanchor 0.0
-        
+
     transform top:
         xpos 0.5 xanchor 0.5 ypos 0.0 yanchor 0.0
-        
+
     # Offscreen positions for use with the move transition. Images at
     # these positions are still shown (and consume
-    # resources)... remember to hide the image after the transition.    
+    # resources)... remember to hide the image after the transition.
     transform offscreenleft:
         xpos 0.0 xanchor 1.0 ypos 1.0 yanchor 1.0
 
@@ -44,31 +44,31 @@ init -1400:
         xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
     transform default:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None 
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None
         xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
 
     # These are used by the transitions to move things offscreen. We don't
     # expect them to be used by user code.
     transform _moveleft:
         xpos 0.0 xanchor 1.0
-        
+
     transform _moveright:
         xpos 1.0 xanchor 0.0
-        
+
     transform _movetop:
         ypos 0.0 yanchor 1.0
-        
+
     transform _movebottom:
         ypos 1.0 yanchor 0.0
 
     python:
         config.default_transform = default
-        
+
 
 init -1400 python:
 
     _define = define = object()
-        
+
     # Transitions ############################################################
 
     # Simple transitions.
@@ -76,7 +76,7 @@ init -1400 python:
     dissolve = Dissolve(0.5)
     pixellate = Pixellate(1.0, 5)
 
-    # Various uses of CropMove.    
+    # Various uses of CropMove.
     wiperight = CropMove(1.0, "wiperight")
     wipeleft = CropMove(1.0, "wipeleft")
     wipeup = CropMove(1.0, "wipeup")
@@ -134,21 +134,21 @@ init -1400 python:
           positions to their new locations, with newly hidden images leaving via
           the appropriate side.
 
-        `time_warp`, `in_time_warp`, `out_time_warp`        
+        `time_warp`, `in_time_warp`, `out_time_warp`
             Time warp functions that are given a time from 0.0 to 1.0 representing
-            the fraction of the move complete, and return a value in the same 
+            the fraction of the move complete, and return a value in the same
             range giving the fraction of a linear move that is complete.
-            
+
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
-            
+
             The three argument are used for images remaining on the screen,
             newly shown images, and newly hidden images, respectively.
 
         `old`
             If true, the transitions to move the old displayables, rather than the new ones.
 
-        `layers`        
+        `layers`
             The layers the transition will apply to.
 
         ::
@@ -157,9 +157,9 @@ init -1400 python:
             # with "move".
             init python:
                 define.move_transitions("move", 0.5)
-        
+
         """
-        
+
         moves = {
             "" : MoveTransition(
                 delay,
@@ -184,7 +184,7 @@ init -1400 python:
                 time_warp=time_warp,
                 enter_time_warp=in_time_warp,
                 ),
-                
+
             "intop" : MoveTransition(
                 delay,
                 old=old,
@@ -193,7 +193,7 @@ init -1400 python:
                 time_warp=time_warp,
                 enter_time_warp=in_time_warp,
                 ),
-                
+
             "inbottom" : MoveTransition(
                 delay,
                 old=old,
@@ -255,21 +255,21 @@ init -1400 python:
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 enter_factory=MoveIn((1.0, None, 0.0, None), time_warp=in_time_warp, **kwargs)),
 
             "inleft" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 enter_factory=MoveIn((0.0, None, 1.0, None), time_warp=in_time_warp, **kwargs)),
 
             "intop" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 enter_factory=MoveIn((None, 0.0, None, 1.0), time_warp=in_time_warp, **kwargs)),
 
             "inbottom" : MoveTransition(
@@ -283,28 +283,28 @@ init -1400 python:
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 leave_factory=MoveOut((1.0, None, 0.0, None), time_warp=out_time_warp, **kwargs)),
 
             "outleft" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 leave_factory=MoveOut((0.0, None, 1.0, None), time_warp=out_time_warp, **kwargs)),
 
             "outtop" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 leave_factory=MoveOut((None, 0.0, None, 1.0), time_warp=out_time_warp, **kwargs)),
 
             "outbottom" : MoveTransition(
                 delay,
                 old=old,
                 layers=layers,
-                factory=MoveFactory(time_warp=time_warp, **kwargs), 
+                factory=MoveFactory(time_warp=time_warp, **kwargs),
                 leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
             }
 
@@ -317,13 +317,13 @@ init -1400 python:
     del old_move_transitions
 
     define.move_transitions("move", 0.5)
-    define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp) 
+    define.move_transitions("ease", 0.5, _ease_time_warp, _ease_in_time_warp, _ease_out_time_warp)
 
     # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
     zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
     zoomout = OldMoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
     zoominout = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0), leave_factory=ZoomInOut(1.0, 0.01))
-    
+
     # These shake the screen up and down for a quarter second.
     # The delay needs to be an integer multiple of the period.
     vpunch = Move((0, 10), (0, -10), .10, bounce=True, repeat=True, delay=.275)

@@ -32,7 +32,7 @@ class CopyRtt(Rtt):
 
     def init(self):
         return
-        
+
     def deinit(self):
         return
 
@@ -59,7 +59,7 @@ class CopyRtt(Rtt):
             0,
             0,
             w,
-            h)        
+            h)
 
     def end(self):
         """
@@ -68,4 +68,4 @@ class CopyRtt(Rtt):
 
     def get_size_limit(self, dimension):
         return dimension
-    
+

@@ -6,80 +6,80 @@ init python:
     #
     # It must be None for a release.
     UPDATE_SIMULATE = None
-    
+
     PUBLIC_KEY = "renpy_public.pem"
-    
+
     UPDATE_URLS = {
         "Release" : "http://update.renpy.org/release/updates.json",
         "Prerelease" : "http://update.renpy.org/prerelease/updates.json",
-        "Experimental" : "http://update.renpy.org/experimental/updates.json" 
+        "Experimental" : "http://update.renpy.org/experimental/updates.json"
         }
-    
+
     version_tuple = renpy.version(tuple=True)
-    
+
     DLC_URL = "http://update.renpy.org/{0}.{1}.{2}/updates.json".format(version_tuple[0], version_tuple[1], version_tuple[2])
-    
+
     if persistent.update_channel not in UPDATE_URLS:
         persistent.update_channel = "Release"
-    
-    def check_dlc(name):        
+
+    def check_dlc(name):
         """
         Returns true if the named dlc package is present.
         """
-        
+
         return name in updater.get_installed_packages()
-        
+
     def add_dlc(name):
         """
         Adds the DLC package, if it doesn't already exist.
-        
+
         Returns True if the DLC is installed, False otherwise.
         """
-        
+
         if check_dlc(name):
             return True
-            
+
         return renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=False)
 
 screen update_channel:
-    
+
     frame:
         style_group "l"
         style "l_root"
-        
+
         window:
-    
+
             has vbox
 
             label _("Select Update Channel")
-            
+
             add HALF_SPACER
-            
+
             hbox:
                 frame:
                     style "l_indent"
                     xfill True
-                    
+
                     has vbox
 
                     text _("The update channel controls the version of Ren'Py the updater will download. Please select an update channel:") style "l_small_text"
 
                     # Release
                     add SPACER
-                    
+
                     textbutton _("Release") action [ SetField(persistent, "update_channel", "Release"), Jump("preferences") ]
 
                     add HALF_SPACER
-                    
+
                     frame:
                         style "l_indent"
                         text _("{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games.") style "l_small_text"
 
                     # Prerelease
                     add SPACER
-                    
+
                     textbutton _("Prerelease") action [ SetField(persistent, "update_channel", "Prerelease"), Jump("preferences") ]
-                    
+
                     add HALF_SPACER
 
                     frame:
@@ -91,14 +91,14 @@ screen update_channel:
                     add SPACER
 
                     textbutton _("Experimental") action [ SetField(persistent, "update_channel", "Experimental"), Jump("preferences") ]
-                    
+
                     add HALF_SPACER
 
                     frame:
                         style "l_indent"
                         text _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.") style "l_small_text"
 
-                
+
     textbutton _("Cancel") action Jump("preferences") style "l_left_button"
 
 label update_preference:
@@ -106,13 +106,13 @@ label update_preference:
     return
 
 screen updater:
-        
+
     frame:
         style "l_root"
 
         frame:
             style_group "l_info"
-        
+
             has vbox
 
             if u.state == u.ERROR:
@@ -144,10 +144,10 @@ screen updater:
 
             if u.progress is not None:
                 add SPACER
-                
+
                 frame:
                     style "l_progress_frame"
-                    
+
                     bar:
                         range 1.0
                         value u.progress
@@ -157,15 +157,15 @@ screen updater:
 
     if u.can_cancel:
         textbutton _("Cancel") action u.cancel style "l_left_button"
-        
+
     if u.can_proceed:
         textbutton _("Proceed") action u.proceed style "l_right_button"
 
 label update:
-    
+
     python:
         updater.update(UPDATE_URLS[persistent.update_channel], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY)
-    
+
     # This should never happen.
     jump front_page
 

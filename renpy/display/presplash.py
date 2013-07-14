@@ -35,7 +35,7 @@ def start(basedir, gamedir):
 
     if "RENPY_LESS_UPDATES" in os.environ:
         return
-    
+
     global proc
 
     filenames = [ "/presplash.png", "/presplash.jpg" ]
@@ -46,27 +46,27 @@ def start(basedir, gamedir):
     else:
         return
 
-    try:    
+    try:
         import subprocess
         import sys
 
         cmd = [sys.executable, "-EOO", sys.argv[0], "show", "presplash", fn]
-            
+
         def fsencode(s):
             if isinstance(s, str):
                 return s
-            
+
             return s.encode(sys.getfilesystemencoding() or "utf-8", "replace")
-            
+
         proc = subprocess.Popen([ fsencode(i) for i in cmd ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
         pass
-            
-            
+
+
 # Called just before we initialize the display for real, to
 # hide the splash, and terminate window centering.
 def end():
-    
+
     global proc
 
     if not proc:
@@ -76,7 +76,7 @@ def end():
     proc.wait()
 
     proc = None
-    
+
 # Called in the presplash process, to actually display the presplash.
 def show(fn):
 
@@ -84,9 +84,9 @@ def show(fn):
     import pygame.constants
     import sys
     import os
-    
+
     os.environ['SDL_VIDEO_CENTERED'] = "1"
-        
+
     try:
         import pygame.macosx
         pygame.macosx.init() #@UndefinedVariable
@@ -109,5 +109,5 @@ def show(fn):
     sys.stdout.write("READY\r\n")
     sys.stdout.flush()
     sys.stdin.read()
-    
+
     sys.exit(0)

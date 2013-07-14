@@ -6,7 +6,7 @@ init python hide:
     layout.provides('yesno_prompt')
 
     renpy.load_module("_layout/imagemap_common")
-    
+
     # Define styles
     style.yesno_prompt = Style(style.prompt, help="a yes/no prompt")
     style.yesno_prompt_text = Style(style.prompt_text, help="a yes/no prompt (text)")
@@ -19,10 +19,10 @@ init python hide:
 
     config.yesno_prompt_message_images = { }
 
-    
+
     def yesno_prompt(screen, message):
         renpy.transition(config.intra_transition)
-        
+
         ime = _ImageMapper(
             screen,
             config.yesno_prompt_ground,
@@ -36,10 +36,10 @@ init python hide:
         ime.button("No", ui.returns(False), False)
 
         ime.close()
-        
+
         default = config.yesno_prompt_message_images.get(layout.ARE_YOU_SURE, None)
         message_image = config.yesno_prompt_message_images.get(message, default)
-        
+
         if message_image:
             ui.add(message_image)
         else:
@@ -50,4 +50,4 @@ init python hide:
         return rv
 
     layout.yesno_prompt = yesno_prompt
-    
+

@@ -46,7 +46,7 @@ two characters. ::
     label start:
 
         $ lucy_is_evil = False
-    
+
         l "Usually, I feel quite normal."
 
         $ lucy_is_evil = True

@@ -3,7 +3,7 @@
 
 init:
     # Define some new transitions here.
-    $ slow_dissolve = Dissolve(1.0)    
+    $ slow_dissolve = Dissolve(1.0)
     $ flashbulb = Fade(0.2, 0.0, 0.8, color='#fff')
 
     # Imagedissolve Transitions.
@@ -15,19 +15,19 @@ init:
 
     image bg circleiris = "id_circleiris.png"
     image bg teleport = "id_teleport.png"
-    
+
     image alpha_control:
         "spotlight.png"
 
         xanchor .5
         yanchor .5
-        
+
         parallel:
             zoom 0
             linear .5 zoom .75
             pause 2
             linear 1.0 zoom 4.0
-            
+
         parallel:
             xpos 0.0 ypos .6
             linear 1.5 xpos 1.0
@@ -35,19 +35,19 @@ init:
 
         pause .5
         repeat
-            
+
     define alpha_example = AlphaDissolve("alpha_control", delay=3.5)
 
-        
+
 label demo_transitions:
 
     e "Ren'Py ships with a large number of built-in transitions, and also includes classes that let you define your own."
 
     menu demo_transitions_menu:
-        
+
         e "What kind of transitions would you like demonstrated?"
 
-        "Simple Transitions":            
+        "Simple Transitions":
 
             call demo_simple_transitions from _call_demo_simple_transitions_1
 
@@ -62,17 +62,17 @@ label demo_transitions:
         "CropMove Transitions":
 
             call demo_cropmove_transitions from _call_demo_cropmove_transitions_1
-            
+
         "AlphaDissolve Transitions":
 
             call demo_alphadissolve
-            
+
         ""
 
         "How about something else?":
 
             return
-        
+
     jump demo_transitions_menu
 
 
@@ -91,7 +91,7 @@ label demo_simple_transitions:
     with slow_dissolve
 
     e "The 'Dissolve' function lets you create your own dissolves, taking a different amount of time."
-    
+
     show bg whitehouse
     with fade
 
@@ -102,17 +102,17 @@ label demo_simple_transitions:
     with flashbulb
 
     e "You can use 'Fade' to define your own fades. By changing the timing and the color faded to, you can use this for special effects, like flashbulbs."
-    
+
     show bg washington
     with pixellate
-    
+
     e "The 'pixellate' transition pixellates out the old scene, switches to the new scene, and then unpixellates that."
 
     e "It's probably not appropriate for most games, but we
        think it's kind of neat."
 
     e "You can use 'Pixellate' to change the details of the pixellation."
-    
+
     e "Motions can also be used as transitions."
 
     "..."
@@ -155,7 +155,7 @@ label demo_simple_transitions:
     with dissolve
 
     e "Having 'Pause' makes it easy to implement skippable cut-scenes in terms of transitions."
-    
+
     e "Anyway, that's it for the simple transitions."
 
     return
@@ -169,15 +169,15 @@ label demo_imagedissolve_transitions:
 
     e "There are two ImageDissolve transitions built into Ren'Py."
 
-    
+
     scene black
     with blinds
-    
+
     scene bg washington
     show eileen happy
     with blinds
-    
-    
+
+
     e "The 'blinds' transition opens and closes what looks like vertical blinds."
 
     scene black
@@ -253,13 +253,13 @@ label demo_imagedissolve_transitions:
     with teleport
 
     e "... which is how we apply the teleport effect to a single character."
-    
+
     e "For more examples of ImageDissolve, check out the {i}Utsukushii Effects{/i} demo."
 
     e "It shows how a clever game-maker can use ImageDissolve to create all sorts of effects."
 
     return
-    
+
 label demo_cropmove_transitions:
 
     e "The CropMove transition class provides a wide range of transition effects. It's not used very much in practice, though."
@@ -277,7 +277,7 @@ label demo_cropmove_transitions:
     scene bg washington
     with wipeleft
 
-    e "...followed by wipeleft... "    
+    e "...followed by wipeleft... "
 
     scene bg whitehouse
     with wipeup
@@ -404,7 +404,7 @@ label demo_movetransition:
     with zoomin
 
     e "And that's all there is."
-    
+
     return
 
 label demo_alphadissolve:
@@ -416,18 +416,18 @@ label demo_alphadissolve:
     scene bg washington
     show eileen happy at center
     with alpha_example
-    
+
     e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
 
     scene
     show alpha_control
-    
+
     e "To be useful, the control displayable should be partially transparent."
 
     e "During an AlphaDissolve, the old screen is used to fill the transparent areas of the image, while the new screen fills the opaque areas."
 
     scene black
-        
+
     e "For our spotlight example, the old screen is this all-black image."
 
     scene bg washington
@@ -440,7 +440,7 @@ label demo_alphadissolve:
     scene bg washington
     show eileen happy at center
     with alpha_example
-        
+
     e "By combining them using AlphaDissolve, we can build a complicated effect out of simpler parts."
-    
+
     return

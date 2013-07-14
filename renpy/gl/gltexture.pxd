@@ -35,7 +35,7 @@ cdef class TextureGrid:
    cdef public TextureGrid half_cache
 
    cdef void make_ready(self, bint nearest)
-   
+
 cpdef blit(
     TextureGrid tg,
     double sx,

@@ -25,9 +25,9 @@ Building your first package takes four steps:
    install the package on your device.
 
 Once you've finished these four steps, you'll have a runnable Android
-package. You'll only need to run step 3 when you decide to make changes to your 
-game's configuration or when configuring a new game entirely; you'll run step 
-4 most often, whenever you need to make a new build of your game. 
+package. You'll only need to run step 3 when you decide to make changes to your
+game's configuration or when configuring a new game entirely; you'll run step
+4 most often, whenever you need to make a new build of your game.
 
 
 Host Platform Support
@@ -37,7 +37,7 @@ We've tested |PGS4A| on Linux and Windows computers. While it should
 work on Mac OS X, we haven't tested it there, so there may be problems
 encountered. The examples we give will be for Linux and Windows.
 
-The |PGS4A| tools are command-line based. We will try to assist you with 
+The |PGS4A| tools are command-line based. We will try to assist you with
 examples to familiarize you with the command line on Windows.
 
 
@@ -84,13 +84,13 @@ However, modern versions of Linux and OS X should just work.
 .. ifconfig:: is_renpy
 
     **RAPT Itself.** The latest version of |PGS4A| can be downloaded from:
-    
+
         |PGS4A_URL|
 
 .. ifconfig:: not is_renpy
 
     **PGS4A Itself.** The latest version of |PGS4A| can be downloaded from:
-    
+
         |PGS4A_URL|
 
 
@@ -110,27 +110,27 @@ In all cases, you should run ``android.py`` from within the |PGS4A|
 directory. (That is, the directory containing ``android.py`` itself.)
 
 
-On Windows, to do this, you will need to open up the command line by pressing 
-and holding down the Windows key and 'R'. In the small window that pops up 
+On Windows, to do this, you will need to open up the command line by pressing
+and holding down the Windows key and 'R'. In the small window that pops up
 write "cmd" and press Enter. This should bring up the command line.
 
-To run the command from within the |PGS4A| directory you need to navigate to it 
-from the command line. Find out where you extracted |PGS4A| and copy the path 
-from Explorer (just click in the address bar so the path turns blue and 
-press Ctrl+c). In the command prompt, write ``cd`` then a space, a 
-double-quote, paste the path you just copied from Explorer (right click and 
+To run the command from within the |PGS4A| directory you need to navigate to it
+from the command line. Find out where you extracted |PGS4A| and copy the path
+from Explorer (just click in the address bar so the path turns blue and
+press Ctrl+c). In the command prompt, write ``cd`` then a space, a
+double-quote, paste the path you just copied from Explorer (right click and
 choose ``paste``), then another double-quote.
 
 .. ifconfig:: is_renpy
 
     Let's assume you extracted RAPT to C:\\tools\\RAPT. In the command line write::
-    
+
         cd "C:\tools\RAPT"
 
 .. ifconfig:: not is_renpy
 
     Let's assume you extracted PGS4A to C:\\tools\\PGS4A. In the command line write::
-    
+
         cd "C:\tools\PGS4A"
 
 Now you're within the |PGS4A| directory.
@@ -140,16 +140,16 @@ just run::
 
     android.py test
 
-If you don't know what the above means or you don't want to do it, you 
-will have to add the full path to Python to each command in 
-the following steps of this guide beginning with 'android.py'. If you 
+If you don't know what the above means or you don't want to do it, you
+will have to add the full path to Python to each command in
+the following steps of this guide beginning with 'android.py'. If you
 installed Python to the default location, the above command would become::
 
     C:\python27\python.exe android.py test
 
-If you installed Python to a different location, then find your Python install 
-in Explorer, click in the address bar and copy the path, then replace 
-``C:\python27`` with the path you copied instead - leaving ``\python.exe`` on the 
+If you installed Python to a different location, then find your Python install
+in Explorer, click in the address bar and copy the path, then replace
+``C:\python27`` with the path you copied instead - leaving ``\python.exe`` on the
 
 end. So if your Python install is in ``C:\tools\python``, you would type::
 
@@ -225,74 +225,74 @@ warnings about licenses, and ask if you want it to generate a key.
 
   2. In the ``mygame`` directory, create a file main.py. Place the
      following code into main.py::
-  
+
       import pygame
-  
+
       # Import the android module. If we can't import it, set it to None - this
       # lets us test it, and check to see if we want android-specific behavior.
       try:
           import android
       except ImportError:
           android = None
-  
+
       # Event constant.
       TIMEREVENT = pygame.USEREVENT
-  
+
       # The FPS the game runs at.
       FPS = 30
-  
+
       # Color constants.
       RED = (255, 0, 0, 255)
       GREEN = (0, 255, 0, 255)
-  
+
       def main():
           pygame.init()
-  
+
           # Set the screen size.
           screen = pygame.display.set_mode((480, 800))
-  
+
           # Map the back button to the escape key.
           if android:
               android.init()
               android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
-  
+
           # Use a timer to control FPS.
           pygame.time.set_timer(TIMEREVENT, 1000 / FPS)
-  
+
           # The color of the screen.
           color = RED
-  
+
           while True:
-  
+
               ev = pygame.event.wait()
-  
-              # Android-specific: 
+
+              # Android-specific:
               if android:
                   if android.check_pause():
                       android.wait_for_resume()
-  
+
               # Draw the screen based on the timer.
               if ev.type == TIMEREVENT:
                   screen.fill(color)
                   pygame.display.flip()
-  
-              # When the touchscreen is pressed, change the color to green. 
+
+              # When the touchscreen is pressed, change the color to green.
               elif ev.type == pygame.MOUSEBUTTONDOWN:
                   color = GREEN
-  
+
               # When it's released, change the color to RED.
               elif ev.type == pygame.MOUSEBUTTONUP:
                   color = RED
-  
+
               # When the user hits back, ESCAPE is sent. Handle it and end
               # the game.
               elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                   break
-  
+
       # This isn't run on Android.
       if __name__ == "__main__":
           main()
-  
+
 In the examples below, ``mygame`` is short for the path to the game
 you're working on, relative to the current directory. When you make
 your own game, you should change ``mygame`` to something else.
@@ -336,7 +336,7 @@ If you'd rather just copy the game's apk file to your Android device manually, y
     android.py build mygame release
 
 Then navigate to the 'bin' directory inside |PGS4A| and copy the file mygame-release.apk into your Android Device.
-You will then need to find the .apk file in your Android device using your file application and open it to install the 
+You will then need to find the .apk file in your Android device using your file application and open it to install the
 
 game.
 
@@ -352,7 +352,7 @@ Viewing Debug Output
 
 To view debug output from your application, run the logcat command::
 
-    android.py logcat 
+    android.py logcat
 
 This command runs the ``adb logcat`` command in a mode that selects
 only Python output.
@@ -375,7 +375,7 @@ After having associated .py files with Python 2.7, if you get::
         from _subprocess import CREATE_NEW_CONSOLE, CREATE_NEW_PROCESS_GROUP
     ImportError: cannot import name CREATE_NEW_PROCESS_GROUP
 
-This may be related to having more than one version of Python installed on your system. 
+This may be related to having more than one version of Python installed on your system.
 Try running android.py with the full path to Python, e.g.::
 
     C:\python27\python.exe android.py test
@@ -396,8 +396,8 @@ If while configuring your game you get something like::
 
     Tag <manifest> attribute package has invalid character '-'.
 
-You may have inserted an invalid character in the package name you used during 
-configuration (in this case a hyphen '-'). You'll have to use a different 
+You may have inserted an invalid character in the package name you used during
+configuration (in this case a hyphen '-'). You'll have to use a different
 package name which does not contain anything other than letters and dots.
 
 
@@ -424,8 +424,8 @@ If building your game gives you an error like:
 
     Error: Target id android-8 is not valid. Use 'android list targets' to get the target ids
 
-You might want to check whether you have Android 2.2 (API 8) in the Android SDK manager. 
-You can run it by navigating to the android-sdk/tools directory inside the |PGS4A| directory 
+You might want to check whether you have Android 2.2 (API 8) in the Android SDK manager.
+You can run it by navigating to the android-sdk/tools directory inside the |PGS4A| directory
 and run android.bat.
 
 .. image:: android_sdk_manager_001.jpg

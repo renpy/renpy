@@ -52,11 +52,11 @@ class Focus(object):
             self.y,
             self.w,
             self.h)
-            
-    
+
+
 # The current focus argument.
 argument = None
-    
+
 # The widget currently grabbing the input, if any.
 grab = None
 
@@ -80,14 +80,14 @@ def get_mouse():
         return None
     else:
         return focused.style.mouse
-    
+
 def set_grab(widget):
     global grab
     grab = widget
 
 def get_grab():
     return grab
-    
+
 # The current list of focuses that we know about.
 focus_list = [ ]
 
@@ -100,7 +100,7 @@ def take_focuses():
 
     global default_focus
     default_focus = None
-    
+
     for f in focus_list:
         if f.x is None:
             default_focus = f
@@ -115,13 +115,13 @@ def focus_coordinates():
     """
 
     current = get_focused()
-    
+
     for i in focus_list:
         if i.widget == current and i.arg == argument:
             return i.x, i.y, i.w, i.h
 
     return None, None, None, None
-    
+
 
 # This is called before each interaction. It's purpose is to choose
 # the widget that is focused, and to mark it as focused and all of
@@ -132,7 +132,7 @@ def focus_coordinates():
 new_grab = None
 
 def before_interact(roots):
-    
+
     global new_grab
     global grab
 
@@ -152,7 +152,7 @@ def before_interact(roots):
     for f, n in fwn:
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
-        
+
         f.full_focus_name = n, serial
 
     # If there's something with the same full name as the current widget,
@@ -170,7 +170,7 @@ def before_interact(roots):
                 break
         else:
             current = None
-            
+
     # Otherwise, focus the default widget, or nothing.
     if current is None:
 
@@ -179,7 +179,7 @@ def before_interact(roots):
                 current = f
                 set_focused(f, None)
                 break
-        else:        
+        else:
             set_focused(None, None)
 
     # Finally, mark the current widget as the focused widget, and
@@ -198,7 +198,7 @@ def before_interact(roots):
 # focus object.
 def change_focus(newfocus, default=False):
     rv = None
-    
+
     if grab:
         return
 
@@ -222,22 +222,22 @@ def change_focus(newfocus, default=False):
         arg = newfocus.arg
     else:
         arg = None
-        
+
     set_focused(current, arg)
 
     if widget is not None:
         rv = widget.focus(default=default)
 
     return rv
-    
+
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev, x, y, default=False):
 
     if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
         return
-    
+
     new_focus = renpy.display.render.focus_at_point(x, y)
-    
+
     if new_focus is None:
         new_focus = default_focus
 
@@ -252,7 +252,7 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 
     max_focus = None
     max_score = -(65536**2)
-        
+
     for f in focus_list:
 
         if not f.x:
@@ -269,14 +269,14 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 
     if max_focus:
         return change_focus(max_focus)
-        
+
 
 # This calculates the distance between two points, applying
 # the given fudge factors. The distance is left squared.
 def points_dist(x0, y0, x1, y1, xfudge, yfudge):
     return (( x0 - x1 ) * xfudge ) ** 2 + \
            (( y0 - y1 ) * yfudge ) ** 2
-    
+
 
 # This computes the distance between two horizontal lines. (So the
 # distance is either vertical, or has a vertical component to it.)
@@ -329,11 +329,11 @@ def verti_line_dist(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1):
 # nothing.
 #
 # If no widget is focused, we pick one and focus it.
-# 
+#
 # If the current widget has an x of None, we pass things off to
 # focus_extreme to deal with.
 def focus_nearest(from_x0, from_y0, from_x1, from_y1,
-                  to_x0, to_y0, to_x1, to_y1, 
+                  to_x0, to_y0, to_x1, to_y1,
                   line_dist,
                   condition,
                   xmul, ymul, wmul, hmul):
@@ -385,7 +385,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
         if not condition(from_focus, f):
             continue
-        
+
         tx0 = f.x + f.w * to_x0
         ty0 = f.y + f.h * to_y0
         tx1 = f.x + f.w * to_x1
@@ -393,7 +393,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
         dist = line_dist(fx0, fy0, fx1, fy1,
                          tx0, ty0, tx1, ty1)
-        
+
         if dist < new_focus_dist:
             new_focus = f
             new_focus_dist = dist
@@ -414,10 +414,10 @@ def key_handler(ev):
     if renpy.display.behavior.map_event(ev, 'focus_right'):
         return focus_nearest(0.9, 0.1, 0.9, 0.9,
                              0.1, 0.1, 0.1, 0.9,
-                             verti_line_dist,                      
+                             verti_line_dist,
                              lambda old, new : old.x + old.w <= new.x,
                              -1, 0, 0, 0)
-        
+
     if renpy.display.behavior.map_event(ev, 'focus_left'):
         return focus_nearest(0.1, 0.1, 0.1, 0.9,
                              0.9, 0.1, 0.9, 0.9,
@@ -438,6 +438,3 @@ def key_handler(ev):
                              horiz_line_dist,
                              lambda old, new : old.y + old.h <= new.y,
                              0, -1, 0, 0)
-
-        
-                                

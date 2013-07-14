@@ -13,7 +13,7 @@ from setuplib import android, include, library, cython, cmodule, pymodule, copyf
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
 setuplib.extra_link_args = [ ]
-    
+
 # Detect win32.
 if platform.win32_ver()[0]:
     windows = True
@@ -40,7 +40,7 @@ library("avutil")
 has_avresample = library("avresample", optional=True)
 has_swscale = library("swscale", optional=True)
 library("freetype")
-has_fribidi = library("fribidi", optional=True)            
+has_fribidi = library("fribidi", optional=True)
 library("z")
 has_libglew = library("GLEW", optional=True)
 has_libglew32 = library("glew32", optional=True)
@@ -54,13 +54,13 @@ else:
 
 # Modules directory.
 cython(
-    "_renpy", 
+    "_renpy",
     [ "IMG_savepng.c", "core.c", "subpixel.c"],
     sdl + [ 'png', 'z', 'm' ])
 
 if has_fribidi and not android:
     cython(
-        "_renpybidi", 
+        "_renpybidi",
         [ "renpybidicore.c" ],
         ['fribidi'], define_macros=[ ("FRIBIDI_ENTRY", "") ])
 
@@ -78,7 +78,7 @@ if not android:
 
     if has_swscale:
         sound.insert(0, "swscale")
-    
+
     cython(
         "pysdlsound.sound",
         [ "pss.c", "ffdecode.c" ],
@@ -110,9 +110,9 @@ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 def anglecopy(fn):
     if android:
         return
-    
+
     copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")
-    
+
 anglecopy("glblacklist.py")
 anglecopy("gldraw.pxd")
 anglecopy("gldraw.pyx")
@@ -139,7 +139,7 @@ cython("renpy.text.textsupport")
 cython("renpy.text.texwrap")
 
 cython(
-    "renpy.text.ftfont", 
+    "renpy.text.ftfont",
     [ "ftsupport.c", "ttgsubtable.c" ],
     libs = sdl + [ 'freetype', 'z', 'm' ])
 

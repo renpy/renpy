@@ -32,7 +32,7 @@ init -1 python hide:
 
     #########################################
     # Themes
-    
+
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
@@ -55,7 +55,7 @@ init -1 python hide:
         ## example, the current value of a preference.)
         widget_selected = "#ffffc8",
 
-        ## The color of a disabled widget face. 
+        ## The color of a disabled widget face.
         disabled = "#404040",
 
         ## The color of disabled widget text.
@@ -83,7 +83,7 @@ init -1 python hide:
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
-        ## do so below.            
+        ## do so below.
         )
 
 
@@ -198,7 +198,7 @@ init -1 python hide:
     ##   show help to the user.
     ## - A file name relative to the base directory, which is opened in a
     ##   web browser.
-    ## - None, to disable help.   
+    ## - None, to disable help.
     config.help = "README.html"
 
 
@@ -261,5 +261,3 @@ init -1 python hide:
 
     #########################################
     ## More customizations can go here.
-    
-    

@@ -53,12 +53,12 @@ if 'pss' not in disable:
         except:
             pass
 
-        
+
 # Save the mixer, and restore it at exit.
 
 old_wave = None
 old_midi = None
-        
+
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
 
@@ -69,7 +69,7 @@ def get_serial():
     """
     Gets a globally unique serial number for each music change.
     """
-    
+
     global serial
     serial += 1
     return (unique, serial)
@@ -107,7 +107,7 @@ class MusicContext(renpy.python.RevertableObject):
     def __init__(self):
 
         super(MusicContext, self).__init__()
-        
+
         # The time this channel was last ordered panned.
         self.pan_time = None
 
@@ -116,10 +116,10 @@ class MusicContext(renpy.python.RevertableObject):
 
         # The time the secondary volume was last ordered changed.
         self.secondary_volume_time = None
-        
+
         # The secondary volume.
         self.secondary_volume = 1.0
-        
+
         # The time the channel was ordered last changed.
         self.last_changed = 0
 
@@ -131,7 +131,7 @@ class MusicContext(renpy.python.RevertableObject):
 
         # Should we force stop this channel?
         self.force_stop = False
-        
+
     def copy(self):
         """
         Returns a shallow copy of this context.
@@ -141,21 +141,21 @@ class MusicContext(renpy.python.RevertableObject):
         rv.__dict__.update(self.__dict__)
 
         return rv
-        
+
 # The next channel number to be assigned.
 next_channel_number = 0
-        
+
 class Channel(object):
     """
     This stores information about the currently-playing music.
     """
-    
+
     def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
         self.name = name
-        
+
         # The number this channel has been assigned, or None if we've yet
         # to assign a number to the channel. We only assign a channel
         # number when there's an operation on the channel other than
@@ -220,7 +220,7 @@ class Channel(object):
 
         # Should we buffer upcoming music/video in the queue?
         self.buffer_queue = buffer_queue
-        
+
         if default_loop is None:
             # By default, should we loop the music?
             self.default_loop = True
@@ -230,7 +230,7 @@ class Channel(object):
         else:
             self.default_loop = default_loop
             self.default_loop_set = True
-        
+
 
     def get_number(self):
         """
@@ -238,12 +238,12 @@ class Channel(object):
         proves necessary.
         """
         global next_channel_number
-        
+
         rv = self._number
         if rv is None:
             rv = self._number = next_channel_number
             next_channel_number += 1
-        
+
         return rv
 
     number = property(get_number)
@@ -263,8 +263,8 @@ class Channel(object):
         return rv
 
     context = property(get_context)
-        
-    
+
+
     def periodic(self):
         """
         This is the periodic call that causes this channel to load new stuff
@@ -294,7 +294,7 @@ class Channel(object):
             else:
                 self.queue = [ ]
             return
-        
+
         # Should we do the callback?
         do_callback = False
 
@@ -322,7 +322,7 @@ class Channel(object):
             # give up here.
             if not self.buffer_queue and depth >= 1:
                 break
-            
+
             # We can't queue anything if the depth is > 0 and we're
             # waiting for a synchro_start.
             if self.synchro_start and depth:
@@ -344,7 +344,7 @@ class Channel(object):
 
             if not topq:
                 continue
-            
+
             try:
                 topf = load(self.file_prefix + topq.filename + self.file_suffix)
 
@@ -371,11 +371,11 @@ class Channel(object):
 
         if self.loop and not self.queue:
             for i in self.loop:
-                newq = QueueEntry(i, 0, topq.tight)                    
+                newq = QueueEntry(i, 0, topq.tight)
                 self.queue.append(newq)
         else:
             do_callback = True
-                
+
         # Queue empty callback.
         if do_callback and self.callback:
             self.callback() # E1102
@@ -390,7 +390,7 @@ class Channel(object):
 
         self.queue = self.queue[:self.keep_queue]
         self.loop = [ ]
-            
+
         if not pcm_ok:
             return
 
@@ -403,7 +403,7 @@ class Channel(object):
         """
 
         self.keep_queue = 0
-        
+
         if pcm_ok:
 
             if self.pan_time != self.context.pan_time:
@@ -418,7 +418,7 @@ class Channel(object):
                 pss.set_secondary_volume(self.number,
                                          self.context.secondary_volume,
                                          0)
-            
+
         if not self.queue and self.callback:
             self.callback() # E1102
 
@@ -437,14 +437,14 @@ class Channel(object):
 
         if secs == 0:
             pss.stop(self.number)
-        else:            
+        else:
             pss.fadeout(self.number, int(secs * 1000))
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
 
         for filename in filenames:
             renpy.game.persistent._seen_audio[filename] = True
-        
+
         if not pcm_ok:
             return
 
@@ -452,7 +452,7 @@ class Channel(object):
             tight = self.tight
 
         self.keep_queue += 1
-            
+
         for filename in filenames:
             qe = QueueEntry(filename, int(fadein * 1000), tight)
             self.queue.append(qe)
@@ -480,17 +480,17 @@ class Channel(object):
 
         if rv is None and self.loop:
             rv = self.loop[0]
-            
+
         return rv
-                
+
     def set_volume(self, volume):
         self.chan_volume = volume
-            
+
     def get_pos(self):
 
         if not pcm_ok:
             return -1
-        
+
         return pss.get_pos(self.number)
 
     def set_pan(self, pan, delay):
@@ -519,41 +519,41 @@ class Channel(object):
 if renpy.android:
 
     import jnius  # @UnresolvedImport
-    
+
     VideoPlayer = jnius.autoclass("org.renpy.android.VideoPlayer")
 
     class AndroidVideoChannel(object):
-        
+
         def __init__(self, name, file_prefix="", file_suffix="", default_loop=None):
-            
+
             # A list of queued filenames.
             self.queue = [ ]
-            
+
             # The filename that's currently playing.
             self.filename = None
-        
+
             # The videoplayer that's currently playing.
             self.player = None
 
             # The name assigned to this channel. This is used to look up
             # information about the channel in the MusicContext object.
             self.name = name
-            
+
             # The name of the mixer this channel uses. Set below, as there's
             # no good default.
             self.mixer = None
-    
+
             # The time the music in this channel was last changed.
             self.last_changed = 0
-    
+
             # The callback that is called if the queue becomes empty.
             self.callback = None
-    
+
             # Ignored.
             self.synchro_start = False
             self.wait_stop = False
             self.loop = [ ]
-            
+
             # A prefix and suffix that are used to create the full filenames.
             self.file_prefix = file_prefix
             self.file_suffix = file_suffix
@@ -563,26 +563,26 @@ if renpy.android:
                 self.default_loop = True
                 # Was this set explicitly?
                 self.default_loop_set = False
-    
+
             else:
                 self.default_loop = default_loop
                 self.default_loop_set = True
 
-        
+
         def get_context(self):
             """
             Returns the MusicContext corresponding to this channel, taken from
             the context object. Allocates a MusicContext if none exists.
             """
-    
+
             mcd = renpy.game.context().music
-    
+
             rv = mcd.get(self.name)
             if rv is None:
                 rv = mcd[self.name] = MusicContext()
-    
+
             return rv
-    
+
         context = property(get_context)
 
 
@@ -590,15 +590,15 @@ if renpy.android:
             """
             Starts playing the first video in the queue.
             """
-            
+
             if not self.queue:
                 return
-            
+
             filename = self.queue.pop(0)
-            
+
             f = renpy.loader.load(filename)
 
-            real_fn = f.name    
+            real_fn = f.name
             base = getattr(f, "base", -1)
             length = getattr(f, "length", -1)
 
@@ -606,84 +606,84 @@ if renpy.android:
             self.player = VideoPlayer(real_fn, base, length)
 
         def stop(self):
-            
+
             if self.player is not None:
                 self.player.stop()
                 self.player = None
-                
+
             self.filename = None
-            
+
         def get_playing(self):
-            
+
             if self.player is None:
                 return None
-            
+
             if self.player.isPlaying():
                 return self.filename
-        
+
         def periodic(self):
-    
+
             # This should be set from something that checks to see if our
             # mixer is muted.
             force_stop = self.context.force_stop
-            
+
             if force_stop:
                 self.dequeue()
                 self.stop()
                 return
-            
+
             if self.get_playing():
                 return
-            
+
             if self.queue:
                 self.start()
-            
-    
+
+
         def dequeue(self, even_tight=False):
             """
-            Clears the queued music, except for a first item that has 
+            Clears the queued music, except for a first item that has
             not been started.
             """
-            
+
             if self.get_playing():
                 self.queue = [ ]
             else:
                 self.queue = self.queue[:1]
-    
-    
+
+
         def interact(self):
             """
             Called (mostly) once per interaction.
             """
 
             self.periodic()
-    
-    
+
+
         def fadeout(self, secs):
             """
             Causes the playing music to be faded out for the given number
             of seconds. Also clears any queued music.
             """
-    
+
             self.stop()
             self.queue = [ ]
-            
+
         def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
             self.queue.extend(filenames)
-    
+
         def set_volume(self, volume):
             pass
-                
+
         def get_pos(self):
             pass
-    
+
         def set_pan(self, pan, delay):
             pass
-    
+
         def set_secondary_volume(self, volume, delay):
             pass
 
-        
+
 # A list of channels we know about.
 all_channels = [ ]
 
@@ -710,7 +710,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
 
     `stop_on_mute`
         If true, music on the channel is stopped when the channel is muted.
-        
+
     `tight`
         If true, sounds will loop even when fadeout is occuring. This should
         be set to True for a sound effects or seamless music channel, and False
@@ -742,7 +742,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     all_channels.append(c)
     channels[name] = c
 
-    
+
 def alias_channel(name, newname):
     if not renpy.game.context().init_phase:
         raise Exception("Can't alias channel outside of init phase.")
@@ -750,13 +750,13 @@ def alias_channel(name, newname):
     c = get_channel(name)
     channels[newname] = c
 
-    
+
 def get_channel(name):
 
     rv = channels.get(name)
     if rv is None:
         raise Exception("Audio channel %r is unknown." % name)
-        
+
     return rv
 
 def set_force_stop(name, value):
@@ -774,7 +774,7 @@ def init():
 
     if pcm_ok is None and pss:
         bufsize = 2048
-                
+
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
 
@@ -794,7 +794,7 @@ def init():
             mixers.append(c.mixer)
 
     default_volume = 1.0
-    
+
     for m in mixers:
         renpy.game.preferences.volumes.setdefault(m, default_volume)
         renpy.game.preferences.mute.setdefault(m, False)
@@ -807,23 +807,23 @@ def quit(): #@ReservedAssignment
 
     if not pcm_ok:
         return
-    
+
     for c in all_channels:
         c.dequeue()
         c.fadeout(0)
-        
+
         c.queue = [ ]
         c.loop = [ ]
         c.playing = False
         c.playing_midi = False
         c.wait_stop = False
         c.synchro_start = False
-        
+
     pss.quit()
-    
+
     pcm_ok = None
     mix_ok = None
- 
+
 # The last-set pcm volume.
 pcm_volume = None
 
@@ -847,12 +847,12 @@ def periodic():
             c.periodic()
 
         pss.periodic()
-        
+
         # Perform a synchro-start if necessary.
         need_ss = False
 
         for c in all_channels:
-            
+
             if c.synchro_start and c.wait_stop:
                 need_ss = False
                 break
@@ -865,12 +865,12 @@ def periodic():
 
             for c in all_channels:
                 c.synchro_start = False
-                    
+
     except:
         if renpy.config.debug_sound:
             raise
 
-        
+
 def interact():
     """
     Called at least once per interaction.
@@ -888,7 +888,7 @@ def interact():
             #    c.set_volume(_music_volumes.get(i, 1.0))
 
             ctx = c.context
-                
+
             # If we're in the same music change, then do nothing with the
             # music.
             if c.last_changed == ctx.last_changed:

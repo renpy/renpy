@@ -36,34 +36,34 @@ cdef extern from "renpy.h":
     void core_init()
 
     void save_png_core(object, SDL_RWops *, int)
-    
+
     void pixellate32_core(object, object, int, int, int, int)
     void pixellate24_core(object, object, int, int, int, int)
 
     void map32_core(object, object,
                     char *,
-                    char *, 
-                    char *, 
+                    char *,
+                    char *,
                     char *)
 
     void map24_core(object, object,
                     char *,
-                    char *, 
+                    char *,
                     char *)
 
     void linmap32_core(object, object,
                     int,
-                    int, 
-                    int, 
+                    int,
+                    int,
                     int)
 
     void linmap24_core(object, object,
                     int,
-                    int, 
+                    int,
                     int)
 
     void xblur32_core(object, object, int)
-    
+
     void alphamunge_core(object, object, int, int, int, char *)
 
     void scale32_core(object, object,
@@ -93,9 +93,9 @@ cdef extern from "renpy.h":
                          int, int, int, int, int, char *)
 
     int subpixel32(object, object, float, float, int)
-    
+
     void PyErr_Clear()
-    
+
 
 import pygame
 
@@ -108,7 +108,7 @@ def save_png(surf, file, compress=-1):
 
     save_png_core(surf, RWopsFromPython(file), compress)
 
-    
+
 def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
 
     if not isinstance(pysrc, PygameSurface):
@@ -231,7 +231,7 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
     # pydst.unlock()
     # pysrc.unlock()
 
-    
+
 
 
 # def xblur(pysrc, pydst, radius):
@@ -283,7 +283,7 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 #         w, h = pysrc.get_size()
 
 #     return stretch_core(pysrc, pydst, x, y, w, h)
-    
+
 
 def bilinear(pysrc, pydst,
              source_xoff=0.0, source_yoff=0.0, source_width=None, source_height=None,
@@ -298,7 +298,7 @@ def bilinear(pysrc, pydst,
 
     if pysrc.get_bitsize() not in (24, 32):
         raise Exception("bilinear requires a 24 or 32 bit surface.")
-    
+
     if pydst.get_bitsize() != pysrc.get_bitsize():
         raise Exception("bilinear requires both surfaces have the same bitsize.")
 
@@ -332,15 +332,15 @@ def check(surf):
 
     if surf.get_bitsize() != 32:
         raise Exception("Surface must be 32-bit.")
-    
-    
+
+
 def transform(pysrc, pydst,
               corner_x, corner_y,
               xdx, ydx, xdy, ydy, a=1.0, precise=0):
 
     check(pysrc)
     check(pydst)
-    
+
     # pysrc.lock()
     # pydst.lock()
 
@@ -359,7 +359,7 @@ def blend(pysrca, pysrcb, pydst, alpha):
     check(pysrca)
     check(pysrcb)
     check(pydst)
-    
+
     # pysrca.lock()
     # pysrcb.lock()
     # pydst.lock()
@@ -375,14 +375,14 @@ def imageblend(pysrca, pysrcb, pydst, pyimg, aoff, amap):
     check(pysrcb)
     check(pydst)
     check(pyimg)
-    
+
     # pysrca.lock()
     # pysrcb.lock()
     # pydst.lock()
     # pyimg.lock()
 
     imageblend32_core(pysrca, pysrcb, pydst, pyimg, aoff, amap)
-    
+
     # pyimg.unlock()
     # pydst.unlock()
     # pysrcb.unlock()
@@ -399,7 +399,7 @@ def colormatrix(pysrc, pydst,
 
     # pysrc.lock()
     # pydst.lock()
-    
+
     colormatrix32_core(pysrc, pydst,
                        c00, c01, c02, c03, c04,
                        c10, c11, c12, c13, c14,
@@ -421,8 +421,8 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
         return
 
     pydst.blit(pysrc, (int(xoffset), int(yoffset)))
-    
-    
+
+
 # Be sure to update scale.py when adding something new here!
 
 import_pygame_rwobject()

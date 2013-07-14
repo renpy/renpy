@@ -10,7 +10,7 @@ cdef extern from "pyfreetype.h":
     #Some tweaking may be needed on a platform-by-platform basis
     DEF FT_SIZEOF_INT = 4
     DEF FT_SIZEOF_LONG = 4
-    
+
     ctypedef signed short      FT_Int16
     ctypedef unsigned short    FT_UInt16
     IF FT_SIZEOF_INT == 4:
@@ -26,9 +26,9 @@ cdef extern from "pyfreetype.h":
     ELIF FT_SIZEOF_LONG >= 4:
         ctypedef long          FT_Fast
         ctypedef unsigned long FT_UFast
-    
-    
-    
+
+
+
     #fttypes.h
     ctypedef unsigned char     FT_Bool
     ctypedef signed short      FT_FWord
@@ -140,15 +140,15 @@ cdef extern from "pyfreetype.h":
                                      (<unsigned long>c'l' << 16) |
                                      (<unsigned long>c'o' << 8)  |
                                      (<unsigned long>c't'))
-    
-    
+
+
 
     #freetype.h
     ctypedef struct FT_Glyph_Metrics:
         FT_Pos  width, height
         FT_Pos  horiBearingX, horiBearingY, horiAdvance
         FT_Pos  vertBearingX, vertBearingY, vertAdvance
-        
+
     ctypedef struct FT_Bitmap_Size:
         FT_Short  height, width
         FT_Pos    size
@@ -322,7 +322,7 @@ cdef extern from "pyfreetype.h":
         FT_Library        library
         FT_Face           face
         FT_GlyphSlot      next
-        FT_UInt           reserved  
+        FT_UInt           reserved
         FT_Generic        generic
 
         FT_Glyph_Metrics  metrics
@@ -361,7 +361,7 @@ cdef extern from "pyfreetype.h":
         FT_SIZE_REQUEST_TYPE_SCALES,
 
         FT_SIZE_REQUEST_TYPE_MAX
-    
+
     ctypedef struct FT_Size_RequestRec:
         FT_Size_Request_Type type
         FT_Long              width, height
@@ -397,7 +397,7 @@ cdef extern from "pyfreetype.h":
 
 
     void FT_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta)
-    
+
     ctypedef enum FT_Render_Mode:
         FT_RENDER_MODE_NORMAL = 0,
         FT_RENDER_MODE_LIGHT,
@@ -438,7 +438,7 @@ cdef extern from "pyfreetype.h":
     void FT_Library_Version(FT_Library, FT_Int *major, FT_Int *minor, FT_Int *patch)
     FT_Bool FT_Face_CheckTrueTypePatents(FT_Face face)
     FT_Bool FT_Face_SetUnpatentedHinting(FT_Face face, FT_Bool value)
-    
+
 
 
     #ftglyph.h
@@ -447,7 +447,7 @@ cdef extern from "pyfreetype.h":
         FT_Glyph_Format format
         FT_Vector       advance
     ctypedef FT_GlyphRec* FT_Glyph
-    
+
     ctypedef struct FT_BitmapGlyphRec:
         FT_GlyphRec root
         FT_Int      left, top
@@ -475,7 +475,7 @@ cdef extern from "pyfreetype.h":
     void FT_Done_Glyph(FT_Glyph glyph)
 
     void FT_Matrix_Multiply(FT_Matrix *a, FT_Matrix *b)
-    FT_Error FT_Matrix_Invert(FT_Matrix *matrix) 
+    FT_Error FT_Matrix_Invert(FT_Matrix *matrix)
 
 
 
@@ -485,7 +485,7 @@ cdef extern from "pyfreetype.h":
     FT_Error FT_Outline_Done(FT_Library lib, FT_Outline *outline)
     FT_Error FT_Outline_Copy(FT_Outline *source, FT_Outline *target)
     FT_Error FT_Outline_Check(FT_Outline *outline)
-    
+
     void FT_Outline_Get_CBox(FT_Outline *outline, FT_BBox *cbox)
     void FT_Outline_Translate(FT_Outline *outline, FT_Pos xOffset, FT_Pos yOffset)
     void FT_Outline_Transform(FT_Outline *outline, FT_Matrix *matrix)
@@ -509,32 +509,32 @@ cdef extern from "pyfreetype.h":
     FT_Error FT_Bitmap_Copy(FT_Library lib, FT_Bitmap *source, FT_Bitmap *target)
     FT_Error FT_Bitmap_Embolden(FT_Library lib, FT_Bitmap *bitmap, FT_Pos xStrength, FT_Pos yStrength)
     FT_Error FT_Bitmap_Convert(FT_Library lib, FT_Bitmap *source, FT_Bitmap *target, FT_Int alignment)
-    
+
 # Additions by Tom Rothame.
 
-    cdef struct FT_MemoryRec_ 
+    cdef struct FT_MemoryRec_
     ctypedef FT_MemoryRec_ *FT_Memory
-    
+
     ctypedef void * (*FT_AllocFunc)(FT_Memory, long)
     ctypedef void (*FT_FreeFunc)(FT_Memory, void *)
     ctypedef void * (*FT_Realloc_Func)(FT_Memory, long, long, void*)
-    
+
     cdef struct FT_StreamRec_
     ctypedef FT_StreamRec_* FT_Stream
-        
+
     cdef union FT_StreamDesc:
         long value
         void *pointer
-        
+
     ctypedef unsigned long (*FT_Stream_IoFunc)(
         FT_Stream,
         unsigned long,
         unsigned char *,
         unsigned long)
-    
+
     ctypedef void (*FT_Stream_CloseFunc)(
         FT_Stream stream)
-    
+
     cdef struct FT_StreamRec_:
         unsigned char *base
         unsigned long size
@@ -543,36 +543,36 @@ cdef extern from "pyfreetype.h":
         FT_StreamDesc pathname
         FT_Stream_IoFunc read
         FT_Stream_CloseFunc close
-        
+
         FT_Memory memory
         unsigned char *cursor
         unsigned char *limit
-        
+
     ctypedef FT_StreamRec_ FT_StreamRec
-        
+
     cdef struct FT_ModuleRec_
     ctypedef FT_ModuleRec_ *FT_Module
-    cdef struct FT_ParameterRec_ 
+    cdef struct FT_ParameterRec_
     ctypedef struct FT_Parameter
-        
+
     ctypedef struct FT_Open_Args:
         FT_UInt flags
         FT_Byte *memory_base
         FT_Long memory_size
         FT_String *pathname
         FT_Stream stream
-    
+
         FT_Module driver
         FT_Int num_params
         FT_Parameter *params
-        
+
     cdef enum:
         FT_OPEN_MEMORY
         FT_OPEN_STREAM
         FT_OPEN_PATHNAME
         FT_OPEN_DRIVER
         FT_OPEN_PARAMS
-    
+
     FT_Error FT_Open_Face(
         FT_Library library,
         FT_Open_Args *args,
@@ -581,10 +581,10 @@ cdef extern from "pyfreetype.h":
 
     cdef struct FT_Stroker_Rec_
     ctypedef FT_Stroker_Rec_ *FT_Stroker
-        
+
     FT_Error FT_Stroker_New( FT_Library   library,
                     FT_Stroker  *astroker )
-                    
+
     cdef enum FT_Stroker_LineCap:
         FT_STROKER_LINECAP_ROUND
     cdef enum FT_Stroker_LineJoin:
@@ -595,11 +595,11 @@ cdef extern from "pyfreetype.h":
                   FT_Stroker_LineCap   line_cap,
                   FT_Stroker_LineJoin  line_join,
                   FT_Fixed             miter_limit )
-     
+
     void FT_Glyph_StrokeBorder(FT_Glyph *, FT_Stroker, FT_Bool, FT_Bool)
-        
+
     void FT_Stroker_Done(FT_Stroker)
-       
+
     cdef FT_Long FT_MulFix(FT_Long, FT_Long)
     cdef FT_Long FT_CEIL(FT_Long)
     cdef FT_Long FT_FLOOR(FT_Long)

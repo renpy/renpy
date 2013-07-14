@@ -11,7 +11,7 @@ init -1600 python hide:
 
     # advanced: Callbacks to run at start.
     config.start_callbacks = [ ]
-    
+
     # Transition that's used after the game is loaded.
     config.after_load_transition = None
 
@@ -24,24 +24,24 @@ init -1600 python hide:
 
     # A save to automatically load, if it exists.
     config.auto_load = None
-    
+
     # The language we use when the game starts. None remembers the user's
     # choice of language, and defaults to the game's native language.
     config.language = None
-        
+
 init -1600 python:
-    
+
     def _init_language():
-        
+
         if "RENPY_LANGUAGE" in os.environ:
             language = os.environ["RENPY_LANGUAGE"]
         elif config.language is not None:
             language = config.language
         else:
             language = _preferences.language
-        
+
         renpy.change_language(language)
-    
+
 # This fixes up the context, if necessary, then calls the real
 # after_load.
 label _after_load:
@@ -52,7 +52,7 @@ label _after_load:
 
     if config.after_load_transition:
         $ renpy.transition(config.after_load_transition, force=True)
-    
+
     if renpy.has_label("after_load"):
         jump expression "after_load"
     else:
@@ -60,33 +60,33 @@ label _after_load:
 
 # Common code for _start and _start_memory.
 label _start_store:
-    
+
     python hide:
         store.main_menu = False
         renpy.context()._menu = False
         renpy.context()._main_menu = False
-        
+
         for i in config.start_callbacks:
             i()
 
     return
-    
-    
-# Starts up a memory. This is called by renpy.game.call_memory, and 
+
+
+# Starts up a memory. This is called by renpy.game.call_memory, and
 # is expected to be called with _in_memory set.
 label _start_replay:
 
     call _start_store
 
-    if config.start_scene_black:        
+    if config.start_scene_black:
         scene black
     else:
         scene
 
     $ renpy.block_rollback()
-    
+
     jump expression _in_replay
-    
+
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -102,11 +102,11 @@ label _start:
     if not _restart and config.auto_load and renpy.can_load(config.auto_load):
         $ renpy.load(config.auto_load)
 
-    if config.start_scene_black:        
+    if config.start_scene_black:
         scene black
     else:
         scene
-        
+
     if not _restart:
         $ ui.pausebehavior(0)
         $ ui.interact(suppress_underlay=True, suppress_overlay=True)
@@ -117,20 +117,20 @@ label _start:
     $ _old_predict_screens = _predict_screens
     $ _game_menu_screen = None
     $ _predict_screens = [ 'main_menu' ]
-    
+
     if renpy.has_label("splashscreen") and not _restart:
         call expression "splashscreen" from _call_splashscreen_1
 
     $ _game_menu_screen = _old_game_menu_screen
     $ del _old_game_menu_screen
-        
+
     $ renpy.block_rollback()
 
     if config.main_menu_music:
         $ renpy.music.play(config.main_menu_music, if_changed=True)
     else:
         $ renpy.music.stop()
-        
+
     # Clean out any residual scene from the splashscreen.
     if config.start_scene_black:
         scene black
@@ -146,7 +146,7 @@ label _start:
         else:
             renpy.transition(_restart[0])
             renpy.jump(_restart[1])
-        
+
 label _invoke_main_menu:
 
     # Again, this has to be python.
@@ -155,8 +155,8 @@ label _invoke_main_menu:
             renpy.call_in_new_context(_restart[2])
         else:
             renpy.call_in_new_context("_main_menu")
-        
-        
+
+
     # If the main menu returns, then start the game.
     jump start
 
@@ -174,10 +174,10 @@ label _main_menu(_main_menu_screen="_main_menu_screen"):
         store.main_menu = True
 
     jump expression _main_menu_screen
-        
+
 # This is called to show the main menu to the user.
-label _main_menu_screen:    
-    
+label _main_menu_screen:
+
     # Let the user give code that runs in the main menu context before
     # the main menu runs.
     if renpy.has_label("before_main_menu"):
@@ -195,5 +195,5 @@ label _main_menu_screen:
     # Compatibility name.
     elif renpy.has_label("_library_main_menu"):
         jump expression "_library_main_menu"
-        
+
     return

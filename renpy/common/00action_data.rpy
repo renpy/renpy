@@ -19,15 +19,15 @@ init -1600 python:
             self.object = object
             self.field = field
             self.value = value
-        
+
         def __call__(self):
             setattr(self.object, self.field, self.value)
             renpy.restart_interaction()
 
         def get_selected(self):
             return getattr(self.object, self.field) == self.value
-        
-        
+
+
     def SetVariable(variable, value):
         """
          :doc: data_action
@@ -37,7 +37,7 @@ init -1600 python:
 
         return SetField(store, variable, value)
 
-    
+
     class SetDict(Action):
         """
          :doc: data_action
@@ -61,16 +61,16 @@ init -1600 python:
         """
         :doc: data_action
 
-        Causes the variable `name` associated with the current screen to 
+        Causes the variable `name` associated with the current screen to
         be set to `value`.
         """
-        
+
         cs = renpy.current_screen()
         if cs is not None:
             return SetDict(cs.scope, name, value)
         else:
             return None
-    
+
     class ToggleField(Action):
         """
          :doc: data_action
@@ -81,15 +81,15 @@ init -1600 python:
          `true_value`
              If not None, then this is the true value we use.
          `false_value`
-             If not None, then this is the false value we use. 
+             If not None, then this is the false value we use.
          """
-        
+
         def __init__(self, object, field, true_value=None, false_value=None):
             self.object = object
             self.field = field
             self.true_value = true_value
             self.false_value = false_value
-        
+
         def __call__(self):
             value = getattr(self.object, self.field)
 
@@ -103,7 +103,7 @@ init -1600 python:
                     value = self.true_value
                 else:
                     value = self.false_value
-                    
+
             setattr(self.object, self.field, value)
             renpy.restart_interaction()
 
@@ -125,12 +125,12 @@ init -1600 python:
          `true_value`
              If not None, then this is the true value we use.
          `false_value`
-             If not None, then this is the false value we use. 
+             If not None, then this is the false value we use.
          """
 
         return ToggleField(store, variable, true_value=true_value, false_value=false_value)
 
-    
+
     class ToggleDict(Action):
         """
          :doc: data_action
@@ -141,15 +141,15 @@ init -1600 python:
          `true_value`
              If not None, then this is the true value we use.
          `false_value`
-             If not None, then this is the false value we use. 
+             If not None, then this is the false value we use.
          """
-        
+
         def __init__(self, dict, key, true_value=None, false_value=None):
             self.dict = dict
             self.key = key
             self.true_value = true_value
             self.false_value = false_value
-        
+
         def __call__(self):
             value = self.dict[self.key]
 
@@ -184,9 +184,9 @@ init -1600 python:
          `true_value`
              If not None, then this is the true value we use.
          `false_value`
-             If not None, then this is the false value we use. 
+             If not None, then this is the false value we use.
          """
-    
+
         cs = renpy.current_screen()
 
         if cs is not None:

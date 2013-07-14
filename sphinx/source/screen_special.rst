@@ -68,7 +68,7 @@ It's expected to declare displayables with the following ids:
 
         window id "window":
             has vbox
-            
+
             if who:
                 text who id "who"
 
@@ -76,7 +76,7 @@ It's expected to declare displayables with the following ids:
 
 
 .. _choice-screen:
-            
+
 Choice
 ------
 
@@ -95,19 +95,19 @@ with the menu statement. It is given the following parameter:
 
     screen choice:
 
-        window: 
-            style "menu_window"        
+        window:
+            style "menu_window"
 
             vbox:
                 style "menu"
 
                 for caption, action, chosen in items:
 
-                    if action:  
+                    if action:
 
                         button:
                             action action
-                            style "menu_choice_button"                        
+                            style "menu_choice_button"
 
                             text caption style "menu_choice"
 
@@ -144,7 +144,7 @@ It is expected to declare a displayable with the following id:
 
 
 .. _nvl-screen:
-            
+
 NVL
 ---
 
@@ -166,7 +166,7 @@ the following parameter:
     is a choice label. `Chosen` if a choice with this label has been
     chosen by the user before. (It doesn't have to be in the current
     game.)
-    
+
     If items is empty, the menu should not be shown.
 
 Ren'Py also supports an ``nvl_choice`` screen, which takes the same
@@ -336,14 +336,14 @@ then use that screen from the save, load and preferences screens.
 
     init python:
         style.gm_nav_button.size_group = "gm_nav"
-                
+
 .. _save-screen:
-                
+
 Save
 ----
 
 The ``save`` screen is used to select a file in which to save the
-game. 
+game.
 
 ::
 
@@ -584,7 +584,7 @@ user. It takes the following parameters:
     The message to display to the user. This is one of:
 
     * layout.ARE_YOU_SURE - "Are you sure?" This should be
-      the default if the message is unknown.    
+      the default if the message is unknown.
     * layout.DELETE_SAVE - "Are you sure you want to delete this save?"
     * layout.OVERWRITE_SAVE - "Are you sure you want to overwrite your save?"
     * layout.LOADING - "Loading will lose unsaved progress.\nAre you sure you want to do this?"
@@ -627,6 +627,6 @@ user. It takes the following parameters:
 
                 hbox:
                     spacing 100
-                    xalign .5 
-                    textbutton _("Yes") action yes_action                
+                    xalign .5
+                    textbutton _("Yes") action yes_action
                     textbutton _("No") action no_action

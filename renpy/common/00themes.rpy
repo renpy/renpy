@@ -9,7 +9,7 @@ init -1400 python:
         def __call__(self, func):
             setattr(self, func.func_name, func)
             return func
-        
+
     _theme = theme = _Theme()
     del _Theme
 
@@ -30,7 +30,7 @@ init -1110 python hide:
     @theme
     def clear_frames():
         style.frame.clear()
-    
+
     @theme
     def clear_buttons():
         style.button.clear()
@@ -65,7 +65,7 @@ init -1110 python hide:
         style.vscrollbar.clear()
         style.slider.clear()
         style.vslider.clear()
-        
+
         style.vbar.bar_vertical = True
         style.vslider.bar_vertical = True
         style.vscrollbar.bar_vertical = True
@@ -91,7 +91,7 @@ init -1110 python hide:
                 return Frame(theme.OneOrTwoColor(file_prefix + frame_png, color), 12, 12)
         else:
             FrameBox = Box
-            
+
         def frames(
             less_rounded,
             frame):
@@ -102,10 +102,10 @@ init -1110 python hide:
 
             style.frame.xpadding = 6
             style.frame.ypadding = 6
-        
+
         setattr(theme, name + "_frames", frames)
 
-            
+
         def buttons(text_size,
                     less_rounded,
                     widget,
@@ -140,7 +140,7 @@ init -1110 python hide:
             style.button_text.text_align = 0.5
 
         setattr(theme, name + "_buttons", buttons)
-            
+
         def large_buttons(
             text_size,
             less_rounded,
@@ -175,7 +175,7 @@ init -1110 python hide:
             style.large_button_text.yalign = 0
 
         setattr(theme, name + "_large_buttons", large_buttons)
-            
+
         def labels(
             text_size,
             label):
@@ -186,7 +186,7 @@ init -1110 python hide:
             style.label_text.color = label
 
         setattr(theme, name + "_labels", labels)
-            
+
         def prompts(
             text_size,
             label):
@@ -199,10 +199,10 @@ init -1110 python hide:
             style.prompt.xalign = 0.5
             style.prompt_text.text_align = 0.5
             style.prompt_text.layout = "subtitle"
- 
+
         setattr(theme, name + "_prompts", prompts)
-       
-            
+
+
         def bars(
             widget,
             widget_hover):
@@ -292,7 +292,7 @@ init -1110 python hide:
             style.vscrollbar.hover_thumb = img("vscrollbar_thumb", widget_hover, None, None)
 
         setattr(theme, name + "_bars", bars)
-        
+
         def main(
             widget = (0, 60, 120, 255),
             widget_hover = (0, 80, 160, 255),
@@ -305,7 +305,7 @@ init -1110 python hide:
 
             text_size=None,
             small_text_size=None,
-            less_rounded = False,        
+            less_rounded = False,
 
             # Compat for the old roundrect theme.
             window = None,
@@ -406,39 +406,39 @@ init -1110 python hide:
     roundrect_based_theme("threeD", "_theme_threeD/th")
     roundrect_based_theme("marker", "_theme_marker/ink")
     roundrect_based_theme("austen", "_theme_austen/au")
-        
+
     @theme
     def ancient():
 
         layout.defaults()
-        
+
         style.frame.background = Solid((0, 0, 128, 128))
         style.frame.xpadding = 10
         style.frame.ypadding = 10
         style.frame.xmargin = 10
         style.frame.ymargin = 5
-        
+
         style.menu_frame.set_parent(style.default)
-        
+
         dark_cyan = (0, 192, 255, 255)
         bright_cyan = (0, 255, 255, 255)
         dark_red = (255, 128, 128, 255)
         bright_red = (255, 64, 64, 255)
         green = (0, 128, 0, 255)
-        
+
         style.button_text.color = dark_cyan
         style.button_text.hover_color = bright_cyan
         style.button_text.insensitive_color = (192, 192, 192, 255)
         style.button_text.size = 24
-        style.button_text.drop_shadow = (2, 2)        
+        style.button_text.drop_shadow = (2, 2)
         style.button_text.drop_shadow_color = "#000"
-        
+
         style.button_text.selected_color = dark_red
         style.button_text.selected_hover_color = bright_red
-        
+
         style.button_text.xalign = 0.5
         style.button_text.text_align = 0.5
-        
+
         style.bar.ymaximum = 22
         style.bar.left_bar = Solid(bright_cyan)
         style.bar.right_bar = Solid((0, 0, 0, 128))
@@ -525,7 +525,7 @@ init -1110 python hide:
         theme.clear_buttons()
 
         style.button.xmargin = 4
-        
+
         style.button_text.size = text_size
         style.button_text.color = inside
         style.button_text.outlines = [ (2, idle) ]
@@ -533,7 +533,7 @@ init -1110 python hide:
         style.button_text.selected_outlines = [ (2, selected) ]
         style.button_text.selected_hover_outlines = [ (2, hover) ]
         style.button_text.insensitive_outlines = [ (2, insensitive) ]
-        
+
 
     @theme
     def outline_large_buttons(
@@ -551,7 +551,7 @@ init -1110 python hide:
         style.large_button.ymargin = 2
 
         style.large_button.background = large_button
-        
+
         style.large_button_text.size = text_size
         style.large_button_text.color = inside
 
@@ -560,7 +560,7 @@ init -1110 python hide:
         style.large_button_text.selected_outlines = [ (2, selected) ]
         style.large_button_text.selected_hover_outlines = [ (2, hover) ]
         style.large_button_text.insensitive_outlines = [ (2, insensitive) ]
-        
+
     @theme
     def outline_prompts(
         inside,
@@ -568,11 +568,11 @@ init -1110 python hide:
         text_size):
 
         theme.clear_prompts()
-        
+
         style.prompt_text.color = inside
         style.prompt_text.outlines = [ (2, prompt) ]
         style.prompt_text.size = text_size
-        
+
     @theme
     def outline_labels(
         inside,
@@ -580,19 +580,19 @@ init -1110 python hide:
         text_size):
 
         theme.clear_labels()
-        
+
         style.label_text.color = inside
         style.label_text.outlines = [ (2, label) ]
         style.label_text.size = text_size
-        
+
     @theme
-    def outline_bars(        
+    def outline_bars(
         inside,
         idle,
         hover):
 
         theme.clear_bars()
-        
+
         def color(fn, c):
             return im.Twocolor("_outline/" + fn + ".png", inside, c)
 
@@ -601,7 +601,7 @@ init -1110 python hide:
         style.bar.right_bar = Frame(color("bar", idle), 0, 0)
         style.bar.left_gutter = 16
         style.bar.bar_resizing = True
-        
+
         style.slider.ymaximum = 16
         style.slider.left_bar = Frame(color("bar", idle), 0, 0)
         style.slider.right_bar = Frame(color("bar", idle), 0, 0)
@@ -617,7 +617,7 @@ init -1110 python hide:
         style.scrollbar.hover_left_bar = Frame(color("bar", hover), 0, 0)
         style.scrollbar.hover_right_bar = Frame(color("bar", hover), 0, 0)
         style.scrollbar.hover_thumb = Frame(color("circle", hover), 7, 0)
-        
+
         style.vbar.xmaximum = 16
         style.vbar.bottom_bar = Frame(color("circle", idle), 0, 7)
         style.vbar.top_bar = Frame(color("vbar", idle), 0, 0)
@@ -658,7 +658,7 @@ init -1110 python hide:
         layout.defaults()
 
         theme.outline_frames()
-        
+
         theme.outline_buttons(
             inside,
             idle,
@@ -693,7 +693,7 @@ init -1110 python hide:
 
         style.mm_root.background = background
         style.gm_root.background = background
-        
+
     @theme
     def image_buttons(d):
         for k, (idle, hover, selected_idle, selected_hover, insensitive) in d.iteritems():
@@ -706,9 +706,9 @@ init -1110 python hide:
             s.hover_child = hover
             s.selected_idle_child = selected_idle
             s.selected_hover_child = selected_hover
-            s.insensitive_child = insensitive 
+            s.insensitive_child = insensitive
             s.focus_mask = True
-            
+
 
     @theme
     def image_labels(d):
@@ -720,7 +720,7 @@ init -1110 python hide:
             s.foreground = None
             s.child = k
 
-            
+
     config.image_buttons = { }
     config.image_labels = { }
 
@@ -1038,7 +1038,7 @@ init -1110 python hide:
         style.bar.left_bar = himg("bar_full", widget, 42, 27, 13, 0)
         style.bar.right_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.bar.thumb = himg("bar_thumb", widget, 20, 25, None, None)
-        
+
         style.vbar.xmaximum = 27
         style.vbar.top_gutter = 11
         style.vbar.bottom_gutter = 14
@@ -1047,8 +1047,8 @@ init -1110 python hide:
         style.vbar.right_bar = himg("v_bar_full", widget, 27, 42, 0, 15)
         style.vbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vbar.thumb = himg("v_bar_thumb", widget, 25, 20, None, None)
-        
-        
+
+
         # Sliders
         style.slider.ymaximum = 27
         style.slider.left_gutter = 13
@@ -1058,10 +1058,10 @@ init -1110 python hide:
         style.slider.left_bar = himg("slider_full", widget, 42, 27, 13, 0)
         style.slider.right_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.slider.thumb = himg("vthumb", widget, 29, 30, None, None)
-        
+
         style.slider.hover_left_bar = himg("slider_full", widget_hover, 42, 27, 13, 0)
         style.slider.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
-        
+
         style.vslider.xmaximum = 27
         style.vslider.top_gutter = 14
         style.vslider.bottom_gutter = 10
@@ -1070,7 +1070,7 @@ init -1110 python hide:
         style.vslider.right_bar = himg("vslider_full", widget, 27, 42, 0, 13)
         style.vslider.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vslider.thumb = himg("vthumb", widget, 29, 30, None, None)
-        
+
         style.vslider.hover_right_bar = himg("vslider_full", widget_hover, 27, 42, 0, 13)
         style.vslider.hover_thumb = himg("vthumb", widget_hover, 29, 30, None, None)
 
@@ -1079,26 +1079,26 @@ init -1110 python hide:
         style.scrollbar.right_gutter = 30
         style.scrollbar.thumb_offset = 32.5
         style.scrollbar.ymaximum = 27
-        
+
         style.scrollbar.left_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.scrollbar.right_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.scrollbar.thumb = himg("scroller", widget, 65, 29, None, None)
-        
+
         style.scrollbar.hover_left_bar = Frame("_theme_awt/slider_empty_all.png", 13, 0, tile=True)
         style.scrollbar.hover_thumb = himg("scroller", widget_hover, 65, 29, None, None)
-        
+
         style.vscrollbar.top_gutter = 30
         style.vscrollbar.bottom_gutter = 29
         style.vscrollbar.thumb_offset = 32.5
         style.vscrollbar.xmaximum = 27
-        
+
         style.vscrollbar.left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vscrollbar.right_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vscrollbar.thumb = himg("vscroller", widget, 28, 65, None, None)
-        
+
         style.vscrollbar.hover_left_bar = Frame("_theme_awt/vslider_empty_all.png", 0, 13, tile=True)
         style.vscrollbar.hover_thumb = himg("vscroller", widget_hover, 28, 65, None, None)
-        
+
     @theme
     def a_white_tulip(
             widget = "#c1c6d3",
@@ -1110,7 +1110,7 @@ init -1110 python hide:
             label = "#6b6b6b",
             frame = "#9391c9",
             text_size=None,
-            small_text_size=None,   
+            small_text_size=None,
             window = None,
             button_menu = None,
             mm_root = "#ffffff",
@@ -1225,7 +1225,3 @@ init 1400 python:
     if not "compat" in _layout.provided:
         theme.image_buttons(config.image_buttons)
         theme.image_labels(config.image_labels)
-        
-    
-    
-        

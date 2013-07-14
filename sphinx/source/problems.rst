@@ -13,6 +13,3 @@ this is to download Ren'Py 6.15.4 or later, and use it to run the game::
 
 
   /path/to/renpy-6.15.4/renpy.sh /path/to/game-with-problems
-
-
-

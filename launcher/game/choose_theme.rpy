@@ -11,64 +11,64 @@ init python:
         """
         Gets a list of all of the theme names we know about.
         """
-        
+
         names = list(theme_data.THEME.keys())
         names.sort(key=lambda a : a.lower())
-        
+
         return names
-    
+
     def scheme_names(theme):
         """
         Gets a list of the color scheme names corresponding to the given
         theme.
         """
-        
+
         names = list(theme_data.THEME[theme].keys())
         names.sort(key=lambda a : a.lower())
-        
+
         return names
 
     def theme_yinitial():
         names = theme_names()
-        
+
         if len(names) < 2:
             return 0
-            
+
         return 1.0 * names.index(current_theme) / (len(names) - 1)
 
     def scheme_yinitial():
         names = scheme_names(current_theme)
-        
+
         if len(names) < 2:
             return 0
-            
+
         return 1.0 * names.index(current_scheme) / (len(names) - 1)
 
     def pick_theme(theme, scheme):
         """
-        Returns a theme and scheme that are similar to `theme` and `scheme`. 
-        
+        Returns a theme and scheme that are similar to `theme` and `scheme`.
+
         If the theme is known, picks it, otherwise picks a random theme. If
-        the scheme is known for that theme, picks it, otherwise picks a 
+        the scheme is known for that theme, picks it, otherwise picks a
         random scheme that is known for the current theme.
         """
-        
+
         if theme not in theme_data.THEME:
             theme = random.choice(list(theme_data.THEME))
-        
+
         schemes = theme_data.THEME[theme]
-        
+
         if scheme not in schemes:
             if theme in schemes:
                 scheme = theme
             else:
                 scheme = random.choice(list(schemes))
-            
+
         return theme, scheme
-        
+
     def implement_theme(theme, scheme):
         global showing_theme, showing_scheme
-        
+
         if theme == showing_theme and scheme == showing_scheme:
             return
 
@@ -80,52 +80,52 @@ init python:
         showing_scheme = scheme
 
         renpy.restart_interaction()
-    
+
     showing_theme = None
     showing_scheme = None
 
     class SetTheme(Action):
         def __init__(self, theme):
             self.theme = theme
-            
+
         def __call__(self):
             global current_theme
-            global current_scheme 
-            
+            global current_scheme
+
             current_theme, current_scheme = pick_theme(self.theme, current_scheme)
-            
+
             implement_theme(current_theme, current_scheme)
             renpy.restart_interaction()
 
         def get_selected(self):
             return current_theme == self.theme
-            
+
     class SetScheme(Action):
         def __init__(self, scheme):
             self.scheme = scheme
-            
+
         def __call__(self):
             global current_theme
-            global current_scheme 
-            
+            global current_scheme
+
             current_theme, current_scheme = pick_theme(current_theme, self.scheme)
-            
+
             implement_theme(current_theme, current_scheme)
             renpy.restart_interaction()
-            
+
         def get_selected(self):
             return current_scheme == self.scheme
-            
+
     class PreviewTheme(Action):
-        
+
         def __init__(self, theme, scheme):
             self.theme = theme
             self.scheme = scheme
-            
+
         def __call__(self):
             theme, scheme = pick_theme(self.theme, self.scheme)
             implement_theme(theme, scheme)
-            
+
         def unhovered(self):
             if (showing_theme == self.theme and showing_scheme == self.scheme):
                 implement_theme(current_theme, current_scheme)
@@ -135,11 +135,11 @@ init python:
 
     ##########################################################################
     # Code to update options.rpy
-    
+
     def list_logical_lines(filename):
         """
          This reads in filename, and turns it into a list of logical
-         lines. 
+         lines.
         """
 
         f = codecs.open(filename, "rb", "utf-8")
@@ -227,7 +227,7 @@ init python:
                         continue
 
                     continue
-                    
+
                 line += c
                 pos += 1
 
@@ -239,7 +239,7 @@ init python:
 
     def switch_theme():
         """
-        Switches the theme of the current project to the current theme 
+        Switches the theme of the current project to the current theme
         and color scheme. (As set in current_theme and current_scheme.)
         """
 
@@ -258,7 +258,7 @@ init python:
                 if (not changed) and m and (m.group(1) in theme_data.THEME_FUNCTIONS):
                     l = "    " + theme_code
                     changed = True
-                        
+
                 out.write(l + "\n")
 
         if changed:
@@ -272,7 +272,7 @@ init python:
         else:
             os.unlink(filename + ".new")
             interface.error(_("Could not change the theme. Perhaps options.rpy was changed too much."))
-            
+
 
         # Now give the theme's screen-ops function a chance to make any
         # necessary changes to the screens.rpy file
@@ -289,13 +289,13 @@ init python:
                     for l in lines:
                         out.write(l + "\n")
                     changed = True
-            
+
             if changed:
                 try:
                     os.unlink(filename + ".bak")
                 except:
                     pass
-                    
+
                 os.rename(filename, filename + ".bak")
                 os.rename(filename + ".new", filename)
 
@@ -313,7 +313,7 @@ init 100 python:
 
 
 screen theme_demo:
-    
+
     window:
         style "gm_root"
         xpadding 5
@@ -324,16 +324,16 @@ screen theme_demo:
             style_group "prefs"
 
             vbox:
-                    
+
                 frame:
                     style_group "pref"
                     has vbox
-          
+
                     label _("Display")
                     textbutton _("Window") action SelectedIf(True)
                     textbutton _("Fullscreen") action ui.returns(None)
                     textbutton _("Planetarium") action None
-                    
+
 
                 frame:
                     style_group "pref"
@@ -368,16 +368,16 @@ screen choose_theme:
     frame:
         style_group "l"
         style "l_root"
-        
+
         window:
-    
+
             has vbox
 
             label _("Choose Theme")
 
             hbox:
                 yfill True
-                
+
                 # Theme selector.
                 frame:
                     style "l_indent"
@@ -385,47 +385,47 @@ screen choose_theme:
                     xmaximum 225
 
                     has vbox
-                    
+
                     label _("Theme") style "l_label_small"
 
                     viewport:
                         scrollbars "vertical"
                         yinitial theme_yinitial()
                         mousewheel True
-                        
+
                         has vbox
-            
+
                         for i in theme_names():
                             textbutton "[i]":
                                 action SetTheme(i)
                                 hovered PreviewTheme(i, current_scheme)
-                                style "l_list2" 
+                                style "l_list2"
 
-                
+
                 # Color scheme selector.
                 frame:
                     style "l_indent"
                     bottom_margin HALF_SPACER_HEIGHT
                     xmaximum 225
-                    
+
                     has vbox
-                    
+
                     label _("Color Scheme") style "l_label_small"
-                    
+
                     viewport:
                         scrollbars "vertical"
                         mousewheel True
                         yinitial scheme_yinitial()
-                        
+
                         has vbox
-            
+
                         for i in scheme_names(current_theme):
-                            textbutton "[i]":  
+                            textbutton "[i]":
                                 action SetScheme(i)
                                 hovered PreviewTheme(current_theme, i)
-                                style "l_list2" 
+                                style "l_list2"
 
-                
+
                 # Preview
                 frame:
                     style "l_default"
@@ -437,19 +437,19 @@ screen choose_theme:
                     yfill True
                     xmargin 20
                     bottom_margin 6
-                
+
                     use theme_demo
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Return(True) style "l_right_button"
-                        
+
 
 label choose_theme_callable:
 
     python:
         current_theme, current_scheme = pick_theme(None, None)
-        implement_theme(current_theme, current_scheme) 
-    
+        implement_theme(current_theme, current_scheme)
+
     call screen choose_theme
 
     python hide:
@@ -457,9 +457,7 @@ label choose_theme_callable:
             switch_theme()
 
     return
-    
+
 label choose_theme:
     call choose_theme_callable
     jump front_page
-
-    

@@ -6,18 +6,18 @@ init -1500 python:
     class __DisplayAction(Action):
         def __init__(self, factor):
             self.width = int(factor * config.screen_width)
-            self.height = int(factor * config.screen_height)            
+            self.height = int(factor * config.screen_height)
 
         def __call__(self):
             renpy.set_physical_size((self.width, self.height))
             renpy.restart_interaction()
-            
+
         def get_sensitive(self):
             if self.width == config.screen_width and self.height == config.screen_height:
                 return True
-                
+
             return renpy.get_renderer_info()["resizable"]
-            
+
         def get_selected(self):
             if _preferences.fullscreen:
                 return False
@@ -31,7 +31,7 @@ init -1500 python:
     def Preference(name, value=None):
         """
          :doc: preference_action
-         
+
          This constructs the approprate action or value from a preference.
          The preference name should be the name given in the standard
          menus, while the value should be either the name of a choice,
@@ -86,14 +86,14 @@ init -1500 python:
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("volice volume", 0.5) - Set the voice volume.
-         
+
          Values that can be used with bars are:
 
          * Preference("text speed")
          * Preference("auto-forward time")
          * Preference("music volume")
          * Preference("sound volume")
-         * Preference("voice volume")                  
+         * Preference("voice volume")
          """
 
         name = name.lower()
@@ -123,7 +123,7 @@ init -1500 python:
                 return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
 
         elif name == "text speed":
-            
+
             if value is None:
                 return FieldValue(_preferences, "text_cps", range=200, max_is_zero=True, style="slider")
             elif isinstance(value, int):
@@ -137,7 +137,7 @@ init -1500 python:
                 return None
 
         elif name == "skip":
-            
+
             if value == "all messages" or value == "all":
                 return SetField(_preferences, "skip_unseen", True)
             elif value == "seen messages" or value == "seen":
@@ -146,7 +146,7 @@ init -1500 python:
                 return ToggleField(_preferences, "skip_unseen")
 
         elif name == "skip":
-            
+
             if value == "all messages" or value == "all":
                 return SetField(_preferences, "skip_unseen", True)
             elif value == "seen messages" or value == "seen":
@@ -159,23 +159,23 @@ init -1500 python:
             return Skip()
 
         elif name == "after choices":
-            
+
             if value == "keep skipping" or value == "keep" or value == "skip":
                 return SetField(_preferences, "skip_after_choices", True)
             elif value == "stop skipping" or value == "stop":
                 return SetField(_preferences, "skip_after_choices", False)
             elif value == "toggle":
                 return ToggleField(_preferences, "skip_after_choices")
-            
+
         elif name == "auto-forward time":
 
             if value is None:
-                
+
                 if config.default_afm_enable is None:
                     return FieldValue(_preferences, "afm_time", range=30.0, max_is_zero=True, style="slider")
                 else:
                     return FieldValue(_preferences, "afm_time", range=29.9, style="slider", offset=.1)
-                    
+
             elif isinstance(value, int):
                 return SetField(_preferences, "afm_time", value)
 
@@ -187,7 +187,7 @@ init -1500 python:
                 return SetField(_preferences, "afm_enable", False)
             elif value == "toggle":
                 return ToggleField(_preferences, "afm_enable")
-            
+
         elif name == "music volume":
 
             if value is None:

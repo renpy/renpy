@@ -26,69 +26,69 @@ changes renders its child with an alpha that is determined by the
 distance of the mouse pointer from the center of the child. ::
 
     init python:
-    
+
         import math
-    
+
         class Appearing(renpy.Displayable):
-            
+
             def __init__(self, child, opaque_distance, transparent_distance, **kwargs):
-            
-                # Pass additional properties on to the renpy.Displayable 
+
+                # Pass additional properties on to the renpy.Displayable
                 # constructor.
                 super(Appearing, self).__init__(**kwargs)
-            
+
                 # The child.
                 self.child = renpy.displayable(child)
-                
-                # The distance at which the child will become fully opaque, and 
+
+                # The distance at which the child will become fully opaque, and
                 # where it will become fully transparent. The former must be less
                 # than the latter.
                 self.opaque_distance = opaque_distance
                 self.transparent_distance = transparent_distance
-                
+
                 # The alpha channel of the child.
                 self.alpha = 0.0
-                
+
                 # The width and height of us, and our child.
                 self.width = 0
                 self.height = 0
-                
+
             def render(self, width, height, st, at):
-            
+
                 # Create a transform, that can adjust the alpha channel of the
                 # child.
                 t = Transform(child=self.child, alpha=self.alpha)
-                
+
                 # Create a render from the child.
                 child_render = renpy.render(t, width, height, st, at)
-                
+
                 # Get the size of the child.
                 self.width, self.height = child_render.get_size()
-                
+
                 # Create the render we will return.
                 render = renpy.Render(self.width, self.height)
-                
+
                 # Blit (draw) the child's render to our render.
                 render.blit(child_render, (0, 0))
-                
+
                 # Return the render.
                 return render
-                
+
             def event(self, ev, x, y, st):
-            
-                # Compute the distance between the center of this displayable and 
-                # the mouse pointer. The mouse pointer is supplied in x and y, 
+
+                # Compute the distance between the center of this displayable and
+                # the mouse pointer. The mouse pointer is supplied in x and y,
                 # relative to the upper-left corner of the displayable.
                 distance = math.hypot(x - (self.width / 2), y - (self.height / 2))
-                
-                # Base on the distance, figure out an alpha.        
+
+                # Base on the distance, figure out an alpha.
                 if distance <= self.opaque_distance:
                     alpha = 1.0
                 elif distance >= self.transparent_distance:
                     alpha = 0.0
                 else:
                     alpha = 1.0 - 1.0 * (distance - self.opaque_distance) / (self.transparent_distance - self.opaque_distance)
-                    
+
                 # If the alpha has changed, trigger a redraw event.
                 if alpha != self.alpha:
                     self.alpha = alpha
@@ -102,17 +102,17 @@ distance of the mouse pointer from the center of the child. ::
 
 To use the creator-defined displayable, we can create an instance of it,
 and add that instance to the screen. ::
-                    
+
     screen alpha_magic:
-        add Appearing("logo.png", 100, 200): 
-            xalign 0.5 
+        add Appearing("logo.png", 100, 200):
+            xalign 0.5
             yalign 0.5
-    
-    label start:    
+
+    label start:
         show screen alpha_magic
-    
+
         "Can you find the logo?"
-        
+
         return
 
 
@@ -167,7 +167,7 @@ class, we'll present them with the `self` parameter.
         The render method is called when the displayable is first
         shown. It can be called again if :func:`renpy.redraw`
         is called on this object.
-            
+
     .. method:: event(self, ev, x, y, st)
 
         The event method is called to pass a pygame event to
@@ -186,7 +186,7 @@ class, we'll present them with the `self` parameter.
             upper-left corner of the displayable. These should
             be used in preference to position information
             found in the pygame event objects.
-            
+
         `st`
             A float, the shown timebase, in seconds.
 
@@ -244,12 +244,12 @@ the implicit `self` parameter.
        corresponding to the
        `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_
        functions, with the first parameter (the surface) omitted.
-       
+
     .. method:: get_size()
 
         Returns a (width, height) tuple giving the size of
         this render.
-            
+
     .. method:: subsurface(rect)
 
         Returns a render consisting of a rectangle cut out of this
@@ -258,7 +258,7 @@ the implicit `self` parameter.
         `rect`
             A (x, y, width, height) tuple.
 
-            
+
 Utility Functions
 =================
 

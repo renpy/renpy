@@ -4,7 +4,7 @@
 init python:
 
     layout.provides('load_save')
-    
+
     # Define styles
     style.file_picker_entry = Style(style.large_button, help="used to select a file to load or save")
     style.file_picker_entry_box = Style(style.hbox, help="the box inside a file picker entry")
@@ -31,9 +31,9 @@ init python:
     style.file_picker_frame.xmargin = 6
     style.file_picker_frame.ymargin = 6
 
-    style.file_picker_frame_box.box_spacing = 4            
+    style.file_picker_frame_box.box_spacing = 4
     style.file_picker_entry_box.box_spacing = 4
-    
+
     # The number of columns per page of files.
     config.file_page_cols = 2
 
@@ -55,7 +55,7 @@ init python:
 
     # The default thumbnail to use when no file exists.
     config.load_save_empty_thumbnail = None
-    
+
     # How we format time in a file entry.
     config.time_format = "%b %d, %H:%M"
 
@@ -69,11 +69,11 @@ init python:
     # library, but shouldn't be saved out as part of the savegame.
     __scratch = object()
     __scratch.file_picker_page = None
-    
+
     def _render_savefile(index, name, extra_info, screenshot, mtime, newest, clicked):
 
         import time
-        
+
         ui.button(style=style.file_picker_entry[index],
                   clicked=clicked,
                   role=("selected_" if newest else ""),
@@ -89,7 +89,7 @@ init python:
             ui.text(name + ". ", style=style.file_picker_new[index])
         else:
             ui.text(name + ". ", style=style.file_picker_old[index])
-            
+
         s = config.file_entry_format % dict(
             time=time.strftime(config.time_format,
                                time.localtime(mtime)),
@@ -98,13 +98,13 @@ init python:
         ui.text(s, style=style.file_picker_extra_info[index])
 
         ui.close()
-        
+
     def _render_new_slot(index, name, clicked):
 
         ui.button(style=style.file_picker_entry[index],
                   clicked=clicked)
 
-        
+
         ui.hbox(style=style.file_picker_entry_box[index])
 
         if not config.disable_thumbnails:
@@ -114,7 +114,7 @@ init python:
             else:
                 ui.null(width=config.thumbnail_width,
                         height=config.thumbnail_height)
-        
+
         ui.text(name + ". ", style=style.file_picker_old[index])
 
         ui.text(_(u"Empty Slot."), style=style.file_picker_empty_slot[index])
@@ -169,7 +169,7 @@ init python:
 
         return rv
 
-    # Given a filename, returns the page that filename is on. 
+    # Given a filename, returns the page that filename is on.
     def _file_picker_file_page(filename):
 
         per_page = config.file_page_cols * config.file_page_rows
@@ -192,18 +192,18 @@ init python:
             return base + int((int(filename) - 1) / per_page)
         except:
             return base
-        
+
     # Processes a screenshot.
     def _file_picker_process_screenshot(s):
         return s
-    
+
     # This displays a file picker that can chose a save file from
     # the list of save files.
     def _file_picker(screen, save):
 
         # Should we update the list of saved games?
         update = True
-        
+
         while True:
 
 
@@ -239,7 +239,7 @@ init python:
                     else:
                         fpp = _file_picker_file_page("1")
 
-            
+
             if fpp < 0:
                 fpp = 0
 
@@ -265,7 +265,7 @@ init python:
 
                 # Previous
                 tb(fpp > 0, u'Previous', ui.returns(("fppdelta", -1)), selected=False)
-    
+
                 # Quick Access
                 for i, name in enumerate(_file_picker_pages()):
                     tb(True, name, ui.returns(("fppset", i)), fpp == i)
@@ -278,7 +278,7 @@ init python:
             # This draws a single slot.
             def entry(name, filename, offset, ro):
                 clicked = ui.returns(("return", filename))
-                
+
                 if filename not in save_info:
                     if (not save) or ro:
                         clicked = None
@@ -315,7 +315,7 @@ init python:
                 if layout.yesno_prompt(screen, layout.DELETE_SAVE):
                     renpy.unlink_save(value)
                     update = True
-                    
+
             if type == "return":
                 return value
 
@@ -345,7 +345,7 @@ label load_screen:
 
         while True:
             fn = _file_picker("load", False)
-            
+
             if _load_prompt:
                 if not layout.yesno_prompt("load", layout.LOADING):
                     continue

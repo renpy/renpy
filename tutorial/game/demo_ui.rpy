@@ -2,16 +2,16 @@
 # functions.
 
 screen viewport_screen:
-    
+
     viewport:
         scrollbars "both"
         xmaximum 400
         ymaximum 400
-        
+
         side_xpos 100
         side_ypos 100
         side_spacing 5
-        
+
         draggable True
         mousewheel True
 
@@ -22,11 +22,11 @@ screen viewport_screen:
         xanchor 0.5
         ypos 550
         yanchor 0.5
-        
+
         action Return(True)
 
 screen edgescroll_screen:
-    
+
     viewport:
         edgescroll (150, 500)
         add "concert2.jpg"
@@ -49,7 +49,7 @@ init:
     # povname.
     $ pov = DynamicCharacter("povname", color=(192, 64, 64, 255))
 
-    
+
     # This is code for a day planner, or at least sort of. To be
     # honest, the code in the dse game is a bit better. Take this
     # as more of an example of what Ren'Py can do.
@@ -77,7 +77,7 @@ init:
             editing = None
 
             def button(text, selected, returns, **properties):
-                    
+
                 if selected:
                     role='selected_'
                 else:
@@ -111,7 +111,7 @@ init:
                     ui.close()
 
                 ui.close()
-                
+
                 # Period Selection Window.
                 ui.frame(xpos=0,
                          ypos=200,
@@ -120,11 +120,11 @@ init:
                          xfill=False,
                          xminimum=300
                          )
-                
+
                 ui.vbox(xpos=0.5, xanchor='center')
                 ui.text(day, xpos=0.5, xanchor='center', textalign=0.5)
                 ui.null(height=20)
-                
+
                 for i in periods:
                     renpy.store.period_tmp = i
                     renpy.store.plan_tmp = plan[i]
@@ -146,9 +146,9 @@ init:
                              yanchor='top',
                              xfill=False,
                              xminimum=500,
-                             xmargin = 10                             
+                             xmargin = 10
                              )
-                
+
                     ui.vbox()
                     renpy.store.periods_small_selected = periods_small[editing]
                     ui.text(_("What will you do in the [periods_small_selected!t]?"))
@@ -213,7 +213,7 @@ label fight(ename, elevel, ehp, pname="Zanthier", plevel=4, php=40):
     $ stats_frame(ename, elevel, ehp, ehp, xalign=.98, yalign=.05)
 
     return
-    
+
 label demo_ui:
 
     e "Ren'Py gives a number of ways of interacting with the user."
@@ -244,14 +244,14 @@ label demo_ui:
 
         pov "My name is [povname!t]."
 
-    
+
     e "Imagemaps let the user click on an image to make a choice. For example, the following screen lets you pick what to do after school:"
 
     # Show an imagemap.
     window hide None
     call screen demo_imagemap
     window show None
-    
+
     # Call screen assignes the chosen result from the imagemap to the
     # _return variable. We can use an if statement to vary what
     # happens based on the user's choice.
@@ -259,19 +259,19 @@ label demo_ui:
     if _return == "swimming":
 
         e "You chose swimming."
-        
+
         e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
 
     elif _return == "science":
 
         e "You chose science."
-        
+
         e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
-        
+
     elif _return == "art":
 
         e "You chose art."
-        
+
         e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
 
     elif _return == "go home":
@@ -285,7 +285,7 @@ label demo_ui:
     e "This viewport can be adjusted by dragging, by the mouse wheel, and by the scrollbars."
 
     window hide
-    
+
     show eileen happy at right
     with move
 
@@ -293,8 +293,8 @@ label demo_ui:
 
     show screen edgescroll_screen
     with dissolve
-    
-    
+
+
     e "Viewports also support edge scrolling, which is automatic scrolling when the mouse reaches their edge."
 
     hide screen edgescroll_screen
@@ -302,7 +302,7 @@ label demo_ui:
     with dissolve
 
     window show
-    
+
     e "While these constructs are probably enough for most visual novels, dating simulations may be more complicated."
 
     e "The ui functions allow you to create quite complicated interfaces."
@@ -311,12 +311,12 @@ label demo_ui:
 
     hide eileen
     with dissolve
-    
+
     $ day_planner()
 
     show eileen happy
     with dissolve
-    
+
     e "For a better implementation of this, take a look at the dating sim engine (DSE) that ships with Ren'Py."
 
     call fight("Eileen", 10, 99, pname=povname) from _call_fight_1
@@ -324,7 +324,7 @@ label demo_ui:
     e "The ui functions can be also be used to show the sorts of stats you'd need if your game involves combat."
 
     call fight("Eileen", 10, 99, pname=povname) from _call_fight_2
-    
+
     e "Hopefully, the ui functions will let you write whatever visual novel or dating sim you want."
 
     return

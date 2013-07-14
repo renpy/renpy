@@ -32,4 +32,4 @@ displayed to the user. ::
              povname = "Pat Smith"
 
     pov "My name is [povname]!"
-    
+

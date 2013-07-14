@@ -17,7 +17,7 @@ class RenPyLexer(PythonLexer):
 
             if value.startswith("###"):
                 continue
-            
+
             if token == Token.Error and value == "$":
                 yield index, Token.Keyword, value
 
@@ -53,7 +53,7 @@ def parse_style_node(env, sig, signode):
     name = m.group(1)
     desc = m.group(2)
     desc = " - " + desc
-    
+
     signode += sphinx.addnodes.desc_name(name, name)
     signode += docutils.nodes.Text(desc, desc)
 
@@ -64,7 +64,7 @@ def parse_style_node(env, sig, signode):
         ref = ref + "_alt"
 
     style_seen_ids.add(ref)
-        
+
     return ref
 
 
@@ -72,21 +72,21 @@ class PythonIndex(sphinx.domains.Index):
     name = "function-class-index"
     localname = "Function and Class Index"
     shortname = ""
-    
+
     def generate(self, docnames=None):
 
         if not isinstance(self.domain, sphinx.domains.python.PythonDomain):
             return [ ], False
-        
+
         entries = [ ]
 
         for name, (docname, kind) in self.domain.data['objects'].iteritems():
-            
+
             if kind == "function" or kind == "class":
                 entries.append((name, 0, docname, name, None, None, ''))
-        
+
         content = { }
-        
+
         for name, subtype, docname, anchor, extra, qualifier, descr in entries:
             c = name[0].upper()
 
@@ -94,12 +94,12 @@ class PythonIndex(sphinx.domains.Index):
                 content[c] = [ ]
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
-         
+
         for i in content.itervalues():
             i.sort()
 
         # self.domain.data['labels']["py-function-class-index"] = ("py-function-class-index", '', self.localname)
-        
+
         return sorted(content.items()), False
 
 
@@ -120,17 +120,17 @@ class CustomIndex(sphinx.domains.Index):
         entries = [ ]
 
         for (kind, name), (docname, anchor) in self.domain.data["objects"].iteritems():
-            
+
             if self.kind != kind:
                 continue
-            
+
             if docnames is not None and docname not in docnames:
                 continue
-            
+
             entries.append((name, 0, docname, anchor, None, None, ''))
-            
+
         content = { }
-            
+
         for name, subtype, docname, anchor, extra, qualifier, descr in entries:
             c = name[0].upper()
 
@@ -138,21 +138,21 @@ class CustomIndex(sphinx.domains.Index):
                 content[c] = [ ]
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
-         
+
         for i in content.itervalues():
             i.sort()
 
         self.domain.data['labels'][self.kind + "-index"] = ("std-" + self.kind + "-index", '', self.localname)
-        
+
         return sorted(content.items()), False
 
 def add_index(app, domain, object_type, title):
-    
+
     class MyIndex(CustomIndex):
         name = object_type + "-index"
         localname = title
         kind = object_type
-        
+
     app.domains[domain].indices.append(MyIndex)
 
 def setup(app):
@@ -162,10 +162,10 @@ def setup(app):
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")
     app.add_object_type("text-tag", "tt", "single: %s (text tag)")
-    
+
     add_index(app, "std", "style-property", "Style Property Index")
     add_index(app, "std", "transform-property", "Transform Property Index")
     add_index(app, "std", "var", "Variable Index")
-    
+
     app.domains['py'].indices.append(PythonIndex)
     # app.domains['std'].data['labels']['py-function-class-index'] = ('py-function-class-index', '', 'Function and Class Index')

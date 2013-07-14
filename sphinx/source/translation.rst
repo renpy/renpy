@@ -77,11 +77,11 @@ take the following game::
 
     label start:
         e "Thank you for taking a look at the Ren'Py translation framework."
-    
+
         show eileen happy
-    
+
         e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
-    
+
         e "Pretty much everything your game needs!"
 
 This is broken up into multiple translation units. Each unit has an
@@ -118,19 +118,19 @@ translating the code above, Ren'Py will generate::
 
         # e "Thank you for taking a look at the Ren'Py translation framework."
         e ""
-        
+
     # game/script.rpy:99
     translate piglatin start_bd1ad9e1:
 
         # e "We aim to provide a comprehensive framework for translating dialogue, strings, images, and styles."
         e ""
-        
+
     # game/script.rpy:101
     translate piglatin start_9e949aac:
 
         # e "Pretty much everything your game needs!"
         e ""
-        
+
 This can be translated by editing the generated code. A finished
 translation might look like::
 
@@ -177,7 +177,7 @@ Or a statement can be removed, by replacing it with the pass statement::
 
          # e "Pretty much everything your game needs!"
          pass
-        
+
 It's also possible to run non-dialogue statements, such as
 conditionals or python code. For example, we can translate::
 
@@ -210,7 +210,7 @@ translation code.::
 
     label ignored_by_translation hide:
         "..."
-        
+
 While translation blocks may include python code, this code should not
 have side effects visible outside of the block. That's because
 changing languages will restart the translation block, causing the
@@ -255,7 +255,7 @@ Ren'Py will generate the following code::
       new ""
 
 Which can then be translated::
-  
+
   translate piglatin strings:
 
       old "Eileen"
@@ -380,7 +380,7 @@ translation:
    to the list of translatable strings. Note that the string may be
    double-translated, if it matches a string translation when it
    is displayed.
-             
+
 There are two language-related variables. One is
 :var:`config.language`, which is used to change the default language
 of the game.
@@ -392,7 +392,7 @@ of the game.
   change the language, call :func:`renpy.change_language`.
 
 
-  
+
 
 Unsanctioned Translations
 =========================
@@ -400,7 +400,7 @@ Unsanctioned Translations
 .. note::
 
     It's best to ask a game's creators for permission before
-    creating an unsanctioned translation. 
+    creating an unsanctioned translation.
 
 Ren'Py includes a small amount of support for creating translations
 without the active assistance of the game's creators. This support

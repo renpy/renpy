@@ -4,7 +4,7 @@
 init -1600 python:
 
     config.keymap = dict(
-        
+
         # Bindings present almost everywhere, unless explicitly
         # disabled.
         rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
@@ -22,20 +22,20 @@ init -1600 python:
         iconify = [ 'meta_m', 'alt_m' ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
-        
+
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
         dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
         # Pause.
         dismiss_hard_pause = [ ],
-        
+
         # Focus.
         focus_left = [ 'K_LEFT', 'joy_left' ],
         focus_right = [ 'K_RIGHT', 'joy_right' ],
         focus_up = [ 'K_UP', 'joy_up' ],
         focus_down = [ 'K_DOWN', 'joy_down' ],
-            
+
         # Button.
         button_ignore = [ 'mousedown_1' ],
         button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
@@ -52,7 +52,7 @@ init -1600 python:
         viewport_down = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        
+
         # These keys control skipping.
         skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
         toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
@@ -72,7 +72,7 @@ init -1600 python:
         # Draggable.
         drag_activate = [ 'mousedown_1' ],
         drag_deactivate = [ 'mouseup_1' ],
-    
+
         # Debug console.
         console = [ 'shift_O' ],
         console_older = [ 'K_UP' ],
@@ -93,7 +93,7 @@ init -1600 python:
 
         if renpy.context()._menu:
             renpy.jump("_noisy_return")
-        else:            
+        else:
             renpy.restart_interaction()
 
     toggle_skipping = _toggle_skipping
@@ -103,9 +103,9 @@ init -1600 python:
             return
 
         _toggle_skipping()
-            
+
     config.help = None
-            
+
     def _help(help=None):
 
         if help is None:
@@ -134,10 +134,10 @@ init -1600 python:
         import os.path
         import os
         import __main__
-        
+
         # Pick the directory to save into.
         dest = config.renpy_base.rstrip("/")
-        
+
         # Guess if we're an OSX App.
         if dest.endswith("/Contents/Resources/autorun"):
             # Go up 4 directories.
@@ -145,7 +145,7 @@ init -1600 python:
             dest = os.path.dirname(dest)
             dest = os.path.dirname(dest)
             dest = os.path.dirname(dest)
-            
+
         # Try to pick a filename.
         i = 1
         while True:
@@ -171,7 +171,7 @@ init -1600 python:
     def _dump_styles():
         if config.developer:
             renpy.style.write_text("styles.txt")
-            
+
 
     def _fast_skip():
         if config.fast_skipping or config.developer:
@@ -192,9 +192,9 @@ init -1600 python:
 
         filename, line = renpy.get_filename_line()
         renpy.launch_editor([ filename ], line)
-        
+
 init -1100 python:
-        
+
     # The default keymap. We might also want to put some of this into
     # the launcher.
     km = renpy.Keymap(
@@ -224,7 +224,7 @@ label _hide_windows:
 
     if renpy.context()._menu:
         return
-    
+
     if _windows_hidden:
         return
 
@@ -235,13 +235,13 @@ label _hide_windows:
         _windows_hidden = False
 
     return
-    
-    
+
+
 label _save_reload_game:
     python hide:
         renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
         renpy.music.stop()
-        
+
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Saving game...",
                 size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
@@ -249,19 +249,19 @@ label _save_reload_game:
         renpy.pause(0)
 
         renpy.save("_reload-1", "reload save game")
-        
+
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Reloading script...",
                 size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
 
         renpy.pause(0)
-        
+
         renpy.utter_restart()
 
 label _load_reload_game:
-    
+
     if not renpy.can_load("_reload-1"):
-        return 
+        return
 
     python hide:
         renpy.rename_save("_reload-1", "_reload-2")
@@ -272,7 +272,7 @@ label _load_reload_game:
 
         ui.pausebehavior(0)
         ui.interact(suppress_underlay=True, suppress_overlay=True)
-        
+
         renpy.load("_reload-2")
 
     return

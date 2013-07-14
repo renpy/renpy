@@ -17,7 +17,7 @@
 #
 # init:
 #     $ narrator = NVLCharacter(None)
-        
+
 ##############################################################################
 # The implementation of NVL mode lives below this line.
 
@@ -66,7 +66,7 @@ init -1500 python:
 
     # A hook that delta wanted, that is called instead of renpy.show_display_say
     config.nvl_show_display_say = renpy.show_display_say
-    
+
     # A list of arguments that have been passed to nvl_record_show.
     nvl_list = None
 
@@ -88,7 +88,7 @@ init -1500 python:
 
         widget_properties = { }
         dialogue = [ ]
-        
+
         for i, entry in enumerate(nvl_list):
             if not entry:
                 continue
@@ -104,40 +104,40 @@ init -1500 python:
                 who_id = "who%d" % i
                 what_id = "what%d" % i
                 window_id = "window%d" % i
-                
+
             widget_properties[who_id] = kwargs["who_args"]
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
 
             dialogue.append((who, what, who_id, what_id, window_id))
-        
+
         return widget_properties, dialogue
-        
+
     def __nvl_show_screen(screen_name, **scope):
         """
          Shows an nvl-mode screen. Returns the "what" widget.
          """
 
-        widget_properties, dialogue = __nvl_screen_dialogue()        
+        widget_properties, dialogue = __nvl_screen_dialogue()
 
-        renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope) 
+        renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope)
         renpy.shown_window()
 
         return renpy.get_widget(screen_name, "what")
-        
+
     def nvl_show_core(who=None, what=None):
 
          # Screen version.
         if renpy.has_screen("nvl"):
             return __nvl_show_screen("nvl", items=[ ])
-        
+
         if renpy.in_rollback():
             nvl_window = __s(style.nvl_window)['rollback']
             nvl_vbox = __s(style.nvl_vbox)['rollback']
         else:
             nvl_window = __s(style.nvl_window)
             nvl_vbox = __s(style.nvl_vbox)
-        
+
         ui.window(style=nvl_window)
         ui.vbox(style=nvl_vbox)
 
@@ -147,18 +147,18 @@ init -1500 python:
             if not i:
                 continue
 
-            who, what, kw = i                
+            who, what, kw = i
             rv = config.nvl_show_display_say(who, what, variant=nvl_variant, **kw)
 
         ui.close()
 
         renpy.shown_window()
-        
+
         return rv
 
     def nvl_window():
         nvl_show_core()
-    
+
     def nvl_show(with_):
         nvl_show_core()
         renpy.with_statement(with_)
@@ -193,39 +193,39 @@ init -1500 python:
                 return False
 
             scry = scry.next()
-        
-            
+
+
     class NVLCharacter(ADVCharacter):
 
-        def __init__(self, 
+        def __init__(self,
                      who=renpy.character.NotSet,
                      kind=None,
                      **properties):
-            
+
             if kind is None:
                 kind = store.nvl
-            
+
             if "clear" in properties:
                 self.clear = properties.pop("clear")
             else:
                 self.clear = kind.clear
 
             ADVCharacter.__init__(
-                self, 
+                self,
                 who,
                 kind=kind,
                 **properties)
 
         def do_add(self, who, what):
-        
+
             if store.nvl_list is None:
                 store.nvl_list = [ ]
-                
+
             kwargs = self.show_args.copy()
             kwargs["what_args"] = self.what_args
             kwargs["who_args"] = self.who_args
             kwargs["window_args"] = self.window_args
-            
+
             store.nvl_list.append((who, what, kwargs))
 
         def do_display(self, who, what, **display_args):
@@ -245,14 +245,14 @@ init -1500 python:
                     checkpoint = False
             else:
                 checkpoint = True
-                
+
             renpy.display_say(
                 who,
                 what,
                 nvl_show_core,
                 checkpoint=checkpoint,
                 **display_args)
-            
+
         def do_done(self, who, what):
             if self.clear:
                 nvl_clear()
@@ -260,7 +260,7 @@ init -1500 python:
         def do_extend(self):
             renpy.mode(self.mode)
             store.nvl_list = store.nvl_list[:-1]
-                
+
     # The default NVLCharacter.
     nvl = NVLCharacter(
         show_say_vbox_properties={ 'box_layout' : 'horizontal' },
@@ -271,31 +271,31 @@ init -1500 python:
         mode='nvl',
         clear=False,
         kind=adv)
-                
+
     def nvl_clear():
         store.nvl_list = [ ]
 
     # Run clear at the start of the game.
     config.start_callbacks.append(nvl_clear)
-    
-    
+
+
     def nvl_menu(items):
 
         renpy.mode('nvl_menu')
-        
+
         if nvl_list is None:
             store.nvl_list = [ ]
 
         screen = None
-        
+
         if renpy.has_screen("nvl_choice"):
             screen = "nvl_choice"
         elif renpy.has_screen("nvl"):
             screen = "nvl"
-            
+
         if screen is not None:
 
-            widget_properties, dialogue = __nvl_screen_dialogue()        
+            widget_properties, dialogue = __nvl_screen_dialogue()
 
             return renpy.display_menu(
                 items,
@@ -307,7 +307,7 @@ init -1500 python:
                 choice_chosen_style=__s(style.nvl_menu_choice_chosen),
                 choice_button_style=__s(style.nvl_menu_choice_button),
                 choice_chosen_button_style=__s(style.nvl_menu_choice_chosen_button),
-                type="nvl",                      
+                type="nvl",
                 )
 
 
@@ -323,7 +323,7 @@ init -1500 python:
             if not i:
                 continue
 
-            who, what, kw = i            
+            who, what, kw = i
             rv = renpy.show_display_say(who, what, **kw)
 
         renpy.display_menu(items, interact=False,
@@ -344,7 +344,7 @@ init -1500 python:
         return rv
 
     NVLSpeaker = NVLCharacter
-    
+
     config.nvl_adv_transition = None
     config.adv_nvl_transition = None
 
@@ -358,14 +358,14 @@ init -1500 python:
             if mode == "nvl" or mode == "nvl_menu":
                 if old == "say" or old == "menu":
                     nvl_show(config.adv_nvl_transition)
-                    
+
         if config.nvl_adv_transition:
             if mode == "say" or mode == "menu":
                 if old == "nvl" or old == "nvl_menu":
                     nvl_hide(config.nvl_adv_transition)
-                    
+
     config.mode_callbacks.append(_nvl_adv_callback)
-    
+
 python early hide:
 
     def parse_nvl_show_hide(l):
@@ -377,7 +377,7 @@ python early hide:
             renpy.error('expected end of line')
 
         return rv
-            
+
     def lint_nvl_show_hide(trans):
         _try_eval(trans, 'transition')
 
@@ -408,12 +408,9 @@ python early hide:
 
     def scry_nvl_clear(parse, scry):
         scry.nvl_clear = True
-        
+
     renpy.statements.register('nvl clear',
                               parse=parse_nvl_clear,
                               execute=execute_nvl_clear,
                               scry=scry_nvl_clear,
                               translatable=True)
-
-
-    

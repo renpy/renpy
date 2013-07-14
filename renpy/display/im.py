@@ -42,7 +42,7 @@ class CacheEntry(object):
         self.what = what
 
         # The pygame surface corresponding to the cached object.
-        self.surf = surf 
+        self.surf = surf
 
         # The size of this image.
         w, h = surf.get_size()
@@ -103,23 +103,23 @@ class Cache(object):
         self.added = set()
 
         # A list of (time, filename, preload) tuples. This is updated when
-        # config.developer is True and an image is loaded. Preload is a 
-        # flag that is true if the image was loaded from the preload 
+        # config.developer is True and an image is loaded. Preload is a
+        # flag that is true if the image was loaded from the preload
         # thread. The log is limited to 100 entries, and the newest entry
         # is first.
-        # 
+        #
         # This is only updated when config.developer is True.
         self.load_log = [ ]
 
-                
+
     def init(self):
         """
         Updates the cache object to make use of settings that might be provided
         by the game-maker.
         """
-        
+
         self.cache_limit = renpy.config.image_cache_size * renpy.config.screen_width * renpy.config.screen_height
-        
+
     def quit(self): #@ReservedAssignment
         if not self.preload_thread.isAlive():
             return
@@ -129,11 +129,11 @@ class Cache(object):
             self.preload_lock.notify()
 
         self.preload_thread.join()
-        
-        
+
+
     # Clears out the cache.
     def clear(self):
-        
+
         self.lock.acquire()
 
         self.preloads = [ ]
@@ -144,9 +144,9 @@ class Cache(object):
         self.total_cache_size = 0
 
         self.added.clear()
-        
+
         self.lock.release()
-    
+
     # Increments time, and clears the list of images to be
     # preloaded.
     def tick(self):
@@ -157,18 +157,18 @@ class Cache(object):
             self.first_preload_in_tick = True
             self.size_of_current_generation = 0
             self.added.clear()
-            
+
         if renpy.config.debug_image_cache:
             renpy.display.ic_log.write("----")
             filename, line = renpy.exports.get_filename_line()
             renpy.display.ic_log.write("%s %d", filename, line)
-            
+
     # The preload thread can deal with this update, so we don't need
-    # to lock things. 
+    # to lock things.
     def end_tick(self):
         self.preloads = [ ]
 
-        
+
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
     # cache to be current, and maintaining the size of the current
@@ -179,7 +179,7 @@ class Cache(object):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
 
         if not image.cache:
-            surf = image.load()                
+            surf = image.load()
             renpy.display.render.mutated_surface(surf)
             return surf
 
@@ -194,36 +194,36 @@ class Cache(object):
                     surf = self.pin_cache[image]
                 else:
                     surf = image.load()
-                    
+
             except:
                 raise
-            
+
             with self.lock:
-            
+
                 ce = CacheEntry(image, surf)
-    
+
                 if image not in self.cache:
                     self.total_cache_size += ce.size
-                
+
                 self.cache[image] = ce
-    
+
                 # Indicate that this surface had changed.
                 renpy.display.render.mutated_surface(ce.surf)
-    
+
                 if renpy.config.debug_image_cache:
                     if predict:
                         renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
                     else:
                         renpy.display.ic_log.write("Total Miss %r", ce.what)
-                        
+
                 renpy.display.draw.load_texture(ce.surf)
 
-                        
+
         # Move it into the current generation. This isn't protected by
         # a lock, so in certain circumstances we could have an
         # inaccurate size - but that will be cured at the end of the
         # current generation.
-        
+
         if ce.time != self.time:
             ce.time = self.time
             self.size_of_current_generation += ce.size
@@ -231,7 +231,7 @@ class Cache(object):
         # Done... return the surface.
         return ce.surf
 
-    
+
     # This kills off a given cache entry.
     def kill(self, ce):
 
@@ -258,9 +258,9 @@ class Cache(object):
 
         # If we're outside the cache limit, we need to go and start
         # killing off some of the entries until we're back inside it.
-        
+
         for ce in sorted(self.cache.itervalues(), key=lambda a : a.time):
-        
+
             if ce.time == self.time:
                 # If we're bigger than the limit, and there's nothing
                 # to remove, we should stop the preloading right away.
@@ -274,14 +274,14 @@ class Cache(object):
                 break
 
         return True
-            
+
 
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, im):
 
         if not isinstance(im, ImageBase):
             return
-            
+
         with self.lock:
 
             if im in self.added:
@@ -297,7 +297,7 @@ class Cache(object):
                 in_cache = False
 
         if not in_cache:
-                
+
             with self.preload_lock:
                 self.preload_lock.notify()
 
@@ -307,7 +307,7 @@ class Cache(object):
 
     def start_prediction(self):
         """
-        Called at the start of prediction, to ensure the thread runs 
+        Called at the start of prediction, to ensure the thread runs
         at least once to clean out the cache.
         """
 
@@ -323,13 +323,13 @@ class Cache(object):
             self.preload_lock.release()
 
             while self.preloads and self.keep_preloading:
-        
+
                 start = time.time()
-                
+
                 # If the size of the current generation is bigger than the
                 # total cache size, stop preloading.
                 with self.lock:
-                    
+
                     # If the cache is overfull, clean it out.
                     if not self.cleanout():
 
@@ -338,30 +338,30 @@ class Cache(object):
                                 renpy.display.ic_log.write("Overfull %r", i)
 
                         self.preloads = [ ]
-                        
+
                         break
 
                 try:
-                    image = self.preloads.pop(0)                    
+                    image = self.preloads.pop(0)
 
                     if image not in self.preload_blacklist:
                         try:
                             self.get(image, True)
                         except:
-                            self.preload_blacklist.add(image)                        
+                            self.preload_blacklist.add(image)
                 except:
                     pass
 
             with self.lock:
                 self.cleanout()
-            
+
             # If we have time, preload pinned images.
             if self.keep_preloading and not renpy.game.less_memory:
 
                 workset = set(renpy.store._cache_pin_set)
 
                 # Remove things that are not in the workset from the pin cache,
-                # and remove things that are in the workset from pin cache.  
+                # and remove things that are in the workset from pin cache.
                 for i in self.pin_cache.keys():
 
                     if i in workset:
@@ -370,14 +370,14 @@ class Cache(object):
                         surf = self.pin_cache[i]
 
                         del self.pin_cache[i]
-                        
-                            
-                # For each image in the worklist...                
+
+
+                # For each image in the worklist...
                 for image in workset:
 
                     if image in self.preload_blacklist:
                         continue
-                    
+
                     # If we have normal preloads, break out.
                     if self.preloads:
                         break
@@ -385,22 +385,22 @@ class Cache(object):
                     try:
                         surf = image.load()
                         self.pin_cache[image] = surf
-                        renpy.display.draw.load_texture(surf)                        
+                        renpy.display.draw.load_texture(surf)
                     except:
                         self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
-        
+
         if not renpy.config.developer:
             return
-        
+
         preload = (threading.current_thread() is self.preload_thread)
-    
+
         self.load_log.insert(0, (time.time(), filename, preload))
-    
+
         while len(self.load_log) > 100:
             self.load_log.pop()
-        
+
 
 
 # The cache object.
@@ -426,12 +426,12 @@ class ImageBase(renpy.display.core.Displayable):
     def after_upgrade(self, version):
         if version < 1:
             self.cache = True
-    
+
     def __init__(self, *args, **properties):
 
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
-            
+
         properties.setdefault('style', 'image')
 
         super(ImageBase, self).__init__(**properties)
@@ -445,12 +445,12 @@ class ImageBase(renpy.display.core.Displayable):
 
         if not isinstance(other, ImageBase):
             return False
-        
+
         return self.identity == other.identity
 
     def __repr__(self):
         return "<" + " ".join([repr(i) for i in self.identity]) + ">"
-        
+
     def load(self):
         """
         This function is called by the image cache code to cause this
@@ -459,9 +459,9 @@ class ImageBase(renpy.display.core.Displayable):
         """
 
         raise Exception("load method not implemented.")
-        
+
     def render(self, w, h, st, at):
-        
+
         im = cache.get(self)
         texture = renpy.display.draw.load_texture(im)
 
@@ -496,7 +496,7 @@ class Image(ImageBase):
 
     def get_mtime(self):
         return renpy.loader.get_mtime(self.filename)
-        
+
     def load(self, unscaled=False):
 
         cache.add_load_log(self.filename)
@@ -520,7 +520,7 @@ class Image(ImageBase):
                 return im.load()
 
             raise
-        
+
     def predict_files(self):
 
         if renpy.loader.loadable(self.filename):
@@ -550,19 +550,19 @@ class ZipFileImage(ImageBase):
             zf.close()
             return rv
         except:
-            return renpy.display.pgrender.surface((2, 2), True)        
-    
-        
+            return renpy.display.pgrender.surface((2, 2), True)
+
+
 
     def predict_files(self):
         return [ ]
-        
-    
-        
+
+
+
 class Composite(ImageBase):
     """
     :doc: im_im
-    
+
     This image manipulator composites multiple images together to
     form a single image.
 
@@ -576,7 +576,7 @@ class Composite(ImageBase):
     given by the tuple.
 
     ::
-    
+
         image girl clothed happy = im.Composite(
             (300, 600),
             (0, 0), "girl_body.png",
@@ -599,7 +599,7 @@ class Composite(ImageBase):
 
     def get_mtime(self):
         return min(i.get_mtime() for i in self.images)
-        
+
     def load(self):
 
         if self.size:
@@ -635,7 +635,7 @@ class Scale(ImageBase):
 
     ::
 
-        image logo scale = im.Scale("logo.png", 100, 150) 
+        image logo scale = im.Scale("logo.png", 100, 150)
     """
 
     def __init__(self, im, width, height, bilinear=True, **properties):
@@ -650,11 +650,11 @@ class Scale(ImageBase):
 
     def get_mtime(self):
         return self.image.get_mtime()
-        
+
     def load(self):
 
         child = cache.get(self.image)
-        
+
         if self.bilinear:
             try:
                 renpy.display.render.blit_lock.acquire()
@@ -667,7 +667,7 @@ class Scale(ImageBase):
                 rv = renpy.display.pgrender.transform_scale(child, (self.width, self.height))
             finally:
                 renpy.display.render.blit_lock.release()
-            
+
         return rv
 
     def predict_files(self):
@@ -694,7 +694,7 @@ class FactorScale(ImageBase):
 
         if height is None:
             height = width
-        
+
         im = image(im)
         super(FactorScale, self).__init__(im, width, height, bilinear, **properties)
 
@@ -727,7 +727,7 @@ class FactorScale(ImageBase):
                 rv = renpy.display.pgrender.transform_scale(surf, (width, height))
             finally:
                 renpy.display.render.blit_lock.release()
-            
+
         return rv
 
     def predict_files(self):
@@ -743,7 +743,7 @@ class Flip(ImageBase):
     the directions in which the image is flipped.
 
     ::
-    
+
         image eileen flip = im.Flip("eileen_happy.png", vertical=True)
     """
 
@@ -762,11 +762,11 @@ class Flip(ImageBase):
 
     def get_mtime(self):
         return self.image.get_mtime()
-        
+
     def load(self):
 
         child = cache.get(self.image)
-        
+
         try:
             renpy.display.render.blit_lock.acquire()
             rv = renpy.display.pgrender.flip(child, self.horizontal, self.vertical)
@@ -775,11 +775,11 @@ class Flip(ImageBase):
 
         return rv
 
-    
+
     def predict_files(self):
         return self.image.predict_files()
 
-    
+
 
 class Rotozoom(ImageBase):
     """
@@ -810,7 +810,7 @@ class Rotozoom(ImageBase):
     def load(self):
 
         child = cache.get(self.image)
-        
+
         try:
             renpy.display.render.blit_lock.acquire()
             rv = renpy.display.pgrender.rotozoom(child, self.angle, self.zoom)
@@ -822,18 +822,18 @@ class Rotozoom(ImageBase):
     def predict_files(self):
         return self.image.predict_files()
 
-        
-        
+
+
 class Crop(ImageBase):
     """
-    :doc: im_im 
+    :doc: im_im
     :args: (im, rect)
-    
+
     An image manipulator that crops `rect`, a (x, y, width, height) tuple,
     out of `im`, an image manipulator.
 
     ::
-    
+
         image logo crop = im.Crop("logo.png", (0, 0, 100, 307))
     """
 
@@ -843,7 +843,7 @@ class Crop(ImageBase):
 
         if y is None:
             (x, y, w, h) = x
-        
+
         super(Crop, self).__init__(im, x, y, w, h, **properties)
 
         self.image = im
@@ -881,7 +881,7 @@ def ramp(start, end):
         for i in range(0, 256):
             i = i / 255.0
             chars.append(chr(int( end * i + start * (1.0 - i) ) ) )
-            
+
         rv = "".join(chars)
         ramp_cache[start, end] = rv
 
@@ -903,7 +903,7 @@ class Map(ImageBase):
         im = image(im)
 
         super(Map, self).__init__(im, rmap, gmap, bmap, amap, force_alpha, **properties)
-        
+
         self.image = im
         self.rmap = rmap
         self.gmap = gmap
@@ -947,7 +947,7 @@ class Twocolor(ImageBase):
         im = image(im)
 
         super(Twocolor, self).__init__(im, white, black, force_alpha, **properties)
-        
+
         self.image = im
         self.white = white
         self.black = black
@@ -985,7 +985,7 @@ class Recolor(ImageBase):
         im = image(im)
 
         super(Recolor, self).__init__(im, rmul, gmul, bmul, amul, force_alpha, **properties)
-        
+
         self.image = im
         self.rmul = rmul + 1
         self.gmul = gmul + 1
@@ -1014,7 +1014,7 @@ class Recolor(ImageBase):
 class MatrixColor(ImageBase):
     """
     :doc: im_matrixcolor
-    
+
     An image operator that uses `matrix` to linearly transform the
     image manipulator `im`.
 
@@ -1026,7 +1026,7 @@ class MatrixColor(ImageBase):
     which range from 0.0 to 1.0; the four components of the transformed
     color are R', G', B', and A', with the same range; and the elements
     of the matrix are named::
-    
+
         [ a, b, c, d, e,
           f, g, h, i, j,
           k, l, m, n, o,
@@ -1050,15 +1050,15 @@ class MatrixColor(ImageBase):
         if len(matrix) != 20 and len(matrix) != 25:
             raise Exception("ColorMatrix expects a 20 or 25 element matrix, got %d elements." % len(matrix))
 
-        matrix = tuple(matrix)        
+        matrix = tuple(matrix)
         super(MatrixColor, self).__init__(im, matrix, **properties)
-        
+
         self.image = im
         self.matrix = matrix
 
     def get_mtime(self):
         return self.image.get_mtime()
-        
+
     def load(self):
 
         surf = cache.get(self.image)
@@ -1066,7 +1066,7 @@ class MatrixColor(ImageBase):
         rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
         renpy.display.module.colormatrix(surf, rv, self.matrix)
-        
+
         return rv
 
     def predict_files(self):
@@ -1075,7 +1075,7 @@ class MatrixColor(ImageBase):
 class matrix(tuple):
     """
     :doc: im_matrixcolor
-    
+
     Constructs an im.matrix object from `matrix`. im.matrix objects
     support The operations supported are matrix multiplication, scalar
     multiplication, element-wise addition, and element-wise
@@ -1086,7 +1086,7 @@ class matrix(tuple):
 
     `matrix` is a 20 or 25 element list or tuple. If it is 20 elements
     long, it is padded with (0, 0, 0, 0, 1) to make a 5x5 matrix,
-    suitable for multiplication.    
+    suitable for multiplication.
     """
 
     def __new__(cls, *args):
@@ -1101,7 +1101,7 @@ class matrix(tuple):
             raise Exception("Matrix expects to be given 20 or 25 entries, not %d." % len(args))
 
         return tuple.__new__(cls, args)
-    
+
     def mul(self, a, b):
 
         if not isinstance(a, matrix):
@@ -1109,13 +1109,13 @@ class matrix(tuple):
 
         if not isinstance(b, matrix):
             b = matrix(b)
-            
+
         result = [ 0 ] * 25
         for y in range(0, 5):
             for x in range(0, 5):
                 for i in range(0, 5):
                     result[x + y * 5] += a[x + i * 5] * b[i + y * 5]
-                    
+
         return matrix(result)
 
     def scalar_mul(self, other):
@@ -1123,14 +1123,14 @@ class matrix(tuple):
         return matrix([ i * other for i in self ])
 
     def vector_mul(self, o):
-        
+
         return (o[0]*self[0] + o[1]*self[1] + o[2]*self[2] + o[3]*self[3] + self[4],
                 o[0]*self[5] + o[1]*self[6] + o[2]*self[7] + o[3]*self[8] + self[9],
                 o[0]*self[10] + o[1]*self[11] + o[2]*self[12] + o[3]*self[13] + self[14],
                 o[0]*self[15] + o[1]*self[16] + o[2]*self[17] + o[3]*self[18] + self[19],
                 1)
 
-                 
+
     def __add__(self, other):
         if isinstance(other, (int, float)):
             other = float(other)
@@ -1146,17 +1146,17 @@ class matrix(tuple):
 
     def __rsub__(self, other):
         return self * -1 + other
-        
+
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             return self.scalar_mul(other)
 
         return self.mul(self, other)
-    
+
     def __rmul__(self, other):
         if isinstance(other, (int, float)):
             return self.scalar_mul(other)
-        
+
         return self.mul(other, self)
 
     def __repr__(self):
@@ -1173,11 +1173,11 @@ im.matrix(%f, %f, %f, %f, %f.
         """
         :doc: im_matrixcolor
         :name: im.matrix.identity
-        
+
         Returns an identity matrix, one that does not change color or
         alpha.
-        """        
-        
+        """
+
         return matrix(1, 0, 0, 0, 0,
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
@@ -1187,15 +1187,15 @@ im.matrix(%f, %f, %f, %f, %f.
         """
         :doc: im_matrixcolor
         :name: im.matrix.saturation
-        
+
         Returns an im.matrix that alters the saturation of an
         image. The alpha channel is untouched.
 
-        `level`        
+        `level`
             The amount of saturation in the resulting image. 1.0 is
             the unaltered image, while 0.0 is grayscale.
-        
-        `desat`        
+
+        `desat`
             This is a 3-element tuple that controls how much of the
             red, green, and blue channels will be placed into all
             three channels of a fully desaturated image. The default
@@ -1204,9 +1204,9 @@ im.matrix(%f, %f, %f, %f, %f.
             mostly sensitive to green, more of the green channel is
             kept then the other two channels.
         """
-        
+
         r, g, b = desat
-        
+
         def I(a, b):
             return a + (b - a) * level
 
@@ -1290,12 +1290,12 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that alters the opacity of an image. An
         `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
         """
-        
+
         return matrix(1, 0, 0, 0, 0,
                       0, 1, 0, 0, 0,
                       0, 0, 1, 0, 0,
                       0, 0, 0, o, 0)
-    
+
     @staticmethod
     def contrast(c):
         """
@@ -1307,7 +1307,7 @@ im.matrix(%f, %f, %f, %f, %f.
         values greater than 1.0 increasing contrast.
         """
 
-        return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5)     
+        return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5)
 
     # from http://www.gskinner.com/blog/archives/2005/09/flash_8_source.html
     @staticmethod
@@ -1315,7 +1315,7 @@ im.matrix(%f, %f, %f, %f, %f.
         """
         :doc: im_matrixcolor
         :name: im.matrix.hue
-        
+
         Returns an im.matrix that rotates the hue by `h` degrees, while
         preserving luminosity.
         """
@@ -1339,7 +1339,7 @@ im.matrix(%f, %f, %f, %f, %f.
         """
         :doc: im_matrixcolor
         :name: im.matrix.colorize
-        
+
         Returns an im.matrix that colorizes a black and white image.
         `black_color` and `white_color` are Ren'Py style colors, so
         they may be specfied as strings or tuples of (0-255) color
@@ -1361,14 +1361,14 @@ im.matrix(%f, %f, %f, %f, %f.
         r1 /= 255.0
         g1 /= 255.0
         b1 /= 255.0
-        
+
         return matrix((r1-r0), 0, 0, 0, r0,
                       0, (g1-g0), 0, 0, g0,
                       0, 0, (b1-b0), 0, b0,
                       0, 0, 0, 1, 0)
 
-    
-    
+
+
 def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
     """
     :doc: im_im
@@ -1389,9 +1389,9 @@ def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties
     An image manipulator that creates a sepia-toned version of the image
     manipulator `im`.
     """
-    
+
     return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
-    
+
 
 def Color(im, color):
     """
@@ -1465,7 +1465,7 @@ class Tile(ImageBase):
 class AlphaMask(ImageBase):
     """
     :doc: im_im
-    
+
     An image manipulator that takes two image manipulators, `base` and
     `mask`, as arguments. It replaces the alpha channel of `base` with
     the red channel of `mask`.
@@ -1475,7 +1475,7 @@ class AlphaMask(ImageBase):
     for alpha. In some cases, two jpegs can be smaller than a
     single png file.
     """
-    
+
     def __init__(self, base, mask, **properties):
         super(AlphaMask, self).__init__(base, mask, **properties)
 
@@ -1496,12 +1496,12 @@ class AlphaMask(ImageBase):
         # Used to copy the surface.
         rv = renpy.display.pgrender.copy_surface(basesurf)
         renpy.display.module.alpha_munge(masksurf, rv, identity)
-            
+
         return rv
-            
+
     def predict_files(self):
         return self.base.predict_files() + self.mask.predict_files()
-        
+
 def image(arg, loose=False, **properties):
     """
     :doc: im_image
@@ -1534,7 +1534,7 @@ def image(arg, loose=False, **properties):
     elif isinstance(arg, renpy.display.image.ImageReference):
         arg.find_target()
         return image(arg.target, loose=loose, **properties)
-            
+
     elif isinstance(arg, tuple):
         params = [ ]
 

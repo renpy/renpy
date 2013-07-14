@@ -4,7 +4,7 @@
 init python:
 
     layout.provides('joystick_preferences')
-    
+
     style.js_frame = Style(style.menu_frame, help="frame used for changing a joystick binding")
     style.js_frame_box = Style(style.vbox, help="vbox used for changing a joystick binding")
     style.js_function_prompt = Style(style.prompt, help="the name of the joystick binding to change (window)")
@@ -16,9 +16,9 @@ init python:
     style.js_prefs_box = Style(style.vbox, help="box containing all joystick bindings")
     style.js_prefs_button = Style(style.button, help="button containing a joystick binding")
     style.js_prefs_button_text = Style(style.button_text, help="button containing a joystick binding (text)")
-    
-    style.js_prefs_label = Style(style.label, help="joystick preferences label (window)") 
-    style.js_prefs_label_text = Style(style.label_text, help="joystick preferences label (text)") 
+
+    style.js_prefs_label = Style(style.label, help="joystick preferences label (window)")
+    style.js_prefs_label_text = Style(style.label_text, help="joystick preferences label (text)")
 
     style.js_frame.ypos = .1
     style.js_frame.ypadding = .05
@@ -30,7 +30,7 @@ init python:
 
     style.js_prefs_button.xminimum = 0.5
     style.js_prefs_box.box_first_spacing = 10
-    
+
     config.joystick_keys = [
         (u'Left', 'joy_left'),
         (u'Right', 'joy_right'),
@@ -43,7 +43,7 @@ init python:
         (u'Hide Text', 'joy_hide'),
         (u'Menu', 'joy_menu'),
         ]
-    
+
     def _joystick_select_binding():
 
         for label, key in config.joystick_keys:
@@ -52,7 +52,7 @@ init python:
                 return (label, key)
 
             layout.button(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=my_clicked, index=label)
-    
+
     def _joystick_get_binding():
         ui.saybehavior()
         ui.add(renpy.display.joystick.JoyBehavior())
@@ -64,8 +64,8 @@ init python:
                 del _preferences.joymap[key]
         else:
             _preferences.joymap[key] = binding
-        
-            
+
+
     def _joystick_preferences():
 
             def set_binding(label, key):
@@ -80,21 +80,21 @@ init python:
                 _joystick_get_binding()
                 binding = ui.interact(mouse="gamemenu")
                 _joystick_take_binding(binding, key)
-                
+
                 return True
 
             ui.window(style='js_prefs_frame')
             ui.vbox(style='js_prefs_box')
 
             layout.label("Joystick Configuration", "js_prefs")
-            
+
             for label, key in config.joystick_keys:
 
                 def clicked(label=label, key=key):
                     return renpy.invoke_in_new_context(set_binding, label, key)
 
                 layout.button(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "js_prefs", clicked=clicked, index=label)
-            
+
             ui.close()
 
 label joystick_preferences_screen:
@@ -104,6 +104,3 @@ label joystick_preferences_screen:
             layout.navigation("joystick_preferences")
             _joystick_preferences()
             ui.interact(mouse="gamemenu")
-
-            
-        

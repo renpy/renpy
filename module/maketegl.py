@@ -1805,7 +1805,7 @@ def generate_tegl():
         constant("DOT3_RGB")
         constant("DOT3_RGBA")
         constant("CLAMP_TO_BORDER")
-        
+
     if GL_ARB_MULTITEXTURE:
         constant("TEXTURE0_ARB")
         constant("TEXTURE1_ARB")
@@ -2537,7 +2537,7 @@ class gltype(object):
 
     def __init__(self, s):
         self.type = s
-    
+
     def __getitem__(self, n):
         return gltype(self.type + " *")
 
@@ -2546,7 +2546,7 @@ class gltype(object):
 
     def __str__(self):
         return self.type
-    
+
 GLenum = gltype("GLenum")
 GLboolean = gltype("GLboolean")
 GLbitfield = gltype("GLbitfield")
@@ -2573,7 +2573,7 @@ GLcharARB = gltype("GLchar")
 def declare(*args):
     global is_enum
     is_enum = False
-    
+
     args = list(args)
 
     if isinstance(args[0], gltype):
@@ -2587,7 +2587,7 @@ def declare(*args):
         type,
         name,
         ", ".join(str(i) for i in args))
-        
+
 constants = [ ]
 
 def constant(name):
@@ -2628,24 +2628,24 @@ cdef inline gl_check(where):
         renpy.display.log.write("GL error 0x%X at %s", error, where)
 
 """
-        
+
 def main():
     out = sys.stdout
     out.write(HEADER)
 
     generate_tegl()
     constant("BGRA")
-    
+
     constants.sort()
     constants.append("RENPY_THIRD_TEXTURE")
-    
-    print 
+
+    print
     print "    enum:"
     for i in constants:
         print "        %s" % i
 
     print
     print FOOTER
-        
+
 if __name__ == '__main__':
     main()

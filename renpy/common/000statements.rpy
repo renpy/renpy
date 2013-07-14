@@ -32,11 +32,11 @@
 # l.revert(o) - Given the object returned by l.checkpoint(), returns
 # there.
 #
-# l.subblock_lexer() - Return a lexer that gives a sub-block for the 
+# l.subblock_lexer() - Return a lexer that gives a sub-block for the
 # block associated with the current statement.
 # l.advance() - In a subblock lexer, advance to the next line. This needs
-# to be called before the above functions can be called on the first line. 
-# 
+# to be called before the above functions can be called on the first line.
+#
 #
 #
 # The parse function is expected to return an object, which is passed
@@ -57,7 +57,7 @@
 # The scry function is called with a scry object. It may mutate that
 # object, but it is then expected to return it. See 00nvlmode.rpy for
 # details.
-# 
+#
 # The next function is expected to return a string giving the label of
 # the next statement to execute, or None to indicate that next
 # statement in the block should be executed. The next function is
@@ -68,7 +68,7 @@
 python early hide:
 
     # Music play - The example of a full statement.
-    
+
     def parse_play_music(l):
 
         file = l.simple_expression()
@@ -80,7 +80,7 @@ python early hide:
         channel = None
         loop = None
         if_changed = False
-        
+
         while True:
 
             if l.eol():
@@ -88,18 +88,18 @@ python early hide:
 
             if l.keyword('fadeout'):
                 fadeout = l.simple_expression()
-                if fadeout is None: 
+                if fadeout is None:
                     renpy.error('expected simple expression')
 
                 continue
-            
+
             if l.keyword('fadein'):
                 fadein = l.simple_expression()
-                if fadein is None: 
+                if fadein is None:
                     renpy.error('expected simple expression')
 
                 continue
-            
+
             if l.keyword('channel'):
                 channel = l.simple_expression()
                 if channel is None:
@@ -110,7 +110,7 @@ python early hide:
             if l.keyword('loop'):
                 loop = True
                 continue
-                
+
             if l.keyword('noloop'):
                 loop = False
                 continue
@@ -118,7 +118,7 @@ python early hide:
             if l.keyword('if_changed'):
                 if_changed = True
                 continue
-            
+
             renpy.error('could not parse statement.')
 
         return dict(file=file,
@@ -134,7 +134,7 @@ python early hide:
             channel = eval(p["channel"])
         else:
             channel = "music"
-        
+
         renpy.music.play(eval(p["file"]),
                          fadeout=eval(p["fadeout"]),
                          fadein=eval(p["fadein"]),
@@ -151,7 +151,7 @@ python early hide:
 
         if p["channel"] is not None:
             channel = _try_eval(p["channel"], 'channel')
-            
+
         if not isinstance(file, list):
             file = [ file ]
 
@@ -162,7 +162,7 @@ python early hide:
                         renpy.error("%r is not loadable" % fn)
                 except:
                     pass
-                        
+
     renpy.statements.register('play music',
                               parse=parse_play_music,
                               execute=execute_play_music,
@@ -180,9 +180,9 @@ python early hide:
 
         channel = None
         loop = None
-        
+
         while not l.eol():
-        
+
             if l.keyword('channel'):
                 channel = l.simple_expression()
                 if channel is None:
@@ -191,7 +191,7 @@ python early hide:
             if l.keyword('loop'):
                 loop = True
                 continue
-                
+
             if l.keyword('noloop'):
                 loop = False
                 continue
@@ -205,7 +205,7 @@ python early hide:
             channel = eval(p["channel"])
         else:
             channel = "music"
-        
+
         renpy.music.queue(
             eval(p["file"]),
             channel=channel,
@@ -224,7 +224,7 @@ python early hide:
             fadeout = l.simple_expression()
 
         channel = None
-            
+
         if l.keyword('channel'):
             channel = l.simple_expression()
             if channel is None:
@@ -233,7 +233,7 @@ python early hide:
         if not l.eol():
             renpy.error('expected end of line')
 
-        if fadeout is None: 
+        if fadeout is None:
             renpy.error('expected simple expression')
 
         return dict(fadeout=fadeout, channel=channel)
@@ -243,7 +243,7 @@ python early hide:
             channel = eval(p["channel"])
         else:
             channel = "music"
-        
+
         renpy.music.stop(fadeout=eval(p["fadeout"]), channel=channel)
 
     renpy.statements.register('stop music',
@@ -255,14 +255,14 @@ python early hide:
     # statements.
 
     def execute_play_sound(p):
-        
+
         if p["channel"] is not None:
             channel = eval(p["channel"])
         else:
             channel = "sound"
 
         fadeout = eval(p["fadeout"]) or 0
-            
+
         renpy.sound.play(eval(p["file"]),
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
@@ -270,7 +270,7 @@ python early hide:
 
     def lint_play_sound(p, lint_play_music=lint_play_music):
         return lint_play_music(p, channel="sound")
-        
+
     renpy.statements.register('play sound',
                               parse=parse_play_music,
                               execute=execute_play_sound,
@@ -346,7 +346,7 @@ python early hide:
 
     def lint_play_generic(p, lint_play_music=lint_play_music):
         channel = eval(p["channel"])
-        
+
         if not renpy.music.channel_defined(channel):
             renpy.error("channel %r is not defined" % channel)
 
@@ -354,7 +354,7 @@ python early hide:
 
     def lint_stop_generic(p):
         channel = eval(p["channel"])
-        
+
         if not renpy.music.channel_defined(channel):
             renpy.error("channel %r is not defined" % channel)
 
@@ -363,12 +363,12 @@ python early hide:
                               execute=execute_play_music,
                               predict=predict_play_music,
                               lint=lint_play_generic)
-    
+
     renpy.statements.register('queue',
                               parse=parse_queue_generic,
                               execute=execute_queue_music,
                               lint=lint_play_generic)
-            
+
     renpy.statements.register('stop',
                               parse=parse_stop_generic,
                               execute=execute_stop_music,
@@ -384,7 +384,7 @@ python early hide:
             renpy.error('expected end of line')
 
         return p
-            
+
     def lint_window(p):
         if p is not None:
             _try_eval(p, 'window transition')
@@ -397,15 +397,15 @@ python early hide:
             trans = eval(p)
         else:
             trans = config.window_show_transition
-            
+
         renpy.with_statement(None)
         store._window = True
         renpy.with_statement(trans)
-        
+
     def execute_window_hide(p):
         if not _window:
             return
-        
+
         if p is not None:
             trans = eval(p)
         else:
@@ -427,7 +427,7 @@ python early hide:
 
     ##########################################################################
     # Pause statement.
-    
+
     def parse_pause(l):
 
         delay = l.simple_expression()
@@ -441,7 +441,7 @@ python early hide:
 
         if p["delay"]:
             _try_eval(p["delay"], 'pause statement')
-            
+
     def execute_pause(p):
 
         if p["delay"]:
@@ -455,19 +455,19 @@ python early hide:
                               parse=parse_pause,
                               lint=lint_pause,
                               execute=execute_pause)
-    
-                              
+
+
 init -1200 python:
 
     config.window_show_transition = None
     config.window_hide_transition = None
-    
+
     def _try_eval(e, what):
         try:
             return eval(e)
         except:
             renpy.error('unable to evaluate %s %r' % (what, e))
-    
+
 ##############################################################################
 # Screen-related statements.
 
@@ -481,7 +481,7 @@ python early hide:
         # Parse the list of arguments.
         arguments = renpy.parser.parse_arguments(l)
         l.expect_eol()
-            
+
         return dict(name=name, arguments=arguments)
 
     def parse_hide_screen(l):
@@ -494,7 +494,7 @@ python early hide:
     def predict_screen(p):
         if not p["arguments"]:
             renpy.predict_screen(p["arguments"])
-    
+
     def execute_show_screen(p):
 
         name = p["name"]
@@ -513,7 +513,7 @@ python early hide:
 
             if a.extrapos is not None:
                 args.extend(eval(a.extrapos))
-                
+
             if a.extrakw is not None:
                 kwargs.update(eval(a.extrakw))
 
@@ -536,7 +536,7 @@ python early hide:
 
             if a.extrapos is not None:
                 args.extend(eval(a.extrapos))
-                
+
             if a.extrakw is not None:
                 kwargs.update(eval(a.extrakw))
 
@@ -545,13 +545,13 @@ python early hide:
     def execute_hide_screen(p):
         name = p["name"]
         renpy.hide_screen(name)
-        
+
     def lint_screen(p):
         name = p["name"]
         if not renpy.has_screen(name):
             renpy.error("Screen %s does not exist." % name)
 
-        
+
     renpy.statements.register("show screen",
                               parse=parse_show_call_screen,
                               execute=execute_show_screen,
@@ -567,6 +567,3 @@ python early hide:
     renpy.statements.register("hide screen",
                               parse=parse_hide_screen,
                               execute=execute_hide_screen)
-
-            
-    

@@ -68,7 +68,7 @@ are some example of python one-liners::
     # Call a function that exposes Ren'Py functionality.
     $ renpy.movie_cutscene("opening.ogv")
 
-Python one-liners always run in the default store. 
+Python one-liners always run in the default store.
 
 Named Stores
 ------------
@@ -93,5 +93,3 @@ TODO:
 
 * Note that names beginning with a single _ are reserved for Ren'Py's
   use.
-
- 

@@ -29,7 +29,7 @@ init:
             (for example) replace the default textbuttons with image buttons.
             When it is called, it's expected to add a button to the screen.
 
-            @param label: The label of this button, before translation. 
+            @param label: The label of this button, before translation.
 
             @param type: The type of the button. One of "mm" (main menu),
             "gm_nav" (game menu), "file_picker_nav", "yesno", or "prefs".
@@ -47,7 +47,7 @@ init:
 
             props.update(properties)
             props.update(config.button_properties.get(label, { }))
-            
+
             if disabled:
                 clicked = None
 
@@ -56,9 +56,9 @@ init:
             else:
                 role = ""
 
-                
+
             if label in config.image_buttons:
-                
+
                 (idle, hover, sel_idle, sel_hover, disabled) = config.image_buttons[label]
 
                 ui.imagebutton(idle,
@@ -73,7 +73,7 @@ init:
                                style=style.image_button[label],
                                role=role,
                                **props)
-                
+
                 return
 
             button_style = type + "_button"
@@ -81,13 +81,13 @@ init:
 
             if index is None:
                 index = label
-            
+
             button_style = getattr(style, button_style)[index]
             text_style = getattr(style, text_style)[index]
-            
+
             ui.button(style=button_style, clicked=clicked, role=role, **props)
             ui.text(_(label), style=text_style, **config.button_text_properties.get(label, { }))
-            
+
         def _label_factory(label, type, properties={}, **props):
             """
             This function is called to create a new label. It can be
@@ -108,5 +108,5 @@ init:
                 return
 
             style = getattr(store.style, type + "_label")[label]
-            
+
             ui.text(_(label), style=style, **props)

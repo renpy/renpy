@@ -40,11 +40,11 @@ In this example::
 
     define a = 1
     define o = object()
-    
+
     label start:
          $ b = 1
          $ o.value = 42
-         
+
 only `b` will be saved. A will not be saved because it does not change once
 the game begins. `O` is not saved because it does not change - the object it
 refers to changes, but the variable itself does not.
@@ -60,11 +60,11 @@ refer to the same object. (Alias the object.) In this example::
     init python:
         a = object()
         a.f = 1
-        
+
     label start:
         $ b = a
         $ b.f = 2
-        
+
         "a.f=[a.f] b.f=[b.f]"
 
 `a` and `b` are aliased. Saving and loading may break this aliasing, causing
@@ -151,9 +151,9 @@ There is one variable that is used by the high-level save system:
 
 .. var:: save_name = ...
 
-   This is a string that is stored with each save. It can be used to give 
+   This is a string that is stored with each save. It can be used to give
    a name to the save, to help users tell them apart.
-   
+
 There are a number of high-level save actions and functions defined in the
 :ref:`screen actions <screen-actions>`. In addition, there are the following
 low-level save and load actions.
@@ -178,18 +178,18 @@ you call :func:`ui.interact` directly, you'll need to add support for rollback
 and roll-forward yourself. This can be done using the following structure::
 
 
-    # This is None if we're not rolling back, or else the value that was 
+    # This is None if we're not rolling back, or else the value that was
     # passed to checkpoint last time if we're rolling forward.
     roll_forward = renpy.roll_forward_info()
 
     # Set up the screen here...
-    
+
     # Interact with the user.
     rv = ui.interact(roll_forward=roll_forward)
 
     # Store the result of the interaction.
     renpy.checkpoint(rv)
-    
+
 It's important that your game does not interact with the user after renpy.checkpoint
 has been called. (If you do, the user may not be able to rollback.)
 
@@ -198,11 +198,11 @@ has been called. (If you do, the user may not be able to rollback.)
 Blocking Rollback
 -----------------
 
-.. warning:: 
+.. warning::
 
     Blocking rollback is a user-unfriendly thing to do. If a user mistakenly
     clicks on an unintended choice, he or she will be unable to correct their
-    mistake. Since rollback is equivalent to saving and loading, your users 
+    mistake. Since rollback is equivalent to saving and loading, your users
     will be forced to save more often, breaking game engagement.
 
 It is possible to disable rollback in part or in full. If rollback is
@@ -232,7 +232,7 @@ Ren'Py not to roll back before that point. For example::
 
 When the label no_return is reached, Ren'Py won't allow a rollback
 back to the menu.
- 
+
 
 Fixing Rollback
 ---------------
@@ -293,7 +293,7 @@ When the :var:`config.fix_rollback_without_choice` option is set to
 False, all buttons are made insensitive. This means that the chosen
 option will use the "selected_insensitive\_" prefix for the style
 properties while the other buttons use properties with the
-"insensitive\_" prefix. 
+"insensitive\_" prefix.
 
 Fixed Rollback and Custom Screens
 ---------------------------------
@@ -302,7 +302,7 @@ When writing custom Python routines that must play nice with the
 fix_rollback system there are a few simple things to know. First of all
 the :func:`renpy.in_fixed_rollback` function can be used to determine whether
 the game is currently in fixed rollback state. Second, when in
-fixed rollback state, :func:`ui.interact` will always return the 
+fixed rollback state, :func:`ui.interact` will always return the
 supplied roll_forward data regardless of what action was performed. This
 effectively means that when the :func:`ui.interact`/:func:`renpy.checkpoint`
 functions are used, most of the work is done.
@@ -322,7 +322,7 @@ Example::
             hover "imagemap_hover.jpg"
             selected_idle "imagemap_selected_idle.jpg"
             selected_hover "imagemap_hover.jpg"
-            
+
             hotspot (8, 200, 78, 78) action ui.ChoiceJump("swimming", "go_swimming", block_all=False)
             hotspot (204, 50, 78, 78) action ui.ChoiceJump("science", "go_science_club", block_all=False)
             hotspot (452, 79, 78, 78) action ui.ChoiceJump("art", "go_art_lessons", block_all=False)
@@ -355,6 +355,3 @@ Rollback-blocking and -fixing Functions
 ---------------------------------------
 
 .. include:: inc/blockrollback
-
-
-

@@ -27,9 +27,9 @@ cdef class GLDraw:
     cdef bint always_opaque
     cdef bint allow_fixed
     cdef tuple default_clip
-        
+
     cdef public tuple clip_rtt_box
-    
+
     cpdef set_clip(GLDraw self, tuple clip)
 
     cpdef int draw_render_textures(
@@ -46,7 +46,7 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse)
-    
+
 cdef class Environ:
     cdef void blit(self)
     cdef void blend(self, double fraction)
@@ -58,4 +58,4 @@ cdef class Environ:
     cdef void unset_clip(self, GLDraw draw)
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far)
     cdef void viewport(self, int x, int y, int width, int height)
-    
+
