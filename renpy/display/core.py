@@ -2289,10 +2289,6 @@ class Interface(object):
                 if ev.type == pygame.NOEVENT:
                     continue
 
-                ev = renpy.display.emulator.emulator(ev)
-                if ev is None:
-                    continue
-
                 if renpy.config.profile:
                     self.profile_time = get_time()
 
@@ -2326,13 +2322,6 @@ class Interface(object):
                     renpy.audio.audio.periodic()
                     continue
 
-                # This can set the event to None, to ignore it.
-                ev = renpy.display.joystick.event(ev)
-                if not ev:
-                    continue
-
-                # Handle skipping.
-                renpy.display.behavior.skipping(ev)
 
                 # Handle quit specially for now.
                 if ev.type == pygame.QUIT:
@@ -2386,6 +2375,18 @@ class Interface(object):
                 if not self.focused:
                     x = -1
                     y = -1
+
+                ev, x, y = renpy.display.emulator.emulator(ev, x, y)
+                if ev is None:
+                    continue
+
+                # This can set the event to None, to ignore it.
+                ev = renpy.display.joystick.event(ev)
+                if not ev:
+                    continue
+
+                # Handle skipping.
+                renpy.display.behavior.skipping(ev)
 
                 self.event_time = end_time = get_time()
 

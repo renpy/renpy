@@ -71,12 +71,41 @@ def touch_emulator(ev, x, y):
     return ev, x, y
 
 
+TV_KEYS = [ pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RETURN, pygame.K_ESCAPE, pygame.K_PAGEUP ]
+
+def tv_emulator(ev, x, y):
+    """
+    This emulates a tv-based device, like the OUYA.
+    """
+
+    if ev.type == pygame.MOUSEBUTTONDOWN:
+        return None, x, y
+    elif ev.type == pygame.MOUSEBUTTONUP:
+        return None, x, y
+    elif ev.type == pygame.MOUSEMOTION:
+        return None, x, y
+    elif ev.type == pygame.KEYDOWN:
+        if not ev.key in TV_KEYS:
+            return None, x, y
+    elif ev.type == pygame.KEYDOWN:
+        if not ev.key in TV_KEYS:
+            return None, x, y
+
+    return ev, x, y
+
+
 def init_emulator():
+    """
+    Sets up the emulator.
+    """
+
     global emulator
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
     if name == "touch":
         emulator = touch_emulator
+    elif name == "tv":
+        emulator = tv_emulator
     else:
         emulator = null_emulator
