@@ -29,13 +29,14 @@ import pygame
 # The function that's called to perform the emulation.
 emulator = None
 
+# An overlay that is placed over the screen to support the emulator.
+overlay = [ ]
 
 def null_emulator(ev, x, y):
     """
     This is used when emulation is not desired.
     """
     return ev, x, y
-
 
 TOUCH_KEYS = [ pygame.K_ESCAPE, pygame.K_PAGEUP ]
 
@@ -100,12 +101,21 @@ def init_emulator():
     """
 
     global emulator
+    global overlay
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
     if name == "touch":
         emulator = touch_emulator
+        overlay = [ ]
     elif name == "tv":
         emulator = tv_emulator
+        overlay = [ renpy.display.motion.Transform(
+            "_tv_unsafe.png",
+            xalign=0.5,
+            yalign=0.5,
+            size=(int(renpy.config.screen_height * 16.0 / 9.0), renpy.config.screen_height),
+            ) ]
     else:
         emulator = null_emulator
+        overlay = [ ]
