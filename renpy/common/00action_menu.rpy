@@ -197,7 +197,7 @@ init -1500 python:
             return config.skipping
 
         def get_sensitive(self):
-            return config.allow_skipping and (not renpy.context()._main_menu)
+            return ( config.allow_skipping and (not renpy.context()._main_menu) ) and ( renpy.game.preferences.skip_unseen or renpy.game.context().seen_current(True) )
 
 
     class Help(Action):
