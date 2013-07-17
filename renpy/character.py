@@ -347,6 +347,8 @@ def display_say(
     ctc_timedpause=None,
     ctc_force=False):
 
+    if (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast":
+        renpy.config.skipping = None
     # If we're in fast skipping mode, don't bother with say
     # statements at all.
     if interact and renpy.config.skipping == "fast":
