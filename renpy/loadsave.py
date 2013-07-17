@@ -470,6 +470,9 @@ def autosave():
     if autosave_counter < renpy.config.autosave_frequency:
         return
 
+    if renpy.context()._main_menu:
+        return
+
     force_autosave(True)
 
 
