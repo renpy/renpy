@@ -185,6 +185,7 @@ screen front_page_project:
                 if ability.can_distribute:
                     textbutton _("Build Distributions") action Jump("build_distributions")
 
+                textbutton _("Android") action Jump("android")
                 textbutton _("Generate Translations") action Jump("translate")
 
 label main_menu:

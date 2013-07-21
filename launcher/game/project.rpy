@@ -121,7 +121,7 @@ init python in project:
             self.make_tmp()
             return os.path.join(self.tmp, filename)
 
-        def launch(self, args=[], wait=False):
+        def launch(self, args=[], wait=False, env={}):
             """
             Launches the project.
 
@@ -131,6 +131,9 @@ init python in project:
             `wait`
                 If true, waits for the launched project to terminate before
                 continuing.
+            
+            `env`
+                Additional variables to include in the environment.
             """
 
             self.make_tmp()
@@ -173,11 +176,14 @@ init python in project:
             if persistent.navigate_library:
                 cmd.append("--json-dump-common")
 
+            environ = dict(os.environ)
+            environ.update(env)
+
             # Launch the project.
             with interface.error_handling("launching the project"):
                 cmd = [ renpy.fsencode(i) for i in cmd ]
 
-                p = subprocess.Popen(cmd)
+                p = subprocess.Popen(cmd, env=environ)
 
                 if wait:
                     p.wait()

@@ -293,3 +293,8 @@ init 1 python:
     # The projects window.
     style.l_projects = Style(style.l_default)
     style.l_projects.background = PROJECTS_WINDOW
+
+    style.hyperlink_text.size = 18
+    style.hyperlink_text.font = LIGHT
+    style.hyperlink_text.color = IDLE
+    style.hyperlink_text.hover_color = HOVER

@@ -23,7 +23,7 @@ styles.txt
 /jedit
 /lint.txt
 /renpy.code
-/testing*
+/*testing*
 /screenshot*
 /Microsoft.VC90.CRT.manifest
 /console.exe
@@ -52,3 +52,4 @@ styles.txt
 dl
 renpy/vc_version.py
 .externalToolBuilders
+rapt-*
