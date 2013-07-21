@@ -49,7 +49,7 @@ init -1400 python:
 # These are used by layout-based code, and also by the screens code when a layout
 # is used to invoke the screen.
 label _quit_prompt:
-        $ renpy.loadsave.force_autosave()
+    $ renpy.loadsave.force_autosave()
 
     if layout.invoke_yesno_prompt(None, layout.QUIT):
         jump _quit
