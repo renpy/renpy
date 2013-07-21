@@ -4,6 +4,10 @@
 init python:
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
 
+    PHONE_TEXT = _("Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
+    TABLET_TEXT = _("Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
+    OUYA_TEXT = _("Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
+
     def find_rapt():
         
         global RAPT_PATH
@@ -46,6 +50,8 @@ init python:
 
 screen android:
 
+    default tt = Tooltip(NO_RAPT_TEXT)
+
     frame:
         style_group "l"
         style "l_root"
@@ -82,9 +88,18 @@ screen android:
 
                             has vbox
 
-                            textbutton _("Phone") action LaunchEmulator("touch", "small phone touch android")
-                            textbutton _("Tablet") action LaunchEmulator("touch", "medium tablet touch android")
-                            textbutton _("Television / OUYA") action LaunchEmulator("tv", "small tv ouya android")
+                            textbutton _("Phone"):
+                                action LaunchEmulator("touch", "small phone touch android")
+                                hovered tt.Action(PHONE_TEXT)
+                                
+                            textbutton _("Tablet"): 
+                                action LaunchEmulator("touch", "medium tablet touch android")
+                                hovered tt.Action(TABLET_TEXT)
+                            
+                            textbutton _("Television / OUYA"):
+                                action LaunchEmulator("tv", "small tv ouya android")
+                                hovered tt.Action(OUYA_TEXT)
+                                
 
                     add SPACER
                     add SEPARATOR2
@@ -122,7 +137,7 @@ screen android:
 
                         add SPACER
 
-                        text NO_RAPT_TEXT
+                        text tt.value
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
 
