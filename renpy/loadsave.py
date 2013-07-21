@@ -480,7 +480,7 @@ def force_autosave(take_screenshot=False):
     if not autosave_not_running.isSet():
         return
 
-    if renpy.context()._main_menu:
+    if renpy.game.context()._main_menu:
         return
 
     autosave_not_running.clear()
