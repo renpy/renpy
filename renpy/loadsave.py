@@ -470,9 +470,6 @@ def autosave():
     if autosave_counter < renpy.config.autosave_frequency:
         return
 
-    if renpy.context()._main_menu:
-        return
-
     force_autosave(True)
 
 
@@ -481,6 +478,9 @@ def force_autosave(take_screenshot=False):
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():
+        return
+
+    if renpy.context()._main_menu:
         return
 
     autosave_not_running.clear()
