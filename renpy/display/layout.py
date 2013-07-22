@@ -1049,11 +1049,24 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         if self.child:
             return self.child.event(ev, x, y, st)
 
+# A cache of compiled conditions used by ConditionSwitch.
+cond_cache = { }
+
 # This chooses the first member of switch that's being shown on the
 # given layer.
 def condition_switch_pick(switch):
     for cond, d in switch:
-        if cond is None or renpy.python.py_eval(cond):
+
+        if cond is None:
+            return d
+
+        if cond in cond_cache:
+            code = cond_cache[cond]
+        else:
+            code = renpy.python.py_compile(cond, 'eval')
+            cond_cache[cond] = code
+
+        if renpy.python.py_eval_bytecode(code):
             return d
 
     raise Exception("Switch could not choose a displayable.")
@@ -1097,6 +1110,10 @@ def ConditionSwitch(*args, **kwargs):
         raise Exception('ConditionSwitch takes an even number of arguments')
 
     for cond, d in zip(args[0::2], args[1::2]):
+
+        if cond not in cond_cache:
+            code = renpy.python.py_compile(cond, 'eval')
+            cond_cache[cond] = code
 
         d = renpy.easy.displayable(d)
         switch.append((cond, d))
