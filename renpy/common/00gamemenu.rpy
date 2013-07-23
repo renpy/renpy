@@ -94,7 +94,7 @@ init -1700 python:
     def _invoke_game_menu():
         if renpy.context()._menu:
             if renpy.context()._main_menu:
-                return
+                ShowMenu("main_menu")()
             else:
                 renpy.jump("_noisy_return")
         else:
