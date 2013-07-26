@@ -467,7 +467,7 @@ def autosave():
     if autosave_counter < renpy.config.autosave_frequency:
         return
 
-    if renpy.game.context()._main_menu:
+    if renpy.game.context().info._main_menu:
         return
 
     force_autosave(True)
