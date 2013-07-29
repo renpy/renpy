@@ -8,6 +8,8 @@ init python:
     TABLET_TEXT = _("Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
     OUYA_TEXT = _("Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
 
+    import subprocess
+
     def find_rapt():
 
         global RAPT_PATH
@@ -35,8 +37,58 @@ init python:
 
     if RAPT_PATH:
         import rapt
+        import rapt.build
+        import rapt.configure
     else:
         rapt = None
+
+
+    class AndroidInterface(object):
+
+        def info(self, prompt):
+            interface.info(prompt, pause=False)
+
+        def yesno(self, prompt, default=None):
+            choices = [ (True, "Yes"), (False, "No") ]
+            return interface.choice(prompt, choices, default)
+
+        def terms(self, url, prompt):
+            submessage = _("{a=%s}%s{/a}") % (url, url)
+            return interface.yesno(prompt, submessage)
+
+        def input(self, prompt, empty=None):
+
+            while True:
+                rv = interface.input(_("QUESTION"), prompt, default=empty, cancel=Jump("android"))
+
+                rv = rv.strip()
+
+                if rv:
+                    return rv
+
+        def choice(self, prompt, choices, default):
+            return interface.choice(prompt, choices, default)
+
+        def fail(self, prompt):
+            interface.error(prompt, label="android")
+
+        def success(self, prompt):
+            interface.info(prompt, pause=False)
+
+        def call(self, cmd):
+            subprocess.check_call(cmd, cwd=RAPT_PATH)
+
+
+    class AndroidBuild(Action):
+        """
+        Activates an Android build process.
+        """
+
+        def __init__(self, label):
+            self.label = label
+
+        def __call__(self):
+            renpy.jump(self.label)
 
     class LaunchEmulator(Action):
 
@@ -123,10 +175,10 @@ screen android:
 
                             has vbox
 
-                            textbutton _("Install SDK & Create Keys") action Jump("installsdk")
-                            textbutton _("Configure")
-                            textbutton _("Build Package")
-                            textbutton _("Build & Install")
+                            textbutton _("Install SDK & Create Keys") action Jump("android_installsdk")
+                            textbutton _("Configure") action Jump("android_configure")
+                            textbutton _("Build Package") action AndroidBuild("android_build")
+                            textbutton _("Build & Install") action AndroidBuild("android_build_and_install")
 
                 # Right side.
                 frame:
@@ -152,6 +204,31 @@ screen android:
 label android:
     call screen android
 
-label installsdk:
+label android_installsdk:
     $ interface.choice("Can I ask you a question?", [ (1, "Yes, you can."), (2, "No, way.") ], 1)
+    jump android
+
+label android_configure:
+
+    python:
+
+        rapt.configure.configure(
+            AndroidInterface(),
+            project.current.path,
+            )
+
+    jump android
+
+label android_build:
+
+    python:
+        rapt.build.build(AndroidInterface(), project.current.path, [ 'release' ])
+
+    jump android
+
+label android_build_and_install:
+
+    python:
+        rapt.build.build(AndroidInterface(), project.current.path, [ 'release', 'install' ])
+
     jump android

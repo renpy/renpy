@@ -140,7 +140,7 @@ screen common:
                 for v, l in choices:
                     textbutton l action SetScreenVariable("selected", v)
 
-                if selected:
+                if selected is not None:
                     $ continue_ = Return(selected)
                 else:
                     $ continue_ = None
