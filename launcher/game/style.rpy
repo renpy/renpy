@@ -224,11 +224,11 @@ init 1 python:
         )
 
     style.l_info_frame.yminimum = 180
-    style.l_info_frame.ypos = 100
+    style.l_info_frame.ypos = 75
 
     style.l_info_label = Style(style.l_default)
     style.l_info_label.xalign = 0.5
-    style.l_info_label.ypos = 100
+    style.l_info_label.ypos = 75
     style.l_info_label.yanchor = 1.0
     style.l_info_label.yoffset = 12
     style.l_info_label_text = Style(style.l_default)

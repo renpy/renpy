@@ -108,6 +108,7 @@ screen common:
     default total = None
     default yes = None
     default no = None
+    default choices = None
 
     frame:
         style "l_root"
@@ -133,6 +134,17 @@ screen common:
                         value complete
                         style "l_progress_bar"
 
+            if choices:
+                add SPACER
+
+                for v, l in choices:
+                    textbutton l action SetScreenVariable("selected", v)
+
+                if selected:
+                    $ continue_ = Return(selected)
+                else:
+                    $ continue_ = None
+
             if submessage:
                 add SPACER
 
@@ -154,10 +166,10 @@ screen common:
         label title text_color title_color style "l_info_label"
 
     if back:
-        textbutton _("Back") action Return(False) style "l_left_button"
+        textbutton _("Back") action back style "l_left_button"
 
     if continue_:
-        textbutton _("Continue") action Return(True) style "l_right_button"
+        textbutton _("Continue") action continue_ style "l_right_button"
 
 
 screen launcher_input:
@@ -190,7 +202,7 @@ init python in interface:
 
     import traceback
 
-    def common(title, title_color, message, submessage=None, back=False, continue_=False, pause0=False, **kwargs):
+    def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, **kwargs):
         """
         Displays the info, interaction, and processing screens.
 
@@ -208,8 +220,8 @@ init python in interface:
             be returned.
 
         `continue_`
-            If True, a continue button will be present. If it's clicked, True
-            will be returned.
+            If True, a continue button will be present. `continue_` gives the action
+            that is called when that button is clicked.
 
         `pause0`
             If True, a zero-length pause will be inserted before calling the
@@ -245,11 +257,8 @@ init python in interface:
         the message.
         """
 
-        common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=True, **kwargs)
+        common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=Jump(label), **kwargs)
 
-
-        if label:
-            renpy.jump(label)
 
     @contextlib.contextmanager
     def error_handling(what, label="front_page"):
@@ -280,6 +289,7 @@ init python in interface:
             error(_("While [what!q], an error occured:"),
                 _("[exception!q]"),
                 what=what,
+                label=label,
                 exception=traceback.format_exception_only(type(e), e)[-1][:-1])
 
     def input(title, message, filename=False, sanitize=True, cancel=None, default=""):
@@ -327,7 +337,7 @@ init python in interface:
         """
 
         if pause:
-            common(_("INFORMATION"), store.INFO_COLOR, message, submessage, continue_=True, **kwargs)
+            common(_("INFORMATION"), store.INFO_COLOR, message, submessage, continue_=Return(True), **kwargs)
         else:
             common(_("INFORMATION"), store.INFO_COLOR, message, submessage, pause=0, **kwargs)
 
@@ -388,4 +398,19 @@ init python in interface:
         """
 
         return common(_("QUESTION"), store.QUESTION_COLOR, message, yes=yes, no=no, **kwargs)
+
+    def choice(message, choices, selected, **kwargs):
+        """
+        Asks the user to pick a choice from a menu.
+
+        `choices`
+            A list of (value, label) tuples, giving the choices.
+
+        `selected`
+            The default choice that we mark as selected.
+        """
+
+        return common(_("CHOICE"), store.QUESTION_COLOR, message, choices=choices, selected=selected, **kwargs)
+
+
 

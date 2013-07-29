@@ -9,41 +9,48 @@ init python:
     OUYA_TEXT = _("Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
 
     def find_rapt():
-        
+
         global RAPT_PATH
-        
+
         candidates = [ ]
-        
+
         for fn in os.listdir(config.renpy_base):
             if not fn.startswith("rapt-"):
                 continue
-               
+
             version = fn[5:]
             version = tuple(int(i) for i in version.split('.'))
-            
+
             candidates.append((version, fn))
-            
+
         if not candidates:
             RAPT_PATH = None
         else:
             RAPT_PATH = os.path.join(config.renpy_base, candidates[-1][1])
 
+            import sys
+            sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
+
     find_rapt()
 
+    if RAPT_PATH:
+        import rapt
+    else:
+        rapt = None
 
     class LaunchEmulator(Action):
-        
+
         def __init__(self, emulator, variants):
             self.emulator = emulator
             self.variants = variants
-            
+
         def __call__(self):
-            
+
             env = {
                 "RENPY_EMULATOR" : self.emulator,
                 "RENPY_VARIANT" : self.variants,
                 }
-            
+
             p = project.current
             p.launch(env=env)
 
@@ -91,15 +98,15 @@ screen android:
                             textbutton _("Phone"):
                                 action LaunchEmulator("touch", "small phone touch android")
                                 hovered tt.Action(PHONE_TEXT)
-                                
-                            textbutton _("Tablet"): 
+
+                            textbutton _("Tablet"):
                                 action LaunchEmulator("touch", "medium tablet touch android")
                                 hovered tt.Action(TABLET_TEXT)
-                            
+
                             textbutton _("Television / OUYA"):
                                 action LaunchEmulator("tv", "small tv ouya android")
                                 hovered tt.Action(OUYA_TEXT)
-                                
+
 
                     add SPACER
                     add SEPARATOR2
@@ -116,7 +123,7 @@ screen android:
 
                             has vbox
 
-                            textbutton _("Install SDK & Create Keys")
+                            textbutton _("Install SDK & Create Keys") action Jump("installsdk")
                             textbutton _("Configure")
                             textbutton _("Build Package")
                             textbutton _("Build & Install")
@@ -144,4 +151,7 @@ screen android:
 
 label android:
     call screen android
-    
+
+label installsdk:
+    $ interface.choice("Can I ask you a question?", [ (1, "Yes, you can."), (2, "No, way.") ], 1)
+    jump android
