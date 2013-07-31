@@ -477,7 +477,7 @@ def force_autosave(take_screenshot=False):
     if not autosave_not_running.isSet():
         return
 
-    if renpy.game.context().info._main_menu:
+    if renpy.game.context().info._main_menu or renpy.store._in_replay:
         return
 
     autosave_not_running.clear()
