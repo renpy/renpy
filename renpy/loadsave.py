@@ -436,6 +436,7 @@ def autosave_thread(take_screenshot):
             if take_screenshot:
                 renpy.exports.take_screenshot(background=True)
             save("auto-1", file=IdleFile, StringIO=IdleStringIO, mutate_flag=True, wait=renpy.display.core.cpu_idle.wait, extra_info=extra_info)
+            renpy.store.persistent._file_newest = "auto-1"
             autosave_counter = 0
 
         except:

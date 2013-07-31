@@ -564,7 +564,7 @@ init -1500 python:
         def __call__(self):
             renpy.take_screenshot()
 
-    def QuickSave(message="Quick save complete.", newest=False):
+    def QuickSave(message="Quick save complete.", newest=True):
         """
         :doc: file_action
 
