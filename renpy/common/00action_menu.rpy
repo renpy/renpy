@@ -182,7 +182,10 @@ init -1500 python:
                 return
 
             if renpy.context()._menu:
-                renpy.jump("_return_skipping")
+                if self.fast:
+                    renpy.jump("_return_fast_skipping")
+                else:
+                    renpy.jump("_return_skipping")
             else:
 
                 if not config.skipping:
