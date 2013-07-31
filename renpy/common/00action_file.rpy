@@ -593,9 +593,15 @@ init -1500 python:
 
     class LoadNewest(Action):
         
+        def __init__(self, confirm=False):
+            self.confirm = confirm
+
         def __call__(self):
             if self.get_sensitive():
-                renpy.load(persistent._file_newest)
+                if self.confirm:
+                    layout.yesno_screen(layout.RESTARTGAME, LoadNewest(False))
+                else:
+                    renpy.load(persistent._file_newest)
 
         def get_sensitive(self):
             if not persistent._file_newest:
