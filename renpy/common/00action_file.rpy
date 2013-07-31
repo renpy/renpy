@@ -590,3 +590,14 @@ init -1500 python:
         """
 
         return FileLoad(1, page="quick", confirm=True, newest=False)
+
+    class LoadNewest(Action):
+        
+        def __call__(self):
+            if self.get_sensitive():
+                renpy.load(persistent._file_newest)
+
+        def get_sensitive(self):
+            if not persistent._file_newest:
+                return False
+            return renpy.can_load(persistent._file_newest)
