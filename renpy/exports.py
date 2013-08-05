@@ -1609,6 +1609,9 @@ def call_screen(_screen_name, *args, **kwargs):
 
     Keyword arguments not beginning with _ are passed to the scope of
     the screen.
+
+    If the keyword argument `_with_none` is false, "with None" is not
+    run at the end of end of the interaction.
     """
 
     renpy.exports.mode('screen')
@@ -1625,6 +1628,10 @@ def call_screen(_screen_name, *args, **kwargs):
     renpy.exports.checkpoint(rv)
 
     with_none = renpy.config.implicit_with_none
+
+    if "_with_none" in kwargs:
+        with_none = kwargs.pop("_with_none")
+
     if with_none:
         renpy.game.interface.do_with(None, None)
 
