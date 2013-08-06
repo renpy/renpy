@@ -92,7 +92,11 @@ init -1700 python:
             renpy.scene(layer=i)
 
     def _invoke_game_menu():
-        if renpy.context()._menu:
+        if renpy.get_screen("yesno_prompt"):
+            renpy.hide_screen("yesno_prompt")
+            renpy.transition(config.exit_yesno_transition)
+            renpy.restart_interaction()
+        elif renpy.context()._menu:
             if renpy.context()._main_menu:
                 return
             else:
