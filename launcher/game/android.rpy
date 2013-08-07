@@ -45,7 +45,15 @@ init python:
 
     class AndroidInterface(object):
 
+        def __init__(self):
+            self.process = None
+            self.filename = project.current.temp_filename("android.txt")
+
+            with open(self.filename, "w"):
+                pass
+
         def info(self, prompt):
+            print "XXX info"
             interface.info(prompt, pause=False)
 
         def yesno(self, prompt, default=None):
@@ -76,7 +84,18 @@ init python:
             interface.info(prompt, pause=False)
 
         def call(self, cmd):
-            subprocess.check_call(cmd, cwd=RAPT_PATH)
+
+            f = open(self.filename, "w")
+
+            try:
+                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f)
+                renpy.show_screen("android_process", interface=self)
+                renpy.pause(10)
+            finally:
+                f.close()
+
+        def check_process(self):
+            return self.process.poll()
 
 
     class AndroidBuild(Action):
@@ -105,6 +124,22 @@ init python:
 
             p = project.current
             p.launch(env=env)
+
+screen android_process(interface):
+
+    zorder 100
+
+    default ft = FileTail(interface.filename)
+
+    text "[ft.text!q]":
+        size 14
+        color "#000"
+        font "Roboto-Light.ttf"
+        xpos 100
+        ypos 350
+
+    timer .2 action ft.update repeat True
+    timer .1 action interface.check_process
 
 
 screen android:

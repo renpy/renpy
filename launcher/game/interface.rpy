@@ -339,7 +339,7 @@ init python in interface:
         if pause:
             common(_("INFORMATION"), store.INFO_COLOR, message, submessage, continue_=Return(True), **kwargs)
         else:
-            common(_("INFORMATION"), store.INFO_COLOR, message, submessage, pause=0, **kwargs)
+            common(_("INFORMATION"), store.INFO_COLOR, message, submessage, pause0=True, **kwargs)
 
 
     def interaction(title, message, submessage=None, **kwargs):
