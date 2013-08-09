@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,369 +17,379 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/other.rst:6
-# 0e1bf29530c046318ac3fa97dfa81e63
+# 5c0994655a964c89804cebfc2871215d
 msgid "Other Functions"
 msgstr ""
 
 #: ../../source/other.rst:8
-# 369d9e0ab0994650908ee73b725ac712
+# 27dc5821d58a4deda4c614d73c620a47
 msgid "We're in the process of migrating the documentation over to a new tool. As not every page has been migrated yet, this exists to document new functionality that has no other place to go."
 msgstr ""
 
 #: ../../source/inc/other:5
-# a2a12470649c4f1b82254a07ddc4efbf
+# 9e3dc03d88854ce89faa19e9d7a3f793
 msgid "Causes the current Ren'Py statement to terminate, and a jump to a `label` to occur. When the jump returns, control will be passed to the statement following the current statement."
 msgstr ""
 
 #: ../../source/inc/other:11
-# 66fec80a8db040039d87808048e88571
+# c546b7c8306c4fd3bbc601a5e9e02bfc
 msgid "Resets the game runtime counter."
 msgstr ""
 
 #: ../../source/inc/other:15
-# 9ce84f70a3e04d868d469e6862334992
+# d52e5e58cfe14b949cc5964e9c0d50b6
 msgid "This attempts to find the coordinates of the currently-focused displayable. If it can, it will return them as a (x, y, w, h) tuple. If not, it will return a (None, None, None, None) tuple."
 msgstr ""
 
 #: ../../source/inc/other:21
-# 100b1810d7a04119a1961f1b299578db
+# 43a226806ac8483db6256524e517741f
 msgid "Converts s from filesystem encoding to unicode."
 msgstr ""
 
 #: ../../source/inc/other:25
-#: ../../source/inc/other:209
-# 354f6dd4f3e84d49ab50a1f10448c80a
-# 93f0674b72084f98aeeaf109a506a8df
+#: ../../source/inc/other:212
+# 7a439fcf1cd34a7a9b4b5dd9f7fe3fb5
+# 5fde516a8b9b4f81a58488033f6ac825
 msgid "Converts s from unicode to the filesystem encoding."
 msgstr ""
 
 #: ../../source/inc/other:29
-# 1c577e67106f490887522a3b729637a9
+# eea915fcb6574669a1170f59e0270e1d
 msgid "Returns the game runtime counter."
 msgstr ""
 
 #: ../../source/inc/other:31
-# 7d94434301e9439d8c8547034849a233
+# ba2807aef19048efb261c63865d4c2b8
 msgid "The game runtime counter counts the number of seconds that have elapsed while waiting for user input in the top-level context. (It does not count time spent in the main or game menus.)"
 msgstr ""
 
 #: ../../source/inc/other:37
-# 35a1640c1567415f9974e7dd3fa7d4b2
+# f990663b14f54e03afc811be76595431
 msgid "A generator that yields a log of image loading activity. For the last 100 image loads, this returns:"
 msgstr ""
 
 #: ../../source/inc/other:40
-# cb98bcc0fe514be6829d4869525d966f
+# c95645d4a4f74aa5803d4a15e8343dac
 msgid "The time the image was loaded (in seconds since the epoch)."
 msgstr ""
 
 #: ../../source/inc/other:41
-# 89ac3227add1469d993f7c9b56554de9
+# 50457804f8294dd3ad280e23233d4e37
 msgid "The filename of the image that was loaded."
 msgstr ""
 
 #: ../../source/inc/other:42
-# 2b61d03e2d4b4687b94d799d978deeb7
+# c9e7507086f2489ab0426da1dcc81ba4
 msgid "A boolean that is true if the image was preloaded, and false if the game stalled to load it."
 msgstr ""
 
 #: ../../source/inc/other:45
-# 1f3456dba22e4682a9c82bf2dfc60b18
+# 58a0e973457e411493118db1a6182fb4
 msgid "The entries are ordered from newest to oldest."
 msgstr ""
 
 #: ../../source/inc/other:49
-# aee04f3a78ee48da8d1ddb12785cc190
+# 60ad570ec454433198d75a384807fc30
 msgid "`age`"
 msgstr ""
 
 #: ../../source/inc/other:48
-# 1743a221e3114d509656ab7142fc6910
+# 15a02beeedef4abbba3ed29818e7bfe7
 msgid "If not None, only images that have been loaded in the past `age` seconds are included."
 msgstr ""
 
 #: ../../source/inc/other:51
-# 5badb71e64844ad49affdd237fc076c1
+# 579117e48a224ac5844f703f97eb5d18
 msgid "The image load log is only kept if config.developer = True."
 msgstr ""
 
 #: ../../source/inc/other:55
-# d19117c5a60c4fdd956933502126976e
+# 92823d96429944b4992c0992d28bd74c
 msgid "Returns the size of the physical window."
 msgstr ""
 
 #: ../../source/inc/other:59
-# aa4a0b534bc8428aa86183d32d0b600f
+# 778c917358b64617a518b9beac64f664
 msgid "Returns a dictionary, giving information about the renderer Ren'Py is currently using. The dictionary has one required key:"
 msgstr ""
 
 #: ../../source/inc/other:64
-# a1f9af32be964dc8898dd5b7ea2cac09
+# c23b3c44eedb4c55a437d78f1341f1b7
 msgid "``\"renderer\"``"
 msgstr ""
 
 #: ../../source/inc/other:63
-# 82ef55f4989c4ccdbe5053f11a55de9c
+# e41724303a86443f8ba3d978ab3aee8d
 msgid "One of ``\"gl\"`` or ``\"sw\"``, corresponding to the OpenGL and software renderers, respectively."
 msgstr ""
 
 #: ../../source/inc/other:67
-# 89f7973633a04508903555db84994c84
-msgid "``\"resizable``"
+# 2a11b89467764461aded325e9614bc18
+msgid "``\"resizable\"``"
 msgstr ""
 
 #: ../../source/inc/other:67
-# e28d9eb5d0aa4b44b20224842e2444d8
+# 8addfbd3f24045e0bb9072d6a0ca9835
 msgid "True if and only if the window is resizable."
 msgstr ""
 
-#: ../../source/inc/other:69
-# 99cd8162900a49d486bf19958f98e7e1
+#: ../../source/inc/other:70
+# c842f33ddc2e4cea84a545d7e5c1fe90
+msgid "``\"additive\"``"
+msgstr ""
+
+#: ../../source/inc/other:70
+# abf66c0f7e4b4451bbbc875e7ffa17a8
+msgid "True if and only if the renderer supports additive blending."
+msgstr ""
+
+#: ../../source/inc/other:72
+# 77f3ffdfcd144967bef908d9faa6a669
 msgid "Other, renderer-specific, keys may also exist. The dictionary should be treated as immutable. This should only be called once the display has been started (that is, after the init code is finished)."
 msgstr ""
 
-#: ../../source/inc/other:75
-# 7bf3352a24b047d193f2239b6ed5869d
+#: ../../source/inc/other:78
+# 854995d584e34a35abe536dd26bc6ec5
 msgid "Gets the attributes associated with the current say statement, or None if no attributes are associated with this statement."
 msgstr ""
 
-#: ../../source/inc/other:78
-# 1b8b5a838ef64c7f911c02b13ad931ae
+#: ../../source/inc/other:81
+# 97805e2645324b8a92fbdad1c3a0b9a2
 msgid "This is only valid when executing or predicting a say statement."
 msgstr ""
 
-#: ../../source/inc/other:82
-# 3b45a03c788b4256ac8d6f206bde9752
+#: ../../source/inc/other:85
+# 13f699fbb11a413ba6bc25fdb800f0e8
 msgid "This attempts to find an image to show as the side image."
 msgstr ""
 
-#: ../../source/inc/other:84
-# d42f65d346774e4d944c008bf49ce20d
+#: ../../source/inc/other:87
+# a7468d97ac014d83a27d3282f42dea3b
 msgid "It begins by determining a set of image attributes. If `image_tag` is given, it gets the image attributes from the tag. Otherwise, it gets them from the currently showing character."
 msgstr ""
 
-#: ../../source/inc/other:88
-# 40be1f0a8343468d943b4ceeb5fa0b59
+#: ../../source/inc/other:91
+# 4490f19b53f643efa18ccb0f49775795
 msgid "It then looks up an image with the tag `prefix_tag` and those attributes, and returns it if it exists."
 msgstr ""
 
-#: ../../source/inc/other:91
-# 08abda3e8d2144eba97c0894f8a9b11d
+#: ../../source/inc/other:94
+# 58bc31d8a05a4f99b298fe37feab8487
 msgid "If not_showing is True, this only returns a side image if the image the attributes are taken from is not on the screen."
 msgstr ""
 
-#: ../../source/inc/other:96
-# ee1a19d885b04c22978a894b0d88ab47
+#: ../../source/inc/other:99
+# bc0bfca9aadd4f97817bc36f88ec6305
 msgid "Given an image manipulator, loads it and returns a (``width``, ``height``) tuple giving its size."
 msgstr ""
 
-#: ../../source/inc/other:99
-# a415eb442ae64db9b1db9a40b28443b1
+#: ../../source/inc/other:102
+# 10a34c0190334f0caafd9ba4f25d0b31
 msgid "This reads the image in from disk and decompresses it, without using the image cache. This can be slow."
 msgstr ""
 
-#: ../../source/inc/other:104
-# ece33075235840708022ec41f204fd45
+#: ../../source/inc/other:107
+# 385c55024d31419a8d46fc3e887e1b4e
 msgid "Lists the files in the game directory and archive files. Returns a list of files, with / as the directory separator."
 msgstr ""
 
-#: ../../source/inc/other:108
-# 2275fdecaa8142a581099fa23545351e
+#: ../../source/inc/other:111
+# d4a5d36daf3e4a708b2b1f5242c1bfc7
 msgid "`common`"
 msgstr ""
 
-#: ../../source/inc/other:108
-# 00ae4f7fc1424cacb91ee6a5cc22497a
+#: ../../source/inc/other:111
+# 1fbcaf1113bc49db9f48f837f4bf2a73
 msgid "If true, files in the common directory are included in the listing."
 msgstr ""
 
-#: ../../source/inc/other:113
-# c34ebb3553514680ac43cc9e87a83155
+#: ../../source/inc/other:116
+# 20d1c029ee6e495b8ba64af536c433cb
 msgid "Causes Ren'Py to display the `message` using the notify screen. By default, this will cause the message to be dissolved in, displayed for two seconds, and dissolved out again."
 msgstr ""
 
-#: ../../source/inc/other:117
-# 4daac539a97f4a108fd84688cd477c76
+#: ../../source/inc/other:120
+# 354ad854b2394755ad2417310c05170e
 msgid "This is useful for actions that otherwise wouldn't produce feedback, like screenshots or quicksaves."
 msgstr ""
 
-#: ../../source/inc/other:120
-# f14c5f71a3c846a08e553b1de1d3bcad
+#: ../../source/inc/other:123
+# aeee332e197d47ab9c141f71e1d20c50
 msgid "Only one notification is displayed at a time. If a second notification is displayed, the first notification is replaced."
 msgstr ""
 
-#: ../../source/inc/other:125
-# 6786ea7154f94d7d8931b35f9cbd329c
+#: ../../source/inc/other:128
+# b6c3f2b9b2bc4f47a397bac6bd1043d0
 msgid "Rolls the state of the game back to the last checkpoint."
 msgstr ""
 
-#: ../../source/inc/other:130
-# 79746ad6069545b9882add20975f1316
+#: ../../source/inc/other:133
+# c76563bc6f604b328c094028b946b4a8
 msgid "`force`"
 msgstr ""
 
-#: ../../source/inc/other:128
-# d82e41829e3d4c449fb2da6e1f6f1de2
+#: ../../source/inc/other:131
+# 14dc86d71f364930a7c60ca53061a7e0
 msgid "If true, the rollback will occur in all circumstances. Otherwise, the rollback will only occur if rollback is enabled in the store, context, and config."
 msgstr ""
 
-#: ../../source/inc/other:134
-# a53784c3c60e43b98ba87a93bf49493c
+#: ../../source/inc/other:137
+# 543f498085754aa68ee51ee9304208a1
 msgid "`checkpoints`"
 msgstr ""
 
-#: ../../source/inc/other:133
-# 80e7768c9c1845c19f0c8253989041b0
+#: ../../source/inc/other:136
+# 986acaf9ee4d4c838e654896d1cad9d5
 msgid "Ren'Py will roll back through this many calls to renpy.checkpoint. It will roll back as far as it can, subject to this condition."
 msgstr ""
 
-#: ../../source/inc/other:138
-# a813f0b3d7a44b559921d9ec275599f7
+#: ../../source/inc/other:141
+# c492af6d97a640f086dbebb293f9ea6b
 msgid "`defer`"
 msgstr ""
 
-#: ../../source/inc/other:137
-# 21ffdfcb1c1f4204b7dc15b20b528515
+#: ../../source/inc/other:140
+# 17bafaf611a64a5b96c4f4cef8709d3c
 msgid "If true, the call will be deferred until code from the main context is executed."
 msgstr ""
 
-#: ../../source/inc/other:142
-# aa1e951087a94f72aa8d0977281ddcde
+#: ../../source/inc/other:145
+# f22469c432fe4d5c9eb8a45cd6769e20
 msgid "`greedy`"
 msgstr ""
 
-#: ../../source/inc/other:141
-# a2ea327eafb24d1f93784c06db7a1e46
+#: ../../source/inc/other:144
+# a5fc6073a2cd44f0b50b725dd64794f8
 msgid "If true, rollback will occur just before the previous checkpoint. If false, rollback occurs to just before the current checkpoint."
 msgstr ""
 
-#: ../../source/inc/other:144
-# c50c1fe689da4807a6819873ffc59453
+#: ../../source/inc/other:147
+# 6b0329d132c64fb586458ef77895667e
 msgid "`label`"
 msgstr ""
 
-#: ../../source/inc/other:145
-# fdfd6e6bc2df4e8485f6d7300112b72d
+#: ../../source/inc/other:148
+# 3fa6ef0a8e2044f3bc73dd8c3d013ece
 msgid "If not None, a label that is called when rollback completes."
 msgstr ""
 
-#: ../../source/inc/other:149
-# 62a5997b26824bf580d58e26f5d8217b
+#: ../../source/inc/other:152
+# 759858ac42d34e53828a7d5f4c3f35fb
 msgid "Attempts to set the size of the physical window to `size`. This has the side effect of taking the screen out of fullscreen mode."
 msgstr ""
 
-#: ../../source/inc/other:154
-# 1e43c7673f014cf49e045b5dca65f352
+#: ../../source/inc/other:157
+# b843d83caa39434883b85205176f2565
 msgid "Causes the device to vibrate for `duration` seconds. Currently, this is only supported on Android."
 msgstr ""
 
-#: ../../source/inc/other:159
-# bf51b4b382854ee78fe3676d6663f47e
+#: ../../source/inc/other:162
+# ff1a5a86156846fe81f7ad139117fc2f
 msgid "This registers a new audio channel named `name`. Audio can then be played on the channel by supplying the channel name to the play or queue statements."
 msgstr ""
 
-#: ../../source/inc/other:167
-# 23c8fc7bae11405d8b0a6867df6b13ba
+#: ../../source/inc/other:170
+# 04fba9cf5bdc4a208de3e59c1bfd98f6
 msgid "`mixer`"
 msgstr ""
 
-#: ../../source/inc/other:164
-# 96504c01fc2548a88143e5e250417928
+#: ../../source/inc/other:167
+# 5f381eaed0294b16a578114beaa6cebe
 msgid "The name of the mixer the channel uses. By default, Ren'Py knows about the \"music\", \"sfx\", and \"voice\" mixers. Using other names is possible, but may require changing the preferences screens."
 msgstr ""
 
-#: ../../source/inc/other:170
-# 488b5a53d53c46eb85355b61fc91f2a9
+#: ../../source/inc/other:173
+# 12e77af7e2754ffdad60d5bde1887c5e
 msgid "`loop`"
 msgstr ""
 
-#: ../../source/inc/other:170
-# 6adfdf7e92c84855961792e6c7528da4
+#: ../../source/inc/other:173
+# d74c84262c1d4f918e0b999aa439ac43
 msgid "If true, sounds on this channel loop by default."
 msgstr ""
 
-#: ../../source/inc/other:173
-# 49f9a1ad6bcc45c6b0d439174d127179
+#: ../../source/inc/other:176
+# a9dfde11b31642bebd25e833c44f0b20
 msgid "`stop_on_mute`"
 msgstr ""
 
-#: ../../source/inc/other:173
-# 60a0aed60eab46f08a1a755d32bda0a6
+#: ../../source/inc/other:176
+# b42ee35038f442148d5dae738239f350
 msgid "If true, music on the channel is stopped when the channel is muted."
 msgstr ""
 
-#: ../../source/inc/other:178
-# 413cc7b5638a48d18d95924a0c46a851
+#: ../../source/inc/other:181
+# 19d16f7f76d44c5790b57aea60decf6d
 msgid "`tight`"
 msgstr ""
 
-#: ../../source/inc/other:176
-# 12fa03123e6441a6aeb0c61eeea88cf6
+#: ../../source/inc/other:179
+# 36f202346a8e4f3d98c222fc1da54d15
 msgid "If true, sounds will loop even when fadeout is occuring. This should be set to True for a sound effects or seamless music channel, and False if the music fades out on its own."
 msgstr ""
 
-#: ../../source/inc/other:182
-# e4fc463fafb0451985943d9cb90f72d2
+#: ../../source/inc/other:185
+# e9b554648f50452da12d8638c6687fa4
 msgid "`file_prefix`"
 msgstr ""
 
-#: ../../source/inc/other:181
-# b9a5e1b705344749aedcc8cdd0dd8c4c
+#: ../../source/inc/other:184
+# 848ccb5cbcad4db3b9f29c473faf3fb1
 msgid "A prefix that is prepended to the filenames of the sound files being played on this channel."
 msgstr ""
 
-#: ../../source/inc/other:186
-# 0b5b9e032d964a0da1a06c5f75175175
+#: ../../source/inc/other:189
+# b146361d0e9046abbae326d61a2eb105
 msgid "`file_suffix`"
 msgstr ""
 
-#: ../../source/inc/other:185
-# f995175ebf364d23be0bc4f94ab7fc3d
+#: ../../source/inc/other:188
+# a7e16ab2342b4ec294e488ad6e4342b3
 msgid "A suffix that is appended to the filenames of the sound files being played on this channel."
 msgstr ""
 
-#: ../../source/inc/other:189
-# 0cbe9cfb91944f7e907fd2026d1b46bc
+#: ../../source/inc/other:192
+# eb71dc24738a41dfb6d126f5db7fd158
 msgid "`buffer_queue`"
 msgstr ""
 
-#: ../../source/inc/other:189
-# 2f606d9045be4dca8525f334e429c9de
+#: ../../source/inc/other:192
+# 70c3e295fe8a4ede8f3ad137cbb670bd
 msgid "Should we buffer the first second or so of a queued file? This should be True for audio, and False for movie playback."
 msgstr ""
 
-#: ../../source/inc/other:194
-# 6b57e8638d1447e091d942fa1c7f507b
+#: ../../source/inc/other:197
+# 25242bb615b64997931e6395f1af102b
 msgid "This causes the a yes/no prompt screen with the given message to be displayed. The screen will be hidden when the user hits yes or no."
 msgstr ""
 
-#: ../../source/inc/other:199
-# feb923ac6eaa4fbcb69ae51a0bf79045
+#: ../../source/inc/other:202
+# bd1c23c06938411790d08c410268495a
 msgid "`message`"
 msgstr ""
 
-#: ../../source/inc/other:199
-# 2afd6cfa947e48bd8e03a521783eb937
+#: ../../source/inc/other:202
+# 2049098ddaeb44dcbf1715ae63d6b662
 msgid "The message that will be displayed."
 msgstr ""
 
-#: ../../source/inc/other:202
-# 764cdeb61b9d4289b8bf8af12b60cc01
+#: ../../source/inc/other:205
+# 34326f1344b5423fb4767c534c436abc
 msgid "`yes`"
 msgstr ""
 
-#: ../../source/inc/other:202
-# 3342295a2e024d4397dcac972b3d94ee
+#: ../../source/inc/other:205
+# 67db3cd6c8a543019773cdbea68aea35
 msgid "An action that is run when the user chooses yes."
 msgstr ""
 
-#: ../../source/inc/other:204
-# 3c29a0af87804c1f8577a1e7f9ec397e
+#: ../../source/inc/other:207
+# a7ca9872cdc74b90a0c17525f15fe4d5
 msgid "`no`"
 msgstr ""
 
-#: ../../source/inc/other:205
-# e2d5aa3baa3d4800813d556accbd41e1
+#: ../../source/inc/other:208
+# b4809945a19843709bdcf0eeb2734afd
 msgid "An action that is run when the user chooses no."
 msgstr ""
 

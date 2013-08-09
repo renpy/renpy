@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,303 +17,303 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/udd.rst:9
-# 51b153363cb0425bbb4cffa9ff98bed2
+# 90ef6f4f96e64121b525419157accf4c
 msgid "Creator-Defined Displayables"
 msgstr ""
 
 #: ../../source/udd.rst:11
-# 0fc7d44dd2dd4181b54b18db907fe575
+# 26c5e31258b64d46a5d926fd946b79a3
 msgid "The most complex, but most powerful, way of customizing Ren'Py's behavior is to use a creator-defined displayable. A creator-defined displayable is allowed to take arbitrary pygame events. It can also render other displayables, and place them at arbitrary locations on the screen. This makes it suitable for creating 2D mini-games that cannot be expressed with the tools Ren'Py gives you. (But see also the section :ref:`sprites <sprites>`, which describes a higher-level way of accomplishing many of the same things.)"
 msgstr ""
 
 #: ../../source/udd.rst:20
-# 6e03640b72b3445abed833a0abf7203c
+# e1f9dcfa8b7e4a74854b127b113aa4c0
 msgid "Creator-defined displayables are programmed entirely in Python, and we encourage you to have a reasonable degree of skill at object-oriented Python programming before you begin creating one."
 msgstr ""
 
 #: ../../source/udd.rst:25
-# 6af9f4fed83a49d1a859d11132ab7905
+# f18eebc64b984adfaff731849c058ea2
 msgid "Example"
 msgstr ""
 
 #: ../../source/udd.rst:27
-# eeb843ebeda4457db907651a412f807c
+# ec65e505293d4afab3625de147c15442
 msgid "Here's an example of a creator-defined displayable. This displayable changes renders its child with an alpha that is determined by the distance of the mouse pointer from the center of the child. ::"
 msgstr ""
 
 #: ../../source/udd.rst:106
-# 4e439d8230404680a535bc2f93e99342
+# 297127b2ea864a0584db3c53ce096cac
 msgid "To use the creator-defined displayable, we can create an instance of it, and add that instance to the screen. ::"
 msgstr ""
 
 #: ../../source/udd.rst:123
-# f23ed8cfd67d44c083d5381c25e84f6b
+# bb91b354f3e042b7b52ce49b384f8700
 msgid "renpy.Displayable"
 msgstr ""
 
 #: ../../source/udd.rst:125
-# 5b8c5544acf34f54b224af34e6ab6cdc
+# 22139bb262204d5b908c385ce95eb8ac
 msgid "A creator-defined displayable is created by subclassing the renpy.Displayable class. A creator-defined displayable must override the render method, and may override other methods as well."
 msgstr ""
 
 #: ../../source/udd.rst:129
-# 522705e989bb4ce7be495aa55f653885
+# 7ab4e10e4a314269a1d4425782464c7d
 msgid "A displayable object must be pickleable, which means it may not contain references to objects that cannot be pickled. Most notably, Render objects cannot be stored in a creator-defined displayable."
 msgstr ""
 
 #: ../../source/udd.rst:133
-# e10ecc59811d4278bdbf2fe3300b8dcf
+# b07d5f46472a4e09aa9834fbecc29f21
 msgid "Since we expect you to override the methods of the displayable class, we'll present them with the `self` parameter."
 msgstr ""
 
 #: ../../source/udd.rst:138
-# 3e5c06cb6eb84ebebd6d7b5b48f3dc29
+# fd8851ef526a483ba89edce0d5efd623
 msgid "Base class for creator-defined displayables."
 msgstr ""
 
 #: ../../source/udd.rst:142
-# f60f2b8b17264a12812fbc9eedf9def2
+# 96f9d7a977394166b4a99a0bcfbc95ad
 msgid "A subclass may override the constructor, perhaps adding new parameters. If it does, it should pass all unknown keyword arguments to the renpy.Displayable constructor, using code like::"
 msgstr ""
 
 #: ../../source/udd.rst:151
-# 44bcf28db5054c5ba0563601053d10be
+# 1e3b5e883e6a4737867d97669fdf2c91
 msgid "Subclasses must override this, to return a :class:`renpy.Render` object. The render object determines what, if anything, is shown on the screen."
 msgstr ""
 
 #: ../../source/udd.rst:157
 #: ../../source/udd.rst:230
 #: ../../source/inc/udd_utility:26
-# 05cb0606151f4bdfb2d3fb803b33c178
-# 7967840904f94350badd8dc2aaa9a2d4
-# ef598e8d37d24f77b6a37b604f87b032
+# f24e002565fe405a8010b1ece6563ce7
+# e79784d30a7643efb5610ecaf5df9b3c
+# d174aefb7a32442e93e878b3f14c5cd5
 msgid "`width`, `height`"
 msgstr ""
 
 #: ../../source/udd.rst:156
-# 2800f0c43b36428f9832efcfb8069115
+# d62cdd9179f04211b703b02521b640ca
 msgid "The amount of space available to this displayable, in pixels."
 msgstr ""
 
 #: ../../source/udd.rst:162
 #: ../../source/udd.rst:194
-# aad482d7b0974efeb4a39fe7f4e1987f
-# caa5b050cec14cb7aa5415429c1693d2
+# 1ff623c9acfe441dbec40cd2c542b78e
+# 359ab3432e0a462b8d6dc267f16e08c7
 msgid "`st`"
 msgstr ""
 
 #: ../../source/udd.rst:160
-# f5263855e97c47efb73ce2d1867559b1
+# 86a1575eec8642dc812b45cd7bd1060f
 msgid "A float, the shown timebase, in seconds. The shown timebase begins when this displayable is first shown on the screen."
 msgstr ""
 
 #: ../../source/udd.rst:168
-# dca9b771d83447d0a208a9887fb5adef
+# 2ed306b1d85145a5a0358dfd8ceae26b
 msgid "`at`"
 msgstr ""
 
 #: ../../source/udd.rst:165
-# 12e32582d98d4173be5dc6ea6931aceb
+# f55baa0cb4804d778991b3118413e27d
 msgid "A float, the animation timebase, in seconds. The animation timebase begins when an image with the same tag was shown, without being hidden. (When the displayable is shown without a tag, this is the same as the shown timebase.)"
 msgstr ""
 
 #: ../../source/udd.rst:170
-# ff80f5dbfaaf4d44afa028b4020bb6ee
+# 96b73af396464391ab6d5abf1cefbc5f
 msgid "The render method is called when the displayable is first shown. It can be called again if :func:`renpy.redraw` is called on this object."
 msgstr ""
 
 #: ../../source/udd.rst:176
-# 6b7dcf7122644a578e2df78153afdb22
+# 8e29adfa58c343fc9c92bba9f1fcb0eb
 msgid "The event method is called to pass a pygame event to the creator-defined displayable. If the event method returns a value other than None, that value is returned as the result of the interaction."
 msgstr ""
 
 #: ../../source/udd.rst:181
-# abf13c9302604ec485e6b3c6f27a36f6
+# 0d9321461daa434da52c5afa71ce1470
 msgid "The event method exists on other displayables, allowing the creator-defined displayable to pass on the event."
 msgstr ""
 
 #: ../../source/udd.rst:185
-# 97f69b1a10774b5bb4b729cef63fe33c
+# 6de5bb34fa374d968b76939ce9e0339e
 msgid "`ev`"
 msgstr ""
 
 #: ../../source/udd.rst:185
-# 6da4b0833c3c48d7a1c43ace7db14574
+# 165de7fbff664937bd458ffb593291b2
 msgid "An `event object <http://www.pygame.org/docs/ref/event.html>`_"
 msgstr ""
 
 #: ../../source/udd.rst:191
-# a944a019795b4a4cbdffe24f18a86d33
+# 74e3acb5847d444395241444ff52aa26
 msgid "`x`, `y`"
 msgstr ""
 
 #: ../../source/udd.rst:188
-# 36dfc478149b4e93a80cd9f2c9799eb1
+# 1004689c4fb246bb8ab0438758f81a81
 msgid "The x and y coordinates of the event, relative to the upper-left corner of the displayable. These should be used in preference to position information found in the pygame event objects."
 msgstr ""
 
 #: ../../source/udd.rst:194
-# 5c657a38a798419684e9220ea0190f72
+# 560e79fe7ec342198c588347d2a67eed
 msgid "A float, the shown timebase, in seconds."
 msgstr ""
 
 #: ../../source/udd.rst:196
-# a96d9103b75b4c408b04cb9de9a67370
+# 16283603c8244a1ebdb9d412ec803e18
 msgid "An event is generated at the start of each interaction, and :func:`renpy.timeout` can be used to cause another event to occur."
 msgstr ""
 
 #: ../../source/udd.rst:202
-# 0bd4ef2474e84f229bd7171497987afe
+# 53c03a40fdf44bd0b889960787b0ca06
 msgid "This method is called at the start of each interaction. It can be used to trigger a redraw, and probably should be used to trigger a redraw if the object participates in rollback."
 msgstr ""
 
 #: ../../source/udd.rst:208
-# 55c43024a9cd4dcbbd64e83582e8f499
+# a22b4363ed6e42649e12b8be0a8b7653
 msgid "If the displayable has child displayables, this method should be overridden to return a list of those displayables. This ensures that the per_interact methods of those displayables are called, and also allows images used by those displayables to be predicted."
 msgstr ""
 
 #: ../../source/udd.rst:215
-# f20ab6977c70415cb4eb3b68b662ad85
+# 20be5a0e4cfa4b289890a8cedef70e2e
 msgid "renpy.Render"
 msgstr ""
 
 #: ../../source/udd.rst:217
-# 5a1fd8235ef64e119f34ffddb7b13c09
+# 95816c4ed59a4f50a2e6004c06ddad48
 msgid "creator-defined displayables work with renpy.Render objects. Render objects are returned by calling the :func:`renpy.render` function on a displayable. A creator-defined displayable should create a Render object by calling :class:`renpy.Render` from its render method."
 msgstr ""
 
 #: ../../source/udd.rst:222
-# 091e1e8864e6412f90e3ba859378139e
+# d6aa60e1e0ca4664ac3eaceedc1bb811
 msgid "Since the render object isn't intended to be subclassed, we will omit the implicit `self` parameter."
 msgstr ""
 
 #: ../../source/udd.rst:227
-# be1726bf44214549bdc44177ccbaf689
+# 8d367d90c788498c89ba966e5f3a1234
 msgid "Creates a new Render object."
 msgstr ""
 
 #: ../../source/udd.rst:230
-# cd06ae314a4c400196bdcfa84f889714
+# 35b619a472834cc5a413043c8c39452e
 msgid "The width and height of the render object, in pixels."
 msgstr ""
 
 #: ../../source/udd.rst:234
-# 35233ebd1aed47b49ed386af696f2b5d
+# 70f66ffa81a142169288d39afabce0cb
 msgid "Draws another render object into this render object."
 msgstr ""
 
 #: ../../source/udd.rst:237
-# 7d2769e801974709a22479879d51d497
+# 04e8b0a28e144b16921fe4a980e035ce
 msgid "`source`"
 msgstr ""
 
 #: ../../source/udd.rst:237
-# 4f8d8053cbf0462a80f9b5183572f490
+# 54cdc41701374e5db645e381e758d8ac
 msgid "The render object to draw."
 msgstr ""
 
 #: ../../source/udd.rst:241
-# fd827b9e21424df686904c4ab03ef71f
+# 0dec88e91e544b23a90070f63cadd7b3
 msgid "`pos`"
 msgstr ""
 
 #: ../../source/udd.rst:240
-# d6fbee2fe8d54100b465b16c75bc5a40
+# 122c75f5d1e84b6cb8017b973e460114
 msgid "The location to draw into. This is an (x, y) tuple with the coordinates being pixels relative to the upper-left corner of the target render."
 msgstr ""
 
 #: ../../source/udd.rst:246
-# 4613c1f97a9245138af92cb86e028ea1
+# 3ecf8db5626d48bd9069713c8a5e39f2
 msgid "Returns a canvas object. A canvas object has methods corresponding to the `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_ functions, with the first parameter (the surface) omitted."
 msgstr ""
 
 #: ../../source/udd.rst:253
-# c85f0939575148ab89272e98cd455301
+# 83a9284bf78e4792a27cda58abef41a8
 msgid "Returns a (width, height) tuple giving the size of this render."
 msgstr ""
 
 #: ../../source/udd.rst:258
-# 4f8703c2594c4bc8a8f11bd34d01d6c6
+# c5372b3616e7457ba29b6d37d451a50b
 msgid "Returns a render consisting of a rectangle cut out of this render."
 msgstr ""
 
 #: ../../source/udd.rst:261
-# 27df38011165453ba8bcdf68609e4a90
+# efbf5e2412a64875bfebb4e76e39cc50
 msgid "`rect`"
 msgstr ""
 
 #: ../../source/udd.rst:262
-# 27d5f31a2c9f4d4abea71209501da8ab
+# 72b86f31477744b58b91d43cdaaad730
 msgid "A (x, y, width, height) tuple."
 msgstr ""
 
 #: ../../source/udd.rst:266
-# 291b1cbdf0d3437da5bc7971520714db
+# 99d46813be69475ca4e1a645e9b17118
 msgid "Utility Functions"
 msgstr ""
 
 #: ../../source/udd.rst:268
-# 8446cdae1010487ab6aedeb84f74757f
+# 9237f521bb194a7498ba84a69bc6071b
 msgid "These function manage the rendering process."
 msgstr ""
 
 #: ../../source/inc/udd_utility:5
-# ccb6f6512d6f475abc752b8ffda00c27
+# 2b2dac79d79849c190e1fa9cbd486b40
 msgid "This takes `d`, which may be a displayable object or a string. If it's a string, it converts that string into a displayable using the usual rules."
 msgstr ""
 
 #: ../../source/inc/udd_utility:11
-# bb140eabb359429590fde9d5ee182a4a
+# 0d63002e0b084c5fa40a9a73246c5054
 msgid "If `value` is not None, immediately ends the current interaction, causing the interaction to return `value`. If `value` is None, does nothing."
 msgstr ""
 
 #: ../../source/inc/udd_utility:14
-# e783a0e404884d439d33a5b3b880d3e6
+# 3ab1e0428ae3424f996397f69508418a
 msgid "This can be called from inside the render and event methods of a creator-defined displayable."
 msgstr ""
 
 #: ../../source/inc/udd_utility:19
-# d76b486c35034cc7b05904068e6ba82d
+# 35be903128c242d1aef55ef9cbf74438
 msgid "Causes a displayable to be rendered, and a renpy.Render object to be returned."
 msgstr ""
 
 #: ../../source/inc/udd_utility:23
-# 23e385a59ebd45509cd9e2863c93654a
+# 328c3381afd04a26b74e388612066a10
 msgid "`d`"
 msgstr ""
 
 #: ../../source/inc/udd_utility:23
-# 9cecbc46b86f48ea98646f2d243dab7f
+# 6e738b128a7b4addb7e35e7004e751b9
 msgid "The displayable to render."
 msgstr ""
 
 #: ../../source/inc/udd_utility:26
-# 9baa5adb36f24ed89b1d9909d8e9723d
+# bebbf6c356d143a6924ecf09f219abf7
 msgid "The width and height available for the displayable to render into."
 msgstr ""
 
 #: ../../source/inc/udd_utility:29
-# a358db4e27414eef8f1a6174f6c55be3
+# 45c813d085d444f19b95e9e77d0802bb
 msgid "`st`, `at`"
 msgstr ""
 
 #: ../../source/inc/udd_utility:29
-# 7da3864e25dd47a8b99b3a18fae73c5c
+# 6fda7f72c57341cd86800ea949c33bb3
 msgid "The shown and animation timebases."
 msgstr ""
 
 #: ../../source/inc/udd_utility:31
-# 61ec968c10264fa08c7fe8a3bcc00203
+# d46abad414914a89856e260e10d0e863
 msgid "Renders returned by this object may be cached, and should not be modified once they have been retrieved."
 msgstr ""
 
 #: ../../source/inc/udd_utility:36
-# 5f7b3b164d9248109bddacae600870e4
+# e715b35ad7ef42b586afca512c23d563
 msgid "Causes an event to be generated before `seconds` seconds have elapsed. This ensures that the event method of a user-defined displayable will be called."
 msgstr ""
 
 #: ../../source/udd.rst:274
-# 6c4dfd2f2d0f46dbb0160b9a89addc60
+# 9c699e3bad044b2ba7506f5ab3f40442
 msgid "Causes the displayable `d` to be redrawn after `when` seconds have elapsed."
 msgstr ""
 

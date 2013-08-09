@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,292 +17,292 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/drag_drop.rst:7
-# dcb49b9c5037464689c1499444bdd00d
+# 92f6b6c166504357a23b9e9755bacfb6
 msgid "Drag and Drop"
 msgstr ""
 
 #: ../../source/drag_drop.rst:9
-# caa189e7c6844c64972ac7ba276b0541
+# 50d323aef1c2464c9f21e70d636f0a74
 msgid "Ren'Py includes drag and drop displayables that allow things to be moved around the screen with the mouse. Some of the uses of dragging are:"
 msgstr ""
 
 #: ../../source/drag_drop.rst:13
-# b099a3fcbf32430cbcf78217a40366c1
+# 3e3caf8cde5e49ea83fbab1e51850ab5
 msgid "Allowing windows to be repositioned by the user, storing the window positions."
 msgstr ""
 
 #: ../../source/drag_drop.rst:15
-# dca37bc994964a52a52f247b290e289e
+# 2b82e916a55d4abba85160151492ed5d
 msgid "Card games that require cards to be dragged around the screen. (For example, solitaire.)"
 msgstr ""
 
 #: ../../source/drag_drop.rst:17
-# 9f9eafae71984a5fb24e1a0f2804dd98
+# 39c3c8018c544b8a976e9715a9bec0a2
 msgid "Inventory systems."
 msgstr ""
 
 #: ../../source/drag_drop.rst:18
-# 432b8c923d6c4d79a45d709d0094b913
+# 445f9bba45ef424583c68f45106d09bc
 msgid "Drag-to-reorder systems."
 msgstr ""
 
 #: ../../source/drag_drop.rst:20
-# 477f2fce119f4e579f50143bd2fc02e7
+# 70ad81b8cc104776b6ae20e45b49d712
 msgid "The drag and drop displayables make it possible to implement these and other uses of drag and drop. There are two classes involved here. The Drag class represents either something that can be dragged around the screen, something that can have a draggable dropped onto it, or something that can do both. The DragGroup class represents a group of Drags - for a drag and drop to occur, both Drags must be part of the same drag group."
 msgstr ""
 
 #: ../../source/drag_drop.rst:28
-# a37aac81287d4b3fbfef9db9885034a6
+# 4dd209f1ad0a48b6bc3050d56df18845
 msgid "The drag and drop system can be used either through the :ref:`Screen Language <screens>` or directly as displayables. It makes sense to use the screen language when you don't need to refer to the Drags that you create after they've been created. This might be the case if the draggable represents a window that the user places on the scren. If you need to refer to the drags after they've been created, then it's often better to create Drags directly, and add them to a DragGroup."
 msgstr ""
 
 #: ../../source/drag_drop.rst:37
-# 1349db21a26a4e1bb96f0699dc14f335
+# 9bbc7b52137c4bfcb5ee30f7f6e9d684
 msgid "Displayables"
 msgstr ""
 
 #: ../../source/inc/drag_drop:5
-# 137d8ed5ab854404883a710f89b7ef47
+# 82abdf0c463944c3833cbe20509fa40b
 msgid "A displayable that represents an object that can be dragged around its enclosing area. A Drag can also represent an area that other Drags can be dropped on."
 msgstr ""
 
 #: ../../source/inc/drag_drop:9
-# f402f7df04604b3b890ff97b4e45f53e
+# d2c1ca5737be48689f888b2f5030fbe7
 msgid "A Drag can be moved around inside is parent. Generally, its parent should be either a :func:`Fixed` or :class:`DragGroup`."
 msgstr ""
 
 #: ../../source/inc/drag_drop:12
-# b244aaa8b3e045d38ed4abefce539bb2
+# bdbb545a55474ccbaec6e60b92414df4
 msgid "A Drag has one child. The child's state reflects the status of the drag and drop operation:"
 msgstr ""
 
 #: ../../source/inc/drag_drop:15
-# b89f2740937b406bb03fd21690f26b29
+# 46182bb6463b400ebcfba5f5668636be
 msgid "``selected_hover`` - when it is being dragged."
 msgstr ""
 
 #: ../../source/inc/drag_drop:16
-# bdae72bd4359499291f11ed98c95773d
+# fc0e49b015fb40a291df25976742be88
 msgid "``selected_idle`` - when it can be dropped on."
 msgstr ""
 
 #: ../../source/inc/drag_drop:17
-# 40f52edaad834d888951374704a15aac
+# 9b875c7b731b4857a4734e3254d6f052
 msgid "``hover`` - when the draggable will be dragged when the mouse is clicked."
 msgstr ""
 
 #: ../../source/inc/drag_drop:19
-# 8de793e39eb741468a980fa11d328929
+# 55c6c81c08214068a3c6c409bfa56e00
 msgid "``idle`` - otherwise."
 msgstr ""
 
 #: ../../source/inc/drag_drop:21
-# a233a7d38b3746b8b0ac9120eda28e8e
+# 7ab740943a3e45cab216941583f7453d
 msgid "The drag handle is a rectangle inside the child. The mouse must be over a non-transparent pixel inside the drag handle for dragging or clicking to occur."
 msgstr ""
 
 #: ../../source/inc/drag_drop:25
-# 4c6851b966a14cdaa0b628455c583373
+# d3d7bb11baed4d4586ba9cc09b508688
 msgid "A newly-created draggable is added to the default DragGroup. A draggable can only be in a single DragGroup - if it's added to a second group, it's removed from the first."
 msgstr ""
 
 #: ../../source/inc/drag_drop:29
-# 7d21090fa997444b933a37fab26aa7c8
+# aa4d21d78b2c4f19b9f8886db039b8d4
 msgid "When a Drag is first rendered, if it's position cannot be determined from the DragGroup it is in, the position of its upper-left corner is computed using the standard layout algorithm. Once that position"
 msgstr ""
 
 #: ../../source/inc/drag_drop:36
-# 78b99ff0853c4139b9f4756de622c4ee
+# c7afe628f9864a02826bddae99e43468
 msgid "`d`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:35
-# ef8ae101e2c04217b21faa270cf34fb3
+# b1021e99f4da4ba28478c81986eaaea2
 msgid "If present, the child of this Drag. Drags use the child style in preference to this, if it's not None."
 msgstr ""
 
 #: ../../source/inc/drag_drop:42
-# 6746b88132d9481383d447bfb7b2a356
+# 7a4e98d964bf4cb38048178ec5d05eb9
 msgid "`drag_name`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:39
-# a98fae018786441a8ec068500e8f2548
+# cc644bc17cca4c47a19b849ea0ac5822
 msgid "If not None, the name of this draggable. This is available as the `name` property of draggable objects. If a Drag with the same name is or was in the DragGroup, the starting position of this Drag is taken from that Draggable."
 msgstr ""
 
 #: ../../source/inc/drag_drop:46
-# c42c2568a8994952b0835cf96444db93
+# 479e2ca16cb046308afce34b69adfaeb
 msgid "`draggable`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:45
-# 39aa0e0e0de14e92bdd13e7fbf2cfe26
+# 316eb7cfa8ab4b2bb676a519c74bf7f0
 msgid "If true, the Drag can be dragged around the screen with the mouse."
 msgstr ""
 
 #: ../../source/inc/drag_drop:49
-# fed25b7cc81c42f79777f66de8619b3e
+# 2bab3fadb2874889a2dc4d7e1f20c682
 msgid "`droppable`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:49
-# 7194d130bc804f19b8dd3ccd9afeaa69
+# 60c55b1fb770420097e473d92766b6d0
 msgid "If true, other Drags can be dropped on this Drag."
 msgstr ""
 
 #: ../../source/inc/drag_drop:53
-# 17e5f9cff3f14e66a2dec7d359b0c482
+# 76be306428244cd9ac07ad14b9c532a3
 msgid "`drag_raise`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:52
-# 585b6283eb514d5d85a1bc9bfc088b3f
+# 021b5c7e5ba549a0a6982815330ab88a
 msgid "If true, this Drag is raised to the top when it is dragged. If it is joined to other Drags, all joined drags are raised."
 msgstr ""
 
 #: ../../source/inc/drag_drop:61
-# 685bc2122091430098d7bfece3f7f747
+# 969552fe82574e6683ea371291434065
 msgid "`dragged`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:56
-# eccf6548aa714333b8be2249c64eb0a7
+# 5be97773b59e459b9fb9582fe34cca8a
 msgid "A callback (or list of callbacks) that is called when the Drag has been dragged. It is called with two arguments. The first is a list of Drags that are being dragged. The second is either a Drag that is being dropped onto, or None of a drop did not occur. If the callback returns a value other than None, that value is returned as the result of the interaction."
 msgstr ""
 
 #: ../../source/inc/drag_drop:72
-# febc31e3d37a4649acc23fa117a7591e
+# dceea41b7f3b442abcd2571bb7f2cf0e
 msgid "`dropped`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:64
-# dff2ad5dd0ab436b8cb55bbc0157b502
+# 1202c759add74b86b71d1463dc327f91
 msgid "A callback (or list of callbacks) that is called when this Drag is dropped onto. It is called with two arguments. The first is the Drag being dropped onto. The second is a list of Drags that are being dragged.  If the callback returns a value other than None, that value is returned as the result of the interaction."
 msgstr ""
 
 #: ../../source/inc/drag_drop:70
-# aa172384a4414a91b8cef7a890dacfa8
+# fa2927b4a95840d7a44943504b0c4aa7
 msgid "When a dragged and dropped callback are triggered for the same event, the dropped callback is only called if dragged returns None."
 msgstr ""
 
 #: ../../source/inc/drag_drop:78
-# 7959686440dd4c44ba9e517acf862e7b
+# 6b6ee06892b946a88f3992c5167eeb2a
 msgid "`clicked`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:75
-# a7fb6dbdca934ac89a7c4551721b388f
+# 878802686e84431095c315fb2921f2c4
 msgid "A callback this is called, with no arguments, when the Drag is clicked without being moved. A droppable can also be focused and clicked.  If the callback returns a value othe than None, that value is returned as the result of the interaction."
 msgstr ""
 
 #: ../../source/inc/drag_drop:84
-# 94eac5d724c044cc8c746e9f8bcf672c
+# c55903dfd4a1489ab241ddf545c694c8
 msgid "`drag_handle`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:81
-# 6307185311534886a3e1473463f097f8
+# 1abc4f9279a64eff9fd3094f6e1d09cc
 msgid "A (x, y, width, height) tuple, giving the position of the drag handle within the child. In this tuple, integers are considered to be a literal number of pixels, while floats are relative to the size of the child."
 msgstr ""
 
 #: ../../source/inc/drag_drop:91
-# 57b03eb9bedb47d39c16e94f01bfd6cd
+# 77b66a3b69aa488d9b3dc3cbcfce2042
 msgid "`drag_joined`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:87
-# 96af54d42378468592819fe544d448d6
+# 3483b96e05fc4674a81354af669992d4
 msgid "This is called with the current Drag as an argument. It's expected to return a list of [ (drag, x, y) ] tuples, giving the draggables to drag as a unit. `x` and `y` are the offsets of the drags relative to each other, they are not relative to the corner of this drag."
 msgstr ""
 
 #: ../../source/inc/drag_drop:93
-# 2167c9bf2c0c4923ac735e8c2486a397
+# e47ea944e61f427896a2348e3f0a5596
 msgid "Except for `d`, all of the parameters are available as fields (with the same name) on the Drag object. In addition, after the drag has been rendered, the following fields become available:"
 msgstr ""
 
 #: ../../source/inc/drag_drop:98
-# 631e74cae5d34bbab45ce238bca75655
+# 9923d78b50c9425597146d4180eba86d
 msgid "`x`, `y`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:98
-# 5fd62659b95843feb67745d8da2a2b77
+# 7b8923ccf9b34b10b8779cf25acb5ba5
 msgid "The position of the Drag relative to its parent, in pixels."
 msgstr ""
 
 #: ../../source/inc/drag_drop:102
-# 4948e0c4a8ee4ec39fc4c32455c37122
+# 3566a7068caf4ee0bed28c79e868ea51
 msgid "`w`, `h`"
 msgstr ""
 
 #: ../../source/inc/drag_drop:101
-# 137c4b28353142599e056d139103a820
+# 6f26b470509f47ec92c1d89c22086cce
 msgid "The width and height of the Drag's child, in pixels."
 msgstr ""
 
 #: ../../source/inc/drag_drop:106
-# 14b7b9ff793741fd92cf5e7d448a9573
+# a19dfe271ac6424bbe712174458c86ba
 msgid "Changes the child of this drag to `d`."
 msgstr ""
 
 #: ../../source/inc/drag_drop:110
-# 2248cb4001ff42a08ca388137ec6ff92
+# 78b70c0ef7244ec9b03cf6e6ac557505
 msgid "Changes the position of the drag. If the drag is not showing, then the position change is instantaneous. Otherwise, the position change takes `delay` seconds, and is animated as a linear move."
 msgstr ""
 
 #: ../../source/inc/drag_drop:117
-# d6ac662b3c004032a9492d9891ab07a5
+# 920c3ff15bbc42118478c235007cf354
 msgid "Raises this displayable to the top of its drag_group."
 msgstr ""
 
 #: ../../source/inc/drag_drop:121
-# 17e80edb1cc547898940bb7b37ae8815
+# 7d0ce699f9ab420a99574cc3732cd00e
 msgid "Represents a group of Drags. A Drag is limited to the boundary of its DragGroup. Dropping only works between Drags that are in the same DragGroup. Drags may only be raised when they are inside a DragGroup."
 msgstr ""
 
 #: ../../source/inc/drag_drop:126
-# d02d11404ff54476abc970050dc54c74
+# 5d3c2ca8f9f145e887febe428bc9c693
 msgid "A DragGroup is laid out like a :func:`Fixed`."
 msgstr ""
 
 #: ../../source/inc/drag_drop:128
-# 776b0261877e4ef48f295b4c948b98c3
+# a32d97f518a3498db177c7344a73594c
 msgid "All positional parameters to the DragGroup constructor should be Drags, that are added to the DragGroup."
 msgstr ""
 
 #: ../../source/inc/drag_drop:133
-# 0712b55f3efd455db27c93b96a8c3400
+# ef34bbfc2de84cfa991bbde915368a2f
 msgid "Adds `child`, which must be a Drag, to this DragGroup."
 msgstr ""
 
 #: ../../source/inc/drag_drop:137
-# ca8cdf66c3c94a92b64e2f3b1c9f10fd
+# 8de8d12a3c6146af8779f6ac8e7d7da7
 msgid "Returns the first child of this DragGroup that has a drag_name of name."
 msgstr ""
 
 #: ../../source/inc/drag_drop:142
-# 6640ae19a46f4c06aacbf0a331df3898
+# c976cfc551064ee3bce8477e85d0d9bf
 msgid "Removes `child` from this DragGroup."
 msgstr ""
 
 #: ../../source/drag_drop.rst:42
-# 2f4c418ba3e040ffb5452d9209332e4d
+# 5472b8a2ef8c4851a976a855ba6d4efb
 msgid "Examples"
 msgstr ""
 
 #: ../../source/drag_drop.rst:44
-# b87b6ff9b7fa4ddcb5b1a0f80c769fb7
+# 24a6e36ae5f046e6b0325fe07ae4bc71
 msgid "An example of a say screen that allows the user to choose the location of the window by dragging it around the screen.::"
 msgstr ""
 
 #: ../../source/drag_drop.rst:67
-# c315681a99c440eeb838f0a07533af06
+# e12e20f6bf16424a9ac8f75025cb1d05
 msgid "Here's a more complicated example, one that shows how dragging can be used to influence gameplay. It shows how dragging can be used to send a character to a location::"
 msgstr ""
 
 #: ../../source/drag_drop.rst:125
-# 9a6b1682209d46f188e2c0f16e68f2f7
+# 97efc13d2e8f490794ae0508eeb669a5
 msgid "More complicated systems take significant programming skill to get right. The `Ren'Py cardgame framework <http://www.renpy.org/wiki/renpy/Frameworks#Cardgame>`_ is both an example of how to use drag and drop in a complex system, and useful for making card games in its own right."
 msgstr ""
 

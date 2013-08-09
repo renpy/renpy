@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,666 +17,666 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/screen_python.rst:6
-# ff0479a59af94005bcfac83cc22c0d47
+# e9268102af324a27b70c10b1a3445a28
 msgid "Screens and Python"
 msgstr ""
 
 #: ../../source/screen_python.rst:8
-# 613915b71c7a4774945f79d3a7369135
+# 0520a4adb46b4d57a03fd38ef3ff3b76
 msgid "Ren'Py supports defining screens in Python, as well as in the Ren'Py screen language. A Python screen is created by supplying a screen function to the :func:`renpy.define_screen` function. It can then be used like it was any other screen."
 msgstr ""
 
 #: ../../source/screen_python.rst:13
-# abbf96367d93464cb8ba4aae0983c019
+# 3715e6fef4cf479bb1f9f553b9ef40bc
 msgid "The screen function should have parameters corresponding to the scope variables it expects, and it should ignore extra keyword arguments. (That is, it should have `**kwargs` at the end of its parameter list.) It is then expected to call the UI functions to add displayables to the screen.The screen function is called whenever an interaction starts or restarts."
 msgstr ""
 
 #: ../../source/screen_python.rst:20
-# 0ceb76a8329f437b96d6e86a107c3e5d
+# 758c2a38225c488e9f5dc80e47f69477
 msgid "To ensure that this restarting is seamless to the user (and not causing things to reset), it's important that every call to a UI function supply the `id` argument. As a screen is re-created, Ren'Py will update each displayable with the contents of the old displayable with the same id. Ids are generated automatically by the screen language, but when doing things by hand, they must be manually specified."
 msgstr ""
 
 #: ../../source/screen_python.rst:28
-# c3286159d7aa4b72b6dbf4902e8a6946
+# 8efdbeeb521d4a8abd6848870295622c
 msgid "Here's an example python screen:"
 msgstr ""
 
 #: ../../source/screen_python.rst:47
-# d618a0846cea42f6a5dd68683bf04afe
+# 5f62a365fa8142dcb8f991dbc33f3a9d
 msgid "Screen Functions"
 msgstr ""
 
 #: ../../source/screen_python.rst:49
-# a269d5336bcf483aab208c12c1ee3366
+# 62f35e4f0f5d452db1d40c815d414306
 msgid "The following functions support the definition, display, and hiding of screens."
 msgstr ""
 
 #: ../../source/inc/screens:5
 #: ../../source/inc/screens:70
-# fb4408c7079a48aa89c8e203efaf97d5
-# ec5bb90b6609419697c8d8a0a945bc15
+# 93de8c71d7a34e04a53d02a85d41ca65
+# 2776914cc20a4c6f9ec77bababa45920
 msgid "The programmatic equivalent of the show screen statement."
 msgstr ""
 
 #: ../../source/inc/screens:7
-# 13eb90a7db5d45aeb06fbc5d70a6f26a
+# 4ffc953d590d44ba96cd7a5a1a493c65
 msgid "This shows `_screen_name` as a screen, then causes an interaction to occur. The screen is hidden at the end of the interaction, and the result of the interaction is returned."
 msgstr ""
 
 #: ../../source/inc/screens:11
-# 892b91b74d13499ead5d05cf9a7af0f6
+# 91f45d3468e94a6885f602dd2baed94a
 msgid "Keyword arguments not beginning with _ are passed to the scope of the screen."
 msgstr ""
 
 #: ../../source/inc/screens:16
-# 10140a1c2be64695a50749a3b61c2cfb
+# 4c7a314ced3443a8a3a6f895c8157d81
 msgid "Defines a screen with `name`, which should be a string."
 msgstr ""
 
 #: ../../source/inc/screens:24
-# c9229e68afba4370a7590f138f4f2fa4
+# 96f10e732349403ebdc952d26a3e6d09
 msgid "`function`"
 msgstr ""
 
 #: ../../source/inc/screens:19
-# ff9ef5aaf53149569dfa2bc4242d340d
+# 04fce3a5724b41ac861e1dfce0f7943d
 msgid "The function that is called to display the screen. The function is called with the screen scope as keyword arguments. It should ignore additional keyword arguments."
 msgstr ""
 
 #: ../../source/inc/screens:23
-# 4119aac630854af2be559f79f301a8a1
+# 35a09cea482e42be83b3c8107be27255
 msgid "The function should call the ui functions to add things to the screen."
 msgstr ""
 
 #: ../../source/inc/screens:29
-# 0db76b602ca34e019cc37b1e024a60b4
+# 9e56715a51e146b590b7a4cec5139fb5
 msgid "`modal`"
 msgstr ""
 
 #: ../../source/inc/screens:27
-# 52c242aaa4e546d9ad3b9ca88bfe2568
+# 4b4a5be9097e41ec9d8de9f43a4ddf30
 msgid "A string that, when evaluated, determines of the created screen should be modal. A modal screen prevents screens underneath it from receiving input events."
 msgstr ""
 
 #: ../../source/inc/screens:35
-# 44462eb024324d2fb4d6cc8f245930fc
+# 5a44947830584d85b7e309bc7885b1e7
 msgid "`zorder`"
 msgstr ""
 
 #: ../../source/inc/screens:32
-# 8ac0d98b8ba64ac190dc6bbe0224f37f
+# b0e705aa0bca4c3598498c6b045793ec
 msgid "A string that, when evaluated, should be an integer. The integer controls the order in which screens are displayed. A screen with a greater zorder number is displayed above screens with a lesser zorder number."
 msgstr ""
 
 #: ../../source/inc/screens:40
-# a244ff5f214140ee8427dc7123f6908c
+# cd4337fa980249b389c0322542b42367
 msgid "`tag`"
 msgstr ""
 
 #: ../../source/inc/screens:38
-# 4f1e0b824ca844db8e319e503041fe2e
+# 879c02a759a94356aea5380c20e425e4
 msgid "The tag associated with this screen. When the screen is shown, it replaces any other screen with the same tag. The tag defaults to the name of the screen."
 msgstr ""
 
 #: ../../source/inc/screens:44
-# 70f7ddb8394f4d209ee4972969dfaa4f
+# 9a0c393901bf4cb2a61d8e2051ef9cfc
 msgid "`predict`"
 msgstr ""
 
 #: ../../source/inc/screens:43
-# 67fda88891e44765972a70e3a1b7c68d
+# c712b3cef3ab4f3c88b0abebb6f5be7b
 msgid "If true, this screen can be loaded for image prediction. If false, it can't. Defaults to true."
 msgstr ""
 
 #: ../../source/inc/screens:46
-# f5a9a95b429143759aa7d2a7b198e7ca
+# 2c03e8c04e9d4c6895f9b6e176e17879
 msgid "`variant`"
 msgstr ""
 
 #: ../../source/inc/screens:47
-# de90889bba8b44d6a70cea68fabdccb2
+# 0a22e016949b494ebc68f98c4e725017
 msgid "String. Gives the variant of the screen to use."
 msgstr ""
 
 #: ../../source/inc/screens:51
-# 220bbe926e744ce695f3b3f010f9690c
+# 85643a374d02449982709549a7b99c7c
 msgid "Returns the ScreenDisplayable with the given `tag`, on `layer`. If no displayable with the tag is not found, it is interpreted as screen name. If it's still not found, None is returned."
 msgstr ""
 
 #: ../../source/inc/screens:58
-# aa91b968741b45c4baad33354fe87f35
+# b7943978c31848d39c35c5323bfbb5b9
 msgid "From the `screen` on `layer`, returns the widget with `id`. Returns None if the screen doesn't exist, or there is no widget with that id on the screen."
 msgstr ""
 
 #: ../../source/inc/screens:64
-# f8907bd6404840e68f2b894c7bc3d56c
+# 9ad916ff95dc4eb2aa8eb47253d97cd6
 msgid "The programmatic equivalent of the hide screen statement."
 msgstr ""
 
 #: ../../source/inc/screens:66
-# ca4fc6d81b36475aab278e74a870211e
+# db5eb5fde7e8411a99d6457f26132793
 msgid "Hides the screen with `tag` on `layer`."
 msgstr ""
 
 #: ../../source/inc/screens:72
-# 0a786cae81464edb9cb51d566e44eac7
+# 0d4e006b6d214518a8789299bb2788cb
 msgid "Shows the named screen. This takes the following keyword arguments:"
 msgstr ""
 
 #: ../../source/inc/screens:74
-# a84fc5240f3042249ad50c79ac31fb52
+# 1102dcd2d14a4b0d96df0b85b5784583
 msgid "`_screen_name`"
 msgstr ""
 
 #: ../../source/inc/screens:75
-# 7ea07900807a4e41af9a8f7216be935f
+# d6ced8935781475591fb2721c34fe443
 msgid "The name of the  screen to show."
 msgstr ""
 
 #: ../../source/inc/screens:76
-# 307de9630a244d05b6ab1d91816c1d8c
+# cd9ed6e1acf34033ab93b1f581a352df
 msgid "`_layer`"
 msgstr ""
 
 #: ../../source/inc/screens:77
-# 52a383f00b2b427babc4b4266aec631f
+# 980e638af513445d9d9d081a939467ff
 msgid "The layer to show the screen on."
 msgstr ""
 
 #: ../../source/inc/screens:80
-# c404a55c99934d039d9a785ce660bfd2
+# d83d6ce364ea4e13bb3cdffbe584cbd2
 msgid "`_tag`"
 msgstr ""
 
 #: ../../source/inc/screens:79
-# d073a545d5044838be348912ef6c4776
+# e6939316dc854684b78b60bd85582c1a
 msgid "The tag to show the screen with. If not specified, defaults to the tag associated with the screen. It that's not specified, defaults to the name of the screen.,"
 msgstr ""
 
 #: ../../source/inc/screens:84
-# 90fce2b1fa8847cea415e64e4e6c6437
+# 7e35aa9138f74cbe915a18ae6c31ab2a
 msgid "`_widget_properties`"
 msgstr ""
 
 #: ../../source/inc/screens:83
-# 234d88581101428fa7a2f07ab69fbaf5
+# e1a1da3da5684783bdb20019b4193c6d
 msgid "A map from the id of a widget to a property name -> property value map. When a widget with that id is shown by the screen, the specified properties are added to it."
 msgstr ""
 
 #: ../../source/inc/screens:88
-# 607cd801494445e1b5e72313a6fdc690
+# dde640a677204c619fd854e43e7515a1
 msgid "`_transient`"
 msgstr ""
 
 #: ../../source/inc/screens:87
-# 1c1112387c994bf4a71395ff1f41ae02
+# 281d1e0e56c94ceaa94c7494da35e55b
 msgid "If true, the screen will be automatically hidden at the end of the current interaction."
 msgstr ""
 
 #: ../../source/inc/screens:90
-# 9100280a70e34a4ca9f6a4218e329ed2
+# 28536c6e610842eb873eebfb69175cbc
 msgid "Keyword arguments not beginning with underscore (_) are used to initialize the screen's scope."
 msgstr ""
 
 #: ../../source/inc/screens:95
-# 9516309445914baf8fd1aa6c2f243bf2
+# 01f8c61272ad440b99f64243396d8004
 msgid "Returns true if a `name` is a screen variant that can be chosen by Ren'Py. See :ref:`screen-variants` for more details. This function can be used as the condition in a python if statement to set up the appropriate styles for the selected screen variant."
 msgstr ""
 
 #: ../../source/screen_python.rst:55
-# 9a4e3f2c21fe47b69ea47ab964d315c0
+# 739ee7e4bcb14c89bb52b0ada3eb45b0
 msgid "UI Functions"
 msgstr ""
 
 #: ../../source/screen_python.rst:57
-# 5ae971ef6ef14103a24d4e081a4f3ee0
+# 524a832f244a461b9ea25f647847d07a
 msgid "The UI functions are python equivalents of the screen language statements. For each screen language statement, there is a ui function with the same name. For example, ui.text corresponds to the text statement, and ui.add corresponds to the add statement."
 msgstr ""
 
 #: ../../source/screen_python.rst:62
-# 29023200794c445aa2525db441ebae77
+# ec41fade90ac4184a9d8d5e2e81607db
 msgid "There is a simple mapping between screen language parameters and arguments and python arguments. Screen language parameters become positional arguments, while properties become keyword arguments. For example, the screen language statement: ::"
 msgstr ""
 
 #: ../../source/screen_python.rst:69
-# dba33117e4bb47c4b853b7eeb7e0eb4d
+# b603fe1a93114205bab15f188ad518ec
 msgid "becomes: ::"
 msgstr ""
 
 #: ../../source/screen_python.rst:73
-# 9135093995be46849b63a3d18a34b7d0
+# 91bb7d2ad4d44cc4a654804dbb1c2245
 msgid "(It really should have an `id` parameter added.)"
 msgstr ""
 
 #: ../../source/screen_python.rst:75
-# 7caeaf28cedb40b59bc0991895e2b66c
+# f15eba64bd3f456d8d5619251c6192ad
 msgid "There are three groups of UI functions, corresponding to the number of children they take."
 msgstr ""
 
 #: ../../source/screen_python.rst:81
-# f1e97de5209341a2bf8cc5f3b29b6009
+# 62f0f3fdb82f42a78a58754a47977f16
 msgid "The following UI functions do not take any children."
 msgstr ""
 
 #: ../../source/screen_python.rst:83
-# 5f2d9056e1fb4e4cb8372ea61813145f
+# 8d46abb61ad647ec97e4470a3d0341c3
 msgid "ui.add"
 msgstr ""
 
 #: ../../source/screen_python.rst:84
-# 012f98b7e4d2441e82665ddba6289965
+# 54e1003ddff244479231044f36816d1c
 msgid "ui.bar"
 msgstr ""
 
 #: ../../source/screen_python.rst:85
-# b948eb9da30c437c842bb3c58da28263
+# a18f3ba52164447da36996464421ce63
 msgid "ui.imagebutton"
 msgstr ""
 
 #: ../../source/screen_python.rst:86
-# 4c357a0bcf5348e4bfba0ed054ff8e45
+# 0ebf40780a4149ad873246eb31cfbc33
 msgid "ui.input"
 msgstr ""
 
 #: ../../source/screen_python.rst:87
-# ef8f81f825ed4c91bd51c318519b3fbd
+# 25aa239e9750494591e7017b072594ef
 msgid "ui.key"
 msgstr ""
 
 #: ../../source/screen_python.rst:88
-# 505f5d0c549346a4877970d91705afe3
+# 9973ea08b45d4f7a9e7384bb2c8877e6
 msgid "ui.label"
 msgstr ""
 
 #: ../../source/screen_python.rst:89
-# 63f94c32c6864e9095d753411d6d0333
+# 36e13d9257064c889f0a02879245da29
 msgid "ui.null"
 msgstr ""
 
 #: ../../source/screen_python.rst:90
-# fae8394a806b4529bfc10050c7748174
+# 39b15f42e1654a8d9b65b31b108b2911
 msgid "ui.text"
 msgstr ""
 
 #: ../../source/screen_python.rst:91
-# 54f595be4e1d4a13b2a13b9ff3144f8f
+# ef3f093f6fcd4f86bed08bb3412789fb
 msgid "ui.textbutton"
 msgstr ""
 
 #: ../../source/screen_python.rst:92
-# c3bdf79ef71d427e936e857d4bd61886
+# 0f4980df854f4d06ad0ac46df75db960
 msgid "ui.timer"
 msgstr ""
 
 #: ../../source/screen_python.rst:93
-# e107080da7284a28b68a23c3a08f7128
+# d90f71a12bf24e2f8caac80833bcd722
 msgid "ui.vbar"
 msgstr ""
 
 #: ../../source/screen_python.rst:94
-# 0323e97b0c48478b8479e731bb1ba520
+# f644ef952a334b4aaf2c4c971cf894b1
 msgid "ui.hotspot"
 msgstr ""
 
 #: ../../source/screen_python.rst:95
-# bd7bf8777ba145ceb8696f5f5ccdcb95
+# 6f3d71e1aa7a4be8ace2e56a25daa88a
 msgid "ui.hotbar"
 msgstr ""
 
 #: ../../source/screen_python.rst:96
-# 43139c97ef544b219a778a49bc09673c
+# a9f8db243c7d407d9cdf230ae3d0d51c
 msgid "ui.spritemanager"
 msgstr ""
 
 #: ../../source/screen_python.rst:98
-# 4de124906e5745f4a58ae90a1c5dc523
+# 5331fa040df3417e95ce510bd89beb66
 msgid "The following UI functions take a single child. They must be given that child - use ui.null() if the child is missing."
 msgstr ""
 
 #: ../../source/screen_python.rst:101
-# 270dffb10cd046b6aa12f12f9a44f716
+# ea58e0f07f3b492b86addf0f0282bb99
 msgid "ui.button"
 msgstr ""
 
 #: ../../source/screen_python.rst:102
-# cd930a9e952d40cc89e81b53c90e8452
+# d12e5ecf61af4c60b70d2cb2ebed2104
 msgid "ui.frame"
 msgstr ""
 
 #: ../../source/screen_python.rst:103
-# 3434ec7aab2f45fd9ff31c02ac0cfd72
+# 4ee91df411e2447ca644b59a3d3d206e
 msgid "ui.transform"
 msgstr ""
 
 #: ../../source/screen_python.rst:104
-# 374a37655fe74771a7f6213e50e633c7
+# 2c9d3aaff68043c3b029fca5427487d7
 msgid "ui.window"
 msgstr ""
 
 #: ../../source/screen_python.rst:105
-# a74a0e40d1ff41bf9f51bc85f312a3e7
+# 95b85c662fda4363beceffc2e31e0be1
 msgid "ui.drag"
 msgstr ""
 
 #: ../../source/screen_python.rst:107
-# 09e7db9e55be4735854f9aafe76cb478
+# 8c8d7a45029e4d7caee64d38bd1f63cb
 msgid "The following UI functions take multiple children. They continue taking children until :func:`ui.close` is called."
 msgstr ""
 
 #: ../../source/screen_python.rst:110
-# 7872290e71a64330b950afa1a20ed655
+# 1cd973f2b7de4037ad20a22f7bc98f28
 msgid "ui.fixed"
 msgstr ""
 
 #: ../../source/screen_python.rst:111
-# 0ec281033b5b4616b5713fdd86fb6661
+# d0642dd031c440909a433b03d671c8a6
 msgid "ui.grid"
 msgstr ""
 
 #: ../../source/screen_python.rst:112
-# e2b9cb3a06a045eabd9635db7d7f3771
+# 10fb1404d42f4efbb9755e08af19c847
 msgid "ui.hbox"
 msgstr ""
 
 #: ../../source/screen_python.rst:113
-# daf9aca3b4314e7f80860950f5de4aba
+# 6e68c8ba2d424419a82881a0f9ab8c6c
 msgid "ui.side"
 msgstr ""
 
 #: ../../source/screen_python.rst:114
-# 1b73443fd0494434819a3ca1ec210731
+# df96a649dcf14ed5a676c0374bea9c86
 msgid "ui.vbox"
 msgstr ""
 
 #: ../../source/screen_python.rst:115
-# 3e7d565893a24dc7b6b9c45848d7779e
+# a053a1c9b6cf40a18df05d01a9f6c6e6
 msgid "ui.imagemap"
 msgstr ""
 
 #: ../../source/screen_python.rst:116
-# a2ddceae46754172af788d0e881a4a92
+# 3f07b8839a5c4a65af0df5ca8febf1cd
 msgid "ui.draggroup"
 msgstr ""
 
 #: ../../source/screen_python.rst:118
-# 711ddfc1728449149178a6fbf2648259
+# 962f53b1116c4909a9529c55f36df465
 msgid "There are a few UI functions that do not correspond to screen language statments, as they correspond to concepts that are not present in the screen language."
 msgstr ""
 
 #: ../../source/inc/ui:5
-# d26d2dc10cda413bb15f76e5abbaa7c4
+# 965a681e120743b2bb15c134dc3d23ce
 msgid "Adjustment objects represent a value that can be adjusted by a bar or viewport. They contain information about the value, the range of the value, and how to adjust the value in small steps and large pages."
 msgstr ""
 
 #: ../../source/inc/ui:10
-# 6ebf009416324e5fa50f214b5a45053c
+# 7c62736a11fa4caaa06817adedeee16f
 msgid "The following parameters correspond to fields or properties on the adjustment object:"
 msgstr ""
 
 #: ../../source/inc/ui:14
-# d9009d646a7546949e5bb423d9a3da54
+# 8a9be3e4c8874c8f8de5c71292fc5529
 msgid "`range`"
 msgstr ""
 
 #: ../../source/inc/ui:14
-# e5babe68ec674c888b24e00f3c8110ba
+# b42ace2c47af4ad78df3f49f366c06bd
 msgid "The range of the adjustment, a number."
 msgstr ""
 
 #: ../../source/inc/ui:17
-# 2f7b0094728d4a2583e2d6ad0dd0781b
+# fe9d985fe08d4137bd5d409358524cc3
 msgid "`value`"
 msgstr ""
 
 #: ../../source/inc/ui:17
-# 3e8ea9f61108472da58c396237016d84
+# 76db42325f414b2690a7e74ed0c01410
 msgid "The value of the adjustment, a number."
 msgstr ""
 
 #: ../../source/inc/ui:24
-# f5ab2bc7734c463bbecfa40a55a103c6
+# 9c82babdd806441c836dd7ee2f7f1f4f
 msgid "`step`"
 msgstr ""
 
 #: ../../source/inc/ui:20
-# 070aadf0d5fa4f00b5777ddad7d577f7
+# 1f20e39b8fd14186b79a55564377d129
 msgid "The step size of the adjustment, a number. If None, then defaults to 1/10th of a page, if set. Otherwise, defaults to the 1/20th of the range."
 msgstr ""
 
 #: ../../source/inc/ui:24
-# 0461f31b8c5e49c0bda7a765d70adc8e
+# f1853825b87b41ba844b56d3bc4a1ef3
 msgid "This is used when scrolling a viewport with the mouse wheel."
 msgstr ""
 
 #: ../../source/inc/ui:31
-# a42861195e9743949e4f4593e953e91a
+# dcfcd56e22864de683eb63ec77c99ab3
 msgid "`page`"
 msgstr ""
 
 #: ../../source/inc/ui:27
-# 164afe7e13224cd6b1ad9add118f1007
+# 10a8372724f64464a19abe887e2bf027
 msgid "The page size of the adjustment. If None, this is set automatically by a viewport. If never set, defaults to 1/10th of the range."
 msgstr ""
 
 #: ../../source/inc/ui:31
-# 067eb44333dc4a55863554176afe8b8d
+# 73c628d0b29a4cd3bbd377d7a7d5c55d
 msgid "It's can be used when clicking on a scrollbar."
 msgstr ""
 
 #: ../../source/inc/ui:33
-# 594afb7c2f1243939ec57ea0e32bec61
+# a9caf281da514642bef856422db2b356
 msgid "The following parameters control the behavior of the adjustment."
 msgstr ""
 
 #: ../../source/inc/ui:41
-# 51d03cf43cc646acbc6ef44782cf2d2f
+# 43c351c5668847399803685d9a9c6f69
 msgid "`adjustable`"
 msgstr ""
 
 #: ../../source/inc/ui:36
-# a5a291f46d51401ca9f859dca03f782e
+# 0a48d3d6ffe84176ad1bc3c95b8c9933
 msgid "If True, this adjustment can be changed by a bar. If False, it can't."
 msgstr ""
 
 #: ../../source/inc/ui:39
-# 83dd986e4c1b443abbe3d88aa907f0db
+# 1f74e7611d4248168be903bd56f60b67
 msgid "It defaults to being adjustable if a `changed` function is given or if the adjustment is associated with a viewport, and not adjustable otherwise."
 msgstr ""
 
 #: ../../source/inc/ui:45
-# f85796c5c8b54444a59a054a1319750b
+# b2e98d76176a42a9b81b2237001a1e7e
 msgid "`changed`"
 msgstr ""
 
 #: ../../source/inc/ui:44
-# 08c6a7f609d94fcd98ca67d004dbcc94
+# 2396aec56dca43f891662bb64d0cbce2
 msgid "This function is called with the new value when the value of the adjustment changes."
 msgstr ""
 
 #: ../../source/inc/ui:49
-# ec82a34e093b4ac8a1d6e99fed635180
+# cb73ea021b1242189e816c31da6409c2
 msgid "`ranged`"
 msgstr ""
 
 #: ../../source/inc/ui:48
-# 04f164c551724961aca44f14c8b7a8e3
+# a89ab02d51c840919917c586b7a5ceda
 msgid "This function is called with the adjustment object when the range of the adjustment is set by a viewport."
 msgstr ""
 
 #: ../../source/inc/ui:53
-# 32e195b2216343678a9e277b90fd8d50
+# e77b8ede798348519b5b9b66e3af4cae
 msgid "Changes the value of the adjustment to `value`, updating any bars and viewports that use the adjustment."
 msgstr ""
 
 #: ../../source/inc/ui:59
-# ed23df98a7384a2aa52847c369deafa8
+# a1e822e348354dfabd5df34c16039a38
 msgid "Specifieds a transform that is applied to the next displayable to be created. This is largely obsolete, as all UI functions now take an `at` argument."
 msgstr ""
 
 #: ../../source/inc/ui:65
-# 2d910dd2deaf4b9297f7e775f4407fc3
+# 751079a599934a92ba6b2a11176f13cf
 msgid "Closes a displayable created with by a UI function. When a displayable is closed, we add new displayables to its parent, or to the layer if no displayable is open."
 msgstr ""
 
 #: ../../source/inc/ui:71
-# e395d7bb720447b0b06c2116f2457d6f
+# 4ce568e5f3d04032bf54a10691f0647f
 msgid "Do not add the next displayable to any later or container. Use this if you want to assign the result of a ui function to a variable."
 msgstr ""
 
 #: ../../source/inc/ui:76
-# e1259e401f1d4411b3bf87acba52f5f0
+# 50470a8e696843e2a47c6e34d1e6fa04
 msgid "Adds displayables to the layer named `name`. The later must be closed with :func:`ui.close`."
 msgstr ""
 
 #: ../../source/screen_python.rst:125
-# a372c5085c204293a4b1f2359a4cd685
+# 30dad50b034344ed95f86178f11c12dc
 msgid "Actions"
 msgstr ""
 
 #: ../../source/screen_python.rst:127
-# d7767fe005514ba1988da5a3cb37f38e
+# cef02cbcfc2a48e0b91007f448b7ecb7
 msgid "Many of the displayables created in the screen language take actions as arguments. An action is one of three things:"
 msgstr ""
 
 #: ../../source/screen_python.rst:130
-# 3029ef6eef1845cb9ad1ba5d9f26fea8
+# 8f5c327387a54f198e8beaca9240a95a
 msgid "A callable python object (like a function or bound method) that takes no arguments."
 msgstr ""
 
 #: ../../source/screen_python.rst:132
-# 5511524ed3664d9babcaa82d65be7d7e
+# ad8d7ced1d2243b4b1d4df6ef2ee7af4
 msgid "An object of a class that inherits from the Action class."
 msgstr ""
 
 #: ../../source/screen_python.rst:133
-# 0d22d099d71a48ddb1bd29791efe1d2f
+# 88db461f472e4a5a990360b0be2eec3c
 msgid "A list of other Actions."
 msgstr ""
 
 #: ../../source/screen_python.rst:135
-# 00905d27339f4d6e890c482a5eb3d2f1
+# d227b18ede0348828eccb4b413d366bc
 msgid "The advantage to inheriting from the Action class is that it allows you to override the methods that determine when a button should be sensitive, and when it is selected."
 msgstr ""
 
 #: ../../source/screen_python.rst:141
-# adba87d0566346f38aa80166cdd96876
+# c505bd8cbb5c4008a47df9d12af93982
 msgid "To define a new action, inherit from this class. Override the methods in this class to change the behavior of the action."
 msgstr ""
 
 #: ../../source/screen_python.rst:146
-# acce74fcb0664557945a5b60d1a0de99
+# f40c1eb78983405b944426aeffc0f624
 msgid "This is the method that is called when the action is activated. In many cases, returning a non-None value from the action will cause the current interaction to end."
 msgstr ""
 
 #: ../../source/screen_python.rst:150
 #: ../../source/screen_python.rst:213
-# 8d818b0f664f4ccbadf61c5bdc80ed95
-# a9d8e65c18f54c9793421d8273cad33d
+# 0e7e119a8f2742dc8ae61778586e8188
+# c0c2628858ca460fa26c42121abc0eac
 msgid "This method must be overriden, as the default method will raise NotImplemented (and hence cause Ren'Py to report an error)."
 msgstr ""
 
 #: ../../source/screen_python.rst:156
-# c4a1855a9ed34929a850aa592e2ac5fb
+# a6e8b9ee7f8042f78fec5da0b3fd8c9e
 msgid "This is called to determine if the button with this action should be sensitive. It should return true if the button is sensitive."
 msgstr ""
 
 #: ../../source/screen_python.rst:160
-# 1bec9237e5e2452ead813fa1c1a0a313
+# 851a29a0f3824817831b2d6e6e450089
 msgid "Note that __call__ can be called, even if this returns False."
 msgstr ""
 
 #: ../../source/screen_python.rst:162
-# 7aa931f4a5b04a1f98902f31b5519f3f
+# eef325d96bea4eba8537faf95e6c107f
 msgid "The default implementation returns True."
 msgstr ""
 
 #: ../../source/screen_python.rst:166
-# 74b1ea16698a45d89f06fd9da0cb49ca
+# 4244a92172e54a488820dfa127ad7a4a
 msgid "This should return true if the button should be rendered as a selected button, and false otherwise."
 msgstr ""
 
 #: ../../source/screen_python.rst:169
-# e151d72343f340afa5155dd989180497
+# c6f6a6c6a1e5432ab239a30e3dbccbf7
 msgid "The default implemention returns False."
 msgstr ""
 
 #: ../../source/screen_python.rst:173
-# 502b8305158645b8a7620615e903ed44
+# 860a1ab79dbc438ea23b902a9dcd6efa
 msgid "This method is called once at the start of each interaction, and then is called periodically thereafter. If it returns a number, it will be called before that many seconds elapse, but it might be called sooner."
 msgstr ""
 
 #: ../../source/screen_python.rst:178
-# cfe77ba517e0453e881070ec5e66e786
+# f4e1b29790f847fdafa36edcf0d9e903
 msgid "The main use of this is to call :func:`renpy.restart_interaction` if the value of get_selected or get_sensitive should change."
 msgstr ""
 
 #: ../../source/screen_python.rst:182
-# faf34ae7cf2d4a8a841adad179a78f99
+# 3670a799f6c94946a75c4ad04da61ce3
 msgid "It takes one argument:"
 msgstr ""
 
 #: ../../source/screen_python.rst:185
-# 84c0404d6e094bff97672106ecd95c53
+# dbd1e1e3bde64015a99fd9720d808b9b
 msgid "`st`"
 msgstr ""
 
 #: ../../source/screen_python.rst:185
-# 07ac3e8ba5d24c6d972ed4e4e99d1515
+# 180b3d4734e44799b1b70d115d558d5e
 msgid "The number of seconds since the screen or displayable this action is associated with was first shown."
 msgstr ""
 
 #: ../../source/screen_python.rst:190
-# d632d3011a71427399290066d8fc9a14
+# cd36878e463743989f10c210958feb48
 msgid "When the action is used as the `hovered` parameter to a button (or similar object), this method is called when the object loses focus."
 msgstr ""
 
 #: ../../source/screen_python.rst:194
-# 47c72b07284f4dd6a5c701b5398a6478
+# 44084dc1e865470f98b10f389d0dc969
 msgid "BarValues"
 msgstr ""
 
 #: ../../source/screen_python.rst:196
-# 05c1befa81e04a9e878acd4bc6e3c9d9
+# 6fc59aac27264e9c8b75eaed31365fb2
 msgid "When creating a bar, vbar, or hotbar, a BarValue object can be supplied as the `value` argument. Methods on the BarValue object are called to get the adjustment and styles."
 msgstr ""
 
 #: ../../source/screen_python.rst:203
-# 836c55737e6a4e908e1af02207165ec6
+# 723985b56e3e435eb9dded7fdeabfd8e
 msgid "To define a new BarValue, inherit from this class and override some of the methods."
 msgstr ""
 
 #: ../../source/screen_python.rst:208
-# be3c19d5cd6c4446894dbd6278ec906f
+# b8253411bd904f81bd926f2418fc0eb4
 msgid "This method is called to get an adjustment object for the bar. It should create the adjustment with :func:`ui.adjustment`, and then return the object created this way."
 msgstr ""
 
 #: ../../source/screen_python.rst:219
-# 5d8d12ed30a3438493771a0a031a1ec7
+# 51ccb21474bd4d3990cc484924c7590f
 msgid "This is used to determine the style of bars that use this value. It should return a tuple of two style names or style objects. The first is used for a bar, and the second for vbar."
 msgstr ""
 
 #: ../../source/screen_python.rst:224
-# c7d95db384c9481898aa60dd532ea720
+# 08a87ce3da2546c197583799b19dc746
 msgid "This defaults to (\"bar\", \"vbar\")."
 msgstr ""
 
 #: ../../source/screen_python.rst:228
-# 7bc7a08e097d45e4b32197646ce9b7bb
+# 605eb55602af41738768fe414d4b64d0
 msgid "This is called when a BarValue replaces another BarValue, such as when a screen is updated. It can be used to update this BarValue from the other. It is called before get_adjustment."
 msgstr ""
 
 #: ../../source/screen_python.rst:232
-# a1246bc0265b48e2b8b46915dc938752
+# 2fc71c1358c142aaa38741be43680df8
 msgid "Note that `other` is not necessarily the same type as `self`."
 msgstr ""
 
 #: ../../source/screen_python.rst:236
-# d7d78e66d7134007ae704ca5c9d342e1
+# 5f945bd8468b489385e3f5419100bcb3
 msgid "This method is called once at the start of each interaction. If it returns a number of seconds, it will be called before that many seconds elapse, but it might be called sooner. It is called after get_adjustment."
 msgstr ""
 
 #: ../../source/screen_python.rst:241
-# 878d2d661dc14a87a73c7e36cd216618
+# 9497e100464d4d6c85d6c47c213b93a8
 msgid "It can be used to update the value of the bar over time, like :func:`AnimatedValue` does. To do this, get_adjustment should store the adjustment, and periodic should calle the adjustment's changed method."
 msgstr ""
 

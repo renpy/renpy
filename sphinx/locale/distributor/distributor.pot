@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,47 +17,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/distributor.rst:5
-# ba23c2b6b13f46c69c8c995f565941c2
+# 746d886840cf42cd8d7b3ac17d92ed58
 msgid "Distributor Notes"
 msgstr ""
 
 #: ../../source/distributor.rst:8
-# 6fc0466c8f144620b2263fb752beef37
+# 3d1a11270fae454c9cee577f7944c45f
 msgid "6.12.0"
 msgstr ""
 
 #: ../../source/distributor.rst:10
-# 217654a7c20f47d2a28a4648ab1014c4
+# ec2e7905cc334508b06a3d7c9cbc5e77
 msgid "Ren'Py now creates a number of binary modules that live in the renpy.display package. As long as they go in the same place as _renpy.so, they should be picked up automatically."
 msgstr ""
 
 #: ../../source/distributor.rst:16
-# 8a7bb805f8064e0b90b0ea123dfae73c
+# 81735c1122b94c63a716674127d266ca
 msgid "6.11.0"
 msgstr ""
 
 #: ../../source/distributor.rst:18
-# 13d41637ef4d44a4911aa5d7e848b257
+# 917112486c5240a1bbe2c0915760e7cf
 msgid "Ren'Py now depends on:"
 msgstr ""
 
 #: ../../source/distributor.rst:20
-# e1b887ed8abe4322a53eb9579ba8db7a
+# 01bd0fc182174b718aab32bf69fb315c
 msgid "Python 2.6"
 msgstr ""
 
 #: ../../source/distributor.rst:21
-# 70455290161141c8be989510544dfde8
+# 3bdc12a90fc6433396f45382b406e2b8
 msgid "OpenGL"
 msgstr ""
 
 #: ../../source/distributor.rst:22
-# 04820b3d07374e92881f39522c994e3d
+# 07b39dcd2b904d5e9df2eb4b4dff399a
 msgid "The GL Extension Wrangler Library: http://glew.sourceforge.net/"
 msgstr ""
 
 #: ../../source/distributor.rst:23
-# 8b81baf057e849d9aba9a628e77adaf8
+# b4294cf91dbe460c99d038007afceb75
 msgid "The argparse Python module: http://code.google.com/p/argparse/"
 msgstr ""
 

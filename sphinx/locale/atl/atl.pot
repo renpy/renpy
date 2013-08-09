@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,498 +17,498 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/atl.rst:8
-# 7133640dde9d4c59aeb12da01cb0626e
+# 55f3120ab7b84577bba435088d26c4ba
 msgid "Animation and Transformation Language"
 msgstr ""
 
 #: ../../source/atl.rst:10
-# e180de8541b644d29fa02ee0e6cf1f1f
+# 948f237940b7420aba5a601a2b072d80
 msgid "The Animation and Transformation Language (ATL) provides a high-level way of choosing a displayable to show, positioning it on the screen, and applying transformations such as rotation, zoom, and alpha-modification. These can be changed over time, and in response to events."
 msgstr ""
 
 #: ../../source/atl.rst:15
-# 7316a0d13edd446aa501e9a0f84bae20
+# 5b3ca39b72124200a0e6a03485e9d8a0
 msgid "The Python equivalent of an ATL transform is the :func:`Transform` displayable. There is no way to create an ATL transform programatically."
 msgstr ""
 
 #: ../../source/atl.rst:19
-# 1afd1ef0dd494feaa58ab4bd8563418e
+# 5c2a2bea2bf646d48969780219944925
 msgid "Ren'Py Script Statements"
 msgstr ""
 
 #: ../../source/atl.rst:21
-# 742b8a8d49f342718e09d238f2e07351
+# d0344448d5af46c4ba533c7b398545b4
 msgid "ATL Code can be included as part of three Ren'Py script statements."
 msgstr ""
 
 #: ../../source/atl.rst:26
-# d3df3f21be8842fdb6db65e25557b52b
+# 90264b61c2d244f08e394bed55ddadae
 msgid "Transform Statement"
 msgstr ""
 
 #: ../../source/atl.rst:28
-# 0be96a457f9a4cbe934848f4a279941e
+# 7f587796a7d64984a358f16e46a843ec
 msgid "The transform statement creates a transform that can be supplied as part of an at clause. The syntax of the transform statement is:"
 msgstr ""
 
 #: ../../source/atl.rst:35
-# 04839bc65c734f8cb4a28f38add7f40e
+# cac03dde2f2a4ba9bf888649ab4f3c60
 msgid "The transform statement  must be run at init time. If it is found outside an init block, then it is automatically placed inside an init block with a priority of 0. The transform may have a list of parameters, which must be supplied when it is called."
 msgstr ""
 
 #: ../../source/atl.rst:40
-# 26df8c55a4e5419d8c8fccc5b23d963b
+# 85371b77729a444a96a32787a380a55a
 msgid "`Name` must be a python identifier. The transform created by the ATL block is bound to this name.::"
 msgstr ""
 
 #: ../../source/atl.rst:51
-# 8935ccc49784442eb92f027056a5f68a
+# 525724a1b2b9417e9f96fc7c90e48ca1
 msgid "Image Statement With ATL Block"
 msgstr ""
 
 #: ../../source/atl.rst:53
-# c05c48676d91493097bba442cfdcaca5
+# c6e1c925cb0f4274bf4c7706a1926c72
 msgid "The second way to use ATL is as part of an image statement with ATL block. This binds an image name to the given transform. As there's no way to supply parameters to this transform, it's only useful if the transform defines an animation. The syntax for an image statement with ATL block is:"
 msgstr ""
 
 #: ../../source/atl.rst:73
-# e2d092a2e05948c68b62c49d58fb11f1
+# 33393352d3cf40e1a63cd288b6a6e2ed
 msgid "Scene and Show Statements with ATL Block"
 msgstr ""
 
 #: ../../source/atl.rst:75
-# e176f94557f745afbb80c02320055c7e
+# 3158c216ddb84474b3ac9f968e7a8246
 msgid "The final way to use ATL is as part of a scene or show statement. This wraps the image being shown inside an ATL transformation."
 msgstr ""
 
 #: ../../source/atl.rst:95
-# ae925db0536c45708f355abeeee2946d
+# 870892189dbd45f69e59f339f32dc234
 msgid "ATL Syntax and Semantics"
 msgstr ""
 
 #: ../../source/atl.rst:97
-# e54dc9a9f0114fdc9f8068412596d140
+# ad4c550f60e04e41917dcfdf5ca39aad
 msgid "An ATL block consists of one or more logical lines, all at the same indentation, and indented relative to the statement containing the block. Each logical line in an ATL block must contain one or more ATL statements."
 msgstr ""
 
 #: ../../source/atl.rst:101
-# 02906c110193455bbe280d9374c6b924
+# 106d39bbbecc4593a5a44e536700dc0f
 msgid "There are two kinds of ATL statements: simple and complex. Simple statements do not take an ATL block. A single logical line may contain one or more ATL statements, separated by commas. A complex statement contains a block, must be on its own line. The first line of a complex statement always ends with a colon (\":\")."
 msgstr ""
 
 #: ../../source/atl.rst:107
-# 64622e1b98b940a08ecdc04575ea27e7
+# e96dd6d49a2247dd91aa341b86d1c383
 msgid "By default, statements in a block are executed in the order in which they appear, starting with the first statement in the block. Execution terminates when the end of the block is reached. Time statements change this, as described in the appropriate section below."
 msgstr ""
 
 #: ../../source/atl.rst:112
-# 52b3b1a961a4463eba00f4e512bd223f
+# c0b7499844b7414f89654c61d682d4fb
 msgid "Execution of a block terminates when all statements in the block have terminated."
 msgstr ""
 
 #: ../../source/atl.rst:115
-# a462f276cf0643b2bf3526e9a6582248
+# 0727ae6810654518b3959bf4b55f5fa4
 msgid "If an ATL statement requires evaluation of an expression, such evaluation occurs when the transform is first added to the scene list. (Such as when using a show statement or ui function.)"
 msgstr ""
 
 #: ../../source/atl.rst:120
-# e09728e0b8b648558096e115366569ad
+# 570439cc071f4b16a47e4183439c60a7
 msgid "ATL Statements"
 msgstr ""
 
 #: ../../source/atl.rst:122
-# a7985a2722014080a1d234cad3769364
+# d6ac4cb925854d9aa53c919829fe84eb
 msgid "The following are the ATL statements."
 msgstr ""
 
 #: ../../source/atl.rst:125
-# 88705e6155bf493d96775cac6b9a4816
+# 5ec6ad6660f94cfbb201d34d168253e6
 msgid "Interpolation Statement"
 msgstr ""
 
 #: ../../source/atl.rst:127
-# abd1ce9f96194e719ee4fdcb49e5ec37
+# a20dd00e4ce840d2a7c2dd02c87d7c4a
 msgid "The interpolation statement is the main way that ATL controls transformations."
 msgstr ""
 
 #: ../../source/atl.rst:137
-# 063dae3379b849858acbf7b6cf3c10b0
+# 2964c67416474cc5a4652b17a0c7b87c
 msgid "The first part of the interpolation statement is used to select a function that time-warps the interpolation. (That is, a function from linear time to non-linear time.) This can either be done by giving the name of a warper registered with ATL, or by giving the keyword \"warp\" followed by an expression giving a function. Either case is followed by a number, giving the number of seconds the interpolation should take."
 msgstr ""
 
 #: ../../source/atl.rst:144
-# 1e4192eb1c21424ea40957c39b26a81c
+# ace42be7754741e289033e388199311c
 msgid "If no warp function is given, the interpolation is run for 0 seconds, using the pause function."
 msgstr ""
 
 #: ../../source/atl.rst:147
-# 6fb035148c9a43e4b9fafc73f8d7f0e6
+# d06d2ebc54674395afa3e9715e3b4fe1
 msgid "The warper and duration are used to compute a completion fraction. This is done by dividing the time taken by the interpolation by the duration of the interpolation. This is clamped to the duration, and then passed to the warper. The result returned by the warper is the completion fraction."
 msgstr ""
 
 #: ../../source/atl.rst:152
-# 355ddabe986e410d896f2359c71bac1d
+# bcb9c203f36645009fe0bc5fc64ef336
 msgid "The interpolation statement can then contain a number of other clauses. When a property and value are present, then the value is the value the property will obtain at the end of the statement. The value can be obtained in several ways:"
 msgstr ""
 
 #: ../../source/atl.rst:156
-# d0a804c6cf214cb0b716d1ebcda9fb35
+# 6e1edb013fcd4284af57474945fe9dcd
 msgid "If the value is followed by one or two knots, then spline motion is used. The starting point is the value of the property at the start of the interpolation, the end point is the property value, and the knots are used to control the spline."
 msgstr ""
 
 #: ../../source/atl.rst:161
-# 8b2cda75a9de419ab7c6dafe272842ec
+# 164dd3fbef1d451489029eb439cd61c5
 msgid "If the interpolation statement contains a \"clockwise\" or \"counterclockwise\" clause, circular motion is used, as described below."
 msgstr ""
 
 #: ../../source/atl.rst:164
-# 5a14bb67ddd143569373b014f651f984
+# afa095e110944de3a60e3e889f6ebdb6
 msgid "Otherwise, the value is linearly interpolated between the start and end locations, using the completion fraction."
 msgstr ""
 
 #: ../../source/atl.rst:167
-# 65905615cedb4ec4a52661d9ad99d928
+# 72a6d4e1c79347c094c94e4170cfee98
 msgid "If a simple expression is present, it should evaluate to a transform with only a single interpolation statement, without a warper, splines, or circular motion. The properties from the transform are processed as if they were included in this statement."
 msgstr ""
 
 #: ../../source/atl.rst:172
-# 49d908eb612748019e64359dd12c7e46
+# 43e967cc4c504e9a8a73212b6e55c245
 msgid "Some sample interpolations are::"
 msgstr ""
 
 #: ../../source/atl.rst:198
-# 34e7a255a277451d925881f5d0208845
+# 4aa244a71ad5432c8698dc00d80a1dd6
 msgid "An important special case is that the pause warper, followed by a time and nothing else, causes ATL execution to pause for that amount of time."
 msgstr ""
 
 #: ../../source/atl.rst:201
-# 6a4b462b8250468b819488d24a2a1c57
+# f4e0b58717834f6db49a1861f3c5951e
 msgid "Some properties can have values of multiple types. For example, the xpos property can be an int, float, or absolute. The behavior is undefined when an interpolation has old and new property values of different types."
 msgstr ""
 
 #: ../../source/atl.rst:206
-# ffe594fe70884a19a070835662536fdf
+# 4452eb4ce1ec440bac7d2d6026357c91
 msgid "Time Statement"
 msgstr ""
 
 #: ../../source/atl.rst:208
-# 57810c5679524fadb1511b313949aba2
+# 80aae0f70ac549b48effae30941bd8dc
 msgid "The time statement is a simple control statement. It contains a single simple_expression, which is evaluated to give a time, expressed as seconds from the start of execution of the containing block."
 msgstr ""
 
 #: ../../source/atl.rst:215
-# 90fc2a2375134ea2aa385001680cb3b6
+# e0268b8781b24ed789b57046d09dc755
 msgid "When the time given in the statement is reached, the following statement begins to execute.This transfer of control occurs even if a previous statement is still executing, and causes any prior statement to immediately terminate."
 msgstr ""
 
 #: ../../source/atl.rst:220
-# 4fc9305780b74849baf03588e2d86323
+# 9c87fec9fffe4dbb9a471d94fe2f79bc
 msgid "Time statements are implicitly preceded by a pause statement with an infinite time. This means that if control would otherwise reach the time statement, it waits until the time statement would take control."
 msgstr ""
 
 #: ../../source/atl.rst:224
-# db0772ee387449f1914705a16477f6fb
+# de9f92d8ecad486aaff1acf964c17050
 msgid "When there are multiple time statements in a block, they must strictly increase in order."
 msgstr ""
 
 #: ../../source/atl.rst:238
-# 9a828abb9e5c4b9798dcd5360ca5b254
+# c2dfb218143149cc89ebc1090a319bc1
 msgid "Expression Statement"
 msgstr ""
 
 #: ../../source/atl.rst:240
-# 3155ab62d560494fb3cad29fb1caba95
+# c33fd653de20459d970e4498ac872b96
 msgid "An expression statement is a simple statement that starts with a simple expression. It then contains an optional with clause, with a second simple expression."
 msgstr ""
 
 #: ../../source/atl.rst:247
-# 305d25fd7dec44568a9003a300bf492e
+# 8f62e7ca147d4a18b3987b70b1720470
 msgid "There are three things the first simple expression may evaluate to:"
 msgstr ""
 
 #: ../../source/atl.rst:249
-# ba7cc66e84e545fdaf7e328305df1b7d
+# 6ba9379e737741e186670c4ac0231bc2
 msgid "If it's a transform, that transform is executed. With clauses are ignored when a transform is supplied."
 msgstr ""
 
 #: ../../source/atl.rst:252
-# 748f38200eb8437fa966e0d44ef627c1
+# 717dc3889e414b20bab7954442319ba0
 msgid "If it's an integer or floating point number,  it's taken as a number of seconds to pause execution for."
 msgstr ""
 
 #: ../../source/atl.rst:255
-# b2b95b20ea4d4e38a590946d29e93bc7
+# 02b844153985488e8af9c0cad522b41a
 msgid "Otherwise, the expression is interpreted to be a displayable. This displayable replaces the child of the transform when this clause executes, making it useful for animation. If a with clause is present, the second expression is evaluated as a transition, and the transition is applied to the old and new displayables."
 msgstr ""
 
 #: ../../source/atl.rst:277
-# a5043d6a8acc48f197b18d7354100bf1
+# 7cf1096c973f4f529b59b0ab79ee2c74
 msgid "Pass Statement"
 msgstr ""
 
 #: ../../source/atl.rst:282
-# 03ce253d4e3c47938efe1d289038132c
+# bd68ec919303479e8a59fa4333820767
 msgid "The pass statement is a simple statement that causes nothing to happen. This can be used when there's a desire to separate statements, like when there are two sets of choice statements that would otherwise be back-to-back."
 msgstr ""
 
 #: ../../source/atl.rst:287
-# f954dbccf295418b91352a05ec25c596
+# 14d8d53fbe4a40639150e6730d6879f6
 msgid "Repeat Statement"
 msgstr ""
 
 #: ../../source/atl.rst:290
-# 633ab68ff4fa4b04b53701d7874dab18
+# 49e61105b5124b688213ae6a545bbcdd
 msgid "The repeat statement is a simple statement that causes the block containing it to resume execution from the beginning. If the expression is present, then it is evaluated to give an integer number of times the block will execute. (So a block ending with \"repeat 2\" will execute at most twice.)"
 msgstr ""
 
 #: ../../source/atl.rst:298
-# 2d4fbf6d8f694ef3bdbefa2fa9c805dc
+# 9a5f205287cb4ea4bb2c1f41c3f741af
 msgid "The repeat statement must be the last statement in a block.::"
 msgstr ""
 
 #: ../../source/atl.rst:308
-# a0884f2eb6484ce087268759f5a5b971
+# d35fb26f23e64d80ab413b5cda63b95a
 msgid "Block Statement"
 msgstr ""
 
 #: ../../source/atl.rst:310
-# b80154663d894ec5a41a4e0035f0ec16
+# 6ef8c0bf41b44112a49eb1b4974eb3d1
 msgid "The block statement is a complex statement that contains a block of ATL code. This can be used to group statements that will repeat."
 msgstr ""
 
 #: ../../source/atl.rst:329
-# f91775a1fe264530b97c2928b02d41e3
+# 90a926b35e984f9ba3ceb1e5f290d765
 msgid "Choice Statement"
 msgstr ""
 
 #: ../../source/atl.rst:331
-# 6ed68f3e21be40b28416b76c09c82c28
+# 4e0b9a46379241b29f0bb8de46003ab4
 msgid "The choice statement is a complex statement that defines one of a set of potential choices. Ren'Py will pick one of the choices in the set, and execute the ATL block associated with it, and then continue execution after the last choice in the choice set."
 msgstr ""
 
 #: ../../source/atl.rst:340
-# 0f1fa47e925d471384d1c7828fb512ee
+# f52dfb82e9f04243816e3a3b34ad958c
 msgid "Choice statements are greedily grouped into a choice set when more than one choice statement appears consecutively in a block. If the `simple_expression` is supplied, it is a floating-point weight given to that block, otherwise 1.0 is assumed."
 msgstr ""
 
 #: ../../source/atl.rst:359
-# 389cd93c39434ef1b8f2ee10e04c195b
+# 7ff3b64015624d5481a26812f4bace8e
 msgid "Parallel Statement"
 msgstr ""
 
 #: ../../source/atl.rst:361
-# b623e58583cb4277b585ad9fe084cbdd
+# f7d50e404f364839b78c5caf6fd6cfc7
 msgid "The parallel statement is used to define a set of ATL blocks to execute in parallel."
 msgstr ""
 
 #: ../../source/atl.rst:368
-# 222a807f3c7d4bc69f81bbe519242953
+# 5cb9041a22564955914a458bd205b275
 msgid "Parallel statements are greedily grouped into a parallel set when more than one parallel statement appears consecutively in a block. The blocks of all parallel statements are then executed simultaneously. The parallel statement terminates when the last block terminates."
 msgstr ""
 
 #: ../../source/atl.rst:373
-# 4c9cb7116fda41a2b4a27a529a9b1aef
+# 8d548c73e8c045a0bb5cffed49d1b412
 msgid "The blocks within a set should be independent of each other, and manipulate different properties. When two blocks change the same property, the result is undefined."
 msgstr ""
 
 #: ../../source/atl.rst:392
-# aed65585e6c0402a83812f94e28d7b53
+# 47b09b6956f14e2b85a6e84712673761
 msgid "Event Statement"
 msgstr ""
 
 #: ../../source/atl.rst:394
-# 232b88078aa746cf91e1ffd4dabd8fc5
+# dbc4f6fc32654f1e93de232cd2a6f49d
 msgid "The event statement is a simple statement that causes an event with the given name to be produced."
 msgstr ""
 
 #: ../../source/atl.rst:400
-# 69e2a64d6d484d28bebae206a7681f38
+# c0fe89559fc14dc9a3fb09543c114a90
 msgid "When an event is produced inside a block, the block is checked to see if an event handler for the given name exists. If it does, control is transferred to the event handler. Otherwise, the event propagates to any containing event handler."
 msgstr ""
 
 #: ../../source/atl.rst:406
-# de87b037544c4a6a8281768421ca3d6a
+# aecb4184bcb6469986bde06bffa9026a
 msgid "On Statement"
 msgstr ""
 
 #: ../../source/atl.rst:408
-# 9030d493453640b0ae712ea43cf3bc81
+# d3e47450b9904947b83404ab4c749753
 msgid "The On statement is a complex statement that defines an event handler. On statements are greedily grouped into a single statement."
 msgstr ""
 
 #: ../../source/atl.rst:415
-# 7d6eab8e7ac1401a9b7e488a0f816e42
+# 4e225ce4d95246b2bf803d1cb2ba4220
 msgid "The on statement is used to handle events. When an event is handled, handling of any other event ends and handing of the new event immediately starts. When an event handler ends without another event occuring, the ``default`` event is produced (unless were already handing the ``default`` event)."
 msgstr ""
 
 #: ../../source/atl.rst:420
-# 68f6afc0ac4743fa9d2d4986fba62dbe
+# 0a6bda0297394a169df7dadd5147fd9e
 msgid "Execution of the on statement will never naturally end. (But it can be ended by the time statement, or an enclosing event handler.)"
 msgstr ""
 
 #: ../../source/atl.rst:433
-# eefe372565ec464dbf111c6ee998b62c
+# fbcff12a7eb64c7e9510e361f53d99cd
 msgid "Contains Statement"
 msgstr ""
 
 #: ../../source/atl.rst:435
-# bd65bb554be54ab5aac0957b07a01af8
+# 89d863f518214bab9ceec836e01f82b5
 msgid "The contains statement sets the displayable contained by this ATL transform. (The child of the transform.) There are two variants of the contains statement."
 msgstr ""
 
 #: ../../source/atl.rst:439
-# 482e5589d3894548a6e23b2b0961fc2e
+# 65109767ce7546318fbbd01eddafafe7
 msgid "The contains expression variant takes an expression, and sets that expression as the child of the transform. This is useful when an ATL transform wishes to contain, rather than include, a second ATL transform."
 msgstr ""
 
 #: ../../source/atl.rst:464
-# d36f4a0beeec4c08a53b272d6728dce3
+# 5cf40fa8e2444fd68d638ce8a02f9188
 msgid "The contains block allows one to define an ATL block that is used for the child of this ATL transform. One or more contains block statements will be greedily grouped together, wrapped inside a :func:`Fixed`, and set as the child of this transform."
 msgstr ""
 
 #: ../../source/atl.rst:473
-# 11b610de0019445d95563a663254f4cd
+# fac35875464a4042bd0a7d62f7f424a4
 msgid "Each block should define a displayable to use, or else an error will occur. The contains statement executes instantaneously, without waiting for the children to complete. This statement is mostly syntactic sugar, as it allows arguments to be easily passed to the children."
 msgstr ""
 
 #: ../../source/atl.rst:494
-# 8982335e776146e6a43058ec52e0023f
+# 22b9622ac5ab4d249f6b8439fd994cf5
 msgid "Function Statement"
 msgstr ""
 
 #: ../../source/atl.rst:496
-# 33a13c93f7af4f7291d035faa0918dc3
+# 381d1c74ea5946ba94f63184faa500d7
 msgid "The function statement allows ATL to use Python functions to control the ATL properties."
 msgstr ""
 
 #: ../../source/atl.rst:502
-# 66eb2e90ff7645408cee7d6ad2c8eae3
+# edab2357b3cc4641b3e1a42e7ed09309
 msgid "The functions have the same signature as those used with :func:`Transform`:"
 msgstr ""
 
 #: ../../source/atl.rst:504
-# 610d2b7ffa8e4cae820d6489a14ff670
+# 6f3eaefce15b4fb7adda8bf831dab5a8
 msgid "The first argument is a transform object. Transform properties can be set on this object."
 msgstr ""
 
 #: ../../source/atl.rst:507
-# d24e52ae04c8408999fc985fe55a545e
+# 68782a464d554c3fa43d645c5c08d53a
 msgid "The second argument is the shown timebase, the number of seconds since the function began executing."
 msgstr ""
 
 #: ../../source/atl.rst:510
-# e4dae805e8484295b8cbc1380d83539c
+# d69c997615574ba7b321f6c07339f25f
 msgid "The third argument is the the animation timebase, which is the number of seconds something with the same tag has been on the screen."
 msgstr ""
 
 #: ../../source/atl.rst:513
-# 8bb78815ec1b431e9fcbea4c3c759f27
+# 32c73e3101e049f78a07089a32a695f9
 msgid "If the function returns a number, it will be called again after that number of seconds has elapsed. (0 seconds means to call the function as soon as possible.) If the function returns None, control will pass to the next ATL statement."
 msgstr ""
 
 #: ../../source/atl.rst:537
-# bc0e52f16dd84ea1998ea685d467da59
+# 0a154f3ca0604b6380ad1a5d8f04ed9f
 msgid "Warpers"
 msgstr ""
 
 #: ../../source/atl.rst:539
-# 8f217b26b3c1465cb624695c4dcc938f
+# 589635991c4745daae0f0c2e44f21d5f
 msgid "A warper is a function that can change the amount of time an interpolation statement considers to have elapsed. The following warpers are defined by default. They are defined as functions from t to t', where t and t' are floating point numbers between 0.0 and 1.0. (If the statement has 0 duration, than t is 1.0 when it runs.)"
 msgstr ""
 
 #: ../../source/atl.rst:547
-# 96ccd99c2ae24eadad64ec51a588d7f0
+# bf9b2d4faa614b438187270b4a7af3e6
 msgid "``pause``"
 msgstr ""
 
 #: ../../source/atl.rst:546
-# b3c3f4fd72384530be3f9674d923df11
+# 6c6c75532086485da67c2f9e35430639
 msgid "Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t' = 0.0."
 msgstr ""
 
 #: ../../source/atl.rst:550
-# 8485ca79e4d846dd9378ebe3b85a4968
+# e0df105e6d4442f8a6ec3920232432ae
 msgid "``linear``"
 msgstr ""
 
 #: ../../source/atl.rst:550
-# 2700c8c86a784f4d98f5bf5c0ed2a71b
+# 07ea1a77f4fe4a87aa135eddaefc3278
 msgid "Linear interpolation. t' = t"
 msgstr ""
 
 #: ../../source/atl.rst:554
-# d7afc471f62146b580a721dc95f3b39f
+# bb44dd2361c743e68d50d077708c2ec8
 msgid "``ease``"
 msgstr ""
 
 #: ../../source/atl.rst:553
-# abacae288ae34774bde46c9be4bd93c6
+# 6c71d3d12f1942eb9452f9d1dc55e2d4
 msgid "Start slow, speed up, then slow down. t' = .5 - math.cos(math.pi * t) / 2.0"
 msgstr ""
 
 #: ../../source/atl.rst:557
-# 1aea3e080e864cb69d5c74dc4c6734fe
+# cf8ad293293244b0b2837ace9640e9cd
 msgid "``easein``"
 msgstr ""
 
 #: ../../source/atl.rst:557
-# b0ffde1eb21a4deb864e60f84308a180
+# cceafaa407884beca6ca30e6d8ff20a8
 msgid "Start fast, then slow down. t' = math.cos((1.0 - t) * math.pi / 2.0"
 msgstr ""
 
 #: ../../source/atl.rst:560
-# 84c3b01f6a20436fa36840dfc656c7c8
+# 3164e8955ffd4930a97ad6c4613fff91
 msgid "``easeout``"
 msgstr ""
 
 #: ../../source/atl.rst:560
-# 954c36cc65e847a08b868cfb6cafaa8a
+# 6992d589c86448129d4fddb705112192
 msgid "Start slow, then speed up. t' = 1.0 - math.cos(t * math.pi / 2.0)"
 msgstr ""
 
 #: ../../source/atl.rst:562
-# 906e8a291b864d21b86f402b5e0b2eaa
+# 56239b40ba15464cb8b5e1318115029b
 msgid "New warpers can be defined using the renpy.atl_warper decorator, in a python early block. It should be placed in a file that is parsed before any file that uses the warper. The code looks like:"
 msgstr ""
 
 #: ../../source/atl.rst:577
-# bd2771bc2a1a43a797a9edf844edd2b5
+# 7e365c3612104dd5a27a8d3cb8462fd2
 msgid "List of Transform Properties"
 msgstr ""
 
 #: ../../source/atl.rst:579
-# ccae67f1da3843ca97e547d1334be300
+# 03d6e9cdd7f848c693f8adee0a1961ed
 msgid "The following transform properties exist."
 msgstr ""
 
 #: ../../source/atl.rst:581
-# 5f4196ab88624b0db136ad445e99cdb2
+# f0dda5e89f1045148d71ebbfebcee117
 msgid "When the type is given as position, it may be an int, renpy.absolute, or float. If it's a float, it's interpreted as a fraction of the size of the containing area (for pos) or displayable (for anchor)."
 msgstr ""
 
 #: ../../source/atl.rst:585
-# e160d7c931434f39ac403e7676ceffaa
+# 1cb7b936f0b949768ed77ed7767a4d38
 msgid "Note that not all properties are independent. For example, xalign and xpos both update some of the same underlying data. In a parallel statement, only one block should adjust horizontal position, and one should adjust vertical positions. (These may be the same block.) The angle and radius properties set both horizontal and vertical positions."
 msgstr ""
 
 #: ../../source/atl.rst:593
 #: ../../source/atl.rst:616
-#: ../../source/atl.rst:759
-# 5f4bfd6a905043789b9a9efd0812f162
-# 154fe8ba1ad340a085b1de5e81ab5f58
-# 0aad7406a4f641ebb292598ed9639c49
+#: ../../source/atl.rst:790
+# 3d92aa14a2de477383039f13dff5248a
+# 475ab1330fdf4d959927ceddb88f8a87
+# dec2ae9805f945e4b18a85db0adf7577
 msgid "(position, position)"
 msgstr ""
 
 #: ../../source/atl.rst:594
 #: ../../source/atl.rst:617
-# a89fbd1a35614a83a4c895d1f784dcdf
-# 14ce9610e07744de9b131d4f2db50111
+# 280eb8e62e3a40a6b62376cfdaafdf61
+# ec5a0b1ea9cc49b588847f8955dce1ed
 msgid "(0, 0)"
 msgstr ""
 
 #: ../../source/atl.rst:596
-# facfa318277c4ee0aa9777d77cd79ed6
+# a4da93546a1e4fef8eca4df5fb820500
 msgid "The position, relative to the top-left corner of the containing area."
 msgstr ""
 
@@ -516,12 +516,12 @@ msgstr ""
 #: ../../source/atl.rst:609
 #: ../../source/atl.rst:624
 #: ../../source/atl.rst:632
-#: ../../source/atl.rst:784
-# 5ffc15da7cfe4d58b45f76af098293dc
-# 28ab82e738904bc296165b8ea876cc3e
-# cb60ac3ab797461595a8d0f7c3adfd7c
-# 68614421bc114281b50dd4e400ec6c9b
-# c375db1c39754810b98b62f7bf1a341c
+#: ../../source/atl.rst:815
+# 09516ee6ea9c41c2a0313952dc6cc0b6
+# c1047da48fbc4efe8279ec43d942ba31
+# 36c1626466464797861828aa73932472
+# 5bd8a0496e4d485f93c65e4f6c32fd1f
+# bb2171489718410db21974086f6f52ee
 msgid "position"
 msgstr ""
 
@@ -529,56 +529,56 @@ msgstr ""
 #: ../../source/atl.rst:610
 #: ../../source/atl.rst:625
 #: ../../source/atl.rst:633
-# f912f9b5479146d2acffccb58feb3a79
-# aa88e7005b0f4732915fd9f8904a11af
-# 7f49bdafae9244f493bb7d042ba84522
-# a126d88df79d41a4be7b94259d15d713
+# e69ee7a51dd84b17adbe7fd786a9d53f
+# 0570eec31f7d4b2b8834ca33dfedd932
+# 3884788512194c7e9296b0ffb5815fe6
+# 4683122b4b824a31ac117d31ba059d0e
 msgid "0"
 msgstr ""
 
 #: ../../source/atl.rst:604
-# dea2da21dec149b3b7a5dbb2590cff3d
+# dcfceaaa6adf42ec860b6d619cd630f7
 msgid "The horizontal position, relative to the left side of the containing area."
 msgstr ""
 
 #: ../../source/atl.rst:612
-# f8e66a9d7cd74ebd81c84953a5239452
+# de973e07190444c98f8c0a274b019849
 msgid "The vertical position, relative to the top of the containing area."
 msgstr ""
 
 #: ../../source/atl.rst:619
-# 4ba605771eb94fd997b235e1ad2d7bec
+# c17ca919ecf84333b985c0229c7d569d
 msgid "The anchor position, relative to the top-left corner of the displayable."
 msgstr ""
 
 #: ../../source/atl.rst:627
-# 52c1ed585b0742139ec1833050382f60
+# 5bfc6b82b949475d99b9d2016d0b0f18
 msgid "The horizontal anchor position, relative to the left side of the displayable."
 msgstr ""
 
 #: ../../source/atl.rst:635
-# 09bb197d9d934189bac7b38c971126f0
+# 656fdfb1d088457e9363c03372db6777
 msgid "The vertical anchor position, relative to the top of the displayable."
 msgstr ""
 
 #: ../../source/atl.rst:640
-#: ../../source/atl.rst:768
-# 0758d3681058453496d4d4fd6b82564b
-# f05ca9cd1f6846a386ec850a83b59ebd
+#: ../../source/atl.rst:799
+# c6e48f93f46140adb14a58cf7440d1ea
+# 0db8008a4f5047fab54541a9fc430be4
 msgid "(float, float)"
 msgstr ""
 
 #: ../../source/atl.rst:641
-#: ../../source/atl.rst:760
-#: ../../source/atl.rst:769
-# a772998c488d4c1e9e70202449229b59
-# b310cffaf8af40dea1dc650372a1c890
-# 0ce8e2891c1c4539871db78b3bcf9460
+#: ../../source/atl.rst:791
+#: ../../source/atl.rst:800
+# e0d3ba37494f47478857e91f0b94786f
+# c188f35d567044ac9dc521aa6f6c1101
+# 4235d3b9a8e345b49ce3eeccb9ad20c5
 msgid "(0.0, 0.0)"
 msgstr ""
 
 #: ../../source/atl.rst:643
-# 1842639313e7445da08661fbc9dff469
+# 109e7e64f11340f9b7a78653dd8186c1
 msgid "Equivalent to setting pos and anchor to the same value."
 msgstr ""
 
@@ -592,20 +592,22 @@ msgstr ""
 #: ../../source/atl.rst:735
 #: ../../source/atl.rst:744
 #: ../../source/atl.rst:752
-#: ../../source/atl.rst:777
-#: ../../source/atl.rst:831
-# 2880a9670a5849119ecdd4f2a2c69943
-# ea7cbba87f7d4f39a3b8a3fed3bab43b
-# 099a07621c4a48789857d0fad2b9dafc
-# dd35bbe2f49a4493af9d092f6ca0566d
-# 1514b6f64a7f40be8fa89a62d989141f
-# cd0f4a43f5e04d908d94852525992edf
-# 9932ac1b7aa6426785dc18c47ff4ba7d
-# 16238b6ef367461195e1134316002316
-# 4ac6757a6af4436897bf315c144fa771
-# ca291bab628f466bb2fb6cef35341ac0
-# c45b2c8ec90a41b5bee54d73b05be981
-# 3bff4590c77f44dcab9510fc0df90946
+#: ../../source/atl.rst:764
+#: ../../source/atl.rst:808
+#: ../../source/atl.rst:862
+# 244ecd32d5854851908ab629f840b3f5
+# 980a505bf62243cab239e4aa4938f359
+# 08ee963212d64567affb93086fdda15a
+# 9caeab814b334f2397d8e0b20f1099f8
+# bdf6cf71ed74454f9b2fe409f3122bda
+# 2b891fc23b354501a4952060d4385066
+# 3a43c3126887435da9bc28a47503343f
+# e319ff07a3fb4bfd81a2136a9147b03a
+# 0b532d64aea84f86bc3b668eee25107e
+# 9476aff649c8477aa8f272c27a98f195
+# 49b6bd8a1410441bb3f3cabc760335a6
+# 10906b391a814158a4c362f69c2d9682
+# 292da139549446f181fe15d1e4163558
 msgid "float"
 msgstr ""
 
@@ -615,98 +617,100 @@ msgstr ""
 #: ../../source/atl.rst:670
 #: ../../source/atl.rst:680
 #: ../../source/atl.rst:688
-#: ../../source/atl.rst:832
-# 60876ac722cd4b0dbb8d6e1ee3b65dda
-# 231d6da8f6e14e8a9b5c5fe8c1fd1c12
-# 21d38d2ed6694ad9921fae7450330384
-# 2b21a5d79483422fa3088af22b6f99b1
-# 0b752828b92b403d9da87586b1f3ce54
-# ed225a40eeff4959a7d9fcf13e0e11e0
-# a6d8ad167b104a20921d0682828d98c6
+#: ../../source/atl.rst:765
+#: ../../source/atl.rst:863
+# 932653076d9241bfb6b5b0aec5d2bc6c
+# c29950f250d8484fa7a21dcdc45c7a97
+# 57ccc088b4e1416faebe3e0ad32378f3
+# 4a19e4a32a074daa9d253cee98330b4b
+# ecc6709f983049a6a0d487953f394886
+# 34254893d75249f2b34cb0843a97ab77
+# 9bf1db34e90b4de1abfc56176ffb394a
+# 37e7af54671d4ac78a7331d2b4a547a1
 msgid "0.0"
 msgstr ""
 
 #: ../../source/atl.rst:650
-# 940e225feaa24fb893c401cdacb3e1fe
+# 244a86e53af14cbdab8d9581f75a1f6a
 msgid "Equivalent to setting xpos and xanchor to this value."
 msgstr ""
 
 #: ../../source/atl.rst:657
-# 33d3889c6c5e4edea6cbf6b2bbc243cd
+# 7eaf1b51ffa64c8b894e5e60810cf95c
 msgid "Equivalent to setting ypos and yanchor to this value."
 msgstr ""
 
 #: ../../source/atl.rst:664
-# e471a256dce5417689a4e8aee88b976e
+# 7702ab5d3d7f4a9f9bb31656dbc0d74e
 msgid "The number of pixels the displayable is offset by in the horizontal direction. Positive values offset toward the right."
 msgstr ""
 
 #: ../../source/atl.rst:672
-# bee09895b96f4900b107e1e1041ea527
+# b97033cb4eb74c2d9453fda387a9cb9d
 msgid "The number of pixels the displayable is offset by in the vertical direction. Positive values offset toward the bottom."
 msgstr ""
 
 #: ../../source/atl.rst:682
-# 0a872a16f261485f9134baa4125f847c
+# 48cc42d5ed6c4eddac727ae9519bfb3b
 msgid "Equivalent to setting xpos to the value of this property, and xanchor to 0.5."
 msgstr ""
 
 #: ../../source/atl.rst:690
-# e41a32397b2d4afaadac3aa46dd650be
+# 5c2dd7bae22241f381e0193d4e9e428f
 msgid "Equivalent to setting ypos to the value of this property, and yanchor to 0.5."
 msgstr ""
 
 #: ../../source/atl.rst:695
-# 726cc72e035043ea8c38fb15ab36ae68
+# 46d317025c4648a699fc3e881f4e1d89
 msgid "float or None"
 msgstr ""
 
 #: ../../source/atl.rst:696
-#: ../../source/atl.rst:792
-#: ../../source/atl.rst:800
-#: ../../source/atl.rst:808
-#: ../../source/atl.rst:816
-# 62842a9fc3cd4f9a9413fa68cbc06856
-# 287907e16cb7433a9afd58ff056b4e17
-# aa6c28f62c31449b8e0e1a98ae8c45a7
-# 628b9ade6c894902a5a6aa038892dd76
-# b529e6f355c24f49854750bd7d3ac2c4
+#: ../../source/atl.rst:823
+#: ../../source/atl.rst:831
+#: ../../source/atl.rst:839
+#: ../../source/atl.rst:847
+# a43fc0279caa409092b4edfd7692d617
+# b1b1baed7c68423598a00fd39d9c0123
+# e3f388995dd0420aaf84c314d9e80ec4
+# 9d129a87affe49b7a85d3a35a80f905e
+# d0fb42128d7c4800828b2947794f1e99
 msgid "None"
 msgstr ""
 
 #: ../../source/atl.rst:698
-# 4bfb77975a044efa88e0c20bc55720d6
+# 88dbe5e529e24bb39a4bde2c81fcc33a
 msgid "If None, no rotation occurs. Otherwise, the image will be rotated by this many degrees clockwise. Rotating the displayable causes it to be resized, according to the setting of rotate_pad, below. This can cause positioning to change if Add 'xanchor' to dictionary and yanchor are not 0.5."
 msgstr ""
 
 #: ../../source/atl.rst:706
 #: ../../source/atl.rst:718
-#: ../../source/atl.rst:823
-# d8395985df17420797e621bd7dada7eb
-# 5ccaaa61bc5d4abc91bc0bf05be834fa
-# 828aaf9d79ad46f9afa03fe8547df6b5
+#: ../../source/atl.rst:854
+# b4878753c599491389ccea04d55e48ff
+# 0f598146e3294d839d582d0bf4ad89ab
+# 68a9e7c0498744408d49325e698e27fd
 msgid "boolean"
 msgstr ""
 
 #: ../../source/atl.rst:707
-# 690dcbe7f1dc421fb03d4ba63009a268
+# 056b289a31034c24acafef270c336230
 msgid "True"
 msgstr ""
 
 #: ../../source/atl.rst:709
-# 2af39227803541f3abed7b245094b7b4
+# ac224231f7464e3f8cf42f726050e485
 msgid "If True, then a rotated displayable is padded such that the width and height are equal to the hypotenuse of the original width and height. This ensures that the transform will not change size as its contents rotate. If False, the transform will be given the minimal size that contains the transformed displayable. This is more suited to fixed rotations."
 msgstr ""
 
 #: ../../source/atl.rst:719
-#: ../../source/atl.rst:824
-# ca3d11817c5741c68ac7b3280a2d8743
-# 09c48c1f9068460e91e3624293d19874
+#: ../../source/atl.rst:855
+# 02cda298f49749fcae5ec3d451ddeb0e
+# 1556943ae49f42b8a259f50c006bfec8
 msgid "False"
 msgstr ""
 
 #: ../../source/atl.rst:721
-# 75d655be33f44a6188361eb84ef83e04
+# 97bec54425bb4aff8684aa9357764395
 msgid "If true, the anchor point is located on the cropped child, and is scaled and rotated as the child is transformed. Effectively, this makes the anchor the point that the child is rotated and scaled around."
 msgstr ""
 
@@ -714,214 +718,244 @@ msgstr ""
 #: ../../source/atl.rst:736
 #: ../../source/atl.rst:745
 #: ../../source/atl.rst:753
-# d55bce15d7074f0495349a81754e175e
-# bc519bc7011b42b2938743e3fbead00b
-# e4a03aa9efa14ebc9d8ba4aa86e3ab51
-# 5e4af76c6d2449f0bbf4efab9830473f
+# b481c7dd3c2b4c2caa3b7205f9aa7cf3
+# 76426cf2a8144ff7a2458723271b1505
+# 86eb67ced30e446391ff9ecfd35fd342
+# c50ac9dd3b3b4f3fa085346fc79f76d5
 msgid "1.0"
 msgstr ""
 
 #: ../../source/atl.rst:730
-# 2716bbae0b37445ea41760bafea2122e
+# 863526e4195a44b89191fe6ff3f5e679
 msgid "This causes the displayable to be zoomed by the supplied factor."
 msgstr ""
 
 #: ../../source/atl.rst:738
-# 9af959ef2da94edeba1d11a5de83363c
+# 0011d12c56fd4a9c83075e44e3eab13e
 msgid "This causes the displayable to be horizontally zoomed by the supplied factor. A negative value causes the image to be flipped horizontally."
 msgstr ""
 
 #: ../../source/atl.rst:747
-# 9ee7b6fe388649e39350a24d3ecf990d
+# 96e2f09b80f346b39f182158626bb0b5
 msgid "This causes the displayable to be vertically zoomed by the supplied factor. A negative value causes the image to be flipped vertically."
 msgstr ""
 
 #: ../../source/atl.rst:755
-# fb616f93166b486da6c98128fc6dcb9e
+# 622a6bc02bb543d9891972e5156b476e
 msgid "This controls the opacity of the displayable."
 msgstr ""
 
-#: ../../source/atl.rst:762
-# 9613642e3b9f4865ada2e686923a821c
-msgid "If not None, specifies the polar coordinate center, relative to the upper-left of the containing area. Setting the center using this allows for circular motion in position mode."
+#: ../../source/atl.rst:757
+# ed13c02a04eb4570b620ba9d49a0c5a2
+msgid "The alpha transform is applied to each image comprising the child of the transform independently. This can lead to unexpected results when the children overlap, such as as seeing a character through clothing. The :func:`Flatten` displayable can help with these problems."
+msgstr ""
+
+#: ../../source/atl.rst:767
+# cc76d5fcf2534391b1cf81d47ab9b7af
+msgid "This controls how much additive blending Ren'Py performs. When 1.0, Ren'Py draws using the ADD operator. When 0.0, Ren'Py draws using the OVER operator."
 msgstr ""
 
 #: ../../source/atl.rst:771
-# 4dc8078c20ff4d1fa7388876c7460011
-msgid "If not None, specifies the polar coordinate center, relative to the upper-left of the containing area. Setting the center using this allows for circular motion in align mode."
+# bad23ddce5c24ea6810b952e26637f01
+msgid "Additive blending is performed on each child of the transform independently."
 msgstr ""
 
-#: ../../source/atl.rst:779
-# d0cee824ae1e4d95a79004e1b0f0b2d6
-msgid "Get the angle component of the polar coordinate position. This is undefined when the polar coordinate center is not set."
+#: ../../source/atl.rst:773
+# 15ca143080f84dc9ac8f3b74135945c6
+msgid "Fully additive blending doesn't alter the alpha channel of the destination, and additive images may not be visible if they're not drawn directly onto an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`, and certain transitions may cause problems with additive blending.)"
 msgstr ""
 
-#: ../../source/atl.rst:786
-# a1c1b96f92b8430eb1bd11db2028b46e
-msgid "Get the radius component of the polar coordinate position. This is undefined when the polar coordinate center is not set."
+#: ../../source/atl.rst:780
+# 2aa07b78d6d9434091abf995277d5eb4
+msgid "Additive blending is only supported by hardware-based renderers, such as the OpenGL and DirectX/ANGLE renderers. The software renderer will draw additive images incorrectly."
 msgstr ""
 
-#: ../../source/atl.rst:791
-# bc63ac91a0ed41e1bfbe34f8f6c94c48
-msgid "None or (int, int, int, int)"
+#: ../../source/atl.rst:784
+# cb0b9c83ab354f79a0ea9cb7c4b59996
+msgid "Once the graphics system has started, ``renpy.get_renderer_info()[\"additive\"]`` will be true if additive blending is supported."
 msgstr ""
 
-#: ../../source/atl.rst:794
-# 5a9c0a380d8047de8d6576f1ef612864
-msgid "If not None, causes the displayable to be cropped to the given box. The box is specified as a tuple of (x, y, width, height)."
-msgstr ""
-
-#: ../../source/atl.rst:799
-#: ../../source/atl.rst:807
-#: ../../source/atl.rst:815
-# 3fa116ec3f5b474191932f20c7e214d5
-# 8391b1234145404f8c88c447f05d9c8e
-# c1c74f4f8db045d9a78563be04354f42
-msgid "None or (int, int)"
+#: ../../source/atl.rst:793
+# 5d3d3ea92855490bad0be70768889f03
+msgid "If not None, specifies the polar coordinate center, relative to the upper-left of the containing area. Setting the center using this allows for circular motion in position mode."
 msgstr ""
 
 #: ../../source/atl.rst:802
-# 36ed86ffa7304969a8be2c77fa97d272
-msgid "If not None, gives the upper-left corner of the crop box. This takes priority over crop."
+# ed6144a42da44fc8b373cec1fc831a14
+msgid "If not None, specifies the polar coordinate center, relative to the upper-left of the containing area. Setting the center using this allows for circular motion in align mode."
 msgstr ""
 
 #: ../../source/atl.rst:810
-# c82201d0341f4b5baf84e7185f2f906f
-msgid "If not None, gives the lower right corner of the crop box. This takes priority over crop."
+# 2f105077f2a24e46b8432121351146d1
+msgid "Get the angle component of the polar coordinate position. This is undefined when the polar coordinate center is not set."
 msgstr ""
 
-#: ../../source/atl.rst:818
-# ad6f72febcbd4f51ab8fb3bec22cff54
-msgid "If not None, causes the displayable to be scaled to the given size."
+#: ../../source/atl.rst:817
+# af541bf5f80f4a1c90201a8910f615dc
+msgid "Get the radius component of the polar coordinate position. This is undefined when the polar coordinate center is not set."
 msgstr ""
 
-#: ../../source/atl.rst:826
-# 3b1ce188ab564da2851ae42ca74f35ca
-msgid "If True, causes things to be drawn on the screen using subpixel positioning."
+#: ../../source/atl.rst:822
+# 6866a02fc478499db6a654402af99797
+msgid "None or (int, int, int, int)"
 msgstr ""
 
-#: ../../source/atl.rst:834
-# 74e0ac89a217456fac9105dd5de71b32
-msgid "If this transform is being used as a transition, then this is the duration of the transition."
+#: ../../source/atl.rst:825
+# 36adbd678402497b81221883d9fdb8d8
+msgid "If not None, causes the displayable to be cropped to the given box. The box is specified as a tuple of (x, y, width, height)."
 msgstr ""
 
-#: ../../source/atl.rst:837
-# 71afeceec2ee42e89264a7b134baa860
-msgid "These properties are applied in the following order:"
+#: ../../source/atl.rst:830
+#: ../../source/atl.rst:838
+#: ../../source/atl.rst:846
+# 79f2bd1c0526430ba1120d0cec4111cb
+# 5fcb4b57979d486fa1c5991477380380
+# e963604223964317be101d5f35ace4a1
+msgid "None or (int, int)"
 msgstr ""
 
-#: ../../source/atl.rst:839
-# ba35cb6a28bb449a870781a8f0cabb33
-msgid "crop, corner1, corner2"
-msgstr ""
-
-#: ../../source/atl.rst:840
-# a449b855f6994c5992d07329d7b8e220
-msgid "size"
+#: ../../source/atl.rst:833
+# b197219deaa04fb0a10886ab0b19a0fc
+msgid "If not None, gives the upper-left corner of the crop box. This takes priority over crop."
 msgstr ""
 
 #: ../../source/atl.rst:841
-# acb5162a665743d596ca97037a8172c3
-msgid "zoom, xzoom, yzoom"
-msgstr ""
-
-#: ../../source/atl.rst:842
-# 16a824c482cd4ff993f9d3b554535bc8
-msgid "rotate"
-msgstr ""
-
-#: ../../source/atl.rst:843
-# 89de2df445c74d618d6d2ebb8783640f
-msgid "position properties"
-msgstr ""
-
-#: ../../source/atl.rst:847
-# 906f4b5a130545eaabf3cbbdd12b990b
-msgid "Circular Motion"
+# 27a56198eddc488c84bc52998000935c
+msgid "If not None, gives the lower right corner of the crop box. This takes priority over crop."
 msgstr ""
 
 #: ../../source/atl.rst:849
-# dd68755eca66495c9ac0ac7ca07e76cd
-msgid "When an interpolation statement contains the ``clockwise`` or ``counterclockwise`` keywords, the interpolation will cause circular motion. Ren'Py will compare the start and end locations and figure out the polar coordinate center. Ren'Py will then compute the number of degrees it will take to go from the start angle to the end angle, in the specified direction of rotation. If the circles clause is given, Ren'Py will ensure that the appropriate number of circles will be made."
+# 44e9de826832480d8f12a6883c838bb9
+msgid "If not None, causes the displayable to be scaled to the given size."
 msgstr ""
 
 #: ../../source/atl.rst:857
-# a93b59c1a2954befae1106d7682728ec
-msgid "Ren'Py will then interpolate the angle and radius properties, as appropriate, to cause the circular motion to happen. If the transform is in align mode, setting the angle and radius will set the align property. Otherwise, the pos property will be set."
-msgstr ""
-
-#: ../../source/atl.rst:863
-# b8387f44463d4a3c8bf93e98a24783f7
-msgid "External Events"
+# ebb8821ecd154484995f2f0fa2864601
+msgid "If True, causes things to be drawn on the screen using subpixel positioning."
 msgstr ""
 
 #: ../../source/atl.rst:865
-# f4fa007ef3b5430189997570ca6d2470
-msgid "The following events can be triggered automatically:"
-msgstr ""
-
-#: ../../source/atl.rst:869
-# 796b8101ba354e679108bde36456ab0e
-msgid "``start``"
+# 9ba58729374e4aa7ba98b1240b2083ed
+msgid "If this transform is being used as a transition, then this is the duration of the transition."
 msgstr ""
 
 #: ../../source/atl.rst:868
-# cf431ec3370d44acbccec3447afabe85
-msgid "A pseudo-event, triggered on entering an on statement, if no event of higher priority has happened."
+# 2e92d60a59664f238649dd9c34f0c641
+msgid "These properties are applied in the following order:"
 msgstr ""
 
-#: ../../source/atl.rst:873
-# 0149e29ac2ec43b3b7740bc9268cc1e1
-msgid "``show``"
+#: ../../source/atl.rst:870
+# db85189db7f54ed085ec9ad38ec6877b
+msgid "crop, corner1, corner2"
+msgstr ""
+
+#: ../../source/atl.rst:871
+# b4339ba928534e2fbfc89a45510f9c5b
+msgid "size"
 msgstr ""
 
 #: ../../source/atl.rst:872
-# 1912ffd67b6a4d3da1431962624fcc21
-msgid "Triggered when the transform is shown using the show or scene statement, and no image with the given tag exists."
+# 930107fc02f2426e828cbfe681c3a350
+msgid "zoom, xzoom, yzoom"
 msgstr ""
 
-#: ../../source/atl.rst:877
-# f59eb196bfde4d9c8d79128eb9eab36d
-msgid "``replace``"
+#: ../../source/atl.rst:873
+# cef158fd6b43415dbaf37ccc24b73dfa
+msgid "rotate"
 msgstr ""
 
-#: ../../source/atl.rst:876
-# 56ef6c94293f4d88979fe54e2db36c9e
-msgid "Triggered when transform is shown using the show statement, replacing an image with the given tag."
+#: ../../source/atl.rst:874
+# 6af4f1789d454fecbd30188d699811c5
+msgid "position properties"
 msgstr ""
 
-#: ../../source/atl.rst:885
-# 8fbad7382a4a4ccb91e1c93fdb77edac
-msgid "``hide``"
+#: ../../source/atl.rst:878
+# bb9097f7d893456199c64520486f9b1f
+msgid "Circular Motion"
 msgstr ""
 
 #: ../../source/atl.rst:880
-# 8124d1230da7424e81cab8746ef28df3
-msgid "Triggered when the transform is hidden using the hide statement or its python equivalent."
-msgstr ""
-
-#: ../../source/atl.rst:883
-# 81ba29f99cc744288a7ce3555afbb3dc
-msgid "Note that this isn't triggered when the transform is eliminated via the scene statement or exiting the context it exists in, such as when exiting the game menu."
-msgstr ""
-
-#: ../../source/atl.rst:889
-# 9d3d7926fb8a491ba990b3194a93788d
-msgid "``replaced``"
+# c23d93a37bb9429283331a4a2cc772c2
+msgid "When an interpolation statement contains the ``clockwise`` or ``counterclockwise`` keywords, the interpolation will cause circular motion. Ren'Py will compare the start and end locations and figure out the polar coordinate center. Ren'Py will then compute the number of degrees it will take to go from the start angle to the end angle, in the specified direction of rotation. If the circles clause is given, Ren'Py will ensure that the appropriate number of circles will be made."
 msgstr ""
 
 #: ../../source/atl.rst:888
-# 618b6f6dab15420999450ff4bd70a3dd
+# 42134dbea24f40e284d2d3f0bcde2069
+msgid "Ren'Py will then interpolate the angle and radius properties, as appropriate, to cause the circular motion to happen. If the transform is in align mode, setting the angle and radius will set the align property. Otherwise, the pos property will be set."
+msgstr ""
+
+#: ../../source/atl.rst:894
+# 42d8deefefdc460c83d6669326b0f2d7
+msgid "External Events"
+msgstr ""
+
+#: ../../source/atl.rst:896
+# 0941c7ac94684af0be9fe9006b2cef67
+msgid "The following events can be triggered automatically:"
+msgstr ""
+
+#: ../../source/atl.rst:900
+# 9b31a23ae4a546b1978b4770fc0e0345
+msgid "``start``"
+msgstr ""
+
+#: ../../source/atl.rst:899
+# c8eff10678554a1a830722bcecfcd899
+msgid "A pseudo-event, triggered on entering an on statement, if no event of higher priority has happened."
+msgstr ""
+
+#: ../../source/atl.rst:904
+# 0cd02ea1dcf04feda3613c651fa950a5
+msgid "``show``"
+msgstr ""
+
+#: ../../source/atl.rst:903
+# b3846de22e694d77a004ae19f1b8f49f
+msgid "Triggered when the transform is shown using the show or scene statement, and no image with the given tag exists."
+msgstr ""
+
+#: ../../source/atl.rst:908
+# db6f3940f3da43a3962b88d696f7873b
+msgid "``replace``"
+msgstr ""
+
+#: ../../source/atl.rst:907
+# 5d2fd04f1c0e4fa9b5baad17592cf3bc
+msgid "Triggered when transform is shown using the show statement, replacing an image with the given tag."
+msgstr ""
+
+#: ../../source/atl.rst:916
+# 18ed98f7cc994ca6aeb1cd8ec683270b
+msgid "``hide``"
+msgstr ""
+
+#: ../../source/atl.rst:911
+# 2ce4428dd6ae4352971291538372ace2
+msgid "Triggered when the transform is hidden using the hide statement or its python equivalent."
+msgstr ""
+
+#: ../../source/atl.rst:914
+# 7d741688859f4bf8ad92b2a2d39019ae
+msgid "Note that this isn't triggered when the transform is eliminated via the scene statement or exiting the context it exists in, such as when exiting the game menu."
+msgstr ""
+
+#: ../../source/atl.rst:920
+# d036464a124348199cb53667b83576e9
+msgid "``replaced``"
+msgstr ""
+
+#: ../../source/atl.rst:919
+# 0eb9e593bca14aa5958b968cca007976
 msgid "Triggered when the transform is replaced by another. The image will not actually hide until the ATL block finishes."
 msgstr ""
 
-#: ../../source/atl.rst:893
-# 3e1902334f6d420891e7fadb6b7a1fc6
+#: ../../source/atl.rst:924
+# 821d11a954554b8ab583859991bd0f89
 msgid "``hover``, ``idle``, ``selected_hover``, ``selected_idle``"
 msgstr ""
 
-#: ../../source/atl.rst:892
-# 9f072251407d47f69005b75c509d63bd
+#: ../../source/atl.rst:923
+# 69200f244a9b4baea95be04b95ca0535
 msgid "Triggered when button containing this transform, or a button contained by this transform, enters the named state."
 msgstr ""
 

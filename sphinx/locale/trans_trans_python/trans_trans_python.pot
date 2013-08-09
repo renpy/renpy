@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,139 +17,139 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/trans_trans_python.rst:6
-# 3ca7f4f7121f41409aa5cacf2f0b2221
+# 97b19b5664c040efb779a5c79accb9b9
 msgid "Transforms and Transitions in Python"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:8
-# d327170f564c49b1a50964f3c2582ad8
+# afee918d475c491093b77ac3bc728339
 msgid "Python can be used to create new transforms and transitions for use by Ren'Py scripts."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:12
-# 7a45bb470ddf4d88b58401764b75798f
+# f206844b5b2c44fba808712303ecaf1c
 msgid "Transforms"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:14
-# ea65a5e5e35d4e408f815634f2aabfbb
+# 4b2aed45f4854e2eaeec9c73d5e6a6e5
 msgid "A transform is a python callable that, when called with a displayable, returns another displayable."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:17
 #: ../../source/trans_trans_python.rst:93
-# 1357273688f8493e98852a3b000e5ba9
-# fb069b7068414cd79627b0db17a6d17d
+# de75de0be92b46e38a7143576727307a
+# e2727530848e4fa4bf0500bcf06654a0
 msgid "For example::"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:29
-# 7ffc637aad6e449381cbd168640f5277
+# 2fda173ee414485c937819c95f117806
 msgid "The python equivalent of an ATL transform is a Transform object."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:33
-# 7efc9c84fac64d109cf95f458c1f47c4
+# 315bcccf47ab45ca9797e64a05f35585
 msgid "A transform applies operations such as cropping, rotation, scaling, and alpha-blending to its child. A transform object has fields corresponding to the :ref:`transform properties <transform-properties>`, which it applies to its child."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:39
-# 08064e8e5d1a44629ce09ad9ed1f1d61
+# ec7d9b73c79c45cebaf818a334c83f53
 msgid "`child`"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:39
-# b23affa97d2e42a8b0d6a8cfd7fac574
+# b1b065aa04e54479a91dcd0770480fe6
 msgid "The child the transform applies to."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:50
-# a59847dd524b4c0f8246aa20480c1aa5
+# 33dfd424aec94b4583945d7ef7df7dc1
 msgid "`function`"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:42
-# 775a9c7b1b2443fe92625aa648faaca9
+# 0ecc19eda75c4650b0f92d2cd2a4b59b
 msgid "If not none, this is a function that is called when the transform is rendered. The function is called with three arguments:"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:45
-# 669a614b27de4bbeb096efdba2de45f6
+# 56d295dd74ce46fdb65fca1f3c21d57a
 msgid "The transform object."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:46
-# f918766fdeb3444ab70cf63cab19e3d2
+# 8132016f2d7a4eeb8b1d3c1ae4cec373
 msgid "The shown timebase, in seconds."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:47
-# aaa868c614a244819f08b53cfe2b5461
+# f18530cbf4f044afbe5b7723b8f73eff
 msgid "The animation timebase, in seconds."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:49
-# 3a190a8049b44f6884df0f0451457c4b
+# 1feb533d645b416393e67871ad377f10
 msgid "The function should return a delay, in seconds, after which it will be called again, or None to never be called again."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:52
-# 23807e8d4d9e4623a02d9aec57a1fbca
+# 9813e6d153ff42de91eaf9c8bc4df45e
 msgid "Additional arguments are taken as values to set transform properties to."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:56
-# e9b49c057f7246a9b436f05c1b121284
+# cc6625e2adc54524a38b1168850ec8ec
 msgid "This is set to true when the function is caled, to indicate that the transform is being hidden."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:61
-# 509f40c3bc294fed8318308a2670d2cd
+# 5ef177a1cd2c476ea84d39a5f782f375
 msgid "If hide request is true, this can be set to false to prevent the transform from being hidden."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:66
-# b6ba3734128d44e0a6709f5c7e7b89fe
+# ef76b42a20e24ab9b27f50bda739ba04
 msgid "Call this method with a new `child` to change the child of this transform."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:71
-# 67f449daa800415a8eeca3dde4f4006b
+# bdd6d0b18f324789b925c79cfb0f79e7
 msgid "This should be called when a transform property field is updated outside of the callback method, to ensure that the change takes effect."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:78
-# e5ba40037cf64c74a7c72d086ede8a85
+# 3ba9da9e3f9448fca599888efe3213a8
 msgid "Transitions"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:80
-# 7afebbb447b34f1abab49271a73ca45a
+# b346b109de714f3eafae1531174477f4
 msgid "A transition is a python callable that, when called with two keyword arguments, returns a displayable that performs the transition effect. The two keyword arguments are:"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:85
-# b82bad79c8674cacb3a64935c54aa7b6
+# 4e265dfbb76e46118dd61423a95b7507
 msgid "`old_widget`"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:85
-# f9083d728a8a445ba0866b7dfa934198
+# 28402d25d9c844b9a6242f5b2b88c620
 msgid "A displayable representing the old screen."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:88
-# 202a84c5e0fa4042ada05c0d5accf520
+# b71e5ea056bd45d995b4d8fd2b603eba
 msgid "`new_widget`"
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:88
-# e7f5a732faa64378b54abb183912eb09
+# 696edad4deef499096aaa5a9548423b6
 msgid "A displayable representing the new screen."
 msgstr ""
 
 #: ../../source/trans_trans_python.rst:90
-# ca21b5ba38df4787a6c5aeddf17bab34
+# cbc620633bab4519a0c8fbf870945d56
 msgid "The returned displayable should have a ``delay`` field, which gives the number of seconds the transition should run for."
 msgstr ""
 

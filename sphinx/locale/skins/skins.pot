@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,42 +17,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/skins.rst:8
-# b07707175154498895ab71eb23ba9a5e
+# 7539282d21a64d48b5ed14533cff3c4b
 msgid "Skins"
 msgstr ""
 
 #: ../../source/skins.rst:10
-# 84476a874491479387836a670cce6988
+# ac586fb3c35d4d758d2b30066fa07eee
 msgid "Ren'Py supports skinning the launcher - changing what the launcher looks like. To do this, follow the following steps:"
 msgstr ""
 
 #: ../../source/skins.rst:13
-# 6956b61885244d4db2ceb2d5462ecbe3
+# fe4a3cc48aa540cba86f4be6c77f2abe
 msgid "Skins are specific to the Ren'Py version in use, and can't be expected to be forward or backwards compatible."
 msgstr ""
 
 #: ../../source/skins.rst:16
-# 320e7487b7b44db59a0184d9e8ebc02d
+# 95a7571c8dae40c199df2fe02328c942
 msgid "Open the launcher in the launcher. This can be done from the preferences screen."
 msgstr ""
 
 #: ../../source/skins.rst:19
-# dccf971a8377439695c084e818f0be66
+# 64b7e181d8ac4aedb56e430186313d50
 msgid "Create the skin.rpy script file."
 msgstr ""
 
 #: ../../source/skins.rst:21
-# 5dac62f9bb3045b0a9c789a31c99c9d3
+# ac25d43d46d2448eb3e56ed42ad3f232
 msgid "Copy the following code into skin.rpy::"
 msgstr ""
 
 #: ../../source/skins.rst:67
-# b050d4a50cc44778b2b00414085bf788
+# aa438e8e60464d6798dcd63ecb85c66a
 msgid "Modify skin.rpy to skin the launcher. Place the image files you use into the launcher's game directory."
 msgstr ""
 
 #: ../../source/skins.rst:70
-# 4324e98c5a7b47b0b9fa78674f0d7092
+# d6ae4ee1fff4473d8d72ec24164028fe
 msgid "An incorrect skin.rpy file could prevent the launcher from starting. To fix it, you'll need to remove skin.rpy and skin.rpyc from the launcher's game directory, start the launcher, and then put them back."
 msgstr ""
 

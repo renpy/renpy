@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,487 +17,487 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/build.rst:5
-# ed34aacf145944aca01eac3650cfdce5
+# 335c846ffc08474b9f9eb2a708781e34
 msgid "Building Distributions"
 msgstr ""
 
 #: ../../source/build.rst:7
-# b9ef53aae5e3487a937bef5658d40960
+# 4442e2e351e04938842386b01797fded
 msgid "Ren'Py includes support for building game distributions. Upon choosing \"Build Distributions\" in the launcher, Ren'Py will scan itself and the project to determine the files to include in the distribution, will create any archives that are necessary, and will build package and update files."
 msgstr ""
 
 #: ../../source/build.rst:13
-# 0cc1a4ad24914559905cffc0d26abf13
+# c87a576ffeda4b70b790a3ab8e5a73d2
 msgid "With no configuration, Ren'Py will build the following four kinds of packages:"
 msgstr ""
 
 #: ../../source/build.rst:16
-# df3a6ee7888847ba88b942b4ee3299a3
+# 4574ac8599394f249112c0b2c448f117
 msgid "All Desktop Platofrms"
 msgstr ""
 
 #: ../../source/build.rst:18
-# 969e0827a1a943799f1f56862d43b977
+# 001b37a7d92243cdab5081ab603dc84c
 msgid "A zip file targeting Windows x86, Macintosh x86, Linux x86, and Linux x86_64."
 msgstr ""
 
 #: ../../source/build.rst:21
-# da67071d8b474bc5828ee177d2229511
+# 4af94082c82a41478c65290b948d9adc
 msgid "Linux x86/x86_64"
 msgstr ""
 
 #: ../../source/build.rst:23
-# c93ce8c5b4e5489999f56b3cb7bcc684
+# 4ed8584131b7440bad1245f7d41106f0
 msgid "A tar.bz2 file targeting Linux x86 and Linux x86_64."
 msgstr ""
 
 #: ../../source/build.rst:25
-# 52d5253e8ed143a290a42d4cbae1d565
+# dad597bd9e9f43639a43bf4d2f490cc5
 msgid "Macintosh x86"
 msgstr ""
 
 #: ../../source/build.rst:27
-# 8b602df06c0d448db365ef4f73613331
+# 986d7568db8e449c9689cffd484dd6b5
 msgid "A zip file containing a Macintosh application targeting Macintosh OS X on Intel processors. Game data will be included inside the application, which appears to the user as a single file."
 msgstr ""
 
 #: ../../source/build.rst:31
-# f20947fc0236491183b444ea63b39df7
+# 581f81b81ced46dcaba3ae7ac7f5a112
 msgid "Windows x86"
 msgstr ""
 
 #: ../../source/build.rst:33
-# 96f874e4cd3b4dcbae8504d056d5c857
+# 92deacf4e79f49dca44b5f4905d5434b
 msgid "A zip file targeting Windows x86."
 msgstr ""
 
 #: ../../source/build.rst:37
-# 9edddba36b0f4d4984a561f8170800c9
+# defd82d2bacf41c582d5275e8efb30c8
 msgid "The zip and tar.bz2 files that Ren'Py produces contain permissions information that must be present for Ren'Py to run on Linux and Macintosh."
 msgstr ""
 
 #: ../../source/build.rst:41
-# 19c82868852a42859a43418a763614a0
+# d66b4109aec64680a21bfccafd5decb5
 msgid "Unpacking and re-packing a zip file on Windows and then running it on Linux or Macintosh is not supported."
 msgstr ""
 
 #: ../../source/build.rst:45
-# f9ab1b6e11f24a2187ae23d23941b127
+# 28ddd943cee44ee486feba5298fab685
 msgid "Basic Configuration"
 msgstr ""
 
 #: ../../source/build.rst:47
-# a9cc715c181b470bb7f19a5d4678dd3f
+# 8f5a501af0e14a1e89364cdd02e2b00c
 msgid "The build process can be configured by setting variables and calling function that live in the build namespace. This must be done from inside an init python block."
 msgstr ""
 
 #: ../../source/build.rst:51
-# 5a1ec1cd913d4e38a070349b148b276d
+# adc5c2ec6a794e38a39164b2b7d1abf4
 msgid "There are a few basic variables and functions that many games will use."
 msgstr ""
 
 #: ../../source/build.rst:56
-# a74979422e334107a5d7b465e9110e37
+# 6311186089e1436baa4116d92a304a0f
 msgid "This is used to create the names of directories in the archive files. For example, if this is set to \"mygame-1.0\", the Linux version of the project will unpack to \"mygame-1.0-linux\"."
 msgstr ""
 
 #: ../../source/build.rst:60
-# 9ed943102a8346989de3f4004352129b
+# c7176417799f43fca813fc66123426a6
 msgid "This is also used to determine the name of the directory in which the package files are placed. For example, if you set build.directory_name to mygame-1.0, the archive files will be placed in mygame-1.0-dists in the directory above the base directory."
 msgstr ""
 
 #: ../../source/build.rst:68
-# 0e7f1372e28544ed94b316a8888e61c6
+# 2ee22ae8ea694d1d86f1245ac619e141
 msgid "This variable controls the name of the executables that the user clicks on to start the game."
 msgstr ""
 
 #: ../../source/build.rst:71
-# b01da3d4182140a78c69943fe5074e2f
+# 112a9cd6c7f14507ae9100287bd2f1c9
 msgid "For example, if this is set to \"mygame\", the user will be able to run mygame.exe on Windows, mygame.app on Macintosh, and mygame.sh on Linux."
 msgstr ""
 
 #: ../../source/build.rst:76
-# a6896dd835f047b39231f035496da99e
+# 975dfde5fa3b4bb689bcc93c86a47710
 msgid "Special Files"
 msgstr ""
 
 #: ../../source/build.rst:78
-# 378da2fe3f2e4123ab910ea9b8e9230b
+# dae03c8c42ab4571ac009afe6d08fb1e
 msgid "There are two files that can be included in your game's base directory to customize the build."
 msgstr ""
 
 #: ../../source/build.rst:82
-# 0de5356563a146349c8211ac228cb089
+# 54e8f9c77f36433fb64b99173a240ce9
 msgid "icon.ico"
 msgstr ""
 
 #: ../../source/build.rst:82
-# 0e8be572073a46da95aafc607b29fbb1
+# 86372f83cf6b47b3a347998f8e1027d5
 msgid "The icon that is used on Windows."
 msgstr ""
 
 #: ../../source/build.rst:85
-# 99811c7b5a154d378276bdcd71a9cf6d
+# 6fb3246445734535a86080075fbabbdf
 msgid "icon.icns"
 msgstr ""
 
 #: ../../source/build.rst:85
-# 695fc395666c4f1f8dee4a5ae5290f45
+# a5480f85c6564380a08b14e51b785203
 msgid "The icon that is used on Macintosh."
 msgstr ""
 
 #: ../../source/build.rst:87
-# 71b092792e0c404591eb8cf837009547
+# 74f59adb96724c46938c101c43c0f1e6
 msgid "These icon files much be in specific formats. You'll need to use a program or web service (such as http://iconverticons.com/ ) to convert them."
 msgstr ""
 
 #: ../../source/build.rst:92
-# 2dcd125ee36c420d8ce6f04ce93a7d68
+# 76f56f00ce154f4cac8ed91687f085f4
 msgid "Classifying and Ignoring Files"
 msgstr ""
 
 #: ../../source/build.rst:94
-# ab8733b643134c69ab7399ccd23d3fb6
+# 3622e931e65b473c9ba0d23f48d98f1e
 msgid "The build process works by first classifying files in the Ren'Py distribution and your game into file lists. These file lists are then added to package files."
 msgstr ""
 
 #: ../../source/build.rst:98
-# 8712d45c6d324871906eba06e6fd3d52
+# d59a745c9ee04fc4a77c7a89daa1ccee
 msgid "The classification is done by the build.classify function. It takes a patterns and a space-separated list of filenames. Patterns are matched from first to last, with the first match taking precedence (even if a more-specific pattern follows.) Patterns are matched with and without a leading /. Patterns may include the following special characters:"
 msgstr ""
 
 #: ../../source/build.rst:104
-# cca7a342d3424ff391be378761dd02ee
+# 9ebdfba92b5144a29ce8ff27f5995200
 msgid "/"
 msgstr ""
 
 #: ../../source/build.rst:105
-# ee1c78c431f7461b91d648fc9176d40a
+# 0caa3b33d9a24e8381082de1cc1e6ed1
 msgid "The directory separator."
 msgstr ""
 
 #: ../../source/build.rst:106
-# a894d39c5ba645d5b4dbcd5b7c191980
+# aa1f8f56f4e54f40829e647050ec3c60
 msgid "\\*"
 msgstr ""
 
 #: ../../source/build.rst:107
-# 7e5248414cc346afbb481219a6ea49e3
+# 05bd5bb223114641adead17a9ee3d4a3
 msgid "Matches all characters except for the directory separator."
 msgstr ""
 
 #: ../../source/build.rst:109
-# 7052d9f4de784329bcac314d2ae72398
+# f16ed4e4f5264386a7c4f9d412c95be8
 msgid "\\*\\*"
 msgstr ""
 
 #: ../../source/build.rst:109
-# c4ca014c1b9648ce85610674c0eb7c68
+# 08a4a2f650b24881aee00dd8dbc2edad
 msgid "Matches all characters."
 msgstr ""
 
 #: ../../source/build.rst:111
-# 48386fee61264d56887cff435ffcda7b
+# 4935bd8fd6994e3b941095acd9b3f362
 msgid "For example:"
 msgstr ""
 
 #: ../../source/build.rst:113
-# 8c9f2fa2bd0e4aa683fdb8a02f929118
+# f5d6630f91cc47afad0a7c011beaed5f
 msgid "\\*\\*.txt"
 msgstr ""
 
 #: ../../source/build.rst:114
-# e3d17211fad240a1bd1d295a33cf6a49
+# de4952b280c94cdeb566bfbd150fc5db
 msgid "Matches all txt files."
 msgstr ""
 
 #: ../../source/build.rst:116
-# 2d9e196cdd1c4459a1bdb7d1105adf46
+# 9b72e1f63f3a404995aed421388a31ca
 msgid "game/\\*.txt"
 msgstr ""
 
 #: ../../source/build.rst:116
-# b1c63a68247d4ddcbd47ca3516e4809c
+# 56fd5eb3a91246c69cc7cd4a62de9fa6
 msgid "Matches txt files in the game directory."
 msgstr ""
 
 #: ../../source/build.rst:118
-# 8fc43beee0844eb6aff064be8cd71fb4
+# b64c6f881d074ac1b7491bf07dcaeb42
 msgid "There are five file lists that files can be classified into by default. (Ren'Py places its own files into the first four of these.)"
 msgstr ""
 
 #: ../../source/build.rst:121
-# d76c0b78af934af48218a1e7ec5a3dc8
+# 1e01a6ea32234831956d2b8d84836b22
 msgid "all"
 msgstr ""
 
 #: ../../source/build.rst:122
-# b4ba29f38a144c7ca445bd0dc1fb3f90
+# f16be3def47a45a8b7c38dbfc51b2373
 msgid "These files will be included in all packages."
 msgstr ""
 
 #: ../../source/build.rst:123
-# 75c21858c6c14f1bb345851fd261172f
+# ce73faf0dbf04581be0bb74525ac49ed
 msgid "linux"
 msgstr ""
 
 #: ../../source/build.rst:124
-# 6c3a9179f26d4f13958587258e2e7f5e
+# aff1c540e48a42a5a0bf3adc67d0a18f
 msgid "These files will be included in packages targeting Linux."
 msgstr ""
 
 #: ../../source/build.rst:125
-# c612b7d292d44664baf573eec985f439
+# 73e3db15795e462fbea5bd04457ed130
 msgid "mac"
 msgstr ""
 
 #: ../../source/build.rst:126
-# e0ecc5a38aed49c1a1aa999b1cd2bd4c
+# 72b881cc5e2b4704814aa555d844f2ff
 msgid "These files will be included in packages targeting Macintosh."
 msgstr ""
 
 #: ../../source/build.rst:127
-# ac0e92c352944e4eb8fd895b69a322cc
+# c64ef8a42604482292958daa682f5d47
 msgid "windows"
 msgstr ""
 
 #: ../../source/build.rst:128
-# d1972417bc984d7aad0a04c8004a310c
+# 21c8efc6f2f1448ca46620e41a690d80
 msgid "These files will be included in packages targeting Windows."
 msgstr ""
 
 #: ../../source/build.rst:130
-# 40000e6493c449499f63da630fb98933
+# f8d795c7b48a4245aa222ca4a73c340b
 msgid "archive"
 msgstr ""
 
 #: ../../source/build.rst:130
-# 08f63733ae0a42d495912c3c61b28f90
+# df6497619778413b9e61751f89f9e35d
 msgid "These files will be included in the archive.rpa archive."
 msgstr ""
 
 #: ../../source/build.rst:132
-# 28875eb3189248f8bba37446f842e05d
+# 96adbe31c8634e639744c7d00da52927
 msgid "Files that are not otherwise classified are placed in the \"all\" file list."
 msgstr ""
 
 #: ../../source/build.rst:135
-# b4a17529a45a44d2aace45697807b146
+# 235eae3609ec44db8c3160800566b9ee
 msgid "To exclude files from distribution, classify them as None or the empty string."
 msgstr ""
 
 #: ../../source/build.rst:138
-# 3afb872e892e4eedbc6db938feb79d46
+# 70d8ee6c110042408247984a089e0000
 msgid "For example::"
 msgstr ""
 
 #: ../../source/build.rst:151
-# 6d0710dbc65648e8a5800abb4a60b960
+# 02f25864e1814b3d8b8163daa6f24aa4
 msgid "Documentation"
 msgstr ""
 
 #: ../../source/build.rst:153
-# 3459aa4170f64d28b1e8a054d444a345
+# 40142ab3a2bc4a358f31fac9de044b5b
 msgid "Calling the build.documentation function with patterns marks files matching those patterns as documentation. Documentation files are included twice in a Macintosh application - both inside and outside of the application itself."
 msgstr ""
 
 #: ../../source/build.rst:158
-# 5b7e34cd4240472ab8790a035aa11e7b
+# cfed2d1bc35c45f2b2cb39ba81c4d7ab
 msgid "For example, to mark all txt and html files in the base directory as documentation, call::"
 msgstr ""
 
 #: ../../source/build.rst:166
-# eedde3c23cb54a5aaf93950e9c50eb8e
+# 7d655bfddb8847f582610b7e58c396c5
 msgid "Packages"
 msgstr ""
 
 #: ../../source/build.rst:168
-# 0cf7e80f97c34257bde4876eccad61ee
+# a71c1674064440e69d7690ba1ce9332c
 msgid "It's also possible to add new types of packages to the Ren'Py build process. This is done by calling the build.package function with a package name, type, and a string containing the file lists to include."
 msgstr ""
 
 #: ../../source/build.rst:173
-# 583cf330ebb44b3ca314214dbf8a78ba
+# 4418aa25e2084232b051404f489a7632
 msgid "Say we wanted to build a normal version of our game, and one containing bonus material. We could classify the bonus files in to a \"bonus\" file list, and then declare an all-premium package with::"
 msgstr ""
 
 #: ../../source/build.rst:180
-# b8c32f36d13246de979715692072af4b
+# 6b8b5fb741434f4eb56eb867e0d725ae
 msgid "Archives"
 msgstr ""
 
 #: ../../source/build.rst:182
-# 38f6f0af84f34c10b2fac8ac1d71627c
+# d4c08d0696574582b2160f841cc50828
 msgid "Ren'Py supports combining files into a simple archive format. While not very secure, this protects files from casual copying."
 msgstr ""
 
 #: ../../source/build.rst:185
-# 8fc2a566d102475da474301dbd5fbf3d
+# f1113c8903154fc6882e2830616c118c
 msgid "By default, all files classified into the \"archive\" file list will be placed in an archive.rpa archive, which is included in the all file list."
 msgstr ""
 
 #: ../../source/build.rst:189
-# 62392a49834240af8d8a5f8ed856b63f
+# 1adb634f0f434626a21072d16ac0ccbd
 msgid "By calling build.archive, it's possible to declare a new archives and the file lists they will be included in. (It's rare to use anything but the all file list, however.) To use an archive, classify files into a list with its name."
 msgstr ""
 
 #: ../../source/build.rst:194
-# ac2dcf072c7c473791503acc22a12917
+# 4a9bac2ff66a48f586a13ab9f1b510d9
 msgid "For example, the following code will archive images in images.rpa, and game scripts into scripts.rpa::"
 msgstr ""
 
 #: ../../source/build.rst:209
-# 90fd0d9fe24741808600d17e6005ace7
+# dee3f58fef1f4c048814a73f5a0fa71d
 msgid "If an archive file is empty, it will not be built."
 msgstr ""
 
 #: ../../source/build.rst:211
-# a3594dbd730f4df4abd913277ec9b3d9
+# 0f28de717c5f4bf89e3e552ced14c5bc
 msgid "Please think twice about archiving your game. Keeping files open will help others run your game on future platforms - platforms that may not exist until after you're gone."
 msgstr ""
 
 #: ../../source/build.rst:217
-# e42197ede6264be8b21017f1ca285e24
+# ae32cc1b2d03406d8dbce693498473f5
 msgid "Build Functions"
 msgstr ""
 
 #: ../../source/inc/build:5
-# cbf45b6154144266b5a3432f13e3cd3e
+# b656baf147e3484f9d3a3b4d148a4dfe
 msgid "Declares the existence of an archive. If one or more files are classified with `name`, `name`.rpa is build as an archive. The archive is included in the named file lists."
 msgstr ""
 
 #: ../../source/inc/build:11
-# b8d5e999d5b54accbb761ae5efe02ce3
+# 4fbd070aff3e477b998066511df17521
 msgid "Classifies files that match `pattern` into `file_list`."
 msgstr ""
 
 #: ../../source/inc/build:15
-# d13e681c093e480da0dd31f8a5f0249d
+# c39713f6014a4fc6b35bcc1d184c6089
 msgid "Clears the list of patterns used to classify files."
 msgstr ""
 
 #: ../../source/inc/build:19
-# 00051c53aa9347559ee8bfe477ae98da
+# 41fa1482355f4bc281321f69fa01c637
 msgid "Declares a pattern that matches documentation. In a mac app build, files matching the documentation pattern are stored twice - once inside the app package, and again outside of it."
 msgstr ""
 
 #: ../../source/inc/build:25
-# 4025cf5f499f436aa3ecd9c8feb69a83
+# e83b453af9f642f4a8807518659cc349
 msgid "Adds a pattern marking files as executable on platforms that support it. (Linux and Macintosh)"
 msgstr ""
 
 #: ../../source/inc/build:30
-# f92046316d4241b9ae78ea44ee470fbf
+# 12f7a2e003ca47e092715990018acd5b
 msgid "Declares a package that can be built by the packaging tool."
 msgstr ""
 
 #: ../../source/inc/build:34
-# a66309869d784559bd487a9e718b7c18
+# 4bdee14b442f433db6f27e614a64d25a
 msgid "`name`"
 msgstr ""
 
 #: ../../source/inc/build:34
-# 1cddd27ebe134768bd52ad471f498dc5
+# ef40d3e2ed134f68ad7bdc3805206b6a
 msgid "The name of the package."
 msgstr ""
 
 #: ../../source/inc/build:48
-# 715bef6df5d14cfe88bc1a5472d4878e
+# cff61802d7ca47a699c7108d62a48665
 msgid "`format`"
 msgstr ""
 
 #: ../../source/inc/build:37
-# 7ce1578c89e348d48ad53db2487f67e3
+# 9376c0d6072c41d483a0bb0fb05adc61
 msgid "The format of the package. A string containing a space separated list of:"
 msgstr ""
 
 #: ../../source/inc/build:40
-# fd3e034b90da4e76ab8efb758e1c8b3b
+# 47b2aadcab05468dada023743033df38
 msgid "zip"
 msgstr ""
 
 #: ../../source/inc/build:41
-# a43a242ae64641e8834ac1838e78dee2
+# e7af9a4a3e544369a9d08b46c920385b
 msgid "A zip file."
 msgstr ""
 
 #: ../../source/inc/build:42
-# 65e1d44d92cd431bb7c10e1adb55ce36
+# 1824670f3ac84449843b887b12ddc525
 msgid "app-zip"
 msgstr ""
 
 #: ../../source/inc/build:43
-# d92df4e88df849f1b1c055889fd5f935
+# accc5e41f03741b1b8dd7ec73af7a0b5
 msgid "A zip file containing a macintosh application."
 msgstr ""
 
 #: ../../source/inc/build:45
-# 072690bdd9b7482893dc8e689055546a
+# 97f3f8401af240d0ab7a336157cdf6d8
 msgid "tar.bz2"
 msgstr ""
 
 #: ../../source/inc/build:45
-# 2173e1d7d7fb40eb89402a3cb10b92a1
+# 7f7409461b734ca88be8c76466a4c96c
 msgid "A tar.bz2 file."
 msgstr ""
 
 #: ../../source/inc/build:47
-# 82b5b7765e67485bb45c30ede2c2369b
+# ed732a8b76124302aea6b49b25d6cdc1
 msgid "The empty string will not build any package formats (this makes dlc possible)."
 msgstr ""
 
 #: ../../source/inc/build:52
-# a91237411cd4406d907c194435dfe17a
+# 5bd135f46132459d9ad6388e00808027
 msgid "`file_lists`"
 msgstr ""
 
 #: ../../source/inc/build:51
-# 56c7176890bd4921b34e8050595b88d0
+# f3155fd89c374b2bb9dda38b02f22e2b
 msgid "A list containing the file lists that will be contained within the package."
 msgstr ""
 
 #: ../../source/inc/build:55
-# 60ace0d0952049489823217b954c858c
+# d8b8c81820cd4afba05b8b6411c5fc16
 msgid "`description`"
 msgstr ""
 
 #: ../../source/inc/build:55
-# 5a384efe49ef4299a4b74368a4509392
+# 3a478149a6694076b8e318f2f3fcad5b
 msgid "An optional description of the package to be built."
 msgstr ""
 
 #: ../../source/inc/build:59
-# 53b3f7cbc6d44cfe8c56480edc9a9267
+# 0ab11faa96a140c6a5a031c9b5225a15
 msgid "`update`"
 msgstr ""
 
 #: ../../source/inc/build:58
-# 1a6d54324a7a491a86dd8dbf5ca9e8bd
+# e6154f60be8c4fcab4eef15c54956d7d
 msgid "If true and updates are being built, an update will be built for this package."
 msgstr ""
 
 #: ../../source/inc/build:62
-# a1d28cf2e6f2481bbf52501677cfac60
+# df015f3cd4ae4c74b2b2b9c27a626d0c
 msgid "`dlc`"
 msgstr ""
 
 #: ../../source/inc/build:62
-# e741a907fd1d4ac9b4a6f96f8e6e4632
+# 7862704d70174e26847003ffb1d71d9e
 msgid "If true, any zip or tar.bz2 file will be built in standalone DLC mode, without an update directory."
 msgstr ""
 
 #: ../../source/build.rst:222
-# d9045ce644b7461cb99efd6b63442f58
+# e1a5b69d292745fdb3574b90f502ea3d
 msgid "Advanced Configuration"
 msgstr ""
 
 #: ../../source/build.rst:224
-# 51e7484c211143a69d4d7a65366e7e83
+# 234993f328a54fcaa43d5ac0f57efbfd
 msgid "The following variables provide further control of the build process:"
 msgstr ""
 
 #: ../../source/build.rst:228
-# 68841e530f6a4d9a807597e1bd1d8b07
+# ffc6501fcd844ca994f5a9709d6debeb
 msgid "If true, empty directories (including directories left empty by file archiving) will be removed from generated packages. If false, empty directories will be included."
 msgstr ""
 

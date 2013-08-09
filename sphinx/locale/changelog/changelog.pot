@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.4\n"
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-21 18:29\n"
+"POT-Creation-Date: 2013-08-09 20:37\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,2067 +17,2167 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../source/changelog.rst:6
-# 3c0d4ac48c884c1caf2fdb5876d8ce12
+# d213d32ff55c4311b09a09d42ea58e8a
 msgid "Full Changelog"
 msgstr ""
 
 #: ../../source/changelog.rst:9
-# 8052e1a466e4485f9cd68dc0b184fc17
-msgid "Ren'Py 6.15.4"
+# da19da51639b4c3383901a60e2683dd6
+msgid "Ren'Py 6.15.6"
 msgstr ""
 
 #: ../../source/changelog.rst:11
-# 120607289d9e4c108f0796c86c1a3711
-msgid "This release fixes a compile problem that prevented Ren'Py 6.14.x and Ren'Py 6.15.0-3 from running on most 64-bit Linux systems."
+# 1c591fdbdf034d0298ac02e34997ab0d
+msgid "This release includes improvements for the Android platform:"
+msgstr ""
+
+#: ../../source/changelog.rst:13
+# 16dbdbf6e1b94570a606e5cbe0e4a43b
+msgid "Assets are now read exclusively from the APK and expansion file."
 msgstr ""
 
 #: ../../source/changelog.rst:14
-# 56fe52183feb43619ac09f7b8ad0f26c
-msgid "Image prediction has become more fine-grained, and can take place while the screen is animating."
+# d3eea2b40b5c4ae0a6d5f1f33503cb09
+msgid "Logs and tracebacks are placed on external storage."
 msgstr ""
 
-#: ../../source/changelog.rst:17
-# 0eeef991c283450188257efaea5f3b0e
-msgid "The new :var:`build.exclude_empty_directories` determines if empty directories are include or excluded from the distribution. It defaults to true, previously the default was platform-dependant."
+#: ../../source/changelog.rst:15
+# c798576476d44604aabb4c5937cc80ad
+msgid "Saves are placed on external storage, except when saves from older versions of Ren'Py exist."
 msgstr ""
 
-#: ../../source/changelog.rst:24
-# 4cacec3847ba437eb437a572231ed5c3
-msgid "Ren'Py 6.15"
+#: ../../source/changelog.rst:18
+# 96a70389e906465abe3f2175c2d3a415
+msgid "The GL2 shaders Ren'Py uses have been simplified in the (usual) case where no clipping is occuring. This leads to a noticable speed improvement on Android, and potentially other platforms as well."
 msgstr ""
 
-#: ../../source/changelog.rst:27
-# 085076f6811646039c3bcd0f8f40e847
-msgid "Translation Framework"
+#: ../../source/changelog.rst:22
+# c94678737bb845d7a3cc405cb222d630
+msgid "An issue with Drag-and-drop has been fixed. Thanks go to Kinsman for contributing this fixe."
+msgstr ""
+
+#: ../../source/changelog.rst:25
+# 1aee3e36b51a4afda4b6d932b1ab47c6
+msgid "The :func:`Skip` action now triggers the skip indicator. It also supports a new fast parameter, which causes skipping to the next menu."
 msgstr ""
 
 #: ../../source/changelog.rst:29
-# eceee6ca0daf4136863f6a67647dddd5
-msgid "Ren'Py now includes a comprehensive :ref:`translation framework <translation>`. This framework includes support for using a single language selection to change dialogue, menus and other interface text, images and files, styles and styles."
+# dd58a56a0e3a4c848725a593d5f66655
+msgid "This release includes various minor changes to improve compatibility with very old Ren'Py games. (It now runs the Ren'Py 5 demo.)"
 msgstr ""
 
 #: ../../source/changelog.rst:34
-# ae47a1857caf437fa849e28661e2e135
-msgid "The dialogue translation support allows lines of dialogue to be split and combined at the translator's discretion. As most Ren'Py statements are allowed inside the new translation blocks, it's possible to use logic (like conditions) to tailor the translations to your language."
+# 7dfa82dfaca04ff4b70c3ce5cbfa913c
+msgid "Ren'Py 6.15.5"
 msgstr ""
 
-#: ../../source/changelog.rst:39
-# c65f4d3e4b924344a7336b2b75bc6954
-msgid "The launcher includes a new \"Generate Translations\" button, which - as part of a sanctioned translation where the full script is present - will generate empty translation files for a new language."
+#: ../../source/changelog.rst:36
+# 6dbdad1f94634c79b1106384ce888704
+msgid "This release adds two new features:"
 msgstr ""
 
-#: ../../source/changelog.rst:44
-# b9d0ce2ee6e645bc8c6156fee0c6e90f
-msgid "Improved Japanese Support"
+#: ../../source/changelog.rst:38
+# 6f967f2ab4e346e5b432c75309784db0
+msgid "The GL renderer now supports additive blending. This is enabled using the :tpref:`additive` transform property in an ATL transform or use of the :func:`Transform` class. Additive blending will not work if the software renderer is in use, and it's up to creators to deal with that issue."
 msgstr ""
 
-#: ../../source/changelog.rst:46
-# 2f3e8a63ded14dc3b1210e5880740bb4
-msgid "Ren'Py 6.15 includes multiple changes to better support the Japanese language."
+#: ../../source/changelog.rst:43
+# effc1ffeb3e04f26b40d9f02f0cb1379
+msgid "The new :func:`Flatten` displayable combines multiple textures into a single texture. This can be used to prevent incorrect behavior when a displayable containing multiple overlapping textures (like a :func:`LiveComposite` is shown with an :tpref:`alpha` between 0 and 1."
 msgstr ""
 
-#: ../../source/changelog.rst:49
-# 5215bf439df449e99a114a53837da41a
-msgid "The tutorial game has been translated to Japanese, with the language being selectable from the preferences menu."
+#: ../../source/changelog.rst:48
+# 1b96912ac0314d6c905640ce8a6b6f3b
+msgid "It also fixes the following issues:"
 msgstr ""
 
-#: ../../source/changelog.rst:52
-# 0f02932b0730414bb0f7fc5a89fac1c1
-msgid "The tutorial was translated by Koichi Akabe."
+#: ../../source/changelog.rst:50
+# 61e3e2e1401d4bff90815a77624d401f
+msgid "Whitespace is now skipped before default arguments, which previously caused parse errors in some cases."
 msgstr ""
 
-#: ../../source/changelog.rst:54
-# cf42e29dc8f24f7188289ee90181db07
-msgid "Support for vertical writing has been added to Ren'Py. Consisting of the :propref:`vertical` style property for text, and the new :propref:`box_reverse` property on hboxes, this support makes it possible to display dialogue, menus, and other text in a vertical orientation."
+#: ../../source/changelog.rst:53
+# 643fbfdc26fc41b0893460103c3e864e
+msgid "Ren'Py now sets the unix mode of files and directories in zip and tar files to 644 and 755 as appropriate. Prior versions of Ren'Py used 666 and 777 as the permissions, which lead to a security problem when the file was unpacked by a tool that didn't respect the user's umask. (Info-zip had this problem.)"
 msgstr ""
 
 #: ../../source/changelog.rst:59
-# 47c3f902a3984ced863af356ebe49d1e
-msgid "Vertical text support was written by Koichi Akabe."
+# a41ec5c7021e40ec8718ae5ea28cb689
+msgid "Auto-hinting for fonts is now enabled by default. This restores font rendering compatibility with prior releases."
 msgstr ""
 
-#: ../../source/changelog.rst:61
-# 063b68114df745c3bca8e6f43c1e7668
-msgid "The line-breaking algorithm has been updated to match Unicode 6.2. In addition, three new \"languages\" have been added. The new \"japanese-strict\", \"japanese-normal\", and \"japanese-loose\" languages (based on the line-break options in the CSS3 Text module) allow greater control of how Ren'Py breaks lines with small kana and other special characters."
+#: ../../source/changelog.rst:62
+# 9b9922ff50ea40309aa50638e64e26ab
+msgid "Ren'Py now builds with and requires the current version of libav. It should also work with current versions of ffmpeg when libav is available."
 msgstr ""
 
-#: ../../source/changelog.rst:67
-# a743b7533f3c4cca98a1eb3b6a17d3b3
-msgid "Linebreaking can be further tailored using the new :func:`renpy.language_tailor` function, which can change the linebreaking class of a character."
+#: ../../source/changelog.rst:66
+# ed9278c4f3084073ac9190908beb8bf5
+msgid "The version of SDL distributed with Ren'Py has been patched to prevent multiple windows from showing up in the Window menu when entering and leaving fullscreen mode."
 msgstr ""
 
-#: ../../source/changelog.rst:72
-# 7ecdacd4c74044238ee50c7f636c2beb
-msgid "Console"
+#: ../../source/changelog.rst:73
+# cd7782fdeb6149b09fa1b40daedbc305
+msgid "Ren'Py 6.15.4"
 msgstr ""
 
-#: ../../source/changelog.rst:74
-# 4b7c8f890b6647bfb742108bd311cda7
-msgid "The new debug console makes it possible to interactively run Ren'Py script and Python statements, and immediately see the results. The console is available in developer mode or when :var:`config.console` is True, and can be accessed by pressing shift+O."
+#: ../../source/changelog.rst:75
+# 80235e1f1d4e48dc8c62f5dfab799526
+msgid "This release fixes a compile problem that prevented Ren'Py 6.14.x and Ren'Py 6.15.0-3 from running on most 64-bit Linux systems."
 msgstr ""
 
-#: ../../source/changelog.rst:79
-# 2b3688f9df764da7b97d4bec4223efab
-msgid "The console can be used to:"
+#: ../../source/changelog.rst:78
+# cdc3dc4331004814b056eed978540a00
+msgid "Image prediction has become more fine-grained, and can take place while the screen is animating."
 msgstr ""
 
 #: ../../source/changelog.rst:81
-# b00f322f75fa4a35aff2fb9ac33f1ab9
-msgid "Jump to a label."
+# 9142c4e5dd984849882a8673b50c4bf9
+msgid "The new :var:`build.exclude_empty_directories` determines if empty directories are include or excluded from the distribution. It defaults to true, previously the default was platform-dependant."
 msgstr ""
 
-#: ../../source/changelog.rst:82
-# 9e07d3d7267941f39c2855b0cd050eed
-msgid "Interactively try out Ren'Py script statements."
-msgstr ""
-
-#: ../../source/changelog.rst:83
-# 241d822e4d3e44b89857698897b52b68
-msgid "Evaluate a python expression or statement to see the result."
-msgstr ""
-
-#: ../../source/changelog.rst:84
-# e0d58deb99b648de8941164dd6dfc2ce
-msgid "Trace python expressions as the game progresses."
-msgstr ""
-
-#: ../../source/changelog.rst:86
-# f3e6e2ed9580465e9f84cb5381896a01
-msgid "The console was originally written by Shiz, C, and delta."
-msgstr ""
-
-#: ../../source/changelog.rst:89
-# b3957a8996d747e3a23df5ee81e2257f
-msgid "Screen Parameters"
+#: ../../source/changelog.rst:88
+# 4274a4652993464ca7bb8378316aa9e2
+msgid "Ren'Py 6.15"
 msgstr ""
 
 #: ../../source/changelog.rst:91
-# 8f687ad40f2d44ebb7b235eb2939d7fa
-msgid "Screens now take named parameters, similar to the way that labels and transforms take named parameters. It's now possible to write::"
+# 3963926eb87540ada20b0e45130c70ce
+msgid "Translation Framework"
 msgstr ""
 
-#: ../../source/changelog.rst:97
-# 4f6ab0e440904631838e32c360d5dcd6
-msgid "and::"
+#: ../../source/changelog.rst:93
+# 24f6f8366e914cf58f26e94b9e071f7f
+msgid "Ren'Py now includes a comprehensive :ref:`translation framework <translation>`. This framework includes support for using a single language selection to change dialogue, menus and other interface text, images and files, styles and styles."
 msgstr ""
 
-#: ../../source/changelog.rst:102
-# 9b58d8d6e3464de38113840f1644b10e
-msgid "Replay Gallery"
+#: ../../source/changelog.rst:98
+# d47e1da7b20349229bd40317547ae744
+msgid "The dialogue translation support allows lines of dialogue to be split and combined at the translator's discretion. As most Ren'Py statements are allowed inside the new translation blocks, it's possible to use logic (like conditions) to tailor the translations to your language."
 msgstr ""
 
-#: ../../source/changelog.rst:104
-# f331826b0ccc46faba46d8a0f0cb1823
-msgid "Ren'Py now includes support for :ref:`replaying <replay>` scenes. A scene replay can be invoked from anywhere in Ren'Py (for example, from a main menu or game menus screen, even when the game has started). When the replay ends, Ren'Py will return to the location the replay was invoked from, even if that location is in a screen or in python code. Rollback works inside a replay, but saving and loading is disabled."
+#: ../../source/changelog.rst:103
+# 874eab2a1e674b0981ee339a2b480c5d
+msgid "The launcher includes a new \"Generate Translations\" button, which - as part of a sanctioned translation where the full script is present - will generate empty translation files for a new language."
 msgstr ""
 
-#: ../../source/changelog.rst:111
-# bf1044799d1142e888447c59068ebab1
-msgid "The :func:`Replay` action begins a replay. The :func:`renpy.end_replay` ends a replay if one is in progress, and is ignored otherwise."
+#: ../../source/changelog.rst:108
+# c9d8f4c40ecd447e9a3f5a991af37db2
+msgid "Improved Japanese Support"
+msgstr ""
+
+#: ../../source/changelog.rst:110
+# 688bc270175a467888a2468f216943d9
+msgid "Ren'Py 6.15 includes multiple changes to better support the Japanese language."
+msgstr ""
+
+#: ../../source/changelog.rst:112
+# 9c241a83218546308afa4f5e1040df7a
+msgid "The tutorial game has been translated to Japanese, with the language being selectable from the preferences menu."
 msgstr ""
 
 #: ../../source/changelog.rst:115
-# 59019ccf4cbf424fa5e462ca7330e7c3
-msgid "Voice Improvements"
+# d6bb23347e48484492adae79868fec78
+msgid "The tutorial was translated by Koichi Akabe."
 msgstr ""
 
 #: ../../source/changelog.rst:117
-# 99c283d73b974ddf8d9db0dba44e6981
-msgid "There have been several improvements to the voice playback system. The new :var:`config.voice_filename_format` variable makes it possible to use only part of the filename in a voice statement. The new voice_tag parameter to :func:`Character`, in conjunction with the :func:`SetVoiceMute` and :func:`ToggleVoiceMute` actions, makes it possible to selectively mute particular characters' voices. The new :func:`VoiceReplay` action makes it possible to replay the current voice."
+# 45e4a5f7f315467c85f740c2449c756d
+msgid "Support for vertical writing has been added to Ren'Py. Consisting of the :propref:`vertical` style property for text, and the new :propref:`box_reverse` property on hboxes, this support makes it possible to display dialogue, menus, and other text in a vertical orientation."
 msgstr ""
 
-#: ../../source/changelog.rst:127
-# 96a1f2336c024f6a93d98d12a82a8e94
-msgid "Launcher Improvements"
+#: ../../source/changelog.rst:122
+# e8ce2f616a0f45a1b74aad9b60c02414
+msgid "Vertical text support was written by Koichi Akabe."
 msgstr ""
 
-#: ../../source/changelog.rst:129
-# 74ba7538c14d4f91beddbbb5cde62c5c
-msgid "There were a few launcher improvements in this release."
+#: ../../source/changelog.rst:124
+# cbcdb56b2a5c4e8f82212b4375adc4f2
+msgid "The line-breaking algorithm has been updated to match Unicode 6.2. In addition, three new \"languages\" have been added. The new \"japanese-strict\", \"japanese-normal\", and \"japanese-loose\" languages (based on the line-break options in the CSS3 Text module) allow greater control of how Ren'Py breaks lines with small kana and other special characters."
 msgstr ""
 
-#: ../../source/changelog.rst:131
-# 5480317576ef460f9823f0e11694d41e
-msgid "The files pane of the navigation page has a new button that allows the user to create a new script file."
+#: ../../source/changelog.rst:130
+# b49137ed75c6482e869275ddd5aba106
+msgid "Linebreaking can be further tailored using the new :func:`renpy.language_tailor` function, which can change the linebreaking class of a character."
 msgstr ""
 
-#: ../../source/changelog.rst:134
-# d4fa1e13be9d4f5c893ad4f375929d16
-msgid "The launcher can generate translation templates, and can be translated using the translation framework."
+#: ../../source/changelog.rst:135
+# 784028cf094a441786adfd45b252f07b
+msgid "Console"
 msgstr ""
 
 #: ../../source/changelog.rst:137
-# 734559c84e764f6dadf28c7e20eadc8b
-msgid "The Ren'Py launcher now has a small amount of support for skins. While the basic layout of the launcher remains fixed, skins allow the background images and colors to be changed. See the :ref:`skin documentation <skins>` for more details."
+# 2ddd4c8ea3bf436ab9852c32747f68b5
+msgid "The new debug console makes it possible to interactively run Ren'Py script and Python statements, and immediately see the results. The console is available in developer mode or when :var:`config.console` is True, and can be accessed by pressing shift+O."
 msgstr ""
 
-#: ../../source/changelog.rst:143
-# a461b2dbe3474017905d5da0bbbb854d
-msgid "Macintosh Changes"
+#: ../../source/changelog.rst:142
+# d90c3a20fbc449f7ac21125cafa0e429
+msgid "The console can be used to:"
+msgstr ""
+
+#: ../../source/changelog.rst:144
+# 197c037b05a64422a64031ea7887e67e
+msgid "Jump to a label."
 msgstr ""
 
 #: ../../source/changelog.rst:145
-# 66c8c16867794fa196b8d5704b65a4c6
-msgid "The Macintosh version of Ren'Py now requires a 64-bit capable processor, and Mac OS X 10.6 or newer."
+# 39a2c58a38e5402095c325bc26c13742
+msgid "Interactively try out Ren'Py script statements."
+msgstr ""
+
+#: ../../source/changelog.rst:146
+# 13411180f46f4a2b913a67d03c8260af
+msgid "Evaluate a python expression or statement to see the result."
+msgstr ""
+
+#: ../../source/changelog.rst:147
+# 6e5a5339ba9b48b09b007d90f499130e
+msgid "Trace python expressions as the game progresses."
 msgstr ""
 
 #: ../../source/changelog.rst:149
-# 8b0f90182e754725bdf6ad425202e39e
-msgid "Packaging Improvements"
+# 58139de2057041efb6db5e9865b39a9a
+msgid "The console was originally written by Shiz, C, and delta."
 msgstr ""
 
-#: ../../source/changelog.rst:151
-# 01c88bfbfc41405595958234aa71671a
-msgid "The file layout of Ren'Py games has been somewhat altered. With the exception of small launcher programs, all platform-dependent binaries are under the lib/ directory. Ren'Py itself has now been placed in the renpy/ directory. The common/ directory has been moved to renpy/common/, as it's considered an integral part of Ren'Py."
+#: ../../source/changelog.rst:152
+# de94b36e9d31461ea53ce87483f7ed66
+msgid "Screen Parameters"
 msgstr ""
 
-#: ../../source/changelog.rst:157
-# 70066c23b1e045779097494e94395560
-msgid "Ren'Py now uses renamed but otherwise unmodified python binaries on all desktop platforms. (Previously, it used platform-specific binaries.) Portions of the library are shared between the desktop builds."
+#: ../../source/changelog.rst:154
+# 2d8c079e39a042b7a04998730d436c6c
+msgid "Screens now take named parameters, similar to the way that labels and transforms take named parameters. It's now possible to write::"
 msgstr ""
 
-#: ../../source/changelog.rst:162
-# f83fb7ac81c34c958bc56fe0f44866d7
-msgid "A running Ren'Py process on Linux will now be named after the game, rather than having python as a name."
+#: ../../source/changelog.rst:160
+# 41606fca627e41e09e1069dad1e54441
+msgid "and::"
 msgstr ""
 
-#: ../../source/changelog.rst:169
-#: ../../source/changelog.rst:480
-#: ../../source/changelog.rst:667
-#: ../../source/changelog.rst:1263
-# 106dfbbbd57245c69d8a3e1df38e2d68
-# dc23af6c9cfd49bcb82841e6aa7b060b
-# 78d4450fcd854395a298ff36d1d9807c
-# 6ccb591cde0c40a99810f62f06ea0350
-msgid "Other Changes"
+#: ../../source/changelog.rst:165
+# a48ddc8c8b0541438953fa7ad77e162c
+msgid "Replay Gallery"
 msgstr ""
 
-#: ../../source/changelog.rst:171
-# ab1c7b7fa8ad49e58d80213a47ce36f5
-msgid ":ref:`Viewports <sl-viewport>` now support edge scrolling, which scrolls the viewport when the mouse is within a a configurable distance of the viewport edge."
+#: ../../source/changelog.rst:167
+# 96e9e408211f476bb2567e7fe9891ebd
+msgid "Ren'Py now includes support for :ref:`replaying <replay>` scenes. A scene replay can be invoked from anywhere in Ren'Py (for example, from a main menu or game menus screen, even when the game has started). When the replay ends, Ren'Py will return to the location the replay was invoked from, even if that location is in a screen or in python code. Rollback works inside a replay, but saving and loading is disabled."
 msgstr ""
 
-#: ../../source/changelog.rst:175
-# 9fa1bda249ca42a1ad506d4963f585e9
-msgid "Most keyboard keys now automatically repeat. The repeat rate is controlled by :var:`config.key_repeat`."
+#: ../../source/changelog.rst:174
+# e66404adb3d342959461c80db550c7a4
+msgid "The :func:`Replay` action begins a replay. The :func:`renpy.end_replay` ends a replay if one is in progress, and is ignored otherwise."
 msgstr ""
 
 #: ../../source/changelog.rst:178
-# f9d8bcc6be0245308ccfc04202ed3de4
-msgid "Side images can now be used with menus."
+# f0d0a3f4bd7b452b96f5be576a445b5d
+msgid "Voice Improvements"
 msgstr ""
 
 #: ../../source/changelog.rst:180
-# 025b5931b89141428d081b1ec0b54abc
-msgid "The :ref:`config.enter_yesno_transition` and `config.exit_yesno_transition` variables make it possible to define a transition that is run when yes/no prompts appear and disappear, respectively."
+# 058326fbff8f4f908ded0a19e1ae4737
+msgid "There have been several improvements to the voice playback system. The new :var:`config.voice_filename_format` variable makes it possible to use only part of the filename in a voice statement. The new voice_tag parameter to :func:`Character`, in conjunction with the :func:`SetVoiceMute` and :func:`ToggleVoiceMute` actions, makes it possible to selectively mute particular characters' voices. The new :func:`VoiceReplay` action makes it possible to replay the current voice."
 msgstr ""
 
-#: ../../source/changelog.rst:184
-# dac15752bfe742939cce44dbb10db979
-msgid "The :ref:`viewport statement <sl-viewport>` now supports edge scrolling - automatic scrolling when the mouse approaches the sides of the viewport."
+#: ../../source/changelog.rst:189
+# 0d6a4e7b72734e6197b1f322c98fecf4
+msgid "Launcher Improvements"
 msgstr ""
 
-#: ../../source/changelog.rst:187
-# 7c6e958f2f9c4cb2a77b4e5d2a5df877
-msgid "The new :tpref:`transform_anchor` transform property makes the anchor the point around which a transform is scaled and rotated. (For example, it's now possible to rotate around the bottom-right corner of an image, rather than just its center.)"
+#: ../../source/changelog.rst:191
+# 37469c5cebcd4097bfdb2bf7a311f326
+msgid "There were a few launcher improvements in this release."
 msgstr ""
 
-#: ../../source/changelog.rst:192
-# e4f40436360a4c5eae23ab39a3573b47
-msgid "The common directory has been moved to renpy/common, as it's part of Ren'Py. The giant 00screens.rpy file has been broken up into a large number of smaller files."
+#: ../../source/changelog.rst:193
+# 28913b32681848398820181978d5220d
+msgid "The files pane of the navigation page has a new button that allows the user to create a new script file."
 msgstr ""
 
 #: ../../source/changelog.rst:196
-# 3017e7bd67cd4e36a747869526e8e92a
-msgid "The new :propref:`box_reverse` and :propref:`order_reverse` style properties allow the user to control the order in which children of vbox and hboxes are placed and drawn, respectively."
+# 5a6032ca9da4470fa9b7f419bdd8e76d
+msgid "The launcher can generate translation templates, and can be translated using the translation framework."
 msgstr ""
 
-#: ../../source/changelog.rst:200
-# 82bf565f70e14ae1a72a258d770ca91a
-msgid "The xoffset and yoffset transform properties now take floating point numbers, allowing more precise positioning if subpixel is true."
+#: ../../source/changelog.rst:199
+# 5767b4282e084bd089f5a37fa6836484
+msgid "The Ren'Py launcher now has a small amount of support for skins. While the basic layout of the launcher remains fixed, skins allow the background images and colors to be changed. See the :ref:`skin documentation <skins>` for more details."
 msgstr ""
 
-#: ../../source/changelog.rst:203
-# fb54e39725e7444297c304bed214ceab
-msgid "The :propref:`child` style property of buttons is now exposed to the screen language."
+#: ../../source/changelog.rst:205
+# 9f4f21cab2c746f692f6110c80675b3f
+msgid "Macintosh Changes"
 msgstr ""
 
-#: ../../source/changelog.rst:206
-# a7eaab076b0a43c8b9305db3d4329e7d
-msgid "The new :var:`config.enter_yesno_transition` and :var:`config.exit_yesno_transition` variables allow a creator to supply transitions that are used upon entering and exiting yes/no prompts."
+#: ../../source/changelog.rst:207
+# 6e7f024812c84793b88ad93372c18d0a
+msgid "The Macintosh version of Ren'Py now requires a 64-bit capable processor, and Mac OS X 10.6 or newer."
 msgstr ""
 
-#: ../../source/changelog.rst:210
-# ded3a45189c14296a2159d27d7bdda73
-msgid "The python decimal module is now included in the default builds of Ren'Py."
+#: ../../source/changelog.rst:211
+# 5229a3d2f4e44285b928a762f1aca6c9
+msgid "Packaging Improvements"
 msgstr ""
 
 #: ../../source/changelog.rst:213
-# fa309c9e9871493fbecd2d11c608845b
-msgid "Bugfixes"
-msgstr ""
-
-#: ../../source/changelog.rst:215
-# 9bc3bd8188e64a32b1c0b56c55128825
-msgid "Among others, the following bugs were fixed:"
-msgstr ""
-
-#: ../../source/changelog.rst:217
-# 646bff88528c478a82f9eff782000067
-msgid ":ghbug:`37`: A crash with LiveTile when sizes were not integers."
+# c3ab0573eeab44919e20437f96a53867
+msgid "The file layout of Ren'Py games has been somewhat altered. With the exception of small launcher programs, all platform-dependent binaries are under the lib/ directory. Ren'Py itself has now been placed in the renpy/ directory. The common/ directory has been moved to renpy/common/, as it's considered an integral part of Ren'Py."
 msgstr ""
 
 #: ../../source/changelog.rst:219
-# c201b7cb184846c5a4f636c57d3705aa
-msgid ":ghbug:`41`: :func:`renpy.loadable` failed to search for files inside android packages."
+# 6b67f5d609d5416da2ede50f95aaa7d4
+msgid "Ren'Py now uses renamed but otherwise unmodified python binaries on all desktop platforms. (Previously, it used platform-specific binaries.) Portions of the library are shared between the desktop builds."
 msgstr ""
 
-#: ../../source/changelog.rst:222
-# 2a3be9fd192741a08615607c68283167
-msgid ":ghbug:`42`: The launcher can now run a game that's in a read-only directory."
+#: ../../source/changelog.rst:223
+# b034b2cfc0164ffca7bf39ea500cee65
+msgid "A running Ren'Py process on Linux will now be named after the game, rather than having python as a name."
 msgstr ""
 
-#: ../../source/changelog.rst:225
-# 98060ffa22f24cebb4224705e4f93d9f
-msgid ":ghbug:`45`: Ren'Py would fail when the hiding of a screen caused a screen beneath it to be hidden."
+#: ../../source/changelog.rst:230
+#: ../../source/changelog.rst:543
+#: ../../source/changelog.rst:730
+#: ../../source/changelog.rst:1326
+# b81afbb9b0b242eeb34803b924c263bb
+# 2ee04b60c9f0496797620ece0fb9aba7
+# 70874c19e67b4cc69fa1c9fafa21dbd9
+# 3476f68198024a8585ae713f4753547c
+msgid "Other Changes"
 msgstr ""
 
-#: ../../source/changelog.rst:228
-# beccbac7fb6c4d66be426bdbbb19297e
-msgid ":ghbug:`46`: A bug that prevented Ren'Py from evicting images from an over-full image cache, that manifested as a runaway memory leak."
+#: ../../source/changelog.rst:232
+# fb4e6724b04e4b7d8e7bf4aaa88333bf
+msgid ":ref:`Viewports <sl-viewport>` now support edge scrolling, which scrolls the viewport when the mouse is within a a configurable distance of the viewport edge."
 msgstr ""
 
-#: ../../source/changelog.rst:231
-# 7ff447b604d44e16ba7fbbe39356e69b
-msgid ":ghbug:`50`: Vertical bars would scroll with the left and right arrow keys; and bars would remain grabbed even if they were grabbed while leaving the screen, preventing further input."
-msgstr ""
-
-#: ../../source/changelog.rst:235
-# a44bb1402ce645a4be2cbc0b4403ffe7
-msgid ":ghbug:`51`: The slow_done callback was not called after a rollback."
-msgstr ""
-
-#: ../../source/changelog.rst:237
-# 60d34da2168b497c81ef302f1aba4e58
-msgid ":ghbug:`56`, :ghbug:`57`: :func:`renpy.loadable` now works with Android assets."
+#: ../../source/changelog.rst:236
+# bcfb993d8df440f59804f7084bd36e2d
+msgid "Most keyboard keys now automatically repeat. The repeat rate is controlled by :var:`config.key_repeat`."
 msgstr ""
 
 #: ../../source/changelog.rst:239
-# 77f4a8b22e264bdba18c3935c6fd1b84
-msgid ":ghbug:`60`: Fixed a bug that prevented {p} and {w} from working properly when followed immediately by a text tag."
+# 0e247ecae1d4466d9f3ec058fee8bc08
+msgid "Side images can now be used with menus."
 msgstr ""
 
-#: ../../source/changelog.rst:242
-# 0db3a69fccf04eff9357aa5770ece2d0
-msgid ":ghbug:`61`: Ren'Py no longer crashes when an end_game_transition is set and a screen uses a variable that is no longer defined when the game restarts."
+#: ../../source/changelog.rst:241
+# 74f778bc031443ae99e6d79898679669
+msgid "The :ref:`config.enter_yesno_transition` and `config.exit_yesno_transition` variables make it possible to define a transition that is run when yes/no prompts appear and disappear, respectively."
 msgstr ""
 
 #: ../../source/changelog.rst:246
-# 2f891be2a4c54bf9ad39702b2c76c31c
-msgid ":ghbug:`65`: Multiplying a rollback list by a number now always produces a rollback list."
+# 6ef86267a6134ea5a3896816259062a5
+msgid "The :ref:`viewport statement <sl-viewport>` now supports edge scrolling - automatic scrolling when the mouse approaches the sides of the viewport."
 msgstr ""
 
 #: ../../source/changelog.rst:249
-# 9f2b2bb427764b8c8e4e05306f38b585
-msgid "Editra should work better on Windows."
-msgstr ""
-
-#: ../../source/changelog.rst:251
-# bd39166b19d2446585943300599c7581
-msgid "It's now possible to :func:`renpy.call` a label that doesn't take parameters."
+# d284a548495e49e8a32f328db37c5b4a
+msgid "The new :tpref:`transform_anchor` transform property makes the anchor the point around which a transform is scaled and rotated. (For example, it's now possible to rotate around the bottom-right corner of an image, rather than just its center.)"
 msgstr ""
 
 #: ../../source/changelog.rst:254
-# f25c3e0785ab4b318e954c868825f7eb
-msgid "Fixed an error handling failure when a style used by error handling was not buildable."
+# 6487ab23694841e5bf98592b2f5b2989
+msgid "The common directory has been moved to renpy/common, as it's part of Ren'Py. The giant 00screens.rpy file has been broken up into a large number of smaller files."
 msgstr ""
 
-#: ../../source/changelog.rst:257
-# ca093b65efdc403d88bb1c9464de498a
-msgid "Fixed an error handling failure when a python early block contained a syntax error."
+#: ../../source/changelog.rst:258
+# ee1d8a8279164acbb8e991016c8275fb
+msgid "The new :propref:`box_reverse` and :propref:`order_reverse` style properties allow the user to control the order in which children of vbox and hboxes are placed and drawn, respectively."
 msgstr ""
 
-#: ../../source/changelog.rst:263
-# 83d81c32d9b34e738e00100ea318615c
-msgid "Ren'Py 6.14"
+#: ../../source/changelog.rst:262
+# ebbf475d6a204b32a80b5845cf6c8a5f
+msgid "The xoffset and yoffset transform properties now take floating point numbers, allowing more precise positioning if subpixel is true."
 msgstr ""
 
-#: ../../source/changelog.rst:266
-# eb12460ddf3f4e99aebf82a4d3849c9f
-msgid "Ren'Py Launcher Rewrite"
+#: ../../source/changelog.rst:265
+# 0ba92e308c8248eca10cb821eb41fca9
+msgid "The :propref:`child` style property of buttons is now exposed to the screen language."
 msgstr ""
 
 #: ../../source/changelog.rst:268
-# 7dafd737e96f42f68434738b62e16ce9
-msgid "The Ren'Py launcher has been rewritten. Some of the improvements are:"
-msgstr ""
-
-#: ../../source/changelog.rst:270
-# b30e633800ae4329878b1ee44811b07f
-msgid "A new visual design by Doomfest of the Dischan visual novel team."
+# f6ae571237e041988b8ce7031632c308
+msgid "The new :var:`config.enter_yesno_transition` and :var:`config.exit_yesno_transition` variables allow a creator to supply transitions that are used upon entering and exiting yes/no prompts."
 msgstr ""
 
 #: ../../source/changelog.rst:272
-# aed1b41b13174a309700b46caa7915ac
-msgid "The launcher now includes direct access to open the script and game directories, and common script files."
+# 92c647e745ee46e8a6b4eac8c45cb062
+msgid "The python decimal module is now included in the default builds of Ren'Py."
 msgstr ""
 
 #: ../../source/changelog.rst:275
-# 2b7e93ffbf8f470daa4746a8c6ac7a3c
-msgid "The launcher includes Script Navigation support. Clicking the name of a label, define, transform, screen, or callable will open the editor to the location where that name is defined."
+# 9aa087b1d7a4462e8818c3ddd7f42850
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../source/changelog.rst:277
+# 606b391fb1834bee8a616704ecb8f029
+msgid "Among others, the following bugs were fixed:"
 msgstr ""
 
 #: ../../source/changelog.rst:279
-# 1c1f9eb2daad4224a024c5c3a3516569
-msgid "Script navigation also provides access to individual script files."
+# 2781ed85a9134aec933a6cbbf7bc20a3
+msgid ":ghbug:`37`: A crash with LiveTile when sizes were not integers."
 msgstr ""
 
 #: ../../source/changelog.rst:281
-# 655f8537cc5144e887bfd479fc1e8a56
-msgid "The launcher now supports one-click project building. Instead of using multiple steps to build a project, a single click will now cause the launcher to:"
+# 15c84d6058f4483f8901047c583f6404
+msgid ":ghbug:`41`: :func:`renpy.loadable` failed to search for files inside android packages."
 msgstr ""
 
-#: ../../source/changelog.rst:285
-# 12a7d68d05ff4566b7b0a6ae8e125c36
-msgid "Read the build process configuration from the game script."
-msgstr ""
-
-#: ../../source/changelog.rst:286
-# 10f0a86660184ed28d8c05eef474e799
-msgid "Build the archives needed."
+#: ../../source/changelog.rst:284
+# deb613e5752a441da17ef11a01515f1a
+msgid ":ghbug:`42`: The launcher can now run a game that's in a read-only directory."
 msgstr ""
 
 #: ../../source/changelog.rst:287
-# 9ddaccbfae834e6e9fd0ab0e0fc4d685
-msgid "Generate the archive and update files."
+# 079d274a0c464064b6f780791a8c68eb
+msgid ":ghbug:`45`: Ren'Py would fail when the hiding of a screen caused a screen beneath it to be hidden."
 msgstr ""
 
-#: ../../source/changelog.rst:289
-# 416bebc8a5764a129b34d0cdcd528f2a
-msgid "The launcher can now use the Ren'Py updater to update Ren'Py, and to download editors."
+#: ../../source/changelog.rst:290
+# 2a0bcd7f294f49708e82d6f24b61e06c
+msgid ":ghbug:`46`: A bug that prevented Ren'Py from evicting images from an over-full image cache, that manifested as a runaway memory leak."
 msgstr ""
 
 #: ../../source/changelog.rst:293
-# 38c4c7492bc1458881a8c92535b72209
-msgid "Editra & Text Editing"
+# 6b69d075f047438d8f1f1bc8faa56579
+msgid ":ghbug:`50`: Vertical bars would scroll with the left and right arrow keys; and bars would remain grabbed even if they were grabbed while leaving the screen, preventing further input."
 msgstr ""
 
-#: ../../source/changelog.rst:295
-# 87f4bb6957404e8eaa9cc3327bafbf3c
-msgid "For most users, Ren'Py recommends the use of the Editra editor. We have developed an Editra plugin that communicates with the Ren'Py launcher and supports the editing of Ren'Py script."
+#: ../../source/changelog.rst:297
+# 3c07c1e5d7584ebaa1b429ff141ef408
+msgid ":ghbug:`51`: The slow_done callback was not called after a rollback."
 msgstr ""
 
 #: ../../source/changelog.rst:299
-# b5859c2eeb4c4b55989d8cafba84e4f1
-msgid "While still in beta, Editra is a fast and light editor with good code editing support. Editra also includes a spell-checker that can be enabled, and applies to dialogue and other strings."
+# c748b2b8d2ca48c0be0a781e89a73414
+msgid ":ghbug:`56`, :ghbug:`57`: :func:`renpy.loadable` now works with Android assets."
 msgstr ""
 
-#: ../../source/changelog.rst:303
-# cba51ebd42084a28b6fb8103bfe81b73
-msgid "If Editra is selected by the user, and it is not installed, Ren'Py will automatically download it."
+#: ../../source/changelog.rst:302
+# d7c050109e0e4431a814a752cc905bca
+msgid ":ghbug:`60`: Fixed a bug that prevented {p} and {w} from working properly when followed immediately by a text tag."
 msgstr ""
 
-#: ../../source/changelog.rst:306
-# fa264ca66aab4bdeb887a4ebdefff68d
-msgid "The jEdit editor remains supported, and is preferred for use with languages (like Chinese, Japanese, and Korean) that Editra doesn't support fully. If selected, Ren'Py will download jEdit automatically."
+#: ../../source/changelog.rst:305
+# 7860825ddd3e4c1996c2cbc5d7f362a0
+msgid ":ghbug:`61`: Ren'Py no longer crashes when an end_game_transition is set and a screen uses a variable that is no longer defined when the game restarts."
 msgstr ""
 
-#: ../../source/changelog.rst:310
-# e636ac8f68ad434ab2be508309b6d39b
-msgid "Ren'Py also supports editing files through system-specific file associations. (This support will not send the cursor to the correct line, however.)"
+#: ../../source/changelog.rst:309
+# 4b4b53556f2a40caaa83099f8eb969c2
+msgid ":ghbug:`65`: Multiplying a rollback list by a number now always produces a rollback list."
+msgstr ""
+
+#: ../../source/changelog.rst:312
+# 458462fb78f04c408b5969e1267740dd
+msgid "Editra should work better on Windows."
 msgstr ""
 
 #: ../../source/changelog.rst:314
-# 527cbafbd42d44f6a8d9b3eeb0cf2359
-msgid "Ren'Py Web Updater"
+# eb33883260f84fc6878e6e736db9e9c0
+msgid "It's now possible to :func:`renpy.call` a label that doesn't take parameters."
 msgstr ""
 
-#: ../../source/changelog.rst:316
-# 2e34ceca218d4bb9b9d5ce8654428cd2
-msgid "Ren'Py includes an updater that can update Ren'Py and individual Ren'Py games by downloading changes from a properly-configured web server with a small number of update files uploaded to it."
+#: ../../source/changelog.rst:317
+# 7eae53305df74175b364d4abdff0b9eb
+msgid "Fixed an error handling failure when a style used by error handling was not buildable."
 msgstr ""
 
 #: ../../source/changelog.rst:320
-# 2492df656ea041abac21131e741a84fb
-msgid "The updater uses zsync to download the minimal set of changes between the local files on disk and the files stored on the server. A single set of files on the server supports updating from all prior versions of a project."
+# 845769baeebc40419f71483a23a1791f
+msgid "Fixed an error handling failure when a python early block contained a syntax error."
 msgstr ""
 
-#: ../../source/changelog.rst:324
-# cc2cdd9cf6384b959c7515dabf03ca9a
-msgid "Ren'Py includes a default updater interface that can be further configured by interested users."
+#: ../../source/changelog.rst:326
+# 3ef39587681a42ff9ae18e66d406b1c9
+msgid "Ren'Py 6.14"
 msgstr ""
 
 #: ../../source/changelog.rst:329
-#: ../../source/changelog.rst:1231
-# 8a99ec27768b4bbc8457e077e64feff4
-# 4fba031f499c416284e8627ea8047577
-msgid "Transform Changes"
+# b121158a25d044d59bbd4207f831ab38
+msgid "Ren'Py Launcher Rewrite"
 msgstr ""
 
 #: ../../source/changelog.rst:331
-# 5ed8e8761c0641559d90aeb9fac43204
-msgid "This release changes the behavior of transforms to make them more correct and easier to use."
+# 5937bb5b1907459485e3aaa1a73afecf
+msgid "The Ren'Py launcher has been rewritten. Some of the improvements are:"
 msgstr ""
 
-#: ../../source/changelog.rst:334
-# 4767d256bbf24bff9645a15d762bba20
-msgid "The xzoom and yzoom properties are now applied before, rotation. This means that the shape of the image will remain consistent as the image is rotated. Previously, the image to change shape as it was rotated."
+#: ../../source/changelog.rst:333
+# e8f6c3d3614c40c499d4335528398bdc
+msgid "A new visual design by Doomfest of the Dischan visual novel team."
+msgstr ""
+
+#: ../../source/changelog.rst:335
+# 27b2cd8dabf74dd092e348d6d9c18055
+msgid "The launcher now includes direct access to open the script and game directories, and common script files."
 msgstr ""
 
 #: ../../source/changelog.rst:338
-# eff5916f910e4a9d9af03f5846a593f5
-msgid "The xzoom and yzoom properties may now be negative, with negative zoom values causing the images to be flipped. The positioning code now takes this into account, and positions a flipped image properly."
+# 2be603bbed47415e95a2a6362ef82615
+msgid "The launcher includes Script Navigation support. Clicking the name of a label, define, transform, screen, or callable will open the editor to the location where that name is defined."
 msgstr ""
 
 #: ../../source/changelog.rst:342
-# 1a82318327e0445c80a388c2e3740f79
-msgid "Thanks to Edwin for contributing these changes."
+# 915c49f0e8cc435db8001d58a2bb3e6a
+msgid "Script navigation also provides access to individual script files."
 msgstr ""
 
-#: ../../source/changelog.rst:345
-# 77aa0e971f4a439c9a714d8ecf7ed31a
-msgid "Screen Language, Displayable, and Transition Enhancements"
+#: ../../source/changelog.rst:344
+# 50d17bfdac8a458d96c5c047df905370
+msgid "The launcher now supports one-click project building. Instead of using multiple steps to build a project, a single click will now cause the launcher to:"
 msgstr ""
 
-#: ../../source/changelog.rst:347
-# 2abfd49e2dae4b908d02095174b78ad4
-msgid "The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take properties prefixed with ``text_``. These properties have the text_ prefix stripped, and are then passed to the internal text displayable."
+#: ../../source/changelog.rst:348
+# 686a8089f85e4046a1116e1f4d03940f
+msgid "Read the build process configuration from the game script."
 msgstr ""
 
-#: ../../source/changelog.rst:351
-# 2f2a2ef6a71945f9bb858fe553456600
-msgid "The :ref:`sl-viewport` screen language statement now takes a `scrollbars` parameter. If given, scrollbars that manipulate the viewport are created."
+#: ../../source/changelog.rst:349
+# 087d36156711437fa83760be41497edb
+msgid "Build the archives needed."
 msgstr ""
 
-#: ../../source/changelog.rst:354
-# d703f794ede645599ccee6f9f41af347
-msgid "The :ref:`sl-viewport` screen language statement now takes `xinitial` and `yinitial` parameters. If given, these control the initial positioning of the viewport."
+#: ../../source/changelog.rst:350
+# 772da1d17b934b31b798a744eb202147
+msgid "Generate the archive and update files."
+msgstr ""
+
+#: ../../source/changelog.rst:352
+# 837a8d06460d466fb163ad600ea21e59
+msgid "The launcher can now use the Ren'Py updater to update Ren'Py, and to download editors."
+msgstr ""
+
+#: ../../source/changelog.rst:356
+# b12a8d5b272949dda3d95ae8e9b93e88
+msgid "Editra & Text Editing"
 msgstr ""
 
 #: ../../source/changelog.rst:358
-# b58ede164fae466b8c64cd6b909a9f38
-msgid "A screen language block may now contain multiple has statements. Screen language widgets that take single children can now take a has statement."
+# ac5dd92544ea4458a7458985f6b22177
+msgid "For most users, Ren'Py recommends the use of the Editra editor. We have developed an Editra plugin that communicates with the Ren'Py launcher and supports the editing of Ren'Py script."
 msgstr ""
 
-#: ../../source/changelog.rst:361
-# c6eb58545005466bb37845ff69506baf
-msgid "The input displayable now supports the use of the left and right arrow keys within the text. (Thanks to Edwin for this feature.)"
+#: ../../source/changelog.rst:362
+# b33b1106773a4dd6b8990cc193167c20
+msgid "While still in beta, Editra is a fast and light editor with good code editing support. Editra also includes a spell-checker that can be enabled, and applies to dialogue and other strings."
 msgstr ""
 
-#: ../../source/changelog.rst:364
-# e1effcc3008344c2bc7b9ff3b7720541
-msgid ":func:`MoveTransition` has been rewritten. The new version now uses transforms to control the positioning of entering and leaving images, and can interpolate between the locations of moving images."
+#: ../../source/changelog.rst:366
+# 5360bbdc182a473a96c989cdbc4d816a
+msgid "If Editra is selected by the user, and it is not installed, Ren'Py will automatically download it."
 msgstr ""
 
 #: ../../source/changelog.rst:369
-# 2c95c4c321ef44bca46fefac41f64ec9
-msgid "Rollback Improvements"
+# 2c543deed58747bca71f393d91a57c81
+msgid "The jEdit editor remains supported, and is preferred for use with languages (like Chinese, Japanese, and Korean) that Editra doesn't support fully. If selected, Ren'Py will download jEdit automatically."
 msgstr ""
 
-#: ../../source/changelog.rst:371
-# 547586d96fbf4d4d96afbe120dfcfe69
-msgid "The new :func:`renpy.fix_rollback` function allows the game to fix choices, even if they are made in rollback mode. The user can roll back and roll forward, but is restricted to making the choices he made the first time through the game."
+#: ../../source/changelog.rst:373
+# 7312832a519e4e85ad8c2b637262011a
+msgid "Ren'Py also supports editing files through system-specific file associations. (This support will not send the cursor to the correct line, however.)"
 msgstr ""
 
-#: ../../source/changelog.rst:376
-# 1079a570a4024dcea0d4c7da1ea2634c
-msgid "Thanks to Edwin for contributing fix_rollback."
+#: ../../source/changelog.rst:377
+# f0ee2b42662e4d5a8becf91fb795e919
+msgid "Ren'Py Web Updater"
 msgstr ""
 
-#: ../../source/changelog.rst:378
-# 14952203e55943dfb389c6eb44530adc
-msgid "Rolling forward now works through a jump out of a ``call screen`` statement."
+#: ../../source/changelog.rst:379
+# 396f3a2f35a44529bd546d163f7b8e17
+msgid "Ren'Py includes an updater that can update Ren'Py and individual Ren'Py games by downloading changes from a properly-configured web server with a small number of update files uploaded to it."
 msgstr ""
 
-#: ../../source/changelog.rst:382
-# ae14fb5ee2034a3cb18beea1134b2ddb
-msgid "Video Improvements"
+#: ../../source/changelog.rst:383
+# 39ecbc8f15f94a8c98cba9cb0c995425
+msgid "The updater uses zsync to download the minimal set of changes between the local files on disk and the files stored on the server. A single set of files on the server supports updating from all prior versions of a project."
 msgstr ""
 
-#: ../../source/changelog.rst:384
-# ed0d6d672658455fac2f1f694536591c
-msgid "Ren'Py's video playback support has been partially rewritten to improve robustness, speed, and framerate stability. These improvements should reduce the number of frame drops Ren'Py performs, and should also prevent Ren'Py from locking up if too many frames are dropped."
+#: ../../source/changelog.rst:387
+# 43c9f681b0a84bd3be249ba7756cb22f
+msgid "Ren'Py includes a default updater interface that can be further configured by interested users."
 msgstr ""
 
-#: ../../source/changelog.rst:389
-# 9392370647794302bbeca014459be4db
-msgid "Ren'Py now supports the WebM video format."
+#: ../../source/changelog.rst:392
+#: ../../source/changelog.rst:1294
+# 8d683d2b9ec741d19eaa6d0139c4da82
+# 95dc05dce4dc4ae3b49120d700a611f8
+msgid "Transform Changes"
 msgstr ""
 
-#: ../../source/changelog.rst:393
-# f75c32354a9348e3b3006072f22f42ce
-msgid "Image Load Log"
+#: ../../source/changelog.rst:394
+# 4b27989b6d30442c8c6e8eedb8a24fd6
+msgid "This release changes the behavior of transforms to make them more correct and easier to use."
 msgstr ""
 
-#: ../../source/changelog.rst:395
-# 8df789de651a45e0adac32802409b856
-msgid "When :var:`config.developer` is true, Ren'Py keeps an internal log of image loads."
+#: ../../source/changelog.rst:397
+# fe78ce73f3fa44feb7d8292363a5ba4d
+msgid "The xzoom and yzoom properties are now applied before, rotation. This means that the shape of the image will remain consistent as the image is rotated. Previously, the image to change shape as it was rotated."
 msgstr ""
 
-#: ../../source/changelog.rst:398
-# a574ef63f8d348c2b1d5d3ec8b82a6b9
-msgid "This log can be access by showing the _image_load_log screen. This screen displays the name of an image file for a few seconds after that image has been loaded. The name is in white if the image was loaded by the image predictor, and pink if Ren'Py was unable to predict the image."
+#: ../../source/changelog.rst:401
+# 6dbf0652a61a4e00b0ef9c92b0f37ae7
+msgid "The xzoom and yzoom properties may now be negative, with negative zoom values causing the images to be flipped. The positioning code now takes this into account, and positions a flipped image properly."
 msgstr ""
 
 #: ../../source/changelog.rst:405
-# d1349f15975e49ceb19cc57791744ac6
-msgid "File Actions and Functions"
+# d2147e8606d54dd1b0e7170634247090
+msgid "Thanks to Edwin for contributing these changes."
 msgstr ""
 
-#: ../../source/changelog.rst:407
-# d14feb875577440887c707254e867b37
-msgid "Two screen functions have been added, and two screen actions have been changed:"
+#: ../../source/changelog.rst:408
+# 26d78a007f5e4b7d9e586f9f07fb02f0
+msgid "Screen Language, Displayable, and Transition Enhancements"
 msgstr ""
 
-#: ../../source/changelog.rst:409
-# 982583d515544ac480a7845b7b19942a
-msgid "The new :func:`FileUsedSlots` function returns a list of used file slots on the current page."
+#: ../../source/changelog.rst:410
+# 9370185723a2413cb98ab6f940348a34
+msgid "The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements now take properties prefixed with ``text_``. These properties have the text_ prefix stripped, and are then passed to the internal text displayable."
 msgstr ""
 
-#: ../../source/changelog.rst:412
-# db5f21ed00484a639797ddbd6e3b08c5
-msgid "The new :func:`FileCurrentPage` function returns the name of the current page."
+#: ../../source/changelog.rst:414
+# 76fadeec3aba49eba10f754d56fa7357
+msgid "The :ref:`sl-viewport` screen language statement now takes a `scrollbars` parameter. If given, scrollbars that manipulate the viewport are created."
 msgstr ""
 
-#: ../../source/changelog.rst:415
-# 1ac4b137a7ac4c9791bedcbe1ca3dc4e
-msgid "The :func:`FileSave` and :func:`FileAction` actions have been modified so that if the slot name is None, an unused slot based on the current time is used."
+#: ../../source/changelog.rst:417
+# 40c8f283d5cf469abe37394ad21de34f
+msgid "The :ref:`sl-viewport` screen language statement now takes `xinitial` and `yinitial` parameters. If given, these control the initial positioning of the viewport."
 msgstr ""
 
-#: ../../source/changelog.rst:419
-# 737d56dcec8345dd80303c4c6d0d12ec
-msgid "Taken together, these changes make it possible to create a list of save slots where the user is able to add new slots to the list."
+#: ../../source/changelog.rst:421
+# d21ea7ab57aa41a1bb3fae378a0935c5
+msgid "A screen language block may now contain multiple has statements. Screen language widgets that take single children can now take a has statement."
 msgstr ""
 
 #: ../../source/changelog.rst:424
-# 22a738e5ebd5401f89553e0d2a871a0c
-msgid "Multiple Store Support"
+# 7bd7e137dad1492abb76add6ef422f52
+msgid "The input displayable now supports the use of the left and right arrow keys within the text. (Thanks to Edwin for this feature.)"
 msgstr ""
 
-#: ../../source/changelog.rst:426
-# d2b7b3b1526f4d8882890cb4dddeea73
-msgid "Ren'Py now supports multiple stores - multiple namespaces in which python code can be run. Variables in these stores are saved, loaded, and rolled-back in the same way that variables in the default store are."
+#: ../../source/changelog.rst:427
+# 8ef60ca08ad147c19a14fa7d4c5d4eed
+msgid ":func:`MoveTransition` has been rewritten. The new version now uses transforms to control the positioning of entering and leaving images, and can interpolate between the locations of moving images."
 msgstr ""
 
-#: ../../source/changelog.rst:430
-# 88df6724d52a427bb3ab918200afc778
-msgid "Stores are accessed by supplying an in-clause to a python block. For example::"
+#: ../../source/changelog.rst:432
+# 371ebe3c12df4082bce7dfaf6779a092
+msgid "Rollback Improvements"
+msgstr ""
+
+#: ../../source/changelog.rst:434
+# ae787974a3c84e39954d572ceb51243f
+msgid "The new :func:`renpy.fix_rollback` function allows the game to fix choices, even if they are made in rollback mode. The user can roll back and roll forward, but is restricted to making the choices he made the first time through the game."
 msgstr ""
 
 #: ../../source/changelog.rst:439
-# 3df1f06331dd4f109ba40b4b2cf811bb
-msgid "User-created stores are placed into the \"store\" package, with the default store being the package itself. Names can be imported between packages.::"
+# adeb649c21304de0b9873b1d35cac1b2
+msgid "Thanks to Edwin for contributing fix_rollback."
 msgstr ""
 
-#: ../../source/changelog.rst:449
-# 83a77f02aa0b4a6c8c497c763e92b3ca
-msgid "Note that stores do not affect the order in which init python blocks are run. A name must be defined in a block before the one that imports that name."
+#: ../../source/changelog.rst:441
+# 7c84692de1c0405a9bcf3015a0cd9b62
+msgid "Rolling forward now works through a jump out of a ``call screen`` statement."
 msgstr ""
 
-#: ../../source/changelog.rst:454
-# 01f78a509de74c4f83af850eb5565fcb
-msgid "Platform Support and Library Updates"
+#: ../../source/changelog.rst:445
+# 96fba76a9e5a4ec2983f4fd3dfd047d7
+msgid "Video Improvements"
+msgstr ""
+
+#: ../../source/changelog.rst:447
+# f3dec0deb081491992be09b4bd8ea2de
+msgid "Ren'Py's video playback support has been partially rewritten to improve robustness, speed, and framerate stability. These improvements should reduce the number of frame drops Ren'Py performs, and should also prevent Ren'Py from locking up if too many frames are dropped."
+msgstr ""
+
+#: ../../source/changelog.rst:452
+# ab3a8999d8154de7aa017c39053824bd
+msgid "Ren'Py now supports the WebM video format."
 msgstr ""
 
 #: ../../source/changelog.rst:456
-# 0c4dbb4dd4d54f66bdeff954fc34dfaf
-msgid "Linux support has been changed."
+# 3df78fdd979146ab84eb54b3eadb0299
+msgid "Image Load Log"
 msgstr ""
 
 #: ../../source/changelog.rst:458
-# 0179121e39644cdf899f19db5f3badb0
-msgid "The Linux platform supports the x86_64 CPU architecture in addition to the x86 architecture. The Ren'Py shell script will automatically determine the platform it is running on when it is launched."
+# ac3db01d74374cb794ec6303092e583f
+msgid "When :var:`config.developer` is true, Ren'Py keeps an internal log of image loads."
 msgstr ""
 
-#: ../../source/changelog.rst:462
-# bcc627eb857e408ba1cccacf4c4713d8
-msgid "The Linux version is now linked agains the libraries from the 2009-era Ubuntu 10.04 Lucid. (Previously, Ren'Py had been linked against 2006's Dapper.) Older versions of Linux are no longer supported."
+#: ../../source/changelog.rst:461
+# 785e39918d6e4ad18659473704c99ec6
+msgid "This log can be access by showing the _image_load_log screen. This screen displays the name of an image file for a few seconds after that image has been loaded. The name is in white if the image was loaded by the image predictor, and pink if Ren'Py was unable to predict the image."
 msgstr ""
 
-#: ../../source/changelog.rst:466
-# 9e39bc14a3df4cebbd2aa95ec57cca8e
-msgid "Many libraries that Ren'Py depends on have been updated. Some of the changes that have occured are:"
+#: ../../source/changelog.rst:468
+# 5df0c5b780524250958b7add82d619ad
+msgid "File Actions and Functions"
 msgstr ""
 
-#: ../../source/changelog.rst:469
-# 94a9c1dd15dc41a6834b624e5d49ff43
-msgid "Python has been updated to version 2.7.3."
+#: ../../source/changelog.rst:470
+# 348d07971c08446fa37e5ce728f4217b
+msgid "Two screen functions have been added, and two screen actions have been changed:"
 msgstr ""
 
-#: ../../source/changelog.rst:471
-# 9d3253203da74754a2b963d1a0a83c2e
-msgid "Pygame has been updated to version 1.9.1."
+#: ../../source/changelog.rst:472
+# 65060d079b9d40ed895901054291ab55
+msgid "The new :func:`FileUsedSlots` function returns a list of used file slots on the current page."
 msgstr ""
 
-#: ../../source/changelog.rst:473
-# 98ff98a0cd184de39bdf95100a8da5dd
-msgid "GLEW has been updated to version 1.7.0. This may fix OpenGL problems on some Linux systems."
+#: ../../source/changelog.rst:475
+# 41bb58e40fac4cfeb116b4aca78c74b9
+msgid "The new :func:`FileCurrentPage` function returns the name of the current page."
 msgstr ""
 
-#: ../../source/changelog.rst:476
-# a37656afb85d40e592e81107e52ff933
-msgid "LibAV has been updated to version 0.7.6, and has been compiled with CPU detection enabled."
+#: ../../source/changelog.rst:478
+# a9119b29d30d4a4d86ff1ac6502201fe
+msgid "The :func:`FileSave` and :func:`FileAction` actions have been modified so that if the slot name is None, an unused slot based on the current time is used."
 msgstr ""
 
 #: ../../source/changelog.rst:482
-# 7e7ab966ce2e4a84976798662b8ad7b2
-msgid "The :func:`renpy.call` function allows - with major and important caveats - a call to a Ren'Py label to begin from inside python code. Such a call immediately terminates the current statement."
+# 6be30231204f477cb231e2b32f09e5c3
+msgid "Taken together, these changes make it possible to create a list of save slots where the user is able to add new slots to the list."
 msgstr ""
 
-#: ../../source/changelog.rst:486
-# d4ab6a03686f4a2a8e844d673c8c7afc
-msgid "When an action is expected, nested lists of actions can be given. The lists are flattened and the action executed."
+#: ../../source/changelog.rst:487
+# d69e402edb8e426cb6178e7729b5bf03
+msgid "Multiple Store Support"
 msgstr ""
 
 #: ../../source/changelog.rst:489
-# fe6251958d9d4ebfbbf505ff9e223257
-msgid "Added the :func:`OpenURL` action, which opens a URL in a web browser."
+# 17a8b9413d0e406bb0150515d2e82448
+msgid "Ren'Py now supports multiple stores - multiple namespaces in which python code can be run. Variables in these stores are saved, loaded, and rolled-back in the same way that variables in the default store are."
 msgstr ""
 
-#: ../../source/changelog.rst:491
-# 1b4263d535cc49e2986fd0f46ae8a970
-msgid "Added the :var:`config.gl_resize` variable, which determines if the user can resize OpenGL windows."
+#: ../../source/changelog.rst:493
+# d978e5f9cd714ca284c8416f36ce11f5
+msgid "Stores are accessed by supplying an in-clause to a python block. For example::"
 msgstr ""
 
-#: ../../source/changelog.rst:494
-# 501e4a84d70244908155bfc6d57bc323
-msgid "Ren'Py's handling of command line argments has been rewritten. Most notably, lint is now invoked with the::"
-msgstr ""
-
-#: ../../source/changelog.rst:499
-# 52d2dcb610324c678fffd7fe749d3106
-msgid "command. (Which also works with renpy.exe.)"
-msgstr ""
-
-#: ../../source/changelog.rst:501
-# 50d970b584ab41ccb9c4017f4891683a
-msgid "Ren'Py can now dump information about the game to a json file when starting up. The information dumped can assist other tools in providing launcher-like code navigation."
-msgstr ""
-
-#: ../../source/changelog.rst:505
-# f4f6de55c6ea4a4c93e85420215091d0
-msgid "The little-used remote control feature has been removed from Ren'Py."
-msgstr ""
-
-#: ../../source/changelog.rst:507
-# 9cdecf8ae6c4428fbf17829dbc8866fb
-msgid "The :var:`config.gl_resize` variable now controls resizing of a game running in GL mode."
-msgstr ""
-
-#: ../../source/changelog.rst:510
-# 8e89be64589e4247a0c65a0194194679
-msgid "Documentation fixes (by SleepKirby and others)."
+#: ../../source/changelog.rst:502
+# 65b2f01a981f43059e95a67675371f00
+msgid "User-created stores are placed into the \"store\" package, with the default store being the package itself. Names can be imported between packages.::"
 msgstr ""
 
 #: ../../source/changelog.rst:512
-# 0b783b707b2742deb9a64fa910386f2d
-msgid "The NVL-Mode tutorial has been ported to Sphinx (by Apricotorange)."
+# 6aad6c20780f4dc387125bd89f77d14f
+msgid "Note that stores do not affect the order in which init python blocks are run. A name must be defined in a block before the one that imports that name."
 msgstr ""
 
-#: ../../source/changelog.rst:514
-# 34f8bf532ac54a19803aab78492eb4f3
-msgid "Ren'Py now defaults to reporting errors with sound and music files when config.developer is True."
+#: ../../source/changelog.rst:517
+# f140a3019c2947b6940f90bee2f73a4b
+msgid "Platform Support and Library Updates"
 msgstr ""
 
-#: ../../source/changelog.rst:518
-# bb5585dc49754513a910977c7dd8aa66
-msgid "Ren'Py 6.13.9"
+#: ../../source/changelog.rst:519
+# 403fd48e15684d86b9885a02be6293f2
+msgid "Linux support has been changed."
 msgstr ""
 
-#: ../../source/changelog.rst:520
-# 4de184a797bf49599b6a66dbffd287f2
-msgid "The new RAPT tool makes it far easier to package a Ren'Py game for Android. It can semi-automatically set up an Android build environment on your system, build a package, and install that package on your Android device."
+#: ../../source/changelog.rst:521
+# e551055c93284fee8c25f7ebb9bc8770
+msgid "The Linux platform supports the x86_64 CPU architecture in addition to the x86 architecture. The Ren'Py shell script will automatically determine the platform it is running on when it is launched."
 msgstr ""
 
-#: ../../source/changelog.rst:524
-# 24b33b96821c47d1a533b80bd8246481
-msgid "To fix some editor-related problems, backported the 6.14 editor system. This changes how editors are configured. Please see :ref:`text-editor-integration` for a description of the new system."
+#: ../../source/changelog.rst:525
+# cc961b09b2504f468aa4b3ff2d1d811c
+msgid "The Linux version is now linked agains the libraries from the 2009-era Ubuntu 10.04 Lucid. (Previously, Ren'Py had been linked against 2006's Dapper.) Older versions of Linux are no longer supported."
 msgstr ""
 
-#: ../../source/changelog.rst:528
-# 643ee7e239144d04a21845bff7bdb15f
-msgid "The new :var:`config.save_dump` variable causes Ren'Py to write out save_dump.txt each time it saves. This file describes the contents of the save, making it possible to figure out what's causing an overly large save file."
+#: ../../source/changelog.rst:529
+# 71a8f08f57dd4f6eb4838db9ecb2f15d
+msgid "Many libraries that Ren'Py depends on have been updated. Some of the changes that have occured are:"
 msgstr ""
 
-#: ../../source/changelog.rst:533
-# 792eb5f13ad54c7b99275dad2520cf01
-msgid "Worked around a bug in Mesa that can cause crashes on certain Linux systems."
+#: ../../source/changelog.rst:532
+# fbbe165521bb4a3788d2d77679a4c1a9
+msgid "Python has been updated to version 2.7.3."
 msgstr ""
 
-#: ../../source/changelog.rst:535
-# c0f638331c8d45f38543cfd222681f25
-msgid "Fixed the following bugs in Ren'Py."
+#: ../../source/changelog.rst:534
+# 5c52da47b55e4b6c868218e72ea7d051
+msgid "Pygame has been updated to version 1.9.1."
 msgstr ""
 
-#: ../../source/changelog.rst:537
-# d92fe00cc3fc41fa813f33898381989a
-msgid "The (default) texwrap layout represents character widths as floating-point numbers. This fixes a bug where non-integer kerning would lead to text overflowing its bounding box."
+#: ../../source/changelog.rst:536
+# 453ac5e4ee63451485257708b6a6aacb
+msgid "GLEW has been updated to version 1.7.0. This may fix OpenGL problems on some Linux systems."
 msgstr ""
 
-#: ../../source/changelog.rst:540
-# fadb7f21123f48dcb6df087c9d5f86b7
-msgid "Menu choices are logged correctly."
-msgstr ""
-
-#: ../../source/changelog.rst:541
-# a04442c99a844881b17fc93100520162
-msgid "All file access is now done in unicode, rather than the system's native encoding. This prevents crashes that occured when Ren'Py was placed in a directory that had non-ASCII characters in it."
-msgstr ""
-
-#: ../../source/changelog.rst:544
-# 01b1b934da0c49eca5d766749da5ea1e
-msgid "Fixed focus_mask on the ANGLE renderer."
+#: ../../source/changelog.rst:539
+# 477404882328435191f44d2a55b1a4d2
+msgid "LibAV has been updated to version 0.7.6, and has been compiled with CPU detection enabled."
 msgstr ""
 
 #: ../../source/changelog.rst:545
-# e2306f318dff43128e39cbe8543d3b5a
-msgid "Displayables can now have fractional-pixel sizes. This allows a zooming image to remain precisely centered on the screen."
+# 9ff10611e9ec4d2c9ed65fa5cd87df58
+msgid "The :func:`renpy.call` function allows - with major and important caveats - a call to a Ren'Py label to begin from inside python code. Such a call"
 msgstr ""
 
 #: ../../source/changelog.rst:547
-# 75379727d53c4d33af3d1871bed82195
-msgid "Fixed a problem where Ren'Py would save unnecessary trees of displayables each time it saved a screen. This would lead to overly large save files and slow save performance."
+# ad1627fdb607400eba77f69b63450863
+msgid "immediately terminates the current statement."
 msgstr ""
 
-#: ../../source/changelog.rst:550
-# c4a75290d87f4d419e5c780982d9aa87
-msgid "Ren'Py would not attempt an alternate rendering method if the texture test failed, leading a \"Textures are not rendering properly.\" exception."
+#: ../../source/changelog.rst:549
+# 77b4904f92dd42c89146326dce0b6d1d
+msgid "When an action is expected, nested lists of actions can be given. The lists are flattened and the action executed."
 msgstr ""
 
 #: ../../source/changelog.rst:552
-# 782df5be4a794d7280595be43b0c204f
-msgid "A crash in Render.fill."
+# abef54a9882a45cc8c0be72ec0a98ee6
+msgid "Added the :func:`OpenURL` action, which opens a URL in a web browser."
 msgstr ""
 
-#: ../../source/changelog.rst:555
-# c8dc0a3634694cc8a9e561f91adbb20b
-msgid "Ren'Py 6.13.8"
+#: ../../source/changelog.rst:554
+# 4a718064253247c9a7cff9c81e5c25fd
+msgid "Added the :var:`config.gl_resize` variable, which determines if the user can resize OpenGL windows."
 msgstr ""
 
-#: ../../source/changelog.rst:558
-# 68c47d1bd6f1445eb96c9086a9f9cdce
-msgid "Side images can now be limited to showing a single character, or only showing characters that are not on the screen. See :var:`config.side_image_tag` and :var:`config.side_image_only_not_showing`."
+#: ../../source/changelog.rst:557
+# 77e13e3c2c4d4764830550128cc9514e
+msgid "Ren'Py's handling of command line argments has been rewritten. Most notably, lint is now invoked with the::"
 msgstr ""
 
 #: ../../source/changelog.rst:562
-# 4314fb65348b444ca7ba832b1f014c01
-msgid "Added :var:`config.python_callbacks`, a list of python functions that are called at the end of each python block."
+# 8df1324a05e74531b522436ee1141683
+msgid "command. (Which also works with renpy.exe.)"
 msgstr ""
 
-#: ../../source/changelog.rst:565
-# 1a24ad04fc5749a296a72a71ef82eaf2
-msgid "Ren'Py now tests the video card it is running on for functionality. If it can't draw textured rectangles to the screen, it will proceed to a different renderer."
+#: ../../source/changelog.rst:564
+# b112efcf79be4e9c8d287e17b29ac600
+msgid "Ren'Py can now dump information about the game to a json file when starting up. The information dumped can assist other tools in providing launcher-like code navigation."
 msgstr ""
 
-#: ../../source/changelog.rst:569
-# 5355d562db524316a965c0fc679d94f0
-msgid "Old-style string interpolation is now enabled by default, alongside new-style string interpolation."
+#: ../../source/changelog.rst:568
+# 9d9254ec64e24bd98aede239edaf9ac5
+msgid "The little-used remote control feature has been removed from Ren'Py."
 msgstr ""
 
-#: ../../source/changelog.rst:572
-# 20f93166f7874bb788094ece2fe3f6fa
-msgid "Ren'Py is now compatible with libpng 1.5. Thanks to James Broadhead for the patch."
+#: ../../source/changelog.rst:570
+# 1d01530b616c4193a74c2cf4a481e4a7
+msgid "The :var:`config.gl_resize` variable now controls resizing of a game running in GL mode."
+msgstr ""
+
+#: ../../source/changelog.rst:573
+# df4bdb4de3214462ba0e1cbc19ced9c0
+msgid "Documentation fixes (by SleepKirby and others)."
 msgstr ""
 
 #: ../../source/changelog.rst:575
-# 627b3b3723d14b1c90eb0d86f1efcf18
-msgid "Fixed the following bugs:"
+# d6195579072d40ffbae9f09b03dd9cc5
+msgid "The NVL-Mode tutorial has been ported to Sphinx (by Apricotorange)."
 msgstr ""
 
 #: ../../source/changelog.rst:577
-# e22e61ea9b3346759a4802f869b93c12
-msgid "A crash when dealing with certain invalid fonts."
-msgstr ""
-
-#: ../../source/changelog.rst:578
-# 13a0e3d37b2d4e31b2bb627350d267aa
-msgid "Pausing too long when typing out text."
-msgstr ""
-
-#: ../../source/changelog.rst:579
-# e7d0f87cdee04d0ea47ee3afec8cee1d
-msgid "Cutting one pixel off a block of text when fractional kerning was used."
-msgstr ""
-
-#: ../../source/changelog.rst:580
-# ccdf44ab933a49a596196a660529982e
-msgid "Crashing when the time was set in the far future or past."
+# 32799152bcce4e0ebd952db342ffda9a
+msgid "Ren'Py now defaults to reporting errors with sound and music files when config.developer is True."
 msgstr ""
 
 #: ../../source/changelog.rst:581
-# 6272265bcff9435fa694fea56932e0a9
-msgid "Immediately exiting when rolling forward at the quit prompt."
+# 79cb6d1d676c4608a24b7cd5a156cd14
+msgid "Ren'Py 6.13.9"
 msgstr ""
 
-#: ../../source/changelog.rst:582
-# 4c07a3a84a384c0ea1d0b7f4c3c28d54
-msgid "Crashing when a non-existing directory is added to the search path. (This prevented Katawa Shoujo from starting in the latest version.)"
+#: ../../source/changelog.rst:583
+# 280c66e5d9a24fe08613eae7e1986216
+msgid "The new RAPT tool makes it far easier to package a Ren'Py game for Android. It can semi-automatically set up an Android build environment on your system, build a package, and install that package on your Android device."
 msgstr ""
 
-#: ../../source/changelog.rst:584
-# 02cf18debb6e4cd48fae406c1705a404
-msgid "Save-file size was overly large due to screens being included in save files."
+#: ../../source/changelog.rst:587
+# f212975a60a84299808cf0b978cf4983
+msgid "To fix some editor-related problems, backported the 6.14 editor system. This changes how editors are configured. Please see :ref:`text-editor-integration` for a description of the new system."
 msgstr ""
 
-#: ../../source/changelog.rst:589
-# e9f7e24cb7bd4b4f91b20a4459cbceb1
-msgid "Ren'Py 6.13"
+#: ../../source/changelog.rst:591
+# c22293da9d4649fc8f85ff4405334565
+msgid "The new :var:`config.save_dump` variable causes Ren'Py to write out save_dump.txt each time it saves. This file describes the contents of the save, making it possible to figure out what's causing an overly large save file."
 msgstr ""
 
-#: ../../source/changelog.rst:592
-# 091dce688be84f03a2a75178f0502394
-msgid "Text Rewrite"
-msgstr ""
-
-#: ../../source/changelog.rst:594
-# 414cd7196a1d40babce746c51369e991
-msgid ":ref:`Text display <text>` has been rewritten from scratch. In addition to supporting many new features, the new implementation of Text is much faster at text layout and display, and contains much cleaner code."
+#: ../../source/changelog.rst:596
+# e55b81e2d71f418d9c2c5c4427222427
+msgid "Worked around a bug in Mesa that can cause crashes on certain Linux systems."
 msgstr ""
 
 #: ../../source/changelog.rst:598
-# c13c0a086f8f41abaf73f764dc42e900
-msgid "Some of the new features that are now supported by the text display system are:"
+# bec3e4db8b164b9d96df6f0640e3419c
+msgid "Fixed the following bugs in Ren'Py."
 msgstr ""
 
 #: ../../source/changelog.rst:600
-# e923c272038444a4aaa7fd6f96b6afa8
-msgid "Interpolation of variables enclosed in square brackets. It's now possible to write code like::"
+# 462def11cd074144abcb11387620176c
+msgid "The (default) texwrap layout represents character widths as floating-point numbers. This fixes a bug where non-integer kerning would lead to text overflowing its bounding box."
 msgstr ""
 
-#: ../../source/changelog.rst:605
-# 2f22fc9a8e46479baebf1622a89ec79f
-msgid "The new string interpolation takes place on all text that is displayed, rather than just say and menu statements. When used as part of a screen, interpolation has access to screen-local variables."
+#: ../../source/changelog.rst:603
+# b1074b358cea440b9cf99e9c2c2e9830
+msgid "Menu choices are logged correctly."
 msgstr ""
 
-#: ../../source/changelog.rst:609
-# 9058859e5ea046ce921cb451f3da06e4
-msgid "PEP 3101-style string formatting is supported, which means that this syntax can be used to display fields and items, as well as variables."
+#: ../../source/changelog.rst:604
+# 07a386193f73468ba24d385feb829992
+msgid "All file access is now done in unicode, rather than the system's native encoding. This prevents crashes that occured when Ren'Py was placed in a directory that had non-ASCII characters in it."
 msgstr ""
 
-#: ../../source/changelog.rst:612
-# bf811189f6564d9e98d276e5eddf1145
-msgid "Kerning support was added, both as the :propref:`kerning` style property and the :tt:`k` text tag."
+#: ../../source/changelog.rst:607
+# 42aa665a1dba4bfa8fccf5060871e7e7
+msgid "Fixed focus_mask on the ANGLE renderer."
+msgstr ""
+
+#: ../../source/changelog.rst:608
+# 8ea2da02f3154053bcec620e83bfaa73
+msgid "Displayables can now have fractional-pixel sizes. This allows a zooming image to remain precisely centered on the screen."
+msgstr ""
+
+#: ../../source/changelog.rst:610
+# bad9888a2ff0486699691c9289c3d92c
+msgid "Fixed a problem where Ren'Py would save unnecessary trees of displayables each time it saved a screen. This would lead to overly large save files and slow save performance."
+msgstr ""
+
+#: ../../source/changelog.rst:613
+# d3b6d59dbeef46a3934c2be994697da2
+msgid "Ren'Py would not attempt an alternate rendering method if the texture test failed, leading a \"Textures are not rendering properly.\" exception."
 msgstr ""
 
 #: ../../source/changelog.rst:615
-# ce042ea11ea543a8afaaf7f5402bd097
-msgid "Support for ruby text (also known as furigana), via the :tt:`rt` and :tt:`rb` text tags, and the :propref:`ruby_style` style property."
+# 6973226025f74bb6ab277920ca69f4c9
+msgid "A crash in Render.fill."
 msgstr ""
 
 #: ../../source/changelog.rst:618
-# 350fc126f5544b9c9ccf98d0454b0f65
-msgid "The new :tt:`space` and :tt:`vspace` text tags make it easy to whitespace into the text."
+# bad1f57c402749b9a43a423460a38edf
+msgid "Ren'Py 6.13.8"
 msgstr ""
 
 #: ../../source/changelog.rst:621
-# b2ae89e764bb484d8743bb3818a9fbee
-msgid "The new :tt:`cps` text tag controls the speed of text display."
+# 4addcf1be87f4084824ce660cd412301
+msgid "Side images can now be limited to showing a single character, or only showing characters that are not on the screen. See :var:`config.side_image_tag` and :var:`config.side_image_only_not_showing`."
 msgstr ""
 
-#: ../../source/changelog.rst:623
-# 80aab020a0444d498f6222df97a89184
-msgid "By default, Ren'Py uses the unicode linebreaking algorithm to find points at which a line can be broken. This algorithm should correctly break lines that contain a mix of western and eastern languages. Since that algorithm is incorrect on some Korean texts, Ren'Py also implements a korean-with-spaces variant, that only breaks runs of Korean text at whitespace. These algorithms can be selected by the :propref:`language` style property."
+#: ../../source/changelog.rst:625
+# d485a58efdbc4c46add96240e3546115
+msgid "Added :var:`config.python_callbacks`, a list of python functions that are called at the end of each python block."
 msgstr ""
 
-#: ../../source/changelog.rst:631
-# ae8b83cea55a43a39647dd9e6a41f703
-msgid "Ren'Py now uses the Knuth-Plass linebreaking algorithm to choose the points at which it actually splits lines. This algorithm attempts to minimize the unevenness of all lines except the last. Ren'Py also supports a nobreak mode, which allows one to create a Text larger than the screen without it being automatically wrapped. These can be selected using the :propref:`layout` style property."
+#: ../../source/changelog.rst:628
+# 34c10aa6e87a490d85fae712c54f336f
+msgid "Ren'Py now tests the video card it is running on for functionality. If it can't draw textured rectangles to the screen, it will proceed to a different renderer."
+msgstr ""
+
+#: ../../source/changelog.rst:632
+# 302ceb0b244d4d43ba8e52dd770386dd
+msgid "Old-style string interpolation is now enabled by default, alongside new-style string interpolation."
+msgstr ""
+
+#: ../../source/changelog.rst:635
+# 13de9e0da9a241aab67d6283e5523620
+msgid "Ren'Py is now compatible with libpng 1.5. Thanks to James Broadhead for the patch."
 msgstr ""
 
 #: ../../source/changelog.rst:638
-# c77e5d57e400487da3c7e9676fae1a11
-msgid "The new :propref:`newline_indent` style property determines if Ren'Py adds indentation after a newline in text."
+# efe870fd24e7449486ad994fd1d7feb6
+msgid "Fixed the following bugs:"
+msgstr ""
+
+#: ../../source/changelog.rst:640
+# 072d89b8be8f4d648987e3b9016f08e8
+msgid "A crash when dealing with certain invalid fonts."
 msgstr ""
 
 #: ../../source/changelog.rst:641
-# 2b1eb7bad09f4c9f9a8254bdbe4381ea
-msgid "The new :propref:`line_leading` style property inserts space above a line of text. (Ruby text can be placed into this space.)"
+# 2d6059194fba4d3bbe18691bee7a72e6
+msgid "Pausing too long when typing out text."
+msgstr ""
+
+#: ../../source/changelog.rst:642
+# 3cbb62dea51c45979937479ec7d3b370
+msgid "Cutting one pixel off a block of text when fractional kerning was used."
+msgstr ""
+
+#: ../../source/changelog.rst:643
+# 968b1315fe1a40129a9d91ebb21493aa
+msgid "Crashing when the time was set in the far future or past."
 msgstr ""
 
 #: ../../source/changelog.rst:644
-# 2efd5a7fe0b94ec795c46cbb9bed3714
-msgid "Text can be automatically translated before it is displayed. (This support will be improved in a future major release.)"
+# 971dc64c78bb4fb29fe8ddb6f04354bf
+msgid "Immediately exiting when rolling forward at the quit prompt."
 msgstr ""
 
-#: ../../source/changelog.rst:648
-# d26e48a3e9684d2f8bc6e8f6f09400e8
-msgid "DirectX Support"
+#: ../../source/changelog.rst:645
+# 19f78a80e4ad404ca681fef4b654d1d8
+msgid "Crashing when a non-existing directory is added to the search path. (This prevented Katawa Shoujo from starting in the latest version.)"
 msgstr ""
 
-#: ../../source/changelog.rst:650
-# cd0cfb1b92bf4eda8a2771e35d150908
-msgid "On Windows systems that have the February 2010 DirectX update installed, Ren'Py will use DirectX via the ANGLE adaptation layer, if OpenGL 2.0 or later is not found. The ANGLE layer is used by popular web browsers such as Firefox and Google Chrome.  This allows hardware rendering to be used on netbooks, where drivers often support DirectX far better than OpenGL."
+#: ../../source/changelog.rst:647
+# 4111b851aaf14c38bcffefe992c8211b
+msgid "Save-file size was overly large due to screens being included in save files."
 msgstr ""
 
-#: ../../source/changelog.rst:656
-# d5c8d33ac7734b39addc3beb58f080f8
-msgid "At startup, Ren'Py will test the graphics capabilities of the computer it is running on. If the software render is being used, or the game renders at an unacceptably slow speed, Ren'Py will display a warning message to the user. The warning message includes a link to a page on renpy.org that explains how to update the graphics drivers."
+#: ../../source/changelog.rst:652
+# cbd5bb60db3349f8a8f0936cf15146f5
+msgid "Ren'Py 6.13"
 msgstr ""
 
-#: ../../source/changelog.rst:662
-# 0e438728b2924a67a018c479a9824366
-msgid "This version of Ren'Py will only use the software renderer if both DirectX and OpenGL are incapable of rendering Ren'Py games. Screen-scaling in the software renderer has been replaced by a simpler but slower version."
+#: ../../source/changelog.rst:655
+# 0fa2d63405a440dc8d0be6b7dab8199f
+msgid "Text Rewrite"
 msgstr ""
 
-#: ../../source/changelog.rst:669
-# 8548f2dc5ece4864b8ec150c77c69831
-msgid "Ren'Py now includes a :ref:`style preference <style-preferences>` system. This system allows styles to be changed after the init phase has finished. These changes are saved with the persistent data. Among other things, style preferences allow a game to offer the user the option to change the font, size, and color of dialogue text."
+#: ../../source/changelog.rst:657
+# bba0fd2a0a20440da2cbf0d5d2b7e0a8
+msgid ":ref:`Text display <text>` has been rewritten from scratch. In addition to supporting many new features, the new implementation of Text is much faster at text layout and display, and contains much cleaner code."
+msgstr ""
+
+#: ../../source/changelog.rst:661
+# 6f9906536b65405bb676ba998dbdaf81
+msgid "Some of the new features that are now supported by the text display system are:"
+msgstr ""
+
+#: ../../source/changelog.rst:663
+# 4e05688748f641849c61b973232cf064
+msgid "Interpolation of variables enclosed in square brackets. It's now possible to write code like::"
+msgstr ""
+
+#: ../../source/changelog.rst:668
+# 873145f4abb545208b34927c7b3f296d
+msgid "The new string interpolation takes place on all text that is displayed, rather than just say and menu statements. When used as part of a screen, interpolation has access to screen-local variables."
+msgstr ""
+
+#: ../../source/changelog.rst:672
+# 3e67301d83b14836aab2f4edf08aa3dc
+msgid "PEP 3101-style string formatting is supported, which means that this syntax can be used to display fields and items, as well as variables."
 msgstr ""
 
 #: ../../source/changelog.rst:675
-# bf153d54115a4fb895ffaee34ac4705c
-msgid "Support has been added for screen-based :ref:`image galleries <image-gallery>` and :ref:`music rooms <music-room>`. This support consists of a classes that provides actions that make it easy to present the user with graphics and music. The creator is responsible for creating screens that use the supplied actions."
+# c4b4f98c308046f3b735c7260ba5ac5f
+msgid "Kerning support was added, both as the :propref:`kerning` style property and the :tt:`k` text tag."
+msgstr ""
+
+#: ../../source/changelog.rst:678
+# f09ab94218314703800992533b3702b8
+msgid "Support for ruby text (also known as furigana), via the :tt:`rt` and :tt:`rb` text tags, and the :propref:`ruby_style` style property."
 msgstr ""
 
 #: ../../source/changelog.rst:681
-# 44b4dabc07d44af4a1056f21323923c5
-msgid "The default screens.rpy file, used when a new game is created, contains support for a \"quick menu\". This menu adds buttons to screens that allow the user to quick save, quick load, save, toggle skipping, toggle auto-forward mode, and access the preferences menu."
+# 537f4b5d923d44f78a5a45ff2161079a
+msgid "The new :tt:`space` and :tt:`vspace` text tags make it easy to whitespace into the text."
+msgstr ""
+
+#: ../../source/changelog.rst:684
+# 9087da97360e40069207a2d36eb97d60
+msgid "The new :tt:`cps` text tag controls the speed of text display."
 msgstr ""
 
 #: ../../source/changelog.rst:686
-# 0148540b09174c1b935fe446cf504c89
-msgid "Ren'Py includes 5 new themes, and a number of new color schemes."
-msgstr ""
-
-#: ../../source/changelog.rst:688
-# 3bc34e436f1f41fda3ebf93d001a6687
-msgid "Several new actions have been added. The :func:`SelectedIf` action allows the creator to control if a button is displayed in the selected state. The :func:`SetMixer` action allows a mixer to be set to a specific value. The :func:`Rollback` and :func:`RollForward` actions allow the creator to bind rollback to buttons."
+# cc8e3336c0c4476a9199b1502eff5821
+msgid "By default, Ren'Py uses the unicode linebreaking algorithm to find points at which a line can be broken. This algorithm should correctly break lines that contain a mix of western and eastern languages. Since that algorithm is incorrect on some Korean texts, Ren'Py also implements a korean-with-spaces variant, that only breaks runs of Korean text at whitespace. These algorithms can be selected by the :propref:`language` style property."
 msgstr ""
 
 #: ../../source/changelog.rst:694
-# cd6fa1a7eba44013bf6003b94ae63b9a
-msgid "The behavior of the xfill and yfill style properties was accidentally changed in the 6.12 series. It has been returned to the historical behavior."
+# e84c1642bd1e4e1bb588cf4730a6a3ef
+msgid "Ren'Py now uses the Knuth-Plass linebreaking algorithm to choose the points at which it actually splits lines. This algorithm attempts to minimize the unevenness of all lines except the last. Ren'Py also supports a nobreak mode, which allows one to create a Text larger than the screen without it being automatically wrapped. These can be selected using the :propref:`layout` style property."
 msgstr ""
 
-#: ../../source/changelog.rst:697
-# b6f2ff6b602044d48b60a32d8770cc86
-msgid "The :func:`Dissolve` and :func:`ImageDissolve` transitions now take a time_warp parameter."
+#: ../../source/changelog.rst:701
+# 83d98f446f6747aa8b8a71f5cf38301d
+msgid "The new :propref:`newline_indent` style property determines if Ren'Py adds indentation after a newline in text."
 msgstr ""
 
-#: ../../source/changelog.rst:700
-# 80ae1ee9be574c5b957e950f416a6b83
-msgid "The :func:`Frame` displayable now allows the user to specify the left, top, right, and bottom borders independently."
+#: ../../source/changelog.rst:704
+# bd7912e963c64da3b5487cec4814a4ef
+msgid "The new :propref:`line_leading` style property inserts space above a line of text. (Ruby text can be placed into this space.)"
 msgstr ""
 
-#: ../../source/changelog.rst:703
-# bc1939be62f1498682a5e62c0b5dc31b
-msgid "The :propref:`caret` style property allows the user to customize the caret of an input widget."
+#: ../../source/changelog.rst:707
+# d76487a4e0bb486987251e450071ee6f
+msgid "Text can be automatically translated before it is displayed. (This support will be improved in a future major release.)"
 msgstr ""
 
-#: ../../source/changelog.rst:706
-# 42a3ee4138044b3283f91b14b6e8b647
-msgid "The :func:`renpy.displayable` function has been exposed to the user."
-msgstr ""
-
-#: ../../source/changelog.rst:708
-# 3c63f7ae368c4adb864aaf12da9f1ad4
-msgid "Timers can now take a list of actions, rather than just a single callable."
-msgstr ""
-
-#: ../../source/changelog.rst:710
-# fcca8ee7bcde44d297ae899591bcf561
-msgid "Three transforms were added to the default library: :var:`top`, :var:`topleft`, and :var:`topright`."
+#: ../../source/changelog.rst:711
+# 81f8c31fbb774b02a2552bc03e40f23c
+msgid "DirectX Support"
 msgstr ""
 
 #: ../../source/changelog.rst:713
-# 1d8ae89fac034a46b2d00ee8444eb521
-msgid "Ren'Py can now load files (including images, music, and fonts) from an Android package."
-msgstr ""
-
-#: ../../source/changelog.rst:716
-# 0996f7ea9cc64ec793e09f7be2854de8
-msgid "User-defined statements can now take a block, which the statement is responsible for parsing."
+# 94e0e8946b8245f2bfb96243abbd41e8
+msgid "On Windows systems that have the February 2010 DirectX update installed, Ren'Py will use DirectX via the ANGLE adaptation layer, if OpenGL 2.0 or later is not found. The ANGLE layer is used by popular web browsers such as Firefox and Google Chrome.  This allows hardware rendering to be used on netbooks, where drivers often support DirectX far better than OpenGL."
 msgstr ""
 
 #: ../../source/changelog.rst:719
-# e9b0fec3f0f34c2fa001e218b3ed7f52
-msgid "Wrote documentation for:"
-msgstr ""
-
-#: ../../source/changelog.rst:721
-# 7c8b467140154b93afbdaaa43353c046
-msgid ":ref:`Menus <menus>`"
-msgstr ""
-
-#: ../../source/changelog.rst:722
-# 27085749475b4da7b78e4af14a1f0eba
-msgid ":ref:`Transforms <transforms>`"
-msgstr ""
-
-#: ../../source/changelog.rst:723
-# cba097d55e104006a0b04d92e3e5f55e
-msgid ":ref:`Creator-Defined Displayables <cdd>`"
+# 75e7e6b514f442c199eb0bf9677d9629
+msgid "At startup, Ren'Py will test the graphics capabilities of the computer it is running on. If the software render is being used, or the game renders at an unacceptably slow speed, Ren'Py will display a warning message to the user. The warning message includes a link to a page on renpy.org that explains how to update the graphics drivers."
 msgstr ""
 
 #: ../../source/changelog.rst:725
-# edb5bfa0aefc4aeab41db154c995f170
-msgid "Several indexes were added to the documentation, and the style was updated."
-msgstr ""
-
-#: ../../source/changelog.rst:727
-# 921e403249114b2993ace5a4ed58bbfc
-msgid "Ren'Py now uses the libjpeg-turbo library, for faster jpeg loading. Ren'Py now uses libav 0.7.1, for improved compatibility with movie formats."
-msgstr ""
-
-#: ../../source/changelog.rst:730
-# d368a17d20b14d608fca7fe36e9fb930
-msgid "Removed support for the iLiad platform."
+# 4dc267b1453a4b66be47dc52ee56865f
+msgid "This version of Ren'Py will only use the software renderer if both DirectX and OpenGL are incapable of rendering Ren'Py games. Screen-scaling in the software renderer has been replaced by a simpler but slower version."
 msgstr ""
 
 #: ../../source/changelog.rst:732
-# 8e6156afadda4087bf3434f9d2928469
-msgid "PowerPC support has been removed from the main Ren'Py distribution. It's available as a download from the Ren'Py web site."
+# ea5d9e78972e4ccbb25d1df52ac632da
+msgid "Ren'Py now includes a :ref:`style preference <style-preferences>` system. This system allows styles to be changed after the init phase has finished. These changes are saved with the persistent data. Among other things, style preferences allow a game to offer the user the option to change the font, size, and color of dialogue text."
 msgstr ""
 
-#: ../../source/changelog.rst:735
-# a94f45abd8c24318a4a162b4abc63ccc
-msgid "Thanks to Aleema for contributing the new themes and color schemes."
-msgstr ""
-
-#: ../../source/changelog.rst:739
-# db5278b8f8e94324b6b124a638f184e0
-msgid "Ren'Py 6.12.2"
-msgstr ""
-
-#: ../../source/changelog.rst:741
-# 0f2f1e9a9f614dc6836d51320267f9cc
-msgid "This release contains the following changes:"
-msgstr ""
-
-#: ../../source/changelog.rst:743
-# 2d267d7447a240cbb329c6d9f540b824
-msgid "ATL Transforms with parameters compile correctly."
+#: ../../source/changelog.rst:738
+# 6d0559881d624f07b2fc569b575e9e92
+msgid "Support has been added for screen-based :ref:`image galleries <image-gallery>` and :ref:`music rooms <music-room>`. This support consists of a classes that provides actions that make it easy to present the user with graphics and music. The creator is responsible for creating screens that use the supplied actions."
 msgstr ""
 
 #: ../../source/changelog.rst:744
-# 5c2b2b4b2d044fd0be44bce7c5f9e69b
-msgid "MultipleTransition works in conjunction with pauses."
-msgstr ""
-
-#: ../../source/changelog.rst:745
-# 256e31be5ba8404b8cacd12653daae45
-msgid "The mouse is shown when a quit action is run while a movie is playing."
-msgstr ""
-
-#: ../../source/changelog.rst:746
-# 53bd4d3218ef42eca9fb6f9f97a49ae3
-msgid "A fix for a lockup that occured when the user entered the game menu while a transition was running."
-msgstr ""
-
-#: ../../source/changelog.rst:748
-# 6c72d79c19d6480ba3bb424874cc6d30
-msgid "RENPY_SCALE_FAST works again."
+# 3ae767f25a044d8286557cfcae1f19c6
+msgid "The default screens.rpy file, used when a new game is created, contains support for a \"quick menu\". This menu adds buttons to screens that allow the user to quick save, quick load, save, toggle skipping, toggle auto-forward mode, and access the preferences menu."
 msgstr ""
 
 #: ../../source/changelog.rst:749
-# bb7a1de8a899410ea47916d88975eb3a
-msgid "Ren'Py compiles with newer versions of ffmpeg."
-msgstr ""
-
-#: ../../source/changelog.rst:750
-# 592f9172f3e542169fdce91936bbe4c3
-msgid "Skipping ends when the game restarts."
+# 693c5265864446dfbdce84425490e45b
+msgid "Ren'Py includes 5 new themes, and a number of new color schemes."
 msgstr ""
 
 #: ../../source/changelog.rst:751
-# e26471d9667848ada9b1ad75310115e9
-msgid "Fixed a problem with texture upload that made games noticeably slower."
+# 57c7242fce8044e6a0068d4192bb4aeb
+msgid "Several new actions have been added. The :func:`SelectedIf` action allows the creator to control if a button is displayed in the selected state. The :func:`SetMixer` action allows a mixer to be set to a specific value. The :func:`Rollback` and :func:`RollForward` actions allow the creator to bind rollback to buttons."
 msgstr ""
 
-#: ../../source/changelog.rst:752
-# e5d93f7103f842c89ccb8eedc1a97d63
-msgid "Choose a better default size for windows on small monitors, like netbooks."
+#: ../../source/changelog.rst:757
+# 66f32222c96c4f169138cc84e864a02b
+msgid "The behavior of the xfill and yfill style properties was accidentally changed in the 6.12 series. It has been returned to the historical behavior."
 msgstr ""
 
-#: ../../source/changelog.rst:753
-# 4a6dae405eff41f1bac91a89ac3b2674
-msgid "xfill and yfill now work for vbox and hbox, respectively."
+#: ../../source/changelog.rst:760
+# 60dd773e122e411bb9556ffa7af35f53
+msgid "The :func:`Dissolve` and :func:`ImageDissolve` transitions now take a time_warp parameter."
 msgstr ""
 
-#: ../../source/changelog.rst:754
-# 35c276bd873643c3aee9e94c8faef0d3
-msgid "Click-to-continue fixes."
+#: ../../source/changelog.rst:763
+# 50bb3b0845d94c8cb04106f8c51601e6
+msgid "The :func:`Frame` displayable now allows the user to specify the left, top, right, and bottom borders independently."
 msgstr ""
 
-#: ../../source/changelog.rst:755
-# 99948899c4724dbaa23ac6e896044a1f
-msgid "Side image fixes."
+#: ../../source/changelog.rst:766
+# 6043de2236a449469e40c81ff1d672fa
+msgid "The :propref:`caret` style property allows the user to customize the caret of an input widget."
 msgstr ""
 
-#: ../../source/changelog.rst:756
-# 206cf54664a147d493ea916dedbf6b4c
-msgid "Documentation fixes."
+#: ../../source/changelog.rst:769
+# 7db54c7f43814ffbb377ae46bd02a431
+msgid "The :func:`renpy.displayable` function has been exposed to the user."
 msgstr ""
 
-#: ../../source/changelog.rst:758
-# 4ceee3b21c074be9857ee488e394abc4
-msgid "Thanks to David Gowers and zhangning for contributing patches to this release."
-msgstr ""
-
-#: ../../source/changelog.rst:762
-# f0a2e90681e0458f80e6088b89f46411
-msgid "Ren'Py 6.12.1"
-msgstr ""
-
-#: ../../source/changelog.rst:765
-# 5761fbaf9366423096b12559714b177b
-msgid "Image Attributes"
-msgstr ""
-
-#: ../../source/changelog.rst:767
-# 62c46a47c203495882d7cb6260e1ccc3
-msgid "The process of showing images is now attribute-based. Image names now consist of a tag, and zero or more attributes. When showing an image, the order of attributes is no longer important - it's now possible to define an image using one set of attributes, and show it using those attributes in a different order."
+#: ../../source/changelog.rst:771
+# 93c6fa00b21e4e5b900cc53b9eb66ed0
+msgid "Timers can now take a list of actions, rather than just a single callable."
 msgstr ""
 
 #: ../../source/changelog.rst:773
-# 4742db95be74466abc368084f909cb1a
-msgid "Attributes are also \"sticky\". This means that we attempt to preserve as many attributes as possible when showing a new image."
+# bd33dd41a2014f5ab9ec11a47a96a5f8
+msgid "Three transforms were added to the default library: :var:`top`, :var:`topleft`, and :var:`topright`."
 msgstr ""
 
 #: ../../source/changelog.rst:776
-# 6c5895b2d86c40e8a2b15adbdc105b6a
-msgid "For example, say we had the following images::"
+# 688ba4d7a9fc4a9eaef83dfe372313c3
+msgid "Ren'Py can now load files (including images, music, and fonts) from an Android package."
 msgstr ""
 
-#: ../../source/changelog.rst:781
-# 21c169cd89ab4fa08296ce4cdd24bd99
-msgid "We can now show the first image using the command::"
+#: ../../source/changelog.rst:779
+# 55992ab0504040d2aee794477464daf1
+msgid "User-defined statements can now take a block, which the statement is responsible for parsing."
+msgstr ""
+
+#: ../../source/changelog.rst:782
+# e97bfd70d78a48cab9e6545960224127
+msgid "Wrote documentation for:"
+msgstr ""
+
+#: ../../source/changelog.rst:784
+# e0bc128560c54f459d1329571c41f9e3
+msgid ":ref:`Menus <menus>`"
 msgstr ""
 
 #: ../../source/changelog.rst:785
-# a7fccfe5732d4340ab9cd32898d644ce
-msgid "Since the order of attributes no longer matters, this will show the \"eileen beach happy\" image. If we follow this with the show statement::"
+# c641171696f44a1a83fa67f34b4c9fbe
+msgid ":ref:`Transforms <transforms>`"
+msgstr ""
+
+#: ../../source/changelog.rst:786
+# 62ca4ce4f4a24ab4926c1d66e0d6897d
+msgid ":ref:`Creator-Defined Displayables <cdd>`"
+msgstr ""
+
+#: ../../source/changelog.rst:788
+# ce9aba26f5454d068c995392101a2a45
+msgid "Several indexes were added to the documentation, and the style was updated."
 msgstr ""
 
 #: ../../source/changelog.rst:790
-# dbb08bd35b6c43278e7d759096935146
-msgid "the image \"eileen beach woozy\" will be shown. (Assuming no other images exist. If the image \"eileen happy woozy\" existed, an ambiguity error would occur.)"
+# 58bd7420068541eda7b24fe557d94ca8
+msgid "Ren'Py now uses the libjpeg-turbo library, for faster jpeg loading. Ren'Py now uses libav 0.7.1, for improved compatibility with movie formats."
 msgstr ""
 
 #: ../../source/changelog.rst:793
-# f63552d7277f4ea6abe4ab7a3074ad24
-msgid "When an image tag is shown without any attributes, then the current attributes are retained. Now, one can write::"
+# 70e9a7c28fa545a6b6a2c164fc73ff6a
+msgid "Removed support for the iLiad platform."
+msgstr ""
+
+#: ../../source/changelog.rst:795
+# dec35c64d03a4c969dfa4ba711a47e33
+msgid "PowerPC support has been removed from the main Ren'Py distribution. It's available as a download from the Ren'Py web site."
 msgstr ""
 
 #: ../../source/changelog.rst:798
-# 922b0a8bad9f41b0ae6e756320605a10
-msgid "to display Eileen on the right side of the screen, without changing the attributes supplied to an image."
+# 482c03fd3efb45a4b1b72903766b44e8
+msgid "Thanks to Aleema for contributing the new themes and color schemes."
 msgstr ""
 
-#: ../../source/changelog.rst:801
-# b2def39cbd31447e87e5f178a4579dfa
-msgid "**Say Attributes.** Image attributes can be updated as part of a say statement. A character can be given an `image` argument, giving the name of an image that character is linked to. As part of the say statement, image attributes can be given before the dialogue string. These attributes are given to the linked image."
+#: ../../source/changelog.rst:802
+# 0546b8ed428b4d9cb9d2415867eb22bf
+msgid "Ren'Py 6.12.2"
+msgstr ""
+
+#: ../../source/changelog.rst:804
+# be42636910cf43e19449f04022471660
+msgid "This release contains the following changes:"
+msgstr ""
+
+#: ../../source/changelog.rst:806
+# d9800d2baf3e414a845816d62fb1a3cb
+msgid "ATL Transforms with parameters compile correctly."
 msgstr ""
 
 #: ../../source/changelog.rst:807
-# 5347d6dd45994fd8b6db5720b465145e
-msgid "For example, if we define a character using the code::"
+# 2a31d3b0eed24659954743b2bfa4c295
+msgid "MultipleTransition works in conjunction with pauses."
+msgstr ""
+
+#: ../../source/changelog.rst:808
+# fc1e637c335948a080fe85e107059c36
+msgid "The mouse is shown when a quit action is run while a movie is playing."
+msgstr ""
+
+#: ../../source/changelog.rst:809
+# 283179feba744e61b19eebd8883bcbe4
+msgid "A fix for a lockup that occured when the user entered the game menu while a transition was running."
 msgstr ""
 
 #: ../../source/changelog.rst:811
-# d691578b8bba47c5b3616c98e60fc9c0
-msgid "the code::"
+# 81485fe8d79c410cbb7109c63726a58a
+msgid "RENPY_SCALE_FAST works again."
+msgstr ""
+
+#: ../../source/changelog.rst:812
+# fd68286ec3674cd39e37cd0f83c6bab1
+msgid "Ren'Py compiles with newer versions of ffmpeg."
+msgstr ""
+
+#: ../../source/changelog.rst:813
+# ad1e28f42ee84dfcbed56a93463c3377
+msgid "Skipping ends when the game restarts."
+msgstr ""
+
+#: ../../source/changelog.rst:814
+# 0d6000f6e27a4c04a7f9acb6ad77a8a6
+msgid "Fixed a problem with texture upload that made games noticeably slower."
 msgstr ""
 
 #: ../../source/changelog.rst:815
-# 89f311dcc8e0411fa62de51d8f695029
-msgid "is equivalent to::"
+# 6c5851220350496b97d87d8882b4ccc3
+msgid "Choose a better default size for windows on small monitors, like netbooks."
 msgstr ""
 
-#: ../../source/changelog.rst:820
-# 4ea056a562a34ba28774c6f673b115ae
-msgid "whenever an image with the tag eileen is being shown."
+#: ../../source/changelog.rst:816
+# 026ad39c9906447c897191abb7e6d513
+msgid "xfill and yfill now work for vbox and hbox, respectively."
 msgstr ""
 
-#: ../../source/changelog.rst:822
-# a068a38491f444cdb9e325775dbf29d0
-msgid "**Side Image.** This release features a new implementation of :ref:`side-images`, which allows side images to be defined like other images, and allows side images to be integrated with screens easily."
+#: ../../source/changelog.rst:817
+# f1032f3f665e4d5e910fede4b7b1b8c0
+msgid "Click-to-continue fixes."
 msgstr ""
 
-#: ../../source/changelog.rst:826
-# 59f49f93e16d4f92a40299cefb92db03
-msgid "**Sticky Transforms.** Finally, showing an image without providing a transform or ATL block will now continue the previous transform that an image with that tag was using. Previously, it caused those transforms to stop."
+#: ../../source/changelog.rst:818
+# f18282d2f0ee4d6a82a565e3582f9853
+msgid "Side image fixes."
 msgstr ""
 
-#: ../../source/changelog.rst:831
-# a9940555409541d29e030fdb8989442d
-msgid "Error Handling"
+#: ../../source/changelog.rst:819
+# 180bc34f308d4deea7d6031ae39b6c24
+msgid "Documentation fixes."
 msgstr ""
 
-#: ../../source/changelog.rst:833
-# 6dd18d1365544e31a806ea351f7e8a5e
-msgid "Ren'Py now has a new exception handing framework. Instead of always crashing when an error occurs, Ren'Py will now display the error message on the screen, and give the user the following choices, as appropriate to the situation:"
+#: ../../source/changelog.rst:821
+# d179f0667b2b4af68c95fec0fe818dd9
+msgid "Thanks to David Gowers and zhangning for contributing patches to this release."
 msgstr ""
 
-#: ../../source/changelog.rst:838
-# 79be259e8b094028906fc65c312aa1f5
-msgid "Rollback"
+#: ../../source/changelog.rst:825
+# e2164291b61f45539afa5590f420a835
+msgid "Ren'Py 6.12.1"
+msgstr ""
+
+#: ../../source/changelog.rst:828
+# 9f74179b952845c8b17b0c5a186783b0
+msgid "Image Attributes"
+msgstr ""
+
+#: ../../source/changelog.rst:830
+# d281d87b6489413ea05f38b760b65fd4
+msgid "The process of showing images is now attribute-based. Image names now consist of a tag, and zero or more attributes. When showing an image, the order of attributes is no longer important - it's now possible to define an image using one set of attributes, and show it using those attributes in a different order."
+msgstr ""
+
+#: ../../source/changelog.rst:836
+# 473d8ede393d44318ed476573d96a1c3
+msgid "Attributes are also \"sticky\". This means that we attempt to preserve as many attributes as possible when showing a new image."
 msgstr ""
 
 #: ../../source/changelog.rst:839
-# f6add0c9c45946f2bd0b6f117f2ecc90
-msgid "Reload"
-msgstr ""
-
-#: ../../source/changelog.rst:840
-# 19bd7e01a17e43a98a1eceb7f7fd8821
-msgid "Ignore"
-msgstr ""
-
-#: ../../source/changelog.rst:841
-# b5ca6c5489584391bf4cbdea63fa1dab
-msgid "Open Traceback"
-msgstr ""
-
-#: ../../source/changelog.rst:842
-# 1442e70c121447718d32f1952b2cec64
-msgid "Quit"
+# 91fb77b646374a0aac76fbb90a490d1f
+msgid "For example, say we had the following images::"
 msgstr ""
 
 #: ../../source/changelog.rst:844
-# a1673c08cbf64df78d857eeb02e427c8
-msgid "When an editor is defined, Ren'Py will allow the user to click on a filename and line number to open that line in the editor."
+# daff2e00142146399d0a8eca750e4072
+msgid "We can now show the first image using the command::"
 msgstr ""
 
-#: ../../source/changelog.rst:847
-# ea1129b7371e4e5592d7a0390cec62f4
-msgid "The framework is used to handle exceptions and parse errors."
+#: ../../source/changelog.rst:848
+# 05c0baae9800473693af45af5feb6a8b
+msgid "Since the order of attributes no longer matters, this will show the \"eileen beach happy\" image. If we follow this with the show statement::"
 msgstr ""
 
-#: ../../source/changelog.rst:850
-# dc553ab0dedc4c0498703fd28cf927df
-msgid "Other"
+#: ../../source/changelog.rst:853
+# c7d301b5d90c44409f540d0d690ab77a
+msgid "the image \"eileen beach woozy\" will be shown. (Assuming no other images exist. If the image \"eileen happy woozy\" existed, an ambiguity error would occur.)"
 msgstr ""
 
-#: ../../source/changelog.rst:852
-# 7c0966aaedff4e7d83e37c117c1bb6ec
-msgid "When in OpenGL mode, Ren'Py now remembers the window size between  sessions. (This can be disabled using :var:`config.save_physical_size`, and it  may make sense to do so if your game is using the pre-screen preferences system.) Choosing the \"Window\" display preference now resizes the window to 100% of normal size."
-msgstr ""
-
-#: ../../source/changelog.rst:858
-# 9a411a65d55c4a889a85f5174fee5107
-msgid "Added the :propref:`xcenter` and :propref:`ycenter` position and transform properties. These set the position of the center of a displayable."
+#: ../../source/changelog.rst:856
+# 2d9015571d7a49d3935dfeb160ed536a
+msgid "When an image tag is shown without any attributes, then the current attributes are retained. Now, one can write::"
 msgstr ""
 
 #: ../../source/changelog.rst:861
-# 8f2cf1c924f944d6b3f38b587510ef0f
-msgid "The :func:`renpy.vibrate` function allows Ren'Py to ask Android devices to vibrate."
+# 5820a30e71e24f0f814c95fee852ec3b
+msgid "to display Eileen on the right side of the screen, without changing the attributes supplied to an image."
 msgstr ""
 
 #: ../../source/changelog.rst:864
-# 6fc59f322ed745c39db78b88e0af891c
-msgid "The hyperlink style, callback, and focus functions have now been moved to the :propref:`hyperlink_functions` style  property. This allows the functions to be changed on a per-style basis."
+# c246f7670d0042abb88fe06e00f9b4d8
+msgid "**Say Attributes.** Image attributes can be updated as part of a say statement. A character can be given an `image` argument, giving the name of an image that character is linked to. As part of the say statement, image attributes can be given before the dialogue string. These attributes are given to the linked image."
 msgstr ""
 
-#: ../../source/changelog.rst:868
-# c72be264c8ad49c69677cdb41f81cb96
-msgid "Indentation errors are now reported on the indented line, and not the line preceding the erroneous indentation."
-msgstr ""
-
-#: ../../source/changelog.rst:871
-# 6de8b8f5f9a54b42a6a2a4768301d81a
-msgid "Added the :func:`SetScreenVariable` and :func:`ToggleScreenVariable` actions. These allow screen-local variables to be changed."
+#: ../../source/changelog.rst:870
+# 8e3a73ddef6846cc825525917ea41cd0
+msgid "For example, if we define a character using the code::"
 msgstr ""
 
 #: ../../source/changelog.rst:874
-# f7b13b1c29a8482f8aff7fd333bcfacb
-msgid "Ren'Py now attempts to elide personal information from filenames. Where possible, filenames are reported relative to the base or Ren'Py base directories,  rather than the root of the filesystem."
+# c93f401b9ba144c58f1d3aea8760f241
+msgid "the code::"
 msgstr ""
 
 #: ../../source/changelog.rst:878
-# 6c254409daf94b22a3ec99d1cbeef511
-msgid "The new :propref:`box_wrap` style property allows hboxes and vboxes to automatically wrap when they reach the edge of their enclosing area."
+# 6f99ba77ad964e5b8bd1f238d1b0122a
+msgid "is equivalent to::"
 msgstr ""
 
-#: ../../source/changelog.rst:881
-# 82296f40a0fa4b9e8bc05194c5f0cd70
-msgid "Actions now can have an :func:`Action.unhovered` method. This method is called when an action supplied as a `hovered` parameter loses focus."
+#: ../../source/changelog.rst:883
+# d89f106c64d04291bda6e867196083dc
+msgid "whenever an image with the tag eileen is being shown."
 msgstr ""
 
-#: ../../source/changelog.rst:884
-# 8299cd31c9e84149b07d0f35aa7d85b1
-msgid "Added the :class:`Tooltip` class, which makes it easier to define tooltips as part of a screen."
+#: ../../source/changelog.rst:885
+# b6b2a694adf043c39a77506239f7f483
+msgid "**Side Image.** This release features a new implementation of :ref:`side-images`, which allows side images to be defined like other images, and allows side images to be integrated with screens easily."
 msgstr ""
 
-#: ../../source/changelog.rst:887
-# 77c0369b2d6c482e893d0339fb7d685d
-msgid "Added :var:`config.debug_text_overflow`, which controls the logging of cases where text exceeds its allocated area."
+#: ../../source/changelog.rst:889
+# 9640bd853df3422587982b2465a75dde
+msgid "**Sticky Transforms.** Finally, showing an image without providing a transform or ATL block will now continue the previous transform that an image with that tag was using. Previously, it caused those transforms to stop."
 msgstr ""
 
-#: ../../source/changelog.rst:890
-# 557b1e71fcb444849f8a6c8faca64c86
-msgid "Ren'Py no longer attempts to adjust the system level mixer controls, which means that it's no longer possible to raise the volume from within Ren'Py. Controlling the system volume exhibited bugs on all three platforms, including hard-to-predict volume changes that affect other applications."
+#: ../../source/changelog.rst:894
+# f2d2b9ab649945daa4599e5543734343
+msgid "Error Handling"
 msgstr ""
 
-#: ../../source/changelog.rst:895
-# eb0998f8d0644f1fae1e259b27ebaa37
-msgid "Along with the new features, transitions have been documented in the new manual."
-msgstr ""
-
-#: ../../source/changelog.rst:898
-# b3c6a1dddea14c5fada94f239de9cbb2
-msgid "Archives are now automatically detected in asciiabetical order. See the documentation for :var:`config.archives` for more details."
+#: ../../source/changelog.rst:896
+# 4c5132d15b3c45a2898d1605e3ca95c6
+msgid "Ren'Py now has a new exception handing framework. Instead of always crashing when an error occurs, Ren'Py will now display the error message on the screen, and give the user the following choices, as appropriate to the situation:"
 msgstr ""
 
 #: ../../source/changelog.rst:901
-# ee1e37a48db14b77bc3a29c0e1ace058
-msgid "Bug fixes:"
+# 31521165f7a44ed9835a09af1e50d9e9
+msgid "Rollback"
+msgstr ""
+
+#: ../../source/changelog.rst:902
+# 1347591db3094820a183a426df09e652
+msgid "Reload"
 msgstr ""
 
 #: ../../source/changelog.rst:903
-# ec7a4f0d4c6d49b49c8d334a1292db56
-msgid ":lpbug:`734137` - Timers do not participate in rollback."
+# 7cce8c7019da4c03805a2acf6e10f954
+msgid "Ignore"
 msgstr ""
 
 #: ../../source/changelog.rst:904
-# 740a6e57797640f2a92f0be7cc16263e
-msgid ":lpbug:`735187` - Ren'Py get stuck when using {nw}. (Thanks to Franck_v for tracking this down.)"
+# e27ec1ef006c45c18c6e3dbbb78206c5
+msgid "Open Traceback"
 msgstr ""
 
-#: ../../source/changelog.rst:909
-# 3a1792b199c643a78a11ca998c4b8aae
-msgid "Ren'Py 6.12.0"
+#: ../../source/changelog.rst:905
+# a6445834d0bf48d5a5ace212d81a58dd
+msgid "Quit"
 msgstr ""
 
-#: ../../source/changelog.rst:912
-# 62ffe6cda2a2406a9964014bc4a13a70
-msgid "Android Support"
+#: ../../source/changelog.rst:907
+# 2b2cef4b362449f7bf7c46a0d6781a0d
+msgid "When an editor is defined, Ren'Py will allow the user to click on a filename and line number to open that line in the editor."
 msgstr ""
 
-#: ../../source/changelog.rst:914
-# 54e3911ee535478684464b48e30c10a4
-msgid "Ren'Py now supports the Android platform. This includes support for a large fraction of Ren'Py's functionality, although we were unable to add support for imagedissolves and movie playback. It should be possible to package a Ren'Py game and distribute it through the Android market."
+#: ../../source/changelog.rst:910
+# f7e849b6b16d44909af996c2e64ac127
+msgid "The framework is used to handle exceptions and parse errors."
 msgstr ""
 
-#: ../../source/changelog.rst:919
-# 7658b02ee4d4467cb3b6aae000d8189d
-msgid "Android support required several changes in Ren'Py:"
+#: ../../source/changelog.rst:913
+# 291f3ca3e6cb42568483f78f3b69a269
+msgid "Other"
+msgstr ""
+
+#: ../../source/changelog.rst:915
+# 36976bd9493f4ba3b75921d3f4f9dc90
+msgid "When in OpenGL mode, Ren'Py now remembers the window size between  sessions. (This can be disabled using :var:`config.save_physical_size`, and it  may make sense to do so if your game is using the pre-screen preferences system.) Choosing the \"Window\" display preference now resizes the window to 100% of normal size."
 msgstr ""
 
 #: ../../source/changelog.rst:921
-# b8cdffeb11dd455bba8633ce924dd19d
-msgid "The OpenGL renderer has been extended to support OpenGL ES."
+# 810f384f21e94c5fb15d8f86e2b02816
+msgid "Added the :propref:`xcenter` and :propref:`ycenter` position and transform properties. These set the position of the center of a displayable."
 msgstr ""
 
-#: ../../source/changelog.rst:923
-# fc542cbc6a5f4377b7a0f3c622f20b15
-msgid "For performance reasons, much of the display system has been rewritten in the Cython language. This also should improve performance on other platforms."
+#: ../../source/changelog.rst:924
+# 5a622cd7abf94dc2a79031e44bc3e9be
+msgid "The :func:`renpy.vibrate` function allows Ren'Py to ask Android devices to vibrate."
 msgstr ""
 
 #: ../../source/changelog.rst:927
-# b2d6537ebd494591a517c1aa33a68cda
-msgid "Support was added for the Android lifecycle. Ren'Py automatically saves when the android device suspends, and reloads (if necessary) upon resume."
+# ebcb40b3c1db464dbafb757d83cec369
+msgid "The hyperlink style, callback, and focus functions have now been moved to the :propref:`hyperlink_functions` style  property. This allows the functions to be changed on a per-style basis."
 msgstr ""
 
-#: ../../source/changelog.rst:930
-# c90d5472de544ad18f1c711c422aa622
-msgid "We added the concept of :ref:`screen-variants`. This allows a single game to have multiple interfaces - such a mouse interface for computer platforms, and a touch interface for Android-based smartphones and tablets."
+#: ../../source/changelog.rst:931
+# 5cb9762fd6264d79a45a1c9fecd11dd7
+msgid "Indentation errors are now reported on the indented line, and not the line preceding the erroneous indentation."
 msgstr ""
 
 #: ../../source/changelog.rst:934
-# 0cbeb8ea8b5047e0bdd8033b4cfc4d6a
-msgid "We built a system that allows one to package a game separately from Ren'Py. This allows one to build packages without having to set up the Android NDK (you'll still need the Android SDK, Java, Python, Ant, and a lot of patience)."
+# f35b74e7437542398c53e907b3b147e4
+msgid "Added the :func:`SetScreenVariable` and :func:`ToggleScreenVariable` actions. These allow screen-local variables to be changed."
+msgstr ""
+
+#: ../../source/changelog.rst:937
+# 757f85d57fe34556a1ba091e1b57da9a
+msgid "Ren'Py now attempts to elide personal information from filenames. Where possible, filenames are reported relative to the base or Ren'Py base directories,  rather than the root of the filesystem."
 msgstr ""
 
 #: ../../source/changelog.rst:941
-# cecdb71cd46846c7b9a4208018cfaae2
-msgid "New Widgets and Displayables"
+# 61d63d3f7f244c9da967cf080c1ceeff
+msgid "The new :propref:`box_wrap` style property allows hboxes and vboxes to automatically wrap when they reach the edge of their enclosing area."
 msgstr ""
 
-#: ../../source/changelog.rst:943
-# 32efebc78cfa440da6c377b7221aabcc
-msgid "Added the :ref:`SpriteManager <sprites>` displayable. This provides a high-performance way of drawing many similar sprites to the screen. This can scale to hundreds of particles, provided those particles are mostly similar to each other."
+#: ../../source/changelog.rst:944
+# abe7bd4341fe4eb3a5000ba18c505109
+msgid "Actions now can have an :func:`Action.unhovered` method. This method is called when an action supplied as a `hovered` parameter loses focus."
 msgstr ""
 
-#: ../../source/changelog.rst:948
-# 84f9700d1d9944a48775b49daee9beaf
-msgid "Added the :ref:`mousearea` widget. A mousearea allows hovered and unhovered callbacks to occur when the mouse enters and leaves an area of the screen. Since it doesn't participate in the focus system, a mousearea can include buttons and bars."
+#: ../../source/changelog.rst:947
+# 5f45a123d41f4cdcaea445e71e762c48
+msgid "Added the :class:`Tooltip` class, which makes it easier to define tooltips as part of a screen."
+msgstr ""
+
+#: ../../source/changelog.rst:950
+# 1ee1d7f7c13c465daa397a97b096952e
+msgid "Added :var:`config.debug_text_overflow`, which controls the logging of cases where text exceeds its allocated area."
 msgstr ""
 
 #: ../../source/changelog.rst:953
-# a9bed496175c4a95a02484c5de72d81b
-msgid "Added :ref:`drag-and-drop` widgets and displayables. The drag and drop system can support:"
-msgstr ""
-
-#: ../../source/changelog.rst:956
-# e67c0f9981544e22879a618f22918201
-msgid "Windows being repositioned by the user."
-msgstr ""
-
-#: ../../source/changelog.rst:957
-# ef6a67eaa9144bd3834b0981f599875e
-msgid "Card games."
+# b99ba0782cd64703b6a3ce91a7f9f912
+msgid "Ren'Py no longer attempts to adjust the system level mixer controls, which means that it's no longer possible to raise the volume from within Ren'Py. Controlling the system volume exhibited bugs on all three platforms, including hard-to-predict volume changes that affect other applications."
 msgstr ""
 
 #: ../../source/changelog.rst:958
-# 76f8dc244caf41edb9a0b2c24ff100be
-msgid "Inventory systems."
+# fa711abc2fab4b388585ec5aa2d47195
+msgid "Along with the new features, transitions have been documented in the new manual."
 msgstr ""
 
-#: ../../source/changelog.rst:959
-# f806a27b0b824879b87e74285299ffa9
-msgid "Drag-to-reorder systems."
-msgstr ""
-
-#: ../../source/changelog.rst:962
-# 7ab4842ca37149b6ac19652bacd7641b
-msgid "Image Prediction"
+#: ../../source/changelog.rst:961
+# 765005ed17b84aa0bd0f6eee2ee21994
+msgid "Archives are now automatically detected in asciiabetical order. See the documentation for :var:`config.archives` for more details."
 msgstr ""
 
 #: ../../source/changelog.rst:964
-# dcfd3ee8c35d4807b78ee3a28f64b0f6
-msgid "Ren'Py is now better at predicting image usage. Along with predicting images used by normal gameplay, it now attempts to predict images that are used by screens one click away from the user. For example, during normal gameplay, it will predict images on the first screen of the game menu. While at the game menu, it will predict the other screens of the game menu, and also the images the user will see when returning to the main menu. This prediction is automatic, but only occurs when using screens."
+# 8b39315a9ee044c0ae154154bfc25950
+msgid "Bug fixes:"
+msgstr ""
+
+#: ../../source/changelog.rst:966
+# d470cbf8c91a4c45a2867ab2ccfe880b
+msgid ":lpbug:`734137` - Timers do not participate in rollback."
+msgstr ""
+
+#: ../../source/changelog.rst:967
+# 4d695efd8aec40c692b0555eaa6a7bbd
+msgid ":lpbug:`735187` - Ren'Py get stuck when using {nw}. (Thanks to Franck_v for tracking this down.)"
 msgstr ""
 
 #: ../../source/changelog.rst:972
-# 101369682e704912b47c5f82cbb8848a
-msgid "Screens may be invoked at any time, in order to allow for image prediction, unless they have a predict property of False. This means that displaying a screen should not have side effects. (Most screens only have side effects when a button is clicked or a bar changed - that's still fine.)"
+# 437ae3e399314012bd2630bfd52e675f
+msgid "Ren'Py 6.12.0"
+msgstr ""
+
+#: ../../source/changelog.rst:975
+# f2190c1cfbcd43a89304cdc164a565bc
+msgid "Android Support"
 msgstr ""
 
 #: ../../source/changelog.rst:977
-# 46eb216b341e492bae1e54a0052f88f5
-msgid "Ren'Py now supports hotspot caching for screen language imagemaps. When :var:`config.developer` is true, Ren'Py will write a PNG file in the game/cache/ directory containing image data for each of the hotspots in the imagemap. If the cache file exists (regardless of the config.developer setting) it will be loaded instead of loading the hotspot images. As the cache file is often much smaller than the size of the hotspot images, it will load faster and reduce image cache pressure, improving game performance. This behavior only applies to screen language imagemaps, and can be disabled with :var:`config.imagemap_cache`."
+# e69ce0e7250841e883dd29bb9a3e5037
+msgid "Ren'Py now supports the Android platform. This includes support for a large fraction of Ren'Py's functionality, although we were unable to add support for imagedissolves and movie playback. It should be possible to package a Ren'Py game and distribute it through the Android market."
 msgstr ""
 
-#: ../../source/changelog.rst:987
-# f9b44871d42a465881f16a0aed42c6e1
-msgid "This should remove most of the need for :func:`renpy.cache_pin`. While not an error, the use of cache pinning can cause unnecessary memory usage when the wrong image is loaded."
+#: ../../source/changelog.rst:982
+# 89f6a7b1918a45b9943fe216fd759a07
+msgid "Android support required several changes in Ren'Py:"
 msgstr ""
 
-#: ../../source/changelog.rst:992
-# f6a8d27369cc444ab583b3d5da7946c2
-msgid "Screens"
+#: ../../source/changelog.rst:984
+# f553f8ee7da94eb8960a7e0d481b19bf
+msgid "The OpenGL renderer has been extended to support OpenGL ES."
 msgstr ""
 
-#: ../../source/changelog.rst:994
-# 116ce869b9d34cdb99cf045d3c89e6e7
-msgid "Ren'Py now ships with a default set of screens, which are used by the demo and installed by default when a new game is created. You can find them in template/game/screens.rpy, and they can be used by copying that file into your project. These screens are not 100% compatible with the previous layout system - for example, some styles have changed. That's why games must opt-in to them."
+#: ../../source/changelog.rst:986
+# d4a0171ec96d46c084e9f57a12c6a47f
+msgid "For performance reasons, much of the display system has been rewritten in the Cython language. This also should improve performance on other platforms."
 msgstr ""
 
-#: ../../source/changelog.rst:1001
-# 25d45ff5f143442697c764d9668bb4de
-msgid "The definition of the `items` parameter of the :ref:`choice-screen` and :ref:`nvl-screen` screens has changed, and games will need to be updated to work with the new version."
+#: ../../source/changelog.rst:990
+# 7d4542b0cecf4811a6858b19bd7137b5
+msgid "Support was added for the Android lifecycle. Ren'Py automatically saves when the android device suspends, and reloads (if necessary) upon resume."
 msgstr ""
 
-#: ../../source/changelog.rst:1005
-# 10e8dff3e74a42ba86d070e48bdf3f68
-msgid "Character arguments beginning with ``show_`` are passed to the :ref:`say-screen` screen. This allows things like show_side_image and show_two_window to work with screens. The screens we ship support these options."
+#: ../../source/changelog.rst:993
+# 8e0adb14fb3b4e738586c41533976b9e
+msgid "We added the concept of :ref:`screen-variants`. This allows a single game to have multiple interfaces - such a mouse interface for computer platforms, and a touch interface for Android-based smartphones and tablets."
 msgstr ""
 
-#: ../../source/changelog.rst:1010
-# 13aaf3bc820642cb9f1cc3e781d08a43
-msgid "The new :var:`config.imagemap_auto_function` variable allows the game-maker to control the interpretation of the ``auto`` property of imagemaps and imagebuttons."
+#: ../../source/changelog.rst:997
+# 9f034ebe40364cf9960613253e0ffc85
+msgid "We built a system that allows one to package a game separately from Ren'Py. This allows one to build packages without having to set up the Android NDK (you'll still need the Android SDK, Java, Python, Ant, and a lot of patience)."
 msgstr ""
 
-#: ../../source/changelog.rst:1014
-# 53031c91c8f54544b1024954c7a96931
-msgid "The imagemap caching behavior described above applies only to screens."
+#: ../../source/changelog.rst:1004
+# 61bbc9bb8b7f4cfab0b6e1b40a459558
+msgid "New Widgets and Displayables"
+msgstr ""
+
+#: ../../source/changelog.rst:1006
+# 52b44d9299914aeaa224dde23fed7a13
+msgid "Added the :ref:`SpriteManager <sprites>` displayable. This provides a high-performance way of drawing many similar sprites to the screen. This can scale to hundreds of particles, provided those particles are mostly similar to each other."
+msgstr ""
+
+#: ../../source/changelog.rst:1011
+# a71b363086214723a70efc2338bd92b4
+msgid "Added the :ref:`mousearea` widget. A mousearea allows hovered and unhovered callbacks to occur when the mouse enters and leaves an area of the screen. Since it doesn't participate in the focus system, a mousearea can include buttons and bars."
 msgstr ""
 
 #: ../../source/changelog.rst:1016
-# ac3e56b5d30b4feaacf08a459289a249
-msgid "The :func:`FilePageName` and :func:`FileSlotName` functions make it easier to name slots"
+# 9bfbcf0ffcd24d199cad9be7370cad82
+msgid "Added :ref:`drag-and-drop` widgets and displayables. The drag and drop system can support:"
+msgstr ""
+
+#: ../../source/changelog.rst:1019
+# c2aed66e72364218aaaa4065284df0ae
+msgid "Windows being repositioned by the user."
 msgstr ""
 
 #: ../../source/changelog.rst:1020
-# 05752541ff0541d09bfbf08187ef5527
-msgid "Other Improvements"
+# 27b6aecf830a4ab88fbc5f79f6c80449
+msgid "Card games."
+msgstr ""
+
+#: ../../source/changelog.rst:1021
+# f43f0e283d294a12aaa00bdffe714aed
+msgid "Inventory systems."
 msgstr ""
 
 #: ../../source/changelog.rst:1022
-# e0b964cf734248cb942334e4187ea494
-msgid "Ren'Py 6.12 includes a number of other improvements:"
+# 14a0a261e25a49149487e9b734fdeb72
+msgid "Drag-to-reorder systems."
 msgstr ""
 
-#: ../../source/changelog.rst:1024
-# f12b17362bb94d8a966428a13eebfd7a
-msgid "We've continued writing the new manual. Notably, we have rewritten the documentation for displayables."
+#: ../../source/changelog.rst:1025
+# 2d24858098aa473fa5d849562e68af1a
+msgid "Image Prediction"
 msgstr ""
 
 #: ../../source/changelog.rst:1027
-# 44b8fafcc2ea4df892a2a76b1e1452d3
-msgid "When taking a screenshot, :var:`config.screenshot_callback` is called. The default implementation of this function notifies the user of the location of the screenshot."
+# f96456ce43d84ee680ad87fb6d676660
+msgid "Ren'Py is now better at predicting image usage. Along with predicting images used by normal gameplay, it now attempts to predict images that are used by screens one click away from the user. For example, during normal gameplay, it will predict images on the first screen of the game menu. While at the game menu, it will predict the other screens of the game menu, and also the images the user will see when returning to the main menu. This prediction is automatic, but only occurs when using screens."
 msgstr ""
 
-#: ../../source/changelog.rst:1031
-# fd32aa94a3d442bab28e22d7ae9b8cba
-msgid "The :func:`Solid` and :func:`Frame` displayables are now tiny and no longer take up (much) space in the image cache."
+#: ../../source/changelog.rst:1035
+# 13420f3032e34c5d82989d853bf9212a
+msgid "Screens may be invoked at any time, in order to allow for image prediction, unless they have a predict property of False. This means that displaying a screen should not have side effects. (Most screens only have side effects when a button is clicked or a bar changed - that's still fine.)"
 msgstr ""
 
-#: ../../source/changelog.rst:1034
-# cccbc4c829dc45d9b55eb28040faaa6e
-msgid "We now create a log.txt file, which replaces the old opengl.txt, and can log other subsystems."
+#: ../../source/changelog.rst:1040
+# dd04bd82ef8a4fdbb37acb14fdfeb121
+msgid "Ren'Py now supports hotspot caching for screen language imagemaps. When :var:`config.developer` is true, Ren'Py will write a PNG file in the game/cache/ directory containing image data for each of the hotspots in the imagemap. If the cache file exists (regardless of the config.developer setting) it will be loaded instead of loading the hotspot images. As the cache file is often much smaller than the size of the hotspot images, it will load faster and reduce image cache pressure, improving game performance. This behavior only applies to screen language imagemaps, and can be disabled with :var:`config.imagemap_cache`."
 msgstr ""
 
-#: ../../source/changelog.rst:1037
-# d0a4a8e5cd9747a5b4188539cd961625
-msgid "Several missing properties have been added to the screen language."
+#: ../../source/changelog.rst:1050
+# 89dd2ec570c846318c85757da17be1bd
+msgid "This should remove most of the need for :func:`renpy.cache_pin`. While not an error, the use of cache pinning can cause unnecessary memory usage when the wrong image is loaded."
 msgstr ""
 
-#: ../../source/changelog.rst:1039
-# 3924defb17624a8c90464ca3bd38eb11
-msgid "Ren'Py now treats filenames as if they were case-insensitive. This means that filename mismatches on Linux should no longer be a problem."
+#: ../../source/changelog.rst:1055
+# 4baa0a524e5445b1b4cb3b13b5f98b73
+msgid "Screens"
 msgstr ""
 
-#: ../../source/changelog.rst:1044
-# 19007fe3382e496797537a3ebec6dbf3
-msgid "Bug Fixes"
-msgstr ""
-
-#: ../../source/changelog.rst:1046
-# 435870697c294b57a2b07b87af705744
-msgid ":lpbug:`680266` - Ensures that dynamic displayables update before Transforms that use them."
-msgstr ""
-
-#: ../../source/changelog.rst:1049
-# 0bf8c9baad424853a398d6989a31f2ae
-msgid ":lpbug:`683412` - Do not crash if a shader fails to compile."
-msgstr ""
-
-#: ../../source/changelog.rst:1051
-# df31f70d9e7f4b338f71d30ca733de78
-msgid "Fixed a bug that caused Ren'Py to crash when the system volume was lowered to 0, but not muted."
-msgstr ""
-
-#: ../../source/changelog.rst:1054
-# 567270b4fe4c4508aac28c92d4dd0f0b
-msgid "Fixed a bug that prevented :func:`Render.canvas` from working with the OpenGL renderer."
-msgstr ""
-
-#: ../../source/changelog.rst:1059
-# 1ade3f0a31ca496ca51c50bb7640681b
-msgid "Ren'Py 6.11.2"
-msgstr ""
-
-#: ../../source/changelog.rst:1062
-#: ../../source/changelog.rst:1115
-# 6859230fc6344c7aa85a42f4dafbd75e
-# af650851331c40618b05073870d2eb39
-msgid "New Features"
+#: ../../source/changelog.rst:1057
+# 2cc1619521bb44829d64cab375ec07d2
+msgid "Ren'Py now ships with a default set of screens, which are used by the demo and installed by default when a new game is created. You can find them in template/game/screens.rpy, and they can be used by copying that file into your project. These screens are not 100% compatible with the previous layout system - for example, some styles have changed. That's why games must opt-in to them."
 msgstr ""
 
 #: ../../source/changelog.rst:1064
-# 5f15e0f725844f6abe10e7b282ee1ea6
-msgid "This release includes four new themes, generously contributed by Aleema. You can see and change to these new themes by clicking the \"Choose Theme\" button in the launcher."
+# 52244d95cbb945789cea831290eb7721
+msgid "The definition of the `items` parameter of the :ref:`choice-screen` and :ref:`nvl-screen` screens has changed, and games will need to be updated to work with the new version."
 msgstr ""
 
-#: ../../source/changelog.rst:1069
-# c9df528c68d745088e4d47291f3f7b04
-msgid "Software Update"
+#: ../../source/changelog.rst:1068
+# 765f47ca7dba456d8fa13900b77edee9
+msgid "Character arguments beginning with ``show_`` are passed to the :ref:`say-screen` screen. This allows things like show_side_image and show_two_window to work with screens. The screens we ship support these options."
 msgstr ""
 
-#: ../../source/changelog.rst:1071
-# 074e750ac8e543668d060ddbe616b98e
-msgid "The jEdit text editor included with Ren'Py has been updated to version 4.3.2, a supported version that should be able to run most plugins."
-msgstr ""
-
-#: ../../source/changelog.rst:1075
-# a409a55cbd7c4c51b098f05b6fae3b3a
-msgid "Behavior Changes"
+#: ../../source/changelog.rst:1073
+# 68c91b0c11ec4121a5ece0b541a69402
+msgid "The new :var:`config.imagemap_auto_function` variable allows the game-maker to control the interpretation of the ``auto`` property of imagemaps and imagebuttons."
 msgstr ""
 
 #: ../../source/changelog.rst:1077
-# bb40fe9171264453b3e9c1775cc64729
-msgid "The maximum default physical size of the Ren'Py window is now 102 pixels smaller than the height of the screen. This should prevent Ren'Py from creating windows that can't be resized since they are much bigger than the screen."
+# 181ee214867b43bd89dfce4ed13852e8
+msgid "The imagemap caching behavior described above applies only to screens."
 msgstr ""
 
-#: ../../source/changelog.rst:1082
-# dc085c1f00b64622821efca31645355d
-msgid "Buttons now only pass key events to their children when they are focused. This allows a screen language key statement to be used as the child of a button, and only activate when the button is focused."
+#: ../../source/changelog.rst:1079
+# 5b6b7f81c3d440acba2c8d5302be9777
+msgid "The :func:`FilePageName` and :func:`FileSlotName` functions make it easier to name slots"
 msgstr ""
 
-#: ../../source/changelog.rst:1086
-# a22887c9bffe486bb2ae8e21742d92ef
-msgid "MoveTransition was rewritten to correctly deal with cases in which images changed their order. This may lead to differences in behavior from the old version, where the ordering was undefined."
+#: ../../source/changelog.rst:1083
+# 467a76d7ad9440e593a7f5d705613087
+msgid "Other Improvements"
 msgstr ""
 
-#: ../../source/changelog.rst:1091
-# 94a12393193040bfa1efec1c0ad5ce70
-msgid "Bug fixes"
+#: ../../source/changelog.rst:1085
+# 2b5bfb9627574123b9f25f46523432ee
+msgid "Ren'Py 6.12 includes a number of other improvements:"
 msgstr ""
 
-#: ../../source/changelog.rst:1093
-# 72016260209d4a269e4f7ab2d53152e1
-msgid "Fixed :lpbug:`647686`, a regression that prevented sounds from looping properly."
+#: ../../source/changelog.rst:1087
+# 0253c972706845f0ad74e4cd4954e0e2
+msgid "We've continued writing the new manual. Notably, we have rewritten the documentation for displayables."
 msgstr ""
 
-#: ../../source/changelog.rst:1096
-# f7efb37c34614a7ca7e7942f0a18abf7
-msgid "Fixed :lpbug:`661983`, which caused insensitive hotspots to default to the idle, rather than ground, image when no insensitive image was supplied."
+#: ../../source/changelog.rst:1090
+# 0c84ba86e34a412592de91ca6564b23f
+msgid "When taking a screenshot, :var:`config.screenshot_callback` is called. The default implementation of this function notifies the user of the location of the screenshot."
 msgstr ""
 
-#: ../../source/changelog.rst:1099
-# da5c44a574264d7bb0f2f423f9579252
-msgid "Fixed :lpbug:`647324`, where ImageDissolves are rendered as if specified with alpha=True whether or not alpha=True was set."
+#: ../../source/changelog.rst:1094
+# 613a0ed7a1b34a2aba09105262b913cb
+msgid "The :func:`Solid` and :func:`Frame` displayables are now tiny and no longer take up (much) space in the image cache."
+msgstr ""
+
+#: ../../source/changelog.rst:1097
+# aca0a5ad320947faa8c746f7654fb239
+msgid "We now create a log.txt file, which replaces the old opengl.txt, and can log other subsystems."
+msgstr ""
+
+#: ../../source/changelog.rst:1100
+# 408108ea5e2e4d40a1ab785957025a2d
+msgid "Several missing properties have been added to the screen language."
 msgstr ""
 
 #: ../../source/changelog.rst:1102
-# 07f3362cedce4ef48652b78aca4175b9
-msgid "Fixed a problem that caused the game to start when picking \"No\" after clicking the (window-level) quit button."
+# 89afb5f8f12b45af8a9944e22940349a
+msgid "Ren'Py now treats filenames as if they were case-insensitive. This means that filename mismatches on Linux should no longer be a problem."
 msgstr ""
 
-#: ../../source/changelog.rst:1105
-# fb6a1dc0fc24421cb37ca2e741d11731
-msgid "Fixed a problem that prevented AnimatedValue from functioning properly when delay was not 1.0. Thanks to Scout for the fix."
+#: ../../source/changelog.rst:1107
+# 791a20e9786b421ea440f08a168567d8
+msgid "Bug Fixes"
 msgstr ""
 
-#: ../../source/changelog.rst:1108
-# c91d5117b4e543e4ace0b388de74097d
-msgid "Fixed a problem that caused movies to display incorrectly when the screen was scaled using OpenGL scaling."
+#: ../../source/changelog.rst:1109
+# e4d455d35af04ce9ae8df824140b18aa
+msgid ":lpbug:`680266` - Ensures that dynamic displayables update before Transforms that use them."
 msgstr ""
 
 #: ../../source/changelog.rst:1112
-# f2bfaf546ec34b1caf1e80e2e8a41fec
-msgid "Ren'Py 6.11.1"
+# 9b648f70c2324f48800e2dc54da9e29d
+msgid ":lpbug:`683412` - Do not crash if a shader fails to compile."
+msgstr ""
+
+#: ../../source/changelog.rst:1114
+# d8308d8544044007afc6e970e6050af7
+msgid "Fixed a bug that caused Ren'Py to crash when the system volume was lowered to 0, but not muted."
 msgstr ""
 
 #: ../../source/changelog.rst:1117
-# 046fab6e51f4421aab272d34db1abfe6
-msgid "Add the :func:`AlphaBlend` displayable and the :func:`AlphaDissolve` transition. These take two displayables, and use the alpha channel of a third displayable to blend them together. (The third displayable is often an animation, allowing the effect to change over time.)"
+# cef9b53202f64fa2b3f50e6992945d1a
+msgid "Fixed a bug that prevented :func:`Render.canvas` from working with the OpenGL renderer."
 msgstr ""
 
 #: ../../source/changelog.rst:1122
-# 4ffc6ded431e473f8de58adf6c31f3fe
-msgid "The new :ref:`modes` system allows one to invoke callbacks when switching from one type of interaction to another. This can be used, for example, to automatically hide the window before transitions."
+# 0631fc67921243838c408130b5f102e9
+msgid "Ren'Py 6.11.2"
 msgstr ""
 
-#: ../../source/changelog.rst:1126
-# a16d7b254f0f4f66a9916318b570becd
-msgid "Imagemaps created using the screen language now only have a size equal to that of their ground image. (Previously, they took up the entire screen.) This change makes it easier to position an imagemap at a different location on screen, such as the bottom."
+#: ../../source/changelog.rst:1125
+#: ../../source/changelog.rst:1178
+# aebc79961ed24a9aa42e60590962c096
+# 7620e5e2efd945be8bd7b8a681420324
+msgid "New Features"
 msgstr ""
 
-#: ../../source/changelog.rst:1131
-# f1a27d41a2454d0e966737f7addfb808
-msgid "Imagemaps now take an alpha argument. If true (the default), hotspots are only focused if the mouse is over a non-transparent part of the idle or hover image. If set to false, the hotspot is focused whenever the mouse is within its boundaries."
+#: ../../source/changelog.rst:1127
+# 4ade9d54c08c492ebcfb5bbd03f1b525
+msgid "This release includes four new themes, generously contributed by Aleema. You can see and change to these new themes by clicking the \"Choose Theme\" button in the launcher."
 msgstr ""
 
-#: ../../source/changelog.rst:1136
-# ca500e4e731e4047a4b7279bd71f2912
-msgid "Added the :func:`renpy.focus_coordinates` function, which returns the coordinates of the currently focused displayable, when possible."
+#: ../../source/changelog.rst:1132
+# 7737c36bb8514d999a5ee0252dbd16e1
+msgid "Software Update"
 msgstr ""
 
-#: ../../source/changelog.rst:1139
-# 8bed267c08ee470194c0d7d9c55faf08
-msgid "The new :func:`renpy.notify` function and :func:`Notify` action make it simple to flash small status messages on the screen, such as might be used to notify the user of a completed quicksave or screenshot."
+#: ../../source/changelog.rst:1134
+# 7bb50c5fc8d3448fa18110bd8eb9c699
+msgid "The jEdit text editor included with Ren'Py has been updated to version 4.3.2, a supported version that should be able to run most plugins."
 msgstr ""
 
-#: ../../source/changelog.rst:1143
-# c3978c8a020e4cba85ea6fd48e6c427c
-msgid "The new :func:`HideInterface` action allows the interface to temporarily be hidden, as a screen language action."
+#: ../../source/changelog.rst:1138
+# 74117ffdae874a1f88bc1c50cefd33d7
+msgid "Behavior Changes"
 msgstr ""
 
-#: ../../source/changelog.rst:1146
-# dc9d320148dc47979d77ff512d7753e8
-msgid "The developer menu now includes a command that will list all the files in the game directory."
+#: ../../source/changelog.rst:1140
+# 926cf793d2df45799403c304489c5cfe
+msgid "The maximum default physical size of the Ren'Py window is now 102 pixels smaller than the height of the screen. This should prevent Ren'Py from creating windows that can't be resized since they are much bigger than the screen."
+msgstr ""
+
+#: ../../source/changelog.rst:1145
+# bd0074eb480749438c24880a251e8920
+msgid "Buttons now only pass key events to their children when they are focused. This allows a screen language key statement to be used as the child of a button, and only activate when the button is focused."
 msgstr ""
 
 #: ../../source/changelog.rst:1149
-# 3249817e87ea4cc087cffee9ba46216f
-msgid "The urllib and urllib2 modules from the Python standard library are now distributed as part of Ren'Py. These modules allow data to be retrieved from web servers."
+# 34bfd16560624a17866d4e43fbcf2e3d
+msgid "MoveTransition was rewritten to correctly deal with cases in which images changed their order. This may lead to differences in behavior from the old version, where the ordering was undefined."
 msgstr ""
 
-#: ../../source/changelog.rst:1153
-# 3a3abd8fedcb48c7990ea4f0edaadfbd
-msgid "The launcher now includes an experimental updater, that makes it easier to update to the latest pre-release. Hitting shift+U at the launcher's main screen will cause Ren'Py to be updated."
+#: ../../source/changelog.rst:1154
+# a1ee4e59f85d45539bdb02e4aa5fdf40
+msgid "Bug fixes"
 msgstr ""
 
-#: ../../source/changelog.rst:1158
-# 3797b3d9a3f347ca8bbb9d0104573a8d
-msgid "Fixes"
+#: ../../source/changelog.rst:1156
+# d352725b45aa479d818bb603a992b6eb
+msgid "Fixed :lpbug:`647686`, a regression that prevented sounds from looping properly."
 msgstr ""
 
-#: ../../source/changelog.rst:1160
-# 27b4e88dc37a42b48a96ab817d5e73f7
-msgid ":func:`MoveTransition` now respects the xoffset and yoffset parameters."
+#: ../../source/changelog.rst:1159
+# ddc5552431ca4b19885809923d91d31b
+msgid "Fixed :lpbug:`661983`, which caused insensitive hotspots to default to the idle, rather than ground, image when no insensitive image was supplied."
 msgstr ""
 
 #: ../../source/changelog.rst:1162
-# 22aa60fad69a43b080ddecf07e868a72
-msgid "Fixed several bugs with screen-language imagemaps."
+# 6a9e9e2c4dc0474391820ab23bc867ac
+msgid "Fixed :lpbug:`647324`, where ImageDissolves are rendered as if specified with alpha=True whether or not alpha=True was set."
 msgstr ""
 
-#: ../../source/changelog.rst:1164
-# c568516a8e884d09aafb19b0b598365c
-msgid "Fixed a bug (#626303) that was caused by an incorrect texture unit check. Thanks to tmrwiz for the fix."
+#: ../../source/changelog.rst:1165
+# 6cf1fa3a74de43d4869ea33c35b4a7f5
+msgid "Fixed a problem that caused the game to start when picking \"No\" after clicking the (window-level) quit button."
 msgstr ""
 
-#: ../../source/changelog.rst:1167
-# 2b3749bb043b44a39d968dc879273fca
-msgid "Transforms no longer cause a divide by zero exception when the zoom, xzoom, or yzoom properties are 0."
+#: ../../source/changelog.rst:1168
+# 2cc50070a91e45a1813ee6fd7e0a68db
+msgid "Fixed a problem that prevented AnimatedValue from functioning properly when delay was not 1.0. Thanks to Scout for the fix."
 msgstr ""
 
-#: ../../source/changelog.rst:1170
-# 58f139cdc68a4c418113d54d006d6f77
-msgid "Clockwise and counterclockwise revolution in transforms now works."
-msgstr ""
-
-#: ../../source/changelog.rst:1172
-# 4ae5edd73ef2400885325e64d3d4553a
-msgid "Fixed a bug with scaling, that occured when switching between the scaled software and GL renderers."
+#: ../../source/changelog.rst:1171
+# fa88d5613a6c444385534b3cb1deab38
+msgid "Fixed a problem that caused movies to display incorrectly when the screen was scaled using OpenGL scaling."
 msgstr ""
 
 #: ../../source/changelog.rst:1175
-# 625491f2cb8c465082caa37da353a054
-msgid "Hidden screens are no longer considered when assigning default focus."
+# b492a3b35a6c4f868790eabb2f39f2a0
+msgid "Ren'Py 6.11.1"
 msgstr ""
 
-#: ../../source/changelog.rst:1177
-# 58f0abaa215843b4a6db0c5bb0de44b8
-msgid "FieldValues with max_is_zero set to True now work properly. Thanks to SleepKirby for the fix."
+#: ../../source/changelog.rst:1180
+# 8082cbedba084810bef0a236e6841391
+msgid "Add the :func:`AlphaBlend` displayable and the :func:`AlphaDissolve` transition. These take two displayables, and use the alpha channel of a third displayable to blend them together. (The third displayable is often an animation, allowing the effect to change over time.)"
 msgstr ""
 
-#: ../../source/changelog.rst:1184
-# 646bfe1d54fd4a268caa9b3ee3a06e7f
-msgid "Ren'Py 6.11.0"
-msgstr ""
-
-#: ../../source/changelog.rst:1187
-# 13bc8a812b8749639426bc38983af214
-msgid "OpenGL Support"
+#: ../../source/changelog.rst:1185
+# edf1b10415614ba9a346984bb7e0344b
+msgid "The new :ref:`modes` system allows one to invoke callbacks when switching from one type of interaction to another. This can be used, for example, to automatically hide the window before transitions."
 msgstr ""
 
 #: ../../source/changelog.rst:1189
-# f52d57bca4ca44ec82e0a9ca6a771c61
-msgid "Ren'Py will now take advantage of a computer's OpenGL hardware acceleration, if supported. This OpenGL support has several user-visible changes:"
+# cbe1240874824fa5a30a9def77aef1fa
+msgid "Imagemaps created using the screen language now only have a size equal to that of their ground image. (Previously, they took up the entire screen.) This change makes it easier to position an imagemap at a different location on screen, such as the bottom."
 msgstr ""
 
-#: ../../source/changelog.rst:1192
-# bbbaf992ca7b4f85be6730609db0c547
-msgid "The window containing a Ren'Py game can be resized or maximized, using standard window controls. When the window's aspect ratio does not match the game's aspect ratio, black bars will be added."
+#: ../../source/changelog.rst:1194
+# 94725de26c2645fe8083c233994306c7
+msgid "Imagemaps now take an alpha argument. If true (the default), hotspots are only focused if the mouse is over a non-transparent part of the idle or hover image. If set to false, the hotspot is focused whenever the mouse is within its boundaries."
 msgstr ""
 
-#: ../../source/changelog.rst:1196
-# 67a2bd63f79248aebb208fc908da1565
-msgid "Displaying in full-screen mode should not change the monitor's resolution. This will prevent the game from being distorted when displayed on a monitor with a different aspect ratio."
+#: ../../source/changelog.rst:1199
+# 5fe41db465144d7ea22b409474af2a5c
+msgid "Added the :func:`renpy.focus_coordinates` function, which returns the coordinates of the currently focused displayable, when possible."
 msgstr ""
 
-#: ../../source/changelog.rst:1200
-# b8b0c3e0b56f48f798a5fb9b4ad6b065
-msgid "Unless disabled in the video driver configuration, Ren'Py will use vertical blank synchronization, eliminating image tearing."
-msgstr ""
-
-#: ../../source/changelog.rst:1203
-# fc8d08c415bf4c49a999311e66f9eef8
-msgid "GPU rendering is used, which should make drawing the screen faster in most circumstances."
+#: ../../source/changelog.rst:1202
+# ffb5e85d6ef9427e8a53a8d3fdda47b6
+msgid "The new :func:`renpy.notify` function and :func:`Notify` action make it simple to flash small status messages on the screen, such as might be used to notify the user of a completed quicksave or screenshot."
 msgstr ""
 
 #: ../../source/changelog.rst:1206
-# ac5a2b64f07d422f94e5029432699526
-msgid "Software rendering is still supported, and Ren'Py will automatically fall back to software rendering if it detects an improperly configured video card."
+# 07fdb65ea78541d59a85acea9ea9189f
+msgid "The new :func:`HideInterface` action allows the interface to temporarily be hidden, as a screen language action."
 msgstr ""
 
 #: ../../source/changelog.rst:1209
-# 4342461aa1734b51a31cc351cc30c9de
-msgid "You can test that Ren'Py is in OpenGL mode by attempting to resize the window. If it's resizable, it's OpenGL, otherwise, software rendering is being used."
+# 7d3565e7432a46e0b815196c0473f2e8
+msgid "The developer menu now includes a command that will list all the files in the game directory."
 msgstr ""
 
-#: ../../source/changelog.rst:1214
-# af4ee6931272444e982a04fddcb39375
-msgid "Screens and Screen Language"
+#: ../../source/changelog.rst:1212
+# e6a5a258a61c4edda6d50ff9c1bba073
+msgid "The urllib and urllib2 modules from the Python standard library are now distributed as part of Ren'Py. These modules allow data to be retrieved from web servers."
 msgstr ""
 
 #: ../../source/changelog.rst:1216
-# 3b4316c82afd4cb2be70e2164d42c246
-msgid "This release introduces a new screen system, which allows one to use the new screen language to declaratively specify portions of the user interface. The screen language supersedes layouts, overlay functions, imagemaps, and most other means of customizing the out-of-game menus and the in-game screens."
+# 7c060fa7433a4b908e48a8b89408b690
+msgid "The launcher now includes an experimental updater, that makes it easier to update to the latest pre-release. Hitting shift+U at the launcher's main screen will cause Ren'Py to be updated."
 msgstr ""
 
 #: ../../source/changelog.rst:1221
-# a4f5174511d141e09e95eb8f3818172d
-msgid "The previous way of customizing the behavior of the game menu, the layout system, had problems, especially when using imagemap layouts. Screens were single-purpose, and it would be difficult to (for example) load a quick-save game from the main menu, without extensive Python code."
+# 6d50affebe144399982cbbd704aca98c
+msgid "Fixes"
 msgstr ""
 
-#: ../../source/changelog.rst:1226
-# aaae1a5309bf47dea45f3c0730905788
-msgid "The screen system addresses this by providing a pool of functionality, in the form of Actions and BarValues. This makes it possible to pick and choose functionality, and add it to screens as is deemed necessary."
+#: ../../source/changelog.rst:1223
+# 8eb883cb64a340e882eea9121901f4f0
+msgid ":func:`MoveTransition` now respects the xoffset and yoffset parameters."
+msgstr ""
+
+#: ../../source/changelog.rst:1225
+# 69fa5ca3c54f438d80759d74efa8b1ad
+msgid "Fixed several bugs with screen-language imagemaps."
+msgstr ""
+
+#: ../../source/changelog.rst:1227
+# 8af3f0140a22479fb9108f5251fb890b
+msgid "Fixed a bug (#626303) that was caused by an incorrect texture unit check. Thanks to tmrwiz for the fix."
+msgstr ""
+
+#: ../../source/changelog.rst:1230
+# 20b2766766144061ac04dd28d2ce0f54
+msgid "Transforms no longer cause a divide by zero exception when the zoom, xzoom, or yzoom properties are 0."
 msgstr ""
 
 #: ../../source/changelog.rst:1233
-# 5872e4a095bb467a9e79ddfb8d9610ef
-msgid "If a transform does not define one of the position properties :propref:`xpos`, :propref:`ypos`, :propref:`xanchor`, or :propref:`yanchor`, that property will be taken from the transform's child, if the defines that property."
+# 56e539aca6f548d8be538a3438e8d0ae
+msgid "Clockwise and counterclockwise revolution in transforms now works."
+msgstr ""
+
+#: ../../source/changelog.rst:1235
+# 312c25197f3d4be995abb3bfefdf3ead
+msgid "Fixed a bug with scaling, that occured when switching between the scaled software and GL renderers."
 msgstr ""
 
 #: ../../source/changelog.rst:1238
-# e2e24b8348e04d7db813bc09381288b2
-msgid "This makes it possible to have one transform control a displayable's vertical motion, and the other control the horizontal. But this is incompatible with previous behavior, and so can be disabled with the :var:`config.transform_uses_child_position` variable."
+# e58273c24bcf469991b7eb6277f6f087
+msgid "Hidden screens are no longer considered when assigning default focus."
 msgstr ""
 
-#: ../../source/changelog.rst:1243
-# 9121244300dd46f493268c67a3e55cf2
-msgid "The new config.default_transform variable allows a transform to specify the initial transform properties of an image that does not have a more specific transform applied to it. Its default value is center, a transform that shows the image at the center-bottom of the screen."
+#: ../../source/changelog.rst:1240
+# a797fdb25c99434281e7a3048ac8d814
+msgid "FieldValues with max_is_zero set to True now work properly. Thanks to SleepKirby for the fix."
 msgstr ""
 
-#: ../../source/changelog.rst:1248
-# f6754471f5a94cb5b5fe9fc4c893e822
-msgid "This can lead to a behavior change. When an image is shown, and then shown transforms, the transform will be initialized to the bottom center of the screen, not the top-left. The reset transform can be used to reset the position to the top-left."
+#: ../../source/changelog.rst:1247
+# b2dc1242dacf47b6a071392de6f94635
+msgid "Ren'Py 6.11.0"
 msgstr ""
 
-#: ../../source/changelog.rst:1253
-# 16dba0e06c4947e483e1f85669615022
-msgid "Transform (and ui.transform) have been changed so that their arguments can now be prefixed with a style prefix. One can write ui.transform(idle_rotate=30, hover_rotate=90) and have it work."
+#: ../../source/changelog.rst:1250
+# 00d75b25cb0d40578ade0e1e74127d1a
+msgid "OpenGL Support"
 msgstr ""
 
-#: ../../source/changelog.rst:1257
-# b5a8b61e06914ec2a19c2956086071be
-msgid "Added the rotate_pad transform property, which controls how Transform pads rotated displayables. When set to False, _not_ the default, it's now possible to rotate a (100, 50) displayable by 90 degrees, and have the result be (50, 100) in size."
+#: ../../source/changelog.rst:1252
+# 12e217c7618d441ab224df4239c56c9b
+msgid "Ren'Py will now take advantage of a computer's OpenGL hardware acceleration, if supported. This OpenGL support has several user-visible changes:"
 msgstr ""
 
-#: ../../source/changelog.rst:1265
-# aebb0df5dc664242824a08f436dbd9c1
-msgid "The Ren'Py documentation is in the process of being rewritten. This changelog is now being maintained as part of the Ren'Py documentation."
+#: ../../source/changelog.rst:1255
+# 24c68b02506c4de0aad90e2b8f65ff0d
+msgid "The window containing a Ren'Py game can be resized or maximized, using standard window controls. When the window's aspect ratio does not match the game's aspect ratio, black bars will be added."
 msgstr ""
 
-#: ../../source/changelog.rst:1268
-# 9d7e66950351457cbd3d95525f903a49
-msgid "Added support for composite style properties, that allow several style properties to be set using a single parameter. The new composite style properties are:"
+#: ../../source/changelog.rst:1259
+# f36838a6a19e4befa85c9a95d5dab57a
+msgid "Displaying in full-screen mode should not change the monitor's resolution. This will prevent the game from being distorted when displayed on a monitor with a different aspect ratio."
+msgstr ""
+
+#: ../../source/changelog.rst:1263
+# bf60f3af72604b939f9fc8f658099a68
+msgid "Unless disabled in the video driver configuration, Ren'Py will use vertical blank synchronization, eliminating image tearing."
+msgstr ""
+
+#: ../../source/changelog.rst:1266
+# cb113e1819164ed780664262e256c29e
+msgid "GPU rendering is used, which should make drawing the screen faster in most circumstances."
+msgstr ""
+
+#: ../../source/changelog.rst:1269
+# 7fcd22c04579452195c1de78e10ca2ce
+msgid "Software rendering is still supported, and Ren'Py will automatically fall back to software rendering if it detects an improperly configured video card."
 msgstr ""
 
 #: ../../source/changelog.rst:1272
-# 9f887df5607a4cfa8debcaefcb95961f
-msgid "pos - takes a pair, and uses it to set xpos and ypos."
+# dd077eee605f4b0ebceef2f247278da7
+msgid "You can test that Ren'Py is in OpenGL mode by attempting to resize the window. If it's resizable, it's OpenGL, otherwise, software rendering is being used."
 msgstr ""
 
-#: ../../source/changelog.rst:1273
-# d921f8e7e2b744e0969d3b47f1c3c163
-msgid "anchor - takes a pair, and uses it to set xanchor and yanchor."
+#: ../../source/changelog.rst:1277
+# 039f42a8fcbd413696cd2cf2ba92f167
+msgid "Screens and Screen Language"
 msgstr ""
 
-#: ../../source/changelog.rst:1274
-# 2c526716250b4e9b9cf400aa146b735a
-msgid "align - takes a pair, and uses it to set xalign and yalign. (And hence xpos, ypos, xanchor, and yanchor.)"
+#: ../../source/changelog.rst:1279
+# 4ccdbd40c7494119b181c173dde77172
+msgid "This release introduces a new screen system, which allows one to use the new screen language to declaratively specify portions of the user interface. The screen language supersedes layouts, overlay functions, imagemaps, and most other means of customizing the out-of-game menus and the in-game screens."
 msgstr ""
 
-#: ../../source/changelog.rst:1276
-# 16481263d2794f32a60160a0c7a6fa3c
-msgid "area - take (x, y, height, width) pair, and tries to set properties such that the displayable will be placed inside the rectangle. This sets the xpos, ypos, xanchor, yanchor, xfill, yfill, xminimum, yminimum, xmaximum, and ymaximum properties."
+#: ../../source/changelog.rst:1284
+# 2b5050d6a0304f22805e45ef2a9dac5f
+msgid "The previous way of customizing the behavior of the game menu, the layout system, had problems, especially when using imagemap layouts. Screens were single-purpose, and it would be difficult to (for example) load a quick-save game from the main menu, without extensive Python code."
 msgstr ""
 
-#: ../../source/changelog.rst:1281
-# 24481b47bd894d69a7d1a68dc423bc32
-msgid "ui.add can now take transform properties as keyword arguments. If at least one transform property is present, ui.add will create a transform that wraps the displayable it's adding to the screen."
-msgstr ""
-
-#: ../../source/changelog.rst:1285
-# aa3a66eb812c4ae1a9452c88b07e11da
-msgid "The new :func:`LiveTile` displayable tiles its child, without consuming a large amount of memory to do so."
-msgstr ""
-
-#: ../../source/changelog.rst:1288
-# 01f9de768817431b942f3a00d4eec9f3
-msgid ":var:`config.quit_action` allows one to specify an action that is run when the quit button (in the corner of the window) is pressed. config.game_menu_action allows one to specify an action that is run when entering the game menu."
-msgstr ""
-
-#: ../../source/changelog.rst:1293
-# 187d092bc34d4670a51a49af8114aaf5
-msgid "The :var:`config.screenshot_crop` configuration variable controls the area of the screen that it stored when the user presses the screenshot key."
+#: ../../source/changelog.rst:1289
+# 57495c03f4bf40f8876a19a9755a5231
+msgid "The screen system addresses this by providing a pool of functionality, in the form of Actions and BarValues. This makes it possible to pick and choose functionality, and add it to screens as is deemed necessary."
 msgstr ""
 
 #: ../../source/changelog.rst:1296
-# 470e927760ab40bc9e23e2d98f36d0f4
-msgid "The :func:`renpy.music.register_channel` method now has two additional parameters, file_prefix and file_suffix. These are prepended and appended to filenames provided to the registered channel, respectively."
+# 305b77c59d4743f6b0228fcf86fa1c54
+msgid "If a transform does not define one of the position properties :propref:`xpos`, :propref:`ypos`, :propref:`xanchor`, or :propref:`yanchor`, that property will be taken from the transform's child, if the defines that property."
 msgstr ""
 
-#: ../../source/changelog.rst:1300
-# 1d482a0aed5048ae9ba7e696f039a65a
-msgid "The new :func:`renpy.list_files` method returns a list of files in the game directory and archives. This can be used to write your own automatic image loading method, among other things."
+#: ../../source/changelog.rst:1301
+# 68d5053e6809484291f2005d715bdb85
+msgid "This makes it possible to have one transform control a displayable's vertical motion, and the other control the horizontal. But this is incompatible with previous behavior, and so can be disabled with the :var:`config.transform_uses_child_position` variable."
 msgstr ""
 
-#: ../../source/changelog.rst:1304
-# 8e6687a2e97349ba8421aead1df8bd4e
-msgid "The interaction between Character and Text has been rewritten to ensure that text is only tokenized once. This required changing a few of the methods on ADVCharacter and NVLCharacter, so code that inherits from those classes should be checked."
+#: ../../source/changelog.rst:1306
+# d6825729847e4cba92fc15f4d0c3c01b
+msgid "The new config.default_transform variable allows a transform to specify the initial transform properties of an image that does not have a more specific transform applied to it. Its default value is center, a transform that shows the image at the center-bottom of the screen."
 msgstr ""
 
-#: ../../source/changelog.rst:1309
-# 5b486ad6a2d74002aa4a87789a1ccb49
-msgid "The distribution code has been moved into launcher/distribute.py. This file can be run from the command line to build distributions in shell scripts and other automated processes."
+#: ../../source/changelog.rst:1311
+# 58141c1dcf4e4794b0d1cdd52f8f3e9e
+msgid "This can lead to a behavior change. When an image is shown, and then shown transforms, the transform will be initialized to the bottom center of the screen, not the top-left. The reset transform can be used to reset the position to the top-left."
 msgstr ""
 
-#: ../../source/changelog.rst:1313
-# 4cfe3ca52cfa487fa10a5b9513ea5352
-msgid "When there are transparent areas on the screen, and :var:`config.developer` is true, the transparent areas are filled with a checkerboard pattern."
-msgstr ""
-
-#: ../../source/changelog.rst:1317
-# f4f1137a0fc54437bad5e4af711a4e04
-msgid "The new ``input``, ``side``, ``grid``, and ``fixed`` styles were created, and the corresponding displayables use them by default."
+#: ../../source/changelog.rst:1316
+# e7c8a03b627e41af89f11442c7ed9b71
+msgid "Transform (and ui.transform) have been changed so that their arguments can now be prefixed with a style prefix. One can write ui.transform(idle_rotate=30, hover_rotate=90) and have it work."
 msgstr ""
 
 #: ../../source/changelog.rst:1320
-# 229275a141374af88d27f7f1d03300eb
-msgid "When a style is accessed at init-time, and doesn't exist, we divide it into two parts at the first underscore. If the second part corresponds to an existing style, we create a new style instead of causing an error."
-msgstr ""
-
-#: ../../source/changelog.rst:1324
-# df2fd9ee13204a24b0f7fd41adc46b3a
-msgid "The python compiler has been rewritten to use the python ast module. This should both improve performance, and improve error handling for python syntax."
+# cd93faee6004486cb142de3619b2793f
+msgid "Added the rotate_pad transform property, which controls how Transform pads rotated displayables. When set to False, _not_ the default, it's now possible to rotate a (100, 50) displayable by 90 degrees, and have the result be (50, 100) in size."
 msgstr ""
 
 #: ../../source/changelog.rst:1328
-# 360102ec3ddd4a72a5db8dbfdc69f1a6
-msgid "Because of this change, Ren'Py now ships with and requires Python 2.6."
+# 66e8156383824232863701ee366b6df4
+msgid "The Ren'Py documentation is in the process of being rewritten. This changelog is now being maintained as part of the Ren'Py documentation."
 msgstr ""
 
-#: ../../source/changelog.rst:1330
-# 644f59189efa4428ae7925357db499ec
-msgid "The following numbered bugs were fixed:"
-msgstr ""
-
-#: ../../source/changelog.rst:1332
-# f6fcd14060ab4471a0b75f30ed85696b
-msgid "520276 - ctc does not appear when cps interrupted"
-msgstr ""
-
-#: ../../source/changelog.rst:1333
-# c549041767a74590a36f7f5f20369959
-msgid "526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)"
+#: ../../source/changelog.rst:1331
+# eee3932297714f27a0c68bf6692f3876
+msgid "Added support for composite style properties, that allow several style properties to be set using a single parameter. The new composite style properties are:"
 msgstr ""
 
 #: ../../source/changelog.rst:1335
-# 7d86e338e44e46aa96d97a6864b976db
-msgid "543785 - Launcher bug on select Projects Directory"
+# cd02fce02a3f47529495f619d0851700
+msgid "pos - takes a pair, and uses it to set xpos and ypos."
 msgstr ""
 
 #: ../../source/changelog.rst:1336
-# b08ecab19fa04e76bf3997b4fc029a7b
-msgid "583112 - rollback while a movie displayable is shown leaves a video frame onscreen"
+# 3b7645f48be345f783651fdff22f85cb
+msgid "anchor - takes a pair, and uses it to set xanchor and yanchor."
 msgstr ""
 
-#: ../../source/changelog.rst:1338
-# a293aac0854c40df90bce90566b4a8d7
-msgid "595532 - Wrong text in tutorial game. (Thanks to Viliam Búr.)"
+#: ../../source/changelog.rst:1337
+# 3c2ee4a5e2384af3a480a15d752e610e
+msgid "align - takes a pair, and uses it to set xalign and yalign. (And hence xpos, ypos, xanchor, and yanchor.)"
 msgstr ""
 
-#: ../../source/changelog.rst:1340
-# e4a683c585234bb28110bab8daaf01d8
-msgid "The following other bugs were fixed:"
+#: ../../source/changelog.rst:1339
+# 98facf0f1f2b42e6ae90c3899028ffc1
+msgid "area - take (x, y, height, width) pair, and tries to set properties such that the displayable will be placed inside the rectangle. This sets the xpos, ypos, xanchor, yanchor, xfill, yfill, xminimum, yminimum, xmaximum, and ymaximum properties."
 msgstr ""
 
-#: ../../source/changelog.rst:1342
-# 077827133734427e8083bda1b06d3025
-msgid "Renamed the internal show and hide methods of Displayable, so those names can once again be used by user-defined displayables."
-msgstr ""
-
-#: ../../source/changelog.rst:1345
-# 0c49a74e2e9b468690054691551fa873
-msgid "Rewrote MultipleTransition (which is used by Fade) to fix some problems it was exhibiting."
+#: ../../source/changelog.rst:1344
+# b5c713a7c11d4af6a9f084f9eedbba89
+msgid "ui.add can now take transform properties as keyword arguments. If at least one transform property is present, ui.add will create a transform that wraps the displayable it's adding to the screen."
 msgstr ""
 
 #: ../../source/changelog.rst:1348
-# 7739891231de4a978241573d224a298e
-msgid "Take the condition parameter to Character into account when determining if an nvl clear occurs before the next interaction."
+# 6814969b3bb14e4b8e3c8e6e1ad8c665
+msgid "The new :func:`LiveTile` displayable tiles its child, without consuming a large amount of memory to do so."
 msgstr ""
 
-#: ../../source/changelog.rst:1352
-# e521a4c7f73b4162baed5e3d4a07b1a5
-msgid "Older Changelogs"
-msgstr ""
-
-#: ../../source/changelog.rst:1354
-# deebd417688d4c158ecce4479a496769
-msgid "Older changelogs can be found at:"
+#: ../../source/changelog.rst:1351
+# 2ffe061615f24f47a63a37257638be16
+msgid ":var:`config.quit_action` allows one to specify an action that is run when the quit button (in the corner of the window) is pressed. config.game_menu_action allows one to specify an action that is run when entering the game menu."
 msgstr ""
 
 #: ../../source/changelog.rst:1356
-# 7d782662fae74ebe973aaf70c02f3b0e
+# d071c6d70290470db4645d20ea8fd15c
+msgid "The :var:`config.screenshot_crop` configuration variable controls the area of the screen that it stored when the user presses the screenshot key."
+msgstr ""
+
+#: ../../source/changelog.rst:1359
+# 3e224c50e2434936aa77de9785fd066e
+msgid "The :func:`renpy.music.register_channel` method now has two additional parameters, file_prefix and file_suffix. These are prepended and appended to filenames provided to the registered channel, respectively."
+msgstr ""
+
+#: ../../source/changelog.rst:1363
+# b049353cfce146958d44d7e16f3950da
+msgid "The new :func:`renpy.list_files` method returns a list of files in the game directory and archives. This can be used to write your own automatic image loading method, among other things."
+msgstr ""
+
+#: ../../source/changelog.rst:1367
+# 8378020b8a1b459286f32f2050715969
+msgid "The interaction between Character and Text has been rewritten to ensure that text is only tokenized once. This required changing a few of the methods on ADVCharacter and NVLCharacter, so code that inherits from those classes should be checked."
+msgstr ""
+
+#: ../../source/changelog.rst:1372
+# bb597d80220a4c04a65bcc6db07aa99d
+msgid "The distribution code has been moved into launcher/distribute.py. This file can be run from the command line to build distributions in shell scripts and other automated processes."
+msgstr ""
+
+#: ../../source/changelog.rst:1376
+# 002d3306590a404dac52f1c5f1386ce0
+msgid "When there are transparent areas on the screen, and :var:`config.developer` is true, the transparent areas are filled with a checkerboard pattern."
+msgstr ""
+
+#: ../../source/changelog.rst:1380
+# 3071dc3e0c9843b6be3ffb73d1305a64
+msgid "The new ``input``, ``side``, ``grid``, and ``fixed`` styles were created, and the corresponding displayables use them by default."
+msgstr ""
+
+#: ../../source/changelog.rst:1383
+# a9877900806d4ce98bfda89d5661537d
+msgid "When a style is accessed at init-time, and doesn't exist, we divide it into two parts at the first underscore. If the second part corresponds to an existing style, we create a new style instead of causing an error."
+msgstr ""
+
+#: ../../source/changelog.rst:1387
+# 8bdd85f314e5411496a09f154482c69c
+msgid "The python compiler has been rewritten to use the python ast module. This should both improve performance, and improve error handling for python syntax."
+msgstr ""
+
+#: ../../source/changelog.rst:1391
+# a2e491a12ed042a9bd463e257582a015
+msgid "Because of this change, Ren'Py now ships with and requires Python 2.6."
+msgstr ""
+
+#: ../../source/changelog.rst:1393
+# aa9348ce00404e7c9c7f7828bc1a36f6
+msgid "The following numbered bugs were fixed:"
+msgstr ""
+
+#: ../../source/changelog.rst:1395
+# 455401ec1c8b48a598f55297158baf78
+msgid "520276 - ctc does not appear when cps interrupted"
+msgstr ""
+
+#: ../../source/changelog.rst:1396
+# c68e22f11bd845c795704ba239141ee3
+msgid "526297 - im.Rotozoom()s crash when Ren'Py is scaled down. (Thanks to Spiky Caterpillar for the bug report and fix.)"
+msgstr ""
+
+#: ../../source/changelog.rst:1398
+# 24e1e19f17fc423fbe6c11873ea258cd
+msgid "543785 - Launcher bug on select Projects Directory"
+msgstr ""
+
+#: ../../source/changelog.rst:1399
+# 92185852756e407c8d2a0b41b6881c53
+msgid "583112 - rollback while a movie displayable is shown leaves a video frame onscreen"
+msgstr ""
+
+#: ../../source/changelog.rst:1401
+# 5a8f1060ec044504b44c5cfcb9405c8a
+msgid "595532 - Wrong text in tutorial game. (Thanks to Viliam Búr.)"
+msgstr ""
+
+#: ../../source/changelog.rst:1403
+# 2d360e2fa7a84ebea86fe696ab1bcac1
+msgid "The following other bugs were fixed:"
+msgstr ""
+
+#: ../../source/changelog.rst:1405
+# ba1e6778629143c6bce275120384eeb5
+msgid "Renamed the internal show and hide methods of Displayable, so those names can once again be used by user-defined displayables."
+msgstr ""
+
+#: ../../source/changelog.rst:1408
+# 6d7e7c9b8eae486b98bf711b61e9e1bd
+msgid "Rewrote MultipleTransition (which is used by Fade) to fix some problems it was exhibiting."
+msgstr ""
+
+#: ../../source/changelog.rst:1411
+# b16e75e9ff7e489793e88e38e2546c40
+msgid "Take the condition parameter to Character into account when determining if an nvl clear occurs before the next interaction."
+msgstr ""
+
+#: ../../source/changelog.rst:1415
+# 2559983556bf4a5fae9372b65bac894d
+msgid "Older Changelogs"
+msgstr ""
+
+#: ../../source/changelog.rst:1417
+# c11101f5badf480e944d1e9adf23e119
+msgid "Older changelogs can be found at:"
+msgstr ""
+
+#: ../../source/changelog.rst:1419
+# 794b4e75124442d39a19a08a4a63477e
 msgid "http://www.renpy.org/dl/6.10.2/CHANGELOG.txt"
 msgstr ""
 
