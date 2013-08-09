@@ -104,7 +104,7 @@ For example, the code::
         e "I'm a little upset at you."
 
         e happy "But it's just a passing thing."
-    
+
 is equivalent to::
 
     define e = Character("Eileen")
@@ -114,7 +114,7 @@ is equivalent to::
         show eileen mad
         e "I'm a little upset at you."
 
-        show eileen happy        
+        show eileen happy
         e "But it's just a passing thing."
 
 To cause a transition to occur whenever the images are changed in this way, set
@@ -158,5 +158,3 @@ them can be a problem.
     character name is given as a string. This character is copied to a
     new character with the given name, and then that new character is
     used to display the dialogue.
-
-   

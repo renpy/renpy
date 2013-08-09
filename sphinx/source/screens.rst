@@ -66,7 +66,7 @@ Here's an example of a screen.::
         window id "window":
             vbox:
                 spacing 10
-             
+
                 text who id "who"
                 text what id "what"
 
@@ -138,7 +138,7 @@ expression. It takes the following properties:
         tag example
         zorder 1
         modal False
-   
+
         text "Hello, World."
 
 A screen can take a parameter list::
@@ -146,7 +146,7 @@ A screen can take a parameter list::
    screen center_text(s, size=42):
         text s size size
 
-        
+
 User Interface Statements
 =========================
 
@@ -238,7 +238,7 @@ This does not take any children.
 
 
 .. _sl-bar:
-        
+
 Bar
 ---
 
@@ -280,13 +280,13 @@ This does not take children.
     screen volume_controls:
         frame:
             has vbox
-        
+
             bar value Preference("sound volume")
             bar value Preference("music volume")
             bar value Preference("voice volume")
 
 .. _sl-button:
-            
+
 Button
 ------
 
@@ -348,9 +348,9 @@ have two or more children.
              textbutton "Yes" xalign 0.33 yalign 0.5 action Return(True)
              textbutton "No" xalign 0.66 yalign 0.5 action Return(False)
 
-             
+
 .. _sl-frame:
-             
+
 Frame
 -----
 
@@ -377,11 +377,11 @@ a fixed is created to contain them.
             vbox:
                 text "Display"
                 null height 10
-                textbutton "Fullscreen" action Preference("display", "fullscreen") 
-                textbutton "Window" action Preference("display", "window") 
+                textbutton "Fullscreen" action Preference("display", "fullscreen")
+                textbutton "Window" action Preference("display", "window")
 
 .. _sl-grid:
-                
+
 Grid
 ----
 
@@ -421,7 +421,7 @@ number of children is an error.
              text "Bottom-Right"
 
 .. _sl-hbox:
-             
+
 Hbox
 ----
 
@@ -441,9 +441,9 @@ UI displayable children are added to the box.
             text "Left"
             text "Right"
 
-            
+
 .. _sl-imagebutton:
-            
+
 Imagebutton
 -----------
 
@@ -507,10 +507,10 @@ This takes no children.
               imagebutton auto "prefs_%s.png" action ShowMenu('preferences')
               imagebutton auto "skip_%s.png" action Skip()
               imagebutton auto "afm_%s.png" action Preference("auto-forward mode", "toggle")
-                
-              
-.. _sl-input:              
-            
+
+
+.. _sl-input:
+
 Input
 -----
 
@@ -559,9 +559,9 @@ This does not take any children.
             text "Enter your name."
             input default "Joseph P. Blow, ESQ."
 
-            
+
 .. _sl-key:
-            
+
 Key
 ---
 
@@ -588,7 +588,7 @@ It takes no children.
 
 
 .. _sl-label:
-        
+
 Label
 -----
 
@@ -628,7 +628,7 @@ It does not take children.
 
 
 .. _sl-null:
-            
+
 Null
 ----
 
@@ -706,12 +706,12 @@ take up the entire screen, a less useful behavior.
             textbutton "Prefs" action ShowMenu("preferences")
             textbutton "Skip" action Skip()
             textbutton "Auto" action Preference("auto-forward", "toggle")
-        
+
     label start:
         show screen button_overlay
-             
+
 .. _sl-side:
-        
+
 Side
 ----
 
@@ -753,7 +753,7 @@ the same number of children as there are entries in the places list.
               text "Bottom-Right"
 
 .. _sl-text:
-              
+
 Text
 ----
 
@@ -772,7 +772,7 @@ It does not take children.
         text "Hello, World." size 40
 
 .. _sl-textbutton:
-        
+
 Textbutton
 ----------
 
@@ -817,7 +817,7 @@ It does not take children.
             textbutton "Song" action Jump("song")
 
 .. _sl-timer:
-            
+
 Timer
 -----
 
@@ -844,7 +844,7 @@ It takes no children.
         timer 3.0 action Jump("too_slow")
 
 .. _sl-transform:
-        
+
 Transform
 ---------
 
@@ -870,14 +870,14 @@ as `bar`.
     screen volume_controls:
          frame:
              has hbox
-             
+
              vbar value Preference("sound volume")
              vbar value Preference("music volume")
              vbar value Preference("voice volume")
 
 
 .. _sl-vbox:
-             
+
 Vbox
 ----
 
@@ -937,7 +937,7 @@ following properties:
       its input, and implements proportional scrolling.  A function
       that always returns 1.0 would implement constant-speed
       scrolling.
-      
+
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
     viewport. When omitted, a new adjustment is created.
@@ -982,17 +982,17 @@ id.
     screen viewport_example:
         side "c b r":
              area (100, 100, 600, 400)
-         
+
              viewport id "vp":
                  draggable True
-                 
+
                  add "washington.jpg"
 
              bar value XScrollValue("vp")
              vbar value YScrollValue("vp")
 
 .. _sl-window:
-             
+
 Window
 ------
 
@@ -1013,7 +1013,7 @@ a fixed is created to contain them.
         window id "window"
             vbox:
                 spacing 10
-             
+
                 text who id "who"
                 text what id "what"
 
@@ -1035,10 +1035,10 @@ Here's an example of a preferences screen that uses imagemaps.
 
         tag menu
         use navigation
-    
+
         imagemap:
             auto "gui_set/gui_prefs_%s.png"
-            
+
             hotspot (740, 232, 75, 73) clicked Preference("display", "fullscreen")
             hotspot (832, 232, 75, 73) clicked Preference("display", "window")
             hotspot (1074, 232, 75, 73) clicked Preference("transitions", "all")
@@ -1049,9 +1049,9 @@ Here's an example of a preferences screen that uses imagemaps.
             hotbar (667, 535, 161, 20) value Preference("voice volume")
             hotbar (1001, 535, 161, 20) value Preference("text speed")
 
-            
+
 .. _sl-imagemap:
-            
+
 Imagemap
 --------
 
@@ -1195,7 +1195,7 @@ The advanced displayable statements are:
 
 
 .. _sl-has:
-    
+
 Has Statement
 =============
 
@@ -1233,7 +1233,7 @@ container.
    screen volume_controls:
         frame:
             has vbox
-        
+
             bar value Preference("sound volume")
             bar value Preference("music volume")
             bar value Preference("voice volume")
@@ -1263,7 +1263,7 @@ us using the use statement.
 
 
 .. _sl-for:
-         
+
 For
 ---
 
@@ -1282,7 +1282,7 @@ it does not support the else clause. It supports assignment to
 
 
 .. _sl-if:
-                
+
 If
 --
 
@@ -1298,7 +1298,7 @@ statement. It supports the if, elif, and else clauses.
              text "Not Skipping."
 
 .. _sl-on:
-             
+
 On
 --
 
@@ -1319,17 +1319,17 @@ occurs.
     screen preferences:
         frame:
             has hbox
-            
+
             text "Display"
             textbutton "Fullscreen" action Preferences("display", "fullscreen")
             textbutton "Window" action Preferences("display", "window")
-                
+
         on "show" action Show("navigation")
         on "hide" action Hide("navigation")
 
 
 .. _sl-use:
-        
+
 Use
 ---
 
@@ -1353,7 +1353,7 @@ values.
             vbox:
                 text FileTime(slot, empty="Empty Slot.")
                 text FileSaveName(slot)
-                    
+
 
      screen save:
          grid 2 5:
@@ -1361,7 +1361,7 @@ values.
                   use file_slot(i)
 
 .. _sl-python:
-                  
+
 Python
 ------
 
@@ -1386,8 +1386,8 @@ has side effects, those side effects may occur at unpredictable times.
         $ test_label = "test_%d" % test_label
 
         textbutton "Run Test" action Jump(test_label)
-        
-        
+
+
 Screen Statements
 =================
 
@@ -1443,7 +1443,7 @@ or can jump to a label using the :func:`Jump` action.
 
 
 .. _screen-variants:
-   
+
 Screen Variants
 ===============
 
@@ -1460,26 +1460,48 @@ that exists is used.
 If the RENPY_VARIANT environment variable is present, config.variants
 is initialized by splitting the value of the variable on whitespace,
 and then appending ``None``. Setting RENPY_VARIANT to a value such as
-``"tablet touch"`` or ``"phone touch"`` allows screens intended for
+``"medium tablet touch"`` or ``"small phone touch"`` allows screens intended for
 Android devices to be tested on a PC.
 
 If the environment variable is not present, a list of variants is
 built up automatically, by going through the following list in order
 and choosing the entries that apply to the current platform.
 
+``"large"``
+   A screen large enough that relatively small text can be
+   comfortably read, and buttons can be easily clicked. This
+   is used for computer screens.
+
+``"medium"``
+   A screen where smallish text can be read, but buttons may
+   need to grow in size so they can be comfortably pressed.
+   This is used for tablets.
+
+``"small"``
+   A screen where text must be expanded in order to be read. This
+   is used for phones and televisions. (A television might be
+   physically large, but it's often far away, making it hard
+   to read.)
+
 ``"tablet"``
    Defined on touchscreen based devices where the screen has a
-   diagonal size of 6 inches or more.
+   diagonal size of 6 inches or more. (In general, ``"medium"`` should
+   be used instead of ``"tablet"``.)
 
 ``"phone"``
    Defined on touchscren-based devices where the diagonal size of
    the screen is less than 6 inches. On such a small device, it's
    important to make buttons large enough a user can easily choose
-   them.
+   them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``
-   Defined on touchscreen-based devices, such as those running the
-   Android platform.
+   Defined on touchscreen-based devices.
+
+``"tv"``
+   Defined on television-based devices.
+
+``"ouya"``
+   Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
@@ -1499,7 +1521,7 @@ An example of defining a screen variant is:
         tag example
         zorder 1
         modal False
-        variant "touch" 
-        
+        variant "small"
+
         text "Hello, World." size 30
-        
+

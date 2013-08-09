@@ -25,12 +25,12 @@
 #include <libavutil/avstring.h>
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
-// #include "libavdevice/avdevice.h"
 #include <libswscale/swscale.h>
-// #include "libavcodec/audioconvert.h"
-// #include "libavcodec/opt.h"
 
-// #include "cmdutils.h"
+#ifdef HAS_RESAMPLE
+#include <libavutil/opt.h>
+#include <libavresample/avresample.h>
+#endif
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -100,17 +100,24 @@ typedef struct VideoState {
     /* samples output by the codec. we reserve more space for avsync
        compensation */
 
+#ifndef HAS_RESAMPLE
     uint8_t audio_buf1[(AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2] __attribute__ ((aligned (16))) ;
     uint8_t audio_buf2[(AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2] __attribute__ ((aligned (16))) ;
-
+#else
+    uint8_t *audio_buf1;
+#endif
     uint8_t *audio_buf;
+
     unsigned int audio_buf_size; /* in bytes */
+
     int audio_buf_index; /* in bytes */
     AVPacket audio_pkt;
     AVPacket audio_pkt_temp;
 
     // AVAudioConvert *reformat_ctx;
+#ifndef HAS_RESAMPLE
     ReSampleContext *reformat_ctx;
+#endif
     int resample_frac;
     
     int show_audio; /* if true, display audio samples */
@@ -165,6 +172,19 @@ typedef struct VideoState {
     // Should we force the display of the current video frame?
     int first_frame;
 
+#ifdef HAS_RESAMPLE
+    // The audio frame, and the audio resample context.
+    enum AVSampleFormat sdl_sample_fmt;
+    uint64_t sdl_channel_layout;
+    int sdl_channels;
+    int sdl_sample_rate;
+    enum AVSampleFormat resample_sample_fmt;
+    uint64_t resample_channel_layout;
+    int resample_sample_rate;
+    AVAudioResampleContext *avr;
+    AVFrame *frame;
+#endif
+
 } VideoState;
 
 SDL_mutex *codec_mutex = NULL;
@@ -183,7 +203,6 @@ static int debug_mv = 0;
 static int workaround_bugs = 1;
 static int fast = 0;
 static int genpts = 0;
-static int lowres = 0;
 static int idct = FF_IDCT_AUTO;
 static enum AVDiscard skip_frame= AVDISCARD_DEFAULT;
 static enum AVDiscard skip_idct= AVDISCARD_DEFAULT;
@@ -770,8 +789,181 @@ static int video_thread(void *arg)
     return 0;
 }
 
+#ifdef HAS_RESAMPLE
+
+/* decode one audio frame and returns its uncompressed size */
+static int audio_decode_frame(VideoState *is, double *pts_ptr)
+{
+    AVPacket *pkt_temp = &is->audio_pkt_temp;
+    AVPacket *pkt = &is->audio_pkt;
+    AVCodecContext *dec = is->audio_st->codec;
+    int n, len1, data_size, got_frame;
+    double pts;
+    int new_packet = 0;
+    int flush_complete = 0;
+
+    for (;;) {
+        /* NOTE: the audio packet can contain several frames */
+        while (pkt_temp->size > 0 || (!pkt_temp->data && new_packet)) {
+            int resample_changed, audio_resample;
+
+            if (!is->frame) {
+                if (!(is->frame = avcodec_alloc_frame()))
+                    return AVERROR(ENOMEM);
+            } else
+                avcodec_get_frame_defaults(is->frame);
+
+            if (flush_complete)
+                break;
+            new_packet = 0;
+            len1 = avcodec_decode_audio4(dec, is->frame, &got_frame, pkt_temp);
+            if (len1 < 0) {
+                /* if error, we skip the frame */
+                pkt_temp->size = 0;
+                break;
+            }
+
+            pkt_temp->data += len1;
+            pkt_temp->size -= len1;
+
+            if (!got_frame) {
+                /* stop sending empty packets if the decoder is finished */
+                if (!pkt_temp->data && dec->codec->capabilities & CODEC_CAP_DELAY)
+                    flush_complete = 1;
+                continue;
+            }
+            data_size = av_samples_get_buffer_size(NULL, dec->channels,
+                                                   is->frame->nb_samples,
+                                                   is->frame->format, 1);
+
+            audio_resample = is->frame->format         != is->sdl_sample_fmt     ||
+                             is->frame->channel_layout != is->sdl_channel_layout ||
+                             is->frame->sample_rate    != is->sdl_sample_rate;
+
+            resample_changed = is->frame->format         != is->resample_sample_fmt     ||
+                               is->frame->channel_layout != is->resample_channel_layout ||
+                               is->frame->sample_rate    != is->resample_sample_rate;
+
+            if ((!is->avr && audio_resample) || resample_changed) {
+                int ret;
+                if (is->avr)
+                    avresample_close(is->avr);
+                else if (audio_resample) {
+                    is->avr = avresample_alloc_context();
+                    if (!is->avr) {
+                        fprintf(stderr, "error allocating AVAudioResampleContext\n");
+                        break;
+                    }
+                }
+                if (audio_resample) {
+                    av_opt_set_int(is->avr, "in_channel_layout",  is->frame->channel_layout, 0);
+                    av_opt_set_int(is->avr, "in_sample_fmt",      is->frame->format,         0);
+                    av_opt_set_int(is->avr, "in_sample_rate",     is->frame->sample_rate,    0);
+                    av_opt_set_int(is->avr, "out_channel_layout", is->sdl_channel_layout,    0);
+                    av_opt_set_int(is->avr, "out_sample_fmt",     is->sdl_sample_fmt,        0);
+                    av_opt_set_int(is->avr, "out_sample_rate",    is->sdl_sample_rate,       0);
+
+                    if ((ret = avresample_open(is->avr)) < 0) {
+                        fprintf(stderr, "error initializing libavresample\n");
+                        break;
+                    }
+                }
+                is->resample_sample_fmt     = is->frame->format;
+                is->resample_channel_layout = is->frame->channel_layout;
+                is->resample_sample_rate    = is->frame->sample_rate;
+            }
+
+            if (audio_resample) {
+                void *tmp_out;
+                int out_samples, out_size, out_linesize;
+                int osize      = av_get_bytes_per_sample(is->sdl_sample_fmt);
+                int nb_samples = is->frame->nb_samples;
+
+                int max_samples = 2 * (avresample_get_delay(is->avr) + nb_samples) * is->sdl_sample_rate / is->frame->sample_rate;
 
 
+                out_size = av_samples_get_buffer_size(
+                		&out_linesize,
+                		is->sdl_channels,
+                		max_samples,
+                		is->sdl_sample_fmt, 0);
+
+                tmp_out = av_realloc(is->audio_buf1, out_size);
+
+                if (!tmp_out)
+                    return AVERROR(ENOMEM);
+
+                is->audio_buf1 = tmp_out;
+
+                out_samples = avresample_convert(is->avr,
+                                                 &is->audio_buf1,
+                                                 out_linesize, max_samples,
+                                                 is->frame->data,
+                                                 is->frame->linesize[0],
+                                                 is->frame->nb_samples);
+
+                if (out_samples < 0) {
+                    fprintf(stderr, "avresample_convert() failed\n");
+                    break;
+                }
+                is->audio_buf = is->audio_buf1;
+                data_size = out_samples * osize * is->sdl_channels;
+            } else {
+                is->audio_buf = is->frame->data[0];
+            }
+
+            /* if no pts, then compute it */
+            pts = is->audio_clock;
+            *pts_ptr = pts;
+            n = is->sdl_channels * av_get_bytes_per_sample(is->sdl_sample_fmt);
+            is->audio_clock += (double)data_size /
+                (double)(n * is->sdl_sample_rate);
+
+            // This is Ren'Py specific code, to deal with ogg files with
+            // more data than their duration.
+            if (is->audio_duration) {
+                int len = data_size / 4;
+                int maxlen = is->audio_duration - is->audio_played;
+                
+                if (len > maxlen) {
+                    len = maxlen;
+                }
+
+                is->audio_played += len;
+                data_size = len * 4;
+            }
+
+            return data_size;
+        }
+
+        /* free the current packet */
+        if (pkt->data)
+            av_free_packet(pkt);
+        memset(pkt_temp, 0, sizeof(*pkt_temp));
+
+        if (is->paused || is->audioq.abort_request) {
+            return -1;
+        }
+
+        /* read next packet */
+        if ((new_packet = packet_queue_get(&is->audioq, pkt, 1)) < 0)
+            return -1;
+
+        if (pkt->data == flush_pkt.data) {
+            avcodec_flush_buffers(dec);
+            flush_complete = 0;
+        }
+
+        *pkt_temp = *pkt;
+
+        /* if update the audio clock with the pts */
+        if (pkt->pts != AV_NOPTS_VALUE) {
+            is->audio_clock = av_q2d(is->audio_st->time_base)*pkt->pts;
+        }
+    }
+}
+
+#else
 
 /* decode one audio frame and returns its uncompressed size */
 static int audio_decode_frame(VideoState *is, double *pts_ptr)
@@ -823,17 +1015,17 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             }
 
             // Moved by tom, from below next block. Is this right?
-            
+
 
             if (is->reformat_ctx) {
-                
+
                 int len = data_size / av_get_bytes_per_sample(dec->sample_fmt);
                 len /= dec->channels;
 
                 len = audio_resample(is->reformat_ctx, (short *) is->audio_buf2, (short *) is->audio_buf1, len);
 
                 data_size = len * 4;
-                is->audio_buf = is->audio_buf2;                
+                is->audio_buf = is->audio_buf2;
             } else {
                 is->audio_buf = is->audio_buf1;
             }
@@ -846,7 +1038,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 int inpos;
 
                 int len = data_size / 4;
-                
+
                 if (is->audio_buf == is->audio_buf1) {
                     in = (short *) is->audio_buf1;
                     out = (short *) is->audio_buf2;
@@ -860,9 +1052,9 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 // which seems reasonable.
                 in[2 * len] = 2 * in[2 * len - 2] - in[2 * len - 4];
                 in[2 * len + 1] = 2 * in[2 * len - 1] - in[2 * len - 3];
-                                
+
                 // The number of bytes of input consumed per output
-                // sample. Scaled by 1 << 14.                
+                // sample. Scaled by 1 << 14.
                 in_per_out = (dec->sample_rate << 14) / audio_sample_rate;
 
                 len *= (1 << 14);
@@ -892,14 +1084,14 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                     out[2 * outpos + 1] = a + (((b - a) * frac) >> 14);
 
                     outpos++;
-                    inpos += in_per_out;                    
+                    inpos += in_per_out;
                 }
 
                 // Store the fraction.
                 is->resample_frac = inpos & ((1 << 14) - 1);
 
                 data_size = outpos * 4;
-                is->audio_buf = (uint8_t *) out;                
+                is->audio_buf = (uint8_t *) out;
             }
 
 
@@ -915,7 +1107,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             if (is->audio_duration) {
                 int len = data_size / 4;
                 int maxlen = is->audio_duration - is->audio_played;
-                
+
                 if (len > maxlen) {
                     len = maxlen;
                 }
@@ -923,7 +1115,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
                 is->audio_played += len;
                 data_size = len * 4;
             }
-                
+
             return data_size;
         }
 
@@ -952,6 +1144,9 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
         }
     }
 }
+
+#endif
+
 
 /* get the current audio output buffer size, in samples. With SDL, we
    cannot have a precise information */
@@ -1038,8 +1233,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     enc->debug_mv = debug_mv;
     enc->debug = debug;
     enc->workaround_bugs = workaround_bugs;
-    enc->lowres = lowres;
-    if(lowres) enc->flags |= CODEC_FLAG_EMU_EDGE;
     enc->idct_algo= idct;
     if(fast) enc->flags2 |= CODEC_FLAG2_FAST;
     enc->skip_frame= skip_frame;
@@ -1068,6 +1261,20 @@ static int stream_component_open(VideoState *is, int stream_index)
         is->audio_st = ic->streams[stream_index];
         is->audio_buf_size = 0;
         is->audio_buf_index = 0;
+
+#ifdef HAS_RESAMPLE
+        if (!enc->channel_layout)
+            enc->channel_layout = av_get_default_channel_layout(enc->channels);
+        if (!enc->channel_layout) {
+            fprintf(stderr, "%s: unable to guess channel layout\n", is->filename);
+            return -1;
+        }
+
+        is->sdl_sample_rate = audio_sample_rate;
+		is->sdl_channel_layout = AV_CH_LAYOUT_STEREO;
+        is->sdl_channels = av_get_channel_layout_nb_channels(is->sdl_channel_layout);
+        is->sdl_sample_fmt = AV_SAMPLE_FMT_S16;
+#endif
 
         memset(&is->audio_pkt, 0, sizeof(is->audio_pkt));
         packet_queue_init(&is->audioq);
@@ -1102,8 +1309,10 @@ static void stream_component_close(VideoState *is, int stream_index)
     case AVMEDIA_TYPE_AUDIO:
         packet_queue_abort(&is->audioq);
         packet_queue_end(&is->audioq);
+#ifndef HAS_RESAMPLE
         if (is->reformat_ctx)
             audio_resample_close(is->reformat_ctx);
+#endif
         break;
     case AVMEDIA_TYPE_VIDEO:
         packet_queue_abort(&is->videoq);
@@ -1353,7 +1562,7 @@ fail:
     if (is->video_stream >= 0)
         stream_component_close(is, is->video_stream);
     if (is->ic) {
-    	av_close_input_file(is->ic);
+    	avformat_close_input(&(is->ic));
     	is->ic = NULL;
     }
         

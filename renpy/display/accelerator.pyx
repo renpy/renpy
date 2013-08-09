@@ -35,7 +35,7 @@ def nogil_copy(src, dest):
     """
     Does a gil-less blit of src to dest, with minimal locking.
     """
-    
+
     cdef SDL_Surface *src_surf
     cdef SDL_Surface *dst_surf
 
@@ -43,16 +43,16 @@ def nogil_copy(src, dest):
     dest_surf = PySurface_AsSurface(dest)
 
     old_alpha = src_surf.flags & SDL_SRCALPHA
-    
+
     if old_alpha:
         SDL_SetAlpha(src_surf, 0, 255)
-    
+
     with nogil:
         SDL_BlitSurface(src_surf, NULL, dest_surf, NULL)
-        
+
     if old_alpha:
         SDL_SetAlpha(src_surf, SDL_SRCALPHA, 255)
-    
+
 
 
 ################################################################################
@@ -78,11 +78,11 @@ def transform_render(self, widtho, heighto, st, at):
     cdef double alpha
     cdef double width = widtho
     cdef double height = heighto
-    
+
     # Should we perform clipping?
     clipping = False
 
-    # Prevent time from ticking backwards, as can happen if we replace a 
+    # Prevent time from ticking backwards, as can happen if we replace a
     # transform but keep its state.
     if st + self.st_offset <= self.st:
         self.st_offset = self.st - st
@@ -97,7 +97,7 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Render the child.
     child = self.child
-    
+
     if child is None:
         raise Exception("Transform does not have a child.")
 
@@ -121,7 +121,7 @@ def transform_render(self, widtho, heighto, st, at):
 
     xo = 0
     yo = 0
-    
+
     # Cropping.
     crop = state.crop
     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):
@@ -154,7 +154,7 @@ def transform_render(self, widtho, heighto, st, at):
             clipping = True
 
     # Size.
-    size = state.size 
+    size = state.size
     if (size is not None) and (size != (width, height)):
         nw, nh = size
         xzoom = 1.0 * nw / width
@@ -216,7 +216,7 @@ def transform_render(self, widtho, heighto, st, at):
         # reverse = Matrix2D(xdx, xdy, ydx, ydy) * reverse
 
         # We know that at this point, rxdy and rydx are both 0, so
-        # we can simplify these formulae a bit.            
+        # we can simplify these formulae a bit.
         rxdy = rydy * -sina
         rydx = rxdx * sina
         rxdx *= cosa
@@ -229,7 +229,7 @@ def transform_render(self, widtho, heighto, st, at):
         py = ch / 2.0
         if yzoom < 0:
             py = -py
-        
+
         if state.rotate_pad:
             width = height = math.hypot(cw, ch)
 
@@ -249,13 +249,11 @@ def transform_render(self, widtho, heighto, st, at):
             x4 =  px * cosa + py * sina
             y4 =  px * sina - py * cosa
 
-            width = max(xo, x2, x3, x4) - min(xo, x2, x3, x4) 
-            height = max(yo, y2, y3, y4) - min(yo, y2, y3, y4) 
+            width = max(xo, x2, x3, x4) - min(xo, x2, x3, x4)
+            height = max(yo, y2, y3, y4) - min(yo, y2, y3, y4)
 
         xo += width / 2.0
         yo += height / 2.0
-        
-    alpha = state.alpha
 
     rv = Render(width, height)
 
@@ -276,14 +274,15 @@ def transform_render(self, widtho, heighto, st, at):
             self.forward = rv.forward = Matrix2D(
                 rydy / inv_det,
                 -rxdy / inv_det,
-                -rydx / inv_det, 
+                -rydx / inv_det,
                 rxdx / inv_det)
 
-    rv.alpha = alpha
+    rv.alpha = state.alpha
+    rv.over = 1.0 - state.additive
     rv.clipping = clipping
 
     pos = (xo, yo)
-    
+
     if state.subpixel:
         rv.subpixel_blit(cr, pos)
     else:

@@ -2,7 +2,7 @@
 # See LICENSE.txt for license details.
 
 init python in distribute:
-    
+
     import time
     import zipfile
     import tarfile
@@ -13,7 +13,7 @@ init python in distribute:
     from zipfile import crc32
 
     zlib.Z_DEFAULT_COMPRESSION = 9
-    
+
     class ZipFile(zipfile.ZipFile):
 
         def write_with_info(self, zinfo, filename):
@@ -80,32 +80,32 @@ init python in distribute:
             self.fp.seek(position, 0)
             self.filelist.append(zinfo)
             self.NameToInfo[zinfo.filename] = zinfo
-    
-    
+
+
     class ZipPackage(object):
         """
         A class that creates a zip file.
         """
-        
+
         def __init__(self, filename):
             self.zipfile = ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
-            
+
         def add_file(self, name, path, xbit):
-            
+
             if path is None:
                 raise Exception("path for " + name + " must not be None.")
 
             zi = zipfile.ZipInfo(name)
 
             s = os.stat(path)
-            zi.date_time = time.gmtime(s.st_mtime)[:6]                            
+            zi.date_time = time.gmtime(s.st_mtime)[:6]
             zi.compress_type = zipfile.ZIP_DEFLATED
             zi.create_system = 3
 
             if xbit:
-                zi.external_attr = long(0100777) << 16
+                zi.external_attr = long(0100755) << 16
             else:
-                zi.external_attr = long(0100666) << 16 
+                zi.external_attr = long(0100644) << 16
 
             self.zipfile.write_with_info(zi, path)
 
@@ -119,8 +119,8 @@ init python in distribute:
             zi.date_time = time.gmtime(s.st_mtime)[:6]
             zi.compress_type = zipfile.ZIP_STORED
             zi.create_system = 3
-            zi.external_attr = (long(0040777) << 16) | 0x10
-  
+            zi.external_attr = (long(0040755) << 16) | 0x10
+
             self.zipfile.write_with_info(zi, path)
 
         def close(self):
@@ -128,15 +128,15 @@ init python in distribute:
 
 
     class TarPackage(object):
-        
+
         def __init__(self, filename, mode, notime=False):
             """
             notime
                 If true, times will be forced to the epoch.
             """
-            
+
             self.tarfile = tarfile.open(filename, mode)
-            self.tarfile.dereference = True            
+            self.tarfile.dereference = True
             self.notime = notime
 
         def add_file(self, name, path, xbit):
@@ -150,9 +150,9 @@ init python in distribute:
                 info.type = tarfile.DIRTYPE
 
             if xbit:
-                info.mode = 0777
+                info.mode = 0755
             else:
-                info.mode = 0666
+                info.mode = 0644
 
             info.uid = 1000
             info.gid = 1000

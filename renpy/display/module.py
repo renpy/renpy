@@ -40,7 +40,7 @@ try:
             )
 
         print >>sys.stderr, "Trying to run anyway, but you should expect errors."
-        
+
 except:
     print >>sys.stderr, "The _renpy module was not found. Please read module/README.txt for"
     print >>sys.stderr, "more information."
@@ -58,7 +58,7 @@ def convert_and_call(function, src, dst, *args):
 
     # Now that all surfaces are 32bpp, this function doesn't do much
     # of anything anymore.
-    
+
     if (dst.get_masks()[3] != 0) != (src.get_masks()[3] != 0):
         raise Exception("Surface alphas do not match.")
 
@@ -97,7 +97,7 @@ def scale(s, size):
     d = renpy.display.pgrender.surface(size, True)
 
     bilinear_scale(s, d)
-    
+
     return d
 
 
@@ -120,10 +120,10 @@ def byte_offset(src):
     """
 
     global bo_cache
-    
+
     if bo_cache is None:
         bo_cache = [ bo32[i] for i in src.get_masks() ]
-        
+
     return bo_cache
 
 def endian_order(src, r, g, b, a):
@@ -211,7 +211,7 @@ def alpha_munge(src, dst, amap):
     alpha = byte_offset(dst)[3]
 
     if red is not None and alpha is not None:
-        _renpy.alpha_munge(src, dst, red, alpha, amap)        
+        _renpy.alpha_munge(src, dst, red, alpha, amap)
 
 
 def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, dh=None, precise=0):
@@ -240,14 +240,14 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
         src = nsrc
 
     _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh, precise=precise)
-        
+
 
 transform = _renpy.transform
-    
-# Note: Blend requires all surfaces to be the same size.    
+
+# Note: Blend requires all surfaces to be the same size.
 blend = _renpy.blend
-    
-def imageblend(a, b, dst, img, amap):        
+
+def imageblend(a, b, dst, img, amap):
     alpha = byte_offset(img)[3]
     _renpy.imageblend(a, b, dst, img, alpha, amap)
 
@@ -261,9 +261,9 @@ def colormatrix(src, dst, matrix):
         o[offs[i]] = i
 
     _renpy.colormatrix(src, dst,
-                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],    
-                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],    
-                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],    
+                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],
+                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],
+                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],
                        c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4])
 
 
@@ -271,5 +271,3 @@ def subpixel(src, dst, x, y):
 
     shift = src.get_shifts()[3]
     _renpy.subpixel(src, dst, x, y, shift)
-
-    

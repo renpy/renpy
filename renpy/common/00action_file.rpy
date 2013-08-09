@@ -3,12 +3,12 @@
 
 init -1500 python:
 
-         
+
     ##########################################################################
     # File functions
 
     config.linear_saves_page_size = None
-        
+
     if persistent._file_page is None:
         persistent._file_page = "1"
 
@@ -29,52 +29,52 @@ init -1500 python:
 
     def __unused_slot_name(page):
         """
-        Returns an unused slot name. 
+        Returns an unused slot name.
         """
-        
+
         import time
-        
+
         rv = int(time.time())
-        
+
         while True:
             if not renpy.can_load(__filename(str(rv), page)):
                 return str(rv)
-                
+
             rv += 1
 
     def FileCurrentPage():
         """
         :doc: file_action_function
-        
+
         Returns the current file page as a string.
         """
-        
+
         return str(persistent._file_page)
 
     def FileUsedSlots(page=None, highest_first=True):
         """
         :doc: file_action_function
-        
+
         Returns a list of used numeric file slots on the page.
-        
+
         `page`
-            The name of the page that will be scanned. If None, the current page 
+            The name of the page that will be scanned. If None, the current page
             is used.
-        
+
         `highest_first`
             If true, the highest-numbered file slot is listed first.
             Otherwise, the lowest-numbered slot is listed first.
         """
-        
+
         regexp = __filename(r'\d+', page)
-        
+
         rv = [ ]
-        
+
         for fn in renpy.list_saved_games(regexp=regexp, fast=True):
             _page, _, slot = fn.partition('-')
-            
+
             rv.append(int(slot))
-            
+
         rv.sort()
         if highest_first:
             rv.reverse()
@@ -90,11 +90,11 @@ init -1500 python:
          """
 
         return renpy.can_load(__filename(name, page))
-    
+
     def FileScreenshot(name, empty=None, page=None):
         """
          :doc: file_action_function
-                  
+
          Returns the screenshot associated with the given file. If the
          file is not loadable, then `empty` is returned, unless it's None,
          in which case, a Null displayable is created.
@@ -114,18 +114,18 @@ init -1500 python:
 
         return displayable
 
-            
+
     def FileTime(name, format=_("%b %d, %H:%M"), empty="", page=None):
         """
-         :doc: file_action_function 
-         
+         :doc: file_action_function
+
          Returns the time the file was saved, formatted according
          to the supplied `format`. If the file is not found, `empty` is
          returned.
 
          The return value is a string.
          """
-        
+
         save_data = renpy.scan_saved_game(__filename(name, page))
 
         if save_data is None:
@@ -134,7 +134,7 @@ init -1500 python:
         import time
 
         extra_info, displayable, save_time = save_data
-        
+
         format = renpy.translation.translate_string(format)
 
         return time.strftime(format.encode("utf-8"), time.localtime(save_time)).decode("utf-8")
@@ -142,7 +142,7 @@ init -1500 python:
     def FileSaveName(name, empty="", page=None):
         """
          :doc: file_action_function
-         
+
          Return the save_name that was in effect when the file was saved,
          or `empty` if the file does not exist.
          """
@@ -153,7 +153,7 @@ init -1500 python:
             return empty
 
         extra_info, displayable, save_time = save_data
-        
+
         return extra_info
 
 
@@ -165,12 +165,12 @@ init -1500 python:
 
          The button with this slot is selected if it's marked as the
          newest save file.
-         
+
          `name`
              The name of the slot to save to. If None, an unused slot
-             (a large number based on the current time) will be 
+             (a large number based on the current time) will be
              will be used.
-        
+
          `confirm`
              If true, then we will prompt before overwriting a file.
 
@@ -197,12 +197,12 @@ init -1500 python:
             self.newest = newest
             self.page = page
             self.cycle = cycle
-            
+
         def __call__(self):
 
             if not self.get_sensitive():
                 return
-            
+
             fn = __filename(self.name, self.page)
 
             if self.cycle:
@@ -220,7 +220,7 @@ init -1500 python:
 
                 if self.page is not None:
                     persistent._file_page = self.page
-                
+
             renpy.restart_interaction()
 
         def get_sensitive(self):
@@ -236,9 +236,9 @@ init -1500 python:
         def get_selected(self):
             if not self.confirm:
                 return False
-            
+
             return persistent._file_newest == __filename(self.name, self.page)
-            
+
     class FileLoad(Action):
         """
          :doc: file_action
@@ -248,35 +248,35 @@ init -1500 python:
          `name`
              The name of the slot to load from. If None, an unused slot
              the file will not be loadable.
-        
+
          `confirm`
              If true, prompt if loading the file will end the game.
 
          `page`
              The page that the file will be loaded from. If None, the
              current page is used.
-        
+
          `newest`
              If true, the button is selected if this is the newest file.
          """
-        
+
         def __init__(self, name, confirm=True, page=None, newest=True):
 
             if name is None:
                 name = __unused_slot_name(page)
-                
+
             self.name = name
             self.confirm = confirm
             self.page = page
             self.newest = newest
-            
+
         def __call__(self):
 
             if not self.get_sensitive():
                 return
-            
+
             fn = __filename(self.name, self.page)
-            
+
             if not renpy.context()._main_menu:
                 if self.confirm:
                     layout.yesno_screen(layout.LOADING, FileLoad(self.name, False, self.page))
@@ -287,7 +287,7 @@ init -1500 python:
         def get_sensitive(self):
             if _in_replay:
                 return False
-            
+
             return renpy.can_load(__filename(self.name, self.page))
 
         def get_selected(self):
@@ -305,19 +305,19 @@ init -1500 python:
          `confirm`
              If true, prompts before deleting a file.
          """
-        
+
         def __init__(self, name, confirm=True, page=None):
             self.name = name
             self.confirm = confirm
             self.page = page
-            
+
         def __call__(self):
 
             if not self.get_sensitive():
                 return
-            
+
             fn = __filename(self.name, self.page)
-            
+
             if self.confirm:
                 layout.yesno_screen(layout.DELETE_SAVE, FileDelete(self.name, False, self.page))
                 return
@@ -330,7 +330,7 @@ init -1500 python:
         def get_selected(self):
             return persistent._file_newest == __filename(self.name, self.page)
 
-        
+
     def FileAction(name, page=None):
         """
          :doc: file_action
@@ -340,19 +340,19 @@ init -1500 python:
 
          `name`
              The name of the slot to save to or load from. If None, an unused slot
-             (a large number based on the current time) will be 
+             (a large number based on the current time) will be
              will be used.
-         
+
          `page`
              The page that the file will be saved to or loaded from. If None, the
              current page is used.
          """
-        
+
         if renpy.current_screen().screen_name[0] == "load":
             return FileLoad(name, page=page)
         else:
             return FileSave(name, page=page)
-         
+
 
     class FilePage(Action):
         """
@@ -361,7 +361,7 @@ init -1500 python:
          Sets the file page to `page`, which should be one of "auto", "quick",
          or an integer.
          """
-        
+
         def __init__(self, page):
             self.page = str(page)
 
@@ -371,10 +371,10 @@ init -1500 python:
 
             persistent._file_page = self.page
             renpy.restart_interaction()
-            
+
         def get_selected(self):
             return self.page == persistent._file_page
-                
+
     def FilePageName(auto="a", quick="q"):
         """
          :doc: file_action_function
@@ -437,8 +437,8 @@ init -1500 python:
             page = int(page) - 1
 
         return format % (prefix, page * slots_per_page + slot)
-         
-        
+
+
     class FilePageNext(Action):
         """
          :doc: file_action
@@ -474,7 +474,7 @@ init -1500 python:
                     page = str(page)
 
             self.page = page
-                
+
         def __call__(self):
             if not self.get_sensitive():
                 return
@@ -484,7 +484,7 @@ init -1500 python:
 
         def get_sensitive(self):
             return self.page is not None
-            
+
 
     class FilePagePrevious(Action):
         """
@@ -496,7 +496,7 @@ init -1500 python:
         def __init__(self):
 
             page = persistent._file_page
-        
+
             if page == "auto":
                 page = None
 
@@ -518,7 +518,7 @@ init -1500 python:
                 page = str(int(page) - 1)
 
             self.page = page
-                
+
         def __call__(self):
             if not self.get_sensitive():
                 return
@@ -540,32 +540,30 @@ init -1500 python:
 
         def __call__(self):
             renpy.take_screenshot()
-        
+
     def QuickSave(message="Quick save complete.", newest=False):
         """
         :doc: file_action
-        
+
         Performs a quick save.
-        
+
         `message`
             A message to display to the user when the quick save finishes.
 
         `newest`
             Set to true to mark the quicksave as the newest save.
          """
-    
-        return [ 
+
+        return [
             FileTakeScreenshot(),
-            FileSave(1, page="quick", confirm=False, cycle=True, newest=newest), 
+            FileSave(1, page="quick", confirm=False, cycle=True, newest=newest),
             Notify("Quick save complete.") ]
-        
+
     def QuickLoad():
         """
         :doc: file_action
-    
+
         Performs a quick load.
         """
-    
-        return FileLoad(1, page="quick", confirm=True, newest=False)
 
-    
+        return FileLoad(1, page="quick", confirm=True, newest=False)

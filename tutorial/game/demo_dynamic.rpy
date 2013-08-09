@@ -6,7 +6,7 @@ init:
 
         # This function will run a countdown of the given length. It will
         # be white until 5 seconds are left, and then red until 0 seconds are
-        # left, and then will blink 0.0 when time is up. 
+        # left, and then will blink 0.0 when time is up.
         def countdown(st, at, length=0.0):
 
             remaining = length - st
@@ -27,7 +27,7 @@ label demo_dynamic:
     e "The DynamicDisplayable function lets you change what's displayed over the course of an interaction."
 
     show countdown at Position(xalign=.1, yalign=.1)
-    
+
     e "This makes it possible to display things like countdown timers and progress bars."
 
     e "Remember, people read at different speeds, so it's probably better to use this for flavor, rather then to make games time-sensitive."
@@ -36,5 +36,3 @@ label demo_dynamic:
     with dissolve
 
     return
-
-    

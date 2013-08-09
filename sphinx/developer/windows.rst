@@ -34,7 +34,7 @@
 
    at the start. The msvcr90 headers do not seem to work when
    STRICT_ANSI is defined. Cancelling it seems to be the fix.
-   
+
 4. Untar directx-devel.tar.gz over in c:/mingw.
 
 5. Install python 2.7.
@@ -54,6 +54,3 @@
 When these steps are done, put /python27 and /mingw/bin in your PATH,
 and run build.sh from renpy-deps. Then run setup.py in the modules
 directory of Ren'Py to build the ren'py modules.
-
-
-

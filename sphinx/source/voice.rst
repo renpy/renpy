@@ -40,10 +40,10 @@ For example::
       vbox:
           textbutton "Mute Eileen" action ToggleVoiceMute("eileen")
           textbutton "Mute Lucy" action ToggleVoiceMute("lucy")
-  
+
   label start:
       show screen voice_toggle
-  
+
       voice "e01.ogg"
       e "You can turn a character's voice on and off."
 

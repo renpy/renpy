@@ -1,7 +1,7 @@
 # Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-# This file defines variables and functions that are obsolete in modern version 
+# This file defines variables and functions that are obsolete in modern version
 # of Ren'Py. (But there are other functions that are also obsolete.)
 
 init -1900 python:
@@ -14,7 +14,7 @@ init -1900 python:
     config.module_warning = False
 
 init -1900 python:
-    
+
     # basics: A map from a string that's displayed by the interface to
     # a translated value of that string.
     config.translations = { }
@@ -49,17 +49,20 @@ init -1900 python:
 
     # Prefixes to strip from automatic images.
     config.automatic_images_strip = [ ]
-    
+
+    # The minimum number of components which the image name consists of is 2 by default.
+    config.automatic_images_minimum_components = 2
+
 
 init 1900 python hide:
-    
+
     def create_automatic_images():
-    
+
         seps = config.automatic_images
 
         if seps is True:
             seps = [ ' ', '/', '_' ]
-            
+
         for dir, fn in renpy.loader.listdirfiles():
 
             if fn.startswith("_"):
@@ -71,7 +74,7 @@ init 1900 python hide:
 
             # Strip the extension, replace slashes.
             shortfn = fn[:-4].replace("\\", "/")
-            
+
             # Determine the name.
             name = ( shortfn, )
             for sep in seps:
@@ -85,11 +88,11 @@ init 1900 python hide:
                         break
                 else:
                     break
-                
-            # Only names of 2 components or more.
-            if len(name) < 2:
+
+            # Only names of 2 components or more by default.
+            if len(name) < config.automatic_images_minimum_components:
                 continue
-            
+
             # Reject if it already exists.
             if name in renpy.display.image.images:
                 continue
@@ -112,7 +115,7 @@ init -1900 python:
             # narrator("", interact=False)
             ui.window(style=style.say_window["empty"])
             ui.null()
-            
+
         return trans
 
     config.with_callback = _default_with_callback

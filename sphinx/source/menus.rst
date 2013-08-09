@@ -21,7 +21,7 @@ Here's an example of a menu statement::
              $ drank_tea = True
 
              "I drink the tea, trying not to make a political statement as I do."
-         
+
          "Genuflect.":
              jump genuflect_ending
 
@@ -66,6 +66,3 @@ true. In the following menu::
 
 The third choice will only be presented if the drank_tea variable is
 true.
-
-          
-

@@ -15,7 +15,7 @@ def process(fn):
 
     with open(fn, "wb") as f:
         f.write(data)
-    
+
 import os
 
 for directory, dirs, files in os.walk(sys.argv[1]):
@@ -27,5 +27,3 @@ for directory, dirs, files in os.walk(sys.argv[1]):
 
         print fn
         process(fn)
-        
-        

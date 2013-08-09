@@ -28,7 +28,7 @@ at clause. The syntax of the transform statement is:
 .. productionlist:: script
     atl_transform : "transform" `name` "(" `parameters` ")" ":"
                   :    `atl_block`
-             
+
 The transform statement  must be run at init time. If it is found outside an
 init block, then it is automatically placed inside an init block with a
 priority of 0. The transform may have a list of parameters, which must be
@@ -43,7 +43,7 @@ bound to this name.::
        repeat
 
 .. _atl-image-statement:
-    
+
 Image Statement With ATL Block
 ------------------------------
 
@@ -65,7 +65,7 @@ animation. The syntax for an image statement with ATL block is:
         pause 1.0
         repeat
 
-              
+
 Scene and Show Statements with ATL Block
 ----------------------------------------
 
@@ -86,7 +86,7 @@ the image being shown inside an ATL transformation.
 
     show eileen happy:
         xalign 1.0
-        
+
 
 ATL Syntax and Semantics
 ========================
@@ -124,10 +124,10 @@ Interpolation Statement
 The interpolation statement is the main way that ATL controls transformations.
 
 .. productionlist:: atl
-    atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? 
-               : ( `property` `simple_expression` ( "knot" `simple_expression` )* 
+    atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )?
+               : ( `property` `simple_expression` ( "knot" `simple_expression` )*
                : | "clockwise"
-               : | "counterclockwise" 
+               : | "counterclockwise"
                : | "circles" simple_expression
                : | simple_expression )*
 
@@ -175,7 +175,7 @@ Some sample interpolations are::
          # Take 1.0 seconds to move things back to the left.
          linear 1.0 xalign 0.0
 
-         # Take 1.0 seconds to move things to the location specified in the 
+         # Take 1.0 seconds to move things to the location specified in the
          # truecenter transform. Use the ease warper to do this.
          ease 1.0 truecenter
 
@@ -185,7 +185,7 @@ Some sample interpolations are::
          # Set the location to circle around.
          alignaround (.5, .5)
 
-         # Use circular motion to bring us to spiral out to the top of 
+         # Use circular motion to bring us to spiral out to the top of
          # the screen. Take 2 seconds to do so.
          linear 2.0 yalign 0.0 clockwise circles 3
 
@@ -348,7 +348,7 @@ is assumed.
             "eileen vhappy"
         choice:
             "eileen concerned"
- 
+
         pause 1.0
         repeat
 
@@ -522,7 +522,7 @@ The functions have the same signature as those used with :func:`Transform`:
             else:
                 trans.xalign = st
                 return 0
-        
+
     label start:
         show logo base:
             function slide_function
@@ -569,7 +569,7 @@ that uses the warper. The code looks like:
             return t
 
 .. _transform-properties:
-            
+
 List of Transform Properties
 ============================
 
@@ -657,19 +657,19 @@ both horizontal and vertical positions.
 
     :type: float
     :default: 0.0
-    
-    The number of pixels the displayable is offset by in the horizontal 
+
+    The number of pixels the displayable is offset by in the horizontal
     direction. Positive values offset toward the right.
 
 .. transform-property:: yoffset
 
     :type: float
     :default: 0.0
-    
+
     The number of pixels the displayable is offset by in the vertical
     direction. Positive values offset toward the bottom.
-    
-    
+
+
 
 .. transform-property:: xcenter
 
@@ -686,7 +686,7 @@ both horizontal and vertical positions.
 
     Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
-    
+
 .. transform-property:: rotate
 
     :type: float or None
@@ -714,9 +714,9 @@ both horizontal and vertical positions.
 
    :type: boolean
    :default: False
-   
+
    If true, the anchor point is located on the cropped child, and is scaled
-   and rotated as the child is transformed. Effectively, this makes the 
+   and rotated as the child is transformed. Effectively, this makes the
    anchor the point that the child is rotated and scaled around.
 
 .. transform-property:: zoom
@@ -733,9 +733,9 @@ both horizontal and vertical positions.
     :default: 1.0
 
     This causes the displayable to be horizontally zoomed by the
-    supplied factor. A negative value causes the image to be 
+    supplied factor. A negative value causes the image to be
     flipped horizontally.
-    
+
 .. transform-property:: yzoom
 
    :type: float
@@ -750,6 +750,37 @@ both horizontal and vertical positions.
     :default: 1.0
 
     This controls the opacity of the displayable.
+
+    The alpha transform is applied to each image comprising the child of
+    the transform independently. This can lead to unexpected results when
+    the children overlap, such as as seeing a character through clothing.
+    The :func:`Flatten` displayable can help with these problems.
+
+.. transform-property:: additive
+
+    :type: float
+    :default: 0.0
+
+    This controls how much additive blending Ren'Py performs. When 1.0,
+    Ren'Py draws using the ADD operator. When 0.0, Ren'Py draws using
+    the OVER operator.
+
+    Additive blending is performed on each child of the transform independently.
+
+    Fully additive blending doesn't alter the alpha channel of the destination,
+    and additive images may not be visible if they're not drawn directly onto
+    an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
+    and certain transitions may cause problems with additive blending.)
+
+    .. warning::
+
+        Additive blending is only supported by hardware-based renderers, such
+        as the OpenGL and DirectX/ANGLE renderers. The software renderer will
+        draw additive images incorrectly.
+
+        Once the graphics system has started, ``renpy.get_renderer_info()["additive"]``
+        will be true if additive blending is supported.
+
 
 .. transform-property:: around
 

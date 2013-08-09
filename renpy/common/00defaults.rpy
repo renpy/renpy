@@ -9,20 +9,20 @@ init -1500 python:
 
     # basics: If not None, the default value of the text_cps
     # preference when the game is first run.
-    config.default_text_cps = None        
+    config.default_text_cps = None
 
     # If not None, the default value of afm_time
     config.default_afm_time = None
 
     # If not None, the default value of afm_enable
     config.default_afm_enable = None
-    
-    
+
+
 init 1500 python:
 
     if not persistent._set_preferences:
         persistent._set_preferences = True
-        
+
         if config.default_fullscreen is not None:
             _preferences.fullscreen = config.default_fullscreen
 
@@ -31,16 +31,16 @@ init 1500 python:
 
         if config.default_afm_time is not None:
             _preferences.afm_time = config.default_afm_time
-            
+
     if config.default_afm_enable is not None:
         _preferences.afm_enable = config.default_afm_enable
         _preferences.using_afm_enable = True
     else:
         _preferences.afm_enable = True
         _preferences.using_afm_enable = False
-    
-    
-init -1500 python:    
+
+
+init -1500 python:
     def _imagemap_auto_function(auto_param, variant):
         rv = auto_param % variant
 
@@ -48,7 +48,7 @@ init -1500 python:
             return rv
         else:
             return None
-        
+
     config.imagemap_auto_function = _imagemap_auto_function
 
 init -1500 python:

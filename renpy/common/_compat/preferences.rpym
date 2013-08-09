@@ -50,7 +50,7 @@ init python:
     # preferences.
     config.always_has_joystick = False
 
-    
+
     def _prefs_screen_run(prefs_map, positions):
 
 
@@ -189,7 +189,7 @@ init python:
             apologize for the convolution of this.)
 
             @param channel: The number of the channel the sample
-            sound is played on.                
+            sound is played on.
             """
 
             self.name = name
@@ -215,7 +215,7 @@ init python:
             def changed(v):
 
                 _preferences.set_volume(self.mixer, v / 128.0)
-                
+
             ui.bar(128,
                    int(_preferences.get_volume(self.mixer) * 128),
                    changed=changed,
@@ -378,7 +378,7 @@ init python:
                 return (label, key)
 
             _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=my_clicked, index=label)
-        
+
 
     def _joystick_get_binding():
         ui.add(renpy.display.joystick.JoyBehavior())
@@ -392,15 +392,15 @@ init python:
         else:
             _preferences.joymap[key] = binding
 
-        
-            
+
+
     class _JoystickPreference(object):
 
         def __init__(self, name):
             self.name = name
             config.all_preferences[name] = self
 
-            
+
         def render_preference(self):
 
             def set_binding(label, key):
@@ -415,9 +415,9 @@ init python:
                 _joystick_get_binding()
                 binding = _game_interact()
                 _joystick_take_binding(binding, key)
-                
+
                 return True
-                
+
 
             ui.window(style='prefs_js_frame')
             ui.vbox(style='prefs_js_vbox')
@@ -429,9 +429,9 @@ init python:
                     return renpy.invoke_in_new_context(set_binding, label, key)
 
                 _button_factory(_(label) + " - " + _(_preferences.joymap.get(key, u"Not Assigned")), "prefs_js", clicked=clicked, index=label)
-            
+
             ui.close()
-            
+
 
     class _JumpPreference(object):
 
@@ -466,7 +466,7 @@ init python:
         for k, v in config.preferences.iteritems():
             if pref in v:
                 v.remove(pref)
-            
+
 init python hide:
 
     # Enablers for some preferences.
@@ -509,7 +509,7 @@ init python hide:
         (u'Keep Skipping', True, 'config.allow_skipping and config.has_skip_after_choice'),
         ])
 
-    config.old_names['Keep Skipping'] = 'Continue Skipping' 
+    config.old_names['Keep Skipping'] = 'Continue Skipping'
 
     def cps_get():
         cps = _preferences.text_cps
@@ -591,17 +591,11 @@ init python hide:
 label _prefs_screen:
 
     $ _prefs_screen_run(config.preferences, config.preference_positions)
-    
+
     jump _prefs_screen
-    
-label _joystick_screen:    
-        
+
+label _joystick_screen:
+
     $ _prefs_screen_run(config.joystick_preferences, config.joystick_preference_positions)
 
     jump _joystick_screen
-
-            
-                        
-
-                         
-                         

@@ -2,11 +2,11 @@
 # See LICENSE.txt for license details.
 
 init python:
-    
+
     # Styles
     style.prefs_frame = Style(style.default, help="the frame containing all of the preferences")
     style.prefs_frame_box = Style(style.default, help="the box inside the frame containing all of the preferences")
-    
+
     style.prefs_pref_frame = Style(style.menu_frame, help="a frame containing a single preference")
     style.prefs_pref_box = Style(style.vbox, help="the box separating the preference label from the preference choices")
     style.prefs_pref_choicebox = Style(style.vbox, help="the box containing the preference choices")
@@ -21,14 +21,14 @@ init python:
 
     style.prefs_volume_box = Style(style.vbox, help="box containing a volume slider and soundtest button")
     style.prefs_volume_slider = Style(style.prefs_slider, help="volume slider bar")
-    
+
     style.soundtest_button = Style(style.small_button, help="soundtest button")
     style.soundtest_button_text = Style(style.small_button_text, help="soundtest button (text)")
 
     style.prefs_jump = Style(style.prefs_pref_frame, help="jump preference frame")
     style.prefs_jump_button = Style(style.button, help="jump preference button")
     style.prefs_jump_button_text = Style(style.button_text, help="jump preference button (text)")
-    
+
     # This is a map from the name of the style that is applied to
     # a list of preferences that should be placed into a vbox
     # with that style.
@@ -40,11 +40,11 @@ init python:
 
     # Should the soundtest button be before the volume slider?
     config.soundtest_before_volume = False
-    
+
     def _prefs_screen_run(prefs_map):
 
         layout.navigation("preferences")
-        
+
         ui.window(style='prefs_frame')
         ui.fixed(style='prefs_frame_box')
 
@@ -96,7 +96,7 @@ init python:
 
             config.all_preferences[name] = self
 
-            
+
         def render(self):
             values = [ (name, val) for name, val, cond in self.values
                        if cond is None or renpy.eval(cond) ]
@@ -149,7 +149,7 @@ init python:
             apologize for the convolution of this.)
 
             @param channel: The number of the channel the sample
-            sound is played on.                
+            sound is played on.
             """
 
             self.name = name
@@ -173,17 +173,17 @@ init python:
             layout.label(self.name, "prefs")
 
             ui.vbox(style=style.prefs_volume_box[self.name])
-            
+
             if sound:
                 def clicked():
                     renpy.sound.play(sound, channel=self.channel)
-            
+
             if sound and config.soundtest_before_volume:
                 layout.button(u"Test", "soundtest", clicked=clicked, index=self.name)
 
             def changed(v):
                 _preferences.set_volume(self.mixer, v / 128.0)
-                
+
             ui.bar(128,
                    int(_preferences.get_volume(self.mixer) * 128),
                    changed=changed,
@@ -227,7 +227,7 @@ init python:
             self.range = range
             self.enable = enable
             self.base = base
-            
+
             config.all_preferences[name] = self
 
         def get(self):
@@ -245,7 +245,7 @@ init python:
                 value = 0
 
             setattr(self.base, self.field, value)
-            
+
         def render(self):
 
             if not eval(self.enable):
@@ -274,14 +274,14 @@ init python:
             self.target = target
             self.condition = condition
             self.show = show
-            
+
             config.all_preferences[name] = self
 
         def render(self):
 
             if not eval(self.show):
                 return
-            
+
             ui.window(style=style.prefs_jump[self.name])
 
             if eval(self.condition):
@@ -304,7 +304,7 @@ init python:
         for k, v in config.preferences.iteritems():
             if pref in v:
                 v.remove(pref)
-            
+
 init python hide:
 
     # Enablers for some preferences.
@@ -317,7 +317,7 @@ init python hide:
     config.has_skip_after_choice = True
     config.always_has_joystick = False
     config.has_joystick = True
-    
+
 
     # Left
 
@@ -343,14 +343,14 @@ init python hide:
                     '_return_skipping',
                     'not main_menu',
                     'config.allow_skipping and config.has_skipping')
-    
-    
+
+
     _Preference(u'After Choices', 'skip_after_choices', [
         (u'Stop Skipping', False, 'config.allow_skipping and config.has_skip_after_choice'),
         (u'Keep Skipping', True, 'config.allow_skipping and config.has_skip_after_choice'),
         ])
 
-    config.old_names['Keep Skipping'] = 'Continue Skipping' 
+    config.old_names['Keep Skipping'] = 'Continue Skipping'
 
     _SliderPreference(u'Text Speed', "text_cps", 150, 'config.has_cps')
     _SliderPreference(u'Auto-Forward Time', "afm_time", 40, 'config.has_afm')

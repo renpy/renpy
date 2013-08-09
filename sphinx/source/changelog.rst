@@ -2,18 +2,82 @@
 Full Changelog
 ==============
 
+Ren'Py 6.15.6
+-------------
+
+This release includes improvements for the Android platform:
+
+* Assets are now read exclusively from the APK and expansion file.
+* Logs and tracebacks are placed on external storage.
+* Saves are placed on external storage, except when saves from
+  older versions of Ren'Py exist.
+
+The GL2 shaders Ren'Py uses have been simplified in the (usual) case
+where no clipping is occuring. This leads to a noticable speed
+improvement on Android, and potentially other platforms as well.
+
+An issue with Drag-and-drop has been fixed. Thanks go to Kinsman
+for contributing this fixe.
+
+The :func:`Skip` action now triggers the skip indicator. It also
+supports a new fast parameter, which causes skipping to the
+next menu.
+
+This release includes various minor changes to improve compatibility
+with very old Ren'Py games. (It now runs the Ren'Py 5 demo.)
+
+
+Ren'Py 6.15.5
+-------------
+
+This release adds two new features:
+
+* The GL renderer now supports additive blending. This is enabled using the
+  :tpref:`additive` transform property in an ATL transform or use of the
+  :func:`Transform` class. Additive blending will not work if the software
+  renderer is in use, and it's up to creators to deal with that issue.
+
+* The new :func:`Flatten` displayable combines multiple textures into
+  a single texture. This can be used to prevent incorrect behavior
+  when a displayable containing multiple overlapping textures (like a
+  :func:`LiveComposite` is shown with an :tpref:`alpha` between 0 and 1.
+
+It also fixes the following issues:
+
+* Whitespace is now skipped before default arguments, which previously
+  caused parse errors in some cases.
+
+* Ren'Py now sets the unix mode of files and directories in zip and tar
+  files to 644 and 755 as appropriate. Prior versions of Ren'Py used
+  666 and 777 as the permissions, which lead to a security problem
+  when the file was unpacked by a tool that didn't respect the user's
+  umask. (Info-zip had this problem.)
+
+* Auto-hinting for fonts is now enabled by default. This restores font
+  rendering compatibility with prior releases.
+
+* Ren'Py now builds with and requires the current version of libav. It
+  should also work with current versions of ffmpeg when libav is
+  available.
+
+* The version of SDL distributed with Ren'Py has been patched to
+  prevent multiple windows from showing up in the Window menu
+  when entering and leaving fullscreen mode.
+
+
+
 Ren'Py 6.15.4
 -------------
 
-This release fixes a compile problem that prevented Ren'Py 6.14.x and
-Ren'Py 6.15.0-3 from running on most 64-bit Linux systems.
+This release fixes a compile problem that prevented Ren'Py 6.14.x and Ren'Py
+6.15.0-3 from running on most 64-bit Linux systems.
 
-Image prediction has become more fine-grained, and can take place
-while the screen is animating.
+Image prediction has become more fine-grained, and can take place while the
+screen is animating.
 
-The new :var:`build.exclude_empty_directories` determines if empty
-directories are include or excluded from the distribution. It defaults
-to true, previously the default was platform-dependant.
+The new :var:`build.exclude_empty_directories` determines if empty directories
+are include or excluded from the distribution. It defaults to true,
+previously the default was platform-dependant.
 
 
 
@@ -33,21 +97,20 @@ combined at the translator's discretion. As most Ren'Py statements are
 allowed inside the new translation blocks, it's possible to use logic (like
 conditions) to tailor the translations to your language.
 
-The launcher includes a new "Generate Translations" button, which - as part
-of a sanctioned translation where the full script is present - will generate
+The launcher includes a new "Generate Translations" button, which - as part of
+a sanctioned translation where the full script is present - will generate
 empty translation files for a new language.
 
 Improved Japanese Support
 -------------------------
 
-Ren'Py 6.15 includes multiple changes to better support the Japanese
-language.
+Ren'Py 6.15 includes multiple changes to better support the Japanese language.
 
-* The tutorial game has been translated to Japanese, with the language
-  being selectable from the preferences menu.
+* The tutorial game has been translated to Japanese, with the language being
+  selectable from the preferences menu.
 
   The tutorial was translated by Koichi Akabe.
-  
+
 * Support for vertical writing has been added to Ren'Py. Consisting of the
   :propref:`vertical` style property for text, and the new
   :propref:`box_reverse` property on hboxes, this support makes it possible
@@ -111,14 +174,13 @@ replay if one is in progress, and is ignored otherwise.
 Voice Improvements
 ------------------
 
-There have been several improvements to the voice playback system. The
-new :var:`config.voice_filename_format` variable makes it possible to
-use only part of the filename in a voice statement. The new voice_tag
-parameter to :func:`Character`, in conjunction with the
-:func:`SetVoiceMute` and :func:`ToggleVoiceMute` actions, makes it
-possible to selectively mute particular characters' voices. The new
-:func:`VoiceReplay` action makes it possible to replay the current
-voice.
+There have been several improvements to the voice playback system. The new
+:var:`config.voice_filename_format` variable makes it possible to use only
+part of the filename in a voice statement. The new voice_tag parameter to
+:func:`Character`, in conjunction with the :func:`SetVoiceMute` and
+:func:`ToggleVoiceMute` actions, makes it possible to selectively mute
+particular characters' voices. The new :func:`VoiceReplay` action makes it
+possible to replay the current voice.
 
 Launcher Improvements
 ---------------------
@@ -139,44 +201,44 @@ There were a few launcher improvements in this release.
 Macintosh Changes
 -----------------
 
-The Macintosh version of Ren'Py now requires a 64-bit capable processor,
-and Mac OS X 10.6 or newer.
-  
+The Macintosh version of Ren'Py now requires a 64-bit capable processor, and
+Mac OS X 10.6 or newer.
+
 Packaging Improvements
 ----------------------
 
-The file layout of Ren'Py games has been somewhat altered. With the
-exception of small launcher programs, all platform-dependent binaries
-are under the lib/ directory. Ren'Py itself has now been placed in the
-renpy/ directory. The common/ directory has been moved to
-renpy/common/, as it's considered an integral part of Ren'Py.
+The file layout of Ren'Py games has been somewhat altered. With the exception
+of small launcher programs, all platform-dependent binaries are under the
+lib/ directory. Ren'Py itself has now been placed in the renpy/ directory.
+The common/ directory has been moved to renpy/common/, as it's considered an
+integral part of Ren'Py.
 
-Ren'Py now uses renamed but otherwise unmodified python binaries on
-all desktop platforms. (Previously, it used platform-specific
-binaries.) Portions of the library are shared between the desktop
-builds.
+Ren'Py now uses renamed but otherwise unmodified python binaries on all
+desktop platforms. (Previously, it used platform-specific binaries.) Portions
+of the library are shared between the desktop builds.
 
-A running Ren'Py process on Linux will now be named after the game,
-rather than having python as a name.
-
+A running Ren'Py process on Linux will now be named after the game, rather
+than having python as a name.
 
 
-  
+
+
 Other Changes
 -------------
 
-* :ref:`Viewports <sl-viewport>` now support edge scrolling, which
-  scrolls the viewport when the mouse is within a a configurable
-  distance of the viewport edge.
+* :ref:`Viewports <sl-viewport>` now support edge scrolling, which scrolls
+  the viewport when the mouse is within a a configurable distance of the
+  viewport edge.
 
-* Most keyboard keys now automatically repeat. The repeat rate is
-  controlled by :var:`config.key_repeat`.
+* Most keyboard keys now automatically repeat. The repeat rate is controlled
+  by :var:`config.key_repeat`.
 
 * Side images can now be used with menus.
-  
-* The :ref:`config.enter_yesno_transition` and `config.exit_yesno_transition`
-  variables make it possible to define a transition that is run when
-  yes/no prompts appear and disappear, respectively.
+
+* The :ref:`config.enter_yesno_transition` and
+  `config.exit_yesno_transition` variables make it possible to define a
+  transition that is run when yes/no prompts appear and disappear,
+  respectively.
 
 * The :ref:`viewport statement <sl-viewport>` now supports edge scrolling -
   automatic scrolling when the mouse approaches the sides of the viewport.
@@ -231,20 +293,21 @@ Among others, the following bugs were fixed:
 
 * :ghbug:`51`: The slow_done callback was not called after a rollback.
 
-* :ghbug:`56`, :ghbug:`57`: :func:`renpy.loadable` now works with Android assets.
+* :ghbug:`56`, :ghbug:`57`: :func:`renpy.loadable` now works with Android
+  assets.
 
-* :ghbug:`60`: Fixed a bug that prevented {p} and {w} from working properly when followed
-  immediately by a text tag.
-  
-* :ghbug:`61`: Ren'Py no longer crashes when an end_game_transition is
-  set and a screen uses a variable that is no longer defined when the
-  game restarts.
+* :ghbug:`60`: Fixed a bug that prevented {p} and {w} from working properly
+  when followed immediately by a text tag.
 
-* :ghbug:`65`: Multiplying a rollback list by a number now always produces
-  a rollback list.
+* :ghbug:`61`: Ren'Py no longer crashes when an end_game_transition is set
+  and a screen uses a variable that is no longer defined when the game
+  restarts.
+
+* :ghbug:`65`: Multiplying a rollback list by a number now always produces a
+  rollback list.
 
 * Editra should work better on Windows.
-  
+
 * It's now possible to :func:`renpy.call` a label that doesn't take
   parameters.
 
@@ -254,7 +317,7 @@ Among others, the following bugs were fixed:
 * Fixed an error handling failure when a python early block contained a
   syntax error.
 
-  
+
 
 Ren'Py 6.14
 ===========
@@ -478,7 +541,7 @@ Other Changes
 
 * The :func:`renpy.call` function allows - with major and important caveats
   - a call to a Ren'Py label to begin from inside python code. Such a call
-  immediately terminates the current statement.
+    immediately terminates the current statement.
 
 * When an action is expected, nested lists of actions can be given. The
   lists are flattened and the action executed.
@@ -774,7 +837,7 @@ For example, say we had the following images::
 
    image eileen beach happy = "eileen_beach_happy.png"
    image eileen beach woozy = "eileen_beach_woozy.png"
-   
+
 We can now show the first image using the command::
 
    show eileen happy beach

@@ -37,7 +37,7 @@ def call_exception_screen(screen_name, **kwargs):
 
         for i in renpy.config.layers:
             renpy.game.context().scene_lists.clear(i)
-    
+
         renpy.exports.show_screen(screen_name, _transient=True, **kwargs)
         return renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
 
@@ -46,7 +46,7 @@ def call_exception_screen(screen_name, **kwargs):
 
 def rollback_action():
     renpy.exports.rollback(force=True)
-    
+
 def init_display():
     """
     The minimum amount of code required to init the display.
@@ -59,14 +59,14 @@ def init_display():
         renpy.style.styles_built = True # The styles we use were built in renpy.main.
 
     renpy.ui.reset()
-       
+
 def error_dump():
     """
     Handles dumps in the case where an error occurs.
     """
-    
+
     renpy.dump.dump(True)
-        
+
 def report_exception(short, full, traceback_fn):
     """
     Reports an exception to the user. Returns True if the exception should
@@ -84,23 +84,23 @@ def report_exception(short, full, traceback_fn):
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
-       
+
     if not renpy.exports.has_screen("_exception"):
         return True
-    
+
     try:
-        init_display()    
+        init_display()
     except:
         return True
-    
+
     if renpy.display.draw is None:
         return True
-    
+
     ignore_action = None
     rollback_action = None
     reload_action = None
 
-    try:    
+    try:
         if not renpy.game.context().init_phase:
 
             if renpy.config.rollback_enabled:
@@ -111,18 +111,18 @@ def report_exception(short, full, traceback_fn):
         if renpy.game.context(-1).next_node is not None:
             ignore_action = renpy.ui.returns(False)
     except:
-        pass     
-     
+        pass
+
     renpy.game.invoke_in_new_context(
         call_exception_screen,
-        "_exception", 
-        short=short, full=full, 
+        "_exception",
+        short=short, full=full,
         rollback_action=rollback_action,
         reload_action=reload_action,
         ignore_action=ignore_action,
         traceback_fn=traceback_fn,
         )
-        
+
 
 def report_parse_errors(errors, error_fn):
     """
@@ -141,14 +141,14 @@ def report_parse_errors(errors, error_fn):
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
-       
+
     if not renpy.exports.has_screen("_parse_errors"):
         return True
-    
-    init_display()    
-          
+
+    init_display()
+
     reload_action = renpy.exports.utter_restart
-     
+
     renpy.game.invoke_in_new_context(
         call_exception_screen,
         "_parse_errors",

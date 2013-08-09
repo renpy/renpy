@@ -51,7 +51,7 @@ updates.json
 
 *package*.sums
    Contains checksums for each block in the package.
-   
+
 *package*.update.gz
    Contains the update data for the given package.
 

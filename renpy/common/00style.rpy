@@ -29,7 +29,7 @@ init -1800 python hide:
     style.vbox = Style(style.default, help='vertical boxes')
     style.grid = Style(style.default, help='grid layouts')
     style.side = Style(style.default, help='side layouts')
-    
+
     style.window = Style(style.default, help='windows created with ui.window')
 
     style.image_placement = Style(style.default, help='default placement of images on the screen')
@@ -67,7 +67,7 @@ init -1800 python hide:
     style.hotspot = Style(style.default, help='default style of hotspots inside imagemaps')
     style.hotbar = Style(style.default, help='default style of hotbars inside imagemaps')
     style.imagemap_button = style.hotspot
-    
+
     style.image_button = Style(style.default, help='default style of image buttons')
     style.image_button_image = Style(style.default, help='default style of images inside image buttons')
 
@@ -77,21 +77,24 @@ init -1800 python hide:
 
     style.viewport = Style(style.default, help='default style of viewports')
     style.transform = Style(style.motion, help='default style of transforms')
-    
+
     style.list = Style(style.default)
     style.list_box = Style(style.vbox)
     style.list_row = Style(style.default)
     style.list_row_box = Style(style.hbox)
-    style.list_spacer = Style(style.default)    
+    style.list_spacer = Style(style.default)
     style.list_text = Style(style.default)
 
     style.tile = Style(style.default, help='default style of tile')
-    
+
+    # Not used - but some old games might customize it.
+    style.error_root = Style(style.default)
+
 # The base styles that can be customized by themes.
 
     style.frame = Style(style.default, help='base style for frames.')
     style.menu_frame = Style(style.frame, help='base style for frames used in the game and main menus.')
-    
+
     style.button = Style(style.default, help='base style for buttons.')
     style.button_text = Style(style.default, help='base style for button text')
 
@@ -110,7 +113,7 @@ init -1800 python hide:
 
     style.prompt = Style(style.default, help="base style for windows surrounding prompts")
     style.prompt_text = Style(style.default, help="base style for prompt text")
-    
+
     style.bar = Style(style.default, help='base style for horizontal bars')
     style.vbar = Style(style.default, help='base style for vertical bars')
 
@@ -123,9 +126,9 @@ init -1800 python hide:
     style.mm_root = Style(style.default, help="main menu root window")
     style.gm_root = Style(style.default, help="game menu root window")
 
-    
+
 init -1800 python:
-    
+
     # Colors #############################################################
 
     # The Default Style ###################################################
@@ -160,7 +163,7 @@ init -1800 python:
     style.default.slow_cps_multiplier = 1.0
     style.default.slow_abortable = False
     # style.default.hyperlink_functions (set in 00library.rpy)
-    
+
     # Window properties.
     style.default.background = None
     style.default.xpadding = 0
@@ -182,7 +185,7 @@ init -1800 python:
     style.default.xoffset = 0
     style.default.yoffset = 0
     style.default.subpixel = False
-    
+
     # Sound properties.
     style.default.sound = None
 
@@ -207,7 +210,7 @@ init -1800 python:
     style.default.right_gutter = 0
     style.default.thumb_offset = 0
     style.default.unscrollable = None
-    
+
     # Misc.
     style.default.activate_sound = None
     style.default.clipping = False
@@ -221,7 +224,7 @@ init -1800 python:
     style.motion.yanchor = 0
     style.motion.xpos = 0
     style.motion.ypos = 0
-    
+
     # Windows.
     style.window.background = Solid((0, 0, 0, 192))
     style.window.xpadding = 6
@@ -253,7 +256,7 @@ init -1800 python:
 
     # Styles used by centered.
     style.centered_window.xalign = 0.5
-    style.centered_window.xfill = False                      
+    style.centered_window.xfill = False
     style.centered_window.yalign = 0.5
     style.centered_window.yfill = False
     style.centered_window.xpadding = 10
@@ -267,17 +270,17 @@ init -1800 python:
     style.centered_vtext.xalign = 0.5
     style.centered_vtext.yalign = 0.5
     style.centered_vtext.vertical = True
- 
+
     # Hyperlinks.
     style.hyperlink_text.underline = True
     style.hyperlink_text.hover_color = "#0ff"
     style.hyperlink_text.idle_color = "#08f"
-    
+
     # Ruby.
     style.ruby_text.size = 22
     style.ruby_text.xoffset = 0
     style.default.ruby_style = style.ruby_text
-    
+
     # Bars.
     style.default.bar_invert = False
     style.default.bar_resizing = False
@@ -293,7 +296,7 @@ init -1800 python:
 
     # Transform
     style.transform.subpixel = True
-    
+
     # Menu windows.
     style.mm_root.background = "#000"
     style.mm_root.xfill = True

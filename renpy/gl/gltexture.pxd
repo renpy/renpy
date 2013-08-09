@@ -35,13 +35,14 @@ cdef class TextureGrid:
    cdef public TextureGrid half_cache
 
    cdef void make_ready(self, bint nearest)
-   
+
 cpdef blit(
     TextureGrid tg,
     double sx,
     double sy,
     render.Matrix2D transform,
     double alpha,
+    double over,
     Environ environ,
     bint nearest)
 
@@ -52,6 +53,7 @@ cpdef blend(
     double sy,
     render.Matrix2D transform,
     double alpha,
+    double over,
     double fraction,
     Environ environ)
 
@@ -63,6 +65,7 @@ cpdef imageblend(
     double sy,
     render.Matrix2D transform,
     double alpha,
+    double over,
     double fraction,
     int ramp,
     Environ environ)

@@ -3,7 +3,7 @@
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-# This is used on Linux and Mac to prompt the user for the projects 
+# This is used on Linux and Mac to prompt the user for the projects
 # directory.
 
 import sys
@@ -18,7 +18,7 @@ except ImportError:
 
 # Create the TK canvas.
 
-if __name__ == "__main__":   
+if __name__ == "__main__":
     root = Tk()
     root.withdraw()
 

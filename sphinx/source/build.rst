@@ -128,7 +128,7 @@ archive
 
 Files that are not otherwise classified are placed in the "all" file
 list.
-    
+
 To exclude files from distribution, classify them as None or the
 empty string.
 
@@ -212,7 +212,7 @@ exist until after you're gone.
 
 Build Functions
 ---------------
-     
+
 .. include:: inc/build
 
 Advanced Configuration

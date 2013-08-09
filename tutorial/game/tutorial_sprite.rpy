@@ -42,7 +42,7 @@ init python:
             d = Transform("star.png", zoom=.125)
             for i in range(0, 25):
                 self.add(d, 1280)
-            
+
         def add(self, d, speed):
             s = self.sm.create(d)
 
@@ -50,14 +50,14 @@ init python:
             s.y = renpy.random.randint(0, 600)
 
             self.stars.append((s, start, speed))
-            
+
         def update(self, st):
             for s, start, speed in self.stars:
                 s.x = (start + speed * st) % 840 - 20
 
             return 0
-                
-        
+
+
 label tutorial_sprite:
 
     e "Ren'Py supports a sprite system, which allows many similar objects to be shown on the screen at once."
@@ -78,7 +78,7 @@ label tutorial_sprite:
     with wipeleft
 
     e "The sprite manager requires you to write a python function to move the sprites around."
-    
+
     show snowblossom
 
     e "In many cases, all you need is something moving around the screen - like cherry blossoms, or snow."
@@ -87,7 +87,7 @@ label tutorial_sprite:
 
     hide snowblossom
     with dissolve
-    
+
     e "And that's it for sprites."
 
 

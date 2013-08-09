@@ -3,7 +3,7 @@
 init:
 
     # Declare a layer, 'demo', that lives just above the default 'master'
-    # layer.    
+    # layer.
     $ config.layers.insert(1, 'demo')
 
     # Make it so that it only takes up part of the screen.
@@ -20,7 +20,7 @@ label demo_layers:
     show bg whitehouse onlayer demo
     with dissolve
 
-    show eileen happy onlayer demo 
+    show eileen happy onlayer demo
     with dissolve
 
     e "The \"onlayer\" clause of the scene, show, and hide statements lets us pick which layers the commands affect."

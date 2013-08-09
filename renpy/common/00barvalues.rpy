@@ -39,7 +39,7 @@ init -1500 python:
          `delay`
              The time it takes to animate the value, in seconds. Defaults
              to 1.0.
-         
+
          `old_value`
              The old value. If this is None, then the value is taken from the
              AnimatedValue we replaced, if any. Otherwise, it is initialized
@@ -57,16 +57,16 @@ init -1500 python:
             self.start_time = None
 
             self.adjustment = None
-            
+
         def get_adjustment(self):
             self.adjustment = ui.adjustment(value=self.value, range=self.range, adjustable=False)
             return self.adjustment
-            
+
         def periodic(self, st):
 
             if self.start_time is None:
                 self.start_time = st
-            
+
             if self.value == self.old_value:
                 return
 
@@ -95,7 +95,7 @@ init -1500 python:
     class FieldValue(BarValue):
         """
          :doc: value
-         
+
          A value that allows the user to adjust the value of a field
          on an object.
 
@@ -120,9 +120,9 @@ init -1500 python:
              The amount to change the bar by. If None, defaults to 1/10th of
              the bar.
          """
-        
+
         offset = 0
-        
+
         def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None):
             self.object = object
             self.field = field
@@ -130,15 +130,15 @@ init -1500 python:
             self.max_is_zero = max_is_zero
             self.style = style
             self.offset = offset
-            
+
             if step is None:
                 if isinstance(range, float):
                     step = range / 10.0
                 else:
                     step = max(range / 10, 1)
-            
+
             self.step = step
-                    
+
         def changed(self, value):
 
             if self.max_is_zero:
@@ -146,24 +146,24 @@ init -1500 python:
                     value = 0
                 else:
                     value = value + 1
-            
+
             value += self.offset
-            
+
             setattr(self.object, self.field, value)
             renpy.restart_interaction()
-            
+
         def get_adjustment(self):
 
             value = getattr(self.object, self.field)
-            
+
             value -= self.offset
-            
+
             if self.max_is_zero:
                 if value == 0:
                     value = self.range
                 else:
                     value = value - 1
-                        
+
             return ui.adjustment(
                 range=self.range,
                 value=value,
@@ -176,7 +176,7 @@ init -1500 python:
     def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None):
         """
          :doc: value
-        
+
          `variable`
              A string giving the name of the variable to adjust.
          `range`
@@ -196,9 +196,9 @@ init -1500 python:
              The amount to change the bar by. If None, defaults to 1/10th of
              the bar.
         """
-        
+
         return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step)
-        
+
     class MixerValue(BarValue):
         """
          :doc: value
@@ -210,13 +210,13 @@ init -1500 python:
              "music", "sfx", or "voice", but user code can create new
              mixers.
          """
-        
+
         def __init__(self, mixer):
             self.mixer = mixer
 
         def set_mixer(self, value):
             _preferences.set_volume(self.mixer, value)
-            
+
         def get_adjustment(self):
             return ui.adjustment(
                 range=1.0,

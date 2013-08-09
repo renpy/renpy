@@ -5,7 +5,7 @@ init python:
 
     layout.provides('load_save')
     renpy.load_module("_layout/imagemap_common")
-    
+
     # The ground image.
     config.load_save_ground = { }
 
@@ -28,19 +28,19 @@ init python:
     # - The y-coordinate of the bottoms side.
     # - The name of the button or slider this is equivalent to.
     config.load_save_hotspots = { }
-    
+
     # Define styles
     style.file_picker_text = Style(style.large_button_text, help="text inside a file picker entry")
     style.file_picker_empty_slot = Style(style.file_picker_text, help="text inside an empty file picker entry slot")
-    style.file_picker_text_window = Style(style.default, help="a window containing the file picker text.") 
+    style.file_picker_text_window = Style(style.default, help="a window containing the file picker text.")
     style.file_picker_ss_window = Style(style.default, help="a window containing the screenshot.")
 
     # Should we disable thumbnails?
     config.disable_thumbnails = False
-    
+
     # The default thumbnail to use when no file exists.
     config.load_save_empty_thumbnail = None
-    
+
     # How we format time in a file entry.
     config.time_format = "%b %d, %H:%M"
 
@@ -59,7 +59,7 @@ init python:
     __scratch.pages = 0
     __scratch.has_autosave = False
     __scratch.has_quicksave = False
-    
+
     def _render_savefile(ime, index, name, extra_info, screenshot, mtime, newest, clicked):
 
         import time
@@ -69,7 +69,7 @@ init python:
             keymap={ "save_delete" : ui.returns(("unlink", name)) })
 
         ui.fixed(xpos=x1, ypos=y1, xmaximum=x2-x1, ymaximum=y2-y1)
-        
+
         if not config.disable_thumbnails:
             ui.window(style=style.file_picker_ss_window[index])
             ui.add(screenshot)
@@ -83,11 +83,11 @@ init python:
         ui.text(s, style=style.file_picker_text[index])
 
         ui.close()
-        
+
     def _render_new_slot(ime, index, name, clicked):
 
         (x1, y1, x2, y2) = ime.button("slot_%d" % index, clicked, False)
-        
+
         ui.fixed(xpos=x1, ypos=y1, xmaximum=x2-x1, ymaximum=y2-y1)
 
         if not config.disable_thumbnails:
@@ -95,7 +95,7 @@ init python:
             if config.load_save_empty_thumbnail:
                 ui.window(style=style.file_picker_ss_window[index])
                 ui.add(config.load_save_empty_thumbnail)
-        
+
         ui.window(style=style.file_picker_text_window[index])
         ui.text(name + ". " + _(u"Empty Slot.") + "\n", style=style.file_picker_empty_slot[index])
 
@@ -132,7 +132,7 @@ init python:
 
         return rv
 
-    # Given a filename, returns the page that filename is on. 
+    # Given a filename, returns the page that filename is on.
     def _file_picker_file_page(filename):
 
         per_page = __scratch.per_page
@@ -155,7 +155,7 @@ init python:
             return base + int((int(filename) - 1) / per_page)
         except:
             return base
-        
+
     # Processes a screenshot.
     def _file_picker_process_screenshot(s):
         return s
@@ -182,7 +182,7 @@ init python:
             __scratch.per_page += 1
 
         __scratch.pages = 1
-            
+
         while ("page_%d" % __scratch.pages) in hotspots:
             __scratch.pages += 1
 
@@ -202,8 +202,8 @@ init python:
             rv.append("page_%d" % i)
 
         return rv
-           
-    
+
+
     # This displays a file picker that can chose a save file from
     # the list of save files.
     def _file_picker(screen, save):
@@ -211,18 +211,18 @@ init python:
         if not __scratch.initialized:
             __scratch.initialized = True
             _file_picker_init()
-        
+
         # The number of slots in a page.
         file_page_length = __scratch.per_page
 
         update = True
-        
+
         while True:
 
             if update:
-                
+
                 update = False
-                
+
                 saved_games = renpy.list_saved_games(regexp=r'(auto-|quick-)?[0-9]+')
 
                 newest = None
@@ -262,7 +262,7 @@ init python:
                 config.load_save_selected_hover,
                 config.load_save_hotspots,
                 variant=screen)
-                
+
 
             def tb(enabled, label, clicked, selected):
 
@@ -284,7 +284,7 @@ init python:
             # This draws a single slot.
             def entry(name, filename, offset, ro):
                 clicked = ui.returns(("return", filename))
-                
+
                 if filename not in save_info:
                     if (not save) or ro:
                         clicked = None
@@ -309,7 +309,7 @@ init python:
                 entry(name, filename, i, ro)
 
             ime.close()
-                
+
             result = ui.interact(mouse="gamemenu")
             type, value = result
 
@@ -346,7 +346,7 @@ label load_screen:
     python hide:
         while True:
             fn = _file_picker("load", False)
-            
+
             if _load_prompt:
                 if not layout.yesno_prompt("load",  layout.LOADING):
                     continue

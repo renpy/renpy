@@ -37,7 +37,7 @@ class LogFile(object):
     """
     This manages one of our logfiles.
     """
-    
+
     def __init__(self, name, append=False, developer=False):
         """
         `name`
@@ -48,19 +48,19 @@ class LogFile(object):
         `developer`
             If true, nothing happens if config.developer is not set to True.
         """
-        
+
         self.name = name
         self.append = append
         self.developer = developer
         self.file = None
-        
+
         # File-like attributes.
         self.softspace = 0
         self.newlines = None
-        
+
         # Should we emulate file's write method? We do so if this is True.
         self.raw_write = False
-        
+
     def open(self): #@ReservedAssignment
 
         if self.file:
@@ -68,17 +68,17 @@ class LogFile(object):
 
         if self.developer and not renpy.config.developer:
             return False
-        
+
         if not renpy.config.log_enable:
             return False
 
         try:
-            base = os.environ.get("RENPY_LOG_BASE", renpy.config.basedir)
+            base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir)
             fn = os.path.join(base, self.name + ".txt")
-        
+
             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
-            
-        
+
+
             if renpy.android:
                 print "Logging to", fn
 
@@ -87,12 +87,12 @@ class LogFile(object):
             else:
                 mode = "w"
 
-            try:        
+            try:
                 self.file = codecs.open(fn, mode, "utf-8")
             except:
                 self.file = codecs.open(altfn, mode, "utf-8")
 
-            if self.append:                
+            if self.append:
                 self.write('')
                 self.write('=' * 78)
                 self.write('')
@@ -102,7 +102,7 @@ class LogFile(object):
             self.write("%s", renpy.version)
             self.write("%s %s", renpy.config.name, renpy.config.version)
             self.write("")
-            
+
             return True
 
         except:
@@ -114,7 +114,7 @@ class LogFile(object):
         """
 
         if self.open():
-        
+
             if not self.raw_write:
                 s = s % args
                 s += "\n"
@@ -122,16 +122,16 @@ class LogFile(object):
             if not isinstance(s, unicode):
                 s = s.decode("latin-1")
 
-            s = s.replace("\n", "\r\n")            
-            
+            s = s.replace("\n", "\r\n")
+
             self.file.write(s)
             self.file.flush()
-            
+
     def exception(self):
         """
         Writes the exception to the logfile.
         """
-        
+
         self.raw_write = True
         traceback.print_exc(None, self)
         self.raw_write = False
@@ -141,12 +141,9 @@ log_cache = { }
 
 def open(name, append=False, developer=False): #@ReservedAssignment
     rv = log_cache.get(name, None)
-    
+
     if rv is None:
         rv = LogFile(name, append=append, developer=developer)
         log_cache[name] = rv
-        
-    return rv
 
-    
-    
+    return rv

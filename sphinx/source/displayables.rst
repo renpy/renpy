@@ -48,7 +48,7 @@ properties.
     # Using Image allows us to specify a default position as part of
     # an image.
     image logo right = Image("logo.png", xalign=1.0)
-    
+
 Loading an Image from from a file on disk and decoding it so it can be
 drawn to the screen takes a long amount of time. While measured in the
 tenths or hundreds of seconds, the duration of the loading process is
@@ -133,7 +133,7 @@ Boxes take :ref:`position-style-properties` and :ref:`box-style-properties`.
    image logo hbox = HBox("logo.png", "logo.png")
 
    # Display two logos, one on top of the other.
-   image logo vbox = VBox("logo.png", "logo.png") 
+   image logo vbox = VBox("logo.png", "logo.png")
 
    # Display two logos. Since both default to the upper-left
    # corner of the screen, we need to use Image to place
@@ -162,7 +162,7 @@ Image manipulators are limited to storing image data to the
 cache. This means that their result is of a fixed size, known in
 advance, and they can't change in response to game state or
 input. Generally, image manipulators can only take images or other
-image manipulators as input. 
+image manipulators as input.
 
 An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an

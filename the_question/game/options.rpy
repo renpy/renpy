@@ -32,14 +32,14 @@ init -1 python hide:
 
     #########################################
     # Layouts
-    
+
     ## This enables the use of an in-game menu that is made out of
     ## buttons.
     layout.button_menu()
 
     #########################################
     # Themes
-    
+
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
@@ -61,7 +61,7 @@ init -1 python hide:
         ## example, the current value of a preference.)
         widget_selected = "#58A1FF",
 
-        ## The color of a disabled widget face. 
+        ## The color of a disabled widget face.
         disabled = "#404040",
 
         ## The color of disabled widget text.
@@ -94,7 +94,7 @@ init -1 python hide:
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
-        ## do so below.            
+        ## do so below.
         )
 
 
@@ -209,10 +209,10 @@ init -1 python hide:
     ##   show help to the user.
     ## - A file name relative to the base directory, which is opened in a
     ##   web browser.
-    ## - None, to disable help.   
+    ## - None, to disable help.
     config.help = "README.html"
 
-    
+
     #########################################
     ## Miscellaneous customizations
 
@@ -228,7 +228,7 @@ init -1 python hide:
     ## is run, so the persisten information can be found by the init code.)
 python early:
     config.save_directory = "the_question-1220806307"
-        
+
 init -1 python hide:
     ## Note: The following two options are only evaluated the first time
     ## a game is run. To have them run a second time, delete
@@ -241,36 +241,36 @@ init -1 python hide:
     config.default_text_cps = 0
 
 
-                         
-## This section contains information about how to build your project into 
+
+## This section contains information about how to build your project into
 ## distribution files.
 init python:
-    
+
     ## The name that's used for directories and archive files. For example, if
     ## this is 'mygame-1.0', the windows distribution will be in the
     ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
     build.directory_name = "the_question-1.0"
-    
+
     ## The name that's uses for executables - the program that users will run
     ## to start the game. For example, if this is 'mygame', then on Windows,
     ## users can click 'mygame.exe' to start the game.
     build.executable_name = "the_question"
-    
+
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.
     build.include_update = True
-    
+
     ## File patterns:
-    ## 
+    ##
     ## The following functions take file patterns. File patterns are case-
     ## insensitive, and matched against the path relative to the base
     ## directory, with and without a leading /. If multiple patterns match,
     ## the first is used.
-    ##    
+    ##
     ##
     ## In a pattern:
     ##
-    ## / 
+    ## /
     ##     Is the directory separator.
     ## *
     ##     Matches all characters, except the directory separator.
@@ -293,9 +293,9 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
-    
+
     ## To archive files, classify them as 'archive'.
-    
+
     build.classify('game/**.png', 'archive')
     build.classify('game/**.jpg', 'archive')
 
@@ -304,4 +304,4 @@ init python:
 
     build.documentation('*.html')
     build.documentation('*.txt')
-    
+

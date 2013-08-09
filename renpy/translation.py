@@ -42,7 +42,7 @@ class ScriptTranslator(object):
         # A map from the translate identifier to the translate object used when the
         # language is None.
         self.default_translates = { }
-        
+
         # A map from (identifier, language) to the translate object used for that
         # language.
         self.language_translates = { }
@@ -50,14 +50,14 @@ class ScriptTranslator(object):
         # A list of (identifier, language) tuples that we need to chain together.
         self.chain_worklist = [ ]
 
-        # A map from filename to a list of (label, translate) pairs found in 
+        # A map from filename to a list of (label, translate) pairs found in
         # that file.
         self.file_translates = collections.defaultdict(list)
 
         # A map from language to the StringTranslator for that language.
         self.strings = collections.defaultdict(StringTranslator)
 
-        # A map from language to a list of TranslatePython objects for 
+        # A map from language to a list of TranslatePython objects for
         # that language.
         self.python = collections.defaultdict(list)
 
@@ -73,7 +73,7 @@ class ScriptTranslator(object):
 
         label = None
         filename = None
-    
+
         for n in nodes:
 
             if filename is None:
@@ -87,18 +87,18 @@ class ScriptTranslator(object):
                 self.python[n.language].append(n)
 
             elif isinstance(n, renpy.ast.Menu):
-                
+
                 for i in n.items:
                     s = i[0]
-                    
+
                     if s is None:
                         continue
-                    
+
                     self.additional_strings[filename].append((n.linenumber, s))
 
             elif isinstance(n, renpy.ast.Translate):
-    
-                
+
+
                 if n.language is None:
                     self.default_translates[n.identifier] = n
                     self.file_translates[filename].append((label, n))
@@ -106,46 +106,46 @@ class ScriptTranslator(object):
                     self.languages.add(n.language)
                     self.language_translates[n.identifier, n.language] = n
                     self.chain_worklist.append((n.identifier, n.language))
-        
+
     def chain_translates(self):
         """
         Chains nodes in non-default translates together.
         """
-        
+
         unchained = [ ]
-        
+
         for identifier, language in self.chain_worklist:
 
             if identifier not in self.default_translates:
                 unchained.append((identifier, language))
                 continue
 
-            translate = self.language_translates[identifier, language]            
+            translate = self.language_translates[identifier, language]
             next_node = self.default_translates[identifier].next
-            
+
             renpy.ast.chain_block(translate.block, next_node)
 
         self.chain_worklist = unchained
 
     def lookup_translate(self, identifier):
-         
+
         language = renpy.game.preferences.language
 
         if language is not None:
             tl = self.language_translates.get((identifier, language), None)
         else:
             tl = None
-            
+
         if tl is None:
             tl = self.default_translates[identifier]
-        
+
         return tl.block[0]
 
 def encode_say_string(s):
     """
     Encodes a string in the format used by Ren'Py say statements.
     """
-    
+
     s = s.replace("\\", "\\\\")
     s = s.replace("\n", "\\n")
     s = s.replace("\"", "\\\"")
@@ -158,15 +158,15 @@ class Restructurer(object):
     def __init__(self, children):
         self.label = None
         self.identifiers = set()
-        self.callback(children)        
+        self.callback(children)
 
     def id_exists(self, identifier):
         if identifier in self.identifiers:
             return True
-        
+
         if identifier in renpy.game.script.translator.default_translates:
             return True
-        
+
         return False
 
     def create_translate(self, block):
@@ -174,23 +174,23 @@ class Restructurer(object):
         Creates an ast.Translate that wraps `block`. The block may only contain
         translatable statements.
         """
-        
+
         md5 = hashlib.md5()
-        
+
         for i in block:
             code = i.get_code()
             md5.update(code.encode("utf-8") + "\r\n")
-    
+
         if self.label:
             base = self.label + "_" + md5.hexdigest()[:8]
         else:
             base = md5.hexdigest()[:8]
-    
+
         i = 0
         suffix = ""
-                
+
         while True:
-            
+
             identifier = base + suffix
 
             if not self.id_exists(identifier):
@@ -201,13 +201,13 @@ class Restructurer(object):
 
         self.identifiers.add(identifier)
         loc = (block[0].filename, block[0].linenumber)
-    
+
         tl = renpy.ast.Translate(loc, identifier, None, block)
         tl.name = block[0].name + ("translate",)
-        
+
         ed = renpy.ast.EndTranslate(loc)
         ed.name = block[0].name + ("end_translate",)
-        
+
         return [ tl, ed ]
 
     def callback(self, children):
@@ -215,41 +215,41 @@ class Restructurer(object):
         This should be called with a list of statements. It restructures the statements
         in the list so that translatable statements are contained within translation blocks.
         """
-        
+
         new_children = [ ]
         group = [ ]
-        
+
         for i in children:
-            
+
             if isinstance(i, renpy.ast.Label):
                 if not i.hide:
                     self.label = i.name
-            
+
             if not isinstance(i, renpy.ast.Translate):
                 i.restructure(self.callback)
-    
+
             if isinstance(i, renpy.ast.Say):
                 group.append(i)
                 tl = self.create_translate(group)
                 new_children.extend(tl)
                 group = [ ]
-    
+
             elif i.translatable:
                 group.append(i)
-            
+
             else:
                 if group:
                     tl = self.create_translate(group)
                     new_children.extend(tl)
                     group = [ ]
-    
+
                 new_children.append(i)
-                    
+
         if group:
             nodes = self.create_translate(group)
             new_children.extend(nodes)
             group = [ ]
-    
+
         children[:] = new_children
 
 def restructure(children):
@@ -273,9 +273,9 @@ def quote_unicode(s):
     s = s.replace("\r", "\\r")
     s = s.replace("\t", "\\t")
     s = s.replace("\v", "\\v")
-    
+
     return s
-    
+
 
 class StringTranslator(object):
     """
@@ -283,65 +283,65 @@ class StringTranslator(object):
     buffer unknown translations, and write them to a file at game's end, if
     we want that to happen.
     """
-    
+
     def __init__(self):
-        
+
         # A map from translation to translated string.
         self.translations = { }
-        
+
         # A list of unknown translations.
         self.unknown = [ ]
-        
+
     def add(self, old, new):
         if old in self.translations:
             raise Exception("A translation for %r already exists." % old)
-        
+
         self.translations[old] = new
-        
+
     def translate(self, old):
-        
+
         new = self.translations.get(old, None)
-                
+
         if new is not None:
             return new
-        
+
         if update_translations:
             self.translations[old] = old
             self.unknown.append(old)
-        
+
         # Remove {#...} tags.
         if new is None:
             notags = re.sub(r"\{\#.*?\}", "", old)
             new = self.translations.get(notags, None)
 
         if new is not None:
-            return True
-            
+            return new
+
         return old
 
     def write_updated_strings(self, language):
-        
+
         if not self.unknown:
             return
-        
+
         if language is None:
             fn = os.path.join(renpy.config.gamedir, "strings.rpy")
         else:
             fn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "strings.rpy")
-            
+
         f = open_tl_file(fn)
-        
+
         f.write(u"translate {} strings:\n".format(language))
         f.write(u"\n")
-        
+
         for i in self.unknown:
-            
+
             i = quote_unicode(i)
-            
+
             f.write(u"    old \"{}\"\n".format(i))
             f.write(u"    new \"{}\"\n".format(i))
             f.write(u"\n")
-            
+
         f.close()
 
 def add_string_translation(language, old, new):
@@ -354,7 +354,7 @@ def translate_string(s):
     """
     Translates interface string `s`.
     """
-    
+
     stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     return stl.translate(s)
 
@@ -362,14 +362,14 @@ def write_updated_strings():
     stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
     stl.write_updated_strings(renpy.game.preferences.language)
 
-        
+
 ################################################################################
 # RPT Support
-# 
+#
 # RPT was the translation format used before 6.15.
 ################################################################################
 
-def load_rpt(fn):        
+def load_rpt(fn):
     """
     Loads the .rpt file `fn`.
     """
@@ -380,41 +380,41 @@ def load_rpt(fn):
         return s
 
     language = os.path.basename(fn).replace(".rpt", "")
-    
+
     f = renpy.loader.load(fn)
-    
+
     old = None
-    
+
     for l in f:
         l = l.decode("utf-8")
         l = l.rstrip()
-        
+
         if not l:
             continue
-        
+
         if l[0] == '#':
             continue
-        
+
         s = unquote(l[2:])
-        
+
         if l[0] == '<':
             if old:
                 raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
-            
+
             old = s
-            
+
         if l[0] == ">":
             if old is None:
                 raise Exception("{0} translation {1!r} doesn't belong to a string.".format(language, s))
-            
+
             add_string_translation(language, old, s)
             old = None
-    
+
     f.close()
-    
+
     if old is not None:
         raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
-    
+
 def load_all_rpts():
     """
     Loads all .rpt files.
@@ -422,34 +422,34 @@ def load_all_rpts():
 
     for fn in renpy.exports.list_files():
         if fn.endswith(".rpt"):
-            load_rpt(fn) 
-    
+            load_rpt(fn)
+
 ################################################################################
 # Changing language
 ################################################################################
- 
+
 style_backup = None
- 
+
 def init_translation():
     """
     Called before the game starts.
     """
- 
+
     global style_backup
     style_backup = renpy.style.backup()
- 
+
     load_all_rpts()
- 
+
 def change_language(language):
     """
     :doc: translation_functions
-    
-    Changes the current language to `language`, which can be a string or 
+
+    Changes the current language to `language`, which can be a string or
     None to use the default language.
     """
 
     renpy.game.preferences.language = language
-    
+
     tl = renpy.game.script.translator
 
     renpy.style.restore(style_backup)
@@ -457,52 +457,52 @@ def change_language(language):
 
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
-        
+
     for i in renpy.config.change_language_callbacks:
         i()
-        
+
     # Reset various parts of the system. Most notably, this clears the image
     # cache, letting us load translated images.
     renpy.exports.free_memory()
-    
+
     # Rebuild the styles.
     renpy.style.rebuild()
-    
+
     # Restart the interaction.
     renpy.exports.restart_interaction()
-    
+
 def check_language():
     """
     Checks to see if the language has changed. If it has, jump to the start
     of the current translation block.
     """
-    
+
     ctx = renpy.game.contexts[-1]
     preferences = renpy.game.preferences
-    
+
     # Deal with a changed language.
     if ctx.translate_language != preferences.language:
         ctx.translate_language = preferences.language
-        
+
         tid = ctx.translate_identifier
-        
+
         if tid is not None:
             node = renpy.game.script.translator.lookup_translate(tid)
-            
+
             if node is not None:
                 raise renpy.game.JumpException(node.name)
-            
+
 def known_languages():
     """
     :doc: translation_functions
-    
-    Returns the set of known languages. This does not include the default 
+
+    Returns the set of known languages. This does not include the default
     language, None.
     """
-    
+
     return renpy.game.script.translator.languages
-    
-                     
+
+
 ################################################################################
 # Translation Generation
 ################################################################################
@@ -520,17 +520,17 @@ STRING_RE = r"""(?x)
 
 def scan_strings(filename):
     """
-    Scans `filename`, a file containing Ren'Py script, for translatable 
+    Scans `filename`, a file containing Ren'Py script, for translatable
     strings.
-    
+
     Generates a list of (line, string) tuples.
     """
- 
+
     for line, s in renpy.game.script.translator.additional_strings[filename]:
         yield line, s
- 
+
     line = 1
-    
+
     with open(filename, "r") as f:
         data = f.read().decode("utf-8")
 
@@ -558,7 +558,7 @@ def open_tl_file(fn):
 
         f = io.open(fn, "a", encoding="utf-8")
         f.write(u"\ufeff")
-    
+
     else:
         f = io.open(fn, "a", encoding="utf-8")
 
@@ -569,44 +569,44 @@ def open_tl_file(fn):
 
 
 class TranslateFile(object):
-    
+
     def __init__(self, filename, language, filter): # @ReservedAssignment
         self.filename = filename
         self.language = language
         self.filter = filter
-        
+
         commondir = os.path.normpath(renpy.config.commondir)
         gamedir = os.path.normpath(renpy.config.gamedir)
-            
+
         if filename.startswith(commondir):
             relfn = os.path.relpath(filename, commondir)
-            
+
             if relfn == "_developer.rpym":
                 return
-            
+
             if relfn.startswith("compat"):
                 return
-            
+
             self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "common.rpy")
         elif filename.startswith(gamedir):
             fn = os.path.relpath(filename, gamedir)
             self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
-        
+
         if self.tl_filename.endswith(".rpym"):
             self.tl_filename = self.tl_filename[:-1]
-        
+
         self.f = None
 
         self.write_translates()
         self.write_strings()
-        
+
         self.close()
-            
+
     def open(self):
         """
         Opens a translation file.
         """
-        
+
         if self.f is not None:
             return
 
@@ -616,7 +616,7 @@ class TranslateFile(object):
         """
         Closes the translation file, if it's open.
         """
-        
+
         if self.f is not None:
             self.f.close()
 
@@ -624,7 +624,7 @@ class TranslateFile(object):
         """
         Writes the translates to the file.
         """
-        
+
         translator = renpy.game.script.translator
 
         for label, t in translator.file_translates[self.filename]:
@@ -633,14 +633,14 @@ class TranslateFile(object):
                 continue
 
             self.open()
-            
+
             if label is None:
                 label = ""
-                
+
             self.f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
             self.f.write(u"translate {} {}:\n".format(self.language, t.identifier))
             self.f.write(u"\n")
-            
+
             for n in t.block:
                 self.f.write(u"    # " + n.get_code() + "\n")
 
@@ -653,17 +653,17 @@ class TranslateFile(object):
         """
         Writes strings to the file.
         """
-        
+
         started = False
         filename = renpy.parser.elide_filename(self.filename)
-        
+
         for line, s in scan_strings(self.filename):
 
             stl = renpy.game.script.translator.strings[self.language]
-            
+
             if s in stl.translations:
                 continue
-            
+
             stl.translations[s] = s
 
             if not started:
@@ -672,9 +672,9 @@ class TranslateFile(object):
                 self.open()
                 self.f.write(u"translate {} strings:\n".format(self.language))
                 self.f.write(u"\n")
-                
+
             fs = self.filter(s)
-            
+
             self.f.write(u"    # {}:{}\n".format(filename, line))
             self.f.write(u"    old \"{}\"\n".format(quote_unicode(s)))
             self.f.write(u"    new \"{}\"\n".format(quote_unicode(fs)))
@@ -694,41 +694,41 @@ for i, j in zip("ABCDEFGHIJKLM", "NMOPQRSTUVWYZ"):
 
     i = i.lower()
     j = j.lower()
-    
+
     ROT13[i] = j
     ROT13[j] = i
 
 def rot13_filter(s):
 
     def tag_pass(s):
-        
+
         brace = False
         first = False
         rv = ""
-        
+
         for i in s:
-            
+
             if i == '{':
-                
+
                 if first:
                     brace = False
                 else:
                     brace = True
                     first = True
-                    
+
                 rv += "{"
 
             elif i == "}":
                 first = False
-                
+
                 if brace:
                     brace = False
-        
+
                 rv += "}"
-            
+
             else:
                 first = False
-                
+
                 if brace:
                     rv += i
                 else:
@@ -739,12 +739,12 @@ def rot13_filter(s):
     def square_pass(s):
         squares = 0
         first = False
-        
+
         rv = ""
         buf = ""
-        
+
         for i in s:
-            
+
             if i == "[":
                 if first:
                     squares = 0
@@ -754,33 +754,33 @@ def rot13_filter(s):
 
                     if squares == 0:
                         first = True
-                    
+
                     squares += 1
-                    
+
                 rv += "["
-                
+
             elif i == "]":
-                
+
                 first = False
-                
+
                 squares -= 1
                 if squares < 0:
                     squares += 1
-                    
+
                 rv += "]"
-            
+
             else:
                 if squares:
                     rv += i
                 else:
                     buf += i
-                    
+
         if buf:
             rv += tag_pass(buf)
 
         return rv
-    
-    
+
+
     return square_pass(s)
 
 def translate_command():
@@ -788,33 +788,33 @@ def translate_command():
     The translate command. When called from the command line, this generates
     the translations.
     """
-    
+
     ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
     ap.add_argument("language", help="The language to generate translations for.")
     ap.add_argument("--rot13", help="Apply rot13 while generating translations.", dest="rot13", action="store_true")
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
     args = ap.parse_args()
-    
+
     if args.rot13:
         filter = rot13_filter #@ReservedAssignment
     elif args.empty:
         filter = empty_filter # @ReservedAssignment
     else:
         filter = null_filter #@ReservedAssignment
-    
+
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:
             continue
 
         filename = os.path.join(dirname, filename)
-        
+
         if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
             continue
-        
+
         filename = os.path.normpath(filename)
         TranslateFile(filename, args.language, filter)
 
     return False
 
 renpy.arguments.register_command("translate", translate_command)
-    
+

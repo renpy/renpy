@@ -11,15 +11,11 @@ args = ap.parse_args()
 
 with open(args.private, "rb") as f:
     private = rsa.PrivateKey.load_pkcs1(f.read())
-    
+
 with open(args.json, "rb") as f:
     message = f.read()
-    
+
 signature = rsa.sign(message, private, "SHA-256")
 
 with open(args.json + ".sig", "wb") as f:
     f.write(signature.encode("base64"))
-    
-
-
-

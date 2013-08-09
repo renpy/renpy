@@ -26,7 +26,7 @@ init -1100:
                     size = 12
 
             return Frame(theme.OneOrTwoColor("_roundrect/rr%dg.png" % size, color), size, size)
-                            
+
         def _display_button_menu(menuitems):
 
             narration = [ s for s, i in menuitems if i is None and s ]
@@ -65,7 +65,7 @@ init -1100:
 
 
         theme.button_menu = _button_menu
-            
+
     python hide:
 
         def OneOrTwoColor(image, color):
@@ -73,9 +73,9 @@ init -1100:
                 return im.Twocolor(image, color[0], color[1])
             else:
                 return im.Twocolor(image, color, color)
-            
+
         theme.OneOrTwoColor = OneOrTwoColor
-        
+
 
         def theme_roundrect(
             widget = (0, 60, 120, 255),
@@ -157,7 +157,7 @@ init -1100:
                 prefcols = [ 110, 320, 530 ]
 
                 nav_xpos = 530
-                    
+
             else:
 
                 size = 22
@@ -175,7 +175,7 @@ init -1100:
                 prefcols = [ 137, 400, 663 ]
 
                 nav_xpos = 663
-                
+
             rrslider_empty = "_roundrect/rrslider_empty.png"
             rrslider_full = "_roundrect/rrslider_full.png"
             rrslider_thumb = "_roundrect/rrslider_thumb.png"
@@ -191,7 +191,7 @@ init -1100:
             rrscrollbar_thumb = "_roundrect/rrscrollbar_thumb.png"
             rrvscrollbar = "_roundrect/rrvscrollbar.png"
             rrvscrollbar_thumb = "_roundrect/rrvscrollbar_thumb.png"
-            
+
             rrvslider_radius = 6
             rrvslider_width = 24
 
@@ -223,18 +223,18 @@ init -1100:
             style.button_text.xanchor = 0.5
             style.button_text.ypos = 0.5
             style.button_text.yanchor = 0.5
-            style.button_text.textalign = 0.5 
+            style.button_text.textalign = 0.5
 
             style.button.insensitive_background = RoundRect(disabled, less_rounded)
             style.button_text.insensitive_color = disabled_text
 
-            style.button_text.selected_color = widget_selected 
+            style.button_text.selected_color = widget_selected
 
             style.menu_button.clear()
-            
+
             style.mm_root.background = mm_root
             style.gm_root.background = gm_root
-            
+
             style.mm_menu_frame_vbox.box_spacing = spacing
             rrframe(style.mm_menu_frame)
             style.mm_menu_frame.xpos = nav_xpos
@@ -245,7 +245,7 @@ init -1100:
             style.gm_nav_frame.xpos = nav_xpos
             style.gm_nav_frame.xanchor = 0.5
 
-            
+
             rrframe(style.prefs_pref_frame)
             del style.prefs_pref_frame.bottom_margin
             style.prefs_pref_frame.xfill = True
@@ -278,7 +278,7 @@ init -1100:
                 style.prefs_button.xanchor = 1.0
 
 
-                
+
             style.bar.ymaximum = rrslider_height
             style.bar.left_gutter = rrslider_radius
             style.bar.right_gutter = rrslider_radius
@@ -297,13 +297,13 @@ init -1100:
             style.scrollbar.right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget), 6, 0)
             style.scrollbar.hover_left_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 6, 0)
             style.scrollbar.hover_right_bar = Frame(theme.OneOrTwoColor(rrscrollbar, widget_hover), 6, 0)
-            style.scrollbar.thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget), 6, 0) 
-            style.scrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget_hover), 6, 0) 
+            style.scrollbar.thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget), 6, 0)
+            style.scrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrscrollbar_thumb, widget_hover), 6, 0)
             style.scrollbar.left_gutter = 6
             style.scrollbar.right_gutter = 6
             style.scrollbar.ymaximum = 12
             style.scrollbar.thumb_offset = 6
-            
+
             style.vbar.xmaximum = rrvslider_width
             style.vbar.top_gutter = rrvslider_radius
             style.vbar.bottom_gutter = rrvslider_radius
@@ -323,20 +323,20 @@ init -1100:
             style.vscrollbar.bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget), 0, 6)
             style.vscrollbar.hover_top_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 6)
             style.vscrollbar.hover_bottom_bar = Frame(theme.OneOrTwoColor(rrvscrollbar, widget_hover), 0, 6)
-            style.vscrollbar.thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget), 0, 6) 
-            style.vscrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget_hover), 0, 6) 
+            style.vscrollbar.thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget), 0, 6)
+            style.vscrollbar.hover_thumb = Frame(theme.OneOrTwoColor(rrvscrollbar_thumb, widget_hover), 0, 6)
             style.vscrollbar.top_gutter = 6
             style.vscrollbar.bottom_gutter = 6
             style.vscrollbar.xmaximum = 12
             style.vscrollbar.thumb_offset = 6
-            
+
             style.prefs_slider.xmaximum=widget_width
             del style.prefs_slider.ymaximum
 
             if centered:
                 style.prefs_slider.xpos = 0.5
                 style.prefs_slider.xanchor = 0.5
-            else:                
+            else:
                 style.prefs_slider.xpos = 1.0
                 style.prefs_slider.xanchor = 1.0
 
@@ -386,7 +386,7 @@ init -1100:
             style.file_picker_frame.xmargin = 6
             style.file_picker_frame.ymargin = 6
 
-            style.file_picker_frame_vbox.box_spacing = 4            
+            style.file_picker_frame_vbox.box_spacing = 4
             style.file_picker_nav_button.xminimum = 0
 
             style.file_picker_navbox.box_spacing = spacing
@@ -404,15 +404,15 @@ init -1100:
 
             style.file_picker_old.minwidth = 40
             style.file_picker_new.minwidth = 40
-            
+
             style.file_picker_old.text_align = 1.0
             style.file_picker_new.text_align = 1.0
-            
+
             if config.script_version is None or config.script_version > (6, 0, 0):
                 style.file_picker_text.insensitive_color = disabled_text
                 style.file_picker_entry.insensitive_background = RoundRect(disabled, less_rounded)
 
-            
+
             config.file_quick_access_pages = 8
 
             # In-game.
@@ -426,14 +426,14 @@ init -1100:
                 style.window.ymargin = 6
 
             else:
-                
+
                 style.window.background = Solid(window)
                 style.window.xpadding = 6
                 style.window.ypadding = 6
                 style.window.xmargin = 0
                 style.window.ymargin = 0
-                
-                
+
+
             style.default.size = size
             style.default.drop_shadow = None
 
@@ -459,35 +459,35 @@ init -1100:
 
                 style.launcher_title_label.color = label
                 style.launcher_title_label.size = 28
-                
+
                 style.launcher_text.xpos = 140
                 style.launcher_text.xanchor = 0.5
                 style.launcher_text.xmaximum = 240
                 style.launcher_text.color = label
                 style.launcher_text.text_align = 0.5
-                
-                
+
+
                 style.launcher_label.xpos = 140
                 style.launcher_label.xanchor = 0.5
                 style.launcher_label.xmaximum = 240
                 style.launcher_label.color = label
                 style.launcher_label.text_align = 0.5
-                
+
                 style.launcher_input.xpos = 140
                 style.launcher_input.xanchor = 0.5
                 style.launcher_input.xmaximum = 240
                 style.launcher_input.color = widget
                 style.launcher_input.text_align = 0.5
-                
+
                 store._launcher_per_page = 9
-                
+
         theme.roundrect = theme_roundrect
 
         def theme_roundrect_red(**params):
             """
             This sets up a red/pink variant of the roundrect theme.
             """
-            
+
             args = dict(widget=(150, 50, 50, 255),
                         widget_hover=(200, 50, 50, 255),
                         widget_text=(255, 225, 225, 255),

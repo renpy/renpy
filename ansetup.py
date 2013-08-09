@@ -1,4 +1,4 @@
-# This file sets up the normal python modules. It's used to help eclipse 
+# This file sets up the normal python modules. It's used to help eclipse
 # do type detection, by providing an importable version of the cython code.
 
 from distutils.core import setup

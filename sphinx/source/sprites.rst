@@ -49,7 +49,7 @@ the mouse.
     init python:
         import math
 
-        def repulsor_update(st):        
+        def repulsor_update(st):
 
             # If we don't know where the mouse is, give up.
             if repulsor_pos is None:
@@ -73,7 +73,7 @@ the mouse.
                 distance = 3.0 * (150 - vl) / 150
 
                 # Move
-                i.x += distance * vx / vl 
+                i.x += distance * vx / vl
                 i.y += distance * vy / vl
 
                 # Ensure we stay on the screen.
@@ -96,7 +96,7 @@ the mouse.
             store.repulsor_pos = (x, y)
 
 
-    label repulsor_demo:                
+    label repulsor_demo:
 
         python:
             # Create a sprite manager.
@@ -131,5 +131,3 @@ the mouse.
             del repulsor
             del repulsor_sprites
             del repulsor_pos
-
-

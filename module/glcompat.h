@@ -54,7 +54,10 @@
 
 #if defined RENPY_GLES_2
 
+#ifndef ANDROID
 #include <EGL/egl.h>
+#endif
+
 #include <GLES2/gl2.h>
 
 typedef GLuint GLhandleARB;

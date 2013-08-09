@@ -19,7 +19,7 @@ Getting Started
    :maxdepth: 2
 
    quickstart
-    
+
 The Ren'Py Language
 -------------------
 
@@ -31,13 +31,13 @@ The Ren'Py Language
    displaying_images
    menus
    voice
-     
+
 Text, Displayables, Transforms, and Transitions
 -----------------------------------------------
 
 .. toctree::
    :maxdepth: 1
-    
+
    text
    translation
    displayables
@@ -50,10 +50,10 @@ Other Functions
 
 .. toctree::
    :maxdepth: 1
-   
+
    input
-              
-   
+
+
 Customizing Ren'Py
 ------------------
 
@@ -74,10 +74,10 @@ Advanced Displayables
 
 .. toctree::
    :maxdepth: 1
-   
+
    drag_drop
    sprites
-   
+
 Python and Ren'Py
 -----------------
 
@@ -101,7 +101,7 @@ Building, Updating, and Other Platforms
    build
    updater
    android
-   
+
 End-User Documentation
 ----------------------
 

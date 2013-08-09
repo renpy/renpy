@@ -31,7 +31,7 @@ elif args.experimental:
 else:
     links = [ ]
     tag = False
-    
+
 os.chdir("/home/tom/ab/renpy/dl")
 
 for i in links:
@@ -41,7 +41,7 @@ for i in links:
 
 os.chdir("/home/tom/ab/renpy")
 
-if tag and not args.no_tag:   
+if tag and not args.no_tag:
     cmd = [ "git", "tag", "-a", version, "-m", "Ren'Py " + version ]
     subprocess.check_call(cmd)
 

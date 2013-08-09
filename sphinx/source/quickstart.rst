@@ -35,9 +35,9 @@ Once you've extracted Ren'Py, you'll need to run it.
 * On Mac OS X, run the ``renpy`` application.
 * On Linux, run the ``renpy.sh`` script.
 
-   
+
 After running this, the Ren'Py launcher should run.
-   
+
 .. image:: launcher.jpg
    :align: right
    :width: 30%
@@ -176,7 +176,7 @@ add some pictures to our game.
     image bg uni = "uni.jpg"
 
     image sylvie smile = "sylvie_smile.png"
-    image sylvie surprised = "sylvie_surprised.png"    
+    image sylvie surprised = "sylvie_surprised.png"
 
     define s = Character('Sylvie', color="#c8ffc8")
     define m = Character('Me', color="#c8c8ff")
@@ -239,7 +239,7 @@ Ren'Py also supports a hide statement, which hides the given image.
 ::
 
     label leaving:
-     
+
         s "I'll get right on it!"
 
         hide sylvie
@@ -337,7 +337,7 @@ purposes.
 
 ::
 
-   ###   
+   ###
         show sylvie smile at right
 
 To do this repositioning, add an at-clause to a show statement. The at
@@ -414,7 +414,7 @@ The menu statement lets you present a choice to the user::
         "It's a hentai game.":
              jump hentai
 
-    label vn:    
+    label vn:
         m "It's a story with pictures and music."
         jump marry
 
@@ -539,7 +539,7 @@ before releasing it:
    From the front page of the launcher, choose "Build Distributions". Based
    on the information contained in options.rpy, the launcher will build one
    or more archive files containing your game.
-   
+
 
 **Test.**
    Lint is not a substitute for thorough testing. It's your
@@ -558,7 +558,7 @@ before releasing it:
 Script of The Question
 -----------------------
 
-You can view the full script of ''The Question'' :ref:`here <thequestion>`. 
+You can view the full script of ''The Question'' :ref:`here <thequestion>`.
 
 Where do we go from here?
 -------------------------

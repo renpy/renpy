@@ -109,7 +109,7 @@ The !t flag will translate the interpolated string::
         $ mood = _("annoyed")
 
     g "I'm [mood!t] to see you."
-    
+
 
 Styling and Text Tags
 =====================
@@ -153,7 +153,7 @@ Tags that apply to all text are:
     :propref:`hyperlink_functions` style property, the default handler
     has the following behavior.
 
-    * Hyperlinks are rendered using the ``style.hyperlink_text`` style. 
+    * Hyperlinks are rendered using the ``style.hyperlink_text`` style.
 
     * If the argument begins with the text ``"http://"``, clicking on
       it opens the url in a web browser. Otherwise, the argument is
@@ -166,19 +166,19 @@ Tags that apply to all text are:
     ::
 
         label test:
-    
+
             e "Why don't you visit {a=http://renpy.org}Ren'Py's home page{/a}?"
 
             e "The {a=define_trebuchet}trebuchet{/a} is at the gates."
 
             return
-            
+
         label define_trebuchet:
 
             e "A trebuchet is a kind of siege engine."
             e "It uses a lever to fling things at targets."
             e "Like us!"
-            
+
             return
 
 
@@ -206,7 +206,7 @@ Tags that apply to all text are:
     at, in characters per second. ::
 
         "{cps=20}Fixed Speed{/cps} {cps=*2}Double Speed{/cps}
-        
+
 .. text-tag:: font
 
     The font tag renders the text between itself and its closing tag
@@ -231,7 +231,7 @@ Tags that apply to all text are:
    kerning.) ::
 
        "{k=-.5}Negative{/k} Normal {k=.5}Positive{/k}"
-       
+
 .. text-tag:: image
 
    The image tag is a self-closing tag that inserts an image into the
@@ -251,7 +251,7 @@ Tags that apply to all text are:
 .. text-tag:: rb
 
    The ruby bottom tag marks text between itself and its closing tag
-   as ruby bottom text. See the section on :ref:`Ruby Text <ruby-text>` 
+   as ruby bottom text. See the section on :ref:`Ruby Text <ruby-text>`
    for more information.
 
 .. text-tag:: rt
@@ -259,7 +259,7 @@ Tags that apply to all text are:
    The ruby top tag marks text between itself and its closing tag as
    ruby top text. See the section on :ref:`Ruby Text <ruby-text>` for
    more information.
-   
+
 .. text-tag:: size
 
    The size tag changes the size of text between itself and its
@@ -277,7 +277,7 @@ Tags that apply to all text are:
    number of pixels of space to add. ::
 
        "Before the space.{space=30}After the space."
-       
+
 .. text-tag:: u
 
    The underline tag underlines the text between itself and its
@@ -297,9 +297,9 @@ Tags that apply to all text are:
 
    Text tags beginning with # are ignored, but can be included to distinguish
    strings for the purpose of translation. ::
-   
-      "New{#playlist}" 
-        
+
+      "New{#playlist}"
+
 Dialogue Text Tags
 ------------------
 
@@ -332,7 +332,7 @@ Text tags that only apply to dialogue are:
     it is given an argument, the argument is interpreted as a number,
     and the wait automatically ends after that many seconds have
     passed. ::
-        
+
         "Line 1{p}Line 2{p=1.0}Line 3"
 
 .. text-tag:: w
@@ -417,11 +417,11 @@ right-to-left.
 There are two text tags that interact with vertical text.
 
 .. text-tag:: horiz
-              
+
     Includes horizontally-oriented text inside vertical text.
 
 .. text-tag:: vert
-              
+
     Includes vertically-oriented text inside horizontal text. (This will
     not rotate the text to the vertical orientation.)
 
@@ -456,7 +456,7 @@ For example::
         style.ruby_style = Style(style.default)
         style.ruby_style.size = 12
         style.ruby_style.yoffset = -20
-                        
+
         style.default.ruby_style = style.ruby_style
 
 Once Ren'Py has been configured, ruby text can be included using the
@@ -504,7 +504,7 @@ Vu Sans font with the official oblique version. (You'll need to
 download the oblique font from the web.)::
 
     init python:
-        config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False) 
+        config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False)
 
 This mapping can improve the look of italic text.
 
@@ -529,7 +529,7 @@ BMFont use is::
     define ebf = Character('Eileen', what_font="bmfont", what_size=22)
 
     label demo_bmfont:
-                           
+
         ebf "Finally, Ren'Py supports BMFonts."
 
 
@@ -551,7 +551,7 @@ For example::
 
     init python:
          style.default.font = FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
-        
+
 .. include:: inc/font_group
 
 

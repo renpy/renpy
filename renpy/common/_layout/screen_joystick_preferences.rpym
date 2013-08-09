@@ -11,6 +11,3 @@ label joystick_preferences_screen:
     $ ui.interact()
 
     jump _noisy_return
-    
-
-

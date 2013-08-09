@@ -4,7 +4,7 @@
 init python:
 
     layout.provides('navigation')
-    
+
     # The ground image.
     config.navigation_ground = None
 
@@ -39,7 +39,7 @@ init python:
 
         # A map from button name to game menu information.
         gm = dict()
-        
+
         for e in config.game_menu:
             screen_ = e[0]
             name_ = e[1]
@@ -50,7 +50,7 @@ init python:
 
         ui.fixed(style='imagemap')
         ui.image(config.navigation_ground)
-            
+
         for (x0, y0, x1, y1, name) in config.navigation_hotspots:
 
             if name not in gm:
@@ -60,14 +60,14 @@ init python:
 
             if not eval(enable):
                 continue
-            
+
             if screen_ == screen:
                 idle = config.navigation_selected_idle
                 hover = config.navigation_selected_hover
             else:
                 idle = config.navigation_idle
                 hover = config.navigation_hover
-            
+
             ui.imagebutton(
                 LiveCrop((x0, y0, x1-x0, y1-y0), idle),
                 LiveCrop((x0, y0, x1-x0, y1-y0), hover),

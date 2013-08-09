@@ -47,14 +47,14 @@ def init():
 
     try:
         pygame.joystick.init()
-        
+
         for i in range(0, pygame.joystick.get_count()):
             pygame.joystick.Joystick(i).init()
             enabled = True
-    except:        
+    except:
         if renpy.config.debug:
             raise
-        
+
 def event(ev):
 
     if not enabled:
@@ -96,7 +96,7 @@ def event(ev):
                                   press=press, release=release)
 
     if ev.type == pygame.JOYBUTTONDOWN:
-        
+
         if not renpy.display.interface.focused:
             return None
 
@@ -123,4 +123,4 @@ class JoyBehavior(renpy.display.layout.Null):
     def event(self, ev, x, y, st):
         if ev.type == renpy.display.core.JOYEVENT:
             return ev.press
-        
+

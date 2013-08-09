@@ -44,7 +44,7 @@ import renpy.audio
 class StoreDeleted(object):
     def __reduce__(self):
         return "deleted"
-    
+
 deleted = StoreDeleted()
 
 class StoreModule(object):
@@ -63,10 +63,10 @@ class StoreModule(object):
 
     def __setattr__(self, key, value):
         self.__dict__[key] = value
-        
+
     def __delattr__(self, key):
         del self.__dict__[key]
-        
+
 # Used to unpickle a store module.
 def get_store_module(name):
     return sys.modules[name]
@@ -76,17 +76,17 @@ class StoreDict(dict):
     This class represents the dictionary of a store module. It logs
     sets and deletes.
     """
-    
+
     def __reduce__(self):
         raise Exception("Cannot pickle a reference to a store dictionary.")
-    
+
     def __init__(self):
 
         # The value of this dictionary at the start of the current
         # rollback period (when begin() was last called).
         self.old = { }
-        
-        # The set of variables in this StoreDict that changed since the 
+
+        # The set of variables in this StoreDict that changed since the
         # end of the init phase.
         self.ever_been_changed = set()
 
@@ -94,44 +94,44 @@ class StoreDict(dict):
         """
         Called to mark the start of a rollback period.
         """
-        
+
         self.old = dict(self)
-        
+
     def get_changes(self):
         """
-        For every key that has changed since begin() was called, returns a 
-        dictionary mapping the key to its value when begin was called, or 
+        For every key that has changed since begin() was called, returns a
+        dictionary mapping the key to its value when begin was called, or
         deleted if it did not exist when begin was called.
 
         As a side-effect, updates self.ever_been_changed.
         """
-        
+
         rv = { }
-        
+
         for k in self:
             if k not in self.old:
                 rv[k] = deleted
-                
+
         for k, v in self.old.iteritems():
-            
+
             new_v = self.get(k, deleted)
-            
+
             if new_v is not v:
                 rv[k] = v
-                
+
         for k in rv:
             self.ever_been_changed.add(k)
 
-        return rv    
-        
-        
+        return rv
+
+
 # A map from the name of a store dict to the corresponding StoreDict object.
 store_dicts = { }
 
 def create_store(name):
     """
     Creates the store with `name`.
-    """    
+    """
 
     name = str(name)
 
@@ -141,62 +141,62 @@ def create_store(name):
     # Create the dict.
     d = StoreDict()
     store_dicts[name] = d
-    
+
     # Set the name.
     d["__name__"] = name
     d["__package__"] = name
-    
+
     # Set up the default contents of the store.
     eval("1", d)
-    
+
     for k, v in renpy.minstore.__dict__.iteritems():
         if k not in d:
             d[k] = v
-    
+
     # Create the corresponding module.
     sys.modules[name] = StoreModule(d)
 
     # If we're a module in the store, add us to the store.
     if name.startswith("store."):
         store_dicts["store"][name[6:]] = sys.modules[name]
-        
+
 class StoreBackup():
     """
-    This creates a copy of the current store, as it was at the start of 
-    the current statement. 
+    This creates a copy of the current store, as it was at the start of
+    the current statement.
     """
-    
+
     def __init__(self):
-        
+
         # The contents of the store for each store.
         self.store = { }
-        
+
         # The contents of old for each store.
         self.old = { }
-        
+
         # The contents of ever_been_changed for each store.
         self.ever_been_changed = { }
-        
-        
+
+
         for k, v in store_dicts.iteritems():
             self.store[k] = dict(v)
             self.old[k] = dict(v.old)
             self.ever_been_changed[k] = set(v.ever_been_changed)
-            
+
     def restore(self):
 
         for k, sd in store_dicts.iteritems():
-             
+
             sd.clear()
             sd.update(self.store[k])
-             
+
             sd.old.clear()
             sd.old.update(self.old[k])
-             
+
             sd.ever_been_changed.clear()
             sd.ever_been_changed.update(self.ever_been_changed[k])
 
-        
+
 
 clean_store_backup = None
 
@@ -204,23 +204,23 @@ def make_clean_stores():
     """
     Copy the clean stores.
     """
-    
+
     global clean_store_backup
 
     for _k, v in store_dicts.iteritems():
-    
+
         v.old.clear()
         v.ever_been_changed.clear()
-        
+
     clean_store_backup = StoreBackup()
-        
+
 def clean_stores():
     """
     Revert the store to the clean copy.
     """
-    
+
     clean_store_backup.restore()
-                
+
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
 
@@ -228,7 +228,7 @@ class NoRollback(object):
     """
     Objects inheriting from this object do not participate in Rollback.
     """
-    
+
     pass
 
 
@@ -247,9 +247,9 @@ def reached(obj, reachable, wait):
 
     if wait:
         wait()
-    
+
     idobj = id(obj)
-    
+
     if idobj in reachable:
         return
 
@@ -259,13 +259,13 @@ def reached(obj, reachable, wait):
 
     reachable[idobj] = 1
 
-    # Since the store module is the roots, there's no need to 
+    # Since the store module is the roots, there's no need to
     # look into it.
     if isinstance(obj, StoreModule):
         return
 
     # parents.append(obj)
-    
+
     try:
         # Treat as fields, indexed by strings.
         for v in vars(obj).itervalues():
@@ -287,22 +287,22 @@ def reached(obj, reachable, wait):
             reached(v, reachable, wait)
     except:
         pass
-            
+
     # parents.pop()
-            
+
 def reached_vars(store, reachable, wait):
     """
     Marks everything reachable from the variables in the store
     or from the context info objects as reachable.
-    
+
     @param store: A map from variable name to variable value.
     @param reachable: A dictionary mapping reached object ids to
     the path by which the object was reached.
     """
 
     for v in store.itervalues():
-        reached(v, reachable, wait)    
-    
+        reached(v, reachable, wait)
+
     for c in renpy.game.contexts:
         reached(c.info, reachable, wait)
         reached(c.music, reachable, wait)
@@ -352,7 +352,7 @@ class WrapNode(ast.NodeTransformer):
             starargs = None,
             kwargs = None)
 
-wrap_node = WrapNode()                
+wrap_node = WrapNode()
 
 
 def set_filename(filename, offset, tree):
@@ -381,7 +381,7 @@ def unicode_sub(m):
 
     if not unicode_re.search(s):
         return s
-    
+
     prefix = m.group(1)
     sep = m.group(2)
     body = m.group(3)
@@ -392,14 +392,14 @@ def unicode_sub(m):
     rv = prefix + sep + body + sep
 
     return rv
-    
+
 
 string_re = re.compile(r'([uU]?[rR]?)("""|"|\'\'\'|\')((\\.|.)*?)\2')
 
-def escape_unicode(s):    
+def escape_unicode(s):
     if unicode_re.search(s):
         s = string_re.sub(unicode_sub, s)
-    
+
     return s
 
 def py_compile(source, mode, filename='<none>', lineno=1):
@@ -419,7 +419,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
 
     if isinstance(source, ast.Module):
         return compile(source, filename, mode)
-            
+
     if isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
@@ -427,7 +427,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
     source = unicode(source)
     source = source.replace("\r", "")
     source = escape_unicode(source)
-        
+
     try:
         line_offset = lineno - 1
 
@@ -439,7 +439,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
         ast.increment_lineno(tree, lineno - 1)
 
         line_offset = 0
-        
+
         return compile(tree, filename, mode)
 
     except SyntaxError, e:
@@ -473,13 +473,13 @@ def mutator(method):
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
-        
+
         mutated = renpy.game.log.mutated #@UndefinedVariable
 
         if id(self) not in mutated:
             mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
             mutate_flag = True
-                    
+
         return method(self, *args, **kwargs)
 
     return do_mutation
@@ -488,12 +488,12 @@ class RevertableList(list):
 
     def __init__(self, *args):
         log = renpy.game.log
-        
+
         if log is not None:
             log.mutated[id(self)] = None
 
         list.__init__(self, *args)
-        
+
     __delitem__ = mutator(list.__delitem__)
     __delslice__ = mutator(list.__delslice__)
     __setitem__ = mutator(list.__setitem__)
@@ -508,7 +508,7 @@ class RevertableList(list):
     sort = mutator(list.sort)
 
     def wrapper(method): # E0213 @NoSelf
-        def newmethod(*args, **kwargs): 
+        def newmethod(*args, **kwargs):
             return RevertableList(method(*args, **kwargs)) # E1102
 
         return newmethod
@@ -519,7 +519,7 @@ class RevertableList(list):
     __rmul__ = wrapper(list.__rmul__)
 
     del wrapper
-    
+
     def get_rollback(self):
         return self[:]
 
@@ -536,7 +536,7 @@ class RevertableDict(dict):
 
     def __init__(self, *args, **kwargs):
         log = renpy.game.log
-        
+
         if log is not None:
             log.mutated[id(self)] = None
 
@@ -558,7 +558,7 @@ class RevertableDict(dict):
     keys = list_wrapper(dict.keys)
     values = list_wrapper(dict.values)
     items = list_wrapper(dict.items)
-    
+
     del list_wrapper
 
     def copy(self):
@@ -582,7 +582,7 @@ class RevertableSet(sets.Set):
 
         if log is not None:
             log.mutated[id(self)] = None
-        
+
         sets.Set.__init__(self, *args)
 
     __iand__ = mutator(sets.Set.__iand__)
@@ -630,7 +630,7 @@ class RevertableSet(sets.Set):
     def rollback(self, old):
         sets.Set.clear(self)
         sets.Set.update(self, old)
-    
+
 
 class RevertableObject(object):
 
@@ -673,7 +673,7 @@ class DetRandom(random.Random):
         if self.stack:
             rv = self.stack.pop()
         else:
-            rv = super(DetRandom, self).random()            
+            rv = super(DetRandom, self).random()
 
         renpy.game.log.current.random.append(rv)
         return rv
@@ -688,7 +688,7 @@ class DetRandom(random.Random):
         ll.reverse()
 
         self.stack.extend(ll)
-        
+
     def reset(self):
         """
         Resets the RNG, removing all of the pushbacked numbers.
@@ -742,12 +742,12 @@ class Rollback(renpy.object.Object):
         self.purged = False
         self.random = [ ]
         self.forward = None
-        
+
         # A map of maps name -> (variable -> value)
         self.stores = { }
-        
+
     def after_upgrade(self, version):
-        
+
         if version < 2:
             self.stores = { "store" : { } }
 
@@ -758,8 +758,8 @@ class Rollback(renpy.object.Object):
                 else:
                     k, = i
                     self.stores["store"][k] = deleted
-            
-        
+
+
     def purge_unreachable(self, reachable, wait):
         """
         Adds objects that are reachable from the store of this
@@ -767,7 +767,7 @@ class Rollback(renpy.object.Object):
         information that is stored about totally unreachable objects.
 
         Returns True if this is the first time this method has been
-        called, or False if it has already been called once before.        
+        called, or False if it has already been called once before.
         """
 
         if self.purged:
@@ -775,7 +775,7 @@ class Rollback(renpy.object.Object):
 
         self.purged = True
 
-        # Add objects reachable from the stores. (Objects that might be 
+        # Add objects reachable from the stores. (Objects that might be
         # unreachable at the moment.)
         for changes in self.stores.itervalues():
             for _k, v in changes.iteritems():
@@ -790,7 +790,7 @@ class Rollback(renpy.object.Object):
 
         # Add in objects reachable through displayables.
         reached(self.context.scene_lists.get_all_displayables(), reachable, wait)
-            
+
         # Purge object update information for unreachable objects.
         new_objects = [ ]
 
@@ -803,7 +803,7 @@ class Rollback(renpy.object.Object):
                     print "Removing unreachable:", o
 
                     pass
-                
+
         self.objects = new_objects
 
         return True
@@ -823,7 +823,7 @@ class Rollback(renpy.object.Object):
             store = store_dicts.get(name, None)
             if store is None:
                 return
-            
+
             for name, value in changes.iteritems():
                 if value is deleted:
                     if name in store:
@@ -835,7 +835,7 @@ class Rollback(renpy.object.Object):
         renpy.game.contexts.append(self.context)
 
         rng.pushback(self.random)
-        
+
 
 class RollbackLog(renpy.object.Object):
     """
@@ -850,11 +850,11 @@ class RollbackLog(renpy.object.Object):
     interactively rollback.
 
     Not serialized:
-    
+
     @ivar mutated: A dictionary that maps object ids to a tuple of
     (weakref to object, information needed to rollback that object)
     """
-    
+
     __version__ = 3
 
 
@@ -875,7 +875,7 @@ class RollbackLog(renpy.object.Object):
 
         # Did we just do a roll forward?
         self.rolled_forward = False
-        
+
         # Reset the RNG on the creation of a new game.
         rng.reset()
 
@@ -889,14 +889,14 @@ class RollbackLog(renpy.object.Object):
         if version < 3:
             self.rollback_is_fixed = False
             self.fixed_rollback_boundary = None
-        
+
     def begin(self):
         """
         Called before a node begins executing, to indicate that the
         state needs to be saved for rollbacking.
         """
 
-        context = renpy.game.context()        
+        context = renpy.game.context()
         if not context.rollback:
             return
 
@@ -936,7 +936,7 @@ class RollbackLog(renpy.object.Object):
         # Reset the point that changes are relative to.
         for sd in store_dicts.itervalues():
             sd.begin()
-        
+
     def complete(self):
         """
         Called after a node is finished executing, before a save
@@ -951,9 +951,9 @@ class RollbackLog(renpy.object.Object):
         for name, sd in store_dicts.iteritems():
             self.current.stores[name] = sd.get_changes()
 
-        # Update the list of mutated objects and what we need to do to 
+        # Update the list of mutated objects and what we need to do to
         # restore them.
-    
+
         for _i in xrange(4):
 
             self.current.objects = [ ]
@@ -979,8 +979,8 @@ class RollbackLog(renpy.object.Object):
                 # iterating over it.
                 pass
 
-        
-                  
+
+
     def get_roots(self):
         """
         Return a map giving the current roots of the store. This is a
@@ -990,14 +990,14 @@ class RollbackLog(renpy.object.Object):
         """
 
         rv = { }
-        
+
         for store_name, sd in store_dicts.iteritems():
             for name in sd.ever_been_changed:
                 if name in sd:
                     rv[store_name + "." + name] = sd[name]
                 else:
                     rv[store_name + "." + name] = deleted
-        
+
         return rv
 
     def purge_unreachable(self, roots, wait=None):
@@ -1025,7 +1025,7 @@ class RollbackLog(renpy.object.Object):
             return True
         else:
             return False
-            
+
     def in_fixed_rollback(self):
         return self.rollback_is_fixed
 
@@ -1033,11 +1033,11 @@ class RollbackLog(renpy.object.Object):
         """
         Returns the current forward info, if any.
         """
-        
+
         if self.forward:
-            
+
             name, data = self.forward[0]
-            
+
             if self.current.context.current == name:
                 return data
 
@@ -1049,18 +1049,18 @@ class RollbackLog(renpy.object.Object):
         that the user may want to rollback to just before this
         node.
         """
-        
+
         if self.current.checkpoint:
             return
 
         if not renpy.game.context().rollback:
             return
-        
-        if self.rollback_limit < renpy.config.hard_rollback_limit: 
+
+        if self.rollback_limit < renpy.config.hard_rollback_limit:
             self.rollback_limit += 1
 
         self.current.checkpoint = True
-        
+
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
             fwd_name, fwd_data = self.forward[0]
@@ -1114,7 +1114,7 @@ class RollbackLog(renpy.object.Object):
 
         @param label: The label that is called in the game script
         after rollback has finished, if it exists.
-        
+
         `greedy`
             If true, rollback will keep going until just after the last
             checkpoint. If False, it will stop immediately before the
@@ -1127,7 +1127,7 @@ class RollbackLog(renpy.object.Object):
             return
 
         self.purge_unreachable(self.get_roots())
-        
+
         revlog = [ ]
 
         # Find the place to roll back to.
@@ -1146,7 +1146,7 @@ class RollbackLog(renpy.object.Object):
         else:
             if force:
                 raise Exception("Couldn't find a place to stop rolling back. Perhaps the script changed in an incompatible way?")
-                
+
             # Otherwise, just give up.
 
             print "Can't find a place to rollback to. Not rolling back."
@@ -1165,10 +1165,10 @@ class RollbackLog(renpy.object.Object):
 
             if not renpy.game.script.has_label(rb.context.current):
                 break
-            
+
             if self.rollback_limit <= 0:
                 break
-            
+
             revlog.append(self.log.pop())
 
         # Decide if we're replacing the current context (rollback command),
@@ -1179,7 +1179,7 @@ class RollbackLog(renpy.object.Object):
         else:
             replace_context = True
             other_contexts = renpy.game.contexts[1:]
-            renpy.game.contexts = renpy.game.contexts[0:1] 
+            renpy.game.contexts = renpy.game.contexts[0:1]
 
         # Actually roll things back.
         for rb in revlog:
@@ -1187,57 +1187,57 @@ class RollbackLog(renpy.object.Object):
 
             if rb.context.current == self.fixed_rollback_boundary:
                 self.rollback_is_fixed = True
-            
+
             if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
-            
+
         # Disable the next transition, as it's pointless. (Only when not used with a label.)
         renpy.game.interface.suppress_transition = True
-            
+
         # If necessary, reset the RNG.
         if force:
             rng.reset()
             self.forward = [ ]
-            
+
         # Flag that we're in the transition immediately after a rollback.
         renpy.game.after_rollback = True
 
         # Stop the sounds.
         renpy.audio.audio.rollback()
-        
+
         renpy.game.contexts.extend(other_contexts)
-        
+
         # Restart the context or the top context.
         if replace_context:
             raise renpy.game.RestartTopContext(label)
         else:
             raise renpy.game.RestartContext(label)
-        
+
 
     def freeze(self, wait=None):
         """
         This is called to freeze the store and the log, in preparation
         for serialization. The next call on log should either be
         unfreeze (called after a serialization reload) or discard_freeze()
-        (called after the save is complete). 
+        (called after the save is complete).
         """
 
-        # Purge unreachable objects, so we don't save them.        
+        # Purge unreachable objects, so we don't save them.
         self.complete()
         roots = self.get_roots()
         self.purge_unreachable(roots, wait=wait)
 
         # The current is not purged.
         self.current.purged = False
-        
+
         return roots
-        
+
     def discard_freeze(self):
         """
         Called to indicate that we will not be restoring from the
         frozen state.
         """
-        
+
     def unfreeze(self, roots, label=None):
         """
         Used to unfreeze the game state after a load of this log
@@ -1245,7 +1245,7 @@ class RollbackLog(renpy.object.Object):
         lucky, it's the one that indicates load was successful.
 
         @param roots: The roots returned from freeze.
-        
+
         @param label: The label that is jumped to in the game script
         after rollback has finished, if it exists.
         """
@@ -1257,26 +1257,26 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
 
         clean_stores()
-                
+
         for name, value in roots.iteritems():
 
             if "." in name:
                 store_name, name = name.rsplit(".", 1)
             else:
                 store_name = "store"
-                
+
             if store_name not in store_dicts:
                 continue
-            
+
             store = store_dicts[store_name]
             store.ever_been_changed.add(name)
-            
+
             if value is deleted:
                 if name in store:
                     del store[name]
             else:
                 store[name] = value
-        
+
         # Now, rollback to an acceptable point.
         self.rollback(0, force=True, label=label, greedy=False)
 
@@ -1321,16 +1321,16 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): #@ReservedAssignment
     return eval(bytecode, globals, locals)
 
 def py_eval(source, globals=None, locals=None): #@ReservedAssignment
-    
+
     if globals is None:
         globals = store_dicts["store"] #@ReservedAssignment
 
     if locals is None:
         locals = globals #@ReservedAssignment
-    
+
     return eval(py_compile(source, 'eval'), globals, locals)
-        
-        
+
+
 # This was used to proxy accesses to the store. Now it's kept around to deal
 # with cases where it might have leaked into a pickle.
 class StoreProxy(object):
@@ -1343,7 +1343,7 @@ class StoreProxy(object):
 
     def __delattr__(self, k):
         delattr(renpy.store, k) #@UndefinedVariable
-        
+
 
 # Code for pickling bound methods.
 def method_pickle(method):

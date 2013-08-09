@@ -67,7 +67,7 @@ rollback_length = 128
 # buffer if the data has not changed.
 keep_rollback_data = False
 
-# If set to true, menus in fixed rollback will not have clickable 
+# If set to true, menus in fixed rollback will not have clickable
 # options and a click anywhere or mouse wheel will roll forward.
 fix_rollback_without_choice = False
 
@@ -379,6 +379,7 @@ gamedir = None
 basedir = None
 renpy_base = None
 commondir = None
+logdir = None # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True

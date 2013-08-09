@@ -8,7 +8,7 @@ moved around the screen with the mouse. Some of the uses of dragging
 are:
 
 * Allowing windows to be repositioned by the user, storing the window
-  positions. 
+  positions.
 * Card games that require cards to be dragged around the screen. (For
   example, solitaire.)
 * Inventory systems.
@@ -64,7 +64,7 @@ of the window by dragging it around the screen.::
 Here's a more complicated example, one that shows how dragging can be
 used to influence gameplay. It shows how dragging can be used to
 send a character to a location::
-                
+
     init python:
 
         def detective_dragged(drags, drop):
@@ -92,7 +92,7 @@ send a character to a location::
                 child "ivy.png"
                 droppable False
                 dragged detective_dragged
-                xpos 100 ypos 100            
+                xpos 100 ypos 100
             drag:
                 drag_name "Zack"
                 child "zack.png"
@@ -118,17 +118,8 @@ send a character to a location::
         call screen send_detective_screen
 
         "Okay, we'll send [detective] to [city]."
-                
+
 More complicated systems take significant programming skill to get
 right. The `Ren'Py cardgame framework <http://www.renpy.org/wiki/renpy/Frameworks#Cardgame>`_
 is both an example of how to use drag and drop in a complex
 system, and useful for making card games in its own right.
-
-
-
-
-
-
-
-
-

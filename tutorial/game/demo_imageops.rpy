@@ -5,10 +5,10 @@ init:
 
     image logo crop = im.Crop("logo.png", 0, 0, 100, 307)
 
-    image logo scale = im.Scale("logo.png", 100, 150) 
+    image logo scale = im.Scale("logo.png", 100, 150)
 
     image logo factorscale = im.FactorScale("logo.png", 1.5, 1.5)
-    
+
     image logo composite = im.Composite((200, 407),
                                         (0, 0), "logo.png",
                                         (0, 50), "logo.png",
@@ -40,7 +40,7 @@ init:
     image logo halfsat = im.MatrixColor("logo.png",
                                         im.matrix.saturation(.5))
 
-    # This could be better done with im.matrix.invert(), but I want to show 
+    # This could be better done with im.matrix.invert(), but I want to show
     # how to use a matrix.
     image logo invert = im.MatrixColor("logo.png",
                                        [ -1,  0,  0, 0, 1,
@@ -53,17 +53,17 @@ init:
 
     image logo hue = im.MatrixColor("logo.png",
                                     im.matrix.hue(90))
-    
+
     image logo bright = im.MatrixColor("logo.png",
                                        im.matrix.brightness(.5))
 
     image logo sepia = im.Sepia("logo.png")
-    
+
     image logo grayscale = im.Grayscale("logo.png")
-    
-    
+
+
     $ logopos = Position(xpos=.5, xanchor=0, ypos=50, yanchor=0)
-    
+
 label demo_imageops:
 
     e "Image operations allow us to manipulate images as they are loaded in."
@@ -107,9 +107,9 @@ label demo_imageops:
 
     show logo factorscale at logopos
     with dissolve
-    
-    e "im.FactorScale lets us do the same thing, except to a factor of the original size."    
-    
+
+    e "im.FactorScale lets us do the same thing, except to a factor of the original size."
+
     show logo green at logopos
     with dissolve
 
@@ -120,7 +120,7 @@ label demo_imageops:
     show logo base at logopos
     with dissolve
     show logo green2 at logopos
-    with dissolve 
+    with dissolve
 
     e "The im.Recolor operation can do the same thing, but is more efficient when we're linearly mapping colors."
 
@@ -136,27 +136,27 @@ label demo_imageops:
 
     show logo halfsat at logopos
     with dissolve
-    
+
     e "The im.MatrixColor operation lets you use a matrix to alter the colors. With the right matrix, you can desaturate colors..."
 
     show logo tintblue at logopos
     with dissolve
-    
+
     e "... tint the image blue..."
 
     show logo hue at logopos
     with dissolve
-    
+
     e "... rotate the hue... "
-    
+
     show logo invert at logopos
     with dissolve
 
     e "... or invert the colors, for a kinda scary look."
-    
+
     show logo bright at logopos
     with dissolve
-    
+
     e "It can even adjust brightness and contrast."
 
     e "We've made some of the most common matrices into image operators."
@@ -168,9 +168,9 @@ label demo_imageops:
 
     show logo sepia at logopos
     with dissolve
-    
+
     e "... while im.Sepia can sepia-tone an image."
-       
+
     show logo base at logopos
     with dissolve
     show logo alpha at logopos

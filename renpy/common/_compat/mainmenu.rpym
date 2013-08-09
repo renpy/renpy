@@ -20,7 +20,7 @@ init -1170 python hide:
     # Styles used in this file.
 
 # This is the default main menu, which we get if the user hasn't
-# defined his own, or if that function calls this explicitly.        
+# defined his own, or if that function calls this explicitly.
 label _library_main_menu:
 
     python hide:

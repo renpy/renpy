@@ -136,24 +136,24 @@ is also possible.
 ::
 
     screen tooltip_test:
-        
+
         default tt = Tooltip("No button selected.")
-        
+
         frame:
             xfill True
-    
+
             has vbox
-                
+
             textbutton "One.":
                 action Return(1)
                 hovered tt.Action("The loneliest number.")
-    
+
             textbutton "Two.":
                 action Return(2)
                 hovered tt.Action("Is what it takes.")
-                
+
             textbutton "Three.":
-                action Return(3)                
+                action Return(3)
                 hovered tt.Action("A crowd.")
-                
+
             text tt.value

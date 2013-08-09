@@ -1528,5 +1528,3 @@ cdef inline gl_check(where):
     if error:
         import renpy
         renpy.display.log.write("GL error 0x%X at %s", error, where)
-
-

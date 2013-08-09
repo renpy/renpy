@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # This file contains code that is responsible for storing and executing a
-# Ren'Py script. 
+# Ren'Py script.
 
 import renpy
 
@@ -41,7 +41,7 @@ BYTECODE_VERSION = 1
 
 # The python magic code.
 MAGIC = imp.get_magic()
-        
+
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
@@ -65,7 +65,7 @@ def collapse_stmts(stmts):
     extend_all(stmts)
 
     return all_stmts
-    
+
 
 class Script(object):
     """
@@ -78,7 +78,7 @@ class Script(object):
     itself.  This is used for jumps, calls, and to find the current
     node when loading back in a save. The names may be strings or
     integers, strings being explicit names provided by the user, and
-    integers being names synthesised by renpy.    
+    integers being names synthesised by renpy.
 
     @ivar initcode: A list of priority, Node tuples that should be
     executed in ascending priority order at init time.
@@ -98,7 +98,7 @@ class Script(object):
         # Set us up as renpy.game.script, so things can use us while
         # we're loading.
         renpy.game.script = self
-        
+
         if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
             self.key = file(renpy.config.renpy_base + "/lock.txt", "rb").read()
         else:
@@ -108,7 +108,7 @@ class Script(object):
         self.all_stmts = [ ]
         self.all_pycode = [ ]
         self.record_pycode = True
-        
+
         # Bytecode caches.
         self.bytecode_oldcache = { }
         self.bytecode_newcache = { }
@@ -127,7 +127,7 @@ class Script(object):
         """
         Scan the directories for script files.
         """
-        
+
         # A list of all files in the search directories.
         dirlist = renpy.loader.listdirfiles()
 
@@ -137,7 +137,7 @@ class Script(object):
 
         # Similar, but for modules:
         self.module_files = [ ]
-        
+
         for dir, fn in dirlist: #@ReservedAssignment
 
             if fn.endswith(".rpy"):
@@ -160,28 +160,28 @@ class Script(object):
                 target = self.module_files
             else:
                 continue
-                
+
             if (fn, dir) not in target:
                 target.append((fn, dir))
 
-    def load_script(self):        
+    def load_script(self):
 
         script_files = self.script_files
-                
+
         # Sort script files by filename.
         script_files.sort()
 
         initcode = [ ]
-        
+
         for fn, dir in script_files: #@ReservedAssignment
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
 
         # Make the sort stable.
         initcode = [ (prio, index, code) for index, (prio, code) in
                      enumerate(initcode) ]
-                     
+
         initcode.sort()
-        
+
         self.initcode = [ (prio, code) for prio, index, code in initcode ]
 
 
@@ -204,9 +204,9 @@ class Script(object):
             raise SystemExit(-1)
 
         self.translator.chain_translates()
-        
+
         return initcode
-        
+
     def assign_names(self, stmts, fn):
         # Assign names to statements that don't have one already.
 
@@ -239,16 +239,16 @@ class Script(object):
                     new.name = old.name
 
     def load_file_core(self, dir, fn): #@ReservedAssignment
-        
+
         if fn.endswith(".rpy") or fn.endswith(".rpym"):
 
             if not dir:
-                raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn) 
+                raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn)
 
             fullfn = dir + "/" + fn
 
             stmts = renpy.parser.parse(fullfn)
-            
+
             data = { }
             data['version'] = script_version
             data['key'] = self.key or 'unlocked'
@@ -288,13 +288,13 @@ class Script(object):
                 data, stmts = loads(f.read().decode('zlib'))
             except:
                 raise
-            
+
             if not isinstance(data, dict):
                 return None, None
 
             if self.key and data.get('key', 'unlocked') != self.key:
                 return None, None
-            
+
             if data['version'] != script_version:
                 return None, None
 
@@ -303,7 +303,7 @@ class Script(object):
             return None, None
 
         return data, stmts
-    
+
     def load_file(self, dir, fn, initcode): #@ReservedAssignment
 
         # Actually do the loading.
@@ -323,46 +323,46 @@ class Script(object):
     def load_string(self, filename, filedata):
         """
         Loads Ren'Py script from a string.
-        
+
         `filename`
             The filename that's assigned to the data.
-            
+
         `filedata`
             A unicode string to be loaded.
-            
+
         Return the list of statements making up the root block, and a
         list of init statements that need to be run.
         """
-        
+
         stmts = renpy.parser.parse(filename, filedata)
-        
+
         if stmts is None:
             return None, None
-        
+
         self.assign_names(stmts, filename)
-        
+
         initcode = [ ]
         stmts = self.finish_load(stmts, initcode, False)
-        
+
         return stmts, initcode
 
 
     def finish_load(self, stmts, initcode, check_names=True):
         """
-        Given `stmts`, a list of AST nodes comprising the root block, 
+        Given `stmts`, a list of AST nodes comprising the root block,
         finishes loading it (this includes chaining statements and
         adding them to the name map.)
-        
+
         `initcode`
             A list we append init statements to.
-        
+
         `check_names`
             If true, produce duplicate name errors.
-        
+
         Returns a list of statements that corresponds to the top-level block
         in initcode after transformation.
         """
-            
+
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
 
@@ -391,7 +391,7 @@ class Script(object):
                                    old.filename, old.linenumber,
                                    node.filename, node.linenumber))
 
-            # Otherwise, add the name to the namemap. 
+            # Otherwise, add the name to the namemap.
             self.namemap[name] = node
 
             # Add any init nodes to self.initcode.
@@ -405,12 +405,12 @@ class Script(object):
         # Exec early python.
         for node in all_stmts:
             node.early_execute()
-        
+
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
 
         return stmts
-    
+
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
@@ -418,7 +418,7 @@ class Script(object):
             if not self.load_file(dir, fn + compiled, initcode):
                 raise Exception("Could not load from archive %s.%s" % (fn, compiled))
             return
-            
+
         # Otherwise, we're loading from disk. So we need to decide if
         # we want to load the rpy or the rpyc file.
         rpyfn = dir + "/" + fn + source
@@ -439,17 +439,17 @@ class Script(object):
                 print "Could not load " + rpycfn
 
             if not self.load_file(dir, fn + source, initcode):
-                raise Exception("Could not load file %s." % rpyfn) 
+                raise Exception("Could not load file %s." % rpyfn)
 
         elif os.path.exists(rpycfn):
             if not self.load_file(dir, fn + compiled, initcode):
-                raise Exception("Could not load file %s." % rpycfn) 
+                raise Exception("Could not load file %s." % rpycfn)
 
         elif os.path.exists(rpyfn):
             if not self.load_file(dir, fn + source, initcode):
-                raise Exception("Could not load file %s." % rpyfn) 
-        
-    
+                raise Exception("Could not load file %s." % rpyfn)
+
+
     def init_bytecode(self):
         """
         Init/Loads the bytecode cache.
@@ -462,7 +462,7 @@ class Script(object):
                 self.bytecode_oldcache = cache
         except:
             pass
-        
+
     def update_bytecode(self):
         """
         Compiles the PyCode objects in self.all_pycode, updating the
@@ -478,14 +478,14 @@ class Script(object):
             code = self.bytecode_oldcache.get(key, None)
 
             if code is None:
-                                              
+
                 self.bytecode_dirty = True
-                
+
                 old_ei = renpy.game.exception_info
                 renpy.game.exception_info = "While compiling python block starting at line %d of %s." % (i.location[1], i.location[0])
 
                 try:
-                
+
                     if i.mode == 'exec':
                         code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
                     elif i.mode == 'eval':
@@ -501,9 +501,9 @@ class Script(object):
                         pos = e.offset)
 
                     renpy.parser.parse_errors.append(pem.message)
-                    
+
                     continue
-                        
+
                 renpy.game.exception_info = old_ei
 
             i.source = None
@@ -514,7 +514,7 @@ class Script(object):
 
 
     def save_bytecode(self):
-        
+
         if self.bytecode_dirty:
             try:
                 data = (BYTECODE_VERSION, self.bytecode_newcache)
@@ -523,7 +523,7 @@ class Script(object):
                 f.close()
             except:
                 pass
-        
+
 
     def lookup(self, label):
         """
@@ -532,7 +532,7 @@ class Script(object):
         """
 
         label = renpy.config.label_overrides.get(label, label)
-        
+
         if label not in self.namemap:
             raise ScriptError("could not find label '%s'." % str(label))
 
@@ -546,6 +546,3 @@ class Script(object):
         label = renpy.config.label_overrides.get(label, label)
 
         return label in self.namemap
-
-    
-

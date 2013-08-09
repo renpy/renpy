@@ -34,7 +34,7 @@ cdef void gl_clip(GLenum plane, GLdouble a, GLdouble b, GLdouble c, GLdouble d):
     """
 
     cdef GLdouble equation[4]
-    
+
     equation[0] = a
     equation[1] = b
     equation[2] = c
@@ -56,7 +56,7 @@ cdef class FixedFunctionEnviron(Environ):
     cdef object ramp_setup
 
     def init(self):
-        
+
         # The last blend environ used.
         self.last = NONE
 
@@ -67,7 +67,7 @@ cdef class FixedFunctionEnviron(Environ):
         self.last_ramplen = -1
 
         # A table that maps ramp lengths to the setup of the fixed-function
-        # units.        
+        # units.
         self.ramp_setup = [
             # Fields are:
             # ramp length,
@@ -82,7 +82,7 @@ cdef class FixedFunctionEnviron(Environ):
             (16, 2.0, GL_ADD, 4.0),
             (8, 4.0, GL_ADD, 4.0),
             ]
-            
+
 
     def deinit(self):
         """
@@ -98,7 +98,7 @@ cdef class FixedFunctionEnviron(Environ):
 
         glActiveTextureARB(unit)
         glDisable(GL_TEXTURE_2D)
-        
+
     # As this takes keyword arguments, it can't be a cdef function.
     def combine_mode(self, unit,
                      color_function=GL_MODULATE,
@@ -119,14 +119,14 @@ cdef class FixedFunctionEnviron(Environ):
                      alpha_scale=1.0,
                      enable=True):
 
-        
+
         glActiveTextureARB(unit)
 
         if enable:
             glEnable(GL_TEXTURE_2D)
         else:
             glDisable(GL_TEXTURE_2D)
-            
+
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB)
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, color_function)
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, alpha_function)
@@ -148,7 +148,7 @@ cdef class FixedFunctionEnviron(Environ):
         glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE_ARB, color_scale)
         glTexEnvf(GL_TEXTURE_ENV, GL_ALPHA_SCALE, alpha_scale)
 
-        
+
     cdef void blit(self):
 
         if self.last != BLIT:
@@ -164,9 +164,9 @@ cdef class FixedFunctionEnviron(Environ):
             self.disable(GL_TEXTURE1_ARB)
             self.disable(GL_TEXTURE2_ARB)
             self.disable(GL_TEXTURE3_ARB)
-            
+
             self.last = BLIT
-        
+
     cdef void blend(self, double fraction):
 
         if self.last != BLEND:
@@ -196,19 +196,19 @@ cdef class FixedFunctionEnviron(Environ):
                               alpha_arg0=GL_PREVIOUS_ARB,
                               alpha_arg1=GL_PRIMARY_COLOR_ARB,
                               enable=False)
-            
+
             # Disable texture unit 3.
             self.disable(GL_TEXTURE3_ARB)
-            
+
             self.last = BLEND
 
         cdef float *fractions = [ fraction, fraction, fraction, fraction ]
-                    
+
         glActiveTextureARB(GL_TEXTURE1_ARB)
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, fractions)
 
-        
-        
+
+
     cdef void imageblend(self, double fraction, int ramp):
 
         if self.last != IMAGEBLEND or self.last_ramp != ramp:
@@ -225,7 +225,7 @@ cdef class FixedFunctionEnviron(Environ):
             # Unit 0 loads in the control image, and adds/subtracts an
             # offset to/from it. (We'll set it up to subtract here,
             # and change this later on as necessary.)
-            # 
+            #
             # It multiplies this result by up to 4.
             self.combine_mode(GL_TEXTURE0_ARB,
                               color_function=GL_SUBTRACT_ARB,
@@ -235,7 +235,7 @@ cdef class FixedFunctionEnviron(Environ):
                               color_scale=t0scale,
                               alpha_scale=t0scale)
 
-            # Unit 1 will multiply the result of stage 1 by up to 8. 
+            # Unit 1 will multiply the result of stage 1 by up to 8.
             #
             # It also takes the first source texture, but we don't
             # access it directly yet.
@@ -270,14 +270,14 @@ cdef class FixedFunctionEnviron(Environ):
                               alpha_arg0=GL_PREVIOUS_ARB,
                               alpha_arg1=GL_PRIMARY_COLOR_ARB,
                               enable=False)
-            
+
             self.last = IMAGEBLEND
             self.last_ramp = ramp
             self.last_ramplen = ramplen
 
-        # Compute the offset to apply to the alpha.            
+        # Compute the offset to apply to the alpha.
         start = -1.0
-        end = self.last_ramplen / 256.0        
+        end = self.last_ramplen / 256.0
         offset = start + ( end - start) * fraction
 
         # Decide if we're adding or subtracting.
@@ -295,31 +295,31 @@ cdef class FixedFunctionEnviron(Environ):
         cdef float *offsets = [ offset, offset, offset, offset ]
 
         glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, offsets)
-    
+
     cdef void set_vertex(self, float *vertices):
         glVertexPointer(2, GL_FLOAT, 0, <GLubyte *> vertices)
-        glEnableClientState(GL_VERTEX_ARRAY)    
-     
+        glEnableClientState(GL_VERTEX_ARRAY)
+
     cdef void set_texture(self, int unit, float *coords):
 
         if unit == 0:
-            glClientActiveTextureARB(GL_TEXTURE0)    
+            glClientActiveTextureARB(GL_TEXTURE0)
         elif unit == 1:
-            glClientActiveTextureARB(GL_TEXTURE1)            
+            glClientActiveTextureARB(GL_TEXTURE1)
         elif RENPY_THIRD_TEXTURE and unit == 2:
             glClientActiveTextureARB(GL_TEXTURE2)
         else:
             return
-        
+
         if coords is not NULL:
             glTexCoordPointer(2, GL_FLOAT, 0, <GLubyte *> coords)
             glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         else:
             glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-    
+
     cdef void set_color(self, float r, float g, float b, float a):
         glColor4f(r, g, b, a)
-    
+
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
 
         glMatrixMode(GL_PROJECTION)
@@ -328,7 +328,7 @@ cdef class FixedFunctionEnviron(Environ):
         glMatrixMode(GL_MODELVIEW)
 
     cdef void set_clip(self, tuple clip_box, GLDraw draw):
-        
+
         cdef double minx, miny, maxx, maxy
 
         minx, miny, maxx, maxy = clip_box
@@ -337,12 +337,12 @@ cdef class FixedFunctionEnviron(Environ):
         gl_clip(GL_CLIP_PLANE1, 0.0, 1.0, 0.0, -miny)
         gl_clip(GL_CLIP_PLANE2, -1.0, 0.0, 0.0, maxx)
         gl_clip(GL_CLIP_PLANE3, 0.0, -1.0, 0.0, maxy)
-  
+
     cdef void unset_clip(self, GLDraw draw):
         glDisable(GL_CLIP_PLANE0)
         glDisable(GL_CLIP_PLANE1)
         glDisable(GL_CLIP_PLANE2)
         glDisable(GL_CLIP_PLANE3)
-        
+
     cdef void viewport(self, int x, int y, int width, int height):
         glViewport(x, y, width, height)

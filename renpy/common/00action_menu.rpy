@@ -3,7 +3,7 @@
 
 init -1500 python:
 
-                
+
     ##########################################################################
     # Menu-related actions.
 
@@ -32,7 +32,7 @@ init -1500 python:
 
          ShowMenu without an argument will enter the game menu at the
          default screen, taken from _game_menu_screen.
-         
+
          """
 
         def __init__(self, screen=None):
@@ -46,12 +46,12 @@ init -1500 python:
 
             if not self.get_sensitive():
                 return
-            
+
             orig_screen = screen = self.screen or store._game_menu_screen
 
             if not (renpy.has_screen(screen) or renpy.has_label(screen)):
                 screen = screen + "_screen"
-                
+
             # Ugly. We have different code depending on if we're in the
             # game menu or not.
             if renpy.context()._menu:
@@ -61,7 +61,7 @@ init -1500 python:
                     renpy.transition(config.intra_transition)
                     renpy.show_screen(screen, _transient=True)
                     renpy.restart_interaction()
-                    
+
                 elif renpy.has_label(screen):
                     renpy.transition(config.intra_transition)
 
@@ -85,12 +85,12 @@ init -1500 python:
                 return eval(config.show_menu_enable[self.screen])
             else:
                 return True
-        
-            
+
+
     class Start(Action):
         """
          :doc: menu_action
-         
+
          Causes Ren'Py to jump out of the menu context to the named
          label. The main use of this is to start a new game from the
          main menu. Common uses are:
@@ -98,14 +98,14 @@ init -1500 python:
          * Start() - Start at the start label.
          * Start("foo") - Start at the "foo" label.
          """
-        
+
         def __init__(self, label="start"):
             self.label = label
 
         def __call__(self):
             renpy.jump_out_of_context(self.label)
 
-            
+
     class MainMenu(Action):
         """
          :doc: menu_action
@@ -120,13 +120,14 @@ init -1500 python:
 
         def __init__(self, confirm=True):
             self.confirm = confirm
-        
+
         def __call__(self):
 
             if not self.get_sensitive():
                 return
 
             if self.confirm:
+                renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.MAIN_MENU, MainMenu(False))
             else:
                 renpy.full_restart()
@@ -145,19 +146,20 @@ init -1500 python:
               If true, prompts the user if he wants to quit, rather
               than quitting directly.
          """
-        
+
         def __init__(self, confirm=True):
             self.confirm = confirm
 
         def __call__(self):
 
             if self.confirm:
-                renpy.loadsave.force_autosave()
+                if not renpy.context()._main_menu:
+                    renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.QUIT, Quit(False))
-            else:            
+            else:
                 renpy.quit()
 
-            
+
     class Skip(Action):
         """
          :doc: other_action
@@ -165,8 +167,16 @@ init -1500 python:
          Causes the game to begin skipping. If the game is in a menu
          context, then this returns to the game. Otherwise, it just
          enables skipping.
+
+         `fast`
+               If True, skips directly to the next menu choice.
          """
-                
+
+        fast = False
+
+        def __init__(self, fast=False):
+            self.fast = fast
+
         def __call__(self):
             if not self.get_sensitive():
                 return
@@ -174,14 +184,22 @@ init -1500 python:
             if renpy.context()._menu:
                 renpy.jump("_return_skipping")
             else:
-                config.skipping = not config.skipping
+
+                if not config.skipping:
+                    if self.fast:
+                        config.skipping = "fast"
+                    else:
+                        config.skipping = "slow"
+                else:
+                    config.skipping = None
+
                 renpy.restart_interaction()
 
         def get_selected(self):
             return config.skipping
-                
+
         def get_sensitive(self):
-            return config.allow_skipping and (not renpy.context()._main_menu)
+            return ( config.allow_skipping and (not renpy.context()._main_menu) ) and ( renpy.game.preferences.skip_unseen or renpy.game.context().seen_current(True) )
 
 
     class Help(Action):
@@ -200,7 +218,7 @@ init -1500 python:
 
         def __init__(self, help=None):
             self.help = help
-        
+
         def __call__(self):
             _help(self.help)
-                   
+

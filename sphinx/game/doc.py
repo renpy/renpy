@@ -88,11 +88,11 @@ has
 
 def write_keywords():
     f = file("source/keywords.py", "w")
-    
+
     kwlist = list(keyword.kwlist)
     kwlist.extend(KEYWORD1.split())
     kwlist.extend(KEYWORD2.split())
-    
+
     kwlist.sort()
 
     f.write("keywords = %r\n" % kwlist)
@@ -115,7 +115,7 @@ line_buffer = collections.defaultdict(list)
 def scan(name, o, prefix=""):
 
     doc_type = "function"
-    
+
     # The section it's going into.
     section = None
 
@@ -151,14 +151,14 @@ def scan(name, o, prefix=""):
             if name != m.group(1):
                 return
             continue
-        
+
         lines.append(l)
-        
+
     if section is None:
         return
 
     if args is None:
-    
+
         # Get the arguments.
         if inspect.isclass(o):
             init = getattr(o, "__init__", None)
@@ -166,11 +166,11 @@ def scan(name, o, prefix=""):
                 return
 
             init_doc = inspect.getdoc(init)
-            
+
             if init_doc and not init_doc.startswith("x.__init__("):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
-            
+
             try:
                 args = inspect.getargspec(init)
             except:
@@ -181,7 +181,7 @@ def scan(name, o, prefix=""):
 
         elif inspect.ismethod(o):
             args = inspect.getargspec(o)
-            
+
         else:
             print "Warning: %s has section but not args." % name
 
@@ -189,12 +189,12 @@ def scan(name, o, prefix=""):
 
         # Format the arguments.
         if args is not None:
-            
+
             args = inspect.formatargspec(*args)
             args = args.replace("(self, ", "(")
         else:
             args = "()"
-            
+
 
     # Put it into the line buffer.
     lb = line_buffer[section]
@@ -218,22 +218,20 @@ def scan_section(name, o):
 
     for n in dir(o):
         scan(name + n, getattr(o, n))
-            
+
 
 def write_line_buffer():
 
     for k, v in line_buffer.iteritems():
 
         print "Generating", k
-        
+
         f = file("source/inc/" + k, "w")
-        
+
         print >>f, ".. Automatically generated file - do not modify."
         print >>f
 
         for l in v:
             print >>f, l
-        
-        f.close()
 
-        
+        f.close()

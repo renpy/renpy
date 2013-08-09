@@ -29,7 +29,7 @@ def compiling(loc):
 
 def executing(loc):
     file, number = loc #@ReservedAssignment
-    
+
     renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
 
 
@@ -40,7 +40,7 @@ def atl_warper(f):
     name = f.func_name
     warpers[name] = f
     return f
-    
+
 # The pause warper is used internally when no other warper is
 # specified.
 @atl_warper
@@ -51,7 +51,7 @@ def pause(t):
         return 1.0
 
 position = object()
-    
+
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
@@ -75,6 +75,7 @@ PROPERTIES = {
         "yzoom" : float,
         "zoom" : float,
         "alpha" : float,
+        "additive" : float,
         "around" : (position, position),
         "alignaround" : (float, float),
         "angle" : float,
@@ -109,17 +110,17 @@ def correct_type(v, b, ty):
 
 def interpolate(t, a, b, type): #@ReservedAssignment
     """
-    Linearly interpolate the arguments. 
+    Linearly interpolate the arguments.
     """
 
     if t >= 1.0:
         return b
-    
+
     # Recurse into tuples.
-    if isinstance(b, tuple):        
+    if isinstance(b, tuple):
         if a is None:
             a = [ None ] * len(b)
-        
+
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
     # Deal with booleans, nones, etc.
@@ -133,7 +134,7 @@ def interpolate(t, a, b, type): #@ReservedAssignment
     else:
         if a is None:
             a = 0
-            
+
         return correct_type(a + t * (b - a), b, type)
 
 # Interpolate the value of a spline. This code is based on Aenakume's code,
@@ -145,9 +146,9 @@ def interpolate_spline(t, spline):
 
     if spline[0] is None:
         return spline[-1]
-        
+
     if len(spline) == 2:
-        t_p = 1.0 - t        
+        t_p = 1.0 - t
 
         rv = t_p * spline[0] + t * spline[-1]
 
@@ -155,7 +156,7 @@ def interpolate_spline(t, spline):
         t_pp = (1.0 - t)**2
         t_p = 2 * t * (1.0 - t)
         t2 = t**2
-        
+
         rv = t_pp * spline[0] + t_p * spline[1] + t2 * spline[2]
 
     elif len(spline) == 4:
@@ -164,14 +165,14 @@ def interpolate_spline(t, spline):
         t_pp = 3 * t * (1.0 - t)**2
         t_p = 3 * t**2 * (1.0 - t)
         t3 = t**3
-        
+
         rv = t_ppp * spline[0] + t_pp * spline[1] + t_p * spline[2] + t3 * spline[3]
 
     else:
         raise Exception("ATL can't interpolate splines of length %d." % len(spline))
 
     return correct_type(rv, spline[-1], position)
-    
+
 
 # This is the context used when compiling an ATL statement. It stores the
 # scopes that are used to evaluate the various expressions in the statement,
@@ -183,15 +184,15 @@ class Context(object):
     def eval(self, expr): #@ReservedAssignment
         expr = renpy.python.escape_unicode(expr)
         return eval(expr, renpy.store.__dict__, self.context) #@UndefinedVariable
-    
+
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
 class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
-    parameters = renpy.ast.ParameterInfo([ ], [ ], None, None) 
-    
+    parameters = renpy.ast.ParameterInfo([ ], [ ], None, None)
+
     def __init__(self, atl, context, parameters):
 
         # The constructor will be called by atltransform.
@@ -201,13 +202,13 @@ class ATLTransformBase(renpy.object.Object):
 
         # The parameters that we take.
         self.parameters = parameters
-        
+
         # The raw code that makes up this ATL statement.
         self.atl = atl
 
         # The context in which execution occurs.
         self.context = Context(context)
-        
+
         # The code after it has been compiled into a block.
         self.block = None
 
@@ -239,7 +240,7 @@ class ATLTransformBase(renpy.object.Object):
         """
 
         super(ATLTransformBase, self).take_execution_state(t)
-        
+
         if t.atl is not self.atl:
             return
 
@@ -257,7 +258,7 @@ class ATLTransformBase(renpy.object.Object):
 
         if self.child is renpy.display.motion.null:
             self.child = t.child
-        
+
 
     def __call__(self, *args, **kwargs):
 
@@ -274,7 +275,7 @@ class ATLTransformBase(renpy.object.Object):
 
         if not positional and args:
             child = args.pop(0)
-        
+
         # Handle positional arguments.
         while positional and args:
             name = positional.pop(0)
@@ -303,7 +304,7 @@ class ATLTransformBase(renpy.object.Object):
 
         if child is None:
             child = self.child
-            
+
         if child is None:
             child = renpy.display.motion.get_null()
 
@@ -318,10 +319,10 @@ class ATLTransformBase(renpy.object.Object):
             parameters=parameters)
 
         rv.take_state(self)
-        
+
         return rv
 
-    
+
     def compile(self): #@ReservedAssignment
         """
         Compiles the ATL code into a block. As necessary, updates the
@@ -330,9 +331,9 @@ class ATLTransformBase(renpy.object.Object):
 
         if self.parameters.positional and self.parameters.positional[0][1] is None:
             raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
-        
+
         old_exception_info = renpy.game.exception_info
-        
+
         self.block = self.atl.compile(self.context)
 
         if len(self.block.statements) == 1 \
@@ -345,7 +346,7 @@ class ATLTransformBase(renpy.object.Object):
 
         renpy.game.exception_info = old_exception_info
 
-        
+
     def execute(self, trans, st, at):
 
         if self.done:
@@ -359,21 +360,21 @@ class ATLTransformBase(renpy.object.Object):
             if self.child.transform_event != self.last_child_transform_event:
                 self.last_child_transform_event = self.child.transform_event
                 self.transform_event = self.child.transform_event
-                
+
         # Hide request.
         if trans.hide_request:
             self.transform_event = "hide"
 
         if trans.replaced_request:
             self.transform_event = "replaced"
-            
+
         # Notice transform events.
         if self.transform_event != self.last_transform_event:
             event = self.transform_event
             self.last_transform_event = self.transform_event
         else:
             event = None
-            
+
         old_exception_info = renpy.game.exception_info
 
         if self.atl.animation:
@@ -386,31 +387,31 @@ class ATLTransformBase(renpy.object.Object):
         renpy.game.exception_info = old_exception_info
 
         # print "Executing", self, self.state, self.xpos, self.ypos
-        
+
         if action == "continue":
             self.atl_state = arg
         else:
             self.done = True
 
         return pause
-    
+
     def predict_one(self):
         self.atl.predict(self.context)
-        
+
     def visit(self):
         if not self.block:
             self.compile()
 
         return self.children + self.block.visit()
-        
-    
+
+
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
 
     def __init__(self, loc):
         super(RawStatement, self).__init__()
         self.loc = loc
-        
+
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
     def compile(self, ctx): #@ReservedAssignment
@@ -436,7 +437,7 @@ class Statement(renpy.object.Object):
     # "continue", state, pause - Causes this statement to execute
     # again, with the given state passed in the second time around.
     #
-    # 
+    #
     # "next", timeleft, pause - Causes the next statement to execute,
     # with timeleft being the amount of time left after this statement
     # finished.
@@ -468,12 +469,12 @@ class RawBlock(RawStatement):
     def __init__(self, loc, statements, animation):
 
         super(RawBlock, self).__init__(loc)
-        
+
         # A list of RawStatements in this block.
         self.statements = statements
-        
+
         self.animation = animation
-        
+
     def compile(self, ctx): #@ReservedAssignment
         compiling(self.loc)
 
@@ -484,30 +485,30 @@ class RawBlock(RawStatement):
     def predict(self, ctx):
         for i in self.statements:
             i.predict(ctx)
-    
-    
-# A compiled ATL block. 
+
+
+# A compiled ATL block.
 class Block(Statement):
     def __init__(self, loc, statements):
 
         super(Block, self).__init__(loc)
-        
+
         # A list of statements in the block.
         self.statements = statements
 
         # The start times of various statements.
         self.times = [ ]
-        
+
         for i, s in enumerate(statements):
             if isinstance(s, Time):
                 self.times.append((s.time, i + 1))
 
         self.times.sort()
-        
+
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
-        
+
         # Unpack the state.
         if state is not None:
             index, start, loop_start, repeats, times, child_state = state
@@ -518,7 +519,7 @@ class Block(Statement):
         action = "continue"
         arg = None
         pause = None
-        
+
         while action == "continue":
 
             # Target is the time we're willing to execute to.
@@ -596,7 +597,7 @@ class Block(Statement):
                 time, tindex = times[0]
                 if time <= target:
                     times.pop(0)
-                    
+
                     index = tindex
                     start = time
                     child_state = None
@@ -607,7 +608,7 @@ class Block(Statement):
 
     def visit(self):
         return [ j for i in self.statements for j in i.visit() ]
-            
+
 # This can become one of four things:
 #
 # - A pause.
@@ -622,11 +623,11 @@ class Block(Statement):
 class RawMultipurpose(RawStatement):
 
     warp_function = None
-    
+
     def __init__(self, loc):
 
         super(RawMultipurpose, self).__init__(loc)
-        
+
         self.warper = None
         self.duration = None
         self.properties = [ ]
@@ -634,12 +635,12 @@ class RawMultipurpose(RawStatement):
         self.splines = [ ]
         self.revolution = None
         self.circles = "0"
-        
+
     def add_warper(self, name, duration, warp_function):
         self.warper = name
         self.duration = duration
         self.warp_function = warp_function
-        
+
     def add_property(self, name, exprs):
         self.properties.append((name, exprs))
 
@@ -648,17 +649,17 @@ class RawMultipurpose(RawStatement):
 
     def add_revolution(self, revolution):
         self.revolution = revolution
-        
+
     def add_circles(self, circles):
         self.circles = circles
 
     def add_spline(self, name, exprs):
         self.splines.append((name, exprs))
-        
+
     def compile(self, ctx): #@ReservedAssignment
 
         compiling(self.loc)
-        
+
         # Figure out what kind of statement we have. If there's no
         # interpolator, and no properties, than we have either a
         # call, or a child statement.
@@ -678,7 +679,7 @@ class RawMultipurpose(RawStatement):
 
             if isinstance(child, (int, float)):
                 return Interpolation(self.loc, "pause", child, [ ], None, 0, [ ])
-                
+
             if isinstance(child, ATLTransformBase):
                 child.compile()
                 return child.block
@@ -692,7 +693,7 @@ class RawMultipurpose(RawStatement):
 
         if self.warp_function:
             warper = ctx.eval(self.warp_function)
-        else:            
+        else:
             warper = self.warper or "pause"
 
             if warper not in warpers:
@@ -708,7 +709,7 @@ class RawMultipurpose(RawStatement):
             properties.append((name, value))
 
         splines = [ ]
-            
+
         for name, exprs in self.splines:
             if name not in PROPERTIES:
                 raise Exception("ATL Property %s is unknown at runtime." % property)
@@ -716,7 +717,7 @@ class RawMultipurpose(RawStatement):
             values = [ ctx.eval(i) for i in exprs ]
 
             splines.append((name, values))
-            
+
         for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
@@ -738,11 +739,11 @@ class RawMultipurpose(RawStatement):
         circles = ctx.eval(self.circles)
 
         return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
-            
+
     def predict(self, ctx):
 
         for i, _j in self.expressions:
-            
+
             try:
                 i = ctx.eval(i)
             except:
@@ -756,7 +757,7 @@ class RawMultipurpose(RawStatement):
                 renpy.easy.predict(i)
             except:
                 continue
-            
+
 # This lets us have an ATL transform as our child.
 class RawContainsExpr(RawStatement):
 
@@ -789,21 +790,21 @@ class RawChild(RawStatement):
 
         return Child(self.loc, box, None)
 
-    
+
 # This changes the child of this statement, optionally with a transition.
 class Child(Statement):
 
     def __init__(self, loc, child, transition):
 
         super(Child, self).__init__(loc)
-        
+
         self.child = renpy.easy.displayable(child)
         self.transition = transition
 
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
-        
+
         old_child = trans.raw_child
 
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
@@ -819,8 +820,8 @@ class Child(Statement):
 
     def visit(self):
         return [ self.child ]
-    
-        
+
+
 # This causes interpolation to occur.
 class Interpolation(Statement):
 
@@ -832,19 +833,19 @@ class Interpolation(Statement):
         self.duration = duration
         self.properties = properties
         self.splines = splines
-        
+
         # The direction we revolve in: cw, ccw, or None.
         self.revolution = revolution
 
         # The number of complete circles we make.
         self.circles = circles
-        
+
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
-        
+
         warper = warpers.get(self.warper, self.warper)
-        
+
         if self.duration:
             complete = min(1.0, st / self.duration)
         else:
@@ -865,7 +866,7 @@ class Interpolation(Statement):
             # Now, the things we change linearly are in the difference
             # between the new and old states.
             linear = trans.state.diff(newts)
-            
+
             revolution = None
             splines = [ ]
 
@@ -909,14 +910,14 @@ class Interpolation(Statement):
                             startangle += 360
 
                         startangle += self.circles * 360
-                        
+
                     # Store the revolution.
                     revolution = (startangle, endangle, startradius, endradius)
 
             # Figure out the splines.
             for name, values in self.splines:
                 splines.append((name, [ getattr(trans.state, name) ] + values))
-                    
+
             state = (linear, revolution, splines)
 
             # Ensure that we set things, even if they don't actually
@@ -932,26 +933,26 @@ class Interpolation(Statement):
         for k, (old, new) in linear.iteritems():
             value = interpolate(complete, old, new, PROPERTIES[k])
 
-            setattr(trans.state, k, value)            
-            
+            setattr(trans.state, k, value)
+
         # Handle the revolution.
         if revolution is not None:
             startangle, endangle, startradius, endradius = revolution
             trans.state.angle = interpolate(complete, startangle, endangle, float)
             trans.state.radius = interpolate(complete, startradius, endradius, float)
 
-            
+
         # Handle any splines we might have.
         for name, values in splines:
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
-            
+
         if st >= self.duration:
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
                 return "continue", state, self.duration - st
-            else:            
+            else:
                 return "continue", state, 0
 
 
@@ -972,7 +973,7 @@ class RawRepeat(RawStatement):
 
         if repeats is not None:
             repeats = ctx.eval(repeats)
-            
+
         return Repeat(self.loc, repeats)
 
 class Repeat(Statement):
@@ -1002,10 +1003,10 @@ class RawParallel(RawStatement):
     def predict(self, ctx):
         for i in self.blocks:
             i.predict(ctx)
-    
-        
+
+
 class Parallel(Statement):
-    
+
     def __init__(self, loc, blocks):
         super(Parallel, self).__init__(loc)
         self.blocks = blocks
@@ -1013,7 +1014,7 @@ class Parallel(Statement):
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
-        
+
         if state is None:
             state = [ (i, None) for i in self.blocks ]
 
@@ -1025,9 +1026,9 @@ class Parallel(Statement):
 
         # The new state structure.
         newstate = [ ]
-        
+
         for i, istate in state:
-            
+
             action, arg, pause = i.execute(trans, st, istate, event)
 
             if pause is not None:
@@ -1039,7 +1040,7 @@ class Parallel(Statement):
                 left.append(arg)
             elif action == "event":
                 return action, arg, pause
-                
+
         if newstate:
             return "continue", newstate, min(pauses)
         else:
@@ -1077,7 +1078,7 @@ class Choice(Statement):
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
-        
+
         if state is None:
 
             total = 0
@@ -1106,7 +1107,7 @@ class Choice(Statement):
     def visit(self):
         return [ j for i in self.choices for j in i[1].visit() ]
 
-        
+
 # The Time statement.
 
 class RawTime(RawStatement):
@@ -1129,7 +1130,7 @@ class Time(Statement):
 
     def execute(self, trans, st, state, event):
         return "continue", None, None
-        
+
 
 # The On statement.
 
@@ -1161,7 +1162,7 @@ class On(Statement):
         super(On, self).__init__(loc)
 
         self.handlers = handlers
-    
+
     def execute(self, trans, st, state, event):
 
         executing(self.loc)
@@ -1183,23 +1184,23 @@ class On(Statement):
                 start = st
                 cstate = None
 
-                
+
         while True:
 
             # If we don't have a handler, return until we change event.
             if name not in self.handlers:
                 return "continue", (name, start, cstate), None
-            
+
             action, arg, pause = self.handlers[name].execute(trans, st - start, cstate, event)
 
             # If we get a continue, save our state.
             if action == "continue":
-                
+
                 # If it comes from a hide block, indicate that.
                 if name == "hide" or name == "replaced":
                     trans.hide_response = False
                     trans.replaced_response = False
-                    
+
                 return "continue", (name, start, arg), pause
 
             # If we get a next, then try going to the default
@@ -1234,7 +1235,7 @@ class On(Statement):
 
 
 # Event statement.
-            
+
 class RawEvent(RawStatement):
 
     def __init__(self, loc, name):
@@ -1245,7 +1246,7 @@ class RawEvent(RawStatement):
     def compile(self, ctx): #@ReservedAssignment
         return Event(self.loc, self.name)
 
-    
+
 class Event(Statement):
 
     def __init__(self, loc, name):
@@ -1255,7 +1256,7 @@ class Event(Statement):
 
     def execute(self, trans, st, state, event):
         return "event", (self.name, st), None
-    
+
 
 class RawFunction(RawStatement):
 
@@ -1268,9 +1269,9 @@ class RawFunction(RawStatement):
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
 
-    
+
 class Function(Statement):
-    
+
     def __init__(self, loc, function):
         super(Function, self).__init__(loc)
 
@@ -1278,13 +1279,13 @@ class Function(Statement):
 
     def execute(self, trans, st, state, event):
         fr = self.function(trans, st, trans.at)
-        
+
         if fr is not None:
             return "continue", None, fr
         else:
             return "next", 0, None
-    
-    
+
+
 # This parses an ATL block.
 def parse_atl(l):
 
@@ -1294,11 +1295,11 @@ def parse_atl(l):
     statements = [ ]
 
     animation = False
-    
+
     while not l.eob:
 
         loc = l.get_location()
-        
+
         if l.keyword('repeat'):
 
             repeats = l.simple_expression()
@@ -1309,7 +1310,7 @@ def parse_atl(l):
             l.expect_eol()
             l.expect_block('block')
 
-            block = parse_atl(l.subblock_lexer())            
+            block = parse_atl(l.subblock_lexer())
             statements.append(block)
 
         elif l.keyword('contains'):
@@ -1327,14 +1328,14 @@ def parse_atl(l):
                 l.expect_eol()
                 l.expect_block('contains')
 
-                block = parse_atl(l.subblock_lexer())            
+                block = parse_atl(l.subblock_lexer())
                 statements.append(RawChild(loc, block))
 
         elif l.keyword('parallel'):
             l.require(':')
             l.expect_eol()
             l.expect_block('parallel')
-            
+
             block = parse_atl(l.subblock_lexer())
             statements.append(RawParallel(loc, block))
 
@@ -1347,7 +1348,7 @@ def parse_atl(l):
             l.require(':')
             l.expect_eol()
             l.expect_block('choice')
-            
+
             block = parse_atl(l.subblock_lexer())
             statements.append(RawChoice(loc, chance, block))
 
@@ -1358,7 +1359,7 @@ def parse_atl(l):
             l.require(':')
             l.expect_eol()
             l.expect_block('on')
-            
+
             block = parse_atl(l.subblock_lexer())
             statements.append(RawOn(loc, name, block))
 
@@ -1387,13 +1388,13 @@ def parse_atl(l):
         elif l.keyword('animation'):
             l.expect_noblock('animation')
             animation = True
-            
+
         else:
 
             # If we can't assign it it a statement more specifically,
             # we try to parse it into a RawMultipurpose. That will
             # then be turned into another statement, as appropriate.
-            
+
             # The RawMultipurpose we add things to.
             rm = renpy.atl.RawMultipurpose(loc)
 
@@ -1402,29 +1403,29 @@ def parse_atl(l):
 
             # Is this clause an expression?
             this_expression = False
-            
+
             # First, look for a warper.
             cp = l.checkpoint()
             warper = l.name()
 
-            
+
             if warper in warpers:
                 duration = l.require(l.simple_expression)
                 warp_function = None
 
             elif warper == "warp":
-                
+
                 warper = None
                 warp_function = l.require(l.simple_expression)
                 duration = l.require(l.simple_expression)
-                
+
             else:
                 l.revert(cp)
 
                 warper = None
                 warp_function = None
                 duration = "0"
-                
+
             rm.add_warper(warper, duration, warp_function)
 
             # Now, look for properties and simple_expressions.
@@ -1436,7 +1437,7 @@ def parse_atl(l):
 
                 if l.keyword('pass'):
                     continue
-                
+
                 # Parse revolution keywords.
                 if l.keyword('clockwise'):
                     rm.add_revolution('clockwise')
@@ -1450,9 +1451,9 @@ def parse_atl(l):
                     expr = l.require(l.simple_expression)
                     rm.add_circles(expr)
 
-                # Try to parse a property. 
+                # Try to parse a property.
                 cp = l.checkpoint()
-                
+
                 prop = l.name()
 
                 if prop in PROPERTIES:
@@ -1463,7 +1464,7 @@ def parse_atl(l):
                     # presence of knots that determine which one it is.
 
                     knots = [ ]
-                    
+
                     while l.keyword('knot'):
                         knots.append(l.require(l.simple_expression))
 
@@ -1474,7 +1475,7 @@ def parse_atl(l):
                         rm.add_property(prop, expr)
 
                     continue
-                    
+
                 # Otherwise, try to parse it as a simple expressoon,
                 # with an optional with clause.
 
@@ -1489,7 +1490,7 @@ def parse_atl(l):
                     l.error('ATL statement contains two expressions in a row; is one of them a misspelled property? If not, separate them with pass.')
 
                 this_expression = True
-                    
+
                 if l.keyword("with"):
                     with_expr = l.require(l.simple_expression)
                 else:
@@ -1498,17 +1499,17 @@ def parse_atl(l):
                 rm.add_expression(expr, with_expr)
 
             l.expect_noblock('ATL')
-                
+
             statements.append(rm)
-            
-            
+
+
         if l.eol():
             l.advance()
             continue
 
         l.require(",", "comma or end of line")
 
-        
+
     # Merge together statements that need to be merged together.
 
     merged = [ ]
@@ -1537,7 +1538,7 @@ def parse_atl(l):
         elif new is None:
             old = new
             continue
-        
+
         merged.append(new)
         old = new
 

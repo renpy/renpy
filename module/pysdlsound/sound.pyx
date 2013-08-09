@@ -1,4 +1,4 @@
-# -*- python -*- 
+# -*- python -*-
 # Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 
 # Permission is hereby granted, free of charge, to any person
@@ -50,7 +50,7 @@ cdef extern from "pss.h":
     void PSS_periodic()
     void PSS_alloc_event(object)
     int PSS_refresh_event()
-    
+
     char *PSS_get_error()
 
     int ffpy_needs_alloc
@@ -120,7 +120,7 @@ def unpause(channel):
 
 def unpause_all():
     PSS_unpause_all()
-    
+
 def fadeout(channel, ms):
     PSS_fadeout(channel, ms)
     check_error()
@@ -132,7 +132,7 @@ def get_pos(channel):
     return PSS_get_pos(channel)
 
 def set_volume(channel, volume):
-    if volume == 0:        
+    if volume == 0:
         PSS_set_volume(channel, 0)
     else:
         PSS_set_volume(channel, 10 ** volume / 10 )
@@ -180,7 +180,7 @@ def needs_alloc():
 
 def movie_size():
     return ffpy_movie_width, ffpy_movie_height
-        
+
 def check_version(version):
     if version < 2 or version > 4:
         raise Exception("pysdlsound version mismatch.")

@@ -40,7 +40,7 @@ attributes`.
 
 For example, take the image name ``mary beach night happy``. The image
 tag is ``mary``, while the image attributes are ``beach``, ``night``,
-and ``happy``. 
+and ``happy``.
 
 A displayable is something that can be shown on the screen. The most
 common thing to show is a static image, which can be specified by
@@ -103,13 +103,13 @@ displayable. For example::
         "question.png",
         "eileen_happy.png",
         )
-    
+
 The image statement must be run at init-time, before game code
 runs. When not contained inside an init block, image statements are
 run at init-time, as if they were placed inside an init block of
 priority 0.
 
-See also the :ref:`ATL variant of the image statement. <atl-image-statement>` 
+See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
 
 
 .. _show-statement:
@@ -141,7 +141,7 @@ may be modified by the zorder and behind properties.
 The show statement does not cause an interaction to occur. For the
 image to actually be displayed to the user, a statement that causes an
 interaction (like the say, menu, pause, and with statements) must be
-run. 
+run.
 
 The show statement takes the following properties:
 
@@ -159,7 +159,7 @@ The show statement takes the following properties:
     If no at clause is given, Ren'Py will retain any existing
     transform that has been applied to the image. If no transform
     exists, the image will be displayed using the :var:`default`
-    transform. 
+    transform.
 
 ``behind``
     Takes a comma-separated list of one or more names. Each name is
@@ -180,7 +180,7 @@ Assuming we have the following images defined::
     image mary night happy = "mary_night_happy.png"
     image mary night sad = "mary_night_sad.png"
     image moon = "moon.png"
-    
+
 Some example show statements are::
 
     # Basic show
@@ -215,7 +215,7 @@ For example::
     show expression "moon.png" as moon
 
 .. _scene-statement:
-    
+
 Scene Statement
 ===============
 
@@ -223,7 +223,7 @@ The scene statement removes all displayables from a layer, and then
 shows an image on that layer. It consists of the keyword ``scene``,
 followed by an image name, followed by zero or more properties. The
 image is shown in the same way as in the show statement, and the scene
-statement takes the same properties as the show statement. 
+statement takes the same properties as the show statement.
 
 The scene statement is often used to show an image on the background
 layer. For example::
@@ -237,7 +237,7 @@ instead of image names.
 **Clearing a layer.**
 When the image name is omitted entirely, the scene statement clears
 all displayables from a layer without showing another
-displayable. 
+displayable.
 
 .. _hide-statement:
 
@@ -277,7 +277,7 @@ Instead, just write::
 
 
 .. _with-statement:
-    
+
 With Statement
 ==============
 
@@ -316,7 +316,7 @@ transition is, by default, defined as a .5 second dissolve.)
 The second transition occurs after the Eileen and Lucy images are
 shown. It causes a dissolve from the scene consisting solely of the
 background to the scene consisting of all three images - the result is
-that the two new images appear to dissolve in simultaneously. 
+that the two new images appear to dissolve in simultaneously.
 
 .. _with-none:
 
@@ -346,7 +346,7 @@ For example, in the code::
 
 Only a single transition occurs, from the washington background to the
 scene consisting of all three images.
-    
+
 With Clause of Scene, Show, and Hide Statements
 -----------------------------------------------
 
@@ -362,7 +362,7 @@ text of the with clause. For example::
 
     show eileen happy at left with dissolve
     show lucy mad at right with dissolve
-    
+
 is equivalent to::
 
     with None

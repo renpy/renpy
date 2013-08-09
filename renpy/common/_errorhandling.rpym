@@ -1,13 +1,13 @@
 # Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 #
-# This file contains the code for in-game Ren'Py error handling. It's a 
-# module (as opposed to a .rpy file) because that allows us to ensure 
-# that it is fully loaded or run before any other Ren'Py code runs. 
+# This file contains the code for in-game Ren'Py error handling. It's a
+# module (as opposed to a .rpy file) because that allows us to ensure
+# that it is fully loaded or run before any other Ren'Py code runs.
 
 
 
-# These styles define the look of the Ren'Py in-game interface (the 
+# These styles define the look of the Ren'Py in-game interface (the
 # amie2-inspired look). They're also used in the launcher.
 init python:
     # default
@@ -17,7 +17,7 @@ init python:
     style.default = style._default
     style.image = style._default
     style.fixed = style._default
-    
+
     style._default.font = "DejaVuSans.ttf"
     style._default.language = "unicode"
     style._default.antialias = True
@@ -46,7 +46,7 @@ init python:
     style._default.slow_cps = None
     style._default.slow_cps_multiplier = 1.0
     style._default.slow_abortable = False
-    
+
     # Window properties.
     style._default.background = None
     style._default.xpadding = 0
@@ -68,7 +68,7 @@ init python:
     style._default.xoffset = 0
     style._default.yoffset = 0
     style._default.subpixel = False
-    
+
     # Sound properties.
     style._default.sound = None
 
@@ -95,7 +95,7 @@ init python:
     style._default.unscrollable = None
     style._default.bar_invert = False
     style._default.bar_vertical = False
-    
+
     # Misc.
     style._default.activate_sound = None
     style._default.clipping = False
@@ -110,21 +110,21 @@ init python:
     style._frame.xpadding = 15
     style._frame.ypadding = 10
 
-    # text    
+    # text
     style._text = Style(style._default)
- 
+
     # boxes/boxlike
     style._fixed = Style(style._default)
     style._hbox = Style(style._default)
     style._vbox = Style(style._default)
     style._grid = Style(style._default)
     style._side = Style(style._default)
-    style._viewport = Style(style._default)    
+    style._viewport = Style(style._default)
 
     style._hbox.box_layout = 'horizontal'
     style._vbox.box_layout = 'vertical'
     style._viewport.clipping = True
-           
+
     # button
     style._button = Style(style._default)
     style._button_text = Style(style._default)
@@ -140,17 +140,17 @@ init python:
     style._button_text.insensitive_color = "#ccc"
     style._button_text.xalign = 0.5
     style._button_text.yoffset = 0
-    
+
     # label
     style._label = Style(style._default)
     style._label_text = Style(style._default)
-    
+
     style._label.top_margin = 10
     style._label.bottom_margin = 5
 
     style._label_text.color = "#000"
     style._label_text.bold = True
-    
+
     # bar
     style._bar = Style(style._default)
 
@@ -159,7 +159,7 @@ init python:
     style._bar.thumb = None
     style._bar.hover_thumb = None
     style._bar.ymaximum = 20
-    
+
     style._scrollbar = Style(style._default)
     style._vscrollbar = Style(style._default)
 
@@ -171,9 +171,9 @@ init python:
     style._scrollbar.left_gutter = 5
     style._scrollbar.right_gutter = 5
     style._scrollbar.unscrollable = "hide"
-    
+
     style._scrollbar.ymaximum = 20
-    style._vscrollbar.xmaximum = 20   
+    style._vscrollbar.xmaximum = 20
     style._vscrollbar.bar_vertical = True
     style._vscrollbar.bar_invert = True
 
@@ -181,9 +181,9 @@ init python:
     style._hyperlink.color = "#008"
     style._hyperlink.hover_underline = True
 
-    # The keymap we use before the 
+    # The keymap we use before the
     config.keymap = dict(
-        
+
         # Bindings present almost everywhere, unless explicitly
         # disabled.
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
@@ -191,13 +191,13 @@ init python:
         quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
         iconify = [ 'meta_m', 'alt_m' ],
         choose_renderer = [ 'G' ],
-        
+
         # Focus.
         focus_left = [ 'K_LEFT', 'joy_left' ],
         focus_right = [ 'K_RIGHT', 'joy_right' ],
         focus_up = [ 'K_UP', 'joy_up' ],
         focus_down = [ 'K_DOWN', 'joy_down' ],
-            
+
         # Button.
         button_ignore = [ 'mousedown_1' ],
         button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
@@ -207,7 +207,7 @@ init python:
         viewport_down = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        
+
         # These control the bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
@@ -232,9 +232,9 @@ init python hide:
         if target.startswith("edit:"):
             prefix, line, filename = target.split(":", 2)
             line = int(line)
-            
+
             renpy.launch_editor([ filename ], line)
-    
+
     style._default.hyperlink_functions = (hyperlink_styler, hyperlink_function, None)
 
 init python:
@@ -244,19 +244,19 @@ init python:
     def _(s):
         return s
 
-    # This function is responsible for taking a traceback, and converting 
+    # This function is responsible for taking a traceback, and converting
     # it to a string that can be shown with text.
     def __format_traceback(s):
         import re
-        
+
         lines = [ i.replace("{", "{{") for i in s.split("\n") ]
-    
+
         rv = [ "{b}" + lines[0] + "{/b}" ]
-        
+
         for i in lines[1:]:
             i = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', i)
             rv.append(i)
-            
+
         return "\n".join(rv)
 
 
@@ -267,71 +267,71 @@ init python:
 
         lines = s.split("\n")
         len_lines = len(lines)
-        
+
         ln = 0
-                
+
         while ln < len_lines:
             line = lines[ln]
             ln += 1
-             
+
             if ln < len_lines and lines[ln].endswith("^"):
                 highlight = len(lines[ln]) - 1
                 ln += 1
             else:
                 highlight = -1
-                
+
             pos = 0
-            
+
             for c in line:
                 if pos == highlight:
                     rv += u"{color=#c00}\u2192{/color}"
                     highlight = -1
 
                 pos += 1
-                    
+
                 if c == "{":
                     rv += "{{"
                 else:
                     rv += c
-                    
+
             if highlight > 0:
                 rv += u"{color=#c00}\u2190{/color}"
-            
+
             rv += "\n"
 
-             
+
         rv = re.sub(r'(File "(.*)", line (\d+))', r'{a=edit:\3:\2}\1{/a}', rv)
-             
+
         return rv
-            
+
     class __EditFile(Action):
         def __init__(self, filename):
             self.filename = filename
-            
+
         def __call__(self):
             try:
                 renpy.launch_editor([ self.filename ], 1, transient=1)
             except:
                 pass
-        
+
     def __can_open_traceback():
         return True
 
-    # The transform used for errors. ATL isn't ready yet.    
+    # The transform used for errors. ATL isn't ready yet.
     def __transform_function(state, st, at):
-        done = min(st / .1, 1.0) 
+        done = min(st / .1, 1.0)
         state.zoom = .5 + .5 * done
         state.alpha = done
         state.xalign = 0.5
         state.yalign = 0.5
-        
+
         if done < 1.0:
             return 0
         else:
             return None
-            
+
     __transform = Transform(function=__transform_function, style='_default')
-     
+
     class __TooltipAction(object):
 
         def __init__(self, tooltip, value):
@@ -341,14 +341,14 @@ init python:
         def __call__(self):
             if self.tooltip.value != self.value:
                 self.tooltip.value = self.value
-                renpy.restart_interaction()            
+                renpy.restart_interaction()
 
         def unhovered(self):
             if self.tooltip.value != self.tooltip.default:
                 self.tooltip.value = self.tooltip.default
-                renpy.restart_interaction()            
+                renpy.restart_interaction()
 
-    class __Tooltip(object):        
+    class __Tooltip(object):
         def __init__(self, default):
             self.value = default
             self.default = default
@@ -384,7 +384,7 @@ init python:
         def get_style(self):
             return "scrollbar", "vscrollbar"
 
-          
+
 # The screen that is used for error handling.
 screen _exception:
     modal True
@@ -393,9 +393,9 @@ screen _exception:
     default tt = __Tooltip("")
     default fmt_short = __format_traceback(short)
     default fmt_full = __format_traceback(full)
-    
+
     add Solid("#000")
-    
+
     frame:
         style_group ""
         xfill True
@@ -403,20 +403,20 @@ screen _exception:
         at __transform
 
         has side "t c r b"
-            
-        vbox:   
+
+        vbox:
             label _("An exception has occurred.")
 
         viewport:
             id "viewport"
             child_size (4000, None)
             mousewheel True
-            
+
             has vbox
 
             text fmt_short substitute False
             text fmt_full substitute False
-      
+
         bar:
             style "_vscrollbar"
             value __YScrollValue("viewport")
@@ -434,33 +434,33 @@ screen _exception:
                     textbutton _("Rollback"):
                         action rollback_action
                         hovered tt.action(_("Attempts a roll back to a prior time, allowing you to save or choose a different choice."))
-                        
+
                 if ignore_action:
                     textbutton _("Ignore"):
                         action ignore_action
                         hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
 
-                if config.developer:                    
+                if config.developer:
                     textbutton _("Reload"):
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
-                        
+
                 textbutton _("Open Traceback"):
                     action __EditFile(traceback_fn)
                     hovered tt.action(_("Opens the traceback.txt file in a text editor."))
-                    
+
                 null width 30
-                
+
                 textbutton _("Quit"):
                     action renpy.quit
                     hovered tt.action(_("Quits the game."))
 
             # Tooltip.
             text tt.value size 12
-            
+
     if config.developer and reload_action:
         key "R" action reload_action
-            
+
 # The screen that is used for error handling.
 screen _parse_errors:
     modal True
@@ -468,7 +468,7 @@ screen _parse_errors:
 
     default tt = __Tooltip("")
     default fmt_errors = __format_parse_errors(errors)
-    
+
     add Solid("#000")
 
     frame:
@@ -478,18 +478,18 @@ screen _parse_errors:
         at __transform
 
         has side "t c r b"
-            
-        vbox:   
+
+        vbox:
             label _("Parsing the script failed.")
 
         viewport:
             id "viewport"
             child_size (None, None)
             mousewheel True
-            
+
             has vbox
             text fmt_errors substitute False
-      
+
         bar:
             style "_vscrollbar"
             value __YScrollValue("viewport")
@@ -506,13 +506,13 @@ screen _parse_errors:
                 textbutton _("Reload"):
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
-                        
+
                 textbutton _("Open Parse Errors"):
                     action __EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
-                    
+
                 null width 30
-                
+
                 textbutton _("Quit"):
                     action renpy.quit
                     hovered tt.action(_("Quits the game."))
@@ -522,4 +522,4 @@ screen _parse_errors:
 
     if config.developer and reload_action:
         key "R" action reload_action
-            
+

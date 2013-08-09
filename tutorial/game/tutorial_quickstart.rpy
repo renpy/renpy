@@ -13,22 +13,22 @@ image lucy mad = "lucy_mad.png"
 
 #begin slowdissolve
 define slowdissolve = Dissolve(1.0)
-#end slowdissolve 
+#end slowdissolve
 
 label tutorial_dialogue:
 
     e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
 
     show example example1
-    
+
 #begin example1
-    e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."  
+    e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
 
     e "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
 #end example1
 
     hide example
-    
+
     e "To create a new project, you can click New Project in the Ren'Py launcher."
 
     e "If it's your first time making a Ren'Py game, you'll be asked to pick a directory to store your projects in."
@@ -43,14 +43,14 @@ label tutorial_dialogue:
 
     scene black
     with dissolve
-    
-#begin dialogue1  
+
+#begin dialogue1
     "Wow, It's really really dark in here."
 
     "Lucy" "Better watch out. You don't want to be eaten by a Grue."
 #end dialogue1
-    
-    scene bg washington 
+
+    scene bg washington
     show eileen happy
     with dissolve
 
@@ -63,7 +63,7 @@ label tutorial_dialogue:
     e "The first line is a label statement. The label statement is used to give a name to a place in the program."
 
     e "In this case, we're naming a place \"start\". The start label is special, as it marks the place a game begins running."
-       
+
     e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
 
     e "Special characters in strings can be escaped with a backslash. To include \" in a string, we have to write \\\"."
@@ -71,9 +71,9 @@ label tutorial_dialogue:
     scene black
     with dissolve
 
-    "Wow, It's really really dark in here." 
-    
-    scene bg washington 
+    "Wow, It's really really dark in here."
+
+    scene bg washington
     show eileen happy
     with dissolve
 
@@ -86,12 +86,12 @@ label tutorial_dialogue:
 
     "Lucy" "Better watch out. You don't want to be eaten by a Grue."
 
-    scene bg washington 
+    scene bg washington
     show eileen happy
     with dissolve
 
     show example start dialogue1
-    
+
     e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
 
     e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
@@ -99,7 +99,7 @@ label tutorial_dialogue:
     e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
 
     e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
-    
+
     hide example
 
 
@@ -108,11 +108,11 @@ label tutorial_dialogue:
     e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
 
     e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
-    
+
     e "To solve these problems, Ren'Py lets you define Characters."
 
     show example characters
-    
+
     e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
 
     e "Define is followed by a short name for the character, like \"l\". We'll be able to use that short name when writing dialogue."
@@ -122,7 +122,7 @@ label tutorial_dialogue:
     e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
 
     e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
-    
+
     hide example
 
     e "Now that we have a character defined, we can use it to say dialogue."
@@ -135,27 +135,27 @@ label tutorial_dialogue:
 
     l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
     #end dialogue2
-    
-    scene bg washington 
+
+    scene bg washington
     show eileen happy
     with dissolve
 
     show example characters start dialogue1 dialogue2
 
     e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
-    
+
     e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
 
     e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
 
     e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
-    
+
     hide example
 
     e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
 
     e "Hopefully, by allowing the use of short names for characters, we've succeeded."
-    
+
     return
 
 label tutorial_images:
@@ -184,7 +184,7 @@ label tutorial_images:
 
     e "Let's see what those look like in the game."
 
-    
+
     #begin images1
     scene bg cave
     show lucy happy
@@ -219,17 +219,17 @@ label tutorial_images:
     #end showbehind
 
     show example showbehind
-    
+
     e "In this example, we show an image named logo base, and we show it at a user-defined position, logopos."
 
     e "We also specify that it should be shown behind another image, in this case eileen. That's me."
-    
+
     #begin hide1
     hide logo
     #end hide1
 
     show example hide1
-        
+
     e "Finally, there's the hide statement, which hides the image with the given tag."
 
     e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
@@ -257,14 +257,14 @@ label tutorial_transitions:
     with Dissolve(.5)
 
     pause .5
-    
+
     scene bg washington
     show eileen happy
     with Dissolve(.5)
     #end trans1
 
     show example trans1
-    
+
     e "That's much smoother. Here's some example code showing how we include transitions in our game."
 
     e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
@@ -274,7 +274,7 @@ label tutorial_transitions:
     e "In this case, each transition takes half a second."
 
     show example slowdissolve
-    
+
     e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
 
     #begin trans2
@@ -324,7 +324,7 @@ label tutorial_music:
     e "The play music command replaces the currently playing music, and replaces it with the named filename."
 
     e "If you specify the currently-playing song, it will restart it."
-    
+
     e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
 
     e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
@@ -340,7 +340,7 @@ label tutorial_music:
 
     show example sound3
     with dissolve
-       
+
     #begin sound3
     play sound "tower_clock.ogg"
     #end sound3
@@ -349,7 +349,7 @@ label tutorial_music:
 
     show example sound4
     with dissolve
-       
+
     #begin sound4
     queue sound "tower_clock.ogg"
     queue sound "tower_clock.ogg"
@@ -359,10 +359,10 @@ label tutorial_music:
     e "You can queue up multiple sounds on the sound channel, but they will only play one at a time."
 
     play music "happy_alley.ogg"
-    
+
     hide example
     with dissolve
-    
+
     e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as he likes."
 
     return
@@ -370,7 +370,7 @@ label tutorial_music:
 label tutorial_menus:
 
     e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
-    
+
     e "Do you think your game will use menus?"
 
 #begin menu1
@@ -384,7 +384,7 @@ label tutorial_menus:
 label choice1_yes:
 
     $ menu_flag = True
-    
+
     e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
 
     jump choice1_done
@@ -392,11 +392,11 @@ label choice1_yes:
 label choice1_no:
 
     $ menu_flag = False
-    
+
     e "Games without menus are called kinetic novels, and there are dozens of them available to play."
 
     jump choice1_done
-    
+
 label choice1_done:
 
     # ... the game continues here.
@@ -404,7 +404,7 @@ label choice1_done:
 
     show example menu1
     with dissolve
-    
+
     e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
 
     e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which each line must contain a choice in quotes."
@@ -428,7 +428,7 @@ label choice1_done:
 
 #begin menu2
     if menu_flag:
-        
+
         e "For example, I remember that you plan to use menus in your game."
 
     else:
@@ -449,12 +449,3 @@ label choice1_done:
     e "We look forward to seeing what you make with it."
 
     return
-    
-        
-    
-
-    
-    
-    
-    
-    

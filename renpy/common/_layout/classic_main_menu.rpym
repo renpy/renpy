@@ -17,14 +17,14 @@ init python:
     style.mm_menu_frame.xanchor = 0.5
     style.mm_menu_frame.ypos = 0.9
     style.mm_menu_frame.yanchor = 1.0
-    
+
 label main_menu_screen:
 
     python hide:
 
         # Ignore right-click while at the main menu.
         ui.keymap(game_menu=ui.returns(None))
-        
+
         # Show the background.
         ui.window(style='mm_root')
         ui.null()
@@ -42,7 +42,7 @@ label main_menu_screen:
 
             if not eval(shown):
                 continue
-            
+
             # This checks to see if clicked is a string. If so, we want clicked
             # to jump us out of the current context.
             if isinstance(clicked, basestring):
@@ -54,7 +54,5 @@ label main_menu_screen:
         ui.close()
 
         ui.interact(mouse="mainmenu")
-        
+
     return
-            
-    

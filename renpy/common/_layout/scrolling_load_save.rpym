@@ -4,14 +4,14 @@
 init python:
 
     layout.provides('load_save')
-    
+
     # Store some global information that won't be saved.
     __session = object()
     __session.scrollbar_position = None
 
     # Should we prompt to load?
     _load_prompt = True
-    
+
     # The number of normal save slots.
     config.load_save_slots = 50
 
@@ -33,7 +33,7 @@ init python:
 
     # The default empty slot thumbnail.
     config.load_save_empty_thumbnail = None
-    
+
     # Styles.
     style.file_picker_frame = Style(style.frame, help="frame containing the file picker")
     style.file_picker_side = Style(style.default, help="ui.side containing the file picker and the scrollbars")
@@ -51,14 +51,14 @@ init python:
     style.file_picker_frame.xmargin = 6
     style.file_picker_frame.ymargin = 6
     style.file_picker_frame.yfill = True
-    
+
     style.file_picker_entry.xfill = True
     style.file_picker_entry.yminimum = 58
-    
+
     style.thumbnail_frame.ymargin = 6
     style.thumbnail_frame.xpos = 0.75
     style.thumbnail_frame.xanchor = 0.5
-    
+
     def _file_picker_thumbnail(st, at):
         if __session.thumbnail:
             rv = __session.thumbnail
@@ -66,10 +66,10 @@ init python:
             rv = config.load_save_empty_thumbnail
         else:
             rv = Null(width=config.thumbnail_width, height=config.thumbnail_height)
-            
+
         return rv, None
-            
-            
+
+
     def _file_picker(screen):
 
         while True:
@@ -200,8 +200,8 @@ init python:
             elif action == "unlink":
                 if layout.yesno_prompt("save", layout.DELETE_SAVE):
                     renpy.unlink_save(arg)
-        
-        
+
+
 label save_screen:
 
     python hide:
@@ -221,7 +221,7 @@ label load_screen:
 
         while True:
             fn = _file_picker("load")
-            
+
             if _load_prompt:
                 if not layout.yesno_prompt("load",  layout.LOADING):
                     continue

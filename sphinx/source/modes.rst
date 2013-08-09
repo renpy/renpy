@@ -41,7 +41,7 @@ pause
     The mode Ren'Py enters when :func:`renpy.pause` is run. This is
     also the mode Ren'Py is in when a ``pause`` statement of indefinite
     duration occurs.
-    
+
 with
     The mode Ren'Py enters when a transition introduced by the ``with``
     statement occurs. This is also used for ``pause`` statement with
@@ -107,5 +107,5 @@ no need to actually use it. ::
                 if mode == "say" or mode == "menu":
                     if old == "nvl" or old == "nvl_menu":
                         nvl_hide(config.nvl_adv_transition)
- 
+
         config.mode_callbacks.append(_nvl_adv_callback)

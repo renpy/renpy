@@ -15,7 +15,7 @@ init 1000000 python:
 
     doc.write_line_buffer()
     doc.write_keywords()
-    
-    
+
+
     raise SystemExit
-    
+

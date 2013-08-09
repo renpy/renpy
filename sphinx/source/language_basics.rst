@@ -44,7 +44,7 @@ comment. As an exception, a comment may not be part of a string.
     show black # this is also a comment.
 
     "# This isn't a comment, since it's part of a string."
-    
+
 Ren'Py ignores comments, so the script is treated like the comment
 wasn't there.
 
@@ -81,7 +81,7 @@ line, while some statements consist of multiple lines.
            "spans more than one line." ]
 
 Empty logical lines are ignored.
-           
+
 
 Indentation and Blocks
 ======================
@@ -135,7 +135,7 @@ Ren'Py statements are made of a few basic parts.
     Ren'Py internal use, unless otherwise documented. When a name
     begins with __ but doesn't end with __, it is changed to a
     file-specfic version of that name.
-    
+
 :dfn:`Name`
     A name begins with a letter or underscore, which is followed by
     zero or more letters, numbers, and underscores. For our purpose,
@@ -152,7 +152,7 @@ Ren'Py statements are made of a few basic parts.
     For example, take the image name ``mary beach night happy``. The
     image tag is ``mary``, while the image attributes are ``mary``,
     ``beach``, and ``night``.
-    
+
 :dfn:`String`
     A string begins with a quote character (one of ", ', or \`),
     contains some sequence of characters, and ends with the same quote
@@ -165,8 +165,8 @@ Ren'Py statements are made of a few basic parts.
     Inside a Ren'Py string, consecutive whitespace is compressed into
     a single whitespace character, unless a space is preceded by a
     backslash. ::
-    
-        'Strings can\'t contain their delimiter, unless you escape it.' 
+
+        'Strings can\'t contain their delimiter, unless you escape it.'
 
 :dfn:`Simple Expression`
     A simple expression is a Python expression, used to include Python
@@ -195,7 +195,7 @@ Ren'Py statements are made of a few basic parts.
     not include a colon. These are used to express the conditions in
     the if and while statements.
 
-    
+
 Common Statement Syntax
 =======================
 
@@ -213,7 +213,7 @@ If the statement takes a block, the line ends with a colon
 (:). Otherwise, the line just ends.
 
 
-.. _python-basics:  
+.. _python-basics:
 
 Python Expression Syntax
 ========================
@@ -231,7 +231,7 @@ a new Character involves a call to the Character function. While
 Python expressions are very powerful, only a fraction of that power is
 necessary to write a basic Ren'Py game.
 
-Here's a synopsis of python expressions. 
+Here's a synopsis of python expressions.
 
 :dfn:`Integer`
     An integer is a number without a decimal point. ``3`` and ``42``
@@ -250,8 +250,8 @@ Here's a synopsis of python expressions.
 :dfn:`True, False, None`
     There are three special values. ``True`` is a true value, ``False`` is
     a false value. ``None`` represents the absence of a value. For
-    example, 
-    
+    example,
+
 :dfn:`Tuple`
     Tuples are used to represent containers where the number of items
     is important. For example, one might use a 2-tuple (also called a
@@ -299,8 +299,8 @@ Here's a synopsis of python expressions.
        config.screen_width
 
     Consists of a variable (config) followed by a field access
-    (screen_width). 
-    
+    (screen_width).
+
 :dfn:`Call`
     Python expressions can call a function which returns a value. They
     begin with an expression (usually a variable), followed by a
@@ -350,7 +350,3 @@ tutorial, which is available from
 While we don't think a deep knowledge of Python is necessary to work
 with Ren'Py, the basics of python statements and expressions is
 often helpful.
-
-
-
-     

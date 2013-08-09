@@ -34,7 +34,7 @@ behavior was ever used.
 6.13.8
 ------
 
-Old-style string interpolation has been re-enabled by default. If you 
+Old-style string interpolation has been re-enabled by default. If you
 wrote code (between 6.13 and 6.13.7) that uses % in say or menu statements, you should either
 write %% instead, or include the code::
 
@@ -75,7 +75,7 @@ text to shrink in height. To revert to the old behavior, use::
 Finally, the new text code may lead to artifacts when displaying slow
 text, especially in conjunction with a negative line spacing. Consider
 adjusting :prop:`line_overlap_split` to fix this.
-        
+
 .. _incompatible-6.12.1:
 
 6.12.1
@@ -142,7 +142,7 @@ be upgraded to use or ignore these additional parameters.
 
   This represents a change in the default value of these style
   properties, which were previously uninitialized and hence defaulted
-  to 0. 
+  to 0.
 
   By including the :var:`reset` transform in ATL transforms, these
   properties can be reset back to 0. Alternatively, one can stop using
@@ -169,7 +169,7 @@ be upgraded to use or ignore these additional parameters.
 
     init python:
         config.transform_uses_child_position = False
-  
+
 .. _incompatible-6.10.1:
 
 6.10.0
@@ -188,8 +188,8 @@ be upgraded to use or ignore these additional parameters.
     define offscreenleft = Position(xpos=0.0, xanchor=1.0)
     define offscreenright = Position(xpos=1.0, xanchor=0.0)
 
-.. _incompatible-6.9.2: 
-    
+.. _incompatible-6.9.2:
+
 6.9.2
 -----
 

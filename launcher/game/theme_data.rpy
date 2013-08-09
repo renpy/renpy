@@ -9,18 +9,18 @@ init python in theme_data:
 
         x = 0
         correct_section = False
-        
+
         while x < len(lines):
             l = lines[x]
 
             m = re.match(r'^screen\s+\w+\s*:\s*$', l)
             if m:
                 correct_section = False
-            
+
             m = re.match(r'^screen\s+file_picker\s*:\s*$', l)
             if m:
                 correct_section = True
-                    
+
             if correct_section:
                 m = re.match(r'^\s+\$\s*columns\s*=\s*(\d+)\s*$', l)
                 if m:
@@ -28,7 +28,7 @@ init python in theme_data:
                 m = re.match(r'^\s+\$\s*rows\s*=\s*(\d+)\s*$', l)
                 if m:
                     l = l.replace(str(m.group(1)), str(file_picker_rows))
-                
+
             lines[x] = l
 
             x = x + 1
@@ -37,7 +37,7 @@ init python in theme_data:
 
     def roundrect_screen_ops(lines):
         return __PerformScreenOperations(lines)
-                       
+
     def awt_screen_ops(lines):
         return __PerformScreenOperations(lines, file_picker_rows=3)
 
@@ -49,12 +49,12 @@ init python in theme_data:
 
     # The set of theme functions.
     THEME_FUNCTIONS = set()
-    
+
     # theme name -> function name to call to munge screens.rpy as appropriate
     # for that theme.
     THEME_SCREEN_OPERATIONS = { }
-    
-    # Color schemes that work (technically - some are eye-melting) with the 
+
+    # Color schemes that work (technically - some are eye-melting) with the
     # roundrect-style themes.
     ROUNDRECT_SCHEMES = {
         'Basic Blue': {'disabled': '#404040',
@@ -337,7 +337,7 @@ init python in theme_data:
                        'widget_hover': '#b38698',
                        'widget_selected': '#fffeed',
                        'widget_text': '#ffffff'},
-    
+
        'Watermelon': {'disabled': '#f9cdad',
                        'disabled_text': '#fc9d9a',
                        'frame': '#f9cdad',
@@ -462,11 +462,11 @@ init python in theme_data:
         ("Marker", "marker"),
         ("Crayon", "crayon"),
        ]
-    
+
     ROUNDRECT_CODE = """theme.%(function)s(
         ## Theme: %(theme)s
         ## Color scheme: %(scheme)s
-                                    
+
         ## The color of an idle widget face.
         widget = "%(widget)s",
 
@@ -480,7 +480,7 @@ init python in theme_data:
         ## example, the current value of a preference.)
         widget_selected = "%(widget_selected)s",
 
-        ## The color of a disabled widget face. 
+        ## The color of a disabled widget face.
         disabled = "%(disabled)s",
 
         ## The color of disabled widget text.
@@ -508,9 +508,9 @@ init python in theme_data:
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
-        ## do so below.            
+        ## do so below.
         )"""
-                       
+
     for theme, function in ROUNDRECT_VARIANTS:
         THEME[theme] = { }
         THEME_FUNCTIONS.add(function)
@@ -521,13 +521,13 @@ init python in theme_data:
             subs["function"] = function
             subs["theme"] = theme
             subs["scheme"] = scheme
-                       
+
             THEME[theme][scheme] = ROUNDRECT_CODE % (subs)
 
     AWT_CODE = """theme.a_white_tulip(
         ## Theme: A White Tulip
         ## Scheme %(scheme)s
-               
+
         ## The color of an idle widget face.
         widget = "%(widget)s",
 
@@ -538,7 +538,7 @@ init python in theme_data:
         ## example, the current value of a preference.)
         widget_selected = "%(widget_selected)s",
 
-        ## The color of a disabled widget face. 
+        ## The color of a disabled widget face.
         disabled = "%(disabled)s",
 
         ## The color of a frame containing widgets.
@@ -556,9 +556,9 @@ init python in theme_data:
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
-        ## do so below.            
+        ## do so below.
         )"""
-    
+
     THEME["A White Tulip"] = { }
     THEME_FUNCTIONS.add("a_white_tulip")
     THEME_SCREEN_OPERATIONS["A White Tulip"] = awt_screen_ops
@@ -567,7 +567,7 @@ init python in theme_data:
     for scheme, colors in ROUNDRECT_SCHEMES.iteritems():
         subs = dict(colors)
         subs["scheme"] = scheme
-                   
+
         THEME["A White Tulip"][scheme] = AWT_CODE % (subs)
 
     THEME["A White Tulip"]["A White Tulip"] = AWT_CODE % dict(

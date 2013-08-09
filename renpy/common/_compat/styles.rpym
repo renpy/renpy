@@ -1,11 +1,11 @@
 # Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-init python hide:
+init python:
 
     style.menu_button = Style(style.button, heavy=True, help='Buttons that are part of the main or game menus.')
     style.menu_button_text = Style(style.button_text, heavy=True, help='The label of buttons that are part of the main or game menus.')
-    
+
     style.thin_hbox = Style(style.hbox, heavy=True, help='A hbox with a small amount of spacing.')
     style.thick_hbox = Style(style.hbox, heavy=True, help='A hbox with a large amount of spacing.')
     style.thin_vbox = Style(style.vbox, heavy=True, help='A vbox with a small amount of spacing.')
@@ -42,7 +42,6 @@ init python hide:
     style.yesno_button_hbox = Style(style.thick_hbox, heavy=True, help="The box containing the Yes and No buttons.")
     style.yesno_button = Style(style.menu_button, heavy=True, help='A Yes/No button.')
     style.yesno_button_text = Style(style.menu_button_text, heavy=True, help='A Yes/No button label.')
-
 
     style.prefs_frame = Style(style.default, heavy=True, help='')
     style.prefs_pref_frame = Style(style.default, heavy=True, help='')
@@ -102,7 +101,7 @@ init python hide:
     style.button_text.hover_color = bright_cyan
     style.button_text.insensitive_color = (192, 192, 192, 255)
     style.button_text.size = 24
-    style.button_text.drop_shadow = (2, 2)        
+    style.button_text.drop_shadow = (2, 2)
 
     style.button_text.selected_color = dark_red
     style.button_text.selected_hover_color = bright_red
@@ -145,13 +144,13 @@ init python hide:
 
     style.vscrollbar.set_parent(style.vbar)
     style.scrollbar.set_parent(style.bar)
-    
-    style.vscrollbar.bottom_bar = Solid((0, 0, 0, 128))        
-    style.vscrollbar.top_bar = Solid(bright_cyan) 
+
+    style.vscrollbar.bottom_bar = Solid((0, 0, 0, 128))
+    style.vscrollbar.top_bar = Solid(bright_cyan)
 
     style.slider.ymaximum = 1
     style.vslider.xmaximum = 1
-    
+
     ######################################################################
     # Main menu.
 
@@ -187,7 +186,7 @@ init python hide:
     style.file_picker_entry.ypadding = 2
     style.file_picker_entry.xmargin = 5
     style.file_picker_entry.xfill = True
-    style.file_picker_entry.ymargin = 2        
+    style.file_picker_entry.ymargin = 2
     style.file_picker_entry.background = Solid((255, 255, 255, 255))
     style.file_picker_entry.hover_background = Solid((255, 255, 192, 255))
 
@@ -224,7 +223,7 @@ init python hide:
 
     style.yesno_button_hbox.xalign = 0.5
     style.yesno_button_hbox.spacing = 100
-    
+
     ##############################################################################
     # Preferences.
 
@@ -299,7 +298,7 @@ init python hide:
     style.window.yminimum = 150 # Includes margins and padding.
 
 
-    
+
     ######################################################################
     # Compatibility names for renamed styles.
     style.file_picker_window_vbox = style.file_picker_frame_vbox
@@ -323,15 +322,25 @@ init python hide:
 
     store._selected_compat = [ ]
 
-    class _SelectedCompat(object):
+    class _SelectedCompat(renpy.style.Style):
 
         def __init__(self, target):
-            self.__dict__["target"] = target
-            self.__dict__["property_updates"] = [ ]
+
+            self.target = target
+            self.property_updates = [ ]
+
+            super(_SelectedCompat, self).__init__(target)
 
             store._selected_compat.append(self)
 
-        def __setattr__(self, k, v):
+        def setattr(self, k, v):
+            super(_SelectedCompat, self).setattr(k, v)
+
+            try:
+                super(_SelectedCompat, self).setattr("selected_" + k, v)
+            except:
+                pass
+
             self.property_updates.append((k, v))
 
         def apply(self):
@@ -340,7 +349,8 @@ init python hide:
                 setattr(target, "selected_" + k, v)
 
         def clear(self):
-            self.__dict__["property_updates"] = [ ]
+            super(_SelectedCompat, self).clear()
+            self.property_updates = [ ]
 
 
     style.selected_button = _SelectedCompat('button')
@@ -349,9 +359,9 @@ init python hide:
     style.gm_nav_selected_button_text = _SelectedCompat('gm_nav_button_text')
     style.prefs_selected_button = _SelectedCompat('prefs_button')
     style.prefs_selected_button_text = _SelectedCompat('prefs_button_text')
-    
-    def apply_selected_compat():
+
+    def _apply_selected_compat():
         for scs in _selected_compat:
             scs.apply()
 
-    layout.compat_funcs.append(apply_selected_compat)
+    layout.compat_funcs.append(_apply_selected_compat)

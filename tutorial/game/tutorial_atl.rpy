@@ -7,14 +7,14 @@ image concert:
     size (800, 600)
     xalign .5
     yalign .5
-    
+
     parallel:
         "concert2.jpg"
         pause 1.0
 
         block:
             "concert1.jpg" with Dissolve(.1)
-            pause .4  
+            pause .4
             "concert2.jpg" with Dissolve(.1)
             pause .4
             "concert3.jpg" with Dissolve(.1)
@@ -24,10 +24,10 @@ image concert:
             repeat
 
         time 43.0
-            
+
     parallel:
 
-        
+
         # Lucy Strums.
         crop (128, 378, 252, 189)
         pause 1.0
@@ -35,7 +35,7 @@ image concert:
 
         crop (65, 174, 252, 189)
         easein .8 crop (36, 138, 337, 253)
-        
+
         # Mary cymbals.
         time 2.9
         crop (532, 320, 179, 134)
@@ -51,8 +51,8 @@ image concert:
         linear 4.0 crop (18, 208, 741, 556)
         easein 4.0 crop (179, 0, 1019, 764)
         easeout 4.0 crop (0, 0, 1019, 764)
-        
-        
+
+
         # Pan up Eileen
         time 17.0
         crop (565, 403, 483, 362)
@@ -82,11 +82,11 @@ image concert:
                 zoom 1.3
             choice:
                 zoom 1.5
-                
+
             pause .43
-            
+
             repeat
-            
+
         # Lucy and Mary
         time 26.97
         zoom 1
@@ -100,8 +100,8 @@ image concert:
         # Final shot.
         easeout 4.0 crop (0, 0, 1019, 765)
         easein 4.0 crop (180, 0, 1019, 765)
-        
-        
+
+
 image pos:
     "target1.png"
     block:
@@ -115,7 +115,7 @@ image anchor:
         rotate 360.0
         linear 2.0 rotate 0.0
         repeat
-        
+
 
 #begin atl_image
 image eileen animated:
@@ -151,12 +151,12 @@ image bg atl transitions:
     repeat
 #end atl_with
 
-    
+
 #begin atl_transform
 transform topright:
     xalign 1.0 yalign 0.0
 #end atl_transform
-    
+
 
 #begin atl_transform1
 transform move_jump:
@@ -173,7 +173,7 @@ transform move_slide:
     linear 3.0 xalign 0.0
     pause 1.0
     repeat
-#end atl_transform2    
+#end atl_transform2
 
 transform reset:
     xalign 0.5 yalign 0.5
@@ -181,7 +181,7 @@ transform reset:
     crop None size None
     alpha 1.0
     rotate None
-    
+
 label tutorial_positions:
 
     e "In this tutorial, I'll teach you how Ren'Py positions things on the screen. But before that, let's learn a little bit about how Python handles numbers."
@@ -198,22 +198,22 @@ label tutorial_positions:
 
     hide eileen
     with moveoutright
-    
+
     show pos:
        xanchor 0.5 yanchor 0.5 xpos 0.5 ypos 0.5
        subpixel True
-       
+
     with dissolve
-    
+
     show pos:
         linear .5 xpos 0.0 ypos 0.0
-        
+
     e "The origin is the upper-left corner of the screen. That's where the x position (xpos) and the y position (ypos) are both zero."
 
     show pos:
         ypos 0.0
         linear .5 xpos 0.5
-        
+
     e "When we increase xpos, we move to the right. So here's an xpos of .5, meaning half the width across the screen."
 
     show pos:
@@ -232,7 +232,7 @@ label tutorial_positions:
     show pos:
         xpos 400
         linear .5 ypos .5
-    
+
     e "Here's a ypos of 0.5."
 
     show pos:
@@ -244,7 +244,7 @@ label tutorial_positions:
 
     show pos:
         linear .5 xpos .75 ypos .25
-    
+
 
     menu:
 
@@ -254,7 +254,7 @@ label tutorial_positions:
 
             e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
 
-            e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top." 
+            e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
 
         "xpos .75 ypos .25":
 
@@ -264,27 +264,27 @@ label tutorial_positions:
 
             e "Sorry, that's wrong. The xpos is .75, and the ypos is .25."
 
-            e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top." 
+            e "In other words, it's 75%% of the way from the left side, and 25%% of the way from the top."
 
     hide pos
 
     show logo blue:
         xpos 300 ypos 100
-        
+
     show anchor:
         xanchor 0.5 yanchor 0.5
         xpos 300 ypos 100
 
     with dissolve
 
-    
+
     e "The second position we care about is the anchor. The anchor is a spot on the thing being positioned."
 
     e "For example, here we have an xanchor of 0.0 and a yanchor of 0.0. It's in the upper-left corner of the logo image."
 
     show anchor:
         linear .5 xpos 500
-    
+
     e "When we increase the xanchor to 1.0, the anchor moves to the right corner of the image."
 
     show anchor:
@@ -296,16 +296,16 @@ label tutorial_positions:
     show pos:
         xanchor .5 yanchor .5
         xpos 600 ypos 400
-        
-    
+
+
     e "To place an image on the screen, we need both the position and the anchor."
-    
+
     show logo blue:
         linear .5 xpos 400 ypos 100
-        
+
     show anchor:
         linear .5 xpos 600 ypos 400
-        
+
     e "We then line them up, so that both the position and anchor are at the same point on the screen."
 
 
@@ -315,8 +315,8 @@ label tutorial_positions:
         linear .5 xpos 0 ypos 0
     show logo blue:
         linear .5 xpos 0 ypos 0
-        
-    e "When we place both in the upper-left corner, the image moves to the upper-left corner of the screen."    
+
+    e "When we place both in the upper-left corner, the image moves to the upper-left corner of the screen."
 
     show anchor:
         linear .5 xpos 0.5 ypos 0.5
@@ -331,24 +331,24 @@ label tutorial_positions:
         linear .5 yalign .3
 
     with None
-        
+
     hide anchor
     hide pos
-    
+
     with dissolve
-        
+
     e "It's often useful to set xpos and xanchor to the same value. We call that xalign, and it gives a fractional position on the screen."
 
     show logo blue:
         linear .5 xalign 0.0
-    
+
     e "For example, when we set xalign to 0.0, things are aligned to the left side of the screen."
 
     show logo blue:
         linear .5 xalign 1.0
 
     e "When we set it to 1.0, then we're aligned to the right side of the screen."
-    
+
     show logo blue:
         linear .5 xalign .5
 
@@ -364,10 +364,10 @@ label tutorial_positions:
     with moveinright
 
     e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    
+
     return
 
-       
+
 label tutorial_atl:
 
     e "While showing static images is often enough for most games, occasionally we'll want to change images, or move them around the screen."
@@ -379,7 +379,7 @@ label tutorial_atl:
     with fade
 
     play music "renpyallstars.ogg" noloop
-    
+
     e "But first, let's have... a Gratuitous Rock Concert!"
 
     play music "happy_alley.ogg" fadeout 1.0
@@ -387,13 +387,13 @@ label tutorial_atl:
     scene bg washington
     show eileen happy
     with dissolve
-    
+
     e "That was a lot of work, and before you can do that, we'll need to start with the basics of using ATL."
 
     e "There are currently three places where ATL can be used in Ren'Py."
 
     show example atl_image
-    
+
     e "The first place ATL can be used is as part of an image statement. Instead of a displayable, an image may be defined as a block of ATL code."
 
     e "When used in this way, we have to be sure that ATL includes one or more displayables to actually show."
@@ -409,20 +409,20 @@ label tutorial_atl:
     hide example
 
     e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    
+
     e "Before I explain how ATL works, let me explain what animation and transformation are."
 
     show eileen animated:
         center
-    
+
     e "Animation is when the displayable being shown changes. For example, right now I am changing my expression."
 
     show eileen happy
 
     show magic:
         yalign .5 subpixel True
-        
-        parallel:            
+
+        parallel:
             xalign .5
             linear 3.0 xalign .75
             linear 6.0 xalign .25
@@ -441,59 +441,59 @@ label tutorial_atl:
             repeat
 
     with dissolve
-                
+
     e "Transformation involves moving or distorting an image. This includes placing it on the screen, zooming it in and out, rotating it, and changing its opacity."
 
     hide magic
-    with dissolve    
+    with dissolve
 
     show example atl_image
     show eileen animated
-    
+
     e "To introduce ATL, let's start by looking at at a simple animation. Here's one that consists of five lines of ATL code, contained within an image statement."
 
     e "In ATL, to change a displayable, simply mention it on a line of ATL code. Here, we're switching back and forth between two images."
 
     e "Since we're defining an image, the first line of ATL has to name a displayable. Otherwise, there would be nothing to show."
-    
+
     e "The second and fourth lines are pause statements, which cause ATL to wait half of a second each before continuing. That's how we give the delay between images."
 
     e "The final line is a repeat statement. This causes the current block of ATL to be restarted. You can only have one repeat statement per block."
 
     show example atl_image1
     show eileen animated twice
-    
+
     e "If we were to write repeat 2 instead, the animation would loop twice, then stop."
 
     show example atl_image2
     show eileen animated once
-    
+
     e "Omitting the repeat statement means that the animation stops once we reach the end of the block of ATL code."
 
     show bg atl transitions
     show example atl_with
-    
+
     e "By default, displayables are replaced instantaneously. We can also use a with clause to give a transition between displayables."
 
     show bg washington
     with dissolve
-    
+
     hide example
 
     e "Now, let's move on to see how we can use ATL to transform an image. We'll start off by seeing what we can do to position images on the screen."
 
     show logo base behind eileen
-    
+
     show logo base at topright
     with dissolve
 
     show example atl_transform
-    
+
     e "Perhaps the simplest thing we can do is to position the images on the screen. This can be done by simply giving the names of the transform properties, each followed by the value."
 
     show example atl_transform1
     show logo base at move_jump
-    
+
     e "With a few more statements, we can move things around on the screen."
 
     e "This code starts the image off at the top-right of the screen, and waits a second."
@@ -514,7 +514,7 @@ label tutorial_atl:
     e "That's followed by an amount of time, in this case three seconds. It ends with a list of properties, each followed by its new value."
 
     e "The old value is the value of the transform property at the start of the statement. By interpolating the property over time, we can change things on the screen."
-    
+
     hide example
     show eileen happy at right
     with move
@@ -528,18 +528,18 @@ label tutorial_atl:
     e "Next, let's take a look at some of the transform properties that we can change using ATL."
 
     show logo base at reset
-    
+
     #begin atl_motion
     show logo base:
         xalign .3 yalign .7
         linear 1.0 xalign .7 yalign .3
         linear 1.0 xalign .3 yalign .7
-        repeat    
+        repeat
     #end atl_motion
     with dissolve
-        
+
     show example atl_motion
-        
+
     e "We've already seen the position properties. Along with xalign and yalign, we support the xpos, ypos, xanchor, and yanchor properties."
 
     hide eileen
@@ -554,7 +554,7 @@ label tutorial_atl:
         xpos 0 ypos -222 xanchor 0 yanchor 0
         linear 5.0 xpos -435 ypos 0
     #end atl_pan
-    
+
     e "We can perform a pan by using xpos and ypos to position images off of the screen."
 
     e "This usually means giving them negative positions."
@@ -564,7 +564,7 @@ label tutorial_atl:
     show logo base at reset behind example
     show example atl_zoom
     with dissolve
-    
+
     #begin atl_zoom
     show logo base:
         zoom 1.0
@@ -587,7 +587,7 @@ label tutorial_atl:
         repeat
     #end atl_xyzoom
     with dissolve
-    
+
     e "The xzoom and yzoom properties allow the displayable to be scaled in the X and Y directions independently."
 
     show logo base at reset
@@ -598,13 +598,13 @@ label tutorial_atl:
         size (300, 450)
     #end atl_size
     with dissolve
-    
+
     e "The size property can be used to set a size, in pixels, that the displayable is scaled to."
 
-    
+
     show logo base at reset
     show example atl_alpha
-    
+
     #begin atl_alpha
     show logo base:
         alpha 1.0
@@ -618,7 +618,7 @@ label tutorial_atl:
 
     show logo base at reset
     show example atl_rotate
-    
+
     #begin atl_rotate
     show logo base:
         xpos 0.5 ypos 0.5 xanchor 0.5 yanchor 0.5
@@ -634,7 +634,7 @@ label tutorial_atl:
 
     show logo base at reset
     show example atl_rotate
-    
+
     #begin atl_cropsize
     show logo base:
         crop (0, 0, 100, 307)
@@ -646,8 +646,8 @@ label tutorial_atl:
     hide logo base
     show example atl_cropsize2
     with dissolve
-    
-    #begin atl_cropsize2    
+
+    #begin atl_cropsize2
     show bg washington:
         crop (0, 0, 800, 600)
         size (800, 600)
@@ -660,11 +660,11 @@ label tutorial_atl:
     show bg washington at reset
     with dissolve
     hide example
-    
+
     e "Apart from displayables, pause, interpolation, and repeat, there are a few other statements we can use as part of ATL."
 
     show example atl_include
-    
+
     #begin atl_include
     show eileen happy:
         right
@@ -674,7 +674,7 @@ label tutorial_atl:
         repeat
     #end atl_include
     with dissolve
-    
+
     e "When we create an ATL transform using the transform statement, we can use that transform as an ATL statement."
 
     e "Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
@@ -683,7 +683,7 @@ label tutorial_atl:
     show logo base behind eileen
     with dissolve
     show example atl_blocktime
-    
+
     #begin atl_blocktime
     show logo base:
         xalign 0.0 yalign 0.0
@@ -694,7 +694,7 @@ label tutorial_atl:
         time 11.5
         linear .5 xalign 1.0
     #end atl_blocktime
-        
+
     e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
 
     e "We also have the time statement, which runs after the given number of seconds have elapsed from the start of the block. It will run even if another statement is running, stopping the other statement."
@@ -712,7 +712,7 @@ label tutorial_atl:
         parallel:
             linear 1.3 yalign 1.0
             linear 1.3 yalign 0.0
-            repeat            
+            repeat
     #end atl_parallel
 
     e "The parallel statement lets us run two blocks of ATL code at the same time."
@@ -724,7 +724,7 @@ label tutorial_atl:
         xalign 0.0
 
     show example atl_choice
-        
+
     #begin atl_choice
     show logo base:
         choice:
@@ -739,13 +739,13 @@ label tutorial_atl:
     hide logo base
     with dissolve
     hide example
-    
+
     e "This tutorial game has only scratched the surface of what you can do with ATL. For example, we haven't even covered the on and event statements. For more information, you might want to check out the ATL chapter in the reference manual."
 
     show eileen vhappy
-    
+
     e "But for now, just remember that when it comes to animating and transforming, ATL is the hot new thing."
 
     show eileen happy
-        
+
     return
