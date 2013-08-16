@@ -592,6 +592,14 @@ init -1500 python:
         return FileLoad(1, page="quick", confirm=True, newest=False)
 
     class LoadNewest(Action):
+        """
+        :doc: file_action
+
+         Load the newest save
+
+         `confirm`
+             If true, prompts before loading the file.
+         """
         
         def __init__(self, confirm=False):
             self.confirm = confirm
