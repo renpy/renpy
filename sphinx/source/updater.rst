@@ -41,8 +41,9 @@ Building an Update
 
 Updates are built automatically when distributions are built. To build
 an update, set build.include_update to True in options.rpy. This will
-unlock the "Build Updates" option in options.rpy. Check this option, and
-Ren'Py will create the update files.
+unlock the "Build Updates" option in the "Build Distributions" section
+of the launcher. Check this option, and Ren'Py will create the update
+files.
 
 The update files consist of:
 
