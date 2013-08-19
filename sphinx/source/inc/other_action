@@ -25,7 +25,7 @@
 
 .. function:: Notify(message)
     
-    Displays `message` using :func:`renpy.notify`. 
+    Displays `message` using :func:`renpy.notify`.
 
 .. function:: OpenURL(url)
     
@@ -33,7 +33,7 @@
 
 .. function:: RollForward()
     
-    This action causes a rollforward to occur, if a roll forward is 
+    This action causes a rollforward to occur, if a roll forward is
     possible. Otherwise, it is insensitive.
 
 .. function:: Rollback()
@@ -52,7 +52,7 @@
     actions. For example::
     
         # The button is selected if mars_flag is True
-        textbutton "Marsopolis": 
+        textbutton "Marsopolis":
             action [ Jump("mars"), SelectedIf(mars_flag) ]
 
 .. function:: Skip(fast=False)
@@ -62,7 +62,7 @@
     enables skipping.
     
     `fast`
-          If True, skips directly to the next menu choice. 
+          If True, skips directly to the next menu choice.
 
 .. function:: With(transition)
     

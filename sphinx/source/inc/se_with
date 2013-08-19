@@ -7,11 +7,11 @@
     
     `trans`
         The transition.
-        
+    
     `always`
         If True, the transition will always occur, even if the user has
         disabled transitions.
-        
+    
     This function returns true if the user chose to interrupt the transition,
-    and false otherwise. 
+    and false otherwise.
 

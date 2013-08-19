@@ -19,9 +19,9 @@
         number is, the closer to the viewer the sprite is.
     
     `events`
-        If True, then events are passed to child. If False, the default, 
+        If True, then events are passed to child. If False, the default,
         the children igore events (and hence don't spend time processing
-        them).     
+        them).
     
     The methods of a Sprite object are:
         
@@ -62,7 +62,7 @@
         If not None, a function that returns a list of
         displayables. These displayables are predicted when the
         sprite manager is.
-        
+    
     `ignore_time`
         If True, then time is ignored when rendering displayables. This
         should be used when the sprite manager is used with a relatively
@@ -77,8 +77,8 @@
     `width`, `height`
     
          The width and height of this SpriteManager, in pixels.
-        
-        
+    
+    
     SpriteManagers have the following methods:
 
     .. method:: create(d)

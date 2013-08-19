@@ -2,6 +2,6 @@
 
 .. function:: SideImage(prefix_tag='side')
     
-    Returns the side image associated with the currently speaking character, 
+    Returns the side image associated with the currently speaking character,
     or a Null displayable if no such side image exists.
 

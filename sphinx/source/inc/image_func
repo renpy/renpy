@@ -6,7 +6,7 @@
     `layer`
     
     `image`
-        May be a string giving the image name or a tuple giving each 
-        component of the image name. It may also be a string giving 
+        May be a string giving the image name or a tuple giving each
+        component of the image name. It may also be a string giving
         only the image tag.
 

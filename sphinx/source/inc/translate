@@ -2,11 +2,11 @@
 
 .. function:: build._(s)
     
-    Flags a string as translatable, and returns it immediately. The string 
+    Flags a string as translatable, and returns it immediately. The string
     will be translated when text displays it.
 
 .. function:: updater._(s)
     
-    Flags a string as translatable, and returns it immediately. The string 
+    Flags a string as translatable, and returns it immediately. The string
     will be translated when text displays it.
 

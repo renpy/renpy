@@ -2,9 +2,9 @@
 
 .. class:: Gallery(self)
     
-    This class supports the creation of an image gallery by handling the 
-    locking of images, providing an action that can show one or more images, 
-    and a providing method that creates buttons that use that action. 
+    This class supports the creation of an image gallery by handling the
+    locking of images, providing an action that can show one or more images,
+    and a providing method that creates buttons that use that action.
     
     .. attribute:: transition
     
@@ -13,11 +13,11 @@
     .. attribute:: locked_button
     
         The default displayable used by make_button for a locked button.
-        
+    
     .. attribute:: hover_border
     
         The default hover border used by make_button.
-        
+    
     .. attribute:: idle_border
     
         The default idle border used by make_button.
@@ -29,12 +29,12 @@
     
     .. method:: allprior(self)
         
-        A condition that is true if all prior images associated with the 
+        A condition that is true if all prior images associated with the
         current button have been unlocked.
     
     .. method:: button(name)
         
-        Creates a new button, named `name`. 
+        Creates a new button, named `name`.
         
         `name`
             The name of the button being created.
@@ -48,64 +48,80 @@
     
     .. method:: display(*displayables)
         
-        Adds a new image to the current button, where an image consists 
+        Adds a new image to the current button, where an image consists
         of one or more displayables.
+    
+    .. method:: get_fraction(name, format='{seen}/{total}')
+        
+        Returns a text string giving the number of unlocked images and total number of images in the button
+        named `name`.
+        
+        `format`
+            A python format string that's used to format the numbers. This has three values that
+            can be substituted in:
+        
+            {seen}
+                The number of images that have been seen.
+            {total}
+                The total number of images in the button.
+            {locked}
+                The number of images that are still locked.
     
     .. method:: image(*displayables)
         
-        Adds a new image to the current button, where an image consists 
+        Adds a new image to the current button, where an image consists
         of one or more displayables.
     
     .. method:: make_button(name, unlocked, locked=None, hover_border=None, idle_border=None, **properties)
         
-        This creates a button that displays the images associated with the given 
-        button name. 
+        This creates a button that displays the images associated with the given
+        button name.
         
         `name`
             The name of the button that will be created.
-            
+        
         `unlocked`
-            A displayable that is displayed for this button when it is 
+            A displayable that is displayed for this button when it is
             unlocked.
-            
+        
         `locked`
-            A displayable that is displayed for this button when it is 
-            locked. If None, the locked_button field of the gallery 
+            A displayable that is displayed for this button when it is
+            locked. If None, the locked_button field of the gallery
             object is used instead.
-            
+        
         `hover_border`
-            A displayable that is used to overlay this button when when 
+            A displayable that is used to overlay this button when when
             it is unlocked and has focus. If None, the hover_border
-            field of the gallery object is used. 
+            field of the gallery object is used.
         
         `idle_border`
-            A displayable that is used to overlay this button when when 
+            A displayable that is used to overlay this button when when
             it is unlocked but unfocused. If None, the idle_border
-            field of the gallery object is used. 
+            field of the gallery object is used.
         
-        Additional keyword arguments become style properties of the 
+        Additional keyword arguments become style properties of the
         created button object.
     
     .. method:: transform(*transforms)
         
         Applies transforms to the last image registered. This should be
-        called with the same number of transforms as the image has 
-        displayables. The transforms are applied to the corresponding 
-        displayables. 
+        called with the same number of transforms as the image has
+        displayables. The transforms are applied to the corresponding
+        displayables.
         
         If a transform is None, the default transform is used.
     
     .. method:: unlock(*images)
         
-        A condition that takes one or more image names as argument, and 
-        is satisfied when all the named images have been seen by the 
-        player. The image names should be given as strings.            
+        A condition that takes one or more image names as argument, and
+        is satisfied when all the named images have been seen by the
+        player. The image names should be given as strings.
     
     .. method:: unlock_image(*images)
-            
+        
         A convenience method that is equivalent to calling image and unlock
-        with the same parameters. This will cause an image to be displayed 
+        with the same parameters. This will cause an image to be displayed
         if it has been seen before.
         
-        The images should be specified as strings giving image names.            
+        The images should be specified as strings giving image names.
     

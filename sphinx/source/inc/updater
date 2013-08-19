@@ -25,23 +25,23 @@
     
     `url`
         The URL to the updates.json file.
-        
+    
     `base`
         The base directory that will be updated. Defaults to the base
         of the current game. (This can usually be ignored.)
     
     `force`
-        Force the update to occur even if the version numbers are 
+        Force the update to occur even if the version numbers are
         the same. (Used for testing.)
-        
+    
     `public_key`
-        The path to a PEM file containing a public key that the 
+        The path to a PEM file containing a public key that the
         update signature is checked against. (This can usually be ignored.)
-        
+    
     `simulate`
         This is used to test update guis without actually performing
         an update. This can be:
-        
+    
         * None to perform an update.
         * "available" to test the case where an update is available.
         * "not_available" to test the case where no update is available.

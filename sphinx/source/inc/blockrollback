@@ -12,7 +12,7 @@
 
 .. function:: renpy.in_fixed_rollback()
     
-    Returns true if rollback is currently occurring and the current 
+    Returns true if rollback is currently occurring and the current
     context is before an executed renpy.fix_rollback() statement.
 
 .. function:: ui.ChoiceJump(label, value, location=None, block_all=None)
@@ -27,19 +27,19 @@
         can be anything. This label is used as a unique identifier of
         the options within the current screen. Together with `location`
         it is used to store whether this option has been chosen.
-        
+    
     `value`
         The location to jump to.
-        
+    
     `location`
         A unique location identifier for the current choices screen.
-        
+    
     `block_all`
         If false, the button is given the selected role if it was
-        the chosen choice, and insensitive if it was not selected.        
+        the chosen choice, and insensitive if it was not selected.
     
-        If true, the button is always insensitive during fixed 
-        rollback. 
+        If true, the button is always insensitive during fixed
+        rollback.
     
         If None, the value is taken from the :var:`config.fix_rollback_without_choice`
         variable.
@@ -61,19 +61,19 @@
         can be anything. This label is used as a unique identifier of
         the options within the current screen. Together with `location`
         it is used to store whether this option has been chosen.
-        
+    
     `value`
         The value this is returned when the choice is chosen.
     
     `location`
         A unique location identifier for the current choices screen.
-        
+    
     `block_all`
         If false, the button is given the selected role if it was
-        the chosen choice, and insensitive if it was not selected.        
+        the chosen choice, and insensitive if it was not selected.
     
-        If true, the button is always insensitive during fixed 
-        rollback. 
+        If true, the button is always insensitive during fixed
+        rollback.
     
         If None, the value is taken from the :var:`config.fix_rollback_without_choice`
         variable.

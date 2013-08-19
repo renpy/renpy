@@ -81,7 +81,7 @@
     
     ::
     
-        image logo scale = im.Scale("logo.png", 100, 150) 
+        image logo scale = im.Scale("logo.png", 100, 150)
 
 .. function:: im.Sepia(im, **properties)
     

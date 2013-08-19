@@ -6,19 +6,19 @@
 
     .. function:: add(font, start, end)
         
-        Associates a range of characters with a `font`. 
+        Associates a range of characters with a `font`.
         
         `start`
-            The start of the range. This may be a single-character string, or 
+            The start of the range. This may be a single-character string, or
             an integer giving a unicode code point.
-            
+        
         `end`
-            The end of the range. This may be a single-character string, or an 
+            The end of the range. This may be a single-character string, or an
             integer giving a unicode code point.
         
         When multiple .add() calls include the same character, the first call
         takes precedence.
         
-        This returns the FontGroup, so that multiple calls to .add() can be 
+        This returns the FontGroup, so that multiple calls to .add() can be
         chained together.
     

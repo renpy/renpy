@@ -6,18 +6,18 @@
     statement.
     
     `filename`
-        The filename to play. This is used with 
-        :var:`config.voice_filename_format` to produce the 
+        The filename to play. This is used with
+        :var:`config.voice_filename_format` to produce the
         filename that will be played.
     
     `tag`
-        If this is not None, it should be a string giving a 
+        If this is not None, it should be a string giving a
         voice tag to be played. If None, this takes its
-        default value from the voice_tag of the Character 
+        default value from the voice_tag of the Character
         that causes the next interaction.
     
-        The voice tag is used to specify which character is 
-        speaking, to allow a user to mute or unmute the 
+        The voice tag is used to specify which character is
+        speaking, to allow a user to mute or unmute the
         voices of particular characters.
 
 .. function:: voice_can_replay()

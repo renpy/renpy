@@ -2,11 +2,11 @@
 
 .. function:: renpy.change_language(language)
     
-    Changes the current language to `language`, which can be a string or 
+    Changes the current language to `language`, which can be a string or
     None to use the default language.
 
 .. function:: renpy.known_languages()
     
-    Returns the set of known languages. This does not include the default 
+    Returns the set of known languages. This does not include the default
     language, None.
 

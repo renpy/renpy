@@ -3,12 +3,12 @@
 .. function:: SetVoiceMute(voice_tag, mute)
     
     If `mute` is true, mutes voices that are played with the given
-    `voice_tag`. If `mute` is false, unmutes voices that are played 
+    `voice_tag`. If `mute` is false, unmutes voices that are played
     with `voice_tag`.
 
 .. function:: ToggleVoiceMute(voice_tag, invert=False)
     
-    Toggles the muting of `voice_tag`. This is selected if 
+    Toggles the muting of `voice_tag`. This is selected if
     the given voice tag is muted, unless `invert` is true,
     in which case it's selected if the voice is unmuted.
 

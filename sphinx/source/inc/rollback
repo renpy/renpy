@@ -7,7 +7,7 @@
     user in the current statement.
     
     `data`
-        This data is returned by :func:`renpy.roll_forward_info` when the 
+        This data is returned by :func:`renpy.roll_forward_info` when the
         game is being rolled back.
 
 .. function:: renpy.in_rollback()
@@ -17,5 +17,5 @@
 .. function:: renpy.roll_forward_info()
     
     When in rollback, returns the data that was supplied to :func:`renpy.checkpoint`
-    the last time this statement executed. Outside of rollback, returns None. 
+    the last time this statement executed. Outside of rollback, returns None.
 

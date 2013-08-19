@@ -2,7 +2,7 @@
 
 .. function:: Hide(screen, transition=None)
     
-    This causes the screen named `screen` to be hidden, if it is shown. 
+    This causes the screen named `screen` to be hidden, if it is shown.
     
     `transition`
         If not None, a transition that occurs when hiding the screen.
