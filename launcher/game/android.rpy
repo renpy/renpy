@@ -49,12 +49,14 @@ init python:
             self.process = None
             self.filename = project.current.temp_filename("android.txt")
 
+            self.info_msg = ""
+
             with open(self.filename, "w"):
                 pass
 
         def info(self, prompt):
-            print "XXX info"
-            interface.info(prompt, pause=False)
+            self.info_msg = prompt
+            interface.processing(prompt, pause=False)
 
         def yesno(self, prompt, default=None):
             choices = [ (True, "Yes"), (False, "No") ]
@@ -81,21 +83,26 @@ init python:
             interface.error(prompt, label="android")
 
         def success(self, prompt):
-            interface.info(prompt, pause=False)
+            interface.info(prompt, label="android")
 
         def call(self, cmd):
 
             f = open(self.filename, "w")
 
+            f.write("\n\n\n")
+
             try:
+                interface.processing(self.info_msg, show_screen=True)
                 self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f)
-                renpy.show_screen("android_process", interface=self)
-                renpy.pause(10)
+                renpy.call_screen("android_process", interface=self)
             finally:
                 f.close()
+                interface.hide_screen()
 
         def check_process(self):
-            return self.process.poll()
+            rv = self.process.poll()
+            if rv is not None:
+                return True
 
 
     class AndroidBuild(Action):
@@ -135,11 +142,11 @@ screen android_process(interface):
         size 14
         color "#000"
         font "Roboto-Light.ttf"
-        xpos 100
+        xpos 75
         ypos 350
 
+    timer .1 action interface.check_process repeat True
     timer .2 action ft.update repeat True
-    timer .1 action interface.check_process
 
 
 screen android:

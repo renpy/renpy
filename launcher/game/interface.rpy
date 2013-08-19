@@ -201,8 +201,9 @@ screen launcher_input:
 init python in interface:
 
     import traceback
+    from store import Jump
 
-    def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, **kwargs):
+    def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, show_screen=False, **kwargs):
         """
         Displays the info, interaction, and processing screens.
 
@@ -228,14 +229,30 @@ init python in interface:
             screen. This will display it to the user and then immediately
             return.
 
+        `show_screen`
+            If True, the screen will be show, and will return immediately. if False,
+            the screen will be called, and interaction will pause.
 
         Other keyword arguments are passed to the screen itself.
         """
 
-        if pause0:
-            ui.pausebehavior(0)
 
-        return renpy.call_screen("common", title=title, title_color=title_color, message=message, submessage=submessage, back=back, continue_=continue_, **kwargs)
+        if show_screen:
+            screen_func = renpy.show_screen
+        else:
+            screen_func = renpy.call_screen
+
+            if pause0:
+                ui.pausebehavior(0)
+
+        return screen_func("common", title=title, title_color=title_color, message=message, submessage=submessage, back=back, continue_=continue_, **kwargs)
+
+    def hide_screen():
+        """
+        Hides a screen that was shown with show_screen=True.
+        """
+
+        renpy.hide_screen("common")
 
 
     def error(message, submessage=None, label="front_page", **kwargs):

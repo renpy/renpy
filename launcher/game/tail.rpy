@@ -18,6 +18,14 @@ init python:
                     text = f.read()
                     text = text.strip()
                     text = text.split("\n")
+
+                    newtext = [ ]
+                    for l in text:
+                        while l:
+                            newtext.append(l[:100])
+                            l = l[100:]
+
+                    text = newtext
                     text = text[-self.lines:]
                     text = "\n".join(text)
 
