@@ -109,6 +109,7 @@ screen common:
     default yes = None
     default no = None
     default choices = None
+    default cancel = None
 
     frame:
         style "l_root"
@@ -167,6 +168,8 @@ screen common:
 
     if back:
         textbutton _("Back") action back style "l_left_button"
+    elif cancel:
+        textbutton _("Cancel") action cancel style "l_left_button"
 
     if continue_:
         textbutton _("Continue") action continue_ style "l_right_button"
@@ -217,8 +220,12 @@ init python in interface:
             If not None, a message that is displayed below the main message.
 
         `back`
-            If True, a back button will be present. If it's clicked, False will
-            be returned.
+            If not None, a back button will be present. `back` is the action that
+            is called when the button is clicked.
+
+        `cancel`
+            If not None, a cancel button will be present. `cancel` is the action
+            that is called when the button is clicked.
 
         `continue_`
             If True, a continue button will be present. `continue_` gives the action

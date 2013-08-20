@@ -83,26 +83,45 @@ init python:
             interface.error(prompt, label="android")
 
         def success(self, prompt):
+            interface.info(prompt, pause=False)
+
+        def final_success(self, prompt):
             interface.info(prompt, label="android")
 
-        def call(self, cmd):
+        def call(self, cmd, cancel=False):
 
             f = open(self.filename, "w")
 
             f.write("\n\n\n")
 
+            if cancel:
+                cancel_action = self.cancel
+            else:
+                cancel_action = None
+
             try:
-                interface.processing(self.info_msg, show_screen=True)
+                interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
                 self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f)
                 renpy.call_screen("android_process", interface=self)
             finally:
                 f.close()
                 interface.hide_screen()
+                self.process = None
 
         def check_process(self):
             rv = self.process.poll()
+
             if rv is not None:
-                return True
+                if rv:
+                    raise subprocess.CalledProcessError(rv)
+                else:
+                    return True
+
+        def cancel(self):
+            if self.process:
+                self.process.terminate()
+
+            renpy.jump("android")
 
 
     class AndroidBuild(Action):
@@ -147,6 +166,7 @@ screen android_process(interface):
 
     timer .1 action interface.check_process repeat True
     timer .2 action ft.update repeat True
+
 
 
 screen android:
@@ -253,7 +273,6 @@ label android_installsdk:
 label android_configure:
 
     python:
-
         rapt.configure.configure(
             AndroidInterface(),
             project.current.path,
@@ -264,13 +283,16 @@ label android_configure:
 label android_build:
 
     python:
-        rapt.build.build(AndroidInterface(), project.current.path, [ 'release' ])
+        with interface.nolinks():
+            rapt.build.build(AndroidInterface(), project.current.path, [ 'release' ])
+
 
     jump android
 
 label android_build_and_install:
 
     python:
-        rapt.build.build(AndroidInterface(), project.current.path, [ 'release', 'install' ])
+        with interface.nolinks():
+            rapt.build.build(AndroidInterface(), project.current.path, [ 'release', 'install' ])
 
     jump android
