@@ -1,3 +1,4 @@
+#@PydevCodeAnalysisIgnore
 from ossaudiodev import * #@UnusedWildImport
 mixer = openmixer()
 

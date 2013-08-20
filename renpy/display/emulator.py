@@ -21,7 +21,7 @@
 
 # This file contains code to emulate various other devices on the PC.
 
-import renpy
+import renpy.display
 
 import os
 import pygame

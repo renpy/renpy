@@ -324,8 +324,6 @@ class Cache(object):
 
             while self.preloads and self.keep_preloading:
 
-                start = time.time()
-
                 # If the size of the current generation is bigger than the
                 # total cache size, stop preloading.
                 with self.lock:
