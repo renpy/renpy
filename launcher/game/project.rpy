@@ -131,7 +131,7 @@ init python in project:
             `wait`
                 If true, waits for the launched project to terminate before
                 continuing.
-            
+
             `env`
                 Additional variables to include in the environment.
             """
@@ -475,6 +475,16 @@ init python in project:
 
         def __call__(self):
             self.project.launch()
+
+    class Rescan(Action):
+        def __call__(self):
+            """
+            Rescans the projects directory.
+            """
+
+            manager.scan()
+            renpy.restart_interaction()
+
 
     manager.scan()
 
