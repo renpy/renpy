@@ -111,3 +111,19 @@ init python:
 
             return None
 
+    class DownloaderValue(BarValue):
+        """
+        A BarValue that reports the progress of a background download.
+        """
+
+        def __init__(self, d):
+            self.downloader = d
+
+        def get_adjustment(self):
+            self.adjustment = ui.adjustment(value=0.0, range=1.0, adjustable=False)
+            return self.adjustment
+
+        def periodic(self, st):
+            self.adjustment.change(self.downloader.progress)
+            return .25
+

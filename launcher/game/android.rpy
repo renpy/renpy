@@ -108,6 +108,16 @@ init python:
                 interface.hide_screen()
                 self.process = None
 
+        def download(self, url, dest):
+            try:
+                d = Downloader(url, dest)
+                cancel_action = [ d.cancel, Jump("android") ]
+                interface.processing(self.info_msg, show_screen=True, cancel=cancel_action, bar_value=DownloaderValue(d))
+                ui.timer(.1, action=d.check, repeat=True)
+                ui.interact()
+            finally:
+                interface.hide_screen()
+
         def check_process(self):
             rv = self.process.poll()
 
@@ -166,7 +176,6 @@ screen android_process(interface):
 
     timer .1 action interface.check_process repeat True
     timer .2 action ft.update repeat True
-
 
 
 screen android:
@@ -267,7 +276,13 @@ label android:
     call screen android
 
 label android_installsdk:
-    $ interface.choice("Can I ask you a question?", [ (1, "Yes, you can."), (2, "No, way.") ], 1)
+
+    python:
+        ai = AndroidInterface()
+        ai.info("Downloading Ren'Py")
+        ai.download("http://www.renpy.org/dl/6.15.7/renpy-6.15.7-sdk.7z.exe", "/tmp/renpy.7z.exe")
+
+
     jump android
 
 label android_configure:

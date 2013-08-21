@@ -110,6 +110,7 @@ screen common:
     default no = None
     default choices = None
     default cancel = None
+    default bar_value = None
 
     frame:
         style "l_root"
@@ -134,6 +135,17 @@ screen common:
                         range total
                         value complete
                         style "l_progress_bar"
+
+            if bar_value is not None:
+                add SPACER
+
+                frame:
+                    style "l_progress_frame"
+
+                    bar:
+                        value bar_value
+                        style "l_progress_bar"
+
 
             if choices:
                 add SPACER
