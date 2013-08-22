@@ -21,6 +21,10 @@ init python:
 
                     newtext = [ ]
                     for l in text:
+
+                        if "\r" in l:
+                            _head, _sep, l = l.rpartition("\r")
+
                         while l:
                             newtext.append(l[:100])
                             l = l[100:]
@@ -32,6 +36,7 @@ init python:
                     if text != self.text:
                         self.text = text
                         renpy.restart_interaction()
+
             except:
                 pass
 
