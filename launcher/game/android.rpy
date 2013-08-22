@@ -39,6 +39,7 @@ init python:
         import rapt
         import rapt.build
         import rapt.configure
+        import rapt.install_sdk
     else:
         rapt = None
 
@@ -58,13 +59,16 @@ init python:
             self.info_msg = prompt
             interface.processing(prompt, pause=False)
 
-        def yesno(self, prompt, default=None):
+        def yesno(self, prompt, submessage=None):
+            return interface.yesno(prompt, submessage=submessage)
+
+        def yesno_choice(self, prompt, default=None):
             choices = [ (True, "Yes"), (False, "No") ]
             return interface.choice(prompt, choices, default)
 
         def terms(self, url, prompt):
             submessage = _("{a=%s}%s{/a}") % (url, url)
-            return interface.yesno(prompt, submessage)
+            return interface.yesno(prompt, submessage=submessage)
 
         def input(self, prompt, empty=None):
 
@@ -275,25 +279,23 @@ screen android:
 label android:
     call screen android
 
+
 label android_installsdk:
 
     python:
-        ai = AndroidInterface()
-        ai.info("Downloading Ren'Py")
-        ai.download("http://www.renpy.org/dl/6.15.7/renpy-6.15.7-sdk.7z.exe", "/tmp/renpy.7z.exe")
-
+        with interface.nolinks():
+            rapt.install_sdk.install_sdk(AndroidInterface())
 
     jump android
+
 
 label android_configure:
 
     python:
-        rapt.configure.configure(
-            AndroidInterface(),
-            project.current.path,
-            )
+        rapt.configure.configure(AndroidInterface(), project.current.path)
 
     jump android
+
 
 label android_build:
 
@@ -301,8 +303,8 @@ label android_build:
         with interface.nolinks():
             rapt.build.build(AndroidInterface(), project.current.path, [ 'release' ])
 
-
     jump android
+
 
 label android_build_and_install:
 
