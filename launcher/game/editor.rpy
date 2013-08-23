@@ -326,6 +326,51 @@ init python in editor:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
+    class EditAbsolute(Action):
+        def __init__(self, filename, line=None, check=False):
+            """
+            An action that lets us edit an absolutely-specified filename.
+
+            `filename`
+                The filename to open.
+
+            `line`
+                The line in the file to jump to.
+
+            `check`
+                If true, we will check to see if the file exists, and gray
+                out the box if it does not.
+            """
+
+            self.filename = filename
+            self.line = line
+            self.check = check
+
+        def get_sensitive(self):
+            if not self.check:
+                return True
+
+            return os.path.exists(self.filename)
+
+        def __call__(self):
+
+            if not self.get_sensitive():
+                return
+
+            if not check_editor():
+                return
+
+            try:
+
+                e = renpy.editor.editor
+
+                e.begin()
+                e.open(self.filename, line=self.line)
+                e.end()
+
+            except Exception, e:
+                exception = traceback.format_exception_only(type(e), e)[-1][:-1]
+                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
 
     class EditAll(Action):

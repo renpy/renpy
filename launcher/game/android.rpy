@@ -2,11 +2,29 @@
 # See LICENSE.txt for license details.
 
 init python:
+    ANDROID_NO_RAPT = 0
+    ANDROID_NO_SDK = 1
+    ANDROID_NO_KEY = 2
+    ANDROID_NO_CONFIG = 3
+    ANDROID_OK = 4
+
+
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
+    NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
+    NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore.")
+    NO_CONFIG_TEXT = _("The current project has not been configured. Use \"Configure\" to configure it before building.")
+    OK_TEXT = _("Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device.")
 
     PHONE_TEXT = _("Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
     TABLET_TEXT = _("Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
     OUYA_TEXT = _("Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
+
+    INSTALL_SDK_TEXT = _("Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package.")
+    CONFIGURE_TEXT = _("Configures the package name, version, and other information about this project.")
+    PLAY_KEYS_TEXT = _("Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details.")
+    BUILD_TEXT = _("Builds the Android package.")
+    BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
+
 
     import subprocess
 
@@ -43,6 +61,48 @@ init python:
     else:
         rapt = None
 
+    def AndroidState():
+        """
+        Determines the state of the android install, and returns it.
+        """
+
+        if RAPT_PATH is None:
+            return ANDROID_NO_RAPT
+        if not os.path.exists(os.path.join(RAPT_PATH, "android-sdk/extras/google/play_licensing")):
+            return ANDROID_NO_SDK
+        if not os.path.exists(os.path.join(RAPT_PATH, "android.keystore")):
+            return ANDROID_NO_KEY
+        if not os.path.exists(os.path.join(project.current.path, ".android.json")):
+            return ANDROID_NO_CONFIG
+        return ANDROID_OK
+
+
+    def AndroidStateText(state):
+        """
+        Returns text corresponding to the state.
+        """
+
+        if state == ANDROID_NO_RAPT:
+            return NO_RAPT_TEXT
+        if state == ANDROID_NO_SDK:
+            return NO_SDK_TEXT
+        if state == ANDROID_NO_KEY:
+            return NO_KEY_TEXT
+        if state == ANDROID_NO_CONFIG:
+            return NO_CONFIG_TEXT
+        if state == ANDROID_OK:
+            return OK_TEXT
+
+    def AndroidIfState(state, needed, action):
+        """
+        If `state` is `needed` or better, `action` is returned. Otherwise,
+        returns None, disabling the button.
+        """
+
+        if state >= needed:
+            return action
+        else:
+            return None
 
     class AndroidInterface(object):
 
@@ -184,7 +244,8 @@ screen android_process(interface):
 
 screen android:
 
-    default tt = Tooltip(NO_RAPT_TEXT)
+    default tt = Tooltip(None)
+    $ state = AndroidState()
 
     frame:
         style_group "l"
@@ -250,10 +311,33 @@ screen android:
 
                             has vbox
 
-                            textbutton _("Install SDK & Create Keys") action Jump("android_installsdk")
-                            textbutton _("Configure") action Jump("android_configure")
-                            textbutton _("Build Package") action AndroidBuild("android_build")
-                            textbutton _("Build & Install") action AndroidBuild("android_build_and_install")
+                            python:
+                                if RAPT_PATH:
+                                    edit_action = editor.EditAbsolute(os.path.join(RAPT_PATH, "src/org/renpy/android/DownloaderService.java"), check=True)
+                                else:
+                                    edit_action = None
+
+                            textbutton _("Install SDK & Create Keys"):
+                                action Jump("android_installsdk")
+                                hovered tt.Action(INSTALL_SDK_TEXT)
+
+                            textbutton _("Configure"):
+                                action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
+                                hovered tt.Action(CONFIGURE_TEXT)
+
+                            textbutton _("Edit Google Play Keys"):
+                                action AndroidIfState(state, ANDROID_NO_CONFIG, edit_action)
+                                hovered tt.Action(PLAY_KEYS_TEXT)
+
+                            textbutton _("Build Package"):
+                                action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
+                                hovered tt.Action(BUILD_TEXT)
+
+                            textbutton _("Build & Install"):
+                                action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
+                                hovered tt.Action(BUILD_AND_INSTALL_TEXT)
+
+
 
                 # Right side.
                 frame:
@@ -271,7 +355,11 @@ screen android:
 
                         add SPACER
 
-                        text tt.value
+                        if tt.value:
+                            text tt.value
+                        else:
+                            text AndroidStateText(state)
+
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
 
