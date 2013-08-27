@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-09 20:37\n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,75 +98,75 @@ msgstr ""
 
 #: ../../source/updater.rst:45
 # 0d2f42318f274415a4ab9644f8d82bc7
-msgid "Updates are built automatically when distributions are built. To build an update, set build.include_update to True in options.rpy. This will unlock the \"Build Updates\" option in options.rpy. Check this option, and Ren'Py will create the update files."
+msgid "Updates are built automatically when distributions are built. To build an update, set build.include_update to True in options.rpy. This will unlock the \"Build Updates\" option in the \"Build Distributions\" section of the launcher. Check this option, and Ren'Py will create the update files."
 msgstr ""
 
-#: ../../source/updater.rst:50
+#: ../../source/updater.rst:51
 # 7fbcadec7c7247a6b176c5ecdbb5c796
 msgid "The update files consist of:"
 msgstr ""
 
-#: ../../source/updater.rst:53
+#: ../../source/updater.rst:54
 # 60b1918c025544bc95620582fd5f4caf
 msgid "updates.json"
 msgstr ""
 
-#: ../../source/updater.rst:53
+#: ../../source/updater.rst:54
 # bf96dd44e7e241c09fff37b748b1658a
 msgid "An index of available updates and their versions."
 msgstr ""
 
-#: ../../source/updater.rst:56
+#: ../../source/updater.rst:57
 # 96876e478083482b9b38cbc9e90c3f25
 msgid "*package*.sums"
 msgstr ""
 
-#: ../../source/updater.rst:56
+#: ../../source/updater.rst:57
 # 9423198982b8402387b99044f9b7daed
 msgid "Contains checksums for each block in the package."
 msgstr ""
 
-#: ../../source/updater.rst:59
+#: ../../source/updater.rst:60
 # 133e7ca908664354a582077c7963925f
 msgid "*package*.update.gz"
 msgstr ""
 
-#: ../../source/updater.rst:59
+#: ../../source/updater.rst:60
 # 38b9cccddc354af4816873613e2ca6e3
 msgid "Contains the update data for the given package."
 msgstr ""
 
-#: ../../source/updater.rst:63
+#: ../../source/updater.rst:64
 # 3e4b88ff001d4297a14498ef0b9f3345
 msgid "*package*.update.json"
 msgstr ""
 
-#: ../../source/updater.rst:62
+#: ../../source/updater.rst:63
 # e8f54cd2bb464f2aac76ae592d00c4e9
 msgid "Contains a list of the files in each package, which the updater uses when downloading DLC."
 msgstr ""
 
-#: ../../source/updater.rst:66
+#: ../../source/updater.rst:67
 # e8a83388825948b9a97df228fc2112fa
 msgid "*package*.zsync"
 msgstr ""
 
-#: ../../source/updater.rst:66
+#: ../../source/updater.rst:67
 # 597cb5294559409fbe84bf92245d70b5
 msgid "This is a control file that's used by zsync to manage the download."
 msgstr ""
 
-#: ../../source/updater.rst:68
+#: ../../source/updater.rst:69
 # 727177f8f5e14590b8a48591e20777d4
 msgid "You must upload all these files to a single directory on your web server."
 msgstr ""
 
-#: ../../source/updater.rst:73
+#: ../../source/updater.rst:74
 # d6cf170c427d4434a01d4319414e4f8b
 msgid "Functions"
 msgstr ""
 
-#: ../../source/updater.rst:75
+#: ../../source/updater.rst:76
 # ea4e6b17d84046aebfb132395cc973df
 msgid "To cause an update to occur, invoke either updater.update or the updater.Update action."
 msgstr ""
@@ -288,12 +288,12 @@ msgstr ""
 msgid "Restart the game after the update."
 msgstr ""
 
-#: ../../source/updater.rst:81
+#: ../../source/updater.rst:82
 # bf832927d42e405caef40f833d8a3ac7
 msgid "Screen"
 msgstr ""
 
-#: ../../source/updater.rst:83
+#: ../../source/updater.rst:84
 # d5d93c617cea4e32aa315f8a2e6882b9
 msgid "To customize the look of the updater, you may override the ``updater`` screen. The default screen is defined in common/00updater.rpy."
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-09 20:37\n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,7 +158,7 @@ msgid "Creates a new button, named `name`."
 msgstr ""
 
 #: ../../source/inc/gallery:39
-#: ../../source/inc/gallery:65
+#: ../../source/inc/gallery:81
 # 9cc875dd731a45bbabad47cd346b4f36
 # 34a97daafdd940238d9b37843966e94b
 msgid "`name`"
@@ -185,90 +185,135 @@ msgid "A string giving a python expression."
 msgstr ""
 
 #: ../../source/inc/gallery:51
-#: ../../source/inc/gallery:56
+#: ../../source/inc/gallery:72
 # e85fb3f8f1bc437f8a53c4c1d8f4e152
 # 57d4c23b3cd3406192774a26e564366d
 msgid "Adds a new image to the current button, where an image consists of one or more displayables."
 msgstr ""
 
-#: ../../source/inc/gallery:61
+#: ../../source/inc/gallery:56
+# 9710b3d0e1e944c3b715d5d724d27cba
+msgid "Returns a text string giving the number of unlocked images and total number of images in the button named `name`."
+msgstr ""
+
+#: ../../source/inc/gallery:67
+# 54bc09bf1a274401a85aa9c0d4281d8b
+msgid "`format`"
+msgstr ""
+
+#: ../../source/inc/gallery:60
+# 58098aa184004bdfa34e3c0951d686cc
+msgid "A python format string that's used to format the numbers. This has three values that can be substituted in:"
+msgstr ""
+
+#: ../../source/inc/gallery:63
+# 3b1dbd2e4ce14e9d9bee5649c226e4b0
+msgid "{seen}"
+msgstr ""
+
+#: ../../source/inc/gallery:64
+# 9f116579831d464d85329456f5abefee
+msgid "The number of images that have been seen."
+msgstr ""
+
+#: ../../source/inc/gallery:65
+# 16682f7917fe464097f8252a12033c25
+msgid "{total}"
+msgstr ""
+
+#: ../../source/inc/gallery:66
+# 80f2ac0018a9476cac3c590fb2174b51
+msgid "The total number of images in the button."
+msgstr ""
+
+#: ../../source/inc/gallery:67
+# 50392e5816da462c91d0cb65862f1f80
+msgid "{locked}"
+msgstr ""
+
+#: ../../source/inc/gallery:68
+# 9f116579831d464d85329456f5abefee
+msgid "The number of images that are still locked."
+msgstr ""
+
+#: ../../source/inc/gallery:77
 # 80f2ac0018a9476cac3c590fb2174b51
 msgid "This creates a button that displays the images associated with the given button name."
 msgstr ""
 
-#: ../../source/inc/gallery:65
+#: ../../source/inc/gallery:81
 # 9f116579831d464d85329456f5abefee
 msgid "The name of the button that will be created."
 msgstr ""
 
-#: ../../source/inc/gallery:69
+#: ../../source/inc/gallery:85
 # 34187bead543401993654986c62ca5d1
 msgid "`unlocked`"
 msgstr ""
 
-#: ../../source/inc/gallery:68
+#: ../../source/inc/gallery:84
 # 5b0af5c859af4ac89bafe549ba479d6a
 msgid "A displayable that is displayed for this button when it is unlocked."
 msgstr ""
 
-#: ../../source/inc/gallery:74
+#: ../../source/inc/gallery:90
 #: ../../source/inc/replay:16
 # 50392e5816da462c91d0cb65862f1f80
-# 4f043366ff734bcabf1ad748f62c94aa
+# 50392e5816da462c91d0cb65862f1f80
 msgid "`locked`"
 msgstr ""
 
-#: ../../source/inc/gallery:72
+#: ../../source/inc/gallery:88
 # e2f1365d1f2a424f999dc7f3992aa60a
 msgid "A displayable that is displayed for this button when it is locked. If None, the locked_button field of the gallery object is used instead."
 msgstr ""
 
-#: ../../source/inc/gallery:79
+#: ../../source/inc/gallery:95
 # 646d985da11143b98c48914c8e864779
 msgid "`hover_border`"
 msgstr ""
 
-#: ../../source/inc/gallery:77
+#: ../../source/inc/gallery:93
 # 9c67182debde4a8fb4c0a1692a904e2e
 msgid "A displayable that is used to overlay this button when when it is unlocked and has focus. If None, the hover_border field of the gallery object is used."
 msgstr ""
 
-#: ../../source/inc/gallery:84
+#: ../../source/inc/gallery:100
 # b97703937b534895a63ac579dbd15417
 msgid "`idle_border`"
 msgstr ""
 
-#: ../../source/inc/gallery:82
+#: ../../source/inc/gallery:98
 # 63503bb4d1fa4207852a35fd22e90295
 msgid "A displayable that is used to overlay this button when when it is unlocked but unfocused. If None, the idle_border field of the gallery object is used."
 msgstr ""
 
-#: ../../source/inc/gallery:86
+#: ../../source/inc/gallery:102
 # 7262939c8b7747c98ebaac60bb8ac66e
 msgid "Additional keyword arguments become style properties of the created button object."
 msgstr ""
 
-#: ../../source/inc/gallery:91
+#: ../../source/inc/gallery:107
 # a8b2caf10b8048b08a90dce4daf19d2d
 msgid "Applies transforms to the last image registered. This should be called with the same number of transforms as the image has displayables. The transforms are applied to the corresponding displayables."
 msgstr ""
 
-#: ../../source/inc/gallery:96
+#: ../../source/inc/gallery:112
 # eb8b4f34bba74afb8cc063c08337d92e
 msgid "If a transform is None, the default transform is used."
 msgstr ""
 
-#: ../../source/inc/gallery:100
+#: ../../source/inc/gallery:116
 # c8dc0dec43b442daa3ca3834d4d740ee
 msgid "A condition that takes one or more image names as argument, and is satisfied when all the named images have been seen by the player. The image names should be given as strings."
 msgstr ""
 
-#: ../../source/inc/gallery:106
+#: ../../source/inc/gallery:122
 # c56a204dfcc347b2bace4d4ac3bfbbd0
 msgid "A convenience method that is equivalent to calling image and unlock with the same parameters. This will cause an image to be displayed if it has been seen before."
 msgstr ""
 
-#: ../../source/inc/gallery:110
+#: ../../source/inc/gallery:126
 # 8ebdaddd5741451da28bc4301635d786
 msgid "The images should be specified as strings giving image names."
 msgstr ""
@@ -384,26 +429,41 @@ msgid "An action that causes the music room to play the previous unlocked file i
 msgstr ""
 
 #: ../../source/inc/music_room:46
+# c85d291f42b441aca33501c83259a15d
+msgid "Causes the music room to start playin a randomly selected unlocked music track."
+msgstr ""
+
+#: ../../source/inc/music_room:51
 # 043c54b9f64d4bb2b90dd7538614021d
 msgid "Stops the music."
 msgstr ""
 
-#: ../../source/inc/music_room:50
+#: ../../source/inc/music_room:55
+# 1e37b69206f74394a2821c05946cae62
+msgid "If no music is currently playing, starts playing the first unlocked track. Otherwise, stops the currently playing music."
+msgstr ""
+
+#: ../../source/inc/music_room:58
+# a86b175cd7e04327a31d7da718c1ae6a
+msgid "This button is selected when any music is playing."
+msgstr ""
+
+#: ../../source/inc/music_room:62
 # b6973755364c4a4aa66f45c19df3e5c3
 msgid "Adds the music file `filename` to this music room. The music room will play unlocked files in the order that they are added to the room."
 msgstr ""
 
-#: ../../source/inc/music_room:56
+#: ../../source/inc/music_room:68
 # a1b1d57bb4434ba0b5cdafd18a2aec02
 msgid "`always_unlocked`"
 msgstr ""
 
-#: ../../source/inc/music_room:55
+#: ../../source/inc/music_room:67
 # a26195634080436b9d915fc32e21de42
 msgid "If true, the music file will be always unlocked. This allows the file to show up in the music room before it has been played in the game."
 msgstr ""
 
-#: ../../source/inc/music_room:61
+#: ../../source/inc/music_room:73
 # 7c3c1e0a331546c98cadf720f08939bb
 msgid "Returns true if the filename has been unlocked (or is always unlocked), and false if it is still locked."
 msgstr ""

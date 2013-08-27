@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-09 20:37\n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgid "The following functions support the definition, display, and hiding of sc
 msgstr ""
 
 #: ../../source/inc/screens:5
-#: ../../source/inc/screens:70
+#: ../../source/inc/screens:73
 # 93de8c71d7a34e04a53d02a85d41ca65
 # 2776914cc20a4c6f9ec77bababa45920
 msgid "The programmatic equivalent of the show screen statement."
@@ -68,157 +68,162 @@ msgstr ""
 msgid "Keyword arguments not beginning with _ are passed to the scope of the screen."
 msgstr ""
 
-#: ../../source/inc/screens:16
+#: ../../source/inc/screens:14
+# 8e99fcebe14144ef9fee3c32bf5f8cf7
+msgid "If the keyword argument `_with_none` is false, \"with None\" is not run at the end of end of the interaction."
+msgstr ""
+
+#: ../../source/inc/screens:19
 # 4c7a314ced3443a8a3a6f895c8157d81
 msgid "Defines a screen with `name`, which should be a string."
 msgstr ""
 
-#: ../../source/inc/screens:24
+#: ../../source/inc/screens:27
 # 96f10e732349403ebdc952d26a3e6d09
 msgid "`function`"
 msgstr ""
 
-#: ../../source/inc/screens:19
+#: ../../source/inc/screens:22
 # 04fce3a5724b41ac861e1dfce0f7943d
 msgid "The function that is called to display the screen. The function is called with the screen scope as keyword arguments. It should ignore additional keyword arguments."
 msgstr ""
 
-#: ../../source/inc/screens:23
+#: ../../source/inc/screens:26
 # 35a09cea482e42be83b3c8107be27255
 msgid "The function should call the ui functions to add things to the screen."
 msgstr ""
 
-#: ../../source/inc/screens:29
+#: ../../source/inc/screens:32
 # 9e56715a51e146b590b7a4cec5139fb5
 msgid "`modal`"
 msgstr ""
 
-#: ../../source/inc/screens:27
+#: ../../source/inc/screens:30
 # 4b4a5be9097e41ec9d8de9f43a4ddf30
 msgid "A string that, when evaluated, determines of the created screen should be modal. A modal screen prevents screens underneath it from receiving input events."
 msgstr ""
 
-#: ../../source/inc/screens:35
+#: ../../source/inc/screens:38
 # 5a44947830584d85b7e309bc7885b1e7
 msgid "`zorder`"
 msgstr ""
 
-#: ../../source/inc/screens:32
+#: ../../source/inc/screens:35
 # b0e705aa0bca4c3598498c6b045793ec
 msgid "A string that, when evaluated, should be an integer. The integer controls the order in which screens are displayed. A screen with a greater zorder number is displayed above screens with a lesser zorder number."
 msgstr ""
 
-#: ../../source/inc/screens:40
+#: ../../source/inc/screens:43
 # cd4337fa980249b389c0322542b42367
 msgid "`tag`"
 msgstr ""
 
-#: ../../source/inc/screens:38
+#: ../../source/inc/screens:41
 # 879c02a759a94356aea5380c20e425e4
 msgid "The tag associated with this screen. When the screen is shown, it replaces any other screen with the same tag. The tag defaults to the name of the screen."
 msgstr ""
 
-#: ../../source/inc/screens:44
+#: ../../source/inc/screens:47
 # 9a0c393901bf4cb2a61d8e2051ef9cfc
 msgid "`predict`"
 msgstr ""
 
-#: ../../source/inc/screens:43
+#: ../../source/inc/screens:46
 # c712b3cef3ab4f3c88b0abebb6f5be7b
 msgid "If true, this screen can be loaded for image prediction. If false, it can't. Defaults to true."
 msgstr ""
 
-#: ../../source/inc/screens:46
+#: ../../source/inc/screens:49
 # 2c03e8c04e9d4c6895f9b6e176e17879
 msgid "`variant`"
 msgstr ""
 
-#: ../../source/inc/screens:47
+#: ../../source/inc/screens:50
 # 0a22e016949b494ebc68f98c4e725017
 msgid "String. Gives the variant of the screen to use."
 msgstr ""
 
-#: ../../source/inc/screens:51
+#: ../../source/inc/screens:54
 # 85643a374d02449982709549a7b99c7c
 msgid "Returns the ScreenDisplayable with the given `tag`, on `layer`. If no displayable with the tag is not found, it is interpreted as screen name. If it's still not found, None is returned."
 msgstr ""
 
-#: ../../source/inc/screens:58
+#: ../../source/inc/screens:61
 # b7943978c31848d39c35c5323bfbb5b9
 msgid "From the `screen` on `layer`, returns the widget with `id`. Returns None if the screen doesn't exist, or there is no widget with that id on the screen."
 msgstr ""
 
-#: ../../source/inc/screens:64
+#: ../../source/inc/screens:67
 # 9ad916ff95dc4eb2aa8eb47253d97cd6
 msgid "The programmatic equivalent of the hide screen statement."
 msgstr ""
 
-#: ../../source/inc/screens:66
+#: ../../source/inc/screens:69
 # db5eb5fde7e8411a99d6457f26132793
 msgid "Hides the screen with `tag` on `layer`."
 msgstr ""
 
-#: ../../source/inc/screens:72
+#: ../../source/inc/screens:75
 # 0d4e006b6d214518a8789299bb2788cb
 msgid "Shows the named screen. This takes the following keyword arguments:"
 msgstr ""
 
-#: ../../source/inc/screens:74
+#: ../../source/inc/screens:77
 # 1102dcd2d14a4b0d96df0b85b5784583
 msgid "`_screen_name`"
 msgstr ""
 
-#: ../../source/inc/screens:75
+#: ../../source/inc/screens:78
 # d6ced8935781475591fb2721c34fe443
 msgid "The name of the  screen to show."
 msgstr ""
 
-#: ../../source/inc/screens:76
+#: ../../source/inc/screens:79
 # cd9ed6e1acf34033ab93b1f581a352df
 msgid "`_layer`"
 msgstr ""
 
-#: ../../source/inc/screens:77
+#: ../../source/inc/screens:80
 # 980e638af513445d9d9d081a939467ff
 msgid "The layer to show the screen on."
 msgstr ""
 
-#: ../../source/inc/screens:80
+#: ../../source/inc/screens:83
 # d83d6ce364ea4e13bb3cdffbe584cbd2
 msgid "`_tag`"
 msgstr ""
 
-#: ../../source/inc/screens:79
+#: ../../source/inc/screens:82
 # e6939316dc854684b78b60bd85582c1a
 msgid "The tag to show the screen with. If not specified, defaults to the tag associated with the screen. It that's not specified, defaults to the name of the screen.,"
 msgstr ""
 
-#: ../../source/inc/screens:84
+#: ../../source/inc/screens:87
 # 7e35aa9138f74cbe915a18ae6c31ab2a
 msgid "`_widget_properties`"
 msgstr ""
 
-#: ../../source/inc/screens:83
+#: ../../source/inc/screens:86
 # e1a1da3da5684783bdb20019b4193c6d
 msgid "A map from the id of a widget to a property name -> property value map. When a widget with that id is shown by the screen, the specified properties are added to it."
 msgstr ""
 
-#: ../../source/inc/screens:88
+#: ../../source/inc/screens:91
 # dde640a677204c619fd854e43e7515a1
 msgid "`_transient`"
 msgstr ""
 
-#: ../../source/inc/screens:87
+#: ../../source/inc/screens:90
 # 281d1e0e56c94ceaa94c7494da35e55b
 msgid "If true, the screen will be automatically hidden at the end of the current interaction."
 msgstr ""
 
-#: ../../source/inc/screens:90
+#: ../../source/inc/screens:93
 # 28536c6e610842eb873eebfb69175cbc
 msgid "Keyword arguments not beginning with underscore (_) are used to initialize the screen's scope."
 msgstr ""
 
-#: ../../source/inc/screens:95
+#: ../../source/inc/screens:98
 # 01f8c61272ad440b99f64243396d8004
 msgid "Returns true if a `name` is a screen variant that can be chosen by Ren'Py. See :ref:`screen-variants` for more details. This function can be used as the condition in a python if statement to set up the appropriate styles for the selected screen variant."
 msgstr ""
@@ -484,7 +489,7 @@ msgid "It defaults to being adjustable if a `changed` function is given or if th
 msgstr ""
 
 #: ../../source/inc/ui:45
-# b2e98d76176a42a9b81b2237001a1e7e
+# 9cb1559bebae46c6b4dd1f54a8bc5c01
 msgid "`changed`"
 msgstr ""
 
@@ -571,7 +576,7 @@ msgstr ""
 #: ../../source/screen_python.rst:150
 #: ../../source/screen_python.rst:213
 # 0e7e119a8f2742dc8ae61778586e8188
-# c0c2628858ca460fa26c42121abc0eac
+# 0e7e119a8f2742dc8ae61778586e8188
 msgid "This method must be overriden, as the default method will raise NotImplemented (and hence cause Ren'Py to report an error)."
 msgstr ""
 
