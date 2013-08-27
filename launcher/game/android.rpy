@@ -58,6 +58,7 @@ init python:
         import rapt.build
         import rapt.configure
         import rapt.install_sdk
+        import rapt.plat
     else:
         rapt = None
 
@@ -153,6 +154,10 @@ init python:
             interface.info(prompt, label="android")
 
         def call(self, cmd, cancel=False):
+
+            cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
+
+            print "Calling", cmd
 
             f = open(self.filename, "w")
 
