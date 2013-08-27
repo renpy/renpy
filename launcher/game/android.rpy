@@ -53,6 +53,8 @@ init python:
 
     find_rapt()
 
+    import threading
+
     if RAPT_PATH:
         import rapt
         import rapt.build
@@ -159,8 +161,12 @@ init python:
         def call(self, cmd, cancel=False):
 
             cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
+            self.cmd = cmd
 
-            f = open(self.filename, "w")
+            print cmd
+            print self.filename.encode("utf-8")
+
+            f = open(self.filename, "a")
 
             f.write("\n\n\n")
 
@@ -169,14 +175,28 @@ init python:
             else:
                 cancel_action = None
 
+            startupinfo = None
+            if renpy.windows:
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
             try:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
-                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f)
+                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo)
                 renpy.call_screen("android_process", interface=self)
             finally:
                 f.close()
                 interface.hide_screen()
                 self.process = None
+
+        def check_process(self):
+            rv = self.process.poll()
+
+            if rv is not None:
+                if rv:
+                    raise subprocess.CalledProcessError(rv, self.cmd)
+                else:
+                    return True
 
         def download(self, url, dest):
             try:
@@ -188,14 +208,20 @@ init python:
             finally:
                 interface.hide_screen()
 
-        def check_process(self):
-            rv = self.process.poll()
+        def background(self, f):
+            try:
+                t = threading.Thread(target=f)
+                t.start()
 
-            if rv is not None:
-                if rv:
-                    raise subprocess.CalledProcessError(rv)
-                else:
-                    return True
+                interface.processing(self.info_msg, show_screen=True)
+
+                while t.is_alive():
+                    renpy.pause(0)
+                    t.join(0.25)
+
+            finally:
+                interface.hide_screen()
+
 
         def cancel(self):
             if self.process:
