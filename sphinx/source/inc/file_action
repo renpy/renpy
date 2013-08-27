@@ -7,7 +7,7 @@
     
     `name`
         The name of the slot to save to or load from. If None, an unused slot
-        (a large number based on the current time) will be 
+        (a large number based on the current time) will be
         will be used.
     
     `page`
@@ -65,7 +65,7 @@
     
     `name`
         The name of the slot to save to. If None, an unused slot
-        (a large number based on the current time) will be 
+        (a large number based on the current time) will be
         will be used.
     
     `confirm`

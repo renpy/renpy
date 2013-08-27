@@ -15,14 +15,14 @@
     
     `value`
         The value of the adjustment, a number.
-        
+    
     `step`
         The step size of the adjustment, a number. If None, then
         defaults to 1/10th of a page, if set. Otherwise, defaults
         to the 1/20th of the range.
     
         This is used when scrolling a viewport with the mouse wheel.
-        
+    
     `page`
         The page size of the adjustment. If None, this is set
         automatically by a viewport. If never set, defaults to 1/10th

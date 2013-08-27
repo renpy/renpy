@@ -455,7 +455,7 @@ class Lexer(object):
 
         if self.line >= len(self.block):
             self.eob = True
-            return
+            return False
 
         self.filename, self.number, self.text, self.subblock = self.block[self.line]
         self.pos = 0

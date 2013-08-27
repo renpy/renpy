@@ -10,17 +10,17 @@
     
     * The filename of the save.
     * The extra_info that was passed in.
-    * A displayable that, when displayed, shows the screenshot that was 
+    * A displayable that, when displayed, shows the screenshot that was
       used when saving the game.
     * The time the game was stayed at, in seconds since the UNIX epoch.
     
     `regexp`
         A regular expression that is matched against the start of the
         filename to filter the list.
-        
+    
     `fast`
-        If fast is true, the filename is returned instead of the 
-        tuple. 
+        If fast is true, the filename is returned instead of the
+        tuple.
 
 .. function:: renpy.load(filename)
     
@@ -32,7 +32,7 @@
 
 .. function:: renpy.save(filename, extra_info='')
     
-    Saves the game state to a save slot. 
+    Saves the game state to a save slot.
     
     `filename`
         A string giving the name of a save slot. Despite the variable name,
@@ -46,7 +46,7 @@
 
 .. function:: renpy.take_screenshot(scale=None, background=False)
     
-    Causes a screenshot to be taken. This screenshot will be saved as part of 
+    Causes a screenshot to be taken. This screenshot will be saved as part of
     a save game.
 
 .. function:: renpy.unlink_save(filename)

@@ -2,8 +2,8 @@
 
 .. function:: renpy.displayable(d)
     
-    This takes `d`, which may be a displayable object or a string. If it's 
-    a string, it converts that string into a displayable using the usual 
+    This takes `d`, which may be a displayable object or a string. If it's
+    a string, it converts that string into a displayable using the usual
     rules.
 
 .. function:: renpy.end_interaction(value)
@@ -11,7 +11,7 @@
     If `value` is not None, immediately ends the current interaction, causing
     the interaction to return `value`. If `value` is None, does nothing.
     
-    This can be called from inside the render and event methods of a 
+    This can be called from inside the render and event methods of a
     creator-defined displayable.
 
 .. function:: renpy.render(d, width, height, st, at)
@@ -21,10 +21,10 @@
     
     `d`
         The displayable to render.
-        
+    
     `width`, `height`
-        The width and height available for the displayable to render into. 
-        
+        The width and height available for the displayable to render into.
+    
     `st`, `at`
         The shown and animation timebases.
     

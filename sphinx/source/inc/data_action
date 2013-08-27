@@ -12,7 +12,7 @@
 
 .. function:: SetScreenVariable(name, value)
     
-    Causes the variable `name` associated with the current screen to 
+    Causes the variable `name` associated with the current screen to
     be set to `value`.
 
 .. function:: SetVariable(variable, value)
@@ -27,7 +27,7 @@
     `true_value`
         If not None, then this is the true value we use.
     `false_value`
-        If not None, then this is the false value we use. 
+        If not None, then this is the false value we use.
 
 .. function:: ToggleField(object, field, true_value=None, false_value=None)
     
@@ -37,7 +37,7 @@
     `true_value`
         If not None, then this is the true value we use.
     `false_value`
-        If not None, then this is the false value we use. 
+        If not None, then this is the false value we use.
 
 .. function:: ToggleScreenVariable(name, true_value=None, false_value=None)
     
@@ -46,7 +46,7 @@
     `true_value`
         If not None, then this is the true value we use.
     `false_value`
-        If not None, then this is the false value we use. 
+        If not None, then this is the false value we use.
 
 .. function:: ToggleVariable(variable, true_value=None, false_value=None)
     
@@ -55,5 +55,5 @@
     `true_value`
         If not None, then this is the true value we use.
     `false_value`
-        If not None, then this is the false value we use. 
+        If not None, then this is the false value we use.
 

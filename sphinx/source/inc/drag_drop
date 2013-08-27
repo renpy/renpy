@@ -16,11 +16,11 @@
     * ``selected_idle`` - when it can be dropped on.
     * ``hover`` - when the draggable will be dragged when the mouse is
       clicked.
-    * ``idle`` - otherwise. 
+    * ``idle`` - otherwise.
     
     The drag handle is a rectangle inside the child. The mouse must be over
     a non-transparent pixel inside the drag handle for dragging or clicking
-    to occur. 
+    to occur.
     
     A newly-created draggable is added to the default DragGroup. A draggable
     can only be in a single DragGroup - if it's added to a second group,
@@ -50,7 +50,7 @@
     
     `drag_raise`
         If true, this Drag is raised to the top when it is dragged. If
-        it is joined to other Drags, all joined drags are raised. 
+        it is joined to other Drags, all joined drags are raised.
     
     `dragged`
         A callback (or list of callbacks) that is called when the Drag
@@ -70,18 +70,18 @@
         When a dragged and dropped callback are triggered for the same
         event, the dropped callback is only called if dragged returns
         None.
-        
-    `clicked`       
+    
+    `clicked`
         A callback this is called, with no arguments, when the Drag is
         clicked without being moved. A droppable can also be focused
         and clicked.  If the callback returns a value othe than None,
         that value is returned as the result of the interaction.
-        
+    
     `drag_handle`
         A (x, y, width, height) tuple, giving the position of the drag
         handle within the child. In this tuple, integers are considered
         to be a literal number of pixels, while floats are relative to
-        the size of the child. 
+        the size of the child.
     
     `drag_joined`
         This is called with the current Drag as an argument. It's

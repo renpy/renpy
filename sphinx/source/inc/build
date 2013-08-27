@@ -2,8 +2,8 @@
 
 .. function:: build.archive(name, file_list='all')
     
-    Declares the existence of an archive. If one or more files are 
-    classified with `name`, `name`.rpa is build as an archive. The 
+    Declares the existence of an archive. If one or more files are
+    classified with `name`, `name`.rpa is build as an archive. The
     archive is included in the named file lists.
 
 .. function:: build.classify(pattern, file_list)
@@ -16,19 +16,19 @@
 
 .. function:: build.documentation(pattern)
     
-    Declares a pattern that matches documentation. In a mac app build, 
+    Declares a pattern that matches documentation. In a mac app build,
     files matching the documentation pattern are stored twice - once
     inside the app package, and again outside of it.
 
 .. function:: build.executable(pattern)
     
-    Adds a pattern marking files as executable on platforms that support it. 
+    Adds a pattern marking files as executable on platforms that support it.
     (Linux and Macintosh)
 
 .. function:: build.package(name, format, file_lists, description=None, update=True, dlc=False)
     
     Declares a package that can be built by the packaging
-    tool. 
+    tool.
     
     `name`
         The name of the package.
@@ -38,13 +38,13 @@
         list of:
     
         zip
-            A zip file. 
+            A zip file.
         app-zip
             A zip file containing a macintosh application.
         tar.bz2
             A tar.bz2 file.
     
-        The empty string will not build any package formats (this 
+        The empty string will not build any package formats (this
         makes dlc possible).
     
     `file_lists`
@@ -55,10 +55,10 @@
         An optional description of the package to be built.
     
     `update`
-        If true and updates are being built, an update will be 
+        If true and updates are being built, an update will be
         built for this package.
     
     `dlc`
-        If true, any zip or tar.bz2 file will be built in 
+        If true, any zip or tar.bz2 file will be built in
         standalone DLC mode, without an update directory.
 

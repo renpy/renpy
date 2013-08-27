@@ -196,12 +196,12 @@ game scripts into scripts.rpa::
     build.archive("images", "all")
 
     # Put script files into the scripts archive.
-    renpy.classify("game/**.rpy", "scripts")
-    renpy.classify("game/**.rpyc", "scripts")
+    build.classify("game/**.rpy", "scripts")
+    build.classify("game/**.rpyc", "scripts")
 
     # Put images into the images archive.
-    renpy.classify("game/**.jpg", "images")
-    renpy.classify("game/**.png", "images")
+    build.classify("game/**.jpg", "images")
+    build.classify("game/**.png", "images")
 
 If an archive file is empty, it will not be built.
 

@@ -6,14 +6,14 @@
     italic, and underline are all advisory (used for matching), and do not
     change the appearance of the font.
     
-    Please see the `BMFont home page <http://www.angelcode.com/products/bmfont/>`_     
+    Please see the `BMFont home page <http://www.angelcode.com/products/bmfont/>`_
     for the tool that creates BMFonts. Ren'Py expects that the filename
     parameter will be to a file in the BMFont text format, that describes a
     32-bit font. The Alpha channel should contain the font information, while
     the Red, Green, and Blue channels should be set to one. The image files,
     kerning, and other control information is read out of the BMFont file.
     
-    We recommend including Latin and General Punctuation as part of your BMFont, 
+    We recommend including Latin and General Punctuation as part of your BMFont,
     to ensure all of the Ren'Py interface can render.
     
     `name`
@@ -32,7 +32,7 @@
         An ignored parameter.
     
     `filename`
-        The file containing BMFont control information. 
+        The file containing BMFont control information.
 
 .. function:: renpy.register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False, filename=None, xml=None, spacewidth=10, default_kern=0, kerns={})
     
@@ -40,7 +40,7 @@
     bold, italic, and underline are all advisory (used for matching), and do not
     change the appearance of the font.
     
-    Please see the `MudgeFont home page <http://www.larryhastings.com/programming/mudgefont/>`_ 
+    Please see the `MudgeFont home page <http://www.larryhastings.com/programming/mudgefont/>`_
     for the tool that creates MudgeFonts. Ren'Py assumes that character codes
     found in the MudgeFont xml file are unicode character numbers, and ignores
     negative character codes.
@@ -75,7 +75,7 @@
     
     `kerns`
         A map from two-character strings to the kern that should be used between
-        those characters.    
+        those characters.
 
 .. function:: renpy.register_sfont(name=None, size=None, bold=False, italics=False, underline=False, filename=None, spacewidth=10, default_kern=0, kerns={}, charset=u'!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~')
     
@@ -114,10 +114,10 @@
         those characters.
     
     `charset` - The character set of the font. A string containing characters in
-        the order in which they are found in the image. The default character 
+        the order in which they are found in the image. The default character
         set for a SFont is::
     
-            ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? 
-            @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _ 
+            ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
+            @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _
             ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
 

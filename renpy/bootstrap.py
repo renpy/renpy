@@ -55,7 +55,7 @@ def extra_imports():
     import difflib; difflib
     import shutil; shutil
     import tarfile; tarfile
-    import bz2; bz2
+    import bz2; bz2  # @UnresolvedImport
     import webbrowser; webbrowser
     import pygame.locals; pygame.locals
     import pygame.color; pygame.color

@@ -24,16 +24,16 @@
     image to show when this character speaks.
     
     `image`
-         A string giving the image tag that is linked with this 
+         A string giving the image tag that is linked with this
          character.
-         
+    
     **Voice Tag**
     If a voice tag is assign to a Character, the voice files that are
-    associated with it, can be muted or played in the preference 
+    associated with it, can be muted or played in the preference
     screen.
     
     `voice_tag`
-        A String that enables the voice file assosiated with the 
+        A String that enables the voice file assosiated with the
         Character to be muted or played in the 'voice' channel.
     
     **Prefixes and Suffixes.**
@@ -56,7 +56,7 @@
     `who_suffix`
         A string that is appended to the name of the character before
         it is shown.
-            
+    
     **Changing Name Display.**
     These options help to control the display of the name.
     
@@ -105,7 +105,7 @@
         display of text is paused by the {p=} or {w=} text tags. When
         None, this takes its default from ctc_pause, use ``Null()``
         when you want a ctc_pause but no ctc_timedpause.
-        
+    
     `ctc_position`
         Controls the location of the click-to-continue indicator. If
         ``"nestled"``, the indicator is displayed as part of the text
@@ -139,7 +139,7 @@
         If true, restructures the layout so that the name of the
         character is placed in one window, and the dialogue text in a
         second window.
-            
+    
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
     `window_`` have their prefix stripped, and are used to :ref:`style

@@ -58,7 +58,19 @@ screen front_page:
             side "t c b":
 
                 window style "l_label":
+
+                    has hbox:
+                        xfill True
+
                     text "PROJECTS:" style "l_label_text" size 36 yoffset 10
+
+                    textbutton _("refresh"):
+                        xalign 1.0
+                        yalign 1.0
+                        yoffset 5
+                        style "l_small_button"
+                        action project.Rescan()
+                        right_margin HALF_INDENT
 
                 side "c r":
 
@@ -76,9 +88,13 @@ screen front_page:
                     add SEPARATOR
                     add HALF_SPACER
 
-                    textbutton _("+ Create New Project"):
-                        left_margin (HALF_INDENT)
-                        action Jump("new_project")
+                    hbox:
+                        xfill True
+
+                        textbutton _("+ Create New Project"):
+                            left_margin (HALF_INDENT)
+                            action Jump("new_project")
+
 
 
         # Project section - on right.

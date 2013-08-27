@@ -63,5 +63,5 @@
     * Preference("auto-forward time")
     * Preference("music volume")
     * Preference("sound volume")
-    * Preference("voice volume")                  
+    * Preference("voice volume")
 

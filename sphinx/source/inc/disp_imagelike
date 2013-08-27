@@ -5,7 +5,7 @@
     This flattens `child`, which may be made up of multiple textures, into
     a single texture.
     
-    Certain operations, like the alpha transform property, apply to every 
+    Certain operations, like the alpha transform property, apply to every
     texture making up a displayable, which can yield incorrect results
     when the textures overlap on screen. Flatten creates a single texture
     from multiple textures, which can prevent this problem.
@@ -28,14 +28,14 @@
     
     `left`
         The size of the border on the left side.
-        
+    
     `top`
         The size of the border on the top.
-        
+    
     `right`
-        The size of the border on the right side. If None, defaults 
+        The size of the border on the right side. If None, defaults
         to `left`.
-        
+    
     `bottom`
         The side of the border on the bottom. If None, defaults to `top`.
     
@@ -45,7 +45,7 @@
     
     ::
     
-         # Resize the background of the text window if it's too small.         
+         # Resize the background of the text window if it's too small.
          init python:
              style.window.background = Frame("frame.png", 10, 10)
         
@@ -55,7 +55,7 @@
     This created a displayable by cropping `child` to `rect`, where
     `rect` is an (x, y, width, height) tuple. ::
     
-        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")    
+        image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")
 
 .. function:: LiveTile(child, style='tile', **properties)
     
@@ -66,7 +66,7 @@
         image bg tile = LiveTile("bg.png")
 
 .. function:: Null(width=0, height=0, **properties)
-        
+    
     A displayable that creates an empty box on the screen. The size
     of the box is controlled by `width` and `height`. This can be used
     when a displayable requires a child, but no child is suitable, or

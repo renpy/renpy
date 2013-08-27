@@ -8,11 +8,11 @@
         A string giving the name of the style preference.
     
     `alternative`
-        A string giving the name of the alternative.        
+        A string giving the name of the alternative.
 
 .. function:: renpy.get_style_preference(preference)
     
-    Returns a string giving the name of the selected alternative for the named style preference. 
+    Returns a string giving the name of the selected alternative for the named style preference.
     
     `preference`
         A string giving the name of the style preference.

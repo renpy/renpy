@@ -21,7 +21,7 @@
     or `empty` if the file does not exist.
 
 .. function:: FileScreenshot(name, empty=None, page=None)
-             
+    
     Returns the screenshot associated with the given file. If the
     file is not loadable, then `empty` is returned, unless it's None,
     in which case, a Null displayable is created.
@@ -69,7 +69,7 @@
     Returns a list of used numeric file slots on the page.
     
     `page`
-        The name of the page that will be scanned. If None, the current page 
+        The name of the page that will be scanned. If None, the current page
         is used.
     
     `highest_first`

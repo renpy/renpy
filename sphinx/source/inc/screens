@@ -10,6 +10,9 @@
     
     Keyword arguments not beginning with _ are passed to the scope of
     the screen.
+    
+    If the keyword argument `_with_none` is false, "with None" is not
+    run at the end of end of the interaction.
 
 .. function:: renpy.define_screen(name, function, modal="False", zorder="0", tag=None, variant=None)
     
@@ -23,7 +26,7 @@
         The function should call the ui functions to add things to the
         screen.
     
-    `modal`    
+    `modal`
         A string that, when evaluated, determines of the created
         screen should be modal. A modal screen prevents screens
         underneath it from receiving input events.
@@ -44,13 +47,13 @@
         it can't. Defaults to true.
     
     `variant`
-        String. Gives the variant of the screen to use. 
+        String. Gives the variant of the screen to use.
 
 .. function:: renpy.get_screen(name, layer='screens')
     
     Returns the ScreenDisplayable with the given `tag`, on
     `layer`. If no displayable with the tag is not found, it is
-    interpreted as screen name. If it's still not found, None is returned. 
+    interpreted as screen name. If it's still not found, None is returned.
      
 
 .. function:: renpy.get_widget(screen, id, layer='screens')
@@ -88,7 +91,7 @@
         the current interaction.
     
     Keyword arguments not beginning with underscore (_) are used to
-    initialize the screen's scope.       
+    initialize the screen's scope.
 
 .. function:: renpy.variant(name)
     

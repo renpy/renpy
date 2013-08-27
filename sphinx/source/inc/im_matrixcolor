@@ -41,7 +41,7 @@
     
     `matrix` is a 20 or 25 element list or tuple. If it is 20 elements
     long, it is padded with (0, 0, 0, 0, 1) to make a 5x5 matrix,
-    suitable for multiplication.    
+    suitable for multiplication.
 
 .. function:: im.matrix.brightness(b)
     
@@ -101,11 +101,11 @@
     Returns an im.matrix that alters the saturation of an
     image. The alpha channel is untouched.
     
-    `level`        
+    `level`
         The amount of saturation in the resulting image. 1.0 is
         the unaltered image, while 0.0 is grayscale.
     
-    `desat`        
+    `desat`
         This is a 3-element tuple that controls how much of the
         red, green, and blue channels will be placed into all
         three channels of a fully desaturated image. The default

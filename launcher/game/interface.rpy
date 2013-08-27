@@ -109,6 +109,8 @@ screen common:
     default yes = None
     default no = None
     default choices = None
+    default cancel = None
+    default bar_value = None
 
     frame:
         style "l_root"
@@ -133,6 +135,17 @@ screen common:
                         range total
                         value complete
                         style "l_progress_bar"
+
+            if bar_value is not None:
+                add SPACER
+
+                frame:
+                    style "l_progress_frame"
+
+                    bar:
+                        value bar_value
+                        style "l_progress_bar"
+
 
             if choices:
                 add SPACER
@@ -167,6 +180,8 @@ screen common:
 
     if back:
         textbutton _("Back") action back style "l_left_button"
+    elif cancel:
+        textbutton _("Cancel") action cancel style "l_left_button"
 
     if continue_:
         textbutton _("Continue") action continue_ style "l_right_button"
@@ -201,8 +216,9 @@ screen launcher_input:
 init python in interface:
 
     import traceback
+    from store import Jump
 
-    def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, **kwargs):
+    def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, show_screen=False, **kwargs):
         """
         Displays the info, interaction, and processing screens.
 
@@ -216,8 +232,12 @@ init python in interface:
             If not None, a message that is displayed below the main message.
 
         `back`
-            If True, a back button will be present. If it's clicked, False will
-            be returned.
+            If not None, a back button will be present. `back` is the action that
+            is called when the button is clicked.
+
+        `cancel`
+            If not None, a cancel button will be present. `cancel` is the action
+            that is called when the button is clicked.
 
         `continue_`
             If True, a continue button will be present. `continue_` gives the action
@@ -228,14 +248,30 @@ init python in interface:
             screen. This will display it to the user and then immediately
             return.
 
+        `show_screen`
+            If True, the screen will be show, and will return immediately. if False,
+            the screen will be called, and interaction will pause.
 
         Other keyword arguments are passed to the screen itself.
         """
 
-        if pause0:
-            ui.pausebehavior(0)
 
-        return renpy.call_screen("common", title=title, title_color=title_color, message=message, submessage=submessage, back=back, continue_=continue_, **kwargs)
+        if show_screen:
+            screen_func = renpy.show_screen
+        else:
+            screen_func = renpy.call_screen
+
+            if pause0:
+                ui.pausebehavior(0)
+
+        return screen_func("common", title=title, title_color=title_color, message=message, submessage=submessage, back=back, continue_=continue_, **kwargs)
+
+    def hide_screen():
+        """
+        Hides a screen that was shown with show_screen=True.
+        """
+
+        renpy.hide_screen("common")
 
 
     def error(message, submessage=None, label="front_page", **kwargs):

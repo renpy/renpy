@@ -5,18 +5,18 @@
     A displayable that displays text on the screen.
     
     `text`
-        The text to display on the screen. This may be a string, or a list of 
+        The text to display on the screen. This may be a string, or a list of
         strings and displayables.
-        
+    
     `slow`
-        Determines if the text is displayed slowly, being typed out one character at the time.  
+        Determines if the text is displayed slowly, being typed out one character at the time.
         If None, slow text mode is determined by the :propref:`slow_cps` style property. Otherwise,
         the truth value of this parameter determines if slow text mode is used.
     
     `scope`
         If not None, this should be a dictionary that provides an additional scope for text
-        interpolation to occur in. 
-        
+        interpolation to occur in.
+    
     `substitute`
         If true, text interpolation occurs. If false, it will not occur. If
         None, they are controlled by :var:`config.new_substitutions`.

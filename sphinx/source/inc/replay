@@ -13,7 +13,7 @@
         when entering the replay.
     
     `locked`
-        If true, this replay is locked. If false, it is unlocked. If None, the 
+        If true, this replay is locked. If false, it is unlocked. If None, the
         replay is locked if the label has not been seen in any playthrough.
 
 .. function:: renpy.call_replay(label, scope={})
