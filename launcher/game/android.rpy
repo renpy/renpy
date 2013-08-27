@@ -133,6 +133,9 @@ init python:
 
         def input(self, prompt, empty=None):
 
+            if empty is None:
+                empty = ''
+
             while True:
                 rv = interface.input(_("QUESTION"), prompt, default=empty, cancel=Jump("android"))
 
@@ -156,8 +159,6 @@ init python:
         def call(self, cmd, cancel=False):
 
             cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
-
-            print "Calling", cmd
 
             f = open(self.filename, "w")
 
