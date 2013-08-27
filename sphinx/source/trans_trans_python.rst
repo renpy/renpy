@@ -50,7 +50,7 @@ The python equivalent of an ATL transform is a Transform object.
 
     .. attribute:: hide_request
 
-        This is set to true when the function is caled, to indicate that the
+        This is set to true when the function is called, to indicate that the
         transform is being hidden.
 
     .. attribute:: hide_response
