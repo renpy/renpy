@@ -163,9 +163,6 @@ init python:
             cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
             self.cmd = cmd
 
-            print cmd
-            print self.filename.encode("utf-8")
-
             f = open(self.filename, "a")
 
             f.write("\n\n\n")
