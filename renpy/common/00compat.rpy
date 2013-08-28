@@ -137,3 +137,6 @@ init 1900 python hide::
 
     if config.hyperlink_styler or config.hyperlink_callback or config.hyperlink_focus:
         style.default.hyperlink_functions = (config.hyperlink_styler, config.hyperlink_callback, config.hyperlink_focus)
+
+    if compat(6, 15, 7):
+        config.has_quicksave = False
