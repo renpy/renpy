@@ -145,15 +145,6 @@ init -1500 python:
             elif value == "toggle":
                 return ToggleField(_preferences, "skip_unseen")
 
-        elif name == "skip":
-
-            if value == "all messages" or value == "all":
-                return SetField(_preferences, "skip_unseen", True)
-            elif value == "seen messages" or value == "seen":
-                return SetField(_preferences, "skip_unseen", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "skip_unseen")
-
         elif name == "begin skipping":
 
             return Skip()
