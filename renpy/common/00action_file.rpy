@@ -449,11 +449,11 @@ init -1500 python:
              If set, this should be an integer that gives the number of
              the maximum file page we can go to.
 
-         `toggle`
+         `wrap`
              If true, we can go to the first page when on the last file page if max is set.
          """
 
-        def __init__(self, max=None, toggle=False):
+        def __init__(self, max=None, wrap=False):
 
             page = persistent._file_page
 
@@ -471,7 +471,7 @@ init -1500 python:
 
                 if max is not None:
                     if page > max:
-                        if toggle:
+                        if wrap:
                             if config.has_autosave:
                                 page = "auto"
                             elif config.has_quicksave:
@@ -506,15 +506,15 @@ init -1500 python:
          `max`
              If set, this should be an integer that gives the number of
              the maximum file page we can go to. This is required to enable
-             toggle.
+             wrap.
 
-         `toggle`
+         `wrap`
              If true, we can go to the last page when on the first file page if max is set.
          """
 
-        def __init__(self, max=None, toggle=False):
+        def __init__(self, max=None, wrap=False):
 
-            if toggle and max is not None:
+            if wrap and max is not None:
                 max = str(max)
             else:
                 max = None
