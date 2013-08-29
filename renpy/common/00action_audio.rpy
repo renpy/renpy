@@ -71,11 +71,9 @@ init -1500 python:
          Causes an audio channel to be stopped.
 
          `channel`
-             The channel to play the sound on.
-         `file`
-             The file to play.
+             The channel to stop the sound on.
 
-         Any keyword arguments are passed to :func:`renpy.music.play`
+         Any keyword arguments are passed to :func:`renpy.music.stop`
          """
 
         def __init__(self, channel, **kwargs):
