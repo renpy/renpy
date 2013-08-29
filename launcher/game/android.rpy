@@ -27,6 +27,10 @@ init python:
 
 
     import subprocess
+    import re
+    import os
+
+    print os.environ['PATH']
 
     def find_rapt():
 
@@ -150,6 +154,7 @@ init python:
             return interface.choice(prompt, choices, default)
 
         def fail(self, prompt):
+            prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
             interface.error(prompt, label="android")
 
         def success(self, prompt):
@@ -158,9 +163,11 @@ init python:
         def final_success(self, prompt):
             interface.info(prompt, label="android")
 
-        def call(self, cmd, cancel=False):
+        def call(self, cmd, cancel=False, use_path=False):
 
-            cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
+            if not use_path:
+                cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
+
             self.cmd = cmd
 
             f = open(self.filename, "a")
