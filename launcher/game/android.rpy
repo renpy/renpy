@@ -30,8 +30,6 @@ init python:
     import re
     import os
 
-    print os.environ['PATH']
-
     def find_rapt():
 
         global RAPT_PATH
