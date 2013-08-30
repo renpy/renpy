@@ -439,7 +439,7 @@ init -1400 python hide:
 
         rv = layout.yesno_prompt(*args)
 
-        if config.enter_yesno_transition:
+        if config.exit_yesno_transition:
             renpy.transition(config.exit_yesno_transition)
 
         return rv
