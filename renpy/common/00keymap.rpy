@@ -24,8 +24,8 @@ init -1600 python:
         choose_renderer = [ 'G' ],
 
         # Say.
-        rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
-        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
+        rollforward = [ 'K_PAGEDOWN' ],
+        dismiss = [ 'mouseup_1', 'mousedown_5', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
         # Pause.
         dismiss_hard_pause = [ ],
