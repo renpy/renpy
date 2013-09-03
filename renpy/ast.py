@@ -672,8 +672,37 @@ class Label(Node):
         renpy.store._args = None
         renpy.store._kwargs = None
 
+        self.scene_skip()
+
         if renpy.config.label_callback:
             renpy.config.label_callback(self.name, renpy.game.context().last_abnormal)
+
+    # fast skip seen_label
+    def scene_skip(self):
+        if not renpy.game.preferences.scene_skip:
+            return
+        # don't skip special labels
+        if self.name[0] == "_" or self.name[-7:] == "_screen":
+            return
+
+        excepts = ["enter_game_menu", "after_load", "splashscreen", "before_main_menu", "confirm_quit", "main_menu", "quit"]
+        if renpy.config.except_labels:
+            excepts = excepts + renpy.config.except_labels
+
+        if self.name in excepts:
+            return
+
+        # don't skip when in replay or rollback
+        if renpy.store._in_replay or renpy.exports.in_rollback():
+            return
+
+        if renpy.exports.seen_label(self.name) or renpy.game.preferences.skip_unseen:
+            if self.name in renpy.config.scene_name:
+                current_scene = renpy.config.scene_name[self.name]
+            else:
+                current_scene = self.name
+
+            renpy.exports.call("_comfirm_scene_skip", current_scene)
 
     def restructure(self, callback):
         callback(self.block)
