@@ -48,7 +48,7 @@ which is the side image Ren'Py will display.
 
 At point B, the "eileen concerned" image is showing. The pool of attributes
 is now "eileen" and "concerned". The only matching image is "side eileen",
-so that's what Ren'Py selects. If the was a "side concerned" image, there
+so that's what Ren'Py selects. If there was a "side concerned" image, there
 would be ambiguity, and Ren'Py wouldn't display an image.
 
 
