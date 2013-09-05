@@ -1233,7 +1233,7 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties): #@Rese
             ymaximum=h,
             **properties)
 
-hotbar = Wrapper(_hotbar, style="hotbar")
+hotbar = Wrapper(_hotbar, style="hotbar", replaces=True)
 
 
 ##############################################################################
