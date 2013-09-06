@@ -724,7 +724,7 @@ one of:
 
 'c' means center, 't' top, 'tl' top left, 'br' bottom right, and so on.
 
-A side taks the following properties:
+A side takes the following properties:
 
 `spacing`
     The spacing between the rows and columns of the grid.
