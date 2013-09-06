@@ -766,7 +766,7 @@ Rarely or Internally Used
 .. var:: config.mouse_hide_time = 30
 
     The mouse is hidden after this number of seconds has elapsed
-    without any mouse input. This should be set to longer then the
+    without any mouse input. This should be set to longer than the
     expected time it will take to read a single screen, so mouse users
     will not experience the mouse appearing then disappearing between
     clicks.

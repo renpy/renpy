@@ -168,8 +168,7 @@ init -1500 python:
 
          `name`
              The name of the slot to save to. If None, an unused slot
-             (a large number based on the current time) will be
-             will be used.
+             (a large number based on the current time) will be used.
 
          `confirm`
              If true, then we will prompt before overwriting a file.
@@ -340,8 +339,7 @@ init -1500 python:
 
          `name`
              The name of the slot to save to or load from. If None, an unused slot
-             (a large number based on the current time) will be
-             will be used.
+             (a large number based on the current time) will be used.
 
          `page`
              The page that the file will be saved to or loaded from. If None, the
@@ -402,7 +400,7 @@ init -1500 python:
          that page numbers start with 1. When slot is 2, and slots_per_page
          is 10, and the other variables are the defauts:
 
-         * When the first page is slowing, this returns "2".
+         * When the first page is showing, this returns "2".
          * When the second page is showing, this returns "12".
          * When the auto page is showing, this returns "a2".
          * When the quicksave page is showing, this returns "q2".
