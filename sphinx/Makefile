@@ -2,7 +2,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+SPHINXOPTS    = -D language=$(LANGUAGE)
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
@@ -11,8 +11,10 @@ BUILDDIR      = build
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+# the i18n builder cannot share the environment and doctrees with the others
+I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -29,6 +31,8 @@ help:
 	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
 	@echo "  text       to make text files"
 	@echo "  man        to make manual pages"
+	@echo "  compile-po to make compiled MO files from PO"
+	@echo "  gettext    to make PO message catalogs"
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
@@ -112,6 +116,23 @@ man:
 	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
 	@echo
 	@echo "Build finished. The manual pages are in $(BUILDDIR)/man."
+
+compile-po:
+	@for p in $(shell find locale -name *.po); do \
+		echo $$p; \
+		mkdir -p source/locale/`basename $$p | sed s/\.po//g`/LC_MESSAGES; \
+		msgfmt --statistics $$p -o source/locale/`basename $$p | sed s/\.po//g`/LC_MESSAGES/`dirname $$p | xargs basename`.mo; \
+	done;
+
+gettext:
+	$(SPHINXBUILD) -b gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
+	@ls $(BUILDDIR)/locale
+	@for p in `find $(BUILDDIR)/locale -name *.pot`; do \
+		echo locale/`basename $$p` | sed s/\.pot//g | xargs mkdir -p; \
+		echo locale/`basename $$p` | sed s/\.pot//g | xargs mv $$p; \
+	done;
+	@echo
+	@echo "Build finished. The message catalogs are in locale."
 
 changes:
 	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes

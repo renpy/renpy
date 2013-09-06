@@ -1,0 +1,193 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/incompatible.rst:5
+# 5f060e5dbdb84bb1a31c9cb5ee788fa6
+msgid "Incompatible Changes"
+msgstr ""
+
+#: ../../source/incompatible.rst:7
+# c34e2adea138404bb4ee1941e466faab
+msgid "This is a list of changes that may require intervention in the form of changes to scripts or your development environment. Our intent is that all other changes should not affect existing scripts."
+msgstr ""
+
+#: ../../source/incompatible.rst:11
+# d1c0462caca74c699bb78afda60da6e3
+msgid "Note that setting :var:`config.script_version` will cause many of these changes to be reverted, at the cost of losing access to recent features."
+msgstr ""
+
+#: ../../source/incompatible.rst:18
+# e4b64f77b1134f8497947d9a15e3076b
+msgid "6.14"
+msgstr ""
+
+#: ../../source/incompatible.rst:20
+# 2d1719724d72496783c653e7023a057d
+msgid "Previously, Ren'Py moved archived files into the archived/ directory. It would search this directory automatically when running a game or building archives. One-click builds make this unnecessary, and files in archived/ should be moved back into the game directory."
+msgstr ""
+
+#: ../../source/incompatible.rst:25
+# fa270ccc78f3403d8e509c59cde0448e
+msgid ":func:`MoveTransition` has changed its interface. The old version of MoveTransition can be accessed as OldMoveTransition, if you don't want to rewrite your code. (The changes only matter if you use factories with MoveTransition.)"
+msgstr ""
+
+#: ../../source/incompatible.rst:30
+# 780f61422e9d43d0999aede409b832f2
+msgid ":func:`Transform` has changed its behavior with regards to asymmetrically scaled and rotated images. It's unlikely the old behavior was ever used."
+msgstr ""
+
+#: ../../source/incompatible.rst:38
+# 5443776bbe624bdda9b99c926f786984
+msgid "6.13.8"
+msgstr ""
+
+#: ../../source/incompatible.rst:40
+# 3b24cdf19c5e4cffa853bf0a0ac2d7f0
+msgid "Old-style string interpolation has been re-enabled by default. If you wrote code (between 6.13 and 6.13.7) that uses % in say or menu statements, you should either write %% instead, or include the code::"
+msgstr ""
+
+#: ../../source/incompatible.rst:48
+# 2c81dd68d8024d7185818fb8f9268df6
+msgid "6.13"
+msgstr ""
+
+#: ../../source/incompatible.rst:50
+# 1fb4f35935ba454eb1418d62803f8013
+msgid "The changes to text behavior can affect games in development in many ways. The biggest change is the introduction of new-style (square-bracket) text substitutions, and the elimination of old-style (percent-based) substitutions. These changes can be reverted with the code::"
+msgstr ""
+
+#: ../../source/incompatible.rst:60
+# 6f93bfb7beea4aeb8621b5710174156f
+msgid "New- and old-style substitutions can coexist in the same game, by setting both variables to True."
+msgstr ""
+
+#: ../../source/incompatible.rst:63
+# de22b489067b44aa821d7fbef7bb82e4
+msgid "Ren'Py has also changed the default line-wrapping behavior. While the new behavior should never increase the number of lines in a paragraph, it may change which words fall on each line. To restore the old behavior, add the code::"
+msgstr ""
+
+#: ../../source/incompatible.rst:72
+# 39e88980a85f4eb38ba89943cb530626
+msgid "A bug with negative line_spacing was fixed. This fix can cause blocks of text to shrink in height. To revert to the old behavior, use::"
+msgstr ""
+
+#: ../../source/incompatible.rst:78
+# 3395edc531904af4a8f8eb05a7f1c520
+msgid "Finally, the new text code may lead to artifacts when displaying slow text, especially in conjunction with a negative line spacing. Consider adjusting :prop:`line_overlap_split` to fix this."
+msgstr ""
+
+#: ../../source/incompatible.rst:85
+# 4c76f096b2a94ee99b96adf46c159428
+msgid "6.12.1"
+msgstr ""
+
+#: ../../source/incompatible.rst:87
+# 4f452af6d7a84f0c9b701aeb54b16804
+msgid "Image names have changed from being static names to being attribute-based. This can lead to image names that were previously distinct becoming ambiguous. To disable attribute-based image names, set :var:`config.image_attributes` to False."
+msgstr ""
+
+#: ../../source/incompatible.rst:92
+# 2a34b685b13f4104af330f71bd64dcc8
+msgid "Showing an image without providing a transform or ATL block will now continue the previous transform that the image was using. This means that a moving image may continue moving once it has changed. To revert to the old behavior, set :var:`config.keep_running_transform` to False."
+msgstr ""
+
+#: ../../source/incompatible.rst:97
+# 4c4eed5ab2684e14a843be496d25c048
+msgid "The `image` argument to :func:`Character` has changed meaning. While the old meaning was unsupported in the screens-based environment, it can be restored for compatibility purposes by setting :var:`config.new_character_image_argument` to False."
+msgstr ""
+
+#: ../../source/incompatible.rst:106
+# f210f927adbd4e08b12ced928281afe0
+msgid "6.12.0"
+msgstr ""
+
+#: ../../source/incompatible.rst:108
+# 03f3fe33339a4671a7d1d88e012d874b
+msgid "The definition of the `items` parameter of the :ref:`choice-screen` and ``nvl_choice`` screens has changed. The ``nvl_choice`` screen is deprecated in favor of the :ref:`nvl-screen` screen."
+msgstr ""
+
+#: ../../source/incompatible.rst:112
+# 759f5eced1504aefb390c7330af903fb
+msgid "Screens may be invoked at any time, in order to allow for image prediction, unless they have a predict property of False. When the predict property is not False, screens should not cause side effects to occur upon their initial display."
+msgstr ""
+
+#: ../../source/incompatible.rst:117
+# b27f563fcc844e0fb6707d504dedc381
+msgid "For performance reason, Ren'Py now ignores the position properties of ImageReferences. This means that the position properties of style.image_placement are now ignored. To revert to the old behavior, set :var:`config.imagereference_respects_position` to True."
+msgstr ""
+
+#: ../../source/incompatible.rst:125
+# 61c3b8e4592a4d7c853005285ec59593
+msgid "6.11.1"
+msgstr ""
+
+#: ../../source/incompatible.rst:127
+# f094b6e4fd6d40b29365877a820f906f
+msgid "MoveTransition has been modified to respect the xoffset and yoffset parameters of the displayables it is moving. The factory functions that are used for movement now take `xoffset` and `yoffset` parameters.  While the built-in movement factories take these parameters without problem, user-defined factories may need to be upgraded to use or ignore these additional parameters."
+msgstr ""
+
+#: ../../source/incompatible.rst:138
+# 0353be215b5e41cabf03ae3e8d3e3478
+msgid "6.11.0"
+msgstr ""
+
+#: ../../source/incompatible.rst:140
+# 3e22f66111534fcab117a36e9e580553
+msgid "The transform specified by the :var:`config.default_transform` variable is used to initialize the transform properties of images shown using the show and hide statements. The default value of this transform sets :propref:`xpos` and :propref:`xanchor` to 0.5, and :propref:`ypos` and :propref:`yanchor` to 1.0."
+msgstr ""
+
+#: ../../source/incompatible.rst:146
+# 925296eaefc2443fa789018f7e9dd37b
+msgid "This represents a change in the default value of these style properties, which were previously uninitialized and hence defaulted to 0."
+msgstr ""
+
+#: ../../source/incompatible.rst:150
+# 7ce076d9a2e649bbab21a14b38ca2af2
+msgid "By including the :var:`reset` transform in ATL transforms, these properties can be reset back to 0. Alternatively, one can stop using the default transform, and revert to the old behavior, using the code::"
+msgstr ""
+
+#: ../../source/incompatible.rst:163
+# 0fb2021820304d4ab3cff0e5a04dcf92
+msgid "If a transform does not define one of the position properties :propref:`xpos`, :propref:`ypos`, :propref:`xanchor`, or :propref:`yanchor`, that property will be taken from the transform's child, if the defines that property."
+msgstr ""
+
+#: ../../source/incompatible.rst:168
+# 50c93df447a74c1798ea88f545cb4938
+msgid "This makes it possible to have one transform control a displayable's vertical motion, and the other control the horizontal. But this is incompatible with previous behavior, and so can be disabled with the :var:`config.transform_uses_child_position` variable. ::"
+msgstr ""
+
+#: ../../source/incompatible.rst:179
+# 21d6457a6fa046d98219d27ec33b9190
+msgid "6.10.0"
+msgstr ""
+
+#: ../../source/incompatible.rst:181
+# 1f003bd4b9fc46cbbaeb00e4655ffae8
+msgid "The default positions (left, right, center, truecenter, offscreenleft, and offscreenright) are now defined as ATL transforms. This means that showing an image at such a position will cause the position to be remembered. If you do not want this behavior, you need to redefine these positions, by adding the code::"
+msgstr ""
+
+#: ../../source/incompatible.rst:197
+# 52732690ac84490eb47988e88c4e32fe
+msgid "6.9.2"
+msgstr ""
+
+#: ../../source/incompatible.rst:199
+# 7ccacb77df66456aa75a30d342c8b7d1
+msgid "To migrate your game from Ren'Py 6.9.2 or later, copy the directory containing your game into your projects directory. You can choose a projects directory by clicking \"Options\", \"Projects Directory\" in the Launcher. Please see the `Ren'Py 6.9.2 release notes <http://www.renpy.org/wiki/renpy/releases/6.9.2>`_ for information about migrating from older releases."
+msgstr ""
+
