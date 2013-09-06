@@ -171,6 +171,8 @@ html_use_smartypants = False
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'TheRenPyVisualNovelEnginedoc'
 
+locale_dirs = ["locale/"]
+
 
 # -- Options for LaTeX output --------------------------------------------------
 

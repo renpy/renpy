@@ -1,0 +1,508 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/quickstart.rst:5
+# 8b325dd8f47b4f648f091289e3db64fc
+msgid "Quickstart"
+msgstr ""
+
+#: ../../source/quickstart.rst:7
+# 4d025aeace3642f4a5d97b3803b7c78c
+msgid "Welcome to the Ren'Py quickstart manual. The purpose of this manual is to demonstrate how you can make a Ren'Py game from scratch, in a few easy steps. We'll do this by showing how to make a simple game, *The Question*, from scratch. This manual contains a number of examples, which are included as part of the demo game."
+msgstr ""
+
+#: ../../source/quickstart.rst:14
+# 107f4b61c4cc469283a32077f2ce8ef4
+msgid "The Ren'Py Launcher"
+msgstr ""
+
+#: ../../source/quickstart.rst:17
+# 1d31d78773444a3d90042f1c5fd437bd
+msgid "Before you begin making a game, you should first take some time to learn how the Ren'Py launcher works. The launcher lets you create, manage, edit, and run Ren'Py projects."
+msgstr ""
+
+#: ../../source/quickstart.rst:21
+# 010f0733a9614824975d3f65c27072df
+msgid "**Getting Started.** To get started you'll want to `download Ren'Py <http://www.renpy.org/wiki/renpy/Download_Ren'Py>`_."
+msgstr ""
+
+#: ../../source/quickstart.rst:24
+# 18acb8e910384c78afb361ec6b6bb945
+msgid "Once you've downloaded Ren'Py, you'll want to extract it. This can generally be done by right-clicking on the package file, and picking \"Extract\" if that's an option, or \"Open\" if it's not. Follow the prompts, and you'll have a working copy of Ren'Py."
+msgstr ""
+
+#: ../../source/quickstart.rst:31
+# c79c568128554fc3986df459e3ec5817
+msgid "Please be sure you've extracted Ren'Py to its own directory or folder on disk. If you try to run it from inside a ZIP file, it won't work properly."
+msgstr ""
+
+#: ../../source/quickstart.rst:35
+# 3fe94d0dac42424bbbb994b4da15cf89
+msgid "Once you've extracted Ren'Py, you'll need to run it."
+msgstr ""
+
+#: ../../source/quickstart.rst:37
+# a3e50e3844e946c185b86adee9482f3a
+msgid "On Windows, run the ``renpy`` or ``renpy.exe`` program."
+msgstr ""
+
+#: ../../source/quickstart.rst:38
+# 1d197b69783e493295303132d36103a5
+msgid "On Mac OS X, run the ``renpy`` application."
+msgstr ""
+
+#: ../../source/quickstart.rst:39
+# a7b021ad8b8a40ba814a0fa666745e64
+msgid "On Linux, run the ``renpy.sh`` script."
+msgstr ""
+
+#: ../../source/quickstart.rst:42
+# 76614e99e46e4eb0ba6a44a27e8addd7
+msgid "After running this, the Ren'Py launcher should run."
+msgstr ""
+
+#: ../../source/quickstart.rst:48
+# 8c9633c29960493a8122fe4753710fa4
+msgid "**Choosing and Launching a Project.** You should first see what the completed *The Question* game looks like. To do this, start the Ren'Py launcher, and choose \"The Question\" from the first screen. Choose \"Launch Project\" to start *The Question*."
+msgstr ""
+
+#: ../../source/quickstart.rst:53
+# 7d35b54c2b2f4b049eaa5ddfc38afd1a
+msgid "You can get back to the Ren'Py demo by doing the same thing, but choosing \"Tutorial\" instead of \"The Question\"."
+msgstr ""
+
+#: ../../source/quickstart.rst:56
+# 5cba1b5f68d54245b946346690c4b2d0
+msgid "**Creating a new Project.** Create a new project by choosing \"Create New Project\" from the launcher. The launcher will then ask you for a project name. Since \"the_question\" is already taken, you should enter something different, like \"My Question\". The launcher will then ask you to choose a color theme for the project. It doesn't matter what you pick at this point, just choose something that appeals to you. You'll be returned to the top menu of the launcher with your new game chosen."
+msgstr ""
+
+#: ../../source/quickstart.rst:66
+# e54dd070861b494f8be89d4853c0a51e
+msgid "A Simple Game"
+msgstr ""
+
+#: ../../source/quickstart.rst:81
+# 940fcbc267874e48af056dfc0741e410
+msgid "This is perhaps one of the simplest Ren'Py games. It doesn't include any pictures or anything like that, but it does show a conversation between the two characters."
+msgstr ""
+
+#: ../../source/quickstart.rst:85
+# cf1c18a2b7f84d9185fb6273d65e38f5
+msgid "To try this out, go into the launcher, select the \"My Question Project\", and choose \"script.rpy\" from under Edit Files. Ren'Py may ask you to select a text editor, after which it will download the editor you select. When it finishes, script.rpy will open in an editor.  Erase everything in script.rpy, as we're starting from scratch, so you don't need what's there. Copy the example above into script.rpy, and save it."
+msgstr ""
+
+#: ../../source/quickstart.rst:93
+# d8bde56a21d3415f9ba70abdcb7436e8
+msgid "You're now ready to run this example. Go back to the launcher, and choose \"Launch Project\". Ren'Py will start up. Notice how, without any extra work, Ren'Py has given you menus that let you load and save the game, and change various preferences. When ready, click \"Launch Project\", and play through this example game."
+msgstr ""
+
+#: ../../source/quickstart.rst:99
+# 516a684c17574b6aac24179699944f0e
+msgid "This example shows some of the commonly-used Ren'Py statements."
+msgstr ""
+
+#: ../../source/quickstart.rst:101
+# f1ea848a2e37470ca2a356d224ff4e84
+msgid "The first line is a label statement. The label statement is used to give a name to a place in the program. In this case, we create a label named ``start``. The start label is special, as it's where Ren'Py scripts begin running when the user clicks \"Start Game\" on the main menu."
+msgstr ""
+
+#: ../../source/quickstart.rst:107
+# ac7bee9264f24e8f9d4cb8c819f74cbe
+msgid "The other lines are say statements. There are two forms of the say statement. The first is a string (beginning with a double-quote, containing characters, and ending with a double-quote) on a line by itself, which is used for narration, and the thoughts of the main character. The second form consists of two strings. It's used for dialogue, with the first string being a character name and the second being what that character is saying."
+msgstr ""
+
+#: ../../source/quickstart.rst:115
+# bc54b37796ca40a68fba90369cdf6f3a
+msgid "Note that all the say statements are indented by four spaces. This is because they are a block underneath the label statement. In Ren'Py, blocks must be indented relative to the prior statement, and all of the statements in a block must be indented by the same amount."
+msgstr ""
+
+#: ../../source/quickstart.rst:120
+# 3699fb8bb6c04fcba8461cba61b182a1
+msgid "When strings contain double-quote characters, those characters need to be preceded by a backslash. This is done in the last line of our example."
+msgstr ""
+
+#: ../../source/quickstart.rst:124
+# 407cbce2a58347ddb1ff7c60489f0fc6
+msgid "While this simple game isn't much to look at, it's an example of how easy it is to get something working in Ren'Py. We'll add the pictures in a little bit, but first, let's see how to declare characters."
+msgstr ""
+
+#: ../../source/quickstart.rst:129
+# 98000ccdfd0e4af794f2bdab503c1581
+msgid "Characters"
+msgstr ""
+
+#: ../../source/quickstart.rst:131
+# d7d366d91df0453e9e779f9a5799f963
+msgid "One problem with the first example is that it requires you to repeatedly type the name of a character each time they speak. In a dialogue-heavy game, this might be a lot of typing. Also, both character names are displayed in the same way, in fairly boring white text. To fix this, Ren'Py lets you define characters in advance. This lets you associate a short name with a character, and to change the color of the character's name."
+msgstr ""
+
+#: ../../source/quickstart.rst:156
+# fb0590825382442c92ed35bfa8cc9a6c
+msgid "The first and and second lines define characters. The first line defines a character with the short name of \"s\", the long name \"Sylvie\", with a name that is shown in a greenish color. (The colors are red-green-blue hex triples, as used in web pages.)"
+msgstr ""
+
+#: ../../source/quickstart.rst:161
+# 83df6eeda9404df28d5f62cbc9cc1738
+msgid "The second line creates a character with a short name \"m\", a long name \"Me\", with the name shown in a reddish color. Other characters can be defined by copying one of the character lines, and changing the short name, long name, and color."
+msgstr ""
+
+#: ../../source/quickstart.rst:166
+# 7da677caa8c54c0fa8bb72cf4b47c6f7
+msgid "We've also changed the say statements to use character objects instead of a character name string. This tells Ren'Py to use the characters we defined in the init block."
+msgstr ""
+
+#: ../../source/quickstart.rst:171
+# 99f7c0d5e855424f86eea151fdc583d2
+msgid "Images"
+msgstr ""
+
+#: ../../source/quickstart.rst:173
+# d066fa1d5ff844e384d01ebcfe2e0efa
+msgid "A visual novel isn't much of a visual novel without pictures. Let's add some pictures to our game."
+msgstr ""
+
+#: ../../source/quickstart.rst:206
+# 2ec1c5e6181a445884d81a6dac8996c4
+msgid "The first new thing we needed to do was to declare the images, using image statements on lines 2, 3, 5, and 6, inside the init block. These image statements give an image name, and the filename the image is found in."
+msgstr ""
+
+#: ../../source/quickstart.rst:211
+# a8ed8169acbf4e358981a46f86f6c87f
+msgid "For example, line 5 declares an image named \"sylvie smile\", found in the filename \"sylvie_smile.png\", with the tag \"sylvie\"."
+msgstr ""
+
+#: ../../source/quickstart.rst:214
+# bb6ed71d9ba845239edb7de36a4882ce
+msgid "We have a scene statement on line 12. This statement clears out the screen, and shows the \"bg meadow\" image. The next line is a show statement, which shows the \"sylvie smile\" image on the screen."
+msgstr ""
+
+#: ../../source/quickstart.rst:218
+# 543f15f0fd434805a05f2e793f55537b
+msgid "The first part of an image name is the image tag. If an image is being shown, and another image with the same tag is on the screen, then the image that's on the screen is replaced with the one being shown. This happens on line 19, the second show statement. Before line 19 is run, the image \"sylvie smile\" is on the screen. When line 19 is run, that image is replaces with \"sylvie surprised\", since they share the \"sylvie\" tag."
+msgstr ""
+
+#: ../../source/quickstart.rst:226
+# bfe5c10a579e4220b6f97c250046876d
+msgid "For Ren'Py to find the image files, they need to be placed in the game directory of the current project. The game directory can be found at \"`Project-Name`/game/\", or by clicking the \"Game Directory\" button in the launcher. You'll probably want to copy the image files from the \"the_question/game/\" directory into the \"my_question/game/\" directory, so you can run this example."
+msgstr ""
+
+#: ../../source/quickstart.rst:233
+# a5fbb7d55d494a7cb54f1897332bf64c
+msgid "Ren'Py does not make any distinction between character and background art, as they're both treated as images. In general, character art needs to be transparent, which means it should be a PNG file. Background art can be JPEG or PNG files. By convention, background images start with the \"bg\" tag."
+msgstr ""
+
+#: ../../source/quickstart.rst:239
+# ab6162a0f6a448a397bea4061622ca7d
+msgid "**Hide Statement.** Ren'Py also supports a hide statement, which hides the given image."
+msgstr ""
+
+#: ../../source/quickstart.rst:254
+# 92d09d47ea4940d69773bfd308badb1e
+msgid "It's actually pretty rare that you'll need to use hide. Show can be used when a character is changing emotions, while scene is used when everyone leaves. You only need to use hide when a character leaves and the scene stays the same."
+msgstr ""
+
+#: ../../source/quickstart.rst:260
+# 83cfb9ede315402597c33dd6f874949d
+msgid "Transitions"
+msgstr ""
+
+#: ../../source/quickstart.rst:262
+# 81c0329e56a64391bf5939e883358a27
+msgid "Simply having pictures pop in and out is boring, so Ren'Py implements transitions that can make changes to the screen more interesting. Transitions change the screen from what it looked like at the end of the last interaction (dialogue, menu, or transition), to what it looks like after any scene, show, and hide statements."
+msgstr ""
+
+#: ../../source/quickstart.rst:294
+# b479b318d7e74e44930f88a2fca9f93b
+msgid "The with statement takes the name of a transition to use. The most common one is ``dissolve`` which dissolves from one screen to the next. Another useful transition is ``fade`` which fades the screen to black, and then fades in the new screen."
+msgstr ""
+
+#: ../../source/quickstart.rst:299
+# bd1575f9f9ef431687464bf2b8156365
+msgid "When a transition is placed after multiple scene, show, or hide statements, it applies to them all at once. If you were to write::"
+msgstr ""
+
+#: ../../source/quickstart.rst:307
+# 3db5516a226d4f77992320e34f83bcf8
+msgid "Both the \"bg meadow\" and \"sylvie smiles\" would be dissolved in at the same time. To dissolve them in one at a time, you need to write two with statements::"
+msgstr ""
+
+#: ../../source/quickstart.rst:317
+# e53473be498a4f43b85f1df7e25749e7
+msgid "This first dissolves in the meadow, and then dissolves in sylvie. If you wanted to instantly show the meadow, and then show sylvie, you could write::"
+msgstr ""
+
+#: ../../source/quickstart.rst:327
+# 0b6e29aa70cf4635a45d03a83803f15f
+msgid "Here, None is used to indicate a special transition that updates Ren'Py's idea of what the prior screen was, without actually showing anything to the user."
+msgstr ""
+
+#: ../../source/quickstart.rst:332
+# f668d099f510455fb3d6fb0a4be161a9
+msgid "Positions"
+msgstr ""
+
+#: ../../source/quickstart.rst:334
+# 2fe00379bbe74cfea0a8d45794dc023c
+msgid "By default, images are shown centered horizontally, and with their bottom edge touching the bottom of the screen. This is usually okay for backgrounds and single characters, but when showing more than one character on the screen it probably makes sense to do it at another position. It also might make sense to reposition a character for story purposes."
+msgstr ""
+
+#: ../../source/quickstart.rst:346
+# 650fbe1d82da4387a09b757178106eec
+msgid "To do this repositioning, add an at-clause to a show statement. The at clause takes a position, and shows the image at that position. Ren'Py includes several pre-defined positions: ``left`` for the right side of the screen, ``right`` for the right side, ``center`` for centered horizontally (the default), and ``truecenter`` for centered horizontally and vertically."
+msgstr ""
+
+#: ../../source/quickstart.rst:353
+# 502e776e0c08493284b95be0d58f0923
+msgid "A user can define their own positions, and event complicated moves, but that's outside of the scope of this quickstart."
+msgstr ""
+
+#: ../../source/quickstart.rst:357
+# ff7047804d0b4f0fb1c08a52bc5e2405
+msgid "Music and Sound"
+msgstr ""
+
+#: ../../source/quickstart.rst:359
+# e1ee418b178f458aa80d08976f1013ba
+msgid "Most games play music in the background. In Ren'Py, music files automatically loop until they are stopped by the user. Music is played with the play music statement. ::"
+msgstr ""
+
+#: ../../source/quickstart.rst:367
+# fa4e6cf61ecf4efc83badcb92939b039
+msgid "When changing music, one can supply a fadeout clause, which is used to fade out the old music when new music is played. ::"
+msgstr ""
+
+#: ../../source/quickstart.rst:373
+# 3ed0e69c43ba40729db037a83971af6a
+msgid "Music can be stopped with the stop music statement, which can also optionally take a fadeout clause. ::"
+msgstr ""
+
+#: ../../source/quickstart.rst:379
+# bdeadfbb593d4ffbabb5f1376bd16efc
+msgid "Sound effects can be played with the play sound statement::"
+msgstr ""
+
+#: ../../source/quickstart.rst:384
+# 09ee8dffda1943fbba53977745bc2960
+msgid "Ren'Py support many formats for sound and music, but OGG Vorbis is preferred. Like image files, sound and music files must be placed in the game directory."
+msgstr ""
+
+#: ../../source/quickstart.rst:389
+# 43069786bd614e1789efe1ddec5bf9b2
+msgid "Ending the Game"
+msgstr ""
+
+#: ../../source/quickstart.rst:391
+# 3d1a08e52b0d4498855bc06a260622f8
+msgid "You can end the game by running the return statement, without having called anything. Before doing this, it's best to put something in the game that indicates that the game is ending, and perhaps giving the user an ending number or ending name. ::"
+msgstr ""
+
+#: ../../source/quickstart.rst:401
+# b88a1cc4876e4dbc943cd67040cdb490
+msgid "That's all you need to make a kinetic novel, a game without any choices in it. Now, we'll look at what it takes to make a game that presents menus to the user."
+msgstr ""
+
+#: ../../source/quickstart.rst:406
+# 039225c4effa42f9981e58895682670c
+msgid "Menus, Labels, and Jumps"
+msgstr ""
+
+#: ../../source/quickstart.rst:408
+# bc2cedb276a44cdf9214858726a05b2e
+msgid "The menu statement lets you present a choice to the user::"
+msgstr ""
+
+#: ../../source/quickstart.rst:434
+# a2c79bc07bb54f65acbd2077e5e19756
+msgid "This example shows how menus are used with Ren'Py. The menu statement introduces an in-game-menu. The menu statement takes a block of lines, each consisting of a string followed by a colon. These are the menu choices which are presented to the user. Each menu choice should be followed by a block of one or more Ren'Py statements. When a choice is chosen, the statements following it are run."
+msgstr ""
+
+#: ../../source/quickstart.rst:441
+# e9e7fb6cfefd495aba5987f61d86717a
+msgid "In our example, each menu choice runs a jump statement. The jump statement transfers control to a label defined using the label statement. The code following that label is run."
+msgstr ""
+
+#: ../../source/quickstart.rst:445
+# 8121685efa244c70b5a8348796025970
+msgid "In our example above, after Sylvie asks her question, the user is presented with a menu containing two choices. If the user picks \"It's a story with pictures.\", the first jump statement is run, and control is transferred to the vn label. This will cause the pov character to say \"It's a story with pictures and music.\", after which control is transferred to the marry label."
+msgstr ""
+
+#: ../../source/quickstart.rst:452
+# 4fd20c97259f4531a04908d602e008f5
+msgid "Labels may be defined in any file that is in the game directory, and ends with .rpy. The filename doesn't matter to Ren'Py, only the labels contained within it. A label may only appear in a single file."
+msgstr ""
+
+#: ../../source/quickstart.rst:457
+# 4146cc2af30349b79ccefa0a3a949dbb
+msgid "Python and If Statements"
+msgstr ""
+
+#: ../../source/quickstart.rst:459
+# 82b05ecee0e448ffbad1957c193f46c9
+msgid "While simple (and even fairly complex) games can be made using only using menus and jump statements, after a point it becomes necessary to store the user's choices in variables, and access them again later. This is what Ren'Py's python support is for."
+msgstr ""
+
+#: ../../source/quickstart.rst:464
+# dee47149f6dc4df8bdedd370019322ba
+msgid "Python support can be accessed in two ways. A line beginning with a dollar-sign is a single-line python statement, while the keyword \"python:\" is used to introduce a block of python statements."
+msgstr ""
+
+#: ../../source/quickstart.rst:468
+# 7f2b2581e1b44088a6ea46eb3536883e
+msgid "Python makes it easy to store flags in response to user input. Just initialize the flag at the start of the game::"
+msgstr ""
+
+#: ../../source/quickstart.rst:474
+# 209bfb70c4f4416c8321cd165479a257
+msgid "You can then change the flag in code that is chosen by menus::"
+msgstr ""
+
+#: ../../source/quickstart.rst:487
+# d54dfc99c855433aa4998b2da294f8ed
+msgid "And check it later::"
+msgstr ""
+
+#: ../../source/quickstart.rst:497
+# fb6524caa398453d9a5548fd221325c6
+msgid "Of course, python variables need not be simple True/False values. They can be arbitrary python values. They can be used to store the player's name, to store a points score, or for any other purpose. Since Ren'Py includes the ability to use the full Python programming language, many things are possible."
+msgstr ""
+
+#: ../../source/quickstart.rst:504
+# fd6444528cec4779b4274cbe3b8f04d0
+msgid "Releasing Your Game"
+msgstr ""
+
+#: ../../source/quickstart.rst:506
+# 5473a81d6d8f4059bcbd89bcd9e72901
+msgid "Once you've made a game, there are a number of things you should do before releasing it:"
+msgstr ""
+
+#: ../../source/quickstart.rst:514
+# ca6faf4e36d744cfaba2281048078ee1
+msgid "**Edit options.rpy.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:510
+# 8d1e5afe2e5c4be4b5d9e661de43ef0b
+msgid "The options.rpy file, created when you create a new game, contains a number of settings that you may want to customize. Some of them, like the screen height and screen width, should probably be set before making the game. Others, like the window title, can be set any time."
+msgstr ""
+
+#: ../../source/quickstart.rst:524
+# 7125a528aced462387323c17cc2abfcd
+msgid "**Add a plug for Ren'Py.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:517
+# c379479d7b5b40ca80d0d7f742022cb5
+msgid "This step is completely optional, but we do ask that if you have credits in your game, you mention Ren'Py in them. We suggest using something like \"Made with the Ren'Py visual novel engine.\", but that's just a suggestion, and what you write is up to you."
+msgstr ""
+
+#: ../../source/quickstart.rst:522
+# 75f06b82eeff4781be68775cf67cda53
+msgid "We think that the games people make are the best advertising for Ren'Py, and we hope that by including this, you'll help more people learn how to make visual novels in Ren'Py."
+msgstr ""
+
+#: ../../source/quickstart.rst:532
+# d1151d6c9f0b4816a47e75c03bc2feeb
+msgid "**Check for a new version of Ren'Py.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:527
+# 9c9e1b22d75942f49b7a2dd0d94c7642
+msgid "New versions of Ren'Py are released on a regular basis, to fix bugs and add new features. You should check the `download page <http://www.renpy.org/wiki/renpy/Download_Ren'Py>`_ to see if a new version has come out. You may also want to see if any bug-fixes are available on that page."
+msgstr ""
+
+#: ../../source/quickstart.rst:539
+# 50363d00631c4a9db7d2cdfb9daa8afc
+msgid "**Check the Script.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:535
+# bd9e78cc5e18407fa08db491deddd4a2
+msgid "From the front page of the launcher, choose \"Check Script (Lint)\". This will check your games for errors that may affect some users. These errors can affect users on the Mac and Linux platforms, so it's important to fix them all, even if you don't see them on your computer."
+msgstr ""
+
+#: ../../source/quickstart.rst:545
+# 9f2fb6126f5a4c3981baa02270bb2f36
+msgid "**Build Distributions.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:542
+# f2ca265ba1444a799a5c311244c57d4b
+msgid "From the front page of the launcher, choose \"Build Distributions\". Based on the information contained in options.rpy, the launcher will build one or more archive files containing your game."
+msgstr ""
+
+#: ../../source/quickstart.rst:551
+# 9c1107cbf4134779bf06efd19f4f58f2
+msgid "**Test.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:548
+# c0fd6e2b382d4f4ba05dd691515f3691
+msgid "Lint is not a substitute for thorough testing. It's your responsibility to check your game before it is released. Consider asking friends to help beta-test your game, as often a tester can find problems you can't."
+msgstr ""
+
+#: ../../source/quickstart.rst:559
+# 9b7a7e3c77dc4f5d85de79ab7bfbd18f
+msgid "**Release.**"
+msgstr ""
+
+#: ../../source/quickstart.rst:554
+# aa3465b69a524f9da8918b82a3cb40e3
+msgid "You should post the generated files (for Windows, Mac, and Linux) up on the web somewhere, and tell people where to download them from. Congratulations, you've released a game!"
+msgstr ""
+
+#: ../../source/quickstart.rst:558
+# 211ffaf6799c431d83bf0fee4ef7a96a
+msgid "Please also add your released game to our `games database <http://games.renpy.org>`_, so we can keep track of the Ren'Py games being made."
+msgstr ""
+
+#: ../../source/quickstart.rst:562
+# 63eaff63d89f4bd8a0e3ff2d046d3fee
+msgid "Script of The Question"
+msgstr ""
+
+#: ../../source/quickstart.rst:564
+# b5f4106de795438699d181c1b8e82fb6
+msgid "You can view the full script of ''The Question'' :ref:`here <thequestion>`."
+msgstr ""
+
+#: ../../source/quickstart.rst:567
+# e63c4a2a7a7442c2acac8c6e89a148a2
+msgid "Where do we go from here?"
+msgstr ""
+
+#: ../../source/quickstart.rst:569
+# 7aac6adddbb94fb3a897128347e2616b
+msgid "This Quickstart has barely scratched the surface of what Ren'Py is capable of. For simplicity's sake, we've omitted many features Ren'Py supports. To get a feel for what Ren'Py is capable of, we suggest playing through the demo, and having Eileen demonstrate these features to you."
+msgstr ""
+
+#: ../../source/quickstart.rst:575
+# a701c62b1188477cb3074f18d6d32cef
+msgid "You may also want to read the rest of this (complex) manual, as it's the definitive guide to Ren'Py."
+msgstr ""
+
+#: ../../source/quickstart.rst:578
+# ad82a9460362479ba0fb7c23520203a9
+msgid "On the Ren'Py website, there's the a `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ giving answers to common questions, and a `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ giving useful code smippets. If you have questions, we suggest asking them at the `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_, the official forum of Ren'Py. This is the central hub of the Ren'Py community, and we welcome new users, and the questions they bring."
+msgstr ""
+
+#: ../../source/quickstart.rst:585
+# 9922b9af21824a38bd41213a01a8ce13
+msgid "Thank you for choosing the Ren'Py visual novel engine. We look forward to seeing what you can create with it!"
+msgstr ""
+

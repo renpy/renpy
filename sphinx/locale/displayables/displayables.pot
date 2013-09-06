@@ -1,0 +1,647 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/displayables.rst:7
+# 3ad20a7932d941b08fa74aea43b7baaa
+msgid "Displayables"
+msgstr ""
+
+#: ../../source/displayables.rst:9
+# d9f69d12518143cfa4ed13853c3950ca
+msgid "A displayable is an object that can be shown to the user. Ren'Py displayables can be used in many ways."
+msgstr ""
+
+#: ../../source/displayables.rst:12
+# 598835b5a28641208549ef994e2823f5
+msgid "Assignment to an image name using the image statement."
+msgstr ""
+
+#: ../../source/displayables.rst:13
+# 6b3d17b469bf4a8a90cd0216ba5c781d
+msgid "Added to a screen using the screen language add statement."
+msgstr ""
+
+#: ../../source/displayables.rst:14
+# 33742b367830431186f0b1807452b7fc
+msgid "Assignment to certain config variables."
+msgstr ""
+
+#: ../../source/displayables.rst:15
+# c7f78689a35245f1ba48646edc763f80
+msgid "Assignment to certain style properties."
+msgstr ""
+
+#: ../../source/displayables.rst:17
+# f5d3e8922123467ba3d4bfe923043637
+msgid "When a Ren'Py function or variable expects a displayable, there are four things that can be provided:"
+msgstr ""
+
+#: ../../source/displayables.rst:20
+# 93ac9f67f73846be9b634fc0d510ea6b
+msgid "An object of type Displayable, created by calling one of the functions given below."
+msgstr ""
+
+#: ../../source/displayables.rst:22
+# 75185dfc6b214d208927d6878fb47a7e
+msgid "A string with a dot (.) in it. Such a string is interpreted as a filename by :func:`Image`."
+msgstr ""
+
+#: ../../source/displayables.rst:24
+# 53ec85e4d1904c8789ca92620b2b2364
+msgid "A color. A color may either be given as a hexidecimal color string in \"#rgb\", \"#rgba\", \"#rrggbb\", or \"#rrggbbaa\" form, or an (r, g, b, a) tuple, where each component is an integer between 0 and 255. Colors are passed to :func:`Solid`."
+msgstr ""
+
+#: ../../source/displayables.rst:28
+# 7979ea153b1146a587b3a7d7b0ed5647
+msgid "An image name. Any other string is interpreted as a reference to an image defined with the image statement."
+msgstr ""
+
+#: ../../source/displayables.rst:34
+# e7131114ed7848df84acd64a01055e71
+msgid "Images"
+msgstr ""
+
+#: ../../source/displayables.rst:36
+# 678f130a9e31409c86d6411a37a467bc
+msgid "The most commonly used displayable is Image, which loads a file from disk and displays it. Since Image is so commonly used, when a string giving a filename is used in a context that expects a displayable, an Image is automatically created. The only time it's necessary to use Image directly is when you want to create an image with style properties."
+msgstr ""
+
+#: ../../source/inc/im_image:5
+# 5655b9ad4d6b46dc9bd035cdb394cbea
+msgid "Loads an image from a file. `filename` is a string giving the name of the file."
+msgstr ""
+
+#: ../../source/inc/im_image:8
+# a45a4ef772a94a599e0e9923889ed564
+msgid "`filename` should be a JPEG or PNG file with an appropriate extension."
+msgstr ""
+
+#: ../../source/displayables.rst:55
+# 20505a92cbad40f6b9f5e8e2c981f992
+msgid "Loading an Image from from a file on disk and decoding it so it can be drawn to the screen takes a long amount of time. While measured in the tenths or hundreds of seconds, the duration of the loading process is long enough that it can prevent an acceptable framerate, and become annoying to the user."
+msgstr ""
+
+#: ../../source/displayables.rst:61
+# cc15fdab440249c186f70a93637947f7
+msgid "Since an Image is of a fixed size, and doesn't change in response to input, game state, or the size of the area available to it, an Image can be loaded before it is needed, and placed into an area of memory known as the image cache. Once an Image is decoded and in the cache, it can be quickly drawn to the screen."
+msgstr ""
+
+#: ../../source/displayables.rst:67
+# 0a943fa6eebb4ff28cf31b8ec04304cc
+msgid "Ren'Py attempts to predict the images that will be used in the future, and loads them into the image cache before they are used. When space in the cache is needed for other images, Ren'Py will remove images that are no longer being used."
+msgstr ""
+
+#: ../../source/displayables.rst:72
+# 150c520d3804497d9c0ca26c274bd39b
+msgid "By default, Ren'Py will predictively cache up to 8 screens worth of image data. (If your screen is 800x600, then a screen's worth of data is one 800x600 image, two 400x600 images, and so on.) This can be changed with the :var:config.image_cache_size configuration variable."
+msgstr ""
+
+#: ../../source/displayables.rst:78
+# c7f2835c7e6a4983b8727a35ba67656f
+msgid "Although the precise amount is dependent on implementation details and there is significant overhead, as a rule of thumb, each pixel in the image cache consumes 4 bytes of main memory and 4 bytes of video memory."
+msgstr ""
+
+#: ../../source/displayables.rst:84
+# f5b5cc893dac40a198530f95650acf03
+msgid "Image-Like Displayables"
+msgstr ""
+
+#: ../../source/displayables.rst:86
+# bc78439fe2474fffacaaf0fd2622eec1
+msgid "We call these displayables image-like because they take up a rectangular area of the screen, and do not react to input.  These differ from normal images by varying their size to fill an area (Frame, LiveTile, and Solid), or by allowing the user to specify their size (LiveComposite, LiveCrop, Null). They are not image manipulators."
+msgstr ""
+
+#: ../../source/displayables.rst:92
+# 8f87951198854ebe8436d476b450aa25
+msgid "Image-like displayables take :ref:`position-style-properties`."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:5
+# eb1511d0567e4e20ade49bf8bc9a91f3
+msgid "This flattens `child`, which may be made up of multiple textures, into a single texture."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:8
+# 55cd3a6afe244f45ab1cbc57e3ece93e
+msgid "Certain operations, like the alpha transform property, apply to every texture making up a displayable, which can yield incorrect results when the textures overlap on screen. Flatten creates a single texture from multiple textures, which can prevent this problem."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:13
+# 5f4c14d078fb4318b30f7dd1ad1ce4d7
+msgid "Flatten is a relatively expensive operation, and so should only be used when absolutely required."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:18
+# 64364114d7394581b053b0dfc4c4d86b
+msgid "A displayable that resizes an image to fill the available area, while preserving the width and height of its borders.  is often used as the background of a window or button."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:27
+# 4b3ba9390c1346fa936de1ce84bba7ce
+msgid "`image`"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:27
+# eb23c093b90c43ca8700862f48e1dfd8
+msgid "An image manipulator that will be resized by this frame."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:30
+# 4531dc1fbb294287bd1b3ff88907fc18
+msgid "`left`"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:30
+# 98aa386532414198a3312bac5ae548d6
+msgid "The size of the border on the left side."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:33
+# 4802f90384204b7a89b4b49ce61083b5
+msgid "`top`"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:33
+# 081353dca9f0462b865d93304a032a7f
+msgid "The size of the border on the top."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:37
+# dbf320f2b63b4f2cb7df598134291f89
+msgid "`right`"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:36
+# bd3e6e55513f44f5b5d453876eed2618
+msgid "The size of the border on the right side. If None, defaults to `left`."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:40
+# 8b54cd032a494192bf072c97d16fa0b4
+msgid "`bottom`"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:40
+# 2ffd2f2c02354b79a11fe6f5bef0e362
+msgid "The side of the border on the bottom. If None, defaults to `top`."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:44
+# 4c5dae50fcc343ec97112612891b8ec5
+msgid "`tile`"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:43
+# 8485400fcf164075b7bb2fff8bdbdb62
+msgid "If true, tiling is used to resize sections of the image, rather than scaling."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:55
+# 5235dca55d844691bf41a5ccce7d0aab
+msgid "This created a displayable by cropping `child` to `rect`, where `rect` is an (x, y, width, height) tuple. ::"
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:62
+# 4f7bd21db58e4b2f938021d74de71fd5
+msgid "Tiles `child` until it fills the area allocated to this displayable."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:70
+# f2f66f27ddfd4caa8a4c385128d417e1
+msgid "A displayable that creates an empty box on the screen. The size of the box is controlled by `width` and `height`. This can be used when a displayable requires a child, but no child is suitable, or as a spacer inside a box."
+msgstr ""
+
+#: ../../source/inc/disp_imagelike:81
+# af02b69ac8924310b098672e8bf94f23
+msgid "A displayable that fills the area its assigned with `color`."
+msgstr ""
+
+#: ../../source/displayables.rst:98
+# ba7d892413b6458a995b0904973bca57
+msgid "Dynamic Displayables"
+msgstr ""
+
+#: ../../source/displayables.rst:100
+# 3edf3581e83242a2be16f17c057a7bbe
+msgid "Dynamic displayables display a child displayable based on the state of the game. They do not take any properties, as layout is controlled by the properties of the child displayable they return."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:5
+# eada71b4f1c245ff9fa5e49078b6019b
+msgid "This is a displayable that changes what it is showing based on python conditions. The positional argument should be given in groups of two, where each group consists of:"
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:9
+# e63dd72358b641aa8e8c8d5980ebca75
+msgid "A string containing a python condition."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:10
+#: ../../source/inc/disp_dynamic:66
+# 9a3653a2e4bd47ac8ebd85326c2e2def
+# 3ee6b34bf1c84eeba7ec455ec11728e0
+msgid "A displayable to use if the condition is true."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:12
+# d82a53aab03c4e43807bd4d05a001b7a
+msgid "The first true condition has its displayable shown, at least one condition should always be true."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:23
+# 6f73319c06a14d9196c843b3ec57e045
+msgid "A displayable that can change its child based on a Python function, over the course of an interaction."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:40
+# fff5478a238e42bb971ce505bc6fe262
+msgid "`function`"
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:27
+# 82fe0ad478054bbdaccbbe511c12e2f1
+msgid "A function that is called with the arguments:"
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:29
+# 70b11d314c9a43c99d95ffa552977f01
+msgid "The amount of time the displayable has been shown for."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:30
+# 0eb81a87889e48f689beda81b35af5a9
+msgid "The amount of time any displayable with the same tag has been shown for."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:31
+# e1bc725d19a14d81bf8c0b10ed0b91b1
+msgid "Any positional or keyword arguments supplied to DynamicDisplayable."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:33
+# bd013ec4412445299936feef3c13afed
+msgid "and should return a (d, redraw) tuple, where:"
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:35
+# 0f212ed01b9a4db5b461c8bb74a18b6f
+msgid "`d` is a displayable to show."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:36
+# eb81f7af647f48598d3a36b174f92e02
+msgid "`redraw` is the amount of time to wait before calling the function again, or None to not call the function again before the start of the next interaction."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:40
+# a937389c7dd94d93bb403e2cc6c4ae1b
+msgid "`function` is called at the start of every interaction."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:42
+# 2dbd55ba7a4749b2be06724c73052c44
+msgid "As a special case, `function` may also be a python string that evaluates to a displayable. In that case, function is run once per interaction."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:61
+# 0b17f55c1cc7423abb8879495b4a2918
+msgid "This is a displayable that changes what it is showing based on the images are showing on the screen. The positional argument should be given in groups of two, where each group consists of:"
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:65
+# 5a8e3049f9594d97b2ae707ae1a96493
+msgid "A string giving an image name, or None to indicate the default."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:68
+# c2872f4fd38949988f6a64a58dd471ea
+msgid "A default image should be specified."
+msgstr ""
+
+#: ../../source/inc/disp_dynamic:70
+# bf2e7aa8a59f417db8990d510beb12d7
+msgid "One use of ShowingSwitch is to have side images change depending on the current emotion of a character. For example::"
+msgstr ""
+
+#: ../../source/displayables.rst:108
+# 02be770aeb774d06993ccaaab5c1e70a
+msgid "Applying Transforms to Displayables"
+msgstr ""
+
+#: ../../source/displayables.rst:110
+# f6c1189d13db409f800fd3483ac95dc1
+msgid "The At function produces a displayable from a displayable and one or more :ref:`transforms <transforms>`."
+msgstr ""
+
+#: ../../source/inc/disp_at:5
+# 01e4ffe498004cd287f7baf0247920a9
+msgid "Given a displayable `d`, applies each of the transforms in `args` to it. The transforms are applied in left-to-right order, so that the outermost transform is the rightmost argument. ::"
+msgstr ""
+
+#: ../../source/displayables.rst:117
+# 36105bddd3f2424f81886a03a08fd4ce
+msgid "Layout Boxes"
+msgstr ""
+
+#: ../../source/displayables.rst:119
+# 592290ee2ed746a58a4c982ecc9c1b8f
+msgid "Layout boxes are displayables that lay out their children on the screen. They can lay out the children in a horizontal or vertical manner, or can lay them out using the standard positioning algorithm."
+msgstr ""
+
+#: ../../source/displayables.rst:123
+# df63c357a76545e8a3bbc739d3e99bcf
+msgid "The box displayables take any number of positional and keyword arguments. Positional arguments should be displayables that are added to the box as children. Keyword arguments are style properties that are applied to the box."
+msgstr ""
+
+#: ../../source/displayables.rst:128
+# 91253698c87542308b80acbbbcb8bb22
+msgid "Boxes take :ref:`position-style-properties` and :ref:`box-style-properties`."
+msgstr ""
+
+#: ../../source/inc/disp_box:5
+# 0e01cef0fe044ec6821b543f621a3e5a
+msgid "A box that fills the screen. Its members are laid out from back to front, with their position properties controlling their position."
+msgstr ""
+
+#: ../../source/inc/disp_box:11
+# 1ce03e5c0aa74e868c5adbd203265a1e
+msgid "A box that lays out its members from left to right."
+msgstr ""
+
+#: ../../source/inc/disp_box:15
+# ba9f74957891433e9a48830020f50c2e
+msgid "A layout that lays out its members from top to bottom."
+msgstr ""
+
+#: ../../source/displayables.rst:149
+# cdd8b6641f7e4c8d90fefb7d2a3d263c
+msgid "Effects"
+msgstr ""
+
+#: ../../source/displayables.rst:151
+# 45131a997ca747cfb3c3518245e46196
+msgid "These displayables are used to create certain visual effects."
+msgstr ""
+
+#: ../../source/inc/disp_effects:5
+# 437c4950d30f43928f7debf1d53bf6cc
+msgid "This transition uses a `control` displayable (almost always some sort of animated transform) to transition from one displayable to another. The transform is evaluated. The `new` displayable is used where the transform is opaque, and the `old` displayable is used when it is transparent."
+msgstr ""
+
+#: ../../source/inc/disp_effects:11
+# 67b7c14f80254e12a275646538348b75
+msgid "`alpha`"
+msgstr ""
+
+#: ../../source/inc/disp_effects:11
+# f09d355958744f3986d95335b8cc3fe4
+msgid "If true, the image is composited with what's behind it. If false, the default, the image is opaque and overwrites what's behind it."
+msgstr ""
+
+#: ../../source/displayables.rst:156
+# e534e3f9d8404a28b60ed028ef41fc55
+msgid "Image Manipulators"
+msgstr ""
+
+#: ../../source/displayables.rst:158
+# 2ed3f44900e74062bc3ab65bb3c6de6c
+msgid "An image manipulator is a displayable that takes an image or image manipulator, performs an operation to it, and stores the result of that operation in the image cache. Since image manipulators can be predicted like images, they can perform expensive operations without incuring a display-time overhead."
+msgstr ""
+
+#: ../../source/displayables.rst:164
+# 24248cfbb24a4b6c84ad8489e6f8f98b
+msgid "Image manipulators are limited to storing image data to the cache. This means that their result is of a fixed size, known in advance, and they can't change in response to game state or input. Generally, image manipulators can only take images or other image manipulators as input."
+msgstr ""
+
+#: ../../source/displayables.rst:170
+# 92371b4985da4ca094b79b2c8e6a1968
+msgid "An image manipulator can be used any place a displayable can, but not vice-versa. An :func:`Image` is a kind of image manipulator, so an Image can be used whenever an image manipulator is required."
+msgstr ""
+
+#: ../../source/displayables.rst:174
+# 350be3da4b6d4c768ffc4c305d650333
+msgid "Many image manipulators provide the same functionality as other displayables. Most of these exist so they can be provided as input to other image manipulators, and so the game-maker can choose between cache memory usage and work done at render-time. There's also an element of historical accident here - many of these image manipulators predate their equivalents."
+msgstr ""
+
+#: ../../source/inc/im_im:5
+# 3f727aaafec840ea8bb8d98fd314ca1d
+msgid "An image manipulator that takes two image manipulators, `base` and `mask`, as arguments. It replaces the alpha channel of `base` with the red channel of `mask`."
+msgstr ""
+
+#: ../../source/inc/im_im:9
+# 3b96aa58e47c4c7db7de50ed70421a5c
+msgid "This is used to provide an image's alpha channel in a second image, like having one jpeg for color data, and a second one for alpha. In some cases, two jpegs can be smaller than a single png file."
+msgstr ""
+
+#: ../../source/inc/im_im:16
+# ac769c050c784e8094af17a66f4f47d5
+msgid "This image manipulator composites multiple images together to form a single image."
+msgstr ""
+
+#: ../../source/inc/im_im:19
+# a43d9f9b42484685be1c52e5efd5f14e
+msgid "The `size` should be a (width, height) tuple giving the size of the composed image."
+msgstr ""
+
+#: ../../source/inc/im_im:22
+# bc41aead5cbf4bb485a8805928054f94
+msgid "The remaining positional arguments are interpreted as groups of two. The first argument in a group should be an (x, y) tuple, while the second should be an image manipulator. The image produced by the image manipulator is composited at the location given by the tuple."
+msgstr ""
+
+#: ../../source/inc/im_im:39
+# 5ab9b9ded4524de0b690649de96cd57a
+msgid "An image manipulator that crops `rect`, a (x, y, width, height) tuple, out of `im`, an image manipulator."
+msgstr ""
+
+#: ../../source/inc/im_im:48
+# a5a3680e8e1246b5815c85a079e86d9f
+msgid "An image manipulator that scales `im` (a second image manipulator) to `width` times its original `width`, and `height` times its original height. If `height` is ommitted, it defaults to `width`."
+msgstr ""
+
+#: ../../source/inc/im_im:52
+#: ../../source/inc/im_im:79
+# 422bc58b7aa0453dbd0ffff7c5fdb77e
+# 5bae5811822e4c05ab81ded2b961a984
+msgid "If `bilinear` is true, then bilinear interpolation is used for the scaling. Otherwise, nearest neighbor interpolation is used."
+msgstr ""
+
+#: ../../source/inc/im_im:61
+# 50e2ea1b2c3c411dae0508e94cee4280
+msgid "An image manipulator that flips `im` (an image manipulator) vertically or horizontally.  `vertical` and `horizontal` control the directions in which the image is flipped."
+msgstr ""
+
+#: ../../source/inc/im_im:71
+# f0ae241899a0468e856b68c6f78cbfd2
+msgid "An image manipulator that creats a desaturated version of the image manipulator `im`."
+msgstr ""
+
+#: ../../source/inc/im_im:76
+# 874c67ec0be34c098e3d50e5ea110306
+msgid "An image manipulator that scales `im` (an image manipulator) to `width` and `height`."
+msgstr ""
+
+#: ../../source/inc/im_im:88
+# 1d1955c1fc514c0ab69470a6d4bd3b88
+msgid "An image manipulator that creates a sepia-toned version of the image manipulator `im`."
+msgstr ""
+
+#: ../../source/inc/im_im:93
+# 564f616a9178422897e4b2efeddb4f3f
+msgid "An image manipulator that tiles the image manipulator `im`, until it is `size`."
+msgstr ""
+
+#: ../../source/inc/im_im:97
+# 4d7d03b6bce742419d315330e303f458
+msgid "`size`"
+msgstr ""
+
+#: ../../source/inc/im_im:97
+# e63af85e97464988bf6b87aa3d6d36bc
+msgid "If not None, a (width, height) tuple. If None, this defaults to (:var:`config.screen_width`, :var:`config.screen_height`)."
+msgstr ""
+
+#: ../../source/displayables.rst:184
+# 94a35a0514634e508a523bc6e56d7ea2
+msgid "im.MatrixColor"
+msgstr ""
+
+#: ../../source/displayables.rst:186
+# 4d44e117d464457b824cd7bcfe45cca8
+msgid "The im.MatrixColor image manipulator is an image manipulator that uses a matrix to control how the colors of an image are transformed. The matrix used can be an im.matrix object, which encodes a 5x5 matrix in an object that supports matrix multiplication, and is returned by a series of functions. im.matrix objects may be multiplied together to yield a second object that performs both operations. For example, the code::"
+msgstr ""
+
+#: ../../source/displayables.rst:198
+# 7204f7eb738642fc9ce0d567e73cdd40
+msgid "first desaturates the image, and then tints it blue. When the intermediate image is not needed, multiplying matrices is far more efficient, in both time and image cache space, than using two im.MatrixColors."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:5
+# 7aa61452e8964dde8f8fa47f8fedbb2e
+msgid "An image operator that uses `matrix` to linearly transform the image manipulator `im`."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:8
+# 26c8c6ddcb4945f1a9dfd86db6221e56
+msgid "`Matrix` should be a list, tuple, or :func:`im.matrix` that is 20 or 25 elements long. If the object has 25 elements, then elements past the 20th are ignored."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:12
+# bf66cb7617fc4cf4a1cd1aaf7a485b5c
+msgid "When the four components of the source color are R, G, B, and A, which range from 0.0 to 1.0; the four components of the transformed color are R', G', B', and A', with the same range; and the elements of the matrix are named::"
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:22
+# b791ffaa08da4f839448d4fb8774d499
+msgid "the transformed colors can be computed with the formula::"
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:29
+# 792f4000a17f460e843adb7b46580a7b
+msgid "The components of the transformed color are clamped to the range [0.0, 1.0]."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:34
+# e3f1941cc92044c6a59f64bc7932c004
+msgid "Constructs an im.matrix object from `matrix`. im.matrix objects support The operations supported are matrix multiplication, scalar multiplication, element-wise addition, and element-wise subtraction. These operations are invoked using the standard mathematical operators (\\*, \\*, +, and -, respectively). If two im.matrix objects are multiplied, matrix multiplication is performed, otherwise scalar multiplication is used."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:42
+# 5bdcbd807cc14f22870cc6259d4f29af
+msgid "`matrix` is a 20 or 25 element list or tuple. If it is 20 elements long, it is padded with (0, 0, 0, 0, 1) to make a 5x5 matrix, suitable for multiplication."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:48
+# 2fe40379b5284e27a6601d5e8fad6b56
+msgid "Returns an im.matrix that alters the brightness of an image."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:52
+# 44b4f5c6a51946f4a86fbf0abff18740
+msgid "`b`"
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:51
+# a4027f73c2324a1b9ea6c1864416a878
+msgid "The amount of change in image brightness. This should be a number between -1 and 1, with -1 the darkest possible image and 1 the brightest."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:57
+# 6298b0f37e864eb6a20d7bc36365ab0a
+msgid "Returns an im.matrix that colorizes a black and white image. `black_color` and `white_color` are Ren'Py style colors, so they may be specfied as strings or tuples of (0-255) color values. ::"
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:69
+# 7bba66df928a41d8aba0fe50667eb1d7
+msgid "Returns an im.matrix that alters the contrast of an image. `c` should be greater than 0.0, with values between 0.0 and 1.0 decreasing contrast, and values greater than 1.0 increasing contrast."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:75
+# 78cf1ce380144f8eaebbdc338509a2f3
+msgid "Returns an im.matrix that desaturates the image (makes it grayscale). This is equivalent to calling im.matrix.saturation(0)."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:81
+# b5af5b9a878c4c71a27fabffa8243bee
+msgid "Returns an im.matrix that rotates the hue by `h` degrees, while preserving luminosity."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:86
+# b9267058c5a6470e91726ad8bedc4b3c
+msgid "Returns an identity matrix, one that does not change color or alpha."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:91
+# 61a46f8294ed454b9dcb7f8d0bc027f3
+msgid "Returns an im.matrix that inverts the red, green, and blue channels of the image without changing the alpha channel."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:96
+# d118b37d02094432b8fcb3ac742e7db7
+msgid "Returns an im.matrix that alters the opacity of an image. An `o` of 0.0 is fully transparent, while 1.0 is fully opaque."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:101
+# d3c63965f2284f33861804961f8c79c2
+msgid "Returns an im.matrix that alters the saturation of an image. The alpha channel is untouched."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:106
+# fd01ebea9f1d4a0cab2f3f0b396348cc
+msgid "`level`"
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:105
+# 95e006ccf5e44c7c96dffa6ffb1b512a
+msgid "The amount of saturation in the resulting image. 1.0 is the unaltered image, while 0.0 is grayscale."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:114
+# fdb4049bf5c9404f832ddcdab6934e57
+msgid "`desat`"
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:109
+# 7d9aa3d3f40c48e5bc48496dc5a03bbc
+msgid "This is a 3-element tuple that controls how much of the red, green, and blue channels will be placed into all three channels of a fully desaturated image. The default is based on the constants used for the luminance channel of an NTSC television signal. Since the human eye is mostly sensitive to green, more of the green channel is kept then the other two channels."
+msgstr ""
+
+#: ../../source/inc/im_matrixcolor:119
+# e54782eb154841698bf59083dec86483
+msgid "Returns an im.matrix that tints an image, without changing the alpha channel. `r`, `g`, and `b` should be numbers between 0 and 1, and control what fraction of the given channel is placed into the final image. (For example, if `r` is .5, and the value of the red channel is 100, the transformed color will have a red value of 50.)"
+msgstr ""
+

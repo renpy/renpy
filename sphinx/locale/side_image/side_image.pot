@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2012, Tom Rothamel
+# This file is distributed under the same license as the Ren'Py Visual Novel Engine package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ren'Py Visual Novel Engine 6.15.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-27 22:25\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/side_image.rst:7
+# 6f62a774368c494cb2ac91b5b098c48c
+msgid "Side Images"
+msgstr ""
+
+#: ../../source/side_image.rst:9
+# df6c05108e4e465f9be649464bcbd320
+msgid "Many visual novels include a picture of the character that is speaking as part of their interface. Ren'Py calls this image a side image, and has support for automatically selecting and displaying a side image as part of the dialogue."
+msgstr ""
+
+#: ../../source/side_image.rst:14
+# bfd5ed7bf05749d4ad7d620022223c1c
+msgid "The side image support assumes that a :func:`Character` is declared with a linked image tag::"
+msgstr ""
+
+#: ../../source/side_image.rst:19
+# fbc6882e131049a0896d15f0359350b1
+msgid "When a character with a linked image tag speaks, Ren'Py creates a pool of image attributes. The linked image tag is added to this pool, as are the current image attributes that are associated with that tag."
+msgstr ""
+
+#: ../../source/side_image.rst:23
+# 2966b118ddbd4f599a30e9b0b3a5ade3
+msgid "To determine the side image associated with a tag, Ren'Py tries to find an image with the tag \"side\", and the largest number of attributes from the pool. If no image can be found, or more than one image has the same number of attributes, an :class:`Null` is shown instead."
+msgstr ""
+
+#: ../../source/side_image.rst:28
+# 03f26cd2bd894a99b595d5321e1f8804
+msgid "For example, say we have the following script::"
+msgstr ""
+
+#: ../../source/side_image.rst:46
+# 118d2988e83e48898ea595f55948c323
+msgid "At point A, the character ``e`` is speaking, which is linked to the image tag \"eileen\". The \"eileen happy\" image is showing, so the pool of attributes is \"eileen\" and \"happy\". We look for an image with the \"side\" tag, and as many of those attributes as possible - and we match \"side eileen happy\", which is the side image Ren'Py will display."
+msgstr ""
+
+#: ../../source/side_image.rst:52
+# 93a4632ef9ad4a85aac1a7020dbd2757
+msgid "At point B, the \"eileen concerned\" image is showing. The pool of attributes is now \"eileen\" and \"concerned\". The only matching image is \"side eileen\", so that's what Ren'Py selects. If the was a \"side concerned\" image, there would be ambiguity, and Ren'Py wouldn't display an image."
+msgstr ""
+
+#: ../../source/side_image.rst:59
+# b431babc28464c51bcd083415ef99d29
+msgid "Invisible Characters"
+msgstr ""
+
+#: ../../source/side_image.rst:61
+# 6ac70a3467374f2da1fcd307dcc5a468
+msgid "Another use of the side image is to show an image of the player character, when that character has dialogue. The way to do this is to link an image to the character, and then use the say with attributes construct to select the side image to show."
+msgstr ""
+
+#: ../../source/side_image.rst:66
+# acd7deedf0b542a0a5abe3fee1017ff4
+msgid "For example::"
+msgstr ""
+
+#: ../../source/side_image.rst:82
+# 6ddd5fdc36714928b71523b9cd9125fb
+msgid "Variations"
+msgstr ""
+
+#: ../../source/side_image.rst:84
+# ff0cd9306da94b3682d863281dc80353
+msgid "There are two variants of side image support that can be selected - either alone or together - using config variables:"
+msgstr ""
+
+#: ../../source/side_image.rst:89
+# 34f3a73d1b2f4868991ca50b2322c15a
+msgid "If this is given, then the side image will track the given image tag, rather than the image associated with currently speaking character. For example,"
+msgstr ""
+
+#: ../../source/side_image.rst:99
+# c0976e82fb2f4ee6b13e0ecea771c7da
+msgid "Will make the side image track the \"eileen\" image tag, which is associated with the ``e`` character."
+msgstr ""
+
+#: ../../source/side_image.rst:104
+# aae89502bc334aeb9420fce0f30cbd7b
+msgid "When set to true, the side image will only show if an image with that tag is not already being shown on the screen."
+msgstr ""
+
+#: ../../source/side_image.rst:109
+# 40bec147bd284ec79dc20b01f0265640
+msgid "Leaving Room / Customization"
+msgstr ""
+
+#: ../../source/side_image.rst:111
+# c75ba0ba68eb4b4fa95fc89f6062c0bc
+msgid "By default, the entire width of the screen is taken up by the text. If one tries to display a side image, it will be displayed on top of the text. To fix this, one should include margin or padding on the appropriate side of the text window, using code like::"
+msgstr ""
+
+#: ../../source/side_image.rst:119
+# 2bd4545fdc434504ae749a4cc8ee05eb
+msgid "The position of the side image can be changed by customizing the ``say`` or ``nvl`` screens. Both include the line::"
+msgstr ""
+
+#: ../../source/side_image.rst:124
+# 8eb0e7f355f8428baf74f2e5974ca899
+msgid "By changing the xalign and yalign properties, you can control the positioning of the side image on the screen."
+msgstr ""
+
+#: ../../source/side_image.rst:127
+# 94fde47ce0e64238a0c490f48731cbc6
+msgid "Finally, the :func:`SideImage` function returns, as a displayable, the current side image. This can be used as part of more advanced screen customization."
+msgstr ""
+
