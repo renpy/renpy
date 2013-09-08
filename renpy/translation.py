@@ -968,7 +968,7 @@ class DialogueFile(object):
                             what
                             ]
 
-                    self.f.write("\t".join(line) + "\n")
+                    self.f.write("\t".join(line).encode("utf-8") + "\n")
 
 
 def dialogue_command():
@@ -997,7 +997,7 @@ def dialogue_command():
                 "Line Number",
                 ]
 
-            f.write("\t".join(line) + "\n")
+            f.write("\t".join(line).encode("utf-8") + "\n")
 
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:
