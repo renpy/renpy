@@ -108,6 +108,7 @@ def import_all():
     import renpy.easy #@UnresolvedImport
     import renpy.execution #@UnresolvedImport
     import renpy.loadsave #@UnresolvedImport
+    import renpy.persistent #@UnresolvedImport
     import renpy.parser #@UnresolvedImport
     import renpy.python #@UnresolvedImport
     import renpy.script #@UnresolvedImport

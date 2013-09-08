@@ -31,8 +31,6 @@ import zipfile
 import os
 import re
 import threading
-import sys
-import platform
 import types
 
 import renpy.display
@@ -40,8 +38,7 @@ import renpy.display
 # This is used to cache information about saved games.
 cache = { }
 
-
-# Dump that choses which pickle to use:
+# Dump that chooses which pickle to use:
 def dump(o, f):
     if renpy.config.use_cpickle:
         cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
@@ -485,75 +482,3 @@ def force_autosave(take_screenshot=False):
 
     autosave_not_running.clear()
     threading.Thread(target=autosave_thread, args=(take_screenshot,)).start()
-
-
-class _MultiPersistent(object):
-
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        del state['_filename']
-        return state
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
-
-    def __getattr__(self, name):
-
-        if name.startswith("__") and name.endswith("__"):
-            raise AttributeError()
-
-        return None
-
-    def save(self):
-
-        fn = self._filename
-        f = file(fn + ".new", "wb")
-        dump(self, f)
-        f.close()
-
-        try:
-            os.rename(fn + ".new", fn)
-        except:
-            os.unlink(fn)
-            os.rename(fn + ".new", fn)
-
-
-def MultiPersistent(name):
-
-    if not renpy.game.context().init_phase:
-        raise Exception("MultiPersistent objects must be created during the init phase.")
-
-    if sys.platform == 'win32':
-        files = [ os.path.expanduser("~/RenPy/Persistent") ]
-
-        if 'APPDATA' in os.environ:
-            files.append(os.environ['APPDATA'] + "/RenPy/persistent")
-
-    elif platform.mac_ver()[0]:
-        files = [ os.path.expanduser("~/.renpy/persistent"),
-                  os.path.expanduser("~/Library/RenPy/persistent") ]
-    else:
-        files = [ os.path.expanduser("~/.renpy/persistent") ]
-
-    # Make the new persistent directory, why not?
-    try:
-        os.makedirs(files[-1])
-    except:
-        pass
-
-    fn = "" # prevent a warning from happening.
-
-    # Find the first file that actually exists. Otherwise, use the last
-    # file.
-    for fn in files:
-        fn = fn + "/" + name
-        if os.path.exists(fn):
-            break
-
-    try:
-        rv = loads(file(fn).read())
-    except:
-        rv = _MultiPersistent()
-
-    rv._filename = fn # W0201
-    return rv

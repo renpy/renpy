@@ -174,7 +174,7 @@ SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
 ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
 Speaker = Character = renpy.character.Character
 DynamicCharacter = renpy.character.DynamicCharacter
-MultiPersistent = renpy.loadsave.MultiPersistent
+MultiPersistent = renpy.persistent.MultiPersistent
 
 Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
