@@ -203,6 +203,7 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("Generate Translations") action Jump("translate")
+                textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
 label main_menu:
     return
