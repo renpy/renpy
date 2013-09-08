@@ -83,21 +83,8 @@ less_mouse = False
 # Should we not imagedissiolve?
 less_imagedissolve = False
 
-# The class that's used to hold the persistent data.
-class Persistent(object):
-
-    def __setstate__(self, data):
-        vars(self).update(data)
-
-    def __getstate__(self):
-        return vars(self)
-
-    # Undefined attributes return None.
-    def __getattr__(self, attr):
-        return None
-
 # The persistent data that's kept from session to session
-persistent = Persistent()
+persistent = None
 
 class Preferences(renpy.object.Object):
     """

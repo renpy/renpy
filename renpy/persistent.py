@@ -23,6 +23,101 @@ import os
 import renpy
 
 from renpy.loadsave import dump, loads
+from cPickle import dumps
+
+
+# The class that's used to hold the persistent data.
+class Persistent(object):
+
+    def __setstate__(self, data):
+        vars(self).update(data)
+
+    def __getstate__(self):
+        return vars(self)
+
+    # Undefined attributes return None.
+    def __getattr__(self, attr):
+        return None
+
+    def _clear(self, progress=False):
+        """
+        Resets the persistent data.
+
+        `progress`
+            If true, also resets progress data that Ren'Py keeps.
+        """
+
+
+        keys = list(self.__dict__)
+
+        for i in keys:
+            if i[0] == "_":
+                continue
+
+            del self.__dict__[i]
+
+        if progress:
+            self._seen_ever.clear()
+            self._seen_images.clear()
+            self._chosen.clear()
+            self._seen_audio.clear()
+
+
+
+
+
+
+
+def load_persistent():
+    """
+    Loads the persistent data from disk.
+    """
+
+    # Unserialize the persistent data.
+    try:
+        f = file(renpy.config.savedir + "/persistent", "rb")
+        s = f.read().decode("zlib")
+        f.close()
+        persistent = loads(s)
+    except:
+        persistent = Persistent()
+
+    update_persistent(persistent)
+    return persistent
+
+def update_persistent(persistent):
+
+    # Initialize the set of statements seen ever.
+    if not persistent._seen_ever:
+        persistent._seen_ever = { }
+
+    renpy.game.seen_ever = persistent._seen_ever
+
+    # Initialize the set of images seen ever.
+    if not persistent._seen_images:
+        persistent._seen_images = { }
+
+    # Initialize the set of chosen menu choices.
+    if not persistent._chosen:
+        persistent._chosen = { }
+
+    if not persistent._seen_audio:
+        persistent._seen_audio = { }
+
+def save_persistent():
+    """
+    Saves the persistent data to disk.
+    """
+
+    try:
+        f = file(renpy.config.savedir + "/persistent", "wb")
+        f.write(dumps(renpy.game.persistent).encode("zlib"))
+        f.close()
+    except:
+        if renpy.config.debug:
+            raise
+
+renpy.game.persistent = Persistent()
 
 class _MultiPersistent(object):
 

@@ -26,19 +26,7 @@ import sys
 import time
 import zipfile
 import subprocess
-from cPickle import loads, dumps
 import __main__
-
-
-def save_persistent():
-
-    try:
-        f = file(renpy.config.savedir + "/persistent", "wb")
-        f.write(dumps(game.persistent).encode("zlib"))
-        f.close()
-    except:
-        if renpy.config.debug:
-            raise
 
 
 def run(restart):
@@ -252,31 +240,7 @@ def main():
     except:
         pass
 
-    # Unserialize the persistent data.
-    try:
-        f = file(renpy.config.savedir + "/persistent", "rb")
-        s = f.read().decode("zlib")
-        f.close()
-        game.persistent = loads(s)
-    except:
-        game.persistent = game.Persistent()
-
-    # Initialize the set of statements seen ever.
-    if not game.persistent._seen_ever:
-        game.persistent._seen_ever = { }
-
-    game.seen_ever = game.persistent._seen_ever
-
-    # Initialize the set of images seen ever.
-    if not game.persistent._seen_images:
-        game.persistent._seen_images = { }
-
-    # Initialize the set of chosen menu choices.
-    if not game.persistent._chosen:
-        game.persistent._chosen = { }
-
-    if not game.persistent._seen_audio:
-        game.persistent._seen_audio = { }
+    game.persistent = renpy.persistent.load_persistent()
 
     # Clear the list of seen statements in this game.
     game.seen_session = { }
@@ -363,7 +327,7 @@ def main():
                 run(restart)
             finally:
                 restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
-                save_persistent()
+                renpy.persistent.save_persistent()
 
         except game.QuitException, e:
 
