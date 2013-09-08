@@ -818,3 +818,200 @@ def translate_command():
 
 renpy.arguments.register_command("translate", translate_command)
 
+
+
+def notags_filter(s):
+
+    def tag_pass(s):
+
+        brace = False
+        first = False
+        rv = ""
+
+        for i in s:
+
+            if i == '{':
+
+                if first:
+                    brace = False
+                else:
+                    brace = True
+                    first = True
+
+            elif i == "}":
+                first = False
+
+                if brace:
+                    brace = False
+
+            else:
+                first = False
+
+                if brace:
+                    pass
+                else:
+                    rv += i
+
+        return rv
+
+    def square_pass(s):
+        squares = 0
+        first = False
+
+        rv = ""
+        buf = ""
+
+        for i in s:
+
+            if i == "[":
+                if first:
+                    squares = 0
+                else:
+                    rv += tag_pass(buf)
+                    buf = ""
+
+                    if squares == 0:
+                        first = True
+
+                    squares += 1
+
+                rv += "["
+
+            elif i == "]":
+
+                first = False
+
+                squares -= 1
+                if squares < 0:
+                    squares += 1
+
+                rv += "]"
+
+            else:
+                if squares:
+                    rv += i
+                else:
+                    buf += i
+
+        if buf:
+            rv += tag_pass(buf)
+
+        return rv
+
+
+    return square_pass(s)
+
+
+
+class DialogueFile(object):
+
+    def __init__(self, filename, output, tdf=True): # @ReservedAssignment
+        """
+        `filename`
+            The file we're extracting dialogue from.
+
+        `tdf`
+            If true, dialogue is extracted in tab-delimited format. If false,
+            dialogue is extracted by itself.
+        """
+
+        self.filename = filename
+
+        commondir = os.path.normpath(renpy.config.commondir)
+        gamedir = os.path.normpath(renpy.config.gamedir)
+
+        if filename.startswith(commondir):
+            return
+
+        self.tdf = tdf
+
+        self.f = open(output, "a")
+
+        self.write_translates()
+
+        self.f.close()
+
+    def write_translates(self):
+        """
+        Writes the translates to the file.
+        """
+
+        translator = renpy.game.script.translator
+
+        for label, t in translator.file_translates[self.filename]:
+
+            if label is None:
+                label = ""
+
+            for n in t.block:
+
+                if isinstance(n, renpy.ast.Say):
+
+                    if not n.who:
+                        who = ""
+                    else:
+                        who = n.who
+
+                    what = notags_filter(n.what)
+
+                    if self.tdf:
+
+                        line = [
+                            t.identifier,
+                            who,
+                            what,
+                            n.filename,
+                            str(n.linenumber),
+                            ]
+
+                    else:
+                        line = [
+                            what
+                            ]
+
+                    self.f.write("\t".join(line) + "\n")
+
+
+def dialogue_command():
+    """
+    The dialogue command. This updates dialogue.txt, a file giving all the dialogue
+    in the game.
+    """
+
+    ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
+    ap.add_argument("--text", help="Apply rot13 while generating translations.", dest="text", action="store_true")
+    args = ap.parse_args()
+
+    tdf = not args.text
+    if tdf:
+        output = os.path.join(renpy.config.basedir, "dialogue.tab")
+    else:
+        output = os.path.join(renpy.config.basedir, "dialogue.txt")
+
+    with open(output, "w") as f:
+        if tdf:
+            line = [
+                "Identifier",
+                "Character",
+                "Dialogue",
+                "Filename",
+                "Line Number",
+                ]
+
+            f.write("\t".join(line) + "\n")
+
+    for dirname, filename in renpy.loader.listdirfiles():
+        if dirname is None:
+            continue
+
+        filename = os.path.join(dirname, filename)
+
+        if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
+            continue
+
+        filename = os.path.normpath(filename)
+        DialogueFile(filename, output, tdf=tdf)
+
+    return False
+
+renpy.arguments.register_command("dialogue", dialogue_command)
