@@ -63,11 +63,6 @@ class Persistent(object):
             self._seen_audio.clear()
 
 
-
-
-
-
-
 def load_persistent():
     """
     Loads the persistent data from disk.
@@ -117,6 +112,7 @@ def save_persistent():
         if renpy.config.debug:
             raise
 
+renpy.game.Persistent = Persistent
 renpy.game.persistent = Persistent()
 
 class _MultiPersistent(object):
