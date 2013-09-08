@@ -918,7 +918,6 @@ class DialogueFile(object):
         self.filename = filename
 
         commondir = os.path.normpath(renpy.config.commondir)
-        gamedir = os.path.normpath(renpy.config.gamedir)
 
         if filename.startswith(commondir):
             return

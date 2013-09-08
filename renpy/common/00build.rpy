@@ -100,6 +100,8 @@ init -1500 python in build:
         ("traceback.txt", None),
         ("image_cache.txt", None),
         ("text_overflow.txt", None),
+        ("dialogue.txt", None),
+        ("dialogue.tab", None),
 
         ("tmp/", None),
         ("game/saves/", None),
