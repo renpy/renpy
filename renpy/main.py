@@ -340,7 +340,6 @@ def main():
             restart = e.reason
 
         finally:
-            renpy.display.core.cpu_idle.set()
             renpy.loadsave.autosave_not_running.wait()
 
     # This is stuff we do on a normal, non-error return.

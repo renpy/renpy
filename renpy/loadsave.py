@@ -24,8 +24,7 @@
 import pickle
 import cPickle
 
-import StringIO
-import cStringIO
+from cStringIO import StringIO
 
 import zipfile
 import os
@@ -174,28 +173,12 @@ def save_dump(roots, log):
 
     f.close()
 
-# A file that can only be written to while the cpu is idle.
-class IdleFile(file):
-
-    def write(self, s):
-        renpy.display.core.cpu_idle.wait()
-        return file.write(self, s)
-
-# A similar StringIO.
-class IdleStringIO(StringIO.StringIO):
-
-    def write(self, s):
-        renpy.display.core.cpu_idle.wait()
-        return StringIO.StringIO.write(self, s)
-
 # Used to indicate an aborted save, due to the game being mutated
 # while the save is in progress.
 class SaveAbort(Exception):
     pass
 
-def save(filename, extra_info='',
-         file=file, StringIO=cStringIO.StringIO, #@ReservedAssignment
-         mutate_flag=False, wait=None):
+def save(filename, extra_info='', mutate_flag=False):
     """
     :doc: loadsave
     :args: (filename, extra_info='')
@@ -225,7 +208,7 @@ def save(filename, extra_info='',
     if mutate_flag:
         renpy.python.mutate_flag = False
 
-    roots = renpy.game.log.freeze(wait)
+    roots = renpy.game.log.freeze(None)
 
     logf = StringIO()
     dump((roots, renpy.game.log), logf)
@@ -424,10 +407,8 @@ def autosave_thread(take_screenshot):
 
         try:
 
-            renpy.display.core.cpu_idle.wait()
             cycle_saves("auto-", renpy.config.autosave_slots)
 
-            renpy.display.core.cpu_idle.wait()
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
             else:
@@ -435,7 +416,8 @@ def autosave_thread(take_screenshot):
 
             if take_screenshot:
                 renpy.exports.take_screenshot(background=True)
-            save("auto-1", file=IdleFile, StringIO=IdleStringIO, mutate_flag=True, wait=renpy.display.core.cpu_idle.wait, extra_info=extra_info)
+
+            save("auto-1", mutate_flag=True, extra_info=extra_info)
             autosave_counter = 0
 
         except:

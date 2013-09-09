@@ -40,10 +40,6 @@ try:
 except:
     android = None
 
-# Is the cpu idle enough to do other things?
-cpu_idle = threading.Event()
-cpu_idle.clear()
-
 # Need to be +4, so we don't interfere with FFMPEG's events.
 TIMEEVENT = pygame.USEREVENT + 4
 PERIODIC = pygame.USEREVENT + 5
@@ -1629,12 +1625,7 @@ class Interface(object):
             self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
             self.bgscreenshot_event.set()
 
-        try:
-            cpu_idle.set()
-            ev = pygame.event.wait()
-        finally:
-            cpu_idle.clear()
-
+        ev = pygame.event.wait()
         self.last_event = ev
 
         return ev
