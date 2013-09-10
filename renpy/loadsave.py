@@ -514,9 +514,16 @@ class FileLocation(object):
         except:
             pass
 
+    def filename(self, slotname):
+        """
+        Given a slot name, returns a filename.
+        """
+
+        return os.path.join(self.directory, slotname + renpy.savegame_suffix)
 
     def save(self, slotname, record):
-        filename = os.path.join(self.directory, slotname + renpy.savegame_suffix)
+
+        filename = self.filename(slotname)
 
         try:
             os.unlink(filename)
@@ -525,11 +532,52 @@ class FileLocation(object):
 
         record.write_file(filename)
 
+    def __eq__(self, other):
+        if not isinstance(other, FileLocation):
+            return False
+
+        return self.directory == other.directory
+
+class MultiLocation(object):
+    """
+    A location that saves in multiple places. When loading or otherwise
+    accessing a file, it loads the newest file found for the given slotname.
+    """
+
+    def __init__(self):
+        self.locations = [ ]
+
+    def add(self, location):
+        """
+        Adds a new location.
+        """
+
+        if location in self.locations:
+            return
+
+        self.locations.append(location)
+
+    def save(self, slotname, record):
+        for l in self.locations:
+            l.save(slotname, record)
+
+    def __eq__(self, other):
+        if not isinstance(other, MultiLocation):
+            return False
+
+        return self.locations == other.locations
+
 
 def init_location():
     global location
 
-    location = FileLocation(renpy.config.savedir)
+    location = MultiLocation()
 
+    # 1. User savedir.
+    location.add(FileLocation(renpy.config.savedir))
+
+    # 2. Game-local savedir. (TODO: Check to see if writable.)
+    path = os.path.join(renpy.config.gamedir, "saves")
+    location.add(FileLocation(path))
 
 
