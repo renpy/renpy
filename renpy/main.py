@@ -234,11 +234,8 @@ def main():
     if renpy.game.args.savedir: #@UndefinedVariable
         renpy.config.savedir = renpy.game.args.savedir #@UndefinedVariable
 
-    # Make the save directory.
-    try:
-        os.makedirs(renpy.config.savedir)
-    except:
-        pass
+    # Init save locations.
+    renpy.loadsave.init_location()
 
     game.persistent = renpy.persistent.load_persistent()
 

@@ -482,6 +482,8 @@ key_repeat = (.3, .03)
 # A callback that is called with the character's voice_tag.
 voice_tag_callback = None
 
+# The location (or set of locations) that we save to. This is a
+
 del renpy
 del os
 

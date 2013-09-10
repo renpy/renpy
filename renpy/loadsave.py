@@ -31,6 +31,7 @@ import os
 import re
 import threading
 import types
+import shutil
 
 import renpy.display
 
@@ -178,7 +179,49 @@ def save_dump(roots, log):
 class SaveAbort(Exception):
     pass
 
-def save(filename, extra_info='', mutate_flag=False):
+class SaveRecord(object):
+    """
+    This is passed to the save locations. It contains the information that
+    goes into a save file in uncompressed form, and the logic to save that
+    information to a Ren'Py-standard format save file.
+    """
+
+    def __init__(self, screenshot, extra_info, log):
+        self.screenshot = screenshot
+        self.extra_info = extra_info
+        self.log = log
+
+        self.first_filename = None
+
+    def write_file(self, filename):
+        """
+        This writes a standard-format savefile to `filename`.
+        """
+
+        # For speed, copy the file after we've written it at least once.
+        if self.first_filename is not None:
+            shutil.copy(self.first_filename, filename)
+
+        self.first_filename = filename
+
+        zf = zipfile.ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
+
+        # Screenshot.
+        zf.writestr("screenshot.png", self.screenshot)
+
+        # Extra info.
+        zf.writestr("extra_info", self.extra_info.encode("utf-8"))
+
+        # Version.
+        zf.writestr("renpy_version", renpy.version)
+
+        # The actual game.
+        zf.writestr("log", self.log)
+
+        zf.close()
+
+
+def save(slotname, extra_info='', mutate_flag=False):
     """
     :doc: loadsave
     :args: (filename, extra_info='')
@@ -196,14 +239,7 @@ def save(filename, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
-    cache.pop(filename, None)
-
-    filename = filename + savegame_suffix
-
-    try:
-        os.unlink(renpy.config.savedir + "/" + filename)
-    except:
-        pass
+    cache.pop(slotname, None)
 
     if mutate_flag:
         renpy.python.mutate_flag = False
@@ -219,23 +255,10 @@ def save(filename, extra_info='', mutate_flag=False):
     if renpy.config.save_dump:
         save_dump(roots, renpy.game.log)
 
-    rf = file(renpy.config.savedir + "/" + filename, "wb")
-    zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
+    screenshot = renpy.game.interface.get_screenshot()
 
-    # Screenshot.
-    zf.writestr("screenshot.png", renpy.game.interface.get_screenshot())
-
-    # Extra info.
-    zf.writestr("extra_info", extra_info.encode("utf-8"))
-
-    # Version.
-    zf.writestr("renpy_version", renpy.version)
-
-    # The actual game.
-    zf.writestr("log", logf.getvalue())
-
-    zf.close()
-    rf.close()
+    sr = SaveRecord(screenshot, extra_info, logf.getvalue())
+    location.save(slotname, sr)
 
 
 def scan_saved_game(name):
@@ -464,3 +487,49 @@ def force_autosave(take_screenshot=False):
 
     autosave_not_running.clear()
     threading.Thread(target=autosave_thread, args=(take_screenshot,)).start()
+
+
+################################################################################
+# Save Locations
+################################################################################
+
+
+# Save locations are places where saves are saved to or loaded from, or a
+# collection of such locations.
+
+# The default location.
+location = None
+
+class FileLocation(object):
+    """
+    A location that saves files to a directory on disk.
+    """
+
+    def __init__(self, directory):
+        self.directory = directory
+
+        # Make the save directory.
+        try:
+            os.makedirs(self.directory)
+        except:
+            pass
+
+
+    def save(self, slotname, record):
+        filename = os.path.join(self.directory, slotname + renpy.savegame_suffix)
+
+        try:
+            os.unlink(filename)
+        except:
+            pass
+
+        record.write_file(filename)
+
+
+def init_location():
+    global location
+
+    location = FileLocation(renpy.config.savedir)
+
+
+
