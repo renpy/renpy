@@ -601,7 +601,7 @@ class ChoiceActionBase(Action):
         self.chosen = None
 
         if self.location:
-            self.chosen = renpy.game.persistent._chosen
+            self.chosen = renpy.game.persistent._chosen  # @UndefinedVariable
 
             if self.chosen is None:
                 self.chosen = renpy.game.persistent._chosen = { }
