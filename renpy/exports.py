@@ -313,7 +313,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
             img = i(img)
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[name] = True
+    renpy.game.persistent._seen_images[name] = True  # @UndefinedVariable
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -1317,13 +1317,13 @@ def seen_label(label):
     return label in renpy.game.seen_ever
 
 def seen_audio(filename):
-    return filename in renpy.game.persistent._seen_audio
+    return filename in renpy.game.persistent._seen_audio  # @UndefinedVariable
 
 def seen_image(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return name in renpy.game.persistent._seen_images
+    return name in renpy.game.persistent._seen_images  # @UndefinedVariable
 
 def file(fn): #@ReservedAssignment
     return renpy.loader.load(fn)
