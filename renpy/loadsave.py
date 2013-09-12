@@ -215,10 +215,10 @@ def save(filename, extra_info='',
 
     cache.pop(filename, None)
 
-    filename = filename + savegame_suffix
+    f = filename + savegame_suffix
 
     try:
-        os.unlink(renpy.config.savedir + "/" + filename)
+        os.unlink(renpy.config.savedir + "/" + f)
     except:
         pass
 
@@ -236,7 +236,7 @@ def save(filename, extra_info='',
     if renpy.config.save_dump:
         save_dump(roots, renpy.game.log)
 
-    rf = file(renpy.config.savedir + "/" + filename, "wb")
+    rf = file(renpy.config.savedir + "/" + f, "wb")
     zf = zipfile.ZipFile(rf, "w", zipfile.ZIP_DEFLATED)
 
     # Screenshot.
@@ -253,6 +253,16 @@ def save(filename, extra_info='',
 
     zf.close()
     rf.close()
+
+    try:
+        mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
+        screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.png", mtime)
+        rv = extra_info, screenshot, mtime
+
+    except:
+        rv = None
+
+    cache[filename] = rv
 
 
 def scan_saved_game(name):
