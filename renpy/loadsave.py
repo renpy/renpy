@@ -514,6 +514,19 @@ class FileLocation(object):
         except:
             pass
 
+        # Try to write a test file.
+        try:
+            fn = os.path.join(self.directory, "text.txt")
+
+            with open(fn, "w") as f:
+                f.write("Test.")
+
+            os.unlink(fn)
+
+            self.active = True
+        except:
+            self.active = False
+
     def filename(self, slotname):
         """
         Given a slot name, returns a filename.
@@ -558,8 +571,17 @@ class MultiLocation(object):
         self.locations.append(location)
 
     def save(self, slotname, record):
+
+        saved = False
+
         for l in self.locations:
-            l.save(slotname, record)
+            if l.active:
+                l.save(slotname, record)
+                saved = True
+
+        if not saved:
+            raise Exception("Not saved - no valid save locations.")
+
 
     def __eq__(self, other):
         if not isinstance(other, MultiLocation):
