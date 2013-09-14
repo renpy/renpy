@@ -445,6 +445,8 @@ class Say(Node):
             if renpy.config.say_menu_text_filter:
                 what = renpy.config.say_menu_text_filter(what) # E1102
 
+            renpy.store._last_raw_what = what
+
             if getattr(who, "record_say", True):
                 renpy.store._last_say_who = self.who
                 renpy.store._last_say_what = what
