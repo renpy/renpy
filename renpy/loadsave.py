@@ -427,20 +427,6 @@ def load(filename):
     roots, log = loads(location.load(filename))
     log.unfreeze(roots, label="_after_load")
 
-def rename_save(old, new):
-    """
-    :doc: loadsave
-
-    Renames a save from `old` to `new`.
-    """
-
-    unlink_save(new)
-    os.rename(renpy.config.savedir + "/" + old + savegame_suffix,
-              renpy.config.savedir + "/" + new + savegame_suffix)
-
-    cache.pop(old, None)
-    cache.pop(new, None)
-
 def unlink_save(filename):
     """
     :doc: loadsave
@@ -448,10 +434,22 @@ def unlink_save(filename):
     Deletes the save with the given `filename`.
     """
 
-    if os.path.exists(renpy.config.savedir + "/" + filename + savegame_suffix):
-        os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
+    location.unlink(filename)
+    get_cache(filename).clear()
 
-    cache.pop(filename, None)
+
+def rename_save(old, new):
+    """
+    :doc: loadsave
+
+    Renames a save from `old` to `new`. (Does nothing if `old` does not
+    exist.)
+    """
+
+    location.rename(old, new)
+
+    get_cache(old).clear()
+    get_cache(new).clear()
 
 
 def cycle_saves(name, count):
@@ -460,14 +458,10 @@ def cycle_saves(name, count):
 
     Rotates the first `count` saves beginning with `name`.
 
-    For example, if the name is auto and the count is 10, then
-    auto-9 will be renamed to auto-9, auto-8 will be renamed to auto-9,
+    For example, if the name is auto- and the count is 10, then
+    auto-9 will be renamed to auto-10, auto-8 will be renamed to auto-9,
     and so on until auto-1 is renamed to auto-2.
     """
-
-    for count in range(1, count + 1):
-        if not os.path.exists(renpy.config.savedir + "/" + name + str(count) + savegame_suffix):
-            break
 
     for i in range(count - 1, 0, -1):
         rename_save(name + str(i), name + str(i + 1))
@@ -706,6 +700,32 @@ class FileLocation(object):
 
         return rv
 
+    def unlink(self, slotname):
+        """
+        Deletes the file in slotname.
+        """
+
+        filename = self.filename(slotname)
+        if os.path.exists(filename):
+            os.unlink(filename)
+
+
+    def rename(self, old, new):
+        """
+        If old exists, renames it to new.
+        """
+
+        old = self.filename(old)
+        new = self.filename(new)
+
+        if not os.path.exists(old):
+            return
+
+        if os.path.exists(new):
+            os.unlink(new)
+
+        os.rename(old, new)
+
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
             return False
@@ -802,6 +822,14 @@ class MultiLocation(object):
     def load(self, slotname):
         l = self.newest(slotname)
         return l.load(slotname)
+
+    def unlink(self, slotname):
+        for l in self.active_locations():
+            l.unlink(slotname)
+
+    def rename(self, old, new):
+        for l in self.active_locations():
+            l.rename(old, new)
 
     def __eq__(self, other):
         if not isinstance(other, MultiLocation):
