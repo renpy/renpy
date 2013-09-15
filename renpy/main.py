@@ -235,7 +235,7 @@ def main():
         renpy.config.savedir = renpy.game.args.savedir #@UndefinedVariable
 
     # Init save locations.
-    renpy.loadsave.init_location()
+    renpy.savelocation.init_location()
 
     game.persistent = renpy.persistent.load_persistent()
 
