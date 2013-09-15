@@ -410,9 +410,12 @@ def can_load(filename, test=False):
     Returns true if `filename` exists as a save file, and False otherwise.
     """
 
-    fn = renpy.config.savedir + "/" + filename + savegame_suffix
-    return os.path.exists(fn)
+    c = get_cache(filename)
 
+    if c.get_mtime():
+        return True
+    else:
+        return False
 
 def load(filename):
     """
@@ -421,10 +424,7 @@ def load(filename):
     Loads the game state from `filename`. This function never returns.
     """
 
-    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
-    roots, log = loads(zf.read("log"))
-    zf.close()
-
+    roots, log = loads(location.load(filename))
     log.unfreeze(roots, label="_after_load")
 
 def rename_save(old, new):
@@ -674,7 +674,6 @@ class FileLocation(object):
             return None
 
         filename = self.filename(slotname)
-
         zf = zipfile.ZipFile(filename, "r")
 
         try:
@@ -693,8 +692,19 @@ class FileLocation(object):
 
         return screenshot
 
+    def load(self, slotname):
+        """
+        Returns the log component of the file found in `slotname`, so it
+        can be loaded.
+        """
 
+        filename = self.filename(slotname)
 
+        zf = zipfile.ZipFile(filename, "r")
+        rv = zf.read("log")
+        zf.close()
+
+        return rv
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
@@ -788,6 +798,10 @@ class MultiLocation(object):
             return None
 
         return l.screenshot(slotname)
+
+    def load(self, slotname):
+        l = self.newest(slotname)
+        return l.load(slotname)
 
     def __eq__(self, other):
         if not isinstance(other, MultiLocation):
