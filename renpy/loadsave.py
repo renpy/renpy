@@ -32,11 +32,9 @@ import re
 import threading
 import types
 import shutil
+import json
 
 import renpy.display
-
-# This is used to cache information about saved games.
-cache = { }
 
 # Dump that chooses which pickle to use:
 def dump(o, f):
@@ -174,6 +172,10 @@ def save_dump(roots, log):
 
     f.close()
 
+################################################################################
+# Saving
+################################################################################
+
 # Used to indicate an aborted save, due to the game being mutated
 # while the save is in progress.
 class SaveAbort(Exception):
@@ -239,7 +241,7 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
-    cache.pop(slotname, None)
+    get_cache(slotname).clear()
 
     if mutate_flag:
         renpy.python.mutate_flag = False
@@ -260,159 +262,6 @@ def save(slotname, extra_info='', mutate_flag=False):
     sr = SaveRecord(screenshot, extra_info, logf.getvalue())
     location.save(slotname, sr)
 
-
-def scan_saved_game(name):
-
-    if name in cache:
-        return cache[name]
-
-    try:
-        f = name + savegame_suffix
-
-        zf = zipfile.ZipFile(renpy.config.savedir + "/" + f, "r")
-
-        try:
-            png = False
-            zf.getinfo('screenshot.tga')
-        except:
-            png = True
-            zf.getinfo('screenshot.png')
-
-
-        extra_info = zf.read("extra_info").decode("utf-8")
-        zf.close()
-
-        mtime = os.path.getmtime(renpy.config.savedir + "/" + f)
-
-        if png:
-            screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.png", mtime)
-        else:
-            screenshot = renpy.display.im.ZipFileImage(renpy.config.savedir + '/' + f, "screenshot.tga", mtime)
-
-        rv = extra_info, screenshot, mtime
-
-    except:
-        rv = None
-
-    cache[name] = rv
-    return rv
-
-
-
-def list_saved_games(regexp=r'.', fast=False):
-    """
-    :doc: loadsave
-
-    Lists the save games. For each save game, returns a tuple containing:
-
-    * The filename of the save.
-    * The extra_info that was passed in.
-    * A displayable that, when displayed, shows the screenshot that was
-      used when saving the game.
-    * The time the game was stayed at, in seconds since the UNIX epoch.
-
-    `regexp`
-        A regular expression that is matched against the start of the
-        filename to filter the list.
-
-    `fast`
-        If fast is true, the filename is returned instead of the
-        tuple.
-    """
-
-    try:
-        files = os.listdir(renpy.config.savedir)
-    except:
-        return [ ]
-
-    files.sort()
-    files = [ i[:-len(savegame_suffix)]
-              for i in files
-              if i.endswith(savegame_suffix) and re.match(regexp, i) ]
-
-    if fast:
-        return files
-
-    rv = [ ]
-
-    for f in files:
-
-        info = scan_saved_game(f)
-
-        if info is not None:
-            extra_info, screenshot, mtime = info
-            rv.append((f, extra_info, screenshot, mtime))
-
-    return rv
-
-def can_load(filename, test=False):
-    """
-    :doc: loadsave
-
-    Returns true if `filename` exists as a save file, and False otherwise.
-    """
-
-    fn = renpy.config.savedir + "/" + filename + savegame_suffix
-    return os.path.exists(fn)
-
-
-def load(filename):
-    """
-    :doc: loadsave
-
-    Loads the game state from `filename`. This function never returns.
-    """
-
-    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
-    roots, log = loads(zf.read("log"))
-    zf.close()
-
-    log.unfreeze(roots, label="_after_load")
-
-def rename_save(old, new):
-    """
-    :doc: loadsave
-
-    Renames a save from `old` to `new`.
-    """
-
-    unlink_save(new)
-    os.rename(renpy.config.savedir + "/" + old + savegame_suffix,
-              renpy.config.savedir + "/" + new + savegame_suffix)
-
-    cache.pop(old, None)
-    cache.pop(new, None)
-
-def unlink_save(filename):
-    """
-    :doc: loadsave
-
-    Deletes the save with the given `filename`.
-    """
-
-    if os.path.exists(renpy.config.savedir + "/" + filename + savegame_suffix):
-        os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
-
-    cache.pop(filename, None)
-
-
-def cycle_saves(name, count):
-    """
-    :doc: loadsave
-
-    Rotates the first `count` saves beginning with `name`.
-
-    For example, if the name is auto and the count is 10, then
-    auto-9 will be renamed to auto-9, auto-8 will be renamed to auto-9,
-    and so on until auto-1 is renamed to auto-2.
-    """
-
-    for count in range(1, count + 1):
-        if not os.path.exists(renpy.config.savedir + "/" + name + str(count) + savegame_suffix):
-            break
-
-    for i in range(count - 1, 0, -1):
-        rename_save(name + str(i), name + str(i + 1))
 
 
 # Flag that lets us know if an autosave is in progress.
@@ -490,6 +339,200 @@ def force_autosave(take_screenshot=False):
 
 
 ################################################################################
+# Loading and Slot Manipulation
+################################################################################
+
+def scan_saved_game(slotname):
+
+    c = get_cache(slotname)
+
+    mtime = c.get_mtime()
+
+    if mtime is None:
+        return None
+
+    extra_info = c.get_json().get("_extra_info", "")
+    screenshot = c.get_screenshot()
+
+    return extra_info, screenshot, mtime
+
+
+def list_saved_games(regexp=r'.', fast=False):
+    """
+    :doc: loadsave
+
+    Lists the save games. For each save game, returns a tuple containing:
+
+    * The filename of the save.
+    * The extra_info that was passed in.
+    * A displayable that, when displayed, shows the screenshot that was
+      used when saving the game.
+    * The time the game was stayed at, in seconds since the UNIX epoch.
+
+    `regexp`
+        A regular expression that is matched against the start of the
+        filename to filter the list.
+
+    `fast`
+        If fast is true, the filename is returned instead of the
+        tuple.
+    """
+
+    # A list of save slots.
+    slots = location.list()
+
+    if regexp is not None:
+        slots = [ i for i in slots if re.match(regexp, i) ]
+
+    slots.sort()
+
+    if fast:
+        return slots
+
+    rv = [ ]
+
+    for s in slots:
+
+        c = get_cache(s)
+
+        extra_info = c.get_json().get("_extra_info", "")
+        screenshot = c.get_screenshot()
+        mtime = c.get_mtime()
+
+        rv.append((s, extra_info, screenshot, mtime))
+
+    return rv
+
+def can_load(filename, test=False):
+    """
+    :doc: loadsave
+
+    Returns true if `filename` exists as a save file, and False otherwise.
+    """
+
+    fn = renpy.config.savedir + "/" + filename + savegame_suffix
+    return os.path.exists(fn)
+
+
+def load(filename):
+    """
+    :doc: loadsave
+
+    Loads the game state from `filename`. This function never returns.
+    """
+
+    zf = zipfile.ZipFile(renpy.config.savedir + "/" + filename + savegame_suffix, "r")
+    roots, log = loads(zf.read("log"))
+    zf.close()
+
+    log.unfreeze(roots, label="_after_load")
+
+def rename_save(old, new):
+    """
+    :doc: loadsave
+
+    Renames a save from `old` to `new`.
+    """
+
+    unlink_save(new)
+    os.rename(renpy.config.savedir + "/" + old + savegame_suffix,
+              renpy.config.savedir + "/" + new + savegame_suffix)
+
+    cache.pop(old, None)
+    cache.pop(new, None)
+
+def unlink_save(filename):
+    """
+    :doc: loadsave
+
+    Deletes the save with the given `filename`.
+    """
+
+    if os.path.exists(renpy.config.savedir + "/" + filename + savegame_suffix):
+        os.unlink(renpy.config.savedir + "/" + filename + savegame_suffix)
+
+    cache.pop(filename, None)
+
+
+def cycle_saves(name, count):
+    """
+    :doc: loadsave
+
+    Rotates the first `count` saves beginning with `name`.
+
+    For example, if the name is auto and the count is 10, then
+    auto-9 will be renamed to auto-9, auto-8 will be renamed to auto-9,
+    and so on until auto-1 is renamed to auto-2.
+    """
+
+    for count in range(1, count + 1):
+        if not os.path.exists(renpy.config.savedir + "/" + name + str(count) + savegame_suffix):
+            break
+
+    for i in range(count - 1, 0, -1):
+        rename_save(name + str(i), name + str(i + 1))
+
+################################################################################
+# Cache
+################################################################################
+
+# None is a possible value for some of the attributes.
+unknown = object()
+
+class Cache(object):
+    """
+    This represents cached information about a save slot.
+    """
+
+    def __init__(self, slotname):
+        self.slotname = slotname
+        self.clear()
+
+    def clear(self):
+        # The time the save was created.
+        self.mtime = unknown
+
+        # The json object loaded from the save slot.
+        self.json = unknown
+
+        # The screenshot associated with the save slot.
+        self.screenshot = unknown
+
+    def get_mtime(self):
+
+        if self.mtime is unknown:
+            self.mtime = location.mtime(self.slotname)
+
+        return self.mtime
+
+    def get_json(self):
+
+        if self.json is unknown:
+            self.json = location.json(self.slotname)
+
+        return self.json
+
+    def get_screenshot(self):
+
+        if self.screenshot is unknown:
+            self.screenshot = location.screenshot(self.slotname)
+
+        return self.screenshot
+
+# A map from slotname to cache object. This is used to cache savegame scan
+# data until the slot changes.
+cache = { }
+
+def get_cache(slotname):
+    if slotname in cache:
+        return cache[slotname]
+
+    rv = Cache(slotname)
+    cache[slotname] = rv
+    return rv
+
+
+################################################################################
 # Save Locations
 ################################################################################
 
@@ -535,6 +578,9 @@ class FileLocation(object):
         return os.path.join(self.directory, slotname + renpy.savegame_suffix)
 
     def save(self, slotname, record):
+        """
+        Saves the save record in slotname.
+        """
 
         filename = self.filename(slotname)
 
@@ -544,6 +590,111 @@ class FileLocation(object):
             pass
 
         record.write_file(filename)
+
+    def list(self):
+        """
+        Returns a list of all slots with savefiles in them, in arbitrary
+        order.
+        """
+
+        rv = [ ]
+
+        suffix = renpy.savegame_suffix
+        suffix_len = len(suffix)
+
+        for i in os.listdir(self.directory):
+            if not i.endswith(suffix):
+                continue
+
+            rv.append(i[:-suffix_len])
+
+        return rv
+
+    def mtime(self, slotname):
+        """
+        For a slot, returns the time the object was saved in that
+        slot.
+
+        Returns None if the slot is empty.
+        """
+
+        filename = self.filename(slotname)
+
+        try:
+            return os.path.getmtime(filename)
+        except:
+            return None
+
+
+    def json(self, slotname):
+        """
+        Returns the JSON data for slotname.
+
+        Returns None if the slot is empty.
+        """
+
+
+        try:
+            filename = self.filename(slotname)
+            zf = zipfile.ZipFile(filename, "r")
+        except:
+            return None
+
+        try:
+
+            try:
+                data = zf.read("json")
+                data = json.loads(data)
+                return data
+            except:
+                pass
+
+            try:
+                extra_info = zf.read("extra_info").decode("utf-8")
+                return { "_save_name" : extra_info }
+            except:
+                pass
+
+            return { }
+
+        finally:
+            zf.close()
+
+
+    def screenshot(self, slotname):
+        """
+        Returns a displayable that show the screenshot for this slot.
+
+        Returns None if the slot is empty.
+        """
+
+        mtime = self.mtime(slotname)
+
+        if mtime is None:
+            return None
+
+        filename = self.filename(slotname)
+
+        zf = zipfile.ZipFile(filename, "r")
+
+        try:
+            png = False
+            zf.getinfo('screenshot.tga')
+        except:
+            png = True
+            zf.getinfo('screenshot.png')
+
+        zf.close()
+
+        if png:
+            screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.png", mtime)
+        else:
+            screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.tga", mtime)
+
+        return screenshot
+
+
+
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
@@ -560,6 +711,30 @@ class MultiLocation(object):
     def __init__(self):
         self.locations = [ ]
 
+    def active_locations(self):
+        return [ i for i in self.locations if i.active ]
+
+    def newest(self, slotname):
+        """
+        Returns the location containing the slotname with the newest
+        mtime. Returns None of the slot is empty.
+        """
+
+        mtime = -1
+        location = None
+
+        for l in self.locations:
+            if not l.active:
+                continue
+
+            slot_mtime = l.mtime(slotname)
+
+            if slot_mtime > mtime:
+                mtime = slot_mtime
+                location = l
+
+        return location
+
     def add(self, location):
         """
         Adds a new location.
@@ -574,14 +749,45 @@ class MultiLocation(object):
 
         saved = False
 
-        for l in self.locations:
-            if l.active:
-                l.save(slotname, record)
-                saved = True
+        for l in self.active_locations():
+            l.save(slotname, record)
+            saved = True
 
         if not saved:
             raise Exception("Not saved - no valid save locations.")
 
+    def list(self):
+        rv = set()
+
+        for l in self.active_locations():
+            rv.update(l.list())
+
+        return list(rv)
+
+    def mtime(self, slotname):
+        l = self.newest(slotname)
+
+        if l is None:
+            return None
+
+        return l.mtime(slotname)
+
+    def json(self, slotname):
+        l = self.newest(slotname)
+
+        if l is None:
+            return None
+
+        return l.json(slotname)
+
+
+    def screenshot(self, slotname):
+        l = self.newest(slotname)
+
+        if l is None:
+            return None
+
+        return l.screenshot(slotname)
 
     def __eq__(self, other):
         if not isinstance(other, MultiLocation):
