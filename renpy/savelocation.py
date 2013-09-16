@@ -29,6 +29,9 @@ import zipfile
 import json
 
 import renpy.display
+import threading
+
+from renpy.loadsave import clear_slot
 
 class FileLocation(object):
     """
@@ -77,6 +80,8 @@ class FileLocation(object):
             pass
 
         record.write_file(filename)
+
+        self.scan()
 
     def list(self):
         """
@@ -202,6 +207,8 @@ class FileLocation(object):
         if os.path.exists(filename):
             os.unlink(filename)
 
+        self.scan()
+
 
     def rename(self, old, new):
         """
@@ -218,6 +225,18 @@ class FileLocation(object):
             os.unlink(new)
 
         os.rename(old, new)
+
+        self.scan()
+
+    def scan(self):
+        """
+        Scan for files that are added or removed.
+        """
+
+        if not self.active:
+            return
+
+        print "SCAN", self.directory
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
@@ -324,6 +343,13 @@ class MultiLocation(object):
         for l in self.active_locations():
             l.rename(old, new)
 
+    def scan(self):
+        # This should scan everything, as a scan can help decide if a
+        # location should become active or inactive.
+
+        for l in self.locations:
+            l.scan()
+
     def __eq__(self, other):
         if not isinstance(other, MultiLocation):
             return False
@@ -331,7 +357,42 @@ class MultiLocation(object):
         return self.locations == other.locations
 
 
-def init_location():
+# The thread that scans locations every few seconds.
+scan_thread = None
+
+# True if we should quit the scan thread.
+quit_scan_thread = False
+
+# The condition we wait on.
+scan_thread_condition = threading.Condition()
+
+def run_scan_thread():
+    global quit_scan_thread
+
+    quit_scan_thread = False
+
+    while not quit_scan_thread:
+
+        try:
+            renpy.loadsave.location.scan()  # @UndefinedVariable
+        except:
+            pass
+
+        with scan_thread_condition:
+            scan_thread_condition.wait(5.0)
+
+def quit():  # @ReservedAssignment
+    global quit_scan_thread
+
+    with scan_thread_condition:
+        quit_scan_thread = True
+        scan_thread_condition.notifyAll()
+
+    scan_thread.join()
+
+def init():
+    global scan_thread
+
     location = MultiLocation()
 
     # 1. User savedir.
@@ -341,5 +402,11 @@ def init_location():
     path = os.path.join(renpy.config.gamedir, "saves")
     location.add(FileLocation(path))
 
+    # Scan the location once.
+    location.scan()
+
     renpy.loadsave.location = location
+
+    scan_thread = threading.Thread(target=run_scan_thread)
+    scan_thread.start()
 

@@ -492,22 +492,28 @@ class Cache(object):
 
     def get_mtime(self):
 
-        if self.mtime is unknown:
-            self.mtime = location.mtime(self.slotname)
+        rv = self.mtime
 
-        return self.mtime
+        if rv is unknown:
+            rv = self.mtime = location.mtime(self.slotname)
+
+        return rv
 
     def get_json(self):
 
-        if self.json is unknown:
-            self.json = location.json(self.slotname)
+        rv = self.json
 
-        return self.json
+        if rv is unknown:
+            rv = self.json = location.json(self.slotname)
+
+        return rv
 
     def get_screenshot(self):
 
-        if self.screenshot is unknown:
-            self.screenshot = location.screenshot(self.slotname)
+        rv = self.screenshot
+
+        if rv is unknown:
+            rv = self.screenshot = location.screenshot(self.slotname)
 
         return self.screenshot
 
@@ -516,12 +522,30 @@ class Cache(object):
 cache = { }
 
 def get_cache(slotname):
-    if slotname in cache:
-        return cache[slotname]
 
-    rv = Cache(slotname)
-    cache[slotname] = rv
+    rv = cache.get(slotname, None)
+
+    if rv is None:
+        rv = cache[slotname] = Cache(slotname)
+
     return rv
+
+
+def clear_slot(slotname):
+    """
+    Clears a single slot in the cache.
+    """
+
+    get_cache(slotname).clear()
+
+def clear_cache():
+    """
+    Clears the entire cache.
+    """
+
+    for c in cache.values():
+        c.clear()
+
 
 
 # Save locations are places where saves are saved to or loaded from, or a
