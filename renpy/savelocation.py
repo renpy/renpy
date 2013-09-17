@@ -60,12 +60,52 @@ class FileLocation(object):
         except:
             self.active = False
 
+        # A map from slotname to the mtime of that slot.
+        self.mtimes = { }
+
     def filename(self, slotname):
         """
         Given a slot name, returns a filename.
         """
 
         return os.path.join(self.directory, slotname + renpy.savegame_suffix)
+
+
+    def scan(self):
+        """
+        Scan for files that are added or removed.
+        """
+
+        if not self.active:
+            return
+
+        old_mtimes = self.mtimes
+        new_mtimes = { }
+
+        suffix = renpy.savegame_suffix
+        suffix_len = len(suffix)
+
+        for fn in os.listdir(self.directory):
+            if not fn.endswith(suffix):
+                continue
+
+            slotname = fn[:-suffix_len]
+
+            try:
+                new_mtimes[slotname] = os.path.getmtime(os.path.join(self.directory, fn))
+            except:
+                pass
+
+        self.mtimes = new_mtimes
+
+        for slotname, mtime in new_mtimes.iteritems():
+            if old_mtimes.get(slotname, None) != mtime:
+                clear_slot(slotname)
+
+        for slotname in old_mtimes:
+            if slotname not in new_mtimes:
+                clear_slot(slotname)
+
 
     def save(self, slotname, record):
         """
@@ -89,18 +129,8 @@ class FileLocation(object):
         order.
         """
 
-        rv = [ ]
+        return list(self.mtimes)
 
-        suffix = renpy.savegame_suffix
-        suffix_len = len(suffix)
-
-        for i in os.listdir(self.directory):
-            if not i.endswith(suffix):
-                continue
-
-            rv.append(i[:-suffix_len])
-
-        return rv
 
     def mtime(self, slotname):
         """
@@ -110,12 +140,7 @@ class FileLocation(object):
         Returns None if the slot is empty.
         """
 
-        filename = self.filename(slotname)
-
-        try:
-            return os.path.getmtime(filename)
-        except:
-            return None
+        return self.mtimes.get(slotname, None)
 
 
     def json(self, slotname):
@@ -227,16 +252,6 @@ class FileLocation(object):
         os.rename(old, new)
 
         self.scan()
-
-    def scan(self):
-        """
-        Scan for files that are added or removed.
-        """
-
-        if not self.active:
-            return
-
-        print "SCAN", self.directory
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
