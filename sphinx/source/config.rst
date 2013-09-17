@@ -302,6 +302,12 @@ Occasionally Used
     code to set the default value. (It's usually set to False in
     options.rpy.)
 
+.. var:: config.default_language = None
+
+    This sets the default value of the language preference. This is only
+    used the first time the game starts. (Or after persistent data has
+    been cleared.)
+
 .. var:: config.default_text_cps = None
 
     If not None, this sets the default number of characters per second
