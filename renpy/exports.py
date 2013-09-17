@@ -822,6 +822,9 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
 
+    if renpy.config.skipping == "fast":
+        return False
+
     roll_forward = renpy.exports.roll_forward_info()
     if roll_forward not in [ True, False ]:
         roll_forward = None
@@ -834,7 +837,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
         if newdelay is not None:
             delay = newdelay
 
-    if renpy.config.skipping == "fast" or (renpy.game.after_rollback and roll_forward is None):
+    if renpy.game.after_rollback and roll_forward is None:
         delay = 0
 
     if hard:
