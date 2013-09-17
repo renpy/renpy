@@ -537,6 +537,7 @@ def clear_slot(slotname):
     """
 
     get_cache(slotname).clear()
+    renpy.exports.restart_interaction()
 
 def clear_cache():
     """
@@ -546,6 +547,7 @@ def clear_cache():
     for c in cache.values():
         c.clear()
 
+    renpy.exports.restart_interaction()
 
 
 # Save locations are places where saves are saved to or loaded from, or a

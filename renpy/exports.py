@@ -1196,7 +1196,10 @@ def restart_interaction():
     changes.
     """
 
-    renpy.game.interface.restart_interaction = True
+    try:
+        renpy.game.interface.restart_interaction = True
+    except:
+        pass
 
 def context():
     """
