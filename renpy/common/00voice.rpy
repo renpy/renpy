@@ -29,10 +29,14 @@ init -1500 python:
     _voice.sustain = False
     _voice.seen_in_lint = False
     _voice.tag = None
+    _voice.tlid = None
 
     # The voice filename format. This may contain the voice tag
-
     config.voice_filename_format = "{filename}"
+
+    # This is formatted with {id} to produce a filename. If the filename
+    # exists, it's played as a voice file.
+    config.auto_voice = None
 
     # Call this to specify the voice file that will be played for
     # the user. This peice only gathers the information so
@@ -187,6 +191,23 @@ init -1500 python hide:
 
         if not config.has_voice:
             return
+
+        # Auto-voice.
+        if not _voice.play and config.auto_voice:
+            tlid = renpy.game.context().translate_identifier
+
+            if tlid is not None:
+
+                fn = config.auto_voice.format(id=tlid)
+
+                if renpy.loadable(fn):
+
+                    if _voice.tlid == tlid:
+                        _voice.sustain = True
+                    else:
+                        _voice.play = fn
+
+                    _voice.tlid = tlid
 
         if _voice.tag in persistent._voice_mute:
             renpy.sound.stop(channel="voice")
