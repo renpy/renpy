@@ -239,6 +239,7 @@ init -1500 python hide:
 
     config.voice_tag_callback = voice_tag_callback
 
+
 screen _auto_voice:
 
     if _voice.auto_file:
