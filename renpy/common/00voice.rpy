@@ -30,6 +30,7 @@ init -1500 python:
     _voice.seen_in_lint = False
     _voice.tag = None
     _voice.tlid = None
+    _voice.auto_file = None
 
     # The voice filename format. This may contain the voice tag
     config.voice_filename_format = "{filename}"
@@ -192,6 +193,8 @@ init -1500 python hide:
         if not config.has_voice:
             return
 
+        _voice.auto_file = None
+
         # Auto-voice.
         if not _voice.play and config.auto_voice:
             tlid = renpy.game.context().translate_identifier
@@ -199,6 +202,7 @@ init -1500 python hide:
             if tlid is not None:
 
                 fn = config.auto_voice.format(id=tlid)
+                _voice.auto_file = fn
 
                 if renpy.loadable(fn):
 
@@ -234,6 +238,26 @@ init -1500 python hide:
         _voice.tag = voice_tag
 
     config.voice_tag_callback = voice_tag_callback
+
+screen _auto_voice:
+
+    if _voice.auto_file:
+
+        if renpy.loadable(_voice.auto_file):
+            $ color = "#ffffff"
+        else:
+            $ color = "#ffcccc"
+
+        frame:
+            xalign 0.5
+            yalign 0.0
+            xpadding 5
+            ypadding 5
+            background "#0004"
+
+            text "auto voice: [_voice.auto_file!q]":
+                color color
+                size 12
 
 python early hide:
 
