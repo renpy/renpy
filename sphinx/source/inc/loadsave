@@ -28,7 +28,8 @@
 
 .. function:: renpy.rename_save(old, new)
     
-    Renames a save from `old` to `new`.
+    Renames a save from `old` to `new`. (Does nothing if `old` does not
+    exist.)
 
 .. function:: renpy.save(filename, extra_info='')
     

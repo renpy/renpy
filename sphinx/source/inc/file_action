@@ -7,8 +7,7 @@
     
     `name`
         The name of the slot to save to or load from. If None, an unused slot
-        (a large number based on the current time) will be
-        will be used.
+        (a large number based on the current time) will be used.
     
     `page`
         The page that the file will be saved to or loaded from. If None, the
@@ -65,8 +64,7 @@
     
     `name`
         The name of the slot to save to. If None, an unused slot
-        (a large number based on the current time) will be
-        will be used.
+        (a large number based on the current time) will be used.
     
     `confirm`
         If true, then we will prompt before overwriting a file.

@@ -219,6 +219,13 @@ Occasionally Used
     for end users. Setting this to "1" will automatically load the
     game in save slot 1.
 
+.. var:: config.auto_voice = None
+
+    If not None, this is formatted with the ``id`` variable bound to the
+    identifier of the current line of dialogue. If this gives an existing
+    file, that file is played as voice audio. See :ref:`Automatic Voice <automatic-voice>`
+    for more details.
+
 .. var:: config.automatic_images = None
 
     If not None, this causes Ren'Py to automatically define
