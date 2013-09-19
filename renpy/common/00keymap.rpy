@@ -220,6 +220,8 @@ init -1100 python:
 
     config.underlay = [ km ]
 
+    del km
+
 
 label _hide_windows:
 
