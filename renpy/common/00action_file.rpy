@@ -446,9 +446,12 @@ init -1500 python:
          `max`
              If set, this should be an integer that gives the number of
              the maximum file page we can go to.
+
+         `wrap`
+             If true, we can go to the first page when on the last file page if max is set.
          """
 
-        def __init__(self, max=None):
+        def __init__(self, max=None, wrap=False):
 
             page = persistent._file_page
 
@@ -466,7 +469,15 @@ init -1500 python:
 
                 if max is not None:
                     if page > max:
-                        page = None
+                        if wrap:
+                            if config.has_autosave:
+                                page = "auto"
+                            elif config.has_quicksave:
+                                page = "quick"
+                            else:
+                                page = "1"
+                        else:
+                            page = None
 
                 if page is not None:
                     page = str(page)
@@ -489,20 +500,34 @@ init -1500 python:
          :doc: file_action
 
          Goes to the previous file page, if possible.
+
+         `max`
+             If set, this should be an integer that gives the number of
+             the maximum file page we can go to. This is required to enable
+             wrap.
+
+         `wrap`
+             If true, we can go to the last page when on the first file page if max is set.
          """
 
-        def __init__(self):
+        def __init__(self, max=None, wrap=False):
+
+            if wrap and max is not None:
+                max = str(max)
+            else:
+                max = None
+
 
             page = persistent._file_page
 
             if page == "auto":
-                page = None
+                page = max
 
             elif page == "quick":
                 if config.has_autosave:
                     page = "auto"
                 else:
-                    page = None
+                    page = max
 
             elif page == "1":
                 if config.has_quicksave:
@@ -510,7 +535,7 @@ init -1500 python:
                 elif config.has_autosave:
                     page = "auto"
                 else:
-                    page = None
+                    page = max
 
             else:
                 page = str(int(page) - 1)
