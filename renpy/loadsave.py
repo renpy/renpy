@@ -414,11 +414,98 @@ def list_saved_games(regexp=r'.', fast=False):
 
     return rv
 
+
+def list_slots(regexp=None):
+    """
+    :doc: loadsave
+
+    Returns a list of non-empty save slots. If `regexp` exists, only slots
+    that begin with `regexp` are returned. The slots are sorted in
+    string-order.
+    """
+
+    # A list of save slots.
+    slots = location.list()
+
+    if regexp is not None:
+        slots = [ i for i in slots if re.match(regexp, i) ]
+
+    slots.sort()
+
+    return slots
+
+# A cache for newest slot info.
+newest_slot_cache = { }
+
+def newest_slot(regexp=None):
+    """
+    :doc: loadsave
+
+    Returns the name of the newest save slot (the save slot with the most
+    recent modification time), or None if there are no (matching) saves.
+
+    If `regexp` exists, only slots that begin with `regexp` are returned.
+    """
+
+    rv = newest_slot_cache.get(regexp, unknown)
+    if rv is unknown:
+
+        max_mtime = 0
+        rv = None
+
+        slots = location.list()
+
+        for i in slots:
+
+            if not re.match(regexp, i):
+                continue
+
+            mtime = get_cache(i).get_mtime()
+            if mtime is None:
+                continue
+
+            if mtime >= max_mtime:
+                rv = i
+                max_mtime = mtime
+
+    newest_slot_cache[regexp] = rv
+    return rv
+
+
+def slot_mtime(slotname):
+    """
+    :doc: loadsave
+
+    Returns the modification time for `slot`, or None if the slot is empty.
+    """
+
+    return get_cache(slotname).get_mtime()
+
+def slot_json(slotname):
+    """
+    :doc: loadsave
+
+    Returns the json information for `slotname`, or None if the slot is
+    empty.
+    """
+
+    return get_cache(slotname).get_json()
+
+def slot_screenshot(slotname):
+    """
+    :doc: loadsave
+
+    Returns a display that can be used as the screenshot for `slotname`,
+    or None if the slot is empty.
+    """
+
+    return get_cache(slotname).get_screenshot()
+
 def can_load(filename, test=False):
     """
     :doc: loadsave
 
-    Returns true if `filename` exists as a save file, and False otherwise.
+    Returns true if `filename` exists as a save slot, and False otherwise.
     """
 
     c = get_cache(filename)
@@ -432,7 +519,8 @@ def load(filename):
     """
     :doc: loadsave
 
-    Loads the game state from `filename`. This function never returns.
+    Loads the game state from the save slot `filename`. If the file is loaded
+    successfully, this function never returns.
     """
 
     roots, log = loads(location.load(filename))
@@ -442,11 +530,11 @@ def unlink_save(filename):
     """
     :doc: loadsave
 
-    Deletes the save with the given `filename`.
+    Deletes the save slot with the given name.
     """
 
     location.unlink(filename)
-    get_cache(filename).clear()
+    clear_slot(filename)
 
 
 def rename_save(old, new):
@@ -459,8 +547,8 @@ def rename_save(old, new):
 
     location.rename(old, new)
 
-    get_cache(old).clear()
-    get_cache(new).clear()
+    clear_slot(old)
+    clear_slot(new)
 
 
 def cycle_saves(name, count):
@@ -550,6 +638,9 @@ def clear_slot(slotname):
     """
 
     get_cache(slotname).clear()
+
+    newest_slot_cache.clear()
+
     renpy.exports.restart_interaction()
 
 def clear_cache():
@@ -559,6 +650,8 @@ def clear_cache():
 
     for c in cache.values():
         c.clear()
+
+    newest_slot_cache.clear()
 
     renpy.exports.restart_interaction()
 

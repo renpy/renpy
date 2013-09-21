@@ -42,7 +42,10 @@ from renpy.display.predict import screen as predict_screen
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
+
 from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot
+
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
@@ -71,6 +74,7 @@ def public_api():
     play
     movie_start_fullscreen, movie_start_displayable, movie_stop
     load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+    list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot
     eval
     random
     atl_warper
