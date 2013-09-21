@@ -45,7 +45,7 @@ init -1700 python:
     config.has_autosave = True
 
     # basics: True if quicksave has been enabled.
-    config.has_quicksave = False
+    config.has_quicksave = True
 
     # A list of layers to clear when entering the main and game menus.
     config.clear_layers = [ ]
