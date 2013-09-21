@@ -34,6 +34,8 @@ import shutil
 
 import renpy
 
+from json import dumps as json_dumps
+
 # Dump that chooses which pickle to use:
 def dump(o, f):
     if renpy.config.use_cpickle:
@@ -186,9 +188,10 @@ class SaveRecord(object):
     information to a Ren'Py-standard format save file.
     """
 
-    def __init__(self, screenshot, extra_info, log):
+    def __init__(self, screenshot, extra_info, json, log):
         self.screenshot = screenshot
         self.extra_info = extra_info
+        self.json = json
         self.log = log
 
         self.first_filename = None
@@ -211,6 +214,9 @@ class SaveRecord(object):
 
         # Extra info.
         zf.writestr("extra_info", self.extra_info.encode("utf-8"))
+
+        # Json
+        zf.writestr("json", self.json)
 
         # Version.
         zf.writestr("renpy_version", renpy.version)
@@ -257,7 +263,14 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     screenshot = renpy.game.interface.get_screenshot()
 
-    sr = SaveRecord(screenshot, extra_info, logf.getvalue())
+    json = { "_save_name" : extra_info }
+
+    for i in renpy.config.save_json_callbacks:
+        i(json)
+
+    json = json_dumps(json)
+
+    sr = SaveRecord(screenshot, extra_info, json, logf.getvalue())
     location.save(slotname, sr)
 
 

@@ -482,6 +482,9 @@ key_repeat = (.3, .03)
 # A callback that is called with the character's voice_tag.
 voice_tag_callback = None
 
+# A list of callbacks that can be used to add JSON to save files.
+save_json_callbacks = [ ]
+
 # The location (or set of locations) that we save to. This is a
 
 del renpy

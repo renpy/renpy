@@ -360,7 +360,6 @@ Occasionally Used
     The user can progress forward through the rollback buffer by
     clicking.
 
-
 .. var:: config.font_replacement_map = { }
 
     This is a map from (font, bold, italics) to (font, bold, italics),
@@ -523,6 +522,21 @@ Occasionally Used
     The action that is called when the user clicks the quit button on
     a window. The default action prompts the user to see if he wants
     to quit the game.
+
+.. var:: config.save_json_callbacks = [ ]
+
+    A list of callback functions that are used to create the json object
+    that is stored with each save and maked accessible through :func:`FileJson`
+    and :func:`renpy.slot_json`.
+
+    Each callback is called with a python dictionary that will eventually be
+    saved. Callbacks should modify that dictionary by adding json-compatible
+    python types, such as numbers, strings, lists, and dicts. The dictionary
+    at the end of the last callback is then saved as part of the save slot.
+
+    The dictionary passed to the callbacks may have already have keys
+    beginning with an underscore (_). These keys are used by Ren'Py,
+    and should not be changed.
 
 .. var:: config.thumbnail_height = 75
 
