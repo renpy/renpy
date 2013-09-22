@@ -300,6 +300,10 @@ screen file_picker:
 
                     text "[file_name]. [file_time!t]\n[save_name!t]"
 
+                    if "%s-%s" % (persistent._file_page, i) == persistent._file_newest:
+                        null width 30
+                        add Text("NEW!", color = "ffff00")
+
                     key "save_delete" action FileDelete(i)
 
 
