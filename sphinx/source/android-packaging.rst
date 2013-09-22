@@ -337,7 +337,6 @@ If you'd rather just copy the game's apk file to your Android device manually, y
 
 Then navigate to the 'bin' directory inside |PGS4A| and copy the file mygame-release.apk into your Android Device.
 You will then need to find the .apk file in your Android device using your file application and open it to install the
-
 game.
 
 The build command passes the options after the game name to the ant

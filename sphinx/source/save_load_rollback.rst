@@ -206,7 +206,7 @@ Blocking Rollback
     will be forced to save more often, breaking game engagement.
 
 It is possible to disable rollback in part or in full. If rollback is
-not wanted at all, it can simply be turned of through the
+not wanted at all, it can simply be turned off through the
 :var:`config.rollback_enabled` option.
 
 More common is a partial block of rollback. This can be achieved by the
@@ -237,7 +237,7 @@ back to the menu.
 Fixing Rollback
 ---------------
 
-Fixing rollback provides for an intemediate choice between
+Fixing rollback provides for an intermediate choice between
 unconstrained rollback and blocking rollback entirely. Rollback is
 allowed, but the user is not allowed to make changes to their
 decisions. Fixing rollback is done with the :func:`renpy.fix_rollback`
