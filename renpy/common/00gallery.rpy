@@ -277,12 +277,12 @@ init -1500 python:
                 object is used instead.
 
             `hover_border`
-                A displayable that is used to overlay this button when when
+                A displayable that is used to overlay this button when
                 it is unlocked and has focus. If None, the hover_border
                 field of the gallery object is used.
 
             `idle_border`
-                A displayable that is used to overlay this button when when
+                A displayable that is used to overlay this button when
                 it is unlocked but unfocused. If None, the idle_border
                 field of the gallery object is used.
 

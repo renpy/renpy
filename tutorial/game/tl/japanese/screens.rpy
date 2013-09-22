@@ -92,7 +92,7 @@ translate japanese strings:
 
     # game/screens.rpy:398
     old "Seen Messages"
-    new "シーンのメッセージ"
+    new "既読のメッセージ"
 
     # game/screens.rpy:399
     old "All Messages"
