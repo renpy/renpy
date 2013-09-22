@@ -111,10 +111,10 @@ init -1500 python:
          """
 
         screenshot = renpy.slot_screenshot(__slotname(name, page))
-        
+
         if screenshot is not None:
             return screenshot
-   
+
         if empty is not None:
             return empty
         else:
@@ -145,13 +145,13 @@ init -1500 python:
     def FileJson(name, key=None, empty=None, missing=None, page=None):
         """
         :doc: file_action_function
-        
+
         Accesses the Json information associated with `name`.
-        
-        If `key` is None, returns the entire Json other object, or `empty` if the slot 
+
+        If `key` is None, returns the entire Json other object, or `empty` if the slot
         is empty.
-        
-        Otherwise, this returns json[key] if `key` is defined on the json object of the save, 
+
+        Otherwise, this returns json[key] if `key` is defined on the json object of the save,
         `missing` if there is a save with the given name, but it does not contain `key`, or
         `empty` if the save slot is empty.
         """
@@ -160,10 +160,10 @@ init -1500 python:
 
         if json is None:
             return empty
-            
+
         if key is None:
             return json
-            
+
         return json.get(key, missing)
 
 
@@ -176,7 +176,15 @@ init -1500 python:
          """
 
         return FileJson(name, "_save_name", empty=empty, missing=empty, page=page)
-        
+
+    def FileNewest(name, page=None):
+        """
+        :doc: file_action_function
+
+        Returns True if this is the newest file slot, or False otherwise.
+        """
+
+        return __newest_slot() == __slotname(name, page)
 
     class FileSave(Action):
         """
@@ -196,7 +204,7 @@ init -1500 python:
 
          `newest`
              Ignored.
-        
+
          `page`
              The name of the page that the slot is on. If None, the current
              page is used.
