@@ -519,7 +519,7 @@ class RenpyImporter(object):
 
     def translate(self, fullname, prefix=""):
 
-        fn = prefix + fullname.replace(".", "/")
+        fn = (prefix + fullname.replace(".", "/")).decode("utf8")
 
         if loadable(fn + ".py"):
             return fn + ".py"
