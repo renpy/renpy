@@ -69,7 +69,8 @@ init -1700 python:
         config.skipping = None
 
         renpy.movie_stop(only_fullscreen=True)
-        renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
+        if not renpy.context()._menu:
+            renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
         for i in config.menu_clear_layers:
             renpy.scene(layer=i)
