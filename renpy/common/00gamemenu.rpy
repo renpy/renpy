@@ -174,6 +174,10 @@ label _game_menu_preferences:
 label _quit:
     $ renpy.quit()
 
+label _return_fast_skipping:
+    $ config.skipping = "fast"
+    jump _return
+
 label _return_skipping:
     $ config.skipping = "slow"
     jump _return
