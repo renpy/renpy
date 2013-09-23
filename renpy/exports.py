@@ -461,7 +461,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     renpy.exports.shown_window()
 
-    if not renpy.game.after_rollback():
+    if not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
     # use normal "say" click behavior if input can't be changed
@@ -538,7 +538,7 @@ def choice_for_skipping():
     if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
         renpy.config.skipping = None
 
-    if not renpy.game.after_rollback():
+    if not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
 
