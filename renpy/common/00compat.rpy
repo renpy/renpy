@@ -140,3 +140,4 @@ init 1900 python hide::
 
     if compat(6, 15, 7):
         config.has_quicksave = False
+        config.quit_action = ui.gamemenus("_confirm_quit") 

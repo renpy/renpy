@@ -57,7 +57,7 @@ init -1700 python:
     config.menu_clear_layers = [ ]
 
     # What we do on a quit, by default.
-    config.quit_action = ui.gamemenus("_confirm_quit")
+    config.quit_action = ui.gamemenus("_quit_prompt")
 
     # What we do on a game menu invokcation.
     config.game_menu_action = None
