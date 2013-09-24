@@ -587,6 +587,8 @@ class Layout(object):
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
         # per-outline basis.)
+
+        # These are from the SDL source code.
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 

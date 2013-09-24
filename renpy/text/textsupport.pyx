@@ -16,6 +16,10 @@ cdef class Line:
     def __repr__(self):
         return "<Line y={0}, height={1}>".format(self.y, self.height)
 
+# The maximum width of text we lay out. This should be quite a bit smaller
+# than the maximum SDL surface width. (16384)
+cdef int MAX_WIDTH
+MAX_WIDTH = 8192
 
 TEXT=1
 TAG=2
@@ -414,6 +418,10 @@ def place_horizontal(list glyphs, float start_x, float first_indent, float rest_
 
         x += g.advance
 
+        # Limit us to some width.
+        if x > MAX_WIDTH:
+            x = MAX_WIDTH
+
         old_g = g
 
     return maxx
@@ -725,7 +733,7 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
 
         last_ruby = RUBY_TOP
 
-def align_and_justify(list lines, short width, float text_align, bint justify):
+def align_and_justify(list lines, int width, float text_align, bint justify):
     """
     Handle text alignment and justification.
     """
@@ -759,6 +767,10 @@ def align_and_justify(list lines, short width, float text_align, bint justify):
                 spaces += 1
 
             max_x = <int> (g.x + g.width)
+
+        # If we're too big, give up.
+        if max_x >= MAX_WIDTH:
+            continue
 
         if justify and spaces and not l.eop:
 
