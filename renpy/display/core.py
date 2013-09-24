@@ -2325,8 +2325,12 @@ class Interface(object):
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
                     evs = pygame.event.get([pygame.VIDEORESIZE])
+
                     if len(evs):
                         ev = evs[-1]
+
+                    if self.last_resize is None and renpy.windows:
+                        self.last_resize = ev.size
 
                     if self.last_resize != ev.size:
                         self.last_resize = ev.size
