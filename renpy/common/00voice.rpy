@@ -205,7 +205,10 @@ init -1500 python hide:
     config.say_sustain_callbacks.append(voice_sustain)
 
     def voice_afm_callback():
-        return not renpy.sound.is_playing(channel="voice")
+        if _preferences.wait_voice:
+            return not renpy.sound.is_playing(channel="voice")
+        else:
+            return True
 
     config.afm_callback = voice_afm_callback
 

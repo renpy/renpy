@@ -16,6 +16,9 @@ init -1500 python:
 
     # If not None, the default value of afm_enable
     config.default_afm_enable = None
+    
+    # If not None, the default value of wait_voice
+    config.default_wait_voice = None
 
 
 init 1500 python:
@@ -31,6 +34,9 @@ init 1500 python:
 
         if config.default_afm_time is not None:
             _preferences.afm_time = config.default_afm_time
+
+        if config.default_wait_voice is not None:
+            _preferences.wait_voice = config.default_wait_voice
 
     if config.default_afm_enable is not None:
         _preferences.afm_enable = config.default_afm_enable
