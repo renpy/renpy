@@ -98,6 +98,7 @@ def import_all():
     import renpy.object #@UnresolvedImport
 
     import renpy.game #@UnresolvedImport
+    import renpy.preferences #@UnresolvedImport
 
     # Adds in the Ren'Py loader.
     import renpy.loader #@UnresolvedImport
