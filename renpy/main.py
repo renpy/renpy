@@ -240,14 +240,14 @@ def main():
     # We need to be 100% sure we kill the savelocation thread.
     try:
 
-        game.persistent = renpy.persistent.load_persistent()
+        game.persistent = renpy.persistent.init_persistent()
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
 
         # Initialize the preferences.
-        if not game.persistent._preferences:
-            game.persistent._preferences = game.Preferences()
+        if game.persistent._preferences is None:
+            game.persistent._preferences = renpy.preferences.Preferences()
 
         game.preferences = game.persistent._preferences
 

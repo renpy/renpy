@@ -63,9 +63,12 @@ class Persistent(object):
             self._seen_audio.clear()
 
 
-def load_persistent():
+def init_persistent():
     """
     Loads the persistent data from disk.
+
+    This performs the initial load of persistent data from the local
+    disk.
     """
 
     # Unserialize the persistent data.
