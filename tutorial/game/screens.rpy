@@ -446,6 +446,7 @@ screen preferences:
                 label _("Voice Volume")
                 bar value Preference("voice volume")
 
+                textbutton "Voice Sustain" action Preference("voice sustain", "toggle")
                 if config.sample_voice:
                     textbutton "Test":
                         action Play("voice", config.sample_voice)

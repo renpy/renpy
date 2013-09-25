@@ -83,6 +83,10 @@ init -1500 python:
          * Preference("voice mute", "disable") - Un-mute the voice mixer.
          * Preference("voice mute", "toggle") - Toggle voice mute.
 
+         * Preference("voice sustain", "enable")  - Sustain voice through the current interaction.
+         * Preference("voice sustain", "disable") - Don't sustain voice through the current interaction.
+         * Preference("voice sustain", "toggle")  - Toggle sustain voice.
+
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("volice volume", 0.5) - Set the voice volume.
@@ -226,6 +230,15 @@ init -1500 python:
                 return SetDict(_preferences.mute, "voice", False)
             elif value == "toggle":
                 return ToggleDict(_preferences.mute, "voice")
+
+        elif name == "voice sustain":
+
+            if value == "enable":
+                return SetField(_preferences, "voice_sustain", True)
+            elif value == "disable":
+                return SetField(_preferences, "voice_sustain", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "voice_sustain")
 
         else:
             raise Exception("Preference(%r, %r) is unknown." % (name , value))

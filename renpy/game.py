@@ -111,6 +111,7 @@ class Preferences(renpy.object.Object):
         self.text_cps = 0
         self.afm_time = 0
         self.afm_enable = True
+        self.voice_sustain = False
 
         # These will be going away soon.
         self.sound = True
