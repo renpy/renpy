@@ -17,6 +17,7 @@ init -1500 python:
             self.mr = mr
             self.filename = filename
             self.selected = self.get_selected()
+            self.last_playing = None
 
         def __call__(self):
             self.mr.play(self.filename, 0)
@@ -30,6 +31,15 @@ init -1500 python:
         def periodic(self, st):
             if self.selected != self.get_selected():
                 renpy.restart_interaction()
+
+            current_playing = renpy.music.get_playing(self.mr.channel)
+            if current_playing in self.mr.action:
+                if self.last_playing != current_playing:
+                    if not isinstance(self.mr.action[current_playing], list):
+                        self.mr.action[current_playing] = [self.mr.action[current_playing]]
+                    for c in self.mr.action[current_playing]:
+                        c()
+                    self.last_playing = current_playing
 
             return .1
 
@@ -95,6 +105,7 @@ init -1500 python:
             self.channel = channel
             self.fadeout = fadeout
             self.fadein = fadein
+            self.action = {}
 
             # The list of strings giving the titles of songs that make up the
             # playlist.
@@ -110,13 +121,20 @@ init -1500 python:
             # Should we loop rather than advancing to the next track?
             self.loop = loop
 
-        def add(self, filename, always_unlocked=False):
+        def add(self, filename, action=None, always_unlocked=False):
             """
             :doc: music_room method
 
             Adds the music file `filename` to this music room. The music room
             will play unlocked files in the order that they are added to the
             room.
+
+            `action`
+                This is a action or the list of actions. these are called when this
+                file is played.
+
+                For example, These actions is used to change a screen or background, description
+                by the playing file.
 
             `always_unlocked`
                 If true, the music file will be always unlocked. This allows
@@ -126,6 +144,9 @@ init -1500 python:
 
             self.playlist.append(filename)
             self.filenames.add(filename)
+
+            if action:
+                self.action[filename] = action
 
             if always_unlocked:
                 self.always_unlocked.add(filename)
