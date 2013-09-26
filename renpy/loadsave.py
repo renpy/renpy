@@ -31,6 +31,7 @@ import re
 import threading
 import types
 import shutil
+import os
 
 import renpy
 
@@ -181,6 +182,16 @@ def save_dump(roots, log):
 class SaveAbort(Exception):
     pass
 
+def safe_rename(old, new):
+    """
+    Safely rename old to new.
+    """
+
+    if os.path.exists(new):
+        os.unlink(new)
+
+    os.rename(old, new)
+
 class SaveRecord(object):
     """
     This is passed to the save locations. It contains the information that
@@ -201,13 +212,15 @@ class SaveRecord(object):
         This writes a standard-format savefile to `filename`.
         """
 
+        filename_new = filename + ".new"
+
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copy(self.first_filename, filename)
+            shutil.copy(self.first_filename, filename_new)
+            safe_rename(filename_new, filename)
+            return
 
-        self.first_filename = filename
-
-        zf = zipfile.ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
+        zf = zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED)
 
         # Screenshot.
         zf.writestr("screenshot.png", self.screenshot)
@@ -225,6 +238,11 @@ class SaveRecord(object):
         zf.writestr("log", self.log)
 
         zf.close()
+
+        safe_rename(filename_new, filename)
+
+        self.first_filename = filename
+
 
 
 def save(slotname, extra_info='', mutate_flag=False):
@@ -659,6 +677,9 @@ def clear_cache():
 # Save locations are places where saves are saved to or loaded from, or a
 # collection of such locations. This is the default save location.
 location = None
+
+if False:
+    location = renpy.savelocation.FileLocation("blah")
 
 
 

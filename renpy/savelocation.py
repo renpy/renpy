@@ -31,7 +31,7 @@ import json
 import renpy.display
 import threading
 
-from renpy.loadsave import clear_slot
+from renpy.loadsave import clear_slot, safe_rename
 
 class FileLocation(object):
     """
@@ -113,11 +113,6 @@ class FileLocation(object):
         """
 
         filename = self.filename(slotname)
-
-        try:
-            os.unlink(filename)
-        except:
-            pass
 
         record.write_file(filename)
 
@@ -253,6 +248,41 @@ class FileLocation(object):
 
         self.scan()
 
+
+    def load_persistent(self):
+        """
+        Returns a list of (mtime, data) tuples for each persistent file we
+        know about.
+        """
+
+        fn = os.path.join(self.directory, "persistent")
+
+        try:
+            mtime = os.path.getmtime(fn)
+            with open(fn, "rb") as f:
+                data = f.read()
+
+            return [ (mtime, data) ]
+
+        except:
+            return [ ]
+
+
+    def save_persistent(self, data):
+        """
+        Saves `data` as the persistent data. Data is a binary string giving
+        the persistent data in python format.
+        """
+
+        fn = os.path.join(self.directory, "persistent")
+        fn_new = fn + ".new"
+
+        with open(fn_new, "wb") as f:
+            f.write(data)
+
+        safe_rename(fn_new, fn)
+
+
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
             return False
@@ -357,6 +387,19 @@ class MultiLocation(object):
     def rename(self, old, new):
         for l in self.active_locations():
             l.rename(old, new)
+
+
+    def load_persistent(self):
+        rv = [ ]
+
+        for l in self.active_locations():
+            rv.extend(l.load_persistent())
+
+    def save_persistent(self, data):
+
+        for l in self.active_locations():
+            l.save_persistent(data)
+
 
     def scan(self):
         # This should scan everything, as a scan can help decide if a

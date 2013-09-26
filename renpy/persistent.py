@@ -108,11 +108,14 @@ def save_persistent():
     """
 
     try:
+        data = dumps(renpy.game.persistent).encode("zlib")
+        renpy.loadsave.location.save_persistent(data)
+
         f = file(renpy.config.savedir + "/persistent", "wb")
         f.write(dumps(renpy.game.persistent).encode("zlib"))
         f.close()
     except:
-        if renpy.config.debug:
+        if renpy.config.developer:
             raise
 
 renpy.game.Persistent = Persistent
