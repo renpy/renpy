@@ -33,13 +33,12 @@ init -1500 python:
                 renpy.restart_interaction()
 
             current_playing = renpy.music.get_playing(self.mr.channel)
-            if current_playing in self.mr.action:
-                if self.last_playing != current_playing:
-                    if not isinstance(self.mr.action[current_playing], list):
-                        self.mr.action[current_playing] = [self.mr.action[current_playing]]
-                    for c in self.mr.action[current_playing]:
-                        c()
-                    self.last_playing = current_playing
+
+            if self.last_playing != current_playing:
+                action = self.mr.action.get(current_playing):
+                renpy.run_action(action)
+
+                self.last_playing = current_playing
 
             return .1
 

@@ -34,6 +34,8 @@ from renpy.text.extras import ParameterizedText
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
+from renpy.display.behavior import run as run_action, run_unhovered, run_periodic
+
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
 from renpy.display.focus import focus_coordinates
@@ -69,6 +71,7 @@ def public_api():
     ParameterizedText
     register_sfont, register_mudgefont, register_bmfont
     Keymap
+    run_action, run_unhovered, run_periodic
     Minigame
     curry, partial
     play
