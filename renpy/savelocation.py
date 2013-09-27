@@ -251,18 +251,22 @@ class FileLocation(object):
 
     def load_persistent(self):
         """
-        Returns a list of (mtime, data) tuples for each persistent file we
+        Returns a list of (mtime, loader) tuples for each persistent file we
         know about.
+
+        Loader is a closure that, when called, returns the data in the file.
         """
 
         fn = os.path.join(self.directory, "persistent")
 
         try:
             mtime = os.path.getmtime(fn)
-            with open(fn, "rb") as f:
-                data = f.read()
 
-            return [ (mtime, data) ]
+            def load():
+                with open(fn, "rb") as f:
+                    return f.read()
+
+            return [ (mtime, load) ]
 
         except:
             return [ ]
