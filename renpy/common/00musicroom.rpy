@@ -17,7 +17,6 @@ init -1500 python:
             self.mr = mr
             self.filename = filename
             self.selected = self.get_selected()
-            self.last_playing = None
 
         def __call__(self):
             self.mr.play(self.filename, 0)
@@ -34,11 +33,11 @@ init -1500 python:
 
             current_playing = renpy.music.get_playing(self.mr.channel)
 
-            if self.last_playing != current_playing:
-                action = self.mr.action.get(current_playing):
+            if self.mr.last_playing != current_playing:
+                action = self.mr.action.get(current_playing)
                 renpy.run_action(action)
 
-                self.last_playing = current_playing
+                self.mr.last_playing = current_playing
 
             return .1
 
@@ -105,6 +104,7 @@ init -1500 python:
             self.fadeout = fadeout
             self.fadein = fadein
             self.action = {}
+            self.last_playing = None
 
             # The list of strings giving the titles of songs that make up the
             # playlist.
