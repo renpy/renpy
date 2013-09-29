@@ -28,10 +28,15 @@ import polib, os
 
 po = polib.pofile("locale/credits/" + os.environ["LANGUAGE"] + ".po")
 
+tc = ""
+
 for podata in po:
     if podata.msgid == "translator-credits":
         tc = podata.msgstr
         break
+
+if tc == "":
+    tc = "???"
 
 creditsfile = open("source/credits.rst", "r")
 
