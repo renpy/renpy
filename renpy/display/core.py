@@ -1888,6 +1888,8 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
+        renpy.persistent.update()
+
         self.roll_forward = roll_forward
         self.show_mouse = show_mouse
 
@@ -2269,16 +2271,17 @@ class Interface(object):
                         self.profile_time = get_time()
                     continue
 
-                # Handle autosaving, as necessary.
-                if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .25 and timeout_in > .25:
+                # Handle autosaving and persistent checking, as necessary.
+                if not did_autosave:
                     renpy.loadsave.autosave()
                     did_autosave = True
+
+                renpy.persistent.check_update()
 
                 if needs_redraw or renpy.display.video.playing():
                     ev = self.event_poll()
                 else:
                     ev = self.event_wait()
-
 
                 if ev.type == pygame.NOEVENT:
                     continue

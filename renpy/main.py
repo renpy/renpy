@@ -234,22 +234,21 @@ def main():
     if renpy.game.args.savedir: #@UndefinedVariable
         renpy.config.savedir = renpy.game.args.savedir #@UndefinedVariable
 
+    # Init preferences.
+    game.persistent = renpy.persistent.init()
+    game.preferences = game.persistent._preferences
+
     # Init save locations.
     renpy.savelocation.init()
 
     # We need to be 100% sure we kill the savelocation thread.
     try:
 
-        game.persistent = renpy.persistent.init_persistent()
+        # Load persistent data from all save locations.
+        renpy.persistent.update()
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
-
-        # Initialize the preferences.
-        if game.persistent._preferences is None:
-            game.persistent._preferences = renpy.preferences.Preferences()
-
-        game.preferences = game.persistent._preferences
 
         # Initialize persistent variables.
         renpy.store.persistent = game.persistent
@@ -328,7 +327,7 @@ def main():
                     run(restart)
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
-                    renpy.persistent.save_persistent()
+                    renpy.persistent.update(True)
 
             except game.QuitException, e:
 

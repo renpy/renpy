@@ -20,11 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
+import copy
+import time
+
 import renpy
 
 from renpy.loadsave import dump, loads
 from cPickle import dumps
-
 
 # The class that's used to hold the persistent data.
 class Persistent(object):
@@ -62,47 +64,250 @@ class Persistent(object):
             self._chosen.clear()
             self._seen_audio.clear()
 
+    def _update(self):
+        """
+        Updates the persistent data to be the latest version of
+        the persistent data.
+        """
 
-def init_persistent():
+        # Initialize the set of statements seen ever.
+        if not self._seen_ever:
+            self._seen_ever = { }
+
+        renpy.game.seen_ever = self._seen_ever
+
+        # Initialize the set of images seen ever.
+        if not self._seen_images:
+            self._seen_images = { }
+
+        # Initialize the set of chosen menu choices.
+        if not self._chosen:
+            self._chosen = { }
+
+        if not self._seen_audio:
+            self._seen_audio = { }
+
+        # A map from the name of a field to the time that field was last
+        # changed at.
+        if self._changed is None:
+            self._changed = { }
+
+
+
+renpy.game.Persistent = Persistent
+renpy.game.persistent = Persistent()
+
+
+def safe_deepcopy(o):
     """
-    Loads the persistent data from disk.
+    A "safe" version of deepcopy. If an object doesn't implement __eq__
+    correctly, we replace it with its original.
 
-    This performs the initial load of persistent data from the local
-    disk.
+    This tries to ensure we don't constantly find changes in the same
+    field.
+    """
+
+    rv = copy.deepcopy(o)
+
+    if not (o == rv):
+
+        if renpy.config.developer:
+            raise Exception("To be persisted, %r must support equality comparison." % o)
+        else:
+            rv = o
+
+    return rv
+
+
+# A map from field names to a backup of the field names in the persistent
+# object.
+backup = { }
+
+def find_changes():
+    """
+    This finds changes in the persistent object. When it finds a change, it
+    backs up that changed, and puts the current time for that field into
+    persistent._changed.
+
+    This returns True if there was at least one change, and False
+    otherwise.
+    """
+
+    rv = False
+
+    now = time.time()
+
+    persistent = renpy.game.persistent
+    pvars = vars(persistent)
+
+    fields = set(backup.keys()) | set(pvars.keys())
+
+    for f in fields:
+
+        if f == "_changed":
+            continue
+
+        old = backup.get(f, None)
+        new = pvars.get(f, None)
+
+        if not (new == old):
+
+            persistent._changed[f] = now
+            backup[f] = safe_deepcopy(new)
+
+            rv = True
+
+    return rv
+
+
+def load(filename):
+    """
+    Loads persistence data from `filename`. Returns None if the data
+    could not be loaded, or a Persistent object if it could be
+    loaded.
     """
 
     # Unserialize the persistent data.
     try:
-        f = file(renpy.config.savedir + "/persistent", "rb")
+        f = file(filename, "rb")
         s = f.read().decode("zlib")
         f.close()
         persistent = loads(s)
     except:
-        persistent = Persistent()
+        return None
 
-    update_persistent(persistent)
+    persistent._update()
+
     return persistent
 
-def update_persistent(persistent):
 
-    # Initialize the set of statements seen ever.
-    if not persistent._seen_ever:
-        persistent._seen_ever = { }
+def init():
+    """
+    Loads the persistent data from disk.
 
-    renpy.game.seen_ever = persistent._seen_ever
+    This performs the initial load of persistent data from the local
+    disk, so that we can configure the savelocation system.
+    """
 
-    # Initialize the set of images seen ever.
-    if not persistent._seen_images:
-        persistent._seen_images = { }
+    filename = os.path.join(renpy.config.savedir, "persistent")
+    persistent = load(filename)
 
-    # Initialize the set of chosen menu choices.
-    if not persistent._chosen:
-        persistent._chosen = { }
+    if persistent is None:
+        persistent = Persistent()
+        persistent._update()
 
-    if not persistent._seen_audio:
-        persistent._seen_audio = { }
+    # Create the backup of the persistent data.
+    v = vars(persistent)
 
-def save_persistent():
+    for k, v in vars(persistent).iteritems():
+        backup[k] = safe_deepcopy(v)
+
+    return persistent
+
+
+def default_merge(old, new, current):
+    return new
+
+def merge(other):
+    """
+    Merges `other` (which must be a persistent object) into the
+    current persistent object. This updates deep
+    """
+
+    now = time.time()
+
+    persistent = renpy.game.persistent
+
+    pvars = vars(persistent)
+    ovars = vars(other)
+
+    fields = set(pvars.keys()) | set(ovars.keys())
+
+    for f in fields:
+        pval = pvars.get(f, None)
+        oval = ovars.get(f, None)
+
+        if pval == oval:
+            continue
+
+        ptime = persistent._changed.get(f, 0)
+
+        otime = other._changed.get(f, 0)
+        otime = min(now, otime)
+
+        if ptime >= otime:
+            new = pval
+            old = oval
+            t = ptime
+        else:
+            new = oval
+            old = pval
+            t = otime
+
+        merge_func = default_merge
+
+        val = merge_func(old, new, pval)
+        pvars[f] = val
+        backup[f] = safe_deepcopy(val)
+        persistent._changed[f] = t
+
+# The mtime of the most recently processed savefile.
+persistent_mtime = None
+
+
+def check_update():
+    """
+    Checks to see if we need to run update. If we do, runs update and
+    restarts the interaction.
+    """
+
+    for mtime, _data in renpy.loadsave.location.load_persistent():
+        if mtime > persistent_mtime:
+            break
+    else:
+        return
+
+    update()
+    renpy.exports.restart_interaction()
+
+
+def update(force_save=False):
+    """
+    Loads the persistent data from persistent files that are newer than
+    persistent_mtime, and merges it into the persistent object.
+    """
+
+    need_save = find_changes()
+    need_save = need_save or force_save
+
+    global persistent_mtime
+
+    # A list of (mtime, other) pairs, where other is a persistent file
+    # we might want to merge in.
+    pairs = renpy.loadsave.location.load_persistent()
+    pairs.sort()
+
+    # Deals with the case where we don't have any persistent data for
+    # some reason.
+    mtime = persistent_mtime
+
+    for mtime, other in pairs:
+
+        if mtime <= persistent_mtime:
+            continue
+
+        if other is None:
+            continue
+
+        merge(other)
+
+    persistent_mtime = mtime
+
+    if need_save:
+        save()
+
+
+def save():
     """
     Saves the persistent data to disk.
     """
@@ -110,16 +315,15 @@ def save_persistent():
     try:
         data = dumps(renpy.game.persistent).encode("zlib")
         renpy.loadsave.location.save_persistent(data)
-
-        f = file(renpy.config.savedir + "/persistent", "wb")
-        f.write(dumps(renpy.game.persistent).encode("zlib"))
-        f.close()
     except:
         if renpy.config.developer:
             raise
 
-renpy.game.Persistent = Persistent
-renpy.game.persistent = Persistent()
+
+################################################################################
+# MultiPersistent
+################################################################################
+
 
 class _MultiPersistent(object):
 

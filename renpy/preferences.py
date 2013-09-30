@@ -99,5 +99,8 @@ class Preferences(renpy.object.Object):
     def get_mute(self, mixer):
         return self.mute[mixer]
 
+    def __eq__(self, other):
+        return True
+
 renpy.game.Preferences = Preferences
 renpy.game.preferences = Preferences()

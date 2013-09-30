@@ -63,6 +63,16 @@ class FileLocation(object):
         # A map from slotname to the mtime of that slot.
         self.mtimes = { }
 
+        # The persistent file.
+        self.persistent = os.path.join(self.directory, "persistent")
+
+        # The mtime of the persistent file.
+        self.persistent_mtime = 0
+
+        # The data loaded from the persistent file.
+        self.persistent_data = None
+
+
     def filename(self, slotname):
         """
         Given a slot name, returns a filename.
@@ -105,6 +115,14 @@ class FileLocation(object):
         for slotname in old_mtimes:
             if slotname not in new_mtimes:
                 clear_slot(slotname)
+
+        if os.path.exists(self.persistent):
+            mtime = os.path.getmtime(self.persistent)
+
+            if mtime != self.persistent_mtime:
+                data = renpy.persistent.load(self.persistent)
+                self.persistent_mtime = mtime
+                self.persistent_data = data
 
 
     def save(self, slotname, record):
@@ -251,26 +269,15 @@ class FileLocation(object):
 
     def load_persistent(self):
         """
-        Returns a list of (mtime, loader) tuples for each persistent file we
-        know about.
-
-        Loader is a closure that, when called, returns the data in the file.
+        Returns a list of (mtime, persistent) tuples loaded from the
+        persistent file. This should return quickly, with the actual
+        load occuring in the scan thread.
         """
 
-        fn = os.path.join(self.directory, "persistent")
-
-        try:
-            mtime = os.path.getmtime(fn)
-
-            def load():
-                with open(fn, "rb") as f:
-                    return f.read()
-
-            return [ (mtime, load) ]
-
-        except:
+        if self.persistent_data:
+            return [ (self.persistent_mtime, self.persistent_data) ]
+        else:
             return [ ]
-
 
     def save_persistent(self, data):
         """
@@ -278,7 +285,7 @@ class FileLocation(object):
         the persistent data in python format.
         """
 
-        fn = os.path.join(self.directory, "persistent")
+        fn = self.persistent
         fn_new = fn + ".new"
 
         with open(fn_new, "wb") as f:
@@ -398,6 +405,8 @@ class MultiLocation(object):
 
         for l in self.active_locations():
             rv.extend(l.load_persistent())
+
+        return rv
 
     def save_persistent(self, data):
 
