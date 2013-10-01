@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+#@PydevCodeAnalysisIgnore
 
-# This file is part of Ren'Py. The license below applies to Ren'Py only. 
+# This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
 # Copyright 2013 Koichi Akabe <vbkaisetsu@gmail.com>
@@ -41,8 +42,8 @@ if tc == "":
 creditsfile = open("source/credits.rst", "r")
 
 reslines = []
-for line in creditsfile:
-    reslines.append(line.replace("@TRANSLATOR_CREDITS@", tc.replace("\n", "\n    ")))
+for line in creditsfile:s
+    reslines.append(line.replace("@TRANSLATOR_CREDITS@", tc.replace("\n", "\n* ")))
 
 creditsfile.close()
 

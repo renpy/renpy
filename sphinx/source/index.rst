@@ -120,8 +120,8 @@ Engine Developer Documentation
    editor
    skins
 
-Changes and License
--------------------
+Changes, License, and Documentation Credits
+-------------------------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -130,6 +130,7 @@ Changes and License
    incompatible
    distributor
    license
+   credits
 
 Indices
 -------
@@ -149,10 +150,3 @@ Example Scripts
    thequestion
    thequestion_nvl
 
-About
----------------
-
-.. toctree::
-   :maxdepth: 1
-
-   credits
