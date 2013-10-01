@@ -334,7 +334,7 @@ class Context(renpy.object.Object):
                 renpy.store._kwargs = e.kwargs
 
             if self.seen:
-                renpy.game.seen_ever[self.current] = True
+                renpy.game.persistent._seen_ever[self.current] = True  # @UndefinedVariable
                 renpy.game.seen_session[self.current] = True
 
             if self.rollback and renpy.game.log:
@@ -474,7 +474,7 @@ class Context(renpy.object.Object):
             return False
 
         if ever:
-            seen = renpy.game.seen_ever
+            seen = renpy.game.persistent._seen_ever  # @UndefinedVariable
         else:
             seen = renpy.game.seen_session
 

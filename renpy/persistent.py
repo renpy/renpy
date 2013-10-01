@@ -31,6 +31,9 @@ from cPickle import dumps
 # The class that's used to hold the persistent data.
 class Persistent(object):
 
+    def __init__(self):
+        self._update()
+
     def __setstate__(self, data):
         vars(self).update(data)
 
@@ -70,11 +73,12 @@ class Persistent(object):
         the persistent data.
         """
 
+        if self._preferences is None:
+            self._preferences = renpy.preferences.Preferences()
+
         # Initialize the set of statements seen ever.
         if not self._seen_ever:
             self._seen_ever = { }
-
-        renpy.game.seen_ever = self._seen_ever
 
         # Initialize the set of images seen ever.
         if not self._seen_images:
@@ -194,7 +198,6 @@ def init():
 
     if persistent is None:
         persistent = Persistent()
-        persistent._update()
 
     # Create the backup of the persistent data.
     v = vars(persistent)
@@ -205,8 +208,52 @@ def init():
     return persistent
 
 
+# A map from field name to merge function.
+registry = { }
+
+def register_persistent(field, func):
+    """
+    :doc: persistent
+
+    Registers a function that is used to merge values of a persistent field
+    loaded from disk with values of current persistent object.
+
+    `field`
+        The name of a field on the persistent object.
+
+    `function`
+        A function that is called with three parameters, `old`, `new`, and
+        `current`:
+
+        `old`
+            The value of the field in the older object.
+
+        `new`
+            The value of the field in the newer object.
+
+        `current`
+            The value of the field in the current persistent object. This is
+            provided for cases where the identity of the object referred to
+            by the field can't change.
+
+        The function is expected to return the new value of the field in the
+        persistent object.
+    """
+
+    registry[field] = func
+
 def default_merge(old, new, current):
     return new
+
+def dictset_merge(old, new, current):
+    current.update(old)
+    current.update(new)
+    return current
+
+register_persistent("_seen_ever", dictset_merge)
+register_persistent("_seen_images", dictset_merge)
+register_persistent("_seen_audio", dictset_merge)
+register_persistent("_chosen", dictset_merge)
 
 def merge(other):
     """
@@ -244,7 +291,7 @@ def merge(other):
             old = pval
             t = otime
 
-        merge_func = default_merge
+        merge_func = registry.get(f, default_merge)
 
         val = merge_func(old, new, pval)
         pvars[f] = val

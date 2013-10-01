@@ -61,9 +61,6 @@ style = None
 # The set of statements we've seen in this session.
 seen_session = { }
 
-# The set of statements we've ever seen.
-seen_ever = { }
-
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 

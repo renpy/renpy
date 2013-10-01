@@ -1888,8 +1888,6 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
-        renpy.persistent.update()
-
         self.roll_forward = roll_forward
         self.show_mouse = show_mouse
 

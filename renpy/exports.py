@@ -55,6 +55,8 @@ from renpy.easy import predict, displayable
 from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
 
+from renpy.persistent import register_persistent
+
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
 import renpy.audio.sound as sound
@@ -93,6 +95,7 @@ def public_api():
     unelide_filename, get_parse_errors
     change_language, known_languages
     language_tailor
+    register_persistent
 
 del public_api
 
@@ -1334,7 +1337,7 @@ def context_dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars, context=True)
 
 def seen_label(label):
-    return label in renpy.game.seen_ever
+    return label in renpy.game.persistent._seen_ever  # @UndefinedVariable
 
 def seen_audio(filename):
     return filename in renpy.game.persistent._seen_audio  # @UndefinedVariable
@@ -1931,3 +1934,13 @@ def end_replay():
 
     if renpy.store._in_replay:
         raise renpy.game.EndReplay()
+
+
+def save_persistent():
+    """
+    :doc: persistent
+
+    Saves the persistent data to disk.
+    """
+
+    renpy.persistent.update(True)

@@ -293,6 +293,11 @@ class FileLocation(object):
 
         safe_rename(fn_new, fn)
 
+    def unlink_persistent(self):
+        try:
+            os.unlink(self.persistent)
+        except:
+            pass
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
@@ -413,6 +418,11 @@ class MultiLocation(object):
         for l in self.active_locations():
             l.save_persistent(data)
 
+
+    def unlink_persistent(self):
+
+        for l in self.active_locations():
+            l.unlink_persistent()
 
     def scan(self):
         # This should scan everything, as a scan can help decide if a
