@@ -115,7 +115,7 @@ statement. For example::
 
     Also: **slideawayright, slideawayup, slideawaydown**
 
-    Slides the new scene in the given direction. Instances of the
+    Slides the old scene in the given direction. Instances of the
     :func:`CropMove` transition class.
 
 .. var:: irisin
