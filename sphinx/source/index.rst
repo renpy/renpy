@@ -148,3 +148,11 @@ Example Scripts
 
    thequestion
    thequestion_nvl
+
+About
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   credits
