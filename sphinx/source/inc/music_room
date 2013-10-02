@@ -57,11 +57,18 @@
         
         This button is selected when any music is playing.
     
-    .. method:: add(filename, always_unlocked=False)
+    .. method:: add(filename, action=None, always_unlocked=False)
         
         Adds the music file `filename` to this music room. The music room
         will play unlocked files in the order that they are added to the
         room.
+        
+        `action`
+            This is a action or the list of actions. these are called when this
+            file is played.
+        
+            For example, These actions is used to change a screen or background, description
+            by the playing file.
         
         `always_unlocked`
             If true, the music file will be always unlocked. This allows

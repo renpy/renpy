@@ -4,10 +4,25 @@
     
     Returns the current file page as a string.
 
+.. function:: FileJson(name, key=None, empty=None, missing=None, page=None)
+    
+    Accesses the Json information associated with `name`.
+    
+    If `key` is None, returns the entire Json other object, or `empty` if the slot
+    is empty.
+    
+    Otherwise, this returns json[key] if `key` is defined on the json object of the save,
+    `missing` if there is a save with the given name, but it does not contain `key`, or
+    `empty` if the save slot is empty.
+
 .. function:: FileLoadable(name, page=None)
     
     This is a function that returns true
     if the file is loadable, and false otherwise.
+
+.. function:: FileNewest(name, page=None)
+    
+    Returns True if this is the newest file slot, or False otherwise.
 
 .. function:: FilePageName(auto='a', quick='q')
     

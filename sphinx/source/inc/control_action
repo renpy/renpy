@@ -13,6 +13,13 @@
     conjunction with renpy.run_screen to define an imagemap that jumps
     to a label when run.
 
+.. function:: NullAction()
+    
+    Does nothing.
+    
+    This can be used to make a button responsive to hover/unhover events,
+    without actually doing anything.
+
 .. function:: Return(value=None)
     
     Causes the current interaction to return the supplied value. This is
