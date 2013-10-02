@@ -354,8 +354,6 @@ label _directx_update:
 label _directx_update_main:
 
     python hide:
-        import subprocess
-        import sys
 
         # Start dxsetup. We have to go through startfile to ensure that UAC
         # doesn't cause problems.
@@ -364,9 +362,7 @@ label _directx_update_main:
         renpy.show_screen("_directx_update")
         ui.interact(suppress_overlay=True, suppress_underlay=True)
 
-        # Restart the current program.
-        subprocess.Popen(sys.argv)
-        renpy.quit()
+        renpy.quit(relaunch=True)
 
 label _choose_renderer:
     scene expression "#000"
