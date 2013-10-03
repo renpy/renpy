@@ -71,6 +71,10 @@ init -1500 python:
          * Preference("auto-forward", "disable") - Disable auto-forward mode.
          * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
 
+         * Preference("wait voice", "enable")  - Wait for the currently playing voice to complete before auto-forwarding.
+         * Preference("wait voice", "disable") - Do not wait for the currently playing voice to complete before auto-forwarding.
+         * Preference("wait voice", "toggle")  - Toggle wait voice.
+
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
          * Preference("music mute", "toggle") - Toggle music mute.
@@ -178,6 +182,15 @@ init -1500 python:
                 return SetField(_preferences, "afm_enable", False)
             elif value == "toggle":
                 return ToggleField(_preferences, "afm_enable")
+
+        elif name == "wait voice":
+
+            if value == "enable":
+                return SetField(_preferences, "wait_voice", True)
+            elif value == "disable":
+                return SetField(_preferences, "wait_voice", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "wait_voice")
 
         elif name == "music volume":
 
