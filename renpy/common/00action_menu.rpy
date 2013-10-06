@@ -157,7 +157,7 @@ init -1500 python:
                     renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.QUIT, Quit(False))
             else:
-                renpy.quit()
+                renpy.jump("_quit") 
 
 
     class Skip(Action):

@@ -57,7 +57,7 @@ init -1700 python:
     config.menu_clear_layers = [ ]
 
     # What we do on a quit, by default.
-    config.quit_action = ui.gamemenus("_confirm_quit")
+    config.quit_action = ui.gamemenus("_quit_prompt")
 
     # What we do on a game menu invokcation.
     config.game_menu_action = None
@@ -171,6 +171,8 @@ label _game_menu_preferences:
         jump expression "preferences_screen"
 
 label _quit:
+    if renpy.has_label("quit"):
+        call expression "quit"
     $ renpy.quit()
 
 label _return_skipping:
