@@ -97,7 +97,13 @@ init -1700 python:
             renpy.scene(layer=i)
 
     def _invoke_game_menu():
-        if renpy.context()._menu:
+        if (renpy.get_screen("yesno_prompt") and
+             hasattr(renpy.context(), "_no_action") and
+              renpy.context()._no_action):
+            for action in renpy.context()._no_action:
+                action()
+            renpy.context()._no_action = None
+        elif renpy.context()._menu:  
             if renpy.context()._main_menu:
                 return
             else:
