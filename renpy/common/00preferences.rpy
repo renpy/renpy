@@ -75,6 +75,11 @@ init -1500 python:
          * Preference("wait for voice", "disable") - Do not wait for the currently playing voice to complete before auto-forwarding.
          * Preference("wait for voice", "toggle")  - Toggle wait voice.
 
+         * Preference("voice sustain", "enable")  - Sustain voice paist the current interaction.
+         * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
+         * Preference("voice sustain", "toggle")  - Toggle voice sustain.
+
+
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
          * Preference("music mute", "toggle") - Toggle music mute.
@@ -239,6 +244,15 @@ init -1500 python:
                 return SetDict(_preferences.mute, "voice", False)
             elif value == "toggle":
                 return ToggleDict(_preferences.mute, "voice")
+
+        elif name == "voice sustain":
+
+            if value == "enable":
+                return SetField(_preferences, "voice_sustain", True)
+            elif value == "disable":
+                return SetField(_preferences, "voice_sustain", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "voice_sustain")
 
         else:
             raise Exception("Preference(%r, %r) is unknown." % (name , value))
