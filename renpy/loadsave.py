@@ -363,6 +363,14 @@ def force_autosave(take_screenshot=False):
     if not autosave_not_running.isSet():
         return
 
+    # Do not save if we're in the main menu.
+    if renpy.game.context().info._main_menu:
+        return
+
+    # Do not save if we're in a replay.
+    if renpy.store._in_replay:
+        return
+
     autosave_not_running.clear()
     threading.Thread(target=autosave_thread, args=(take_screenshot,)).start()
 

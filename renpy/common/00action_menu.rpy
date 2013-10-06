@@ -153,8 +153,7 @@ init -1500 python:
         def __call__(self):
 
             if self.confirm:
-                if not renpy.context()._main_menu:
-                    renpy.loadsave.force_autosave()
+                renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.QUIT, Quit(False))
             else:
                 renpy.jump("_quit") 
