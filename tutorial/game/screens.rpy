@@ -419,7 +419,8 @@ screen preferences:
                 label _("Auto-Forward Time")
                 bar value Preference("auto-forward time")
 
-                textbutton _("Wait for Voice") action Preference("wait for voice", "toggle")
+                if config.has_voice:
+                    textbutton _("Wait for Voice") action Preference("wait for voice", "toggle")
 
         vbox:
             frame:
@@ -441,18 +442,19 @@ screen preferences:
                         action Play("sound", config.sample_sound)
                         style "soundtest_button"
 
-            frame:
-                style_group "pref"
-                has vbox
+            if config.has_voice:
+                frame:
+                    style_group "pref"
+                    has vbox
 
-                label _("Voice Volume")
-                bar value Preference("voice volume")
+                    label _("Voice Volume")
+                    bar value Preference("voice volume")
 
-                textbutton "Voice Sustain" action Preference("voice sustain", "toggle")
-                if config.sample_voice:
-                    textbutton "Test":
-                        action Play("voice", config.sample_voice)
-                        style "soundtest_button"
+                    textbutton "Voice Sustain" action Preference("voice sustain", "toggle")
+                    if config.sample_voice:
+                        textbutton "Test":
+                            action Play("voice", config.sample_voice)
+                            style "soundtest_button"
 
 init -2 python:
     style.pref_frame.xfill = True
