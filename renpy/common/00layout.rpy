@@ -472,6 +472,8 @@ init -1400 python hide:
             if no is not None:
                 no_action.append(no)
 
+            renpy.context()._no_action = no_action  
+
             if config.enter_yesno_transition:
                 renpy.transition(config.enter_yesno_transition)
 
