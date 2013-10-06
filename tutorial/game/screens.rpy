@@ -419,8 +419,7 @@ screen preferences:
                 label _("Auto-Forward Time")
                 bar value Preference("auto-forward time")
 
-                if config.has_voice:
-                    textbutton _("Wait for Voice") action Preference("wait for voice", "toggle")
+                textbutton _("Wait for Voice") action Preference("wait for voice", "toggle")
 
         vbox:
             frame:
