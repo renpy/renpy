@@ -3,6 +3,19 @@
 
 init -1500 python:
 
+    class NullAction(Action):
+        """
+        :doc: control_action
+
+        Does nothing.
+
+        This can be used to make a button responsive to hover/unhover events,
+        without actually doing anything.
+        """
+
+        def __call__(self):
+            return
+
     class Return(Action):
         """
          :doc: control_action

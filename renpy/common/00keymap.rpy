@@ -128,6 +128,7 @@ init -1600 python:
 
     import os
     config.screenshot_pattern = os.environ.get("RENPY_SCREENSHOT_PATTERN", "screenshot%04d.png")
+    del os
 
     # Called to make a screenshot happen.
     def _screenshot():
@@ -218,6 +219,8 @@ init -1100 python:
         )
 
     config.underlay = [ km ]
+
+    del km
 
 
 label _hide_windows:

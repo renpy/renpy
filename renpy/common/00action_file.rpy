@@ -12,7 +12,7 @@ init -1500 python:
     if persistent._file_page is None:
         persistent._file_page = "1"
 
-    def __filename(name, page=None):
+    def __slotname(name, page=None):
 
         if page is None:
             page = persistent._file_page
@@ -27,9 +27,17 @@ init -1500 python:
 
         return str(page) + "-" + str(name)
 
+    def __newest_slot():
+        """
+        Returns the name of the newest slot on a page.
+        """
+
+        return renpy.newest_slot(r'\d+')
+
     def __unused_slot_name(page):
         """
-        Returns an unused slot name.
+        Returns an unused name of a slot on the current page. (This will
+        likely be a very big number, as it's based on the current unix time.)
         """
 
         import time
@@ -37,7 +45,7 @@ init -1500 python:
         rv = int(time.time())
 
         while True:
-            if not renpy.can_load(__filename(str(rv), page)):
+            if not renpy.can_load(__slotname(str(rv), page)):
                 return str(rv)
 
             rv += 1
@@ -66,11 +74,11 @@ init -1500 python:
             Otherwise, the lowest-numbered slot is listed first.
         """
 
-        regexp = __filename(r'\d+', page)
+        regexp = __slotname(r'\d+', page)
 
         rv = [ ]
 
-        for fn in renpy.list_saved_games(regexp=regexp, fast=True):
+        for fn in renpy.list_slots(regexp=regexp):
             _page, _, slot = fn.partition('-')
 
             rv.append(int(slot))
@@ -89,7 +97,7 @@ init -1500 python:
          if the file is loadable, and false otherwise.
          """
 
-        return renpy.can_load(__filename(name, page))
+        return renpy.can_load(__slotname(name, page))
 
     def FileScreenshot(name, empty=None, page=None):
         """
@@ -102,17 +110,15 @@ init -1500 python:
          The return value is a displayable.
          """
 
-        save_data = renpy.scan_saved_game(__filename(name, page))
+        screenshot = renpy.slot_screenshot(__slotname(name, page))
 
-        if save_data is None:
-            if empty is not None:
-                return empty
-            else:
-                return Null(config.thumbnail_width, config.thumbnail_height)
+        if screenshot is not None:
+            return screenshot
 
-        extra_info, displayable, save_time = save_data
-
-        return displayable
+        if empty is not None:
+            return empty
+        else:
+            return Null(config.thumbnail_width, config.thumbnail_height)
 
 
     def FileTime(name, format=_("%b %d, %H:%M"), empty="", page=None):
@@ -126,18 +132,40 @@ init -1500 python:
          The return value is a string.
          """
 
-        save_data = renpy.scan_saved_game(__filename(name, page))
+        mtime = renpy.slot_mtime(__slotname(name, page))
 
-        if save_data is None:
+        if mtime is None:
             return empty
 
         import time
 
-        extra_info, displayable, save_time = save_data
-
         format = renpy.translation.translate_string(format)
+        return time.strftime(format.encode("utf-8"), time.localtime(mtime)).decode("utf-8")
 
-        return time.strftime(format.encode("utf-8"), time.localtime(save_time)).decode("utf-8")
+    def FileJson(name, key=None, empty=None, missing=None, page=None):
+        """
+        :doc: file_action_function
+
+        Accesses the Json information associated with `name`.
+
+        If `key` is None, returns the entire Json other object, or `empty` if the slot
+        is empty.
+
+        Otherwise, this returns json[key] if `key` is defined on the json object of the save,
+        `missing` if there is a save with the given name, but it does not contain `key`, or
+        `empty` if the save slot is empty.
+        """
+
+        json = renpy.slot_json(__slotname(name, page))
+
+        if json is None:
+            return empty
+
+        if key is None:
+            return json
+
+        return json.get(key, missing)
+
 
     def FileSaveName(name, empty="", page=None):
         """
@@ -147,15 +175,16 @@ init -1500 python:
          or `empty` if the file does not exist.
          """
 
-        save_data = renpy.scan_saved_game(__filename(name, page))
+        return FileJson(name, "_save_name", empty=empty, missing=empty, page=page)
 
-        if save_data is None:
-            return empty
+    def FileNewest(name, page=None):
+        """
+        :doc: file_action_function
 
-        extra_info, displayable, save_time = save_data
+        Returns True if this is the newest file slot, or False otherwise.
+        """
 
-        return extra_info
-
+        return __newest_slot() == __slotname(name, page)
 
     class FileSave(Action):
         """
@@ -174,8 +203,7 @@ init -1500 python:
              If true, then we will prompt before overwriting a file.
 
          `newest`
-             If true, then this file will be marked as the newest save
-             file when it's saved.
+             Ignored.
 
          `page`
              The name of the page that the slot is on. If None, the current
@@ -193,8 +221,6 @@ init -1500 python:
             self.name = name
             self.confirm = confirm
             self.page = page
-            self.newest = newest
-            self.page = page
             self.cycle = cycle
 
         def __call__(self):
@@ -202,7 +228,7 @@ init -1500 python:
             if not self.get_sensitive():
                 return
 
-            fn = __filename(self.name, self.page)
+            fn = __slotname(self.name, self.page)
 
             if self.cycle:
                 renpy.renpy.loadsave.cycle_saves(self.page + "-", 10)
@@ -213,12 +239,6 @@ init -1500 python:
                     return
 
             renpy.save(fn, extra_info=save_name)
-
-            if self.newest:
-                persistent._file_newest = fn
-
-                if self.page is not None:
-                    persistent._file_page = self.page
 
             renpy.restart_interaction()
 
@@ -236,7 +256,7 @@ init -1500 python:
             if not self.confirm:
                 return False
 
-            return persistent._file_newest == __filename(self.name, self.page)
+            return __newest_slot() == __slotname(self.name, self.page)
 
     class FileLoad(Action):
         """
@@ -274,7 +294,7 @@ init -1500 python:
             if not self.get_sensitive():
                 return
 
-            fn = __filename(self.name, self.page)
+            fn = __slotname(self.name, self.page)
 
             if not renpy.context()._main_menu:
                 if self.confirm:
@@ -287,13 +307,13 @@ init -1500 python:
             if _in_replay:
                 return False
 
-            return renpy.can_load(__filename(self.name, self.page))
+            return renpy.can_load(__slotname(self.name, self.page))
 
         def get_selected(self):
             if not self.confirm or not self.newest:
                 return False
 
-            return persistent._file_newest == __filename(self.name, self.page)
+            return __newest_slot() == __slotname(self.name, self.page)
 
     class FileDelete(Action):
         """
@@ -315,7 +335,7 @@ init -1500 python:
             if not self.get_sensitive():
                 return
 
-            fn = __filename(self.name, self.page)
+            fn = __slotname(self.name, self.page)
 
             if self.confirm:
                 layout.yesno_screen(layout.DELETE_SAVE, FileDelete(self.name, False, self.page))
@@ -324,10 +344,10 @@ init -1500 python:
             renpy.unlink_save(fn)
 
         def get_sensitive(self):
-            return renpy.can_load(__filename(self.name, self.page))
+            return renpy.can_load(__slotname(self.name, self.page))
 
         def get_selected(self):
-            return persistent._file_newest == __filename(self.name, self.page)
+            return __newest_slot() == __slotname(self.name, self.page)
 
 
     def FileAction(name, page=None):
@@ -564,7 +584,7 @@ init -1500 python:
         def __call__(self):
             renpy.take_screenshot()
 
-    def QuickSave(message="Quick save complete.", newest=False):
+    def QuickSave(message=_("Quick save complete."), newest=False):
         """
         :doc: file_action
 
@@ -580,7 +600,7 @@ init -1500 python:
         return [
             FileTakeScreenshot(),
             FileSave(1, page="quick", confirm=False, cycle=True, newest=newest),
-            Notify("Quick save complete.") ]
+            Notify(message) ]
 
     def QuickLoad():
         """

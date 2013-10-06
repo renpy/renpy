@@ -61,9 +61,6 @@ style = None
 # The set of statements we've seen in this session.
 seen_session = { }
 
-# The set of statements we've ever seen.
-seen_ever = { }
-
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
@@ -86,86 +83,8 @@ less_imagedissolve = False
 # The persistent data that's kept from session to session
 persistent = None
 
-class Preferences(renpy.object.Object):
-    """
-    Stores preferences that will one day be persisted.
-    """
-    __version__ = 5
-
-    def after_upgrade(self, version):
-        if version < 1:
-            self.mute_volumes = 0
-        if version < 2:
-            self.using_afm_enable = False
-        if version < 3:
-            self.physical_size = None
-        if version < 4:
-            self.renderer = "auto"
-            self.performance_test = True
-        if version < 5:
-            self.language = None
-
-    def __init__(self):
-        self.fullscreen = False
-        self.skip_unseen = False
-        self.text_cps = 0
-        self.afm_time = 0
-        self.afm_enable = True
-
-        # These will be going away soon.
-        self.sound = True
-        self.music = True
-
-        # 2 - All transitions.
-        # 1 - Only non-default transitions.
-        # 0 - No transitions.
-        self.transitions = 2
-
-        self.skip_after_choices = False
-
-        # Mixer channel info.
-
-        # A map from channel name to the current volume (between 0 and 1).
-        self.volumes = { }
-
-        # True if the channel should not play music. False
-        # otherwise. (Not used anymore.)
-        self.mute = { }
-
-        # Joystick mappings.
-        self.joymap = dict(
-            joy_left="Axis 0.0 Negative",
-            joy_right="Axis 0.0 Positive",
-            joy_up="Axis 0.1 Negative",
-            joy_down="Axis 0.1 Positive",
-            joy_dismiss="Button 0.0")
-
-        # The size of the window, or None if we don't know it yet.
-        self.physical_size = None
-
-        # The graphics renderer we use.
-        self.renderer = "auto"
-
-        # Should we do a performance test on startup?
-        self.performance_test = True
-
-        # The language we use for translations.
-        self.language = None
-
-    def set_volume(self, mixer, volume):
-        self.volumes[mixer] = volume
-
-    def get_volume(self, mixer):
-        return self.volumes.get(mixer, 0)
-
-    def set_mute(self, mixer, mute):
-        self.mute[mixer] = mute
-
-    def get_mute(self, mixer):
-        return self.mute[mixer]
-
 # The current preferences.
-preferences = Preferences()
+preferences = None
 
 class RestartContext(Exception):
     """
@@ -418,3 +337,4 @@ if False:
     script = renpy.script.Script()
     interface = renpy.display.core.Interface()
     log = renpy.python.RollbackLog()
+    preferences = renpy.preferences.Preferences()

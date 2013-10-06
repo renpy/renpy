@@ -419,6 +419,9 @@ screen preferences:
                 label _("Auto-Forward Time")
                 bar value Preference("auto-forward time")
 
+                if config.has_voice:
+                    textbutton _("Wait for Voice") action Preference("wait for voice", "toggle")
+
         vbox:
             frame:
                 style_group "pref"
@@ -446,6 +449,7 @@ screen preferences:
                 label _("Voice Volume")
                 bar value Preference("voice volume")
 
+                textbutton "Voice Sustain" action Preference("voice sustain", "toggle")
                 if config.sample_voice:
                     textbutton "Test":
                         action Play("voice", config.sample_voice)

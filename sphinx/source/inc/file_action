@@ -7,8 +7,7 @@
     
     `name`
         The name of the slot to save to or load from. If None, an unused slot
-        (a large number based on the current time) will be
-        will be used.
+        (a large number based on the current time) will be used.
     
     `page`
         The page that the file will be saved to or loaded from. If None, the
@@ -44,17 +43,28 @@
     Sets the file page to `page`, which should be one of "auto", "quick",
     or an integer.
 
-.. function:: FilePageNext(max=None)
+.. function:: FilePageNext(max=None, wrap=False)
     
     Goes to the next file page.
     
     `max`
         If set, this should be an integer that gives the number of
         the maximum file page we can go to.
+    
+    `wrap`
+        If true, we can go to the first page when on the last file page if max is set.
 
-.. function:: FilePagePrevious(self)
+.. function:: FilePagePrevious(max=None, wrap=False)
     
     Goes to the previous file page, if possible.
+    
+    `max`
+        If set, this should be an integer that gives the number of
+        the maximum file page we can go to. This is required to enable
+        wrap.
+    
+    `wrap`
+        If true, we can go to the last page when on the first file page if max is set.
 
 .. function:: FileSave(name, confirm=True, newest=True, page=None, cycle=False)
     
@@ -65,15 +75,13 @@
     
     `name`
         The name of the slot to save to. If None, an unused slot
-        (a large number based on the current time) will be
-        will be used.
+        (a large number based on the current time) will be used.
     
     `confirm`
         If true, then we will prompt before overwriting a file.
     
     `newest`
-        If true, then this file will be marked as the newest save
-        file when it's saved.
+        Ignored.
     
     `page`
         The name of the page that the slot is on. If None, the current

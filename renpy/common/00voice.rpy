@@ -29,10 +29,15 @@ init -1500 python:
     _voice.sustain = False
     _voice.seen_in_lint = False
     _voice.tag = None
+    _voice.tlid = None
+    _voice.auto_file = None
 
     # The voice filename format. This may contain the voice tag
-
     config.voice_filename_format = "{filename}"
+
+    # This is formatted with {id} to produce a filename. If the filename
+    # exists, it's played as a voice file.
+    config.auto_voice = None
 
     # Call this to specify the voice file that will be played for
     # the user. This peice only gathers the information so
@@ -188,6 +193,26 @@ init -1500 python hide:
         if not config.has_voice:
             return
 
+        _voice.auto_file = None
+
+        # Auto-voice.
+        if not _voice.play and config.auto_voice:
+            tlid = renpy.game.context().translate_identifier
+
+            if tlid is not None:
+
+                fn = config.auto_voice.format(id=tlid)
+                _voice.auto_file = fn
+
+                if renpy.loadable(fn):
+
+                    if _voice.tlid == tlid:
+                        _voice.sustain = True
+                    else:
+                        _voice.play = fn
+
+                    _voice.tlid = tlid
+
         if _voice.tag in persistent._voice_mute:
             renpy.sound.stop(channel="voice")
             store._last_voice_play = _voice.play
@@ -200,12 +225,18 @@ init -1500 python hide:
 
         _voice.play = None
         _voice.sustain = False
+        
+        if _preferences.voice_sustain:
+            _voice.sustain = True
 
     config.start_interact_callbacks.append(voice_interact)
     config.say_sustain_callbacks.append(voice_sustain)
 
     def voice_afm_callback():
-        return not renpy.sound.is_playing(channel="voice")
+        if _preferences.wait_voice:
+            return not renpy.sound.is_playing(channel="voice")
+        else:
+            return True
 
     config.afm_callback = voice_afm_callback
 
@@ -213,6 +244,27 @@ init -1500 python hide:
         _voice.tag = voice_tag
 
     config.voice_tag_callback = voice_tag_callback
+
+
+screen _auto_voice:
+
+    if _voice.auto_file:
+
+        if renpy.loadable(_voice.auto_file):
+            $ color = "#ffffff"
+        else:
+            $ color = "#ffcccc"
+
+        frame:
+            xalign 0.5
+            yalign 0.0
+            xpadding 5
+            ypadding 5
+            background "#0004"
+
+            text "auto voice: [_voice.auto_file!q]":
+                color color
+                size 12
 
 python early hide:
 

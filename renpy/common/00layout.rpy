@@ -49,8 +49,7 @@ init -1400 python:
 # These are used by layout-based code, and also by the screens code when a layout
 # is used to invoke the screen.
 label _quit_prompt:
-    if not renpy.context()._main_menu:
-        $ renpy.loadsave.force_autosave()
+    $ renpy.loadsave.force_autosave()
 
     if layout.invoke_yesno_prompt(None, layout.QUIT):
         jump _quit
@@ -472,6 +471,8 @@ init -1400 python hide:
                 yes_action.append(yes)
             if no is not None:
                 no_action.append(no)
+
+            renpy.context()._no_action = no_action 
 
             if config.enter_yesno_transition:
                 renpy.transition(config.enter_yesno_transition)

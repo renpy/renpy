@@ -54,7 +54,7 @@ init -1700 python:
         # This ensures extend works even with NVL mode.
         who.do_extend()
 
-        what = _last_say_what + config.extend_interjection + what
+        what = _last_say_what + config.extend_interjection + _last_raw_what
 
         renpy.exports.say(who, what, interact=interact)
         store._last_say_what = what

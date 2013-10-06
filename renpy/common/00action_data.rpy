@@ -55,6 +55,9 @@ init -1600 python:
             renpy.restart_interaction()
 
         def get_selected(self):
+            if self.key not in self.dict:
+                return False
+
             return self.dict[self.key] == self.value
 
     def SetScreenVariable(name, value):

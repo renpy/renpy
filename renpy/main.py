@@ -234,114 +234,117 @@ def main():
     if renpy.game.args.savedir: #@UndefinedVariable
         renpy.config.savedir = renpy.game.args.savedir #@UndefinedVariable
 
-    # Make the save directory.
-    try:
-        os.makedirs(renpy.config.savedir)
-    except:
-        pass
-
-    game.persistent = renpy.persistent.load_persistent()
-
-    # Clear the list of seen statements in this game.
-    game.seen_session = { }
-
-    # Initialize the preferences.
-    if not game.persistent._preferences:
-        game.persistent._preferences = game.Preferences()
-
+    # Init preferences.
+    game.persistent = renpy.persistent.init()
     game.preferences = game.persistent._preferences
 
-    # Initialize persistent variables.
-    renpy.store.persistent = game.persistent
-    renpy.store._preferences = game.preferences
+    # Init save locations.
+    renpy.savelocation.init()
 
-    if renpy.parser.report_parse_errors():
-        raise renpy.game.ParseErrorException()
+    # We need to be 100% sure we kill the savelocation thread.
+    try:
 
-    renpy.game.exception_info = 'While executing init code:'
+        # Load persistent data from all save locations.
+        renpy.persistent.update()
 
-    for _prio, node in game.script.initcode:
-        game.context().run(node)
+        # Clear the list of seen statements in this game.
+        game.seen_session = { }
 
-    renpy.game.exception_info = 'After initialization, but before game start.'
+        # Initialize persistent variables.
+        renpy.store.persistent = game.persistent
+        renpy.store._preferences = game.preferences
 
-    # Save the bytecode in a cache.
-    renpy.game.script.save_bytecode()
+        if renpy.parser.report_parse_errors():
+            raise renpy.game.ParseErrorException()
 
-    # Check if we should simulate android.
-    renpy.android = renpy.android or renpy.config.simulate_android #@UndefinedVariable
+        renpy.game.exception_info = 'While executing init code:'
 
-    # Run the post init code, if any.
-    for i in renpy.game.post_init:
-        i()
+        for _prio, node in game.script.initcode:
+            game.context().run(node)
 
-    # Init translation.
-    renpy.translation.init_translation()
+        renpy.game.exception_info = 'After initialization, but before game start.'
 
-    # Rebuild the various style caches.
-    renpy.style.build_styles()
+        # Save the bytecode in a cache.
+        renpy.game.script.save_bytecode()
 
-    # Index the archive files. We should not have loaded an image
-    # before this point. (As pygame will not have been initialized.)
-    # We need to do this again because the list of known archives
-    # may have changed.
-    renpy.loader.index_archives()
+        # Check if we should simulate android.
+        renpy.android = renpy.android or renpy.config.simulate_android #@UndefinedVariable
 
-    # Check some environment variables.
-    renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
-    renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
-    renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
+        # Run the post init code, if any.
+        for i in renpy.game.post_init:
+            i()
 
-    renpy.dump.dump(False)
+        # Init translation.
+        renpy.translation.init_translation()
 
-    # Handle arguments and commands.
-    if not renpy.arguments.post_init():
-        return
+        # Rebuild the various style caches.
+        renpy.style.build_styles()
 
-    # Remove the list of all statements from the script.
-    game.script.all_stmts = None
+        # Index the archive files. We should not have loaded an image
+        # before this point. (As pygame will not have been initialized.)
+        # We need to do this again because the list of known archives
+        # may have changed.
+        renpy.loader.index_archives()
 
-    # Make a clean copy of the store.
-    renpy.python.make_clean_stores()
+        # Check some environment variables.
+        renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
+        renpy.game.less_mouse = "RENPY_LESS_MOUSE" in os.environ
+        renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
 
-    # Initialize image cache.
-    renpy.display.im.cache.init()
+        renpy.dump.dump(False)
 
-    # (Perhaps) Initialize graphics.
-    if not game.interface:
-        renpy.display.core.Interface()
+        # Handle arguments and commands.
+        if not renpy.arguments.post_init():
+            return
 
-    # Start things running.
-    restart = None
+        # Remove the list of all statements from the script.
+        game.script.all_stmts = None
 
-    renpy.game.exception_info = 'While running game code:'
-    renpy.first_utter_start = False
+        # Make a clean copy of the store.
+        renpy.python.make_clean_stores()
 
-    while True:
+        # Initialize image cache.
+        renpy.display.im.cache.init()
 
-        if restart:
-            renpy.display.screen.before_restart()
+        # (Perhaps) Initialize graphics.
+        if not game.interface:
+            renpy.display.core.Interface()
 
-        try:
+        # Start things running.
+        restart = None
+
+        renpy.game.exception_info = 'While running game code:'
+        renpy.first_utter_start = False
+
+
+        while True:
+
+            if restart:
+                renpy.display.screen.before_restart()
+
             try:
-                run(restart)
+                try:
+                    run(restart)
+                finally:
+                    restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
+                    renpy.persistent.update(True)
+
+            except game.QuitException, e:
+
+                if e.relaunch:
+                    subprocess.Popen([sys.executable, "-EOO"] + sys.argv)
+
+                break
+
+            except game.FullRestartException, e:
+                restart = e.reason
+
             finally:
-                restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
-                renpy.persistent.save_persistent()
+                renpy.loadsave.autosave_not_running.wait()
 
-        except game.QuitException, e:
+    finally:
 
-            if e.relaunch:
-                subprocess.Popen([sys.executable, "-EOO"] + sys.argv)
-
-            break
-
-        except game.FullRestartException, e:
-            restart = e.reason
-
-        finally:
-            renpy.display.core.cpu_idle.set()
-            renpy.loadsave.autosave_not_running.wait()
+        renpy.savelocation.quit()
 
     # This is stuff we do on a normal, non-error return.
     if not renpy.display.error.error_handled:

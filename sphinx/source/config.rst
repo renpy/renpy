@@ -219,6 +219,13 @@ Occasionally Used
     for end users. Setting this to "1" will automatically load the
     game in save slot 1.
 
+.. var:: config.auto_voice = None
+
+    If not None, this is formatted with the ``id`` variable bound to the
+    identifier of the current line of dialogue. If this gives an existing
+    file, that file is played as voice audio. See :ref:`Automatic Voice <automatic-voice>`
+    for more details.
+
 .. var:: config.automatic_images = None
 
     If not None, this causes Ren'Py to automatically define
@@ -302,6 +309,12 @@ Occasionally Used
     code to set the default value. (It's usually set to False in
     options.rpy.)
 
+.. var:: config.default_language = None
+
+    This sets the default value of the language preference. This is only
+    used the first time the game starts. (Or after persistent data has
+    been cleared.)
+
 .. var:: config.default_text_cps = None
 
     If not None, this sets the default number of characters per second
@@ -346,7 +359,6 @@ Occasionally Used
     to True, the selected option is marked but no options are clickable.
     The user can progress forward through the rollback buffer by
     clicking.
-
 
 .. var:: config.font_replacement_map = { }
 
@@ -510,6 +522,21 @@ Occasionally Used
     The action that is called when the user clicks the quit button on
     a window. The default action prompts the user to see if he wants
     to quit the game.
+
+.. var:: config.save_json_callbacks = [ ]
+
+    A list of callback functions that are used to create the json object
+    that is stored with each save and maked accessible through :func:`FileJson`
+    and :func:`renpy.slot_json`.
+
+    Each callback is called with a python dictionary that will eventually be
+    saved. Callbacks should modify that dictionary by adding json-compatible
+    python types, such as numbers, strings, lists, and dicts. The dictionary
+    at the end of the last callback is then saved as part of the save slot.
+
+    The dictionary passed to the callbacks may have already have keys
+    beginning with an underscore (_). These keys are used by Ren'Py,
+    and should not be changed.
 
 .. var:: config.thumbnail_height = 75
 

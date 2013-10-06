@@ -40,10 +40,6 @@ try:
 except:
     android = None
 
-# Is the cpu idle enough to do other things?
-cpu_idle = threading.Event()
-cpu_idle.clear()
-
 # Need to be +4, so we don't interfere with FFMPEG's events.
 TIMEEVENT = pygame.USEREVENT + 4
 PERIODIC = pygame.USEREVENT + 5
@@ -1629,12 +1625,7 @@ class Interface(object):
             self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
             self.bgscreenshot_event.set()
 
-        try:
-            cpu_idle.set()
-            ev = pygame.event.wait()
-        finally:
-            cpu_idle.clear()
-
+        ev = pygame.event.wait()
         self.last_event = ev
 
         return ev
@@ -2278,16 +2269,17 @@ class Interface(object):
                         self.profile_time = get_time()
                     continue
 
-                # Handle autosaving, as necessary.
-                if not did_autosave and not needs_redraw and not self.event_peek() and redraw_in > .25 and timeout_in > .25:
+                # Handle autosaving and persistent checking, as necessary.
+                if not did_autosave:
                     renpy.loadsave.autosave()
                     did_autosave = True
+
+                renpy.persistent.check_update()
 
                 if needs_redraw or renpy.display.video.playing():
                     ev = self.event_poll()
                 else:
                     ev = self.event_wait()
-
 
                 if ev.type == pygame.NOEVENT:
                     continue

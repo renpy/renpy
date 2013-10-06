@@ -34,6 +34,8 @@ from renpy.text.extras import ParameterizedText
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
+from renpy.display.behavior import run as run_action, run_unhovered, run_periodic
+
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
 from renpy.display.focus import focus_coordinates
@@ -42,13 +44,18 @@ from renpy.display.predict import screen as predict_screen
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
+
 from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot
+
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable
 from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
+
+from renpy.persistent import register_persistent
 
 from renpy.character import show_display_say, predict_show_display_say, display_say
 
@@ -66,11 +73,13 @@ def public_api():
     ParameterizedText
     register_sfont, register_mudgefont, register_bmfont
     Keymap
+    run_action, run_unhovered, run_periodic
     Minigame
     curry, partial
     play
     movie_start_fullscreen, movie_start_displayable, movie_stop
     load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+    list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot
     eval
     random
     atl_warper
@@ -86,6 +95,7 @@ def public_api():
     unelide_filename, get_parse_errors
     change_language, known_languages
     language_tailor
+    register_persistent
 
 del public_api
 
@@ -313,7 +323,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
             img = i(img)
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[name] = True
+    renpy.game.persistent._seen_images[name] = True  # @UndefinedVariable
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -457,7 +467,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     renpy.exports.shown_window()
 
-    if not renpy.game.after_rollback():
+    if not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
     # use normal "say" click behavior if input can't be changed
@@ -534,7 +544,7 @@ def choice_for_skipping():
     if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
         renpy.config.skipping = None
 
-    if not renpy.game.after_rollback():
+    if not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
 
@@ -829,6 +839,9 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
 
+    if renpy.config.skipping == "fast":
+        return False
+
     roll_forward = renpy.exports.roll_forward_info()
     if roll_forward not in [ True, False ]:
         roll_forward = None
@@ -841,7 +854,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
         if newdelay is not None:
             delay = newdelay
 
-    if renpy.config.skipping == "fast" or (renpy.game.after_rollback and roll_forward is None):
+    if renpy.game.after_rollback and roll_forward is None:
         delay = 0
 
     if hard:
@@ -1203,7 +1216,10 @@ def restart_interaction():
     changes.
     """
 
-    renpy.game.interface.restart_interaction = True
+    try:
+        renpy.game.interface.restart_interaction = True
+    except:
+        pass
 
 def context():
     """
@@ -1321,16 +1337,16 @@ def context_dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars, context=True)
 
 def seen_label(label):
-    return label in renpy.game.seen_ever
+    return label in renpy.game.persistent._seen_ever  # @UndefinedVariable
 
 def seen_audio(filename):
-    return filename in renpy.game.persistent._seen_audio
+    return filename in renpy.game.persistent._seen_audio  # @UndefinedVariable
 
 def seen_image(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    return name in renpy.game.persistent._seen_images
+    return name in renpy.game.persistent._seen_images  # @UndefinedVariable
 
 def file(fn): #@ReservedAssignment
     return renpy.loader.load(fn)
@@ -1918,3 +1934,13 @@ def end_replay():
 
     if renpy.store._in_replay:
         raise renpy.game.EndReplay()
+
+
+def save_persistent():
+    """
+    :doc: persistent
+
+    Saves the persistent data to disk.
+    """
+
+    renpy.persistent.update(True)

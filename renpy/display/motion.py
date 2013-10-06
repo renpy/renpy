@@ -482,6 +482,9 @@ class Transform(Container):
     children = False
     arguments = DEFAULT_ARGUMENTS
 
+    # Default before we set this.
+    child_size = (0, 0)
+
     def __init__(self,
                  child=None,
                  function=None,

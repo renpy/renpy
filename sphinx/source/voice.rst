@@ -53,6 +53,39 @@ For example::
       voice "l02.ogg"
       l "Wait... that means they can mute me as well! Really?"
 
+.. _automatic-voice:
+
+Automatic Voice
+---------------
+
+Ren'Py includes support for automatically determining the voice file to play,
+making it possible to play back voice without having to put voice statements
+before each line of dialogue.
+
+This is done by creating voice files that match the identifier for each line
+of dialogue. To determine the identifiers to use , first export the dialogue
+to a spreadsheet by choosing from the launcher "Extract Dialogue", "Tab-delimited
+Spreadsheet (dialogue.tab)", and "Continue". This will produce a file, dialogue.tab,
+that can be loaded in a spreasheet program.
+
+The first column of the spreadsheet is the identifier to use, with other
+columns giving more information about the dialogue.
+
+To make Ren'Py automatically play voices, set :var:`config.auto_dialogue` to
+a string containing `{id}`. When dialogue occurs, `{id}` is replaced with
+the dialogue identifier, forming a filename. If the filename exists, it is
+played.
+
+For example, if we have::
+
+    config.auto_voice = "voice/{id}.ogg"
+
+And the dialogue identifier is ``demo_minigame_03fc91ef``, then when
+the corresponding line is shown, Ren'Py will look for the file
+``voice/demo_minigame_03fc91ef.ogg``. If the file exists, Ren'Py will
+play it.
+
+
 Voice Functions
 ---------------
 

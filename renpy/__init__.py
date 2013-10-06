@@ -98,6 +98,7 @@ def import_all():
     import renpy.object #@UnresolvedImport
 
     import renpy.game #@UnresolvedImport
+    import renpy.preferences #@UnresolvedImport
 
     # Adds in the Ren'Py loader.
     import renpy.loader #@UnresolvedImport
@@ -108,6 +109,7 @@ def import_all():
     import renpy.easy #@UnresolvedImport
     import renpy.execution #@UnresolvedImport
     import renpy.loadsave #@UnresolvedImport
+    import renpy.savelocation  # @UnresolvedImport
     import renpy.persistent #@UnresolvedImport
     import renpy.parser #@UnresolvedImport
     import renpy.python #@UnresolvedImport

@@ -153,11 +153,10 @@ init -1500 python:
         def __call__(self):
 
             if self.confirm:
-                if not renpy.context()._main_menu:
-                    renpy.loadsave.force_autosave()
+                renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.QUIT, Quit(False))
             else:
-                renpy.quit()
+                renpy.jump("_quit") 
 
 
     class Skip(Action):
@@ -182,7 +181,10 @@ init -1500 python:
                 return
 
             if renpy.context()._menu:
-                renpy.jump("_return_skipping")
+                if self.fast:
+                    renpy.jump("_return_fast_skipping")
+                else:
+                    renpy.jump("_return_skipping")
             else:
 
                 if not config.skipping:
@@ -199,7 +201,7 @@ init -1500 python:
             return config.skipping
 
         def get_sensitive(self):
-            return ( config.allow_skipping and (not renpy.context()._main_menu) ) and ( renpy.game.preferences.skip_unseen or renpy.game.context().seen_current(True) )
+            return ( config.allow_skipping and (not renpy.context()._main_menu) ) and (self.fast or renpy.game.preferences.skip_unseen or renpy.game.context().seen_current(True) )
 
 
     class Help(Action):

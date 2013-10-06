@@ -169,10 +169,7 @@ def rmpersistent():
 
     takes_no_arguments("Deletes the persistent data.")
 
-    try:
-        os.unlink(renpy.config.savedir + "/persistent")
-    except:
-        pass
+    renpy.loadsave.location.unlink_persistent()
 
     return False
 

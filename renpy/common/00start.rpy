@@ -33,6 +33,8 @@ init -1600 python:
 
     def _init_language():
 
+        import os
+
         if "RENPY_LANGUAGE" in os.environ:
             language = os.environ["RENPY_LANGUAGE"]
         elif config.language is not None:

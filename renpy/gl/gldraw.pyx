@@ -666,17 +666,10 @@ cdef class GLDraw:
 
             self.draw_mouse()
 
-            # Release the CPU while we're waiting for things to actually
-            # draw to the screen.
-            renpy.display.core.cpu_idle.set()
-
             IF not ANGLE:
                 pygame.display.flip()
             ELSE:
                 egl_swap()
-
-            # Grab the CPU again.
-            renpy.display.core.cpu_idle.clear()
 
         gl_check("draw_screen")
 
