@@ -58,6 +58,10 @@ init -1500 python:
          * Preference("skip", "all") - Skip unseen messages.
          * Preference("skip", "toggle") - Toggle between skip seen and skip all.
 
+         * Preference("scene skip", "enable") - enable scene_skip
+         * Preference("scene skip", "disable") - disable scene_skip
+         * Preference("scene skip", "toggle") - Toggle scene_skip
+
          * Preference("begin skipping") - Starts skipping.
 
          * Preference("after choices", "skip") - Skip after choices.
@@ -145,6 +149,15 @@ init -1500 python:
             elif value == "toggle":
                 return ToggleField(_preferences, "skip_unseen")
 
+        elif name == "scene skip":
+            
+            if value == "enable":
+                return SetField(_preferences, "scene_skip", True)
+            elif value == "disable":
+                return SetField(_preferences, "scene_skip", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "scene_skip")
+ 
         elif name == "begin skipping":
 
             return Skip()

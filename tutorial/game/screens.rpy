@@ -397,6 +397,8 @@ screen preferences:
                 label _("Skip")
                 textbutton _("Seen Messages") action Preference("skip", "seen")
                 textbutton _("All Messages") action Preference("skip", "all")
+                null height 10
+                textbutton _("Scene Skip") action Preference("scene skip", "toggle") 
 
             frame:
                 style_group "pref"

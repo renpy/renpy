@@ -200,3 +200,9 @@ label _confirm_quit:
         jump expression "_compat_confirm_quit"
     else:
         jump expression "_quit_prompt"
+
+label _comfirm_scene_skip(current_scene):
+    if renpy.invoke_in_new_context(layout.invoke_yesno_prompt, None, __(layout.SCENE_SKIP) % current_scene):
+        $config.skipping = "fast"
+
+    return 

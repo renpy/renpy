@@ -262,6 +262,11 @@ init -1 python hide:
     ## The default text speed in characters per second. 0 is infinite.
     config.default_text_cps = 0
 
+    # The default value of scene_skip.
+    config.default_scene_skip = False
+    # The list of labels which shold be ignored by scene_skip.
+    config.except_labels = ["start"]
+ 
     config.window_icon = "logo.png"
     config.windows_icon = "logo32.png"
 

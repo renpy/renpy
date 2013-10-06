@@ -108,6 +108,7 @@ class Preferences(renpy.object.Object):
     def __init__(self):
         self.fullscreen = False
         self.skip_unseen = False
+        self.scene_skip = False
         self.text_cps = 0
         self.afm_time = 0
         self.afm_enable = True

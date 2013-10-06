@@ -259,5 +259,14 @@ init -1 python hide:
 
     config.default_text_cps = 0
 
+    # The default value of scene_skip.
+    config.default_scene_skip = False
+    # The list of labels which shold be ignored by scene_skip.
+    config.except_labels = []
+
+    # The map from labels to scene_names. if the key of the label exists, 
+    # the value is shown in the message in place of the label name when scene_skip
+    config.scene_name = {}
+ 
     #########################################
     ## More customizations can go here.
