@@ -564,7 +564,7 @@ init -1500 python:
         def __call__(self):
             renpy.take_screenshot()
 
-    def QuickSave(message="Quick save complete.", newest=False):
+    def QuickSave(message="Quick save complete.", newest=True):
         """
         :doc: file_action
 
@@ -590,3 +590,28 @@ init -1500 python:
         """
 
         return FileLoad(1, page="quick", confirm=True, newest=False)
+
+    class LoadNewest(Action):
+        """
+        :doc: file_action
+
+         Load the newest save
+
+         `confirm`
+             If true, prompts before loading the file.
+         """
+        
+        def __init__(self, confirm=False):
+            self.confirm = confirm
+
+        def __call__(self):
+            if self.get_sensitive():
+                if self.confirm:
+                    layout.yesno_screen(layout.RESTARTGAME, LoadNewest(False))
+                else:
+                    renpy.load(persistent._file_newest)
+
+        def get_sensitive(self):
+            if not persistent._file_newest:
+                return False
+            return renpy.can_load(persistent._file_newest)

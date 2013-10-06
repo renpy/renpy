@@ -420,6 +420,7 @@ init -1400 python hide:
         renpy.load_module("_layout/screen_yesno_prompt")
 
     layout.ARE_YOU_SURE = _("Are you sure?")
+    layout.RESTARTGAME = _("Are you sure you want to load the newest save?")
     layout.DELETE_SAVE = _("Are you sure you want to delete this save?")
     layout.OVERWRITE_SAVE = _("Are you sure you want to overwrite your save?")
     layout.LOADING = _("Loading will lose unsaved progress.\nAre you sure you want to do this?")
