@@ -1308,6 +1308,7 @@ class Bar(renpy.display.core.Displayable):
 
         if not grabbed and map_event(ev, "bar_activate"):
             renpy.display.focus.set_grab(self)
+            self.set_style_prefix("selected_hover_", True)
             just_grabbed = True
             grabbed = True
 
@@ -1360,6 +1361,7 @@ class Bar(renpy.display.core.Displayable):
             value = range - value
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
+            self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
 
         if value != old_value:
