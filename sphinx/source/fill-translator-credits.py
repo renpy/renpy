@@ -39,11 +39,18 @@ for podata in po:
 if tc == "":
     tc = "???"
 
+tc_lines = []
+for line in tc.split("\n"):
+    line_s = line.lstrip()
+    tc_lines.append(" " * (len(line) - len(line_s)) + "* " + line_s)
+    
+tc = "\n\n".join(tc_lines)
+
 creditsfile = open("source/credits.rst", "r")
 
 reslines = []
-for line in creditsfile:s
-    reslines.append(line.replace("@TRANSLATOR_CREDITS@", tc.replace("\n", "\n* ")))
+for line in creditsfile:
+    reslines.append(line.replace("@TRANSLATOR_CREDITS@", tc))
 
 creditsfile.close()
 

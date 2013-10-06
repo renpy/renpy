@@ -3,6 +3,6 @@ Translators
 
 This documentation is translated by:
 
-* @TRANSLATOR_CREDITS@
+@TRANSLATOR_CREDITS@
 
 
