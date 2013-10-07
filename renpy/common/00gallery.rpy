@@ -161,7 +161,7 @@ init -1500 python:
             self.button_ = None
             self.image_ = None
             self.unlockable = None
-            self.preview_mode = False
+            self.slideshow = False
 
         def button(self, name):
             """
@@ -429,38 +429,38 @@ init -1500 python:
             """
             return self.previous
 
-        def EnablePreview(self, preview_time=10):
+        def ToggleSlideshow(self, time=10):
             """
             :doc: gallery method
             
-            This is the action to enable preview_mode.
+            This is the action to toggle slideshow.
             
-            `preview_time`
+            `time`
                 This is a number in second, defaults to 10. advance to the next unlocked image
-                when this time is elapsed if preview_mode is enable.
+                when this time is elapsed if slideshow is enable.
             """
-            return __GalleryEnablePreview(self, preview_time)
+            return __GalleryToggleSlideshow(self, time)
 
-    class __GalleryEnablePreview(Action):
+    class __GalleryToggleSlideshow(Action):
 
-        def __init__(self, gallery, preview_time):
+        def __init__(self, gallery, time):
             self.gallery = gallery
-            self.preview_time = preview_time
+            self.time = time
             self.selected = self.get_selected()
 
         def __call__(self):
-            if self.gallery.preview_mode:
-                self.gallery.preview_mode = False
+            if self.gallery.slideshow:
+                self.gallery.slideshow = False
             else:
-                self.gallery.preview_mode = True
+                self.gallery.slideshow = True
 
         def get_selected(self):
-            return self.gallery.preview_mode
+            return self.gallery.slideshow
 
         def periodic(self, st):
             if self.selected != self.get_selected():
                 renpy.restart_interaction()
-            if st > self.preview_time and self.gallery.preview_mode:
+            if st > self.time and self.gallery.slideshow:
                 self.gallery.diff_next()
             else:
                 return 1
@@ -497,7 +497,7 @@ init -1500:
 
             textbutton _("Previous") action gallery.Previous()
             textbutton _("Next") action gallery.Next()
-            textbutton _("PreviewMode") action gallery.EnablePreview(5)
+            textbutton _("SlideShow") action gallery.ToggleSlideshow()
             textbutton _("Close") action gallery.Close()
 
     python:
