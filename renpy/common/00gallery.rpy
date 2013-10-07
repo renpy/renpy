@@ -76,7 +76,11 @@ init -1500 python:
 
                 displayables.append(d)
 
-            renpy.show_screen("_gallery", locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
+            if renpy.has_screen("gallery"):
+                gallery = "gallery"
+            else:
+                gallery = "_gallery"
+            renpy.show_screen(gallery, locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
             ui.interact()
 
     class __GalleryButton(object):
