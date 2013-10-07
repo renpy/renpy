@@ -25,8 +25,8 @@ Most of Ren'Py is covered by the terms of the following (MIT) license:
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Portions of Ren'Py are derived from code that is copyright using the
-Lesser GNU Public License, so Ren'Py games must be distributed in a
+Portions of Ren'Py are derived from code that is licensed under the
+GNU Lesser General Public License, so Ren'Py games must be distributed in a
 manner that satisfies the LGPL.
 
 Please see each individual source file for a list of copyright
