@@ -209,6 +209,60 @@ These control transitions between various screens.
     transition has been explicitly specified.
 
 
+Preference Defaults
+-------------------
+
+These are defaults for the various preferences. The defaults only take
+effect the first time Ren'Py is run, or when persistent data has been
+cleared.
+
+.. var:: config.default_afm_time = None
+
+    If not None, this sets the default auto-forward-mode timeout. If
+    not None, then this is the time in seconds we should delay when
+    showing 250 characters. 0 is special-cased to be infinite time,
+    disabling auto-forward mode.
+
+.. var:: config.default_afm_enable = None
+
+    If not None, this should be a boolean that controls if
+    auto-forward-mode is enabled by default. When it's False,
+    auto-forwarding will not occur. Set this to False with caution, as
+    the default Ren'Py UI does not provide a way of changing it's
+    setting. (But one can use Preference action in a screen to create
+    such a UI.)
+
+.. var:: config.default_fullscreen = None
+
+    This sets the default value of the fullscreen preference. This
+    should be True or False. If None, this is ignored, allowing other
+    code to set the default value. (It's usually set to False in
+    options.rpy.)
+
+.. var:: config.default_language = None
+
+    This sets the default value of the language preference. This is only
+    used the first time the game starts.
+
+.. var:: config.default_text_cps = None
+
+    If not None, this sets the default number of characters per second
+    to show. 0 is special cased to mean an infinite number of
+    characters per second. (It's usually set to 0 in options.rpy.)
+
+.. var:: config.default_voice_sustain = False
+
+    The default value of the voice sustain preference. If this is
+    True, the voice will continue past the next interaction. If
+    false, voice will stop when the next interaction begins.
+
+.. var:: config.default_wait_for_voice = True
+
+    The default value of the wait for voice preference. This
+    determines if Ren'Py should wait for voice to finish before
+    auto-forward takes place.
+
+
 Occasionally Used
 -----------------
 
@@ -281,47 +335,6 @@ Occasionally Used
     the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
-
-.. var:: config.default_afm_time = None
-
-    If not None, this sets the default auto-forward-mode timeout. If
-    not None, then this is the time in seconds we should delay when
-    showing 250 characters. 0 is special-cased to be infinite time,
-    disabling auto-forward mode.
-
-    Persistent data must be deleted for this to take effect.
-
-.. var:: config.default_afm_enable = None
-
-    If not None, this should be a boolean that controls if
-    auto-forward-mode is enabled by default. When it's False,
-    auto-forwarding will not occur. Set this to False with caution, as
-    the default Ren'Py UI does not provide a way of changing it's
-    setting. (But one can use Preference action in a screen to create
-    such a UI.)
-
-    Persistent data must be deleted for this to take effect.
-
-.. var:: config.default_fullscreen = None
-
-    This sets the default value of the fullscreen preference. This
-    should be True or False. If None, this is ignored, allowing other
-    code to set the default value. (It's usually set to False in
-    options.rpy.)
-
-.. var:: config.default_language = None
-
-    This sets the default value of the language preference. This is only
-    used the first time the game starts. (Or after persistent data has
-    been cleared.)
-
-.. var:: config.default_text_cps = None
-
-    If not None, this sets the default number of characters per second
-    to show. 0 is special cased to mean an infinite number of
-    characters per second. (It's usually set to 0 in options.rpy.)
-
-    Persistent data must be deleted for this to take effect.
 
 .. var:: config.default_transform = ...
 
