@@ -3,49 +3,38 @@
 Building Android Applications
 =============================
 
-|PGS4A| contains tools that help you take a packaging-centric approach
+
+Ren'Py contains tools that help you take a packaging-centric approach
 to Android game development. In this approach, you will use a PC to
 build an Android package and upload it to your device. You can then
 run the game like any Android application. When it works correctly,
-you can upload the package you make to the Android Market or other app
+you can upload the package you make to Google Play and other app
 stores.
 
-Building your first package takes four steps:
+Building an Android application takes four or five steps:
 
-1. Download and install |PGS4A|, Python 2.7, the Java Development Kit,
+1. Download and install RAPT, the Java Development Kit,
    and Android USB Drivers (scroll down for links).
 
-2. Use the ``android.py installsdk`` command to install the Android SDK and
-   set up your development environment.
+2. Use the launcher to install the Android SDK and create keys.
 
-3. Use the ``android.py configure`` command to configure
-   Android-specific settings in your game.
+3. Use the launcher to configure the Android build.
 
-4. Use the ``android.py build`` command to build a package, and to
-   install the package on your device.
+4. Optionally, add Google Play keys.
 
-Once you've finished these four steps, you'll have a runnable Android
+5. Use the launcher to build the Android application.
+
+Once you've finished these steps, you'll have a runnable Android
 package. You'll only need to run step 3 when you decide to make changes to your
 game's configuration or when configuring a new game entirely; you'll run step
-4 most often, whenever you need to make a new build of your game.
+5 most often, whenever you need to make a new build of your game.
 
 
-Host Platform Support
----------------------
+Step 1: Installing the Dependencies
+-----------------------------------
 
-We've tested |PGS4A| on Linux and Windows computers. While it should
-work on Mac OS X, we haven't tested it there, so there may be problems
-encountered. The examples we give will be for Linux and Windows.
-
-The |PGS4A| tools are command-line based. We will try to assist you with
-examples to familiarize you with the command line on Windows.
-
-
-Step 1: Installing |PGS4A| and its Dependencies
------------------------------------------------
-
-There are four things you may need to manually download and install
-before you can run |PGS4A|:
+There are three things you may need to manually download and install
+before you can build packages:
 
 **Java Development Kit.**
 The Java Development Kit (JDK) contains several tools that are used by
@@ -56,15 +45,6 @@ packages. It can be downloaded from:
 
 Please note that the developer-focused JDK is different from the
 user-focused JRE, and you'll need the JDK to create Android packages.
-
-
-**Python 2.7.**
-Python 2.7 is required to run the android.py script that's
-included with |PGS4A|. It can be downloaded from:
-
-    http://python.org/download/releases/2.7.2/
-
-|PGS4A| is not compatible with Python 3 at this time.
 
 
 **Android Device Drivers.**
@@ -81,98 +61,15 @@ your device, you may need to read:
 However, modern versions of Linux and OS X should just work.
 
 
-.. ifconfig:: is_renpy
+**RAPT.**
+The latest version of RAPT can be downloaded from:
 
-    **RAPT Itself.** The latest version of |PGS4A| can be downloaded from:
+    http://www.renpy.org/dl/android
 
-        |PGS4A_URL|
-
-.. ifconfig:: not is_renpy
-
-    **PGS4A Itself.** The latest version of |PGS4A| can be downloaded from:
-
-        |PGS4A_URL|
-
-
-Once |PGS4A| has been downloaded, you should extract it using an
-archive program. The directory contained in that archive is what we
-will refer to as the |PGS4A| directory.
-
-
-Aside: Running android.py
--------------------------
-
-In this documentation, we'll ask you to run the ``android.py``
-command. The technique we use to run this varies based on the system
-you're on.
-
-In all cases, you should run ``android.py`` from within the |PGS4A|
-directory. (That is, the directory containing ``android.py`` itself.)
-
-
-On Windows, to do this, you will need to open up the command line by pressing
-and holding down the Windows key and 'R'. In the small window that pops up
-write "cmd" and press Enter. This should bring up the command line.
-
-To run the command from within the |PGS4A| directory you need to navigate to it
-from the command line. Find out where you extracted |PGS4A| and copy the path
-from Explorer (just click in the address bar so the path turns blue and
-press Ctrl+c). In the command prompt, write ``cd`` then a space, a
-double-quote, paste the path you just copied from Explorer (right click and
-choose ``paste``), then another double-quote.
-
-.. ifconfig:: is_renpy
-
-    Let's assume you extracted RAPT to C:\\tools\\RAPT. In the command line write::
-
-        cd "C:\tools\RAPT"
-
-.. ifconfig:: not is_renpy
-
-    Let's assume you extracted PGS4A to C:\\tools\\PGS4A. In the command line write::
-
-        cd "C:\tools\PGS4A"
-
-Now you're within the |PGS4A| directory.
-
-On Windows, if the .py extension is registered to Python 2.7, you then can
-just run::
-
-    android.py test
-
-If you don't know what the above means or you don't want to do it, you
-will have to add the full path to Python to each command in
-the following steps of this guide beginning with 'android.py'. If you
-installed Python to the default location, the above command would become::
-
-    C:\python27\python.exe android.py test
-
-If you installed Python to a different location, then find your Python install
-in Explorer, click in the address bar and copy the path, then replace
-``C:\python27`` with the path you copied instead - leaving ``\python.exe`` on the
-
-end. So if your Python install is in ``C:\tools\python``, you would type::
-
-    C:\tools\python\python.exe android.py test
-
-.. warning::
-
-    If the path to Python that you copied has any spaces in - for example, if you had installed it in the
-    ``Program Files`` directory - you will need to put double quotes at the beginning of the whole
-    command and just after ``python.exe``::
-
-        "C:\Program Files\Python\python.exe" android.py test
-
-
-
-On Linux, you may need to prefix the command with the current
-directory::
-
-   ./android.py test
-
-For the rest of this documentation, we'll just use ``android.py`` - if you had to include the path
-to Python in the example above, you will need to do the same thing every time you see ``android.py``
-in these instructions.
+Once RAPT has been downloaded, you should unpack it in side the
+Ren'Py directory. (The directory that contains renpy.exe, renpy.sh,
+and the Ren'Py app.) Then restart the launcher to ensure that it
+detects the presence of RAPT.
 
 
 Step 2: Set up the Android SDK and Development Environment
@@ -187,20 +84,19 @@ development environment. This step will:
 * Use the Android SDK to install the appropriate development
   packages.
 * Create a signing key that will be used to sign packages that are
-  placed on the market (android.keystore: this will be generated in the |PGS4A| directory).
+  placed on the market (android.keystore: this will be generated in the RAPT directory).
 
 This step requires Internet access.
 
-To perform this step, run::
+To perform this step, choose "Install SDK & Create Keys" from the
+Android screen in the Ren'Py Launcher.
 
-   android.py installsdk
-
-|PGS4A| will report on what it's doing. It will also prompt you with
+RAPT will report on what it's doing. It will also prompt you with
 warnings about licenses, and ask if you want it to generate a key.
 
 .. warning::
 
-   The key generated by |PGS4A| is created with a standard
+   The key generated by RAPT is created with a standard
    passphrase. You should really use keytool to generate your own
    signing keys.
 
@@ -211,94 +107,9 @@ warnings about licenses, and ask if you want it to generate a key.
    key, you won't be able to upload the generated applications.
 
 
-.. ifconfig:: not is_renpy
 
-  Aside: A Simple Game
-  --------------------
 
-  To continue, we'll need a game to package. The section on
-  :ref:`writing` explains how a simple game works. For now,
-  you can make a game by:
 
-  1. Creating the ``mygame`` directory underneath the |PGS4A|
-     directory.
-
-  2. In the ``mygame`` directory, create a file main.py. Place the
-     following code into main.py::
-
-      import pygame
-
-      # Import the android module. If we can't import it, set it to None - this
-      # lets us test it, and check to see if we want android-specific behavior.
-      try:
-          import android
-      except ImportError:
-          android = None
-
-      # Event constant.
-      TIMEREVENT = pygame.USEREVENT
-
-      # The FPS the game runs at.
-      FPS = 30
-
-      # Color constants.
-      RED = (255, 0, 0, 255)
-      GREEN = (0, 255, 0, 255)
-
-      def main():
-          pygame.init()
-
-          # Set the screen size.
-          screen = pygame.display.set_mode((480, 800))
-
-          # Map the back button to the escape key.
-          if android:
-              android.init()
-              android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
-
-          # Use a timer to control FPS.
-          pygame.time.set_timer(TIMEREVENT, 1000 / FPS)
-
-          # The color of the screen.
-          color = RED
-
-          while True:
-
-              ev = pygame.event.wait()
-
-              # Android-specific:
-              if android:
-                  if android.check_pause():
-                      android.wait_for_resume()
-
-              # Draw the screen based on the timer.
-              if ev.type == TIMEREVENT:
-                  screen.fill(color)
-                  pygame.display.flip()
-
-              # When the touchscreen is pressed, change the color to green.
-              elif ev.type == pygame.MOUSEBUTTONDOWN:
-                  color = GREEN
-
-              # When it's released, change the color to RED.
-              elif ev.type == pygame.MOUSEBUTTONUP:
-                  color = RED
-
-              # When the user hits back, ESCAPE is sent. Handle it and end
-              # the game.
-              elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                  break
-
-      # This isn't run on Android.
-      if __name__ == "__main__":
-          main()
-
-In the examples below, ``mygame`` is short for the path to the game
-you're working on, relative to the current directory. When you make
-your own game, you should change ``mygame`` to something else.
-The easiest way to do this, of course, is to make a copy of your game's
-directory inside the |PGS4A| directory and then replace ``mygame`` in
-the examples below with the name of your game's directory.
 
 Step 3: Configure Your Game
 ---------------------------

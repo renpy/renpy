@@ -63,9 +63,43 @@ human factors:
   buttons need to be larger than mouse-based ones.
 
 To help you adapt to these differences, Ren'Py for Android
-automatically selects a screen variant of ``touch``. It also
-selects screen variants of ``phone`` or ``tablet`` based on the
-device's screen size. See :ref:`screen-variants` for more information.
+automatically selects screen variants based on the
+device's screen size and capabilities. See :ref:`screen-variants` for
+more information.
+
+
+Testing and Emulation
+=====================
+
+For testing purposes, Ren'Py supports three Android emulation modes. These
+are accessed from the Android screen of the launcher.
+
+Phone
+    This mode emulates an Android phone. Touch emulation is performed
+    using the mouse, but only when the mouse button is held down. Escape
+    is mapped to the menu button, and Page Up is mapped to the back button.
+
+Tablet
+    This mode emulates an Android tablet. Touch emulation is performed
+    using the mouse, but only when the mouse button is held down. Escape
+    is mapped to the menu button, and Page Up is mapped to the back button.
+
+Television / OUYA
+    This mode emulates a television-based Android device, such as the OUYA
+    console. The keyboard is mapped to remote or controller input, with the
+    arrow keys providing navigation. Select is enter, Escape is menu, and
+    page-up is back.
+
+    This mode also displays an overlay showing the Television-unsafe area.
+    Content in the Television-unsafe area may not display on all Televisions.
+
+While these emulators can be used to quickly test your project, it's best to
+also test on real hardware. The emulators do not deal with some human-factors
+issues, like the size of a user's fingers.
+
+
+
+
 
 .. include:: android-packaging.rst
 
