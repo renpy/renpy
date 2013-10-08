@@ -495,15 +495,15 @@ init -1500:
             style_group "gallery"
             align (.98, .98)
 
-            textbutton _("Previous") action gallery.Previous()
-            textbutton _("Next") action gallery.Next()
-            textbutton _("SlideShow") action gallery.ToggleSlideshow()
-            textbutton _("Close") action gallery.Close()
+            textbutton _("prev") action gallery.Previous()
+            textbutton _("next") action gallery.Next()
+            textbutton _("slide show") action gallery.ToggleSlideshow()
+            textbutton _("close") action gallery.Close()
 
     python:
         style.gallery = Style(style.default)
         style.gallery_button.background = None
-        style.gallery_button_text.color = "#fff"
-        style.gallery_button_text.hover_color = "#666"
-        style.gallery_button_text.selected_color = "#ff0"
+        style.gallery_button_text.color = "#666"
+        style.gallery_button_text.hover_color = "#fff"
+        style.gallery_button_text.selected_color = "#fff"
         style.gallery_button_text.outlines = [(1, "#000", 0, 0)]
