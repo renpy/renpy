@@ -76,7 +76,11 @@ init -1500 python:
 
                 displayables.append(d)
 
-            renpy.show_screen("_gallery", locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
+            if renpy.has_screen("gallery"):
+                gallery = "gallery"
+            else:
+                gallery = "_gallery"
+            renpy.show_screen(gallery, locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
             ui.interact()
 
     class __GalleryButton(object):
@@ -99,10 +103,20 @@ init -1500 python:
         def show(self):
 
             all_prior = True
+            diff = False
 
             for i, img in enumerate(self.images):
                 locked = not img.check_unlock(all_prior)
-                img.show(locked, i, len(self.images))
+                try:
+                    img.show(locked, i, len(self.images))
+                except Exception, e:
+                    if e.message == "diff_next":
+                        diff = True
+                        continue
+                    else:
+                        raise
+            if diff:
+                raise Exception("next")
 
             renpy.transition(self.gallery.transition)
 
@@ -142,10 +156,12 @@ init -1500 python:
 
             # A map from button name (or image) to __GalleryButton object.
             self.buttons = { }
+            self.button_list = []
 
             self.button_ = None
             self.image_ = None
             self.unlockable = None
+            self.slideshow = False
 
         def button(self, name):
             """
@@ -160,6 +176,7 @@ init -1500 python:
             self.button_ = __GalleryButton(self)
             self.unlockable = self.button_
             self.buttons[name] = self.button_
+            self.button_list.append(name)
 
         def image(self, *displayables):
             """
@@ -253,7 +270,7 @@ init -1500 python:
             b = self.buttons[name]
 
             if b.check_unlock():
-                return ui.invokesinnewcontext(b.show)
+                return ui.invokesinnewcontext(self.show, b, name)
             else:
                 return None
 
@@ -336,6 +353,118 @@ init -1500 python:
 
             return format.format(seen=seen, total=total, locked=total - seen)
 
+        def show(self, button, name):
+            while True:
+                try:
+                    button.show()
+                except Exception, e:
+                    if e.message == "close":
+                        return
+                    elif e.message == "next":
+                        idx = self.button_list.index(name) + 1
+                        try:
+                            while not self.buttons[self.button_list[idx]].check_unlock():
+                                idx += 1
+                        except IndexError:
+                            return
+                        name = self.button_list[idx]
+                        button = self.buttons[name]
+                        continue
+                    elif e.message == "previous":
+                        idx = self.button_list.index(name) - 1
+                        while not self.buttons[self.button_list[idx]].check_unlock():
+                            idx -= 1
+                        if idx >= 0:
+                            name = self.button_list[idx]
+                            button = self.buttons[name]
+                            continue
+                        else:
+                            return
+                    else:
+                        raise
+                return
+
+        def close(self):
+            raise Exception("close")
+
+        def Close(self):
+            """
+            :doc: gallery method
+            
+            Close the current image.
+            """
+            return self.close
+
+        def next(self):
+            raise Exception("next")
+
+        def diff_next(self):
+            raise Exception("diff_next")
+
+        def Next(self, diff=False):
+            """
+            :doc: gallery method
+            
+            This is the action to advance to the next unlocked image.
+            When the last image is showing, close it.
+
+            `diff`
+                If True, advance to the next image in the button, otherwise
+                advance to the image in the next button.
+            """
+            if diff:
+                return self.diff_next
+            else:
+                return self.next
+
+        def previous(self):
+            raise Exception("previous")
+
+        def Previous(self):
+            """
+            :doc: gallery method
+            
+            This is the action to return to the previous unlocked image.
+            When the first image is showing, close it.
+            """
+            return self.previous
+
+        def ToggleSlideshow(self, time=10):
+            """
+            :doc: gallery method
+            
+            This is the action to toggle slideshow.
+            
+            `time`
+                This is a number in second, defaults to 10. advance to the next unlocked image
+                when this time is elapsed if slideshow is enable.
+            """
+            return __GalleryToggleSlideshow(self, time)
+
+    class __GalleryToggleSlideshow(Action):
+
+        def __init__(self, gallery, time):
+            self.gallery = gallery
+            self.time = time
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            if self.gallery.slideshow:
+                self.gallery.slideshow = False
+            else:
+                self.gallery.slideshow = True
+
+        def get_selected(self):
+            return self.gallery.slideshow
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                renpy.restart_interaction()
+            if st > self.time and self.gallery.slideshow:
+                self.gallery.diff_next()
+            else:
+                return 1
+
 
 init -1500:
 
@@ -353,6 +482,8 @@ init -1500:
     # gallery
     #     The image gallery object.
     screen _gallery:
+        key "game_menu" action gallery.Close()
+
         if locked:
             add "#000"
             text "Image [index] of [count] locked." align (0.5, 0.5)
@@ -360,3 +491,19 @@ init -1500:
             for d in displayables:
                 add d
 
+        hbox:
+            style_group "gallery"
+            align (.98, .98)
+
+            textbutton _("prev") action gallery.Previous()
+            textbutton _("next") action gallery.Next()
+            textbutton _("slide show") action gallery.ToggleSlideshow()
+            textbutton _("close") action gallery.Close()
+
+    python:
+        style.gallery = Style(style.default)
+        style.gallery_button.background = None
+        style.gallery_button_text.color = "#666"
+        style.gallery_button_text.hover_color = "#fff"
+        style.gallery_button_text.selected_color = "#fff"
+        style.gallery_button_text.outlines = [(1, "#000", 0, 0)]
