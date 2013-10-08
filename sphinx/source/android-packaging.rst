@@ -64,7 +64,7 @@ The latest version of RAPT can be downloaded from:
 
     http://www.renpy.org/dl/android
 
-Once RAPT has been downloaded, you should unpack it in side the
+Once RAPT has been downloaded, you should unpack it inside the
 Ren'Py directory. (The directory that contains renpy.exe, renpy.sh,
 and the Ren'Py app.) Then restart the launcher to ensure that it
 detects the presence of RAPT.
@@ -145,11 +145,13 @@ To view output from Ren'Py, consider a command line like:
 
     adb logcat -s python:*
 
-Expansion APKs
---------------
+Google Play Expansion APKs
+--------------------------
 
-|PGS4A| optionally supports the use of expansion APKs when used on a
-device supporting Google Play. Please see:
+Ren'Py optionally supports the use of expansion APKs when used on a device
+supporting Google Play. Expansion APs allow Google Play to host games
+larger than 50MB in size. Please see:
+
 
     http://developer.android.com/google/play/expansion-files.html
 
@@ -158,7 +160,30 @@ main expansion APK is supported, giving a 2GB limit. When an Expansion
 APK is created, all game files will be placed in the
 expansion APK. Ren'Py will transparently use these files.
 
+To configure your game to use Expansion APKs, you'll need to set two
+variables:
+
+.. var:: build.google_play_key = "..."
+
+    This is the Google Play license key associated with your application,
+    which can be found on the "Services & APIs" tab associated with
+    your application in the Google Play developer console. (Be sure to
+    remove all spaces and newlines from the key.)
+
+.. var:: build.google_play_salt = ( ... )
+
+    This should be a tuple of 20 bytes, where each byte is represented as
+    an integer between -128 and 127. This is used to encrypt license
+    information returned from Google Play.
+
+    A valid (if insecure) value for this variable is::
+
+        (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+
 RAPT will place the expansion APK on the device when installing
-the APK package on the device. In normal operation, Google Play will
-place the expansion APK on the device automatically.
+the APK package on the device. The expansion APK will be an .obb file
+found inside the bin subdirectory of the RAPT directory.
+
+In normal operation, Google Play will place the expansion APK on the
+device automatically when the user installs the application.
 
