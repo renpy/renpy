@@ -288,6 +288,12 @@ init -1500 python in build:
     # Should we exclude empty directories from the zip and tar files?
     exclude_empty_directories = True
 
+    # The key used for google play.
+    google_play_key = None
+
+    # The salt used for google play.
+    google_play_salt = None
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -309,5 +315,11 @@ init -1500 python in build:
         rv["exclude_empty_directories"] = exclude_empty_directories
 
         rv["renpy"] = renpy
+
+        if google_play_key:
+            rv["google_play_key"] = google_play_key
+
+        if google_play_salt:
+            rv["google_play_salt"] = google_play_salt
 
         return rv

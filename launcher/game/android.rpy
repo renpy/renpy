@@ -29,6 +29,7 @@ init python:
     import subprocess
     import re
     import os
+    import json
 
     def find_rapt():
 
@@ -149,7 +150,7 @@ init python:
                     return rv
 
         def choice(self, prompt, choices, default):
-            return interface.choice(prompt, choices, default)
+            return interface.choice(prompt, choices, default, cancel=Jump("android"))
 
         def fail(self, prompt):
             prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
@@ -259,6 +260,40 @@ init python:
             p = project.current
             p.launch(env=env)
 
+    def update_android_json():
+        """
+        Updates .android.json to include the google play information.
+        """
+
+        project.current.update_dump(True)
+
+        build = project.current.dump["build"]
+
+        filename = os.path.join(project.current.path, ".android.json")
+
+        with open(filename, "r") as f:
+            android_json = json.load(f)
+
+        if "google_play_key" in build:
+            android_json["google_play_key"] = build["google_play_key"]
+        else:
+            android_json.pop("google_play_key", None)
+
+        if "google_play_salt" in build:
+
+            if len(build["google_play_salt"]) != 20:
+                raise Exception("build.google_play_salt must be exactly 20 bytes long.")
+
+            android_json["google_play_salt"] = ", ".join(str(i) for i in build["google_play_salt"])
+        else:
+            android_json.pop("google_play_salt", None)
+
+
+        with open(filename, "w") as f:
+            json.dump(android_json, f)
+
+
+
 screen android_process(interface):
 
     zorder 100
@@ -345,12 +380,6 @@ screen android:
 
                             has vbox
 
-                            python:
-                                if RAPT_PATH:
-                                    edit_action = editor.EditAbsolute(os.path.join(RAPT_PATH, "src/org/renpy/android/DownloaderService.java"), check=True)
-                                else:
-                                    edit_action = None
-
                             textbutton _("Install SDK & Create Keys"):
                                 action Jump("android_installsdk")
                                 hovered tt.Action(INSTALL_SDK_TEXT)
@@ -358,10 +387,6 @@ screen android:
                             textbutton _("Configure"):
                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
                                 hovered tt.Action(CONFIGURE_TEXT)
-
-                            textbutton _("Edit Google Play Keys"):
-                                action AndroidIfState(state, ANDROID_NO_CONFIG, edit_action)
-                                hovered tt.Action(PLAY_KEYS_TEXT)
 
                             textbutton _("Build Package"):
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
@@ -423,6 +448,7 @@ label android_build:
 
     python:
         with interface.nolinks():
+            update_android_json()
             rapt.build.build(AndroidInterface(), project.current.path, [ 'release' ])
 
     jump android
@@ -432,6 +458,7 @@ label android_build_and_install:
 
     python:
         with interface.nolinks():
+            update_android_json()
             rapt.build.build(AndroidInterface(), project.current.path, [ 'release', 'install' ])
 
     jump android

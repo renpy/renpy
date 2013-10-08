@@ -239,7 +239,10 @@ init 1 python:
 
     style.l_info_button = Style(style.l_button)
     style.l_info_button.xalign = 0.5
+    style.l_info_button.xmargin = 50
     style.l_info_button_text = Style(style.l_button_text)
+    style.l_info_button_text.text_align = 0.5
+    style.l_info_button_text.layout = "subtitle"
 
     # Code navigation
     style.l_navigation_button = Style(style.l_button)
