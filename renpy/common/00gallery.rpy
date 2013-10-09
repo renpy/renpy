@@ -395,7 +395,7 @@ init -1500 python:
         def diff_next(self):
             return "diff_next"
 
-        def Next(self, diff=False):
+        def Next(self, diff=True):
             """
             :doc: gallery method
             
@@ -403,8 +403,8 @@ init -1500 python:
             When the last image is showing, close it.
 
             `diff`
-                If True, advance to the next image in the button, otherwise
-                advance to the image in the next button.
+                If True, advance to the next unlocked image in the current button.
+                Otherwise, advance to the unlocked image in the next button.
             """
             if diff:
                 return self.diff_next
