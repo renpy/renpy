@@ -81,7 +81,7 @@ init -1500 python:
             else:
                 gallery = "_gallery"
             renpy.show_screen(gallery, locked=locked, index=index + 1, count=count, displayables=displayables, gallery=self.gallery)
-            ui.interact()
+            return ui.interact()
 
     class __GalleryButton(object):
         def __init__(self, gallery):
@@ -107,16 +107,12 @@ init -1500 python:
 
             for i, img in enumerate(self.images):
                 locked = not img.check_unlock(all_prior)
-                try:
-                    img.show(locked, i, len(self.images))
-                except Exception, e:
-                    if e.message == "diff_next":
-                        diff = True
-                        continue
-                    else:
-                        raise
-            if diff:
-                raise Exception("next")
+                rv = img.show(locked, i, len(self.images))
+                if rv == "next" or rv == "previous" or rv == "close":
+                    return rv
+
+            if rv == "diff_next":
+                return "next"
 
             renpy.transition(self.gallery.transition)
 
@@ -162,6 +158,7 @@ init -1500 python:
             self.image_ = None
             self.unlockable = None
             self.slideshow = False
+            self.start_time = None
 
         def button(self, name):
             """
@@ -355,37 +352,34 @@ init -1500 python:
 
         def show(self, button, name):
             while True:
-                try:
-                    button.show()
-                except Exception, e:
-                    if e.message == "close":
+                rv = button.show()
+                if rv == "close":
+                    return
+                elif rv == "next":
+                    idx = self.button_list.index(name) + 1
+                    try:
+                        while not self.buttons[self.button_list[idx]].check_unlock():
+                            idx += 1
+                    except IndexError:
                         return
-                    elif e.message == "next":
-                        idx = self.button_list.index(name) + 1
-                        try:
-                            while not self.buttons[self.button_list[idx]].check_unlock():
-                                idx += 1
-                        except IndexError:
-                            return
+                    name = self.button_list[idx]
+                    button = self.buttons[name]
+                    continue
+                elif rv == "previous":
+                    idx = self.button_list.index(name) - 1
+                    while not self.buttons[self.button_list[idx]].check_unlock():
+                        idx -= 1
+                    if idx >= 0:
                         name = self.button_list[idx]
                         button = self.buttons[name]
                         continue
-                    elif e.message == "previous":
-                        idx = self.button_list.index(name) - 1
-                        while not self.buttons[self.button_list[idx]].check_unlock():
-                            idx -= 1
-                        if idx >= 0:
-                            name = self.button_list[idx]
-                            button = self.buttons[name]
-                            continue
-                        else:
-                            return
                     else:
-                        raise
-                return
+                        return
+                else:
+                    return
 
         def close(self):
-            raise Exception("close")
+            return "close"
 
         def Close(self):
             """
@@ -396,12 +390,12 @@ init -1500 python:
             return self.close
 
         def next(self):
-            raise Exception("next")
+            return "next"
 
         def diff_next(self):
-            raise Exception("diff_next")
+            return "diff_next"
 
-        def Next(self, diff=False):
+        def Next(self, diff=True):
             """
             :doc: gallery method
             
@@ -409,8 +403,8 @@ init -1500 python:
             When the last image is showing, close it.
 
             `diff`
-                If True, advance to the next image in the button, otherwise
-                advance to the image in the next button.
+                If True, advance to the next unlocked image in the current button.
+                Otherwise, advance to the unlocked image in the next button.
             """
             if diff:
                 return self.diff_next
@@ -418,7 +412,7 @@ init -1500 python:
                 return self.next
 
         def previous(self):
-            raise Exception("previous")
+            return "previous"
 
         def Previous(self):
             """
@@ -429,23 +423,31 @@ init -1500 python:
             """
             return self.previous
 
-        def ToggleSlideshow(self, time=10):
+        def ToggleSlideshow(self):
             """
             :doc: gallery method
             
             This is the action to toggle slideshow.
             
+            """
+            return __GalleryToggleSlideShow(self)
+        
+        def SlideShow(self, time=10):
+            """
+            :doc: gallery method
+            
+            This is the action to be set to timer for slideshow.
+            
             `time`
                 This is a number in second, defaults to 10. advance to the next unlocked image
                 when this time is elapsed if slideshow is enable.
             """
-            return __GalleryToggleSlideshow(self, time)
+            return __GallerySlideShow(self, time)
 
-    class __GalleryToggleSlideshow(Action):
+    class __GalleryToggleSlideShow(Action):
 
-        def __init__(self, gallery, time):
+        def __init__(self, gallery):
             self.gallery = gallery
-            self.time = time
             self.selected = self.get_selected()
 
         def __call__(self):
@@ -453,6 +455,7 @@ init -1500 python:
                 self.gallery.slideshow = False
             else:
                 self.gallery.slideshow = True
+                self.gallery.start_time = renpy.display.core.get_time()
 
         def get_selected(self):
             return self.gallery.slideshow
@@ -460,10 +463,19 @@ init -1500 python:
         def periodic(self, st):
             if self.selected != self.get_selected():
                 renpy.restart_interaction()
-            if st > self.time and self.gallery.slideshow:
-                self.gallery.diff_next()
-            else:
-                return 1
+
+    class __GallerySlideShow(Action):
+            
+        def __init__(self, gallery, time):
+            self.gallery = gallery
+            self.time = time
+            if self.gallery.slideshow:
+                self.gallery.start_time = renpy.display.core.get_time()
+
+        def __call__(self):
+            if self.gallery.start_time is not None:
+                if renpy.display.core.get_time() > self.gallery.start_time + self.time and self.gallery.slideshow:
+                    return self.gallery.diff_next()
 
 
 init -1500:
@@ -481,8 +493,12 @@ init -1500:
     #     The number of images attached to the current button.
     # gallery
     #     The image gallery object.
+    #
+    # And if you use slideshow, set timer gallery.SlideShow().
+
     screen _gallery:
         key "game_menu" action gallery.Close()
+        timer .1 repeat True action gallery.SlideShow()
 
         if locked:
             add "#000"
@@ -503,7 +519,7 @@ init -1500:
     python:
         style.gallery = Style(style.default)
         style.gallery_button.background = None
-        style.gallery_button_text.color = "#666"
-        style.gallery_button_text.hover_color = "#fff"
-        style.gallery_button_text.selected_color = "#fff"
-        style.gallery_button_text.outlines = [(1, "#000", 0, 0)]
+        style.gallery_button_text.color = "#7779"
+        style.gallery_button_text.hover_color = "#999"
+        style.gallery_button_text.selected_color = "fff6"
+        style.gallery_button_text.outlines = [(1, "#0006", 0, 0)]
