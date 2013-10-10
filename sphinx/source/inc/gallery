@@ -21,11 +21,51 @@
     .. attribute:: idle_border
     
         The default idle border used by make_button.
+    
+    .. attribute:: navigation
+    
+        If true, the gallery will display navigation and slideshow
+        buttons on top of the images.
+    
+    .. attribute:: span_buttons
+    
+        If true, the gallery will advance between buttons.
+    
+    .. attribute:: locked
+    
+        If true, the gallery will advance through locked images.
+    
+    .. attribute:: slideshow_delay
+    
+        The time it will take for the gallery to advance between images
+        in slideshow mode.
 
     .. method:: Action(name)
         
         An action that displays the images associated with the given button
         name.
+    
+    .. method:: Next(unlocked=False)
+        
+        Advances to the next image in the gallery.
+        
+        `unlocked`
+            If true, only considers unlocked images.
+    
+    .. method:: Previous(unlocked=False)
+        
+        Goes to the previous image in the gallery.
+        
+        `unlocked`
+            If true, only considers unlocked images.
+    
+    .. method:: Return(self)
+        
+        Stops displaying gallery images.
+    
+    .. method:: ToggleSlideshow(self)
+        
+        Toggles slideshow mode.
     
     .. method:: allprior(self)
         

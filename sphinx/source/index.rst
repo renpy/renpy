@@ -7,10 +7,14 @@ out more about Ren'Py, please visit the Ren'Py home page:
 
     http://www.renpy.org/
 
-Much of Ren'Py is only documented in the older documentation, which is stored
+Some of Ren'Py is only documented in the older documentation, which is stored
 in the Ren'Py Wiki:
 
     http://www.renpy.org/wiki/
+
+日本語のドキュメントは以下にあります:
+
+    http://ja.renpy.org/doc/html/
 
 
 Getting Started
