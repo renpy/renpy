@@ -93,9 +93,6 @@ class Context(renpy.object.Object):
         if version < 10:
             self.exception_handler = None
 
-        if not hasattr(self, "_main_menu"):
-            self._main_menu = False
-
     def __init__(self, rollback, context=None, clear=False):
         """
         `clear`
@@ -147,10 +144,6 @@ class Context(renpy.object.Object):
         # The exception handler that is called when an exception occurs while executing
         # code. If None, a default handler is used. This is reset when run is called.
         self.exception_handler = None
-
-        # True if we're in the main menu.
-        self._main_menu = False
-
 
         if context:
             oldsl = context.scene_lists
