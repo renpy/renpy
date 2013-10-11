@@ -523,12 +523,12 @@ init -1500:
             for d in displayables:
                 add d
 
-        if g.slideshow:
-            timer g.slideshow_delay action Return("next")
+        if gallery.slideshow:
+            timer gallery.slideshow_delay action Return("next")
 
         key "game_menu" action gallery.Return()
 
-        if g.navigation:
+        if gallery.navigation:
 
             hbox:
                 spacing 20
