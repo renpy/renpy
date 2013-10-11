@@ -24,11 +24,11 @@
 # Invariants: The periodic callback assumes pcm_ok. If we don't have
 # at least pcm_ok, we have no sound whatsoever.
 
-import renpy.audio
-import renpy.display
+import renpy.audio  # @UnusedImport
+import renpy.display  # @UnusedImport
 
 import time
-import pygame
+import pygame  # @UnusedImport
 import os
 import atexit
 
@@ -41,8 +41,8 @@ pss = None
 if 'pss' not in disable:
     try:
         import pysdlsound as pss
-        pss.check_version(4)
-        atexit.register(pss.quit)
+        pss.check_version(4)  # @UndefinedVariable
+        atexit.register(pss.quit)  # @UndefinedVariable
     except:
         pass
 
