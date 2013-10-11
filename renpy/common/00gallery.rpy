@@ -520,8 +520,12 @@ init -1500:
             add "#000"
             text _("Image [index] of [count] locked.") align (0.5, 0.5)
         else:
-            for d in displayables:
-                add d
+            viewport:
+                draggable True
+                mousewheel True
+
+                for d in displayables:
+                    add d
 
         if gallery.slideshow:
             timer gallery.slideshow_delay action Return("next")
