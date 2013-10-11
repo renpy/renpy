@@ -356,6 +356,10 @@ _in_replay = None
 # Used to store the side image attributes.
 _side_image_attributes = None
 
+# True if we're in the main_menu, False otherwise. This controls autosave,
+# among other things.
+main_menu = False
+
 # Make these available to user code.
 import sys
 import os

@@ -76,12 +76,12 @@ init -1700 python:
             renpy.scene(layer=i)
 
         renpy.context()._menu = True
-        renpy.context()._main_menu = False
+        renpy.context()._main_menu = main_menu
+
         renpy.context_dynamic("main_menu")
         renpy.context_dynamic("_window_subtitle")
         renpy.context_dynamic("_window")
 
-        store.main_menu = False
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
 
