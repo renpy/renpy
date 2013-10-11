@@ -350,7 +350,7 @@ def autosave():
     if autosave_counter < renpy.config.autosave_frequency:
         return
 
-    if renpy.game.context()._main_menu:
+    if renpy.store.main_menu:
         return
 
     force_autosave(True)
@@ -364,7 +364,7 @@ def force_autosave(take_screenshot=False):
         return
 
     # Do not save if we're in the main menu.
-    if renpy.game.context().info._main_menu:
+    if renpy.store.main_menu:
         return
 
     # Do not save if we're in a replay.
