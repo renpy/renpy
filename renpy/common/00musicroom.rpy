@@ -33,11 +33,12 @@ init -1500 python:
 
             current_playing = renpy.music.get_playing(self.mr.channel)
 
-            if self.mr.last_playing != current_playing:
-                action = self.mr.action.get(current_playing)
-                renpy.run_action(action)
+            if not self.mr.stopping:
+                if self.mr.last_playing != current_playing:
+                    action = self.mr.action.get(current_playing)
+                    renpy.run_action(action)
 
-                self.mr.last_playing = current_playing
+                    self.mr.last_playing = current_playing
 
             return .1
 
@@ -105,6 +106,7 @@ init -1500 python:
             self.fadein = fadein
             self.action = {}
             self.last_playing = None
+            self.stopping = True
 
             # The list of strings giving the titles of songs that make up the
             # playlist.
@@ -207,6 +209,7 @@ init -1500 python:
             else:
                 playlist = playlist[idx:] + playlist[:idx]
 
+            self.stopping = False
             renpy.music.play(playlist, channel=self.channel, fadeout=self.fadeout, fadein=self.fadein)
 
         def stop(self):
@@ -214,6 +217,7 @@ init -1500 python:
             Stops the music from playing.
             """
 
+            self.stopping = True
             renpy.music.stop(channel=self.channel, fadeout=self.fadeout)
 
         def next(self):
@@ -229,6 +233,24 @@ init -1500 python:
             """
 
             return self.play(None, -1)
+
+        def init(self):
+            """
+            Init the musicroom
+            """
+
+            self.stopping = True
+            self.last_playing = None
+
+        def Init(self):
+            """
+            :doc: music_room method
+
+            This must be called before opening a music room screen
+            to prevent action being called when open a musicroom screen.
+            """
+
+            return self.init
 
         def Play(self, filename=None):
             """
