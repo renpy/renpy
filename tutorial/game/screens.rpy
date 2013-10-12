@@ -508,6 +508,8 @@ screen yesno_prompt:
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
+    # Right-click and escape answer "no".
+    key "game_menu" action no_action
 
 init -2 python:
     style.yesno_button.size_group = "yesno"
