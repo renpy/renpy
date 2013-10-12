@@ -33,11 +33,23 @@ init -1500 python:
 
             current_playing = renpy.music.get_playing(self.mr.channel)
 
-            if self.mr.last_playing != current_playing:
-                action = self.mr.action.get(current_playing)
-                renpy.run_action(action)
+            if not self.mr.stopping:
+                if current_playing is None:
+                    if self.mr.last_playing:
+                        if self.mr.loop:
+                            self.mr.play(self.mr.last_playing, 0)
+                        elif self.mr.sequence:
+                            self.mr.play(self.mr.last_playing, 1)
+                        elif self.mr.random:
+                            self.mr.RandomPlay()()
+                        else:
+                            self.mr.stopping = True
 
-                self.mr.last_playing = current_playing
+                elif self.mr.last_playing != current_playing:
+                    action = self.mr.action.get(current_playing)
+                    renpy.run_action(action)
+
+                    self.mr.last_playing = current_playing
 
             return .1
 
@@ -70,6 +82,75 @@ init -1500 python:
         def get_selected(self):
             return renpy.music.get_playing(self.mr.channel) is not None
 
+    class __MusicRoomToggleLoop(Action):
+        """
+        The action returned by MusicRoom.ToggleLoop
+        """
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            if self.mr.loop:
+                self.mr.loop = False
+            else:
+                self.mr.loop = True
+                self.mr.sequence = False
+                self.mr.random = False
+
+        def get_selected(self):
+            return self.mr.loop
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                renpy.restart_interaction()
+
+    class __MusicRoomToggleSequence(Action):
+        """
+        The action returned by MusicRoom.ToggleSequence
+        """
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            if self.mr.sequence:
+                self.mr.sequence = False
+            else:
+                self.mr.sequence = True
+                self.mr.loop = False
+                self.mr.random = False
+
+        def get_selected(self):
+            return self.mr.sequence
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                renpy.restart_interaction()
+
+    class __MusicRoomToggleRandom(Action):
+        """
+        The action returned by MusicRoom.ToggleRandom
+        """
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            if self.mr.random:
+                self.mr.random = False
+            else:
+                self.mr.random = True
+                self.mr.loop = False
+                self.mr.sequence = False
+
+        def get_selected(self):
+            return self.mr.random
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                renpy.restart_interaction()
+
 
     class MusicRoom(object):
         """
@@ -80,9 +161,7 @@ init -1500 python:
         order.
         """
 
-        loop = False
-
-        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=False):
+        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=False, sequence=True):
             """
             `channel`
                 The channel that this music room will operate on.
@@ -96,8 +175,12 @@ init -1500 python:
                 music when changing tracks.
 
             `loop`
-                If true, a music track will loop once played. If False, it
-                will advance to the next track.
+                If true, a music track will loop once played.
+                This is in preference to sequence.
+
+            `sequence`
+                If true, a music track will advance to the next track once played.
+                If loop and sequence are False, it will do nothing once played.
             """
 
             self.channel = channel
@@ -105,6 +188,9 @@ init -1500 python:
             self.fadein = fadein
             self.action = {}
             self.last_playing = None
+            self.stopping = True
+            self.random = False
+
 
             # The list of strings giving the titles of songs that make up the
             # playlist.
@@ -119,6 +205,9 @@ init -1500 python:
 
             # Should we loop rather than advancing to the next track?
             self.loop = loop
+
+            # Should we advance to the next track rather than looping?
+            self.sequence = sequence
 
         def add(self, filename, action=None, always_unlocked=False):
             """
@@ -202,18 +291,15 @@ init -1500 python:
 
             idx = (idx + offset) % len(playlist)
 
-            if self.loop:
-                playlist = [ playlist[idx] ]
-            else:
-                playlist = playlist[idx:] + playlist[:idx]
-
-            renpy.music.play(playlist, channel=self.channel, fadeout=self.fadeout, fadein=self.fadein)
+            self.stopping = False
+            renpy.music.play(playlist[idx], channel=self.channel, fadeout=self.fadeout, fadein=self.fadein, loop=False)
 
         def stop(self):
             """
             Stops the music from playing.
             """
 
+            self.stopping = True
             renpy.music.stop(channel=self.channel, fadeout=self.fadeout)
 
         def next(self):
@@ -229,6 +315,24 @@ init -1500 python:
             """
 
             return self.play(None, -1)
+
+        def init(self):
+            """
+            Init the musicroom
+            """
+
+            self.stopping = True
+            self.last_playing = None
+
+        def Init(self):
+            """
+            :doc: music_room method
+
+            This must be called before opening a music room screen
+            to prevent action being called when open a musicroom screen.
+            """
+
+            return self.init
 
         def Play(self, filename=None):
             """
@@ -301,3 +405,30 @@ init -1500 python:
             """
 
             return self.previous
+
+        def ToggleLoop(self):
+            """
+            :doc: music_room method
+            
+            Toggle whether play the playing file again when it is competed
+            """
+
+            return __MusicRoomToggleLoop(self)
+
+        def ToggleSequence(self):
+            """
+            :doc: music_room method
+            
+            Toggle whether advance to the next unlocked file when playing file is competed
+            """
+
+            return __MusicRoomToggleSequence(self)
+
+        def ToggleRandom(self):
+            """
+            :doc: music_room method
+            
+            Toggle whether advance to the unlocked file chosen randomly when playing file is competed
+            """
+
+            return __MusicRoomToggleRandom(self)
