@@ -3,6 +3,13 @@
 
 # This file contains functions relevant to the game menu.
 
+init -1 python:
+    # What we do on a quit, by default.
+    if renpy.has_screen("yesno_prompt"):
+        config.quit_action = Quit()
+    else:
+        config.quit_action = ui.gamemenus("_quit_prompt")
+ 
 init -1700 python:
 
     ######################################################################
@@ -56,9 +63,6 @@ init -1700 python:
     # Layers to clear when entering the menus.
     config.menu_clear_layers = [ ]
 
-    # What we do on a quit, by default.
-    config.quit_action = ui.gamemenus("_quit_prompt")
-
     # What we do on a game menu invokcation.
     config.game_menu_action = None
 
@@ -93,7 +97,13 @@ init -1700 python:
             renpy.scene(layer=i)
 
     def _invoke_game_menu():
-        if renpy.context()._menu:
+        if (renpy.get_screen("yesno_prompt") and
+             hasattr(renpy.context(), "_no_action") and
+              renpy.context()._no_action):
+            for action in renpy.context()._no_action:
+                action()
+            renpy.context()._no_action = None
+        elif renpy.context()._menu:   
             if renpy.context()._main_menu:
                 return
             else:
