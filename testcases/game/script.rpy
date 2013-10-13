@@ -6,12 +6,12 @@
 
     style.ruby_style = Style(style.default)
     style.ruby_style.size = 12
-    style.ruby_style.xoffset = -18
+    style.ruby_style.yoffset = -18
 
 define ruby = Character(None, what_line_leading=10, what_ruby_style=style.ruby_style)
 
-label main_menu:
-    return
+# label main_menu:
+#     return
 
 screen text1:
     frame:

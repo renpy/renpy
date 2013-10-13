@@ -76,6 +76,9 @@ init -1900 python:
         if version <= (6, 14, 1):
             config.key_repeat = None
 
+        if version <= (6, 15, 7):
+            MusicRoom.loop_compat = True
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
@@ -140,4 +143,4 @@ init 1900 python hide::
 
     if compat(6, 15, 7):
         config.has_quicksave = False
-        config.quit_action = ui.gamemenus("_confirm_quit") 
+        config.quit_action = ui.gamemenus("_confirm_quit")

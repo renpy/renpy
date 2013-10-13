@@ -53,6 +53,8 @@ init -1500 python:
 
             if not playlist:
                 return
+
+            self.mr.shuffled = None
             self.mr.play(renpy.random.choice(playlist), 0)
 
     class __MusicRoomTogglePlay(Action):
@@ -65,6 +67,8 @@ init -1500 python:
         def __call__(self):
             if renpy.music.get_playing(self.mr.channel):
                 return self.mr.stop()
+
+            self.mr.shuffled = None
             return self.mr.play()
 
         def get_selected(self):
@@ -82,7 +86,9 @@ init -1500 python:
 
         loop = False
 
-        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=False):
+        loop_compat = False
+
+        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=True, single_track=False, shuffle=False):
             """
             `channel`
                 The channel that this music room will operate on.
@@ -96,8 +102,18 @@ init -1500 python:
                 music when changing tracks.
 
             `loop`
-                If true, a music track will loop once played. If False, it
-                will advance to the next track.
+                Determines if playback will loop or stop when it reaches
+                the end of the playlist.
+
+            `single_track`
+                If true, only a single track will play. If loop is true,
+                that track will loop. Otherwise, playback will stop when the
+                track finishes.the
+
+            `shuffle`
+                If true, the tracks are shuffled, and played in the shuffled
+                order. If false, the tracks are played in the order they're
+                added to the MusicRoom.
             """
 
             self.channel = channel
@@ -110,6 +126,10 @@ init -1500 python:
             # playlist.
             self.playlist = [ ]
 
+            # A shuffled copy of the playlist. (Created on demand when we
+            # need it.)
+            self.shuffled = None
+
             # A set of filenames, so we can quickly check if a valid filename
             # has been provided.
             self.filenames = set()
@@ -117,10 +137,23 @@ init -1500 python:
             # The set of songs that are always unlocked.
             self.always_unlocked = set()
 
-            # Should we loop rather than advancing to the next track?
+            # Should we loop a single track rather than advancing to the next
+            # track?
             self.loop = loop
 
-        def add(self, filename, action=None, always_unlocked=False):
+            # Should we play a single track?
+            self.single_track = single_track
+
+            # Should we shuffle the playlist?
+            self.shuffle = shuffle
+
+            # In older versions, loop would loop a single trak.
+            if self.loop_compat and loop:
+                print "Compat!"
+                self.single_track = True
+
+
+        def add(self, filename, always_unlocked=False, action=None):
             """
             :doc: music_room method
 
@@ -128,17 +161,17 @@ init -1500 python:
             will play unlocked files in the order that they are added to the
             room.
 
+            `always_unlocked`
+                If true, the music file will be always unlocked. This allows
+                the file to show up in the music room before it has been
+                played in the game.
+
             `action`
                 This is a action or the list of actions. these are called when this
                 file is played.
 
                 For example, These actions is used to change a screen or background, description
                 by the playing file.
-
-            `always_unlocked`
-                If true, the music file will be always unlocked. This allows
-                the file to show up in the music room before it has been
-                played in the game.
             """
 
             self.playlist.append(filename)
@@ -163,15 +196,32 @@ init -1500 python:
 
             return renpy.seen_audio(filename)
 
-        def unlocked_playlist(self):
+        def unlocked_playlist(self, filename=None):
             """
             Returns a list of filenames in the playlist that have been
             unlocked.
             """
 
-            return [ i for i in self.playlist if self.is_unlocked(i) ]
+            if self.shuffle:
+                if self.shuffled is None or (filename and self.shuffled[0] != filename):
+                    import random
+                    self.shuffled = list(self.playlist)
+                    random.shuffle(self.shuffled)
 
-        def play(self, filename=None, offset=0):
+                    if filename in self.shuffled:
+                        self.shuffled.remove(filename)
+                        self.shuffled.insert(0, filename)
+
+
+                playlist = self.shuffled
+
+            else:
+                self.shuffled = None
+                playlist = self.playlist
+
+            return [ i for i in playlist if self.is_unlocked(i) ]
+
+        def play(self, filename=None, offset=0, queue=False):
             """
             Starts the music room playing. The file we start playing with is
             selected in two steps.
@@ -183,11 +233,11 @@ init -1500 python:
             We then apply `offset`. If `offset` is positive, we advance that many
             files, otherwise we go back that many files.
 
-            The selected file is then played.
-
+            If `queue` is true, the music is queued. Otherwise, it is played
+            immediately.
             """
 
-            playlist = self.unlocked_playlist()
+            playlist = self.unlocked_playlist(filename)
 
             if not playlist:
                 return
@@ -202,12 +252,35 @@ init -1500 python:
 
             idx = (idx + offset) % len(playlist)
 
-            if self.loop:
+            if self.single_track:
                 playlist = [ playlist[idx] ]
-            else:
+            elif self.loop:
                 playlist = playlist[idx:] + playlist[:idx]
+            else:
+                playlist = playlist[idx:]
 
-            renpy.music.play(playlist, channel=self.channel, fadeout=self.fadeout, fadein=self.fadein)
+            if queue:
+                renpy.music.queue(playlist, channel=self.channel, loop=self.loop)
+            else:
+                renpy.music.play(playlist, channel=self.channel, fadeout=self.fadeout, fadein=self.fadein, loop=self.loop)
+
+        def queue_if_playing(self):
+            """
+            If the music is not playing, do nothing.
+
+            Otherwise, redo the queue such that we have the right tracks
+            queued up.
+            """
+
+            filename = renpy.music.get_playing(channel=self.channel)
+            if filename is None:
+                return
+
+            if self.single_track:
+                self.play(None, offset=0, queue=True)
+            else:
+                self.play(None, offset=1, queue=True)
+
 
         def stop(self):
             """
@@ -221,7 +294,11 @@ init -1500 python:
             Plays the next file in the playlist.
             """
 
-            return self.play(None, 1)
+            filename = renpy.music.get_playing(channel=self.channel)
+            if filename is None:
+                return self.play(None, 0)
+            else:
+                return self.play(None, 1)
 
         def previous(self):
             """
@@ -234,7 +311,7 @@ init -1500 python:
             """
             :doc: music_room method
 
-            Causes the music room to start playing. If `filename` is given, that
+            This action auses the music room to start playing. If `filename` is given, that
             file begins playing. Otherwise, the currently playing file starts
             over (if it's unlocked), or the first file starts playing.
 
@@ -255,7 +332,7 @@ init -1500 python:
             """
             :doc: music_room method
 
-            Causes the music room to start playin a randomly selected unlocked
+            This action causes the music room to start playing a randomly selected unlocked
             music track.
             """
 
@@ -265,7 +342,7 @@ init -1500 python:
             """
             :doc: music_room method
 
-            If no music is currently playing, starts playing the first
+            If no music is currently playing, this action starts playing the first
             unlocked track. Otherwise, stops the currently playing music.
 
             This button is selected when any music is playing.
@@ -276,7 +353,7 @@ init -1500 python:
             """
             :doc: music_room method
 
-            Stops the music.
+            This action stops the music.
             """
 
             return self.stop
@@ -301,3 +378,59 @@ init -1500 python:
             """
 
             return self.previous
+
+        def SetLoop(self, value):
+            """
+            :doc: music_room method
+
+            This action sets the value of the loop property.
+            """
+
+            return [ SetField(self, "loop", value), self.queue_if_playing ]
+
+        def SetSingleTrack(self, value):
+            """
+            :doc: music_room method
+
+            This action sets the value of the single_track property.
+            """
+
+            return [ SetField(self, "single_track", value), self.queue_if_playing ]
+
+
+        def SetShuffle(self, value):
+            """
+            :doc: music_room method
+
+            This action sets the value of the shuffle property.
+            """
+
+            return [ SetField(self, "shuffle", value), self.queue_if_playing ]
+
+        def ToggleLoop(self):
+            """
+            :doc: music_room method
+
+            This action toggles the value of the loop property.
+            """
+
+            return [ ToggleField(self, "loop"), self.queue_if_playing ]
+
+
+        def ToggleSingleTrack(self):
+            """
+            :doc: music_room method
+
+            This action toggles the value of the single_track property.
+            """
+
+            return [ ToggleField(self, "single_track"), self.queue_if_playing ]
+
+        def ToggleShuffle(self):
+            """
+            :doc: music_room method
+
+            This action toggles the value of the shuffle property.
+            """
+
+            return [ ToggleField(self, "shuffle"), self.queue_if_playing ]
