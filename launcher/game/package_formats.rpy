@@ -97,7 +97,11 @@ init python in distribute:
 
             zi = zipfile.ZipInfo(name)
 
-            s = os.stat(path)
+            try:
+                s = os.stat(path)
+            except:
+                raise Exception("Could not stat " + str(filename) + "(for " + name + "): " + str(e))
+
             zi.date_time = time.gmtime(s.st_mtime)[:6]
             zi.compress_type = zipfile.ZIP_DEFLATED
             zi.create_system = 3
