@@ -298,14 +298,16 @@ init python in distribute:
 
             # The destination directory.
             if destination is None:
+                destination = build["destination"]
                 parent = os.path.dirname(project.path)
-                self.destination = os.path.join(parent, self.base_name + "-dists")
-                try:
-                    os.makedirs(self.destination)
-                except:
-                    pass
+                self.destination = os.path.join(parent, destination)
             else:
                 self.destination = destination
+
+            try:
+                os.makedirs(self.destination)
+            except:
+                pass
 
             # Status reporter.
             self.reporter = reporter

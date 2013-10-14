@@ -294,6 +294,9 @@ init -1500 python in build:
     # The salt used for google play.
     google_play_salt = None
 
+    # The destination things are built in.
+    destination = "{directory_name}-dists"
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -315,6 +318,13 @@ init -1500 python in build:
         rv["exclude_empty_directories"] = exclude_empty_directories
 
         rv["renpy"] = renpy
+
+        rv["destination"] = destination.format(
+            directory_name=directory_name,
+            executable_name=executable_name,
+            display_name=display_name,
+            version=rv["version"],
+        )
 
         if google_play_key:
             rv["google_play_key"] = google_play_key

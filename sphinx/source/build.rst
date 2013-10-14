@@ -225,3 +225,21 @@ The following variables provide further control of the build process:
     If true, empty directories (including directories left empty by
     file archiving) will be removed from generated packages. If false,
     empty directories will be included.
+
+.. var:: build.destination = "{directory_name}-dists"
+
+    Gives the path to the directory the archive files will be placed in. This
+    may be an absolute or a relative path. A relative path is considered to
+    be relative to the projects directory.
+
+    The following values are substituted in using python's str.format function.
+
+    ``{directory_name}``
+        The value of build.directory_name.
+
+    ``{executable_name}``
+        The value of build.executable_name.
+
+    ``{version}``
+        The value of build.version.
+
