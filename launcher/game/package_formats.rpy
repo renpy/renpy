@@ -101,7 +101,7 @@ init python in distribute:
                 s = os.stat(path)
                 zi.date_time = time.gmtime(s.st_mtime)[:6]
             except:
-                raise Exception("Invalid time for " + str(path) + "(" + name + ")")
+                zi.date_time = time.gmtime()[:6]
 
             zi.compress_type = zipfile.ZIP_DEFLATED
             zi.create_system = 3
