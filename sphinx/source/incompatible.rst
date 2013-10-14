@@ -9,6 +9,15 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+.. _incompatible-6.16:
+
+6.16
+----
+
+The meaning of the `loop` parameter to :func:`MusicRoom` has changed. To
+get the old behavior, set both `loop` and `single_track` to true.
+
+
 .. _incompatible-6.14:
 
 6.14

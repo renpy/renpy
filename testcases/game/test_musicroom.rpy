@@ -1,12 +1,14 @@
 init python:
 
-    mr = MusicRoom()
+    mr_track = ""
 
-    mr.add("sound/1.ogg", True)
-    mr.add("sound/2.ogg", True)
-    mr.add("sound/3.ogg", True)
-    mr.add("sound/4.ogg", True)
-    mr.add("sound/5.ogg", True)
+    mr = MusicRoom(stop_action=SetVariable("mr_track", "Stopped"))
+
+    mr.add("sound/1.ogg", True, SetVariable("mr_track", "1"))
+    mr.add("sound/2.ogg", True, SetVariable("mr_track", "2"))
+    mr.add("sound/3.ogg", True, SetVariable("mr_track", "3"))
+    mr.add("sound/4.ogg", True, SetVariable("mr_track", "4"))
+    mr.add("sound/5.ogg", True, SetVariable("mr_track", "5"))
 
 
 screen music_room:
@@ -15,6 +17,8 @@ screen music_room:
     frame:
 
         has vbox
+
+        text "[mr_track]"
 
         textbutton "1" action mr.Play("sound/1.ogg")
         textbutton "2" action mr.Play("sound/2.ogg")

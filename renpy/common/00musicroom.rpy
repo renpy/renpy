@@ -31,13 +31,7 @@ init -1500 python:
             if self.selected != self.get_selected():
                 renpy.restart_interaction()
 
-            current_playing = renpy.music.get_playing(self.mr.channel)
-
-            if self.mr.last_playing != current_playing:
-                action = self.mr.action.get(current_playing)
-                renpy.run_action(action)
-
-                self.mr.last_playing = current_playing
+            self.mr.periodic(st)
 
             return .1
 
@@ -88,7 +82,7 @@ init -1500 python:
 
         loop_compat = False
 
-        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=True, single_track=False, shuffle=False):
+        def __init__(self, channel="music", fadeout=0.0, fadein=0.0, loop=True, single_track=False, shuffle=False, stop_action=None):
             """
             `channel`
                 The channel that this music room will operate on.
@@ -114,12 +108,20 @@ init -1500 python:
                 If true, the tracks are shuffled, and played in the shuffled
                 order. If false, the tracks are played in the order they're
                 added to the MusicRoom.
+
+            `stop_action`
+                An action to run when the music has stopped.
             """
 
             self.channel = channel
             self.fadeout = fadeout
             self.fadein = fadein
-            self.action = {}
+
+            # A map from track name (or "" for stopped) to the appropriate
+            # action.
+            self.action = { "" : stop_action }
+
+            # The last track playing, or "" if we've been stopped.
             self.last_playing = None
 
             # The list of strings giving the titles of songs that make up the
@@ -149,9 +151,30 @@ init -1500 python:
 
             # In older versions, loop would loop a single trak.
             if self.loop_compat and loop:
-                print "Compat!"
                 self.single_track = True
 
+            # The last shown time for the music room.
+            self.st = -1
+
+        def periodic(self, st):
+
+            if st == self.st:
+                return
+            elif st < self.st:
+                self.last_playing = None
+            else:
+                self.st = st
+
+            current_playing = renpy.music.get_playing(self.channel)
+            if current_playing is None:
+                current_playing = ""
+
+            if self.last_playing != current_playing:
+                action = self.action.get(current_playing, None)
+
+                renpy.run_action(action)
+
+                self.last_playing = current_playing
 
         def add(self, filename, always_unlocked=False, action=None):
             """
