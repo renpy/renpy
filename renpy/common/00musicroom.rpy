@@ -102,7 +102,7 @@ init -1500 python:
             `single_track`
                 If true, only a single track will play. If loop is true,
                 that track will loop. Otherwise, playback will stop when the
-                track finishes.the
+                track finishes.
 
             `shuffle`
                 If true, the tracks are shuffled, and played in the shuffled
