@@ -162,8 +162,8 @@ init -1500 python:
                 return
             elif st < self.st:
                 self.last_playing = None
-            else:
-                self.st = st
+
+            self.st = st
 
             current_playing = renpy.music.get_playing(self.channel)
             if current_playing is None:
@@ -171,7 +171,6 @@ init -1500 python:
 
             if self.last_playing != current_playing:
                 action = self.action.get(current_playing, None)
-
                 renpy.run_action(action)
 
                 self.last_playing = current_playing
