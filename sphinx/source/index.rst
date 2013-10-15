@@ -12,9 +12,11 @@ in the Ren'Py Wiki:
 
     http://www.renpy.org/wiki/
 
-日本語のドキュメントは以下にあります:
+.. only:: not language_ja and not gettext
 
-    http://ja.renpy.org/doc/html/
+    日本語のドキュメントは以下にあります:
+
+        http://ja.renpy.org/doc/html/
 
 
 Getting Started
