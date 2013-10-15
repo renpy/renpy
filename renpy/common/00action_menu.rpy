@@ -198,7 +198,10 @@ init -1500 python:
                 renpy.restart_interaction()
 
         def get_selected(self):
-            return config.skipping
+            if self.fast:
+                return config.skipping == "fast"
+            else:
+                return config.skipping == "slow"
 
         def get_sensitive(self):
             return ( config.allow_skipping and (not renpy.context()._main_menu) ) and (self.fast or renpy.game.preferences.skip_unseen or renpy.game.context().seen_current(True) )
