@@ -515,6 +515,7 @@ screen yesno_prompt:
 init -2 python:
     style.yesno_button.size_group = "yesno"
     style.yesno_label_text.text_align = 0.5
+    style.yesno_label_text.layout = "subtitle"
 
 
 ##############################################################################
