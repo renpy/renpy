@@ -424,6 +424,8 @@ init -1400 python hide:
     layout.LOADING = _("Loading will lose unsaved progress.\nAre you sure you want to do this?")
     layout.QUIT = _("Are you sure you want to quit?")
     layout.MAIN_MENU = _("Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
+    layout.SLOW_SKIP = _("Are you sure you want to begin skipping?")
+    layout.FAST_SKIP = _("Are you sure you want to skip to the next choice?")
 
     config.enter_yesno_transition = None
     config.exit_yesno_transition = None

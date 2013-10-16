@@ -168,16 +168,28 @@ init -1500 python:
          enables skipping.
 
          `fast`
-               If True, skips directly to the next menu choice.
+               If true, skips directly to the next menu choice.
+
+         `confirm`
+               If true, asks for confirmation before beginning skipping.
          """
 
         fast = False
+        confirm = False
 
-        def __init__(self, fast=False):
+        def __init__(self, fast=False, confirm=False):
             self.fast = fast
+            self.confirm = confirm
 
         def __call__(self):
             if not self.get_sensitive():
+                return
+
+            if self.confirm:
+                if self.fast:
+                    layout.yesno_screen(layout.FAST_SKIP, Skip(True))
+                else:
+                    layout.yesno_screen(layout.SLOW_SKIP, Skip(False))
                 return
 
             if renpy.context()._menu:
