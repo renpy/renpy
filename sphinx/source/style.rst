@@ -939,11 +939,11 @@ choose between large, simple text and smaller outlined text.
 ::
 
     init python:
-        renpy.register_style_property("text", "decorated", style.say_dialogue, "outlines", [ (1, "#000", 0, 0) ])
-        renpy.register_style_property("text", "decorated", style.say_dialogue, "size", 22)
+        renpy.register_style_preference("text", "decorated", style.say_dialogue, "outlines", [ (1, "#000", 0, 0) ])
+        renpy.register_style_preference("text", "decorated", style.say_dialogue, "size", 22)
 
-        renpy.register_style_property("text", "large", style.say_dialogue, "outlines", [ ])
-        renpy.register_style_property("text", "large", style.say_dialogue, "size", 24)
+        renpy.register_style_preference("text", "large", style.say_dialogue, "outlines", [ ])
+        renpy.register_style_preference("text", "large", style.say_dialogue, "size", 24)
 
 The following code will allow the user to select these alternatives using
 buttons::
