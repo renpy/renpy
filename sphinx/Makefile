@@ -2,7 +2,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    = -D language=$(LANGUAGE)
+SPHINXOPTS    = -D language=$(LANGUAGE) -t language_$(LANGUAGE)
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
@@ -139,7 +139,7 @@ gettext:
 	     source/credit_items/translators.txt \
 	     source/credit_items/footer.txt \
 	         > source/credits.rst
-	$(SPHINXBUILD) -b gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
+	$(SPHINXBUILD) -b gettext -t gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
 	@ls $(BUILDDIR)/locale
 	@for p in `find $(BUILDDIR)/locale -name *.pot`; do \
 		echo locale/`basename $$p` | sed s/\.pot//g | xargs mkdir -p; \
