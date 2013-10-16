@@ -240,6 +240,9 @@ def reload_all():
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
 
+    # Shut down the importer.
+    renpy.loader.quit_importer()
+
     blacklist = [ "renpy",
                   "renpy.log",
                   "renpy.bootstrap",

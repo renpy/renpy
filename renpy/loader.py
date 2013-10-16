@@ -565,3 +565,6 @@ class RenpyImporter(object):
 
 def init_importer():
     sys.meta_path.append(RenpyImporter())
+
+def quit_importer():
+    sys.meta_path.pop()

@@ -346,6 +346,8 @@ def main():
 
         renpy.savelocation.quit()
 
+        renpy.translation.write_updated_strings()
+
     # This is stuff we do on a normal, non-error return.
     if not renpy.display.error.error_handled:
         renpy.display.render.check_at_shutdown()
