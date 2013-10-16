@@ -1,5 +1,9 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.can_rollback()
+    
+    Returns true if we can rollback.
+
 .. function:: renpy.checkpoint(data=None)
     
     Makes the current statement a checkpoint that the user can rollback to. Once

@@ -133,6 +133,8 @@ label _start:
     else:
         $ renpy.music.stop()
 
+    $ renpy.music.stop(channel="movie")
+
     # Clean out any residual scene from the splashscreen.
     if config.start_scene_black:
         scene black
