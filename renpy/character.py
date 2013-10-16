@@ -139,8 +139,9 @@ def compute_widget_properties(who_args, what_args, window_args, variant=None):
             return d
 
         in_rollback = renpy.exports.in_rollback()
-
-        if (not in_rollback) and (not variant):
+        seen = renpy.game.context().seen_current(True)
+        
+        if (not in_rollback) and (not variant) and (not seen):
             return d
 
         d = d.copy()
@@ -155,6 +156,8 @@ def compute_widget_properties(who_args, what_args, window_args, variant=None):
 
             if in_rollback:
                 style = style["rollback"]
+            elif seen:
+                style = style["seen"]
 
         d["style"] = style
 
@@ -232,6 +235,8 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 
         if renpy.exports.in_rollback():
             style = style["rollback"]
+        elif renpy.game.context().seen_current(True):
+            style = style["seen"]
 
         rv = dict(style=style)
         rv.update(properties)
