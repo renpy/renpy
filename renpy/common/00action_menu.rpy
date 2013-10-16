@@ -156,7 +156,7 @@ init -1500 python:
                 renpy.loadsave.force_autosave()
                 layout.yesno_screen(layout.QUIT, Quit(False))
             else:
-                renpy.jump("_quit") 
+                renpy.jump("_quit")
 
 
     class Skip(Action):
@@ -201,7 +201,7 @@ init -1500 python:
             if self.fast:
                 return config.skipping == "fast"
             else:
-                return config.skipping == "slow"
+                return config.skipping and config.skipping != "fast"
 
         def get_sensitive(self):
             return ( config.allow_skipping and (not renpy.context()._main_menu) ) and (self.fast or renpy.game.preferences.skip_unseen or renpy.game.context().seen_current(True) )
