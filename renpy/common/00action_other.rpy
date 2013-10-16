@@ -136,7 +136,7 @@ init -1500 python:
         def __call__(self):
             renpy.notify(self.message)
 
-    def Rollback():
+    class Rollback(Action):
         """
         :doc: other_action
 
@@ -144,7 +144,11 @@ init -1500 python:
         Otherwise, nothing happens.
         """
 
-        return renpy.rollback
+        def __call__(self):
+            renpy.rollback()
+
+        def get_sensitive(self):
+            return renpy.can_rollback()
 
     class RollForward(Action):
         """

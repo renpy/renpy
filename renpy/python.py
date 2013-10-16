@@ -1100,6 +1100,13 @@ class RollbackLog(renpy.object.Object):
         if not self.rollback_is_fixed and len(self.log) > 1:
             self.fixed_rollback_boundary = self.log[-2].context.current
 
+    def can_rollback(self):
+        """
+        Returns True if we can rollback.
+        """
+
+        return self.rollback_limit > 0
+
     def rollback(self, checkpoints, force=False, label=None, greedy=True):
         """
         This rolls the system back to the first valid rollback point

@@ -121,6 +121,15 @@ def in_rollback():
 
     return renpy.game.log.in_rollback()
 
+def can_rollback():
+    """
+    :doc: rollback
+
+    Returns true if we can rollback.
+    """
+
+    return renpy.game.log.can_rollback()
+
 def in_fixed_rollback():
     """
     :doc: blockrollback
