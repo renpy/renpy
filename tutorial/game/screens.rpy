@@ -535,6 +535,10 @@ screen quick_menu:
         textbutton _("Q.Load") action QuickLoad()
         textbutton _("Save") action ShowMenu('save')
         textbutton _("Skip") action Skip()
+
+        if config.fast_skipping:
+            textbutton _("F.Skip") action Skip(fast=True, confirm=True)
+
         textbutton _("Auto") action Preference("auto-forward", "toggle")
         textbutton _("Prefs") action ShowMenu('preferences')
 

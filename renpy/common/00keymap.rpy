@@ -175,11 +175,10 @@ init -1600 python:
 
 
     def _fast_skip():
-        if config.fast_skipping or config.developer:
-            config.skipping = "fast"
+        if not config.fast_skipping and not config.developer:
+            return
 
-        if renpy.context()._menu:
-            renpy.jump("_noisy_return")
+        Skip(fast=True, confirm=not config.developer)
 
     def _reload_game():
         if not config.developer:

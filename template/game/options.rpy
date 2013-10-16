@@ -30,6 +30,10 @@ init -1 python hide:
     config.name = "A Ren'Py Game"
     config.version = "0.0"
 
+    ## Should we allow the user to skip to the next choice or unseen
+    ## line of dialogue?
+    config.fast_skipping = True
+
     #########################################
     # Themes
 

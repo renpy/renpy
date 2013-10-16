@@ -187,9 +187,13 @@ init -1500 python:
 
             if self.confirm:
                 if self.fast:
-                    layout.yesno_screen(layout.FAST_SKIP, Skip(True))
+                    if _preferences.skip_unseen:
+                        layout.yesno_screen(layout.FAST_SKIP_UNSEEN, Skip(True))
+                    else:
+                        layout.yesno_screen(layout.FAST_SKIP_SEEN, Skip(True))
                 else:
                     layout.yesno_screen(layout.SLOW_SKIP, Skip(False))
+
                 return
 
             if renpy.context()._menu:

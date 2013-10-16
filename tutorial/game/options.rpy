@@ -30,6 +30,10 @@ init -1 python hide:
     config.name = "Ren'Py Tutorial"
     config.version = "6.15 \"Foreign Policy\""
 
+    ## Should we allow the user to skip to the next choice or unseen
+    ## line of dialogue?
+    config.fast_skipping = True
+
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
