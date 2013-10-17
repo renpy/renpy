@@ -2,8 +2,95 @@
 Full Changelog
 ==============
 
+Ren'Py 6.16
+===========
+
+Android
+-------
+
+Android support has now been integrated into the Ren'Py launcher. While
+for size reasons RAPT is still a separate download, once RAPT has been
+placed inside the Ren'Py directory, the launcher will allow you to:
+
+* Install the Android SDK.
+* Configure a project as an Android application.
+* Build and Install the Android application.
+
+The launcher can now launch Ren'Py in modes that simulate Android phones,
+tablets, and television-based consoles.
+
+Ren'Py includes support for television-based Android consoles, such as the
+OUYA. It includes support for detecting the OUYA specifically, and choosing
+a variant as appropriate.
+
+This release adds some video playback support to the Android port. While
+limited to full-screen video and codecs that the Android platform supports
+(which unfortunately have little overlap with desktop Ren'Py), this may
+be enough to enable cutscene movies.
+
+Ren'Py now includes a new set of screen variants, with "large", "medium", and
+"small" reflecting the visual size of devices (televisions are considered to
+be small because they're far away), while "touch", "tv", and "pc" reflect
+the input devices involved.
+
+Android now supports displaying vertical text.
+
+
+Save, Load, and Persistent Improvements
+---------------------------------------
+
+The low-level load/save API has been overhauled. It's now possible to
+access save slot information directly, instead of having to scan all save
+slots to find the one you want. New functions include :func:`renpy.list_slots`,
+:func:`renpy.newest_slot`, :func:`renpy.slot_mtime`, :func:`renpy.slot_mtime`,
+:func:`renpy.slot_json`, and :func:`renpy.slot_screenshot`.
+
+There is now support for adding arbitrary JSON information to save
+files. This allows per-save information (like the path you're on
+in a VN, date and amount of money in a sim, or party composition
+in an RPG) to be accessed from the save and load screens.
+
+JSON information is created by :var:`config.save_json_callbacks`,
+and can be accessed through the low-level :func:`renpy.slot_json` or
+high-level :func:`FileJson` functions.
+
+When possible, Ren'Py now stores save files with the game, as well as in
+a user-global save directory. This means that if a Ren'Py game is placed
+on a USB drive or shared on a network, the saves will be available on
+multiple computers. (When save files are available in both places, the
+newest file wins.)
+
+When a save file on a network share is updated, Ren'Py will automatically
+rescan the contents of that file, and restart the current interaction. (This
+will update the save and load screens, making the file available to be
+loaded.)
+
+Ren'Py will no longer auto-save while at the main menu.
+
+Persistent data is also stored in both locations. When the persistent
+data is not identical, it will be merged. By default, the most recently
+updated value for each field will be used. In some cases (for example, a set
+of endings the player has reached), this is not the correct behavior. The
+new :func:`renpy.register_persistent` can be used to register different
+merge behavior.
+
+Voice
+-----
+
+
+Other
+-----
+
+ConditionSwitch is now much faster.
+
+The fast skipping function now stops when it visits seen text.
+
+
+
+
+
 Ren'Py 6.15.6
--------------
+=============
 
 This release includes improvements for the Android platform:
 
@@ -28,7 +115,7 @@ with very old Ren'Py games. (It now runs the Ren'Py 5 demo.)
 
 
 Ren'Py 6.15.5
--------------
+=============
 
 This release adds two new features:
 
