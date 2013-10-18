@@ -116,7 +116,13 @@ selected track.
 Other
 -----
 
-The default quick menu now includes rollback and fast skip functionality.
+The default quick menu now includes rollback and fast skip
+functionality. (This functionality is contained in the template screens.rpy,
+and may need to be copied into your game.)
+
+The default yes_no screen now answers no when the user right-clicks. (This
+functionality is contained in the template screens.rpy, and may need to be
+copied into your game.)
 
 The fast skipping function now stops when it visits seen text.
 
@@ -134,6 +140,15 @@ current time.
 
 Bugfixes
 --------
+
+This release includes many bugfixes. Some of the more important are:
+
+* A fix to a problem that would cause Ren'Py to restart the display when
+  starting up on Windows. This could cause Ren'Py to spuriously detect a
+  slow video card, and present the user with the appropriate error message.
+
+* A fix to a problem where Ren'Py would fail to display the proper error
+  message when python code containing non-ASCII characters fails to compile.
 
 
 
