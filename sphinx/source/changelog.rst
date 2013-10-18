@@ -45,6 +45,11 @@ slots to find the one you want. New functions include :func:`renpy.list_slots`,
 :func:`renpy.newest_slot`, :func:`renpy.slot_mtime`, :func:`renpy.slot_mtime`,
 :func:`renpy.slot_json`, and :func:`renpy.slot_screenshot`.
 
+At a higher level, there is a new :func:`FileNewest` function that's
+true for the newest save slot. :func:`FilePageNext` and
+:func:`FilePagePrevious` now support a wrap argument that causes them
+to wrap around a defined number of screens.
+
 There is now support for adding arbitrary JSON information to save
 files. This allows per-save information (like the path you're on
 in a VN, date and amount of money in a sim, or party composition
@@ -77,15 +82,58 @@ merge behavior.
 Voice
 -----
 
+This release adds support for playing voice without having to fill
+the script with voice statements. This support consists of two
+new pieces of functionality:
+
+* The launcher contains a new "Extract Dialogue" function. This extracts
+  the dialogue into a tab-delimited file. Each record includes the character,
+  the dialogue text, the filename and line number, and a unique identifier
+  for that line.
+
+* The :var:`config.auto_voice` variable is used to give a filename pattern
+  that is formatted with the unique identifier. If a file with that filename
+  exists, and no other voice file is being played, that file is used as the
+  voice.
+
+There are also several new voice-related preferences. The "voice sustain"
+preference determines if voice is sustained through multiple interactions.
+The "wait for voice" preference determines if auto-forwart mode waits for
+the voice to finish before advancing.
+
+Image Gallery and Music Room
+----------------------------
+
+The image gallery now can display a navigation overlay with next, previous,
+slide show, and return buttons. The creator can choose if these buttons
+display the images associated with a single button, or advance between
+multiple buttons.
+
+The Music Room includes the ability to play a random track, and to determine
+if the tracks are shuffled, looped, or if play is confined to a single
+selected track.
 
 Other
 -----
 
-ConditionSwitch is now much faster.
+The default quick menu now includes rollback and fast skip functionality.
 
 The fast skipping function now stops when it visits seen text.
 
+The :var:`build.destination` variable can be used to select the directory
+in which Ren'Py places files when building a distribution.
 
+There is a new NullAction that can be used when one wants a button
+to be sensitive to hover and unhover, but not performing a useful
+action on click.
+
+ConditionSwitch is now much faster.
+
+Ren'Py will deal with files with insane timestamps by giving them the
+current time.
+
+Bugfixes
+--------
 
 
 
