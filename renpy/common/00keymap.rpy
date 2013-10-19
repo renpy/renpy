@@ -165,7 +165,7 @@ init -1600 python:
             config.screenshot_callback(fn)
 
     def _screenshot_callback(fn):
-        renpy.notify(_("Saved screenshot as %s.") % fn)
+        renpy.notify(__("Saved screenshot as %s.") % fn)
 
     config.screenshot_callback = _screenshot_callback
 
