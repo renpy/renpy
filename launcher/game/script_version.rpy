@@ -1,2 +1,2 @@
 ﻿init -999:
-    $ config.script_version = (6, 15, 7)
+    $ config.script_version = (6, 16, 0)
