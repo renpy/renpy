@@ -30,6 +30,8 @@ writing it. Some example say statements are::
 
         e "This is dialogue, using a character object instead."
 
+        "Bam!!" with vpunch
+
 The first form of the say statement consists of a string by
 itself. This form is used for narration, with the narration being the
 contents of the string.
@@ -38,10 +40,15 @@ The second form consists of two strings. The first string is the name
 of the character who is speaking, and the second is the dialogue being
 spoken.
 
-The final form is consists of a simple expression followed by a
+The third form consists of a simple expression followed by a
 string. The simple expression should evaluate to either a string
 giving a character name, or a Character object. In the latter case,
 the character object is used to control how the dialogue is shown.
+
+The final form consists of a string and a with clause which has a
+transition. In this case, the string is shown and a screen is shaked
+at the same time.
+
 
 Although the precise details of what a say statement does is
 controlled by the character object used, the usual effect of a say
