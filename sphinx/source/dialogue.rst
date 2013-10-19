@@ -158,3 +158,12 @@ them can be a problem.
     character name is given as a string. This character is copied to a
     new character with the given name, and then that new character is
     used to display the dialogue.
+
+``centered``
+    A character that causes what it says to be displayed centered,
+    in the middle of the screen, outside of any window. 
+
+``vcentered``
+    A character that causes what it says to be displayed centered
+    in vertically oriented text, in the middle of the screen,
+    outside of any window. 
