@@ -325,6 +325,38 @@ Here, None is used to indicate a special transition that updates
 Ren'Py's idea of what the prior screen was, without actually showing
 anything to the user.
 
+Hide and Show Window
+---------------
+
+The window statement is used to control if a window is shown when a character
+is not speaking. (For example, during transitions and pauses.) The window show
+statement causes the window to be shown, while the window hide statement hides
+the window.
+
+If the optional transition is given, it's used to show and hide the window.
+If not given, it defaults to :var:`config.window_show_transition` and
+:var:`config.window_hide_transition`. Giving None as the transition prevents
+it from occuring.
+
+The window itself is displayed by calling :var:`config.empty_window`. It defaults to
+having the narrator say an empty string.
+
+    ###
+        show bg washington
+        show eileen happy
+        with dissolve
+
+        window show dissolve
+
+        "I can say stuff..."
+
+        show eileen happy at right
+        with move
+
+        "... and move, while keeping the window shown."
+
+        window hide dissolve
+
 Positions
 ---------
 
