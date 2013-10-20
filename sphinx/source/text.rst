@@ -425,6 +425,13 @@ There are two text tags that interact with vertical text.
     Includes vertically-oriented text inside horizontal text. (This will
     not rotate the text to the vertical orientation.)
 
+.. note::
+
+    If the font does not contain vertical text spacing information, Ren'Py
+    will attempt to synthesize this information from horizontal text
+    information. The spacing may not remain constant between Ren'Py
+    releases.
+
 
 .. _ruby-text:
 
