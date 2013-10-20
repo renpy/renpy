@@ -158,3 +158,19 @@ translate japanese strings:
     old "Prefs"
     new "設定"
 
+# TODO: Translation updated at 2013-10-20 13:16
+
+translate japanese strings:
+
+    # game/screens.rpy:423
+    old "Wait for Voice"
+    new "ボイスを待つ"
+
+    # game/screens.rpy:535
+    old "Back"
+    new "戻る"
+
+    # game/screens.rpy:540
+    old "F.Skip"
+    new "F.スキップ"
+
