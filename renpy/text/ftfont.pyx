@@ -391,7 +391,8 @@ cdef class FTFont:
         if glyph_rotate == 1:
             rv.advance = face.glyph.metrics.vertAdvance / 64.0 + self.expand + overhang
         elif glyph_rotate == 2:
-            rv.advance = (face.ascender - face.descender) / 64.0 + self.expand + overhang
+            # rv.advance = (face.ascender - face.descender) / 64.0 + self.expand + overhang
+            rv.advance = self.lineskip + overhang
         else:
             rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
 
@@ -452,8 +453,9 @@ cdef class FTFont:
 
             gl.character = c
             gl.ascent = self.ascent
-            gl.line_spacing = self.lineskip
             gl.width = cache.width
+
+            gl.line_spacing = self.lineskip
 
             if i < len_s - 1:
                 next_c = s[i + 1]
