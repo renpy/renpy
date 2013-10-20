@@ -40,6 +40,7 @@ cdef class Glyph:
         # The hyperlink this is part of.
         public short hyperlink
 
+
 cdef class Line:
 
     cdef:

@@ -83,6 +83,9 @@ class ImageFont(object):
 
         return rv
 
+    def bounds(self, glyphs, bounds):
+        return bounds
+
     def draw(self, target, xo, yo, color, glyphs, underline, strikethrough, black_color):
 
         if black_color is None:

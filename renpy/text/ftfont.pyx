@@ -355,7 +355,6 @@ cdef class FTFont:
                 import traceback
                 traceback.print_exc()
 
-
             if self.antialias:
                 FT_Glyph_To_Bitmap(&g, FT_RENDER_MODE_NORMAL, NULL, 1)
             else:
@@ -401,10 +400,10 @@ cdef class FTFont:
 
         rv.width = rv.bitmap.width + rv.bitmap_left
 
-
         FT_Done_Glyph(g)
 
         return rv
+
 
     def glyphs(self, unicode s):
         """
@@ -479,6 +478,57 @@ cdef class FTFont:
             rv.append(gl)
 
         return rv
+
+    def bounds(self, glyphs, bounds):
+        """
+        Given a list of glyphs, get the intersection of bounds and the area where the glyphs
+        will be drawn to. (Not including any offsets or expansions.)
+
+        Returns an x, y, w, h tuple.
+        """
+
+        cdef Glyph glyph
+
+        cdef FT_Face face
+        cdef FT_GlyphSlot g
+        cdef FT_UInt index
+
+        cdef int bmx
+        cdef int bmy
+
+        cdef int x, y, w, h
+
+        x, y, w, h = bounds
+
+        face = self.face
+
+        for glyph in glyphs:
+
+            if glyph.split == SPLIT_INSTEAD:
+                continue
+
+            if glyph.character == 0x200b:
+                continue
+
+            index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
+            cache = self.get_glyph(index)
+
+            bmx = <int> (glyph.x + .5) + cache.bitmap_left
+            bmy = glyph.y - cache.bitmap_top
+
+            if bmx < x:
+                x = bmx
+
+            if bmy < y:
+                y = bmy
+
+            if bmx + cache.bitmap.width > w:
+                w = bmx + cache.bitmap.width
+
+            if bmy + cache.bitmap.rows > h:
+                h = bmy + cache.bitmap.rows
+
+        return x, y, w, h
 
     def draw(self, pysurf, float xo, int yo, color, list glyphs, bint underline, bint strikethrough, black_color):
         """

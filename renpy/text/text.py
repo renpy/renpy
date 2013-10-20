@@ -236,7 +236,7 @@ class TextSegment(object):
 
         return rv
 
-    def draw(self, glyphs, di):
+    def draw(self, glyphs, di, xo, yo):
         """
         Draws the glyphs to surf.
         """
@@ -249,7 +249,7 @@ class TextSegment(object):
             black_color = self.black_color
 
         fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical)
-        fo.draw(di.surface, 0, 0, color, glyphs, self.underline, self.strikethrough, black_color)
+        fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
         """
@@ -289,8 +289,18 @@ class TextSegment(object):
 
             yield seg, ss
 
+    def bounds(self, glyphs, bounds):
+        """
+        Given an x, y, w, h bounding box, returns the union of the given
+        bounding box and the bounding box the glyphs will actually be drawn
+        into, not including any offsets or expansions.
 
+        This is used to deal with glyphs that are on the wrong side of the
+        origin point.
+        """
 
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical)
+        return fo.bounds(glyphs, bounds)
 
 class SpaceSegment(object):
     """
@@ -319,7 +329,10 @@ class SpaceSegment(object):
     def glyphs(self, s):
         return [ self.glyph ]
 
-    def draw(self, glyphs, di):
+    def bounds(self, glyphs, bounds):
+        return bounds
+
+    def draw(self, glyphs, di, xo, yo):
         # Does nothing - since there's nothing to draw.
         return
 
@@ -363,7 +376,7 @@ class DisplayableSegment(object):
     def glyphs(self, s):
         return [ self.glyph ]
 
-    def draw(self, glyphs, di):
+    def draw(self, glyphs, di, xo, yo):
         if di.displayable_blits is not None:
             di.displayable_blits.append((self.d, self.glyph.x, self.glyph.y, self.glyph.time))
 
@@ -374,6 +387,9 @@ class DisplayableSegment(object):
         self.glyph.time = gt
         return gt
 
+    def bounds(self, glyphs, bounds):
+        return bounds
+
 class FlagSegment(object):
     """
     A do-nothing segment that just exists so we can flag the start and end
@@ -383,12 +399,14 @@ class FlagSegment(object):
     def glyphs(self, s):
         return [ ]
 
-    def draw(self, glyphs, di):
+    def draw(self, glyphs, di, xo, yo):
         return
 
     def assign_times(self, gt, glyphs):
         return gt
 
+    def bounds(self, glyphs, bounds):
+        return bounds
 
 class Layout(object):
     """
@@ -584,18 +602,34 @@ class Layout(object):
 
         maxx = math.ceil(maxx)
 
+        textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
+
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
         # per-outline basis.)
-
-        # These are from the SDL source code.
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
-        textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
-
         if self.has_ruby:
             textsupport.place_ruby(all_glyphs, style.ruby_style.yoffset, sw, sh)
+
+
+        # Check for glyphs that are being drawn out of bounds, because the font
+        # or anti-aliasing or whatever makes them bigger than the bounding box. If
+        # we have them, grow the b
+
+        bounds = (0, 0, maxx, y)
+        for ts, glyphs in par_seg_glyphs:
+            bounds = ts.bounds(glyphs, bounds)
+
+
+        self.add_left = max(-bounds[0], 0)
+        self.add_top = max(-bounds[1], 0)
+        self.add_right = max(bounds[2] - maxx, 0)
+        self.add_bottom = max(bounds[3] - y, 0)
+
+        sw += self.add_left * 10 + self.add_right
+        sh += self.add_top + self.add_bottom
 
         # A map from (outline, color) to a texture.
         self.textures = { }
@@ -609,7 +643,7 @@ class Layout(object):
                 continue
 
             # Create the texture.
-            surf = renpy.display.pgrender.surface(size, True)
+            surf = renpy.display.pgrender.surface((sw, sh), True)
 
             di.surface = surf
             di.override_color = color
@@ -625,7 +659,8 @@ class Layout(object):
                 if ts is self.end_segment:
                     break
 
-                ts.draw(glyphs, di)
+                ts.draw(glyphs, di, self.add_left, self.add_top)
+
 
             renpy.display.draw.mutated_surface(surf)
             tex = renpy.display.draw.load_texture(surf)
@@ -1416,10 +1451,29 @@ class Text(renpy.display.core.Displayable):
                 if b_w <= 0 or b_h <= 0:
                     continue
 
-                # Bound blits to the surface.
+                # Expand the blits and offset them as necessary.
+                if b_x + b_w == w:
+                    b_w += layout.add_right
+
+                if b_y + b_h == h:
+                    b_h += layout.add_bottom
+
+                if b_x == 0:
+                    b_w += layout.add_left
+                else:
+                    b_x += layout.add_left
+
+                if b_y == 0:
+                    b_h += layout.add_top
+                else:
+                    b_y += layout.add_top
+
+                # Blit.
                 rv.blit(
                     tex.subsurface((b_x, b_y, b_w, b_h)),
-                    (b_x + xo + layout.xoffset - o, b_y + yo + layout.yoffset - o))
+                    (b_x + xo + layout.xoffset - o - layout.add_left,
+                     b_y + yo + layout.yoffset - o - layout.add_top)
+                     )
 
         # Blit displayables.
         for d, xo, yo, t in layout.displayable_blits:
