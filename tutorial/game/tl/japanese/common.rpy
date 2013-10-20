@@ -278,3 +278,51 @@ translate japanese strings:
     old "%b %d, %H:%M"
     new "%m月%d日, %H:%M"
 
+# Translation updated at 2013-10-20 13:16
+
+translate japanese strings:
+
+    # renpy/common/00layout.rpy:427
+    old "Are you sure you want to begin skipping?"
+    new "本当にスキップモードを開始しますか？"
+
+    # renpy/common/00layout.rpy:428
+    old "Are you sure you want to skip to the next choice?"
+    new "本当に次の選択肢までスキップしますか？"
+
+    # renpy/common/00layout.rpy:429
+    old "Are you sure you want to skip to unseen dialogue or the next choice?"
+    new "本当に未読の会話、もしくは次の選択肢までスキップしますか？"
+
+# Translation updated at 2013-10-20 13:16
+
+translate japanese strings:
+
+    # renpy/common/00gallery.rpy:521
+    old "Image [index] of [count] locked."
+    new "画像 [index] / [count] はロックされています。"
+
+    # renpy/common/00gallery.rpy:539
+    old "prev"
+    new "前へ"
+
+    # renpy/common/00gallery.rpy:540
+    old "next"
+    new "次へ"
+
+    # renpy/common/00gallery.rpy:541
+    old "slideshow"
+    new "スライドショー"
+
+    # renpy/common/00gallery.rpy:542
+    old "return"
+    new "戻る"
+
+# Translation updated at 2013-10-20 13:16
+
+translate japanese strings:
+
+    # renpy/common/00action_file.rpy:587
+    old "Quick save complete."
+    new "クイックセーブ完了。"
+
