@@ -174,3 +174,29 @@ them can be a problem.
     A character that causes what it says to be displayed centered
     in vertically oriented text, in the middle of the screen,
     outside of any window. 
+
+``extend``
+     A character that causes the last character to speak to say a line
+     of dialogue consisting of the last line of dialogue spoken, "{fast}",
+     and the dialogue given to extend. This can be used to have the screen
+     change over the course of dialogue.
+     
+     Extend is aware of NVL-mode, and treats it correctly. 
+
+For example::
+    # Show the first line of dialogue, wait for a click, change expression, and show
+    # the rest.
+
+    show eileen concerned
+    e "Sometimes, I feel sad."
+    show eileen happy
+    extend " But I usually quickly get over it!"
+
+    # Similar, but automatically changes the expression when the first line is finished
+    # showing. This only makes sense when the user doesn't have text speed set all the 
+    # way up.
+
+    show eileen concerned
+    e "Sometimes, I feel sad.{nw}"
+    show eileen happy
+    extend " But I usually quickly get over it!"
