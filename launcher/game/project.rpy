@@ -179,14 +179,16 @@ init python in project:
             environ = dict(os.environ)
             environ.update(env)
 
+            for k in environ:
+                environ[k] = renpy.fsencode(environ[k])
+
             # Launch the project.
-            with interface.error_handling("launching the project"):
-                cmd = [ renpy.fsencode(i) for i in cmd ]
+            cmd = [ renpy.fsencode(i) for i in cmd ]
 
-                p = subprocess.Popen(cmd, env=environ)
+            p = subprocess.Popen(cmd, env=environ)
 
-                if wait:
-                    p.wait()
+            if wait:
+                p.wait()
 
         def update_dump(self, force=False, gui=True):
             """
