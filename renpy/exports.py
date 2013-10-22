@@ -890,6 +890,8 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
 
 def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     """
+    :doc: movie_cutscene
+
     This displays an MPEG-1 cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
     Overlays and Underlays are disabled for the duration of the cutscene.

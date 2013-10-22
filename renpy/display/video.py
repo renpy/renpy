@@ -160,7 +160,21 @@ def render_movie(width, height):
 
 class Movie(renpy.display.core.Displayable):
     """
+    :doc: movie
+
     This is a displayable that shows the current movie.
+
+    `fps`
+        The framerate that the movie should be shown at. (This is currently
+        ignored, but the parameter is kept for backwards compatibility.
+        The framerate is auto-detected.)
+
+    `size`
+        This should always be specified. A tuple giving the width and height
+        of the movie.
+
+    The contents of this displayable when a movie is not playing are undefined.
+    (And may change when a rollback occurs.) 
     """
 
     fullscreen = False
