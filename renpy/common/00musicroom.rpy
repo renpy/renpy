@@ -333,7 +333,7 @@ init -1500 python:
             """
             :doc: music_room method
 
-            This action auses the music room to start playing. If `filename` is given, that
+            This action causes the music room to start playing. If `filename` is given, that
             file begins playing. Otherwise, the currently playing file starts
             over (if it's unlocked), or the first file starts playing.
 
