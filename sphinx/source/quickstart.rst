@@ -425,6 +425,13 @@ Ren'Py support many formats for sound and music, but OGG Vorbis is
 preferred. Like image files, sound and music files must be placed in
 the game directory.
 
+Pause Statement
+---------------
+
+The pause statement causes Ren'Py to pause until the mouse is clicked. If the
+optional expression is given, it will be evaluated to a number, and the pause
+will automatically terminate once that number of seconds has elapsed. 
+
 Ending the Game
 ---------------
 
