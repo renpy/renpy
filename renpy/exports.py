@@ -896,14 +896,17 @@ def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     seconds. The user can click to interrupt the cutscene.
     Overlays and Underlays are disabled for the duration of the cutscene.
 
-    @param filename: The name of a file containing an MPEG-1 movie.
+    `filename`
+        The name of a file containing an MPEG-1 movie.
 
-    @param delay: The number of seconds to wait before ending the cutscene.
-    Normally the length of the movie, in seconds. If None, then the
-    delay is computed from the number of loops (that is, loops + 1) *
-    the length of the movie. If -1, we wait until the user clicks.
+    `delay`
+        The number of seconds to wait before ending the cutscene.
+        Normally the length of the movie, in seconds. If None, then the
+        delay is computed from the number of loops (that is, loops + 1) *
+        the length of the movie. If -1, we wait until the user clicks.
 
-    @param loops: The number of extra loops to show, -1 to loop forever.
+    `loops`
+        The number of extra loops to show, -1 to loop forever.
 
     Returns True if the movie was terminated by the user, or False if the
     given delay elapsed uninterrupted.
