@@ -31,7 +31,7 @@ init -1500 python:
         Registers information about an alternative for a style preference.
 
         `preference`
-            A string, the name of the style property.
+            A string, the name of the style preference.
 
         `alternative`
             A string, the name of the alternative.
