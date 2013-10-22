@@ -983,7 +983,7 @@ globals()["with"] = with_statement
 
 def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
     """
-    :doc: other
+    :doc: rollback
 
     Rolls the state of the game back to the last checkpoint.
 
