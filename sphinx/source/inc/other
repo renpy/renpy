@@ -102,6 +102,14 @@
     This reads the image in from disk and decompresses it, without
     using the image cache. This can be slow.
 
+.. function:: renpy.is_seen(ever=True)
+    
+    Returns true if the current line has been seen by the player.
+    
+    If `ever` is true, we check to see if the line has ever been seen by the
+    player. If false, we check if the line has been seen in the current
+    play-through.
+
 .. function:: renpy.list_files(common=False)
     
     Lists the files in the game directory and archive files. Returns
