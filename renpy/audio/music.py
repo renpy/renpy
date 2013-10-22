@@ -37,30 +37,42 @@ register_channel; alias_channel
 
 def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False):
     """
+    :doc: audio
+
     This stops the music currently playing on the numbered channel, dequeues
-    any queued music, and begins playing the specified file or files. If loop
-    is True, the tracks will loop while they are the last thing in
-    the queue. If fadeout is None, the fadeout time is taken from
-    config.fade_music, otherwise it is a time in seconds to fade for.
+    any queued music, and begins playing the specified file or files.
 
-    Filenames may be a single file, or a list of files.
+    `filenames`
+        This may be a single file, or a list of files to be played.
 
-    Fadein is the number of seconds to fade the music in for, on the
-    first loop only.
+    `channel`
+        The channel to play the sound on.
+    
+    `loop`
+        If this is True, the tracks will loop while they are the last thing
+        in the queue. 
 
-    If synchro_start is given, all the channels that have had play
-    called on them with synchro_start set to True will be started at
-    the same time, in a sample accurate manner.
+    `fadeout`
+        If not None, this is a time in seconds to fade for. Otherwise the
+        fadeout time is taken from config.fade_music.
 
-    The filenames given becomes the last queued files if loop is
-    True. If loop is False, then there are no last queued files.
+    `synchro_start`
+        If synchro_start is given, all the channels that have had play
+        called on them with synchro_start set to True will be started at
+        the same time, in a sample accurate manner.
 
-    If tight is True, then fadeouts will span into the next-queued sound.
+    `fadein`
+        This is the number of seconds to fade the music in for, on the
+        first loop only.
 
-    If if_changed is True, and the music file is currently playing,
-    then it will not be stopped/faded out and faded back in again, but
-    instead will be kept playing. (This will always queue up an additional
-    loop of the music.)
+    `tight`
+        If this is True, then fadeouts will span into the next-queued sound.
+
+    `if_changed`
+        If this is True, and the music file is currently playing,
+        then it will not be stopped/faded out and faded back in again, but
+        instead will be kept playing. (This will always queue up an additional
+        loop of the music.)
     """
 
     if renpy.game.context().init_phase:
@@ -109,25 +121,32 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
 def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tight=None):
     """
-    This queues the given filenames on the specified channel. If
-    clear_queue is True, then the queue is cleared, making these files
-    the files that are played when the currently playing file
-    finishes. If it is False, then these files are placed at the back of
-    the queue. In either case, if no music is playing these files
-    begin playing immediately.
+    :doc: audio
 
-    Filenames may either be a single filename, or a list of filenames.
+    This queues the given filenames on the specified channel.
 
-    Fadein is the number of seconds to fade the music in for, on the
-    first loop only.
+    `filenames`
+        This may be a single file, or a list of files to be played.
 
-    If loop is True, then this music will repeat as long as it is the
-    last element of the queue.
+    `channel`
+        The channel to play the sound on.
+    
+    `loop`
+        If this is True, the tracks will loop while they are the last thing
+        in the queue. 
 
-    The filenames given becomes the last queued file if loop is
-    True. If loop is False, then the last queued file is set to None.
+    `clear_queue`
+        If True, then the queue is cleared, making these files the files that
+        are played when the currently playing file finishes. If it is False,
+        then these files are placed at the back of the queue. In either case,
+        if no music is playing these files begin playing immediately.
 
-    If tight is True, then fadeouts will span into the next-queued sound.
+    `fadein`
+        This is the number of seconds to fade the music in for, on the
+        first loop only.
+
+    `tight`
+        If this is True, then fadeouts will span into the next-queued sound.
     """
 
     if renpy.game.context().init_phase:
@@ -181,12 +200,23 @@ def playable(filename, channel="music"):
 
 def stop(channel="music", fadeout=None):
     """
+    :doc: audio
+
     This stops the music that is currently playing, and dequeues all
     queued music. If fadeout is None, the music is faded out for the
     time given in config.fade_music, otherwise it is faded for fadeout
     seconds.
 
     This sets the last queued file to None.
+
+    `channel`
+        The channel to stop the sound on. 
+
+    `fadeout`
+        If not None, this is a time in seconds to fade for. Otherwise the
+        fadeout time is taken from config.fade_music.
+
+
     """
 
     if renpy.game.context().init_phase:
@@ -251,6 +281,8 @@ def get_delay(time, channel="music"):
 
 def get_playing(channel="music"):
     """
+    :doc: audio
+
     Returns true if the given channel is playing.
     """
 
@@ -265,6 +297,8 @@ def get_playing(channel="music"):
 
 def is_playing(channel="music"):
     """
+    :doc: audio
+
     Returns True if the channel is currently playing a sound, False if
     it is not, or if the sound system isn't working.
     """
@@ -274,8 +308,22 @@ def is_playing(channel="music"):
 
 def set_volume(volume, delay=0, channel="music"):
     """
+    :doc: audio
+
     Sets the volume of this channel, as a fraction of the volume of the
     mixer controlling the channel.
+
+    `volume`
+        This is a number between 0.0 and 1.0, and is interpreted as a fraction
+        of the mixer volume for the channel.
+
+    `delay`
+        It takes delay seconds to change/fade the volume from the old to
+        the new value. This value is persisted into saves, and participates
+        in rollback.
+
+    `channel`
+        The channel to be set
     """
 
     try:
@@ -287,7 +335,22 @@ def set_volume(volume, delay=0, channel="music"):
 
 def set_pan(pan, delay, channel="music"):
     """
+    :doc: audio
+
     Sets the pan of this channel.
+
+    `pan`
+        A number between -1 and 1 that control the placement of the audio.
+        If this is -1, then all audio is sent to the left channel.
+        If it's 0, then the two channels are equally balanced. If it's 1,
+        then all audio is sent to the right ear. 
+
+    `delay`
+        The amount of time it takes for the panning to occur.
+
+    `channel`
+        The channel the panning takes place on. This can be a sound or a music
+        channel. Often, this is channel 7, the default music channel. 
     """
 
     try:
@@ -299,6 +362,8 @@ def set_pan(pan, delay, channel="music"):
 
 def set_queue_empty_callback(callback, channel="music"):
     """
+    :doc: audio
+
     This sets a callback that is called when the queue is empty. This
     callback is called when the queue first becomes empty, and at
     least once per interaction while the queue is empty.
