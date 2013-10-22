@@ -1118,7 +1118,7 @@ def jump_out_of_context(label):
 
 def call(label, *args, **kwargs):
     """
-    :doc: other
+    :doc: se_call
 
     Causes the current Ren'Py statement to terminate, and a jump to a
     `label` to occur. When the jump returns, control will be passed
