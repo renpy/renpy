@@ -33,6 +33,7 @@ The Ren'Py Language
    :maxdepth: 1
 
    language_basics
+   label
    dialogue
    displaying_images
    menus
