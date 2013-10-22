@@ -13,6 +13,21 @@ define ruby = Character(None, what_line_leading=10, what_ruby_style=style.ruby_s
 # label main_menu:
 #     return
 
+screen vtext_test:
+    fixed:
+        area (0, 0, 400, 300)
+        add "#000"
+    fixed:
+        area (400, 300, 400, 300)
+        add "#000"
+
+    text "口口口あああ":
+        vertical True
+        font "mikachan.ttf"
+        xpos 400 ypos 300
+        xanchor 0.5
+        yanchor 0.0
+
 screen text1:
     frame:
         has vbox
@@ -69,7 +84,6 @@ screen text1:
             slow_cps 40
 
 
-
 label start:
 
     # Text tag tests.
@@ -77,6 +91,8 @@ label start:
     $ ui.saybehavior()
     call screen text1
 
+    show screen vtext_test
+    pause
 
     $ a = 42
     $ b = "{b}"
