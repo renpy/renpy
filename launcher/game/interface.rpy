@@ -197,7 +197,10 @@ screen launcher_input:
 
             has vbox
 
-            text message
+            text message:
+                text_align 0.5
+                xalign 0.5
+                layout "subtitle"
 
             add SPACER
 
