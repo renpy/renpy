@@ -500,10 +500,13 @@ screen yesno_prompt:
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
+    # Right-click and escape answer "no".
+    key "game_menu" action no_action
 
 init -2 python:
     style.yesno_button.size_group = "yesno"
     style.yesno_label_text.text_align = 0.5
+    style.yesno_label_text.layout = "subtitle"
 
 
 ##############################################################################
@@ -520,10 +523,12 @@ screen quick_menu:
         xalign 1.0
         yalign 1.0
 
+        textbutton _("Back") action Rollback()
+        textbutton _("Save") action ShowMenu('save')
         textbutton _("Q.Save") action QuickSave()
         textbutton _("Q.Load") action QuickLoad()
-        textbutton _("Save") action ShowMenu('save')
         textbutton _("Skip") action Skip()
+        textbutton _("F.Skip") action Skip(fast=True, confirm=True)
         textbutton _("Auto") action Preference("auto-forward", "toggle")
         textbutton _("Prefs") action ShowMenu('preferences')
 
