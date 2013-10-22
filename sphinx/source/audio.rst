@@ -31,7 +31,7 @@ respectively.
 In-game, the usual way to play music and sound in Ren'Py is using
 the three music/sound statements.
 
-The Play Statement
+Play Statement
 ------------------
 
 The play statement is used to play sound and music. If a file is
@@ -40,6 +40,8 @@ currently playing, it is interrupted and replaced with the new file.
 The name of a channel is expected following keyword ``play``,
 (Usually, this is either "sound", "music", or "voice"). This is
 followed by audiofile(s), where audiofile(s) can be one file or list of files.
+When the list is given, the item of it is played in order.
+
 
 The ``fadein`` and ``fadeout`` clauses are optional. Fadeout gives the fadeout
 time for currently playing music, in seconds, while fadein gives the time
@@ -48,7 +50,7 @@ is used.
 
 The ``loop`` and ``noloop`` clauses are also optional. The loop clause causes
 the music to loop, while noloop causes it to play only once. If both of them isn't
-given the default of the channel is used. ::
+given, the default of the channel is used. ::
 
         play music "mozart.ogg"
         play sound "woof.mp3"
@@ -70,8 +72,11 @@ clause. ::
 Queue Statement
 ---------------
 
+The queue statement is used to queue up audio files. They will be played when
+the channel finishes playing the currently playing file. 
+
 The queue statement begin with keyword ``queue``, followed by the the name of a
-channel to stop sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
+channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.ogg"
         queue music [ "a.ogg", "b.ogg" ]
