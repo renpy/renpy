@@ -171,7 +171,7 @@ visuals and game variables during rollback events, there are several
 things that should be considered while creating a game.
 
 Supporting Rollback and Roll Forward
-------------------------------------
+====================================
 
 Most Ren'Py statements automatically support rollback and roll forward. If
 you call :func:`ui.interact` directly, you'll need to add support for rollback
@@ -196,7 +196,7 @@ has been called. (If you do, the user may not be able to rollback.)
 .. include:: inc/rollback
 
 Blocking Rollback
------------------
+=================
 
 .. warning::
 
@@ -235,7 +235,7 @@ back to the menu.
 
 
 Fixing Rollback
----------------
+===============
 
 Fixing rollback provides for an intermediate choice between
 unconstrained rollback and blocking rollback entirely. Rollback is
@@ -275,7 +275,7 @@ The internal user interaction options for menus, :func:`renpy.input`
 and :func:`renpy.imagemap` are designed to fully work with fix_rollback.
 
 Styling Fixed Rollback
-----------------------
+======================
 
 Because fix_rollback changes the functionality of menus and imagemaps,
 it is advisable to reflect this in the appearance. To do this, it is
@@ -296,7 +296,7 @@ properties while the other buttons use properties with the
 "insensitive\_" prefix.
 
 Fixed Rollback and Custom Screens
----------------------------------
+=================================
 
 When writing custom Python routines that must play nice with the
 fix_rollback system there are a few simple things to know. First of all
@@ -352,12 +352,12 @@ Example::
 
 
 Rollback-blocking and -fixing Functions
----------------------------------------
+=======================================
 
 .. include:: inc/blockrollback
 
 Persistent Data
----------------
+===============
 
 Ren'Py also supports persistent data, which is saved data that is not
 associated with a particular point in a game. Persistent data is data that is

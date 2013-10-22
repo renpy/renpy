@@ -54,12 +54,6 @@ label name. It also pushes the label name of the statement following this one
 onto the call stack, allowing the return statement to return control to the
 statement following this one.
 
-call_statement -> "call" name ( "from" name )?
-call_statement -> "call" "expression" simple_expression ( "from" name )?
-
-call_statement -> "call" name "(" arguments ")" ( "from" name )?
-call_statement -> "call" "expression" simple_expression "pass" "(" arguments ")" ( "from" name )?
-
 If the ``expression`` keyword is present, the expression following it is evaluated, and the
 string so computed is used as the name of the statement to call. If the
 ``expression`` keyword is not present, the name of the statement to call must be
