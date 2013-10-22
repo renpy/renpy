@@ -99,3 +99,21 @@ restart of Ren'Py.
 If the optional expression is given to return, it is evaluated, and it's result
 is stored in the _return variable. This variable is dynamically scoped to each
 context. 
+
+Special Label
+-------------
+
+Below labels is called in the special cases.
+
+start - This label is called when a game is started.
+
+quit - This label is called when a game is quitted.
+
+after_load - This label is called after a game is loaded. This may be used to
+fix datas after updates.
+
+splashscreen - This label is called before showing a main menu. This may be
+used to show logos.
+
+before_main_menu - This label is called before showing a main menu after
+splashscreen is called. This may be used to start a prologue.
