@@ -30,6 +30,45 @@ exists without a corresponding ``.rpy`` file, the ``.rpyc`` file will be
 used. This can lead to problems if a ``.rpy`` file is deleted without
 deleting the .rpyc file.
 
+Base Directory
+--------------
+
+The base directory is the directory that contains all files that are
+distributed with the game. (It may also contain some files that are not
+distributed with the game.) Things like README files should be placed in the
+base directory, from where they will be distributed.
+
+The base directory is created underneath the Ren'Py directory, and has the name
+of your game. For example, if your Ren'Py directory is named renpy-6.11.2, and
+your game is named "HelloWorld", your base directory will be
+renpy-6.11.2/HelloWorld.
+
+Game Directory
+--------------
+
+The game directory is almost always a directory named "game" underneath the
+base directory. For example, if your base directory is renpy-6.11.2/HelloWorld,
+your game directory will be renpy-6.11.2/HelloWorld/game.
+
+However, Ren'Py searches directories in the following order:
+
+* The name of the executable, without the suffix. For example,
+  if the executable is named moonlight.exe, it will look for
+  a directory named moonlight under the base directory.
+* The name of the executable, without the suffix, and with
+  a prefix ending with _ removed. For example, if the executable
+  is moonlight_en.exe, Ren'Py will look for a directory named en.
+* The directories "game", "data", and "launcher", in that order. 
+
+The launcher will only properly recognize the "game" and "data" directories,
+however.
+
+The game directory contains all the files used by the game. It, including all
+subdirectories, is scanned for .rpy and .rpyc files, and those are combined to
+form the game script. It is scanned for .rpa archive files, and those are
+automatically used by the game. Finally, when the game gives a path to a file
+to load, it is loaded relative to the game directory. (But note that
+config.searchpath can change this.) 
 
 Comments
 ========

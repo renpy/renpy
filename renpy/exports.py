@@ -890,18 +890,23 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
 
 def movie_cutscene(filename, delay=None, loops=0, stop_music=True):
     """
+    :doc: movie_cutscene
+
     This displays an MPEG-1 cutscene for the specified number of
     seconds. The user can click to interrupt the cutscene.
     Overlays and Underlays are disabled for the duration of the cutscene.
 
-    @param filename: The name of a file containing an MPEG-1 movie.
+    `filename`
+        The name of a file containing an MPEG-1 movie.
 
-    @param delay: The number of seconds to wait before ending the cutscene.
-    Normally the length of the movie, in seconds. If None, then the
-    delay is computed from the number of loops (that is, loops + 1) *
-    the length of the movie. If -1, we wait until the user clicks.
+    `delay`
+        The number of seconds to wait before ending the cutscene.
+        Normally the length of the movie, in seconds. If None, then the
+        delay is computed from the number of loops (that is, loops + 1) *
+        the length of the movie. If -1, we wait until the user clicks.
 
-    @param loops: The number of extra loops to show, -1 to loop forever.
+    `loops`
+        The number of extra loops to show, -1 to loop forever.
 
     Returns True if the movie was terminated by the user, or False if the
     given delay elapsed uninterrupted.
@@ -978,7 +983,7 @@ globals()["with"] = with_statement
 
 def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
     """
-    :doc: other
+    :doc: rollback
 
     Rolls the state of the game back to the last checkpoint.
 
@@ -1113,7 +1118,7 @@ def jump_out_of_context(label):
 
 def call(label, *args, **kwargs):
     """
-    :doc: other
+    :doc: se_call
 
     Causes the current Ren'Py statement to terminate, and a jump to a
     `label` to occur. When the jump returns, control will be passed

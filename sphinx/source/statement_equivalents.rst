@@ -74,3 +74,10 @@ The equivalent of the with statement is the renpy.with_statement
 function.
 
 .. include:: inc/se_with
+
+Call
+====
+
+The equivalent of the call statement is the renpy.call function.
+
+.. include:: inc/se_call

@@ -86,6 +86,10 @@ Character is a python function, that takes a large number of keyword
 arguments. These keyword arguments control the behavior of the
 character.
 
+The define statement causes its expression to be evaluated, and assigned to the
+supplied name. If not inside an init block, the define statement will
+automatically be run with init priority 0. 
+
 .. include:: inc/character
 
 Say with Image Attributes
