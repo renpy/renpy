@@ -5,6 +5,7 @@ Ren'Py is capable of using libav (included) to play movies using the
 video codecs:
 
 * Theora
+* V8
 * MPEG 4 part 2 (including Xvid and DivX)
 * MPEG 2
 * MPEG 1 
@@ -19,6 +20,7 @@ and the following audio codecs:
 inside the following container formats:
 
 * Matroska
+* WebM
 * Ogg
 * Avi
 * Various kinds of MPEG stream. 
