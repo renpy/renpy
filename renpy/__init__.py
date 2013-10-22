@@ -264,6 +264,8 @@ def reload_all():
 
     import_all()
 
+    renpy.loader.init_importer()
+
 # Information about the platform we're running on. We break the platforms
 # up into 4 groups - windows-like, mac-like, linux-like, and android-like.
 windows = False
