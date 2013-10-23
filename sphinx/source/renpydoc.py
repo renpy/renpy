@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 from pygments.lexers.agile import PythonLexer
-from pygments.token import Token, Name
+from pygments.token import Token, Name, Operator
 
 import keywords
 
@@ -21,7 +21,7 @@ class RenPyLexer(PythonLexer):
             if token == Token.Error and value == "$":
                 yield index, Token.Keyword, value
 
-            elif token in Name and value in KEYWORDS:
+            elif token in [ Name, Operator.Word ] and value in KEYWORDS:
                 yield index, Token.Keyword, value
 
             elif token in Name and value in PROPERTIES:
