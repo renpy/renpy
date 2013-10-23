@@ -132,3 +132,12 @@ The following labels are used by Ren'Py:
 
         label main_menu:
             return
+
+``after_warp``
+    If it is existed, this label is called after a warp but before the warped-to
+    statement executes. please see :ref:`Warping to a line <warping_to_a_line>`
+
+Labels & Control Flow Functions
+-------------------------------
+
+.. include:: inc/label
