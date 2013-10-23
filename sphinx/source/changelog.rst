@@ -385,8 +385,8 @@ Other Changes
 
 * Side images can now be used with menus.
 
-* The :ref:`config.enter_yesno_transition` and
-  `config.exit_yesno_transition` variables make it possible to define a
+* The :var:`config.enter_yesno_transition` and
+  :var:`config.exit_yesno_transition` variables make it possible to define a
   transition that is run when yes/no prompts appear and disappear,
   respectively.
 
