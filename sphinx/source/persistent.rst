@@ -66,3 +66,60 @@ Persistent Functions
 --------------------
 
 .. include:: inc/persistent
+
+Multi-Game Persistence
+----------------------
+
+Multi-Game persistence is a feature that lets you share information between
+Ren'Py games. This may be useful if you plan to make a series of games, and
+want to have them share information.
+
+To use multipersistent data, a MultiPersistent object must be created inside
+an init block. The user can then update this object, and save it to disk by
+calling its save method. Undefined fields default to None. To ensure the
+object can be loaded again, we suggest not assigning the object instances
+of user-defined types.
+
+.. class:: MultiPersistent(key)
+
+    Creates a new MultiPersistent object. This should only be called inside an
+    init block, and it returns a new MultiPersistent with the given key.
+
+    `key`
+        The key used to to access the multipersistent data. Games using the
+        same key will access the same multipersistent data.
+
+
+    .. method:: save()
+
+        Saves the multipersistent data to disk. This must be called after
+        the data is modified.
+
+
+As an example, take the first part of a two-part game::
+
+    init python:
+        mp = MultiPersistent("demo.renpy.org")
+
+    label start:
+
+        # ...
+
+        # Record the fact that the user beat part 1.
+
+        $ mp.beat_part_1 = True
+        $ mp.save()
+
+        e "You beat part 1. See you in part 2!"
+
+And the second part::
+
+    init python:
+        mp = MultiPersistent("demo.renpy.org")
+
+    label start:
+
+        if mp.beat_part_1:
+             e "I see you've beaten part 1, so welcome back!"
+        else:
+             e "Hmm, you haven't played part 1, why not try it first?"
