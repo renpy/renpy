@@ -95,6 +95,7 @@ Python and Ren'Py
 
    statement_equivalents
    save_load_rollback
+   persistent
    trans_trans_python
    screen_python
    modes

@@ -356,34 +356,3 @@ Rollback-blocking and -fixing Functions
 
 .. include:: inc/blockrollback
 
-Persistent Data
-===============
-
-Ren'Py also supports persistent data, which is saved data that is not
-associated with a particular point in a game. Persistent data is data that is
-accessed through the fields of the persistent object, which is bound to the
-variable persistent.
-
-The persistent variable is bound to the special persistent object. All data
-reachable through fields on persistent is saved whenver Ren'Py terminates, and
-loaded when Ren'Py resumes. The persistent object is special in that an access
-to an undefined field on it will have a None value, rather than causing an
-exception.
-
-An example use of persistent is the creation of an unlockable image gallery.
-This is done by storing a flag in persistent that determines if the gallery has
-been unlocked, as in ::
-
-        label gallery:
-
-            if not persistent.gallery_unlocked:
-                show background
-                centered "You haven't unlocked this gallery yet."
-                $ renpy.full_restart()
-
-            # Actually show the gallery here.
-
-When the user gets an ending that causes the gallery to be unlocked, the flag
-must be set to True. ::
-
-        $ persistent.gallery_unlocked = True
