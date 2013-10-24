@@ -113,6 +113,14 @@ The Music Room includes the ability to play a random track, and to determine
 if the tracks are shuffled, looped, or if play is confined to a single
 selected track.
 
+Text Rendering
+--------------
+
+Ren'Py now renders portions of font characters that leave the character
+bounding box. This prevents text (especially hinted and anti-aliased text)
+from being cut off, but may lead to apparent placement problems for fonts
+with very inaccurate bounding boxes.
+
 Documentation
 -------------
 
