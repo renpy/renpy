@@ -76,7 +76,7 @@ Customizing Ren'Py
    side_image
    config
    environment_variables
-   keymap
+   keym
    rooms
    nvl_mode
    developer_tools

@@ -21,7 +21,7 @@ example, "mousedown_1" is generally a press of the left mouse button,
 "mouseup_1" is a release of that button, and "mousedown_4" is a turn of the the
 mouse wheel to the top.
 
-A second kind of keysym is a joystick keysym. These begin with joy_. They are
+A second kind of keysym is a joystick keysym. These begin with joy\_. They are
 defined in :var:`config.joystick_keys`, and mapped to actual joystick events by
 the user.
 
@@ -30,7 +30,7 @@ when a key is pressed. This is useful for binding alphabetic keys and numbers.
 Examples of these keysyms include "a", "A", and "7".
 
 The final kind of keysym is the symbolic name for the key. This can be any of
-the K_ constants taken from pygame.constants. This type of keysym looks like
+the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K_BACKSPACE", "K_RETURN", and "K_TAB"; a full list of this kind of keysyms may
 be found here.
 
