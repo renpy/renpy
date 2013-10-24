@@ -134,7 +134,7 @@ init python in editor:
             dlc = "editra-linux"
             installed = os.path.exists(os.path.join(config.basedir, "editra/Editra"))
             description = EDL
-            error_message = _("The may have occured because wxPython is not installed on this system.")
+            error_message = _("This may have occured because wxPython is not installed on this system.")
 
         e = FancyEditorInfo(
             1,
