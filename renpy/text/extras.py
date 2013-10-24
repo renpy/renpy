@@ -67,6 +67,9 @@ def check_text_tags(s):
         if type != TAG:
             continue
 
+        if text[0] == "#":
+            continue
+
         # Strip off arguments for tags.
         if text.find('=') != -1:
             text = text[:text.find('=')]
