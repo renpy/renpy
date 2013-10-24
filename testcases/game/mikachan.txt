@@ -1,0 +1,32 @@
+Copyright: (C) 2001-2005 Mikachan <mikachan_font@hotmail.com>
+
+  Original Copyright (in Japanese UTF-8):
+
+    フリーですが、著作権は放棄しておりません。
+    フォントの使用による障害や損害には一切責任を持ちません。
+
+    禁止事項
+    オリジナルフォント「みかちゃん」サイトで配布している
+    フォントそのものを販売すること。(改変して販売することを含む)
+
+    使用条件
+    個人使用/商用使用にかかわらず特に制限事項はありません。ご自由にお使い下さい。
+    ・再配布および転載自由です。
+    ・メディア掲載の場合お知らせ頂けるとうれしいです。
+    ・商用使用でのサンプル画像/写真頂ければ、HP上の「さくひんしょうかい」にて掲載します。
+
+  Original Copyright (in English):
+
+    This font is free.
+    However,copyright is not gave up by Mikachan
+    If user had damege or loss by using this font,Mikachan doesn't have any responsibility.
+
+    Prohibition
+    To sell font which is distribute on the web site of Mikachan Font.
+    To change the font design to sell.
+
+    Terms for using
+    You can use fonts for personal and on business.
+    You can distribute and publish.
+    Author hopes information from you,when you publish something.
+    When you use on business, if you give a sample picture, Mikachan can show on the web site.
