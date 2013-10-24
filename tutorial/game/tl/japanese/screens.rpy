@@ -174,3 +174,11 @@ translate japanese strings:
     old "F.Skip"
     new "F.スキップ"
 
+# TODO: Translation updated at 2013-10-24 17:22
+
+translate japanese strings:
+
+    # game/screens.rpy:453
+    old "Voice Sustain"
+    new "改行後もボイス継続"
+
