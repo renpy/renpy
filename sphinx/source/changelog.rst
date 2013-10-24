@@ -113,6 +113,14 @@ The Music Room includes the ability to play a random track, and to determine
 if the tracks are shuffled, looped, or if play is confined to a single
 selected track.
 
+Documentation
+-------------
+
+The Ren'Py documentation has been improved, and has been translated
+to Japanese. The Japanese translation can be found at:
+
+    http://ja.renpy.org/doc/html/
+
 Other
 -----
 
