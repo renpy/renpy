@@ -33,6 +33,8 @@ import threading
 
 from renpy.loadsave import clear_slot, safe_rename
 
+disk_lock = threading.RLock()
+
 class FileLocation(object):
     """
     A location that saves files to a directory on disk.
@@ -89,40 +91,42 @@ class FileLocation(object):
         if not self.active:
             return
 
-        old_mtimes = self.mtimes
-        new_mtimes = { }
+        with disk_lock:
 
-        suffix = renpy.savegame_suffix
-        suffix_len = len(suffix)
+            old_mtimes = self.mtimes
+            new_mtimes = { }
 
-        for fn in os.listdir(self.directory):
-            if not fn.endswith(suffix):
-                continue
+            suffix = renpy.savegame_suffix
+            suffix_len = len(suffix)
 
-            slotname = fn[:-suffix_len]
+            for fn in os.listdir(self.directory):
+                if not fn.endswith(suffix):
+                    continue
 
-            try:
-                new_mtimes[slotname] = os.path.getmtime(os.path.join(self.directory, fn))
-            except:
-                pass
+                slotname = fn[:-suffix_len]
 
-        self.mtimes = new_mtimes
+                try:
+                    new_mtimes[slotname] = os.path.getmtime(os.path.join(self.directory, fn))
+                except:
+                    pass
 
-        for slotname, mtime in new_mtimes.iteritems():
-            if old_mtimes.get(slotname, None) != mtime:
-                clear_slot(slotname)
+            self.mtimes = new_mtimes
 
-        for slotname in old_mtimes:
-            if slotname not in new_mtimes:
-                clear_slot(slotname)
+            for slotname, mtime in new_mtimes.iteritems():
+                if old_mtimes.get(slotname, None) != mtime:
+                    clear_slot(slotname)
 
-        if os.path.exists(self.persistent):
-            mtime = os.path.getmtime(self.persistent)
+            for slotname in old_mtimes:
+                if slotname not in new_mtimes:
+                    clear_slot(slotname)
 
-            if mtime != self.persistent_mtime:
-                data = renpy.persistent.load(self.persistent)
-                self.persistent_mtime = mtime
-                self.persistent_data = data
+            if os.path.exists(self.persistent):
+                mtime = os.path.getmtime(self.persistent)
+
+                if mtime != self.persistent_mtime:
+                    data = renpy.persistent.load(self.persistent)
+                    self.persistent_mtime = mtime
+                    self.persistent_data = data
 
 
     def save(self, slotname, record):
@@ -132,7 +136,8 @@ class FileLocation(object):
 
         filename = self.filename(slotname)
 
-        record.write_file(filename)
+        with disk_lock:
+            record.write_file(filename)
 
         self.scan()
 
@@ -163,32 +168,33 @@ class FileLocation(object):
         Returns None if the slot is empty.
         """
 
-
-        try:
-            filename = self.filename(slotname)
-            zf = zipfile.ZipFile(filename, "r")
-        except:
-            return None
-
-        try:
+        with disk_lock:
 
             try:
-                data = zf.read("json")
-                data = json.loads(data)
-                return data
+                filename = self.filename(slotname)
+                zf = zipfile.ZipFile(filename, "r")
             except:
-                pass
+                return None
 
             try:
-                extra_info = zf.read("extra_info").decode("utf-8")
-                return { "_save_name" : extra_info }
-            except:
-                pass
 
-            return { }
+                try:
+                    data = zf.read("json")
+                    data = json.loads(data)
+                    return data
+                except:
+                    pass
 
-        finally:
-            zf.close()
+                try:
+                    extra_info = zf.read("extra_info").decode("utf-8")
+                    return { "_save_name" : extra_info }
+                except:
+                    pass
+
+                return { }
+
+            finally:
+                zf.close()
 
 
     def screenshot(self, slotname):
@@ -198,29 +204,34 @@ class FileLocation(object):
         Returns None if the slot is empty.
         """
 
-        mtime = self.mtime(slotname)
+        with disk_lock:
 
-        if mtime is None:
-            return None
+            mtime = self.mtime(slotname)
 
-        filename = self.filename(slotname)
-        zf = zipfile.ZipFile(filename, "r")
+            if mtime is None:
+                return None
 
-        try:
-            png = False
-            zf.getinfo('screenshot.tga')
-        except:
-            png = True
-            zf.getinfo('screenshot.png')
+            try:
+                filename = self.filename(slotname)
+                zf = zipfile.ZipFile(filename, "r")
+            except:
+                return None
 
-        zf.close()
+            try:
+                png = False
+                zf.getinfo('screenshot.tga')
+            except:
+                png = True
+                zf.getinfo('screenshot.png')
 
-        if png:
-            screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.png", mtime)
-        else:
-            screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.tga", mtime)
+            zf.close()
 
-        return screenshot
+            if png:
+                screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.png", mtime)
+            else:
+                screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.tga", mtime)
+
+            return screenshot
 
     def load(self, slotname):
         """
@@ -228,24 +239,28 @@ class FileLocation(object):
         can be loaded.
         """
 
-        filename = self.filename(slotname)
+        with disk_lock:
 
-        zf = zipfile.ZipFile(filename, "r")
-        rv = zf.read("log")
-        zf.close()
+            filename = self.filename(slotname)
 
-        return rv
+            zf = zipfile.ZipFile(filename, "r")
+            rv = zf.read("log")
+            zf.close()
+
+            return rv
 
     def unlink(self, slotname):
         """
         Deletes the file in slotname.
         """
 
-        filename = self.filename(slotname)
-        if os.path.exists(filename):
-            os.unlink(filename)
+        with disk_lock:
 
-        self.scan()
+            filename = self.filename(slotname)
+            if os.path.exists(filename):
+                os.unlink(filename)
+
+            self.scan()
 
 
     def rename(self, old, new):
@@ -253,18 +268,20 @@ class FileLocation(object):
         If old exists, renames it to new.
         """
 
-        old = self.filename(old)
-        new = self.filename(new)
+        with disk_lock:
 
-        if not os.path.exists(old):
-            return
+            old = self.filename(old)
+            new = self.filename(new)
 
-        if os.path.exists(new):
-            os.unlink(new)
+            if not os.path.exists(old):
+                return
 
-        os.rename(old, new)
+            if os.path.exists(new):
+                os.unlink(new)
 
-        self.scan()
+            os.rename(old, new)
+
+            self.scan()
 
 
     def load_persistent(self):
@@ -285,15 +302,24 @@ class FileLocation(object):
         the persistent data in python format.
         """
 
-        fn = self.persistent
-        fn_new = fn + ".new"
+        with disk_lock:
 
-        with open(fn_new, "wb") as f:
-            f.write(data)
+            if not self.active:
+                return
 
-        safe_rename(fn_new, fn)
+            fn = self.persistent
+            fn_new = fn + ".new"
+
+            with open(fn_new, "wb") as f:
+                f.write(data)
+
+            safe_rename(fn_new, fn)
 
     def unlink_persistent(self):
+
+        if not self.active:
+            return
+
         try:
             os.unlink(self.persistent)
         except:
