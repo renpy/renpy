@@ -275,10 +275,19 @@ Occasionally Used
 
 .. var:: config.auto_voice = None
 
-    If not None, this is formatted with the ``id`` variable bound to the
+    This may be a string, a function, or None. If None, auto-voice is
+    disabled.
+
+    If a string, this is formatted with the ``id`` variable bound to the
     identifier of the current line of dialogue. If this gives an existing
-    file, that file is played as voice audio. See :ref:`Automatic Voice <automatic-voice>`
-    for more details.
+    file, that file is played as voice audio.
+
+    If a function, the function is called with a single argument, the
+    identifier of the current line of dialogue. The function is expected to
+    return a string. If this gives an existing file, that file is played as
+    voice audio.
+
+    See :ref:`Automatic Voice <automatic-voice>` for more details.
 
 .. var:: config.automatic_images = None
 

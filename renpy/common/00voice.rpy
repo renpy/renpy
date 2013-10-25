@@ -201,10 +201,14 @@ init -1500 python hide:
 
             if tlid is not None:
 
-                fn = config.auto_voice.format(id=tlid)
+                if isinstance(config.auto_voice, (str, unicode)):
+                    fn = config.auto_voice.format(id=tlid)
+                else:
+                    fn = config.auto_voice(tlid)
+
                 _voice.auto_file = fn
 
-                if renpy.loadable(fn):
+                if fn and renpy.loadable(fn):
 
                     if _voice.tlid == tlid:
                         _voice.sustain = True
@@ -225,7 +229,7 @@ init -1500 python hide:
 
         _voice.play = None
         _voice.sustain = False
-        
+
         if _preferences.voice_sustain:
             _voice.sustain = True
 
@@ -262,7 +266,7 @@ screen _auto_voice:
             ypadding 5
             background "#0004"
 
-            text "auto voice: [_voice.auto_file!q]":
+            text "auto voice: [_voice.auto_file!sq]":
                 color color
                 size 12
 
