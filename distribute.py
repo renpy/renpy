@@ -138,6 +138,9 @@ def tree(root):
 
 def main():
 
+    if not sys.flags.optimize:
+        raise Exception("Not running with python optimization.")
+
     ap = argparse.ArgumentParser()
     ap.add_argument("version")
     ap.add_argument("--fast", action="store_true")
@@ -187,6 +190,7 @@ def main():
             print "Compiling", i
             subprocess.check_call(["./renpy.sh", i, "compile" ])
 
+
     # The destination directory.
     destination = os.path.join("dl", args.version)
 
@@ -219,6 +223,26 @@ def main():
 
     print
     subprocess.check_call(cmd)
+
+    # Kick off the rapt build.
+    if not args.fast:
+        out = open("/tmp/rapt_build.txt", "wb")
+
+        print os.getcwd()
+
+        print("Building RAPT in the background.")
+
+        android = os.path.abspath("android")
+
+        rapt_build = subprocess.Popen([
+            os.path.join(android, "build_renpy.sh"),
+            zip_version
+            ],
+            cwd = android,
+            stdout=out,
+            stderr=out)
+    else:
+        rapt_build = None
 
     # Sign the update.
     if not args.fast:
@@ -277,6 +301,15 @@ def main():
 
         if os.path.exists(sdk + ".7z.exe"):
             os.unlink(sdk + ".7z.exe")
+
+    print
+
+    if rapt_build:
+        code = rapt_build.wait()
+        if code:
+            print "RAPT build failed. The output is in /tmp/rapt_build.txt"
+        else:
+            print "RAPT build succeeded."
 
     print
     print "Did you run me with renpython -OO?"

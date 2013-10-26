@@ -3,6 +3,7 @@
 import argparse
 import os
 import subprocess
+import sys
 
 from renpy import version_tuple #@UnresolvedImport
 
@@ -31,6 +32,25 @@ elif args.experimental:
 else:
     links = [ ]
     tag = False
+
+
+def check_dirty():
+    if args.no_tag:
+        return
+
+    if subprocess.check_call([ "git", "diff", "--quiet", "HEAD" ]):
+        print "Directory not checked in: {}".format(os.getcwd())
+        sys.exit(1)
+
+os.chdir("/home/tom/ab/renpy")
+check_dirty()
+
+os.chdir("/home/tom/ab/renpy/android")
+check_dirty()
+subprocess.check_call([ "./add_renpy.sh", short_version ])
+
+if not args.no_tag:
+    subprocess.check_call([ "git", "tag", "-a" "rapt-" + version, "-m", "Tagging RAPT release." ])
 
 os.chdir("/home/tom/ab/renpy/dl")
 
