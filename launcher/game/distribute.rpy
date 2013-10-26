@@ -249,7 +249,7 @@ init python in distribute:
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False):
             """
             Distributes `project`.
 
@@ -266,6 +266,10 @@ init python in distribute:
 
             `build_update`
                 Will updates be built?
+
+            `open_directory`
+                If true, the directory containing the built files will be opened
+                if the build succeeds.
             """
 
 
@@ -332,7 +336,8 @@ init python in distribute:
                     build_packages.append(i)
 
             if not build_packages:
-                self.reporter.info(_("Nothing to do."), pause=True)
+                self.reporter.info(_("No packages are selected, so there's nothing to do."), pause=True)
+                self.log.close()
                 return
 
             # add the game.
@@ -387,7 +392,14 @@ init python in distribute:
             if self.build_update:
                 self.finish_updates(build_packages)
 
+            # Finish up.
             self.log.close()
+
+            self.reporter.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
+
+            if open_directory:
+                store.OpenDirectory(self.destination)()
+
 
 
         def scan_and_classify(self, directory, patterns):
@@ -844,7 +856,7 @@ init python in distribute:
 
         def info(self, what, pause=False, **kwargs):
             if pause:
-                interface.information(what, **kwargs)
+                interface.info(what, **kwargs)
             else:
                 interface.processing(what, **kwargs)
 
@@ -911,9 +923,12 @@ label distribute:
     python hide:
 
         data = project.current.data
-        d = distribute.Distributor(project.current, reporter=distribute.GuiReporter(), packages=data['packages'], build_update=data['build_update'])
-        OpenDirectory(d.destination)()
+        d = distribute.Distributor(project.current,
+            reporter=distribute.GuiReporter(),
+            packages=data['packages'],
+            build_update=data['build_update'],
+            open_directory=True,
+            )
 
-        interface.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
     jump front_page
