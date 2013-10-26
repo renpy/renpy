@@ -188,6 +188,7 @@ them can be a problem.
      Extend is aware of NVL-mode, and treats it correctly. 
 
 For example::
+
     # Show the first line of dialogue, wait for a click, change expression, and show
     # the rest.
 
