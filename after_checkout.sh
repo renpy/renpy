@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT="$(dirname $(readlink -f $0))"
+ROOT="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
 
 ln -s "$ROOT/help.html" "$ROOT/tutorial/README.html"
 ln -s "$ROOT/help.html" "$ROOT/the_question/README.html"
