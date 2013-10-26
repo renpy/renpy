@@ -215,7 +215,9 @@ init -1500 python hide:
                     else:
                         _voice.play = fn
 
-                    _voice.tlid = tlid
+            _voice.tlid = tlid
+
+
 
         if _voice.tag in persistent._voice_mute:
             renpy.sound.stop(channel="voice")
