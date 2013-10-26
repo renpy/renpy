@@ -373,6 +373,9 @@ is equivalent to::
     show lucy mad at right
     with dissolve
 
+A window isn't shown during a transition If the with statement or a with clause is used.
+Set _window_during_transitions to True if you want to also show a window during a transition.
+
 Hide and Show Window
 ====================
 
