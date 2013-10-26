@@ -387,7 +387,7 @@ screen android:
                             has vbox
 
                             textbutton _("Install SDK & Create Keys"):
-                                action Jump("android_installsdk")
+                                action AndroidIfState(state, ANDROID_NO_SDK, Jump("android_installsdk"))
                                 hovered tt.Action(INSTALL_SDK_TEXT)
 
                             textbutton _("Configure"):
