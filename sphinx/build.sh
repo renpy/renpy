@@ -1,14 +1,13 @@
 #!/bin/sh
 
-DIR="`readlink -f $0`"
-DIR="`dirname $DIR`"
-echo $DIR
+SPHINX="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
+cd $SPHINX
 
-cd $DIR
+# This has to be run with python (and not renpy.sh, or python -OO) since
+# optimization will remove the docstrings.
+python ../renpy.py . || exit 1
 
-../renpy.py .
-
-sphinx-build -a source ../doc
+sphinx-build -a source ../doc || exit 1
 
 echo Not uploading.
 

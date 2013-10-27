@@ -1,10 +1,7 @@
 #!/bin/sh
 
-DIR="`readlink -f $0`"
-DIR="`dirname $DIR`"
-echo $DIR
-
-cd $DIR
+SPHINX="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
+cd $SPHINX
 
 sphinx-build -a developer ../developer/html
 
