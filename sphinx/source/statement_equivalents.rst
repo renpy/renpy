@@ -75,6 +75,13 @@ function.
 
 .. include:: inc/se_with
 
+Jump
+====
+
+The equivalent of the jump statement is the renpy.jump function.
+
+.. include:: inc/se_jump
+
 Call
 ====
 

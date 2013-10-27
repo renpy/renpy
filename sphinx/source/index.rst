@@ -75,8 +75,11 @@ Customizing Ren'Py
    screen_special
    side_image
    config
+   environment_variables
+   keym
    rooms
    nvl_mode
+   developer_tools
 
 Advanced Displayables
 ---------------------
@@ -99,6 +102,7 @@ Python and Ren'Py
    trans_trans_python
    screen_python
    modes
+   uds
    udd
    other
 

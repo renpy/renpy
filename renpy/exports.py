@@ -401,6 +401,8 @@ def scene(layer='master'):
 
 def watch(expression, style='default', **properties):
     """
+    :doc: debug
+
     This watches the given python expression, by displaying it in the
     upper-left corner of the screen (although position properties
     can change that). The expression should always be
@@ -1043,6 +1045,8 @@ def toggle_music():
 
 def has_label(name):
     """
+    :doc: label
+
     Returns true if name is a valid label in the program, or false
     otherwise.
     """
@@ -1050,6 +1054,12 @@ def has_label(name):
     return renpy.game.script.has_label(name)
 
 def get_all_labels():
+    """
+    :doc: label
+    
+    Returns the set of all labels defined in the program, including labels
+    defined for internal use in the libraries.
+    """
     rv = [ ]
 
     for i in renpy.game.script.namemap.iterkeys():
@@ -1092,6 +1102,8 @@ def utter_restart():
 
 def quit(relaunch=False): #@ReservedAssignment
     """
+    :doc: other
+
     This causes Ren'Py to exit entirely.
 
     `relaunch`
@@ -1102,6 +1114,8 @@ def quit(relaunch=False): #@ReservedAssignment
 
 def jump(label):
     """
+    :doc: se_jump
+
     Causes the current statement to end, and control to jump to the given
     label.
     """
@@ -1110,6 +1124,8 @@ def jump(label):
 
 def jump_out_of_context(label):
     """
+    :doc: label
+
     Causes control to leave the current context, and then to be
     transferred in the parent context to the given label.
     """
@@ -1200,6 +1216,8 @@ def get_game_runtime():
 
 def loadable(filename):
     """
+    :doc: other
+
     Returns True if the given filename is loadable, meaning that it
     can be loaded from the disk or from inside an archive. Returns
     False if this is not the case.
@@ -1209,6 +1227,8 @@ def loadable(filename):
 
 def exists(filename):
     """
+    :doc: other
+
     Returns true if the given filename can be found in the
     searchpath. This only works if a physical file exists on disk. It
     won't find the file if it's inside of an archive.
@@ -1271,6 +1291,8 @@ def music_stop(fadeout=None):
 
 def get_filename_line():
     """
+    :doc: debug
+
     Returns a pair giving the filename and line number of the current
     statement.
     """
@@ -1287,7 +1309,9 @@ logfile = None
 
 def log(msg):
     """
-    If config.log is not set, this does nothing. Otherwise, it opens
+    :doc: debug
+
+    If :var:`config.log` is not set, this does nothing. Otherwise, it opens
     the logfile (if not already open), formats the message to 70
     columns, and prints it to the logfile.
     """
@@ -1351,18 +1375,49 @@ def context_dynamic(*vars): #@ReservedAssignment
     renpy.game.context().make_dynamic(vars, context=True)
 
 def seen_label(label):
+    """
+    :doc: label
+
+    Returns true if the named label has executed at least once on the current user's
+    system, and false otherwise. This can be used to unlock scene galleries, for
+    example.
+    """
     return label in renpy.game.persistent._seen_ever  # @UndefinedVariable
 
 def seen_audio(filename):
+    """
+    :doc: audio
+
+    Returns True if the given filename has been played at least once on the current
+    user's system.
+    """
     return filename in renpy.game.persistent._seen_audio  # @UndefinedVariable
 
 def seen_image(name):
+    """
+    :doc: image_func
+
+    Returns True if the named image has been seen at least once on the user's
+    system. An image has been seen if it's been displayed using the show statement,
+    scene statement, or :func:`renpy.show` function. (Note that there are cases
+    where the user won't actually see the image, like a show immediately followed by
+    a hide.)
+    """
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
     return name in renpy.game.persistent._seen_images  # @UndefinedVariable
 
 def file(fn): #@ReservedAssignment
+    """
+    :doc: other
+    
+    Returns a read-only file-like object that accesses filename. The file is
+    accessed using Ren'Py's standard search method, and may reside in an archive.
+    The object supports a wide subset of the fields and methods found on python's
+    standard file object. (Basically, all of the methods that are sensible for a
+    read-only object.)
+    """
     return renpy.loader.load(fn)
 
 def image_size(im):
@@ -1399,6 +1454,12 @@ def layer_at_list(at_list, layer='master'):
     renpy.game.context().scene_lists.set_layer_at_list(layer, at_list)
 
 def free_memory():
+    """
+    :doc: other
+
+    Attempts to free some memory. Useful before running a renpygame-based
+    minigame.
+    """
     force_full_redraw()
     renpy.display.interface.kill_textures_and_surfaces()
 
@@ -1476,6 +1537,19 @@ def munged_filename():
 loaded_modules = set()
 
 def load_module(name, **kwargs):
+    """
+    :doc: other
+
+    This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py code
+    that is loaded into the usual (store) namespace, contained in a file named
+    name.rpym or name.rpymc. If a .rpym file exists, and is newer than the
+    corresponding .rpymc file, it is loaded and a new .rpymc file is created.
+
+    All init code in the module is run before this function returns. An error is
+    raised if the module name cannot be found, or is ambiguous.
+
+    Module loading may only occur from inside an init block.
+    """
 
     if not renpy.game.context().init_phase:
         raise Exception("Module loading is only allowed in init code.")
@@ -1582,6 +1656,24 @@ class placement(renpy.python.RevertableObject):
         self.subpixel = p[6]
 
 def get_placement(d):
+    """
+    :doc: image_func
+
+    This gets the placement of displayable d. There's very little warranty on this
+    information, as it might change when the displayable is rendered, and might not
+    exist until the displayable is first rendered.
+
+    This returns an object with the following fields, each corresponding to a style
+    property:
+
+        * xpos
+        * xanchor
+        * xoffset
+        * ypos
+        * yanchor
+        * yoffset
+        * subpixel
+    """
     p = d.get_placement()
 
     return placement(p)

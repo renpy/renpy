@@ -41,7 +41,7 @@ Fullscreen Movies
 -----------------
 
 The easiest way to display a movie fullscreen is to display it using
-the renpy.movie_cutscene function. This function displays a movie for a specified
+the :func:`renpy.movie_cutscene` function. This function displays a movie for a specified
 length of time. When that time has elapsed, or when the user clicks to dismiss
 the movie, the movie ends and the function returns. ::
 

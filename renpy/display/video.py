@@ -180,9 +180,6 @@ class Movie(renpy.display.core.Displayable):
     fullscreen = False
 
     def __init__(self, fps=24, size=None, **properties):
-        """
-        @param fps: The framerate that the movie should be shown at.
-        """
         super(Movie, self).__init__(**properties)
         self.size = size
 

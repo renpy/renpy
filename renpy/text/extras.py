@@ -58,6 +58,12 @@ text_tags[""] = True
 # This checks the text tags in a string to be sure they are all matched, and
 # properly nested. It returns an error message, or None if the line is okay.
 def check_text_tags(s):
+    """
+    :doc: lint
+
+    Checks the text tags in s for correctness. Returns an error string if there is
+    an error, or None if there is no error. 
+    """
 
     tokens = textsupport.tokenize(unicode(s))
 

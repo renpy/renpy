@@ -198,6 +198,8 @@ def context(index=-1):
 
 def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
     """
+    :doc: label
+
     This pushes the current context, and invokes the given python
     function in a new context. When that function returns or raises an
     exception, it removes the new context, and restores the current
@@ -244,6 +246,8 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
 
 def call_in_new_context(label, *args, **kwargs):
     """
+    :doc: label
+
     This code creates a new context, and starts executing code from
     that label in the new context. Rollback is disabled in the
     new context. (Actually, it will just bring you back to the
