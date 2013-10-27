@@ -1,5 +1,30 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.get_placement(d)
+    
+    This gets the placement of displayable d. There's very little warranty on this
+    information, as it might change when the displayable is rendered, and might not
+    exist until the displayable is first rendered.
+    
+    This returns an object with the following fields, each corresponding to a style
+    property:
+    
+        * xpos
+        * xanchor
+        * xoffset
+        * ypos
+        * yanchor
+        * yoffset
+        * subpixel
+
+.. function:: renpy.seen_image(name)
+    
+    Returns True if the named image has been seen at least once on the user's
+    system. An image has been seen if it's been displayed using the show statement,
+    scene statement, or :func:`renpy.show` function. (Note that there are cases
+    where the user won't actually see the image, like a show immediately followed by
+    a hide.)
+
 .. function:: renpy.showing(name, layer='master')
     
     Returns true if an image with the same tag as `name` is showing on

@@ -15,6 +15,4 @@
     
     The contents of this displayable when a movie is not playing are undefined.
     (And may change when a rollback occurs.) 
-    
-    @param fps: The framerate that the movie should be shown at.
 

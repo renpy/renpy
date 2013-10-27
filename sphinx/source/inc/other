@@ -4,11 +4,30 @@
     
     Resets the game runtime counter.
 
+.. function:: renpy.exists(filename)
+    
+    Returns true if the given filename can be found in the
+    searchpath. This only works if a physical file exists on disk. It
+    won't find the file if it's inside of an archive.
+
+.. function:: renpy.file(fn)
+    
+    Returns a read-only file-like object that accesses filename. The file is
+    accessed using Ren'Py's standard search method, and may reside in an archive.
+    The object supports a wide subset of the fields and methods found on python's
+    standard file object. (Basically, all of the methods that are sensible for a
+    read-only object.)
+
 .. function:: renpy.focus_coordinates()
     
     This attempts to find the coordinates of the currently-focused
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
+
+.. function:: renpy.free_memory()
+    
+    Attempts to free some memory. Useful before running a renpygame-based
+    minigame.
 
 .. function:: renpy.fsdecode(s)
     
@@ -113,6 +132,24 @@
         If true, files in the common directory are included in the
         listing.
 
+.. function:: renpy.load_module(name, **kwargs)
+    
+    This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py code
+    that is loaded into the usual (store) namespace, contained in a file named
+    name.rpym or name.rpymc. If a .rpym file exists, and is newer than the
+    corresponding .rpymc file, it is loaded and a new .rpymc file is created.
+    
+    All init code in the module is run before this function returns. An error is
+    raised if the module name cannot be found, or is ambiguous.
+    
+    Module loading may only occur from inside an init block.
+
+.. function:: renpy.loadable(filename)
+    
+    Returns True if the given filename is loadable, meaning that it
+    can be loaded from the disk or from inside an archive. Returns
+    False if this is not the case.
+
 .. function:: renpy.notify(message)
     
     Causes Ren'Py to display the `message` using the notify screen. By
@@ -124,6 +161,13 @@
     
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.
+
+.. function:: renpy.quit(relaunch=False)
+    
+    This causes Ren'Py to exit entirely.
+    
+    `relaunch`
+        If true, Ren'Py will run a second copy of itself before quitting.
 
 .. function:: renpy.set_physical_size(size)
     

@@ -102,8 +102,8 @@ Python and Ren'Py
    trans_trans_python
    screen_python
    modes
-   uds
    udd
+   cds
    other
 
 Building, Updating, and Other Platforms

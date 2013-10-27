@@ -1,5 +1,10 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.seen_audio(filename)
+    
+    Returns True if the given filename has been played at least once on the current
+    user's system.
+
 .. function:: renpy.music.get_playing(channel='music')
     
     Returns true if the given channel is playing.
