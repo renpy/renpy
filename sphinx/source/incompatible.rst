@@ -83,7 +83,7 @@ text to shrink in height. To revert to the old behavior, use::
 
 Finally, the new text code may lead to artifacts when displaying slow
 text, especially in conjunction with a negative line spacing. Consider
-adjusting :prop:`line_overlap_split` to fix this.
+adjusting :propref:`line_overlap_split` to fix this.
 
 .. _incompatible-6.12.1:
 

@@ -571,8 +571,8 @@ Screen Language, Displayable, and Transition Enhancements
 ---------------------------------------------------------
 
 * The :ref:`sl-textbutton` and :ref:`sl-label` screen language statements
-  now take properties prefixed with ``text_``. These properties have the
-  text_ prefix stripped, and are then passed to the internal text displayable.
+  now take properties prefixed with ``text\_``. These properties have the
+  text\_ prefix stripped, and are then passed to the internal text displayable.
 
 * The :ref:`sl-viewport` screen language statement now takes a `scrollbars`
   parameter. If given, scrollbars that manipulate the viewport are created.
@@ -705,9 +705,9 @@ that have occured are:
 Other Changes
 -------------
 
-* The :func:`renpy.call` function allows - with major and important caveats
-  - a call to a Ren'Py label to begin from inside python code. Such a call
-    immediately terminates the current statement.
+* The :func:`renpy.call` function allows - with major and important caveats -
+  a call to a Ren'Py label to begin from inside python code. Such a call
+  immediately terminates the current statement.
 
 * When an action is expected, nested lists of actions can be given. The
   lists are flattened and the action executed.

@@ -570,7 +570,7 @@ pressed. Key is used in a loose sense here, as it also allows joystick
 and mouse events.
 
 Key takes one positional parameter, a string giving the key to
-bind. See the `Keymap`_ section for a description of available
+bind. See the :ref:`keymap` section for a description of available
 keysyms. It takes one property:
 
 `action`
@@ -924,8 +924,8 @@ following properties:
     tuple:
 
     * The first element in the tuple is the distance from
-    the edge of the viewport that edgescrolling begins to take
-    effect, in pixels.
+      the edge of the viewport that edgescrolling begins to take
+      effect, in pixels.
 
     * The second element is the maximum scrolling rate, in pixels per
       second.

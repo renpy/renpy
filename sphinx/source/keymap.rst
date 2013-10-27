@@ -1,3 +1,5 @@
+.. _keymap:
+
 Customizing the Keymap
 ======================
 
