@@ -4,6 +4,7 @@ import collections
 import keyword
 import renpy
 import shutil
+import __builtin__
 
 # Keywords in the Ren'Py script language.
 KEYWORD1 = """\
@@ -235,3 +236,28 @@ def write_line_buffer():
             print >>f, l
 
         f.close()
+
+def write_reserved(module, dest, ignore_builtins):
+
+    print "Writing", dest
+
+    with open(dest, "w") as f:
+
+        for i in sorted(dir(module)):
+
+            if i == "doc":
+                continue
+
+            if i.startswith("_"):
+                continue
+
+            if ignore_builtins and hasattr(__builtin__, i):
+                continue
+
+            o = getattr(module, i)
+
+            doc = inspect.getdoc(o)
+            if doc and ":doc:" in doc and not isinstance(o, renpy.curry.Curry):
+                i = ":func:`" + i + "`"
+
+            f.write("* " + i + "\n")

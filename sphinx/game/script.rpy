@@ -1,5 +1,6 @@
 init 1000000 python:
     import doc
+    import __builtin__
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
@@ -16,6 +17,8 @@ init 1000000 python:
     doc.write_line_buffer()
     doc.write_keywords()
 
+    doc.write_reserved(__builtin__, "source/inc/reserved_builtins", False)
+    doc.write_reserved(store, "source/inc/reserved_renpy", True)
 
     raise SystemExit
 
