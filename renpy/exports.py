@@ -62,6 +62,9 @@ from renpy.character import show_display_say, predict_show_display_say, display_
 import renpy.audio.sound as sound
 import renpy.audio.music as music
 
+from renpy.statements import register as register_statement
+from renpy.text.extras import check_text_tags
+
 import time
 import sys
 
@@ -96,6 +99,9 @@ def public_api():
     change_language, known_languages
     language_tailor
     register_persistent
+    register_statement
+    check_text_tags
+
 
 del public_api
 
@@ -1056,7 +1062,7 @@ def has_label(name):
 def get_all_labels():
     """
     :doc: label
-    
+
     Returns the set of all labels defined in the program, including labels
     defined for internal use in the libraries.
     """
@@ -1411,7 +1417,7 @@ def seen_image(name):
 def file(fn): #@ReservedAssignment
     """
     :doc: other
-    
+
     Returns a read-only file-like object that accesses filename. The file is
     accessed using Ren'Py's standard search method, and may reside in an archive.
     The object supports a wide subset of the fields and methods found on python's

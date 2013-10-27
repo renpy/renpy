@@ -32,49 +32,48 @@ parsers = renpy.parser.ParseTrie()
 def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False): #@ReservedAssignment
     """
     :doc: statement_register
+    :name: renpy.register_statement
 
     This registers a user-defined statement.
 
-    ``name``
+    `name`
         This is either a space-separated list of names that begin the statement, or the
         empty string to define a new default statement (the default statement will
         replace the say statement).
 
-    ``parse``
-        This is a function that takes a lexer object. This function should parse the
+    `parse`
+        This is a function that takes a Lexer object. This function should parse the
         statement, and return an object. This object is passed as an argument to all the
         other functions. The lexer argument has the following methods:
 
-        l.eol() - True if we are at the end of the line.
-        l.match(re) - Matches an arbitrary regexp string.
-        l.keyword(s) - Matches s.
-        l.name() - Matches any non-keyword name. Note that this only counts built-in keywords.
-        l.word() - Matches any word, period.
-        l.string() - Matches a renpy string.
-        l.integer() - Matches an integer, returns a string containing the integer.
-        l.float() - Matches a floating point number.
-        l.simple_expression() - Matches a simple python expression, returns it as a string.
-        l.rest() - Skips whitespace, then returns the rest of the line.
-        l.checkpoint() - Returns an opaque object representing the current point in the parse.
-        l.revert(o) - Given the object returned by l.checkpoint(), returns there. 
-
-    ``lint``
+    `lint`
         This is called to check the statement. It is passed a single object, the
         argument returned from parse. It should call renpy.error to report errors.
 
-    ``execute``
+    `execute`
         This is a function that is called when the statement executes. It is passed a
         single object, the argument returned from parse.
 
-    ``predict``
+    `predict`
         This is a function that is called to predict the images used by the statement.
         It is passed a single object, the argument returned from parse. It should return
         a list of displayables used by the statement.
 
-    ``next``
+    `next`
         This is called to determine the next statement. It is passed a single object,
         the argument returned from parse. It should either return a label, or return
         None if execution should continue to the next statement.
+
+    `scry`
+        Used internally by Ren'Py.
+
+    `block`
+        True if this takes a block, false otherwise.
+
+    `init`
+        True if this statement should be run at init-time. (If the statement
+        is not already inside an init block, it's automatically placed inside
+        an init 0 block.)
     """
     name = tuple(name.split())
 

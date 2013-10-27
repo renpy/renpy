@@ -1,69 +1,7 @@
 ﻿# Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
-# This file contains code that creates a few new statements. We'll
-# also describe here the API for defining your own statements.
-#
-# Statements can be defined by calling renpy.statements.register. This
-# function takes a string giving the keywords at the start of the
-# statement, and then up to 4 functions defining the behavior of the
-# statement: parse, execute, predict, and lint. If given the keyword
-# argument block=True, the statement will take a block.
-#
-# The parse function takes a lexer object as an argument, and is
-# expected to return some parser data. The lexer has the following
-# methods.
-#
-# l.eol() - True if we are at the end of the line.
-# l.match(re) - Matches an arbitrary regexp string.
-# l.keyword(s) - Matches s.
-# l.name() - Matches any non-keyword name. Note that this only
-# counts built-in keywords.
-# l.word() - Matches any word, period.
-# l.string() - Matches a renpy string.
-# l.integer() - Matches an integer, returns a string containing the
-# integer.
-# l.float() - Matches a floating point number.
-# l.simple_expression() - Matches a simple python expression, returns
-# it as a string.
-# l.rest() - Skips whitespace, then returns the rest of the line.
-# l.checkpoint() - Returns an opaque object representing the current
-# point in the parse.
-# l.revert(o) - Given the object returned by l.checkpoint(), returns
-# there.
-#
-# l.subblock_lexer() - Return a lexer that gives a sub-block for the
-# block associated with the current statement.
-# l.advance() - In a subblock lexer, advance to the next line. This needs
-# to be called before the above functions can be called on the first line.
-#
-#
-#
-# The parse function is expected to return an object, which is passed
-# to the other functions. Parse should call renpy.error with the error
-# message to report an error.
-#
-# The execute function is passed the object returned from parse, and
-# is expected to execute the statement.
-#
-# The predict function is passed the object returned from parse, and
-# is expected to return a list of images that are used by the
-# statement.
-#
-# The lint function is called at lint time, after the init code is
-# run. It should check the statement for errors, and report them by
-# calling renpy.error with the appropriate error message.
-#
-# The scry function is called with a scry object. It may mutate that
-# object, but it is then expected to return it. See 00nvlmode.rpy for
-# details.
-#
-# The next function is expected to return a string giving the label of
-# the next statement to execute, or None to indicate that next
-# statement in the block should be executed. The next function is
-# called during predict, scry, and execute, and should always return
-# the same value. (Or scrying may be incorrect.)
-
+# This file contains code that creates a few new statements.
 
 python early hide:
 
@@ -163,7 +101,7 @@ python early hide:
                 except:
                     pass
 
-    renpy.statements.register('play music',
+    renpy.register_statement('play music',
                               parse=parse_play_music,
                               execute=execute_play_music,
                               predict=predict_play_music,
@@ -212,7 +150,7 @@ python early hide:
             loop=p.get("loop", None))
 
 
-    renpy.statements.register('queue music',
+    renpy.register_statement('queue music',
                               parse=parse_queue_music,
                               execute=execute_queue_music,
                               lint=lint_play_music)
@@ -246,7 +184,7 @@ python early hide:
 
         renpy.music.stop(fadeout=eval(p["fadeout"]), channel=channel)
 
-    renpy.statements.register('stop music',
+    renpy.register_statement('stop music',
                               parse=parse_stop_music,
                               execute=execute_stop_music)
 
@@ -271,7 +209,7 @@ python early hide:
     def lint_play_sound(p, lint_play_music=lint_play_music):
         return lint_play_music(p, channel="sound")
 
-    renpy.statements.register('play sound',
+    renpy.register_statement('play sound',
                               parse=parse_play_music,
                               execute=execute_play_sound,
                               lint=lint_play_sound)
@@ -285,7 +223,7 @@ python early hide:
         renpy.sound.queue(eval(p["file"]), channel=channel)
 
 
-    renpy.statements.register('queue sound',
+    renpy.register_statement('queue sound',
                               parse=parse_queue_music,
                               execute=execute_queue_sound,
                               lint=lint_play_music)
@@ -300,7 +238,7 @@ python early hide:
 
         renpy.sound.stop(fadeout=fadeout, channel=channel)
 
-    renpy.statements.register('stop sound',
+    renpy.register_statement('stop sound',
                               parse=parse_stop_music,
                               execute=execute_stop_sound)
 
@@ -358,18 +296,18 @@ python early hide:
         if not renpy.music.channel_defined(channel):
             renpy.error("channel %r is not defined" % channel)
 
-    renpy.statements.register('play',
+    renpy.register_statement('play',
                               parse=parse_play_generic,
                               execute=execute_play_music,
                               predict=predict_play_music,
                               lint=lint_play_generic)
 
-    renpy.statements.register('queue',
+    renpy.register_statement('queue',
                               parse=parse_queue_generic,
                               execute=execute_queue_music,
                               lint=lint_play_generic)
 
-    renpy.statements.register('stop',
+    renpy.register_statement('stop',
                               parse=parse_stop_generic,
                               execute=execute_stop_music,
                               lint=lint_stop_generic)
@@ -415,12 +353,12 @@ python early hide:
         store._window = False
         renpy.with_statement(trans)
 
-    renpy.statements.register('window show',
+    renpy.register_statement('window show',
                               parse=parse_window,
                               execute=execute_window_show,
                               lint=lint_window)
 
-    renpy.statements.register('window hide',
+    renpy.register_statement('window hide',
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window)
@@ -451,7 +389,7 @@ python early hide:
             renpy.pause()
 
 
-    renpy.statements.register('pause',
+    renpy.register_statement('pause',
                               parse=parse_pause,
                               lint=lint_pause,
                               execute=execute_pause)
@@ -552,18 +490,18 @@ python early hide:
             renpy.error("Screen %s does not exist." % name)
 
 
-    renpy.statements.register("show screen",
+    renpy.register_statement("show screen",
                               parse=parse_show_call_screen,
                               execute=execute_show_screen,
                               predict=predict_screen,
                               lint=lint_screen)
 
-    renpy.statements.register("call screen",
+    renpy.register_statement("call screen",
                               parse=parse_show_call_screen,
                               execute=execute_call_screen,
                               predict=predict_screen,
                               lint=lint_screen)
 
-    renpy.statements.register("hide screen",
+    renpy.register_statement("hide screen",
                               parse=parse_hide_screen,
                               execute=execute_hide_screen)
