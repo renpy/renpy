@@ -75,11 +75,10 @@ Customizing Ren'Py
    screen_special
    side_image
    config
-   environment_variables
-   keym
    rooms
    nvl_mode
    developer_tools
+   keymap
 
 Advanced Displayables
 ---------------------
@@ -123,7 +122,7 @@ End-User Documentation
    :maxdepth: 1
 
    problems
-
+   environment_variables
 
 Engine Developer Documentation
 ------------------------------
