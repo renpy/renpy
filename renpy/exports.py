@@ -1978,6 +1978,7 @@ def set_physical_size(size):
 def fsencode(s):
     """
     :doc: other
+    :name: renpy.fsencode
 
     Converts s from unicode to the filesystem encoding.
     """
@@ -1991,6 +1992,7 @@ def fsencode(s):
 def fsdecode(s):
     """
     :doc: other
+    :name: renpy.fsdecode
 
     Converts s from filesystem encoding to unicode.
     """

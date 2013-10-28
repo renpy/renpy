@@ -693,7 +693,7 @@ channels = { }
 
 def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True):
     """
-    :doc: other
+    :doc: audio
 
     This registers a new audio channel named `name`. Audio can then be
     played on the channel by supplying the channel name to the play or
