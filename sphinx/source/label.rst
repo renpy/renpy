@@ -25,6 +25,8 @@ are processed as described in PEP 3102, with two exceptions:
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
 
+.. _jump-statement:
+
 Jump Statement
 --------------
 
@@ -44,6 +46,8 @@ no way to return to where you've jumped from. ::
         e "Oh no! It looks like we're trapped in an infinite loop."
 
         jump loop_start
+
+.. _call-statement:
 
 Call Statement
 --------------
@@ -87,6 +91,8 @@ When using a call expression with an arguments list, the ``pass`` keyword must
 be inserted between the expression and the arguments list. Otherwise, the
 arguments list will be parsed as part of the expression, not as part of the
 call.
+
+.. _return-statement:
 
 Return Statement
 ----------------

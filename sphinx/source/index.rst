@@ -38,6 +38,7 @@ The Ren'Py Language
    displaying_images
    menus
    python
+   conditional
    audio
    movie
    voice
@@ -62,7 +63,6 @@ Other Functions
    :maxdepth: 1
 
    input
-
 
 Customizing Ren'Py
 ------------------
@@ -155,7 +155,6 @@ Indices
 * `Function and Class Index <py-function-class-index.html>`_
 * `Reserved Names Index <reserved.html>`_
 * `General Index <genindex.html>`_
-
 
 Example Scripts
 ---------------
