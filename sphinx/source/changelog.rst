@@ -124,7 +124,24 @@ with very inaccurate bounding boxes.
 Documentation
 -------------
 
-The Ren'Py documentation has been improved, and has been translated
+The Ren'Py documentation has been improved. The following pages have been
+added or migrated from the old wiki-based documentation.
+
+* :doc:`label`
+* :doc:`python`
+* :doc:`conditional`
+* :doc:`audio`
+* :doc:`movie`
+* :doc:`persistent`
+* :doc:`cds`
+* :doc:`character_callbacks`
+* :doc:`file_python`
+* :doc:`environment_variables`
+* :doc:`reserved`
+
+Many other documentation pages have been improved and edited.
+
+Much of the documentation has been translated
 to Japanese. The Japanese translation can be found at:
 
     http://ja.renpy.org/doc/html/
