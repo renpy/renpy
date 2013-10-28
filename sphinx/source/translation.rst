@@ -280,6 +280,14 @@ of translation::
     "New{#game}"
     "New{#playlist}"
 
+The translate strings statement can also be used to translate the None
+language. This can be used to when the game is written in a non-English
+language, to translate the Ren'Py user interface. ::
+
+    translate None strings:
+         old "Start Game"
+         new "Artstay Amegay"
+
 
 Translating substitutions
 -------------------------
