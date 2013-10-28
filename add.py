@@ -50,7 +50,7 @@ check_dirty()
 subprocess.check_call([ "./add_renpy.sh", short_version ])
 
 if not args.no_tag:
-    subprocess.check_call([ "git", "tag", "-a" "rapt-" + version, "-m", "Tagging RAPT release." ])
+    subprocess.check_call([ "git", "tag", "-a", "rapt-" + version, "-m", "Tagging RAPT release." ])
 
 os.chdir("/home/tom/ab/renpy/dl")
 
