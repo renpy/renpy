@@ -71,7 +71,7 @@ that can be loaded in a spreasheet program.
 The first column of the spreadsheet is the identifier to use, with other
 columns giving more information about the dialogue.
 
-To make Ren'Py automatically play voices, set :var:`config.auto_dialogue` to
+To make Ren'Py automatically play voices, set :var:`config.auto_voice` to
 a string containing `{id}`. When dialogue occurs, `{id}` is replaced with
 the dialogue identifier, forming a filename. If the filename exists, it is
 played.
