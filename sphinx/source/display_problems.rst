@@ -1,3 +1,5 @@
+:orphan:
+
 Dealing With Display Problems
 -----------------------------
 

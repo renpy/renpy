@@ -1,3 +1,5 @@
+:orphan:
+
 .. highlight:: none
 
 Building Android Applications

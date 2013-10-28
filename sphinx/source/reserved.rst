@@ -1,3 +1,5 @@
+:orphan:
+
 .. _reserved-names:
 
 Reserved Names
