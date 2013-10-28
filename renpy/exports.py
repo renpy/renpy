@@ -1222,7 +1222,7 @@ def get_game_runtime():
 
 def loadable(filename):
     """
-    :doc: other
+    :doc: file
 
     Returns True if the given filename is loadable, meaning that it
     can be loaded from the disk or from inside an archive. Returns
@@ -1233,11 +1233,14 @@ def loadable(filename):
 
 def exists(filename):
     """
-    :doc: other
+    :doc: file_rare
 
     Returns true if the given filename can be found in the
     searchpath. This only works if a physical file exists on disk. It
     won't find the file if it's inside of an archive.
+
+    You almost certainly want to use :func:`file.loadable` in preference
+    to this function.
     """
 
     try:
@@ -1416,19 +1419,21 @@ def seen_image(name):
 
 def file(fn): #@ReservedAssignment
     """
-    :doc: other
+    :doc: file
 
-    Returns a read-only file-like object that accesses filename. The file is
-    accessed using Ren'Py's standard search method, and may reside in an archive.
+    Returns a read-only file-like object that accesses the file named `fn`. The file is
+    accessed using Ren'Py's standard search method, and may reside in an RPA archive.
+    or as an Android asset.
+
     The object supports a wide subset of the fields and methods found on python's
-    standard file object. (Basically, all of the methods that are sensible for a
-    read-only object.)
+    standard file object, opened in binary mode. (Basically, all of the methods that
+    are sensible for a read-only file.)
     """
     return renpy.loader.load(fn)
 
 def image_size(im):
     """
-    :doc: other
+    :doc: file_rare
 
     Given an image manipulator, loads it and returns a (``width``,
     ``height``) tuple giving its size.
@@ -1778,7 +1783,7 @@ def call_screen(_screen_name, *args, **kwargs):
 
 def list_files(common=False):
     """
-    :doc: other
+    :doc: file
 
     Lists the files in the game directory and archive files. Returns
     a list of files, with / as the directory separator.
@@ -1977,7 +1982,7 @@ def set_physical_size(size):
 
 def fsencode(s):
     """
-    :doc: other
+    :doc: file_rare
     :name: renpy.fsencode
 
     Converts s from unicode to the filesystem encoding.
@@ -1991,7 +1996,7 @@ def fsencode(s):
 
 def fsdecode(s):
     """
-    :doc: other
+    :doc: file_rare
     :name: renpy.fsdecode
 
     Converts s from filesystem encoding to unicode.

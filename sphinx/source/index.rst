@@ -105,6 +105,7 @@ Python and Ren'Py
    udd
    cds
    character_callbacks
+   file_python
    other
 
 Building, Updating, and Other Platforms
