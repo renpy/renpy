@@ -37,6 +37,7 @@ The Ren'Py Language
    dialogue
    displaying_images
    menus
+   python
    audio
    movie
    voice
