@@ -104,6 +104,7 @@ Python and Ren'Py
    modes
    udd
    cds
+   character_callbacks
    other
 
 Building, Updating, and Other Platforms
