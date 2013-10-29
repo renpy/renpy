@@ -21,10 +21,10 @@ screen vtext_test:
         area (400, 300, 400, 300)
         add "#000"
 
-    text "口口口あああ":
+    text "「可愛いね〜」と、彼女は言った。":
         vertical True
-        font "mikachan.ttf"
-        xpos 400 ypos 300
+        font "../../tutorial/game/tl/japanese/MTLc3m.ttf"
+        xpos 400 ypos 200
         xanchor 0.5
         yanchor 0.0
 
@@ -40,7 +40,7 @@ screen text1:
             color "#000"
 
         text "Testing font and size.":
-            font "mikachan.ttf"
+            font "../../tutorial/game/tl/japanese/MTLc3m.ttf"
             size 30
 
         text "Testing drop_shadow.":
@@ -74,7 +74,7 @@ screen text1:
             text_align 0.5
 
         text "ビジュアルノベル、ヴィジュアルノベル（visual novel）とは、コンピュータゲームの一ジャンルである。ビジュアルノベルそれ自体もアドベンチャーゲームの一種に分類される。ノベルゲームやサウンドノベルと呼ばれることもある。":
-            font "mikachan.ttf"
+            font "../../tutorial/game/tl/japanese/MTLc3m.ttf"
 
         text "Min-width & Text_align":
             min_width 400
@@ -108,7 +108,7 @@ label start:
 
     "Testing size {size=18}absolute{/size}, {size=-6}smaller{/size}, {size=+6}bigger{/size}."
 
-    "Testing an {font=mikachan.ttf}alternate font{/font}."
+    "Testing an {font=../../tutorial/game/tl/japanese/MTLc3m.ttf}alternate font{/font}."
 
     "Testing a {=red}custom text tag{/=red}."
 
