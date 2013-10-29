@@ -241,6 +241,27 @@ init -1 python hide:
     ## Used when the window is hidden.
     config.window_hide_transition = Dissolve(.25)
 
+    ## Used when showing NVL-mode text directly after ADV-mode text.
+    config.adv_nvl_transition = dissolve
+    
+    ## Used when showing ADV-mode text directly after NVL-mode text.
+    config.nvl_adv_transition = dissolve
+    
+    ## Used when yesno is shown.
+    config.enter_yesno_transition = None
+
+    ## Used when the yesno is hidden.
+    config.exit_yesno_transition = None
+    
+    ## Used when entering a replay
+    config.enter_replay_transition = None
+    
+    ## Used when exiting a replay
+    config.exit_replay_transition = None
+    
+    ## Used when the image is changed by a say statement with image attributes.
+    config.say_attribute_transition = None
+
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code
