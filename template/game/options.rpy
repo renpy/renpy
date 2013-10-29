@@ -259,5 +259,10 @@ init -1 python hide:
 
     config.default_text_cps = 0
 
+    # Set a default value for the auto-forward time, and note that AFM is
+    # turned off by default.
+    config.default_afm_time = 10
+    config.default_afm_enable = False
+
     #########################################
     ## More customizations can go here.

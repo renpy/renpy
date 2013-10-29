@@ -553,8 +553,3 @@ init -2 python:
     style.quick_button_text.selected_idle_color = "#cc08"
     style.quick_button_text.selected_hover_color = "#cc0"
     style.quick_button_text.insensitive_color = "#4448"
-
-    # Set a default value for the auto-forward time, and note that AFM is
-    # turned off by default.
-    config.default_afm_time = 10
-    config.default_afm_enable = False

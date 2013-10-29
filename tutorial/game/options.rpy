@@ -265,6 +265,11 @@ init -1 python hide:
     config.window_icon = "logo.png"
     config.windows_icon = "logo32.png"
 
+    # Set a default value for the auto-forward time, and note that AFM is
+    # turned off by default.
+    config.default_afm_time = 10
+    config.default_afm_enable = False
+
 # This is the main menu image we use.
 image main_menu:
     contains:
