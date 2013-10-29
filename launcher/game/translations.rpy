@@ -53,7 +53,7 @@ label extract_dialogue:
         if format == "txt":
             args.append("--text")
 
-        interface.processing(_("Ren'Py is extracted dialogue...."))
+        interface.processing(_("Ren'Py is extracting dialogue...."))
         project.current.launch(args, wait=True)
         project.current.update_dump(force=True)
 
