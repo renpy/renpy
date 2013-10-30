@@ -572,7 +572,6 @@ class TranslateFile(object):
 
     def __init__(self, filename, language, filter): # @ReservedAssignment
         self.filename = filename
-        self.language = language
         self.filter = filter
 
         commondir = os.path.normpath(renpy.config.commondir)
@@ -595,9 +594,15 @@ class TranslateFile(object):
         if self.tl_filename.endswith(".rpym"):
             self.tl_filename = self.tl_filename[:-1]
 
+        if language == "None":
+            language = None
+
+        self.language = language
         self.f = None
 
-        self.write_translates()
+        if language is not None:
+            self.write_translates()
+
         self.write_strings()
 
         self.close()
