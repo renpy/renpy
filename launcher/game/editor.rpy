@@ -152,7 +152,7 @@ init python in editor:
         fei.append(FancyEditorInfo(
             2,
             "jEdit",
-            "A mature editor that requires Java.",
+            _("A mature editor that requires Java."),
             "jedit",
             _("1.8 MB download required."),
             _("This may have occured because Java is not installed on this system."),
@@ -161,7 +161,7 @@ init python in editor:
         fei.append(FancyEditorInfo(
             3,
             "System Editor",
-            "Invokes the editor your operating system has associated with .rpy files.",
+            _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
         for k in editors:
@@ -177,7 +177,7 @@ init python in editor:
         fei.append(FancyEditorInfo(
             5,
             "None",
-            "Prevents Ren'Py from opening a text editor.",
+            _("Prevents Ren'Py from opening a text editor."),
             None))
 
         fei.sort(key=lambda e : (e.priority, e.name.lower()))
