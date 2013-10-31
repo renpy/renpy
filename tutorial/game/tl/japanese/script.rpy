@@ -66,10 +66,6 @@ translate japanese strings:
     old "Adding Images"
     new "画像の追加"
 
-    # game/script.rpy:22
-    old "Transitions"
-    new "トランジション"
-
     # game/script.rpy:23
     old "Music and Sound Effects"
     new "音楽と効果音"

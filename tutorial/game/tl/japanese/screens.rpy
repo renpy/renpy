@@ -4,15 +4,15 @@ translate japanese strings:
 
     # game/screens.rpy:192
     old "Start Game"
-    new "ゲーム開始"
+    new "スタート"
 
     # game/screens.rpy:193
     old "Load Game"
-    new "ケーム読み込み"
+    new "ロード"
 
     # game/screens.rpy:194
     old "Preferences"
-    new "設定"
+    new "環境設定"
 
     # game/screens.rpy:195
     old "Help"
@@ -28,7 +28,7 @@ translate japanese strings:
 
     # game/screens.rpy:226
     old "Save Game"
-    new "ゲーム保存"
+    new "セーブ"
 
     # game/screens.rpy:228
     old "Main Menu"
@@ -36,11 +36,11 @@ translate japanese strings:
 
     # game/screens.rpy:259
     old "Previous"
-    new "前"
+    new "前へ"
 
     # game/screens.rpy:262
     old "Auto"
-    new "自動"
+    new "オート"
 
     # game/screens.rpy:265
     old "Quick"
@@ -48,15 +48,15 @@ translate japanese strings:
 
     # game/screens.rpy:272
     old "Next"
-    new "次"
+    new "次へ"
 
     # game/screens.rpy:298
     old "Empty Slot."
-    new "空スロット"
+    new "空きスロット"
 
     # game/screens.rpy:357
     old "Display"
-    new "表示"
+    new "画面表示"
 
     # game/screens.rpy:358
     old "Window"
@@ -64,23 +64,27 @@ translate japanese strings:
 
     # game/screens.rpy:359
     old "Fullscreen"
-    new "全画面"
+    new "フルスクリーン"
+
+    # game/script.rpy:22
+    old "Transitions"
+    new "画面効果"
 
     # game/screens.rpy:366
     old "All"
-    new "すべて"
+    new "有り"
 
     # game/screens.rpy:367
     old "None"
-    new "なし"
+    new "無し"
 
     # game/screens.rpy:373
     old "Text Speed"
-    new "テキスト速度"
+    new "文字表示速度"
 
     # game/screens.rpy:380
     old "Joystick..."
-    new "ジョイスティック..."
+    new "ジョイスティック"
 
     # game/screens.rpy:387
     old "Language"
@@ -92,11 +96,11 @@ translate japanese strings:
 
     # game/screens.rpy:398
     old "Seen Messages"
-    new "既読のメッセージ"
+    new "既読のみ"
 
     # game/screens.rpy:399
     old "All Messages"
-    new "すべてのメッセージ"
+    new "未読も含む"
 
     # game/screens.rpy:405
     old "Begin Skipping"
@@ -104,7 +108,7 @@ translate japanese strings:
 
     # game/screens.rpy:411
     old "After Choices"
-    new "選択後"
+    new "選択肢後"
 
     # game/screens.rpy:412
     old "Stop Skipping"
@@ -112,19 +116,19 @@ translate japanese strings:
 
     # game/screens.rpy:413
     old "Keep Skipping"
-    new "スキップの維持"
+    new "スキップ継続"
 
     # game/screens.rpy:419
     old "Auto-Forward Time"
-    new "自動的に進むまでの時間"
+    new "オート待ち時間"
 
     # game/screens.rpy:427
     old "Music Volume"
-    new "音楽の音量"
+    new "音楽音量"
 
     # game/screens.rpy:434
     old "Sound Volume"
-    new "サウンドの音量"
+    new "効果音音量"
 
     # game/screens.rpy:438
     old "Test"
@@ -132,7 +136,7 @@ translate japanese strings:
 
     # game/screens.rpy:446
     old "Voice Volume"
-    new "音声の音量"
+    new "ボイス音量"
 
     # game/screens.rpy:504
     old "Yes"
@@ -158,27 +162,24 @@ translate japanese strings:
     old "Prefs"
     new "設定"
 
-# TODO: Translation updated at 2013-10-20 13:16
 
 translate japanese strings:
 
     # game/screens.rpy:423
     old "Wait for Voice"
-    new "ボイスを待つ"
+    new "ボイス待ち"
 
     # game/screens.rpy:535
     old "Back"
-    new "戻る"
+    new "ロールバック"
 
     # game/screens.rpy:540
     old "F.Skip"
-    new "F.スキップ"
+    new "高速スキップ"
 
-# TODO: Translation updated at 2013-10-24 17:22
 
 translate japanese strings:
 
     # game/screens.rpy:453
     old "Voice Sustain"
     new "改行後もボイス継続"
-

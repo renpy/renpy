@@ -28,7 +28,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1264
     old "This program is up to date."
-    new "このプログラムは最新版です。"
+    new "最新の状態です。"
 
     # renpy/common/00updater.rpy:1266
     old "[u.version] is available. Do you want to install it?"
@@ -36,7 +36,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1268
     old "Preparing to download the updates."
-    new "アップデートをダウンロードする準備をしています。"
+    new "ダウンロードする準備をしています。"
 
     # renpy/common/00updater.rpy:1270
     old "Downloading the updates."
@@ -48,7 +48,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1274
     old "Finishing up."
-    new "完了しました。"
+    new "最終処理中です。"
 
     # renpy/common/00updater.rpy:1276
     old "The updates have been installed. The program will restart."
@@ -56,7 +56,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1278
     old "The updates have been installed."
-    new "アップデートがインストールされました。"
+    new "アップデートが完了しました。"
 
     # renpy/common/00updater.rpy:1280
     old "The updates were cancelled."
@@ -68,7 +68,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1297
     old "Cancel"
-    new "キャンセル"
+    new "中止"
 
 # Translation updated at 2013-02-18 11:40
 
@@ -76,7 +76,7 @@ translate japanese strings:
 
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
-    new "ジョイスティックのマッピング"
+    new "ジョイスティックの割り当て"
 
 # Translation updated at 2013-02-18 11:40
 
@@ -84,27 +84,27 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
-    new "本当にいいですか？"
+    new "よろしいですか？"
 
     # renpy/common/00layout.rpy:422
     old "Are you sure you want to delete this save?"
-    new "この保存データを本当に削除しますか？"
+    new "このセーブデータを消去しますか？"
 
     # renpy/common/00layout.rpy:423
     old "Are you sure you want to overwrite your save?"
-    new "本当に保存データを上書きしますか？"
+    new "このセーブデータに上書きしますか？"
 
     # renpy/common/00layout.rpy:424
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "読み込みによって未保存のゲームが失われます。\n本当に読み込みますか？"
+    new "現在の状況を破棄してロードしますか？"
 
     # renpy/common/00layout.rpy:425
     old "Are you sure you want to quit?"
-    new "本当にゲームを終了しますか？"
+    new "終了しますか？"
 
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "本当にメインメニューに戻りますか？\nこれによって未保存のゲームが失われます。"
+    new "現在の状況を破棄してメインメニューに戻りますか？"
 
 # Translation updated at 2013-02-18 11:40
 
@@ -120,7 +120,7 @@ translate japanese strings:
 
     # renpy/common/_errorhandling.rpym:436
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
-    new "一つ前へのロールバックを試み、セーブまたは他の選択肢を選ぶことを許可します。"
+    new "セーブまたは他の選択肢が選べるように、ロールバックを使って直前に戻ります。"
 
     # renpy/common/_errorhandling.rpym:439
     old "Ignore"
@@ -128,15 +128,15 @@ translate japanese strings:
 
     # renpy/common/_errorhandling.rpym:441
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
-    new "例外を無視し、ゲームの継続を許可します。この場合、付加的なエラーが発生する原因となることがあります。"
+    new "例外を無視してゲームを続行します。連鎖的にエラーが発生する可能性があります。"
 
     # renpy/common/_errorhandling.rpym:444
     old "Reload"
-    new "再読み込み"
+    new "リロード"
 
     # renpy/common/_errorhandling.rpym:446
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "ディスクからゲームを再読み込みし、可能であればゲームの保存と復元をします。"
+    new "ディスクからゲームをリロードして、現在の状況を保存、可能であれば復元します。"
 
     # renpy/common/_errorhandling.rpym:448
     old "Open Traceback"
@@ -180,23 +180,23 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:54
     old "Automatically Choose"
-    new "自動選択"
+    new "自動で選択する"
 
     # renpy/common/00gltest.rpy:59
     old "Force Angle/DirectX Renderer"
-    new "Angle/DirectX による描画を強制"
+    new "Angle/DirectX レンダラーを使う"
 
     # renpy/common/00gltest.rpy:63
     old "Force OpenGL Renderer"
-    new "OpenGL による描画を強制"
+    new "OpenGL レンダラーを使う"
 
     # renpy/common/00gltest.rpy:67
     old "Force Software Renderer"
-    new "ソフトウェアによる描画を強制"
+    new "ソフトウェアレンダラーを使う"
 
     # renpy/common/00gltest.rpy:73
     old "Changes will take effect the next time this program is run."
-    new "変更は、次にプログラムを起動した時に反映されます。"
+    new "変更は次回起動時から適用されます"
 
     # renpy/common/00gltest.rpy:112
     old "Performance Warning"
@@ -216,15 +216,15 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:123
     old "This computer has a problem displaying graphics: [problem]."
-    new "このコンピューターはグラフィックスの表示に問題があります: [problem]。"
+    new "このコンピュータではグラフィックに以下の問題があります：[problem] "
 
     # renpy/common/00gltest.rpy:128
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "グラフィックドライバーは古いか、あるいは正常に動作していません。これはグラフィックスの表示が遅くなったり、正常に表示されない原因となります。DirectXをアップデートするとこの問題を解決できます。"
+    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されなかったりする可能性があります。DirectX を更新すると治ることがあります。"
 
     # renpy/common/00gltest.rpy:130
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "グラフィックドライバーは古いか、あるいは正常に動作していません。これはグラフィックスの表示が遅くなったり、正常に表示されない原因となります。"
+    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されなかったりする可能性があります。"
 
     # renpy/common/00gltest.rpy:135
     old "Update DirectX"
@@ -232,11 +232,11 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:141
     old "Continue, Show this warning again"
-    new "今後も、この注意を表示する"
+    new "次回もこの注意を表示する。"
 
     # renpy/common/00gltest.rpy:145
     old "Continue, Don't show warning again"
-    new "今後は、この注意を表示しない"
+    new "次回はこの注意を表示しない。"
 
     # renpy/common/00gltest.rpy:171
     old "Updating DirectX."
@@ -244,15 +244,15 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:175
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "DirectXウェブセットアップが開始されました。タスクバーに最小化された状態で開始したので、画面に従ってDirectXをインストールして下さい。"
+    new "DirectX ウェブセットアップを開始しました。タスクバーに最小化されていることがありますが、指示通りにインストールしてください。"
 
     # renpy/common/00gltest.rpy:179
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}メモ:{/b} MicrosoftのDirectXウェブセットアッププログラムは、デフォルトでBingツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
+    new "{b}注意:{/b} MicrosoftのDirectXウェブセットアッププログラムは、デフォルトでBingツールバーをインストールします。このツールバーが不要な場合は、対応したチェックボックスを解除して下さい。"
 
     # renpy/common/00gltest.rpy:183
     old "When setup finishes, please click below to restart this program."
-    new "セットアップが完了したら、以下をクリックしてプログラムを再起動して下さい。"
+    new "セットアップが完了したら、下のボタンを押して再起動してください。"
 
     # renpy/common/00gltest.rpy:185
     old "Restart"
@@ -284,15 +284,15 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:427
     old "Are you sure you want to begin skipping?"
-    new "本当にスキップモードを開始しますか？"
+    new "スキップを開始しますか？"
 
     # renpy/common/00layout.rpy:428
     old "Are you sure you want to skip to the next choice?"
-    new "本当に次の選択肢までスキップしますか？"
+    new "次の選択肢までスキップしますか？"
 
     # renpy/common/00layout.rpy:429
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
-    new "本当に未読の会話、もしくは次の選択肢までスキップしますか？"
+    new "次の選択肢または未読までスキップしますか？"
 
 # Translation updated at 2013-10-20 13:16
 
