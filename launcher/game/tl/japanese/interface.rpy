@@ -81,10 +81,3 @@ translate japanese strings:
     old "CHOICE"
     new "選択"
 
-
-translate japanese strings:
-
-    # game/interface.rpy:328
-    old "While [what!q], an error occured:"
-    new "[what!q] 中にエラーが発生しました:"
-
