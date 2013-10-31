@@ -1,6 +1,6 @@
-# Translation updated at 2013-02-18 11:40
+﻿# Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # game/screens.rpy:192
     old "Start Game"
@@ -163,7 +163,7 @@ translate japanese strings:
     new "設定"
 
 
-translate japanese strings:
+translate None strings:
 
     # game/screens.rpy:423
     old "Wait for Voice"
@@ -178,7 +178,7 @@ translate japanese strings:
     new "高速スキップ"
 
 
-translate japanese strings:
+translate None strings:
 
     # game/screens.rpy:453
     old "Voice Sustain"

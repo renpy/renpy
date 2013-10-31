@@ -1,6 +1,6 @@
-# Translation updated at 2013-02-18 11:40
+﻿# Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00library.rpy:77
     old "Skip Mode"
@@ -12,7 +12,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00updater.rpy:1255
     old "Updater"
@@ -72,7 +72,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
@@ -80,7 +80,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
@@ -108,7 +108,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -164,7 +164,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00keymap.rpy:167
     old "Saved screenshot as %s."
@@ -172,7 +172,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00gltest.rpy:50
     old "Graphics Acceleration"
@@ -260,7 +260,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/_layout/imagemap_load_save.rpym:115
     old "a"
@@ -272,7 +272,7 @@ translate japanese strings:
 
 # Translation updated at 2013-02-18 11:40
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"
@@ -280,7 +280,7 @@ translate japanese strings:
 
 # Translation updated at 2013-10-20 13:16
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00layout.rpy:427
     old "Are you sure you want to begin skipping?"
@@ -296,7 +296,7 @@ translate japanese strings:
 
 # Translation updated at 2013-10-20 13:16
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00gallery.rpy:521
     old "Image [index] of [count] locked."
@@ -320,7 +320,7 @@ translate japanese strings:
 
 # Translation updated at 2013-10-20 13:16
 
-translate japanese strings:
+translate None strings:
 
     # renpy/common/00action_file.rpy:587
     old "Quick save complete."

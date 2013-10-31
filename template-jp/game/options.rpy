@@ -237,7 +237,8 @@ init -1 python hide:
     ## The file containing the default font.
     ## デフォルトフォントを設定します。
 
-    # style.default.font = "DejaVuSans.ttf"
+    style.default.font = "tl/None/MTLc3m.ttf"
+    style._default.font = "tl/None/MTLc3m.ttf"
 
     ## The default size of text.
     ## デフォルトのテキストサイズを変更します。
@@ -251,16 +252,6 @@ init -1 python hide:
 
     ## 訳注：以下は原文にはない追加コードです。
 
-    ## tl/japanese フォルダにある、日本語翻訳ファイルを使用します。
-    ## なお、バイリンガルのゲームを作成する場合には、if 文を使うなど
-    ## 初回起動時のみ config.language が設定されるようにする必要があります。
-
-    config.language = "japanese"
-
-    ## tl/japaneseフォルダにある、日本語のフォントをデフォルトにします。
-
-    style.default.font = "tl/japanese/MTLc3m.ttf"
-    style._default.font = "tl/japanese/MTLc3m.ttf"
 
     ## 日本語の禁則処理を設定します。
     ## "japanese-strict", "japapese-normal", "japanese-loose"から選択します。
