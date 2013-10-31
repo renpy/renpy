@@ -112,8 +112,15 @@ init -1900 python:
             renpy.context_nesting_level() and
             not renpy.count_displayables_in_layer('transient')):
 
-            # narrator("", interact=False)
-            ui.window(style=style.say_window["empty"])
+            who = _last_say_who
+
+            if who is not None:
+                who = eval(who)
+
+            if isinstance(who, NVLCharacter):
+                ui.window(style=style.nvl_window["empty"])
+            elif isinstance(who, ADVCharacter):
+                ui.window(style=style.say_window["empty"])
             ui.null()
 
         return trans
