@@ -235,6 +235,26 @@ init -1 python hide:
     ## Used when the window is hidden.
     config.window_hide_transition = None
 
+    ## Used when showing NVL-mode text directly after ADV-mode text.
+    config.adv_nvl_transition = dissolve
+    
+    ## Used when showing ADV-mode text directly after NVL-mode text.
+    config.nvl_adv_transition = dissolve
+    
+    ## Used when yesno is shown.
+    config.enter_yesno_transition = None
+
+    ## Used when the yesno is hidden.
+    config.exit_yesno_transition = None
+    
+    ## Used when entering a replay
+    config.enter_replay_transition = None
+    
+    ## Used when exiting a replay
+    config.exit_replay_transition = None
+    
+    ## Used when the image is changed by a say statement with image attributes.
+    config.say_attribute_transition = None
 
     #########################################
     ## This is the name of the directory where the game's data is
@@ -258,6 +278,11 @@ init -1 python hide:
     ## The default text speed in characters per second. 0 is infinite.
 
     config.default_text_cps = 0
+
+    # Set a default value for the auto-forward time, and note that AFM is
+    # turned off by default.
+    config.default_afm_time = 10
+    config.default_afm_enable = False
 
     #########################################
     ## More customizations can go here.
