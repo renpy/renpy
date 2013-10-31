@@ -15,7 +15,7 @@ init -1500 python:
     config.default_afm_time = None
 
     # If not None, the default value of afm_enable
-    config.default_afm_enable = None
+    config.default_afm_enable = False
 
     # If not None, the default language to use.
     config.default_language = None
