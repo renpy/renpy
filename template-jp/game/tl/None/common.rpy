@@ -28,7 +28,7 @@ translate None strings:
 
     # renpy/common/00updater.rpy:1264
     old "This program is up to date."
-    new "最新の状態です。"
+    new "このプログラムは最新の状態です。"
 
     # renpy/common/00updater.rpy:1266
     old "[u.version] is available. Do you want to install it?"
@@ -96,7 +96,7 @@ translate None strings:
 
     # renpy/common/00layout.rpy:424
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "現在のゲームを破棄してロードしますか？"
+    new "現在の状況を破棄してロードしますか？"
 
     # renpy/common/00layout.rpy:425
     old "Are you sure you want to quit?"
@@ -104,7 +104,7 @@ translate None strings:
 
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "現在のゲームを破棄してメインメニューに戻りますか？"
+    new "現在の状況を破棄してメインメニューに戻りますか？"
 
 # Translation updated at 2013-02-18 11:40
 
@@ -136,7 +136,7 @@ translate None strings:
 
     # renpy/common/_errorhandling.rpym:446
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "ディスクからゲームをリロードして、現在のゲームを保存、可能であれば復元します。"
+    new "ディスクからゲームをリロードして、現在の状況を保存、可能であれば復元します。"
 
     # renpy/common/_errorhandling.rpym:448
     old "Open Traceback"
@@ -204,7 +204,7 @@ translate None strings:
 
     # renpy/common/00gltest.rpy:117
     old "This computer is using software rendering."
-    new "このコンピュータはソフトウェアレンダリングを使用しています。"
+    new "このコンピューターはソフトウェアレンダリングを使用しています。"
 
     # renpy/common/00gltest.rpy:119
     old "This computer is not using shaders."
@@ -216,15 +216,15 @@ translate None strings:
 
     # renpy/common/00gltest.rpy:123
     old "This computer has a problem displaying graphics: [problem]."
-    new "このコンピュータではグラフィックに以下の問題があります：[problem] "
+    new "このコンピューターではグラフィックに以下の問題があります：[problem] "
 
     # renpy/common/00gltest.rpy:128
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されなかったりする可能性があります。DirectX を更新すると治ることがあります。"
+    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されない可能性があります。DirectX を更新すると解決することがあります。"
 
     # renpy/common/00gltest.rpy:130
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されなかったりする可能性があります。"
+    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されない可能性があります。"
 
     # renpy/common/00gltest.rpy:135
     old "Update DirectX"
