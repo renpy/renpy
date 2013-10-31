@@ -1,5 +1,5 @@
 translate japanese python:
-    LIGHT   = "../../tutorial/game/tl/japanese/MTLc3m.ttf"
+    LIGHT = "tl/japanese/MTLc3m.ttf"
     style.l_default.font = LIGHT
     style.l_button_text.selected_font = LIGHT
     style.l_button_text.selected_bold = True
