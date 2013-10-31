@@ -307,10 +307,17 @@ init python:
                 pass
             pass
 
+    def make_style_backup():
+        """
+        Call this to back up the styles. This should be called in a
+        translate python block in each translation.
+        """
 
-init 100 python:
-    style_backup = renpy.style.backup()
+        global style_backup
+        style_backup = renpy.style.backup()
 
+translate None python:
+    make_style_backup()
 
 screen theme_demo:
 
