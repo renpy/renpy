@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-10-24 22:18
-
+﻿
 translate japanese strings:
 
     # renpy/common/00action_file.rpy:124
@@ -10,7 +9,6 @@ translate japanese strings:
     old "Quick save complete."
     new "クイックセーブ完了。"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -34,7 +32,6 @@ translate japanese strings:
     old "return"
     new "戻る"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -130,7 +127,6 @@ translate japanese strings:
     old "Restart"
     new "再起動"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -138,7 +134,6 @@ translate japanese strings:
     old "Saved screenshot as %s."
     new "スクリーンショットを %s に保存しました。"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -178,7 +173,6 @@ translate japanese strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "本当に未読の会話、もしくは次の選択肢までスキップしますか？"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -190,7 +184,6 @@ translate japanese strings:
     old "Fast Skip Mode"
     new "高速スキップモード"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -230,7 +223,6 @@ translate japanese strings:
     old "The updates were cancelled."
     new "アップデートがキャンセルされました。"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -246,7 +238,6 @@ translate japanese strings:
     old "Next"
     new "次へ"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -254,7 +245,6 @@ translate japanese strings:
     old "Joystick Mapping"
     new "ジョイスティックのマッピング"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 
@@ -310,7 +300,6 @@ translate japanese strings:
     old "Opens the errors.txt file in a text editor."
     new "テキストエディターで errors.txt を開きます。"
 
-# TODO: Translation updated at 2013-10-24 22:18
 
 translate japanese strings:
 

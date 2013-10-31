@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-10-24 18:29
-
+﻿
 translate japanese strings:
 
     # game/editor.rpy:120
@@ -42,7 +41,6 @@ translate japanese strings:
     old "Cancel"
     new "キャンセル"
 
-# TODO: Translation updated at 2013-10-24 22:08
 
 translate japanese strings:
 

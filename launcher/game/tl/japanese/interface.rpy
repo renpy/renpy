@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-10-24 18:29
-
+﻿
 translate japanese strings:
 
     # game/interface.rpy:89
@@ -51,8 +50,8 @@ translate japanese strings:
     new "エラー"
 
     # game/interface.rpy:328
-    old "[what!q] 中にエラーが発生しました。:"
-    new ""
+    old "While [what!q], an error occured:"
+    new "[what!q] 中にエラーが発生しました。:"
 
     # game/interface.rpy:329
     old "[exception!q]"
@@ -82,7 +81,6 @@ translate japanese strings:
     old "CHOICE"
     new "選択"
 
-# TODO: Translation updated at 2013-10-24 22:08
 
 translate japanese strings:
 

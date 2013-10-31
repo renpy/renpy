@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-10-24 18:29
-
+﻿
 translate japanese strings:
 
     # game/new_project.rpy:22
