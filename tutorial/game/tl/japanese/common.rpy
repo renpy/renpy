@@ -28,7 +28,7 @@ translate japanese strings:
 
     # renpy/common/00updater.rpy:1264
     old "This program is up to date."
-    new "最新の状態です。"
+    new "このプログラムは最新の状態です。"
 
     # renpy/common/00updater.rpy:1266
     old "[u.version] is available. Do you want to install it?"
@@ -204,7 +204,7 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:117
     old "This computer is using software rendering."
-    new "このコンピュータはソフトウェアレンダリングを使用しています。"
+    new "このコンピューターはソフトウェアレンダリングを使用しています。"
 
     # renpy/common/00gltest.rpy:119
     old "This computer is not using shaders."
@@ -216,15 +216,15 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:123
     old "This computer has a problem displaying graphics: [problem]."
-    new "このコンピュータではグラフィックに以下の問題があります：[problem] "
+    new "このコンピューターではグラフィックに以下の問題があります：[problem] "
 
     # renpy/common/00gltest.rpy:128
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されなかったりする可能性があります。DirectX を更新すると治ることがあります。"
+    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されない可能性があります。DirectX を更新すると解決することがあります。"
 
     # renpy/common/00gltest.rpy:130
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
-    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されなかったりする可能性があります。"
+    new "グラフィックドライバーが古いか、正常に動作していません。表示が遅れたり、正しく表示されない可能性があります。"
 
     # renpy/common/00gltest.rpy:135
     old "Update DirectX"

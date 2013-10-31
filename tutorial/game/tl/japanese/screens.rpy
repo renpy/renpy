@@ -108,7 +108,7 @@ translate japanese strings:
 
     # game/screens.rpy:411
     old "After Choices"
-    new "選択肢後"
+    new "選択肢の後"
 
     # game/screens.rpy:412
     old "Stop Skipping"
@@ -124,11 +124,11 @@ translate japanese strings:
 
     # game/screens.rpy:427
     old "Music Volume"
-    new "音楽音量"
+    new "音楽の音量"
 
     # game/screens.rpy:434
     old "Sound Volume"
-    new "効果音音量"
+    new "効果の音音量"
 
     # game/screens.rpy:438
     old "Test"
@@ -136,7 +136,7 @@ translate japanese strings:
 
     # game/screens.rpy:446
     old "Voice Volume"
-    new "ボイス音量"
+    new "ボイスの音量"
 
     # game/screens.rpy:504
     old "Yes"
@@ -171,11 +171,11 @@ translate japanese strings:
 
     # game/screens.rpy:535
     old "Back"
-    new "ロールバック"
+    new "巻き戻し"
 
     # game/screens.rpy:540
     old "F.Skip"
-    new "高速スキップ"
+    new "F.スキップ"
 
 
 translate japanese strings:
