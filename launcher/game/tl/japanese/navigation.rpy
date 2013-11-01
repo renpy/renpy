@@ -7,7 +7,7 @@ translate japanese strings:
 
     # game/navigation.rpy:159
     old "Order: "
-    new "並び順"
+    new "並び順:"
 
     # game/navigation.rpy:160
     old "alphabetical"
@@ -23,7 +23,7 @@ translate japanese strings:
 
     # game/navigation.rpy:176
     old "Category:"
-    new "カテゴリ"
+    new "カテゴリー:"
 
     # game/navigation.rpy:178
     old "files"

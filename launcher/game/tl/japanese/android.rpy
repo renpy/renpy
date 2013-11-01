@@ -3,15 +3,15 @@ translate japanese strings:
 
     # game/android.rpy:12
     old "To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Androidパッケージをビルドするためには{a=http://www.renpy.org/dl/android}RAPT{/a}をダウンロードして解凍し、Ren'Py ディレクトリに配置してからランチャーを再起動してください。"
+    new "Androidパッケージをビルドするためには{a=http://www.renpy.org/dl/android}RAPT{/a}をダウンロードして解凍し、Ren'Py ディレクトリーに配置してからランチャーを再起動してください。"
 
     # game/android.rpy:13
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT はインストールされましたが、Androidパッケージをビルドする前にAndroid SDK もインストールする必要があります。このためにSDKをインストールしてください。"
+    new "RAPT はインストールされましたが、Androidパッケージをビルドする前に Android SDK もインストールする必要があります。このためにSDKをインストールしてください。"
 
     # game/android.rpy:14
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT はインストールされましたが、キーが設定されていません。新しいキーを作成するか、android.keystoreを復帰させてください。"
+    new "RAPT はインストールされましたが、キーが設定されていません。新しいキーを作成するか、android.keystore を復帰させてください。"
 
     # game/android.rpy:15
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
@@ -23,15 +23,15 @@ translate japanese strings:
 
     # game/android.rpy:18
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Android Phoneをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみです。エスケープはメニューボタン、ページアップはバックボタンにマップされています。"
+    new "Android Phoneをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみです。Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
 
     # game/android.rpy:19
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Android tabletをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみです。エスケープはメニューボタン、ページアップはバックボタンにマップされています。"
+    new "Android tabletをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみです。Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
 
     # game/android.rpy:20
     old "Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Android OUYAをエミュレートします。\n\nコントローラーの入力は矢印キー、エンターはセレクトボタン、エスケープはメニューボタン、ページアップはバックボタンにマップされています。"
+    new "Android OUYAをエミュレートします。\n\nコントローラーの入力は矢印キー、Enterはセレクトボタン、Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
 
     # game/android.rpy:22
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
@@ -43,7 +43,7 @@ translate japanese strings:
 
     # game/android.rpy:24
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
-    new "Google Play key を含むファイルをエディタで開いてください。\n\nこれはアプリが拡張APKを使用する場合のみ必要となります。詳細はドキュメントを参照してください。"
+    new "Google Play key を含むファイルをエディターで開いてください。\n\nこれはアプリが拡張APKを使用する場合のみ必要となります。詳細はドキュメントを参照してください。"
 
     # game/android.rpy:25
     old "Builds the Android package."
@@ -67,7 +67,7 @@ translate japanese strings:
 
     # game/android.rpy:371
     old "Emulation:"
-    new "エミュレータ"
+    new "エミュレーター:"
 
     # game/android.rpy:379
     old "Phone"
@@ -83,7 +83,7 @@ translate japanese strings:
 
     # game/android.rpy:399
     old "Build:"
-    new "ビルド"
+    new "ビルド:"
 
     # game/android.rpy:407
     old "Install SDK & Create Keys"

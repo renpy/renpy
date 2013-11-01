@@ -7,7 +7,7 @@ translate japanese strings:
 
     # game/new_project.rpy:40
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "新しいプロジェクトで使用するテンプレートを選択してください。Ren'Pyはデフォルトのフォントとユーザーインターフェースの言語を設定します。あなたの言語がサポートされていないなら 'english' を選択してください。"
+    new "新しいプロジェクトで使用するテンプレートを選択してください。Ren'Pyはデフォルトのフォントとユーザーインターフェイスの言語を設定します。あなたの言語がサポートされていないなら 'english' を選択してください。"
 
     # game/new_project.rpy:55
     old "PROJECT NAME"
@@ -15,7 +15,7 @@ translate japanese strings:
 
     # game/new_project.rpy:56
     old "Please enter the name of your project:"
-    new "プロジェクト名を入力してください。"
+    new "プロジェクト名を入力してください:"
 
     # game/new_project.rpy:62
     old "The project name may not be empty."

@@ -7,11 +7,11 @@ translate japanese strings:
 
     # game/distribute_gui.rpy:154
     old "Directory Name:"
-    new "ディレクトリ名"
+    new "ディレクトリー名:"
 
     # game/distribute_gui.rpy:158
     old "Executable Name:"
-    new "実行ファイル名"
+    new "実行ファイル名:"
 
     # game/distribute_gui.rpy:167
     old "Actions:"
