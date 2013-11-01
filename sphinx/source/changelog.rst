@@ -121,6 +121,20 @@ bounding box. This prevents text (especially hinted and anti-aliased text)
 from being cut off, but may lead to apparent placement problems for fonts
 with very inaccurate bounding boxes.
 
+Japanese Language
+-----------------
+
+The Ren'Py launcher has been translated into Japanese. The language
+used by the launcher can be switched from the preferences screen.
+
+There is now a Japanese language template game, which defaults to
+a Japanese font and has a translated interface.
+
+Much of the documentation has been translated
+to Japanese. The Japanese translation can be found at:
+
+    http://ja.renpy.org/doc/html/
+
 Documentation
 -------------
 
@@ -141,10 +155,6 @@ added or migrated from the old wiki-based documentation.
 
 Many other documentation pages have been improved and edited.
 
-Much of the documentation has been translated
-to Japanese. The Japanese translation can be found at:
-
-    http://ja.renpy.org/doc/html/
 
 Other
 -----
