@@ -37,7 +37,7 @@ screen select_template:
                     style "l_indent"
                     xmaximum TWOTHIRDS
 
-                    text _("Please select a template to use for your new project. Ren'Py ships with a default template that creates an English-language game with standard screens.")
+                    text _("Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'.")
 
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
