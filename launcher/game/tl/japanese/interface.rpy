@@ -39,7 +39,7 @@ translate japanese strings:
 
     # game/interface.rpy:211
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "パッケージフォーマトの制限により、アスキーコード以外のファイル、ディレクトリー名は許可されません。"
+    new "パッケージフォーマットの制限により、アスキーコード以外のファイル、ディレクトリー名は許可されません。"
 
     # game/interface.rpy:213
     old "[title]"

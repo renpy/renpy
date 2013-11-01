@@ -27,7 +27,7 @@ translate japanese strings:
 
     # game/front_page.rpy:152
     old "Open Directory"
-    new "ディレクトリを開く"
+    new "ディレクトリーを開く"
 
     # game/front_page.rpy:157
     old "game"

@@ -7,7 +7,7 @@ translate japanese strings:
 
     # game/preferences.rpy:61
     old "Projects Directory:"
-    new "プロジェクトディレクトリ"
+    new "プロジェクトディレクトリー:"
 
     # game/preferences.rpy:68
     old "[persistent.projects_directory!q]"
@@ -19,15 +19,15 @@ translate japanese strings:
 
     # game/preferences.rpy:84
     old "Text Editor:"
-    new "テキストエディタ"
+    new "テキストエディター:"
 
     # game/preferences.rpy:106
     old "Update Channel:"
-    new "アップデートチャンネル"
+    new "アップデートチャンネル:"
 
     # game/preferences.rpy:126
     old "Navigation Options:"
-    new "ナビゲートオプション"
+    new "ナビゲートオプション:"
 
     # game/preferences.rpy:130
     old "Include private names"
@@ -39,7 +39,7 @@ translate japanese strings:
 
     # game/preferences.rpy:141
     old "Launcher Options:"
-    new "ランチャー設定"
+    new "ランチャー設定:"
 
     # game/preferences.rpy:145
     old "Hardware rendering"

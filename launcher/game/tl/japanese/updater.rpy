@@ -7,7 +7,7 @@ translate japanese strings:
 
     # game/updater.rpy:65
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "アップデートチャンネルはアップデータがダウンロードするRen'Pyのバージョンを制御します。アップデートチャンネルを選択してください。"
+    new "アップデートチャンネルはアップデーターがダウンロードするRen'Pyのバージョンを制御します。アップデートチャンネルを選択してください。"
 
     # game/updater.rpy:70
     old "Release"

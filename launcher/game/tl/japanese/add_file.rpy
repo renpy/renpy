@@ -15,9 +15,9 @@ translate japanese strings:
 
     # game/add_file.rpy:18
     old "The file already exists."
-    new "ファイル既に存在します。"
+    new "ファイルは既に存在します。"
 
     # game/add_file.rpy:21
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
-    new "# RRen'Pyは .rpy で終わるすべてのスクリプトファイルを自動的にロードします。このファイルを使用するためにはラベルを定義し、他のファイルからそこにジャンプしてください。\n"
+    new "# Ren'Pyは .rpy で終わるすべてのスクリプトファイルを自動的にロードします。このファイルを使用するためにはラベルを定義し、他のファイルからそこにジャンプしてください。\n"
 

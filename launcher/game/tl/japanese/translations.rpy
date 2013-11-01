@@ -31,5 +31,5 @@ translate japanese strings:
 
     # game/translations.rpy:60
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[format] in the base directory."
-    new "Ren'Pyは台詞を抽出し終えました。抽出した台詞はベースディレクトリの dialogue.[format] にあります。"
+    new "Ren'Pyは台詞を抽出し終えました。抽出した台詞はベースディレクトリーの dialogue.[format] にあります。"
 
