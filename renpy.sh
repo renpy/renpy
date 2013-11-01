@@ -1,11 +1,27 @@
 #!/bin/sh
 
+SCRIPT="$0"
+
+# Resolve the chain of symlinks leading to this script.
+while [ -L "$SCRIPT" ] ; do
+    LINK=$(readlink "$SCRIPT")
+
+    case "$LINK" in
+        /*)
+            SCRIPT="$LINK"
+            ;;
+        *)
+            SCRIPT="$(dirname "$SCRIPT")/$LINK"
+            ;;
+    esac
+done
+
 # The directory containing this shell script - an absolute path.
-ROOT=$(dirname "$0")
+ROOT=$(dirname "$SCRIPT")
 ROOT=$(cd "$ROOT"; pwd)
 
 # The name of this shell script without the .sh on the end.
-BASEFILE=$(basename "$0" .sh)
+BASEFILE=$(basename "$SCRIPT" .sh)
 
 if [ -z "$RENPY_PLATFORM" ] ; then
     case "$(uname -s)-$(uname -m)" in
@@ -13,7 +29,7 @@ if [ -z "$RENPY_PLATFORM" ] ; then
             RENPY_PLATFORM="darwin-x86_64"
             ROOT1="$ROOT/../Resources/autorun"
             ROOT2="$ROOT/../../.."
-                        ;;        
+                        ;;
         *-x86_64|amd64)
             RENPY_PLATFORM="linux-x86_64"
             ROOT1="$ROOT"
@@ -34,7 +50,7 @@ if [ -z "$RENPY_PLATFORM" ] ; then
 fi
 
 
-for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do 
+for BASE in "$ROOT" "$ROOT1" "$ROOT2"; do
     LIB="$BASE/lib/$RENPY_PLATFORM"
 		if test -d "$LIB"; then
 		    break
