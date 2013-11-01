@@ -86,9 +86,9 @@ def main():
     # Compile the various games
 
     if not args.fast:
-        for i in [ 'tutorial', 'launcher', 'template', 'the_question' ]:
+        for i in [ 'tutorial', 'launcher', 'templates/english', 'templates/japanese', 'the_question' ]:
             print "Compiling", i
-            subprocess.check_call(["./renpy.sh", i, "compile" ])
+            subprocess.check_call(["./renpy.sh", i, "quit" ])
 
 
     # The destination directory.

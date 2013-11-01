@@ -241,7 +241,7 @@ init python:
     # games.
     build.classify_renpy("launcher/game/theme/", None)
     build.classify_renpy("launcher/**", "source")
-    build.classify_renpy("template/**", "source")
+    build.classify_renpy("templates/**", "source")
     build.classify_renpy("the_question/**", "source")
     build.classify_renpy("tutorial/**", "source")
 
