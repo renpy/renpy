@@ -162,9 +162,6 @@ translate None strings:
     old "Prefs"
     new "設定"
 
-
-translate None strings:
-
     # game/screens.rpy:423
     old "Wait for Voice"
     new "ボイス待ち"
@@ -176,9 +173,6 @@ translate None strings:
     # game/screens.rpy:540
     old "F.Skip"
     new "F.スキップ"
-
-
-translate None strings:
 
     # game/screens.rpy:453
     old "Voice Sustain"

@@ -10,10 +10,6 @@ translate None strings:
     old "Fast Skip Mode"
     new "高速スキップモード"
 
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
-
     # renpy/common/00updater.rpy:1255
     old "Updater"
     new "アップデーター"
@@ -70,17 +66,9 @@ translate None strings:
     old "Cancel"
     new "中止"
 
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
-
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
     new "ジョイスティックの割り当て"
-
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
@@ -105,10 +93,6 @@ translate None strings:
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "現在の状況を破棄してメインメニューに戻りますか？"
-
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -162,17 +146,9 @@ translate None strings:
     old "Opens the errors.txt file in a text editor."
     new "テキストエディターで errors.txt を開きます。"
 
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
-
     # renpy/common/00keymap.rpy:167
     old "Saved screenshot as %s."
     new "スクリーンショットを %s に保存しました。"
-
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
 
     # renpy/common/00gltest.rpy:50
     old "Graphics Acceleration"
@@ -258,10 +234,6 @@ translate None strings:
     old "Restart"
     new "再起動"
 
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
-
     # renpy/common/_layout/imagemap_load_save.rpym:115
     old "a"
     new "a"
@@ -270,17 +242,9 @@ translate None strings:
     old "q"
     new "q"
 
-# Translation updated at 2013-02-18 11:40
-
-translate None strings:
-
     # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"
     new "%m月%d日, %H:%M"
-
-# Translation updated at 2013-10-20 13:16
-
-translate None strings:
 
     # renpy/common/00layout.rpy:427
     old "Are you sure you want to begin skipping?"
@@ -293,10 +257,6 @@ translate None strings:
     # renpy/common/00layout.rpy:429
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "次の選択肢または未読までスキップしますか？"
-
-# Translation updated at 2013-10-20 13:16
-
-translate None strings:
 
     # renpy/common/00gallery.rpy:521
     old "Image [index] of [count] locked."
@@ -317,10 +277,6 @@ translate None strings:
     # renpy/common/00gallery.rpy:542
     old "return"
     new "戻る"
-
-# Translation updated at 2013-10-20 13:16
-
-translate None strings:
 
     # renpy/common/00action_file.rpy:587
     old "Quick save complete."
