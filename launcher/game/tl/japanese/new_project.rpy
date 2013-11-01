@@ -6,8 +6,8 @@ translate japanese strings:
     new "テンプレートを選んでください"
 
     # game/new_project.rpy:40
-    old "Please select a template to use for your new project. Ren'Py ships with a default template that creates an English-language game with standard screens."
-    new "新しいプロジェクトで使用するテンプレートを選択してください。Ren'Pyにはデフォルトで英語のゲームを作成するための基本的なスクリーンを備えたテンプレートが付属しています。"
+    old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
+    new "新しいプロジェクトで使用するテンプレートを選択してください。Ren'Pyはデフォルトのフォントとユーザーインターフェースの言語を設定します。あなたの言語がサポートされていないなら 'english' を選択してください。"
 
     # game/new_project.rpy:55
     old "PROJECT NAME"
