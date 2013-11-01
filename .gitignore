@@ -14,8 +14,10 @@ cache
 log.txt
 errors.txt
 traceback.txt
+
 styles.txt
 
+/android
 /build
 /dist
 /dists
@@ -25,10 +27,6 @@ styles.txt
 /renpy.code
 /*testing*
 /screenshot*
-/Microsoft.VC90.CRT.manifest
-/console.exe
-/msvcr90.dll
-/python27.dll
 /renpy.exe
 /lib
 /lib.old
@@ -38,7 +36,7 @@ styles.txt
 /.project
 /.settings
 /LICENSE.txt
-/template/README.html
+/templates/english/README.html
 /the_question/README.html
 /tutorial/README.html
 /renpy/angle/*.pyx
