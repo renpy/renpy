@@ -1,83 +1,15 @@
 #!/home/tom/bin/renpython -OO
-# Builds a distributions of Ren'Py.
+
+# Builds a distribution of Ren'Py.
 
 import sys
 import os
-import zipfile
-import tarfile
-import zlib
 import compileall
 import shutil
 import subprocess
-import time
 import argparse
 
 CWD = os.getcwdu()
-
-zlib.Z_DEFAULT_COMPRESSION = 9
-
-# Gets the data for the given file.
-def data(fn):
-
-    rv = file(fn, "rb").read()
-
-    if fn.startswith("renpy.app"):
-        return rv
-
-    if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith(".py") or fn.endswith(".txt"):
-        rv = rv.replace("\n", "\r\n")
-        rv = rv.replace("\r\r\n", "\r\n")
-
-    return rv
-
-
-def tarup(filename, prefix, files):
-
-    tf = tarfile.open(filename, "w:bz2")
-    tf.dereference = True
-
-    sys.stdout.write(filename)
-    sys.stdout.flush()
-
-    for fn in files:
-        sys.stdout.write(".")
-        sys.stdout.flush()
-
-        tf.add(fn, prefix + "/" + fn, False)
-
-    sys.stdout.write("\n")
-
-    tf.close()
-
-
-# Creates a zip file.
-def zipup(filename, prefix, files):
-
-    zf = zipfile.ZipFile(filename, "w")
-
-    sys.stdout.write(filename)
-    sys.stdout.flush()
-
-    for fn in files:
-        sys.stdout.write(".")
-        sys.stdout.flush()
-
-        zi = zipfile.ZipInfo(prefix + "/" + fn)
-
-        st = os.stat(fn)
-
-        zi.date_time = time.gmtime(st.st_mtime)[:6]
-        zi.compress_type = zipfile.ZIP_DEFLATED
-        zi.create_system = 3
-        zi.external_attr = long(st.st_mode) << 16
-
-        zf.writestr(zi, data(fn))
-
-    zf.close()
-
-    sys.stdout.write("\n")
-    sys.stdout.flush()
-
 
 def copy_tutorial_file(src, dest):
     """
@@ -103,38 +35,6 @@ def copy_tutorial_file(src, dest):
     sf.close()
     df.close()
 
-
-def tree(root):
-
-    rv = [ ]
-
-    for dirname, dirs, filenames in os.walk(root):
-
-        if "saves" in dirs:
-            dirs.remove("saves")
-
-        if ".svn" in dirs:
-            dirs.remove(".svn")
-
-        if ".doctrees" in dirs:
-            dirs.remove(".doctrees")
-
-        for f in filenames:
-            if f[-1] == '~' or f[0] == '.':
-                continue
-
-            if f.endswith(".bak") or f.endswith(".pyc"):
-                continue
-
-            if f == "semantic.cache":
-                continue
-
-            if "libSDL_mixer" in f or "mixer_music" in f:
-                continue
-
-            rv.append(dirname + "/" + f)
-
-    return rv
 
 def main():
 
