@@ -34,7 +34,7 @@ the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
 
-Keyboard keysuyms may be preceded by the prefixes "alt\_", "meta\_", "shift\_",
+Keyboard keysyms may be preceded by the prefixes "alt\_", "meta\_", "shift\_",
 or "noshift\_". The first three of these require the corresponding modifier
 key to be pressed. (Meta is present on Linux keyboards, and corresponds to the
 Command key on a Mac.) "noshift\_" requires that the shift key not be pressed.
