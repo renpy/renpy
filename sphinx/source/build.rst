@@ -112,17 +112,23 @@ For example:
 game/\*.txt
     Matches txt files in the game directory.
 
-There are five file lists that files can be classified into by
-default. (Ren'Py places its own files into the first four of these.)
+There are seven file lists that files can be classified into by
+default. (Ren'Py places its own files into the first six of these.)
 
 all
-    These files will be included in all packages.
+    These files will be included in all packages, and in Android
+    builds.
 linux
     These files will be included in packages targeting Linux.
 mac
     These files will be included in packages targeting Macintosh.
 windows
     These files will be included in packages targeting Windows.
+renpy
+    These files will be included in packages that require the Ren'Py
+    engine files. (Linux, Macintosh, and Windows.)
+android
+    These files will be included in Android builds.
 archive
     These files will be included in the archive.rpa archive.
 

@@ -46,8 +46,8 @@ init -1500 python in build:
 
         ( "**/*.pyc", None),
 
-        ( "renpy.py", "all"),
-        ( "renpy/**", "all"),
+        ( "renpy.py", "renpy"),
+        ( "renpy/**", "renpy"),
 
         # Ignore Ren'Py and renpy.exe.
         ( "lib/*/renpy", None),
@@ -270,11 +270,11 @@ init -1500 python in build:
 
         packages.append(d)
 
-    package("all", "zip", "windows mac linux all", "All Desktop Platforms")
-    package("linux", "tar.bz2", "linux all", "Linux x86/x86_64")
-    package("mac", "app-zip", "mac all", "Macintosh x86")
-    package("win", "zip", "windows all", "Windows x86")
-    package("android", "directory", "android all", hidden=True, update=False)
+    package("all", "zip", "windows mac linux renpy all", "All Desktop Platforms")
+    package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
+    package("mac", "app-zip", "mac renpy all", "Macintosh x86")
+    package("win", "zip", "windows renpy all", "Windows x86")
+    package("android", "directory", "android all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 

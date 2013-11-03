@@ -9,6 +9,7 @@ init python in distribute:
     import zlib
     import struct
     import stat
+    import shutil
 
     from zipfile import crc32
 
@@ -177,3 +178,31 @@ init python in distribute:
 
         def close(self):
             self.tarfile.close()
+
+    class DirectoryPackage(object):
+
+        def mkdir(self, path):
+            if not os.path.isdir(path):
+                os.mkdir(path, 0755)
+
+        def __init__(self, path):
+            self.path = path
+            self.mkdir(path)
+
+        def add_file(self, name, path, xbit):
+            fn = os.path.join(self.path, name)
+            shutil.copy2(path, fn)
+
+            if xbit:
+                os.chmod(fn, 0755)
+            else:
+                os.chmod(fn, 0644)
+
+        def add_directory(self, name, path):
+            fn = os.path.join(self.path, name)
+            self.mkdir(fn)
+
+        def close(self):
+            return
+
+

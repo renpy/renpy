@@ -249,7 +249,7 @@ init python in distribute:
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None):
             """
             Distributes `project`.
 
@@ -270,10 +270,20 @@ init python in distribute:
             `open_directory`
                 If true, the directory containing the built files will be opened
                 if the build succeeds.
+
+            `noarchive`
+                If true, files will not be placed into archives.
+
+            `packagedest`
+                If given, gives the full path to the single package (without any
+                extensions).
             """
 
+            if packagedest is not None:
+                if packages is None or len(packages) != 1:
+                    raise Exception("Packagedest requires a single package be given.")
 
-            # Safety - prevents us frome releasing a launcher that won't update.
+            # Safety - prevents us from releasing a launcher that won't update.
             if store.UPDATE_SIMULATE:
                 raise Exception("Cannot build distributions when UPDATE_SIMULATE is True.")
 
@@ -308,10 +318,13 @@ init python in distribute:
             else:
                 self.destination = destination
 
-            try:
-                os.makedirs(self.destination)
-            except:
-                pass
+            if not packagedest:
+                try:
+                    os.makedirs(self.destination)
+                except:
+                    pass
+
+            self.packagedest = packagedest
 
             # Status reporter.
             self.reporter = reporter
@@ -332,7 +345,10 @@ init python in distribute:
             for i in build['packages']:
                 name = i['name']
 
-                if (packages is None) or (name in packages):
+                if packages is None:
+                    if not i['hidden']:
+                        build_packages.append(i)
+                elif name in packages:
                     build_packages.append(i)
 
             if not build_packages:
@@ -345,7 +361,10 @@ init python in distribute:
 
             self.scan_and_classify(project.path, build["base_patterns"])
 
-            self.archive_files(build["archives"])
+            if noarchive:
+                self.ignore_archives(build['archives'])
+            else:
+                self.archive_files(build["archives"])
 
             # Add Ren'Py.
             self.reporter.info(_("Scanning Ren'Py files..."))
@@ -483,6 +502,20 @@ init python in distribute:
             for fl in file_list:
                 self.file_lists[fl].append(f)
 
+        def ignore_archives(self, archives):
+            """
+            Ignore archiving commands by adding the files that would be in
+            archives into packages instead.
+            """
+
+            for arcname, file_lists in archives:
+                if not self.file_lists[arcname]:
+                    continue
+
+                for f in self.file_lists[arcname]:
+                    for fl in file_lists:
+                        self.file_lists[fl].append(f)
+
         def archive_files(self, archives):
             """
             Add files to archives.
@@ -527,7 +560,7 @@ init python in distribute:
             if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
                 self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
 
-            self.add_file("all", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
+            self.add_file("renpy", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
 
 
         def write_plist(self):
@@ -705,6 +738,9 @@ init python in distribute:
             filename = self.base_name + "-" + variant
             path = os.path.join(self.destination, filename)
 
+            if self.packagedest:
+                path = self.packagedest
+
             fl = FileList.merge([ self.file_lists[i] for i in file_lists ])
             fl = fl.copy()
             fl.sort()
@@ -742,7 +778,7 @@ init python in distribute:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
 
             # If we're not an update file, prepend the directory.
-            if (not dlc) and format != "update":
+            if (not dlc) and format != "update" and format != "directory":
                 fl.prepend_directory(filename)
 
             if format == "tar.bz2":
@@ -754,6 +790,8 @@ init python in distribute:
             elif format == "zip" or format == "app-zip":
                 path += ".zip"
                 pkg = ZipPackage(path)
+            elif format == "directory":
+                pkg = DirectoryPackage(path)
 
             for i, f in enumerate(fl):
                 self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
@@ -899,9 +937,11 @@ init python in distribute:
     def distribute_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
+        ap.add_argument("--packagedest", default=None, action="store", help="If given, gives the full path to the package file, without extensions." )
         ap.add_argument("--no-update", default=True, action="store_false", dest="build_update", help="Prevents updates from being built.")
-        ap.add_argument("project", help="The path to the project directory.")
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
+        ap.add_argument("--no-archive", action="store_true", help="If given, files will not be added to archives.")
+        ap.add_argument("project", help="The path to the project directory.")
 
         args = ap.parse_args()
 
@@ -912,7 +952,7 @@ init python in distribute:
         else:
             packages = None
 
-        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update)
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest)
 
         return False
 
