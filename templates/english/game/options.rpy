@@ -261,7 +261,7 @@ init -1 python hide:
     ## stored. (It needs to be set early, before any other init code
     ## is run, so the persisten information can be found by the init code.)
 python early:
-    config.save_directory = "template-1220804310"
+    config.save_directory = "PROJECT_NAME-UNIQUE"
 
 init -1 python hide:
     #########################################

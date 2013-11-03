@@ -454,7 +454,7 @@ init -1 python hide:
     ## 便利かもしれません。
 
 python early:
-    config.save_directory = "template-jp-1220804310"
+    config.save_directory = "PROJECT_NAME-UNIQUE"
 
 init -1 python hide:
     #########################################
@@ -584,7 +584,7 @@ init python:
     ## ディレクトリとアーカイブの名前です。例えば、'mygame-1.0' の場合、
     ## ウィンドウズ用のディストリビューションは 'mygame-1.0-win.zip' となり、
     ## 展開すると 'mygame-1.0-win' となります。
-    build.directory_name = "template-jp-1.0"
+    build.directory_name = "PROJECT_NAME-1.0"
 
     ## The name that's uses for executables - the program that users will run
     ## to start the game. For example, if this is 'mygame', then on Windows,
@@ -592,7 +592,7 @@ init python:
     ## 実行ファイル - ゲームをスタートするプログラムの名前です。
     ## 例えば、'maygame' の場合、ウィンドウズでは 'mygame.exe' を
     ## クリックするとゲームがスタートします。
-    build.executable_name = "template-jp"
+    build.executable_name = "PROJECT_NAME"
 
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.

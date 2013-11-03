@@ -91,8 +91,8 @@ label new_project:
             with open(fn, "rb") as f:
                 options = f.read().decode("utf-8")
 
-            save_dir = project_name + "-" + str(int(time.time()))
-            options = re.sub(r'template-\d+', save_dir, options)
+            options = options.replace("PROJECT_NAME", project_name)
+            options = options.replace("UNIQUE", str(int(time.time())))
 
             with open(fn, "wb") as f:
                 f.write(options.encode("utf-8"))
