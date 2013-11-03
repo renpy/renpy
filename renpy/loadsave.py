@@ -372,7 +372,9 @@ def force_autosave(take_screenshot=False):
         return
 
     autosave_not_running.clear()
-    threading.Thread(target=autosave_thread, args=(take_screenshot,)).start()
+    t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
+    t.daemon = True
+    t.start()
 
 
 ################################################################################

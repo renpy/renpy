@@ -340,12 +340,16 @@ def main():
                 restart = e.reason
 
             finally:
-                renpy.loadsave.autosave_not_running.wait()
+
+                # Flush any pending interface work.
+                renpy.display.interface.finish_pending()
+
+                # Give Ren'Py a couple of seconds to finish saving.
+                renpy.loadsave.autosave_not_running.wait(3.0)
 
     finally:
 
         renpy.savelocation.quit()
-
         renpy.translation.write_updated_strings()
 
     # This is stuff we do on a normal, non-error return.

@@ -1441,7 +1441,9 @@ class Interface(object):
         if background:
             self.bgscreenshot_event.clear()
             self.bgscreenshot_needed = True
-            self.bgscreenshot_event.wait()
+
+            if not self.bgscreenshot_event.wait(1.0):
+                raise Exception("Screenshot timed out.")
 
             window = self.bgscreenshot_surface
             self.bgscreenshot_surface = None
@@ -1459,6 +1461,16 @@ class Interface(object):
         self.screenshot = sio.getvalue()
         sio.close()
 
+
+    def check_background_screenshot(self):
+        """
+        Handles requests for a background screenshot.
+        """
+
+        if self.bgscreenshot_needed:
+            self.bgscreenshot_needed = False
+            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+            self.bgscreenshot_event.set()
 
     def save_screenshot(self, filename):
         """
@@ -1619,17 +1631,12 @@ class Interface(object):
             self.last_event = rv
             return rv
 
-        # Handle a request for a background screenshot.
-        if self.bgscreenshot_needed:
-            self.bgscreenshot_needed = False
-            self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
-            self.bgscreenshot_event.set()
+        self.check_background_screenshot()
 
         ev = pygame.event.wait()
         self.last_event = ev
 
         return ev
-
 
     def compute_overlay(self):
 
@@ -2468,3 +2475,10 @@ class Interface(object):
         else:
             self.timeout_time = self.event_time + offset
 
+    def finish_pending(self):
+        """
+        Called before a quit or restart to finish any pending work that might
+        block other threads.
+        """
+
+        self.check_background_screenshot()
