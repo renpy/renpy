@@ -128,7 +128,7 @@ translate japanese strings:
 
     # game/screens.rpy:434
     old "Sound Volume"
-    new "効果の音音量"
+    new "効果音の音量"
 
     # game/screens.rpy:438
     old "Test"
