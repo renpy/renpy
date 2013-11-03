@@ -109,11 +109,16 @@ init -1500 python in build:
         ("archived/", None),
         ("launcherinfo.py", None),
         ("android.txt", None),
+
+        (".android.json", "android"),
+        ("android-icon.png", "android"),
+        ("ouya-icon.png", "android"),
         ])
 
     base_patterns = [ ]
 
     late_base_patterns = pattern_list([
+        (".*", None),
         ("**", "all")
         ])
 
@@ -200,7 +205,7 @@ init -1500 python in build:
 
     packages = [ ]
 
-    def package(name, format, file_lists, description=None, update=True, dlc=False):
+    def package(name, format, file_lists, description=None, update=True, dlc=False, hidden=False):
         """
         :doc: build
 
@@ -238,12 +243,16 @@ init -1500 python in build:
         `dlc`
             If true, any zip or tar.bz2 file will be built in
             standalone DLC mode, without an update directory.
+
+        `hidden`
+            If true, this will be hidden from the list of packages in
+            the launcher.
         """
 
         formats = format.split()
 
         for i in formats:
-            if i not in [ "zip", "app-zip", "tar.bz2" ]:
+            if i not in [ "zip", "app-zip", "tar.bz2", "directory" ]:
                 raise Exception("Format {} not known.".format(i))
 
         if description is None:
@@ -256,6 +265,7 @@ init -1500 python in build:
             "description" : description,
             "update" : update,
             "dlc" : dlc,
+            "hidden" : hidden,
             }
 
         packages.append(d)
@@ -264,6 +274,7 @@ init -1500 python in build:
     package("linux", "tar.bz2", "linux all", "Linux x86/x86_64")
     package("mac", "app-zip", "mac all", "Macintosh x86")
     package("win", "zip", "windows all", "Windows x86")
+    package("android", "directory", "android all", hidden=True, update=False)
 
     # Data that we expect the user to set.
 

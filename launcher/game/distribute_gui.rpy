@@ -197,10 +197,9 @@ screen build_distributions:
                         $ packages = project.current.dump["build"]["packages"]
 
                         for pkg in packages:
-
-                            $ description = pkg["description"]
-
-                            textbutton "[description!q]" action PackageToggle(pkg["name"]) style "l_checkbox"
+                            if not pkg["hidden"]:
+                                $ description = pkg["description"]
+                                textbutton "[description!q]" action PackageToggle(pkg["name"]) style "l_checkbox"
 
                         add SPACER
 
