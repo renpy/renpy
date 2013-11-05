@@ -6,7 +6,7 @@
     searchpath. This only works if a physical file exists on disk. It
     won't find the file if it's inside of an archive.
     
-    You almost certainly want to use :func:`file.loadable` in preference
+    You almost certainly want to use :func:`renpy.loadable` in preference
     to this function.
 
 .. function:: renpy.fsdecode(s)
