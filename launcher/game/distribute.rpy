@@ -249,7 +249,7 @@ init python in distribute:
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True):
             """
             Distributes `project`.
 
@@ -277,6 +277,9 @@ init python in distribute:
             `packagedest`
                 If given, gives the full path to the single package (without any
                 extensions).
+
+            `report_success`
+                If true, we report that the build succeeded.
             """
 
             if packagedest is not None:
@@ -414,7 +417,8 @@ init python in distribute:
             # Finish up.
             self.log.close()
 
-            self.reporter.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
+            if report_success:
+                self.reporter.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
             if open_directory:
                 store.OpenDirectory(self.destination)()
@@ -424,7 +428,7 @@ init python in distribute:
         def scan_and_classify(self, directory, patterns):
             """
             Walks through the `directory`, finds files and directories that
-            match the pattern, and assds them to the appropriate file list.
+            match the pattern, and assigns them to the appropriate file list.
 
             `patterns`
                 A list of pattern, file_list tuples. The pattern is a string

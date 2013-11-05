@@ -298,6 +298,29 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
+    def android_build(command):
+        """
+        This actually builds the package.
+        """
+
+        update_android_json()
+
+        dist = project.current.temp_filename("android.dist")
+
+        if os.path.exists(dist):
+            shutil.rmtree(dist)
+
+        distribute.Distributor(project.current,
+            reporter=distribute.GuiReporter(),
+            packages=[ 'android' ],
+            build_update=False,
+            noarchive=True,
+            packagedest=dist,
+            report_success=False,
+            )
+
+        with interface.nolinks():
+            rapt.build.build(AndroidInterface(), dist, command)
 
 
 screen android_process(interface):
@@ -452,19 +475,13 @@ label android_configure:
 
 label android_build:
 
-    python:
-        with interface.nolinks():
-            update_android_json()
-            rapt.build.build(AndroidInterface(), project.current.path, [ 'release' ])
+    $ android_build([ 'release' ])
 
     jump android
 
 
 label android_build_and_install:
 
-    python:
-        with interface.nolinks():
-            update_android_json()
-            rapt.build.build(AndroidInterface(), project.current.path, [ 'release', 'install' ])
+    $ android_build([ 'release', 'install' ])
 
     jump android
