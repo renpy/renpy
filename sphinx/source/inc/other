@@ -1,5 +1,15 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.choice_for_skipping()
+    
+    Tells Ren'Py that a choice is coming up soon. This currently has
+    two effects:
+    
+    * If Ren'Py is skipping, and the Skip After Choices preferences is set
+      to stop skipping, skipping is terminated.
+    
+    * An auto-save is triggered.
+
 .. function:: renpy.clear_game_runtime()
     
     Resets the game runtime counter.
@@ -14,6 +24,14 @@
     
     Attempts to free some memory. Useful before running a renpygame-based
     minigame.
+
+.. function:: renpy.full_restart(transition=False, label='_invoke_main_menu', target='_main_menu')
+    
+    Causes Ren'Py to restart, returning the user to the main menu.
+    
+    `transition`
+        If given, the transition to run, or None to not run a transition.
+        False uses :var:`config.end_game_transition`.
 
 .. function:: renpy.get_game_runtime()
     
@@ -117,12 +135,37 @@
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.
 
+.. function:: renpy.pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True)
+    
+    Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
+    or false if the pause timed out or was skipped.
+    
+    `delay`
+        If given, the number of seconds Ren'Py should pause for.
+    
+    `music`
+        Retained for compatibility purposes.
+    
+    `with_none`
+        Determines if a with None clause is executed at the end of the pause.
+    
+    `hard`
+        If true, a click will not interrupt the pause. Use this sparingly,
+        as it's hard to distinguish a hard pause from a crashing game.
+    
+    `checkpoint`
+        If true, a checkpoint is placed so rollback can occur.
+
 .. function:: renpy.quit(relaunch=False)
     
     This causes Ren'Py to exit entirely.
     
     `relaunch`
         If true, Ren'Py will run a second copy of itself before quitting.
+
+.. function:: renpy.screenshot(filename)
+    
+    Saves a screenshot in `filename`.
 
 .. function:: renpy.set_physical_size(size)
     
