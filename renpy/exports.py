@@ -553,9 +553,15 @@ def menu(items, set_expr):
 
 def choice_for_skipping():
     """
-    This is called to indicate to the skipping code that we have
-    reached a choice. If we're skipping, and if the skip after
-    choices preference is not True, then this disables skipping.
+    :doc: other
+
+    Tells Ren'Py that a choice is coming up soon. This currently has
+    two effects:
+
+    * If Ren'Py is skipping, and the Skip After Choices preferences is set
+      to stop skipping, skipping is terminated.
+
+    * An auto-save is triggered.
     """
 
     if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
@@ -855,6 +861,29 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
 
 def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
+    """
+    :doc: other
+
+    Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
+    or false if the pause timed out or was skipped.
+
+    `delay`
+        If given, the number of seconds Ren'Py should pause for.
+
+    `music`
+        Retained for compatibility purposes.
+
+    `with_none`
+        Determines if a with None clause is executed at the end of the pause.
+
+    `hard`
+        If true, a click will not interrupt the pause. Use this sparingly,
+        as it's hard to distinguish a hard pause from a crashing game.
+
+    `checkpoint`
+        If true, a checkpoint is placed so rollback can occur.
+    """
+
 
     if renpy.config.skipping == "fast":
         return False
@@ -1090,7 +1119,13 @@ def take_screenshot(scale=None, background=False):
 
 def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu"):
     """
-    This causes a full restart of Ren'Py.
+    :doc: other
+
+    Causes Ren'Py to restart, returning the user to the main menu.
+
+    `transition`
+        If given, the transition to run, or None to not run a transition.
+        False uses :var:`config.end_game_transition`.
     """
 
     if transition is False:
@@ -1100,7 +1135,7 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
 
 def utter_restart():
     """
-    This causes an utter restart of Ren'Py. This reloads the script and
+    Causes an utter restart of Ren'Py. This reloads the script and
     re-runs initialization.
     """
 
@@ -1151,19 +1186,22 @@ def call(label, *args, **kwargs):
 
 def screenshot(filename):
     """
-    Saves a screenshot in the named filename.
+    :doc: other
+
+    Saves a screenshot in `filename`.
     """
 
     renpy.game.interface.save_screenshot(filename)
 
 def version(tuple=False): #@ReservedAssignment
     """
-    Returns a string containing the current version of Ren'Py, prefixed with the
-    string "Ren\'Py ".
+    :doc: `other`
 
-    `tuple`
-        If True, returns a tuple giving each component of the version as an
-        integer.
+    If `tuple` is false, returns a string containing "Ren'Py ", followed by
+    the current version of Ren'Py.
+
+    If `tuple` is true, returns a string giving each component of the
+    version as an integer.
     """
 
     if tuple:
