@@ -210,8 +210,7 @@ screen launcher_input:
                 add SPACER
                 text _("Due to package format limitations, non-ASCII file and directory names are not allowed.")
 
-        label _("[title]") style "l_info_label" text_color QUESTION_COLOR
-
+        label title style "l_info_label" text_color QUESTION_COLOR
 
     if cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
