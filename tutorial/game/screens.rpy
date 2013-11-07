@@ -452,7 +452,7 @@ screen preferences:
 
                     textbutton _("Voice Sustain") action Preference("voice sustain", "toggle")
                     if config.sample_voice:
-                        textbutton "Test":
+                        textbutton _("Test"):
                             action Play("voice", config.sample_voice)
                             style "soundtest_button"
 
