@@ -4,6 +4,28 @@ Dealing with Problems
 .. include:: display_problems.rst
 
 
+Windows Encoding Problems
+-------------------------
+
+Ren'Py will fail to start on Windows if it's placed in a directory with a
+full path that isn't representable in the current system language. For example,
+if Ren'Py is in the directory:
+
+    C:\ビジュアルノベル\renpy-6.16.0-sdk\
+
+and the system is set to use the English language, Ren'Py will be unable to
+start. To fix this problem, start the control panel, select "Region and Language
+Options", "Advanced", and change the Language for non-Unicode programs.
+
+
+OS X 10.9 Mavericks
+-------------------
+
+A bug in OS X 10.9 Mavericks prevents Ren'Py from starting when launched
+on a non-primary display. Until Apple fixes this bug, please launch Ren'Py from
+the the primary display.
+
+
 64-Bit Linux Problems
 ----------------------
 
