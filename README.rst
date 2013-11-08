@@ -61,12 +61,12 @@ of some of the libraries requires permission to install them globally
 however if one does not wish to do so, this can be overcome by installing 
 the libraries into a python `virtualenv` (more information to this below under "Without Global Permissions") 
 
-###With Global Permissions###
+**With Global Permissions**
 The required software can be installed using `pip`::
 
     pip install sphinx cython
 
-Then install the necessary libraries
+Then install the necessary libraries::
 
     apt-get install python-dev python-pygame libavcodec-dev libavformat-dev \
         libfreetype6-dev libglew1.6-dev libsdl1.2-dev libsdl-image1.2-dev \
@@ -83,7 +83,7 @@ Finally, change into the modules directory, and run::
 
 Ren'Py can then be run by using python to run renpy.py
 
-###Without Global Permissions###
+**Without Global Permissions**
 
 If one does not have global permissions (or does not wish to use them) one can use python 
 `virtualenv`. `virtualenv` is essentially a smaller installation of python made in the $HOME
@@ -102,7 +102,7 @@ installing the required libraries and modules::
     workon renpy
      
 Now one can install software into this virtual environment using `pip`. More information on 
-how to use this tool can be found [here](http://virtualenvwrapper.readthedocs.org/en/latest/) 
+how to use this tool can be found here: (http://virtualenvwrapper.readthedocs.org/en/latest/) 
 
 Contributing
 ============
