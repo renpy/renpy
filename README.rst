@@ -65,6 +65,10 @@ the libraries into a python `virtualenv` (more information to this below under "
 The required software can be installed using `pip`::
 
     pip install sphinx cython
+    
+Or `apt` and `easy_install`::
+
+    apt-get install cython && easy_install -U sphinx
 
 Then install the necessary libraries::
 
@@ -101,8 +105,8 @@ installing the required libraries and modules::
     mkvirtualenv renpy
     workon renpy
      
-Now one can install software into this virtual environment using `pip`. More information on 
-how to use this tool can be found here: (http://virtualenvwrapper.readthedocs.org/en/latest/) 
+Now one can install software into this virtual environment using `pip` as in the section *With Global Permission*. 
+More information on how to use this tool can be found here: (http://virtualenvwrapper.readthedocs.org/en/latest/) 
 
 Contributing
 ============
