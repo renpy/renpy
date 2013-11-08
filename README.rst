@@ -18,7 +18,7 @@ The master branch contains code that can be run using the precompiled libraries 
 the latest (release or pre-release) version of Ren'Py. It is mainly used for
 bugfixes and features that do not require C or Cython code to implement.
 
-To start please check out from devel into the `master` branch.
+To start please check out from devel into the `master` branch::
 
     git checkout master
 
@@ -39,11 +39,11 @@ of the folder `doc`, making this inaccessible. This is because the documentation
 has not been built using the documentation generator `sphinx`.
 
 To build this please install the sphinx documentation generator using the python
-package installation tool `pip`, install sphinx.
+package installation tool `pip`, install sphinx::
 
     pip install sphinx
 
-Change directory into renpy/sphinx and run this command to build the documentation.
+Change directory into renpy/sphinx and run this command to build the documentation::
 
     ./ build.sh
     
@@ -62,7 +62,7 @@ however if one does not wish to do so, this can be overcome by installing
 the libraries into a python `virtualenv` (more information to this below under "Without Global Permissions") 
 
 ###With Global Permissions###
-The required software can be installed using `pip` 
+The required software can be installed using `pip`::
 
     pip install sphinx cython
 
@@ -72,7 +72,7 @@ Then install the necessary libraries
         libfreetype6-dev libglew1.6-dev libsdl1.2-dev libsdl-image1.2-dev \
         libfribidi-dev libswscale-dev libesd0-dev libpulse-dev
     
-RENPY_DEPS_INSTALLED to a \::-separated list of paths containing dependencies. 
+RENPY_DEPS_INSTALLED to a \::-separated list of paths containing dependencies:: 
 
     export RENPY_DEPS_INSTALL=/usr::/usr/lib/x86_64-linux-gnu/
     export RENPY_CYTHON=cython
@@ -81,7 +81,7 @@ Finally, change into the modules directory, and run::
 
     python setup.py install
 
-Ren'Py can then be run by using python to run renpy.py.
+Ren'Py can then be run by using python to run renpy.py
 
 ###Without Global Permissions###
 
@@ -90,13 +90,13 @@ If one does not have global permissions (or does not wish to use them) one can u
 directory to which one can add modules without su rights.
 
 The easiest way to do this is to install `virtualenvwrapper` which includes more features 
-than the stock `virtualenv` using pip. 
+than the stock `virtualenv` using pip::
 
     pip install virtualenvwrapper
     
 Once this is done, please restart the shell so that `virtualenv` is available for use. Then 
 one can make wrappers for managing the virtual environments and work on Ren'Py after 
-installing the required libraries and modules.
+installing the required libraries and modules::
 
     mkvirtualenv renpy
     workon renpy
