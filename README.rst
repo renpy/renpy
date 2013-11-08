@@ -108,6 +108,10 @@ installing the required libraries and modules::
 Now one can install software into this virtual environment using `pip` as in the section *With Global Permission*. 
 More information on how to use this tool can be found here: (http://virtualenvwrapper.readthedocs.org/en/latest/) 
 
+Finally one can run renpy using::
+
+    python renpy.py
+
 Contributing
 ============
 
