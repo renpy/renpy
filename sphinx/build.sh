@@ -5,7 +5,7 @@ cd $SPHINX
 
 # This has to be run with python (and not renpy.sh, or python -OO) since
 # optimization will remove the docstrings.
-python ../renpy.py . || exit 1
+../renpy.sh . || exit 1
 
 sphinx-build -a source ../doc || exit 1
 

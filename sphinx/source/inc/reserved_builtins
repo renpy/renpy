@@ -68,8 +68,6 @@
 * coerce
 * compile
 * complex
-* copyright
-* credits
 * delattr
 * dict
 * dir
@@ -77,7 +75,6 @@
 * enumerate
 * eval
 * execfile
-* exit
 * file
 * filter
 * float
@@ -87,7 +84,6 @@
 * globals
 * hasattr
 * hash
-* help
 * hex
 * id
 * input
@@ -97,7 +93,6 @@
 * issubclass
 * iter
 * len
-* license
 * list
 * locals
 * long
@@ -113,7 +108,6 @@
 * pow
 * print
 * property
-* quit
 * range
 * raw_input
 * reduce
