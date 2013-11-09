@@ -161,7 +161,7 @@ init python in project:
                 raise Exception("Python interpreter not found: %r", executables)
 
             # Put together the basic command line.
-            cmd = [ executable, "-EOO", sys.argv[0] ]
+            cmd = [ executable, "-EO", sys.argv[0] ]
 
             cmd.append(self.path)
             cmd.extend(args)

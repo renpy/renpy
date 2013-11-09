@@ -50,7 +50,7 @@ def start(basedir, gamedir):
         import subprocess
         import sys
 
-        cmd = [sys.executable, "-EOO", sys.argv[0], "show", "presplash", fn]
+        cmd = [sys.executable, "-EO", sys.argv[0], "show", "presplash", fn]
 
         def fsencode(s):
             if isinstance(s, str):

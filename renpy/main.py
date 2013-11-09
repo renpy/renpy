@@ -332,7 +332,7 @@ def main():
             except game.QuitException, e:
 
                 if e.relaunch:
-                    subprocess.Popen([sys.executable, "-EOO"] + sys.argv)
+                    subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
                 break
 
