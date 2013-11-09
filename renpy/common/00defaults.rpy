@@ -42,7 +42,7 @@ init 1500 python:
             _preferences.afm_time = config.default_afm_time
 
         if config.default_language is not None:
-            _preference.language = config.default_language
+            _preferences.language = config.default_language
 
         if config.default_wait_for_voice is not None:
             _preferences.wait_voice = config.default_wait_for_voice
