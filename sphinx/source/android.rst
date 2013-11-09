@@ -45,10 +45,10 @@ due to the Android software and hardware are:
   screen. When the user is not touching the screen, the virtual
   pointer will move to the upper-left corner of the screen.
 
-* Movie playback is not supported.
-
-* Some python modules (including network communication) modules are
-  not supported.
+* Movie playback is only supported in fullscreen mode, and only with
+  media formats that are supported by Android devices. See
+  `this page <http://developer.android.com/guide/appendix/media-formats.html>`_
+  for a list of supported video formats.
 
 * Ren'Py cannot change the device volume. However, the android volume
   buttons work normally.
