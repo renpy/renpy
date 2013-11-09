@@ -42,7 +42,7 @@ Save, Load, and Persistent Improvements
 The low-level load/save API has been overhauled. It's now possible to
 access save slot information directly, instead of having to scan all save
 slots to find the one you want. New functions include :func:`renpy.list_slots`,
-:func:`renpy.newest_slot`, :func:`renpy.slot_mtime`, :func:`renpy.slot_mtime`,
+:func:`renpy.newest_slot`, :func:`renpy.slot_mtime`,
 :func:`renpy.slot_json`, and :func:`renpy.slot_screenshot`.
 
 At a higher level, there is a new :func:`FileNewest` function that's
