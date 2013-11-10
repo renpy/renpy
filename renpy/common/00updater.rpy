@@ -819,14 +819,14 @@ init -1500 python in updater:
                     stdout=self.log,
                     stderr=self.log,
                     creationflags=CREATE_NO_WINDOW,
-                    cwd=self.updatedir)
+                    cwd=renpy.fsencode(self.updatedir))
             else:
 
                 p = subprocess.Popen(cmd,
                     stdin=subprocess.PIPE,
                     stdout=self.log,
                     stderr=self.log,
-                    cwd=self.updatedir)
+                    cwd=renpy.fsencode(self.updatedir))
 
             p.stdin.close()
 
