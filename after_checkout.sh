@@ -7,7 +7,6 @@ ln -s "$ROOT/help.html" "$ROOT/the_question/README.html"
 ln -s "$ROOT/help.html" "$ROOT/templates/english/README.html"
 
 ln -s "$ROOT/sphinx/source/license.rst" "$ROOT/LICENSE.txt"
-ln -s "$ROOT/sphinx/build/html" "$ROOT/doc"
 
 if [ "$1" != "" ]; then
     ln -s "$1/lib" "$ROOT/lib"

@@ -1,4 +1,4 @@
-#!/home/tom/bin/renpython -OO
+#!/home/tom/bin/renpython -O
 
 # Builds a distribution of Ren'Py.
 
@@ -67,13 +67,23 @@ def main():
     with open("renpy/vc_version.py", "w") as f:
         f.write("vc_version = {}".format(vc_version))
 
-    reload(sys.modules['renpy.vc_version']) #@UndefinedVariable
+    try:
+        reload(sys.modules['renpy.vc_version']) #@UndefinedVariable
+    except:
+        import renpy.vc_version # @UnusedImport
+
     reload(sys.modules['renpy'])
 
     # Check that the versions match.
     full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
-    if args.version != "experimental" and not full_version.startswith(args.version):
+    if args.version != "experimental" \
+        and not args.version.startswith("renpy-nightly-") \
+        and not full_version.startswith(args.version):
+
         raise Exception("The command-line and Ren'Py versions do not match.")
+
+    # The destination directory.
+    destination = os.path.join("dl", args.version)
 
     print "Version {} ({})".format(args.version, full_version)
 
@@ -91,8 +101,6 @@ def main():
             subprocess.check_call(["./renpy.sh", i, "quit" ])
 
 
-    # The destination directory.
-    destination = os.path.join("dl", args.version)
 
     if not os.path.exists(destination):
         os.makedirs(destination)
@@ -127,8 +135,6 @@ def main():
     # Kick off the rapt build.
     if not args.fast:
         out = open("/tmp/rapt_build.txt", "wb")
-
-        print os.getcwd()
 
         print("Building RAPT in the background.")
 
@@ -212,7 +218,7 @@ def main():
             print "RAPT build succeeded."
 
     print
-    print "Did you run me with renpython -OO?"
+    print "Did you run me with renpython -O?"
     print "Did you update renpy.py and launcher/script_version.rpy?"
 
 if __name__ == "__main__":
