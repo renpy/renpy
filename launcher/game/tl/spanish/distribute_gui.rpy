@@ -42,4 +42,4 @@ translate spanish strings:
 
     # game/distribute_gui.rpy:236
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
-    new "Tu proyecto no tiene información de construcción. ¿Te gustaría añadir información de construcción al final del archivo options.rpy?"
+    new "Tu proyecto no tiene información de construcción. ¿Te gustaría añadir la información de construcción al final del archivo options.rpy?"
