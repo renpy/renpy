@@ -6,7 +6,7 @@ translate spanish strings:
 
     # game/new_project.rpy:40
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
-    new "Por favor selecciona una plantilla para usar en tu nuevo proyecto. La plantilla establece la fuente predeterminada y el idioma de la interfaz de usuario, Si tu idioma no esta soportado, \"English\"."
+    new "Por favor selecciona una plantilla para usar en tu nuevo proyecto. La plantilla establece la fuente predeterminada y el idioma de la interfaz de usuario, Si tu idioma no está soportado, elige \"English\"."
 
     # game/new_project.rpy:55
     old "PROJECT NAME"
@@ -26,4 +26,4 @@ translate spanish strings:
 
     # game/new_project.rpy:70
     old "[project_dir!q] already exists. Please choose a different project name."
-    new "[project_dir!q] ya existe. Por favor elige un nombre diferente para el proyecto"
+    new "[project_dir!q] ya existe. Por favor elige un nombre diferente para el proyecto."
