@@ -119,7 +119,7 @@ screen front_page_project_list:
 
             for p in templates:
 
-                textbutton "[p.name!q] (template)":
+                textbutton _("[p.name!q] (template)"):
                     action project.Select(p)
                     style "l_list"
 
