@@ -34,7 +34,7 @@ translate spanish strings:
 
     # game/preferences.rpy:131
     old "Include library names"
-    new "Incluse nombre de bibliotecas"
+    new "Incluye nombres de bibliotecas"
 
     # game/preferences.rpy:141
     old "Launcher Options:"
