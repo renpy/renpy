@@ -18,7 +18,7 @@ translate spanish strings:
 
     # game/translations.rpy:30
     old "Ren'Py has finished generating [language] translations."
-    new "Ren'Pyは ha terminado de generar las traducciones [language]"
+    new "Ren'Py ha terminado de generar las traducciones [language]"
 
     # game/translations.rpy:44
     old "What format would you like for the extracted dialogue?"
@@ -26,7 +26,7 @@ translate spanish strings:
 
     # game/translations.rpy:56
     old "Ren'Py is extracting dialogue...."
-    new "Ren'Py esta extrayendo los diálogos..."
+    new "Ren'Py está extrayendo los diálogos..."
 
     # game/translations.rpy:60
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[format] in the base directory."
