@@ -16,6 +16,10 @@ translate spanish strings:
     old "Launch Project"
     new "Ejecutar Proyecto"
 
+    # game/front_page.rpy:122
+    old "[p.name!q] (template)"
+    new "[p.name!q] (plantilla)"
+
     # game/front_page.rpy:127
     old "Tutorial"
     new "Tutorial"
