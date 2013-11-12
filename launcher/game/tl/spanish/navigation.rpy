@@ -62,4 +62,4 @@ translate spanish strings:
 
     # game/navigation.rpy:238
     old "The list of names is empty."
-    new "La lista de nombre está vacáa."
+    new "La lista de nombres está vacía."
