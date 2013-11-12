@@ -44,6 +44,10 @@ translate spanish strings:
     old "Hardware rendering"
     new "Renderización por hardware"
 
+    # game/preferences.rpy:146
+    old "Show templates"
+    new "Mostrar plantillas"
+
     # game/preferences.rpy:148
     old "Console output"
     new "Salida de la consola"
