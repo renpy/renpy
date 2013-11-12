@@ -53,7 +53,7 @@ translate spanish strings:
 
     # game/editor.rpy:327
     old "An exception occured while launching the text editor:\n[exception!q]"
-    new "Ha ocurido una excepción mientras se ejecutaba el editor de texto:\[exception!q]"
+    new "Ha ocurrido una excepción mientras se ejecutaba el editor de texto:\[exception!q]"
 
     # game/editor.rpy:423
     old "Select Editor"
