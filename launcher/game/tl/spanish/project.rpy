@@ -2,7 +2,7 @@ translate spanish strings:
 
     # game/project.rpy:204
     old "Ren'Py is scanning the project..."
-    new "Ren'Py esta escaneando el proyecto..."
+    new "Ren'Py está escaneando el proyecto..."
 
     # game/project.rpy:503
     old "PROJECTS DIRECTORY"
@@ -14,7 +14,7 @@ translate spanish strings:
 
     # game/project.rpy:503
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
-    new "Este launcher buscará proyectos en esta carpeta, creará nuevos proyectos en esta carpeta, y colocará los proyectos en este directorio."
+    new "El launcher buscará proyectos en esta carpeta, creará nuevos proyectos en esta carpeta, y colocará los proyectos en este directorio."
 
     # game/project.rpy:543
     old "Ren'Py was unable to run python with tkinter to choose the projects directory."
