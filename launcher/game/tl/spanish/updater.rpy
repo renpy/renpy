@@ -14,7 +14,7 @@ translate spanish strings:
 
     # game/updater.rpy:76
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
-    new "{b}Recomendado.{/b} La versión the Ren'Py que se recoemienda usar en todos los juegos recién liberados."
+    new "{b}Recomendado.{/b} La versión the Ren'Py que se recomienda usar en todos los juegos recién liberados."
 
     # game/updater.rpy:81
     old "Prerelease"
@@ -38,11 +38,11 @@ translate spanish strings:
 
     # game/updater.rpy:121
     old "Checking for updates."
-    new "Comprobar actualizaciones."
+    new "Comprobando actualizaciones."
 
     # game/updater.rpy:123
     old "Ren'Py is up to date."
-    new "Ren'Py esta actualizado."
+    new "Ren'Py está actualizado."
 
     # game/updater.rpy:125
     old "[u.version] is now available. Do you want to install it?"
@@ -50,7 +50,7 @@ translate spanish strings:
 
     # game/updater.rpy:127
     old "Preparing to download the update."
-    new "Preparando para descargar la actualizacion."
+    new "Preparando para descargar la actualización."
 
     # game/updater.rpy:129
     old "Downloading the update."
