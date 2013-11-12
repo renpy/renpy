@@ -2,15 +2,15 @@ translate spanish strings:
 
     # game/android.rpy:12
     old "To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Para construir paquetes de Android, por favor descarga RAPT (desde {a=http://www.renpy.org/dl/android}aquí{/a}), descomprimelo y copialo dentro de la carpeta de Ren'Py. Despues reinicia el launcher de Ren'Py."
+    new "Para construir paquetes de Android, por favor descarga RAPT (desde {a=http://www.renpy.org/dl/android}aquí{/a}), descomprímelo y cópialo dentro de la carpeta de Ren'Py. Después reinicia el launcher de Ren'Py."
 
     # game/android.rpy:13
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT esta instalado, pero tendrás que instalar el SDK de Android para poder construir paquetes de Android. Selecciona instalar SDK para hacerlo."
+    new "RAPT está instalado, pero tendrás que instalar el SDK de Android para poder construir paquetes de Android. Selecciona instalar SDK para instalarlo."
 
     # game/android.rpy:14
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT esta instalado, pero la clave aun no se ha configurado. Por favor crea una nueva clave, o restaura android.keystore."
+    new "RAPT está instalado, pero la clave aun no se ha configurado. Por favor crea una nueva clave, o restaura android.keystore."
 
     # game/android.rpy:15
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
@@ -22,15 +22,15 @@ translate spanish strings:
 
     # game/android.rpy:18
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Al intentar emular un telefono Android. \n\nLa entrada tactil se emula mediante el ratón, pero sólo cuando el botón se mantiene pulsado. Escape está asignado al boton del menú, y PageUp esta asignado al botón Atrás."
+    new "Al intentar emular un teléfono Android. \n\nLa entrada táctil se emula mediante el ratón, pero sólo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
 
     # game/android.rpy:19
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Al intentar emular una tablet Android. \n\nLa entrada tactil se emula mediante el ratón, pero sólo cuando el botón se mantiene pulsado. Escape está asignado al boton del menú, y PageUp esta asignado al botón Atrás."
+    new "Al intentar emular una tablet Android. \n\nLa entrada táctil se emula mediante el ratón, pero sólo cuando el botón se mantiene pulsado. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
 
     # game/android.rpy:20
     old "Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Al intentar emular una consola OUYA. \n\nPara el control se usan las flechas, Intro está asignado al botón select. Escape está asignado al boton del menú, y PageUp esta asignado al botón Atrás."
+    new "Al intentar emular una consola OUYA. \n\nPara el control se usan las flechas, Intro está asignado al botón select. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
 
     # game/android.rpy:22
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
@@ -38,7 +38,7 @@ translate spanish strings:
 
     # game/android.rpy:23
     old "Configures the package name, version, and other information about this project."
-    new "Configura el nombre del paquete, la version, y otra información de este proyecto."
+    new "Configura el nombre del paquete, la versión, y otra información de este proyecto."
 
     # game/android.rpy:24
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
@@ -50,7 +50,7 @@ translate spanish strings:
 
     # game/android.rpy:26
     old "Builds the Android package, and installs it on an Android device connected to your computer."
-    new "Construye el paquete de Android, y instalala en un dispositivo Android connectado a tu ordenador."
+    new "Construye el paquete de Android, e instálalo en un dispositivo Android connectado a tu ordenador."
 
     # game/android.rpy:142
     old "{a=%s}%s{/a}"
@@ -70,7 +70,7 @@ translate spanish strings:
 
     # game/android.rpy:379
     old "Phone"
-    new "Telefono"
+    new "Teléfono"
 
     # game/android.rpy:383
     old "Tablet"
