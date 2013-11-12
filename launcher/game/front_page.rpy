@@ -111,8 +111,19 @@ screen front_page:
 screen front_page_project_list:
 
     $ projects = project.manager.projects
+    $ templates = project.manager.templates
 
     vbox:
+
+        if templates and persistent.show_templates:
+
+            for p in templates:
+
+                textbutton "[p.name!q] (template)":
+                    action project.Select(p)
+                    style "l_list"
+
+            null height 12
 
         if projects:
 
