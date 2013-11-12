@@ -50,7 +50,7 @@ translate spanish strings:
 
     # game/interface.rpy:211
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "Debido a las limitaciones del formato de paquete, no se permite el uso de nombres de archivos y carpeta que no sean ASCII"
+    new "Debido a las limitaciones del formato de paquete, no se permite el uso de nombres de archivos y carpetas que no sean ASCII"
 
     # game/interface.rpy:213
     old "[title]"
@@ -74,7 +74,7 @@ translate spanish strings:
 
     # game/interface.rpy:352
     old "File and directory names may not contain / or \\."
-    new "Los nombres de archivos y carpetas no puden contener / o \\."
+    new "Los nombres de archivos y carpetas no pueden contener / o \\."
 
     # game/interface.rpy:358
     old "File and directory names must consist of ASCII characters."
