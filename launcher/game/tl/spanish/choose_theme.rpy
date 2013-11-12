@@ -2,7 +2,7 @@ translate spanish strings:
 
     # game/choose_theme.rpy:274
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new "No se peude cambiar el tema. Quizás options.rpy fue cambiado demasiado."
+    new "No se puede cambiar el tema. Quizás options.rpy ha sufrido muchos cambios."
 
     # game/choose_theme.rpy:332
     old "Display"
