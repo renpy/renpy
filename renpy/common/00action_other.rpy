@@ -306,6 +306,41 @@ init -1500 python:
         def get_sensitive(self):
             return _in_replay
 
+    class MouseJump(Action):
+        """
+        :doc: other_action
+
+        Jump the mouse pointer to the location given by arguments x and y.
+        If a android device or _preferences.mouse_move is False, this does
+        nothing.
+        """
+        def __init__(self, x, y):
+            self.x = x
+            self.y = y
+
+        def __call__(self):
+            if _preferences.mouse_move:
+                renpy.set_mouse_pos(self.x, self.y)
+
+    class MouseMove(Action):
+        """
+        :doc: other_action
+
+        Move the mouse pointer to the location given by arguments x and y in
+        ``limit`` seconds.
+        If a android device or _preferences.mouse_move is False, this does
+        nothing.
+        """
+        def __init__(self, x, y, limit):
+            self.x = x
+            self.y = y
+            self.limit = limit
+
+        def __call__(self):
+            if _preferences.mouse_move:
+                renpy.mouse_move(self.x, self.y, self.limit)
+
+
 transform _notify_transform:
     # These control the position.
     xalign .02 yalign .015

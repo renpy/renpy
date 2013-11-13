@@ -71,6 +71,10 @@ init -1500 python:
          * Preference("auto-forward", "disable") - Disable auto-forward mode.
          * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
 
+         * Preference("automatic move", "enable") - Enable automatic mouse mode.
+         * Preference("automatic move", "disable") - Disable automatic mouse mode.
+         * Preference("automatic move", "toggle") - Toggle automatic mouse mode.
+
          * Preference("wait for voice", "enable")  - Wait for the currently playing voice to complete before auto-forwarding.
          * Preference("wait for voice", "disable") - Do not wait for the currently playing voice to complete before auto-forwarding.
          * Preference("wait for voice", "toggle")  - Toggle wait voice.
@@ -187,6 +191,15 @@ init -1500 python:
                 return SetField(_preferences, "afm_enable", False)
             elif value == "toggle":
                 return ToggleField(_preferences, "afm_enable")
+
+        elif name == "automatic move":
+
+            if value == "enable":
+                return SetField(_preferences, "mouse_move", True)
+            elif value == "disable":
+                return SetField(_preferences, "mouse_move", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "mouse_move")
 
         elif name == "wait for voice":
 

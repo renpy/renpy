@@ -25,7 +25,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 7
+    __version__ = 8
 
     def after_upgrade(self, version):
         if version < 1:
@@ -43,6 +43,8 @@ class Preferences(renpy.object.Object):
             self.wait_voice = True
         if version < 7:
             self.voice_sustain = False
+        if version < 8:
+            self.mouse_move = False
 
     def __init__(self):
         self.fullscreen = False
@@ -51,6 +53,7 @@ class Preferences(renpy.object.Object):
         self.afm_time = 0
         self.afm_enable = True
         self.voice_sustain = False
+        self.mouse_move = False
 
         # Should we wait for the voice to stop?
         self.wait_voice = True
