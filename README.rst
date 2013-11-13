@@ -4,6 +4,8 @@ The Ren'Py Visual Novel Engine
 
 http://www.renpy.org
 
+*Currently these instructions are Ubuntu/Debian specific, and these instructions will work, without
+modification only on this platform until further notice and changes in the near future.*
 
 Branches
 ========
@@ -26,10 +28,7 @@ After checking out master, run::
 
     ./after_checkout.sh <path-to-built-renpysdk>
 
-to link in the libraries from the most recent Ren'Py. (On Windows, you
-will need to run this under msys or cygwin however the use of cygwin is
-deprecated because it would mean that this working copy of Ren'Py would
-have to be covered by the GNU GPL.)
+to link in the libraries from the most recent Ren'Py.
 
 Ren'Py can then be run by running renpy.exe, renpy.sh, or renpy.app as
 appropriate.
@@ -45,7 +44,7 @@ package installation tool `pip`, install sphinx::
 
 Change directory into renpy/sphinx and run this command to build the documentation::
 
-    ./ build.sh
+    ./build.sh
     
 This will be helpful to those who wish to change documentation files, and want to 
 see the end result by running this build script.
