@@ -2124,3 +2124,12 @@ def get_mouse_pos():
     currently being touched, x and y are numbers, but not meaningful.
     """
     return renpy.display.draw.get_mouse_pos()
+
+def set_mouse_pos(x, y):
+    """
+    :doc: other
+
+    Jump the mouse pointer to the location given by arguments x and y.
+    If a android device, this does nothing.
+    """
+    return renpy.display.draw.set_mouse_pos(x, y)
