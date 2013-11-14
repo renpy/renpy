@@ -310,9 +310,9 @@ init -1500 python:
         """
         :doc: other_action
 
-        Jump the mouse pointer to the location given by arguments x and y.
-        If a android device or _preferences.mouse_move is False, this does
-        nothing.
+        Jump the mouse pointer to the location given by arguments x and y.  If
+        the device does not have a mouse pointer or _preferences.mouse_move is
+        False, this does nothing.
         """
         def __init__(self, x, y):
             self.x = x
@@ -327,9 +327,8 @@ init -1500 python:
         :doc: other_action
 
         Move the mouse pointer to the location given by arguments x and y in
-        ``limit`` seconds.
-        If a android device or _preferences.mouse_move is False, this does
-        nothing.
+        ``limit`` seconds.  If the device does not have a mouse pointer or
+        _preferences.mouse_move is False, this does nothing.
         """
         def __init__(self, x, y, limit):
             self.x = x

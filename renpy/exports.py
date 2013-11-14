@@ -2130,7 +2130,7 @@ def set_mouse_pos(x, y):
     :doc: other
 
     Jump the mouse pointer to the location given by arguments x and y.
-    If a android device, this does nothing.
+    If the device does not have a mouse pointer, this does nothing.
     """
     return renpy.display.draw.set_mouse_pos(x, y)
 
@@ -2140,7 +2140,7 @@ def mouse_move(x, y, limit):
 
     Move the mouse pointer to the location given by arguments x and y in
     ``limit`` seconds.
-    If a android device, this does nothing.
+    If the device does not have a mouse pointer, this does nothing.
     """
 
     start = renpy.display.core.get_time()
