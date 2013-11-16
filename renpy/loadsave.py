@@ -494,7 +494,7 @@ def newest_slot(regexp=None):
 
         for i in slots:
 
-            if not re.match(regexp, i):
+            if (regexp is not None) and (not re.match(regexp, i)):
                 continue
 
             mtime = get_cache(i).get_mtime()
