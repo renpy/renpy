@@ -57,3 +57,7 @@ translate japanese strings:
     old "Language:"
     new "言語:"
 
+    # game/preferences.rpy:146
+    old "Show templates"
+    new "テンプレートの表示"
+

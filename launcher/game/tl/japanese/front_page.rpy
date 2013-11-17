@@ -85,3 +85,7 @@ translate japanese strings:
     old "Deleting persistent data..."
     new "永続データを削除しています…"
 
+    # game/front_page.rpy:122
+    old "[p.name!q] (template)"
+    new "[p.name!q] (テンプレート)"
+

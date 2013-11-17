@@ -33,3 +33,7 @@ translate japanese strings:
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "すべてのパッケージがビルドされました。\n\nパーミッション情報のために、Windows上でのLinuxやMacintosh用の配布物の解凍、再圧縮はサポートされません。"
 
+    # game/distribute.rpy:358
+    old "No packages are selected, so there's nothing to do."
+    new "パッケージが選択されていないため、何もすることがありません。"
+
