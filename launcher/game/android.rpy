@@ -2,13 +2,15 @@
 # See LICENSE.txt for license details.
 
 init python:
-    ANDROID_NO_RAPT = 0
-    ANDROID_NO_SDK = 1
-    ANDROID_NO_KEY = 2
-    ANDROID_NO_CONFIG = 3
-    ANDROID_OK = 4
+    ANDROID_NO_JDK = 0
+    ANDROID_NO_RAPT = 1
+    ANDROID_NO_SDK = 2
+    ANDROID_NO_KEY = 3
+    ANDROID_NO_CONFIG = 4
+    ANDROID_OK = 5
 
 
+    NO_JDK_TEXT = _("A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher.")
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
     NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
     NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore.")
@@ -78,6 +80,8 @@ init python:
         Determines the state of the android install, and returns it.
         """
 
+        if renpy.windows and not "JAVA_HOME" in os.environ:
+            return ANDROID_NO_JDK
         if RAPT_PATH is None:
             return ANDROID_NO_RAPT
         if not os.path.exists(os.path.join(RAPT_PATH, "android-sdk/extras/google/play_licensing")):
@@ -94,6 +98,8 @@ init python:
         Returns text corresponding to the state.
         """
 
+        if state == ANDROID_NO_JDK:
+            return NO_JDK_TEXT
         if state == ANDROID_NO_RAPT:
             return NO_RAPT_TEXT
         if state == ANDROID_NO_SDK:
