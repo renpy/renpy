@@ -1,9 +1,8 @@
-
 translate spanish strings:
 
     # game/distribute.rpy:358
     old "No packages are selected, so there's nothing to do."
-    new ""
+    new "Ningún paquete seleccionado. No hay nada que hacer."
 
     # game/distribute.rpy:363
     old "Scanning project files..."
