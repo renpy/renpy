@@ -46,7 +46,7 @@ translate spanish strings:
 
     # game/updater.rpy:125
     old "[u.version] is now available. Do you want to install it?"
-    new "[u.version] ahora esta disponible. ¿Quieres instalarla?"
+    new "[u.version] ahora está disponible. ¿Quieres instalarla?"
 
     # game/updater.rpy:127
     old "Preparing to download the update."
@@ -82,4 +82,4 @@ translate spanish strings:
 
     # game/updater.rpy:162
     old "Proceed"
-    new "Seguír"
+    new "Seguir"
