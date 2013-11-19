@@ -30,11 +30,11 @@ translate spanish strings:
 
     # game/preferences.rpy:130
     old "Include private names"
-    new "Incluye los nombres privados"
+    new "Incluir nombres privados"
 
     # game/preferences.rpy:131
     old "Include library names"
-    new "Incluye nombres de bibliotecas"
+    new "Incluir nombres de bibliotecas"
 
     # game/preferences.rpy:141
     old "Launcher Options:"
