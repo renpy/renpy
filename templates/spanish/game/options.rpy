@@ -7,40 +7,48 @@
 ## commented-out code, and you may want to uncomment them when
 ## appropriate.
 ##
-## Este archivo contiene algunas de las opciones que pueden cambiarse para
-## personalizar el juego Ren'Py. Solo figuran las opciones más comunes.
-## Es posible añadir muchas más personalizaciones.
+## - Este archivo contiene algunas de las opciones que pueden cambiarse para
+##   personalizar el juego Ren'Py. Solo figuran las opciones más comunes.
+##   Es posible añadir muchas más personalizaciones.
 ##
-## Las líneas que empiezan con dos marcas '#' son comentarios, no debes 
-## eliminar las marcas. Las líneas que comienzan con una sola marca '#'
-## contienen código no activo. La marca '#' puede eliminarse si se quiere
-## utilizar esa característica.
+## - Las líneas que empiezan con dos marcas '#' son comentarios, no debes 
+##   eliminar las marcas. Las líneas que comienzan con una sola marca '#'
+##   contienen código no activo. La marca '#' puede eliminarse si se quiere
+##   utilizar esa característica.
 
 init -1 python hide:
 
     ## Should we enable the use of developer tools? This should be
     ## set to False before the game is released, so the user can't
     ## cheat using developer tools.
+    ## - Esta variable habilita las herramientas de desarrollo. Debe ser
+    ##   ajustada a False antes del lanzamiento del juego, así el usuario
+    ##   no puede hacer trampas usando las herramientas de desarrollo.
 
     config.developer = True
 
     ## These control the width and height of the screen.
+    ## - Control de la anchura y altura de la pantalla.
 
     config.screen_width = 800
     config.screen_height = 600
 
     ## This controls the title of the window, when Ren'Py is
     ## running in a window.
+    ## - Título de la ventana, cuando Ren'Py se ejecuta en modo ventana.
 
     config.window_title = u"PROJECT_NAME"
 
-    # These control the name and version of the game, that are reported
-    # with tracebacks and other debugging logs.
+    ## These control the name and version of the game, that are reported
+    ## with tracebacks and other debugging logs.
+    ## - Control del nombre y versión del juego; se utilizan en los
+    ##   rastreos y otras funciones de depuración.
     config.name = "PROJECT_NAME"
     config.version = "0.0"
 
     #########################################
-    # Themes
+    ## Themes
+    ## - Temas
 
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
@@ -48,51 +56,77 @@ init -1 python hide:
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
+    
+    ## - Para utilizar una función de tema, utilizamos themes.roundrect.
+    ##   Este tema configura el uso de rectángulos redondeados.
+    ##   Actualmente es la única función soportada.
+    ## 
+    ## - La función de tema acepta una serie de parámetros que pueden
+    ##   personalizar la paleta de colores.
 
     theme.roundrect(
 
         ## The color of an idle widget face.
+        ## - Color base de un elemento (widget).
         widget = "#003c78",
 
         ## The color of a focused widget face.
+        ## - Color de un elemento con foco.
         widget_hover = "#0050a0",
 
         ## The color of the text in a widget.
+        ## - Color del texto en un elemento.
         widget_text = "#c8ffff",
 
         ## The color of the text in a selected widget. (For
         ## example, the current value of a preference.)
+        ## - Color del texto en un elemento seleccionado (por ejemplo,
+        ##   el valor actual de una preferencia).
         widget_selected = "#ffffc8",
 
         ## The color of a disabled widget face.
+        ## - Color de un elemento deshabilitado
         disabled = "#404040",
 
         ## The color of disabled widget text.
+        ## - Color del texto de un elemento deshabilitado
         disabled_text = "#c8c8c8",
 
         ## The color of informational labels.
+        ## - Color de las etiquetas de información.
         label = "#ffffff",
 
         ## The color of a frame containing widgets.
+        ## - Color del marco que contiene los elementos.
         frame = "#6496c8",
 
         ## If this is True, the in-game window is rounded. If False,
         ## the in-game window is square.
+        ## - Si es 'True', la ventana interna del juego tendrà las
+        ##   esquinas redondeadas. Si es 'False', serà rectangular.
         rounded_window = False,
 
         ## The background of the main menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
+        ## - Fondo del menú principal. Puede ser un color que
+        ##   comience con '#' o bien el nombre de un archivo de imagen.
+        ##   En ese caso, debe ocupar el ancho y alto de la pantalla.
         mm_root = "#dcebff",
 
         ## The background of the game menu. This can be a color
         ## beginning with '#', or an image filename. The latter
         ## should take up the full height and width of the screen.
+        ## - Fondo del menú del juego. Puede ser un color que
+        ##   comience con '#' o bien el nombre de un archivo de imagen.
+        ##   En ese caso, debe ocupar el ancho y alto de la pantalla.
         gm_root = "#dcebff",
 
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
         ## do so below.
+        ## - Hemos terminado con el tema. El tema personalizará varios
+        ##   estilos, que pueden ser cambiados más abajo.
         )
 
 
