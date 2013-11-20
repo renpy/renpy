@@ -1,4 +1,3 @@
-
 translate None strings:
 
     # game/screens.rpy:192
@@ -7,7 +6,7 @@ translate None strings:
 
     # game/screens.rpy:193
     old "Load Game"
-    new "Abrir"
+    new "Cargar"
 
     # game/screens.rpy:194
     old "Preferences"
@@ -27,7 +26,7 @@ translate None strings:
 
     # game/screens.rpy:226
     old "Save Game"
-    new "Grabar"
+    new "Guardar"
 
     # game/screens.rpy:228
     old "Main Menu"
