@@ -8,7 +8,7 @@
 ## appropriate.
 ##
 ## Este archivo contiene algunas de las opciones que pueden cambiarse para
-## personalizar el juego Ren'Py. Solo figuran las opciones más comunes...
+## personalizar el juego Ren'Py. Solo figuran las opciones más comunes.
 ## Es posible añadir muchas más personalizaciones.
 ##
 ## Las líneas que empiezan con dos marcas '#' son comentarios, no debes 
