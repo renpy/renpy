@@ -263,8 +263,6 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
-    get_cache(slotname).clear()
-
     if mutate_flag:
         renpy.python.mutate_flag = False
 
@@ -290,6 +288,9 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     sr = SaveRecord(screenshot, extra_info, json, logf.getvalue())
     location.save(slotname, sr)
+
+    location.scan()
+    clear_slot(slotname)
 
 
 
@@ -390,8 +391,16 @@ def scan_saved_game(slotname):
     if mtime is None:
         return None
 
-    extra_info = c.get_json().get("_extra_info", "")
+    json = c.get_json()
+    if json is None:
+        return None
+
+    extra_info = json.get("_extra_info", "")
+
     screenshot = c.get_screenshot()
+
+    if screenshot is None:
+        return None
 
     return extra_info, screenshot, mtime
 
@@ -485,7 +494,7 @@ def newest_slot(regexp=None):
 
         for i in slots:
 
-            if not re.match(regexp, i):
+            if (regexp is not None) and (not re.match(regexp, i)):
                 continue
 
             mtime = get_cache(i).get_mtime()

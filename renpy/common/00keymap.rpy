@@ -178,7 +178,7 @@ init -1600 python:
         if not config.fast_skipping and not config.developer:
             return
 
-        Skip(fast=True, confirm=not config.developer)
+        Skip(fast=True, confirm=not config.developer)()
 
     def _reload_game():
         if not config.developer:

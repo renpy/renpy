@@ -143,6 +143,7 @@ screen preferences:
                         add HALF_SPACER
 
                         textbutton _("Hardware rendering") style "l_checkbox" action ToggleField(persistent, "gl_enable")
+                        textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
 
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")

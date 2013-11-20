@@ -35,14 +35,14 @@ init -1 python hide:
     ## ゲームがウインドウモードで起動している時の
     ## ウインドウタイトルを変更します。
 
-    config.window_title = u"A Ren'Py Game"
+    config.window_title = u"PROJECT_NAME"
 
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     # ゲームの名前とバージョンを変更します。
     # トレースバックなどのデバッグ用ログに記載されます。
 
-    config.name = "A Ren'Py Game"
+    config.name = "PROJECT_NAME"
     config.version = "0.0"
 
     #########################################

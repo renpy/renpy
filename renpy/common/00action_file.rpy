@@ -230,13 +230,13 @@ init -1500 python:
 
             fn = __slotname(self.name, self.page)
 
-            if self.cycle:
-                renpy.renpy.loadsave.cycle_saves(self.page + "-", 10)
-
             if renpy.scan_saved_game(fn):
                 if self.confirm:
                     layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, False, self.page, cycle=self.cycle))
                     return
+
+            if self.cycle:
+                renpy.renpy.loadsave.cycle_saves(self.page + "-", 10)
 
             renpy.save(fn, extra_info=save_name)
 

@@ -15,7 +15,7 @@ Three are defined by default:
 * sound - A channel for sound effects.
 * voice - A channel for voice.
 
-New channels can be registeres with :func:`renpy.register_channel`.
+New channels can be registered with :func:`renpy.register_channel`.
 
 The 'Music Volume', 'Sound Volume', and 'Voice Volume' settings
 of the in-game preferences menu are used to set individual
@@ -73,7 +73,7 @@ Queue Statement
 ---------------
 
 The queue statement is used to queue up audio files. They will be played when
-the channel finishes playing the currently playing file. 
+the channel finishes playing the currently playing file.
 
 The queue statement begin with keyword ``queue``, followed by the the name of a
 channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::

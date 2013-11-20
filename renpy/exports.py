@@ -2114,3 +2114,13 @@ def is_seen(ever=True):
     """
 
     return renpy.game.context().seen_current(ever)
+
+def get_mouse_pos():
+    """
+    :doc: other
+
+    Returns an (x, y) tuple giving the location of the mouse pointer or the
+    current touch location. If the device does not support a mouse and is not
+    currently being touched, x and y are numbers, but not meaningful.
+    """
+    return renpy.display.draw.get_mouse_pos()

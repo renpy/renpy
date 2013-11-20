@@ -101,3 +101,7 @@ translate japanese strings:
     old "Build & Install"
     new "ビルド & インストール"
 
+    # game/android.rpy:13
+    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Windowsでは、Androidパッケージのビルドに32-bitのJava開発キットが必要です。JDKはJREとは異なるため、JDKが無くてもJavaが利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}JDKのダウンロードとインストール{/a}を行い、Ren'Pyランチャーを再起動して下さい。"
+
