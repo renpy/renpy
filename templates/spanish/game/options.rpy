@@ -85,11 +85,11 @@ init -1 python hide:
         widget_selected = "#ffffc8",
 
         ## The color of a disabled widget face.
-        ## - Color de un elemento deshabilitado
+        ## - Color de un elemento deshabilitado.
         disabled = "#404040",
 
         ## The color of disabled widget text.
-        ## - Color del texto de un elemento deshabilitado
+        ## - Color del texto de un elemento deshabilitado.
         disabled_text = "#c8c8c8",
 
         ## The color of informational labels.
@@ -133,15 +133,22 @@ init -1 python hide:
     #########################################
     ## These settings let you customize the window containing the
     ## dialogue and narration, by replacing it with an image.
+    ## - Estos ajustes permiten personalizar la ventana que contiene
+    ##   el diálogo y la narración, reemplazándola con una imagen.
 
     ## The background of the window. In a Frame, the two numbers
     ## are the size of the left/right and top/bottom borders,
     ## respectively.
+    ## - Fondo de la ventana. Usando un marco ('Frame'), los dos números
+    ##   indican la dimensión de los bordes izquierdo/derecho y
+    ##   superior/inferior, respectivamente.
 
     # style.window.background = Frame("frame.png", 12, 12)
 
     ## Margin is space surrounding the window, where the background
     ## is not drawn.
+    ## - El margen es el espacio alrededor de la ventana, en el cual el
+    ##   fondo no aparece.
 
     # style.window.left_margin = 6
     # style.window.right_margin = 6
@@ -150,6 +157,8 @@ init -1 python hide:
 
     ## Padding is space inside the window, where the background is
     ## drawn.
+    ## - El 'relleno' ('padding') es el margen interior a la ventana,
+    ##   en el cual el fondo sí se dibuja, pero no el texto.
 
     # style.window.left_padding = 6
     # style.window.right_padding = 6
@@ -158,12 +167,14 @@ init -1 python hide:
 
     ## This is the minimum height of the window, including the margins
     ## and padding.
+    ## - Altura mínima de la ventana, incluyendo margen y 'relleno'.
 
     # style.window.yminimum = 250
 
 
     #########################################
     ## This lets you change the placement of the main menu.
+    ## - Esta sección permite cambiar la disposición del menú principal.
 
     ## The way placement works is that we find an anchor point
     ## inside a displayable, and a position (pos) point on the
@@ -328,3 +339,4 @@ init -1 python hide:
 
     #########################################
     ## More customizations can go here.
+    ## - Más personalizaciones pueden ir aquí.
