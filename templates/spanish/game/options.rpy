@@ -6,6 +6,15 @@
 ## uncomment them. Lines beginning with a single '#' mark are
 ## commented-out code, and you may want to uncomment them when
 ## appropriate.
+##
+## Este archivo contiene algunas de las opciones que pueden cambiarse para
+## personalizar el juego Ren'Py. Solo figuran las opciones más comunes...
+## Es posible añadir muchas más personalizaciones.
+##
+## Las líneas que empiezan con dos marcas '#' son comentarios, no debes 
+## eliminar las marcas. Las líneas que comienzan con una sola marca '#'
+## contienen código no activo. La marca '#' puede eliminarse si se quiere
+## utilizar esa característica.
 
 init -1 python hide:
 
