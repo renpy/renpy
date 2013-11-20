@@ -37,14 +37,14 @@ expected to be forward or backwards compatible.
         SCROLLBAR_HOVER = "#d86b45"
 
         # An image used as a separator pattern.
-        PATTERN = "pattern.png"
+        PATTERN = "images/pattern.png"
 
         # A displayable used for the background of everything.
-        BACKGROUND = "background.png"
+        BACKGROUND = "images/background.png"
 
         # A displayable used for the background of windows
         # containing commands, preferences, and navigation info.
-        WINDOW = Frame("window.png", 0, 0, tile=True)
+        WINDOW = Frame("images/window.png", 0, 0, tile=True)
 
         # A displayable used for the background of the projects list.
         PROJECTS_WINDOW = Null()
