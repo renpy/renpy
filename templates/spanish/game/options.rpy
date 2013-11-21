@@ -8,10 +8,10 @@
 ## appropriate.
 ##
 ## - Este archivo contiene algunas de las opciones que pueden cambiarse para
-##   personalizar el juego Ren'Py. Solo figuran las opciones más comunes.
+##   personalizar el juego Ren'Py. Sólo figuran las opciones más comunes.
 ##   Es posible añadir muchas más personalizaciones.
 ##
-## - Las líneas que empiezan con dos marcas '#' son comentarios, no debes 
+## - Las líneas que empiezan con dos marcas '#' son comentarios, no debes
 ##   eliminar las marcas. Las líneas que comienzan con una sola marca '#'
 ##   contienen código no activo. La marca '#' puede eliminarse si se quiere
 ##   utilizar esa característica.
@@ -56,11 +56,11 @@ init -1 python hide:
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
-    
+
     ## - Para utilizar una función de tema, utilizamos themes.roundrect.
     ##   Este tema configura el uso de rectángulos redondeados.
     ##   Actualmente es la única función soportada.
-    ## 
+    ##
     ## - La función de tema acepta una serie de parámetros que pueden
     ##   personalizar la paleta de colores.
 
@@ -219,7 +219,7 @@ init -1 python hide:
 
     ## Note that these only change the size of some of the text. Other
     ## buttons have their own styles.
-    ## - Nota: Solo cambia el tamaño de parte del texto. Otros botones
+    ## - Nota: Sólo cambia el tamaño de parte del texto. Otros botones
     ##   tienen sus propios estilos.
 
 
@@ -277,7 +277,7 @@ init -1 python hide:
     ## - A file name relative to the base directory, which is opened in a
     ##   web browser.
     ## - None, to disable help.
-    
+
     ## - Configuración de la opción de ayuda de los menús de Ren'Py.
     ##   Puede ser:
     ##   - Una etiqueta (label) en el 'script', en cuyo caso se llama esa
