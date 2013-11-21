@@ -191,7 +191,7 @@ init -1 python hide:
     ## of pixels from the upper-left corner. If a floating point,
     ## the number is interpreted as a fraction of the size of the
     ## displayable or screen.
-    ## - El punto de anclaje y de posición (anchor/pos) puede indicarse
+    ## - Los puntos de anclaje y de posición (anchor/pos) pueden indicarse
     ##   con un número entero o decimal. Un entero indica los píxeles desde
     ##   la esquina superior izquierda. Un decimal, en cambio, se interpreta
     ##   como fracción de las dimensiones del elemento gráfico o la
@@ -229,17 +229,17 @@ init -1 python hide:
     ## - Ajuste de algunos de los sonidos utilizados por Ren'Py.
 
     ## Set this to False if the game does not have any sound effects.
-    ## - Ajusta a 'False' si el juego no tiene efectos de sonido.
+    ## - Ajustar a 'False' si el juego no tiene efectos de sonido.
 
     config.has_sound = True
 
     ## Set this to False if the game does not have any music.
-    ## - Ajusta a 'False' si el juego no tiene música.
+    ## - Ajustar a 'False' si el juego no tiene música.
 
     config.has_music = True
 
     ## Set this to True if the game has voicing.
-    ## - Ajusta a 'True' si el juego contiene voces.
+    ## - Ajustar a 'True' si el juego contiene voces.
 
     config.has_voice = False
 
@@ -285,7 +285,7 @@ init -1 python hide:
     ##   - El nombre de un archivo relativo al directorio base, que se abre
     ##     en un navegador web.
     ##   - 'None', para deshabilitar la ayuda (se debe eliminar el botón
-    ##     de ayuda en las pantallas (screens).
+    ##     de ayuda en las pantallas 'screens').
     config.help = "README.html"
 
 
