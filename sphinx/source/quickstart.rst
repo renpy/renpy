@@ -38,9 +38,8 @@ Once you've extracted Ren'Py, you'll need to run it.
 
 After running this, the Ren'Py launcher should run.
 
-.. image:: launcher.jpg
+.. image:: launcher.png
    :align: right
-   :width: 30%
 
 **Choosing and Launching a Project.** You should first see what the
 completed *The Question* game looks like. To do this, start the Ren'Py
@@ -53,7 +52,7 @@ choosing "Tutorial" instead of "The Question".
 **Creating a new Project.**
 Create a new project by choosing "Create New Project" from the
 launcher. The launcher will then ask you for a project name. Since
-"the_question" is already taken, you should enter something different,
+"The Question" is already taken, you should enter something different,
 like "My Question". The launcher will then ask you to choose a color
 theme for the project. It doesn't matter what you pick at this point,
 just choose something that appeals to you. You'll be returned to the
@@ -80,7 +79,7 @@ any pictures or anything like that, but it does show a conversation
 between the two characters.
 
 To try this out, go into the launcher, select the "My Question
-Project", and choose "script.rpy" from under Edit Files. Ren'Py may
+Project", and choose "script.rpy" from under Edit File. Ren'Py may
 ask you to select a text editor, after which it will download the
 editor you select. When it finishes, script.rpy will open in an
 editor.  Erase everything in script.rpy, as we're starting from
@@ -146,7 +145,7 @@ priority between files is undefined.
 The init blocks are all run once, during a special init phase. When control
 reaches the end of an init block during normal execution, execution of that
 block ends. If an init statement is encountered during normal execution, the
-init block is not run. Instead, control passes to the next statement. 
+init block is not run. Instead, control passes to the next statement.
 
 Characters
 ----------
@@ -424,7 +423,7 @@ Pause Statement
 
 The pause statement causes Ren'Py to pause until the mouse is clicked. If the
 optional expression is given, it will be evaluated to a number, and the pause
-will automatically terminate once that number of seconds has elapsed. 
+will automatically terminate once that number of seconds has elapsed.
 
 Ending the Game
 ---------------
@@ -486,9 +485,9 @@ statement. The code following that label is run.
 In our example above, after Sylvie asks her question, the user is
 presented with a menu containing two choices. If the user picks "It's
 a story with pictures.", the first jump statement is run, and control
-is transferred to the vn label. This will cause the pov character to
+is transferred to the ``vn`` label. This will cause the pov character to
 say "It's a story with pictures and music.", after which control is
-transferred to the marry label.
+transferred to the ``marry`` label.
 
 Labels may be defined in any file that is in the game directory, and
 ends with .rpy. The filename doesn't matter to Ren'Py, only the labels
@@ -566,11 +565,10 @@ before releasing it:
 
 **Check for a new version of Ren'Py.**
    New versions of Ren'Py are released on a regular basis, to fix bugs
-   and add new features. You should check the
-   `download page <http://www.renpy.org/wiki/renpy/Download_Ren'Py>`_
-   to see if a new version
-   has come out. You may also want to see if any bug-fixes are
-   available on that page.
+   and add new features. Before releasing, click update in the launcher
+   to update Ren'Py to the latest version. You can also download new
+   versions and view a list of changes at
+   `http://www.renpy.org/latest.html <http://www.renpy.org/latest.html>`_.
 
 **Check the Script.**
    From the front page of the launcher, choose "Check Script
@@ -583,7 +581,6 @@ before releasing it:
    From the front page of the launcher, choose "Build Distributions". Based
    on the information contained in options.rpy, the launcher will build one
    or more archive files containing your game.
-
 
 **Test.**
    Lint is not a substitute for thorough testing. It's your
@@ -610,7 +607,7 @@ Where do we go from here?
 This Quickstart has barely scratched the surface of what Ren'Py is
 capable of. For simplicity's sake, we've omitted many features Ren'Py
 supports. To get a feel for what Ren'Py is capable of, we suggest
-playing through the demo, and having Eileen demonstrate these features
+playing through the Tutorial, and having Eileen demonstrate these features
 to you.
 
 You may also want to read the rest of this (complex) manual, as it's
@@ -618,10 +615,10 @@ the definitive guide to Ren'Py.
 
 On the Ren'Py website, there's the a `FAQ <http://www.renpy.org/wiki/renpy/doc/FAQ>`_ giving answers to
 common questions, and a `Cookbook <http://www.renpy.org/wiki/renpy/doc/cookbook/Cookbook>`_ giving
-useful code smippets. If you have questions, we suggest asking them at
+useful code snippets. If you have questions, we suggest asking them at
 the `Lemma Soft Forums <http://lemmasoft.renai.us/forums/>`_, the
 official forum of Ren'Py. This is the central hub of the Ren'Py
-community, and we welcome new users, and the questions they bring.
+community, where we welcome new users and the questions they bring.
 
 Thank you for choosing the Ren'Py visual novel engine. We look forward
-to seeing what you can create with it!
+to seeing what you create with it!
