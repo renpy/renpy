@@ -493,10 +493,15 @@ class Script(object):
 
                 except SyntaxError, e:
 
+                    text = e.text
+
+                    if text is None:
+                        text = ''
+
                     try:
-                        text = e.text.decode("utf-8")
+                        text = text.decode("utf-8")
                     except:
-                        text = e.text.decode("latin-1")
+                        text = text.decode("latin-1")
 
                     pem = renpy.parser.ParseError(
                         filename = e.filename,

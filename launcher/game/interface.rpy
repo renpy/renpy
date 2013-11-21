@@ -289,13 +289,18 @@ init python in interface:
 
         `label`
             The label to redirect to when the user finishes displaying the error. None
-            to just return.
+            to just return False.
 
         Keyword arguments are passed into the screen so that they can be substituted into
         the message.
         """
 
-        common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=Jump(label), **kwargs)
+        if label is None:
+            action = Return(False)
+        else:
+            action = Jump(label)
+
+        common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=action, **kwargs)
 
 
     @contextlib.contextmanager
