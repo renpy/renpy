@@ -8,7 +8,7 @@
 ## appropriate.
 ##
 ## - Este archivo contiene algunas de las opciones que pueden cambiarse para
-##   personalizar el juego Ren'Py. Sólo figuran las opciones más comunes.
+##   personalizar el juego Ren'Py. Solo figuran las opciones más comunes.
 ##   Es posible añadir muchas más personalizaciones.
 ##
 ## - Las líneas que empiezan con dos marcas '#' son comentarios, no debes
@@ -219,7 +219,7 @@ init -1 python hide:
 
     ## Note that these only change the size of some of the text. Other
     ## buttons have their own styles.
-    ## - Nota: Sólo cambia el tamaño de parte del texto. Otros botones
+    ## - Nota: Solo cambia el tamaño de parte del texto. Otros botones
     ##   tienen sus propios estilos.
 
 
