@@ -1,21 +1,27 @@
 # This file is in the public domain. Feel free to modify it as a basis
 # for your own screens.
+# - Este archivo se encuentra en el dominio público. Puede ser modificado
+#   libremente como base para tus propias pantallas.
 
 ##############################################################################
-# Say
+# Say - Diálogo
 #
 # Screen that's used to display adv-mode dialogue.
+# - Pantalla utilizada para presentar el diálogo en modo adv.
 # http://www.renpy.org/doc/html/screen_special.html#say
 screen say:
 
     # Defaults for side_image and two_window
+    # - Valores por defecto de 'side_image' y 'two_window'
     default side_image = None
     default two_window = False
 
     # Decide if we want to use the one-window or two-window variant.
+    # - Opta entre las variantes de una ventana o dos ventanas.
     if not two_window:
 
         # The one window variant.
+        # - Una ventana.
         window:
             id "window"
 
@@ -30,6 +36,7 @@ screen say:
     else:
 
         # The two window variant.
+        # - Dos ventanas.
         vbox:
             style "say_two_window_vbox"
 
@@ -49,19 +56,22 @@ screen say:
                 text what id "what"
 
     # If there's a side image, display it above the text.
+    # - Si hay una imagen lateral, la presenta sobre el texto.
     if side_image:
         add side_image
     else:
         add SideImage() xalign 0.0 yalign 1.0
 
     # Use the quick menu.
+    # - Usa el menú de acceso rápido.
     use quick_menu
 
 
 ##############################################################################
-# Choice
+# Choice - Elecciones
 #
 # Screen that's used to display in-game menus.
+# - Pantalla utilizada para presentar los menus dentro del juego.
 # http://www.renpy.org/doc/html/screen_special.html#choice
 
 screen choice:
@@ -100,9 +110,10 @@ init -2 python:
 
 
 ##############################################################################
-# Input
+# Input - Entrada
 #
 # Screen that's used to display renpy.input()
+# - Pantalla utilizada para la entrada de texto por parte del usuario.
 # http://www.renpy.org/doc/html/screen_special.html#input
 
 screen input:
@@ -119,6 +130,7 @@ screen input:
 # Nvl
 #
 # Screen used for nvl-mode dialogue and menus.
+# - Pantalla utilizada para el diálogo y los menús en modo nvl.
 # http://www.renpy.org/doc/html/screen_special.html#nvl
 
 screen nvl:
@@ -130,6 +142,7 @@ screen nvl:
             style "nvl_vbox"
 
         # Display dialogue.
+        # - Presenta el diálogo.
         for who, what, who_id, what_id, window_id in dialogue:
             window:
                 id window_id
@@ -143,6 +156,7 @@ screen nvl:
                 text what id what_id
 
         # Display a menu, if given.
+        # - Presenta un menú, si lo hay.
         if items:
 
             vbox:
@@ -167,21 +181,25 @@ screen nvl:
     use quick_menu
 
 ##############################################################################
-# Main Menu
+# Main Menu - Menú principal
 #
 # Screen that's used to display the main menu, when Ren'Py first starts
+# - Pantalla utilizada para presentar el menú principal, cuando Ren'Py empieza
 # http://www.renpy.org/doc/html/screen_special.html#main-menu
 
 screen main_menu:
 
     # This ensures that any other menu screen is replaced.
+    # - Esta linea asegura que las otras pantallas de menú son reemplazadas.
     tag menu
 
     # The background of the main menu.
+    # - Fondo del menú principal.
     window:
         style "mm_root"
 
     # The main menu buttons.
+    # - Botones del menú principal.
     frame:
         style_group "mm"
         xalign .98
@@ -198,22 +216,27 @@ screen main_menu:
 init -2 python:
 
     # Make all the main menu buttons be the same size.
+    # - Ajusta todos los botones del menú principal al mismo tamaño.
     style.mm_button.size_group = "mm"
 
 
 ##############################################################################
-# Navigation
+# Navigation - Navegación
 #
 # Screen that's included in other screens to display the game menu
 # navigation and background.
+# - Pantalla incluida en otras pantallas para presentar las opciones de 
+#   navegación y el fondo en los menús del juego.
 # http://www.renpy.org/doc/html/screen_special.html#navigation
 screen navigation:
 
     # The background of the game menu.
+    # - Fondo de los menús del juego.
     window:
         style "gm_root"
 
     # The various buttons.
+    # - Botones de navegación.
     frame:
         style_group "gm_nav"
         xalign .98
@@ -234,15 +257,19 @@ init -2 python:
 
 
 ##############################################################################
-# Save, Load
+# Save, Load - Guardar, Cargar
 #
 # Screens that allow the user to save and load the game.
+# - Pantallas que permiten al usuario guardar y cargar las partidas.
 # http://www.renpy.org/doc/html/screen_special.html#save
 # http://www.renpy.org/doc/html/screen_special.html#load
 
 # Since saving and loading are so similar, we combine them into
 # a single screen, file_picker. We then use the file_picker screen
 # from simple load and save screens.
+# - Ya que guardar y cargar son muy similares, se combinan en una sola
+#   pantalla, selector de archivo ('file_picker'). Esa se usa desde
+#   simples pantallas de guardado y carga.
 
 screen file_picker:
 
@@ -253,6 +280,8 @@ screen file_picker:
 
         # The buttons at the top allow the user to pick a
         # page of files.
+        # - Los botones superiores permiten al usuario escoger entre
+        #   páginas de archivos.
         hbox:
             style_group "file_picker_nav"
 
@@ -276,15 +305,18 @@ screen file_picker:
         $ rows = 5
 
         # Display a grid of file slots.
+        # - Presenta una cuadrícula de espacios para archivos.
         grid columns rows:
             transpose True
             xfill True
             style_group "file_picker"
 
             # Display ten file slots, numbered 1 - 10.
+            # - Presenta diez espacios para archivos, numerados de 1 a 10.
             for i in range(1, columns * rows + 1):
 
                 # Each file slot is a button.
+                # - Cada espacio es un botón.
                 button:
                     action FileAction(i)
                     xfill True
@@ -292,6 +324,7 @@ screen file_picker:
                     has hbox
 
                     # Add the screenshot.
+                    # - Añade la captura de pantalla.
                     add FileScreenshot(i)
 
                     $ file_name = FileSlotName(i, columns * rows)
@@ -306,6 +339,7 @@ screen file_picker:
 screen save:
 
     # This ensures that any other menu screen is replaced.
+    # - Esta linea asegura que las otras pantallas de menú son reemplazadas.
     tag menu
 
     use navigation
@@ -314,6 +348,7 @@ screen save:
 screen load:
 
     # This ensures that any other menu screen is replaced.
+    # - Esta linea asegura que las otras pantallas de menú son reemplazadas.
     tag menu
 
     use navigation
@@ -331,9 +366,10 @@ init -2 python:
 
 
 ##############################################################################
-# Preferences
+# Preferences - Opciones
 #
 # Screen that allows the user to change the preferences.
+# - Pantalla que permite al usuario cambiar las opciones.
 # http://www.renpy.org/doc/html/screen_special.html#prefereces
 
 screen preferences:
@@ -341,14 +377,17 @@ screen preferences:
     tag menu
 
     # Include the navigation.
+    # - Incluye la navegación.
     use navigation
 
     # Put the navigation columns in a three-wide grid.
+    # - Coloca las columnas de navegación en una cuadrícula de anchura 3.
     grid 3 1:
         style_group "prefs"
         xfill True
 
         # The left column.
+        # - Columna izquierda.
         vbox:
             frame:
                 style_group "pref"
@@ -464,9 +503,10 @@ init -2 python:
 
 
 ##############################################################################
-# Yes/No Prompt
+# Yes/No Prompt - Pregunta Sí/No
 #
 # Screen that asks the user a yes or no question.
+# - Pantalla que pregunta al usuario una pregunta Sí/No.
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 
 screen yesno_prompt:
@@ -501,6 +541,7 @@ screen yesno_prompt:
             textbutton _("No") action no_action
 
     # Right-click and escape answer "no".
+    # - Clic derecho y escape responden "no".
     key "game_menu" action no_action
 
 init -2 python:
@@ -510,13 +551,16 @@ init -2 python:
 
 
 ##############################################################################
-# Quick Menu
+# Quick Menu - Menú de acceso rápido
 #
 # A screen that's included by the default say screen, and adds quick access to
 # several useful functions.
+# - Pantalla incluida por defecto en la pantalla de diálogo, que añade acceso
+#   rápido a una serie de funciones útiles.
 screen quick_menu:
 
     # Add an in-game quick menu.
+    # - Añade un menú de acceso rápido interno al juego.
     hbox:
         style_group "quick"
 
