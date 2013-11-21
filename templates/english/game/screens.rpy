@@ -12,7 +12,7 @@ screen say:
     default side_image = None
     default two_window = False
 
-    # Decide if we want to use the one-window or two-window varaint.
+    # Decide if we want to use the one-window or two-window variant.
     if not two_window:
 
         # The one window variant.

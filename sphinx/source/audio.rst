@@ -15,7 +15,7 @@ Three are defined by default:
 * sound - A channel for sound effects.
 * voice - A channel for voice.
 
-New channels can be registered with :func:`renpy.register_channel`.
+New channels can be registered with :func:`renpy.music.register_channel`.
 
 The 'Music Volume', 'Sound Volume', and 'Voice Volume' settings
 of the in-game preferences menu are used to set individual
