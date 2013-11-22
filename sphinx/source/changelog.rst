@@ -2,6 +2,14 @@
 Full Changelog
 ==============
 
+Ren'Py 6.16.2
+=============
+
+This release adds a Spanish translation of the launcher and the template game.
+
+This release adds the new :func:`renpy.get_mouse_pos()` function, which
+retrieves the mouse position if a mouse is supported.
+
 Ren'Py 6.16
 ===========
 
