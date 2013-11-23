@@ -1195,7 +1195,7 @@ def screenshot(filename):
 
 def version(tuple=False): #@ReservedAssignment
     """
-    :doc: `other`
+    :doc: other
 
     If `tuple` is false, returns a string containing "Ren'Py ", followed by
     the current version of Ren'Py.
@@ -1219,13 +1219,18 @@ def module_version():
 
 def transition(trans, layer=None, always=False, force=False):
     """
-    Sets the transition that will be used for the next
-    interaction. This is useful when the next interaction doesn't take
-    a with clause, as is the case with pause, input, and imagemap.
+    :doc: other
+    :args: (trans, layer=None, always=False)
 
-    @param layer: If the layer setting is not None, then the transition
-    will be applied only to the layer named. Please note that only some
-    transitions can be applied to specific layers.
+    Sets the transition that will be used during the next interaction.
+
+    `layer`
+        The layer the transition applies to. If None, the transition
+        applies to the entire scene.
+
+    `always`
+        If false, this respects the transition preference. If true, the
+        transition is always run.
     """
 
     if not always and not renpy.game.preferences.transitions:
