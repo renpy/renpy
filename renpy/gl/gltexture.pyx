@@ -43,7 +43,7 @@ MAX_SIZE = 1024
 SIZES = [ 64 ]
 
 # A list of texture number allocated.
-texture_numbers = [ ]
+texture_numbers = set()
 
 cdef GLenum tex_format = GL_RGBA
 cdef GLenum tex_internalformat = GL_RGBA
@@ -454,7 +454,7 @@ cdef class TextureCore:
         self.number = texnums[0]
         self.format = 0
 
-        texture_numbers.append(texnums[0])
+        texture_numbers.add(texnums[0])
 
         return 0
 
@@ -515,7 +515,7 @@ def dealloc_textures():
 
         glDeleteTextures(1, texnums)
 
-    texture_numbers = [ ]
+    texture_numbers = set()
     free_textures.clear()
 
 
