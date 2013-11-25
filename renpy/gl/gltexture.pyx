@@ -443,8 +443,9 @@ cdef class TextureCore:
         This allocates a texture number, if necessary.
         """
 
-        cdef unsigned int texnums[1]
+        global total_texture_size
 
+        cdef unsigned int texnums[1]
 
         if self.number != -1:
             return 0
@@ -455,8 +456,28 @@ cdef class TextureCore:
         self.format = 0
 
         texture_numbers.add(texnums[0])
+        total_texture_size += self.width * self.height * 4
 
         return 0
+
+    def deallocate(self):
+        """
+        Deallocates this texture. The texture must have been removed from a
+        free list before this is called.
+        """
+
+        global total_texture_size
+
+        if self.number == -1:
+            return
+
+        cdef GLuint texnums[1]
+
+        texnums[0] = self.number
+        glDeleteTextures(1, texnums)
+
+        texture_numbers.remove(self.number)
+        total_texture_size -= self.width * self.height * 4
 
 class Texture(TextureCore):
     """
@@ -498,7 +519,6 @@ def alloc_texture(width, height):
         rv = l.pop()
     else:
         rv = Texture(width, height)
-        total_texture_size += width * height * 4
 
     rv.free_list = l
 
@@ -507,6 +527,7 @@ def alloc_texture(width, height):
 
 def dealloc_textures():
     global texture_numbers
+    global total_texture_size
 
     cdef GLuint texnums[1]
 
@@ -517,6 +538,23 @@ def dealloc_textures():
 
     texture_numbers = set()
     free_textures.clear()
+
+    total_texture_size = 0
+
+def cleanup():
+    """
+    This is called once per frame.
+    """
+
+    # If we have more than one of a texture size, deallocate the last one of
+    # that size. This prevents us from leaking memory via textures, while
+    # making it unlikely we'll constantly allocate/deallocate textures.
+
+    for l in free_textures.values():
+        if len(l) > 1:
+            t = l.pop()
+            t.deallocate()
+
 
 
 def compute_subrow(row, offset, width):

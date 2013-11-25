@@ -671,6 +671,8 @@ cdef class GLDraw:
             ELSE:
                 egl_swap()
 
+        gltexture.cleanup()
+
         gl_check("draw_screen")
 
     cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
