@@ -58,6 +58,13 @@ arguments, or pass them to a character function. Doing this will
 allow the game to continue working if Ren'Py adds additional keyword
 arguments to character calls.
 
+Choice Menus
+============
+
+The menu statement has an equivalent Python function.
+
+.. include:: inc/se_menu
+
 
 Displaying Images
 =================

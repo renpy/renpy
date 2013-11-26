@@ -182,7 +182,7 @@
 * left
 * library
 * main_menu
-* menu
+* :func:`menu`
 * mouse_visible
 * move
 * moveinbottom

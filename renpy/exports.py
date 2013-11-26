@@ -504,6 +504,8 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
 def menu(items, set_expr):
     """
+    :undocumented:
+
     Displays a menu, and returns to the user the value of the selected
     choice. Also handles conditions and the menuset.
     """
@@ -609,20 +611,24 @@ def display_menu(items,
                  predict_only=False,
                  **kwargs):
     """
-    Displays a menu containing the given items, returning the value of
-    the item the user selects.
+    :doc: se_menu
+    :args: (items, interact=True, screen="choice")
 
-    @param items: A list of tuples that are the items to be added to
-    this menu. The first element of a tuple is a string that is used
-    for this menuitem. The second element is the value to be returned
-    if this item is selected, or None if this item is a non-selectable
-    caption.
+    This displays a menu to the user. `items` should be a list of 2-item tuples.
+    In each tuple, the first item is a textual label, and the second item is
+    the value to be returned if that item is selected. If the value is None,
+    the first item is used as a menu caption.
 
-    @param interact: If True, then an interaction occurs. If False, no suc
-    interaction occurs, and the user should call ui.interact() manually.
+    This function takes many arguments, of which only a few are documented.
+    Except for `items`, all arguments should be given as keyword arguments.
 
-    @param with_none: If True, performs a with None after the input. If None,
-    takes the value from config.implicit_with_none.
+    `interact`
+        If false, the menu is displayed, but no interaction is performed.
+
+    `screen`
+        The name of the screen used to display the menu.
+
+    In each pair the first element of which is a textual label, and the second item
     """
 
     if interact:
