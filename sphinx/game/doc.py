@@ -4,6 +4,9 @@ import collections
 import keyword
 import renpy
 import shutil
+import StringIO
+import os
+
 import __builtin__
 
 # Keywords in the Ren'Py script language.
@@ -225,9 +228,9 @@ def write_line_buffer():
 
     for k, v in line_buffer.iteritems():
 
-        print "Generating", k
+        # f = file("source/inc/" + k, "w")
 
-        f = file("source/inc/" + k, "w")
+        f = StringIO.StringIO()
 
         print >>f, ".. Automatically generated file - do not modify."
         print >>f
@@ -235,7 +238,18 @@ def write_line_buffer():
         for l in v:
             print >>f, l
 
-        f.close()
+        s = f.getvalue()
+
+        if os.path.exists("source/inc/" + k):
+            with open("source/inc/" + k) as f:
+                if f.read() == s:
+                    print "Retaining", k
+                    continue
+
+        print "Generating", k
+
+        with open("source/inc/" + k, "w") as f:
+            f.write(s)
 
 def write_reserved(module, dest, ignore_builtins):
 
