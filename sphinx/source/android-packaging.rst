@@ -135,8 +135,10 @@ file mygame-release.apk into your Android Device. You will then need to find
 the .apk file in your Android device using a file manager application and
 open it to install the game.
 
+
+
 Viewing Debug Output
---------------------
+====================
 
 Debug output can be found by running the adb command manually from
 the terminal. After installing the SDK, the adb command can be
@@ -147,13 +149,43 @@ To view output from Ren'Py, consider a command line like:
 
     adb logcat -s python:*
 
+Icon and Presplash Images
+=========================
+
+There are several special files that are used to set the icon and
+presplash images used by the package. These files should be placed
+in the base directory.
+
+android-icon.png
+    The icon that's used for the app in the Android launcher. This icon is
+    automatically scaled down to the appropriate size, and should be larger
+    that 144x144.
+
+android-`density`-icon.png
+    If present, these are used in preference to android-icon.png for screens
+    of the given densities. This allows for pixel-perfect icons. Available
+    screen densities and the corresponding icon sizes are:
+
+    * ldpi (36x36)
+    * mdpi (48x48)
+    * hdpi (72x72)
+    * xhdpi (96x96)
+    * xxhdpi (144x144)
+
+android-presplash.jpg
+    The image that's used when the app is loading. This should be surrounded
+    by a monocolored border. That border is expanded to fill the screen.
+
+ouya-icon.png
+    A 732x412 icon that's used on the OUYA console.
+
+
 Google Play Expansion APKs
---------------------------
+==========================
 
 Ren'Py optionally supports the use of expansion APKs when used on a device
 supporting Google Play. Expansion APs allow Google Play to host games
 larger than 50MB in size. Please see:
-
 
     http://developer.android.com/google/play/expansion-files.html
 

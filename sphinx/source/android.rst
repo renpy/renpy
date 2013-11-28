@@ -98,8 +98,5 @@ also test on real hardware. The emulators do not deal with some human-factors
 issues, like the size of a user's fingers.
 
 
-
-
-
 .. include:: android-packaging.rst
 
