@@ -112,7 +112,11 @@ init -1500 python in build:
 
         (".android.json", "android"),
         ("android-icon.png", "android"),
+        ("android-presplash.jpg", "android"),
+        ("android-*-icon.png", "android"),
+        ("android-*-presplash.jpg", "android"),
         ("ouya-icon.png", "android"),
+        ("ouya_icon.png", "android"),
         ])
 
     base_patterns = [ ]
