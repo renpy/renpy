@@ -166,6 +166,10 @@ init python:
 
         def fail(self, prompt):
             prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
+
+            # Open android.txt in the editor.
+            editor.EditAbsolute(self.filename)()
+
             interface.error(prompt, label="android")
 
         def success(self, prompt):
