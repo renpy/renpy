@@ -221,9 +221,5 @@ def main():
         else:
             print "RAPT build succeeded."
 
-    print
-    print "Did you run me with renpython -O?"
-    print "Did you update renpy.py and launcher/script_version.rpy?"
-
 if __name__ == "__main__":
     main()
