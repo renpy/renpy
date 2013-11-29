@@ -558,13 +558,20 @@ init python in distribute:
             Add Ren'Py-generic files to the project.
             """
 
-            if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy")):
-                self.add_file("all", "game/script_version.rpy", os.path.join(config.gamedir, "script_version.rpy"))
+            SCRIPT_VERSION_RPY = os.path.join(config.gamedir, "script_version.rpy")
+            SCRIPT_VERSION_RPYC = os.path.join(config.gamedir, "script_version.rpy")
+            LICENSE_TXT = os.path.join(config.renpy_base, "LICENSE.txt")
 
-            if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
-                self.add_file("all", "game/script_version.rpyc", os.path.join(config.gamedir, "script_version.rpyc"))
+            if os.path.exists(SCRIPT_VERSION_RPY):
+                if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy")):
+                    self.add_file("all", "game/script_version.rpy", SCRIPT_VERSION_RPY)
 
-            self.add_file("renpy", "renpy/LICENSE.txt", os.path.join(config.renpy_base, "LICENSE.txt"))
+            if os.path.exists(SCRIPT_VERSION_RPYC):
+                if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
+                    self.add_file("all", "game/script_version.rpyc", SCRIPT_VERSION_RPYC)
+
+            if os.path.exists(LICENSE_TXT):
+                self.add_file("renpy", "renpy/LICENSE.txt", LICENSE_TXT)
 
 
         def write_plist(self):

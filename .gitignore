@@ -46,6 +46,7 @@ styles.txt
 /module/gen
 /editra
 /launcher/game/theme
+/launcher/game/script_version.rpy
 
 dl
 renpy/vc_version.py
