@@ -59,7 +59,11 @@ def main():
 
     s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", match_version ])
     parts = s.strip().split("-")
-    vc_version = int(parts[1])
+
+    if len(parts) <= 2:
+        vc_version = 0
+    else:
+        vc_version = int(parts[1])
 
     if parts[-1] == "dirty":
         vc_version += 1
