@@ -28,7 +28,10 @@ init -1 python hide:
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     config.name = "Ren'Py Tutorial"
-    config.version = "6.16 \"In the Arena\""
+    config.version = '{}.{} "{}"'.format(
+        renpy.renpy.version_tuple[0],
+        renpy.renpy.version_tuple[1],
+        renpy.renpy.version_name)
 
     ## We then want to call a theme function. themes.roundrect is
     ## a theme that features the use of rounded rectangles. It's
@@ -243,22 +246,22 @@ init -1 python hide:
 
     ## Used when showing NVL-mode text directly after ADV-mode text.
     config.adv_nvl_transition = dissolve
-    
+
     ## Used when showing ADV-mode text directly after NVL-mode text.
     config.nvl_adv_transition = dissolve
-    
+
     ## Used when yesno is shown.
     config.enter_yesno_transition = None
 
     ## Used when the yesno is hidden.
     config.exit_yesno_transition = None
-    
+
     ## Used when entering a replay
     config.enter_replay_transition = None
-    
+
     ## Used when exiting a replay
     config.exit_replay_transition = None
-    
+
     ## Used when the image is changed by a say statement with image attributes.
     config.say_attribute_transition = None
 

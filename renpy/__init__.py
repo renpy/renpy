@@ -31,13 +31,13 @@ try:
 except ImportError:
     vc_version = 0
 
-# The tuple giving the version. This needs to be updated when
-# we bump the version.
-#
-# Be sure to change config.version in tutorial/game/options.rpy.
-version_tuple = (6, 16, 3, vc_version)
+# The tuple giving the version number.
+version_tuple = (6, 17, 0, vc_version)
 
-# A verbose string computed from that version.
+# The name of this version.
+version_name = "In This Decade..."
+
+# A verbose string giving the version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
 
 # Other versions.
