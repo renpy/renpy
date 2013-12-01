@@ -886,6 +886,13 @@ class SWDraw(object):
 
         return x, y
 
+    def set_mouse_pos(self, x, y):
+
+        x *= self.scale_factor
+        y *= self.scale_factor
+
+        return pygame.mouse.set_pos([x, y])
+
 
     def screenshot(self, surftree, fullscreen_video):
         """

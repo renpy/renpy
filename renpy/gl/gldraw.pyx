@@ -1026,6 +1026,25 @@ cdef class GLDraw:
 
         return x, y
 
+    def untranslate_mouse(self, x, y):
+
+        # Screen sizes.
+        pw, ph = self.physical_size
+        vx, vy, vbw, vbh = self.virtual_box
+
+        # Translate from virtual size.
+        x = ( x - vx ) / vbw
+        y = ( y - vy ) / vbh
+
+        # Translate from fractional screen.
+        x = x * pw
+        y = y * ph
+
+        x = int(x)
+        y = int(y)
+
+        return x, y
+
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
         return self.translate_mouse(x, y)
@@ -1033,6 +1052,10 @@ cdef class GLDraw:
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
         return self.translate_mouse(x, y)
+
+    def set_mouse_pos(self, x, y):
+        x, y = self.untranslate_mouse(x, y)
+        pygame.mouse.set_pos([x, y])
 
 
     # Private.
