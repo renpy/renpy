@@ -56,12 +56,12 @@ init 1500 python:
         if config.default_mouse_move is not None:
             _preferences.mouse_move = config.default_mouse_move
 
-    if config.default_afm_enable is not None:
-        _preferences.afm_enable = config.default_afm_enable
-        _preferences.using_afm_enable = True
-    else:
-        _preferences.afm_enable = True
-        _preferences.using_afm_enable = False
+        if config.default_afm_enable is not None:
+            _preferences.afm_enable = config.default_afm_enable
+            _preferences.using_afm_enable = True
+        else:
+            _preferences.afm_enable = True
+            _preferences.using_afm_enable = False
 
 
 init -1500 python:
