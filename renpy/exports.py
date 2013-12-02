@@ -2136,30 +2136,18 @@ def get_mouse_pos():
     """
     return renpy.display.draw.get_mouse_pos()
 
-def set_mouse_pos(x, y):
+def set_mouse_pos(x, y, duration=0):
     """
     :doc: other
 
     Jump the mouse pointer to the location given by arguments x and y.
     If the device does not have a mouse pointer, this does nothing.
-    """
-    return renpy.display.draw.set_mouse_pos(x, y)
 
-def mouse_move(x, y, limit):
-    """
-    :doc: other
-
-    Move the mouse pointer to the location given by arguments x and y in
-    ``limit`` seconds.
-    If the device does not have a mouse pointer, this does nothing.
+    `duration`
+        The time it will take to perform the move, in seconds.
+        During this time, the mouse may be unresponsive.
     """
 
-    start = renpy.display.core.get_time()
-    now_x, now_y = get_mouse_pos()
-    speedx = ( float(x - now_x) / float(limit) )
-    speedy = ( float(y - now_y) / float(limit) )
-    while True:
-        elapse = renpy.display.core.get_time() - start
-        renpy.set_mouse_pos(speedx * elapse + now_x, speedy * elapse + now_y)
-        if elapse >= limit:
-            break
+    renpy.display.interface.set_mouse_pos(x, y, duration)
+
+

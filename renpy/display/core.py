@@ -982,6 +982,44 @@ def scene_lists(index=-1):
     return renpy.game.context(index).scene_lists
 
 
+class MouseMove(object):
+    """
+    This contains information about the current mouse move.
+    """
+
+    def __init__(self, x, y, duration):
+        self.start = get_time()
+
+        if duration is not None:
+            self.duration = duration
+        else:
+            self.duration = 0
+
+        self.start_x, self.start_y = renpy.display.draw.get_mouse_pos()
+
+        self.end_x = x
+        self.end_y = y
+
+    def perform(self):
+        """
+        Performs the mouse move. Returns True if this should be called
+        again, or False if the move has finished.
+        """
+
+        elapsed = get_time() - self.start
+
+        if elapsed >= self.duration:
+            renpy.display.draw.set_mouse_pos(self.end_x, self.end_y)
+            return False
+
+        done = 1.0 * elapsed / self.duration
+
+        x = int(self.start_x + done * (self.end_x - self.start_x))
+        y = int(self.start_y + done * (self.end_y - self.start_y))
+
+        renpy.display.draw.set_mouse_pos(x, y)
+        return True
+
 class Interface(object):
     """
     This represents the user interface that interacts with the user.
@@ -1188,6 +1226,10 @@ class Interface(object):
 
         # The background screenshot surface.
         self.bgscreenshot_surface = None
+
+        # Mouse move. If not None, information about the current mouse
+        # move.
+        self.mouse_move = None
 
         renpy.display.emulator.init_emulator()
 
@@ -1732,6 +1774,15 @@ class Interface(object):
 
         return False, x, y, tex
 
+    def set_mouse_pos(self, x, y, duration):
+        """
+        Sets the mouse position. Duration can be a number of seconds or
+        None.
+        """
+
+        self.mouse_move = MouseMove(x, y, duration)
+        self.force_redraw = True
+
     def drawn_since(self, seconds_ago):
         """
         Returns true if the screen has been drawn in the last `seconds_ago`,
@@ -2194,6 +2245,11 @@ class Interface(object):
                     pygame.event.clear([REDRAW])
                     old_redraw_time = None
 
+                # Move the mouse, if necessary.
+                if self.mouse_move is not None:
+                    if not self.mouse_move.perform():
+                        self.mouse_move = None
+
                 # Draw the mouse, if it needs drawing.
                 renpy.display.draw.update_mouse()
 
@@ -2283,7 +2339,7 @@ class Interface(object):
 
                 renpy.persistent.check_update()
 
-                if needs_redraw or renpy.display.video.playing():
+                if needs_redraw or self.mouse_move or renpy.display.video.playing():
                     ev = self.event_poll()
                 else:
                     ev = self.event_wait()
