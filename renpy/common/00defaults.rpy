@@ -26,6 +26,9 @@ init -1500 python:
     # If not None, the default value of voice_sustain
     config.default_voice_sustain = False
 
+    # If not None, the default value of mouse_move.
+    config.default_mouse_move = True
+
 
 init 1500 python:
 
@@ -49,6 +52,9 @@ init 1500 python:
 
         if config.default_voice_sustain is not None:
             _preferences.voice_sustain = config.default_voice_sustain
+
+        if config.default_mouse_move is not None:
+            _preferences.mouse_move = config.default_mouse_move
 
     if config.default_afm_enable is not None:
         _preferences.afm_enable = config.default_afm_enable
