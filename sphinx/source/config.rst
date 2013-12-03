@@ -225,12 +225,10 @@ cleared.
 
 .. var:: config.default_afm_enable = None
 
-    If not None, this should be a boolean that controls if
-    auto-forward-mode is enabled by default. When it's False,
-    auto-forwarding will not occur. Set this to False with caution, as
-    the default Ren'Py UI does not provide a way of changing it's
-    setting. (But one can use Preference action in a screen to create
-    such a UI.)
+    Controls the default state of the afm_enable preference. If False,
+    auto-forward-mode is disabled by default. If True, it is enabled by
+    default. If None, the afm_enable preferences is ignored. (Auto-forward
+    will occur when the auto-forward speed is non-zero.)
 
 .. var:: config.default_fullscreen = None
 
