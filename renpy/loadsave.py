@@ -395,7 +395,7 @@ def scan_saved_game(slotname):
     if json is None:
         return None
 
-    extra_info = json.get("_extra_info", "")
+    extra_info = json.get("_save_name", "")
 
     screenshot = c.get_screenshot()
 
