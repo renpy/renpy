@@ -23,6 +23,15 @@
     This inverts the selection state of the provided action, while
     proxying over all of the other methods.
 
+.. function:: MouseMove(x, y, duration=0)
+    
+    Move the mouse pointer to `x`, `y`. If the device does not have a mouse
+    pointer or _preferences.mouse_move is False, this does nothing.
+    
+    `duration`
+        The time it will take to perform the move, in seconds. During
+        this time, the mouse may be unresponsive.
+
 .. function:: Notify(message)
     
     Displays `message` using :func:`renpy.notify`.

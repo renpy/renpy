@@ -251,6 +251,36 @@ def write_line_buffer():
         with open("source/inc/" + k, "w") as f:
             f.write(s)
 
+
+name_kind = collections.defaultdict(str)
+
+def scan_docs():
+    """
+    Scans the documentation for functions, classes, and variables.
+    """
+
+
+    def scan_file(fn):
+        f = open(fn)
+
+        for l in f:
+            m = re.search(r"\.\. (\w+):: ([.\w+]+)", l)
+
+            if not m:
+                continue
+
+            name_kind[m.group(2)] = m.group(1)
+
+    for i in os.listdir("source"):
+        if i.endswith(".rst"):
+            scan_file(os.path.join("source", i))
+
+    for i in os.listdir("source/inc"):
+        scan_file(os.path.join("source", "inc", i))
+
+
+
+
 def write_reserved(module, dest, ignore_builtins):
 
     print "Writing", dest
@@ -268,10 +298,11 @@ def write_reserved(module, dest, ignore_builtins):
             if ignore_builtins and hasattr(__builtin__, i):
                 continue
 
-            o = getattr(module, i)
-
-            doc = inspect.getdoc(o)
-            if doc and ":doc:" in doc and not isinstance(o, renpy.curry.Curry):
-                i = ":func:`" + i + "`"
+            if name_kind[i] == 'function':
+                i = ":func:`{}`".format(i)
+            elif name_kind[i] == 'class':
+                i = ":class:`{}`".format(i)
+            elif name_kind[i] == 'var':
+                i = ":var:`{}`".format(i)
 
             f.write("* " + i + "\n")
