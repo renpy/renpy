@@ -443,7 +443,7 @@ def list_saved_games(regexp=r'.', fast=False):
 
         c = get_cache(s)
 
-        extra_info = c.get_json().get("_extra_info", "")
+        extra_info = c.get_json().get("_save_name", "")
         screenshot = c.get_screenshot()
         mtime = c.get_mtime()
 
