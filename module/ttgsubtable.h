@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <ft2build.h>
-#include <freetype/ftotval.h>
+#include FT_OPENTYPE_VALIDATE_H
 
 typedef struct
 {
@@ -101,7 +101,7 @@ typedef struct
 typedef struct
 {
     int LookupCount;
-    TLookup *Lookup;    
+    TLookup *Lookup;
 } TLookupList;
 
 typedef struct
