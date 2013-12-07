@@ -236,7 +236,7 @@ class SpriteManager(renpy.display.core.Displayable):
 
     def redraw(self, delay=0):
         """
-        :doc: sprite method
+        :doc: sprites method
 
         Causes this SpriteManager to be redrawn in `delay` seconds.
         """

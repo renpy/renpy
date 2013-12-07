@@ -405,3 +405,7 @@ having the narrator say an empty string.::
 
         window hide dissolve
 
+Image Functions
+===============
+
+.. include:: inc/image_func
