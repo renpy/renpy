@@ -44,7 +44,7 @@ from renpy.translation import translate_string as __ # @UnusedImport
 
 def _(s):
     """
-    :doc: translate
+    :undocumented: Documented directly in the .rst.
 
     Flags a string as translatable, and returns it immediately. The string
     will be translated when text displays it.

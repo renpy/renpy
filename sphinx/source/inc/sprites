@@ -86,3 +86,7 @@
         Creates a new Sprite for the displayable `d`, and adds it to this
         SpriteManager.
     
+    .. method:: redraw(delay=0)
+        
+        Causes this SpriteManager to be redrawn in `delay` seconds.
+    
