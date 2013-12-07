@@ -46,7 +46,7 @@
 * :func:`FontGroup`
 * :func:`Frame`
 * :class:`Gallery`
-* Grid
+* :func:`Grid`
 * :func:`HBox`
 * :func:`Help`
 * :func:`Hide`

@@ -110,8 +110,8 @@ more :ref:`transforms <transforms>`.
 .. include:: inc/disp_at
 
 
-Layout Boxes
-------------
+Layout Boxes and Grids
+----------------------
 
 Layout boxes are displayables that lay out their children on the
 screen. They can lay out the children in a horizontal or vertical
@@ -123,7 +123,6 @@ added to the box as children. Keyword arguments are style properties
 that are applied to the box.
 
 Boxes take :ref:`position-style-properties` and :ref:`box-style-properties`.
-
 
 .. include:: inc/disp_box
 
@@ -141,6 +140,13 @@ Boxes take :ref:`position-style-properties` and :ref:`box-style-properties`.
    image logo fixed = Fixed(
        Image("logo.png", xalign=0.0, yalign=0.0),
        Image("logo.png", xalign=1.0, yalign=1.0))
+
+
+The Grid layout displays its children in a grid on the screen. It takes
+:ref:`position-style-properties` and the :propref:`spacing` style
+property.
+
+.. include:: inc/disp_grid
 
 Effects
 -------

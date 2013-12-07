@@ -185,7 +185,7 @@ absolute = renpy.display.core.absolute
 
 NoRollback = renpy.python.NoRollback
 
-def layout(cls, doc, nargs=0, **extra_kwargs):
+def _layout(cls, doc, nargs=0, **extra_kwargs):
 
     def f(*args, **properties):
 
@@ -205,7 +205,7 @@ def layout(cls, doc, nargs=0, **extra_kwargs):
 
     return f
 
-Fixed = layout(renpy.display.layout.MultiBox, """
+Fixed = _layout(renpy.display.layout.MultiBox, """
 :doc: disp_box
 :args: (*args, **properties)
 
@@ -214,24 +214,30 @@ from back to front, with their position properties
 controlling their position.
 """, layout="fixed")
 
-HBox = layout(renpy.display.layout.MultiBox, """
+HBox = _layout(renpy.display.layout.MultiBox, """
 :doc: disp_box
 :args: (*args, **properties)
 
 A box that lays out its members from left to right.
 """, layout='horizontal')
 
-VBox = layout(renpy.display.layout.MultiBox, """
+VBox = _layout(renpy.display.layout.MultiBox, """
 :doc: disp_box
 :args: (*args, **properties)
 
 A layout that lays out its members from top to bottom.
 """, layout='vertical')
 
-Grid = layout(renpy.display.layout.Grid, """
-A layout that lays out displayables in a grid.
+Grid = _layout(renpy.display.layout.Grid, """
+:doc: disp_grid
+
+Lays out displayables in a a grid. The first two positional arguments
+are the number of columns and rows in the grid. This must be followed
+by `columns * rows` positional arguments giving the displayables that
+fill the grid.
 """, nargs=2, layout='vertical')
 
+del _layout
 
 def AlphaBlend(control, old, new, alpha=False):
     """
@@ -248,9 +254,6 @@ def AlphaBlend(control, old, new, alpha=False):
     """
 
     return renpy.display.transition.AlphaDissolve(control, 0.0, old_widget=old, new_widget=new, alpha=alpha)
-
-
-del layout
 
 def At(d, *args):
     """
