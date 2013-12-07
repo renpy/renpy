@@ -1,5 +1,24 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.copy_images(old, new)
+    
+    Copies images beginning with one prefix to images beginning with
+    another. For example::
+    
+        renpy.copy_images("eileen", "eileen2")
+    
+    will create an image beginning with "eileen2" for every image beginning
+    with "eileen2". If "eileen happy" exists, "eileen2 happy" will be
+    created.
+    
+    `old`
+        A space-separated string giving the components of the old image
+        name.
+    
+    `new`
+        A space-separated string giving the components of the new image
+        name.
+
 .. function:: renpy.get_placement(d)
     
     This gets the placement of displayable d. There's very little warranty on this

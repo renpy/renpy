@@ -109,6 +109,13 @@
     If not_showing is True, this only returns a side image if the image the
     attributes are taken from is not on the screen.
 
+.. function:: renpy.get_transition(layer=None)
+    
+    Gets the transition for `layer`, or the entire scene if
+    `layer` is None. This returns the transition that is queued up
+    to run during the next interaction, or None if no such
+    transition exists.
+
 .. function:: renpy.is_seen(ever=True)
     
     Returns true if the current line has been seen by the player.
@@ -168,6 +175,16 @@
     
     `relaunch`
         If true, Ren'Py will run a second copy of itself before quitting.
+
+.. function:: renpy.restart_interaction()
+    
+    Restarts the current interaction. Among other things, this displays
+    images added to the scene, re-evaluates screens, and starts any
+    queued transitions.
+    
+    This only does anything when called from within an interaction (for
+    example, from an action). Outside an interaction, this function has
+    no effect.
 
 .. function:: renpy.screenshot(filename)
     
