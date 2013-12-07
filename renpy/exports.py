@@ -70,6 +70,8 @@ import sys
 
 def public_api():
     """
+    :undocumented:
+
     This does nothing, except to make the pyflakes warnings about
     unused imports go away.
     """
@@ -226,6 +228,28 @@ def image(name, d):
     renpy.display.image.register_image(name, d)
 
 def copy_images(old, new):
+    """
+    :doc: image_func
+
+    Copies images beginning with one prefix to images beginning with
+    another. For example::
+
+        renpy.copy_images("eileen", "eileen2")
+
+    will create an image beginning with "eileen2" for every image beginning
+    with "eileen2". If "eileen happy" exists, "eileen2 happy" will be
+    created.
+
+    `old`
+        A space-separated string giving the components of the old image
+        name.
+
+    `new`
+        A space-separated string giving the components of the new image
+        name.
+
+    """
+
     if not isinstance(old, tuple):
         old = tuple(old.split())
 
@@ -576,6 +600,8 @@ def choice_for_skipping():
 
 def predict_menu():
     """
+    :undocumented:
+
     Predicts widgets that are used by the menu.
     """
 
@@ -759,6 +785,8 @@ tag_quoting_dict = TagQuotingDict()
 
 def predict_say(who, what):
     """
+    :undocumented:
+
     This is called to predict the results of a say command.
     """
 
@@ -774,6 +802,8 @@ def predict_say(who, what):
 
 def scry_say(who, scry):
     """
+    :undocumented:
+
     Called when scry is called on a say statement. Needs to set
     the interacts field.
     """
@@ -785,9 +815,29 @@ def scry_say(who, scry):
 
 def say(who, what, interact=True):
     """
-    This is the core of the say command. If the who parameter is None
-    or a string, it is passed directly to display_say. Otherwise, the
-    say method is called on the who object with what as a parameter.
+    :doc: se_say
+
+    The equivalent of the say statement.
+
+    `who`
+        Either the character that will say something, None for the narrator,
+        or a string giving the character name. In the latter case, the
+        :func:`say` is used to create the speaking character.
+
+    `what`
+        A string giving the line to say. Percent-substitutions are performed
+        in this string.
+
+    `interact`
+        If true, Ren'Py waits for player input when displaying the dialogue. If
+        false, Ren'Py shows the dialogue, but does not perform an interaction.
+
+    This function is rarely necessary, as the following three lines are
+    equivalent. ::
+
+        e "Hello, world."
+        $ renpy.say(e, "Hello, world.")
+        $ e("Hello, world.")
     """
 
     if renpy.config.old_substitutions:
@@ -806,6 +856,8 @@ def say(who, what, interact=True):
 def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
              style='imagemap', mouse='imagemap', with_none=None, **properties):
     """
+    :undocumented: Use screens already.
+
     Displays an imagemap. An image map consists of two images and a
     list of hotspots that are defined on that image. When the user
     clicks on a hotspot, the value associated with that hotspot is
@@ -1072,6 +1124,7 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
 
 def toggle_fullscreen():
     """
+    :undocumented:
     Toggles the fullscreen mode.
     """
 
@@ -1079,6 +1132,7 @@ def toggle_fullscreen():
 
 def toggle_music():
     """
+    :undocumented:
     Toggles the playing of music.
     """
 
@@ -1141,6 +1195,8 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
 
 def utter_restart():
     """
+    :undocumented: Used in the implementation of shift+R.
+
     Causes an utter restart of Ren'Py. This reloads the script and
     re-runs initialization.
     """
@@ -1217,6 +1273,7 @@ def version(tuple=False): #@ReservedAssignment
 
 def module_version():
     """
+    :undocumented:
     Returns a number corresponding to the current version of the Ren'Py module,
     or 0 if the module wasn't loaded.
     """
@@ -1245,6 +1302,15 @@ def transition(trans, layer=None, always=False, force=False):
     renpy.game.interface.set_transition(trans, layer, force=force)
 
 def get_transition(layer=None):
+    """
+    :doc: other
+
+    Gets the transition for `layer`, or the entire scene if
+    `layer` is None. This returns the transition that is queued up
+    to run during the next interaction, or None if no such
+    transition exists.
+    """
+
     return renpy.game.interface.transition.get(layer, None)
 
 def clear_game_runtime():
@@ -1300,12 +1366,15 @@ def exists(filename):
 
 def restart_interaction():
     """
-    Calling this restarts the current interaction. This will immediately end
-    any ongoing transition, and will call all of the overlay functions again.
+    :doc: other
 
-    This should be called whenever widgets are added or removed over the course
-    of an interaction, or when the information used to construct the overlay
-    changes.
+    Restarts the current interaction. Among other things, this displays
+    images added to the scene, re-evaluates screens, and starts any
+    queued transitions.
+
+    This only does anything when called from within an interaction (for
+    example, from an action). Outside an interaction, this function has
+    no effect.
     """
 
     try:
