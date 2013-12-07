@@ -7,5 +7,5 @@ cd $SPHINX
 
 sphinx-build -a source ../doc || exit 1
 
-echo Not uploading.
+python checks.py
 
