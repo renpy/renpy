@@ -79,6 +79,9 @@ init -1900 python:
         if version <= (6, 15, 7):
             MusicRoom.loop_compat = True
 
+        if version <= (6, 17, 0):
+            config.keymap['toggle_music'] = [ 'm' ]
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

@@ -1133,10 +1133,8 @@ def toggle_fullscreen():
 def toggle_music():
     """
     :undocumented:
-    Toggles the playing of music.
+    Does nothing.
     """
-
-    renpy.game.preferences.music = not renpy.game.preferences.music
 
 def has_label(name):
     """

@@ -58,10 +58,6 @@ class Preferences(renpy.object.Object):
         # Should we wait for the voice to stop?
         self.wait_voice = True
 
-        # These will be going away soon.
-        self.sound = True
-        self.music = True
-
         # 2 - All transitions.
         # 1 - Only non-default transitions.
         # 0 - No transitions.
