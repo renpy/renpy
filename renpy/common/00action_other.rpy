@@ -271,10 +271,6 @@ init -1500 python:
         def __init__(self, label, scope={}, locked=None):
             self.label = label
             self.scope = scope
-
-            if locked is None:
-                self.locked = not renpy.seen_label(label)
-
             self.locked = locked
 
         def __call__(self):
@@ -291,7 +287,10 @@ init -1500 python:
                 renpy.transition(config.exit_replay_transition)
 
         def get_sensitive(self):
-            return not self.locked
+            if self.locked is not None:
+                return self.locked
+
+            return renpy.seen_label(self.label)
 
     class EndReplay(Action):
         """
