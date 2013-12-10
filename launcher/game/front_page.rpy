@@ -25,14 +25,18 @@ init python:
 
         def __call__(self):
 
-            directory = renpy.fsencode(self.directory)
+            try:
+                directory = renpy.fsencode(self.directory)
 
-            if renpy.windows:
-                os.startfile(directory)
-            elif renpy.macintosh:
-                subprocess.Popen([ "open", directory ])
-            else:
-                subprocess.Popen([ "xdg-open", directory ])
+                if renpy.windows:
+                    os.startfile(directory)
+                elif renpy.macintosh:
+                    subprocess.Popen([ "open", directory ])
+                else:
+                    subprocess.Popen([ "xdg-open", directory ])
+
+            except:
+                pass
 
     # Used for testing.
     def Relaunch():
