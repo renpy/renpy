@@ -125,13 +125,24 @@ def compile_event(key, keydown):
 event_cache = { }
 keyup_cache = { }
 
-def map_event(ev, name):
-    """Returns true if the event matches the named keycode being pressed."""
+def map_event(ev, keysym):
+    """
+    :doc: udd_utility
 
-    check_code = event_cache.get(name, None)
+    Returns true if the pygame event `ev` matches `keysym`
+
+    `keysym`
+        One of:
+
+        * The name of a keybinding in :var:`config.keymap`.
+        * A keysym, as documented in the :ref:`keymap` section.
+        * A list containing one or more keysyms.
+    """
+
+    check_code = event_cache.get(keysym, None)
     if check_code is None:
-        check_code = eval("lambda ev : " + compile_event(name, True), globals())
-        event_cache[name] = check_code
+        check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
+        event_cache[keysym] = check_code
 
     return check_code(ev)
 

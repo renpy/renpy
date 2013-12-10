@@ -14,6 +14,17 @@
     This can be called from inside the render and event methods of a
     creator-defined displayable.
 
+.. function:: renpy.map_event(ev, keysym)
+    
+    Returns true if the pygame event `ev` matches `keysym`
+    
+    `keysym`
+        One of:
+    
+        * The name of a keybinding in :var:`config.keymap`.
+        * A keysym, as documented in the :ref:`keymap` section.
+        * A list containing one or more keysyms.
+
 .. function:: renpy.render(d, width, height, st, at)
     
     Causes a displayable to be rendered, and a renpy.Render object to
