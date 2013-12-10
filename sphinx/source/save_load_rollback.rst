@@ -356,3 +356,25 @@ Rollback-blocking and -fixing Functions
 
 .. include:: inc/blockrollback
 
+NoRollback
+==========
+
+.. include:: inc/norollback
+
+For example::
+
+    init python:
+
+        class MyClass(NoRollback):
+            def __init__(self):
+                self.value = 0
+
+    label start:
+        $ o = MyClass()
+
+        "Welcome!"
+
+        $ o.value += 1
+
+        "o.value is [o.value]. It will increase each time you rolllback and then click ahead."
+

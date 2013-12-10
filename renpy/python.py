@@ -226,7 +226,11 @@ def clean_stores():
 
 class NoRollback(object):
     """
-    Objects inheriting from this object do not participate in Rollback.
+    :doc: norollback
+
+    Instances of classes inheriting from this class do not participate in
+    rollback. Objects reachable through an instance of a NoRollback class
+    only participate in rollback if they are reachable through other paths.
     """
 
     pass
