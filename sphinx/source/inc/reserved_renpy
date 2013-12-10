@@ -76,7 +76,7 @@
 * :func:`MusicRoom`
 * NVLCharacter
 * NVLSpeaker
-* NoRollback
+* :func:`NoRollback`
 * :func:`Notify`
 * :func:`Null`
 * :func:`NullAction`
