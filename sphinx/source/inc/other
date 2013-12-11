@@ -14,6 +14,26 @@
     
     Resets the game runtime counter.
 
+.. function:: renpy.context_dynamic(*vars)
+    
+    This can be given one or more variable names as arguments. This makes
+    the variables dynamically scoped to the current context. The variables will
+    be reset to their original value when the call returns.
+    
+    An example call is::
+    
+        $ renpy.context_dynamic("x", "y", "z")
+
+.. function:: renpy.dynamic(*vars)
+    
+    This can be given one or more variable names as arguments. This makes
+    the variables dynamically scoped to the current call. The variables will
+    be reset to their original value when the call returns.
+    
+    An example call is::
+    
+        $ renpy.dynamic("x", "y", "z")
+
 .. function:: renpy.focus_coordinates()
     
     This attempts to find the coordinates of the currently-focused
@@ -194,6 +214,12 @@
     
     Attempts to set the size of the physical window to `size`. This has the
     side effect of taking the screen out of fullscreen mode.
+
+.. function:: renpy.shown_window()
+    
+    Call this to indicate that the window has been shown. This interacts
+    with the "window show" statement, which shows an empty window whenever
+    tis functions has not been called during an interaction.
 
 .. function:: renpy.transition(trans, layer=None, always=False)
     

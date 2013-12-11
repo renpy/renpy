@@ -1497,9 +1497,33 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 def dynamic(*vars): #@ReservedAssignment
+    """
+    :doc: other
+
+    This can be given one or more variable names as arguments. This makes
+    the variables dynamically scoped to the current call. The variables will
+    be reset to their original value when the call returns.
+
+    An example call is::
+
+        $ renpy.dynamic("x", "y", "z")
+    """
+
     renpy.game.context().make_dynamic(vars)
 
 def context_dynamic(*vars): #@ReservedAssignment
+    """
+    :doc: other
+
+    This can be given one or more variable names as arguments. This makes
+    the variables dynamically scoped to the current context. The variables will
+    be reset to their original value when the call returns.
+
+    An example call is::
+
+        $ renpy.context_dynamic("x", "y", "z")
+    """
+
     renpy.game.context().make_dynamic(vars, context=True)
 
 def seen_label(label):
@@ -1765,12 +1789,25 @@ def call_stack_depth():
 
 
 def game_menu(screen=None):
+    """
+    :undocumented: Probably not what we want in the presence of
+    screens.
+    """
+
     if screen is None:
         call_in_new_context("_game_menu")
     else:
         call_in_new_context("_game_menu", screen)
 
 def shown_window():
+    """
+    :doc: other
+
+    Call this to indicate that the window has been shown. This interacts
+    with the "window show" statement, which shows an empty window whenever
+    tis functions has not been called during an interaction.
+    """
+
     renpy.game.context().scene_lists.shown_window = True
 
 class placement(renpy.python.RevertableObject):
@@ -1825,6 +1862,9 @@ def get_roll_forward():
     return renpy.game.interface.shown_window
 
 def cache_pin(*args):
+    """
+    :undocumented: Cache pin is deprecated.
+    """
 
     new_pins = renpy.python.RevertableSet()
 
@@ -1841,6 +1881,9 @@ def cache_pin(*args):
 
 
 def cache_unpin(*args):
+    """
+    :undocumented: Cache pin is deprecated.
+    """
 
     new_pins = renpy.python.RevertableSet()
 
@@ -1945,8 +1988,9 @@ def get_renderer_info():
 
 def display_reset():
     """
-    Used internally. Causes the display to be restarted at the start of
-    the next interaction.
+    :undocumented: Used internally.
+
+    Causes the display to be restarted at the start of the next interaction.
     """
 
     renpy.display.interface.display_reset = True
