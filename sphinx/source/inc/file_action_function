@@ -4,6 +4,15 @@
     
     Returns the current file page as a string.
 
+.. function:: FileCurrentScreenshot(empty=None, **properties)
+    
+    A displayable that shows the screenshot that will be saved with the current
+    file, if a screenshot has been taken when entering a menu or with
+    :func:`FileTakeScreenshot`.
+    
+    If there is no current screenshot, `empty` is shown in its place. (If `empty` is
+    None, it defaults to :func:`Null`().)
+
 .. function:: FileJson(name, key=None, empty=None, missing=None, page=None)
     
     Accesses the Json information associated with `name`.

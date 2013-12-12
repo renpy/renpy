@@ -25,6 +25,7 @@
 * :func:`FieldValue`
 * :func:`FileAction`
 * :func:`FileCurrentPage`
+* :func:`FileCurrentScreenshot`
 * :func:`FileDelete`
 * :func:`FileJson`
 * :func:`FileLoad`

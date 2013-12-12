@@ -378,3 +378,42 @@ class Frame(renpy.display.core.Displayable):
 
     def visit(self):
         return [ self.image ]
+
+
+class FileCurrentScreenshot(renpy.display.core.Displayable):
+    """
+    :doc: file_action_function
+
+    A displayable that shows the screenshot that will be saved with the current
+    file, if a screenshot has been taken when entering a menu or with
+    :func:`FileTakeScreenshot`.
+
+    If there is no current screenshot, `empty` is shown in its place. (If `empty` is
+    None, it defaults to :func:`Null`().)
+    """
+
+    def __init__(self, empty=None, **properties):
+
+        super(FileCurrentScreenshot, self).__init__(**properties)
+
+        if empty is None:
+            empty = renpy.display.layout.Null()
+
+        self.empty = empty
+
+
+    def render(self, width, height, st, at):
+
+        ss = renpy.display.interface.screenshot_surface
+
+        if ss is None:
+            return renpy.display.render.render(self.empty, width, height, st, at)
+
+        tex = renpy.display.draw.load_texture(ss)
+        w, h = tex.get_size()
+
+        rv = renpy.display.render.Render(w, h)
+        rv.blit(tex, (0, 0))
+
+        return rv
+

@@ -107,6 +107,7 @@ Image = renpy.display.im.image
 
 Frame = renpy.display.imagelike.Frame
 Solid = renpy.display.imagelike.Solid
+FileCurrentScreenshot = renpy.display.imagelike.FileCurrentScreenshot
 
 LiveComposite = renpy.display.layout.LiveComposite
 LiveCrop = renpy.display.layout.LiveCrop

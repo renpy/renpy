@@ -1072,7 +1072,11 @@ class Interface(object):
     """
 
     def __init__(self):
+
+        # PNG data and the surface for the current file screenshot.
         self.screenshot = None
+        self.screenshot_surface = None
+
         self.old_scene = { }
         self.transition = { }
         self.ongoing_transition = { }
@@ -1498,6 +1502,10 @@ class Interface(object):
         surf = renpy.display.scale.smoothscale(surf, scale)
         surf = surf.convert()
 
+        renpy.display.render.mutated_surface(surf)
+
+        self.screenshot_surface = surf
+
         sio = cStringIO.StringIO()
         renpy.display.module.save_png(surf, sio, 0)
         self.screenshot = sio.getvalue()
@@ -1513,24 +1521,6 @@ class Interface(object):
             self.bgscreenshot_needed = False
             self.bgscreenshot_surface = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
             self.bgscreenshot_event.set()
-
-    def save_screenshot(self, filename):
-        """
-        Saves a full-size screenshot in the given filename.
-        """
-
-        window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
-
-        if renpy.config.screenshot_crop:
-            window = window.subsurface(renpy.config.screenshot_crop)
-
-        try:
-            renpy.display.scale.image_save_unscaled(window, filename)
-        except:
-            if renpy.config.debug:
-                raise
-            pass
-
 
     def get_screenshot(self):
         """
@@ -1554,6 +1544,26 @@ class Interface(object):
         """
 
         self.screenshot = None
+        self.screenshot_surface = None
+
+
+    def save_screenshot(self, filename):
+        """
+        Saves a full-size screenshot in the given filename.
+        """
+
+        window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+
+        if renpy.config.screenshot_crop:
+            window = window.subsurface(renpy.config.screenshot_crop)
+
+        try:
+            renpy.display.scale.image_save_unscaled(window, filename)
+        except:
+            if renpy.config.debug:
+                raise
+            pass
+
 
 
     def show_window(self):
