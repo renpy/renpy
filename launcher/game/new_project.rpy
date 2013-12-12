@@ -81,7 +81,7 @@ label new_project:
 
             # Delete the tmp directory, if it exists.
             if os.path.isdir(os.path.join(project_dir, "tmp")):
-                os.path.rmtree(os.path.join(project_dir, "tmp"))
+                shutil.rmtree(os.path.join(project_dir, "tmp"))
 
             # Delete project.json, which must exist.
             os.unlink(os.path.join(project_dir, "project.json"))
