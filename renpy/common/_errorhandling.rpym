@@ -181,7 +181,7 @@ init python:
     style._hyperlink.color = "#008"
     style._hyperlink.hover_underline = True
 
-    # The keymap we use before the
+    # The keymap we use before the real keymap is defined.
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly

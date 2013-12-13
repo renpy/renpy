@@ -471,10 +471,11 @@ class Button(renpy.display.layout.Window):
 
     keymap = { }
     action = None
+    alternate = None
 
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
-                 time_policy=None, keymap={},
+                 time_policy=None, keymap={}, alternate=None,
                  **properties):
 
         super(Button, self).__init__(child, style=style, **properties)
@@ -502,6 +503,8 @@ class Button(renpy.display.layout.Window):
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
+        self.alternate = alternate
+
         self.focusable = clicked is not None
         self.role = role
         self.keymap = keymap
@@ -512,6 +515,7 @@ class Button(renpy.display.layout.Window):
         predict_action(self.clicked)
         predict_action(self.hovered)
         predict_action(self.unhovered)
+        predict_action(self.alternate)
 
         if self.keymap:
             for v in self.keymap.itervalues():
@@ -621,19 +625,20 @@ class Button(renpy.display.layout.Window):
                 return run(action)
 
         # Ignore as appropriate:
-        if map_event(ev, "button_ignore") and self.clicked:
+        if (self.clicked is not None) and map_event(ev, "button_ignore"):
             raise renpy.display.core.IgnoreEvent()
 
-        # If clicked,
-        if map_event(ev, "button_select") and self.clicked:
+        if (self.clicked is not None) and map_event(ev, "button_alternate_ignore"):
+            raise renpy.display.core.IgnoreEvent()
 
+        def handle_click(action):
             self.activated = True
             self.style.set_prefix(self.role + 'activate_')
 
             if self.style.sound:
                 renpy.audio.music.play(self.style.sound, channel="sound")
 
-            rv = run(self.clicked)
+            rv = run(action)
 
             if rv is not None:
                 return rv
@@ -646,6 +651,13 @@ class Button(renpy.display.layout.Window):
                     self.set_style_prefix(self.role + "idle_", True)
 
                 raise renpy.display.core.IgnoreEvent()
+
+        # If clicked,
+        if (self.clicked is not None) and map_event(ev, "button_select"):
+            handle_click(self.clicked)
+
+        if (self.alternate is not None) and map_event(ev, "button_alternate"):
+            handle_click(self.alternate)
 
         return None
 

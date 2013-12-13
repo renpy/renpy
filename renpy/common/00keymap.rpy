@@ -38,6 +38,8 @@ init -1600 python:
         # Button.
         button_ignore = [ 'mousedown_1' ],
         button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        button_alternate = [ 'mouseup_3' ],
+        button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
         input_backspace = [ 'K_BACKSPACE' ],
