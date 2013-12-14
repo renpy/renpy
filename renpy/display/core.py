@@ -1121,6 +1121,10 @@ class Interface(object):
         # Are we in fullscren mode?
         self.fullscreen = False
 
+        # Should we ignore the release of the primary mouse button? This
+        # is used after a longpress, to ignore the release event.
+        self.ignore_primary_mouseup = False
+
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -1876,6 +1880,13 @@ class Interface(object):
         except:
             pass
 
+    def after_longpress(self):
+        """
+        Called after a longpress, to ignore the mouse button release.
+        """
+
+        self.ignore_primary_mouseup = True
+
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -2411,6 +2422,14 @@ class Interface(object):
                         self.set_mode((ev.w, ev.h))
 
                     continue
+
+                if self.ignore_primary_mouseup and \
+                    ev.type == pygame.MOUSEBUTTONUP and \
+                    ev.button == 1:
+
+                    self.ignore_primary_mouseup = False
+                    continue
+
 
                 if ev.type == pygame.MOUSEMOTION or \
                         ev.type == pygame.MOUSEBUTTONDOWN or \

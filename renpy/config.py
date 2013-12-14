@@ -485,7 +485,15 @@ voice_tag_callback = None
 # A list of callbacks that can be used to add JSON to save files.
 save_json_callbacks = [ ]
 
-# The location (or set of locations) that we save to. This is a
+# The duration of a longpress, in seconds.
+longpress_duration = .5
+
+# The radius the longpress has to remain within, in pixels.
+longpress_radius = 15
+
+# How long we vibrate the device upon a longpress.
+longpress_vibrate = .1
+
 
 del renpy
 del os

@@ -29,6 +29,8 @@ from renpy.display.render import render, Render
 
 import pygame
 
+import math
+
 def compile_event(key, keydown):
     """
     Compiles a keymap entry into a python expression.
@@ -473,6 +475,10 @@ class Button(renpy.display.layout.Window):
     action = None
     alternate = None
 
+    longpress_start = None
+    longpress_x = None
+    longpress_y = None
+
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
@@ -581,6 +587,8 @@ class Button(renpy.display.layout.Window):
     def unfocus(self, default=False):
         super(Button, self).unfocus(default)
 
+        self.longpress_start = None
+
         if self.activated:
             return None
 
@@ -601,6 +609,27 @@ class Button(renpy.display.layout.Window):
         super(Button, self).per_interact()
 
     def event(self, ev, x, y, st):
+
+        def handle_click(action):
+            self.activated = True
+            self.style.set_prefix(self.role + 'activate_')
+
+            if self.style.sound:
+                renpy.audio.music.play(self.style.sound, channel="sound")
+
+            rv = run(action)
+
+            if rv is not None:
+                return rv
+            else:
+                self.activated = False
+
+                if self.is_focused():
+                    self.set_style_prefix(self.role + "hover_", True)
+                else:
+                    self.set_style_prefix(self.role + "idle_", True)
+
+                raise renpy.display.core.IgnoreEvent()
 
         # Call self.action.periodic()
         timeout = run_periodic(self.action, st)
@@ -624,6 +653,25 @@ class Button(renpy.display.layout.Window):
             if map_event(ev, name):
                 return run(action)
 
+        # Handle the longpress event, if necessary.
+        if self.alternate is not None:
+
+            if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+                self.longpress_start = st
+                self.longpress_x = x
+                self.longpress_y = y
+
+                renpy.game.interface.timeout(renpy.config.longpress_duration)
+
+            if self.longpress_start is not None:
+                if math.hypot(x - self.longpress_x, y - self.longpress_y) > renpy.config.longpress_radius:
+                    self.longpress_start = None
+                elif st >= (self.longpress_start + renpy.config.longpress_duration):
+                    renpy.exports.vibrate(renpy.config.longpress_vibrate)
+                    renpy.display.interface.after_longpress()
+
+                    return handle_click(self.alternate)
+
         # Ignore as appropriate:
         if (self.clicked is not None) and map_event(ev, "button_ignore"):
             raise renpy.display.core.IgnoreEvent()
@@ -631,33 +679,12 @@ class Button(renpy.display.layout.Window):
         if (self.clicked is not None) and map_event(ev, "button_alternate_ignore"):
             raise renpy.display.core.IgnoreEvent()
 
-        def handle_click(action):
-            self.activated = True
-            self.style.set_prefix(self.role + 'activate_')
-
-            if self.style.sound:
-                renpy.audio.music.play(self.style.sound, channel="sound")
-
-            rv = run(action)
-
-            if rv is not None:
-                return rv
-            else:
-                self.activated = False
-
-                if self.is_focused():
-                    self.set_style_prefix(self.role + "hover_", True)
-                else:
-                    self.set_style_prefix(self.role + "idle_", True)
-
-                raise renpy.display.core.IgnoreEvent()
-
         # If clicked,
         if (self.clicked is not None) and map_event(ev, "button_select"):
-            handle_click(self.clicked)
+            return handle_click(self.clicked)
 
         if (self.alternate is not None) and map_event(ev, "button_alternate"):
-            handle_click(self.alternate)
+            return handle_click(self.alternate)
 
         return None
 
