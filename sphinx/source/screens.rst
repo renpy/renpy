@@ -294,8 +294,16 @@ Creates an area of the screen that can be activated to run an
 action. A button takes no parameters, and the following properties.
 
 `action`
-    The action to run when the button is activated. This also controls
-    if the button is sensitive, and if the button is selected.
+    The action to run when the button is activated. A button is activated
+    when it is clicked, or when the player selects it and hits enter on the
+    keyboard. This also controls if the button is sensitive, and if the button
+    is selected.
+
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.

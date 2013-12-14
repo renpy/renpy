@@ -797,6 +797,20 @@ Rarely or Internally Used
     images used by that interaction have loaded. (Yeah, it's a lousy
     name.)
 
+.. var:: config.longpress_duration = 0.5
+
+    The amount of time the player must press the screen for for a longpress
+    to be recognized on a touch device.
+
+.. var:: config.longpress_radius = 15
+
+    The number of pixels the touch must remain within for a press to be
+    recognized as a longpress.
+
+.. var:: config.longpress_vibrate = .1
+
+    The amount of time the device will vibrate for after a longpress.
+
 .. var:: config.log = None
 
     If not None, this is expected to be a filename. Much of the text
