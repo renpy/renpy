@@ -26,7 +26,8 @@ import renpy.display
 import os
 import pygame
 
-# The function that's called to perform the emulation.
+# The function that's called to perform the emulation. This function has
+# the signature of null_emulator.
 emulator = None
 
 # An overlay that is placed over the screen to support the emulator.

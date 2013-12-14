@@ -1121,9 +1121,9 @@ class Interface(object):
         # Are we in fullscren mode?
         self.fullscreen = False
 
-        # Should we ignore the release of the primary mouse button? This
-        # is used after a longpress, to ignore the release event.
-        self.ignore_primary_mouseup = False
+        # Should we ignore the rest of the current touch? Used to ignore the
+        # rest of a mousepress after a longpress occurs.
+        self.ignore_touch = False
 
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
@@ -1885,7 +1885,9 @@ class Interface(object):
         Called after a longpress, to ignore the mouse button release.
         """
 
-        self.ignore_primary_mouseup = True
+        self.ignore_touch = True
+        renpy.display.focus.mouse_handler(None, -1, -1, default=False)
+
 
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
@@ -2257,7 +2259,13 @@ class Interface(object):
 
                     if first_pass and self.last_event:
                         x, y = renpy.display.draw.get_mouse_pos()
-                        renpy.display.focus.mouse_handler(self.last_event, x, y, default=False)
+                        ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
+
+                        if self.ignore_touch:
+                            x = -1
+                            y = -1
+
+                        renpy.display.focus.mouse_handler(None, x, y, default=False)
 
                     needs_redraw = False
                     first_pass = False
@@ -2423,19 +2431,15 @@ class Interface(object):
 
                     continue
 
-                if self.ignore_primary_mouseup and \
+                # If we're ignoring touch events, and get a mouse up, stop
+                # ignoring those events.
+                if self.ignore_touch and \
                     ev.type == pygame.MOUSEBUTTONUP and \
                     ev.button == 1:
 
-                    self.ignore_primary_mouseup = False
+                    self.ignore_touch = False
                     continue
 
-
-                if ev.type == pygame.MOUSEMOTION or \
-                        ev.type == pygame.MOUSEBUTTONDOWN or \
-                        ev.type == pygame.MOUSEBUTTONUP:
-
-                    self.mouse_event_time = renpy.display.core.get_time()
 
                 # Merge mousemotion events.
                 if ev.type == pygame.MOUSEMOTION:
@@ -2445,6 +2449,16 @@ class Interface(object):
 
                     if renpy.windows:
                         self.focused = True
+
+                # Handle mouse event time, and ignoring touch.
+                if ev.type == pygame.MOUSEMOTION or \
+                        ev.type == pygame.MOUSEBUTTONDOWN or \
+                        ev.type == pygame.MOUSEBUTTONUP:
+
+                    self.mouse_event_time = renpy.display.core.get_time()
+
+                    if self.ignore_touch:
+                        renpy.display.focus.mouse_handler(None, -1, -1, default=False)
 
                 # Handle focus notifications.
                 if ev.type == pygame.ACTIVEEVENT:
@@ -2463,13 +2477,13 @@ class Interface(object):
                 # mouse state as necessary.
                 x, y = renpy.display.draw.mouse_event(ev)
 
-                if not self.focused:
-                    x = -1
-                    y = -1
-
                 ev, x, y = renpy.display.emulator.emulator(ev, x, y)
                 if ev is None:
                     continue
+
+                if not self.focused or self.ignore_touch:
+                    x = -1
+                    y = -1
 
                 # This can set the event to None, to ignore it.
                 ev = renpy.display.joystick.event(ev)

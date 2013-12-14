@@ -32,6 +32,9 @@ interface = None
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False
 
+# Are we on a touchscreen?
+touch = False
+
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)
 ic_log = renpy.log.open("image_cache", developer=True, append=False)

@@ -232,9 +232,16 @@ def change_focus(newfocus, default=False):
 
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev, x, y, default=False):
+    """
+    Handle mouse events, to see if they change the focus.
 
-    if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
-        return
+    `ev`
+        If ev is not None, this function checks to see if it is a mouse event.
+    """
+
+    if ev is not None:
+        if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
+            return
 
     new_focus = renpy.display.render.focus_at_point(x, y)
 

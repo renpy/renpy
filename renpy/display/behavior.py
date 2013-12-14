@@ -654,7 +654,7 @@ class Button(renpy.display.layout.Window):
                 return run(action)
 
         # Handle the longpress event, if necessary.
-        if self.alternate is not None:
+        if (self.alternate is not None) and renpy.display.touch:
 
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                 self.longpress_start = st

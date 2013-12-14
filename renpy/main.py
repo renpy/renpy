@@ -160,6 +160,8 @@ def main():
 
     # Set up variants.
     choose_variants()
+    renpy.display.touch = "touch" in renpy.config.variants
+
 
     # Note the game directory.
     game.basepath = renpy.config.gamedir
