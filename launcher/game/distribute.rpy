@@ -559,7 +559,7 @@ init python in distribute:
             """
 
             SCRIPT_VERSION_RPY = os.path.join(config.gamedir, "script_version.rpy")
-            SCRIPT_VERSION_RPYC = os.path.join(config.gamedir, "script_version.rpy")
+            SCRIPT_VERSION_RPYC = os.path.join(config.gamedir, "script_version.rpyc")
             LICENSE_TXT = os.path.join(config.renpy_base, "LICENSE.txt")
 
             if os.path.exists(SCRIPT_VERSION_RPY):
