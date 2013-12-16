@@ -35,7 +35,7 @@ except ImportError:
 # we bump the version.
 #
 # Be sure to change config.version in tutorial/game/options.rpy.
-version_tuple = (6, 16, 3, vc_version)
+version_tuple = (6, 16, 4, vc_version)
 
 # A verbose string computed from that version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
