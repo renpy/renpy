@@ -2,8 +2,8 @@
 # See LICENSE.txt for license details.
 
 init python:
-    ANDROID_NO_JDK = 0
-    ANDROID_NO_RAPT = 1
+    ANDROID_NO_RAPT = 0
+    ANDROID_NO_JDK = 1
     ANDROID_NO_SDK = 2
     ANDROID_NO_KEY = 3
     ANDROID_NO_CONFIG = 4
@@ -80,10 +80,10 @@ init python:
         Determines the state of the android install, and returns it.
         """
 
-        if renpy.windows and not "JAVA_HOME" in os.environ:
-            return ANDROID_NO_JDK
         if RAPT_PATH is None:
             return ANDROID_NO_RAPT
+        if renpy.windows and not "JAVA_HOME" in os.environ:
+            return ANDROID_NO_JDK
         if not os.path.exists(os.path.join(RAPT_PATH, "android-sdk/extras/google/play_licensing")):
             return ANDROID_NO_SDK
         if not os.path.exists(os.path.join(RAPT_PATH, "android.keystore")):
@@ -98,10 +98,10 @@ init python:
         Returns text corresponding to the state.
         """
 
-        if state == ANDROID_NO_JDK:
-            return NO_JDK_TEXT
         if state == ANDROID_NO_RAPT:
             return NO_RAPT_TEXT
+        if state == ANDROID_NO_JDK:
+            return NO_JDK_TEXT
         if state == ANDROID_NO_SDK:
             return NO_SDK_TEXT
         if state == ANDROID_NO_KEY:
