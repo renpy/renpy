@@ -238,7 +238,7 @@ def copy_images(old, new):
         renpy.copy_images("eileen", "eileen2")
 
     will create an image beginning with "eileen2" for every image beginning
-    with "eileen2". If "eileen happy" exists, "eileen2 happy" will be
+    with "eileen". If "eileen happy" exists, "eileen2 happy" will be
     created.
 
     `old`
@@ -655,7 +655,6 @@ def display_menu(items,
     `screen`
         The name of the screen used to display the menu.
 
-    In each pair the first element of which is a textual label, and the second item
     """
 
     if interact:
@@ -1263,7 +1262,7 @@ def version(tuple=False): #@ReservedAssignment
     If `tuple` is false, returns a string containing "Ren'Py ", followed by
     the current version of Ren'Py.
 
-    If `tuple` is true, returns a string giving each component of the
+    If `tuple` is true, returns a tuple giving each component of the
     version as an integer.
     """
 
@@ -1805,7 +1804,7 @@ def shown_window():
 
     Call this to indicate that the window has been shown. This interacts
     with the "window show" statement, which shows an empty window whenever
-    tis functions has not been called during an interaction.
+    this functions has not been called during an interaction.
     """
 
     renpy.game.context().scene_lists.shown_window = True
