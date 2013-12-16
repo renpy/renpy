@@ -8,7 +8,7 @@
         renpy.copy_images("eileen", "eileen2")
     
     will create an image beginning with "eileen2" for every image beginning
-    with "eileen2". If "eileen happy" exists, "eileen2 happy" will be
+    with "eileen". If "eileen happy" exists, "eileen2 happy" will be
     created.
     
     `old`
