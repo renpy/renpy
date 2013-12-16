@@ -335,7 +335,7 @@ init python:
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
     for k, v in list(os.environ.items()):
-        if isinstance(v, str):
+        if not isinstance(v, str):
             os.environ[k] = renpy.fsencode(v)
 
 screen android_process(interface):
