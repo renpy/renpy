@@ -228,7 +228,7 @@
     
     Call this to indicate that the window has been shown. This interacts
     with the "window show" statement, which shows an empty window whenever
-    tis functions has not been called during an interaction.
+    this functions has not been called during an interaction.
 
 .. function:: renpy.transition(trans, layer=None, always=False)
     
@@ -247,7 +247,7 @@
     If `tuple` is false, returns a string containing "Ren'Py ", followed by
     the current version of Ren'Py.
     
-    If `tuple` is true, returns a string giving each component of the
+    If `tuple` is true, returns a tuple giving each component of the
     version as an integer.
 
 .. function:: renpy.vibrate(duration)

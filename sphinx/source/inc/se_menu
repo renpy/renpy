@@ -16,7 +16,6 @@
     `screen`
         The name of the screen used to display the menu.
     
-    In each pair the first element of which is a textual label, and the second item
 
 .. function:: renpy.display_menu(items, interact=True, screen="choice")
     
@@ -34,5 +33,4 @@
     `screen`
         The name of the screen used to display the menu.
     
-    In each pair the first element of which is a textual label, and the second item
 
