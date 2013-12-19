@@ -47,19 +47,20 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     `channel`
         The channel to play the sound on.
-    
+
     `loop`
         If this is True, the tracks will loop while they are the last thing
-        in the queue. 
+        in the queue.
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
         fadeout time is taken from config.fade_music.
 
     `synchro_start`
-        If synchro_start is given, all the channels that have had play
-        called on them with synchro_start set to True will be started at
-        the same time, in a sample accurate manner.
+        Ren'Py will ensure that all channels of with synchro_start set to true
+        will start playing at exactly the same time. Synchro_start should be
+        true when playing two audio files that are meant to be synchronized
+        with each other.
 
     `fadein`
         This is the number of seconds to fade the music in for, on the
@@ -130,10 +131,10 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 
     `channel`
         The channel to play the sound on.
-    
+
     `loop`
         If this is True, the tracks will loop while they are the last thing
-        in the queue. 
+        in the queue.
 
     `clear_queue`
         If True, then the queue is cleared, making these files the files that
@@ -210,7 +211,7 @@ def stop(channel="music", fadeout=None):
     This sets the last queued file to None.
 
     `channel`
-        The channel to stop the sound on. 
+        The channel to stop the sound on.
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
@@ -343,14 +344,14 @@ def set_pan(pan, delay, channel="music"):
         A number between -1 and 1 that control the placement of the audio.
         If this is -1, then all audio is sent to the left channel.
         If it's 0, then the two channels are equally balanced. If it's 1,
-        then all audio is sent to the right ear. 
+        then all audio is sent to the right ear.
 
     `delay`
         The amount of time it takes for the panning to occur.
 
     `channel`
         The channel the panning takes place on. This can be a sound or a music
-        channel. Often, this is channel 7, the default music channel. 
+        channel. Often, this is channel 7, the default music channel.
     """
 
     try:

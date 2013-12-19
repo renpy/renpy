@@ -30,16 +30,15 @@ are processed as described in PEP 3102, with two exceptions:
 Jump Statement
 --------------
 
-The jump statement is used to transfer control to the statement with the given
-label name.
+The jump statement is used to transfer control to the givel label.
 
 If the ``expression`` keyword is present, the expression following it is
 evaluated, and the string so computed is used as the label name of the
 statement to jump to. If the ``expression`` keyword is not present, the label
 name of the statement to jump to must be explicitly given.
 
-Unlike call, jump does not push the target onto any stack. As a result, there's
-no way to return to where you've jumped from. ::
+Unlike call, jump does not push the next statement onto a stack. As a
+result, there's no way to return to where you've jumped from. ::
 
     label loop_start:
 
@@ -52,13 +51,12 @@ no way to return to where you've jumped from. ::
 Call Statement
 --------------
 
-The call statement is used to transfer control to the statement with the given
-label name. It also pushes the label name of the statement following this one
-onto the call stack, allowing the return statement to return control to the
-statement following this one.
+The call statement is used to transfer control to the givel label. It
+also pushes the next statement onto the call stack, allowing the return s
+tatement to return control to the statement following the call.
 
 If the ``expression`` keyword is present, the expression following it is evaluated, and the
-string so computed is used as the name of the statement to call. If the
+string so computed is used as the name of the label to call. If the
 ``expression`` keyword is not present, the name of the statement to call must be
 explicitly given.
 
@@ -97,9 +95,9 @@ call.
 Return Statement
 ----------------
 
-The return statement pops the top location off of the call stack, and transfers
-control to it. If the call stack is empty, the return statement performs a full
-restart of Ren'Py.
+The return statement pops the top statement off of the call stack, and transfers
+control to it. If the call stack is empty, the return statement restarts
+Ren'Py, returning control to the main menu.
 
 If the optional expression is given to return, it is evaluated, and it's result
 is stored in the _return variable. This variable is dynamically scoped to each
