@@ -413,12 +413,21 @@ class Layout(object):
     Represents the layout of text.
     """
 
-    def __init__(self, text, width, height, renders):
+    def __init__(self, text, width, height, renders, size_only=False):
         """
         `text`
             The text object this layout is associated with.
+
         `width`, `height`
             The height of the laid-out text.
+
+        `renders`
+            A map from displayable to its render.
+
+        `size_only`
+            If true, layout will stop once the size field is filled
+            out. The object will only be suitable for sizing, as it
+            will be missing the textures required to render it.
         """
 
         style = text.style
@@ -610,9 +619,13 @@ class Layout(object):
         sw, sh = size = (maxx + self.xborder, y + self.yborder)
         self.size = size
 
+        # If we only care about the size, we're done.
+        if size_only:
+            return
+
+        # Place ruby.
         if self.has_ruby:
             textsupport.place_ruby(all_glyphs, style.ruby_style.yoffset, sw, sh)
-
 
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
@@ -1371,6 +1384,26 @@ class Text(renpy.display.core.Displayable):
 
                 rv = self.style.hyperlink_functions[1](target)
                 return rv
+
+    def size(self, width=4096, height=4096, st=0, at=0):
+        """
+        Attempts to figure out the size of the text. The parameters are
+        as for render.
+
+        This does not rotate vertical text.
+        """
+
+        if self.dirty or self.displayables is None:
+            self.update()
+
+        renders = { }
+
+        for i in self.displayables:
+            renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
+
+        layout = Layout(self, width, height, renders, size_only=True)
+
+        return layout.size
 
     def render(self, width, height, st, at):
 

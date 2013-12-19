@@ -532,6 +532,10 @@ interaction. This takes no parameters, and the following properties:
 `length`
     The maximum length of the text in this input.
 
+`pixel_width`
+    The maximum pixel width of the input. If typing a character would
+    cause the input to exceed this width, the keypress is ignored.
+
 `allow`
     A string containing characters that are allowed to be typed into
     this input. (By default, allow all characters.)
@@ -549,6 +553,7 @@ interaction. This takes no parameters, and the following properties:
 `changed`
     A python function that is called with what the user has typed,
     when the string changes.
+
 
 It also takes:
 

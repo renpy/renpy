@@ -448,7 +448,7 @@ def watch(expression, style='default', **properties):
 
     renpy.config.overlay_functions.append(overlay_func)
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None): #@ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None): #@ReservedAssignment
     """
     :doc: input
 
@@ -472,6 +472,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `length`
         If not None, this must be an integer giving the maximum length
         of the input string.
+
+    `pixel_width`
+        If not None, the input is limited to being this many pixels wide,
+        in the font used by the
     """
 
     renpy.exports.mode('input')
@@ -488,7 +492,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     if has_screen("input"):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
         show_screen("input", _transient=True, _widget_properties=widget_properties, prompt=prompt)
 

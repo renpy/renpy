@@ -775,6 +775,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     prefix = ""
     suffix = ""
     caret_pos = 0
+    old_caret_pos = 0
+    pixel_width = None
 
     def __init__(self,
                  default="",
@@ -788,6 +790,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                  button=None,
                  replaces=None,
                  editable=True,
+                 pixel_width=None,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -803,6 +806,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         self.changed = changed
 
         self.editable = editable
+        self.pixel_width = pixel_width
 
         caretprops = { 'color' : None }
 
@@ -812,6 +816,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         self.caret = renpy.display.image.Solid(xmaximum=1, style=style, **caretprops)
         self.caret_pos = len(self.content)
+        self.old_caret_pos = self.caret_pos
 
         if button:
             self.editable = False
@@ -826,19 +831,12 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         self.update_text(self.content, self.editable)
 
 
-    def update_text(self, content, editable):
+    def update_text(self, new_content, editable, check_size=False):
 
-        if content != self.content or editable != self.editable:
+        old_content = self.content
+
+        if new_content != self.content or editable != self.editable:
             renpy.display.render.redraw(self, 0)
-
-        if content != self.content:
-            self.content = content
-
-            if self.changed:
-                self.changed(content)
-
-        if content == "":
-            content = u"\u200b"
 
         self.editable = editable
 
@@ -847,12 +845,32 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         if caret is None:
             caret = self.caret
 
-        if editable:
-            l = len(content)
-            self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), caret,
-                                        content[self.caret_pos:l].replace("{", "{{"), self.suffix])
-        else:
-            self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+        def set_content(content):
+
+            if content == "":
+                content = u"\u200b"
+
+            if editable:
+                l = len(content)
+                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), caret,
+                                            content[self.caret_pos:l].replace("{", "{{"), self.suffix])
+            else:
+                self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+
+        set_content(new_content)
+
+        if check_size and self.pixel_width:
+            w, _h = self.size()
+            if w > self.pixel_width:
+                self.caret_pos = self.old_caret_pos
+                set_content(old_content)
+                return
+
+        if new_content != old_content:
+            self.content = new_content
+
+            if self.changed:
+                self.changed(new_content)
 
     # This is needed to ensure the caret updates properly.
     def set_style_prefix(self, prefix, root):
@@ -868,6 +886,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         self.update_text(self.content, False)
 
     def event(self, ev, x, y, st):
+
+        self.old_caret_pos = self.caret_pos
 
         if not self.editable:
             return None
@@ -928,7 +948,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             content = self.content[0:self.caret_pos] + ev.unicode + self.content[self.caret_pos:l]
             self.caret_pos += 1
 
-            self.update_text(content, self.editable)
+            self.update_text(content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
 
