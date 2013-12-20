@@ -578,7 +578,7 @@ init -1500 python:
 
          Take a screenshot to be used when the game is saved. This can
          be used to ensure that the screenshot is accurate, by taking
-         a pictue of the screen before a file save screen is shown.
+         a picture of the screen before a file save screen is shown.
          """
 
         def __call__(self):
@@ -597,10 +597,16 @@ init -1500 python:
             Set to true to mark the quicksave as the newest save.
          """
 
-        return [
-            FileTakeScreenshot(),
+        rv = [
             FileSave(1, page="quick", confirm=False, cycle=True, newest=newest),
-            Notify(message) ]
+            Notify(message),
+            ]
+
+        if not getattr(renpy.context(), "_menu", False):
+            rv.insert(0, FileTakeScreenshot())
+
+        return rv
+
 
     def QuickLoad():
         """
