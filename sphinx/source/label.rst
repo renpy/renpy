@@ -30,7 +30,7 @@ are processed as described in PEP 3102, with two exceptions:
 Jump Statement
 --------------
 
-The jump statement is used to transfer control to the givel label.
+The jump statement is used to transfer control to the given label.
 
 If the ``expression`` keyword is present, the expression following it is
 evaluated, and the string so computed is used as the label name of the
@@ -51,7 +51,7 @@ result, there's no way to return to where you've jumped from. ::
 Call Statement
 --------------
 
-The call statement is used to transfer control to the givel label. It
+The call statement is used to transfer control to the given label. It
 also pushes the next statement onto the call stack, allowing the return s
 tatement to return control to the statement following the call.
 
