@@ -314,8 +314,8 @@ label tutorial_music:
     e "Let's check out some of the commands that can effect the music channel."
 
     #begin sound1
-    play music "happy_alley.ogg" fadeout 1
-    queue music "happy_alley.ogg"
+    play music "sunflower-slow-drag.ogg" fadeout 1
+    queue music "sunflower-slow-drag.ogg"
     #end sound1
 
     show example sound1
@@ -358,7 +358,7 @@ label tutorial_music:
 
     e "You can queue up multiple sounds on the sound channel, but they will only play one at a time."
 
-    play music "happy_alley.ogg"
+    play music "sunflower-slow-drag.ogg"
 
     hide example
     with dissolve

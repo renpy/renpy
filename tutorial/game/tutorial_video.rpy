@@ -48,6 +48,6 @@ label tutorial_video:
 
     e "And that's all there is when it comes to movie playback in Ren'Py."
 
-    play music "happy_alley.ogg"
+    play music "sunflower-slow-drag.ogg"
 
     return

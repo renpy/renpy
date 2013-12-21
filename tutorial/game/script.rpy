@@ -78,7 +78,7 @@ label start:
     with dissolve
 
     # Start the background music playing.
-    play music "happy_alley.ogg"
+    play music "sunflower-slow-drag.ogg"
 
     window show
 
@@ -123,7 +123,7 @@ label end:
 
     e "We'd like to thank Piroshki for contributing my sprites, Mugenjohncel for Lucy and the band, and Jake for the magic circle."
 
-    e "The background music is \"Happy Alley\" by Kevin MacLeod. The concert music is by Alessio."
+    e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
 
     show eileen vhappy
 
