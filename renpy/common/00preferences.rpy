@@ -43,6 +43,7 @@ init -1500 python:
          * Preference("display", "fullscreen") - displays in fullscreen mode.
          * Preference("display", "window") - displays in windowed mode at 1x normal size.
          * Preference("display", 2.0) - displays in windowed mode at 2.0x normal size.
+         * Preference("display", "any window") - displays in windowed mode at the previous size.
          * Preference("display", "toggle") - toggle display mode.
 
          * Preference("transitions", "all") - show all transitions.
@@ -119,6 +120,8 @@ init -1500 python:
                 return SetField(_preferences, "fullscreen", True)
             elif value == "window":
                 return __DisplayAction(1.0)
+            elif value == "any window":
+                return SetField(_preferences, "fullscreen", False)
             elif value == "toggle":
                 return ToggleField(_preferences, "fullscreen")
             elif isinstance(value, (int, float)):
