@@ -239,15 +239,29 @@ init python:
     build.classify_renpy("**/.Editra", None)
 
     # main source.
+
+    def source_and_binary(pattern):
+        """
+        Classifies source and binary files beginning with `pattern`.
+        .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
+        else goes into source.
+        """
+
+        build.classify_renpy(pattern + ".pyo", "binary")
+        build.classify_renpy(pattern + ".rpyc", "binary")
+        build.classify_renpy(pattern + ".rpymc", "binary")
+        build.classify_renpy(pattern + ".rpyb", "binary")
+        build.classify_renpy(pattern, "source")
+
     build.classify_renpy("renpy.py", "source")
-    build.classify_renpy("renpy/**", "source")
+    source_and_binary("renpy/**")
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
-    build.classify_renpy("launcher/**", "source")
-    build.classify_renpy("templates/**", "source")
-    build.classify_renpy("the_question/**", "source")
-    build.classify_renpy("tutorial/**", "source")
+    source_and_binary("launcher/**")
+    source_and_binary("templates/**")
+    source_and_binary("the_question/**")
+    source_and_binary("tutorial/**")
 
     # docs.
     build.classify_renpy("doc/", "source")
