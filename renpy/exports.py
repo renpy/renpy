@@ -1846,6 +1846,30 @@ def get_placement(d):
 
     return placement(p)
 
+def place_image(tag, width=None, height=None, layer='master'):
+    """
+    :doc: image_func
+
+    If an image with `tag` exists on `layer`, returns the bounding box of
+    that image. Returns None if the image is not found.
+
+    The bounding box is an (x, y, width, height) tuple. The components of
+    the tuples are expressed in pixels, and may be floating point numbers.
+
+    `width`, `height`
+        The width and height of the area that contains the image. If None,
+        defaults the width and height of the screen, respectively.
+    """
+
+    tag = tag.split()[0]
+
+    if width is None:
+        width = renpy.config.screen_width
+    if height is None:
+        height = renpy.config.screen_height
+
+    return scene_lists().place_image(layer, tag, width, height)
+
 # User-Defined Displayable stuff.
 
 Render = renpy.display.render.Render

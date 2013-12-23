@@ -94,6 +94,55 @@ class absolute(float):
     __slots__ = [ ]
 
 
+def place(width, height, sw, sh, placement):
+    """
+    Performs the Ren'Py placement algorithm.
+
+    `width`, `height`
+        The width and height of the area the image will be
+        placed in.
+
+    `size`
+        The size of the image to be placed.
+
+    `placement`
+        The tuple returned by Displayable.get_placement().
+    """
+
+    xpos, ypos, xanchor, yanchor, xoffset, yoffset, _subpixel = placement
+
+    if xpos is None:
+        xpos = 0
+    if ypos is None:
+        ypos = 0
+    if xanchor is None:
+        xanchor = 0
+    if yanchor is None:
+        yanchor = 0
+    if xoffset is None:
+        xoffset = 0
+    if yoffset is None:
+        yoffset = 0
+
+    # We need to use type, since isinstance(absolute(0), float).
+    if xpos.__class__ is float:
+        xpos *= width
+
+    if xanchor.__class__ is float:
+        xanchor *= sw
+
+    x = xpos + xoffset - xanchor
+
+    if ypos.__class__ is float:
+        ypos *= height
+
+    if yanchor.__class__ is float:
+        yanchor *= sh
+
+    y = ypos + yoffset - yanchor
+
+    return x, y
+
 class Displayable(renpy.object.Object):
     """
     The base class for every object in Ren'Py that can be
@@ -281,70 +330,41 @@ class Displayable(renpy.object.Object):
 
     def place(self, dest, x, y, width, height, surf, main=True):
         """
-        This draws this Displayable onto a destination surface, using
-        the placement style information returned by this object's
-        get_placement() method.
+        This places a render (which must be of this displayable)
+        within a bounding area. Returns an (x, y) tuple giving the location
+        the displayable was placed at.
 
-        @param dest: The surface that this displayable will be drawn
-        on.
+        `dest`
+            If not None, the `surf` will be blitted to `dest` at the
+            computed coordinates.
 
-        @param x: The minimum x coordinate on this surface that this
-        Displayable will be drawn to.
+        `x`, `y`, `width`, `height`
+            The bounding area.
 
-        @param y: The minimum y coordinate on this surface that this
-        displayable will be drawn to.
+        `surf`
+            The render to place.
 
-        @param width: The width of the area allocated to this
-        Displayable.
-
-        @param height: The height of the area allocated to this
-        Displayable.
-
-        @param surf: The surface returned by a previous call to
-        self.render().
+        `main`
+            This is passed to Render.blit().
         """
 
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.get_placement()
+        placement = self.get_placement()
+        subpixel = placement[6]
 
-        if xpos is None:
-            xpos = 0
-        if ypos is None:
-            ypos = 0
-        if xanchor is None:
-            xanchor = 0
-        if yanchor is None:
-            yanchor = 0
-        if xoffset is None:
-            xoffset = 0
-        if yoffset is None:
-            yoffset = 0
+        xpos, ypos = place(width, height, surf.width, surf.height, placement)
 
-        # We need to use type, since isinstance(absolute(0), float).
-        if xpos.__class__ is float:
-            xpos *= width
+        xpos += x
+        ypos += y
 
-        if xanchor.__class__ is float:
-            xanchor *= surf.width
-
-        xpos += x + xoffset - xanchor
-
-        # y
-
-        if ypos.__class__ is float:
-            ypos *= height
-
-        if yanchor.__class__ is float:
-            yanchor *= surf.height
-
-        ypos += y + yoffset - yanchor
+        pos = (xpos, ypos)
 
         if dest is not None:
             if subpixel:
-                dest.subpixel_blit(surf, (xpos, ypos), main, main, None)
+                dest.subpixel_blit(surf, pos, main, main, None)
             else:
-                dest.blit(surf, (xpos, ypos), main, main, None)
+                dest.blit(surf, pos, main, main, None)
 
-        return xpos, ypos
+        return pos
 
     def set_transform_event(self, event):
         """
@@ -957,7 +977,7 @@ class SceneLists(renpy.object.Object):
 
     def get_displayable_by_name(self, layer, name):
         """
-        Returns the displayable on the layer with the given tag, or None
+        Returns the displayable on the layer with the given name, or None
         if no such displayable exists. Note that this will usually return
         a Transform.
         """
@@ -966,11 +986,47 @@ class SceneLists(renpy.object.Object):
             raise Exception("Unknown layer %r." % layer)
 
         for sle in self.layers[layer]:
-
             if sle.name == name:
                 return sle.displayable
 
         return None
+
+    def place_image(self, layer, tag, width, height):
+        """
+        Implements renpy.layout_image.
+        """
+
+        if layer not in self.layers:
+            raise Exception("Unknown layer %r." % layer)
+
+        for sle in self.layers[layer]:
+            if sle.tag == tag:
+                break
+        else:
+            return None
+
+        now = get_time()
+
+        if sle.show_time is not None:
+            st = now - sle.show_time
+        else:
+            st = 0
+
+        if sle.animation_time is not None:
+            at = now - sle.animation_time
+        else:
+            at = 0
+
+        surf = renpy.display.render.render(sle.displayable, width, height, st, at)
+
+        sw = surf.width
+        sh = surf.height
+
+        x, y = place(width, height, sw, sh, sle.displayable.get_placement())
+
+        surf.kill()
+
+        return (x, y, sw, sh)
 
 
 def scene_lists(index=-1):
