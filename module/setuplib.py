@@ -198,6 +198,8 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
             dep_fn = os.path.join("..", dep_fn)
         elif os.path.exists(os.path.join("include", dep_fn)):
             dep_fn = os.path.join("include", dep_fn)
+        elif os.path.exists(os.path.join("gen", dep_fn)):
+            dep_fn = os.path.join("gen", dep_fn)
         elif os.path.exists(dep_fn):
             pass
         else:
@@ -220,6 +222,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
             subprocess.check_call([
                 cython_command,
                 "-Iinclude",
+                "-Igen",
                 "-a",
                 fn,
                 "-o",

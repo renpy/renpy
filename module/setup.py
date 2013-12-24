@@ -85,12 +85,14 @@ if not android:
         libs = sdl + sound,
         define_macros=macros)
 
+# renpy
+cython("renpy.styleaccel")
 
-# Display.
+# renpy.display
 cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
-# Gl.
+# renpy.gl
 if android:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
 elif has_libglew:
@@ -106,7 +108,7 @@ cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not android)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
-# Angle
+# renpy.angle
 def anglecopy(fn):
     if android:
         return
@@ -134,7 +136,7 @@ anglecython("renpy.angle.glenviron_shader")
 anglecython("renpy.angle.glrtt_fbo")
 anglecython("renpy.angle.glrtt_copy")
 
-# Text.
+# renpy.text
 cython("renpy.text.textsupport")
 cython("renpy.text.texwrap")
 

@@ -1,6 +1,12 @@
-# Code for generating the includes used by renpy.styleaccel.
+from __future__ import print_function, unicode_literals, division, absolute_import
+
+str = unicode # @ReservedAssignment
 
 import collections
+import os
+
+# The path to the directory containing this file.
+BASE = os.path.dirname(os.path.abspath(__file__))
 
 ################################################################################
 # Prefixes
@@ -27,16 +33,22 @@ class Prefix(object):
         # updated, including this prefix.
         if index >= 0:
             self.alts = [ self.index ]
+            self.alt_names = [ self.name ]
         else:
             self.alts = [ ]
+            self.alt_names = [ ]
 
         for i in alts:
             self.alts.append(prefixes[i].index)
+            self.alt_names.append(i)
 
         prefixes[name] = self
 
 # The number of priority levels we have.
 PRIORITY_LEVELS = 4
+
+# The number of prefixes we have.
+PREFIX_COUNT = 6
 
 Prefix(5, 'selected_hover_', 3, [ ])
 Prefix(4, 'selected_idle_', 3, [ ])
@@ -45,7 +57,7 @@ Prefix(-1, 'selected_', 2, [ "selected_hover_", "selected_idle_", "selected_inse
 Prefix(2, 'hover_', 1, [ "selected_hover_" ])
 Prefix(1, 'idle_', 1, [ "selected_idle_" ] )
 Prefix(0, 'insensitive_', 1, [ "selected_insensitive_" ])
-Prefix(-1, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ] )
+Prefix(-2, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ] )
 
 
 ################################################################################
@@ -140,6 +152,16 @@ style_properties = collections.OrderedDict(
     line_overlap_split=None,
     )
 
+# A map from a style property to its index in the order of style_properties.
+style_property_index = { }
+for i, name in enumerate(style_properties):
+    style_property_index[name] = i
+
+style_property_count = len(style_properties)
+
+# print("{} properties * {} prefixes = {} cache entries".format(
+#     style_property_count, PREFIX_COUNT, style_property_count * PREFIX_COUNT))
+
 # A list of synthetic style properties, where each property is expanded into
 # multiple style properties. Each property are mapped into a list of tuples,
 # with each consisting of:
@@ -186,10 +208,10 @@ synthetic_properties = collections.OrderedDict(
     right_gutter = [ ('aft_gutter', None) ],
     top_gutter = [ ('fore_gutter', None) ],
     bottom_gutter = [ ('aft_gutter', None) ],
-    left_bar = [ ('fore_bar', 'none_is_null') ],
-    right_bar = [ ('aft_bar', 'none_is_null') ],
-    top_bar = [ ('fore_bar', 'none_is_null') ],
-    bottom_bar = [ ('aft_bar', 'none_is_null') ],
+    left_bar = [ ('fore_bar', None) ],
+    right_bar = [ ('aft_bar', None) ],
+    top_bar = [ ('fore_bar', None) ],
+    bottom_bar = [ ('aft_bar', None) ],
     box_spacing = [ ( 'spacing', None ) ],
     box_first_spacing = [ ( 'first_spacing', None) ],
 
@@ -251,14 +273,104 @@ synthetic_properties = collections.OrderedDict(
 
     )
 
+all_properties = collections.OrderedDict()
 
+for k, v in style_properties.items():
+    all_properties[k] = [ (k, None) ]
 
+all_properties.update(synthetic_properties)
 
-def generate(force=False):
+################################################################################
+# Code Generation
+################################################################################
 
-    # TODO: If nothing is out of date, do not generate styles.
+class CodeGen(object):
+    """
+    Utility class for code generation.
+
+    `filename`
+        The name of the file we code-generate into.
+    """
+
+    def __init__(self, filename):
+        self.filename = os.path.join(BASE, "gen", filename)
+        self.f = open(self.filename, "w")
+        self.depth = 0
+
+    def close(self):
+        self.f.close()
+
+    def write(self, s, *args, **kwargs):
+        out = "    " * self.depth
+        out += s.format(*args, **kwargs)
+        out = out.rstrip()
+
+        print(out)
+
+        out += "\n"
+        self.f.write(out)
+
+    def indent(self):
+        self.depth += 1
+
+    def dedent(self):
+        self.depth -= 1
+
+def generate_property_function(g, prefix, propname, properties):
+    name = prefix.name + propname
+
+    g.write("cdef void {name}_property(PyObject **cache, int *cache_priorities, int priority, object value):", name=name)
+    g.indent()
+
+    g.write("priority += {}", prefix.priority)
+
+    for stylepropname, func in properties:
+        value = "value"
+
+        g.write("")
+
+        if isinstance(func, str):
+            g.write("v = {func}({value})", func=func, value=value)
+            value = "v"
+        elif func is not None:
+            g.write("v = {}", func)
+            value = "v"
+
+        propfunc = style_properties[stylepropname]
+
+        if propfunc is not None:
+            g.write("v = {propfunc}({value})", propfunc=propfunc, value=value)
+            value = "v"
+
+        for alt, alt_name in zip(prefix.alts, prefix.alt_names):
+            g.write("assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
+                alt * len(style_properties) + style_property_index[stylepropname],
+                value, alt_name, stylepropname)
+
+    g.dedent()
+
+    g.write("")
+    g.write('register_property_function("{}", {}_property)', name, name)
+    g.write("")
 
     pass
 
+def generate_property_functions():
+    """
+    This generates code that defines the property functions.
+    """
+
+    g = CodeGen("stylepropertyfunctions.pxi")
+
+    for propname, proplist in all_properties.items():
+        for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+            generate_property_function(g, prefix, propname, proplist)
+
+    g.close()
+
+
+def generate():
+    generate_property_functions()
+
 if __name__ == "__main__":
-    generate(force=True)
+    generate()
