@@ -1,6 +1,8 @@
-from cpython.ref cimport PyObject, Py_INCREF, Py_DECREF
+from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
 
 import renpy
+
+include "styleconstants.pxi"
 
 ################################################################################
 # Property Functions
@@ -20,7 +22,7 @@ import renpy
 #     An offset that is applied to the priority of the property.
 # value
 #     The value of the style property.
-ctypedef void (*property_function)(PyObject **cache, int *cache_priorities, int priority, object value)
+ctypedef int (*property_function)(PyObject **cache, int *cache_priorities, int priority, object value) except -1
 
 # A class that wraps a pointer to a property function.
 cdef class PropertyFunctionWrapper:
@@ -49,17 +51,30 @@ cdef inline void assign(int index, PyObject **cache, int *cache_priorities, int 
     that is currently in that slot.
     """
 
-    pass
+    if priority >= cache_priorities[index]:
+        return
+
+    cdef PyObject *old
+
+    old = cache[index]
+    if old != NULL:
+        Py_XDECREF(old)
+
+    Py_XINCREF(value)
+    cache[index] = value
+
+    cache_priorities[index] = priority
+
 
 # Utility functions used by the various property functions:
 
-cdef object none_is_null(object o):
+def none_is_null(o):
     if o is None:
         return renpy.display.layout.Null()
     else:
         return renpy.easy.displayable(o)
 
-cdef object expand_outlines(list l):
+def expand_outlines(list l):
     rv = [ ]
 
     for i in l:
@@ -70,9 +85,34 @@ cdef object expand_outlines(list l):
 
     return rv
 
-cdef object expand_anchor(object v):
-    # TODO: Properly expand the anchor, perhaps optionally.
-    return v
+# Names for anchors.
+ANCHORS = dict(
+    left=0.0,
+    right=1.0,
+    center=0.5,
+    top=0.0,
+    bottom=1.0,
+    )
+
+def expand_anchor(v):
+    """
+    Turns an anchor into a number.
+    """
+
+    try:
+        return ANCHORS.get(v, v)
+    except:
+        # This fixes some bugs in very old Ren'Pys.
+
+        for n in ANCHORS:
+            o = getattr(renpy.store, n, None)
+            if o is None:
+                continue
+
+            if v is o:
+                return ANCHORS[n]
+
+        raise
 
 cdef inline object index_0(object v):
     return v[0]
@@ -87,3 +127,22 @@ cdef inline object index_3(object v):
     return v[3]
 
 include "stylepropertyfunctions.pxi"
+
+
+cdef class StyleCore:
+
+    cdef public list properties
+    cdef PyObject **cache
+
+    def __init__(self, **properties):
+        self.properties = [ ]
+
+    def setattr(self, property, value): # @ReservedAssignment
+        self.properties.append({ property : value })
+
+    def delattr(self, property): # @ReservedAssignment
+        for d in self.properties:
+            if property in d:
+                del d[property]
+
+include "styleproperties.pxi"

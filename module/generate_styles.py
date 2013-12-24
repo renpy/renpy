@@ -290,12 +290,15 @@ class CodeGen(object):
 
     `filename`
         The name of the file we code-generate into.
+    `spew`
+        If true, spew the generated code to stdout.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, spew=False):
         self.filename = os.path.join(BASE, "gen", filename)
         self.f = open(self.filename, "w")
         self.depth = 0
+        self.spew = spew
 
     def close(self):
         self.f.close()
@@ -305,7 +308,8 @@ class CodeGen(object):
         out += s.format(*args, **kwargs)
         out = out.rstrip()
 
-        print(out)
+        if self.spew:
+            print(out)
 
         out += "\n"
         self.f.write(out)
@@ -316,10 +320,30 @@ class CodeGen(object):
     def dedent(self):
         self.depth -= 1
 
+
+def generate_constants():
+    """
+    This generates code that defines the property functions.
+    """
+
+    g = CodeGen("styleconstants.pxi")
+
+    g.write("DEF PRIORITY_LEVELS = {}", PRIORITY_LEVELS)
+    g.write("DEF PREFIX_COUNT = {}", PREFIX_COUNT)
+    g.write("DEF STYLE_PROPERTY_COUNT = {}", style_property_count)
+
+    for p in prefixes.values():
+        if p.index < 0:
+            continue
+
+        g.write("DEF {}PREFIX = {}", p.name, p.index * style_property_count)
+
+    g.close()
+
 def generate_property_function(g, prefix, propname, properties):
     name = prefix.name + propname
 
-    g.write("cdef void {name}_property(PyObject **cache, int *cache_priorities, int priority, object value):", name=name)
+    g.write("cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:", name=name)
     g.indent()
 
     g.write("priority += {}", prefix.priority)
@@ -347,6 +371,7 @@ def generate_property_function(g, prefix, propname, properties):
                 alt * len(style_properties) + style_property_index[stylepropname],
                 value, alt_name, stylepropname)
 
+    g.write("return 0")
     g.dedent()
 
     g.write("")
@@ -368,9 +393,51 @@ def generate_property_functions():
 
     g.close()
 
+def generate_property(g, propname, prefix):
+    """
+    This generates the code for a single property on the style object.
+    """
+
+    name = prefix.name + propname
+
+    g.write("property {}:", name)
+    g.indent()
+
+    # __set__
+    g.write("def __set__(self, value):")
+    g.indent()
+    g.write("self.properties.append({{ '{}' : value }})", name)
+    g.dedent()
+
+    # __del__
+    g.write("def __del__(self):")
+    g.indent()
+    g.write("self.delattr('{}')", name)
+    g.dedent()
+
+    g.dedent()
+    g.write("")
+
+def generate_properties():
+
+    g = CodeGen("styleproperties.pxi", True)
+
+    g.write("cdef class Style(StyleCore):")
+    g.write("")
+
+    g.indent()
+
+    for propname in all_properties:
+        for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+            generate_property(g, propname, prefix)
+
+    g.dedent()
+    g.close()
 
 def generate():
+    generate_constants()
     generate_property_functions()
+    generate_properties()
 
 if __name__ == "__main__":
     generate()
