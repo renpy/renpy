@@ -87,7 +87,26 @@ def import_cython():
     import renpy.angle.gltexture #@UnresolvedImport
 
 
+def update_path(package):
+    """
+    Update the __path__ of package, to import binary modules from a libexec
+    directory.
+    """
+
+    name = package.__name__.split(".")
+
+    import _renpy #@UnresolvedImport
+    libexec = os.path.dirname(_renpy.__file__)
+    package.__path__.append(os.path.join(libexec, *name))
+
+    # Also find encodings, to deal with the way py2exe lays things out.
+    import encodings
+    libexec = os.path.dirname(encodings.__path__[0])
+    package.__path__.append(os.path.join(libexec, *name))
+
 def import_all():
+
+    import renpy.arguments #@ @UnresolvedImport
 
     import renpy.log #@UnresolvedImport
 
@@ -123,22 +142,8 @@ def import_all():
     import renpy.display.scale #@UnresolvedImport
     import renpy.display.module #@UnresolvedImport
 
-    def update_path(package):
-        """
-        Update the __path__ of package, to import binary modules from a libexec
-        directory.
-        """
+    update_path(renpy)
 
-        name = package.__name__.split(".")
-
-        import _renpy #@UnresolvedImport
-        libexec = os.path.dirname(_renpy.__file__)
-        package.__path__.append(os.path.join(libexec, *name))
-
-        # Also find encodings, to deal with the way py2exe lays things out.
-        import encodings
-        libexec = os.path.dirname(encodings.__path__[0])
-        package.__path__.append(os.path.join(libexec, *name))
 
     update_path(renpy.display)
 
@@ -146,6 +151,7 @@ def import_all():
     import renpy.display.core # object @UnresolvedImport
 
     import renpy.text #@UnresolvedImport
+
     update_path(renpy.text)
 
     import renpy.text.ftfont #@UnresolvedImport
