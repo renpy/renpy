@@ -403,6 +403,13 @@ def generate_property(g, propname, prefix):
     g.write("property {}:", name)
     g.indent()
 
+    if name in style_properties:
+        # __get__
+        g.write("def __get__(self):")
+        g.indent()
+        g.write("return get(self, {})", style_property_index[propname])
+        g.dedent()
+
     # __set__
     g.write("def __set__(self, value):")
     g.indent()
