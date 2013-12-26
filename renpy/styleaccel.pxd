@@ -32,11 +32,36 @@ cdef void register_property_function(name, property_function function)
 
 cdef class StyleCore:
 
+    ############################################################## Public Fields
+
+    # The name of this style, a tuple of strings.
+    cdef public object name
+
+    # The parent of this style, a tuple of strings.
+    cdef public object parent
+
+    # A list of dictionaries mapping properties to values. The later items
+    # in this list override eariler ones.
+    cdef public list properties
+
+    # The style prefix that accesses to unprefixed styles will use.
+    cdef public object prefix
+
+    ############################################################# Private Fields
+
     # True if this style has been built, False otherwise.
     cdef bint built
 
-    # A list of dictionaries mapping properties to
-    cdef public list properties
+    # References to the down and left parents, or None if we do nothave one.
+    #
+    # The down parent uses inheritance, while the left parent uses less style
+    # indexing. For example, if style.mybutton inherits from style.button, and
+    # self is style.mybutton['Quit']
+    #
+    # self.down_parent is style.button['Quit']
+    # self.left_parent is style.mybutton
+    cdef StyleCore down_parent
+    cdef StyleCore left_parent
 
     # This is a map from prefixed style property to its value, or NULL if
     # the prefixed style property is not defined by this style.
@@ -49,4 +74,11 @@ cdef class StyleCore:
     # we don't increment the reference count while it's in the cache.
     cdef PyObject **cache
 
+    # The offset in the cache corresponding to self.prefix.
+    cdef int offset
+
+    #################################################################### Methods
+
     cpdef _get(StyleCore self, int)
+
+
