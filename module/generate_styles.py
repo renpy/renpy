@@ -348,7 +348,7 @@ def generate_constants():
         if p.index < 0:
             continue
 
-        g.write("DEF {}PREFIX = {}", p.name, p.index * style_property_count)
+        g.write("DEF {}PREFIX = {}", p.name.upper(), p.index * style_property_count)
 
     g.close()
 

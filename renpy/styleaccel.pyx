@@ -32,26 +32,11 @@ cdef void register_property_function(name, property_function function):
 
 
 cdef class StyleCore:
-#
-#     # True if this style has been built, False otherwise.
-#     cdef bint built
-#
-#     # A list of dictionaries mapping properties to
-#     cdef public list properties
-#
-#     # This is a map from prefixed style property to its value, or NULL if
-#     # the prefixed style property is not defined by this style.
-#     #
-#     # Each prefix and style property are given an index, using the formula
-#     # (prefix_index * STYLE_PROPERTY_COUNT) + style_property_index
-#     #
-#     # Note: We cheat the reference counting on this cache. Since we know
-#     # that every object has a positive reference count because it's in properties,
-#     # we don't increment the reference count while it's in the cache.
-#     cdef PyObject **cache
 
     def __init__(self, **properties):
         self.properties = [ ]
+        self.prefix = "insensitive_"
+        self.offset = INSENSITIVE_PREFIX
 
     def __dealloc__(self):
 
@@ -66,10 +51,35 @@ cdef class StyleCore:
             if property in d:
                 del d[property]
 
+    def set_prefix(self, prefix):
+        """
+        Sets the style_prefix to `prefix`.
+        """
+
+        if prefix == self.prefix:
+            return
+
+        self.prefix = prefix
+
+        if prefix == "insensitive_":
+            self.offset = INSENSITIVE_PREFIX
+        elif prefix == "idle_":
+            self.offset = IDLE_PREFIX
+        elif prefix == "hover_":
+            self.offset = HOVER_PREFIX
+        elif prefix == "selected_insensitive_":
+            self.offset = SELECTED_INSENSITIVE_PREFIX
+        elif prefix == "selected_idle_":
+            self.offset = SELECTED_IDLE_PREFIX
+        elif prefix == "selected_hover_":
+            self.offset = SELECTED_HOVER_PREFIX
+
     cpdef _get(StyleCore self, int index):
         """
         Retrieves the property at `index` from this style or its parents.
         """
+
+        index += self.offset
 
         if not self.built:
             build_style(self)
