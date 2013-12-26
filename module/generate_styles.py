@@ -4,6 +4,7 @@ str = unicode # @ReservedAssignment
 
 import collections
 import os
+import io
 
 # The path to the directory containing this file.
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -296,12 +297,23 @@ class CodeGen(object):
 
     def __init__(self, filename, spew=False):
         self.filename = os.path.join(BASE, "gen", filename)
-        self.f = open(self.filename, "w")
+        self.f = io.StringIO()
         self.depth = 0
         self.spew = spew
 
     def close(self):
-        self.f.close()
+
+        text = self.f.getvalue()
+
+        if os.path.exists(self.filename):
+            with open(self.filename, "r") as f:
+                old = f.read()
+
+            if old == text:
+                return
+
+        with open(self.filename, "w") as f:
+            f.write(text)
 
     def write(self, s, *args, **kwargs):
         out = "    " * self.depth
@@ -407,7 +419,7 @@ def generate_property(g, propname, prefix):
         # __get__
         g.write("def __get__(self):")
         g.indent()
-        g.write("return get(self, {})", style_property_index[propname])
+        g.write("return self._get({})", style_property_index[propname])
         g.dedent()
 
     # __set__
@@ -427,7 +439,7 @@ def generate_property(g, propname, prefix):
 
 def generate_properties():
 
-    g = CodeGen("styleproperties.pxi", True)
+    g = CodeGen("styleproperties.pxi")
 
     g.write("cdef class Style(StyleCore):")
     g.write("")

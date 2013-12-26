@@ -87,6 +87,7 @@ if not android:
 
 # renpy
 cython("renpy.styleaccel")
+cython("renpy.styleclass")
 
 # renpy.display
 cython("renpy.display.render", libs=[ 'z', 'm' ])
