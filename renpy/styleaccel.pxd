@@ -47,6 +47,9 @@ cdef class StyleCore:
     # The style prefix that accesses to unprefixed styles will use.
     cdef public object prefix
 
+    # The help for the style object.
+    cdef public object help
+
     ############################################################# Private Fields
 
     # True if this style has been built, False otherwise.
