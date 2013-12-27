@@ -33,14 +33,17 @@ init -1500 python:
          ShowMenu without an argument will enter the game menu at the
          default screen, taken from _game_menu_screen.
 
+         Extra arguments and kewyord arguments are passed on to the screen
          """
 
-        def __init__(self, screen=None):
+        def __init__(self, screen=None, *args, **kwargs):
             self.screen = screen
+            self.args = args
+            self.kwargs = kwargs
 
         def predict(self):
             if renpy.has_screen(self.screen):
-                renpy.predict_screen(self.screen)
+                renpy.predict_screen(self.screen, *self.args, **self.kwargs)
 
         def __call__(self):
 
@@ -59,7 +62,7 @@ init -1500 python:
                 if renpy.has_screen(screen):
 
                     renpy.transition(config.intra_transition)
-                    renpy.show_screen(screen, _transient=True)
+                    renpy.show_screen(screen, _transient=True, *self.args, **self.kwargs)
                     renpy.restart_interaction()
 
                 elif renpy.has_label(screen):
@@ -75,7 +78,7 @@ init -1500 python:
                     raise Exception("%r is not a screen or a label." % orig_screen)
 
             else:
-                renpy.call_in_new_context("_game_menu", _game_menu_screen=screen)
+                renpy.call_in_new_context("_game_menu", *self.args, _game_menu_screen=screen, **self.kwargs)
 
         def get_selected(self):
             return renpy.get_screen(self.screen)
