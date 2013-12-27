@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 ## This file contains some of the options that can be changed to customize
@@ -166,8 +166,8 @@ init -1 python hide:
     config.sound = False
     config.quit_action = Quit(confirm=False)
     config.gl_resize = False
-    config.window_icon = "logo.png"
-    config.windows_icon = "logo32.png"
+    config.window_icon = "images/logo.png"
+    config.windows_icon = "images/logo32.png"
     config.has_autosave = False
     config.log_enable = False
     config.mouse_hide_time = 86400 * 366

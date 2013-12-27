@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2012 Tom Rothamel <pytom@bishoujo.us>
 # See LICENSE.txt for license details.
 
 init -1 python:
@@ -21,14 +21,14 @@ init -1 python:
     SCROLLBAR_HOVER = "#d86b45"
 
     # An image used as a separator pattern.
-    PATTERN = "pattern.png"
+    PATTERN = "images/pattern.png"
 
     # A displayable used for the background of everything.
-    BACKGROUND = "background.png"
+    BACKGROUND = "images/background.png"
 
     # A displayable used for the background of windows
     # containing commands, preferences, and navigation info.
-    WINDOW = Frame("window.png", 0, 0, tile=True)
+    WINDOW = Frame("images/window.png", 0, 0, tile=True)
 
     # A displayable used for the background of the projects list.
     PROJECTS_WINDOW = Null()
@@ -195,11 +195,11 @@ init 1 python:
     style.l_vscrollbar = Style(style.l_default)
     style.l_vscrollbar.thumb = Fixed(
         Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
-        Image("vscrollbar_center.png", xalign=0.5, yalign=0.5),
+        Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     style.l_vscrollbar.hover_thumb = Fixed(
         Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
-        Image("vscrollbar_center.png", xalign=0.5, yalign=0.5),
+        Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     style.l_vscrollbar.xmaximum = SCROLLBAR_SIZE
     style.l_vscrollbar.bar_vertical = True
@@ -264,9 +264,9 @@ init 1 python:
 
     def checkbox(full, color):
         if full:
-            return im.Twocolor("checkbox_full.png", color, color, yalign=0.5)
+            return im.Twocolor("images/checkbox_full.png", color, color, yalign=0.5)
         else:
-            return im.Twocolor("checkbox_empty.png", color, color, yalign=0.5)
+            return im.Twocolor("images/checkbox_empty.png", color, color, yalign=0.5)
 
     style.l_checkbox.background = checkbox(False, IDLE)
     style.l_checkbox.hover_background = checkbox(False, HOVER)
