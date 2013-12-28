@@ -41,7 +41,7 @@ styles = { }
 
 cpdef get_style(name):
     """
-    Gets the (non-indexed style) with `name`, which must be a string.
+    Gets the style with `name`, which must be a string.
 
     If the style doesn't exist, and it contains an underscore in it, creates
     a new style that has as a parent the part after the first underscore, if
@@ -67,6 +67,23 @@ cpdef get_style(name):
     rv = Style(parent, name=nametuple)
     styles[nametuple] = rv
     return rv
+
+cpdef get_full_style(name):
+    """
+    Gets the style with `name`, which must be a tuple.
+    """
+
+    rv = styles.get(name, None)
+    if rv is not None:
+        return rv
+
+    rv = get_style(name[0])
+
+    for i in name[1:]:
+        rv = name[i]
+
+    return rv
+
 
 class StyleManager(object):
     """
@@ -105,22 +122,17 @@ class StyleManager(object):
         Returns `true` if name is a style.
         """
 
-        return (name in styles) or ((name,) in styles):
+        return (name in styles) or ((name,) in styles)
 
     def get(self, name):
         """
         Gets a style, which may be a name or a tuple.
         """
 
-        if not isinstance(name, tuple):
+        if isinstance(name, tuple):
+            return get_full_style(name)
+        else:
             return get_style(name)
-
-        rv = get_style(name[0])
-
-        for i in name[1:]:
-            rv = name[i]
-
-        return rv
 
 
 ################################################################################
@@ -234,6 +246,15 @@ cpdef build_style(StyleCore s):
 
     s.built = True
 
+    # Find our parents.
+    if s.parent is not None:
+        s.down_parent = get_full_style(s.parent)
+        build_style(s.down_parent)
+
+    if s.name is not None and len(s.name) > 1:
+        s.left_parent = get_full_style(s.name[:-1])
+        build_style(s.left_parent)
+
     # Build the properties cache.
     if not s.properties:
         s.cache = NULL
@@ -261,6 +282,17 @@ cpdef build_style(StyleCore s):
 
         priority += PRIORITY_LEVELS
 
+def build_styles():
+    """
+    Builds or rebuilds all styles.
+    """
+
+    for s in styles.values():
+        unbuild_style(s)
+
+    for s in styles.values():
+        build_style(s)
+
 cpdef unbuild_style(StyleCore s):
 
     if not s.built:
@@ -269,5 +301,8 @@ cpdef unbuild_style(StyleCore s):
     if s.cache != NULL:
         free(s.cache)
         s.cache = NULL
+
+    s.left_parent = None
+    s.down_parent = None
 
     s.built = False

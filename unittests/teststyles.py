@@ -3,7 +3,7 @@ import unittest
 
 import renpy
 renpy.import_all()
-from renpy.styleaccel import Style, StyleManager
+from renpy.styleaccel import Style, StyleManager, build_styles
 
 
 class TestStyles(unittest.TestCase):
@@ -53,6 +53,22 @@ class TestStyles(unittest.TestCase):
         assert sm.prefs_default["foo"] is sm.prefs_default["foo"]
         assert sm.prefs_default["foo"].name == ("prefs_default","foo")
         assert sm.prefs_default["foo"].parent == ("default","foo")
+
+        sm.default.size = "default"
+        sm.default.italic = "default"
+        sm.default.bold = "default"
+
+        sm.prefs_default.italic = "prefs_default"
+        sm.prefs_default.bold = "prefs_default"
+
+        sm.default["foo"].bold = "default_foo"
+
+        build_styles()
+
+
+
+
+
 
 
 
