@@ -223,19 +223,47 @@ cdef class StyleCore:
         Retrieves the property at `index` from this style or its parents.
         """
 
+        cdef PyObject *o
+
+        # The current style object we're looking at.
+        cdef StyleCore s
+
+        # The style object we'll backtrack to when s has no down-parent.
+        cdef StyleCore left
+
         index += self.offset
 
         if not self.built:
             build_style(self)
 
-        cdef PyObject *o
+        s = self
+        left = None
 
-        o = self.cache[index]
+        while True:
 
-        if o == NULL:
-            return None
+            # If we have the style, return it.
+            if s.cache != NULL:
+                o = s.cache[index]
+                if o != NULL:
+                    return <object> o
 
-        return <object> o
+            # If there is no left-parent, and we have one, store it.
+            if left is None and s.left_parent is not None:
+                left = s.left_parent
+
+            s = s.down_parent
+
+            # If no down-parent, try left.
+            if s is None:
+                s = left
+                left = None
+
+            # If no down-parent or left-parent, default to None.
+            if s is None:
+                return None
+
+
+
 
 from renpy.styleclass import Style
 

@@ -65,7 +65,11 @@ class TestStyles(unittest.TestCase):
 
         build_styles()
 
+        s = sm.prefs_default["foo"]
 
+        assert s.bold == "default_foo"
+        assert s.italic == "prefs_default"
+        assert s.size == "default"
 
 
 
