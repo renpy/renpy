@@ -161,7 +161,6 @@ class Displayable(renpy.object.Object):
     # get_placement can be called at any time, so can't
     # assume anything.
 
-    activated = False
     focusable = False
     full_focus_name = None
     role = ''
@@ -196,20 +195,18 @@ class Displayable(renpy.object.Object):
         Called to indicate that this widget has the focus.
         """
 
-        if not self.activated:
-            self.set_style_prefix(self.role + "hover_", True)
+        self.set_style_prefix(self.role + "hover_", True)
 
-        if not default and not self.activated:
-            if self.style.sound:
-                renpy.audio.music.play(self.style.sound, channel="sound")
+        if not default:
+            if self.style.hover_sound:
+                renpy.audio.music.play(self.style.hover_sound, channel="sound")
 
     def unfocus(self, default=False):
         """
         Called to indicate that this widget has become unfocused.
         """
 
-        if not self.activated:
-            self.set_style_prefix(self.role + "idle_", True)
+        self.set_style_prefix(self.role + "idle_", True)
 
     def is_focused(self):
 

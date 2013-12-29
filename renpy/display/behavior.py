@@ -505,7 +505,6 @@ class Button(renpy.display.layout.Window):
                 role = ''
 
         self.action = action
-        self.activated = False
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
@@ -570,9 +569,6 @@ class Button(renpy.display.layout.Window):
     def focus(self, default=False):
         super(Button, self).focus(default)
 
-        if self.activated:
-            return None
-
         rv = None
 
         if not default:
@@ -588,9 +584,6 @@ class Button(renpy.display.layout.Window):
         super(Button, self).unfocus(default)
 
         self.longpress_start = None
-
-        if self.activated:
-            return None
 
         if not default:
             run_unhovered(self.hovered)
@@ -611,24 +604,14 @@ class Button(renpy.display.layout.Window):
     def event(self, ev, x, y, st):
 
         def handle_click(action):
-            self.activated = True
-            self.style.set_prefix(self.role + 'activate_')
-
-            if self.style.sound:
-                renpy.audio.music.play(self.style.sound, channel="sound")
+            if self.style.activate_sound:
+                renpy.audio.music.play(self.style.activate_sound, channel="sound")
 
             rv = run(action)
 
             if rv is not None:
                 return rv
             else:
-                self.activated = False
-
-                if self.is_focused():
-                    self.set_style_prefix(self.role + "hover_", True)
-                else:
-                    self.set_style_prefix(self.role + "idle_", True)
-
                 raise renpy.display.core.IgnoreEvent()
 
         # Call self.action.periodic()

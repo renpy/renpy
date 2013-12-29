@@ -70,7 +70,8 @@ init python:
     style._default.subpixel = False
 
     # Sound properties.
-    style._default.sound = None
+    style._default.activate_sound = None
+    style._default.hover_sound = None
 
     # Box properties.
     style._default.spacing = 0

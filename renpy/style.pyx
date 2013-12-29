@@ -363,15 +363,6 @@ cdef class StyleCore:
             if s is None:
                 return None
 
-    property activate_sound:
-        # TODO: Something sensible.
-
-        def __set__(self, value):
-            return
-
-        def __get__(self):
-            return None
-
 from renpy.styleclass import Style
 
 cpdef build_style(StyleCore s):

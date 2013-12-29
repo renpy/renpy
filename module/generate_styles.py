@@ -54,11 +54,14 @@ PREFIX_COUNT = 6
 Prefix(5, 'selected_hover_', 3, [ ])
 Prefix(4, 'selected_idle_', 3, [ ])
 Prefix(3, 'selected_insensitive_', 3, [ ])
-Prefix(-1, 'selected_', 2, [ "selected_hover_", "selected_idle_", "selected_insensitive_" ])
+Prefix(-3, 'selected_', 2, [ "selected_hover_", "selected_idle_", "selected_insensitive_" ])
 Prefix(2, 'hover_', 1, [ "selected_hover_" ])
 Prefix(1, 'idle_', 1, [ "selected_idle_" ] )
 Prefix(0, 'insensitive_', 1, [ "selected_insensitive_" ])
-Prefix(-2, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ] )
+Prefix(-4, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ] )
+
+Prefix(-2, 'activate_', 0, [ ])
+Prefix(-1, 'selected_activate_', 0, [ ])
 
 
 ################################################################################
@@ -69,6 +72,7 @@ Prefix(-2, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_"
 # to a function that is called when it is set, or None if no such function
 # is needed.
 style_properties = collections.OrderedDict(
+    activate_sound = None,
     aft_bar = 'none_is_null',
     aft_gutter = None,
     antialias = None,
@@ -100,7 +104,8 @@ style_properties = collections.OrderedDict(
     fore_bar = 'none_is_null',
     fore_gutter = None,
     foreground = 'renpy.easy.displayable_or_none',
-    sound = None,
+    hover_sound = None,
+    hyperlink_functions=None,
     italic = None,
     justify = None,
     kerning = None,
@@ -108,6 +113,7 @@ style_properties = collections.OrderedDict(
     layout = None,
     line_leading = None,
     left_margin = None,
+    line_overlap_split=None,
     left_padding = None,
     line_spacing = None,
     mouse = None,
@@ -149,8 +155,6 @@ style_properties = collections.OrderedDict(
     yminimum = None,
     yoffset = None,
     ypos = None,
-    hyperlink_functions=None,
-    line_overlap_split=None,
     )
 
 # A map from a style property to its index in the order of style_properties.

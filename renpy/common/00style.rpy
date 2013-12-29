@@ -187,7 +187,8 @@ init -1800 python:
     style.default.subpixel = False
 
     # Sound properties.
-    style.default.sound = None
+    style.default.activate_sound = None
+    style.default.hover_sound = None
 
     # Box properties.
     style.default.spacing = 0
