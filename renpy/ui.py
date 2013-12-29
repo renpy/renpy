@@ -347,13 +347,7 @@ def style_group_style(s, style_group):
 
     new_style = style_group + "_" + s
 
-    if new_style[0] == "_":
-        return new_style
-
-    if new_style not in renpy.style.style_map:
-        renpy.style.style_map[new_style] = renpy.style.Style(s, heavy=False, name=new_style)
-
-    return new_style
+    return renpy.style.get_style(new_style)
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.

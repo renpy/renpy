@@ -222,7 +222,7 @@ def main():
 
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
-    renpy.style.build_styles(early=True)
+    renpy.style.build_styles()
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.

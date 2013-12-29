@@ -56,7 +56,6 @@ def init_display():
         renpy.display.core.Interface()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
-        renpy.style.styles_built = True # The styles we use were built in renpy.main.
 
     renpy.ui.reset()
 

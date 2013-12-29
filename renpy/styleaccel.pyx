@@ -262,9 +262,6 @@ cdef class StyleCore:
             if s is None:
                 return None
 
-
-
-
 from renpy.styleclass import Style
 
 cpdef build_style(StyleCore s):
@@ -303,23 +300,11 @@ cpdef build_style(StyleCore s):
             pfw = property_functions.get(k, None)
 
             if pfw is None:
-                print "Warning:", k,
                 continue
 
             pfw.function(s.cache, cache_priorities, priority, v)
 
         priority += PRIORITY_LEVELS
-
-def build_styles():
-    """
-    Builds or rebuilds all styles.
-    """
-
-    for s in styles.values():
-        unbuild_style(s)
-
-    for s in styles.values():
-        build_style(s)
 
 cpdef unbuild_style(StyleCore s):
 
@@ -334,3 +319,68 @@ cpdef unbuild_style(StyleCore s):
     s.down_parent = None
 
     s.built = False
+
+
+################################################################################
+# Other functions
+################################################################################
+
+def reset():
+    """
+    Reset the style system.
+    """
+
+    styles.clear()
+
+def build_styles():
+    """
+    Builds or rebuilds all styles.
+    """
+
+    for s in styles.values():
+        unbuild_style(s)
+
+    for s in styles.values():
+        build_style(s)
+
+def rebuild():
+    """
+    Rebuilds all styles.
+    """
+
+    build_styles()
+
+def copy_properties(p):
+    """
+    Makes a copy of the properties dict p.
+    """
+
+    return [ dict(i) for i in p ]
+
+def backup():
+    """
+    Returns an opaque object that backs up the current styles.
+    """
+
+    rv = { }
+
+    for k, v in styles.iteritems()
+        rv[k] = (v.parent, copy_properties(v.properties))
+
+    return rv
+
+def restore(o):
+    """
+    Restores a style backup.
+    """
+
+    for k, v in o.iteritems():
+        s = get_full_style(k)
+
+        parent, properties = v
+
+        s.set_parent(parent)
+        s.properties = copy_properties(properties)
+
+# TODO: write_text
+# TODO: style_heirarchy
