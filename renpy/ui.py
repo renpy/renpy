@@ -343,9 +343,9 @@ def style_group_style(s, style_group):
         style_group = stack[-1].style_group
 
     if style_group is None:
-        return s
-
-    new_style = style_group + "_" + s
+        new_style = s
+    else:
+        new_style = style_group + "_" + s
 
     return renpy.style.get_style(new_style)
 
@@ -856,25 +856,6 @@ def _imagebutton(idle_image = None,
 
 imagebutton = Wrapper(_imagebutton, style="image_button")
 
-def get_text_style(style, default):
-    if isinstance(style, basestring):
-        base = style
-        rest = ()
-    else:
-        base = style.name[0]
-        rest = style.name[1:]
-
-    base = base + "_text"
-
-    rv = renpy.style.style_map.get(base, None)
-
-    if rv is None:
-        rv = renpy.style.style_map[default]
-
-    for i in rest:
-        rv = rv[i]
-
-    return rv
 
 def textbutton(label, clicked=None, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
@@ -898,7 +879,7 @@ def textbutton(label, clicked=None, style=None, text_style=None, substitute=True
         style = style_group_style('button', NoStyleGroupGiven)
 
     if text_style is None:
-        text_style = get_text_style(style, style_group_style('button_text', NoStyleGroupGiven))
+        text_style = renpy.style.get_text_style(style, style_group_style('button_text', NoStyleGroupGiven))
 
     button(style=style, clicked=clicked, **button_kwargs)
     text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -918,7 +899,7 @@ def label(label, style=None, text_style=None, substitute=True, scope=None, **kwa
         style = style_group_style('label', NoStyleGroupGiven)
 
     if text_style is None:
-        text_style = get_text_style(style, style_group_style('label_text', NoStyleGroupGiven))
+        text_style = renpy.style.get_text_style(style, style_group_style('label_text', NoStyleGroupGiven))
 
     window(style=style, **label_kwargs)
     text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)

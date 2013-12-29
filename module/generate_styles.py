@@ -350,6 +350,9 @@ def generate_constants():
 
         g.write("DEF {}PREFIX = {}", p.name.upper(), p.index * style_property_count)
 
+    for k in style_properties:
+        g.write("DEF {}_INDEX = {}", k.upper(), style_property_index[k])
+
     g.close()
 
 def generate_property_function(g, prefix, propname, properties):

@@ -1,4 +1,4 @@
-from cpython.ref cimport PyObject
+from cpython.ref cimport PyObject, Py_XDECREF
 from libc.string cimport memset
 from libc.stdlib cimport calloc, free
 
@@ -35,7 +35,6 @@ cdef void register_property_function(name, property_function function):
 # Style Management
 ################################################################################
 
-
 # A map from style name (a tuple) to the style object with that name.
 styles = { }
 
@@ -68,6 +67,7 @@ cpdef get_style(name):
     styles[nametuple] = rv
     return rv
 
+
 cpdef get_full_style(name):
     """
     Gets the style with `name`, which must be a tuple.
@@ -80,7 +80,52 @@ cpdef get_full_style(name):
     rv = get_style(name[0])
 
     for i in name[1:]:
-        rv = name[i]
+        rv = rv[i]
+
+    return rv
+
+
+cpdef get_tuple_name(s):
+    """
+    Gets the tuple name of a style, where `s` may be a tuple, Style, or string.
+
+    If `s` is None, returns None.
+    """
+
+    if isinstance(s, StyleCore):
+        return s.name
+    elif isinstance(s, tuple):
+        return s
+    elif s is None:
+        return s
+    else:
+        return (s,)
+
+
+def get_text_style(style, default):
+    """
+    If `style` + "_text", exists, returns it. Otherwise, returns the default
+    style, which must be given as a Style.
+
+    For indexed styles, this is applied first, and then indexing is applied.
+    """
+
+    style = get_tuple_name(style)
+
+    if style is None:
+        return None
+
+    start = style[:1]
+    rest = style[1:]
+
+    rv = styles.get(style, None)
+    if rv is None:
+        rv = get_style(default)
+    else:
+        rv = default
+
+    for i in rest:
+        rv = rv[i]
 
     return rv
 
@@ -99,19 +144,19 @@ class StyleManager(object):
         value.name = name
         styles[name] = value
 
-    __setitem__ = setattr
+    __setitem__ = __setattr__
 
     def __getattr__(self, name):
         return get_style(name)
 
-    __getitem__ = getattr
+    __getitem__ = __getattr__
 
     def create(self, name, parent, description=None):
         """
         Deprecated way of creating styles.
         """
 
-        s = Style(parent,help=description)
+        s = Style(parent, help=description)
         self[name] = s
 
     def rebuild(self):
@@ -141,31 +186,49 @@ class StyleManager(object):
 
 cdef class StyleCore:
 
-    def __init__(self, parent, properties=None, name=None, help=None):
+    def __init__(self, parent, properties=None, name=None, help=None, heavy=True):
+        """
+        `parent`
+            The parent of this style. One of:
+
+            * A Style object.
+            * A string giving the name of a style.
+            * A tuple giving the name of an indexed style.
+            * None, to indicate there is no parent.
+
+        `properties`
+            A map from style property to its value.
+
+        `name`
+            If given, a tuple that will be the name of this style.
+
+        `help`
+            Help information for this style.
+
+        `heavy`
+            Ignored, but retained for compatibility.
+        """
+
         self.prefix = "insensitive_"
         self.offset = INSENSITIVE_PREFIX
+
+        self.properties = [ ]
 
         if properties:
             self.properties.append(properties)
 
-        self.properties = [ ]
-
-        if isinstance(parent, StyleCore):
-            self.parent = parent.name
-        elif isinstance(parent, tuple):
-            self.parent = parent
-        elif parent is None:
-            self.parent = parent
-        else:
-            self.parent = (parent,)
-
+        self.parent = get_tuple_name(parent)
         self.name = name
-
         self.help = help
 
     def __dealloc__(self):
+        cdef int i
 
         if self.cache != NULL:
+
+            for 0 <= i < PREFIX_COUNT * STYLE_PROPERTY_COUNT:
+                Py_XDECREF(self.cache[i])
+
             free(self.cache)
 
     def __repr__(self):
@@ -195,6 +258,30 @@ cdef class StyleCore:
             if property in d:
                 del d[property]
 
+    def set_parent(self, parent):
+        self.parent = get_tuple_name(parent)
+
+    def clear(self):
+        self.properties = [ ]
+
+    def take(self, other):
+        self.properties = other.properties[:]
+
+    def setdefault(self, **properties):
+        """
+        This sets the default value of the given properties, if no more
+        explicit values have been set.
+        """
+
+        for p in self.properties:
+            for k in p:
+                if k in properties:
+                    del properties[k]
+
+        if properties:
+            self.properties.append(properties)
+
+
     def set_prefix(self, prefix):
         """
         Sets the style_prefix to `prefix`.
@@ -217,6 +304,20 @@ cdef class StyleCore:
             self.offset = SELECTED_IDLE_PREFIX
         elif prefix == "selected_hover_":
             self.offset = SELECTED_HOVER_PREFIX
+
+    def get_placement(self):
+        """
+        Returns a tuple giving the placement of the object.
+        """
+        return (
+            self._get(XPOS_INDEX),
+            self._get(YPOS_INDEX),
+            self._get(XANCHOR_INDEX),
+            self._get(YANCHOR_INDEX),
+            self._get(XOFFSET_INDEX),
+            self._get(YOFFSET_INDEX),
+            self._get(SUBPIXEL_INDEX),
+            )
 
     cpdef _get(StyleCore self, int index):
         """
@@ -262,6 +363,15 @@ cdef class StyleCore:
             if s is None:
                 return None
 
+    property activate_sound:
+        # TODO: Something sensible.
+
+        def __set__(self, value):
+            return
+
+        def __get__(self):
+            return None
+
 from renpy.styleclass import Style
 
 cpdef build_style(StyleCore s):
@@ -305,6 +415,7 @@ cpdef build_style(StyleCore s):
             pfw.function(s.cache, cache_priorities, priority, v)
 
         priority += PRIORITY_LEVELS
+
 
 cpdef unbuild_style(StyleCore s):
 
@@ -364,7 +475,7 @@ def backup():
 
     rv = { }
 
-    for k, v in styles.iteritems()
+    for k, v in styles.iteritems():
         rv[k] = (v.parent, copy_properties(v.properties))
 
     return rv

@@ -265,11 +265,6 @@ text_layout = None
 # A callback that is called 20 times a second.
 periodic_callback = None
 
-# A dictionary, mapping from style property to functions (which map
-# arguments to values) or to None to indicate no such function is
-# necessary.
-style_properties = None
-
 # Should we check that all style properties are in style_properties? (Internal)
 check_properties = True
 
@@ -499,6 +494,4 @@ del renpy
 del os
 
 def init():
-    import renpy # W0404 @Reimport
-    global style_properties
-    style_properties = renpy.style.style_properties
+    pass

@@ -172,8 +172,8 @@ class Displayable(renpy.object.Object):
     # Can we change our look in response to transform_events?
     transform_event_responder = False
 
-    def __init__(self, focus=None, default=False, style='default', **properties): # W0231
-        self.style = renpy.style.Style(style, properties, heavy=True)
+    def __init__(self, focus=None, default=False, style='default', **properties):
+        self.style = renpy.style.Style(style, properties)
         self.focus_name = focus
         self.default = default
 

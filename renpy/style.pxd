@@ -1,4 +1,4 @@
-from cpython.ref cimport PyObject
+from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
 
 # A property function. The property function is responsible for taking a
 # style property, expanding it as necessary, and assigning it to the
@@ -24,6 +24,9 @@ cdef inline void assign(int index, PyObject **cache, int *cache_priorities, int 
 
     if priority < cache_priorities[index]:
         return
+
+    Py_XDECREF(cache[index])
+    Py_XINCREF(value)
 
     cache[index] = value
     cache_priorities[index] = priority
@@ -71,10 +74,6 @@ cdef class StyleCore:
     #
     # Each prefix and style property are given an index, using the formula
     # (prefix_index * STYLE_PROPERTY_COUNT) + style_property_index
-    #
-    # Note: We cheat the reference counting on this cache. Since we know
-    # that every object has a positive reference count because it's in properties,
-    # we don't increment the reference count while it's in the cache.
     cdef PyObject **cache
 
     # The offset in the cache corresponding to self.prefix.

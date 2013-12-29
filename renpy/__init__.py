@@ -106,7 +106,11 @@ def update_path(package):
 
 def import_all():
 
-    import renpy.arguments #@ @UnresolvedImport
+    import renpy # @UnresolvedImport
+
+    update_path(renpy)
+
+    import renpy.arguments # @UnresolvedImport
 
     import renpy.log #@UnresolvedImport
 
@@ -137,16 +141,14 @@ def import_all():
     import renpy.substitutions #@UnresolvedImport
     import renpy.translation #@UnresolvedImport
 
+    import renpy.display
+
+    update_path(renpy.display)
+
     import renpy.display.presplash #@UnresolvedImport
     import renpy.display.pgrender #@UnresolvedImport
     import renpy.display.scale #@UnresolvedImport
     import renpy.display.module #@UnresolvedImport
-
-    update_path(renpy)
-
-
-    update_path(renpy.display)
-
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
     import renpy.display.core # object @UnresolvedImport
 

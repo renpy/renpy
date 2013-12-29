@@ -91,6 +91,18 @@ class Keyword(object):
         if parser:
             parser.add(self)
 
+STYLE_PREFIXES = [
+    '',
+    'insensitive_',
+    'hover_',
+    'idle_',
+    'activate_',
+    'selected_',
+    'selected_insensitive_'
+    'selected_hover_',
+    'selected_idle_',
+    'selected_activate_',
+]
 
 class Style(object):
     """
@@ -100,7 +112,7 @@ class Style(object):
     def __init__(self, name):
         self.name = name
 
-        for j in renpy.style.prefix_subs:
+        for j in STYLE_PREFIXES:
             all_keyword_names.add(j + self.name)
 
         if parser:
@@ -116,7 +128,7 @@ class PrefixStyle(object):
         self.prefix = prefix
         self.name = name
 
-        for j in renpy.style.prefix_subs:
+        for j in STYLE_PREFIXES:
             all_keyword_names.add(prefix + j + self.name)
 
         if parser:
@@ -159,11 +171,11 @@ class Parser(object):
             self.keyword[i.name] = i
 
         elif isinstance(i, Style):
-            for j in renpy.style.prefix_subs:
+            for j in STYLE_PREFIXES:
                 self.keyword[j + i.name] = i
 
         elif isinstance(i, PrefixStyle):
-            for j in renpy.style.prefix_subs:
+            for j in STYLE_PREFIXES:
                 self.keyword[i.prefix + j + i.name] = i
 
         elif isinstance(i, Parser):

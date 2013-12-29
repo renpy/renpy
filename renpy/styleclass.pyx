@@ -1,4 +1,4 @@
-from styleaccel cimport register_property_function, StyleCore, assign
+from style cimport register_property_function, StyleCore, assign
 from cpython.ref cimport PyObject
 
 # Utility functions used by the various property functions:
@@ -11,7 +11,7 @@ def none_is_null(o):
     else:
         return renpy.easy.displayable(o)
 
-def expand_outlines(list l):
+def expand_outlines(l):
     rv = [ ]
 
     for i in l:
