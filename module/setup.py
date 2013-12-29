@@ -86,7 +86,7 @@ if not android:
         define_macros=macros)
 
 # renpy
-cython("renpy.styleaccel")
+cython("renpy.style")
 cython("renpy.styleclass")
 
 # renpy.display
