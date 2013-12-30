@@ -1,3 +1,4 @@
+#@PydevCodeAnalysisIgnore
 from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
 
 # A property function. The property function is responsible for taking a

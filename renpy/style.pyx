@@ -53,9 +53,11 @@ cpdef get_style(name):
     if rv is not None:
         return rv
 
-    _start, _mid, end = name.partition("_")
+    start, _mid, end = name.partition("_")
 
-    if not end:
+    # We need both sides of the _, as we don't want to have
+    # _foo auto-inherit from foo.
+    if not start or not end:
         raise Exception("Style %r does not exist." % name)
 
     try:
@@ -141,7 +143,10 @@ class StyleManager(object):
             raise Exception("Value is not a style.")
 
         name = (name,)
-        value.name = name
+
+        if value.name is None:
+            value.name = name
+
         styles[name] = value
 
     __setitem__ = __setattr__
