@@ -231,6 +231,23 @@ cdef class StyleCore:
 
             free(self.cache)
 
+    def __getstate__(self):
+
+        rv = dict(
+            properties=self.properties,
+            prefix=self.prefix,
+            name=self.name,
+            parent=self.parent)
+
+        return rv
+
+    def __setstate__(self, state):
+
+        self.properties = state["properties"]
+        self.name = state["name"]
+        self.set_parent(state["parent"])
+        self.set_prefix(state["prefix"])
+
     def __repr__(self):
         return "<{} parent={}>".format(self.name, self.parent)
 
