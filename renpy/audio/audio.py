@@ -362,7 +362,7 @@ class Channel(object):
                 while topq.filename in self.loop:
                     self.loop.remove(topq.filename)
 
-                if renpy.config.debug_sound:
+                if renpy.config.debug_sound and not renpy.game.after_rollback:
                     raise
                 else:
                     return

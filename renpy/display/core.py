@@ -1969,8 +1969,6 @@ class Interface(object):
         self.preloads = [ ]
 
         try:
-            renpy.game.after_rollback = False
-
             for i in renpy.config.start_interact_callbacks:
                 i()
 
@@ -2257,6 +2255,9 @@ class Interface(object):
 
         # Have we drawn a frame yet?
         video_frame_drawn = False
+
+        # We're no longer after rollback.
+        renpy.game.after_rollback = False
 
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.

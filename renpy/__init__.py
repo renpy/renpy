@@ -141,7 +141,7 @@ def import_all():
     import renpy.substitutions #@UnresolvedImport
     import renpy.translation #@UnresolvedImport
 
-    import renpy.display
+    import renpy.display # @UnresolvedImport @Reimport
 
     update_path(renpy.display)
 
