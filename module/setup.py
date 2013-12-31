@@ -8,7 +8,16 @@ import os
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
 import setuplib
-from setuplib import android, include, library, cython, cmodule, pymodule, copyfile, find_unnecessary_gen
+from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
+
+# If RENPY_CC or RENPY_LD are in the environment, use them.
+def setup_env(name):
+    renpy_name = "RENPY_" + name
+    if renpy_name in os.environ:
+        os.environ[name] = os.environ[renpy_name]
+
+setup_env("CC")
+setup_env("LD")
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
