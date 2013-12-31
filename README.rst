@@ -4,117 +4,138 @@ The Ren'Py Visual Novel Engine
 
 http://www.renpy.org
 
-*Currently these instructions are Ubuntu/Debian specific, and these instructions will work, without
-modification only on this platform until further notice and changes in the near future.*
+Ren'Py development takes place on the ``master`` branch, and occasionally
+on feature branches.
 
-Branches
-========
+Getting Started
+===============
 
-Ren'Py development takes place on two branches, ``master`` and
-``devel``, as well as the occasional feature branch.
+Ren'Py depends on a number of python modules written in Cython and C. For
+changes to Ren'Py that only involve python modules, you can use the modules
+found in the latest nightly build. Otherwise, you'll have to compile the
+modules yourself.
 
-Master
-------
+The development scripts assume a POSIX-like platform. The scripts should run
+on Linux or Mac OS X, and can be made to run on Windows using an environment
+like Msys.
 
-The master branch contains code that can be run using the precompiled libraries in
-the latest (release or pre-release) version of Ren'Py. It is mainly used for
-bugfixes and features that do not require C or Cython code to implement.
+Nightly Build
+-------------
 
-To start please check out from devel into the `master` branch::
+Nightly builds can be downloaded from:
 
-    git checkout master
+   http://nightly.renpy.org
 
-After checking out master, run::
+Note that the latest nightly build is at the bottom of the list. Once you've
+unpacked the nightly, change into this repository, and run::
 
-    ./after_checkout.sh <path-to-built-renpysdk>
+    ./after_checkout.sh <path-to-nightly>
 
-to link in the libraries from the most recent Ren'Py.
+Once this script completes, you should be able to run Ren'Py using renpy.sh,
+renpy.app, or renpy.exe, as appropriate for your platform.
 
-Ren'Py can then be run by running renpy.exe, renpy.sh, or renpy.app as
-appropriate.
+If the current nightly build doesn't work, please wait 24 hours for a new
+build to occur. If that build still doesn't work, contact Tom (`pytom at bishoujo.us`,
+or @renpytom on twitter) to find out what's wrong.
 
-*NB* After completion of these steps, there will be an error in the symlink 
-of the folder `doc`, making this inaccessible. This is because the documentation
-has not been built using the documentation generator `sphinx`.
+The ``doc`` symlink will dangle until documentation is built, as described
+below.
 
-To build this please install the sphinx documentation generator using the python
-package installation tool `pip`, install sphinx::
+Compiling the Modules
+----------------------
 
-    pip install sphinx
-
-Change directory into renpy/sphinx and run this command to build the documentation::
-
-    ./build.sh
-    
-This will be helpful to those who wish to change documentation files, and want to 
-see the end result by running this build script.
-
-Devel
------
-
-The devel branch contains code that requires a recompile of modules
-implemented in C or Cython. Building devel requires you to have the
-prerequisite libraries installed in addition to cython and other tools 
-such as sphinx mentioned above to get a complete package. The installation
-of some of the libraries requires permission to install them globally
-however if one does not wish to do so, this can be overcome by installing 
-the libraries into a python `virtualenv` (more information to this below under "Without Global Permissions") 
-
-**With Global Permissions**
-The required software can be installed using `pip`::
-
-    pip install sphinx cython
-    
-Or `apt` and `easy_install`::
-
-    apt-get install cython && easy_install -U sphinx
-
-Then install the necessary libraries::
+Building the modules requires you have the many dependencies installed on
+your system. On Ubuntu, these dependencies can be installed with the
+command::
 
     apt-get install python-dev python-pygame libavcodec-dev libavformat-dev \
         libfreetype6-dev libglew1.6-dev libsdl1.2-dev libsdl-image1.2-dev \
         libfribidi-dev libswscale-dev libesd0-dev libpulse-dev
-    
-RENPY_DEPS_INSTALLED to a \::-separated list of paths containing dependencies:: 
+
+Other platforms may have an equivalent command. Otherwise, you'll need to
+build `renpy-deps <https://github.com/renpy/renpy-deps>`_.
+
+We strongly suggest installing the Ren'Py modules into a Python
+virtualenv. `This page <http://dabapps.com/blog/introduction-to-pip-and-virtualenv-python/>`_
+describes how to install pip and the virtualenv tool, and set up a new virtualenv.
+
+After activating the virtualenv, install cython::
+
+    pip install -U cython
+
+Next, set RENPY_DEPS_INSTALL To a \::-separated list of paths containing the
+dependencies, and RENPY_CYTHON to the name of the cython command::
 
     export RENPY_DEPS_INSTALL=/usr::/usr/lib/x86_64-linux-gnu/
     export RENPY_CYTHON=cython
-    
-Finally, change into the modules directory, and run::
+
+Finally, change into the `modules` directory, and run::
 
     python setup.py install
 
-Ren'Py can then be run by using python to run renpy.py
+Ren'Py will be installed into the activated virtualenv. It can then be run
+using the command::
 
-**Without Global Permissions**
+    python -O renpy.py
 
-If one does not have global permissions (or does not wish to use them) one can use python 
-`virtualenv`. `virtualenv` is essentially a smaller installation of python made in the $HOME
-directory to which one can add modules without su rights.
 
-The easiest way to do this is to install `virtualenvwrapper` which includes more features 
-than the stock `virtualenv` using pip::
+Documentation
+=============
 
-    pip install virtualenvwrapper
-    
-Once this is done, please restart the shell so that `virtualenv` is available for use. Then 
-one can make wrappers for managing the virtual environments and work on Ren'Py after 
-installing the required libraries and modules::
+Building
+--------
 
-    mkvirtualenv renpy
-    workon renpy
-     
-Now one can install software into this virtual environment using `pip` as in the section *With Global Permission*. 
-More information on how to use this tool can be found here: (http://virtualenvwrapper.readthedocs.org/en/latest/) 
+Building the documentation requires Ren'Py to work. You'll either need to
+link in a nightly build, or compile the modules as described above. You'll
+also need the `Sphinx <http://sphinx-doc.org/>`_ documentation generator.
+If you have pip working, install Sphinx using::
 
-Finally one can run renpy using::
+    pip install -U sphinx
 
-    python renpy.py
+Once Sphinx is installed, change into the ``sphinx`` directory inside the
+Ren'Py checkout and run::
+
+    ./build.sh
+
+Format
+------
+
+Ren'Py's documentation consists of reStructuredText files found in sphinx/source, and
+generated documentation found in function docstrings scattered throughout the code. Do
+not edit the files in sphinx/source/inc directly, as they will be overwritten.
+
+Docstrings may include tags on the first few lines:
+
+\:doc: `section` `kind`
+    Indicates that this functions should be documented. `section` gives
+    the name of the include file the function will be documented in, while
+    `kind` indicates the kind of object to be documented (one of ``function``,
+    ``method`` or ``class``. If omitted, `kind` will be auto-detected.
+\:name: `name`
+    The name of the function to be documented. Function names are usually
+    detected, so this is only necessary when a function has multiple aliases.
+\:args: `args`
+    This overrides the detected argument list. It can be used if some arguments
+    to the function are deprecated.
+
+For example::
+
+    def warp_speed(factor, transwarp=False):
+        """
+        :doc: warp
+        :name: renpy.warp_speed
+        :args: (factor)
+
+        Exceeds the speed of light.
+        """
+
+        renpy.engine.warp_drive.engage(factor)
+
 
 Contributing
 ============
 
 For bug fixes, documentation improvements, and simple changes, just
 make a pull request. For more complex changes, it might make sense
-to file an issue so we can discuss the design.
+to file an issue first so we can discuss the design.
 
