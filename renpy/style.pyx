@@ -117,14 +117,13 @@ def get_text_style(style, default):
     if style is None:
         return None
 
-    start = style[:1]
+    start = style[0]
     rest = style[1:]
 
-    rv = styles.get(style, None)
+    rv = styles.get((start + "_text",), None)
+
     if rv is None:
         rv = get_style(default)
-    else:
-        rv = default
 
     for i in rest:
         rv = rv[i]
