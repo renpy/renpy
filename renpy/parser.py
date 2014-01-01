@@ -1909,6 +1909,7 @@ def translate_statement(l, loc):
 @statement("style")
 def style_statment(l, loc):
 
+    # Parse priority and name.
     priority = l.integer()
     if priority:
         priority = int(priority)
@@ -1916,37 +1917,54 @@ def style_statment(l, loc):
         priority = 0
 
     name = l.require(l.name)
+    parent = None
 
-    if l.keyword("is"):
-        parent = l.require(l.name)
+    rv = ast.Style(loc, name)
+
+    # Function that parses a clause. This returns true if a clause has been
+    # parsed, False otherwise.
+    def parse_clause(l):
+
+        if l.keyword("is"):
+            if parent is not None:
+                l.error("parent appears twice.")
+            else:
+                rv.parent = l.require(l.name)
+                return True
+
+        propname = l.name()
+
+        if propname is not None:
+            if propname not in renpy.style.prefixed_all_properties:
+                l.error("style property %s is not known." % propname)
+
+            if propname in rv.properties:
+                l.error("style property %s appears twice." % propname)
+
+            rv.properties[propname] = l.require(l.simple_expression)
+            return True
+
+        return False
+
+    while parse_clause(l):
+        pass
+
+    if not l.match(':'):
+        l.expect_noblock("style statement")
+        l.expect_eol()
     else:
-        parent = None
+        l.expect_block("style statement")
+        l.expect_eol()
 
-    l.require(':')
-    l.expect_eol()
-    l.expect_block("style statement")
+        ll = l.subblock_lexer()
 
-    properties = [ ]
-    seen_properties = set()
+        while ll.advance():
 
-    ll = l.subblock_lexer()
+            while parse_clause(ll):
+                pass
 
+            ll.expect_eol()
 
-
-    while ll.advance():
-
-        while not ll.eol():
-            propname = ll.require(ll.name)
-
-            if propname in seen_properties:
-                ll.error("property %s appears twice." % propname)
-
-            seen_properties.add(propname)
-            propexpr = ll.require(ll.simple_expression)
-
-            properties.append((propname, propexpr))
-
-    rv = ast.Style(loc, name, parent, properties)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority)

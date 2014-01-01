@@ -1763,22 +1763,21 @@ class Style(Node):
         'properties',
     ]
 
-    def __init__(self, loc, name, parent, properties):
+    def __init__(self, loc, name):
         """
         `name`
             The name of the style to define.
-        `parent`
-            The parent style, or None to use the default.
-        `properties`
-            A list of (property, expression) tuples to add to the
-            style.
         """
 
         super(Style, self).__init__(loc)
 
         self.name = name
-        self.parent = parent
-        self.properties = properties
+
+        # The parent of this style.
+        self.parent = None
+
+        # Properties.
+        self.properties = { }
 
 
     def diff_info(self):
@@ -1794,7 +1793,7 @@ class Style(Node):
 
         if self.properties:
             properties = { }
-            for name, expr in self.properties:
+            for name, expr in self.properties.items():
                 properties[name] = renpy.python.py_eval(expr)
 
             s.add_properties(properties)
