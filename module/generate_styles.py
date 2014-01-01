@@ -9,12 +9,20 @@ import io
 # The path to the directory containing this file.
 BASE = os.path.dirname(os.path.abspath(__file__))
 
+def sorted_dict(**kwargs):
+    """
+    Constructs an ordered_dict from the keyword arguments in sorted order.
+    """
+
+    items = list(kwargs.items())
+    return collections.OrderedDict(items)
+
 ################################################################################
 # Prefixes
 ################################################################################
 
 # A map from prefix name to Prefix object.
-prefixes = { }
+prefixes = collections.OrderedDict()
 
 class Prefix(object):
     def __init__(self, index, name, priority, alts):
@@ -71,7 +79,7 @@ Prefix(-1, 'selected_activate_', 0, [ ])
 # All the style properties we know about. This is a dict, that maps each style
 # to a function that is called when it is set, or None if no such function
 # is needed.
-style_properties = collections.OrderedDict(
+style_properties = sorted_dict(
     activate_sound = None,
     aft_bar = 'none_is_null',
     aft_gutter = None,
@@ -158,7 +166,7 @@ style_properties = collections.OrderedDict(
     )
 
 # A map from a style property to its index in the order of style_properties.
-style_property_index = { }
+style_property_index = collections.OrderedDict()
 for i, name in enumerate(style_properties):
     style_property_index[name] = i
 
@@ -174,7 +182,7 @@ style_property_count = len(style_properties)
 # * The name of the style to assign.
 # * A string giving the name of a functon to call to get the value to assign, a constant
 #   numeric value, or None to not change the argument.
-synthetic_properties = collections.OrderedDict(
+synthetic_properties = sorted_dict(
     xmargin = [
         ('left_margin', None),
         ('right_margin', None)
@@ -275,7 +283,6 @@ synthetic_properties = collections.OrderedDict(
         ('ypos', None),
         ('yanchor', 0.5),
         ],
-
     )
 
 all_properties = collections.OrderedDict()
