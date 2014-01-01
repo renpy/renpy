@@ -417,7 +417,7 @@ cdef class StyleCore:
             if s is None:
                 return None
 
-from renpy.styleclass import Style
+from renpy.styleclass import Style, all_properties, prefixed_all_properties
 
 cpdef build_style(StyleCore s):
 

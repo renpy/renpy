@@ -467,10 +467,34 @@ def generate_properties():
     g.dedent()
     g.close()
 
+def generate_sets():
+    """
+    Generates code for sets of properties.
+    """
+
+    prefixed_all_properties = [ ]
+
+    for i in all_properties:
+        for p in prefixes.values():
+            if p.alts:
+                prefixed_all_properties.append(p.name + i)
+
+    def set_code(l):
+        return "{ " + ",".join(repr(str(i)) for i in l) + " }"
+
+    g = CodeGen("stylesets.pxi")
+
+    g.write("all_properties = {}", set_code(all_properties))
+    g.write("prefixed_all_properties = {}", set_code(prefixed_all_properties))
+
+    g.close()
+
+
 def generate():
     generate_constants()
     generate_property_functions()
     generate_properties()
+    generate_sets()
 
 if __name__ == "__main__":
     generate()
