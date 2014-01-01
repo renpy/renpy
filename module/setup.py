@@ -7,6 +7,9 @@ import os
 # Change to the directory containing this file.
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
+import generate_styles
+generate_styles.generate()
+
 import setuplib
 from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
