@@ -1927,18 +1927,24 @@ def style_statment(l, loc):
     l.expect_block("style statement")
 
     properties = [ ]
+    seen_properties = set()
 
     ll = l.subblock_lexer()
 
+
+
     while ll.advance():
 
-        if ll.eol():
-            continue
+        while not ll.eol():
+            propname = ll.require(ll.name)
 
-        propname = ll.require(ll.name)
-        propexpr = ll.require(ll.rest, "expression")
+            if propname in seen_properties:
+                ll.error("property %s appears twice." % propname)
 
-        properties.append((propname, propexpr))
+            seen_properties.add(propname)
+            propexpr = ll.require(ll.simple_expression)
+
+            properties.append((propname, propexpr))
 
     rv = ast.Style(loc, name, parent, properties)
 
