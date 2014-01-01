@@ -7,11 +7,16 @@ import os
 # Change to the directory containing this file.
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
+# Create the gen directory if it doesn't exist.
+try:
+    os.makedirs("gen")
+except:
+    pass
+
+# Generate styles.
 import generate_styles
 generate_styles.generate()
 
-import setuplib
-from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # If RENPY_CC or RENPY_LD are in the environment, use them.
 def setup_env(name):
@@ -21,6 +26,9 @@ def setup_env(name):
 
 setup_env("CC")
 setup_env("LD")
+
+import setuplib
+from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
