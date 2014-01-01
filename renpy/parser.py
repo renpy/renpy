@@ -1906,6 +1906,50 @@ def translate_statement(l, loc):
     return [ ast.Translate(loc, identifier, language, block), ast.EndTranslate(loc) ]
 
 
+@statement("style")
+def style_statment(l, loc):
+
+    priority = l.integer()
+    if priority:
+        priority = int(priority)
+    else:
+        priority = 0
+
+    name = l.require(l.name)
+
+    if l.keyword("is"):
+        parent = l.require(l.name)
+    else:
+        parent = None
+
+    l.require(':')
+    l.expect_eol()
+    l.expect_block("style statement")
+
+    properties = [ ]
+
+    ll = l.subblock_lexer()
+
+    while ll.advance():
+
+        if ll.eol():
+            continue
+
+        propname = ll.require(ll.name)
+        propexpr = ll.require(ll.rest, "expression")
+
+        properties.append((propname, propexpr))
+
+    rv = ast.Style(loc, name, parent, properties)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], priority)
+
+    l.advance()
+
+    return rv
+
+
 @statement("")
 def say_statement(l, loc):
 

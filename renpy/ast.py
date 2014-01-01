@@ -1754,3 +1754,47 @@ class TranslatePython(Node):
     # def early_execute(self):
     #    renpy.python.create_store(self.store)
     #    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+
+class Style(Node):
+
+    __slots__ = [
+        'name',
+        'parent',
+        'properties',
+    ]
+
+    def __init__(self, loc, name, parent, properties):
+        """
+        `name`
+            The name of the style to define.
+        `parent`
+            The parent style, or None to use the default.
+        `properties`
+            A list of (property, expression) tuples to add to the
+            style.
+        """
+
+        super(Style, self).__init__(loc)
+
+        self.name = name
+        self.parent = parent
+        self.properties = properties
+
+
+    def diff_info(self):
+        return (Style, self.name)
+
+    def execute(self):
+        next_node(self.next)
+
+        s = renpy.style.get_or_create_style(self.name)
+
+        if self.parent is not None:
+            s.set_parent(self.parent)
+
+        if self.properties:
+            properties = { }
+            for name, expr in self.properties:
+                properties[name] = renpy.python.py_eval(expr)
+
+            s.add_properties(properties)

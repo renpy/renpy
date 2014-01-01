@@ -69,6 +69,33 @@ cpdef get_style(name):
     styles[nametuple] = rv
     return rv
 
+cpdef get_or_create_style(name):
+    """
+    Like get_style, but if the style doesn't exist, its hierarchy is created,
+    eventually inheriting from default.
+    """
+
+    nametuple = (name,)
+
+    rv = styles.get(nametuple, None)
+    if rv is not None:
+        return rv
+
+    start, _mid, end = name.partition("_")
+
+    # We need both sides of the _, as we don't want to have
+    # _foo auto-inherit from foo.
+    if not start or not end:
+        rv = Style("default", name=nametuple)
+        styles[nametuple] = rv
+        return rv
+
+    parent = get_or_create_style(end)
+
+    rv = Style(parent, name=nametuple)
+    styles[nametuple] = rv
+    return rv
+
 
 cpdef get_full_style(name):
     """
@@ -302,6 +329,12 @@ cdef class StyleCore:
         if properties:
             self.properties.append(properties)
 
+    def add_properties(self, properties):
+        """
+        Adds the properties (which must be a dict) to this style.
+        """
+
+        self.properties.append(dict(properties))
 
     def set_prefix(self, prefix):
         """
