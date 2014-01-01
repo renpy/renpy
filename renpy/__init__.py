@@ -86,6 +86,7 @@ def import_cython():
     import renpy.angle.glrtt_fbo #@UnresolvedImport
     import renpy.angle.gltexture #@UnresolvedImport
 
+    import renpy.styleclass # @UnresolvedImport
 
 def update_path(package):
     """
@@ -105,6 +106,9 @@ def update_path(package):
     package.__path__.append(os.path.join(libexec, *name))
 
 def import_all():
+
+    # Note: If we add a new update_path, we have to add an equivalent
+    # hook in the renpython hooks dir.
 
     import renpy # @UnresolvedImport
 
