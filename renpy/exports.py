@@ -2076,9 +2076,21 @@ def variant(name):
     by Ren'Py. See :ref:`screen-variants` for more details. This function
     can be used as the condition in a python if statement to set up the
     appropriate styles for the selected screen variant.
+
+    `name` can also be a list of variants, in which case this function
+    returns True if any of the variants is selected.
     """
 
-    return name in renpy.config.variants
+    if isinstance(name, basestring):
+        return name in renpy.config.variants
+    else:
+        for n in name:
+            if n in renpy.config.variants:
+                return True
+
+        return False
+
+
 
 def vibrate(duration):
     """
