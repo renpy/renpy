@@ -1927,10 +1927,30 @@ def style_statment(l, loc):
 
         if l.keyword("is"):
             if parent is not None:
-                l.error("parent appears twice.")
-            else:
-                rv.parent = l.require(l.name)
-                return True
+                l.error("parent clause appears twice.")
+
+            rv.parent = l.require(l.name)
+            return True
+
+        if l.keyword("clear"):
+            rv.clear = True
+            return True
+
+        if l.keyword("take"):
+            if rv.take is not None:
+                l.error("take clause appears twice.")
+
+            rv.take = l.require(l.name)
+            return True
+
+        if l.keyword("del"):
+            propname = l.require(l.name)
+
+            if propname not in renpy.style.prefixed_all_properties:
+                l.error("style property %s is not known." % propname)
+
+            rv.delattr.append(propname)
+            return True
 
         propname = l.name()
 

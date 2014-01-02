@@ -1758,9 +1758,12 @@ class TranslatePython(Node):
 class Style(Node):
 
     __slots__ = [
-        'name',
+        'style_name',
         'parent',
         'properties',
+        'clear',
+        'take',
+        'delattr',
     ]
 
     def __init__(self, loc, name):
@@ -1771,7 +1774,7 @@ class Style(Node):
 
         super(Style, self).__init__(loc)
 
-        self.name = name
+        self.style_name = name
 
         # The parent of this style.
         self.parent = None
@@ -1779,17 +1782,34 @@ class Style(Node):
         # Properties.
         self.properties = { }
 
+        # Should we clear the style?
+        self.clear = False
+
+        # Should we take properties from another style?
+        self.take = None
+
+        # A list of attributes we should delete from this style.
+        self.delattr = [ ]
 
     def diff_info(self):
-        return (Style, self.name)
+        return (Style, self.style_name)
 
     def execute(self):
         next_node(self.next)
 
-        s = renpy.style.get_or_create_style(self.name)
+        s = renpy.style.get_or_create_style(self.style_name)
+
+        if self.clear:
+            s.clear()
 
         if self.parent is not None:
             s.set_parent(self.parent)
+
+        if self.take is not None:
+            s.take(self.take)
+
+        for i in self.delattr:
+            s.delattr(i)
 
         if self.properties:
             properties = { }

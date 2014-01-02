@@ -313,7 +313,15 @@ cdef class StyleCore:
         self.properties = [ ]
 
     def take(self, other):
-        self.properties = other.properties[:]
+        """
+        Takes the style properties from `other`, which may be a style name
+        string or a style object.
+        """
+
+        if not isinstance(other, StyleCore):
+            other = get_style(other)
+
+        self.properties = copy_properties(other.properties)
 
     def setdefault(self, **properties):
         """
