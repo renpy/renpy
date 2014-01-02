@@ -1764,6 +1764,7 @@ class Style(Node):
         'clear',
         'take',
         'delattr',
+        'variant',
     ]
 
     def __init__(self, loc, name):
@@ -1791,11 +1792,19 @@ class Style(Node):
         # A list of attributes we should delete from this style.
         self.delattr = [ ]
 
+        # If not none, an expression for the variant.
+        self.variant = None
+
     def diff_info(self):
         return (Style, self.style_name)
 
     def execute(self):
         next_node(self.next)
+
+        if self.variant is not None:
+            variant = renpy.python.py_eval(self.variant)
+            if not renpy.exports.variant(variant):
+                return
 
         s = renpy.style.get_or_create_style(self.style_name)
 

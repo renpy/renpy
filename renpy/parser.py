@@ -1952,6 +1952,13 @@ def style_statment(l, loc):
             rv.delattr.append(propname)
             return True
 
+        if l.keyword("variant"):
+            if rv.variant is not None:
+                l.error("variant clause appears twice.")
+
+            rv.variant = l.require(l.simple_expression)
+            return True
+
         propname = l.name()
 
         if propname is not None:
