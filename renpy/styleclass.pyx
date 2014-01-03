@@ -1,5 +1,6 @@
 from style cimport register_property_function, StyleCore, assign
 from cpython.ref cimport PyObject
+from collections import OrderedDict
 
 # Utility functions used by the various property functions:
 
