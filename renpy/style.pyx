@@ -425,7 +425,91 @@ cdef class StyleCore:
             if s is None:
                 return None
 
-from renpy.styleclass import Style, all_properties, prefixed_all_properties
+    def inspect(StyleCore self):
+        """
+        Inspects this style.
+
+        Returns a list of (name, properties) pairs for each style, with only
+        properties that affect the final result being in the properties
+        list. Properties is a map from property name to value.
+        """
+
+        cdef StyleCore s
+        cdef StyleCore left
+
+        init_inspect()
+
+        if not self.built:
+            build_style(self)
+
+        rv = [ ]
+
+        # Affected properties that we've seen already.
+        seen_properties = set()
+
+        def inspect_one(s):
+
+            my_properties = { }
+
+            for pdict in reversed(s.properties):
+
+                propnames = list(pdict)
+                propnames.sort(key=lambda pn : -priority.get(pn, -100))
+
+                for propname in propnames:
+                    prop_affects = affects.get(propname, [ ])
+
+                    for a in prop_affects:
+                        if a not in seen_properties:
+                            break
+                    else:
+                        continue
+
+                    for a in prop_affects:
+                        seen_properties.add(a)
+
+                    my_properties[propname] = pdict[propname]
+
+            rv.append((s.name, my_properties))
+
+        s = self
+        left = None
+
+        while True:
+
+            inspect_one(s)
+
+            # If there is no left-parent, and we have one, store it.
+            if left is None and s.left_parent is not None:
+                left = s.left_parent
+
+            s = s.down_parent
+
+            # If no down-parent, try left.
+            if s is None:
+                s = left
+                left = None
+
+            # If no down-parent or left-parent, default to None.
+            if s is None:
+                break
+
+        return rv
+
+
+from renpy.styleclass import Style, all_properties, prefix_priority, prefix_alts
+
+# The set of all prefixed properties we know about.
+prefixed_all_properties = {
+    prefix + propname
+    for prefix in prefix_priority
+    for propname in all_properties
+    }
+
+
+################################################################################
+# Building
+################################################################################
 
 cpdef build_style(StyleCore s):
 
@@ -483,6 +567,32 @@ cpdef unbuild_style(StyleCore s):
     s.down_parent = None
 
     s.built = False
+
+################################################################################
+# Inspect support
+################################################################################
+
+# A map from prefixed property to priority.
+priority = None
+
+# A map from prefixed property to the prefixed properties it affects.
+affects = None
+
+def init_inspect():
+
+    global priority
+    global affects
+
+    if priority is not None:
+        return
+
+    priority = { }
+    affects = { }
+
+    for prefixname, pri in prefix_priority.items():
+        for propname, proplist in all_properties.items():
+            priority[prefixname + propname] = pri
+            affects[prefixname + propname] = [ a + i for a in prefix_alts[prefixname] for i in proplist ]
 
 
 ################################################################################
@@ -545,6 +655,10 @@ def restore(o):
 
         s.set_parent(parent)
         s.properties = copy_properties(properties)
+
+
+
+
 
 # TODO: write_text
 # TODO: style_heirarchy
