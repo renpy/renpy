@@ -385,7 +385,7 @@ init python in interface:
             common(_("INFORMATION"), store.INFO_COLOR, message, submessage, pause0=True, **kwargs)
 
 
-    def interaction(title, message, submessage=None, **kwargs):
+    def interaction(title, message, submessage=None, pause=0, **kwargs):
         """
         Put up on the screen while an interaction with an external program occurs.
         This shows the message, then immediately returns.
@@ -398,9 +398,13 @@ init python in interface:
 
         `submessage`
             An optional sub message.
+
+        `pause`
+            The amount of time to pause for after showing the message.
         """
 
-        common(title, store.INTERACTION_COLOR, message, submessage, pause0=True, **kwargs)
+        common(title, store.INTERACTION_COLOR, message, submessage=None, pause=pause, show_screen=True, **kwargs)
+        renpy.pause(pause)
 
     def processing(message, submessage=None, complete=None, total=None, **kwargs):
         """

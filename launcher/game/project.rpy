@@ -23,6 +23,15 @@ init python in project:
     import re
     import tempfile
 
+    if persistent.blurb is None:
+        persistent.blurb = 0
+
+    LAUNCH_BLURBS = [
+        _("After making changes to the script, press shift+R to reload your game."),
+        _("Press shift+O (the letter) to access the console."),
+        _("Press shift+D to access the developer menu."),
+    ]
+
     class Project(object):
 
         def __init__(self, path):
@@ -480,8 +489,16 @@ init python in project:
         def get_sensitive(self):
             return self.project is not None
 
+        def post_launch(self):
+            blurb = LAUNCH_BLURBS[persistent.blurb % len(LAUNCH_BLURBS)]
+            persistent.blurb += 1
+
+            interface.interaction(_("Launching"), blurb, pause=2.5)
+
+
         def __call__(self):
             self.project.launch()
+            renpy.invoke_in_new_context(self.post_launch)
 
     class Rescan(Action):
         def __call__(self):
