@@ -973,10 +973,16 @@ cdef class Render:
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return rv
 
+        is_screen = False
+
         if depth is not None:
             for d in self.render_of:
                 rv.append((depth, self.width, self.height, d))
                 depth += 1
+
+                if isinstance(d, renpy.display.screen.ScreenDisplayable):
+                    is_screen = True
+
         elif self.layer_name in layers:
             depth = 0
 
@@ -990,8 +996,13 @@ cdef class Render:
             if self.forward:
                 cx, cy = self.forward.transform(cx, cy)
 
-            cf = child.main_displayables_at_point(cx, cy, layers, depth)
-            rv.extend(cf)
+            if is_screen:
+                # Ignore the fixed at the root of every screen.
+                cf = child.main_displayables_at_point(cx, cy, layers, depth - 1)
+                rv.extend(cf[1:])
+            else:
+                cf = child.main_displayables_at_point(cx, cy, layers, depth)
+                rv.extend(cf)
 
         return rv
 
