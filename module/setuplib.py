@@ -11,7 +11,7 @@ import distutils.core
 android = "RENPY_ANDROID" in os.environ
 
 # The cython command.
-cython_command = os.environ.get("RENPY_CYTHON", None)
+cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # Note that the android build sets up CFLAGS for us, and ensures
 # that necessary libraries are present. So autoconfiguration is
