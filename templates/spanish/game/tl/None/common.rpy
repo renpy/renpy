@@ -51,7 +51,7 @@ translate None strings:
 
     # renpy/common/00keymap.rpy:167
     old "Saved screenshot as %s."
-    new "Pantalla guardada como %s."
+    new "Captura de pantalla guardada como %s."
 
     # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"

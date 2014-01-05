@@ -23,3 +23,19 @@ translate spanish strings:
     # game/project.rpy:547
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py ha establecido el directorio de proyectos:"
+
+    # game/project.rpy:30
+    old "After making changes to the script, press shift+R to reload your game."
+    new "Despues de hacer cambios a un script, presiona shift+R para recargar tu juego."
+
+    # game/project.rpy:31
+    old "Press shift+O (the letter) to access the console."
+    new "Presiona shift+O (la letra) para acceder a la consola."
+
+    # game/project.rpy:32
+    old "Press shift+D to access the developer menu."
+    new "Presiona shift+D para acceder al menú de desarrollador."
+
+    # game/project.rpy:496
+    old "Launching"
+    new "Ejecutando"
