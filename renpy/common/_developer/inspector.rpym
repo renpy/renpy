@@ -1,0 +1,64 @@
+# Copyright 2004-2013 Tom Rothamel <pytom@bishoujo.us>
+# See LICENSE.txt for license details.
+
+# The displayable and style inspectors.
+
+screen _inspector:
+    zorder 1010
+    modal True
+
+    frame:
+        style_group ""
+
+        xfill True
+        yfill True
+
+
+        has vbox
+
+        label _("Style Inspector")
+
+        null height 20
+
+        if not tree:
+            text _("Nothing to inspect.")
+        else:
+            for depth, width, height, d in tree:
+                $ t = ( "  " * depth +
+                        u" \u2022 " +
+                        d.__class__.__name__ + " : " +
+                        "style=%s, " % (__format_style(d.style),) +
+                        "size=(%dx%d)" % (width, height) )
+
+                text "[t!q]"
+
+        null height 20
+
+        text _("(Click to continue.)")
+
+    python:
+        ui.saybehavior()
+
+init python:
+
+    def __format_style(s):
+
+        while s:
+            if s.name:
+                break
+
+            if s.parent:
+                s = style.get(s.parent)
+            else:
+                break
+
+        return s.name[0] + "".join([ "[%r]" % i for i in s.name[1:] ])
+
+    def __inspect(tree):
+        renpy.context_dynamic("_window")
+        store._window = False
+
+        renpy.exports.show_screen("_inspector", _transient=True, tree=tree)
+        renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
+
+    config.inspector = __inspect

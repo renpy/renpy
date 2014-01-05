@@ -152,7 +152,8 @@ init 1700 python hide:
         if config.debug_sound is None:
             config.debug_sound = True
 
-        renpy.load_module("_developer")
+        renpy.load_module("_developer/developer")
+        renpy.load_module("_developer/inspector")
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym
