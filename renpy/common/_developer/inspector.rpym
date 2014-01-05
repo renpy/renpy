@@ -10,31 +10,77 @@ screen _inspector:
     frame:
         style_group ""
 
+        xmaximum 770
         xfill True
-        yfill True
+
+        xpadding 15
+        ypadding 15
+
+        xalign 0.5
+        yalign 0.25
 
 
         has vbox
 
-        label _("Style Inspector")
+        label _("Displayable Inspector")
 
-        null height 20
+        null height 10
 
         if not tree:
-            text _("Nothing to inspect.")
-        else:
-            for depth, width, height, d in tree:
-                $ t = ( "  " * depth +
-                        u" \u2022 " +
-                        d.__class__.__name__ + " : " +
-                        "style=%s, " % (__format_style(d.style),) +
-                        "size=(%dx%d)" % (width, height) )
 
-                text "[t!q]"
+            text _("Nothing to inspect.")
+
+        else:
+
+            hbox:
+                text " ":
+                    min_width 300
+                    xmaximum 300
+
+                text _("Size"):
+                    min_width 100
+                    xmaximum 100
+                    underline True
+
+                text _("Style"):
+                    underline True
+
+            null height 5
+
+            for depth, width, height, d in tree:
+
+                $ t = "  " * depth + u"\u2022 " + d.__class__.__name__
+                $ s = __format_style(d.style)
+
+                button:
+                    xfill True
+                    xmargin 0
+                    ymargin 0
+                    xpadding 0
+                    ypadding 0
+                    xoffset 0
+
+                    background None
+                    hover_background "#fff4"
+
+                    action NullAction()
+
+                    hbox:
+
+                        text "[t!q]":
+                            min_width 300
+                            xmaximum 300
+
+                        text "[width:.0f]x[height:.0f]":
+                            min_width 100
+                            xmaximum 100
+
+                        text "[s!q]":
+                            style "_hyperlink"
 
         null height 20
 
-        text _("(Click to continue.)")
+        text _("Click on a style to display it, or anywhere else to dismiss.")
 
     python:
         ui.saybehavior()
