@@ -34,8 +34,8 @@ screen _inspector:
 
             hbox:
                 text " ":
-                    min_width 300
-                    xmaximum 300
+                    min_width 400
+                    xmaximum 400
 
                 text _("Size"):
                     min_width 100
@@ -49,7 +49,7 @@ screen _inspector:
 
             for depth, width, height, d in tree:
 
-                $ t = "  " * depth + u"\u2022 " + d.__class__.__name__
+                $ t = "  " * depth + u"\u2022 " + unicode(d)
                 $ s = __format_style(d.style)
 
                 button:
@@ -68,8 +68,8 @@ screen _inspector:
                     hbox:
 
                         text "[t!q]":
-                            min_width 300
-                            xmaximum 300
+                            min_width 400
+                            xmaximum 400
 
                         text "[width:.0f]x[height:.0f]":
                             min_width 100

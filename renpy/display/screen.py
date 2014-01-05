@@ -155,8 +155,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
         self.zorder = renpy.python.py_eval(self.screen.zorder, locals=self.scope)
 
-    def __repr__(self):
-        return "<ScreenDisplayable: %r>" % (self.screen_name,)
+    def __unicode__(self):
+        return "Screen {}".format(" ".join(self.screen_name))
 
     def visit(self):
         return [ self.child ]

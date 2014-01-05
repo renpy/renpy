@@ -441,6 +441,21 @@ class MultiBox(Container):
         # The scene list for this widget.
         self.scene_list = None
 
+    def __unicode__(self):
+        layout = self.style.box_layout
+
+        if layout is None:
+            layout = self.default_layout
+
+        if layout == "fixed":
+            return "Fixed"
+        elif layout == "horizontal":
+            return "HBox"
+        elif layout == "vertical":
+            return "VBox"
+        else:
+            return "MultiBox"
+
     def add(self, widget, start_time=None, anim_time=None): # W0221
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)

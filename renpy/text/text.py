@@ -1192,6 +1192,20 @@ class Text(renpy.display.core.Displayable):
         # The list of displayables we use.
         self.displayables = None
 
+    def __unicode__(self):
+        s = ""
+
+        for i in self.text:
+            if isinstance(s, basestring):
+                s += i
+
+            if len(s) > 25:
+                s = s[:24] + u"\u2026"
+                break
+
+        return u"Text \"{}\"".format(s.replace("\\", "\\\\").replace("\"", "\\\""))
+
+
     def set_text(self, text, scope=None, substitute=False):
 
         if not isinstance(text, list):

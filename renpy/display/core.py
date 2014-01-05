@@ -176,6 +176,12 @@ class Displayable(renpy.object.Object):
         self.focus_name = focus
         self.default = default
 
+    def __unicode__(self):
+        return self.__class__.__name__
+
+    def __repr__(self):
+        return "<{} at {:x}>".format(unicode(self), id(self))
+
     def find_focusable(self, callback, focus_name):
 
         focus_name = self.focus_name or focus_name
