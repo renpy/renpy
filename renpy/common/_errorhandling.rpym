@@ -125,6 +125,8 @@ init python:
     style._hbox.box_layout = 'horizontal'
     style._vbox.box_layout = 'vertical'
     style._viewport.clipping = True
+    style._viewport.xfill = True
+    style._viewport.yfill = True
 
     # button
     style._button = Style(style._default)

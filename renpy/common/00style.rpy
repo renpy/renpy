@@ -294,6 +294,8 @@ init -1800 python:
 
     # Viewport
     style.viewport.clipping = True
+    style.viewport.xfill = True
+    style.viewport.yfill = True
 
     # Transform
     style.transform.subpixel = True

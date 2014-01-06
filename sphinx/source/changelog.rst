@@ -1,6 +1,16 @@
+
 ==============
 Full Changelog
 ==============
+
+Ren'Py 6.17
+===========
+
+Viewport now respects the xfill and yfill properties. The default viewport
+style sets these to true. Setting them to False will cause the viewport to
+shrink to fit its contents when those contents do not fill the entire
+viewport.
+
 
 Ren'Py 6.16.2
 =============

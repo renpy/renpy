@@ -1343,8 +1343,11 @@ class Viewport(Container):
 
         cw, ch = surf.get_size()
 
-        # width = min(cw, width)
-        # height = min(ch, height)
+        if not self.style.xfill:
+            width = min(cw, width)
+
+        if not self.style.yfill:
+            height = min(ch, height)
 
         if self.set_adjustments:
             self.xadjustment.range = max(cw - width, 0)
