@@ -1203,7 +1203,8 @@ class Text(renpy.display.core.Displayable):
                 s = s[:24] + u"\u2026"
                 break
 
-        return u"Text \"{}\"".format(s.replace("\\", "\\\\").replace("\"", "\\\""))
+        s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+        return u"Text \"{}\"".format(s)
 
 
     def set_text(self, text, scope=None, substitute=False):
