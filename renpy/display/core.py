@@ -1877,6 +1877,9 @@ class Interface(object):
             # The game has to be saved.
             renpy.loadsave.save("_reload-1")
 
+            # So does the persistent data.
+            renpy.persistent.update(True)
+
             android.wait_for_resume()
 
             # Since we came back to life, we can get rid of the
