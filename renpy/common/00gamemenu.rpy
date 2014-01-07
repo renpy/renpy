@@ -129,7 +129,7 @@ label _enter_game_menu:
     return
 
 # Entry points from the game into menu-space.
-label _game_menu(_game_menu_screen=_game_menu_screen):
+label _game_menu(_game_menu_screen=_game_menu_screen, *args, **kwargs):
     if not _game_menu_screen:
         return
 
@@ -141,7 +141,7 @@ label _game_menu(_game_menu_screen=_game_menu_screen):
         jump expression "game_menu"
 
     if renpy.has_screen(_game_menu_screen):
-        $ renpy.show_screen(_game_menu_screen)
+        $ renpy.show_screen(_game_menu_screen, *args, **kwargs)
         $ ui.interact()
         jump _noisy_return
 
