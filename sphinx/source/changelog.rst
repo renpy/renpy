@@ -116,7 +116,7 @@ new pieces of functionality:
 
 There are also several new voice-related preferences. The "voice sustain"
 preference determines if voice is sustained through multiple interactions.
-The "wait for voice" preference determines if auto-forwart mode waits for
+The "wait for voice" preference determines if auto-forward mode waits for
 the voice to finish before advancing.
 
 Image Gallery and Music Room

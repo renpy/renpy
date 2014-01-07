@@ -52,8 +52,8 @@ Call Statement
 --------------
 
 The call statement is used to transfer control to the given label. It
-also pushes the next statement onto the call stack, allowing the return s
-tatement to return control to the statement following the call.
+also pushes the next statement onto the call stack, allowing the return statement
+to return control to the statement following the call.
 
 If the ``expression`` keyword is present, the expression following it is evaluated, and the
 string so computed is used as the name of the label to call. If the
