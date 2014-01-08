@@ -172,7 +172,7 @@ class Displayable(renpy.object.Object):
     transform_event_responder = False
 
     def __init__(self, focus=None, default=False, style='default', **properties):
-        self.style = renpy.style.Style(style, properties)
+        self.style = renpy.style.Style(style, properties) # @UndefinedVariable
         self.focus_name = focus
         self.default = default
 

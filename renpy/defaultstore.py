@@ -180,7 +180,7 @@ MultiPersistent = renpy.persistent.MultiPersistent
 Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
 
-Style = renpy.style.Style
+Style = renpy.style.Style # @UndefinedVariable
 
 absolute = renpy.display.core.absolute
 
