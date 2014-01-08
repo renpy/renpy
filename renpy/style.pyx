@@ -215,6 +215,18 @@ class StyleManager(object):
 # Style Class
 ################################################################################
 
+def style_name_to_string(name):
+
+    if name is None:
+        return "anonymous style"
+
+    rv = "style " + name[0]
+
+    for i in name[1:]:
+        rv += "['{}']".format(i)
+
+    return rv
+
 cdef class StyleCore:
 
     def __init__(self, parent, properties=None, name=None, help=None, heavy=True):
@@ -280,7 +292,10 @@ cdef class StyleCore:
         self.set_prefix(state["prefix"])
 
     def __repr__(self):
-        return "<{} parent={}>".format(self.name, self.parent)
+        if self.parent:
+            return "<{} is {} @ {}>".format(style_name_to_string(self.name), style_name_to_string(self.parent), hex(id(self)))
+        else:
+            return "<{} @ {}>".format(style_name_to_string(self.name), hex(id(self)))
 
     def __getitem__(self, name):
         tname = self.name + (name,)
@@ -549,7 +564,11 @@ cpdef build_style(StyleCore s):
             if pfw is None:
                 continue
 
-            pfw.function(s.cache, cache_priorities, priority, v)
+            try:
+                pfw.function(s.cache, cache_priorities, priority, v)
+            except:
+                renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
+                raise
 
         priority += PRIORITY_LEVELS
 
@@ -656,9 +675,3 @@ def restore(o):
         s.set_parent(parent)
         s.properties = copy_properties(properties)
 
-
-
-
-
-# TODO: write_text
-# TODO: style_heirarchy
