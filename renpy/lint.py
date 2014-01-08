@@ -381,11 +381,6 @@ def check_jump(node):
 
 def check_call(node):
 
-#     if not isinstance(node.next.name, basestring):
-#         report(node, "The call does not have a from clause associated with it.")
-#         add("You can add from clauses to calls automatically by running the add_from program.")
-#         add("This is necessary to ensure saves can be loaded even when the script changes.")
-
     if node.expression:
         return
 
@@ -409,19 +404,11 @@ def check_style(name, s):
     for p in s.properties:
         for k, v in p.iteritems():
 
-            kname = name + "." + k
+            kname = name + ", property " + k
 
             # Treat font specially.
             if k.endswith("font"):
                 check_file(name, v)
-
-            e = renpy.style.expansions[k]
-
-            # We only need to check the first function.
-            for _prio, _propn, func in e:
-                if func:
-                    v = func(v)
-                break
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_displayable(kname, v)
@@ -446,8 +433,12 @@ def check_label(node):
 
 
 def check_styles():
-    for name, s in renpy.style.style_map.iteritems():
-        check_style("Style property style." + name, s)
+    for name, s in renpy.style.styles.iteritems(): # @UndefinedVariable
+        name = "style." + name[0]
+        for i in name[1:]:
+            name += "[{!r}]".format(i)
+
+        check_style("Style " + name, s)
 
 def humanize(n):
     s = str(n)
