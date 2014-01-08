@@ -397,10 +397,6 @@ def check_if(node):
 
 def check_style(name, s):
 
-    if s.indexed:
-        for i in s.indexed:
-            check_style(name + "[%r]" % (name,), s.indexed[i])
-
     for p in s.properties:
         for k, v in p.iteritems():
 
