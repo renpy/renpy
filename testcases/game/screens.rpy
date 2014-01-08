@@ -191,6 +191,9 @@ screen main_menu:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit(confirm=False)
 
+    if autotest:
+        timer .5 action Start("autostart")
+
 init -2 python:
 
     # Make all the main menu buttons be the same size.

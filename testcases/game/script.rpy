@@ -1,4 +1,41 @@
-﻿init python:
+init python:
+    import os
+    if "RENPY_AUTOTEST" in os.environ:
+        autotest = True
+        config.auto_choice_delay = 0.5
+        _preferences.afm_time = 0.5
+        _preferences.afm_enable = True
+    else:
+        autotest = False
+
+###############################################################################
+# Welcome
+###############################################################################
+
+label autostart:
+    call text
+    $ renpy.quit()
+
+label start:
+
+    "Welcome to the Ren'Py test cases. This is meant for automatic consumption, so it may be weird if you're just reading this."
+
+    menu start_loop:
+        "Choose a test case:"
+
+        "Text":
+            call text
+
+        "Done.":
+            return
+
+    jump start_loop
+
+###############################################################################
+# Text
+###############################################################################
+
+init python:
     _preferences.text_cps = 100
 
     style.red = Style(style.default)
@@ -7,6 +44,7 @@
     style.ruby_style = Style(style.default)
     style.ruby_style.size = 12
     style.ruby_style.yoffset = -18
+
 
 define ruby = Character(None, what_line_leading=10, what_ruby_style=style.ruby_style)
 
@@ -83,16 +121,17 @@ screen text1:
         text "This will be typed out slowly.":
             slow_cps 40
 
-
-label start:
+label text:
 
     # Text tag tests.
 
-    $ ui.saybehavior()
-    call screen text1
+    show screen text1
+    "..."
+    hide screen text1
 
     show screen vtext_test
-    pause
+    "..."
+    hide screen test1
 
     $ a = 42
     $ b = "{b}"
@@ -125,7 +164,5 @@ label start:
 
     "Testing no-wait mode{nw}"
     "No-wait mode worked."
-
-
 
     return
