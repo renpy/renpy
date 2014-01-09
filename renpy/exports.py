@@ -1846,7 +1846,7 @@ def get_placement(d):
 
     return placement(p)
 
-def place_image(tag, width=None, height=None, layer='master'):
+def get_image_bounds(tag, width=None, height=None, layer='master'):
     """
     :doc: image_func
 
@@ -1868,7 +1868,7 @@ def place_image(tag, width=None, height=None, layer='master'):
     if height is None:
         height = renpy.config.screen_height
 
-    return scene_lists().place_image(layer, tag, width, height)
+    return scene_lists().get_image_bounds(layer, tag, width, height)
 
 # User-Defined Displayable stuff.
 

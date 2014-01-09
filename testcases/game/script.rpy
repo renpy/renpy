@@ -8,6 +8,10 @@ init python:
     else:
         autotest = False
 
+image eileen happy = "eileen_happy.png"
+image eileen vhappy = "eileen_vhappy.png"
+image eileen concerned = "eileen_concerned.png"
+
 ###############################################################################
 # Welcome
 ###############################################################################
@@ -25,6 +29,9 @@ label start:
 
         "Text":
             call text
+
+        "Other":
+            call other
 
         "Done.":
             return
@@ -164,5 +171,19 @@ label text:
 
     "Testing no-wait mode{nw}"
     "No-wait mode worked."
+
+    return
+
+###############################################################################
+# Other
+###############################################################################
+
+label other:
+
+    show eileen happy at center
+
+    $ bounds = renpy.get_image_bounds("eileen")
+
+    "Eileen's bounding box: [bounds]"
 
     return

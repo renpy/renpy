@@ -994,9 +994,9 @@ class SceneLists(renpy.object.Object):
 
         return None
 
-    def place_image(self, layer, tag, width, height):
+    def get_image_bounds(self, layer, tag, width, height):
         """
-        Implements renpy.layout_image.
+        Implements renpy.get_image_bounds().
         """
 
         if layer not in self.layers:
