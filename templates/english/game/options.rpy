@@ -33,7 +33,7 @@ init -1 python hide:
     #########################################
     # Themes
 
-    ## We then want to call a theme function. themes.roundrect is
+    ## We then want to call a theme function. theme.roundrect is
     ## a theme that features the use of rounded rectangles. It's
     ## the only theme we currently support.
     ##
