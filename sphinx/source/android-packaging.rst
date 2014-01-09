@@ -103,7 +103,7 @@ warnings about licenses, and ask if you want it to generate a key.
 
     http://docs.oracle.com/javase/1.3/docs/tooldocs/win32/keytool.html
 
-   At the very least, you should keep the android.keyring file in
+   At the very least, you should keep the android.keystore file in
    a safe place. You should also back it up, because without the
    key, you won't be able to upload the generated applications.
 
