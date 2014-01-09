@@ -184,7 +184,7 @@ Google Play Expansion APKs
 ==========================
 
 Ren'Py optionally supports the use of expansion APKs when used on a device
-supporting Google Play. Expansion APs allow Google Play to host games
+supporting Google Play. Expansion APKs allow Google Play to host games
 larger than 50MB in size. Please see:
 
     http://developer.android.com/google/play/expansion-files.html
