@@ -259,7 +259,7 @@ init -1 python hide:
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code
-    ## is run, so the persisten information can be found by the init code.)
+    ## is run, so the persistent information can be found by the init code.)
 python early:
     config.save_directory = "PROJECT_NAME-UNIQUE"
 
