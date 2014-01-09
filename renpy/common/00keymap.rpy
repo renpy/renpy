@@ -13,7 +13,7 @@ init -1600 python:
         game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
-        dump_styles = [ 'Y' ],
+        dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
         developer = [ 'D' ],
@@ -170,11 +170,6 @@ init -1600 python:
 
     config.screenshot_callback = _screenshot_callback
 
-    def _dump_styles():
-        if config.developer:
-            renpy.style.write_text("styles.txt")
-
-
     def _fast_skip():
         if not config.fast_skipping and not config.developer:
             return
@@ -207,7 +202,6 @@ init -1100 python:
         game_menu = _invoke_game_menu,
         hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
         launch_editor = _launch_editor,
-        dump_styles = _dump_styles,
         reload_game = _reload_game,
         developer = renpy.curried_call_in_new_context("_developer"),
         quit = renpy.quit_event,

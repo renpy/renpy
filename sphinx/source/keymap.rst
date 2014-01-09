@@ -60,7 +60,6 @@ as of version 6.16 is as follows::
         game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
-        dump_styles = [ 'Y' ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
         developer = [ 'D' ],
