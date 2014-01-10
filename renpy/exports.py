@@ -188,6 +188,17 @@ def fix_rollback():
     """
     renpy.game.log.fix_rollback()
 
+def retain_after_load():
+    """
+    :doc: retain_after_load
+
+    Causes data modified between the current statement and the statement
+    containing the next checkpoint to be retained when a load occurs.
+    """
+
+    renpy.game.log.retain_after_load()
+
+
 scene_lists = renpy.display.core.scene_lists
 
 def count_displayables_in_layer(layer):

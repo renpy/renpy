@@ -18,6 +18,7 @@ image eileen concerned = "eileen_concerned.png"
 
 label autostart:
     call text
+    call get_image_bounds
     $ renpy.quit()
 
 label start:
@@ -30,8 +31,11 @@ label start:
         "Text":
             call text
 
-        "Other":
-            call other
+        "Get Image Bounds":
+            call get_image_bounds
+
+        "Retain after Load":
+            call retain_after_load
 
         "Done.":
             return
@@ -174,16 +178,45 @@ label text:
 
     return
 
+
 ###############################################################################
-# Other
+# Get Image Bounds
 ###############################################################################
 
-label other:
+label get_image_bounds:
 
     show eileen happy at center
 
     $ bounds = renpy.get_image_bounds("eileen")
 
     "Eileen's bounding box: [bounds]"
+
+    return
+
+
+###############################################################################
+# Retain on Load
+###############################################################################
+
+screen retain_after_load(label):
+    frame:
+        has vbox
+        label label
+
+        text "value = [value]"
+
+        textbutton "Increase Value" action SetVariable("value", value+1)
+        textbutton "Decrease Value" action SetVariable("value", value-1)
+        textbutton "Done" action Return(True)
+
+label retain_after_load:
+
+    $ value = 1
+    $ renpy.retain_after_load()
+    call screen retain_after_load("In Retain after Load Mode")
+    call screen retain_after_load("Not in Retain after Load Mode")
+
+    return
+
 
     return
