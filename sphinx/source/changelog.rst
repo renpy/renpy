@@ -11,13 +11,20 @@ style sets these to true. Setting them to False will cause the viewport to
 shrink to fit its contents when those contents do not fill the entire
 viewport.
 
+The new :func:`renpy.get_image_bounds` function retrieves the bounding box
+of an image that is being displayed, after all Transforms have been applied
+to it.
+
+The new :func:`renpy.retain_after_load` can be used to retain data updated
+by a screen after the game is loaded.
+
 
 Ren'Py 6.16.2
 =============
 
 This release adds a Spanish translation of the launcher and the template game.
 
-This release adds the new :func:`renpy.get_mouse_pos()` function, which
+This release adds the new :func:`renpy.get_mouse_pos` function, which
 retrieves the mouse position if a mouse is supported.
 
 Ren'Py 6.16

@@ -161,6 +161,40 @@ low-level save and load actions.
 
 .. include:: inc/loadsave
 
+Retaining Data After Load
+=========================
+
+When a game is loaded, the state of the game is reset (using the rollback
+system described below) to the state of the game when the current statement
+began executing.
+
+In some cases, this may not be desirable. For example, when a screen allows
+editing of a value, we may want to retain that value when the game is
+loaded. When renpy.retain_after_load is called, data will not be reverted
+when a game is saved and loaded before the end of the next checkpointed
+interaction.
+
+Note that while data is not changed, control is reset to the start of the
+current statement. That statement will execute again, with the new data
+in place at the start of the statement.
+
+For example::
+
+    screen edit_value:
+        hbox:
+            text "[value]"
+            textbutton "+" action SetVariable("value", value + 1)
+            textbutton "-" action SetVariable("value", value - 1)
+            textbutton "+" action Return(True)
+
+    label start:
+        $ value = 0
+        $ renpy.retain_after_load()
+        call screen edit_value
+
+
+.. include:: inc/retain_after_load
+
 Rollback
 ========
 
