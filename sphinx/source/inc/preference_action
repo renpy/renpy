@@ -13,6 +13,7 @@
     * Preference("display", "fullscreen") - displays in fullscreen mode.
     * Preference("display", "window") - displays in windowed mode at 1x normal size.
     * Preference("display", 2.0) - displays in windowed mode at 2.0x normal size.
+    * Preference("display", "any window") - displays in windowed mode at the previous size.
     * Preference("display", "toggle") - toggle display mode.
     
     * Preference("transitions", "all") - show all transitions.

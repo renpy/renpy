@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: renpy.input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None)
+.. function:: renpy.input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None)
     
     Calling this function pops up a window asking the player to enter some
     text. It returns the entered text.
@@ -22,4 +22,8 @@
     `length`
         If not None, this must be an integer giving the maximum length
         of the input string.
+    
+    `pixel_width`
+        If not None, the input is limited to being this many pixels wide,
+        in the font used by the
 

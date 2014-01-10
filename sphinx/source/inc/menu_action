@@ -17,7 +17,7 @@
          If true, prompts the user if he wants to quit, rather
          than quitting directly.
 
-.. function:: ShowMenu(screen=None)
+.. function:: ShowMenu(screen=None, *args, **kwargs)
     
     Causes us to enter the game menu, if we're not there already. If we
     are in the game menu, then this shows a screen or jumps to a label.
@@ -38,6 +38,8 @@
     
     ShowMenu without an argument will enter the game menu at the
     default screen, taken from _game_menu_screen.
+    
+    Extra arguments and kewyord arguments are passed on to the screen
 
 .. function:: Start(label='start')
     

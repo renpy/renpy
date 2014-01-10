@@ -19,6 +19,18 @@
         A space-separated string giving the components of the new image
         name.
 
+.. function:: renpy.get_image_bounds(tag, width=None, height=None, layer='master')
+    
+    If an image with `tag` exists on `layer`, returns the bounding box of
+    that image. Returns None if the image is not found.
+    
+    The bounding box is an (x, y, width, height) tuple. The components of
+    the tuples are expressed in pixels, and may be floating point numbers.
+    
+    `width`, `height`
+        The width and height of the area that contains the image. If None,
+        defaults the width and height of the screen, respectively.
+
 .. function:: renpy.get_placement(d)
     
     This gets the placement of displayable d. There's very little warranty on this
