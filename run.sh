@@ -29,5 +29,5 @@ fi
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
 else
-    exec python -OO ./renpy.py "$@"
+    exec python -O ./renpy.py "$@"
 fi
