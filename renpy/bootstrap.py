@@ -222,6 +222,7 @@ def bootstrap(renpy_base):
     if renpy.macintosh:
         os.startfile = mac_start
 
+
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
@@ -234,7 +235,24 @@ def bootstrap(renpy_base):
 Could not import pygame. Please ensure that this program has been built
 and unpacked properly. Also, make sure that the directories containing
 this program do not contain : or ; in their names.
-"""
+
+You may be using a system install of python. Please run {0}.sh,
+{0}.exe, or {0}.app instead.
+""".format(name)
+
+        raise
+
+    # Ditto for the Ren'Py module.
+    try:
+        import _renpy; _renpy
+    except:
+        print >>sys.stderr, """\
+Could not import _renpy. Please ensure that this program has been built
+and unpacked properly.
+
+You may be using a system install of python. Please run {0}.sh,
+{0}.exe, or {0}.app instead.
+""".format(name)
         raise
 
     # Load up all of Ren'Py, in the right order.
