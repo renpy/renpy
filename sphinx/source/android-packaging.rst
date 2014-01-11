@@ -103,7 +103,7 @@ warnings about licenses, and ask if you want it to generate a key.
 
     http://docs.oracle.com/javase/1.3/docs/tooldocs/win32/keytool.html
 
-   At the very least, you should keep the android.keyring file in
+   At the very least, you should keep the android.keystore file in
    a safe place. You should also back it up, because without the
    key, you won't be able to upload the generated applications.
 
@@ -184,7 +184,7 @@ Google Play Expansion APKs
 ==========================
 
 Ren'Py optionally supports the use of expansion APKs when used on a device
-supporting Google Play. Expansion APs allow Google Play to host games
+supporting Google Play. Expansion APKs allow Google Play to host games
 larger than 50MB in size. Please see:
 
     http://developer.android.com/google/play/expansion-files.html
