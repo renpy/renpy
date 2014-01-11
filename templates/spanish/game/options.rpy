@@ -50,16 +50,14 @@ init -1 python hide:
     ## Themes
     ## - Temas
 
-    ## We then want to call a theme function. themes.roundrect is
-    ## a theme that features the use of rounded rectangles. It's
-    ## the only theme we currently support.
+    ## We then want to call a theme function. theme.roundrect is
+    ## a theme that features the use of rounded rectangles.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
 
     ## - Para utilizar una función de tema, utilizamos themes.roundrect.
     ##   Este tema configura el uso de rectángulos redondeados.
-    ##   Actualmente es la única función soportada.
     ##
     ## - La función de tema acepta una serie de parámetros que pueden
     ##   personalizar la paleta de colores.
@@ -367,7 +365,7 @@ init -1 python hide:
     #########################################
     ## This is the name of the directory where the game's data is
     ## stored. (It needs to be set early, before any other init code
-    ## is run, so the persisten information can be found by the init code.)
+    ## is run, so the persistent information can be found by the init code.)
     ## - Nombre del directorio en el cual se almacenan los datos del juego.
     ##   (Debe ajustarse al inicio, antes de los otros bloques 'init', para
     ##   que la información persistente pueda ser encontrada por el código
