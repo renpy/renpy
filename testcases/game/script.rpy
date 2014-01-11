@@ -212,6 +212,11 @@ screen retain_after_load(label):
 label retain_after_load:
 
     $ value = 1
+
+    "..."
+    "The value is [value] (should always be 1)."
+    "..."
+
     $ renpy.retain_after_load()
     call screen retain_after_load("In Retain after Load Mode")
     call screen retain_after_load("Not in Retain after Load Mode")

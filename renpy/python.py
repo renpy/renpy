@@ -819,36 +819,38 @@ class Rollback(renpy.object.Object):
         return True
 
 
-    def rollback(self, on_load):
+    def rollback(self):
         """
         Reverts the state of the game to what it was at the start of the
         previous checkpoint.
-
-        `on_load`
-            This should be true if this rollback is occurring as part of a
-            game load, where data marked retain_after_load should be retained.
-
         """
 
-        if (not on_load) or (not self.retain_after_load):
+        for obj, roll in reversed(self.objects):
+            if roll is not None:
+                obj.rollback(roll)
 
-            for obj, roll in reversed(self.objects):
-                if roll is not None:
-                    obj.rollback(roll)
+        for name, changes in self.stores.iteritems():
+            store = store_dicts.get(name, None)
+            if store is None:
+                return
 
-            for name, changes in self.stores.iteritems():
-                store = store_dicts.get(name, None)
-                if store is None:
-                    return
+            for name, value in changes.iteritems():
+                if value is deleted:
+                    if name in store:
+                        del store[name]
+                else:
+                    store[name] = value
 
-                for name, value in changes.iteritems():
-                    if value is deleted:
-                        if name in store:
-                            del store[name]
-                    else:
-                        store[name] = value
+        rng.pushback(self.random)
 
-            rng.pushback(self.random)
+        renpy.game.contexts.pop()
+        renpy.game.contexts.append(self.context)
+
+    def rollback_control(self):
+        """
+        This rolls back only the control information, while leaving
+        the data information intact.
+        """
 
         renpy.game.contexts.pop()
         renpy.game.contexts.append(self.context)
@@ -1231,15 +1233,24 @@ class RollbackLog(renpy.object.Object):
             other_contexts = renpy.game.contexts[1:]
             renpy.game.contexts = renpy.game.contexts[0:1]
 
+        if on_load and revlog[-1].retain_after_load:
+            retained = revlog.pop()
+        else:
+            retained = None
+
         # Actually roll things back.
         for rb in revlog:
-            rb.rollback(on_load)
+            rb.rollback()
 
             if rb.context.current == self.fixed_rollback_boundary:
                 self.rollback_is_fixed = True
 
             if rb.forward is not None:
                 self.forward.insert(0, (rb.context.current, rb.forward))
+
+        if retained is not None:
+            retained.rollback_control()
+            self.log.append(retained)
 
         # Disable the next transition, as it's pointless. (Only when not used with a label.)
         renpy.game.interface.suppress_transition = True
