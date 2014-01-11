@@ -387,6 +387,15 @@ init python:
         def get_style(self):
             return "scrollbar", "vscrollbar"
 
+    class __ErrorQuit(Action):
+        """
+        An action that quits with an error status.
+        """
+
+        def __call__(self):
+            renpy.quit(status=1)
+
+
 
 # The screen that is used for error handling.
 screen _exception:
@@ -455,7 +464,7 @@ screen _exception:
                 null width 30
 
                 textbutton _("Quit"):
-                    action renpy.quit
+                    action __ErrorQuit()
                     hovered tt.action(_("Quits the game."))
 
             # Tooltip.
@@ -517,7 +526,7 @@ screen _parse_errors:
                 null width 30
 
                 textbutton _("Quit"):
-                    action renpy.quit
+                    action __ErrorQuit()
                     hovered tt.action(_("Quits the game."))
 
             # Tooltip.

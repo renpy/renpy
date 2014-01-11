@@ -24,6 +24,7 @@ import sys
 import cStringIO
 import platform
 import traceback
+import subprocess
 import io
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
@@ -243,10 +244,10 @@ this program do not contain : or ; in their names.
 
     renpy.loader.init_importer()
 
-    keep_running = True
+    exit_status = None
 
     try:
-        while keep_running:
+        while exit_status is None:
             try:
                 renpy.game.args = args
                 renpy.config.renpy_base = renpy_base
@@ -279,17 +280,20 @@ this program do not contain : or ; in their names.
                 renpy.reload_all()
                 continue
 
-            except renpy.game.QuitException:
-                keep_running = False
+            except renpy.game.QuitException as e:
+                exit_status = e.status
+
+                if e.relaunch:
+                    subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
             except renpy.game.ParseErrorException:
-                keep_running = False
+                exit_status = 1
 
             except Exception, e:
                 report_exception(e)
-                keep_running = False
+                exit_status = 1
 
-        sys.exit(0)
+        sys.exit(exit_status)
 
     finally:
 

@@ -25,7 +25,6 @@ import os
 import sys
 import time
 import zipfile
-import subprocess
 import __main__
 
 
@@ -330,13 +329,6 @@ def main():
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                     renpy.persistent.update(True)
-
-            except game.QuitException, e:
-
-                if e.relaunch:
-                    subprocess.Popen([sys.executable, "-EO"] + sys.argv)
-
-                break
 
             except game.FullRestartException, e:
                 restart = e.reason

@@ -1216,7 +1216,7 @@ def utter_restart():
 
     raise renpy.game.UtterRestartException()
 
-def quit(relaunch=False): #@ReservedAssignment
+def quit(relaunch=False, status=0): #@ReservedAssignment
     """
     :doc: other
 
@@ -1224,9 +1224,13 @@ def quit(relaunch=False): #@ReservedAssignment
 
     `relaunch`
         If true, Ren'Py will run a second copy of itself before quitting.
+
+    `status`
+        The status code Ren'Py will return to the operating system.
+        Generally, 0 is success, and positive integers are failure.
     """
 
-    raise renpy.game.QuitException(relaunch)
+    raise renpy.game.QuitException(relaunch=relaunch, status=status)
 
 def jump(label):
     """
