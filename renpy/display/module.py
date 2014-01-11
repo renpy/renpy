@@ -22,30 +22,11 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
-VERSION = (6, 12, 0)
-
+import pygame; pygame
 import renpy.display
-import pygame; pygame # prevents pyflakes warning.
+import _renpy
 
 import sys
-
-try:
-    import _renpy
-    version = _renpy.version()
-
-    if version != VERSION:
-        print "Found Ren'Py module version %s, while expecting %s." % (
-            ".".join(str(i) for i in version),
-            ".".join(str(i) for i in VERSION),
-            )
-
-        print >>sys.stderr, "Trying to run anyway, but you should expect errors."
-
-except:
-    print >>sys.stderr, "The _renpy module was not found. Please read module/README.txt for"
-    print >>sys.stderr, "more information."
-
-    sys.exit(-1)
 
 def convert_and_call(function, src, dst, *args):
     """

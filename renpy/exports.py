@@ -1284,15 +1284,6 @@ def version(tuple=False): #@ReservedAssignment
 
     return renpy.version
 
-def module_version():
-    """
-    :undocumented:
-    Returns a number corresponding to the current version of the Ren'Py module,
-    or 0 if the module wasn't loaded.
-    """
-
-    return renpy.display.module.version
-
 def transition(trans, layer=None, always=False, force=False):
     """
     :doc: other
