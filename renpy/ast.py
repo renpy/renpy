@@ -422,7 +422,7 @@ class Say(Node):
 
         try:
 
-            renpy.exports.say_attributes = self.attributes
+            renpy.game.context().say_attributes = self.attributes
 
             if self.who is not None:
                 if self.who_fast:
@@ -455,16 +455,16 @@ class Say(Node):
             renpy.exports.say(who, what, interact=self.interact)
 
         finally:
-            renpy.exports.say_attributes = None
+            renpy.game.context().say_attributes = None
 
 
     def predict(self):
 
-        old_attributes = renpy.exports.say_attributes
+        old_attributes = renpy.game.context().say_attributes
 
         try:
 
-            renpy.exports.say_attributes = self.attributes
+            renpy.game.context().say_attributes = self.attributes
 
             if self.who is not None:
                 if self.who_fast:
@@ -486,7 +486,7 @@ class Say(Node):
             renpy.exports.predict_say(who, what)
 
         finally:
-            renpy.exports.say_attributes = old_attributes
+            renpy.game.context().say_attributes = old_attributes
 
         return [ self.next ]
 

@@ -2097,7 +2097,6 @@ def variant(name):
         return False
 
 
-
 def vibrate(duration):
     """
     :doc: other
@@ -2113,9 +2112,6 @@ def vibrate(duration):
         pass
 
 
-# The attributes that are applied to the current say statement.
-say_attributes = None
-
 def get_say_attributes():
     """
     :doc: other
@@ -2126,7 +2122,8 @@ def get_say_attributes():
     This is only valid when executing or predicting a say statement.
     """
 
-    return say_attributes
+    return renpy.game.context().say_attributes
+
 
 def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master'):
     """

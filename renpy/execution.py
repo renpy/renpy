@@ -56,7 +56,7 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 10
+    __version__ = 11
 
     def after_upgrade(self, version):
         if version < 1:
@@ -92,6 +92,9 @@ class Context(renpy.object.Object):
 
         if version < 10:
             self.exception_handler = None
+
+        if version < 11:
+            self.say_attributes = None
 
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -144,6 +147,9 @@ class Context(renpy.object.Object):
         # The exception handler that is called when an exception occurs while executing
         # code. If None, a default handler is used. This is reset when run is called.
         self.exception_handler = None
+
+        # The attributes that are used by the current say statement.
+        self.say_attributes = None
 
         if context:
             oldsl = context.scene_lists

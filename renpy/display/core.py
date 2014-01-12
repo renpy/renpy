@@ -1661,7 +1661,7 @@ class Interface(object):
         be transitioning from.
         """
 
-        renpy.exports.say_attributes = None
+        renpy.game.context().say_attributes = None
 
         # Show the window, if that's necessary.
         self.show_window()
@@ -2605,7 +2605,7 @@ class Interface(object):
 
         finally:
 
-            renpy.exports.say_attributes = None
+            renpy.game.context().say_attributes = None
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:
