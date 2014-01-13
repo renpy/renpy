@@ -133,9 +133,16 @@ init python:
             with open(self.filename, "w"):
                 pass
 
+        def log(self, msg):
+            with open(self.filename, "a") as f:
+                f.write("\n")
+                f.write(msg)
+                f.write("\n")
+
         def info(self, prompt):
             self.info_msg = prompt
             interface.processing(prompt, pause=False)
+            self.log(prompt)
 
         def yesno(self, prompt, submessage=None):
             return interface.yesno(prompt, submessage=submessage)
@@ -165,6 +172,7 @@ init python:
             return interface.choice(prompt, choices, default, cancel=Jump("android"))
 
         def fail(self, prompt):
+            self.log(prompt)
             prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
 
             # Open android.txt in the editor.
@@ -173,9 +181,11 @@ init python:
             interface.error(prompt, label="android")
 
         def success(self, prompt):
+            self.log(prompt)
             interface.info(prompt, pause=False)
 
         def final_success(self, prompt):
+            self.log(prompt)
             interface.info(prompt, label="android")
 
         def call(self, cmd, cancel=False, use_path=False):
