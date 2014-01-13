@@ -266,6 +266,8 @@ You may be using a system install of python. Please run {0}.sh,
 
     try:
         while exit_status is None:
+            exit_status = 1
+
             try:
                 renpy.game.args = args
                 renpy.config.renpy_base = renpy_base
@@ -282,11 +284,11 @@ You may be using a system install of python. Please run {0}.sh,
                     os.makedirs(renpy.config.logdir, 0777)
 
                 renpy.main.main()
-                keep_running = False
+
+                exit_status = 0
 
             except KeyboardInterrupt:
-                traceback.print_exc()
-                break
+                raise
 
             except renpy.game.UtterRestartException:
 
@@ -296,7 +298,8 @@ You may be using a system install of python. Please run {0}.sh,
 
                 # On an UtterRestart, reload Ren'Py.
                 renpy.reload_all()
-                continue
+
+                exit_status = None
 
             except renpy.game.QuitException as e:
                 exit_status = e.status
@@ -305,11 +308,11 @@ You may be using a system install of python. Please run {0}.sh,
                     subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
             except renpy.game.ParseErrorException:
-                exit_status = 1
+                pass
 
             except Exception, e:
                 report_exception(e)
-                exit_status = 1
+                pass
 
         sys.exit(exit_status)
 
