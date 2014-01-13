@@ -255,7 +255,7 @@ init python in project:
                     except:
                         continue
 
-                    m = re.search(r".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
+                    m = re.search(ur".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
                         continue
@@ -267,7 +267,7 @@ init python in project:
 
                     while not todo_text or todo_text in todos:
                         index += 1
-                        todo_text = "{0} ({1})".format(raw_todo_text, index)
+                        todo_text = u"{0} ({1})".format(raw_todo_text, index)
 
                     todos[todo_text] = [f, l]
 
