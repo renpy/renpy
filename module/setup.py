@@ -18,10 +18,10 @@ import generate_styles
 generate_styles.generate()
 
 
-# If RENPY_CC or RENPY_LD are in the environment, use them.
+# If RENPY_CC or RENPY_LD are in the environment, and CC or LD are not, use them.
 def setup_env(name):
     renpy_name = "RENPY_" + name
-    if renpy_name in os.environ:
+    if (renpy_name in os.environ) and (name not in os.environ):
         os.environ[name] = os.environ[renpy_name]
 
 setup_env("CC")

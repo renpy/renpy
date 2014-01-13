@@ -4,7 +4,11 @@ str = unicode # @ReservedAssignment
 
 import collections
 import os
-import io
+
+try:
+    from io import StringIO
+except:
+    from StringIO import StringIO
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -309,7 +313,7 @@ class CodeGen(object):
 
     def __init__(self, filename, spew=False):
         self.filename = os.path.join(ROOT, filename)
-        self.f = io.StringIO()
+        self.f = StringIO()
         self.depth = 0
         self.spew = spew
 
