@@ -32,26 +32,25 @@ def main():
 
         print
 
-        if not current_parent and not current_entries:
-            raise Exception("Empty Style %r", current_name)
-
-        print
-
         if current_parent and current_entries:
             print "style {} is {}:".format(current_name, current_parent)
         elif current_parent:
             print "style {} is {}".format(current_name, current_parent)
-        else:
+        elif current_entries:
             print "style {}:".format(current_name)
+        else:
+            print "style {}".format(current_name)
 
         for name, expr in current_entries:
-            print "    {} {}".format(name, expr)
-
+            if expr:
+                print "    {} {}".format(name, expr.strip())
+            else:
+                print "    {}".format(name)
 
 
     for _fn, _lineno, l in renpy.parser.list_logical_lines(args.script):
 
-        m = re.search(r'style\.(\w+)\s*=\s*Style\((["\'](\w+)["\']|style\.(\w+))', l)
+        m = re.search(r'style\.(\w+)\s*=\s*Style\(\s*(["\'](\w+)["\']|style\.(\w+))', l)
 
         new_name = None
         new_parent = None
@@ -68,6 +67,17 @@ def main():
         if m:
             new_name = m.group(1)
             new_entries.append((m.group(2), m.group(3)))
+
+        m = re.search(r'style\.(\w+)\.clear\(\)', l)
+        if m:
+            new_name = m.group(1)
+            new_entries.append(("clear", None))
+
+        m = re.search(r'style\.(\w+)\.take\((.*)\)', l)
+        if m:
+            new_name = m.group(1)
+            new_entries.append(("take", m.group(2)))
+
 
         if new_name is None:
             continue
