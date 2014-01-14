@@ -9,180 +9,170 @@
 
 # These styles define the look of the Ren'Py in-game interface (the
 # amie2-inspired look). They're also used in the launcher.
-init python:
-    # default
-    style._default = Style(None)
 
+style _default:
+
+    # Text properties
+    font "DejaVuSans.ttf"
+    language "unicode"
+    antialias True
+    size 14
+    color "#111"
+    black_color (0, 0, 0, 255)
+    bold False
+    italic False
+    underline False
+    strikethrough False
+    kerning 0.0
+    drop_shadow None
+    drop_shadow_color (0, 0, 0, 255)
+    outlines [ ]
+    minwidth 0
+    text_align 0
+    justify False
+    text_y_fudge 0
+    first_indent 0
+    rest_indent 0
+    line_spacing 0
+    line_leading 0
+    line_overlap_split 0
+    layout "tex"
+    subtitle_width 0.9
+    slow_cps None
+    slow_cps_multiplier 1.0
+    slow_abortable False
+
+    # Window properties
+    background None
+    xpadding 0
+    ypadding 0
+    xmargin 0
+    ymargin 0
+    xfill False
+    yfill False
+    xminimum 0
+    yminimum 0
+
+    # Placement properties
+    xpos None
+    ypos None
+    xanchor None
+    yanchor None
+    xmaximum None
+    ymaximum None
+    xoffset 0
+    yoffset 0
+    subpixel False
+
+    # Sound properties
+    activate_sound None
+    hover_sound None
+
+    # Box properties
+    spacing 0
+    first_spacing None
+    box_layout None
+    box_wrap False
+    box_reverse False
+    order_reverse False
+
+    # Button properties
+    focus_mask None
+    focus_rect None
+
+    # Bar properties
+    fore_bar Null()
+    aft_bar Null()
+    thumb None
+    thumb_shadow None
+    left_gutter 0
+    right_gutter 0
+    thumb_offset 0
+    unscrollable None
+    bar_invert False
+    bar_vertical False
+
+    # Viewport properties
+    clipping False
+
+init python:
     # Temporarily, until the real styles can be defined.
     style.default = style._default
     style.image = style._default
     style.fixed = style._default
 
-    style._default.font = "DejaVuSans.ttf"
-    style._default.language = "unicode"
-    style._default.antialias = True
-    style._default.size = 14
-    style._default.color = "#111"
-    style._default.black_color = (0, 0, 0, 255)
-    style._default.bold = False
-    style._default.italic = False
-    style._default.underline = False
-    style._default.strikethrough = False
-    style._default.kerning = 0.0
-    style._default.drop_shadow = None
-    style._default.drop_shadow_color = (0, 0, 0, 255)
-    style._default.outlines = [ ]
-    style._default.minwidth = 0
-    style._default.text_align = 0
-    style._default.justify = False
-    style._default.text_y_fudge = 0
-    style._default.first_indent = 0
-    style._default.rest_indent = 0
-    style._default.line_spacing = 0
-    style._default.line_leading = 0
-    style._default.line_overlap_split = 0
-    style._default.layout = "tex"
-    style._default.subtitle_width = 0.9
-    style._default.slow_cps = None
-    style._default.slow_cps_multiplier = 1.0
-    style._default.slow_abortable = False
-
-    # Window properties.
-    style._default.background = None
-    style._default.xpadding = 0
-    style._default.ypadding = 0
-    style._default.xmargin = 0
-    style._default.ymargin = 0
-    style._default.xfill = False
-    style._default.yfill = False
-    style._default.xminimum = 0 # Includes margins and padding.
-    style._default.yminimum = 0 # Includes margins and padding.
-
-    # Placement properties.
-    style._default.xpos = None # 0
-    style._default.ypos = None # 0
-    style._default.xanchor = None # 0
-    style._default.yanchor = None # 0
-    style._default.xmaximum = None
-    style._default.ymaximum = None
-    style._default.xoffset = 0
-    style._default.yoffset = 0
-    style._default.subpixel = False
-
-    # Sound properties.
-    style._default.activate_sound = None
-    style._default.hover_sound = None
-
-    # Box properties.
-    style._default.spacing = 0
-    style._default.first_spacing = None
-    style._default.box_layout = None
-    style._default.box_wrap = False
-    style._default.box_reverse = False
-    style._default.order_reverse = False
-
-    # Focus properties.
-    style._default.focus_mask = None
-    style._default.focus_rect = None
-
-    # Bar properties.
-    style._default.fore_bar = Null()
-    style._default.aft_bar = Null()
-    style._default.thumb = None
-    style._default.thumb_shadow = None
-    style._default.left_gutter = 0
-    style._default.right_gutter = 0
-    style._default.thumb_offset = 0
-    style._default.unscrollable = None
-    style._default.bar_invert = False
-    style._default.bar_vertical = False
-
-    # Misc.
-    style._default.activate_sound = None
-    style._default.clipping = False
-
     ##########################################################################
 
-    # frame
-    style._frame = Style(style._default)
-    style._frame.background = Frame("_theme_amie2/frame.png", 40, 40)
-    style._frame.xmargin = 0
-    style._frame.ymargin = 0
-    style._frame.xpadding = 15
-    style._frame.ypadding = 10
+style _frame is _default:
+    background Frame("_theme_amie2/frame.png", 40, 40)
+    xmargin 0
+    ymargin 0
+    xpadding 15
+    ypadding 10
 
-    # text
-    style._text = Style(style._default)
+style _text is _default
+style _fixed is _default
 
-    # boxes/boxlike
-    style._fixed = Style(style._default)
-    style._hbox = Style(style._default)
-    style._vbox = Style(style._default)
-    style._grid = Style(style._default)
-    style._side = Style(style._default)
-    style._viewport = Style(style._default)
+style _hbox is _default:
+    box_layout 'horizontal'
 
-    style._hbox.box_layout = 'horizontal'
-    style._vbox.box_layout = 'vertical'
-    style._viewport.clipping = True
-    style._viewport.xfill = True
-    style._viewport.yfill = True
+style _vbox is _default:
+    box_layout 'vertical'
 
-    # button
-    style._button = Style(style._default)
-    style._button_text = Style(style._default)
-    style._button.xpadding = 8
-    style._button.ypadding = 6
-    style._button.xoffset = -5
+style _grid is _default
+style _side is _default
 
-    style._button.background = Frame("_theme_amie2/button.png", 10, 10)
-    style._button.hover_background = Frame("_theme_amie2/button_hover.png", 10, 10)
-    style._button_text.size = 16
-    style._button_text.color = "#111"
-    style._button_text.selected_color = "#11f"
-    style._button_text.insensitive_color = "#ccc"
-    style._button_text.xalign = 0.5
-    style._button_text.yoffset = 0
+style _viewport is _default:
+    clipping True
+    xfill True
+    yfill True
 
-    # label
-    style._label = Style(style._default)
-    style._label_text = Style(style._default)
 
-    style._label.top_margin = 10
-    style._label.bottom_margin = 5
+style _button is _default:
+    xpadding 8
+    ypadding 6
+    xoffset -5
+    background Frame("_theme_amie2/button.png", 10, 10)
+    hover_background Frame("_theme_amie2/button_hover.png", 10, 10)
 
-    style._label_text.color = "#000"
-    style._label_text.bold = True
+style _button_text is _default:
+    size 16
+    color "#111"
+    selected_color "#11f"
+    insensitive_color "#ccc"
+    xalign 0.5
+    yoffset 0
 
-    # bar
-    style._bar = Style(style._default)
+style _label is _default:
+    top_margin 10
+    bottom_margin 5
 
-    style._bar.left_bar = Frame("_theme_amie2/hover_frame.png", 10, 10)
-    style._bar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
-    style._bar.thumb = None
-    style._bar.hover_thumb = None
-    style._bar.ymaximum = 20
+style _label_text is _default:
+    color "#000"
+    bold True
 
-    style._scrollbar = Style(style._default)
-    style._vscrollbar = Style(style._default)
 
-    style._scrollbar.left_bar = Frame("_theme_amie2/bar.png", 10, 10)
-    style._scrollbar.right_bar = Frame("_theme_amie2/bar.png", 10, 10)
-    style._scrollbar.thumb = Frame("_theme_amie2/frame.png", 10, 10)
-    style._scrollbar.hover_thumb = Frame("_theme_amie2/hover_frame.png", 10, 10)
-    style._scrollbar.thumb_offset = 10
-    style._scrollbar.left_gutter = 5
-    style._scrollbar.right_gutter = 5
-    style._scrollbar.unscrollable = "hide"
+style _scrollbar is _default:
+    left_bar Frame("_theme_amie2/bar.png", 10, 10)
+    right_bar Frame("_theme_amie2/bar.png", 10, 10)
+    thumb Frame("_theme_amie2/frame.png", 10, 10)
+    hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
+    thumb_offset 10
+    left_gutter 5
+    right_gutter 5
+    unscrollable "hide"
+    ymaximum 20
 
-    style._scrollbar.ymaximum = 20
-    style._vscrollbar.xmaximum = 20
-    style._vscrollbar.bar_vertical = True
-    style._vscrollbar.bar_invert = True
+style _vscrollbar is _default:
+    xmaximum 20
+    bar_vertical True
+    bar_invert True
 
-    style._hyperlink = Style(style._default)
-    style._hyperlink.color = "#008"
-    style._hyperlink.hover_underline = True
+style _hyperlink is _default:
+    color "#008"
+    hover_underline True
+
+init python:
 
     # The keymap we use before the real keymap is defined.
     config.keymap = dict(
