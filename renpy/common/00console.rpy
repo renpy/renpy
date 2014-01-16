@@ -33,6 +33,62 @@
 #  - _console_trace_var: the variable in a trace box.
 #  - _console_trace_value: the value in a trace box.
 
+# Console styles.
+init -1500:
+
+    style _console is _default:
+        background None
+
+    style _console_text is _default:
+        size 14
+        color "#ffffff"
+
+    style _console_input is _default:
+        background "#0000006f"
+        xfill True
+
+    style _console_prompt is _console_text:
+        minwidth 20
+        text_align 1.0
+
+    style _console_input_text is _console_text:
+        color "#fafafa"
+
+    style _console_history is _default:
+        background "#00000000"
+        xfill True
+        yfill True
+
+    style _console_history_item is _default:
+        background "#00000040"
+        top_margin 4
+        xfill True
+
+    style _console_command is _default:
+        background "#00000040"
+        left_padding 24
+
+    style _console_command_text is _console_text
+
+    style _console_result is _default:
+        background "#00000000"
+        left_padding 24
+
+    style _console_result_text is _console_text
+
+    style _console_error_text is _console_text:
+        color "#ff8080"
+
+    style _console_trace is _default:
+        background "#00000040"
+        xalign 1.0
+        top_margin 20
+        right_margin 20
+
+    style _console_trace_var is _console_text:
+        bold True
+
+    style _console_trace_value is _console_text
 
 # Configuration and style initalization.
 init -1500 python:
@@ -49,60 +105,6 @@ init -1500 python:
     # be actually run.
     config.console_callback = None
 
-    # Create default styles. See above for documentation.
-    style.create('_console', '_default')
-    style._console.background = None
-
-    style.create('_console_text', '_default')
-    style._console_text.size = 14
-    style._console_text.color = "#ffffff"
-
-    style.create('_console_input', '_default')
-    style._console_input.background = "#0000006f"
-    style._console_input.xfill = True
-
-    style.create('_console_prompt', '_console_text')
-    style._console_prompt.minwidth = 20
-    style._console_prompt.text_align = 1.0
-
-    style.create('_console_input_text', '_console_text')
-    style._console_input_text.color = "#fafafa"
-
-    style.create('_console_history', '_default')
-    style._console_history.background = "#00000000"
-    style._console_history.xfill = True
-    style._console_history.yfill = True
-
-    style.create('_console_history_item', '_default')
-    style._console_history_item.background = "#00000040"
-    style._console_history_item.top_margin = 4
-    style._console_history_item.xfill = True
-
-    style.create('_console_command', '_default')
-    style._console_command.background = "#00000040"
-    style._console_command.left_padding = 24
-
-    style.create('_console_command_text', '_console_text')
-
-    style.create('_console_result', '_default')
-    style._console_result.background = "#00000000"
-    style._console_result.left_padding = 24
-
-    style.create('_console_result_text', '_console_text')
-
-    style.create('_console_error_text', '_console_text')
-    style._console_error_text.color = "#ff8080"
-
-    style.create('_console_trace', '_default')
-    style._console_trace.background = "#00000040"
-    style._console_trace.xalign = 1.0
-    style._console_trace.top_margin = 20
-    style._console_trace.right_margin = 20
-
-    style.create('_console_trace_var', '_console_text')
-    style._console_trace_var.bold = True
-
-    style.create('_console_trace_value', '_console_text')
 
 init -1500 python in _console:
     from store import config
