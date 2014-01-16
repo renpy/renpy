@@ -6,9 +6,8 @@
 # that it is fully loaded or run before any other Ren'Py code runs.
 
 
-
-# These styles define the look of the Ren'Py in-game interface (the
-# amie2-inspired look). They're also used in the launcher.
+init python:
+    style._default = Style(None)
 
 style _default:
 
