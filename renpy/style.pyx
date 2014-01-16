@@ -409,6 +409,9 @@ cdef class StyleCore:
         # The style object we'll backtrack to when s has no down-parent.
         cdef StyleCore left
 
+        # A limit to the number of styles we'll consider.
+        cdef int limit
+
         index += self.offset
 
         if not self.built:
@@ -416,8 +419,9 @@ cdef class StyleCore:
 
         s = self
         left = None
+        limit = 100
 
-        while True:
+        while limit > 0:
 
             # If we have the style, return it.
             if s.cache != NULL:
@@ -439,6 +443,10 @@ cdef class StyleCore:
             # If no down-parent or left-parent, default to None.
             if s is None:
                 return None
+
+            limit -= 1
+
+        raise Exception("{} is too complex. Check for loops in style inheritance.".format(self))
 
     def inspect(StyleCore self):
         """
