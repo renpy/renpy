@@ -4,6 +4,34 @@
 # This file contains code that helps support the development of Ren'Py
 # games.
 
+# List styles.
+
+style list is default
+style list_box is vbox
+style list_row is default
+style list_row_box is hbox
+style list_spacer is default
+style list_text is default
+
+style list_row:
+    xfill True
+    ymargin 0
+    background "#eee"
+    hover_background "#fff"
+    selected_background "#cce"
+
+init python:
+    style.list_row[1].background = "#ddd"
+    style.list_row[1].hover_background = "#fff"
+    style.list_row[1].selected_background = "#cce"
+
+style list_text:
+    color "#000"
+    size 14
+
+style list_spacer:
+    xminimum 15
+
 screen _developer:
 
     frame:

@@ -4,324 +4,323 @@
 # This file is responsible for creating and defining the default styles
 # used by the system.
 
-# This file should be considered part of the Ren'Py library, and not
-# something that needs to be modified by the user. Instead, just update
-# the appropriate style property in an init: block in your script.
-#
-# For example, to change the default window backgrounds to a
-# transparent dark red, add:
-#
-# init:
-#     $ style.window.background = "#8008"
-#
-# to your script. No need to mess around here, it will just make your
-# life harder when a new version of Ren'Py is released.
-
-init -1800 python hide:
-
-    # Style Declarations #################################################
-
-    style.default = Style(None, help='root of style hierarchy')
-    style.text = Style(style.default, help='style of text')
-
-    style.fixed = Style(style.default, help='fixed layouts')
-    style.hbox = Style(style.default, help='horizontal boxes')
-    style.vbox = Style(style.default, help='vertical boxes')
-    style.grid = Style(style.default, help='grid layouts')
-    style.side = Style(style.default, help='side layouts')
-
-    style.window = Style(style.default, help='windows created with ui.window')
-
-    style.image_placement = Style(style.default, help='default placement of images on the screen')
-    style.image = Style(style.default, help="default style of images")
-
-    style.motion = Style(style.default, help="default style of motions and zooms.")
-    style.animation = Style(style.default, help="default style of animations.")
-
-    style.say_label = Style(style.default, help='the name of the character speaking dialogue.')
-    style.say_dialogue = Style(style.default, help='used for dialogue text')
-    style.say_thought = Style(style.default, help='used by the default narrator')
-    style.say_window = Style(style.window, help='windows containing dialogue and thoughts')
-    style.say_who_window = Style(style.window, help='window containing the label in two-window-say mode')
-    style.say_two_window_vbox = Style(style.vbox, help='vbox containing the two windows in two-window-say mode')
-    style.say_vbox = Style(style.vbox, help='contains the label (if present) and the body of dialogue')
-
-    style.menu = Style(style.default, help='the vbox containing an in-game menu')
-    style.menu_caption = Style(style.default, help='in-game menu caption text')
-    style.menu_choice = Style(style.default, help='text of an in-game menu choice')
-    style.menu_choice_button = Style(style.default, help='buttons containing in-game menu choices')
-    style.menu_choice_chosen = Style(style.menu_choice, help='text of an in-game menu choice that has been chosen')
-    style.menu_choice_chosen_button = Style(style.menu_choice_button, help='buttons containing chosen in-game menu choices')
-    style.menu_window = Style(style.window, help='a window containing a menu')
-
-    style.input = Style(style.default, help='style of an input control')
-    style.input_text = Style(style.input, help='text of an input box')
-    style.input_prompt = Style(style.default, help='prompt of an input box')
-    style.input_window = Style(style.window, help='window of an input box')
-
-    style.centered_window = Style(style.default, help='window containing centered text')
-    style.centered_text = Style(style.default, help='centered text')
-    style.centered_vtext = Style(style.default, help='centered text')
-
-    style.imagemap = Style(style.image_placement, help='default style of imagemaps')
-    style.hotspot = Style(style.default, help='default style of hotspots inside imagemaps')
-    style.hotbar = Style(style.default, help='default style of hotbars inside imagemaps')
-    style.imagemap_button = style.hotspot
-
-    style.image_button = Style(style.default, help='default style of image buttons')
-    style.image_button_image = Style(style.default, help='default style of images inside image buttons')
-
-    style.hyperlink = Style(style.default, help=None) # ignored
-    style.hyperlink_text = Style(style.default, help='hyperlinked text')
-    style.ruby_text = Style(style.default, help='ruby text')
-
-    style.viewport = Style(style.default, help='default style of viewports')
-    style.transform = Style(style.motion, help='default style of transforms')
-
-    style.list = Style(style.default)
-    style.list_box = Style(style.vbox)
-    style.list_row = Style(style.default)
-    style.list_row_box = Style(style.hbox)
-    style.list_spacer = Style(style.default)
-    style.list_text = Style(style.default)
-
-    style.tile = Style(style.default, help='default style of tile')
-
-    # Not used - but some old games might customize it.
-    style.error_root = Style(style.default)
-
-# The base styles that can be customized by themes.
-
-    style.frame = Style(style.default, help='base style for frames.')
-    style.menu_frame = Style(style.frame, help='base style for frames used in the game and main menus.')
-
-    style.button = Style(style.default, help='base style for buttons.')
-    style.button_text = Style(style.default, help='base style for button text')
-
-    style.small_button = Style(style.button, help="base style for small buttons")
-    style.small_button_text = Style(style.button_text, help="base style for small button text")
-    style.radio_button = Style(style.button, help="base style for radio buttons")
-    style.radio_button_text = Style(style.button_text, help="base style for radio button text")
-    style.check_button = Style(style.button, help="base style for check buttons")
-    style.check_button_text = Style(style.button_text, help="base style for check button text")
-
-    style.large_button = Style(style.default, help="base style for large buttons")
-    style.large_button_text = Style(style.default, help="base style for large button text")
-
-    style.label = Style(style.default, help="base style for windows surrounding labels")
-    style.label_text = Style(style.default, help="base style for label text")
-
-    style.prompt = Style(style.default, help="base style for windows surrounding prompts")
-    style.prompt_text = Style(style.default, help="base style for prompt text")
-
-    style.bar = Style(style.default, help='base style for horizontal bars')
-    style.vbar = Style(style.default, help='base style for vertical bars')
-
-    style.slider = Style(style.default, help='base style for horizontal sliders')
-    style.vslider = Style(style.default, help='base style for vertical sliders')
-
-    style.scrollbar = Style(style.default, help='base style for horizontal scrollbars')
-    style.vscrollbar = Style(style.default, help='base style for vertical scollbars')
-
-    style.mm_root = Style(style.default, help="main menu root window")
-    style.gm_root = Style(style.default, help="game menu root window")
-
-
 init -1800 python:
 
-    # Colors #############################################################
+    # The style hierarchy root has to be initialized through python
+    # code.
+    style.default = Style(None)
 
-    # The Default Style ###################################################
+init -1800:
 
-    # Text properties.
-    style.default.font = "DejaVuSans.ttf"
-    style.default.language = "unicode"
-    style.default.antialias = True
-    style.default.size = 22
-    style.default.color = (255, 255, 255, 255)
-    style.default.black_color = (0, 0, 0, 255)
-    style.default.bold = False
-    style.default.italic = False
-    style.default.underline = False
-    style.default.strikethrough = False
-    style.default.kerning = 0.0
-    style.default.drop_shadow = None
-    style.default.drop_shadow_color = (0, 0, 0, 255)
-    style.default.outlines = [ ]
-    style.default.minwidth = 0
-    style.default.text_align = 0
-    style.default.justify = False
-    style.default.text_y_fudge = 0
-    style.default.first_indent = 0
-    style.default.rest_indent = 0
-    style.default.line_spacing = 0
-    style.default.line_leading = 0
-    style.default.line_overlap_split = 0
-    style.default.layout = "tex"
-    style.default.subtitle_width = 0.9
-    style.default.slow_cps = None
-    style.default.slow_cps_multiplier = 1.0
-    style.default.slow_abortable = False
-    # style.default.hyperlink_functions (set in 00library.rpy)
+    # Declare styles and inheritance.
 
-    # Window properties.
-    style.default.background = None
-    style.default.xpadding = 0
-    style.default.ypadding = 0
-    style.default.xmargin = 0
-    style.default.ymargin = 0
-    style.default.xfill = False
-    style.default.yfill = False
-    style.default.xminimum = 0 # Includes margins and padding.
-    style.default.yminimum = 0 # Includes margins and padding.
+    style text is default
+    style fixed is default
+    style hbox is default
+    style vbox is default
+    style grid is default
+    style side is default
+    style window is default
+    style image_placement is default
+    style image is default
+    style animation is default
 
-    # Placement properties.
-    style.default.xpos = None # 0
-    style.default.ypos = None # 0
-    style.default.xanchor = None # 0
-    style.default.yanchor = None # 0
-    style.default.xmaximum = None
-    style.default.ymaximum = None
-    style.default.xoffset = 0
-    style.default.yoffset = 0
-    style.default.subpixel = False
+    style say_label is default
+    style say_dialogue is default
+    style say_thought is default
+    style say_window is window
+    style say_who_window is window
+    style say_two_window_vbox is vbox
+    style say_vbox is vbox
 
-    # Sound properties.
-    style.default.activate_sound = None
-    style.default.hover_sound = None
+    style menu is default
+    style menu_caption is default
+    style menu_choice is default
+    style menu_choice_button is default
+    style menu_choice_chosen is menu_choice
+    style menu_choice_chosen_button is menu_choice_button
+    style menu_window is window
 
-    # Box properties.
-    style.default.spacing = 0
-    style.default.first_spacing = None
-    style.default.box_layout = None
-    style.default.box_wrap = False
-    style.default.box_reverse = False
-    style.default.order_reverse = False
+    style input is default
+    style input_text is input
+    style input_prompt is default
+    style input_window is window
 
-    # Focus properties.
-    style.default.focus_mask = None
-    style.default.focus_rect = None
+    style centered_window is default
+    style centered_text is default
+    style centered_vtext is default
 
-    # Bar properties.
-    style.default.fore_bar = Null()
-    style.default.aft_bar = Null()
-    style.default.thumb = None
-    style.default.thumb_shadow = None
-    style.default.left_gutter = 0
-    style.default.right_gutter = 0
-    style.default.thumb_offset = 0
-    style.default.unscrollable = None
+    style imagemap is image_placement
+    style hotspot is default
+    style hotbar is default
 
-    # Misc.
-    style.default.activate_sound = None
-    style.default.clipping = False
+    style image_button is default
+    style image_button_image is default
 
-    # Boxes.
-    style.hbox.box_layout = 'horizontal'
-    style.vbox.box_layout = 'vertical'
+    style hyperlink is default
+    style hyperlink_text is default
+    style ruby_text is default
 
-    # Motions, zooms, rotozooms, and transforms.
-    style.motion.xanchor = 0
-    style.motion.yanchor = 0
-    style.motion.xpos = 0
-    style.motion.ypos = 0
+    style viewport is default
 
-    # Windows.
-    style.window.background = Solid((0, 0, 0, 192))
-    style.window.xpadding = 6
-    style.window.ypadding = 6
-    style.window.xmargin = 0
-    style.window.ymargin = 0
-    style.window.xfill = True
-    style.window.yfill = False
-    style.window.yminimum = 150 # Includes margins and padding.
-    style.window.xalign = 0.5
-    style.window.yalign = 1.0
+    style motion is default
+    style transform is motion
+
+    style tile is default
+
+    # Not used - kept for compatibility.
+    style error_root is default
+
+    style frame is default
+    style menu_frame is frame
+
+    style button is default
+    style button_text is default
+
+    style small_button is button
+    style small_button_text is button_text
+
+    style radio_button is button
+    style radio_button_text is button_text
+
+    style check_button is button
+    style check_button_text is button_text
+
+    style large_button is default
+    style large_button_text is default
+
+    style label is default
+    style label_text is default
+
+    style prompt is default
+    style prompt_text is default
+
+    style bar is default
+    style vbar is default
+    style slider is default
+    style vslider is default
+    style scrollbar is default
+    style vscrollbar is default
+
+    style mm_root is default
+    style gm_root is default
+
+    # Default style.
+
+    style default:
+
+        # Text properties
+        font "DejaVuSans.ttf"
+        language "unicode"
+        antialias True
+        size 22
+        color (255, 255, 255, 255)
+        black_color (0, 0, 0, 255)
+        bold False
+        italic False
+        underline False
+        strikethrough False
+        kerning 0.0
+        drop_shadow None
+        drop_shadow_color (0, 0, 0, 255)
+        outlines [ ]
+        minwidth 0
+        text_align 0
+        justify False
+        text_y_fudge 0
+        first_indent 0
+        rest_indent 0
+        line_spacing 0
+        line_leading 0
+        line_overlap_split 0
+        layout "tex"
+        subtitle_width 0.9
+        slow_cps None
+        slow_cps_multiplier 1.0
+        slow_abortable False
+        ruby_style style.ruby_text
+        # hyperlink_functions is set in 00defaults.rpy
+
+        # Window properties
+        background None
+        xpadding 0
+        ypadding 0
+        xmargin 0
+        ymargin 0
+        xfill False
+        yfill False
+
+        # Size properties
+        xminimum 0
+        yminimum 0
+        xmaximum None
+        ymaximum None
+
+        # Position properties
+        xpos None
+        ypos None
+        xanchor None
+        yanchor None
+        xoffset 0
+        yoffset 0
+        subpixel False
+
+        # Sound properties
+        activate_sound None
+        hover_sound None
+
+        # Box properties
+        spacing 0
+        first_spacing None
+        box_layout None
+        box_wrap False
+        box_reverse False
+        order_reverse False
+
+        # Button properties
+        focus_mask None
+        focus_rect None
+
+        # Bar properties
+        fore_bar Null()
+        aft_bar Null()
+        thumb None
+        thumb_shadow None
+        left_gutter 0
+        right_gutter 0
+        thumb_offset 0
+        unscrollable None
+        bar_invert False
+        bar_resizing False
+        bar_vertical False
+
+        # Viewport properties
+        clipping False
+
+    # Boxes
+
+    style hbox:
+        box_layout 'horizontal'
+
+    style vbox:
+        box_layout 'vertical'
+
+    # Motions, zooms, rotozooms, and transforms
+
+    style motion:
+        xanchor 0
+        yanchor 0
+        xpos 0
+        ypos 0
+
+    style transform:
+        subpixel True
+
+    # Windows
+
+    style window:
+        background Solid((0, 0, 0, 192))
+        xpadding 6
+        ypadding 6
+        xmargin 0
+        ymargin 0
+        xfill True
+        yfill False
+        yminimum 150
+        xalign 0.5
+        yalign 1.0
 
     # Dialogue
-    style.say_label.bold = True
-    style.say_vbox.spacing = 8
+    style say_label:
+        bold True
 
-    # Two window styles.
-    style.say_who_window.xminimum = 200
-    style.say_who_window.yminimum = 34
-    style.say_who_window.xfill = False
-    style.say_who_window.xalign = 0
+    style say_vbox:
+        spacing 8
 
-    style.say_two_window_vbox.yalign = 1.0
+    style say_who_window:
+        xminimum 200
+        yminimum 34
+        xfill False
+        xalign 0
 
-    # Menus.
-    style.menu_choice.idle_color = "#0ff"
-    style.menu_choice.hover_color = "#ff0"
-    style.input.color = "#ff0"
+    style say_two_window_vbox:
+        yalign 1.0
 
-    # Styles used by centered.
-    style.centered_window.xalign = 0.5
-    style.centered_window.xfill = False
-    style.centered_window.yalign = 0.5
-    style.centered_window.yfill = False
-    style.centered_window.xpadding = 10
+    # Menus
 
-    style.centered_text.textalign = 0.5
-    style.centered_text.xalign = 0.5
-    style.centered_text.yalign = 0.5
-    style.centered_text.layout = "subtitle"
+    style menu_choice:
+        idle_color "#0ff"
+        hover_color "#ff0"
 
-    style.centered_vtext.textalign = 0.5
-    style.centered_vtext.xalign = 0.5
-    style.centered_vtext.yalign = 0.5
-    style.centered_vtext.vertical = True
+    # Input
 
-    # Hyperlinks.
-    style.hyperlink_text.underline = True
-    style.hyperlink_text.hover_color = "#0ff"
-    style.hyperlink_text.idle_color = "#08f"
+    style input:
+        color "#ff0"
 
-    # Ruby.
-    style.ruby_text.size = 22
-    style.ruby_text.xoffset = 0
-    style.default.ruby_style = style.ruby_text
+    # Centered text and dialogue
 
-    # Bars.
-    style.default.bar_invert = False
-    style.default.bar_resizing = False
-    style.default.bar_vertical = False
+    style centered_window:
+        xalign 0.5
+        xfill False
+        yalign 0.5
+        yfill False
+        xpadding 10
 
-    style.vbar.bar_vertical = True
-    style.vslider.bar_vertical = True
-    style.vscrollbar.bar_vertical = True
-    style.vscrollbar.bar_invert = True
+    style centered_text:
+        textalign 0.5
+        xalign 0.5
+        yalign 0.5
+        layout "subtitle"
 
-    # Viewport
-    style.viewport.clipping = True
-    style.viewport.xfill = True
-    style.viewport.yfill = True
+    style centered_vtext:
+        textalign 0.5
+        xalign 0.5
+        yalign 0.5
+        vertical True
 
-    # Transform
-    style.transform.subpixel = True
+    # Hyperlinks
 
-    # Menu windows.
-    style.mm_root.background = "#000"
-    style.mm_root.xfill = True
-    style.mm_root.yfill = True
+    style hyperlink_text:
+        underline True
+        hover_color "#0ff"
+        idle_color "#08f"
 
-    style.gm_root.background = "#000"
-    style.gm_root.xfill = True
-    style.gm_root.yfill = True
+    # Ruby text (Furigana)
 
-    # Lists.
-    style.list_row.xfill = True
+    style ruby_text:
+        size 22
+        xoffset 0
 
-    style.list_row.ymargin = 0
-    style.list_row.background = "#eee"
-    style.list_row[1].background = "#ddd"
-    style.list_row.hover_background = "#fff"
-    style.list_row[1].hover_background = "#fff"
-    style.list_row.selected_background = "#cce"
-    style.list_row[1].selected_background = "#cce"
-    style.list_text.color = "#000"
-    style.list_text.size = 14
-    style.list_spacer.xminimum = 15
+    # Bars
 
-    # Tile
-    style.tile.clipping = True
+    style vbar:
+        bar_vertical True
+
+    style vslider:
+        bar_vertical True
+
+    style vscrollbar:
+        bar_vertical True
+        bar_invert True
+
+    style viewport:
+        clipping True
+        xfill True
+        yfill True
+
+    # Out-of-game menu root windows
+
+    style mm_root:
+        background "#000"
+        xfill True
+        yfill True
+
+    style gm_root:
+        background "#000"
+        xfill True
+        yfill True
+
+    # Tiles
+
+    style tile:
+        clipping True
