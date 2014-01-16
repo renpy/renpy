@@ -1916,7 +1916,7 @@ def style_statment(l, loc):
     else:
         priority = 0
 
-    name = l.require(l.name)
+    name = l.require(l.word)
     parent = None
 
     rv = ast.Style(loc, name)
@@ -1929,7 +1929,7 @@ def style_statment(l, loc):
             if parent is not None:
                 l.error("parent clause appears twice.")
 
-            rv.parent = l.require(l.name)
+            rv.parent = l.require(l.word)
             return True
 
         if l.keyword("clear"):
