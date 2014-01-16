@@ -63,6 +63,11 @@ def main():
             new_name = name
             new_parent = parent
 
+        m = re.search(r'style\.create\(["\'](\w+)["\'],\s*["\'](\w+)["\']', l)
+        if m:
+            new_name = m.group(1)
+            new_parent = m.group(2)
+
         m = re.search(r'style\.(\w+)\.(\w+)\s*=\s*(.*)', l)
         if m:
             new_name = m.group(1)
