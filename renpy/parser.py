@@ -379,20 +379,13 @@ def group_logical_lines(lines):
 
     return gll_core(0, 0)[0]
 
-class Lexer(object):
-    """
-    The lexer that is used to lex script files. This works on the idea
-    that we want to lex each line in a block individually, and use
-    sub-lexers to lex sub-blocks.
-    """
-
-    # A list of keywords which should not be parsed as names, because
-    # there is a huge chance of confusion.
-    #
-    # Note: We need to be careful with what's in here, because thse
-    # are banned in simple_expressions, where we might want to use
-    # some of them.
-    keywords = set([
+# A list of keywords which should not be parsed as names, because
+# there is a huge chance of confusion.
+#
+# Note: We need to be careful with what's in here, because thse
+# are banned in simple_expressions, where we might want to use
+# some of them.
+KEYWORDS = set([
             '$',
             'as',
             'at',
@@ -418,6 +411,42 @@ class Lexer(object):
             'transform',
             ])
 
+OPERATORS = [
+        'or',
+        'and',
+        'not',
+        'in',
+        'is',
+        '<',
+        '<=',
+        '>',
+        '>=',
+        '<>',
+        '!=',
+        '==',
+        '|',
+        '^',
+        '&',
+        '<<',
+        '>>',
+        '+',
+        '-',
+        '*',
+        '/',
+        '//',
+        '%',
+        '~',
+        '**',
+        ]
+
+operator_regexp = "|".join(re.escape(i) for i in OPERATORS)
+
+class Lexer(object):
+    """
+    The lexer that is used to lex script files. This works on the idea
+    that we want to lex each line in a block individually, and use
+    sub-lexers to lex sub-blocks.
+    """
 
     def __init__(self, block, init=False):
 
@@ -438,6 +467,7 @@ class Lexer(object):
         self.word_cache_pos = -1
         self.word_cache_newpos = -1
         self.word_cache = ""
+
 
     def advance(self):
         """
@@ -670,7 +700,7 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.word()
 
-        if rv in self.keywords:
+        if rv in KEYWORDS:
             self.pos = oldpos
             return None
 
@@ -831,42 +861,57 @@ class Lexer(object):
         None if it cannot.
         """
 
-        self.skip_whitespace()
-        if self.eol():
-            return None
-
         start = self.pos
 
-        # We start with either a name, a python_string, or parenthesized
-        # python
-        if (not self.python_string() and
-            not self.name() and
-            not self.float() and
-            not self.parenthesised_python()):
+        # Operator.
+        while True:
 
-            return None
-
-        while not self.eol():
-            self.skip_whitespace()
+            while self.match(operator_regexp):
+                pass
 
             if self.eol():
                 break
 
-            # If we see a dot, expect a dotted name.
-            if self.match(r'\.'):
-                n = self.name()
-                if not n:
-                    self.error("expecting name after dot.")
+            # We start with either a name, a python_string, or parenthesized
+            # python
+            if not (self.python_string() or
+                self.name() or
+                self.float() or
+                self.parenthesised_python()):
 
-                continue
+                break
 
-            # Otherwise, try matching parenthesised python.
-            if self.parenthesised_python():
+            while True:
+                self.skip_whitespace()
+
+                if self.eol():
+                    break
+
+                # If we see a dot, expect a dotted name.
+                if self.match(r'\.'):
+                    n = self.name()
+                    if not n:
+                        self.error("expecting name after dot.")
+
+                    continue
+
+                # Otherwise, try matching parenthesised python.
+                if self.parenthesised_python():
+                    continue
+
+                break
+
+            if self.match(operator_regexp):
                 continue
 
             break
 
-        return renpy.ast.PyExpr(self.text[start:self.pos], self.filename, self.number)
+        text = self.text[start:self.pos].strip()
+
+        if not text:
+            return None
+
+        return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
 
     def checkpoint(self):
         """
@@ -1907,7 +1952,7 @@ def translate_statement(l, loc):
 
 
 @statement("style")
-def style_statment(l, loc):
+def style_statment(l, loc, rest_expression=False):
 
     # Parse priority and name.
     priority = l.integer()
@@ -1957,6 +2002,7 @@ def style_statment(l, loc):
                 l.error("variant clause appears twice.")
 
             rv.variant = l.require(l.simple_expression)
+
             return True
 
         propname = l.name()
@@ -1969,6 +2015,7 @@ def style_statment(l, loc):
                 l.error("style property %s appears twice." % propname)
 
             rv.properties[propname] = l.require(l.simple_expression)
+
             return True
 
         return False

@@ -51,6 +51,7 @@ init -1 python:
     DARK = "Roboto-Medium.ttf"
 
 init 1 python:
+
     INDENT = 20
     HALF_INDENT = 10
 
@@ -102,9 +103,9 @@ init 1:
     # Action buttons on the bottom of the screen.
     style l_right_button is l_default:
         xalign 1.0
-        ypos (600 - 128 + 12)
-        left_margin (8 + INDENT)
-        right_margin (10 + INDENT)
+        ypos 600 - 128 + 12
+        left_margin 8 + INDENT
+        right_margin 10 + INDENT
 
     style l_right_button_text is l_default:
         size 30
