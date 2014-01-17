@@ -68,7 +68,7 @@ def main():
             new_name = m.group(1)
             new_parent = m.group(2)
 
-        m = re.search(r'style\.(\w+)\.(\w+)\s*=\s*(.*)', l)
+        m = re.search(r'style\.(\w+)\.(\w+)\s*=\s*(.*)', l, re.S)
         if m:
             new_name = m.group(1)
             new_entries.append((m.group(2), m.group(3)))
