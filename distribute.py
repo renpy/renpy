@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import argparse
 
-CWD = os.getcwdu()
+ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def copy_tutorial_file(src, dest):
     """
@@ -109,6 +109,30 @@ def main():
             subprocess.check_call(["./renpy.sh", i, "quit" ])
 
 
+    # Kick off the rapt build.
+    if not args.fast:
+        out = open("/tmp/rapt_build.txt", "wb")
+
+        print("Building RAPT.")
+
+        android = os.path.abspath("android")
+
+        rapt_build = subprocess.Popen([
+            os.path.join(android, "build_renpy.sh"),
+            "renpy",
+            ROOT,
+            ],
+            cwd = android,
+            stdout=out,
+            stderr=out)
+
+        code = rapt_build.wait()
+
+        if code:
+            print "RAPT build failed. The output is in /tmp/rapt_build.txt."
+            sys.exit(1)
+        else:
+            print "RAPT build succeeded."
 
     if not os.path.exists(destination):
         os.makedirs(destination)
@@ -139,24 +163,6 @@ def main():
 
     print
     subprocess.check_call(cmd)
-
-    # Kick off the rapt build.
-    if not args.fast:
-        out = open("/tmp/rapt_build.txt", "wb")
-
-        print("Building RAPT in the background.")
-
-        android = os.path.abspath("android")
-
-        rapt_build = subprocess.Popen([
-            os.path.join(android, "build_renpy.sh"),
-            zip_version
-            ],
-            cwd = android,
-            stdout=out,
-            stderr=out)
-    else:
-        rapt_build = None
 
     # Sign the update.
     if not args.fast:
@@ -217,13 +223,6 @@ def main():
             os.unlink(sdk + ".7z.exe")
 
     print
-
-    if rapt_build:
-        code = rapt_build.wait()
-        if code:
-            print "RAPT build failed. The output is in /tmp/rapt_build.txt"
-        else:
-            print "RAPT build succeeded."
 
 if __name__ == "__main__":
     main()
