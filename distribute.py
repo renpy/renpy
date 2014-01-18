@@ -176,6 +176,9 @@ def main():
     # Write 7z.exe.
     sdk = "renpy-{}-sdk".format(zip_version)
 
+    if args.version.startswith("renpy-nightly-"):
+        sdk = args.version + "-sdk"
+
     if not args.fast:
 
         # shutil.copy("renpy-ppc.zip", os.path.join(destination, "renpy-ppc.zip"))
