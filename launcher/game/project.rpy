@@ -197,7 +197,8 @@ init python in project:
             p = subprocess.Popen(cmd, env=environ)
 
             if wait:
-                p.wait()
+                if p.wait():
+                    interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
         def update_dump(self, force=False, gui=True):
             """
