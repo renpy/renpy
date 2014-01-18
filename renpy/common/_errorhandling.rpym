@@ -150,7 +150,6 @@ style _label_text is _default:
     color "#000"
     bold True
 
-
 style _scrollbar is _default:
     left_bar Frame("_theme_amie2/bar.png", 10, 10)
     right_bar Frame("_theme_amie2/bar.png", 10, 10)
@@ -163,6 +162,14 @@ style _scrollbar is _default:
     ymaximum 20
 
 style _vscrollbar is _default:
+    top_bar Frame("_theme_amie2/bar.png", 10, 10)
+    bottom_bar Frame("_theme_amie2/bar.png", 10, 10)
+    thumb Frame("_theme_amie2/frame.png", 10, 10)
+    hover_thumb Frame("_theme_amie2/hover_frame.png", 10, 10)
+    thumb_offset 10
+    top_gutter 5
+    bottom_gutter 5
+    unscrollable "hide"
     xmaximum 20
     bar_vertical True
     bar_invert True
