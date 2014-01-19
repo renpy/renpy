@@ -80,7 +80,7 @@ def main():
 
     # Check that the versions match.
     full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
-    if args.version != "experimental" \
+    if args.version != "renpy-experimental" \
         and not args.version.startswith("renpy-nightly-") \
         and not full_version.startswith(args.version):
 
