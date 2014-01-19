@@ -39,7 +39,7 @@ try:
 
         apks = [
             android.apk.APK(apk=expansion, prefix='assets/x-game/'),
-            android.apk.APK(apk=expansion, prefix='assets/x-common/'),
+            android.apk.APK(apk=expansion, prefix='assets/x-renpy/x-common/'),
             ]
 
         game_apks = [ apks[0] ]
@@ -49,7 +49,7 @@ try:
 
         apks = [
             android.apk.APK(prefix='assets/x-game/'),
-            android.apk.APK(prefix='assets/x-common/'),
+            android.apk.APK(prefix='assets/x-renpy/x-common/'),
             ]
 
         game_apks = [ apks[0] ]

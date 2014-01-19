@@ -39,28 +39,14 @@ init python:
 
         candidates = [ ]
 
-        for fn in os.listdir(config.renpy_base):
-            if not fn.startswith("rapt-"):
-                continue
+        RAPT_PATH = os.path.join(config.renpy_base, "rapt")
 
-            if not os.path.isdir(os.path.join(config.renpy_base, fn)):
-                continue
-
-            try:
-                version = fn[5:]
-                version = tuple(int(i) for i in version.split('.'))
-            except ValueError:
-                continue
-
-            candidates.append((version, fn))
-
-        if not candidates:
-            RAPT_PATH = None
-        else:
-            RAPT_PATH = os.path.join(config.renpy_base, candidates[-1][1])
-
+        if os.path.isdir(RAPT_PATH):
             import sys
             sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
+        else:
+            RAPT_PATH = None
+            RAPT_PATH is None
 
     find_rapt()
 

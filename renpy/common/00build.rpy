@@ -47,6 +47,14 @@ init -1500 python in build:
         ( "**/*.pyc", None),
 
         ( "renpy.py", "renpy"),
+
+        ( "renpy/", "all"),
+        ( "renpy/common/", "all"),
+        ( "renpy/common/_compat/**", "renpy"),
+        ( "renpy/common/**.rpy", "renpy"),
+        ( "renpy/common/**.rpym", "renpy"),
+        ( "renpy/common/_compat/**", "renpy"),
+        ( "renpy/common/**", "all"),
         ( "renpy/**", "renpy"),
 
         # Ignore Ren'Py and renpy.exe.
