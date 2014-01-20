@@ -1,5 +1,13 @@
 translate spanish strings:
 
+    # game/project.rpy:201
+    old "Launching the project failed."
+    new "La ejecución del proyecto ha fallado."
+
+    # game/project.rpy:201
+    old "Please ensure that your project launches normally before running this command."
+    new "Por favor, asegurate de que tu proyecto se ejecuta normalmente antes de ejecutar este comando."
+
     # game/project.rpy:204
     old "Ren'Py is scanning the project..."
     new "Ren'Py está escaneando el proyecto..."
