@@ -29,7 +29,7 @@ init python:
 
         return name in updater.get_installed_packages()
 
-    def add_dlc(name):
+    def add_dlc(name, restart=False):
         """
         Adds the DLC package, if it doesn't already exist.
 
@@ -39,7 +39,7 @@ init python:
         if check_dlc(name):
             return True
 
-        return renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=False)
+        return renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
 
 screen update_channel:
 

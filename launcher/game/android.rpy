@@ -9,9 +9,8 @@ init python:
     ANDROID_NO_CONFIG = 4
     ANDROID_OK = 5
 
-
+    NO_RAPT_TEXT = _("To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
     NO_JDK_TEXT = _("A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher.")
-    NO_RAPT_TEXT = _("To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
     NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
     NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore.")
     NO_CONFIG_TEXT = _("The current project has not been configured. Use \"Configure\" to configure it before building.")
@@ -464,6 +463,11 @@ screen android:
 
 
 label android:
+
+    if RAPT_PATH is None:
+        $ interface.yesno(_("Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"), no=Jump("front_page"))
+        $ add_dlc("rapt", restart=True)
+
     call screen android
 
 
