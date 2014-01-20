@@ -328,8 +328,7 @@ You may be using a system install of python. Please run {0}.sh,
 
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
-        import subprocess # W0403
-        subprocess.Popen.__del__ = popen_del # E1101
+        subprocess.Popen.__del__ = popen_del
 
 def report_line(out, filename, line, what):
     out.write('  File "%s", line %d, in %s\n' % (filename, line, what))
