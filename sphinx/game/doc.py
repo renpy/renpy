@@ -87,6 +87,7 @@ transform
 add
 use
 has
+style
 """
 
 

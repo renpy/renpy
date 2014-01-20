@@ -189,12 +189,16 @@
     `checkpoint`
         If true, a checkpoint is placed so rollback can occur.
 
-.. function:: renpy.quit(relaunch=False)
+.. function:: renpy.quit(relaunch=False, status=0)
     
     This causes Ren'Py to exit entirely.
     
     `relaunch`
         If true, Ren'Py will run a second copy of itself before quitting.
+    
+    `status`
+        The status code Ren'Py will return to the operating system.
+        Generally, 0 is success, and positive integers are failure.
 
 .. function:: renpy.restart_interaction()
     
