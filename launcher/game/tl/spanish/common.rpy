@@ -320,3 +320,80 @@ translate spanish strings:
     # renpy/common/_layout/classic_load_save.rpym:161
     old "q"
     new "q"
+
+    # renpy/common/_developer/inspector.rpym:25
+    old "Displayable Inspector"
+    new "Displayable Inspector"
+
+    # renpy/common/_developer/inspector.rpym:31
+    old "Nothing to inspect."
+    new "Nada para inspeccionar."
+
+    # renpy/common/_developer/inspector.rpym:40
+    old "Size"
+    new "Tamaño"
+
+    # renpy/common/_developer/inspector.rpym:45
+    old "Style"
+    new "Estilo"
+
+    # renpy/common/_developer/inspector.rpym:105
+    old "Inspecting Styles of [displayable_name!q]"
+    new "Inspeccionando estilos de [displayable_name!q]"
+
+    # renpy/common/_developer/inspector.rpym:117
+    old "displayable:"
+    new "visualizable:"
+
+    # renpy/common/_developer/inspector.rpym:124
+    old "        (no properties affect the displayable)"
+    new "        (no hay propiedades que afecten la visualización)"
+
+    # renpy/common/_developer/inspector.rpym:126
+    old "        (default properties omitted)"
+    new "        (propiedades por defecto omitidas)"
+
+    # renpy/common/_developer/inspector.rpym:156
+    old "<repr() failed>"
+    new "<repr() fallido>"
+
+    # renpy/common/_developer/developer.rpym:46
+    old "Reload Game (Shift+R)"
+    new "Reiniciar Juego (Shift+R)"
+
+    # renpy/common/_developer/developer.rpym:49
+    old "Variable Viewer"
+    new "Visor De Variables"
+
+    # renpy/common/_developer/developer.rpym:52
+    old "Theme Test"
+    new "Probar Tema"
+
+    # renpy/common/_developer/developer.rpym:55
+    old "Style Hierarchy"
+    new "Jerarquía De Estilo"
+
+    # renpy/common/_developer/developer.rpym:58
+    old "Image Location Picker"
+    new "Image Location Picker"
+
+    # renpy/common/_developer/developer.rpym:61
+    old "Filename List"
+    new "Lista De Archivos"
+
+    # renpy/common/_developer/developer.rpym:307
+    old "Undefined Images"
+    new "Imagenes No Definidas"
+
+    # renpy/common/_developer/developer.rpym:410
+    old "Mouse position: %r"
+    new "Posición del ratón: %r"
+
+    # renpy/common/_developer/developer.rpym:412
+    old "Right-click or escape to quit."
+    new "Click-derecho o escape para salir."
+
+    # renpy/common/_developer/developer.rpym:465
+    old "Done"
+    new "Hecho"
+
