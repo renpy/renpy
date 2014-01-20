@@ -57,6 +57,7 @@ init python:
         import rapt.configure
         import rapt.install_sdk
         import rapt.plat
+        import rapt.interface
     else:
         rapt = None
 
@@ -275,16 +276,19 @@ init python:
             p = project.current
             p.launch(env=env)
 
-    def update_android_json():
+    def update_android_json(p, gui):
         """
         Updates .android.json to include the google play information.
+
+        `p`
+            The project to update json for.
         """
 
-        project.current.update_dump(True)
+        p.update_dump(True, gui=gui)
 
-        build = project.current.dump["build"]
+        build = p.dump["build"]
 
-        filename = os.path.join(project.current.path, ".android.json")
+        filename = os.path.join(p.path, ".android.json")
 
         with open(filename, "r") as f:
             android_json = json.load(f)
@@ -307,20 +311,30 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
-    def android_build(command):
+    def android_build(command, p=None, gui=True):
         """
         This actually builds the package.
         """
 
-        update_android_json()
+        if p is None:
+            p = project.current
 
-        dist = project.current.temp_filename("android.dist")
+        update_android_json(p, gui)
+
+        dist = p.temp_filename("android.dist")
 
         if os.path.exists(dist):
             shutil.rmtree(dist)
 
+        if gui:
+            reporter = distribute.GuiReporter()
+            rapt_interface = AndroidInterface()
+        else:
+            reporter = distribute.TextReporter()
+            rapt_interface = rapt.interface.Interface()
+
         distribute.Distributor(project.current,
-            reporter=distribute.GuiReporter(),
+            reporter=reporter,
             packages=[ 'android' ],
             build_update=False,
             noarchive=True,
@@ -329,7 +343,7 @@ init python:
             )
 
         with interface.nolinks():
-            rapt.build.build(AndroidInterface(), dist, command)
+            rapt.build.build(rapt_interface, dist, command)
 
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
@@ -504,3 +518,21 @@ label android_build_and_install:
     $ android_build([ 'release', 'install' ])
 
     jump android
+
+init python:
+
+    def android_build_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The path to the project directory.")
+        ap.add_argument("command", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+
+        args = ap.parse_args()
+
+        p = project.Project(args.project)
+
+        android_build(args.command, p=p, gui=False)
+
+        return False
+
+    renpy.arguments.register_command("android_build", android_build_command)
+
