@@ -138,7 +138,10 @@ init python:
 
         def terms(self, url, prompt):
             submessage = _("{a=%s}%s{/a}") % (url, url)
-            return interface.yesno(prompt, submessage=submessage)
+
+            if not interface.yesno(prompt, submessage=submessage):
+                self.fail("You must accept the terms and conditions to proceed.", edit=False)
+
 
         def input(self, prompt, empty=None):
 
@@ -156,12 +159,13 @@ init python:
         def choice(self, prompt, choices, default):
             return interface.choice(prompt, choices, default, cancel=Jump("android"))
 
-        def fail(self, prompt):
+        def fail(self, prompt, edit=True):
             self.log(prompt)
             prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
 
             # Open android.txt in the editor.
-            editor.EditAbsolute(self.filename)()
+            if edit:
+                editor.EditAbsolute(self.filename)()
 
             interface.error(prompt, label="android")
 
