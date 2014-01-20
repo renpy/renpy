@@ -12,7 +12,8 @@ init python:
     UPDATE_URLS = {
         "Release" : "http://update.renpy.org/release/updates.json",
         "Prerelease" : "http://update.renpy.org/prerelease/updates.json",
-        "Experimental" : "http://update.renpy.org/experimental/updates.json"
+        "Experimental" : "http://update.renpy.org/experimental/updates.json",
+        "Nightly" : "http://nightly.renpy.org/current/updates.json",
         }
 
     version_tuple = renpy.version(tuple=True)
@@ -97,6 +98,18 @@ screen update_channel:
                     frame:
                         style "l_indent"
                         text _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.") style "l_small_text"
+
+
+                    # Nightly
+                    add SPACER
+
+                    textbutton _("Nightly") action [ SetField(persistent, "update_channel", "Nightly"), Jump("preferences") ]
+
+                    add HALF_SPACER
+
+                    frame:
+                        style "l_indent"
+                        text _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.") style "l_small_text"
 
 
     textbutton _("Cancel") action Jump("preferences") style "l_left_button"
