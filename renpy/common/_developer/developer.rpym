@@ -84,7 +84,7 @@ label _debugger_screen:
         ui.frame(ymargin=10, xmargin=10, style=style.menu_frame)
         ui.side(['t', 'c', 'r', 'b'])
 
-        layout.label("Variable Viewer", None)
+        layout.label(_("Variable Viewer"), None)
 
         entries = [ ]
 
@@ -119,10 +119,10 @@ label _debugger_screen:
             layout.list(entries)
             ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
         else:
-            layout.prompt("No variables have changed since the game started.", None)
+            layout.prompt(_("No variables have changed since the game started."), None)
             ui.null()
 
-        layout.button(u"Return to the developer menu", None, clicked=ui.returns(True))
+        layout.button(_(u"Return to the developer menu"), None, clicked=ui.returns(True))
 
         ui.close()
 
@@ -158,23 +158,23 @@ label _theme_test:
 
             ui.frame(style='menu_frame')
             ui.vbox()
-            layout.label("Button", None)
-            ui.textbutton("Button", size_group=sg, clicked=ui.returns("gndn"))
-            ui.textbutton("Button (Selected)", size_group=sg, clicked=ui.returns("gndn"), role=role(True))
-            ui.textbutton("Small", clicked=ui.returns("gndn"), style='small_button')
+            layout.label(_("Button"), None)
+            ui.textbutton(_("Button"(, size_group=sg, clicked=ui.returns("gndn"))
+            ui.textbutton(_("Button (Selected)"(, size_group=sg, clicked=ui.returns("gndn"), role=role(True))
+            ui.textbutton(_("Small"), clicked=ui.returns("gndn"), style='small_button')
             ui.close()
 
             ui.frame(style='menu_frame')
             ui.vbox()
-            layout.label("Radio Button", None)
-            ui.textbutton("True", size_group=sg, clicked=ui.returns("set"), role=role(toggle_var), style='radio_button')
-            ui.textbutton("False", size_group=sg, clicked=ui.returns("unset"), role=role(not toggle_var), style='radio_button')
+            layout.label("_(Radio Button"), None)
+            ui.textbutton(_("True"), size_group=sg, clicked=ui.returns("set"), role=role(toggle_var), style='radio_button')
+            ui.textbutton(_("False"), size_group=sg, clicked=ui.returns("unset"), role=role(not toggle_var), style='radio_button')
             ui.close()
 
             ui.frame(style='menu_frame')
             ui.vbox()
-            layout.label("Check Button", None)
-            ui.textbutton("Check Button", size_group=sg, clicked=ui.returns("toggle"), role=role(toggle_var), style='check_button')
+            layout.label(_("Check Button"), None)
+            ui.textbutton(_("Check Button"), size_group=sg, clicked=ui.returns("toggle"), role=role(toggle_var), style='check_button')
             ui.close()
 
             ui.frame(style='menu_frame')
@@ -195,13 +195,13 @@ label _theme_test:
 
             ui.frame(style='menu_frame', xmaximum=0.95)
             ui.vbox(box_spacing=20)
-            layout.prompt("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines.", None)
+            layout.prompt(_("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines."), None)
             ui.close()
 
             ui.close() # hbox
 
             ui.frame(style='menu_frame', xalign=.01, yalign=.99)
-            ui.textbutton("Return to the developer menu", clicked=ui.returns("return"))
+            ui.textbutton(_("Return to the developer menu"), clicked=ui.returns("return"))
 
             rv = ui.interact()
             if rv == "return":
@@ -224,7 +224,7 @@ label _style_hierarchy:
         ui.frame(ymargin=10, xmargin=10, style=style.menu_frame)
         ui.side(['t', 'c', 'r', 'b'], spacing=2)
 
-        layout.label("Style Hierarchy", None)
+        layout.label(_("Style Hierarchy"), None)
 
         hier = renpy.style.style_hierarchy()
 
@@ -234,7 +234,7 @@ label _style_hierarchy:
         layout.list(entries)
         ui.bar(adjustment=vp.yadjustment, style='vscrollbar')
 
-        layout.button(u"Return to the developer menu", None, clicked=ui.returns(True))
+        layout.button(_(u"Return to the developer menu"), None, clicked=ui.returns(True))
 
         ui.close()
 
@@ -402,7 +402,7 @@ init python:
                     rv.blit(sr, (minx, miny))
 
                     # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
-                    text.append("Rectangle: %r" % ((minx, miny, w, h),))
+                    text.append(_("Rectangle: %r") % ((minx, miny, w, h),))
 
             if self.mouse:
                 mx, my = self.mouse
@@ -460,7 +460,7 @@ label _image_location_picker:
             ui.frame()
             ui.vbox()
 
-            layout.label(u"Image Location Picker", None)
+            layout.label(_(u"Image Location Picker"), None)
 
             ui.textbutton(_(u"Done"), clicked=ui.returns(False), size_group="files")
 

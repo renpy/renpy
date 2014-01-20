@@ -356,3 +356,7 @@ translate None strings:
     # renpy/common/_developer/developer.rpym:465
     old "Done"
     new "Hecho"
+
+    # renpy/common/_developer/developer.rpym:44
+    old "Developer Menu"
+    new "Menú De Desarrollo"
