@@ -41,7 +41,7 @@ screen _developer:
 
         has vbox
 
-        label "Developer Menu"
+        label _(u"Developer Menu")
 
         textbutton _(u"Reload Game (Shift+R)"):
             action ui.callsinnewcontext("_save_reload_game")
