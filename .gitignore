@@ -5,15 +5,15 @@
 *.pyo
 
 *~
-*.bak 
+*.bak
 
 saves
 tmp
 cache
 
 log.txt
-errors.txt
-traceback.txt
+/errors.txt
+/traceback.txt
 
 styles.txt
 
