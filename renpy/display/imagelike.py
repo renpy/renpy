@@ -74,7 +74,7 @@ class Solid(renpy.display.core.Displayable):
 class Frame(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
-    :args: (image, xborder, yborder, tile=False, **properties)
+    :args: (image, left, top, right=None, bottom=None, tile=False, **properties)
 
     A displayable that resizes an image to fill the available area,
     while preserving the width and height of its borders.  is often
@@ -120,11 +120,17 @@ class Frame(renpy.display.core.Displayable):
             self.top = self.yborder
             self.bottom = self.yborder
 
-    def __init__(self, image, left, top, right=None, bottom=None, bilinear=True, tile=False, **properties):
+    def __init__(self, image, left=None, top=None, right=None, bottom=None, xborder=None, yborder=None, bilinear=True, tile=False, **properties):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
         self.tile = tile
+
+        # Compat for old argument names.
+        if left is None:
+            left = xborder
+        if top is None:
+            top= yborder
 
         if right is None:
             right = left
