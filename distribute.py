@@ -8,6 +8,7 @@ import compileall
 import shutil
 import subprocess
 import argparse
+import glob
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -104,7 +105,7 @@ def main():
 
     # Compile the various games.
     if not args.fast:
-        for i in [ 'tutorial', 'launcher', 'templates/english', 'templates/japanese', 'the_question' ]:
+        for i in [ 'tutorial', 'launcher', 'the_question' ] + glob.glob("templates/*"):
             print "Compiling", i
             subprocess.check_call(["./renpy.sh", i, "quit" ])
 
