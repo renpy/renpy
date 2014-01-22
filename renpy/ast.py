@@ -969,6 +969,39 @@ class Show(Node):
         return [ self.next ]
 
 
+class ShowLayer(Node):
+
+    __slots__ = [
+        'layer',
+        'at_list',
+        'atl',
+        ]
+
+    def __init__(self, loc, layer, at_list, atl):
+        super(ShowLayer, self).__init__(loc)
+
+        self.layer = layer
+        self.at_list = at_list
+        self.atl = atl
+
+    def diff_info(self):
+        return (ShowLayer, self.layer)
+
+    def execute(self):
+
+        at_list = [ renpy.python.py_eval(i) for i in self.at_list ]
+
+        if self.atl is not None:
+            atl = renpy.display.motion.ATLTransform(self.atl)
+            at_list.append(atl)
+
+        renpy.exports.layer_at_list(at_list, layer=self.layer)
+        next_node(self.next)
+
+    def predict(self):
+        return [ self.next ]
+
+
 class Scene(Node):
 
     __slots__ = [

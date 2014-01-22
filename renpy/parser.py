@@ -1634,6 +1634,29 @@ def show_statement(l, loc):
 
     return rv
 
+@statement("show layer")
+def show_layer_statement(l, loc):
+
+    layer = l.require(l.name)
+
+    if l.keyword("at"):
+        at_list = parse_simple_expression_list(l)
+    else:
+        at_list = [ ]
+
+    if l.match(':'):
+        atl = renpy.atl.parse_atl(l.subblock_lexer())
+    else:
+        atl = None
+        l.expect_noblock('show layer statement')
+
+    l.expect_eol()
+    l.advance()
+
+    rv = ast.ShowLayer(loc, layer, at_list, atl)
+
+    return rv
+
 
 @statement("hide")
 def hide_statement(l, loc):
