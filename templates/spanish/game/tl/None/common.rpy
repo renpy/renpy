@@ -329,10 +329,6 @@ translate None strings:
     old "Theme Test"
     new "Probar Tema"
 
-    # renpy/common/_developer/developer.rpym:55
-    old "Style Hierarchy"
-    new "Jerarquía De Estilo"
-
     # renpy/common/_developer/developer.rpym:58
     old "Image Location Picker"
     new "Image Location Picker"
@@ -368,38 +364,6 @@ translate None strings:
     # renpy/common/_developer/developer.rpym:125
     old "Return to the developer menu"
     new "Volver al menú de desarrollo"
-
-    # renpy/common/_developer/developer.rpym:161
-    old "Button"
-    new "Botón"
-
-    # renpy/common/_developer/developer.rpym:163
-    old "Button (Selected)"
-    new "Botón (seleccionado)"
-
-    # renpy/common/_developer/developer.rpym:164
-    old "Small"
-    new "Pequeño"
-
-    # renpy/common/_developer/developer.rpym:169
-    old "Radio Button"
-    new "Botón de Radio"
-
-    # renpy/common/_developer/developer.rpym:170
-    old "True"
-    new "Verdadero"
-
-    # renpy/common/_developer/developer.rpym:171
-    old "False"
-    new "Falso"
-
-    # renpy/common/_developer/developer.rpym:176
-    old "Check Button"
-    new "Botón revisar"
-
-    # renpy/common/_developer/developer.rpym:198
-    old "This is a prompt. We've made this text long enough to wrap around so it fills multiple lines."
-    new "Esto es rapido. Hemos hecho este texto para que ocupe lo suficiente de forma que ocupe varias líneas."
 
     # renpy/common/_developer/developer.rpym:405
     old "Rectangle: %r"

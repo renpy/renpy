@@ -158,23 +158,23 @@ label _theme_test:
 
             ui.frame(style='menu_frame')
             ui.vbox()
-            layout.label(_("Button"), None)
-            ui.textbutton(_("Button"), size_group=sg, clicked=ui.returns("gndn"))
-            ui.textbutton(_("Button (Selected)"), size_group=sg, clicked=ui.returns("gndn"), role=role(True))
-            ui.textbutton(_("Small"), clicked=ui.returns("gndn"), style='small_button')
+            layout.label("Button", None)
+            ui.textbutton("Button", size_group=sg, clicked=ui.returns("gndn"))
+            ui.textbutton("Button (Selected)", size_group=sg, clicked=ui.returns("gndn"), role=role(True))
+            ui.textbutton("Small", clicked=ui.returns("gndn"), style='small_button')
             ui.close()
 
             ui.frame(style='menu_frame')
             ui.vbox()
-            layout.label(_("Radio Button"), None)
-            ui.textbutton(_("True"), size_group=sg, clicked=ui.returns("set"), role=role(toggle_var), style='radio_button')
-            ui.textbutton(_("False"), size_group=sg, clicked=ui.returns("unset"), role=role(not toggle_var), style='radio_button')
+            layout.label("Radio Button", None)
+            ui.textbutton("True", size_group=sg, clicked=ui.returns("set"), role=role(toggle_var), style='radio_button')
+            ui.textbutton("False", size_group=sg, clicked=ui.returns("unset"), role=role(not toggle_var), style='radio_button')
             ui.close()
 
             ui.frame(style='menu_frame')
             ui.vbox()
-            layout.label(_("Check Button"), None)
-            ui.textbutton(_("Check Button"), size_group=sg, clicked=ui.returns("toggle"), role=role(toggle_var), style='check_button')
+            layout.label("Check Button", None)
+            ui.textbutton("Check Button", size_group=sg, clicked=ui.returns("toggle"), role=role(toggle_var), style='check_button')
             ui.close()
 
             ui.frame(style='menu_frame')
@@ -195,7 +195,7 @@ label _theme_test:
 
             ui.frame(style='menu_frame', xmaximum=0.95)
             ui.vbox(box_spacing=20)
-            layout.prompt(_("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines."), None)
+            layout.prompt("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines.", None)
             ui.close()
 
             ui.close() # hbox
