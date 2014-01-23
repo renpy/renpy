@@ -32,6 +32,14 @@ translate spanish strings:
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
     new "Versiones experimentales de Ren'Py. No debes seleccionar el canal a menos que te lo pida un desarrollador de Ren'Py."
 
+    # game/updater.rpy:106
+    old "Nightly"
+    new "Nightly"
+
+    # game/updater.rpy:112
+    old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
+    new "Versión de desarrollo de Ren'Py. Puede tener las últimas características o puede no funcionar."
+
     # game/updater.rpy:119
     old "An error has occured:"
     new "Ha ocurrido un error:"
@@ -83,3 +91,4 @@ translate spanish strings:
     # game/updater.rpy:162
     old "Proceed"
     new "Seguir"
+
