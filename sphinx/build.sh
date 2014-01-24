@@ -1,11 +1,16 @@
 #!/bin/sh
 
+try () { "$@" || exit 1; }
+
 SPHINX="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
-cd $SPHINX
 
-../renpy.sh . || exit 1
+try cd "$SPHINX"
 
-sphinx-build -a source ../doc || exit 1
+# Delete .pyo files, which could not include docstrings.
+try find ../renpy -name \*.pyo -delete
 
-python checks.py
+try ../renpy.sh .
+
+try sphinx-build -a source ../doc || exit 1
+try python checks.py
 
