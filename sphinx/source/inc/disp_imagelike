@@ -13,7 +13,7 @@
     Flatten is a relatively expensive operation, and so should only be used
     when absolutely required.
 
-.. function:: Frame(image, xborder, yborder, tile=False, **properties)
+.. function:: Frame(image, left, top, right=None, bottom=None, tile=False, **properties)
     
     A displayable that resizes an image to fill the available area,
     while preserving the width and height of its borders.  is often

@@ -72,6 +72,10 @@ init -1500 python:
          * Preference("auto-forward", "disable") - Disable auto-forward mode.
          * Preference("auto-forward", "toggle") - Toggle auto-forward mode.
 
+         * Preference("auto-forward after click", "enable") - Remain in auto-forward mode after a click.
+         * Preference("auto-forward after click", "disable") - Disable auto-forward mode after a click.
+         * Preference("auto-forward after click", "toggle") - Toggle auto-forward after click.
+
          * Preference("automatic move", "enable") - Enable automatic mouse mode.
          * Preference("automatic move", "disable") - Disable automatic mouse mode.
          * Preference("automatic move", "toggle") - Toggle automatic mouse mode.
@@ -83,7 +87,6 @@ init -1500 python:
          * Preference("voice sustain", "enable")  - Sustain voice past the current interaction.
          * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
          * Preference("voice sustain", "toggle")  - Toggle voice sustain.
-
 
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
@@ -99,7 +102,7 @@ init -1500 python:
 
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
-         * Preference("volice volume", 0.5) - Set the voice volume.
+         * Preference("voice volume", 0.5) - Set the voice volume.
 
          Values that can be used with bars are:
 
@@ -194,6 +197,15 @@ init -1500 python:
                 return SetField(_preferences, "afm_enable", False)
             elif value == "toggle":
                 return ToggleField(_preferences, "afm_enable")
+
+        elif name == "auto-forward after click":
+
+            if value == "enable":
+                return SetField(_preferences, "afm_after_click", True)
+            elif value == "disable":
+                return SetField(_preferences, "afm_after_click", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "afm_after_click")
 
         elif name == "automatic move":
 
