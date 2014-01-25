@@ -553,17 +553,23 @@ label choose_projects_directory:
 
                 p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
                 choice = p.stdout.read()
-                p.wait()
-
-                if choice:
-                    path = renpy.fsdecode(choice)
+                code = p.wait()
 
             except:
                 import traceback
                 traceback.print_exc()
 
+                code = 0
+                choice = ""
                 path = None
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory."), label=None)
+
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
+
+            if code:
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
+
+            elif choice:
+                path = renpy.fsdecode(choice)
 
         if path is None:
             path = default_path
