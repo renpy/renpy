@@ -2566,7 +2566,6 @@ class Interface(object):
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
 
-
                     if rv is None:
                         rv = root_widget.event(ev, x, y, 0)
 
