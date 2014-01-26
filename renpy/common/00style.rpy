@@ -10,6 +10,10 @@ init -1800 python:
     # code.
     style.default = Style(None)
 
+    # Fix up some styles originally defined in _errorhandling.rpym.
+    style.image = Style(style.default)
+    style.fixed = Style(style.default)
+
 init -1800:
 
     # Declare styles and inheritance.
