@@ -209,11 +209,11 @@ init 1:
     style l_vscrollbar is l_default:
         thumb Fixed(
             Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
-            Image("vscrollbar_center.png", xalign=0.5, yalign=0.5),
+            Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
             xmaximum = SCROLLBAR_SIZE)
         hover_thumb Fixed(
             Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
-            Image("vscrollbar_center.png", xalign=0.5, yalign=0.5),
+            Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
             xmaximum = SCROLLBAR_SIZE)
         xmaximum SCROLLBAR_SIZE
         bar_vertical True
