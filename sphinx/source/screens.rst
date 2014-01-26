@@ -188,6 +188,8 @@ All user interface statements take the following common properties:
     values for style properties.
 
 `style_group`
+    .. _style-group:
+
     Style_group is used to provide a prefix to the style of a displayable,
     for this displayable and all of its children (unless they have a
     more specific group set).

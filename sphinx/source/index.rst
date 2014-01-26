@@ -56,14 +56,6 @@ Text, Displayables, Transforms, and Transitions
    transitions
    atl
 
-Other Functions
----------------
-
-.. toctree::
-   :maxdepth: 1
-
-   input
-
 Customizing Ren'Py
 ------------------
 
@@ -71,24 +63,26 @@ Customizing Ren'Py
    :maxdepth: 1
 
    style
+   style_properties
    screens
    screen_actions
    screen_special
-   side_image
    config
-   rooms
-   nvl_mode
-   developer_tools
-   keymap
 
-Advanced Displayables
----------------------
+Other Functionality
+-------------------
 
 .. toctree::
    :maxdepth: 1
 
+   nvl_mode
+   input
+   side_image
+   rooms
    drag_drop
    sprites
+   keymap
+   developer_tools
 
 Python and Ren'Py
 -----------------
