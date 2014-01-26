@@ -83,6 +83,15 @@ def main():
             new_name = m.group(1)
             new_entries.append(("take", m.group(2)))
 
+        m = re.search(r'style\.(\w+)\.set_parent\(style\.(.*)\)', l)
+        if m:
+            new_name = m.group(1)
+            new_entries.append(("is", m.group(2)))
+
+        m = re.search(r'style\.(\w+)\.set_parent\([\'"](.*)[\'"]\)', l)
+        if m:
+            new_name = m.group(1)
+            new_entries.append(("is", m.group(2)))
 
         if new_name is None:
             continue
