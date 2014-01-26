@@ -1828,28 +1828,7 @@ def init_statement(l, loc):
     else:
         priority = 0
 
-    if l.keyword('python'):
-
-        hide = False
-        if l.keyword('hide'):
-
-            hide = True
-
-        if l.keyword('in'):
-            store = "store." + l.require(l.name)
-        else:
-            store = "store"
-
-        l.require(':')
-        l.expect_block('python block')
-
-        python_code = l.python_block()
-
-        l.advance()
-        block = [ ast.Python(loc, python_code, hide, store=store) ]
-
-    else:
-        l.require(':')
+    if l.match(':'):
 
         l.expect_eol()
         l.expect_block('init statement')
@@ -1857,6 +1836,17 @@ def init_statement(l, loc):
         block = parse_block(l.subblock_lexer(True))
 
         l.advance()
+
+    else:
+
+        try:
+            old_init = l.init
+            l.init = True
+
+            block = [ parse_statement(l) ]
+
+        finally:
+            l.init = old_init
 
     return ast.Init(loc, block, priority)
 
@@ -1978,12 +1968,6 @@ def translate_statement(l, loc):
 def style_statment(l, loc, rest_expression=False):
 
     # Parse priority and name.
-    priority = l.integer()
-    if priority:
-        priority = int(priority)
-    else:
-        priority = 0
-
     name = l.require(l.word)
     parent = None
 
@@ -2062,9 +2046,8 @@ def style_statment(l, loc, rest_expression=False):
 
             ll.expect_eol()
 
-
     if not l.init:
-        rv = ast.Init(loc, [ rv ], priority)
+        rv = ast.Init(loc, [ rv ], 0)
 
     l.advance()
 
