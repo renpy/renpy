@@ -6,6 +6,44 @@ Full Changelog
 Ren'Py 6.17
 ===========
 
+Styles
+------
+
+The style system, which makes it possible to configure the look of
+displayables, has been rewritten from scratch. The new code reduces
+the amount of time it takes to create a new style to a small fraction
+of the previous time. Since every displayable creates an associated
+style, this has the potential to lead to a substantial performance
+improvement.
+
+This release also introduced a new style statement that can be used
+to define styles, in place of python code. (Of course, the older form
+remains fully supported.) Lengthy and redundant code like::
+
+    init python:
+        style.quick_button_text.set_parent('default')
+        style.quick_button_text.size = 12
+        style.quick_button_text.idle_color = "#8888"
+        style.quick_button_text.hover_color = "#ccc"
+
+can be replaced with::
+
+    style quick_button_text is defaut:
+        size 12
+        idle_color "#8888"
+        hover_color "#ccc"
+
+Other
+-----
+
+The definition of a simple expression has been expanded. Simple expressions
+(which are used in ATL and the screen language, among other places) now
+encompass all Python expressions that do not include lambda or the
+ternary (... if ... else ...) operator.
+
+show layer ... at ...
+
+
 Viewport now respects the xfill and yfill properties. The default viewport
 style sets these to true. Setting them to False will cause the viewport to
 shrink to fit its contents when those contents do not fill the entire
