@@ -1,4 +1,3 @@
-
 ==============
 Full Changelog
 ==============
@@ -33,16 +32,85 @@ can be replaced with::
         idle_color "#8888"
         hover_color "#ccc"
 
+Finally, the style inspector (accessed through shift+I) has been
+rewritten.
+
+Syntax Changes
+--------------
+
+In addition to the new style statement, there are three other syntax
+changes:
+
+* The definition of a simple expression has been expanded. Simple expressions
+  (which are used in ATL and the screen language, among other places) now
+  encompass all Python expressions that do not include lambda or the
+  ternary (... if ... else ...) operator.
+
+  This means that code like::
+
+      show logo:
+          xpos 800 / 2
+
+  is now legal. Previously, the expression had to be parenthesized.
+
+* The new show layer statement allows one to apply a transform
+  or ATL transform to an entire layer, using syntax like::
+
+      show layer master at flip
+
+  or::
+
+      show layer master:
+          xalign 0.5 yalign 0.5 rotate 180
+
+* The init statement has been extended so it can be combined with
+  other statements. It's now possible to write "init 1 image = ...",
+  "init -2 define name = ..." and so on.
+
+Translations
+------------
+
+This release adds French and Russian template games and translations
+of the launcher.
+
+Android
+-------
+
+It is no longer necessary to download RAPT (the Ren'Py Android Packaging Tool)
+separately from Ren'Py. As of this release, RAPT will be downloaded by the
+Ren'Py launcher when an Android build is requested, and will be updated
+by the Ren'Py updater.
+
+Buttons may now have an alternate action that is triggered by longpress
+on Android and right-click on desktop computers.
+
+This release fixes a bug in which Ren'Py would not save persistent data
+(including preferences) before being terminated by the Android system.
+
+New Preferences
+---------------
+
+There are a couple of preference changes that can be accessed through the
+:func:`Preferences` function:
+
+* "auto-forward after click" controls if auto-forward mode is stopped
+  by a click.
+
+* "display" now has an "any window" option, which restores a fullscreen
+  Ren'Py to its prior windowed size.
+
+Neither of these is exposed as part of the default preferences screen, but
+both can be added by interesting
+
 Other
 -----
 
-The definition of a simple expression has been expanded. Simple expressions
-(which are used in ATL and the screen language, among other places) now
-encompass all Python expressions that do not include lambda or the
-ternary (... if ... else ...) operator.
+:func:`ShowMenu` can now pass arguments to the screen it displays.
 
-show layer ... at ...
+The input displayable now takes a pixel_width property, that limits
+the size of the input field it a certain number of pixels.
 
+The :func:`FileCurrentScreenshot` function
 
 Viewport now respects the xfill and yfill properties. The default viewport
 style sets these to true. Setting them to False will cause the viewport to
