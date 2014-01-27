@@ -34,8 +34,11 @@ style list_spacer:
 
 screen _developer:
 
+    zorder 1001
+    modal True
+
     frame:
-        style_group ""
+        style_group "_developer"
 
         align (.025, .05)
 
@@ -43,33 +46,42 @@ screen _developer:
 
         label _(u"Developer Menu")
 
-        textbutton _(u"Reload Game (Shift+R)"):
+        textbutton _("Reload Game (Shift+R)"):
             action ui.callsinnewcontext("_save_reload_game")
-            size_group "developer"
-        textbutton _(u"Variable Viewer"):
-            action Jump("_debugger_screen")
-            size_group "developer"
-        textbutton _(u"Theme Test"):
-            action Jump("_theme_test")
-            size_group "developer"
-        textbutton _(u"Image Location Picker"):
-            action Jump("_image_location_picker")
-            size_group "developer"
-        textbutton _(u"Filename List"):
-            action Jump("_filename_list")
-            size_group "developer"
+        textbutton _("Console (Shift+O)"):
+            action [ Hide("_developer"), _console.enter ]
+        textbutton _("Variable Viewer"):
+            action ui.callsinnewcontext("_debugger_screen")
+        textbutton _("Theme Test"):
+            action ui.callsinnewcontext("_theme_test")
+        textbutton _("Image Location Picker"):
+            action ui.callsinnewcontext("_image_location_picker")
+        textbutton _("Filename List"):
+            action ui.callsinnewcontext("_filename_list")
+
+        if not renpy.get_screen("_image_load_log"):
+            textbutton _("Show Image Load Log"):
+                action Show("_image_load_log")
+        else:
+            textbutton _("Hide Image Load Log"):
+                action Hide("_image_load_log")
 
         null height 15
 
         textbutton _(u"Return"):
-            action Return()
+            action Hide("_developer")
             size_group "developer"
 
-label _developer_screen:
+style _developer_frame is _frame
+style _developer_vbox is _vbox
 
-    call screen _developer
+style _developer_button is _button:
+    size_group "developer"
 
-    return
+style _developer_button_text is _button_text
+style _developer_label is _label
+style _developer_label_text is _label_text
+
 
 label _debugger_screen:
 
@@ -125,7 +137,7 @@ label _debugger_screen:
 
         ui.interact()
 
-    jump _developer_screen
+    return
 
 label _theme_test:
 
@@ -202,7 +214,7 @@ label _theme_test:
 
             rv = ui.interact()
             if rv == "return":
-                renpy.jump("_developer_screen")
+                break
 
             elif rv == "set":
                 toggle_var = True
@@ -210,6 +222,9 @@ label _theme_test:
                 toggle_var = False
             elif rv == "toggle":
                 toggle_var = not toggle_var
+
+    return
+
 
 init -1050 python:
     config.missing_background = "black"
@@ -286,6 +301,7 @@ init 1050 python:
         config.missing_hide = __missing_hide_callback
         config.overlay_functions.append(__missing_overlay)
 
+
 init -1050 python:
 
     class __FPSMeter(object):
@@ -323,6 +339,7 @@ label _fps_meter:
         config.overlay_functions.append(fps_overlay)
 
     return
+
 
 init python:
 
@@ -419,10 +436,8 @@ label _image_location_picker:
 
         image_files.sort()
 
-
         xadjustment = ui.adjustment()
         yadjustment = ui.adjustment()
-
 
         while True:
 
@@ -453,7 +468,7 @@ label _image_location_picker:
             rv = ui.interact()
 
             if rv is False:
-                renpy.jump("_developer_screen")
+                renpy.jump("_image_location_picker_done")
 
             # Now, allow the user to pick the image.
 
@@ -461,11 +476,11 @@ label _image_location_picker:
             ui.add(__ImageLocationPicker(rv))
             ui.interact()
 
-
-
-        # ...
-
         renpy.jump("_image_location_picker")
+
+label _image_location_picker_done:
+    return
+
 
 label _filename_list:
 
@@ -488,17 +503,13 @@ label _filename_list:
 
         renpy.launch_editor(["files.txt"], transient=1)
 
-
-    jump _developer_screen
+    return
 
 
 init python:
     def _image_load_log_function(st, at):
 
         ill = list(renpy.get_image_load_log(3))
-
-        if not ill:
-            return Null(), .25
 
         vbox = VBox()
 
@@ -522,4 +533,3 @@ screen _image_load_log:
 
 init python:
     config.underlay.append(im.Tile("_transparent_tile.png"))
-

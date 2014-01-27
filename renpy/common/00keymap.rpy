@@ -189,6 +189,14 @@ init -1600 python:
         filename, line = renpy.get_filename_line()
         renpy.launch_editor([ filename ], line)
 
+    def _developer():
+
+        if not config.developer:
+            return
+
+        renpy.show_screen("_developer")
+        renpy.restart_interaction()
+
 init -1100 python:
 
     # The default keymap. We might also want to put some of this into
@@ -203,7 +211,7 @@ init -1100 python:
         hide_windows = renpy.curried_call_in_new_context("_hide_windows"),
         launch_editor = _launch_editor,
         reload_game = _reload_game,
-        developer = renpy.curried_call_in_new_context("_developer"),
+        developer = _developer,
         quit = renpy.quit_event,
         iconify = renpy.iconify,
         help = _help,
