@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # renpy/common/00updater.rpy:1258
     old "Updater"

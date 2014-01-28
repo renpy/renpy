@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/preferences.rpy:40
     old "Launcher Preferences"

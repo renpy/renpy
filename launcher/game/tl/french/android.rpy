@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/android.rpy:12
     old "To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."

@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/distribute.rpy:333
     old "Nothing to do."

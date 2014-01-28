@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/translations.rpy:10
     old "Create or Update Translations"

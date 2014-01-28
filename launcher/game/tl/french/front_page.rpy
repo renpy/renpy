@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/front_page.rpy:79
     old "+ Create New Project"

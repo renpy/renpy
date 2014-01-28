@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/updater.rpy:54
     old "Select Update Channel"

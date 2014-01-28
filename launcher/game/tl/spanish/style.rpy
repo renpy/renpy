@@ -1,3 +1,3 @@
-translate spanish python:
+﻿translate spanish python:
 
         make_style_backup()

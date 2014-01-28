@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/font_page.rpy 65
     old "PROJECTS:"

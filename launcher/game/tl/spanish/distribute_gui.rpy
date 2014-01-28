@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/distribute_gui.rpy:139
     old "Build Distributions: [project.current.name!q]"

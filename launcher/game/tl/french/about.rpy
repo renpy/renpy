@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/about.rpy:21
     old "[version!q]"

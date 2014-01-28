@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/navigation.rpy:150
     old "Navigate: [project.current.name]"

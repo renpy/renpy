@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/interface.rpy:89
     old "Documentation"

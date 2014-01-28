@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/preferences.rpy:40
     old "Launcher Preferences"

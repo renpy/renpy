@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/add_file.rpy:7
     old "FILENAME"

@@ -1,4 +1,4 @@
-translate japanese python:
+﻿translate japanese python:
     MTLC = "tl/japanese/MTLc3m.ttf"
     style.l_default.font = MTLC
     style.l_default.size = 16

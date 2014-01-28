@@ -1,4 +1,4 @@
-#translation: renpy/common/00action_file.rpy
+﻿#translation: renpy/common/00action_file.rpy
 translate spanish strings:
 
     # renpy/common/00action_file.rpy:124

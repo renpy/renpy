@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/project.rpy:196
     old "Ren'Py is scanning the project..."

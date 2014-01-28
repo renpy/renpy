@@ -1,4 +1,4 @@
-
+﻿
 translate japanese strings:
 
     # game/about.rpy:21

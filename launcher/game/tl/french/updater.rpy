@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/updater.rpy:54
     old "Select Update Channel"

@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # game/translations.rpy:10
     old "Create or Update Translations"

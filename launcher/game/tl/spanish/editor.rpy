@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # description for the option: "Editra"
     # game/editor.rpy:120
