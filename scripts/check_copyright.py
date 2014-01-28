@@ -34,6 +34,8 @@ launcher/game/script_version.rpy
 launcher/game/tl
 launcher/game/theme""".split()
 
+LICENSE = "Permission is hereby granted"
+
 def process_file(fn):
 
     for i in ENDINGS:
@@ -46,6 +48,9 @@ def process_file(fn):
         if fn.startswith(i):
             return
 
+    has_copyright = False
+    has_license = False
+
     with open(fn, "rb") as f:
         for l in f:
             m = re.search(
@@ -53,6 +58,12 @@ def process_file(fn):
                 l)
 
             if m:
+                has_copyright = True
+
+            if LICENSE in l:
+                has_license = True
+
+            if has_copyright and has_license:
                 return
 
     print("Missing copyright", fn)
