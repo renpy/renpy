@@ -5,6 +5,7 @@ from __future__ import print_function
 import os.path
 import sys
 import re
+import codecs
 
 ENDINGS = [
     ".rpy",
@@ -48,6 +49,7 @@ def process_file(fn):
     lines = [ ]
 
     has_copyright = False
+    first = True
 
     with open(fn, "rb") as f:
         for l in f:
@@ -63,6 +65,13 @@ def process_file(fn):
                 has_copyright = True
 
             l = l.replace("# See LICENSE.txt for license details.", full_copyright)
+
+            if first:
+                if fn.endswith(".rpy") or fn.endswith(".rpym"):
+                    if codecs.BOM_UTF8 not in l:
+                        l = codecs.BOM_UTF8 + l
+
+                first = False
 
             lines.append(l)
 

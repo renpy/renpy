@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os.path
 import re
+import codecs
 
 ENDINGS = [
     ".rpy",
@@ -50,9 +51,23 @@ def process_file(fn):
 
     has_copyright = False
     has_license = False
+    first = True
 
     with open(fn, "rb") as f:
+
         for l in f:
+            if fn.endswith(".rpy") or fn.endswith(".rpym"):
+                if first:
+                    if codecs.BOM_UTF8 not in l:
+                        print("Missing BOM", fn)
+                    first = False
+                else:
+                    if codecs.BOM_UTF8 in l:
+                        print("Extra BOM", fn)
+
+                first = False
+
+
             m = re.search(
                 r"Copyright (\d{4})-2014 Tom Rothamel",
                 l)
