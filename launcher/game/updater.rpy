@@ -58,7 +58,12 @@ init python:
         if check_dlc(name):
             return True
 
-        return renpy.invoke_in_new_context(updater.update, DLC_URL, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
+        if persistent.update_channel == "Nightly":
+            dlc_url = UPDATE_URLS["Nightly"]
+        else:
+            dlc_url = DLC_URL
+
+        return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
 
 screen update_channel:
 
