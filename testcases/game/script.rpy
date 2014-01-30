@@ -1,12 +1,26 @@
 init python:
     import os
-    if "RENPY_AUTOTEST" in os.environ:
+
+    autotest = False
+
+
+    def auto_command():
+        ap = renpy.arguments.ArgumentParser()
+        args = ap.parse_args()
+
+        global autotest
+
         autotest = True
         config.auto_choice_delay = 0.5
         _preferences.afm_time = 0.5
         _preferences.afm_enable = True
-    else:
-        autotest = False
+
+        os.environ["RENPY_SIMPLE_EXCEPTIONS"] = "1"
+
+        return True
+
+    renpy.arguments.register_command("auto", auto_command)
+
 
 image eileen happy = "eileen_happy.png"
 image eileen vhappy = "eileen_vhappy.png"
