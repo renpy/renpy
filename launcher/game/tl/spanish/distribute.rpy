@@ -31,3 +31,7 @@ translate spanish strings:
     # game/distribute.rpy:910
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Procesados {b}[complete]{/b} de {b}[total]{/b} archivos."
+
+    # game/distribute.rpy:335
+    old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
+    new "Ha fallado la construcción de distribuciones:\n\nLa variable build.directory_name no puede incluir espacios, dos puntos ni punto y coma."
