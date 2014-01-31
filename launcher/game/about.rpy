@@ -32,7 +32,7 @@ screen about:
 
             has vbox xfill True
 
-            add "logo.png" xalign 0.5 yoffset -5
+            add "images/logo.png" xalign 0.5 yoffset -5
 
             null height 15
 
