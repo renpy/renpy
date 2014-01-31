@@ -27,7 +27,7 @@ init python:
 
 screen select_template:
 
-    default result = project.manager.get("template")
+    default result = project.manager.get("english")
 
     frame:
         style_group "l"
