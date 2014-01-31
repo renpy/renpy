@@ -320,3 +320,103 @@ translate spanish strings:
     # renpy/common/_layout/classic_load_save.rpym:161
     old "q"
     new "q"
+
+    # renpy/common/_developer/inspector.rpym:25
+    old "Displayable Inspector"
+    new "Displayable Inspector"
+
+    # renpy/common/_developer/inspector.rpym:31
+    old "Nothing to inspect."
+    new "Nada para inspeccionar."
+
+    # renpy/common/_developer/inspector.rpym:40
+    old "Size"
+    new "Tamaño"
+
+    # renpy/common/_developer/inspector.rpym:45
+    old "Style"
+    new "Estilo"
+
+    # renpy/common/_developer/inspector.rpym:105
+    old "Inspecting Styles of [displayable_name!q]"
+    new "Inspeccionando estilos de [displayable_name!q]"
+
+    # renpy/common/_developer/inspector.rpym:117
+    old "displayable:"
+    new "visualizable:"
+
+    # renpy/common/_developer/inspector.rpym:124
+    old "        (no properties affect the displayable)"
+    new "        (no hay propiedades que afecten la visualización)"
+
+    # renpy/common/_developer/inspector.rpym:126
+    old "        (default properties omitted)"
+    new "        (propiedades por defecto omitidas)"
+
+    # renpy/common/_developer/inspector.rpym:156
+    old "<repr() failed>"
+    new "<repr() fallido>"
+
+    # renpy/common/_developer/developer.rpym:46
+    old "Reload Game (Shift+R)"
+    new "Reiniciar Juego (Shift+R)"
+
+    # renpy/common/_developer/developer.rpym:49
+    old "Variable Viewer"
+    new "Visor De Variables"
+
+    # renpy/common/_developer/developer.rpym:52
+    old "Theme Test"
+    new "Probar Tema"
+
+    # renpy/common/_developer/developer.rpym:58
+    old "Image Location Picker"
+    new "Image Location Picker"
+
+    # renpy/common/_developer/developer.rpym:61
+    old "Filename List"
+    new "Lista De Archivos"
+
+    # renpy/common/_developer/developer.rpym:307
+    old "Undefined Images"
+    new "Imagenes No Definidas"
+
+    # renpy/common/_developer/developer.rpym:410
+    old "Mouse position: %r"
+    new "Posición del ratón: %r"
+
+    # renpy/common/_developer/developer.rpym:412
+    old "Right-click or escape to quit."
+    new "Click-derecho o escape para salir."
+
+    # renpy/common/_developer/developer.rpym:465
+    old "Done"
+    new "Hecho"
+
+    # renpy/common/_developer/developer.rpym:44
+    old "Developer Menu"
+    new "Menú De Desarrollo"
+
+    # renpy/common/_developer/developer.rpym:405
+    old "Rectangle: %r"
+    new "Rectángulo: %r"
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Console (Shift+O)"
+    new "Consola (Mayús.+O)"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Image Load Log"
+    new "Muestra registro de carga de imagen"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Image Load Log"
+    new "Oculta registro de carga de imagen"
+
+    # renpy/common/_developer/developer.rpym:149
+    old "No variables have changed since the game started."
+    new "Ninguna variable ha cambiado desde el inicio del juego."
+
+    # renpy/common/_developer/developer.rpym:152
+    old "Return to the developer menu"
+    new "Volver al menú de desarrollo"
