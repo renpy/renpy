@@ -331,6 +331,11 @@ init python in distribute:
             self.executable_name = build['executable_name']
             self.pretty_version = build['version']
 
+            if (" " in self.base_name) or (":" in self.base_name) or (";" in self.base_name):
+                reporter.info(_("Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."), pause=True)
+                self.log.close()
+                return
+
             # The destination directory.
             if destination is None:
                 destination = build["destination"]
