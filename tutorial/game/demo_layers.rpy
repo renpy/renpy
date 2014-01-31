@@ -61,11 +61,31 @@ label demo_layers:
     show logo base at Position(xalign=0.6, yalign=0.0) behind eileen
     with dissolve
 
-    e "Finally, the \"behind\" clause lets you place an image behind another."
+    e "The \"behind\" clause lets you place an image behind another."
 
     hide logo base
     show eileen happy
     with dissolve
+
+    show layer master:
+        xalign 0.5
+        yalign 0.5
+        linear 0.75 rotate 180.0
+
+    pause 0.75
+
+    e "Finally, the \"show layer\" statement allows you to apply a transform to an entire layer."
+
+    show layer master:
+        xalign 0.5
+        yalign 0.5
+        rotate 180.0
+        linear 0.75 rotate 360.0
+
+    pause 0.75
+
+    # Cancels the layer transform.
+    show layer master
 
     e "And that's it for layers and advanced show."
 
