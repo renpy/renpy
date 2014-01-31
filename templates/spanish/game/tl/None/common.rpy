@@ -1,4 +1,3 @@
-
 translate None strings:
 
     # renpy/common/_layout/classic_load_save.rpym:152
@@ -281,3 +280,14 @@ translate None strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "¿Seguro que desea saltar hasta el diálogo no visto o la próxima elección?"
 
+    # renpy/common/_developer/developer.rpym:69
+    old "Console (Shift+O)"
+    new "Consola (Mayús.+O)"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Image Load Log"
+    new "Muestra registro de carga de imagen"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Image Load Log"
+    new "Oculta registro de carga de imagen"
