@@ -200,7 +200,6 @@ Styles. ::
 ..
 
     Indexed Styles
-    --------------
 
     Indexed styles are lightweight styles that can be used to customize the look
     of a displayable based on the data supplied to that displayable. An index
