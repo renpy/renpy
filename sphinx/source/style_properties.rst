@@ -261,6 +261,22 @@ allocated to it by a layout, or on the screen when not inside a layout.
     Equivalent to setting xminimum to the first component of the
     tuple, and yminimum to the second.
 
+.. style-property:: xsize int
+
+    Equivalent to setting xminimum and xmaximum to the same value. This
+    has the effect of setting the width of the displayable.
+
+.. style-property:: ysize int
+
+    Equivalent to setting yminimum and ymaximum to the same value. This
+    has the effect of setting the width of the displayable.
+
+.. style-property:: xysize tuple of (int, int)
+
+    Equivalent to setting xminimum and xmaximum to the first component of
+    the tuple, and yminimum and ymaximum to the second component. This
+    has the effect of setting the size of the displayable.
+
 .. style-property:: xfill boolean
 
     If true, the displayable will expand to fill all available

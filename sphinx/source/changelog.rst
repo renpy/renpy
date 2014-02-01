@@ -124,6 +124,9 @@ to it.
 The new :func:`renpy.retain_after_load` can be used to retain data updated
 by a screen after the game is loaded.
 
+The new :propref:`xsize`, :propref:`ysize`, and :propref:`xysize` style
+properties make it possible to directly set the size of resizable
+displayables.
 
 Ren'Py 6.16.2
 =============

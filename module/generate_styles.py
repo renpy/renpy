@@ -287,6 +287,23 @@ synthetic_properties = sorted_dict(
         ('yminimum', 'index_1'),
         ],
 
+    xsize = [
+        ('xminimum', None),
+        ('xmaximum', None),
+        ],
+
+    ysize = [
+        ('yminimum', None),
+        ('ymaximum', None),
+        ],
+
+    xysize = [
+        ('xminimum', 'index_0'),
+        ('xmaximum', 'index_0'),
+        ('yminimum', 'index_1'),
+        ('ymaximum', 'index_1'),
+        ],
+
     area = [
         ('xpos', 'index_0'),
         ('ypos', 'index_1'),
