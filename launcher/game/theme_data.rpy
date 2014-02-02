@@ -572,6 +572,11 @@ init python in theme_data:
         ## should take up the full height and width of the screen.
         gm_root = "%(gm_root)s",
 
+        ## The fonts used by this theme. The default fonts may not be
+        ## suitable for non-English languages.
+        regular_font = "_theme_awt/Quicksand-Regular.ttf",
+        bold_font = "_theme_awt/Quicksand-Bold.ttf",
+
         ## And we're done with the theme. The theme will customize
         ## various styles, so if we want to change them, we should
         ## do so below.

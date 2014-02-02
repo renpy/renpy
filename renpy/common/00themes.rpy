@@ -810,7 +810,8 @@ init -1110 python hide:
             widget_selected,
             disabled,
             disabled_text,
-            small):
+            small,
+            font="_theme_awt/Quicksand-Regular.ttf"):
 
         theme.clear_buttons()
 
@@ -820,7 +821,7 @@ init -1110 python hide:
         style.button.selected_hover_background = __AWTButton("button_selected", widget_hover, True, low_sat=True)
         style.button.insensitive_background = __AWTButton("button", disabled, False)
 
-        style.button_text.font = "_theme_awt/Quicksand-Regular.ttf"
+        style.button_text.font = font
         style.button_text.size = text_size
         style.button_text.color = widget_text
 
@@ -927,7 +928,8 @@ init -1110 python hide:
             widget_selected,
             disabled,
             disabled_text,
-            small):
+            small,
+            font="_theme_awt/Quicksand-Regular.ttf"):
 
         theme.clear_large_buttons()
 
@@ -937,7 +939,7 @@ init -1110 python hide:
         style.large_button.selected_hover_background = __AWTButton("button_selected", widget_hover, True)
         style.large_button.insensitive_background = __AWTButton("button", disabled, False)
 
-        style.large_button_text.font = "_theme_awt/Quicksand-Regular.ttf"
+        style.large_button_text.font = font
         style.large_button_text.size = text_size
         style.large_button_text.color = widget_text
         style.large_button_text.selected_color = widget_selected
@@ -1133,6 +1135,8 @@ init -1110 python hide:
             button_menu = None,
             mm_root = "#ffffff",
             gm_root = "#ffffff",
+            regular_font = "_theme_awt/Quicksand-Regular.ttf",
+            bold_font = "_theme_awt/Quicksand-Bold.ttf",
 
             # for compatibility - unused:
             **properties
@@ -1214,13 +1218,13 @@ init -1110 python hide:
         style.window.bottom_padding = 35
         style.window.ymargin = 6
 
-        style.say_dialogue.font = "_theme_awt/Quicksand-Regular.ttf"
+        style.say_dialogue.font = regular_font
         style.say_dialogue.color = widget_text
         style.say_dialogue.outlines = [
                                                     (0, widget_text, 1, 0)
                                                 ]
 
-        style.say_label.font = "_theme_awt/Quicksand-Bold.ttf"
+        style.say_label.font = bold_font
         style.say_label.color = widget_text
         style.say_label.outlines = [
                                                     (2, "#20202008", 2, 2),
