@@ -1,4 +1,4 @@
-﻿#translation: renpy/common/00action_file.rpy
+#translation: renpy/common/00action_file.rpy
 translate spanish strings:
 
     # renpy/common/00action_file.rpy:124
@@ -401,3 +401,22 @@ translate spanish strings:
     old "Rectangle: %r"
     new "Rectángulo: %r"
 
+    # renpy/common/_developer/developer.rpym:69
+    old "Console (Shift+O)"
+    new "Consola (Mayús.+O)"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Image Load Log"
+    new "Muestra registro de carga de imagen"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Image Load Log"
+    new "Oculta registro de carga de imagen"
+
+    # renpy/common/_developer/developer.rpym:149
+    old "No variables have changed since the game started."
+    new "Ninguna variable ha cambiado desde el inicio del juego."
+
+    # renpy/common/_developer/developer.rpym:152
+    old "Return to the developer menu"
+    new "Volver al menú de desarrollo"
