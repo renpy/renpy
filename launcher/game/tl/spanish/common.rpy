@@ -7,7 +7,7 @@ translate spanish strings:
 
     # renpy/common/00action_file.rpy:587
     old "Quick save complete."
-    new "Guardado rapido completado"
+    new "Guardado rápido completado"
 
 
 #translation: renpy/common/00gallery.rpy
