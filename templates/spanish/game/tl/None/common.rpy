@@ -358,7 +358,7 @@ translate None strings:
 
     # renpy/common/_developer/developer.rpym:122
     old "No variables have changed since the game started."
-    new "No hay variables que hayan cambiado desde que empezo el jeugo."
+    new "Ninguna variable ha cambiado desde el inicio del juego."
 
     # renpy/common/_developer/developer.rpym:125
     old "Return to the developer menu"
