@@ -695,7 +695,9 @@ class Layout(object):
         # Log an overflow if the laid out width or height is larger than the
         # size of the provided area.
         if renpy.config.debug_text_overflow:
-            if sw > width or sh > height:
+            ow, oh = self.size
+
+            if ow > width or oh > height:
                 filename, line = renpy.exports.get_filename_line()
 
                 renpy.display.to_log.write("")
