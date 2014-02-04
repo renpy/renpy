@@ -47,6 +47,7 @@ class Preferences(renpy.object.Object):
             self.mouse_move = False
         if version < 9:
             self.afm_after_click = False
+            self.window_during_trans = False
 
     def __init__(self):
         self.fullscreen = False
@@ -56,6 +57,7 @@ class Preferences(renpy.object.Object):
         self.afm_enable = True
         self.voice_sustain = False
         self.mouse_move = False
+        self.window_during_trans = False
 
         # Should we wait for the voice to stop?
         self.wait_voice = True

@@ -1036,6 +1036,10 @@ class Scene(Node):
 
         next_node(self.next)
 
+        if renpy.store._window == "auto":
+            renpy.store._window = False
+            renpy.store._scene = True
+
         renpy.config.scene(self.layer)
 
         if self.imspec:
@@ -1143,6 +1147,10 @@ class With(Node):
             paired = None
 
         renpy.exports.with_statement(trans, paired)
+
+        if renpy.store._scene:
+            renpy.store._window = "auto"
+            renpy.store._scene = False
 
     def predict(self):
 

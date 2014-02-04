@@ -379,7 +379,9 @@ Hide and Show Window
 The window statement is used to control if a window is shown when a character
 is not speaking. (For example, during transitions and pauses.) The window show
 statement causes the window to be shown, while the window hide statement hides
-the window.
+the window. And the window auto statement decides to show or hide the window by
+the preference. The window is always hidden when the scene statement is used
+even if the window auto statement is used.
 
 If the optional transition is given, it's used to show and hide the window.
 If not given, it defaults to :var:`config.window_show_transition` and

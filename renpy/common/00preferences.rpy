@@ -68,6 +68,10 @@ init -1500 python:
          * Preference("transitions", "none") - do not show transitions.
          * Preference("transitions", "toggle") - toggle transitions.
 
+         * Preference("window during transitions", "show") - show window during transitions.
+         * Preference("window during transitions", "hide") - hide window during transitions.
+         * Preference("window during transitions", "toggle") - toggle show and hide.
+
          * Preference("text speed", 0) - make text appear instantaneously.
          * Preference("text speed", 142) - set text speed to 142 characters per second.
 
@@ -158,6 +162,15 @@ init -1500 python:
                 return SetField(_preferences, "transitions", 0)
             elif value == "toggle":
                 return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
+
+        elif name == "window during transitions":
+
+            if value == "show":
+                return SetField(_preferences, "window_during_trans", True)
+            elif value == "hide":
+                return SetField(_preferences, "window_during_trans", False)
+            elif value == "toggle":
+                return ToggleField(_preferences, "window_during_trans")
 
         elif name == "text speed":
 
