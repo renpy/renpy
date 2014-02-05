@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # game/project.rpy:201
     old "Launching the project failed."
@@ -47,3 +47,8 @@
     # game/project.rpy:496
     old "Launching"
     new "Ejecutando"
+
+    # game/project.rpy:584
+    old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
+    new "Ren'Py no puede ejecutar python con tkinter para escoger el directorio de proyectos. Por favor, installa el paquete python-tk o tkinter.
+    

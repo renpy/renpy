@@ -1,4 +1,3 @@
-
 translate None strings:
 
     # renpy/common/_layout/classic_load_save.rpym:152
@@ -359,7 +358,7 @@ translate None strings:
 
     # renpy/common/_developer/developer.rpym:122
     old "No variables have changed since the game started."
-    new "No hay variables que hayan cambiado desde que empezo el jeugo."
+    new "Ninguna variable ha cambiado desde el inicio del juego."
 
     # renpy/common/_developer/developer.rpym:125
     old "Return to the developer menu"
@@ -369,3 +368,14 @@ translate None strings:
     old "Rectangle: %r"
     new "Rectángulo: %r"
 
+    # renpy/common/_developer/developer.rpym:69
+    old "Console (Shift+O)"
+    new "Consola (Mayús.+O)"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Image Load Log"
+    new "Muestra registro de carga de imagen"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Image Load Log"
+    new "Oculta registro de carga de imagen"
