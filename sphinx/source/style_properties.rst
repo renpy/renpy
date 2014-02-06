@@ -647,14 +647,27 @@ Button Style Properties
     The mouse style that is used when the button is focused. This
     should be one of the styles in :var:`config.mouse`.
 
-.. style-property:: focus_mask displayable or True or None
+.. style-property:: focus_mask multiple
 
     A mask that's used to control what portions of the button can be
-    focused, and hence clicked on. If it's a displayable, then areas
-    of the displayable that are not transparent can be focused. If
-    it's True, then the button itself is used as the displayable (so
-    non-transparent areas of the button can be focused.) Otherwise,
-    the entire button can be focused.
+    focused, and hence clicked on. The type of this propertie determines
+    how it is interpreted.
+
+    Displayable
+        The areas of the displayable that are not transparent cause the button
+        to be focused.
+    True
+        The button itself is used as the displayable (so
+        non-transparent areas of the button cause the button to be
+        focused).
+    callable
+        If a non-displayable callable (like a function, method, or object
+        with a __call__ method) is given, the function is called with two
+        arguments, the x and y offset from the top-left corner of the
+        displayable. If the function returns true, the displayable is
+        focused.
+    None
+        If none is given, the entire button can be focused.
 
 
 .. _bar-style-properties:

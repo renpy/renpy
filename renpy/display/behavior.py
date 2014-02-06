@@ -552,8 +552,14 @@ class Button(renpy.display.layout.Window):
             if mask is True:
                 mask = rv
             elif mask is not None:
-                mask = renpy.easy.displayable(mask)
-                mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
+                try:
+                    mask = renpy.easy.displayable(mask)
+                    mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
+                except:
+                    if callable(mask):
+                        mask = mask
+                    else:
+                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
 
             if mask is not None:
                 fmx = 0

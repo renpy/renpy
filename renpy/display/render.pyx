@@ -834,7 +834,7 @@ cdef class Render:
         this focus is assumed to be the singular full-screen focus.
         """
 
-        if mask is not None and mask is not self:
+        if isinstance(mask, Render) and mask is not self:
             self.depends_on(mask)
 
         t = (d, arg, x, y, w, h, mx, my, mask)
@@ -929,8 +929,12 @@ cdef class Render:
                     if self.forward:
                         cx, cy = self.forward.transform(cx, cy)
 
-                    if mask.is_pixel_opaque(cx, cy):
-                        rv = d, arg
+                    if isinstance(mask, Render):
+                        if mask.is_pixel_opaque(cx, cy):
+                            rv = d, arg
+                    else:
+                        if mask(cx, cy):
+                            rv = d, arg
 
                 elif xo <= x < xo + w and yo <= y < yo + h:
                     rv = d, arg
