@@ -112,6 +112,14 @@ the size of the input field it a certain number of pixels.
 
 The :func:`FileCurrentScreenshot` function
 
+The new :propref:`xsize`, :propref:`ysize`, and :propref:`xysize` style
+properties make it possible to directly set the size of a displayble.
+
+The :propref:`focus_mask` style property can now take as an argument a callable
+that returns true when a displayable should be focused. If such a callable
+can be written, it may be much faster than the current method of determining
+pixel opacity.
+
 Viewport now respects the xfill and yfill properties. The default viewport
 style sets these to true. Setting them to False will cause the viewport to
 shrink to fit its contents when those contents do not fill the entire
