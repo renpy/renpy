@@ -208,6 +208,7 @@ init -2 python:
 # http://www.renpy.org/doc/html/screen_special.html#navigation
 screen navigation:
 
+    key "game_menu" action Return()
     # The background of the game menu.
     window:
         style "gm_root"
