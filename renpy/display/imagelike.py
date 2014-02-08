@@ -395,7 +395,7 @@ class FileCurrentScreenshot(renpy.display.core.Displayable):
     :func:`FileTakeScreenshot`.
 
     If there is no current screenshot, `empty` is shown in its place. (If `empty` is
-    None, it defaults to :func:`Null`().)
+    None, it defaults to :func:`Null`.)
     """
 
     def __init__(self, empty=None, **properties):

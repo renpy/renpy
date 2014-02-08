@@ -87,20 +87,26 @@ on Android and right-click on desktop computers.
 This release fixes a bug in which Ren'Py would not save persistent data
 (including preferences) before being terminated by the Android system.
 
-New Preferences
----------------
+New and Changed Preferences
+---------------------------
 
-There are a couple of preference changes that can be accessed through the
-:func:`Preferences` function:
+There are two new preferences accessible through the :func:`Preferences`
+function:
 
 * "auto-forward after click" controls if auto-forward mode is stopped
   by a click.
 
+* "window during transitions" controls if the "window show" statement
+  causes the window to be displayed during transitions.
+
+Neither of these is exposed as part of the default preferences screen, but
+both can be added by interested developers.
+
+There is one changed preference:
+
 * "display" now has an "any window" option, which restores a fullscreen
   Ren'Py to its prior windowed size.
 
-Neither of these is exposed as part of the default preferences screen, but
-both can be added by interesting
 
 Other
 -----

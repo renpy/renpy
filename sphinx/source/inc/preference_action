@@ -20,6 +20,10 @@
     * Preference("transitions", "none") - do not show transitions.
     * Preference("transitions", "toggle") - toggle transitions.
     
+    * Preference("window during transitions", "show") - show window during transitions.
+    * Preference("window during transitions", "hide") - hide window during transitions.
+    * Preference("window during transitions", "toggle") - toggle show and hide.
+    
     * Preference("text speed", 0) - make text appear instantaneously.
     * Preference("text speed", 142) - set text speed to 142 characters per second.
     
