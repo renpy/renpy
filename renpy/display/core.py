@@ -1637,6 +1637,10 @@ class Interface(object):
         if not renpy.store._window:
             return
 
+        if (renpy.store._window == "auto" and
+             not renpy.game.preferences.window_during_trans):
+            return
+
         if renpy.game.context().scene_lists.shown_window:
             return
 

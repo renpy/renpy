@@ -371,6 +371,9 @@ python early hide:
         store._window = False
         renpy.with_statement(trans)
 
+    def execute_window_auto(p):
+        store._window = "auto"
+
     renpy.register_statement('window show',
                               parse=parse_window,
                               execute=execute_window_show,
@@ -380,6 +383,10 @@ python early hide:
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window)
+
+    renpy.register_statement('window auto',
+                              parse=parse_window,
+                              execute=execute_window_auto)
 
     ##########################################################################
     # Pause statement.
