@@ -282,3 +282,111 @@ translate None strings:
     old "Quick save complete."
     new "クイックセーブ完了。"
 
+# Translation updated at 2014-02-08 16:38
+
+translate None strings:
+
+    # renpy/common/_developer/inspector.rpym:43
+    old "Displayable Inspector"
+    new "Displayableインスペクター"
+
+    # renpy/common/_developer/inspector.rpym:49
+    old "Nothing to inspect."
+    new "インスペクトするものがありません"
+
+    # renpy/common/_developer/inspector.rpym:58
+    old "Size"
+    new "サイズ"
+
+    # renpy/common/_developer/inspector.rpym:63
+    old "Style"
+    new "スタイル"
+
+    # renpy/common/_developer/inspector.rpym:123
+    old "Inspecting Styles of [displayable_name!q]"
+    new "[displayable_name!q]のスタイルをインスペクト中"
+
+    # renpy/common/_developer/inspector.rpym:135
+    old "displayable:"
+    new "Displayable:"
+
+    # renpy/common/_developer/inspector.rpym:142
+    old "        (no properties affect the displayable)"
+    new "        (Displayableに影響しているプロパティーはありません)"
+
+    # renpy/common/_developer/inspector.rpym:144
+    old "        (default properties omitted)"
+    new "        (デフォルトのプロパティーは省略)"
+
+    # renpy/common/_developer/inspector.rpym:174
+    old "<repr() failed>"
+    new "<repr() 失敗>"
+
+# Translation updated at 2014-02-08 16:38
+
+translate None strings:
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Developer Menu"
+    new "開発者メニュー"
+
+    # renpy/common/_developer/developer.rpym:67
+    old "Reload Game (Shift+R)"
+    new "ゲームのリロード (Shift+R)"
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Console (Shift+O)"
+    new "コンソール (Shift+D)"
+
+    # renpy/common/_developer/developer.rpym:71
+    old "Variable Viewer"
+    new "変数ビューアー"
+
+    # renpy/common/_developer/developer.rpym:73
+    old "Theme Test"
+    new "テーマのテスト"
+
+    # renpy/common/_developer/developer.rpym:75
+    old "Image Location Picker"
+    new "画像位置ピッカー"
+
+    # renpy/common/_developer/developer.rpym:77
+    old "Filename List"
+    new "ファイル名のリスト"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Image Load Log"
+    new "画像ロード履歴の表示"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Image Load Log"
+    new "画像ロード履歴の非表示"
+
+    # renpy/common/_developer/developer.rpym:149
+    old "No variables have changed since the game started."
+    new "ゲーム起動時から変更された変数はありません。"
+
+    # renpy/common/_developer/developer.rpym:152
+    old "Return to the developer menu"
+    new "開発者メニューに戻ります"
+
+    # renpy/common/_developer/developer.rpym:309
+    old "Undefined Images"
+    new "未定義の画像"
+
+    # renpy/common/_developer/developer.rpym:409
+    old "Rectangle: %r"
+    new "矩形: %r"
+
+    # renpy/common/_developer/developer.rpym:414
+    old "Mouse position: %r"
+    new "マウス位置: %r"
+
+    # renpy/common/_developer/developer.rpym:416
+    old "Right-click or escape to quit."
+    new "右クリックまたはEscで終了。"
+
+    # renpy/common/_developer/developer.rpym:467
+    old "Done"
+    new "完了"
+

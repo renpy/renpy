@@ -25,3 +25,31 @@ translate japanese strings:
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py は以下にプロジェクトディレクトリーを設定します:"
 
+    # game/project.rpy:48
+    old "After making changes to the script, press shift+R to reload your game."
+    new "スクリプトに変更を加えた後、Shift+Rを押すとゲームをリロードします。"
+
+    # game/project.rpy:49
+    old "Press shift+O (the letter) to access the console."
+    new "Shift+O(英字)を押すとコンソールを表示します。"
+
+    # game/project.rpy:50
+    old "Press shift+D to access the developer menu."
+    new "Shift+Dを押すと開発者メニューを表示します。"
+
+    # game/project.rpy:219
+    old "Launching the project failed."
+    new "プロジェクトの起動に失敗しました。"
+
+    # game/project.rpy:219
+    old "Please ensure that your project launches normally before running this command."
+    new "このコマンドを実行する前に、プロジェクトが通常通り起動することを確認して下さい。"
+
+    # game/project.rpy:515
+    old "Launching"
+    new "起動中"
+
+    # game/project.rpy:584
+    old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
+    new "Ren'Pyはプロジェクトディレクトリー選択のためのtkinterをPythonの実行時に読み込めませんでした。python-tkもしくはtkinterパッケージをインストールして下さい。"
+

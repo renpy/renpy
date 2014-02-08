@@ -37,3 +37,6 @@ translate japanese strings:
     old "No packages are selected, so there's nothing to do."
     new "パッケージが選択されていないため、何もすることがありません。"
 
+    # game/distribute.rpy:335
+    old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
+    new "配布物のビルドに失敗しました:\n\nbuild.directory_name 変数にスペース、コロン、セミコロンを含めてはいけません。"

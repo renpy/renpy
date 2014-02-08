@@ -85,3 +85,11 @@ translate japanese strings:
     old "Proceed"
     new "続行"
 
+    # game/updater.rpy:129
+    old "Nightly"
+    new "Nightly"
+
+    # game/updater.rpy:135
+    old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
+    new "Ren'Pyの開発版で、極めて不安定です。これには最新の機能が含まれていますが、すべては動かないかもしれません。"
+
