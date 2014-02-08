@@ -260,6 +260,13 @@ cleared.
     determines if Ren'Py should wait for voice to finish before
     auto-forward takes place.
 
+.. var:: config.default_window_during_transitions = True
+
+    The default value of the window during transitions preference.
+    If True, Ren'Py respects the "window show" and "window hide"
+    statements. If False, Ren'Py will always hide the window
+    during transitions.
+
 
 Occasionally Used
 -----------------

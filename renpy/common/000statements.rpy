@@ -354,9 +354,13 @@ python early hide:
         else:
             trans = config.window_show_transition
 
-        renpy.with_statement(None)
-        store._window = True
-        renpy.with_statement(trans)
+        if _preferences.window_during_transitions:
+            renpy.with_statement(None)
+            store._window = True
+            renpy.with_statement(trans)
+        else:
+            store._window = True
+
 
     def execute_window_hide(p):
         if not _window:
@@ -367,12 +371,12 @@ python early hide:
         else:
             trans = config.window_hide_transition
 
-        renpy.with_statement(None)
-        store._window = False
-        renpy.with_statement(trans)
-
-    def execute_window_auto(p):
-        store._window = "auto"
+        if _preferences.window_during_transitions:
+            renpy.with_statement(None)
+            store._window = False
+            renpy.with_statement(trans)
+        else:
+            store._window = False
 
     renpy.register_statement('window show',
                               parse=parse_window,
@@ -383,10 +387,6 @@ python early hide:
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window)
-
-    renpy.register_statement('window auto',
-                              parse=parse_window,
-                              execute=execute_window_auto)
 
     ##########################################################################
     # Pause statement.

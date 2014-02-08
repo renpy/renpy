@@ -166,11 +166,11 @@ init -1500 python:
         elif name == "window during transitions":
 
             if value == "show":
-                return SetField(_preferences, "window_during_trans", True)
+                return SetField(_preferences, "window_during_transitions", True)
             elif value == "hide":
-                return SetField(_preferences, "window_during_trans", False)
+                return SetField(_preferences, "window_during_transitions", False)
             elif value == "toggle":
-                return ToggleField(_preferences, "window_during_trans")
+                return ToggleField(_preferences, "window_during_transitions")
 
         elif name == "text speed":
 
