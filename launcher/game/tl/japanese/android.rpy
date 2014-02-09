@@ -105,3 +105,11 @@ translate japanese strings:
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
     new "Windowsでは、Androidパッケージのビルドに32-bitのJava開発キットが必要です。JDKはJREとは異なるため、JDKが無くてもJavaが利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}JDKのダウンロードとインストール{/a}を行い、Ren'Pyランチャーを再起動して下さい。"
 
+    # game/android.rpy:30
+    old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
+    new "Androidパッケージをビルドするには、RAPTをダウンロード・展開し、Ren'Pyのディレクトリーに設置して下さい。その後、Ren'Pyを再起動して下さい。"
+
+    # game/android.rpy:504
+    old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
+    new "Androidアプリをパッケージングする前に、RAPT(Ren'Py Android Packaging Tool)をダウンロードする必要があります。今すぐダウンロードしますか？"
+
