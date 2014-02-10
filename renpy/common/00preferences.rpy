@@ -68,9 +68,9 @@ init -1500 python:
          * Preference("transitions", "none") - do not show transitions.
          * Preference("transitions", "toggle") - toggle transitions.
 
-         * Preference("window during transitions", "show") - show window during transitions.
-         * Preference("window during transitions", "hide") - hide window during transitions.
-         * Preference("window during transitions", "toggle") - toggle show and hide.
+         * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
+         * Preference("show empty window", "hide") - Prevent the above.
+         * Preference("show empty window", "toggle") - Toggle the above.
 
          * Preference("text speed", 0) - make text appear instantaneously.
          * Preference("text speed", 142) - set text speed to 142 characters per second.
@@ -163,14 +163,14 @@ init -1500 python:
             elif value == "toggle":
                 return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
 
-        elif name == "window during transitions":
+        elif name == "show empty window":
 
             if value == "show":
-                return SetField(_preferences, "window_during_transitions", True)
+                return SetField(_preferences, "show_empty_window", True)
             elif value == "hide":
-                return SetField(_preferences, "window_during_transitions", False)
+                return SetField(_preferences, "show_empty_window", False)
             elif value == "toggle":
-                return ToggleField(_preferences, "window_during_transitions")
+                return ToggleField(_preferences, "show_empty_window")
 
         elif name == "text speed":
 

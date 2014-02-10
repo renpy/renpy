@@ -242,6 +242,13 @@ cleared.
     This sets the default value of the language preference. This is only
     used the first time the game starts.
 
+.. var:: config.default_show_empty_window = True
+
+    This determines if Ren'Py will show an empty window during
+    non-say statements. If True, Ren'Py respects the "window show", "window hide",
+    and "window auto" statements. If False, Ren'Py will not show an empty
+    window.
+
 .. var:: config.default_text_cps = None
 
     If not None, this sets the default number of characters per second
@@ -259,13 +266,6 @@ cleared.
     The default value of the wait for voice preference. This
     determines if Ren'Py should wait for voice to finish before
     auto-forward takes place.
-
-.. var:: config.default_window_during_transitions = True
-
-    The default value of the window during transitions preference.
-    If True, Ren'Py respects the "window show" and "window hide"
-    statements. If False, Ren'Py will always hide the window
-    during transitions.
 
 
 Occasionally Used

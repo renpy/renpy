@@ -47,8 +47,8 @@ init -1500 python:
     # If not None, the default value of mouse_move.
     config.default_mouse_move = True
 
-    # If not None, the default value of window_during_transitions.
-    config.default_window_during_transitions = True
+    # If not None, the default value of show_empty_window.
+    config.default_show_empty_window = True
 
 
 init 1500 python:
@@ -80,8 +80,8 @@ init 1500 python:
         if config.default_afm_enable is not None:
             _preferences.afm_enable = config.default_afm_enable
 
-        if config.default_window_during_transitions is not None:
-            _preferences.window_during_transitions = config.default_window_during_transitions
+        if config.default_show_empty_window is not None:
+            _preferences.show_empty_window = config.default_show_empty_window
 
     # Use default_afm_enable to decide if we use the afm_enable
     # preference.

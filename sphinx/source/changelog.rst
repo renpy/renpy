@@ -96,8 +96,8 @@ function:
 * "auto-forward after click" controls if auto-forward mode is stopped
   by a click.
 
-* "window during transitions" controls if the "window show" statement
-  causes the window to be displayed during transitions.
+* "show empty window" determines is if the "window show" and "window auto"
+  statements will cause an empty window to be shown.
 
 Neither of these is exposed as part of the default preferences screen, but
 both can be added by interested developers.

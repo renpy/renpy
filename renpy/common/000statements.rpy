@@ -354,7 +354,7 @@ python early hide:
         else:
             trans = config.window_show_transition
 
-        if _preferences.window_during_transitions:
+        if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = True
             renpy.with_statement(trans)
@@ -371,7 +371,7 @@ python early hide:
         else:
             trans = config.window_hide_transition
 
-        if _preferences.window_during_transitions:
+        if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = False
             renpy.with_statement(trans)

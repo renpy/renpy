@@ -1637,7 +1637,7 @@ class Interface(object):
         if not renpy.store._window:
             return
 
-        if not renpy.game.preferences.window_during_transitions:
+        if not renpy.game.preferences.show_empty_window:
             return
 
         if renpy.game.context().scene_lists.shown_window:
