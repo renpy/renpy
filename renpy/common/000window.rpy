@@ -27,9 +27,20 @@ init -1200 python:
     config.window_show_transition = None
     config.window_hide_transition = None
 
+    # A list of statements that cause the window to be auto-shown.
+    config.window_auto_show = [ "say" ]
+
+    # A list of statements that cause the window to be auto-hidden.
+    config.window_auto_hide = [ "scene" ]
+
+    _window_auto = False
+
     def _window_show(trans=None):
         if store._window:
             return
+
+        if trans is None:
+            trans = config.window_show_transition
 
         if _preferences.show_empty_window:
             renpy.with_statement(None)
@@ -42,12 +53,28 @@ init -1200 python:
         if not store._window:
             return
 
+        if trans is None:
+            trans = config.window_hide_transition
+
         if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = False
             renpy.with_statement(trans)
         else:
             store._window = False
+
+    def _window_auto_callback(statement):
+
+        if not store._window_auto:
+            return
+
+        if statement in config.window_auto_hide:
+            _window_hide()
+
+        if statement in config.window_auto_show:
+            _window_show()
+
+    config.statement_callbacks.append(_window_auto_callback)
 
 python early hide:
     ##########################################################################
@@ -65,22 +92,33 @@ python early hide:
             _try_eval(p, 'window transition')
 
     def execute_window_show(p):
+        store._window_auto = False
 
         if p is not None:
             trans = eval(p)
         else:
-            trans = config.window_show_transition
+            trans = None
 
         _window_show(trans)
 
     def execute_window_hide(p):
+        store._window_auto = False
 
         if p is not None:
             trans = eval(p)
         else:
-            trans = config.window_hide_transition
+            trans = None
 
         _window_hide(trans)
+
+    def parse_window_auto(l):
+        if not l.eol():
+            renpy.error('expected end of line')
+
+        return { }
+
+    def execute_window_auto(p):
+        store._window_auto = True
 
     renpy.register_statement('window show',
                               parse=parse_window,
@@ -91,3 +129,7 @@ python early hide:
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window)
+
+    renpy.register_statement('window auto',
+                             parse=parse_window_auto,
+                             execute=execute_window_auto)
