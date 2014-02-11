@@ -142,3 +142,7 @@ def call(method, parsed, *args, **kwargs):
         return None
 
     return method(parsed, *args, **kwargs)
+
+def get_name(parsed):
+    name, _parsed = parsed
+    return " ".join(name)

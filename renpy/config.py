@@ -489,6 +489,9 @@ longpress_radius = 15
 # How long we vibrate the device upon a longpress.
 longpress_vibrate = .1
 
+# A list of callbacks that are called before each statement, with the name
+# of the statement.
+statement_callbacks = [ ]
 
 del renpy
 del os
