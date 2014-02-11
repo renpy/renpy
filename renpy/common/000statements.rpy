@@ -331,62 +331,6 @@ python early hide:
                               lint=lint_stop_generic)
 
 
-    ##########################################################################
-    # "window show" and "window hide" statements.
-
-    def parse_window(l):
-        p = l.simple_expression()
-        if not l.eol():
-            renpy.error('expected end of line')
-
-        return p
-
-    def lint_window(p):
-        if p is not None:
-            _try_eval(p, 'window transition')
-
-    def execute_window_show(p):
-        if store._window:
-            return
-
-        if p is not None:
-            trans = eval(p)
-        else:
-            trans = config.window_show_transition
-
-        if _preferences.show_empty_window:
-            renpy.with_statement(None)
-            store._window = True
-            renpy.with_statement(trans)
-        else:
-            store._window = True
-
-
-    def execute_window_hide(p):
-        if not _window:
-            return
-
-        if p is not None:
-            trans = eval(p)
-        else:
-            trans = config.window_hide_transition
-
-        if _preferences.show_empty_window:
-            renpy.with_statement(None)
-            store._window = False
-            renpy.with_statement(trans)
-        else:
-            store._window = False
-
-    renpy.register_statement('window show',
-                              parse=parse_window,
-                              execute=execute_window_show,
-                              lint=lint_window)
-
-    renpy.register_statement('window hide',
-                              parse=parse_window,
-                              execute=execute_window_hide,
-                              lint=lint_window)
 
     ##########################################################################
     # Pause statement.
@@ -421,9 +365,6 @@ python early hide:
 
 
 init -1200 python:
-
-    config.window_show_transition = None
-    config.window_hide_transition = None
 
     def _try_eval(e, what):
         try:
