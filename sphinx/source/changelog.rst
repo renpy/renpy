@@ -38,7 +38,7 @@ rewritten.
 Syntax Changes
 --------------
 
-In addition to the new style statement, there are three other syntax
+In addition to the new style statement, there are four other syntax
 changes:
 
 * The definition of a simple expression has been expanded. Simple expressions
@@ -53,7 +53,7 @@ changes:
 
   is now legal. Previously, the expression had to be parenthesized.
 
-* The new show layer statement allows one to apply a transform
+* The new ``show layer`` statement allows one to apply a transform
   or ATL transform to an entire layer, using syntax like::
 
       show layer master at flip
@@ -62,6 +62,11 @@ changes:
 
       show layer master:
           xalign 0.5 yalign 0.5 rotate 180
+
+* The new ``window auto`` statement makes it possible for Ren'Py to
+  automatically show and hide the dialogue window. By default, it is
+  shown before ``say`` statements, and hidden before ``scene`` statements,
+  but this can be customized.
 
 * The init statement has been extended so it can be combined with
   other statements. It's now possible to write "init 1 image = ...",

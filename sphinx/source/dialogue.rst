@@ -88,7 +88,7 @@ character.
 
 The define statement causes its expression to be evaluated, and assigned to the
 supplied name. If not inside an init block, the define statement will
-automatically be run with init priority 0. 
+automatically be run with init priority 0.
 
 .. include:: inc/character
 
@@ -172,20 +172,20 @@ them can be a problem.
 
 ``centered``
     A character that causes what it says to be displayed centered,
-    in the middle of the screen, outside of any window. 
+    in the middle of the screen, outside of any window.
 
 ``vcentered``
     A character that causes what it says to be displayed centered
     in vertically oriented text, in the middle of the screen,
-    outside of any window. 
+    outside of any window.
 
 ``extend``
      A character that causes the last character to speak to say a line
      of dialogue consisting of the last line of dialogue spoken, "{fast}",
      and the dialogue given to extend. This can be used to have the screen
      change over the course of dialogue.
-     
-     Extend is aware of NVL-mode, and treats it correctly. 
+
+     Extend is aware of NVL-mode, and treats it correctly.
 
 For example::
 
@@ -198,10 +198,69 @@ For example::
     extend " But I usually quickly get over it!"
 
     # Similar, but automatically changes the expression when the first line is finished
-    # showing. This only makes sense when the user doesn't have text speed set all the 
+    # showing. This only makes sense when the user doesn't have text speed set all the
     # way up.
 
     show eileen concerned
     e "Sometimes, I feel sad.{nw}"
     show eileen happy
     extend " But I usually quickly get over it!"
+
+
+Dialogue Window Management
+--------------------------
+
+Ren'Py includes several statements that allow for management of the
+dialogue window. As dialogue window is always shown during dialogue,
+these statements control the presence or absence of the window during
+non-dialogue interactions.
+
+``window show``
+
+The window show statement causes the window to be shown.
+It takes as an argument an optional transition, which is used to show the
+window. If the transition is omitted, :var:`config.window_show_transition`
+is used.
+
+``window hide``
+
+The window hide statement causes the window to be hidden. It takes as an
+argument an optional transition, which is used to hide the window. If
+the transition is omitted,  :var:`config.window_hide_transition` is
+used.
+
+``window auto``
+
+This enables automatic management of the window. The window is shown
+before statements listed in :var:`config.window_auto_show` - by default,
+say statements. The window is hidden before statements listed in
+:var:`config.window_auto_hide` - by default, scene statements.
+
+The ``window auto`` statement uses :var:`config.window_show_transition`
+and :var:`config.window_hide_transition` to show and hide the window,
+respectively. ``window auto`` is cancelled by ``window show`` or ``window hide``.
+
+For example::
+
+    window show # shows the window with the default transition, if any.
+    pause       # the window is shown during this pause.
+    window hide # hides the window.
+    pause       # the window is hidden during this pause.
+
+    window show dissolve # shows the window with dissolve.
+    pause                # the window is shown during this pause.
+    window hide dissolve # hides the window with dissolve.
+    pause                # the window is hidden during this pause.
+
+
+    window auto
+
+    "The window is automatically shown before this line of dialogue."
+    pause                # the window is shown during this pause.
+
+    scene bg washington  # the window is hidden before the scene change.
+    with dissolve
+
+Dialogue window management is subject to the "show empty window"
+:func:`Preference`. If the preference is disabled, the statements above
+have no effect.

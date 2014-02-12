@@ -585,6 +585,16 @@ Occasionally Used
 
     When using a load_save layout, a different default may be used.
 
+.. var:: config.window_auto_hide = [ 'scene' ]
+
+    A list of statements that cause ``window auto`` to hide the empty
+    dialogue window.
+
+.. var:: config.window_auto_show = [ 'say' ]
+
+    A list of statements that cause ``window auto`` to show the empty
+    dialogue window.
+
 .. var:: config.window_overlay_functions = []
 
     A list of overlay functions that are only called when the window

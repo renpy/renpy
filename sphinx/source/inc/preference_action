@@ -20,9 +20,9 @@
     * Preference("transitions", "none") - do not show transitions.
     * Preference("transitions", "toggle") - toggle transitions.
     
-    * Preference("window during transitions", "show") - show window during transitions.
-    * Preference("window during transitions", "hide") - hide window during transitions.
-    * Preference("window during transitions", "toggle") - toggle show and hide.
+    * Preference("show empty window", "show") - Allow the "window show" and "window auto" statement to show an empty window outside of the say statement.
+    * Preference("show empty window", "hide") - Prevent the above.
+    * Preference("show empty window", "toggle") - Toggle the above.
     
     * Preference("text speed", 0) - make text appear instantaneously.
     * Preference("text speed", 142) - set text speed to 142 characters per second.
