@@ -1597,7 +1597,12 @@ class UserStatement(Node):
         self.call("execute")
 
     def predict(self):
-        self.call("predict")
+        predictions = self.call("predict")
+
+        if predictions is not None:
+            for i in predictions:
+                renpy.easy.predict(i)
+
         return [ self.get_next() ]
 
     def call(self, method, *args, **kwargs):
