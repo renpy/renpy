@@ -876,14 +876,15 @@ def predict_imspec(imspec, scene=False, atl=None):
     """
 
     if len(imspec) == 7:
-        name, expression, tag, _at_list, layer, _zorder, _behind = imspec
+        name, expression, tag, at_expr_list, layer, _zorder, _behind = imspec
 
     elif len(imspec) == 6:
-        name, expression, tag, _at_list, layer, _zorder = imspec
+        name, expression, tag, at_expr_list, layer, _zorder = imspec
 
     elif len(imspec) == 3:
-        name, _at_list, layer = imspec
-
+        name, at_expr_list, layer = imspec
+        tag = None
+        expression = None
 
     if expression:
         try:
@@ -891,30 +892,27 @@ def predict_imspec(imspec, scene=False, atl=None):
             img = renpy.easy.displayable(img)
         except:
             return
-
     else:
-        img = renpy.display.image.images.get(name, None)
-        if img is None:
-            return
+        img = None
 
-    full_name = name
-    if tag:
-        full_name = (tag,) + full_name[1:]
+    at_list = [ ]
+    for i in at_expr_list:
+        try:
+            at_list.append(renpy.python.py_eval(i))
+        except:
+            pass
+
+
+    if atl is not None:
+        try:
+            at_list.append(renpy.display.motion.ATLTransform(atl))
+        except:
+            pass
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
 
-    renpy.game.context().images.predict_show(tag or name, layer)
-
-    if atl is not None:
-        try:
-            img = renpy.display.motion.ATLTransform(atl, child=img)
-        except:
-            import traceback
-            traceback.print_exc()
-
-    renpy.display.predict.displayable(img)
-
+    renpy.exports.predict_show(name, layer, what=img, tag=tag)
 
 
 def show_imspec(imspec, atl=None):

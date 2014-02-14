@@ -295,6 +295,63 @@ def showing(name, layer='master'):
 
     return renpy.game.context().images.showing(layer, name)
 
+def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
+    """
+    :undocumented:
+
+    Predicts a scene or show statement.
+
+    `name`
+        The name of the image to show, a string.
+
+    `layer`
+        The layer the image is being show non.
+
+    `what`
+        What is being show - if given, overrides `name`.
+
+    `tag`
+        The tag of the thing being shown.
+
+    `at_list`
+        A list of transforms to apply to the displayable.
+    """
+
+    key = tag or name[0]
+
+    if what is None:
+        what = name
+    elif isinstance(what, basestring):
+        what = tuple(what.split())
+
+    if isinstance(what, renpy.display.core.Displayable):
+        base = img = what
+    else:
+
+        if renpy.config.image_attributes:
+            new_what = renpy.game.context().images.apply_attributes(layer, key, name)
+            if new_what is not None:
+                what = new_what
+                name = (key,) + new_what[1:]
+
+        base = img = renpy.display.image.ImageReference(what, style='image_placement')
+
+        if not base.find_target() and renpy.config.missing_show:
+            if renpy.config.missing_show(name, what, layer):
+                return
+
+    for i in at_list:
+        if isinstance(i, renpy.display.motion.Transform):
+            img = i(child=img)
+        else:
+            img = i(img)
+
+    renpy.game.context().images.predict_show(name, layer, True)
+    renpy.display.predict.displayable(img)
+
+
+
+
 def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
