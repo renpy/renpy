@@ -105,6 +105,16 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
     list of images used by show_display_say.
     """
 
+    if side_image:
+        renpy.easy.predict(side_image)
+
+    if renpy.store._side_image_attributes:
+        renpy.easy.predict(renpy.display.image.ImageReference(("side",) + renpy.store._side_image_attributes))
+
+    if image:
+        if image != "<Dynamic>":
+            renpy.easy.predict(who)
+
     if screen:
         props = compute_widget_properties(who_args, what_args, window_args)
 
@@ -120,12 +130,6 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
 
         return
 
-    if image:
-        if image != "<Dynamic>":
-            renpy.easy.predict(who)
-
-    if side_image:
-        renpy.easy.predict(side_image)
 
 
 def compute_widget_properties(who_args, what_args, window_args, variant=None):
@@ -829,7 +833,7 @@ class ADVCharacter(object):
         old_side_image_attributes = renpy.store._side_image_attributes
 
         if self.image_tag:
-            attrs = self.image_tag + renpy.game.context().images.get_attributes("master", self.image_tag)
+            attrs = ( self.image_tag, ) + renpy.game.context().images.get_attributes("master", self.image_tag)
         else:
             attrs = None
 
