@@ -329,6 +329,7 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
 
     else:
         if renpy.config.image_attributes:
+
             new_what = renpy.game.context().images.apply_attributes(layer, key, name)
             if new_what is not None:
                 what = new_what
@@ -345,7 +346,7 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
         else:
             img = i(img)
 
-    renpy.game.context().images.predict_show(name, layer, True)
+    renpy.game.context().images.predict_show(layer, name, True)
     renpy.display.predict.displayable(img)
 
 
