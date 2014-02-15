@@ -326,8 +326,8 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
 
     if isinstance(what, renpy.display.core.Displayable):
         base = img = what
-    else:
 
+    else:
         if renpy.config.image_attributes:
             new_what = renpy.game.context().images.apply_attributes(layer, key, name)
             if new_what is not None:
@@ -336,9 +336,8 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
 
         base = img = renpy.display.image.ImageReference(what, style='image_placement')
 
-        if not base.find_target() and renpy.config.missing_show:
-            if renpy.config.missing_show(name, what, layer):
-                return
+        if not base.find_target():
+            return
 
     for i in at_list:
         if isinstance(i, renpy.display.motion.Transform):
