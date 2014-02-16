@@ -151,7 +151,7 @@
 * Zoom
 * ZoomInOut
 * absolute
-* adv
+* :var:`adv`
 * anim
 * :var:`blinds`
 * build
@@ -183,9 +183,9 @@
 * layout
 * :var:`left`
 * library
-* main_menu
+* :var:`main_menu`
 * :func:`menu`
-* mouse_visible
+* :var:`mouse_visible`
 * :var:`move`
 * moveinbottom
 * moveinleft
@@ -195,8 +195,8 @@
 * moveoutleft
 * :var:`moveoutright`
 * moveouttop
-* name_only
-* narrator
+* :var:`name_only`
+* :var:`narrator`
 * nvl
 * nvl_clear
 * nvl_clear_next
@@ -223,7 +223,7 @@
 * :var:`reset`
 * :var:`right`
 * :var:`save_name`
-* say
+* :var:`say`
 * skip_indicator
 * slideawaydown
 * :var:`slideawayleft`

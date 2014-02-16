@@ -68,6 +68,7 @@ Customizing Ren'Py
    screen_actions
    screen_special
    config
+   store_variables
 
 Other Functionality
 -------------------
