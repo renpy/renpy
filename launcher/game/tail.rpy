@@ -34,6 +34,12 @@ init python:
             try:
                 with open(self.filename) as f:
                     text = f.read()
+
+                    try:
+                        text = renpy.fsdecode(text)
+                    except:
+                        text = text.decode("latin-1")
+
                     text = text.strip()
                     text = text.split("\n")
 
