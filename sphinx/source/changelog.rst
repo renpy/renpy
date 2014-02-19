@@ -90,7 +90,8 @@ Buttons may now have an alternate action that is triggered by longpress
 on Android and right-click on desktop computers.
 
 This release fixes a bug in which Ren'Py would not save persistent data
-(including preferences) before being terminated by the Android system.
+(including preferences) before being terminated by the Android system, and
+a regression that broke compatibility with some Android 2.3 systems.
 
 New and Changed Preferences
 ---------------------------
@@ -146,6 +147,13 @@ by a screen after the game is loaded.
 The new :propref:`xsize`, :propref:`ysize`, and :propref:`xysize` style
 properties make it possible to directly set the size of resizable
 displayables.
+
+Prediction of images with partial attributes and side images used in
+dialogue has been improved. Prediction of creator-defined statements
+now works as documented.
+
+
+
 
 Ren'Py 6.16.2
 =============
