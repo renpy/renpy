@@ -269,7 +269,7 @@ allocated to it by a layout, or on the screen when not inside a layout.
 .. style-property:: ysize int
 
     Equivalent to setting yminimum and ymaximum to the same value. This
-    has the effect of setting the width of the displayable.
+    has the effect of setting the height of the displayable.
 
 .. style-property:: xysize tuple of (int, int)
 
