@@ -436,7 +436,7 @@ init -1500 python:
          Returns the name of the numbered slot. This assumes that slots on
          normal pages are numbered in a linear order starting with 1, and
          that page numbers start with 1. When slot is 2, and slots_per_page
-         is 10, and the other variables are the defauts:
+         is 10, and the other variables are the defaults:
 
          * When the first page is showing, this returns "2".
          * When the second page is showing, this returns "12".

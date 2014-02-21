@@ -27,7 +27,7 @@ remains fully supported.) Lengthy and redundant code like::
 
 can be replaced with::
 
-    style quick_button_text is defaut:
+    style quick_button_text is default:
         size 12
         idle_color "#8888"
         hover_color "#ccc"
