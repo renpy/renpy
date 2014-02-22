@@ -595,7 +595,8 @@ label choose_projects_directory:
 
         path = renpy.fsdecode(path)
 
-        persistent.projects_directory = path
-        project.manager.scan()
+        if os.path.isdir(path):
+            persistent.projects_directory = path
+            project.manager.scan()
 
     return
