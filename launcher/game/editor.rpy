@@ -24,7 +24,7 @@
 # This contains code for scanning for editors, and for allowing the user to
 # select an editor.
 
-init python in editor:
+init 1 python in editor:
 
     from store import Action, renpy, config, persistent
     import store.project as project
@@ -81,6 +81,9 @@ init python in editor:
 
         for d in [ config.renpy_base, persistent.projects_directory ]:
             if d is None:
+                continue
+
+            if not os.path.isdir(d):
                 continue
 
             for filename in glob.glob(d + "/*/*.edit.py"):
