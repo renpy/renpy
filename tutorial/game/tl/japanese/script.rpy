@@ -146,3 +146,10 @@ translate japanese strings:
     old "Is there anything else you'd like to see?"
     new "他に見たいものはありますか？"
 
+
+# game/script.rpy:126
+translate japanese end_762dc07a:
+
+    # e "The background music is \"Sunflower Slow Drag\", by Scott Joplin and Scott Hayden, performed by the United States Marine Band. The concert music is by Alessio."
+    e "バックグラウンドミュージックは Scott Joplin と Scott Hayden による \"Sunflower Slow Drag\" です。"
+

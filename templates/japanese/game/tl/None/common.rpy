@@ -288,7 +288,7 @@ translate None strings:
 
     # renpy/common/_developer/inspector.rpym:43
     old "Displayable Inspector"
-    new "Displayableインスペクター"
+    new "Displayable インスペクター"
 
     # renpy/common/_developer/inspector.rpym:49
     old "Nothing to inspect."
@@ -304,7 +304,7 @@ translate None strings:
 
     # renpy/common/_developer/inspector.rpym:123
     old "Inspecting Styles of [displayable_name!q]"
-    new "[displayable_name!q]のスタイルをインスペクト中"
+    new "[displayable_name!q] のスタイルをインスペクト中"
 
     # renpy/common/_developer/inspector.rpym:135
     old "displayable:"
@@ -312,11 +312,11 @@ translate None strings:
 
     # renpy/common/_developer/inspector.rpym:142
     old "        (no properties affect the displayable)"
-    new "        (Displayableに影響しているプロパティーはありません)"
+    new "        (Displayable に影響しているプロパティーはありません)"
 
     # renpy/common/_developer/inspector.rpym:144
     old "        (default properties omitted)"
-    new "        (デフォルトのプロパティーは省略)"
+    new "        (デフォルトのプロパティーは省略します)"
 
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
