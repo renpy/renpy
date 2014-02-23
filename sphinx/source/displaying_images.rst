@@ -214,6 +214,17 @@ For example::
 
     show expression "moon.png" as moon
 
+**Show Layer.**
+The show layer statement allows one to apply a transform or ATL transform to an
+entire layer, using syntax like:
+
+    show layer master at flip
+
+or
+
+    show layer master:
+        xalign 0.5 yalign 0.5 rotate 180
+
 .. _scene-statement:
 
 Scene Statement
