@@ -60,3 +60,15 @@ translate japanese strings:
     old "This is text."
     new "これはテキスト。"
 
+# game/demo_layers.rpy:64
+translate japanese demo_layers_91559c86:
+
+    # e "The \"behind\" clause lets you place an image behind another."
+    e "behind 節は画像を他の画像の後ろに表示します。"
+
+# game/demo_layers.rpy:77
+translate japanese demo_layers_a983efbd:
+
+    # e "Finally, the \"show layer\" statement allows you to apply a transform to an entire layer."
+    e "つまり、 \"show layer\" ステートメントではレイヤーすべてに変換を適用出来ます。"
+
