@@ -393,7 +393,7 @@ translate japanese strings:
     old "Done"
     new "完了"
 
-# TODO: Translation updated at 2014-02-23 11:23
+# Translation updated at 2014-02-23 11:23
 
 translate japanese strings:
 
@@ -432,4 +432,76 @@ translate japanese strings:
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
     new "<repr() 失敗>"
+
+# Translation updated at 2014-02-24 16:15
+
+translate japanese strings:
+
+    # renpy/common/00console.rpy:179
+    old "%(version)s console, originally by Shiz, C, and delta.\n"
+    new "%(version)s コンソール, 作成者: Shiz, C, delta\n"
+
+    # renpy/common/00console.rpy:180
+    old "Press <esc> to exit console. Type help for help.\n"
+    new "<esc> を押して終了。help と入力してヘルプを表示。\n"
+
+    # renpy/common/00console.rpy:184
+    old "Ren'Py script enabled."
+    new "Ren'Py スクリプト有効。"
+
+    # renpy/common/00console.rpy:186
+    old "Ren'Py script disabled."
+    new "Ren'Py スクリプト無効。"
+
+    # renpy/common/00console.rpy:392
+    old "help: show this help"
+    new "help: このヘルプを表示"
+
+    # renpy/common/00console.rpy:397
+    old "commands:\n"
+    new "コマンド:\n"
+
+    # renpy/common/00console.rpy:407
+    old " <renpy script statement>: run the statement\n"
+    new " <Ren'Py スクリプトステートメント>: ステートメントを実行\n"
+
+    # renpy/common/00console.rpy:409
+    old " <python expression or statement>: run the expression or statement"
+    new " <Python 式またはステートメント>: 式またはステートメントを実行"
+
+    # renpy/common/00console.rpy:417
+    old "clear: clear the console history"
+    new "clear: コンソール履歴を消去"
+
+    # renpy/common/00console.rpy:421
+    old "exit: exit the console"
+    new "exit: コンソールを終了"
+
+    # renpy/common/00console.rpy:429
+    old "load <slot>: loads the game from slot"
+    new "load <スロット>: スロットからゲームをロード"
+
+    # renpy/common/00console.rpy:442
+    old "save <slot>: saves the game in slot"
+    new "save <スロット>: スロットにゲームを保存"
+
+    # renpy/common/00console.rpy:453
+    old "reload: reloads the game, refreshing the scripts"
+    new "reload: ゲームをリロードしてスクリプトを再読み込み"
+
+    # renpy/common/00console.rpy:461
+    old "watch <expression>: watch a python expression"
+    new "watch <式>: Python 式をウォッチ"
+
+    # renpy/common/00console.rpy:470
+    old "unwatch <expression>: stop watching an expression"
+    new "unwatch <式>: Python 式のウォッチを解除"
+
+    # renpy/common/00console.rpy:478
+    old "unwatchall: stop watching all expressions"
+    new "unwatchall: すべての式のウォッチを解除"
+
+    # renpy/common/00console.rpy:484
+    old "jump <label>: jumps to label"
+    new "jump <ラベル>: ラベルにジャンプ"
 

@@ -176,14 +176,14 @@ init -1500 python in _console:
             message = ""
 
             if self.first_time:
-                message += renpy.version() + " console, originally by Shiz, C, and delta.\n"
-                message += "Press <esc> to exit console. Type help for help.\n"
+                message += __("%(version)s console, originally by Shiz, C, and delta.\n") % {"version": renpy.version()}
+                message += __("Press <esc> to exit console. Type help for help.\n")
                 self.first_time = False
 
             if self.can_renpy():
-                message += "Ren'Py script enabled."
+                message += __("Ren'Py script enabled.")
             else:
-                message += "Ren'Py script disabled."
+                message += __("Ren'Py script disabled.")
 
             he.result = message
             self.history.append(he)
@@ -389,24 +389,24 @@ init -1500 python in _console:
 
         return wrap
 
-    @command("help: show this help")
+    @command(_("help: show this help"))
     def help(l):
         keys = list(config.console_commands.iterkeys())
         keys.sort()
 
-        rv = "commands:\n"
+        rv = __("commands:\n")
 
         for k in keys:
             f = config.console_commands[k]
             if f.help is None:
                 continue
 
-            rv += " " + f.help + "\n"
+            rv += " " + __(f.help) + "\n"
 
         if console.can_renpy():
-            rv += " <renpy script statement>: run the statement\n"
+            rv += __(" <renpy script statement>: run the statement\n")
 
-        rv += " <python expression or statement>: run the expression or statement"
+        rv += __(" <python expression or statement>: run the expression or statement")
 
         return rv
 
@@ -414,11 +414,11 @@ init -1500 python in _console:
     def halp(l):
         return help(l).replace("e", "a")
 
-    @command("clear: clear the console history")
+    @command(_("clear: clear the console history"))
     def clear(l):
         console.history[:] = [ ]
 
-    @command("exit: exit the console")
+    @command(_("exit: exit the console"))
     def exit(l):
         renpy.jump("_console_return")
 
@@ -426,7 +426,7 @@ init -1500 python in _console:
     def quit(l):
         renpy.jump("_console_return")
 
-    @command("load <slot>: loads the game from slot")
+    @command(_("load <slot>: loads the game from slot"))
     def load(l):
         name = l.rest().strip()
 
@@ -439,7 +439,7 @@ init -1500 python in _console:
             console.history[-1].result = "Loading slot {!r}.".format(name)
 
 
-    @command("save <slot>: saves the game in slot")
+    @command(_("save <slot>: saves the game in slot"))
     def save(l):
         name = l.rest().strip()
 
@@ -450,7 +450,7 @@ init -1500 python in _console:
 
         return "Saved slot {!r}.".format(name)
 
-    @command("reload: reloads the game, refreshing the scripts")
+    @command(_("reload: reloads the game, refreshing the scripts"))
     def reload(l):
         store._reload_game()
 
@@ -458,7 +458,7 @@ init -1500 python in _console:
     def R(l):
         store._reload_game()
 
-    @command("watch <expression>: watch a python expression")
+    @command(_("watch <expression>: watch a python expression"))
     def watch(l):
         expr = l.rest()
         expr.strip()
@@ -467,7 +467,7 @@ init -1500 python in _console:
         traced_expressions.append(expr)
         renpy.show_screen("_trace_screen")
 
-    @command("unwatch <expression>: stop watching an expression")
+    @command(_("unwatch <expression>: stop watching an expression"))
     def unwatch(l):
         expr = l.rest()
         expr.strip()
@@ -475,13 +475,13 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
-    @command("unwatchall: stop watching all expressions")
+    @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
         traced_expressions[:] = [ ]
         renpy.hide_screen("_trace_screen")
 
 
-    @command("jump <label>: jumps to label")
+    @command(_("jump <label>: jumps to label"))
     def jump(l):
         label = l.name()
 
