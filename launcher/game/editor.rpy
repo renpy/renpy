@@ -30,6 +30,7 @@ init 1 python in editor:
     import store.project as project
     import store.updater as updater
     import store.interface as interface
+    import store.util as util
     import store
 
     import glob
@@ -86,8 +87,16 @@ init 1 python in editor:
             if not os.path.isdir(d):
                 continue
 
-            for filename in glob.glob(d + "/*/*.edit.py"):
-                scan_editor(filename)
+            for i in util.listdir(d):
+                i = os.path.join(d, i)
+                if not os.path.isdir(d):
+                    continue
+
+                for j in util.listdir(i):
+                    j = os.path.join(i, j)
+
+                    if j.endswith(".edit.py"):
+                        scan_editor(j)
 
     ########################################################################
 
