@@ -126,10 +126,13 @@ init -1500 python:
                 If true, the tracks are shuffled, and played in the shuffled
                 order. If false, the tracks are played in the order they're
                 added to the MusicRoom.
-                Single_track precedes this.
 
             `stop_action`
                 An action to run when the music has stopped.
+
+            Single_track and shuffle conflict with each other. Only one should
+            be true at a time. (Actions that set single_track and shuffle
+            enforce this.)
             """
 
             self.channel = channel
