@@ -406,14 +406,14 @@ init python:
                     rv.blit(sr, (minx, miny))
 
                     # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
-                    text.append(_("Rectangle: %r") % ((minx, miny, w, h),))
+                    text.append(__("Rectangle: %r") % ((minx, miny, w, h),))
 
             if self.mouse:
                 mx, my = self.mouse
                 if mx < cr.width and my < cr.height:
-                    text.append(_("Mouse position: %r") % (self.mouse,))
+                    text.append(__("Mouse position: %r") % (self.mouse,))
 
-            text.append(_("Right-click or escape to quit."))
+            text.append(__("Right-click or escape to quit."))
 
             td = Text("\n".join(text), size=14, color="#fff", outlines=[ (1, "#000", 0, 0 ) ])
             tr = renpy.render(td, width, height, st, at)
