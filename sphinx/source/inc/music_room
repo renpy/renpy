@@ -33,6 +33,10 @@
     
     `stop_action`
         An action to run when the music has stopped.
+    
+    Single_track and shuffle conflict with each other. Only one should
+    be true at a time. (Actions that set single_track and shuffle
+    enforce this.)
 
     .. method:: Next(self)
         

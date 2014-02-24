@@ -19,8 +19,21 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init python in util:
+init -1 python in util:
     import os
+
+    def listdir(d):
+        """
+        Returns a list of files and directories in `d` that are accessible with
+        the filesystem encoding.
+        """
+
+        d = renpy.fsdecode(d)
+
+        if not os.path.isdir(d):
+            return [ ]
+
+        return [ i for i in os.listdir(d) if isinstance(i, unicode) ]
 
     def walk(directory, base=None):
         """
@@ -38,6 +51,9 @@ init python in util:
 
         for subdir, directories, files in os.walk(directory):
             for fn in directories:
+                if not isinstance(fn, unicode):
+                    continue
+
                 fullfn = os.path.join(subdir, fn)
                 relfn = os.path.relpath(fullfn, base)
 
@@ -46,6 +62,9 @@ init python in util:
                 yield relfn, True
 
             for fn in files:
+                if not isinstance(fn, unicode):
+                    continue
+
                 fullfn = os.path.join(subdir, fn)
                 relfn = os.path.relpath(fullfn, base)
 

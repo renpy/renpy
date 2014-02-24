@@ -380,7 +380,8 @@ init python in project:
             if not os.path.isdir(d):
                 return
 
-            for pdir in os.listdir(d):
+            for pdir in util.listdir(d):
+
                 ppath = os.path.join(d, pdir)
 
                 # A project must be a directory.

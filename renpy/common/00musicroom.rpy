@@ -129,6 +129,10 @@ init -1500 python:
 
             `stop_action`
                 An action to run when the music has stopped.
+
+            Single_track and shuffle conflict with each other. Only one should
+            be true at a time. (Actions that set single_track and shuffle
+            enforce this.)
             """
 
             self.channel = channel
@@ -165,7 +169,10 @@ init -1500 python:
             self.single_track = single_track
 
             # Should we shuffle the playlist?
-            self.shuffle = shuffle
+            if self.single_track:
+                self.shuffle = False
+            else:
+                self.shuffle = shuffle
 
             # In older versions, loop would loop a single trak.
             if self.loop_compat and loop:
@@ -435,7 +442,10 @@ init -1500 python:
             This action sets the value of the single_track property.
             """
 
-            return [ SetField(self, "single_track", value), self.queue_if_playing ]
+            if value:
+                return [ SetField(self, "single_track", value), SetField(self, "shuffle", False), self.queue_if_playing ]
+            else:
+                return [ SetField(self, "single_track", value), self.queue_if_playing ]
 
 
         def SetShuffle(self, value):
@@ -445,7 +455,10 @@ init -1500 python:
             This action sets the value of the shuffle property.
             """
 
-            return [ SetField(self, "shuffle", value), self.queue_if_playing ]
+            if value:
+                return [ SetField(self, "shuffle", value), SetField(self, "single_track", False), self.queue_if_playing ]
+            else:
+                return [ SetField(self, "shuffle", value), self.queue_if_playing ]
 
         def ToggleLoop(self):
             """
@@ -464,7 +477,7 @@ init -1500 python:
             This action toggles the value of the single_track property.
             """
 
-            return [ ToggleField(self, "single_track"), self.queue_if_playing ]
+            return [ ToggleField(self, "single_track"), SetField(self, "shuffle", False), self.queue_if_playing ]
 
         def ToggleShuffle(self):
             """
@@ -473,4 +486,4 @@ init -1500 python:
             This action toggles the value of the shuffle property.
             """
 
-            return [ ToggleField(self, "shuffle"), self.queue_if_playing ]
+            return [ ToggleField(self, "shuffle"), SetField(self, "single_track", False), self.queue_if_playing ]
