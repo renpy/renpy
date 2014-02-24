@@ -216,16 +216,16 @@ For example::
 
 **Show Layer.**
 The show layer statement allows one to apply a transform or ATL transform to an
-entire layer (such as "master"), using syntax like:
+entire layer (such as "master"), using syntax like::
 
     show layer master at flip
 
-or
+or::
 
     show layer master:
         xalign 0.5 yalign 0.5 rotate 180
 
-To stop applying transforms to the layer, use:
+To stop applying transforms to the layer, use::
 
     show layer master
 
