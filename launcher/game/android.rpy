@@ -92,6 +92,8 @@ init python:
             return ANDROID_NO_SDK
         if not os.path.exists(os.path.join(RAPT_PATH, "android.keystore")):
             return ANDROID_NO_KEY
+        if not os.path.exists(os.path.join(RAPT_PATH, "local.properties")):
+            return ANDROID_NO_KEY
         if not os.path.exists(os.path.join(project.current.path, ".android.json")):
             return ANDROID_NO_CONFIG
         return ANDROID_OK
