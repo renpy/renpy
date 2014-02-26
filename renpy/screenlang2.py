@@ -19,8 +19,15 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+
 # Import the Python AST module, instead of the Ren'Py ast module.
-ast = __import__("ast", { })
+import ast
+
+constants = { 'foo.bar' }
 
 def is_constant(expr):
     """
@@ -49,6 +56,37 @@ def is_constant(expr):
         return False
 
 
+    def check_name(node):
+        """
+        Check nodes that make up a name. This returns a pair:
+
+        * The first element is True if the node is constant, and False
+          otherwise.
+        * The second element is None if the node is constant or the name is
+          not known, and the name otherwise.
+        """
+
+        if isinstance(node, ast.Name):
+            name = node.id
+
+        elif isinstance(node, ast.Attribute):
+            const, name = check_name(node.value)
+
+            if const:
+                return True, None
+            if not name:
+                return False, None
+
+            name = name + "." + node.attr
+
+        else:
+            return check_node(node), None
+
+        if name in constants:
+            return True, None
+
+        return False, name
+
     def check_nodes(nodes):
         """
         Checks a list of nodes. Returns true if all are constant, and
@@ -72,6 +110,9 @@ def is_constant(expr):
 
         elif isinstance(node, (ast.List, ast.Tuple)):
             return check_nodes(node.elts)
+
+        elif isinstance(node, (ast.Attribute, ast.Name)):
+            return check_name(node)[0]
 
         elif isinstance(node, ast.BoolOp):
             return check_nodes(node.values)
@@ -110,9 +151,6 @@ def is_constant(expr):
         elif isinstance(node, ast.Repr):
             return check_node(node.value)
 
-        elif isinstance(node, ast.Attribute):
-            return check_node(node.value)
-
         elif isinstance(node, ast.Subscript):
             return (
                 check_node(node.value) and
@@ -131,6 +169,7 @@ if __name__ == "__main__":
     assert is_constant("not 42")
     assert is_constant("(1, 2, 'a', [ '4', 5+2-1 ])")
     assert is_constant("{ 'foo' : { 'bar', 'baz' } }")
+    assert is_constant("foo.bar.baz")
 
     assert not is_constant("foo + 42")
 
