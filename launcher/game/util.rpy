@@ -33,7 +33,10 @@ init -1 python in util:
         if not os.path.isdir(d):
             return [ ]
 
-        return [ i for i in os.listdir(d) if isinstance(i, unicode) ]
+        try:
+            return [ i for i in os.listdir(d) if isinstance(i, unicode) ]
+        except:
+            return [ ]
 
     def walk(directory, base=None):
         """
