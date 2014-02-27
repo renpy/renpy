@@ -322,16 +322,22 @@ Style Translations
 
 It may be necessary to change styles - especially font-related
 styles - when translating a game. Ren'Py handles this with translate
-python blocks. These blocks can contain code to change
-language-related styles::
+style blocks and translate python blocks. These blocks can contain code
+to change language-related variables and styles. For example::
+
+  translate piglatin style default:
+      font "stonecutter.ttf"
+
+or equivalently::
 
   translate piglatin python:
-       style.default.font = "stonecutter.ttf"
+      style.default.font = "stonecutter.ttf"
 
 When a language is activated - either at the start of the game, or
 after a language change - Ren'Py resets the styles to their contents
 at the end of the init phase. It then runs all translate python blocks
-associated with the current language, in some order. Finally, it
+and translate style blocks associated with the current language, guaranteeing
+that blocks appearing earlier in a file are executed first. Finally, it
 rebuilds styles, allowing the changes to take effect.
 
 Style translations may be added to any .rpy file.
