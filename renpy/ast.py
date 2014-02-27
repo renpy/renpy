@@ -1811,6 +1811,11 @@ class TranslateString(Node):
         renpy.translation.add_string_translation(self.language, self.old, self.new)
 
 class TranslatePython(Node):
+    """
+    Runs python code when changing the language.
+
+    This is no longer generated, but is still run when encountered.
+    """
 
     __slots__ = [
         'language',
@@ -1840,6 +1845,40 @@ class TranslatePython(Node):
     # def early_execute(self):
     #    renpy.python.create_store(self.store)
     #    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+
+
+class TranslateBlock(Node):
+    """
+    Runs a block of code when changing the language.
+    """
+
+    __slots__ = [
+        'block',
+        'language',
+        ]
+
+    def __init__(self, loc, language, block):
+        super(TranslateBlock, self).__init__(loc)
+
+        self.language = language
+        self.block = block
+
+    def get_children(self):
+        return self.block
+
+    # We handle chaining specially. We want to chain together the nodes in
+    # the block, but we want that chain to end in None, and we also want
+    # this node to just continue on to the next node in normal execution.
+    def chain(self, next): #@ReservedAssignment
+        self.next = next
+        chain_block(self.block, None)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("translate_block")
+
+    def restructure(self, callback):
+        callback(self.block)
 
 class Style(Node):
 

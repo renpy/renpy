@@ -1926,17 +1926,6 @@ def translate_strings(init_loc, language, l):
 
     return ast.Init(init_loc, block, 0)
 
-def translate_python(loc, language, l):
-    l.require(':')
-    l.expect_block('python block')
-
-    python_code = l.python_block()
-
-    l.advance()
-
-    return ast.TranslatePython(loc, language, python_code)
-
-
 @statement("translate")
 def translate_statement(l, loc):
 
@@ -1949,8 +1938,27 @@ def translate_statement(l, loc):
 
     if identifier == "strings":
         return translate_strings(loc, language, l)
+
     elif identifier == "python":
-        return translate_python(loc, language, l)
+        try:
+            old_init = l.init
+            l.init = True
+
+            block = [ python_statement(l, loc) ]
+            return [ ast.TranslateBlock(loc, language, block) ]
+        except:
+            l.init = old_init
+
+    elif identifier == "style":
+        try:
+            old_init = l.init
+            l.init = True
+
+            block = [ style_statement(l, loc) ]
+            return [ ast.TranslateBlock(loc, language, block) ]
+        except:
+            l.init = old_init
+
 
     l.require(':')
     l.expect_eol()
@@ -1965,7 +1973,7 @@ def translate_statement(l, loc):
 
 
 @statement("style")
-def style_statment(l, loc, rest_expression=False):
+def style_statement(l, loc):
 
     # Parse priority and name.
     name = l.require(l.word)

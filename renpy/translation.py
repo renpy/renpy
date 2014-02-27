@@ -57,6 +57,10 @@ class ScriptTranslator(object):
         # A map from language to the StringTranslator for that language.
         self.strings = collections.defaultdict(StringTranslator)
 
+        # A map from language to a list of TranslateBlock objects for
+        # that language.
+        self.block = collections.defaultdict(list)
+
         # A map from language to a list of TranslatePython objects for
         # that language.
         self.python = collections.defaultdict(list)
@@ -85,6 +89,9 @@ class ScriptTranslator(object):
 
             if isinstance(n, renpy.ast.TranslatePython):
                 self.python[n.language].append(n)
+
+            if isinstance(n, renpy.ast.TranslateBlock):
+                self.block[n.language].append(n)
 
             elif isinstance(n, renpy.ast.Menu):
 
@@ -454,6 +461,12 @@ def change_language(language):
 
     renpy.style.restore(style_backup)
     renpy.style.rebuild()
+
+    def run_blocks():
+        for i in tl.block[language]:
+            renpy.game.context().run(i.block[0])
+
+    renpy.game.invoke_in_new_context(run_blocks)
 
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
