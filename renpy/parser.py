@@ -1857,6 +1857,7 @@ def screen_statement(l, loc):
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
     screen = renpy.screenlang.parse_screen(l)
+
     l.advance()
 
     if not screen:
@@ -1946,7 +1947,7 @@ def translate_statement(l, loc):
 
             block = [ python_statement(l, loc) ]
             return [ ast.TranslateBlock(loc, language, block) ]
-        except:
+        finally:
             l.init = old_init
 
     elif identifier == "style":
@@ -1956,7 +1957,7 @@ def translate_statement(l, loc):
 
             block = [ style_statement(l, loc) ]
             return [ ast.TranslateBlock(loc, language, block) ]
-        except:
+        finally:
             l.init = old_init
 
 
