@@ -219,10 +219,11 @@ Styles. ::
 
 
 .. _style-preferences:
+
 Style Preferences
 -----------------
 
-It's often desireable to allow the user to customize aspects of the user
+It's often desirable to allow the user to customize aspects of the user
 interface that are best expressed as styles. For example, a creator may want
 to give players of his game the ability to adjust the look, color, and size
 of the text. Style preferences allow for this customization.
