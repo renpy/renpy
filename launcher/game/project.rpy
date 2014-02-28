@@ -598,6 +598,9 @@ label choose_projects_directory:
 
         if os.path.isdir(path):
             persistent.projects_directory = path
-            project.manager.scan()
+        else:
+            path = os.path.abspath(config.renpy_base)
+
+        project.manager.scan()
 
     return

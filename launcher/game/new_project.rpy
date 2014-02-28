@@ -67,6 +67,9 @@ label new_project:
     if persistent.projects_directory is None:
         call choose_projects_directory
 
+    if persistent.projects_directory is None:
+        $ interface.error(_("The projects directory could not be set. Giving up."))
+
     python hide:
 
         project_name = interface.input(
