@@ -543,7 +543,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     `pixel_width`
         If not None, the input is limited to being this many pixels wide,
-        in the font used by the
+        in the font used by the input to display text.
     """
 
     renpy.exports.mode('input')
