@@ -28,13 +28,14 @@ init -1 python in util:
         the filesystem encoding.
         """
 
-        d = renpy.fsdecode(d)
-
-        if not os.path.isdir(d):
-            return [ ]
-
         try:
+            d = renpy.fsdecode(d)
+
+            if not os.path.isdir(d):
+                return [ ]
+
             return [ i for i in os.listdir(d) if isinstance(i, unicode) ]
+
         except:
             return [ ]
 
