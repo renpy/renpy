@@ -639,7 +639,7 @@ class RevertableSet(sets.Set):
 class RevertableObject(object):
 
     def __new__(cls, *args, **kwargs):
-        self = super(RevertableObject, cls).__new__(cls, *args, **kwargs)
+        self = super(RevertableObject, cls).__new__(cls)
 
         log = renpy.game.log
         if log is not None:
