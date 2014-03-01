@@ -34,7 +34,7 @@ Here's an example python screen:
             ui.text(who, id="who")
             ui.text(what, id="what")
 
-            ui.close("return")
+            ui.close()
 
         renpy.define_screen("say", say_screen)
 
