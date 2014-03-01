@@ -98,7 +98,7 @@ STYLE_PREFIXES = [
     'idle_',
     'activate_',
     'selected_',
-    'selected_insensitive_'
+    'selected_insensitive_',
     'selected_hover_',
     'selected_idle_',
     'selected_activate_',
@@ -726,6 +726,7 @@ add(ui_properties)
 add(position_properties)
 add(window_properties)
 add(button_properties)
+print sorted(parser.keyword)
 
 FunctionStatementParser("imagebutton", "ui.imagebutton", 0)
 Keyword("auto")
