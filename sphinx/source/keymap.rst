@@ -48,7 +48,7 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside the python code implementing Ren'Py, and
-as of version 6.16 is as follows::
+as of version 6.17 is as follows::
 
     config.keymap = dict(
 
@@ -60,6 +60,7 @@ as of version 6.16 is as follows::
         game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
+        dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
         developer = [ 'D' ],
@@ -124,4 +125,8 @@ as of version 6.16 is as follows::
         console = [ 'shift_O' ],
         console_older = [ 'K_UP' ],
         console_newer = [ 'K_DOWN' ],
+
+        # Ignored (kept for backwards compatibility).
+        toggle_music = [ 'm' ],
+
         )

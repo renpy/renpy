@@ -96,6 +96,10 @@ init -1600 python:
         console = [ 'shift_O' ],
         console_older = [ 'K_UP' ],
         console_newer = [ 'K_DOWN' ],
+
+        # Ignored (kept for backwards compatibility).
+        toggle_music = [ 'm' ],
+
         )
 
 init -1600 python:
