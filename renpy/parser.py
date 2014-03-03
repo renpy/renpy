@@ -412,11 +412,11 @@ KEYWORDS = set([
             ])
 
 OPERATORS = [
-        'or',
-        'and',
-        'not',
-        'in',
-        'is',
+        'or\b',
+        'and\b',
+        'not\b',
+        'in\b',
+        'is\b',
         '<',
         '<=',
         '>',
