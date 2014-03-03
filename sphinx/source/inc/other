@@ -1,5 +1,11 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.call_stack_depth()
+    
+    Returns the depth of the call stack of the current context - the number
+    of calls that have run without being returned from or popped from the
+    call stack.
+
 .. function:: renpy.choice_for_skipping()
     
     Tells Ren'Py that a choice is coming up soon. This currently has
@@ -39,6 +45,11 @@
     This attempts to find the coordinates of the currently-focused
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
+
+.. function:: renpy.force_full_redraw()
+    
+    Forces the screen to be redrawn in full. Call this after using pygame
+    to redraw the screen directly.
 
 .. function:: renpy.free_memory()
     
@@ -136,6 +147,10 @@
     to run during the next interaction, or None if no such
     transition exists.
 
+.. function:: renpy.iconify()
+    
+    Iconifies the game.
+
 .. function:: renpy.is_seen(ever=True)
     
     Returns true if the current line has been seen by the player.
@@ -155,6 +170,15 @@
     raised if the module name cannot be found, or is ambiguous.
     
     Module loading may only occur from inside an init block.
+
+.. function:: renpy.load_string(s, filename='<string>')
+    
+    Loads `s` as Ren'Py script that can be called.
+    
+    Returns the name of the first statement in s.
+    
+    `filename` is the name of the filename that statements in the string will
+    appear to be from.
 
 .. function:: renpy.notify(message)
     
@@ -189,6 +213,22 @@
     `checkpoint`
         If true, a checkpoint is placed so rollback can occur.
 
+.. function:: renpy.pop_call()
+    
+    Pops the current call from the call stack, without returning to
+    the location.
+    
+    This can be used if a label that is called decides not to return
+    to its caller.
+
+.. function:: renpy.pop_return()
+    
+    Pops the current call from the call stack, without returning to
+    the location.
+    
+    This can be used if a label that is called decides not to return
+    to its caller.
+
 .. function:: renpy.quit(relaunch=False, status=0)
     
     This causes Ren'Py to exit entirely.
@@ -199,6 +239,11 @@
     `status`
         The status code Ren'Py will return to the operating system.
         Generally, 0 is success, and positive integers are failure.
+
+.. function:: renpy.quit_event()
+    
+    Triggers a quit event, as if the player clicked the quit button in the
+    window chrome.
 
 .. function:: renpy.restart_interaction()
     
@@ -213,6 +258,18 @@
 .. function:: renpy.screenshot(filename)
     
     Saves a screenshot in `filename`.
+
+.. function:: renpy.scry()
+    
+    Returns the scry object for the current statement.
+    
+    The scry object tells Ren'Py about things that must be true in the
+    future of the current statement. Right now, the scry object has one
+    field:
+    
+    ``nvl_clear``
+        Is true if an ``nvl clear`` statement will execute before the
+        next interaction.
 
 .. function:: renpy.set_mouse_pos(x, y, duration=0)
     
