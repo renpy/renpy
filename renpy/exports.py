@@ -1449,18 +1449,24 @@ def restart_interaction():
 
 def context():
     """
-    Returns an object that is unique to the current context, that
-    participates in rollback and the like.
+    :doc: context
+
+    Returns an object that is unique to the current context. The object
+    is copied when entering a new context, but changes to the copy do
+    not change the original.
+
+    The object is saved and participates in rollback.
     """
 
     return renpy.game.context().info
 
 def context_nesting_level():
     """
+    :doc: context
+
     Returns the nesting level of the current context. This is 0 for the
-    outermost context (the context that is saved, and in which most of
-    the game runs), and greater than zero when in a menu or other nested
-    context.
+    outermost context (the context that is saved, loaded, and rolled-back),
+    and is non-zero in other contexts, such as menu and replay contexts.
     """
 
     return len(renpy.game.contexts) - 1
@@ -1530,6 +1536,8 @@ def log(msg):
 
 def force_full_redraw():
     """
+    :doc: other
+
     Forces the screen to be redrawn in full. Call this after using pygame
     to redraw the screen directly.
     """
@@ -1661,6 +1669,12 @@ def image_size(im):
     return surf.get_size()
 
 def get_at_list(name, layer='master'):
+    """
+    :undocumented:
+
+    Returns the list of transforms being applied to a layer.
+    """
+
     if isinstance(name, basestring):
         name = tuple(name.split())
 
@@ -1668,8 +1682,20 @@ def get_at_list(name, layer='master'):
 
     return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
 
-def layer_at_list(at_list, layer='master'):
+def show_layer_at(at_list, layer='master'):
+    """
+    :doc: se_images
+
+    The python equivalent of the ``show layer`` `layer` ``at`` `at_list`
+    statement.
+    """
+
+    if not isinstance(at_list, list):
+        at_list = [ at_list ]
+
     renpy.game.context().scene_lists.set_layer_at_list(layer, at_list)
+
+layer_at_list = show_layer_at
 
 def free_memory():
     """
@@ -1682,15 +1708,32 @@ def free_memory():
     renpy.display.interface.kill_textures_and_surfaces()
 
 def easy_displayable(d, none=False):
+    """
+    :undocumented:
+    """
+
     if none:
         return renpy.easy.displayable(d)
     else:
         return renpy.easy.displayable_or_none(d)
 
 def quit_event():
+    """
+    :doc: other
+
+    Triggers a quit event, as if the player clicked the quit button in the
+    window chrome.
+    """
+
     renpy.game.interface.quit_event()
 
 def iconify():
+    """
+    :doc: other
+
+    Iconifies the game.
+    """
+
     renpy.game.interface.iconify()
 
 # New context stuff.
@@ -1743,6 +1786,20 @@ def end_interaction(value):
     raise renpy.display.core.EndInteraction(value)
 
 def scry():
+    """
+    :doc: other
+
+    Returns the scry object for the current statement.
+
+    The scry object tells Ren'Py about things that must be true in the
+    future of the current statement. Right now, the scry object has one
+    field:
+
+    ``nvl_clear``
+        Is true if an ``nvl clear`` statement will execute before the
+        next interaction.
+    """
+
     name = renpy.game.context().current
     node = renpy.game.script.lookup(name)
     return node.scry()
@@ -1800,6 +1857,8 @@ def load_module(name, **kwargs):
 
 def load_string(s, filename="<string>"):
     """
+    :doc: other
+
     Loads `s` as Ren'Py script that can be called.
 
     Returns the name of the first statement in s.
@@ -1838,6 +1897,16 @@ def load_string(s, filename="<string>"):
         renpy.game.exception_info = old_exception_info
 
 def pop_call():
+    """
+    :doc: other
+
+    Pops the current call from the call stack, without returning to
+    the location.
+
+    This can be used if a label that is called decides not to return
+    to its caller.
+    """
+
     renpy.game.context().pop_dynamic()
     renpy.game.context().lookup_return(pop=True)
 
@@ -1845,12 +1914,14 @@ pop_return = pop_call
 
 def call_stack_depth():
     """
-    Returns the depth of the call stack.
+    :doc: other
+
+    Returns the depth of the call stack of the current context - the number
+    of calls that have run without being returned from or popped from the
+    call stack.
     """
 
     return len(renpy.game.context().return_stack)
-
-
 
 def game_menu(screen=None):
     """
