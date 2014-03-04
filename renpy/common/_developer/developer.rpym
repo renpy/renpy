@@ -247,6 +247,36 @@ label _theme_test:
 init -1050 python:
     config.missing_background = "black"
 
+style _missing_frame is _frame:
+    xalign 0.5
+    yalign 0.0
+    background "#0004"
+    xpadding 5
+    ypadding 5
+
+style _missing_text is _text:
+    color "#fff"
+    xalign 0.5
+
+screen _missing_images:
+    zorder -1050
+    $ missing = renpy.context().__missing
+
+    if missing:
+
+        frame:
+            style "_missing_frame"
+
+            has vbox
+
+            text _("{b}Missing Images{/b}"):
+                style "_missing_text"
+
+            for what in sorted(missing.values()):
+
+                text "[what!q]":
+                    style "_missing_text"
+
 init 1050 python:
 
     if config.developer:
@@ -275,7 +305,7 @@ init 1050 python:
                 renpy.show(name, what=config.missing_background)
             __missing_scene = False
 
-            what = " ".join(what).replace("{", "{{").replace("[", "[[")
+            what = " ".join(what)
             __missing()[name[0]] = what
             return True
 
@@ -285,7 +315,6 @@ init 1050 python:
 
             global __missing_scene
             __missing_scene = False
-
             __missing().pop(name[0], None)
             return True
 
@@ -299,25 +328,11 @@ init 1050 python:
 
             return True
 
-        def __missing_overlay():
-            missing = __missing()
-
-            if not missing:
-                return
-
-            ui.vbox(xalign=0.5, yalign=0.0)
-            ui.text(_("Undefined Images"), xalign=0.5)
-
-            for what in sorted(missing.values()):
-                ui.text(what, xalign=0.5)
-
-            ui.close()
-
-
         config.missing_scene = __missing_scene_callback
         config.missing_show = __missing_show_callback
         config.missing_hide = __missing_hide_callback
-        config.overlay_functions.append(__missing_overlay)
+
+        config.start_callbacks.append(Show("_missing_images"))
 
 
 init -1050 python:
