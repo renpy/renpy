@@ -1273,6 +1273,16 @@ def utter_restart():
 
     raise renpy.game.UtterRestartException()
 
+def reload_script():
+    """
+    :doc: other
+
+    Causes Ren'Py to save the game, reload the script, and then load the
+    save.
+    """
+
+    renpy.game.call_in_new_context("_save_reload_game")
+
 def quit(relaunch=False, status=0): #@ReservedAssignment
     """
     :doc: other

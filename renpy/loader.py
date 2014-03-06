@@ -25,10 +25,14 @@ from pickle import loads
 from cStringIO import StringIO
 import sys
 import types
+import time
+import threading
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
 u"".encode("utf-8")
+
+################################################################## Asset Loading
 
 try:
     import android.apk
@@ -486,6 +490,9 @@ def transfn(name):
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)
 
+        if autoreload:
+            add_auto(fn)
+
         if os.path.exists(fn):
             return fn
 
@@ -507,6 +514,7 @@ def get_mtime(name):
 
     return 0
 
+################################################################# Module Loading
 
 class RenpyImporter(object):
     """
@@ -572,3 +580,117 @@ def init_importer():
 
 def quit_importer():
     sys.meta_path.pop()
+
+#################################################################### Auto-Reload
+
+# True if autoreload is needed.
+autoreload = True
+
+# This is set to True if autoreload hads detected an autoreload is needed.
+needs_autoreload = False
+
+# A map from filename to mtime, or None if the file doesn't exist.
+auto_mtimes = { }
+
+# The thread used for autoreload.
+auto_thread = None
+
+# True if auto_thread should run. False if it should quit.
+auto_quit_flag = True
+
+# The lock used by auto_thread.
+auto_lock = threading.Condition()
+
+# Used to indicate that this file is blacklisted.
+auto_blacklisted = object()
+
+def auto_mtime(fn):
+    """
+    Gets the mtime of fn, or None if the file does not exist.
+    """
+
+    try:
+        return os.path.getmtime(fn)
+    except:
+        return None
+
+def add_auto(fn):
+    """
+    Adds fn as a file we watch for changes. If it's mtime changes or the file
+    starts/stops existing, we trigger a reload.
+    """
+
+    if fn in auto_mtimes:
+        return
+
+    for e in renpy.config.autoreload_blacklist:
+        if fn.endswith(e):
+            with auto_lock:
+                auto_mtimes[fn] = auto_blacklisted
+            return
+
+    mtime = auto_mtime(fn)
+
+    with auto_lock:
+        auto_mtimes[fn] = mtime
+
+def auto_thread():
+    """
+    This thread sets need_autoreload when necessary.
+    """
+
+    global needs_autoreload
+
+    while True:
+
+        with auto_lock:
+
+            auto_lock.wait(1.5)
+
+            if auto_quit_flag:
+                return
+
+            if not autoreload:
+                continue
+
+            items = auto_mtimes.items()
+
+        for fn, mtime in items:
+
+            if mtime is auto_blacklisted:
+                continue
+
+            if auto_mtime(fn) != mtime:
+                needs_autoreload = True
+
+def auto_init():
+    """
+    Starts the autoreload thread.
+    """
+
+    global auto_thread
+    global auto_quit_flag
+    global needs_autoreload
+
+    auto_quit_flag = False
+    needs_autoreload = False
+
+    auto_thread = threading.Thread(target=auto_thread)
+    auto_thread.daemon = True
+    auto_thread.start()
+
+def auto_quit():
+    """
+    Terminates the autoreload thread.
+    """
+    global auto_quit_flag
+
+    if auto_thread is None:
+        return
+
+    auto_quit_flag = True
+
+    with auto_lock:
+        auto_lock.notify_all()
+
+    auto_thread.join()

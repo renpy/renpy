@@ -493,6 +493,9 @@ longpress_vibrate = .1
 # of the statement.
 statement_callbacks = [ ]
 
+# A list of file extensions that are blacklisted by autoreload.
+autoreload_blacklist = [ ".rpyc", ".rpymc", ".rpyb", ".pyc", ".pyo" ]
+
 del renpy
 del os
 

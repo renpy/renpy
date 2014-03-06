@@ -2289,6 +2289,11 @@ class Interface(object):
                 if android:
                     self.android_check_suspend()
 
+                # Check for autoreload.
+                if renpy.loader.needs_autoreload:
+                    renpy.loader.needs_autoreload = False
+                    renpy.exports.reload_script()
+
                 # Redraw the screen.
                 if (self.force_redraw or
                     ((first_pass or not pygame.event.peek(ALL_EVENTS)) and

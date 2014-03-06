@@ -424,6 +424,8 @@ class Script(object):
         rpyfn = dir + "/" + fn + source
         rpycfn = dir + "/" + fn + compiled
 
+        renpy.loader.add_auto(rpyfn)
+
         if os.path.exists(rpyfn) and os.path.exists(rpycfn):
             rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
             f = file(rpycfn, "rb")

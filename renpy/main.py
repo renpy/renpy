@@ -161,7 +161,6 @@ def main():
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
 
-
     # Note the game directory.
     game.basepath = renpy.config.gamedir
     renpy.config.searchpath = [ renpy.config.gamedir ]
@@ -199,6 +198,9 @@ def main():
 
     # Initialize archives.
     renpy.loader.index_archives()
+
+    # Start auto-loading.
+    renpy.loader.auto_init()
 
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -343,6 +345,7 @@ def main():
 
     finally:
 
+        renpy.loader.auto_quit()
         renpy.savelocation.quit()
         renpy.translation.write_updated_strings()
 

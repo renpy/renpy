@@ -265,12 +265,16 @@ label _hide_windows:
 
 label _save_reload_game:
     python hide:
-        renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
         renpy.music.stop()
+
+        if renpy.can_load("_reload-1"):
+            renpy.utter_restart()
+
+        renpy.take_screenshot((config.thumbnail_width, config.thumbnail_height))
 
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Saving game...",
-                size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
+                size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
 
         renpy.pause(0)
 
@@ -278,7 +282,7 @@ label _save_reload_game:
 
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Reloading script...",
-                size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
+                size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
 
         renpy.pause(0)
 
@@ -294,7 +298,7 @@ label _load_reload_game:
 
         ui.add(Solid((0, 0, 0, 255)))
         ui.text("Reloading game...",
-                size=32, xalign=0.5, yalign=0.5, color=(255, 255, 255, 255))
+                size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
 
         ui.pausebehavior(0)
         ui.interact(suppress_underlay=True, suppress_overlay=True)
