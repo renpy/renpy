@@ -35,6 +35,18 @@ less_imagedissolve = False
 # Are we on a touchscreen?
 touch = False
 
+# The pygame.display.Info object, which we want to survive a reload.
+info = None
+
+def get_info():
+    global info
+
+    if info is None:
+        import pygame
+        info = pygame.display.Info()
+
+    return info
+
 # Logs we use.
 log = renpy.log.open("log", developer=False, append=False)
 ic_log = renpy.log.open("image_cache", developer=True, append=False)

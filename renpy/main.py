@@ -131,7 +131,7 @@ def choose_variants():
 
         pygame.display.init()
 
-        info = pygame.display.Info()
+        info = renpy.display.get_info()
         diag = math.hypot(info.current_w, info.current_h) / android.get_dpi()
         print "Screen diagonal is", diag, "inches."
 

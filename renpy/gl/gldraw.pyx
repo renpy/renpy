@@ -169,7 +169,7 @@ cdef class GLDraw:
             pygame.display.init()
 
             if self.display_info is None:
-                self.display_info = pygame.display.Info()
+                self.display_info = renpy.display.get_info()
 
             self.old_fullscreen = fullscreen
 
@@ -330,13 +330,7 @@ cdef class GLDraw:
         if not self.old_fullscreen:
             renpy.display.gl_size = self.physical_size
 
-        renpy.display.log.write("Deallocating textures.")
         gltexture.dealloc_textures()
-        renpy.display.log.write("Done deallocating textures.")
-
-        renpy.display.log.write("About to quit GL.")
-        pygame.display.quit()
-        renpy.display.log.write("Finished quit GL.")
 
         self.old_fullscreen = None
 

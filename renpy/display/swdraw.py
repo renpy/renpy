@@ -701,7 +701,7 @@ class SWDraw(object):
         renpy.display.interface.post_init()
 
         if self.display_info is None:
-            self.display_info = pygame.display.Info()
+            self.display_info = renpy.display.get_info()
 
         # The scale factor we use for this display.
         self.scale_factor = 1.0
@@ -752,7 +752,9 @@ class SWDraw(object):
 
         if ((old_screen is not None) and
             (old_screen.get_size() == (scaled_width, scaled_height)) and
-            (old_screen.get_flags() & pygame.FULLSCREEN == fsflag)):
+            (old_screen.get_flags() & pygame.FULLSCREEN == fsflag) and
+            not (old_screen.get_flags() & pygame.OPENGL)
+            ):
 
             self.screen = old_screen
 

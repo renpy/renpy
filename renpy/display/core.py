@@ -1452,6 +1452,10 @@ class Interface(object):
             if renpy.display.draw.info["renderer"] == "angle":
                 renpy.display.draw.quit()
 
+                # This is necessary to fix a bug with restoring a window from
+                # minimized state on windows.
+                pygame.display.quit()
+
             renpy.display.render.free_memory()
             renpy.display.im.cache.clear()
             renpy.text.text.layout_cache_clear()
@@ -1496,7 +1500,8 @@ class Interface(object):
                 renpy.display.draw = draw
                 break
             else:
-                pygame.display.quit()
+                # pygame.display.quit()
+                pass
         else:
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False

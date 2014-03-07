@@ -292,10 +292,6 @@ You may be using a system install of python. Please run {0}.sh,
 
             except renpy.game.UtterRestartException:
 
-                if renpy.display.draw:
-                    renpy.display.draw.deinit()
-                    renpy.display.draw.quit()
-
                 # On an UtterRestart, reload Ren'Py.
                 renpy.reload_all()
 
