@@ -1082,6 +1082,35 @@ class MouseMove(object):
         renpy.display.draw.set_mouse_pos(x, y)
         return True
 
+def get_safe_mode():
+    """
+    Returns true if we should go into safe mode.
+    """
+
+    if not renpy.first_utter_start:
+        return False
+
+    if renpy.linux:
+        if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+            return True
+        else:
+            return False
+
+    if renpy.windows:
+        import ctypes
+
+        VK_SHIFT      = 0x10
+
+        ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort
+        if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000:
+            return True
+        else:
+            return False
+
+    # We don't need safe mode on mac or android, as those platforms
+    # should always have OpenGL 2 or OpenGL ES 2.
+    return False
+
 class Interface(object):
     """
     This represents the user interface that interacts with the user.
@@ -1262,12 +1291,14 @@ class Interface(object):
         renpy.display.interface = self
 
         # Are we in safe mode, from holding down shift at start?
-        self.safe_mode = False
-        if renpy.first_utter_start and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-            self.safe_mode = True
+        self.safe_mode = get_safe_mode()
 
         # Setup the video mode.
         self.set_mode()
+
+        # Double check, since at least on Linux, we can't set safe_mode until
+        # the window maps.
+        self.safe_mode = get_safe_mode()
 
         # Load the image fonts.
         renpy.text.font.load_image_fonts()
@@ -1276,11 +1307,6 @@ class Interface(object):
         if android is not None:
             android.map_key(android.KEYCODE_BACK, pygame.K_PAGEUP)
             android.map_key(android.KEYCODE_MENU, pygame.K_ESCAPE)
-
-        # Double check, since at least on Linux, we can't set safe_mode until
-        # the window maps.
-        if renpy.first_utter_start and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-            self.safe_mode = True
 
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
