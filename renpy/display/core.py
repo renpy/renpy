@@ -1090,26 +1090,31 @@ def get_safe_mode():
     if not renpy.first_utter_start:
         return False
 
-    if renpy.linux:
-        if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-            return True
-        else:
-            return False
 
-    if renpy.windows:
-        import ctypes
+    try:
+        if renpy.linux:
+            if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+                return True
+            else:
+                return False
 
-        VK_SHIFT      = 0x10
+        if renpy.windows:
+            import ctypes
 
-        ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort
-        if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000:
-            return True
-        else:
-            return False
+            VK_SHIFT      = 0x10
 
-    # We don't need safe mode on mac or android, as those platforms
-    # should always have OpenGL 2 or OpenGL ES 2.
-    return False
+            ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort
+            if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000:
+                return True
+            else:
+                return False
+
+        # We don't need safe mode on mac or android, as those platforms
+        # should always have OpenGL 2 or OpenGL ES 2.
+        return False
+
+    except:
+        return False
 
 class Interface(object):
     """
