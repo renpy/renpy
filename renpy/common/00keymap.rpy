@@ -202,7 +202,12 @@ init -1600 python:
         if not config.developer:
             return
 
-        renpy.call_in_new_context("_save_reload_game")
+        if renpy.get_autoreload():
+            renpy.set_autoreload(False)
+            renpy.restart_interaction()
+        else:
+            renpy.set_autoreload(True)
+            renpy.call_in_new_context("_save_reload_game")
 
     def _launch_editor():
         if not config.developer:
@@ -306,3 +311,29 @@ label _load_reload_game:
         renpy.load("_reload-2")
 
     return
+
+screen _autoreload:
+
+    zorder 1000
+
+    if renpy.get_autoreload():
+
+        frame:
+            style_group ""
+            xalign 0.0
+            yalign 0.5
+
+            text _("Autoreload"):
+                vertical True
+
+init 1600 python hide:
+
+    def _show_autoreload_screen():
+        if config.developer:
+            renpy.show_screen("_autoreload")
+
+    config.start_callbacks.append(_show_autoreload_screen)
+
+
+
+

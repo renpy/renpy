@@ -2442,4 +2442,24 @@ def set_mouse_pos(x, y, duration=0):
 
     renpy.display.interface.set_mouse_pos(x, y, duration)
 
+def set_autoreload(autoreload):
+    """
+    :doc: other
+
+    Sets the autoreload flag, which determines if the game will be
+    automatically reloated after file changes. Autoreload will not be
+    fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
+    """
+
+    renpy.autoreload = autoreload
+
+def get_autoreload():
+    """
+    :doc: other
+
+    Gets the autoreload flag.
+    """
+
+    return renpy.autoreload
+
 

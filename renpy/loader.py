@@ -25,7 +25,6 @@ from pickle import loads
 from cStringIO import StringIO
 import sys
 import types
-import time
 import threading
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
@@ -490,8 +489,7 @@ def transfn(name):
     for d in renpy.config.searchpath:
         fn = os.path.join(renpy.config.basedir, d, name)
 
-        if autoreload:
-            add_auto(fn)
+        add_auto(fn)
 
         if os.path.exists(fn):
             return fn
@@ -583,9 +581,6 @@ def quit_importer():
 
 #################################################################### Auto-Reload
 
-# True if autoreload is needed.
-autoreload = True
-
 # This is set to True if autoreload hads detected an autoreload is needed.
 needs_autoreload = False
 
@@ -620,6 +615,9 @@ def add_auto(fn):
     starts/stops existing, we trigger a reload.
     """
 
+    if not renpy.autoreload:
+        return
+
     if fn in auto_mtimes:
         return
 
@@ -634,7 +632,7 @@ def add_auto(fn):
     with auto_lock:
         auto_mtimes[fn] = mtime
 
-def auto_thread():
+def auto_thread_function():
     """
     This thread sets need_autoreload when necessary.
     """
@@ -649,9 +647,6 @@ def auto_thread():
 
             if auto_quit_flag:
                 return
-
-            if not autoreload:
-                continue
 
             items = auto_mtimes.items()
 
@@ -672,10 +667,14 @@ def auto_init():
     global auto_quit_flag
     global needs_autoreload
 
-    auto_quit_flag = False
     needs_autoreload = False
 
-    auto_thread = threading.Thread(target=auto_thread)
+    if not renpy.autoreload:
+        return
+
+    auto_quit_flag = False
+
+    auto_thread = threading.Thread(target=auto_thread_function)
     auto_thread.daemon = True
     auto_thread.start()
 

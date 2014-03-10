@@ -49,6 +49,10 @@ bytecode_version = 1
 # utter restarts.
 first_utter_start = True
 
+# True if autoreload mode is enabled. This has to live here, because it
+# needs to survive through an utter restart.
+autoreload = False
+
 def setup_modulefinder(modulefinder):
     import _renpy
 
