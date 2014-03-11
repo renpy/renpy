@@ -25,7 +25,7 @@ init -1500 python:
     ##########################################################################
     # Menu-related actions.
 
-    config.show_menu_enable = { "save" : "(not renpy.context()._main_menu) and (not _in_replay)" }
+    config.show_menu_enable = { "save" : "(not main_menu) and (not _in_replay)" }
 
     class ShowMenu(Action):
         """

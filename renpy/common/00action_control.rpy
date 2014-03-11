@@ -51,7 +51,7 @@ init -1500 python:
         def __call__(self):
 
             if self.value is None:
-                if renpy.context()._main_menu:
+                if main_menu:
                     ShowMenu("main_menu")()
                 else:
                     return True

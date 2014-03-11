@@ -112,7 +112,7 @@ init -1700 python:
 
     def _invoke_game_menu():
         if renpy.context()._menu:
-            if renpy.context()._main_menu:
+            if main_menu:
                 return
             else:
                 renpy.jump("_noisy_return")
@@ -209,7 +209,7 @@ label _noisy_return:
 # Return to the game.
 label _return:
 
-    if renpy.context()._main_menu:
+    if main_menu:
         $ renpy.transition(config.game_main_transition)
         jump _main_menu_screen
 

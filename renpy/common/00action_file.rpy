@@ -263,7 +263,7 @@ init -1500 python:
         def get_sensitive(self):
             if _in_replay:
                 return False
-            elif renpy.context()._main_menu:
+            elif main_menu:
                 return False
             elif (self.page or persistent._file_page) == "auto":
                 return False
@@ -314,7 +314,7 @@ init -1500 python:
 
             fn = __slotname(self.name, self.page)
 
-            if not renpy.context()._main_menu:
+            if not main_menu:
                 if self.confirm:
                     layout.yesno_screen(layout.LOADING, FileLoad(self.name, False, self.page))
                     return
