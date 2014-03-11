@@ -911,6 +911,8 @@ class SceneLists(renpy.object.Object):
         if at_list:
             for a in at_list:
 
+                rv = renpy.display.layout.AdjustTimes(rv, None, None)
+
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
                 else:
