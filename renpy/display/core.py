@@ -1204,6 +1204,9 @@ class Interface(object):
         # The time we last tried to quit.
         self.quit_time = 0
 
+        # Are we currently processing the quit event?
+        self.in_quit_event = False
+
         self.time_event = pygame.event.Event(TIMEEVENT)
         self.redraw_event = pygame.event.Event(REDRAW)
 
@@ -1845,6 +1848,9 @@ class Interface(object):
         if self.quit_time > (time.time() - .75):
             raise renpy.game.QuitException()
 
+        if self.in_quit_event:
+            raise renpy.game.QuitException()
+
         if renpy.config.quit_action is not None:
             self.quit_time = time.time()
 
@@ -1852,7 +1858,12 @@ class Interface(object):
             renpy.exports.movie_stop(only_fullscreen=True)
             renpy.store.mouse_visible = True
 
-            renpy.display.behavior.run(renpy.config.quit_action)
+            try:
+                self.in_quit_event = True
+                renpy.display.behavior.run(renpy.config.quit_action)
+            finally:
+                self.in_quit_event = False
+
         else:
             raise renpy.game.QuitException()
 
