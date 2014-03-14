@@ -92,7 +92,7 @@ class MultipleTransition(Transition):
     after the other.
 
     `args`
-        A list containing an odd number of items. The first, third, and
+        A *list* containing an odd number of items. The first, third, and
         other odd-numbered items must be scenes, and the even items
         must be transitions. A scene can be one of:
 
@@ -106,11 +106,11 @@ class MultipleTransition(Transition):
     the old scene is the screen preceding it, and the new scene is the
     scene following it. For example::
 
-        define logodissolve = MultipleTransition(
+        define logodissolve = MultipleTransition([
             False, Dissolve(0.5)
             "logo.jpg", NoTransition(1.0),
             "logo.jpg", dissolve,
-            True)
+            True])
 
     This example will dissolve to logo.jpg, wait 1 second, and then
     dissolve to the new scene.
