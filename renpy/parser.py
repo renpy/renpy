@@ -1870,6 +1870,18 @@ def screen_statement(l, loc):
 
     return rv
 
+@statement("screen2")
+def screen2_statement(l, loc):
+
+    # The guts of screen language parsing is in screenlang.py. It
+    # assumes we ate the "screen" keyword before it's called.
+    screen = renpy.sl2.parser.parse_screen(l)
+
+    l.advance()
+
+    return [ ]
+
+
 def translate_strings(init_loc, language, l):
     l.require(':')
     l.expect_eol()

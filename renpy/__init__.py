@@ -210,6 +210,12 @@ def import_all():
     import renpy.ui #@UnresolvedImport
     import renpy.screenlang #@UnresolvedImport
 
+    import renpy.sl2 # @UnresolvedImport
+    update_path(renpy.angle)
+
+    import renpy.sl2.pyutil # @UnresolvedImport
+    import renpy.sl2.parser # @UnresolvedImport
+
     import renpy.lint #@UnresolvedImport
     import renpy.warp #@UnresolvedImport
 
