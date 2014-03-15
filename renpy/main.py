@@ -154,6 +154,9 @@ def main():
     # Get ready to accept new arguments.
     renpy.arguments.pre_init()
 
+    # Init the screen language parser.
+    renpy.sl2.slparser.init()
+
     # Init the config after load.
     renpy.config.init()
 

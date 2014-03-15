@@ -211,10 +211,11 @@ def import_all():
     import renpy.screenlang #@UnresolvedImport
 
     import renpy.sl2 # @UnresolvedImport
-    update_path(renpy.angle)
+    update_path(renpy.sl2)
 
     import renpy.sl2.pyutil # @UnresolvedImport
-    import renpy.sl2.parser # @UnresolvedImport
+    import renpy.sl2.slparser # @UnresolvedImport
+    import renpy.sl2.sldisplayables # @UnresolvedImport
 
     import renpy.lint #@UnresolvedImport
     import renpy.warp #@UnresolvedImport
