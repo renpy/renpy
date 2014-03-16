@@ -45,12 +45,12 @@ Compiling the Modules
 ----------------------
 
 Building the modules requires you have the many dependencies installed on
-your system. On Ubuntu, these dependencies can be installed with the
-command::
+your system. On Ubuntu and Debian, these dependencies can be installed with
+the command::
 
     apt-get install python-dev python-pygame libavcodec-dev libavformat-dev \
-        libfreetype6-dev libglew1.6-dev libsdl1.2-dev libsdl-image1.2-dev \
-        libfribidi-dev libswscale-dev libesd0-dev libpulse-dev
+        libavresample-dev libfreetype6-dev libglew1.6-dev libsdl1.2-dev \
+        libsdl-image1.2-dev libfribidi-dev libswscale-dev libesd0-dev libpulse-dev
 
 Other platforms may have an equivalent command. Otherwise, you'll need to
 build `renpy-deps <https://github.com/renpy/renpy-deps>`_.
