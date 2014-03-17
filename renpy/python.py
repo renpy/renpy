@@ -406,19 +406,30 @@ def escape_unicode(s):
 
     return s
 
-def py_compile(source, mode, filename='<none>', lineno=1):
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
     appropriate.
 
-    @param source: The source code, as a string.
+    `source`
+        The source code, as a either a string, pyexpr, or ast module
+        node.
 
-    @param mode: 'exec' or 'eval'.
+    `mode`
+        One of "exec" or "eval".
 
-    @param filename: The filename that the source code is taken from.
+    `filename`
+        The filename the source comes from. If a pyexpr is given, the
+        filename embedded in the pyexpr is used.
 
-    @param lineno: The line number of the first line of the source code.
+    `lineno`
+        The line number of the first line of source code. If a pyexpr is
+        given, the filename embedded in the pyexpr is used.
+
+    `ast_node`
+        Rather than returning compiled bytecode, returns the AST object
+        that would be used.
     """
 
     if isinstance(source, ast.Module):
@@ -444,6 +455,9 @@ def py_compile(source, mode, filename='<none>', lineno=1):
 
         line_offset = 0
 
+        if ast_node:
+            return tree.body
+
         return compile(tree, filename, mode)
 
     except SyntaxError, e:
@@ -452,6 +466,7 @@ def py_compile(source, mode, filename='<none>', lineno=1):
             e.lineno += line_offset
 
         raise e
+
 
 def py_compile_exec_bytecode(source, **kwargs):
     code = py_compile(source, 'exec', **kwargs)

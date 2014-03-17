@@ -24,15 +24,17 @@ from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 
+import renpy
+
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
 constants = { 'foo.bar' }
 
-def is_constant(expr):
+def is_constant(node):
     """
-    Returns true if `expr` (a string) is constant for the purposes of
-    the screen language.
+    Returns true if `node` is constant for the purpose of screen
+    language. Node should be a python AST node.
 
     Screen language ignores object identity for the purposes of
     object equality.
@@ -159,17 +161,4 @@ def is_constant(expr):
 
         return False
 
-    node = ast.parse(expr, mode='eval').body
     return check_node(node)
-
-if __name__ == "__main__":
-
-    assert is_constant("1")
-    assert is_constant("1 + 5")
-    assert is_constant("not 42")
-    assert is_constant("(1, 2, 'a', [ '4', 5+2-1 ])")
-    assert is_constant("{ 'foo' : { 'bar', 'baz' } }")
-    assert is_constant("foo.bar.baz")
-
-    assert not is_constant("foo + 42")
-

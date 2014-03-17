@@ -22,6 +22,7 @@
 ##############################################################################
 # Definitions of screen language statements.
 
+import renpy
 from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser
 
@@ -166,7 +167,7 @@ ui_properties = [
     ]
 
 
-DisplayableParser("text", "Text", 0, scope=True)
+DisplayableParser("text", renpy.text.text.Text, 0, scope=True)
 Positional("text")
 Keyword("slow")
 Keyword("slow_done")

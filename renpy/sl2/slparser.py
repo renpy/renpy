@@ -21,6 +21,8 @@
 
 import renpy
 
+import renpy.sl2.slast as slast
+
 # A list of style prefixes that we know of.
 STYLE_PREFIXES = [
     '',
@@ -323,10 +325,14 @@ class ScreenParser(Parser):
             if c is None:
                 l.error('Expected a screen language statement.')
 
-            rv.extend(c)
+            rv.append(c)
             count += 1
 
         # TODO: Turn rv into something useful.
+        for i in rv:
+            ctx = slast.SLContext()
+            i.prepare()
+            i.execute(ctx)
 
         return screen
 
@@ -358,7 +364,102 @@ class DisplayableParser(Parser):
         return self.parse(l, True)
 
     def parse(self, l, layout_mode=False):
-        return [ ]
+        seen_keywords = set()
+
+        # Parses a keyword argument from the lexer.
+        def parse_keyword(l):
+            name = l.word()
+
+            if name is None:
+                l.error('expected a keyword argument, colon, or end of line.')
+
+            if name not in self.keyword:
+                l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
+
+            if name in seen_keywords:
+                l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+
+            seen_keywords.add(name)
+
+            expr = l.simple_expression()
+
+            rv.keyword.append((name, expr))
+
+        rv = slast.SLDisplayable(self.displayable, scope=self.scope, child_or_fixed=(self.nchildren == 1))
+
+        # We assume that the initial keyword has been parsed already,
+        # so we start with the positional arguments.
+
+        for _i in self.positional:
+            rv.positional.append(l.simple_expression())
+
+        # Next, we allow keyword arguments on the starting line.
+        while True:
+            if l.match(':'):
+                l.expect_eol()
+                l.expect_block(self.name)
+                block = True
+                break
+
+            if l.eol():
+                l.expect_noblock(self.name)
+                block = False
+                break
+
+            parse_keyword(l)
+
+        # The index of the child we're adding to this statement.
+        child_index = 0
+
+        # A list of lexers we need to parse the contents of.
+        lexers = [ ]
+
+        if block:
+            lexers.append(l.subblock_lexer())
+
+        if layout_mode:
+            lexers.append(l)
+
+        # If we have a block, parse it. This also takes care of parsing the
+        # block of a has clause.
+
+        for l in lexers:
+
+            while l.advance():
+
+                state = l.checkpoint()
+
+                if l.keyword(r'has'):
+                    if self.nchildren != 1:
+                        l.error("The %s statement does not take a layout." % self.name)
+
+                    if child_index != 0:
+                        l.error("The has statement may not be given after a child has been supplied.")
+
+                    c = self.parse_statement(l, layout_mode=True)
+
+                    if c is None:
+                        l.error('Has expects a child statement.')
+
+                    rv.children.append(c)
+
+                    continue
+
+                c = self.parse_statement(l)
+
+                if c is not None:
+                    rv.children.append(c)
+
+                    child_index += 1
+
+                    continue
+
+                l.revert(state)
+
+                while not l.eol():
+                    parse_keyword(l)
+
+        return rv
 
 
 screen_parser = ScreenParser()
