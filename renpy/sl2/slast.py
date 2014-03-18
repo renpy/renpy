@@ -39,9 +39,9 @@ def compile_expr(node, filename='<screen language>'):
     Wraps the node in a python AST, and compiles it.
     """
 
-    node = ast.Expression(body=node)
-    ast.fix_missing_locations(node)
-    return compile(node, filename, "eval")
+    expr = ast.Expression(body=node)
+    ast.fix_missing_locations(expr)
+    return compile(expr, filename, "eval")
 
 
 class SLContext(object):
@@ -109,11 +109,49 @@ class SLBlock(object):
 
     def __init__(self):
 
+        super(SLBlock, self).__init__()
+
         # A list of keyword argument, expr tuples.
         self.keyword = [ ]
 
         # A list of child SLNodes.
         self.children = [ ]
+
+
+    def prepare(self):
+
+        for i in self.children:
+            i.prepare()
+
+        # Compile the keywords.
+
+        keyword_values = { }
+        keyword_keys = [ ]
+        keyword_exprs = [ ]
+
+        for k, expr in self.keyword:
+
+            node = py_compile(expr, 'eval', ast_node=True)
+
+            if is_constant(node):
+                keyword_values[k] = py_eval_bytecode(compile_expr(node))
+            else:
+                keyword_keys.append(ast.Str(s=k))
+                keyword_exprs.append(node)
+
+        if keyword_values:
+            self.keyword_values = keyword_values
+        else:
+            self.keyword_values = None
+
+        if keyword_keys:
+            node = ast.Dict(keys=keyword_keys, values=keyword_exprs)
+            ast.copy_location(node, keyword_exprs[0])
+            self.keyword_exprs = compile_expr(node)
+
+
+
+
 
 class SLDisplayable(SLBlock):
     """
@@ -136,6 +174,8 @@ class SLDisplayable(SLBlock):
             displayable.
         """
 
+        super(SLDisplayable, self).__init__()
+
         self.displayable = displayable
         self.scope = scope
         self.child_or_fixed = child_or_fixed
@@ -144,6 +184,8 @@ class SLDisplayable(SLBlock):
         self.positional = [ ]
 
     def prepare(self):
+
+        super(SLDisplayable, self).prepare()
 
         # Prepare the positional arguments.
 
@@ -172,10 +214,13 @@ class SLDisplayable(SLBlock):
 
         if has_exprs:
             t = ast.Tuple(elts=exprs, ctx=ast.Load())
-            ast.copy_location(exprs[0], t)
+            ast.copy_location(t, exprs[0])
             self.positional_exprs = compile_expr(t)
         else:
             self.positional_exprs = None
+
+
+
 
     def execute(self, context):
 
