@@ -148,9 +148,24 @@ class SLBlock(object):
             node = ast.Dict(keys=keyword_keys, values=keyword_exprs)
             ast.copy_location(node, keyword_exprs[0])
             self.keyword_exprs = compile_expr(node)
+        else:
+            self.keyword_exprs = None
 
 
+    def execute(self, context):
 
+        keyword_values = self.keyword_values
+
+        if keyword_values is not None:
+            context.keywords.update(keyword_values)
+
+        keyword_exprs = self.keyword_exprs
+
+        if keyword_exprs is not None:
+            context.keywords.update(py_eval_bytecode(keyword_exprs))
+
+        for i in self.children:
+            i.execute(context)
 
 
 class SLDisplayable(SLBlock):
@@ -219,9 +234,6 @@ class SLDisplayable(SLBlock):
         else:
             self.positional_exprs = None
 
-
-
-
     def execute(self, context):
 
         # Evaluate the positional arguments.
@@ -240,7 +252,14 @@ class SLDisplayable(SLBlock):
             positional = [ ]
 
 
+        ctx = SLContext(context)
+        ctx.keywords = { }
+
+        super(SLDisplayable, self).execute(ctx)
+
+        print self.displayable, positional, ctx.keywords
 
 
 
-
+# TODO: If a displayable is entirely constant, do not re-create it. If a
+# tree is entirely constant, reuse it.
