@@ -190,16 +190,6 @@ class ScreenLangScreen(renpy.object.Object):
     This represents a screen defined in the screen language.
     """
 
-    __version__ = 1
-
-    variant = "None"
-
-    # Predict should be false for screens created before
-    # prediction existed.
-    predict = "False"
-
-    parameters = None
-
     def __init__(self):
 
         # The name of the screen.
@@ -214,9 +204,6 @@ class ScreenLangScreen(renpy.object.Object):
         # The screen's tag.
         self.tag = None
 
-        # The PyCode object containing the screen's code.
-        self.code = None
-
         # The variant of screen we're defining.
         self.variant = "None" # expr.
 
@@ -226,10 +213,11 @@ class ScreenLangScreen(renpy.object.Object):
         # The parameters this screen takes.
         self.parameters = None
 
-    def after_upgrade(self, version):
-        if version < 1:
-            self.modal = "False"
-            self.zorder = "0"
+        # True if this screen has been prepared.
+        self.prepared = False
+
+        # The screen's ast.
+        self.ast = None
 
     def define(self):
         """
@@ -258,8 +246,17 @@ class ScreenLangScreen(renpy.object.Object):
             values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
             scope.update(values)
 
-        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
+        context = slast.SLContext()
+        context.scope = scope
 
+        if not self.prepared:
+            self.prepared = True
+            self.ast.prepare()
+
+        self.ast.execute(context)
+
+        for i in context.children:
+            renpy.ui.add(i)
 
 class ScreenParser(Parser):
 
@@ -308,8 +305,7 @@ class ScreenParser(Parser):
 
         l = l.subblock_lexer()
 
-        rv = [ ]
-        count = 0
+        ast = slast.SLBlock()
 
         while l.advance():
 
@@ -325,14 +321,9 @@ class ScreenParser(Parser):
             if c is None:
                 l.error('Expected a screen language statement.')
 
-            rv.append(c)
-            count += 1
+            ast.children.append(c)
 
-        # TODO: Turn rv into something useful.
-        for i in rv:
-            ctx = slast.SLContext()
-            i.prepare()
-            i.execute(ctx)
+        screen.ast = ast
 
         return screen
 
@@ -475,5 +466,5 @@ def parse_screen(l):
     Parses the screen statement.
     """
 
-    screen_parser.parse(l)
+    return screen_parser.parse(l)
 

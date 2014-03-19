@@ -254,11 +254,12 @@ class SLDisplayable(SLBlock):
 
         ctx = SLContext(context)
         ctx.keywords = { }
+        ctx.children = [ ]
 
         super(SLDisplayable, self).execute(ctx)
 
-        print self.displayable, positional, ctx.keywords
-
+        d = self.displayable(*positional, **ctx.keywords)
+        context.children.append(d)
 
 
 # TODO: If a displayable is entirely constant, do not re-create it. If a

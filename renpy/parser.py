@@ -1870,6 +1870,7 @@ def screen_statement(l, loc):
 
     return rv
 
+
 @statement("screen2")
 def screen2_statement(l, loc):
 
@@ -1879,7 +1880,12 @@ def screen2_statement(l, loc):
 
     l.advance()
 
-    return [ ]
+    rv = ast.Screen(loc, screen)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], -500)
+
+    return rv
 
 
 def translate_strings(init_loc, language, l):
