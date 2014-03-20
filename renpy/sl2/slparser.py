@@ -158,18 +158,18 @@ class Parser(object):
 
         if word and word in self.children:
             if layout_mode:
-                c = self.children[word].parse_layout(l)
+                c = self.children[word].parse_layout(l, self)
             else:
-                c = self.children[word].parse(l)
+                c = self.children[word].parse(l, self)
 
             return c
         else:
             return None
 
-    def parse_layout(self, l):
+    def parse_layout(self, l, parent):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)
 
-    def parse(self, l):
+    def parse(self, l, parent):
         """
         This is expected to parse a function statement, and to return
         a list of python ast statements.
@@ -182,8 +182,165 @@ class Parser(object):
 
         raise Exception("Not Implemented")
 
+    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False):
+        """
+        Parses the remainder of the current line of `l`, and all of its subblock,
+        looking for keywords and children.
+
+        `layout_mode`
+            If true, parsing continues to the end of `l`, rather than stopping
+            with the end of the first logical line.
+
+        `can_has`
+            If true, we should parse layouts.
+
+        `can_tag`
+            If true, we should parse the ``tag`` keyword, as it's used by
+            screens.
+        """
+
+        seen_keywords = set()
+
+        # Parses a keyword argument from the lexer.
+        def parse_keyword(l):
+            name = l.word()
+
+            if name is None:
+                l.error('expected a keyword argument, colon, or end of line.')
+
+            if can_tag and name == "tag":
+                if target.tag is not None:
+                    l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+
+                target.tag = l.require(l.word)
+
+                return True
+
+            if name not in self.keyword:
+                l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
+
+            if name in seen_keywords:
+                l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+
+            seen_keywords.add(name)
+
+
+            expr = l.simple_expression()
+
+            target.keyword.append((name, expr))
+
+        # Next, we allow keyword arguments on the starting line.
+        while True:
+            if l.match(':'):
+                l.expect_eol()
+                l.expect_block(self.name)
+                block = True
+                break
+
+            if l.eol():
+                l.expect_noblock(self.name)
+                block = False
+                break
+
+            parse_keyword(l)
+
+        # The index of the child we're adding to this statement.
+        child_index = 0
+
+        # A list of lexers we need to parse the contents of.
+        lexers = [ ]
+
+        if block:
+            lexers.append(l.subblock_lexer())
+
+        if layout_mode:
+            lexers.append(l)
+
+        # If we have a block, parse it. This also takes care of parsing the
+        # block after a has clause.
+
+        for l in lexers:
+
+            while l.advance():
+
+                state = l.checkpoint()
+
+                if l.keyword(r'has'):
+                    if self.nchildren != 1:
+                        l.error("The %s statement does not take a layout." % self.name)
+
+                    if child_index != 0:
+                        l.error("The has statement may not be given after a child has been supplied.")
+
+                    c = self.parse_statement(l, layout_mode=True)
+
+                    if c is None:
+                        l.error('Has expects a child statement.')
+
+                    target.children.append(c)
+
+                    continue
+
+                c = self.parse_statement(l)
+
+                if c is not None:
+                    target.children.append(c)
+
+                    child_index += 1
+
+                    continue
+
+                l.revert(state)
+
+                while not l.eol():
+                    parse_keyword(l)
+
+
 def add(thing):
     parser.add(thing)
+
+
+class DisplayableParser(Parser):
+    """
+    This is responsible for parsing statements that create displayables.
+    """
+
+    def __init__(self, name, displayable, nchildren=0, scope=False):
+
+        super(DisplayableParser, self).__init__(name)
+
+        # The displayable that is called when this statement runs.
+        self.displayable = displayable
+
+        # The number of children we have.
+        self.nchildren = nchildren
+
+        # Add us to the appropriate lists.
+        global parser
+        parser = self
+
+        if nchildren != 0:
+            childbearing_statements.append(self)
+
+        self.scope = scope
+
+    def parse_layout(self, l):
+        return self.parse(l, True)
+
+    def parse(self, l, parent, layout_mode=False):
+
+        rv = slast.SLDisplayable(self.displayable, scope=self.scope, child_or_fixed=(self.nchildren == 1))
+
+        for _i in self.positional:
+            rv.positional.append(l.simple_expression())
+
+
+        can_has = (self.nchildren == 1)
+        self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
+
+        return rv
+
+
 
 class ScreenLangScreen(renpy.object.Object):
     """
@@ -216,8 +373,12 @@ class ScreenLangScreen(renpy.object.Object):
         # True if this screen has been prepared.
         self.prepared = False
 
-        # The screen's ast.
-        self.ast = None
+        # The keywords that make up the screen. (This is removed once parsing
+        # is finished.)
+        self.keywords = [ ]
+
+        # The children that make up the screen's ast.
+        self.children = [ ]
 
     def define(self):
         """
@@ -251,209 +412,47 @@ class ScreenLangScreen(renpy.object.Object):
 
         if not self.prepared:
             self.prepared = True
-            self.ast.prepare()
 
-        self.ast.execute(context)
+            for i in self.children:
+                i.prepare()
+
+        for i in self.children:
+            i.execute(context)
 
         for i in context.children:
             renpy.ui.add(i)
+
 
 class ScreenParser(Parser):
 
     def __init__(self):
         super(ScreenParser, self).__init__("screen")
 
-    def parse(self, l, name="_name"):
+    def parse(self, l, parent, name="_name"):
 
-        location = l.get_location()
         screen = ScreenLangScreen()
-
-        def parse_keyword(l):
-            if l.match('modal'):
-                screen.modal = l.require(l.simple_expression)
-                return True
-
-            if l.match('zorder'):
-                screen.zorder = l.require(l.simple_expression)
-                return True
-
-            if l.match('tag'):
-                screen.tag = l.require(l.word)
-                return True
-
-            if l.match('variant'):
-                screen.variant = l.require(l.simple_expression)
-                return True
-
-            if l.match('predict'):
-                screen.predict = l.require(l.simple_expression)
-                return True
-
-            return False
-
-        lineno = l.number
 
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l)
 
-        while parse_keyword(l):
-            continue
+        self.parse_contents(l, screen, can_tag=True)
 
-        l.require(':')
-        l.expect_eol()
-        l.expect_block('screen statement')
+        keywords = dict(screen.keywords)
 
-        l = l.subblock_lexer()
+        screen.modal = keywords.get("modal", "False")
+        screen.zorder = keywords.get("modal", "0")
+        screen.variant = keywords.get("modal", "None")
+        screen.predict = keywords.get("modal", "None")
 
-        ast = slast.SLBlock()
-
-        while l.advance():
-
-            if parse_keyword(l):
-                while parse_keyword(l):
-                    continue
-
-                l.expect_eol()
-                continue
-
-            c = self.parse_statement(l)
-
-            if c is None:
-                l.error('Expected a screen language statement.')
-
-            ast.children.append(c)
-
-        screen.ast = ast
+        del screen.keywords
 
         return screen
 
-class DisplayableParser(Parser):
-    """
-    This is responsible for parsing statements that create displayables.
-    """
-
-    def __init__(self, name, displayable, nchildren=0, scope=False):
-
-        super(DisplayableParser, self).__init__(name)
-
-        # The displayable that is called when this statement runs.
-        self.displayable = displayable
-
-        # The number of children we have.
-        self.nchildren = nchildren
-
-        # Add us to the appropriate lists.
-        global parser
-        parser = self
-
-        if nchildren != 0:
-            childbearing_statements.append(self)
-
-        self.scope = scope
-
-    def parse_layout(self, l):
-        return self.parse(l, True)
-
-    def parse(self, l, layout_mode=False):
-        seen_keywords = set()
-
-        # Parses a keyword argument from the lexer.
-        def parse_keyword(l):
-            name = l.word()
-
-            if name is None:
-                l.error('expected a keyword argument, colon, or end of line.')
-
-            if name not in self.keyword:
-                l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
-
-            if name in seen_keywords:
-                l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
-
-            seen_keywords.add(name)
-
-            expr = l.simple_expression()
-
-            rv.keyword.append((name, expr))
-
-        rv = slast.SLDisplayable(self.displayable, scope=self.scope, child_or_fixed=(self.nchildren == 1))
-
-        # We assume that the initial keyword has been parsed already,
-        # so we start with the positional arguments.
-
-        for _i in self.positional:
-            rv.positional.append(l.simple_expression())
-
-        # Next, we allow keyword arguments on the starting line.
-        while True:
-            if l.match(':'):
-                l.expect_eol()
-                l.expect_block(self.name)
-                block = True
-                break
-
-            if l.eol():
-                l.expect_noblock(self.name)
-                block = False
-                break
-
-            parse_keyword(l)
-
-        # The index of the child we're adding to this statement.
-        child_index = 0
-
-        # A list of lexers we need to parse the contents of.
-        lexers = [ ]
-
-        if block:
-            lexers.append(l.subblock_lexer())
-
-        if layout_mode:
-            lexers.append(l)
-
-        # If we have a block, parse it. This also takes care of parsing the
-        # block of a has clause.
-
-        for l in lexers:
-
-            while l.advance():
-
-                state = l.checkpoint()
-
-                if l.keyword(r'has'):
-                    if self.nchildren != 1:
-                        l.error("The %s statement does not take a layout." % self.name)
-
-                    if child_index != 0:
-                        l.error("The has statement may not be given after a child has been supplied.")
-
-                    c = self.parse_statement(l, layout_mode=True)
-
-                    if c is None:
-                        l.error('Has expects a child statement.')
-
-                    rv.children.append(c)
-
-                    continue
-
-                c = self.parse_statement(l)
-
-                if c is not None:
-                    rv.children.append(c)
-
-                    child_index += 1
-
-                    continue
-
-                l.revert(state)
-
-                while not l.eol():
-                    parse_keyword(l)
-
-        return rv
-
-
 screen_parser = ScreenParser()
+Keyword("modal")
+Keyword("zorder")
+Keyword("variant")
+Keyword("predict")
 
 def init():
     screen_parser.add(all_statements)
@@ -466,5 +465,5 @@ def parse_screen(l):
     Parses the screen statement.
     """
 
-    return screen_parser.parse(l)
+    return screen_parser.parse(l, None)
 
