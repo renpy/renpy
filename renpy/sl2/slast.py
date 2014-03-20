@@ -33,8 +33,10 @@ serial = 0
 # expression.
 use_expression = object()
 
+# The filename that's currently being compiled.
+filename = '<screen language>'
 
-def compile_expr(node, filename='<screen language>'):
+def compile_expr(node):
     """
     Wraps the node in a python AST, and compiles it.
     """
@@ -261,6 +263,42 @@ class SLDisplayable(SLBlock):
         d = self.displayable(*positional, **ctx.keywords)
         context.children.append(d)
 
-
 # TODO: If a displayable is entirely constant, do not re-create it. If a
 # tree is entirely constant, reuse it.
+
+
+class SLIf(SLNode):
+    """
+    A screen language AST node that corresponds to an If/Elif/Else statement.
+    """
+
+    def __init__(self):
+        """
+        An AST node that represents an if statement.
+        """
+
+        # A list of entries, with each consisting of an expression (or
+        # None, for the else block) and a SLBlock.
+        self.entries = [ ]
+
+    def prepare(self):
+
+        # A list of prepared entries, with each consisting of expression
+        # bytecode and a SLBlock.
+        self.prepared_entries = [ ]
+
+        for cond, block in self.entries:
+            if cond is not None:
+                cond = py_compile(cond, 'eval')
+
+            block.prepare()
+
+            self.prepared_entries.append((cond, block))
+
+    def execute(self, context):
+
+        for cond, block in self.prepared_entries:
+            if cond is None or py_eval_bytecode(cond, locals=context.scope):
+                block.execute(context)
+                return
+

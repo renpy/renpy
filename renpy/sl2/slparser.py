@@ -47,7 +47,7 @@ parser = None
 all_statements = [ ]
 
 # Statements that can contain children.
-childbearing_statements = [ ]
+childbearing_statements = set()
 
 class Positional(object):
     """
@@ -182,7 +182,7 @@ class Parser(object):
 
         raise Exception("Not Implemented")
 
-    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False):
+    def parse_contents(self, l, target, layout_mode=False, can_has=False, can_tag=False, block_only=False):
         """
         Parses the remainder of the current line of `l`, and all of its subblock,
         looking for keywords and children.
@@ -197,6 +197,9 @@ class Parser(object):
         `can_tag`
             If true, we should parse the ``tag`` keyword, as it's used by
             screens.
+
+        `block_only`
+            If true, only parse the
         """
 
         seen_keywords = set()
@@ -229,20 +232,29 @@ class Parser(object):
 
             target.keyword.append((name, expr))
 
-        # Next, we allow keyword arguments on the starting line.
-        while True:
-            if l.match(':'):
-                l.expect_eol()
-                l.expect_block(self.name)
-                block = True
-                break
+        if block_only:
+            l.expect_eol()
+            l.expect_block(self.name)
+            block = True
 
-            if l.eol():
-                l.expect_noblock(self.name)
-                block = False
-                break
+        else:
 
-            parse_keyword(l)
+            # If not block_only, we allow keyword arguments on the starting
+            # line.
+            while True:
+                if l.match(':'):
+                    l.expect_eol()
+                    l.expect_block(self.name)
+                    block = True
+                    break
+
+                if l.eol():
+                    l.expect_noblock(self.name)
+                    block = False
+                    break
+
+                parse_keyword(l)
+
 
         # The index of the child we're adding to this statement.
         child_index = 0
@@ -320,12 +332,12 @@ class DisplayableParser(Parser):
         parser = self
 
         if nchildren != 0:
-            childbearing_statements.append(self)
+            childbearing_statements.add(self)
 
         self.scope = scope
 
-    def parse_layout(self, l):
-        return self.parse(l, True)
+    def parse_layout(self, l, parent):
+        return self.parse(l, parent, True)
 
     def parse(self, l, parent, layout_mode=False):
 
@@ -340,6 +352,61 @@ class DisplayableParser(Parser):
 
         return rv
 
+class IfParser(Parser):
+
+    def __init__(self, name):
+        super(IfParser, self).__init__(name)
+
+    def parse(self, l, parent):
+
+        rv = slast.SLIf()
+
+        condition = l.require(l.python_expression)
+
+        l.require(':')
+
+        block = slast.SLBlock()
+        parent.parse_contents(l, block, block_only=True)
+
+        rv.entries.append((condition, block))
+
+        state = l.checkpoint()
+
+        while l.advance():
+
+            if l.keyword("elif"):
+
+                condition = l.require(l.python_expression)
+                l.require(':')
+
+                block = slast.SLBlock()
+                parent.parse_contents(l, block, block_only=True)
+
+                rv.entries.append((condition, block))
+
+                state = l.checkpoint()
+
+            elif l.keyword("else"):
+
+                condition = None
+                l.require(':')
+
+                block = slast.SLBlock()
+                parent.parse_contents(l, block, block_only=True)
+
+                rv.entries.append((condition, block))
+
+                state = l.checkpoint()
+
+                break
+
+            else:
+                l.revert(state)
+                break
+
+        return rv
+
+if_statement = IfParser("if")
 
 
 class ScreenLangScreen(renpy.object.Object):
@@ -457,8 +524,14 @@ Keyword("predict")
 def init():
     screen_parser.add(all_statements)
 
-    for i in childbearing_statements:
-        i.add(all_statements)
+    for i in all_statements:
+
+        if i in childbearing_statements:
+            i.add(all_statements)
+        else:
+            i.add(if_statement)
+
+
 
 def parse_screen(l):
     """
