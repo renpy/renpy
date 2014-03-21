@@ -22,9 +22,11 @@
 ##############################################################################
 # Definitions of screen language statements.
 
-import renpy
+import renpy.display
+import renpy.text.text
+
 from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
-from renpy.sl2.slparser import DisplayableParser
+from renpy.sl2.slparser import DisplayableParser, many
 
 position_property_names = [
         "anchor",
@@ -167,7 +169,13 @@ ui_properties = [
     ]
 
 
-DisplayableParser("text", renpy.text.text.Text, 0, scope=True)
+DisplayableParser("null", renpy.display.layout.Null, "default", 0)
+Keyword("width")
+Keyword("height")
+add(ui_properties)
+add(position_properties)
+
+DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True)
 Positional("text")
 Keyword("slow")
 Keyword("slow_done")
@@ -176,4 +184,242 @@ Keyword("scope")
 add(ui_properties)
 add(position_properties)
 add(text_properties)
+
+DisplayableParser("hbox", renpy.display.layout.MultiBox, "hbox", many)
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+DisplayableParser("vbox", renpy.display.layout.MultiBox, "vbox", many)
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+DisplayableParser("fixed", renpy.display.layout.Fixed, "fixed", many)
+add(ui_properties)
+add(position_properties)
+add(box_properties)
+
+DisplayableParser("grid", renpy.display.layout.Grid, "grid", many)
+Positional("cols")
+Positional("rows")
+Keyword("transpose")
+Style("spacing")
+add(ui_properties)
+add(position_properties)
+
+DisplayableParser("side", renpy.display.layout.Side, "side", many)
+Positional("positions")
+Style("spacing")
+add(ui_properties)
+add(position_properties)
+
+# Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
+
+for name in [ "window", "frame" ]:
+    DisplayableParser(name, renpy.display.layout.Window, name, 1)
+    add(ui_properties)
+    add(position_properties)
+    add(window_properties)
+
+DisplayableParser("key", renpy.ui._key, None, 0)
+Positional("key")
+Keyword("action")
+
+DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0)
+Positional("delay")
+Keyword("action")
+Keyword("repeat")
+
+# Omit behaviors.
+# Omit menu as being too high-level.
+
+DisplayableParser("input", renpy.display.behavior.Input, "input", 0)
+Keyword("default")
+Keyword("length")
+Keyword("allow")
+Keyword("exclude")
+Keyword("prefix")
+Keyword("suffix")
+Keyword("changed")
+Keyword("pixel_width")
+add(ui_properties)
+add(position_properties)
+add(text_properties)
+
+DisplayableParser("image", renpy.display.im.image, "default", 0)
+Positional("im")
+
+# Omit imagemap_compat for being too high level (and obsolete).
+
+DisplayableParser("button", renpy.display.behavior.Button, "button", 1)
+Keyword("action")
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+Keyword("alternate")
+add(ui_properties)
+add(position_properties)
+add(window_properties)
+add(button_properties)
+
+DisplayableParser("imagebutton", renpy.ui._imagebutton, "image_button", 0)
+Keyword("auto")
+Keyword("idle")
+Keyword("hover")
+Keyword("insensitive")
+Keyword("selected_idle")
+Keyword("selected_hover")
+Keyword("selected_insensitive")
+Keyword("action")
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+Keyword("alternate")
+Keyword("image_style")
+add(ui_properties)
+add(position_properties)
+add(window_properties)
+add(button_properties)
+
+# TODO
+# DisplayableParser("textbutton", "ui.textbutton", 0, scope=True)
+# Positional("label")
+# Keyword("action")
+# Keyword("clicked")
+# Keyword("hovered")
+# Keyword("unhovered")
+# Keyword("alternate")
+# Keyword("text_style")
+# Keyword("substitute")
+# Keyword("scope")
+# add(ui_properties)
+# add(position_properties)
+# add(window_properties)
+# add(button_properties)
+# add(text_position_properties)
+# add(text_text_properties)
+#
+# DisplayableParser("label", "ui.label", 0, scope=True)
+# Positional("label")
+# Keyword("text_style")
+# add(ui_properties)
+# add(position_properties)
+# add(window_properties)
+# add(text_position_properties)
+# add(text_text_properties)
+
+for name in [ "bar", "vbar" ]:
+    DisplayableParser(name, renpy.display.behavior.Bar, name, 0)
+    Keyword("adjustment")
+    Keyword("range")
+    Keyword("value")
+    Keyword("changed")
+    Keyword("hovered")
+    Keyword("unhovered")
+    add(ui_properties)
+    add(position_properties)
+    add(bar_properties)
+
+# Omit autobar. (behavior)
+
+DisplayableParser("viewport", renpy.display.layout.Viewport, "viewport", 1)
+Keyword("child_size")
+Keyword("mousewheel")
+Keyword("draggable")
+Keyword("edgescroll")
+Keyword("xadjustment")
+Keyword("yadjustment")
+Keyword("xinitial")
+Keyword("yinitial")
+Keyword("scrollbars")
+PrefixStyle("side_", "spacing")
+add(ui_properties)
+add(position_properties)
+add(side_position_properties)
+
+# Omit conditional. (behavior)
+
+# TODO:
+# DisplayableParser("imagemap", "ui.imagemap", many)
+# Keyword("ground")
+# Keyword("hover")
+# Keyword("insensitive")
+# Keyword("idle")
+# Keyword("selected_hover")
+# Keyword("selected_idle")
+# Keyword("selected_insensitive")
+# Keyword("auto")
+# Keyword("alpha")
+# Keyword("cache")
+# add(ui_properties)
+# add(position_properties)
+#
+# DisplayableParser("hotspot", "ui.hotspot_with_child", 1)
+# Positional("spot")
+# Keyword("action")
+# Keyword("clicked")
+# Keyword("hovered")
+# Keyword("unhovered")
+# add(ui_properties)
+# add(position_properties)
+# add(window_properties)
+# add(button_properties)
+#
+# DisplayableParser("hotbar", "ui.hotbar", 0)
+# Positional("spot")
+# Keyword("adjustment")
+# Keyword("range")
+# Keyword("value")
+# add(ui_properties)
+# add(position_properties)
+# add(bar_properties)
+
+
+DisplayableParser("transform", renpy.display.motion.Transform, "transform", 1)
+Keyword("at")
+Keyword("id")
+for i in renpy.atl.PROPERTIES:
+    Style(i)
+
+# TODO: Add.
+# DisplayableParser("add", "ui.add", 0)
+# Positional("im")
+# Keyword("at")
+# Keyword("id")
+# for i in renpy.atl.PROPERTIES:
+#     Style(i)
+
+# TODO: On.
+# DisplayableParser("on", "ui.on", 0)
+# Positional("event")
+# Keyword("action")
+
+DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1)
+Keyword("drag_name")
+Keyword("draggable")
+Keyword("droppable")
+Keyword("drag_raise")
+Keyword("dragged")
+Keyword("dropped")
+Keyword("drag_handle")
+Keyword("drag_joined")
+Keyword("clicked")
+Keyword("hovered")
+Keyword("unhovered")
+Style("child")
+add(ui_properties)
+add(position_properties)
+
+DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many)
+add(ui_properties)
+add(position_properties)
+
+DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0)
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+
+
 

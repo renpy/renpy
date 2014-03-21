@@ -311,13 +311,40 @@ class Parser(object):
 def add(thing):
     parser.add(thing)
 
+# A singleton value.
+many = object()
 
 class DisplayableParser(Parser):
     """
     This is responsible for parsing statements that create displayables.
     """
 
-    def __init__(self, name, displayable, nchildren=0, scope=False):
+    def __init__(self, name, displayable, style, nchildren=0, scope=False):
+        """
+        `name`
+            The name of the statement that creates the displayable.
+
+        `displayable`
+            A function that creates the displayable.
+
+        `style`
+            The name of the style that is applied to this displayable.
+
+        `nchildren`
+            The number of children of this displayable. One of:
+
+            0
+                The displayable takes no children.
+            1
+                The displayable takes 1 child. If more than one child is given,
+                the children are placed in a Fixed.
+            many
+                The displayable takes more than one child.
+
+        `scope`
+            If true, the scope is passed into the displayable.
+        """
+
 
         super(DisplayableParser, self).__init__(name)
 
