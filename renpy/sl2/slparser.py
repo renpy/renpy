@@ -319,7 +319,7 @@ class DisplayableParser(Parser):
     This is responsible for parsing statements that create displayables.
     """
 
-    def __init__(self, name, displayable, style, nchildren=0, scope=False):
+    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None):
         """
         `name`
             The name of the statement that creates the displayable.
@@ -329,6 +329,9 @@ class DisplayableParser(Parser):
 
         `style`
             The name of the style that is applied to this displayable.
+
+        `text_style`
+            The name of the text style that is applied to this displayable.
 
         `nchildren`
             The number of children of this displayable. One of:
@@ -345,6 +348,7 @@ class DisplayableParser(Parser):
             If true, the scope is passed into the displayable.
         """
 
+        # TODO: Implement text_style.
 
         super(DisplayableParser, self).__init__(name)
 

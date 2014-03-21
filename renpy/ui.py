@@ -859,8 +859,7 @@ def _imagebutton(idle_image = None,
 
 imagebutton = Wrapper(_imagebutton, style="image_button")
 
-
-def textbutton(label, clicked=None, style=None, text_style=None, substitute=True, scope=None, **kwargs):
+def _textbutton(label, clicked=None, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
     button_kwargs = { }
     text_kwargs = { }
@@ -884,10 +883,14 @@ def textbutton(label, clicked=None, style=None, text_style=None, substitute=True
     if text_style is None:
         text_style = renpy.style.get_text_style(style, style_group_style('button_text', NoStyleGroupGiven)) # @UndefinedVariable
 
-    button(style=style, clicked=clicked, **button_kwargs)
-    text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
+    rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
+    rv.add(renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs))
+    return rv
 
-def label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
+def textbutton(label, **kwargs):
+    return add(_textbutton(label, **kwargs))
+
+def _label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
     label_kwargs = { }
     text_kwargs = { }
@@ -904,8 +907,12 @@ def label(label, style=None, text_style=None, substitute=True, scope=None, **kwa
     if text_style is None:
         text_style = renpy.style.get_text_style(style, style_group_style('label_text', NoStyleGroupGiven)) # @UndefinedVariable
 
-    window(style=style, **label_kwargs)
-    text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
+    rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
+    rv.add(renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs))
+    return rv
+
+def label(label, **kwargs):
+    return add(_label(label, **kwargs))
 
 adjustment = renpy.display.behavior.Adjustment
 
