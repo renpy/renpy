@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import renpy.style
+import renpy.sl2
 import renpy.game as game
 import os
 import sys
@@ -212,8 +214,8 @@ def main():
     renpy.store.store = sys.modules['store']
 
     # Set up styles.
-    renpy.style.reset()
-    game.style = renpy.style.StyleManager()
+    renpy.style.reset() # @UndefinedVariable
+    game.style = renpy.style.StyleManager() # @UndefinedVariable
     renpy.store.style = game.style
 
     # Run init code in its own context. (Don't log.)
@@ -226,7 +228,7 @@ def main():
 
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
-    renpy.style.build_styles()
+    renpy.style.build_styles() # @UndefinedVariable
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
@@ -284,7 +286,7 @@ def main():
         renpy.translation.init_translation()
 
         # Rebuild the various style caches.
-        renpy.style.build_styles()
+        renpy.style.build_styles() # @UndefinedVariable
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)

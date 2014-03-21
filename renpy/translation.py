@@ -443,7 +443,7 @@ def init_translation():
     """
 
     global style_backup
-    style_backup = renpy.style.backup()
+    style_backup = renpy.style.backup() # @UndefinedVariable
 
     load_all_rpts()
 
@@ -459,8 +459,8 @@ def change_language(language):
 
     tl = renpy.game.script.translator
 
-    renpy.style.restore(style_backup)
-    renpy.style.rebuild()
+    renpy.style.restore(style_backup) # @UndefinedVariable
+    renpy.style.rebuild() # @UndefinedVariable
 
     def run_blocks():
         for i in tl.block[language]:
@@ -479,7 +479,7 @@ def change_language(language):
     renpy.exports.free_memory()
 
     # Rebuild the styles.
-    renpy.style.rebuild()
+    renpy.style.rebuild() # @UndefinedVariable
 
     # Restart the interaction.
     renpy.exports.restart_interaction()

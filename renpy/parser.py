@@ -29,6 +29,7 @@ import os
 
 import renpy.display
 import renpy.ast as ast
+import renpy.sl2
 
 # A list of parse error messages.
 parse_errors = [ ]
@@ -2025,7 +2026,7 @@ def style_statement(l, loc):
         if l.keyword("del"):
             propname = l.require(l.name)
 
-            if propname not in renpy.style.prefixed_all_properties:
+            if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             rv.delattr.append(propname)
@@ -2042,7 +2043,7 @@ def style_statement(l, loc):
         propname = l.name()
 
         if propname is not None:
-            if propname not in renpy.style.prefixed_all_properties:
+            if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
             if propname in rv.properties:

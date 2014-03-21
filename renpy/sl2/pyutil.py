@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 
-import renpy
+import renpy # @UnusedImport
 
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
