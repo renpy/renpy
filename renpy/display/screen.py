@@ -233,6 +233,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def update(self):
 
+        if self.screen is None:
+            self.child = renpy.display.layout.Null()
+            return { }
+
         # If we're restarting, do not update - the update can use variables
         # that are no longer in scope.
         if self.restarting:
