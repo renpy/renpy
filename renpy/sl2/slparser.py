@@ -319,7 +319,7 @@ class DisplayableParser(Parser):
     This is responsible for parsing statements that create displayables.
     """
 
-    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None):
+    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None, pass_context=False):
         """
         `name`
             The name of the statement that creates the displayable.
@@ -329,9 +329,6 @@ class DisplayableParser(Parser):
 
         `style`
             The name of the style that is applied to this displayable.
-
-        `text_style`
-            The name of the text style that is applied to this displayable.
 
         `nchildren`
             The number of children of this displayable. One of:
@@ -345,10 +342,17 @@ class DisplayableParser(Parser):
                 The displayable takes more than one child.
 
         `scope`
-            If true, the scope is passed into the displayable.
-        """
+            If true, the scope is passed into the displayable as a keyword
+            argument named "scope".
 
-        # TODO: Implement text_style.
+        `text_style`
+            The name of the text style that is applied to this displayable. This
+            also enables the whole text style handling mechanism.
+
+        `pass_context`
+            If true, the context is passed as the first positional argument of the
+            displayable.
+        """
 
         super(DisplayableParser, self).__init__(name)
 
@@ -365,18 +369,21 @@ class DisplayableParser(Parser):
         if nchildren != 0:
             childbearing_statements.add(self)
 
+        self.style = style
         self.scope = scope
+        self.text_style = text_style
+        self.pass_context = pass_context
 
     def parse_layout(self, l, parent):
         return self.parse(l, parent, True)
 
     def parse(self, l, parent, layout_mode=False):
 
-        rv = slast.SLDisplayable(self.displayable, scope=self.scope, child_or_fixed=(self.nchildren == 1))
+        rv = slast.SLDisplayable(self.displayable, scope=self.scope, child_or_fixed=(self.nchildren == 1),
+            style=self.style, text_style=self.text_style, pass_context=self.pass_context)
 
         for _i in self.positional:
             rv.positional.append(l.simple_expression())
-
 
         can_has = (self.nchildren == 1)
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)

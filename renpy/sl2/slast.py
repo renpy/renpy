@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import ast
+import renpy.style
+
 from renpy.python import py_compile, py_eval_bytecode
 from renpy.sl2.pyutil import is_constant
 
@@ -71,7 +73,7 @@ class SLContext(object):
             self.scope = { }
             self.children = [ ]
             self.keywords = { }
-            self.style_prefix = None
+            self.style_prefix = ""
 
 
 class SLNode(object):
@@ -101,7 +103,8 @@ class SLNode(object):
 
         raise Exception("execute not implemented by " + type(self).__name__)
 
-
+# A sentinel used to indicate a keyword argument was not given.
+NotGiven = object()
 
 class SLBlock(object):
     """
@@ -166,9 +169,15 @@ class SLBlock(object):
         if keyword_exprs is not None:
             context.keywords.update(py_eval_bytecode(keyword_exprs))
 
+        style_group = context.keywords.pop("style_group", NotGiven)
+        if style_group is not NotGiven:
+            if style_group is not None:
+                context.style_prefix = style_group + "_"
+            else:
+                context.style_prefix = ""
+
         for i in self.children:
             i.execute(context)
-
 
 class SLDisplayable(SLBlock):
     """
@@ -176,7 +185,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, displayable, scope=False, child_or_fixed=False):
+    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -189,16 +198,27 @@ class SLDisplayable(SLBlock):
             If true and the number of children of this displayable is not one,
             the children are added to a Fixed, and the Fixed is added to the
             displayable.
+
+        `style`
+            The base name of the main style.
+
+        `pass_context`
+            If given, the context is passed in as the first positonal argument
+            of the displayable.
         """
 
         super(SLDisplayable, self).__init__()
 
         self.displayable = displayable
+
         self.scope = scope
         self.child_or_fixed = child_or_fixed
+        self.style = style
+        self.pass_context = pass_context
 
         # Positional argument expressions.
         self.positional = [ ]
+
 
     def prepare(self):
 
@@ -253,14 +273,43 @@ class SLDisplayable(SLBlock):
         else:
             positional = [ ]
 
-
+        # Create the context.
         ctx = SLContext(context)
-        ctx.keywords = { }
+        keywords = ctx.keywords = { }
         ctx.children = [ ]
 
+        # Evaluate keywords and children.
         super(SLDisplayable, self).execute(ctx)
 
-        d = self.displayable(*positional, **ctx.keywords)
+        # Pass the context
+        if self.pass_context:
+            positional.insert(0, ctx)
+
+        # If we don't know the style, figure it out.
+        if ("style" not in keywords) and self.style:
+            keywords["style"] = renpy.style.get_style(ctx.style_prefix + self.style) # @UndefinedVariable
+
+        if self.scope:
+            keywords["scope"] = ctx.scope
+
+        # Get the widget id and transform, if any.
+        widget_id = keywords.pop("id", None)
+        transform = keywords.pop("at", None)
+
+        # Create and add the displayables.
+        screen = renpy.ui.screen
+
+        if widget_id in screen.widget_properties:
+            keywords.update(screen.widget_properties[widget_id])
+
+        d = self.displayable(*positional, **keywords)
+
+        if widget_id is not None:
+            screen.widgets[widget_id] = d
+
+        if transform is not None:
+            d = transform(d)
+
         context.children.append(d)
 
 # TODO: If a displayable is entirely constant, do not re-create it. If a
