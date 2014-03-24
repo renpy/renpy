@@ -22,7 +22,7 @@
 import ast
 import renpy.style
 
-from renpy.python import py_compile, py_eval_bytecode
+from renpy.python import py_compile, py_eval_bytecode, py_exec_bytecode
 from renpy.sl2.pyutil import is_constant
 
 # This file contains the abstract syntax tree for a screen language
@@ -222,7 +222,7 @@ class SLDisplayable(SLBlock):
 
     def prepare(self):
 
-        super(SLDisplayable, self).prepare()
+        SLBlock.prepare(self)
 
         # Prepare the positional arguments.
 
@@ -279,7 +279,7 @@ class SLDisplayable(SLBlock):
         ctx.children = [ ]
 
         # Evaluate keywords and children.
-        super(SLDisplayable, self).execute(ctx)
+        SLBlock.execute(self, ctx)
 
         # Pass the context
         if self.pass_context:
@@ -326,6 +326,8 @@ class SLIf(SLNode):
         An AST node that represents an if statement.
         """
 
+        super(SLIf, self).__init__()
+
         # A list of entries, with each consisting of an expression (or
         # None, for the else block) and a SLBlock.
         self.entries = [ ]
@@ -350,4 +352,58 @@ class SLIf(SLNode):
             if cond is None or py_eval_bytecode(cond, locals=context.scope):
                 block.execute(context)
                 return
+
+
+class SLFor(SLBlock):
+    """
+    The AST node that corresponds to a for statement. This only supports
+    simple for loops that assign a single variable.
+    """
+
+    def __init__(self, variable, expression):
+        super(SLFor, self).__init__()
+
+        self.variable = variable
+        self.expression = expression
+
+    def prepare(self):
+        node = py_compile(self.expression, 'eval', ast_node=True)
+
+        if is_constant(node):
+            self.expression_value = py_eval_bytecode(compile_expr(node))
+            self.expression_expr = None
+        else:
+            self.expression_value = None
+            self.expression_expr = node
+
+        SLBlock.prepare(self)
+
+    def execute(self, context):
+
+        variable = self.variable
+        expr = self.expression_expr
+
+        if expr is not None:
+            value = py_eval_bytecode(expr, locals=context.scope)
+        else:
+            value = self.expression_value
+
+        for i in value:
+            context.scope[variable] = i
+
+            SLBlock.execute(context)
+
+class SLPython(SLNode):
+
+    def __init__(self, code):
+        super(SLNode, self).__init__()
+
+        # A pycode object.
+        self.code = code
+
+    def prepare(self):
+        return
+
+    def execute(self, context):
+        py_exec_bytecode(self.code.bytecode, locals=context.scope)
 

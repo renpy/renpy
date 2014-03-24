@@ -21,6 +21,7 @@
 
 import renpy.display
 
+import ast
 import renpy.sl2.slast as slast
 
 # A list of style prefixes that we know of.
@@ -445,6 +446,64 @@ class IfParser(Parser):
         return rv
 
 if_statement = IfParser("if")
+
+class ForParser(Parser):
+
+    def __init__(self, name):
+        super(ForParser, self).__init__(name)
+        childbearing_statements.add(self)
+
+    def name_or_tuple_pattern(self, l):
+        """
+        Matches either a name or a tuple pattern. If a single name is being
+        matched, returns it. Otherwise, returns None.
+        """
+
+        while True:
+
+            if l.match(r"\("):
+                name = self.name_or_tuple_pattern(l)
+            else:
+                name = l.name()
+
+                if not name:
+                    l.error("Expected tuple pattern.")
+
+            if l.match(r","):
+                name = None
+
+        return name
+
+    def parse(self, l, name):
+
+        l.skip_whitespace()
+
+        tuple_start = l.pos
+        name = self.name_or_tuple_pattern(l)
+
+        if not name:
+            name = "_i_" + str(self.serial)
+            pattern = l.text[tuple_start:l.pos]
+            stmt = pattern + " = " + name
+            code = renpy.ast.PyCode(stmt, (l.filename, l.lineno))
+        else:
+            code = None
+
+        l.require('in')
+
+        expression = l.require(l.python_expression)
+
+        l.require(':')
+        l.expect_eol()
+
+        rv = slast.SLFor(name, expression)
+
+        if code:
+            rv.children.append(slast.SLPython(code))
+
+        return rv
+
+ForParser("for")
 
 
 class ScreenLangScreen(renpy.object.Object):
