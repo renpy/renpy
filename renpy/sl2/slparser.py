@@ -21,7 +21,6 @@
 
 import renpy.display
 
-import ast
 import renpy.sl2.slast as slast
 
 # A list of style prefixes that we know of.
@@ -477,7 +476,7 @@ class ForParser(Parser):
 
         return name
 
-    def parse(self, l, name):
+    def parse(self, l, parent):
 
         l.skip_whitespace()
 
@@ -509,6 +508,22 @@ class ForParser(Parser):
         return rv
 
 ForParser("for")
+
+
+class OneLinePythonParser(Parser):
+
+    def parse(self, l, parent):
+
+        loc = l.get_location()
+        source = l.require(l.rest)
+
+        l.expect_eol()
+        l.expect_noblock("one-line python")
+
+        code = renpy.ast.PyCode(source, loc)
+        return slast.SLPython(code)
+
+OneLinePythonParser("$")
 
 
 class ScreenLangScreen(renpy.object.Object):
