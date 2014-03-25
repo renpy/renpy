@@ -526,6 +526,25 @@ class OneLinePythonParser(Parser):
 OneLinePythonParser("$")
 
 
+class MultiLinePythonParser(Parser):
+
+    def parse(self, l, parent):
+
+        loc = l.get_location()
+
+        l.require(':')
+
+        l.expect_eol()
+        l.expect_block("python block")
+
+        source = l.python_block()
+
+        code = renpy.ast.PyCode(source, loc)
+        return slast.SLPython(code)
+
+MultiLinePythonParser("python")
+
+
 class ScreenLangScreen(renpy.object.Object):
     """
     This represents a screen defined in the screen language.
