@@ -304,6 +304,9 @@ class SLDisplayable(SLBlock):
 
         d = self.displayable(*positional, **keywords)
 
+        for i in ctx.children:
+            d.add(i)
+
         if widget_id is not None:
             screen.widgets[widget_id] = d
 
@@ -374,7 +377,7 @@ class SLFor(SLBlock):
             self.expression_expr = None
         else:
             self.expression_value = None
-            self.expression_expr = node
+            self.expression_expr = compile_expr(node)
 
         SLBlock.prepare(self)
 
@@ -391,7 +394,8 @@ class SLFor(SLBlock):
         for i in value:
             context.scope[variable] = i
 
-            SLBlock.execute(context)
+            SLBlock.execute(self, context)
+
 
 class SLPython(SLNode):
 

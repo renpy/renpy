@@ -818,7 +818,7 @@ class Window(Container):
     screen language statement.
     """
 
-    def __init__(self, child, style='window', **properties):
+    def __init__(self, child=None, style='window', **properties):
         super(Window, self).__init__(style=style, **properties)
         if child is not None:
             self.add(child)

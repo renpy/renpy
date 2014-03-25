@@ -463,6 +463,7 @@ class ForParser(Parser):
 
             if l.match(r"\("):
                 name = self.name_or_tuple_pattern(l)
+                l.require(r'\)')
             else:
                 name = l.name()
 
@@ -471,6 +472,8 @@ class ForParser(Parser):
 
             if l.match(r","):
                 name = None
+            else:
+                break
 
         return name
 
@@ -500,6 +503,8 @@ class ForParser(Parser):
 
         if code:
             rv.children.append(slast.SLPython(code))
+
+        self.parse_contents(l, rv, block_only=True)
 
         return rv
 
