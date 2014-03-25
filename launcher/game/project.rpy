@@ -604,3 +604,28 @@ label choose_projects_directory:
         project.manager.scan()
 
     return
+
+init python:
+
+    def set_projects_directory_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("projects", help="The path to the projects directory.")
+
+        args = ap.parse_args()
+
+        persistent.projects_directory = args.projects
+        renpy.save_persistent()
+
+        return False
+
+    renpy.arguments.register_command("set_projects_directory", set_projects_directory_command)
+
+    def get_projects_directory_command():
+        ap = renpy.arguments.ArgumentParser()
+        args = ap.parse_args()
+
+        print persistent.projects_directory
+
+        return False
+
+    renpy.arguments.register_command("get_projects_directory", get_projects_directory_command)
