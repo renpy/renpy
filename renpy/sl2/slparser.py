@@ -295,11 +295,14 @@ class Parser(object):
 
                 c = self.parse_statement(l)
 
+                # Ignore passes.
+                if isinstance(c, slast.SLPass):
+                    continue
+
+                # If not none, add the child to our AST.
                 if c is not None:
                     target.children.append(c)
-
                     child_index += 1
-
                     continue
 
                 l.revert(state)
@@ -543,6 +546,18 @@ class MultiLinePythonParser(Parser):
         return slast.SLPython(code)
 
 MultiLinePythonParser("python")
+
+
+class PassParser(Parser):
+
+    def parse(self, l, parent):
+
+        l.expect_eol()
+
+        return slast.SLPass()
+
+PassParser("pass")
+
 
 
 class ScreenLangScreen(renpy.object.Object):

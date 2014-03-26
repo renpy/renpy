@@ -411,3 +411,11 @@ class SLPython(SLNode):
     def execute(self, context):
         py_exec_bytecode(self.code.bytecode, locals=context.scope)
 
+
+class SLPass(SLNode):
+
+    def prepare(self):
+        return
+
+    def execute(self, context):
+        return
