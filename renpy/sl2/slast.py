@@ -419,3 +419,22 @@ class SLPass(SLNode):
 
     def execute(self, context):
         return
+
+
+class SLDefault(SLNode):
+
+    def __init__(self, variable, expression):
+        self.variable = variable
+        self.expression = expression
+
+    def prepare(self):
+        self.expr = py_compile(self.expression, 'eval')
+
+    def execute(self, context):
+        scope = context.scope
+        variable = self.variable
+
+        if variable in scope:
+            return
+
+        scope[variable] = py_eval_bytecode(self.expr, locals=scope)

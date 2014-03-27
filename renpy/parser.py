@@ -971,7 +971,7 @@ class Lexer(object):
 
         pos = self.pos
         self.pos = len(self.text)
-        return self.text[pos:]
+        return renpy.ast.PyExpr(self.text[pos:].strip(), self.filename, self.number)
 
     def python_block(self):
         """

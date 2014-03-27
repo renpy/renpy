@@ -559,6 +559,21 @@ class PassParser(Parser):
 PassParser("pass")
 
 
+class DefaultParser(Parser):
+
+    def parse(self, l, parent):
+
+        name = l.require(l.word)
+        l.require(r'=')
+        rest = l.rest()
+
+        l.expect_eol()
+        l.expect_noblock('default statement')
+
+        return slast.SLDefault(name, rest)
+
+DefaultParser("default")
+
 
 class ScreenLangScreen(renpy.object.Object):
     """
