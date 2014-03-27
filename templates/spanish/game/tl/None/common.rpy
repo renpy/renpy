@@ -382,7 +382,7 @@ translate None strings:
 
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
-    new "%(version)s consola, original de Shiz, C, y delta.\n"
+    new "Consola %(version)s, original de Shiz, C, y delta.\n"
 
     # renpy/common/00console.rpy:180
     old "Press <esc> to exit console. Type help for help.\n"
