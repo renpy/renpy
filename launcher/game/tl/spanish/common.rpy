@@ -420,3 +420,76 @@ translate spanish strings:
     # renpy/common/_developer/developer.rpym:152
     old "Return to the developer menu"
     new "Volver al menú de desarrollo"
+
+    # renpy/common/00console.rpy:179
+    old "%(version)s console, originally by Shiz, C, and delta.\n"
+    new "Consola %(version)s, original de Shiz, C, y delta.\n"
+
+    # renpy/common/00console.rpy:180
+    old "Press <esc> to exit console. Type help for help.\n"
+    new "Presiona <esc> para salir de la consola. Escribe 'help' para la ayuda.\n"
+
+    # renpy/common/00console.rpy:184
+    old "Ren'Py script enabled."
+    new "Script Ren'Py habilitado."
+
+    # renpy/common/00console.rpy:186
+    old "Ren'Py script disabled."
+    new "Script Ren'Py deshabilitado."
+
+    # renpy/common/00console.rpy:392
+    old "help: show this help"
+    new "help: muestra esta ayuda"
+
+    # renpy/common/00console.rpy:397
+    old "commands:\n"
+    new "comandos:\n"
+
+    # renpy/common/00console.rpy:407
+    old " <renpy script statement>: run the statement\n"
+    new " <sentencia renpy script>: ejecuta la sentencia\n"
+
+    # renpy/common/00console.rpy:409
+    old " <python expression or statement>: run the expression or statement"
+    new " <expresión o sentencia python>: ejecuta la expresión o sentencia"
+
+    # renpy/common/00console.rpy:417
+    old "clear: clear the console history"
+    new "clear: limpia el historial de la consola"
+
+    # renpy/common/00console.rpy:421
+    old "exit: exit the console"
+    new "exit: sale de la consola"
+
+    # renpy/common/00console.rpy:429
+    old "load <slot>: loads the game from slot"
+    new "load <slot>: carga el juego desde el 'slot'"
+
+    # renpy/common/00console.rpy:442
+    old "save <slot>: saves the game in slot"
+    new "save <slot>: graba el juego en el 'slot'"
+
+    # renpy/common/00console.rpy:453
+    old "reload: reloads the game, refreshing the scripts"
+    new "reload: recarga el juego, actualizando los scripts"
+
+    # renpy/common/00console.rpy:461
+    old "watch <expression>: watch a python expression"
+    new "watch <expresión>: observa una expresión python"
+
+    # renpy/common/00console.rpy:470
+    old "unwatch <expression>: stop watching an expression"
+    new "unwatch <expresión>: deja de observar una expresión"
+
+    # renpy/common/00console.rpy:478
+    old "unwatchall: stop watching all expressions"
+    new "unwatchall: deja de observar todas las expresiones"
+
+    # renpy/common/00console.rpy:484
+    old "jump <label>: jumps to label"
+    new "jump <label>: salta a la etiqueta"
+
+    # renpy/common/_developer/developer.rpym:272
+    old "{b}Missing Images{/b}"
+    new "{b}Imágenes ausentes{/b}"
+
