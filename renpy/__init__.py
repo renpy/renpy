@@ -259,6 +259,9 @@ def reload_all():
 
     import renpy #@UnresolvedImport
 
+    # Reset the styles.
+    renpy.style.reset()
+
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
 
