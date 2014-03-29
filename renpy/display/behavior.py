@@ -1185,31 +1185,7 @@ class Bar(renpy.display.core.Displayable):
 
     def predict_one(self):
         pd = renpy.display.predict.displayable
-        style = self.style
-
-        pd(style.insensitive_fore_bar)
-        pd(style.idle_fore_bar)
-        pd(style.hover_fore_bar)
-        pd(style.selected_idle_fore_bar)
-        pd(style.selected_hover_fore_bar)
-
-        pd(style.insensitive_aft_bar)
-        pd(style.idle_aft_bar)
-        pd(style.hover_aft_bar)
-        pd(style.selected_idle_aft_bar)
-        pd(style.selected_hover_aft_bar)
-
-        pd(style.insensitive_thumb)
-        pd(style.idle_thumb)
-        pd(style.hover_thumb)
-        pd(style.selected_idle_thumb)
-        pd(style.selected_hover_thumb)
-
-        pd(style.insensitive_thumb_shadow)
-        pd(style.idle_thumb_shadow)
-        pd(style.hover_thumb_shadow)
-        pd(style.selected_idle_thumb_shadow)
-        pd(style.selected_hover_thumb_shadow)
+        self.style._predict_window(pd)
 
     def render(self, width, height, st, at):
 

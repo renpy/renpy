@@ -840,28 +840,8 @@ class Window(Container):
             group.members.append(self)
 
     def predict_one(self):
-        # Child will be predicted by visiting.
-
         pd = renpy.display.predict.displayable
-        style = self.style
-
-        pd(style.insensitive_background)
-        pd(style.idle_background)
-        pd(style.hover_background)
-        pd(style.selected_idle_background)
-        pd(style.selected_hover_background)
-
-        pd(style.insensitive_child)
-        pd(style.idle_child)
-        pd(style.hover_child)
-        pd(style.selected_idle_child)
-        pd(style.selected_hover_child)
-
-        pd(style.insensitive_foreground)
-        pd(style.idle_foreground)
-        pd(style.hover_foreground)
-        pd(style.selected_idle_foreground)
-        pd(style.selected_hover_foreground)
+        self.style._predict_window(pd)
 
     def render(self, width, height, st, at):
 

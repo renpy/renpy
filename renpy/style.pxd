@@ -104,5 +104,5 @@ cdef class StyleCore:
     #################################################################### Methods
 
     cpdef _get(StyleCore self, int)
-
+    cpdef _get_unoffset(StyleCore self, int)
 

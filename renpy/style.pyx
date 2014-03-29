@@ -469,6 +469,41 @@ cdef class StyleCore:
 
         raise Exception("{} is too complex. Check for loops in style inheritance.".format(self))
 
+
+    cpdef _get_unoffset(self, int index):
+        return self._get(index - self.offset)
+
+
+    def _predict_window(self, pd):
+        """
+        Predicts properties for a window.
+
+        `pd`
+            The function that should be called to predict a displayable.
+        """
+
+        for i in [ INSENSITIVE_PREFIX, IDLE_PREFIX, HOVER_PREFIX, SELECTED_INSENSITIVE_PREFIX, SELECTED_IDLE_PREFIX, SELECTED_HOVER_PREFIX ]:
+            for j in [ BACKGROUND_INDEX, CHILD_INDEX, FOREGROUND_INDEX ]:
+                v = self._get_unoffset(i + j)
+                if v is not None:
+                    pd(v)
+
+
+    def _predict_bar(self, pd):
+        """
+        Predicts properties for a window.
+
+        `pd`
+            The function that should be called to predict a displayable.
+        """
+
+        for i in [ INSENSITIVE_PREFIX, IDLE_PREFIX, HOVER_PREFIX, SELECTED_INSENSITIVE_PREFIX, SELECTED_IDLE_PREFIX, SELECTED_HOVER_PREFIX ]:
+            for j in [ FORE_BAR_INDEX, AFT_BAR_INDEX, THUMB_INDEX, THUMB_SHADOW_INDEX ]:
+                v = self._get_unoffset(i + j)
+                if v is not None:
+                    pd(v)
+
+
     def inspect(StyleCore self):
         """
         Inspects this style.
