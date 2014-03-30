@@ -57,8 +57,14 @@ _widget_properties = { }
 
 class _Config(object):
 
+    def __getstate__(self):
+        return None
+
     def __setstate__(self, data):
         return
+
+    def __deepcopy__(self, memo):
+        return self
 
     def register(self, name, default, cat=None, help=None): #@ReservedAssignment
         setattr(self, name, default)
@@ -186,27 +192,33 @@ absolute = renpy.display.core.absolute
 
 NoRollback = renpy.python.NoRollback
 
-def _layout(cls, doc, nargs=0, **extra_kwargs):
+class _layout_class(__builtins__["object"]):
+    """
+    This is used to generate declarative versions of MultiBox and Grid.
+    """
 
-    def f(*args, **properties):
+    def __init__(self, cls, doc, nargs=0, **extra_kwargs):
+        self.cls = cls
+        self.nargs = nargs
+        self.extra_kwargs = extra_kwargs
 
-        conargs = args[:nargs]
-        kids = args[nargs:]
+        self.__doc__ = doc
 
-        kwargs = extra_kwargs.copy()
+    def __call__(self, *args, **properties):
+
+        conargs = args[:self.nargs]
+        kids = args[self.nargs:]
+
+        kwargs = self.extra_kwargs.copy()
         kwargs.update(properties)
 
-        rv = cls(*conargs, **kwargs)
+        rv = self.cls(*conargs, **kwargs)
         for i in kids:
             rv.add(renpy.easy.displayable(i))
 
         return rv
 
-    f.__doc__ = doc
-
-    return f
-
-Fixed = _layout(renpy.display.layout.MultiBox, """
+Fixed = _layout_class(renpy.display.layout.MultiBox, """
 :doc: disp_box
 :args: (*args, **properties)
 
@@ -215,21 +227,21 @@ from back to front, with their position properties
 controlling their position.
 """, layout="fixed")
 
-HBox = _layout(renpy.display.layout.MultiBox, """
+HBox = _layout_class(renpy.display.layout.MultiBox, """
 :doc: disp_box
 :args: (*args, **properties)
 
 A box that lays out its members from left to right.
 """, layout='horizontal')
 
-VBox = _layout(renpy.display.layout.MultiBox, """
+VBox = _layout_class(renpy.display.layout.MultiBox, """
 :doc: disp_box
 :args: (*args, **properties)
 
 A layout that lays out its members from top to bottom.
 """, layout='vertical')
 
-Grid = _layout(renpy.display.layout.Grid, """
+Grid = _layout_class(renpy.display.layout.Grid, """
 :doc: disp_grid
 
 Lays out displayables in a a grid. The first two positional arguments
@@ -238,7 +250,6 @@ by `columns * rows` positional arguments giving the displayables that
 fill the grid.
 """, nargs=2, layout='vertical')
 
-del _layout
 
 def AlphaBlend(control, old, new, alpha=False):
     """
@@ -378,3 +389,4 @@ def public_api():
     sys
 
 del public_api
+
