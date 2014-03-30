@@ -353,9 +353,6 @@ def render_screen(root, width, height):
     `width` and `height`.
     """
 
-
-
-    global old_screen_render
     global screen_render
     global invalidated
     global frame_time

@@ -1488,3 +1488,4 @@ cdef void draw_rectangle(
     environ.set_vertex(vcoords)
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
+

@@ -689,6 +689,13 @@ def reset():
 
     styles.clear()
 
+#     import gc
+#
+#     for i in gc.get_objects():
+#         if isinstance(i, Style):
+#             unbuild_style(i)
+
+
 def build_styles():
     """
     Builds or rebuilds all styles.

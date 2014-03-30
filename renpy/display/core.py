@@ -2271,6 +2271,8 @@ class Interface(object):
         for i in renpy.display.emulator.overlay:
             root_widget.add(i)
 
+        del add_layer
+
         prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         prediction_coroutine.send(None)
 

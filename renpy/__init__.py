@@ -113,6 +113,9 @@ class Backup():
         # pickled.
         self.objects = { }
 
+        # A map from module to the set of names in that module.
+        self.names = { }
+
         for m in sys.modules.values():
             if m is None:
                 continue
@@ -136,6 +139,8 @@ class Backup():
 
         if name in backup_blacklist:
             return
+
+        self.names[mod] = set(vars(mod).keys())
 
         for k, v in vars(mod).iteritems():
 
@@ -165,6 +170,17 @@ class Backup():
         Restores the modules to a state similar to the state of the modules
         when the backup was created.
         """
+
+        # Remove new variables from the module.
+        for mod, names in self.names.iteritems():
+            modvars = vars(mod)
+            for name in set(modvars.keys()) - names:
+                del modvars[name]
+
+            reset_module = getattr(mod, "reset_module", None)
+            if reset_module is not None:
+                reset_module()
+
 
         objects = cPickle.loads(self.objects_pickle)
 
@@ -338,6 +354,7 @@ def post_import():
     # Import the contents of renpy.defaultstore into renpy.store, and set
     # up an alias as we do.
     renpy.store = sys.modules['store']
+    renpy.exports.store = renpy.store
     sys.modules['renpy.store'] = sys.modules['store']
 
     import subprocess
@@ -360,6 +377,9 @@ def reload_all():
 
     import renpy #@UnresolvedImport
 
+    # Clear all pending exceptions.
+    sys.exc_clear()
+
     # Reset the styles.
     renpy.style.reset()
 
@@ -369,27 +389,40 @@ def reload_all():
     # Shut down the importer.
     renpy.loader.quit_importer()
 
-    # Get rid of the draw module.
+    # Free memory.
+    renpy.exports.free_memory()
+
+    # GC renders.
+    renpy.display.render.screen_render = None
+    renpy.display.render.mark_sweep()
+
+    # Get rid of the draw module and interface.
+    renpy.display.draw.deinit()
     renpy.display.draw = None
+    renpy.display.interface = None
+    renpy.display.render.render_cache.clear()
 
     # Delete the store modules.
     for i in sys.modules.keys():
-        if i.startswith("store"):
+        if i.startswith("store") or i == "renpy.store":
+            m = sys.modules[i]
+
+            if m is not None:
+                m.__dict__.reset()
+
             del sys.modules[i]
+
 
     # Restore the state of all modules from backup.
     backup.restore()
 
-    # GC to save memory.
-    import gc
-    gc.collect()
+
 
     post_import()
 
-    # import_all()
-
     # Re-initialize the importer.
     renpy.loader.init_importer()
+
 
 
 ################################################################################

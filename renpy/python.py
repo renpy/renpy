@@ -90,6 +90,15 @@ class StoreDict(dict):
         # end of the init phase.
         self.ever_been_changed = set()
 
+    def reset(self):
+        """
+        Called to reset this to its initial conditions.
+        """
+
+        self.old = { }
+        self.ever_been_changed = set()
+        self.clear()
+
     def begin(self):
         """
         Called to mark the start of a rollback period.
@@ -137,6 +146,8 @@ def create_store(name):
 
     if name in store_dicts:
         return
+
+    print("Creating store", name)
 
     # Create the dict.
     d = StoreDict()

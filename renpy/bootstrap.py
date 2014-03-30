@@ -268,6 +268,8 @@ You may be using a system install of python. Please run {0}.sh,
         while exit_status is None:
             exit_status = 1
 
+            memory_profile()
+
             try:
                 renpy.game.args = args
                 renpy.config.renpy_base = renpy_base
@@ -539,3 +541,73 @@ def memory_profile():
         old_memory[ty] = count
         if diff:
             print diff, ty
+
+    del objs
+
+    style_profile()
+
+
+def style_profile():
+
+    # GC to save memory.
+    import gc
+    import types
+    gc.collect()
+
+    objs = gc.get_objects()
+
+    def print_path(o):
+
+        seen = set()
+        queue = [ ]
+
+        for _i in range(30):
+
+            found = False
+
+            for i in gc.get_referrers(o):
+
+                if i is objs:
+                    continue
+
+                if id(i) in seen:
+                    continue
+
+                if isinstance(i, types.FrameType):
+                    continue
+
+                seen.add(id(i))
+                queue.append(i)
+                found = True
+                break
+
+            if not found:
+                for i in gc.get_referrers(o):
+                    if i is objs:
+                        continue
+                    print "OUTER", repr(i)
+                    if isinstance(i, types.FrameType):
+                        print i.f_lineno, i.f_code.co_filename
+
+
+                break
+
+            if not queue:
+                break
+
+            o = queue.pop()
+
+            print id(o), type(o),
+            try:
+                if isinstance(o, dict) and __name__ in o:
+                    print o["__name__"],
+
+                print repr(o)[:1000]
+            except:
+                print "Bad repr."
+
+    for o in objs:
+
+        if type(o).__name__.endswith("Texture"):
+            print
+            print_path(o)

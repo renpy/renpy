@@ -63,9 +63,6 @@ class _Config(object):
     def __setstate__(self, data):
         return
 
-    def __deepcopy__(self, memo):
-        return self
-
     def register(self, name, default, cat=None, help=None): #@ReservedAssignment
         setattr(self, name, default)
         _config.help.append((cat, name, help))

@@ -214,7 +214,6 @@ def main():
     renpy.store.store = sys.modules['store']
 
     # Set up styles.
-    renpy.style.reset() # @UndefinedVariable
     game.style = renpy.style.StyleManager() # @UndefinedVariable
     renpy.store.style = game.style
 

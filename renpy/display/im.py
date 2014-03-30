@@ -130,6 +130,8 @@ class Cache(object):
 
         self.preload_thread.join()
 
+        self.clear()
+
 
     # Clears out the cache.
     def clear(self):
@@ -1558,3 +1560,9 @@ def load_image(fn):
 
     surf = cache.get(image(fn))
     return renpy.display.draw.load_texture(surf)
+
+def reset_module():
+    print "Resetting cache."
+
+    global cache
+    cache = Cache()
