@@ -24,6 +24,14 @@
 
 import sys
 import os
+import copy
+import types
+import threading
+import cPickle
+
+################################################################################
+# Version information
+################################################################################
 
 # Version numbers.
 try:
@@ -53,44 +61,120 @@ first_utter_start = True
 # needs to survive through an utter restart.
 autoreload = False
 
-def setup_modulefinder(modulefinder):
-    import _renpy
+# A list of modules beginning with "renpy" that we don't want
+# to backup.
+backup_blacklist = {
+    "renpy",
+    "renpy.log",
+    "renpy.bootstrap",
+    "renpy.display",
+    "renpy.display.pgrender",
+    "renpy.display.scale"
+    "renpy.reload",
 
-    libexec = os.path.dirname(_renpy.__file__)
+    "renpy.text.ftfont",
+    }
 
-    for i in [ "display", "gl", "angle", "text" ]:
+type_blacklist = (
+    types.ModuleType,
+    )
 
-        displaypath = os.path.join(libexec, "renpy", i)
+name_blacklist = {
+    "renpy.loadsave.autosave_not_running",
+    "renpy.python.unicode_re",
+    "renpy.python.string_re",
+    "renpy.text.text.VERT_FORWARD",
+    "renpy.text.text.VERT_REVERSE",
+    "renpy.savelocation.scan_thread_condition",
+    "renpy.savelocation.disk_lock",
+    "renpy.character.TAG_RE",
+    "renpy.display.im.cache",
+    "renpy.display.render.blit_lock",
+    "renpy.display.render.IDENTITY",
+    "renpy.loader.auto_lock",
+    }
 
-        if os.path.exists(displaypath):
-            modulefinder.AddPackagePath('renpy.' + i, displaypath)
-
-def import_cython():
+class Backup():
     """
-    Never called, but necessary to ensure that modulefinder will properly
-    grab the various cython modules.
+    This represents a backup of all of the fields in the python modules
+    comprising Ren'Py, shortly after they were imported.
+
+    This attempts to preserve object aliasing, but not object identity. If
+    renpy.mod.a is renpy.mod.b before the restore, the same will be true
+    after the restore - even though renpy.mod.a will have changed identity.
     """
 
-    import renpy.arguments #@UnresolvedImport
+    def __init__(self):
 
-    import renpy.display.accelerator #@UnresolvedImport
-    import renpy.display.render #@UnresolvedImport
+        # A map from (module, field) to the id of the object in that field.
+        self.variables = { }
 
-    import renpy.gl.gldraw #@UnresolvedImport
-    import renpy.gl.glenviron_fixed #@UnresolvedImport
-    import renpy.gl.glenviron_limited #@UnresolvedImport
-    import renpy.gl.glenviron_shader #@UnresolvedImport
-    import renpy.gl.glrtt_copy #@UnresolvedImport
-    import renpy.gl.glrtt_fbo #@UnresolvedImport
-    import renpy.gl.gltexture #@UnresolvedImport
+        # A map from id(object) to objects. This is discarded after being
+        # pickled.
+        self.objects = { }
 
-    import renpy.angle.gldraw #@UnresolvedImport
-    import renpy.angle.glenviron_shader #@UnresolvedImport
-    import renpy.angle.glrtt_copy #@UnresolvedImport
-    import renpy.angle.glrtt_fbo #@UnresolvedImport
-    import renpy.angle.gltexture #@UnresolvedImport
+        for m in sys.modules.values():
+            if m is None:
+                continue
 
-    import renpy.styleclass # @UnresolvedImport
+            self.backup_module(m)
+
+        # A pickled version of self.objects.
+        self.objects_pickle = cPickle.dumps(self.objects)
+
+        self.objects = None
+
+    def backup_module(self, mod):
+        """
+        Makes a backup of `mod`, which must be a Python module.
+        """
+
+        name = mod.__name__
+
+        if not name.startswith("renpy"):
+            return
+
+        if name in backup_blacklist:
+            return
+
+        for k, v in vars(mod).iteritems():
+
+            if k.startswith("__") and k.endswith("__"):
+                continue
+
+            if isinstance(v, type_blacklist):
+                continue
+
+            if name + "." + k in name_blacklist:
+                continue
+
+            idv = id(v)
+
+            self.variables[mod, k] = idv
+            self.objects[idv] = v
+
+            # If we have a problem pickling things, uncomment the next block.
+
+#             try:
+#                 cPickle.dumps(v)
+#             except:
+#                 print "Cannot pickle", name + "." + k
+
+    def restore(self):
+        """
+        Restores the modules to a state similar to the state of the modules
+        when the backup was created.
+        """
+
+        objects = cPickle.loads(self.objects_pickle)
+
+        for k, v in self.variables.iteritems():
+            mod, field = k
+            setattr(mod, field, objects[v])
+
+# A backup of the Ren'Py modules after initial import.
+backup = None
+
 
 def update_path(package):
     """
@@ -108,6 +192,7 @@ def update_path(package):
     import encodings
     libexec = os.path.dirname(encodings.__path__[0])
     package.__path__.append(os.path.join(libexec, *name))
+
 
 def import_all():
 
@@ -231,6 +316,22 @@ def import_all():
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
     import renpy.main #@UnresolvedImport
 
+
+    # Back up the Ren'Py modules.
+    global backup
+    backup = Backup()
+
+    post_import()
+
+
+def post_import():
+    """
+    This is called after import or reload, to do further initialization
+    of various modules.
+    """
+
+    import renpy # @UnresolvedImport
+
     # Create the store.
     renpy.python.create_store("store")
 
@@ -250,12 +351,12 @@ def import_all():
     for k, v in globals().iteritems():
         vars(renpy.exports).setdefault(k, v)
 
-# Fool the analyzer.
-if False:
-    import renpy.defaultstore as store
 
-# This reloads all modules.
 def reload_all():
+    """
+    Resets all modules to the state they were in right after import_all
+    returned.
+    """
 
     import renpy #@UnresolvedImport
 
@@ -268,28 +369,85 @@ def reload_all():
     # Shut down the importer.
     renpy.loader.quit_importer()
 
-    blacklist = [ "renpy",
-                  "renpy.log",
-                  "renpy.bootstrap",
-                  "renpy.display",
-                  "renpy.display.pgrender",
-                  "renpy.display.scale" ]
+    # Get rid of the draw module.
+    renpy.display.draw = None
 
+    # Delete the store modules.
     for i in sys.modules.keys():
-        if i.startswith("renpy") and i not in blacklist:
-            del sys.modules[i]
-
         if i.startswith("store"):
             del sys.modules[i]
 
+    # Restore the state of all modules from backup.
+    backup.restore()
+
+    # GC to save memory.
     import gc
     gc.collect()
 
-    renpy.display.draw = None
+    post_import()
 
-    import_all()
+    # import_all()
 
+    # Re-initialize the importer.
     renpy.loader.init_importer()
+
+
+################################################################################
+# Fix things for code analysis
+################################################################################
+
+def setup_modulefinder(modulefinder):
+    """
+    Informs modulefinder about the location of modules in nonstandard places.
+    """
+
+    import _renpy
+
+    libexec = os.path.dirname(_renpy.__file__)
+
+    for i in [ "display", "gl", "angle", "text" ]:
+
+        displaypath = os.path.join(libexec, "renpy", i)
+
+        if os.path.exists(displaypath):
+            modulefinder.AddPackagePath('renpy.' + i, displaypath)
+
+
+def import_cython():
+    """
+    Never called, but necessary to ensure that modulefinder will properly
+    grab the various cython modules.
+    """
+
+    import renpy.arguments #@UnresolvedImport
+
+    import renpy.display.accelerator #@UnresolvedImport
+    import renpy.display.render #@UnresolvedImport
+
+    import renpy.gl.gldraw #@UnresolvedImport
+    import renpy.gl.glenviron_fixed #@UnresolvedImport
+    import renpy.gl.glenviron_limited #@UnresolvedImport
+    import renpy.gl.glenviron_shader #@UnresolvedImport
+    import renpy.gl.glrtt_copy #@UnresolvedImport
+    import renpy.gl.glrtt_fbo #@UnresolvedImport
+    import renpy.gl.gltexture #@UnresolvedImport
+
+    import renpy.angle.gldraw #@UnresolvedImport
+    import renpy.angle.glenviron_shader #@UnresolvedImport
+    import renpy.angle.glrtt_copy #@UnresolvedImport
+    import renpy.angle.glrtt_fbo #@UnresolvedImport
+    import renpy.angle.gltexture #@UnresolvedImport
+
+    import renpy.styleclass # @UnresolvedImport
+
+
+if False:
+    import renpy.defaultstore as store
+
+
+################################################################################
+# Platform Information
+################################################################################
 
 # Information about the platform we're running on. We break the platforms
 # up into 4 groups - windows-like, mac-like, linux-like, and android-like.
