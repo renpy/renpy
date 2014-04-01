@@ -147,8 +147,6 @@ def create_store(name):
     if name in store_dicts:
         return
 
-    print("Creating store", name)
-
     # Create the dict.
     d = StoreDict()
     store_dicts[name] = d

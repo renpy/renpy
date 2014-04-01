@@ -69,9 +69,7 @@ backup_blacklist = {
     "renpy.bootstrap",
     "renpy.display",
     "renpy.display.pgrender",
-    "renpy.display.scale"
-    "renpy.reload",
-
+    "renpy.display.scale",
     "renpy.text.ftfont",
     }
 
@@ -176,10 +174,6 @@ class Backup():
             modvars = vars(mod)
             for name in set(modvars.keys()) - names:
                 del modvars[name]
-
-            reset_module = getattr(mod, "reset_module", None)
-            if reset_module is not None:
-                reset_module()
 
 
         objects = cPickle.loads(self.objects_pickle)
@@ -400,7 +394,6 @@ def reload_all():
     renpy.display.draw.deinit()
     renpy.display.draw = None
     renpy.display.interface = None
-    renpy.display.render.render_cache.clear()
 
     # Delete the store modules.
     for i in sys.modules.keys():
@@ -412,18 +405,16 @@ def reload_all():
 
             del sys.modules[i]
 
-
     # Restore the state of all modules from backup.
     backup.restore()
-
-
 
     post_import()
 
     # Re-initialize the importer.
     renpy.loader.init_importer()
 
-
+    renpy.bootstrap.memory_profile()
+    renpy.bootstrap.find_parents(renpy.python.StoreDict)
 
 ################################################################################
 # Fix things for code analysis

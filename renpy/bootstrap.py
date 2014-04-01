@@ -268,7 +268,7 @@ You may be using a system install of python. Please run {0}.sh,
         while exit_status is None:
             exit_status = 1
 
-            memory_profile()
+            # memory_profile()
 
             try:
                 renpy.game.args = args
@@ -544,10 +544,11 @@ def memory_profile():
 
     del objs
 
-    style_profile()
 
-
-def style_profile():
+def find_parents(cls):
+    """
+    Finds the parents of every object of type `cls`.
+    """
 
     # GC to save memory.
     import gc
@@ -558,10 +559,21 @@ def style_profile():
 
     def print_path(o):
 
+        prefix = ""
+
         seen = set()
         queue = [ ]
 
         for _i in range(30):
+
+            print prefix + str(id(o)), type(o),
+
+            try:
+                if isinstance(o, dict) and "__name__" in o:
+                    print o["__name__"],
+                print repr(o)#[:1000]
+            except:
+                print "Bad repr."
 
             found = False
 
@@ -577,37 +589,19 @@ def style_profile():
                     continue
 
                 seen.add(id(i))
-                queue.append(i)
+                queue.append((i, prefix + "  "))
                 found = True
-                break
-
-            if not found:
-                for i in gc.get_referrers(o):
-                    if i is objs:
-                        continue
-                    print "OUTER", repr(i)
-                    if isinstance(i, types.FrameType):
-                        print i.f_lineno, i.f_code.co_filename
-
-
                 break
 
             if not queue:
                 break
 
-            o = queue.pop()
+            if not found:
+                print "<no parent, popping>"
 
-            print id(o), type(o),
-            try:
-                if isinstance(o, dict) and __name__ in o:
-                    print o["__name__"],
-
-                print repr(o)[:1000]
-            except:
-                print "Bad repr."
+            o, prefix = queue.pop()
 
     for o in objs:
-
-        if type(o).__name__.endswith("Texture"):
+        if isinstance(o, cls):
             print
             print_path(o)

@@ -286,14 +286,7 @@ cdef class StyleCore:
         self.help = help
 
     def __dealloc__(self):
-        cdef int i
-
-        if self.cache != NULL:
-
-            for 0 <= i < PREFIX_COUNT * STYLE_PROPERTY_COUNT:
-                Py_XDECREF(self.cache[i])
-
-            free(self.cache)
+        unbuild_style(self)
 
     def __getstate__(self):
 
@@ -638,11 +631,16 @@ cpdef build_style(StyleCore s):
 
 
 cpdef unbuild_style(StyleCore s):
+    cdef int i
 
     if not s.built:
         return
 
     if s.cache != NULL:
+
+        for 0 <= i < PREFIX_COUNT * STYLE_PROPERTY_COUNT:
+            Py_XDECREF(s.cache[i])
+
         free(s.cache)
         s.cache = NULL
 
