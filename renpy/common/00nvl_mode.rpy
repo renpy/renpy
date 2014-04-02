@@ -85,6 +85,9 @@ init -1500 python:
     # A hook that delta wanted, that is called instead of renpy.show_display_say
     config.nvl_show_display_say = renpy.show_display_say
 
+    # The layer the nvl screens are shown on.
+    config.nvl_layer = "screens"
+
     # A list of arguments that have been passed to nvl_record_show.
     nvl_list = None
 
@@ -138,10 +141,10 @@ init -1500 python:
 
         widget_properties, dialogue = __nvl_screen_dialogue()
 
-        renpy.show_screen(screen_name, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope)
+        renpy.show_screen(screen_name, _layer=config.nvl_layer, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope)
         renpy.shown_window()
 
-        return renpy.get_widget(screen_name, "what")
+        return renpy.get_widget(screen_name, "what", config.nvl_layer)
 
     def nvl_show_core(who=None, what=None):
 

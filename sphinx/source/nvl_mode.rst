@@ -189,6 +189,16 @@ about styles. ::
         # How far from the left menu choices should be indented.
         style.nvl_menu_choice_button.left_margin = 20
 
+Config Variables
+----------------
+
+The following config variables control nvl-related functionality.
+
+.. var:: config.nvl_layer = "screens"
+
+    The layer the nvl screens are shown on.
+
+
 Customizing the NVL window
 --------------------------
 

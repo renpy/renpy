@@ -496,6 +496,12 @@ statement_callbacks = [ ]
 # A list of file extensions that are blacklisted by autoreload.
 autoreload_blacklist = [ ".rpyc", ".rpymc", ".rpyb", ".pyc", ".pyo" ]
 
+# The layer dialogue is shown on.
+say_layer = "screens"
+
+# The layer the choice screen is shown on.
+choice_layer = "screens"
+
 del renpy
 del os
 

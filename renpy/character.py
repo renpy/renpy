@@ -183,7 +183,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      transform=None,
                      variant=None,
                      screen=None,
-                     layer="screens",
+                     layer=None,
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -243,6 +243,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         return rv
 
     if screen and renpy.display.screen.has_screen(screen):
+
+        if layer is None:
+            layer = renpy.config.say_layer
 
         tag = screen
         index = 0

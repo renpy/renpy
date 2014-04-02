@@ -664,6 +664,10 @@ Rarely or Internally Used
 
     The default value of the callback parameter of Character.
 
+.. var:: config.choice_layer = "screens"
+
+    The layer the choice screen (used by the menu statement) is shown on.
+
 .. var:: config.clear_layers = []
 
     A list of names of layers to clear when entering the main and game
@@ -907,6 +911,10 @@ Rarely or Internally Used
     with no arguments when the user attempts to dismiss a :ref:`say
     statement <say-statement>`. If this function returns true, the
     dismissal is allowed, otherwise it is ignored.
+
+.. var:: config.say_layer = "screens"
+
+    The layer the say screen is shown on.
 
 .. var:: config.say_menu_text_filter = None
 

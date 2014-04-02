@@ -785,7 +785,7 @@ def display_menu(items,
             else:
                 item_actions.append((label, action))
 
-            show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, **scope)
+            show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, _layer=renpy.config.choice_layer, **scope)
 
     else:
         renpy.ui.window(style=window_style, focus="menu")
