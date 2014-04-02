@@ -198,6 +198,24 @@ The following config variables control nvl-related functionality.
 
     The layer the nvl screens are shown on.
 
+.. var:: config.nvl_page_ctc = None
+
+    If not None, this is the click-to-continue indicator that is used for NVL mode
+    characters that are at the end of a page. (That is, immediately
+    followed by an nvl clear statement.) This replaces the ctc parameter
+    of :func:`Character`.
+
+.. var:: config.nvl_page_ctc_position = "nestled"
+
+    If not None, this is the click-to-continue indicator position that is used for NVL mode
+    characters that are at the end of a page. (That is, immediately
+    followed by an nvl clear statement.) This replaces the ctc_position parameter
+    of :func:`Character`.
+
+.. var:: config.nvl_paged_rollback = False
+
+    If true, NVL-mode rollback will occur a full page at a time.
+
 
 Customizing the NVL window
 --------------------------
