@@ -183,6 +183,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
                      transform=None,
                      variant=None,
                      screen=None,
+                     layer="screens",
                      **kwargs):
     """
     This is called (by default) by renpy.display_say to add the
@@ -260,11 +261,12 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
             two_window=two_window,
             who=who,
             what=what,
+            _layer=layer,
             **kwargs)
 
         renpy.exports.shown_window()
 
-        return renpy.display.screen.get_widget(screen, "what")
+        return renpy.display.screen.get_widget(screen, "what", layer)
 
 
     # Apply the transform.
@@ -1002,6 +1004,10 @@ def Character(name=NotSet, kind=None, **properties):
         If true, restructures the layout so that the name of the
         character is placed in one window, and the dialogue text in a
         second window.
+
+    `show_layer`
+        If given, this should be a string giving the name of the layer
+        to show the "say" screen on.
 
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
