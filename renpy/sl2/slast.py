@@ -94,7 +94,7 @@ class SLNode(object):
         python block) is called.
         """
 
-        raise Exception("prepare not implemented by " + type(self).__name__)
+        # By default, does nothing.
 
     def execute(self, context):
         """
@@ -102,6 +102,14 @@ class SLNode(object):
         """
 
         raise Exception("execute not implemented by " + type(self).__name__)
+
+    def keywords(self, context):
+        """
+        Execute this node, updating context.keywords as appropriate.
+        """
+
+        # By default, does nothing.
+        return
 
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = object()
@@ -159,6 +167,11 @@ class SLBlock(object):
 
     def execute(self, context):
 
+        for i in self.children:
+            i.execute(context)
+
+    def keywords(self, context):
+
         keyword_values = self.keyword_values
 
         if keyword_values is not None:
@@ -177,7 +190,9 @@ class SLBlock(object):
                 context.style_prefix = ""
 
         for i in self.children:
-            i.execute(context)
+            i.keywords(context)
+
+
 
 class SLDisplayable(SLBlock):
     """
@@ -185,7 +200,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False):
+    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=True):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -205,6 +220,9 @@ class SLDisplayable(SLBlock):
         `pass_context`
             If given, the context is passed in as the first positonal argument
             of the displayable.
+
+        `imagemap`
+            True if this is an imagemap, and should be handled as one.
         """
 
         super(SLDisplayable, self).__init__()
@@ -218,6 +236,8 @@ class SLDisplayable(SLBlock):
 
         # Positional argument expressions.
         self.positional = [ ]
+
+        self.imagemap = imagemap
 
 
     def prepare(self):
@@ -278,8 +298,7 @@ class SLDisplayable(SLBlock):
         keywords = ctx.keywords = { }
         ctx.children = [ ]
 
-        # Evaluate keywords and children.
-        SLBlock.execute(self, ctx)
+        SLBlock.keywords(self, ctx)
 
         # Pass the context
         if self.pass_context:
@@ -304,6 +323,9 @@ class SLDisplayable(SLBlock):
 
         d = self.displayable(*positional, **keywords)
 
+        # Evaluate children.
+        SLBlock.execute(self, ctx)
+
         for i in ctx.children:
             d.add(i)
 
@@ -316,7 +338,10 @@ class SLDisplayable(SLBlock):
         context.children.append(d)
 
 # TODO: If a displayable is entirely constant, do not re-create it. If a
-# tree is entirely constant, reuse it.
+# tree is entirely constant, reuse it. Be sure to handle imagemaps properly,
+# using self.imagemap.
+
+# TODO: Can we gey rid of pass_context?
 
 
 class SLIf(SLNode):
@@ -355,6 +380,14 @@ class SLIf(SLNode):
             if cond is None or py_eval_bytecode(cond, locals=context.scope):
                 block.execute(context)
                 return
+
+    def keywords(self, context):
+
+        for cond, block in self.prepared_entries:
+            if cond is None or py_eval_bytecode(cond, locals=context.scope):
+                block.keywords(context)
+                return
+
 
 
 class SLFor(SLBlock):
@@ -396,6 +429,9 @@ class SLFor(SLBlock):
 
             SLBlock.execute(self, context)
 
+    def keywords(self, context):
+        return
+
 
 class SLPython(SLNode):
 
@@ -405,17 +441,11 @@ class SLPython(SLNode):
         # A pycode object.
         self.code = code
 
-    def prepare(self):
-        return
-
     def execute(self, context):
         py_exec_bytecode(self.code.bytecode, locals=context.scope)
 
 
 class SLPass(SLNode):
-
-    def prepare(self):
-        return
 
     def execute(self, context):
         return
