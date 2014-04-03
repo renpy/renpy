@@ -21,6 +21,7 @@
 
 import ast
 import renpy.style
+import renpy.display
 
 from renpy.python import py_compile, py_eval_bytecode, py_exec_bytecode
 from renpy.sl2.pyutil import is_constant
@@ -326,8 +327,17 @@ class SLDisplayable(SLBlock):
         # Evaluate children.
         SLBlock.execute(self, ctx)
 
-        for i in ctx.children:
-            d.add(i)
+        if self.child_or_fixed and len(self.children) != 1:
+            f = renpy.display.layout.Fixed()
+
+            for i in ctx.children:
+                f.add(i)
+
+            d.add(f)
+
+        else:
+            for i in ctx.children:
+                d.add(i)
 
         if widget_id is not None:
             screen.widgets[widget_id] = d
