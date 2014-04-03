@@ -200,7 +200,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=True):
+    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -336,6 +336,9 @@ class SLDisplayable(SLBlock):
             d = transform(d)
 
         context.children.append(d)
+
+        if self.imagemap:
+            renpy.ui.imagemap_stack.pop()
 
 # TODO: If a displayable is entirely constant, do not re-create it. If a
 # tree is entirely constant, reuse it. Be sure to handle imagemaps properly,

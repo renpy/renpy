@@ -322,7 +322,8 @@ class DisplayableParser(Parser):
     This is responsible for parsing statements that create displayables.
     """
 
-    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None, pass_context=False):
+    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None,
+        pass_context=False, imagemap=False):
         """
         `name`
             The name of the statement that creates the displayable.
@@ -355,6 +356,10 @@ class DisplayableParser(Parser):
         `pass_context`
             If true, the context is passed as the first positional argument of the
             displayable.
+
+        `imagemap`
+            If true, the displayable is treated as defining an imagemap. (The imagemap
+            is added to and removed from renpy.ui.imagemap_stack as appropraite.)
         """
 
         super(DisplayableParser, self).__init__(name)
@@ -376,14 +381,20 @@ class DisplayableParser(Parser):
         self.scope = scope
         self.text_style = text_style
         self.pass_context = pass_context
+        self.imagemap = imagemap
 
     def parse_layout(self, l, parent):
         return self.parse(l, parent, True)
 
     def parse(self, l, parent, layout_mode=False):
 
-        rv = slast.SLDisplayable(self.displayable, scope=self.scope, child_or_fixed=(self.nchildren == 1),
-            style=self.style, text_style=self.text_style, pass_context=self.pass_context)
+        rv = slast.SLDisplayable(self.displayable,
+            scope=self.scope,
+            child_or_fixed=(self.nchildren == 1),
+            style=self.style,
+            text_style=self.text_style,
+            pass_context=self.pass_context,
+            imagemap=self.imagemap)
 
         for _i in self.positional:
             rv.positional.append(l.simple_expression())
