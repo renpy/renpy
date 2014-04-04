@@ -327,6 +327,10 @@ class SLDisplayable(SLBlock):
         # Evaluate children.
         SLBlock.execute(self, ctx)
 
+        # If we didn't create a displayable, exit early.
+        if d is None:
+            return
+
         if self.child_or_fixed and len(self.children) != 1:
             f = renpy.display.layout.Fixed()
 

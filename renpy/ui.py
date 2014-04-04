@@ -1263,11 +1263,7 @@ def on(event, action=[], id=None): #@ReservedAssignment
     if renpy.display.screen.current_screen().current_transform_event != event:
         return
 
-    if isinstance(action, (list, tuple)):
-        for i in action:
-            i()
-    else:
-        action()
+    renpy.display.behavior.run(action)
 
 
 ##############################################################################
