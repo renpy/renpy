@@ -378,13 +378,12 @@ Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-# TODO: Add.
-# DisplayableParser("add", "ui.add", 0)
-# Positional("im")
-# Keyword("at")
-# Keyword("id")
-# for i in renpy.atl.PROPERTIES:
-#     Style(i)
+DisplayableParser("add", renpy.ui._add, None, 0)
+Positional("im")
+Keyword("at")
+Keyword("id")
+for i in renpy.atl.PROPERTIES:
+    Style(i)
 
 # TODO: On.
 # DisplayableParser("on", "ui.on", 0)
