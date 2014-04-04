@@ -1115,7 +1115,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
 
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
 
-def _hotspot(spot, style='imagemap_button', **properties):
+def _hotspot(spot, style='hotspot', **properties):
 
     if not imagemap_stack:
         raise Exception("hotspot expects an imagemap to be defined.")

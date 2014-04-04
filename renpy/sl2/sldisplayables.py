@@ -351,7 +351,7 @@ Keyword("cache")
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("hotspot", renpy.ui._hotspot, "imagemap_button", 1)
+DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1)
 Positional("spot")
 Keyword("action")
 Keyword("clicked")
