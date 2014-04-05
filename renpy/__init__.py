@@ -114,6 +114,12 @@ class Backup():
         # A map from module to the set of names in that module.
         self.names = { }
 
+        try:
+            import android # @UnresolvedImport
+            return
+        except:
+            pass
+
         for m in sys.modules.values():
             if m is None:
                 continue
@@ -168,6 +174,9 @@ class Backup():
         Restores the modules to a state similar to the state of the modules
         when the backup was created.
         """
+
+        if not self.names:
+            return
 
         # Remove new variables from the module.
         for mod, names in self.names.iteritems():
