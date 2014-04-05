@@ -106,6 +106,22 @@ def choose_variants():
 
         from jnius import autoclass  # @UnresolvedImport
 
+
+        # Manufacturer/Model-specific variants.
+        try:
+            Build = autoclass("android.os.Build")
+
+            manufacturer = Build.MANUFACTURER
+            model = Build.MODEL
+
+            print "Manufacturer", manufacturer, "model", model
+
+            if manufacturer == "Amazon" and model.startswith("AFT"):
+                print "Running on a Fire TV."
+                renpy.config.variants.insert(0, "firetv")
+        except:
+            pass
+
         # Are we running on an OUYA?
         try:
             OuyaFacade = autoclass("tv.ouya.console.api.OuyaFacade")
@@ -116,6 +132,7 @@ def choose_variants():
                 renpy.config.variants.insert(0, "ouya")
         except:
             pass
+
 
         # Are we running on OUYA or Google TV or something similar?
         PythonActivity = autoclass('org.renpy.android.PythonActivity')
