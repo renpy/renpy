@@ -226,7 +226,7 @@ DisplayableParser("key", renpy.ui._key, None, 0)
 Positional("key")
 Keyword("action")
 
-DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0)
+DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=True)
 Positional("delay")
 Keyword("action")
 Keyword("repeat")
