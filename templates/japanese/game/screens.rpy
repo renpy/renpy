@@ -232,6 +232,7 @@ init -2 python:
 
 screen navigation:
 
+    key "game_menu" action Return()
     # The background of the game menu.
     # ゲームメニューの背景。
     window:
