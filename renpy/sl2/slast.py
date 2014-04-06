@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import ast
+import collections
+
 import renpy.style
 import renpy.display
 
@@ -70,11 +72,16 @@ class SLContext(object):
             # The style prefix that is given to children of this displayable.
             self.style_prefix = parent.style_prefix
 
+            # A cache associated with this context. These map from
+            # statement serial to information associated with the statement.
+            self.cache = parent.cache
+
         else:
             self.scope = { }
             self.children = [ ]
             self.keywords = { }
             self.style_prefix = ""
+            self.cache = { }
 
 
 class SLNode(object):
@@ -115,7 +122,7 @@ class SLNode(object):
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = object()
 
-class SLBlock(object):
+class SLBlock(SLNode):
     """
     Represents a screen language block that can contain keyword arguments
     and child displayables.
@@ -194,6 +201,18 @@ class SLBlock(object):
             i.keywords(context)
 
 
+class SLCache(object):
+    """
+    The type of cache associated with an SLDisplayable.
+    """
+
+    def __init__(self):
+
+        # The displayable object created.
+        self.displayable = None
+
+
+
 
 class SLDisplayable(SLBlock):
     """
@@ -201,7 +220,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False):
+    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -224,6 +243,10 @@ class SLDisplayable(SLBlock):
 
         `imagemap`
             True if this is an imagemap, and should be handled as one.
+
+        `replaces`
+            True if the object this displayable replaces should be
+            passed to it.
         """
 
         super(SLDisplayable, self).__init__()
@@ -234,12 +257,11 @@ class SLDisplayable(SLBlock):
         self.child_or_fixed = child_or_fixed
         self.style = style
         self.pass_context = pass_context
+        self.imagemap = imagemap
+        self.replaces = replaces
 
         # Positional argument expressions.
         self.positional = [ ]
-
-        self.imagemap = imagemap
-
 
     def prepare(self):
 
@@ -279,8 +301,11 @@ class SLDisplayable(SLBlock):
 
     def execute(self, context):
 
-        # Evaluate the positional arguments.
+        cache = context.cache.get(self.serial, None)
+        if cache is None:
+            context.cache[self.serial] = cache = SLCache()
 
+        # Evaluate the positional arguments.
         positional_values = self.positional_values
         positional_exprs = self.positional_exprs
 
@@ -322,6 +347,9 @@ class SLDisplayable(SLBlock):
         if widget_id in screen.widget_properties:
             keywords.update(screen.widget_properties[widget_id])
 
+        if self.replaces:
+            keywords['replaces'] = cache.displayable
+
         d = self.displayable(*positional, **keywords)
 
         # Evaluate children.
@@ -342,6 +370,8 @@ class SLDisplayable(SLBlock):
         else:
             for i in ctx.children:
                 d.add(i)
+
+        cache.displayable = d
 
         if widget_id is not None:
             screen.widgets[widget_id] = d
@@ -405,7 +435,7 @@ class SLIf(SLNode):
                 block.keywords(context)
                 return
 
-
+unhashable = object()
 
 class SLFor(SLBlock):
     """
@@ -441,10 +471,22 @@ class SLFor(SLBlock):
         else:
             value = self.expression_value
 
-        for i in value:
-            context.scope[variable] = i
+        newcaches = collections.defaultdict(dict)
+        oldcaches = context.cache.get(self.serial, newcaches)
 
-            SLBlock.execute(self, context)
+        ctx = SLContext(context)
+
+        for i, v in enumerate(value):
+
+            ctx.scope[variable] = v
+
+            # TODO: use indexes of id(v) to get the cache.
+
+            cache = oldcaches[i]
+            newcaches[i] = cache
+            ctx.cache = cache
+
+            SLBlock.execute(self, ctx)
 
     def keywords(self, context):
         return

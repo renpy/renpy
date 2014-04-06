@@ -175,7 +175,7 @@ Keyword("height")
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True)
+DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True, replaces=True)
 Positional("text")
 Keyword("slow")
 Keyword("slow_done")
@@ -234,7 +234,7 @@ Keyword("repeat")
 # Omit behaviors.
 # Omit menu as being too high-level.
 
-DisplayableParser("input", renpy.display.behavior.Input, "input", 0)
+DisplayableParser("input", renpy.display.behavior.Input, "input", 0, replaces=True)
 Keyword("default")
 Keyword("length")
 Keyword("allow")
@@ -309,7 +309,7 @@ add(text_position_properties)
 add(text_text_properties)
 
 for name in [ "bar", "vbar" ]:
-    DisplayableParser(name, renpy.display.behavior.Bar, name, 0)
+    DisplayableParser(name, renpy.display.behavior.Bar, name, 0, replaces=True)
     Keyword("adjustment")
     Keyword("range")
     Keyword("value")
@@ -322,7 +322,7 @@ for name in [ "bar", "vbar" ]:
 
 # Omit autobar. (behavior)
 
-DisplayableParser("viewport", renpy.display.layout.Viewport, "viewport", 1)
+DisplayableParser("viewport", renpy.ui._viewport, "viewport", 1, replaces=True)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")
@@ -362,7 +362,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-DisplayableParser("hotbar", renpy.ui._hotbar, "hotbar", 0)
+DisplayableParser("hotbar", renpy.ui._hotbar, "hotbar", 0, replaces=True)
 Positional("spot")
 Keyword("adjustment")
 Keyword("range")
@@ -389,7 +389,7 @@ DisplayableParser("on", renpy.ui.on, None, 0)
 Positional("event")
 Keyword("action")
 
-DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1)
+DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1, replaces=True)
 Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
@@ -405,11 +405,11 @@ Style("child")
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many)
+DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0)
+DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")
 Keyword("unhovered")
 add(ui_properties)

@@ -323,7 +323,7 @@ class DisplayableParser(Parser):
     """
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None,
-        pass_context=False, imagemap=False):
+        pass_context=False, imagemap=False, replaces=False):
         """
         `name`
             The name of the statement that creates the displayable.
@@ -360,6 +360,10 @@ class DisplayableParser(Parser):
         `imagemap`
             If true, the displayable is treated as defining an imagemap. (The imagemap
             is added to and removed from renpy.ui.imagemap_stack as appropraite.)
+
+        `replaces`
+            If true, and the displayable replaces a prior displayable, that displayable
+            is passed as a parameter to the new displayable.
         """
 
         super(DisplayableParser, self).__init__(name)
@@ -382,6 +386,7 @@ class DisplayableParser(Parser):
         self.text_style = text_style
         self.pass_context = pass_context
         self.imagemap = imagemap
+        self.replaces = replaces
 
     def parse_layout(self, l, parent):
         return self.parse(l, parent, True)
@@ -394,7 +399,8 @@ class DisplayableParser(Parser):
             style=self.style,
             text_style=self.text_style,
             pass_context=self.pass_context,
-            imagemap=self.imagemap)
+            imagemap=self.imagemap,
+            replaces=self.replaces)
 
         for _i in self.positional:
             rv.positional.append(l.simple_expression())
