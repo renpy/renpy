@@ -211,7 +211,8 @@ class SLCache(object):
         # The displayable object created.
         self.displayable = None
 
-
+        # The old transform created.
+        self.transform = None
 
 
 class SLDisplayable(SLBlock):
@@ -379,6 +380,11 @@ class SLDisplayable(SLBlock):
         if transform is not None:
             d = transform(d)
 
+        if isinstance(d, renpy.display.motion.Transform):
+            if cache.transform is not None:
+                d.take_state(cache.transform)
+                d.take_execution_state(cache.transform)
+
         context.children.append(d)
 
         if self.imagemap:
@@ -386,9 +392,9 @@ class SLDisplayable(SLBlock):
 
 # TODO: If a displayable is entirely constant, do not re-create it. If a
 # tree is entirely constant, reuse it. Be sure to handle imagemaps properly,
-# using self.imagemap.
+# using the stack.
 
-# TODO: Can we gey rid of pass_context?
+# TODO: Can we get rid of pass_context?
 
 
 class SLIf(SLNode):
