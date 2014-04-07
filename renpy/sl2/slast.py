@@ -188,7 +188,7 @@ class SLBlock(SLNode):
         keyword_exprs = self.keyword_exprs
 
         if keyword_exprs is not None:
-            context.keywords.update(py_eval_bytecode(keyword_exprs))
+            context.keywords.update(py_eval_bytecode(keyword_exprs, locals=context.scope))
 
         style_group = context.keywords.pop("style_group", NotGiven)
         if style_group is not NotGiven:
