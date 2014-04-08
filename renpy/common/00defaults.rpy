@@ -110,7 +110,7 @@ init -1500 python:
         return style.hyperlink_text
 
     def hyperlink_function(target):
-        if target.startswith("http:"):
+        if ":" in target:
             try:
                 import webbrowser
                 webbrowser.open(target)
