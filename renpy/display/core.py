@@ -1266,6 +1266,9 @@ class Interface(object):
         # VIDEORESIZE event.
         self.last_resize = None
 
+        # The thread that can do display operations.
+        self.thread = threading.current_thread()
+
         # Ensure that we kill off the presplash.
         renpy.display.presplash.end()
 
@@ -1638,7 +1641,10 @@ class Interface(object):
         rv = self.screenshot
 
         if not rv:
-            self.take_screenshot((renpy.config.thumbnail_width, renpy.config.thumbnail_height))
+            self.take_screenshot(
+                (renpy.config.thumbnail_width, renpy.config.thumbnail_height),
+                background=(threading.current_thread() is not self.thread),
+                )
             rv = self.screenshot
             self.lose_screenshot()
 
