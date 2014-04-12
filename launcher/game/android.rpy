@@ -568,8 +568,43 @@ label android_connect:
 
     python hide:
 
+        if persistent.connect_address is not None:
+            address = persistent.connect_address
+        else:
+            address = ""
+
+        while True:
+            address = interface.input(
+                _("Remote ADB Address"),
+                _("Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."),
+                default=address,
+                cancel=Jump("android"),
+                )
+
+            address = address.strip()
+
+            try:
+                host, port = address.split(":")
+            except:
+                interface.error(_("Invalid remote ADB address"), _("The address must contain one exactly one ':'."), label=None)
+                continue
+
+            if " " in host:
+                interface.error(_("Invalid remote ADB address"), _("The host may not contain whitespace."), label=None)
+                continue
+
+            try:
+                int(port)
+            except:
+                interface.error(_("Invalid remote ADB address"), _("The port must be a number."), label=None)
+                continue
+
+            break
+
+        persistent.connect_address = address
+
         rapt_interface = AndroidInterface()
-        rapt.build.connect(rapt_interface, "192.168.1.143")
+        rapt.build.connect(rapt_interface, address)
 
     jump android
 
@@ -581,9 +616,6 @@ label android_disconnect:
         rapt.build.disconnect(rapt_interface)
 
     jump android
-
-
-
 
 init python:
 
