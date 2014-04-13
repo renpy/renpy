@@ -91,11 +91,11 @@ init python:
             return ANDROID_NO_RAPT
         if renpy.windows and not "JAVA_HOME" in os.environ:
             return ANDROID_NO_JDK
-        if not os.path.exists(os.path.join(RAPT_PATH, "android-sdk/extras/google/play_licensing")):
+        if not os.path.exists(rapt.plat.path("android-sdk/extras/google/play_licensing")):
             return ANDROID_NO_SDK
-        if not os.path.exists(os.path.join(RAPT_PATH, "android.keystore")):
+        if not os.path.exists(rapt.plat.path("android.keystore")):
             return ANDROID_NO_KEY
-        if not os.path.exists(os.path.join(RAPT_PATH, "local.properties")):
+        if not os.path.exists(rapt.plat.path("local.properties")):
             return ANDROID_NO_KEY
         if not os.path.exists(os.path.join(project.current.path, ".android.json")):
             return ANDROID_NO_CONFIG
@@ -201,10 +201,22 @@ init python:
             self.log(prompt)
             interface.info(prompt, label="android")
 
-        def call(self, cmd, cancel=False, use_path=False):
+        def yes_thread(self):
+            import time
 
-            if not use_path:
-                cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
+            try:
+                while True:
+                    time.sleep(.2)
+                    self.process.stdin.write('y\n')
+                    self.process.stdin.flush()
+            except:
+                import traceback
+                traceback.print_exc()
+
+        def call(self, cmd, cancel=False, use_path=False, yes=False):
+
+            print
+            print " ".join(cmd)
 
             self.cmd = cmd
 
@@ -224,11 +236,27 @@ init python:
 
             try:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
-                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo)
+
+                kwargs = { }
+                if yes:
+                    kwargs["stdin"] = subprocess.PIPE
+
+                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+
+                if yes:
+                    import threading
+                    self.yes_thread = threading.Thread(target=self.yes_thread)
+                    self.yes_thread.daemon = True
+                    self.yes_thread.start()
+
                 renpy.call_screen("android_process", interface=self)
             finally:
                 f.close()
                 interface.hide_screen()
+
+                if yes and self.yes_thread:
+                    self.yes_thread.join()
+
                 self.process = None
 
         def check_process(self):
