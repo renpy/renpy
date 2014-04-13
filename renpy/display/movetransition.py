@@ -501,7 +501,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         if new.layers:
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
-            rv.layers = { }
 
             for layer in renpy.config.layers:
 
@@ -514,7 +513,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
                     f = merge_slide(old.layers[layer], new.layers[layer])
 
                 rv.add(f)
-                rv.layers[layer] = f
 
             return rv
 
