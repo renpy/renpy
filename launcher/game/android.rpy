@@ -205,10 +205,10 @@ init python:
             import time
 
             try:
-                while True:
-                    time.sleep(.2)
+                while self.run_yes:
                     self.process.stdin.write('y\n')
                     self.process.stdin.flush()
+                    time.sleep(.2)
             except:
                 import traceback
                 traceback.print_exc()
@@ -245,6 +245,7 @@ init python:
 
                 if yes:
                     import threading
+                    self.run_yes = True
                     self.yes_thread = threading.Thread(target=self.yes_thread)
                     self.yes_thread.daemon = True
                     self.yes_thread.start()
@@ -255,6 +256,7 @@ init python:
                 interface.hide_screen()
 
                 if yes and self.yes_thread:
+                    self.run_yes = False
                     self.yes_thread.join()
 
                 self.process = None
