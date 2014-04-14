@@ -64,6 +64,10 @@
         If given, the transition to run, or None to not run a transition.
         False uses :var:`config.end_game_transition`.
 
+.. function:: renpy.get_autoreload()
+    
+    Gets the autoreload flag.
+
 .. function:: renpy.get_game_runtime()
     
     Returns the game runtime counter.
@@ -245,6 +249,11 @@
     Triggers a quit event, as if the player clicked the quit button in the
     window chrome.
 
+.. function:: renpy.reload_script()
+    
+    Causes Ren'Py to save the game, reload the script, and then load the
+    save.
+
 .. function:: renpy.restart_interaction()
     
     Restarts the current interaction. Among other things, this displays
@@ -270,6 +279,12 @@
     ``nvl_clear``
         Is true if an ``nvl clear`` statement will execute before the
         next interaction.
+
+.. function:: renpy.set_autoreload(autoreload)
+    
+    Sets the autoreload flag, which determines if the game will be
+    automatically reloated after file changes. Autoreload will not be
+    fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
 
 .. function:: renpy.set_mouse_pos(x, y, duration=0)
     

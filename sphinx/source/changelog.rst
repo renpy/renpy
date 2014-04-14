@@ -2,6 +2,45 @@
 Full Changelog
 ==============
 
+Ren'Py 6.17.4
+=============
+
+Reloading
+---------
+
+This release contains a complete rewrite of shift+R reloading.
+
+The rewrite was necessary to eliminate several major memory leaks that
+were triggered by reloading.
+
+Android
+-------
+
+Ren'Py has been updated to use the newest (at the time of release) versions
+of the Android SDK and Ant. This should fix build problems caused by the
+use of older versions.
+
+Ren'Py now recognizes and supports the Amazon Fire TV device. When a Fire TV
+is detected, the "firetv" screen variant is selected. To support pushing games
+to this device, Ren'Py now supports connecting to Android devices via the
+Remote ADB protocol.
+
+Other
+-----
+
+Fixed a problem that occurred when an interaction containing a MoveTransition
+was restarted.
+
+Added support for imagemaps that are larger than the screen. This allows an
+imagemap to be placed inside a viewport.
+
+It is now possible to select the layer used by the say, choice, and nvl
+choice screen. Please see :var:`config.say_layer`, :var:`config.choice_layer`,
+and :var:`config.nvl_layer` statements.
+
+The prediction of window and bar images has been improved.
+
+
 Ren'Py 6.17
 ===========
 

@@ -1518,6 +1518,9 @@ and choosing the entries that apply to the current platform.
 ``"ouya"``
    Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
 
+``"firetv"``
+   Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
    a mouse and keyboard present, to allow buttons to be hovered, and

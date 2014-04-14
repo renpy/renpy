@@ -140,6 +140,10 @@
         character is placed in one window, and the dialogue text in a
         second window.
     
+    `show_layer`
+        If given, this should be a string giving the name of the layer
+        to show the "say" screen on.
+    
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
     `window_`` have their prefix stripped, and are used to :ref:`style
