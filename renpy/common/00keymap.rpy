@@ -99,8 +99,10 @@ init -1600 python:
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
-
         )
+
+    # Should we use the autoreload system?
+    config.autoreload = False
 
 init -1600 python:
 
@@ -200,6 +202,10 @@ init -1600 python:
 
     def _reload_game():
         if not config.developer:
+            return
+
+        if not config.autoreload:
+            renpy.call_in_new_context("_save_reload_game")
             return
 
         if renpy.get_autoreload():

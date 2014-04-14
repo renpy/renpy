@@ -422,8 +422,8 @@ def reload_all():
     # Re-initialize the importer.
     renpy.loader.init_importer()
 
-    renpy.bootstrap.memory_profile()
-    renpy.bootstrap.find_parents(renpy.python.StoreDict)
+    # renpy.bootstrap.memory_profile()
+    # renpy.bootstrap.find_parents(renpy.python.StoreDict)
 
 ################################################################################
 # Fix things for code analysis
