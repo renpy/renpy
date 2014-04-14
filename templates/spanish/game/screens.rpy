@@ -1,27 +1,21 @@
-# This file is in the public domain. Feel free to modify it as a basis
-# for your own screens.
-# - Este archivo se encuentra en el dominio público. Puede ser modificado
-#   libremente como base para tus propias pantallas.
+# Este archivo se encuentra en el dominio público. Puede ser modificado
+# libremente como base para tus propias pantallas.
 
 ##############################################################################
-# Say - Diálogo
+# Diálogo
 #
-# Screen that's used to display adv-mode dialogue.
-# - Pantalla utilizada para presentar el diálogo en modo adv.
+# Pantalla utilizada para presentar el diálogo en modo adv.
 # http://www.renpy.org/doc/html/screen_special.html#say
 screen say:
 
-    # Defaults for side_image and two_window
-    # - Valores por defecto de 'side_image' y 'two_window'
+    # Valores por defecto de 'side_image' y 'two_window'
     default side_image = None
     default two_window = False
 
-    # Decide if we want to use the one-window or two-window variant.
-    # - Opta entre las variantes de una ventana o dos ventanas.
+    # Opta entre las variantes de una ventana o dos ventanas.
     if not two_window:
 
-        # The one window variant.
-        # - Una ventana.
+        # Una ventana.
         window:
             id "window"
 
@@ -35,8 +29,7 @@ screen say:
 
     else:
 
-        # The two window variant.
-        # - Dos ventanas.
+        # Dos ventanas.
         vbox:
             style "say_two_window_vbox"
 
@@ -55,23 +48,20 @@ screen say:
 
                 text what id "what"
 
-    # If there's a side image, display it above the text.
-    # - Si hay una imagen lateral, la presenta sobre el texto.
+    # Si hay una imagen lateral, la presenta sobre el texto.
     if side_image:
         add side_image
     else:
         add SideImage() xalign 0.0 yalign 1.0
 
-    # Use the quick menu.
-    # - Usa el menú de acceso rápido.
+    # Usa el menú de acceso rápido.
     use quick_menu
 
 
 ##############################################################################
-# Choice - Elecciones
+# Elecciones
 #
-# Screen that's used to display in-game menus.
-# - Pantalla utilizada para presentar los menus dentro del juego.
+# Pantalla utilizada para presentar los menus dentro del juego.
 # http://www.renpy.org/doc/html/screen_special.html#choice
 
 screen choice:
@@ -98,22 +88,23 @@ screen choice:
                 else:
                     text caption style "menu_caption"
 
-init -2 python:
-    config.narrator_menu = True
+init -2:
+    $ config.narrator_menu = True
 
-    style.menu_window.set_parent(style.default)
-    style.menu_choice.set_parent(style.button_text)
-    style.menu_choice.clear()
-    style.menu_choice_button.set_parent(style.button)
-    style.menu_choice_button.xminimum = int(config.screen_width * 0.75)
-    style.menu_choice_button.xmaximum = int(config.screen_width * 0.75)
+    style menu_window is default
+
+    style menu_choice is button_text:
+        clear
+
+    style menu_choice_button is button:
+        xminimum int(config.screen_width * 0.75)
+        xmaximum int(config.screen_width * 0.75)
 
 
 ##############################################################################
-# Input - Entrada
+# Entrada
 #
-# Screen that's used to display renpy.input()
-# - Pantalla utilizada para la entrada de texto por parte del usuario.
+# Pantalla utilizada para la entrada de texto por parte del usuario.
 # http://www.renpy.org/doc/html/screen_special.html#input
 
 screen input:
@@ -129,8 +120,7 @@ screen input:
 ##############################################################################
 # Nvl
 #
-# Screen used for nvl-mode dialogue and menus.
-# - Pantalla utilizada para el diálogo y los menús en modo nvl.
+# Pantalla utilizada para el diálogo y los menús en modo nvl.
 # http://www.renpy.org/doc/html/screen_special.html#nvl
 
 screen nvl:
@@ -141,8 +131,7 @@ screen nvl:
         has vbox:
             style "nvl_vbox"
 
-        # Display dialogue.
-        # - Presenta el diálogo.
+        # Presenta el diálogo.
         for who, what, who_id, what_id, window_id in dialogue:
             window:
                 id window_id
@@ -155,8 +144,7 @@ screen nvl:
 
                 text what id what_id
 
-        # Display a menu, if given.
-        # - Presenta un menú, si lo hay.
+        # Presenta un menú, si lo hay.
         if items:
 
             vbox:
@@ -183,23 +171,19 @@ screen nvl:
 ##############################################################################
 # Main Menu - Menú principal
 #
-# Screen that's used to display the main menu, when Ren'Py first starts
-# - Pantalla utilizada para presentar el menú principal, cuando Ren'Py empieza
+# Pantalla utilizada para presentar el menú principal, cuando Ren'Py empieza
 # http://www.renpy.org/doc/html/screen_special.html#main-menu
 
 screen main_menu:
 
-    # This ensures that any other menu screen is replaced.
-    # - Esta linea asegura que las otras pantallas de menú son reemplazadas.
+    # Esta linea asegura que las otras pantallas de menú son reemplazadas.
     tag menu
 
-    # The background of the main menu.
-    # - Fondo del menú principal.
+    # Fondo del menú principal.
     window:
         style "mm_root"
 
-    # The main menu buttons.
-    # - Botones del menú principal.
+    # Botones del menú principal.
     frame:
         style_group "mm"
         xalign .98
@@ -213,30 +197,27 @@ screen main_menu:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit(confirm=False)
 
-init -2 python:
+init -2:
 
-    # Make all the main menu buttons be the same size.
-    # - Ajusta todos los botones del menú principal al mismo tamaño.
-    style.mm_button.size_group = "mm"
+    # Ajusta todos los botones del menú principal al mismo tamaño.
+    style mm_button:
+        size_group "mm"
+
 
 
 ##############################################################################
-# Navigation - Navegación
+# Navegación
 #
-# Screen that's included in other screens to display the game menu
-# navigation and background.
-# - Pantalla incluida en otras pantallas para presentar las opciones de 
-#   navegación y el fondo en los menús del juego.
+# Pantalla incluida en otras pantallas para presentar las opciones de
+# navegación y el fondo en los menús del juego.
 # http://www.renpy.org/doc/html/screen_special.html#navigation
 screen navigation:
 
-    # The background of the game menu.
-    # - Fondo de los menús del juego.
+    # Fondo de los menús del juego.
     window:
         style "gm_root"
 
-    # The various buttons.
-    # - Botones de navegación.
+    # Botones de navegación.
     frame:
         style_group "gm_nav"
         xalign .98
@@ -252,24 +233,23 @@ screen navigation:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit()
 
-init -2 python:
-    style.gm_nav_button.size_group = "gm_nav"
+init -2:
+
+    # Todos los botones del menú de navegación del mismo tamaño
+    style gm_nav_button:
+        size_group "gm_nav"
 
 
 ##############################################################################
-# Save, Load - Guardar, Cargar
+# Guardar, Cargar
 #
-# Screens that allow the user to save and load the game.
-# - Pantallas que permiten al usuario guardar y cargar las partidas.
+# Pantallas que permiten al usuario guardar y cargar las partidas.
 # http://www.renpy.org/doc/html/screen_special.html#save
 # http://www.renpy.org/doc/html/screen_special.html#load
 
-# Since saving and loading are so similar, we combine them into
-# a single screen, file_picker. We then use the file_picker screen
-# from simple load and save screens.
-# - Ya que guardar y cargar son muy similares, se combinan en una sola
-#   pantalla, selector de archivo ('file_picker'). Esa se usa desde
-#   simples pantallas de guardado y carga.
+# Ya que guardar y cargar son muy similares, se combinan en una sola
+# pantalla, selector de archivo ('file_picker'). Esa se usa desde
+# simples pantallas de guardado y carga.
 
 screen file_picker:
 
@@ -278,10 +258,8 @@ screen file_picker:
 
         has vbox
 
-        # The buttons at the top allow the user to pick a
-        # page of files.
-        # - Los botones superiores permiten al usuario escoger entre
-        #   páginas de archivos.
+        # Los botones superiores permiten al usuario escoger entre
+        # páginas de archivos.
         hbox:
             style_group "file_picker_nav"
 
@@ -304,27 +282,23 @@ screen file_picker:
         $ columns = 2
         $ rows = 5
 
-        # Display a grid of file slots.
-        # - Presenta una cuadrícula de espacios para archivos.
+        # Presenta una cuadrícula de espacios para archivos.
         grid columns rows:
             transpose True
             xfill True
             style_group "file_picker"
 
-            # Display ten file slots, numbered 1 - 10.
-            # - Presenta diez espacios para archivos, numerados de 1 a 10.
+            # Presenta diez espacios para archivos, numerados de 1 a 10.
             for i in range(1, columns * rows + 1):
 
-                # Each file slot is a button.
-                # - Cada espacio es un botón.
+                # Cada espacio es un botón.
                 button:
                     action FileAction(i)
                     xfill True
 
                     has hbox
 
-                    # Add the screenshot.
-                    # - Añade la captura de pantalla.
+                    # Añade la captura de pantalla.
                     add FileScreenshot(i)
 
                     $ file_name = FileSlotName(i, columns * rows)
@@ -338,8 +312,7 @@ screen file_picker:
 
 screen save:
 
-    # This ensures that any other menu screen is replaced.
-    # - Esta linea asegura que las otras pantallas de menú son reemplazadas.
+    # Esta linea asegura que las otras pantallas de menú son reemplazadas.
     tag menu
 
     use navigation
@@ -347,47 +320,39 @@ screen save:
 
 screen load:
 
-    # This ensures that any other menu screen is replaced.
-    # - Esta linea asegura que las otras pantallas de menú son reemplazadas.
+    # Esta linea asegura que las otras pantallas de menú son reemplazadas.
     tag menu
 
     use navigation
     use file_picker
 
-init -2 python:
-    style.file_picker_frame = Style(style.menu_frame)
-
-    style.file_picker_nav_button = Style(style.small_button)
-    style.file_picker_nav_button_text = Style(style.small_button_text)
-
-    style.file_picker_button = Style(style.large_button)
-    style.file_picker_text = Style(style.large_button_text)
-
+init -2:
+    style file_picker_frame is menu_frame
+    style file_picker_nav_button is small_button
+    style file_picker_nav_button_text is small_button_text
+    style file_picker_button is large_button
+    style file_picker_text is large_button_text
 
 
 ##############################################################################
-# Preferences - Opciones
+# Opciones
 #
-# Screen that allows the user to change the preferences.
-# - Pantalla que permite al usuario cambiar las opciones.
-# http://www.renpy.org/doc/html/screen_special.html#prefereces
+# Pantalla que permite al usuario cambiar las opciones.
+# http://www.renpy.org/doc/html/screen_special.html#preferences
 
 screen preferences:
 
     tag menu
 
-    # Include the navigation.
-    # - Incluye la navegación.
+    # Incluye la navegación.
     use navigation
 
-    # Put the navigation columns in a three-wide grid.
-    # - Coloca las columnas de navegación en una cuadrícula de anchura 3.
+    # Coloca las columnas de navegación en una cuadrícula de anchura 3.
     grid 3 1:
         style_group "prefs"
         xfill True
 
-        # The left column.
-        # - Columna izquierda.
+        # Columna izquierda.
         vbox:
             frame:
                 style_group "pref"
@@ -486,27 +451,31 @@ screen preferences:
                             action Play("voice", config.sample_voice)
                             style "soundtest_button"
 
-init -2 python:
-    style.pref_frame.xfill = True
-    style.pref_frame.xmargin = 5
-    style.pref_frame.top_margin = 5
+init -2:
+    style pref_frame:
+        xfill True
+        xmargin 5
+        top_margin 5
 
-    style.pref_vbox.xfill = True
+    style pref_vbox:
+        xfill True
 
-    style.pref_button.size_group = "pref"
-    style.pref_button.xalign = 1.0
+    style pref_button:
+        size_group "pref"
+        xalign 1.0
 
-    style.pref_slider.xmaximum = 192
-    style.pref_slider.xalign = 1.0
+    style pref_slider:
+        xmaximum 192
+        xalign 1.0
 
-    style.soundtest_button.xalign = 1.0
+    style soundtest_button:
+        xalign 1.0
 
 
 ##############################################################################
-# Yes/No Prompt - Pregunta Sí/No
+# Pregunta Sí/No
 #
-# Screen that asks the user a yes or no question.
-# - Pantalla que pregunta al usuario una pregunta Sí/No.
+# Pantalla que pregunta al usuario una pregunta Sí/No.
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 
 screen yesno_prompt:
@@ -540,27 +509,26 @@ screen yesno_prompt:
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
-    # Right-click and escape answer "no".
-    # - Clic derecho y escape responden "no".
+    # Clic derecho y escape responden "no".
     key "game_menu" action no_action
 
-init -2 python:
-    style.yesno_button.size_group = "yesno"
-    style.yesno_label_text.text_align = 0.5
-    style.yesno_label_text.layout = "subtitle"
+init -2:
+    style yesno_button:
+        size_group "yesno"
+
+    style yesno_label_text:
+        text_align 0.5
+        layout "subtitle"
 
 
 ##############################################################################
 # Quick Menu - Menú de acceso rápido
 #
-# A screen that's included by the default say screen, and adds quick access to
-# several useful functions.
-# - Pantalla incluida por defecto en la pantalla de diálogo, que añade acceso
-#   rápido a una serie de funciones útiles.
+# Pantalla incluida por defecto en la pantalla de diálogo, que añade acceso
+# rápido a una serie de funciones útiles.
 screen quick_menu:
 
-    # Add an in-game quick menu.
-    # - Añade un menú de acceso rápido interno al juego.
+    # Añade un menú de acceso rápido interno al juego.
     hbox:
         style_group "quick"
 
@@ -576,15 +544,18 @@ screen quick_menu:
         textbutton _("Auto") action Preference("auto-forward", "toggle")
         textbutton _("Prefs") action ShowMenu('preferences')
 
-init -2 python:
-    style.quick_button.set_parent('default')
-    style.quick_button.background = None
-    style.quick_button.xpadding = 5
+init -2:
+    style quick_button:
+        is default
+        background None
+        xpadding 5
 
-    style.quick_button_text.set_parent('default')
-    style.quick_button_text.size = 12
-    style.quick_button_text.idle_color = "#8888"
-    style.quick_button_text.hover_color = "#ccc"
-    style.quick_button_text.selected_idle_color = "#cc08"
-    style.quick_button_text.selected_hover_color = "#cc0"
-    style.quick_button_text.insensitive_color = "#4448"
+    style quick_button_text:
+        is default
+        size 12
+        idle_color "#8888"
+        hover_color "#ccc"
+        selected_idle_color "#cc08"
+        selected_hover_color "#cc0"
+        insensitive_color "#4448"
+
