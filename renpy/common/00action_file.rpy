@@ -634,3 +634,13 @@ init -1500 python:
         """
 
         return FileLoad(1, page="quick", confirm=True, newest=False)
+
+init 1050 python hide:
+
+    if not config.has_quicksave and persistent._file_page == "quick":
+        persistent._file_page = "1"
+
+    if not config.has_autosave and persistent._file_page == "auto":
+        persistent._file_page = "1"
+
+
