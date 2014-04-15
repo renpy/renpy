@@ -767,7 +767,7 @@ def imagemap_compat(ground,
                     hotspots,
                     unselected=None,
                     style='imagemap',
-                    button_style='imagemap_button',
+                    button_style='hotspot',
                     **properties):
 
     if isinstance(button_style, basestring):

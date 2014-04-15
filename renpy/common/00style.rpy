@@ -74,6 +74,7 @@ init -1800:
 
     style imagemap is image_placement
     style hotspot is default
+    style imagemap_button is hotspot
     style hotbar is default
 
     style image_button is default
