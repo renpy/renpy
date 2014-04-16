@@ -102,7 +102,7 @@ init -1600 python:
         )
 
     # Should we use the autoreload system?
-    config.autoreload = False
+    config.autoreload = True
 
 init -1600 python:
 
