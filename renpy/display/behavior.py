@@ -123,9 +123,23 @@ def compile_event(key, keydown):
 
     return rv
 
+
 # These store a lambda for each compiled key in the system.
 event_cache = { }
 keyup_cache = { }
+
+
+def clear_keymap_cache():
+    """
+    :doc: other
+
+    Clears the keymap cache. This allows changes to :var:`config.keymap` to
+    take effect without restarting Ren'Py.
+    """
+
+    event_cache.clear()
+    keyup_cache.clear()
+
 
 def map_event(ev, keysym):
     """
