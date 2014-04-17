@@ -141,6 +141,32 @@ def clear_keymap_cache():
     keyup_cache.clear()
 
 
+def queue_event(name, up=False):
+    """
+    :doc: other
+
+    Queues an event with the given name. `Name` should be one of the event
+    names in :var:`config.keymap`.
+
+    `up`
+        This should be false when the event begins (for example, when a keyboard
+        button is pressed.) It should be true when the event begins (when the
+        button is released.)
+
+    The event is queued at the time this function is called. This function will
+    not work to replace an event with another - doing so will change event order.
+    (Use :var:`config.keymap` instead.)
+
+    This method is threadsafe.
+    """
+
+    # Avoid queueing events before we're ready.
+    if not renpy.display.interface:
+        return
+
+    ev = pygame.event.Event(renpy.display.core.EVENTNAME, { "eventname" : name, "up" : up })
+    pygame.event.post(ev)
+
 def map_event(ev, keysym):
     """
     :doc: udd_utility
@@ -155,6 +181,12 @@ def map_event(ev, keysym):
         * A list containing one or more keysyms.
     """
 
+    if ev.type == renpy.display.core.EVENTNAME:
+        if ev.eventname == keysym and not ev.up:
+            return True
+
+        return False
+
     check_code = event_cache.get(keysym, None)
     if check_code is None:
         check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
@@ -164,6 +196,10 @@ def map_event(ev, keysym):
 
 def map_keyup(ev, name):
     """Returns true if the event matches the named keycode being released."""
+
+    if ev.type == renpy.display.core.EVENTNAME:
+        if ev.eventname == name and ev.up:
+            return True
 
     check_code = keyup_cache.get(name, None)
     if check_code is None:
