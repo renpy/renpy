@@ -41,10 +41,11 @@ except:
     android = None
 
 # Need to be +4, so we don't interfere with FFMPEG's events.
-TIMEEVENT = pygame.USEREVENT + 4
-PERIODIC = pygame.USEREVENT + 5
-JOYEVENT = pygame.USEREVENT + 6
-REDRAW = pygame.USEREVENT + 7
+TIMEEVENT = pygame.USEREVENT
+PERIODIC = pygame.USEREVENT + 1
+JOYEVENT = pygame.USEREVENT + 2
+REDRAW = pygame.USEREVENT + 3
+EVENTNAME = pygame.USEREVENT + 4
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
