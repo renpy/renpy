@@ -580,7 +580,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     screen = get_screen_variant(name[0])
 
     if screen is None:
-        raise Exception("Screen %r is not known." % name)
+        raise Exception("Screen %r is not known." % (name,))
 
     old_transfers = _current_screen.old_transfers
     _current_screen.old_transfers = True

@@ -76,12 +76,18 @@ class SLContext(object):
             # statement serial to information associated with the statement.
             self.cache = parent.cache
 
+            # The number of times a particular use statement has been called
+            # in the current screen. We use this to generate a unique name for
+            # each call site.
+            self.use_index = parent.use_index
+
         else:
             self.scope = { }
             self.children = [ ]
             self.keywords = { }
             self.style_prefix = ""
             self.cache = { }
+            self.use_index = collections.defaultdict(int)
 
 
 class SLNode(object):
@@ -129,8 +135,7 @@ class SLBlock(SLNode):
     """
 
     def __init__(self):
-
-        super(SLBlock, self).__init__()
+        SLNode.__init__(self)
 
         # A list of keyword argument, expr tuples.
         self.keyword = [ ]
@@ -250,7 +255,7 @@ class SLDisplayable(SLBlock):
             passed to it.
         """
 
-        super(SLDisplayable, self).__init__()
+        SLBlock.__init__(self)
 
         self.displayable = displayable
 
@@ -323,7 +328,6 @@ class SLDisplayable(SLBlock):
         # Create the context.
         ctx = SLContext(context)
         keywords = ctx.keywords = { }
-        ctx.children = [ ]
 
         SLBlock.keywords(self, ctx)
 
@@ -353,12 +357,21 @@ class SLDisplayable(SLBlock):
 
         d = self.displayable(*positional, **keywords)
 
+        if d is not None:
+            ctx.children = [ ]
+            renpy.ui.stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
+
         # Evaluate children.
         SLBlock.execute(self, ctx)
 
         # If we didn't create a displayable, exit early.
         if d is None:
             return
+
+        renpy.ui.stack.pop()
+
+        if self.imagemap:
+            renpy.ui.imagemap_stack.pop()
 
         if self.child_or_fixed and len(self.children) != 1:
             f = renpy.display.layout.Fixed()
@@ -387,8 +400,6 @@ class SLDisplayable(SLBlock):
 
         context.children.append(d)
 
-        if self.imagemap:
-            renpy.ui.imagemap_stack.pop()
 
 # TODO: If a displayable is entirely constant, do not re-create it. If a
 # tree is entirely constant, reuse it. Be sure to handle imagemaps properly,
@@ -406,8 +417,7 @@ class SLIf(SLNode):
         """
         An AST node that represents an if statement.
         """
-
-        super(SLIf, self).__init__()
+        SLNode.__init__(self)
 
         # A list of entries, with each consisting of an expression (or
         # None, for the else block) and a SLBlock.
@@ -450,7 +460,7 @@ class SLFor(SLBlock):
     """
 
     def __init__(self, variable, expression):
-        super(SLFor, self).__init__()
+        SLBlock.__init__(self)
 
         self.variable = variable
         self.expression = expression
@@ -501,7 +511,7 @@ class SLFor(SLBlock):
 class SLPython(SLNode):
 
     def __init__(self, code):
-        super(SLNode, self).__init__()
+        SLNode.__init__(self)
 
         # A pycode object.
         self.code = code
@@ -519,6 +529,8 @@ class SLPass(SLNode):
 class SLDefault(SLNode):
 
     def __init__(self, variable, expression):
+        SLNode.__init__(self)
+
         self.variable = variable
         self.expression = expression
 
@@ -533,3 +545,117 @@ class SLDefault(SLNode):
             return
 
         scope[variable] = py_eval_bytecode(self.expr, locals=scope)
+
+
+class SLUse(SLNode):
+
+    def __init__(self, target, args):
+
+        SLNode.__init__(self)
+
+        self.target = target
+        self.args = args
+
+    def execute_use_screen(self, context):
+
+        # Create an old-style displayable name for this call site.
+        serial = context.use_index[self.serial]
+        context.use_index[self.serial] = serial + 1
+
+        name = (
+            context.scope.get("_name", ()),
+            self.serial,
+            serial)
+
+        # TODO: Evaluate args, kwargs.
+
+        renpy.display.screen.use_screen(self.target, _name=name, _scope=context.scope)
+
+
+    def execute(self, context):
+
+        # TODO: Splice in an SLScreen, if possible.
+
+        self.execute_use_screen(context)
+
+
+class SLScreen(renpy.object.Object):
+    """
+    This represents a screen defined in the screen language 2.
+    """
+
+    def __init__(self):
+
+        # The name of the screen.
+        self.name = None
+
+        # Should this screen be declared as modal?
+        self.modal = "False"
+
+        # The screen's zorder.
+        self.zorder = "0"
+
+        # The screen's tag.
+        self.tag = None
+
+        # The variant of screen we're defining.
+        self.variant = "None" # expr.
+
+        # Should we predict this screen?
+        self.predict = "None" # expr.
+
+        # The parameters this screen takes.
+        self.parameters = None
+
+        # True if this screen has been prepared.
+        self.prepared = False
+
+        # The keywords that make up the screen. (This is removed once parsing
+        # is finished.)
+        self.keywords = [ ]
+
+        # The children that make up the screen's ast.
+        self.children = [ ]
+
+    def define(self):
+        """
+        Defines a screen.
+        """
+
+        renpy.display.screen.define_screen(
+            self.name,
+            self,
+            modal=self.modal,
+            zorder=self.zorder,
+            tag=self.tag,
+            variant=renpy.python.py_eval(self.variant),
+            predict=renpy.python.py_eval(self.predict),
+            parameters=self.parameters,
+            )
+
+    def __call__(self, *args, **kwargs):
+        scope = kwargs["_scope"]
+
+        if self.parameters:
+
+            args = scope.get("_args", ())
+            kwargs = scope.get("_kwargs", { })
+
+            values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
+            scope.update(values)
+
+        context = SLContext()
+        context.scope = scope
+
+        if not self.prepared:
+            self.prepared = True
+
+            for i in self.children:
+                i.prepare()
+
+        for i in self.children:
+            i.execute(context)
+
+        for i in context.children:
+            renpy.ui.add(i)
+

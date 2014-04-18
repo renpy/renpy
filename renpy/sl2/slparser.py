@@ -592,85 +592,23 @@ class DefaultParser(Parser):
 DefaultParser("default")
 
 
-class ScreenLangScreen(renpy.object.Object):
-    """
-    This represents a screen defined in the screen language.
-    """
+class UseParser(Parser):
 
-    def __init__(self):
+    def __init__(self, name):
+        super(UseParser, self).__init__(name)
+        childbearing_statements.add(self)
 
-        # The name of the screen.
-        self.name = None
+    def parse(self, l, name):
 
-        # Should this screen be declared as modal?
-        self.modal = "False"
+        target = l.require(l.word)
+        args = renpy.parser.parse_arguments(l)
 
-        # The screen's zorder.
-        self.zorder = "0"
+        l.expect_eol()
+        l.expect_noblock("use statement")
 
-        # The screen's tag.
-        self.tag = None
+        return slast.SLUse(target, args)
 
-        # The variant of screen we're defining.
-        self.variant = "None" # expr.
-
-        # Should we predict this screen?
-        self.predict = "None" # expr.
-
-        # The parameters this screen takes.
-        self.parameters = None
-
-        # True if this screen has been prepared.
-        self.prepared = False
-
-        # The keywords that make up the screen. (This is removed once parsing
-        # is finished.)
-        self.keywords = [ ]
-
-        # The children that make up the screen's ast.
-        self.children = [ ]
-
-    def define(self):
-        """
-        Defines a screen.
-        """
-
-        renpy.display.screen.define_screen(
-            self.name,
-            self,
-            modal=self.modal,
-            zorder=self.zorder,
-            tag=self.tag,
-            variant=renpy.python.py_eval(self.variant),
-            predict=renpy.python.py_eval(self.predict),
-            parameters=self.parameters,
-            )
-
-    def __call__(self, *args, **kwargs):
-        scope = kwargs["_scope"]
-
-        if self.parameters:
-
-            args = scope.get("_args", ())
-            kwargs = scope.get("_kwargs", { })
-
-            values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
-            scope.update(values)
-
-        context = slast.SLContext()
-        context.scope = scope
-
-        if not self.prepared:
-            self.prepared = True
-
-            for i in self.children:
-                i.prepare()
-
-        for i in self.children:
-            i.execute(context)
-
-        for i in context.children:
-            renpy.ui.add(i)
+UseParser("use")
 
 
 class ScreenParser(Parser):
@@ -680,7 +618,7 @@ class ScreenParser(Parser):
 
     def parse(self, l, parent, name="_name"):
 
-        screen = ScreenLangScreen()
+        screen = slast.SLScreen()
 
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l)

@@ -192,6 +192,33 @@ class ChildOrFixed(Addable):
         if d is not None:
             raise Exception("Did not expect to close %r." % d)
 
+class ChildList(Addable):
+    """
+    Used by SL2 to interface with SL1 screens. This appends widgets to
+    a list of children.
+    """
+
+    def __init__(self, children, style_prefix):
+        self.children = children
+        self.style_prefix = style_prefix
+
+    def get_style_group(self):
+        style_prefix = self.style_prefix
+
+        if style_prefix:
+            return style_prefix[:-1]
+        else:
+            return None
+
+    style_group = property(get_style_group)
+
+    def add(self, d, key):
+        self.children.append(d)
+
+    def close(self, d):
+        raise Exception("Spurious ui.close().")
+
+
 # A stack of things we can add to.
 stack = [ ]
 
