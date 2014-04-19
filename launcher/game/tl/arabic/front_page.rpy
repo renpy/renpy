@@ -1,4 +1,4 @@
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -74,7 +74,7 @@ translate arabic strings:
     old "Deleting persistent data..."
     new "يتم الآن حذف الملفات المؤقتة "
 
-# TODO: Translation updated at 2013-11-17 23:18
+# : Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 
@@ -86,11 +86,11 @@ translate arabic strings:
     old "Extract Dialogue"
     new "استخراج النص"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # game/front_page.rpy:144
     old "[p.name!q] (template)"
-    new ""
+    new "[p.name!q] (template)"
 
