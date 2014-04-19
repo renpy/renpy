@@ -1,4 +1,4 @@
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -86,15 +86,15 @@ translate arabic strings:
     old "Proceed"
     new "استمرار."
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # game/updater.rpy:129
     old "Nightly"
-    new ""
+    new "مسائي"
 
     # game/updater.rpy:135
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new ""
+    new "أحدث نسخة طازجة من رينباي التجريبي, قد يحتوي على آخر مستجدات رينباي و قد لا يعمل مطلقاً"
 
