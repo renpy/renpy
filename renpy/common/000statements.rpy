@@ -404,45 +404,24 @@ python early hide:
         name = p["name"]
         a = p["arguments"]
 
-        args = [ ]
-        kwargs = { }
-
         if a is not None:
-
-            for k, v in a.arguments:
-                if k is not None:
-                    kwargs[k] = eval(v)
-                else:
-                    args.append(eval(v))
-
-            if a.extrapos is not None:
-                args.extend(eval(a.extrapos))
-
-            if a.extrakw is not None:
-                kwargs.update(eval(a.extrakw))
+            args, kwargs = a.evaluate()
+        else:
+            args = [ ]
+            kwargs = { }
 
         renpy.show_screen(name, *args, **kwargs)
 
     def execute_call_screen(p):
+
         name = p["name"]
         a = p["arguments"]
 
-        args = [ ]
-        kwargs = { }
-
         if a is not None:
-
-            for k, v in a.arguments:
-                if k is not None:
-                    kwargs[k] = eval(v)
-                else:
-                    args.append(eval(v))
-
-            if a.extrapos is not None:
-                args.extend(eval(a.extrapos))
-
-            if a.extrakw is not None:
-                kwargs.update(eval(a.extrakw))
+            args, kwargs = a.evaluate()
+        else:
+            args = [ ]
+            kwargs = { }
 
         store._return = renpy.call_screen(name, *args, **kwargs)
 

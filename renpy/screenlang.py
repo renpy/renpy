@@ -1237,7 +1237,6 @@ class ScreenLangScreen(renpy.object.Object):
 
 
 
-
 class ScreenParser(Parser):
 
     def __init__(self):
