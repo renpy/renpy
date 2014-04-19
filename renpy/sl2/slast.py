@@ -567,10 +567,13 @@ class SLUse(SLNode):
             self.serial,
             serial)
 
-        # TODO: Evaluate args, kwargs.
+        if self.args:
+            args, kwargs = self.args.evaluate(context.scope)
+        else:
+            args = [ ]
+            kwargs = { }
 
-        renpy.display.screen.use_screen(self.target, _name=name, _scope=context.scope)
-
+        renpy.display.screen.use_screen(self.target, _name=name, _scope=context.scope, *args, **kwargs)
 
     def execute(self, context):
 
