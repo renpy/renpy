@@ -17,7 +17,7 @@ screen say:
     default side_image = None
     default two_window = False
 
-    # Decide if we want to use the one-window or two-window varaint.
+    # Decide if we want to use the one-window or two-window variant.
     # １ウィンドウ形式か２ウィンドウ形式か決めます。
     if not two_window:
 
