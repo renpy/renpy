@@ -1,4 +1,4 @@
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -6,7 +6,7 @@ translate arabic strings:
     old "%b %d, %H:%M"
     new "%b %d, %H:%M"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -102,7 +102,7 @@ translate arabic strings:
     old "Restart"
     new "إعادة تشغيل"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -110,7 +110,7 @@ translate arabic strings:
     old "Saved screenshot as %s."
     new "تم حفظ الصورة كـ %s"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -138,7 +138,7 @@ translate arabic strings:
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "هل انت متأكد من رغبتك في العودة للقائمة الرئيسية؟ \n كل ما لم تقم بحفظة سيضيع."
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -150,7 +150,7 @@ translate arabic strings:
     old "Fast Skip Mode"
     new "وضع التسريع السريع"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -190,7 +190,7 @@ translate arabic strings:
     old "The updates were cancelled."
     new "تم إلغاء التحديث."
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -206,7 +206,7 @@ translate arabic strings:
     old "Next"
     new "التالي"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -214,7 +214,7 @@ translate arabic strings:
     old "Joystick Mapping"
     new "خيارات عصى التحكم"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -270,7 +270,7 @@ translate arabic strings:
     old "Opens the errors.txt file in a text editor."
     new "يفتح ملف errors.txt في برنامج الملفات النصية"
 
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -282,7 +282,7 @@ translate arabic strings:
     old "q"
     new "q"
 
-# TODO: Translation updated at 2013-11-17 23:18
+# : Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 
@@ -290,7 +290,7 @@ translate arabic strings:
     old "Quick save complete."
     new "تم الحفظ السريع بنجاح"
 
-# TODO: Translation updated at 2013-11-17 23:18
+# : Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 
@@ -314,7 +314,7 @@ translate arabic strings:
     old "return"
     new "العودة"
 
-# TODO: Translation updated at 2013-11-17 23:18
+# : Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 
@@ -330,7 +330,7 @@ translate arabic strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "هل انت متأكد من رغبتك في تسريع الخيارات و الحوار الذي لم يسبق لك قرائته؟"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
@@ -340,181 +340,181 @@ translate arabic strings:
 
     # renpy/common/00console.rpy:180
     old "Press <esc> to exit console. Type help for help.\n"
-    new ""
+    new "إضغط زر الخروج لإغلاق لوحة التحكم, اكتب كلمة help للمساعدة"
 
     # renpy/common/00console.rpy:184
     old "Ren'Py script enabled."
-    new ""
+    new "لغة برمحة رينباي متاحه"
 
     # renpy/common/00console.rpy:186
     old "Ren'Py script disabled."
-    new ""
+    new "لغة برمجة رينباي غير متاحه"
 
     # renpy/common/00console.rpy:392
     old "help: show this help"
-    new ""
+    new "مساعده: عرض هذه المساعده"
 
     # renpy/common/00console.rpy:397
     old "commands:\n"
-    new ""
+    new "أوامر: \n"
 
     # renpy/common/00console.rpy:407
     old " <renpy script statement>: run the statement\n"
-    new ""
+    new "<renpy script statement>: عرض الأوامر\n"
 
     # renpy/common/00console.rpy:409
     old " <python expression or statement>: run the expression or statement"
-    new ""
+    new " <python expression or statement>: عرض التعبير او الأوامر"
 
     # renpy/common/00console.rpy:417
     old "clear: clear the console history"
-    new ""
+    new "clear: مسح تاريخ  لوحة التحكم"
 
     # renpy/common/00console.rpy:421
     old "exit: exit the console"
-    new ""
+    new "exit: الخروج من لوحة التحكم"
 
     # renpy/common/00console.rpy:429
     old "load <slot>: loads the game from slot"
-    new ""
+    new "استرجاع <slot>: يقوم باسترجاع اللعب من نقطة الحفظ"
 
     # renpy/common/00console.rpy:442
     old "save <slot>: saves the game in slot"
-    new ""
+    new "حفظ <slot>: يقوم بحفظ اللعب في نقطة الحفظ"
 
     # renpy/common/00console.rpy:453
     old "reload: reloads the game, refreshing the scripts"
-    new ""
+    new "reload: يعيد تشغيل اللعبة مع عرض التغييرات في النص"
 
     # renpy/common/00console.rpy:461
     old "watch <expression>: watch a python expression"
-    new ""
+    new "مشاهده <expression>: يقوم بعرض تبيرات بايثون"
 
     # renpy/common/00console.rpy:470
     old "unwatch <expression>: stop watching an expression"
-    new ""
+    new "unwatch <expression>: يقوم بإيقاف تعبير بايثون"
 
     # renpy/common/00console.rpy:478
     old "unwatchall: stop watching all expressions"
-    new ""
+    new "unwatchall: يقوم بإيقاف كل تعبيرات بايثون"
 
     # renpy/common/00console.rpy:484
     old "jump <label>: jumps to label"
-    new ""
+    new "jump <label>: يقفز للعنوان"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # renpy/common/00keymap.rpy:332
     old "Autoreload"
-    new ""
+    new "إعادة التحميل تلقائياً"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # renpy/common/_developer/developer.rpym:65
     old "Developer Menu"
-    new ""
+    new "قائمة المبرمج"
 
     # renpy/common/_developer/developer.rpym:67
     old "Reload Game (Shift+R)"
-    new ""
+    new "إعادة تشغيل اللعبة (Shift+R)"
 
     # renpy/common/_developer/developer.rpym:69
     old "Console (Shift+O)"
-    new ""
+    new "لوحة التحكم (Shift+O)"
 
     # renpy/common/_developer/developer.rpym:71
     old "Variable Viewer"
-    new ""
+    new "مستعرض الأوامر"
 
     # renpy/common/_developer/developer.rpym:73
     old "Theme Test"
-    new ""
+    new "اختبار القوالب"
 
     # renpy/common/_developer/developer.rpym:75
     old "Image Location Picker"
-    new ""
+    new "مكان الصور المطلوبة"
 
     # renpy/common/_developer/developer.rpym:77
     old "Filename List"
-    new ""
+    new "قائمة اسماء الملفات"
 
     # renpy/common/_developer/developer.rpym:81
     old "Show Image Load Log"
-    new ""
+    new "عرض قائمة الصور "
 
     # renpy/common/_developer/developer.rpym:84
     old "Hide Image Load Log"
-    new ""
+    new "إخفاء قائمة الصور"
 
     # renpy/common/_developer/developer.rpym:149
     old "No variables have changed since the game started."
-    new ""
+    new "لم يتم تغيير اي من الأوامر منذ ان بدأت اللعبة"
 
     # renpy/common/_developer/developer.rpym:152
     old "Return to the developer menu"
-    new ""
+    new "العودة للوحة المبرمج"
 
     # renpy/common/_developer/developer.rpym:272
     old "{b}Missing Images{/b}"
-    new ""
+    new "{b}صور مفقودة{/b}"
 
     # renpy/common/_developer/developer.rpym:424
     old "Rectangle: %r"
-    new ""
+    new "مثلث: %r"
 
     # renpy/common/_developer/developer.rpym:429
     old "Mouse position: %r"
-    new ""
+    new "مكان المؤشر: %r"
 
     # renpy/common/_developer/developer.rpym:431
     old "Right-click or escape to quit."
-    new ""
+    new "إضغط بالزر الايمن او إضغط زر الخروح للإغلاق"
 
     # renpy/common/_developer/developer.rpym:482
     old "Done"
-    new ""
+    new "تم"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # renpy/common/_developer/inspector.rpym:43
     old "Displayable Inspector"
-    new ""
+    new "اختبار المستعرضات"
 
     # renpy/common/_developer/inspector.rpym:49
     old "Nothing to inspect."
-    new ""
+    new "لا يوجد شيء ليتم اختباره"
 
     # renpy/common/_developer/inspector.rpym:58
     old "Size"
-    new ""
+    new "حجم"
 
     # renpy/common/_developer/inspector.rpym:63
     old "Style"
-    new ""
+    new "مظهر"
 
     # renpy/common/_developer/inspector.rpym:123
     old "Inspecting Styles of [displayable_name!q]"
-    new ""
+    new "يتم اختبار المظهر الخاص بـ [displayable_name!q]"
 
     # renpy/common/_developer/inspector.rpym:135
     old "displayable:"
-    new ""
+    new "مستعرضات"
 
     # renpy/common/_developer/inspector.rpym:142
     old "        (no properties affect the displayable)"
-    new ""
+    new "        (لا توجد اي مؤثرات على هذا المستعرض)"
 
     # renpy/common/_developer/inspector.rpym:144
     old "        (default properties omitted)"
-    new ""
+    new "        (تم استبعاد تأثير المؤثرات القياسية)"
 
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
-    new ""
+    new "<repr() failed>"
 
