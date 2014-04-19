@@ -138,7 +138,7 @@ label _start:
     $ _game_menu_screen = None
     $ _predict_screens = [ 'main_menu' ]
 
-    if renpy.has_label("splashscreen") and not _restart:
+    if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
         call expression "splashscreen" from _call_splashscreen_1
 
     $ _game_menu_screen = _old_game_menu_screen
@@ -175,7 +175,7 @@ label _invoke_main_menu:
     python:
         if _restart:
             renpy.call_in_new_context(_restart[2])
-        else:
+        elif not renpy.os.environ.get("RENPY_SKIP_MAIN_MENU", False):
             renpy.call_in_new_context("_main_menu")
 
 
