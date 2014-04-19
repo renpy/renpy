@@ -1,4 +1,4 @@
-# TODO: Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -58,11 +58,11 @@ translate arabic strings:
     old "Language:"
     new "اللغة:"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # game/preferences.rpy:164
     old "Show templates"
-    new ""
+    new "عرض القوالب"
 
