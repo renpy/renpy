@@ -906,24 +906,26 @@ class SceneLists(renpy.object.Object):
 
         rv = renpy.display.layout.MultiBox(layout='fixed', focus=layer, **properties)
         rv.append_scene_list(self.layers[layer])
+        rv.layer_name = layer
 
         time, at_list = self.layer_at_list[layer]
 
         if at_list:
-            for a in at_list:
 
-                rv = renpy.display.layout.AdjustTimes(rv, None, None)
+            for a in at_list:
 
                 if isinstance(a, renpy.display.motion.Transform):
                     rv = a(child=rv)
                 else:
                     rv = a(rv)
 
-                f = renpy.display.layout.MultiBox(layout='fixed')
-                f.add(rv, time, time)
-                rv = f
+            f = renpy.display.layout.MultiBox(layout='fixed')
+            f.add(rv, time, time)
+            f.layer_name = layer
 
-        rv.layer_name = layer
+            rv = f
+
+
         return rv
 
     def remove_hide_replaced(self, layer, tag):
