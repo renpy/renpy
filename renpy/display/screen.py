@@ -45,8 +45,15 @@ class Screen(renpy.object.Object):
 
         screens[name[0], variant] = self
 
-        # The function that is called to display this screen.
+        # A function that can be called to display the screen.
         self.function = function
+
+        # If this is a SL2 screen, the SLScreen node at the root of this
+        # screen.
+        if isinstance(function, renpy.sl2.slast.SLScreen): # @UndefinedVariable
+            self.ast = function
+        else:
+            self.ast = None
 
         # Expression: Are we modal? (A modal screen ignores screens under it.)
         self.modal = modal

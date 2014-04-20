@@ -556,8 +556,9 @@ class SLUse(SLNode):
         # The name of the screen we're accessing.
         self.target = target
 
-        # If self.target refers to an SLScreen, that SLScreen.
-        self.target_screen = None
+        # If the target is an SL2 screen, the SLScreen node at the root of
+        # the ast for that screen.
+        self.ast = None
 
         # If arguments are given, those arguments.
         self.args = args
@@ -567,8 +568,13 @@ class SLUse(SLNode):
 
         ts = renpy.display.screen.get_screen_variant(self.target)
 
-        if not isinstance(ts, SLScreen):
+        if ts is None:
             return
+        if ts.ast is None:
+            return
+
+        self.ast = ts.ast
+        self.ast.prepare()
 
     def execute_use_screen(self, context):
 
@@ -591,9 +597,49 @@ class SLUse(SLNode):
 
     def execute(self, context):
 
-        # TODO: Splice in an SLScreen, if possible.
+        ast = self.ast
 
-        self.execute_use_screen(context)
+        # If self.ast is not an SL2 screen, run it using renpy.display.screen.use_screen.
+        if ast is None:
+            self.execute_use_screen(context)
+            return
+
+        # Otherwise, run it directly.
+
+        ctx = SLContext(context)
+
+        # Create a new scope for the context, based on the parameters.
+        scope = dict(context.scope)
+
+        if self.args:
+            args, kwargs = self.args.evaluate(context.scope)
+        else:
+            args = [ ]
+            kwargs = { }
+
+        if ast.parameters is not None:
+            newscope = ast.parameters.apply(args, kwargs)
+        else:
+            if args:
+                raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
+
+            newscope = kwargs
+
+        scope.update(newscope)
+        ctx.scope = scope
+
+        # Use a call-site specific cache. (Otherwise, two uses of the same screen would
+        # be sharing cache locations.
+
+        cache = context.cache.get(self.serial, None)
+
+        if cache is None:
+            context.cache[self.serial] = cache = { }
+
+        ctx.cache = cache
+
+        # Run the child screen.
+        ast.execute(ctx)
 
 
 class SLScreen(SLBlock):
@@ -647,6 +693,7 @@ class SLScreen(SLBlock):
 
     def prepare(self):
         if not self.prepared:
+            self.prepared = True
             SLBlock.prepare(self)
 
     def __call__(self, *args, **kwargs):
