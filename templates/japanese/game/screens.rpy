@@ -17,7 +17,7 @@ screen say:
     default side_image = None
     default two_window = False
 
-    # Decide if we want to use the one-window or two-window varaint.
+    # Decide if we want to use the one-window or two-window variant.
     # １ウィンドウ形式か２ウィンドウ形式か決めます。
     if not two_window:
 
@@ -99,15 +99,17 @@ screen choice:
                 else:
                     text caption style "menu_caption"
 
-init -2 python:
-    config.narrator_menu = True
+init -2:
+    $ config.narrator_menu = True
 
-    style.menu_window.set_parent(style.default)
-    style.menu_choice.set_parent(style.button_text)
-    style.menu_choice.clear()
-    style.menu_choice_button.set_parent(style.button)
-    style.menu_choice_button.xminimum = int(config.screen_width * 0.75)
-    style.menu_choice_button.xmaximum = int(config.screen_width * 0.75)
+    style menu_window is default
+
+    style menu_choice is button_text:
+        clear
+
+    style menu_choice_button is button:
+        xminimum int(config.screen_width * 0.75)
+        xmaximum int(config.screen_width * 0.75)
 
 
 ##############################################################################
@@ -214,11 +216,12 @@ screen main_menu:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit(confirm=False)
 
-init -2 python:
+init -2:
 
     # Make all the main menu buttons be the same size.
     # メインメニューの全てのボタンを同じサイズにします。
-    style.mm_button.size_group = "mm"
+    style mm_button:
+        size_group "mm"
 
 
 ##############################################################################
@@ -254,8 +257,12 @@ screen navigation:
         textbutton _("Help") action Help()
         textbutton _("Quit") action Quit()
 
-init -2 python:
-    style.gm_nav_button.size_group = "gm_nav"
+init -2:
+
+    # Make all game menu navigation buttons the same size.
+    # すべてのゲームメニューのナビゲーションボタンを同サイズにします。
+    style gm_nav_button:
+        size_group "gm_nav"
 
 
 ##############################################################################
@@ -354,15 +361,12 @@ screen load:
     use navigation
     use file_picker
 
-init -2 python:
-    style.file_picker_frame = Style(style.menu_frame)
-
-    style.file_picker_nav_button = Style(style.small_button)
-    style.file_picker_nav_button_text = Style(style.small_button_text)
-
-    style.file_picker_button = Style(style.large_button)
-    style.file_picker_text = Style(style.large_button_text)
-
+init -2:
+    style file_picker_frame is menu_frame
+    style file_picker_nav_button is small_button
+    style file_picker_nav_button_text is small_button_text
+    style file_picker_button is large_button
+    style file_picker_text is large_button_text
 
 
 ##############################################################################
@@ -486,20 +490,25 @@ screen preferences:
                             action Play("voice", config.sample_voice)
                             style "soundtest_button"
 
-init -2 python:
-    style.pref_frame.xfill = True
-    style.pref_frame.xmargin = 5
-    style.pref_frame.top_margin = 5
+init -2:
+    style pref_frame:
+        xfill True
+        xmargin 5
+        top_margin 5
 
-    style.pref_vbox.xfill = True
+    style pref_vbox:
+        xfill True
 
-    style.pref_button.size_group = "pref"
-    style.pref_button.xalign = 1.0
+    style pref_button:
+        size_group "pref"
+        xalign 1.0
 
-    style.pref_slider.xmaximum = 192
-    style.pref_slider.xalign = 1.0
+    style pref_slider:
+        xmaximum 192
+        xalign 1.0
 
-    style.soundtest_button.xalign = 1.0
+    style soundtest_button:
+        xalign 1.0
 
 
 ##############################################################################
@@ -544,10 +553,13 @@ screen yesno_prompt:
     # 右クリックで"no"を選択したことにする。
     key "game_menu" action no_action
 
-init -2 python:
-    style.yesno_button.size_group = "yesno"
-    style.yesno_label_text.text_align = 0.5
-    style.yesno_label_text.layout = "subtitle"
+init -2:
+    style yesno_button:
+        size_group "yesno"
+
+    style yesno_label_text:
+        text_align 0.5
+        layout "subtitle"
 
 
 ##############################################################################
@@ -576,15 +588,18 @@ screen quick_menu:
         textbutton _("Auto") action Preference("auto-forward", "toggle")
         textbutton _("Prefs") action ShowMenu('preferences')
 
-init -2 python:
-    style.quick_button.set_parent('default')
-    style.quick_button.background = None
-    style.quick_button.xpadding = 5
+init -2:
+    style quick_button:
+        is default
+        background None
+        xpadding 5
 
-    style.quick_button_text.set_parent('default')
-    style.quick_button_text.size = 12
-    style.quick_button_text.idle_color = "#8888"
-    style.quick_button_text.hover_color = "#ccc"
-    style.quick_button_text.selected_idle_color = "#cc08"
-    style.quick_button_text.selected_hover_color = "#cc0"
-    style.quick_button_text.insensitive_color = "#4448"
+    style quick_button_text:
+        is default
+        size 12
+        idle_color "#8888"
+        hover_color "#ccc"
+        selected_idle_color "#cc08"
+        selected_hover_color "#cc0"
+        insensitive_color "#4448"
+
