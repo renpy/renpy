@@ -1,4 +1,4 @@
-# TODO: Translation updated at 2013-11-17 23:18
+# : Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 
@@ -98,67 +98,67 @@ translate arabic strings:
     old "Build & Install"
     new "بناء و تنصيب"
 
-# TODO: Translation updated at 2014-04-17 13:01
+# : Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # game/android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new ""
+    new "لبناء ملفات الأندرويد, الرجاء تحميل RAPT, ثم فك الضغط عن الملف ووضعه في مجلد رينباي. قد تحتاج لإعادة تشغيل رينباي ليعمل بشكل صحيح."
 
     # game/android.rpy:31
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new ""
+    new "تحتاج لنسخة برمجية من جافا تعتمد الـ 32-بت لتستطيع إنشاء ملفات الأندرويد على نظام الوندوز. حزمة JDK تختلف عن JRE, قد تكون الجافا لديك موجوده لكنها تفتقد الـ JDK. \n\n الرجاء {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}تحميل و تنصيب JDK{/a} ثم إعادة تشغيل رينباي"
 
     # game/android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new ""
+    new "يحاول محاكاة نظام تلفزيوني للأندرويد مثل جهاز OUYA او Fire TV. \n\n يتم تخطيط الأزرار لعصا التحكم لتناسب ازرار جهاز التحكم عن بعد. Controller input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
 
     # game/android.rpy:47
     old "Connects to an Android device running ADB in TCP/IP mode."
-    new ""
+    new "يتصل بجهاز أندرويد يعمل على نظام ADB عن طريق TCP/IP mode"
 
     # game/android.rpy:48
     old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new ""
+    new "يفصل الاتصال عن جهاز أندرويد يعمل على نظام ADB عن طريق TCP/IP mode"
 
     # game/android.rpy:516
     old "Other:"
-    new ""
+    new "آخر:"
 
     # game/android.rpy:524
     old "Remote ADB Connect"
-    new ""
+    new "الإتصال عن بعد عن طريق ADB"
 
     # game/android.rpy:528
     old "Remote ADB Disconnect"
-    new ""
+    new "قطع إتصال ADB عن بعد"
 
     # game/android.rpy:561
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new ""
+    new "قبل ان تصتطيع إنشاء ملفات للأندرويد, عليك ان تقوم بتحميل ملفات RAPT الخاصة بتحويل ملفات رينباي للأندرويد. هل تريد ان تقوم بتحميل الحزمة الآن؟"
 
     # game/android.rpy:608
     old "Remote ADB Address"
-    new ""
+    new "عنوان ADB عن بعد"
 
     # game/android.rpy:609
     old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new ""
+    new "الرجاء إدخال عنوان الأي بي ورقم المنفذ المطلوب للإتصال, على شكل \"192.168.1.143:5555\". الرجاء العودة لدليل المستخدم الخاص بجهازك لتعرف إن كان يدعم الإتصال عن بعد للـ ADB و إن كان قادراً على ذلك, ستجد العنوان و المنفذ المطلوبان."
 
     # game/android.rpy:619
     old "Invalid remote ADB address"
-    new ""
+    new "عنوان ِADB خاطيء"
 
     # game/android.rpy:619
     old "The address must contain one exactly one ':'."
-    new ""
+    new "العنوان يجب ان يحتوي على علامة ':' واحده فقط لا غير"
 
     # game/android.rpy:623
     old "The host may not contain whitespace."
-    new ""
+    new "الخادم يجب ان لا يحتوي على مساحات فارغة"
 
     # game/android.rpy:629
     old "The port must be a number."
-    new ""
+    new "يجب ان يكون العنوان مكون من أرقام فقط"
 
