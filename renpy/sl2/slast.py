@@ -553,8 +553,22 @@ class SLUse(SLNode):
 
         SLNode.__init__(self)
 
+        # The name of the screen we're accessing.
         self.target = target
+
+        # If self.target refers to an SLScreen, that SLScreen.
+        self.target_screen = None
+
+        # If arguments are given, those arguments.
         self.args = args
+
+
+    def prepare(self):
+
+        ts = renpy.display.screen.get_screen_variant(self.target)
+
+        if not isinstance(ts, SLScreen):
+            return
 
     def execute_use_screen(self, context):
 
@@ -582,12 +596,14 @@ class SLUse(SLNode):
         self.execute_use_screen(context)
 
 
-class SLScreen(renpy.object.Object):
+class SLScreen(SLBlock):
     """
     This represents a screen defined in the screen language 2.
     """
 
     def __init__(self):
+
+        SLBlock.__init__(self)
 
         # The name of the screen.
         self.name = None
@@ -613,13 +629,6 @@ class SLScreen(renpy.object.Object):
         # True if this screen has been prepared.
         self.prepared = False
 
-        # The keywords that make up the screen. (This is removed once parsing
-        # is finished.)
-        self.keywords = [ ]
-
-        # The children that make up the screen's ast.
-        self.children = [ ]
-
     def define(self):
         """
         Defines a screen.
@@ -636,6 +645,10 @@ class SLScreen(renpy.object.Object):
             parameters=self.parameters,
             )
 
+    def prepare(self):
+        if not self.prepared:
+            SLBlock.prepare(self)
+
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
 
@@ -647,17 +660,12 @@ class SLScreen(renpy.object.Object):
             values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
             scope.update(values)
 
+        self.prepare()
+
         context = SLContext()
         context.scope = scope
 
-        if not self.prepared:
-            self.prepared = True
-
-            for i in self.children:
-                i.prepare()
-
-        for i in self.children:
-            i.execute(context)
+        self.execute(context)
 
         for i in context.children:
             renpy.ui.add(i)

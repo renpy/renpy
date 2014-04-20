@@ -122,6 +122,9 @@ class Parser(object):
 
         all_statements.append(self)
 
+        global parser
+        parser = self
+
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.name)
 
@@ -374,10 +377,6 @@ class DisplayableParser(Parser):
         # The number of children we have.
         self.nchildren = nchildren
 
-        # Add us to the appropriate lists.
-        global parser
-        parser = self
-
         if nchildren != 0:
             childbearing_statements.add(self)
 
@@ -625,14 +624,12 @@ class ScreenParser(Parser):
 
         self.parse_contents(l, screen, can_tag=True)
 
-        keywords = dict(screen.keywords)
+        keyword = dict(screen.keyword)
 
-        screen.modal = keywords.get("modal", "False")
-        screen.zorder = keywords.get("modal", "0")
-        screen.variant = keywords.get("modal", "None")
-        screen.predict = keywords.get("modal", "None")
-
-        del screen.keywords
+        screen.modal = keyword.get("modal", "False")
+        screen.zorder = keyword.get("zorder", "0")
+        screen.variant = keyword.get("variant", "None")
+        screen.predict = keyword.get("predict", "None")
 
         return screen
 
