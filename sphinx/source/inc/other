@@ -20,6 +20,11 @@
     
     Resets the game runtime counter.
 
+.. function:: renpy.clear_keymap_cache()
+    
+    Clears the keymap cache. This allows changes to :var:`config.keymap` to
+    take effect without restarting Ren'Py.
+
 .. function:: renpy.context_dynamic(*vars)
     
     This can be given one or more variable names as arguments. This makes
@@ -232,6 +237,22 @@
     
     This can be used if a label that is called decides not to return
     to its caller.
+
+.. function:: renpy.queue_event(name, up=False)
+    
+    Queues an event with the given name. `Name` should be one of the event
+    names in :var:`config.keymap`.
+    
+    `up`
+        This should be false when the event begins (for example, when a keyboard
+        button is pressed.) It should be true when the event begins (when the
+        button is released.)
+    
+    The event is queued at the time this function is called. This function will
+    not work to replace an event with another - doing so will change event order.
+    (Use :var:`config.keymap` instead.)
+    
+    This method is threadsafe.
 
 .. function:: renpy.quit(relaunch=False, status=0)
     

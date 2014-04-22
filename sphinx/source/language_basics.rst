@@ -58,7 +58,7 @@ However, Ren'Py searches directories in the following order:
 * The name of the executable, without the suffix, and with
   a prefix ending with _ removed. For example, if the executable
   is moonlight_en.exe, Ren'Py will look for a directory named en.
-* The directories "game", "data", and "launcher", in that order. 
+* The directories "game", "data", and "launcher", in that order.
 
 The launcher will only properly recognize the "game" and "data" directories,
 however.
@@ -68,7 +68,7 @@ subdirectories, is scanned for .rpy and .rpyc files, and those are combined to
 form the game script. It is scanned for .rpa archive files, and those are
 automatically used by the game. Finally, when the game gives a path to a file
 to load, it is loaded relative to the game directory. (But note that
-config.searchpath can change this.) 
+config.searchpath can change this.)
 
 Comments
 ========
@@ -182,7 +182,6 @@ Ren'Py statements are made of a few basic parts.
     letters.
 
 :dfn:`Image Name`
-
     An :dfn:`image name` consists of one or more names, separated by
     spaces. The first component of the image name is called the
     :dfn:`image tag`. The second and later components of the name are
