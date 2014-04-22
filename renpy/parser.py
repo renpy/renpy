@@ -2238,7 +2238,7 @@ def report_parse_errors():
 
     full_text = ""
 
-    f, error_fn = renpy.bootstrap.open_error_file("errors.txt", "w")
+    f, error_fn = renpy.error.open_error_file("errors.txt", "w")
     f.write(codecs.BOM_UTF8)
 
     print >>f, "I'm sorry, but errors were detected in your script. Please correct the"

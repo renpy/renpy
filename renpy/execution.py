@@ -304,7 +304,7 @@ class Context(renpy.object.Object):
                     self.translate_interaction = None
 
                     exc_info = sys.exc_info()
-                    short, full, traceback_fn = renpy.bootstrap.report_exception(e, editor=False)
+                    short, full, traceback_fn = renpy.error.report_exception(e, editor=False)
 
                     try:
                         if self.exception_handler is not None:
