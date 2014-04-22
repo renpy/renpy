@@ -241,7 +241,7 @@ class Context(renpy.object.Object):
 
         self.current = node_name
 
-    def report_tb(self, out):
+    def report_traceback(self, name):
 
         rv = [ ]
 

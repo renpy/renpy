@@ -502,6 +502,10 @@ say_layer = "screens"
 # The layer the choice screen is shown on.
 choice_layer = "screens"
 
+# If true, we will not use the .report_traceback method to produced
+# prettier tracebacks.
+raw_tracebacks = False
+
 del renpy
 del os
 

@@ -25,6 +25,7 @@ import traceback
 import sys
 import cStringIO
 import platform
+import linecache
 
 import renpy
 import os
@@ -69,6 +70,59 @@ def write_utf8_traceback_list(out, l):
         out.write(t.encode("utf-8", "replace"))
 
 
+def traceback_list(tb):
+    """
+    Given `tb`, returns a list of (filename, line_number, function, line_text)
+    tuples.
+    """
+
+    l = [ ]
+
+    while tb:
+        frame = tb.tb_frame
+        line_number = tb.tb_lineno
+        code = frame.f_code
+        filename = code.co_filename
+        name = code.co_name
+
+        tb = tb.tb_next
+
+        if 'self' in frame.f_locals and not renpy.config.raw_tracebacks:
+            obj = frame.f_locals['self']
+
+            try:
+                l.extend(obj.report_traceback(name))
+                continue
+            except:
+                pass
+
+        l.append((filename, line_number, name, None))
+
+    rv = [ ]
+
+    for filename, line_number, name, line in l:
+        if line is None:
+            line = linecache.getline(filename, line_number)
+
+        rv.append((filename, line_number, name, line))
+
+    return rv
+
+def filter_traceback_list(tl):
+    """
+    Returns the subset of `tl` that originates in creator-written files, as
+    opposed to those portions that come from Ren'Py itself.
+    """
+
+    rv = [ ]
+
+    for t in tl:
+        filename = t[0]
+        if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
+            rv.append(t)
+
+    return rv
+
 def script_level_traceback(out, tb):
     """
     Writes a script-level traceback to out, based on the traceback
@@ -95,6 +149,8 @@ def script_level_traceback(out, tb):
         tb = tb.tb_next
 
     write_utf8_traceback_list(out, tbl)
+
+
 
 def open_error_file(fn, mode):
     """
@@ -148,14 +204,16 @@ def report_exception(e, editor=True):
     simple = cStringIO.StringIO()
     full = cStringIO.StringIO()
 
+    full_tl = traceback_list(tb)
+    simple_tl = filter_traceback_list(full_tl)
+
     print >>simple, renpy.game.exception_info
-    script_level_traceback(simple, tb)
+    write_utf8_traceback_list(simple, simple_tl)
     print >>simple, type.__name__ + ":",
     print >>simple, safe_utf8(e)
 
     print >>full, "Full traceback:"
-    tbl = traceback.extract_tb(tb)
-    write_utf8_traceback_list(full, tbl)
+    write_utf8_traceback_list(full, full_tl)
     print >>full, type.__name__ + ":",
     print >>full, safe_utf8(e)
 
