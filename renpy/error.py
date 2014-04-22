@@ -77,7 +77,7 @@ def traceback_list(tb):
 
         tb = tb.tb_next
 
-        if 'self' in frame.f_locals and not renpy.config.raw_tracebacks:
+        if (tb is not None) and ('self' in frame.f_locals) and (not renpy.config.raw_tracebacks):
             obj = frame.f_locals['self']
 
             try:
