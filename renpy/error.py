@@ -32,16 +32,6 @@ import os
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
-def report_line(out, filename, line, what):
-    out.write('  File "%s", line %d, in %s\n' % (filename, line, what))
-    try:
-        fn = renpy.parser.unelide_filename(filename)
-        f = file(fn, "rb")
-        lines = f.read().decode("utf-8").replace("\r", "").split("\n")
-        out.write("    " + lines[line - 1].encode("utf-8") + "\n")
-    except:
-        pass
-
 
 def write_utf8_traceback_list(out, l):
     """
@@ -122,34 +112,6 @@ def filter_traceback_list(tl):
             rv.append(t)
 
     return rv
-
-def script_level_traceback(out, tb):
-    """
-    Writes a script-level traceback to out, based on the traceback
-    object tb.
-    """
-
-    tbl = [ ]
-
-    while tb:
-        f = tb.tb_frame
-        line = tb.tb_lineno
-        co = f.f_code
-        filename = co.co_filename
-
-        if filename.endswith(".rpy") and not filename.replace("\\", "/").startswith("common/"):
-            tbl.append((filename, line, "python", None))
-
-        elif 'self' in f.f_locals:
-            obj = f.f_locals['self']
-
-            if isinstance(obj, renpy.execution.Context):
-                tbl.extend(obj.report_tb(out))
-
-        tb = tb.tb_next
-
-    write_utf8_traceback_list(out, tbl)
-
 
 
 def open_error_file(fn, mode):
