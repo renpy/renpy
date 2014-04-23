@@ -95,11 +95,12 @@ class SLNode(object):
     The base class for screen language nodes.
     """
 
-    def __init__(self):
+    def __init__(self, loc):
         global serial
         serial += 1
 
         self.serial = serial
+        self.location = loc
 
     def prepare(self):
         """
@@ -134,8 +135,8 @@ class SLBlock(SLNode):
     and child displayables.
     """
 
-    def __init__(self):
-        SLNode.__init__(self)
+    def __init__(self, loc):
+        SLNode.__init__(self, loc)
 
         # A list of keyword argument, expr tuples.
         self.keyword = [ ]
@@ -226,7 +227,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -255,7 +256,7 @@ class SLDisplayable(SLBlock):
             passed to it.
         """
 
-        SLBlock.__init__(self)
+        SLBlock.__init__(self, loc)
 
         self.displayable = displayable
 
@@ -413,11 +414,11 @@ class SLIf(SLNode):
     A screen language AST node that corresponds to an If/Elif/Else statement.
     """
 
-    def __init__(self):
+    def __init__(self, loc):
         """
         An AST node that represents an if statement.
         """
-        SLNode.__init__(self)
+        SLNode.__init__(self, loc)
 
         # A list of entries, with each consisting of an expression (or
         # None, for the else block) and a SLBlock.
@@ -459,8 +460,8 @@ class SLFor(SLBlock):
     simple for loops that assign a single variable.
     """
 
-    def __init__(self, variable, expression):
-        SLBlock.__init__(self)
+    def __init__(self, loc, variable, expression):
+        SLBlock.__init__(self, loc)
 
         self.variable = variable
         self.expression = expression
@@ -510,8 +511,8 @@ class SLFor(SLBlock):
 
 class SLPython(SLNode):
 
-    def __init__(self, code):
-        SLNode.__init__(self)
+    def __init__(self, loc, code):
+        SLNode.__init__(self, loc)
 
         # A pycode object.
         self.code = code
@@ -528,8 +529,8 @@ class SLPass(SLNode):
 
 class SLDefault(SLNode):
 
-    def __init__(self, variable, expression):
-        SLNode.__init__(self)
+    def __init__(self, loc, variable, expression):
+        SLNode.__init__(self, loc)
 
         self.variable = variable
         self.expression = expression
@@ -549,9 +550,9 @@ class SLDefault(SLNode):
 
 class SLUse(SLNode):
 
-    def __init__(self, target, args):
+    def __init__(self, loc, target, args):
 
-        SLNode.__init__(self)
+        SLNode.__init__(self, loc)
 
         # The name of the screen we're accessing.
         self.target = target
@@ -647,9 +648,9 @@ class SLScreen(SLBlock):
     This represents a screen defined in the screen language 2.
     """
 
-    def __init__(self):
+    def __init__(self, loc):
 
-        SLBlock.__init__(self)
+        SLBlock.__init__(self, loc)
 
         # The name of the screen.
         self.name = None

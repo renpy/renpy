@@ -156,31 +156,35 @@ class Parser(object):
         elif isinstance(i, Parser):
             self.children[i.name] = i
 
-    def parse_statement(self, l, layout_mode=False):
+    def parse_statement(self, loc, l, layout_mode=False):
         word = l.word() or l.match(r'\$')
 
         if word and word in self.children:
             if layout_mode:
-                c = self.children[word].parse_layout(l, self)
+                c = self.children[word].parse_layout(loc, l, self)
             else:
-                c = self.children[word].parse(l, self)
+                c = self.children[word].parse(loc, l, self)
 
             return c
         else:
             return None
 
-    def parse_layout(self, l, parent):
+    def parse_layout(self, loc, l, parent):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
         """
         This is expected to parse a function statement, and to return
         a list of python ast statements.
 
-        `l` the lexer.
+        `loc`
+            The location of the current statement.
 
-        `name` the name of the variable containing the name of the
-        current statement.
+        `l`
+            The lexer.
+
+        `parent`
+            The parent Parser of the current statement.
         """
 
         raise Exception("Not Implemented")
@@ -279,6 +283,7 @@ class Parser(object):
             while l.advance():
 
                 state = l.checkpoint()
+                loc = l.get_location()
 
                 if l.keyword(r'has'):
                     if self.nchildren != 1:
@@ -287,7 +292,7 @@ class Parser(object):
                     if child_index != 0:
                         l.error("The has statement may not be given after a child has been supplied.")
 
-                    c = self.parse_statement(l, layout_mode=True)
+                    c = self.parse_statement(loc, l, layout_mode=True)
 
                     if c is None:
                         l.error('Has expects a child statement.')
@@ -296,7 +301,7 @@ class Parser(object):
 
                     continue
 
-                c = self.parse_statement(l)
+                c = self.parse_statement(loc, l)
 
                 # Ignore passes.
                 if isinstance(c, slast.SLPass):
@@ -387,12 +392,14 @@ class DisplayableParser(Parser):
         self.imagemap = imagemap
         self.replaces = replaces
 
-    def parse_layout(self, l, parent):
+    def parse_layout(self, loc, l, parent):
         return self.parse(l, parent, True)
 
-    def parse(self, l, parent, layout_mode=False):
+    def parse(self, loc, l, parent, layout_mode=False):
 
-        rv = slast.SLDisplayable(self.displayable,
+        rv = slast.SLDisplayable(
+            loc,
+            self.displayable,
             scope=self.scope,
             child_or_fixed=(self.nchildren == 1),
             style=self.style,
@@ -414,15 +421,15 @@ class IfParser(Parser):
     def __init__(self, name):
         super(IfParser, self).__init__(name)
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
-        rv = slast.SLIf()
+        rv = slast.SLIf(loc)
 
         condition = l.require(l.python_expression)
 
         l.require(':')
 
-        block = slast.SLBlock()
+        block = slast.SLBlock(loc)
         parent.parse_contents(l, block, block_only=True)
 
         rv.entries.append((condition, block))
@@ -431,12 +438,14 @@ class IfParser(Parser):
 
         while l.advance():
 
+            loc = l.get_location()
+
             if l.keyword("elif"):
 
                 condition = l.require(l.python_expression)
                 l.require(':')
 
-                block = slast.SLBlock()
+                block = slast.SLBlock(loc)
                 parent.parse_contents(l, block, block_only=True)
 
                 rv.entries.append((condition, block))
@@ -448,7 +457,7 @@ class IfParser(Parser):
                 condition = None
                 l.require(':')
 
-                block = slast.SLBlock()
+                block = slast.SLBlock(loc)
                 parent.parse_contents(l, block, block_only=True)
 
                 rv.entries.append((condition, block))
@@ -495,7 +504,7 @@ class ForParser(Parser):
 
         return name
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         l.skip_whitespace()
 
@@ -517,10 +526,10 @@ class ForParser(Parser):
         l.require(':')
         l.expect_eol()
 
-        rv = slast.SLFor(name, expression)
+        rv = slast.SLFor(loc, name, expression)
 
         if code:
-            rv.children.append(slast.SLPython(code))
+            rv.children.append(slast.SLPython(loc, code))
 
         self.parse_contents(l, rv, block_only=True)
 
@@ -531,7 +540,7 @@ ForParser("for")
 
 class OneLinePythonParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         loc = l.get_location()
         source = l.require(l.rest)
@@ -540,14 +549,14 @@ class OneLinePythonParser(Parser):
         l.expect_noblock("one-line python")
 
         code = renpy.ast.PyCode(source, loc)
-        return slast.SLPython(code)
+        return slast.SLPython(loc, code)
 
 OneLinePythonParser("$")
 
 
 class MultiLinePythonParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         loc = l.get_location()
 
@@ -559,14 +568,14 @@ class MultiLinePythonParser(Parser):
         source = l.python_block()
 
         code = renpy.ast.PyCode(source, loc)
-        return slast.SLPython(code)
+        return slast.SLPython(loc, code)
 
 MultiLinePythonParser("python")
 
 
 class PassParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         l.expect_eol()
 
@@ -586,7 +595,7 @@ class DefaultParser(Parser):
         l.expect_eol()
         l.expect_noblock('default statement')
 
-        return slast.SLDefault(name, rest)
+        return slast.SLDefault(loc, name, rest)
 
 DefaultParser("default")
 
@@ -597,7 +606,7 @@ class UseParser(Parser):
         super(UseParser, self).__init__(name)
         childbearing_statements.add(self)
 
-    def parse(self, l, name):
+    def parse(self, loc, l, name):
 
         target = l.require(l.word)
         args = renpy.parser.parse_arguments(l)
@@ -605,7 +614,7 @@ class UseParser(Parser):
         l.expect_eol()
         l.expect_noblock("use statement")
 
-        return slast.SLUse(target, args)
+        return slast.SLUse(loc, target, args)
 
 UseParser("use")
 
@@ -615,9 +624,9 @@ class ScreenParser(Parser):
     def __init__(self):
         super(ScreenParser, self).__init__("screen")
 
-    def parse(self, l, parent, name="_name"):
+    def parse(self, loc, l, parent, name="_name"):
 
-        screen = slast.SLScreen()
+        screen = slast.SLScreen(loc)
 
         screen.name = l.require(l.word)
         screen.parameters = renpy.parser.parse_parameters(l)
@@ -650,11 +659,10 @@ def init():
             i.add(if_statement)
 
 
-
-def parse_screen(l):
+def parse_screen(l, loc):
     """
     Parses the screen statement.
     """
 
-    return screen_parser.parse(l, None)
+    return screen_parser.parse(loc, l, None)
 
