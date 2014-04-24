@@ -70,6 +70,7 @@ backup_blacklist = {
     "renpy.display",
     "renpy.display.pgrender",
     "renpy.display.scale",
+    "renpy.display.presplash",
     "renpy.text.ftfont",
     }
 
