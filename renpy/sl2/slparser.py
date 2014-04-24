@@ -586,7 +586,7 @@ PassParser("pass")
 
 class DefaultParser(Parser):
 
-    def parse(self, l, parent):
+    def parse(self, loc, l, parent):
 
         name = l.require(l.word)
         l.require(r'=')
