@@ -102,6 +102,11 @@ class SLNode(object):
         self.serial = serial
         self.location = loc
 
+    def report_traceback(self, name):
+        filename, line = self.location
+
+        return [ (filename, line, name, None) ]
+
     def prepare(self):
         """
         This should be called before the execute code is called, and again
@@ -696,6 +701,12 @@ class SLScreen(SLBlock):
         if not self.prepared:
             self.prepared = True
             SLBlock.prepare(self)
+
+    def report_traceback(self, name):
+        if name == "__call__":
+            return [ ]
+
+        return SLBlock.report_traceback(self, name)
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
