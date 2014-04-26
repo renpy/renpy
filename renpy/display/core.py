@@ -54,14 +54,21 @@ ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW
 PERIODIC_INTERVAL = 50
 
 # Time management.
-time_base = None
+time_base = 0.0
+time_mult = 1.0
 
 def init_time():
+    warp = os.environ.get("RENPY_TIMEWARP", "1.0")
+
     global time_base
-    time_base = time.time() - pygame.time.get_ticks() / 1000.0
+    global time_mult
+
+    time_base = time.time()
+    time_mult = float(warp)
 
 def get_time():
-    return time_base + pygame.time.get_ticks() / 1000.0
+    t = time.time()
+    return time_base + (t - time_base) * time_mult
 
 
 def displayable_by_tag(layer, tag):
