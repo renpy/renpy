@@ -96,6 +96,7 @@ class TransformState(renpy.object.Object):
     default_yoffset = None
     transform_anchor = False
     additive = 0.0
+    debug = None
 
     def __init__(self): # W0231
         self.alpha = 1
@@ -127,6 +128,8 @@ class TransformState(renpy.object.Object):
         self.size = None
 
         self.delay = 0
+
+        self.debug = None
 
         # Note: When adding a new property, we need to add it to:
         # - take_state
@@ -429,6 +432,8 @@ class Transform(Container):
 
     xcenter = Proxy("xcenter")
     ycenter = Proxy("ycenter")
+
+    debug = Proxy("debug")
 
     def after_upgrade(self, version):
 

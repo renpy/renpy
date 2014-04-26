@@ -52,6 +52,9 @@ def pause(t):
 
 position = object()
 
+def any_object(x):
+    return x
+
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
@@ -91,6 +94,7 @@ PROPERTIES = {
         "offset" : (int, int),
         "xcenter" : position,
         "ycenter" : position,
+        "debug" : any_object,
         }
 
 
