@@ -142,17 +142,24 @@ cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 # renpy.gl
-if android or raspberry_pi:
+if android:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
+    egl = "egl_gl.c"
+elif raspberry_pi:
+    glew_libs = [ 'GLESv2', 'z', 'm' ]
+    gl2_only = True
+    egl = "egl_gl.c"
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
     gl2_only = False
+    egl = "egl_gl.c"
 else:
     glew_libs = [ 'glew32', 'opengl32' ]
     gl2_only = False
+    egl = "egl_gl.c"
 
-cython("renpy.gl.gldraw", libs=glew_libs )
+cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
 cython("renpy.gl.gltexture", libs=glew_libs)
 cython("renpy.gl.glenviron_shader", libs=glew_libs)
 cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not gl2_only)
@@ -182,7 +189,7 @@ angle_libs = [ "SDL", "EGL", "GLESv2" ]
 def anglecython(name, source=[]):
     cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ], source=source)
 
-anglecython("renpy.angle.gldraw", source=[ "anglesupport.c" ])
+anglecython("renpy.angle.gldraw", source=[ "egl_angle.c" ])
 anglecython("renpy.angle.gltexture")
 anglecython("renpy.angle.glenviron_shader")
 anglecython("renpy.angle.glrtt_fbo")

@@ -4,6 +4,8 @@
 #include "EGL/egl.h"
 #include "GLES2/gl2.h"
 
+#include "eglsupport.h"
+
 HWND window;
 
 EGLDisplay display;
@@ -14,6 +16,10 @@ EGLContext context;
 int initialized = 0;
 
 char error_message[100];
+
+int egl_available() {
+	return 1;
+}
 
 // Checks for an EGL error. Returns an error string if there is one,
 // or NULL otherwise.
@@ -39,7 +45,7 @@ char *egl_init(int interval) {
     SDL_SysWMinfo wminfo;
     EGLint major, minor;
     EGLint num_config;
-    
+
     const EGLint attrs[] = {
          EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
          EGL_ALPHA_SIZE, 8,
