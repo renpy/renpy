@@ -18,6 +18,10 @@
 
 #define RENPY_GLES_2
 
+#elif defined RASPBERRY_PI
+
+#define RENPY_GLES_2
+
 #else
 
 #define RENPY_OPENGL
@@ -139,7 +143,7 @@ typedef GLfloat GLdouble;
 #define glDeleteShader glDeleteObjectARB
 #undef glDeleteProgram
 #define glDeleteProgram glDeleteObjectARB
-#undef glGetShaderiv 
+#undef glGetShaderiv
 #define glGetShaderiv glGetObjectParameterivARB
 #undef glGetProgramiv
 #define glGetProgramiv glGetObjectParameterivARB

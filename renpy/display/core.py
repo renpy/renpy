@@ -1297,7 +1297,7 @@ class Interface(object):
         except:
             pass
 
-        pygame.font.init()
+        # pygame.font.init()
         renpy.audio.audio.init()
         renpy.display.joystick.init()
         pygame.display.init()

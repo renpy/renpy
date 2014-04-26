@@ -30,6 +30,7 @@ import distutils.core
 
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
+raspberry_pi = "RENPY_RASPBERRY_PI" in os.environ
 
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
@@ -132,6 +133,12 @@ def library(name, optional=False):
 # A list of extension objects that we use.
 extensions = [ ]
 
+# A list of macros that are defined for all modules.
+global_macros = [ ]
+
+if raspberry_pi:
+    global_macros.append(('RASPBERRY_PI', 1))
+
 def cmodule(name, source, libs=[], define_macros=[]):
     """
     Compiles the python module `name` from the files given in
@@ -146,7 +153,7 @@ def cmodule(name, source, libs=[], define_macros=[]):
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
         libraries=libs,
-        define_macros=define_macros,
+        define_macros=define_macros + global_macros,
         ))
 
 

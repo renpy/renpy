@@ -49,7 +49,7 @@ setup_env("CC")
 setup_env("LD")
 
 import setuplib
-from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
+from setuplib import android, raspberry_pi, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -73,6 +73,10 @@ include("libavcodec/avcodec.h")
 include("libswscale/swscale.h")
 include("GL/glew.h")
 
+if raspberry_pi:
+    include("EGL/egl.h")
+    include("GLES2/gl2.h")
+
 library("SDL")
 library("png")
 library("avformat")
@@ -87,11 +91,14 @@ has_libglew = library("GLEW", optional=True)
 has_libglew32 = library("glew32", optional=True)
 has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
 
+if raspberry_pi:
+    library("EGL")
+    library("GLESv2")
+
 if android:
     sdl = [ 'sdl', 'GLESv2', 'log' ]
 else:
     sdl = [ 'SDL' ]
-
 
 # Modules directory.
 cython(
@@ -135,18 +142,21 @@ cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 # renpy.gl
-if android:
+if android or raspberry_pi:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
+    gl2_only = True
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
+    gl2_only = False
 else:
     glew_libs = [ 'glew32', 'opengl32' ]
+    gl2_only = False
 
 cython("renpy.gl.gldraw", libs=glew_libs )
 cython("renpy.gl.gltexture", libs=glew_libs)
 cython("renpy.gl.glenviron_shader", libs=glew_libs)
-cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
-cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not android)
+cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not gl2_only)
+cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
