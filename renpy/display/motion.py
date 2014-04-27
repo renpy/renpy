@@ -167,6 +167,8 @@ class TransformState(renpy.object.Object):
         self.corner2 = ts.corner2
         self.size = ts.size
 
+        self.debug = ts.debug
+
         # Take the computed position properties, not the
         # raw ones.
         (self.default_xpos,
@@ -617,6 +619,8 @@ class Transform(Container):
         self.state.ypos = t.state.ypos
         self.state.xanchor = t.state.xanchor
         self.state.yanchor = t.state.yanchor
+
+        self.child_st_base = t.child_st_base
 
         if isinstance(self.child, Transform) and isinstance(t.child, Transform):
             self.child.take_execution_state(t.child)

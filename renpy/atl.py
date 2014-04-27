@@ -237,6 +237,9 @@ class ATLTransformBase(renpy.object.Object):
         # The child transform event we last processed.
         self.last_child_transform_event = None
 
+        # The child, without any transformations.
+        self.raw_child = None
+
     def take_execution_state(self, t):
         """
         Updates self to begin executing from the same point as t. This
@@ -262,6 +265,8 @@ class ATLTransformBase(renpy.object.Object):
 
         if self.child is renpy.display.motion.null:
             self.child = t.child
+            self.raw_child = t.raw_child
+
 
 
     def __call__(self, *args, **kwargs):
