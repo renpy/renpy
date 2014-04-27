@@ -49,7 +49,7 @@ setup_env("CC")
 setup_env("LD")
 
 import setuplib
-from setuplib import android, raspberry_pi, include, library, cython, pymodule, copyfile, find_unnecessary_gen
+from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -73,10 +73,6 @@ include("libavcodec/avcodec.h")
 include("libswscale/swscale.h")
 include("GL/glew.h")
 
-if raspberry_pi:
-    include("EGL/egl.h")
-    include("GLES2/gl2.h")
-
 library("SDL")
 library("png")
 library("avformat")
@@ -90,10 +86,6 @@ library("z")
 has_libglew = library("GLEW", optional=True)
 has_libglew32 = library("glew32", optional=True)
 has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
-
-if raspberry_pi:
-    library("EGL")
-    library("GLESv2")
 
 if android:
     sdl = [ 'sdl', 'GLESv2', 'log' ]
@@ -146,10 +138,6 @@ if android:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
     egl = "egl_none.c"
-elif raspberry_pi:
-    glew_libs = [ 'GLESv2', 'z', 'm' ]
-    gl2_only = True
-    egl = "egl_rpi.c"
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
     gl2_only = False

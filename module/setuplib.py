@@ -30,7 +30,6 @@ import distutils.core
 
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
-raspberry_pi = "RENPY_RASPBERRY_PI" in os.environ
 
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
@@ -135,9 +134,6 @@ extensions = [ ]
 
 # A list of macros that are defined for all modules.
 global_macros = [ ]
-
-if raspberry_pi:
-    global_macros.append(('RASPBERRY_PI', 1))
 
 def cmodule(name, source, libs=[], define_macros=[]):
     """
