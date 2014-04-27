@@ -145,19 +145,19 @@ cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 if android:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
-    egl = "egl_gl.c"
+    egl = "egl_none.c"
 elif raspberry_pi:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
-    egl = "egl_gl.c"
+    egl = "egl_x11.c"
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
     gl2_only = False
-    egl = "egl_gl.c"
+    egl = "egl_none.c"
 else:
     glew_libs = [ 'glew32', 'opengl32' ]
     gl2_only = False
-    egl = "egl_gl.c"
+    egl = "egl_none.c"
 
 cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
 cython("renpy.gl.gltexture", libs=glew_libs)
