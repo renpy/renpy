@@ -149,7 +149,7 @@ if android:
 elif raspberry_pi:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
-    egl = "egl_x11.c"
+    egl = "egl_rpi.c"
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
     gl2_only = False
