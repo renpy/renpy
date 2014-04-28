@@ -113,3 +113,51 @@ translate japanese strings:
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Androidアプリをパッケージングする前に、RAPT(Ren'Py Android Packaging Tool)をダウンロードする必要があります。今すぐダウンロードしますか？"
 
+    # game/android.rpy:39
+    old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "OUYAやFire TVのようなテレビで動作する Android デバイスをエミュレートします。\n\nコントローラーの入力は矢印キー、Enterはセレクトボタン、Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
+
+    # game/android.rpy:47
+    old "Connects to an Android device running ADB in TCP/IP mode."
+    new "TCP/IPモードでADBを実行し、Androidデバイスに接続します。"
+
+    # game/android.rpy:48
+    old "Disconnects from an Android device running ADB in TCP/IP mode."
+    new "TCP/IPモードでADBを実行し、Androidデバイスとの接続を解除します。"
+
+    # game/android.rpy:516
+    old "Other:"
+    new "その他"
+
+    # game/android.rpy:524
+    old "Remote ADB Connect"
+    new "リモートADB接続"
+
+    # game/android.rpy:528
+    old "Remote ADB Disconnect"
+    new "リモートADB接続解除"
+
+    # game/android.rpy:608
+    old "Remote ADB Address"
+    new "リモートADBアドレス"
+
+    # game/android.rpy:609
+    old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
+    new "接続先のIPアドレスとポート番号を\"192.168.1.143:5555\"の形式で入力して下さい。あなたのデバイスがのドキュメントを読んでリモートADB接続をサポートしているかを確認してください。サポートしているなら、そのアドレスとポート番号を使用してください。"
+
+    # game/android.rpy:619
+    old "Invalid remote ADB address"
+    new "不正なリモートADBアドレスです。"
+
+    # game/android.rpy:619
+    old "The address must contain one exactly one ':'."
+    new "アドレスは必ずひとつ ':' を含まなければなりません。"
+
+    # game/android.rpy:623
+    old "The host may not contain whitespace."
+    new "ホストは空白を含まなくともよいです。"
+
+    # game/android.rpy:629
+    old "The port must be a number."
+    new "ポートは数字でなければなりません。"
+

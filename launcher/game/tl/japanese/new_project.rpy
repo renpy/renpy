@@ -29,3 +29,7 @@ translate japanese strings:
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] は既に存在します。違う名前を選択してください。"
 
+    # game/new_project.rpy:71
+    old "The projects directory could not be set. Giving up."
+    new "プロジェクトディレクトリーを設定出来ません。キャンセルしています。"
+

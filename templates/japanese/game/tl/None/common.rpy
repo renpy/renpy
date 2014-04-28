@@ -462,3 +462,11 @@ translate None strings:
     old "jump <label>: jumps to label"
     new "jump <ラベル>: ラベルにジャンプ"
 
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "オートリロード"
+
+    # renpy/common/_developer/developer.rpym:272
+    old "{b}Missing Images{/b}"
+    new "{b}M画像が見付かりません{/b}"
+
