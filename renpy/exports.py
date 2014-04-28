@@ -2447,7 +2447,7 @@ def set_autoreload(autoreload):
     :doc: other
 
     Sets the autoreload flag, which determines if the game will be
-    automatically reloated after file changes. Autoreload will not be
+    automatically reloaded after file changes. Autoreload will not be
     fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
     """
 
