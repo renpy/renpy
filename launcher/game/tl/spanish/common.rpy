@@ -493,3 +493,7 @@ translate spanish strings:
     old "{b}Missing Images{/b}"
     new "{b}Imágenes ausentes{/b}"
 
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "Autorecarga"
+
