@@ -61,13 +61,11 @@ first_utter_start = True
 # needs to survive through an utter restart.
 autoreload = False
 
-# Back up the object type, since it will be overwritten by renpy.object.
-_object = object
-
 # A list of modules beginning with "renpy" that we don't want
 # to backup.
 backup_blacklist = {
     "renpy",
+    "renpy.object",
     "renpy.log",
     "renpy.bootstrap",
     "renpy.display",
@@ -159,12 +157,6 @@ class Backup():
                 continue
 
             if name + "." + k in name_blacklist:
-                continue
-
-            # Direct instances of type object are almost always flag singletons,
-            # and we don't want to change them, since they may be referred to by
-            # function definitions.
-            if type(v) is _object:
                 continue
 
             idv = id(v)

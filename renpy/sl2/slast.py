@@ -36,7 +36,7 @@ serial = 0
 
 # A sentinel used to indicate we should use the value found in the
 # expression.
-use_expression = object()
+use_expression = renpy.object.Sentinel("use_expression")
 
 # The filename that's currently being compiled.
 filename = '<screen language>'
@@ -132,7 +132,7 @@ class SLNode(object):
         return
 
 # A sentinel used to indicate a keyword argument was not given.
-NotGiven = object()
+NotGiven = renpy.object.Sentinel("NotGiven")
 
 class SLBlock(SLNode):
     """
@@ -457,7 +457,7 @@ class SLIf(SLNode):
                 block.keywords(context)
                 return
 
-unhashable = object()
+unhashable = renpy.object.Sentinel("unhashable")
 
 class SLFor(SLBlock):
     """

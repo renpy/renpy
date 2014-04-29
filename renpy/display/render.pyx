@@ -320,7 +320,7 @@ def take_focuses(focuses):
 
 # The result of focus_at_point for a modal render. This overrides any
 # specific focus from below us.
-Modal = object()
+Modal = renpy.object.Sentinel("Modal")
 
 def focus_at_point(x, y):
     """

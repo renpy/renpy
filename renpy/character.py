@@ -514,7 +514,7 @@ def display_say(
 
 
 # This is used to flag values that haven't been set by the user.
-NotSet = object()
+NotSet = renpy.object.Sentinel("NotSet")
 
 class ADVCharacter(object):
     """

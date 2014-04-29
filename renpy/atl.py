@@ -50,7 +50,7 @@ def pause(t):
     else:
         return 1.0
 
-position = object()
+position = renpy.object.Sentinel("position")
 
 def any_object(x):
     return x

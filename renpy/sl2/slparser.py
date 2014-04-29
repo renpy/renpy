@@ -323,7 +323,7 @@ def add(thing):
     parser.add(thing)
 
 # A singleton value.
-many = object()
+many = renpy.object.Sentinel("many")
 
 class DisplayableParser(Parser):
     """

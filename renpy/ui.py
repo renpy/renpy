@@ -358,7 +358,7 @@ def context_enter(w):
 def context_exit(w):
     close(w)
 
-NoStyleGroupGiven = object()
+NoStyleGroupGiven = renpy.object.Sentinel("NoStyleGroupGiven")
 
 def style_group_style(s, style_group):
     """

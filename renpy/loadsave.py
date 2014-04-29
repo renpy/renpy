@@ -607,7 +607,7 @@ def cycle_saves(name, count):
 ################################################################################
 
 # None is a possible value for some of the attributes.
-unknown = object()
+unknown = renpy.object.Sentinel("unknown")
 
 class Cache(object):
     """

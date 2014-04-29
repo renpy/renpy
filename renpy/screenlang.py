@@ -293,7 +293,7 @@ class Parser(object):
 
 
 # A singleton value.
-many = object()
+many = renpy.object.Sentinel("many")
 
 class FunctionStatementParser(Parser):
     """
