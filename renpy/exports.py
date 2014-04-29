@@ -990,7 +990,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
+def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
 
@@ -1011,9 +1011,17 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
         as it's hard to distinguish a hard pause from a crashing game.
 
     `checkpoint`
-        If true, a checkpoint is placed so rollback can occur.
+        If true, a checkpoint will be set, and players will be able to roll
+        back to this statement. If false, no checkpoint will be set. If None,
+        a checkpoint will only be set if display is set.
     """
 
+
+    if checkpoint is None:
+        if delay is not None:
+            checkpoint = False
+        else:
+            checkpoint = True
 
     if renpy.config.skipping == "fast":
         return False
