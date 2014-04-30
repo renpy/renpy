@@ -22,6 +22,11 @@
 # This file contains functions used to help debug memory leaks. They aren't
 # called by default, but can be used when problems occur.
 
+import renpy.gl.gltexture
+import time
+import threading
+import weakref
+
 old_memory = { }
 
 def memory_profile():
@@ -73,23 +78,42 @@ def find_parents(cls):
 
         seen = set()
         queue = [ ]
+        objects = [ ]
+
 
         for _i in range(30):
+
+            objects.append(o)
 
             print prefix + str(id(o)), type(o),
 
             try:
                 if isinstance(o, dict) and "__name__" in o:
-                    print o["__name__"],
-                print repr(o)#[:1000]
+                    print "with name", o["__name__"]
+                else:
+                    print repr(o)#[:1000]
             except:
                 print "Bad repr."
 
             found = False
 
+            if isinstance(o, types.ModuleType):
+                if not queue:
+                    break
+
+                o, prefix = queue.pop()
+                continue
+
+            if isinstance(o, weakref.WeakKeyDictionary):
+                for k, v in o.data.items():
+                    if v is objects[-4]:
+                        k = k()
+                        seen.add(id(k))
+                        queue.append((k, prefix + " (key) "))
+
             for i in gc.get_referrers(o):
 
-                if i is objs:
+                if i is objs or i is objects:
                     continue
 
                 if id(i) in seen:
@@ -113,5 +137,28 @@ def find_parents(cls):
 
     for o in objs:
         if isinstance(o, cls):
-            print
-            print_path(o)
+            import random
+            if random.random() < .1:
+
+                print
+                print "==================================================="
+                print
+
+                print_path(o)
+
+def memory_thread():
+
+    import sys
+    TextureGrid = sys.modules['renpy.gl.gltexture'].TextureGrid
+
+    while True:
+        print "==================================================="
+        print "==================================================="
+        find_parents(TextureGrid)
+        sys.stderr.write("Wrote textures.\n")
+        time.sleep(5)
+
+def start_memory_thread():
+    t = threading.Thread(target=memory_thread)
+    t.daemon = True
+    t.start()
