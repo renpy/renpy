@@ -419,10 +419,13 @@ def reload_all():
     # Restore the state of all modules from backup.
     backup.restore()
 
+    renpy.display.im.reset_module()
+
     post_import()
 
     # Re-initialize the importer.
     renpy.loader.init_importer()
+
 
 ################################################################################
 # Fix things for code analysis
