@@ -90,7 +90,9 @@ To invoke warping, run Ren'Py with the ``--warp`` command-line argument followed
 by a filename:line combination, to specify where you would like to warp to. For
 example ::
 
-    run_game --warp script.rpy:458
+    renpy.exe my_project --warp script.rpy:458
+
+(Where `my_project` is the full path to the base directory of your project.)
 
 When warping is invoked, Ren'Py does a number of things. It first finds all of
 the scene statements in the program. It then tries to find a path from the
@@ -116,11 +118,6 @@ the warped-to statement executes. The code reached by this label can set up
 variables in the program, and then return to the preview.
 
 The warp feature requires :var:`config.developer` to be True to operate.
-
-When using renpy.sh or renpy.py from the SDK to run Ren'Py, you will also need
-to give the ``--game`` option. For example ::
-
-    ./renpy.sh --game ./the_question/game/ --warp script.rpy:98
 
 Debug Functions
 ---------------
