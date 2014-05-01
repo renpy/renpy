@@ -59,9 +59,7 @@ def run(restart):
     if warp_label is not None:
 
         game.context().goto_label(warp_label)
-
-        if game.script.has_label('after_warp'):
-            game.context().call('after_warp')
+        game.context().call('_after_warp')
 
         renpy.config.skipping = None
 

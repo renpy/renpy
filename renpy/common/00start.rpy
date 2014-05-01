@@ -65,18 +65,36 @@ init -1600 python:
 # This fixes up the context, if necessary, then calls the real
 # after_load.
 label _after_load:
-    $ renpy.context()._menu = False
-    $ renpy.context()._main_menu = False
-    $ main_menu = False
-    $ _in_replay = None
 
-    if config.after_load_transition:
-        $ renpy.transition(config.after_load_transition, force=True)
+    python:
+        renpy.context()._menu = False
+        renpy.context()._main_menu = False
+        main_menu = False
+        _in_replay = None
+
+        if config.after_load_transition:
+            renpy.transition(config.after_load_transition, force=True)
 
     if renpy.has_label("after_load"):
         jump expression "after_load"
     else:
         return
+
+# Ditto, for warp.
+label _after_warp:
+
+    python:
+        renpy.context()._menu = False
+        renpy.context()._main_menu = False
+        main_menu = False
+        _in_replay = None
+
+    if renpy.has_label("after_warp"):
+        jump expression "after_warp"
+    else:
+        return
+
+
 
 # Common code for _start and _start_memory.
 label _start_store:
