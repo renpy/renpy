@@ -202,6 +202,8 @@ init -1 python hide:
 
     config.rollback_enabled = False
 
+    config.rtl = True
+
 
 ## This section controls how to build Ren'Py. (Building the launcher is how
 ## we build Ren'Py distributions.)

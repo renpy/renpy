@@ -259,9 +259,23 @@ init -1 python hide:
 
     config.default_text_cps = 0
 
+    ## Enable right-to-left text.
+    config.rtl = True
+
     #########################################
     ## More customizations can go here.
     ##تغيير مظهر النص ليكون من اليمين لليسار
-    style.say_vbox.xalign = 1.0
+
+style say_vbox:
+    xalign 1.0
+
+style say_label:
+    xalign 1.0
+
+style say_dialogue:
+    xalign 1.0
+
+style say_thought:
+    xalign 1.0
 
 
