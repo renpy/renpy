@@ -654,7 +654,7 @@ Rarely or Internally Used
     released games, but setting it to a number will allow for
     automated demonstrations of games without much human interaction.
 
-.. var:: config.autoreload = True
+.. var:: config.autoreload = False
 
     If true, shift+R will toggle automatic reloading. When automatic
     reloading is enabled, Ren'Py will reload the game whenever a used

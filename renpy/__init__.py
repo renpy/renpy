@@ -40,10 +40,10 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 18, 0, vc_version)
+version_tuple = (6, 17, 5, vc_version)
 
 # The name of this version.
-version_name = "TBD."
+version_name = "In This Decade..."
 
 # A verbose string giving the version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
