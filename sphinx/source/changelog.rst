@@ -2,6 +2,55 @@
 Full Changelog
 ==============
 
+Ren'Py 6.17.5
+=============
+
+Translations
+------------
+
+This release features an Arabic translation of the launcher and template
+game, contributed by Renoa.
+
+The Japanese and Spanish translations have been updated.
+
+Changes
+-------
+
+The traceback system has been changed to generally report script statements,
+rather than the functions Ren'Py uses to implement those statements.
+
+The :func:`renpy.pause` function now only sets a checkpoint (allowing rollback)
+if the delay time is 0. This prevents rollback from being blocked by short
+pauses.
+
+The new :func:`renpy.queue_event` function provides a way to queue Ren'Py
+events from user-written interface code. (For example, it could be used to
+listen to commands on a serial port that's connected to a custom
+controller.)
+
+If set, RENPY_SKIP_MAIN_MENU and RENPY_SKIP_SPLASHSCREEN environment
+variables cause Ren'Py to skip the main menu and splashscreen, respectively.
+
+The RENPY_TIMEWARP environment variable makes it possible to speedup and
+slow down time.
+
+An experimental new autoreload system can be accessed by setting
+:var:`config.autoreload` to True, then pressing shift+R to toggle
+automatic reloading.
+
+Fixes
+-----
+
+A regression in 6.17.4 caused a major memory leak on shift+R. This has
+been fixed. Several other problems with shift+R have also been fixed.
+
+An issue preventing transitions from working properly inside a restarted
+ATL transform has been fixed.
+
+The --warp was documented incorrectly, and had stopped working. It's been
+repaired, and its documentation has been improved.
+
+
 Ren'Py 6.17.4
 =============
 
