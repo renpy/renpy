@@ -1,5 +1,5 @@
 translate arabic python:
-    al = "tl/arabic/Advertisinglight.ttf"
+    al = "DejaVuSans.ttf"
     style.l_default.font = al
     style.l_default.size = 16
     style.l_button_text.selected_font = al
@@ -13,3 +13,4 @@ translate arabic python:
     style.l_nonbox_text.selected_font = al
     style.hyperlink_text.font = al
     make_style_backup()
+    
