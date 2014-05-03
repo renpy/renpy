@@ -20,6 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import os
+import time
+
+PROFILE = ("RENPY_PROFILE_SCREENS" in os.environ)
 
 class Screen(renpy.object.Object):
     """
@@ -252,6 +256,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             return self.widgets
 
+        if PROFILE:
+            start = time.time()
+
         # Update _current_screen
         global _current_screen
         old_screen = _current_screen
@@ -295,6 +302,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 i.set_transform_event(self.current_transform_event)
 
             self.current_transform_event = None
+
+        if PROFILE:
+            end = time.time()
+            print "screen {} took {:.3f}ms".format(" ".join(self.screen_name).encode("utf-8"), 1000.0 * (end - start))
 
         return self.widgets
 
