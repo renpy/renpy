@@ -19,8 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
-
+import renpy
 import renpy.sl2.slast as slast
 
 # A list of style prefixes that we know of.
@@ -393,7 +392,7 @@ class DisplayableParser(Parser):
         self.replaces = replaces
 
     def parse_layout(self, loc, l, parent):
-        return self.parse(l, parent, True)
+        return self.parse(loc, l, parent, True)
 
     def parse(self, loc, l, parent, layout_mode=False):
 
