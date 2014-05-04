@@ -84,7 +84,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     class is responsible for managing the display of a screen.
     """
 
-    nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms' ]
+    nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms', "cache" ]
 
     restarting = False
 
@@ -95,6 +95,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.widgets = { }
         self.old_widgets = None
         self.old_transforms = None
+        self.cache = { }
 
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
@@ -125,6 +126,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # A map from name to the widget with that name.
         self.widgets = { }
+
+        # The persistent cache.
+        self.cache = { }
 
         if tag and layer:
             old_screen = get_screen(tag, layer)

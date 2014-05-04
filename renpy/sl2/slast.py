@@ -724,6 +724,16 @@ class SLScreen(SLBlock):
         context = SLContext()
         context.scope = scope
 
+        name = scope["_name"]
+        main_cache = renpy.display.screen.current_screen().cache
+
+        cache = main_cache.get(name, None)
+        if cache is None:
+            cache = { }
+            main_cache[name] = cache
+
+        context.cache = cache
+
         self.execute(context)
 
         for i in context.children:
