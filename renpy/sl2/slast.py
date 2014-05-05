@@ -222,8 +222,23 @@ class SLCache(object):
         # The displayable object created.
         self.displayable = None
 
+        # The positional arguments that were used to create the displayable.
+        self.positional = None
+
+        # The keywords arguments that were used to created the displayable.
+        self.keyword = None
+
+        # The children that were added to self.displayable.
+        self.children = None
+
         # The old transform created.
         self.transform = None
+
+        # The transform that was used to create self.transform.
+        self.raw_transform = None
+
+        # The imagemap stack entry we reuse.
+        self.imagemap = None
 
 
 class SLDisplayable(SLBlock):
@@ -341,16 +356,13 @@ class SLDisplayable(SLBlock):
         if self.pass_context:
             positional.insert(0, ctx)
 
-        # If we don't know the style, figure it out.
-        if ("style" not in keywords) and self.style:
-            keywords["style"] = renpy.style.get_style(ctx.style_prefix + self.style) # @UndefinedVariable
-
-        if self.scope:
-            keywords["scope"] = ctx.scope
-
         # Get the widget id and transform, if any.
         widget_id = keywords.pop("id", None)
         transform = keywords.pop("at", None)
+
+        # If we don't know the style, figure it out.
+        if ("style" not in keywords) and self.style:
+            keywords["style"] = renpy.style.get_style(ctx.style_prefix + self.style) # @UndefinedVariable
 
         # Create and add the displayables.
         screen = renpy.ui.screen
@@ -358,10 +370,27 @@ class SLDisplayable(SLBlock):
         if widget_id in screen.widget_properties:
             keywords.update(screen.widget_properties[widget_id])
 
-        if self.replaces:
-            keywords['replaces'] = cache.displayable
+        if (positional == cache.positional) and (keywords == cache.keywords):
+            d = cache.displayable
+            reused = True
+            print "REUSED", d
 
-        d = self.displayable(*positional, **keywords)
+            if cache.imagemap is not None:
+                renpy.ui.imagemap_stack.append(cache.imagemap)
+
+        else:
+            cache.positional = positional
+            cache.keywords = keywords.copy()
+
+            if self.scope:
+                keywords["scope"] = ctx.scope
+
+            if self.replaces:
+                keywords['replaces'] = cache.displayable
+
+            d = self.displayable(*positional, **keywords)
+
+            reused = False
 
         if d is not None:
             ctx.children = [ ]
@@ -377,19 +406,24 @@ class SLDisplayable(SLBlock):
         renpy.ui.stack.pop()
 
         if self.imagemap:
-            renpy.ui.imagemap_stack.pop()
+            cache.imagemap = renpy.ui.imagemap_stack.pop()
 
-        if self.child_or_fixed and len(self.children) != 1:
-            f = renpy.display.layout.Fixed()
+        if ctx.children != cache.children:
 
-            for i in ctx.children:
-                f.add(i)
+            if reused:
+                d._clear()
 
-            d.add(f)
+            if self.child_or_fixed and len(self.children) != 1:
+                f = renpy.display.layout.Fixed()
 
-        else:
-            for i in ctx.children:
-                d.add(i)
+                for i in ctx.children:
+                    f.add(i)
+
+                d.add(f)
+
+            else:
+                for i in ctx.children:
+                    d.add(i)
 
         cache.displayable = d
 
@@ -397,12 +431,15 @@ class SLDisplayable(SLBlock):
             screen.widgets[widget_id] = d
 
         if transform is not None:
-            d = transform(d)
+            if transform is not cache.raw_transform:
+                cache.raw_transform = transform
+                d = transform(d)
 
-        if isinstance(d, renpy.display.motion.Transform):
-            if cache.transform is not None:
-                d.take_state(cache.transform)
-                d.take_execution_state(cache.transform)
+                if cache.transform is not None:
+                    d.take_state(cache.transform)
+                    d.take_execution_state(cache.transform)
+
+            cache.transform = d
 
         context.children.append(d)
 
