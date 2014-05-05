@@ -421,6 +421,13 @@ class Displayable(renpy.object.Object):
 
         return child
 
+    def _clear(self):
+        """
+        Clears out the children of this displayable, if any.
+        """
+
+        return
+
 
 
 class SceneListEntry(renpy.object.Object):
