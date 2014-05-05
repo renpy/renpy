@@ -112,3 +112,51 @@
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Antes de empaquetar apps para Android, vas a necesitar descargar RAPT, Ren'Py Android Packaging Tool. ¿Quieres descargar RAPT ahora?"
 
+    # game/android.rpy:39
+    old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Al intentar emular una consola Android basada en televisión, como OUYA o Fire TV.\n\nPara el control se usan las flechas, Intro está asignado al botón select. Escape está asignado al botón de menú, y PageUp está asignado al botón Atrás."
+
+    # game/android.rpy:47
+    old "Connects to an Android device running ADB in TCP/IP mode."
+    new "Conectar a un dispositivo Android ejecutando ADB en modo TCP/IP."
+
+    # game/android.rpy:48
+    old "Disconnects from an Android device running ADB in TCP/IP mode."
+    new "Desconectar de un dispositivo Android corriendo ADB en modo TCP/IP."
+
+    # game/android.rpy:516
+    old "Other:"
+    new "Otros:"
+
+    # game/android.rpy:524
+    old "Remote ADB Connect"
+    new "Conexión remota ADB"
+
+    # game/android.rpy:528
+    old "Remote ADB Disconnect"
+    new "Desconexión remota ADB"
+
+    # game/android.rpy:608
+    old "Remote ADB Address"
+    new "Dirección remota ADB"
+
+    # game/android.rpy:609
+    old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
+    new "Por favor introduce la dirección IP y el número de puerto para conectarte, con el formato \"192.168.1.143:5555\". Consulta la documentación de tu dispositivo para averiguar si es compatible con ADB remoto, y si es así, la dirección y el puerto a utilizar."
+
+    # game/android.rpy:619
+    old "Invalid remote ADB address"
+    new "Dirección remota ADB no válida"
+
+    # game/android.rpy:619
+    old "The address must contain one exactly one ':'."
+    new "La dirección debe contener exactamente un ':'."
+
+    # game/android.rpy:623
+    old "The host may not contain whitespace."
+    new "El host no puede contener espacios en blanco."
+
+    # game/android.rpy:629
+    old "The port must be a number."
+    new "El puerto debe ser un número."
+
