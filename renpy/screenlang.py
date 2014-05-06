@@ -352,11 +352,11 @@ class FunctionStatementParser(Parser):
         seen_keywords = set()
 
         # Parses a keyword argument from the lexer.
-        def parse_keyword(l):
+        def parse_keyword(l, expect):
             name = l.word()
 
             if name is None:
-                l.error('expected a keyword argument, colon, or end of line.')
+                l.error(expect)
 
             if name not in self.keyword:
                 l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
@@ -391,7 +391,7 @@ class FunctionStatementParser(Parser):
                 block = False
                 break
 
-            parse_keyword(l)
+            parse_keyword(l, "expected a keyword argument, colon, or end of line.")
 
         rv.append(ast.Expr(value=call_node))
 
@@ -459,8 +459,11 @@ class FunctionStatementParser(Parser):
 
                     l.revert(state)
 
+                    if not l.eol():
+                        parse_keyword(l, "expected a keyword argument or child statement.")
+
                     while not l.eol():
-                        parse_keyword(l)
+                        parse_keyword(l, "expected a keyword argument or end of line.")
 
         if needs_close:
             rv.extend(self.parse_exec("ui.close()"))
