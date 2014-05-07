@@ -38,6 +38,9 @@ Once you've extracted Ren'Py, you'll need to run it.
 
 After running this, the Ren'Py launcher should run.
 
+The Ren'Py launcher is translated to Russian, Japanese, French,
+ and Spanish. If want, choose "preferences" and "Language".
+
 .. image:: launcher.png
    :align: right
 
