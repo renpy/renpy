@@ -150,7 +150,7 @@ def queue_event(name, up=False):
 
     `up`
         This should be false when the event begins (for example, when a keyboard
-        button is pressed.) It should be true when the event begins (when the
+        button is pressed.) It should be true when the event ends (when the
         button is released.)
 
     The event is queued at the time this function is called. This function will
