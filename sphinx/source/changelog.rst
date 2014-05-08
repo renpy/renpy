@@ -2,6 +2,16 @@
 Full Changelog
 ==============
 
+Ren'Py 6.17.6
+=============
+
+This release adds German and Korean translations of the launcher,
+contributed by Marcel and Baekansi, respectively.
+
+It works around an issue that could prevent the launcher from starting
+on certain Mac OS X computers.
+
+
 Ren'Py 6.17.5
 =============
 
