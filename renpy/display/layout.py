@@ -119,6 +119,11 @@ class Container(renpy.display.core.Displayable):
         self.child = child
         self.offsets = self._list_type()
 
+    def _clear(self):
+        self.child = None
+        self.children = self._list_type()
+        self.offsets = self._list_type()
+
     def remove(self, d):
         """
         Removes the first instance of child from this container. May
@@ -439,6 +444,14 @@ class MultiBox(Container):
         self.layers = None
 
         # The scene list for this widget.
+        self.scene_list = None
+
+    def _clear(self):
+        super(MultiBox, self)._clear()
+
+        self.start_times = [ ]
+        self.anim_times = [ ]
+        self.layers = None
         self.scene_list = None
 
     def __unicode__(self):
@@ -1512,6 +1525,10 @@ class Side(Container):
                 raise Exception("Side used with impossible position '%s'." % (i,))
 
         self.positions = tuple(positions)
+        self.sized = False
+
+    def _clear(self):
+        super(Side, self)._clear()
         self.sized = False
 
     def render(self, width, height, st, at):

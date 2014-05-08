@@ -20,6 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import os
+import time
+
+PROFILE = ("RENPY_PROFILE_SCREENS" in os.environ)
 
 class Screen(renpy.object.Object):
     """
@@ -80,7 +84,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     class is responsible for managing the display of a screen.
     """
 
-    nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms' ]
+    nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms', "cache" ]
 
     restarting = False
 
@@ -91,6 +95,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.widgets = { }
         self.old_widgets = None
         self.old_transforms = None
+        self.cache = { }
 
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
@@ -121,6 +126,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # A map from name to the widget with that name.
         self.widgets = { }
+
+        # The persistent cache.
+        self.cache = { }
 
         if tag and layer:
             old_screen = get_screen(tag, layer)
@@ -252,6 +260,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             return self.widgets
 
+        if PROFILE:
+            start = time.time()
+
         # Update _current_screen
         global _current_screen
         old_screen = _current_screen
@@ -295,6 +306,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 i.set_transform_event(self.current_transform_event)
 
             self.current_transform_event = None
+
+        if PROFILE:
+            end = time.time()
+            print "screen {} took {:.3f}ms".format(" ".join(self.screen_name).encode("utf-8"), 1000.0 * (end - start))
 
         return self.widgets
 

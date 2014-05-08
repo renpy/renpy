@@ -19,8 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
-
+import renpy
 import renpy.sl2.slast as slast
 
 # A list of style prefixes that we know of.
@@ -212,11 +211,11 @@ class Parser(object):
         seen_keywords = set()
 
         # Parses a keyword argument from the lexer.
-        def parse_keyword(l):
+        def parse_keyword(l, expect):
             name = l.word()
 
             if name is None:
-                l.error('expected a keyword argument, colon, or end of line.')
+                l.error(expect)
 
             if can_tag and name == "tag":
                 if target.tag is not None:
@@ -260,7 +259,7 @@ class Parser(object):
                     block = False
                     break
 
-                parse_keyword(l)
+                parse_keyword(l, 'expected a keyword argument, colon, or end of line.')
 
 
         # The index of the child we're adding to this statement.
@@ -315,8 +314,11 @@ class Parser(object):
 
                 l.revert(state)
 
+                if not l.eol():
+                    parse_keyword(l, "expected a keyword argument or child statement.")
+
                 while not l.eol():
-                    parse_keyword(l)
+                    parse_keyword(l, "expected a keyword argument or end of line.")
 
 
 def add(thing):
@@ -393,7 +395,7 @@ class DisplayableParser(Parser):
         self.replaces = replaces
 
     def parse_layout(self, loc, l, parent):
-        return self.parse(l, parent, True)
+        return self.parse(loc, l, parent, True)
 
     def parse(self, loc, l, parent, layout_mode=False):
 

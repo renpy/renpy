@@ -588,7 +588,7 @@ label choose_projects_directory:
                 interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
 
             elif choice:
-                path = renpy.fsdecode(choice)
+                path = choice.decode("utf-8")
 
         if path is None:
             path = default_path
