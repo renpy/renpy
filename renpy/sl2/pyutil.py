@@ -29,7 +29,11 @@ import renpy # @UnusedImport
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
+# The set of names that should be treated as constants.
 constants = { 'foo.bar' }
+
+# The set of names that should be treated as pure functions.
+pure_functions = { 'Test' }
 
 def is_constant(node):
     """
@@ -74,12 +78,11 @@ def is_constant(node):
         elif isinstance(node, ast.Attribute):
             const, name = check_name(node.value)
 
-            if const:
-                return True, None
-            if not name:
-                return False, None
+            if name is not None:
+                name = name + "." + node.attr
 
-            name = name + "." + node.attr
+            if const:
+                return True, name
 
         else:
             return check_node(node), None
@@ -127,6 +130,28 @@ def is_constant(node):
 
         elif isinstance(node, ast.UnaryOp):
             return check_node(node.operand)
+
+        elif isinstance(node, ast.Call):
+            _const, name = check_name(node.func)
+
+            # The function must have a name, and must be declared pure.
+            if not name in pure_functions:
+                return False
+
+            # Arguments and keyword arguments must be pure.
+            if not check_nodes(node.args):
+                return False
+
+            if not check_nodes(i.value for i in node.keywords):
+                return False
+
+            if (node.starargs is not None) and not check_node(node.starargs):
+                return False
+
+            if (node.kwargs is not None) and not check_node(node.kwargs):
+                return False
+
+            return True
 
         elif isinstance(node, ast.IfExp):
             return (
