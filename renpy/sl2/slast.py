@@ -225,8 +225,8 @@ class SLCache(object):
         # The positional arguments that were used to create the displayable.
         self.positional = None
 
-        # The keywords arguments that were used to created the displayable.
-        self.keyword = None
+        # The keyword arguments that were used to created the displayable.
+        self.keywords = None
 
         # The children that were added to self.displayable.
         self.children = None
@@ -247,7 +247,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, clear=None):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -274,6 +274,9 @@ class SLDisplayable(SLBlock):
         `replaces`
             True if the object this displayable replaces should be
             passed to it.
+
+        `clear`
+            The function used to clean out the children of a reused displayable.
         """
 
         SLBlock.__init__(self, loc)
@@ -286,6 +289,7 @@ class SLDisplayable(SLBlock):
         self.pass_context = pass_context
         self.imagemap = imagemap
         self.replaces = replaces
+        self.clear = clear
 
         # Positional argument expressions.
         self.positional = [ ]
@@ -410,8 +414,8 @@ class SLDisplayable(SLBlock):
 
         if ctx.children != cache.children:
 
-            if reused:
-                d._clear()
+            if reused and (self.clear is not None):
+                self.clear(d)
 
             if self.child_or_fixed and len(self.children) != 1:
                 f = renpy.display.layout.Fixed()
@@ -431,7 +435,9 @@ class SLDisplayable(SLBlock):
             screen.widgets[widget_id] = d
 
         if transform is not None:
-            if transform is not cache.raw_transform:
+            if reused and (transform is cache.raw_transform):
+                d = cache.transform
+            else:
                 cache.raw_transform = transform
                 d = transform(d)
 
@@ -440,6 +446,9 @@ class SLDisplayable(SLBlock):
                     d.take_execution_state(cache.transform)
 
             cache.transform = d
+        else:
+            cache.transform = None
+            cache.raw_transform = None
 
         context.children.append(d)
 
@@ -530,8 +539,8 @@ class SLFor(SLBlock):
         else:
             value = self.expression_value
 
-        newcaches = collections.defaultdict(dict)
-        oldcaches = context.cache.get(self.serial, newcaches)
+        newcaches = {}
+        oldcaches = context.cache.get(self.serial, {})
 
         ctx = SLContext(context)
 
@@ -541,11 +550,17 @@ class SLFor(SLBlock):
 
             # TODO: use indexes of id(v) to get the cache.
 
-            cache = oldcaches[i]
+            cache = oldcaches.get(i, None)
+
+            if cache is None:
+                cache = {}
+
             newcaches[i] = cache
             ctx.cache = cache
 
             SLBlock.execute(self, ctx)
+
+        context.cache[self.serial] = newcaches
 
     def keywords(self, context):
         return

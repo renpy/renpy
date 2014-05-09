@@ -1011,6 +1011,9 @@ autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
 _viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style='viewport')
 
+def _clear_viewport(self):
+    raise Exception("Not implemented.")
+
 def viewport(scrollbars=None, **properties):
 
     if scrollbars is None:

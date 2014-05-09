@@ -327,13 +327,16 @@ def add(thing):
 # A singleton value.
 many = renpy.object.Sentinel("many")
 
+def default_clear(d):
+    d._clear()
+
 class DisplayableParser(Parser):
     """
     This is responsible for parsing statements that create displayables.
     """
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None,
-        pass_context=False, imagemap=False, replaces=False):
+        pass_context=False, imagemap=False, replaces=False, clear=default_clear):
         """
         `name`
             The name of the statement that creates the displayable.
@@ -374,6 +377,9 @@ class DisplayableParser(Parser):
         `replaces`
             If true, and the displayable replaces a prior displayable, that displayable
             is passed as a parameter to the new displayable.
+
+        `clear`
+            The function used to clear out the children of a reused displayable.
         """
 
         super(DisplayableParser, self).__init__(name)
@@ -393,6 +399,7 @@ class DisplayableParser(Parser):
         self.pass_context = pass_context
         self.imagemap = imagemap
         self.replaces = replaces
+        self.clear = clear
 
     def parse_layout(self, loc, l, parent):
         return self.parse(loc, l, parent, True)
@@ -408,7 +415,8 @@ class DisplayableParser(Parser):
             text_style=self.text_style,
             pass_context=self.pass_context,
             imagemap=self.imagemap,
-            replaces=self.replaces)
+            replaces=self.replaces,
+            clear=self.clear)
 
         for _i in self.positional:
             rv.positional.append(l.simple_expression())
