@@ -386,7 +386,12 @@ class SLDisplayable(SLBlock):
                 keywords["scope"] = ctx.scope
 
             if self.replaces:
-                keywords['replaces'] = cache.displayable
+                old_d = cache.displayable
+
+                if old_d is not None:
+                    old_d = old_d._main or old_d
+
+                    keywords['replaces'] = old_d
 
             # Pass the context
             if self.pass_context:
