@@ -263,7 +263,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-DisplayableParser("imagebutton", renpy.ui._imagebutton, "image_button", 0, clear=None)
+DisplayableParser("imagebutton", renpy.ui._imagebutton, "image_button", 0)
 Keyword("auto")
 Keyword("idle")
 Keyword("hover")
@@ -282,7 +282,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-DisplayableParser("textbutton", renpy.ui._textbutton, 0, scope=True, clear=None)
+DisplayableParser("textbutton", renpy.ui._textbutton, 0, scope=True)
 Positional("label")
 Keyword("action")
 Keyword("clicked")
@@ -299,7 +299,7 @@ add(button_properties)
 add(text_position_properties)
 add(text_text_properties)
 
-DisplayableParser("label", renpy.ui._label, "label", 0, scope=True, clear=None)
+DisplayableParser("label", renpy.ui._label, "label", 0, scope=True)
 Positional("label")
 Keyword("text_style")
 add(ui_properties)
@@ -322,7 +322,26 @@ for name in [ "bar", "vbar" ]:
 
 # Omit autobar. (behavior)
 
-DisplayableParser("viewport", renpy.ui._viewport, "viewport", 1, replaces=True, clear=renpy.ui._clear_viewport)
+def sl2viewport(context=None, **kwargs):
+    """
+    This converts the output of renpy.ui.viewport into something that
+    sl.displayable can use.
+    """
+
+    l = [ ]
+
+    renpy.ui.stack.append(renpy.ui.ChildList(l, context.style_prefix))
+    vp = renpy.ui.viewport(**kwargs)
+    renpy.ui.stack.pop()
+    renpy.ui.stack.pop()
+
+    # Make the viewport the main element.
+    d = l[0]
+    d._main = vp
+
+    return d
+
+DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True, pass_context=True)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")

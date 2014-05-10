@@ -911,7 +911,9 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
         text_style = renpy.style.get_text_style(style, style_group_style('button_text', NoStyleGroupGiven)) # @UndefinedVariable
 
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
-    rv.add(renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs))
+    text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
+    rv.add(text)
+    rv._main = text
     return rv
 
 def textbutton(label, **kwargs):
@@ -935,7 +937,9 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
         text_style = renpy.style.get_text_style(style, style_group_style('label_text', NoStyleGroupGiven)) # @UndefinedVariable
 
     rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
-    rv.add(renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs))
+    text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
+    rv.add(text)
+    rv._main = text
     return rv
 
 def label(label, **kwargs):
@@ -1010,9 +1014,6 @@ def _autobar(range, start, end, time, **properties): #@ReservedAssignment
 autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
 _viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style='viewport')
-
-def _clear_viewport(self):
-    raise Exception("Not implemented.")
 
 def viewport(scrollbars=None, **properties):
 

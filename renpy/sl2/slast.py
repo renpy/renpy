@@ -247,7 +247,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, clear=None):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -274,9 +274,6 @@ class SLDisplayable(SLBlock):
         `replaces`
             True if the object this displayable replaces should be
             passed to it.
-
-        `clear`
-            The function used to clean out the children of a reused displayable.
         """
 
         SLBlock.__init__(self, loc)
@@ -289,7 +286,6 @@ class SLDisplayable(SLBlock):
         self.pass_context = pass_context
         self.imagemap = imagemap
         self.replaces = replaces
-        self.clear = clear
 
         # Positional argument expressions.
         self.positional = [ ]
@@ -356,10 +352,6 @@ class SLDisplayable(SLBlock):
 
         SLBlock.keywords(self, ctx)
 
-        # Pass the context
-        if self.pass_context:
-            positional.insert(0, ctx)
-
         # Get the widget id and transform, if any.
         widget_id = keywords.pop("id", None)
         transform = keywords.pop("at", None)
@@ -382,6 +374,10 @@ class SLDisplayable(SLBlock):
             if cache.imagemap is not None:
                 renpy.ui.imagemap_stack.append(cache.imagemap)
 
+            # The main displayable, if d is a composite displayable. (This is
+            # the one that gets the scope, and gets children added to it.)
+            main = d._main or d
+
         else:
             cache.positional = positional
             cache.keywords = keywords.copy()
@@ -392,7 +388,12 @@ class SLDisplayable(SLBlock):
             if self.replaces:
                 keywords['replaces'] = cache.displayable
 
+            # Pass the context
+            if self.pass_context:
+                keywords['context'] = ctx
+
             d = self.displayable(*positional, **keywords)
+            main = d._main or d
 
             reused = False
 
@@ -412,10 +413,11 @@ class SLDisplayable(SLBlock):
         if self.imagemap:
             cache.imagemap = renpy.ui.imagemap_stack.pop()
 
+
         if ctx.children != cache.children:
 
-            if reused and (self.clear is not None):
-                self.clear(d)
+            if reused:
+                main._clear()
 
             if self.child_or_fixed and len(self.children) != 1:
                 f = renpy.display.layout.Fixed()
@@ -423,16 +425,16 @@ class SLDisplayable(SLBlock):
                 for i in ctx.children:
                     f.add(i)
 
-                d.add(f)
+                main.add(f)
 
             else:
                 for i in ctx.children:
-                    d.add(i)
+                    main.add(i)
 
         cache.displayable = d
 
         if widget_id is not None:
-            screen.widgets[widget_id] = d
+            screen.widgets[widget_id] = main
 
         if transform is not None:
             if reused and (transform is cache.raw_transform):

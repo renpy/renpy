@@ -179,6 +179,11 @@ class Displayable(renpy.object.Object):
     # Can we change our look in response to transform_events?
     transform_event_responder = False
 
+    # The main displayable, if this displayable is the root of a composite
+    # displayable. (This is used by SL to figure out where to add children
+    # to.) If None, it is itself.
+    _main = None
+
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties) # @UndefinedVariable
         self.focus_name = focus
