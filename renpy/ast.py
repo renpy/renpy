@@ -1665,6 +1665,7 @@ class Define(Node):
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
+        renpy.exports.const(self.varname)
         setattr(renpy.store, self.varname, value)
 
 
