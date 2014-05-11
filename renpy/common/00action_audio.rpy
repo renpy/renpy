@@ -24,7 +24,8 @@ init -1500 python:
     ##########################################################################
     # Audio actions.
 
-    class Play(Action):
+    @renpy.pure
+    class Play(Action, FieldEquality):
         """
          :doc: audio_action
 
@@ -37,6 +38,8 @@ init -1500 python:
 
          Any keyword arguments are passed to :func:`renpy.music.play`
          """
+
+        equality_fields = ["channel", "file", "kwargs"]
 
         def __init__(self, channel, file, **kwargs):
             self.channel = channel
@@ -58,7 +61,8 @@ init -1500 python:
             return .1
 
 
-    class Queue(Action):
+    @renpy.pure
+    class Queue(Action, DictEquality):
         """
          :doc: audio_action
 
@@ -81,8 +85,8 @@ init -1500 python:
             renpy.music.queue(self.file, channel=self.channel, **self.kwargs)
             renpy.restart_interaction()
 
-
-    class Stop(Action):
+    @renpy.pure
+    class Stop(Action, DictEquality):
         """
          :doc: audio_action
 
@@ -102,7 +106,8 @@ init -1500 python:
             renpy.music.stop(channel=self.channel, **self.kwargs)
             renpy.restart_interaction()
 
-    class SetMixer(Action):
+    @renpy.pure
+    class SetMixer(Action, DictEquality):
         """
         :doc: audio_action
 

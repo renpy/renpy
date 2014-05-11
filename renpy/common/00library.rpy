@@ -22,6 +22,44 @@
 # This is kind of a catch-all file for things that are defined in the library,
 # but don't merit their own files.
 
+
+init -1700 python:
+    class DictEquality(object):
+        """
+        Declares two objects equal if their types are the same, and
+        their internal dictionaries are equal.
+        """
+
+        def __eq__(self, o):
+            if type(self) is type(o):
+                return (self.__dict__ == o.__dict__)
+
+            return False
+
+    class FieldEquality(object):
+        """
+        Declares two objects equal if their types are the same, and
+        the listed fields are equal.
+        """
+
+        # The lists of fields to use.
+        equality_fields = [ ]
+        identity_fields = [ ]
+
+        def __eq__(self, o):
+            if type(self) is not type(o):
+                return False
+
+            for k in self.equality_fields:
+                if self.__dict__[k] != o.__dict__[k]:
+                    return False
+
+            for k in self.identity_fields:
+                if self.__dict__[k] is not o.__dict__[k]:
+                    return False
+
+            return True
+
 init -1700 python:
 
     # basics: True if the skip indicator should be shown.

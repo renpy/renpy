@@ -369,7 +369,6 @@ class SLDisplayable(SLBlock):
         if (positional == cache.positional) and (keywords == cache.keywords):
             d = cache.displayable
             reused = True
-            print "REUSED", d
 
             if cache.imagemap is not None:
                 renpy.ui.imagemap_stack.append(cache.imagemap)

@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class InvertSelected(Action):
+    @renpy.pure
+    class InvertSelected(Action, DictEquality):
         """
          :doc: other_action
 
@@ -47,6 +48,7 @@ init -1500 python:
         def predict(self):
             self.action.predict()
 
+    @renpy.pure
     def If(expression, true=None, false=None):
         """
          :doc: other_action
@@ -62,8 +64,8 @@ init -1500 python:
         else:
             return false
 
-
-    class SelectedIf(Action):
+    @renpy.pure
+    class SelectedIf(Action, DictEquality):
         """
         :doc: other_action
 
@@ -85,7 +87,8 @@ init -1500 python:
         def get_selected(self):
             return self.expression
 
-    class Screenshot(Action):
+    @renpy.pure
+    class Screenshot(Action, DictEquality):
         """
          :doc: other_action
 
@@ -95,18 +98,20 @@ init -1500 python:
         def __call__(self):
             _screenshot()
 
-
-    def HideInterface():
+    @renpy.pure
+    class HideInterface(Action, DictEquality):
         """
          :doc other_action
 
          Causes the interface to be hidden until the user clicks.
          """
 
-        return ui.callsinnewcontext("_hide_windows")
+        def __call__(self):
+            renpy.call_in_new_context("_hide_windows")
 
 
-    class OpenURL(Action):
+    @renpy.pure
+    class OpenURL(Action, DictEquality):
         """
         :doc: other_action
 
@@ -123,8 +128,7 @@ init -1500 python:
             except:
                 pass
 
-
-    class With(Action):
+    class With(Action, DictEquality):
         """
          :doc: other_action
 
@@ -138,7 +142,8 @@ init -1500 python:
             renpy.transition(self.transition)
             renpy.restart_interaction()
 
-    class Notify(Action):
+    @renpy.pure
+    class Notify(Action, DictEquality):
         """
          :doc: other_action
 
@@ -154,7 +159,8 @@ init -1500 python:
         def __call__(self):
             renpy.notify(self.message)
 
-    class Rollback(Action):
+    @renpy.pure
+    class Rollback(Action, DictEquality):
         """
         :doc: other_action
 
@@ -168,7 +174,8 @@ init -1500 python:
         def get_sensitive(self):
             return renpy.can_rollback()
 
-    class RollForward(Action):
+    @renpy.pure
+    class RollForward(Action, DictEquality):
         """
         :doc: other_action
 
@@ -185,7 +192,9 @@ init -1500 python:
 
     #########################################################################
 
-    class __TooltipAction(object):
+    class __TooltipAction(Action, FieldEquality):
+
+        identity_fields = [ "tooltip", "value" ]
 
         def __init__(self, tooltip, value):
             self.tooltip = tooltip
@@ -238,7 +247,8 @@ init -1500 python:
 
     #########################################################################
 
-    class Language(Action):
+    @renpy.pure
+    class Language(Action, DictEquality):
         """
         :doc: language_action
 
@@ -271,7 +281,8 @@ init -1500 python:
     config.enter_replay_transition = None
     config.exit_replay_transition = None
 
-    class Replay(Action):
+    @renpy.pure
+    class Replay(Action, DictEquality):
         """
         :doc: replay
 
@@ -310,7 +321,8 @@ init -1500 python:
 
             return renpy.seen_label(self.label)
 
-    class EndReplay(Action):
+    @renpy.pure
+    class EndReplay(Action, DictEquality):
         """
         :doc: replay
 
@@ -323,7 +335,8 @@ init -1500 python:
         def get_sensitive(self):
             return _in_replay
 
-    class MouseMove(Action):
+    @renpy.pure
+    class MouseMove(Action, DictEquality):
         """
         :doc: other_action
 

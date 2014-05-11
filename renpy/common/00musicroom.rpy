@@ -26,10 +26,15 @@
 
 init -1500 python:
 
-    class __MusicRoomPlay(Action):
+    @renpy.pure
+    class __MusicRoomPlay(Action, FieldEquality):
         """
         The action returned by MusicRoom.Play when called with a file.
         """
+
+        identity_fields = [ "mr" ]
+        equality_fields = [ "filename" ]
+
 
         def __init__(self, mr, filename):
             self.mr = mr
@@ -53,10 +58,14 @@ init -1500 python:
 
             return .1
 
-    class __MusicRoomRandomPlay(Action):
+    @renpy.pure
+    class __MusicRoomRandomPlay(Action, FieldEquality):
         """
         The action returned by MusicRoom.RandomPlay
         """
+
+        identity_fields = [ "mr" ]
+
         def __init__(self, mr):
             self.mr = mr
 
@@ -69,10 +78,14 @@ init -1500 python:
             self.mr.shuffled = None
             self.mr.play(renpy.random.choice(playlist), 0)
 
-    class __MusicRoomTogglePlay(Action):
+    @renpy.pure
+    class __MusicRoomTogglePlay(Action, FieldEquality):
         """
         The action returned by MusicRoom.TogglePlay
         """
+
+        identity_fields = [ "mr" ]
+
         def __init__(self, mr):
             self.mr = mr
 

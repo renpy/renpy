@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class __DisplayAction(Action):
+    @renpy.pure
+    class __DisplayAction(Action, DictEquality):
         def __init__(self, factor):
             self.width = int(factor * config.screen_width)
             self.height = int(factor * config.screen_height)
@@ -46,6 +47,7 @@ init -1500 python:
 
     config.always_has_joystick = False
 
+    @renpy.pure
     def Preference(name, value=None):
         """
          :doc: preference_action

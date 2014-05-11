@@ -1196,7 +1196,8 @@ init -1500 python in updater:
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 
-    class Update(Action):
+    @renpy.pure
+    class Update(Action, DictEquality):
         """
         :doc: updater
 
