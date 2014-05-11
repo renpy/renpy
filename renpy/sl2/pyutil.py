@@ -30,10 +30,52 @@ import renpy # @UnusedImport
 import ast
 
 # The set of names that should be treated as constants.
-constants = { 'foo.bar' }
+constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
-pure_functions = { 'Test' }
+pure_functions = { 'range' }
+
+def const(name):
+    """
+    :doc: const
+
+    Declares a variable in the store to be constant.
+
+
+    A variable is constant if nothing can change its value, or any value
+    reached by indexing it or accessing its attributes. Variables must
+    remain constant out of define, init, and translate python blocks.
+
+    `name`
+        A string giving the name of the variable to declare constant.
+    """
+
+    constants.add(name)
+
+
+def pure(fn):
+    """
+    :doc: const
+
+    Declares a function as pure. A pure function must always return the
+    same value when it is called with the same arguments, outside of
+    define, init, and translate python blocks.
+
+    `fn`
+        The name of the function to declare pure. This may either be a string
+        containing the name of the function, or the function itself.
+
+    Returns `fn`, allowing this function to be used as a decorator.
+    """
+
+    rv = fn
+
+    if not isinstance(fn, basestring):
+        fn = fn.__name__
+
+    pure_functions.add(fn)
+
+    return rv
 
 def is_constant(node):
     """

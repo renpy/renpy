@@ -66,6 +66,8 @@ import renpy.audio.music as music
 from renpy.statements import register as register_statement
 from renpy.text.extras import check_text_tags
 
+from renpy.sl2.pyutil import const, pure
+
 import time
 import sys
 
@@ -105,6 +107,7 @@ def public_api():
     register_statement
     check_text_tags
     map_event, queue_event, clear_keymap_cache
+    const, pure
 
 del public_api
 
