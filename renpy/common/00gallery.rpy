@@ -139,7 +139,7 @@ init -1500 python:
         identity_fields = [ "galley" ]
         equality_fields = [ "index" ]
 
-        def __init__(self, gallery, index)
+        def __init__(self, gallery, index):
             self.gallery = gallery
             self.index = index
 

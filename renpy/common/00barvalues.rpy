@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class StaticValue(BarValue):
+    @renpy.pure
+    class StaticValue(BarValue, DictEquality):
         """
          :doc: value
 
@@ -41,7 +42,8 @@ init -1500 python:
         def get_adjustment(self):
             return ui.adjustment(value=self.value, range=self.range, adjustable=False)
 
-    class AnimatedValue(BarValue):
+    @renpy.pure
+    class AnimatedValue(BarValue, DictEquality):
         """
          :doc: value
 
@@ -110,7 +112,8 @@ init -1500 python:
                 self.old_value = other.value
                 self.start_time = None
 
-    class DictValue(BarValue):
+    @renpy.pure
+    class DictValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -139,6 +142,9 @@ init -1500 python:
          """
 
         offset = 0
+
+        identity_fields = [ 'dict' ]
+        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step']
 
         def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None):
             self.dict = dict
@@ -190,7 +196,8 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
-    class FieldValue(BarValue):
+    @renpy.pure
+    class FieldValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -220,6 +227,9 @@ init -1500 python:
          """
 
         offset = 0
+
+        identity_fields = [ 'object' ]
+        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step']
 
         def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None):
             self.object = object
@@ -271,6 +281,7 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
+    @renpy.pure
     def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None):
         """
          :doc: value
@@ -297,7 +308,8 @@ init -1500 python:
 
         return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step)
 
-    class MixerValue(BarValue):
+    @renpy.pure
+    class MixerValue(BarValue, DictEquality):
         """
          :doc: value
 
@@ -324,7 +336,8 @@ init -1500 python:
         def get_style(self):
             return "slider", "vslider"
 
-    class XScrollValue(BarValue):
+    @renpy.pure
+    class XScrollValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -332,6 +345,8 @@ init -1500 python:
          given id, on the current screen. The viewport must be defined
          before a bar with this value is.
          """
+
+        identity_fields = [ 'viewport' ]
 
         def __init__(self, viewport):
             self.viewport = viewport
@@ -346,7 +361,7 @@ init -1500 python:
         def get_style(self):
             return "scrollbar", "vscrollbar"
 
-    class YScrollValue(BarValue):
+    class YScrollValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -354,6 +369,8 @@ init -1500 python:
          given id, on the current screen. The viewport must be defined
          before a bar with this value is.
          """
+
+        identity_fields = [ 'viewport' ]
 
         def __init__(self, viewport):
             self.viewport = viewport

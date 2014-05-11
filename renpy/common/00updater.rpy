@@ -21,7 +21,7 @@
 
 # This code applies an update.
 init -1500 python in updater:
-    from store import renpy, config, Action
+    from store import renpy, config, Action, DictEquality
     import store.build as build
 
     import tarfile
