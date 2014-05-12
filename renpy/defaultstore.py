@@ -173,7 +173,6 @@ MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransiti
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
-
 # Misc.
 ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
 Speaker = Character = renpy.character.Character
@@ -183,11 +182,15 @@ MultiPersistent = renpy.persistent.MultiPersistent
 Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
 
+# NOTE: When exporting something from here, decide if we need to add it to
+# renpy.sl2.pyutil.pure_functions.
+
 Style = renpy.style.Style # @UndefinedVariable
 
 absolute = renpy.display.core.absolute
 
 NoRollback = renpy.python.NoRollback
+
 
 class _layout_class(__builtins__["object"]):
     """

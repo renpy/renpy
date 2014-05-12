@@ -215,7 +215,7 @@ init -1500 python:
 
             scry = scry.next()
 
-
+    @renpy.pure
     class NVLCharacter(ADVCharacter):
 
         def __init__(self,

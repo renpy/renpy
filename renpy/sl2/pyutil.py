@@ -33,7 +33,36 @@ import ast
 constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
-pure_functions = { 'range' }
+pure_functions = {
+    # Python builtins.
+    "abs", "all", "any", "apply", "bin", "bool", "bytes", "callable", "chr",
+    "cmp", "dict", "divmod",
+    "filter", "float", "frozenset",
+    "getattr", "globals", "hasattr", "hash", "hex", "int", "isinstance",
+    "len", "list", "long", "map", "max", "min", "oct", "ord", "pow",
+    "range", "reduce", "repr", "round", "set", "sorted",
+    "str", "sum", "tuple", "unichr", "unicode", "vars", "zip",
+
+    # enumerator and reversed return iterators at the moment.
+
+    # minstore.py
+    "_",
+
+    # defaultstore.py
+    "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
+    "LiveTile", "Flatten", "Null", "Window", "Viewport", "DynamicDisplayable",
+    "ConditionSwitch", "ShowingSwitch", "Transform", "Animation", "Movie",
+    "Particles", "SnowBlossom", "Text", "ParameterizedText", "FontGroup",
+    "Drag", "Alpha", "Position", "Pan", "Move", "Motion", "Revolve", "Zoom",
+    "RotoZoom", "FactorZoom", "SizeZoom", "Fade", "Dissolve", "ImageDissolve",
+    "AlphaDissolve", "CropMove", "Pixellate", "OldMoveTransition",
+    "MoveTransition", "MoveFactory", "MoveIn", "MoveOut", "ZoomInOut",
+    "RevolveInOut", "MultipleTransition", "ComposeTransition", "Pause",
+    "SubTransition", "ADVSpeaker", "ADVCharacter", "Speaker", "Character",
+    "DynamicCharacter", "Fixed", "HBox", "VBox", "Grid", "AlphaBlend", "At",
+    "color",
+
+    }
 
 def const(name):
     """
