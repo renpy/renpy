@@ -166,3 +166,6 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
+
+    if compat(6, 17, 6):
+        config.reduce_volume_in_voice = False

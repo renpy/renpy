@@ -244,6 +244,12 @@ init -1500 python hide:
             renpy.sound.stop(channel="voice")
             store._last_voice_play = _voice.play
         elif _voice.play and not config.skipping:
+            if config.reduce_volume_in_voice:
+                for c in renpy.audio.audio.all_channels:
+                    if c.mixer != "voice" and config.volume_in_voice < c.context.secondary_volume:
+                        c.context.pre_secondary_volume = c.context.secondary_volume
+                        c.set_secondary_volume(config.volume_in_voice, config.reduce_volume_time)
+
             renpy.sound.play(_voice.play, channel="voice")
             store._last_voice_play = _voice.play
         elif not _voice.sustain:
