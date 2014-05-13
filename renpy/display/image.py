@@ -37,10 +37,14 @@ images = { }
 # tag.
 image_attributes = collections.defaultdict(list)
 
+
 def register_image(name, d):
     """
     Registers the existence of an image with `name`, and that the image
     used displayable d.
+
+    `name`
+        A tuple of strings.
     """
 
     tag = name[0]
@@ -48,6 +52,30 @@ def register_image(name, d):
 
     images[name] = d
     image_attributes[tag].append(rest)
+
+
+def image_exists(name):
+    """
+    :doc: image
+
+    Return true if an image with `name` exists, and false if no such image
+    exists.
+
+    `name`
+        Either a string giving an image name, or a tuple of strings giving
+        the name components.
+    """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    while name:
+        if name in images:
+            return True
+
+        name = name[:-1]
+
+    return False
 
 
 def wrap_render(child, w, h, st, at):

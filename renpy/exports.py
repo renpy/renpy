@@ -41,6 +41,7 @@ from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
+from renpy.display.image import image_exists
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -108,6 +109,7 @@ def public_api():
     check_text_tags
     map_event, queue_event, clear_keymap_cache
     const, pure
+    image_exists
 
 del public_api
 
