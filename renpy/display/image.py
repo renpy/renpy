@@ -77,6 +77,18 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
+    def __eq__(self, o):
+        if self is o:
+            return True
+
+        if not self._equals(o):
+            return False
+
+        if self.name != o.name:
+            return False
+
+        return True
+
     def _get_parameterized(self):
         if self.param_target:
             return self.param_target._get_parameterized()

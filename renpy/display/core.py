@@ -189,6 +189,27 @@ class Displayable(renpy.object.Object):
         self.focus_name = focus
         self.default = default
 
+    def _equals(self, o):
+        """
+        This is a utility method that can be called by a Displayable's
+        __eq__ method, to compare displayables for type and displayable
+        component equality.
+        """
+
+        if type(self) is not type(o):
+            return False
+
+        if self.focus_name != o.focus_name:
+            return False
+
+        if self.style != o.style:
+            return False
+
+        if self.default != o.default:
+            return False
+
+        return True
+
     def __unicode__(self):
         return self.__class__.__name__
 

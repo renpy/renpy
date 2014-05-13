@@ -46,6 +46,12 @@ class Solid(renpy.display.core.Displayable):
         else:
             self.color = None
 
+    def __eq__(self, o):
+        if not self._equals(o):
+            return False
+
+        return (self.color == o.color)
+
     def visit(self):
         return [ ]
 
@@ -141,6 +147,25 @@ class Frame(renpy.display.core.Displayable):
         self.top = top
         self.right = right
         self.bottom = bottom
+
+    def __eq__(self, o):
+        if not self._equals(o):
+            return False
+
+        if self.image != o.image:
+            return False
+
+        if self.left != o.left:
+            return False
+        if self.top != o.top:
+            return False
+        if self.right != o.right:
+            return False
+        if self.bottom != o.bottom:
+            return False
+
+        if self.tile != o.tile:
+            return False
 
     def render(self, width, height, st, at):
 
