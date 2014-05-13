@@ -121,7 +121,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
 
-    render_cache_d = render_cache[d]
+    id_d = id(d)
+    render_cache_d = render_cache[id_d]
     rv = render_cache_d.get(orig_wh, None)
 
     if rv is not None:
@@ -192,8 +193,10 @@ def invalidate(d):
 
     global invalidated
 
-    if d in render_cache:
-        for v in render_cache[d].values():
+    id_d = id(d)
+
+    if id_d in render_cache:
+        for v in render_cache[id_d].values():
             v.kill_cache()
 
         invalidated = True
@@ -218,12 +221,14 @@ def process_redraws():
     for t in redraw_queue:
         when, d = t
 
-        if d in seen:
+        id_d = id(d)
+
+        if id_d in seen:
             continue
 
-        seen.add(d)
+        seen.add(id_d)
 
-        if d not in render_cache:
+        if id_d not in render_cache:
             continue
 
         if when <= now:
@@ -231,7 +236,7 @@ def process_redraws():
             # render cache. But don't kill them yet, as that will kill the
             # children that we want to reuse.
 
-            for v in render_cache[d].values():
+            for v in render_cache[id_d].values():
                 v.kill_cache()
 
             rv = True
@@ -805,13 +810,15 @@ cdef class Render:
                 i.parents.discard(self)
 
         for ro in self.render_of:
-            cache = render_cache[ro]
+            id_ro = id(ro)
+
+            cache = render_cache[id_ro]
             for k, v in cache.items():
                 if v is self:
                     del cache[k]
 
             if not cache:
-                del render_cache[ro]
+                del render_cache[id_ro]
 
     def kill(self):
         """
