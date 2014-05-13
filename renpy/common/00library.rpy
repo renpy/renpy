@@ -31,6 +31,9 @@ init -1700 python:
         """
 
         def __eq__(self, o):
+            if self is o:
+                return True
+
             if type(self) is type(o):
                 return (self.__dict__ == o.__dict__)
 
@@ -47,6 +50,9 @@ init -1700 python:
         identity_fields = [ ]
 
         def __eq__(self, o):
+            if self is o:
+                return True
+
             if type(self) is not type(o):
                 return False
 
