@@ -469,7 +469,8 @@ properties:
     property.
 
     For example, if `auto` is "button_%s.png", and `idle` is omitted, then
-    idle defaults to "button_idle.png".
+    idle defaults to "button_idle.png". Similarly, if `auto` is "button %s",
+    the ``button idle`` image is used.
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
@@ -1081,7 +1082,8 @@ parameters, and the following properties:
     property.
 
     For example, if `auto` is "imagemap_%s.png", and `idle` is omitted, then
-    idle defaults to "imagemap_idle.png".
+    idle defaults to "imagemap_idle.png". If `auto` is "imagemap %s", the
+    ``imagemap idle`` image is used.
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
