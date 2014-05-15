@@ -553,18 +553,29 @@ class SLFor(SLBlock):
 
         ctx = SLContext(context)
 
-        for i, v in enumerate(value):
+        count = collections.defaultdict(int)
+
+        for v in value:
 
             ctx.scope[variable] = v
 
-            # TODO: use indexes of id(v) to get the cache.
+            if type(v) is int:
+                index = v
+            else:
+                index = id(v)
 
-            cache = oldcaches.get(i, None)
+            n = count[index]
+            count[index] = n + 1
+
+            if n > 0:
+                index = (index, count)
+
+            cache = oldcaches.get(index, None)
 
             if cache is None:
                 cache = {}
 
-            newcaches[i] = cache
+            newcaches[index] = cache
             ctx.cache = cache
 
             SLBlock.execute(self, ctx)
