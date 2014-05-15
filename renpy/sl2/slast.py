@@ -377,6 +377,9 @@ class SLDisplayable(SLBlock):
             # the one that gets the scope, and gets children added to it.)
             main = d._main or d
 
+            if self.scope:
+                main._scope(ctx.scope)
+
         else:
             cache.positional = positional
             cache.keywords = keywords.copy()
