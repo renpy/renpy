@@ -124,6 +124,8 @@ class Container(renpy.display.core.Displayable):
         self.children = self._list_type()
         self.offsets = self._list_type()
 
+        renpy.display.render.redraw(self, 0)
+
     def remove(self, d):
         """
         Removes the first instance of child from this container. May

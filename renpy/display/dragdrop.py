@@ -278,6 +278,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     def _clear(self):
         self.child = None
+        renpy.display.render.redraw(self, 0)
 
     def set_child(self, d):
         """
