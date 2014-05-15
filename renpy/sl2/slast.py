@@ -326,6 +326,10 @@ class SLDisplayable(SLBlock):
         else:
             self.positional_exprs = None
 
+    def keywords(self, context):
+        # We do not want to pass keywords to our parents, so just return.
+        return
+
     def execute(self, context):
 
         cache = context.cache.get(self.serial, None)
