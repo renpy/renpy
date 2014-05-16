@@ -532,6 +532,8 @@ class Button(renpy.display.layout.Window):
     longpress_x = None
     longpress_y = None
 
+    role_parameter = None
+
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
@@ -542,21 +544,6 @@ class Button(renpy.display.layout.Window):
         if isinstance(clicked, renpy.ui.Action):
             action = clicked
 
-        if action is not None:
-            clicked = action
-
-            if not is_sensitive(action):
-                clicked = None
-
-        if role is None:
-            if action:
-                if is_selected(action):
-                    role = 'selected_'
-                else:
-                    role = ''
-            else:
-                role = ''
-
         self.action = action
         self.clicked = clicked
         self.hovered = hovered
@@ -564,7 +551,7 @@ class Button(renpy.display.layout.Window):
         self.alternate = alternate
 
         self.focusable = clicked is not None
-        self.role = role
+        self.role_parameter = role
         self.keymap = keymap
 
         self.time_policy_data = None
@@ -624,7 +611,6 @@ class Button(renpy.display.layout.Window):
 
         return rv
 
-
     def focus(self, default=False):
         super(Button, self).focus(default)
 
@@ -638,7 +624,6 @@ class Button(renpy.display.layout.Window):
 
         return rv
 
-
     def unfocus(self, default=False):
         super(Button, self).unfocus(default)
 
@@ -651,8 +636,27 @@ class Button(renpy.display.layout.Window):
         self.set_transform_event(self.role + "idle")
         self.child.set_transform_event(self.role + "idle")
 
-
     def per_interact(self):
+
+        if self.action is not None:
+            if is_selected(self.action):
+                role = 'selected_'
+            else:
+                role = ''
+
+            if is_sensitive(self.action):
+                clicked = self.action
+            else:
+                clicked = None
+
+        if self.role_parameter:
+            role = self.role_parameter
+
+        if (role != self.role) or (clicked is not self.clicked):
+            renpy.display.render.invalidate(self)
+            self.role = role
+            self.clicked = clicked
+
         if not self.clicked:
             self.set_style_prefix(self.role + "insensitive_", True)
         else:
