@@ -58,37 +58,38 @@ class SLContext(object):
 
     def __init__(self, parent=None):
         if parent is not None:
+            self.__dict__.update(parent.__dict__)
+            return
 
-            # The scope that python methods are evaluated in.
-            self.scope = parent.scope
+        # The scope that python methods are evaluated in.
+        self.scope = { }
 
-            # A list of child displayables that will be added to an outer
-            # displayable.
-            self.children = parent.children
+        # A list of child displayables that will be added to an outer
+        # displayable.
+        self.children = [ ]
 
-            # A list of keywords.
-            self.keywords = parent.keywords
+        # A map from keyword arguments to their values.
+        self.keywords = { }
 
-            # The style prefix that is given to children of this displayable.
-            self.style_prefix = parent.style_prefix
+        # The style prefix that is given to children of this displayable.
+        self.style_prefix = ""
 
-            # A cache associated with this context. These map from
-            # statement serial to information associated with the statement.
-            self.cache = parent.cache
+        # A cache associated with this context. The cache maps from
+        # statement serial to information associated with the statement.
+        self.cache = { }
 
-            # The number of times a particular use statement has been called
-            # in the current screen. We use this to generate a unique name for
-            # each call site.
-            self.use_index = parent.use_index
+        # The number of times a particular use statement has been called
+        # in the current screen. We use this to generate a unique name for
+        # each call site.
+        self.use_index = collections.defaultdict(int)
 
-        else:
-            self.scope = { }
-            self.children = [ ]
-            self.keywords = { }
-            self.style_prefix = ""
-            self.cache = { }
-            self.use_index = collections.defaultdict(int)
+        # When a constant node uses the scope, we add it to this list, so
+        # it may be reused. (If None, no list is used.)
+        self.uses_scope = None
 
+        # When a constant node has an id, we added it to this dict, so it
+        # may be reused. (If None, no dict is used.)
+        self.widgets = None
 
 class SLNode(object):
     """
@@ -99,8 +100,15 @@ class SLNode(object):
         global serial
         serial += 1
 
+        # A unique serial number assigned to this node.
         self.serial = serial
+
+        # The location of this node, a (file, line) tuple.
         self.location = loc
+
+        # True if this is a constant node, always producing an equivalent
+        # tree of objects.
+        self.constant = True
 
     def report_traceback(self, name):
         filename, line = self.location
@@ -155,6 +163,9 @@ class SLBlock(SLNode):
         for i in self.children:
             i.prepare()
 
+            if not i.constant:
+                self.constant = False
+
         # Compile the keywords.
 
         keyword_values = { }
@@ -180,6 +191,8 @@ class SLBlock(SLNode):
             node = ast.Dict(keys=keyword_keys, values=keyword_exprs)
             ast.copy_location(node, keyword_exprs[0])
             self.keyword_exprs = compile_expr(node)
+
+            self.constant = False
         else:
             self.keyword_exprs = None
 
@@ -240,6 +253,16 @@ class SLCache(object):
         # The imagemap stack entry we reuse.
         self.imagemap = None
 
+        # If this can be represented as a single constant displayable,
+        # do so.
+        self.constant = None
+
+        # For a constant statement, a list of our children that use
+        # the scope.
+        self.constant_uses_scope = [ ]
+
+        # For a constant statement, a map from children to widgets.
+        self.constant_widgets = { }
 
 class SLDisplayable(SLBlock):
     """
@@ -301,7 +324,6 @@ class SLDisplayable(SLBlock):
         has_exprs = False
         has_values = False
 
-
         for a in self.positional:
             node = py_compile(a, 'eval', ast_node=True)
 
@@ -323,6 +345,8 @@ class SLDisplayable(SLBlock):
             t = ast.Tuple(elts=exprs, ctx=ast.Load())
             ast.copy_location(t, exprs[0])
             self.positional_exprs = compile_expr(t)
+
+            self.constant = False
         else:
             self.positional_exprs = None
 
@@ -332,9 +356,20 @@ class SLDisplayable(SLBlock):
 
     def execute(self, context):
 
+        screen = renpy.ui.screen
+
         cache = context.cache.get(self.serial, None)
         if cache is None:
             context.cache[self.serial] = cache = SLCache()
+
+        if cache.constant:
+            context.children.append(cache.constant)
+            screen.widgets.update(cache.constant_widgets)
+
+            for i in cache.constant_uses_scope:
+                i._scope(context.scope)
+
+            return
 
         # Evaluate the positional arguments.
         positional_values = self.positional_values
@@ -354,6 +389,12 @@ class SLDisplayable(SLBlock):
         ctx = SLContext(context)
         keywords = ctx.keywords = { }
 
+        if self.constant:
+            if ctx.uses_scope is None:
+                ctx.uses_scope = [ ]
+            if ctx.widgets is None:
+                ctx.widgets = { }
+
         SLBlock.keywords(self, ctx)
 
         # Get the widget id and transform, if any.
@@ -363,9 +404,6 @@ class SLDisplayable(SLBlock):
         # If we don't know the style, figure it out.
         if ("style" not in keywords) and self.style:
             keywords["style"] = renpy.style.get_style(ctx.style_prefix + self.style) # @UndefinedVariable
-
-        # Create and add the displayables.
-        screen = renpy.ui.screen
 
         if widget_id in screen.widget_properties:
             keywords.update(screen.widget_properties[widget_id])
@@ -424,7 +462,6 @@ class SLDisplayable(SLBlock):
         if self.imagemap:
             cache.imagemap = renpy.ui.imagemap_stack.pop()
 
-
         if ctx.children != cache.children:
 
             if reused:
@@ -444,9 +481,6 @@ class SLDisplayable(SLBlock):
 
         cache.displayable = d
 
-        if widget_id is not None:
-            screen.widgets[widget_id] = main
-
         if transform is not None:
             if reused and (transform is cache.raw_transform):
                 d = cache.transform
@@ -465,10 +499,24 @@ class SLDisplayable(SLBlock):
 
         context.children.append(d)
 
+        if widget_id is not None:
+            screen.widgets[widget_id] = main
 
-# TODO: If a displayable is entirely constant, do not re-create it. If a
-# tree is entirely constant, reuse it. Be sure to handle imagemaps properly,
-# using the stack.
+        if self.constant:
+            cache.constant = d
+
+            if widget_id is not None:
+                ctx.widgets[widget_id] = main
+
+            if self.scope:
+                ctx.uses_scope.append(main)
+
+            if context.widgets is None:
+                cache.constant_widgets = ctx.widgets
+
+            if context.uses_scope is None:
+                cache.constant_uses_scope = ctx.uses_scope
+
 
 # TODO: Can we get rid of pass_context?
 
@@ -539,6 +587,7 @@ class SLFor(SLBlock):
         else:
             self.expression_value = None
             self.expression_expr = compile_expr(node)
+            self.constant = False
 
         SLBlock.prepare(self)
 
@@ -601,6 +650,8 @@ class SLPython(SLNode):
     def execute(self, context):
         py_exec_bytecode(self.code.bytecode, locals=context.scope)
 
+    def prepare(self):
+        self.constant = False
 
 class SLPass(SLNode):
 
@@ -618,6 +669,7 @@ class SLDefault(SLNode):
 
     def prepare(self):
         self.expr = py_compile(self.expression, 'eval')
+        self.constant = False
 
     def execute(self, context):
         scope = context.scope
@@ -651,12 +703,17 @@ class SLUse(SLNode):
         ts = renpy.display.screen.get_screen_variant(self.target)
 
         if ts is None:
+            self.constant = False
             return
+
         if ts.ast is None:
+            self.constant = False
             return
 
         self.ast = ts.ast
         self.ast.prepare()
+
+        self.constant = self.ast.constant
 
     def execute_use_screen(self, context):
 
@@ -775,7 +832,10 @@ class SLScreen(SLBlock):
 
     def prepare(self):
         if not self.prepared:
+
+            self.constant = False
             self.prepared = True
+
             SLBlock.prepare(self)
 
     def report_traceback(self, name):
