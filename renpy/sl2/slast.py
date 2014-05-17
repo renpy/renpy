@@ -517,7 +517,6 @@ class SLDisplayable(SLBlock):
             if context.uses_scope is None:
                 cache.constant_uses_scope = ctx.uses_scope
 
-
 # TODO: Can we get rid of pass_context?
 
 

@@ -1234,6 +1234,14 @@ class Bar(renpy.display.core.Displayable):
         self.unhovered = unhovered
 
     def per_interact(self):
+        if self.value is not None:
+            adjustment = self.value.get_adjustment()
+
+            if adjustment.value != self.value:
+                renpy.display.render.invalidate(self)
+
+            self.adjustment = adjustment
+
         self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)
 
