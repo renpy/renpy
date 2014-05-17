@@ -823,6 +823,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     caret_pos = 0
     old_caret_pos = 0
     pixel_width = None
+    default = u""
 
     def __init__(self,
                  default="",
@@ -841,7 +842,9 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
 
-        self.content = unicode(default)
+        self.default = unicode(default)
+        self.content = self.default
+
         self.length = length
 
         self.allow = allow
@@ -876,6 +879,12 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         self.update_text(self.content, self.editable)
 
+
+    def _show(self):
+        if self.default != self.content:
+            self.content = self.default
+            self.caret_pos = len(self.content)
+            self.update_text(self.content, self.editable)
 
     def update_text(self, new_content, editable, check_size=False):
 
