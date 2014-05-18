@@ -89,7 +89,13 @@ class ArgumentParser(argparse.ArgumentParser):
             "--version", action='version', version=renpy.version,
             help="Displays the version of Ren'Py in use.")
 
-        self.add_argument("--lint", action="store_const", dest="command", const="lint", help=argparse.SUPPRESS)
+        self.add_argument(
+            "--compile", action='store_true', dest='compile',
+            help='Forces all .rpy scripts to be recompiled before proceeding.')
+
+        self.add_argument(
+            "--lint", action="store_true", dest="lint",
+            help=argparse.SUPPRESS)
 
         dump = self.add_argument_group("JSON Dump Arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
@@ -107,8 +113,6 @@ class ArgumentParser(argparse.ArgumentParser):
             argparse.ArgumentParser.add_argument(self, *args, **kwargs)
         else:
             self.group.add_argument(*args, **kwargs)
-
-
 
 def run():
     """
@@ -222,6 +226,9 @@ def post_init():
     """
 
     command = renpy.game.args.command #@UndefinedVariable
+
+    if command == "run" and renpy.game.args.lint: # @UndefinedVariable
+        command = "lint"
 
     if command not in commands:
         ArgumentParser().error("Command {0} is unknown.".format(command))

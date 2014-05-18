@@ -502,7 +502,7 @@ def lint():
     other checks.
     """
 
-    ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.")
+    ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
 
     args = ap.parse_args()
