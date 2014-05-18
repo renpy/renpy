@@ -486,11 +486,16 @@ class SLDisplayable(SLBlock):
                 d = cache.transform
             else:
                 cache.raw_transform = transform
-                d = transform(d)
 
-                if cache.transform is not None:
-                    d.take_state(cache.transform)
-                    d.take_execution_state(cache.transform)
+                if isinstance(transform, renpy.display.motion.Transform):
+                    d = transform(child=d)
+
+                    if cache.transform is not None:
+                        d.take_state(cache.transform)
+                        d.take_execution_state(cache.transform)
+                else:
+                    d = transform(d)
+
 
             cache.transform = d
         else:
