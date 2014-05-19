@@ -649,7 +649,11 @@ class Button(renpy.display.layout.Window):
             else:
                 clicked = None
 
-        if self.role_parameter:
+        else:
+            role = ''
+            clicked = self.clicked
+
+        if self.role_parameter is not None:
             role = self.role_parameter
 
         if (role != self.role) or (clicked is not self.clicked):
