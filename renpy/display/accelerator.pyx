@@ -155,8 +155,9 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Size.
     size = state.size
-    if (size is not None) and (size != (width, height)):
+    if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
         nw, nh = size
+
         xzoom = 1.0 * nw / width
         yzoom = 1.0 * nh / height
 
