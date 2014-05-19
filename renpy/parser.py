@@ -1852,8 +1852,8 @@ def init_statement(l, loc):
     return ast.Init(loc, block, priority)
 
 
-@statement("screen")
-def screen_statement(l, loc):
+@statement("screen1")
+def screen1_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
@@ -1887,6 +1887,18 @@ def screen2_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500)
 
     return rv
+
+# The version of screen language to use by default.
+screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "1"))
+
+@statement("screen")
+def screen_statement(l, loc):
+    if screen_language == 1:
+        return screen1_statement(l, loc)
+    elif screen_language == 2:
+        return screen2_statement(l, loc)
+    else:
+        l.error("Bad screen language version.")
 
 
 def translate_strings(init_loc, language, l):
