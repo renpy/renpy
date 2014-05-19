@@ -375,6 +375,7 @@ label _directx_update_main:
 
         # Start dxsetup. We have to go through startfile to ensure that UAC
         # doesn't cause problems.
+        import os
         os.startfile(__dxwebsetup)
 
         renpy.show_screen("_directx_update")
