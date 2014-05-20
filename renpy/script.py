@@ -434,7 +434,7 @@ class Script(object):
             f.close()
 
             if rpydigest == rpycdigest and \
-                (renpy.game.args.command != "compile" or renpy.game.args.compile): #@UndefinedVariable
+                not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
 
                 if self.load_file(dir, fn + compiled, initcode):
                     return
