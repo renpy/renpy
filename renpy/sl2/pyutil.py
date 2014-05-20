@@ -30,7 +30,7 @@ import renpy # @UnusedImport
 import ast
 
 # The set of names that should be treated as constants.
-constants = { 'True', 'False', 'None' }
+constants = { 'True', 'False', 'None', "config", "style" }
 
 # The set of names that should be treated as pure functions.
 pure_functions = {
