@@ -548,9 +548,17 @@ class SLIf(SLNode):
 
         for cond, block in self.entries:
             if cond is not None:
-                cond = py_compile(cond, 'eval')
+                node = py_compile(cond, 'eval', ast_node=True)
+
+                if not is_constant(node):
+                    self.constant = False
+
+                cond = compile_expr(node)
 
             block.prepare()
+
+            if not block.constant:
+                self.constant = False
 
             self.prepared_entries.append((cond, block))
 
