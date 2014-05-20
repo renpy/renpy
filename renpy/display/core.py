@@ -214,7 +214,7 @@ class Displayable(renpy.object.Object):
         return self.__class__.__name__
 
     def __repr__(self):
-        return "<{} at {:x}>".format(unicode(self), id(self))
+        return "<{} at {:x}>".format(unicode(self).encode("utf-8"), id(self))
 
     def find_focusable(self, callback, focus_name):
 
