@@ -309,7 +309,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if PROFILE:
             end = time.time()
-            print "screen {} took {:.3f}ms".format(" ".join(self.screen_name).encode("utf-8"), 1000.0 * (end - start))
+            if isinstance(self.screen.function, renpy.screenlang.ScreenLangScreen):
+                slversion = 1
+            else:
+                slversion = 2
+
+            print "screen {} took {:.3f}ms ({})".format(" ".join(self.screen_name).encode("utf-8"), 1000.0 * (end - start), slversion)
 
         return self.widgets
 
@@ -513,6 +518,8 @@ def show_screen(_screen_name, *_args, **kwargs):
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
 
+PREDICT = "RENPY_NO_PREDICT_SCREENS" not in os.environ
+
 def predict_screen(_screen_name, *_args, **kwargs):
     """
     Predicts the displayables that make up the given screen.
@@ -527,6 +534,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
     Keyword arguments not beginning with underscore (_) are used to
     initialize the screen's scope.
     """
+
+    if not PREDICT:
+        return
 
     _widget_properties = kwargs.pop("_widget_properties", {})
     _scope = kwargs.pop
