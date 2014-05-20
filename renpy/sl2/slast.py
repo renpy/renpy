@@ -61,8 +61,11 @@ class SLContext(object):
             self.__dict__.update(parent.__dict__)
             return
 
-        # The scope that python methods are evaluated in.
+        # The local scope that python code is evaluated in.
         self.scope = { }
+
+        # The global scope that python code is evaluated in.
+        self.globals = { }
 
         # A list of child displayables that will be added to an outer
         # displayable.
@@ -212,7 +215,7 @@ class SLBlock(SLNode):
         keyword_exprs = self.keyword_exprs
 
         if keyword_exprs is not None:
-            context.keywords.update(py_eval_bytecode(keyword_exprs, locals=context.scope))
+            context.keywords.update(eval(keyword_exprs, context.globals, context.scope))
 
         style_group = context.keywords.pop("style_group", NotGiven)
         if style_group is not NotGiven:
@@ -376,12 +379,12 @@ class SLDisplayable(SLBlock):
         positional_exprs = self.positional_exprs
 
         if positional_values and positional_exprs:
-            values = py_eval_bytecode(positional_exprs, context.scope)
+            values = eval(positional_exprs, context.globals, context.scope)
             positional = [ b if (a is use_expression) else a for a, b in zip(positional_values, values) ]
         elif positional_values:
             positional = positional_values
         elif positional_exprs:
-            positional = py_eval_bytecode(positional_exprs, locals=context.scope)
+            positional = eval(positional_exprs, context.globals, context.scope)
         else:
             positional = [ ]
 
@@ -565,14 +568,14 @@ class SLIf(SLNode):
     def execute(self, context):
 
         for cond, block in self.prepared_entries:
-            if cond is None or py_eval_bytecode(cond, locals=context.scope):
+            if cond is None or eval(cond, context.globals, context.scope):
                 block.execute(context)
                 return
 
     def keywords(self, context):
 
         for cond, block in self.prepared_entries:
-            if cond is None or py_eval_bytecode(cond, locals=context.scope):
+            if cond is None or eval(cond, context.globals, context.scope):
                 block.keywords(context)
                 return
 
@@ -609,7 +612,7 @@ class SLFor(SLBlock):
         expr = self.expression_expr
 
         if expr is not None:
-            value = py_eval_bytecode(expr, locals=context.scope)
+            value = eval(expr, context.globals, context.scope)
         else:
             value = self.expression_value
 
@@ -660,7 +663,7 @@ class SLPython(SLNode):
         self.code = code
 
     def execute(self, context):
-        py_exec_bytecode(self.code.bytecode, locals=context.scope)
+        exec self.code.bytecode in context.globals, context.scope
 
     def prepare(self):
         self.constant = False
@@ -690,7 +693,7 @@ class SLDefault(SLNode):
         if variable in scope:
             return
 
-        scope[variable] = py_eval_bytecode(self.expr, locals=scope)
+        scope[variable] = eval(self.expr, context.globals, scope)
 
 
 class SLUse(SLNode):
@@ -871,6 +874,7 @@ class SLScreen(SLBlock):
 
         context = SLContext()
         context.scope = scope
+        context.globals = renpy.python.store_dicts["store"]
 
         name = scope["_name"]
         main_cache = renpy.display.screen.current_screen().cache
