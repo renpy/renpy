@@ -489,6 +489,9 @@ class ForParser(Parser):
         matched, returns it. Otherwise, returns None.
         """
 
+        name = None
+        pattern = False
+
         while True:
 
             if l.match(r"\("):
@@ -497,15 +500,21 @@ class ForParser(Parser):
             else:
                 name = l.name()
 
-                if not name:
-                    l.error("Expected tuple pattern.")
+                if name is None:
+                    break
 
             if l.match(r","):
-                name = None
+                pattern = True
             else:
                 break
 
-        return name
+        if pattern:
+            return None
+
+        if name is not None:
+            return name
+
+        l.error("expected variable or tuple pattern.")
 
     def parse(self, loc, l, parent):
 
@@ -515,10 +524,10 @@ class ForParser(Parser):
         name = self.name_or_tuple_pattern(l)
 
         if not name:
-            name = "_i_" + str(self.serial)
+            name = "_sl2_i"
             pattern = l.text[tuple_start:l.pos]
             stmt = pattern + " = " + name
-            code = renpy.ast.PyCode(stmt, (l.filename, l.lineno))
+            code = renpy.ast.PyCode(stmt, loc)
         else:
             code = None
 
