@@ -99,6 +99,9 @@ init -1600 python:
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
+
+        # Profile one frame
+        profile_once = [ 'shift_P' ]
         )
 
     # Should we use the autoreload system?
@@ -230,6 +233,10 @@ init -1600 python:
         renpy.show_screen("_developer")
         renpy.restart_interaction()
 
+    def _profile_once():
+        renpy.display.interface.profile_once = True
+        renpy.restart_interaction()
+
 init -1100 python:
 
     # The default keymap. We might also want to put some of this into
@@ -250,6 +257,7 @@ init -1100 python:
         help = _help,
         choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
         console = _console.enter,
+        profile_once = _profile_once,
         )
 
     config.underlay = [ km ]

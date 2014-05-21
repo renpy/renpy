@@ -1608,6 +1608,9 @@ class Interface(object):
         # Force an interaction restart.
         self.restart_interaction = True
 
+        # True if we're doing a one-time profile.
+        self.profile_once = False
+
 
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
@@ -2424,12 +2427,14 @@ class Interface(object):
                     renpy.config.frames += 1
 
                     # If profiling is enabled, report the profile time.
-                    if renpy.config.profile :
+                    if renpy.config.profile or self.profile_once:
                         new_time = get_time()
 
-                        if new_time - self.profile_time > .015:
-                            print "Profile: Redraw took %f seconds." % (new_time - self.frame_time)
-                            print "Profile: %f seconds to complete event." % (new_time - self.profile_time)
+                        if self.profile_once or (new_time - self.profile_time > .015):
+                            print "Profile: Redraw took %.3f ms." % (1000 * (new_time - self.frame_time))
+                            print "Profile: %.3f ms to complete event." % (1000 * (new_time - self.profile_time))
+
+                        self.profile_once = False
 
                     if first_pass and self.last_event:
                         x, y = renpy.display.draw.get_mouse_pos()
@@ -2531,8 +2536,7 @@ class Interface(object):
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
                 if needs_redraw and not self.event_peek():
-                    if renpy.config.profile:
-                        self.profile_time = get_time()
+                    self.profile_time = get_time()
                     continue
 
                 # Handle autosaving and persistent checking, as necessary.
@@ -2550,8 +2554,7 @@ class Interface(object):
                 if ev.type == pygame.NOEVENT:
                     continue
 
-                if renpy.config.profile:
-                    self.profile_time = get_time()
+                self.profile_time = get_time()
 
                 # Try to merge an TIMEEVENT with other timeevents.
                 if ev.type == TIMEEVENT:
