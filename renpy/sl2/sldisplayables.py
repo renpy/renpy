@@ -308,17 +308,74 @@ add(window_properties)
 add(text_position_properties)
 add(text_text_properties)
 
-for name in [ "bar", "vbar" ]:
-    DisplayableParser(name, renpy.display.behavior.Bar, name, 0, replaces=True)
-    Keyword("adjustment")
-    Keyword("range")
-    Keyword("value")
-    Keyword("changed")
-    Keyword("hovered")
-    Keyword("unhovered")
-    add(ui_properties)
-    add(position_properties)
-    add(bar_properties)
+def sl2bar(context=None, **properties):
+    range = 1 #@ReservedAssignment
+    value = 0
+    width = None
+    height = None
+
+    if "width" in properties:
+        width = properties.pop("width")
+    if "height" in properties:
+        height  = properties.pop("height")
+    if "range" in properties:
+        range = properties.pop("range") #@ReservedAssignment
+    if "value" in properties:
+        value = properties.pop("value")
+
+    if "style" not in properties:
+        if isinstance(value, renpy.ui.BarValue):
+            style = context.style_prefix + value.get_style()[0]
+            properties["style"] = style
+
+    return renpy.display.behavior.Bar(range, value, width, height, vertical=False, **properties)
+
+DisplayableParser("bar", sl2bar, None, 0, replaces=True, pass_context=True)
+Keyword("adjustment")
+Keyword("range")
+Keyword("value")
+Keyword("changed")
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+add(bar_properties)
+
+
+def sl2vbar(context=None, **properties):
+    range = 1 #@ReservedAssignment
+    value = 0
+    width = None
+    height = None
+
+    if "width" in properties:
+        width = properties.pop("width")
+    if "height" in properties:
+        height  = properties.pop("height")
+    if "range" in properties:
+        range = properties.pop("range") #@ReservedAssignment
+    if "value" in properties:
+        value = properties.pop("value")
+
+    if "style" not in properties:
+        if isinstance(value, renpy.ui.BarValue):
+            style = context.style_prefix + value.get_style()[1]
+            properties["style"] = style
+
+    return renpy.display.behavior.Bar(range, value, width, height, vertical=True, **properties)
+
+DisplayableParser("vbar", sl2vbar, None, 0, replaces=True, pass_context=True)
+Keyword("adjustment")
+Keyword("range")
+Keyword("value")
+Keyword("changed")
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+add(bar_properties)
+
+
 
 # Omit autobar. (behavior)
 
