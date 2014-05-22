@@ -2197,8 +2197,11 @@ class Interface(object):
         renpy.text.text.layout_cache_tick()
         renpy.display.predict.reset()
 
-        # Cleare the size groups.
+        # Clear the size groups.
         renpy.display.layout.size_groups.clear()
+
+        # Clear the set of updated screens.
+        renpy.display.screen.updated_screens.clear()
 
         # Clear some events.
         pygame.event.clear((pygame.MOUSEMOTION,

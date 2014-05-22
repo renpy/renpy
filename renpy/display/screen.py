@@ -248,6 +248,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def update(self):
 
+        if self in updated_screens:
+            return
+
+        updated_screens.add(self)
+
         if self.screen is None:
             self.child = renpy.display.layout.Null()
             return { }
@@ -372,6 +377,9 @@ _current_screen = None
 
 # A map from (screen_name, variant) tuples to screen.
 screens = { }
+
+# The screens that were updated during the current interaction.
+updated_screens = set()
 
 def get_screen_variant(name):
     """
