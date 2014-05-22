@@ -1,0 +1,50 @@
+class Render:
+    pass
+
+def render(d, width, height, st, at):
+    return Render
+
+def redraw(d, when):
+    pass
+
+def invalidate(d):
+    pass
+
+def free_memory():
+    pass
+
+def render_screen(d, width, height):
+    pass
+
+def mutated_surface(surf):
+    pass
+
+def mark_sweep():
+    pass
+
+def process_redraws():
+    pass
+
+def redraw_time():
+    return float
+
+def focus_at_point(x, y):
+    pass
+
+def take_focuses(focus_list):
+    pass
+
+def check_at_shutdown():
+    pass
+
+import threading
+blit_lock = threading.Condition
+
+class Matrix2D():
+    pass
+
+IDENTITY = Matrix2D
+BLIT = int
+DISSOLVE = int
+IMAGEDISSOLVE = int
+PIXELLATE = int

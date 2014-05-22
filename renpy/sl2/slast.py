@@ -25,7 +25,7 @@ import collections
 import renpy.style
 import renpy.display
 
-from renpy.python import py_compile, py_eval_bytecode, py_exec_bytecode
+from renpy.python import py_compile, py_eval_bytecode
 from renpy.sl2.pyutil import is_constant
 
 # This file contains the abstract syntax tree for a screen language

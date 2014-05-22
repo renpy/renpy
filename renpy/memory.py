@@ -22,7 +22,6 @@
 # This file contains functions used to help debug memory leaks. They aren't
 # called by default, but can be used when problems occur.
 
-import renpy.gl.gltexture
 import time
 import threading
 import weakref

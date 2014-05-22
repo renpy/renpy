@@ -22,8 +22,7 @@
 import math
 import renpy.display
 
-from renpy.text.textsupport import \
-    TAG, TEXT, PARAGRAPH, DISPLAYABLE
+from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
 import renpy.text.textsupport as textsupport
 import renpy.text.texwrap as texwrap

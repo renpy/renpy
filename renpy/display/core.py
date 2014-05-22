@@ -2369,7 +2369,7 @@ class Interface(object):
         renpy.audio.audio.interact()
 
         # How long until we redraw.
-        redraw_in = 3600
+        _redraw_in = 3600
 
         # Have we drawn a frame yet?
         video_frame_drawn = False
@@ -2476,7 +2476,7 @@ class Interface(object):
                 needs_redraw = renpy.display.render.process_redraws() or needs_redraw
 
                 # How many seconds until we timeout.
-                timeout_in = 3600
+                _timeout_in = 3600
 
                 # Handle the redraw timer.
                 redraw_time = renpy.display.render.redraw_time()
@@ -2485,7 +2485,7 @@ class Interface(object):
                     if redraw_time != old_redraw_time:
                         time_left = redraw_time - get_time()
                         time_left = min(time_left, 3600)
-                        redraw_in = time_left
+                        _redraw_in = time_left
 
                         if time_left <= 0:
                             try:
@@ -2498,7 +2498,7 @@ class Interface(object):
 
                         old_redraw_time = redraw_time
                 else:
-                    redraw_in = 3600
+                    _redraw_in = 3600
                     pygame.time.set_timer(REDRAW, 0)
 
                 # Handle the timeout timer.
@@ -2507,7 +2507,7 @@ class Interface(object):
                 else:
                     time_left = self.timeout_time - get_time()
                     time_left = min(time_left, 3600)
-                    timeout_in = time_left
+                    _timeout_in = time_left
 
                     if time_left <= 0:
                         self.timeout_time = None
