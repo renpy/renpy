@@ -314,7 +314,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
             else:
                 slversion = 2
 
-            print "screen {} took {:.3f}ms ({})".format(" ".join(self.screen_name).encode("utf-8"), 1000.0 * (end - start), slversion)
+            if renpy.display.predict.predicting:
+                predict = "predict "
+            else:
+                predict = ""
+
+            print "{}screen {} took {:.3f}ms ({})".format(
+                predict,
+                " ".join(self.screen_name).encode("utf-8"),
+                1000.0 * (end - start), slversion)
 
         return self.widgets
 
@@ -460,6 +468,10 @@ def has_screen(name):
     else:
         return False
 
+# A map from screen to the cache from the last time the screen was
+# predicted.
+predict_cache = { }
+
 def show_screen(_screen_name, *_args, **kwargs):
     """
     :doc: screens
@@ -515,6 +527,10 @@ def show_screen(_screen_name, *_args, **kwargs):
         scope.update(kwargs)
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
+
+    if screen in predict_cache:
+        d.cache = predict_cache.pop(screen)
+
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
 
@@ -572,7 +588,12 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
         d = ScreenDisplayable(screen, None, None, _widget_properties, scope)
 
+        if screen in predict_cache:
+            d.cache = predict_cache[screen]
+
         d.update()
+        predict_cache[screen] = d.cache
+
         renpy.display.predict.displayable(d)
 
     except:
