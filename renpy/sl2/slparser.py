@@ -612,13 +612,29 @@ class DefaultParser(Parser):
 DefaultParser("default")
 
 
+class OnParser(Parser):
+
+    def parse(self, loc, l, parent):
+
+        event = l.require(l.simple_expression)
+
+        rv = slast.SLOn(loc, event)
+
+        self.parse_contents(l, rv)
+
+        return rv
+
+OnParser("on")
+Keyword("action")
+
+
 class UseParser(Parser):
 
     def __init__(self, name):
         super(UseParser, self).__init__(name)
         childbearing_statements.add(self)
 
-    def parse(self, loc, l, name):
+    def parse(self, loc, l, parent):
 
         target = l.require(l.word)
         args = renpy.parser.parse_arguments(l)

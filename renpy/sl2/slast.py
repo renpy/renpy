@@ -183,7 +183,7 @@ class SLBlock(SLNode):
                 keyword_values[k] = py_eval_bytecode(compile_expr(node))
             else:
                 keyword_keys.append(ast.Str(s=k))
-                keyword_exprs.append(node)
+                keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
 
         if keyword_values:
             self.keyword_values = keyword_values
@@ -336,7 +336,7 @@ class SLDisplayable(SLBlock):
                 has_values = True
             else:
                 values.append(use_expression)
-                exprs.append(node)
+                exprs.append(node) # Will be compiled as part of the tuple.
                 has_exprs = True
 
         if has_values:
@@ -449,17 +449,16 @@ class SLDisplayable(SLBlock):
 
             reused = False
 
-        if d is not None:
-            ctx.children = [ ]
-            renpy.ui.stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
+        ctx.children = [ ]
+        renpy.ui.stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
+
+        if widget_id is not None:
+            screen.widgets[widget_id] = main
 
         # Evaluate children.
         SLBlock.execute(self, ctx)
 
         # If we didn't create a displayable, exit early.
-        if d is None:
-            return
-
         renpy.ui.stack.pop()
 
         if self.imagemap:
@@ -506,9 +505,6 @@ class SLDisplayable(SLBlock):
             cache.raw_transform = None
 
         context.children.append(d)
-
-        if widget_id is not None:
-            screen.widgets[widget_id] = main
 
         if self.constant:
             cache.constant = d
@@ -695,6 +691,52 @@ class SLDefault(SLNode):
 
         scope[variable] = eval(self.expr, context.globals, scope)
 
+class SLOn(SLNode):
+
+    def __init__(self, loc, event):
+        SLNode.__init__(self, loc)
+
+        self.event = event
+
+        # This stores the action using the 'action' property.
+        self.keyword = [ ]
+
+    def prepare(self):
+
+        keywords = dict(self.keyword)
+
+        event_node = py_compile(self.event, 'eval', ast_node=True)
+        action_node = py_compile(keywords.get('action', None), 'eval', ast_node=True)
+
+        self.event_expr = compile_expr(event_node)
+        self.action_expr = compile_expr(action_node)
+
+        if is_constant(event_node):
+            self.event_value = py_eval_bytecode(self.event_expr)
+        else:
+            self.event_value = None
+
+        if is_constant(action_node):
+            self.action_value = py_eval_bytecode(self.action_expr)
+        else:
+            self.action_value = None
+
+        self.constant = False
+
+
+    def execute(self, context):
+
+        event = self.event_value
+        if event is None:
+            event = eval(self.event_expr, context.globals, context.scope)
+
+        action = self.action_value
+        if action is None:
+            action = eval(self.action_expr, context.globals, context.scope)
+
+        renpy.ui.on(event, action)
+
+
 
 class SLUse(SLNode):
 
@@ -849,9 +891,8 @@ class SLScreen(SLBlock):
         if not self.prepared:
 
             self.constant = False
-            self.prepared = True
-
             SLBlock.prepare(self)
+            self.prepared = True
 
     def report_traceback(self, name):
         if name == "__call__":
