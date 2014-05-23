@@ -888,13 +888,13 @@ add(position_properties)
 ##############################################################################
 # Control-flow statements.
 
-def PassParser(Parser):
+class PassParser(Parser):
 
     def __init__(self, name):
         super(PassParser, self).__init__(name)
 
     def parse(self, l, name):
-        return [ ast.Pass(lineno=l.number, col_offset=0) ]
+        return self.parse_exec("pass", l.number)
 
 PassParser("pass")
 
@@ -903,7 +903,6 @@ class DefaultParser(Parser):
 
     def __init__(self, name):
         super(DefaultParser, self).__init__(name)
-
 
     def parse(self, l, name):
 

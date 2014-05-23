@@ -591,7 +591,7 @@ class PassParser(Parser):
 
         l.expect_eol()
 
-        return slast.SLPass()
+        return slast.SLPass(loc)
 
 PassParser("pass")
 
