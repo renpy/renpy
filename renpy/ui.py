@@ -420,7 +420,7 @@ class Wrapper(renpy.object.Object):
         id = kwargs.pop("id", None) #@ReservedAssignment
 
         at_list = kwargs.pop("at", [ ])
-        if not isinstance(at_list, list):
+        if not isinstance(at_list, (list, tuple)):
             at_list = [ at_list ]
 
         style_group = kwargs.pop("style_group", NoStyleGroupGiven)

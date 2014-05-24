@@ -278,6 +278,12 @@ class Parser(object):
 
         return self.parse_eval(expr, lineno)
 
+    def parse_comma_expression(self, l):
+        lineno = l.number
+        expr = l.require(l.comma_expression)
+
+        return self.parse_eval(expr, lineno)
+
     def parse(self, l, name):
         """
         This is expected to parse a function statement, and to return
@@ -366,7 +372,7 @@ class FunctionStatementParser(Parser):
 
             seen_keywords.add(name)
 
-            expr = self.parse_simple_expression(l)
+            expr = self.parse_comma_expression(l)
 
             call_node.keywords.append(
                 ast.keyword(arg=str(name), value=expr),

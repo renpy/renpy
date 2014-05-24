@@ -484,22 +484,27 @@ class SLDisplayable(SLBlock):
         cache.displayable = d
 
         if transform is not None:
-            if reused and (transform is cache.raw_transform):
+            if reused and (transform == cache.raw_transform):
                 d = cache.transform
             else:
                 cache.raw_transform = transform
 
-                if isinstance(transform, renpy.display.motion.Transform):
-                    d = transform(child=d)
+                if not isinstance(transform, (list, tuple)):
+                    transform = [ transform ]
 
+                for t in transform:
+                    if isinstance(t, renpy.display.motion.Transform):
+                        d = t(child=d)
+                    else:
+                        d = t(d)
+
+                if isinstance(d, renpy.display.motion.Transform):
                     if cache.transform is not None:
                         d.take_state(cache.transform)
                         d.take_execution_state(cache.transform)
-                else:
-                    d = transform(d)
-
 
             cache.transform = d
+
         else:
             cache.transform = None
             cache.raw_transform = None

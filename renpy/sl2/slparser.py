@@ -234,7 +234,7 @@ class Parser(object):
             seen_keywords.add(name)
 
 
-            expr = l.simple_expression()
+            expr = l.comma_expression()
 
             target.keyword.append((name, expr))
 
@@ -616,7 +616,7 @@ class OnParser(Parser):
 
     def parse(self, loc, l, parent):
 
-        event = l.require(l.simple_expression)
+        event = l.require(l.comma_expression)
 
         rv = slast.SLOn(loc, event)
 

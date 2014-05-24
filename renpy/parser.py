@@ -856,7 +856,7 @@ class Lexer(object):
         return False
 
 
-    def simple_expression(self):
+    def simple_expression(self, comma=False):
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -905,6 +905,9 @@ class Lexer(object):
             if self.match(operator_regexp):
                 continue
 
+            if comma and self.match(r','):
+                continue
+
             break
 
         text = self.text[start:self.pos].strip()
@@ -913,6 +916,15 @@ class Lexer(object):
             return None
 
         return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
+
+    def comma_expression(self):
+        """
+        One or more simple expressions, separated by commas, including an
+        optional trailing comma.
+        """
+
+        return self.simple_expression(comma=True)
+
 
     def checkpoint(self):
         """
