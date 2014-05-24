@@ -890,7 +890,7 @@ class Lexer(object):
 
                 # If we see a dot, expect a dotted name.
                 if self.match(r'\.'):
-                    n = self.name()
+                    n = self.word()
                     if not n:
                         self.error("expecting name after dot.")
 
