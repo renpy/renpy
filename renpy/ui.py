@@ -1142,6 +1142,10 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     if ground:
         rv.add(renpy.easy.displayable(ground))
 
+    box = renpy.display.layout.MultiBox(layout='fixed')
+    rv.add(box)
+    rv._main = box
+
     return rv
 
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
