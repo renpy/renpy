@@ -284,7 +284,8 @@ def get_playing(channel="music"):
     """
     :doc: audio
 
-    Returns true if the given channel is playing.
+    If the given channel is playing, returns the playing file name.
+    Otherwise, returns None.
     """
 
     try:
