@@ -620,7 +620,9 @@ class Button(renpy.display.layout.Window):
             rv = run(self.hovered)
 
         self.set_transform_event(self.role + "hover")
-        self.child.set_transform_event(self.role + "hover")
+
+        if self.child is not None:
+            self.child.set_transform_event(self.role + "hover")
 
         return rv
 
@@ -634,7 +636,10 @@ class Button(renpy.display.layout.Window):
             run(self.unhovered)
 
         self.set_transform_event(self.role + "idle")
-        self.child.set_transform_event(self.role + "idle")
+
+        if self.child is not None:
+            self.child.set_transform_event(self.role + "idle")
+
 
     def per_interact(self):
 
@@ -791,7 +796,7 @@ class ImageButton(Button):
             selected_activate_ = renpy.easy.displayable(selected_activate_image),
             )
 
-        super(ImageButton, self).__init__(renpy.display.layout.Null(),
+        super(ImageButton, self).__init__(None,
                                           style=style,
                                           clicked=clicked,
                                           hovered=hovered,

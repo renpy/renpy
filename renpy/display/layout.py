@@ -176,8 +176,12 @@ class Container(renpy.display.core.Displayable):
 
         for i in xrange(len(offsets) - 1, -1, -1):
 
-            d = children[i]
-            xo, yo = offsets[i]
+            try:
+                d = children[i]
+                xo, yo = offsets[i]
+            except:
+                print type(self)
+
 
             rv = d.event(ev, x - xo, y - yo, st)
             if rv is not None:
@@ -933,7 +937,8 @@ class Window(Container):
 
             style.foreground.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
-        self.offsets = [ offsets ]
+        if self.child:
+            self.offsets = [ offsets ]
 
         self.window_size = width, height # W0201
 
