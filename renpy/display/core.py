@@ -184,6 +184,9 @@ class Displayable(renpy.object.Object):
     # to.) If None, it is itself.
     _main = None
 
+    # The location the displayable was created at, if known.
+    _location = None
+
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties) # @UndefinedVariable
         self.focus_name = focus
