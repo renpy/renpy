@@ -101,7 +101,7 @@ init -1600 python:
         toggle_music = [ 'm' ],
 
         # Profile one frame
-        profile_once = [ 'shift_P' ]
+        profile_once = [ 'K_F8' ]
         )
 
     # Should we use the autoreload system?

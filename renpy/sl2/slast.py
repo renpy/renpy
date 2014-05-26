@@ -449,6 +449,10 @@ class SLDisplayable(SLBlock):
 
             reused = False
 
+            cache.children = None # Re-add the children.
+
+        main._location = self.location
+
         ctx.children = [ ]
         renpy.ui.stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
 
@@ -466,7 +470,7 @@ class SLDisplayable(SLBlock):
 
         if ctx.children != cache.children:
 
-            if reused and cache.children:
+            if reused:
                 main._clear()
 
             if self.child_or_fixed and len(self.children) != 1:
