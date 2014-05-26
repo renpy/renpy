@@ -244,7 +244,7 @@ class SLCache(object):
         # The keyword arguments that were used to created the displayable.
         self.keywords = None
 
-        # The children that were added to self.displayable.
+        # A list of the children that were added to self.displayable.
         self.children = None
 
         # The old transform created.
@@ -466,7 +466,7 @@ class SLDisplayable(SLBlock):
 
         if ctx.children != cache.children:
 
-            if reused:
+            if reused and cache.children:
                 main._clear()
 
             if self.child_or_fixed and len(self.children) != 1:
@@ -482,6 +482,7 @@ class SLDisplayable(SLBlock):
                     main.add(i)
 
         cache.displayable = d
+        cache.children = ctx.children
 
         if transform is not None:
             if reused and (transform == cache.raw_transform):
