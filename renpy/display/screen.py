@@ -23,7 +23,7 @@ import renpy.display
 import os
 import time
 
-PROFILE = ("RENPY_PROFILE_SCREENS" in os.environ)
+PROFILE = set(i.strip() for i in os.environ.get("RENPY_PROFILE_SCREENS", "").split(","))
 
 class Screen(renpy.object.Object):
     """
@@ -96,6 +96,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = None
         self.old_transforms = None
         self.cache = { }
+        self.uses = 0
 
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
@@ -169,6 +170,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Modal and zorder.
         self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
         self.zorder = renpy.python.py_eval(self.screen.zorder, locals=self.scope)
+
+        # The number of times this screen has been shown.
+        self.uses = 0
 
     def __unicode__(self):
         return "Screen {}".format(" ".join(self.screen_name))
@@ -313,21 +317,35 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.current_transform_event = None
 
         if PROFILE:
-            end = time.time()
-            if isinstance(self.screen.function, renpy.screenlang.ScreenLangScreen):
-                slversion = 1
-            else:
-                slversion = 2
 
-            if renpy.display.predict.predicting:
-                predict = "predict "
-            else:
-                predict = ""
+            profile = False
 
-            print "{}screen {} took {:.3f}ms ({})".format(
-                predict,
-                " ".join(self.screen_name).encode("utf-8"),
-                1000.0 * (end - start), slversion)
+            if self.uses == 0 and ("predict" in PROFILE):
+                profile = True
+            elif self.uses == 1 and ("show" in PROFILE):
+                profile = True
+                self.uses += 1
+            elif "update" in PROFILE:
+                profile = True
+                self.uses += 1
+
+            if profile:
+
+                end = time.time()
+                if isinstance(self.screen.function, renpy.screenlang.ScreenLangScreen):
+                    slversion = 1
+                else:
+                    slversion = 2
+
+                if renpy.display.predict.predicting:
+                    predict = "predict "
+                else:
+                    predict = ""
+
+                print "{}screen {} took {:.3f}ms ({})".format(
+                    predict,
+                    " ".join(self.screen_name).encode("utf-8"),
+                    1000.0 * (end - start), slversion)
 
         return self.widgets
 
@@ -535,6 +553,8 @@ def show_screen(_screen_name, *_args, **kwargs):
         scope.update(kwargs)
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
+
+    d.uses = 1
 
     if screen in predict_cache:
         d.cache = predict_cache.pop(screen)
