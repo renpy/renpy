@@ -1,5 +1,5 @@
 ﻿translate Chinese_Simplified python:
-    CHSdef = "tl/Chinese_Simplified/default.ttf"
+    CHSdef = "tl/Chinese_Simplified/DroidSansFallback.ttf"
 
 translate Chinese_Simplified style l_default:
     font CHSdef

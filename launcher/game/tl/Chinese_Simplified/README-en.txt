@@ -1,7 +1,7 @@
 Chinese_Simplified translation for ren'py launcher 
 orgin version£º0.98a
-current version£º1.3b
-least update date:2014-3-26
+current version£º1.3c
+least update date:2014-5-27
 ----------------------------------------------------
 logs£º
 ----------------------------------------------------
@@ -85,4 +85,15 @@ base on translation 1.3a
 fix bug for new_project.rpy 
 add info to about.rpy
 add these README files[Chinese/English]
+---------------------------------------------------
+version:1.3c rlease
+description:
+ren'py translate trage version£ºrenpy-6.17.3
+inf:
+base on translation 1.3c
+--------------------------
+add DroidSansFallback.ttf
+del default.ttf
+fix style.rpy for font DroidSansFallback.ttf  
+update README files[Chinese/English]
 ----------------------------------------------------

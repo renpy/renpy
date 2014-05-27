@@ -1,12 +1,12 @@
 Chinese_Simplified translation for ren'py launcher 
 orgin version：0.98a
-current version：1.3b
-least update date:2014-3-26
+current version：1.3c
+least update date:2014-5-27
 ----------------------------------------------------
 REN’PY启动器的简体中文[Chinese_Simplified]翻译
 原始版本：0.98a
-目前版本：1.3b
-最后更新：2014-3-26
+目前版本：1.3c
+最后更新：2014-5-27
 ----------------------------------------------------
 logs：
 记录：
@@ -174,4 +174,25 @@ add these README files[Chinese/English]
 修复 new_project.rpy 的bug
 添加信息到about.rpy
 添加README文件[中文版/英文版]
+---------------------------------------------------
+version:1.3c rlease
+description:
+ren'py translate trage version：renpy-6.17.3
+inf:
+base on translation 1.3c
+--------------------------
+add DroidSansFallback.ttf
+del default.ttf
+fix style.rpy for font DroidSansFallback.ttf  
+update README files[Chinese/English]
+----------------------------------------------------
+版本：1.3c rlease
+描述：
+翻译的目标ren'py平台版本：renpy-6.17.3
+信息:
+基于翻译1.3b
+--------------------------
+修复 new_project.rpy 的bug
+添加信息到about.rpy
+更新README文件[中文版/英文版]
 ---------------------------------------------------
