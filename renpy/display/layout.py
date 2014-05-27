@@ -176,12 +176,8 @@ class Container(renpy.display.core.Displayable):
 
         for i in xrange(len(offsets) - 1, -1, -1):
 
-            try:
-                d = children[i]
-                xo, yo = offsets[i]
-            except:
-                print type(self)
-
+            d = children[i]
+            xo, yo = offsets[i]
 
             rv = d.event(ev, x - xo, y - yo, st)
             if rv is not None:

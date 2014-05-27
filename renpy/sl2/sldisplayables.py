@@ -379,26 +379,24 @@ add(bar_properties)
 
 # Omit autobar. (behavior)
 
-def sl2viewport(context=None, **kwargs):
+def sl2viewport(**kwargs):
     """
     This converts the output of renpy.ui.viewport into something that
     sl.displayable can use.
     """
 
-    l = [ ]
-
-    renpy.ui.stack.append(renpy.ui.ChildList(l, context.style_prefix))
     vp = renpy.ui.viewport(**kwargs)
     renpy.ui.stack.pop()
-    renpy.ui.stack.pop()
+
+    # Remove the side from the list of children. (It will be re-added later.)
+    d = renpy.ui.stack[-1].children.pop()
 
     # Make the viewport the main element.
-    d = l[0]
     d._main = vp
 
     return d
 
-DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True, pass_context=True)
+DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")
