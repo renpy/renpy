@@ -695,7 +695,7 @@ both horizontal and vertical positions.
     If None, no rotation occurs. Otherwise, the image will be rotated
     by this many degrees clockwise. Rotating the displayable causes it
     to be resized, according to the setting of rotate_pad, below. This
-    can cause positioning to change if Add 'xanchor' to dictionary and yanchor are not
+    can cause positioning to change if xanchor and yanchor are not
     0.5.
 
 .. transform-property:: rotate_pad
