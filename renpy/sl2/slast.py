@@ -25,6 +25,8 @@ import collections
 import renpy.style
 import renpy.display
 
+from renpy.display.motion import Transform
+
 from renpy.python import py_compile, py_eval_bytecode
 from renpy.sl2.pyutil import is_constant
 
@@ -202,6 +204,9 @@ class SLBlock(SLNode):
 
     def execute(self, context):
 
+        # Note: SLBlock.execute() is inlined in various locations for performance
+        # reasons.
+
         for i in self.children:
             i.execute(context)
 
@@ -217,6 +222,9 @@ class SLBlock(SLNode):
         if keyword_exprs is not None:
             context.keywords.update(eval(keyword_exprs, context.globals, context.scope))
 
+        for i in self.children:
+            i.keywords(context)
+
         style_group = context.keywords.pop("style_group", NotGiven)
         if style_group is not NotGiven:
             if style_group is not None:
@@ -224,9 +232,7 @@ class SLBlock(SLNode):
             else:
                 context.style_prefix = ""
 
-        for i in self.children:
-            i.keywords(context)
-
+list_or_tuple = (list, tuple)
 
 class SLCache(object):
     """
@@ -374,6 +380,8 @@ class SLDisplayable(SLBlock):
 
             return
 
+        stack = renpy.ui.stack
+
         # Evaluate the positional arguments.
         positional_values = self.positional_values
         positional_exprs = self.positional_exprs
@@ -408,14 +416,14 @@ class SLDisplayable(SLBlock):
         if ("style" not in keywords) and self.style:
             keywords["style"] = renpy.style.get_style(ctx.style_prefix + self.style) # @UndefinedVariable
 
-        if widget_id in screen.widget_properties:
+        if widget_id and (widget_id in screen.widget_properties):
             keywords.update(screen.widget_properties[widget_id])
 
         if (positional == cache.positional) and (keywords == cache.keywords):
             d = cache.displayable
             reused = True
 
-            if cache.imagemap is not None:
+            if cache.imagemap:
                 renpy.ui.imagemap_stack.append(cache.imagemap)
 
             # The main displayable, if d is a composite displayable. (This is
@@ -454,16 +462,17 @@ class SLDisplayable(SLBlock):
         main._location = self.location
 
         ctx.children = [ ]
-        renpy.ui.stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
+        stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
 
-        if widget_id is not None:
+        if widget_id:
             screen.widgets[widget_id] = main
 
-        # Evaluate children.
-        SLBlock.execute(self, ctx)
+        # Evaluate children. (Inlined SLBlock.execute)
+        for i in self.children:
+            i.execute(ctx)
 
         # If we didn't create a displayable, exit early.
-        renpy.ui.stack.pop()
+        stack.pop()
 
         if self.imagemap:
             cache.imagemap = renpy.ui.imagemap_stack.pop()
@@ -494,16 +503,19 @@ class SLDisplayable(SLBlock):
             else:
                 cache.raw_transform = transform
 
-                if not isinstance(transform, (list, tuple)):
-                    transform = [ transform ]
 
-                for t in transform:
-                    if isinstance(t, renpy.display.motion.Transform):
-                        d = t(child=d)
-                    else:
-                        d = t(d)
+                if isinstance(transform, Transform):
+                    d = transform(child=d)
+                elif isinstance(transform, list_or_tuple):
+                    for t in transform:
+                        if isinstance(t, Transform):
+                            d = t(child=d)
+                        else:
+                            d = t(d)
+                else:
+                    d = transform(d)
 
-                if isinstance(d, renpy.display.motion.Transform):
+                if isinstance(d, Transform):
                     if cache.transform is not None:
                         d.take_state(cache.transform)
                         d.take_execution_state(cache.transform)
@@ -633,10 +645,7 @@ class SLFor(SLBlock):
 
             ctx.scope[variable] = v
 
-            if type(v) is int:
-                index = v
-            else:
-                index = id(v)
+            index = id(v)
 
             n = count.get(index, -1) + 1
             count[index] = n
@@ -652,7 +661,10 @@ class SLFor(SLBlock):
             newcaches[index] = cache
             ctx.cache = cache
 
-            SLBlock.execute(self, ctx)
+            # Inline of SLBlock.execute.
+
+            for i in self.children:
+                i.execute(ctx)
 
         context.cache[self.serial] = newcaches
 
@@ -902,8 +914,6 @@ class SLScreen(SLBlock):
 
     def prepare(self):
         if not self.prepared:
-
-            print "prepare", self.name
 
             self.constant = False
             SLBlock.prepare(self)
