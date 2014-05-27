@@ -25,6 +25,19 @@ import time
 
 PROFILE = set(i.strip() for i in os.environ.get("RENPY_PROFILE_SCREENS", "").split(","))
 
+if "cprofile" in PROFILE:
+    import cProfile
+    cprof = cProfile.Profile()
+
+    import atexit
+
+    def cprof_atexit():
+        cprof.dump_stats("/tmp/profile")
+
+    atexit.register(cprof_atexit)
+else:
+    cprof = None
+
 class Screen(renpy.object.Object):
     """
     A screen is a collection of widgets that are displayed together.
@@ -272,6 +285,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if PROFILE:
             start = time.time()
 
+            if cprof:
+                cprof.enable()
+
         # Update _current_screen
         global _current_screen
         old_screen = _current_screen
@@ -317,6 +333,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.current_transform_event = None
 
         if PROFILE:
+
+            if cprof:
+                cprof.disable()
 
             profile = False
 

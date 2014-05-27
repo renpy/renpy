@@ -623,11 +623,11 @@ class SLFor(SLBlock):
             value = self.expression_value
 
         newcaches = {}
-        oldcaches = context.cache.get(self.serial, {})
+        oldcaches = context.cache.get(self.serial, newcaches)
 
         ctx = SLContext(context)
 
-        count = collections.defaultdict(int)
+        count = { }
 
         for v in value:
 
@@ -638,11 +638,11 @@ class SLFor(SLBlock):
             else:
                 index = id(v)
 
-            n = count[index]
-            count[index] = n + 1
+            n = count.get(index, -1) + 1
+            count[index] = n
 
-            if n > 0:
-                index = (index, count)
+            if n:
+                index = (index, n)
 
             cache = oldcaches.get(index, None)
 

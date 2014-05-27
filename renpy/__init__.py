@@ -92,6 +92,7 @@ name_blacklist = {
     "renpy.display.render.blit_lock",
     "renpy.display.render.IDENTITY",
     "renpy.loader.auto_lock",
+    "renpy.display.screen.cprof",
     }
 
 class Backup():
