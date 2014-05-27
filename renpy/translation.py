@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
+import renpy.display
 
 import hashlib
 import re
@@ -480,6 +480,9 @@ def change_language(language):
 
     # Rebuild the styles.
     renpy.style.rebuild() # @UndefinedVariable
+
+    # Re-prepare the screens.
+    renpy.display.screen.prepare_screens()
 
     # Restart the interaction.
     renpy.exports.restart_interaction()

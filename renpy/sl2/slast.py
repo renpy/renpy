@@ -897,8 +897,13 @@ class SLScreen(SLBlock):
             parameters=self.parameters,
             )
 
+    def unprepare(self):
+        self.prepared = False
+
     def prepare(self):
         if not self.prepared:
+
+            print "prepare", self.name
 
             self.constant = False
             SLBlock.prepare(self)

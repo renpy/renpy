@@ -324,9 +324,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 profile = True
             elif self.uses == 1 and ("show" in PROFILE):
                 profile = True
-                self.uses += 1
-            elif "update" in PROFILE:
+            elif self.uses >= 2 and ("update" in PROFILE):
                 profile = True
+
+            if self.uses:
                 self.uses += 1
 
             if profile:
@@ -410,6 +411,25 @@ def get_screen_variant(name):
             return rv
 
     return None
+
+def prepare_screens():
+    """
+    Prepares all screens for use.
+    """
+
+    predict_cache.clear()
+
+    for s in screens.values():
+        if s.ast is None:
+            continue
+
+        s.ast.unprepare()
+
+    for s in screens.values():
+        if s.ast is None:
+            continue
+
+        s.ast.prepare()
 
 def define_screen(*args, **kwargs):
     """
@@ -554,10 +574,10 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
 
-    d.uses = 1
-
     if screen in predict_cache:
         d.cache = predict_cache.pop(screen)
+
+    d.uses = 1
 
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 

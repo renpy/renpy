@@ -243,6 +243,7 @@ def main():
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles() # @UndefinedVariable
+    renpy.display.screen.prepare_screens()
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
@@ -301,6 +302,9 @@ def main():
 
         # Rebuild the various style caches.
         renpy.style.build_styles() # @UndefinedVariable
+
+        # Prepare the screens.
+        renpy.display.screen.prepare_screens()
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
