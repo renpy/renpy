@@ -805,9 +805,9 @@ class Transform(Container):
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
-                if isinstance(xanchor, float):
+                if xanchor.__class__ is float:
                     xanchor *= cw
-                if isinstance(yanchor, float):
+                if yanchor.__class__ is float:
                     yanchor *= ch
 
                 xanchor -= cw / 2.0
