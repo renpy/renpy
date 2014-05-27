@@ -22,10 +22,10 @@
 import ast
 import collections
 
-import renpy.style
 import renpy.display
 
 from renpy.display.motion import Transform
+from renpy.display.layout import Fixed
 
 from renpy.python import py_compile, py_eval_bytecode
 from renpy.sl2.pyutil import is_constant
@@ -53,9 +53,10 @@ def compile_expr(node):
     return compile(expr, filename, "eval")
 
 
-class SLContext(object):
+class SLContext(renpy.ui.Addable):
     """
-    A context object that can be passed to the execute methods.
+    A context object that can be passed to the execute methods, and can also
+    be placed in renpy.ui.stack.
     """
 
     def __init__(self, parent=None):
@@ -95,6 +96,22 @@ class SLContext(object):
         # When a constant node has an id, we added it to this dict, so it
         # may be reused. (If None, no dict is used.)
         self.widgets = None
+
+    def get_style_group(self):
+        style_prefix = self.style_prefix
+
+        if style_prefix:
+            return style_prefix[:-1]
+        else:
+            return None
+
+    style_group = property(get_style_group)
+
+    def add(self, d, key):
+        self.children.append(d)
+
+    def close(self, d):
+        raise Exception("Spurious ui.close().")
 
 class SLNode(object):
     """
@@ -414,7 +431,7 @@ class SLDisplayable(SLBlock):
 
         # If we don't know the style, figure it out.
         if ("style" not in keywords) and self.style:
-            keywords["style"] = renpy.style.get_style(ctx.style_prefix + self.style) # @UndefinedVariable
+            keywords["style"] = ctx.style_prefix + self.style
 
         if widget_id and (widget_id in screen.widget_properties):
             keywords.update(screen.widget_properties[widget_id])
@@ -462,7 +479,7 @@ class SLDisplayable(SLBlock):
         main._location = self.location
 
         ctx.children = [ ]
-        stack.append(renpy.ui.ChildList(ctx.children, ctx.style_prefix))
+        stack.append(ctx)
 
         if widget_id:
             screen.widgets[widget_id] = main
@@ -471,7 +488,6 @@ class SLDisplayable(SLBlock):
         for i in self.children:
             i.execute(ctx)
 
-        # If we didn't create a displayable, exit early.
         stack.pop()
 
         if self.imagemap:
@@ -483,7 +499,7 @@ class SLDisplayable(SLBlock):
                 main._clear()
 
             if self.child_or_fixed and len(self.children) != 1:
-                f = renpy.display.layout.Fixed()
+                f = Fixed()
 
                 for i in ctx.children:
                     f.add(i)
