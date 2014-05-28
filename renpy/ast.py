@@ -478,7 +478,8 @@ class Say(Node):
         if who is not None:
             self.who = who.strip()
 
-            if re.match(r'[a-zA-Z_]\w*$', self.who):
+            # True if who is a simple enough expression we can just look it up.
+            if re.match(renpy.parser.word_regexp + "$", self.who):
                 self.who_fast = True
             else:
                 self.who_fast = False
@@ -529,7 +530,7 @@ class Say(Node):
 
             if self.who is not None:
                 if self.who_fast:
-                    who = getattr(renpy.store, self.who, None)
+                    who = renpy.python.store_dicts['store'].get(self.who, None)
                     if who is None:
                         raise Exception("Sayer '%s' is not defined." % self.who.encode("utf-8"))
                 else:
@@ -1666,7 +1667,7 @@ class Define(Node):
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
         renpy.exports.const(self.varname)
-        setattr(renpy.store, self.varname, value)
+        renpy.python.store_dicts["store"][self.varname] = value
 
 
 class Screen(Node):

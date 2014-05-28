@@ -442,6 +442,8 @@ OPERATORS = [
 
 operator_regexp = "|".join(re.escape(i) for i in OPERATORS)
 
+word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
+
 class Lexer(object):
     """
     The lexer that is used to lex script files. This works on the idea
@@ -686,7 +688,7 @@ class Lexer(object):
             return self.word_cache
 
         self.word_cache_pos = self.pos
-        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        rv = self.match(word_regexp)
         self.word_cache = rv
         self.word_cache_newpos = self.pos
 
