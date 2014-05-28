@@ -474,10 +474,12 @@ class Wrapper(renpy.object.Object):
         elif self.many:
             stack.append(Many(w, self.imagemap, style_group))
 
+        main = w._main or w
+
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
         if screen and id is not None:
-            screen.widgets[id] = w
+            screen.widgets[id] = main
 
             if isinstance(atw, renpy.display.motion.Transform):
                 screen.transforms[id] = atw
@@ -493,7 +495,7 @@ class Wrapper(renpy.object.Object):
         # Clear out the add_tag.
         add_tag = None
 
-        return w
+        return main
 
 ##############################################################################
 # Button support functions
@@ -889,8 +891,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     rv._main = text
     return rv
 
-def textbutton(label, **kwargs):
-    return add(_textbutton(label, **kwargs))
+textbutton = Wrapper(_textbutton)
 
 def _label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
@@ -915,8 +916,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
     rv._main = text
     return rv
 
-def label(label, **kwargs):
-    return add(_label(label, **kwargs))
+label = Wrapper(_label)
 
 adjustment = renpy.display.behavior.Adjustment
 
