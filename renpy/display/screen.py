@@ -732,6 +732,9 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     widget with that id on the screen.
     """
 
+    if isinstance(screen, ScreenDisplayable):
+        screen = screen.screen_name
+
     if screen is None:
         screen = current_screen()
     else:
