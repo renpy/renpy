@@ -478,20 +478,24 @@ class SLDisplayable(SLBlock):
 
         main._location = self.location
 
-        ctx.children = [ ]
-        stack.append(ctx)
-
         if widget_id:
             screen.widgets[widget_id] = main
 
-        # Evaluate children. (Inlined SLBlock.execute)
-        for i in self.children:
-            i.execute(ctx)
+        ctx.children = [ ]
+        stack.append(ctx)
 
-        stack.pop()
+        try:
 
-        if self.imagemap:
-            cache.imagemap = renpy.ui.imagemap_stack.pop()
+            # Evaluate children. (Inlined SLBlock.execute)
+            for i in self.children:
+                i.execute(ctx)
+
+        finally:
+
+            stack.pop()
+
+            if self.imagemap:
+                cache.imagemap = renpy.ui.imagemap_stack.pop()
 
         if ctx.children != cache.children:
 
