@@ -187,7 +187,7 @@ def dump(error):
         else:
             continue
 
-        for name, o in inspect.getmembers(mod):
+        for name, o in mod.__dict__.items():
 
             if inspect.isfunction(o):
                 try:
