@@ -326,6 +326,7 @@ init -1500 python:
 
         def set_mixer(self, value):
             _preferences.set_volume(self.mixer, value)
+            renpy.restart_interaction()
 
         def get_adjustment(self):
             return ui.adjustment(
