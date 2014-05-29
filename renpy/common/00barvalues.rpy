@@ -336,7 +336,6 @@ init -1500 python:
         def get_style(self):
             return "slider", "vslider"
 
-    @renpy.pure
     class XScrollValue(BarValue, FieldEquality):
         """
          :doc: value
@@ -346,13 +345,14 @@ init -1500 python:
          before a bar with this value is.
          """
 
-        identity_fields = [ 'viewport' ]
+        equality_fields = [ 'viewport' ]
 
         def __init__(self, viewport):
             self.viewport = viewport
+            self.screen = renpy.current_screen()
 
         def get_adjustment(self):
-            w = renpy.get_widget(None, self.viewport)
+            w = renpy.get_widget(self.screen, self.viewport)
             if not isinstance(w, Viewport):
                 raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 
@@ -370,13 +370,14 @@ init -1500 python:
          before a bar with this value is.
          """
 
-        identity_fields = [ 'viewport' ]
+        equality_fields = [ 'viewport' ]
 
         def __init__(self, viewport):
             self.viewport = viewport
+            self.screen = renpy.current_screen()
 
         def get_adjustment(self):
-            w = renpy.get_widget(None, self.viewport)
+            w = renpy.get_widget(self.screen, self.viewport)
             if not isinstance(w, Viewport):
                 raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 
