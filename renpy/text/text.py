@@ -1242,9 +1242,11 @@ class Text(renpy.display.core.Displayable):
 
             self.text.append(i)
 
-        if self.text != old_text:
+        if not self.dirty and self.text != old_text:
             self.dirty = True
-            renpy.display.render.redraw(self, 0)
+
+            if old_text is not None:
+                renpy.display.render.redraw(self, 0)
 
     def set_ctc(self, ctc):
         self.ctc = ctc
