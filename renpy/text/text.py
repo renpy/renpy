@@ -1163,6 +1163,9 @@ class Text(renpy.display.core.Displayable):
         # True if we are substituting things in.
         self.substitute = substitute
 
+        # Do we need to update ourselves?
+        self.dirty = True
+
         # The text, after substitutions.
         self.text = None
 
@@ -1192,9 +1195,6 @@ class Text(renpy.display.core.Displayable):
             self.ctc = replaces.ctc
             self.start = replaces.start
             self.end = replaces.end
-
-        # Do we need to update ourselves?
-        self.dirty = True
 
         # The list of displayables we use.
         self.displayables = None
