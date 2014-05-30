@@ -403,7 +403,7 @@ class ShownImageInfo(renpy.object.Object):
                 if num_required != len(required):
                     continue
 
-                len_attrs = len(attrs)
+                len_attrs = len(set(attrs))
 
                 if len_attrs < max_len:
                     continue
