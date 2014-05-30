@@ -2478,8 +2478,8 @@ class Interface(object):
                     needs_redraw = True
                     video_frame_drawn = True
 
-                needs_redraw = renpy.display.video.frequent() or needs_redraw
-                needs_redraw = renpy.display.render.process_redraws() or needs_redraw
+                if renpy.display.render.process_redraws():
+                    needs_redraw = True
 
                 # How many seconds until we timeout.
                 _timeout_in = 3600
@@ -2541,7 +2541,7 @@ class Interface(object):
 
                 # If we need to redraw again, do it if we don't have an
                 # event going on.
-                if needs_redraw and not self.event_peek():
+                if (prediction_coroutine or needs_redraw) and not self.event_peek():
                     self.profile_time = get_time()
                     continue
 
