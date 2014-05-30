@@ -396,8 +396,14 @@ python early hide:
         return dict(name=name)
 
     def predict_screen(p):
+
+        name = p["name"]
+
         if not p["arguments"]:
-            renpy.predict_screen(p["arguments"])
+            renpy.predict_screen(name)
+#
+#         if not p["arguments"]:
+#             renpy.predict_screen(p["arguments"])
 
     def execute_show_screen(p):
 
