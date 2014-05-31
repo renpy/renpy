@@ -621,11 +621,10 @@ def predict_screen(_screen_name, *_args, **kwargs):
     if not PREDICT:
         return
 
+    _layer = kwargs.pop("_layer", "screens")
+    _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
-    _scope = kwargs.pop
-
-    kwargs["_kwargs" ] = kwargs.copy()
-    kwargs["_args"] = _args
+    _transient = kwargs.pop("_transient", False)
 
     name = _screen_name
 
@@ -638,6 +637,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     screen = get_screen_variant(name[0])
 
     scope = { }
+    scope["_scope"] = scope
 
     if screen.parameters:
         scope["_kwargs" ] = kwargs
