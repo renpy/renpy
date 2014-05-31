@@ -377,6 +377,9 @@ init -1200 python:
 
 python early hide:
 
+    # Should we predict screens?
+    config.predict_screen_statements = True
+
     def parse_show_call_screen(l):
 
         # Parse a name.
@@ -384,9 +387,15 @@ python early hide:
 
         # Parse the list of arguments.
         arguments = renpy.parser.parse_arguments(l)
+
+        if l.keyword('nopredict'):
+            predict = False
+        else:
+            predict = True
+
         l.expect_eol()
 
-        return dict(name=name, arguments=arguments)
+        return dict(name=name, arguments=arguments, predict=predict)
 
     def parse_hide_screen(l):
         name = l.require(l.name)
@@ -397,13 +406,24 @@ python early hide:
 
     def predict_screen(p):
 
-        name = p["name"]
+        if not config.predict_screen_statements:
+            return
 
-        if not p["arguments"]:
-            renpy.predict_screen(name)
-#
-#         if not p["arguments"]:
-#             renpy.predict_screen(p["arguments"])
+        predict = p.get("predict", False)
+
+        if not predict:
+            return
+
+        name = p["name"]
+        a = p["arguments"]
+
+        if a is not None:
+            args, kwargs = a.evaluate()
+        else:
+            args = [ ]
+            kwargs = { }
+
+        renpy.predict_screen(name, *args, **kwargs)
 
     def execute_show_screen(p):
 

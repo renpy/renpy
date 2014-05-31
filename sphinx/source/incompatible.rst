@@ -9,6 +9,18 @@ Note that setting :var:`config.script_version` will cause many of
 these changes to be reverted, at the cost of losing access to recent
 features.
 
+
+.. _incompatible-6.18:
+
+6.18
+----
+
+The ``show screen`` and ``call screen`` statements may now evaluate their
+arguments as part of the screen prediction process. If evaluating the
+arguments to a screen causes side effects to occur, the ``show screen``
+or ``call screen`` statements should be given the new ``nopredict``
+clause, which prevents prediction.
+
 .. _incompatible-6.16:
 
 6.16

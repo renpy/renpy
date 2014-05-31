@@ -1421,7 +1421,17 @@ Show Screen
 
 The show screen statement causes a screen to be shown. It takes an
 screen name, and an optional argument list. If present, the arguments
-are used to intialize the scope of the screen.
+are used to initialize the scope of the screen.
+
+The show screen statement takes an optional nopredict keyword, that
+prevents screen prediction from occurring. During screen prediction,
+arguments to the screen are evaluated. Please ensure that evaluating
+the screen arguments does not cause unexpected side-effects to occur.
+
+.. warning::
+
+    If evaluating the arguments to a screen causes side-effects to occur,
+    your game may behave in unexpected ways.
 
 Screens shown in this way are displayed until they are explicitly
 hidden. This allows them to be used for overlay purposes.
@@ -1430,6 +1440,10 @@ hidden. This allows them to be used for overlay purposes.
 
     show screen overlay_screen
     show screen clock_screen(hour=11, minute=30)
+
+    if rare_case:
+        show rare_screen nopredict
+
 
 Hide Screen
 -----------
@@ -1454,10 +1468,21 @@ This can be used to display an imagemap. The imagemap can place a
 value into the `_return` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
+The call screen statement takes an optional nopredict keyword, that
+prevents screen prediction from occurring. During screen prediction,
+arguments to the screen are evaluated. Please ensure that evaluating
+the screen arguments does not cause unexpected side-effects to occur.
+
+.. warning::
+
+    If evaluating the arguments to a screen causes side-effects to occur,
+    your game may behave in unexpected ways.
+
 ::
 
-   call screen my_imagemap
+    call screen my_imagemap
 
+    call screen my_screen(side_effect_function()) nopredict
 
 .. _screen-variants:
 
