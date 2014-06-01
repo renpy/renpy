@@ -46,6 +46,9 @@ class Solid(renpy.display.core.Displayable):
         else:
             self.color = None
 
+    def __hash__(self):
+        return hash(self.color)
+
     def __eq__(self, o):
         if not self._equals(o):
             return False

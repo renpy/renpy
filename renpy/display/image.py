@@ -105,6 +105,9 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
+    def __hash__(self):
+        return hash(self.name)
+
     def __eq__(self, o):
         if self is o:
             return True
