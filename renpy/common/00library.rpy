@@ -126,8 +126,6 @@ init -1700 python:
 
 init -1700 python:
 
-    _predict_screens = [ ]
-
     def skip_indicator():
 
         ### skip_indicator default
@@ -155,10 +153,6 @@ init -1700 python:
 
     # Prediction of screens.
     def predict():
-
-        for s in _predict_screens:
-            if renpy.has_screen(s):
-                renpy.predict_screen(s)
 
         s = _game_menu_screen
 

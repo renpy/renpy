@@ -152,9 +152,8 @@ label _start:
     $ renpy.block_rollback()
 
     $ _old_game_menu_screen = _game_menu_screen
-    $ _old_predict_screens = _predict_screens
     $ _game_menu_screen = None
-    $ _predict_screens = [ 'main_menu' ]
+    $ renpy.start_predict("main_menu")
 
     if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
         call expression "splashscreen" from _call_splashscreen_1
