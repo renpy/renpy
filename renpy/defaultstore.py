@@ -365,6 +365,13 @@ _last_say_what = None
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
 
+# Used to store displayables that should be predicted.
+_predict_set = set()
+
+# A map from a screen name to an (args, kwargs) tuple. The arguments and
+# keyword arguments can be
+_predict_screen = dict()
+
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None
 

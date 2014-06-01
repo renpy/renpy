@@ -2081,6 +2081,68 @@ def cache_unpin(*args):
     renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
+def start_predict(*args):
+    """
+    :doc: cache
+
+    This function takes one or more displayables as arguments. It causes
+    Ren'Py to predict those displayables during every interaction until
+    the displayables are removed by :func:`renpy.stop_predict`.
+    """
+
+    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+
+    for d in args:
+        d = renpy.easy.displayable(d)
+        new_predict.add(d)
+
+    renpy.store._predict_set = new_predict
+
+
+def stop_predict(*args):
+    """
+    :doc: cache
+
+    This function takes one or more displayables as arguments. It causes
+    Ren'Py to stop predicting those displayables during every interaction.
+    """
+
+    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+
+    for d in args:
+        d = renpy.easy.displayable(d)
+        new_predict.discard(d)
+
+    renpy.store._predict_set = new_predict
+
+
+def start_predict_screen(_screen_name, *args, **kwargs):
+
+    """
+    :doc: cache
+
+    Causes Ren'Py to start predicting the screen named `_screen_name`
+    will be shown with the given arguments. This replaces  any previous prediction
+    of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
+    """
+
+    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict[_screen_name] = (args, kwargs)
+    renpy.store._predict_screen = new_predict
+
+def stop_predict_screen(name):
+    """
+    :doc: cache
+
+    Causes Ren'Py to stop predicting the screen named `name` will be shown.
+    """
+
+    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict.pop(name)
+    renpy.store._predict_screen = new_predict
+
+
+
 def call_screen(_screen_name, *args, **kwargs):
     """
     :doc: screens
