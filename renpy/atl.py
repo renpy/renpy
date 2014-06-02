@@ -95,6 +95,7 @@ PROPERTIES = {
         "xcenter" : position,
         "ycenter" : position,
         "debug" : any_object,
+        "events" : bool,
         }
 
 

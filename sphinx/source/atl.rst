@@ -862,6 +862,15 @@ both horizontal and vertical positions.
     If this transform is being used as a transition, then this is the
     duration of the transition.
 
+.. transform-property:: events
+
+    :type: boolean
+    :default: True
+
+    If true, events are passed to the child of this transform. If false,
+    events are blocked. (This can be used in ATL transitions to prevent
+    events from reaching the old_widget.)
+
 These properties are applied in the following order:
 
 #. crop, corner1, corner2

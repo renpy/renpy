@@ -97,6 +97,7 @@ class TransformState(renpy.object.Object):
     transform_anchor = False
     additive = 0.0
     debug = None
+    events = True
 
     def __init__(self): # W0231
         self.alpha = 1
@@ -130,6 +131,7 @@ class TransformState(renpy.object.Object):
         self.delay = 0
 
         self.debug = None
+        self.events = True
 
         # Note: When adding a new property, we need to add it to:
         # - take_state
@@ -168,6 +170,7 @@ class TransformState(renpy.object.Object):
         self.size = ts.size
 
         self.debug = ts.debug
+        self.events = ts.events
 
         # Take the computed position properties, not the
         # raw ones.
@@ -232,6 +235,9 @@ class TransformState(renpy.object.Object):
         diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
         diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
         diff2("yoffset", newts.yoffset, self.yoffset)
+
+        diff2("debug", newts.debug, self.debug)
+        diff2("events", newts.events, self.events)
 
         return rv
 
@@ -436,6 +442,7 @@ class Transform(Container):
     ycenter = Proxy("ycenter")
 
     debug = Proxy("debug")
+    events = Proxy("events")
 
     def after_upgrade(self, version):
 
@@ -739,6 +746,9 @@ class Transform(Container):
 
         if self.hide_request:
             return None
+
+        if not self.state.events:
+            return
 
         children = self.children
         offsets = self.offsets
