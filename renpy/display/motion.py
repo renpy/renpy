@@ -690,6 +690,7 @@ class Transform(Container):
         child = renpy.easy.displayable(child)
 
         self.child = child
+        self.children = [ child ]
         self.child_st_base = self.st
 
         child.per_interact()
