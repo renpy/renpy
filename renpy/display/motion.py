@@ -398,7 +398,7 @@ class Transform(Container):
     additive = Proxy("additive")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("rotate_pad")
+    transform_anchor = Proxy("anchor")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
@@ -522,28 +522,54 @@ class Transform(Container):
 
         self.state = TransformState()
 
-        self.arguments = dict((k, {}) for k in self.DEFAULT_ARGUMENTS)
+        self.arguments = None
 
-        # Split up the keyword arguments.
-        for k, v in kwargs.iteritems():
-            if "_" in k:
-                prefix, prop = k.rsplit("_", 1)
-            else:
-                prefix = ""
-                prop = k
+        if kwargs:
 
-            if prefix not in self.arguments:
-                raise Exception("Unknown transform property prefix: %r" % prefix)
+            if function is None:
 
-            if prop not in renpy.atl.PROPERTIES:
-                raise Exception("Unknown transform property: %r" % prop)
+                # We are complex if we have arguments with non-empty prefixes.
+                has_prefixes = False
 
-            self.arguments[prefix][prop] = v
+                # A map from prefix -> (prop -> value)
+                self.arguments = { }
 
+                # Fill self.arguments with a
+                for k, v in kwargs.iteritems():
 
-        # Apply the keyword arguments.
-        for k, v in kwargs.iteritems():
-            setattr(self.state, k, v)
+                    prefix = ""
+                    prop = k
+
+                    while True:
+
+                        if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
+
+                            if prefix not in self.arguments:
+                                self.arguments[prefix] = { }
+
+                            self.arguments[prefix][prop] = v
+
+                            if prefix:
+                                has_prefixes = True
+
+                            break
+
+                        new_prefix, _, prop = prop.partition("_")
+
+                        if not prop:
+                            raise Exception("Unknown transform property: %r" % k)
+
+                        if prefix:
+                            prefix = prefix + "_" + new_prefix
+                        else:
+                            prefix = new_prefix
+
+                if not has_prefixes:
+                    self.arguments = None
+
+            # Apply keyword arguments to self.state.
+            for prop, value in kwargs.iteritems():
+                setattr(self.state, prop, value)
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
@@ -580,6 +606,9 @@ class Transform(Container):
     # the style prefix, and applies them to the state.
     def default_function(self, state, st, at):
 
+        if self.arguments is None:
+            return None
+
         prefix = self.style.prefix.strip("_")
         prefixes = [ ]
 
@@ -590,7 +619,12 @@ class Transform(Container):
         prefixes.insert(0, "")
 
         for i in prefixes:
-            for k, v in self.arguments[i].iteritems():
+            d = self.arguments.get(i, None)
+
+            if d is None:
+                continue
+
+            for k, v in d.iteritems():
                 setattr(state, k, v)
 
         return None
