@@ -593,8 +593,9 @@ class Layout(object):
             lines.extend(l)
 
             # Figure out the indent of the next line.
-            first_indent = style.newline_indent
-            if first_indent is None:
+            if style.newline_indent:
+                first_indent = style.first_indent
+            else:
                 first_indent = rest_indent
 
         if style.line_spacing < 0:
