@@ -229,6 +229,27 @@ translate None strings:
     old "The updates were cancelled."
     new "L'aggiornamento è stato annullato."
 
+    # renpy/common/00updater.rpy:1263
+    old "An error has occured:"
+    new "Si è verificato un errore:"
+
+    # renpy/common/00updater.rpy:1265
+    old "Checking for updates."
+    new "Controllando gli aggiornamenti."
+
+    # renpy/common/00updater.rpy:1277
+    old "Finishing up."
+    new "Finalizando."
+
+    # renpy/common/00updater.rpy:1297
+    old "Proceed"
+    new "Procedi"
+
+    # renpy/common/00updater.rpy:1300
+    old "Cancel"
+    new "Cancelar"
+
+
 
 #translation: renpy/common/_compat/gamemenu.rpym
 translate None strings:
@@ -308,7 +329,6 @@ translate None strings:
     # renpy/common/_errorhandling.rpym:512
     old "Opens the errors.txt file in a text editor."
     new "Apre il file errors.txt in un editor di testo."
-
 
 #translation: renpy/common/_layout/classic_load_save.rpym
 translate None strings:
@@ -421,6 +441,10 @@ translate None strings:
     old "Return to the developer menu"
     new "Ritorna al menù dello sviluppatore"
 
+    # renpy/common/_developer/developer.rpym:405
+    old "Rectangle: %r"
+    new "Rettangolo: %r"
+
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
     new "Versione della console %(versione)s, autori originali Shiz, C e delta.\n"
@@ -479,7 +503,7 @@ translate None strings:
 
     # renpy/common/00console.rpy:470
     old "unwatch <expression>: stop watching an expression"
-    new "unwatch <expresión>: smetti di osservare un'espressione"
+    new "unwatch <espressione>: smetti di osservare un'espressione"
 
     # renpy/common/00console.rpy:478
     old "unwatchall: stop watching all expressions"

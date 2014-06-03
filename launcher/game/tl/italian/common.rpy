@@ -398,7 +398,7 @@ translate italian strings:
     new "Menù dello sviluppatore"
 
     # renpy/common/_developer/developer.rpym:405
-    old "Rettangolo: %r"
+    old "Rectangle: %r"
     new "Rettangolo: %r"
 
     # renpy/common/_developer/developer.rpym:69
@@ -479,7 +479,7 @@ translate italian strings:
 
     # renpy/common/00console.rpy:470
     old "unwatch <expression>: stop watching an expression"
-    new "unwatch <expresión>: smetti di osservare un'espressione"
+    new "unwatch <espressione>: smetti di osservare un'espressione"
 
     # renpy/common/00console.rpy:478
     old "unwatchall: stop watching all expressions"

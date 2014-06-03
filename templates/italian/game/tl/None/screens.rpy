@@ -1,6 +1,4 @@
-﻿# TODO: Translation updated at 2014-06-02 19:19
-
-translate None strings:
+﻿translate None strings:
 
     # game/screens.rpy:194
     old "Start Game"
@@ -18,14 +16,6 @@ translate None strings:
     old "Help"
     new "Aiuto"
 
-    # game/screens.rpy:198
-    old "Quit"
-    new "Esci"
-
-    # game/screens.rpy:228
-    old "Return"
-    new "Ritorna"
-
     # game/screens.rpy:230
     old "Save Game"
     new "Salva Partita"
@@ -34,10 +24,6 @@ translate None strings:
     old "Main Menu"
     new "Menù Principale"
 
-    # game/screens.rpy:266
-    old "Previous"
-    new "Precedente"
-
     # game/screens.rpy:269
     old "Auto"
     new "Auto"
@@ -45,14 +31,6 @@ translate None strings:
     # game/screens.rpy:272
     old "Quick"
     new "Veloce"
-
-    # game/screens.rpy:279
-    old "Next"
-    new "Prossimo"
-
-    # game/screens.rpy:305
-    old "Empty Slot."
-    new "Slot Vuoto."
 
     # game/screens.rpy:361
     old "Display"
@@ -80,7 +58,7 @@ translate None strings:
 
     # game/screens.rpy:377
     old "Text Speed"
-    new "Velocità del testo"
+    new "Velocità del Testo"
 
     # game/screens.rpy:384
     old "Joystick..."
@@ -173,4 +151,3 @@ translate None strings:
     # game/screens.rpy:545
     old "Prefs"
     new "Preferenze"
-
