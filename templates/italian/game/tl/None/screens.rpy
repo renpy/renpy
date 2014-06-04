@@ -142,7 +142,7 @@
 
     # game/screens.rpy:541
     old "Q.Load"
-    new "Salva V."
+    new "Carica V."
 
     # game/screens.rpy:543
     old "F.Skip"
