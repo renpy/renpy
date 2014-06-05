@@ -474,7 +474,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
     `enter_time_warp`
         A time warp function that's applied to images entering the scene.
 
-    `enter_time_warp`
+    `leave_time_warp`
         A time warp function that's applied to images leaving the scene.
 
     """
