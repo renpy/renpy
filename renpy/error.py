@@ -151,11 +151,24 @@ def report_exception(e, editor=True):
 
     type, _value, tb = sys.exc_info() #@ReservedAssignment
 
+    print(repr(e))
+
     def safe_utf8(e):
         try:
             m = unicode(e)
         except:
-            m = str(e)
+            try:
+                if len(e.args) == 0:
+                    m = ""
+                elif len(e.args) == 1:
+                    m = e.args[0]
+                else:
+                    m = " ".join(e.args)
+            except:
+                try:
+                    m = repr(e)
+                except:
+                    m = "<Could not encode exception.>"
 
         if isinstance(m, unicode):
             return m.encode("utf-8", "replace")
