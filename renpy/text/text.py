@@ -1127,6 +1127,8 @@ class Text(renpy.display.core.Displayable):
 
     __version__ = 4
 
+    uses_scope = True
+
     def after_upgrade(self, version):
 
         if version < 3:
@@ -1232,15 +1234,20 @@ class Text(renpy.display.core.Displayable):
 
         self.text = [ ]
 
+        uses_scope = False
+
         # Perform substitution as necessary.
         for i in text:
             if isinstance(i, basestring):
                 if substitute is not False:
-                    i = renpy.substitutions.substitute(i, scope, substitute)
+                    i, did_sub = renpy.substitutions.substitute(i, scope, substitute)
+                    uses_scope = uses_scope or did_sub
 
                 i = unicode(i)
 
             self.text.append(i)
+
+        self.uses_scope = uses_scope
 
         if not self.dirty and self.text != old_text:
             self.dirty = True

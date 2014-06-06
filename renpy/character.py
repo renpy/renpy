@@ -787,7 +787,8 @@ class ADVCharacter(object):
             if self.dynamic:
                 who = renpy.python.py_eval(who)
 
-            sub = renpy.substitutions.substitute
+            def sub(s, scope=None, force=False, translate=True):
+                return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
 
             if who is not None:
                 if renpy.config.new_substitutions:

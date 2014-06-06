@@ -204,6 +204,9 @@ def substitute(s, scope=None, force=False, translate=True):
 
     `translate`
         Determines if translation occurs.
+
+    Returns the substituted string, and a flag that is True if substitution
+    occurred, or False if no substitution occurred.
     """
 
     if translate:
@@ -211,15 +214,18 @@ def substitute(s, scope=None, force=False, translate=True):
 
     # Substitute.
     if not renpy.config.new_substitutions and not force:
-        return s
+        return s, False
 
-    if "[" in s:
+    if "[" not in s:
+        return s, False
 
-        if scope is not None:
-            kwargs = MultipleDict(scope, renpy.store.__dict__) #@UndefinedVariable
-        else:
-            kwargs = renpy.store.__dict__ #@UndefinedVariable
+    old_s = s
 
-        s = formatter.vformat(s, (), kwargs)
+    if scope is not None:
+        kwargs = MultipleDict(scope, renpy.store.__dict__) #@UndefinedVariable
+    else:
+        kwargs = renpy.store.__dict__ #@UndefinedVariable
 
-    return s
+    s = formatter.vformat(s, (), kwargs)
+
+    return s, (s != old_s)
