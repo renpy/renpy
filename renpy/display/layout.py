@@ -206,7 +206,7 @@ class Container(renpy.display.core.Displayable):
 
 def LiveComposite(size, *args, **properties):
     """
-    :args: disp_imagelike
+    :doc: disp_imagelike
 
     This creates a new displayable of `size`, by compositing other
     displayables. `size` is a (width, height) tuple.
