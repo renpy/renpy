@@ -447,7 +447,7 @@ class SLDisplayable(SLBlock):
             # the one that gets the scope, and gets children added to it.)
             main = d._main or d
 
-            if self.scope:
+            if self.scope and main.uses_scope:
                 main._scope(ctx.scope)
 
         else:
@@ -554,7 +554,7 @@ class SLDisplayable(SLBlock):
             if widget_id is not None:
                 ctx.widgets[widget_id] = main
 
-            if self.scope:
+            if self.scope and main.uses_scope:
                 ctx.uses_scope.append(main)
 
             if context.widgets is None:
