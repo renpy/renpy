@@ -219,9 +219,12 @@ python early hide:
 
         fadeout = eval(p["fadeout"]) or 0
 
+        loop = p.get("loop", False)
+
         renpy.sound.play(eval(p["file"]),
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
+                         loop=loop,
                          channel=channel)
 
     def lint_play_sound(p, lint_play_music=lint_play_music):
@@ -238,13 +241,15 @@ python early hide:
         else:
             channel = "sound"
 
-        renpy.sound.queue(eval(p["file"]), channel=channel)
+        loop = p.get("loop", False)
+
+        renpy.sound.queue(eval(p["file"]), channel=channel, loop=loop)
 
 
     renpy.register_statement('queue sound',
                               parse=parse_queue_music,
                               execute=execute_queue_sound,
-                              lint=lint_play_music)
+                              lint=lint_play_sound)
 
     def execute_stop_sound(p):
         if p["channel"] is not None:
