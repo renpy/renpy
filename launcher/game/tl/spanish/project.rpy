@@ -52,3 +52,7 @@ translate spanish strings:
     old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
     new "Ren'Py no puede ejecutar python con tkinter para escoger el directorio de proyectos. Por favor, installa el paquete python-tk o tkinter."
 
+    # game/project.rpy:47
+    old "Have you backed up your projects recently?"
+    new "¿Has respaldado tus proyectos recientemente?"
+
