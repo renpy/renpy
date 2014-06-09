@@ -356,6 +356,28 @@ init -1500 python:
             if _preferences.mouse_move:
                 renpy.set_mouse_pos(self.x, self.y, self.duration)
 
+    @renpy.pure
+    class Function(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This Action calls `callable` with `args` and `kwargs`.
+
+        `callable`
+            Callable object.
+        `args`
+            position arguments to be passed to `callable`.
+        `kwargs`
+            keyword arguments to be passed to `callable`.
+        """
+        def __init__(self, callable, *args, **kwargs):
+            self.callable = callable
+            self.args = args
+            self.kwargs = kwargs
+
+        def __call__(self):
+            self.callable(*self.args, **self.kwargs)
+
 
 transform _notify_transform:
     # These control the position.
