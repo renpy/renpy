@@ -161,6 +161,14 @@ class SLNode(object):
         # By default, does nothing.
         return
 
+    def copy_on_change(self, cache):
+        """
+        Flags the displayables that are created by this node and its children
+        as copy-on-change.
+        """
+
+        return
+
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
 
@@ -249,6 +257,11 @@ class SLBlock(SLNode):
             else:
                 context.style_prefix = ""
 
+    def copy_on_change(self, cache):
+        for i in self.children:
+            i.copy_on_change(cache)
+
+
 list_or_tuple = (list, tuple)
 
 class SLCache(object):
@@ -289,6 +302,10 @@ class SLCache(object):
 
         # For a constant statement, a map from children to widgets.
         self.constant_widgets = { }
+
+        # True if the displayable should be re-created if its arguments
+        # or children are changed.
+        self.copy_on_change = False
 
 class SLDisplayable(SLBlock):
     """
@@ -454,6 +471,8 @@ class SLDisplayable(SLBlock):
             cache.positional = positional
             cache.keywords = keywords.copy()
 
+            # This child creation code is copied below, for the copy_on_change
+            # case.
             if self.scope:
                 keywords["scope"] = ctx.scope
 
@@ -471,6 +490,7 @@ class SLDisplayable(SLBlock):
 
             d = self.displayable(*positional, **keywords)
             main = d._main or d
+            # End copy.
 
             reused = False
 
@@ -498,6 +518,30 @@ class SLDisplayable(SLBlock):
                 cache.imagemap = renpy.ui.imagemap_stack.pop()
 
         if ctx.children != cache.children:
+
+            if reused and cache.copy_on_change:
+
+                # This is a copy of the child creation code from above.
+                if self.scope:
+                    keywords["scope"] = ctx.scope
+
+                if self.replaces:
+                    old_d = cache.displayable
+
+                    if old_d is not None:
+                        old_d = old_d._main or old_d
+
+                        keywords['replaces'] = old_d
+
+                if self.pass_context:
+                    keywords['context'] = ctx
+
+                d = self.displayable(*positional, **keywords)
+                main = d._main or d
+                # End child creation code.
+
+                cache.copy_on_change = False
+                reused = False
 
             if reused:
                 main._clear()
@@ -563,7 +607,13 @@ class SLDisplayable(SLBlock):
             if context.uses_scope is None:
                 cache.constant_uses_scope = ctx.uses_scope
 
-# TODO: Can we get rid of pass_context?
+    def copy_on_change(self, cache):
+        c = cache.get(self.serial, None)
+        if c is not None:
+            c.copy_on_change = True
+
+        for i in self.children:
+            i.copy_on_change(cache)
 
 
 class SLIf(SLNode):
@@ -617,7 +667,10 @@ class SLIf(SLNode):
                 block.keywords(context)
                 return
 
-unhashable = renpy.object.Sentinel("unhashable")
+    def copy_on_change(self, cache):
+        for _cont, block in self.entries:
+            block.copy_on_change(cache)
+
 
 class SLFor(SLBlock):
     """
@@ -690,6 +743,15 @@ class SLFor(SLBlock):
 
     def keywords(self, context):
         return
+
+    def copy_on_change(self, cache):
+        c = cache.get(self.serial, None)
+        if c is None:
+            return
+
+        for child_cache in c.values():
+            for i in self.children:
+                i.copy_on_change(child_cache)
 
 
 class SLPython(SLNode):
@@ -878,6 +940,16 @@ class SLUse(SLNode):
 
         # Run the child screen.
         ast.execute(ctx)
+
+    def copy_on_change(self, cache):
+
+        c = cache.get(self.serial, None)
+        if c is None:
+            return
+
+        if self.ast is not None:
+            self.ast.copy_on_change(c)
+
 
 
 class SLScreen(SLBlock):
