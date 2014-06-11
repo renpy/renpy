@@ -457,6 +457,14 @@ class Displayable(renpy.object.Object):
 
         return
 
+    def _in_old_scene(self):
+        """
+        Returns a version of this displayable that will not change as it is
+        rendered.
+        """
+
+        return self
+
 
 
 class SceneListEntry(renpy.object.Object):
@@ -2153,7 +2161,7 @@ class Interface(object):
                 continue
 
             self.ongoing_transition[k] = self.transition[k]
-            self.transition_from[k] = self.old_scene[k]
+            self.transition_from[k] = self.old_scene[k]._in_old_scene()
             self.transition_time[k] = None
 
         self.transition.clear()
