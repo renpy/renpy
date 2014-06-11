@@ -8,7 +8,7 @@ Ren'Py 6.17.6
 This release adds a German translation of the launcher, contributed by
 Marcel.
 
-This release adds a Korean translatoon of the launcher and template game,
+This release adds a Korean translation of the launcher and template game,
 contributed by Baekansi.
 
 This release includes a workaround for an issue that could prevent the
