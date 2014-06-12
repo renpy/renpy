@@ -459,9 +459,6 @@ class MultiBox(Container):
     def _in_old_scene(self):
 
         if self.layer_name is not None:
-            rv = MultiBox(layout=self.default_layout)
-            rv.layer_name = self.layer_name
-
             scene_list = [ ]
 
             changed = False
@@ -480,6 +477,8 @@ class MultiBox(Container):
             if not changed:
                 return self
 
+            rv = MultiBox(layout=self.default_layout)
+            rv.layer_name = self.layer_name
             rv.append_scene_list(scene_list)
 
         elif self.layers:
