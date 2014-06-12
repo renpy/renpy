@@ -464,10 +464,21 @@ class MultiBox(Container):
 
             scene_list = [ ]
 
+            changed = False
+
             for old_sle in self.scene_list:
                 new_sle = old_sle.copy()
-                new_sle.displayable = new_sle.displayable._in_old_scene()
+
+                d = new_sle.displayable._in_old_scene()
+
+                if d is not new_sle.displayable:
+                    new_sle.displayable = new_sle.displayable._in_old_scene()
+                    changed = True
+
                 scene_list.append(new_sle)
+
+            if not changed:
+                return self
 
             rv.append_scene_list(scene_list)
 
@@ -475,10 +486,20 @@ class MultiBox(Container):
             rv = MultiBox(layout=self.default_layout)
             rv.layers = { }
 
+            changed = False
+
             for layer in renpy.config.layers:
-                d = self.layers[layer]._in_old_scene()
-                rv.add(d)
-                rv.layers[layer] = d
+                old_d = self.layers[layer]
+                new_d = old_d._in_old_scene()
+
+                if new_d is not old_d:
+                    changed = True
+
+                rv.add(new_d)
+                rv.layers[layer] = new_d
+
+            if not changed:
+                return self
 
         else:
             return self
