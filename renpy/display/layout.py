@@ -456,6 +456,42 @@ class MultiBox(Container):
         self.layers = None
         self.scene_list = None
 
+    def _in_old_scene(self):
+
+        if self.layer_name is not None:
+            rv = MultiBox(layout=self.default_layout)
+            rv.layer_name = self.layer_name
+
+            scene_list = [ ]
+
+            for old_sle in self.scene_list:
+                new_sle = old_sle.copy()
+                new_sle.displayable = new_sle.displayable._in_old_scene()
+                scene_list.append(new_sle)
+
+            rv.append_scene_list(scene_list)
+
+        elif self.layers:
+            rv = MultiBox(layout=self.default_layout)
+            rv.layers = { }
+
+            for layer in renpy.config.layers:
+                d = self.layers[layer]._in_old_scene()
+                rv.add(d)
+                rv.layers[layer] = d
+
+        else:
+            return self
+
+        if self.offsets:
+            rv.offsets = list(self.offsets)
+        if self.start_times:
+            rv.start_times = list(self.start_times)
+        if self.anim_times:
+            rv.anim_times = list(self.anim_times)
+
+        return rv
+
     def __unicode__(self):
         layout = self.style.box_layout
 
