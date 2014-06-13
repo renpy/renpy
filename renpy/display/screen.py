@@ -263,6 +263,19 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         return rv
 
+    def _in_old_scene(self):
+
+        if self.screen is None:
+            return self
+
+        if self.screen.ast is None:
+            return self
+
+        self.screen.ast.copy_on_change(self.cache)
+
+        return self.child
+
+
     def update(self):
 
         if self in updated_screens:
