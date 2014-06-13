@@ -969,7 +969,7 @@ following properties:
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
 `scrollbars`
-    If not None, scrollbars are added allong with this viewport.
+    If not None, scrollbars are added along with this viewport.
     This works by creating a side layout, and placing the created
     viewport in the center of the side. If `scrollbars` is "horizontal",
     a horizontal scrollbar is placed beneath the viewport. If `scrollbars`
@@ -1157,7 +1157,7 @@ It also takes:
 
 A hotspot creates a fixed, allowing children to be added to it. The
 fixed has an area that is the same size as the hotspot, meaning that
-the children will be positioned relative to the hotpsot.
+the children will be positioned relative to the hotspot.
 
 
 .. _sl-hotbar:
@@ -1216,7 +1216,7 @@ The advanced displayable statements are:
 Has Statement
 =============
 
-The has statment allows you to specify a container to use, instead of
+The has statement allows you to specify a container to use, instead of
 fixed, for statements that take only one child. The has statement
 may only be used inside a statement that takes one child. The keyword
 ``has`` is followed (on the same line) by another statement, which
@@ -1284,7 +1284,7 @@ us using the use statement.
 For
 ---
 
-The for statement is similar to the Python for statment, except that
+The for statement is similar to the Python for statement, except that
 it does not support the else clause. It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
@@ -1531,7 +1531,7 @@ and choosing the entries that apply to the current platform.
    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscren-based devices where the diagonal size of
+   Defined on touchscreen-based devices where the diagonal size of
    the screen is less than 6 inches. On such a small device, it's
    important to make buttons large enough a user can easily choose
    them. (In general, ``"small"`` should be used instead of ``"phone"``.)

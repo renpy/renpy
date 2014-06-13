@@ -52,7 +52,7 @@ init -1500 python:
         """
          :doc: preference_action
 
-         This constructs the approprate action or value from a preference.
+         This constructs the appropriate action or value from a preference.
          The preference name should be the name given in the standard
          menus, while the value should be either the name of a choice,
          "toggle" to cycle through choices, a specific value, or left off

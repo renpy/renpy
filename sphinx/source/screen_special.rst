@@ -13,7 +13,7 @@ On this page, we'll give example screens. It's important to realize
 that, while some screens must have minimal functionality, the screen
 system makes it possible to add additional functionality to
 screens. For example, while the standard say screen only displays
-text, the screen systen makes it easy to add features like skipping,
+text, the screen system makes it easy to add features like skipping,
 auto-forward mode, or muting.
 
 Some special screens take parameters. These parameters can be accessed
@@ -257,7 +257,7 @@ Menu Screens
 ============
 
 These are the menu screens. The ``main_menu`` and ``yesno_prompt`` are
-invoked implictly.  When the user invokes the game menu, the screen
+invoked implicitly.  When the user invokes the game menu, the screen
 named in :data:`_game_menu_screen` will be displayed. (This defaults
 to ``save``.)
 

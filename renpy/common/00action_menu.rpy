@@ -52,7 +52,7 @@ init -1500 python:
          ShowMenu without an argument will enter the game menu at the
          default screen, taken from _game_menu_screen.
 
-         Extra arguments and kewyord arguments are passed on to the screen
+         Extra arguments and keyword arguments are passed on to the screen
          """
 
         def __init__(self, screen=None, *args, **kwargs):
@@ -265,7 +265,7 @@ init -1500 python:
          Displays help.
 
          `help`
-              If this is a string giving a label in the programe, then
+              If this is a string giving a label in the program, then
               that label is called in a new context when the button is
               chosen. Otherwise, it should be a string giving a file
               that is opened in a web browser. If None, the value of
