@@ -180,12 +180,12 @@ class ChildOrFixed(Addable):
         stack.pop()
 
         if len(self.queue) == 1:
-            add(self.queue[0])
+            implicit_add(self.queue[0])
         else:
             fixed()
 
             for i in self.queue:
-                add(i)
+                implicit_add(i)
 
             close()
 
@@ -538,6 +538,16 @@ def _add(d, **kwargs):
     return rv
 
 add = Wrapper(_add)
+
+def _implicit_add(d):
+    """
+    A faster version of add to use when we know `d` is a displayable and isn't
+    transformed.
+    """
+
+    return d
+
+implicit_add = Wrapper(_implicit_add)
 
 def _image(im, **properties):
     d = renpy.display.im.image(im, loose=True, **properties)
