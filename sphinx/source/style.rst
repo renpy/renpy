@@ -65,7 +65,7 @@ When a style is defined without a parent being specified, a default
 parent is chosen for the style. If the style contains an underscore (_)
 in its name, the parent is named by removing everything up to and
 including the first underscore. For example, a style named ``my_button``
-will inherity from ``button``. This inheritance can be changed using the
+will inherit from ``button``. This inheritance can be changed using the
 style statement or by calling a method on a style object.  When a style that
 does not exist is used, and the style has an underscore in its name, Ren'Py will create
 it using the default parent.
