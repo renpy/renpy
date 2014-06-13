@@ -10,7 +10,7 @@ transformations such as rotation, zoom, and alpha-modification. These can be
 changed over time, and in response to events.
 
 The Python equivalent of an ATL transform is the :func:`Transform`
-displayable. There is no way to create an ATL transform programatically.
+displayable. There is no way to create an ATL transform programmatically.
 
 Ren'Py Script Statements
 ========================
@@ -411,7 +411,7 @@ statements are greedily grouped into a single statement.
 
 The on statement is used to handle events. When an event is handled, handling
 of any other event ends and handing of the new event immediately starts. When
-an event handler ends without another event occuring, the ``default`` event
+an event handler ends without another event occurring, the ``default`` event
 is produced (unless were already handing the ``default`` event).
 
 Execution of the on statement will never naturally end. (But it can be ended

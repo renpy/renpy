@@ -10,7 +10,7 @@ update files.
 With no configuration, Ren'Py will build the following four kinds of
 packages:
 
-All Desktop Platofrms
+All Desktop Platforms
 
    A zip file targeting Windows x86, Macintosh x86, Linux x86, and
    Linux x86_64.
