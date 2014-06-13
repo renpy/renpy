@@ -304,7 +304,7 @@ Occasionally Used
 
     Ren'Py will scan through the list of files on disk and in
     archives. When it finds a file ending with .png or .jpg, it will
-    strip the extension, then break the name at separators, to creatge
+    strip the extension, then break the name at separators, to create
     an image name. If the name consists of at least two components,
     and no image with that name already is defined, Ren'Py will define
     that image to refer to a filename.
@@ -336,7 +336,7 @@ Occasionally Used
 .. var:: config.debug_sound = False
 
     Enables debugging of sound functionality. This disables the
-    supression of errors when generating sound. However, if a sound
+    suppression of errors when generating sound. However, if a sound
     card is missing or flawed, then such errors are normal, and
     enabling this may prevent Ren'Py from functioning normally. This
     should always be False in a released game.
@@ -540,7 +540,7 @@ Occasionally Used
 
     The functions may be called during internal Ren'Py code, before the
     start of the game proper, and potentially before the variables the
-    function depends on are intialized. The functions are required to deal
+    function depends on are initialized. The functions are required to deal
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
 
@@ -553,7 +553,7 @@ Occasionally Used
 .. var:: config.save_json_callbacks = [ ]
 
     A list of callback functions that are used to create the json object
-    that is stored with each save and maked accessible through :func:`FileJson`
+    that is stored with each save and marked accessible through :func:`FileJson`
     and :func:`renpy.slot_json`.
 
     Each callback is called with a python dictionary that will eventually be
@@ -1026,7 +1026,7 @@ Rarely or Internally Used
 
     The sample rate that the sound card will be run at. If all of your
     wav files are of a lower rate, changing this to that rate may make
-    things more efficent.
+    things more efficient.
 
 .. var:: config.start_callbacks = [ ... ]
 

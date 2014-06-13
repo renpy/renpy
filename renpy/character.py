@@ -902,7 +902,7 @@ def Character(name=NotSet, kind=None, **properties):
     screen.
 
     `voice_tag`
-        A String that enables the voice file assosiated with the
+        A String that enables the voice file associated with the
         Character to be muted or played in the 'voice' channel.
 
     **Prefixes and Suffixes.**

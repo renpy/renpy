@@ -113,7 +113,7 @@ taking children until :func:`ui.close` is called.
 * ui.draggroup
 
 There are a few UI functions that do not correspond to screen language
-statments, as they correspond to concepts that are not present in the
+statements, as they correspond to concepts that are not present in the
 screen language.
 
 .. include:: inc/ui
@@ -144,7 +144,7 @@ sensitive, and when it is selected.
        activated. In many cases, returning a non-None value from the
        action will cause the current interaction to end.
 
-       This method must be overriden, as the default method will
+       This method must be overridden, as the default method will
        raise NotImplemented (and hence cause Ren'Py to report an
        error).
 
@@ -207,7 +207,7 @@ the adjustment and styles.
         :func:`ui.adjustment`, and then return the object created this
         way.
 
-        This method must be overriden, as the default method will
+        This method must be overridden, as the default method will
         raise NotImplemented (and hence cause Ren'Py to report an
         error).
 
@@ -237,5 +237,5 @@ the adjustment and styles.
 
        It can be used to update the value of the bar over time, like
        :func:`AnimatedValue` does. To do this, get_adjustment should
-       store the adjustment, and periodic should calle the
+       store the adjustment, and periodic should call the
        adjustment's changed method.

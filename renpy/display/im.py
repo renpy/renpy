@@ -679,7 +679,7 @@ class FactorScale(ImageBase):
 
     An image manipulator that scales `im` (a second image manipulator)
     to `width` times its original `width`, and `height` times its
-    original height. If `height` is ommitted, it defaults to `width`.
+    original height. If `height` is omitted, it defaults to `width`.
 
     If `bilinear` is true, then bilinear interpolation is used for
     the scaling. Otherwise, nearest neighbor interpolation is used.
@@ -1342,7 +1342,7 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that colorizes a black and white image.
         `black_color` and `white_color` are Ren'Py style colors, so
-        they may be specfied as strings or tuples of (0-255) color
+        they may be specified as strings or tuples of (0-255) color
         values. ::
 
             # This makes black colors red, and white colors blue.
@@ -1374,7 +1374,7 @@ def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
     :doc: im_im
     :args: (im, **properties)
 
-    An image manipulator that creats a desaturated version of the image
+    An image manipulator that creates a desaturated version of the image
     manipulator `im`.
     """
 

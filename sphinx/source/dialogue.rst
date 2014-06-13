@@ -46,7 +46,7 @@ giving a character name, or a Character object. In the latter case,
 the character object is used to control how the dialogue is shown.
 
 The final form consists of a string and a with clause which has a
-transition. In this case, the string is shown and a screen is shaked
+transition. In this case, the string is shown and a screen is shaken
 at the same time.
 
 

@@ -14,7 +14,7 @@ The following environment variables control the behavior of Ren'Py:
     If set, Ren'Py will refuse to go into fullscreen mode.
 
 ``RENPY_DISABLE_SOUND``
-    This prevents sound playback from occuring. If this variable contains
+    This prevents sound playback from occurring. If this variable contains
     "pss", sound playback will be disabled.
 
 ``RENPY_EDIT_PY``

@@ -1,7 +1,7 @@
 Python Statements
 =================
 
-Ren'Py is written in the Python programmming language, and includes
+Ren'Py is written in the Python programming language, and includes
 support for including python code inside Ren'Py scripts. Python
 support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can

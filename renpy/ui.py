@@ -269,7 +269,7 @@ def at(transform):
     """
     :doc: ui
 
-    Specifieds a transform that is applied to the next displayable to
+    Specifies a transform that is applied to the next displayable to
     be created. This is largely obsolete, as all UI functions now take
     an `at` argument.
     """

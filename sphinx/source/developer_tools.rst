@@ -107,12 +107,12 @@ that it only examines a single path, which means that while the path may be
 representative of some route of execution, it's possible that there may be a
 bug along some other route. In general, the path doesn't consider game logic,
 so it's also possible to have a path that isn't actually reachable. (This is
-only really a problem on control-heavy games, espcially those that use a lot of
+only really a problem on control-heavy games, especially those that use a lot of
 python code.
 
 The biggest problem, though, is that no python code is executed before the
 statement that is warped to. This means that all variables will be
-uninitalized, which can lead to crashes when they are used. To overcome this,
+uninitialized, which can lead to crashes when they are used. To overcome this,
 one can define a label ``after_warp``, which is called after a warp but before
 the warped-to statement executes. The code reached by this label can set up
 variables in the program, and then return to the preview.
