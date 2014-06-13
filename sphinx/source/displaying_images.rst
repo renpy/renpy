@@ -304,7 +304,7 @@ value ``None``.
 
 The transition effect is applied between the contents of the screen at
 the end of the previous interaction (with transient screens and
-displayables hiddden), and the current contents of the scene, after the
+displayables hidden), and the current contents of the scene, after the
 show and hide statements have executed.
 
 The with statement causes an interaction to occur. The duration of
@@ -399,7 +399,7 @@ the window.
 If the optional transition is given, it's used to show and hide the window.
 If not given, it defaults to :var:`config.window_show_transition` and
 :var:`config.window_hide_transition`. Giving None as the transition prevents
-it from occuring.
+it from occurring.
 
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
 having the narrator say an empty string.::

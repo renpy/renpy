@@ -29,7 +29,7 @@ There are two kinds of keyboard keysyms. The first is a string containing a
 character that is generated when a key is pressed. This is useful for
 binding alphabetic keys and numbers. Examples of these keysyms include "a", "A", and "7".
 
-Keboard keysyms can also be the symbolic name for the key. This can be any of
+Keyboard keysyms can also be the symbolic name for the key. This can be any of
 the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
