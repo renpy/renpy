@@ -550,7 +550,7 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.alternate = alternate
 
-        self.focusable = clicked is not None
+        self.focusable = (clicked is not None) or (action is not None)
         self.role_parameter = role
         self.keymap = keymap
 
