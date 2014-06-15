@@ -465,35 +465,42 @@ class Displayable(renpy.object.Object):
 
         return self
 
-    def _tts(self, callback):
-        """
-        Calls `callback` with self-voicing text for this displayable
-        and its children.
-        """
+    def _tts_common(self, default_alt=None):
 
-        if self.style.alt is not None:
-            s = renpy.substitutions.substitute(self.style.alt)[0]
-            callback(s)
-            return
+        rv = [ ]
 
         for i in self.visit():
             if i is not None:
-                i._tts(callback)
+                rv.append(i._tts())
 
-    def _tts_all(self, callback):
+        rv = " ".join(rv)
+
+        alt = self.style.alt
+
+        if alt is None:
+            alt = default_alt
+
+        if alt is not None:
+            rv = renpy.substitutions.substitute(alt, scope={ "text" : rv })[0]
+
+        return rv
+
+    def _tts(self):
         """
-        Voices the tree consisting of this displayable and its children,
-        except those that do not have focus.
+        Returns the self-voicing text of this displayable and all of its
+        children that cannot take focus. If the displayable can take focus,
+        retuns the empty string.
         """
 
-        if self.style.alt is not None:
-            s = renpy.substitutions.substitute(self.style.alt)[0]
-            callback(s)
-            return
+        return self._tts_common()
 
-        for i in self.visit():
-            if i is not None:
-                i._tts(callback)
+
+    def _tts_all(self):
+        """
+        Returns the self-voicing text of this displayable and all of its
+        children that cannot take focus.
+        """
+        return self._tts_common()
 
 
 class SceneListEntry(renpy.object.Object):

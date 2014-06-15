@@ -307,7 +307,6 @@ def run_periodic(var, st):
     if isinstance(var, renpy.ui.Action):
         return var.periodic(st)
 
-
 def is_selected(clicked):
 
     if isinstance(clicked, (list, tuple)):
@@ -329,6 +328,25 @@ def is_sensitive(clicked):
     else:
         return True
 
+def alt(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        rv = [ ]
+
+        for i in clicked:
+            t = alt(i)
+            if t is not None:
+                rv.append(t)
+
+        if rv:
+            return " ".join(rv)
+        else:
+            return None
+
+    if isinstance(clicked, renpy.ui.Action):
+        return clicked.alt
+    else:
+        return None
 
 ##############################################################################
 # Special-Purpose Displayables
@@ -455,7 +473,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         self.allow_dismiss = allow_dismiss
 
-    def _tts_all(self, callback):
+    def _tts_all(self):
         raise renpy.display.tts.TTSRoot()
 
     def set_afm_length(self, afm_length):
@@ -542,10 +560,10 @@ class Button(renpy.display.layout.Window):
                  time_policy=None, keymap={}, alternate=None,
                  **properties):
 
-        super(Button, self).__init__(child, style=style, **properties)
-
         if isinstance(clicked, renpy.ui.Action):
             action = clicked
+
+        super(Button, self).__init__(child, style=style, **properties)
 
         self.action = action
         self.clicked = clicked
@@ -751,8 +769,11 @@ class Button(renpy.display.layout.Window):
         if root:
             super(Button, self).set_style_prefix(prefix, root)
 
-    def _tts(self, callback):
-        return
+    def _tts(self):
+        return ""
+
+    def _tts_all(self):
+        return self._tts_common(alt(self.action))
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
@@ -1222,12 +1243,8 @@ class Bar(renpy.display.core.Displayable):
                 adjustment = value.get_adjustment()
                 renpy.game.interface.timeout(0)
 
-                properties.setdefault('alt', value.alt)
-
             else:
                 adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
-
-        properties.setdefault('alt', "Bar")
 
         if style is None:
             if self.value is not None:
@@ -1501,10 +1518,17 @@ class Bar(renpy.display.core.Displayable):
 
         return None
 
-    def _tts(self, callback):
-        return
+    def _tts(self):
+        return ""
 
+    def _tts_all(self):
 
+        if self.value is not None:
+            alt = self.value.alt
+        else:
+            alt = "Bar"
+
+        return self._tts_common(alt)
 
 
 class Conditional(renpy.display.layout.Container):

@@ -1333,13 +1333,19 @@ class Text(renpy.display.core.Displayable):
 
         return list(self.displayables)
 
-    def _tts(self, callback):
+    def _tts(self):
+        rv = [ ]
+
         for i in self.text:
 
             if not isinstance(i, basestring):
                 continue
 
-            callback(renpy.translation.notags_filter(i))
+            rv.append(renpy.translation.notags_filter(i))
+
+        return "".join(rv)
+
+    _tts_all = _tts
 
     def kill_layout(self):
         """

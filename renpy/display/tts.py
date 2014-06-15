@@ -68,25 +68,18 @@ def displayable(d):
 
     global last
 
-    def callback(t):
-        text.append(t)
-
     if d is None:
         d = root
 
     while True:
         try:
-            text = [ ]
-            d._tts_all(callback)
+            s = d._tts_all()
             break
         except TTSRoot:
-
             if d is root:
                 return
             else:
                 d = root
-
-    s = " ".join(text)
 
     global last
 

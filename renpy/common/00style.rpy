@@ -347,3 +347,7 @@ init -1800:
 
     style tile:
         clipping True
+
+    # Labels
+    style label:
+        alt "" # We expect the labelled buttons/bars to read themselves out.
