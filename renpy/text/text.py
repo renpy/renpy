@@ -1333,6 +1333,14 @@ class Text(renpy.display.core.Displayable):
 
         return list(self.displayables)
 
+    def _tts(self, callback):
+        for i in self.text:
+
+            if not isinstance(i, basestring):
+                continue
+
+            callback(renpy.translation.notags_filter(i))
+
     def kill_layout(self):
         """
         Kills the layout of this Text. Used when the text or style

@@ -40,6 +40,9 @@ class Action(renpy.object.Object):
     action should be displayed insensitive or disabled.
     """
 
+    # Alt text.
+    alt = None
+
     def get_sensitive(self):
         return True
 
@@ -59,6 +62,9 @@ class BarValue(renpy.object.Object):
     """
     This can be passed to the value method of bar and hotbar.
     """
+
+    # Alt text.
+    alt = "Bar"
 
     def replaces(self, other):
         return

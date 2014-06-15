@@ -465,6 +465,35 @@ class Displayable(renpy.object.Object):
 
         return self
 
+    def _tts(self, callback):
+        """
+        Calls `callback` with self-voicing text for this displayable
+        and its children.
+        """
+
+        if self.style.alt is not None:
+            s = renpy.substitutions.substitute(self.style.alt)[0]
+            callback(s)
+            return
+
+        for i in self.visit():
+            if i is not None:
+                i._tts(callback)
+
+    def _tts_all(self, callback):
+        """
+        Voices the tree consisting of this displayable and its children,
+        except those that do not have focus.
+        """
+
+        if self.style.alt is not None:
+            s = renpy.substitutions.substitute(self.style.alt)[0]
+            callback(s)
+            return
+
+        for i in self.visit():
+            if i is not None:
+                i._tts(callback)
 
 
 class SceneListEntry(renpy.object.Object):
@@ -2254,6 +2283,7 @@ class Interface(object):
 
         # Figure out the scene. (All of the layers, and the root.)
         scene = self.compute_scene(scene_lists)
+        renpy.display.tts.set_root(scene[None])
 
         # If necessary, load all images here.
         for w in scene.itervalues():
@@ -2598,6 +2628,7 @@ class Interface(object):
                         renpy.config.periodic_callback()
 
                     renpy.audio.audio.periodic()
+                    renpy.display.tts.periodic()
                     continue
 
 

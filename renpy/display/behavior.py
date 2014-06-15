@@ -455,6 +455,9 @@ class SayBehavior(renpy.display.layout.Null):
 
         self.allow_dismiss = allow_dismiss
 
+    def _tts_all(self, callback):
+        raise renpy.display.tts.TTSRoot()
+
     def set_afm_length(self, afm_length):
         self.afm_length = max(afm_length, 1)
 
@@ -748,6 +751,8 @@ class Button(renpy.display.layout.Window):
         if root:
             super(Button, self).set_style_prefix(prefix, root)
 
+    def _tts(self, callback):
+        return
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
@@ -1216,8 +1221,13 @@ class Bar(renpy.display.core.Displayable):
                 self.value = value
                 adjustment = value.get_adjustment()
                 renpy.game.interface.timeout(0)
+
+                properties.setdefault('alt', value.alt)
+
             else:
                 adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
+
+        properties.setdefault('alt', "Bar")
 
         if style is None:
             if self.value is not None:
@@ -1425,6 +1435,7 @@ class Bar(renpy.display.core.Displayable):
         just_grabbed = False
 
         if not grabbed and map_event(ev, "bar_activate"):
+            renpy.display.tts.speak("activate")
             renpy.display.focus.set_grab(self)
             self.set_style_prefix("selected_hover_", True)
             just_grabbed = True
@@ -1440,9 +1451,11 @@ class Bar(renpy.display.core.Displayable):
                 decrease = "bar_left"
 
             if map_event(ev, decrease):
+                renpy.display.tts.speak("decrease")
                 value -= self.adjustment.step
 
             if map_event(ev, increase):
+                renpy.display.tts.speak("increase")
                 value += self.adjustment.step
 
             if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
@@ -1479,6 +1492,7 @@ class Bar(renpy.display.core.Displayable):
             value = range - value
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
+            renpy.display.tts.speak("deactivate")
             self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
 
@@ -1486,6 +1500,11 @@ class Bar(renpy.display.core.Displayable):
             return self.adjustment.change(value)
 
         return None
+
+    def _tts(self, callback):
+        return
+
+
 
 
 class Conditional(renpy.display.layout.Container):
