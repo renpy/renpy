@@ -356,6 +356,22 @@ init -1500 python:
             if _preferences.mouse_move:
                 renpy.set_mouse_pos(self.x, self.y, self.duration)
 
+    @renpy.pure
+    class Eval(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This Action runs a expression and returns the result of it.
+
+        `expression`
+            This is a string giving a expression to be run.
+        """
+        def __init__(self, expression):
+            self.expression = expression
+
+        def __call__(self):
+            return renpy.python.py_eval(self.expression)
+
 
 transform _notify_transform:
     # These control the position.
