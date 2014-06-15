@@ -405,14 +405,22 @@ class SLDisplayable(SLBlock):
         if cache is None:
             context.cache[self.serial] = cache = SLCache()
 
+        copy_on_change = cache.copy_on_change
+
         if cache.constant:
-            context.children.append(cache.constant)
-            screen.widgets.update(cache.constant_widgets)
 
             for i in cache.constant_uses_scope:
-                i._scope(context.scope)
+                if copy_on_change:
+                    if i._scope(context.scope, False):
+                        cache.constant = None
+                        break
+                else:
+                    i._scope(context.scope, True)
 
-            return
+            else:
+                context.children.append(cache.constant)
+                screen.widgets.update(cache.constant_widgets)
+                return
 
         stack = renpy.ui.stack
 
@@ -453,21 +461,27 @@ class SLDisplayable(SLBlock):
         if widget_id and (widget_id in screen.widget_properties):
             keywords.update(screen.widget_properties[widget_id])
 
+        reused = False
+
         if (positional == cache.positional) and (keywords == cache.keywords):
             d = cache.displayable
             reused = True
-
-            if cache.imagemap:
-                renpy.ui.imagemap_stack.append(cache.imagemap)
 
             # The main displayable, if d is a composite displayable. (This is
             # the one that gets the scope, and gets children added to it.)
             main = d._main or d
 
             if self.scope and main.uses_scope:
-                main._scope(ctx.scope)
+                if copy_on_change:
+                    if main._scope(ctx.scope, False):
+                        reused = False
+                else:
+                    main._scope(ctx.scope, True)
 
-        else:
+        if reused and cache.imagemap:
+            renpy.ui.imagemap_stack.append(cache.imagemap)
+
+        if not reused:
             cache.positional = positional
             cache.keywords = keywords.copy()
 
@@ -490,10 +504,9 @@ class SLDisplayable(SLBlock):
 
             d = self.displayable(*positional, **keywords)
             main = d._main or d
-            # End copy.
+            # End child creation code.
 
-            reused = False
-
+            cache.copy_on_change = False # We no longer need to copy on change.
             cache.children = None # Re-add the children.
 
         main._location = self.location
@@ -519,7 +532,7 @@ class SLDisplayable(SLBlock):
 
         if ctx.children != cache.children:
 
-            if reused and cache.copy_on_change:
+            if reused and copy_on_change:
 
                 # This is a copy of the child creation code from above.
                 if self.scope:
@@ -609,6 +622,7 @@ class SLDisplayable(SLBlock):
 
     def copy_on_change(self, cache):
         c = cache.get(self.serial, None)
+
         if c is not None:
             c.copy_on_change = True
 
@@ -1048,4 +1062,3 @@ class SLScreen(SLBlock):
 
         for i in context.children:
             renpy.ui.add(i)
-

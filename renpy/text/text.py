@@ -1215,14 +1215,14 @@ class Text(renpy.display.core.Displayable):
         s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
         return u"Text \"{}\"".format(s)
 
-    def _scope(self, scope):
+    def _scope(self, scope, update=True):
         """
         Called to update the scope, when necessary.
         """
 
-        self.set_text(self.text_parameter, scope, self.substitute)
+        return self.set_text(self.text_parameter, scope, self.substitute, update)
 
-    def set_text(self, text, scope=None, substitute=False):
+    def set_text(self, text, scope=None, substitute=False, update=True):
 
         old_text = self.text
 
@@ -1232,8 +1232,7 @@ class Text(renpy.display.core.Displayable):
         # The text parameter, before substitutions were performed.
         self.text_parameter = text
 
-        self.text = [ ]
-
+        new_text = [ ]
         uses_scope = False
 
         # Perform substitution as necessary.
@@ -1245,15 +1244,24 @@ class Text(renpy.display.core.Displayable):
 
                 i = unicode(i)
 
-            self.text.append(i)
+            new_text.append(i)
 
         self.uses_scope = uses_scope
 
-        if not self.dirty and self.text != old_text:
-            self.dirty = True
+        if new_text == old_text:
+            return False
 
-            if old_text is not None:
-                renpy.display.render.redraw(self, 0)
+        if update:
+
+            self.text = new_text
+
+            if not self.dirty:
+                self.dirty = True
+
+                if old_text is not None:
+                    renpy.display.render.redraw(self, 0)
+
+        return True
 
     def set_ctc(self, ctc):
         self.ctc = ctc

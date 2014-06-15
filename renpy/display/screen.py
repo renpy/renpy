@@ -272,7 +272,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return self
 
         if self.screen.ast is not None:
-            self.screen.ast.copy_on_change(self.cache)
+            self.screen.ast.copy_on_change(self.cache.get(0, {}))
 
         return self.child
 
