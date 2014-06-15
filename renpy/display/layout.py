@@ -469,7 +469,7 @@ class MultiBox(Container):
                 d = new_sle.displayable._in_old_scene()
 
                 if d is not new_sle.displayable:
-                    new_sle.displayable = new_sle.displayable._in_old_scene()
+                    new_sle.displayable = d
                     changed = True
 
                 scene_list.append(new_sle)
