@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import renpy
+
 try:
     import pyttsx
 except:
@@ -49,21 +51,35 @@ def speak(s, translate=True):
     Causes the TTS system to speak `s`, if the TTS system is enabled.
     """
 
+    if not renpy.game.preferences.self_voicing:
+        return
+
+    if pyttsx is None:
+        return
+
     global engine
 
     if engine is None:
         engine = pyttsx.init()
         engine.startLoop(False)
 
+    if translate:
+        s = renpy.translation.translate_string(s)
+
     engine.stop()
     engine.say(s)
+
+def periodic():
+
+    if engine is not None:
+        engine.iterate()
 
 def displayable(d):
     """
     Causes the TTS system to read the text of the displayable `d`.
     """
 
-    if pyttsx is None:
+    if not renpy.game.preferences.self_voicing:
         return
 
     global last
@@ -88,7 +104,3 @@ def displayable(d):
 
     speak(s, False)
 
-def periodic():
-
-    if engine is not None:
-        engine.iterate()

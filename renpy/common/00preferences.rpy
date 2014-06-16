@@ -317,6 +317,15 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "voice_sustain")
 
+            elif name == "self voicing":
+
+                if value == "enable":
+                    return SetField(_preferences, "self_voicing", True)
+                elif value == "disable":
+                    return SetField(_preferences, "self_voicing", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "self_voicing")
+
             else:
                 raise Exception("Preference(%r, %r) is unknown." % (name , value))
 
