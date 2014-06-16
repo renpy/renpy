@@ -53,6 +53,7 @@ position_property_names = [
         "xsize",
         "ysize",
         "xysize",
+        "alt",
         ]
 
 position_properties = [ Style(i) for i in position_property_names ]
