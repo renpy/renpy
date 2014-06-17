@@ -356,7 +356,6 @@ init -1500 python:
             if _preferences.mouse_move:
                 renpy.set_mouse_pos(self.x, self.y, self.duration)
 
-    @renpy.pure
     class Function(Action, DictEquality):
         """
         :doc: other_action
