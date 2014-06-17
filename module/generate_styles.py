@@ -109,6 +109,7 @@ style_properties = sorted_dict(
     activate_sound = None,
     aft_bar = 'none_is_null',
     aft_gutter = None,
+    alt = None,
     antialias = None,
     vertical = None,
     background = 'renpy.easy.displayable_or_none',

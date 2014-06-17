@@ -39,7 +39,7 @@ def warp():
     spec = warp_spec
     warp_spec = None
 
-    if warp_spec is None:
+    if spec is None:
         return None
 
     if ':' not in spec:
@@ -50,7 +50,6 @@ def warp():
 
     if not renpy.config.developer:
         raise Exception("Can't warp, developer mode disabled.")
-
 
     # First, compute for each statement reachable from a scene statement,
     # one statement that reaches that statement.
@@ -114,10 +113,8 @@ def warp():
     if not candidates:
         return
 
-    # Sort the list of candidates, so they're orderd by linenumber.
+    # Sort the list of candidates, so they're ordered by linenumber.
     candidates.sort()
-
-    print candidates
 
     # Pick the candidate immediately before (or on) the line.
     node = candidates[-1][1]

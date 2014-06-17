@@ -469,7 +469,8 @@ properties:
     property.
 
     For example, if `auto` is "button_%s.png", and `idle` is omitted, then
-    idle defaults to "button_idle.png".
+    idle defaults to "button_idle.png". Similarly, if `auto` is "button %s",
+    the ``button idle`` image is used.
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
@@ -968,7 +969,7 @@ following properties:
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
 `scrollbars`
-    If not None, scrollbars are added allong with this viewport.
+    If not None, scrollbars are added along with this viewport.
     This works by creating a side layout, and placing the created
     viewport in the center of the side. If `scrollbars` is "horizontal",
     a horizontal scrollbar is placed beneath the viewport. If `scrollbars`
@@ -1081,7 +1082,8 @@ parameters, and the following properties:
     property.
 
     For example, if `auto` is "imagemap_%s.png", and `idle` is omitted, then
-    idle defaults to "imagemap_idle.png".
+    idle defaults to "imagemap_idle.png". If `auto` is "imagemap %s", the
+    ``imagemap idle`` image is used.
 
     The behavior of `auto` can be customized by changing
     :var:`config.imagemap_auto_function`.
@@ -1155,7 +1157,7 @@ It also takes:
 
 A hotspot creates a fixed, allowing children to be added to it. The
 fixed has an area that is the same size as the hotspot, meaning that
-the children will be positioned relative to the hotpsot.
+the children will be positioned relative to the hotspot.
 
 
 .. _sl-hotbar:
@@ -1214,7 +1216,7 @@ The advanced displayable statements are:
 Has Statement
 =============
 
-The has statment allows you to specify a container to use, instead of
+The has statement allows you to specify a container to use, instead of
 fixed, for statements that take only one child. The has statement
 may only be used inside a statement that takes one child. The keyword
 ``has`` is followed (on the same line) by another statement, which
@@ -1282,7 +1284,7 @@ us using the use statement.
 For
 ---
 
-The for statement is similar to the Python for statment, except that
+The for statement is similar to the Python for statement, except that
 it does not support the else clause. It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
@@ -1419,7 +1421,17 @@ Show Screen
 
 The show screen statement causes a screen to be shown. It takes an
 screen name, and an optional argument list. If present, the arguments
-are used to intialize the scope of the screen.
+are used to initialize the scope of the screen.
+
+The show screen statement takes an optional nopredict keyword, that
+prevents screen prediction from occurring. During screen prediction,
+arguments to the screen are evaluated. Please ensure that evaluating
+the screen arguments does not cause unexpected side-effects to occur.
+
+.. warning::
+
+    If evaluating the arguments to a screen causes side-effects to occur,
+    your game may behave in unexpected ways.
 
 Screens shown in this way are displayed until they are explicitly
 hidden. This allows them to be used for overlay purposes.
@@ -1428,6 +1440,10 @@ hidden. This allows them to be used for overlay purposes.
 
     show screen overlay_screen
     show screen clock_screen(hour=11, minute=30)
+
+    if rare_case:
+        show rare_screen nopredict
+
 
 Hide Screen
 -----------
@@ -1452,10 +1468,21 @@ This can be used to display an imagemap. The imagemap can place a
 value into the `_return` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
+The call screen statement takes an optional nopredict keyword, that
+prevents screen prediction from occurring. During screen prediction,
+arguments to the screen are evaluated. Please ensure that evaluating
+the screen arguments does not cause unexpected side-effects to occur.
+
+.. warning::
+
+    If evaluating the arguments to a screen causes side-effects to occur,
+    your game may behave in unexpected ways.
+
 ::
 
-   call screen my_imagemap
+    call screen my_imagemap
 
+    call screen my_screen(side_effect_function()) nopredict
 
 .. _screen-variants:
 
@@ -1504,7 +1531,7 @@ and choosing the entries that apply to the current platform.
    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscren-based devices where the diagonal size of
+   Defined on touchscreen-based devices where the diagonal size of
    the screen is less than 6 inches. On such a small device, it's
    important to make buttons large enough a user can easily choose
    them. (In general, ``"small"`` should be used instead of ``"phone"``.)
@@ -1517,6 +1544,9 @@ and choosing the entries that apply to the current platform.
 
 ``"ouya"``
    Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
+
+``"firetv"``
+   Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have

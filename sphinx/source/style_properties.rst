@@ -112,15 +112,15 @@ novel kinds of value a style property can expect.
     value:
 
     int (like 0, 1, 37, or 42)
-        An integer is intepreted as the number of pixels from the left
+        An integer is interpreted as the number of pixels from the left
         or top side of the containing area.
     float (like 0.0, 0.5, or 1.0)
-        A floating-point number is intepreted as a fraction of the
+        A floating-point number is interpreted as a fraction of the
         containing area. For example, 0.5 is a point halfway between the
         sides of the containing area, while 1.0 is on the right or bottom
         side.
     renpy.absolute (like renpy.absolute(100.25))
-        A renpy.absolute number is intepreted as the number of pixels
+        A renpy.absolute number is interpreted as the number of pixels
         from the left or top side of the screen, when using subpixel-precise
         rendering.
 
@@ -130,7 +130,7 @@ novel kinds of value a style property can expect.
 `color`
     Colors in Ren'Py can be expressed as strings beginning with the hash
     mark (#), followed by a hex triple or hex quadruple, with each of the
-    three or four elements consisting of a one or two hexidecimal character
+    three or four elements consisting of a one or two hexadecimal character
     color code.
 
     In a triple, the components represent red, green, and blue. In a
@@ -472,7 +472,7 @@ Text Style Properties
     `yoffset` are the amount the outline is shifted by, in pixels.
 
     The outline functionality can also be used to give drop-shadows to
-    fonts, by specifiying a size of 0 and non-zero offsets.
+    fonts, by specifying a size of 0 and non-zero offsets.
 
     Outlines only work with truetype fonts.
 
@@ -495,7 +495,7 @@ Text Style Properties
 .. style-property:: slow_cps_multiplier float
 
     The speed of the text is multiplied by this number. This can be
-    used to have a character that speeks at a faster-than-normal rate
+    used to have a character that speaks at a faster-than-normal rate
     of speed.
 
 .. style-property:: strikethrough boolean

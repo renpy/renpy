@@ -204,7 +204,7 @@ init -1500 python:
 
         return __newest_slot() == __slotname(name, page)
 
-    class FileSave(Action):
+    class FileSave(Action, DictEquality):
         """
          :doc: file_action
 
@@ -276,7 +276,7 @@ init -1500 python:
 
             return __newest_slot() == __slotname(self.name, self.page)
 
-    class FileLoad(Action):
+    class FileLoad(Action, DictEquality):
         """
          :doc: file_action
 
@@ -333,7 +333,8 @@ init -1500 python:
 
             return __newest_slot() == __slotname(self.name, self.page)
 
-    class FileDelete(Action):
+    @renpy.pure
+    class FileDelete(Action, DictEquality):
         """
          :doc: file_action
 
@@ -389,8 +390,8 @@ init -1500 python:
         else:
             return FileSave(name, page=page)
 
-
-    class FilePage(Action):
+    @renpy.pure
+    class FilePage(Action, DictEquality):
         """
          :doc: file_action
 
@@ -475,7 +476,7 @@ init -1500 python:
         return format % (prefix, page * slots_per_page + slot)
 
 
-    class FilePageNext(Action):
+    class FilePageNext(Action, DictEquality):
         """
          :doc: file_action
 
@@ -533,7 +534,7 @@ init -1500 python:
             return self.page is not None
 
 
-    class FilePagePrevious(Action):
+    class FilePagePrevious(Action, DictEquality):
         """
          :doc: file_action
 
@@ -590,7 +591,8 @@ init -1500 python:
         def get_sensitive(self):
             return self.page
 
-    class FileTakeScreenshot(Action):
+    @renpy.pure
+    class FileTakeScreenshot(Action, DictEquality):
         """
          :doc: file_action
 
@@ -602,6 +604,7 @@ init -1500 python:
         def __call__(self):
             renpy.take_screenshot()
 
+    @renpy.pure
     def QuickSave(message=_("Quick save complete."), newest=False):
         """
         :doc: file_action
@@ -625,7 +628,7 @@ init -1500 python:
 
         return rv
 
-
+    @renpy.pure
     def QuickLoad():
         """
         :doc: file_action
@@ -634,3 +637,13 @@ init -1500 python:
         """
 
         return FileLoad(1, page="quick", confirm=True, newest=False)
+
+init 1050 python hide:
+
+    if not config.has_quicksave and persistent._file_page == "quick":
+        persistent._file_page = "1"
+
+    if not config.has_autosave and persistent._file_page == "auto":
+        persistent._file_page = "1"
+
+

@@ -96,6 +96,8 @@ class TransformState(renpy.object.Object):
     default_yoffset = None
     transform_anchor = False
     additive = 0.0
+    debug = None
+    events = True
 
     def __init__(self): # W0231
         self.alpha = 1
@@ -127,6 +129,9 @@ class TransformState(renpy.object.Object):
         self.size = None
 
         self.delay = 0
+
+        self.debug = None
+        self.events = True
 
         # Note: When adding a new property, we need to add it to:
         # - take_state
@@ -163,6 +168,9 @@ class TransformState(renpy.object.Object):
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
         self.size = ts.size
+
+        self.debug = ts.debug
+        self.events = ts.events
 
         # Take the computed position properties, not the
         # raw ones.
@@ -227,6 +235,9 @@ class TransformState(renpy.object.Object):
         diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
         diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
         diff2("yoffset", newts.yoffset, self.yoffset)
+
+        diff2("debug", newts.debug, self.debug)
+        diff2("events", newts.events, self.events)
 
         return rv
 
@@ -387,7 +398,7 @@ class Transform(Container):
     additive = Proxy("additive")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("rotate_pad")
+    transform_anchor = Proxy("anchor")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
@@ -429,6 +440,9 @@ class Transform(Container):
 
     xcenter = Proxy("xcenter")
     ycenter = Proxy("ycenter")
+
+    debug = Proxy("debug")
+    events = Proxy("events")
 
     def after_upgrade(self, version):
 
@@ -508,28 +522,54 @@ class Transform(Container):
 
         self.state = TransformState()
 
-        self.arguments = dict((k, {}) for k in self.DEFAULT_ARGUMENTS)
+        self.arguments = None
 
-        # Split up the keyword arguments.
-        for k, v in kwargs.iteritems():
-            if "_" in k:
-                prefix, prop = k.rsplit("_", 1)
-            else:
-                prefix = ""
-                prop = k
+        if kwargs:
 
-            if prefix not in self.arguments:
-                raise Exception("Unknown transform property prefix: %r" % prefix)
+            if function is None:
 
-            if prop not in renpy.atl.PROPERTIES:
-                raise Exception("Unknown transform property: %r" % prop)
+                # We are complex if we have arguments with non-empty prefixes.
+                has_prefixes = False
 
-            self.arguments[prefix][prop] = v
+                # A map from prefix -> (prop -> value)
+                self.arguments = { }
 
+                # Fill self.arguments with a
+                for k, v in kwargs.iteritems():
 
-        # Apply the keyword arguments.
-        for k, v in kwargs.iteritems():
-            setattr(self.state, k, v)
+                    prefix = ""
+                    prop = k
+
+                    while True:
+
+                        if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
+
+                            if prefix not in self.arguments:
+                                self.arguments[prefix] = { }
+
+                            self.arguments[prefix][prop] = v
+
+                            if prefix:
+                                has_prefixes = True
+
+                            break
+
+                        new_prefix, _, prop = prop.partition("_")
+
+                        if not prop:
+                            raise Exception("Unknown transform property: %r" % k)
+
+                        if prefix:
+                            prefix = prefix + "_" + new_prefix
+                        else:
+                            prefix = new_prefix
+
+                if not has_prefixes:
+                    self.arguments = None
+
+            # Apply keyword arguments to self.state.
+            for prop, value in kwargs.iteritems():
+                setattr(self.state, prop, value)
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
@@ -566,6 +606,9 @@ class Transform(Container):
     # the style prefix, and applies them to the state.
     def default_function(self, state, st, at):
 
+        if self.arguments is None:
+            return None
+
         prefix = self.style.prefix.strip("_")
         prefixes = [ ]
 
@@ -576,7 +619,12 @@ class Transform(Container):
         prefixes.insert(0, "")
 
         for i in prefixes:
-            for k, v in self.arguments[i].iteritems():
+            d = self.arguments.get(i, None)
+
+            if d is None:
+                continue
+
+            for k, v in d.iteritems():
                 setattr(state, k, v)
 
         return None
@@ -612,6 +660,8 @@ class Transform(Container):
         self.state.ypos = t.state.ypos
         self.state.xanchor = t.state.xanchor
         self.state.yanchor = t.state.yanchor
+
+        self.child_st_base = t.child_st_base
 
         if isinstance(self.child, Transform) and isinstance(t.child, Transform):
             self.child.take_execution_state(t.child)
@@ -681,6 +731,7 @@ class Transform(Container):
         child = renpy.easy.displayable(child)
 
         self.child = child
+        self.children = [ child ]
         self.child_st_base = self.st
 
         child.per_interact()
@@ -729,6 +780,9 @@ class Transform(Container):
 
         if self.hide_request:
             return None
+
+        if not self.state.events:
+            return
 
         children = self.children
         offsets = self.offsets
@@ -796,9 +850,9 @@ class Transform(Container):
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
-                if isinstance(xanchor, float):
+                if xanchor.__class__ is float:
                     xanchor *= cw
-                if isinstance(yanchor, float):
+                if yanchor.__class__ is float:
                     yanchor *= ch
 
                 xanchor -= cw / 2.0

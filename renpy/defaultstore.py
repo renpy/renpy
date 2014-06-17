@@ -173,7 +173,6 @@ MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransiti
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
-
 # Misc.
 ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
 Speaker = Character = renpy.character.Character
@@ -183,11 +182,15 @@ MultiPersistent = renpy.persistent.MultiPersistent
 Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
 
+# NOTE: When exporting something from here, decide if we need to add it to
+# renpy.sl2.pyutil.pure_functions.
+
 Style = renpy.style.Style # @UndefinedVariable
 
 absolute = renpy.display.core.absolute
 
 NoRollback = renpy.python.NoRollback
+
 
 class _layout_class(__builtins__["object"]):
     """
@@ -361,6 +364,13 @@ _last_say_what = None
 
 # Used to store the things pinned into the cache.
 _cache_pin_set = set()
+
+# Used to store displayables that should be predicted.
+_predict_set = set()
+
+# A map from a screen name to an (args, kwargs) tuple. The arguments and
+# keyword arguments can be
+_predict_screen = dict()
 
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None

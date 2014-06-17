@@ -65,18 +65,36 @@ init -1600 python:
 # This fixes up the context, if necessary, then calls the real
 # after_load.
 label _after_load:
-    $ renpy.context()._menu = False
-    $ renpy.context()._main_menu = False
-    $ main_menu = False
-    $ _in_replay = None
 
-    if config.after_load_transition:
-        $ renpy.transition(config.after_load_transition, force=True)
+    python:
+        renpy.context()._menu = False
+        renpy.context()._main_menu = False
+        main_menu = False
+        _in_replay = None
+
+        if config.after_load_transition:
+            renpy.transition(config.after_load_transition, force=True)
 
     if renpy.has_label("after_load"):
         jump expression "after_load"
     else:
         return
+
+# Ditto, for warp.
+label _after_warp:
+
+    python:
+        renpy.context()._menu = False
+        renpy.context()._main_menu = False
+        main_menu = False
+        _in_replay = None
+
+    if renpy.has_label("after_warp"):
+        jump expression "after_warp"
+    else:
+        return
+
+
 
 # Common code for _start and _start_memory.
 label _start_store:
@@ -134,11 +152,10 @@ label _start:
     $ renpy.block_rollback()
 
     $ _old_game_menu_screen = _game_menu_screen
-    $ _old_predict_screens = _predict_screens
     $ _game_menu_screen = None
-    $ _predict_screens = [ 'main_menu' ]
+    $ renpy.start_predict("main_menu")
 
-    if renpy.has_label("splashscreen") and not _restart:
+    if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
         call expression "splashscreen" from _call_splashscreen_1
 
     $ _game_menu_screen = _old_game_menu_screen
@@ -175,7 +192,7 @@ label _invoke_main_menu:
     python:
         if _restart:
             renpy.call_in_new_context(_restart[2])
-        else:
+        elif not renpy.os.environ.get("RENPY_SKIP_MAIN_MENU", False):
             renpy.call_in_new_context("_main_menu")
 
 

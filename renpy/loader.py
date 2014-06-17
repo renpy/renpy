@@ -597,7 +597,7 @@ auto_quit_flag = True
 auto_lock = threading.Condition()
 
 # Used to indicate that this file is blacklisted.
-auto_blacklisted = object()
+auto_blacklisted = renpy.object.Sentinel("auto_blacklisted")
 
 def auto_mtime(fn):
     """

@@ -514,7 +514,7 @@ def display_say(
 
 
 # This is used to flag values that haven't been set by the user.
-NotSet = object()
+NotSet = renpy.object.Sentinel("NotSet")
 
 class ADVCharacter(object):
     """
@@ -787,7 +787,8 @@ class ADVCharacter(object):
             if self.dynamic:
                 who = renpy.python.py_eval(who)
 
-            sub = renpy.substitutions.substitute
+            def sub(s, scope=None, force=False, translate=True):
+                return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
 
             if who is not None:
                 if renpy.config.new_substitutions:
@@ -901,7 +902,7 @@ def Character(name=NotSet, kind=None, **properties):
     screen.
 
     `voice_tag`
-        A String that enables the voice file assosiated with the
+        A String that enables the voice file associated with the
         Character to be muted or played in the 'voice' channel.
 
     **Prefixes and Suffixes.**

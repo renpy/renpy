@@ -69,6 +69,8 @@ def set_focused(widget, arg):
     argument = arg
     renpy.game.context().scene_lists.focused = widget
 
+    renpy.display.tts.displayable(widget)
+
 # Gets the currently focused widget.
 def get_focused():
     return renpy.game.context().scene_lists.focused

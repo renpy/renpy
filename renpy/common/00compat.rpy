@@ -100,6 +100,9 @@ init -1900 python:
         if version <= (6, 17, 0):
             config.keymap['toggle_music'] = [ 'm' ]
 
+        if version <= (6, 18, 0):
+            config.predict_screen_statements = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

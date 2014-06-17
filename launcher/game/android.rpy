@@ -36,13 +36,16 @@ init python:
 
     PHONE_TEXT = _("Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
     TABLET_TEXT = _("Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
-    OUYA_TEXT = _("Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
+    OUYA_TEXT = _("Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button.")
 
     INSTALL_SDK_TEXT = _("Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package.")
     CONFIGURE_TEXT = _("Configures the package name, version, and other information about this project.")
     PLAY_KEYS_TEXT = _("Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details.")
     BUILD_TEXT = _("Builds the Android package.")
     BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
+
+    CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
+    DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
 
 
     import subprocess
@@ -88,11 +91,11 @@ init python:
             return ANDROID_NO_RAPT
         if renpy.windows and not "JAVA_HOME" in os.environ:
             return ANDROID_NO_JDK
-        if not os.path.exists(os.path.join(RAPT_PATH, "android-sdk/extras/google/play_licensing")):
+        if not os.path.exists(rapt.plat.path("android-sdk/extras/google/play_licensing")):
             return ANDROID_NO_SDK
-        if not os.path.exists(os.path.join(RAPT_PATH, "android.keystore")):
+        if not os.path.exists(rapt.plat.path("android.keystore")):
             return ANDROID_NO_KEY
-        if not os.path.exists(os.path.join(RAPT_PATH, "local.properties")):
+        if not os.path.exists(rapt.plat.path("local.properties")):
             return ANDROID_NO_KEY
         if not os.path.exists(os.path.join(project.current.path, ".android.json")):
             return ANDROID_NO_CONFIG
@@ -198,10 +201,22 @@ init python:
             self.log(prompt)
             interface.info(prompt, label="android")
 
-        def call(self, cmd, cancel=False, use_path=False):
+        def yes_thread(self):
+            import time
 
-            if not use_path:
-                cmd = [ rapt.plat.path(cmd[0]) ] + list(cmd[1:])
+            try:
+                while self.run_yes:
+                    self.process.stdin.write('y\n')
+                    self.process.stdin.flush()
+                    time.sleep(.2)
+            except:
+                import traceback
+                traceback.print_exc()
+
+        def call(self, cmd, cancel=False, use_path=False, yes=False):
+
+            print
+            print " ".join(cmd)
 
             self.cmd = cmd
 
@@ -221,11 +236,29 @@ init python:
 
             try:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
-                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo)
+
+                kwargs = { }
+                if yes:
+                    kwargs["stdin"] = subprocess.PIPE
+
+                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+
+                if yes:
+                    import threading
+                    self.run_yes = True
+                    self.yes_thread = threading.Thread(target=self.yes_thread)
+                    self.yes_thread.daemon = True
+                    self.yes_thread.start()
+
                 renpy.call_screen("android_process", interface=self)
             finally:
                 f.close()
                 interface.hide_screen()
+
+                if yes and self.yes_thread:
+                    self.run_yes = False
+                    self.yes_thread.join()
+
                 self.process = None
 
         def check_process(self):
@@ -473,6 +506,28 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
                                 hovered tt.Action(BUILD_AND_INSTALL_TEXT)
 
+                    add SPACER
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        text _("Other:")
+
+                        add HALF_SPACER
+
+                        frame style "l_indent":
+
+                            has vbox
+
+                            textbutton _("Remote ADB Connect"):
+                                action AndroidIfState(state, ANDROID_OK, Jump("android_connect"))
+                                hovered tt.Action(CONNECT_TEXT)
+
+                            textbutton _("Remote ADB Disconnect"):
+                                action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
+                                hovered tt.Action(DISCONNECT_TEXT)
 
 
                 # Right side.
@@ -536,6 +591,59 @@ label android_build:
 label android_build_and_install:
 
     $ android_build([ 'release', 'install' ])
+
+    jump android
+
+label android_connect:
+
+    python hide:
+
+        if persistent.connect_address is not None:
+            address = persistent.connect_address
+        else:
+            address = ""
+
+        while True:
+            address = interface.input(
+                _("Remote ADB Address"),
+                _("Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."),
+                default=address,
+                cancel=Jump("android"),
+                )
+
+            address = address.strip()
+
+            try:
+                host, port = address.split(":")
+            except:
+                interface.error(_("Invalid remote ADB address"), _("The address must contain one exactly one ':'."), label=None)
+                continue
+
+            if " " in host:
+                interface.error(_("Invalid remote ADB address"), _("The host may not contain whitespace."), label=None)
+                continue
+
+            try:
+                int(port)
+            except:
+                interface.error(_("Invalid remote ADB address"), _("The port must be a number."), label=None)
+                continue
+
+            break
+
+        persistent.connect_address = address
+
+        rapt_interface = AndroidInterface()
+        rapt.build.connect(rapt_interface, address)
+
+    jump android
+
+label android_disconnect:
+
+    python hide:
+
+        rapt_interface = AndroidInterface()
+        rapt.build.disconnect(rapt_interface)
 
     jump android
 

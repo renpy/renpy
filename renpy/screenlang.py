@@ -278,6 +278,12 @@ class Parser(object):
 
         return self.parse_eval(expr, lineno)
 
+    def parse_comma_expression(self, l):
+        lineno = l.number
+        expr = l.require(l.comma_expression)
+
+        return self.parse_eval(expr, lineno)
+
     def parse(self, l, name):
         """
         This is expected to parse a function statement, and to return
@@ -293,7 +299,7 @@ class Parser(object):
 
 
 # A singleton value.
-many = object()
+many = renpy.object.Sentinel("many")
 
 class FunctionStatementParser(Parser):
     """
@@ -352,11 +358,11 @@ class FunctionStatementParser(Parser):
         seen_keywords = set()
 
         # Parses a keyword argument from the lexer.
-        def parse_keyword(l):
+        def parse_keyword(l, expect):
             name = l.word()
 
             if name is None:
-                l.error('expected a keyword argument, colon, or end of line.')
+                l.error(expect)
 
             if name not in self.keyword:
                 l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
@@ -366,7 +372,7 @@ class FunctionStatementParser(Parser):
 
             seen_keywords.add(name)
 
-            expr = self.parse_simple_expression(l)
+            expr = self.parse_comma_expression(l)
 
             call_node.keywords.append(
                 ast.keyword(arg=str(name), value=expr),
@@ -391,7 +397,7 @@ class FunctionStatementParser(Parser):
                 block = False
                 break
 
-            parse_keyword(l)
+            parse_keyword(l, "expected a keyword argument, colon, or end of line.")
 
         rv.append(ast.Expr(value=call_node))
 
@@ -459,8 +465,11 @@ class FunctionStatementParser(Parser):
 
                     l.revert(state)
 
+                    if not l.eol():
+                        parse_keyword(l, "expected a keyword argument or child statement.")
+
                     while not l.eol():
-                        parse_keyword(l)
+                        parse_keyword(l, "expected a keyword argument or end of line.")
 
         if needs_close:
             rv.extend(self.parse_exec("ui.close()"))
@@ -509,6 +518,7 @@ position_property_names = [
         "xsize",
         "ysize",
         "xysize",
+        "alt",
         ]
 
 position_properties = [ Style(i) for i in position_property_names ]
@@ -885,13 +895,13 @@ add(position_properties)
 ##############################################################################
 # Control-flow statements.
 
-def PassParser(Parser):
+class PassParser(Parser):
 
     def __init__(self, name):
         super(PassParser, self).__init__(name)
 
     def parse(self, l, name):
-        return [ ast.Pass(lineno=l.number, col_offset=0) ]
+        return self.parse_exec("pass", l.number)
 
 PassParser("pass")
 
@@ -900,7 +910,6 @@ class DefaultParser(Parser):
 
     def __init__(self, name):
         super(DefaultParser, self).__init__(name)
-
 
     def parse(self, l, name):
 
@@ -1234,7 +1243,6 @@ class ScreenLangScreen(renpy.object.Object):
             scope.update(values)
 
         renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
-
 
 
 

@@ -37,10 +37,14 @@ images = { }
 # tag.
 image_attributes = collections.defaultdict(list)
 
+
 def register_image(name, d):
     """
     Registers the existence of an image with `name`, and that the image
     used displayable d.
+
+    `name`
+        A tuple of strings.
     """
 
     tag = name[0]
@@ -48,6 +52,30 @@ def register_image(name, d):
 
     images[name] = d
     image_attributes[tag].append(rest)
+
+
+def image_exists(name):
+    """
+    :doc: image
+
+    Return true if an image with `name` exists, and false if no such image
+    exists.
+
+    `name`
+        Either a string giving an image name, or a tuple of strings giving
+        the name components.
+    """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    while name:
+        if name in images:
+            return True
+
+        name = name[:-1]
+
+    return False
 
 
 def wrap_render(child, w, h, st, at):
@@ -76,6 +104,21 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, o):
+        if self is o:
+            return True
+
+        if not self._equals(o):
+            return False
+
+        if self.name != o.name:
+            return False
+
+        return True
 
     def _get_parameterized(self):
         if self.param_target:
@@ -363,7 +406,7 @@ class ShownImageInfo(renpy.object.Object):
                 if num_required != len(required):
                     continue
 
-                len_attrs = len(attrs)
+                len_attrs = len(set(attrs))
 
                 if len_attrs < max_len:
                     continue

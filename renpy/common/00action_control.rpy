@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class NullAction(Action):
+    @renpy.pure
+    class NullAction(Action, DictEquality):
         """
         :doc: control_action
 
@@ -34,7 +35,8 @@ init -1500 python:
         def __call__(self):
             return
 
-    class Return(Action):
+    @renpy.pure
+    class Return(Action, DictEquality):
         """
          :doc: control_action
 
@@ -59,8 +61,8 @@ init -1500 python:
             else:
                 return self.value
 
-
-    class Jump(Action):
+    @renpy.pure
+    class Jump(Action, DictEquality):
         """
          :doc: control_action
 
@@ -75,8 +77,8 @@ init -1500 python:
         def __call__(self):
             renpy.jump(self.label)
 
-
-    class Show(Action):
+    @renpy.pure
+    class Show(Action, DictEquality):
         """
          :doc: control_action
 
@@ -110,7 +112,7 @@ init -1500 python:
         def get_selected(self):
             return renpy.showing(self.screen)
 
-
+    @renpy.pure
     def ShowTransient(screen, *args, **kwargs):
         """
          :doc: control_action
@@ -121,8 +123,8 @@ init -1500 python:
 
         return Show(screen, _transient=True, *args, **kwargs)
 
-
-    class Hide(Action):
+    @renpy.pure
+    class Hide(Action, DictEquality):
         """
          :doc: control_action
 

@@ -74,6 +74,7 @@ init -1800:
 
     style imagemap is image_placement
     style hotspot is default
+    style imagemap_button is hotspot
     style hotbar is default
 
     style image_button is default
@@ -346,3 +347,7 @@ init -1800:
 
     style tile:
         clipping True
+
+    # Labels
+    style label:
+        alt "" # We expect the labelled buttons/bars to read themselves out.

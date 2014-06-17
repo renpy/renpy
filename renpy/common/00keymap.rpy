@@ -39,6 +39,7 @@ init -1600 python:
         iconify = [ 'meta_m', 'alt_m' ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
+        self_voicing = [ 'v', 'V' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -100,7 +101,14 @@ init -1600 python:
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
 
+        # Profile one frame
+        profile_once = [ 'K_F8' ],
+
+
         )
+
+    # Should we use the autoreload system?
+    config.autoreload = True
 
 init -1600 python:
 
@@ -202,6 +210,10 @@ init -1600 python:
         if not config.developer:
             return
 
+        if not config.autoreload:
+            renpy.call_in_new_context("_save_reload_game")
+            return
+
         if renpy.get_autoreload():
             renpy.set_autoreload(False)
             renpy.restart_interaction()
@@ -224,6 +236,10 @@ init -1600 python:
         renpy.show_screen("_developer")
         renpy.restart_interaction()
 
+    def _profile_once():
+        renpy.display.interface.profile_once = True
+        renpy.restart_interaction()
+
 init -1100 python:
 
     # The default keymap. We might also want to put some of this into
@@ -244,6 +260,8 @@ init -1100 python:
         help = _help,
         choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
         console = _console.enter,
+        profile_once = _profile_once,
+        self_voicing = Preference("self voicing", "toggle"),
         )
 
     config.underlay = [ km ]

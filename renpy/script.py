@@ -433,7 +433,8 @@ class Script(object):
             rpycdigest = f.read(md5.digest_size)
             f.close()
 
-            if rpydigest == rpycdigest and renpy.game.args.command != "compile": #@UndefinedVariable
+            if rpydigest == rpycdigest and \
+                not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
 
                 if self.load_file(dir, fn + compiled, initcode):
                     return

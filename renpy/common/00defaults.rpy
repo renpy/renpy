@@ -96,7 +96,9 @@ init -1500 python:
     def _imagemap_auto_function(auto_param, variant):
         rv = auto_param % variant
 
-        if renpy.loadable(rv):
+        if renpy.image_exists(rv):
+            return rv
+        elif renpy.loadable(rv):
             return rv
         else:
             return None
@@ -110,7 +112,7 @@ init -1500 python:
         return style.hyperlink_text
 
     def hyperlink_function(target):
-        if target.startswith("http:"):
+        if ":" in target:
             try:
                 import webbrowser
                 webbrowser.open(target)

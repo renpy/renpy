@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class __DisplayAction(Action):
+    @renpy.pure
+    class __DisplayAction(Action, DictEquality):
         def __init__(self, factor):
             self.width = int(factor * config.screen_width)
             self.height = int(factor * config.screen_height)
@@ -46,11 +47,12 @@ init -1500 python:
 
     config.always_has_joystick = False
 
+    @renpy.pure
     def Preference(name, value=None):
         """
          :doc: preference_action
 
-         This constructs the approprate action or value from a preference.
+         This constructs the appropriate action or value from a preference.
          The preference name should be the name given in the standard
          menus, while the value should be either the name of a choice,
          "toggle" to cycle through choices, a specific value, or left off
@@ -140,179 +142,196 @@ init -1500 python:
         if isinstance(value, basestring):
             value = value.lower()
 
-        if name == "display":
-            if value == "fullscreen":
-                return SetField(_preferences, "fullscreen", True)
-            elif value == "window":
-                return __DisplayAction(1.0)
-            elif value == "any window":
-                return SetField(_preferences, "fullscreen", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "fullscreen")
-            elif isinstance(value, (int, float)):
-                return __DisplayAction(value)
+        def get():
 
-        elif name == "transitions":
+            if name == "display":
+                if value == "fullscreen":
+                    return SetField(_preferences, "fullscreen", True)
+                elif value == "window":
+                    return __DisplayAction(1.0)
+                elif value == "any window":
+                    return SetField(_preferences, "fullscreen", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "fullscreen")
+                elif isinstance(value, (int, float)):
+                    return __DisplayAction(value)
 
-            if value == "all":
-                return SetField(_preferences, "transitions", 2)
-            elif value == "some":
-                return SetField(_preferences, "transitions", 1)
-            elif value == "none":
-                return SetField(_preferences, "transitions", 0)
-            elif value == "toggle":
-                return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
+            elif name == "transitions":
 
-        elif name == "show empty window":
+                if value == "all":
+                    return SetField(_preferences, "transitions", 2)
+                elif value == "some":
+                    return SetField(_preferences, "transitions", 1)
+                elif value == "none":
+                    return SetField(_preferences, "transitions", 0)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
 
-            if value == "show":
-                return SetField(_preferences, "show_empty_window", True)
-            elif value == "hide":
-                return SetField(_preferences, "show_empty_window", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "show_empty_window")
+            elif name == "show empty window":
 
-        elif name == "text speed":
+                if value == "show":
+                    return SetField(_preferences, "show_empty_window", True)
+                elif value == "hide":
+                    return SetField(_preferences, "show_empty_window", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "show_empty_window")
 
-            if value is None:
-                return FieldValue(_preferences, "text_cps", range=200, max_is_zero=True, style="slider")
-            elif isinstance(value, int):
-                return SetField(_preferences, "text_cps", value)
+            elif name == "text speed":
 
-        elif name == "joystick" or name == "joystick...":
+                if value is None:
+                    return FieldValue(_preferences, "text_cps", range=200, max_is_zero=True, style="slider")
+                elif isinstance(value, int):
+                    return SetField(_preferences, "text_cps", value)
 
-            if renpy.display.joystick.enabled or config.always_has_joystick:
-                return ShowMenu("joystick_preferences")
-            else:
-                return None
+            elif name == "joystick" or name == "joystick...":
 
-        elif name == "skip":
-
-            if value == "all messages" or value == "all":
-                return SetField(_preferences, "skip_unseen", True)
-            elif value == "seen messages" or value == "seen":
-                return SetField(_preferences, "skip_unseen", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "skip_unseen")
-
-        elif name == "begin skipping":
-
-            return Skip()
-
-        elif name == "after choices":
-
-            if value == "keep skipping" or value == "keep" or value == "skip":
-                return SetField(_preferences, "skip_after_choices", True)
-            elif value == "stop skipping" or value == "stop":
-                return SetField(_preferences, "skip_after_choices", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "skip_after_choices")
-
-        elif name == "auto-forward time":
-
-            if value is None:
-
-                if config.default_afm_enable is None:
-                    return FieldValue(_preferences, "afm_time", range=30.0, max_is_zero=True, style="slider")
+                if renpy.display.joystick.enabled or config.always_has_joystick:
+                    return ShowMenu("joystick_preferences")
                 else:
-                    return FieldValue(_preferences, "afm_time", range=29.9, style="slider", offset=.1)
+                    return None
 
-            elif isinstance(value, int):
-                return SetField(_preferences, "afm_time", value)
+            elif name == "skip":
 
-        elif name == "auto-forward":
+                if value == "all messages" or value == "all":
+                    return SetField(_preferences, "skip_unseen", True)
+                elif value == "seen messages" or value == "seen":
+                    return SetField(_preferences, "skip_unseen", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "skip_unseen")
 
-            if value == "enable":
-                return SetField(_preferences, "afm_enable", True)
-            elif value == "disable":
-                return SetField(_preferences, "afm_enable", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "afm_enable")
+            elif name == "begin skipping":
 
-        elif name == "auto-forward after click":
+                return Skip()
 
-            if value == "enable":
-                return SetField(_preferences, "afm_after_click", True)
-            elif value == "disable":
-                return SetField(_preferences, "afm_after_click", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "afm_after_click")
+            elif name == "after choices":
 
-        elif name == "automatic move":
+                if value == "keep skipping" or value == "keep" or value == "skip":
+                    return SetField(_preferences, "skip_after_choices", True)
+                elif value == "stop skipping" or value == "stop":
+                    return SetField(_preferences, "skip_after_choices", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "skip_after_choices")
 
-            if value == "enable":
-                return SetField(_preferences, "mouse_move", True)
-            elif value == "disable":
-                return SetField(_preferences, "mouse_move", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "mouse_move")
+            elif name == "auto-forward time":
 
-        elif name == "wait for voice":
+                if value is None:
 
-            if value == "enable":
-                return SetField(_preferences, "wait_voice", True)
-            elif value == "disable":
-                return SetField(_preferences, "wait_voice", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "wait_voice")
+                    if config.default_afm_enable is None:
+                        return FieldValue(_preferences, "afm_time", range=30.0, max_is_zero=True, style="slider")
+                    else:
+                        return FieldValue(_preferences, "afm_time", range=29.9, style="slider", offset=.1)
 
-        elif name == "music volume":
+                elif isinstance(value, int):
+                    return SetField(_preferences, "afm_time", value)
 
-            if value is None:
-                return MixerValue('music')
+            elif name == "auto-forward":
+
+                if value == "enable":
+                    return SetField(_preferences, "afm_enable", True)
+                elif value == "disable":
+                    return SetField(_preferences, "afm_enable", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "afm_enable")
+
+            elif name == "auto-forward after click":
+
+                if value == "enable":
+                    return SetField(_preferences, "afm_after_click", True)
+                elif value == "disable":
+                    return SetField(_preferences, "afm_after_click", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "afm_after_click")
+
+            elif name == "automatic move":
+
+                if value == "enable":
+                    return SetField(_preferences, "mouse_move", True)
+                elif value == "disable":
+                    return SetField(_preferences, "mouse_move", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "mouse_move")
+
+            elif name == "wait for voice":
+
+                if value == "enable":
+                    return SetField(_preferences, "wait_voice", True)
+                elif value == "disable":
+                    return SetField(_preferences, "wait_voice", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "wait_voice")
+
+            elif name == "music volume":
+
+                if value is None:
+                    return MixerValue('music')
+                else:
+                    return SetMixer('music', value)
+
+            elif name == "sound volume":
+
+                if value is None:
+                    return MixerValue('sfx')
+                else:
+                    return SetMixer('sfx', value)
+
+            elif name == "voice volume":
+
+                if value is None:
+                    return MixerValue('voice')
+                else:
+                    return SetMixer('voice', value)
+
+            elif name == "music mute":
+
+                if value == "enable":
+                    return SetDict(_preferences.mute, "music", True)
+                elif value == "disable":
+                    return SetDict(_preferences.mute, "music", False)
+                elif value == "toggle":
+                    return ToggleDict(_preferences.mute, "music")
+
+            elif name == "sound mute":
+
+                if value == "enable":
+                    return SetDict(_preferences.mute, "sfx", True)
+                elif value == "disable":
+                    return SetDict(_preferences.mute, "sfx", False)
+                elif value == "toggle":
+                    return ToggleDict(_preferences.mute, "sfx")
+
+            elif name == "voice mute":
+
+                if value == "enable":
+                    return SetDict(_preferences.mute, "voice", True)
+                elif value == "disable":
+                    return SetDict(_preferences.mute, "voice", False)
+                elif value == "toggle":
+                    return ToggleDict(_preferences.mute, "voice")
+
+            elif name == "voice sustain":
+
+                if value == "enable":
+                    return SetField(_preferences, "voice_sustain", True)
+                elif value == "disable":
+                    return SetField(_preferences, "voice_sustain", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "voice_sustain")
+
+            elif name == "self voicing":
+
+                if value == "enable":
+                    return SetField(_preferences, "self_voicing", True)
+                elif value == "disable":
+                    return SetField(_preferences, "self_voicing", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "self_voicing")
+
             else:
-                return SetMixer('music', value)
+                raise Exception("Preference(%r, %r) is unknown." % (name , value))
 
-        elif name == "sound volume":
+        rv = get()
 
-            if value is None:
-                return MixerValue('sfx')
-            else:
-                return SetMixer('sfx', value)
+        if rv is not None:
+            rv.alt = name + " [text]"
 
-        elif name == "voice volume":
-
-            if value is None:
-                return MixerValue('voice')
-            else:
-                return SetMixer('voice', value)
-
-        elif name == "music mute":
-
-            if value == "enable":
-                return SetDict(_preferences.mute, "music", True)
-            elif value == "disable":
-                return SetDict(_preferences.mute, "music", False)
-            elif value == "toggle":
-                return ToggleDict(_preferences.mute, "music")
-
-        elif name == "sound mute":
-
-            if value == "enable":
-                return SetDict(_preferences.mute, "sfx", True)
-            elif value == "disable":
-                return SetDict(_preferences.mute, "sfx", False)
-            elif value == "toggle":
-                return ToggleDict(_preferences.mute, "sfx")
-
-        elif name == "voice mute":
-
-            if value == "enable":
-                return SetDict(_preferences.mute, "voice", True)
-            elif value == "disable":
-                return SetDict(_preferences.mute, "voice", False)
-            elif value == "toggle":
-                return ToggleDict(_preferences.mute, "voice")
-
-        elif name == "voice sustain":
-
-            if value == "enable":
-                return SetField(_preferences, "voice_sustain", True)
-            elif value == "disable":
-                return SetField(_preferences, "voice_sustain", False)
-            elif value == "toggle":
-                return ToggleField(_preferences, "voice_sustain")
-
-        else:
-            raise Exception("Preference(%r, %r) is unknown." % (name , value))
-
+        return rv

@@ -48,12 +48,11 @@ cdef extern from "glcompat.h":
     enum:
         GLEW_OK
 
-IF ANGLE:
-
-    cdef extern from "anglesupport.h":
-        char *egl_init(int)
-        void egl_swap()
-        void egl_quit()
+cdef extern from "eglsupport.h":
+    int egl_available()
+    char *egl_init(int)
+    void egl_swap()
+    void egl_quit()
 
 
 # This is used by gl_error_check in gl.pxd.
@@ -63,6 +62,10 @@ class GLError(Exception):
     """
 
     pass
+
+# EGL is a flag we check to see if we have EGL on this platform.
+cdef bint EGL
+EGL = egl_available()
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE
@@ -206,7 +209,7 @@ cdef class GLDraw:
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
 
-        if ANGLE:
+        if EGL:
             opengl = 0
             resizable = 0
         elif renpy.android:
@@ -234,8 +237,8 @@ cdef class GLDraw:
             renpy.display.log.write("Could not get pygame screen: %r", e)
             return False
 
-        # In ANGLE mode, we have to use EGL to get the OpenGL ES 2 context.
-        IF ANGLE:
+        # Use EGL to get the OpenGL ES 2 context, if necessary.
+        if EGL:
 
             # This ensures the display is shown.
             pygame.display.flip()
@@ -340,7 +343,7 @@ cdef class GLDraw:
         which subsystems to use.
         """
 
-        if not ANGLE:
+        if not EGL:
 
             # Init glew.
             err = glewInit()
@@ -377,7 +380,7 @@ cdef class GLDraw:
             renpy.display.log.write("GL is totally blacklisted.")
             return False
 
-        if ANGLE:
+        if EGL:
             gltexture.use_gles()
 
         elif renpy.android:
@@ -430,7 +433,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
 
-        if ANGLE or renpy.android or (allow_shader and use_subsystem(
+        if EGL or renpy.android or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
@@ -660,10 +663,10 @@ cdef class GLDraw:
 
             self.draw_mouse()
 
-            IF not ANGLE:
-                pygame.display.flip()
-            ELSE:
+            if EGL:
                 egl_swap()
+            else:
+                pygame.display.flip()
 
         gltexture.cleanup()
 

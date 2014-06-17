@@ -123,9 +123,49 @@ def compile_event(key, keydown):
 
     return rv
 
+
 # These store a lambda for each compiled key in the system.
 event_cache = { }
 keyup_cache = { }
+
+
+def clear_keymap_cache():
+    """
+    :doc: other
+
+    Clears the keymap cache. This allows changes to :var:`config.keymap` to
+    take effect without restarting Ren'Py.
+    """
+
+    event_cache.clear()
+    keyup_cache.clear()
+
+
+def queue_event(name, up=False):
+    """
+    :doc: other
+
+    Queues an event with the given name. `Name` should be one of the event
+    names in :var:`config.keymap`.
+
+    `up`
+        This should be false when the event begins (for example, when a keyboard
+        button is pressed.) It should be true when the event ends (when the
+        button is released.)
+
+    The event is queued at the time this function is called. This function will
+    not work to replace an event with another - doing so will change event order.
+    (Use :var:`config.keymap` instead.)
+
+    This method is threadsafe.
+    """
+
+    # Avoid queueing events before we're ready.
+    if not renpy.display.interface:
+        return
+
+    ev = pygame.event.Event(renpy.display.core.EVENTNAME, { "eventname" : name, "up" : up })
+    pygame.event.post(ev)
 
 def map_event(ev, keysym):
     """
@@ -141,6 +181,12 @@ def map_event(ev, keysym):
         * A list containing one or more keysyms.
     """
 
+    if ev.type == renpy.display.core.EVENTNAME:
+        if ev.eventname == keysym and not ev.up:
+            return True
+
+        return False
+
     check_code = event_cache.get(keysym, None)
     if check_code is None:
         check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
@@ -150,6 +196,10 @@ def map_event(ev, keysym):
 
 def map_keyup(ev, name):
     """Returns true if the event matches the named keycode being released."""
+
+    if ev.type == renpy.display.core.EVENTNAME:
+        if ev.eventname == name and ev.up:
+            return True
 
     check_code = keyup_cache.get(name, None)
     if check_code is None:
@@ -257,7 +307,6 @@ def run_periodic(var, st):
     if isinstance(var, renpy.ui.Action):
         return var.periodic(st)
 
-
 def is_selected(clicked):
 
     if isinstance(clicked, (list, tuple)):
@@ -285,6 +334,25 @@ def is_sensitive(clicked):
     else:
         return True
 
+def alt(clicked):
+
+    if isinstance(clicked, (list, tuple)):
+        rv = [ ]
+
+        for i in clicked:
+            t = alt(i)
+            if t is not None:
+                rv.append(t)
+
+        if rv:
+            return " ".join(rv)
+        else:
+            return None
+
+    if isinstance(clicked, renpy.ui.Action):
+        return clicked.alt
+    else:
+        return None
 
 ##############################################################################
 # Special-Purpose Displayables
@@ -411,6 +479,9 @@ class SayBehavior(renpy.display.layout.Null):
 
         self.allow_dismiss = allow_dismiss
 
+    def _tts_all(self):
+        raise renpy.display.tts.TTSRoot()
+
     def set_afm_length(self, afm_length):
         self.afm_length = max(afm_length, 1)
 
@@ -488,30 +559,17 @@ class Button(renpy.display.layout.Window):
     longpress_x = None
     longpress_y = None
 
+    role_parameter = None
+
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
                  **properties):
 
-        super(Button, self).__init__(child, style=style, **properties)
-
         if isinstance(clicked, renpy.ui.Action):
             action = clicked
 
-        if action is not None:
-            clicked = action
-
-            if not is_sensitive(action):
-                clicked = None
-
-        if role is None:
-            if action:
-                if is_selected(action):
-                    role = 'selected_'
-                else:
-                    role = ''
-            else:
-                role = ''
+        super(Button, self).__init__(child, style=style, **properties)
 
         self.action = action
         self.clicked = clicked
@@ -519,8 +577,8 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.alternate = alternate
 
-        self.focusable = clicked is not None
-        self.role = role
+        self.focusable = (clicked is not None) or (action is not None)
+        self.role_parameter = role
         self.keymap = keymap
 
         self.time_policy_data = None
@@ -580,7 +638,6 @@ class Button(renpy.display.layout.Window):
 
         return rv
 
-
     def focus(self, default=False):
         super(Button, self).focus(default)
 
@@ -590,10 +647,11 @@ class Button(renpy.display.layout.Window):
             rv = run(self.hovered)
 
         self.set_transform_event(self.role + "hover")
-        self.child.set_transform_event(self.role + "hover")
+
+        if self.child is not None:
+            self.child.set_transform_event(self.role + "hover")
 
         return rv
-
 
     def unfocus(self, default=False):
         super(Button, self).unfocus(default)
@@ -605,10 +663,36 @@ class Button(renpy.display.layout.Window):
             run(self.unhovered)
 
         self.set_transform_event(self.role + "idle")
-        self.child.set_transform_event(self.role + "idle")
+
+        if self.child is not None:
+            self.child.set_transform_event(self.role + "idle")
 
 
     def per_interact(self):
+
+        if self.action is not None:
+            if is_selected(self.action):
+                role = 'selected_'
+            else:
+                role = ''
+
+            if is_sensitive(self.action):
+                clicked = self.action
+            else:
+                clicked = None
+
+        else:
+            role = ''
+            clicked = self.clicked
+
+        if self.role_parameter is not None:
+            role = self.role_parameter
+
+        if (role != self.role) or (clicked is not self.clicked):
+            renpy.display.render.invalidate(self)
+            self.role = role
+            self.clicked = clicked
+
         if not self.clicked:
             self.set_style_prefix(self.role + "insensitive_", True)
         else:
@@ -691,6 +775,11 @@ class Button(renpy.display.layout.Window):
         if root:
             super(Button, self).set_style_prefix(prefix, root)
 
+    def _tts(self):
+        return ""
+
+    def _tts_all(self):
+        return self._tts_common(alt(self.action))
 
 # Reimplementation of the TextButton widget as a Button and a Text
 # widget.
@@ -739,7 +828,7 @@ class ImageButton(Button):
             selected_activate_ = renpy.easy.displayable(selected_activate_image),
             )
 
-        super(ImageButton, self).__init__(renpy.display.layout.Null(),
+        super(ImageButton, self).__init__(None,
                                           style=style,
                                           clicked=clicked,
                                           hovered=hovered,
@@ -775,6 +864,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     caret_pos = 0
     old_caret_pos = 0
     pixel_width = None
+    default = u""
 
     def __init__(self,
                  default="",
@@ -793,7 +883,9 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
 
-        self.content = unicode(default)
+        self.default = unicode(default)
+        self.content = self.default
+
         self.length = length
 
         self.allow = allow
@@ -828,6 +920,12 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         self.update_text(self.content, self.editable)
 
+
+    def _show(self):
+        if self.default != self.content:
+            self.content = self.default
+            self.caret_pos = len(self.content)
+            self.update_text(self.content, self.editable)
 
     def update_text(self, new_content, editable, check_size=False):
 
@@ -1150,6 +1248,7 @@ class Bar(renpy.display.core.Displayable):
                 self.value = value
                 adjustment = value.get_adjustment()
                 renpy.game.interface.timeout(0)
+
             else:
                 adjustment = Adjustment(range, value, step=step, page=page, changed=changed)
 
@@ -1186,6 +1285,14 @@ class Bar(renpy.display.core.Displayable):
         self.unhovered = unhovered
 
     def per_interact(self):
+        if self.value is not None:
+            adjustment = self.value.get_adjustment()
+
+            if adjustment.value != self.value:
+                renpy.display.render.invalidate(self)
+
+            self.adjustment = adjustment
+
         self.focusable = self.adjustment.adjustable
         self.adjustment.register(self)
 
@@ -1351,6 +1458,7 @@ class Bar(renpy.display.core.Displayable):
         just_grabbed = False
 
         if not grabbed and map_event(ev, "bar_activate"):
+            renpy.display.tts.speak("activate")
             renpy.display.focus.set_grab(self)
             self.set_style_prefix("selected_hover_", True)
             just_grabbed = True
@@ -1366,9 +1474,11 @@ class Bar(renpy.display.core.Displayable):
                 decrease = "bar_left"
 
             if map_event(ev, decrease):
+                renpy.display.tts.speak("decrease")
                 value -= self.adjustment.step
 
             if map_event(ev, increase):
+                renpy.display.tts.speak("increase")
                 value += self.adjustment.step
 
             if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
@@ -1405,6 +1515,7 @@ class Bar(renpy.display.core.Displayable):
             value = range - value
 
         if grabbed and not just_grabbed and map_event(ev, "bar_deactivate"):
+            renpy.display.tts.speak("deactivate")
             self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
 
@@ -1412,6 +1523,18 @@ class Bar(renpy.display.core.Displayable):
             return self.adjustment.change(value)
 
         return None
+
+    def _tts(self):
+        return ""
+
+    def _tts_all(self):
+
+        if self.value is not None:
+            alt = self.value.alt
+        else:
+            alt = "Bar"
+
+        return self._tts_common(alt)
 
 
 class Conditional(renpy.display.layout.Container):

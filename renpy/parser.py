@@ -442,6 +442,8 @@ OPERATORS = [
 
 operator_regexp = "|".join(re.escape(i) for i in OPERATORS)
 
+word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
+
 class Lexer(object):
     """
     The lexer that is used to lex script files. This works on the idea
@@ -686,7 +688,7 @@ class Lexer(object):
             return self.word_cache
 
         self.word_cache_pos = self.pos
-        rv = self.match(ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*')
+        rv = self.match(word_regexp)
         self.word_cache = rv
         self.word_cache_newpos = self.pos
 
@@ -856,7 +858,7 @@ class Lexer(object):
         return False
 
 
-    def simple_expression(self):
+    def simple_expression(self, comma=False):
         """
         Tries to parse a simple_expression. Returns the text if it can, or
         None if it cannot.
@@ -890,7 +892,7 @@ class Lexer(object):
 
                 # If we see a dot, expect a dotted name.
                 if self.match(r'\.'):
-                    n = self.name()
+                    n = self.word()
                     if not n:
                         self.error("expecting name after dot.")
 
@@ -905,6 +907,9 @@ class Lexer(object):
             if self.match(operator_regexp):
                 continue
 
+            if comma and self.match(r','):
+                continue
+
             break
 
         text = self.text[start:self.pos].strip()
@@ -913,6 +918,15 @@ class Lexer(object):
             return None
 
         return renpy.ast.PyExpr(self.text[start:self.pos].strip(), self.filename, self.number)
+
+    def comma_expression(self):
+        """
+        One or more simple expressions, separated by commas, including an
+        optional trailing comma.
+        """
+
+        return self.simple_expression(comma=True)
+
 
     def checkpoint(self):
         """
@@ -1852,8 +1866,8 @@ def init_statement(l, loc):
     return ast.Init(loc, block, priority)
 
 
-@statement("screen")
-def screen_statement(l, loc):
+@statement("screen1")
+def screen1_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
@@ -1877,7 +1891,7 @@ def screen2_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
     # assumes we ate the "screen" keyword before it's called.
-    screen = renpy.sl2.slparser.parse_screen(l)
+    screen = renpy.sl2.slparser.parse_screen(l, loc)
 
     l.advance()
 
@@ -1887,6 +1901,18 @@ def screen2_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500)
 
     return rv
+
+# The version of screen language to use by default.
+screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "1"))
+
+@statement("screen")
+def screen_statement(l, loc):
+    if screen_language == 1:
+        return screen1_statement(l, loc)
+    elif screen_language == 2:
+        return screen2_statement(l, loc)
+    else:
+        l.error("Bad screen language version.")
 
 
 def translate_strings(init_loc, language, l):
@@ -2238,7 +2264,7 @@ def report_parse_errors():
 
     full_text = ""
 
-    f, error_fn = renpy.bootstrap.open_error_file("errors.txt", "w")
+    f, error_fn = renpy.error.open_error_file("errors.txt", "w")
     f.write(codecs.BOM_UTF8)
 
     print >>f, "I'm sorry, but errors were detected in your script. Please correct the"

@@ -92,7 +92,6 @@ if android:
 else:
     sdl = [ 'SDL' ]
 
-
 # Modules directory.
 cython(
     "_renpy",
@@ -137,16 +136,22 @@ cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 # renpy.gl
 if android:
     glew_libs = [ 'GLESv2', 'z', 'm' ]
+    gl2_only = True
+    egl = "egl_none.c"
 elif has_libglew:
     glew_libs = [ 'GLEW' ]
+    gl2_only = False
+    egl = "egl_none.c"
 else:
     glew_libs = [ 'glew32', 'opengl32' ]
+    gl2_only = False
+    egl = "egl_none.c"
 
-cython("renpy.gl.gldraw", libs=glew_libs )
+cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
 cython("renpy.gl.gltexture", libs=glew_libs)
 cython("renpy.gl.glenviron_shader", libs=glew_libs)
-cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not android)
-cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not android)
+cython("renpy.gl.glenviron_fixed", libs=glew_libs, compile_if=not gl2_only)
+cython("renpy.gl.glenviron_limited", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.glrtt_copy", libs=glew_libs)
 cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
@@ -172,7 +177,7 @@ angle_libs = [ "SDL", "EGL", "GLESv2" ]
 def anglecython(name, source=[]):
     cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ], source=source)
 
-anglecython("renpy.angle.gldraw", source=[ "anglesupport.c" ])
+anglecython("renpy.angle.gldraw", source=[ "egl_angle.c" ])
 anglecython("renpy.angle.gltexture")
 anglecython("renpy.angle.glenviron_shader")
 anglecython("renpy.angle.glrtt_fbo")

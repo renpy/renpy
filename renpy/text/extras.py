@@ -62,7 +62,7 @@ def check_text_tags(s):
     :doc: lint
 
     Checks the text tags in s for correctness. Returns an error string if there is
-    an error, or None if there is no error. 
+    an error, or None if there is no error.
     """
 
     tokens = textsupport.tokenize(unicode(s))

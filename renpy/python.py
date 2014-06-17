@@ -1416,6 +1416,24 @@ def py_eval(source, globals=None, locals=None): #@ReservedAssignment
     return eval(py_compile(source, 'eval'), globals, locals)
 
 
+def raise_at_location(e, loc):
+    """
+    Raises `e` (which must be an Exception object) at location `loc`.
+
+    `loc`
+        A location, which should be a (filename, line_number) tuple.
+    """
+
+    filename, line = loc
+
+    node = ast.parse("raise e", filename)
+    ast.increment_lineno(node, line - 1)
+    code = compile(node, filename, 'exec')
+
+    # PY3 - need to change to exec().
+    exec code in { "e" : e }
+
+
 # This was used to proxy accesses to the store. Now it's kept around to deal
 # with cases where it might have leaked into a pickle.
 class StoreProxy(object):

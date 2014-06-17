@@ -712,7 +712,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
         If true, music on the channel is stopped when the channel is muted.
 
     `tight`
-        If true, sounds will loop even when fadeout is occuring. This should
+        If true, sounds will loop even when fadeout is occurring. This should
         be set to True for a sound effects or seamless music channel, and False
         if the music fades out on its own.
 

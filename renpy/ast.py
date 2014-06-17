@@ -71,6 +71,77 @@ class ParameterInfo(object):
         # any. None if no such variable exists.
         self.extrakw = extrakw
 
+
+    def apply(self, args, kwargs):
+        """
+        Applies `args` and `kwargs` to these parameters. Returns
+        a dictionary that can be used to update an enclosing
+        scope.
+        """
+
+        values = { }
+        rv = { }
+
+        if args is None:
+            args = ()
+
+        if kwargs is None:
+            kwargs = { }
+
+
+        for name, value in zip(self.positional, args):
+            if name in values:
+                raise Exception("Parameter %s has two values." % name)
+
+            values[name] = value
+
+        extrapos = tuple(args[len(self.positional):])
+
+        for name, value in kwargs.iteritems():
+            if name in values:
+                raise Exception("Parameter %s has two values." % name)
+
+            values[name] = value
+
+        for name, default in self.parameters:
+
+            if name not in values:
+                if default is None:
+                    raise Exception("Required parameter %s has no value." % name)
+                else:
+                    rv[name] = renpy.python.py_eval(default)
+
+            else:
+                rv[name] = values[name]
+                del values[name]
+
+        # Now, values has the left-over keyword arguments, and extrapos
+        # has the left-over positional arguments.
+
+        if self.extrapos:
+            rv[self.extrapos] = extrapos
+        elif extrapos:
+            raise Exception("Too many arguments in call (expected %d, got %d)." % (len(self.positional), len(args)))
+
+        if self.extrakw:
+            rv[self.extrakw] = values
+        else:
+            if values:
+                raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+
+        return rv
+
+def apply_arguments(parameters, args, kwargs):
+
+    if parameters is None:
+        if args or kwargs:
+            raise Exception("Arguments supplied, but parameter list not present")
+        else:
+            return { }
+
+    return parameters.apply(args, kwargs)
+
+
 class ArgumentInfo(object):
 
     def __init__(self, arguments, extrapos, extrakw):
@@ -86,6 +157,29 @@ class ArgumentInfo(object):
         # An expression giving extra keyword arguments that need
         # to be supplied to this function.
         self.extrakw = extrakw
+
+    def evaluate(self, scope=None):
+        """
+        Evaluates the arguments, returning a list of arguments and a
+        dictionary of keyword arguments.
+        """
+
+        args = [ ]
+        kwargs = renpy.python.RevertableDict()
+
+        for k, v in self.arguments:
+            if k is not None:
+                kwargs[k] = renpy.python.py_eval(v, locals=scope)
+            else:
+                args.append(renpy.python.py_eval(v, locals=scope))
+
+        if self.extrapos is not None:
+            args.extend(renpy.python.py_eval(self.extrapos, locals=scope))
+
+        if self.extrakw is not None:
+            kwargs.update(renpy.python.py_eval(self.extrakw, locals=scope))
+
+        return tuple(args), kwargs
 
 
 def __newobj__(cls, *args):
@@ -384,7 +478,8 @@ class Say(Node):
         if who is not None:
             self.who = who.strip()
 
-            if re.match(r'[a-zA-Z_]\w*$', self.who):
+            # True if who is a simple enough expression we can just look it up.
+            if re.match(renpy.parser.word_regexp + "$", self.who):
                 self.who_fast = True
             else:
                 self.who_fast = False
@@ -435,7 +530,7 @@ class Say(Node):
 
             if self.who is not None:
                 if self.who_fast:
-                    who = getattr(renpy.store, self.who, None)
+                    who = renpy.python.store_dicts['store'].get(self.who, None)
                     if who is None:
                         raise Exception("Sayer '%s' is not defined." % self.who.encode("utf-8"))
                 else:
@@ -555,76 +650,6 @@ class Init(Node):
     def restructure(self, callback):
         callback(self.block)
 
-def apply_arguments(params, args, kwargs):
-    """
-    Applies arguments to parameters to update scope.
-
-    `scope`
-        A dict.
-
-    `params`
-        The parameters object.
-
-    `args`, `kwargs`
-        Positional and keyword arguments.
-    """
-
-    values = { }
-    rv = { }
-
-    if args is None:
-        args = ()
-
-    if kwargs is None:
-        kwargs = { }
-
-    if params is None:
-        if args or kwargs:
-            raise Exception("Arguments supplied, but parameter list not present")
-        else:
-            return rv
-
-    for name, value in zip(params.positional, args):
-        if name in values:
-            raise Exception("Parameter %s has two values." % name)
-
-        values[name] = value
-
-    extrapos = tuple(args[len(params.positional):])
-
-    for name, value in kwargs.iteritems():
-        if name in values:
-            raise Exception("Parameter %s has two values." % name)
-
-        values[name] = value
-
-    for name, default in params.parameters:
-
-        if name not in values:
-            if default is None:
-                raise Exception("Required parameter %s has no value." % name)
-            else:
-                rv[name] = renpy.python.py_eval(default)
-
-        else:
-            rv[name] = values[name]
-            del values[name]
-
-    # Now, values has the left-over keyword arguments, and extrapos
-    # has the left-over positional arguments.
-
-    if params.extrapos:
-        rv[params.extrapos] = extrapos
-    elif extrapos:
-        raise Exception("Too many arguments in call (expected %d, got %d)." % (len(params.positional), len(args)))
-
-    if params.extrakw:
-        rv[params.extrakw] = values
-    else:
-        if values:
-            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
-
-    return rv
 
 class Label(Node):
 
@@ -1212,34 +1237,8 @@ class Call(Node):
         renpy.game.context().abnormal = True
 
         if self.arguments:
-
-            args = [ ]
-            kwargs = renpy.python.RevertableDict()
-
-            for name, expr in self.arguments.arguments:
-
-                value = renpy.python.py_eval(expr)
-
-                if name is None:
-                    args.append(value)
-                else:
-                    if name in kwargs:
-                        raise Exception("The argument named %s appears twice." % name)
-
-                    kwargs[name] = value
-
-            if self.arguments.extrapos:
-                args.extend(renpy.python.py_eval(self.arguments.extrapos))
-
-            if self.arguments.extrakw:
-                for name, value in renpy.python.py_eval(self.arguments.extrakw).iteritems():
-                    if name in kwargs:
-                        raise Exception("The argument named %s appears twice." % name)
-
-                    kwargs[name] = value
-
-
-            renpy.store._args = tuple(args)
+            args, kwargs = self.arguments.evaluate()
+            renpy.store._args = args
             renpy.store._kwargs = kwargs
 
     def predict(self):
@@ -1667,7 +1666,8 @@ class Define(Node):
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
-        setattr(renpy.store, self.varname, value)
+        renpy.exports.const(self.varname)
+        renpy.python.store_dicts["store"][self.varname] = value
 
 
 class Screen(Node):

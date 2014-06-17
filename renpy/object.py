@@ -58,3 +58,27 @@ class Object(object):
 
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.
+
+sentinels = { }
+
+class Sentinel(object):
+    """
+    This is used to represent a sentinel object. There will be exactly one
+    sentinel object with a name existing in the system at any time.
+    """
+
+    def __new__(cls, name):
+        rv = sentinels.get(name, None)
+
+        if rv is None:
+            rv = object.__new__(cls, name)
+            sentinels[name] = rv
+
+        return rv
+
+    def __init__(self, name):
+        self.name = name
+
+    def __reduce__(self):
+        return (Sentinel, (self.name, ))
+

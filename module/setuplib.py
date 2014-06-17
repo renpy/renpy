@@ -132,6 +132,9 @@ def library(name, optional=False):
 # A list of extension objects that we use.
 extensions = [ ]
 
+# A list of macros that are defined for all modules.
+global_macros = [ ]
+
 def cmodule(name, source, libs=[], define_macros=[]):
     """
     Compiles the python module `name` from the files given in
@@ -146,7 +149,7 @@ def cmodule(name, source, libs=[], define_macros=[]):
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
         libraries=libs,
-        define_macros=define_macros,
+        define_macros=define_macros + global_macros,
         ))
 
 

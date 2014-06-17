@@ -583,7 +583,7 @@ artifacts when characters overlap. To minimize these rendering
 artifacts, ensure that the :propref:`line_leading` and
 :propref:`line_spacing` properties are large enough that lines do not
 overlap. If the bottoms of characters on the first line are clipped,
-espeically if line_spacing is negative, consider increasing
+especially if line_spacing is negative, consider increasing
 :propref:`line_overlap_split`.
 
 Horizontal artifacts are also possible when characters are kerned

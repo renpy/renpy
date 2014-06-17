@@ -43,7 +43,7 @@ except ImportError:
 version_tuple = (6, 18, 0, vc_version)
 
 # The name of this version.
-version_name = "Name TBD."
+version_name = "TBD."
 
 # A verbose string giving the version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
@@ -65,11 +65,13 @@ autoreload = False
 # to backup.
 backup_blacklist = {
     "renpy",
+    "renpy.object",
     "renpy.log",
     "renpy.bootstrap",
     "renpy.display",
     "renpy.display.pgrender",
     "renpy.display.scale",
+    "renpy.display.presplash",
     "renpy.text.ftfont",
     }
 
@@ -90,6 +92,7 @@ name_blacklist = {
     "renpy.display.render.blit_lock",
     "renpy.display.render.IDENTITY",
     "renpy.loader.auto_lock",
+    "renpy.display.screen.cprof",
     }
 
 class Backup():
@@ -113,6 +116,12 @@ class Backup():
 
         # A map from module to the set of names in that module.
         self.names = { }
+
+        try:
+            import android # @UnresolvedImport
+            return
+        except:
+            pass
 
         for m in sys.modules.values():
             if m is None:
@@ -168,6 +177,9 @@ class Backup():
         Restores the modules to a state similar to the state of the modules
         when the backup was created.
         """
+
+        if not self.names:
+            return
 
         # Remove new variables from the module.
         for mod, names in self.names.iteritems():
@@ -293,6 +305,7 @@ def import_all():
     import renpy.display.imagemap #@UnresolvedImport
     import renpy.display.predict #@UnresolvedImport
     import renpy.display.emulator # @UnresolvedImport
+    import renpy.display.tts # @UnresolvedImport
 
     import renpy.display.error #@UnresolvedImport
 
@@ -408,13 +421,13 @@ def reload_all():
     # Restore the state of all modules from backup.
     backup.restore()
 
+    renpy.display.im.reset_module()
+
     post_import()
 
     # Re-initialize the importer.
     renpy.loader.init_importer()
 
-    renpy.bootstrap.memory_profile()
-    renpy.bootstrap.find_parents(renpy.python.StoreDict)
 
 ################################################################################
 # Fix things for code analysis

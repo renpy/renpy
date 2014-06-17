@@ -29,7 +29,82 @@ import renpy # @UnusedImport
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
-constants = { 'foo.bar' }
+# The set of names that should be treated as constants.
+constants = { 'True', 'False', 'None', "config", "style" }
+
+# The set of names that should be treated as pure functions.
+pure_functions = {
+    # Python builtins.
+    "abs", "all", "any", "apply", "bin", "bool", "bytes", "callable", "chr",
+    "cmp", "dict", "divmod",
+    "filter", "float", "frozenset",
+    "getattr", "globals", "hasattr", "hash", "hex", "int", "isinstance",
+    "len", "list", "long", "map", "max", "min", "oct", "ord", "pow",
+    "range", "reduce", "repr", "round", "set", "sorted",
+    "str", "sum", "tuple", "unichr", "unicode", "vars", "zip",
+
+    # enumerator and reversed return iterators at the moment.
+
+    # minstore.py
+    "_",
+
+    # defaultstore.py
+    "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
+    "LiveTile", "Flatten", "Null", "Window", "Viewport", "DynamicDisplayable",
+    "ConditionSwitch", "ShowingSwitch", "Transform", "Animation", "Movie",
+    "Particles", "SnowBlossom", "Text", "ParameterizedText", "FontGroup",
+    "Drag", "Alpha", "Position", "Pan", "Move", "Motion", "Revolve", "Zoom",
+    "RotoZoom", "FactorZoom", "SizeZoom", "Fade", "Dissolve", "ImageDissolve",
+    "AlphaDissolve", "CropMove", "Pixellate", "OldMoveTransition",
+    "MoveTransition", "MoveFactory", "MoveIn", "MoveOut", "ZoomInOut",
+    "RevolveInOut", "MultipleTransition", "ComposeTransition", "Pause",
+    "SubTransition", "ADVSpeaker", "ADVCharacter", "Speaker", "Character",
+    "DynamicCharacter", "Fixed", "HBox", "VBox", "Grid", "AlphaBlend", "At",
+    "color",
+
+    }
+
+def const(name):
+    """
+    :doc: const
+
+    Declares a variable in the store to be constant.
+
+
+    A variable is constant if nothing can change its value, or any value
+    reached by indexing it or accessing its attributes. Variables must
+    remain constant out of define, init, and translate python blocks.
+
+    `name`
+        A string giving the name of the variable to declare constant.
+    """
+
+    constants.add(name)
+
+
+def pure(fn):
+    """
+    :doc: const
+
+    Declares a function as pure. A pure function must always return the
+    same value when it is called with the same arguments, outside of
+    define, init, and translate python blocks.
+
+    `fn`
+        The name of the function to declare pure. This may either be a string
+        containing the name of the function, or the function itself.
+
+    Returns `fn`, allowing this function to be used as a decorator.
+    """
+
+    rv = fn
+
+    if not isinstance(fn, basestring):
+        fn = fn.__name__
+
+    pure_functions.add(fn)
+
+    return rv
 
 def is_constant(node):
     """
@@ -74,12 +149,11 @@ def is_constant(node):
         elif isinstance(node, ast.Attribute):
             const, name = check_name(node.value)
 
-            if const:
-                return True, None
-            if not name:
-                return False, None
+            if name is not None:
+                name = name + "." + node.attr
 
-            name = name + "." + node.attr
+            if const:
+                return True, name
 
         else:
             return check_node(node), None
@@ -127,6 +201,28 @@ def is_constant(node):
 
         elif isinstance(node, ast.UnaryOp):
             return check_node(node.operand)
+
+        elif isinstance(node, ast.Call):
+            _const, name = check_name(node.func)
+
+            # The function must have a name, and must be declared pure.
+            if not name in pure_functions:
+                return False
+
+            # Arguments and keyword arguments must be pure.
+            if not check_nodes(node.args):
+                return False
+
+            if not check_nodes(i.value for i in node.keywords):
+                return False
+
+            if (node.starargs is not None) and not check_node(node.starargs):
+                return False
+
+            if (node.kwargs is not None) and not check_node(node.kwargs):
+                return False
+
+            return True
 
         elif isinstance(node, ast.IfExp):
             return (

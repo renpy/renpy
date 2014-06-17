@@ -25,7 +25,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 11
+    __version__ = 13
 
     def after_upgrade(self, version):
         if version < 1:
@@ -49,6 +49,8 @@ class Preferences(renpy.object.Object):
             self.afm_after_click = False
         if version < 11:
             self.show_empty_window = True
+        if version < 13:
+            self.self_voicing = False
 
     def __init__(self):
         self.fullscreen = False
@@ -101,6 +103,9 @@ class Preferences(renpy.object.Object):
 
         # The language we use for translations.
         self.language = None
+
+        # Should we self-voice?
+        self.self_voicing = False
 
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume

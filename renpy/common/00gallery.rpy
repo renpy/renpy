@@ -118,7 +118,10 @@ init -1500 python:
             return False
 
 
-    class __GalleryToggleSlideshow(Action):
+    @renpy.pure
+    class __GalleryToggleSlideshow(Action, FieldEquality):
+
+        identity_fields = [ "gallery" ]
 
         def __init__(self, gallery):
             self.gallery = gallery
@@ -130,6 +133,18 @@ init -1500 python:
         def get_selected(self):
             return self.gallery.slideshow
 
+    @renpy.pure
+    class __GalleryAction(Action, FieldEquality):
+
+        identity_fields = [ "galley" ]
+        equality_fields = [ "index" ]
+
+        def __init__(self, gallery, index):
+            self.gallery = gallery
+            self.index = index
+
+        def __call__(self):
+            renpy.invoke_in_new_context(self.gallery.show, self.index)
 
     class Gallery(object):
         """
@@ -309,7 +324,7 @@ init -1500 python:
             b = self.buttons[name]
 
             if b.check_unlock():
-                return ui.invokesinnewcontext(self.show, b.index)
+                return __GalleryAction(self, b.index)
             else:
                 return None
 

@@ -24,7 +24,8 @@ init -1600 python:
    ##########################################################################
     # Functions that set variables or fields.
 
-    class SetField(Action):
+    @renpy.pure
+    class SetField(Action, FieldEquality):
         """
          :doc: data_action
 
@@ -32,6 +33,9 @@ init -1600 python:
          `object` is the object, `field` is a string giving the name of the
          field to set, and `value` is the value to set it to.
          """
+
+        identity_fields = [ "object", "value" ]
+        equality_fields = [ "value" ]
 
         def __init__(self, object, field, value):
             self.object = object
@@ -45,7 +49,7 @@ init -1600 python:
         def get_selected(self):
             return getattr(self.object, self.field) == self.value
 
-
+    @renpy.pure
     def SetVariable(variable, value):
         """
          :doc: data_action
@@ -55,13 +59,15 @@ init -1600 python:
 
         return SetField(store, variable, value)
 
-
-    class SetDict(Action):
+    @renpy.pure
+    class SetDict(Action, FieldEquality):
         """
          :doc: data_action
 
          Causes the value of `key` in `dict` to be set to `value`.
          """
+
+        identity_fields = [ "dict", "key", "value" ]
 
         def __init__(self, dict, key, value):
             self.dict = dict
@@ -78,6 +84,7 @@ init -1600 python:
 
             return self.dict[self.key] == self.value
 
+    @renpy.pure
     def SetScreenVariable(name, value):
         """
         :doc: data_action
@@ -92,7 +99,8 @@ init -1600 python:
         else:
             return None
 
-    class ToggleField(Action):
+    @renpy.pure
+    class ToggleField(Action, FieldEquality):
         """
          :doc: data_action
 
@@ -104,6 +112,9 @@ init -1600 python:
          `false_value`
              If not None, then this is the false value we use.
          """
+
+        identity_fields = [ "object", "true_value", "false_value" ]
+        equality_fields = [ "field" ]
 
         def __init__(self, object, field, true_value=None, false_value=None):
             self.object = object
@@ -136,7 +147,7 @@ init -1600 python:
 
             return rv
 
-
+    @renpy.pure
     def ToggleVariable(variable, true_value=None, false_value=None):
         """
          :doc: data_action
@@ -151,8 +162,8 @@ init -1600 python:
 
         return ToggleField(store, variable, true_value=true_value, false_value=false_value)
 
-
-    class ToggleDict(Action):
+    @renpy.pure
+    class ToggleDict(Action, FieldEquality):
         """
          :doc: data_action
 
@@ -164,6 +175,8 @@ init -1600 python:
          `false_value`
              If not None, then this is the false value we use.
          """
+
+        identity_fields = [ "dict", "key", "true_value", "false_value" ]
 
         def __init__(self, dict, key, true_value=None, false_value=None):
             self.dict = dict
@@ -196,6 +209,7 @@ init -1600 python:
 
             return rv
 
+    @renpy.pure
     def ToggleScreenVariable(name, true_value=None, false_value=None):
         """
          :doc: data_action

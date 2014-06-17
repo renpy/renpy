@@ -59,9 +59,7 @@ def run(restart):
     if warp_label is not None:
 
         game.context().goto_label(warp_label)
-
-        if game.script.has_label('after_warp'):
-            game.context().call('after_warp')
+        game.context().call('_after_warp')
 
         renpy.config.skipping = None
 
@@ -106,6 +104,22 @@ def choose_variants():
 
         from jnius import autoclass  # @UnresolvedImport
 
+
+        # Manufacturer/Model-specific variants.
+        try:
+            Build = autoclass("android.os.Build")
+
+            manufacturer = Build.MANUFACTURER
+            model = Build.MODEL
+
+            print "Manufacturer", manufacturer, "model", model
+
+            if manufacturer == "Amazon" and model.startswith("AFT"):
+                print "Running on a Fire TV."
+                renpy.config.variants.insert(0, "firetv")
+        except:
+            pass
+
         # Are we running on an OUYA?
         try:
             OuyaFacade = autoclass("tv.ouya.console.api.OuyaFacade")
@@ -116,6 +130,7 @@ def choose_variants():
                 renpy.config.variants.insert(0, "ouya")
         except:
             pass
+
 
         # Are we running on OUYA or Google TV or something similar?
         PythonActivity = autoclass('org.renpy.android.PythonActivity')
@@ -228,6 +243,7 @@ def main():
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles() # @UndefinedVariable
+    renpy.display.screen.prepare_screens()
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
@@ -286,6 +302,9 @@ def main():
 
         # Rebuild the various style caches.
         renpy.style.build_styles() # @UndefinedVariable
+
+        # Prepare the screens.
+        renpy.display.screen.prepare_screens()
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)

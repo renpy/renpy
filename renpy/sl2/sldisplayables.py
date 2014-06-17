@@ -53,6 +53,7 @@ position_property_names = [
         "xsize",
         "ysize",
         "xysize",
+        "alt",
         ]
 
 position_properties = [ Style(i) for i in position_property_names ]
@@ -175,7 +176,7 @@ Keyword("height")
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True)
+DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True, replaces=True)
 Positional("text")
 Keyword("slow")
 Keyword("slow_done")
@@ -226,7 +227,7 @@ DisplayableParser("key", renpy.ui._key, None, 0)
 Positional("key")
 Keyword("action")
 
-DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0)
+DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=True)
 Positional("delay")
 Keyword("action")
 Keyword("repeat")
@@ -234,7 +235,7 @@ Keyword("repeat")
 # Omit behaviors.
 # Omit menu as being too high-level.
 
-DisplayableParser("input", renpy.display.behavior.Input, "input", 0)
+DisplayableParser("input", renpy.display.behavior.Input, "input", 0, replaces=True)
 Keyword("default")
 Keyword("length")
 Keyword("allow")
@@ -308,21 +309,95 @@ add(window_properties)
 add(text_position_properties)
 add(text_text_properties)
 
-for name in [ "bar", "vbar" ]:
-    DisplayableParser(name, renpy.display.behavior.Bar, name, 0)
-    Keyword("adjustment")
-    Keyword("range")
-    Keyword("value")
-    Keyword("changed")
-    Keyword("hovered")
-    Keyword("unhovered")
-    add(ui_properties)
-    add(position_properties)
-    add(bar_properties)
+def sl2bar(context=None, **properties):
+    range = 1 #@ReservedAssignment
+    value = 0
+    width = None
+    height = None
+
+    if "width" in properties:
+        width = properties.pop("width")
+    if "height" in properties:
+        height  = properties.pop("height")
+    if "range" in properties:
+        range = properties.pop("range") #@ReservedAssignment
+    if "value" in properties:
+        value = properties.pop("value")
+
+    if "style" not in properties:
+        if isinstance(value, renpy.ui.BarValue):
+            style = context.style_prefix + value.get_style()[0]
+            properties["style"] = style
+
+    return renpy.display.behavior.Bar(range, value, width, height, vertical=False, **properties)
+
+DisplayableParser("bar", sl2bar, None, 0, replaces=True, pass_context=True)
+Keyword("adjustment")
+Keyword("range")
+Keyword("value")
+Keyword("changed")
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+add(bar_properties)
+
+
+def sl2vbar(context=None, **properties):
+    range = 1 #@ReservedAssignment
+    value = 0
+    width = None
+    height = None
+
+    if "width" in properties:
+        width = properties.pop("width")
+    if "height" in properties:
+        height  = properties.pop("height")
+    if "range" in properties:
+        range = properties.pop("range") #@ReservedAssignment
+    if "value" in properties:
+        value = properties.pop("value")
+
+    if "style" not in properties:
+        if isinstance(value, renpy.ui.BarValue):
+            style = context.style_prefix + value.get_style()[1]
+            properties["style"] = style
+
+    return renpy.display.behavior.Bar(range, value, width, height, vertical=True, **properties)
+
+DisplayableParser("vbar", sl2vbar, None, 0, replaces=True, pass_context=True)
+Keyword("adjustment")
+Keyword("range")
+Keyword("value")
+Keyword("changed")
+Keyword("hovered")
+Keyword("unhovered")
+add(ui_properties)
+add(position_properties)
+add(bar_properties)
+
+
 
 # Omit autobar. (behavior)
 
-DisplayableParser("viewport", renpy.display.layout.Viewport, "viewport", 1)
+def sl2viewport(**kwargs):
+    """
+    This converts the output of renpy.ui.viewport into something that
+    sl.displayable can use.
+    """
+
+    vp = renpy.ui.viewport(**kwargs)
+    renpy.ui.stack.pop()
+
+    # Remove the side from the list of children. (It will be re-added later.)
+    d = renpy.ui.stack[-1].children.pop()
+
+    # Make the viewport the main element.
+    d._main = vp
+
+    return d
+
+DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True)
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("draggable")
@@ -362,7 +437,7 @@ add(position_properties)
 add(window_properties)
 add(button_properties)
 
-DisplayableParser("hotbar", renpy.ui._hotbar, "hotbar", 0)
+DisplayableParser("hotbar", renpy.ui._hotbar, "hotbar", 0, replaces=True)
 Positional("spot")
 Keyword("adjustment")
 Keyword("range")
@@ -385,12 +460,7 @@ Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-# TODO: On.
-# DisplayableParser("on", "ui.on", 0)
-# Positional("event")
-# Keyword("action")
-
-DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1)
+DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1, replaces=True)
 Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
@@ -406,11 +476,11 @@ Style("child")
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many)
+DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0)
+DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")
 Keyword("unhovered")
 add(ui_properties)

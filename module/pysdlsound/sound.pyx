@@ -81,7 +81,8 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
     else:
         tight = 0
 
-    PSS_play(channel, rw, name, name, fadein, tight, pause)
+    extension = name.encode("utf-8")
+    PSS_play(channel, rw, extension, name, fadein, tight, pause)
     check_error()
 
 def queue(channel, file, name, fadein=0, tight=False):
@@ -94,7 +95,8 @@ def queue(channel, file, name, fadein=0, tight=False):
     else:
         tight = 0
 
-    PSS_queue(channel, rw, name, name, fadein, tight)
+    extension = name.encode("utf-8")
+    PSS_queue(channel, rw, extension, name, fadein, tight)
     check_error()
 
 def stop(channel):

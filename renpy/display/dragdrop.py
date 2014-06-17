@@ -276,6 +276,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         self.child = renpy.easy.displayable(d)
 
+    def _clear(self):
+        self.child = None
+        renpy.display.render.redraw(self, 0)
+
     def set_child(self, d):
         """
         :doc: drag_drop method

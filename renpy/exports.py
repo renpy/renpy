@@ -35,12 +35,13 @@ from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
 from renpy.display.behavior import run as run_action, run_unhovered, run_periodic
-from renpy.display.behavior import map_event
+from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
 
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
+from renpy.display.image import image_exists
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -65,6 +66,8 @@ import renpy.audio.music as music
 
 from renpy.statements import register as register_statement
 from renpy.text.extras import check_text_tags
+
+from renpy.sl2.pyutil import const, pure
 
 import time
 import sys
@@ -104,7 +107,9 @@ def public_api():
     register_persistent
     register_statement
     check_text_tags
-
+    map_event, queue_event, clear_keymap_cache
+    const, pure
+    image_exists
 
 del public_api
 
@@ -990,7 +995,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
+def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     """
     :doc: other
 
@@ -1011,9 +1016,17 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True):
         as it's hard to distinguish a hard pause from a crashing game.
 
     `checkpoint`
-        If true, a checkpoint is placed so rollback can occur.
+        If true, a checkpoint will be set, and players will be able to roll
+        back to this statement. If false, no checkpoint will be set. If None,
+        a checkpoint will only be set if display is set.
     """
 
+
+    if checkpoint is None:
+        if delay is not None:
+            checkpoint = False
+        else:
+            checkpoint = True
 
     if renpy.config.skipping == "fast":
         return False
@@ -2068,6 +2081,68 @@ def cache_unpin(*args):
     renpy.store._cache_pin_set = renpy.store._cache_pin_set - new_pins
 
 
+def start_predict(*args):
+    """
+    :doc: cache
+
+    This function takes one or more displayables as arguments. It causes
+    Ren'Py to predict those displayables during every interaction until
+    the displayables are removed by :func:`renpy.stop_predict`.
+    """
+
+    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+
+    for d in args:
+        d = renpy.easy.displayable(d)
+        new_predict.add(d)
+
+    renpy.store._predict_set = new_predict
+
+
+def stop_predict(*args):
+    """
+    :doc: cache
+
+    This function takes one or more displayables as arguments. It causes
+    Ren'Py to stop predicting those displayables during every interaction.
+    """
+
+    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+
+    for d in args:
+        d = renpy.easy.displayable(d)
+        new_predict.discard(d)
+
+    renpy.store._predict_set = new_predict
+
+
+def start_predict_screen(_screen_name, *args, **kwargs):
+
+    """
+    :doc: cache
+
+    Causes Ren'Py to start predicting the screen named `_screen_name`
+    will be shown with the given arguments. This replaces  any previous prediction
+    of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
+    """
+
+    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict[_screen_name] = (args, kwargs)
+    renpy.store._predict_screen = new_predict
+
+def stop_predict_screen(name):
+    """
+    :doc: cache
+
+    Causes Ren'Py to stop predicting the screen named `name` will be shown.
+    """
+
+    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict.pop(name)
+    renpy.store._predict_screen = new_predict
+
+
+
 def call_screen(_screen_name, *args, **kwargs):
     """
     :doc: screens
@@ -2447,7 +2522,7 @@ def set_autoreload(autoreload):
     :doc: other
 
     Sets the autoreload flag, which determines if the game will be
-    automatically reloated after file changes. Autoreload will not be
+    automatically reloaded after file changes. Autoreload will not be
     fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
     """
 

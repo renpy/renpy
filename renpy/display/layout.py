@@ -119,6 +119,13 @@ class Container(renpy.display.core.Displayable):
         self.child = child
         self.offsets = self._list_type()
 
+    def _clear(self):
+        self.child = None
+        self.children = self._list_type()
+        self.offsets = self._list_type()
+
+        renpy.display.render.redraw(self, 0)
+
     def remove(self, d):
         """
         Removes the first instance of child from this container. May
@@ -199,7 +206,7 @@ class Container(renpy.display.core.Displayable):
 
 def LiveComposite(size, *args, **properties):
     """
-    :args: disp_imagelike
+    :doc: disp_imagelike
 
     This creates a new displayable of `size`, by compositing other
     displayables. `size` is a (width, height) tuple.
@@ -441,6 +448,70 @@ class MultiBox(Container):
         # The scene list for this widget.
         self.scene_list = None
 
+    def _clear(self):
+        super(MultiBox, self)._clear()
+
+        self.start_times = [ ]
+        self.anim_times = [ ]
+        self.layers = None
+        self.scene_list = None
+
+    def _in_old_scene(self):
+
+        if self.layer_name is not None:
+            scene_list = [ ]
+
+            changed = False
+
+            for old_sle in self.scene_list:
+                new_sle = old_sle.copy()
+
+                d = new_sle.displayable._in_old_scene()
+
+                if d is not new_sle.displayable:
+                    new_sle.displayable = d
+                    changed = True
+
+                scene_list.append(new_sle)
+
+            if not changed:
+                return self
+
+            rv = MultiBox(layout=self.default_layout)
+            rv.layer_name = self.layer_name
+            rv.append_scene_list(scene_list)
+
+        elif self.layers:
+            rv = MultiBox(layout=self.default_layout)
+            rv.layers = { }
+
+            changed = False
+
+            for layer in renpy.config.layers:
+                old_d = self.layers[layer]
+                new_d = old_d._in_old_scene()
+
+                if new_d is not old_d:
+                    changed = True
+
+                rv.add(new_d)
+                rv.layers[layer] = new_d
+
+            if not changed:
+                return self
+
+        else:
+            return self
+
+        if self.offsets:
+            rv.offsets = list(self.offsets)
+        if self.start_times:
+            rv.start_times = list(self.start_times)
+        if self.anim_times:
+            rv.anim_times = list(self.anim_times)
+
+        return rv
+
     def __unicode__(self):
         layout = self.style.box_layout
 
@@ -538,10 +609,7 @@ class MultiBox(Container):
                 if rv is None:
 
                     if self.style.fit_first:
-                        sw, sh = surf.get_size()
-                        width = min(width, sw)
-                        height = min(height, sh)
-
+                        width, height = surf.get_size()
 
                     rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
@@ -921,7 +989,8 @@ class Window(Container):
 
             style.foreground.place(rv, left_margin, top_margin, bw, bh, back, main=False)
 
-        self.offsets = [ offsets ]
+        if self.child:
+            self.offsets = [ offsets ]
 
         self.window_size = width, height # W0201
 
@@ -1220,6 +1289,15 @@ class Viewport(Container):
             self.edge_yspeed = 0
             self.edge_last_st = None
 
+        if version < 4:
+            self.xadjustment_param = None
+            self.yadjustment_param = None
+            self.offsets_param = (None, None)
+            self.set_adjustments_param = True
+            self.xinitial_param = None
+            self.yinitial_param = None
+
+
     def __init__(self,
                  child=None,
                  child_size=(None, None),
@@ -1240,16 +1318,14 @@ class Viewport(Container):
         if child is not None:
             self.add(child)
 
-        if xadjustment is None:
-            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
-        else:
-            self.xadjustment = xadjustment
+        self.xadjustment_param = xadjustment
+        self.yadjustment_param = yadjustment
+        self.offsets_param = offsets
+        self.set_adjustments_param = set_adjustments
+        self.xinitial_param = xinitial
+        self.yinitial_param = yinitial
 
-        if yadjustment is None:
-            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
-        else:
-            self.yadjustment = yadjustment
-
+        self._show()
 
         if isinstance(replaces, Viewport):
             self.xadjustment.range = replaces.xadjustment.range
@@ -1260,17 +1336,7 @@ class Viewport(Container):
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
         else:
-            self.xoffset = offsets[0] if (offsets[0] is not None) else xinitial
-            self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
             self.drag_position = None
-
-        if self.xadjustment.adjustable is None:
-            self.xadjustment.adjustable = True
-
-        if self.yadjustment.adjustable is None:
-            self.yadjustment.adjustable = True
-
-        self.set_adjustments = set_adjustments
 
         self.child_width, self.child_height = child_size
 
@@ -1306,6 +1372,28 @@ class Viewport(Container):
             self.edge_speed = 0
             self.edge_function = edgescroll_proportional
 
+    def _show(self):
+        if self.xadjustment_param is None:
+            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.xadjustment = self.xadjustment_param
+
+        if self.yadjustment_param is None:
+            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.yadjustment = self.yadjustment_param
+
+        if self.xadjustment.adjustable is None:
+            self.xadjustment.adjustable = True
+
+        if self.yadjustment.adjustable is None:
+            self.yadjustment.adjustable = True
+
+        self.set_adjustments = self.set_adjustments_param
+
+        offsets = self.offsets_param
+        self.xoffset = offsets[0] if (offsets[0] is not None) else self.xinitial_param
+        self.yoffset = offsets[1] if (offsets[1] is not None) else self.yinitial_param
 
     def per_interact(self):
         self.xadjustment.register(self)
@@ -1515,6 +1603,10 @@ class Side(Container):
                 raise Exception("Side used with impossible position '%s'." % (i,))
 
         self.positions = tuple(positions)
+        self.sized = False
+
+    def _clear(self):
+        super(Side, self)._clear()
         self.sized = False
 
     def render(self, width, height, st, at):

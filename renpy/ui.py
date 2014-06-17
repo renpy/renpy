@@ -40,6 +40,9 @@ class Action(renpy.object.Object):
     action should be displayed insensitive or disabled.
     """
 
+    # Alt text.
+    alt = None
+
     def get_sensitive(self):
         return True
 
@@ -59,6 +62,9 @@ class BarValue(renpy.object.Object):
     """
     This can be passed to the value method of bar and hotbar.
     """
+
+    # Alt text.
+    alt = "Bar"
 
     def replaces(self, other):
         return
@@ -180,12 +186,12 @@ class ChildOrFixed(Addable):
         stack.pop()
 
         if len(self.queue) == 1:
-            add(self.queue[0])
+            implicit_add(self.queue[0])
         else:
             fixed()
 
             for i in self.queue:
-                add(i)
+                implicit_add(i)
 
             close()
 
@@ -269,7 +275,7 @@ def at(transform):
     """
     :doc: ui
 
-    Specifieds a transform that is applied to the next displayable to
+    Specifies a transform that is applied to the next displayable to
     be created. This is largely obsolete, as all UI functions now take
     an `at` argument.
     """
@@ -331,7 +337,7 @@ def context_enter(w):
 def context_exit(w):
     close(w)
 
-NoStyleGroupGiven = object()
+NoStyleGroupGiven = renpy.object.Sentinel("NoStyleGroupGiven")
 
 def style_group_style(s, style_group):
     """
@@ -393,7 +399,7 @@ class Wrapper(renpy.object.Object):
         id = kwargs.pop("id", None) #@ReservedAssignment
 
         at_list = kwargs.pop("at", [ ])
-        if not isinstance(at_list, list):
+        if not isinstance(at_list, (list, tuple)):
             at_list = [ at_list ]
 
         style_group = kwargs.pop("style_group", NoStyleGroupGiven)
@@ -474,10 +480,12 @@ class Wrapper(renpy.object.Object):
         elif self.many:
             stack.append(Many(w, self.imagemap, style_group))
 
+        main = w._main or w
+
         # If we have an id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
         if screen and id is not None:
-            screen.widgets[id] = w
+            screen.widgets[id] = main
 
             if isinstance(atw, renpy.display.motion.Transform):
                 screen.transforms[id] = atw
@@ -493,7 +501,7 @@ class Wrapper(renpy.object.Object):
         # Clear out the add_tag.
         add_tag = None
 
-        return w
+        return main
 
 ##############################################################################
 # Button support functions
@@ -542,6 +550,16 @@ def _add(d, **kwargs):
     return rv
 
 add = Wrapper(_add)
+
+def _implicit_add(d):
+    """
+    A faster version of add to use when we know `d` is a displayable and isn't
+    transformed.
+    """
+
+    return d
+
+implicit_add = Wrapper(_implicit_add)
 
 def _image(im, **properties):
     d = renpy.display.im.image(im, loose=True, **properties)
@@ -773,7 +791,7 @@ def imagemap_compat(ground,
                     hotspots,
                     unselected=None,
                     style='imagemap',
-                    button_style='imagemap_button',
+                    button_style='hotspot',
                     **properties):
 
     if isinstance(button_style, basestring):
@@ -890,11 +908,12 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
         text_style = renpy.style.get_text_style(style, style_group_style('button_text', NoStyleGroupGiven)) # @UndefinedVariable
 
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
-    rv.add(renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs))
+    text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
+    rv.add(text)
+    rv._main = text
     return rv
 
-def textbutton(label, **kwargs):
-    return add(_textbutton(label, **kwargs))
+textbutton = Wrapper(_textbutton)
 
 def _label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
@@ -914,11 +933,12 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
         text_style = renpy.style.get_text_style(style, style_group_style('label_text', NoStyleGroupGiven)) # @UndefinedVariable
 
     rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
-    rv.add(renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs))
+    text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
+    rv.add(text)
+    rv._main = text
     return rv
 
-def label(label, **kwargs):
-    return add(_label(label, **kwargs))
+label = Wrapper(_label)
 
 adjustment = renpy.display.behavior.Adjustment
 
@@ -1117,6 +1137,10 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     if ground:
         rv.add(renpy.easy.displayable(ground))
 
+    box = renpy.display.layout.MultiBox(layout='fixed')
+    rv.add(box)
+    rv._main = box
+
     return rv
 
 imagemap = Wrapper(_imagemap, imagemap=True, style='imagemap')
@@ -1269,11 +1293,7 @@ def on(event, action=[], id=None): #@ReservedAssignment
     if renpy.display.screen.current_screen().current_transform_event != event:
         return
 
-    if isinstance(action, (list, tuple)):
-        for i in action:
-            i()
-    else:
-        action()
+    renpy.display.behavior.run(action)
 
 
 ##############################################################################

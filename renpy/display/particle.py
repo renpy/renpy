@@ -69,7 +69,7 @@ class Sprite(renpy.object.Object):
 
     `events`
         If True, then events are passed to child. If False, the default,
-        the children igore events (and hence don't spend time processing
+        the children ignore events (and hence don't spend time processing
         them).
 
     The methods of a Sprite object are:

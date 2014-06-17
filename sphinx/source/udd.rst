@@ -141,7 +141,7 @@ class, we'll present them with the `self` parameter.
         arguments to the renpy.Displayable constructor, using code
         like::
 
-            super(MyDisplayable, self).__init__(properties)
+            super(MyDisplayable, self).__init__(**properties)
 
     .. method:: render(self, width, height, st, at)
 

@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # game/new_project.rpy:22
     old "Choose Project Template"
@@ -27,3 +27,8 @@
     # game/new_project.rpy:70
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] ya existe. Por favor elige un nombre diferente para el proyecto."
+
+    # game/new_project.rpy:71
+    old "The projects directory could not be set. Giving up."
+    new "No se puede establecer el directorio de proyectos. Abandonando."
+

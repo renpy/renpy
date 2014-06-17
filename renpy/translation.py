@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
+import renpy.display
 
 import hashlib
 import re
@@ -481,6 +481,9 @@ def change_language(language):
     # Rebuild the styles.
     renpy.style.rebuild() # @UndefinedVariable
 
+    # Re-prepare the screens.
+    renpy.display.screen.prepare_screens()
+
     # Restart the interaction.
     renpy.exports.restart_interaction()
 
@@ -521,9 +524,7 @@ def known_languages():
 ################################################################################
 
 STRING_RE = r"""(?x)
-\n
-|\#[^\n]*
-|\b__?\s*\(\s*[uU]?(
+\b__?\s*\(\s*[uU]?(
 \"\"\"(?:\\.|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|[^\\"])*"
@@ -544,19 +545,16 @@ def scan_strings(filename):
 
     line = 1
 
-    with open(filename, "r") as f:
-        data = f.read().decode("utf-8")
+    for _filename, lineno, text in renpy.parser.list_logical_lines(filename):
 
-    for m in re.finditer(STRING_RE, data):
+        for m in re.finditer(STRING_RE, text):
 
-        s = m.group(1)
-        if s is not None:
-            s = s.strip()
-            s = "u" + s
-            s = eval(s)
-            yield line, s
-
-        line += m.group(0).count("\n")
+            s = m.group(1)
+            if s is not None:
+                s = s.strip()
+                s = "u" + s
+                s = eval(s)
+                yield lineno, s
 
 
 def open_tl_file(fn):

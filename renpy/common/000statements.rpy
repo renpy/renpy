@@ -219,9 +219,12 @@ python early hide:
 
         fadeout = eval(p["fadeout"]) or 0
 
+        loop = p.get("loop", False)
+
         renpy.sound.play(eval(p["file"]),
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
+                         loop=loop,
                          channel=channel)
 
     def lint_play_sound(p, lint_play_music=lint_play_music):
@@ -238,13 +241,15 @@ python early hide:
         else:
             channel = "sound"
 
-        renpy.sound.queue(eval(p["file"]), channel=channel)
+        loop = p.get("loop", False)
+
+        renpy.sound.queue(eval(p["file"]), channel=channel, loop=loop)
 
 
     renpy.register_statement('queue sound',
                               parse=parse_queue_music,
                               execute=execute_queue_sound,
-                              lint=lint_play_music)
+                              lint=lint_play_sound)
 
     def execute_stop_sound(p):
         if p["channel"] is not None:
@@ -377,6 +382,9 @@ init -1200 python:
 
 python early hide:
 
+    # Should we predict screens?
+    config.predict_screen_statements = True
+
     def parse_show_call_screen(l):
 
         # Parse a name.
@@ -384,9 +392,15 @@ python early hide:
 
         # Parse the list of arguments.
         arguments = renpy.parser.parse_arguments(l)
+
+        if l.keyword('nopredict'):
+            predict = False
+        else:
+            predict = True
+
         l.expect_eol()
 
-        return dict(name=name, arguments=arguments)
+        return dict(name=name, arguments=arguments, predict=predict)
 
     def parse_hide_screen(l):
         name = l.require(l.name)
@@ -396,53 +410,49 @@ python early hide:
         return dict(name=name)
 
     def predict_screen(p):
-        if not p["arguments"]:
-            renpy.predict_screen(p["arguments"])
+
+        if not config.predict_screen_statements:
+            return
+
+        predict = p.get("predict", False)
+
+        if not predict:
+            return
+
+        name = p["name"]
+        a = p["arguments"]
+
+        if a is not None:
+            args, kwargs = a.evaluate()
+        else:
+            args = [ ]
+            kwargs = { }
+
+        renpy.predict_screen(name, *args, **kwargs)
 
     def execute_show_screen(p):
 
         name = p["name"]
         a = p["arguments"]
 
-        args = [ ]
-        kwargs = { }
-
         if a is not None:
-
-            for k, v in a.arguments:
-                if k is not None:
-                    kwargs[k] = eval(v)
-                else:
-                    args.append(eval(v))
-
-            if a.extrapos is not None:
-                args.extend(eval(a.extrapos))
-
-            if a.extrakw is not None:
-                kwargs.update(eval(a.extrakw))
+            args, kwargs = a.evaluate()
+        else:
+            args = [ ]
+            kwargs = { }
 
         renpy.show_screen(name, *args, **kwargs)
 
     def execute_call_screen(p):
+
         name = p["name"]
         a = p["arguments"]
 
-        args = [ ]
-        kwargs = { }
-
         if a is not None:
-
-            for k, v in a.arguments:
-                if k is not None:
-                    kwargs[k] = eval(v)
-                else:
-                    args.append(eval(v))
-
-            if a.extrapos is not None:
-                args.extend(eval(a.extrapos))
-
-            if a.extrakw is not None:
-                kwargs.update(eval(a.extrakw))
+            args, kwargs = a.evaluate()
+        else:
+            args = [ ]
+            kwargs = { }
 
         store._return = renpy.call_screen(name, *args, **kwargs)
 

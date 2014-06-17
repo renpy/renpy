@@ -139,7 +139,7 @@ typedef GLfloat GLdouble;
 #define glDeleteShader glDeleteObjectARB
 #undef glDeleteProgram
 #define glDeleteProgram glDeleteObjectARB
-#undef glGetShaderiv 
+#undef glGetShaderiv
 #define glGetShaderiv glGetObjectParameterivARB
 #undef glGetProgramiv
 #define glGetProgramiv glGetObjectParameterivARB

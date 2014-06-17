@@ -124,7 +124,8 @@ init -1500 python:
 
         return _last_voice_play is not None
 
-    class SetVoiceMute(Action):
+    @renpy.pure
+    class SetVoiceMute(Action, DictEquality):
         """
         :doc: voice_action
 
@@ -151,7 +152,8 @@ init -1500 python:
 
             renpy.restart_interaction()
 
-    class ToggleVoiceMute(Action):
+    @renpy.pure
+    class ToggleVoiceMute(Action, DictEquality):
         """
         :doc: voice_action
 
@@ -181,7 +183,8 @@ init -1500 python:
 
             renpy.restart_interaction()
 
-    class VoiceReplay(Action):
+    @renpy.pure
+    class VoiceReplay(Action, DictEquality):
         """
         :doc: voice_action
 

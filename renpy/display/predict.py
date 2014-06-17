@@ -88,13 +88,33 @@ def prediction_coroutine(root_widget):
     # Start the prediction thread (to clean out the cache).
     renpy.display.im.cache.start_prediction()
 
+
     # Set up the image prediction method.
     global image
     image = renpy.display.im.cache.preload_image
 
+    predicting = True
+
+    # Predict displayables given to renpy.start_predict.
+    for d in renpy.store._predict_set:
+        displayable(d)
+
+        predicting = False
+        yield True
+        predicting = True
+
+    # Predict screens given with renpy.start_predict_screen.
+    for name, value in renpy.store._predict_screen.items():
+        args, kwargs = value
+
+        renpy.display.screen.predict_screen(name, *args, **kwargs)
+
+        predicting = False
+        yield True
+        predicting = True
+
     # Predict images that are going to be reached in the next few
     # clicks.
-    predicting = True
 
     for _i in renpy.game.context().predict():
 
@@ -129,6 +149,7 @@ def prediction_coroutine(root_widget):
     # an action.
     predicting = True
 
+
     try:
         root_widget.visit_all(lambda i : i.predict_one_action())
     except:
@@ -136,10 +157,17 @@ def prediction_coroutine(root_widget):
 
     predicting = False
 
+    predicted_screens = set()
+
     # Predict the screens themselves.
     for name, args, kwargs in screens:
         while not (yield True):
             continue
+
+        if name in predicted_screens:
+            continue
+
+        predicted_screens.add(name)
 
         predicting = True
 

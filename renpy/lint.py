@@ -429,9 +429,9 @@ def check_label(node):
 
 
 def check_styles():
-    for name, s in renpy.style.styles.iteritems(): # @UndefinedVariable
-        name = "style." + name[0]
-        for i in name[1:]:
+    for full_name, s in renpy.style.styles.iteritems(): # @UndefinedVariable
+        name = "style." + full_name[0]
+        for i in full_name[1:]:
             name += "[{!r}]".format(i)
 
         check_style("Style " + name, s)
@@ -502,7 +502,7 @@ def lint():
     other checks.
     """
 
-    ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.")
+    ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
 
     args = ap.parse_args()

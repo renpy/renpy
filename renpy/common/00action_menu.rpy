@@ -27,7 +27,8 @@ init -1500 python:
 
     config.show_menu_enable = { "save" : "(not main_menu) and (not _in_replay)" }
 
-    class ShowMenu(Action):
+    @renpy.pure
+    class ShowMenu(Action, DictEquality):
         """
          :doc: menu_action
 
@@ -51,7 +52,7 @@ init -1500 python:
          ShowMenu without an argument will enter the game menu at the
          default screen, taken from _game_menu_screen.
 
-         Extra arguments and kewyord arguments are passed on to the screen
+         Extra arguments and keyword arguments are passed on to the screen
          """
 
         def __init__(self, screen=None, *args, **kwargs):
@@ -107,8 +108,8 @@ init -1500 python:
             else:
                 return True
 
-
-    class Start(Action):
+    @renpy.pure
+    class Start(Action, DictEquality):
         """
          :doc: menu_action
 
@@ -127,7 +128,8 @@ init -1500 python:
             renpy.jump_out_of_context(self.label)
 
 
-    class MainMenu(Action):
+    @renpy.pure
+    class MainMenu(Action, DictEquality):
         """
          :doc: menu_action
 
@@ -156,8 +158,8 @@ init -1500 python:
         def get_sensitive(self):
             return not renpy.context()._main_menu
 
-
-    class Quit(Action):
+    @renpy.pure
+    class Quit(Action, DictEquality):
         """
          :doc: menu_action
 
@@ -179,8 +181,8 @@ init -1500 python:
             else:
                 renpy.jump("_quit")
 
-
-    class Skip(Action):
+    @renpy.pure
+    class Skip(Action, DictEquality):
         """
          :doc: other_action
 
@@ -255,15 +257,15 @@ init -1500 python:
 
             return False
 
-
-    class Help(Action):
+    @renpy.pure
+    class Help(Action, DictEquality):
         """
          :doc: other_action
 
          Displays help.
 
          `help`
-              If this is a string giving a label in the programe, then
+              If this is a string giving a label in the program, then
               that label is called in a new context when the button is
               chosen. Otherwise, it should be a string giving a file
               that is opened in a web browser. If None, the value of

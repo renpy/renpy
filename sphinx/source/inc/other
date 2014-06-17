@@ -20,6 +20,11 @@
     
     Resets the game runtime counter.
 
+.. function:: renpy.clear_keymap_cache()
+    
+    Clears the keymap cache. This allows changes to :var:`config.keymap` to
+    take effect without restarting Ren'Py.
+
 .. function:: renpy.context_dynamic(*vars)
     
     This can be given one or more variable names as arguments. This makes
@@ -63,6 +68,10 @@
     `transition`
         If given, the transition to run, or None to not run a transition.
         False uses :var:`config.end_game_transition`.
+
+.. function:: renpy.get_autoreload()
+    
+    Gets the autoreload flag.
 
 .. function:: renpy.get_game_runtime()
     
@@ -192,7 +201,7 @@
     Only one notification is displayed at a time. If a second notification
     is displayed, the first notification is replaced.
 
-.. function:: renpy.pause(delay=None, music=None, with_none=None, hard=False, checkpoint=True)
+.. function:: renpy.pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None)
     
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -211,7 +220,9 @@
         as it's hard to distinguish a hard pause from a crashing game.
     
     `checkpoint`
-        If true, a checkpoint is placed so rollback can occur.
+        If true, a checkpoint will be set, and players will be able to roll
+        back to this statement. If false, no checkpoint will be set. If None,
+        a checkpoint will only be set if display is set.
 
 .. function:: renpy.pop_call()
     
@@ -229,6 +240,22 @@
     This can be used if a label that is called decides not to return
     to its caller.
 
+.. function:: renpy.queue_event(name, up=False)
+    
+    Queues an event with the given name. `Name` should be one of the event
+    names in :var:`config.keymap`.
+    
+    `up`
+        This should be false when the event begins (for example, when a keyboard
+        button is pressed.) It should be true when the event begins (when the
+        button is released.)
+    
+    The event is queued at the time this function is called. This function will
+    not work to replace an event with another - doing so will change event order.
+    (Use :var:`config.keymap` instead.)
+    
+    This method is threadsafe.
+
 .. function:: renpy.quit(relaunch=False, status=0)
     
     This causes Ren'Py to exit entirely.
@@ -244,6 +271,11 @@
     
     Triggers a quit event, as if the player clicked the quit button in the
     window chrome.
+
+.. function:: renpy.reload_script()
+    
+    Causes Ren'Py to save the game, reload the script, and then load the
+    save.
 
 .. function:: renpy.restart_interaction()
     
@@ -270,6 +302,12 @@
     ``nvl_clear``
         Is true if an ``nvl clear`` statement will execute before the
         next interaction.
+
+.. function:: renpy.set_autoreload(autoreload)
+    
+    Sets the autoreload flag, which determines if the game will be
+    automatically reloaded after file changes. Autoreload will not be
+    fully enabled until the game is reloaded with :func:`renpy.utter_restart`.
 
 .. function:: renpy.set_mouse_pos(x, y, duration=0)
     

@@ -10,7 +10,7 @@ transformations such as rotation, zoom, and alpha-modification. These can be
 changed over time, and in response to events.
 
 The Python equivalent of an ATL transform is the :func:`Transform`
-displayable. There is no way to create an ATL transform programatically.
+displayable. There is no way to create an ATL transform programmatically.
 
 Ren'Py Script Statements
 ========================
@@ -411,7 +411,7 @@ statements are greedily grouped into a single statement.
 
 The on statement is used to handle events. When an event is handled, handling
 of any other event ends and handing of the new event immediately starts. When
-an event handler ends without another event occuring, the ``default`` event
+an event handler ends without another event occurring, the ``default`` event
 is produced (unless were already handing the ``default`` event).
 
 Execution of the on statement will never naturally end. (But it can be ended
@@ -695,7 +695,7 @@ both horizontal and vertical positions.
     If None, no rotation occurs. Otherwise, the image will be rotated
     by this many degrees clockwise. Rotating the displayable causes it
     to be resized, according to the setting of rotate_pad, below. This
-    can cause positioning to change if Add 'xanchor' to dictionary and yanchor are not
+    can cause positioning to change if xanchor and yanchor are not
     0.5.
 
 .. transform-property:: rotate_pad
@@ -861,6 +861,15 @@ both horizontal and vertical positions.
 
     If this transform is being used as a transition, then this is the
     duration of the transition.
+
+.. transform-property:: events
+
+    :type: boolean
+    :default: True
+
+    If true, events are passed to the child of this transform. If false,
+    events are blocked. (This can be used in ATL transitions to prevent
+    events from reaching the old_widget.)
 
 These properties are applied in the following order:
 

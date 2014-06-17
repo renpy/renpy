@@ -285,6 +285,27 @@ cdef class StyleCore:
         self.name = name
         self.help = help
 
+    def __richcmp__(self, o, int op):
+        if self is o:
+            eq = True
+        elif type(self) != type(o):
+            eq = False
+        elif self.parent != o.parent:
+            eq = False
+        elif self.name != o.name:
+            eq = False
+        elif self.properties != o.properties:
+            eq = False
+        else:
+            eq = True
+
+        if op == 2: # ==
+            return eq
+        elif op == 3: # !=
+            return not eq
+        else:
+            return NotImplemented
+
     def __dealloc__(self):
         unbuild_style(self)
 

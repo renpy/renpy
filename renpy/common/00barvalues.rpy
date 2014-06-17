@@ -21,7 +21,8 @@
 
 init -1500 python:
 
-    class StaticValue(BarValue):
+    @renpy.pure
+    class StaticValue(BarValue, DictEquality):
         """
          :doc: value
 
@@ -41,7 +42,8 @@ init -1500 python:
         def get_adjustment(self):
             return ui.adjustment(value=self.value, range=self.range, adjustable=False)
 
-    class AnimatedValue(BarValue):
+    @renpy.pure
+    class AnimatedValue(BarValue, DictEquality):
         """
          :doc: value
 
@@ -110,7 +112,92 @@ init -1500 python:
                 self.old_value = other.value
                 self.start_time = None
 
-    class FieldValue(BarValue):
+    @renpy.pure
+    class DictValue(BarValue, FieldEquality):
+        """
+         :doc: value
+
+         A value that allows the user to adjust the value of a key
+         in a dict.
+
+         `dict`
+             The dict.
+         `key`
+             The key.
+         `range`
+             The range to adjust over.
+         `max_is_zero`
+             If True, then when the value of a key is zero, the value of the
+             bar will be range, and all other values will be shifted down by 1.
+             This works both ways - when the bar is set to the maximum, the
+             value of a key is set to 0.
+
+         `style`
+             The styles of the bar created.
+         `offset`
+             An offset to add to the value.
+         `step`
+             The amount to change the bar by. If None, defaults to 1/10th of
+             the bar.
+         """
+
+        offset = 0
+
+        identity_fields = [ 'dict' ]
+        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step']
+
+        def __init__(self, dict, key, range, max_is_zero=False, style="bar", offset=0, step=None):
+            self.dict = dict
+            self.key = key
+            self.range = range
+            self.max_is_zero = max_is_zero
+            self.style = style
+            self.offset = offset
+
+            if step is None:
+                if isinstance(range, float):
+                    step = range / 10.0
+                else:
+                    step = max(range / 10, 1)
+
+            self.step = step
+
+        def changed(self, value):
+
+            if self.max_is_zero:
+                if value == self.range:
+                    value = 0
+                else:
+                    value = value + 1
+
+            value += self.offset
+
+            self.dict[self.key] = value
+            renpy.restart_interaction()
+
+        def get_adjustment(self):
+
+            value = self.dict[self.key]
+
+            value -= self.offset
+
+            if self.max_is_zero:
+                if value == 0:
+                    value = self.range
+                else:
+                    value = value - 1
+
+            return ui.adjustment(
+                range=self.range,
+                value=value,
+                changed=self.changed,
+                step=self.step)
+
+        def get_style(self):
+            return self.style, "v" + self.style
+
+    @renpy.pure
+    class FieldValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -140,6 +227,9 @@ init -1500 python:
          """
 
         offset = 0
+
+        identity_fields = [ 'object' ]
+        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step']
 
         def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None):
             self.object = object
@@ -191,6 +281,7 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
+    @renpy.pure
     def VariableValue(variable, range, max_is_zero=False, style="bar", offset=0, step=None):
         """
          :doc: value
@@ -217,7 +308,8 @@ init -1500 python:
 
         return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step)
 
-    class MixerValue(BarValue):
+    @renpy.pure
+    class MixerValue(BarValue, DictEquality):
         """
          :doc: value
 
@@ -234,6 +326,7 @@ init -1500 python:
 
         def set_mixer(self, value):
             _preferences.set_volume(self.mixer, value)
+            renpy.restart_interaction()
 
         def get_adjustment(self):
             return ui.adjustment(
@@ -244,7 +337,7 @@ init -1500 python:
         def get_style(self):
             return "slider", "vslider"
 
-    class XScrollValue(BarValue):
+    class XScrollValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -253,11 +346,14 @@ init -1500 python:
          before a bar with this value is.
          """
 
+        equality_fields = [ 'viewport' ]
+
         def __init__(self, viewport):
             self.viewport = viewport
+            self.screen = renpy.current_screen()
 
         def get_adjustment(self):
-            w = renpy.get_widget(None, self.viewport)
+            w = renpy.get_widget(self.screen, self.viewport)
             if not isinstance(w, Viewport):
                 raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 
@@ -266,7 +362,7 @@ init -1500 python:
         def get_style(self):
             return "scrollbar", "vscrollbar"
 
-    class YScrollValue(BarValue):
+    class YScrollValue(BarValue, FieldEquality):
         """
          :doc: value
 
@@ -275,11 +371,14 @@ init -1500 python:
          before a bar with this value is.
          """
 
+        equality_fields = [ 'viewport' ]
+
         def __init__(self, viewport):
             self.viewport = viewport
+            self.screen = renpy.current_screen()
 
         def get_adjustment(self):
-            w = renpy.get_widget(None, self.viewport)
+            w = renpy.get_widget(self.screen, self.viewport)
             if not isinstance(w, Viewport):
                 raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 

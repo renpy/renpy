@@ -2,6 +2,107 @@
 Full Changelog
 ==============
 
+Ren'Py 6.17.6
+=============
+
+This release adds a German translation of the launcher, contributed by
+Marcel.
+
+This release adds a Korean translation of the launcher and template game,
+contributed by Baekansi.
+
+This release includes a workaround for an issue that could prevent the
+launcher from starting on certain Mac OS X computers.
+
+
+Ren'Py 6.17.5
+=============
+
+Translations
+------------
+
+This release features an Arabic translation of the launcher and template
+game, contributed by Renoa.
+
+The Japanese and Spanish translations have been updated.
+
+Changes
+-------
+
+The traceback system has been changed to generally report script statements,
+rather than the functions Ren'Py uses to implement those statements.
+
+The :func:`renpy.pause` function now only sets a checkpoint (allowing rollback)
+if the delay time is 0. This prevents rollback from being blocked by short
+pauses.
+
+The new :func:`renpy.queue_event` function provides a way to queue Ren'Py
+events from user-written interface code. (For example, it could be used to
+listen to commands on a serial port that's connected to a custom
+controller.)
+
+If set, RENPY_SKIP_MAIN_MENU and RENPY_SKIP_SPLASHSCREEN environment
+variables cause Ren'Py to skip the main menu and splashscreen, respectively.
+
+The RENPY_TIMEWARP environment variable makes it possible to speedup and
+slow down time.
+
+An experimental new autoreload system can be accessed by setting
+:var:`config.autoreload` to True, then pressing shift+R to toggle
+automatic reloading.
+
+Fixes
+-----
+
+A regression in 6.17.4 caused a major memory leak on shift+R. This has
+been fixed. Several other problems with shift+R have also been fixed.
+
+An issue preventing transitions from working properly inside a restarted
+ATL transform has been fixed.
+
+The --warp was documented incorrectly, and had stopped working. It's been
+repaired, and its documentation has been improved.
+
+
+Ren'Py 6.17.4
+=============
+
+Reloading
+---------
+
+This release contains a complete rewrite of shift+R reloading.
+
+The rewrite was necessary to eliminate several major memory leaks that
+were triggered by reloading.
+
+Android
+-------
+
+Ren'Py has been updated to use the newest (at the time of release) versions
+of the Android SDK and Ant. This should fix build problems caused by the
+use of older versions.
+
+Ren'Py now recognizes and supports the Amazon Fire TV device. When a Fire TV
+is detected, the "firetv" screen variant is selected. To support pushing games
+to this device, Ren'Py now supports connecting to Android devices via the
+Remote ADB protocol.
+
+Other
+-----
+
+Fixed a problem that occurred when an interaction containing a MoveTransition
+was restarted.
+
+Added support for imagemaps that are larger than the screen. This allows an
+imagemap to be placed inside a viewport.
+
+It is now possible to select the layer used by the say, choice, and nvl
+choice screen. Please see :var:`config.say_layer`, :var:`config.choice_layer`,
+and :var:`config.nvl_layer` statements.
+
+The prediction of window and bar images has been improved.
+
+
 Ren'Py 6.17
 ===========
 
@@ -125,7 +226,7 @@ the size of the input field it a certain number of pixels.
 The :func:`FileCurrentScreenshot` function
 
 The new :propref:`xsize`, :propref:`ysize`, and :propref:`xysize` style
-properties make it possible to directly set the size of a displayble.
+properties make it possible to directly set the size of a displayable.
 
 The :propref:`focus_mask` style property can now take as an argument a callable
 that returns true when a displayable should be focused. If such a callable
@@ -367,7 +468,7 @@ This release includes improvements for the Android platform:
   older versions of Ren'Py exist.
 
 The GL2 shaders Ren'Py uses have been simplified in the (usual) case
-where no clipping is occuring. This leads to a noticable speed
+where no clipping is occurring. This leads to a noticeable speed
 improvement on Android, and potentially other platforms as well.
 
 An issue with Drag-and-drop has been fixed. Thanks go to Kinsman
@@ -873,12 +974,12 @@ Linux support has been changed.
   x86 architecture. The Ren'Py shell script will automatically determine the
   platform it is running on when it is launched.
 
-* The Linux version is now linked agains the libraries from the 2009-era
+* The Linux version is now linked against the libraries from the 2009-era
   Ubuntu 10.04 Lucid. (Previously, Ren'Py had been linked against 2006's
   Dapper.) Older versions of Linux are no longer supported.
 
 Many libraries that Ren'Py depends on have been updated. Some of the changes
-that have occured are:
+that have occurred are:
 
 * Python has been updated to version 2.7.3.
 
@@ -905,7 +1006,7 @@ Other Changes
 * Added the :var:`config.gl_resize` variable, which determines if the user
   can resize OpenGL windows.
 
-* Ren'Py's handling of command line argments has been rewritten. Most
+* Ren'Py's handling of command line arguments has been rewritten. Most
   notably, lint is now invoked with the::
 
     renpy.sh <gamename> lint
@@ -953,7 +1054,7 @@ Fixed the following bugs in Ren'Py.
   overflowing its bounding box.
 * Menu choices are logged correctly.
 * All file access is now done in unicode, rather than the system's native
-  encoding. This prevents crashes that occured when Ren'Py was placed in a
+  encoding. This prevents crashes that occurred when Ren'Py was placed in a
   directory that had non-ASCII characters in it.
 * Fixed focus_mask on the ANGLE renderer.
 * Displayables can now have fractional-pixel sizes. This allows a zooming
@@ -1157,7 +1258,7 @@ This release contains the following changes:
 * ATL Transforms with parameters compile correctly.
 * MultipleTransition works in conjunction with pauses.
 * The mouse is shown when a quit action is run while a movie is playing.
-* A fix for a lockup that occured when the user entered the game menu while
+* A fix for a lockup that occurred when the user entered the game menu while
   a transition was running.
 * RENPY_SCALE_FAST works again.
 * Ren'Py compiles with newer versions of ffmpeg.
@@ -1309,7 +1410,7 @@ including hard-to-predict volume changes that affect other applications.
 Along with the new features, transitions have been documented in the new
 manual.
 
-Archives are now automatically detected in asciiabetical order. See the
+Archives are now automatically detected in asciibetical order. See the
 documentation for :var:`config.archives` for more details.
 
 Bug fixes:
@@ -1583,7 +1684,7 @@ yzoom properties are 0.
 
 Clockwise and counterclockwise revolution in transforms now works.
 
-Fixed a bug with scaling, that occured when switching between the scaled
+Fixed a bug with scaling, that occurred when switching between the scaled
 software and GL renderers.
 
 Hidden screens are no longer considered when assigning default focus.

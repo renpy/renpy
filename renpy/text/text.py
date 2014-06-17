@@ -22,8 +22,7 @@
 import math
 import renpy.display
 
-from renpy.text.textsupport import \
-    TAG, TEXT, PARAGRAPH, DISPLAYABLE
+from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
 import renpy.text.textsupport as textsupport
 import renpy.text.texwrap as texwrap
@@ -1128,6 +1127,8 @@ class Text(renpy.display.core.Displayable):
 
     __version__ = 4
 
+    uses_scope = True
+
     def after_upgrade(self, version):
 
         if version < 3:
@@ -1161,10 +1162,19 @@ class Text(renpy.display.core.Displayable):
                     text = [ "" ]
                     break
 
+        # True if we are substituting things in.
+        self.substitute = substitute
+
+        # Do we need to update ourselves?
+        self.dirty = True
+
+        # The text, after substitutions.
+        self.text = None
+
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute)
 
-        if renpy.game.less_updates:
+        if renpy.game.less_updates or renpy.game.preferences.self_voicing:
             slow = False
 
         # True if we're using slow text mode.
@@ -1188,9 +1198,6 @@ class Text(renpy.display.core.Displayable):
             self.start = replaces.start
             self.end = replaces.end
 
-        # Do we need to update ourselves?
-        self.dirty = True
-
         # The list of displayables we use.
         self.displayables = None
 
@@ -1208,25 +1215,53 @@ class Text(renpy.display.core.Displayable):
         s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
         return u"Text \"{}\"".format(s)
 
+    def _scope(self, scope, update=True):
+        """
+        Called to update the scope, when necessary.
+        """
 
-    def set_text(self, text, scope=None, substitute=False):
+        return self.set_text(self.text_parameter, scope, self.substitute, update)
+
+    def set_text(self, text, scope=None, substitute=False, update=True):
+
+        old_text = self.text
 
         if not isinstance(text, list):
             text = [ text ]
 
-        self.text = [ ]
+        # The text parameter, before substitutions were performed.
+        self.text_parameter = text
+
+        new_text = [ ]
+        uses_scope = False
 
         # Perform substitution as necessary.
         for i in text:
             if isinstance(i, basestring):
                 if substitute is not False:
-                    i = renpy.substitutions.substitute(i, scope, substitute)
+                    i, did_sub = renpy.substitutions.substitute(i, scope, substitute)
+                    uses_scope = uses_scope or did_sub
 
                 i = unicode(i)
 
-            self.text.append(i)
+            new_text.append(i)
 
-        self.dirty = True
+        self.uses_scope = uses_scope
+
+        if new_text == old_text:
+            return False
+
+        if update:
+
+            self.text = new_text
+
+            if not self.dirty:
+                self.dirty = True
+
+                if old_text is not None:
+                    renpy.display.render.redraw(self, 0)
+
+        return True
 
     def set_ctc(self, ctc):
         self.ctc = ctc
@@ -1297,6 +1332,24 @@ class Text(renpy.display.core.Displayable):
             self.update()
 
         return list(self.displayables)
+
+    def _tts(self):
+
+        if self.style.alt is not None:
+            return self.style.alt
+
+        rv = [ ]
+
+        for i in self.text:
+
+            if not isinstance(i, basestring):
+                continue
+
+            rv.append(renpy.translation.notags_filter(i))
+
+        return "".join(rv)
+
+    _tts_all = _tts
 
     def kill_layout(self):
         """
