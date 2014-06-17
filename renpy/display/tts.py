@@ -19,12 +19,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import sys
+import os
 import renpy
-
-try:
-    import pyttsx
-except:
-    pyttsx = None
+import subprocess
 
 class TTSRoot(Exception):
     """
@@ -36,51 +34,100 @@ class TTSRoot(Exception):
 # The root of the scene.
 root = None
 
-# The last thing we said.
+# The text of the last displayable.
 last = ""
 
-# The engine.
-engine = None
+# A queue of things to say.
+queue = [ ]
+
+# The speech synthesis process.
+process = None
+
+def periodic():
+    global process
+
+    if process is not None:
+        if process.poll() is not None:
+            process = None
+
+def speak_queued():
+    """
+    Speaks the queued messages, if any, using an os-specific method.
+    """
+
+    global process
+    global queue
+
+    # Stop the existing process.
+    if process is not None:
+        try:
+            process.terminate()
+            process.wait()
+        except:
+            pass
+
+    process = None
+
+    s = " ".join(queue).strip()
+
+    if not s:
+        return
+
+
+    if renpy.linux:
+        process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
+    elif renpy.macintosh:
+        process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
+    elif renpy.windows:
+        say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
+        process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
+
+
+    queue = [ ]
+
+
+def speak(s, translate=True, force=False):
+    """
+    This is called by the system to queue the speaking of message `s`.
+    """
+
+    if not force and not renpy.game.preferences.self_voicing:
+        return
+
+    if translate:
+        s = renpy.translation.translate_string(s)
+
+    queue.append(s)
+
 
 def set_root(d):
     global root
     root = d
 
-def speak(s, translate=True):
-    """
-    Causes the TTS system to speak `s`, if the TTS system is enabled.
-    """
-
-    if not renpy.game.preferences.self_voicing:
-        return
-
-    if pyttsx is None:
-        return
-
-    global engine
-
-    if engine is None:
-        engine = pyttsx.init()
-        engine.startLoop(False)
-
-    if translate:
-        s = renpy.translation.translate_string(s)
-
-    engine.stop()
-    engine.say(s)
-
-def periodic():
-
-    if engine is not None:
-        engine.iterate()
+# The old value of the self_voicing preference.
+old_self_voicing = False
 
 def displayable(d):
     """
     Causes the TTS system to read the text of the displayable `d`.
     """
 
-    if not renpy.game.preferences.self_voicing:
+    global old_self_voicing
+
+    self_voicing = renpy.game.preferences.self_voicing
+
+    if not self_voicing:
+        if old_self_voicing:
+            old_self_voicing = self_voicing
+            speak("Self-voicing disabled.", force=True)
+            speak_queued()
+
         return
+
+    if not old_self_voicing:
+        old_self_voicing = self_voicing
+        speak("Self-voicing enabled.")
+
 
     global last
 
@@ -99,8 +146,8 @@ def displayable(d):
 
     global last
 
-    if s == last:
-        return
+    if s != last:
+        last = s
+        speak(s, translate=False)
 
-    speak(s, False)
-
+    speak_queued()
