@@ -243,9 +243,9 @@ init -1500 python:
                 store.nvl_list = [ ]
 
             kwargs = self.show_args.copy()
-            kwargs["what_args"] = self.what_args
-            kwargs["who_args"] = self.who_args
-            kwargs["window_args"] = self.window_args
+            kwargs["what_args"] = dict(self.what_args)
+            kwargs["who_args"] = dict(self.who_args)
+            kwargs["window_args"] = dict(self.window_args)
 
             store.nvl_list.append((who, what, kwargs))
 
@@ -275,6 +275,9 @@ init -1500 python:
                 **display_args)
 
         def do_done(self, who, what):
+            nvl_list[-1][2]["what_args"]["alt"] = ""
+            nvl_list[-1][2]["who_args"]["alt"] = ""
+
             if self.clear:
                 nvl_clear()
 

@@ -1174,7 +1174,7 @@ class Text(renpy.display.core.Displayable):
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute)
 
-        if renpy.game.less_updates:
+        if renpy.game.less_updates or renpy.game.preferences.self_voicing:
             slow = False
 
         # True if we're using slow text mode.
@@ -1334,6 +1334,10 @@ class Text(renpy.display.core.Displayable):
         return list(self.displayables)
 
     def _tts(self):
+
+        if self.style.alt is not None:
+            return self.style.alt
+
         rv = [ ]
 
         for i in self.text:
