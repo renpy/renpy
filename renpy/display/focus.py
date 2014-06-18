@@ -417,33 +417,89 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
     # And, we're done.
 
 
+def focus_ordered(delta):
+
+    placeless = None
+
+    candidates = [ ]
+    index = 0
+
+    current = get_focused()
+    current_index = None
+
+    for f in focus_list:
+
+        if f.x is None:
+            placeless = f
+            continue
+
+        if f.arg is not None:
+            continue
+
+        if f.widget is current:
+            current_index = index
+
+        candidates.append(f)
+        index += 1
+
+    new_focus = None
+
+    if current_index is None:
+        if candidates:
+            if delta > 0:
+                new_focus = candidates[delta - 1]
+            else:
+                new_focus = candidates[delta]
+    else:
+        new_index = current_index + delta
+
+        if 0 <= new_index < len(candidates):
+            new_focus = candidates[new_index]
+
+    new_focus = new_focus or placeless
+
+    if new_focus is not None:
+        return change_focus(new_focus)
+
+
 
 def key_handler(ev):
 
-    if renpy.display.behavior.map_event(ev, 'focus_right'):
-        return focus_nearest(0.9, 0.1, 0.9, 0.9,
-                             0.1, 0.1, 0.1, 0.9,
-                             verti_line_dist,
-                             lambda old, new : old.x + old.w <= new.x,
-                             -1, 0, 0, 0)
+    map_event = renpy.display.behavior.map_event
 
-    if renpy.display.behavior.map_event(ev, 'focus_left'):
-        return focus_nearest(0.1, 0.1, 0.1, 0.9,
-                             0.9, 0.1, 0.9, 0.9,
-                             verti_line_dist,
-                             lambda old, new : new.x + new.w <= old.x,
-                             1, 0, 1, 0)
+    if renpy.game.preferences.self_voicing:
+        if map_event(ev, 'focus_right') or map_event(ev, 'focus_down'):
+            return focus_ordered(1)
 
-    if renpy.display.behavior.map_event(ev, 'focus_up'):
-        return focus_nearest(0.1, 0.1, 0.9, 0.1,
-                             0.1, 0.9, 0.9, 0.9,
-                             horiz_line_dist,
-                             lambda old, new : new.y + new.h <= old.y,
-                             0, 1, 0, 1)
+        if map_event(ev, 'focus_left') or map_event(ev, 'focus_up'):
+            return focus_ordered(-1)
 
-    if renpy.display.behavior.map_event(ev, 'focus_down'):
-        return focus_nearest(0.1, 0.9, 0.9, 0.9,
-                             0.1, 0.1, 0.9, 0.1,
-                             horiz_line_dist,
-                             lambda old, new : old.y + old.h <= new.y,
-                             0, -1, 0, 0)
+    else:
+
+        if map_event(ev, 'focus_right'):
+            return focus_nearest(0.9, 0.1, 0.9, 0.9,
+                                 0.1, 0.1, 0.1, 0.9,
+                                 verti_line_dist,
+                                 lambda old, new : old.x + old.w <= new.x,
+                                 -1, 0, 0, 0)
+
+        if map_event(ev, 'focus_left'):
+            return focus_nearest(0.1, 0.1, 0.1, 0.9,
+                                 0.9, 0.1, 0.9, 0.9,
+                                 verti_line_dist,
+                                 lambda old, new : new.x + new.w <= old.x,
+                                 1, 0, 1, 0)
+
+        if map_event(ev, 'focus_up'):
+            return focus_nearest(0.1, 0.1, 0.9, 0.1,
+                                 0.1, 0.9, 0.9, 0.9,
+                                 horiz_line_dist,
+                                 lambda old, new : new.y + new.h <= old.y,
+                                 0, 1, 0, 1)
+
+        if map_event(ev, 'focus_down'):
+            return focus_nearest(0.1, 0.9, 0.9, 0.9,
+                                 0.1, 0.1, 0.9, 0.1,
+                                 horiz_line_dist,
+                                 lambda old, new : old.y + old.h <= new.y,
+                                 0, -1, 0, 0)
