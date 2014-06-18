@@ -70,8 +70,6 @@ init -1110 python hide:
         style.label.clear()
         style.label_text.clear()
 
-        style.label.alt = ""
-
     @theme
     def clear_prompts():
         style.prompt.clear()

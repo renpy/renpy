@@ -349,5 +349,5 @@ init -1800:
         clipping True
 
     # Labels
-    style label:
+    style pref_label:
         alt "" # We expect the labelled buttons/bars to read themselves out.
