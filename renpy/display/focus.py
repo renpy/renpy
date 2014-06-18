@@ -458,8 +458,7 @@ def focus_ordered(delta):
 
     new_focus = new_focus or placeless
 
-    if new_focus is not None:
-        return change_focus(new_focus)
+    return change_focus(new_focus)
 
 
 
