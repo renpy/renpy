@@ -37,9 +37,6 @@ root = None
 # The text of the last displayable.
 last = ""
 
-# A queue of things to say.
-queue = [ ]
-
 # The speech synthesis process.
 process = None
 
@@ -50,7 +47,7 @@ def periodic():
         if process.poll() is not None:
             process = None
 
-def speak_queued():
+def tts(s):
     """
     Speaks the queued messages, if any, using an os-specific method.
     """
@@ -68,11 +65,10 @@ def speak_queued():
 
     process = None
 
-    s = " ".join(queue).strip()
+    s = s.strip()
 
     if not s:
         return
-
 
     if renpy.linux:
         process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
@@ -97,8 +93,7 @@ def speak(s, translate=True, force=False):
     if translate:
         s = renpy.translation.translate_string(s)
 
-    queue.append(s)
-
+    tts(s)
 
 def set_root(d):
     global root
@@ -113,6 +108,7 @@ def displayable(d):
     """
 
     global old_self_voicing
+    global last
 
     self_voicing = renpy.game.preferences.self_voicing
 
@@ -120,16 +116,16 @@ def displayable(d):
         if old_self_voicing:
             old_self_voicing = self_voicing
             speak("Self-voicing disabled.", force=True)
-            speak_queued()
+
+        last = None
 
         return
 
+    prefix = ""
+
     if not old_self_voicing:
         old_self_voicing = self_voicing
-        speak("Self-voicing enabled.")
-
-
-    global last
+        prefix = renpy.translation.translate_string("Self-voicing enabled. ")
 
     if d is None:
         d = root
@@ -144,10 +140,6 @@ def displayable(d):
             else:
                 d = root
 
-    global last
-
     if s != last:
         last = s
-        speak(s, translate=False)
-
-    speak_queued()
+        tts(prefix + s)

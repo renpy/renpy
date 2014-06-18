@@ -461,7 +461,6 @@ def focus_ordered(delta):
     return change_focus(new_focus)
 
 
-
 def key_handler(ev):
 
     map_event = renpy.display.behavior.map_event
