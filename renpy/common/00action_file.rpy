@@ -232,6 +232,8 @@ init -1500 python:
              being shown to the user.
          """
 
+        alt = "Save slot [text]"
+
         def __init__(self, name, confirm=True, newest=True, page=None, cycle=False):
             if name is None:
                 name = __unused_slot_name(page)
@@ -297,6 +299,8 @@ init -1500 python:
              If true, the button is selected if this is the newest file.
          """
 
+        alt = "Load slot [text]"
+
         def __init__(self, name, confirm=True, page=None, newest=True):
 
             if name is None:
@@ -343,6 +347,8 @@ init -1500 python:
          `confirm`
              If true, prompts before deleting a file.
          """
+
+        alt = "Delete slot [text]"
 
         def __init__(self, name, confirm=True, page=None):
             self.name = name
@@ -401,6 +407,7 @@ init -1500 python:
 
         def __init__(self, page):
             self.page = str(page)
+            self.alt = "File page [text]"
 
         def __call__(self):
             if not self.get_sensitive():
@@ -490,6 +497,8 @@ init -1500 python:
              If true, we can go to the first page when on the last file page if max is set.
          """
 
+        alt = "Next file page"
+
         def __init__(self, max=None, wrap=False):
 
             page = persistent._file_page
@@ -548,6 +557,8 @@ init -1500 python:
          `wrap`
              If true, we can go to the last page when on the first file page if max is set.
          """
+
+        alt = "Previous file page"
 
         def __init__(self, max=None, wrap=False):
 
@@ -623,6 +634,8 @@ init -1500 python:
             Notify(message),
             ]
 
+        rv[0].alt = "Quick save."
+
         if not getattr(renpy.context(), "_menu", False):
             rv.insert(0, FileTakeScreenshot())
 
@@ -636,7 +649,9 @@ init -1500 python:
         Performs a quick load.
         """
 
-        return FileLoad(1, page="quick", confirm=True, newest=False)
+        rv = FileLoad(1, page="quick", confirm=True, newest=False)
+        rv.alt = "Quick load."
+        return rv
 
 init 1050 python hide:
 
