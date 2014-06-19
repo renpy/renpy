@@ -782,6 +782,9 @@ class MultiBox(Container):
 
             maxx, maxy = layout_line(line, 0, remheight if yfill else 0)
 
+        else:
+            raise Exception("Unknown box layout: %r" % layout)
+
         # Back to the common for vertical and horizontal.
 
         if not xfill:

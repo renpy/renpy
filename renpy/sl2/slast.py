@@ -313,7 +313,7 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -340,6 +340,9 @@ class SLDisplayable(SLBlock):
         `replaces`
             True if the object this displayable replaces should be
             passed to it.
+
+        `default_keywords`
+            The default keyword arguments to supply to the displayable.
         """
 
         SLBlock.__init__(self, loc)
@@ -352,6 +355,7 @@ class SLDisplayable(SLBlock):
         self.pass_context = pass_context
         self.imagemap = imagemap
         self.replaces = replaces
+        self.default_keywords = default_keywords
 
         # Positional argument expressions.
         self.positional = [ ]
@@ -406,6 +410,8 @@ class SLDisplayable(SLBlock):
             context.cache[self.serial] = cache = SLCache()
 
         copy_on_change = cache.copy_on_change
+k
+        cache.constant = None
 
         if cache.constant:
 
@@ -440,7 +446,7 @@ class SLDisplayable(SLBlock):
 
         # Create the context.
         ctx = SLContext(context)
-        keywords = ctx.keywords = { }
+        keywords = ctx.keywords = self.default_keywords.copy()
 
         if self.constant:
             if ctx.uses_scope is None:
