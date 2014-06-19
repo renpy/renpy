@@ -7,7 +7,7 @@
     
     A tooltip object has a ``value`` field, which is set to the `default`
     value passed to the constructor when the tooltip is created. When
-    a button using an action creadted by the tooltip is hovered, the
+    a button using an action created by the tooltip is hovered, the
     value field changes to the value associated with the action.
 
     .. method:: Action(value)

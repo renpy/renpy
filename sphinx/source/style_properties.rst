@@ -161,8 +161,15 @@ groups.
 Position Style Properties
 -------------------------
 
-These are used to control the position of a displayable inside the area
-allocated to it by a layout, or on the screen when not inside a layout.
+These properties apply to all displayables, and mostly control the
+position of a displayable inside the area allocated to it by a layout,
+or on the screen when not inside a layout.
+
+.. style-property:: alt string or None
+
+    Alternative text used for the displayable when self-voicing is
+    enabled. See the :ref:`self voicing <self-voicing>` section for
+    more information.
 
 .. style-property:: xpos position
 

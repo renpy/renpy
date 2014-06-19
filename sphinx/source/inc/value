@@ -20,6 +20,31 @@
         AnimatedValue we replaced, if any. Otherwise, it is initialized
         to `value`.
 
+.. function:: DictValue(dict, key, range, max_is_zero=False, style='bar', offset=0, step=None)
+    
+    A value that allows the user to adjust the value of a key
+    in a dict.
+    
+    `dict`
+        The dict.
+    `key`
+        The key.
+    `range`
+        The range to adjust over.
+    `max_is_zero`
+        If True, then when the value of a key is zero, the value of the
+        bar will be range, and all other values will be shifted down by 1.
+        This works both ways - when the bar is set to the maximum, the
+        value of a key is set to 0.
+    
+    `style`
+        The styles of the bar created.
+    `offset`
+        An offset to add to the value.
+    `step`
+        The amount to change the bar by. If None, defaults to 1/10th of
+        the bar.
+
 .. function:: FieldValue(object, field, range, max_is_zero=False, style='bar', offset=0, step=None)
     
     A value that allows the user to adjust the value of a field

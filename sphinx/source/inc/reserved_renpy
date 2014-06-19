@@ -14,6 +14,8 @@
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`
+* DictEquality
+* :func:`DictValue`
 * :func:`Dissolve`
 * :class:`Drag`
 * :class:`DragGroup`
@@ -22,6 +24,7 @@
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
+* FieldEquality
 * :func:`FieldValue`
 * :func:`FileAction`
 * :func:`FileCurrentPage`
@@ -60,7 +63,7 @@
 * :func:`InvertSelected`
 * :func:`Jump`
 * :func:`Language`
-* LiveComposite
+* :func:`LiveComposite`
 * :func:`LiveCrop`
 * :func:`LiveTile`
 * :func:`MainMenu`

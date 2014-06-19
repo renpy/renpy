@@ -1055,15 +1055,15 @@ Here's an example of a preferences screen that uses imagemaps.
         imagemap:
             auto "gui_set/gui_prefs_%s.png"
 
-            hotspot (740, 232, 75, 73) clicked Preference("display", "fullscreen")
-            hotspot (832, 232, 75, 73) clicked Preference("display", "window")
-            hotspot (1074, 232, 75, 73) clicked Preference("transitions", "all")
-            hotspot (1166, 232, 75, 73) clicked Preference("transitions", "none")
+            hotspot (740, 232, 75, 73) action Preference("display", "fullscreen") alt _("Display Fullscreen")
+            hotspot (832, 232, 75, 73) action Preference("display", "window") alt _("Display Window")
+            hotspot (1074, 232, 75, 73) action Preference("transitions", "all") alt _("Transitions All")
+            hotspot (1166, 232, 75, 73) action  Preference("transitions", "none") alt _("Transitions None")
 
-            hotbar (736, 415, 161, 20) value Preference("music volume")
-            hotbar (1070, 415, 161, 20) value Preference("sound volume")
-            hotbar (667, 535, 161, 20) value Preference("voice volume")
-            hotbar (1001, 535, 161, 20) value Preference("text speed")
+            hotbar (736, 415, 161, 20) value Preference("music volume") alt _("Music Volume")
+            hotbar (1070, 415, 161, 20) value Preference("sound volume") alt _("Sound Volume")
+            hotbar (667, 535, 161, 20) value Preference("voice volume") alt _("Voice Volume")
+            hotbar (1001, 535, 161, 20) value Preference("text speed") alt _("Text Speed")
 
 
 .. _sl-imagemap:
@@ -1159,6 +1159,8 @@ A hotspot creates a fixed, allowing children to be added to it. The
 fixed has an area that is the same size as the hotspot, meaning that
 the children will be positioned relative to the hotspot.
 
+Hotspots should be given the ``alt`` style property to allow Ren'Py's
+self-voicing feature to work.
 
 .. _sl-hotbar:
 
@@ -1188,6 +1190,10 @@ function takes:
 * :ref:`bar-style-properties`
 
 This does not take children.
+
+Hotbars should be given the ``alt`` style property to allow Ren'Py's
+self-voicing feature to work.
+
 
 Advanced Displayables
 =====================

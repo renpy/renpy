@@ -7,7 +7,8 @@
 
 .. function:: renpy.music.get_playing(channel='music')
     
-    Returns true if the given channel is playing.
+    If the given channel is playing, returns the playing file name.
+    Otherwise, returns None.
 
 .. function:: renpy.music.is_playing(channel='music')
     
@@ -98,7 +99,7 @@
         If true, music on the channel is stopped when the channel is muted.
     
     `tight`
-        If true, sounds will loop even when fadeout is occuring. This should
+        If true, sounds will loop even when fadeout is occurring. This should
         be set to True for a sound effects or seamless music channel, and False
         if the music fades out on its own.
     

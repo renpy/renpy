@@ -50,6 +50,27 @@
              style.window.background = Frame("frame.png", 10, 10)
         
 
+.. function:: LiveComposite(size, *args, **properties)
+    
+    This creates a new displayable of `size`, by compositing other
+    displayables. `size` is a (width, height) tuple.
+    
+    The remaining positional arguments are used to place images inside
+    the LiveComposite. The remaining positional arguments should come
+    in groups of two, with the first member of each group an (x, y)
+    tuple, and the second member of a group is a displayable that
+    is composited at that position.
+    
+    Displayables are composited from back to front.
+    
+    ::
+    
+       image eileen composite = LiveComposite(
+           (300, 600),
+           (0, 0), "body.png",
+           (0, 0), "clothes.png",
+           (50, 50), "expression.png")
+
 .. function:: LiveCrop(rect, child, **properties)
     
     This created a displayable by cropping `child` to `rect`, where

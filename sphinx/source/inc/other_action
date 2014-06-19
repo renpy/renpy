@@ -5,7 +5,7 @@
     Displays help.
     
     `help`
-         If this is a string giving a label in the programe, then
+         If this is a string giving a label in the program, then
          that label is called in a new context when the button is
          chosen. Otherwise, it should be a string giving a file
          that is opened in a web browser. If None, the value of

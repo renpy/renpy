@@ -121,6 +121,7 @@ End-User Documentation
 
    problems
    environment_variables
+   self_voicing
 
 Engine Developer Documentation
 ------------------------------
