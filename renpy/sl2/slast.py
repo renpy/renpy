@@ -410,8 +410,6 @@ class SLDisplayable(SLBlock):
             context.cache[self.serial] = cache = SLCache()
 
         copy_on_change = cache.copy_on_change
-k
-        cache.constant = None
 
         if cache.constant:
 
