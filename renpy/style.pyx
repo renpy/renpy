@@ -279,6 +279,9 @@ cdef class StyleCore:
         self.properties = [ ]
 
         if properties:
+            if not type(properties) is dict:
+                properties = dict(properties)
+
             self.properties.append(properties)
 
         self.parent = get_tuple_name(parent)
