@@ -210,56 +210,50 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.hiding:
             hid = self
         else:
+
+            if self.screen is None:
+                return None
+
+            if self.child is None:
+                return None
+
+            if self.screen.ast is not None:
+                self.screen.ast.copy_on_change(self.cache.get(0, {}))
+
             hid = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
             hid.transforms = self.transforms.copy()
             hid.widgets = self.widgets.copy()
             hid.old_transfers = True
+            hid.child = self.child
 
         hid.hiding = True
 
         hid.current_transform_event = kind
         hid.update()
 
-        renpy.display.render.redraw(hid, 0)
-
         rv = None
 
-        # Compute the reverse of transforms and widgets.
-        reverse_transforms = dict((id(v), k) for k, v in hid.transforms.iteritems())
-        reverse_widgets = dict((id(v), k) for k, v in hid.widgets.iteritems())
+        old_child = hid.child
 
-        # Assumption: the only displayables that can keep us around
-        # are Transforms that handle hide.
+        if not isinstance(old_child, renpy.display.layout.MultiBox):
+            return None
 
-        # Iterate over our immediate children, trying to hide them.
-        for d in list(hid.child.children):
+        renpy.ui.detached()
+        self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
+        self.children = [ self.child ]
+        renpy.ui.close()
 
-            id_d = id(d)
+        for d in old_child.children:
+            c = d._hide(st, at, kind)
 
-            # If we have a transform, call its _hide method. If that comes
-            # back non-None, store the new transform, and keep us alive.
-            #
-            # Otherwise, remove the child.
-            name = reverse_transforms.get(id_d, None)
+            if c is not None:
+                renpy.display.render.redraw(c, 0)
+                self.child.add(c)
 
-            if name is not None:
-                c = d._hide(st, at, kind)
+                rv = hid
 
-                if c is not None:
-                    hid.transforms[name] = c
-                    rv = hid
-                else:
-                    hid.hidden_widgets[name] = True
-                    hid.child.remove(d)
-
-                continue
-
-            # Remove any non-transform children.
-            name = reverse_widgets.get(id_d, None)
-
-            if name is not None:
-                hid.hidden_widgets[name] = True
-                hid.child.remove(d)
+        if hid is not None:
+            renpy.display.render.redraw(hid, 0)
 
         return rv
 
@@ -288,9 +282,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.child = renpy.display.layout.Null()
             return { }
 
-        # If we're restarting, do not update - the update can use variables
-        # that are no longer in scope.
-        if self.restarting:
+        # Do not update if restarting or hiding.
+        if self.restarting or self.hiding:
             if not self.child:
                 self.child = renpy.display.layout.Null()
 
