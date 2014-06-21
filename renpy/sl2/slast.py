@@ -465,6 +465,12 @@ class SLDisplayable(SLBlock):
         if widget_id and (widget_id in screen.widget_properties):
             keywords.update(screen.widget_properties[widget_id])
 
+        old_d = cache.displayable
+        if old_d:
+            old_main = old_d._main
+        else:
+            old_main = None
+
         reused = False
 
         if (positional == cache.positional) and (keywords == cache.keywords):
@@ -495,12 +501,7 @@ class SLDisplayable(SLBlock):
                 keywords["scope"] = ctx.scope
 
             if self.replaces:
-                old_d = cache.displayable
-
-                if old_d is not None:
-                    old_d = old_d._main or old_d
-
-                    keywords['replaces'] = old_d
+                keywords['replaces'] = old_main
 
             # Pass the context
             if self.pass_context:
@@ -543,12 +544,7 @@ class SLDisplayable(SLBlock):
                     keywords["scope"] = ctx.scope
 
                 if self.replaces:
-                    old_d = cache.displayable
-
-                    if old_d is not None:
-                        old_d = old_d._main or old_d
-
-                        keywords['replaces'] = old_d
+                    keywords['replaces'] = old_main
 
                 if self.pass_context:
                     keywords['context'] = ctx
@@ -574,6 +570,9 @@ class SLDisplayable(SLBlock):
             else:
                 for i in ctx.children:
                     main.add(i)
+
+        if old_main and (renpy.display.focus.grab is old_main) and screen and (not screen.hiding):
+            renpy.display.focus.new_grab = main
 
         cache.displayable = d
         cache.children = ctx.children
