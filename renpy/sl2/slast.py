@@ -185,6 +185,7 @@ class SLNode(object):
         full_filename = renpy.exports.unelide_filename(filename)
 
         line = linecache.getline(full_filename, lineno) or ""
+        line = line.decode("utf-8")
 
         profile_log.write("  %s:%d %s", filename, lineno, line.rstrip())
 
@@ -441,7 +442,7 @@ class SLDisplayable(SLBlock):
             self.debug_line()
 
             if cache.constant:
-                profile_log("    reusing constant")
+                profile_log.write("    reused constant displayable")
 
         if cache.constant:
 
