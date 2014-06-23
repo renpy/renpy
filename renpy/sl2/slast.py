@@ -21,6 +21,7 @@
 
 import ast
 import collections
+import linecache
 
 import renpy.display
 
@@ -42,6 +43,9 @@ use_expression = renpy.object.Sentinel("use_expression")
 
 # The filename that's currently being compiled.
 filename = '<screen language>'
+
+# A log that's used for profiling information.
+profile_log = renpy.log.open("profile_screen", developer=True, append=False, flush=False)
 
 def compile_expr(node):
     """
@@ -96,6 +100,9 @@ class SLContext(renpy.ui.Addable):
         # When a constant node has an id, we added it to this dict, so it
         # may be reused. (If None, no dict is used.)
         self.widgets = None
+
+        # True if we should dump debug information to the profile log.
+        self.debug = False
 
     def get_style_group(self):
         style_prefix = self.style_prefix
@@ -168,6 +175,21 @@ class SLNode(object):
         """
 
         return
+
+    def debug_line(self):
+        """
+        Writes information about the line we're on to the debug log.
+        """
+
+        filename, lineno = self.location
+        full_filename = renpy.exports.unelide_filename(filename)
+
+        line = linecache.getline(full_filename, lineno) or ""
+
+        profile_log.write("  %s:%d %s", filename, lineno, line.rstrip())
+
+        if self.constant:
+            profile_log.write("    potentially constant")
 
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
@@ -403,13 +425,23 @@ class SLDisplayable(SLBlock):
 
     def execute(self, context):
 
+        debug = context.debug
+
+
         screen = renpy.ui.screen
 
         cache = context.cache.get(self.serial, None)
+
         if cache is None:
             context.cache[self.serial] = cache = SLCache()
 
         copy_on_change = cache.copy_on_change
+
+        if debug:
+            self.debug_line()
+
+            if cache.constant:
+                profile_log("    reusing constant")
 
         if cache.constant:
 
@@ -473,6 +505,9 @@ class SLDisplayable(SLBlock):
 
         reused = False
 
+        if debug:
+            self.report_arguments(cache, positional, keywords, transform)
+
         if (positional == cache.positional) and (keywords == cache.keywords):
             d = cache.displayable
             reused = True
@@ -513,6 +548,14 @@ class SLDisplayable(SLBlock):
 
             cache.copy_on_change = False # We no longer need to copy on change.
             cache.children = None # Re-add the children.
+
+        if debug:
+            if reused:
+                profile_log.write("    reused displayable")
+            elif self.constant:
+                profile_log.write("    created constant displayable")
+            else:
+                profile_log.write("    created displayable")
 
         main._location = self.location
 
@@ -583,7 +626,6 @@ class SLDisplayable(SLBlock):
             else:
                 cache.raw_transform = transform
 
-
                 if isinstance(transform, Transform):
                     d = transform(child=d)
                 elif isinstance(transform, list_or_tuple):
@@ -622,6 +664,72 @@ class SLDisplayable(SLBlock):
 
             if context.uses_scope is None:
                 cache.constant_uses_scope = ctx.uses_scope
+
+    def report_arguments(self, cache, positional, keywords, transform):
+        if positional:
+            report = [ ]
+
+            values = self.positional_values or ([ use_expression ] * len(positional))
+
+            for i in range(len(positional)):
+
+                if values[i] is not use_expression:
+                    report.append("const")
+                elif cache.positional is None:
+                    report.append("new")
+                elif cache.positiona[i] == positional[i]:
+                    report.append("equal")
+                else:
+                    report.append("not-equal")
+
+            profile_log.write("    args: %s", " ".join(report))
+
+        values = self.keyword_values or { }
+
+        if keywords:
+            report = { }
+
+            if cache.keywords is None:
+                for k in keywords:
+
+                    if k in values:
+                        report[k] = "const"
+                        continue
+
+                    report[k] = "new"
+
+            else:
+                for k in keywords:
+                    k = str(k)
+
+                    if k in values:
+                        report[k] = "const"
+                        continue
+
+                    if k not in cache.keywords:
+                        report[k] = "new-only"
+                        continue
+
+                    if keywords[k] == cache.keywords[k]:
+                        report[k] = "equal"
+                    else:
+                        report[k] = "not-equal"
+
+                for k in cache.keywords:
+                    if k not in keywords:
+                        report[k] = "old-only"
+
+            profile_log.write("    kwargs: %r", report)
+
+        if transform is not None:
+            if "at" in values:
+                profile_log.write("    at: const")
+            elif cache.raw_transform is None:
+                profile_log.write("    at: new")
+            elif cache.raw_transform == transform:
+                profile_log.write("    at: equal")
+            else:
+                profile_log.write("    at: not-equal")
 
     def copy_on_change(self, cache):
         c = cache.get(self.serial, None)
@@ -1036,6 +1144,7 @@ class SLScreen(SLBlock):
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
+        debug = kwargs.get("_debug", False)
 
         if self.parameters:
 
@@ -1050,6 +1159,7 @@ class SLScreen(SLBlock):
         context = SLContext()
         context.scope = scope
         context.globals = renpy.python.store_dicts["store"]
+        context.debug = debug
 
         name = scope["_name"]
         main_cache = renpy.display.screen.current_screen().cache

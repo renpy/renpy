@@ -24,6 +24,8 @@ import time
 
 import datetime
 
+profile_log = renpy.log.open("profile_screen", developer=True, append=False, flush=False)
+
 # A map from screen name to ScreenProfile object.
 profile = { }
 
@@ -361,6 +363,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return self.widgets
 
         profile = False
+        debug = False
 
         if self.profile:
 
@@ -375,12 +378,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 profile = True
 
             if profile:
-                renpy.display.sp_log.write("%s %s %s",
+                profile_log.write("%s %s %s",
                     phase_name[self.phase],
                     " ".join(self.screen_name),
                     datetime.datetime.now().strftime("%H:%M:%S.%f"))
 
                 start = time.time()
+
+                if self.profile.debug:
+                    debug = True
 
         # Update _current_screen
         global _current_screen
@@ -403,6 +409,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         self.scope["_scope"] = self.scope
         self.scope["_name"] = 0
+        self.scope["_debug"] = debug
 
         self.screen.function(**self.scope)
 
@@ -430,7 +437,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
             end = time.time()
 
             if self.profile.time:
-                renpy.display.sp_log.write("* %.2f ms", 1000 * (end - start))
+                profile_log.write("* %.2f ms", 1000 * (end - start))
+
+            if self.profile.debug:
+                profile_log.write("\n")
 
         if self.phase == SHOW:
             self.phase = UPDATE
@@ -683,9 +693,6 @@ def predict_screen(_screen_name, *_args, **kwargs):
     Keyword arguments not beginning with underscore (_) are used to
     initialize the screen's scope.
     """
-
-    if not PREDICT:
-        return
 
     _layer = kwargs.pop("_layer", "screens")
     _tag = kwargs.pop("_tag", None)
