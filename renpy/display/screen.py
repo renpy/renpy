@@ -20,23 +20,75 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
-import os
 import time
 
-PROFILE = set(i.strip() for i in os.environ.get("RENPY_PROFILE_SCREENS", "").split(","))
+import datetime
 
-if "cprofile" in PROFILE:
-    import cProfile
-    cprof = cProfile.Profile()
+# A map from screen name to ScreenProfile object.
+profile = { }
 
-    import atexit
+class ScreenProfile(renpy.object.Object):
 
-    def cprof_atexit():
-        cprof.dump_stats("/tmp/profile")
+    def __init__(self, name, predict=False, show=False, update=False, request=False, time=False, debug=False):
+        """
+        :doc: screen
+        :name: renpy.profile_screen
 
-    atexit.register(cprof_atexit)
-else:
-    cprof = None
+        Requests screen profiling for the screen named `name`, which
+        must be a string.
+
+        Apart from `name`, all arguments must be supplied as keyword
+        arguments. This function takes two groups of arguments.
+
+
+        The first group of arguments determines when profiling occurs.
+
+        `predict`
+            If true, profiling occurs when the screen is being predicted.
+
+        `show`
+            If true, profiling occurs when the screen is first shown.
+
+        `update`
+            If true, profiling occurs when the screen is updated.
+
+        `request`
+            If true, rofiling occurs when requested by pressing F8.
+
+        The second group of arguments controls what profiling occurs. All
+        profiling output will be logged to profile.txt in the game directory.
+
+        `time`
+            If true, Ren'Py will log the amount of time it takes to evaluate
+            the screen.
+
+        `debug`
+            If true, Ren'Py will log information as to how screens are
+            evaluated, including:
+
+            * Which displayables Ren'Py considers constant.
+            * Which arguments, if any, needed to be evaluated.
+            * Which displayables were reused.
+
+            Producing and saving this debug information takes a noticable
+            amount of time, and so the `time` output should not be considered
+            reliable if `debug` is set.
+        """
+
+        self.predict = predict
+        self.show = show
+        self.update = update
+        self.request = request
+
+        self.time = time
+        self.debug = debug
+
+        if name is not None:
+
+            if isinstance(name, basestring):
+                name = tuple(name.split())
+                profile[name] = self
+
 
 class Screen(renpy.object.Object):
     """
@@ -91,13 +143,26 @@ class Screen(renpy.object.Object):
         self.parameters = parameters
 
 
+# Phases we can be in.
+PREDICT = 0
+SHOW = 1
+UPDATE = 2
+HIDE = 3
+
+phase_name = [
+    "PREDICT",
+    "SHOW",
+    "UPDATE",
+    "HIDE",
+    ]
+
 class ScreenDisplayable(renpy.display.layout.Container):
     """
     A screen is a collection of widgets that are displayed together. This
     class is responsible for managing the display of a screen.
     """
 
-    nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms', "cache" ]
+    nosave = [ 'screen', 'child', 'transforms', 'widgets', 'old_widgets', 'old_transforms', 'cache', 'profile', 'phase' ]
 
     restarting = False
 
@@ -109,7 +174,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = None
         self.old_transforms = None
         self.cache = { }
-        self.uses = 0
+        self.phase = UPDATE
+
+        self.profile = profile.get(self.screen_name, None)
 
     def __init__(self, screen, tag, layer, widget_properties={}, scope={}, **properties):
 
@@ -122,6 +189,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # screen on save.)
         self.screen = screen
         self.screen_name = screen.name
+
+        # The profile object that determines when we profile.
+        self.profile = profile.get(self.screen_name, None)
 
         # The tag and layer screen was displayed with.
         self.tag = tag
@@ -184,8 +254,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
         self.zorder = renpy.python.py_eval(self.screen.zorder, locals=self.scope)
 
-        # The number of times this screen has been shown.
-        self.uses = 0
+        # The lifecycle phase we are in - one of PREDICT, SHOW, UPDATE, or HIDE.
+        self.phase = PREDICT
 
     def __unicode__(self):
         return "Screen {}".format(" ".join(self.screen_name))
@@ -226,6 +296,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             hid.old_transfers = True
             hid.child = self.child
 
+        hid.phase = HIDE
         hid.hiding = True
 
         hid.current_transform_event = kind
@@ -289,11 +360,27 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             return self.widgets
 
-        if PROFILE:
-            start = time.time()
+        profile = False
 
-            if cprof:
-                cprof.enable()
+        if self.profile:
+
+            if self.phase == UPDATE and self.profile.update:
+                profile = True
+            elif self.phase == SHOW and self.profile.show:
+                profile = True
+            elif self.phase == PREDICT and self.profile.predict:
+                profile = True
+
+            if renpy.display.interface.profile_once and self.profile.request:
+                profile = True
+
+            if profile:
+                renpy.display.sp_log.write("%s %s %s",
+                    phase_name[self.phase],
+                    " ".join(self.screen_name),
+                    datetime.datetime.now().strftime("%H:%M:%S.%f"))
+
+                start = time.time()
 
         # Update _current_screen
         global _current_screen
@@ -339,40 +426,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             self.current_transform_event = None
 
-        if PROFILE:
+        if profile:
+            end = time.time()
 
-            if cprof:
-                cprof.disable()
+            if self.profile.time:
+                renpy.display.sp_log.write("* %.2f ms", 1000 * (end - start))
 
-            profile = False
-
-            if self.uses == 0 and ("predict" in PROFILE):
-                profile = True
-            elif self.uses == 1 and ("show" in PROFILE):
-                profile = True
-            elif self.uses >= 2 and ("update" in PROFILE):
-                profile = True
-
-            if self.uses:
-                self.uses += 1
-
-            if profile:
-
-                end = time.time()
-                if isinstance(self.screen.function, renpy.screenlang.ScreenLangScreen):
-                    slversion = 1
-                else:
-                    slversion = 2
-
-                if renpy.display.predict.predicting:
-                    predict = "predict "
-                else:
-                    predict = ""
-
-                print "{}screen {} took {:.3f}ms ({})".format(
-                    predict,
-                    " ".join(self.screen_name).encode("utf-8"),
-                    1000.0 * (end - start), slversion)
+        if self.phase == SHOW:
+            self.phase = UPDATE
 
         return self.widgets
 
@@ -603,12 +664,10 @@ def show_screen(_screen_name, *_args, **kwargs):
     if screen in predict_cache:
         d.cache = predict_cache.pop(screen)
 
-    d.uses = 1
+    d.phase = SHOW
 
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 
-
-PREDICT = "RENPY_NO_PREDICT_SCREENS" not in os.environ
 
 def predict_screen(_screen_name, *_args, **kwargs):
     """

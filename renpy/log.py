@@ -38,7 +38,7 @@ class LogFile(object):
     This manages one of our logfiles.
     """
 
-    def __init__(self, name, append=False, developer=False):
+    def __init__(self, name, append=False, developer=False, flush=True):
         """
         `name`
             The name of the logfile, without the .txt extension.
@@ -47,11 +47,14 @@ class LogFile(object):
             it to an empty file the first time we write to it.
         `developer`
             If true, nothing happens if config.developer is not set to True.
+        `flush`
+            Determines if the file is flushed after each write.
         """
 
         self.name = name
         self.append = append
         self.developer = developer
+        self.flush = flush
         self.file = None
 
         # File-like attributes.
@@ -125,7 +128,9 @@ class LogFile(object):
             s = s.replace("\n", "\r\n")
 
             self.file.write(s)
-            self.file.flush()
+
+            if self.flush:
+                self.file.flush()
 
     def exception(self):
         """
@@ -139,11 +144,11 @@ class LogFile(object):
 # A map from the log name to a log object.
 log_cache = { }
 
-def open(name, append=False, developer=False): #@ReservedAssignment
+def open(name, append=False, developer=False, flush=False): #@ReservedAssignment
     rv = log_cache.get(name, None)
 
     if rv is None:
-        rv = LogFile(name, append=append, developer=developer)
+        rv = LogFile(name, append=append, developer=developer, flush=flush)
         log_cache[name] = rv
 
     return rv

@@ -38,7 +38,8 @@ from renpy.display.behavior import run as run_action, run_unhovered, run_periodi
 from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
 
 from renpy.display.minigame import Minigame
-from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen, has_screen, get_screen, get_widget
+from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
+from renpy.display.screen import  has_screen, get_screen, get_widget, ScreenProfile as profile_screen
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
 from renpy.display.image import image_exists
@@ -97,7 +98,7 @@ def public_api():
     music
     time
     define_screen, show_screen, hide_screen, use_screen, has_screen
-    current_screen, get_screen, get_widget
+    current_screen, get_screen, get_widget, profile_screen
     focus_coordinates
     predict, predict_screen
     displayable
