@@ -106,155 +106,219 @@ def pure(fn):
 
     return rv
 
-def is_constant(node):
-    """
-    Returns true if `node` is constant for the purpose of screen
-    language. Node should be a python AST node.
 
-    Screen language ignores object identity for the purposes of
-    object equality.
+class Analysis(object):
+    """
+    Represents the result of code analysis, and provides tools to perform
+    code analysis.
     """
 
-    def check_slice(slice): # @ReservedAssignment
+    def __init__(self):
+        # The variables we consider to be not-constant.
+        self.not_constant = set()
 
-        if isinstance(slice, ast.Index):
-            return check_node(slice.value)
+        # The variables we consider to be potentially constant.
+        self.constant = set(constants)
 
-        elif isinstance(slice, ast.Slice):
-            if slice.lower and not check_node(slice.lower):
-                return False
-            if slice.upper and not check_node(slice.upper):
-                return False
-            if slice.step and not check_node(slice.step):
-                return False
+    def mark_constant(self, name):
+        """
+        Marks `name` as potentially constant.
+        """
 
+        if not name in self.not_constant:
+            self.constant.add(name)
+
+    def mark_not_constant(self, name):
+        """
+        Marks `name` as definitely not-constant.
+        """
+
+        self.constant.discard(name)
+        self.not_constant.add(name)
+
+    def is_constant(self, node):
+        """
+        Returns true if `node` is constant for the purpose of screen
+        language. Node should be a python AST node.
+
+        Screen language ignores object identity for the purposes of
+        object equality.
+        """
+
+        def check_slice(slice): # @ReservedAssignment
+
+            if isinstance(slice, ast.Index):
+                return check_node(slice.value)
+
+            elif isinstance(slice, ast.Slice):
+                if slice.lower and not check_node(slice.lower):
+                    return False
+                if slice.upper and not check_node(slice.upper):
+                    return False
+                if slice.step and not check_node(slice.step):
+                    return False
+
+                return True
+
+            return False
+
+        def check_name(node):
+            """
+            Check nodes that make up a name. This returns a pair:
+
+            * The first element is True if the node is constant, and False
+              otherwise.
+            * The second element is None if the node is constant or the name is
+              not known, and the name otherwise.
+            """
+
+            if isinstance(node, ast.Name):
+                name = node.id
+
+            elif isinstance(node, ast.Attribute):
+                const, name = check_name(node.value)
+
+                if name is not None:
+                    name = name + "." + node.attr
+
+                if const:
+                    return True, name
+
+            else:
+                return check_node(node), None
+
+            if name in self.not_constant:
+                return False, None
+
+            if name in constants:
+                return True, None
+
+            return False, name
+
+        def check_nodes(nodes):
+            """
+            Checks a list of nodes. Returns true if all are constant, and
+            False otherwise.
+            """
+
+            for i in nodes:
+                if not check_node(i):
+                    return False
             return True
 
-        return False
+        def check_node(node):
+            """
+            Returns true if the ast node `node` is constant.
+            """
+
+            #PY3: see if there are new node types.
+
+            if isinstance(node, (ast.Num, ast.Str)):
+                return True
+
+            elif isinstance(node, (ast.List, ast.Tuple)):
+                return check_nodes(node.elts)
+
+            elif isinstance(node, (ast.Attribute, ast.Name)):
+                return check_name(node)[0]
+
+            elif isinstance(node, ast.BoolOp):
+                return check_nodes(node.values)
+
+            elif isinstance(node, ast.BinOp):
+                return (
+                    check_node(node.left) and
+                    check_node(node.right)
+                    )
+
+            elif isinstance(node, ast.UnaryOp):
+                return check_node(node.operand)
+
+            elif isinstance(node, ast.Call):
+                _const, name = check_name(node.func)
+
+                # The function must have a name, and must be declared pure.
+                if not name in pure_functions:
+                    return False
+
+                # Arguments and keyword arguments must be pure.
+                if not check_nodes(node.args):
+                    return False
+
+                if not check_nodes(i.value for i in node.keywords):
+                    return False
+
+                if (node.starargs is not None) and not check_node(node.starargs):
+                    return False
+
+                if (node.kwargs is not None) and not check_node(node.kwargs):
+                    return False
+
+                return True
+
+            elif isinstance(node, ast.IfExp):
+                return (
+                    check_node(node.test) and
+                    check_node(node.body) and
+                    check_node(node.orelse)
+                    )
+
+            elif isinstance(node, ast.Dict):
+                return (
+                    check_nodes(node.keys) and
+                    check_nodes(node.values)
+                    )
+
+            elif isinstance(node, ast.Set):
+                return check_nodes(node.elts)
+
+            elif isinstance(node, ast.Compare):
+                return (
+                    check_node(node.left) and
+                    check_nodes(node.comparators)
+                    )
+
+            elif isinstance(node, ast.Repr):
+                return check_node(node.value)
+
+            elif isinstance(node, ast.Subscript):
+                return (
+                    check_node(node.value) and
+                    check_slice(node.slice)
+                    )
+
+            return False
+
+        return check_node(node)
 
 
-    def check_name(node):
-        """
-        Check nodes that make up a name. This returns a pair:
+class ConstAnalysis(ast.NodeVisitor):
+    """
+    This analyzes python nodes and determines which variables should be
+    marked const and not-const.
+    """
 
-        * The first element is True if the node is constant, and False
-          otherwise.
-        * The second element is None if the node is constant or the name is
-          not known, and the name otherwise.
-        """
+    def __init__(self):
 
-        if isinstance(node, ast.Name):
-            name = node.id
+        # A set of variables that are const, and those that are not.
+        self.constants = constants
+        self.not_constants = set()
 
-        elif isinstance(node, ast.Attribute):
-            const, name = check_name(node.value)
+        # True if variables should be assigned const (if otherwise unknown),
+        # false if they should be assigned non-const.
+        self.const = False
 
-            if name is not None:
-                name = name + "." + node.attr
+    def visit_Name(self, node):
+        if isinstance(node, ast.AugStore):
+            self.constants.discard(node.id)
+            self.not_constants.add(node.id)
 
-            if const:
-                return True, name
+        if isinstance(node.ctx, ast.Store):
+            if self.const:
+                if node.id not in self.not_constants:
+                    self.constants.add(node.id)
+            else:
+                self.constants.discard(node.id)
+                self.not_constants.add(node.id)
 
-        else:
-            return check_node(node), None
 
-        if name in constants:
-            return True, None
-
-        return False, name
-
-    def check_nodes(nodes):
-        """
-        Checks a list of nodes. Returns true if all are constant, and
-        False otherwise.
-        """
-
-        for i in nodes:
-            if not check_node(i):
-                return False
-        return True
-
-    def check_node(node):
-        """
-        Returns true if the ast node `node` is constant.
-        """
-
-        #PY3: see if there are new node types.
-
-        if isinstance(node, (ast.Num, ast.Str)):
-            return True
-
-        elif isinstance(node, (ast.List, ast.Tuple)):
-            return check_nodes(node.elts)
-
-        elif isinstance(node, (ast.Attribute, ast.Name)):
-            return check_name(node)[0]
-
-        elif isinstance(node, ast.BoolOp):
-            return check_nodes(node.values)
-
-        elif isinstance(node, ast.BinOp):
-            return (
-                check_node(node.left) and
-                check_node(node.right)
-                )
-
-        elif isinstance(node, ast.UnaryOp):
-            return check_node(node.operand)
-
-        elif isinstance(node, ast.Call):
-            _const, name = check_name(node.func)
-
-            # The function must have a name, and must be declared pure.
-            if not name in pure_functions:
-                return False
-
-            # Arguments and keyword arguments must be pure.
-            if not check_nodes(node.args):
-                return False
-
-            if not check_nodes(i.value for i in node.keywords):
-                return False
-
-            if (node.starargs is not None) and not check_node(node.starargs):
-                return False
-
-            if (node.kwargs is not None) and not check_node(node.kwargs):
-                return False
-
-            return True
-
-        elif isinstance(node, ast.IfExp):
-            return (
-                check_node(node.test) and
-                check_node(node.body) and
-                check_node(node.orelse)
-                )
-
-        elif isinstance(node, ast.Dict):
-            return (
-                check_nodes(node.keys) and
-                check_nodes(node.values)
-                )
-
-        elif isinstance(node, ast.Set):
-            return check_nodes(node.elts)
-
-        elif isinstance(node, ast.Compare):
-            return (
-                check_node(node.left) and
-                check_nodes(node.comparators)
-                )
-
-        elif isinstance(node, ast.Repr):
-            return check_node(node.value)
-
-        elif isinstance(node, ast.Subscript):
-            return (
-                check_node(node.value) and
-                check_slice(node.slice)
-                )
-
-        return False
-
-    return check_node(node)

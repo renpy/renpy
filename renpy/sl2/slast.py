@@ -29,7 +29,7 @@ from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
 
 from renpy.python import py_compile, py_eval_bytecode
-from renpy.sl2.pyutil import is_constant
+from renpy.sl2.pyutil import Analysis
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
@@ -144,11 +144,14 @@ class SLNode(object):
 
         return [ (filename, line, name, None) ]
 
-    def prepare(self):
+    def prepare(self, analysis):
         """
         This should be called before the execute code is called, and again
         after init-level code (like the code in a .rpym module or an init
         python block) is called.
+
+        `analysis`
+            A pyutil.Analysis object containing the analysis of this screen.
         """
 
         # By default, does nothing.
@@ -211,10 +214,10 @@ class SLBlock(SLNode):
         self.children = [ ]
 
 
-    def prepare(self):
+    def prepare(self, analysis):
 
         for i in self.children:
-            i.prepare()
+            i.prepare(analysis)
 
             if not i.constant:
                 self.constant = False
@@ -229,7 +232,7 @@ class SLBlock(SLNode):
 
             node = py_compile(expr, 'eval', ast_node=True)
 
-            if is_constant(node):
+            if analysis.is_constant(node):
                 keyword_values[k] = py_eval_bytecode(compile_expr(node))
             else:
                 keyword_keys.append(ast.Str(s=k))
@@ -383,9 +386,9 @@ class SLDisplayable(SLBlock):
         # Positional argument expressions.
         self.positional = [ ]
 
-    def prepare(self):
+    def prepare(self, analysis):
 
-        SLBlock.prepare(self)
+        SLBlock.prepare(self, analysis)
 
         # Prepare the positional arguments.
 
@@ -397,7 +400,7 @@ class SLDisplayable(SLBlock):
         for a in self.positional:
             node = py_compile(a, 'eval', ast_node=True)
 
-            if is_constant(node):
+            if analysis.is_constant(node):
                 values.append(py_eval_bytecode(compile_expr(node)))
                 exprs.append(ast.Num(n=0))
                 has_values = True
@@ -757,7 +760,7 @@ class SLIf(SLNode):
         # None, for the else block) and a SLBlock.
         self.entries = [ ]
 
-    def prepare(self):
+    def prepare(self, analysis):
 
         # A list of prepared entries, with each consisting of expression
         # bytecode and a SLBlock.
@@ -767,12 +770,12 @@ class SLIf(SLNode):
             if cond is not None:
                 node = py_compile(cond, 'eval', ast_node=True)
 
-                if not is_constant(node):
+                if not analysis.is_constant(node):
                     self.constant = False
 
                 cond = compile_expr(node)
 
-            block.prepare()
+            block.prepare(analysis)
 
             if not block.constant:
                 self.constant = False
@@ -810,10 +813,10 @@ class SLFor(SLBlock):
         self.variable = variable
         self.expression = expression
 
-    def prepare(self):
+    def prepare(self, analysis):
         node = py_compile(self.expression, 'eval', ast_node=True)
 
-        if is_constant(node):
+        if analysis.is_constant(node):
             self.expression_value = py_eval_bytecode(compile_expr(node))
             self.expression_expr = None
         else:
@@ -821,7 +824,7 @@ class SLFor(SLBlock):
             self.expression_expr = compile_expr(node)
             self.constant = False
 
-        SLBlock.prepare(self)
+        SLBlock.prepare(self, analysis)
 
     def execute(self, context):
 
@@ -891,7 +894,7 @@ class SLPython(SLNode):
     def execute(self, context):
         exec self.code.bytecode in context.globals, context.scope
 
-    def prepare(self):
+    def prepare(self, analysis):
         self.constant = False
 
 class SLPass(SLNode):
@@ -908,7 +911,7 @@ class SLDefault(SLNode):
         self.variable = variable
         self.expression = expression
 
-    def prepare(self):
+    def prepare(self, analysis):
         self.expr = py_compile(self.expression, 'eval')
         self.constant = False
 
@@ -931,7 +934,7 @@ class SLOn(SLNode):
         # This stores the action using the 'action' property.
         self.keyword = [ ]
 
-    def prepare(self):
+    def prepare(self, analysis):
 
         keywords = dict(self.keyword)
 
@@ -941,12 +944,12 @@ class SLOn(SLNode):
         self.event_expr = compile_expr(event_node)
         self.action_expr = compile_expr(action_node)
 
-        if is_constant(event_node):
+        if analysis.is_constant(event_node):
             self.event_value = py_eval_bytecode(self.event_expr)
         else:
             self.event_value = None
 
-        if is_constant(action_node):
+        if analysis.is_constant(action_node):
             self.action_value = py_eval_bytecode(self.action_expr)
         else:
             self.action_value = None
@@ -985,7 +988,7 @@ class SLUse(SLNode):
         self.args = args
 
 
-    def prepare(self):
+    def prepare(self, analysis):
 
         ts = renpy.display.screen.get_screen_variant(self.target)
 
@@ -998,7 +1001,7 @@ class SLUse(SLNode):
             return
 
         self.ast = ts.ast
-        self.ast.prepare()
+        self.ast.prepare(analysis)
 
         self.constant = self.ast.constant
 
@@ -1130,11 +1133,14 @@ class SLScreen(SLBlock):
     def unprepare(self):
         self.prepared = False
 
-    def prepare(self):
+    def prepare(self, analysis=None):
+
+        analysis = Analysis()
+
         if not self.prepared:
 
             self.constant = False
-            SLBlock.prepare(self)
+            SLBlock.prepare(self, analysis)
             self.prepared = True
 
     def report_traceback(self, name):
