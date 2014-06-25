@@ -221,6 +221,11 @@ class SLBlock(SLNode):
         self.children = [ ]
 
 
+    def analyze(self, analysis):
+
+        for i in self.children:
+            i.analyze(analysis)
+
     def prepare(self, analysis):
 
         for i in self.children:
@@ -767,6 +772,22 @@ class SLIf(SLNode):
         # None, for the else block) and a SLBlock.
         self.entries = [ ]
 
+
+    def analyze(self, analysis):
+
+        all_const = True
+
+        for cond, _block in self.entries:
+            if (cond is not None) and not analysis.is_constant_expr(cond):
+                all_const = False
+
+        analysis.push_never_constant(not all_const)
+
+        for _cond, block in self.entries:
+            block.analyze(analysis)
+
+        analysis.pop_never_constant()
+
     def prepare(self, analysis):
 
         # A list of prepared entries, with each consisting of expression
@@ -819,6 +840,18 @@ class SLFor(SLBlock):
 
         self.variable = variable
         self.expression = expression
+
+    def analyze(self, analysis):
+
+        if analysis.is_constant_expr(self.expression):
+            analysis.push_never_constant(False)
+        else:
+            analysis.push_never_constant(True)
+
+        SLBlock.analyze(self, analysis)
+
+        analysis.pop_never_constant()
+
 
     def prepare(self, analysis):
         node = py_compile(self.expression, 'eval', ast_node=True)
@@ -918,6 +951,9 @@ class SLDefault(SLNode):
         self.variable = variable
         self.expression = expression
 
+    def analyze(self, analysis):
+        analysis.mark_not_constant(self.variable)
+
     def prepare(self, analysis):
         self.expr = py_compile(self.expression, 'eval')
         self.constant = False
@@ -993,7 +1029,6 @@ class SLUse(SLNode):
 
         # If arguments are given, those arguments.
         self.args = args
-
 
     def prepare(self, analysis):
 
@@ -1085,8 +1120,6 @@ class SLUse(SLNode):
 
         if self.ast is not None:
             self.ast.copy_on_change(c)
-
-
 
 class SLScreen(SLBlock):
     """

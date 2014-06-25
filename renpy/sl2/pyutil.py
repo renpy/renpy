@@ -25,6 +25,7 @@ from __future__ import division
 from __future__ import absolute_import
 
 import renpy # @UnusedImport
+from renpy.python import py_compile
 
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
@@ -128,9 +129,19 @@ class Analysis(object):
         self.old_constant = set()
         self.old_pure_functions = set()
 
-        # True if we can never mark a variable as constant.
+        # True if control flow prevents assigned variables from being constant.
         self.never_constant = False
 
+        # The stack of never_constant values.
+        self.never_constant_stack = [ ]
+
+
+    def push_never_constant(self, value):
+        self.never_constant_stack.append(self.never_constant)
+        self.never_constant = self.never_constant or value
+
+    def pop_never_constant(self):
+        self.never_constant = self.never_constant_stack.pop()
 
     def at_fixed_point(self):
         """
@@ -320,6 +331,16 @@ class Analysis(object):
             return False
 
         return check_node(node)
+
+    def is_constant_expr(self, expr):
+        """
+        Compiles `expr` into an AST node, then returns the result of
+        self.is_constant called on that node.
+        """
+
+        node = py_compile(expr, 'eval', ast_node=True)
+        return self.is_constant(node)
+
 
 
 class ConstAnalysis(ast.NodeVisitor):
