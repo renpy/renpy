@@ -144,6 +144,13 @@ class SLNode(object):
 
         return [ (filename, line, name, None) ]
 
+    def analyze(self, analysis):
+        """
+        Performs static analysis on Python code used in this statement.
+        """
+
+        # By default, does nothing.
+
     def prepare(self, analysis):
         """
         This should be called before the execute code is called, and again
@@ -1135,9 +1142,14 @@ class SLScreen(SLBlock):
 
     def prepare(self, analysis=None):
 
-        analysis = Analysis()
-
         if not self.prepared:
+
+            analysis = Analysis()
+
+            while not analysis.at_fixed_point():
+                # TODO: Mark parameters as not-const.
+
+                SLBlock.analyze(self, analysis)
 
             self.constant = False
             SLBlock.prepare(self, analysis)

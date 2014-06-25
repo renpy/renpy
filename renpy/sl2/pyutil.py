@@ -120,6 +120,35 @@ class Analysis(object):
         # The variables we consider to be potentially constant.
         self.constant = set(constants)
 
+        # The functions we consider to be pure.
+        self.pure_functions = set(pure_functions)
+
+        # Old versions of the analysis.
+        self.old_not_constant = set()
+        self.old_constant = set()
+        self.old_pure_functions = set()
+
+        # True if we can never mark a variable as constant.
+        self.never_constant = False
+
+
+    def at_fixed_point(self):
+        """
+        Returns True if we've reached a fixed point, where the analysis has
+        not changed since the last time we called this function.
+        """
+
+        if ((self.not_constant == self.old_not_constant) and
+            (self.old_constant == self.old_constant) and
+            (self.pure_functions == self.old_pure_functions)):
+            return True
+
+        self.old_not_constant = set(self.not_constant)
+        self.old_constant = set(self.constant)
+        self.old_pure_functions = set(self.pure_functions)
+
+        return False
+
     def mark_constant(self, name):
         """
         Marks `name` as potentially constant.
@@ -133,6 +162,7 @@ class Analysis(object):
         Marks `name` as definitely not-constant.
         """
 
+        self.pure_functions.discard(name)
         self.constant.discard(name)
         self.not_constant.add(name)
 
@@ -238,7 +268,7 @@ class Analysis(object):
                 _const, name = check_name(node.func)
 
                 # The function must have a name, and must be declared pure.
-                if not name in pure_functions:
+                if not name in self.pure_functions:
                     return False
 
                 # Arguments and keyword arguments must be pure.
