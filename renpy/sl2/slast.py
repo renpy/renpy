@@ -781,12 +781,12 @@ class SLIf(SLNode):
             if (cond is not None) and not analysis.is_constant_expr(cond):
                 all_const = False
 
-        analysis.push_never_constant(not all_const)
+        analysis.push_control(all_const)
 
         for _cond, block in self.entries:
             block.analyze(analysis)
 
-        analysis.pop_never_constant()
+        analysis.pop_control()
 
     def prepare(self, analysis):
 
@@ -844,13 +844,13 @@ class SLFor(SLBlock):
     def analyze(self, analysis):
 
         if analysis.is_constant_expr(self.expression):
-            analysis.push_never_constant(False)
+            analysis.push_control(True)
         else:
-            analysis.push_never_constant(True)
+            analysis.push_control(False)
 
         SLBlock.analyze(self, analysis)
 
-        analysis.pop_never_constant()
+        analysis.pop_control()
 
 
     def prepare(self, analysis):
@@ -931,11 +931,15 @@ class SLPython(SLNode):
         # A pycode object.
         self.code = code
 
+    def analyze(self, analysis):
+        analysis.python(self.code.source)
+
     def execute(self, context):
         exec self.code.bytecode in context.globals, context.scope
 
     def prepare(self, analysis):
         self.constant = False
+
 
 class SLPass(SLNode):
 
@@ -1011,7 +1015,6 @@ class SLOn(SLNode):
             action = eval(self.action_expr, context.globals, context.scope)
 
         renpy.ui.on(event, action)
-
 
 
 class SLUse(SLNode):

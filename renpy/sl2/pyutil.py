@@ -107,6 +107,20 @@ def pure(fn):
 
     return rv
 
+class Control(object):
+    """
+    Represents control flow.
+
+    `const`
+        True if this statement always executes.
+
+    `loop`
+        True if this corresponds to a loop.
+    """
+
+    def __init__(self, const, loop):
+        self.const = const
+        self.loop = loop
 
 class Analysis(object):
     """
@@ -129,19 +143,35 @@ class Analysis(object):
         self.old_constant = set()
         self.old_pure_functions = set()
 
-        # True if control flow prevents assigned variables from being constant.
-        self.never_constant = False
+        # Represents what we know about the current control.
+        self.control = Control(True, False)
 
-        # The stack of never_constant values.
-        self.never_constant_stack = [ ]
+        # The stack of const_flow values.
+        self.control_stack = [ self.control ]
 
+    def push_control(self, const=True, loop=False):
+        self.control = Control(self.control.const and const, loop)
+        self.control_stack.append(self.control)
 
-    def push_never_constant(self, value):
-        self.never_constant_stack.append(self.never_constant)
-        self.never_constant = self.never_constant or value
+    def pop_control(self):
+        rv = self.control_stack.pop()
+        self.control = self.control_stack[-1]
+        return rv
 
-    def pop_never_constant(self):
-        self.never_constant = self.never_constant_stack.pop()
+    def exit_loop(self):
+        """
+        Call this to indicate the current loop is being exited by the
+        continue or break statements.
+        """
+
+        l = list(self.control_stack)
+        l.reverse()
+
+        for i in l:
+            i.const = False
+
+            if i.loop:
+                break
 
     def at_fixed_point(self):
         """
@@ -341,35 +371,99 @@ class Analysis(object):
         node = py_compile(expr, 'eval', ast_node=True)
         return self.is_constant(node)
 
+    def python(self, code):
+        """
+        Performs analysis on a block of python code.
+        """
 
+        nodes = py_compile(code, 'exec', ast_node=True)
 
-class ConstAnalysis(ast.NodeVisitor):
+        a = PyAnalysis(self)
+
+        for i in nodes:
+            a.visit(i)
+
+class PyAnalysis(ast.NodeVisitor):
     """
-    This analyzes python nodes and determines which variables should be
-    marked const and not-const.
+    This analyzes Python code to determine which variables should be
+    marked const, and which should be marked non-const.
     """
 
-    def __init__(self):
+    def __init__(self, analysis):
 
-        # A set of variables that are const, and those that are not.
-        self.constants = constants
-        self.not_constants = set()
-
-        # True if variables should be assigned const (if otherwise unknown),
-        # false if they should be assigned non-const.
-        self.const = False
+        self.analysis = analysis
 
     def visit_Name(self, node):
-        if isinstance(node, ast.AugStore):
-            self.constants.discard(node.id)
-            self.not_constants.add(node.id)
 
-        if isinstance(node.ctx, ast.Store):
-            if self.const:
-                if node.id not in self.not_constants:
-                    self.constants.add(node.id)
+        if isinstance(node, ast.AugStore):
+            self.analysis.mark_not_constant(node.id)
+
+        elif isinstance(node.ctx, ast.Store):
+            if self.analysis.control.const:
+                self.analysis.mark_constant(node.id)
             else:
-                self.constants.discard(node.id)
-                self.not_constants.add(node.id)
+                self.analysis.mark_not_constant(node.id)
+
+    def visit_Assign(self, node):
+
+        const = self.analysis.is_constant(node.value)
+        self.analysis.push_control(const, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+    def visit_AugAssign(self, node):
+
+        self.analysis.push_control(False, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+    def visit_For(self, node):
+
+        const = self.analysis.is_constant(node.iter)
+
+        self.analysis.push_control(const=const, loop=True)
+        old_const = self.analysis.control.const
+
+        self.generic_visit(node)
+
+        if self.analysis.control.const != old_const:
+            self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+    def visit_While(self, node):
+
+        const = self.analysis.is_constant(node.test)
+
+        self.analysis.push_control(const=const, loop=True)
+        old_const = self.analysis.control.const
+
+        self.generic_visit(node)
+
+        if self.analysis.control.const != old_const:
+            self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+    def visit_If(self, node):
+        const = self.analysis.is_constant(node.value)
+        self.analysis.push_control(const, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+    # The continue and break statements should be pretty rare, so if they
+    # occur, we mark everything later in the loop as non-const.
+
+    def visit_Break(self, node):
+        self.analysis.exit_loop()
+
+    def visit_Continue(self, node):
+        self.analysis.exit_loop()
 
 
