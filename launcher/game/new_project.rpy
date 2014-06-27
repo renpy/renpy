@@ -98,7 +98,7 @@ label new_project:
         template_path = template.path
 
         with interface.error_handling("creating a new project"):
-            shutil.copytree(template_path, project_dir)
+            shutil.copytree(template_path, project_dir, symlinks=False)
 
             # Delete the tmp directory, if it exists.
             if os.path.isdir(os.path.join(project_dir, "tmp")):
