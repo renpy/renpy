@@ -891,6 +891,7 @@ class Transform(Node):
 
         trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
         renpy.dump.transforms.append((self.varname, self.filename, self.linenumber))
+        renpy.exports.pure(self.varname)
         setattr(renpy.store, self.varname, trans)
 
 
@@ -1666,7 +1667,7 @@ class Define(Node):
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
-        renpy.exports.const(self.varname)
+        renpy.exports.pure(self.varname)
         renpy.python.store_dicts["store"][self.varname] = value
 
 
