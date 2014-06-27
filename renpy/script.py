@@ -519,7 +519,6 @@ class Script(object):
 
                 renpy.game.exception_info = old_ei
 
-            i.source = None
             self.bytecode_newcache[key] = code
             i.bytecode = marshal.loads(code)
 
