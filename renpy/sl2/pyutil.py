@@ -104,6 +104,7 @@ def pure(fn):
         fn = fn.__name__
 
     pure_functions.add(fn)
+    constants.add(fn)
 
     return rv
 
