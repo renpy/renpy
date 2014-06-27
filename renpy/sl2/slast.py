@@ -1191,6 +1191,17 @@ class SLScreen(SLBlock):
             SLBlock.prepare(self, analysis)
             self.prepared = True
 
+            if renpy.display.screen.get_profile(self.name).const:
+                profile_log.write("CONST ANALYSIS %s", self.name)
+
+                new_constants = [ i for i in analysis.constant if i not in renpy.sl2.pyutil.constants ]
+                new_constants.sort()
+                profile_log.write('    const: %s', " ".join(new_constants))
+
+                not_constants = list(analysis.not_constant)
+                not_constants.sort()
+                profile_log.write('    not-const: %s', " ".join(not_constants))
+
     def report_traceback(self, name):
         if name == "__call__":
             return [ ]

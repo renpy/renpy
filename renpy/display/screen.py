@@ -31,7 +31,7 @@ profile = { }
 
 class ScreenProfile(renpy.object.Object):
 
-    def __init__(self, name, predict=False, show=False, update=False, request=False, time=False, debug=False):
+    def __init__(self, name, predict=False, show=False, update=False, request=False, time=False, debug=False, const=False):
         """
         :doc: screen
         :name: renpy.profile_screen
@@ -40,7 +40,7 @@ class ScreenProfile(renpy.object.Object):
         must be a string.
 
         Apart from `name`, all arguments must be supplied as keyword
-        arguments. This function takes two groups of arguments.
+        arguments. This function takes three groups of arguments.
 
 
         The first group of arguments determines when profiling occurs.
@@ -55,10 +55,10 @@ class ScreenProfile(renpy.object.Object):
             If true, profiling occurs when the screen is updated.
 
         `request`
-            If true, rofiling occurs when requested by pressing F8.
+            If true, profiling occurs when requested by pressing F8.
 
-        The second group of arguments controls what profiling occurs. All
-        profiling output will be logged to profile.txt in the game directory.
+        The second group of arguments controls what profiling output is
+        produced when profiling occurs.
 
         `time`
             If true, Ren'Py will log the amount of time it takes to evaluate
@@ -72,9 +72,19 @@ class ScreenProfile(renpy.object.Object):
             * Which arguments, if any, needed to be evaluated.
             * Which displayables were reused.
 
-            Producing and saving this debug information takes a noticable
+            Producing and saving this debug information takes a noticeable
             amount of time, and so the `time` output should not be considered
             reliable if `debug` is set.
+
+        The last group of arguments controls what output is produced once
+        per Ren'Py run.
+
+        `const`
+            Displays the variables in the screen that are marked as const and
+            not-const.
+
+        All profiling profiling output will be logged to profile_screen.txt in
+        the game directory.
         """
 
         self.predict = predict
@@ -85,11 +95,30 @@ class ScreenProfile(renpy.object.Object):
         self.time = time
         self.debug = debug
 
-        if name is not None:
+        self.const = const
 
+        if name is not None:
             if isinstance(name, basestring):
                 name = tuple(name.split())
                 profile[name] = self
+
+def get_profile(name):
+    """
+    Returns the profile object for the screen with `name`, or a default
+    profile object if none exists.
+
+    `name`
+        A string or tuple.
+    """
+
+    if isinstance(name, basestring):
+        name = tuple(name.split())
+
+    if name in profile:
+        return profile[name]
+    else:
+        return ScreenProfile(None)
+
 
 
 class Screen(renpy.object.Object):
