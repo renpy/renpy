@@ -736,7 +736,7 @@ class Transform(Container):
 
         child.per_interact()
 
-        renpy.display.render.redraw(self, 0)
+        renpy.display.render.invalidate(self)
 
     def update_state(self):
         """
