@@ -154,6 +154,7 @@ init -1500 python:
 
         return persistent._style_preferences[preference]
 
+    @renpy.pure
     class StylePreference(Action):
         """
         :doc: style_preferences

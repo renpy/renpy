@@ -63,7 +63,17 @@ pure_functions = {
     "DynamicCharacter", "Fixed", "HBox", "VBox", "Grid", "AlphaBlend", "At",
     "color",
 
+    # ui.py
+
+    "ui.returns",
+    "ui.jumps",
+    "ui.jumpsoutofcontext",
+    "ui.callsinnewcontext",
+    "ui.invokesinnewcontext",
+    "ui.gamemenus",
     }
+
+constants = constants | pure_functions
 
 def const(name):
     """
