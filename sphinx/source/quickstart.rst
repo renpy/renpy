@@ -370,7 +370,7 @@ purposes.
 
 To do this repositioning, add an at-clause to a show statement. The at
 clause takes a position, and shows the image at that position. Ren'Py
-includes several pre-defined positions: ``left`` for the right side of
+includes several pre-defined positions: ``left`` for the left side of
 the screen, ``right`` for the right side, ``center`` for centered
 horizontally (the default), and ``truecenter`` for centered
 horizontally and vertically.
