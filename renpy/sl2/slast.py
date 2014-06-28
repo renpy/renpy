@@ -1182,8 +1182,10 @@ class SLScreen(SLBlock):
 
             analysis = Analysis()
 
+            if self.parameters:
+                analysis.parameters(self.parameters)
+
             while not analysis.at_fixed_point():
-                # TODO: Mark parameters as not-const.
 
                 SLBlock.analyze(self, analysis)
 

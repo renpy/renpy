@@ -384,6 +384,20 @@ class Analysis(object):
         for i in nodes:
             a.visit(i)
 
+    def parameters(self, parameters):
+        """
+        Analyzes the parameters to the screen.
+        """
+
+        for i in parameters.parameters:
+            self.mark_not_constant(i)
+
+        if parameters.extrapos is not None:
+            self.mark_not_constant(parameters.extrapos)
+
+        if parameters.extrakw is not None:
+            self.mark_not_constant(parameters.extrakw)
+
 class PyAnalysis(ast.NodeVisitor):
     """
     This analyzes Python code to determine which variables should be
