@@ -322,6 +322,46 @@ Occasionally Used
     defining automatic images. This can be used to remove directory
     names, when directories contain images.
 
+.. var:: config.automatic_images_parts = None
+
+    If this and `config.automatic_images` are not None, this causes Ren'Py
+    to automatically also define composite images.
+
+    When not set to None, this should be set to a list of strings giving
+    directories that include images which are parts of composite images.
+
+    Parts are composited from left to right and all parts must be same size.
+
+    For example, if relative variables are set like below:
+
+    * config.automatic_images = ["/"]
+    * config.automatic_images_parts = ["body", "face", "sweat", "surplus"]
+    * config.automatic_images_not_necessary_parts = ["sweat"]
+
+    and your game directly contains, :
+
+    * eileen/body/b1.png
+    * eileen/body/b2.png
+    * eileen/face/f1.png
+    * eileen/face/f2.png
+    * eileen/sweat/sweat.png
+
+    then below images are defined :
+
+    * eileen b1 f1
+    * eileen b1 f1 sweat 
+    * eileen b1 f2
+    * eileen b1 f2 sweat 
+    * eileen b2 f1
+    * eileen b2 f1 sweat 
+    * eileen b2 f2
+    * eileen b2 f2 sweat
+
+.. var:: config.automatic_images_not_necessary_parts = []
+
+    A list of strings giving directories including images which are not
+    necessary parts for composite images.
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
