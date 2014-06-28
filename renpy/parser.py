@@ -1903,7 +1903,7 @@ def screen2_statement(l, loc):
     return rv
 
 # The version of screen language to use by default.
-screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "1"))
+screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
 
 @statement("screen")
 def screen_statement(l, loc):
