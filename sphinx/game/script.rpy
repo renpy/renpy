@@ -21,5 +21,7 @@ init 1000000 python:
     doc.write_reserved(__builtin__, "source/inc/reserved_builtins", False)
     doc.write_reserved(store, "source/inc/reserved_renpy", True)
 
+    doc.write_pure_const()
+
     raise SystemExit
 

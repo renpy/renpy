@@ -281,7 +281,16 @@ def scan_docs():
         scan_file(os.path.join("source", "inc", i))
 
 
+def format_name(name):
 
+    if name_kind[name] == 'function':
+        name = ":func:`{}`".format(name)
+    elif name_kind[name] == 'class':
+        name = ":class:`{}`".format(name)
+    elif name_kind[name] == 'var':
+        name = ":var:`{}`".format(name)
+
+    return name
 
 def write_reserved(module, dest, ignore_builtins):
 
@@ -300,11 +309,24 @@ def write_reserved(module, dest, ignore_builtins):
             if ignore_builtins and hasattr(__builtin__, i):
                 continue
 
-            if name_kind[i] == 'function':
-                i = ":func:`{}`".format(i)
-            elif name_kind[i] == 'class':
-                i = ":class:`{}`".format(i)
-            elif name_kind[i] == 'var':
-                i = ":var:`{}`".format(i)
+            f.write("* " + format_name(i) + "\n")
 
-            f.write("* " + i + "\n")
+def write_pure_const():
+
+    def write_set(f, s):
+        l = list(s)
+        l.sort()
+
+        for i in l:
+            f.write("* " + format_name(i) + "\n")
+
+    pure = renpy.sl2.pyutil.pure_functions
+    constants = renpy.sl2.pyutil.constants - pure
+
+    with open("source/inc/pure_vars", "w") as f:
+        write_set(f, pure)
+
+    with open("source/inc/const_vars", "w") as f:
+        write_set(f, constants)
+
+

@@ -1,5 +1,16 @@
 .. Automatically generated file - do not modify.
 
+.. function:: Function(callable, *args, **kwargs)
+    
+    This Action calls `callable` with `args` and `kwargs`.
+    
+    `callable`
+        Callable object.
+    `args`
+        position arguments to be passed to `callable`.
+    `kwargs`
+        keyword arguments to be passed to `callable`.
+
 .. function:: Help(help=None)
     
     Displays help.
