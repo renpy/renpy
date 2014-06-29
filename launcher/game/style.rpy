@@ -66,9 +66,22 @@ init -1 python:
     # FONTS/WEIGHTS
     LIGHT = "Roboto-Light.ttf"
     REGULAR = "Roboto-Regular.ttf"
-    DARK = "Roboto-Medium.ttf"
+
+    if persistent.large_print:
+        LIGHT = REGULAR
 
 init 1 python:
+
+    def size(n):
+        """
+        Adjusts the font size if we're in large-print mode.
+        """
+
+        if persistent.large_print and n < 18:
+            n = 18
+
+        return n
+
 
     INDENT = 20
     HALF_INDENT = 10
@@ -103,7 +116,7 @@ init 1:
         color TEXT
         idle_color IDLE
         hover_color HOVER
-        size 18
+        size size(18)
 
     style l_text is l_default
 
@@ -115,7 +128,7 @@ init 1:
     # A small button, used at the bottom of the screen.
     style l_link is l_default
     style l_link_text is l_default:
-        size 14
+        size size(14)
         font LIGHT
 
     # Action buttons on the bottom of the screen.
@@ -126,7 +139,7 @@ init 1:
         right_margin 10 + INDENT
 
     style l_right_button_text is l_default:
-        size 30
+        size size(30)
 
     style l_left_button is l_right_button:
         xalign 0.0
@@ -158,7 +171,7 @@ init 1:
         background SEPARATOR
 
     style l_label_text is l_default:
-        size 24
+        size size(24)
         xpos INDENT
         yoffset 6
 
@@ -172,7 +185,7 @@ init 1:
     style l_label_small_text is l_default:
         xpos INDENT
         yoffset 6
-        size 20
+        size size(20)
 
     # Alternate labels. This nests inside an l_label, and gives a button
     # or label that's nested inside another label.
@@ -184,17 +197,17 @@ init 1:
         right_margin INDENT
 
     style l_alternate_text is l_default:
-        size 14
+        size size(14)
         font LIGHT
         text_align 1.0
 
     style l_small_button is l_button
 
     style l_small_button_text is l_button_text:
-        size 14
+        size size(14)
 
     style l_small_text is l_text:
-        size 14
+        size size(14)
 
     # Indents its contents.
     style l_indent is l_default:
@@ -262,7 +275,7 @@ init 1:
         yoffset 12
 
     style l_info_label_text is l_default:
-        size 36
+        size size(36)
 
     style l_info_text is l_default:
         xalign 0.5
@@ -292,11 +305,11 @@ init 1:
         top_margin 3
 
     style l_navigation_button_text is l_button_text:
-        size 14
+        size size(14)
         font REGULAR
 
     style l_navigation_text is l_text:
-        size 12
+        size size(14)
         font LIGHT
         color TEXT
 
@@ -324,7 +337,7 @@ init 1:
         background PROJECTS_WINDOW
 
     style hyperlink_text:
-        size 18
+        size size(18)
         font LIGHT
         color IDLE
         hover_color HOVER
