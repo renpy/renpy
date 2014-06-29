@@ -307,6 +307,8 @@ init 1 python in editor:
 
 
     class Edit(Action):
+        alt = "Edit [text]."
+
         def __init__(self, filename, line=None, check=False):
             """
             An action that opens the given line of the given file in a
@@ -407,6 +409,8 @@ init 1 python in editor:
         """
         Opens all scripts that are part of the current project in a web browser.
         """
+
+        alt = "Edit [text]."
 
         def __init__(self):
             return

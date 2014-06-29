@@ -197,6 +197,7 @@ init -1 python hide:
             quit = renpy.quit_event,
             iconify = renpy.iconify,
             choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
+            self_voicing = Preference("self voicing", "toggle"),
             ),
     ]
 

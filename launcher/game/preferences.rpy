@@ -50,6 +50,7 @@ screen preferences:
     frame:
         style_group "l"
         style "l_root"
+        alt "Preferences"
 
         window:
 
@@ -83,10 +84,13 @@ screen preferences:
 
                         frame style "l_indent":
                             if persistent.projects_directory:
-                                textbutton _("[persistent.projects_directory!q]") action Jump("projects_directory_preference")
+                                textbutton _("[persistent.projects_directory!q]"):
+                                    action Jump("projects_directory_preference")
+                                    alt _("Projects directory: [text]")
                             else:
-                                textbutton _("Not Set") action Jump("projects_directory_preference")
-
+                                textbutton _("Not Set"):
+                                    action Jump("projects_directory_preference")
+                                    alt _("Projects directory: [text]")
 
 
                     add SPACER
@@ -105,9 +109,9 @@ screen preferences:
 
                         frame style "l_indent":
                             if persistent.editor:
-                                textbutton persistent.editor action Jump("editor_preference")
+                                textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
                             else:
-                                textbutton _("Not Set") action Jump("editor_preference")
+                                textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
 
                     add SPACER
 
