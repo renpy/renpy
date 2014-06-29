@@ -162,6 +162,7 @@ screen preferences:
 
                         textbutton _("Hardware rendering") style "l_checkbox" action ToggleField(persistent, "gl_enable")
                         textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
+                        textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                         if renpy.windows:
                             textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
