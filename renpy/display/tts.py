@@ -47,6 +47,20 @@ def periodic():
         if process.poll() is not None:
             process = None
 
+
+def default_tts_function(s):
+    """
+    Process texts which should be spoken.
+    """
+    if renpy.linux:
+        process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
+    elif renpy.macintosh:
+        process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
+    elif renpy.windows:
+        say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
+        process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
+
+
 def tts(s):
     """
     Speaks the queued messages, if any, using an os-specific method.
@@ -70,14 +84,7 @@ def tts(s):
     if not s:
         return
 
-    if renpy.linux:
-        process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
-    elif renpy.macintosh:
-        process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
-    elif renpy.windows:
-        say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
-        process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
-
+    renpy.config.tts_function(s)
 
     queue = [ ]
 

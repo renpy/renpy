@@ -24,7 +24,7 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 # This will be deleted by the end of this file.
-import renpy.display #@UnusedImport
+import renpy.display
 import os
 
 # Can we add more config variables?
@@ -505,6 +505,9 @@ choice_layer = "screens"
 # If true, we will not use the .report_traceback method to produced
 # prettier tracebacks.
 raw_tracebacks = ("RENPY_RAW_TRACEBACKS" in os.environ)
+
+# A function to process texts which should be spoken
+tts_function = renpy.display.tts.default_tts_function
 
 del renpy
 del os
