@@ -315,7 +315,8 @@ init python in project:
             """
 
             rv = [ ]
-            rv.extend(i for i, isdir in util.walk(self.path) if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) )
+            rv.extend(i for i, isdir in util.walk(self.path)
+                if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) and (not i.startswith("tmp/")) )
 
             return rv
 
