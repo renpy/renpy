@@ -82,6 +82,20 @@ init -1400:
     python:
         config.default_transform = default
 
+        # These names are unlikely to be used in screens - except as arguments -
+        # so mark them not-const.
+
+        renpy.not_const("reset")
+        renpy.not_const("left")
+        renpy.not_const("right")
+        renpy.not_const("center")
+        renpy.not_const("truecenter")
+        renpy.not_const("topleft")
+        renpy.not_const("topright")
+        renpy.not_const("top")
+        renpy.not_const("offscreenleft")
+        renpy.not_const("offscreenright")
+        renpy.not_const("default")
 
 # Transitions ##################################################################
 
@@ -234,7 +248,6 @@ init -1400 python:
             }
 
         for k, v in moves.iteritems():
-            renpy.pure(prefix + k)
             setattr(store, prefix + k, v)
 
     def old_move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
@@ -303,7 +316,6 @@ init -1400 python:
             }
 
         for k, v in moves.iteritems():
-            renpy.pure(prefix + k)
             setattr(store, prefix + k, v)
 
     define.move_transitions = move_transitions

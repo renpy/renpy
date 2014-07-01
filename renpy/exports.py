@@ -30,8 +30,7 @@ _file = file
 import renpy.display
 import renpy.audio
 
-
-from renpy.sl2.pyutil import const, pure
+from renpy.sl2.pyutil import const, pure, not_const
 
 def renpy_pure(fn):
     """
@@ -134,7 +133,7 @@ def public_api():
     register_statement
     check_text_tags
     map_event, queue_event, clear_keymap_cache
-    const, pure
+    const, pure, not_const
     image_exists
 
 del public_api

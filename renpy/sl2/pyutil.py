@@ -75,12 +75,14 @@ pure_functions = {
 
 constants = constants | pure_functions
 
+# A set of names that should not be treated as global constants.
+not_constants = set()
+
 def const(name):
     """
     :doc: const
 
     Declares a variable in the store to be constant.
-
 
     A variable is constant if nothing can change its value, or any value
     reached by indexing it or accessing its attributes. Variables must
@@ -90,7 +92,26 @@ def const(name):
         A string giving the name of the variable to declare constant.
     """
 
-    constants.add(name)
+    if name not in not_constants:
+        constants.add(name)
+
+
+def not_const(name):
+    """
+    :doc: const
+
+    Declares a name in the store to be not constant.
+
+    This undoes the effect of calls to :func:`renpy.const` and
+    :func:`renpy.pure`.
+
+    `name`
+        The name to declare not constant.
+    """
+
+    constants.discard(name)
+    pure_functions.discard(name)
+    not_constants.add(name)
 
 
 def pure(fn):
@@ -108,15 +129,17 @@ def pure(fn):
     Returns `fn`, allowing this function to be used as a decorator.
     """
 
-    rv = fn
+    name = fn
 
-    if not isinstance(fn, basestring):
-        fn = fn.__name__
+    if not isinstance(name, basestring):
+        name = fn.__name__
 
-    pure_functions.add(fn)
-    constants.add(fn)
+    if name not in not_constants:
+        pure_functions.add(name)
+        constants.add(name)
 
-    return rv
+    return fn
+
 
 class Control(object):
     """
@@ -132,6 +155,7 @@ class Control(object):
     def __init__(self, const, loop):
         self.const = const
         self.loop = loop
+
 
 class Analysis(object):
     """
@@ -407,6 +431,7 @@ class Analysis(object):
 
         if parameters.extrakw is not None:
             self.mark_not_constant(parameters.extrakw)
+
 
 class PyAnalysis(ast.NodeVisitor):
     """
