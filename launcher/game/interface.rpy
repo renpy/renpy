@@ -120,15 +120,10 @@ screen bottom_info:
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
 
 
-screen common:
-
-    default complete = None
-    default total = None
-    default yes = None
-    default no = None
-    default choices = None
-    default cancel = None
-    default bar_value = None
+screen common(title, message="", submessage=None, title_color="#000000",
+    complete=None, total=None, bar_value=None,
+    choices=None,
+    yes=None, no=None, back=None, cancel=None, continue_=None):
 
     frame:
         style "l_root"
@@ -205,7 +200,7 @@ screen common:
         textbutton _("Continue") action continue_ style "l_right_button"
 
 
-screen launcher_input:
+screen launcher_input(title, message, default="", cancel=None, filename=False):
 
     frame:
         style "l_root"
@@ -421,7 +416,7 @@ init python in interface:
             The amount of time to pause for after showing the message.
         """
 
-        common(title, store.INTERACTION_COLOR, message, submessage=None, pause=pause, show_screen=True, **kwargs)
+        common(title, store.INTERACTION_COLOR, message, submessage=None, show_screen=True, **kwargs)
         renpy.pause(pause)
 
     def processing(message, submessage=None, complete=None, total=None, **kwargs):
