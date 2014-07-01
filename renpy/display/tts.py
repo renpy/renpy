@@ -47,13 +47,13 @@ def periodic():
         if process.poll() is not None:
             process = None
 
-def tts(s):
+
+def default_tts_function(s):
     """
-    Speaks the queued messages, if any, using an os-specific method.
+    Default function which speaks messages using an os-specific method.
     """
 
     global process
-    global queue
 
     # Stop the existing process.
     if process is not None:
@@ -78,6 +78,15 @@ def tts(s):
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
         process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
 
+
+def tts(s):
+    """
+    Speaks the queued messages using the specified function.
+    """
+
+    global queue
+
+    renpy.config.tts_function(s)
 
     queue = [ ]
 
