@@ -868,7 +868,7 @@ both horizontal and vertical positions.
     :default: True
 
     If true, events are passed to the child of this transform. If false,
-    events are blocked. (This can be used in ATL transitions to prevent
+    events are blocked. (This can be used in ATL transforms to prevent
     events from reaching the old_widget.)
 
 These properties are applied in the following order:
