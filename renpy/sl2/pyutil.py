@@ -399,8 +399,8 @@ class Analysis(object):
         Analyzes the parameters to the screen.
         """
 
-        for i in parameters.parameters:
-            self.mark_not_constant(i)
+        for name, _default in parameters.parameters:
+            self.mark_not_constant(name)
 
         if parameters.extrapos is not None:
             self.mark_not_constant(parameters.extrapos)
