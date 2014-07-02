@@ -310,6 +310,9 @@ def run_periodic(var, st):
 def is_selected(clicked):
 
     if isinstance(clicked, (list, tuple)):
+        for i in clicked:
+            if isinstance(i, renpy.store.SelectedIf):
+                return i.get_selected()
         return any(is_selected(i) for i in clicked)
 
     elif isinstance(clicked, renpy.ui.Action):
@@ -321,6 +324,9 @@ def is_selected(clicked):
 def is_sensitive(clicked):
 
     if isinstance(clicked, (list, tuple)):
+        for i in clicked:
+            if isinstance(i, renpy.store.SensitiveIf):
+                return i.get_sensitive()
         return all(is_sensitive(i) for i in clicked)
 
     elif isinstance(clicked, renpy.ui.Action):
