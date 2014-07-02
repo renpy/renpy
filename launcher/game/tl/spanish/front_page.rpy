@@ -98,5 +98,5 @@
 
     # game/front_page.rpy:150
     old "Select project [text]."
-    new "Seleccionar Proyecto [text]."
+    new "Seleccionar proyecto [text]."
 
