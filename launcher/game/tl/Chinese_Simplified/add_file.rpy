@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 

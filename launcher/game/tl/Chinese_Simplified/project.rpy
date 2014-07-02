@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -26,7 +25,6 @@ translate Chinese_Simplified strings:
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py已将工程目录设置为："
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 

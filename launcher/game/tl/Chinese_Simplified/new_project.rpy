@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -30,7 +29,6 @@ translate Chinese_Simplified strings:
     old "[project_dir!q] already exists. Please choose a different project name."
     new "[project_dir!q] 已存在。请选择另一个不同的名字。"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
@@ -38,7 +36,6 @@ translate Chinese_Simplified strings:
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "请为你新建的工程选择一个模板。该模板将设定默认的字体和交互语言。如果你的语言没有被支持，请选择'english'。\n({a=http://www.weibo.com/huanxuantian}简体中文模板现已上线，点击进入微博查看。\n——幻玄天 字{/a})"
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 

@@ -1,4 +1,3 @@
-﻿# TODO: Translation version 更新记录
 
 translate Chinese_Simplified strings:
 

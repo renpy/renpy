@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -82,7 +81,6 @@ translate Chinese_Simplified strings:
     old "QUESTION"
     new "问题"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 

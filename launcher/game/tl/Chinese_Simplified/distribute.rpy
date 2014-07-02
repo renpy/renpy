@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -34,7 +33,6 @@ translate Chinese_Simplified strings:
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "所有包已被创建。\n\n由于许可信息存在，因此在Windows中不支持解包和重新打包linux和Mac的发布包。"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
@@ -42,7 +40,6 @@ translate Chinese_Simplified strings:
     old "No packages are selected, so there's nothing to do."
     new "没有包被选中，所以什么都没有发生。( ´_ゝ｀)"
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 

@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -6,7 +5,6 @@ translate Chinese_Simplified strings:
     old "%b %d, %H:%M"
     new "%b %d, %H:%M"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -102,7 +100,6 @@ translate Chinese_Simplified strings:
     old "Restart"
     new "重启"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -110,7 +107,6 @@ translate Chinese_Simplified strings:
     old "Saved screenshot as %s."
     new "保存屏幕截图为 %s。"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -138,7 +134,6 @@ translate Chinese_Simplified strings:
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "是否确认返回主菜单？\n这样将会丢失未保存的数据。"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -150,7 +145,6 @@ translate Chinese_Simplified strings:
     old "Fast Skip Mode"
     new "快进模式"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -190,7 +184,6 @@ translate Chinese_Simplified strings:
     old "The updates were cancelled."
     new "该更新已被取消。"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -206,7 +199,6 @@ translate Chinese_Simplified strings:
     old "Next"
     new "下一页"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -214,7 +206,6 @@ translate Chinese_Simplified strings:
     old "Joystick Mapping"
     new "手柄映射"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -270,7 +261,6 @@ translate Chinese_Simplified strings:
     old "Opens the errors.txt file in a text editor."
     new "在编辑器中打开解析错误文件（errors.txt）"
 
-# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -282,7 +272,6 @@ translate Chinese_Simplified strings:
     old "q"
     new "q"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
@@ -290,7 +279,6 @@ translate Chinese_Simplified strings:
     old "Quick save complete."
     new "快速保存构建。"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
@@ -314,7 +302,6 @@ translate Chinese_Simplified strings:
     old "return"
     new "返回"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
@@ -330,7 +317,6 @@ translate Chinese_Simplified strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "是否确认跳过未见得对话或者下一个选项？"
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 
@@ -400,7 +386,6 @@ translate Chinese_Simplified strings:
     old "jump <label>: jumps to label"
     new "unwatchall: 停止监视（watch）所有表达式"
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 
@@ -468,7 +453,6 @@ translate Chinese_Simplified strings:
     old "Done"
     new "完成"
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 
@@ -508,7 +492,6 @@ translate Chinese_Simplified strings:
     old "<repr() failed>"
     new "<repr() failed>"
 
-# TODO: Translation updated at 2014-03-24 10:49
 
 translate Chinese_Simplified strings:
 

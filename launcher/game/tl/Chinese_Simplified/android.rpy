@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
@@ -102,7 +101,6 @@ translate Chinese_Simplified strings:
     old "Build & Install"
     new "构建并安装"
 
-# TODO: Translation updated at 2014-03-19 22:16
 
 translate Chinese_Simplified strings:
 

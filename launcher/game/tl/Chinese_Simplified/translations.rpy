@@ -1,4 +1,3 @@
-﻿# TODO: Translation updated at 2013-12-16 18:00
 
 translate Chinese_Simplified strings:
 
@@ -22,7 +21,6 @@ translate Chinese_Simplified strings:
     old "Ren'Py has finished generating [language] translations."
     new "Ren'Py完成[language]翻译文件的创建。"
 
-# TODO: Translation updated at 2013-12-16 20:31
 
 translate Chinese_Simplified strings:
 
