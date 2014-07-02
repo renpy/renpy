@@ -227,3 +227,98 @@ label _developer:
 # its own layer.
 screen _ctc:
     add ctc
+
+init -1900 python:
+
+    # directories including images for composite images.
+    config.automatic_images_parts = None
+
+    # directories including not necessary images for composite images.
+    config.automatic_images_not_necessary_parts = []
+
+init 1900 python hide:
+
+    def create_automatic_composite_images():
+        import itertools
+
+        seps = config.automatic_images
+
+        if seps is True:
+            seps = [ ' ', '/', '_' ]
+
+        image_parts = dict()
+
+        for dir, fn in renpy.loader.listdirfiles():
+
+            if fn.startswith("_"):
+                continue
+
+            # Only .png and .jpg
+            if not fn.lower().endswith(".png") and not fn.lower().endswith(".jpg"):
+                continue
+
+            # Strip the extension, replace slashes.
+            shortfn = fn[:-4].replace("\\", "/")
+
+            #store parts to image_parts
+            for i in config.automatic_images_parts:
+                if shortfn.find("/"+i+"/") > 0:
+
+                    name = (shortfn[:shortfn.find("/"+i+"/")], )
+                    for sep in seps:
+                        name = tuple(j for i in name for j in i.split(sep))
+                    # Strip name components.
+                    while name:
+                        for j in config.automatic_images_strip:
+                            if name[0] == j:
+                                name = name[1:]
+                                break
+                        else:
+                            break
+
+                    parts = (shortfn[shortfn.find("/"+i+"/")+len(i)+2:], )
+                    for sep in seps:
+                        parts = tuple(j for i in parts for j in i.split(sep))
+
+
+                    if name not in image_parts:
+                        image_parts[name] = { i:[] for i in config.automatic_images_parts }
+
+                    image_parts[name][i].append((parts, fn))
+
+        # define images consisting of several images
+        for name in image_parts:
+            parts_lists = []
+            for part in config.automatic_images_parts:
+                if image_parts[name][part]:
+                    if part in config.automatic_images_not_necessary_parts:
+                        image_parts[name][part].append(None)
+                    parts_lists.append(image_parts[name][part])
+
+            all_pattern = map(list, itertools.product(*parts_lists))
+
+            for i in all_pattern:
+                if i[0] is not None:
+                    size = renpy.image_size(i[0][1])
+                    break
+
+            for i in all_pattern:
+                name_args = name
+                file_args = ()
+                for k in i:
+                    if k is not None:
+                        name_args += k[0]
+                        file_args += (0,0), k[1]
+
+                # Only names of 2 components or more by default.
+                if len(name_args) < config.automatic_images_minimum_components:
+                    continue
+
+                # Reject if it already exists.
+                if name_args in renpy.display.image.images:
+                    continue
+
+                renpy.image(name_args, LiveComposite(size, *file_args))
+ 
+    if config.automatic_images and config.automatic_images_parts:
+        create_automatic_composite_images()
