@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/navigation.rpy:150
     old "Navigate: [project.current.name]"

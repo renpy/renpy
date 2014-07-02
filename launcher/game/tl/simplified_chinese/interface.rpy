@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/interface.rpy:89
     old "Documentation"
@@ -82,7 +82,7 @@ translate Chinese_Simplified strings:
     new "问题"
 
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/interface.rpy:456
     old "CHOICE"

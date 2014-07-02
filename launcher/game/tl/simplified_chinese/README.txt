@@ -1,9 +1,9 @@
-Chinese_Simplified translation for ren'py launcher 
+simplified_chinese translation for ren'py launcher 
 orgin version：0.98a
 current version：1.3c
 least update date:2014-5-27
 ----------------------------------------------------
-REN’PY启动器的简体中文[Chinese_Simplified]翻译
+REN’PY启动器的简体中文[simplified_chinese]翻译
 原始版本：0.98a
 目前版本：1.3c
 最后更新：2014-5-27
@@ -50,7 +50,7 @@ description:
 ren'py translate trage version：renpy-6.15.6
 inf:
 -----------------------------
-folder: Chinese_Simplified
+folder: simplified_chinese
 files:
     about.rpy
     add_file.rpy
@@ -76,7 +76,7 @@ font file not include
 翻译的目标ren'py平台版本：renpy-6.15.6
 信息:
 -----------------------------
-目录: Chinese_Simplified
+目录: simplified_chinese
 文件:
     about.rpy
     add_file.rpy
@@ -102,7 +102,7 @@ description:
 ren'py translate trage version：renpy-6.17.3
 inf:
 -----------------------------
-folder: Chinese_Simplified
+folder: simplified_chinese
 files:
     about.rpy
     add_file.rpy
@@ -131,7 +131,7 @@ include style.rpy in this version,custom font file supportly
 翻译的目标ren'py平台版本：renpy-6.17.3
 信息:
 -----------------------------
-目录: Chinese_Simplified
+目录: simplified_chinese
 文件:
     about.rpy
     add_file.rpy

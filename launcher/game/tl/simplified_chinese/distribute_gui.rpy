@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/distribute_gui.rpy:139
     old "Build Distributions: [project.current.name!q]"

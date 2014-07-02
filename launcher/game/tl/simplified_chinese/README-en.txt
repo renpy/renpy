@@ -1,4 +1,4 @@
-Chinese_Simplified translation for ren'py launcher 
+simplified_chinese translation for ren'py launcher 
 orgin version£º0.98a
 current version£º1.3c
 least update date:2014-5-27
@@ -26,7 +26,7 @@ description:
 ren'py translate trage version£ºrenpy-6.15.6
 inf:
 -----------------------------
-folder: Chinese_Simplified
+folder: simplified_chinese
 files:
     about.rpy
     add_file.rpy
@@ -52,7 +52,7 @@ description:
 ren'py translate trage version£ºrenpy-6.17.3
 inf:
 -----------------------------
-folder: Chinese_Simplified
+folder: simplified_chinese
 files:
     about.rpy
     add_file.rpy

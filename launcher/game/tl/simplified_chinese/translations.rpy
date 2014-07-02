@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/translations.rpy:10
     old "Create or Update Translations"
@@ -7,7 +7,7 @@ translate Chinese_Simplified strings:
 
     # game/translations.rpy:10
     old "Please enter the name of the language for which you want to create or update translations."
-    new "请输入你要创建或者更新的语言名称。（当前简体中文使用Chinese_Simplified）"
+    new "请输入你要创建或者更新的语言名称。（当前简体中文使用simplified_chinese）"
 
     # game/translations.rpy:15
     old "The language name can not be the empty string."
@@ -22,7 +22,7 @@ translate Chinese_Simplified strings:
     new "Ren'Py完成[language]翻译文件的创建。"
 
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/translations.rpy:44
     old "What format would you like for the extracted dialogue?"

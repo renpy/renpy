@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/updater.rpy:54
     old "Select Update Channel"
@@ -86,7 +86,7 @@ translate Chinese_Simplified strings:
     new "继续"
 
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/updater.rpy:129
     old "Nightly"

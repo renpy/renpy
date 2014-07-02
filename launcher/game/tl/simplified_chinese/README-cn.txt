@@ -1,5 +1,5 @@
 ----------------------------------------------------
-REN’PY启动器的简体中文[Chinese_Simplified]翻译
+REN’PY启动器的简体中文[simplified_chinese]翻译
 原始版本：0.98a
 目前版本：1.3c
 最后更新：2014-5-27
@@ -29,7 +29,7 @@ REN’PY启动器的简体中文[Chinese_Simplified]翻译
 翻译的目标ren'py平台版本：renpy-6.15.6
 信息:
 -----------------------------
-目录: Chinese_Simplified
+目录: simplified_chinese
 文件:
     about.rpy
     add_file.rpy
@@ -55,7 +55,7 @@ REN’PY启动器的简体中文[Chinese_Simplified]翻译
 翻译的目标ren'py平台版本：renpy-6.17.3
 信息:
 -----------------------------
-目录: Chinese_Simplified
+目录: simplified_chinese
 文件:
     about.rpy
     add_file.rpy

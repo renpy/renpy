@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/front_page.rpy:79
     old "+ Create New Project"
@@ -74,7 +74,7 @@ translate Chinese_Simplified strings:
     new "删除固实数据..."
 
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
     
     # game/front_page.rpy:69
     old "PROJECTS:"

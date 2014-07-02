@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/distribute.rpy:333
     old "Nothing to do."
@@ -34,14 +34,14 @@ translate Chinese_Simplified strings:
     new "所有包已被创建。\n\n由于许可信息存在，因此在Windows中不支持解包和重新打包linux和Mac的发布包。"
 
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/distribute.rpy:358
     old "No packages are selected, so there's nothing to do."
     new "没有包被选中，所以什么都没有发生。( ´_ゝ｀)"
 
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/distribute.rpy:335
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."

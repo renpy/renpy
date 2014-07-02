@@ -1,5 +1,5 @@
 
-translate Chinese_Simplified strings:
+translate simplified_chinese strings:
 
     # game/choose_theme.rpy:274
     old "Could not change the theme. Perhaps options.rpy was changed too much."
