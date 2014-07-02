@@ -50,6 +50,9 @@ init -1500 python:
     _voice.tlid = None
     _voice.auto_file = None
 
+    # If true, the voice system ignores the interaction.
+    _voice.ignore_interaction = False
+
     # The voice filename format. This may contain the voice tag
     config.voice_filename_format = "{filename}"
 
@@ -212,6 +215,9 @@ init -1500 python hide:
     def voice_interact():
 
         if not config.has_voice:
+            return
+
+        if _voice.ignore_interaction:
             return
 
         _voice.auto_file = None
