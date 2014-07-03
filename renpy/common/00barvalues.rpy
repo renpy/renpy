@@ -229,7 +229,7 @@ init -1500 python:
         offset = 0
 
         identity_fields = [ 'object' ]
-        equality_fields = [ 'key', 'range', 'max_is_zero', 'style', 'offset', 'step']
+        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step']
 
         def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None):
             self.object = object
