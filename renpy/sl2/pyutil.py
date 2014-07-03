@@ -500,7 +500,7 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.pop_control()
 
     def visit_If(self, node):
-        const = self.analysis.is_constant(node.value)
+        const = self.analysis.is_constant(node.test)
         self.analysis.push_control(const, False)
 
         self.generic_visit(node)
