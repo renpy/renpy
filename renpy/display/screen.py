@@ -600,7 +600,6 @@ def define_screen(*args, **kwargs):
     Screen(*args, **kwargs)
 
 
-
 def get_screen(name, layer="screens"):
     """
     :doc: screens
@@ -623,6 +622,7 @@ def get_screen(name, layer="screens"):
         sd = sl.get_displayable_by_name(layer, name)
 
     return sd
+
 
 def has_screen(name):
     """

@@ -1129,6 +1129,8 @@ class SLScreen(SLBlock):
     This represents a screen defined in the screen language 2.
     """
 
+    version = 0
+
     def __init__(self, loc):
 
         SLBlock.__init__(self, loc)
@@ -1179,6 +1181,10 @@ class SLScreen(SLBlock):
     def prepare(self, analysis=None):
 
         if not self.prepared:
+
+            # This version ensures we're not using the cache from an old
+            # version of the screen.
+            self.version += 1
 
             analysis = Analysis()
 
@@ -1233,8 +1239,8 @@ class SLScreen(SLBlock):
         main_cache = renpy.display.screen.current_screen().cache
 
         cache = main_cache.get(name, None)
-        if cache is None:
-            cache = { }
+        if cache is None or (cache["version"] != self.version):
+            cache = { "version" : self.version }
             main_cache[name] = cache
 
         context.cache = cache
