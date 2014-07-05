@@ -196,7 +196,7 @@ add(ui_properties)
 add(position_properties)
 add(box_properties)
 
-DisplayableParser("fixed", renpy.display.layout.Fixed, "fixed", many, default_keywords={ 'layout' : 'fixed' })
+DisplayableParser("fixed", renpy.display.layout.MultiBox, "fixed", many, default_keywords={ 'layout' : 'fixed' })
 add(ui_properties)
 add(position_properties)
 add(box_properties)
