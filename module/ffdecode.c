@@ -119,7 +119,7 @@ typedef struct VideoState {
     ReSampleContext *reformat_ctx;
 #endif
     int resample_frac;
-    
+
     int show_audio; /* if true, display audio samples */
     int16_t sample_array[SAMPLE_ARRAY_SIZE];
     int sample_array_index;
@@ -140,7 +140,7 @@ typedef struct VideoState {
     SDL_mutex *pictq_mutex;
     SDL_cond *pictq_cond;
 
-    
+
     // These are used to notify the parse thread when it's time to die.
     SDL_mutex *quit_mutex;
     SDL_cond *quit_cond;
@@ -148,7 +148,7 @@ typedef struct VideoState {
     //    QETimer *video_timer;
     SDL_RWops *rwops;
     AVIOContext *io_context;
-    
+
     int width, height, xleft, ytop;
 
     double audio_callback_time;
@@ -166,11 +166,14 @@ typedef struct VideoState {
 
     // The amount of audio we've played, in samples.
     unsigned int audio_played;
-    
+
     double start_time;
 
     // Should we force the display of the current video frame?
     int first_frame;
+
+    // The PTS of the first frame.
+    double first_frame_pts;
 
 #ifdef HAS_RESAMPLE
     // The audio frame, and the audio resample context.
@@ -218,7 +221,7 @@ static int audio_sample_rate;
 
 /* ByteIOContext <-> SDL_RWops mapping. */
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
-    SDL_RWops *rw = (SDL_RWops *) opaque;    
+    SDL_RWops *rw = (SDL_RWops *) opaque;
 
     int rv = rw->read(rw, buf, 1, buf_size);
     return rv;
@@ -257,7 +260,7 @@ static AVIOContext *rwops_open(SDL_RWops *rw) {
         rwops_write,
         rwops_seek);
 
-    return rv;    
+    return rv;
 }
 
 static void rwops_close(SDL_RWops *rw) {
@@ -373,7 +376,7 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block)
             break;
         } else if (q->end_request) {
             ret = -1;
-            break;            
+            break;
         } else {
             SDL_CondWait(q->cond, q->mutex);
         }
@@ -392,7 +395,7 @@ static void video_image_display(VideoState *is)
     SDL_Rect rect;
 
     static struct SwsContext *img_convert_ctx;
-    
+
     vp = &is->pictq[is->pictq_rindex];
     if (vp->surf) {
         /* XXX: use variable in the frame */
@@ -405,7 +408,7 @@ static void video_image_display(VideoState *is)
         if (aspect_ratio <= 0.0)
             aspect_ratio = 1.0;
         aspect_ratio *= (float)is->video_st->codec->width / is->video_st->codec->height;
-        
+
         /* XXX: we suppose the screen has a 1.0 pixel ratio */
         height = is->height;
         width = ((int)rint(height * aspect_ratio)) & ~1;
@@ -424,7 +427,7 @@ static void video_image_display(VideoState *is)
         } else {
             is->no_background = 0;
         }
-        
+
         rect.x = is->xleft + x;
         rect.y = is->ytop  + y;
         rect.w = width;
@@ -445,7 +448,7 @@ static void video_image_display(VideoState *is)
 
             pict.data[0] = &((uint8_t *)vp->surf->pixels)[rect.y * vp->surf->pitch + rect.x * 4];
             pict.linesize[0] = vp->surf->pitch;
-            
+
             sws_scale(
                 img_convert_ctx,
                 (const uint8_t * const *) vp->frame->data,
@@ -453,9 +456,9 @@ static void video_image_display(VideoState *is)
                 0,
                 is->video_st->codec->height,
                 pict.data,
-                pict.linesize); 
+                pict.linesize);
         }
-            
+
     } else {
     }
 }
@@ -531,7 +534,7 @@ static int video_refresh(void *opaque)
 {
     VideoState *is = opaque;
     VideoPicture *vp;
-    
+
     double delay;
 
     if (!is->video_st) {
@@ -551,7 +554,12 @@ static int video_refresh(void *opaque)
 		is->video_current_pts = vp->pts;
 		is->video_current_pts_time = av_gettime();
 
+		if (is->first_frame) {
+			is->first_frame_pts = vp->pts;
+		}
+
 		delay = get_audio_clock(is, 0) - vp->pts;
+		delay += is->first_frame_pts;
 
 		/* The video is ahead of the audio. */
 		if (delay < 0 && !is->first_frame) {
@@ -607,13 +615,13 @@ static void alloc_picture(void *opaque, PyObject *pysurf)
     }
 
     ffpy_needs_alloc = 0;
-    
+
     surf = PySurface_AsSurface(pysurf);
     is->width = surf->w;
     is->height = surf->h;
 
     vp = &is->pictq[is->pictq_windex];
-    vp->surf = surf;    
+    vp->surf = surf;
     vp->width = is->video_st->codec->width;
     vp->height = is->video_st->codec->height;
 
@@ -649,7 +657,7 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
     AVPicture pict;
     static struct SwsContext *img_convert_ctx;
 #endif
-    
+
     /* wait until we have space to put a new picture */
     SDL_LockMutex(is->pictq_mutex);
     while (is->pictq_size >= VIDEO_PICTURE_QUEUE_SIZE &&
@@ -696,7 +704,7 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts)
     SDL_LockMutex(is->pictq_mutex);
     is->pictq_size++;
     SDL_UnlockMutex(is->pictq_mutex);
-    
+
     return 0;
 }
 
@@ -924,7 +932,7 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
             if (is->audio_duration) {
                 int len = data_size / 4;
                 int maxlen = is->audio_duration - is->audio_played;
-                
+
                 if (len > maxlen) {
                     len = maxlen;
                 }
@@ -1175,12 +1183,12 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
         if (is->started) {
             break;
         }
-        
+
         SDL_Delay(10);
     }
-    
+
     is->audio_callback_time = get_time();
-    
+
     while (len > 0) {
         if (is->audio_buf_index >= is->audio_buf_size) {
 
@@ -1204,7 +1212,7 @@ int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len)
 
         rv += len1;
     }
-    
+
     return rv;
 }
 
@@ -1215,11 +1223,11 @@ static int stream_component_open(VideoState *is, int stream_index)
     AVCodecContext *enc;
     AVCodec *codec;
     int err;
-    
+
     if (stream_index < 0 || stream_index >= ic->nb_streams)
         return -1;
     enc = ic->streams[stream_index]->codec;
-    
+
     /* prepare audio output */
     if (enc->codec_type == AVMEDIA_TYPE_AUDIO) {
         if (enc->channels > 0) {
@@ -1241,19 +1249,19 @@ static int stream_component_open(VideoState *is, int stream_index)
     enc->error_concealment= error_concealment;
 
 //    set_context_opts(enc, avctx_opts[enc->codec_type], 0);
-    
+
     if (!codec) {
         return -1;
     }
 
     err = avcodec_open2(enc, codec, NULL);
-    
+
     if (err < 0) {
         return -1;
     }
-    
+
     is->audio_hw_buf_size = 2048;
-    
+
     ic->streams[stream_index]->discard = AVDISCARD_DEFAULT;
     switch(enc->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
@@ -1336,7 +1344,7 @@ static void stream_component_close(VideoState *is, int stream_index)
     SDL_LockMutex(codec_mutex);
     avcodec_close(enc);
     SDL_UnlockMutex(codec_mutex);
-    
+
     switch(enc->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
         is->audio_st = NULL;
@@ -1362,9 +1370,9 @@ static int decode_thread(void *arg)
     int err, i, ret, video_index, audio_index;
     AVPacket pkt1, *pkt = &pkt1;
     int codecs_locked = 0;
-    
+
     // url_set_interrupt_cb(decode_interrupt_cb);
-    
+
     video_index = -1;
     audio_index = -1;
     is->video_stream = -1;
@@ -1392,7 +1400,7 @@ static int decode_thread(void *arg)
         NULL);
 
     // printf("Format name: %s\n", fmt->name);
-    
+
     is->ic = ic;
 
     if (err < 0) {
@@ -1415,7 +1423,7 @@ static int decode_thread(void *arg)
     if(ic->pb)
         ic->pb->eof_reached= 0; //FIXME hack, ffplay maybe should not
                                 //use url_feof() to test for the end
-    
+
     /* if seeking requested, we execute it */
     if (start_time != AV_NOPTS_VALUE) {
         int64_t timestamp;
@@ -1450,7 +1458,7 @@ static int decode_thread(void *arg)
         }
     }
 
-    
+
     if (show_status) {
         av_dump_format(ic, 0, is->filename, 0);
     }
@@ -1471,7 +1479,7 @@ static int decode_thread(void *arg)
     } else {
         is->show_audio = 0;
     }
-    
+
     if (is->video_stream < 0 && is->audio_stream < 0) {
         fprintf(stderr, "could not open codecs\n");
         ret = -1;
@@ -1488,12 +1496,12 @@ static int decode_thread(void *arg)
         }
     }
 
-    
+
     SDL_UnlockMutex(codec_mutex);
     codecs_locked = 0;
 
     is->started = 1;
-    
+
     for(;;) {
 
         if (is->abort_request) {
@@ -1528,7 +1536,7 @@ static int decode_thread(void *arg)
     }
 
 eof:
-    
+
     /* Request the end of the audio queue when we have no more
        bytes to decode. */
     if (is->audio_st) {
@@ -1555,7 +1563,7 @@ fail:
         SDL_UnlockMutex(codec_mutex);
         codecs_locked = 0;
     }
-        
+
     /* close each stream */
     if (is->audio_stream >= 0)
         stream_component_close(is, is->audio_stream);
@@ -1565,14 +1573,14 @@ fail:
     	avformat_close_input(&(is->ic));
     	is->ic = NULL;
     }
-        
+
     is->audio_stream = -1;
     is->video_stream = -1;
 
     av_free(is->io_context->buffer);
     av_free(is->io_context);
     rwops_close(is->rwops);
-    
+
     return 0;
 }
 
@@ -1586,7 +1594,7 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
 
     is->filename = strdup(filename);
     is->rwops = rwops;
-    
+
     is->iformat = NULL;
     is->ytop = 0;
     is->xleft = 0;
@@ -1597,7 +1605,7 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
 
     is->quit_mutex = SDL_CreateMutex();
     is->quit_cond = SDL_CreateCond();
-    
+
     is->parse_tid = SDL_CreateThread(decode_thread, is);
 
     is->first_frame = 1;
@@ -1628,12 +1636,12 @@ void ffpy_stream_close(VideoState *is)
             av_free(vp->frame);
         }
     }
-    
+
     SDL_DestroyMutex(is->pictq_mutex);
     SDL_DestroyCond(is->pictq_cond);
     SDL_DestroyMutex(is->quit_mutex);
     SDL_DestroyCond(is->quit_cond);
-    
+
     free(is->filename);
     av_free(is);
 }
@@ -1658,9 +1666,9 @@ void ffpy_init(int rate, int status) {
     ffpy_did_init = 1;
 
     show_status = status;
-    
+
     audio_sample_rate = rate;
-    
+
     /* register all codecs, demux and protocols */
     avcodec_register_all();
     av_register_all();
@@ -1670,7 +1678,7 @@ void ffpy_init(int rate, int status) {
     } else {
         av_log_set_level(AV_LOG_ERROR);
     }
-        
+
     av_init_packet(&flush_pkt);
     flush_pkt.data = (unsigned char *) "FLUSH";
 
