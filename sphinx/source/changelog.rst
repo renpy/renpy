@@ -17,6 +17,26 @@ text that allows Ren'Py to voice imagemap components, and buttons with
 incomplete names.
 
 
+Ren'Py 6.17.7
+=============
+
+This release includes a number of Android changes:
+
+* RAPT has been updated to use the latest version of the SDK. Please install
+  the SDK again if you have build problems.
+
+* RAPT no longer includes a copy of Ren'Py. Instead, Ren'Py includes a copy of
+  itself into the built game that RAPT uses. This makes it possible to include
+  fixes to Ren'Py in an Android package.
+
+* A low-level In-App Purchase implementation, contributed
+  by Emmanuel Marty and Winter Wolves. The low-level IAP code supports Google
+  Play and the Amazon App Store. This code is not currently documented, as it
+  will be wrapped in a higher-level implementation.
+
+This release includes a fix to an audio-video sync issue that affected the
+Windows, Mac OS X, and Linux platforms.
+
 
 Ren'Py 6.17.6
 =============
