@@ -386,7 +386,7 @@ init python:
             reporter = distribute.TextReporter()
             rapt_interface = rapt.interface.Interface()
 
-        distribute.Distributor(project.current,
+        distribute.Distributor(p,
             reporter=reporter,
             packages=[ 'android' ],
             build_update=False,
