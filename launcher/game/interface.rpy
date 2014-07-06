@@ -123,7 +123,8 @@ screen bottom_info:
 screen common(title, message="", submessage=None, title_color="#000000",
     complete=None, total=None, bar_value=None,
     choices=None,
-    yes=None, no=None, back=None, cancel=None, continue_=None):
+    yes=None, no=None, back=None, cancel=None, continue_=None,
+    selected=None):
 
     frame:
         style "l_root"
