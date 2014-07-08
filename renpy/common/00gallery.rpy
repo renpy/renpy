@@ -136,7 +136,7 @@ init -1500 python:
     @renpy.pure
     class __GalleryAction(Action, FieldEquality):
 
-        identity_fields = [ "galley" ]
+        identity_fields = [ "gallery" ]
         equality_fields = [ "index" ]
 
         def __init__(self, gallery, index):
