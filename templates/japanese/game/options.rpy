@@ -506,6 +506,14 @@ init -1 python hide:
     ## 他のカスタマイズは以下に記述します。
     ## 訳注：以下は原文にはない追加コードです。
 
+    # テキストがウィンドウの許可された領域からはみ出ると text_overflow.txt
+    # に記録します。
+    # config.debug_text_overflow = False
+
+    # オートリロードを有効化します。オートリロードが有効だと
+    # スクリプト変更を検出し、自動でリロードします。
+    # config.autoreload = False
+
     ## マウスホイールで読み進められるようにします。
     # config.keymap['dismiss'].append('mousedown_5')
 
@@ -665,6 +673,11 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
+
+    build.classify('log.txt', None)
+    build.classify('errors.txt', None)
+    build.classify('text_overflow.txt', None)
+    build.classify('traceback.txt', None)
 
     ## To archive files, classify them as 'archive'.
     ## アーカイブに含めるには、'archive' に分類します。

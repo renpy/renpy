@@ -61,3 +61,7 @@ translate japanese strings:
     old "Show templates"
     new "テンプレートの表示"
 
+    # game/preferences.rpy:165
+    old "Large fonts"
+    new "フォントを大きくする"
+

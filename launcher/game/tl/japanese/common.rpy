@@ -310,3 +310,184 @@ translate japanese strings:
     # renpy/common/_layout/classic_load_save.rpym:161
     old "q"
     new "q"
+
+translate japanese strings:
+
+    # renpy/common/00console.rpy:179
+    old "%(version)s console, originally by Shiz, C, and delta.\n"
+    new "%(version)s コンソール, 作成者: Shiz, C, delta\n"
+
+    # renpy/common/00console.rpy:180
+    old "Press <esc> to exit console. Type help for help.\n"
+    new "<esc> を押して終了。help と入力してヘルプを表示。\n"
+
+    # renpy/common/00console.rpy:184
+    old "Ren'Py script enabled."
+    new "Ren'Py スクリプト有効。"
+
+    # renpy/common/00console.rpy:186
+    old "Ren'Py script disabled."
+    new "Ren'Py スクリプト無効。"
+
+    # renpy/common/00console.rpy:392
+    old "help: show this help"
+    new "help: このヘルプを表示"
+
+    # renpy/common/00console.rpy:397
+    old "commands:\n"
+    new "コマンド:\n"
+
+    # renpy/common/00console.rpy:407
+    old " <renpy script statement>: run the statement\n"
+    new " <Ren'Py スクリプトステートメント>: ステートメントを実行\n"
+
+    # renpy/common/00console.rpy:409
+    old " <python expression or statement>: run the expression or statement"
+    new " <Python 式またはステートメント>: 式またはステートメントを実行"
+
+    # renpy/common/00console.rpy:417
+    old "clear: clear the console history"
+    new "clear: コンソール履歴を消去"
+
+    # renpy/common/00console.rpy:421
+    old "exit: exit the console"
+    new "exit: コンソールを終了"
+
+    # renpy/common/00console.rpy:429
+    old "load <slot>: loads the game from slot"
+    new "load <スロット>: スロットからゲームをロード"
+
+    # renpy/common/00console.rpy:442
+    old "save <slot>: saves the game in slot"
+    new "save <スロット>: スロットにゲームを保存"
+
+    # renpy/common/00console.rpy:453
+    old "reload: reloads the game, refreshing the scripts"
+    new "reload: ゲームをリロードしてスクリプトを再読み込み"
+
+    # renpy/common/00console.rpy:461
+    old "watch <expression>: watch a python expression"
+    new "watch <式>: Python 式をウォッチ"
+
+    # renpy/common/00console.rpy:470
+    old "unwatch <expression>: stop watching an expression"
+    new "unwatch <式>: Python 式のウォッチを解除"
+
+    # renpy/common/00console.rpy:478
+    old "unwatchall: stop watching all expressions"
+    new "unwatchall: すべての式のウォッチを解除"
+
+    # renpy/common/00console.rpy:484
+    old "jump <label>: jumps to label"
+    new "jump <ラベル>: ラベルにジャンプ"
+
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "オートリロード"
+
+translate japanese strings:
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Developer Menu"
+    new "開発者メニュー"
+
+    # renpy/common/_developer/developer.rpym:67
+    old "Reload Game (Shift+R)"
+    new "ゲームのリロード (Shift+R)"
+
+    # renpy/common/_developer/developer.rpym:69
+    old "Console (Shift+O)"
+    new "コンソール (Shift+D)"
+
+    # renpy/common/_developer/developer.rpym:71
+    old "Variable Viewer"
+    new "変数ビューアー"
+
+    # renpy/common/_developer/developer.rpym:73
+    old "Theme Test"
+    new "テーマのテスト"
+
+    # renpy/common/_developer/developer.rpym:75
+    old "Image Location Picker"
+    new "画像位置ピッカー"
+
+    # renpy/common/_developer/developer.rpym:77
+    old "Filename List"
+    new "ファイル名のリスト"
+
+    # renpy/common/_developer/developer.rpym:81
+    old "Show Image Load Log"
+    new "画像ロード履歴の表示"
+
+    # renpy/common/_developer/developer.rpym:84
+    old "Hide Image Load Log"
+    new "画像ロード履歴の非表示"
+
+    # renpy/common/_developer/developer.rpym:149
+    old "No variables have changed since the game started."
+    new "ゲーム起動時から変更された変数はありません。"
+
+    # renpy/common/_developer/developer.rpym:152
+    old "Return to the developer menu"
+    new "開発者メニューに戻ります"
+
+    # renpy/common/_developer/developer.rpym:309
+    old "Undefined Images"
+    new "未定義の画像"
+
+    # renpy/common/_developer/developer.rpym:409
+    old "Rectangle: %r"
+    new "矩形: %r"
+
+    # renpy/common/_developer/developer.rpym:414
+    old "Mouse position: %r"
+    new "マウス位置: %r"
+
+    # renpy/common/_developer/developer.rpym:416
+    old "Right-click or escape to quit."
+    new "右クリックまたはEscで終了。"
+
+    # renpy/common/_developer/developer.rpym:467
+    old "Done"
+    new "完了"
+
+# TODO: Translation updated at 2014-07-08 18:59
+
+translate japanese strings:
+
+    # renpy/common/_developer/inspector.rpym:43
+    old "Displayable Inspector"
+    new "Displayable インスペクター"
+
+    # renpy/common/_developer/inspector.rpym:49
+    old "Nothing to inspect."
+    new "インスペクトするものがありません"
+
+    # renpy/common/_developer/inspector.rpym:58
+    old "Size"
+    new "サイズ"
+
+    # renpy/common/_developer/inspector.rpym:63
+    old "Style"
+    new "スタイル"
+
+    # renpy/common/_developer/inspector.rpym:123
+    old "Inspecting Styles of [displayable_name!q]"
+    new "[displayable_name!q] のスタイルをインスペクト中"
+
+    # renpy/common/_developer/inspector.rpym:135
+    old "displayable:"
+    new "Displayable:"
+
+    # renpy/common/_developer/inspector.rpym:142
+    old "        (no properties affect the displayable)"
+    new "        (Displayable に影響しているプロパティーはありません)"
+
+    # renpy/common/_developer/inspector.rpym:144
+    old "        (default properties omitted)"
+    new "        (デフォルトのプロパティーは省略します)"
+
+    # renpy/common/_developer/inspector.rpym:174
+    old "<repr() failed>"
+    new "<repr() 失敗>"
+
