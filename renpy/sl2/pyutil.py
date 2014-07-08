@@ -156,6 +156,10 @@ class Control(object):
         self.const = const
         self.loop = loop
 
+# Three levels of constness.
+GLOBAL_CONST = 2 # Expressions that are const everywhere.
+LOCAL_CONST = 1  # Expressions that are const with regard to a screen + parameters.
+NOT_CONST = 0    # Expressions that are not const.
 
 class Analysis(object):
     """
@@ -257,16 +261,18 @@ class Analysis(object):
                 return check_node(slice.value)
 
             elif isinstance(slice, ast.Slice):
-                if slice.lower and not check_node(slice.lower):
-                    return False
-                if slice.upper and not check_node(slice.upper):
-                    return False
-                if slice.step and not check_node(slice.step):
-                    return False
+                consts = [ ]
 
-                return True
+                if slice.lower:
+                    consts.append(check_node(slice.lower))
+                if slice.upper:
+                    consts.append(check_node(slice.upper))
+                if slice.step:
+                    consts.append(check_node(slice.step))
 
-            return False
+                return min(consts)
+
+            return NOT_CONST
 
         def check_name(node):
             """
@@ -287,19 +293,18 @@ class Analysis(object):
                 if name is not None:
                     name = name + "." + node.attr
 
-                if const:
-                    return True, name
+                if const != NOT_CONST:
+                    return const, name
 
             else:
                 return check_node(node), None
 
             if name in self.not_constant:
-                return False, None
-
-            if name in constants:
-                return True, None
-
-            return False, name
+                return NOT_CONST, None
+            elif name in self.constant:
+                return GLOBAL_CONST, None
+            else:
+                return NOT_CONST, None
 
         def check_nodes(nodes):
             """
@@ -307,20 +312,20 @@ class Analysis(object):
             False otherwise.
             """
 
-            for i in nodes:
-                if not check_node(i):
-                    return False
-            return True
+            return min(check_node(i) for i in nodes)
 
         def check_node(node):
             """
             Returns true if the ast node `node` is constant.
             """
 
+            if node is None:
+                return GLOBAL_CONST
+
             #PY3: see if there are new node types.
 
             if isinstance(node, (ast.Num, ast.Str)):
-                return True
+                return GLOBAL_CONST
 
             elif isinstance(node, (ast.List, ast.Tuple)):
                 return check_nodes(node.elts)
@@ -332,9 +337,9 @@ class Analysis(object):
                 return check_nodes(node.values)
 
             elif isinstance(node, ast.BinOp):
-                return (
-                    check_node(node.left) and
-                    check_node(node.right)
+                return min(
+                    check_node(node.left),
+                    check_node(node.right),
                     )
 
             elif isinstance(node, ast.UnaryOp):
@@ -345,33 +350,32 @@ class Analysis(object):
 
                 # The function must have a name, and must be declared pure.
                 if not name in self.pure_functions:
-                    return False
+                    return NOT_CONST
+
+                consts = [ ]
 
                 # Arguments and keyword arguments must be pure.
-                if not check_nodes(node.args):
-                    return False
+                consts.append(check_nodes(node.args))
+                consts.append(check_nodes(i.value for i in node.keywords))
 
-                if not check_nodes(i.value for i in node.keywords):
-                    return False
+                if node.starargs is not None:
+                    consts.append(check_node(node.starargs))
 
-                if (node.starargs is not None) and not check_node(node.starargs):
-                    return False
+                if node.kwargs is not None:
+                    consts.append(check_node(node.kwargs))
 
-                if (node.kwargs is not None) and not check_node(node.kwargs):
-                    return False
-
-                return True
+                return min(consts)
 
             elif isinstance(node, ast.IfExp):
-                return (
-                    check_node(node.test) and
-                    check_node(node.body) and
-                    check_node(node.orelse)
+                return min(
+                    check_node(node.test),
+                    check_node(node.body),
+                    check_node(node.orelse),
                     )
 
             elif isinstance(node, ast.Dict):
-                return (
-                    check_nodes(node.keys) and
+                return min(
+                    check_nodes(node.keys),
                     check_nodes(node.values)
                     )
 
@@ -379,18 +383,18 @@ class Analysis(object):
                 return check_nodes(node.elts)
 
             elif isinstance(node, ast.Compare):
-                return (
-                    check_node(node.left) and
-                    check_nodes(node.comparators)
+                return min(
+                    check_node(node.left),
+                    check_nodes(node.comparators),
                     )
 
             elif isinstance(node, ast.Repr):
                 return check_node(node.value)
 
             elif isinstance(node, ast.Subscript):
-                return (
-                    check_node(node.value) and
-                    check_slice(node.slice)
+                return min(
+                    check_node(node.value),
+                    check_slice(node.slice),
                     )
 
             return False
