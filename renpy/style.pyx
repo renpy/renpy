@@ -735,6 +735,7 @@ def rebuild():
     """
 
     build_styles()
+    renpy.display.screen.prepare_screens()
 
 def copy_properties(p):
     """

@@ -481,9 +481,6 @@ def change_language(language):
     # Rebuild the styles.
     renpy.style.rebuild() # @UndefinedVariable
 
-    # Re-prepare the screens.
-    renpy.display.screen.prepare_screens()
-
     # Restart the interaction.
     renpy.exports.restart_interaction()
 
