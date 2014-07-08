@@ -51,6 +51,9 @@ label start:
         "Retain after Load":
             call retain_after_load
 
+        "Gallery":
+            call gallery
+
         "Done.":
             return
 
