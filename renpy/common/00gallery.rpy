@@ -175,6 +175,10 @@ init -1500 python:
             If true, the gallery will display navigation and slideshow
             buttons on top of the images.
 
+            To customize the look of the navigation, you may override the
+            gallery_nav screen. The default screen is defined in
+            common/00gallery.rpy
+
         .. attribute:: span_buttons
 
             If true, the gallery will advance between buttons.
@@ -565,17 +569,19 @@ init -1500:
         key "game_menu" action gallery.Return()
 
         if gallery.navigation:
+            use gallery_nav
 
-            hbox:
-                spacing 20
+    screen gallery_nav:
+        hbox:
+            spacing 20
 
-                style_group "gallery"
-                align (.98, .98)
+            style_group "gallery"
+            align (.98, .98)
 
-                textbutton _("prev") action gallery.Previous()
-                textbutton _("next") action gallery.Next()
-                textbutton _("slideshow") action gallery.ToggleSlideshow()
-                textbutton _("return") action gallery.Return()
+            textbutton _("prev") action gallery.Previous()
+            textbutton _("next") action gallery.Next()
+            textbutton _("slideshow") action gallery.ToggleSlideshow()
+            textbutton _("return") action gallery.Return()
 
     python:
         style.gallery = Style(style.default)
