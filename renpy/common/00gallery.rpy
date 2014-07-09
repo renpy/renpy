@@ -176,7 +176,7 @@ init -1500 python:
             buttons on top of the images.
 
             To customize the look of the navigation, you may override the
-            gallery_nav screen. The default screen is defined in
+            gallery_navigation screen. The default screen is defined in
             common/00gallery.rpy
 
         .. attribute:: span_buttons
@@ -569,9 +569,9 @@ init -1500:
         key "game_menu" action gallery.Return()
 
         if gallery.navigation:
-            use gallery_nav
+            use gallery_navigation
 
-    screen gallery_nav:
+    screen gallery_navigation:
         hbox:
             spacing 20
 
