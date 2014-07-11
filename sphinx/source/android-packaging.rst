@@ -101,7 +101,7 @@ warnings about licenses, and ask if you want it to generate a key.
    passphrase. You should really use keytool to generate your own
    signing keys.
 
-    http://docs.oracle.com/javase/1.3/docs/tooldocs/win32/keytool.html
+    http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html
 
    At the very least, you should keep the android.keystore file in
    a safe place. You should also back it up, because without the
