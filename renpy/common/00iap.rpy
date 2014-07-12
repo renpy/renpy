@@ -139,7 +139,7 @@ init -1500 python in iap:
             These strings are generally of the form "com.domain.app.product".
         """
 
-        if product in prodicts:
+        if product in products:
             raise Exception('Product %r has already been registered.' % product)
 
         p = Product(product)
@@ -184,7 +184,7 @@ init -1500 python in iap:
         if persistent._iap_purchases[p.identifier]:
             return True
 
-        rv = backend.purchase(p.identifier)
+        rv = backend.purchase(p)
 
         if rv:
             persistent._iap_purchases[p.identifier] = True
