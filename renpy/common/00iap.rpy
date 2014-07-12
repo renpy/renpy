@@ -28,8 +28,11 @@ init -1500 python in iap:
         A data object representing a product.
         """
 
-        def __init__(self, identifier):
+        def __init__(self, product, identifier, google, amazon):
+            self.product = product
             self.identifier = identifier
+            self.google = google
+            self.amazon = amazon
 
     class NoneBackend(object):
         """
@@ -80,15 +83,23 @@ init -1500 python in iap:
         def get_store_name(self):
             return self.store_name
 
-        def wait_for_result(self, sleep):
+        def identifier(self, p):
+            """
+            Returns the identifier for a store purchase.
+            """
+
+            if self.store_name == "amazon":
+                return p.amazon
+            else:
+                return p.google
+
+        def wait_for_result(self, interact=True):
             """
             Waits for a result.
 
-            `sleep`
-                The function used to sleep, which should have the signature
-                of time.sleep.
-
-            Returns True if the action succeded, or False otherwise.
+            `interact`
+                If true, waits interactively. If false, waits using
+                renpy.pause.
             """
 
             while True:
@@ -96,29 +107,30 @@ init -1500 python in iap:
                 if rv:
                     break
 
-                sleep(.1)
+                if interact:
+                    renpy.pause(.1)
+                else:
+                    time.sleep(.1)
 
             if rv == 1:
                 return True
             else:
                 return False
 
+
         def purchase(self, p):
-            self.devicePurchase.beginPurchase(p.identifier)
-            return self.wait_for_result(renpy.pause)
+            identifier = self.identifier(p)
+
+            self.devicePurchase.beginPurchase(identifier)
+            return self.wait_for_result()
 
         def restore_purchases(self, interact=True):
-            import time
-
             self.devicePurchase.restorePurchases()
-
-            if interact:
-                self.wait_for_result(renpy.pause)
-            else:
-                self.wait_for_result(time.sleep)
+            self.wait_for_result(interact)
 
         def has_purchased(self, p):
-            return self.devicePurchase.isPurchaseOwned(p.identifier)
+            identifier = self.identifier(p)
+            return self.devicePurchase.isPurchaseOwned(identifier)
 
     # The backend we're using.
     backend = NoneBackend()
@@ -126,23 +138,41 @@ init -1500 python in iap:
     # A map from product identifier to the product object.
     products = { }
 
-    def register(product):
+    def register(product, identifier=None, amazon=None, google=None):
         """
         :doc: iap
 
         Registers a product with the in-app purchase system.
 
         `product`
-            A string identifying the product to be purchased. This must match
-            the product identifier in the various app stores.
+            A string giving the high-level name of the product. This is the
+            string that will be passed to :func:`iap.purchase` and
+            :func:`iap.has_purchased` to represent this product.
 
-            These strings are generally of the form "com.domain.app.product".
+        `identifier`
+            A string that's used to identify the product internally. Once used
+            to represent a product, this must never change. These strings are
+            generall of the form "com.domain.game.product".
+
+            If None, defaults to `product`.
+
+        `amazon`
+            A string that identifies the product in the Amazon app store.
+            If not given, defaults to `identifier`.
+
+        `google`
+            A string that identifies the product in the Google Play store.
+            If not given, defaults to `identifier`.
         """
 
         if product in products:
             raise Exception('Product %r has already been registered.' % product)
 
-        p = Product(product)
+        identifier = identifier or product
+        amazon = amazon or identifier
+        google = google or identifier
+
+        p = Product(product, identifier, google, amazon)
         products[product] = p
 
     def restore(interact=True):
