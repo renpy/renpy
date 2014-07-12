@@ -22,6 +22,7 @@
 init -1500 python in iap:
 
     from store import persistent
+    import time
 
     class Product(object):
         """
