@@ -1065,25 +1065,14 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.function = function
         self.args = args
         self.kwargs = kwargs
-        self.st = 0
-        self.at = 0
 
     def visit(self):
         return [ ]
 
     def per_interact(self):
-        child, _ = self.function(self.st, self.at, *self.args, **self.kwargs)
-        child = renpy.easy.displayable(child)
-        child.visit_all(lambda a : a.per_interact())
-
-        if child is not self.child:
-            renpy.display.render.redraw(self, 0)
-            self.child = child
+        renpy.display.render.redraw(self, 0)
 
     def render(self, w, h, st, at):
-
-        self.st = st
-        self.at = at
 
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
