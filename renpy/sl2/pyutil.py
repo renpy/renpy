@@ -312,15 +312,19 @@ class Analysis(object):
             elif name in self.global_constant:
                 return GLOBAL_CONST, None
             elif name in self.local_constant:
-                return GLOBAL_CONST, None
+                return LOCAL_CONST, None
             else:
-                return const, None
+                return const, name
 
         def check_nodes(nodes):
             """
-            Checks a list of nodes. Returns true if all are constant, and
-            False otherwise.
+            Checks a list of nodes for constness.
             """
+
+            nodes = list(nodes)
+
+            if not nodes:
+                return GLOBAL_CONST
 
             return min(check_node(i) for i in nodes)
 
@@ -408,7 +412,7 @@ class Analysis(object):
                     check_slice(node.slice),
                     )
 
-            return False
+            return NOT_CONST
 
         return check_node(node)
 

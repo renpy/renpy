@@ -29,7 +29,7 @@ from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
 
 from renpy.python import py_compile, py_eval_bytecode
-from renpy.sl2.pyutil import Analysis
+from renpy.sl2.pyutil import Analysis, NOT_CONST, GLOBAL_CONST
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
@@ -137,7 +137,7 @@ class SLNode(object):
 
         # True if this is a constant node, always producing an equivalent
         # tree of objects.
-        self.constant = True
+        self.constant = GLOBAL_CONST
 
     def report_traceback(self, name):
         filename, line = self.location
@@ -230,9 +230,7 @@ class SLBlock(SLNode):
 
         for i in self.children:
             i.prepare(analysis)
-
-            if not i.constant:
-                self.constant = False
+            self.constant = min(self.constant, i.constant)
 
         # Compile the keywords.
 
@@ -244,11 +242,15 @@ class SLBlock(SLNode):
 
             node = py_compile(expr, 'eval', ast_node=True)
 
-            if analysis.is_constant(node):
+            const = analysis.is_constant(node)
+
+            if const == GLOBAL_CONST:
                 keyword_values[k] = py_eval_bytecode(compile_expr(node))
             else:
                 keyword_keys.append(ast.Str(s=k))
                 keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
+
+            self.constant = min(self.constant, const)
 
         if keyword_values:
             self.keyword_values = keyword_values
@@ -259,8 +261,6 @@ class SLBlock(SLNode):
             node = ast.Dict(keys=keyword_keys, values=keyword_exprs)
             ast.copy_location(node, keyword_exprs[0])
             self.keyword_exprs = compile_expr(node)
-
-            self.constant = False
         else:
             self.keyword_exprs = None
 
@@ -412,7 +412,9 @@ class SLDisplayable(SLBlock):
         for a in self.positional:
             node = py_compile(a, 'eval', ast_node=True)
 
-            if analysis.is_constant(node):
+            const = analysis.is_constant(node)
+
+            if const == GLOBAL_CONST:
                 values.append(py_eval_bytecode(compile_expr(node)))
                 exprs.append(ast.Num(n=0))
                 has_values = True
@@ -420,6 +422,8 @@ class SLDisplayable(SLBlock):
                 values.append(use_expression)
                 exprs.append(node) # Will be compiled as part of the tuple.
                 has_exprs = True
+
+            self.constant = min(self.constant, const)
 
         if has_values:
             self.positional_values = values
@@ -430,8 +434,6 @@ class SLDisplayable(SLBlock):
             t = ast.Tuple(elts=exprs, ctx=ast.Load())
             ast.copy_location(t, exprs[0])
             self.positional_exprs = compile_expr(t)
-
-            self.constant = False
         else:
             self.positional_exprs = None
 
@@ -775,13 +777,13 @@ class SLIf(SLNode):
 
     def analyze(self, analysis):
 
-        all_const = True
+        const = GLOBAL_CONST
 
         for cond, _block in self.entries:
-            if (cond is not None) and not analysis.is_constant_expr(cond):
-                all_const = False
+            if cond is not None:
+                const = min(const, analysis.is_constant_expr(cond))
 
-        analysis.push_control(all_const)
+        analysis.push_control(const)
 
         for _cond, block in self.entries:
             block.analyze(analysis)
@@ -798,16 +800,12 @@ class SLIf(SLNode):
             if cond is not None:
                 node = py_compile(cond, 'eval', ast_node=True)
 
-                if not analysis.is_constant(node):
-                    self.constant = False
+                self.constant = min(self.constant, analysis.is_constant(node))
 
                 cond = compile_expr(node)
 
             block.prepare(analysis)
-
-            if not block.constant:
-                self.constant = False
-
+            self.constant = min(self.constant, block.constant)
             self.prepared_entries.append((cond, block))
 
     def execute(self, context):
@@ -856,13 +854,16 @@ class SLFor(SLBlock):
     def prepare(self, analysis):
         node = py_compile(self.expression, 'eval', ast_node=True)
 
-        if analysis.is_constant(node):
+        const = analysis.is_constant(node)
+
+        if const == GLOBAL_CONST:
             self.expression_value = py_eval_bytecode(compile_expr(node))
             self.expression_expr = None
         else:
             self.expression_value = None
             self.expression_expr = compile_expr(node)
-            self.constant = False
+
+        self.constant = min(self.constant, const)
 
         SLBlock.prepare(self, analysis)
 
@@ -960,7 +961,7 @@ class SLDefault(SLNode):
 
     def prepare(self, analysis):
         self.expr = py_compile(self.expression, 'eval')
-        self.constant = False
+        self.constant = NOT_CONST
 
     def execute(self, context):
         scope = context.scope
@@ -1001,7 +1002,7 @@ class SLOn(SLNode):
         else:
             self.action_value = None
 
-        self.constant = False
+        self.constant = NOT_CONST
 
 
     def execute(self, context):
@@ -1038,11 +1039,11 @@ class SLUse(SLNode):
         ts = renpy.display.screen.get_screen_variant(self.target)
 
         if ts is None:
-            self.constant = False
+            self.constant = NOT_CONST
             return
 
         if ts.ast is None:
-            self.constant = False
+            self.constant = NOT_CONST
             return
 
         self.ast = ts.ast
@@ -1192,23 +1193,26 @@ class SLScreen(SLBlock):
                 analysis.parameters(self.parameters)
 
             while not analysis.at_fixed_point():
-
                 SLBlock.analyze(self, analysis)
 
-            self.constant = False
+            self.constant = NOT_CONST
             SLBlock.prepare(self, analysis)
             self.prepared = True
 
             if renpy.display.screen.get_profile(self.name).const:
                 profile_log.write("CONST ANALYSIS %s", self.name)
 
-                new_constants = [ i for i in analysis.constant if i not in renpy.sl2.pyutil.constants ]
+                new_constants = [ i for i in analysis.global_constant if i not in renpy.sl2.pyutil.constants ]
                 new_constants.sort()
-                profile_log.write('    const: %s', " ".join(new_constants))
+                profile_log.write('    global_const: %s', " ".join(new_constants))
+
+                local_constants = list(analysis.local_constant)
+                local_constants.sort()
+                profile_log.write('    local_const: %s', " ".join(local_constants))
 
                 not_constants = list(analysis.not_constant)
                 not_constants.sort()
-                profile_log.write('    not-const: %s', " ".join(not_constants))
+                profile_log.write('    not_const: %s', " ".join(not_constants))
 
     def report_traceback(self, name):
         if name == "__call__":
