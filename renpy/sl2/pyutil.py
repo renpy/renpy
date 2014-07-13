@@ -171,15 +171,19 @@ class Analysis(object):
         # The variables we consider to be not-constant.
         self.not_constant = set()
 
-        # The variables we consider to be potentially constant.
-        self.constant = set(constants)
+        # Variables we consider to be locally constant.
+        self.local_constant = set()
+
+        # Veriables we consider to be globally constant.
+        self.global_constant = set()
 
         # The functions we consider to be pure.
         self.pure_functions = set(pure_functions)
 
         # Old versions of the analysis.
         self.old_not_constant = set()
-        self.old_constant = set()
+        self.old_local_constant = set()
+        self.old_global_constant = set()
         self.old_pure_functions = set()
 
         # Represents what we know about the current control.
@@ -218,33 +222,39 @@ class Analysis(object):
         not changed since the last time we called this function.
         """
 
-        if ((self.not_constant == self.old_not_constant) and
-            (self.old_constant == self.old_constant) and
-            (self.pure_functions == self.old_pure_functions)):
+        if ((self.old_not_constant == self.not_constant) and
+            (self.old_global_constant == self.global_constant) and
+            (self.old_local_constant == self.local_constant) and
+            (self.old_pure_functions == self.pure_functions)):
             return True
 
         self.old_not_constant = set(self.not_constant)
-        self.old_constant = set(self.constant)
+        self.old_global_constant = set(self.global_constant)
+        self.old_local_constant = set(self.local_constant)
         self.old_pure_functions = set(self.pure_functions)
 
         return False
 
     def mark_constant(self, name):
         """
-        Marks `name` as potentially constant.
+        Marks `name` as a potential local constant.
         """
 
         if not name in self.not_constant:
-            self.constant.add(name)
+            self.local_constant.add(name)
+            self.global_constant.discard(name)
+            self.pure_functions.discard(name)
 
     def mark_not_constant(self, name):
         """
         Marks `name` as definitely not-constant.
         """
 
-        self.pure_functions.discard(name)
-        self.constant.discard(name)
         self.not_constant.add(name)
+
+        self.pure_functions.discard(name)
+        self.local_constant.discard(name)
+        self.global_constant.discard(name)
 
     def is_constant(self, node):
         """
@@ -285,6 +295,7 @@ class Analysis(object):
             """
 
             if isinstance(node, ast.Name):
+                const = NOT_CONST
                 name = node.id
 
             elif isinstance(node, ast.Attribute):
@@ -293,18 +304,17 @@ class Analysis(object):
                 if name is not None:
                     name = name + "." + node.attr
 
-                if const != NOT_CONST:
-                    return const, name
-
             else:
                 return check_node(node), None
 
             if name in self.not_constant:
                 return NOT_CONST, None
-            elif name in self.constant:
+            elif name in self.global_constant:
+                return GLOBAL_CONST, None
+            elif name in self.local_constant:
                 return GLOBAL_CONST, None
             else:
-                return NOT_CONST, None
+                return const, None
 
         def check_nodes(nodes):
             """
@@ -319,6 +329,7 @@ class Analysis(object):
             Returns true if the ast node `node` is constant.
             """
 
+            # This handles children that do not exist.
             if node is None:
                 return GLOBAL_CONST
 
@@ -428,13 +439,13 @@ class Analysis(object):
         """
 
         for name, _default in parameters.parameters:
-            self.mark_not_constant(name)
+            self.mark_constant(name)
 
         if parameters.extrapos is not None:
-            self.mark_not_constant(parameters.extrapos)
+            self.mark_constant(parameters.extrapos)
 
         if parameters.extrakw is not None:
-            self.mark_not_constant(parameters.extrakw)
+            self.mark_constant(parameters.extrakw)
 
 
 class PyAnalysis(ast.NodeVisitor):
