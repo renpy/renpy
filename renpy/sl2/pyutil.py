@@ -31,7 +31,7 @@ from renpy.python import py_compile
 import ast
 
 # The set of names that should be treated as constants.
-constants = { 'True', 'False', 'None', "config", "style" }
+always_constants = { 'True', 'False', 'None', "config", "style" }
 
 # The set of names that should be treated as pure functions.
 pure_functions = {
@@ -73,7 +73,7 @@ pure_functions = {
     "ui.gamemenus",
     }
 
-constants = constants | pure_functions
+constants = always_constants | pure_functions
 
 # A set of names that should not be treated as global constants.
 not_constants = set()
@@ -308,11 +308,11 @@ class Analysis(object):
                 return check_node(node), None
 
             if name in self.not_constant:
-                return NOT_CONST, None
+                return NOT_CONST, name
             elif name in self.global_constant:
-                return GLOBAL_CONST, None
+                return GLOBAL_CONST, name
             elif name in self.local_constant:
-                return LOCAL_CONST, None
+                return LOCAL_CONST, name
             else:
                 return const, name
 
@@ -361,10 +361,10 @@ class Analysis(object):
                 return check_node(node.operand)
 
             elif isinstance(node, ast.Call):
-                _const, name = check_name(node.func)
+                const, name = check_name(node.func)
 
                 # The function must have a name, and must be declared pure.
-                if not name in self.pure_functions:
+                if (const != GLOBAL_CONST) or  (name not in self.pure_functions):
                     return NOT_CONST
 
                 consts = [ ]
