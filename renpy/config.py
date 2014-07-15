@@ -520,6 +520,9 @@ raw_tracebacks = ("RENPY_RAW_TRACEBACKS" in os.environ)
 # A function to process texts which should be spoken
 tts_function = renpy.display.tts.default_tts_function
 
+# The number of copies of each screen to keep in the screen cache.
+screen_cache_size = 4
+
 del renpy
 del os
 
