@@ -861,12 +861,12 @@ def use_screen(_screen_name, *_args, **kwargs):
     old_transfers = _current_screen.old_transfers
     _current_screen.old_transfers = True
 
-    scope = _scope.copy()
-
     if screen.parameters:
+        scope = { }
         scope["_kwargs"] = kwargs
         scope["_args"] = _args
     else:
+        scope = _scope.copy()
         scope.update(kwargs)
 
     scope["_scope"] = scope
