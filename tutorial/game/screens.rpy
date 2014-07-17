@@ -10,7 +10,7 @@
 #
 # Screen that's used to display adv-mode dialogue.
 # http://www.renpy.org/doc/html/screen_special.html#say
-screen say(who, what, side_image=None, two_window=False, **kwargs):
+screen say(who, what, side_image=None, two_window=False):
 
     # Decide if we want to use the one-window or two-window variant.
     if not two_window:
@@ -64,7 +64,7 @@ screen say(who, what, side_image=None, two_window=False, **kwargs):
 # Screen that's used to display in-game menus.
 # http://www.renpy.org/doc/html/screen_special.html#choice
 
-screen choice(items, **kwargs):
+screen choice(items):
 
     window:
         style "menu_window"
@@ -107,7 +107,7 @@ init -2:
 # Screen that's used to display renpy.input()
 # http://www.renpy.org/doc/html/screen_special.html#input
 
-screen input(prompt, **kwargs):
+screen input(prompt):
 
     window style "input_window":
         has vbox
@@ -123,7 +123,7 @@ screen input(prompt, **kwargs):
 # Screen used for nvl-mode dialogue and menus.
 # http://www.renpy.org/doc/html/screen_special.html#nvl
 
-screen nvl(dialogue, items=None, **kwargs):
+screen nvl(dialogue, items=None):
 
     window:
         style "nvl_window"
@@ -487,7 +487,7 @@ init -2:
 # Screen that asks the user a yes or no question.
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 
-screen yesno_prompt(message, yes_action, no_action, **kwargs):
+screen yesno_prompt(message, yes_action, no_action):
 
     modal True
 
