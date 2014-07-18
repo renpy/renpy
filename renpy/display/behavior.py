@@ -577,7 +577,7 @@ class Button(renpy.display.layout.Window):
         self.unhovered = unhovered
         self.alternate = alternate
 
-        self.focusable = (clicked is not None) or (action is not None)
+        self.focusable = True #(clicked is not None) or (action is not None)
         self.role_parameter = role
         self.keymap = keymap
 
@@ -693,10 +693,12 @@ class Button(renpy.display.layout.Window):
             self.role = role
             self.clicked = clicked
 
-        if not self.clicked:
-            self.set_style_prefix(self.role + "insensitive_", True)
-        else:
+        if self.clicked is not None:
             self.set_style_prefix(self.role + "idle_", True)
+            self.focusable = True
+        else:
+            self.set_style_prefix(self.role + "insensitive_", True)
+            self.focusable = False
 
         super(Button, self).per_interact()
 
