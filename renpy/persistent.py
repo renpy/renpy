@@ -91,10 +91,15 @@ class Persistent(object):
         if not self._seen_audio:
             self._seen_audio = { }
 
+        # The set of seen translate identifiers.
+        if not self._seen_translates:
+            self._seen_translates = set()
+
         # A map from the name of a field to the time that field was last
         # changed at.
         if self._changed is None:
             self._changed = { }
+
 
 
 

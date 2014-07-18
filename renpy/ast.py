@@ -1746,6 +1746,8 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
+        renpy.game.persistent._seen_translates.add(self.identifier) # @UndefinedVariable
+
         next_node(renpy.game.script.translator.lookup_translate(self.identifier))
 
         renpy.game.context().translate_identifier = self.identifier

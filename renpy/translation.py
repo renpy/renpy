@@ -69,6 +69,13 @@ class ScriptTranslator(object):
         # in that file.
         self.additional_strings = collections.defaultdict(list)
 
+    def count_translates(self):
+        """
+        Return the number of dialogue blocks in the game.
+        """
+
+        return len(self.default_translates)
+
     def take_translates(self, nodes):
         """
         Takes the translates out of the flattened list of statements, and stores

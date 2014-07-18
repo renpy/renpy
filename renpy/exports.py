@@ -2666,4 +2666,25 @@ def get_autoreload():
 
     return renpy.autoreload
 
+def count_dialogue_blocks():
+    """
+    :doc: other
+
+    Returns the number of dialogue blocks in the game's original language.
+    """
+
+    return renpy.game.script.translator.count_translates()
+
+def count_seen_dialogue_blocks():
+    """
+    :doc: other
+
+    Returns the number of dialogue blocks the user has seen in any play-through
+    of the current game.
+
+    This number may be larger than the result of :func:`renpy.count_dialogue_blocks`
+    when the script has changed and older dialogue blocks are no longer accessible.
+    """
+
+    return len(renpy.game.persistent._seen_translates) # @UndefinedVariable
 
