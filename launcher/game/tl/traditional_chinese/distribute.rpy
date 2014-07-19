@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/distribute.rpy:333
     old "Nothing to do."
@@ -34,14 +34,14 @@ translate Chinese_Traditional strings:
     new "所有套件已被建立。\n\n由於含有授權資訊存在，因此在 Windows 中不支援解開和重新包裝 Linux 及 Mac 的套件。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/distribute.rpy:358
     old "No packages are selected, so there's nothing to do."
     new "沒有選擇套件，沒有可以處理的事情。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/distribute.rpy:335
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."

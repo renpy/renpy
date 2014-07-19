@@ -1,12 +1,12 @@
 ﻿
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"
     new "%%m月%d日, %H:%M"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00gltest.rpy:50
     old "Graphics Acceleration"
@@ -101,14 +101,14 @@ translate Chinese_Traditional strings:
     new "重新啟動"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00keymap.rpy:167
     old "Saved screenshot as %s."
     new "儲存螢幕截圖為 %s。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00layout.rpy:439
     old "Are you sure?"
@@ -135,7 +135,7 @@ translate Chinese_Traditional strings:
     new "您確定您要刪掉這份存檔嗎？"
     
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00library.rpy:77
     old "Skip Mode"
@@ -146,7 +146,7 @@ translate Chinese_Traditional strings:
     new "快速跳過對話模式"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00updater.rpy:1258
     old "Updater"
@@ -185,7 +185,7 @@ translate Chinese_Traditional strings:
     new "已取消更新。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/_compat/gamemenu.rpym:180
     old "Empty Slot."
@@ -200,14 +200,14 @@ translate Chinese_Traditional strings:
     new "下一頁"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
     new "遊戲桿映射"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -262,7 +262,7 @@ translate Chinese_Traditional strings:
     new "在編輯器中開啟解析錯誤檔案（errors.txt）。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/_layout/classic_load_save.rpym:152
     old "a"
@@ -273,14 +273,14 @@ translate Chinese_Traditional strings:
     new "q"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00action_file.rpy:587
     old "Quick save complete."
     new "快速儲存。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00gallery.rpy:521
     old "Image [index] of [count] locked."
@@ -303,7 +303,7 @@ translate Chinese_Traditional strings:
     new "返回"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00layout.rpy:427
     old "Are you sure you want to begin skipping?"
@@ -318,7 +318,7 @@ translate Chinese_Traditional strings:
     new "是否確定略過未看過的訊息或下一選項？"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
@@ -389,7 +389,7 @@ translate Chinese_Traditional strings:
     new "jump <label>: 跳移至標籤"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/_developer/developer.rpym:65
     old "Developer Menu"
@@ -456,7 +456,7 @@ translate Chinese_Traditional strings:
     new "完成"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # renpy/common/_developer/inspector.rpym:43
     old "Displayable Inspector"

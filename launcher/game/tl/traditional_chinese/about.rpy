@@ -1,5 +1,5 @@
 ﻿
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/about.rpy:21
     old "[version!q]"

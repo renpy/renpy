@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/project.rpy:196
     old "Ren'Py is scanning the project..."
@@ -26,7 +26,7 @@ translate Chinese_Traditional strings:
     new "Ren'Py 已將專案目錄設定為："
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/project.rpy:48
     old "After making changes to the script, press shift+R to reload your game."

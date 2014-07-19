@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/front_page.rpy:79
     old "+ Create New Project"
@@ -74,7 +74,7 @@ translate Chinese_Traditional strings:
     new "刪除永久性資料..."
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
     
     # game/front_page.rpy:69
     old "PROJECTS:"

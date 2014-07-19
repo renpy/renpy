@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/translations.rpy:10
     old "Create or Update Translations"
@@ -22,7 +22,7 @@ translate Chinese_Traditional strings:
     new "Ren'Py 已經完成[language]翻譯檔案。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/translations.rpy:44
     old "What format would you like for the extracted dialogue?"

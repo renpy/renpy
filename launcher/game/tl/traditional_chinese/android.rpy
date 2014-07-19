@@ -1,5 +1,5 @@
 ﻿
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/android.rpy:13
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
@@ -105,7 +105,7 @@ translate Chinese_Traditional strings:
     old "Build & Install"
     new "建立並安裝"
     
-translate Chinese_Traditional strings:   
+translate traditional_chinese strings:   
 
     # game/android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."

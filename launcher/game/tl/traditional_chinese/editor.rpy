@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/editor.rpy:120
     old "{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input."
@@ -42,7 +42,7 @@ translate Chinese_Traditional strings:
     new "取消"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
  
 

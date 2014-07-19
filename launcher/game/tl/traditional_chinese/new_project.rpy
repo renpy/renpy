@@ -1,5 +1,5 @@
 ﻿
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/new_project.rpy:22
     old "Choose Project Template"
@@ -30,14 +30,14 @@ translate Chinese_Traditional strings:
     new "[project_dir!q] 已存在。請選擇不同的名稱。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/new_project.rpy:40
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "請為您新增的專案選擇一個模版。該模版將設定為預設的字型和語言。如果您的所使用的語言沒有被支援，那麼請選擇「english」。"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/new_project.rpy:71
     old "The projects directory could not be set. Giving up."

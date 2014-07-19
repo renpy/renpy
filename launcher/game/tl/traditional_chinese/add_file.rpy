@@ -1,5 +1,5 @@
 ﻿
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/add_file.rpy:7
     old "FILENAME"

@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/preferences.rpy:40
     old "Launcher Preferences"
@@ -58,7 +58,7 @@ translate Chinese_Traditional strings:
     new "語言："
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/preferences.rpy:146
     old "Show templates"

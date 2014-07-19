@@ -1,5 +1,5 @@
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/updater.rpy:54
     old "Select Update Channel"
@@ -86,7 +86,7 @@ translate Chinese_Traditional strings:
     new "繼續"
 
 
-translate Chinese_Traditional strings:
+translate traditional_chinese strings:
 
     # game/updater.rpy:129
     old "Nightly"
