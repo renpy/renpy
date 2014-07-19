@@ -201,7 +201,7 @@ Some example show statements are::
     show moon behind mary, mary2
 
     # Show an image on a user-defined layer.
-    show moon on user_layer
+    show moon onlayer user_layer
 
 **Show Expression.**
 A variant of the show statement replaces the image name with the
