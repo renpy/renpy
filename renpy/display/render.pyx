@@ -511,9 +511,13 @@ cdef class Render:
         # This is used to adjust the alpha of children of this render.
         self.alpha = 1
 
-        # The over blending factor. When this is 1.0, we get fully additive
-        # blending. When set to 0.0, we get additive blending.
+        # The over blending factor. When this is 1.0, blends only use the
+        # over operation. When set to 0.0, we get additive blending.
         self.over = 1.0
+
+        # If true, children of this render use nearest-neighbor texture
+        # lookup.
+        self.nearest = False
 
         # A list of focus regions in this displayable.
         self.focuses = None

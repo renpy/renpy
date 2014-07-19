@@ -86,6 +86,7 @@ def first_not_none(*args):
 
 class TransformState(renpy.object.Object):
 
+    nearest = False
     xoffset = None
     yoffset = None
     default_xpos = None
@@ -101,6 +102,7 @@ class TransformState(renpy.object.Object):
 
     def __init__(self): # W0231
         self.alpha = 1
+        self.nearest = False
         self.additive = 0.0
         self.rotate = None
         self.rotate_pad = True
@@ -148,6 +150,7 @@ class TransformState(renpy.object.Object):
 
     def take_state(self, ts):
 
+        self.nearest = ts.nearest
         self.alpha = ts.alpha
         self.additive = ts.additive
         self.rotate = ts.rotate
@@ -206,6 +209,7 @@ class TransformState(renpy.object.Object):
             if new_value != old_value:
                 rv[prop] = (old_value, new_value)
 
+        diff2("nearest", newts.nearest, self.nearest)
         diff2("alpha", newts.alpha, self.alpha)
         diff2("additive", newts.additive, self.additive)
         diff2("rotate", newts.rotate, self.rotate)
@@ -394,6 +398,7 @@ class Transform(Container):
     transform_event_responder = True
 
     # Proxying things over to our state.
+    nearest = Proxy("nearest")
     alpha = Proxy("alpha")
     additive = Proxy("additive")
     rotate = Proxy("rotate")
