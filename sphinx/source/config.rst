@@ -618,6 +618,16 @@ Occasionally Used
 Rarely or Internally Used
 -------------------------
 
+.. var:: config.adjust_view_size = None
+
+    If not None, this should be a function taking two arguments, the width
+    and height of the physical window. It is expected to return a tuple
+    giving the width and height of the OpenGL viewport, the portion of the
+    screen that Ren'Py wil draw pictures to.
+
+    This can be used to configure Ren'Py to only allow certain sizes of
+    screen, such as integer multiples of the screen size.
+
 .. var:: config.afm_bonus = 25
 
     The number of bonus characters added to every string when

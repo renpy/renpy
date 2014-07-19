@@ -255,20 +255,25 @@ cdef class GLDraw:
 
         renpy.display.log.write("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
 
-        # Figure out the virtual box, which includes padding around
-        # the borders.
-        physical_ar = 1.0 * pwidth / pheight
 
-        if physical_ar >= virtual_ar:
-            x_padding = physical_ar * vheight - vwidth
-            y_padding = 0
-            px_padding = x_padding * pheight / vheight
-            py_padding = 0
+        if renpy.config.adjust_view_size is not None:
+            view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
         else:
-            x_padding = 0
-            y_padding = ( 1.0 / physical_ar ) * vwidth - vheight
-            px_padding = 0
-            py_padding = y_padding * pwidth / vwidth
+
+            # Figure out the virtual box, which includes padding around
+            # the borders.
+            physical_ar = 1.0 * pwidth / pheight
+
+            ratio = min(1.0 * pwidth / vwidth, 1.0 * pheight / vheight)
+
+            view_width = int(vwidth * ratio)
+            view_height = int(vheight * ratio)
+
+        px_padding = pwidth - view_width
+        py_padding = pheight - view_height
+
+        x_padding = px_padding * vwidth / view_width
+        y_padding = py_padding * vheight / view_height
 
         # The position of the physical screen, in virtual pixels
         # (x, y, w, h). Since the physical screen will always contain

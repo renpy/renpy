@@ -523,6 +523,9 @@ tts_function = renpy.display.tts.default_tts_function
 # The number of copies of each screen to keep in the screen cache.
 screen_cache_size = 4
 
+# A callback that adjusts the physical size of the screen.
+adjust_view_size = None
+
 del renpy
 del os
 
