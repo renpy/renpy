@@ -21,8 +21,11 @@
 
 import renpy.display
 import time
+import collections
 
 import datetime
+
+# Profiling ####################################################################
 
 profile_log = renpy.log.open("profile_screen", developer=True, append=False, flush=False)
 
@@ -118,6 +121,67 @@ def get_profile(name):
         return profile[name]
     else:
         return ScreenProfile(None)
+
+# Cache ########################################################################
+
+# A map from screen name to a list of ScreenCache objects. We ensure the cache
+# does not exceed config.screen_cache_size for each screen.
+predict_cache = collections.defaultdict(list)
+
+class ScreenCache(object):
+    """
+    Represents an entry in the screen cache. Upon creation, puts itself into
+    the screen cache.
+    """
+
+    def __init__(self, screen, args, kwargs, cache):
+
+        if screen.ast is None:
+            return
+
+        self.args = args
+        self.kwargs = kwargs
+        self.cache = cache
+
+        pc = predict_cache[screen]
+
+        pc.append(self)
+
+        if len(pc) > renpy.config.screen_cache_size:
+            pc.pop(0)
+
+cache_put = ScreenCache
+
+def cache_get(screen, args, kwargs):
+    """
+    Returns the cache to use when `screen` is accessed with `args` and
+    `kwargs`.
+    """
+
+    if screen.ast is None:
+        return { }
+
+    pc = predict_cache[screen]
+
+    if not pc:
+        return { }
+
+    for sc in pc:
+
+        # Reuse w/ same arguments.
+        if sc.args == args and sc.args == kwargs:
+            pc.remove(sc)
+            break
+    else:
+
+        # Reuse the oldest.
+        sc = pc.pop(0)
+
+    return sc.cache
+
+
+# Screens #####################################################################
+
 
 
 
@@ -640,10 +704,6 @@ def has_screen(name):
     else:
         return False
 
-# A map from screen to the cache from the last time the screen was
-# predicted.
-predict_cache = { }
-
 def show_screen(_screen_name, *_args, **kwargs):
     """
     :doc: screens
@@ -699,10 +759,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         scope.update(kwargs)
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
-
-    if screen in predict_cache:
-        d.cache = predict_cache.pop(screen)
-
+    d.cache = cache_get(screen, _args, kwargs)
     d.phase = SHOW
 
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
@@ -756,12 +813,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
             return
 
         d = ScreenDisplayable(screen, None, None, _widget_properties, scope)
-
-        if screen in predict_cache:
-            d.cache = predict_cache[screen]
-
+        d.cache = cache_get(screen, _args, kwargs)
         d.update()
-        predict_cache[screen] = d.cache
+        cache_put(screen, _args, kwargs, d.cache)
 
         renpy.display.predict.displayable(d)
 
@@ -807,12 +861,12 @@ def use_screen(_screen_name, *_args, **kwargs):
     old_transfers = _current_screen.old_transfers
     _current_screen.old_transfers = True
 
-    scope = _scope.copy()
-
     if screen.parameters:
+        scope = { }
         scope["_kwargs"] = kwargs
         scope["_args"] = _args
     else:
+        scope = _scope.copy()
         scope.update(kwargs)
 
     scope["_scope"] = scope

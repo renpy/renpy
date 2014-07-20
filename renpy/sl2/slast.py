@@ -1083,9 +1083,6 @@ class SLUse(SLNode):
 
         ctx = SLContext(context)
 
-        # Create a new scope for the context, based on the parameters.
-        scope = dict(context.scope)
-
         if self.args:
             args, kwargs = self.args.evaluate(context.scope)
         else:
@@ -1093,14 +1090,16 @@ class SLUse(SLNode):
             kwargs = { }
 
         if ast.parameters is not None:
-            newscope = ast.parameters.apply(args, kwargs)
+            scope = ast.parameters.apply(args, kwargs)
         else:
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            newscope = kwargs
+            scope = context.scope.copy()
+            scope.update(kwargs)
 
-        scope.update(newscope)
+        scope["_scope"] = scope
+
         ctx.scope = scope
 
         # Use a call-site specific cache. (Otherwise, two uses of the same screen would

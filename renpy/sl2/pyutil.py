@@ -169,13 +169,13 @@ class Analysis(object):
 
     def __init__(self):
         # The variables we consider to be not-constant.
-        self.not_constant = set()
+        self.not_constant = set(not_constants)
 
         # Variables we consider to be locally constant.
         self.local_constant = set()
 
         # Veriables we consider to be globally constant.
-        self.global_constant = set()
+        self.global_constant = set(always_constants)
 
         # The functions we consider to be pure.
         self.pure_functions = set(pure_functions)
@@ -442,14 +442,18 @@ class Analysis(object):
         Analyzes the parameters to the screen.
         """
 
+        self.global_constant.update(constants)
+
+        # As we have parameters, analyze with those parameters.
+
         for name, _default in parameters.parameters:
-            self.mark_constant(name)
+            self.mark_not_constant(name)
 
         if parameters.extrapos is not None:
-            self.mark_constant(parameters.extrapos)
+            self.mark_not_constant(parameters.extrapos)
 
         if parameters.extrakw is not None:
-            self.mark_constant(parameters.extrakw)
+            self.mark_not_constant(parameters.extrakw)
 
 
 class PyAnalysis(ast.NodeVisitor):

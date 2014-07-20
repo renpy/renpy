@@ -77,6 +77,7 @@ PROPERTIES = {
         "xzoom" : float,
         "yzoom" : float,
         "zoom" : float,
+        "nearest" : bool,
         "alpha" : float,
         "additive" : float,
         "around" : (position, position),

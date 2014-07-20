@@ -13,9 +13,9 @@ run the game like any Android application. When it works correctly,
 you can upload the package you make to Google Play and other app
 stores.
 
-Building an Android application takes four or five steps:
+Building an Android application consists of four steps:
 
-1. Download and install RAPT, the Java Development Kit,
+1. Download and install the Java Development Kit
    and Android USB Drivers (scroll down for links).
 
 2. Use the launcher to install the Android SDK and create keys.
@@ -59,17 +59,6 @@ your device, you may need to read:
     http://developer.android.com/guide/developing/device.html#setting-up
 
 However, modern versions of Linux and OS X should just work.
-
-
-**RAPT.**
-The latest version of RAPT can be downloaded from:
-
-    http://www.renpy.org/dl/android
-
-Once RAPT has been downloaded, you should unpack it inside the
-Ren'Py directory. (The directory that contains renpy.exe, renpy.sh,
-and the Ren'Py app.) Then restart the launcher to ensure that it
-detects the presence of RAPT.
 
 
 Step 2: Set up the Android SDK and Development Environment

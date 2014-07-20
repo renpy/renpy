@@ -62,7 +62,7 @@ statements.
 
 Here's an example of a screen.::
 
-    screen say:
+    screen say(who, what):
         window id "window":
             vbox:
                 spacing 10
@@ -72,7 +72,8 @@ Here's an example of a screen.::
 
 The first line of this is a screen statement, a Ren'Py language
 statement that's used to declare a screen. The name of the screen is
-`say`, so this is the screen that's used to display dialogue.
+`say`, so this is the screen that's used to display dialogue. It takes
+two parameters, `who` and `what`.
 
 The screen contains a window, which has been given the id of
 "window". This window contains a vertical box, and the spacing inside
@@ -134,7 +135,7 @@ expression. It takes the following properties:
 
 ::
 
-   screen hello_world:
+   screen hello_world():
         tag example
         zorder 1
         modal False
@@ -235,7 +236,7 @@ This does not take any children.
 
 ::
 
-    screen add_test:
+    screen add_test():
         add "logo.png" xalign 1.0 yalign 0.0
 
 
@@ -279,7 +280,7 @@ This does not take children.
 
 ::
 
-    screen volume_controls:
+    screen volume_controls():
         frame:
             has vbox
 
@@ -377,7 +378,7 @@ a fixed is created to contain them.
 
 ::
 
-    screen test_frame:
+    screen test_frame():
         frame:
             xpadding 10
             ypadding 10
@@ -446,7 +447,7 @@ UI displayable children are added to the box.
 
 ::
 
-   screen hbox_text:
+   screen hbox_text():
        hbox:
             text "Left"
             text "Right"
@@ -512,7 +513,7 @@ This takes no children.
 
 ::
 
-    screen gui_game_menu:
+    screen gui_game_menu():
          vbox xalign 1.0 yalign 1.0:
               imagebutton auto "save_%s.png" action ShowMenu('save')
               imagebutton auto "prefs_%s.png" action ShowMenu('preferences')
@@ -568,7 +569,7 @@ This does not take any children.
 
 ::
 
-    screen input_screen:
+    screen input_screen():
         window:
             has vbox
 
@@ -597,7 +598,7 @@ It takes no children.
 
 ::
 
-    screen keymap_screen:
+    screen keymap_screen():
         key "game_menu" action ShowMenu('save')
         key "p" action ShowMenu('preferences')
         key "s" action Screenshot()
@@ -634,7 +635,7 @@ It does not take children.
 
 ::
 
-    screen display_preference:
+    screen display_preference():
         frame:
             has vbox
 
@@ -667,7 +668,7 @@ It does not take children.
 
 ::
 
-    screen text_box:
+    screen text_box():
         vbox:
              text "The title."
              null height 20
@@ -710,13 +711,13 @@ take up the entire screen, a less useful behavior.
 
 ::
 
-    screen button_overlay:
+    screen button_overlay():
         mousearea:
             area (0, 0, 1.0, 100)
             hovered Show("buttons", transition=dissolve)
             unhovered Hide("buttons", transition=dissolve)
 
-    screen buttons:
+    screen buttons():
         hbox:
             textbutton "Save" action ShowMenu("save")
             textbutton "Prefs" action ShowMenu("preferences")
@@ -762,7 +763,7 @@ the same number of children as there are entries in the places list.
 
 ::
 
-    screen side_test:
+    screen side_test():
          side "c tl br":
               text "Center"
               text "Top-Left"
@@ -784,7 +785,7 @@ It does not take children.
 
 ::
 
-    screen hello_world:
+    screen hello_world():
         text "Hello, World." size 40
 
 .. _sl-textbutton:
@@ -826,7 +827,7 @@ It does not take children.
 
 ::
 
-    screen textbutton_screen:
+    screen textbutton_screen():
         vbox:
             textbutton "Wine" action Jump("wine")
             textbutton "Women" action Jump("women")
@@ -852,7 +853,7 @@ It takes no children.
 
 ::
 
-    screen timer_test:
+    screen timer_test():
         vbox:
              textbutton "Yes." action Jump("yes")
              textbutton "No." action Jump("no")
@@ -883,7 +884,7 @@ as `bar`.
 
 ::
 
-    screen volume_controls:
+    screen volume_controls():
          frame:
              has hbox
 
@@ -909,7 +910,7 @@ UI displayable children are added to the box.
 
 ::
 
-    screen vbox_test:
+    screen vbox_test():
         vbox:
              text "Top."
              text "Bottom."
@@ -995,7 +996,7 @@ id.
 
 ::
 
-    screen viewport_example:
+    screen viewport_example():
         side "c b r":
              area (100, 100, 600, 400)
 
@@ -1025,7 +1026,7 @@ a fixed is created to contain them.
 
 ::
 
-    screen say:
+    screen say(who, what):
         window id "window"
             vbox:
                 spacing 10
@@ -1047,7 +1048,7 @@ Here's an example of a preferences screen that uses imagemaps.
 
 ::
 
-    screen preferences:
+    screen preferences():
 
         tag menu
         use navigation
@@ -1253,7 +1254,7 @@ container.
 
 ::
 
-   screen volume_controls:
+   screen volume_controls():
         frame:
             has vbox
 
@@ -1274,15 +1275,24 @@ events occur, and executing arbitrary python code.
 Default
 -------
 
+The default statement sets the default value of a variable when the
+screen is first one. :func:`SetScreenVariable`
+
 The default statement sets the default value of a variable, if it is not
 passed as an argument to the screen, or inherited from a screen that calls
 us using the use statement.
 
 ::
 
-    screen message:
-         default message = "No message defined."
-         text message
+    screen scheduler():
+        default club = None
+        vbox:
+             text "What would you like to do?"
+             textbutton "Art Club" action SetScreenVariable("club", "art")
+             textbutton "Writing Club" action SetScreenVariable("club", "writing")
+
+             if club:
+                 textbutton "Select" action Return(club)
 
 
 .. _sl-for:
@@ -1298,7 +1308,7 @@ it does not support the else clause. It supports assignment to
 
     $ numerals = [ 'I', 'II', 'III', 'IV', 'V' ]
 
-    screen five_buttons:
+    screen five_buttons():
         vbox:
             for i, numeral in enumerate(numerals):
                 textbutton numeral action Return(i + 1)
@@ -1314,7 +1324,7 @@ statement. It supports the if, elif, and else clauses.
 
 ::
 
-    screen skipping_indicator:
+    screen skipping_indicator():
         if config.skipping:
              text "Skipping."
         else:
@@ -1339,7 +1349,7 @@ occurs.
 
 ::
 
-    screen preferences:
+    screen preferences():
         frame:
             has hbox
 
@@ -1360,6 +1370,10 @@ The use statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
+If the used screen include parameters, its scope is initialized to the
+result of assigning the arguments to those parameters. Otherwise, it
+is passed the scope of the current screen, updated with any
+
 The scope of the included code includes the scope of the current
 statement's code, updated by assinging the parameters their new
 values.
@@ -1378,7 +1392,7 @@ values.
                 text FileSaveName(slot)
 
 
-     screen save:
+     screen save():
          grid 2 5:
              for i in range(1, 11):
                   use file_slot(i)
@@ -1568,7 +1582,7 @@ An example of defining a screen variant is:
 
    # A variant hello_world screen, used on small touch-based
    # devices.
-   screen hello_world:
+   screen hello_world():
         tag example
         zorder 1
         modal False

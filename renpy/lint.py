@@ -285,7 +285,7 @@ def text_checks(s):
     if msg:
         report("%s (in %s)", msg, repr(s)[1:])
 
-    if "%" in s:
+    if "%" in s and renpy.config.old_substitutions:
 
         state = 0
         pos = 0
@@ -553,10 +553,10 @@ def lint():
             check_image(node)
 
         elif isinstance(node, renpy.ast.Show):
-            check_show(node, True)
+            check_show(node, False)
 
         elif isinstance(node, renpy.ast.Scene):
-            check_show(node, False)
+            check_show(node, True)
 
         elif isinstance(node, renpy.ast.Hide):
             check_hide(node)

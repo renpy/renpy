@@ -459,6 +459,9 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
     cdef int ascent, line_spacing
     cdef bint end_line
 
+    if not glyphs:
+        return [ ], y
+
     len_glyphs = len(glyphs)
 
     pos = 0

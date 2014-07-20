@@ -744,6 +744,14 @@ both horizontal and vertical positions.
    This causes the displayable to be vertically zoomed by the supplied
    factor. A negative value causes the image to be flipped vertically.
 
+.. transform-property:: nearest
+
+    :type: boolean
+    :default: False
+
+    If true, the displayable and its children are drawn using nearest-neighbor
+    filtering.
+
 .. transform-property:: alpha
 
     :type: float

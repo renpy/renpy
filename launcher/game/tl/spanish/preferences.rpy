@@ -59,3 +59,16 @@
     # game/preferences.rpy:183
     old "Language:"
     new "Idioma:"
+
+    # game/preferences.rpy:89
+    old "Projects directory: [text]"
+    new "Directorio de proyectos: [text]"
+
+    # game/preferences.rpy:112
+    old "Text editor: [text]"
+    new "Editor de texto: [text]"
+
+    # game/preferences.rpy:169
+    old "Large fonts"
+    new "Fuentes grandes"
+

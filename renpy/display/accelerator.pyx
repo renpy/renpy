@@ -278,6 +278,7 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
+    rv.nearest = state.nearest
     rv.alpha = state.alpha
     rv.over = 1.0 - state.additive
     rv.clipping = clipping

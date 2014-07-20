@@ -64,7 +64,7 @@ It's expected to declare displayables with the following ids:
 
 ::
 
-    screen say:
+    screen say(who, what):
 
         window id "window":
             has vbox
@@ -93,7 +93,7 @@ with the menu statement. It is given the following parameter:
 
 ::
 
-    screen choice:
+    screen choice(items):
 
         window:
             style "menu_window"
@@ -134,7 +134,7 @@ It is expected to declare a displayable with the following id:
 
 ::
 
-    screen input:
+    screen input(prompt):
 
         window:
             has vbox
@@ -175,7 +175,7 @@ an in-game choice is presented to the user, if it exists.
 
 ::
 
-    screen nvl:
+    screen nvl(dialogue, items=None):
 
         window:
             style "nvl_window"
@@ -232,7 +232,7 @@ single parameter:
 
 The default notify screen, and its associated transform, are::
 
-    screen notify:
+    screen notify(message):
         zorder 100
 
         text message at _notify_transform
@@ -273,7 +273,7 @@ begins.
 
 ::
 
-    screen main_menu:
+    screen main_menu():
 
         # This ensures that any other menu screen is replaced.
         tag menu
@@ -312,7 +312,7 @@ then use that screen from the save, load and preferences screens.
 
 ::
 
-    screen navigation:
+    screen navigation():
 
         # The background of the game menu.
         window:
@@ -347,7 +347,7 @@ game.
 
 ::
 
-    screen save:
+    screen save():
 
         # This ensures that any other menu screen is replaced.
         tag menu
@@ -402,7 +402,7 @@ game.
 
 ::
 
-    screen load:
+    screen load():
 
         # This ensures that any other menu screen is replaced.
         tag menu
@@ -457,7 +457,7 @@ display of the game.
 
 ::
 
-    screen preferences:
+    screen preferences():
 
         tag menu
 
@@ -602,7 +602,7 @@ user. It takes the following parameters:
 
 ::
 
-    screen yesno_prompt:
+    screen yesno_prompt(message, yes_action, no_action):
 
         modal True
 

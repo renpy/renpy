@@ -592,9 +592,8 @@ class Layout(object):
             l, y = textsupport.place_vertical(line_glyphs, y, style.line_spacing, style.line_leading)
             lines.extend(l)
 
-            # Figure out the indent of the next line.
-            first_indent = style.newline_indent
-            if first_indent is None:
+            # Figure out the indent of the next paragraph.
+            if not style.newline_indent:
                 first_indent = rest_indent
 
         if style.line_spacing < 0:
