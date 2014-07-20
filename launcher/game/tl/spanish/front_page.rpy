@@ -91,3 +91,12 @@
     # game/front_page.rpy:237
     old "Deleting persistent data..."
     new "Eliminando datos persistentes..."
+
+    # game/front_page.rpy:35
+    old "Open [text] directory."
+    new "Abrir directorio [text]."
+
+    # game/front_page.rpy:150
+    old "Select project [text]."
+    new "Seleccionar proyecto [text]."
+
