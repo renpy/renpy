@@ -107,6 +107,9 @@ def take_focuses():
         if f.x is None:
             default_focus = f
 
+    if (default_focus is not None) and (get_focused() is None):
+        change_focus(default_focus, True)
+
 def focus_coordinates():
     """
     :doc: other
