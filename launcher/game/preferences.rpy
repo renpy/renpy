@@ -38,7 +38,9 @@ init python:
         rv = [ ( "English", None) ]
 
         for i in languages:
-            rv.append((i.title(), i))
+            rv.append((i.replace("_", " ").title(), i))
+
+        rv.sort()
 
         return rv
 
@@ -208,10 +210,16 @@ screen preferences:
 
                             add HALF_SPACER
 
-                            # frame style "l_indent":
+                            viewport:
+                                scrollbars "vertical"
+                                mousewheel True
 
-                            for tlname, tlvalue in translations:
-                                textbutton tlname action Language(tlvalue) style "l_list"
+                                has vbox
+
+                                # frame style "l_indent":
+
+                                for tlname, tlvalue in translations:
+                                    textbutton tlname action Language(tlvalue) style "l_list"
 
 
     textbutton _("Back") action Jump("front_page") style "l_left_button"
