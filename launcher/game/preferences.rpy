@@ -222,7 +222,7 @@ screen preferences:
                                     textbutton tlname action Language(tlvalue) style "l_list"
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Back") action Jump("start") style "l_left_button"
 
 label projects_directory_preference:
     call choose_projects_directory
