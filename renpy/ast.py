@@ -452,6 +452,27 @@ def say_menu_with(expression, callback):
         # renpy.game.interface.set_transition(what)
         callback(what)
 
+def eval_who(who, fast=None):
+    """
+    Evaluates the `who` parameter to a say statement.
+    """
+
+    if who is None:
+        return None
+
+    if fast is None:
+        fast = bool(re.match(renpy.parser.word_regexp + "$", who))
+
+    if fast:
+        rv = renpy.python.store_dicts['store'].get(who, None)
+
+        if rv is None:
+            raise Exception("Sayer '%s' is not defined." % who.encode("utf-8"))
+
+        return rv
+
+    return renpy.python.py_eval(who)
+
 class Say(Node):
 
     __slots__ = [
@@ -528,15 +549,7 @@ class Say(Node):
 
             renpy.game.context().say_attributes = self.attributes
 
-            if self.who is not None:
-                if self.who_fast:
-                    who = renpy.python.store_dicts['store'].get(self.who, None)
-                    if who is None:
-                        raise Exception("Sayer '%s' is not defined." % self.who.encode("utf-8"))
-                else:
-                    who = renpy.python.py_eval(self.who)
-            else:
-                who = None
+            who = eval_who(self.who, self.who_fast)
 
             if not (
                 (who is None) or
@@ -570,13 +583,7 @@ class Say(Node):
 
             renpy.game.context().say_attributes = self.attributes
 
-            if self.who is not None:
-                if self.who_fast:
-                    who = getattr(renpy.store, self.who)
-                else:
-                    who = renpy.python.py_eval(self.who)
-            else:
-                who = None
+            who = eval_who(self.who, self.who_fast)
 
             def predict_with(trans):
                 renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
