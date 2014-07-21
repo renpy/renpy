@@ -2635,12 +2635,16 @@ def set_mouse_pos(x, y, duration=0):
     :doc: other
 
     Jump the mouse pointer to the location given by arguments x and y.
-    If the device does not have a mouse pointer, this does nothing.
+    If the device does not have a mouse pointer or a joystick is enable,
+    this does nothing.
 
     `duration`
         The time it will take to perform the move, in seconds.
         During this time, the mouse may be unresponsive.
     """
+
+    if renpy.display.joystick.enabled or config.always_has_joystick:
+        return
 
     renpy.display.interface.set_mouse_pos(x, y, duration)
 
