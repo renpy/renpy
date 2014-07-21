@@ -109,6 +109,7 @@ init -1500 python:
 
         widget_properties = { }
         dialogue = [ ]
+        show_args = {}
 
         for i, entry in enumerate(nvl_list):
             if not entry:
@@ -129,17 +130,27 @@ init -1500 python:
             widget_properties[who_id] = kwargs["who_args"]
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
+            show_args.update(kwargs)
 
             dialogue.append((who, what, who_id, what_id, window_id))
 
-        return widget_properties, dialogue
+
+        if "who_args" in show_args:
+            del show_args["who_args"]
+        if "what_args" in show_args:
+            show_args["what_args"]
+        if "window_args" in show_args:
+            show_args["window_args"]
+
+        return widget_properties, dialogue, show_args
 
     def __nvl_show_screen(screen_name, **scope):
         """
          Shows an nvl-mode screen. Returns the "what" widget.
          """
 
-        widget_properties, dialogue = __nvl_screen_dialogue()
+        widget_properties, dialogue, show_args = __nvl_screen_dialogue()
+        scope.update(show_args)
 
         renpy.show_screen(screen_name, _layer=config.nvl_layer, _transient=True, _widget_properties=widget_properties, dialogue=dialogue, **scope)
         renpy.shown_window()
@@ -319,13 +330,15 @@ init -1500 python:
 
         if screen is not None:
 
-            widget_properties, dialogue = __nvl_screen_dialogue()
+            widget_properties, dialogue, show_args = __nvl_screen_dialogue()
+            scope = show_args.copy()
+            scope["dialogue"] = dialogue
 
             return renpy.display_menu(
                 items,
                 widget_properties=widget_properties,
                 screen=screen,
-                scope={ "dialogue" : dialogue },
+                scope=scope,
                 window_style=__s(style.nvl_menu_window),
                 choice_style=__s(style.nvl_menu_choice),
                 choice_chosen_style=__s(style.nvl_menu_choice_chosen),
