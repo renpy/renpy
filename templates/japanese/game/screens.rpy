@@ -3,6 +3,12 @@
 # 本ファイルはパブリックドメインです。
 # これを基にして、独自のスクリーンを作成してください。
 
+# Note that many of these screens may be given additional arguments in the
+# future. The use of **kwargs in the parameter list ensures your code will
+# work in the future.
+# これらのスクリーンには将来、追加の引数が与えられるかもしれないことに注意してください。
+# 引数で **kwargs を使用するとそのような場合でもコードは動作するでしょう
+
 ##############################################################################
 # Say
 #
@@ -10,12 +16,7 @@
 # http://www.renpy.org/doc/html/screen_special.html#say
 # アドベンチャーモードのダイアログを表示するスクリーン。
 
-screen say:
-
-    # Defaults for side_image and two_window
-    # side_image と two_window の初期値。
-    default side_image = None
-    default two_window = False
+screen say(who, what, side_image=None, two_window=False):
 
     # Decide if we want to use the one-window or two-window variant.
     # １ウィンドウ形式か２ウィンドウ形式か決めます。
@@ -75,7 +76,7 @@ screen say:
 # http://www.renpy.org/doc/html/screen_special.html#choice
 # ゲーム中の選択肢を表示するスクリーン。
 
-screen choice:
+screen choice(items):
 
     window:
         style "menu_window"
@@ -119,7 +120,7 @@ init -2:
 # http://www.renpy.org/doc/html/screen_special.html#input
 # renpy.input() を表示するスクリーン。
 
-screen input:
+screen input(prompt):
 
     window style "input_window":
         has vbox
@@ -136,7 +137,7 @@ screen input:
 # http://www.renpy.org/doc/html/screen_special.html#nvl
 # ノベルモードのダイアログと選択肢を表示するスクリーン。
 
-screen nvl:
+screen nvl(dialogue, items=None):
 
     window:
         style "nvl_window"
@@ -233,7 +234,7 @@ init -2:
 # ゲームメニューの背景とナビゲーションを表示するスクリーン。
 # 他のゲームメニュー用スクリーンと一緒に使われます。
 
-screen navigation:
+screen navigation():
 
     # The background of the game menu.
     # ゲームメニューの背景。
@@ -279,7 +280,7 @@ init -2:
 # セーブとロードは似ているため、両者を組み合わせてファイルピッカー
 # というスクリーンを作り、実際のセーブ・ロードスクリーンで使用します。
 
-screen file_picker:
+screen file_picker():
 
     frame:
         style "file_picker_frame"
@@ -343,7 +344,7 @@ screen file_picker:
                     key "save_delete" action FileDelete(i)
 
 
-screen save:
+screen save():
 
     # This ensures that any other menu screen is replaced.
     # 他のメニュースクリーンが表示される時に置き換えます。
@@ -352,7 +353,7 @@ screen save:
     use navigation
     use file_picker
 
-screen load:
+screen load():
 
     # This ensures that any other menu screen is replaced.
     # 他のメニュースクリーンが表示される時に置き換えます。
@@ -376,7 +377,7 @@ init -2:
 # http://www.renpy.org/doc/html/screen_special.html#prefereces
 # 環境設定を変更する時に使用するスクリーン。
 
-screen preferences:
+screen preferences():
 
     tag menu
 
@@ -518,7 +519,7 @@ init -2:
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 # はい／いいえを尋ねるスクリーン。
 
-screen yesno_prompt:
+screen yesno_prompt(message, yes_action, no_action):
 
     modal True
 
@@ -569,7 +570,7 @@ init -2:
 # several useful functions.
 # say スクリーンに含まれ、クイックメニュー用スクリーン。
 
-screen quick_menu:
+screen quick_menu():
 
     # Add an in-game quick menu.
     # クイックメニューを追加。
