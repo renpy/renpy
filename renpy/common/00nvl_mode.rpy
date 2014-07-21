@@ -109,7 +109,7 @@ init -1500 python:
 
         widget_properties = { }
         dialogue = [ ]
-        show_args = {}
+        kwargs = { }
 
         for i, entry in enumerate(nvl_list):
             if not entry:
@@ -130,17 +130,14 @@ init -1500 python:
             widget_properties[who_id] = kwargs["who_args"]
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
-            show_args.update(kwargs)
 
             dialogue.append((who, what, who_id, what_id, window_id))
 
-
-        if "who_args" in show_args:
+        show_args = dict(kwargs)
+        if show_args:
             del show_args["who_args"]
-        if "what_args" in show_args:
-            show_args["what_args"]
-        if "window_args" in show_args:
-            show_args["window_args"]
+            del show_args["what_args"]
+            del show_args["window_args"]
 
         return widget_properties, dialogue, show_args
 
@@ -180,6 +177,8 @@ init -1500 python:
                 continue
 
             who, what, kw = i
+            kw = dict(kw)
+            kw.setdefault("show_say_vbox_properties",  { 'box_layout' : 'horizontal' }),
             rv = config.nvl_show_display_say(who, what, variant=nvl_variant, **kw)
 
         ui.close()
@@ -298,7 +297,6 @@ init -1500 python:
 
     # The default NVLCharacter.
     nvl = NVLCharacter(
-        show_say_vbox_properties={ 'box_layout' : 'horizontal' },
         who_style='nvl_label',
         what_style='nvl_dialogue',
         window_style='nvl_entry',
@@ -361,6 +359,8 @@ init -1500 python:
                 continue
 
             who, what, kw = i
+            kw = dict(kw)
+            kw.setdefault("show_say_vbox_properties",  { 'box_layout' : 'horizontal' }),
             rv = renpy.show_display_say(who, what, **kw)
 
         renpy.display_menu(items, interact=False,
