@@ -62,7 +62,7 @@ def event(ev):
 
     if ev.type == pygame.JOYAXISMOTION:
 
-        if not renpy.display.interface.focused:
+        if not renpy.display.interface.keyboard_focused:
             return None
 
         if ev.value >= 0.5:
@@ -97,7 +97,7 @@ def event(ev):
 
     if ev.type == pygame.JOYBUTTONDOWN:
 
-        if not renpy.display.interface.focused:
+        if not renpy.display.interface.keyboard_focused:
             return None
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,
@@ -105,7 +105,7 @@ def event(ev):
                                   release=None)
     if ev.type == pygame.JOYBUTTONUP:
 
-        if not renpy.display.interface.focused:
+        if not renpy.display.interface.keyboard_focused:
             return None
 
         return pygame.event.Event(renpy.display.core.JOYEVENT,

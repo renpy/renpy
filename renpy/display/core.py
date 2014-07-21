@@ -1301,7 +1301,8 @@ class Interface(object):
         self.redraw_event = pygame.event.Event(REDRAW)
 
         # Are we focused?
-        self.focused = True
+        self.mouse_focused = True
+        self.keyboard_focused = True
 
         # Properties for each layer.
         self.layer_properties = { }
@@ -1651,7 +1652,8 @@ class Interface(object):
         self.force_redraw = True
 
         # Assume we have focus until told otherwise.
-        self.focused = True
+        self.mouse_focused = True
+        self.keyboard_focused = True
 
         # Assume we're not minimized.
         self.minimized = False
@@ -1989,7 +1991,7 @@ class Interface(object):
             return True, 0, 0, None
 
         # Deal with the mouse going offscreen.
-        if not self.focused:
+        if not self.mouse_focused:
             return False, 0, 0, None
 
         mouse_kind = renpy.display.focus.get_mouse() or self.mouse
@@ -2681,7 +2683,7 @@ class Interface(object):
                         ev = evs[-1]
 
                     if renpy.windows:
-                        self.focused = True
+                        self.mouse_focused = True
 
                 # Handle mouse event time, and ignoring touch.
                 if ev.type == pygame.MOUSEMOTION or \
@@ -2695,8 +2697,12 @@ class Interface(object):
 
                 # Handle focus notifications.
                 if ev.type == pygame.ACTIVEEVENT:
+
                     if ev.state & 1:
-                        self.focused = ev.gain
+                        self.mouse_focused = ev.gain
+
+                    if ev.state & 2:
+                        self.keyboard_focused = ev.gain
 
                     if ev.state & 4:
                         if ev.gain:
@@ -2714,7 +2720,7 @@ class Interface(object):
                 if ev is None:
                     continue
 
-                if not self.focused or self.ignore_touch:
+                if not self.mouse_focused or self.ignore_touch:
                     x = -1
                     y = -1
 
