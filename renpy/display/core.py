@@ -1700,16 +1700,14 @@ class Interface(object):
             if not self.bgscreenshot_event.wait(1.0):
                 raise Exception("Screenshot timed out.")
 
-            window = self.bgscreenshot_surface
+            surf = self.bgscreenshot_surface
             self.bgscreenshot_surface = None
 
         else:
 
-            window = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
+            surf = renpy.display.draw.screenshot(self.surftree, self.fullscreen_video)
 
-        surf = renpy.display.pgrender.copy_surface(window, True)
         surf = renpy.display.scale.smoothscale(surf, scale)
-        surf = surf.convert()
 
         renpy.display.render.mutated_surface(surf)
 
