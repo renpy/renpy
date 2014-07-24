@@ -694,9 +694,10 @@ Rarely or Internally Used
 
 .. var:: config.autosave_on_quit = True
 
-    If true, Ren'Py will attempt to autosave when the user attempts to quit
-    or return to the main menu. (To save time, the autosave occurs while the
-    user is being prompted to confirm his or her decision.)
+    If true, Ren'Py will attempt to autosave when the user attempts to quit,
+    return to the main menu, or load a game over the existing game. (To
+    save time, the autosave occurs while the user is being prompted to confirm
+    his or her decision.)
 
 .. var:: config.character_callback = None
 
