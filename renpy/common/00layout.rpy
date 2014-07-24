@@ -27,6 +27,9 @@ init -1400 python:
     # basics: The height of a thumbnail.
     config.thumbnail_height = 50
 
+    # Should autosave be called when the game is about to quit?
+    config.autosave_on_quit = True
+
     class Layout():
         def __call__(self, func):
             setattr(self, func.func_name, func)
@@ -67,7 +70,8 @@ init -1400 python:
 # These are used by layout-based code, and also by the screens code when a layout
 # is used to invoke the screen.
 label _quit_prompt:
-    $ renpy.loadsave.force_autosave()
+    if config.autosave_on_quit:
+        $ renpy.force_autosave()
 
     if layout.invoke_yesno_prompt(None, layout.QUIT):
         jump _quit
@@ -75,7 +79,8 @@ label _quit_prompt:
         return
 
 label _main_menu_prompt:
-    $ renpy.loadsave.force_autosave()
+    if config.autosave_on_quit:
+        $ renpy.force_autosave()
 
     if layout.yesno_prompt(None, layout.MAIN_MENU):
         $ renpy.full_restart(transition=config.game_main_transition)

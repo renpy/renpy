@@ -359,6 +359,16 @@ def autosave():
 
 # This assumes a screenshot has already been taken.
 def force_autosave(take_screenshot=False):
+    """
+    :doc: other
+
+    Forces a background autosave to occur.
+
+    `take_screenshot`
+        If True, a new screenshot will be taken. If False, the existing
+        screenshot will be used.
+    """
+
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():

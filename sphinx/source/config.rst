@@ -692,6 +692,12 @@ Rarely or Internally Used
     autosave occurs. To disable autosaving, set :var:`config.has_autosave` to
     False, don't change this variable.
 
+.. var:: config.autosave_on_quit = True
+
+    If true, Ren'Py will attempt to autosave when the user attempts to quit
+    or return to the main menu. (To save time, the autosave occurs while the
+    user is being prompted to confirm his or her decision.)
+
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.
