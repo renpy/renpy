@@ -386,16 +386,13 @@ def sl2viewport(**kwargs):
     sl.displayable can use.
     """
 
+    d = renpy.ui.detached()
     vp = renpy.ui.viewport(**kwargs)
-    renpy.ui.stack.pop()
+    rv = d.child
 
-    # Remove the side from the list of children. (It will be re-added later.)
-    d = renpy.ui.stack[-1].children.pop()
+    rv._main = vp
 
-    # Make the viewport the main element.
-    d._main = vp
-
-    return d
+    return rv
 
 DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True)
 Keyword("child_size")

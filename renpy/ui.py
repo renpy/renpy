@@ -163,6 +163,7 @@ class Detached(Addable):
     """
 
     def add(self, d, key):
+        self.child = d
         stack.pop()
 
     def close(self, d):
@@ -294,7 +295,9 @@ def detached():
     you want to assign the result of a ui function to a variable.
     """
 
-    stack.append(Detached())
+    rv = Detached()
+    stack.append(rv)
+    return rv
 
 def layer(name):
     """
