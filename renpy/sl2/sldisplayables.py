@@ -388,8 +388,10 @@ def sl2viewport(**kwargs):
 
     d = renpy.ui.detached()
     vp = renpy.ui.viewport(**kwargs)
-    rv = d.child
 
+    renpy.ui.stack.pop()
+
+    rv = d.child
     rv._main = vp
 
     return rv
