@@ -125,6 +125,17 @@ class SLNode(object):
     The base class for screen language nodes.
     """
 
+    # The type of constant this node is.
+    constant = GLOBAL_CONST
+
+    # True if this node has at least one keyword that applies to its
+    # parent. False otherwise.
+    has_keyword = False
+
+    # True if this node should be the last keyword parsed.
+    last_keyword = False
+
+
     def __init__(self, loc):
         global serial
         serial += 1
@@ -134,10 +145,6 @@ class SLNode(object):
 
         # The location of this node, a (file, line) tuple.
         self.location = loc
-
-        # True if this is a constant node, always producing an equivalent
-        # tree of objects.
-        self.constant = GLOBAL_CONST
 
     def report_traceback(self, name):
         filename, line = self.location
@@ -264,6 +271,18 @@ class SLBlock(SLNode):
         else:
             self.keyword_exprs = None
 
+        self.has_keyword = bool(self.keyword)
+        self.keyword_children = [ ]
+
+        for i in self.children:
+            if i.has_keyword:
+                self.keyword_children.append(i)
+                self.has_keyword = True
+
+            if i.last_keyword:
+                self.last_keyword = True
+                break
+
 
     def execute(self, context):
 
@@ -285,7 +304,7 @@ class SLBlock(SLNode):
         if keyword_exprs is not None:
             context.keywords.update(eval(keyword_exprs, context.globals, context.scope))
 
-        for i in self.children:
+        for i in self.keyword_children:
             i.keywords(context)
 
         style_group = context.keywords.pop("style_group", NotGiven)
@@ -436,6 +455,12 @@ class SLDisplayable(SLBlock):
             self.positional_exprs = compile_expr(t)
         else:
             self.positional_exprs = None
+
+        # We do not pass keywords to our parents.
+        self.has_keyword = False
+
+        # We want to preserve last_keyword, however, in case we run a
+        # python block.
 
     def keywords(self, context):
         # We do not want to pass keywords to our parents, so just return.
@@ -808,6 +833,9 @@ class SLIf(SLNode):
             self.constant = min(self.constant, block.constant)
             self.prepared_entries.append((cond, block))
 
+            self.has_keyword = self.has_keyword or block.has_keyword
+            self.last_keyword = self.last_keyword or block.last_keyword
+
     def execute(self, context):
 
         for cond, block in self.prepared_entries:
@@ -866,6 +894,8 @@ class SLFor(SLBlock):
         self.constant = min(self.constant, const)
 
         SLBlock.prepare(self, analysis)
+
+        self.last_keyword = True
 
     def execute(self, context):
 
@@ -939,7 +969,8 @@ class SLPython(SLNode):
         exec self.code.bytecode in context.globals, context.scope
 
     def prepare(self, analysis):
-        self.constant = False
+        self.constant = NOT_CONST
+        self.last_keyword = True
 
 
 class SLPass(SLNode):
@@ -962,6 +993,7 @@ class SLDefault(SLNode):
     def prepare(self, analysis):
         self.expr = py_compile(self.expression, 'eval')
         self.constant = NOT_CONST
+        self.last_keyword = True
 
     def execute(self, context):
         scope = context.scope
@@ -1003,6 +1035,7 @@ class SLOn(SLNode):
             self.action_value = None
 
         self.constant = NOT_CONST
+        self.last_keyword = True
 
 
     def execute(self, context):
@@ -1050,6 +1083,7 @@ class SLUse(SLNode):
         self.ast.prepare(analysis)
 
         self.constant = self.ast.constant
+        self.last_keyword = True
 
     def execute_use_screen(self, context):
 
