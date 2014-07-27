@@ -459,6 +459,10 @@ class MultiBox(Container):
     def _in_old_scene(self):
 
         if self.layer_name is not None:
+
+            if self.scene_list is None:
+                return self
+
             scene_list = [ ]
 
             changed = False
