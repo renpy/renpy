@@ -405,8 +405,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return None
 
         renpy.ui.detached()
-        self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
-        self.children = [ self.child ]
+        hid.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
+        hid.children = [ hid.child ]
         renpy.ui.close()
 
         for d in old_child.children:
@@ -414,7 +414,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             if c is not None:
                 renpy.display.render.redraw(c, 0)
-                self.child.add(c)
+                hid.child.add(c)
 
                 rv = hid
 
@@ -823,7 +823,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
         if renpy.config.debug_image_cache:
             import traceback
 
-            print "While predicting screen", screen
+            print "While predicting screen", _screen_name
             traceback.print_exc()
 
     renpy.ui.reset()
