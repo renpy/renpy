@@ -72,11 +72,15 @@ class ParameterInfo(object):
         self.extrakw = extrakw
 
 
-    def apply(self, args, kwargs):
+    def apply(self, args, kwargs, ignore_errors=False):
         """
         Applies `args` and `kwargs` to these parameters. Returns
         a dictionary that can be used to update an enclosing
         scope.
+
+        `ignore_errors`
+            If true, errors will be ignored, and this function will do the
+            best job it can.
         """
 
         values = { }
@@ -91,7 +95,8 @@ class ParameterInfo(object):
 
         for name, value in zip(self.positional, args):
             if name in values:
-                raise Exception("Parameter %s has two values." % name)
+                if not ignore_errors:
+                    raise Exception("Parameter %s has two values." % name)
 
             values[name] = value
 
@@ -99,7 +104,8 @@ class ParameterInfo(object):
 
         for name, value in kwargs.iteritems():
             if name in values:
-                raise Exception("Parameter %s has two values." % name)
+                if not ignore_errors:
+                    raise Exception("Parameter %s has two values." % name)
 
             values[name] = value
 
@@ -107,7 +113,8 @@ class ParameterInfo(object):
 
             if name not in values:
                 if default is None:
-                    raise Exception("Required parameter %s has no value." % name)
+                    if not ignore_errors:
+                        raise Exception("Required parameter %s has no value." % name)
                 else:
                     rv[name] = renpy.python.py_eval(default)
 
@@ -120,18 +127,17 @@ class ParameterInfo(object):
 
         if self.extrapos:
             rv[self.extrapos] = extrapos
-        elif extrapos:
+        elif extrapos and not ignore_errors:
             raise Exception("Too many arguments in call (expected %d, got %d)." % (len(self.positional), len(args)))
 
         if self.extrakw:
             rv[self.extrakw] = values
-        else:
-            if values:
-                raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
+        elif values and not ignore_errors:
+            raise Exception("Unknown keyword arguments: %s" % ( ", ".join(values.keys())))
 
         return rv
 
-def apply_arguments(parameters, args, kwargs):
+def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
     if parameters is None:
         if args or kwargs:
@@ -139,7 +145,7 @@ def apply_arguments(parameters, args, kwargs):
         else:
             return { }
 
-    return parameters.apply(args, kwargs)
+    return parameters.apply(args, kwargs, ignore_errors)
 
 
 class ArgumentInfo(object):

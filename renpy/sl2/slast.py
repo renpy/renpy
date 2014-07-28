@@ -27,6 +27,7 @@ import renpy.display
 
 from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
+from renpy.display.predict import displayable as predict_displayable
 
 from renpy.python import py_compile, py_eval_bytecode
 from renpy.sl2.pyutil import Analysis, NOT_CONST, GLOBAL_CONST
@@ -103,6 +104,13 @@ class SLContext(renpy.ui.Addable):
 
         # True if we should dump debug information to the profile log.
         self.debug = False
+
+        # True if we're predicting the screen.
+        self.predicting = False
+
+        # A list of nodes we've predicted, for cases where predicting more than
+        # once could be a performance problem.
+        self.predicted = set()
 
     def get_style_group(self):
         style_prefix = self.style_prefix
@@ -290,7 +298,12 @@ class SLBlock(SLNode):
         # reasons.
 
         for i in self.children:
-            i.execute(context)
+
+            try:
+                i.execute(context)
+            except:
+                if not context.predicting:
+                    raise
 
     def keywords(self, context):
 
@@ -470,7 +483,6 @@ class SLDisplayable(SLBlock):
 
         debug = context.debug
 
-
         screen = renpy.ui.screen
 
         cache = context.cache.get(self.serial, None)
@@ -501,118 +513,136 @@ class SLDisplayable(SLBlock):
                 screen.widgets.update(cache.constant_widgets)
                 return
 
-        stack = renpy.ui.stack
-
-        # Evaluate the positional arguments.
-        positional_values = self.positional_values
-        positional_exprs = self.positional_exprs
-
-        if positional_values and positional_exprs:
-            values = eval(positional_exprs, context.globals, context.scope)
-            positional = [ b if (a is use_expression) else a for a, b in zip(positional_values, values) ]
-        elif positional_values:
-            positional = positional_values
-        elif positional_exprs:
-            positional = eval(positional_exprs, context.globals, context.scope)
-        else:
-            positional = [ ]
-
         # Create the context.
         ctx = SLContext(context)
-        keywords = ctx.keywords = self.default_keywords.copy()
 
-        if self.constant:
-            if ctx.uses_scope is None:
-                ctx.uses_scope = [ ]
-            if ctx.widgets is None:
-                ctx.widgets = { }
+        # True if we encountered an exception that we're recovering from
+        # due to being in prediction mode.
+        fail = False
 
-        SLBlock.keywords(self, ctx)
+        # The main displayable we're predicting.
+        main = None
 
-        # Get the widget id and transform, if any.
-        widget_id = keywords.pop("id", None)
-        transform = keywords.pop("at", None)
+        try:
+            # Evaluate the positional arguments.
+            positional_values = self.positional_values
+            positional_exprs = self.positional_exprs
 
-        # If we don't know the style, figure it out.
-        if ("style" not in keywords) and self.style:
-            keywords["style"] = ctx.style_prefix + self.style
-
-        if widget_id and (widget_id in screen.widget_properties):
-            keywords.update(screen.widget_properties[widget_id])
-
-        old_d = cache.displayable
-        if old_d:
-            old_main = old_d._main
-        else:
-            old_main = None
-
-        reused = False
-
-        if debug:
-            self.report_arguments(cache, positional, keywords, transform)
-
-        if (positional == cache.positional) and (keywords == cache.keywords):
-            d = cache.displayable
-            reused = True
-
-            # The main displayable, if d is a composite displayable. (This is
-            # the one that gets the scope, and gets children added to it.)
-            main = d._main or d
-
-            if self.scope and main.uses_scope:
-                if copy_on_change:
-                    if main._scope(ctx.scope, False):
-                        reused = False
-                else:
-                    main._scope(ctx.scope, True)
-
-        if reused and cache.imagemap:
-            renpy.ui.imagemap_stack.append(cache.imagemap)
-
-        if not reused:
-            cache.positional = positional
-            cache.keywords = keywords.copy()
-
-            # This child creation code is copied below, for the copy_on_change
-            # case.
-            if self.scope:
-                keywords["scope"] = ctx.scope
-
-            if self.replaces:
-                keywords['replaces'] = old_main
-
-            # Pass the context
-            if self.pass_context:
-                keywords['context'] = ctx
-
-            d = self.displayable(*positional, **keywords)
-            main = d._main or d
-            # End child creation code.
-
-            cache.copy_on_change = False # We no longer need to copy on change.
-            cache.children = None # Re-add the children.
-
-        if debug:
-            if reused:
-                profile_log.write("    reused displayable")
-            elif self.constant:
-                profile_log.write("    created constant displayable")
+            if positional_values and positional_exprs:
+                values = eval(positional_exprs, context.globals, context.scope)
+                positional = [ b if (a is use_expression) else a for a, b in zip(positional_values, values) ]
+            elif positional_values:
+                positional = positional_values
+            elif positional_exprs:
+                positional = eval(positional_exprs, context.globals, context.scope)
             else:
-                profile_log.write("    created displayable")
+                positional = [ ]
 
-        main._location = self.location
+            keywords = ctx.keywords = self.default_keywords.copy()
 
-        if widget_id:
-            screen.widgets[widget_id] = main
+            if self.constant:
+                if ctx.uses_scope is None:
+                    ctx.uses_scope = [ ]
+                if ctx.widgets is None:
+                    ctx.widgets = { }
+
+            SLBlock.keywords(self, ctx)
+
+            # Get the widget id and transform, if any.
+            widget_id = keywords.pop("id", None)
+            transform = keywords.pop("at", None)
+
+            # If we don't know the style, figure it out.
+            if ("style" not in keywords) and self.style:
+                keywords["style"] = ctx.style_prefix + self.style
+
+            if widget_id and (widget_id in screen.widget_properties):
+                keywords.update(screen.widget_properties[widget_id])
+
+            old_d = cache.displayable
+            if old_d:
+                old_main = old_d._main
+            else:
+                old_main = None
+
+            reused = False
+
+            if debug:
+                self.report_arguments(cache, positional, keywords, transform)
+
+            if (positional == cache.positional) and (keywords == cache.keywords):
+                d = cache.displayable
+                reused = True
+
+                # The main displayable, if d is a composite displayable. (This is
+                # the one that gets the scope, and gets children added to it.)
+                main = d._main or d
+
+                if self.scope and main.uses_scope:
+                    if copy_on_change:
+                        if main._scope(ctx.scope, False):
+                            reused = False
+                    else:
+                        main._scope(ctx.scope, True)
+
+            if reused and cache.imagemap:
+                renpy.ui.imagemap_stack.append(cache.imagemap)
+
+            if not reused:
+                cache.positional = positional
+                cache.keywords = keywords.copy()
+
+                # This child creation code is copied below, for the copy_on_change
+                # case.
+                if self.scope:
+                    keywords["scope"] = ctx.scope
+
+                if self.replaces:
+                    keywords['replaces'] = old_main
+
+                # Pass the context
+                if self.pass_context:
+                    keywords['context'] = ctx
+
+                d = self.displayable(*positional, **keywords)
+                main = d._main or d
+                # End child creation code.
+
+                cache.copy_on_change = False # We no longer need to copy on change.
+                cache.children = None # Re-add the children.
+
+            if debug:
+                if reused:
+                    profile_log.write("    reused displayable")
+                elif self.constant:
+                    profile_log.write("    created constant displayable")
+                else:
+                    profile_log.write("    created displayable")
+
+            main._location = self.location
+
+            if widget_id:
+                screen.widgets[widget_id] = main
+
+        except:
+            if not context.predicting:
+                raise
+            fail = True
 
         ctx.children = [ ]
+        stack = renpy.ui.stack
         stack.append(ctx)
 
         try:
 
             # Evaluate children. (Inlined SLBlock.execute)
             for i in self.children:
-                i.execute(ctx)
+                try:
+                    i.execute(ctx)
+                except:
+                    if not context.predicting:
+                        raise
+                    fail = True
 
         finally:
 
@@ -620,6 +650,16 @@ class SLDisplayable(SLBlock):
 
             if self.imagemap:
                 cache.imagemap = renpy.ui.imagemap_stack.pop()
+
+        # If a failure occurred during prediction, predict main (if known),
+        # and ctx.children, and return.
+        if fail:
+            predict_displayable(main)
+
+            for i in ctx.children:
+                predict_displayable(i)
+
+            return
 
         if ctx.children != cache.children:
 
@@ -838,10 +878,62 @@ class SLIf(SLNode):
 
     def execute(self, context):
 
+        if context.predicting:
+            self.execute_predicting(context)
+            return
+
         for cond, block in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
-                block.execute(context)
+                for i in block.children:
+                    i.execute(context)
                 return
+
+    def execute_predicting(self, context):
+        # A variant of the this code that runs while predicting, executing
+        # all paths of the if.
+
+        # True if no block has been the main choice yet.
+        first = True
+
+        # Has any instance of this node been predicted? We only predict
+        # once per node, for performance reasons.
+        predicted = self.serial in context.predicted
+
+        if not predicted:
+            context.predicted.add(self.serial)
+
+        for cond, block in self.prepared_entries:
+
+            try:
+                cond_value = (cond is None) or eval(cond, context.globals, context.scope)
+            except:
+                cond_value = False
+
+            # The taken branch.
+            if first and cond_value:
+                first = False
+
+                for i in block.children:
+                    try:
+                        i.execute(context)
+                    except:
+                        pass
+
+            # Not-taken branches, only if not already predicted.
+            elif not predicted:
+
+                ctx = SLContext(context)
+                ctx.children = [ ]
+
+                for i in block.children:
+                    try:
+                        i.execute(context)
+                    except:
+                        pass
+
+                for i in ctx.children:
+                    predict_displayable(i)
+
 
     def keywords(self, context):
 
@@ -902,10 +994,16 @@ class SLFor(SLBlock):
         variable = self.variable
         expr = self.expression_expr
 
-        if expr is not None:
-            value = eval(expr, context.globals, context.scope)
-        else:
-            value = self.expression_value
+        try:
+            if expr is not None:
+                value = eval(expr, context.globals, context.scope)
+            else:
+                value = self.expression_value
+        except:
+            if not context.predicting:
+                raise
+
+            value = [ 0 ]
 
         newcaches = {}
         oldcaches = context.cache.get(self.serial, newcaches)
@@ -937,7 +1035,11 @@ class SLFor(SLBlock):
             # Inline of SLBlock.execute.
 
             for i in self.children:
-                i.execute(ctx)
+                try:
+                    i.execute(ctx)
+                except:
+                    if not context.predicting:
+                        raise
 
         context.cache[self.serial] = newcaches
 
@@ -1117,14 +1219,21 @@ class SLUse(SLNode):
 
         ctx = SLContext(context)
 
-        if self.args:
-            args, kwargs = self.args.evaluate(context.scope)
-        else:
+        try:
+            if self.args:
+                args, kwargs = self.args.evaluate(context.scope)
+            else:
+                args = [ ]
+                kwargs = { }
+        except:
+            if not context.predicting:
+                raise
+
             args = [ ]
             kwargs = { }
 
         if ast.parameters is not None:
-            scope = ast.parameters.apply(args, kwargs)
+            scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
         else:
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
@@ -1262,7 +1371,7 @@ class SLScreen(SLBlock):
             args = scope.get("_args", ())
             kwargs = scope.get("_kwargs", { })
 
-            values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
+            values = renpy.ast.apply_arguments(self.parameters, args, kwargs, ignore_errors=renpy.display.predict.predicting)
             scope.update(values)
 
         self.prepare()
@@ -1271,6 +1380,7 @@ class SLScreen(SLBlock):
         context.scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
+        context.predicting = renpy.display.predict.predicting
 
         name = scope["_name"]
         main_cache = renpy.display.screen.current_screen().cache
