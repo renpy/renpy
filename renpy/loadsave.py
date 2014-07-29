@@ -268,14 +268,14 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     roots = renpy.game.log.freeze(None)
 
+    if renpy.config.save_dump:
+        save_dump(roots, renpy.game.log)
+
     logf = StringIO()
     dump((roots, renpy.game.log), logf)
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
-
-    if renpy.config.save_dump:
-        save_dump(roots, renpy.game.log)
 
     screenshot = renpy.game.interface.get_screenshot()
 
