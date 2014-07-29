@@ -692,12 +692,18 @@ Rarely or Internally Used
     autosave occurs. To disable autosaving, set :var:`config.has_autosave` to
     False, don't change this variable.
 
+.. var:: config.autosave_on_choice = True
+
+    If true, Ren'Py will autosave upon encountering an in-game choice.
+    (When :func:`renpy.choice_for_skipping` is called.)
+
 .. var:: config.autosave_on_quit = True
 
     If true, Ren'Py will attempt to autosave when the user attempts to quit,
     return to the main menu, or load a game over the existing game. (To
     save time, the autosave occurs while the user is being prompted to confirm
     his or her decision.)
+
 
 .. var:: config.character_callback = None
 

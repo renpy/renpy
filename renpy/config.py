@@ -526,6 +526,9 @@ screen_cache_size = 4
 # A callback that adjusts the physical size of the screen.
 adjust_view_size = None
 
+# True if we should autosave when a choice occurs.
+autosave_on_choice = True
+
 del renpy
 del os
 

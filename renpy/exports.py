@@ -710,7 +710,7 @@ def choice_for_skipping():
     if renpy.config.skipping and not renpy.game.preferences.skip_after_choices:
         renpy.config.skipping = None
 
-    if not renpy.game.after_rollback:
+    if renpy.config.autosave_on_choice and not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
 
