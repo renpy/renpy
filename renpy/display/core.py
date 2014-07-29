@@ -2491,15 +2491,16 @@ class Interface(object):
 
                         self.profile_once = False
 
-                    if first_pass and self.last_event:
-                        x, y = renpy.display.draw.get_mouse_pos()
-                        ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
+                    if first_pass and self.last_event and self.last_event.type in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ]:
 
-                        if self.ignore_touch:
-                            x = -1
-                            y = -1
+                            x, y = renpy.display.draw.get_mouse_pos()
+                            ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
-                        renpy.display.focus.mouse_handler(None, x, y, default=False)
+                            if self.ignore_touch:
+                                x = -1
+                                y = -1
+
+                            renpy.display.focus.mouse_handler(None, x, y, default=False)
 
                     needs_redraw = False
                     first_pass = False
