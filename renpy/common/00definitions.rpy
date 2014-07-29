@@ -367,10 +367,12 @@ init -1400:
     define blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
     define squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
 
+    # The default narrator.
+    define _narrator = Character(None, kind=adv, what_style='say_thought')
 
 init 1400 python:
     if not hasattr(store, 'narrator'):
-        narrator = Character(None, kind=adv, what_style='say_thought')
+        narrator = _narrator
 
     renpy.pure('narrator')
 

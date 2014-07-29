@@ -88,7 +88,7 @@ init -1700 python:
         if isinstance(who, NVLCharacter):
             nvl_show_core()
         else:
-            store.narrator("", interact=False)
+            store._narrator("", interact=False)
 
     config.empty_window = _default_empty_window
 
