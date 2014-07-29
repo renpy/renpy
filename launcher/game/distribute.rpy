@@ -613,6 +613,7 @@ init python in distribute:
                 CFBundlePackageType="APPL",
                 CFBundleShortVersionString=version,
                 CFBundleVersion="1.0.{0}".format(int(time.time())),
+                LSApplicationCategoryType="public.app-category.simulation-games",
                 CFBundleDocumentTypes = [
                     {
                         "CFBundleTypeOSTypes" : [ "****", "fold", "disk" ],
