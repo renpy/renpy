@@ -523,6 +523,9 @@ class SLDisplayable(SLBlock):
         # The main displayable we're predicting.
         main = None
 
+        # True if we're using an imagemap.
+        imagemap = False
+
         try:
             # Evaluate the positional arguments.
             positional_values = self.positional_values
@@ -586,6 +589,8 @@ class SLDisplayable(SLBlock):
                         main._scope(ctx.scope, True)
 
             if reused and cache.imagemap:
+                imagemap = True
+                cache.imagemap.reuse()
                 renpy.ui.imagemap_stack.append(cache.imagemap)
 
             if not reused:
@@ -607,6 +612,8 @@ class SLDisplayable(SLBlock):
                 d = self.displayable(*positional, **keywords)
                 main = d._main or d
                 # End child creation code.
+
+                imagemap = self.imagemap
 
                 cache.copy_on_change = False # We no longer need to copy on change.
                 cache.children = None # Re-add the children.
@@ -648,8 +655,9 @@ class SLDisplayable(SLBlock):
 
             stack.pop()
 
-            if self.imagemap:
+            if imagemap:
                 cache.imagemap = renpy.ui.imagemap_stack.pop()
+                cache.imagemap.cache.finish()
 
         # If a failure occurred during prediction, predict main (if known),
         # and ctx.children, and return.

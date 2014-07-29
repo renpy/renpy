@@ -1084,6 +1084,7 @@ class Imagemap(object):
     """
 
     alpha = True
+    cache_param = True
 
     def __init__(self, insensitive, idle, selected_idle, hover, selected_hover, selected_insensitive, alpha, cache):
         self.insensitive = renpy.easy.displayable(insensitive)
@@ -1095,7 +1096,12 @@ class Imagemap(object):
 
         self.alpha = alpha
 
+        self.cache_param = cache
         self.cache = renpy.display.imagemap.ImageMapCache(cache)
+
+    def reuse(self):
+        self.cache = renpy.display.imagemap.ImageMapCache(self.cache_param)
+
 
 def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hover=None, selected_idle=None, selected_insensitive=None, auto=None, alpha=True, cache=True, style='imagemap', **properties):
 
