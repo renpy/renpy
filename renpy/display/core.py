@@ -2500,6 +2500,10 @@ class Interface(object):
                                 x = -1
                                 y = -1
 
+                            if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
+                                x = -1
+                                y = -1
+
                             renpy.display.focus.mouse_handler(None, x, y, default=False)
 
                     needs_redraw = False
@@ -2734,6 +2738,9 @@ class Interface(object):
                 self.event_time = end_time = get_time()
 
                 try:
+                    if ev.type == pygame.MOUSEMOTION or \
+                        ev.type == pygame.MOUSEBUTTONDOWN or \
+                        ev.type == pygame.MOUSEBUTTONUP:
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
