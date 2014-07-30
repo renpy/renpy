@@ -2738,9 +2738,6 @@ class Interface(object):
                 self.event_time = end_time = get_time()
 
                 try:
-                    if ev.type == pygame.MOUSEMOTION or \
-                        ev.type == pygame.MOUSEBUTTONDOWN or \
-                        ev.type == pygame.MOUSEBUTTONUP:
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
