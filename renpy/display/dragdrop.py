@@ -151,6 +151,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
          The width and height of the Drag's child, in pixels.
         """
 
+    focusable = True
+
     def __init__(self,
                  d=None,
                  drag_name=None,
@@ -180,6 +182,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
+
+        # We're focusable if we can be dragged.
+        self.focusable = draggable
 
         self.child = None
 
