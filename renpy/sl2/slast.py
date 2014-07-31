@@ -564,7 +564,7 @@ class SLDisplayable(SLBlock):
 
             old_d = cache.displayable
             if old_d:
-                old_main = old_d._main
+                old_main = old_d._main or old_d
             else:
                 old_main = None
 
