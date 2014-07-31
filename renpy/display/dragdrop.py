@@ -296,6 +296,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         d.per_interact()
         self.child = renpy.easy.displayable(d)
+        renpy.display.render.invalidate(self)
 
     def top(self):
         """
