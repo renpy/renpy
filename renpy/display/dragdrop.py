@@ -262,6 +262,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.x = x
             self.y = y
 
+        self.drag_group.positions[self.drag_name] = (x, y)
+
         redraw(self, 0)
 
     def set_style_prefix(self, prefix, root):
