@@ -231,6 +231,7 @@ screen front_page_project:
                 textbutton _("Check Script (Lint)") action Jump("lint")
                 textbutton _("Change Theme") action Jump("choose_theme")
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
+                textbutton _("Force Recompile") action Jump("force_recompile")
 
                 # textbutton "Relaunch" action Relaunch
 
@@ -278,3 +279,10 @@ label rmpersistent:
 
     jump front_page
 
+label force_recompile:
+
+    python hide:
+        interface.processing(_("Recompiling all rpy files into rpyc files..."))
+        project.current.launch([ 'compile' ], wait=True)
+
+    jump front_page
