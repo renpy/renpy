@@ -705,7 +705,8 @@ class SLDisplayable(SLBlock):
                 for i in ctx.children:
                     main.add(i)
 
-        if old_main and (renpy.display.focus.grab is old_main) and screen and (not screen.hiding):
+        # Migrate grabs.
+        if old_main and (renpy.display.focus.grab is old_main):
             renpy.display.focus.new_grab = main
 
         cache.displayable = d

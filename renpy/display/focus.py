@@ -160,6 +160,9 @@ def before_interact(roots):
 
         f.full_focus_name = n, serial
 
+        if (f is grab) and (new_grab is None):
+            new_grab = f
+
     # If there's something with the same full name as the current widget,
     # it becomes the new current widget.
 

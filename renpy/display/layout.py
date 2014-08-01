@@ -1262,7 +1262,7 @@ def edgescroll_proportional(n):
 
 class Viewport(Container):
 
-    __version__ = 3
+    __version__ = 5
 
     def after_upgrade(self, version):
         if version < 1:
@@ -1292,6 +1292,9 @@ class Viewport(Container):
             self.set_adjustments_param = True
             self.xinitial_param = None
             self.yinitial_param = None
+
+        if version < 5:
+            self.focusable = self.draggable
 
 
     def __init__(self,
@@ -1338,6 +1341,9 @@ class Viewport(Container):
 
         self.mousewheel = mousewheel
         self.draggable = draggable
+
+        # Layout participates in the focus system so drags get migrated.
+        self.focusable = draggable
 
         self.width = 0
         self.height = 0
