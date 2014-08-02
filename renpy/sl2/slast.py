@@ -573,13 +573,12 @@ class SLDisplayable(SLBlock):
             if debug:
                 self.report_arguments(cache, positional, keywords, transform)
 
-            if (positional == cache.positional) and (keywords == cache.keywords):
-                d = cache.displayable
+            if old_d and (positional == cache.positional) and (keywords == cache.keywords):
                 reused = True
 
                 # The main displayable, if d is a composite displayable. (This is
                 # the one that gets the scope, and gets children added to it.)
-                main = d._main or d
+                main = old_main
 
                 if self.scope and main.uses_scope:
                     if copy_on_change:
