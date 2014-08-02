@@ -62,7 +62,10 @@ init python in project:
                 raise Exception("{} does not exist.".format(path))
 
             # The name of the project.
-            self.name = os.path.basename(path)
+            if path.endswith(".app/Contents/Resources/autorun"):
+                self.name = os.path.basename(path[:-len(".app/Contents/Resources/autorun")])
+            else:
+                self.name = os.path.basename(path)
 
             # The path to the project.
             self.path = path
@@ -389,6 +392,10 @@ init python in project:
                 # A project must be a directory.
                 if not os.path.isdir(ppath):
                     continue
+
+                autorun = os.path.join(ppath, "Contents", "Resources", "autorun")
+                if os.path.exists(autorun):
+                    ppath = autorun
 
                 # A project has either a game/ directory, or a project.json
                 # file.
