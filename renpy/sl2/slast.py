@@ -575,6 +575,7 @@ class SLDisplayable(SLBlock):
 
             if old_d and (positional == cache.positional) and (keywords == cache.keywords):
                 reused = True
+                d = old_d
 
                 # The main displayable, if d is a composite displayable. (This is
                 # the one that gets the scope, and gets children added to it.)
