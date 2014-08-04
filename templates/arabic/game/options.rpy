@@ -170,17 +170,6 @@ init -1 python hide:
 
     config.has_voice = True
 
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-    config.reduce_volume_in_voice = True
-    
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-    config.volume_in_voice = .5
-    
-    # It takes this seconds to reduce and return the volume when voice is played.
-    config.reduce_volume_time = .5
-
     ## Sounds that are used when button and imagemaps are clicked.
 
     # style.button.activate_sound = "click.wav"

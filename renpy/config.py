@@ -479,7 +479,7 @@ voice_tag_callback = None
 
 # If True, reduce the volumes of all the channels other than the "voice" channel
 # during voice playing.
-reduce_volume_in_voice = True
+reduce_volume_in_voice = False
 
 # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
 # than "voice" mixer during voice playing.

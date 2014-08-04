@@ -167,20 +167,9 @@ init -1 python hide:
 
     config.has_music = True
 
-    ## Установите True если в игре есть озвучка. 
+    ## Установите True если в игре есть озвучка.
 
     config.has_voice = False
-
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-    config.reduce_volume_in_voice = True
-    
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-    config.volume_in_voice = .5
-    
-    # It takes this seconds to reduce and return the volume when voice is played.
-    config.reduce_volume_time = .5
 
     ## Звуки при нажатии на кнопки и imagemap-ы.
 
@@ -270,7 +259,7 @@ init -1 python hide:
 
     #########################################
     ## Имя директории, где хранятся данные игры.
-    ## (это необходимо задать рано, чтобы постоянная информация могла быть 
+    ## (это необходимо задать рано, чтобы постоянная информация могла быть
     ## найдена на стадии инициализации.)
 python early:
     config.save_directory = "PROJECT_NAME-UNIQUE"
