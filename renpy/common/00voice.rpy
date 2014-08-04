@@ -60,6 +60,18 @@ init -1500 python:
     # exists, it's played as a voice file.
     config.auto_voice = None
 
+    # If True, reduce the volumes of all the channels other than the "voice" channel
+    # during voice playing.
+    config.reduce_volume_in_voice = True
+
+    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
+    # than "voice" mixer during voice playing.
+    config.volume_in_voice = .5
+
+    # It takes this seconds to reduce and return the volume when voice is played.
+    config.reduce_volume_time = .5
+
+
     # Call this to specify the voice file that will be played for
     # the user. This peice only gathers the information so
     # voice_interact can play the right file.
@@ -163,7 +175,7 @@ init -1500 python:
         This allows the volume of each characters to be adjusted.
         If `volume` is None, this returns the value of volume of `voice_tag`.
         Otherwise, this set it to `volume`.
-        
+
         `volume` is a number between 0.0 and 1.0, and is interpreted as a
         fraction of the mixer volume for `voice` channel.
         """
