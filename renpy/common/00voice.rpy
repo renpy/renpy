@@ -163,7 +163,7 @@ init -1500 python:
         This allows the volume of each characters to be adjusted.
         If `volume` is None, this returns the value of volume of `voice_tag`.
         Otherwise, this set it to `volume`.
-        
+
         `volume` is a number between 0.0 and 1.0, and is interpreted as a
         fraction of the mixer volume for `voice` channel.
         """
@@ -275,11 +275,6 @@ init -1500 python hide:
             renpy.sound.stop(channel="voice")
             store._last_voice_play = _voice.play
         elif _voice.play and not config.skipping:
-            if config.reduce_volume_in_voice:
-                for c in renpy.audio.audio.all_channels:
-                    if c.mixer != "voice" and config.volume_in_voice < c.context.secondary_volume:
-                        c.context.pre_secondary_volume = c.context.secondary_volume
-                        c.set_secondary_volume(config.volume_in_voice, config.reduce_volume_time)
 
             renpy.music.get_channel("voice").set_volume(persistent._character_volume.get(_voice.tag, 1.0))
             renpy.sound.play(_voice.play, channel="voice")

@@ -120,9 +120,6 @@ class MusicContext(renpy.python.RevertableObject):
         # The secondary volume.
         self.secondary_volume = 1.0
 
-        # This is used to reduce volumes during playing a voice
-        self.pre_secondary_volume = None
-
         # The time the channel was ordered last changed.
         self.last_changed = 0
 
@@ -300,11 +297,6 @@ class Channel(object):
 
         # Should we do the callback?
         do_callback = False
-
-        # return secondary_volume to pre_secondary_volume after finishing voices
-        if self.context.pre_secondary_volume and not renpy.audio.music.get_playing("voice") and self.mixer != "voice":
-            self.set_secondary_volume(self.context.pre_secondary_volume, renpy.config.reduce_volume_time)
-            self.context.pre_secondary_volume = None
 
         # This has been modified so we only queue a single sound file
         # per call, to prevent memory leaks with really short sound
@@ -835,6 +827,7 @@ def quit(): #@ReservedAssignment
 # The last-set pcm volume.
 pcm_volume = None
 
+old_emphasized = False
 
 def periodic():
     """
@@ -845,11 +838,40 @@ def periodic():
     """
 
     global pcm_volume
+    global old_emphasized
 
     if not pcm_ok:
         return False
 
+
     try:
+
+        # A list of emphasized channels.
+        emphasize_channels = [ ]
+        emphasized = False
+
+        for i in renpy.config.emphasize_audio_channels:
+            c = get_channel(i)
+            emphasize_channels.append(c)
+
+            if c.get_playing():
+                emphasized = True
+
+        if emphasized and not old_emphasized:
+            vol = renpy.config.emphasize_audio_volume
+        elif not emphasized and old_emphasized:
+            vol = 1.0
+        else:
+            vol = None
+
+        old_emphasized = emphasized
+
+        if vol is not None:
+            for c in all_channels:
+                if c in emphasize_channels:
+                    continue
+
+                c.set_secondary_volume(vol, renpy.config.emphasize_audio_time)
 
         for c in all_channels:
             c.periodic()

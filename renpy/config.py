@@ -477,17 +477,6 @@ key_repeat = (.3, .03)
 # A callback that is called with the character's voice_tag.
 voice_tag_callback = None
 
-# If True, reduce the volumes of all the channels other than the "voice" channel
-# during voice playing.
-reduce_volume_in_voice = False
-
-# If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-# than "voice" mixer during voice playing.
-volume_in_voice = .5
-
-# It takes this seconds to reduce and return the volume when voice is played.
-reduce_volume_time = .5
-
 # A list of callbacks that can be used to add JSON to save files.
 save_json_callbacks = [ ]
 
@@ -528,6 +517,17 @@ adjust_view_size = None
 
 # True if we should autosave when a choice occurs.
 autosave_on_choice = True
+
+# A list of channels we should emphasize the audio on.
+emphasize_audio_channels = [ ]
+
+# What we should lower the volume of non-emphasized channels to.
+emphasize_audio_volume = 0.5
+
+# How long we should take to raise and lower the volume when emphasizing
+# audio.
+emphasize_audio_time = 0.5
+
 
 del renpy
 del os

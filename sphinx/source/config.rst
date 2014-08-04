@@ -294,20 +294,6 @@ Occasionally Used
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
 
-.. var:: config.reduce_volume_in_voice = True
-
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-
-.. var:: config.volume_in_voice = .5
-
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-
-.. var:: config.reduce_volume_time = .5
-
-    # It takes this seconds to reduce and return the volume when voice is played.
-
 .. var:: config.automatic_images = None
 
     If not None, this causes Ren'Py to automatically define
@@ -371,6 +357,29 @@ Occasionally Used
     initialize the values of the displayable's transform.
 
     The default default transform is :var:`center`.
+
+.. var:: config.emphasize_audio_channels = [ ]
+
+    A list of strings giving audio channel names. When one of the audio
+    channels listed starts playing a sound, all channels that are not
+    listed in this variable have their secondary audio volume reduced
+    to :var:`config.emphasize_audio_volume` over :var:`config.emphasize_audio_time`
+    seconds.
+
+    When no channels listed in this variable are playing audio, all channels
+    that are not listed have their secondary audio volume raised to 1.0 over
+    :var:`config.emphasize_audio_time` seconds.
+
+    For example, setting this to ``[ 'voice' ]]`` will lower the volume of all
+    non-voice channels when a voice is played.
+
+.. var:: config.emphasize_audio_time = 0.5
+
+    See above.
+
+.. var:: config.emphasize_audio_volume = 0.5
+
+    See above.
 
 .. var:: config.empty_window = ...
 
