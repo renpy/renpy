@@ -270,18 +270,22 @@ init -1500 python hide:
             _voice.tlid = tlid
 
 
+        volume = persistent._character_volume.get(_voice.tag, 1.0)
+        renpy.music.get_channel("voice").set_volume(volume)
 
-        if _voice.tag in persistent._voice_mute:
+        if (not volume) or (_voice.tag in persistent._voice_mute):
             renpy.sound.stop(channel="voice")
             store._last_voice_play = _voice.play
-        elif _voice.play and not config.skipping:
 
-            renpy.music.get_channel("voice").set_volume(persistent._character_volume.get(_voice.tag, 1.0))
-            renpy.sound.play(_voice.play, channel="voice")
+        elif _voice.play:
+            if not config.skipping:
+                renpy.sound.play(_voice.play, channel="voice")
+
             store._last_voice_play = _voice.play
+
         elif not _voice.sustain:
             renpy.sound.stop(channel="voice")
-            store._last_voice_play = _voice.play
+            store._last_voice_play = None
 
         _voice.play = None
         _voice.sustain = False
