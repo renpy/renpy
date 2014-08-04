@@ -81,9 +81,12 @@ Voice volume is now adjustable on a per-character basis, using the
 voice_tag argument to :func:`Character` and the new :func:`VoiceVolume`
 value.
 
-Ren'Py will now reduce the volume of non-voice channels by 50% when a
-voice is playing. This is controlled by :var:`config.reduce_volume_in_voice`,
-:var:`config.volume_in_voice`, and :var:`config.reduce_volume_time`.
+Using the new :var:`config.emphasize_audio_channels` variable, Ren'Py
+can emphasize audio on some channels. This is doen by lowering the
+volume of non-emphasized channels when a emphasized channel is playing,
+and returning the volumes to normal when no emphasized chanels are
+playing. By setting this variable to ``[ 'voice' ]``, the voice
+channel can be emphasized over music and other sounds,
 
 
 OS X Bug Workaround
