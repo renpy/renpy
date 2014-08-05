@@ -24,6 +24,7 @@
 import platform
 import sys
 import os
+import subprocess
 
 # Change to the directory containing this file.
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
@@ -91,6 +92,15 @@ if android:
     sdl = [ 'sdl', 'GLESv2', 'log' ]
 else:
     sdl = [ 'SDL' ]
+
+if has_fribidi:
+    try:
+        # Some versions of fribidi require glib, and it doesn't hurt to include it in
+        # our path.
+        glib_flags = subprocess.check_output(["pkg-config", "--cflags", "glib-2.0"])
+        setuplib.extra_compile_args.extend(glib_flags.split())
+    except:
+        pass
 
 # Modules directory.
 cython(
