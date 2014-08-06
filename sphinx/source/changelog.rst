@@ -5,24 +5,39 @@ Full Changelog
 Ren'Py 6.18
 ===========
 
-New Screen Functionality
-------------------------
+Screen Language Improvements
+----------------------------
 
-<Change in use scope.>
+This release includes a new implementation of screen language that has the
+potential to be much faster than the original implementation of screen language.
+Where the original screen language evaluated screens from scratch at the start
+of each interaction, this new implementation can incrementally reuse large
+portions of a screen between interactions. Please see the new
+:ref:`Screen Language Optimization <screen-optimization>` documentation for
+information on how to maximize screen language performance.
 
-<profiling>
+Of special note is that screens now perform better when defined with a parameter
+list. Screens that do not expect parameters should be defined with an empty
+parameter list.
 
-<transitons + screens>
+To support improved optimization, when the screen language use statement
+calls a screen with a parameter list, only variables in that parameter list
+are updated. (This is a change in previously-undocumented behavior.)
 
-Image and Screen Prediction
----------------------------
+Screens now support passing properties to a displayable from within an if
+statement, provided the if statement is the first thing inside the
+displayable. For example::
 
-Ren'Py now has a supported mechanism for manually predicting images in
-cases where automatic image prediction fails. This mechanism consists
-of two functions: :func:`renpy.start_predict` starts prediction of images,
-while :func:`renpy.stop_predict` stops prediction.
+    text "Eileen":
+         if eileen_mad:
+             color "#fcc"
+         else:
+             color "#cfc"
 
-Screen prediction has been improved in several ways:
+now works.
+
+As there is now a larger benefit from predicting screens, screen prediction
+has been improved in several ways:
 
 * By default, Ren'Py will now use the arguments supplied to a screen in
   the ``show screen`` and ``call screen`` statements to predict the
@@ -38,6 +53,22 @@ Screen prediction has been improved in several ways:
   :func:`renpy.stop_predict_screen` allows for manual prediction of time
   images that will be used by screens, including parameterized screens.
 
+Ren'Py now supports profiling of screens, via the :func:`renpy.profile_screen`
+function.
+
+Ren'Py has been changed to make a copy of the screens being displayed before
+a transition occurs. This makes it possible to use a transition to show
+screen updates. For example, one could increase the value displayed
+by a bar, and then use the dissolve transition to dissolve in the new
+segment of bar.
+
+Image Prediction
+----------------
+
+Ren'Py now has a supported mechanism for manually predicting images in
+cases where automatic image prediction fails. This mechanism consists
+of two functions: :func:`renpy.start_predict` starts prediction of images,
+while :func:`renpy.stop_predict` stops prediction.
 
 Accessibility
 ------------
