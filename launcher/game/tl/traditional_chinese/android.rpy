@@ -133,7 +133,7 @@ translate traditional_chinese strings:
 
     # game/android.rpy:609
     old "Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."
-    new "\"192.168.1.143:5555\" 是連接的裝置 IP 位址和埠的輸入形式。請鍵入設備的 IP 位址和埠來連接。注意，確保設備支援遠端 ADB，然後輸入位址和埠來使用。"
+    new "\"192.168.1.143:5555\" 是連接裝置的 IP 位址和埠的輸入形式。請鍵入裝置的 IP 位址和埠來連接。注意，確保裝置支援遠端 ADB，然後鍵入位址和埠來使用。"
 
     # game/android.rpy:619
     old "Invalid remote ADB address"
@@ -153,9 +153,9 @@ translate traditional_chinese strings:
     
     # game/android.rpy:47
     old "Connects to an Android device running ADB in TCP/IP mode."
-    new "在 TCP/IP 模式下運行 ADB Android 設備。"
+    new "在 TCP/IP 模式下運行 ADB Android 裝置。"
 
     # game/android.rpy:48
     old "Disconnects from an Android device running ADB in TCP/IP mode."
-    new "在 TCP/IP 模式下運行 ADB Android 設備，並斷開連接。"
+    new "在 TCP/IP 模式下運行 ADB Android 裝置，並斷開連接。"
    

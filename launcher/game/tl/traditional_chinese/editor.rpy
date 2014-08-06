@@ -44,8 +44,6 @@ translate traditional_chinese strings:
 
 translate traditional_chinese strings:
 
- 
-
     # game/editor.rpy:155
     old "A mature editor that requires Java."
     new "一個成熟的編輯器，它需要 Java。"
