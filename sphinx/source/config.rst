@@ -230,6 +230,10 @@ cleared.
     default. If None, the afm_enable preferences is ignored. (Auto-forward
     will occur when the auto-forward speed is non-zero.)
 
+.. var:: config.default_emphasize_audio = False
+
+    Controls the default state of the "emphasize audio" preference.
+
 .. var:: config.default_fullscreen = None
 
     This sets the default value of the fullscreen preference. This
@@ -358,9 +362,11 @@ Occasionally Used
 
     The default default transform is :var:`center`.
 
-.. var:: config.emphasize_audio_channels = [ ]
+.. var:: config.emphasize_audio_channels = [ 'voice' ]
 
-    A list of strings giving audio channel names. When one of the audio
+    A list of strings giving audio channel names.
+
+    If the "emphasize audio" preference is enabled, when one of the audio
     channels listed starts playing a sound, all channels that are not
     listed in this variable have their secondary audio volume reduced
     to :var:`config.emphasize_audio_volume` over :var:`config.emphasize_audio_time`

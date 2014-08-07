@@ -25,7 +25,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 13
+    __version__ = 14
 
     def after_upgrade(self, version):
         if version < 1:
@@ -51,6 +51,8 @@ class Preferences(renpy.object.Object):
             self.show_empty_window = True
         if version < 13:
             self.self_voicing = False
+        if version < 14:
+            self.emphasize_audio = False
 
     def __init__(self):
         self.fullscreen = False
@@ -106,6 +108,9 @@ class Preferences(renpy.object.Object):
 
         # Should we self-voice?
         self.self_voicing = False
+
+        # Should we emphasize audio?
+        self.emphasize_audio = False
 
     def set_volume(self, mixer, volume):
         self.volumes[mixer] = volume

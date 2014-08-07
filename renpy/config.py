@@ -519,7 +519,7 @@ adjust_view_size = None
 autosave_on_choice = True
 
 # A list of channels we should emphasize the audio on.
-emphasize_audio_channels = [ ]
+emphasize_audio_channels = [ 'voice' ]
 
 # What we should lower the volume of non-emphasized channels to.
 emphasize_audio_volume = 0.5

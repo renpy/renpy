@@ -128,6 +128,14 @@ init -1500 python:
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
 
+         * Preference("emphasize audio", "enable") - Emphasize the audio channels found in :var:`config.emphasize_audio_channels`.
+         * Preference("emphasize audio", "disable") - Do not emphasize audio channels.
+         * Preference("emphasize audio", "toggle") - Toggle emphasize audio.
+
+         * Preference("self voicing", "enable") - Enables self-voicing.
+         * Preference("self voicing", "disable") - Disable self-voicing.
+         * Preference("self voicing", "toggle") - Toggles self-voicing.
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -325,6 +333,15 @@ init -1500 python:
                     return SetField(_preferences, "self_voicing", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing")
+
+            elif name == "emphasize audio":
+
+                if value == "enable":
+                    return SetField(_preferences, "emphasize_audio", True)
+                elif value == "disable":
+                    return SetField(_preferences, "emphasize_audio", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "emphasize_audio")
 
             else:
                 raise Exception("Preference(%r, %r) is unknown." % (name , value))

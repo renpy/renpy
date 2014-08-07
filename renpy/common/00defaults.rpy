@@ -50,6 +50,9 @@ init -1500 python:
     # If not None, the default value of show_empty_window.
     config.default_show_empty_window = True
 
+    # If not None, the default value of emphasize_audio.
+    config.default_emphasize_audio = False
+
 
 init 1500 python:
 
@@ -82,6 +85,9 @@ init 1500 python:
 
         if config.default_show_empty_window is not None:
             _preferences.show_empty_window = config.default_show_empty_window
+
+        if config.default_emphasize_audio is not None:
+            _preferences.emphasize_audio = config.default_emphasize_audio
 
     # Use default_afm_enable to decide if we use the afm_enable
     # preference.
