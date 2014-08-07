@@ -162,6 +162,9 @@ class Detached(Addable):
     Used to indicate a widget is detached from the stack.
     """
 
+    def __init__(self, style_group):
+        self.style_group = style_group
+
     def add(self, d, key):
         self.child = d
         stack.pop()
@@ -295,7 +298,7 @@ def detached():
     you want to assign the result of a ui function to a variable.
     """
 
-    rv = Detached()
+    rv = Detached(stack[-1].style_group)
     stack.append(rv)
     return rv
 
