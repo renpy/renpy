@@ -1344,9 +1344,12 @@ class Text(renpy.display.core.Displayable):
             if not isinstance(i, basestring):
                 continue
 
-            rv.append(renpy.translation.notags_filter(i))
+            rv.append(i)
 
-        return "".join(rv)
+        rv = "".join(rv)
+        _, _, rv = rv.rpartition("{fast}")
+
+        return renpy.translation.notags_filter(rv)
 
     _tts_all = _tts
 
