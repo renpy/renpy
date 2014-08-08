@@ -1073,11 +1073,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     def visit(self):
         return [ ]
 
-    def per_interact(self):
-        renpy.display.render.redraw(self, 0)
-
-    def render(self, w, h, st, at):
-
+    def update(self, st, at):
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
         child.visit_all(lambda c : c.per_interact())
@@ -1086,6 +1082,12 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
+
+    def per_interact(self):
+        renpy.display.render.redraw(self, 0)
+
+    def render(self, w, h, st, at):
+        self.update(st, at)
 
         return renpy.display.render.render(self.child, w, h, st, at)
 
@@ -1099,7 +1101,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     def get_placement(self):
         if not self.child:
-            self.per_interact()
+            self.update(0, 0)
 
         return self.child.get_placement()
 
