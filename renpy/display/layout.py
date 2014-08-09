@@ -24,6 +24,7 @@
 
 from renpy.display.render import render, Render
 import renpy.display
+import pygame
 
 
 def scale(num, base):
@@ -1443,7 +1444,7 @@ class Viewport(Container):
 
             self.yadjustment.value = value
 
-        if self.edge_size and self.edge_last_st and (self.edge_xspeed or self.edge_yspeed):
+        if self.edge_size and (self.edge_last_st is not None) and (self.edge_xspeed or self.edge_yspeed):
 
             duration = max(st - self.edge_last_st, 0)
             self.xadjustment.change(self.xadjustment.value + duration * self.edge_xspeed)
@@ -1451,7 +1452,7 @@ class Viewport(Container):
 
             self.check_edge_redraw()
 
-        self.edge_last_st = st
+            self.edge_last_st = st
 
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
@@ -1530,7 +1531,7 @@ class Viewport(Container):
                 renpy.display.focus.set_grab(self)
                 raise renpy.display.core.IgnoreEvent()
 
-        if self.edge_size:
+        if self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
             def speed(n, zero, one):
                 """
