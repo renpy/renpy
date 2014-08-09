@@ -376,16 +376,32 @@ class Context(renpy.object.Object):
         such node.
         """
 
-        if len(self.return_stack) == 0:
-            return None
+        while self.return_stack:
 
-        if pop:
-            label = self.return_stack.pop()
-            self.call_location_stack.pop()
-        else:
-            label = self.return_stack[-1]
+            node = None
 
-        return renpy.game.script.lookup(label)
+            if renpy.game.script.has_label(self.return_stack[-1]):
+                node = renpy.game.script.lookup(self.return_stack[-1])
+            elif renpy.game.script.has_label(self.call_location_stack[-1]):
+                node = renpy.game.script.lookup(self.call_location_stack[-1]).next
+
+            if node is None:
+
+                if renpy.config.developer:
+                    raise Exception("Could not find return label %r." % self.return_stack[-1])
+
+                self.return_stack.pop()
+                self.call_location_stack.pop()
+
+                continue
+
+            if pop:
+                self.return_stack.pop()
+                self.call_location_stack.pop()
+
+            return node
+
+        return None
 
     def rollback_copy(self):
         """
