@@ -110,7 +110,9 @@
 * RoundRect
 * :func:`Screenshot`
 * :func:`SelectedIf`
+* :func:`SensitiveIf`
 * Set
+* :func:`SetCharacterVolume`
 * :func:`SetDict`
 * :func:`SetField`
 * :func:`SetMixer`
@@ -181,6 +183,7 @@
 * :var:`hpunch`
 * hyperlink_function
 * hyperlink_styler
+* iap
 * im
 * :var:`irisin`
 * irisout

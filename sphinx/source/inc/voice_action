@@ -1,5 +1,14 @@
 .. Automatically generated file - do not modify.
 
+.. function:: SetCharacterVolume(voice_tag, volume=None)
+    
+    This allows the volume of each characters to be adjusted.
+    If `volume` is None, this returns the value of volume of `voice_tag`.
+    Otherwise, this set it to `volume`.
+    
+    `volume` is a number between 0.0 and 1.0, and is interpreted as a
+    fraction of the mixer volume for `voice` channel.
+
 .. function:: SetVoiceMute(voice_tag, mute)
     
     If `mute` is true, mutes voices that are played with the given

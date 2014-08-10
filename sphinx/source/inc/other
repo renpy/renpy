@@ -35,6 +35,18 @@
     
         $ renpy.context_dynamic("x", "y", "z")
 
+.. function:: renpy.count_dialogue_blocks()
+    
+    Returns the number of dialogue blocks in the game's original language.
+
+.. function:: renpy.count_seen_dialogue_blocks()
+    
+    Returns the number of dialogue blocks the user has seen in any play-through
+    of the current game.
+    
+    This number may be larger than the result of :func:`renpy.count_dialogue_blocks`
+    when the script has changed and older dialogue blocks are no longer accessible.
+
 .. function:: renpy.dynamic(*vars)
     
     This can be given one or more variable names as arguments. This makes
@@ -50,6 +62,14 @@
     This attempts to find the coordinates of the currently-focused
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
+
+.. function:: renpy.force_autosave(take_screenshot=False)
+    
+    Forces a background autosave to occur.
+    
+    `take_screenshot`
+        If True, a new screenshot will be taken. If False, the existing
+        screenshot will be used.
 
 .. function:: renpy.force_full_redraw()
     

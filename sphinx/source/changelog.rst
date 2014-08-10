@@ -162,8 +162,6 @@ save occurs, making them far more useful for debugging pickling problems.
 When show_ arguments are past to an :func:`NVLCharacter`, the show_ prefix
 is stripped and those arguments are passed to the ``nvl`` screen.
 
-
-
 Translations
 ------------
 
