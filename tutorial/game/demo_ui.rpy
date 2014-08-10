@@ -35,10 +35,10 @@ screen demo_imagemap:
     imagemap:
         auto "imagemap_%s.jpg"
 
-        hotspot (8, 200, 78, 78) action Return("swimming")
-        hotspot (204, 50, 78, 78) action Return("science")
-        hotspot (452, 79, 78, 78) action Return("art")
-        hotspot (602, 316, 78, 78) action Return("go home")
+        hotspot (8, 200, 78, 78) action Return("swimming") alt "Swimming"
+        hotspot (204, 50, 78, 78) action Return("science") alt "Science"
+        hotspot (452, 79, 78, 78) action Return("art") alt "Art"
+        hotspot (602, 316, 78, 78) action Return("go home") alt "Go Home"
 
 init:
 
