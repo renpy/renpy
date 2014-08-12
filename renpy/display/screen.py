@@ -359,6 +359,17 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def visit(self):
         return [ self.child ]
 
+    def visit_all(self, callback):
+        callback(self)
+
+        global _current_screen
+        old_screen = _current_screen
+        _current_screen = self
+
+        self.child.visit_all(callback)
+
+        _current_screen = old_screen
+
     def per_interact(self):
         renpy.display.render.redraw(self, 0)
         self.update()
@@ -521,9 +532,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
         renpy.ui.screen = old_ui_screen
         _current_screen = old_screen
 
-        # Visit all the children, to get them started.
-        self.child.visit_all(lambda c : c.per_interact())
-
         # Finish up.
         self.old_widgets = None
         self.old_transforms = None
@@ -555,7 +563,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if not self.child:
             self.update()
 
+        global _current_screen
+        old_screen = _current_screen
+        _current_screen = self
+
         child = renpy.display.render.render(self.child, w, h, st, at)
+
+        _current_screen = old_screen
 
         rv = renpy.display.render.Render(w, h)
 
