@@ -239,16 +239,18 @@ class Screen(renpy.object.Object):
 
 
 # Phases we can be in.
-PREDICT = 0
-SHOW = 1
-UPDATE = 2
-HIDE = 3
+PREDICT = 0 # Predicting the screen before it is shown.
+SHOW = 1    # Showing the screen for the first time.
+UPDATE = 2  # Showing the screen for the second and later times.
+HIDE = 3    # After the screen has been hid with "hide screen" (or the end of call screen).
+OLD = 4     # A copy of the screen in the old side of a transition.
 
 phase_name = [
     "PREDICT",
     "SHOW",
     "UPDATE",
     "HIDE",
+    "OLD",
     ]
 
 class ScreenDisplayable(renpy.display.layout.Container):
@@ -341,9 +343,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # A dict-set of widgets (by id) that have been hidden from us.
         self.hidden_widgets = { }
 
-        # Are we hiding?
-        self.hiding = False
-
         # Are we restarting?
         self.restarting = False
 
@@ -369,12 +368,24 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.current_transform_event = event
 
     def find_focusable(self, callback, focus_name):
-        if self.child and not self.hiding:
+
+        hiding = (self.phase == OLD) or (self.phase == HIDE)
+
+        if self.child and not hiding:
             self.child.find_focusable(callback, focus_name)
+
+    def copy(self):
+        rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
+        rv.transforms = self.transforms.copy()
+        rv.widgets = self.widgets.copy()
+        rv.old_transfers = True
+        rv.child = self.child
+
+        return rv
 
     def _hide(self, st, at, kind):
 
-        if self.hiding:
+        if self.phase == HIDE:
             hid = self
         else:
 
@@ -387,14 +398,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
             if self.screen.ast is not None:
                 self.screen.ast.copy_on_change(self.cache.get(0, {}))
 
-            hid = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
-            hid.transforms = self.transforms.copy()
-            hid.widgets = self.widgets.copy()
-            hid.old_transfers = True
-            hid.child = self.child
+            hid = self.copy()
 
         hid.phase = HIDE
-        hid.hiding = True
 
         hid.current_transform_event = kind
         hid.update()
@@ -436,7 +442,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.screen.ast is not None:
             self.screen.ast.copy_on_change(self.cache.get(0, {}))
 
-        return self.child
+        rv = self.copy()
+        rv.phase = OLD
+        return rv
 
 
     def update(self):
@@ -451,7 +459,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return { }
 
         # Do not update if restarting or hiding.
-        if self.restarting or self.hiding:
+        if self.restarting or (self.phase == HIDE) or (self.phase == OLD):
             if not self.child:
                 self.child = renpy.display.layout.Null()
 
@@ -551,8 +559,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         rv = renpy.display.render.Render(w, h)
 
-        rv.blit(child, (0, 0), focus=not self.hiding, main=not self.hiding)
-        rv.modal = self.modal and not self.hiding
+        hiding = (self.phase == OLD) or (self.phase == HIDE)
+
+        rv.blit(child, (0, 0), focus=not hiding, main=not hiding)
+        rv.modal = self.modal and not hiding
 
         return rv
 
@@ -564,7 +574,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def event(self, ev, x, y, st):
 
-        if self.hiding:
+        if (self.phase == OLD) or (self.phase == HIDE):
             return
 
         global _current_screen
