@@ -1413,4 +1413,4 @@ class SLScreen(SLBlock):
         self.execute(context)
 
         for i in context.children:
-            renpy.ui.add(i)
+            renpy.ui.implicit_add(i)
