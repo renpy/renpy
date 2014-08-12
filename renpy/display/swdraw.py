@@ -857,7 +857,7 @@ class SWDraw(object):
         if self.mouse_location:
             updates.append(self.hide_mouse())
 
-        if tex and pos and renpy.game.interface.focused:
+        if tex and pos and renpy.game.interface.focused: # @UndefinedVariable
             updates.append(self.show_mouse(pos, info))
 
         return updates

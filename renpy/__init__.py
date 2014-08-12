@@ -206,7 +206,7 @@ def update_path(package):
 
     name = package.__name__.split(".")
 
-    import _renpy #@UnresolvedImport
+    import _renpy
     libexec = os.path.dirname(_renpy.__file__)
     package.__path__.append(os.path.join(libexec, *name))
 
@@ -227,96 +227,96 @@ def import_all():
 
     import renpy.arguments # @UnresolvedImport
 
-    import renpy.log #@UnresolvedImport
+    import renpy.log
 
-    import renpy.display #@UnresolvedImport
+    import renpy.display
 
     # Should probably be early, as we will add it as a base to serialized things.
-    import renpy.object #@UnresolvedImport
+    import renpy.object
 
-    import renpy.game #@UnresolvedImport
-    import renpy.preferences #@UnresolvedImport
+    import renpy.game
+    import renpy.preferences
 
     # Adds in the Ren'Py loader.
-    import renpy.loader #@UnresolvedImport
+    import renpy.loader
 
-    import renpy.ast #@UnresolvedImport
-    import renpy.atl #@UnresolvedImport
-    import renpy.curry #@UnresolvedImport
-    import renpy.easy #@UnresolvedImport
-    import renpy.execution #@UnresolvedImport
-    import renpy.loadsave #@UnresolvedImport
+    import renpy.ast
+    import renpy.atl
+    import renpy.curry
+    import renpy.easy
+    import renpy.execution
+    import renpy.loadsave
     import renpy.savelocation  # @UnresolvedImport
-    import renpy.persistent #@UnresolvedImport
-    import renpy.parser #@UnresolvedImport
-    import renpy.python #@UnresolvedImport
-    import renpy.script #@UnresolvedImport
-    import renpy.statements #@UnresolvedImport
-    import renpy.style #@UnresolvedImport
-    import renpy.substitutions #@UnresolvedImport
-    import renpy.translation #@UnresolvedImport
+    import renpy.persistent
+    import renpy.parser
+    import renpy.python
+    import renpy.script
+    import renpy.statements
+    import renpy.style
+    import renpy.substitutions
+    import renpy.translation
 
     import renpy.display # @UnresolvedImport @Reimport
 
     update_path(renpy.display)
 
-    import renpy.display.presplash #@UnresolvedImport
-    import renpy.display.pgrender #@UnresolvedImport
-    import renpy.display.scale #@UnresolvedImport
-    import renpy.display.module #@UnresolvedImport
+    import renpy.display.presplash
+    import renpy.display.pgrender
+    import renpy.display.scale
+    import renpy.display.module
     import renpy.display.render # Most display stuff depends on this. @UnresolvedImport
     import renpy.display.core # object @UnresolvedImport
 
-    import renpy.text #@UnresolvedImport
+    import renpy.text
 
     update_path(renpy.text)
 
-    import renpy.text.ftfont #@UnresolvedImport
-    import renpy.text.font #@UnresolvedImport
-    import renpy.text.textsupport #@UnresolvedImport
-    import renpy.text.texwrap #@UnresolvedImport
-    import renpy.text.text #@UnresolvedImport
-    import renpy.text.extras #@UnresolvedImport
+    import renpy.text.ftfont
+    import renpy.text.font
+    import renpy.text.textsupport
+    import renpy.text.texwrap
+    import renpy.text.text
+    import renpy.text.extras
 
     sys.modules['renpy.display.text'] = renpy.text.text
 
-    import renpy.gl #@UnresolvedImport
+    import renpy.gl
     update_path(renpy.gl)
 
-    import renpy.angle #@UnresolvedImport
+    import renpy.angle
     update_path(renpy.angle)
 
-    import renpy.display.layout # core @UnresolvedImport
+    import renpy.display.layout
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
     import renpy.display.transition # core, layout @UnresolvedImport
     import renpy.display.movetransition # core @UnresolvedImport
-    import renpy.display.im #@UnresolvedImport
-    import renpy.display.imagelike #@UnresolvedImport
+    import renpy.display.im
+    import renpy.display.imagelike
     import renpy.display.image # core, behavior, im, imagelike @UnresolvedImport
-    import renpy.display.video #@UnresolvedImport
-    import renpy.display.focus #@UnresolvedImport
-    import renpy.display.anim #@UnresolvedImport
-    import renpy.display.particle #@UnresolvedImport
-    import renpy.display.joystick #@UnresolvedImport
-    import renpy.display.minigame #@UnresolvedImport
-    import renpy.display.screen #@UnresolvedImport
-    import renpy.display.dragdrop #@UnresolvedImport
-    import renpy.display.imagemap #@UnresolvedImport
-    import renpy.display.predict #@UnresolvedImport
+    import renpy.display.video
+    import renpy.display.focus
+    import renpy.display.anim
+    import renpy.display.particle
+    import renpy.display.joystick
+    import renpy.display.minigame
+    import renpy.display.screen
+    import renpy.display.dragdrop
+    import renpy.display.imagemap
+    import renpy.display.predict
     import renpy.display.emulator # @UnresolvedImport
     import renpy.display.tts # @UnresolvedImport
 
-    import renpy.display.error #@UnresolvedImport
+    import renpy.display.error
 
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module.
-    import renpy.audio.audio #@UnresolvedImport
-    import renpy.audio.music #@UnresolvedImport
-    import renpy.audio.sound #@UnresolvedImport
+    import renpy.audio.audio
+    import renpy.audio.music
+    import renpy.audio.sound
 
-    import renpy.ui #@UnresolvedImport
-    import renpy.screenlang #@UnresolvedImport
+    import renpy.ui
+    import renpy.screenlang
 
     import renpy.sl2 # @UnresolvedImport
     update_path(renpy.sl2)
@@ -325,19 +325,19 @@ def import_all():
     import renpy.sl2.slparser # @UnresolvedImport
     import renpy.sl2.sldisplayables # @UnresolvedImport
 
-    import renpy.lint #@UnresolvedImport
-    import renpy.warp #@UnresolvedImport
+    import renpy.lint
+    import renpy.warp
 
-    import renpy.editor #@UnresolvedImport
-    import renpy.exports #@UnresolvedImport
+    import renpy.editor
+    import renpy.exports
     import renpy.character # depends on exports. @UnresolvedImport
 
-    import renpy.dump #@UnresolvedImport
+    import renpy.dump
 
     import renpy.config # depends on lots. @UnresolvedImport
     import renpy.minstore # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
-    import renpy.main #@UnresolvedImport
+    import renpy.main
 
 
     # Back up the Ren'Py modules.
@@ -382,13 +382,14 @@ def reload_all():
     returned.
     """
 
-    import renpy #@UnresolvedImport
+    import renpy.style
+    import renpy.display
 
     # Clear all pending exceptions.
     sys.exc_clear()
 
     # Reset the styles.
-    renpy.style.reset()
+    renpy.style.reset() # @UndefinedVariable
 
     # Shut down the cache thread.
     renpy.display.im.cache.quit()
@@ -456,24 +457,24 @@ def import_cython():
     grab the various cython modules.
     """
 
-    import renpy.arguments #@UnresolvedImport
+    import renpy.arguments
 
-    import renpy.display.accelerator #@UnresolvedImport
-    import renpy.display.render #@UnresolvedImport
+    import renpy.display.accelerator
+    import renpy.display.render
 
-    import renpy.gl.gldraw #@UnresolvedImport
-    import renpy.gl.glenviron_fixed #@UnresolvedImport
-    import renpy.gl.glenviron_limited #@UnresolvedImport
-    import renpy.gl.glenviron_shader #@UnresolvedImport
-    import renpy.gl.glrtt_copy #@UnresolvedImport
-    import renpy.gl.glrtt_fbo #@UnresolvedImport
-    import renpy.gl.gltexture #@UnresolvedImport
+    import renpy.gl.gldraw
+    import renpy.gl.glenviron_fixed
+    import renpy.gl.glenviron_limited
+    import renpy.gl.glenviron_shader
+    import renpy.gl.glrtt_copy
+    import renpy.gl.glrtt_fbo
+    import renpy.gl.gltexture
 
-    import renpy.angle.gldraw #@UnresolvedImport
-    import renpy.angle.glenviron_shader #@UnresolvedImport
-    import renpy.angle.glrtt_copy #@UnresolvedImport
-    import renpy.angle.glrtt_fbo #@UnresolvedImport
-    import renpy.angle.gltexture #@UnresolvedImport
+    import renpy.angle.gldraw
+    import renpy.angle.glenviron_shader
+    import renpy.angle.glrtt_copy
+    import renpy.angle.glrtt_fbo
+    import renpy.angle.gltexture
 
     import renpy.styleclass # @UnresolvedImport
 

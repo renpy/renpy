@@ -24,6 +24,7 @@ import collections
 import linecache
 
 import renpy.display
+import renpy.sl2
 
 from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
