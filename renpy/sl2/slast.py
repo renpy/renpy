@@ -582,6 +582,9 @@ class SLDisplayable(SLBlock):
                 # the one that gets the scope, and gets children added to it.)
                 main = old_main
 
+                if widget_id:
+                    screen.widgets[widget_id] = main
+
                 if self.scope and main.uses_scope:
                     if copy_on_change:
                         if main._scope(ctx.scope, False):
@@ -612,6 +615,11 @@ class SLDisplayable(SLBlock):
 
                 d = self.displayable(*positional, **keywords)
                 main = d._main or d
+
+                main._location = self.location
+
+                if widget_id:
+                    screen.widgets[widget_id] = main
                 # End child creation code.
 
                 imagemap = self.imagemap
@@ -626,11 +634,6 @@ class SLDisplayable(SLBlock):
                     profile_log.write("    created constant displayable")
                 else:
                     profile_log.write("    created displayable")
-
-            main._location = self.location
-
-            if widget_id:
-                screen.widgets[widget_id] = main
 
         except:
             if not context.predicting:
@@ -686,6 +689,11 @@ class SLDisplayable(SLBlock):
 
                 d = self.displayable(*positional, **keywords)
                 main = d._main or d
+
+                main._location = self.location
+
+                if widget_id:
+                    screen.widgets[widget_id] = main
                 # End child creation code.
 
                 cache.copy_on_change = False
