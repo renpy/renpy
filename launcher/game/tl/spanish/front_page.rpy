@@ -102,7 +102,7 @@
 
     # game/front_page.rpy:234
     old "Force Recompile"
-    new "Forzar recompilación"
+    new "Forzar Recompilación"
 
     # game/front_page.rpy:285
     old "Recompiling all rpy files into rpyc files..."
