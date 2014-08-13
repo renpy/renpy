@@ -100,3 +100,11 @@
     old "Select project [text]."
     new "Seleccionar proyecto [text]."
 
+    # game/front_page.rpy:234
+    old "Force Recompile"
+    new "Forzar recompilación"
+
+    # game/front_page.rpy:285
+    old "Recompiling all rpy files into rpyc files..."
+    new "Recompilando todos los archivos rpy en archivos rpyc..."
+
