@@ -50,51 +50,65 @@ screen _inspector:
 
         else:
 
-            hbox:
-                text " ":
-                    min_width 400
-                    xmaximum 400
+            viewport:
+                scrollbars "both"
+                child_size (1200, 0)
+                yfill False
 
-                text _("Size"):
-                    min_width 100
-                    xmaximum 100
-                    underline True
+                has vbox
 
-                text _("Style"):
-                    underline True
+                hbox:
+                    text " ":
+                        min_width 350
+                        xmaximum 350
 
-            null height 5
+                    text _("Size"):
+                        min_width 100
+                        underline True
 
-            for depth, width, height, d in tree:
+                    text _("Style"):
+                        min_width 120
+                        underline True
 
-                $ t = "  " * depth + u"\u2022 " + unicode(d)
-                $ s = __format_style(d.style.parent)
+                    text _("Location"):
+                        underline True
 
-                button:
-                    xfill True
-                    xmargin 0
-                    ymargin 0
-                    xpadding 0
-                    ypadding 0
-                    xoffset 0
+                null height 5
 
-                    background None
-                    hover_background "#fff4"
+                for depth, width, height, d in tree:
 
-                    action Show("_style_inspector", d=d)
+                    $ t = "  " * depth + u"\u2022 " + unicode(d)
+                    $ s = __format_style(d.style.parent)
+                    $ l = __format_location(d._location)
 
-                    hbox:
+                    button:
+                        xfill True
+                        xmargin 0
+                        ymargin 0
+                        xpadding 0
+                        ypadding 0
+                        xoffset 0
 
-                        text "[t!q]":
-                            min_width 400
-                            xmaximum 400
+                        background None
+                        hover_background "#fff4"
 
-                        text "[width:.0f]x[height:.0f]":
-                            min_width 100
-                            xmaximum 100
+                        action Show("_style_inspector", d=d)
 
-                        text "[s!q]":
-                            style "_hyperlink"
+                        hbox:
+
+                            text "[t!q]":
+                                min_width 350
+
+                            text "[width:.0f]x[height:.0f]":
+                                min_width 100
+
+                            text "[s!q]":
+                                style "_hyperlink"
+                                min_width 120
+
+                            text "[l!q]"
+
+                null height 5
 
         null height 20
 
@@ -126,6 +140,7 @@ screen _style_inspector:
 
         viewport:
             yfill False
+            xfill False
             mousewheel True
 
             vbox:
@@ -162,6 +177,18 @@ init python:
 
     def __format_style(name):
         return name[0] + "".join([ "[%r]" % i for i in name[1:] ])
+
+    def __format_location(l):
+        if l is None:
+            return ""
+        else:
+            fn = l[0]
+            if fn.startswith("game/"):
+                fn = fn[5:]
+            elif fn.startswith("renpy/common"):
+                fn = fn[6:]
+
+            return "{}:{}".format(fn, l[1])
 
     def __safe_repr(name):
         try:
