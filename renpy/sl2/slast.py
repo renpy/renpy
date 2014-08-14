@@ -702,7 +702,7 @@ class SLDisplayable(SLBlock):
             if reused:
                 main._clear()
 
-            if self.child_or_fixed and len(self.children) != 1:
+            if self.child_or_fixed and len(ctx.children) != 1:
                 f = Fixed()
 
                 for i in ctx.children:
