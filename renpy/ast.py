@@ -1709,7 +1709,7 @@ class Screen(Node):
         next_node(self.next)
         statement_name("screen")
 
-        self.screen.define()
+        self.screen.define((self.filename, self.linenumber))
         renpy.dump.screens.append((self.screen.name, self.filename, self.linenumber))
 
 

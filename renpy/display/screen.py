@@ -199,7 +199,8 @@ class Screen(renpy.object.Object):
                  tag=None,
                  predict=None,
                  variant=None,
-                 parameters=False):
+                 parameters=False,
+                 location=None):
 
         # The name of this screen.
         if isinstance(name, basestring):
@@ -236,6 +237,9 @@ class Screen(renpy.object.Object):
 
         # True if this screen takes parameters via _args and _kwargs.
         self.parameters = parameters
+
+        # The location (filename, linenumber) of this screen.
+        self.location = location
 
 
 # Phases we can be in.
@@ -288,6 +292,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # screen on save.)
         self.screen = screen
         self.screen_name = screen.name
+
+        self._location = self.screen.location
 
         # The profile object that determines when we profile.
         self.profile = profile.get(self.screen_name, None)

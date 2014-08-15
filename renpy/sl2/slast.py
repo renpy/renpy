@@ -1320,7 +1320,7 @@ class SLScreen(SLBlock):
         # True if this screen has been prepared.
         self.prepared = False
 
-    def define(self):
+    def define(self, location):
         """
         Defines a screen.
         """
@@ -1334,6 +1334,7 @@ class SLScreen(SLBlock):
             variant=renpy.python.py_eval(self.variant),
             predict=renpy.python.py_eval(self.predict),
             parameters=self.parameters,
+            location=self.location,
             )
 
     def unprepare(self):
