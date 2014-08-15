@@ -21,6 +21,9 @@
 
 # The displayable and style inspectors.
 
+style _hyperlink_button is _default
+style _hyperlink_button_text is _hyperlink
+
 screen _inspector:
     zorder 1010
     modal True
@@ -54,6 +57,8 @@ screen _inspector:
                 scrollbars "both"
                 child_size (1200, 0)
                 yfill False
+                xfill False
+                mousewheel True
 
                 has vbox
 
@@ -63,15 +68,18 @@ screen _inspector:
                         xmaximum 350
 
                     text _("Size"):
-                        min_width 100
+                        min_width 85
                         underline True
 
                     text _("Style"):
-                        min_width 120
+                        min_width 125
                         underline True
+
+                    null width 5
 
                     text _("Location"):
                         underline True
+                        min_width 100
 
                 null height 5
 
@@ -79,34 +87,31 @@ screen _inspector:
 
                     $ t = "  " * depth + u"\u2022 " + unicode(d)
                     $ s = __format_style(d.style.parent)
-                    $ l = __format_location(d._location)
 
-                    button:
-                        xfill True
-                        xmargin 0
-                        ymargin 0
-                        xpadding 0
-                        ypadding 0
-                        xoffset 0
 
-                        background None
-                        hover_background "#fff4"
+                    hbox:
 
-                        action Show("_style_inspector", d=d)
+                        text "[t!q]":
+                            min_width 350
 
-                        hbox:
+                        text "[width:.0f]x[height:.0f]":
+                            min_width 85
 
-                            text "[t!q]":
-                                min_width 350
+                        textbutton "[s!q]":
+                            style "_hyperlink_button"
+                            text_min_width 125
+                            action Show("_style_inspector", d=d)
 
-                            text "[width:.0f]x[height:.0f]":
-                                min_width 100
+                        null width 5
 
-                            text "[s!q]":
-                                style "_hyperlink"
-                                min_width 120
+                        if d._location:
+                            $ l = __format_location(d._location)
 
-                            text "[l!q]"
+                            textbutton "[l!q]":
+                                style "_hyperlink_button"
+                                text_min_width 100
+                                action _EditFile(d._location[0], d._location[1])
+
 
                 null height 5
 
@@ -188,7 +193,7 @@ init python:
             elif fn.startswith("renpy/common"):
                 fn = fn[6:]
 
-            return "{}:{}".format(fn, l[1])
+            return "%s:%d" % (fn, l[1])
 
     def __safe_repr(name):
         try:

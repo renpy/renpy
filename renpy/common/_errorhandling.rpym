@@ -336,13 +336,14 @@ init python:
 
         return rv
 
-    class __EditFile(Action):
-        def __init__(self, filename):
+    class _EditFile(Action):
+        def __init__(self, filename, line=1):
             self.filename = filename
+            self.line = line
 
         def __call__(self):
             try:
-                renpy.launch_editor([ self.filename ], 1, transient=1)
+                renpy.launch_editor([ self.filename ], self.line, transient=1)
             except:
                 pass
 
@@ -487,7 +488,7 @@ screen _exception:
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
                 textbutton _("Open Traceback"):
-                    action __EditFile(traceback_fn)
+                    action _EditFile(traceback_fn)
                     hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
                 null width 30
@@ -549,7 +550,7 @@ screen _parse_errors:
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
                 textbutton _("Open Parse Errors"):
-                    action __EditFile(error_fn)
+                    action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
 
                 null width 30
