@@ -92,8 +92,59 @@ It's important to define the __eq__ function carefully, making sure it
 compares all fields, and uses equality (==) and identity (is) comparison
 as appropriate.
 
-Const
-=====
+Const Expressions and Pure Functions
+====================================
+
+Ren'Py can exploit the properties of const variables and pure functions
+to improve the speed of screen evaluation, and to entirely avoid the
+evaluation of some parts of screens.
+
+Definitions
+-----------
+
+An expression is **const** (short for constant) if it always represents the
+same value when it is evaluated. For Ren'Py's purposes, an expression is
+const if and only if the following expressions always evaluate to the same
+const value or are undefined:
+
+* Applying any unary, binary, or ternary operator to the expression, provided
+  the other operands are also const.
+* Accessing a field on the expression.
+* Indexing the expression, either using a number or an object.
+
+Python numbers and strings are const, as are list, tuple, set, and dict
+literals for which all components are const. Ren'Py marks
+variables defined using the ``define`` statement as const.
+The :func:`renpy.const` and :func:`renpy.not_const` functions
+can be used to further control what Ren'Py considers to be const. The
+default list of const names is given in the :ref:`Const Names <const-names>`
+section below.
+
+A callable function, class, or action is **pure** if, when all of its arguments
+are const values, it always gives the same const value. Alternatively, an
+expression that invokes a pure function with const expression is also a
+const expression.
+
+A large number of default functions, classes, and actions are marked as
+pure. These functions are listed in the :ref:`Pure Names <pure-names>`
+section below.
+
+Functions are declared pure using the :func:`renpy.pure` function, which
+can be used as a decorator for functions declared in the default store.
+
+Const expressions and pure functions do not need to retain the same value
+across the following events:
+
+* The end of the init phase.
+* A change of the language.
+* A style rebuild.
+
+How Const Optimizes Screen Language
+-----------------------------------
+
+
+
+
 
 Profiling
 =========
