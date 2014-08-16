@@ -287,8 +287,7 @@ Here's a synopsis of python expressions.
 
 :dfn:`True, False, None`
     There are three special values. ``True`` is a true value, ``False`` is
-    a false value. ``None`` represents the absence of a value. For
-    example,
+    a false value. ``None`` represents the absence of a value.
 
 :dfn:`Tuple`
     Tuples are used to represent containers where the number of items
