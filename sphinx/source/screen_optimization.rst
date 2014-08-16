@@ -120,6 +120,12 @@ can be used to further control what Ren'Py considers to be const. The
 default list of const names is given in the :ref:`Const Names <const-names>`
 section below.
 
+If you have a variable that will never change, it makes sense to use ``define``
+to both define it and declare it const. For example::
+
+    define GRID_WIDTH = 20
+    define GRID_HEIGHT = 10
+
 A callable function, class, or action is **pure** if, when all of its arguments
 are const values, it always gives the same const value. Alternatively, an
 expression that invokes a pure function with const expression is also a
@@ -142,9 +148,59 @@ across the following events:
 How Const Optimizes Screen Language
 -----------------------------------
 
+There are three advantages to ensuring that screen language arguments and
+properties are const.
 
+The first is that const arguments and properties are evaluated when
+screens are prepared, which is at the end of the init phase, when the
+language is changed, or when styles are rebuilt. After that, it is no
+longer necessary to spend time evaluating const arguments and properties.
 
+The second is that const works well with displayable reuse. When all of
+the arguments and properties of a displayable are const, the displayable
+can always be reused, which gains all the benefits of displayable reuse.
 
+Lastly, when Ren'Py encounters a tree of displayables such that all
+arguments, properties, and expressions affecting control flow are
+also const, Ren'Py will reuse the entire tree without evaluating
+expressions or creating displayables. This can yield a significant
+performance boost.
+
+For example, the following screen does not execute any code or create
+any displayables after the first time it is predicted or shown::
+
+    screen mood_picker():
+        hbox:
+            xalign 1.0
+            yalign 0.0
+
+            textbutton "Happy" action SetVariable("mood", "happy")
+            textbutton "Sad" action SetVariable("mood", "sad")
+            textbutton "Angry" action SetVariable("mood", "angry")
+
+Const Text
+----------
+
+When defining text, please note that strings containing new-style text
+substitutions are const::
+
+    $ t = "Hello, world."
+    text "[t]"
+
+Supplying a variable containing the text directly is generally not const::
+
+    $ t = "Hello, world."
+    text t
+
+Neither is using percent-substitution::
+
+    $ t = "Hello, world."
+    text "%s" % t
+
+Lastly, note that the _ text translation function is pure, so if it contains
+a string, the entire expression is const::
+
+    text _("Your score is: [score]")
 
 Profiling
 =========
