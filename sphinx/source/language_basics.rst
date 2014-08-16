@@ -298,7 +298,7 @@ Here's a synopsis of python expressions.
     Tuples begin with a left-parenthesis ``(``, consist of zero or
     more comma-separated python expressions, and end with a
     right-parenthesis ``)``. As a special case, the one-item tuple
-    must have a parenthesis following the item. For example::
+    must have a comma following the item. For example::
 
         ()
         (1,)
