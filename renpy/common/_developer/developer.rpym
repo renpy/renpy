@@ -90,6 +90,7 @@ screen _developer:
             action Hide("_developer")
             size_group "developer"
 
+style _developer_default is _default
 style _developer_frame is _frame
 style _developer_vbox is _vbox
 
