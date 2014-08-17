@@ -191,7 +191,7 @@ screen nvl(dialogue, items=None):
 # http://www.renpy.org/doc/html/screen_special.html#main-menu
 # ゲーム起動時に表示される、メインメニュー用スクリーン。
 
-screen main_menu:
+screen main_menu():
 
     # This ensures that any other menu screen is replaced.
     # 他のメニュースクリーンが表示される時に置き換えます。
