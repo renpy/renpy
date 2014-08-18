@@ -46,6 +46,22 @@ it performs.
 Prediction
 ==========
 
+Screens perform better when they're predicted in advance. That's because
+Ren'Py will execute the screen during prediction time, and load in images
+that are used by the screen.
+
+There are two ways Ren'Py automatically predicts screens:
+
+* Ren'Py will predict screens shown by the ``show screen`` and ``call screen``
+  statements.
+* Ren'Py will predict screen that will be shown by the :func:`Show` and :func:`ShowMenu`
+  actions.
+
+If screens are shown from python code, it's a good idea to start predicting
+the screen before it is shown. To start predicting a screen, use the
+:func:`renpy.start_screen_predict` function. To stop predicting a screen,
+use the :func:`renpy.stop_screen_predict` function.
+
 
 Displayable Reuse
 =================
