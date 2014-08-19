@@ -75,10 +75,11 @@ Accessibility
 
 Ren'Py now includes support for self-voicing, a mode in which Ren'Py will
 read on-screen text to vision impaired players. To activate self-voicing,
-press the ``v`` key.
+press the ``v`` key.  For more information, please read the :ref:`self-voicing <self-voicing>`
+documentation.
 
 The new :propref:`alt` style property allows one to supply alternative
-text that allows Ren'Py to voice imagemap components, and buttons with
+text that allows Ren'Py to voice imagemap components and buttons with
 incomplete names.
 
 The Ren'Py launcher now includes a large-text mode that can be accessed from
