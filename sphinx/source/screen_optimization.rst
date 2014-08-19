@@ -1,4 +1,4 @@
-.. _screen_optimization:
+.. _screen-optimization:
 
 ============================
 Screen Language Optimization
@@ -218,11 +218,32 @@ a string, the entire expression is const::
 
     text _("Your score is: [score]")
 
+
+Const Functions
+----------------
+
+.. include: inc/const
+
 Profiling
 =========
+
+
+.. _const-names:
 
 Const Names
 ===========
 
+The following names are const by default.
+
+.. include: inc/const_vars
+
+
+.. _pure-names:
+
 Pure Names
 ==========
+
+The following names are both pure and const by default.
+
+.. include: inc/pure_vars
+
