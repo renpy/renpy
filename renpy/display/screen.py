@@ -36,7 +36,7 @@ class ScreenProfile(renpy.object.Object):
 
     def __init__(self, name, predict=False, show=False, update=False, request=False, time=False, debug=False, const=False):
         """
-        :doc: screen
+        :doc: profile_screen
         :name: renpy.profile_screen
 
         Requests screen profiling for the screen named `name`, which

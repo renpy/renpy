@@ -227,6 +227,11 @@ Const Functions
 Profiling
 =========
 
+Ren'Py supports profiling screen execution through the ``renpy.profile_screen``
+function:
+
+.. include: inc/profile_screen
+
 
 .. _const-names:
 
