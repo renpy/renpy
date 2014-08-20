@@ -1116,6 +1116,12 @@ Rarely or Internally Used
     If True, transforms will inherit :ref:`position properties
     <position-style-properties>` from their child. If not, they won't.
 
+.. var:: config.transition_screens = True
+
+    If true, screens will participate in transitions, dissolving from the
+    old state of the screen to the new state of the screen. If False, only
+    the latest state of the screen will be shown.
+
 .. var:: config.variants = [ ... ]
 
     A list of screen variants that are searched when choosing a screen to

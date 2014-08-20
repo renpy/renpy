@@ -456,6 +456,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.child is None:
             return self
 
+        if not renpy.config.transition_screens:
+            return self
+
         if self.screen.ast is not None:
             self.screen.ast.copy_on_change(self.cache.get(0, {}))
 

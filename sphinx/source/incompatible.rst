@@ -21,6 +21,11 @@ arguments to a screen causes side effects to occur, the ``show screen``
 or ``call screen`` statements should be given the new ``nopredict``
 clause, which prevents prediction.
 
+Screens now participate in transitions - transitions now go from the old
+state of the screen to the new state. To disable this, set
+:var:`config.transition_screens` to false.
+
+
 .. _incompatible-6.16:
 
 6.16

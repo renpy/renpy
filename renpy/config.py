@@ -528,6 +528,8 @@ emphasize_audio_volume = 0.5
 # audio.
 emphasize_audio_time = 0.5
 
+# Should we transition screens, or always use their new states.
+transition_screens = True
 
 del renpy
 del os
