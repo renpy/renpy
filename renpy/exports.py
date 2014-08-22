@@ -2666,6 +2666,7 @@ def get_autoreload():
 
     return renpy.autoreload
 
+
 def count_dialogue_blocks():
     """
     :doc: other
@@ -2674,6 +2675,7 @@ def count_dialogue_blocks():
     """
 
     return renpy.game.script.translator.count_translates()
+
 
 def count_seen_dialogue_blocks():
     """
@@ -2688,3 +2690,21 @@ def count_seen_dialogue_blocks():
 
     return len(renpy.game.persistent._seen_translates) # @UndefinedVariable
 
+
+def substitute(s, scope=None, translate=True):
+    """
+    :doc: other
+
+    Applies translation and new-style formatting to the string `s`.
+
+    `scope`
+        If not None, a scope which is used in formatting, in addition to the
+        default store.
+
+    `translate`
+        Determines if translation occurs.
+
+    Returns the translated and formatted string.
+    """
+
+    return renpy.substitutions.substitute(s, scope=scope, translate=translate)[0]
