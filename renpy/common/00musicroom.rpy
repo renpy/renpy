@@ -52,6 +52,7 @@ init -1500 python:
 
         def periodic(self, st):
             if self.selected != self.get_selected():
+                self.selected = self.get_selected()
                 renpy.restart_interaction()
 
             self.mr.periodic(st)
