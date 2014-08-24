@@ -113,6 +113,7 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   iap
 
 End-User Documentation
 ----------------------

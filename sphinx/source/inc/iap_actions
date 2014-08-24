@@ -1,0 +1,12 @@
+.. Automatically generated file - do not modify.
+
+.. function:: iap.Purchase(product)
+    
+    An action that attempts the purchase of `product`. This action is
+    sensitive iff and only if the product is purchasable (a store is
+    enabled, and the product has not already been purchased.)
+
+.. function:: iap.Restore()
+    
+    An Action that contacts the app store and restores any missing purchases.
+
