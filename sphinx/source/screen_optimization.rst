@@ -222,7 +222,7 @@ a string, the entire expression is const::
 Const Functions
 ----------------
 
-.. include: inc/const
+.. include:: inc/const
 
 Profiling
 =========
@@ -230,7 +230,7 @@ Profiling
 Ren'Py supports profiling screen execution through the ``renpy.profile_screen``
 function:
 
-.. include: inc/profile_screen
+.. include:: inc/profile_screen
 
 
 .. _const-names:
@@ -240,7 +240,7 @@ Const Names
 
 The following names are const by default.
 
-.. include: inc/const_vars
+.. include:: inc/const_vars
 
 
 .. _pure-names:
@@ -250,5 +250,5 @@ Pure Names
 
 The following names are both pure and const by default.
 
-.. include: inc/pure_vars
+.. include:: inc/pure_vars
 

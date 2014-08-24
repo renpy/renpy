@@ -169,6 +169,8 @@ ouya-icon.png
     A 732x412 icon that's used on the OUYA console.
 
 
+.. _expansion-apk:
+
 Google Play Expansion APKs
 ==========================
 

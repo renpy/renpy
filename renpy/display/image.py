@@ -56,7 +56,7 @@ def register_image(name, d):
 
 def image_exists(name):
     """
-    :doc: image
+    :doc: image_func
 
     Return true if an image with `name` exists, and false if no such image
     exists.

@@ -2192,7 +2192,7 @@ def cache_unpin(*args):
 
 def start_predict(*args):
     """
-    :doc: cache
+    :doc: image_func
 
     This function takes one or more displayables as arguments. It causes
     Ren'Py to predict those displayables during every interaction until
@@ -2210,7 +2210,7 @@ def start_predict(*args):
 
 def stop_predict(*args):
     """
-    :doc: cache
+    :doc: image_func
 
     This function takes one or more displayables as arguments. It causes
     Ren'Py to stop predicting those displayables during every interaction.
@@ -2228,7 +2228,7 @@ def stop_predict(*args):
 def start_predict_screen(_screen_name, *args, **kwargs):
 
     """
-    :doc: cache
+    :doc: screens
 
     Causes Ren'Py to start predicting the screen named `_screen_name`
     will be shown with the given arguments. This replaces  any previous prediction
@@ -2242,7 +2242,7 @@ def start_predict_screen(_screen_name, *args, **kwargs):
 
 def stop_predict_screen(name):
     """
-    :doc: cache
+    :doc: screens
 
     Causes Ren'Py to stop predicting the screen named `name` will be shown.
     """

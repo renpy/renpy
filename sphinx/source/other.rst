@@ -8,6 +8,11 @@ new functionality that has no other place to go.
 
 .. include:: inc/other
 
+Contexts
+---------
+
+.. include:: inc/context
+
 renpy.random
 -------------
 
@@ -39,9 +44,9 @@ It should be used instead of the standard Python random module. ::
 
     # return a random float between 0 and 1
     $ randfloat = renpy.random.random()
-    
+
     # return a random integer between 1 and 20
     $ d20roll = renpy.random.randint(1, 20)
-    
+
     # return a random element from a list
     $ randfruit = renpy.random.choice(['apple', 'orange', 'plum'])

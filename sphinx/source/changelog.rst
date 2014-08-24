@@ -71,7 +71,7 @@ of two functions: :func:`renpy.start_predict` starts prediction of images,
 while :func:`renpy.stop_predict` stops prediction.
 
 Accessibility
-------------
+-------------
 
 Ren'Py now includes support for self-voicing, a mode in which Ren'Py will
 read on-screen text to vision impaired players. To activate self-voicing,
@@ -122,7 +122,7 @@ channel can be emphasized over music and other sounds,
 
 
 OS X Bug Workaround
---------------
+-------------------
 
 To workaround a bug in Mac OS X 10.9, Ren'Py will now always open on the
 the primary monitor of a Macintosh.
@@ -160,13 +160,13 @@ when some children should not receive events.
 Save dumps (enabled by :var:`config.save_dump`) are performed before the
 save occurs, making them far more useful for debugging pickling problems.
 
-When show_ arguments are past to an :func:`NVLCharacter`, the show_ prefix
+When show\_ arguments are past to an :func:`NVLCharacter`, the show_ prefix
 is stripped and those arguments are passed to the ``nvl`` screen.
 
 Translations
 ------------
 
-This release adss an Italian translation of the launcher and template game,
+This release add an Italian translation of the launcher and template game,
 contributed by Oshi-Shinobu.
 
 This release adds a Portuguese translation of the template game, contributed

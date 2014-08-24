@@ -93,6 +93,16 @@
     Keyword arguments not beginning with underscore (_) are used to
     initialize the screen's scope.
 
+.. function:: renpy.start_predict_screen(_screen_name, *args, **kwargs)
+    
+    Causes Ren'Py to start predicting the screen named `_screen_name`
+    will be shown with the given arguments. This replaces  any previous prediction
+    of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
+
+.. function:: renpy.stop_predict_screen(name)
+    
+    Causes Ren'Py to stop predicting the screen named `name` will be shown.
+
 .. function:: renpy.variant(name)
     
     Returns true if a `name` is a screen variant that can be chosen

@@ -349,6 +349,19 @@
     with the "window show" statement, which shows an empty window whenever
     this functions has not been called during an interaction.
 
+.. function:: renpy.substitute(s, scope=None, translate=True)
+    
+    Applies translation and new-style formatting to the string `s`.
+    
+    `scope`
+        If not None, a scope which is used in formatting, in addition to the
+        default store.
+    
+    `translate`
+        Determines if translation occurs.
+    
+    Returns the translated and formatted string.
+
 .. function:: renpy.transition(trans, layer=None, always=False)
     
     Sets the transition that will be used during the next interaction.
