@@ -191,6 +191,12 @@ class Context(object):
         expr = renpy.python.escape_unicode(expr)
         return eval(expr, renpy.store.__dict__, self.context) #@UndefinedVariable
 
+    def __eq__(self, other):
+        if not isinstance(other, Context):
+            return False
+
+        return self.context == other.context
+
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
@@ -248,10 +254,13 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
-        super(ATLTransformBase, self).take_execution_state(t)
-
         if t.atl is not self.atl:
             return
+
+        if t.context != self.context:
+            return
+
+        super(ATLTransformBase, self).take_execution_state(t)
 
         self.done = t.done
         self.block = t.block
