@@ -21,7 +21,7 @@
 
 init -1500 python in iap:
 
-    from store import persistent
+    from store import persistent, Action
     import time
 
     class Product(object):
@@ -48,7 +48,7 @@ init -1500 python in iap:
 
             return None
 
-        def purchase(self, p):
+        def purchase(self, p, interact=True):
             """
             Triggers an attempt to purchase the product `p`. Returns true if
             the purchase succeeds, and False otherwise.
@@ -119,11 +119,11 @@ init -1500 python in iap:
                 return False
 
 
-        def purchase(self, p):
+        def purchase(self, p, interact=True):
             identifier = self.identifier(p)
 
             self.devicePurchase.beginPurchase(identifier)
-            return self.wait_for_result()
+            return self.wait_for_result(interact=interact)
 
         def restore_purchases(self, interact=True):
             self.devicePurchase.restorePurchases()
@@ -147,8 +147,8 @@ init -1500 python in iap:
 
         `product`
             A string giving the high-level name of the product. This is the
-            string that will be passed to :func:`iap.purchase` and
-            :func:`iap.has_purchased` to represent this product.
+            string that will be passed to :func:`iap.purchase`, :func:`iap.Purchase`,
+            and :func:`iap.has_purchased` to represent this product.
 
         `identifier`
             A string that's used to identify the product internally. Once used
@@ -183,7 +183,7 @@ init -1500 python in iap:
         Contacts the app store and restores any missing purchases.
 
         `interact`
-            If True, renpy.pause will be cause while waiting for the app store
+            If True, renpy.pause will be called while waiting for the app store
             to respond.
         """
 
@@ -192,6 +192,18 @@ init -1500 python in iap:
         for p in products.values():
             persistent._iap_purchases[p.identifier] = backend.has_purchased(p)
 
+    class Restore(Action):
+        """
+        :doc: iap_actions
+
+        An Action that contacts the app store and restores any missing purchases.
+        """
+
+        def __call__(self):
+            restore(False)
+
+        def get_sensitive(self):
+            return get_store_name()
 
     def get_product(product):
         p = products.get(product, None)
@@ -200,7 +212,7 @@ init -1500 python in iap:
 
         return p
 
-    def purchase(product):
+    def purchase(product, interact=False):
         """
         :doc: iap
 
@@ -215,12 +227,31 @@ init -1500 python in iap:
         if persistent._iap_purchases[p.identifier]:
             return True
 
-        rv = backend.purchase(p)
+        rv = backend.purchase(p, interact)
 
         if rv:
             persistent._iap_purchases[p.identifier] = True
 
         return rv
+
+    class Purchase(Action):
+        """
+        :doc: iap_actions
+
+        An action that attempts the purchase of `product`. This action is
+        sensitive iff and only if the product is purchasable (a store is
+        enabled, and the product has not already been purchased.)
+        """
+
+        def __init__(self, product):
+            self.product = product
+
+        def __call__(self):
+            purchase(self.product, interact=False)
+            renpy.restart_interaction()
+
+        def get_sensitive(self):
+            return get_store_name() and not has_purchased(self.product)
 
     def has_purchased(product):
         """
@@ -233,6 +264,17 @@ init -1500 python in iap:
         p = get_product(product)
 
         return persistent._iap_purchases[p.identifier]
+
+    def get_store_name():
+        """
+        :doc: iap
+
+        Returns the name of the enabled store for in-app purchase. This
+        currently returns one of "amazon", "google", or None if no store
+        is configured.
+        """
+
+        return backend.get_store_name()
 
     def missing_products():
         """
