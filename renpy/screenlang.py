@@ -1183,6 +1183,7 @@ class ScreenLangScreen(renpy.object.Object):
     predict = "False"
 
     parameters = None
+    location = None
 
     def __init__(self):
 
