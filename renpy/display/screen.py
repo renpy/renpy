@@ -417,10 +417,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             hid = self.copy()
 
-        hid.phase = HIDE
-
         hid.current_transform_event = kind
         hid.update()
+
+        hid.phase = HIDE
 
         rv = None
 
