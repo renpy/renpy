@@ -770,6 +770,7 @@ cdef class Render:
         rv.operation = self.operation
         rv.operation_alpha = self.operation_alpha
         rv.operation_complete = self.operation_complete
+        rv.nearest = self.nearest
 
         return rv
 
