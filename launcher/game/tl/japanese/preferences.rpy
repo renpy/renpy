@@ -65,3 +65,11 @@ translate japanese strings:
     old "Large fonts"
     new "フォントを大きくする"
 
+    # game/preferences.rpy:91
+    old "Projects directory: [text]"
+    new "プロジェクトディレクトリー: [text]"
+
+    # game/preferences.rpy:114
+    old "Text editor: [text]"
+    new "テキストエディター: [text]"
+

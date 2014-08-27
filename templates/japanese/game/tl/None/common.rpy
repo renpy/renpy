@@ -470,3 +470,6 @@ translate None strings:
     old "{b}Missing Images{/b}"
     new "{b}M画像が見付かりません{/b}"
 
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "ファイル"

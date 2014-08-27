@@ -491,3 +491,10 @@ translate japanese strings:
     old "<repr() failed>"
     new "<repr() 失敗>"
 
+    # renpy/common/_developer/developer.rpym:273
+    old "{b}Missing Images{/b}"
+    new "{b}M画像が見付かりません{/b}"
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "ファイル"
