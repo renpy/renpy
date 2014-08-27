@@ -405,6 +405,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.phase == HIDE:
             hid = self
         else:
+            self.update()
 
             if self.screen is None:
                 return None
@@ -418,8 +419,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
             hid = self.copy()
 
         hid.current_transform_event = kind
-        hid.update()
-
         hid.phase = HIDE
 
         rv = None
