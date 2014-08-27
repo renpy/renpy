@@ -1866,7 +1866,6 @@ def init_statement(l, loc):
     return ast.Init(loc, block, priority)
 
 
-@statement("screen1")
 def screen1_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
@@ -1886,7 +1885,6 @@ def screen1_statement(l, loc):
     return rv
 
 
-@statement("screen2")
 def screen2_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
@@ -1903,10 +1901,17 @@ def screen2_statement(l, loc):
     return rv
 
 # The version of screen language to use by default.
-screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
+default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
 
 @statement("screen")
 def screen_statement(l, loc):
+
+    screen_language = default_screen_language
+
+    slver = l.integer()
+    if slver is not None:
+        screen_language = int(slver)
+
     if screen_language == 1:
         return screen1_statement(l, loc)
     elif screen_language == 2:
