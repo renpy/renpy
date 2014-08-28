@@ -34,7 +34,7 @@ init -1700 python:
             if self is o:
                 return True
 
-            if type(self) is type(o):
+            if _type(self) is _type(o):
                 return (self.__dict__ == o.__dict__)
 
             return False
@@ -53,7 +53,7 @@ init -1700 python:
             if self is o:
                 return True
 
-            if type(self) is not type(o):
+            if _type(self) is not _type(o):
                 return False
 
             for k in self.equality_fields:

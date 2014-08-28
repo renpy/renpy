@@ -24,6 +24,8 @@ python_dict = _dict = dict
 python_object = _object = object
 python_set = _set = set
 
+_type = type
+
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__ #@ReservedAssignment
 
