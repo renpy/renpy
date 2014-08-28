@@ -428,18 +428,23 @@ class Script(object):
 
         if os.path.exists(rpyfn) and os.path.exists(rpycfn):
             rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
-            f = file(rpycfn, "rb")
-            f.seek(-md5.digest_size, 2)
-            rpycdigest = f.read(md5.digest_size)
-            f.close()
 
-            if rpydigest == rpycdigest and \
-                not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
+            try:
+                f = file(rpycfn, "rb")
+                f.seek(-md5.digest_size, 2)
+                rpycdigest = f.read(md5.digest_size)
+                f.close()
 
-                if self.load_file(dir, fn + compiled, initcode):
-                    return
+                if rpydigest == rpycdigest and \
+                    not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
 
-                print "Could not load " + rpycfn
+                    if self.load_file(dir, fn + compiled, initcode):
+                        return
+
+                    print "Could not load " + rpycfn
+
+            except:
+                pass
 
             if not self.load_file(dir, fn + source, initcode):
                 raise Exception("Could not load file %s." % rpyfn)
