@@ -21,7 +21,7 @@
 
 import sys
 import os
-import renpy
+import renpy.audio
 import subprocess
 
 class TTSRoot(Exception):
@@ -135,6 +135,11 @@ def displayable(d):
     if not old_self_voicing:
         old_self_voicing = self_voicing
         prefix = renpy.translation.translate_string("Self-voicing enabled. ")
+
+
+    for i in renpy.config.tts_voice_channels:
+        if not prefix and renpy.audio.music.get_playing(i):
+            return
 
     if d is None:
         d = root
