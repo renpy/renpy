@@ -257,8 +257,13 @@ class ATLTransformBase(renpy.object.Object):
         if t.atl is not self.atl:
             return
 
-        if t.context != self.context:
-            return
+        # Important to do it this way, so we use __eq__. The exception handling
+        # optimistically assumes that uncomparable objects are the same.
+        try:
+            if not (t.context == self.context):
+                return
+        except:
+            pass
 
         super(ATLTransformBase, self).take_execution_state(t)
 
