@@ -31,7 +31,7 @@ from renpy.python import py_compile
 import ast
 
 # The set of names that should be treated as constants.
-always_constants = { 'True', 'False', 'None', "config", "style" }
+always_constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
 pure_functions = {
@@ -73,7 +73,7 @@ pure_functions = {
     "ui.gamemenus",
     }
 
-constants = always_constants | pure_functions
+constants = { "config", "style" } | always_constants | pure_functions
 
 # A set of names that should not be treated as global constants.
 not_constants = set()
