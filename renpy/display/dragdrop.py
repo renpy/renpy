@@ -406,8 +406,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         #    return self.child.event(ev, x, y, st)
 
         # Mouse, in parent-relative coordinates.
-        par_x = self.last_x + x
-        par_y = self.last_y + y
+        par_x = int(self.last_x + x)
+        par_y = int(self.last_y + y)
 
         grabbed = (renpy.display.focus.get_grab() is self)
 
@@ -473,8 +473,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if self.drag_moved:
                 for i, xo, yo in joined_offsets:
 
-                    new_x = par_x - self.grab_x + xo
-                    new_y = par_y - self.grab_y + yo
+                    new_x = int(par_x - self.grab_x + xo)
+                    new_y = int(par_y - self.grab_y + yo)
                     new_x = max(new_x, 0)
                     new_x = min(new_x, int(i.parent_width - i.w))
                     new_y = max(new_y, 0)
