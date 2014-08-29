@@ -152,6 +152,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         """
 
     focusable = True
+    drag_group = None
 
     def __init__(self,
                  d=None,
