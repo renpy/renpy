@@ -167,8 +167,6 @@ class TransformState(renpy.object.Object):
         self.xanchoraround = ts.xanchoraround
         self.yanchoraround = ts.yanchoraround
 
-        self.subpixel = ts.subpixel
-
         self.crop = ts.crop
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
@@ -183,9 +181,13 @@ class TransformState(renpy.object.Object):
          self.default_ypos,
          self.default_xanchor,
          self.default_yanchor,
-         self.xoffset,
-         self.yoffset,
-         self.subpixel) = ts.get_placement()
+         _,
+         _,
+         _) = ts.get_placement()
+
+        self.xoffset = ts.xoffset
+        self.yoffset = ts.yoffset
+        self.subpixel = ts.subpixel
 
     # Returns a dict, with p -> (old, new) where p is a property that
     # has changed between this object and the new object.
@@ -662,14 +664,6 @@ class Transform(Container):
 
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request
-
-        ss = self.state
-        ts = t.state
-
-        ss.default_xpos = first_not_none(ts.xpos, ts.default_xpos)
-        ss.default_ypos = first_not_none(ts.ypos, ts.default_ypos)
-        ss.default_xanchor = first_not_none(ts.xanchor, ts.default_xanchor)
-        ss.default_xanchor = first_not_none(ts.yanchor, ts.default_yanchor)
 
         self.child_st_base = t.child_st_base
 
