@@ -760,6 +760,9 @@ class ADVCharacter(object):
         if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return True
 
+        if not isinstance(what, basestring):
+            raise Exception("Character expects its what argument to be a string, got %r." % (what,))
+
         self.resolve_say_attributes(False)
 
         old_side_image_attributes = renpy.store._side_image_attributes
