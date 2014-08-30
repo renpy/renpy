@@ -89,10 +89,10 @@ class TransformState(renpy.object.Object):
     nearest = False
     xoffset = None
     yoffset = None
-    default_xpos = None
-    default_ypos = None
-    default_xanchor = None
-    default_yanchor = None
+    inherited_xpos = None
+    inherited_ypos = None
+    inherited_xanchor = None
+    inherited_yanchor = None
     transform_anchor = False
     additive = 0.0
     debug = None
@@ -143,12 +143,12 @@ class TransformState(renpy.object.Object):
         # An xpos (etc) inherited from our child overrides an xpos inherited
         # from an old transform, but not an xpos set in the current transform.
         #
-        # default_xpos stores the inherited_xpos, which is overridden by the
+        # inherited_xpos stores the inherited_xpos, which is overridden by the
         # xpos, if not None.
-        self.default_xpos = None
-        self.default_ypos = None
-        self.default_xanchor = None
-        self.default_yanchor = None
+        self.inherited_xpos = None
+        self.inherited_ypos = None
+        self.inherited_xanchor = None
+        self.inherited_yanchor = None
 
     def take_state(self, ts):
 
@@ -177,10 +177,10 @@ class TransformState(renpy.object.Object):
 
         # Take the computed position properties, not the
         # raw ones.
-        (self.default_xpos,
-         self.default_ypos,
-         self.default_xanchor,
-         self.default_yanchor,
+        (self.inherited_xpos,
+         self.inherited_ypos,
+         self.inherited_xanchor,
+         self.inherited_yanchor,
          _,
          _,
          _) = ts.get_placement()
@@ -199,14 +199,14 @@ class TransformState(renpy.object.Object):
             if new != old:
                 rv[prop] = (old, new)
 
-        def diff4(prop, new, default_new, old, default_old):
+        def diff4(prop, new, inherited_new, old, inherited_old):
             if new is None:
-                new_value = default_new
+                new_value = inherited_new
             else:
                 new_value = new
 
             if old is None:
-                old_value = default_old
+                old_value = inherited_old
             else:
                 old_value = old
 
@@ -235,13 +235,13 @@ class TransformState(renpy.object.Object):
         diff2("corner2", newts.corner2, self.corner2)
         diff2("size", newts.size, self.size)
 
-        diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
+        diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
 
-        diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
+        diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
         diff2("xoffset", newts.xoffset, self.xoffset)
 
-        diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
-        diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
+        diff4("ypos", newts.ypos, newts.inherited_ypos, self.ypos, self.inherited_ypos)
+        diff4("yanchor", newts.yanchor, newts.inherited_yanchor, self.yanchor, self.inherited_yanchor)
         diff2("yoffset", newts.yoffset, self.yoffset)
 
         diff2("debug", newts.debug, self.debug)
@@ -252,10 +252,10 @@ class TransformState(renpy.object.Object):
     def get_placement(self, cxoffset=0, cyoffset=0):
 
         return (
-            first_not_none(self.xpos, self.default_xpos),
-            first_not_none(self.ypos, self.default_ypos),
-            first_not_none(self.xanchor, self.default_xanchor),
-            first_not_none(self.yanchor, self.default_yanchor),
+            first_not_none(self.xpos, self.inherited_xpos),
+            first_not_none(self.ypos, self.inherited_ypos),
+            first_not_none(self.xanchor, self.inherited_xanchor),
+            first_not_none(self.yanchor, self.inherited_yanchor),
             self.xoffset + cxoffset,
             self.yoffset + cyoffset,
             self.subpixel,
@@ -295,20 +295,20 @@ class TransformState(renpy.object.Object):
     alignaround = property(get_around, set_alignaround)
 
     def get_angle(self):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return angle
 
     def get_radius(self):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return radius
 
     def set_angle(self, value):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         angle = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
@@ -317,8 +317,8 @@ class TransformState(renpy.object.Object):
             self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
 
     def set_radius(self, value):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         radius = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
@@ -768,13 +768,13 @@ class Transform(Container):
             pos = child.get_placement()
 
             if pos[0] is not None:
-                state.default_xpos = pos[0]
+                state.inherited_xpos = pos[0]
             if pos[2] is not None:
-                state.default_xanchor = pos[2]
+                state.inherited_xanchor = pos[2]
             if pos[1] is not None:
-                state.default_ypos = pos[1]
+                state.inherited_ypos = pos[1]
             if pos[3] is not None:
-                state.default_yanchor = pos[3]
+                state.inherited_yanchor = pos[3]
 
             state.subpixel |= pos[6]
 
