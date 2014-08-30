@@ -93,8 +93,6 @@ class TransformState(renpy.object.Object):
     default_ypos = None
     default_xanchor = None
     default_yanchor = None
-    default_xoffset = None
-    default_yoffset = None
     transform_anchor = False
     additive = 0.0
     debug = None
@@ -141,8 +139,12 @@ class TransformState(renpy.object.Object):
         # - renpy.atl.PROPERTIES
         # - Proxies in Transform
 
-        # Default values for various properties, taken from our
-        # parent.
+
+        # An xpos (etc) inherited from our child overrides an xpos inherited
+        # from an old transform, but not an xpos set in the current transform.
+        #
+        # default_xpos stores the inherited_xpos, which is overridden by the
+        # xpos, if not None.
         self.default_xpos = None
         self.default_ypos = None
         self.default_xanchor = None
@@ -661,10 +663,13 @@ class Transform(Container):
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request
 
-        self.state.xpos = t.state.xpos
-        self.state.ypos = t.state.ypos
-        self.state.xanchor = t.state.xanchor
-        self.state.yanchor = t.state.yanchor
+        ss = self.state
+        ts = t.state
+
+        ss.default_xpos = first_not_none(ts.xpos, ts.default_xpos)
+        ss.default_ypos = first_not_none(ts.ypos, ts.default_ypos)
+        ss.default_xanchor = first_not_none(ts.xanchor, ts.default_xanchor)
+        ss.default_xanchor = first_not_none(ts.yanchor, ts.default_yanchor)
 
         self.child_st_base = t.child_st_base
 
