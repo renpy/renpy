@@ -405,6 +405,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.phase == HIDE:
             hid = self
         else:
+
+            updated_screens.discard(self)
             self.update()
 
             if self.screen is None:
