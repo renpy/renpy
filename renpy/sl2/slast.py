@@ -24,14 +24,14 @@ import collections
 import linecache
 
 import renpy.display
-import renpy.sl2
+import renpy.pyanalysis
 
 from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
 from renpy.display.predict import displayable as predict_displayable
 
 from renpy.python import py_compile, py_eval_bytecode
-from renpy.sl2.pyutil import Analysis, NOT_CONST, GLOBAL_CONST
+from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
@@ -174,7 +174,7 @@ class SLNode(object):
         python block) is called.
 
         `analysis`
-            A pyutil.Analysis object containing the analysis of this screen.
+            A pyanalysis.Analysis object containing the analysis of this screen.
         """
 
         # By default, does nothing.
@@ -1363,7 +1363,7 @@ class SLScreen(SLBlock):
             if renpy.display.screen.get_profile(self.name).const:
                 profile_log.write("CONST ANALYSIS %s", self.name)
 
-                new_constants = [ i for i in analysis.global_constant if i not in renpy.sl2.pyutil.constants ]
+                new_constants = [ i for i in analysis.global_constant if i not in renpy.pyanalysis.constants ]
                 new_constants.sort()
                 profile_log.write('    global_const: %s', " ".join(new_constants))
 

@@ -240,6 +240,7 @@ def import_all():
     # Adds in the Ren'Py loader.
     import renpy.loader
 
+
     import renpy.ast
     import renpy.atl
     import renpy.curry
@@ -250,6 +251,7 @@ def import_all():
     import renpy.persistent
     import renpy.parser
     import renpy.python
+    import renpy.pyanalysis
     import renpy.script
     import renpy.statements
     import renpy.style
@@ -318,12 +320,11 @@ def import_all():
     import renpy.ui
     import renpy.screenlang
 
-    import renpy.sl2 # @UnresolvedImport
+    import renpy.sl2
     update_path(renpy.sl2)
 
-    import renpy.sl2.pyutil # @UnresolvedImport
-    import renpy.sl2.slparser # @UnresolvedImport
-    import renpy.sl2.sldisplayables # @UnresolvedImport
+    import renpy.sl2.slparser
+    import renpy.sl2.sldisplayables
 
     import renpy.lint
     import renpy.warp

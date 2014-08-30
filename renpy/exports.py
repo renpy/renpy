@@ -30,7 +30,7 @@ _file = file
 import renpy.display
 import renpy.audio
 
-from renpy.sl2.pyutil import const, pure, not_const
+from renpy.pyanalysis import const, pure, not_const
 
 def renpy_pure(fn):
     """

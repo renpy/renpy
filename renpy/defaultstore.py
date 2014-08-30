@@ -183,7 +183,7 @@ Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
 
 # NOTE: When exporting something from here, decide if we need to add it to
-# renpy.sl2.pyutil.pure_functions.
+# renpy.pyanalysis.pure_functions.
 
 Style = renpy.style.Style # @UndefinedVariable
 
