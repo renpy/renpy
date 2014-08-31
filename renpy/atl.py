@@ -181,6 +181,23 @@ def interpolate_spline(t, spline):
 
     return correct_type(rv, spline[-1], position)
 
+# A list of atl transforms that may need to be compile.
+compile_queue = [ ]
+
+def compile_all():
+    """
+    Called after the init phase is finished and transforms are compiled,
+    to compile all transforms.
+    """
+
+    global compile_queue
+
+    for i in compile_queue:
+        if i.atl.constant:
+            i.compile()
+
+    compile_queue = [ ]
+
 
 # This is the context used when compiling an ATL statement. It stores the
 # scopes that are used to evaluate the various expressions in the statement,
@@ -206,6 +223,9 @@ class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
     parameters = renpy.ast.ParameterInfo([ ], [ ], None, None)
+    parent_transform = None
+
+    nosave = [ 'parent_transform' ]
 
     def __init__(self, atl, context, parameters):
 
@@ -250,6 +270,12 @@ class ATLTransformBase(renpy.object.Object):
         # The child, without any transformations.
         self.raw_child = None
 
+        # The parent transform that was called to create this transform.
+        self.parent_transform = None
+
+        if renpy.game.context().init_phase:
+            compile_queue.append(self)
+
     def take_execution_state(self, t):
         """
         Updates self to begin executing from the same point as t. This
@@ -284,7 +310,6 @@ class ATLTransformBase(renpy.object.Object):
         if self.child is renpy.display.motion.null:
             self.child = t.child
             self.raw_child = t.raw_child
-
 
 
     def __call__(self, *args, **kwargs):
@@ -345,6 +370,7 @@ class ATLTransformBase(renpy.object.Object):
             context=context,
             parameters=parameters)
 
+        rv.parent_transform = self
         rv.take_state(self)
 
         return rv
@@ -359,6 +385,13 @@ class ATLTransformBase(renpy.object.Object):
         if self.parameters.positional and self.parameters.positional[0][1] is None:
             raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
 
+        if self.atl.constant and self.parent_transform:
+            if self.parent_transform.block:
+                self.block = self.parent_transform.block
+                self.properties = self.parent_transform.properties
+                self.parent_transform = None
+                return
+
         old_exception_info = renpy.game.exception_info
 
         self.block = self.atl.compile(self.context)
@@ -372,6 +405,11 @@ class ATLTransformBase(renpy.object.Object):
                 self.properties = interp.properties[:]
 
         renpy.game.exception_info = old_exception_info
+
+        if self.atl.constant and self.parent_transform:
+            self.parent_transform.block = self.block
+            self.parent_transform.properties = self.properties
+            self.parent_transform = None
 
 
     def execute(self, trans, st, at):

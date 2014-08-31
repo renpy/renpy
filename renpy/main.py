@@ -303,8 +303,9 @@ def main():
         # Rebuild the various style caches.
         renpy.style.build_styles() # @UndefinedVariable
 
-        # Analyze the script.
+        # Analyze the script and compile ATL.
         renpy.game.script.analyze()
+        renpy.atl.compile_all()
 
         # Prepare the screens.
         renpy.display.screen.prepare_screens()
