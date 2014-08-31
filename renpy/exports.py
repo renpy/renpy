@@ -2014,6 +2014,8 @@ def load_string(s, filename="<string>"):
 
         renpy.config.locked = old_locked
 
+        renpy.game.script.analyze()
+
         return stmts[0].name
 
     finally:

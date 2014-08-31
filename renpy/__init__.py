@@ -240,6 +240,7 @@ def import_all():
     # Adds in the Ren'Py loader.
     import renpy.loader
 
+    import renpy.pyanalysis
 
     import renpy.ast
     import renpy.atl
@@ -251,7 +252,6 @@ def import_all():
     import renpy.persistent
     import renpy.parser
     import renpy.python
-    import renpy.pyanalysis
     import renpy.script
     import renpy.statements
     import renpy.style

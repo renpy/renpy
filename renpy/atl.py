@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import renpy.pyanalysis
+
 import random
 
 def compiling(loc):
@@ -429,9 +431,14 @@ class ATLTransformBase(renpy.object.Object):
 
         return self.children + self.block.visit()
 
+# This is used in mark_constant to analyze expressions for constness.
+is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
+GLOBAL_CONST = renpy.pyanalysis.GLOBAL_CONST
 
 # The base class for raw ATL statements.
 class RawStatement(renpy.object.Object):
+
+    constant = None
 
     def __init__(self, loc):
         super(RawStatement, self).__init__()
@@ -445,6 +452,14 @@ class RawStatement(renpy.object.Object):
     # Predicts the images used by this statement.
     def predict(self, ctx):
         return
+
+    def mark_constant(self):
+        """
+        Sets self.constant to true if all expressions used in this statement
+        and its children are constant.
+        """
+
+        self.constant = 0
 
 # The base class for compiled ATL Statements.
 class Statement(renpy.object.Object):
@@ -510,6 +525,16 @@ class RawBlock(RawStatement):
     def predict(self, ctx):
         for i in self.statements:
             i.predict(ctx)
+
+    def mark_constant(self):
+
+        constant = GLOBAL_CONST
+
+        for i in self.statements:
+            i.mark_constant()
+            constant = min(constant, i.constant)
+
+        self.constant = constant
 
 
 # A compiled ATL block.
@@ -765,6 +790,27 @@ class RawMultipurpose(RawStatement):
 
         return Interpolation(self.loc, warper, duration, properties, self.revolution, circles, splines)
 
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        constant = min(constant, is_constant_expr(self.warp_function))
+        constant = min(constant, is_constant_expr(self.duration))
+        constant = min(constant, is_constant_expr(self.circles))
+
+        for _name, expr in self.properties:
+            constant = min(constant, is_constant_expr(expr))
+
+        for _name, exprs in self.splines:
+            for expr in exprs:
+                constant = min(constant, is_constant_expr(expr))
+
+        for expr, withexpr in self.expressions:
+            constant = min(constant, is_constant_expr(expr))
+            constant = min(constant, is_constant_expr(withexpr))
+
+        self.constant = constant
+
+
     def predict(self, ctx):
 
         for i, _j in self.expressions:
@@ -797,6 +843,9 @@ class RawContainsExpr(RawStatement):
         child = ctx.eval(self.expression)
         return Child(self.loc, child, None)
 
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.expression)
+
 
 # This allows us to have multiple children, inside a Fixed.
 class RawChild(RawStatement):
@@ -814,6 +863,16 @@ class RawChild(RawStatement):
             box.add(renpy.display.motion.ATLTransform(i, context=ctx.context))
 
         return Child(self.loc, box, None)
+
+    def mark_constant(self):
+
+        constant = GLOBAL_CONST
+
+        for i in self.children:
+            i.mark_constant()
+            constant = min(constant, i.constant)
+
+        self.constant = constant
 
 
 # This changes the child of this statement, optionally with a transition.
@@ -1001,6 +1060,9 @@ class RawRepeat(RawStatement):
 
         return Repeat(self.loc, repeats)
 
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.repeats)
+
 class Repeat(Statement):
 
     def __init__(self, loc, repeats):
@@ -1029,6 +1091,14 @@ class RawParallel(RawStatement):
         for i in self.blocks:
             i.predict(ctx)
 
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        for i in self.blocks:
+            i.mark_constant()
+            constant = min(constant, i.constant)
+
+        self.constant = constant
 
 class Parallel(Statement):
 
@@ -1092,6 +1162,15 @@ class RawChoice(RawStatement):
         for _i, j in self.choices:
             j.predict(ctx)
 
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        for _chance, block in self.choices:
+            block.mark_constant()
+            constant = min(constant, block.constant)
+
+        self.constant = constant
+
 class Choice(Statement):
 
     def __init__(self, loc, choices):
@@ -1146,6 +1225,9 @@ class RawTime(RawStatement):
         compiling(self.loc)
         return Time(self.loc, ctx.eval(self.time))
 
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.time)
+
 class Time(Statement):
 
     def __init__(self, loc, time):
@@ -1180,6 +1262,16 @@ class RawOn(RawStatement):
     def predict(self, ctx):
         for i in self.handlers.itervalues():
             i.predict(ctx)
+
+    def mark_constant(self):
+        constant = GLOBAL_CONST
+
+        for block in self.handlers.itervalues():
+            block.mark_constant()
+            constant = min(constant, block.constant)
+
+        self.constant = constant
+
 
 class On(Statement):
 
@@ -1271,6 +1363,8 @@ class RawEvent(RawStatement):
     def compile(self, ctx): #@ReservedAssignment
         return Event(self.loc, self.name)
 
+    def mark_constant(self):
+        self.constant = GLOBAL_CONST
 
 class Event(Statement):
 
@@ -1294,6 +1388,8 @@ class RawFunction(RawStatement):
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
 
+    def mark_constant(self):
+        self.constant = is_constant_expr(self.function)
 
 class Function(Statement):
 
