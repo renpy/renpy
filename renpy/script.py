@@ -107,6 +107,10 @@ class Script(object):
         self.namemap = { }
         self.all_stmts = [ ]
         self.all_pycode = [ ]
+
+        # A list of statements that haven't been analyzed.
+        self.need_analysis = [ ]
+
         self.record_pycode = True
 
         # Bytecode caches.
@@ -409,6 +413,8 @@ class Script(object):
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
 
+        self.need_analysis.extend(all_stmts)
+
         return stmts
 
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
@@ -563,3 +569,13 @@ class Script(object):
         label = renpy.config.label_overrides.get(label, label)
 
         return label in self.namemap
+
+    def analyze(self):
+        """
+        Analyzes all statements that need analysis.
+        """
+
+        for i in self.need_analysis:
+            i.analyze()
+
+        self.need_analysis = [ ]

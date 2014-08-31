@@ -439,6 +439,14 @@ class Node(object):
 
         raise Exception("Not Implemented")
 
+    def analyze(self):
+        """
+        Called on all code after the init phase, to analyze it.
+        """
+
+        # Does nothing by default.
+        return
+
 def say_menu_with(expression, callback):
     """
     This handles the with clause of a say or menu statement.
@@ -907,6 +915,9 @@ class Transform(Node):
         renpy.exports.pure(self.varname)
         setattr(renpy.store, self.varname, trans)
 
+    def analyze(self):
+        self.atl.mark_constant()
+
 
 def predict_imspec(imspec, scene=False, atl=None):
     """
@@ -990,6 +1001,7 @@ def show_imspec(imspec, atl=None):
                       behind=behind,
                       atl=atl)
 
+
 class Show(Node):
 
     __slots__ = [
@@ -1055,6 +1067,10 @@ class ShowLayer(Node):
     def predict(self):
         return [ self.next ]
 
+    def analyze(self):
+        if self.atl is not None:
+            self.atl.mark_constant()
+
 
 class Scene(Node):
 
@@ -1102,6 +1118,10 @@ class Scene(Node):
             predict_imspec(self.imspec, atl=getattr(self, "atl", None), scene=True)
 
         return [ self.next ]
+
+    def analyze(self):
+        if self.atl is not None:
+            self.atl.mark_constant()
 
 
 class Hide(Node):
