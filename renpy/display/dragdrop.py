@@ -170,7 +170,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  replaces=None,
                  **properties):
 
-        super(Drag, self).__init__(self, **properties)
+        super(Drag, self).__init__(**properties)
 
         self.drag_name = drag_name
         self.draggable = draggable
