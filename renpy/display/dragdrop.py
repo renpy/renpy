@@ -363,14 +363,21 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.w = cw
         self.h = ch
 
-        # If we don't have a position, then look for it in a drag group.
-        if (self.x is None) and (self.drag_group is not None) and (self.drag_name is not None):
-            if self.drag_name in self.drag_group.positions:
-                self.x, self.y = self.drag_group.positions[self.drag_name]
+
+        # Back up self.x, since get_placement() uses it to place us.
+        old_x = self.x
+        self.x = None
 
         place_x, place_y = self.place(None, 0, 0, width, height, rv)
         place_x = int(place_x)
         place_y = int(place_y)
+
+        self.x = old_x
+
+        # If we don't have a position, then look for it in a drag group.
+        if (self.x is None) and (self.drag_group is not None) and (self.drag_name is not None):
+            if self.drag_name in self.drag_group.positions:
+                self.x, self.y = self.drag_group.positions[self.drag_name]
 
         if (self.place_x is not None) and (self.place_x != place_x):
             place = True
