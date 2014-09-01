@@ -154,8 +154,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     focusable = True
 
     drag_group = None
-    place_x = None
-    place_y = None
+    old_position = None
 
     def __init__(self,
                  d=None,
@@ -204,10 +203,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.w = None
         self.h = None
 
-        # The x and y coordinates that we were placed at by the placement
-        # algorithm.
-        self.place_x = None
-        self.place_y = None
+        self.old_position = None
 
         # The width and height of our parent.
         self.parent_width = None
@@ -255,8 +251,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.grab_y = replaces.grab_y
             self.last_x = replaces.last_x
             self.last_y = replaces.last_y
-            self.place_x = replaces.place_x
-            self.place_y = replaces.place_y
+            self.old_position = replaces.old_position
             self.drag_moved = replaces.drag_moved
             self.last_drop = replaces.last_drop
 
@@ -284,7 +279,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.x = x
             self.y = y
 
-        self.drag_group.positions[self.drag_name] = (x, y)
+        self.drag_group.positions[self.drag_name] = (x, y, self.old_position)
 
         redraw(self, 0)
 
@@ -363,25 +358,19 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.w = cw
         self.h = ch
 
-
-        # Back up self.x, since get_placement() uses it to place us.
-        old_x = self.x
-        self.x = None
-
-        place_x, place_y = self.place(None, 0, 0, width, height, rv)
-        place_x = int(place_x)
-        place_y = int(place_y)
-
-        self.x = old_x
+        position = (self.style.xpos, self.style.ypos, self.style.xanchor, self.style.yanchor, self.style.xoffset, self.style.yoffset)
 
         # If we don't have a position, then look for it in a drag group.
         if (self.x is None) and (self.drag_group is not None) and (self.drag_name is not None):
             if self.drag_name in self.drag_group.positions:
-                self.x, self.y = self.drag_group.positions[self.drag_name]
+                dgp = self.drag_group.positions[self.drag_name]
+                if len(dgp) == 3:
+                    self.x, self.y, self.old_position = dgp
+                else:
+                    self.x, self.y = dgp
+                    self.old_position = position
 
-        if (self.place_x is not None) and (self.place_x != place_x):
-            place = True
-        elif (self.place_y is not None) and (self.place_y != place_y):
+        if self.old_position != position:
             place = True
         elif self.x is None:
             place = True
@@ -391,9 +380,17 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # If we don't have a position, run the placement code and use
         # that to compute our placement.
         if place:
-            self.x = self.place_x = place_x
-            self.y = self.place_y = place_y
+            # This is required to get get_placement to work properly.
+            self.x = None
+
+            place_x, place_y = self.place(None, 0, 0, width, height, rv)
+
+            self.x = int(place_x)
+            self.y = int(place_y)
+
             self.target_x = None
+
+            self.old_position = position
 
         if self.target_x is None:
             self.target_x = self.x
@@ -518,7 +515,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                     new_y = min(new_y, int(i.parent_height - i.h))
 
                     if i.drag_group is not None and i.drag_name is not None:
-                        i.drag_group.positions[i.drag_name] = (new_x, new_y)
+                        i.drag_group.positions[i.drag_name] = (new_x, new_y, self.old_position)
 
                     i.x = new_x
                     i.y = new_y
