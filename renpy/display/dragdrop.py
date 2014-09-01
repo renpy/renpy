@@ -152,7 +152,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         """
 
     focusable = True
+
     drag_group = None
+    place_x = None
+    place_y = None
 
     def __init__(self,
                  d=None,
@@ -201,6 +204,11 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.w = None
         self.h = None
 
+        # The x and y coordinates that we were placed at by the placement
+        # algorithm.
+        self.place_x = None
+        self.place_y = None
+
         # The width and height of our parent.
         self.parent_width = None
         self.parent_height = None
@@ -243,6 +251,14 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.target_x = replaces.target_x
             self.target_y = replaces.target_y
             self.target_at = replaces.target_at
+            self.grab_x = replaces.grab_x
+            self.grab_y = replaces.grab_y
+            self.last_x = replaces.last_x
+            self.last_y = replaces.last_y
+            self.place_x = replaces.place_x
+            self.place_y = replaces.place_y
+            self.drag_moved = replaces.drag_moved
+            self.last_drop = replaces.last_drop
 
         if d is not None:
             self.add(d)
@@ -351,12 +367,25 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if self.drag_name in self.drag_group.positions:
                 self.x, self.y = self.drag_group.positions[self.drag_name]
 
+        place_x, place_y = self.place(None, 0, 0, width, height, rv)
+        place_x = int(place_x)
+        place_y = int(place_y)
+
+        if (self.place_x is not None) and (self.place_x != place_x):
+            place = True
+        elif (self.place_y is not None) and (self.place_y != place_y):
+            place = True
+        elif self.x is None:
+            place = True
+        else:
+            place = False
+
         # If we don't have a position, run the placement code and use
         # that to compute our placement.
-        if self.x is None:
-            self.x, self.y = self.place(None, 0, 0, width, height, rv)
-            self.x = int(self.x)
-            self.y = int(self.y)
+        if place:
+            self.x = self.place_x = place_x
+            self.y = self.place_y = place_y
+            self.target_x = None
 
         if self.target_x is None:
             self.target_x = self.x
