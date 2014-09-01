@@ -320,7 +320,7 @@ init -1500 python:
 
             if not main_menu:
                 if self.confirm:
-                    if config.autosave_on_quit:
+                    if config.autosave_on_quit and not fn.startswith("auto-"):
                         renpy.loadsave.force_autosave()
                     layout.yesno_screen(layout.LOADING, FileLoad(self.name, False, self.page))
                     return
