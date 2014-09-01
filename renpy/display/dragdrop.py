@@ -25,7 +25,7 @@
 import renpy.display
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
-from renpy.display.behavior import map_event, run
+from renpy.display.behavior import map_event, run, run_unhovered
 
 import pygame
 
@@ -342,6 +342,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         super(Drag, self).unfocus(default)
 
         if not default:
+            run_unhovered(self.hovered)
             run(self.unhovered)
 
     def render(self, width, height, st, at):
