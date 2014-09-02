@@ -84,7 +84,7 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
-    new "よろしいですか？"
+    new "続けますか？"
 
     # renpy/common/00layout.rpy:422
     old "Are you sure you want to delete this save?"
@@ -96,7 +96,7 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:424
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "現在の状況を破棄してロードしますか？"
+    new "セーブされていないデータは失われます\n続けますか？"
 
     # renpy/common/00layout.rpy:425
     old "Are you sure you want to quit?"
@@ -104,7 +104,7 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "現在の状況を破棄してメインメニューに戻りますか？"
+    new "メインメニューに戻りますか？\nセーブされていないデータは破棄されます"
 
 # Translation updated at 2013-02-18 11:40
 
