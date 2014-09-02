@@ -485,5 +485,6 @@ Keyword("unhovered")
 add(ui_properties)
 add(position_properties)
 
-
-
+DisplayableParser("on", renpy.display.behavior.OnEvent, 0)
+Positional("event")
+Keyword("action")

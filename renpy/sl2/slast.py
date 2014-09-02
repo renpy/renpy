@@ -1124,53 +1124,6 @@ class SLDefault(SLNode):
 
         scope[variable] = eval(self.expr, context.globals, scope)
 
-class SLOn(SLNode):
-
-    def __init__(self, loc, event):
-        SLNode.__init__(self, loc)
-
-        self.event = event
-
-        # This stores the action using the 'action' property.
-        self.keyword = [ ]
-
-    def prepare(self, analysis):
-
-        keywords = dict(self.keyword)
-
-        event_node = py_compile(self.event, 'eval', ast_node=True)
-        action_node = py_compile(keywords.get('action', None), 'eval', ast_node=True)
-
-        self.event_expr = compile_expr(event_node)
-        self.action_expr = compile_expr(action_node)
-
-        if analysis.is_constant(event_node):
-            self.event_value = py_eval_bytecode(self.event_expr)
-        else:
-            self.event_value = None
-
-        if analysis.is_constant(action_node):
-            self.action_value = py_eval_bytecode(self.action_expr)
-        else:
-            self.action_value = None
-
-        self.constant = NOT_CONST
-        self.last_keyword = True
-
-
-    def execute(self, context):
-
-        event = self.event_value
-        if event is None:
-            event = eval(self.event_expr, context.globals, context.scope)
-
-        action = self.action_value
-        if action is None:
-            action = eval(self.action_expr, context.globals, context.scope)
-
-        renpy.ui.on(event, action)
-
-
 class SLUse(SLNode):
 
     def __init__(self, loc, target, args):

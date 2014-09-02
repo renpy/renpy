@@ -1698,3 +1698,31 @@ class MouseArea(renpy.display.core.Displayable):
 
             run_unhovered(self.hovered)
             run(self.unhovered)
+
+class OnEvent(renpy.display.core.Displayable):
+    """
+    This is a displayable that runs an action in response to a transform
+    event. It's used to implement the screen language on statement.
+    """
+
+
+    def __init__(self, event, action=[ ]):
+        """
+        `event`
+            A string giving the event name.
+
+        `action`
+            An action or list of actions that are run when the event occurs.
+        """
+
+        super(OnEvent, self).__init__()
+
+        self.event_name = event
+        self.action = action
+
+    def set_transform_event(self, event):
+        if event == self.event_name:
+            run(self.action)
+
+    def render(self, width, height, st, at):
+        return renpy.display.render.Render(0, 0)

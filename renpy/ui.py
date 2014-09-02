@@ -1301,12 +1301,8 @@ def gamemenus(*args):
 
 ##############################################################################
 # The on statement.
-def on(event, action=[], id=None): #@ReservedAssignment
-    if renpy.display.screen.current_screen().current_transform_event != event:
-        return
 
-    renpy.display.behavior.run(action)
-
+on = Wrapper(renpy.display.behavior.OnEvent)
 
 ##############################################################################
 # Postamble

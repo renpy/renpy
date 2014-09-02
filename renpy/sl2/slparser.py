@@ -617,22 +617,6 @@ class DefaultParser(Parser):
 DefaultParser("default")
 
 
-class OnParser(Parser):
-
-    def parse(self, loc, l, parent):
-
-        event = l.require(l.comma_expression)
-
-        rv = slast.SLOn(loc, event)
-
-        self.parse_contents(l, rv)
-
-        return rv
-
-OnParser("on")
-Keyword("action")
-
-
 class UseParser(Parser):
 
     def __init__(self, name):
