@@ -124,7 +124,7 @@ init -1500 python:
     @renpy.pure
     class HideInterface(Action, DictEquality):
         """
-         :doc other_action
+         :doc: other_action
 
          Causes the interface to be hidden until the user clicks.
          """
