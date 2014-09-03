@@ -497,3 +497,7 @@ translate spanish strings:
     old "Autoreload"
     new "Autorecarga"
 
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "Ubicación"
+

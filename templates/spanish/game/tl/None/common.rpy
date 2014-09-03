@@ -452,3 +452,11 @@ translate None strings:
     old "{b}Missing Images{/b}"
     new "{b}Imágenes ausentes{/b}"
 
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "Autorecarga"
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "Ubicación"
+
