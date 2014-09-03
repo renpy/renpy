@@ -224,6 +224,13 @@ class SubFile(object):
 
         self.f.seek(self.base)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _type, value, tb):
+        self.close()
+        return False
+
     def read(self, length=None):
 
         maxlength = self.length - self.offset
