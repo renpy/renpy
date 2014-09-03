@@ -22,6 +22,10 @@
          that is opened in a web browser. If None, the value of
          config.help is used in the same wayt.
 
+.. function:: HideInterface()
+    
+    Causes the interface to be hidden until the user clicks.
+
 .. function:: If(expression, true=None, false=None)
     
     This returns `true` if `expression` is true, and `false`

@@ -55,7 +55,7 @@ from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
 
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
-from renpy.display.screen import  has_screen, get_screen, get_widget, ScreenProfile as profile_screen
+from renpy.display.screen import has_screen, get_screen, get_widget, ScreenProfile as profile_screen
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
 from renpy.display.image import image_exists

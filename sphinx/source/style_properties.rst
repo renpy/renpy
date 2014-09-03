@@ -79,8 +79,6 @@ text inside the button. The :propref:`background` style property sets the
 background of a button, while the :propref:`color` property sets the color of
 text.::
 
-    init python:
-
      # The button background is gray when insensitive, light
      # blue when hovered, and dark blue otherwise.
      style button:
@@ -91,7 +89,7 @@ text.::
      # The button text is yellow when selected, and white
      # otherwise.
      style button_text:
-         color = "#fff"
+         color "#fff"
          selected_color = "#ff0"
 
 Style Property Values

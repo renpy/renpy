@@ -55,7 +55,7 @@
 * :func:`HBox`
 * :func:`Help`
 * :func:`Hide`
-* HideInterface
+* :func:`HideInterface`
 * :func:`If`
 * :func:`Image`
 * :func:`ImageDissolve`

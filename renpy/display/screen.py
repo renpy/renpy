@@ -33,12 +33,14 @@ profile_log = renpy.log.open("profile_screen", developer=True, append=False, flu
 profile = { }
 
 class ScreenProfile(renpy.object.Object):
+    """
+    :doc: profile_screen
+    :name: renpy.profile_screen
+
+    """
 
     def __init__(self, name, predict=False, show=False, update=False, request=False, time=False, debug=False, const=False):
         """
-        :doc: profile_screen
-        :name: renpy.profile_screen
-
         Requests screen profiling for the screen named `name`, which
         must be a string.
 

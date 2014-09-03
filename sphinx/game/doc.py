@@ -160,6 +160,7 @@ def scan(name, o, prefix=""):
 
         lines.append(l)
 
+
     if section is None:
         return
 
