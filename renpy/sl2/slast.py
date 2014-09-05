@@ -109,6 +109,9 @@ class SLContext(renpy.ui.Addable):
         # True if we're predicting the screen.
         self.predicting = False
 
+        # True if we're updating the screen.
+        self.updating = False
+
         # A list of nodes we've predicted, for cases where predicting more than
         # once could be a performance problem.
         self.predicted = set()
@@ -606,7 +609,7 @@ class SLDisplayable(SLBlock):
                 if self.scope:
                     keywords["scope"] = ctx.scope
 
-                if self.replaces:
+                if self.replaces and context.updating:
                     keywords['replaces'] = old_main
 
                 # Pass the context
@@ -681,7 +684,7 @@ class SLDisplayable(SLBlock):
                 if self.scope:
                     keywords["scope"] = ctx.scope
 
-                if self.replaces:
+                if self.replaces and context.updating:
                     keywords['replaces'] = old_main
 
                 if self.pass_context:
@@ -738,10 +741,9 @@ class SLDisplayable(SLBlock):
                 else:
                     d = transform(d)
 
-                if isinstance(d, Transform):
-                    if cache.transform is not None:
-                        d.take_state(cache.transform)
-                        d.take_execution_state(cache.transform)
+                if context.updating and isinstance(d, Transform) and (cache.transform is not None):
+                    d.take_state(cache.transform)
+                    d.take_execution_state(cache.transform)
 
             cache.transform = d
 
@@ -1346,16 +1348,20 @@ class SLScreen(SLBlock):
             values = renpy.ast.apply_arguments(self.parameters, args, kwargs, ignore_errors=renpy.display.predict.predicting)
             scope.update(values)
 
-        self.prepare()
+        if not self.prepared:
+            self.prepare()
+
+        current_screen = renpy.display.screen.current_screen()
 
         context = SLContext()
         context.scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
         context.predicting = renpy.display.predict.predicting
+        context.updating = (current_screen.phase == renpy.display.screen.UPDATE)
 
         name = scope["_name"]
-        main_cache = renpy.display.screen.current_screen().cache
+        main_cache = current_screen.cache
 
         cache = main_cache.get(name, None)
         if cache is None or (cache["version"] != self.version):
