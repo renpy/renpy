@@ -182,6 +182,10 @@ def bootstrap(renpy_base):
     else:
         basedir = renpy_base
 
+    if not os.path.exists(basedir):
+        sys.stderr.write("Base directory %r does not exist. Giving up.\n" % (basedir,))
+        sys.exit(1)
+
 
     gamedirs = [ name ]
     game_name = name
