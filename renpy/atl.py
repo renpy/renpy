@@ -282,6 +282,8 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
+        super(ATLTransformBase, self).take_execution_state(t)
+
         if t.atl is not self.atl:
             return
 
@@ -292,8 +294,6 @@ class ATLTransformBase(renpy.object.Object):
                 return
         except:
             pass
-
-        super(ATLTransformBase, self).take_execution_state(t)
 
         self.done = t.done
         self.block = t.block

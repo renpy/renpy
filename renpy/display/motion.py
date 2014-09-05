@@ -665,6 +665,11 @@ class Transform(Container):
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request
 
+        self.state.xpos = t.state.xpos
+        self.state.ypos = t.state.ypos
+        self.state.xanchor = t.state.xanchor
+        self.state.yanchor = t.state.yanchor
+
         self.child_st_base = t.child_st_base
 
         if isinstance(self.child, Transform) and isinstance(t.child, Transform):
