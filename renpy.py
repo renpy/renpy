@@ -41,6 +41,18 @@ def path_to_common(renpy_base):
 def path_to_saves(gamedir):
     import renpy #@UnresolvedImport
 
+    # Makes sure the permissions are right on the save directory.
+    def test_writable(d):
+        try:
+            fn = os.path.join(d, "test.txt")
+            open(fn, "w").close()
+            open(fn, "r").close()
+            os.unlink(fn)
+            return True
+        except:
+            return False
+
+
     # Android.
     if renpy.android:
         paths = [
@@ -50,7 +62,7 @@ def path_to_saves(gamedir):
             ]
 
         for rv in paths:
-            if os.path.isdir(rv):
+            if os.path.isdir(rv) and test_writable(rv):
                 break
 
         print "Using savedir", rv
