@@ -356,16 +356,14 @@ class Grid(Container):
             else:
                 raise Exception("Grid overfull.")
 
-        # If necessary, transpose the grid (kinda hacky, but it works here.)
         if self.transpose:
-            self.transpose = False
+            children = [ ]
+            for y in range(rows):
+                for x in range(cols):
+                    children.append(self.children[y + x * rows])
 
-            old_children = self.children[:]
-
-            for y in range(0, rows):
-                for x in range(0, cols):
-                    self.children[x + y * cols] = old_children[ y + x * rows ]
-
+        else:
+            children = self.children
 
         # Now, start the actual rendering.
 
@@ -377,7 +375,7 @@ class Grid(Container):
         if self.style.yfill:
             renheight = (height - (rows - 1) * padding) / rows
 
-        renders = [ render(i, renwidth, renheight, st, at) for i in self.children ]
+        renders = [ render(i, renwidth, renheight, st, at) for i in children ]
         sizes = [ i.get_size() for i in renders ]
 
         cwidth = 0
@@ -398,19 +396,27 @@ class Grid(Container):
 
         rv = renpy.display.render.Render(width, height)
 
-        self.offsets = [ ]
+        offsets = [ ]
 
         for y in range(0, rows):
             for x in range(0, cols):
 
-                child = self.children[ x + y * cols ]
+                child = children[ x + y * cols ]
                 surf = renders[x + y * cols]
 
                 xpos = x * (cwidth + padding)
                 ypos = y * (cheight + padding)
 
                 offset = child.place(rv, xpos, ypos, cwidth, cheight, surf)
-                self.offsets.append(offset)
+                offsets.append(offset)
+
+        if self.transpose:
+            self.offsets = [ ]
+            for x in range(cols):
+                for y in range(rows):
+                    self.offsets.append(offsets[y * cols + x])
+        else:
+            self.offsets = offsets
 
         return rv
 
