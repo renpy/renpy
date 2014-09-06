@@ -505,9 +505,10 @@ def init():
     # 1. User savedir.
     location.add(FileLocation(renpy.config.savedir))
 
-    # 2. Game-local savedir. (TODO: Check to see if writable.)
-    path = os.path.join(renpy.config.gamedir, "saves")
-    location.add(FileLocation(path))
+    # 2. Game-local savedir.
+    if not renpy.android:
+        path = os.path.join(renpy.config.gamedir, "saves")
+        location.add(FileLocation(path))
 
     # Scan the location once.
     location.scan()
