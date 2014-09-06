@@ -137,8 +137,10 @@ label _start:
     call _gl_test
     call _load_reload_game from _call__load_reload_game_1
 
-    if not _restart and config.auto_load and renpy.can_load(config.auto_load):
-        $ renpy.load(config.auto_load)
+    python hide:
+        auto_load = renpy.os.environ.get("RENPY_AUTO_LOAD", config.auto_load)
+        if not _restart and auto_load and renpy.can_load(auto_load):
+            renpy.load(auto_load)
 
     if config.start_scene_black:
         scene black
