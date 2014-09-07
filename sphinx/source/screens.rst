@@ -1372,11 +1372,8 @@ followed by an argument list, in parenthesis.
 
 If the used screen include parameters, its scope is initialized to the
 result of assigning the arguments to those parameters. Otherwise, it
-is passed the scope of the current screen, updated with any
-
-The scope of the included code includes the scope of the current
-statement's code, updated by assinging the parameters their new
-values.
+is passed the scope of the current screen, updated with any keyword
+arguments passed to the screen.
 
 ::
 
@@ -1396,6 +1393,40 @@ values.
          grid 2 5:
              for i in range(1, 11):
                   use file_slot(i)
+
+
+The use statement may take one property, ``id``, which must be placed
+after the parameter list if present. This screen is only useful when
+two screens with the same tag use the same screen. In this case,
+when one screen replaces the other, the state of the used screen
+is transfered from old to new.
+
+::
+
+    transform t1():
+        xpos 150
+        linear 1.0 xpos 0
+
+    screen common():
+        text "Test" at t1
+
+    screen s1():
+        tag s
+        use common id "common"
+        text "s1" ypos 100
+
+    screen s2():
+        tag s
+        use common id "common"
+        text "s2" ypos 100
+
+    label start:
+        show screen s1
+        pause
+        show screen s2
+        pause
+        return
+
 
 .. _sl-python:
 

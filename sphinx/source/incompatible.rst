@@ -25,6 +25,10 @@ Screens now participate in transitions - transitions now go from the old
 state of the screen to the new state. To disable this, set
 :var:`config.transition_screens` to false.
 
+Ren'Py no longer uses structural equality to transfer state (for example,
+the state of a transform) when a screen replaces a screen with the same
+tag. Instead, the :ref:`use statement <sl-use>` now supports an ``id``
+property, which can be used to explicitly transfer state.
 
 .. _incompatible-6.16:
 

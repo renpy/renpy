@@ -160,7 +160,7 @@ when some children should not receive events.
 Save dumps (enabled by :var:`config.save_dump`) are performed before the
 save occurs, making them far more useful for debugging pickling problems.
 
-When show\_ arguments are past to an :func:`NVLCharacter`, the show_ prefix
+When show\_ arguments are past to an :func:`NVLCharacter`, the show\_ prefix
 is stripped and those arguments are passed to the ``nvl`` screen.
 
 Translations
