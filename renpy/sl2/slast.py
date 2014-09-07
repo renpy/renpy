@@ -1128,7 +1128,9 @@ class SLDefault(SLNode):
 
 class SLUse(SLNode):
 
-    def __init__(self, loc, target, args):
+    id = None
+
+    def __init__(self, loc, target, args, id_expr):
 
         SLNode.__init__(self, loc)
 
@@ -1141,6 +1143,9 @@ class SLUse(SLNode):
 
         # If arguments are given, those arguments.
         self.args = args
+
+        # An expression, if the id property is given.
+        self.id = id_expr
 
     def prepare(self, analysis):
 
@@ -1159,6 +1164,9 @@ class SLUse(SLNode):
 
         self.constant = self.ast.constant
         self.last_keyword = True
+
+        if self.id:
+            self.constant = NOT_CONST
 
     def execute_use_screen(self, context):
 
@@ -1218,17 +1226,38 @@ class SLUse(SLNode):
 
         ctx.scope = scope
 
-        # Use a call-site specific cache. (Otherwise, two uses of the same screen would
-        # be sharing cache locations.
+        # Figure out the cache to use.
 
-        cache = context.cache.get(self.serial, None)
+        if (not context.predicting) and self.id:
 
-        if cache is None:
-            context.cache[self.serial] = cache = { }
+            # If we have an id, look it up in the current screen's use_cache.
 
-        ctx.cache = cache
+            current_screen = renpy.display.screen.current_screen()
+            use_id = (self.target, eval(self.id, context.globals, context.scope))
+
+            cache = current_screen.use_cache.get(use_id, None)
+
+            if cache is None:
+                cache = context.cache.get(self.serial, None)
+
+            if cache is None:
+                cache = { }
+
+            context.cache[self.serial] = cache
+            current_screen.use_cache[use_id] = cache
+
+        else:
+
+            # Otherwise, look up the cache based on the statement's location.
+
+            cache = context.cache.get(self.serial, None)
+
+            if cache is None:
+                context.cache[self.serial] = cache = { }
+
 
         # Run the child screen.
+        ctx.cache = cache
         ast.execute(ctx)
 
     def copy_on_change(self, cache):

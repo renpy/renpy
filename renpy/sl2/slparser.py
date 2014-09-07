@@ -628,10 +628,15 @@ class UseParser(Parser):
         target = l.require(l.word)
         args = renpy.parser.parse_arguments(l)
 
+        if l.keyword('id'):
+            id_expr = l.simple_expression()
+        else:
+            id_expr = None
+
         l.expect_eol()
         l.expect_noblock("use statement")
 
-        return slast.SLUse(loc, target, args)
+        return slast.SLUse(loc, target, args, id_expr)
 
 UseParser("use")
 

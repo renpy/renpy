@@ -265,7 +265,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     class is responsible for managing the display of a screen.
     """
 
-    nosave = [ 'screen', 'child', 'children', 'transforms', 'widgets', 'old_widgets', 'hidden_widgets', 'old_transforms', 'cache', 'profile', 'phase' ]
+    nosave = [ 'screen', 'child', 'children', 'transforms', 'widgets', 'old_widgets', 'hidden_widgets', 'old_transforms', 'cache', 'profile', 'phase', 'use_cache' ]
 
     restarting = False
 
@@ -332,6 +332,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.transforms = old_screen.transforms
         else:
             self.transforms = { }
+
+        # A map from a (screen name, id) pair to cache. This is for use
+        # statements with the id parameter.
+        if old_screen is not None:
+            self.use_cache = old_screen.use_cache
+        else:
+            self.use_cache = { }
+
 
         # What widgets and transforms were the last time this screen was
         # updated. Used to communicate with the ui module, and only
