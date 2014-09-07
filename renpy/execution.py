@@ -388,7 +388,7 @@ class Context(renpy.object.Object):
             if node is None:
 
                 if renpy.config.developer:
-                    raise Exception("Could not find return label %r." % self.return_stack[-1])
+                    raise Exception("Could not find return label {!r}.".format(self.return_stack[-1]))
 
                 self.return_stack.pop()
                 self.call_location_stack.pop()
