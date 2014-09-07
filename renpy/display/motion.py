@@ -537,9 +537,6 @@ class Transform(Container):
 
             if function is None:
 
-                # We are complex if we have arguments with non-empty prefixes.
-                has_prefixes = False
-
                 # A map from prefix -> (prop -> value)
                 self.arguments = { }
 
@@ -557,10 +554,6 @@ class Transform(Container):
                                 self.arguments[prefix] = { }
 
                             self.arguments[prefix][prop] = v
-
-                            if prefix:
-                                has_prefixes = True
-
                             break
 
                         new_prefix, _, prop = prop.partition("_")
@@ -572,13 +565,6 @@ class Transform(Container):
                             prefix = prefix + "_" + new_prefix
                         else:
                             prefix = new_prefix
-
-                if not has_prefixes:
-                    self.arguments = None
-
-            # Apply keyword arguments to self.state.
-            for prop, value in kwargs.iteritems():
-                setattr(self.state, prop, value)
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
