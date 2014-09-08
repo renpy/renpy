@@ -531,40 +531,39 @@ class Transform(Container):
 
         self.state = TransformState()
 
-        self.arguments = None
-
         if kwargs:
 
-            if function is None:
+            # A map from prefix -> (prop -> value)
+            self.arguments = { }
 
-                # A map from prefix -> (prop -> value)
-                self.arguments = { }
+            # Fill self.arguments with a
+            for k, v in kwargs.iteritems():
 
-                # Fill self.arguments with a
-                for k, v in kwargs.iteritems():
+                prefix = ""
+                prop = k
 
-                    prefix = ""
-                    prop = k
+                while True:
 
-                    while True:
+                    if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
 
-                        if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
+                        if prefix not in self.arguments:
+                            self.arguments[prefix] = { }
 
-                            if prefix not in self.arguments:
-                                self.arguments[prefix] = { }
+                        self.arguments[prefix][prop] = v
+                        break
 
-                            self.arguments[prefix][prop] = v
-                            break
+                    new_prefix, _, prop = prop.partition("_")
 
-                        new_prefix, _, prop = prop.partition("_")
+                    if not prop:
+                        raise Exception("Unknown transform property: %r" % k)
 
-                        if not prop:
-                            raise Exception("Unknown transform property: %r" % k)
+                    if prefix:
+                        prefix = prefix + "_" + new_prefix
+                    else:
+                        prefix = new_prefix
 
-                        if prefix:
-                            prefix = prefix + "_" + new_prefix
-                        else:
-                            prefix = new_prefix
+        else:
+            self.arguments = None
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
@@ -739,14 +738,15 @@ class Transform(Container):
         """
 
         # If we have to, call the function that updates this transform.
+        if self.arguments is not None:
+            self.default_function(self, self.st, self.at)
+
         if self.function is not None:
             fr = self.function(self, self.st, self.at)
-        else:
-            fr = self.default_function(self, self.st, self.at)
 
-        # Order a redraw, if necessary.
-        if fr is not None:
-            renpy.display.render.redraw(self, fr)
+            # Order a redraw, if necessary.
+            if fr is not None:
+                renpy.display.render.redraw(self, fr)
 
         state = self.state
 
