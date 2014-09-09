@@ -729,13 +729,15 @@ def build_styles():
     for s in styles.values():
         build_style(s)
 
-def rebuild():
+def rebuild(prepare_screens=True):
     """
     Rebuilds all styles.
     """
 
     build_styles()
-    renpy.display.screen.prepare_screens()
+
+    if prepare_screens:
+        renpy.display.screen.prepare_screens()
 
 def copy_properties(p):
     """

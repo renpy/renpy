@@ -85,6 +85,12 @@ init python:
         return theme, scheme
 
     def implement_theme(theme, scheme):
+        """
+        Implement the current theme.
+
+        This function uses non-public APIs.
+        """
+
         global showing_theme, showing_scheme
 
         if theme == showing_theme and scheme == showing_scheme:
@@ -92,7 +98,12 @@ init python:
 
         renpy.style.restore(style_backup)
         exec theme_data.THEME[theme][scheme] in globals()
-        renpy.style.rebuild()
+
+        # Rebuild the style cache.
+        renpy.style.rebuild(False)
+
+        # Bust the render cache, so we re-evaluate the styles.
+        renpy.display.interface.kill_textures()
 
         showing_theme = theme
         showing_scheme = scheme
