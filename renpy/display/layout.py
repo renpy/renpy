@@ -1456,9 +1456,7 @@ class Viewport(Container):
             self.xadjustment.change(self.xadjustment.value + duration * self.edge_xspeed)
             self.yadjustment.change(self.yadjustment.value + duration * self.edge_yspeed)
 
-            self.check_edge_redraw()
-
-            self.edge_last_st = st
+            self.check_edge_redraw(st)
 
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
@@ -1470,7 +1468,7 @@ class Viewport(Container):
 
         return rv
 
-    def check_edge_redraw(self):
+    def check_edge_redraw(self, st):
         redraw = False
 
         if (self.edge_xspeed > 0) and (self.xadjustment.value < self.xadjustment.range):
@@ -1485,6 +1483,9 @@ class Viewport(Container):
 
         if redraw:
             renpy.display.render.redraw(self, 0)
+            self.edge_last_st = st
+        else:
+            self.edge_last_st = None
 
 
     def event(self, ev, x, y, st):
@@ -1565,9 +1566,7 @@ class Viewport(Container):
             self.edge_yspeed = self.edge_speed * self.edge_function(yspeed)
 
             if xspeed or yspeed:
-                self.check_edge_redraw()
-                if self.edge_last_st is None:
-                    self.edge_last_st = st
+                self.check_edge_redraw(st)
             else:
                 self.edge_last_st = None
 
