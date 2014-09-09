@@ -153,6 +153,26 @@ def roll_forward_info():
     return renpy.game.log.forward_info()
 
 
+def roll_forward_core(value=None):
+    """
+    :undocumented:
+
+    To cause a roll_forward to occur, return the value of this function
+    from an event handler.
+    """
+
+    if value is None:
+        value = roll_forward_info()
+    if value is None:
+        return
+
+    renpy.game.interface.suppress_transition = True
+    renpy.game.after_rollback = True
+    renpy.game.log.rolled_forward = True
+
+    return value
+
+
 def in_rollback():
     """
     :doc: rollback

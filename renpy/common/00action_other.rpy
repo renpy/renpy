@@ -207,7 +207,7 @@ init -1500 python:
         """
 
         def __call__(self):
-            return renpy.roll_forward_info()
+            return renpy.exports.roll_forward_core()
 
         def get_sensitive(self):
             return renpy.roll_forward_info() is not None

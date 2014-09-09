@@ -394,14 +394,9 @@ class RollForward(renpy.display.layout.Null):
         super(RollForward, self).__init__(**properties)
         self.value = value
 
-
     def event(self, ev, x, y, st):
-
         if map_event(ev, "rollforward"):
-            renpy.game.interface.suppress_transition = True
-            renpy.game.after_rollback = True
-            renpy.game.log.rolled_forward = True
-            return self.value
+            return renpy.exports.roll_forward_core(self.value)
 
 
 class PauseBehavior(renpy.display.layout.Null):
