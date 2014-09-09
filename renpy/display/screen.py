@@ -280,6 +280,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.hidden_widgets = { }
         self.cache = { }
         self.phase = UPDATE
+        self.use_cache = { }
 
         self.profile = profile.get(self.screen_name, None)
 
