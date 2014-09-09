@@ -1126,6 +1126,7 @@ class SLDefault(SLNode):
 
         scope[variable] = eval(self.expr, context.globals, scope)
 
+
 class SLUse(SLNode):
 
     id = None
@@ -1196,35 +1197,7 @@ class SLUse(SLNode):
             self.execute_use_screen(context)
             return
 
-        # Otherwise, run it directly.
-
-        ctx = SLContext(context)
-
-        try:
-            if self.args:
-                args, kwargs = self.args.evaluate(context.scope)
-            else:
-                args = [ ]
-                kwargs = { }
-        except:
-            if not context.predicting:
-                raise
-
-            args = [ ]
-            kwargs = { }
-
-        if ast.parameters is not None:
-            scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
-        else:
-            if args:
-                raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
-
-            scope = context.scope.copy()
-            scope.update(kwargs)
-
-        scope["_scope"] = scope
-
-        ctx.scope = scope
+        # Otherwise, run the use statement directly.
 
         # Figure out the cache to use.
 
@@ -1256,7 +1229,44 @@ class SLUse(SLNode):
                 context.cache[self.serial] = cache = { }
 
 
+        # Evaluate the arguments.
+        try:
+            if self.args:
+                args, kwargs = self.args.evaluate(context.scope)
+            else:
+                args = [ ]
+                kwargs = { }
+        except:
+            if not context.predicting:
+                raise
+
+            args = [ ]
+            kwargs = { }
+
+        # Apply the arguments to the parameters (if present) or to the scope of the used screen.
+        if ast.parameters is not None:
+            new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
+
+            scope = cache.get("scope", None)
+
+            if scope is None:
+                scope = cache["scope"] = new_scope
+            else:
+                scope.update(new_scope)
+
+        else:
+
+            if args:
+                raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
+
+            scope = context.scope.copy()
+            scope.update(kwargs)
+
+        scope["_scope"] = scope
+
         # Run the child screen.
+        ctx = SLContext(context)
+        ctx.scope = scope
         ctx.cache = cache
         ast.execute(ctx)
 
