@@ -76,6 +76,7 @@ def default_tts_function(s):
         process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
     elif renpy.windows:
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
+        s = s.replace('"', "")
         process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
 
 
