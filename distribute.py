@@ -92,6 +92,11 @@ def main():
 
     print "Version {} ({})".format(args.version, full_version)
 
+    # Perhaps autobuild.
+    if "RENPY_BUILD_ALL" in os.environ:
+        print("Autobuild...")
+        subprocess.check_call(["scripts/autobuild.sh"])
+
     # Copy over the screens, to keep them up to date.
     copy_tutorial_file("tutorial/game/screens.rpy", "templates/english/game/screens.rpy")
 
