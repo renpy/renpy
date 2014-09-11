@@ -1334,9 +1334,6 @@ class Text(renpy.display.core.Displayable):
 
     def _tts(self):
 
-        if self.style.alt is not None:
-            return self.style.alt
-
         rv = [ ]
 
         for i in self.text:
@@ -1349,7 +1346,14 @@ class Text(renpy.display.core.Displayable):
         rv = "".join(rv)
         _, _, rv = rv.rpartition("{fast}")
 
-        return renpy.translation.notags_filter(rv)
+        rv = renpy.translation.notags_filter(rv)
+
+        alt = self.style.alt
+
+        if alt is not None:
+            rv = renpy.substitutions.substitute(alt, scope={ "text" : rv })[0]
+
+        return rv
 
     _tts_all = _tts
 
