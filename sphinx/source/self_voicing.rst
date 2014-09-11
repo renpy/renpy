@@ -63,6 +63,14 @@ Alternative text
 
     Alternative text is translated using Ren'Py's string translation
     mechanism. Alternative text takes precedence over text extracted
-    from a displayable's children, but such child text is made
+    from a displayable and its children, but such child text is made
     available as the "[text]" string substitution. No other string
     substitutions are allowed.
+
+    Supplying the `who_alt` and `what_alt` parameters to Character
+    sets the alt style property for the character name and body text,
+    respectively. As an example, we define a Character that uses italics
+    to indicate thoughts normally, but explicitly indicates thoughts
+    via self voicing::
+
+        define thought = Character(None, what_italic=True, what_alt="I think, [text]")
