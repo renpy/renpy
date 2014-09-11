@@ -562,6 +562,10 @@ class Transform(Container):
                     else:
                         prefix = new_prefix
 
+            if "" in self.arguments:
+                for k, v in self.arguments[""].iteritems():
+                    setattr(self.state, k, v)
+
         else:
             self.arguments = None
 
