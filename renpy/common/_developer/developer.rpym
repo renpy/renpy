@@ -245,38 +245,14 @@ label _theme_test:
     return
 
 
+# Not used any more, but may be in save files.
 init -1050 python:
     config.missing_background = "black"
 
-style _missing_frame is _frame:
-    xalign 0.5
-    yalign 0.0
-    background "#0004"
-    xpadding 5
-    ypadding 5
 
-style _missing_text is _text:
-    color "#fff"
-    xalign 0.5
-
+# Not used any more, but may be in save files.
 screen _missing_images:
-    zorder -1050
-    $ missing = renpy.context().__missing
-
-    if missing:
-
-        frame:
-            style "_missing_frame"
-
-            has vbox
-
-            text _("{b}Missing Images{/b}"):
-                style "_missing_text"
-
-            for what in sorted(missing.values()):
-
-                text "[what!q]":
-                    style "_missing_text"
+    pass
 
 init 1050 python:
 
@@ -287,53 +263,37 @@ init 1050 python:
         # blank the screen.
         __missing_scene = False
 
-        # This returns the __missing dictionary from the current
-        # context object.
-        def __missing():
-            try:
-                return renpy.context().__missing
-            except AttributeError:
-                rv = dict()
-                renpy.context().__missing = rv
-                return rv
-
         def __missing_show_callback(name, what, layer):
+            global __missing_scene
+
             if layer != 'master':
                 return False
 
-            global __missing_scene
             if __missing_scene:
-                renpy.show(name, what=config.missing_background)
-            __missing_scene = False
-
-            what = " ".join(what)
-            __missing()[name[0]] = what
-            return True
+                __missing_scene = False
+                return Placeholder("bg").parameterize((), what)
+            else:
+                return Placeholder().parameterize((), what)
 
         def __missing_hide_callback(name, layer):
             if layer != 'master':
                 return False
 
-            global __missing_scene
-            __missing_scene = False
-            __missing().pop(name[0], None)
             return True
 
         def __missing_scene_callback(layer):
+
+            global __missing_scene
+
             if layer != 'master':
                 return False
 
-            global __missing_scene
             __missing_scene = True
-            __missing().clear()
-
             return True
 
         config.missing_scene = __missing_scene_callback
         config.missing_show = __missing_show_callback
         config.missing_hide = __missing_hide_callback
-
-        config.start_callbacks.append(Show("_missing_images"))
 
 
 init -1050 python:

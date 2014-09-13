@@ -481,7 +481,11 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
         base = img = renpy.display.image.ImageReference(what, style='image_placement')
 
         if not base.find_target() and renpy.config.missing_show:
-            if renpy.config.missing_show(name, what, layer):
+            result = renpy.config.missing_show(name, what, layer)
+
+            if isinstance(result, renpy.display.core.Displayable):
+                base = img = result
+            elif result:
                 return
 
     for i in at_list:
@@ -495,7 +499,6 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
 
     if tag and munge_name:
         name = (tag,) + name[1:]
-
 
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
