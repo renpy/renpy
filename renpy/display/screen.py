@@ -360,8 +360,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # A dict-set of widgets (by id) that have been hidden from us.
         self.hidden_widgets = { }
 
-        # Are we restarting?
+        # Are we restarting or hiding?
         self.restarting = False
+        self.hiding = False
 
         # Modal and zorder.
         self.modal = renpy.python.py_eval(self.screen.modal, locals=self.scope)
