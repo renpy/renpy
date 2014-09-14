@@ -1427,7 +1427,7 @@ class RawFunction(RawStatement):
         return Function(self.loc, ctx.eval(self.expr))
 
     def mark_constant(self):
-        self.constant = is_constant_expr(self.function)
+        self.constant = is_constant_expr(self.expr)
 
 class Function(Statement):
 
