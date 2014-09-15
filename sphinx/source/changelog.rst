@@ -2,6 +2,15 @@
 Full Changelog
 ==============
 
+Ren'Py 6.18.1
+=============
+
+ATL transforms now begin executing when first shown. Previously, ATL transforms
+began executing when the screen containing the ATL transform was first shown,
+which meant that if the transform changed over the course of screen display,
+a portion of the new transform would be skipped.
+
+
 Ren'Py 6.18
 ===========
 

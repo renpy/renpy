@@ -224,6 +224,7 @@ class ATLTransformBase(renpy.object.Object):
     # Compatibility with older saves.
     parameters = renpy.ast.ParameterInfo([ ], [ ], None, None)
     parent_transform = None
+    atl_st_offset = 0
 
     nosave = [ 'parent_transform' ]
 
@@ -273,6 +274,9 @@ class ATLTransformBase(renpy.object.Object):
         # The parent transform that was called to create this transform.
         self.parent_transform = None
 
+        # The offset between st and when this ATL block first executed.
+        self.atl_st_offset = 0
+
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
@@ -306,6 +310,8 @@ class ATLTransformBase(renpy.object.Object):
         self.at = t.at
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
+
+        self.atl_st_offset = t.atl_st_offset
 
         if self.child is renpy.display.motion.null:
             self.child = t.child
@@ -442,16 +448,17 @@ class ATLTransformBase(renpy.object.Object):
 
         old_exception_info = renpy.game.exception_info
 
+        if self.atl_state is None or (st - self.atl_st_offset) < 0:
+            self.atl_st_offset = st
+
         if self.atl.animation:
             timebase = at
         else:
-            timebase = st
+            timebase = st - self.atl_st_offset
 
         action, arg, pause = self.block.execute(trans, timebase, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
-
-        # print "Executing", self, self.state, self.xpos, self.ypos
 
         if action == "continue":
             self.atl_state = arg
