@@ -335,7 +335,7 @@ class Script(object):
 
         return stmts
 
-    def load_file_core(self, dir, fn): #@ReservedAssignment
+    def load_file(self, dir, fn): #@ReservedAssignment
 
         if fn.endswith(".rpy") or fn.endswith(".rpym"):
 
@@ -401,12 +401,65 @@ class Script(object):
 
         return data, stmts
 
-    def load_file(self, dir, fn, initcode): #@ReservedAssignment
+    def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
+        # This can only be a .rpyc file, since we're loading it
+        # from an archive.
+        if dir is None:
 
-        # Actually do the loading.
-        data, stmts = self.load_file_core(dir, fn)
+            lastfn = fn + compiled
+            data, stmts = self.load_file(dir, fn + compiled)
+
+            if data is None:
+                raise Exception("Could not load from archive %s." % (lastfn,))
+
+        else:
+
+            # Otherwise, we're loading from disk. So we need to decide if
+            # we want to load the rpy or the rpyc file.
+            rpyfn = dir + "/" + fn + source
+            rpycfn = dir + "/" + fn + compiled
+
+            renpy.loader.add_auto(rpyfn)
+
+            if os.path.exists(rpyfn) and os.path.exists(rpycfn):
+
+                # Use the source file here since it'll be loaded if it exists.
+                lastfn = rpyfn
+
+                rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
+
+                data, stmts = None, None
+
+                try:
+                    f = file(rpycfn, "rb")
+                    f.seek(-md5.digest_size, 2)
+                    rpycdigest = f.read(md5.digest_size)
+                    f.close()
+
+                    if rpydigest == rpycdigest and \
+                        not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
+
+                        data, stmts = self.load_file(dir, fn + compiled)
+
+                        if data is None:
+                            print "Could not load " + rpycfn
+
+                except:
+                    pass
+
+                if data is None:
+                    data, stmts = self.load_file(dir, fn + source)
+
+            elif os.path.exists(rpycfn):
+                lastfn = rpycfn
+                data, stmts = self.load_file(dir, fn + compiled)
+
+            elif os.path.exists(rpyfn):
+                lastfn = rpyfn
+                data, stmts = self.load_file(dir, fn + source)
+
         if data is None:
-            return False
+            raise Exception("Could not load file %s." % lastfn)
 
         # Check the key.
         if self.key is None:
@@ -415,54 +468,7 @@ class Script(object):
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
         self.finish_load(stmts, initcode)
-        return True
 
-
-    def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
-        # This can only be a .rpyc file, since we're loading it
-        # from an archive.
-        if dir is None:
-            if not self.load_file(dir, fn + compiled, initcode):
-                raise Exception("Could not load from archive %s.%s" % (fn, compiled))
-            return
-
-        # Otherwise, we're loading from disk. So we need to decide if
-        # we want to load the rpy or the rpyc file.
-        rpyfn = dir + "/" + fn + source
-        rpycfn = dir + "/" + fn + compiled
-
-        renpy.loader.add_auto(rpyfn)
-
-        if os.path.exists(rpyfn) and os.path.exists(rpycfn):
-            rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
-
-            try:
-                f = file(rpycfn, "rb")
-                f.seek(-md5.digest_size, 2)
-                rpycdigest = f.read(md5.digest_size)
-                f.close()
-
-                if rpydigest == rpycdigest and \
-                    not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
-
-                    if self.load_file(dir, fn + compiled, initcode):
-                        return
-
-                    print "Could not load " + rpycfn
-
-            except:
-                pass
-
-            if not self.load_file(dir, fn + source, initcode):
-                raise Exception("Could not load file %s." % rpyfn)
-
-        elif os.path.exists(rpycfn):
-            if not self.load_file(dir, fn + compiled, initcode):
-                raise Exception("Could not load file %s." % rpycfn)
-
-        elif os.path.exists(rpyfn):
-            if not self.load_file(dir, fn + source, initcode):
-                raise Exception("Could not load file %s." % rpyfn)
 
 
     def init_bytecode(self):
