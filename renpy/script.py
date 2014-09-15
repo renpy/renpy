@@ -242,88 +242,6 @@ class Script(object):
                 if new.name is None:
                     new.name = old.name
 
-    def load_file_core(self, dir, fn): #@ReservedAssignment
-
-        if fn.endswith(".rpy") or fn.endswith(".rpym"):
-
-            if not dir:
-                raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn)
-
-            fullfn = dir + "/" + fn
-
-            stmts = renpy.parser.parse(fullfn)
-
-            data = { }
-            data['version'] = script_version
-            data['key'] = self.key or 'unlocked'
-
-            if stmts is None:
-                return data, [ ]
-
-            # See if we have a corresponding .rpyc file. If so, then
-            # we want to try to upgrade our .rpy file with it.
-            try:
-                self.record_pycode = False
-                old_data, old_stmts = self.load_file_core(dir, fn + "c")
-                self.merge_names(old_stmts, stmts)
-                del old_data
-                del old_stmts
-            except:
-                pass
-            finally:
-                self.record_pycode = True
-
-            self.assign_names(stmts, fullfn)
-
-            try:
-                rpydigest = md5.md5(file(fullfn, "rU").read()).digest()
-                f = file(dir + "/" + fn + "c", "wb")
-                f.write(dumps((data, stmts), 2).encode('zlib'))
-                f.write(rpydigest)
-                f.close()
-            except:
-                pass
-
-        elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
-
-            f = renpy.loader.load(fn)
-
-            try:
-                data, stmts = loads(f.read().decode('zlib'))
-            except:
-                return None, None
-
-            if not isinstance(data, dict):
-                return None, None
-
-            if self.key and data.get('key', 'unlocked') != self.key:
-                return None, None
-
-            if data['version'] != script_version:
-                return None, None
-
-            f.close()
-        else:
-            return None, None
-
-        return data, stmts
-
-    def load_file(self, dir, fn, initcode): #@ReservedAssignment
-
-        # Actually do the loading.
-        data, stmts = self.load_file_core(dir, fn)
-        if data is None:
-            return False
-
-        # Check the key.
-        if self.key is None:
-            self.key = data['key']
-        elif self.key != data['key']:
-            raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
-
-        self.finish_load(stmts, initcode)
-        return True
-
     def load_string(self, filename, filedata):
         """
         Loads Ren'Py script from a string.
@@ -416,6 +334,89 @@ class Script(object):
         self.need_analysis.extend(all_stmts)
 
         return stmts
+
+    def load_file_core(self, dir, fn): #@ReservedAssignment
+
+        if fn.endswith(".rpy") or fn.endswith(".rpym"):
+
+            if not dir:
+                raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn)
+
+            fullfn = dir + "/" + fn
+
+            stmts = renpy.parser.parse(fullfn)
+
+            data = { }
+            data['version'] = script_version
+            data['key'] = self.key or 'unlocked'
+
+            if stmts is None:
+                return data, [ ]
+
+            # See if we have a corresponding .rpyc file. If so, then
+            # we want to try to upgrade our .rpy file with it.
+            try:
+                self.record_pycode = False
+                old_data, old_stmts = self.load_file_core(dir, fn + "c")
+                self.merge_names(old_stmts, stmts)
+                del old_data
+                del old_stmts
+            except:
+                pass
+            finally:
+                self.record_pycode = True
+
+            self.assign_names(stmts, fullfn)
+
+            try:
+                rpydigest = md5.md5(file(fullfn, "rU").read()).digest()
+                f = file(dir + "/" + fn + "c", "wb")
+                f.write(dumps((data, stmts), 2).encode('zlib'))
+                f.write(rpydigest)
+                f.close()
+            except:
+                pass
+
+        elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
+
+            f = renpy.loader.load(fn)
+
+            try:
+                data, stmts = loads(f.read().decode('zlib'))
+            except:
+                return None, None
+
+            if not isinstance(data, dict):
+                return None, None
+
+            if self.key and data.get('key', 'unlocked') != self.key:
+                return None, None
+
+            if data['version'] != script_version:
+                return None, None
+
+            f.close()
+        else:
+            return None, None
+
+        return data, stmts
+
+    def load_file(self, dir, fn, initcode): #@ReservedAssignment
+
+        # Actually do the loading.
+        data, stmts = self.load_file_core(dir, fn)
+        if data is None:
+            return False
+
+        # Check the key.
+        if self.key is None:
+            self.key = data['key']
+        elif self.key != data['key']:
+            raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
+
+        self.finish_load(stmts, initcode)
+        return True
+
 
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
