@@ -5,6 +5,10 @@ Full Changelog
 Ren'Py 6.18.1
 =============
 
+This release includes a new :func:`Placeholder` displayable, which can be
+used to display placeholder characters. Placeholders are now used when
+displaying images that are not defined.
+
 ATL transforms now begin executing when first shown. Previously, ATL transforms
 began executing when the screen containing the ATL transform was first shown,
 which meant that if the transform changed over the course of screen display,

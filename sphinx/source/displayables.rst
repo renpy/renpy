@@ -204,3 +204,20 @@ more efficient, in both time and image cache space, than using
 two im.MatrixColors.
 
 .. include:: inc/im_matrixcolor
+
+Placeholders
+------------
+
+The Placeholder displayable is used to display background or character
+images as appropriate. Placeholders are used automatically when an undefined
+image is used in developer mode. Placeholder displayables can also be used
+manually when the defaults are inappropriate. ::
+
+    # By default, the girl placeholer will be used.
+    image sue = Placeholder("boy")
+
+    label start:
+         show sue angry
+         "Sue" "How do you do? Now you gonna die!"
+
+.. include:: inc/placeholder

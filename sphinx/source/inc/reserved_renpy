@@ -93,6 +93,7 @@
 * Particles
 * :func:`Pause`
 * :func:`Pixellate`
+* :func:`Placeholder`
 * Play
 * Position
 * :func:`Preference`
