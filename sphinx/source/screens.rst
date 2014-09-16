@@ -949,11 +949,11 @@ following properties:
 
     * If present, the third element is a function that adjusts the
       scrolling speed, based on how close to the pointer is to an
-      edge. The function should take a number between 0.0 and 1.0, and
+      edge. The function should take a number between -1.0 and 1.0, and
       return a number in the same range. The default function returns
       its input, and implements proportional scrolling.  A function
-      that always returns 1.0 would implement constant-speed
-      scrolling.
+      that returned -1.0 or 1.0 based on the sign of its input would
+      implement constant-speed scrolling.
 
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
