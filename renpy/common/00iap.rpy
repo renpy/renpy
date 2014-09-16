@@ -321,8 +321,8 @@ init -1500 python in iap:
         else:
             backend = NoneBackend()
 
-        # If there are any missing products, restore purchases.
-        if missing_products():
+        # Restore purchases.
+        if products:
             restore(False)
 
 init 1500 python in iap:
