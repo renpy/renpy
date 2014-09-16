@@ -479,6 +479,13 @@ class SLDisplayable(SLBlock):
         # We want to preserve last_keyword, however, in case we run a
         # python block.
 
+        # If we have the id property, we're not constant - since we may get
+        # additional keywords via id. (It's unlikely, but id should be pretty
+        # rare.)
+        for k, _expr in self.keyword:
+            if k == "id":
+                self.constant = NOT_CONST
+
     def keywords(self, context):
         # We do not want to pass keywords to our parents, so just return.
         return
@@ -514,7 +521,6 @@ class SLDisplayable(SLBlock):
 
             else:
                 context.children.append(cache.constant)
-                screen.widgets.update(cache.constant_widgets)
                 return
 
         # Create the context.
@@ -550,8 +556,6 @@ class SLDisplayable(SLBlock):
             if self.constant:
                 if ctx.uses_scope is None:
                     ctx.uses_scope = [ ]
-                if ctx.widgets is None:
-                    ctx.widgets = { }
 
             SLBlock.keywords(self, ctx)
 
@@ -756,14 +760,8 @@ class SLDisplayable(SLBlock):
         if self.constant:
             cache.constant = d
 
-            if widget_id is not None:
-                ctx.widgets[widget_id] = main
-
             if self.scope and main.uses_scope:
                 ctx.uses_scope.append(main)
-
-            if context.widgets is None:
-                cache.constant_widgets = ctx.widgets
 
             if context.uses_scope is None:
                 cache.constant_uses_scope = ctx.uses_scope
