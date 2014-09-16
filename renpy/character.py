@@ -476,6 +476,8 @@ def display_say(
         what_text.slow = slow
         what_text.slow_done = slow_done
 
+        what_text.update()
+
         for c in callback:
             c("show_done", interact=interact, type=type, **cb_args)
 
