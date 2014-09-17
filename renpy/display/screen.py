@@ -810,8 +810,15 @@ def show_screen(_screen_name, *_args, **kwargs):
         scope.update(kwargs)
 
     d = ScreenDisplayable(screen, _tag, _layer, _widget_properties, scope)
-    d.cache = cache_get(screen, _args, kwargs)
-    d.phase = SHOW
+
+    old_d = get_screen(name, _layer)
+
+    if old_d and old_d.cache:
+        d.cache = old_d.cache
+        d.phase = UPDATE
+    else:
+        d.cache = cache_get(screen, _args, kwargs)
+        d.phase = SHOW
 
     renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
 

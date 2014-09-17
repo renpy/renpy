@@ -1199,6 +1199,9 @@ class SLUse(SLNode):
 
         # Figure out the cache to use.
 
+        # True if we want to force-mark this as an update.
+        update = False
+
         if (not context.predicting) and self.id:
 
             # If we have an id, look it up in the current screen's use_cache.
@@ -1208,11 +1211,16 @@ class SLUse(SLNode):
 
             cache = current_screen.use_cache.get(use_id, None)
 
-            if cache is None:
-                cache = context.cache.get(self.serial, None)
+            if cache is not None:
+                update = True
 
-            if cache is None:
-                cache = { }
+            else:
+
+                if cache is None:
+                    cache = context.cache.get(self.serial, None)
+
+                if cache is None:
+                    cache = { }
 
             context.cache[self.serial] = cache
             current_screen.use_cache[use_id] = cache
@@ -1266,6 +1274,10 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.scope = scope
         ctx.cache = cache
+
+        if update:
+            ctx.updating = True
+
         ast.execute(ctx)
 
     def copy_on_change(self, cache):
