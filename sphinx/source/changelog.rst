@@ -14,6 +14,8 @@ began executing when the screen containing the ATL transform was first shown,
 which meant that if the transform changed over the course of screen display,
 a portion of the new transform would be skipped.
 
+This release includes a German template contributed by NoJoker.
+
 
 Ren'Py 6.18
 ===========
