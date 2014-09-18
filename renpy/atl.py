@@ -367,7 +367,7 @@ class ATLTransformBase(renpy.object.Object):
             child = renpy.display.motion.get_null()
 
         # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo({}, positional, None, None)
+        parameters = renpy.ast.ParameterInfo({ }, positional, None, None)
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
@@ -388,7 +388,7 @@ class ATLTransformBase(renpy.object.Object):
         properties.
         """
 
-        if self.parameters.positional and self.parameters.positional[0][1] is None:
+        if self.parameters.positional:
             raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
 
         if self.atl.constant and self.parent_transform:
