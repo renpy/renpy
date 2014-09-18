@@ -452,7 +452,25 @@ Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-DisplayableParser("add", renpy.ui._add, None, 0)
+def sl2add(d, replaces=None, **kwargs):
+    d = renpy.easy.displayable(d)
+    d = d.parameterize('displayable', [ ])
+
+    rv = d
+
+    Transform = renpy.display.motion.Transform
+
+    if kwargs:
+        rv = Transform(child=d, **kwargs)
+
+    if replaces is not None:
+        if isinstance(rv, Transform) and isinstance(replaces, Transform):
+            rv.take_state(replaces)
+            rv.take_execution_state(replaces)
+
+    return rv
+
+DisplayableParser("add", sl2add, None, 0, replaces=True)
 Positional("im")
 Keyword("at")
 Keyword("id")
