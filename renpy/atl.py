@@ -193,7 +193,7 @@ def compile_all():
     global compile_queue
 
     for i in compile_queue:
-        if i.atl.constant:
+        if i.atl.constant == GLOBAL_CONST:
             i.compile()
 
     compile_queue = [ ]
@@ -388,10 +388,16 @@ class ATLTransformBase(renpy.object.Object):
         properties.
         """
 
-        if self.parameters.positional:
-            raise Exception("Cannot compile ATL Transform, as it's missing positional parameter %s." % self.parameters.positional[0])
+        constant = (self.atl.constant == GLOBAL_CONST)
 
-        if self.atl.constant and self.parent_transform:
+        if self.parameters.positional and not constant:
+            raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
+                self.atl.loc[0],
+                self.atl.loc[1],
+                self.parameters.positional[0],
+                ))
+
+        if constant and self.parent_transform:
             if self.parent_transform.block:
                 self.block = self.parent_transform.block
                 self.properties = self.parent_transform.properties
@@ -412,7 +418,7 @@ class ATLTransformBase(renpy.object.Object):
 
         renpy.game.exception_info = old_exception_info
 
-        if self.atl.constant and self.parent_transform:
+        if constant and self.parent_transform:
             self.parent_transform.block = self.block
             self.parent_transform.properties = self.properties
             self.parent_transform = None
