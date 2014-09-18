@@ -245,6 +245,7 @@
 * store
 * style
 * suppress_overlay
+* :var:`sv`
 * sys
 * theme
 * toggle_skipping
