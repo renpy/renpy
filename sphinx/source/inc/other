@@ -209,6 +209,14 @@
     `filename` is the name of the filename that statements in the string will
     appear to be from.
 
+.. function:: renpy.munge(name, filename=None)
+    
+    Munges `name`, which must begin with __.
+    
+    `filename`
+        The filename the name is munged into. If None, the name is munged
+        into the filename containing the call to this function.
+
 .. function:: renpy.notify(message)
     
     Causes Ren'Py to display the `message` using the notify screen. By

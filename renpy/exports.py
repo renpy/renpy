@@ -2733,3 +2733,26 @@ def substitute(s, scope=None, translate=True):
     """
 
     return renpy.substitutions.substitute(s, scope=scope, translate=translate)[0]
+
+
+def munge(name, filename=None):
+    """
+    :doc: other
+
+    Munges `name`, which must begin with __.
+
+    `filename`
+        The filename the name is munged into. If None, the name is munged
+        into the filename containing the call to this function.
+    """
+
+    if filename is None:
+        filename = sys._getframe(1).f_code.co_filename
+
+    if not name.startswith("__"):
+        return name
+
+    if name.endswith("__"):
+        return name
+
+    return renpy.parser.munge_filename(filename) + name[2:]
