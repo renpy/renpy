@@ -74,3 +74,24 @@ Alternative text
     via self voicing::
 
         define thought = Character(None, what_italic=True, what_alt="I think, [text]")
+
+Descriptive Text
+    Descriptive text is text that is displayed (and spoken) by the narrator if
+    self-voicing is enabled. The text is not displayed if self-voicing is
+    disabled. Self voicing text uses the `sv` variable, which is defined to
+    be similar to a character.
+
+    .. var:: sv = ...
+
+        A character-like object that uses the narrator to speak text if
+        self-vocing is enabled.
+
+    For example::
+
+        e "Hang on, this is gonna be a bumpy ride!"
+
+        sv "And then the sun exploded..."
+
+        # A complex and exciting cut scene.
+        show event sun_exploding
+        pause 10

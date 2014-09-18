@@ -9,6 +9,9 @@ This release includes a new :func:`Placeholder` displayable, which can be
 used to display placeholder characters. Placeholders are now used when
 displaying images that are not defined.
 
+The new :var:`sv` Character-like object can be used when self-voicing is
+enabled to display (and hence speak) descriptive text.
+
 ATL transforms now begin executing when first shown. Previously, ATL transforms
 began executing when the screen containing the ATL transform was first shown,
 which meant that if the transform changed over the course of screen display,

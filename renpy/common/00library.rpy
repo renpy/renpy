@@ -121,6 +121,14 @@ init -1700 python:
 
     extend.record_say = False
 
+    def sv(what, interact=True):
+        """
+        Uses the narrator to speak `what` iff self-voicing is enabled.
+        """
+
+        if _preferences.self_voicing:
+            return narrator(what, interact=interact)
+
 
 init -1700 python:
 
