@@ -390,12 +390,14 @@ class ATLTransformBase(renpy.object.Object):
 
         constant = (self.atl.constant == GLOBAL_CONST)
 
-        if self.parameters.positional and not constant:
-            raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
-                self.atl.loc[0],
-                self.atl.loc[1],
-                self.parameters.positional[0],
-                ))
+        if not constant:
+            for p in self.parameters.positional:
+                if p not in self.context.context:
+                    raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
+                        self.atl.loc[0],
+                        self.atl.loc[1],
+                        self.parameters.positional[0],
+                        ))
 
         if constant and self.parent_transform:
             if self.parent_transform.block:
