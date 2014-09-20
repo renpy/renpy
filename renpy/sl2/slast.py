@@ -1028,19 +1028,9 @@ class SLFor(SLBlock):
 
         ctx = SLContext(context)
 
-        count = { }
-
-        for v in value:
+        for index, v in enumerate(value):
 
             ctx.scope[variable] = v
-
-            index = id(v)
-
-            n = count.get(index, -1) + 1
-            count[index] = n
-
-            if n:
-                index = (index, n)
 
             cache = oldcaches.get(index, None)
 
