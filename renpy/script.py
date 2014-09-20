@@ -357,7 +357,7 @@ class Script(object):
             # we want to try to upgrade our .rpy file with it.
             try:
                 self.record_pycode = False
-                old_data, old_stmts = self.load_file_core(dir, fn + "c")
+                old_data, old_stmts = self.load_file(dir, fn + "c")
                 self.merge_names(old_stmts, stmts)
                 del old_data
                 del old_stmts
