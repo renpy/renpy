@@ -226,6 +226,9 @@ class ATLTransformBase(renpy.object.Object):
     parent_transform = None
     atl_st_offset = 0
 
+    # Do we want to force use of the animation timebase?
+    force_animation = False
+
     nosave = [ 'parent_transform' ]
 
     def __init__(self, atl, context, parameters):
@@ -459,7 +462,7 @@ class ATLTransformBase(renpy.object.Object):
         if self.atl_state is None or (st - self.atl_st_offset) < 0:
             self.atl_st_offset = st
 
-        if self.atl.animation:
+        if self.atl.animation or self.force_animation:
             timebase = at
         else:
             timebase = st - self.atl_st_offset
