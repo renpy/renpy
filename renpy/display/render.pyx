@@ -91,6 +91,9 @@ def check_at_shutdown():
         raise Exception("%d Renders are alive at shutdown. This is probably a memory leak bug in Ren'Py." % count)
 
 
+# The number of things being rendered at the moment.
+cdef int rendering
+rendering = 0
 
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
@@ -112,6 +115,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     Renders returned by this object may be cached, and should not be modified
     once they have been retrieved.
     """
+
+    global rendering
 
     cdef float width, height
     cdef float orig_width, orig_height
@@ -164,7 +169,11 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     else:
         wh = orig_wh
 
-    rv = d.render(widtho, heighto, st, at)
+    try:
+        rendering += 1
+        rv = d.render(widtho, heighto, st, at)
+    finally:
+        rendering -= 1
 
     rv.render_of.append(d)
 
@@ -179,27 +188,14 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     return rv
 
-
-# This is true if something has been invalidated, and a redraw needs
-# to occur. It's automatically cleared to False at the end of each
-# redraw.
-invalidated = False
-
 def invalidate(d):
     """
     Removes d from the render cache. If we're not in a redraw, triggers
     a redraw to start.
     """
 
-    global invalidated
-
-    id_d = id(d)
-
-    if id_d in render_cache:
-        for v in render_cache[id_d].values():
-            v.kill_cache()
-
-        invalidated = True
+    if not rendering:
+        redraw(d, 0)
 
 
 def process_redraws():
@@ -213,7 +209,7 @@ def process_redraws():
     redraw_queue.sort()
 
     now = renpy.display.core.get_time()
-    rv = invalidated
+    rv = False
 
     new_redraw_queue = [ ]
     seen = set()
