@@ -639,6 +639,9 @@ class Transform(Container):
         Takes the transformation state from object t into this object.
         """
 
+        if not isinstance(t, Transform):
+            return
+
         self.state.take_state(t.state)
 
         # The arguments will be applied when the default function is
@@ -650,6 +653,9 @@ class Transform(Container):
         Takes the execution state from object t into this object. This is
         overridden by renpy.atl.TransformBase.
         """
+
+        if not isinstance(t, Transform):
+            return
 
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request

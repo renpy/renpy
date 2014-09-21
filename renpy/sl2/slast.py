@@ -745,9 +745,14 @@ class SLDisplayable(SLBlock):
                 else:
                     d = transform(d)
 
-                if context.updating and isinstance(d, Transform) and (cache.transform is not None):
-                    d.take_state(cache.transform)
-                    d.take_execution_state(cache.transform)
+                if isinstance(d, Transform):
+                    old_transform = cache.transform
+
+                    if not context.updating:
+                        old_transform = None
+
+                    d.take_state(old_transform)
+                    d.take_execution_state(old_transform)
 
             cache.transform = d
 

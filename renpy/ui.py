@@ -497,12 +497,12 @@ class Wrapper(renpy.object.Object):
                 screen.transforms[id] = atw
 
                 if old_transfers:
-
                     oldt = screen.old_transforms.get(id, None)
+                else:
+                    oldt = None
 
-                    if oldt is not None:
-                        atw.take_state(oldt)
-                        atw.take_execution_state(oldt)
+                atw.take_state(oldt)
+                atw.take_execution_state(oldt)
 
         # Clear out the add_tag.
         add_tag = None

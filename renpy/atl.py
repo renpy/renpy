@@ -291,7 +291,11 @@ class ATLTransformBase(renpy.object.Object):
 
         super(ATLTransformBase, self).take_execution_state(t)
 
-        if t.atl is not self.atl:
+        self.atl_st_offset = None
+
+        if not isinstance(t, ATLTransformBase):
+            return
+        elif t.atl is not self.atl:
             return
 
         # Important to do it this way, so we use __eq__. The exception handling
@@ -459,7 +463,7 @@ class ATLTransformBase(renpy.object.Object):
 
         old_exception_info = renpy.game.exception_info
 
-        if self.atl_state is None or (st - self.atl_st_offset) < 0:
+        if (self.atl_st_offset is None) or (st - self.atl_st_offset) < 0:
             self.atl_st_offset = st
 
         if self.atl.animation or self.force_animation:

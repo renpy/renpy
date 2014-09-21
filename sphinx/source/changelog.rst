@@ -12,7 +12,7 @@ displaying images that are not defined.
 The new :var:`sv` Character-like object can be used when self-voicing is
 enabled to display (and hence speak) descriptive text.
 
-ATL transforms now begin executing when first shown. Previously, ATL transforms
+ATL transforms in screens now begin executing when first shown. Previously, ATL transforms
 began executing when the screen containing the ATL transform was first shown,
 which meant that if the transform changed over the course of screen display,
 a portion of the new transform would be skipped.

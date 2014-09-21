@@ -463,10 +463,9 @@ def sl2add(d, replaces=None, **kwargs):
     if kwargs:
         rv = Transform(child=d, **kwargs)
 
-    if replaces is not None:
-        if isinstance(rv, Transform) and isinstance(replaces, Transform):
-            rv.take_state(replaces)
-            rv.take_execution_state(replaces)
+    if isinstance(rv, Transform):
+        rv.take_state(replaces)
+        rv.take_execution_state(replaces)
 
     return rv
 
