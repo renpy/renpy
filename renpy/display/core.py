@@ -1006,12 +1006,6 @@ class SceneLists(renpy.object.Object):
                 else:
                     rv = a(rv)
 
-                # We really should be taking state and execution state from the
-                # previous version. But until we do that, using the animation
-                # timebase is a reasonable workaround.
-                if isinstance(rv, renpy.display.motion.ATLTransform):
-                    rv.force_animation = True
-
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
