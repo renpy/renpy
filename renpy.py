@@ -110,7 +110,6 @@ def path_to_saves(gamedir):
 # the launcher, usually.)
 def path_to_renpy_base():
     renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
-    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
     renpy_base = os.path.abspath(renpy_base)
 
     return renpy_base
