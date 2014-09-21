@@ -24,6 +24,8 @@ init -1500 python in iap:
     from store import persistent, Action
     import time
 
+    background = "black"
+
     class Product(object):
         """
         A data object representing a product.
@@ -105,6 +107,7 @@ init -1500 python in iap:
 
             while True:
                 rv = self.devicePurchase.checkPurchaseResult()
+
                 if rv:
                     break
 
@@ -121,7 +124,6 @@ init -1500 python in iap:
 
         def purchase(self, p, interact=True):
             identifier = self.identifier(p)
-
             self.devicePurchase.beginPurchase(identifier)
             return self.wait_for_result(interact=interact)
 
@@ -176,6 +178,15 @@ init -1500 python in iap:
         p = Product(product, identifier, google, amazon)
         products[product] = p
 
+    def with_background(f, *args, **kwargs):
+        """
+        Displays the background, then invokes `f`.
+        """
+
+        renpy.scene()
+        renpy.show(background)
+        return f(*args, **kwargs)
+
     def restore(interact=True):
         """
         :doc: iap
@@ -200,7 +211,7 @@ init -1500 python in iap:
         """
 
         def __call__(self):
-            restore(False)
+            renpy.invoke_in_new_context(with_background, restore)
 
         def get_sensitive(self):
             return get_store_name()
@@ -212,7 +223,7 @@ init -1500 python in iap:
 
         return p
 
-    def purchase(product, interact=False):
+    def purchase(product, interact=True):
         """
         :doc: iap
 
@@ -247,7 +258,7 @@ init -1500 python in iap:
             self.product = product
 
         def __call__(self):
-            purchase(self.product, interact=False)
+            renpy.invoke_in_new_context(with_background, purchase, self.product)
             renpy.restart_interaction()
 
         def get_sensitive(self):
