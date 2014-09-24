@@ -824,11 +824,21 @@ both horizontal and vertical positions.
 
 .. transform-property:: crop
 
-    :type: None or (int, int, int, int)
+    :type: None or (int, int, int, int) or (float, float, float, float)
     :default: None
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
+    If floats are given and crop_relative is true, the components are
+    taken as a fraction of the width and hight of the source image.
+    Otherwise, the components are considered to be an absolute number
+    of pixels.
+
+.. transform-property:: crop_relative
+    :default: False
+
+    If True, float components of crop are take as a fraction of the width
+    and height of the source image.
 
 .. transform-property:: corner1
 

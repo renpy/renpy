@@ -2,6 +2,16 @@
 Full Changelog
 ==============
 
+Ren'Py 6.18.2
+=============
+
+When set to True, the new :tpref:`crop_relative` transform property tells
+a Transform to interpret float components of its :tpref:`crop` property
+relative to the width or height of its transformed child, as appropriate.
+For example, (0.5, 0.0, 0.5, 1.0) will cropout the lower-right quadrant
+of the child.
+
+
 Ren'Py 6.18.1
 =============
 

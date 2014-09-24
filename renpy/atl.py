@@ -87,6 +87,7 @@ PROPERTIES = {
         "angle" : float,
         "radius" : float,
         "crop" : (float, float, float, float),
+        "crop_relative" : bool,
         "size" : (int, int),
         "corner1" : (float, float),
         "corner2" : (float, float),

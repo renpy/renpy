@@ -23,6 +23,7 @@
 import renpy
 import math
 from renpy.display.render cimport Render, Matrix2D, render
+from renpy.display.core import absolute
 
 
 ################################################################################
@@ -52,8 +53,6 @@ def nogil_copy(src, dest):
 
     if old_alpha:
         SDL_SetAlpha(src_surf, SDL_SRCALPHA, 255)
-
-
 
 ################################################################################
 # Transform render function
@@ -140,6 +139,22 @@ def transform_render(self, widtho, heighto, st, at):
         crop = (x1, y1, x2-x1, y2-y1)
 
     if crop is not None:
+
+        if state.crop_relative:
+            x, y, w, h = crop
+
+            def relative(n, base, limit):
+                if isinstance(n, (int, absolute)):
+                    return n
+                else:
+                    return min(int(n * base), limit)
+
+            x = relative(x, width, width)
+            y = relative(y, height, height)
+            w = relative(w, width, width - x)
+            h = relative(h, height, height - y)
+
+            crop = (x, y, w, h)
 
         negative_xo, negative_yo, width, height = crop
 

@@ -97,6 +97,7 @@ class TransformState(renpy.object.Object):
     additive = 0.0
     debug = None
     events = True
+    crop_relative = False
 
     def __init__(self): # W0231
         self.alpha = 1
@@ -124,6 +125,7 @@ class TransformState(renpy.object.Object):
         self.subpixel = False
 
         self.crop = None
+        self.crop_relative = False
         self.corner1 = None
         self.corner2 = None
         self.size = None
@@ -168,6 +170,7 @@ class TransformState(renpy.object.Object):
         self.yanchoraround = ts.yanchoraround
 
         self.crop = ts.crop
+        self.crop_relative = ts.crop_relative
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
         self.size = ts.size
@@ -231,6 +234,7 @@ class TransformState(renpy.object.Object):
         diff2("subpixel", newts.subpixel, self.subpixel)
 
         diff2("crop", newts.crop, self.crop)
+        diff2("crop_relative", newts.crop_relative, self.crop_relative)
         diff2("corner1", newts.corner1, self.corner1)
         diff2("corner2", newts.corner2, self.corner2)
         diff2("size", newts.size, self.size)
@@ -435,6 +439,7 @@ class Transform(Container):
     align = Proxy("align")
 
     crop = Proxy("crop")
+    crop_relative = Proxy("crop_relative")
     corner1 = Proxy("corner1")
     corner2 = Proxy("corner2")
     size = Proxy("size")
