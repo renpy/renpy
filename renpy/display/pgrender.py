@@ -24,7 +24,9 @@
 
 import sys
 import pygame
+import threading
 import renpy.display
+
 
 # Sample surfaces, with and without alpha.
 sample_alpha = None
@@ -125,8 +127,26 @@ copy_surface_unscaled = copy_surface
 
 # Wrapper around image loading.
 
+# Formats we can load reentrantly.
+safe_formats = { "png", "jpg", "jpeg" }
+
+# Lock used for loading unsafe formats.
+image_load_lock = threading.RLock()
+
 def load_image(f, filename):
-    surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+    global count
+
+    _basename, _dot, ext = filename.rpartition('.')
+
+    if ext.lower() in safe_formats:
+        surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+    else:
+
+        # Non-whitelisted formats may not be able to load in a reentrant
+        # fashion.
+        with image_load_lock:
+            surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+
     rv = copy_surface_unscaled(surf)
     return rv
 
