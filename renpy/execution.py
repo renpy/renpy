@@ -509,6 +509,23 @@ class Context(renpy.object.Object):
 
         renpy.exports.rollback(force, checkpoints)
 
+    def get_return_stack(self):
+        return list(self.return_stack)
+
+    def set_return_stack(self, return_stack):
+        self.return_stack = list(return_stack)
+
+        while len(self.call_location_stack) > len(self.return_stack):
+            self.call_location_stack.pop()
+
+            d = self.dynamic_stack.pop()
+            d.update(self.dynamic_stack[-1])
+            self.dynamic_stack[-1] = d
+
+        while len(self.call_location_stack) < len(self.return_stack):
+            self.call_location_stack.append("unknown location")
+            self.dynamic_stack.append({})
+
 
 def run_context(top):
     """

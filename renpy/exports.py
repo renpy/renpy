@@ -1294,8 +1294,11 @@ def has_label(name):
     """
     :doc: label
 
-    Returns true if name is a valid label in the program, or false
-    otherwise.
+    Returns true if `name` is a valid label the program, or false otherwise.
+
+    `name`
+        Should be a string to check for the existence of a label. It can
+        also be an opaque tuple giving the name of a non-label statement.
     """
 
     return renpy.game.script.has_label(name)
@@ -2756,3 +2759,30 @@ def munge(name, filename=None):
         return name
 
     return renpy.parser.munge_filename(filename) + name[2:]
+
+
+def get_return_stack():
+    """
+    :doc: label
+
+    Returns a list giving the current return stack. The return stack is a
+    list of statement names.
+
+    The statement names will be strings (for labels), or opaque tuples (for
+    non-label statements).
+    """
+
+    return renpy.game.context().get_return_stack()
+
+def set_return_stack(stack):
+    """
+    :doc: label
+
+    Sets the current return stack. The return stack is a list of statement
+    names.
+
+    Statement names may be strings (for labels) or opaque tuples (for
+    non-label statements).
+    """
+
+    renpy.game.context().set_return_stack(stack)
