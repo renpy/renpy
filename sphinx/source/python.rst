@@ -1,3 +1,5 @@
+.. _python:
+
 Python Statements
 =================
 
@@ -124,15 +126,20 @@ Define Statement
 The define statement sets a single variable in the default store
 to a value at init time. For example::
 
-    define e = Character("eileen")
+    define e = Character("Eileen")
 
 is equivalent to::
 
     init python:
-        e = Character("eileen")
+        e = Character("Eileen")
+
+The define statement can take an optional named store (see below), by
+prepending it to the variable name with a dot. For example::
+
+    define character.e = Character("Eileen")
 
 One advantage of using the define statement is that it records the
-filename and line number at which the assignment occured, and
+filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
 
 Names in the Store
@@ -202,6 +209,7 @@ For example::
 
 
 Named stores participate in save, load, and rollback in the same way
-that the default store does.
+that the default store does. The defined statement can be used to
+define names in a named store.
 
 
