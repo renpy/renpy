@@ -835,6 +835,8 @@ both horizontal and vertical positions.
     of pixels.
 
 .. transform-property:: crop_relative
+
+    :type: boolean
     :default: False
 
     If True, float components of crop are take as a fraction of the width

@@ -11,7 +11,7 @@
     Returns True if the user has purchased `product` in the past, and
     False otherwise.
 
-.. function:: iap.purchase(product, interact=False)
+.. function:: iap.purchase(product, interact=True)
     
     This function requests the purchase of `product`.
     
