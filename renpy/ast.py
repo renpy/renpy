@@ -478,7 +478,14 @@ def eval_who(who, fast=None):
         fast = bool(re.match(renpy.parser.word_regexp + "$", who))
 
     if fast:
-        rv = renpy.python.store_dicts['store'].get(who, None)
+
+        if 'store.character' in renpy.python.store_dicts:
+            rv = renpy.python.store_dicts['store.character'].get(who, None)
+        else:
+            rv = None
+
+        if rv is None:
+            rv = renpy.python.store_dicts['store'].get(who, None)
 
         if rv is None:
             raise Exception("Sayer '%s' is not defined." % who.encode("utf-8"))
