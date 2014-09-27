@@ -1682,9 +1682,14 @@ class Define(Node):
     __slots__ = [
         'varname',
         'code',
+        'store',
         ]
 
-    def __init__(self, loc, name, expr):
+    def __setstate__(self, state):
+        self.store = 'store'
+        Node.__setstate__(self, state)
+
+    def __init__(self, loc, store, name, expr):
         """
         @param name: The name of the image being defined.
 
@@ -1694,11 +1699,15 @@ class Define(Node):
 
         super(Define, self).__init__(loc)
 
+        self.store = store
         self.varname = name
         self.code = PyCode(expr, loc=loc, mode='eval')
 
     def diff_info(self):
-        return (Define, tuple(self.varname))
+        return (Define, self.store, self.varname)
+
+    def early_execute(self):
+        renpy.python.create_store(self.store)
 
     def execute(self):
 
@@ -1706,9 +1715,15 @@ class Define(Node):
         statement_name("define")
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
-        renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
-        renpy.exports.pure(self.varname)
-        renpy.python.store_dicts["store"][self.varname] = value
+
+        if self.store == 'store':
+            renpy.exports.pure(self.varname)
+            renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
+        else:
+            print self.store[6:] + "." + self.varname
+            renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
+
+        renpy.python.store_dicts[self.store][self.varname] = value
 
 
 class Screen(Node):

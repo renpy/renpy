@@ -1728,13 +1728,19 @@ def define_statement(l, loc):
     else:
         priority = 0
 
+    store = 'store'
     name = l.require(l.name)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.name)
+
     l.require('=')
     expr = l.rest()
 
     l.expect_noblock('define statement')
 
-    rv = ast.Define(loc, name, expr)
+    rv = ast.Define(loc, store, name, expr)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority)
