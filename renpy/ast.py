@@ -1720,7 +1720,6 @@ class Define(Node):
             renpy.exports.pure(self.varname)
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
         else:
-            print self.store[6:] + "." + self.varname
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
         renpy.python.store_dicts[self.store][self.varname] = value
