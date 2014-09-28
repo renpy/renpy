@@ -394,6 +394,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
         if f is from_focus:
             continue
 
+        if not f.widget.style.keyboard_focus:
+            continue
+
         if f.x is None:
             placeless = f
             continue
@@ -440,6 +443,9 @@ def focus_ordered(delta):
             continue
 
         if f.arg is not None:
+            continue
+
+        if not f.widget.style.keyboard_focus:
             continue
 
         if f.widget is current:

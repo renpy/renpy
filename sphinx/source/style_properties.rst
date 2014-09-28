@@ -674,6 +674,13 @@ Button Style Properties
     None
         If none is given, the entire button can be focused.
 
+.. style-property:: keyboard_focus
+
+   If true, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If false, the keyboard focus
+   mechanism will skip this button. (The keyboard focus mechanism is used
+   by keyboards and keyboard-like devices, such as joypads.)
+
 
 .. _bar-style-properties:
 
@@ -778,6 +785,13 @@ left and right sides are used.
     ``"hide"``
        Prevents the bar from rendering at all. Space will be allocated
        for the bar, but nothing will be drawn in that space.
+
+.. style-property:: keyboard_focus
+
+   If true, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If false, the keyboard focus
+   mechanism will skip this button. (The keyboard focus mechanism is used
+   by keyboards and keyboard-like devices, such as joypads.)
 
 
 .. _box-style-properties:

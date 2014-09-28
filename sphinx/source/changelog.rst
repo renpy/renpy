@@ -11,6 +11,8 @@ relative to the width or height of its transformed child, as appropriate.
 For example, (0.5, 0.0, 0.5, 1.0) will cropout the lower-right quadrant
 of the child.
 
+When set to false, the new :propref:`keyboard_focus` style property hides
+buttons, bars, and imagemap hotspots from the keyboard focus mechanism.
 
 Ren'Py 6.18.1
 =============

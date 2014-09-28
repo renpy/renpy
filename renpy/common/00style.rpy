@@ -203,6 +203,7 @@ init -1800:
         # Button properties
         focus_mask None
         focus_rect None
+        keyboard_focus True
 
         # Bar properties
         fore_bar Null()

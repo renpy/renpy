@@ -591,6 +591,7 @@ button_properties = [ Style(i) for i in [
         "mouse",
         "focus_mask",
         "child",
+        "keyboard_focus",
         ] ]
 
 bar_properties = [ Style(i) for i in [
@@ -610,6 +611,7 @@ bar_properties = [ Style(i) for i in [
         "thumb_offset",
         "mouse",
         "unscrollable",
+        "keyboard_focus",
         ] ]
 
 box_properties = [ Style(i) for i in [

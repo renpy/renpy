@@ -144,6 +144,7 @@ style_properties = sorted_dict(
     italic = None,
     justify = None,
     kerning = None,
+    keyboard_focus = None,
     language = None,
     layout = None,
     line_leading = None,
