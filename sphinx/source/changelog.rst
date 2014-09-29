@@ -14,6 +14,10 @@ of the child.
 When set to false, the new :propref:`keyboard_focus` style property hides
 buttons, bars, and imagemap hotspots from the keyboard focus mechanism.
 
+The :ref:`mousearea` screen language statement now respects the
+:propref:`focus_mask` style property, making it possible to have
+non-rectangular mouseareas.
+
 Ren'Py 6.18.1
 =============
 

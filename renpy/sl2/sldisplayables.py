@@ -501,6 +501,7 @@ add(position_properties)
 DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")
 Keyword("unhovered")
+Style("focus_mask")
 add(ui_properties)
 add(position_properties)
 

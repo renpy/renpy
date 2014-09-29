@@ -683,13 +683,19 @@ Mousearea
 A mouse area is an area of the screen that can react to the mouse
 entering or leaving it. Unlike a button, a mouse area does not take
 focus, so it's possible to have a mouse area with buttons inside it.
-The mousearea statement takes not parameters, and the following properties:
+The mousearea statement takes no parameters, and the following properties:
 
 `hovered`
     An action to run when the mouse enters the mouse area.
 
 `unhovered`
     An action to run when the mouse leaves the mouse area.
+
+`focus_mask`
+    The :propref:`focus_mask` style property, which may be a Displayable
+    or None. If a displayable, the mousearea will only be hovered if the
+    mouse is over an opaque portion of the displayable. (The displayable
+    is not shown to the user.)
 
 It also takes:
 

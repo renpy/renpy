@@ -890,6 +890,7 @@ add(position_properties)
 FunctionStatementParser("mousearea", "ui.mousearea", 0)
 Keyword("hovered")
 Keyword("unhovered")
+Style("focus_mask")
 add(ui_properties)
 add(position_properties)
 

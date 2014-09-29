@@ -612,7 +612,6 @@ class Button(renpy.display.layout.Window):
                 mask = rv
             elif mask is not None:
                 try:
-                    mask = renpy.easy.displayable(mask)
                     mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
                 except:
                     if callable(mask):
@@ -1653,6 +1652,9 @@ class Timer(renpy.display.layout.Null):
 
 class MouseArea(renpy.display.core.Displayable):
 
+    # The offset between st and at.
+    at_st_offset = 0
+
     def __init__(self, hovered=None, unhovered=None, replaces=None, **properties):
         super(MouseArea, self).__init__(**properties)
 
@@ -1669,16 +1671,20 @@ class MouseArea(renpy.display.core.Displayable):
         self.width = 0
         self.height = 0
 
-
     def render(self, width, height, st, at):
         self.width = width
         self.height = height
+
+        self.at_st_offset = at - st
 
         return Render(width, height)
 
     def event(self, ev, x, y, st):
 
-        if 0 <= x < self.width and 0 <= y < self.height:
+        if self.style.focus_mask is not None:
+            crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
+            is_hovered = crend.is_pixel_opaque(x, y)
+        elif 0 <= x < self.width and 0 <= y < self.height:
             is_hovered = True
         else:
             is_hovered = False
