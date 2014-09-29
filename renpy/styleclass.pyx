@@ -33,6 +33,16 @@ def none_is_null(o):
     else:
         return renpy.easy.displayable(o)
 
+def expand_focus_mask(v):
+    if v is None:
+        return v
+    elif v is False:
+        return v
+    elif v is True:
+        return v
+    else:
+        return renpy.easy.displayable(v)
+
 def expand_outlines(l):
     rv = [ ]
 
