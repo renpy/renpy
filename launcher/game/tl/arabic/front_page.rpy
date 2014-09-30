@@ -94,3 +94,23 @@ translate arabic strings:
     old "[p.name!q] (template)"
     new "[p.name!q] (template)"
 
+#  Translation updated at 2014-09-30 23:01
+
+translate arabic strings:
+
+    # game/front_page.rpy:35
+    old "Open [text] directory."
+    new "فتح المجلد [text]"
+
+    # game/front_page.rpy:150
+    old "Select project [text]."
+    new "اختر المشروع [text]"
+
+    # game/front_page.rpy:234
+    old "Force Recompile"
+    new "إعادة حزم الملفات"
+
+    # game/front_page.rpy:285
+    old "Recompiling all rpy files into rpyc files..."
+    new "يتم إعادة حزم الملفات من صيغة rpy إلى rpyc..."
+
