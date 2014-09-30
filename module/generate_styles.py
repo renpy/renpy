@@ -128,6 +128,7 @@ style_properties = sorted_dict(
     child = 'renpy.easy.displayable_or_none',
     clipping = None,
     color = 'renpy.easy.color',
+    debug = None,
     drop_shadow = None,
     drop_shadow_color = 'renpy.easy.color',
     first_indent = None,
