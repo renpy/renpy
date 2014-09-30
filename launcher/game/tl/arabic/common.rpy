@@ -518,3 +518,11 @@ translate arabic strings:
     old "<repr() failed>"
     new "<repr() failed>"
 
+# TODO: Translation updated at 2014-09-30 23:01
+
+translate arabic strings:
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "الموقع"
+
