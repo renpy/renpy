@@ -58,7 +58,7 @@ init -1500 python:
                 selected = renpy.music.is_music(channel)
 
             self.can_be_selected = selected
-            self.selected = self.get_selected()
+            self.get_selected()
 
         def __call__(self):
             renpy.music.play(self.file, channel=self.channel, **self.kwargs)
@@ -66,15 +66,17 @@ init -1500 python:
 
         def get_selected(self):
             if not self.can_be_selected:
+                self.selected = False
                 return False
 
-            return renpy.music.get_playing(self.channel) == self.file
+            self.selected = (renpy.music.get_playing(self.channel) == self.file)
+            return self.selected
 
         def periodic(self, st):
             if not self.can_be_selected:
                 return None
 
-            if self.selected != self.get_selected():
+            if self.selected != (renpy.music.get_playing(self.channel) == self.file):
                 renpy.restart_interaction()
 
             return .1
