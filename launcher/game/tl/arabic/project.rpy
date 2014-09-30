@@ -58,3 +58,11 @@ translate arabic strings:
     old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
     new "رينباي لم يتمكن من تشغيل بايثون مع tkinter لكي يختار مجلد المشاريع, الرجاء تنصيب Python-tk او tkinter"
 
+# Translation updated at 2014-09-30 23:01
+
+translate arabic strings:
+
+    # game/project.rpy:47
+    old "Have you backed up your projects recently?"
+    new "هل قمت بعمل نسخة احتياطية من مشاريعك مؤخراً؟"
+
