@@ -23,12 +23,6 @@
 
 import renpy.audio
 
-# A list of music channels.
-music_channels = [ ]
-
-# A list of channels for which set_music has been called, either way.
-music_set = [ ]
-
 from renpy.audio.audio import get_channel, get_serial
 
 # Part of the public api:
@@ -256,6 +250,16 @@ def set_music(channel, flag, default=False):
     c.default_loop = flag
     c.default_loop_set = True
 
+
+def is_music(channel):
+    """
+    Returns true if "channel" will loop by default.
+    """
+
+    c = get_channel(channel)
+    return c.default_loop
+
+
 def get_delay(time, channel="music"):
     """
     Returns the number of seconds left until the given time in the
@@ -306,7 +310,6 @@ def is_playing(channel="music"):
     """
 
     return (get_playing(channel=channel) is not None)
-
 
 def set_volume(volume, delay=0, channel="music"):
     """
