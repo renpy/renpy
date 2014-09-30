@@ -35,16 +35,29 @@ init -1500 python:
              The channel to play the sound on.
          `file`
              The file to play.
+         `selected`
+             If True, buttons using this action will be marked as selected
+             if the file is playing on the channel. If False, this action
+             will not cause the button to start playing. If None, the button
+             is marked selected if the channel is a music channel, and not
+             otherwise.
 
-         Any keyword arguments are passed to :func:`renpy.music.play`
+         Any other keyword arguments are passed to :func:`renpy.music.play`.
          """
 
-        equality_fields = ["channel", "file", "kwargs"]
+        equality_fields = ["channel", "file", "kwargs", "can_be_selected" ]
 
-        def __init__(self, channel, file, **kwargs):
+        can_be_selected = False
+
+        def __init__(self, channel, file, selected=None, **kwargs):
             self.channel = channel
             self.file = file
             self.kwargs = kwargs
+
+            if selected is None:
+                selected = renpy.music.is_music(channel)
+
+            self.can_be_selected = selected
             self.selected = self.get_selected()
 
         def __call__(self):
@@ -52,9 +65,15 @@ init -1500 python:
             renpy.restart_interaction()
 
         def get_selected(self):
+            if not self.can_be_selected:
+                return False
+
             return renpy.music.get_playing(self.channel) == self.file
 
         def periodic(self, st):
+            if not self.can_be_selected:
+                return None
+
             if self.selected != self.get_selected():
                 renpy.restart_interaction()
 
