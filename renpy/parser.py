@@ -1705,7 +1705,12 @@ def image_statement(l, loc):
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.require('=')
+
         expr = l.rest()
+
+        if not expr:
+            l.error('expected expression')
+
         atl = None
         l.expect_noblock('image statement')
 
@@ -1737,6 +1742,9 @@ def define_statement(l, loc):
 
     l.require('=')
     expr = l.rest()
+
+    if not expr:
+        l.error("expected expression")
 
     l.expect_noblock('define statement')
 
@@ -1783,6 +1791,10 @@ def transform_statement(l, loc):
 @statement("$")
 def one_line_python(l, loc):
     python_code = l.rest()
+
+    if not python_code:
+        l.error('expected python code')
+
     l.expect_noblock('one-line python statement')
     l.advance()
 
