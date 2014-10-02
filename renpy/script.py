@@ -269,7 +269,7 @@ class Script(object):
         return stmts, initcode
 
 
-    def finish_load(self, stmts, initcode, check_names=True):
+    def finish_load(self, stmts, initcode, check_names=True, filename=None):
         """
         Given `stmts`, a list of AST nodes comprising the root block,
         finishes loading it (this includes chaining statements and
@@ -281,9 +281,16 @@ class Script(object):
         `check_names`
             If true, produce duplicate name errors.
 
+        `filename`
+            If given, a filename that overrides the filename found inside the
+            file.
+
         Returns a list of statements that corresponds to the top-level block
         in initcode after transformation.
         """
+
+        if not stmts:
+            return
 
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
@@ -298,22 +305,42 @@ class Script(object):
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)
 
-        # Check each node individually.
+        # Fix the filename for a renamed .rpyc file.
+        if filename is not None:
+            filename = renpy.parser.elide_filename(filename)
+
+            if all_stmts[0].filename.lower() != filename.lower():
+                filename += "c"
+                for i in all_stmts:
+                    i.filename = filename
+
+        # Check for duplicate names.
+        if check_names:
+            bad_name = None
+            bad_node = None
+            old_node = None
+
+            for node in all_stmts:
+                name = node.name
+
+                if name in self.namemap:
+                    if not isinstance(bad_name, basestring):
+                        bad_name = name
+                        bad_node = node
+                        old_node = self.namemap[name]
+
+            if bad_name is not None:
+                raise ScriptError("Name %s is defined twice, at %s:%d and %s:%d." %
+                                  (repr(bad_name),
+                                   old_node.filename, old_node.linenumber,
+                                   bad_node.filename, bad_node.linenumber))
+
+
         for node in all_stmts:
 
-            # Check to see if the name is defined twice. If it is,
-            # report the error.
             name = node.name
 
-            if name in self.namemap and check_names:
-                old = self.namemap[name]
-
-                raise ScriptError("Name %s is defined twice: at %s:%d and %s:%d." %
-                                  (repr(name),
-                                   old.filename, old.linenumber,
-                                   node.filename, node.linenumber))
-
-            # Otherwise, add the name to the namemap.
+            # Add the name to the namemap.
             self.namemap[name] = node
 
             # Add any init nodes to self.initcode.
@@ -467,7 +494,7 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode)
+        self.finish_load(stmts, initcode, filename=rpyfn)
 
 
 
