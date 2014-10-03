@@ -823,7 +823,7 @@ cdef class Render:
 
     def kill(self):
         """
-        Retained for compatibility.
+        Retained for compatibility, but does not need to be called.
         """
 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
