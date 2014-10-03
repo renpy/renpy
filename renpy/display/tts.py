@@ -87,7 +87,10 @@ def tts(s):
 
     global queue
 
-    renpy.config.tts_function(s)
+    try:
+        renpy.config.tts_function(s)
+    except:
+        pass
 
     queue = [ ]
 
