@@ -984,10 +984,12 @@ class SLFor(SLBlock):
 
     def analyze(self, analysis):
 
-        if analysis.is_constant_expr(self.expression):
+        if analysis.is_constant_expr(self.expression) == GLOBAL_CONST:
             analysis.push_control(True)
+            analysis.mark_constant(self.variable)
         else:
             analysis.push_control(False)
+            analysis.mark_not_constant(self.variable)
 
         SLBlock.analyze(self, analysis)
 
