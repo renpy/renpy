@@ -1,4 +1,3 @@
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -90,7 +89,6 @@ translate russian strings:
     old "Deleting persistent data..."
     new "Удаление постоянных данных..."
 
-# TODO: Translation updated at 2014-09-21 00:32
 
 translate russian strings:
 

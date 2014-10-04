@@ -451,7 +451,6 @@ translate japanese strings:
     old "Done"
     new "完了"
 
-# TODO: Translation updated at 2014-07-08 18:59
 
 translate japanese strings:
 

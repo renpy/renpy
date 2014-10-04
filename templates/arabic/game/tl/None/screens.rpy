@@ -1,4 +1,3 @@
-# TODO: Translation updated at 2013-04-30 09:54
 
 translate arabic strings:
 

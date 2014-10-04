@@ -10,7 +10,6 @@ translate korean strings:
     old "Quick save complete."
     new "퀵세이브했습니다."
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -82,7 +81,6 @@ translate korean strings:
     old "jump <label>: jumps to label"
     new "jump <label>: label로 점프한다"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -106,7 +104,6 @@ translate korean strings:
     old "return"
     new "돌아가기"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -202,7 +199,6 @@ translate korean strings:
     old "Restart"
     new "다시 시작"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -214,7 +210,6 @@ translate korean strings:
     old "Autoreload"
     new "자동 다시 불러오기"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -254,7 +249,6 @@ translate korean strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "읽지 않은 대사나 다음 선택지가 나타날 때까지 스킵하겠습니까?"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -266,7 +260,6 @@ translate korean strings:
     old "Fast Skip Mode"
     new "고속 스킵 모드"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -306,7 +299,6 @@ translate korean strings:
     old "The updates were cancelled."
     new "업데이트가 취소되었습니다."
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -322,7 +314,6 @@ translate korean strings:
     old "Next"
     new "앞으로"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -330,7 +321,6 @@ translate korean strings:
     old "Joystick Mapping"
     new "조이스틱 설정"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -398,7 +388,6 @@ translate korean strings:
     old "Done"
     new "완료"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -438,7 +427,6 @@ translate korean strings:
     old "<repr() failed>"
     new "<repr() 실패>"
 
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
@@ -494,7 +482,6 @@ translate korean strings:
     old "Opens the errors.txt file in a text editor."
     new "errors.txt 파일을 스크립트 에디터로 엽니다."
     
-# TODO: Translation updated at 2014-05-02 21:49
 
 translate korean strings:
 
