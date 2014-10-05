@@ -28,6 +28,7 @@ import types
 import sys
 import collections
 import pygame
+import gc
 
 import renpy
 
@@ -82,55 +83,17 @@ def walk_memory(roots):
     while worklist:
         name, o = worklist.pop(0)
 
+        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType, types.FunctionType)):
+            continue
+
         size[name] += sys.getsizeof(o)
 
         if isinstance(o, pygame.Surface):
             w, h = o.get_size()
             size[name] += w * h * o.get_bytesize()
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
-            continue
-
-        elif isinstance(o, (str, unicode)):
-            continue
-
-        elif isinstance(o, (tuple, list, set, frozenset)):
-            for i in o:
-                add(name, i)
-
-            continue
-
-        elif isinstance(o, dict):
-            for k, v in o.iteritems():
-                add(name, k)
-                add(name, v)
-
-            continue
-
-        elif isinstance(o, types.MethodType):
-            add(name, o.im_self)
-
-        else:
-            try:
-                slots = getattr(o, "__slots__", empty_list)
-            except:
-                slots = empty_list
-
-            if slots is not None:
-                for f in slots:
-                    try:
-                        v = getattr(o, f, None)
-                    except:
-                        v = None
-
-                    add(name, v)
-
-            try:
-                d = getattr(o, "__dict__", empty_dict)
-            except:
-                d = empty_dict
-
-            add(name, d)
+        for v in gc.get_referents(o):
+            add(name, v)
 
     return size
 
@@ -270,8 +233,6 @@ def find_parents(cls):
     """
 
     # GC to save memory.
-    import gc
-    import types
     gc.collect()
 
     objs = gc.get_objects()
