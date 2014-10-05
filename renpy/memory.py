@@ -34,8 +34,7 @@ import renpy
 memory_log = renpy.log.open("memory")
 
 def write(s):
-    if sys.stdout.isatty():
-        sys.stdout.write(s + "\n")
+    sys.stdout.write(s + "\n")
     memory_log.write("%s", s)
 
 def walk_memory(roots):
@@ -166,7 +165,7 @@ def profile_memory(fraction=1.0, minimum=0):
 
     Profiles object, surface, and texture memory use by Ren'Py and the
     game. Writes an accounting of memory use by to the memory.txt file and
-    stdout, the latter if stdout is a tty.
+    stdout.
 
     The accounting is by names in the store and in the Ren'Py implementation
     that the memory is reachable from. If an object is reachable from more
@@ -207,6 +206,58 @@ def profile_memory(fraction=1.0, minimum=0):
     write("-" * 13)
     write("{:13,d} Total object, surface, and texture memory usage (in bytes).".format(total))
     write("")
+
+old_usage = { }
+old_total = 0
+
+def diff_memory(update=True):
+    """
+    :doc: memory
+
+    Profiles objects, surface, and texture memory use by Ren'Py and the game.
+    Writes (to memory.txt and stdout) the difference in memory usage from the
+    last time this function was called with `update` true.
+
+    The accounting is by names in the store and in the Ren'Py implementation
+    that the memory is reachable from. If an object is reachable from more
+    than one name, it's assigned to the name it's most directly reachable
+    from.
+    """
+
+    global old_usage
+    global old_total
+
+    usage = profile_memory_common()
+    total = sum(usage.values())
+
+    diff = [ ]
+
+    for k, v in usage.iteritems():
+        diff.append((
+            v - old_usage.get(k, 0),
+            k))
+
+    diff.sort()
+
+    write("=" * 78)
+    write("")
+    write("Memory profile at " + time.ctime() + ":")
+    write("")
+
+    for change, name in diff:
+        if name == "renpy.memory.old_usage":
+            continue
+
+        if change:
+            write("{:+14,d} {:13,d} {}".format(change, usage[name], name))
+
+    write("-" * 14 + " " + "-" * 13)
+    write("{:+14,d} {:13,d} {}".format(total - old_total, total, "Total memory usage (in bytes)."))
+    write("")
+
+    if update:
+        old_usage = usage
+        old_total = total
 
 
 ################################################################################

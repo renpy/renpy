@@ -84,7 +84,7 @@ import renpy.audio.music as music
 from renpy.statements import register as register_statement
 from renpy.text.extras import check_text_tags
 
-from renpy.memory import profile_memory
+from renpy.memory import profile_memory, diff_memory
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
@@ -137,7 +137,7 @@ def public_api():
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
     image_exists
-    profile_memory
+    profile_memory, diff_memory
 
 del public_api
 
