@@ -23,16 +23,34 @@
 # called by default, but can be used when problems occur.
 
 import time
-import threading
 import weakref
 import types
 import sys
 import collections
 import pygame
 
-import renpy.gl.gltexture
+import renpy
 
-def memory_profile(minimum=10000):
+memory_log = renpy.log.open("memory")
+
+def write(s):
+    if sys.stdout.isatty():
+        sys.stdout.write(s + "\n")
+    memory_log.write("%s", s)
+
+def walk_memory(roots):
+    """
+    Walks over memory, trying to account it to the objects in `roots`. Each
+    object in memory is attributed to at most one of the roots. We use a
+    breadth-first search to try to come up with the most accurate
+    attribution possible.
+
+    `roots`
+        A list of (name, object) tuples.
+
+    Returns a dictionary mapping names from roots to the number of bytes
+    reachable from that name.
+    """
 
     # The set of ids we've seen.
     seen = set()
@@ -59,16 +77,8 @@ def memory_profile(minimum=10000):
         seen.add(id_o)
         worklist.append((name, o))
 
-    for mod_name, mod in sorted(sys.modules.items()):
-
-        if mod is None:
-            continue
-
-        if not (mod_name.startswith("renpy") or mod_name.startswith("store")):
-            continue
-
-        for name, o in mod.__dict__.items():
-            add(mod_name + "." + name, o)
+    for name, o in roots:
+        add(name, o)
 
     while worklist:
         name, o = worklist.pop(0)
@@ -78,8 +88,6 @@ def memory_profile(minimum=10000):
         if isinstance(o, pygame.Surface):
             w, h = o.get_size()
             size[name] += w * h * o.get_bytesize()
-        elif isinstance(o, renpy.gl.gltexture.Texture):
-            print sys.getsizeof(o), o
 
         if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
             continue
@@ -125,17 +133,85 @@ def memory_profile(minimum=10000):
 
             add(name, d)
 
-    total = 0
+    return size
 
-    for k, v in sorted(size.items(), key=lambda a : a[1]):
-        total += v
+def profile_memory_common():
+    """
+    Profiles object, surface, and texture memory used in the renpy and store
+    packages.
 
-        if v > minimum:
-            print v / 1024, k
+    Returns a map from name to the number of bytes accounted for by that
+    name.
+    """
 
-    print "Total python memory used:", total
+    roots = [ ]
+
+    for mod_name, mod in sorted(sys.modules.items()):
+
+        if mod is None:
+            continue
+
+        if not (mod_name.startswith("renpy") or mod_name.startswith("store")):
+            continue
+
+        for name, o in mod.__dict__.items():
+            roots.append((mod_name + "." + name, o))
+
+    return walk_memory(roots)
 
 
+def profile_memory(fraction=1.0, minimum=0):
+    """
+    :doc: memory
+
+    Profiles object, surface, and texture memory use by Ren'Py and the
+    game. Writes an accounting of memory use by to the memory.txt file and
+    stdout, the latter if stdout is a tty.
+
+    The accounting is by names in the store and in the Ren'Py implementation
+    that the memory is reachable from. If an object is reachable from more
+    than one name, it's assigned to the name it's most directly reachable
+    from.
+
+    `fraction`
+        The fraction of the total memory usage to show. 1.0 will show all
+        memory usage, .9 will show the top 90%.
+
+    `minimum`
+        If a name is accounted less than `minimum` bytes of memory, it will
+        not be printed.
+    """
+
+    usage = [ (v, k) for (k, v) in profile_memory_common().items() ]
+    usage.sort()
+
+    # The total number of bytes allocated.
+    total = sum(i[0] for i in usage)
+
+    # The number of bytes we have yet to process.
+    remaining = total
+
+    write("=" * 78)
+    write("")
+    write("Memory profile at " + time.ctime() + ":")
+    write("")
+
+    for size, name in usage:
+
+        if (remaining - size) < total * fraction:
+            if size > minimum:
+                write("{:13,d} {}".format(size, name))
+
+        remaining -= size
+
+    write("-" * 13)
+    write("{:13,d} Total object, surface, and texture memory usage (in bytes).".format(total))
+    write("")
+
+
+################################################################################
+# Legacy memory debug functions
+################################################################################
 
 def find_parents(cls):
     """
@@ -156,7 +232,6 @@ def find_parents(cls):
         seen = set()
         queue = [ ]
         objects = [ ]
-
 
         for _i in range(30):
 
@@ -222,20 +297,3 @@ def find_parents(cls):
                 print
 
                 print_path(o)
-
-def memory_thread():
-
-    import sys
-    TextureGrid = sys.modules['renpy.gl.gltexture'].TextureGrid
-
-    while True:
-        print "==================================================="
-        print "==================================================="
-        find_parents(TextureGrid)
-        sys.stderr.write("Wrote textures.\n")
-        time.sleep(5)
-
-def start_memory_thread():
-    t = threading.Thread(target=memory_thread)
-    t.daemon = True
-    t.start()

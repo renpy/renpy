@@ -84,6 +84,8 @@ import renpy.audio.music as music
 from renpy.statements import register as register_statement
 from renpy.text.extras import check_text_tags
 
+from renpy.memory import profile_memory
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -135,6 +137,7 @@ def public_api():
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
     image_exists
+    profile_memory
 
 del public_api
 

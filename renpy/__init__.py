@@ -330,6 +330,9 @@ def import_all():
     import renpy.warp
 
     import renpy.editor
+
+    import renpy.memory
+
     import renpy.exports
     import renpy.character # depends on exports. @UnresolvedImport
 
