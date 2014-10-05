@@ -61,39 +61,49 @@ def walk_memory(roots):
     # A map from root_name to total_size.
     size = collections.defaultdict(int)
 
-    # Empty objects we can reuse.
-    empty_list = [ ]
-    empty_dict = { }
-
     def add(name, o):
         """
         Adds o to the worklist if it's not in seen.
         """
 
+    for name, o in roots:
         id_o = id(o)
+
         if id_o in seen:
-            return
+            continue
 
         seen.add(id_o)
         worklist.append((name, o))
 
-    for name, o in roots:
-        add(name, o)
+    # For speed, cache name lookups.
+    Surface = pygame.Surface
+    getsizeof = sys.getsizeof
+    get_referents = gc.get_referents
+    seen_add = seen.add
+    worklist_append = worklist.append
+
+    ignore_types = (types.ModuleType, types.ClassType, types.FunctionType)
 
     while worklist:
         name, o = worklist.pop(0)
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType, types.FunctionType)):
+        if isinstance(o, ignore_types):
             continue
 
-        size[name] += sys.getsizeof(o)
+        size[name] += getsizeof(o)
 
-        if isinstance(o, pygame.Surface):
+        if isinstance(o, Surface):
             w, h = o.get_size()
             size[name] += w * h * o.get_bytesize()
 
-        for v in gc.get_referents(o):
-            add(name, v)
+        for v in get_referents(o):
+            id_v = id(v)
+
+            if id_v in seen:
+                continue
+
+            seen_add(id_v)
+            worklist_append((name, v))
 
     return size
 
