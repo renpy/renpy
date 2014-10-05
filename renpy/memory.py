@@ -126,6 +126,9 @@ def profile_memory_common():
         if not (mod_name.startswith("renpy") or mod_name.startswith("store")):
             continue
 
+        if mod_name.startswith("renpy.store"):
+            continue
+
         for name, o in mod.__dict__.items():
             roots.append((mod_name + "." + name, o))
 
