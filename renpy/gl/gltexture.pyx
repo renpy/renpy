@@ -485,6 +485,9 @@ class Texture(TextureCore):
     the __del__ method is called.
     """
 
+    def __sizeof__(self):
+        return TextureCore.__sizeof__(self) + self.width * self.height * 4
+
     def __getstate__(self):
         if renpy.config.developer:
             raise Exception("Can't pickle a texture.")

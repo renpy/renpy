@@ -25,38 +25,116 @@
 import time
 import threading
 import weakref
+import types
+import sys
+import collections
+import pygame
 
-old_memory = { }
+import renpy.gl.gltexture
 
-def memory_profile():
-    """
-    Calling this function displays the change in the number of instances of
-    each type of object.
-    """
+def memory_profile(minimum=10000):
 
-    print "- Memory Profile ---------------------------------------------------"
+    # The set of ids we've seen.
+    seen = set()
 
-    import gc
-    gc.collect()
+    # A list of (name, object) pairs.
+    worklist = [ ]
 
-    objs = gc.get_objects()
+    # A map from root_name to total_size.
+    size = collections.defaultdict(int)
 
-    c = { } # count
+    # Empty objects we can reuse.
+    empty_list = [ ]
+    empty_dict = { }
 
-    for i in objs:
-        t = type(i)
-        c[t] = c.get(t, 0) + 1
+    def add(name, o):
+        """
+        Adds o to the worklist if it's not in seen.
+        """
 
-    results = [ (count, ty) for ty, count in c.iteritems() ]
-    results.sort()
+        id_o = id(o)
+        if id_o in seen:
+            return
 
-    for count, ty in results:
-        diff = count - old_memory.get(ty, 0)
-        old_memory[ty] = count
-        if diff:
-            print diff, ty
+        seen.add(id_o)
+        worklist.append((name, o))
 
-    del objs
+    for mod_name, mod in sorted(sys.modules.items()):
+
+        if mod is None:
+            continue
+
+        if not (mod_name.startswith("renpy") or mod_name.startswith("store")):
+            continue
+
+        for name, o in mod.__dict__.items():
+            add(mod_name + "." + name, o)
+
+    while worklist:
+        name, o = worklist.pop(0)
+
+        size[name] += sys.getsizeof(o)
+
+        if isinstance(o, pygame.Surface):
+            w, h = o.get_size()
+            size[name] += w * h * o.get_bytesize()
+        elif isinstance(o, renpy.gl.gltexture.Texture):
+            print sys.getsizeof(o), o
+
+        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+            continue
+
+        elif isinstance(o, (str, unicode)):
+            continue
+
+        elif isinstance(o, (tuple, list, set, frozenset)):
+            for i in o:
+                add(name, i)
+
+            continue
+
+        elif isinstance(o, dict):
+            for k, v in o.iteritems():
+                add(name, k)
+                add(name, v)
+
+            continue
+
+        elif isinstance(o, types.MethodType):
+            add(name, o.im_self)
+
+        else:
+            try:
+                slots = getattr(o, "__slots__", empty_list)
+            except:
+                slots = empty_list
+
+            if slots is not None:
+                for f in slots:
+                    try:
+                        v = getattr(o, f, None)
+                    except:
+                        v = None
+
+                    add(name, v)
+
+            try:
+                d = getattr(o, "__dict__", empty_dict)
+            except:
+                d = empty_dict
+
+            add(name, d)
+
+    total = 0
+
+    for k, v in sorted(size.items(), key=lambda a : a[1]):
+        total += v
+
+        if v > minimum:
+            print v / 1024, k
+
+    print "Total python memory used:", total
+
 
 
 def find_parents(cls):
