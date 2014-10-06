@@ -84,7 +84,7 @@ import renpy.audio.music as music
 from renpy.statements import register as register_statement
 from renpy.text.extras import check_text_tags
 
-from renpy.memory import profile_memory, diff_memory
+from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")

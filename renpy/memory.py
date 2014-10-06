@@ -38,7 +38,7 @@ def write(s):
     sys.stdout.write(s + "\n")
     memory_log.write("%s", s)
 
-def walk_memory(roots):
+def walk_memory(roots, seen=None):
     """
     Walks over memory, trying to account it to the objects in `roots`. Each
     object in memory is attributed to at most one of the roots. We use a
@@ -48,12 +48,14 @@ def walk_memory(roots):
     `roots`
         A list of (name, object) tuples.
 
-    Returns a dictionary mapping names from roots to the number of bytes
-    reachable from that name.
+    Returns a dictionary mapping names to the number of bytes
+    reachable from that name, and a dictionary mapping object ids to
+    names.
     """
 
-    # The set of ids we've seen.
-    seen = set()
+    # A map from id(o) to the name o is accounted under.
+    if seen is None:
+        seen = { }
 
     # A list of (name, object) pairs.
     worklist = [ ]
@@ -72,14 +74,13 @@ def walk_memory(roots):
         if id_o in seen:
             continue
 
-        seen.add(id_o)
+        seen[id_o] = name
         worklist.append((name, o))
 
     # For speed, cache name lookups.
     Surface = pygame.Surface
     getsizeof = sys.getsizeof
     get_referents = gc.get_referents
-    seen_add = seen.add
     worklist_append = worklist.append
 
     ignore_types = (types.ModuleType, types.ClassType, types.FunctionType)
@@ -102,18 +103,19 @@ def walk_memory(roots):
             if id_v in seen:
                 continue
 
-            seen_add(id_v)
+            seen[id_v] = name
             worklist_append((name, v))
 
-    return size
+    return size, seen
 
-def profile_memory_common():
+def profile_memory_common(packages=[ "renpy", "store" ]):
     """
     Profiles object, surface, and texture memory used in the renpy and store
     packages.
 
     Returns a map from name to the number of bytes accounted for by that
-    name.
+    name, and a dictionary mapping object ids to
+    names.
     """
 
     roots = [ ]
@@ -121,6 +123,12 @@ def profile_memory_common():
     for mod_name, mod in sorted(sys.modules.items()):
 
         if mod is None:
+            continue
+
+        for p in packages:
+            if mod_name.startswith(p):
+                break
+        else:
             continue
 
         if not (mod_name.startswith("renpy") or mod_name.startswith("store")):
@@ -155,9 +163,12 @@ def profile_memory(fraction=1.0, minimum=0):
     `minimum`
         If a name is accounted less than `minimum` bytes of memory, it will
         not be printed.
+
+    As it has to scan all memory used by Ren'Py, this function may take a
+    long time to complete.
     """
 
-    usage = [ (v, k) for (k, v) in profile_memory_common().items() ]
+    usage = [ (v, k) for (k, v) in profile_memory_common()[0].items() ]
     usage.sort()
 
     # The total number of bytes allocated.
@@ -198,12 +209,15 @@ def diff_memory(update=True):
     that the memory is reachable from. If an object is reachable from more
     than one name, it's assigned to the name it's most directly reachable
     from.
+
+    As it has to scan all memory used by Ren'Py, this function may take a
+    long time to complete.
     """
 
     global old_usage
     global old_total
 
-    usage = profile_memory_common()
+    usage = profile_memory_common()[0]
     total = sum(usage.values())
 
     diff = [ ]
@@ -217,7 +231,7 @@ def diff_memory(update=True):
 
     write("=" * 78)
     write("")
-    write("Memory profile at " + time.ctime() + ":")
+    write("Memory diff at " + time.ctime() + ":")
     write("")
 
     for change, name in diff:
@@ -234,6 +248,78 @@ def diff_memory(update=True):
     if update:
         old_usage = usage
         old_total = total
+
+
+def profile_rollback():
+    """
+    :doc: memory
+
+    Profiles memory used by the rollback system. Writes (to memory.txt and
+    stdout) the memory used by the rollback system. This tries to account
+    for rollback memory used by various store variables, as well as by
+    internal aspects of the rollback system.
+    """
+
+    # Profile live memory.
+    seen = profile_memory_common([ "store", "renpy.display" ])[1]
+
+    # Like seen, but for objects found in rollback.
+    new_seen = { }
+
+    log = list(renpy.game.log.log)
+    log.reverse()
+
+    roots = [ ]
+
+    # Walk the log, finding new roots and rollback information.
+    for rb in log:
+
+        for store_name, store in rb.stores.iteritems():
+            for var_name, o in store.iteritems():
+                name = store_name + "." + var_name
+                id_o = id(o)
+
+                if (id_o not in seen) and (id_o not in new_seen):
+                    new_seen[id_o] = name
+
+                roots.append((name, o))
+
+        for o, roll in rb.objects:
+
+            id_o = id(o)
+
+            name = "<unknown>"
+            name = new_seen.get(id_o, name)
+            name = seen.get(id_o, name)
+
+            roots.append((name, roll))
+
+        roots.append(("<scene lists>", rb.context.scene_lists))
+        roots.append(("<context>", rb.context))
+
+    sizes = walk_memory(roots, seen)[0]
+
+    write("=" * 78)
+    write("")
+    write("Rollback profile at " + time.ctime() + ":")
+    write("")
+
+    usage = [ (v, k) for (k, v) in sizes.iteritems() ]
+    usage.sort()
+
+    write("Total Bytes".rjust(13) + " " + "Per Rollback".rjust(13))
+    write("-" * 13 + " " + "-" * 13 + " " + "-" * 50)
+
+    for size, name in usage:
+        if name.startswith("renpy"):
+            continue
+
+        if size:
+            write("{:13,d} {:13,d} {}".format(size, size // len(log), name))
+
+    write("")
+    write("{} Rollback objects exist.".format(len(log)))
+    write("")
 
 
 ################################################################################
