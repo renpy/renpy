@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: Play(channel, file, **kwargs)
+.. function:: Play(channel, file, selected=None, **kwargs)
     
     Causes an audio file to be played on a given channel.
     
@@ -8,8 +8,14 @@
         The channel to play the sound on.
     `file`
         The file to play.
+    `selected`
+        If True, buttons using this action will be marked as selected
+        if the file is playing on the channel. If False, this action
+        will not cause the button to start playing. If None, the button
+        is marked selected if the channel is a music channel, and not
+        otherwise.
     
-    Any keyword arguments are passed to :func:`renpy.music.play`
+    Any other keyword arguments are passed to :func:`renpy.music.play`.
 
 .. function:: Queue(channel, file, **kwargs)
     

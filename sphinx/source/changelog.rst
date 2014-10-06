@@ -18,6 +18,19 @@ The :ref:`mousearea` screen language statement now respects the
 :propref:`focus_mask` style property, making it possible to have
 non-rectangular mouseareas.
 
+Ren'Py now includes functions that can be used to profile
+the memory consumption of a game, including the memory consumption of
+Ren'Py itself. These functions are :func:`renpy.profile_memory` and
+:func:`renpy.diff_memory`. The new :func:`renpy.profile_rollback`
+lets one more specifically see the memory consumption of the internal
+rollback log.
+
+This release fixes a subtle bug caused by incorrect analysis of for
+loops in screen language screens, when the iteration variable is a
+constant. (For example, when the iteration variable is ``define``ed
+somewhere else in the game.
+
+
 Ren'Py 6.18.1
 =============
 

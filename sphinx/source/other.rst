@@ -8,6 +8,11 @@ new functionality that has no other place to go.
 
 .. include:: inc/other
 
+Memory Profiling
+-----------------
+
+.. include:: inc/memory
+
 Contexts
 ---------
 
