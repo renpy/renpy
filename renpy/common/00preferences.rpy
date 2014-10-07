@@ -352,3 +352,28 @@ init -1500 python:
             rv.alt = name + " [text]"
 
         return rv
+
+
+    def __show_self_voicing():
+        has_screen = renpy.get_screen("_self_voicing")
+
+        if _preferences.self_voicing and not has_screen:
+            renpy.show_screen("_self_voicing")
+        elif not _preferences.self_voicing and has_screen:
+            renpy.hide_screen("_self_voicing")
+
+    config.interact_callbacks.append(__show_self_voicing)
+
+init -1500:
+
+    # The screen that we use to indicate that self-voicing is enabled.
+    screen _self_voicing():
+        zorder 1500
+
+        text _("Self-voicing enabled. Press 'v' to disable."):
+            alt ""
+
+            xpos 10
+            ypos 35
+            color "#fff"
+            outlines [ (1, "#0008", 0, 0)]
