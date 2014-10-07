@@ -234,6 +234,8 @@ init python:
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
+            self.yes_thread = None
+
             try:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
 
@@ -260,6 +262,7 @@ init python:
                     self.yes_thread.join()
 
                 self.process = None
+                self.yes_thread = None
 
         def check_process(self):
             rv = self.process.poll()
