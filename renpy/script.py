@@ -433,6 +433,7 @@ class Script(object):
         # from an archive.
         if dir is None:
 
+            rpyfn = fn + source
             lastfn = fn + compiled
             data, stmts = self.load_file(dir, fn + compiled)
 
