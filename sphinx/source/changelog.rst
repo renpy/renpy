@@ -5,6 +5,22 @@ Full Changelog
 Ren'Py 6.18.2
 =============
 
+The define statement can now take a store name, and the say statement
+will search the ``character`` store before searching the default store.
+This means that if one uses::
+
+    define character.e = Character("Eileen")
+
+Say statements like::
+
+    e "Hello, world."
+
+will continue to work, even though ``e`` has been freed up for other
+purposes.
+
+The default image cache size (set in :var:`config.image_cache_size`) has
+been increased from 8 to 16 screens worth of images.
+
 When set to True, the new :tpref:`crop_relative` transform property tells
 a Transform to interpret float components of its :tpref:`crop` property
 relative to the width or height of its transformed child, as appropriate.
@@ -28,7 +44,7 @@ rollback log.
 This release fixes a subtle bug caused by incorrect analysis of for
 loops in screen language screens, when the iteration variable is a
 constant. (For example, when the iteration variable is ``define``ed
-somewhere else in the game.
+somewhere else in the game.)
 
 
 Ren'Py 6.18.1
