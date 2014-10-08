@@ -97,11 +97,11 @@ image_cache_size = 8
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
 # path. The current node is counted in this number.
-predict_statements = 16
+predict_statements = 32
 
 # Causes the contents of the image cache to be printed to stdout when
 # it changes.
-debug_image_cache = False
+debug_image_cache = ("RENPY_DEBUG_IMAGE_CACHE" in os.environ)
 
 # Should we allow skipping at all?
 allow_skipping = True
