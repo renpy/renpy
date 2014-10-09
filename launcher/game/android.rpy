@@ -243,7 +243,12 @@ init python:
                 if yes:
                     kwargs["stdin"] = subprocess.PIPE
 
-                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+                try:
+                    self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+                except:
+                    import traceback
+                    traceback.print_exc(file=f)
+                    raise
 
                 if yes:
                     import threading
