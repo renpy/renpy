@@ -527,10 +527,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 if self.profile.debug:
                     debug = True
 
-        # Update _current_screen
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
 
         # Cycle widgets and transforms.
         self.old_widgets = self.widgets
@@ -538,24 +534,31 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.widgets = { }
         self.transforms = { }
 
-        # Render the child.
+        # Update _current_screen and renpy.ui.screen.
+        global _current_screen
+        old_screen = _current_screen
+        _current_screen = self
+
         old_ui_screen = renpy.ui.screen
         renpy.ui.screen = self
 
-        renpy.ui.detached()
-        self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
-        self.children = [ self.child ]
+        # Evaluate the screen.
+        try:
+            renpy.ui.detached()
+            self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
+            self.children = [ self.child ]
 
-        self.scope["_scope"] = self.scope
-        self.scope["_name"] = 0
-        self.scope["_debug"] = debug
+            self.scope["_scope"] = self.scope
+            self.scope["_name"] = 0
+            self.scope["_debug"] = debug
 
-        self.screen.function(**self.scope)
+            self.screen.function(**self.scope)
 
-        renpy.ui.close()
+            renpy.ui.close()
 
-        renpy.ui.screen = old_ui_screen
-        _current_screen = old_screen
+        finally:
+            renpy.ui.screen = old_ui_screen
+            _current_screen = old_screen
 
         # Finish up.
         self.old_widgets = None
