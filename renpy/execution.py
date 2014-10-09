@@ -392,6 +392,7 @@ class Context(renpy.object.Object):
 
                 self.return_stack.pop()
                 self.call_location_stack.pop()
+                self.pop_dynamic()
 
                 continue
 
