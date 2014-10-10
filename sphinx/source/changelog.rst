@@ -41,11 +41,16 @@ Ren'Py itself. These functions are :func:`renpy.profile_memory` and
 lets one more specifically see the memory consumption of the internal
 rollback log.
 
+When self-voicing mode is enabled, Ren'Py displays a notification that
+explains how to disable self-voicing mode.
+
 This release fixes a subtle bug caused by incorrect analysis of for
 loops in screen language screens, when the iteration variable is a
 constant. (For example, when the iteration variable is ``define``ed
 somewhere else in the game.)
 
+This release adds Traditional Chinese translations of the launcher and
+template game, contributed by Civalin.
 
 Ren'Py 6.18.1
 =============
