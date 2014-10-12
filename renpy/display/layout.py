@@ -1611,12 +1611,25 @@ class Side(Container):
         if isinstance(positions, basestring):
             positions = positions.split()
 
+        seen = set()
+
         for i in positions:
             if not i in Side.possible_positions:
                 raise Exception("Side used with impossible position '%s'." % (i,))
 
+            if i in seen:
+                raise Exception("Side used with duplicate position '%s'." % (i,))
+
+            seen.add(i)
+
         self.positions = tuple(positions)
         self.sized = False
+
+    def add(self, d):
+        if len(self.children) >= len(self.positions):
+            raise Exception("Side has been given too many arguments.")
+
+        super(Side, self).add(d)
 
     def _clear(self):
         super(Side, self)._clear()
