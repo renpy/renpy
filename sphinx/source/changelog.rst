@@ -2,6 +2,17 @@
 Full Changelog
 ==============
 
+Ren'Py 6.18.3
+=============
+
+Ren'Py's image prediction mechanism now models the return stack, and can
+predict images through a call and return pair. Previously, a call followed
+by a return would block image prediction.
+
+Ren'Py now predicts that the start label will be called from the main menu.
+This will help to avoid unpredicted image loads at the very start of a game.
+
+
 Ren'Py 6.18.2
 =============
 
