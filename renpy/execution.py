@@ -423,6 +423,39 @@ class Context(renpy.object.Object):
 
         return rv
 
+    def predict_call(self, label, return_site):
+        """
+        This is called by the prediction code to indicate that a call to
+        `label` will occur.
+
+        `return_site`
+            The name of the return site to push on the predicted return
+            stack.
+
+        Returns the node corresponding to `label`
+        """
+
+        self.predict_return_stack = list(self.predict_return_stack)
+        self.predict_return_stack.append(return_site)
+
+        return renpy.game.script.lookup(label)
+
+
+    def predict_return(self):
+        """
+        This predicts that a return will occur.
+
+        It returns the node we predict will be returned to.
+        """
+
+        if not self.predict_return_stack:
+            return None
+
+        self.predict_return_stack = list(self.predict_return_stack)
+        label = self.predict_return_stack.pop()
+
+        return renpy.game.script.lookup(label)
+
     def predict(self):
         """
         Performs image prediction, calling the given callback with each
@@ -435,7 +468,7 @@ class Context(renpy.object.Object):
 
         old_images = self.images
 
-        nodes = [ (renpy.game.script.lookup(self.current), self.images) ]
+        nodes = [ (renpy.game.script.lookup(self.current), self.images, list(self.return_stack) ) ]
         node_set = set()
 
         for i in range(0, renpy.config.predict_statements):
@@ -443,9 +476,10 @@ class Context(renpy.object.Object):
             if i >= len(nodes):
                 break
 
-            node, images = nodes[i]
+            node, images, return_stack = nodes[i]
 
             self.images = renpy.display.image.ShownImageInfo(images)
+            self.predict_return_stack = return_stack
 
             # Ignore exceptions in prediction, so long as
             # prediction is not needed.
@@ -456,9 +490,11 @@ class Context(renpy.object.Object):
                         continue
 
                     if n not in node_set:
-                        nodes.append((n, self.images))
+                        nodes.append((n, self.images, self.predict_return_stack))
                         node_set.add(n)
             except:
+
+                raise
 
                 if renpy.config.debug_image_cache:
                     import traceback
@@ -470,8 +506,10 @@ class Context(renpy.object.Object):
                 # We accept that sometimes prediction won't work.
 
             self.images = old_images
+            self.predict_return_stack = None
 
             yield True
+
 
         yield False
 
