@@ -534,6 +534,10 @@ emphasize_audio_time = 0.5
 # Should we transition screens, or always use their new states.
 transition_screens = True
 
+# A function that given the current statement identifier, returns a list
+# of statement identifiers that should be predicted.
+predict_statements_callback = None
+
 del renpy
 del os
 
