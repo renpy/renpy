@@ -955,7 +955,7 @@ class SLIf(SLNode):
 
                 for i in block.children:
                     try:
-                        i.execute(context)
+                        i.execute(ctx)
                     except:
                         pass
 
