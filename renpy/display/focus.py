@@ -128,15 +128,15 @@ def focus_coordinates():
     return None, None, None, None
 
 
-# This is called before each interaction. It's purpose is to choose
-# the widget that is focused, and to mark it as focused and all of
-# the other widgets as unfocused.
-
-# The new grab widget. (The one that replaced the old grab widget at the start
-# of the interaction.)
-new_grab = None
+# A map from id(displayable) to the displayable that replaces it.
+replaced_by = { }
 
 def before_interact(roots):
+    """
+    Called before each interaction to choose the focused and grabbed
+    displayables.
+    """
+
 
     global new_grab
     global grab
@@ -160,13 +160,17 @@ def before_interact(roots):
 
         f.full_focus_name = n, serial
 
-        if (f is grab) and (new_grab is None):
-            new_grab = f
+        replaced_by[id(f)] = f
+
+
+    # We assume id(None) is not in replaced_by.
+    replaced_by.pop(None, None)
 
     # If there's something with the same full name as the current widget,
     # it becomes the new current widget.
 
     current = get_focused()
+    current = replaced_by.get(id(current), current)
 
     if current is not None:
         current_name = current.full_focus_name
@@ -199,8 +203,11 @@ def before_interact(roots):
     if current:
         current.focus(default=True)
 
-    grab = new_grab
-    new_grab = None
+    # Update the grab.
+    grab = replaced_by.get(id(grab), None)
+
+    # Clear replaced_by.
+    replaced_by.clear()
 
 # This changes the focus to be the widget contained inside the new
 # focus object.
