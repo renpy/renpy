@@ -396,6 +396,7 @@ def sl2viewport(**kwargs):
 
     rv = d.child
     rv._main = vp
+    rv._composite_parts = list(rv.children)
 
     return rv
 

@@ -917,6 +917,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
     rv._main = text
+    rv._composite_parts = [ text ]
     return rv
 
 textbutton = Wrapper(_textbutton)
@@ -942,6 +943,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
     rv._main = text
+    rv._composite_parts = [ text ]
     return rv
 
 label = Wrapper(_label)
@@ -1145,13 +1147,18 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     properties.setdefault('fit_first', True)
 
     rv = renpy.display.layout.MultiBox(layout='fixed', **properties)
+    parts = [ ]
 
     if ground:
         rv.add(renpy.easy.displayable(ground))
+        parts.append(ground)
 
     box = renpy.display.layout.MultiBox(layout='fixed')
     rv.add(box)
+    parts.append(box)
+
     rv._main = box
+    rv._composite_parts = parts
 
     return rv
 
