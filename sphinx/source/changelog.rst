@@ -12,6 +12,8 @@ by a return would block image prediction.
 Ren'Py now predicts that the start label will be called from the main menu.
 This will help to avoid unpredicted image loads at the very start of a game.
 
+The ATL on statement now can take a comma-separated list of event names.
+
 
 Ren'Py 6.18.2
 =============
