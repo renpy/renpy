@@ -418,6 +418,7 @@ class Displayable(renpy.object.Object):
             return
 
         self.transform_event = event
+
         if self.transform_event_responder:
             renpy.display.render.redraw(self, 0)
 

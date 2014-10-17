@@ -507,6 +507,9 @@ Style("focus_mask")
 add(ui_properties)
 add(position_properties)
 
-DisplayableParser("on", renpy.display.behavior.OnEvent, 0)
+DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
+
+DisplayableParser("showif", renpy.display.layout.ShowIf, None, 1, replaces=True)
+Positional("condition")
