@@ -84,8 +84,9 @@ init -1600 python:
 
             return self.dict[self.key] == self.value
 
+
     @renpy.pure
-    def SetScreenVariable(name, value):
+    class SetScreenVariable(Action, FieldEquality):
         """
         :doc: data_action
 
@@ -93,11 +94,34 @@ init -1600 python:
         be set to `value`.
         """
 
-        cs = renpy.current_screen()
-        if cs is not None:
-            return SetDict(cs.scope, name, value)
-        else:
-            return None
+        identity_fields = [ "name", "value" ]
+
+        def __init__(self, name, value):
+            self.name = name
+            self.value = value
+
+        def __call__(self):
+
+            cs = renpy.current_screen()
+
+            if cs is None:
+                return
+
+            cs.scope[self.name] = self.value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+
+            cs = renpy.current_screen()
+
+            if cs is None:
+                return False
+
+            if self.name not in cs.scope:
+                return False
+
+            return cs.scope[self.name] == self.value
+
 
     @renpy.pure
     class ToggleField(Action, FieldEquality):
@@ -162,6 +186,8 @@ init -1600 python:
 
         return ToggleField(store, variable, true_value=true_value, false_value=false_value)
 
+
+
     @renpy.pure
     class ToggleDict(Action, FieldEquality):
         """
@@ -202,6 +228,9 @@ init -1600 python:
             renpy.restart_interaction()
 
         def get_selected(self):
+            if self.key not in self.dict:
+                return False
+
             rv = self.dict[self.key]
 
             if self.true_value is not None:
@@ -209,8 +238,10 @@ init -1600 python:
 
             return rv
 
+
+
     @renpy.pure
-    def ToggleScreenVariable(name, true_value=None, false_value=None):
+    class ToggleScreenVariable(Action, FieldEquality):
         """
          :doc: data_action
 
@@ -222,10 +253,48 @@ init -1600 python:
              If not None, then this is the false value we use.
          """
 
-        cs = renpy.current_screen()
+        identity_fields = [ "name", "true_value", "false_value" ]
 
-        if cs is not None:
-            return ToggleDict(cs.scope, name, true_value=true_value, false_value=None)
-        else:
-            return None
+        def __init__(self, name, true_value=None, false_value=None):
+            self.name = name
+            self.true_value = true_value
+            self.false_value = false_value
 
+        def __call__(self):
+            cs = renpy.current_screen()
+
+            if cs is None:
+                return
+
+            value = cs.scope[self.name]
+
+            if self.true_value is not None:
+                value = (value == self.true_value)
+
+            value = not value
+
+            if self.true_value is not None:
+                if value:
+                    value = self.true_value
+                else:
+                    value = self.false_value
+
+            cs.scope[self.name] = value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            cs = renpy.current_screen()
+
+            if cs is None:
+                return False
+
+            if self.name not in cs.scope:
+                return False
+
+            rv = cs.scope[self.name]
+
+            if self.true_value is not None:
+                rv = (rv == self.true_value)
+
+
+            return rv
