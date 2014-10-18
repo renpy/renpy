@@ -1301,10 +1301,13 @@ class Time(Statement):
 
 class RawOn(RawStatement):
 
-    def __init__(self, loc, name, block):
+    def __init__(self, loc, names, block):
         super(RawOn, self).__init__(loc)
 
-        self.handlers = { name : block }
+        self.handlers = { }
+
+        for i in names:
+            self.handlers[i] = block
 
     def compile(self, ctx): #@ReservedAssignment
 
@@ -1533,14 +1536,22 @@ def parse_atl(l):
 
         elif l.keyword('on'):
 
-            name = l.require(l.word)
+            names = [ l.require(l.word) ]
+
+            while l.match(','):
+                name = l.word()
+
+                if name is None:
+                    break
+
+                names.append(name)
 
             l.require(':')
             l.expect_eol()
             l.expect_block('on')
 
             block = parse_atl(l.subblock_lexer())
-            statements.append(RawOn(loc, name, block))
+            statements.append(RawOn(loc, names, block))
 
         elif l.keyword('time'):
             time = l.require(l.simple_expression)

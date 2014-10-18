@@ -392,6 +392,7 @@ class Context(renpy.object.Object):
 
                 self.return_stack.pop()
                 self.call_location_stack.pop()
+                self.pop_dynamic()
 
                 continue
 
@@ -422,6 +423,39 @@ class Context(renpy.object.Object):
 
         return rv
 
+    def predict_call(self, label, return_site):
+        """
+        This is called by the prediction code to indicate that a call to
+        `label` will occur.
+
+        `return_site`
+            The name of the return site to push on the predicted return
+            stack.
+
+        Returns the node corresponding to `label`
+        """
+
+        self.predict_return_stack = list(self.predict_return_stack)
+        self.predict_return_stack.append(return_site)
+
+        return renpy.game.script.lookup(label)
+
+
+    def predict_return(self):
+        """
+        This predicts that a return will occur.
+
+        It returns the node we predict will be returned to.
+        """
+
+        if not self.predict_return_stack:
+            return None
+
+        self.predict_return_stack = list(self.predict_return_stack)
+        label = self.predict_return_stack.pop()
+
+        return renpy.game.script.lookup(label)
+
     def predict(self):
         """
         Performs image prediction, calling the given callback with each
@@ -432,31 +466,48 @@ class Context(renpy.object.Object):
         if not self.current:
             return
 
+        if renpy.config.predict_statements_callback is None:
+            return
+
         old_images = self.images
 
-        nodes = [ (renpy.game.script.lookup(self.current), self.images) ]
-        node_set = set()
+        # A worklist of (node, images, return_stack) tuples.
+        nodes = [ ]
 
+        # The set of nodes we've seen. (We only consider each node once.)
+        seen = set()
+
+        # Find the roots.
+        for label in renpy.config.predict_statements_callback(self.current):
+            node = renpy.game.script.lookup(label)
+
+            if node in seen:
+                continue
+
+            nodes.append((node, self.images, self.return_stack))
+            seen.add(node)
+
+        # Predict statements.
         for i in range(0, renpy.config.predict_statements):
 
             if i >= len(nodes):
                 break
 
-            node, images = nodes[i]
+            node, images, return_stack = nodes[i]
 
             self.images = renpy.display.image.ShownImageInfo(images)
-
-            # Ignore exceptions in prediction, so long as
-            # prediction is not needed.
+            self.predict_return_stack = return_stack
 
             try:
+
                 for n in node.predict():
                     if n is None:
                         continue
 
-                    if n not in node_set:
-                        nodes.append((n, self.images))
-                        node_set.add(n)
+                    if n not in seen:
+                        nodes.append((n, self.images, self.predict_return_stack))
+                        seen.add(n)
+
             except:
 
                 if renpy.config.debug_image_cache:
@@ -466,9 +517,8 @@ class Context(renpy.object.Object):
                     traceback.print_exc()
                     print "While predicting images."
 
-                # We accept that sometimes prediction won't work.
-
             self.images = old_images
+            self.predict_return_stack = None
 
             yield True
 

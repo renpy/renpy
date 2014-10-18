@@ -92,12 +92,9 @@ init -1700 python:
 
     config.empty_window = _default_empty_window
 
-    style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
-    style.skip_indicator.xpos = 10
-    style.skip_indicator.ypos = 10
 
-
-init -1700 python:
+    ##########################################################################
+    # Extend
 
     config.extend_interjection = "{fast}"
 
@@ -121,6 +118,10 @@ init -1700 python:
 
     extend.record_say = False
 
+
+    ##########################################################################
+    # Self-voicing
+
     def sv(what, interact=True):
         """
         Uses the narrator to speak `what` iff self-voicing is enabled.
@@ -130,9 +131,14 @@ init -1700 python:
             return narrator(what, interact=interact)
 
 
-init -1700 python:
+    ##########################################################################
+    # Skip indicator
 
-    def skip_indicator():
+    style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
+    style.skip_indicator.xpos = 10
+    style.skip_indicator.ypos = 10
+
+    def _skip_indicator():
 
         ### skip_indicator default
         # (text) The style and placement of the skip indicator.
@@ -155,10 +161,30 @@ init -1700 python:
 
         ui.add(renpy.easy.displayable(config.skip_indicator))
 
-    config.overlay_functions.append(skip_indicator)
+    config.overlay_functions.append(_skip_indicator)
+
+
+    ##########################################################################
+    # Predictions
+
+    # A list of labels we predict at start time.
+    config.predict_start_labels = [ "start" ]
+
+    # Prediction of statements.
+    def _predict_statements(current):
+
+        if main_menu:
+            rv = list(config.predict_start_labels)
+            rv.append(current)
+            return rv
+
+        return [ current ]
+
+    config.predict_statements_callback = _predict_statements
+
 
     # Prediction of screens.
-    def predict():
+    def _predict_screens():
 
         s = _game_menu_screen
 
@@ -175,10 +201,8 @@ init -1700 python:
                 renpy.predict_screen(s)
                 return
 
+    config.predict_callbacks.append(_predict_screens)
 
-    config.predict_callbacks.append(predict)
-
-init -1700 python:
 
     ##########################################################################
     # Side Images

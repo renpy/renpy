@@ -1283,10 +1283,13 @@ class Call(Node):
             renpy.store._kwargs = kwargs
 
     def predict(self):
+
+        label = self.label
+
         if self.expression:
-            return [ ]
-        else:
-            return [ renpy.game.script.lookup(self.label) ]
+            label = renpy.python.py_eval(label)
+
+        return [ renpy.game.context().predict_call(label, self.next.name) ]
 
     def scry(self):
         rv = Node.scry(self)
@@ -1328,11 +1331,8 @@ class Return(Node):
         next_node(renpy.game.context().lookup_return(pop=True))
 
     def predict(self):
-        site = renpy.game.context().lookup_return(pop=False)
-        if site:
-            return [ site ]
-        else:
-            return [ ]
+
+        return [ renpy.game.context().predict_return() ]
 
     def scry(self):
         rv = Node.scry(self)

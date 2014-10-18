@@ -403,10 +403,11 @@ On Statement
 ------------
 
 The On statement is a complex statement that defines an event handler. On
-statements are greedily grouped into a single statement.
+statements are greedily grouped into a single statement. On statement can
+handle a single event name, or a comma-separated list of event names.
 
 .. productionlist:: atl
-   atl_on : "on" `name` ":"
+   atl_on : "on" `name` [ "," `name` ] * ":"
           :      `atl_block`
 
 The on statement is used to handle events. When an event is handled, handling
@@ -425,6 +426,11 @@ by the time statement, or an enclosing event handler.)
             linear .5 alpha 1.0
         on hide:
             linear .5 alpha 0.0
+
+    transform pulse_button:
+        on hover, idle:
+            linear .25 zoom 1.25
+            linear .25 zoom 1.0
 
 Contains Statement
 ------------------

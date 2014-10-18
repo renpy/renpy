@@ -2,8 +2,37 @@
 Full Changelog
 ==============
 
+Ren'Py 6.18.3
+=============
+
+Ren'Py's image prediction mechanism now models the return stack, and can
+predict images through a call and return pair. Previously, a call followed
+by a return would block image prediction.
+
+Ren'Py now predicts that the start label will be called from the main menu.
+This will help to avoid unpredicted image loads at the very start of a game.
+
+The ATL on statement now can take a comma-separated list of event names.
+
+
 Ren'Py 6.18.2
 =============
+
+The define statement can now take a store name, and the say statement
+will search the ``character`` store before searching the default store.
+This means that if one uses::
+
+    define character.e = Character("Eileen")
+
+Say statements like::
+
+    e "Hello, world."
+
+will continue to work, even though ``e`` has been freed up for other
+purposes.
+
+The default image cache size (set in :var:`config.image_cache_size`) has
+been increased from 8 to 16 screens worth of images.
 
 When set to True, the new :tpref:`crop_relative` transform property tells
 a Transform to interpret float components of its :tpref:`crop` property
@@ -25,11 +54,16 @@ Ren'Py itself. These functions are :func:`renpy.profile_memory` and
 lets one more specifically see the memory consumption of the internal
 rollback log.
 
+When self-voicing mode is enabled, Ren'Py displays a notification that
+explains how to disable self-voicing mode.
+
 This release fixes a subtle bug caused by incorrect analysis of for
 loops in screen language screens, when the iteration variable is a
 constant. (For example, when the iteration variable is ``define``ed
-somewhere else in the game.
+somewhere else in the game.)
 
+This release adds Traditional Chinese translations of the launcher and
+template game, contributed by Civalin.
 
 Ren'Py 6.18.1
 =============

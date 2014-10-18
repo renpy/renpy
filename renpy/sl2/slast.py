@@ -721,9 +721,14 @@ class SLDisplayable(SLBlock):
                 for i in ctx.children:
                     main.add(i)
 
-        # Migrate grabs.
-        if old_main and (renpy.display.focus.grab is old_main):
-            renpy.display.focus.new_grab = main
+        # Inform the focus system about replacement displayables.
+        if (not context.predicting) and (old_d is not None):
+            replaced_by = renpy.display.focus.replaced_by
+            replaced_by[id(old_d)] = d
+
+            if d is not main:
+                for old_part, new_part in zip(old_d._composite_parts, d._composite_parts):
+                    replaced_by[id(old_part)] = new_part
 
         cache.displayable = d
         cache.children = ctx.children
@@ -950,7 +955,7 @@ class SLIf(SLNode):
 
                 for i in block.children:
                     try:
-                        i.execute(context)
+                        i.execute(ctx)
                     except:
                         pass
 

@@ -501,3 +501,7 @@ translate spanish strings:
     old "Location"
     new "Ubicación"
 
+    # renpy/common/00preferences.rpy:373
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "Self-voicing activado. Presiona 'v' para desactivarlo."
+

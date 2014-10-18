@@ -220,7 +220,6 @@
 * :var:`offscreenright`
 * persistent
 * :var:`pixellate`
-* predict
 * predict_menu
 * predict_say
 * python_dict
@@ -232,7 +231,6 @@
 * :var:`right`
 * :var:`save_name`
 * :var:`say`
-* skip_indicator
 * slideawaydown
 * :var:`slideawayleft`
 * slideawayright

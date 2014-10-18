@@ -400,9 +400,9 @@ class Wrapper(renpy.object.Object):
         if not stack:
             raise Exception("Can't add displayable during init phase.")
 
-        # Pull out the special kwargs, id, at, and style_group.
+        # Pull out the special kwargs, widget_id, at, and style_group.
 
-        id = kwargs.pop("id", None) #@ReservedAssignment
+        widget_id = kwargs.pop("id", None) #@ReservedAssignment
 
         at_list = kwargs.pop("at", [ ])
         if not isinstance(at_list, (list, tuple)):
@@ -428,24 +428,19 @@ class Wrapper(renpy.object.Object):
         do_add = True
 
         if screen:
-            if id in screen.widget_properties:
-                keyword.update(screen.widget_properties[id])
+            if widget_id in screen.widget_properties:
+                keyword.update(screen.widget_properties[widget_id])
 
-            if id in screen.hidden_widgets:
+            if widget_id in screen.hidden_widgets:
                 do_add = False
 
-        grab = False
-
         if old_transfers:
-            if self.replaces:
-                w = screen.old_widgets.get(id, None)
+            old_main = screen.old_widgets.get(widget_id, None)
 
-                if w is not None:
-                    keyword["replaces"] = w
-
-                    if (renpy.display.focus.grab is w) and (not screen.hiding):
-                        grab = True
-
+            if self.replaces and old_main is not None:
+                keyword["replaces"] = old_main
+        else:
+            old_main = None
 
         if self.style and "style" not in keyword:
             keyword["style"] = style_group_style(self.style, style_group)
@@ -461,11 +456,14 @@ class Wrapper(renpy.object.Object):
             del tb # Important! Prevents memory leaks via our frame.
             raise
 
+        main = w._main or w
+
+        # Migrate the focus.
+        if (old_main is not None) and (not screen.hiding):
+            renpy.display.focus.replaced_by[id(old_main)] = main
+
         # Wrap the displayable based on the at_list and at_stack.
         atw = w
-
-        if grab:
-            renpy.display.focus.new_grab = w
 
         while at_stack:
             at_list.append(at_stack.pop())
@@ -486,18 +484,16 @@ class Wrapper(renpy.object.Object):
         elif self.many:
             stack.append(Many(w, self.imagemap, style_group))
 
-        main = w._main or w
-
-        # If we have an id, record the displayable, the transform,
+        # If we have an widget_id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
-        if screen and id is not None:
-            screen.widgets[id] = main
+        if screen and widget_id is not None:
+            screen.widgets[widget_id] = main
 
             if isinstance(atw, renpy.display.motion.Transform):
-                screen.transforms[id] = atw
+                screen.transforms[widget_id] = atw
 
                 if old_transfers:
-                    oldt = screen.old_transforms.get(id, None)
+                    oldt = screen.old_transforms.get(widget_id, None)
                 else:
                     oldt = None
 
@@ -917,6 +913,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
     rv._main = text
+    rv._composite_parts = [ text ]
     return rv
 
 textbutton = Wrapper(_textbutton)
@@ -942,6 +939,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
     rv._main = text
+    rv._composite_parts = [ text ]
     return rv
 
 label = Wrapper(_label)
@@ -1145,13 +1143,18 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     properties.setdefault('fit_first', True)
 
     rv = renpy.display.layout.MultiBox(layout='fixed', **properties)
+    parts = [ ]
 
     if ground:
         rv.add(renpy.easy.displayable(ground))
+        parts.append(ground)
 
     box = renpy.display.layout.MultiBox(layout='fixed')
     rv.add(box)
+    parts.append(box)
+
     rv._main = box
+    rv._composite_parts = parts
 
     return rv
 

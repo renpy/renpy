@@ -1098,12 +1098,16 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         return renpy.display.render.render(self.child, w, h, st, at)
 
     def predict_one(self):
-        if not self.predict_function:
-            return
+        try:
+            if self.predict_function:
+                child = self.predict_function(*self.args, **self.kwargs)
+            else:
+                child, _ = self.function(0, 0, *self.args, **self.kwargs)
 
-        for i in self.predict_function(*self.args, **self.kwargs):
-            if i is not None:
-                renpy.display.predict.displayable(i)
+            if child is not None:
+                renpy.display.predict.displayable(child)
+        except:
+            pass
 
     def get_placement(self):
         if not self.child:
@@ -1607,12 +1611,25 @@ class Side(Container):
         if isinstance(positions, basestring):
             positions = positions.split()
 
+        seen = set()
+
         for i in positions:
             if not i in Side.possible_positions:
                 raise Exception("Side used with impossible position '%s'." % (i,))
 
+            if i in seen:
+                raise Exception("Side used with duplicate position '%s'." % (i,))
+
+            seen.add(i)
+
         self.positions = tuple(positions)
         self.sized = False
+
+    def add(self, d):
+        if len(self.children) >= len(self.positions):
+            raise Exception("Side has been given too many arguments.")
+
+        super(Side, self).add(d)
 
     def _clear(self):
         super(Side, self)._clear()
@@ -1892,3 +1909,71 @@ class Flatten(Container):
         rv.depends_on(cr, focus=True)
 
         return rv
+
+
+class ShowIf(Container):
+    """
+    """
+
+    def __init__(self, condition, replaces=None):
+        super(ShowIf, self).__init__()
+
+        self.condition = condition
+
+        if replaces is None:
+            self.hide_child = None
+
+        else:
+            if self.condition and not replaces.condition:
+                self.hide_child = None
+                self.set_transform_event("show")
+            elif not self.condition and replaces.condition:
+                self.hide_child = replaces.child
+                self.set_transform_event("hide")
+            else:
+                self.hide_child = replaces.hide_child
+                self.transform_event = replaces.transform_event
+
+        # True if we've called _hide, false otherwise.
+        self.hide_called = False
+
+    def render(self, width, height, st, at):
+
+        # If the condition is true, just render our child.
+        if self.condition:
+            child = self.child
+
+        else:
+            if self.hide_child is not None and not self.hide_called:
+                self.hide_called = True
+                self.hide_child = self.hide_child._hide(st, at, "hide")
+
+            child = self.hide_child
+
+
+        if child:
+            cr = renpy.display.render.render(child, width, height, st, at)
+            cw, ch = cr.get_size()
+
+            rv = renpy.display.render.Render(cw, ch)
+            rv.blit(cr, (0, 0))
+
+        else:
+            rv = renpy.display.render.Render(0, 0)
+
+        self.offsets = [ (0, 0) ]
+
+        return rv
+
+    def event(self, ev, x, y, st):
+        if self.condition:
+            return self.child.event(ev, x, y, st)
+        else:
+            return None
+
+    def get_placement(self):
+        if not self.condition and self.hide_child:
+            return self.hide_child.get_placement()
+        else:
+            return self.child.get_placement()
+

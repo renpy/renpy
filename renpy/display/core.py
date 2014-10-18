@@ -184,6 +184,9 @@ class Displayable(renpy.object.Object):
     # to.) If None, it is itself.
     _main = None
 
+    # A list of the children that make up this composite displayable.
+    _composite_parts = [ ]
+
     # The location the displayable was created at, if known.
     _location = None
 
@@ -415,6 +418,7 @@ class Displayable(renpy.object.Object):
             return
 
         self.transform_event = event
+
         if self.transform_event_responder:
             renpy.display.render.redraw(self, 0)
 

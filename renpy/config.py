@@ -91,17 +91,17 @@ savedir = None
 
 # The number of screens worth of images that are allowed to
 # live in the image cache at once.
-image_cache_size = 8
+image_cache_size = 16
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
 # path. The current node is counted in this number.
-predict_statements = 16
+predict_statements = 32
 
 # Causes the contents of the image cache to be printed to stdout when
 # it changes.
-debug_image_cache = False
+debug_image_cache = ("RENPY_DEBUG_IMAGE_CACHE" in os.environ)
 
 # Should we allow skipping at all?
 allow_skipping = True
@@ -533,6 +533,10 @@ emphasize_audio_time = 0.5
 
 # Should we transition screens, or always use their new states.
 transition_screens = True
+
+# A function that given the current statement identifier, returns a list
+# of statement identifiers that should be predicted.
+predict_statements_callback = None
 
 del renpy
 del os
