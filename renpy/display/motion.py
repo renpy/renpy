@@ -752,6 +752,9 @@ class Transform(Container):
         This updates the state to that at self.st, self.at.
         """
 
+        self.hide_response = True
+        self.replaced_response = True
+
         # If we have to, call the function that updates this transform.
         if self.arguments is not None:
             self.default_function(self, self.st, self.at)
