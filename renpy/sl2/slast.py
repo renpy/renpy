@@ -25,6 +25,7 @@ import linecache
 
 import renpy.display
 import renpy.pyanalysis
+import renpy.sl2
 
 from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
@@ -115,6 +116,10 @@ class SLContext(renpy.ui.Addable):
         # A list of nodes we've predicted, for cases where predicting more than
         # once could be a performance problem.
         self.predicted = set()
+
+        # True if we're in a true showif block, False if we're in a false showif
+        # block, or None if we're not in a showif block.
+        self.showif = None
 
     def get_style_group(self):
         style_prefix = self.style_prefix
@@ -381,6 +386,9 @@ class SLCache(object):
         # or children are changed.
         self.copy_on_change = False
 
+        # The ShowIf this statement was wrapped in the last time it was wrapped.
+        self.old_showif = None
+
 class SLDisplayable(SLBlock):
     """
     A screen language AST node that corresponds to a displayable being
@@ -520,7 +528,13 @@ class SLDisplayable(SLBlock):
                     i._scope(context.scope, True)
 
             else:
-                context.children.append(cache.constant)
+
+                d = cache.constant
+
+                if context.showif is not None:
+                    d = self.wrap_in_showif(d, context, cache)
+
+                context.children.append(d)
                 return
 
         # Create the context.
@@ -648,6 +662,8 @@ class SLDisplayable(SLBlock):
             fail = True
 
         ctx.children = [ ]
+        ctx.showif = None
+
         stack = renpy.ui.stack
         stack.append(ctx)
 
@@ -765,8 +781,6 @@ class SLDisplayable(SLBlock):
             cache.transform = None
             cache.raw_transform = None
 
-        context.children.append(d)
-
         if self.constant:
             cache.constant = d
 
@@ -775,6 +789,24 @@ class SLDisplayable(SLBlock):
 
             if context.uses_scope is None:
                 cache.constant_uses_scope = ctx.uses_scope
+
+        if context.showif is not None:
+            d = self.wrap_in_showif(d, context, cache)
+
+        context.children.append(d)
+
+    def wrap_in_showif(self, d, context, cache):
+        """
+        Wraps `d` in a ShowIf displayable.
+        """
+
+        rv = renpy.sl2.sldisplayables.ShowIf(context.showif, cache.old_showif)
+        rv.add(d)
+
+        if not context.predicting:
+            cache.old_showif = rv
+
+        return rv
 
     def report_arguments(self, cache, positional, keywords, transform):
         if positional:
@@ -971,7 +1003,72 @@ class SLIf(SLNode):
                 return
 
     def copy_on_change(self, cache):
-        for _cont, block in self.entries:
+        for _cond, block in self.entries:
+            block.copy_on_change(cache)
+
+
+class SLShowIf(SLNode):
+    """
+    The AST node that corresponds to the showif statement.
+    """
+
+    def __init__(self, loc):
+        """
+        An AST node that represents an if statement.
+        """
+        SLNode.__init__(self, loc)
+
+        # A list of entries, with each consisting of an expression (or
+        # None, for the else block) and a SLBlock.
+        self.entries = [ ]
+
+    def analyze(self, analysis):
+
+        for _cond, block in self.entries:
+            block.analyze(analysis)
+
+    def prepare(self, analysis):
+
+        # A list of prepared entries, with each consisting of expression
+        # bytecode and a SLBlock.
+        self.prepared_entries = [ ]
+
+        for cond, block in self.entries:
+            if cond is not None:
+                node = py_compile(cond, 'eval', ast_node=True)
+
+                self.constant = min(self.constant, analysis.is_constant(node))
+
+                cond = compile_expr(node)
+
+            block.prepare(analysis)
+            self.constant = min(self.constant, block.constant)
+            self.prepared_entries.append((cond, block))
+
+        self.last_keyword = True
+
+    def execute(self, context):
+
+        first_true = True
+
+        for cond, block in self.prepared_entries:
+
+            ctx = SLContext(context)
+
+            if not first_true:
+                ctx.showif = False
+            else:
+                if cond is None or eval(cond, context.globals, context.scope):
+                    ctx.showif = True
+                    first_true = False
+                else:
+                    ctx.showif = False
+
+            for i in block.children:
+                i.execute(ctx)
+
+    def copy_on_change(self, cache):
+        for _cond, block in self.entries:
             block.copy_on_change(cache)
 
 

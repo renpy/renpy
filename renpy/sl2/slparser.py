@@ -426,19 +426,40 @@ class DisplayableParser(Parser):
 
 class IfParser(Parser):
 
-    def __init__(self, name):
+    def __init__(self, name, node_type, parent_contents):
+        """
+        `node_type`
+            The type of node to create.
+
+        `parent_contents`
+            If true, our children must be children of our parent. Otherwise,
+            our children must be children of ourself.
+        """
+
         super(IfParser, self).__init__(name)
+
+        self.node_type = node_type
+        self.parent_contents = parent_contents
+
+        if not parent_contents:
+            childbearing_statements.add(self)
+
 
     def parse(self, loc, l, parent):
 
-        rv = slast.SLIf(loc)
+        if self.parent_contents:
+            contents_from = parent
+        else:
+            contents_from = self
+
+        rv = self.node_type(loc)
 
         condition = l.require(l.python_expression)
 
         l.require(':')
 
         block = slast.SLBlock(loc)
-        parent.parse_contents(l, block, block_only=True)
+        contents_from.parse_contents(l, block, block_only=True)
 
         rv.entries.append((condition, block))
 
@@ -454,7 +475,7 @@ class IfParser(Parser):
                 l.require(':')
 
                 block = slast.SLBlock(loc)
-                parent.parse_contents(l, block, block_only=True)
+                contents_from.parse_contents(l, block, block_only=True)
 
                 rv.entries.append((condition, block))
 
@@ -466,7 +487,7 @@ class IfParser(Parser):
                 l.require(':')
 
                 block = slast.SLBlock(loc)
-                parent.parse_contents(l, block, block_only=True)
+                contents_from.parse_contents(l, block, block_only=True)
 
                 rv.entries.append((condition, block))
 
@@ -480,7 +501,9 @@ class IfParser(Parser):
 
         return rv
 
-if_statement = IfParser("if")
+if_statement = IfParser("if", slast.SLIf, True)
+IfParser("showif", slast.SLShowIf, False)
+
 
 class ForParser(Parser):
 

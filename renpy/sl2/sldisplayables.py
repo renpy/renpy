@@ -25,6 +25,74 @@
 import renpy.display
 import renpy.text.text
 
+class ShowIf(renpy.display.layout.Container):
+    """
+    This is a displayable that wraps displayables that are
+    underneath a showif statement.
+    """
+
+    def __init__(self, condition, replaces=None):
+        super(ShowIf, self).__init__()
+
+        self.condition = condition
+
+        if replaces is None:
+            if condition:
+                self.pending_event = "appear"
+            else:
+                self.pending_event = None
+
+            self.show_child = condition
+
+        else:
+            if self.condition and not replaces.condition:
+                self.pending_event = "show"
+            elif not self.condition and replaces.condition:
+                self.pending_event = "hide"
+            else:
+                self.pending_event = replaces.pending_event
+
+            self.show_child = replaces.show_child
+
+    def per_interact(self):
+        if self.pending_event:
+            self.child.set_transform_event(self.pending_event)
+            self.pending_event = None
+
+    def render(self, width, height, st, at):
+
+        if isinstance(self.child, renpy.display.motion.Transform):
+            if self.condition or self.show_child:
+                cr = renpy.display.render.render(self.child, width, height, st, at)
+                self.show_child = self.condition or not self.child.hide_response
+        else:
+            if self.condition:
+                cr = renpy.display.render.render(self.child, width, height, st, at)
+                self.show_child = True
+            else:
+                self.show_child = False
+
+        if self.show_child:
+            cw, ch = cr.get_size()
+            rv = renpy.display.render.Render(cw, ch)
+            rv.blit(cr, (0, 0))
+        else:
+            rv = renpy.display.render.Render(0, 0)
+
+        self.offsets = [ (0, 0) ]
+
+        return rv
+
+    def event(self, ev, x, y, st):
+        if self.condition:
+            return self.child.event(ev, x, y, st)
+        else:
+            return None
+
+    def get_placement(self):
+        return self.child.get_placement()
+
+
 from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
 
@@ -510,6 +578,3 @@ add(position_properties)
 DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
-
-DisplayableParser("showif", renpy.display.layout.ShowIf, None, 1, replaces=True)
-Positional("condition")

@@ -323,6 +323,7 @@ def import_all():
     import renpy.sl2
     update_path(renpy.sl2)
 
+    import renpy.sl2.slast
     import renpy.sl2.slparser
     import renpy.sl2.sldisplayables
 
