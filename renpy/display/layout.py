@@ -1921,43 +1921,45 @@ class ShowIf(Container):
         self.condition = condition
 
         if replaces is None:
-            self.hide_child = None
+            if condition:
+                self.pending_event = "appear"
+            else:
+                self.pending_event = None
+
+            self.show_child = condition
 
         else:
             if self.condition and not replaces.condition:
-                self.hide_child = None
-                self.set_transform_event("show")
+                self.pending_event = "show"
             elif not self.condition and replaces.condition:
-                self.hide_child = replaces.child
-                self.set_transform_event("hide")
+                self.pending_event = "hide"
             else:
-                self.hide_child = replaces.hide_child
-                self.transform_event = replaces.transform_event
+                self.pending_event = replaces.pending_event
 
-        # True if we've called _hide, false otherwise.
-        self.hide_called = False
+            self.show_child = replaces.show_child
+
+    def per_interact(self):
+        if self.pending_event:
+            self.child.set_transform_event(self.pending_event)
+            self.pending_event = None
 
     def render(self, width, height, st, at):
 
-        # If the condition is true, just render our child.
-        if self.condition:
-            child = self.child
-
+        if isinstance(self.child, renpy.display.motion.Transform):
+            if self.condition or self.show_child:
+                cr = renpy.display.render.render(self.child, width, height, st, at)
+                self.show_child = self.condition or not self.child.hide_response
         else:
-            if self.hide_child is not None and not self.hide_called:
-                self.hide_called = True
-                self.hide_child = self.hide_child._hide(st, at, "hide")
+            if self.condition:
+                cr = renpy.display.render.render(self.child, width, height, st, at)
+                self.show_child = True
+            else:
+                self.show_child = False
 
-            child = self.hide_child
-
-
-        if child:
-            cr = renpy.display.render.render(child, width, height, st, at)
+        if self.show_child:
             cw, ch = cr.get_size()
-
             rv = renpy.display.render.Render(cw, ch)
             rv.blit(cr, (0, 0))
-
         else:
             rv = renpy.display.render.Render(0, 0)
 
@@ -1972,8 +1974,5 @@ class ShowIf(Container):
             return None
 
     def get_placement(self):
-        if not self.condition and self.hide_child:
-            return self.hide_child.get_placement()
-        else:
-            return self.child.get_placement()
+        return self.child.get_placement()
 
