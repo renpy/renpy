@@ -5,11 +5,35 @@
     An action that calls :func:`updater.update`. All arguments are
     stored and passed to that function.
 
+.. function:: updater.UpdateVersion(url, check_interval=21600, simulate=None, **kwargs)
+    
+    This function contacts the server at `url`, and determines if there is
+    a newer version of software available at that url. If there is, this
+    function returns the new version. Otherwise, it returns None.
+    
+    Since contacting the server can take some time, this function launches
+    a thread in the background, and immediately returns the version from
+    the last time the server was contacted, or None if the server has never
+    been contacted. The background thread will restart the current interaction
+    once the server has been contacted, which will cause screens that call
+    this function to update.
+    
+    Each url will be contacted at most once per Ren'Py session, and not
+    more than once every `check_interval` seconds. When the server is not
+    contacted, cached data will be returned.
+    
+    Additional keyword arguments (including `simulate`) are passed to the
+    update mechanism as if they were given to :func:`updater.update`.
+
 .. function:: updater.can_update(base=None)
     
     Returns true if it's possible that an update can succeed. Returns false
     if updating is totally impossible. (For example, if the update directory
     was deleted.)
+    
+    
+    Note that this does not determine if an update is actually available.
+    To do that, use :func:`updater.UpdateVersion`.
 
 .. function:: updater.get_installed_packages(base=None)
     

@@ -14,6 +14,9 @@ This will help to avoid unpredicted image loads at the very start of a game.
 
 The ATL on statement now can take a comma-separated list of event names.
 
+The new :func:`updater.UpdateVersion` function contacts an update server and
+determines if an update is available.
+
 
 Ren'Py 6.18.2
 =============

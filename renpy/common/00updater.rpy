@@ -21,7 +21,7 @@
 
 # This code applies an update.
 init -1500 python in updater:
-    from store import renpy, config, Action, DictEquality
+    from store import renpy, config, Action, DictEquality, persistent
     import store.build as build
 
     import tarfile
@@ -46,6 +46,14 @@ init -1500 python in updater:
         rsa = None
 
     from renpy.exports import fsencode
+
+    # A map from update URL to the last version found at that URL.
+    if persistent._update_version is None:
+        persistent._update_version = { }
+
+    # A map from update URL to the time we last checked that URL.
+    if persistent._update_last_checked is None:
+        persistent._update_last_checked = { }
 
     # A file containing deferred update commands, one per line. Right now,
     # there are two commands:
@@ -202,7 +210,7 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base, force=False, public_key=None, simulate=None, add=[], restart=True):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False):
             """
             Takes the same arguments as update().
             """
@@ -236,11 +244,15 @@ init -1500 python in updater:
             # Force the update?
             self.force = force
 
+            # Packages to add during the update.
+            self.add = add
+
             # Do we need to restart Ren'Py at the end?
             self.restart = restart
 
-            # Packages to add during the update.
-            self.add = add
+            # If true, we check for an update, and update persistent._update_version
+            # as appropriate.
+            self.check_only = check_only
 
             # The base path of the game that we're updating, and the path to the update
             # directory underneath it.
@@ -359,6 +371,14 @@ init -1500 python in updater:
                 self.can_cancel = False
                 self.can_proceed = True
                 self.state = self.UPDATE_NOT_AVAILABLE
+                persistent._update_version[self.url] = None
+                renpy.restart_interaction()
+                return
+
+            persistent._update_version[self.url] = pretty_version
+
+            if self.check_only:
+                renpy.restart_interaction()
                 return
 
             if not self.add:
@@ -369,6 +389,8 @@ init -1500 python in updater:
                     self.can_proceed = True
                     self.state = self.UPDATE_AVAILABLE
                     self.version = pretty_version
+
+                    renpy.restart_interaction()
 
                     while True:
                         if self.cancelled or self.proceeded:
@@ -384,6 +406,7 @@ init -1500 python in updater:
 
             # Perform the update.
             self.new_state = dict(self.current_state)
+            renpy.restart_interaction()
 
             self.progress = 0.0
             self.state = self.PREPARING
@@ -393,6 +416,7 @@ init -1500 python in updater:
 
             self.progress = 0.0
             self.state = self.DOWNLOADING
+            renpy.restart_interaction()
 
             for i in self.modules:
                 self.download(i)
@@ -402,12 +426,14 @@ init -1500 python in updater:
             self.can_cancel = False
             self.progress = 0.0
             self.state = self.UNPACKING
+            renpy.restart_interaction()
 
             for i in self.modules:
                 self.unpack(i)
 
             self.progress = None
             self.state = self.FINISHING
+            renpy.restart_interaction()
 
             self.move_files()
             self.delete_obsolete()
@@ -419,10 +445,14 @@ init -1500 python in updater:
             self.can_proceed = True
             self.can_cancel = False
 
+            persistent._update_version[self.url] = None
+
             if self.restart:
                 self.state = self.DONE
             else:
                 self.state = self.DONE_NO_RESTART
+
+            renpy.restart_interaction()
 
             return
 
@@ -451,6 +481,14 @@ init -1500 python in updater:
                 self.can_cancel = False
                 self.can_proceed = True
                 self.state = self.UPDATE_NOT_AVAILABLE
+                persistent._update_version[self.url] = None
+                return
+
+            pretty_version = build.version or build.directory_name
+            persistent._update_version[self.url] = pretty_version
+
+            if self.check_only:
+                renpy.restart_interaction()
                 return
 
             # Confirm with the user that the update is available.
@@ -458,7 +496,7 @@ init -1500 python in updater:
                 self.can_cancel = True
                 self.can_proceed = True
                 self.state = self.UPDATE_AVAILABLE
-                self.version = build.version or build.directory_name
+                self.version = pretty_version
 
                 while True:
                     if self.cancelled or self.proceeded:
@@ -473,22 +511,26 @@ init -1500 python in updater:
 
             self.progress = 0.0
             self.state = self.PREPARING
+            renpy.restart_interaction()
 
             simulate_progress()
 
             self.progress = 0.0
             self.state = self.DOWNLOADING
+            renpy.restart_interaction()
 
             simulate_progress()
 
             self.can_cancel = False
             self.progress = 0.0
             self.state = self.UNPACKING
+            renpy.restart_interaction()
 
             simulate_progress()
 
             self.progress = None
             self.state = self.FINISHING
+            renpy.restart_interaction()
 
             time.sleep(1.5)
 
@@ -497,10 +539,14 @@ init -1500 python in updater:
             self.can_proceed = True
             self.can_cancel = False
 
+            persistent._update_version[self.url] = None
+
             if self.restart:
                 self.state = self.DONE
             else:
                 self.state = self.DONE_NO_RESTART
+
+            renpy.restart_interaction()
 
             return
 
@@ -1106,6 +1152,7 @@ init -1500 python in updater:
 
     installed_packages_cache = None
 
+
     def get_installed_packages(base=None):
         """
         :doc: updater
@@ -1137,6 +1184,7 @@ init -1500 python in updater:
         installed_packages_cache = rv
         return rv
 
+
     def can_update(base=None):
         """
         :doc: updater
@@ -1144,12 +1192,17 @@ init -1500 python in updater:
         Returns true if it's possible that an update can succeed. Returns false
         if updating is totally impossible. (For example, if the update directory
         was deleted.)
+
+
+        Note that this does not determine if an update is actually available.
+        To do that, use :func:`updater.UpdateVersion`.
         """
 
         if rsa is None:
             return False
 
         return not not get_installed_packages(base)
+
 
     def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True):
         """
@@ -1196,6 +1249,7 @@ init -1500 python in updater:
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 
+
     @renpy.pure
     class Update(Action, DictEquality):
         """
@@ -1211,6 +1265,52 @@ init -1500 python in updater:
 
         def __call__(self):
             renpy.invoke_in_new_context(update, *self.args, **self.kwargs)
+
+
+    # A list of URLs that we've checked for the update version.
+    checked = set()
+
+    def UpdateVersion(url, check_interval=3600*6, simulate=None, **kwargs):
+        """
+        :doc: updater
+
+        This function contacts the server at `url`, and determines if there is
+        a newer version of software available at that url. If there is, this
+        function returns the new version. Otherwise, it returns None.
+
+        Since contacting the server can take some time, this function launches
+        a thread in the background, and immediately returns the version from
+        the last time the server was contacted, or None if the server has never
+        been contacted. The background thread will restart the current interaction
+        once the server has been contacted, which will cause screens that call
+        this function to update.
+
+        Each url will be contacted at most once per Ren'Py session, and not
+        more than once every `check_interval` seconds. When the server is not
+        contacted, cached data will be returned.
+
+        Additional keyword arguments (including `simulate`) are passed to the
+        update mechanism as if they were given to :func:`updater.update`.
+        """
+
+        if not can_update() and not simulate:
+            return None
+
+        check = True
+
+        if url in checked:
+            check = False
+
+        if time.time() < persistent._update_last_checked.get(url, 0) + check_interval:
+            check = False
+
+        if check:
+            checked.add(url)
+            persistent._update_last_checked[url] = time.time()
+            Updater(url, check_only=True, simulate=simulate, **kwargs)
+
+        return persistent._update_version.get(url, None)
+
 
     def update_command():
         import time
