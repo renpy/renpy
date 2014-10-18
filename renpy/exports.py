@@ -98,6 +98,7 @@ renpy_pure("check_text_tags")
 
 import time
 import sys
+import threading
 
 def public_api():
     """
@@ -2789,3 +2790,29 @@ def set_return_stack(stack):
     """
 
     renpy.game.context().set_return_stack(stack)
+
+def invoke_in_thread(fn, *args, **kwargs):
+    """
+    :doc: other
+
+    Invokes the function `fn` in a background thread, passing it the
+    provided arguments and keyword arguments. Restarts the interaction
+    once the thread returns.
+
+    This function creates a daemon thread, which will be automatically
+    stopped when Ren'Py is shutting down.
+    """
+
+    def run():
+        try:
+            fn(*args, **kwargs)
+        except:
+            import traceback
+            traceback.print_exc()
+
+        restart_interaction()
+
+    t = threading.Thread(target=run)
+    t.daemon = True
+    t.start()
+

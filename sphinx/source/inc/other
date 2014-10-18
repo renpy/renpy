@@ -180,6 +180,15 @@
     
     Iconifies the game.
 
+.. function:: renpy.invoke_in_thread(fn, *args, **kwargs)
+    
+    Invokes the function `fn` in a background thread, passing it the
+    provided arguments and keyword arguments. Restarts the interaction
+    once the thread returns.
+    
+    This function creates a daemon thread, which will be automatically
+    stopped when Ren'Py is shutting down.
+
 .. function:: renpy.is_seen(ever=True)
     
     Returns true if the current line has been seen by the player.

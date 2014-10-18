@@ -17,6 +17,9 @@ The ATL on statement now can take a comma-separated list of event names.
 The new :func:`updater.UpdateVersion` function contacts an update server and
 determines if an update is available.
 
+The new :func:`renpy.invoke_in_thread` function runs a function in a background
+thread, and restarts the interaction when that thread finishes.
+
 
 Ren'Py 6.18.2
 =============
