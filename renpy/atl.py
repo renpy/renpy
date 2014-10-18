@@ -1355,13 +1355,13 @@ class On(Statement):
         # handle it.
         if event in self.handlers:
 
-            # Do not allow people to abort the hide handler with another
-            # event.
-            if name != "hide":
+            # Do not allow people to abort the hide or replaced event.
+            lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+
+            if not lock_event:
                 name = event
                 start = st
                 cstate = None
-
 
         while True:
 
