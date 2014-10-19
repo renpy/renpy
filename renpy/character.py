@@ -404,7 +404,7 @@ def display_say(
 
     # Figure out which pause we're on. (Or set the pause to None in
     # order to put us in all-at-once mode.)
-    if not interact:
+    if not interact or renpy.game.preferences.self_voicing:
         all_at_once = True
 
     dtt = DialogueTextTags(what)
