@@ -703,6 +703,16 @@ class Transform(Container):
         if not self.child:
             return None
 
+        # Prevent time from ticking backwards, as can happen if we replace a
+        # transform but keep its state.
+        if st + self.st_offset <= self.st:
+            self.st_offset = self.st - st
+        if at + self.at_offset <= self.at:
+            self.at_offset = self.at - at
+
+        self.st = st = st + self.st_offset
+        self.at = at = at + self.at_offset
+
         if not (self.hide_request or self.replaced_request):
             d = self.copy()
         else:
