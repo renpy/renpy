@@ -1462,6 +1462,73 @@ has side effects, those side effects may occur at unpredictable times.
         textbutton "Run Test" action Jump(test_label)
 
 
+.. _sl-showif:
+
+Showif Statement
+================
+
+The showif statement takes a condition. It shows its children when the
+condition is true, and hides the children when the condition is false.
+When showif's children have transforms, it will supply them with ATL
+events to manage the show and hide process, so that Ren'Py can animate
+the show and hide process.
+
+Multiple showif statements can be grouped together into a single
+showif/elif/else construct, similiar to an if statement.
+**Unlike the if statement, showif executes all of its blocks, including python code, even if the condition is false.**
+This is because the showif statement needs to create the children that it is
+hiding.
+
+Showif delivers three events to its children:
+
+``appear``
+    Is delivered if the condition is true when the screen is first shown,
+    to instantly show the child.
+``show``
+    Is delivered when the condition changes from false to true.
+``hide``
+    Is delivered when the condition changes from true to false.
+
+For these purposes, the condition of an elif clause is always false if any
+prior condition is true, while the condition of an else clause is only true
+when all prior conditions are false.
+
+For example::
+
+    transform cd_transform:
+        # This is run before appear, show, or hide.
+        xalign 0.5 yalign 0.5 alpha 0.0
+
+        on appear:
+            alpha 1.0
+        on show:
+            zoom .75
+            linear .25 zoom 1.0 alpha 1.0
+        on hide:
+            linear .25 zoom 1.25 alpha 0.0
+
+    screen countdown():
+        default n = 3
+
+        vbox:
+            textbutton "3" action SetScreenVariable("n", 3)
+            textbutton "2" action SetScreenVariable("n", 2)
+            textbutton "1" action SetScreenVariable("n", 1)
+            textbutton "0" action SetScreenVariable("n", 0)
+
+        showif n == 3:
+            text "Three" size 100 at cd_transform
+        elif n == 2:
+            text "Two" size 100 at cd_transform
+        elif n == 1:
+            text "One" size 100 at cd_transform
+        else:
+            text "Liftoff!" size 100 at cd_transform
+
+    label start:
+        call screen countdown
+
+
 Screen Statements
 =================
 

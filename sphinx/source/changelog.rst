@@ -5,6 +5,11 @@ Full Changelog
 Ren'Py 6.18.3
 =============
 
+This release adds the :ref:`showif statement <sl-showif>` to screen language.
+The showif statement shows and hides its children based on a condition. When
+its children are ATL transforms, showif delivers ATL events to manage the
+show and hide process.
+
 Ren'Py's image prediction mechanism now models the return stack, and can
 predict images through a call and return pair. Previously, a call followed
 by a return would block image prediction.
@@ -65,7 +70,7 @@ explains how to disable self-voicing mode.
 
 This release fixes a subtle bug caused by incorrect analysis of for
 loops in screen language screens, when the iteration variable is a
-constant. (For example, when the iteration variable is ``define``ed
+constant. (For example, when the iteration variable is ``define``\ed
 somewhere else in the game.)
 
 This release adds Traditional Chinese translations of the launcher and
