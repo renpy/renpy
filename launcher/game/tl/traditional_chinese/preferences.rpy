@@ -68,3 +68,15 @@ translate traditional_chinese strings:
     old "Large fonts"
     new "大字體"
 
+# Translation updated at 2014-10-18 06:00
+
+translate traditional_chinese strings:
+
+    # game/preferences.rpy:91
+    old "Projects directory: [text]"
+    new "專案資料夾： [text]"
+
+    # game/preferences.rpy:114
+    old "Text editor: [text]"
+    new "文字編輯器： [text]"
+
