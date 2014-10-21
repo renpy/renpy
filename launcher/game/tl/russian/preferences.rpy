@@ -1,4 +1,3 @@
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -62,7 +61,6 @@ translate russian strings:
     old "Language:"
     new "Язык:"
 
-# TODO: Translation updated at 2014-10-17 21:28
 
 translate russian strings:
 
