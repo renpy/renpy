@@ -1,4 +1,4 @@
-﻿# TODO: Translation updated at 2013-12-08 21:52
+# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -61,4 +61,20 @@ translate russian strings:
     # game/preferences.rpy:184
     old "Language:"
     new "Язык:"
+
+# TODO: Translation updated at 2014-10-17 21:28
+
+translate russian strings:
+
+    # game/preferences.rpy:91
+    old "Projects directory: [text]"
+    new "Папка проектов: [text]"
+
+    # game/preferences.rpy:114
+    old "Text editor: [text]"
+    new "Текстовый редактор: [text]"
+
+    # game/preferences.rpy:171
+    old "Large fonts"
+    new "Большие шрифты"
 
