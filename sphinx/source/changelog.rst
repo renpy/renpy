@@ -25,6 +25,24 @@ determines if an update is available.
 The new :func:`renpy.invoke_in_thread` function runs a function in a background
 thread, and restarts the interaction when that thread finishes.
 
+While in self-voicing mode, the {w} and {p} tags are ignored.
+
+Bug Fixes
+---------
+
+Fixed a regression that could cause hiding transforms to skip time.
+
+Fixed a bug that would cause the screen language if statement to show
+children from blocks with a false condition, if those child blocks were
+run during prediction.
+
+Fixed an issue where SetScreenVariable and ToggleScreenVariable were
+declared as pure functions, but weren't. They now have been reimplemented
+as pure functions.
+
+Fixed an issue where a grab could fail to transfer between interactions,
+leaving Ren'Py unresponsive.
+
 
 Ren'Py 6.18.2
 =============
