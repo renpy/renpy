@@ -27,6 +27,8 @@ thread, and restarts the interaction when that thread finishes.
 
 While in self-voicing mode, the {w} and {p} tags are ignored.
 
+The Traditional Chinese and Russian translations have been updated.
+
 Bug Fixes
 ---------
 
