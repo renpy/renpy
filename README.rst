@@ -7,6 +7,7 @@ http://www.renpy.org
 Ren'Py development takes place on the ``master`` branch, and occasionally
 on feature branches.
 
+
 Getting Started
 ===============
 
@@ -132,10 +133,18 @@ For example::
         renpy.engine.warp_drive.engage(factor)
 
 
+Translating
+===========
+
+For best practices when it comes to translating the launcher and template
+game, please read:
+
+http://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
+
+
 Contributing
 ============
 
 For bug fixes, documentation improvements, and simple changes, just
 make a pull request. For more complex changes, it might make sense
 to file an issue first so we can discuss the design.
-
