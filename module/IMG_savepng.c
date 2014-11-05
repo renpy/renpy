@@ -25,8 +25,7 @@
  * 11/08/2004 - Compr fix, levels -1,1-7 now work - Tyler Montbriand
  */
 #include <stdlib.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_byteorder.h>
+#include <SDL.h>
 #include <png.h>
 #include <zlib.h>
 #include "IMG_savepng.h"
@@ -38,7 +37,7 @@
 int IMG_SavePNG(const char *file, SDL_Surface *surf,int compression){
 	SDL_RWops *fp;
 	int ret;
-	
+
 	fp=SDL_RWFromFile(file,"wb");
 
 	if( fp == NULL ) {
@@ -60,24 +59,25 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 	png_infop info_ptr;
 	SDL_PixelFormat *fmt=NULL;
 	SDL_Surface *tempsurf=NULL;
-	int ret,funky_format,used_alpha;
-	unsigned int i,temp_alpha;
+	int ret,funky_format;
+	unsigned int i;
 	png_colorp palette;
 	Uint8 *palette_alpha=NULL;
 	png_byte **row_pointers=NULL;
 	png_ptr=NULL;info_ptr=NULL;palette=NULL;ret=-1;
 	funky_format=0;
-	
+	SDL_BlendMode temp_blend;
+
 	if( !src || !surf) {
 		goto savedone; /* Nothing to do. */
 	}
 
 	row_pointers=(png_byte **)malloc(surf->h * sizeof(png_byte*));
-	if (!row_pointers) { 
+	if (!row_pointers) {
 		SDL_SetError("Couldn't allocate memory for rowpointers");
 		goto savedone;
 	}
-	
+
 	png_ptr=png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL,NULL,NULL);
 	if (!png_ptr){
 		SDL_SetError("Couldn't allocate memory for PNG file");
@@ -126,19 +126,19 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 			palette[i].blue=fmt->palette->colors[i].b;
 		}
 		png_set_PLTE(png_ptr,info_ptr,palette,fmt->palette->ncolors);
-		if (surf->flags&SDL_SRCCOLORKEY) {
-			palette_alpha=(Uint8 *)malloc((fmt->colorkey+1)*sizeof(Uint8));
-			if (!palette_alpha) {
-				SDL_SetError("Couldn't create memory for palette transparency");
-				goto savedone;
-			}
-			/* FIXME: memset? */
-			for (i=0;i<(fmt->colorkey+1);i++) {
-				palette_alpha[i]=255;
-			}
-			palette_alpha[fmt->colorkey]=0;
-			png_set_tRNS(png_ptr,info_ptr,palette_alpha,fmt->colorkey+1,NULL);
-		}
+//		if (surf->flags&SDL_SRCCOLORKEY) {
+//			palette_alpha=(Uint8 *)malloc((fmt->colorkey+1)*sizeof(Uint8));
+//			if (!palette_alpha) {
+//				SDL_SetError("Couldn't create memory for palette transparency");
+//				goto savedone;
+//			}
+//			/* FIXME: memset? */
+//			for (i=0;i<(fmt->colorkey+1);i++) {
+//				palette_alpha[i]=255;
+//			}
+//			palette_alpha[fmt->colorkey]=0;
+//			png_set_tRNS(png_ptr,info_ptr,palette_alpha,fmt->colorkey+1,NULL);
+//		}
 	}else{ /* Truecolor */
 		if (fmt->Amask) {
 			png_set_IHDR(png_ptr,info_ptr,
@@ -172,11 +172,11 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 			}else{
 				/* Check for RGB/BGR/GBR/RBG/etc surfaces.*/
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-				if(fmt->Rmask!=0xFF0000 
+				if(fmt->Rmask!=0xFF0000
 				|| fmt->Gmask!=0x00FF00
 				|| fmt->Bmask!=0x0000FF){
 #else
-				if(fmt->Rmask!=0x0000FF 
+				if(fmt->Rmask!=0x0000FF
 				|| fmt->Gmask!=0x00FF00
 				|| fmt->Bmask!=0xFF0000){
 #endif
@@ -185,7 +185,7 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 			}
 		}else if (fmt->BytesPerPixel==4){
 			if (!fmt->Amask) { /* check for 32bit but no alpha */
-				funky_format=1; 
+				funky_format=1;
 			}else{
 				/* Check for ARGB/ABGR/GBAR/RABG/etc surfaces.*/
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -228,21 +228,18 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 				SDL_SetError("Couldn't allocate temp surface");
 				goto savedone;
 			}
-			if(surf->flags&SDL_SRCALPHA){
-				temp_alpha=fmt->alpha;
-				used_alpha=1;
-				SDL_SetAlpha(surf,0,255); /* Set for an opaque blit */
-			}else{
-				used_alpha=0;
-			}
+
+			SDL_GetSurfaceBlendMode(surf, &temp_blend);
+			SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
+
 			if(SDL_BlitSurface(surf,NULL,tempsurf,NULL)!=0){
 				SDL_SetError("Couldn't blit surface to temp surface");
 				SDL_FreeSurface(tempsurf);
 				goto savedone;
 			}
-			if (used_alpha) {
-				SDL_SetAlpha(surf,SDL_SRCALPHA,(Uint8)temp_alpha); /* Restore alpha settings*/
-			}
+
+			SDL_SetSurfaceBlendMode(surf, temp_blend);
+
 			for(i=0;i<tempsurf->h;i++){
 				row_pointers[i]= ((png_byte*)tempsurf->pixels) + i*tempsurf->pitch;
 			}

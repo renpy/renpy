@@ -23,17 +23,13 @@
 def version():
     return (6, 12, 0)
 
-cdef extern from "pygame/pygame.h":
-    cdef struct SDL_RWops:
-        pass
-
-    void import_pygame_rwobject()
-    SDL_RWops* RWopsFromPython(object obj)
-
+from sdl2 cimport *
+from pygame_sdl2 cimport *
 
 cdef extern from "renpy.h":
 
     void core_init()
+    void subpixel_init()
 
     void save_png_core(object, SDL_RWops *, int)
 
@@ -425,6 +421,6 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
 # Be sure to update scale.py when adding something new here!
 
-import_pygame_rwobject()
+import_pygame_sdl2__rwobject()
 core_init()
-
+subpixel_init()

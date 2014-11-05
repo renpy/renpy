@@ -25,7 +25,10 @@ DEF ANGLE = False
 
 from gl cimport *
 from gldraw cimport *
-from pygame cimport *
+
+from sdl2 cimport *
+from pygame_sdl2 cimport *
+import_pygame_sdl2__surface()
 
 from cpython.string cimport PyString_FromStringAndSize
 from libc.stdlib cimport calloc, free
@@ -1112,7 +1115,9 @@ def premultiply(
     cdef unsigned char *out = rv
 
     # The pixels in the source image.
-    cdef unsigned char *pixels, *pixels_end
+    cdef unsigned char *pixels
+    cdef unsigned char *pixels_end
+
     cdef SDL_Surface *surf
 
     # Pointer to the current pixel.

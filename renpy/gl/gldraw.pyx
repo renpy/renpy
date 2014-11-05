@@ -24,8 +24,11 @@
 DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
-from pygame cimport *
+from sdl2 cimport *
 from gl cimport *
+
+from pygame_sdl2 cimport *
+import_pygame_sdl2__surface()
 
 import renpy
 import pygame
@@ -39,6 +42,7 @@ cimport renpy.display.render as render
 cimport gltexture
 import gltexture
 import glblacklist
+
 
 cdef extern from "glcompat.h":
     GLenum glewInit()

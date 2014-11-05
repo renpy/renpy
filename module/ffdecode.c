@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <pygame/pygame.h>
 #include <math.h>
 #include <limits.h>
 #include <libavutil/avstring.h>
@@ -34,6 +33,8 @@
 
 #include <SDL.h>
 #include <SDL_thread.h>
+
+#include <pygame_sdl2/pygame_sdl2.surface_api.h>
 
 #ifdef __MINGW32__
 #undef main /* We don't want SDL to override our main() */
@@ -1296,7 +1297,7 @@ static int stream_component_open(VideoState *is, int stream_index)
         is->video_current_pts_time = av_gettime();
 
         packet_queue_init(&is->videoq);
-        is->video_tid = SDL_CreateThread(video_thread, is);
+        is->video_tid = SDL_CreateThread(video_thread, "video_thread", is);
         break;
     default:
         break;
@@ -1606,7 +1607,7 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
     is->quit_mutex = SDL_CreateMutex();
     is->quit_cond = SDL_CreateCond();
 
-    is->parse_tid = SDL_CreateThread(decode_thread, is);
+    is->parse_tid = SDL_CreateThread(decode_thread, "decode_thread", is);
 
     is->first_frame = 1;
 
@@ -1664,6 +1665,8 @@ void ffpy_init(int rate, int status) {
     }
 
     ffpy_did_init = 1;
+
+    import_pygame_sdl2__surface();
 
     show_status = status;
 

@@ -225,6 +225,8 @@ def bootstrap(renpy_base):
     if renpy.macintosh:
         os.startfile = mac_start
 
+    import pygame_sdl2
+    pygame_sdl2.import_as_pygame()
 
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On

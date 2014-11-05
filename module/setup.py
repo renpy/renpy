@@ -65,7 +65,7 @@ else:
 
 include("zlib.h")
 include("png.h")
-include("SDL.h", directory="SDL")
+include("SDL.h", directory="SDL2")
 include("ft2build.h")
 include("freetype/freetype.h", directory="freetype2", optional=True) or include("freetype.h", directory="freetype2")
 include("libavutil/avstring.h")
@@ -74,7 +74,7 @@ include("libavcodec/avcodec.h")
 include("libswscale/swscale.h")
 include("GL/glew.h")
 
-library("SDL")
+library("SDL2")
 library("png")
 library("avformat")
 library("avcodec")
@@ -91,7 +91,7 @@ has_angle = windows and library("EGL", optional=True) and library("GLESv2", opti
 if android:
     sdl = [ 'sdl', 'GLESv2', 'log' ]
 else:
-    sdl = [ 'SDL' ]
+    sdl = [ 'SDL2' ]
 
 if has_fribidi:
     try:
