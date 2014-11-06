@@ -27,7 +27,7 @@ cdef extern from "SDL.h":
 cdef extern from "pygame_sdl2/pygame_sdl2.rwobject_api.h":
 
     void import_pygame_sdl2__rwobject()
-    SDL_RWops* RWopsFromPythonThreaded(object obj)
+    SDL_RWops* RWopsFromPython(object obj)
 
 cdef extern from "pss.h":
 
@@ -68,7 +68,7 @@ def check_error():
 def play(channel, file, name, paused=False, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
-    rw = RWopsFromPythonThreaded(file)
+    rw = RWopsFromPython(file)
 
     if rw == NULL:
         raise Exception, "Could not create RWops."
@@ -90,7 +90,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
 def queue(channel, file, name, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
-    rw = RWopsFromPythonThreaded(file)
+    rw = RWopsFromPython(file)
 
     if tight:
         tight = 1
