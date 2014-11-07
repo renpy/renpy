@@ -44,6 +44,8 @@ if 'pss' not in disable:
         pss.check_version(4)  # @UndefinedVariable
         atexit.register(pss.quit)  # @UndefinedVariable
     except:
+        import traceback
+        traceback.print_exc()
         pass
 
     if pss is None:
