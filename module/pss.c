@@ -26,6 +26,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <stdio.h>
+#include <strings.h>
 
 /* Declarations of ffdecode functions. */
 struct VideoState;
@@ -408,8 +409,9 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
 
-    for (channel = 0; channel < num_channels; channel++) {
+    bzero(stream, length);
 
+    for (channel = 0; channel < num_channels; channel++) {
 
         int mixed = 0;
         struct Channel *c = &channels[channel];
