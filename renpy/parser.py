@@ -648,6 +648,7 @@ class Lexer(object):
 
             s = s.replace("\\n", "\n")
             s = s.replace("\\{", "{{")
+            s = s.replace("\\[", "[[")
             s = s.replace("\\%", "%%")
             s = re.sub(r'\\u([0-9a-fA-F]{1,4})',
                        lambda m : unichr(int(m.group(1), 16)), s)
