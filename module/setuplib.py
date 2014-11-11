@@ -294,6 +294,9 @@ def copyfile(source, dest, replace=None, replace_with=None):
     sfn = os.path.join("..", source)
     dfn = os.path.join("..", dest)
 
+    if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
+        return
+
     sf = file(sfn, "rb")
     data = sf.read()
     sf.close()
