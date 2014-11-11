@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
 #include "EGL/egl.h"
 #include "GLES2/gl2.h"
 
@@ -62,7 +62,7 @@ char *egl_init(int interval) {
 
     if (! initialized) {
 
-    	display = eglGetDisplay(GetDC(wminfo.window));
+    	display = eglGetDisplay(GetDC(wminfo.info.win.window));
 		egl_check("getting display");
 
 		eglInitialize(display, &major, &minor);
@@ -77,16 +77,16 @@ char *egl_init(int interval) {
 		context = eglCreateContext(display, config, EGL_NO_CONTEXT, context_attrs);
 		egl_check("creating EGL context");
 
-    	surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
+    	surface = eglCreateWindowSurface(display, config, wminfo.info.win.window, NULL);
     	egl_check("creating EGL surface");
 
 
-    } else if (window != wminfo.window) {
+    } else if (window != wminfo.info.win.window) {
 
     	eglDestroySurface(display, surface);
     	egl_check("destroying existing EGL surface")
 
-    	surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
+    	surface = eglCreateWindowSurface(display, config, wminfo.info.win.window, NULL);
     	egl_check("creating EGL surface");
 
     }
@@ -98,7 +98,7 @@ char *egl_init(int interval) {
     egl_check("setting swap interval")
 
 	initialized = 1;
-	window = wminfo.window;
+	window = wminfo.info.win.window;
 
     return NULL;
 }
