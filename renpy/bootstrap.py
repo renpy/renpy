@@ -212,10 +212,6 @@ def bootstrap(renpy_base):
 
     sys.path.insert(0, basedir)
 
-    # Force windib on windows, unless the user explicitly overrides.
-    if renpy.windows and not 'SDL_VIDEODRIVER' in os.environ:
-        os.environ['SDL_VIDEODRIVER'] = 'windib'
-
     # If we're not given a command, show the presplash.
     if args.command == "run":
         import renpy.display.presplash #@Reimport
