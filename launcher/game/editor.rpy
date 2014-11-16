@@ -190,22 +190,31 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             3,
+            "GVim",
+            _("A powerful and highly configurable text editor, but it's also hard to understand by newbie.\n(You should install GVim on this system by yourself)"),
+            None,
+            None,
+            _("This may have occured because GVim is not installed on this system."),
+            ))
+
+        fei.append(FancyEditorInfo(
+            4,
             "System Editor",
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
         for k in editors:
-            if k in [ "Editra", "jEdit", "System Editor", "None" ]:
+            if k in [ "Editra", "jEdit", "GVim", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
-                4,
+                5,
                 k,
                 None,
                 None))
 
         fei.append(FancyEditorInfo(
-            5,
+            6,
             "None",
             _("Prevents Ren'Py from opening a text editor."),
             None))

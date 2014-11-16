@@ -56,11 +56,15 @@ translate traditional_chinese strings:
     old "Prevents Ren'Py from opening a text editor."
     new "防止 Ren'Py 開啟文字編輯器。"
 
-# Translation updated at 2014-10-18 06:00
-
-translate traditional_chinese strings:
-
     # game/editor.rpy:167
     old "This may have occured because wxPython is not installed on this system."
     new "這可能是因為 wxPython 沒有被安裝在當前系統中而發生的。"
+
+    # game/editor.rpy:191
+    old "A powerful and highly configurable text editor, but it's also hard to understand by newbie.\n(You should install GVim on this system by yourself)"
+    new "一個強大且高度可自訂的編輯器，但新手可能難以理解他的運作邏輯。\n（您必須自行在當前系統上安裝 GVim）"
+
+    # game/editor.rpy:191
+    old "This may have occured because GVim is not installed on this system."
+    new "這可能是因為 Gvim 沒有被安裝在當前系統中。"
 
