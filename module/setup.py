@@ -87,12 +87,10 @@ library("z")
 has_libglew = library("GLEW", optional=True)
 has_libglew32 = library("glew32", optional=True)
 
-
-# has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
-has_angle = False
+has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
 
 if android:
-    sdl = [ 'sdl', 'GLESv2', 'log' ]
+    sdl = [ 'sdl2', 'GLESv2', 'log' ]
 else:
     sdl = [ 'SDL2' ]
 
@@ -185,7 +183,7 @@ anglecopy("glrtt_copy.pyx")
 anglecopy("gltexture.pxd")
 anglecopy("gltexture.pyx")
 
-angle_libs = [ "SDL", "EGL", "GLESv2" ]
+angle_libs = [ "SDL2", "EGL", "GLESv2" ]
 
 def anglecython(name, source=[]):
     cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ], source=source)
