@@ -479,6 +479,10 @@ class Context(renpy.object.Object):
 
         # Find the roots.
         for label in renpy.config.predict_statements_callback(self.current):
+
+            if not renpy.game.script.has_label(label):
+                return
+
             node = renpy.game.script.lookup(label)
 
             if node in seen:
