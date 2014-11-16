@@ -22,7 +22,7 @@
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
-import_pygame_sdl2__surface()
+import_pygame_sdl2()
 
 from freetype cimport *
 from ttgsubtable cimport *

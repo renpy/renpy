@@ -28,7 +28,7 @@ from gldraw cimport *
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
-import_pygame_sdl2__surface()
+import_pygame_sdl2()
 
 from cpython.string cimport PyString_FromStringAndSize
 from libc.stdlib cimport calloc, free

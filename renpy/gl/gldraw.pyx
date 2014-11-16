@@ -28,7 +28,7 @@ from sdl2 cimport *
 from gl cimport *
 
 from pygame_sdl2 cimport *
-import_pygame_sdl2__surface()
+import_pygame_sdl2()
 
 import renpy
 import pygame

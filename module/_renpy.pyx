@@ -421,6 +421,6 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
 # Be sure to update scale.py when adding something new here!
 
-import_pygame_sdl2__rwobject()
+import_pygame_sdl2()
 core_init()
 subpixel_init()

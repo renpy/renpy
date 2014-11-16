@@ -1,7 +1,7 @@
 #include "renpy.h"
 #include "IMG_savepng.h"
 #include <SDL.h>
-#include <pygame_sdl2/pygame_sdl2.surface_api.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -22,7 +22,7 @@
 /* Initializes the stuff found in this file.
  */
 void core_init() {
-    import_pygame_sdl2__surface();
+    import_pygame_sdl2();
 }
 
 void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {

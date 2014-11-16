@@ -34,7 +34,7 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
-#include <pygame_sdl2/pygame_sdl2.surface_api.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 
 #ifdef __MINGW32__
 #undef main /* We don't want SDL to override our main() */
@@ -1666,7 +1666,7 @@ void ffpy_init(int rate, int status) {
 
     ffpy_did_init = 1;
 
-    import_pygame_sdl2__surface();
+    import_pygame_sdl2();
 
     show_status = status;
 

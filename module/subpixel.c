@@ -8,12 +8,12 @@
 
 #include "renpy.h"
 #include <SDL.h>
-#include <pygame_sdl2/pygame_sdl2.surface_api.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 #include <stdio.h>
 #include <math.h>
 
 void subpixel_init() {
-    import_pygame_sdl2__surface();
+    import_pygame_sdl2();
 }
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
