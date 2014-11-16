@@ -61,7 +61,7 @@ def which(program):
 
 
 class Editor(renpy.editor.Editor):
-    '''Gedit Editor'''
+    '''GVim Editor'''
 
     def begin(self, new_window = False, **kwargs):
         '''Collect variable'''
