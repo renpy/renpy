@@ -158,6 +158,7 @@ else:
     gl2_only = False
     egl = "egl_none.c"
 
+cython("renpy.gl.gl", libs=glew_libs)
 cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
 cython("renpy.gl.gltexture", libs=glew_libs)
 cython("renpy.gl.glenviron_shader", libs=glew_libs)
@@ -177,7 +178,6 @@ anglecopy("glblacklist.py")
 anglecopy("gldraw.pxd")
 anglecopy("gldraw.pyx")
 anglecopy("glenviron_shader.pyx")
-anglecopy("gl.pxd")
 anglecopy("glrtt_fbo.pyx")
 anglecopy("glrtt_copy.pyx")
 anglecopy("gltexture.pxd")
@@ -188,6 +188,7 @@ angle_libs = [ "SDL2", "EGL", "GLESv2" ]
 def anglecython(name, source=[]):
     cython(name, libs=angle_libs, compile_if=has_angle, define_macros=[ ( "ANGLE", None ) ], source=source)
 
+anglecython("renpy.angle.gl")
 anglecython("renpy.angle.gldraw", source=[ "egl_angle.c" ])
 anglecython("renpy.angle.gltexture")
 anglecython("renpy.angle.glenviron_shader")

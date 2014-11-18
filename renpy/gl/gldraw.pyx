@@ -59,14 +59,6 @@ cdef extern from "eglsupport.h":
     void egl_quit()
 
 
-# This is used by gl_error_check in gl.pxd.
-class GLError(Exception):
-    """
-    This is used to report OpenGL errors.
-    """
-
-    pass
-
 # EGL is a flag we check to see if we have EGL on this platform.
 cdef bint EGL
 EGL = egl_available()
@@ -314,8 +306,6 @@ cdef class GLDraw:
 
         self.environ.init()
         self.rtt.init()
-
-        gl_check("set_mode")
 
         return True
 
@@ -678,8 +668,6 @@ cdef class GLDraw:
                 pygame.display.flip()
 
         gltexture.cleanup()
-
-        gl_check("draw_screen")
 
     cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
         """

@@ -116,10 +116,9 @@ def test_texture_sizes(Environ environ, draw):
 
     # There could be an error queued up from an ANGLE reset. Purge it before we do the
     # texture testing.
-    error = glGetError()
+    error = realGlGetError()
     if error != GL_NO_ERROR:
         renpy.display.log.write("- Ignored error at start of testing: {0:x}".format(error))
-
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &hw_max_size)
 
@@ -165,7 +164,7 @@ def test_texture_sizes(Environ environ, draw):
         # Free the bitmap.
         free(bitmap)
 
-        error = glGetError()
+        error = realGlGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error loading {0}px bitmap: {1:x}".format(size, error))
             glDeleteTextures(1, &tex)
@@ -205,7 +204,7 @@ def test_texture_sizes(Environ environ, draw):
         # Delete the texture.
         glDeleteTextures(1, &tex)
 
-        error = glGetError()
+        error = realGlGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error drawing {0}px texture: {1:x}".format(size, error))
             break
@@ -213,7 +212,7 @@ def test_texture_sizes(Environ environ, draw):
         # Check the pixel color.
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
 
-        error = glGetError()
+        error = realGlGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error reading {0}px texture: {1:x}".format(size, error))
             break

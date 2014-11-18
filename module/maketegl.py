@@ -26,11 +26,15 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-# Modified in 2010 by PyTom to generate Cython code that uses glew.
+from __future__ import print_function
+
+# Modified in 2010,2014 by PyTom to generate Cython code that uses glew.
 
 VERSION = "0.1"
 
 import sys
+import os
+import re
 
 #-----------------------------------------------------------------------
 # Options
@@ -2570,6 +2574,81 @@ GLhandleARB = gltype("GLhandleARB")
 GLstring = gltype("GLchar *")
 GLcharARB = gltype("GLchar")
 
+
+def exception_return(t):
+    if "*" in str(t):
+        return "NULL"
+    else:
+        return "0"
+
+class GLFunction(object):
+
+    def __init__(self, type, name, args):
+        self.type = type
+        self.name = name
+        self.args = args
+
+    def declare_external(self, f):
+
+        print('    %s realGl%s "gl%s\" (%s)' % (
+            self.type,
+            self.name,
+            self.name,
+            ", ".join(str(i) for i in self.args)
+            ), file=f)
+
+    def declare_wrapper(self, f):
+        t = self.type
+
+        if t == GLvoid:
+            t = "int"
+
+        print('cdef %s gl%s(%s) except? %s' % (
+            t,
+            self.name,
+            ", ".join(str(i) for i in self.args),
+            exception_return(self.type),
+            ), file=f)
+
+    def define_wrapper(self, f):
+        t = self.type
+
+        if t == GLvoid:
+            t = "int"
+
+        print('cdef %s gl%s(%s) except? %s:' % (
+            t,
+            self.name,
+            ", ".join(("%s a%d" % (t, i)) for i, t in enumerate(self.args)),
+            exception_return(self.type),
+            ), file=f)
+
+        print("    cdef GLenum error", file=f)
+
+        if self.type == GLvoid:
+            print("    realGl%s(%s)" % (
+                self.name,
+                ", ".join(("a%d" % i) for i in range(len(self.args)))
+                ), file=f)
+        else:
+            print("    cdef %s rv = realGl%s(%s)" % (
+                self.type,
+                self.name,
+                ", ".join(("a%d" % i) for i in range(len(self.args)))
+                ), file=f)
+
+        print("    if 1:", file=f)
+        print("        error = realGlGetError()", file=f)
+        print("        if error:", file=f)
+        print("            raise Exception('GL error %x' % error)", file=f)
+
+        if self.type == GLvoid:
+            print("    return 1", file=f)
+        else:
+            print("    return rv", file=f)
+
+declarations = [ ]
+
 def declare(*args):
     global is_enum
     is_enum = False
@@ -2579,14 +2658,12 @@ def declare(*args):
     if isinstance(args[0], gltype):
         type = args.pop(0) #@ReservedAssignment
     else:
-        type = "void" #@ReservedAssignment
+        type = GLvoid #@ReservedAssignment
 
     name = args.pop(0)
 
-    print "    %s gl%s(%s)" % (
-        type,
-        name,
-        ", ".join(str(i) for i in args))
+    declarations.append(GLFunction(type, name, args))
+
 
 constants = [ ]
 
@@ -2618,34 +2695,75 @@ cdef extern from "glcompat.h":
     ctypedef char            GLcharARB
 """
 
-FOOTER = """\
 
-cdef inline gl_check(where):
-    cdef GLenum error
-    error = glGetError()
-    if error:
-        import renpy
-        renpy.display.log.write("GL error 0x%X at %s", error, where)
+def find_gl_names(dirname):
 
-"""
+    names = set()
 
-def main():
-    out = sys.stdout
-    out.write(HEADER)
+    for i in os.listdir(dirname):
+        if not i.endswith('.pyx'):
+            continue
+
+        if i == "gl.pyx":
+            continue
+
+        fn = os.path.join(dirname, i)
+
+        with open(fn, "r") as f:
+            data = f.read()
+
+        for m in re.finditer(r'gl([A-Z]\w+)', data):
+            names.add(m.group(1))
+
+    rv = list(names)
+    rv.sort()
+
+    return rv
+
+
+def generate(dirname):
+
+    names = find_gl_names(dirname)
+
+    global constants
+    constants = [ ]
+
+    global declarations
+    declarations = [ ]
 
     generate_tegl()
-    constant("BGRA")
 
+    constant("BGRA")
     constants.sort()
     constants.append("RENPY_THIRD_TEXTURE")
 
-    print
-    print "    enum:"
-    for i in constants:
-        print "        %s" % i
+    decl_by_name = dict((i.name, i) for i in declarations)
 
-    print
-    print FOOTER
+    with open(os.path.join(dirname, "gl.pxd"), "w") as f:
+        print(HEADER, file=f)
+
+        print(file=f)
+        print("    enum:", file=f)
+        for i in constants:
+            print("        %s" % i, file=f)
+
+        print(file=f)
+        for i in declarations:
+            i.declare_external(f)
+
+        print(file=f)
+        for i in names:
+            decl_by_name[i].declare_wrapper(f)
+
+    with open(os.path.join(dirname, "gl.pyx"), "w") as f:
+
+        for i in names:
+            print(file=f)
+            decl_by_name[i].define_wrapper(f)
+
+
+root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == '__main__':
-    main()
+    generate(os.path.join(root, "renpy", "gl"))
+    generate(os.path.join(root, "renpy", "angle"))
