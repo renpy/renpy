@@ -5,7 +5,8 @@ cdef int glActiveTextureARB(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glActiveTextureARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glAttachObjectARB(GLhandleARB a0, GLhandleARB a1) except? 0:
@@ -14,7 +15,8 @@ cdef int glAttachObjectARB(GLhandleARB a0, GLhandleARB a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glAttachObjectARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glBindFramebufferEXT(GLenum a0, GLuint a1) except? 0:
@@ -23,7 +25,8 @@ cdef int glBindFramebufferEXT(GLenum a0, GLuint a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glBindFramebufferEXT' % error
+            raise Exception(message)
     return 1
 
 cdef int glBindTexture(GLenum a0, GLuint a1) except? 0:
@@ -32,7 +35,8 @@ cdef int glBindTexture(GLenum a0, GLuint a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glBindTexture' % error
+            raise Exception(message)
     return 1
 
 cdef int glBlendFunc(GLenum a0, GLenum a1) except? 0:
@@ -41,7 +45,8 @@ cdef int glBlendFunc(GLenum a0, GLenum a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glBlendFunc' % error
+            raise Exception(message)
     return 1
 
 cdef int glClear(GLbitfield a0) except? 0:
@@ -50,7 +55,8 @@ cdef int glClear(GLbitfield a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glClear' % error
+            raise Exception(message)
     return 1
 
 cdef int glClearColor(GLclampf a0, GLclampf a1, GLclampf a2, GLclampf a3) except? 0:
@@ -59,7 +65,8 @@ cdef int glClearColor(GLclampf a0, GLclampf a1, GLclampf a2, GLclampf a3) except
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glClearColor' % error
+            raise Exception(message)
     return 1
 
 cdef int glClientActiveTextureARB(GLenum a0) except? 0:
@@ -68,7 +75,8 @@ cdef int glClientActiveTextureARB(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glClientActiveTextureARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glClipPlane(GLenum a0, GLdouble * a1) except? 0:
@@ -77,7 +85,8 @@ cdef int glClipPlane(GLenum a0, GLdouble * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glClipPlane' % error
+            raise Exception(message)
     return 1
 
 cdef int glColor4f(GLfloat a0, GLfloat a1, GLfloat a2, GLfloat a3) except? 0:
@@ -86,7 +95,8 @@ cdef int glColor4f(GLfloat a0, GLfloat a1, GLfloat a2, GLfloat a3) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glColor4f' % error
+            raise Exception(message)
     return 1
 
 cdef int glCompileShaderARB(GLhandleARB a0) except? 0:
@@ -95,7 +105,8 @@ cdef int glCompileShaderARB(GLhandleARB a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glCompileShaderARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glCopyTexSubImage2D(GLenum a0, GLint a1, GLint a2, GLint a3, GLint a4, GLint a5, GLsizei a6, GLsizei a7) except? 0:
@@ -104,7 +115,8 @@ cdef int glCopyTexSubImage2D(GLenum a0, GLint a1, GLint a2, GLint a3, GLint a4, 
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glCopyTexSubImage2D' % error
+            raise Exception(message)
     return 1
 
 cdef GLhandleARB glCreateProgramObjectARB() except? 0:
@@ -113,7 +125,8 @@ cdef GLhandleARB glCreateProgramObjectARB() except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glCreateProgramObjectARB' % error
+            raise Exception(message)
     return rv
 
 cdef GLhandleARB glCreateShaderObjectARB(GLenum a0) except? 0:
@@ -122,7 +135,8 @@ cdef GLhandleARB glCreateShaderObjectARB(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glCreateShaderObjectARB' % error
+            raise Exception(message)
     return rv
 
 cdef int glDeleteFramebuffersEXT(GLsizei a0, GLuint * a1) except? 0:
@@ -131,7 +145,8 @@ cdef int glDeleteFramebuffersEXT(GLsizei a0, GLuint * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDeleteFramebuffersEXT' % error
+            raise Exception(message)
     return 1
 
 cdef int glDeleteProgram(GLuint a0) except? 0:
@@ -140,7 +155,8 @@ cdef int glDeleteProgram(GLuint a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDeleteProgram' % error
+            raise Exception(message)
     return 1
 
 cdef int glDeleteShader(GLuint a0) except? 0:
@@ -149,7 +165,8 @@ cdef int glDeleteShader(GLuint a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDeleteShader' % error
+            raise Exception(message)
     return 1
 
 cdef int glDeleteTextures(GLsizei a0, GLuint * a1) except? 0:
@@ -158,7 +175,8 @@ cdef int glDeleteTextures(GLsizei a0, GLuint * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDeleteTextures' % error
+            raise Exception(message)
     return 1
 
 cdef int glDisable(GLenum a0) except? 0:
@@ -167,7 +185,8 @@ cdef int glDisable(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDisable' % error
+            raise Exception(message)
     return 1
 
 cdef int glDisableClientState(GLenum a0) except? 0:
@@ -176,7 +195,8 @@ cdef int glDisableClientState(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDisableClientState' % error
+            raise Exception(message)
     return 1
 
 cdef int glDisableVertexAttribArrayARB(GLuint a0) except? 0:
@@ -185,7 +205,8 @@ cdef int glDisableVertexAttribArrayARB(GLuint a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDisableVertexAttribArrayARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glDrawArrays(GLenum a0, GLint a1, GLsizei a2) except? 0:
@@ -194,7 +215,8 @@ cdef int glDrawArrays(GLenum a0, GLint a1, GLsizei a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glDrawArrays' % error
+            raise Exception(message)
     return 1
 
 cdef int glEnable(GLenum a0) except? 0:
@@ -203,7 +225,8 @@ cdef int glEnable(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glEnable' % error
+            raise Exception(message)
     return 1
 
 cdef int glEnableClientState(GLenum a0) except? 0:
@@ -212,7 +235,8 @@ cdef int glEnableClientState(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glEnableClientState' % error
+            raise Exception(message)
     return 1
 
 cdef int glEnableVertexAttribArrayARB(GLuint a0) except? 0:
@@ -221,7 +245,8 @@ cdef int glEnableVertexAttribArrayARB(GLuint a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glEnableVertexAttribArrayARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glFinish() except? 0:
@@ -230,7 +255,8 @@ cdef int glFinish() except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glFinish' % error
+            raise Exception(message)
     return 1
 
 cdef int glFramebufferTexture2DEXT(GLenum a0, GLenum a1, GLenum a2, GLuint a3, GLint a4) except? 0:
@@ -239,7 +265,8 @@ cdef int glFramebufferTexture2DEXT(GLenum a0, GLenum a1, GLenum a2, GLuint a3, G
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glFramebufferTexture2DEXT' % error
+            raise Exception(message)
     return 1
 
 cdef int glGenFramebuffersEXT(GLsizei a0, GLuint * a1) except? 0:
@@ -248,7 +275,8 @@ cdef int glGenFramebuffersEXT(GLsizei a0, GLuint * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGenFramebuffersEXT' % error
+            raise Exception(message)
     return 1
 
 cdef int glGenTextures(GLsizei a0, GLuint * a1) except? 0:
@@ -257,7 +285,8 @@ cdef int glGenTextures(GLsizei a0, GLuint * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGenTextures' % error
+            raise Exception(message)
     return 1
 
 cdef GLint glGetAttribLocationARB(GLhandleARB a0, GLchar * a1) except? 0:
@@ -266,7 +295,8 @@ cdef GLint glGetAttribLocationARB(GLhandleARB a0, GLchar * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetAttribLocationARB' % error
+            raise Exception(message)
     return rv
 
 cdef int glGetIntegerv(GLenum a0, GLint * a1) except? 0:
@@ -275,7 +305,8 @@ cdef int glGetIntegerv(GLenum a0, GLint * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetIntegerv' % error
+            raise Exception(message)
     return 1
 
 cdef int glGetProgramInfoLog(GLhandleARB a0, GLsizei a1, GLsizei * a2, GLchar * a3) except? 0:
@@ -284,7 +315,8 @@ cdef int glGetProgramInfoLog(GLhandleARB a0, GLsizei a1, GLsizei * a2, GLchar * 
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetProgramInfoLog' % error
+            raise Exception(message)
     return 1
 
 cdef int glGetProgramiv(GLuint a0, GLenum a1, GLint * a2) except? 0:
@@ -293,7 +325,8 @@ cdef int glGetProgramiv(GLuint a0, GLenum a1, GLint * a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetProgramiv' % error
+            raise Exception(message)
     return 1
 
 cdef int glGetShaderInfoLog(GLhandleARB a0, GLsizei a1, GLsizei * a2, GLchar * a3) except? 0:
@@ -302,7 +335,8 @@ cdef int glGetShaderInfoLog(GLhandleARB a0, GLsizei a1, GLsizei * a2, GLchar * a
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetShaderInfoLog' % error
+            raise Exception(message)
     return 1
 
 cdef int glGetShaderiv(GLuint a0, GLenum a1, GLint * a2) except? 0:
@@ -311,7 +345,8 @@ cdef int glGetShaderiv(GLuint a0, GLenum a1, GLint * a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetShaderiv' % error
+            raise Exception(message)
     return 1
 
 cdef GLchar * glGetString(GLenum a0) except? NULL:
@@ -320,7 +355,8 @@ cdef GLchar * glGetString(GLenum a0) except? NULL:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetString' % error
+            raise Exception(message)
     return rv
 
 cdef GLint glGetUniformLocationARB(GLhandleARB a0, GLchar * a1) except? 0:
@@ -329,7 +365,8 @@ cdef GLint glGetUniformLocationARB(GLhandleARB a0, GLchar * a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glGetUniformLocationARB' % error
+            raise Exception(message)
     return rv
 
 cdef int glLinkProgramARB(GLhandleARB a0) except? 0:
@@ -338,7 +375,8 @@ cdef int glLinkProgramARB(GLhandleARB a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glLinkProgramARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glLoadIdentity() except? 0:
@@ -347,7 +385,8 @@ cdef int glLoadIdentity() except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glLoadIdentity' % error
+            raise Exception(message)
     return 1
 
 cdef int glMatrixMode(GLenum a0) except? 0:
@@ -356,7 +395,8 @@ cdef int glMatrixMode(GLenum a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glMatrixMode' % error
+            raise Exception(message)
     return 1
 
 cdef int glOrtho(GLdouble a0, GLdouble a1, GLdouble a2, GLdouble a3, GLdouble a4, GLdouble a5) except? 0:
@@ -365,7 +405,8 @@ cdef int glOrtho(GLdouble a0, GLdouble a1, GLdouble a2, GLdouble a3, GLdouble a4
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glOrtho' % error
+            raise Exception(message)
     return 1
 
 cdef int glReadPixels(GLint a0, GLint a1, GLsizei a2, GLsizei a3, GLenum a4, GLenum a5, GLubyte * a6) except? 0:
@@ -374,7 +415,8 @@ cdef int glReadPixels(GLint a0, GLint a1, GLsizei a2, GLsizei a3, GLenum a4, GLe
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glReadPixels' % error
+            raise Exception(message)
     return 1
 
 cdef int glScissor(GLint a0, GLint a1, GLsizei a2, GLsizei a3) except? 0:
@@ -383,7 +425,8 @@ cdef int glScissor(GLint a0, GLint a1, GLsizei a2, GLsizei a3) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glScissor' % error
+            raise Exception(message)
     return 1
 
 cdef int glShaderSourceARB(GLhandleARB a0, GLsizei a1, GLchar * * a2, GLint * a3) except? 0:
@@ -392,7 +435,8 @@ cdef int glShaderSourceARB(GLhandleARB a0, GLsizei a1, GLchar * * a2, GLint * a3
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glShaderSourceARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexCoordPointer(GLint a0, GLenum a1, GLsizei a2, GLubyte * a3) except? 0:
@@ -401,7 +445,8 @@ cdef int glTexCoordPointer(GLint a0, GLenum a1, GLsizei a2, GLubyte * a3) except
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexCoordPointer' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexEnvf(GLenum a0, GLenum a1, GLfloat a2) except? 0:
@@ -410,7 +455,8 @@ cdef int glTexEnvf(GLenum a0, GLenum a1, GLfloat a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexEnvf' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexEnvfv(GLenum a0, GLenum a1, GLfloat * a2) except? 0:
@@ -419,7 +465,8 @@ cdef int glTexEnvfv(GLenum a0, GLenum a1, GLfloat * a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexEnvfv' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexEnvi(GLenum a0, GLenum a1, GLint a2) except? 0:
@@ -428,7 +475,8 @@ cdef int glTexEnvi(GLenum a0, GLenum a1, GLint a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexEnvi' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexImage2D(GLenum a0, GLint a1, GLint a2, GLsizei a3, GLsizei a4, GLint a5, GLenum a6, GLenum a7, GLubyte * a8) except? 0:
@@ -437,7 +485,8 @@ cdef int glTexImage2D(GLenum a0, GLint a1, GLint a2, GLsizei a3, GLsizei a4, GLi
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexImage2D' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexParameteri(GLenum a0, GLenum a1, GLint a2) except? 0:
@@ -446,7 +495,8 @@ cdef int glTexParameteri(GLenum a0, GLenum a1, GLint a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexParameteri' % error
+            raise Exception(message)
     return 1
 
 cdef int glTexSubImage2D(GLenum a0, GLint a1, GLint a2, GLint a3, GLsizei a4, GLsizei a5, GLenum a6, GLenum a7, GLubyte * a8) except? 0:
@@ -455,7 +505,8 @@ cdef int glTexSubImage2D(GLenum a0, GLint a1, GLint a2, GLint a3, GLsizei a4, GL
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glTexSubImage2D' % error
+            raise Exception(message)
     return 1
 
 cdef int glUniform1fARB(GLint a0, GLfloat a1) except? 0:
@@ -464,7 +515,8 @@ cdef int glUniform1fARB(GLint a0, GLfloat a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glUniform1fARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glUniform1iARB(GLint a0, GLint a1) except? 0:
@@ -473,7 +525,8 @@ cdef int glUniform1iARB(GLint a0, GLint a1) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glUniform1iARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glUniform2fARB(GLint a0, GLfloat a1, GLfloat a2) except? 0:
@@ -482,7 +535,8 @@ cdef int glUniform2fARB(GLint a0, GLfloat a1, GLfloat a2) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glUniform2fARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glUniform4fARB(GLint a0, GLfloat a1, GLfloat a2, GLfloat a3, GLfloat a4) except? 0:
@@ -491,7 +545,8 @@ cdef int glUniform4fARB(GLint a0, GLfloat a1, GLfloat a2, GLfloat a3, GLfloat a4
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glUniform4fARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glUniformMatrix4fvARB(GLint a0, GLsizei a1, GLboolean a2, GLfloat * a3) except? 0:
@@ -500,7 +555,8 @@ cdef int glUniformMatrix4fvARB(GLint a0, GLsizei a1, GLboolean a2, GLfloat * a3)
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glUniformMatrix4fvARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glUseProgramObjectARB(GLhandleARB a0) except? 0:
@@ -509,7 +565,8 @@ cdef int glUseProgramObjectARB(GLhandleARB a0) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glUseProgramObjectARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glVertexAttribPointerARB(GLuint a0, GLint a1, GLenum a2, GLboolean a3, GLsizei a4, GLubyte * a5) except? 0:
@@ -518,7 +575,8 @@ cdef int glVertexAttribPointerARB(GLuint a0, GLint a1, GLenum a2, GLboolean a3, 
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glVertexAttribPointerARB' % error
+            raise Exception(message)
     return 1
 
 cdef int glVertexPointer(GLint a0, GLenum a1, GLsizei a2, GLubyte * a3) except? 0:
@@ -527,7 +585,8 @@ cdef int glVertexPointer(GLint a0, GLenum a1, GLsizei a2, GLubyte * a3) except? 
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glVertexPointer' % error
+            raise Exception(message)
     return 1
 
 cdef int glViewport(GLint a0, GLint a1, GLsizei a2, GLsizei a3) except? 0:
@@ -536,5 +595,6 @@ cdef int glViewport(GLint a0, GLint a1, GLsizei a2, GLsizei a3) except? 0:
     if 1:
         error = realGlGetError()
         if error:
-            raise Exception('GL error %x' % error)
+            message = 'GL error %x in glViewport' % error
+            raise Exception(message)
     return 1

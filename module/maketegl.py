@@ -2640,7 +2640,8 @@ class GLFunction(object):
         print("    if 1:", file=f)
         print("        error = realGlGetError()", file=f)
         print("        if error:", file=f)
-        print("            raise Exception('GL error %x' % error)", file=f)
+        print("            message = 'GL error %%x in gl%s' %% error" % self.name, file=f)
+        print("            raise Exception(message)", file=f)
 
         if self.type == GLvoid:
             print("    return 1", file=f)

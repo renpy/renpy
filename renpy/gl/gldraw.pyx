@@ -669,7 +669,7 @@ cdef class GLDraw:
 
         gltexture.cleanup()
 
-    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
+    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned) except 1:
         """
         This is responsible for rendering things to textures,
         as necessary.
@@ -728,7 +728,7 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse,
-        bint nearest):
+        bint nearest) except 1:
 
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
