@@ -2637,11 +2637,14 @@ class GLFunction(object):
                 ", ".join(("a%d" % i) for i in range(len(self.args)))
                 ), file=f)
 
-        print("    if 1:", file=f)
+        print("    if check_errors:", file=f)
         print("        error = realGlGetError()", file=f)
         print("        if error:", file=f)
         print("            message = 'GL error %%x in gl%s' %% error" % self.name, file=f)
-        print("            raise Exception(message)", file=f)
+        print("            if check_errors & 1:", file=f)
+        print("                renpy.display.log.write('%s', message)", file=f)
+        print("            if check_errors & 2:", file=f)
+        print("                raise Exception(message)", file=f)
 
         if self.type == GLvoid:
             print("    return 1", file=f)
@@ -2671,7 +2674,7 @@ constants = [ ]
 def constant(name):
     constants.append("GL_" + name)
 
-HEADER = """\
+PXD_HEADER = """\
 cdef extern from "glcompat.h":
     ctypedef unsigned int    GLenum
     ctypedef unsigned char   GLboolean
@@ -2696,6 +2699,13 @@ cdef extern from "glcompat.h":
     ctypedef char            GLcharARB
 """
 
+PYX_HEADER = """\
+import os
+import renpy
+
+cdef int check_errors
+check_errors = int(os.environ.get("RENPY_GL_CHECK_ERRORS", 0))
+"""
 
 def find_gl_names(dirname):
 
@@ -2741,7 +2751,7 @@ def generate(dirname):
     decl_by_name = dict((i.name, i) for i in declarations)
 
     with open(os.path.join(dirname, "gl.pxd"), "w") as f:
-        print(HEADER, file=f)
+        print(PXD_HEADER, file=f)
 
         print(file=f)
         print("    enum:", file=f)
@@ -2757,6 +2767,7 @@ def generate(dirname):
             decl_by_name[i].declare_wrapper(f)
 
     with open(os.path.join(dirname, "gl.pyx"), "w") as f:
+        print(PYX_HEADER, file=f)
 
         for i in names:
             print(file=f)
