@@ -41,7 +41,7 @@ label translate:
 
         if language == "rot13":
             args.append("--rot13")
-        else:
+        elif persistent.generate_empty_strings:
             args.append("--empty")
 
         interface.processing(_("Ren'Py is generating translations...."))
