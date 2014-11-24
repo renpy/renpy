@@ -90,7 +90,7 @@ has_libglew32 = library("glew32", optional=True)
 has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
 
 if android:
-    sdl = [ 'sdl2', 'GLESv2', 'log' ]
+    sdl = [ 'SDL2', 'GLESv2', 'log' ]
 else:
     sdl = [ 'SDL2' ]
 
