@@ -1524,49 +1524,20 @@ cdef extern from "glcompat.h":
     GLvoid realGlGenerateMipmapEXT "glGenerateMipmapEXT" (GLenum)
 
 cdef int glActiveTextureARB(GLenum) except? 0
-cdef int glAttachObjectARB(GLhandleARB, GLhandleARB) except? 0
-cdef int glBindFramebufferEXT(GLenum, GLuint) except? 0
-cdef int glBindTexture(GLenum, GLuint) except? 0
-cdef int glBlendFunc(GLenum, GLenum) except? 0
-cdef int glClear(GLbitfield) except? 0
-cdef int glClearColor(GLclampf, GLclampf, GLclampf, GLclampf) except? 0
-cdef int glCompileShaderARB(GLhandleARB) except? 0
-cdef int glCopyTexSubImage2D(GLenum, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei) except? 0
-cdef GLhandleARB glCreateProgramObjectARB() except? 0
-cdef GLhandleARB glCreateShaderObjectARB(GLenum) except? 0
-cdef int glDeleteFramebuffersEXT(GLsizei, GLuint *) except? 0
-cdef int glDeleteProgram(GLuint) except? 0
-cdef int glDeleteShader(GLuint) except? 0
-cdef int glDeleteTextures(GLsizei, GLuint *) except? 0
+cdef int glClientActiveTextureARB(GLenum) except? 0
+cdef int glClipPlane(GLenum, GLdouble *) except? 0
+cdef int glColor4f(GLfloat, GLfloat, GLfloat, GLfloat) except? 0
 cdef int glDisable(GLenum) except? 0
-cdef int glDisableVertexAttribArrayARB(GLuint) except? 0
-cdef int glDrawArrays(GLenum, GLint, GLsizei) except? 0
+cdef int glDisableClientState(GLenum) except? 0
 cdef int glEnable(GLenum) except? 0
-cdef int glEnableVertexAttribArrayARB(GLuint) except? 0
-cdef int glFinish() except? 0
-cdef int glFramebufferTexture2DEXT(GLenum, GLenum, GLenum, GLuint, GLint) except? 0
-cdef int glGenFramebuffersEXT(GLsizei, GLuint *) except? 0
-cdef int glGenTextures(GLsizei, GLuint *) except? 0
-cdef GLint glGetAttribLocationARB(GLhandleARB, GLchar *) except? 0
-cdef int glGetIntegerv(GLenum, GLint *) except? 0
-cdef int glGetProgramInfoLog(GLhandleARB, GLsizei, GLsizei *, GLchar *) except? 0
-cdef int glGetProgramiv(GLuint, GLenum, GLint *) except? 0
-cdef int glGetShaderInfoLog(GLhandleARB, GLsizei, GLsizei *, GLchar *) except? 0
-cdef int glGetShaderiv(GLuint, GLenum, GLint *) except? 0
-cdef GLchar * glGetString(GLenum) except? NULL
-cdef GLint glGetUniformLocationARB(GLhandleARB, GLchar *) except? 0
-cdef int glLinkProgramARB(GLhandleARB) except? 0
-cdef int glReadPixels(GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLubyte *) except? 0
+cdef int glEnableClientState(GLenum) except? 0
+cdef int glLoadIdentity() except? 0
+cdef int glMatrixMode(GLenum) except? 0
+cdef int glOrtho(GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble) except? 0
 cdef int glScissor(GLint, GLint, GLsizei, GLsizei) except? 0
-cdef int glShaderSourceARB(GLhandleARB, GLsizei, GLchar * *, GLint *) except? 0
-cdef int glTexImage2D(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, GLubyte *) except? 0
-cdef int glTexParameteri(GLenum, GLenum, GLint) except? 0
-cdef int glTexSubImage2D(GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLubyte *) except? 0
-cdef int glUniform1fARB(GLint, GLfloat) except? 0
-cdef int glUniform1iARB(GLint, GLint) except? 0
-cdef int glUniform2fARB(GLint, GLfloat, GLfloat) except? 0
-cdef int glUniform4fARB(GLint, GLfloat, GLfloat, GLfloat, GLfloat) except? 0
-cdef int glUniformMatrix4fvARB(GLint, GLsizei, GLboolean, GLfloat *) except? 0
-cdef int glUseProgramObjectARB(GLhandleARB) except? 0
-cdef int glVertexAttribPointerARB(GLuint, GLint, GLenum, GLboolean, GLsizei, GLubyte *) except? 0
+cdef int glTexCoordPointer(GLint, GLenum, GLsizei, GLubyte *) except? 0
+cdef int glTexEnvf(GLenum, GLenum, GLfloat) except? 0
+cdef int glTexEnvfv(GLenum, GLenum, GLfloat *) except? 0
+cdef int glTexEnvi(GLenum, GLenum, GLint) except? 0
+cdef int glVertexPointer(GLint, GLenum, GLsizei, GLubyte *) except? 0
 cdef int glViewport(GLint, GLint, GLsizei, GLsizei) except? 0

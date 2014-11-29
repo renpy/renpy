@@ -2707,7 +2707,7 @@ cdef int check_errors
 check_errors = int(os.environ.get("RENPY_GL_CHECK_ERRORS", 0))
 """
 
-def find_gl_names(dirname):
+def find_gl_names(dirname, gl1):
 
     names = set()
 
@@ -2715,8 +2715,17 @@ def find_gl_names(dirname):
         if not i.endswith('.pyx'):
             continue
 
-        if i == "gl.pyx":
+        if i in [ "gl.pyx", "gl1.pyx" ]:
             continue
+
+        GL1_FILES = [ "glenviron_fixed.pyx", "glenviron_limited.pyx" ]
+
+        if gl1:
+            if i not in GL1_FILES:
+                continue
+        else:
+            if i in GL1_FILES:
+                continue
 
         fn = os.path.join(dirname, i)
 
@@ -2732,9 +2741,14 @@ def find_gl_names(dirname):
     return rv
 
 
-def generate(dirname):
+def generate(dirname, gl1):
 
-    names = find_gl_names(dirname)
+    if gl1:
+        prefix = "gl1"
+    else:
+        prefix = "gl"
+
+    names = find_gl_names(dirname, gl1)
 
     global constants
     constants = [ ]
@@ -2750,7 +2764,7 @@ def generate(dirname):
 
     decl_by_name = dict((i.name, i) for i in declarations)
 
-    with open(os.path.join(dirname, "gl.pxd"), "w") as f:
+    with open(os.path.join(dirname, prefix + ".pxd"), "w") as f:
         print(PXD_HEADER, file=f)
 
         print(file=f)
@@ -2766,7 +2780,7 @@ def generate(dirname):
         for i in names:
             decl_by_name[i].declare_wrapper(f)
 
-    with open(os.path.join(dirname, "gl.pyx"), "w") as f:
+    with open(os.path.join(dirname, prefix + ".pyx"), "w") as f:
         print(PYX_HEADER, file=f)
 
         for i in names:
@@ -2777,5 +2791,6 @@ def generate(dirname):
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == '__main__':
-    generate(os.path.join(root, "renpy", "gl"))
-    generate(os.path.join(root, "renpy", "angle"))
+    generate(os.path.join(root, "renpy", "gl"), False)
+    generate(os.path.join(root, "renpy", "gl"), True)
+    generate(os.path.join(root, "renpy", "angle"), False)

@@ -91,8 +91,10 @@ has_angle = windows and library("EGL", optional=True) and library("GLESv2", opti
 
 if android:
     sdl = [ 'SDL2', 'GLESv2', 'log' ]
+    png = 'png14'
 else:
     sdl = [ 'SDL2' ]
+    png = 'png'
 
 if has_fribidi:
     try:
@@ -107,7 +109,7 @@ if has_fribidi:
 cython(
     "_renpy",
     [ "IMG_savepng.c", "core.c", "subpixel.c"],
-    sdl + [ 'png', 'z', 'm' ])
+    sdl + [ png, 'z', 'm' ])
 
 if has_fribidi and not android:
     cython(
@@ -159,6 +161,7 @@ else:
     egl = "egl_none.c"
 
 cython("renpy.gl.gl", libs=glew_libs)
+cython("renpy.gl.gl1", libs=glew_libs, compile_if=not gl2_only)
 cython("renpy.gl.gldraw", libs=glew_libs, source=[ egl ])
 cython("renpy.gl.gltexture", libs=glew_libs)
 cython("renpy.gl.glenviron_shader", libs=glew_libs)
