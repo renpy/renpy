@@ -133,9 +133,7 @@ def choose_variants():
 
 
         # Are we running on OUYA or Google TV or something similar?
-        PythonActivity = autoclass('org.renpy.android.PythonActivity')
-        mActivity = PythonActivity.mActivity
-        package_manager = mActivity.getPackageManager()
+        package_manager = android.activity.getPackageManager()
 
         if package_manager.hasSystemFeature("android.hardware.type.television"):
             print "Running on a television."
