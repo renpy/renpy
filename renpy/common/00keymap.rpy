@@ -25,10 +25,10 @@ init -1600 python:
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
+        rollback = [ 'K_PAGEUP', 'K_AC_BACK', 'mousedown_4', 'joy_rollback' ],
         screenshot = [ 's' ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
