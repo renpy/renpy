@@ -213,13 +213,15 @@ cdef class GLDraw:
             resizable = 0
         else:
             opengl = pygame.OPENGL
-            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
-            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
             if renpy.config.gl_resize:
                 resizable = pygame.RESIZABLE
             else:
                 resizable = 0
+
+        if opengl:
+            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
+            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
         try:
             if fullscreen:
