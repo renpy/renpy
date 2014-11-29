@@ -36,25 +36,20 @@ import atexit
 
 disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 
-pss = None
-
 if 'pss' not in disable:
+
     try:
-        import pysdlsound as pss
-        pss.check_version(4)  # @UndefinedVariable
-        atexit.register(pss.quit)  # @UndefinedVariable
+        if renpy.android:
+            import android._android_sound as pss #@UnresolvedImport @Reimport
+            print "Imported android sound."
+        else:
+            import pysdlsound as pss
+            pss.check_version(4)  # @UndefinedVariable
+            atexit.register(pss.quit)  # @UndefinedVariable
     except:
         import traceback
         traceback.print_exc()
-        pass
-
-    if pss is None:
-        try:
-            import android.sound as pss #@UnresolvedImport @Reimport
-            print "Imported android.sound."
-        except:
-            pass
-
+        pss = None
 
 # Save the mixer, and restore it at exit.
 
