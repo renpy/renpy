@@ -91,7 +91,7 @@ has_angle = windows and library("EGL", optional=True) and library("GLESv2", opti
 
 if android:
     sdl = [ 'SDL2', 'GLESv2', 'log' ]
-    png = 'png14'
+    png = 'png16'
 else:
     sdl = [ 'SDL2' ]
     png = 'png'
