@@ -69,19 +69,19 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 	SDL_BlendMode temp_blend;
 
 	if( !src || !surf) {
-		goto savedone; /* Nothing to do. */
+		goto savedone2; /* Nothing to do. */
 	}
 
 	row_pointers=(png_byte **)malloc(surf->h * sizeof(png_byte*));
 	if (!row_pointers) {
 		SDL_SetError("Couldn't allocate memory for rowpointers");
-		goto savedone;
+		goto savedone2;
 	}
 
 	png_ptr=png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL,NULL,NULL);
 	if (!png_ptr){
-		SDL_SetError("Couldn't allocate memory for PNG file");
-		goto savedone;
+		SDL_SetError("Couldn't allocate memory for PNG file version: " PNG_LIBPNG_VER_STRING);
+		goto savedone2;
 	}
 	info_ptr= png_create_info_struct(png_ptr);
 	if (!info_ptr){
@@ -270,6 +270,8 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 
 savedone: /* clean up and return */
 	png_destroy_write_struct(&png_ptr,&info_ptr);
+
+savedone2:
 	if (palette) {
 		free(palette);
 	}
