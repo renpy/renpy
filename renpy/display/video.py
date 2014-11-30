@@ -174,7 +174,7 @@ class Movie(renpy.display.core.Displayable):
         of the movie.
 
     The contents of this displayable when a movie is not playing are undefined.
-    (And may change when a rollback occurs.) 
+    (And may change when a rollback occurs.)
     """
 
     fullscreen = False
@@ -222,8 +222,11 @@ def frequent():
     needed, false otherwise.
     """
 
+    if renpy.android:
+        return False
+
     if not playing():
-        return 0
+        return False
 
     pss = renpy.audio.audio.pss
 
