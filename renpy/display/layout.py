@@ -24,7 +24,7 @@
 
 from renpy.display.render import render, Render
 import renpy.display
-import pygame
+import pygame_sdl2 as pygame
 
 
 def scale(num, base):

@@ -27,7 +27,7 @@ import renpy.audio
 
 from renpy.display.render import render, Render
 
-import pygame
+import pygame_sdl2 as pygame
 
 import math
 

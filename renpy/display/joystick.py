@@ -22,7 +22,7 @@
 # This file is responsible for joystick support in Ren'Py.
 
 import os
-import pygame
+import pygame_sdl2 as pygame
 
 import renpy.display
 

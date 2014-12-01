@@ -27,7 +27,7 @@ import weakref
 import types
 import sys
 import collections
-import pygame
+import pygame_sdl2 as pygame
 import gc
 
 import renpy

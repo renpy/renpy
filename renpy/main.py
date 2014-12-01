@@ -100,7 +100,7 @@ def choose_variants():
 
         import android #@UnresolvedImport
         import math
-        import pygame
+        import pygame_sdl2 as pygame
 
         from jnius import autoclass  # @UnresolvedImport
 

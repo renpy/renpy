@@ -24,7 +24,7 @@
 import renpy.display
 
 import os
-import pygame
+import pygame_sdl2 as pygame
 
 # The function that's called to perform the emulation. This function has
 # the signature of null_emulator.

@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
-import pygame
+import pygame_sdl2 as pygame
 import math
 import weakref
 import time

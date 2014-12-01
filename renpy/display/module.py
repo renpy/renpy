@@ -22,7 +22,7 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
-import pygame; pygame
+import pygame_sdl2; pygame_sdl2
 import renpy.display
 import _renpy
 

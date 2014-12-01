@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import collections
-import pygame
+import pygame_sdl2 as pygame
 import threading
 import renpy
 import gc

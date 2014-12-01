@@ -57,9 +57,6 @@ def extra_imports():
     import tarfile; tarfile
     import bz2; bz2  # @UnresolvedImport
     import webbrowser; webbrowser
-    import pygame.locals; pygame.locals
-    import pygame.color; pygame.color
-    import pygame.colordict; pygame.colordict
     import posixpath; posixpath
     import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
@@ -221,19 +218,17 @@ def bootstrap(renpy_base):
     if renpy.macintosh:
         os.startfile = mac_start
 
-    import pygame_sdl2
-    pygame_sdl2.import_as_pygame()
-
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
     # directory, we won't get the libraries in the PATH, and hence pygame
     # won't import.)
     try:
-        import pygame; pygame
+        import pygame_sdl2
+        pygame_sdl2.import_as_pygame()
     except:
         print >>sys.stderr, """\
-Could not import pygame. Please ensure that this program has been built
+Could not import pygame_sdl2. Please ensure that this program has been built
 and unpacked properly. Also, make sure that the directories containing
 this program do not contain : or ; in their names.
 

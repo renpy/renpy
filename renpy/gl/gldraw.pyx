@@ -31,7 +31,7 @@ from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
 import renpy
-import pygame
+import pygame_sdl2 as pygame
 import os
 import os.path
 import weakref

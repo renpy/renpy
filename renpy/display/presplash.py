@@ -80,24 +80,11 @@ def end():
 # Called in the presplash process, to actually display the presplash.
 def show(fn):
 
-    import pygame.display
-    import pygame.constants
+    import pygame_sdl2 as pygame
     import sys
     import os
 
     os.environ['SDL_VIDEO_CENTERED'] = "1"
-
-    try:
-        import pygame.macosx
-        pygame.macosx.init() #@UndefinedVariable
-    except:
-        pass
-
-    try:
-        import pygame.macosx #@Reimport
-        pygame.macosx.Video_AutoInit()
-    except:
-        pass
 
     pygame.display.init()
 

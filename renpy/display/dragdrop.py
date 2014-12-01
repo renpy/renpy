@@ -27,7 +27,7 @@ from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
 
-import pygame
+import pygame_sdl2 as pygame
 
 def default_drag_group():
     """

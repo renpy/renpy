@@ -26,7 +26,7 @@ import renpy.display
 import renpy.audio
 import renpy.text
 
-import pygame #@UnusedImport
+import pygame_sdl2 as pygame
 
 import sys
 import os
@@ -1370,17 +1370,6 @@ class Interface(object):
         # Initialize pygame.
         if pygame.version.vernum < (1, 8, 1):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
-
-        try:
-            import pygame.macosx as macosx
-            macosx.init() #@UndefinedVariable
-        except:
-            pass
-
-        try:
-            macosx.Video_AutoInit() #@UndefinedVariable
-        except:
-            pass
 
         # pygame.font.init()
         renpy.audio.audio.init()
