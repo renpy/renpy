@@ -35,8 +35,7 @@ import cStringIO
 import threading
 
 try:
-    import android #@UnresolvedImport @UnusedImport
-    import android.sound #@UnresolvedImport
+    import android._android_sound # @UnresolvedImport
 except:
     android = None
 
@@ -1400,11 +1399,6 @@ class Interface(object):
         # Load the image fonts.
         renpy.text.font.load_image_fonts()
 
-        # Setup the android keymap.
-        if android is not None:
-            android.map_key(android.KEYCODE_BACK, pygame.K_PAGEUP)
-            android.map_key(android.KEYCODE_MENU, pygame.K_ESCAPE)
-
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
@@ -2015,31 +2009,60 @@ class Interface(object):
 
         return (get_time() - self.frame_time) <= seconds_ago
 
-    def android_check_suspend(self):
+    def check_suspend(self, ev):
+        """
+        Handles the SDL2 suspend process.
+        """
 
-        if android.check_pause():
-
-            android.sound.pause_all()
-
-            pygame.time.set_timer(PERIODIC, 0)
-            pygame.time.set_timer(REDRAW, 0)
-            pygame.time.set_timer(TIMEEVENT, 0)
-
-            # The game has to be saved.
+        def save():
             renpy.loadsave.save("_reload-1")
-
-            # So does the persistent data.
             renpy.persistent.update(True)
 
-            android.wait_for_resume()
+        if ev.type == pygame.APP_TERMINATING:
+            save()
+            sys.exit(0)
 
-            # Since we came back to life, we can get rid of the
-            # auto-reload.
-            renpy.loadsave.unlink_save("_reload-1")
+        if ev.type != pygame.APP_WILLENTERBACKGROUND:
+            return False
 
-            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+        # At this point, we're about to enter the background.
 
-            android.sound.unpause_all()
+        android._android_sound.pause_all()
+
+        pygame.time.set_timer(PERIODIC, 0)
+        pygame.time.set_timer(REDRAW, 0)
+        pygame.time.set_timer(TIMEEVENT, 0)
+
+        save()
+
+        renpy.exports.free_memory()
+
+        print "Entered background."
+
+        while True:
+            ev = pygame.event.wait()
+
+            if ev.type == pygame.APP_DIDENTERFOREGROUND:
+                break
+
+            if ev.type == pygame.APP_TERMINATING:
+                sys.exit(0)
+
+        print "Entering foreground."
+
+        # Since we came back to life, we can get rid of the
+        # auto-reload.
+        renpy.loadsave.unlink_save("_reload-1")
+
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+        android._android_sound.unpause_all()
+
+        # Reset the display so we get the GL context back.
+        self.display_reset = True
+        self.restart_interaction = True
+
+        return True
 
     def iconified(self):
         """
@@ -2436,10 +2459,6 @@ class Interface(object):
                     self.set_mode()
                     needs_redraw = True
 
-                # Check for suspend.
-                if android:
-                    self.android_check_suspend()
-
                 # Check for autoreload.
                 if renpy.loader.needs_autoreload:
                     renpy.loader.needs_autoreload = False
@@ -2608,6 +2627,11 @@ class Interface(object):
                     continue
 
                 self.profile_time = get_time()
+
+                # Check to see if the OS is asking us to suspend (on Android
+                # and iOS.)
+                if self.check_suspend(ev):
+                    continue
 
                 # Try to merge an TIMEEVENT with other timeevents.
                 if ev.type == TIMEEVENT:
