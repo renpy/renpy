@@ -196,9 +196,9 @@ Ren'Py statements are made of a few basic parts.
     contains some sequence of characters, and ends with the same quote
     character.
 
-    The backslash character (\) is used to escape quotes, special
-    characters such as % (written as \%), [ (written as \[), and
-    { (written as \{). It's also used to include newlines, using the \n
+    The backslash character (\\) is used to escape quotes, special
+    characters such as % (written as \\%), [ (written as \\[), and
+    { (written as \\{). It's also used to include newlines, using the \\n
     sequence.
 
     Inside a Ren'Py string, consecutive whitespace is compressed into
