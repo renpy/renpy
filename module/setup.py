@@ -50,7 +50,7 @@ setup_env("CC")
 setup_env("LD")
 
 import setuplib
-from setuplib import android, include, library, cython, pymodule, copyfile, find_unnecessary_gen
+from setuplib import android, ios, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -120,7 +120,7 @@ if has_fribidi and not android:
 # Sound.
 pymodule("pysdlsound.__init__")
 
-if not android:
+if not (android or ios):
 
     sound = [ "avformat", "avcodec", "avutil", "z" ]
     macros = [ ]
@@ -147,7 +147,7 @@ cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 # renpy.gl
-if android:
+if (android or ios):
     glew_libs = [ 'GLESv2', 'z', 'm' ]
     gl2_only = True
     egl = "egl_none.c"
@@ -172,7 +172,7 @@ cython("renpy.gl.glrtt_fbo", libs=glew_libs)
 
 # renpy.angle
 def anglecopy(fn):
-    if android:
+    if (android or ios):
         return
 
     copyfile("renpy/gl/" + fn, "renpy/angle/" + fn, "DEF ANGLE = False", "DEF ANGLE = True")

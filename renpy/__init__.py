@@ -493,16 +493,20 @@ if False:
 ################################################################################
 
 # Information about the platform we're running on. We break the platforms
-# up into 4 groups - windows-like, mac-like, linux-like, and android-like.
+# up into 5 groups - windows-like, mac-like, linux-like, android-like,
+# and ios-like.
 windows = False
 macintosh = False
 linux = False
 android = False
+ios = False
 
 import platform
 
 if platform.win32_ver()[0]:
     windows = True
+elif "RENPY_IOS" in os.environ:
+    ios = True
 elif platform.mac_ver()[0]:
     macintosh = True
 else:

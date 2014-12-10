@@ -10,17 +10,28 @@
 // identifier. So get rid of it here.
 #undef environ
 
+#if defined __APPLE__
+#include "TargetConditionals.h"
+#if TARGET_OS_IPHONE
+#define IOS
+#endif
+#endif
+
 #if defined ANDROID
 
-#define RENPY_GLES_2
+	#define RENPY_GLES_2
 
 #elif defined ANGLE
 
-#define RENPY_GLES_2
+	#define RENPY_GLES_2
+
+#elif defined IOS
+
+	#define RENPY_GLES_2
 
 #else
 
-#define RENPY_OPENGL
+	#define RENPY_OPENGL
 
 #endif
 
@@ -54,11 +65,15 @@
 
 #if defined RENPY_GLES_2
 
-#ifndef ANDROID
+#ifdef ANGLE
 #include <EGL/egl.h>
 #endif
 
+#ifdef IOS
+#include <OpenGLES/ES2/gl.h>
+#else
 #include <GLES2/gl2.h>
+#endif
 
 typedef GLuint GLhandleARB;
 typedef GLchar GLcharARB;

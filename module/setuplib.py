@@ -31,6 +31,9 @@ import distutils.core
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
 
+# True if we're building on ios.
+ios = "RENPY_IOS" in os.environ
+
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
@@ -40,7 +43,7 @@ cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The install variable is a list of directories that have Ren'Py
 # dependencies installed in them.
-if not android:
+if not android or ios:
     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
     install = install.split("::")
     install = [ os.path.abspath(i) for i in install ]
@@ -66,7 +69,7 @@ def include(header, directory=None, optional=True):
         If given, returns False rather than abandoning the process.
     """
 
-    if android:
+    if android or ios:
         return True
 
     for i in install:
@@ -105,7 +108,7 @@ def library(name, optional=False):
         rather than reporting an error.
     """
 
-    if android:
+    if android or ios:
         return True
 
     for i in install:
