@@ -1435,6 +1435,10 @@ class Interface(object):
             delay, repeat_delay = renpy.config.key_repeat
             pygame.key.set_repeat(int(1000 * delay), int(1000 * repeat_delay))
 
+        if android:
+            android.wakelock(True)
+
+
     def set_icon(self):
         """
         This is called to set up the window icon.
@@ -2027,7 +2031,9 @@ class Interface(object):
 
         # At this point, we're about to enter the background.
 
-        android._android_sound.pause_all()
+        if android:
+            android._android_sound.pause_all()
+            android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
         pygame.time.set_timer(REDRAW, 0)
@@ -2056,7 +2062,9 @@ class Interface(object):
 
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
-        android._android_sound.unpause_all()
+        if android:
+            android._android_sound.unpause_all()
+            android.wakelock(True)
 
         # Reset the display so we get the GL context back.
         self.display_reset = True
