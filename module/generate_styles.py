@@ -465,33 +465,30 @@ def generate_property_functions():
 
     g.close()
 
-def generate_property(g, propname, prefix):
+def generate_property(g, propname):
     """
     This generates the code for a single property on the style object.
     """
 
-    name = prefix.name + propname
-
-    g.write("property {}:", name)
+    g.write("property {}:", propname)
     g.indent()
 
-    if name in style_properties:
-        # __get__
-        g.write("def __get__(self):")
-        g.indent()
-        g.write("return self._get({})", style_property_index[propname])
-        g.dedent()
+    # __get__
+    g.write("def __get__(self):")
+    g.indent()
+    g.write("return self._get({})", style_property_index[propname])
+    g.dedent()
 
     # __set__
     g.write("def __set__(self, value):")
     g.indent()
-    g.write("self.properties.append({{ '{}' : value }})", name)
+    g.write("self.properties.append({{ '{}' : value }})", propname)
     g.dedent()
 
     # __del__
     g.write("def __del__(self):")
     g.indent()
-    g.write("self.delattr('{}')", name)
+    g.write("self.delattr('{}')", propname)
     g.dedent()
 
     g.dedent()
@@ -506,9 +503,8 @@ def generate_properties():
 
     g.indent()
 
-    for propname in all_properties:
-        for prefix in sorted(prefixes.values(), key=lambda p : p.index):
-            generate_property(g, propname, prefix)
+    for propname in style_properties:
+        generate_property(g, propname)
 
     g.dedent()
     g.close()

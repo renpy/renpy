@@ -27,6 +27,8 @@ import renpy
 
 include "styleconstants.pxi"
 
+cdef public set prefixed_all_properties
+
 ################################################################################
 # Property Functions
 ################################################################################
@@ -189,10 +191,12 @@ class StyleManager(object):
         if not isinstance(value, StyleCore):
             raise Exception("Value is not a style.")
 
+        cdef StyleCore style = value
+
         name = (name,)
 
-        if value.name is None:
-            value.name = name
+        if style.name is None:
+            style.name = name
 
         styles[name] = value
 
@@ -358,6 +362,14 @@ cdef class StyleCore:
         for d in self.properties:
             if property in d:
                 del d[property]
+
+    def __setattr__(self, name, value):
+        if name not in prefixed_all_properties:
+            raise Exception("Style property {} is not known.".format(name))
+        self.properties.append({ property : value })
+        
+    def __delattr__(self, name):
+        self.delattr(name)
 
     def set_parent(self, parent):
         self.parent = get_tuple_name(parent)
@@ -764,6 +776,8 @@ def restore(o):
     """
     Restores a style backup.
     """
+
+    cdef StyleCore s
 
     for k, v in o.iteritems():
         s = get_full_style(k)
