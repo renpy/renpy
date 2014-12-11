@@ -593,7 +593,9 @@ cdef class StyleCore:
         return rv
 
 
-from renpy.styleclass import Style, all_properties, prefix_priority, prefix_alts
+from renpy.styledata.styleclass import Style
+from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
+import renpy.styleclass
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {

@@ -147,6 +147,9 @@ class Backup():
         if name in backup_blacklist:
             return
 
+        if name.startswith("renpy.styledata"):
+            return
+
         self.names[mod] = set(vars(mod).keys())
 
         for k, v in vars(mod).iteritems():
@@ -254,6 +257,10 @@ def import_all():
     import renpy.python
     import renpy.script
     import renpy.statements
+    
+    import renpy.styledata
+    update_path(renpy.styledata)
+    
     import renpy.style
     import renpy.substitutions
     import renpy.translation

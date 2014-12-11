@@ -142,6 +142,10 @@ if not (android or ios):
 cython("renpy.style")
 cython("renpy.styleclass")
 
+# renpy.styledata
+cython("renpy.styledata.styleclass")
+cython("renpy.styledata.stylesets")
+
 # renpy.display
 cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])

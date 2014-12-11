@@ -499,7 +499,7 @@ def generate_property(g, propname, prefix):
 
 def generate_properties():
 
-    g = CodeGen("module/gen/styleproperties.pxi")
+    g = CodeGen("module/gen/styleclass.pxi")
 
     g.write("cdef class Style(StyleCore):")
     g.write("")

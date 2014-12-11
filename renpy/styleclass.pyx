@@ -96,5 +96,3 @@ cdef inline object index_3(object v):
     return v[3]
 
 include "stylepropertyfunctions.pxi"
-include "styleproperties.pxi"
-include "stylesets.pxi"
