@@ -158,7 +158,7 @@ def cmodule(name, source, libs=[], define_macros=[]):
 
 necessary_gen = [ ]
 
-def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
+def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -167,7 +167,10 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     # Find the pyx file.
     split_name = name.split(".")
 
-    fn = "/".join(split_name) + ".pyx"
+    if pyx is not None:
+        fn = pyx
+    else:
+        fn = "/".join(split_name) + ".pyx"
 
     if os.path.exists(os.path.join("..", fn)):
         fn = os.path.join("..", fn)
@@ -250,6 +253,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
                 cython_command,
                 "-Iinclude",
                 "-Igen",
+                "-I..",
                 "-a",
                 fn,
                 "-o",

@@ -413,6 +413,7 @@ def generate_constants():
     g.close()
 
 def generate_property_function(g, prefix, propname, properties):
+
     name = prefix.name + propname
 
     g.write("cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:", name=name)
@@ -457,13 +458,16 @@ def generate_property_functions():
     This generates code that defines the property functions.
     """
 
-    g = CodeGen("module/gen/stylepropertyfunctions.pxi")
+    for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+        g = CodeGen("module/gen/style_{}functions.pyx".format(prefix.name))
 
-    for propname, proplist in all_properties.items():
-        for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+        g.write('include "style_common.pxi"')
+        g.write('')
+
+        for propname, proplist in all_properties.items():
             generate_property_function(g, prefix, propname, proplist)
 
-    g.close()
+        g.close()
 
 def generate_property(g, propname):
     """

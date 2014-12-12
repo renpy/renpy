@@ -140,11 +140,14 @@ if not (android or ios):
 
 # renpy
 cython("renpy.style")
-cython("renpy.styleclass")
+# cython("renpy.styleclass")
 
 # renpy.styledata
 cython("renpy.styledata.styleclass")
 cython("renpy.styledata.stylesets")
+
+for p in generate_styles.prefixes:
+    cython("renpy.styledata.style_{}functions".format(p), pyx="gen/style_{}functions.pyx".format(p))
 
 # renpy.display
 cython("renpy.display.render", libs=[ 'z', 'm' ])
@@ -215,6 +218,7 @@ find_unnecessary_gen()
 
 # Figure out the version, and call setup.
 sys.path.insert(0, '..')
+
 import renpy
 
 setuplib.setup("Ren'Py", renpy.version[7:])

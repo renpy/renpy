@@ -19,15 +19,21 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-def import_style_functions():
-    import renpy.styledata.style_functions # @UnresolvedImport
-    import renpy.styledata.style_activate_functions # @UnresolvedImport
-    import renpy.styledata.style_hover_functions # @UnresolvedImport
-    import renpy.styledata.style_idle_functions # @UnresolvedImport
-    import renpy.styledata.style_insensitive_functions # @UnresolvedImport
+import renpy
 
-    import renpy.styledata.style_selected_functions # @UnresolvedImport
-    import renpy.styledata.style_selected_activate_functions # @UnresolvedImport
-    import renpy.styledata.style_selected_hover_functions # @UnresolvedImport
-    import renpy.styledata.style_selected_idle_functions # @UnresolvedImport
-    import renpy.styledata.style_selected_insensitive_functions # @UnresolvedImport
+from renpy.style cimport register_property_function, assign
+from cpython.ref cimport PyObject
+
+from renpy.styledata.styleutil import none_is_null, expand_focus_mask, expand_outlines, expand_anchor
+
+cdef inline object index_0(object v):
+    return v[0]
+
+cdef inline object index_1(object v):
+    return v[1]
+
+cdef inline object index_2(object v):
+    return v[2]
+
+cdef inline object index_3(object v):
+    return v[3]

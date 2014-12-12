@@ -367,7 +367,7 @@ cdef class StyleCore:
         if name not in prefixed_all_properties:
             raise Exception("Style property {} is not known.".format(name))
         self.properties.append({ property : value })
-        
+
     def __delattr__(self, name):
         self.delattr(name)
 
@@ -607,7 +607,8 @@ cdef class StyleCore:
 
 from renpy.styledata.styleclass import Style
 from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
-import renpy.styleclass
+
+renpy.styledata.import_style_functions()
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {
