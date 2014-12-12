@@ -366,7 +366,7 @@ cdef class StyleCore:
     def __setattr__(self, name, value):
         if name not in prefixed_all_properties:
             raise Exception("Style property {} is not known.".format(name))
-        self.properties.append({ property : value })
+        self.properties.append({ name : value })
 
     def __delattr__(self, name):
         self.delattr(name)
