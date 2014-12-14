@@ -605,10 +605,10 @@ cdef class StyleCore:
         return rv
 
 
-from renpy.styledata.styleclass import Style
-from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
+# This will be replaced when renpy.styledata.import_style_functions is called.
+Style = StyleCore
 
-renpy.styledata.import_style_functions()
+from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {
@@ -616,7 +616,6 @@ prefixed_all_properties = {
     for prefix in prefix_priority
     for propname in all_properties
     }
-
 
 ################################################################################
 # Building

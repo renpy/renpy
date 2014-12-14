@@ -31,3 +31,6 @@ def import_style_functions():
     import renpy.styledata.style_selected_hover_functions # @UnresolvedImport
     import renpy.styledata.style_selected_idle_functions # @UnresolvedImport
     import renpy.styledata.style_selected_insensitive_functions # @UnresolvedImport
+
+    import renpy.styledata.styleclass
+    renpy.style.Style = renpy.styledata.styleclass.Style # @UndefinedVariable

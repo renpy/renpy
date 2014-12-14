@@ -218,7 +218,6 @@ def update_path(package):
     libexec = os.path.dirname(encodings.__path__[0])
     package.__path__.append(os.path.join(libexec, *name))
 
-
 def import_all():
 
     # Note: If we add a new update_path, we have to add an equivalent
@@ -257,11 +256,13 @@ def import_all():
     import renpy.python
     import renpy.script
     import renpy.statements
-    
-    import renpy.styledata
+
+    import renpy.styledata # @UnresolvedImport
     update_path(renpy.styledata)
-    
+
     import renpy.style
+    renpy.styledata.import_style_functions()
+
     import renpy.substitutions
     import renpy.translation
 
