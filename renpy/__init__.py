@@ -516,7 +516,10 @@ elif "RENPY_IOS" in os.environ:
     ios = True
 elif platform.mac_ver()[0]:
     macintosh = True
+elif "ANDROID_PRIVATE" in os.environ:
+    android = True
 else:
     linux = True
 
-# The android init code in renpy.py will set linux=False and android=True.
+# A flag that's true if we're on a smartphone or tablet-like platform.
+mobile = android or ios

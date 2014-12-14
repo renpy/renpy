@@ -165,10 +165,6 @@ def main():
         print >>sys.stderr, "correctly, preserving the directory structure."
         raise
 
-    if android:
-        renpy.linux = False
-        renpy.android = True
-
     renpy.bootstrap.bootstrap(renpy_base)
 
 if __name__ == "__main__":
