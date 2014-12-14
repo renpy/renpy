@@ -128,7 +128,7 @@ typedef GLfloat GLdouble;
 #define glClipPlane glClipPlanef
 
 // This isn't defined on GL ES, but that's okay, since we'll disable
-// screenshots on Android.
+// screenshots on Android/iOS.
 #define GL_PACK_ROW_LENGTH 0
 
 #define glClientActiveTextureARB glClientActiveTexture
@@ -136,6 +136,7 @@ typedef GLfloat GLdouble;
 
 #define GL_BGRA GL_RGBA
 #define GL_UNSIGNED_INT_8_8_8_8_REV GL_UNSIGNED_BYTE
+#define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
 #endif
 
