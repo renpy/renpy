@@ -65,12 +65,29 @@ def path_to_saves(gamedir):
             if os.path.isdir(rv) and test_writable(rv):
                 break
 
-        print "Using savedir", rv
+        print "Saving to", rv
 
         # We return the last path as the default.
 
         return rv
 
+    if renpy.ios:
+        from pyobjus import autoclass
+        from pyobjus.objc_py_types import enum
+
+        NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
+        NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
+
+        NSFileManager = autoclass('NSFileManager')
+        manager = NSFileManager.defaultManager()
+        url = manager.URLsForDirectory_inDomains_(
+            NSSearchPathDirectory.NSDocumentDirectory,
+            NSSearchPathDomainMask.NSUserDomainMask,
+            ).lastObject()
+
+        rv = url.path.UTF8String().decode("utf-8")
+        print "Saving to", rv
+        return rv
 
     # No save directory given.
     if not renpy.config.save_directory:
