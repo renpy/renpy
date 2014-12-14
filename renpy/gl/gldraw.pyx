@@ -185,7 +185,7 @@ cdef class GLDraw:
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
-        if renpy.android:
+        if renpy.mobile:
             pheight = self.display_info.current_h
             pwidth = self.display_info.current_w
         else:
@@ -211,6 +211,13 @@ cdef class GLDraw:
         elif renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
+        elif renpy.ios:
+            opengl = pygame.OPENGL
+            resizable = pygame.RESIZABLE
+
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+
         else:
             opengl = pygame.OPENGL
 
@@ -434,7 +441,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
 
-        if EGL or renpy.android or (allow_shader and use_subsystem(
+        if EGL or renpy.android or renpy.ios or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
