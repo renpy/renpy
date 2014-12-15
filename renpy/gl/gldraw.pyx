@@ -391,7 +391,7 @@ cdef class GLDraw:
         if EGL:
             gltexture.use_gles()
 
-        elif renpy.android:
+        elif renpy.android or renpy.ios:
             self.redraw_period = 1.0
             self.always_opaque = True
             gltexture.use_gles()
@@ -507,7 +507,8 @@ cdef class GLDraw:
             self.info["rtt"] = "copy"
             self.rtt.init()
 
-        elif (use_subsystem(
+        elif (renpy.ios or
+            use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
@@ -1258,6 +1259,10 @@ cdef class Environ(object):
 try:
     import glrtt_copy
 except:
+    glrtt_copy = None
+
+# Copy doesn't work on iOS.
+if renpy.ios:
     glrtt_copy = None
 
 try:

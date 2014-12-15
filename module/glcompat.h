@@ -81,6 +81,7 @@ typedef GLchar GLcharARB;
 #define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
+#define GL_FRAMEBUFFER_BINDING_EXT GL_FRAMEBUFFER_BINDING
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
 #define glBindFramebufferEXT glBindFramebuffer
 #define glFramebufferTexture2DEXT glFramebufferTexture2D
