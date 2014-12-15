@@ -358,8 +358,8 @@ init -1500 python in updater:
             Performs the update.
             """
 
-            if renpy.android:
-                raise UpdateError("The Ren'Py Updater is not supported on Android.")
+            if renpy.mobile:
+                raise UpdateError("The Ren'Py Updater is not supported on mobile devices.")
 
             self.load_state()
             self.test_write()
@@ -1197,6 +1197,9 @@ init -1500 python in updater:
         Note that this does not determine if an update is actually available.
         To do that, use :func:`updater.UpdateVersion`.
         """
+
+        if renpy.mobile:
+            return False
 
         if rsa is None:
             return False

@@ -506,7 +506,7 @@ def init():
     location.add(FileLocation(renpy.config.savedir))
 
     # 2. Game-local savedir.
-    if not renpy.android:
+    if not renpy.mobile:
         path = os.path.join(renpy.config.gamedir, "saves")
         location.add(FileLocation(path))
 

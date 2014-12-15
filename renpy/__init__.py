@@ -53,6 +53,41 @@ script_version = 5003000
 savegame_suffix = "-LT1.save"
 bytecode_version = 1
 
+
+################################################################################
+# Platform Information
+################################################################################
+
+# Information about the platform we're running on. We break the platforms
+# up into 5 groups - windows-like, mac-like, linux-like, android-like,
+# and ios-like.
+windows = False
+macintosh = False
+linux = False
+android = False
+ios = False
+
+import platform
+
+if platform.win32_ver()[0]:
+    windows = True
+elif "RENPY_IOS" in os.environ:
+    ios = True
+elif platform.mac_ver()[0]:
+    macintosh = True
+elif "ANDROID_PRIVATE" in os.environ:
+    android = True
+else:
+    linux = True
+
+# A flag that's true if we're on a smartphone or tablet-like platform.
+mobile = android or ios
+
+
+################################################################################
+# Backup Data for Reload
+################################################################################
+
 # True if this is the first time we've started - even including
 # utter restarts.
 first_utter_start = True
@@ -117,11 +152,8 @@ class Backup():
         # A map from module to the set of names in that module.
         self.names = { }
 
-        try:
-            import android # @UnresolvedImport
+        if mobile:
             return
-        except:
-            pass
 
         for m in sys.modules.values():
             if m is None:
@@ -200,6 +232,9 @@ class Backup():
 # A backup of the Ren'Py modules after initial import.
 backup = None
 
+################################################################################
+# Import
+################################################################################
 
 def update_path(package):
     """
@@ -496,31 +531,3 @@ if False:
     import renpy.defaultstore as store
 
 
-################################################################################
-# Platform Information
-################################################################################
-
-# Information about the platform we're running on. We break the platforms
-# up into 5 groups - windows-like, mac-like, linux-like, android-like,
-# and ios-like.
-windows = False
-macintosh = False
-linux = False
-android = False
-ios = False
-
-import platform
-
-if platform.win32_ver()[0]:
-    windows = True
-elif "RENPY_IOS" in os.environ:
-    ios = True
-elif platform.mac_ver()[0]:
-    macintosh = True
-elif "ANDROID_PRIVATE" in os.environ:
-    android = True
-else:
-    linux = True
-
-# A flag that's true if we're on a smartphone or tablet-like platform.
-mobile = android or ios
