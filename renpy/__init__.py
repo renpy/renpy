@@ -491,7 +491,7 @@ def setup_modulefinder(modulefinder):
 
     libexec = os.path.dirname(_renpy.__file__)
 
-    for i in [ "display", "gl", "angle", "text" ]:
+    for i in [ "display", "gl", "angle", "text", "styledata" ]:
 
         displaypath = os.path.join(libexec, "renpy", i)
 
@@ -510,6 +510,8 @@ def import_cython():
     import renpy.display.accelerator
     import renpy.display.render
 
+    import renpy.gl.gl
+    import renpy.gl.gl1
     import renpy.gl.gldraw
     import renpy.gl.glenviron_fixed
     import renpy.gl.glenviron_limited
@@ -518,13 +520,13 @@ def import_cython():
     import renpy.gl.glrtt_fbo
     import renpy.gl.gltexture
 
+    import renpy.angle.gl
     import renpy.angle.gldraw
     import renpy.angle.glenviron_shader
     import renpy.angle.glrtt_copy
     import renpy.angle.glrtt_fbo
     import renpy.angle.gltexture
 
-    import renpy.styleclass # @UnresolvedImport
 
 
 if False:
