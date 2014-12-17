@@ -27,8 +27,6 @@ import renpy
 
 include "styleconstants.pxi"
 
-cdef public set prefixed_all_properties
-
 ################################################################################
 # Property Functions
 ################################################################################
