@@ -45,6 +45,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("version")
     ap.add_argument("--fast", action="store_true")
+    ap.add_argument("--pygame", action="store", default=None)
 
     args = ap.parse_args()
 
@@ -123,11 +124,17 @@ def main():
 
         android = os.path.abspath("android")
 
-        rapt_build = subprocess.Popen([
+        rapt_cmd = [
             os.path.join(android, "build_renpy.sh"),
             "renpy",
             ROOT,
-            ],
+            ]
+
+        if args.pygame:
+            rapt_cmd.append(args.pygame)
+
+        rapt_build = subprocess.Popen(
+            rapt_cmd,
             cwd = android,
             stdout=out,
             stderr=out)
