@@ -180,17 +180,19 @@ cdef class GLDraw:
 
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
+
+        if pwidth is None:
+            pwidth = self.display_info.current_w
+            pheight = self.display_info.current_h
+
         virtual_ar = 1.0 * vwidth / vheight
 
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
-        if renpy.mobile:
-            pheight = self.display_info.current_h
-            pwidth = self.display_info.current_w
-        else:
-            pheight = min(self.display_info.current_h - 102, pheight)
+        if not renpy.mobile:
             pwidth = min(self.display_info.current_w - 102, pwidth)
+            pheight = min(self.display_info.current_h - 102, pheight)
 
             # The first time through.
             if not self.did_init:
