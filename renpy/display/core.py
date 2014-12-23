@@ -2031,8 +2031,9 @@ class Interface(object):
 
         # At this point, we're about to enter the background.
 
+        renpy.audio.audio.pause_all()
+
         if android:
-            android._android_sound.pause_all()
             android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
@@ -2062,8 +2063,9 @@ class Interface(object):
 
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
+        renpy.audio.audio.unpause_all()
+
         if android:
-            android._android_sound.unpause_all()
             android.wakelock(True)
 
         # Reset the display so we get the GL context back.

@@ -508,6 +508,12 @@ class Channel(object):
             self.secondary_volume_time = self.context.secondary_volume_time
             pss.set_secondary_volume(self.number, self.context.secondary_volume, delay)
 
+    def pause(self):
+        pss.pause(self.number)
+
+    def unpause(self):
+        pss.unpause(self.number)
+
 
 ################################################################################
 # Android VideoPlayer Channel
@@ -592,6 +598,8 @@ if renpy.android:
                 return
 
             filename = self.queue.pop(0)
+
+            print "Playing", filename
 
             f = renpy.loader.load(filename)
 
@@ -678,6 +686,14 @@ if renpy.android:
             pass
 
         def set_secondary_volume(self, volume, delay):
+            pass
+
+        def pause(self):
+            self.player.pause()
+            pass
+
+        def unpause(self):
+            self.player.unpause()
             pass
 
 
@@ -950,3 +966,19 @@ def rollback():
     for c in all_channels:
         if not c.loop:
             c.fadeout(0)
+
+def pause_all():
+    """
+    Pause all playback channels.
+    """
+
+    for c in channels.values():
+        c.pause()
+
+def unpause_all():
+    """
+    Unpause all playback channels.
+    """
+
+    for c in channels.values():
+        c.unpause()
