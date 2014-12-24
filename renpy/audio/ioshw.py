@@ -78,9 +78,6 @@ class IOSVideoChannel(object):
             return
 
         filename = self.queue.pop(0)
-
-        print "Playing", filename
-
         f = renpy.loader.load(filename)
 
         real_fn = f.name
