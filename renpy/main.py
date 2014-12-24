@@ -157,10 +157,29 @@ def choose_variants():
             renpy.config.variants.insert(0, 'phone')
             renpy.config.variants.insert(0, 'small')
 
+    elif renpy.ios:
+        renpy.config.variants.insert(0, 'ios')
+        renpy.config.variants.insert(0, 'touch')
+
+        from pyobjus import autoclass # @UnresolvedImport @Reimport
+        UIDevice = autoclass("UIDevice")
+
+        idiom = UIDevice.currentDevice().userInterfaceIdiom
+
+        print "iOS device idiom", idiom
+
+        # idiom 0 is iPhone, 1 is iPad. We assume any bigger idiom will
+        # be tablet-like.
+        if idiom >= 1:
+            renpy.config.variants.insert(0, 'tablet')
+            renpy.config.variants.insert(0, 'medium')
+        else:
+            renpy.config.variants.insert(0, 'phone')
+            renpy.config.variants.insert(0, 'small')
+
     else:
         renpy.config.variants.insert(0, 'pc')
         renpy.config.variants.insert(0, 'large')
-
 
 def main():
 
