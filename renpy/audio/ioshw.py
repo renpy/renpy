@@ -152,11 +152,13 @@ class IOSVideoChannel(object):
         self.queue.extend(filenames)
 
     def pause(self):
-        self.player.pause()
+        if self.player is not None:
+            self.player.pause()
         pass
 
     def unpause(self):
-        self.player.unpause()
+        if self.player is not None:
+            self.player.unpause()
         pass
 
     def set_volume(self, volume):

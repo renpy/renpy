@@ -169,9 +169,9 @@ class AndroidVideoChannel(object):
         pass
 
     def pause(self):
-        self.player.pause()
-        pass
+        if self.player is not None:
+            self.player.pause()
 
     def unpause(self):
-        self.player.unpause()
-        pass
+        if self.player is not None:
+            self.player.unpause()
