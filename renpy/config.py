@@ -538,6 +538,9 @@ transition_screens = True
 # of statement identifiers that should be predicted.
 predict_statements_callback = None
 
+# Should we use hardware video on platforms that support it?
+hw_video = False
+
 del renpy
 del os
 

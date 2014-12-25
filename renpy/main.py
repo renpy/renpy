@@ -181,6 +181,7 @@ def choose_variants():
         renpy.config.variants.insert(0, 'pc')
         renpy.config.variants.insert(0, 'large')
 
+
 def main():
 
     renpy.game.exception_info = 'Before loading the script.'

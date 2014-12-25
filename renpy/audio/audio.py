@@ -573,9 +573,9 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     if not renpy.game.context().init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
-    if renpy.android and name == "movie":
+    if renpy.android and renpy.config.hw_video and name == "movie":
         c = AndroidVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
-    elif renpy.ios and name == "movie":
+    elif renpy.ios and renpy.config.hw_video and name == "movie":
         c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
     else:
         c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue)
