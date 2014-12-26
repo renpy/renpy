@@ -913,6 +913,7 @@ class RollbackLog(renpy.object.Object):
         self.mutated = { }
         self.rollback_limit = 0
         self.rollback_is_fixed = False
+        self.checkpointing_suspended = False
         self.fixed_rollback_boundary = None
         self.forward = [ ]
         self.old_store = { }
@@ -1103,6 +1104,9 @@ class RollbackLog(renpy.object.Object):
         node.
         """
 
+        if self.checkpointing_suspended:
+            return
+
         self.retain_after_load_flag = False
 
         if self.current.checkpoint:
@@ -1142,6 +1146,14 @@ class RollbackLog(renpy.object.Object):
 
             # Log the data in case we roll back again.
             self.current.forward = data
+
+    def suspend_checkpointing(self, flag):
+        """
+        Called to temporarily suspend checkpointing, so any rollback
+        will jump to prior to this statement
+        """
+        
+        self.checkpointing_suspended = flag
 
     def block(self):
         """
@@ -1201,6 +1213,9 @@ class RollbackLog(renpy.object.Object):
         # give up.
         if checkpoints and not self.rollback_limit > 0 and not force:
             return
+
+        self.suspend_checkpointing(False)
+            # will always rollback to before suspension
 
         self.purge_unreachable(self.get_roots())
 
