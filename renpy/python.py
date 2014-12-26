@@ -1211,7 +1211,6 @@ class RollbackLog(renpy.object.Object):
 
         # If we have exceeded the rollback limit, and don't have force,
         # give up.
-
         if checkpoints and not self.rollback_limit > 0 and not force:
             return
 
