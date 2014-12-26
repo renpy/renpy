@@ -132,6 +132,10 @@ def bootstrap(renpy_base):
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
 
+    # Remove a legacy environment setting.
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
+
     renpy_base = unicode(renpy_base, FSENCODING, "replace")
 
     # If environment.txt exists, load it into the os.environ dictionary.
