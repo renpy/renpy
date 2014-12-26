@@ -240,16 +240,17 @@ def block_rollback():
     renpy.game.log.block()
 
 
-def rollback_skip(flag):
+def suspend_rollback(flag):
     """
-    :doc: suspendrollingback
+    :doc: rollback
     :args: (flag)
 
-    Stops checkpointing data, so any rollback will jump
-    to prior to this statement.
+    Rollback will skip sections of the game where rollback has been
+    suspended.
 
-    'flag':
-        True to begin skipping, False to end.
+    `flag`:
+        When `flag` is true, rollback is suspended. When false,
+        rollback is resumed.
     """
 
     renpy.game.log.suspend_checkpointing(flag)

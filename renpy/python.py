@@ -1147,13 +1147,13 @@ class RollbackLog(renpy.object.Object):
             # Log the data in case we roll back again.
             self.current.forward = data
 
-    def suspend_checkpointing(self,flag):
+    def suspend_checkpointing(self, flag):
         """
         Called to temporarily suspend checkpointing, so any rollback
         will jump to prior to this statement
         """
         
-        self.checkpointing_suspended = Flag
+        self.checkpointing_suspended = flag
 
     def block(self):
         """
