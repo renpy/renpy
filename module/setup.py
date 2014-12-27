@@ -120,23 +120,21 @@ if has_fribidi and not android:
 # Sound.
 pymodule("pysdlsound.__init__")
 
-if not android:
+sound = [ "avformat", "avcodec", "avutil", "z" ]
+macros = [ ]
 
-    sound = [ "avformat", "avcodec", "avutil", "z" ]
-    macros = [ ]
+if has_avresample:
+    sound.insert(0, "avresample")
+    macros.append(("HAS_RESAMPLE", 1))
 
-    if has_avresample:
-        sound.insert(0, "avresample")
-        macros.append(("HAS_RESAMPLE", 1))
+if has_swscale:
+    sound.insert(0, "swscale")
 
-    if has_swscale:
-        sound.insert(0, "swscale")
-
-    cython(
-        "pysdlsound.sound",
-        [ "pss.c", "ffdecode.c" ],
-        libs = sdl + sound,
-        define_macros=macros)
+cython(
+    "pysdlsound.sound",
+    [ "pss.c", "ffdecode.c" ],
+    libs = sdl + sound,
+    define_macros=macros)
 
 # renpy
 cython("renpy.style")

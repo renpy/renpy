@@ -39,13 +39,9 @@ disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 if 'pss' not in disable:
 
     try:
-        if renpy.android:
-            import android._android_sound as pss #@UnresolvedImport @Reimport
-            print "Imported android sound."
-        else:
-            import pysdlsound as pss
-            pss.check_version(4)  # @UndefinedVariable
-            atexit.register(pss.quit)  # @UndefinedVariable
+        import pysdlsound as pss
+        pss.check_version(4)  # @UndefinedVariable
+        atexit.register(pss.quit)  # @UndefinedVariable
     except:
         import traceback
         traceback.print_exc()
@@ -519,11 +515,18 @@ class Channel(object):
 # Android VideoPlayer Channel
 ################################################################################
 
-if renpy.android:
-    from renpy.audio.androidhw import AndroidVideoChannel
+# Use unconditional imports so these files get compiled during the build
+# process.
 
-if renpy.ios:
+try:
+    from renpy.audio.androidhw import AndroidVideoChannel
+except:
+    pass
+
+try:
     from renpy.audio.ioshw import IOSVideoChannel
+except:
+    pass
 
 # A list of channels we know about.
 all_channels = [ ]
