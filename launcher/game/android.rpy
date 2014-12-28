@@ -132,184 +132,6 @@ init python:
         else:
             return None
 
-    class AndroidInterface(object):
-
-        def __init__(self):
-            self.process = None
-            self.filename = project.current.temp_filename("android.txt")
-
-            self.info_msg = ""
-
-            with open(self.filename, "w"):
-                pass
-
-        def log(self, msg):
-            with open(self.filename, "a") as f:
-                f.write("\n")
-                f.write(msg)
-                f.write("\n")
-
-        def info(self, prompt):
-            self.info_msg = prompt
-            interface.processing(prompt, pause=False)
-            self.log(prompt)
-
-        def yesno(self, prompt, submessage=None):
-            return interface.yesno(prompt, submessage=submessage)
-
-        def yesno_choice(self, prompt, default=None):
-            choices = [ (True, "Yes"), (False, "No") ]
-            return interface.choice(prompt, choices, default)
-
-        def terms(self, url, prompt):
-            submessage = _("{a=%s}%s{/a}") % (url, url)
-
-            if not interface.yesno(prompt, submessage=submessage):
-                self.fail("You must accept the terms and conditions to proceed.", edit=False)
-
-
-        def input(self, prompt, empty=None):
-
-            if empty is None:
-                empty = ''
-
-            while True:
-                rv = interface.input(_("QUESTION"), prompt, default=empty, cancel=Jump("android"))
-
-                rv = rv.strip()
-
-                if rv:
-                    return rv
-
-        def choice(self, prompt, choices, default):
-            return interface.choice(prompt, choices, default, cancel=Jump("android"))
-
-        def fail(self, prompt, edit=True):
-            self.log(prompt)
-            prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
-
-            # Open android.txt in the editor.
-            if edit:
-                editor.EditAbsolute(self.filename)()
-
-            interface.error(prompt, label="android")
-
-        def success(self, prompt):
-            self.log(prompt)
-            interface.info(prompt, pause=False)
-
-        def final_success(self, prompt):
-            self.log(prompt)
-            interface.info(prompt, label="android")
-
-        def run_yes_thread(self):
-            import time
-
-            try:
-                while self.run_yes:
-                    self.process.stdin.write('y\n')
-                    self.process.stdin.flush()
-                    time.sleep(.2)
-            except:
-                import traceback
-                traceback.print_exc()
-
-        def call(self, cmd, cancel=False, use_path=False, yes=False):
-
-            print
-            print " ".join(cmd)
-
-            self.cmd = cmd
-
-            f = open(self.filename, "a")
-
-            f.write("\n\n\n")
-
-            if cancel:
-                cancel_action = self.cancel
-            else:
-                cancel_action = None
-
-            startupinfo = None
-            if renpy.windows:
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
-            self.yes_thread = None
-
-            try:
-                interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
-
-                kwargs = { }
-                if yes:
-                    kwargs["stdin"] = subprocess.PIPE
-
-                try:
-                    self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
-                except:
-                    import traceback
-                    traceback.print_exc(file=f)
-                    raise
-
-                if yes:
-                    import threading
-                    self.run_yes = True
-                    self.yes_thread = threading.Thread(target=self.run_yes_thread)
-                    self.yes_thread.daemon = True
-                    self.yes_thread.start()
-
-                renpy.call_screen("android_process", interface=self)
-            finally:
-                f.close()
-                interface.hide_screen()
-
-                if yes and self.yes_thread:
-                    self.run_yes = False
-                    self.yes_thread.join()
-
-                self.process = None
-                self.yes_thread = None
-
-        def check_process(self):
-            rv = self.process.poll()
-
-            if rv is not None:
-                if rv:
-                    raise subprocess.CalledProcessError(rv, self.cmd)
-                else:
-                    return True
-
-        def download(self, url, dest):
-            try:
-                d = Downloader(url, dest)
-                cancel_action = [ d.cancel, Jump("android") ]
-                interface.processing(self.info_msg, show_screen=True, cancel=cancel_action, bar_value=DownloaderValue(d))
-                ui.timer(.1, action=d.check, repeat=True)
-                ui.interact()
-            finally:
-                interface.hide_screen()
-
-        def background(self, f):
-            try:
-                t = threading.Thread(target=f)
-                t.start()
-
-                interface.processing(self.info_msg, show_screen=True)
-
-                while t.is_alive():
-                    renpy.pause(0)
-                    t.join(0.25)
-
-            finally:
-                interface.hide_screen()
-
-
-        def cancel(self):
-            if self.process:
-                self.process.terminate()
-
-            renpy.jump("android")
-
 
     class AndroidBuild(Action):
         """
@@ -321,22 +143,6 @@ init python:
 
         def __call__(self):
             renpy.jump(self.label)
-
-    class LaunchEmulator(Action):
-
-        def __init__(self, emulator, variants):
-            self.emulator = emulator
-            self.variants = variants
-
-        def __call__(self):
-
-            env = {
-                "RENPY_EMULATOR" : self.emulator,
-                "RENPY_VARIANT" : self.variants,
-                }
-
-            p = project.current
-            p.launch(env=env)
 
     def update_android_json(p, gui):
         """
@@ -390,7 +196,7 @@ init python:
 
         if gui:
             reporter = distribute.GuiReporter()
-            rapt_interface = AndroidInterface()
+            rapt_interface = MobileInterface("android")
         else:
             reporter = distribute.TextReporter()
             rapt_interface = rapt.interface.Interface()
@@ -582,7 +388,7 @@ label android_installsdk:
 
     python:
         with interface.nolinks():
-            rapt.install_sdk.install_sdk(AndroidInterface())
+            rapt.install_sdk.install_sdk(MobileInterface("android"))
 
     jump android
 
@@ -590,7 +396,7 @@ label android_installsdk:
 label android_configure:
 
     python:
-        rapt.configure.configure(AndroidInterface(), project.current.path)
+        rapt.configure.configure(MobileInterface("android"), project.current.path)
 
     jump android
 
@@ -654,7 +460,7 @@ label android_connect:
 
         persistent.connect_address = address
 
-        rapt_interface = AndroidInterface()
+        rapt_interface = MobileInterface("android")
         rapt.build.connect(rapt_interface, address)
 
     jump android
@@ -663,7 +469,7 @@ label android_disconnect:
 
     python hide:
 
-        rapt_interface = AndroidInterface()
+        rapt_interface = MobileInterface("android")
         rapt.build.disconnect(rapt_interface)
 
     jump android
