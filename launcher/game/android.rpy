@@ -43,6 +43,7 @@ init python:
     PLAY_KEYS_TEXT = _("Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details.")
     BUILD_TEXT = _("Builds the Android package.")
     BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
+    BUILD_INSTALL_AND_LAUNCH_TEXT = _("Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device.")
 
     CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
     DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
@@ -372,7 +373,7 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
-    def android_build(command, p=None, gui=True):
+    def android_build(command, p=None, gui=True, launch=False):
         """
         This actually builds the package.
         """
@@ -404,7 +405,7 @@ init python:
             )
 
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, command)
+            rapt.build.build(rapt_interface, dist, command, launch=launch)
 
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
@@ -468,7 +469,8 @@ screen android:
 
                         frame style "l_indent":
 
-                            has vbox
+                            has hbox:
+                                spacing 15
 
                             textbutton _("Phone"):
                                 action LaunchEmulator("touch", "small phone touch android")
@@ -478,7 +480,7 @@ screen android:
                                 action LaunchEmulator("touch", "medium tablet touch android")
                                 hovered tt.Action(TABLET_TEXT)
 
-                            textbutton _("Television / OUYA"):
+                            textbutton _("Television"):
                                 action LaunchEmulator("tv", "small tv ouya android")
                                 hovered tt.Action(OUYA_TEXT)
 
@@ -513,6 +515,10 @@ screen android:
                             textbutton _("Build & Install"):
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
                                 hovered tt.Action(BUILD_AND_INSTALL_TEXT)
+
+                            textbutton _("Build, Install & Launch"):
+                                action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
+                                hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
 
                     add SPACER
                     add SEPARATOR2
@@ -602,6 +608,13 @@ label android_build_and_install:
 
     jump android
 
+label android_build_install_and_launch:
+
+    $ android_build([ 'release', 'install' ], launch=True)
+
+    jump android
+
+
 label android_connect:
 
     python hide:
@@ -661,12 +674,13 @@ init python:
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("project", help="The path to the project directory.")
         ap.add_argument("command", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
 
         args = ap.parse_args()
 
         p = project.Project(args.project)
 
-        android_build(args.command, p=p, gui=False)
+        android_build(args.command, p=p, gui=False, launch=args.launch)
 
         return False
 
