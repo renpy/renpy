@@ -67,7 +67,6 @@ init python:
             sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
         else:
             RAPT_PATH = None
-            RAPT_PATH is None
 
     find_rapt()
 
