@@ -38,6 +38,8 @@ init python:
     IOS_UPDATE_PROJECT_TEXT = _("Updates the Xcode project with files from the current Ren'Py project.")
     IOS_XCODE_TEXT = _("Opens the Xcode project in Xcode.")
 
+    IOS_OPEN_DIRECTORY_TEXT = _("Opens the directory containing Xcode projects.")
+
     def find_renios():
 
         global RENIOS_PATH
@@ -56,7 +58,13 @@ init python:
 
 
     def IOSState():
-        return IOS_NO_RENIOS
+        if not RENIOS_PATH:
+            return IOS_NO_RENIOS
+        elif not persistent.xcode_projects_directory:
+            return IOS_NO_DIRECTORY
+        else:
+            return IOS_NO_PROJECT
+
 
     def IOSStateText(state):
         if state == IOS_NO_RENIOS:
@@ -67,6 +75,17 @@ init python:
             return IOS_NO_PROJECT_TEXT
         else:
             return IOS_OK_TEXT
+
+    def IOSIfState(state, needed, action):
+        """
+        If `state` is `needed` or better, `action` is returned. Otherwise,
+        returns None, disabling the button.
+        """
+
+        if state >= needed:
+            return action
+        else:
+            return None
 
 
 screen ios:
@@ -135,12 +154,10 @@ screen ios:
 
                             has vbox
 
-                            text "This space for rent."
+                            textbutton _("Select Xcode Projects Directory"):
+                                action IOSIfState(state, IOS_NO_DIRECTORY, Jump("select_xcode_projects_directory"))
+                                hovered tt.Action(IOS_SELECT_DIRECTORY_TEXT)
 
-#                             textbutton _("Install SDK & Create Keys"):
-#                                 action AndroidIfState(state, ANDROID_NO_SDK, Jump("android_installsdk"))
-#                                 hovered tt.Action(INSTALL_SDK_TEXT)
-#
 #                             textbutton _("Configure"):
 #                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
 #                                 hovered tt.Action(CONFIGURE_TEXT)
@@ -156,6 +173,25 @@ screen ios:
 #                             textbutton _("Build, Install & Launch"):
 #                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
 #                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
+
+                    add SPACER
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
+                        text _("Other:")
+
+                        add HALF_SPACER
+
+                        frame style "l_indent":
+
+                            has vbox
+
+                            textbutton _("Open Xcode Projects Directory"):
+                                action IOSIfState(state, IOS_NO_PROJECT, OpenDirectory(persistent.xcode_projects_directory, absolute=True))
+                                hovered tt.Action(IOS_OPEN_DIRECTORY_TEXT)
 
 
                 # Right side.
@@ -186,9 +222,23 @@ screen ios:
 label ios:
 
     if RENIOS_PATH is None:
-        $ interface.yesno(_("Before packaging Android apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"), no=Jump("front_page"))
+        $ interface.yesno(_("Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"), no=Jump("front_page"))
         $ add_dlc("renios", restart=True)
 
     call screen ios
 
+label select_xcode_projects_directory:
+
+    python hide:
+
+        interface.interaction(_("XCODE PROJECTS DIRECTORY"), _("Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"))
+
+        path, is_default = choose_directory(persistent.xcode_projects_directory)
+
+        if is_default:
+            interface.info(_("Ren'Py has set the Xcode Projects Directory to:"), "[path!q]", path=path)
+
+        persistent.xcode_projects_directory = path
+
+    jump ios
 
