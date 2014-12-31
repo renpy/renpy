@@ -56,6 +56,8 @@ init python:
 
     find_renios()
 
+    if RENIOS_PATH:
+        import renios.create
 
     def IOSState():
         if not RENIOS_PATH:
@@ -84,6 +86,17 @@ init python:
 
         if state >= needed:
             return action
+        else:
+            return None
+
+    def xcode_project():
+        """
+        Returns the path to the Xcode project corresponding to the
+        currently-selected Ren'Py project.
+        """
+
+        if persistent.xcode_projects_directory:
+            return os.path.join(persistent.xcode_projects_directory, project.current.name)
         else:
             return None
 
@@ -157,6 +170,10 @@ screen ios:
                             textbutton _("Select Xcode Projects Directory"):
                                 action IOSIfState(state, IOS_NO_DIRECTORY, Jump("select_xcode_projects_directory"))
                                 hovered tt.Action(IOS_SELECT_DIRECTORY_TEXT)
+
+                            textbutton _("Create Xcode Project"):
+                                action IOSIfState(state, IOS_NO_PROJECT, Jump("create_xcode_project"))
+                                hovered tt.Action(IOS_CREATE_PROJECT_TEXT)
 
 #                             textbutton _("Configure"):
 #                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
@@ -242,3 +259,25 @@ label select_xcode_projects_directory:
 
     jump ios
 
+
+label create_xcode_project:
+
+    python hide:
+        dest = xcode_project()
+
+        if os.path.exists(dest):
+            interface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"), no=Jump("ios"))
+
+            i = 0
+            while True:
+                i += 1
+                backup = dest + "." + str(i)
+                if not os.path.exists(backup):
+                    break
+
+            os.rename(dest, backup)
+
+        iface = MobileInterface("ios")
+        renios.create.create_project(iface, dest)
+
+    jump ios
