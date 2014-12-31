@@ -308,6 +308,7 @@ init -1500 python in build:
     package("mac", "app-zip", "mac renpy all", "Macintosh x86")
     package("win", "zip", "windows renpy all", "Windows x86")
     package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
+    package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 

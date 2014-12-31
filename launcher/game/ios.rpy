@@ -35,7 +35,7 @@ init python:
 
     IOS_SELECT_DIRECTORY_TEXT = _("Selects the directory where Xcode projects will be placed.")
     IOS_CREATE_PROJECT_TEXT = _("Creates an Xcode project corresponding to the current Ren'Py project.")
-    IOS_UPDATE_PROJECT_TEXT = _("Updates the Xcode project with files from the current Ren'Py project.")
+    IOS_UPDATE_PROJECT_TEXT = _("Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes.")
     IOS_XCODE_TEXT = _("Opens the Xcode project in Xcode.")
 
     IOS_OPEN_DIRECTORY_TEXT = _("Opens the directory containing Xcode projects.")
@@ -64,9 +64,10 @@ init python:
             return IOS_NO_RENIOS
         elif not persistent.xcode_projects_directory:
             return IOS_NO_DIRECTORY
-        else:
+        elif not os.path.exists(xcode_project()):
             return IOS_NO_PROJECT
-
+        else:
+            return IOS_OK
 
     def IOSStateText(state):
         if state == IOS_NO_RENIOS:
@@ -89,16 +90,80 @@ init python:
         else:
             return None
 
-    def xcode_project():
+    def xcode_project(p=None):
         """
-        Returns the path to the Xcode project corresponding to the
-        currently-selected Ren'Py project.
+        Return the path to the Xcode project corresponding to `p`, or the current
+        project if `p` is None
         """
 
-        if persistent.xcode_projects_directory:
-            return os.path.join(persistent.xcode_projects_directory, project.current.name)
+        if p is None:
+            p = project.current
+
+        if persistent.xcode_projects_directory is None:
+            raise Exception("The Xcode projects directory has not been set.")
+
+        return os.path.join(persistent.xcode_projects_directory, p.name)
+
+    def ios_create(p=None, gui=True):
+
+        dest = xcode_project(p)
+
+        if os.path.exists(dest):
+            interface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"), no=Jump("ios"))
+
+            i = 0
+            while True:
+                i += 1
+                backup = dest + "." + str(i)
+                if not os.path.exists(backup):
+                    break
+
+            os.rename(dest, backup)
+
+        iface = MobileInterface("ios")
+        renios.create.create_project(iface, dest)
+
+        ios_populate(p, gui=gui)
+
+    def ios_populate(p=None, gui=True):
+        """
+        This actually builds the package.
+        """
+
+        import shutil
+
+        if p is None:
+            p = project.current
+
+        update_android_json(p, gui)
+
+        dist = os.path.join(xcode_project(p), "base")
+
+        if os.path.exists(dist):
+            shutil.rmtree(dist)
+
+        if gui:
+            reporter = distribute.GuiReporter()
         else:
-            return None
+            reporter = distribute.TextReporter()
+
+        distribute.Distributor(p,
+            reporter=reporter,
+            packages=[ 'ios' ],
+            build_update=False,
+            noarchive=True,
+            packagedest=dist,
+            report_success=False,
+            )
+
+        for fn in os.listdir(dist):
+            if fn.endswith(".py"):
+                os.rename(
+                    os.path.join(dist, fn),
+                    os.path.join(dist, "main.py"),
+                    )
+
+                break
 
 
 screen ios:
@@ -174,6 +239,10 @@ screen ios:
                             textbutton _("Create Xcode Project"):
                                 action IOSIfState(state, IOS_NO_PROJECT, Jump("create_xcode_project"))
                                 hovered tt.Action(IOS_CREATE_PROJECT_TEXT)
+
+                            textbutton _("Update Xcode Project"):
+                                action IOSIfState(state, IOS_NO_PROJECT, Jump("update_xcode_project"))
+                                hovered tt.Action(IOS_UPDATE_PROJECT_TEXT)
 
 #                             textbutton _("Configure"):
 #                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
@@ -259,25 +328,13 @@ label select_xcode_projects_directory:
 
     jump ios
 
-
 label create_xcode_project:
 
-    python hide:
-        dest = xcode_project()
+    $ ios_create(None, True)
 
-        if os.path.exists(dest):
-            interface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"), no=Jump("ios"))
+    jump ios
 
-            i = 0
-            while True:
-                i += 1
-                backup = dest + "." + str(i)
-                if not os.path.exists(backup):
-                    break
-
-            os.rename(dest, backup)
-
-        iface = MobileInterface("ios")
-        renios.create.create_project(iface, dest)
+label update_xcode_project:
+    $ ios_populate(None, True)
 
     jump ios
