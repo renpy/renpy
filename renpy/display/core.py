@@ -1418,6 +1418,12 @@ class Interface(object):
         # move.
         self.mouse_move = None
 
+        # True if the keyboard is in text editing mode. False if text has been
+        # input.
+        self.text_editing = False
+
+
+
         renpy.display.emulator.init_emulator()
 
 
@@ -2674,10 +2680,17 @@ class Interface(object):
                     renpy.display.tts.periodic()
                     continue
 
-
                 # Handle quit specially for now.
                 if ev.type == pygame.QUIT:
                     self.quit_event()
+                    continue
+
+                # Ignore KEY-events while text is being edited (usually with an IME).
+                if ev.type == pygame.TEXTEDITING:
+                    self.text_editing = True
+                elif ev.type == pygame.TEXTINPUT:
+                    self.text_editing = False
+                elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:
                     continue
 
                 # Handle videoresize.
