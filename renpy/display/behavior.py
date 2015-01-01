@@ -986,6 +986,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         l = len(self.content)
 
+        raw_text = None
+
         if map_event(ev, "input_backspace"):
 
             if self.content and self.caret_pos > 0:
@@ -1024,23 +1026,37 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif ev.type == pygame.KEYDOWN and ev.unicode:
-            if ord(ev.unicode[0]) < 32:
-                return None
+        elif ev.type == pygame.TEXTINPUT:
+            raw_text = ev.text
 
-            if self.length and len(self.content) >= self.length:
-                raise renpy.display.core.IgnoreEvent()
+        elif ev.type == pygame.KEYDOWN:
+            if ord(ev.unicode[0]) >= 32:
+                raw_text = ev.unicode
 
-            if self.allow and ev.unicode not in self.allow:
-                raise renpy.display.core.IgnoreEvent()
+        if raw_text is not None:
 
-            if self.exclude and ev.unicode in self.exclude:
-                raise renpy.display.core.IgnoreEvent()
+            text = ""
 
-            content = self.content[0:self.caret_pos] + ev.unicode + self.content[self.caret_pos:l]
-            self.caret_pos += 1
+            for c in raw_text:
 
-            self.update_text(content, self.editable, check_size=True)
+                if self.allow and c not in self.allow:
+                    continue
+
+                if self.exclude and c in self.exclude:
+                    continue
+
+                text += c
+
+            if self.length:
+                remaining = self.length - len(self.content)
+                text = text[:remaining]
+
+            if text:
+
+                content = self.content[0:self.caret_pos] + text + self.content[self.caret_pos:l]
+                self.caret_pos += len(text)
+
+                self.update_text(content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
 
