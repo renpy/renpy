@@ -90,6 +90,20 @@ init python:
         else:
             return None
 
+    xcode_name_cache = { }
+
+    def xcode_name(s):
+        """
+        Returns a version of `s` that's safe to use in Xcode.
+        """
+
+        if s in xcode_name_cache:
+            return xcode_name_cache[s]
+
+        s = re.sub(r'[^\w\-\.]', '', s)
+        xcode_name_cache[s] = s
+        return s
+
     def xcode_project(p=None):
         """
         Return the path to the Xcode project corresponding to `p`, or the current
@@ -102,7 +116,7 @@ init python:
         if persistent.xcode_projects_directory is None:
             raise Exception("The Xcode projects directory has not been set.")
 
-        return os.path.join(persistent.xcode_projects_directory, p.name)
+        return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
     def ios_create(p=None, gui=True):
 
