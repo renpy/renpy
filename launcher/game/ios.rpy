@@ -179,6 +179,12 @@ init python:
 
                 break
 
+    def launch_xcode():
+        dist = xcode_project(None)
+        base = os.path.basename(dist)
+        xcodeproj = "{}/{}.xcodeproj".format(dist, base)
+
+        subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
 
 screen ios:
 
@@ -257,6 +263,11 @@ screen ios:
                             textbutton _("Update Xcode Project"):
                                 action IOSIfState(state, IOS_NO_PROJECT, Jump("update_xcode_project"))
                                 hovered tt.Action(IOS_UPDATE_PROJECT_TEXT)
+
+                            if renpy.macintosh:
+                                textbutton _("Launch Xcode"):
+                                    action IOSIfState(state, IOS_OK, launch_xcode)
+                                    hovered tt.Action(IOS_XCODE_TEXT)
 
 #                             textbutton _("Configure"):
 #                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
