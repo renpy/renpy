@@ -198,7 +198,16 @@ class TextSegment(object):
         self.size = style.size
         self.bold = style.bold
         self.italic = style.italic
-        self.underline = style.underline
+
+        underline = style.underline
+
+        if isinstance(underline, int):
+            self.underline = underline
+        elif style.underline:
+            self.underline = 1
+        else:
+            self.underline = 0
+
         self.strikethrough = style.strikethrough
         self.color = style.color
         self.black_color = style.black_color
@@ -852,7 +861,7 @@ class Layout(object):
                 push().italic = True
 
             elif tag == "u":
-                push().underline = True
+                push().underline = 1
 
             elif tag == "s":
                 push().strikethrough = True

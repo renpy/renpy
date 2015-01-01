@@ -554,7 +554,7 @@ cdef class FTFont:
 
         return x, y, w, h
 
-    def draw(self, pysurf, float xo, int yo, color, list glyphs, bint underline, bint strikethrough, black_color):
+    def draw(self, pysurf, float xo, int yo, color, list glyphs, int underline, bint strikethrough, black_color):
         """
         Draws a list of glyphs to surf, with the baseline starting at x, y.
         """
@@ -648,10 +648,11 @@ cdef class FTFont:
 
             # Underlining.
             if underline:
-                ly = y - self.underline_offset - 1
-                lh = self.underline_height
 
-                for py from ly <= py < (ly + lh):
+                ly = y - self.underline_offset - 1
+                lh = self.underline_height * underline
+
+                for py from ly <= py < min(ly + lh, surf.h):
                     for px from x <= px < (x + glyph.advance):
                         line = pixels + py * pitch + px * 4
 
