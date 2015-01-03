@@ -298,6 +298,8 @@ def import_all():
     import renpy.style
     renpy.styledata.import_style_functions()
 
+    sys.modules['renpy.styleclass'] = renpy.style
+
     import renpy.substitutions
     import renpy.translation
 
