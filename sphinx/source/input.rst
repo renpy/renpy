@@ -7,7 +7,7 @@ amount of text. This prompting is done by the renpy.input function,
 which returns the entered text, allowing it to be saved in a variable
 or otherwise processed.
 
-Right now, text input is limited to languages that do not require
+On Linux, text input is limited to languages that do not require
 input method (IME) support. Most western languages should work, but
 Chinese, Japanese, and Korean probably won't.
 
