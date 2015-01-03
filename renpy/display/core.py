@@ -1418,11 +1418,8 @@ class Interface(object):
         # move.
         self.mouse_move = None
 
-        # True if the keyboard is in text editing mode. False if text has been
-        # input.
-        self.text_editing = False
-
-
+        # If in text editing mode, the current text editing event.
+        self.text_editing = None
 
         renpy.display.emulator.init_emulator()
 
@@ -2687,9 +2684,12 @@ class Interface(object):
 
                 # Ignore KEY-events while text is being edited (usually with an IME).
                 if ev.type == pygame.TEXTEDITING:
-                    self.text_editing = True
+                    if ev.text:
+                        self.text_editing = ev
+                    else:
+                        self.text_editing = None
                 elif ev.type == pygame.TEXTINPUT:
-                    self.text_editing = False
+                    self.text_editing = None
                 elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:
                     continue
 
