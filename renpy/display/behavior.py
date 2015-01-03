@@ -1087,6 +1087,14 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
             raise renpy.display.core.IgnoreEvent()
 
+    def render(self, width, height, st, at):
+        rv = super(Input, self).render(width, height, st, at)
+
+        if self.editable:
+            rv.text_input = True
+
+        return rv
+
 # A map from adjustment to lists of displayables that want to be redrawn
 # if the adjustment changes.
 adj_registered = { }

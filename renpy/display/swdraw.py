@@ -378,6 +378,9 @@ def draw(dest, clip, what, xo, yo, screen):
 
         return
 
+    if what.text_input:
+        renpy.display.interface.text_rect = what.screen_rect(xo, yo, None)
+
     # Deal with draw functions.
     if what.operation != BLIT:
 
@@ -557,6 +560,9 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
                 alpha, True)
 
         return
+
+    if what.text_input:
+        renpy.display.interface.text_rect = what.screen_rect(xo, yo, reverse)
 
     if what.clipping:
 
@@ -861,6 +867,17 @@ class SWDraw(object):
             updates.append(self.show_mouse(pos, info))
 
         return updates
+
+    def translate_point(self, x, y):
+        x /= self.scale_factor
+        y /= self.scale_factor
+        return (x, y)
+
+    def untranslate_point(self, x, y):
+        x *= self.scale_factor
+        y *= self.scale_factor
+        return (x, y)
+
 
     def update_mouse(self):
         """

@@ -1421,6 +1421,12 @@ class Interface(object):
         # If in text editing mode, the current text editing event.
         self.text_editing = None
 
+        # The text rectangle after the current draw.
+        self.text_rect = None
+
+        # The text rectangle after the previous draw.
+        self.old_text_rect = None
+
         renpy.display.emulator.init_emulator()
 
 
@@ -1575,6 +1581,11 @@ class Interface(object):
             renpy.display.video.movie_stop(clear=False)
 
         if self.display_reset:
+
+            pygame.key.stop_text_input() # @UndefinedVariable
+            pygame.key.set_text_input_rect(None) # @UndefinedVariable
+            self.text_rect = None
+
             renpy.display.draw.deinit()
 
             if renpy.display.draw.info["renderer"] == "angle":
@@ -1592,6 +1603,7 @@ class Interface(object):
 
             self.kill_textures_and_surfaces()
 
+        self.old_text_rect = None
         self.display_reset = False
 
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
@@ -2138,6 +2150,34 @@ class Interface(object):
         renpy.display.focus.mouse_handler(None, -1, -1, default=False)
 
 
+    def update_text_rect(self):
+        """
+        Updates the text input state and text rectangle.
+        """
+
+        if renpy.store._text_rect is not None: # @UndefinedVariable
+            self.text_rect = renpy.store._text_rect # @UndefinedVariable
+
+        if self.text_rect is not None:
+            if not self.old_text_rect:
+                pygame.key.start_text_input() # @UndefinedVariable
+
+            if self.old_text_rect != self.text_rect:
+                x, y, w, h = self.text_rect
+                x0, y0 = renpy.display.draw.untranslate_point(x, y)
+                x1, y1 = renpy.display.draw.untranslate_point(x + w, y + h)
+                rect = (x0, y0, x1 - x0, y1 - y0)
+
+                pygame.key.set_text_input_rect(rect) # @UndefinedVariable
+
+        else:
+            if self.old_text_rect:
+                pygame.key.stop_text_input() # @UndefinedVariable
+                pygame.key.set_text_input_rect(None) # @UndefinedVariable
+
+        self.old_text_rect = self.text_rect
+
+
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -2490,6 +2530,8 @@ class Interface(object):
                     # Clean out the redraws, if we have to.
                     # renpy.display.render.kill_redraws()
 
+                    self.text_rect = None
+
                     # Draw the screen.
                     self.frame_time = get_time()
 
@@ -2537,6 +2579,8 @@ class Interface(object):
                     pygame.time.set_timer(REDRAW, 0)
                     pygame.event.clear([REDRAW])
                     old_redraw_time = None
+
+                    self.update_text_rect()
 
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:

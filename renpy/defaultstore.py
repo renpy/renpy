@@ -55,6 +55,9 @@ name_only = None
 _widget_by_id = None
 _widget_properties = { }
 
+# The text rectangle, or None to use the automatic code.
+_text_rect = None
+
 class _Config(object):
 
     def __getstate__(self):

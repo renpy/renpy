@@ -62,6 +62,8 @@ cdef class Render:
 
     cdef public bint modal
 
+    cdef public bint text_input
+
     cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
 
