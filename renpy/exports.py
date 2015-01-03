@@ -2832,3 +2832,20 @@ def invoke_in_thread(fn, *args, **kwargs):
     t.daemon = True
     t.start()
 
+def put_clipboard(string):
+    """
+    :doc: other
+
+    Put a string to clipboard
+    """
+    from pygame import scrap, locals
+    scrap.put(locals.SCRAP_TEXT, string)
+
+def get_clipboard():
+    """
+    :doc: other
+
+    Get a string from clipboard
+    """
+    from pygame import scrap, locals
+    return scrap.get(locals.SCRAP_TEXT)
