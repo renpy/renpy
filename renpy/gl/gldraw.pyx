@@ -182,8 +182,12 @@ cdef class GLDraw:
         pwidth, pheight = physical_size
 
         if pwidth is None:
-            pwidth = self.display_info.current_w
-            pheight = self.display_info.current_h
+            if renpy.mobile:
+                pwidth = self.display_info.current_w
+                pheight = self.display_info.current_h
+            else:
+                pwidth = vwidth
+                pheight = vheight
 
         virtual_ar = 1.0 * vwidth / vheight
 
