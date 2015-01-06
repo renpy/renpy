@@ -1217,7 +1217,8 @@ The advanced displayable statements are:
 ``drag``
     Creates a :class:`Drag`. A drag can be given an optional child,
     or the :propref:`child` style property can be used to supply the child,
-    and its focused variants.
+    and its focused variants. Drags also take the :propref:`focus_mask`
+    style property.
 
 ``draggroup``
     Creates a :class:`DragGroup`. A drag group may have zero or more
