@@ -182,12 +182,8 @@ cdef class GLDraw:
         pwidth, pheight = physical_size
 
         if pwidth is None:
-            if renpy.mobile:
-                pwidth = self.display_info.current_w
-                pheight = self.display_info.current_h
-            else:
-                pwidth = vwidth
-                pheight = vheight
+            pwidth = vwidth
+            pheight = vheight
 
         virtual_ar = 1.0 * vwidth / vheight
 
@@ -217,12 +213,19 @@ cdef class GLDraw:
         elif renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
+
+            pwidth = 0
+            pheight = 0
+
         elif renpy.ios:
             opengl = pygame.OPENGL
             resizable = pygame.RESIZABLE
 
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+
+            pwidth = 0
+            pheight = 0
 
         else:
             opengl = pygame.OPENGL
