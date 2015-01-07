@@ -398,7 +398,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.target_at = at
 
         # Determine if we need to do the snap animation.
-        if at >= self.target_at:
+        if at >= (self.target_at - self.at):
             self.x = self.target_x
             self.y = self.target_y
         else:
