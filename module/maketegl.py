@@ -2623,6 +2623,9 @@ class GLFunction(object):
             exception_return(self.type),
             ), file=f)
 
+        print("    if check_errors & 4:", file=f)
+        print("        renpy.display.log.write('gl%s')" % self.name, file=f)
+
         print("    cdef GLenum error", file=f)
 
         if self.type == GLvoid:
