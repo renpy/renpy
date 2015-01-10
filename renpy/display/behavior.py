@@ -373,6 +373,8 @@ class Keymap(renpy.display.layout.Null):
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
 
+                print "running", name
+
                 rv = run(action)
 
                 if rv is not None:

@@ -351,8 +351,9 @@ def import_all():
     import renpy.display.dragdrop
     import renpy.display.imagemap
     import renpy.display.predict
-    import renpy.display.emulator # @UnresolvedImport
-    import renpy.display.tts # @UnresolvedImport
+    import renpy.display.emulator
+    import renpy.display.tts
+    import renpy.display.gesture
 
     import renpy.display.error
 

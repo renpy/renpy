@@ -87,6 +87,8 @@ def set_grab(widget):
     global grab
     grab = widget
 
+    renpy.exports.cancel_gesture()
+
 def get_grab():
     return grab
 

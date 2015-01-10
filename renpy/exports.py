@@ -254,7 +254,7 @@ def suspend_rollback(flag):
     """
 
     renpy.game.log.suspend_checkpointing(flag)
-    
+
 
 def fix_rollback():
     """
@@ -2832,3 +2832,12 @@ def invoke_in_thread(fn, *args, **kwargs):
     t.daemon = True
     t.start()
 
+def cancel_gesture():
+    """
+    :doc: gesture
+
+    Cancels the current gesture, preventing the gesture from being recognized.
+    This should be called by displayables that have gesture-like behavior.
+    """
+
+    renpy.display.gesture.recognizer.cancel() # @UndefinedVariable

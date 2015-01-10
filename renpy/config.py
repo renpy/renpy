@@ -541,6 +541,20 @@ predict_statements_callback = None
 # Should we use hardware video on platforms that support it?
 hw_video = False
 
+# A function to use to dispatch gestures.
+dispatch_gesture = None
+
+# The table mapping gestures to events used by the default function.
+gestures = {
+    "w" : "rollback",
+    "s" : "game_menu",
+    "n_s_w_e_w_e" : "progress_screen",
+    }
+
+# Sizes of gesture components and strokes, as a fraction of screen_width.
+gesture_component_size = .05
+gesture_stroke_size = .2
+
 del renpy
 del os
 

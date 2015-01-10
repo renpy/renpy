@@ -1427,6 +1427,9 @@ class Interface(object):
         # The text rectangle after the previous draw.
         self.old_text_rect = None
 
+        # Are we a touchscreen?
+        self.touch = renpy.exports.variant("touch")
+
         renpy.display.emulator.init_emulator()
 
 
@@ -2822,6 +2825,9 @@ class Interface(object):
                 self.event_time = end_time = get_time()
 
                 try:
+
+                    if self.touch:
+                        renpy.display.gesture.recognizer.event(ev, x, y) # @UndefinedVariable
 
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
