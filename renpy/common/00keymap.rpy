@@ -39,8 +39,11 @@ init -1600 python:
         iconify = [ 'meta_m', 'alt_m' ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
-        self_voicing = [ 'v', 'V' ],
         progress_screen = [ 'alt_P' ],
+
+        # Accessibility.
+        self_voicing = [ 'v', 'V' ],
+        clipboard_voicing = [ 'C' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -289,6 +292,7 @@ init -1100 python:
         console = _console.enter,
         profile_once = _profile_once,
         self_voicing = Preference("self voicing", "toggle"),
+        clipboard_voicing = Preference("clipboard voicing", "toggle"),
         progress_screen = _progress_screen,
         )
 
