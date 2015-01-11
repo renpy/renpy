@@ -124,7 +124,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     `clicked`
         A callback this is called, with no arguments, when the Drag is
         clicked without being moved. A droppable can also be focused
-        and clicked.  If the callback returns a value othe than None,
+        and clicked.  If the callback returns a value other than None,
         that value is returned as the result of the interaction.
 
     `drag_handle`
@@ -398,7 +398,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.target_at = at
 
         # Determine if we need to do the snap animation.
-        if at >= self.target_at:
+        if at >= (self.target_at - self.at):
             self.x = self.target_x
             self.y = self.target_y
         else:
@@ -423,7 +423,27 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if isinstance(fh, float):
                 fh = int(fh * ch)
 
-            rv.add_focus(self, None, fx, fy, fw, fh, fx, fy, cr.subsurface((fx, fy, fw, fh)))
+            mask = self.style.focus_mask
+
+            if mask is True:
+                mask = cr.subsurface((fx, fy, fw, fh))
+            elif mask is not None:
+                try:
+                    mask = renpy.display.render.render(mask, fw, fh, st, at)
+                except:
+                    if callable(mask):
+                        mask = mask
+                    else:
+                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+
+            if mask is not None:
+                fmx = 0
+                fmy = 0
+            else:
+                fmx = None
+                fmy = None
+
+            rv.add_focus(self, None, fx, fy, fw, fh, fmx, fmy, mask)
 
         self.last_x = self.x
         self.last_y = self.y

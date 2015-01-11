@@ -39,7 +39,11 @@ init -1600 python:
         iconify = [ 'meta_m', 'alt_m' ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
+        progress_screen = [ 'alt_P' ],
+
+        # Accessibility.
         self_voicing = [ 'v', 'V' ],
+        clipboard_voicing = [ 'C' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
@@ -240,6 +244,32 @@ init -1600 python:
         renpy.display.interface.profile_once = True
         renpy.restart_interaction()
 
+    def _progress_screen():
+        if renpy.context_nesting_level():
+            return
+
+        if renpy.get_screen("_progress"):
+            renpy.hide_screen("_progress")
+        else:
+            renpy.show_screen("_progress")
+
+        renpy.restart_interaction()
+
+screen _progress:
+    $ seen = renpy.count_seen_dialogue_blocks()
+    $ total = renpy.count_dialogue_blocks()
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        text "[seen]/[total]":
+            size 14
+            color "#fff"
+            outlines [ (1, "#000", 0, 0) ]
+
 init -1100 python:
 
     # The default keymap. We might also want to put some of this into
@@ -262,6 +292,8 @@ init -1100 python:
         console = _console.enter,
         profile_once = _profile_once,
         self_voicing = Preference("self voicing", "toggle"),
+        clipboard_voicing = Preference("clipboard voicing", "toggle"),
+        progress_screen = _progress_screen,
         )
 
     config.underlay = [ km ]

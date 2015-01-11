@@ -861,7 +861,10 @@ class Layout(object):
                 push().italic = True
 
             elif tag == "u":
-                push().underline = 1
+                if value:
+                    push().underline = int(value)
+                else:
+                    push().underline = 1
 
             elif tag == "s":
                 push().strikethrough = True

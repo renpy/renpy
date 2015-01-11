@@ -413,11 +413,6 @@ KEYWORDS = set([
             ])
 
 OPERATORS = [
-        'or\b',
-        'and\b',
-        'not\b',
-        'in\b',
-        'is\b',
         '<',
         '<=',
         '>',
@@ -440,7 +435,15 @@ OPERATORS = [
         '**',
         ]
 
-operator_regexp = "|".join(re.escape(i) for i in OPERATORS)
+ESCAPED_OPERATORS = [
+        r'\bor\b',
+        r'\band\b',
+        r'\bnot\b',
+        r'\bin\b',
+        r'\bis\b',
+    ]
+
+operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
 
 word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
 

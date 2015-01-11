@@ -274,7 +274,7 @@ init -1500 python in iap:
 
         p = get_product(product)
 
-        return persistent._iap_purchases[p.identifier]
+        return persistent._iap_purchases.get(p.identifier, False)
 
     def get_store_name():
         """

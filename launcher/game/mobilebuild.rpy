@@ -45,14 +45,19 @@ init python:
         This is used to interface between the launcher and RAPT/RENIOS.
         """
 
-        def __init__(self, platform):
+        def __init__(self, platform, edit=True):
             """
             `platform`
-                The name of the platform we're using for. Used for libraries
-                and cancel labels.
+                The name of the platform we're using for. Used for libraries,
+                cancel labels, and logfiles.
+
+            `edit`
+                If true, we launch the log file in the editor on failure.
             """
 
             self.platform = platform
+            self.edit = edit
+
             self.process = None
             self.filename = project.current.temp_filename(platform + ".txt")
 
@@ -107,7 +112,7 @@ init python:
             prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
 
             # Open android.txt in the editor.
-            if edit:
+            if edit and self.edit:
                 editor.EditAbsolute(self.filename)()
 
             interface.error(prompt, label="android")

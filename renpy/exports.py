@@ -254,7 +254,7 @@ def suspend_rollback(flag):
     """
 
     renpy.game.log.suspend_checkpointing(flag)
-    
+
 
 def fix_rollback():
     """
@@ -2836,25 +2836,34 @@ def put_clipboard(string):
     """
     :doc: other
 
-    Put a string to clipboard. If this fail, return None.
+    Put a string to clipboard. If this fails, return None.
     """
     try:
         from pygame import scrap, locals
-        scrap.init()
         scrap.put(locals.SCRAP_TEXT, string)
         return True
-    except ImportError:
+    except:
         return None
 
 def get_clipboard():
     """
     :doc: other
 
-    Get a string from clipboard and return it. If this fail, return None.
+    Get a string from clipboard and return it. If this fails, return None.
     """
     try:
         from pygame import scrap, locals
-        scrap.init()
         return scrap.get(locals.SCRAP_TEXT)
-    except ImportError:
+    except:
         return None
+
+def cancel_gesture():
+    """
+    :doc: gesture
+
+    Cancels the current gesture, preventing the gesture from being recognized.
+    This should be called by displayables that have gesture-like behavior.
+    """
+
+    renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
+

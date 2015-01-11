@@ -1313,12 +1313,8 @@ cdef void draw_rectangle(
     ):
 
     """
-    This draws a rectangle (textured with up to four textures) to the
+    This draws a rectangle (textured with up to three textures) to the
     screen.
-
-    Note that this is usually implemented in C code in the Ren'Py
-    module, and that this version is for debugging.
-
 
     `sx`, `sy`
         The location in the untransformed screen coordinate of the

@@ -395,7 +395,7 @@ label android_installsdk:
 label android_configure:
 
     python:
-        rapt.configure.configure(MobileInterface("android"), project.current.path)
+        rapt.configure.configure(MobileInterface("android", edit=False), project.current.path)
 
     jump android
 

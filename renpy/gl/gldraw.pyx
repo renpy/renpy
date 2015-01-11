@@ -182,8 +182,8 @@ cdef class GLDraw:
         pwidth, pheight = physical_size
 
         if pwidth is None:
-            pwidth = self.display_info.current_w
-            pheight = self.display_info.current_h
+            pwidth = vwidth
+            pheight = vheight
 
         virtual_ar = 1.0 * vwidth / vheight
 
@@ -213,12 +213,19 @@ cdef class GLDraw:
         elif renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
+
+            pwidth = 0
+            pheight = 0
+
         elif renpy.ios:
             opengl = pygame.OPENGL
             resizable = pygame.RESIZABLE
 
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+
+            pwidth = 0
+            pheight = 0
 
         else:
             opengl = pygame.OPENGL
@@ -774,6 +781,10 @@ cdef class GLDraw:
 
         rend = what
 
+        if rend.text_input:
+            renpy.display.interface.text_rect = rend.screen_rect(xo, yo, reverse)
+
+
         # Other draw modes.
 
         if rend.operation == DISSOLVE:
@@ -1003,13 +1014,10 @@ cdef class GLDraw:
 
         return rv
 
-    def update_mouse(self):
-        # The draw routine updates the mouse. There's no need to
-        # redraw it event-by-event.
-
-        return
-
-    def translate_mouse(self, x, y):
+    def translate_point(self, x, y):
+        """
+        Translates (x, y) from physical to virtual coordinates.
+        """
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1034,7 +1042,10 @@ cdef class GLDraw:
 
         return x, y
 
-    def untranslate_mouse(self, x, y):
+    def untranslate_point(self, x, y):
+        """
+        Untranslates (x, y) from virtual to physical coordinates.
+        """
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1053,18 +1064,23 @@ cdef class GLDraw:
 
         return x, y
 
+    def update_mouse(self):
+        # The draw routine updates the mouse. There's no need to
+        # redraw it event-by-event.
+
+        return
+
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-        return self.translate_mouse(x, y)
+        return self.translate_point(x, y)
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
-        return self.translate_mouse(x, y)
+        return self.translate_point(x, y)
 
     def set_mouse_pos(self, x, y):
-        x, y = self.untranslate_mouse(x, y)
+        x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
-
 
     # Private.
     def draw_mouse(self):

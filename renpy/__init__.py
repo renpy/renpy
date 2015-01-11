@@ -298,6 +298,8 @@ def import_all():
     import renpy.style
     renpy.styledata.import_style_functions()
 
+    sys.modules['renpy.styleclass'] = renpy.style
+
     import renpy.substitutions
     import renpy.translation
 
@@ -349,8 +351,9 @@ def import_all():
     import renpy.display.dragdrop
     import renpy.display.imagemap
     import renpy.display.predict
-    import renpy.display.emulator # @UnresolvedImport
-    import renpy.display.tts # @UnresolvedImport
+    import renpy.display.emulator
+    import renpy.display.tts
+    import renpy.display.gesture
 
     import renpy.display.error
 

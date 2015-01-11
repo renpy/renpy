@@ -925,9 +925,11 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
     def update_text(self, new_content, editable, check_size=False):
 
+        edit = renpy.display.interface.text_editing
+
         old_content = self.content
 
-        if new_content != self.content or editable != self.editable:
+        if new_content != self.content or editable != self.editable or edit:
             renpy.display.render.redraw(self, 0)
 
         self.editable = editable
@@ -937,6 +939,27 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         if caret is None:
             caret = self.caret
 
+        # Format text being edited by the IME.
+        if edit:
+
+            edit_text_0 = edit.text[:edit.start]
+            edit_text_1 = edit.text[edit.start:edit.start + edit.length]
+            edit_text_2 = edit.text[edit.start + edit.length:]
+
+            edit_text = ""
+
+            if edit_text_0:
+                edit_text += "{u=1}" + edit_text_0.replace("{", "{{") + "{/u}"
+
+            if edit_text_1:
+                edit_text += "{u=2}" + edit_text_1.replace("{", "{{") + "{/u}"
+
+            if edit_text_2:
+                edit_text += "{u=1}" + edit_text_2.replace("{", "{{") + "{/u}"
+
+        else:
+            edit_text = ""
+
         def set_content(content):
 
             if content == "":
@@ -944,7 +967,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
             if editable:
                 l = len(content)
-                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), caret,
+                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), edit_text, caret,
                                             content[self.caret_pos:l].replace("{", "{{"), self.suffix])
             else:
                 self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
@@ -1026,6 +1049,11 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
+        elif ev.type == pygame.TEXTEDITING:
+            self.update_text(self.content, self.editable, check_size=True)
+
+            raise renpy.display.core.IgnoreEvent()
+
         elif ev.type == pygame.TEXTINPUT:
             raw_text = ev.text
 
@@ -1041,7 +1069,6 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
                 if self.allow and c not in self.allow:
                     continue
-
                 if self.exclude and c in self.exclude:
                     continue
 
@@ -1059,6 +1086,14 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 self.update_text(content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
+
+    def render(self, width, height, st, at):
+        rv = super(Input, self).render(width, height, st, at)
+
+        if self.editable:
+            rv.text_input = True
+
+        return rv
 
 # A map from adjustment to lists of displayables that want to be redrawn
 # if the adjustment changes.

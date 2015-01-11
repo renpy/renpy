@@ -372,7 +372,8 @@ cdef class FTFont:
 
             try:
                 if self.stroker != NULL:
-                    FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+                    # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
+                    FT_Glyph_Stroke(&g, self.stroker, 1)
             except:
                 import traceback
                 traceback.print_exc()
