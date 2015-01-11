@@ -2836,16 +2836,25 @@ def put_clipboard(string):
     """
     :doc: other
 
-    Put a string to clipboard
+    Put a string to clipboard. If this fail, return None.
     """
-    from pygame import scrap, locals
-    scrap.put(locals.SCRAP_TEXT, string)
+    try:
+        from pygame import scrap, locals
+        scrap.init()
+        scrap.put(locals.SCRAP_TEXT, string)
+        return True
+    except ImportError:
+        return None
 
 def get_clipboard():
     """
     :doc: other
 
-    Get a string from clipboard
+    Get a string from clipboard and return it. If this fail, return None.
     """
-    from pygame import scrap, locals
-    return scrap.get(locals.SCRAP_TEXT)
+    try:
+        from pygame import scrap, locals
+        scrap.init()
+        return scrap.get(locals.SCRAP_TEXT)
+    except ImportError:
+        return None
