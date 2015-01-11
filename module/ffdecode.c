@@ -1482,9 +1482,9 @@ static int decode_thread(void *arg)
         is->show_audio = 0;
     }
 
-    if (is->video_stream < 0 && is->audio_stream < 0) {
-        fprintf(stderr, "could not open codecs\n");
-        ret = -1;
+    if (is->audio_stream < 0) {
+    	printf("%s audio stream could not be opened.\n", is->filename);
+    	ret = -1;
         goto fail;
     }
 
