@@ -195,7 +195,11 @@ class Cache(object):
                 if image in self.pin_cache:
                     surf = self.pin_cache[image]
                 else:
-                    surf = image.load()
+                    if not predict:
+                        with renpy.game.ExceptionInfo("While loading %r:", image):
+                            surf = image.load()
+                    else:
+                        surf = image.load()
 
             except:
                 raise
