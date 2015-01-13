@@ -86,6 +86,29 @@ persistent = None
 # The current preferences.
 preferences = None
 
+class ExceptionInfo(object):
+    """
+    Context manager that sets exception_info iff an exception occurs.
+
+    `s`
+        A percent-format string to use.
+    `args`
+        The arguments that are percent-formatted with `s`.
+    """
+
+    def __init__(self, s, args):
+        self.s = s
+        self.args = args
+
+    def __enter__(self):
+        return
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            renpy.game.exception_info = self.s % self.args
+
+        return False
+
 class RestartContext(Exception):
     """
     Restarts the current context. If `label` is given, calls that label

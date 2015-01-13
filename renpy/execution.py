@@ -290,6 +290,8 @@ class Context(renpy.object.Object):
 
             try:
                 try:
+                    renpy.game.exception_info = "While running game code:"
+
                     self.next_node = None
                     node.execute()
 
