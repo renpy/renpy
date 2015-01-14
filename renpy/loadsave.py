@@ -453,11 +453,12 @@ def list_saved_games(regexp=r'.', fast=False):
 
         c = get_cache(s)
 
-        extra_info = c.get_json().get("_save_name", "")
-        screenshot = c.get_screenshot()
-        mtime = c.get_mtime()
+        if c is not None:
+            extra_info = c.get_json().get("_save_name", "")
+            screenshot = c.get_screenshot()
+            mtime = c.get_mtime()
 
-        rv.append((s, extra_info, screenshot, mtime))
+            rv.append((s, extra_info, screenshot, mtime))
 
     return rv
 
