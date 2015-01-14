@@ -2836,7 +2836,7 @@ def put_clipboard(string):
     """
     :doc: other
 
-    Put a string to clipboard. If this fails, return None.
+    Put a string to clipboard and return True. If this fails, return None.
     """
     try:
         from pygame import scrap, locals
