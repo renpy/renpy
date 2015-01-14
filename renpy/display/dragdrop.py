@@ -284,10 +284,11 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         redraw(self, 0)
 
     def set_style_prefix(self, prefix, root):
-        super(Drag, self).set_style_prefix(prefix, root)
+        if root:
+            super(Drag, self).set_style_prefix(prefix, root)
 
-        if self.child is not None:
-            self.child.set_style_prefix(prefix, False)
+            if self.child is not None:
+                self.child.set_style_prefix(prefix, False)
 
     def add(self, d):
         if self.child is not None:

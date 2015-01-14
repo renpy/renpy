@@ -1571,6 +1571,10 @@ class Bar(renpy.display.core.Displayable):
 
         return None
 
+    def set_style_prefix(self, prefix, root):
+        if root:
+            super(Bar, self).set_style_prefix(prefix, root)
+
     def _tts(self):
         return ""
 
