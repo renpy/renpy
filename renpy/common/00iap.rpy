@@ -139,11 +139,23 @@ init -1500 python in iap:
     if renpy.ios:
         import pyobjus
         IAPHelper = pyobjus.autoclass("IAPHelper")
+        NSMutableArray = pyobjus.autoclass("NSMutableArray")
+
+        from pyobjus import objc_str, objc_arr
 
     class IOSBackend(object):
 
         def __init__(self):
             self.helper = IAPHelper.alloc().init()
+
+            identifiers = NSMutableArray.alloc().init()
+
+            for p in products.values():
+                identifiers.addObject_(objc_str(p.ios))
+
+            self.helper.productIdentifiers = identifiers
+            self.helper.validateProductIdentifiers()
+
 
         def get_store_name(self):
             if self.helper.canMakePayments():
