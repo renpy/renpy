@@ -555,6 +555,9 @@ gestures = {
 gesture_component_size = .05
 gesture_stroke_size = .2
 
+# Should we log to stdout rather than files?
+log_to_stdout = False
+
 del renpy
 del os
 
