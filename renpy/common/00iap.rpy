@@ -31,11 +31,12 @@ init -1500 python in iap:
         A data object representing a product.
         """
 
-        def __init__(self, product, identifier, google, amazon):
+        def __init__(self, product, identifier, google, amazon, ios):
             self.product = product
             self.identifier = identifier
             self.google = google
             self.amazon = amazon
+            self.ios = ios
 
     class NoneBackend(object):
         """
@@ -135,13 +136,74 @@ init -1500 python in iap:
             identifier = self.identifier(p)
             return self.devicePurchase.isPurchaseOwned(identifier)
 
+    if renpy.ios:
+        import pyobjus
+        IAPHelper = pyobjus.autoclass("IAPHelper")
+
+    class IOSBackend(object):
+
+        def __init__(self):
+            self.helper = IAPHelper.alloc().init()
+
+        def get_store_name(self):
+            if self.helper.canMakePayments():
+                return "ios"
+            else:
+                return None
+
+        def identifier(self, p):
+            """
+            Returns the identifier for a store purchase.
+            """
+
+            return p.ios
+
+        def wait_for_result(self, interact=True):
+            """
+            Waits for a result.
+
+            `interact`
+                If true, waits interactively. If false, waits using
+                renpy.pause.
+            """
+
+            while True:
+                rv = True # self.devicePurchase.checkPurchaseResult()
+
+                if rv:
+                    break
+
+                if interact:
+                    renpy.pause(.1)
+                else:
+                    time.sleep(.1)
+
+            if rv == 1:
+                return True
+            else:
+                return False
+
+
+        def purchase(self, p, interact=True):
+            identifier = self.identifier(p)
+            # self.beginPurchase(identifier)
+            return self.wait_for_result(interact=interact)
+
+        def restore_purchases(self, interact=True):
+            self.wait_for_result(interact)
+
+        def has_purchased(self, p):
+            identifier = self.identifier(p)
+            return False
+
+
     # The backend we're using.
     backend = NoneBackend()
 
     # A map from product identifier to the product object.
     products = { }
 
-    def register(product, identifier=None, amazon=None, google=None):
+    def register(product, identifier=None, amazon=None, google=None, ios=None):
         """
         :doc: iap
 
@@ -166,6 +228,10 @@ init -1500 python in iap:
         `google`
             A string that identifies the product in the Google Play store.
             If not given, defaults to `identifier`.
+
+        `ios`
+            A string that identifies the product in the Apple App store for
+            iOS. If not given, defaults to `identifier`.
         """
 
         if product in products:
@@ -174,8 +240,9 @@ init -1500 python in iap:
         identifier = identifier or product
         amazon = amazon or identifier
         google = google or identifier
+        ios = ios or identifier
 
-        p = Product(product, identifier, google, amazon)
+        p = Product(product, identifier, google, amazon, ios)
         products[product] = p
 
     def with_background(f, *args, **kwargs):
@@ -281,8 +348,8 @@ init -1500 python in iap:
         :doc: iap
 
         Returns the name of the enabled store for in-app purchase. This
-        currently returns one of "amazon", "google", or None if no store
-        is configured.
+        currently returns one of "amazon", "google", "ios" or None if no store
+        is available.
         """
 
         return backend.get_store_name()
@@ -307,6 +374,7 @@ init -1500 python in iap:
         devicePurchase = autoclass('com.puzzlebrothers.renpurchase.devicePurchase')
 
         store_name = devicePurchase.getStoreName()
+
         if store_name == "none":
             return NoneBackend()
 
@@ -329,6 +397,12 @@ init -1500 python in iap:
         # Set up the back end.
         if renpy.android:
             backend = init_android()
+        elif renpy.ios:
+            backend = IOSBackend()
+
+            if backend.get_store_name() is None:
+                backend = NoneBackend()
+
         else:
             backend = NoneBackend()
 
