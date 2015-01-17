@@ -347,7 +347,7 @@ init -1500 python in updater:
             """
 
             if renpy.android:
-                raise UpdateError("The Ren'Py Updater is not supported on Android.")
+                raise UpdateError(_("The Ren'Py Updater is not supported on Android."))
 
             self.load_state()
             self.test_write()
@@ -445,7 +445,7 @@ init -1500 python in updater:
                 raise UpdateCancelled()
 
             if self.simulate == "error":
-                raise UpdateError("An error is being simulated.")
+                raise UpdateError(_("An error is being simulated."))
 
             if self.simulate == "not_available":
                 self.can_cancel = False
@@ -605,7 +605,7 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "current.json")
 
             if not os.path.exists(fn):
-                raise UpdateError("Either this project does not support updating, or the update status file was deleted.")
+                raise UpdateError(_("Either this project does not support updating, or the update status file was deleted."))
 
             with open(fn, "rb") as f:
                 self.current_state = json.load(f)
@@ -619,10 +619,10 @@ init -1500 python in updater:
 
                 os.unlink(fn)
             except:
-                raise UpdateError("This account does not have permission to perform an update.")
+                raise UpdateError(_("This account does not have permission to perform an update."))
 
             if not self.log:
-                raise UpdateError("This account does not have permission to write the update log.")
+                raise UpdateError(_("This account does not have permission to write the update log."))
 
         def check_updates(self):
             """
@@ -647,7 +647,7 @@ init -1500 python in updater:
                 try:
                     rsa.verify(updates_json, signature, self.public_key)
                 except:
-                    raise UpdateError("Could not verify update signature.")
+                    raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
                     exec self.updates["monkeypatch"] in globals(), globals()
@@ -907,7 +907,7 @@ init -1500 python in updater:
                 if os.path.exists(new_fn + ".part"):
                     os.rename(new_fn + ".part", new_fn)
                 else:
-                    raise UpdateError("The update file was not downloaded.")
+                    raise UpdateError(_("The update file was not downloaded."))
 
             # Check that the downloaded file has the right digest.
             import hashlib
@@ -925,7 +925,7 @@ init -1500 python in updater:
                 digest = hash.hexdigest()
 
             if digest != self.updates[module]["digest"]:
-                raise UpdateError("The update file does not have the correct digest - it may have been corrupted.")
+                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
 
             if os.path.exists(new_fn + ".part.old"):
                 os.unlink(new_fn + ".part.old")
