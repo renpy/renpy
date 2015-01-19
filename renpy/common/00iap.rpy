@@ -75,6 +75,13 @@ init -1500 python in iap:
 
             return False
 
+        def is_deferred(self, p):
+            """
+            Returns True if the purchase of `p` has been deferred, and False otherwise.
+            """
+
+            return False
+
     class AndroidBackend(object):
         """
         The IAP backend that is used when IAP is supported.
@@ -136,6 +143,9 @@ init -1500 python in iap:
             identifier = self.identifier(p)
             return self.devicePurchase.isPurchaseOwned(identifier)
 
+        def is_deferred(self, p):
+            return False
+
     if renpy.ios:
         import pyobjus
         IAPHelper = pyobjus.autoclass("IAPHelper")
@@ -179,34 +189,34 @@ init -1500 python in iap:
                 renpy.pause.
             """
 
-            while True:
-                rv = True # self.devicePurchase.checkPurchaseResult()
-
-                if rv:
-                    break
-
+            while not self.helper.finished:
                 if interact:
                     renpy.pause(.1)
                 else:
+                    import pygame
+                    pygame.event.pump()
                     time.sleep(.1)
 
-            if rv == 1:
-                return True
-            else:
-                return False
-
-
         def purchase(self, p, interact=True):
-            identifier = self.identifier(p)
-            # self.beginPurchase(identifier)
-            return self.wait_for_result(interact=interact)
+            identifier = objc_str(self.identifier(p))
+
+            self.helper.beginPurchase_(identifier)
+
+            self.wait_for_result(interact=interact)
+
+            return self.helper.hasPurchased_(identifier)
 
         def restore_purchases(self, interact=True):
+            self.helper.restorePurchases()
             self.wait_for_result(interact)
 
         def has_purchased(self, p):
-            identifier = self.identifier(p)
-            return False
+            identifier = objc_str(self.identifier(p))
+            return self.helper.hasPurchased_(identifier)
+
+        def is_deferred(self, p):
+            identifier = objc_str(self.identifier(p))
+            return self.helper.isDeferred_(identifier)
 
 
     # The backend we're using.
@@ -335,13 +345,34 @@ init -1500 python in iap:
 
         def __init__(self, product):
             self.product = product
+            self.sensitive = True
 
         def __call__(self):
             renpy.invoke_in_new_context(with_background, purchase, self.product)
             renpy.restart_interaction()
 
+        def should_be_sensitive(self):
+
+            if not get_store_name():
+                return False
+
+            if has_purchased(self.product):
+                return False
+
+            if is_deferred(self.product):
+                return False
+
+            return True
+
         def get_sensitive(self):
-            return get_store_name() and not has_purchased(self.product)
+            self.sensitive = self.should_be_sensitive()
+            return self.sensitive
+
+        def periodic(self, st):
+            if self.should_be_sensitive() != self.sensitive:
+                renpy.restart_interaction()
+
+            return 5.0
 
     def has_purchased(product):
         """
@@ -353,7 +384,30 @@ init -1500 python in iap:
 
         p = get_product(product)
 
-        return persistent._iap_purchases.get(p.identifier, False)
+        # Check the cache first, since we might be off line.
+        if persistent._iap_purchases.get(p.identifier, False):
+            return True
+
+        # Then ask the backend, in case we bought the product
+        # recently.
+        return backend.has_purchased(p)
+
+
+    def is_deferred(product):
+        """
+        :doc: iap
+
+        Returns True if the user has asked to purchase `product`, but that
+        request has to be approved by a third party, such as a parent or
+        guardian.
+        """
+
+        p = get_product(product)
+
+        # Then ask the backend, in case we bought the product
+        # recently.
+        return backend.is_deferred(p)
+
 
     def get_store_name():
         """
