@@ -38,6 +38,10 @@ init -1500 python in iap:
             self.amazon = amazon
             self.ios = ios
 
+            # None if the item is not purchasable. Otherwise, a string that
+            # gives the price in the local language.
+            self.price = None
+
     class NoneBackend(object):
         """
         The IAP backend that is used when IAP is not supported.
@@ -81,6 +85,14 @@ init -1500 python in iap:
             """
 
             return False
+
+        def get_price(self, p):
+            """
+            Returns the price of the item, or None if the item is not
+            purchasable.
+            """
+
+            return None
 
     class AndroidBackend(object):
         """
@@ -146,6 +158,9 @@ init -1500 python in iap:
         def is_deferred(self, p):
             return False
 
+        def get_price(self, p):
+            return ""
+
     if renpy.ios:
         import pyobjus
         IAPHelper = pyobjus.autoclass("IAPHelper")
@@ -164,8 +179,6 @@ init -1500 python in iap:
                 identifiers.addObject_(objc_str(p.ios))
 
             self.helper.productIdentifiers = identifiers
-            self.helper.validateProductIdentifiers()
-
 
         def get_store_name(self):
             if self.helper.canMakePayments():
@@ -207,6 +220,7 @@ init -1500 python in iap:
             return self.helper.hasPurchased_(identifier)
 
         def restore_purchases(self, interact=True):
+            self.helper.validateProductIdentifiers()
             self.helper.restorePurchases()
             self.wait_for_result(interact)
 
@@ -218,6 +232,14 @@ init -1500 python in iap:
             identifier = objc_str(self.identifier(p))
             return self.helper.isDeferred_(identifier)
 
+        def get_price(self, p):
+            identifier = objc_str(self.identifier(p))
+            rv = self.helper.formatPrice_(identifier)
+
+            if rv is not None:
+                rv = rv.UTF8String().decode("utf-8")
+
+            return rv
 
     # The backend we're using.
     backend = NoneBackend()
@@ -408,6 +430,21 @@ init -1500 python in iap:
         # recently.
         return backend.is_deferred(p)
 
+    def get_price(product):
+        """
+        :doc: iap
+
+        Returns a string giving the price of the `product` in the user's
+        local currency. Returns None if the price of the product is unknown -
+        which indicates the product cannot be purchased.
+        """
+
+        p = get_product(product)
+
+        if p.price is None:
+            p.price = backend.get_price(p)
+
+        return p.price
 
     def get_store_name():
         """
