@@ -35,6 +35,7 @@ init -1600 python:
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
         developer = [ 'D' ],
+        position_viewer = [ 'P' ],
         quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
         iconify = [ 'meta_m', 'alt_m' ],
         help = [ 'K_F1', 'meta_shift_/' ],
@@ -294,6 +295,7 @@ init -1100 python:
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
         progress_screen = _progress_screen,
+        position_viewer = _position_viewer,
         )
 
     config.underlay = [ km ]

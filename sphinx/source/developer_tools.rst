@@ -76,6 +76,14 @@ one that is not caused by a say statement, transition, or pause command.
 Usually, this means skipping to the next menu, but it will also stop when
 user-defined forms of interaction occur.
 
+Shift+P Position Viewer
+-----------------------
+
+When :var:`config.developer` is True, pressing position_viewer (by default,
+"shift+P"), will open Position Viewer. This allow you to adjustment a camera
+,3D layers and images positions by bars and manual inputs and see the result at
+the moment.
+
 .. _warping_to_a_line:
 
 Warping to a Line

@@ -85,6 +85,7 @@ Other Functionality
    sprites
    keymap
    developer_tools
+   camera
 
 Python and Ren'Py
 -----------------
