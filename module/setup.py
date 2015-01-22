@@ -96,6 +96,7 @@ else:
     sdl = [ 'SDL2' ]
     png = 'png'
 
+
 if has_fribidi:
     try:
         # Some versions of fribidi require glib, and it doesn't hurt to include it in
@@ -104,6 +105,13 @@ if has_fribidi:
         setuplib.extra_compile_args.extend(glib_flags.split())
     except:
         pass
+
+steam_sdk = os.environ.get("RENPY_STEAM_SDK", None)
+steam_platform = os.environ.get("RENPY_STEAM_PLATFORM", "")
+
+if steam_sdk:
+    setuplib.library_dirs.append("{}/redistributable_bin/{}".format(steam_sdk, steam_platform))
+    setuplib.include_dirs.append("{}/public".format(steam_sdk))
 
 # Modules directory.
 cython(
@@ -116,6 +124,8 @@ if has_fribidi and not android:
         "_renpybidi",
         [ "renpybidicore.c" ],
         ['fribidi'], define_macros=[ ("FRIBIDI_ENTRY", "") ])
+
+cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
 # Sound.
 pymodule("pysdlsound.__init__")
