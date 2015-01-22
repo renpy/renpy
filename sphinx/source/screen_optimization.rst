@@ -59,8 +59,8 @@ There are two ways Ren'Py automatically predicts screens:
 
 If screens are shown from python code, it's a good idea to start predicting
 the screen before it is shown. To start predicting a screen, use the
-:func:`renpy.start_screen_predict` function. To stop predicting a screen,
-use the :func:`renpy.stop_screen_predict` function.
+:func:`renpy.start_predict_screen` function. To stop predicting a screen,
+use the :func:`renpy.stop_predict_screen` function.
 
 
 Displayable Reuse

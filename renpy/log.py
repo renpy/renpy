@@ -90,7 +90,7 @@ class LogFile(object):
             else:
                 mode = "w"
 
-            if renpy.mobile:
+            if renpy.config.log_to_stdout:
 
                 import sys
                 self.file = sys.stdout
