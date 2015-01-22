@@ -99,9 +99,14 @@ init -1500 python in iap:
         The IAP backend that is used when IAP is supported.
         """
 
-        def __init__(self, devicePurchase, store_name):
-            self.devicePurchase = devicePurchase
+        def __init__(self, store, store_name):
+            self.store = store
             self.store_name = store_name
+
+            self.store.clearSKUs()
+
+            for p in products.values():
+                self.store.addSKU(self.identifier(p))
 
         def get_store_name(self):
             return self.store_name
@@ -125,41 +130,34 @@ init -1500 python in iap:
                 renpy.pause.
             """
 
-            while True:
-                rv = self.devicePurchase.checkPurchaseResult()
-
-                if rv:
-                    break
-
+            while not self.store.getFinished():
                 if interact:
                     renpy.pause(.1)
                 else:
                     time.sleep(.1)
 
-            if rv == 1:
-                return True
-            else:
-                return False
-
-
         def purchase(self, p, interact=True):
             identifier = self.identifier(p)
-            self.devicePurchase.beginPurchase(identifier)
-            return self.wait_for_result(interact=interact)
+            self.store.beginPurchase(identifier)
+            self.wait_for_result(interact=interact)
 
         def restore_purchases(self, interact=True):
-            self.devicePurchase.restorePurchases()
+            self.store.updatePrices();
+            self.wait_for_result(interact)
+
+            self.store.restorePurchases();
             self.wait_for_result(interact)
 
         def has_purchased(self, p):
             identifier = self.identifier(p)
-            return self.devicePurchase.isPurchaseOwned(identifier)
+            return self.store.hasPurchased(identifier)
 
         def is_deferred(self, p):
             return False
 
         def get_price(self, p):
-            return ""
+            identifier = self.identifier(p)
+            return self.store.getPrice(identifier)
 
     if renpy.ios:
         import pyobjus
@@ -212,12 +210,8 @@ init -1500 python in iap:
 
         def purchase(self, p, interact=True):
             identifier = objc_str(self.identifier(p))
-
             self.helper.beginPurchase_(identifier)
-
             self.wait_for_result(interact=interact)
-
-            return self.helper.hasPurchased_(identifier)
 
         def restore_purchases(self, interact=True):
             self.helper.validateProductIdentifiers()
@@ -296,6 +290,8 @@ init -1500 python in iap:
 
         renpy.scene()
         renpy.show(background)
+        renpy.pause(0)
+
         return f(*args, **kwargs)
 
     def restore(interact=True):
@@ -349,12 +345,13 @@ init -1500 python in iap:
         if persistent._iap_purchases[p.identifier]:
             return True
 
-        rv = backend.purchase(p, interact)
+        backend.purchase(p, interact)
 
-        if rv:
+        if backend.has_purchased(p):
             persistent._iap_purchases[p.identifier] = True
-
-        return rv
+            return True
+        else:
+            return False
 
     class Purchase(Action):
         """
@@ -474,14 +471,15 @@ init -1500 python in iap:
         """
 
         from jnius import autoclass
-        devicePurchase = autoclass('com.puzzlebrothers.renpurchase.devicePurchase')
+        Store = autoclass('org.renpy.iap.Store')
+        store = Store.getStore()
 
-        store_name = devicePurchase.getStoreName()
+        store_name = store.getStoreName()
 
         if store_name == "none":
             return NoneBackend()
 
-        return AndroidBackend(devicePurchase, store_name)
+        return AndroidBackend(store, store_name)
 
     def init():
         """
