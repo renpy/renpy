@@ -138,7 +138,7 @@ extensions = [ ]
 # A list of macros that are defined for all modules.
 global_macros = [ ]
 
-def cmodule(name, source, libs=[], define_macros=[]):
+def cmodule(name, source, libs=[], define_macros=[], language="c"):
     """
     Compiles the python module `name` from the files given in
     `source`, and the libraries in `libs`.
@@ -153,12 +153,13 @@ def cmodule(name, source, libs=[], define_macros=[]):
         extra_link_args=extra_link_args,
         libraries=libs,
         define_macros=define_macros + global_macros,
+        language=language,
         ))
 
 
 necessary_gen = [ ]
 
-def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None):
+def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None, language="c"):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -208,8 +209,13 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
     deps = [ i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) ]
 
     # Determine if any of the dependencies are newer than the c file.
-    c_fn = os.path.join("gen", name + ".c")
-    necessary_gen.append(name + ".c")
+
+    if language == "c++":
+        c_fn = os.path.join("gen", name + ".cc")
+        necessary_gen.append(name + ".cc")
+    else:
+        c_fn = os.path.join("gen", name + ".c")
+        necessary_gen.append(name + ".c")
 
     if os.path.exists(c_fn):
         c_mtime = os.path.getmtime(c_fn)
@@ -267,7 +273,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
 
     # Build the module normally once we have the c file.
     if compile_if:
-        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros)
+        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros, language=language)
 
 def find_unnecessary_gen():
 
