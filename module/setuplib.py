@@ -255,12 +255,18 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
 
         try:
             import subprocess
+
+            if language == "c++":
+                lang_args = [ "--cplus" ]
+            else:
+                lang_args = [ ]
+
             subprocess.check_call([
                 cython_command,
                 "-Iinclude",
                 "-Igen",
                 "-I..",
-                "-a",
+                ] + lang_args + [
                 fn,
                 "-o",
                 c_fn])
