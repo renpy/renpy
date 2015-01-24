@@ -1,39 +1,156 @@
 cdef extern from "steam/steam_api.h":
-    bint SteamAPI_Init()
+    ctypedef bint bool
+
+    bool SteamAPI_Init()
     void SteamAPI_RunCallbacks()
 
     cdef cppclass ISteamUserStats:
-        bint RequestCurrentStats()
+        bool RequestCurrentStats()
+        bool StoreStats()
+
+        bool GetAchievement(const char *pchName, bool *pbAchieved);
+        bool SetAchievement(const char *pchName);
+        bool ClearAchievement(const char *pchName);
+
+        int GetNumAchievements()
+        char *GetAchievementName(int)
 
     ISteamUserStats *SteamUserStats()
 
+    cdef cppclass ISteamUtils:
+        bint IsOverlayEnabled()
+
+    ISteamUtils *SteamUtils()
+
     ctypedef struct UserStatsReceived_t
 
+    bint SteamAPI_RestartAppIfNecessary(unsigned int)
+
+
 cdef extern from "steamcallbacks.h":
-    cdef cppclass OnUserStatsReceivedCallback:
-        OnUserStatsReceivedCallback(void (*)(UserStatsReceived_t *))
+    cdef cppclass SteamCallback[T]:
+        SteamCallback(void (*)(T *))
+
+import renpy
+
+################################################################# Initialization
+
+# Have we been initialized?
+initialized = None
+
+# Called periodically to run callbacks.
+def periodic():
+    SteamAPI_RunCallbacks()
+
+# Initialize the Steam API.
+def init():
+    """
+    :doc: steam
+
+    Initializes the Steam API. Returns true for success, false for failure.
+    If a failure has occurred, no other steam functions should be called.
+
+    This may be called multiple times, but only attempts initialization the
+    first time it's been called.
+    """
+
+    global initialized
+
+    if initialized is None:
+        initialized = SteamAPI_Init()
+
+        if initialized:
+            renpy.config.periodic_callbacks.append(periodic)
+
+    return initialized
 
 
-print SteamAPI_Init()
+######################################################### Stats and Achievements
 
+# A method that is called when the stats are available.
+got_stats = None
 
-stats_done = False
+cdef void call_got_stats(UserStatsReceived_t *s):
+    if got_stats is not None:
+        got_stats()
 
-cdef void stats_received_callback(UserStatsReceived_t *s):
-    global stats_done
-    stats_done = True
+cdef SteamCallback[UserStatsReceived_t] *stats_received_callback = \
+    new SteamCallback[UserStatsReceived_t](call_got_stats)
 
-cdef OnUserStatsReceivedCallback *on_stats_received = new OnUserStatsReceivedCallback(stats_received_callback)
+def retrieve_stats(callback):
+    """
+    :doc: steam_stats
 
-import time
+    Retrieves achievements and statistics from Steam. `callback` will be
+    called with no parameters if and when the statistics become available.
+    """
 
-def update_stats():
+    global got_stats
+    got_stats = callback
+
     print SteamUserStats().RequestCurrentStats()
 
-    start = time.time()
-    while not stats_done:
-        SteamAPI_RunCallbacks()
-        time.sleep(.01)
-    print time.time() - start
+def store_stats():
+    """
+    :doc: steam_stats
 
-update_stats()
+    Stores statistics and achievements on the Steam server.
+    """
+
+    SteamUserStats().StoreStats()
+
+def list_achievements():
+    """
+    :doc: steam_stats
+
+    Returns a list of achievement names.
+    """
+
+    rv = [ ]
+
+    cdef int na = SteamUserStats().GetNumAchievements()
+    cdef char *s
+    cdef int i
+
+    for 0 <= i < na:
+        s = <char *> SteamUserStats().GetAchievementName(i)
+        rv.append(s)
+
+    return rv
+
+def get_achievement(name):
+    """
+    :doc: steam_stats
+
+    Gets the state of the achievements with `name`. This returns True if the
+    achievement has been granted, False if it hasn't, and None if the achievement
+    is unknown or an error occurs.
+    """
+
+    cdef bool rv
+
+    if not SteamUserStats().GetAchievement(name, &rv):
+        return None
+
+    return rv
+
+def grant_achievement(name):
+    """
+    :doc: steam_stats
+
+    Grants the achievement with `name`. Call :func:`_renpysteam.store_stats` to
+    push this change to the server.
+    """
+
+    return SteamUserStats().SetAchievement(name)
+
+def clear_achievement(name):
+    """
+    :doc: steam_stats
+
+    Clears the achievement with `name`. Call :func:`_renpysteam.store_stats` to
+    push this change to the server.
+    """
+
+    return SteamUserStats().ClearAchievement(name)
+
