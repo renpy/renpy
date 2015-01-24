@@ -2,21 +2,34 @@
 #define STEAMCALLBACKS_H
 #include "steam/steam_api.h"
 
-class OnUserStatsReceivedCallback {
+template <class P>
+class SteamCallback : CCallbackBase {
+	void (*callback)(P*);
+
 public:
-	STEAM_CALLBACK( OnUserStatsReceivedCallback, OnUserStatsReceived, UserStatsReceived_t, steam_callback);
 
-	void (*callback)(UserStatsReceived_t *stats);
-
-	void callback_method(UserStatsReceived_t *stats) {
-		callback(stats);
+	SteamCallback(void (*func)(P *)) : callback(func) {
+		m_iCallback = P::k_iCallback;
+		SteamAPI_RegisterCallback(this, P::k_iCallback);
 	}
 
-	OnUserStatsReceivedCallback(void (*callback)(UserStatsReceived_t *))
-		: steam_callback(this, &OnUserStatsReceivedCallback::callback_method) {
-		this->callback = callback;
+	~SteamCallback() {
+		SteamAPI_UnregisterCallback(this);
+	}
+
+protected:
+
+	virtual void Run(void *param) {
+		callback((P *) param);
+	}
+
+	virtual void Run( void *param, bool, SteamAPICall_t ) {
+		callback((P *) param);
+	}
+
+	int GetCallbackSizeBytes() {
+		return sizeof(P);
 	}
 };
-
 
 #endif
