@@ -1,8 +1,13 @@
 cdef extern from "steam/steam_api.h":
     ctypedef bint bool
 
+    # Init.
+
     bool SteamAPI_Init()
     void SteamAPI_RunCallbacks()
+    bool SteamAPI_RestartAppIfNecessary(unsigned int)
+
+    # Stats & Achievements.
 
     cdef cppclass ISteamUserStats:
         bool RequestCurrentStats()
@@ -15,16 +20,20 @@ cdef extern from "steam/steam_api.h":
         int GetNumAchievements()
         char *GetAchievementName(int)
 
+        bool GetStat(const char *pchName, float *pData)
+        bool SetStat(const char *pchName, float fData)
+
+    ctypedef struct UserStatsReceived_t
     ISteamUserStats *SteamUserStats()
+
+    # Utils.
 
     cdef cppclass ISteamUtils:
         bint IsOverlayEnabled()
 
     ISteamUtils *SteamUtils()
 
-    ctypedef struct UserStatsReceived_t
 
-    bint SteamAPI_RestartAppIfNecessary(unsigned int)
 
 
 cdef extern from "steamcallbacks.h":
@@ -67,7 +76,7 @@ def init():
 
 ######################################################### Stats and Achievements
 
-# A method that is called when the stats are available.
+# A callable that is called when the stats are available.
 got_stats = None
 
 cdef void call_got_stats(UserStatsReceived_t *s):
@@ -154,3 +163,28 @@ def clear_achievement(name):
 
     return SteamUserStats().ClearAchievement(name)
 
+def get_stat(name):
+    """
+    :doc: steam_stats
+
+    Returns the value of the stat with `name`, or None if no such stat
+    exits.
+    """
+
+    cdef float rv
+
+    if not SteamUserStats().GetStat(name, &rv):
+        return None
+
+    return rv
+
+def set_stat(name, value):
+    """
+    :doc: steam_stats
+
+    Sets the value of the stat with `name`, which must have the type of
+    FLOAT. Call :func:`_renpysteam.store_stats` to push this change to the
+    server.
+    """
+
+    return SteamUserStats().SetStat(name, <float> value)
