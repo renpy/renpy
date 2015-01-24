@@ -820,7 +820,7 @@ class SLDisplayable(SLBlock):
                     report.append("const")
                 elif cache.positional is None:
                     report.append("new")
-                elif cache.positiona[i] == positional[i]:
+                elif cache.positional[i] == positional[i]:
                     report.append("equal")
                 else:
                     report.append("not-equal")
