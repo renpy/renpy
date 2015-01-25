@@ -23,6 +23,7 @@
 cdef extern from "steam/steam_api.h":
     ctypedef bint bool
     ctypedef int int32
+    ctypedef unsigned int uint32
 
     # Init.
 
@@ -39,7 +40,7 @@ cdef extern from "steam/steam_api.h":
         bool GetAchievement(const char *pchName, bool *pbAchieved);
         bool SetAchievement(const char *pchName);
         bool ClearAchievement(const char *pchName);
-
+        bool IndicateAchievementProgress(const char *pchName, uint32 nCurProgress, uint32 nMaxProgress)
         int GetNumAchievements()
         char *GetAchievementName(int)
 
@@ -192,6 +193,16 @@ def clear_achievement(name):
     """
 
     return SteamUserStats().ClearAchievement(name)
+
+def indicate_achievement_progress(name, cur_progress, max_progress):
+    """
+    :doc: steam_stats
+
+    Indicates achievement progress to the user. This does *not* unlock the
+    achievement.
+    """
+
+    return SteamUserStats().IndicateAchievementProgress(name, cur_progress, max_progress)
 
 def get_float_stat(name):
     """
