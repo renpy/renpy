@@ -1,5 +1,28 @@
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 cdef extern from "steam/steam_api.h":
     ctypedef bint bool
+    ctypedef int int32
 
     # Init.
 
@@ -20,7 +43,9 @@ cdef extern from "steam/steam_api.h":
         int GetNumAchievements()
         char *GetAchievementName(int)
 
+        bool GetStat(const char *pchName, int32 *pData)
         bool GetStat(const char *pchName, float *pData)
+        bool SetStat(const char *pchName, int32 iData)
         bool SetStat(const char *pchName, float fData)
 
     ctypedef struct UserStatsReceived_t
@@ -168,7 +193,7 @@ def clear_achievement(name):
 
     return SteamUserStats().ClearAchievement(name)
 
-def get_stat(name):
+def get_float_stat(name):
     """
     :doc: steam_stats
 
@@ -178,12 +203,12 @@ def get_stat(name):
 
     cdef float rv
 
-    if not SteamUserStats().GetStat(name, &rv):
+    if not SteamUserStats().GetStat(<char *> name, &rv):
         return None
 
     return rv
 
-def set_stat(name, value):
+def set_float_stat(name, value):
     """
     :doc: steam_stats
 
@@ -192,7 +217,38 @@ def set_stat(name, value):
     server.
     """
 
-    return SteamUserStats().SetStat(name, <float> value)
+    cdef float v = value
+
+    return SteamUserStats().SetStat(<char *> name, v)
+
+def get_int_stat(name):
+    """
+    :doc: steam_stats
+
+    Returns the value of the stat with `name`, or None if no such stat
+    exits.
+    """
+
+    cdef int32 rv
+
+    if not SteamUserStats().GetStat(<char *> name, &rv):
+        return None
+
+    return rv
+
+def set_int_stat(name, value):
+    """
+    :doc: steam_stats
+
+    Sets the value of the stat with `name`, which must have the type of
+    INT. Call :func:`_renpysteam.store_stats` to push this change to the
+    server.
+    """
+
+    cdef int32 v
+
+    return SteamUserStats().SetStat(<char *> name, v)
+
 
 ########################################################################### Apps
 
