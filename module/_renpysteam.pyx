@@ -92,11 +92,27 @@ cdef extern from "steam/steam_api.h":
         k_EOverlayToStoreFlag_AddToCartAndShow
 
     cdef cppclass ISteamFriends:
+        const char *GetPersonaName()
         void ActivateGameOverlay(const char *pchDialog)
         void ActivateGameOverlayToWebPage(const char *pchURL)
         void ActivateGameOverlayToStore(AppId_t nAppID, EOverlayToStoreFlag eFlag)
 
     ISteamFriends *SteamFriends()
+
+    # User.
+
+    ctypedef uint32 AccountID_t
+    ctypedef uint32 HAuthTicket
+
+    cdef cppclass CSteamID:
+        AccountID_t GetAccountID()
+
+    cdef cppclass ISteamUser:
+        CSteamID GetSteamID()
+        HAuthTicket GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32 *pcbTicket)
+        void CancelAuthTicket(HAuthTicket hAuthTicket)
+
+    ISteamUser *SteamUser()
 
 
 cdef extern from "steamcallbacks.h":
@@ -406,6 +422,69 @@ def activate_overlay_to_store(appid, flag=STORE_NONE):
     """
 
     SteamFriends().ActivateGameOverlayToStore(appid, flag)
+
+########################################################################### User
+
+def get_persona_name():
+    """
+    :doc: steam_user
+
+    Returns the user's publicly-visible name.
+    """
+
+    return SteamFriends().GetPersonaName().decode("utf-8")
+
+
+def get_account_id():
+    """
+    :doc: steam_user
+
+    Returns the user's account ID.
+    """
+
+    return SteamUser().GetSteamID().GetAccountID()
+
+cdef HAuthTicket h_ticket = 0
+ticket = None
+
+def get_session_ticket():
+    """
+    :doc: steam_user
+
+    Gets a ticket that can be sent to the server to authenticate this user.
+    """
+
+    global ticket
+    global h_ticket
+
+    cdef char ticket_buf[2048]
+    cdef uint32 ticket_len
+
+    if ticket is not None:
+        return ticket
+
+    h_ticket = SteamUser().GetAuthSessionTicket(ticket_buf, 2048, &ticket_len)
+
+    if h_ticket:
+        ticket = ticket_buf[0:ticket_len]
+
+    return ticket
+
+def cancel_ticket():
+    """
+    :doc: steam_user
+
+    Cancels the ticket returned by :func:`_renpysteam.get_session_ticket`.
+    """
+
+
+    global h_ticket
+    global tocket
+
+    SteamUser().CancelAuthTicket(h_ticket)
+
+    h_ticket = 0
+    ticket = None
 
 
 ################################################################# Initialization
