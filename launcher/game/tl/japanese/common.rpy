@@ -9,9 +9,6 @@ translate japanese strings:
     old "Quick save complete."
     new "クイックセーブ完了。"
 
-
-translate japanese strings:
-
     # renpy/common/00gallery.rpy:521
     old "Image [index] of [count] locked."
     new "画像 [index] / [count] はロックされています。"
@@ -31,9 +28,6 @@ translate japanese strings:
     # renpy/common/00gallery.rpy:542
     old "return"
     new "戻る"
-
-
-translate japanese strings:
 
     # renpy/common/00gltest.rpy:50
     old "Graphics Acceleration"
@@ -127,15 +121,9 @@ translate japanese strings:
     old "Restart"
     new "再起動"
 
-
-translate japanese strings:
-
     # renpy/common/00keymap.rpy:168
     old "Saved screenshot as %s."
     new "スクリーンショットを %s に保存しました。"
-
-
-translate japanese strings:
 
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
@@ -173,9 +161,6 @@ translate japanese strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "本当に未読の会話、もしくは次の選択肢までスキップしますか？"
 
-
-translate japanese strings:
-
     # renpy/common/00library.rpy:77
     old "Skip Mode"
     new "スキップモード"
@@ -183,9 +168,6 @@ translate japanese strings:
     # renpy/common/00library.rpy:80
     old "Fast Skip Mode"
     new "高速スキップモード"
-
-
-translate japanese strings:
 
     # renpy/common/00updater.rpy:1258
     old "Updater"
@@ -223,9 +205,6 @@ translate japanese strings:
     old "The updates were cancelled."
     new "アップデートがキャンセルされました。"
 
-
-translate japanese strings:
-
     # renpy/common/_compat/gamemenu.rpym:180
     old "Empty Slot."
     new "空のスロット"
@@ -238,15 +217,9 @@ translate japanese strings:
     old "Next"
     new "次へ"
 
-
-translate japanese strings:
-
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
     new "ジョイスティックのマッピング"
-
-
-translate japanese strings:
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -300,9 +273,6 @@ translate japanese strings:
     old "Opens the errors.txt file in a text editor."
     new "テキストエディターで errors.txt を開きます。"
 
-
-translate japanese strings:
-
     # renpy/common/_layout/classic_load_save.rpym:152
     old "a"
     new "a"
@@ -310,8 +280,6 @@ translate japanese strings:
     # renpy/common/_layout/classic_load_save.rpym:161
     old "q"
     new "q"
-
-translate japanese strings:
 
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
@@ -385,8 +353,6 @@ translate japanese strings:
     old "Autoreload"
     new "オートリロード"
 
-translate japanese strings:
-
     # renpy/common/_developer/developer.rpym:65
     old "Developer Menu"
     new "開発者メニュー"
@@ -451,9 +417,6 @@ translate japanese strings:
     old "Done"
     new "完了"
 
-
-translate japanese strings:
-
     # renpy/common/_developer/inspector.rpym:43
     old "Displayable Inspector"
     new "Displayable インスペクター"
@@ -497,3 +460,11 @@ translate japanese strings:
     # renpy/common/_developer/inspector.rpym:80
     old "Location"
     new "ファイル"
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "クリップボードボイシングが有効化しました。 'shift+C'で無効化します。"
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "セルフボイシングが有効化しました。 'v' で無効化します。"
