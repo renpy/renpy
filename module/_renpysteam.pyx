@@ -79,38 +79,6 @@ cdef extern from "steamcallbacks.h":
 
 import renpy
 
-################################################################# Initialization
-
-# Have we been initialized?
-initialized = None
-
-# Called periodically to run callbacks.
-def periodic():
-    SteamAPI_RunCallbacks()
-
-# Initialize the Steam API.
-def init():
-    """
-    :doc: steam
-
-    Initializes the Steam API. Returns true for success, false for failure.
-    If a failure has occurred, no other steam functions should be called.
-
-    This may be called multiple times, but only attempts initialization the
-    first time it's been called.
-    """
-
-    global initialized
-
-    if initialized is None:
-        initialized = SteamAPI_Init()
-
-        if initialized:
-            renpy.config.periodic_callbacks.append(periodic)
-
-    return initialized
-
-
 ######################################################### Stats and Achievements
 
 # A callable that is called when the stats are available.
@@ -371,3 +339,36 @@ def activate_overlay_to_store(appid, flag=STORE_NONE):
     """
 
     SteamFriends().ActivateGameOverlayToStore(appid, flag)
+
+
+################################################################# Initialization
+
+# Have we been initialized?
+initialized = None
+
+# Called periodically to run callbacks.
+def periodic():
+    SteamAPI_RunCallbacks()
+
+# Initialize the Steam API.
+def init():
+    """
+    :doc: steam
+
+    Initializes the Steam API. Returns true for success, false for failure.
+    If a failure has occurred, no other steam functions should be called.
+
+    This may be called multiple times, but only attempts initialization the
+    first time it's been called.
+    """
+
+    global initialized
+
+    if initialized is None:
+        initialized = SteamAPI_Init()
+
+        if initialized:
+            renpy.config.periodic_callbacks.append(periodic)
+            set_overlay_notification_position(POSITION_TOP_RIGHT)
+
+    return initialized
