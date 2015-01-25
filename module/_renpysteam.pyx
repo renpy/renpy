@@ -58,6 +58,21 @@ cdef extern from "steam/steam_api.h":
 
     ISteamApps *SteamApps()
 
+    # Friends.
+
+    cdef enum EOverlayToStoreFlag:
+        k_EOverlayToStoreFlag_None
+        k_EOverlayToStoreFlag_AddToCart
+        k_EOverlayToStoreFlag_AddToCartAndShow
+
+    cdef cppclass ISteamFriends:
+        void ActivateGameOverlay(const char *pchDialog)
+        void ActivateGameOverlayToWebPage(const char *pchURL)
+        void ActivateGameOverlayToStore(AppId_t nAppID, EOverlayToStoreFlag eFlag)
+
+    ISteamFriends *SteamFriends()
+
+
 cdef extern from "steamcallbacks.h":
     cdef cppclass SteamCallback[T]:
         SteamCallback(void (*)(T *))
@@ -315,3 +330,44 @@ def set_overlay_notification_position(position):
     """
 
     SteamUtils().SetOverlayNotificationPosition(position)
+
+def activate_overlay(dialog):
+    """
+    :doc: steam_overlay
+
+    Activates the Steam overlay.
+
+    `dialog`
+        The dialog to open the overlay to. One of "Friends", "Community",
+        "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements"
+    """
+
+    SteamFriends().ActivateGameOverlay(dialog)
+
+def activate_overlay_to_web_page(url):
+    """
+    :doc: steam_overlay
+
+    Activates the Steam overlay, and opens the web page at `url`.
+    """
+
+    SteamFriends().ActivateGameOverlayToWebPage(url)
+
+STORE_NONE = k_EOverlayToStoreFlag_None
+STORE_ADD_TO_CART = k_EOverlayToStoreFlag_AddToCart
+STORE_ADD_TO_CART_AND_SHOW = k_EOverlayToStoreFlag_AddToCartAndShow
+
+def activate_overlay_to_store(appid, flag=STORE_NONE):
+    """
+    :doc: steam_overlay
+
+    Opens the steam overlay to the store.
+
+    `appid`
+        The appid to open.
+
+    `flag`
+        One of _renpysteam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
+    """
+
+    SteamFriends().ActivateGameOverlayToStore(appid, flag)
