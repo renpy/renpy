@@ -14,14 +14,6 @@ translate None strings:
     old "Updater"
     new "アップデーター"
 
-    # renpy/common/00updater.rpy:1260
-    old "An error has occured:"
-    new "エラーが発生しました:"
-
-    # renpy/common/00updater.rpy:1262
-    old "Checking for updates."
-    new "アップデートを確認しています。"
-
     # renpy/common/00updater.rpy:1264
     old "This program is up to date."
     new "このプログラムは最新の状態です。"
@@ -42,10 +34,6 @@ translate None strings:
     old "Unpacking the updates."
     new "アップデートを展開しています。"
 
-    # renpy/common/00updater.rpy:1274
-    old "Finishing up."
-    new "最終処理中です。"
-
     # renpy/common/00updater.rpy:1276
     old "The updates have been installed. The program will restart."
     new "アップデートがインストールされました。プログラムを再起動します。"
@@ -57,14 +45,6 @@ translate None strings:
     # renpy/common/00updater.rpy:1280
     old "The updates were cancelled."
     new "アップデートがキャンセルされました。"
-
-    # renpy/common/00updater.rpy:1294
-    old "Proceed"
-    new "続行"
-
-    # renpy/common/00updater.rpy:1297
-    old "Cancel"
-    new "中止"
 
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
@@ -282,10 +262,6 @@ translate None strings:
     old "Quick save complete."
     new "クイックセーブ完了。"
 
-# Translation updated at 2014-02-08 16:38
-
-translate None strings:
-
     # renpy/common/_developer/inspector.rpym:43
     old "Displayable Inspector"
     new "Displayable インスペクター"
@@ -321,10 +297,6 @@ translate None strings:
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
     new "<repr() 失敗>"
-
-# Translation updated at 2014-02-08 16:38
-
-translate None strings:
 
     # renpy/common/_developer/developer.rpym:65
     old "Developer Menu"
@@ -389,10 +361,6 @@ translate None strings:
     # renpy/common/_developer/developer.rpym:467
     old "Done"
     new "完了"
-
-# Translation updated at 2014-02-24 16:15
-
-translate None strings:
 
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
@@ -473,3 +441,53 @@ translate None strings:
     # renpy/common/_developer/inspector.rpym:80
     old "Location"
     new "ファイル"
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "クリップボードボイシングが有効化しました。 'shift+C'で無効化します。"
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "セルフボイシングが有効化しました。 'v' で無効化します。"
+
+##Lancherでのみ必要###########################################
+    # # renpy/common/00gltest.rpy:95
+    # old "Quit"
+    # new "終了"
+    #
+    # # renpy/common/00gltest.rpy:100
+    # old "Return"
+    # new "戻る"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:198
+    # old "Empty Slot."
+    # new "空のスロット"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:355
+    # old "Previous"
+    # new "前へ"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:362
+    # old "Next"
+    # new "次へ"
+##templateでのみ必要############################################
+
+    # renpy/common/00updater.rpy:1385
+    old "An error has occured:"
+    new "エラーが派生しました。"
+
+    # renpy/common/00updater.rpy:1387
+    old "Checking for updates."
+    new "更新をチェックしています。"
+
+    # renpy/common/00updater.rpy:1399
+    old "Finishing up."
+    new "更新を完了しました。"
+
+    # renpy/common/00updater.rpy:1419
+    old "Proceed"
+    new "処理中"
+
+    # renpy/common/00updater.rpy:1422
+    old "Cancel"
+    new "キャンセル"

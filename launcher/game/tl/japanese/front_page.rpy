@@ -105,3 +105,7 @@ translate japanese strings:
     old "Recompiling all rpy files into rpyc files..."
     new "すべての rpy ファイルを rpyc ファイルにコンパイルしています。"
 
+    # game/front_page.rpy:245
+    old "iOS"
+    new "iOS"
+
