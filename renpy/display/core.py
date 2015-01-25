@@ -1430,6 +1430,10 @@ class Interface(object):
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
 
+        # For compatibility with older code.
+        if renpy.config.periodic_callback:
+            renpy.config.periodic_callbacks.append(renpy.config.periodic_callback)
+
         renpy.display.emulator.init_emulator()
 
 
@@ -2717,8 +2721,8 @@ class Interface(object):
                     events = 1 + len(pygame.event.get([PERIODIC]))
                     self.ticks += events
 
-                    if renpy.config.periodic_callback:
-                        renpy.config.periodic_callback()
+                    for i in renpy.config.periodic_callbacks:
+                        i()
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()

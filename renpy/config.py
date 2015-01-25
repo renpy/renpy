@@ -264,6 +264,7 @@ text_layout = None
 
 # A callback that is called 20 times a second.
 periodic_callback = None
+periodic_callbacks = [ ]
 
 # Should we check that all style properties are in style_properties? (Internal)
 check_properties = True
