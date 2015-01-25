@@ -28,13 +28,35 @@ cdef extern from "steam/steam_api.h":
 
     # Utils.
 
+    cdef enum ENotificationPosition:
+        k_EPositionTopLeft
+        k_EPositionTopRight
+        k_EPositionBottomLeft
+        k_EPositionBottomRight
+
     cdef cppclass ISteamUtils:
         bint IsOverlayEnabled()
+        void SetOverlayNotificationPosition(ENotificationPosition eNotificationPosition)
 
     ISteamUtils *SteamUtils()
 
+    # Apps.
 
+    ctypedef int AppId_t
 
+    cdef cppclass ISteamApps:
+        bool BIsSubscribedApp(AppId_t appID)
+        const char *GetCurrentGameLanguage()
+        bool GetCurrentBetaName( char *pchName, int cchNameBufferSize );
+
+        bool BIsDlcInstalled(AppId_t nAppID)
+        void InstallDLC(AppId_t nAppID)
+        void UninstallDLC(AppId_t nAppID)
+
+    ctypedef struct DlcInstalled_t:
+        AppId_t m_nAppID
+
+    ISteamApps *SteamApps()
 
 cdef extern from "steamcallbacks.h":
     cdef cppclass SteamCallback[T]:
@@ -188,3 +210,108 @@ def set_stat(name, value):
     """
 
     return SteamUserStats().SetStat(name, <float> value)
+
+########################################################################### Apps
+
+def is_subscribed_app(appid):
+    """
+    :doc: steam_apps
+
+    Returns true if the user owns the app with `appid`, and false otherwise.
+    """
+
+    return SteamApps().BIsSubscribedApp(appid)
+
+def get_current_game_language():
+    """
+    :doc: steam_apps
+
+    Return the name of the language the user has selected.
+    """
+
+    cdef const char *s = SteamApps().GetCurrentGameLanguage()
+    return str(s)
+
+def get_current_beta_name():
+    """
+    :doc: steam_apps
+
+    Returns the name of the current beta, or None if it can't.
+    """
+
+    cdef char rv[256]
+
+    if not SteamApps().GetCurrentBetaName(rv, 256):
+        return None
+
+    return str(rv)
+
+def dlc_installed(appid):
+    """
+    :doc: steam_apps
+
+    Returns True if `dlc` is installed, or False otherwise.
+    """
+
+    return SteamApps().BIsDlcInstalled(appid)
+
+# A callable that is called when the stats are available.
+got_dlc = None
+
+cdef void call_got_dlc(DlcInstalled_t *s):
+    if got_dlc is not None:
+        got_dlc(s.m_nAppID)
+
+cdef SteamCallback[DlcInstalled_t] *dlc_callback = \
+    new SteamCallback[DlcInstalled_t](call_got_dlc)
+
+def install_dlc(appid, callback):
+    """
+    :doc: steam_apps
+
+    Requests the DLC with `appid` be installed. If not None, `callback`
+    will be called with `appid` when the install finishes. Only one
+    callback can be registered at a time.
+    """
+
+    global got_dlc
+    got_dlc = callback
+
+    SteamApps().InstallDLC(appid)
+
+def uninstall_dlc(appid):
+    """
+    :doc: steam_apps
+
+    Requests that the DLC with `appid` be uninstalled.
+    """
+
+    SteamApps().UninstallDLC(appid)
+
+######################################################################## Overlay
+
+def is_overlay_enabled():
+    """
+    :doc: steam_overlay
+
+    Returns true if the steam overlay is enabled. (This might take a while to
+    return true once the game starts.)
+    """
+
+    return SteamUtils().IsOverlayEnabled()
+
+POSITION_TOP_LEFT = k_EPositionTopLeft
+POSITION_TOP_RIGHT = k_EPositionTopRight
+POSITION_BOTTOM_LEFT = k_EPositionBottomLeft
+POSITION_BOTTOM_RIGHT = k_EPositionBottomRight
+
+def set_overlay_notification_position(position):
+    """
+    :doc: steam_overlay
+
+    Sets the position of the steam overlay. `Position` should be one of
+    _renpysteam.POSTION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
+    or .POSITION_BOTTOM_RIGHT.
+    """
+
+    SteamUtils().SetOverlayNotificationPosition(position)
