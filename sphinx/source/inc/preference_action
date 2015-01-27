@@ -86,6 +86,10 @@
     * Preference("self voicing", "disable") - Disable self-voicing.
     * Preference("self voicing", "toggle") - Toggles self-voicing.
     
+    * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
+    * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
+    * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
+    
     Values that can be used with bars are:
     
     * Preference("text speed")

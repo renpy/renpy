@@ -344,15 +344,19 @@ Text tags that only apply to dialogue are:
 
         "Line 1{w} Line 1{w=1.0} Line 1"
 
+It's also possible to define :ref:`custom text tags <custom-text-tags>` using
+Python.
 
-User-Defined Text Tags
-----------------------
+Style Text Tags
+---------------
 
-Ren'Py also supports user-defined text tags. A user-defined text tag
-is a text tag where the tag name is empty. In this case, the argument
-is taken to be the name of a style. The text between this tag and the
-closing tag has the following properties set to those defined in the
-style:
+Ren'Py supports text tags that access styles. These are text tags
+where the tag name is empty. In this case, the argument
+is taken to be the name of a style. For example, the {=mystyle} tag
+will acces the ``mystyle`` style.
+
+The text between the tag and the corresponding closing tag has the following
+properties set to those defined in the style:
 
 * antialias
 * font

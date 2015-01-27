@@ -158,6 +158,7 @@
 * Zoom
 * ZoomInOut
 * absolute
+* achievement
 * :var:`adv`
 * anim
 * :var:`blinds`

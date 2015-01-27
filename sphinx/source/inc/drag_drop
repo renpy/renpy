@@ -74,7 +74,7 @@
     `clicked`
         A callback this is called, with no arguments, when the Drag is
         clicked without being moved. A droppable can also be focused
-        and clicked.  If the callback returns a value othe than None,
+        and clicked.  If the callback returns a value other than None,
         that value is returned as the result of the interaction.
     
     `drag_handle`

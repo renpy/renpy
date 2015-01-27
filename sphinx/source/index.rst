@@ -100,6 +100,7 @@ Python and Ren'Py
    modes
    udd
    cds
+   custom_text_tags
    character_callbacks
    file_python
    other

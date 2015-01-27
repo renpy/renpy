@@ -14,5 +14,5 @@
         of the movie.
     
     The contents of this displayable when a movie is not playing are undefined.
-    (And may change when a rollback occurs.) 
+    (And may change when a rollback occurs.)
 
