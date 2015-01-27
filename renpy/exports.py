@@ -86,6 +86,8 @@ from renpy.text.extras import check_text_tags
 
 from renpy.memory import profile_memory, diff_memory, profile_rollback
 
+from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -138,7 +140,11 @@ def public_api():
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
     image_exists
-    profile_memory, diff_memory
+    profile_memory, diff_memory, profile_rollback
+    TEXT_TAG
+    TEXT_TEXT
+    TEXT_PARAGRAPH
+    TEXT_DISPLAYABLE
 
 del public_api
 

@@ -1328,6 +1328,9 @@ class Text(renpy.display.core.Displayable):
         # Tokenize the text.
         tokens = self.tokenize(text)
 
+        if renpy.config.custom_text_tags:
+            tokens = self.apply_custom_tags(tokens)
+
         # self.tokens is a list of pairs, where the first component of
         # each pair is TEXT, NEWLINE, TAG, or DISPLAYABLE, and the second
         # is text or a displayable.
@@ -1649,6 +1652,78 @@ class Text(renpy.display.core.Displayable):
         return tokens
 
 
+    def apply_custom_tags(self, tokens):
+        """
+        Apply new-style custom text tags.
+        """
+
+        rv = [ ]
+
+        while tokens:
+
+            t = tokens.pop(0)
+            kind, text = t
+
+            if kind != TAG:
+                rv.append(t)
+                continue
+
+            else:
+
+                tag, _, value = text.partition("=")
+
+                func = renpy.config.custom_text_tags.get(tag, None)
+
+                if func is None:
+                    rv.append(t)
+                    continue
+
+                # The contents of this tag.
+                contents = [ ]
+
+                # The close tag we're lookin for.
+                close = "/" + tag
+
+                # The number of open tags.
+                count = 1
+
+                while tokens:
+
+                    # Count the number of `tag` tags that are still open.
+                    t2 = tokens.pop(0)
+
+                    kind2, text2 = t2
+
+                    if kind2 == TAG:
+                        tag2, _, _ = text2.partition("=")
+
+                        if tag2 == tag:
+                            count += 1
+                        elif tag2 == close:
+                            count -= 1
+                            if not count:
+                                break
+
+                    contents.append(t2)
+
+                if count:
+                    raise Exception("Text ended while the '{}' text tag was still open.".format(tag))
+
+                new_contents = func(tag, value, contents)
+
+                new_tokens = [ ]
+
+                for kind2, text2 in new_contents:
+                    if isinstance(text2, str):
+                        text2 = unicode(text2)
+
+                    new_tokens.append((kind2, text2))
+
+                new_tokens.extend(tokens)
+                tokens = new_tokens
+
+        return rv
+
     def get_displayables(self, tokens):
         """
         Goes through the list of tokens. Returns the set of displayables that
@@ -1681,6 +1756,7 @@ class Text(renpy.display.core.Displayable):
             new_tokens.append(t)
 
         return new_tokens, displayables
+
 
 language_tailor = textsupport.language_tailor
 

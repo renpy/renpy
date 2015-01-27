@@ -559,6 +559,9 @@ gesture_stroke_size = .2
 # Should we log to stdout rather than files?
 log_to_stdout = False
 
+# new-style custom text tags.
+custom_text_tags = { }
+
 del renpy
 del os
 
