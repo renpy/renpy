@@ -65,6 +65,14 @@ def check_text_tags(s):
     an error, or None if there is no error.
     """
 
+    custom_tags = renpy.config.custom_text_tags
+
+    if custom_tags:
+        all_tags = dict(text_tags)
+        all_tags.update(renpy.config.custom_text_tags)
+    else:
+        all_tags = text_tags
+
     tokens = textsupport.tokenize(unicode(s))
 
     tag_stack = [ ]
@@ -91,10 +99,10 @@ def check_text_tags(s):
             tag_stack.pop()
             continue
 
-        if text not in text_tags:
+        if text not in all_tags:
             return "Text tag '%s' is not known." % text
 
-        if text_tags[text]:
+        if all_tags[text]:
             tag_stack.append(text)
 
     if tag_stack:
