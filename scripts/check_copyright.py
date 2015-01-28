@@ -69,7 +69,7 @@ def process_file(fn):
 
 
             m = re.search(
-                r"Copyright (\d{4})-2014 Tom Rothamel",
+                r"Copyright (\d{4})-2015 Tom Rothamel",
                 l)
 
             if m:
