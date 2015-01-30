@@ -44,7 +44,8 @@ The python equivalent of an ATL transform is a Transform object.
         * The animation timebase, in seconds.
 
         The function should return a delay, in seconds, after which it will
-        be called again, or None to never be called again.
+        be called again, or None to be called again at the start of the next
+        interaction.
 
     Additional arguments are taken as values to set transform properties to.
 
