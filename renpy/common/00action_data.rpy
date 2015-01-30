@@ -94,7 +94,8 @@ init -1600 python:
         be set to `value`.
         """
 
-        identity_fields = [ "name", "value" ]
+        identity_fields = [ "value" ]
+        equality_fields = [ "name" ]
 
         def __init__(self, name, value):
             self.name = name
@@ -253,7 +254,8 @@ init -1600 python:
              If not None, then this is the false value we use.
          """
 
-        identity_fields = [ "name", "true_value", "false_value" ]
+        identity_fields = [ "true_value", "false_value" ]
+        equality_fields = [ "name" ]
 
         def __init__(self, name, true_value=None, false_value=None):
             self.name = name
