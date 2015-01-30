@@ -411,7 +411,7 @@ class Transform(Container):
     additive = Proxy("additive")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("anchor")
+    transform_anchor = Proxy("transform_anchor")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
