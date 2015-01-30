@@ -139,8 +139,7 @@ init python:
 
         def call(self, cmd, cancel=False, use_path=False, yes=False):
 
-            print
-            print " ".join(cmd)
+            cmd = [ renpy.fsencode(i) for i in cmd ]
 
             self.cmd = cmd
 
@@ -168,7 +167,7 @@ init python:
                     kwargs["stdin"] = subprocess.PIPE
 
                 try:
-                    self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
                 except:
                     import traceback
                     traceback.print_exc(file=f)
