@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1600 python:
+
     ##########################################################################
     # TransformViewer
     class TransformViewer(object):
@@ -107,10 +108,13 @@ init -1600 python:
             return None
 
         def put_clipboard(self, prop, value):
-            if renpy.put_clipboard("%s %s" % (prop, value)):
-                renpy.notify('Putted "%s %s" on clipboard' % (prop, value))
-            else:
+            try:
+                from pygame import scrap, locals
+                scrap.put(locals.SCRAP_TEXT, "%s %s" % (prop, value))
+            except ImportError:
                 renpy.notify(_("Can't open clipboard"))
+            else:
+                renpy.notify(__('Putted "%s %s" on clipboard') % (prop, value))
 
         def edit_value(self, function, int=False):
             v = renpy.invoke_in_new_context(renpy.call_screen, "_input_screen")
@@ -130,11 +134,8 @@ init -1600 python:
     class CameraViewer(object):
 
         def __init__(self):
-            self.range_x         = 50000
-            self.range_y         = 50000
-            self.range_z         = 10000
-            self.range_r         = 360
-            self.range_focal_length = 300
+            self.range_camera_pos   = 6000
+            self.range_rotate       = 360
             self.range_layer_z   = 10000
 
         def init(self):
@@ -143,11 +144,11 @@ init -1600 python:
             self._camera_x = _camera_x
             self._camera_y = _camera_y
             self._camera_z = _camera_z
-            self._camera_r = _camera_r
+            self._camera_rotate = _camera_rotate
             self._3d_layers = _3d_layers.copy()
 
         def camera_reset(self):
-            camera_move(self._camera_x, self._camera_y, self._camera_z, self._camera_r)
+            camera_move(self._camera_x, self._camera_y, self._camera_z, self._camera_rotate)
             renpy.restart_interaction()
 
         def layer_reset(self):
@@ -157,24 +158,20 @@ init -1600 python:
             renpy.restart_interaction()
 
         def x_changed(self, v):
-            camera_move(v - self.range_x, _camera_y, _camera_z, _camera_r)
+            camera_move(v - self.range_camera_pos, _camera_y, _camera_z, _camera_rotate)
             renpy.restart_interaction()
 
         def y_changed(self, v):
-            camera_move(_camera_x, v - self.range_y, _camera_z, _camera_r)
+            camera_move(_camera_x, v - self.range_camera_pos, _camera_z, _camera_rotate)
             renpy.restart_interaction()
 
         def z_changed(self, v):
-            camera_move(_camera_x, _camera_y, v - self.range_z, _camera_r)
+            camera_move(_camera_x, _camera_y, v - self.range_camera_pos, _camera_rotate)
             renpy.restart_interaction()
 
         def r_changed(self, v):
-            camera_move(_camera_x, _camera_y, _camera_z, v - self.range_r)
+            camera_move(_camera_x, _camera_y, _camera_z, v - self.range_rotate)
             renpy.restart_interaction()
-
-        # def f_changed(self, v):
-        #     set_focal_length(v)
-        #     renpy.restart_interaction()
 
         def generate_layer_z_changed(self, l):
             def layer_z_changed(v):
@@ -182,16 +179,17 @@ init -1600 python:
                 renpy.restart_interaction()
             return layer_z_changed
 
-        def put_clipboard(self, tab, layer=""):
-            string = ""
-            if tab:
-                string = '$camera_move(%s, %s, %s, %s, duration=0)' % (_camera_x, _camera_y, _camera_z, _camera_r)
-            else:
+        def put_clipboard(self, camera_tab, layer=""):
+            string = '$camera_move(%s, %s, %s, %s, duration=0)' % (_camera_x, _camera_y, _camera_z, _camera_rotate)
+            if not camera_tab:
                 string = '$layer_move("%s", %s, duration=0)' % (layer, _3d_layers[layer])
-            if renpy.put_clipboard(string):
-                renpy.notify("Putted '%s' on clipboard" % string)
-            else:
+            try:
+                from pygame import scrap, locals
+                scrap.put(locals.SCRAP_TEXT, string)
+            except:
                 renpy.notify(_("Can't open clipboard"))
+            else:
+                renpy.notify(__("Putted '%s' on clipboard") % string)
 
         def edit_value(self, function, range):
             v = renpy.invoke_in_new_context(renpy.call_screen, "_input_screen")
@@ -256,28 +254,24 @@ screen _position_viewer(tab="images", layer="master", tag=""):
             textbutton _("clip board") action Function(_camera_viewer.put_clipboard, True)
             hbox:
                 label "x"
-                textbutton "[_camera_x]" action Function(_camera_viewer.edit_value, _camera_viewer.x_changed, _camera_viewer.range_x)
-                bar adjustment ui.adjustment(range=_camera_viewer.range_x*2, value=_camera_x+_camera_viewer.range_x, page=1, changed=_camera_viewer.x_changed) xalign 1.
+                textbutton "[_camera_x]" action Function(_camera_viewer.edit_value, _camera_viewer.x_changed, _camera_viewer.range_camera_pos)
+                bar adjustment ui.adjustment(range=_camera_viewer.range_camera_pos*2, value=_camera_x+_camera_viewer.range_camera_pos, page=1, changed=_camera_viewer.x_changed) xalign 1.
             hbox:
                 label "y"
-                textbutton "[_camera_y]" action Function(_camera_viewer.edit_value, _camera_viewer.y_changed, _camera_viewer.range_y)
-                bar adjustment ui.adjustment(range=_camera_viewer.range_y*2, value=_camera_y+_camera_viewer.range_y, page=1, changed=_camera_viewer.y_changed) xalign 1.
+                textbutton "[_camera_y]" action Function(_camera_viewer.edit_value, _camera_viewer.y_changed, _camera_viewer.range_camera_pos)
+                bar adjustment ui.adjustment(range=_camera_viewer.range_camera_pos*2, value=_camera_y+_camera_viewer.range_camera_pos, page=1, changed=_camera_viewer.y_changed) xalign 1.
             hbox:
                 label "z"
-                textbutton "[_camera_z]" action Function(_camera_viewer.edit_value, _camera_viewer.z_changed, _camera_viewer.range_z)
-                bar adjustment ui.adjustment(range=_camera_viewer.range_z*2, value=_camera_z+_camera_viewer.range_z, page=1, changed=_camera_viewer.z_changed) xalign 1.
+                textbutton "[_camera_z]" action Function(_camera_viewer.edit_value, _camera_viewer.z_changed, _camera_viewer.range_camera_pos)
+                bar adjustment ui.adjustment(range=_camera_viewer.range_camera_pos*2, value=_camera_z+_camera_viewer.range_camera_pos, page=1, changed=_camera_viewer.z_changed) xalign 1.
             hbox:
                 label "rotate"
-                textbutton "[_camera_r]" action Function(_camera_viewer.edit_value, _camera_viewer.r_changed, _camera_viewer.range_r)
-                bar adjustment ui.adjustment(range=_camera_viewer.range_r*2, value=_camera_r+_camera_viewer.range_r, page=1, changed=_camera_viewer.r_changed) xalign 1.
-            # hbox:
-            #     label "film size"
-            #     textbutton "[_focal_length]" action Function(_camera_viewer.edit_value, _camera_viewer.f_changed, 0)
-            #     bar adjustment ui.adjustment(range=_camera_viewer.range_focal_length, value=_focal_length, page=1, changed=_camera_viewer.f_changed) xalign 1.
+                textbutton "[_camera_rotate]" action Function(_camera_viewer.edit_value, _camera_viewer.r_changed, _camera_viewer.range_rotate)
+                bar adjustment ui.adjustment(range=_camera_viewer.range_rotate*2, value=_camera_rotate+_camera_viewer.range_rotate, page=1, changed=_camera_viewer.r_changed) xalign 1.
         elif tab == "3D":
             for layer in sorted(_3d_layers.keys()):
                 hbox:
-                    textbutton "[layer]" action Function(_camera_viewer.put_clipboard, tab, layer)
+                    textbutton "[layer]" action Function(_camera_viewer.put_clipboard, False, layer)
                     textbutton "{}".format(int(_3d_layers[layer])) action Function(_camera_viewer.edit_value, _camera_viewer.generate_layer_z_changed(layer), 0)
                     bar adjustment ui.adjustment(range=_camera_viewer.range_layer_z, value=_3d_layers[layer], page=1, changed=_camera_viewer.generate_layer_z_changed(layer)) xalign 1.
         hbox:
@@ -298,7 +292,7 @@ init -1600:
     style position_viewer_label xminimum 100
     style position_viewer_vbox xfill True
 
-screen _input_screen(message="", default=""):
+screen _input_screen(message="type value", default=""):
     modal True
     zorder 100
     key "game_menu" action Return("")

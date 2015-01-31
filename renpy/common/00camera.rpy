@@ -30,7 +30,7 @@ init -1600 python:
     _camera_x = 0
     _camera_y = 0
     _camera_z = 0
-    _camera_r = 0
+    _camera_rotate = 0
     _focal_length = 147.40
     _layer_z = 1848.9
 
@@ -39,11 +39,12 @@ init -1600 python:
         """
          :doc: camera
 
-         Register layers as 3D layers. 3D layers is applied transforms to by a
-         camera motion. You can use this in game again and again.
+         Register layers as 3D layers. 3D layers is applied transforms to by
+         positions of a camera and 3D layers. You can use this in game again
+         and again.
 
          `layers`
-              These should be the string or strings of a layer name.
+              This should be the string or strings of a layer name.
          """
         global _3d_layers
         af_3d_layers = {}
@@ -93,8 +94,7 @@ init -1600 python:
         """
          :doc: camera
 
-         Move the z coordinate of a layer and apply transforms to all 3D
-         layers.
+         Move the z coordinate of a layer and apply transform to the layer.
 
          `layer`
               the string of a layer name to be moved
@@ -103,8 +103,8 @@ init -1600 python:
          `duration`
               Default 0, this is the second times taken to move a camera.
          `warper`
-              Default 'linear', this should be string and the name of a warper
-              registered with ATL.
+              Default 'linear', this should be the string of the name of a
+              warper registered with ATL.
          `subpixel`
               Default True, if True, causes things to be drawn on the screen
               using subpixel positioning
@@ -129,14 +129,14 @@ init -1600 python:
               Default True, if True, causes things to be drawn on the screen
               using subpixel positioning
          """
-        global _camera_x, _camera_y, _camera_z, _camera_r
+        global _camera_x, _camera_y, _camera_z, _camera_rotate
 
         af_3d_layers = {}
         for layer in _3d_layers:
             start_xanchor = _focal_length*_camera_x/(config.screen_width *_layer_z) + .5
             start_yanchor = _focal_length*_camera_y/(config.screen_height*_layer_z) + .5
 
-            check_points2 = [(_camera_z, _camera_r, start_xanchor, start_yanchor, _3d_layers[layer], 0), ]
+            check_points2 = [(_camera_z, _camera_rotate, start_xanchor, start_yanchor, _3d_layers[layer], 0), ]
             for c in check_points:
                 xanchor = _focal_length*c[0]/(config.screen_width *_layer_z) + .5
                 yanchor = _focal_length*c[1]/(config.screen_height*_layer_z) + .5
@@ -148,13 +148,13 @@ init -1600 python:
         _camera_x = check_points[-1][0]
         _camera_y = check_points[-1][1]
         _camera_z = check_points[-1][2]
-        _camera_r = check_points[-1][3]
+        _camera_rotate = check_points[-1][3]
 
     def layer_moves(layer, check_points, warper='linear', loop=False, subpixel=True):
         """
          :doc: camera
 
-         Move a layer through check points and apply transforms to the layers.
+         Move a layer through check points and apply transform to the layer.
 
          `layer`
               the string of a layer name to be moved
@@ -166,15 +166,15 @@ init -1600 python:
               Default True, if True, causes things to be drawn on the screen
               using subpixel positioning
          """
-        global _3d_layers, _camera_x, _camera_y, _camera_z, _camera_r
+        global _3d_layers, _camera_x, _camera_y, _camera_z, _camera_rotate
 
         start_xanchor = _focal_length*_camera_x/(config.screen_width *_layer_z) + .5
         start_yanchor = _focal_length*_camera_y/(config.screen_height*_layer_z) + .5
 
-        check_points2 = [(_camera_z, _camera_r, start_xanchor, start_yanchor, _3d_layers[layer], 0), ]
+        check_points2 = [(_camera_z, _camera_rotate, start_xanchor, start_yanchor, _3d_layers[layer], 0), ]
         af_3d_layers = _3d_layers.copy()
         for c in check_points:
-            check_points2.append((_camera_z, _camera_r, start_xanchor, start_yanchor, c[0], float(c[1])))
+            check_points2.append((_camera_z, _camera_rotate, start_xanchor, start_yanchor, c[0], float(c[1])))
 
         renpy.game.context().scene_lists.set_layer_at_list(layer, [Transform(function=renpy.curry(_camera_trans)(check_points=check_points2, warper=warper, loop=loop, subpixel=subpixel, layer=layer))])
 
@@ -186,12 +186,12 @@ init -1600 python:
         duration = check_points[-1][5]
         tran.xpos    = .5 
         tran.ypos    = .5
+        tran.subpixel = subpixel
+        tran.transform_anchor = True
         if duration > 0:
             g = renpy.atl.warpers[warper](st/duration) 
             if loop:
                 g = g % 1
-            tran.subpixel = subpixel
-            # tran.transform_anchor = True
 
             for i in xrange(1, len(check_points)):
                 checkpoint_g = check_points[i][5]/duration
