@@ -83,6 +83,7 @@ Other Functionality
    rooms
    drag_drop
    sprites
+   camera
    keymap
    developer_tools
 

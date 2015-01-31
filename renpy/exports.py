@@ -1851,6 +1851,9 @@ def show_layer_at(at_list, layer='master'):
     statement.
     """
 
+    if layer in renpy.store._3d_layers:
+        _error("Can't apply transforms to 3D layers")
+
     if not isinstance(at_list, list):
         at_list = [ at_list ]
 

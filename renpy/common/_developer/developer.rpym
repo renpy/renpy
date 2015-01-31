@@ -70,6 +70,8 @@ screen _developer:
             action [ Hide("_developer"), _console.enter ]
         textbutton _("Variable Viewer"):
             action ui.callsinnewcontext("_debugger_screen")
+        textbutton _("Position Viewer"):
+            action _position_viewer
         textbutton _("Theme Test"):
             action ui.callsinnewcontext("_theme_test")
         textbutton _("Image Location Picker"):
