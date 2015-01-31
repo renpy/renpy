@@ -300,3 +300,100 @@ init -1600 python:
 
 
             return rv
+
+    @renpy.pure
+    class AddToSet(Action, FieldEquality):
+        """
+        :data: data_action
+
+        Adds `value` to `set`.
+
+        `set`
+            The set to add to. This may be a python set or list, in which
+            case the value is appended to the list.
+        `value`
+            The value to add or append.
+        """
+
+        identity_fields = [ 'set', 'value' ]
+
+        def __init__(self, set, value):
+            self.set = set
+            self.value = value
+
+        def get_sensitive(self):
+            return self.value not in self.set
+
+        def __call__(self):
+            if isinstance(self.set, list):
+                self.set.append(self.value)
+            else:
+                self.set.add(self.value)
+
+            renpy.restart_interaction()
+
+    @renpy.pure
+    class RemoveFromSet(Action, FieldEquality):
+        """
+        :data: data_action
+
+        Removes `value` from `set`.
+
+        `set`
+            The set to remove from. This may be a set or list.
+        `value`
+            The value to add or append.
+        """
+
+        identity_fields = [ 'set', 'value' ]
+
+        def __init__(self, set, value):
+            self.set = set
+            self.value = value
+
+        def get_sensitive(self):
+            return self.value in self.set
+
+        def __call__(self):
+            if self.value in self.set:
+                self.set.remove(self.value)
+
+            renpy.restart_interaction()
+
+    @renpy.pure
+    class ToggleSetMembership(Action, FieldEquality):
+        """
+        :data: data_action
+
+        Toggles the membership of `value` in `set`. If the value is not
+        in the set, it's added. Otherwise, it is removed.
+
+        Buttons with this action are marked as selected if and only if the
+        value is in the set.
+
+        `set`
+            The set to add to or remove from. This may be a set or list. In the
+            case of a list, new items are appended.
+        `value`
+            The value to add or append.
+        """
+
+        identity_fields = [ 'set', 'value' ]
+
+        def __init__(self, set, value):
+            self.set = set
+            self.value = value
+
+        def get_selected(self):
+            return self.value in self.set
+
+        def __call__(self):
+            if self.value in self.set:
+                self.set.remove(self.value)
+            else:
+                if isinstance(self.set, list):
+                    self.set.append(self.value)
+                else:
+                    self.set.add(self.value)
+
+            renpy.restart_interaction()
