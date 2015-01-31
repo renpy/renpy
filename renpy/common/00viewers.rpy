@@ -107,7 +107,7 @@ init -1600 python:
                 return state
             return None
 
-        def put_clipboard(self, prop, value):
+        def put_prop_clipboard(self, prop, value):
             try:
                 from pygame import scrap, locals
                 scrap.put(locals.SCRAP_TEXT, "%s %s" % (prop, value))
@@ -115,6 +115,22 @@ init -1600 python:
                 renpy.notify(_("Can't open clipboard"))
             else:
                 renpy.notify(__('Putted "%s %s" on clipboard') % (prop, value))
+
+        def put_show_clipboard(self, tag, layer):
+            string = "show %s onlayer %s" % (tag, layer)
+            for k, v in self.props_default.iteritems():
+                value = self.get_state(layer, tag, k)
+                if value != v[0]:
+                    if string.find(":") < 0:
+                        string += ":\n    "
+                    string += "%s %s " % (k, value)
+            try:
+                from pygame import scrap, locals
+                scrap.put(locals.SCRAP_TEXT, string)
+            except ImportError:
+                renpy.notify(_("Can't open clipboard"))
+            else:
+                renpy.notify(__('Putted "%s" on clipboard') % string)
 
         def edit_value(self, function, int=False):
             v = renpy.invoke_in_new_context(renpy.call_screen, "_input_screen")
@@ -236,18 +252,19 @@ screen _position_viewer(tab="images", layer="master", tag=""):
                     textbutton "[t]" action [SelectedIf(t == tag), Show("_position_viewer", tab=tab, layer=layer, tag=t)]
 
             if tag:
+                textbutton _("clip board") action Function(_transform_viewer.put_show_clipboard, tag, layer)
                 for p in sorted(_transform_viewer.props_default.keys()):
                     $state = _transform_viewer.get_state(layer, tag, p)
                     if isinstance(state, int):
                         hbox:
                             $ f = _transform_viewer.generate_changed(layer, tag, p, True)
-                            textbutton "[p]" action Function(_transform_viewer.put_clipboard, p, state)
+                            textbutton "[p]" action Function(_transform_viewer.put_prop_clipboard, p, state)
                             textbutton "[state]" action Function(_transform_viewer.edit_value, f, int)
                             bar adjustment ui.adjustment(range=_transform_viewer.int_range*2, value=state+_transform_viewer.int_range, page=1, changed=f) xalign 1.
                     elif isinstance(state, float):
                         hbox:
                             $ f = _transform_viewer.generate_changed(layer, tag, p)
-                            textbutton "[p]" action Function(_transform_viewer.put_clipboard, p, state)
+                            textbutton "[p]" action Function(_transform_viewer.put_prop_clipboard, p, state)
                             textbutton "[state:>.4]" action Function(_transform_viewer.edit_value, f)
                             bar adjustment ui.adjustment(range=_transform_viewer.float_range*2, value=state+_transform_viewer.float_range, page=.05, changed=f) xalign 1.
         elif tab == "camera":
