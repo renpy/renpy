@@ -216,7 +216,7 @@ class SaveRecord(object):
 
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copy(self.first_filename, filename_new)
+            shutil.copyfile(self.first_filename, filename_new)
             safe_rename(filename_new, filename)
             return
 
