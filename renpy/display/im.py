@@ -175,7 +175,7 @@ class Cache(object):
     # image. It also takes care of updating the age of images in the
     # cache to be current, and maintaining the size of the current
     # generation of images.
-    def get(self, image, predict=False):
+    def get(self, image, predict=False, texture=False):
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
@@ -221,8 +221,6 @@ class Cache(object):
                         renpy.display.ic_log.write("Added %r (%.02f%%)", ce.what, 100.0 * self.total_cache_size / self.cache_limit)
                     else:
                         renpy.display.ic_log.write("Total Miss %r", ce.what)
-
-                renpy.display.draw.load_texture(ce.surf)
 
 
         # Move it into the current generation. This isn't protected by
@@ -281,6 +279,14 @@ class Cache(object):
 
         return True
 
+    def preload_texture(self, im):
+        """
+        Preloads `im` into the cache, and loads the corresponding texture
+        into the GPU.
+        """
+
+        surf = self.get(im, predict=True)
+        renpy.display.draw.load_texture(surf)
 
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, im):
@@ -296,7 +302,7 @@ class Cache(object):
             self.added.add(im)
 
             if im in self.cache:
-                self.get(im)
+                self.preload_texture(im)
                 in_cache = True
             else:
                 self.preloads.append(im)
@@ -350,7 +356,7 @@ class Cache(object):
 
                     if image not in self.preload_blacklist:
                         try:
-                            self.get(image, True)
+                            self.preload_texture(image)
                         except:
                             self.preload_blacklist.add(image)
                 except:
