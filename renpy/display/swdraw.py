@@ -694,9 +694,6 @@ class SWDraw(object):
         # Is the mouse currently visible?
         self.mouse_old_visible = None
 
-        # This is used to cache the surface->texture operation.
-        self.texture_cache = weakref.WeakKeyDictionary()
-
         # This is used to display video to the screen.
         self.fullscreen_surface = None
 
@@ -1048,7 +1045,6 @@ class SWDraw(object):
         if surf in rle_cache:
             del rle_cache[surf]
 
-
     def load_texture(self, surf, transient=False):
         """
         Creates a texture from the surface. In the software implementation,
@@ -1056,23 +1052,18 @@ class SWDraw(object):
         is in the RLE cache.
         """
 
-        surf = copy_surface(surf)
-        self.mutated_surface(surf)
+        if surf in rle_cache:
+            return rle_cache[surf]
 
-        if transient:
-            return surf
+        rle_surf = copy_surface(surf)
 
-        if renpy.game.less_memory:
-            return surf
-
-        if surf not in rle_cache:
-            rle_surf = copy_surface(surf)
+        if not transient:
             rle_surf.set_alpha(255, pygame.RLEACCEL)
-            self.mutated_surface(rle_surf)
 
-            rle_cache[surf] = rle_surf
+        self.mutated_surface(rle_surf)
+        rle_cache[surf] = rle_surf
 
-        return surf
+        return rle_surf
 
     def solid_texture(self, w, h, color):
         """
