@@ -101,9 +101,11 @@ def try_compile(where, expr, additional=None):
             add(additional)
 
 
-# The sets of names + attributes that
+# The sets of names + attributes that we know are valid.
 imprecise_cache = set()
 
+# Determines if the name is a plausible image. (That is, there is a at least
+# one image with that tag and those attributes.)
 def image_exists_imprecise(name):
     if name in imprecise_cache:
         return True
@@ -138,14 +140,12 @@ def image_exists_imprecise(name):
     return False
 
 
-
 # This reports an error if we're sure that the image with the given name
 # does not exist.
 def image_exists(name, expression, tag, precise=True):
     """
     Checks a scene or show statement for image existence.
     """
-
 
     # Add the tag to the set of known tags.
     tag = tag or name[0]
@@ -170,9 +170,6 @@ def image_exists(name, expression, tag, precise=True):
         return
 
     report("The image named '%s' was not declared.", names)
-
-
-
 
 # Only check each file once.
 check_file_cache = { }
@@ -226,7 +223,7 @@ def imspec(t):
         return t
 
 
-# Lints ast.Show and ast.Scene nodets.
+# Lints ast.Show and ast.Scene nodes.
 def check_show(node, precise):
 
     # A Scene may have an empty imspec.
@@ -242,6 +239,15 @@ def check_show(node, precise):
 
     for i in at_list:
         try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
+
+
+def precheck_show(node):
+    # A Scene may have an empty imspec.
+    if not node.imspec:
+        return
+
+    tag = imspec(node.imspec)[2]
+    image_prefixes[tag] = True
 
 
 # Lints ast.Hide.
@@ -540,6 +546,10 @@ def lint():
     image_count = 0
 
     global report_node
+
+    for _fn, _ln, node in all_stmts:
+        if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
+            precheck_show(node)
 
     for _fn, _ln, node in all_stmts:
 
