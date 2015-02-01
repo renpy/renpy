@@ -2276,6 +2276,9 @@ def parse(fn, filedata=None):
     if parse_errors:
         return None
 
+    if rv:
+        rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
+
     return rv
 
 def get_parse_errors():
