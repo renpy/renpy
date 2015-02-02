@@ -342,7 +342,7 @@ init -1500 python:
 
         def get_sensitive(self):
             if self.locked is not None:
-                return self.locked
+                return not self.locked
 
             return renpy.seen_label(self.label)
 
