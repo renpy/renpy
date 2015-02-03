@@ -245,6 +245,9 @@ init -1500 python hide:
         if _voice.ignore_interaction:
             return
 
+        if renpy.get_mode() == "with":
+            return
+
         _voice.auto_file = None
 
         # Auto-voice.

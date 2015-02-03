@@ -45,11 +45,7 @@ init -1200 python:
         if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = True
-            try:
-                _voice.ignore_interaction = True
-                renpy.with_statement(trans)
-            finally:
-                _voice.ignore_interaction = False
+            renpy.with_statement(trans)
         else:
             store._window = True
 
@@ -63,11 +59,7 @@ init -1200 python:
         if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = False
-            try:
-                _voice.ignore_interaction = True
-                renpy.with_statement(trans)
-            finally:
-                _voice.ignore_interaction = False
+            renpy.with_statement(trans)
         else:
             store._window = False
 

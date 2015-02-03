@@ -2432,8 +2432,24 @@ def mode(mode):
 
     if mode in modes:
         modes.remove(mode)
+
     modes.insert(0, mode)
 
+def get_mode():
+    """
+    :doc: modes
+
+    Returns the current mode, or None if it is not defined.
+    """
+
+    ctx = renpy.game.context()
+
+    if not ctx.use_modes:
+        return None
+
+    modes = ctx.modes
+
+    return modes[0]
 
 def notify(message):
     """
