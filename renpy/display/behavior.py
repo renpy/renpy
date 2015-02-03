@@ -1736,6 +1736,10 @@ class MouseArea(renpy.display.core.Displayable):
 
     def event(self, ev, x, y, st):
 
+        # Mouseareas should not handle events when something else is grabbing.
+        if renpy.display.focus.get_grab():
+            return
+
         if self.style.focus_mask is not None:
             crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
             is_hovered = crend.is_pixel_opaque(x, y)
