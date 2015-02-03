@@ -216,9 +216,6 @@ def list_logical_lines(filename, filedata=None):
 
             c = data[pos]
 
-            if c == '\t':
-                raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
-
             if c == '\n':
                 number += 1
 
@@ -325,60 +322,60 @@ def group_logical_lines(lines):
     no block is associated with this line.)
     """
 
-    # Returns the depth of a line, and the rest of the line.
-    def depth_split(l):
+    # Returns the indentation string of a line, and the rest of the line.
+    def indent_split(l):
 
-        depth = 0
-        index = 0
+        indent = u''
+        index  = 0
 
         while True:
-            if l[index] == ' ':
-                depth += 1
-                index += 1
+            c = l[index]
+            if c == u' ' or c == u'\t':
+                indent += c
+                index  += 1
                 continue
-
-            # if l[index] == '\t':
-            #    index += 1
-            #    depth = depth + 8 - (depth % 8)
-            #    continue
-
             break
 
-        return depth, l[index:]
+        return indent, l[index:]
 
-    # i, min_depth -> block, new_i
-    def gll_core(i, min_depth):
+    # i, start_indent -> block, new_i
+    def gll_core(i, start_indent):
 
         rv = []
-        depth = None
+        indent = None
 
         while i < len(lines):
 
             filename, number, text = lines[i]
 
-            line_depth, rest = depth_split(text)
+            line_indent, rest = indent_split(text)
 
-            # This catches a block exit.
-            if line_depth < min_depth:
-                break
+            # This catches a block exit (or an invalid change of indent prefix).
+            if start_indent != None:
+                if len(line_indent) <= len(start_indent):
+                    break
+                if not line_indent.startswith(start_indent):
+                    break
 
-            if depth is None:
-                depth = line_depth
+            # The first line of an indented block.
+            if indent is None:
+                indent = line_indent
 
-            if depth != line_depth:
-                raise ParseError(filename, number, "indentation mismatch.")
+            # A mismatched indent.
+            if indent != line_indent:
+                raise ParseError(filename, number, "indentation mismatch; expected = " + repr(indent) + "; actual = " + repr(line_indent))
 
             # Advance to the next line.
             i += 1
 
             # Try parsing a block associated with this line.
-            block, i = gll_core(i, depth + 1)
+            block, i = gll_core(i, indent)
 
             rv.append((filename, number, rest, block))
 
         return rv, i
 
-    return gll_core(0, 0)[0]
+    return gll_core(0, None)[0]
 
 # A list of keywords which should not be parsed as names, because
 # there is a huge chance of confusion.
