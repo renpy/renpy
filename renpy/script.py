@@ -465,7 +465,7 @@ class Script(object):
                     f.close()
 
                     if rpydigest == rpycdigest and \
-                        not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
+                        not (renpy.game.args.command in [ "compile", "add_from" ] or renpy.game.args.compile): #@UndefinedVariable
 
                         data, stmts = self.load_file(dir, fn + compiled)
 

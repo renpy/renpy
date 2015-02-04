@@ -383,6 +383,7 @@ def import_all():
     import renpy.exports
     import renpy.character # depends on exports. @UnresolvedImport
 
+    import renpy.add_from
     import renpy.dump
 
     import renpy.config # depends on lots. @UnresolvedImport

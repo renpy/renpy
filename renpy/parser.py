@@ -1637,6 +1637,11 @@ def call_statement(l, loc):
     if l.keyword('from'):
         name = l.require(l.name)
         rv.append(ast.Label(loc, name, [], None))
+    else:
+        if expression:
+            renpy.add_from.report_missing("expression", original_filename, line_endpos[loc])
+        else:
+            renpy.add_from.report_missing(target, original_filename, line_endpos[loc])
 
     rv.append(ast.Pass(loc))
 
