@@ -1601,8 +1601,8 @@ def call_statement(l, loc):
     if l.keyword('from'):
         name = l.require(l.name)
         rv.append(ast.Label(loc, name, [], None))
-    else:
-        rv.append(ast.Pass(loc))
+
+    rv.append(ast.Pass(loc))
 
     l.expect_eol()
     l.advance()
