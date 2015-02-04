@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,9 @@ init python:
         persistent.gl_enable = True
 
     config.gl_enable = persistent.gl_enable
+
+    if persistent.show_edit_funcs is None:
+        persistent.show_edit_funcs = True
 
     if persistent.windows_console is None:
         persistent.windows_console = False
@@ -168,6 +171,7 @@ screen preferences:
 
                         textbutton _("Hardware rendering") style "l_checkbox" action ToggleField(persistent, "gl_enable")
                         textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
+                        textbutton _("Show edit functions") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
                         textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
 
                         if renpy.windows:

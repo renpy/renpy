@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -197,8 +197,9 @@ screen front_page_project:
                     textbutton _("base") action OpenDirectory(".")
                     # textbutton _("images") action OpenDirectory("game/images") style "l_list"
                     # textbutton _("save") action None style "l_list"
-
+                
             vbox:
+              if persistent.show_edit_funcs:
 
                 label _("Edit File") style "l_label_small"
 
@@ -209,6 +210,8 @@ screen front_page_project:
                     textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
                     textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
                     textbutton _("All script files") action editor.EditAll()
+              else:
+                pass
 
         add SPACER
         add SEPARATOR
