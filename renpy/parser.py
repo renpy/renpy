@@ -160,6 +160,18 @@ def unelide_filename(fn):
 
     return fn
 
+# The filename that the start and end positions are relative to.
+original_filename = ""
+
+# A map from line loc (elide filename, line) to the position (offset in unicode characters) of
+# the start of the logical line in the file.
+line_startpos = { }
+
+# A map from the line loc to the postion (offset in unicode characters) of the end of the logical
+# line in the file.
+line_endpos = { }
+
+
 def list_logical_lines(filename, filedata=None):
     """
     Reads `filename`, and divides it into logical lines.
@@ -170,15 +182,16 @@ def list_logical_lines(filename, filedata=None):
     contents. In that case, `filename` need not exist.
     """
 
+    global original_filename
+
+    original_filename = filename
+
     if filedata:
         data = filedata
     else:
         f = codecs.open(filename, "r", "utf-8")
         data = f.read()
         f.close()
-
-    data = data.replace("\r\n", "\n")
-    data = data.replace("\r", "\n")
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
@@ -211,16 +224,17 @@ def list_logical_lines(filename, filedata=None):
         # The number of open parenthesis there are right now.
         parendepth = 0
 
-        # Looping over the characters in a single logical line.
+        loc = (filename, start_number)
+        line_startpos[loc] = pos
+
+        endpos = None
+
         while pos < len(data):
 
             c = data[pos]
 
             if c == '\t':
                 raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
-
-            if c == '\n':
-                number += 1
 
             if c == '\n' and not parendepth:
                 # If not blank...
@@ -229,10 +243,28 @@ def list_logical_lines(filename, filedata=None):
                     # Add to the results.
                     rv.append((filename, start_number, line))
 
+                    if endpos is None:
+                        endpos = pos
+
+                    while data[endpos-1] in ' \r':
+                        endpos -= 1
+
+                    line_endpos[loc] = endpos
+
                 pos += 1
+                number += 1
+                endpos = None
                 # This helps out error checking.
                 line = ""
                 break
+
+            if c == '\n':
+                number += 1
+                endpos = None
+
+            if c == "\r":
+                pos += 1
+                continue
 
             # Backslash/newline.
             if c == "\\" and data[pos+1] == "\n":
@@ -250,6 +282,8 @@ def list_logical_lines(filename, filedata=None):
 
             # Comments.
             if c == '#':
+                endpos = pos
+
                 while data[pos] != '\n':
                     pos += 1
 
@@ -269,6 +303,10 @@ def list_logical_lines(filename, filedata=None):
 
                     if c == '\n':
                         number += 1
+
+                    if c == '\r':
+                        pos += 1
+                        continue
 
                     if escape:
                         escape = False
@@ -305,8 +343,6 @@ def list_logical_lines(filename, filedata=None):
                 raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
 
             pos = m.end(0)
-
-            # print repr(data[pos:])
 
 
     if not line == "":
@@ -2260,26 +2296,33 @@ def parse(fn, filedata=None):
     contents.
     """
 
-    renpy.game.exception_info = 'While parsing ' + fn + '.'
-
     try:
-        lines = list_logical_lines(fn, filedata)
-        nested = group_logical_lines(lines)
-    except ParseError, e:
-        parse_errors.append(e.message)
-        return None
 
-    l = Lexer(nested)
+        renpy.game.exception_info = 'While parsing ' + fn + '.'
 
-    rv = parse_block(l)
+        try:
+            lines = list_logical_lines(fn, filedata)
+            nested = group_logical_lines(lines)
+        except ParseError, e:
+            parse_errors.append(e.message)
+            return None
 
-    if parse_errors:
-        return None
+        l = Lexer(nested)
 
-    if rv:
-        rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
+        rv = parse_block(l)
 
-    return rv
+        if parse_errors:
+            return None
+
+        if rv:
+            rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
+
+        return rv
+
+    finally:
+
+        line_startpos.clear()
+        line_endpos.clear()
 
 def get_parse_errors():
     global parse_errors
