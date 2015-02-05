@@ -121,6 +121,7 @@ init python in project:
 
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "all" ])
+            data.setdefault("add_from", True)
 
         def make_tmp(self):
             """
