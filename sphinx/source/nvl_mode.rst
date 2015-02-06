@@ -124,6 +124,10 @@ An example of using the window commands to show and hide the window is::
         m "Ummm... will you..."
         m "Will you be my artist for a visual novel?"
 
+There are also explicit ``nvl show`` and ``nvl hide`` commands that show
+hide the NVL-mode window. These take an optional transition, and can be
+used in code that has a mix of NVL-mode and ADV-mode windows.
+
 Customizing Characters
 ----------------------
 
