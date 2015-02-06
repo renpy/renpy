@@ -528,7 +528,10 @@ Input
 
 Creates a text input area, which allows the user to enter text. When
 the user presses return, the text will be returned by the
-interaction. This takes no parameters, and the following properties:
+interaction. (When the screen is invoked through ``call screen``, the result
+will be placed in the ``_return`` variable.)
+
+The input statement takes no parameters, and the following properties:
 
 `default`
     The default text in this input.
