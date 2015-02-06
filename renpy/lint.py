@@ -358,8 +358,13 @@ def check_say(node):
 
     name = (char.image_tag,) + node.attributes
 
-    if not image_exists_imprecise(name):
-        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+    if image_exists_imprecise(name):
+        return
+
+    if image_exists_imprecise(('side', ) + name):
+        return
+
+    report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
 
 
 
