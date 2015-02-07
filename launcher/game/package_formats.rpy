@@ -107,7 +107,7 @@ init python in distribute:
         """
 
         def __init__(self, filename):
-            self.zipfile = ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
+            self.zipfile = ZipFile(filename, "w", zipfile.ZIP_DEFLATED, True)
 
         def add_file(self, name, path, xbit):
 
