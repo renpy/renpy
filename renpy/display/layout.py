@@ -1431,6 +1431,9 @@ class Viewport(Container):
         if not self.style.yfill:
             height = min(ch, height)
 
+        width = max(width, self.style.xminimum)
+        height = max(height, self.style.yminimum)
+
         if self.set_adjustments:
             self.xadjustment.range = max(cw - width, 0)
             self.xadjustment.page = width
