@@ -24,6 +24,9 @@ init python:
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
+    if persistent.generate_empty_strings is None:
+        persistent.generate_empty_strings = True
+
 label translate:
 
     python:
