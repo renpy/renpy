@@ -1027,7 +1027,7 @@ init -1500 python in updater:
                     continue
 
                 if not info.isreg():
-                    raise UpdateError("While unpacking {}, unknown type {}.".format(info.name, info.type))
+                    raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
 
                 # Extract regular files.
                 tff = tf.extractfile(info)
