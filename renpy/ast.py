@@ -878,6 +878,9 @@ class Image(Node):
 
         renpy.exports.image(self.imgname, img)
 
+    def analyze(self):
+        if getattr(self, 'atl', None) is not None:
+            self.atl.mark_constant()
 
 
 class Transform(Node):
@@ -1040,6 +1043,10 @@ class Show(Node):
         predict_imspec(self.imspec, atl=getattr(self, "atl", None))
         return [ self.next ]
 
+    def analyze(self):
+        if getattr(self, 'atl', None) is not None:
+            self.atl.mark_constant()
+
 
 class ShowLayer(Node):
 
@@ -1127,7 +1134,7 @@ class Scene(Node):
         return [ self.next ]
 
     def analyze(self):
-        if self.atl is not None:
+        if getattr(self, 'atl', None) is not None:
             self.atl.mark_constant()
 
 
