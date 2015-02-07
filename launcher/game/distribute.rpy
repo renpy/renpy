@@ -666,7 +666,7 @@ init python in distribute:
             self.add_file(
                 windows,
                 "lib/windows-i686/" + self.executable_name + ".exe",
-                os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe"))
+                os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe"))
 
         def add_mac_files(self):
             """
