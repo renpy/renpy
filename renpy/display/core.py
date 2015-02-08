@@ -1356,8 +1356,7 @@ class Interface(object):
         # Should we reset the display?
         self.display_reset = False
 
-        # The last size we were resized to. This lets us debounce the
-        # VIDEORESIZE event.
+        # The last size we were resized to.
         self.last_resize = None
 
         # The thread that can do display operations.
@@ -2744,6 +2743,9 @@ class Interface(object):
                 elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:
                     continue
 
+                if ev.type == pygame.VIDEOEXPOSE:
+                    continue
+
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
                     evs = pygame.event.get([pygame.VIDEORESIZE])
@@ -2751,12 +2753,16 @@ class Interface(object):
                     if len(evs):
                         ev = evs[-1]
 
-                    if self.last_resize is None and renpy.windows:
-                        self.last_resize = ev.size
+                    # We seem to get a spurious event like this when leaving
+                    # fullscreen mode on windows.
+                    if ev.w == 1 and ev.h == 1:
+                        continue
 
-                    if self.last_resize != ev.size:
-                        self.last_resize = ev.size
+                    if pygame.display.get_surface().get_size() != ev.size:
                         self.set_mode((ev.w, ev.h))
+
+                    if not self.fullscreen:
+                        self.last_resize = ev.size
 
                     continue
 
