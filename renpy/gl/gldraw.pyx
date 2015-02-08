@@ -210,9 +210,14 @@ cdef class GLDraw:
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
 
-        if EGL:
+        if ANGLE:
+            opengl = 0
+            resizable = pygame.RESIZABLE
+
+        elif EGL:
             opengl = 0
             resizable = 0
+
         elif renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
