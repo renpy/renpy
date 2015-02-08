@@ -26,6 +26,7 @@ cdef class Environ
 cdef class GLDraw:
 
     cdef bint did_init
+    cdef bint did_texture_test
     cdef Environ environ
     cdef public object rtt
     cdef object window

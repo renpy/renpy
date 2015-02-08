@@ -139,6 +139,9 @@ cdef class GLDraw:
         # Should we allow the fixed-function environment?
         self.allow_fixed = allow_fixed
 
+        # Did we do the texture test at least once?
+        self.did_texture_test = False
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it
@@ -242,7 +245,7 @@ cdef class GLDraw:
         try:
             if fullscreen:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
@@ -541,13 +544,18 @@ cdef class GLDraw:
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
         # Figure out the sizes of texture that render properly.
-        rv = gltexture.test_texture_sizes(self.environ, self)
+        if not self.did_texture_test:
+            rv = gltexture.test_texture_sizes(self.environ, self)
+        else:
+            rv = True
 
         self.rtt.deinit()
         self.environ.deinit()
 
         if not rv:
             return False
+
+        self.did_texture_test = True
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
