@@ -199,19 +199,17 @@ screen front_page_project:
                     # textbutton _("save") action None style "l_list"
                 
             vbox:
-              if persistent.show_edit_funcs:
+                if persistent.show_edit_funcs:
 
-                label _("Edit File") style "l_label_small"
+                    label _("Edit File") style "l_label_small"
 
-                frame style "l_indent":
-                    has vbox
+                    frame style "l_indent":
+                        has vbox
 
-                    textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
-                    textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
-                    textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
-                    textbutton _("All script files") action editor.EditAll()
-              else:
-                pass
+                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
+                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+                        textbutton _("All script files") action editor.EditAll()
 
         add SPACER
         add SEPARATOR
