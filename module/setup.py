@@ -97,7 +97,7 @@ else:
     png = 'png'
 
 
-if has_fribidi:
+if has_fribidi and (not android) and (not ios):
     try:
         # Some versions of fribidi require glib, and it doesn't hurt to include it in
         # our path.
@@ -119,7 +119,7 @@ cython(
     [ "IMG_savepng.c", "core.c", "subpixel.c"],
     sdl + [ png, 'z', 'm' ])
 
-if has_fribidi and not android:
+if has_fribidi:
     cython(
         "_renpybidi",
         [ "renpybidicore.c" ],
