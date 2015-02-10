@@ -2,6 +2,178 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99
+===========
+
+SDL2
+----
+
+Ren'Py is now based on Pygame_SDL2, a reimplementation of the Pygame API
+based on the SDL2 library. One of the largest changes in Ren'Py's history,
+switching to SDL2 lays the groundwork for many improvements, in this
+and future releases.
+
+
+iOS Support
+-----------
+
+Ren'Py now supports the iOS platform. To develop for iOS, you will need a
+Macintosh computer, Xcode, and a paid membership in the iOS developer
+program. (An iPad or iPhone to test with is highly recommended.)
+
+Ren'Py's iOS support includes the ability to create Xcode projects, and
+to update those projects with the latest version of a Ren'Py game. Xcode
+can be used to change project settings, and to create debug and release
+builds.
+
+The iOS port supports iOS 7 and higher. Almost all of Ren'Py is supported,
+with the exception being that video playback is limited to fullscreen video
+in formats the iOS device supports.
+
+For now, the default set of Ren'Py screens are not particularly compatible
+with iOS. You will need to customize your game to make it touch friendly and
+compliant with Apple's guidelines before submitting it to the iOS app store.
+
+Please see the iOS documentation for more information and a copyright
+notice you must include as part of your app description on iOS.
+
+
+Android Support
+---------------
+
+Android support has been rewritten, and is now based in SDL2. This release
+brings Android support to parity with desktop platforms. Improvements
+include:
+
+* Support for rotating the screen to match the user's preferred orientation.
+* Improved in-app purchase support, with the ability to retrieve prices and
+  create a single .apk that supports the Google and Amazon stores.
+* Android audio playback is now based on the same code that's used on
+  the desktop and iOS platforms. This enables support for features like
+  panning and fading volume. It also means the same sound files can be
+  used on Android, iOS, and desktop platforms.
+* Keyboard input is now supported on Android.
+* Languages requiring bidirectional text (like Arabic and Hebrew) are supported
+  on Android.
+
+A number of issues with Android support have been fixed, including one that
+prevented Ren'Py from unzipping the android SDK automatically when the path
+to the Ren'Py install was too long.
+
+Please see the Android documentation for more information and a copyright
+notice that should be included as part of your app description.
+
+
+Steam
+-----
+
+Ren'Py now ships with Python bindings for the steam API. These bindings
+are built as part of the Ren'Py build process, which means they will be
+maintained alongside Ren'Py going forwards.
+
+For an explanation of how to use the Steam API, please contact the Ren'Py
+developers directly. The bindings make available:
+
+* Initialization.
+* User statistics and achievements.
+* Retrieving other apps by the same developer that have been installed.
+* DLC support.
+* The in-game overlay, including the ability to launch a purchase flow.
+* Session tickets.
+
+The steam bindings will be integrated with Ren'Py as appropriate. For now,
+this integration consists of binding the steam achievement system to the new
+Ren'Py achievement API.
+
+
+Distribution Improvements
+-------------------------
+
+The launcher now has the ability to add from clauses to call statements,
+automatically turning::
+
+    call dayplanner
+
+into::
+
+    call dayplanner from __call_dayplanner
+
+From clauses, which are really labels, help Ren'Py to find the return
+site to use when a game is changed. This should help fix problem with games
+that may change greatly between releases.
+
+When asked to package a game that is more than about 2GB in size, Ren'Py
+will produce a ZIP64-format archive. These archives may be less compatible
+that smaller zip files.
+
+
+Languages and Translations
+--------------------------
+
+There is now a Russian translation of the tutorial game.
+
+Ren'Py supports input methods (IMEs) on platforms where SDL2 makes that
+support available. (All platforms except for Linux.) Input methods make
+it possible to input complex non-ASCII text, such as Chinese, Japanese,
+and Korean.
+
+
+Clipboard Voicing
+-----------------
+
+Ren'Py now supports clipboard voicing, which is accessed by shift+C.
+
+Clipboard voicing is a form of self-voicing that works by copying the
+text to the clipboard, where a screenreader program is likely to read
+it using settings preferred by the player.
+
+
+Custom Text Tags
+----------------
+
+Ren'Py snow supports a new form of :ref:`custom text tags <custom-text-tags>`.
+
+Custom text tags are applied after the text has been tokenized into tags and
+text. This makes it easier to write a custom text tag that manipulates text
+or applies multiple existing text tags to text.
+
+The previously-existing form of custom text tag has been renamed to
+style text tag, and is still supported.
+
+
+Other Improvements
+------------------
+
+A high-level achievement API has been added to Ren'Py.
+
+Ren'Py now includes support for recognizing touch gestures on Android and
+iOS.
+
+It is possible to hide the editing buttons in the launcher, so they can't
+be used to open an absurd number of editor windows.
+
+The developer can choose if strings should be empty when generating
+translations.
+
+Three new set manipulation actions :func:`AddToSet`, :func:`RemoveFromSet`,
+and :func:`ToggleSetMembership` manipulate sets and lists-as-sets. (Such
+as inventory lists.)
+
+Drags (as in, drag-and-drop) now support the focus_mask style property.
+
+The complexity of the style system has been reduced, decreasing memory
+usage and startup time.
+
+The new :func:`renpy.suspend_rollback` suspends the recording of rollback
+checkpoints, while still allowing rollback to occur.
+
+The RENPY_GL_CHECK_ERRORS controlls the logging of OpenGL/ANGLE function
+calls and errors.
+
+A completion progress indicator can be toggled by typing shift-alt-P or
+swiping up-down-left-right-left-right.
+
+
 Ren'Py 6.18.3
 =============
 
