@@ -90,8 +90,13 @@ init -1500 python in achievement:
         def has(self, name):
             return name in persistent._achievements
 
+    def merge(old, new, current):
+        return old | new
+
+    renpy.register_persistent("_achievements", merge)
 
     backends.append(PersistentBackend())
+
 
     class SteamBackend(Backend):
         """
