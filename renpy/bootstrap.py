@@ -71,6 +71,7 @@ def extra_imports():
     import rsa; rsa
     import decimal; decimal
     import plistlib; plistlib
+    import _renpysteam; _renpysteam
 
 class NullFile(io.IOBase):
     """

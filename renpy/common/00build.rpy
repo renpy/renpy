@@ -96,7 +96,6 @@ init -1500 python in build:
         ( "renpy.sh", "linux mac"),
     ])
 
-
     def classify_renpy(pattern, groups):
         """
         Classifies files in the Ren'Py base directory according to pattern.
@@ -346,6 +345,7 @@ init -1500 python in build:
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
+
         rv = { }
 
         rv["directory_name"] = directory_name

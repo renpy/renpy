@@ -48,6 +48,7 @@ def setup_env(name):
 
 setup_env("CC")
 setup_env("LD")
+setup_env("CXX")
 
 import setuplib
 from setuplib import android, ios, include, library, cython, pymodule, copyfile, find_unnecessary_gen
