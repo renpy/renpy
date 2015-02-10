@@ -152,7 +152,7 @@ init -1500 python in achievement:
 
     def register(name, **kwargs):
         """
-        :doc: achievements
+        :doc: achievement
 
         Registers an achievement. Achievements are not required to be
         registered, but doing so allows one to pass information to the
@@ -172,7 +172,7 @@ init -1500 python in achievement:
 
     def grant(name):
         """
-        :doc: achievements
+        :doc: achievement
 
         Grants the achievement with `name`, if it has not already been
         granted.
@@ -184,7 +184,7 @@ init -1500 python in achievement:
 
     def clear(name):
         """
-        :doc: achievements
+        :doc: achievement
 
         Clears the achievement with `name`.
         """
@@ -205,7 +205,7 @@ init -1500 python in achievement:
 
     def progress(name, complete, total):
         """
-        :doc: achievements
+        :doc: achievement
 
         Reports progress towards the achievement with `name`, if that
         achievement has not been granted.
@@ -227,7 +227,7 @@ init -1500 python in achievement:
 
     def grant_progress(name, complete, total):
         """
-        :doc: achievements
+        :doc: achievement
 
         If `complete` is less than `total`, reports progress towards the
         achievement with `name`, if that achievement has not been
@@ -244,7 +244,7 @@ init -1500 python in achievement:
 
     def has(name):
         """
-        :doc: achievements
+        :doc: achievement
 
         Returne true if the plater has been grnted the achievement with
         `name`.

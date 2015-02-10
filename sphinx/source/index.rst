@@ -85,6 +85,7 @@ Other Functionality
    sprites
    keymap
    developer_tools
+   achievement
 
 Python and Ren'Py
 -----------------
@@ -114,7 +115,9 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   ios
    iap
+   gesture
 
 End-User Documentation
 ----------------------
