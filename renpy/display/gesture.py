@@ -96,6 +96,8 @@ class GestureRecognizer(object):
                 self.strokes.append(stroke)
 
     def finish(self):
+        rv = None
+
         if self.x is None:
             return
 
@@ -105,10 +107,12 @@ class GestureRecognizer(object):
             if func is None:
                 func = dispatch_gesture
 
-            func("_".join(self.strokes))
+            rv = func("_".join(self.strokes))
 
         self.x = None
         self.y = None
+
+        return rv
 
     def cancel(self):
         self.x = None
@@ -126,6 +130,8 @@ class GestureRecognizer(object):
             self.take_point(x, y)
 
             if ev.button == 1:
-                self.finish()
+                return self.finish()
+
+
 
 recognizer = GestureRecognizer()
