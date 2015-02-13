@@ -149,8 +149,6 @@ init python:
         if p is None:
             p = project.current
 
-        update_android_json(p, gui)
-
         dist = os.path.join(xcode_project(p), "base")
 
         if os.path.exists(dist):
