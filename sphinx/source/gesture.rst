@@ -30,3 +30,5 @@ a touchscreen device.
     passed the raw gesture string. If it returns non-None, the
     interaction ends. If this variable is None, a default dispatch
     function is used.
+
+.. include:: inc/gesture
