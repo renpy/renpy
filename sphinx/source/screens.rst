@@ -1676,6 +1676,14 @@ and choosing the entries that apply to the current platform.
 ``"firetv"``
    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
+``"android"``
+   Defined on all Android devices.
+
+``"ios"``
+   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+   also defined).
+
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
    a mouse and keyboard present, to allow buttons to be hovered, and
