@@ -2302,7 +2302,7 @@ def stop_predict_screen(name):
     """
 
     new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
-    new_predict.pop(name)
+    new_predict.pop(name, None)
     renpy.store._predict_screen = new_predict
 
 
