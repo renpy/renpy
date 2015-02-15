@@ -302,7 +302,10 @@ You may be using a system install of python. Please run {0}.sh,
                 exit_status = e.status
 
                 if e.relaunch:
-                    subprocess.Popen([sys.executable, "-EO"] + sys.argv)
+                    if hasattr(sys, "renpy_executable"):
+                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])
+                    else:
+                        subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
             except renpy.game.ParseErrorException:
                 pass
