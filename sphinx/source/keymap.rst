@@ -47,27 +47,32 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].append('t')
         $ config.keymap['dismiss'].remove('K_SPACE')
 
-The default keymap is contained inside the python code implementing Ren'Py, and
-as of version 6.17 is as follows::
+The default keymap is contained inside renpy/common/00keymap.rpy, and
+as of version 6.99 is as follows::
 
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
+        rollback = [ 'K_PAGEUP', 'K_AC_BACK', 'mousedown_4', 'joy_rollback' ],
         screenshot = [ 's' ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
         developer = [ 'D' ],
-        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-        iconify = [ 'meta_m', 'alt_m' ],
+        quit = [ ],
+        iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
+        progress_screen = [ 'alt_P' ],
+
+        # Accessibility.
+        self_voicing = [ 'v', 'V' ],
+        clipboard_voicing = [ 'C' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],

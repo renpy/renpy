@@ -35,8 +35,8 @@ init -1600 python:
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
         developer = [ 'D' ],
-        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-        iconify = [ 'meta_m', 'alt_m' ],
+        quit = [ ],
+        iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
         progress_screen = [ 'alt_P' ],
@@ -107,7 +107,6 @@ init -1600 python:
 
         # Profile one frame
         profile_once = [ 'K_F8' ],
-
 
         )
 
