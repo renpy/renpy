@@ -323,7 +323,6 @@ init python:
     build.classify_renpy("lib/*/renpy.exe", None)
     build.classify_renpy("lib/**", "binary")
     build.classify_renpy("renpy.sh", "binary")
-    build.classify_renpy("renpy.exe", "binary")
     # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.
