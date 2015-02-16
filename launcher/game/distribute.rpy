@@ -876,7 +876,7 @@ init python in distribute:
                             if not data:
                                 break
 
-                            sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
+                            sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
 
             if self.include_update and not self.build_update and not dlc:
                 os.unlink(update_fn)
@@ -898,12 +898,15 @@ init python in distribute:
                 with open(fn, "rb") as f:
                     digest = hashlib.sha256(f.read()).hexdigest()
 
+                sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
+
                 index[variant] = {
                     "version" : self.update_version,
                     "pretty_version" : self.pretty_version,
                     "digest" : digest,
                     "zsync_url" : self.base_name + "-" + variant + ".zsync",
                     "sums_url" : self.base_name + "-" + variant + ".sums",
+                    "sums_size" : sums_size,
                     "json_url" : self.base_name + "-" + variant + ".update.json",
                     }
 

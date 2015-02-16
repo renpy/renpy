@@ -833,13 +833,17 @@ init -1500 python in updater:
             sums = [ ]
 
             f = urllib.urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
-            while True:
-                data = f.read(4)
+
+            while len(sums) * 4 <= self.updates[module].get("sums_url", 4):
+                try:
+                    data = f.read(4)
+                except:
+                    break
 
                 if len(data) != 4:
                     break
 
-                sums.append(struct.unpack("I", data)[0])
+                sums.append(struct.unpack("<I", data)[0])
 
             f.close()
 
