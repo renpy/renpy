@@ -1623,12 +1623,6 @@ class Interface(object):
         # Setup screen.
         fullscreen = renpy.game.preferences.fullscreen
 
-        # If we're in fullscreen mode, and changing to another mode, go to
-        # windowed mode first.
-        s = pygame.display.get_surface()
-        if s and (s.get_flags() & pygame.FULLSCREEN):
-            fullscreen = False
-
         old_fullscreen = self.fullscreen
         self.fullscreen = fullscreen
 
@@ -2757,6 +2751,8 @@ class Interface(object):
                     # fullscreen mode on windows.
                     if ev.w == 1 and ev.h == 1:
                         continue
+
+                    print ev
 
                     if pygame.display.get_surface().get_size() != ev.size:
                         self.set_mode((ev.w, ev.h))
