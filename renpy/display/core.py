@@ -2752,8 +2752,6 @@ class Interface(object):
                     if ev.w == 1 and ev.h == 1:
                         continue
 
-                    print ev
-
                     if pygame.display.get_surface().get_size() != ev.size:
                         self.set_mode((ev.w, ev.h))
 
