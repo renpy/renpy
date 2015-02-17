@@ -57,7 +57,7 @@ if tag:
         else:
             tag = "renpy-" + version
 
-        subprocess.check_call([ "git", "tag", "-a", "rapt-" + version, "-m", "Tagging Ren'Py + " + version + " release." ])
+        subprocess.check_call([ "git", "tag", "-a", "renpy-" + version, "-m", "Tagging Ren'Py + " + version + " release." ])
 
 
 os.chdir("/home/tom/ab/renpy/dl")
