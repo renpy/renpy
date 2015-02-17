@@ -17,8 +17,8 @@ the following language in your app's description will suffice, but check
 with a lawyer to be sure.
 
     This program contains free software licensed under a number of licenses,
-    including the GNU Lesser Public License. A complete list of software
-    is available at http://www.renpy.org/doc/html/license.html.
+    including the GNU Lesser General Public License. A complete list of
+    software is available at http://www.renpy.org/doc/html/license.html.
 
 Work in Progress
 ================
