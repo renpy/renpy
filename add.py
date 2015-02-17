@@ -52,12 +52,15 @@ if tag:
             sys.exit(1)
 
     for i in SOURCE:
+
+        os.chdir(i)
+
         if i == SOURCE[0]:
             tag = version
         else:
             tag = "renpy-" + version
 
-        subprocess.check_call([ "git", "tag", "-a", "renpy-" + version, "-m", "Tagging Ren'Py + " + version + " release." ])
+        subprocess.check_call([ "git", "tag", "-a", tag, "-m", "Tagging Ren'Py + " + version + " release." ])
 
 
 os.chdir("/home/tom/ab/renpy/dl")
