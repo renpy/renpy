@@ -10,7 +10,6 @@ translate russian strings:
     old "Quick save complete."
     new "Быстрое сохранение выполнено."
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -82,7 +81,6 @@ translate russian strings:
     old "jump <label>: jumps to label"
     new "jump <метка>: переходит к метке"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -106,7 +104,6 @@ translate russian strings:
     old "return"
     new "выход"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -194,7 +191,6 @@ translate russian strings:
     old "Restart"
     new "Перезапуск"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -202,7 +198,6 @@ translate russian strings:
     old "Saved screenshot as %s."
     new "Скриншот сохранен как %s."
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -242,7 +237,6 @@ translate russian strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "Вы уверены, что хотите пропустить невиданный диалог или следующий выбор?"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -254,7 +248,6 @@ translate russian strings:
     old "Fast Skip Mode"
     new "Быстрый режим пропуска"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -262,7 +255,6 @@ translate russian strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Включен режим авто-озвучки. Нажмите v, чтобы выключить."
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -322,7 +314,6 @@ translate russian strings:
     old "Cancel"
     new "Отменить"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -330,7 +321,6 @@ translate russian strings:
     old "Joystick Mapping"
     new "Настройка геймпада"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -394,7 +384,6 @@ translate russian strings:
     old "Done"
     new "Конец"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -438,7 +427,6 @@ translate russian strings:
     old "<repr() failed>"
     new "<ошибка repr()>"
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
@@ -494,7 +482,6 @@ translate russian strings:
     old "Opens the errors.txt file in a text editor."
     new "Открывает файл errors.txt в текстовом редакторе."
 
-# TODO: Translation updated at 2014-11-25 03:16
 
 translate russian strings:
 
