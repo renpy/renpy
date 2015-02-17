@@ -371,7 +371,7 @@ translate spanish strings:
 
     # renpy/common/_developer/developer.rpym:58
     old "Image Location Picker"
-    new "Image Location Picker"
+    new "Selector de posición en imágenes"
 
     # renpy/common/_developer/developer.rpym:61
     old "Filename List"
