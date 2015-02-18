@@ -342,6 +342,10 @@ init -1500 python in build:
     # The destination things are built in.
     destination = "{directory_name}-dists"
 
+    # Should we allow the use of an integrated GPU on platforms that support
+    # both discrete and integrated GPUs?
+    allow_integrated_gpu = True
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -363,7 +367,10 @@ init -1500 python in build:
 
         rv["exclude_empty_directories"] = exclude_empty_directories
 
+        rv["allow_integrated_gpu"] = allow_integrated_gpu
+
         rv["renpy"] = renpy
+
 
         rv["destination"] = destination.format(
             directory_name=directory_name,

@@ -630,6 +630,9 @@ init python in distribute:
                     ],
                 )
 
+            if self.build.get('allow_integrated_gpu', False):
+                plist["NSSupportsAutomaticGraphicsSwitching"] = True
+
             rv = self.temp_filename("Info.plist")
             plistlib.writePlist(plist, rv)
             return rv
