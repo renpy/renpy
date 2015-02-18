@@ -85,7 +85,12 @@ def path_to_saves(gamedir):
             NSSearchPathDomainMask.NSUserDomainMask,
             ).lastObject()
 
-        rv = url.path.UTF8String().decode("utf-8")
+        # url.path seems to change type based on iOS version, for some reason.
+        try:
+            rv = url.path().UTF8String().decode("utf-8")
+        except:
+            rv = url.path.UTF8String().decode("utf-8")
+
         print "Saving to", rv
         return rv
 
