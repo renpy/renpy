@@ -140,6 +140,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         of the drags relative to each other, they are not relative
         to the corner of this drag.
 
+    `drag_offscreen`
+        If true, this draggable can be moved offscreen. This can be
+        dangerous to use with drag_joined or drags that can change
+        size, as the drags can leave the screen entirely, with no
+        way to get them back on the screen.
+
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
     been rendered, the following fields become available:
@@ -155,6 +161,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     drag_group = None
     old_position = None
+    drag_offscreen = False
 
     def __init__(self,
                  d=None,
@@ -170,6 +177,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  hovered=None,
                  unhovered=None,
                  replaces=None,
+                 drag_offscreen=False,
                  **properties):
 
         super(Drag, self).__init__(**properties)
@@ -185,6 +193,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
+        self.drag_offscreen = drag_offscreen
 
         # We're focusable if we can be dragged.
         self.focusable = draggable
@@ -530,10 +539,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
                     new_x = int(par_x - self.grab_x + xo)
                     new_y = int(par_y - self.grab_y + yo)
-                    new_x = max(new_x, 0)
-                    new_x = min(new_x, int(i.parent_width - i.w))
-                    new_y = max(new_y, 0)
-                    new_y = min(new_y, int(i.parent_height - i.h))
+
+                    if not self.drag_offscreen:
+                        new_x = max(new_x, 0)
+                        new_x = min(new_x, int(i.parent_width - i.w))
+                        new_y = max(new_y, 0)
+                        new_y = min(new_y, int(i.parent_height - i.h))
 
                     if i.drag_group is not None and i.drag_name is not None:
                         i.drag_group.positions[i.drag_name] = (new_x, new_y, self.old_position)
