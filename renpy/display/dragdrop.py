@@ -178,9 +178,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  unhovered=None,
                  replaces=None,
                  drag_offscreen=False,
+                 style="drag",
                  **properties):
 
-        super(Drag, self).__init__(**properties)
+        super(Drag, self).__init__(style=style, **properties)
 
         self.drag_name = drag_name
         self.draggable = draggable
@@ -465,9 +466,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if not self.is_focused():
             return self.child.event(ev, x, y, st)
-
-        # if not self.draggable:
-        #    return self.child.event(ev, x, y, st)
 
         # Mouse, in parent-relative coordinates.
         par_x = int(self.last_x + x)

@@ -550,7 +550,7 @@ Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-DisplayableParser("drag", renpy.display.dragdrop.Drag, None, 1, replaces=True)
+DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
 Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")

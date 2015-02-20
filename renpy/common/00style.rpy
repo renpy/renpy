@@ -85,6 +85,7 @@ init -1800:
     style ruby_text is default
 
     style viewport is default
+    style drag is default
 
     style motion is default
     style transform is motion
@@ -331,6 +332,9 @@ init -1800:
         clipping True
         xfill True
         yfill True
+
+    style drag:
+        focus_mask True
 
     # Out-of-game menu root windows
 

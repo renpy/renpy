@@ -145,7 +145,6 @@ style _viewport is _default:
     xfill True
     yfill True
 
-
 style _button is _default:
     xpadding 8
     ypadding 6
