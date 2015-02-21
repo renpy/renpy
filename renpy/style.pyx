@@ -290,6 +290,12 @@ cdef class StyleCore:
         self.name = name
         self.help = help
 
+    def copy(self):
+        cdef StyleCore rv
+        rv = Style(self.parent)
+        rv.properties = list(self.properties)
+        return rv
+
     def __richcmp__(self, o, int op):
         if self is o:
             eq = True

@@ -455,6 +455,15 @@ class MultiBox(Container):
         # The scene list for this widget.
         self.scene_list = None
 
+    def parameterize(self, name, parameters):
+        rv = MultiBox(layout=self.default_layout)
+        rv.style = self.style.copy()
+
+        rv.children = self._list_type(i.parameterize('displayable', [ ]) for i in self.children)
+        rv.offsets = self._list_type()
+
+        return rv
+
     def _clear(self):
         super(MultiBox, self)._clear()
 
