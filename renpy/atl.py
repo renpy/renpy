@@ -915,12 +915,23 @@ class RawChild(RawStatement):
         self.children = [ child ]
 
     def compile(self, ctx): #@ReservedAssignment
-        box = renpy.display.layout.MultiBox(layout='fixed')
+
+        children = [ ]
 
         for i in self.children:
-            box.add(renpy.display.motion.ATLTransform(i, context=ctx.context))
+            children.append(renpy.display.motion.ATLTransform(i, context=ctx.context))
 
-        return Child(self.loc, box, None)
+        if len(children) != 1:
+
+            box = renpy.display.layout.MultiBox(layout='fixed')
+
+            for i in children:
+                box.add(i)
+
+            return Child(self.loc, box, None)
+
+        else:
+            return Child(self.loc, children[0], None)
 
     def mark_constant(self):
 
