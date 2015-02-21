@@ -959,12 +959,13 @@ class Child(Statement):
         executing(self.loc)
 
         old_child = trans.raw_child
+        child = self.child.parameterize('displayable', [ ])
 
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child,
-                                    new_widget=self.child)
+                                    new_widget=child)
         else:
-            child = self.child
+            child = child
 
         trans.set_child(child)
         trans.raw_child = self.child
