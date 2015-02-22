@@ -2150,6 +2150,17 @@ class Interface(object):
         renpy.display.focus.mouse_handler(None, -1, -1, default=False)
 
 
+    def text_event_in_queue(self):
+        """
+        Returns true if the next event in the queue is a text editing event.
+        """
+
+        ev = self.event_peek()
+        if ev is None:
+            return False
+        else:
+            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING)
+
     def update_text_rect(self):
         """
         Updates the text input state and text rectangle.
