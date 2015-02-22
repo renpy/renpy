@@ -2159,7 +2159,10 @@ class Interface(object):
             self.text_rect = renpy.store._text_rect # @UndefinedVariable
 
         if self.text_rect is not None:
-            if not self.old_text_rect:
+
+            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown() # @UndefinedVariable
+
+            if not self.old_text_rect or not_shown:
                 pygame.key.start_text_input() # @UndefinedVariable
 
             if self.old_text_rect != self.text_rect:
