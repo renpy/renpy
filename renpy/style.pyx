@@ -292,6 +292,7 @@ cdef class StyleCore:
 
     def copy(self):
         cdef StyleCore rv
+
         rv = Style(self.parent)
         rv.properties = list(self.properties)
         return rv

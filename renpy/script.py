@@ -590,9 +590,16 @@ class Script(object):
         """
 
         label = renpy.config.label_overrides.get(label, label)
+        original = label
 
-        if label not in self.namemap:
-            raise ScriptError("could not find label '%s'." % str(label))
+        rv = self.namemap.get(label, None)
+
+        if (rv is None) and (renpy.config.missing_label_callback is not None):
+            label = renpy.config.missing_label_callback(label)
+            rv = self.namemap.get(label, None)
+
+        if rv is None:
+            raise ScriptError("could not find label '%s'." % str(original))
 
         return self.namemap[label]
 
