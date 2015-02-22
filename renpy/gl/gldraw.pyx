@@ -518,27 +518,26 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture method.
 
-        if glrtt_copy and os.environ.get("RENPY_GL_RTT", "copy") == "copy":
-            renpy.display.log.write("Using copy RTT.")
-            self.rtt = glrtt_copy.CopyRtt()
-            self.info["rtt"] = "copy"
-            self.rtt.init()
 
-        elif (renpy.ios or
+        use_fbo = (
+            EGL or renpy.ios or renpy.android or
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
-                "GL_OES_framebuffer_object") or
-            use_subsystem(
-                glrtt_fbo,
-                "RENPY_GL_RTT",
-                "fbo",
-                "GL_ARB_framebuffer_object")):
+                "GL_ARB_framebuffer_object"))
 
+
+        if use_fbo:
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
+            self.rtt.init()
+
+        elif glrtt_copy:
+            renpy.display.log.write("Using copy RTT.")
+            self.rtt = glrtt_copy.CopyRtt()
+            self.info["rtt"] = "copy"
             self.rtt.init()
 
         else:
