@@ -105,8 +105,9 @@ init -1600 python:
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
 
-        # Profile one frame
+        # Profile commands.
         profile_once = [ 'K_F8' ],
+        memory_profile = [ 'K_F7' ],
 
         )
 
@@ -243,6 +244,9 @@ init -1600 python:
         renpy.display.interface.profile_once = True
         renpy.restart_interaction()
 
+    def _memory_profile():
+        renpy.memory.diff_memory()
+
     def _progress_screen():
         if renpy.context_nesting_level():
             return
@@ -290,6 +294,7 @@ init -1100 python:
         choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
         console = _console.enter,
         profile_once = _profile_once,
+        memory_profile = _memory_profile,
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
         progress_screen = _progress_screen,
