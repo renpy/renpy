@@ -598,6 +598,17 @@ def rename_save(old, new):
     clear_slot(old)
     clear_slot(new)
 
+def copy_save(old, new):
+    """
+    :doc: loadsave
+
+    Copies the save at `old` to `new`. (Does nothing if `old` does not
+    exist.)
+    """
+
+    location.copy(old, new)
+    clear_slot(new)
+
 
 def cycle_saves(name, count):
     """

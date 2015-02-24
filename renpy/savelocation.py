@@ -32,6 +32,7 @@ import renpy.display
 import threading
 
 from renpy.loadsave import clear_slot, safe_rename
+import shutil
 
 disk_lock = threading.RLock()
 
@@ -283,6 +284,21 @@ class FileLocation(object):
 
             self.scan()
 
+    def copy(self, old, new):
+        """
+        Copies `old` to `new`, if `old` exists.
+        """
+
+        with disk_lock:
+            old = self.filename(old)
+            new = self.filename(new)
+
+            if not os.path.exists(old):
+                return
+
+            shutil.copyfile(old, new)
+
+            self.scan()
 
     def load_persistent(self):
         """
@@ -430,6 +446,9 @@ class MultiLocation(object):
         for l in self.active_locations():
             l.rename(old, new)
 
+    def copy(self, old, new):
+        for l in self.active_locations():
+            l.copy(old, new)
 
     def load_persistent(self):
         rv = [ ]
@@ -443,7 +462,6 @@ class MultiLocation(object):
 
         for l in self.active_locations():
             l.save_persistent(data)
-
 
     def unlink_persistent(self):
 
