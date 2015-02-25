@@ -476,7 +476,7 @@ init -1 python hide:
     config.default_fullscreen = False
 
     ## The default text speed in characters per second. 0 is infinite.
-    ## デフォルト文字表示速度。０だと瞬間表示します。
+    ## デフォルト文字表示速度。０だと無限に時間がかかります。
 
     config.default_text_cps = 0
 

@@ -450,6 +450,42 @@ translate None strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "セルフボイシングが有効化しました。 'v' で無効化します。"
 
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "モバイル板でのアップデートはサポートしていません。"
+
+    # renpy/common/00updater.rpy:478
+    old "An error is being simulated."
+    new "エラーがシミュレートされました。"
+
+    # renpy/common/00updater.rpy:654
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "このプロジェクトはアップデートをサポートしていないか、アップデート用のファイルが削除されました。"
+
+    # renpy/common/00updater.rpy:668
+    old "This account does not have permission to perform an update."
+    new "このアカウントにはアップデート処理の権限がありません。"
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to write the update log."
+    new "このアカウントにはアップデートログを記録する権限がありません。"
+
+    # renpy/common/00updater.rpy:696
+    old "Could not verify update signature."
+    new "アップデートシグネチャーを認証出来ません。"
+
+    # renpy/common/00updater.rpy:956
+    old "The update file was not downloaded."
+    new "アップデートファイルがダウンロードされませんでした。"
+
+    # renpy/common/00updater.rpy:974
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "アップデートファイルは正しい digest を持っていません - 破損の可能性がありまます。"
+
+    # renpy/common/00updater.rpy:1030
+    old "While unpacking {}, unknown type {}."
+    new "{} を解凍中に、未知のタイプ {} を検出しました。"
+
 ##Lancherでのみ必要###########################################
     # # renpy/common/00gltest.rpy:95
     # old "Quit"
