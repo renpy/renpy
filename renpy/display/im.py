@@ -243,6 +243,9 @@ class Cache(object):
         if ce.time == self.time:
             self.size_of_current_generation -= ce.size
 
+        # Let the texture cache know we're not needed.
+        renpy.display.draw.mutated_surface(ce.surf)
+
         self.total_cache_size -= ce.size
         del self.cache[ce.what]
 
