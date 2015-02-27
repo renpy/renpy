@@ -429,7 +429,7 @@ class ATLTransformBase(renpy.object.Object):
                 self.block = self.parent_transform.block
                 self.properties = self.parent_transform.properties
                 self.parent_transform = None
-                return
+                return self.block
 
         old_exception_info = renpy.game.exception_info
 
