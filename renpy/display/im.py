@@ -507,6 +507,13 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
+    def __unicode__(self):
+        if len(self.filename) < 20:
+            return u"Image %r" % self.filename
+        else:
+            return u"Image \u2026%s" % self.filename[-20:]
+
+
     def get_mtime(self):
         return renpy.loader.get_mtime(self.filename)
 

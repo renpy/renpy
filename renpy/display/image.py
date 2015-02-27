@@ -105,6 +105,9 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
+    def __unicode__(self):
+        return u"<ImageReference {!r}>".format(self.name)
+
     def __hash__(self):
         return hash(self.name)
 

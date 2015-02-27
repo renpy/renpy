@@ -922,6 +922,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
         self.raw_child = self.child
 
+    def __repr__(self):
+        return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
+
     def _show(self):
         super(ATLTransform, self)._show()
         self.execute(self, self.st, self.at)
