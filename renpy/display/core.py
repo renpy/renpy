@@ -35,7 +35,7 @@ import cStringIO
 import threading
 
 try:
-    import android._android_sound # @UnresolvedImport
+    import android # @UnresolvedImport
 except:
     android = None
 
@@ -47,7 +47,11 @@ REDRAW = pygame.USEREVENT + 3
 EVENTNAME = pygame.USEREVENT + 4
 
 # All events except for TIMEEVENT and REDRAW
-ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
+ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
+ALL_EVENTS.add(PERIODIC)
+ALL_EVENTS.add(JOYEVENT)
+ALL_EVENTS.add(EVENTNAME)
+
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
