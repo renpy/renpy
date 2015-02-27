@@ -227,6 +227,9 @@ class ATLTransformBase(renpy.object.Object):
     parent_transform = None
     atl_st_offset = 0
 
+    # The block, as first compiled for prediction.
+    predict_block = None
+
     nosave = [ 'parent_transform' ]
 
     def __init__(self, atl, context, parameters):
@@ -247,6 +250,10 @@ class ATLTransformBase(renpy.object.Object):
 
         # The code after it has been compiled into a block.
         self.block = None
+
+        # The same thing, but only if the code was compiled into a block
+        # for prediction purposes only.
+        self.predict_block = None
 
         # The properties of the block, if it contains only an
         # Interpolation.
@@ -281,6 +288,18 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+    def get_block(self):
+        """
+        Returns the compiled block to use.
+        """
+
+        if self.block:
+            return self.block
+        elif self.predict_block and renpy.display.predict.predicting:
+            return self.predict_block
+        else:
+            return None
+
     def take_execution_state(self, t):
         """
         Updates self to begin executing from the same point as t. This
@@ -294,6 +313,8 @@ class ATLTransformBase(renpy.object.Object):
         if not isinstance(t, ATLTransformBase):
             return
         elif t.atl is not self.atl:
+            return
+        elif self.atl_state is None:
             return
 
         # Important to do it this way, so we use __eq__. The exception handling
@@ -321,7 +342,6 @@ class ATLTransformBase(renpy.object.Object):
         if self.child is renpy.display.motion.null:
             self.child = t.child
             self.raw_child = t.raw_child
-
 
     def __call__(self, *args, **kwargs):
 
@@ -413,15 +433,20 @@ class ATLTransformBase(renpy.object.Object):
 
         old_exception_info = renpy.game.exception_info
 
-        self.block = self.atl.compile(self.context)
+        block = self.atl.compile(self.context)
 
-        if len(self.block.statements) == 1 \
-                and isinstance(self.block.statements[0], Interpolation):
+        if len(block.statements) == 1 and isinstance(block.statements[0], Interpolation):
 
-            interp = self.block.statements[0]
+            interp = block.statements[0]
 
             if interp.duration == 0 and interp.properties:
                 self.properties = interp.properties[:]
+
+        if not constant and renpy.display.predict.predicting:
+            self.predict_block = block
+        else:
+            self.block = block
+            self.predict_block = None
 
         renpy.game.exception_info = old_exception_info
 
@@ -430,14 +455,17 @@ class ATLTransformBase(renpy.object.Object):
             self.parent_transform.properties = self.properties
             self.parent_transform = None
 
+        return block
+
 
     def execute(self, trans, st, at):
 
         if self.done:
             return None
 
-        if not self.block:
-            self.compile()
+        block = self.get_block()
+        if block is None:
+            block = self.compile()
 
         # Propagate transform_events from children.
         if self.child:
@@ -469,11 +497,11 @@ class ATLTransformBase(renpy.object.Object):
         else:
             timebase = st - self.atl_st_offset
 
-        action, arg, pause = self.block.execute(trans, timebase, self.atl_state, event)
+        action, arg, pause = block.execute(trans, timebase, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
 
-        if action == "continue":
+        if action == "continue" and not renpy.display.predict.predicting:
             self.atl_state = arg
         else:
             self.done = True
@@ -484,10 +512,12 @@ class ATLTransformBase(renpy.object.Object):
         self.atl.predict(self.context)
 
     def visit(self):
-        if not self.block:
-            self.compile()
+        block = self.get_block()
 
-        return self.children + self.block.visit()
+        if block is None:
+            block = self.compile()
+
+        return self.children + block.visit()
 
 # This is used in mark_constant to analyze expressions for constness.
 is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
@@ -788,10 +818,11 @@ class RawMultipurpose(RawStatement):
             if isinstance(child, (int, float)):
                 return Interpolation(self.loc, "pause", child, [ ], None, 0, [ ])
 
+            child = renpy.easy.displayable(child)
+
             if isinstance(child, ATLTransformBase):
                 child.compile()
-                return child.block
-
+                return child.get_block()
             else:
                 return Child(self.loc, child, transition)
 
@@ -912,7 +943,7 @@ class RawChild(RawStatement):
 
         super(RawChild, self).__init__(loc)
 
-        self.children = [ child ]
+        self.children = [ renpy.easy.displayable(child) ]
 
     def compile(self, ctx): #@ReservedAssignment
 
@@ -951,7 +982,7 @@ class Child(Statement):
 
         super(Child, self).__init__(loc)
 
-        self.child = renpy.easy.displayable(child)
+        self.child = child
         self.transition = transition
 
     def execute(self, trans, st, state, event):
