@@ -240,8 +240,7 @@ def LiveComposite(size, *args, **properties):
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
-        rv.add(Position(renpy.easy.displayable(widget),
-                        xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
+        rv.add(renpy.display.motion.Transform(widget, xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
 
     return rv
 
@@ -1605,9 +1604,7 @@ def LiveCrop(rect, child, **properties):
         image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")
     """
 
-    x, y, w, h = rect
-
-    return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
+    return renpy.display.motion.Transform(child, crop=rect, **properties)
 
 class Side(Container):
 
