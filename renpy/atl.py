@@ -936,14 +936,14 @@ class RawContainsExpr(RawStatement):
         self.constant = is_constant_expr(self.expression)
 
 
-# This allows us to have multiple children, inside a Fixed.
+# This allows us to have multiple ATL transforms as children.
 class RawChild(RawStatement):
 
     def __init__(self, loc, child):
 
         super(RawChild, self).__init__(loc)
 
-        self.children = [ renpy.easy.displayable(child) ]
+        self.children = [ child ]
 
     def compile(self, ctx): #@ReservedAssignment
 
