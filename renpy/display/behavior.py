@@ -527,7 +527,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         if renpy.config.allow_skipping and renpy.config.skipping:
 
-            if st >= skip_delay:
+            if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
                 if renpy.game.preferences.skip_unseen:
                     return True
                 elif renpy.config.skipping == "fast":
