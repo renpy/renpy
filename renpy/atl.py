@@ -314,8 +314,6 @@ class ATLTransformBase(renpy.object.Object):
             return
         elif t.atl is not self.atl:
             return
-        elif self.atl_state is None:
-            return
 
         # Important to do it this way, so we use __eq__. The exception handling
         # optimistically assumes that uncomparable objects are the same.
