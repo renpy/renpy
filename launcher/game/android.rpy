@@ -79,6 +79,8 @@ init python:
         import rapt.install_sdk
         import rapt.plat
         import rapt.interface
+
+        rapt.plat.renpy = True
     else:
         rapt = None
 
