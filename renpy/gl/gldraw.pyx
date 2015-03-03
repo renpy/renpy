@@ -321,6 +321,9 @@ cdef class GLDraw:
             if not self.init():
                 return False
 
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            return False
+
         self.did_init = True
 
         # Set some default settings.
