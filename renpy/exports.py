@@ -88,6 +88,8 @@ from renpy.memory import profile_memory, diff_memory, profile_rollback
 
 from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
 
+from renpy.execution import not_infinite_loop
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -145,6 +147,7 @@ def public_api():
     TEXT_TEXT
     TEXT_PARAGRAPH
     TEXT_DISPLAYABLE
+    not_infinite_loop
 
 del public_api
 

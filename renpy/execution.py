@@ -23,7 +23,45 @@
 # renpy object, as well as the context object.
 
 import sys
+import time
+
 import renpy.display
+
+
+# The number of statements that have been run since the last infinite loop
+# check.
+il_statements = 0
+
+# The deadline for reporting we're not in an infinite loop.
+il_time = 0
+
+def check_infinite_loop():
+    global il_statements
+
+    il_statements += 1
+
+    if il_statements <= 1000:
+        return
+
+    il_statements = 0
+
+    global il_time
+
+    if time.time() > il_time:
+        il_time = time.time() + 60
+        raise Exception("Possible infinite loop.")
+
+    return
+
+def not_infinite_loop(delay):
+    """
+    :doc: other
+
+    Resets the infinite loop detection timer to `delay` seconds.
+    """
+
+    global il_time
+    il_time = time.time() + delay
 
 class Delete(object):
     pass
@@ -290,6 +328,8 @@ class Context(renpy.object.Object):
 
             try:
                 try:
+                    check_infinite_loop()
+
                     renpy.game.exception_info = "While running game code:"
 
                     self.next_node = None

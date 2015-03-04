@@ -254,6 +254,8 @@ def main():
     game.contexts = [ renpy.execution.Context(False) ]
     game.contexts[0].init_phase = True
 
+    renpy.execution.not_infinite_loop(60)
+
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
     renpy.game.script = renpy.script.Script()
