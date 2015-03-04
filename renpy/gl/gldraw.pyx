@@ -521,15 +521,17 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture method.
 
+        # 2015-3-3 - had a problem with 2012-era Nvidia drivers that prevented
+        # ANGLE from working with fbo on Windows.
 
         use_fbo = (
-            EGL or renpy.ios or renpy.android or
+            renpy.ios or renpy.android or (EGL and not ANGLE) or
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
-                "GL_ARB_framebuffer_object"))
-
+                # "GL_ARB_framebuffer_object"
+                "RENPY_bogus_extension"))
 
         if use_fbo:
             renpy.display.log.write("Using FBO RTT.")
