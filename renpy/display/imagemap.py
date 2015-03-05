@@ -117,7 +117,7 @@ class ImageMapCache(renpy.object.Object):
             return rv
 
         self.md5.update(repr(d.identity))
-        self.md5.update(repr(d.identity))
+        self.md5.update(repr(rect))
 
         index = len(self.imagerect)
         rv = ImageCacheCrop(self, index)
@@ -192,7 +192,7 @@ class ImageMapCache(renpy.object.Object):
         for i in self.imagerect:
             rv += i[0].get_hash()
 
-        return rv
+        return rv & 0x7fffffff
 
     def finish(self):
         if not self.areas:
