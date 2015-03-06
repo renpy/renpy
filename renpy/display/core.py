@@ -2878,8 +2878,10 @@ class Interface(object):
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to
                     # process an TIMEEVENT to ensure that the timeout is
-                    # set correctly.
-                    self.post_time_event()
+                    # set correctly
+
+                    if ev.type != TIMEEVENT:
+                        self.post_time_event()
 
 
                 # Check again after handling the event.
