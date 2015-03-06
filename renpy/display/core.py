@@ -2866,9 +2866,14 @@ class Interface(object):
                         break
 
                     # Handle displayable inspector.
-                    if renpy.config.inspector and renpy.display.behavior.inspector(ev):
-                        l = self.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.context_clear_layers + renpy.config.overlay_layers)
-                        renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                    if renpy.config.inspector:
+                        if renpy.display.behavior.map_event(ev, "inspector"):
+                            l = self.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.context_clear_layers + renpy.config.overlay_layers)
+                            renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                        elif renpy.display.behavior.map_event(ev, "full_inspector"):
+                            l = self.surftree.main_displayables_at_point(x, y, renpy.config.layers)
+                            renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+
 
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to

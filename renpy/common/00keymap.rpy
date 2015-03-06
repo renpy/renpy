@@ -34,6 +34,7 @@ init -1600 python:
         dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
+        full_inspector = [ 'alt_I' ],
         developer = [ 'D' ],
         quit = [ ],
         iconify = [ ],
