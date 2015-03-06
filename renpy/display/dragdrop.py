@@ -518,6 +518,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
+            handled = True
+
             if not self.drag_moved and (self.start_x != par_x or self.start_y != par_y):
                 self.drag_moved = True
 
@@ -553,6 +555,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                     i.target_y = new_y
                     i.target_at = self.at
                     redraw(i, 0)
+
+        else:
+            handled = False
 
         if (self.drag_group is not None) and self.drag_moved:
             drop = self.drag_group.get_best_drop(joined)
@@ -607,7 +612,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                     if rv is not None:
                         return rv
 
-        raise renpy.display.core.IgnoreEvent()
+        if handled:
+            raise renpy.display.core.IgnoreEvent()
 
 
     def get_placement(self):
@@ -638,6 +644,9 @@ class DragGroup(renpy.display.layout.MultiBox):
     """
 
     _list_type = renpy.python.RevertableList
+
+    def __unicode__(self):
+        return "DragGroup"
 
     def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")
