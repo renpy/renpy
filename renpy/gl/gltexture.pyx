@@ -838,8 +838,8 @@ def texture_grid_from_drawing(width, height, draw_func, rtt, environ):
     gldraw = renpy.display.draw
     pwidth, pheight = gldraw.physical_size
 
-    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), 0.0)
-    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), 0.0)
+    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), 0.5)
+    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), 0.5)
 
     for y, height, texheight in texrows:
         row = [ ]
