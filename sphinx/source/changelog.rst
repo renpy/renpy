@@ -173,6 +173,9 @@ calls and errors.
 A completion progress indicator can be toggled by typing shift-alt-P or
 swiping up-down-left-right-left-right.
 
+As of this release, dictionary and set comprehensions are wrapped to
+support rollback.
+
 
 Ren'Py 6.18.3
 =============

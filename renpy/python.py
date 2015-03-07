@@ -328,6 +328,17 @@ def reached_vars(store, reachable, wait):
 
 class WrapNode(ast.NodeTransformer):
 
+    def visit_SetComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__set__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
+
     def visit_ListComp(self, n):
         return ast.Call(
             func = ast.Name(
@@ -346,6 +357,17 @@ class WrapNode(ast.NodeTransformer):
         return ast.Call(
             func = ast.Name(
                 id="__renpy__list__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
+
+    def visit_DictComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
             args = [ self.generic_visit(n) ],
@@ -1152,7 +1174,7 @@ class RollbackLog(renpy.object.Object):
         Called to temporarily suspend checkpointing, so any rollback
         will jump to prior to this statement
         """
-        
+
         self.checkpointing_suspended = flag
 
     def block(self):
