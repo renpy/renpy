@@ -356,7 +356,10 @@ python early hide:
         if not isinstance(fn, basestring):
             return
 
-        fn = config.voice_filename_format.format(filename=fn)
+        try:
+            fn = config.voice_filename_format.format(filename=fn)
+        except:
+            return
 
         if not renpy.loadable(fn):
             renpy.error('voice file %r is not loadable' % fn)
