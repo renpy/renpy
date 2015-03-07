@@ -60,6 +60,9 @@ class Solid(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
+        width = max(self.style.xminimum, width)
+        height = max(self.style.yminimum, height)
+
         color = self.color or self.style.color
 
         rv = Render(width, height)
@@ -171,6 +174,9 @@ class Frame(renpy.display.core.Displayable):
             return False
 
     def render(self, width, height, st, at):
+
+        width = max(self.style.xminimum, width)
+        height = max(self.style.yminimum, height)
 
         crend = render(self.image, width, height, st, at)
 
