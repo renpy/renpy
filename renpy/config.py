@@ -114,7 +114,7 @@ fast_skipping = False
 skipping = None
 
 # The delay while we are skipping say statements.
-skip_delay = 25
+skip_delay = 5
 
 # basic: Archive files that are searched for images.
 archives = [ ]
