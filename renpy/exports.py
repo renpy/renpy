@@ -2088,8 +2088,7 @@ def pop_call():
     to its caller.
     """
 
-    renpy.game.context().pop_dynamic()
-    renpy.game.context().lookup_return(pop=True)
+    renpy.game.context().pop_call()
 
 pop_return = pop_call
 

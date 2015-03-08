@@ -1333,9 +1333,8 @@ class Return(Node):
         else:
             renpy.store._return = None
 
-        renpy.game.context().pop_dynamic()
-
         next_node(renpy.game.context().lookup_return(pop=True))
+        renpy.game.context().pop_dynamic()
 
     def predict(self):
 
