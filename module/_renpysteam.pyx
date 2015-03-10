@@ -123,28 +123,31 @@ import renpy
 
 ######################################################### Stats and Achievements
 
-# A callable that is called when the stats are available.
-got_stats = None
+# # A callable that is called when the stats are available.
+# got_stats = None
+#
+# cdef void call_got_stats(UserStatsReceived_t *s):
+#     if got_stats is not None:
+#         got_stats()
+#
+# cdef SteamCallback[UserStatsReceived_t] *stats_received_callback = \
+#     new SteamCallback[UserStatsReceived_t](call_got_stats)
 
-cdef void call_got_stats(UserStatsReceived_t *s):
-    if got_stats is not None:
-        got_stats()
-
-cdef SteamCallback[UserStatsReceived_t] *stats_received_callback = \
-    new SteamCallback[UserStatsReceived_t](call_got_stats)
-
-def retrieve_stats(callback):
+def retrieve_stats():
     """
     :doc: steam_stats
 
-    Retrieves achievements and statistics from Steam. `callback` will be
+    Retrieves achievements and statistics from Steam.
+    """
+    """
+     `callback` will be
     called with no parameters if and when the statistics become available.
     """
 
-    global got_stats
-    got_stats = callback
+#     global got_stats
+#     got_stats = callback
 
-    print SteamUserStats().RequestCurrentStats()
+    SteamUserStats().RequestCurrentStats()
 
 def store_stats():
     """
@@ -321,27 +324,31 @@ def dlc_installed(appid):
 
     return SteamApps().BIsDlcInstalled(appid)
 
-# A callable that is called when the stats are available.
-got_dlc = None
+# # A callable that is called when the stats are available.
+# got_dlc = None
+#
+# cdef void call_got_dlc(DlcInstalled_t *s):
+#     if got_dlc is not None:
+#         got_dlc(s.m_nAppID)
+#
+# cdef SteamCallback[DlcInstalled_t] *dlc_callback = \
+#     new SteamCallback[DlcInstalled_t](call_got_dlc)
 
-cdef void call_got_dlc(DlcInstalled_t *s):
-    if got_dlc is not None:
-        got_dlc(s.m_nAppID)
-
-cdef SteamCallback[DlcInstalled_t] *dlc_callback = \
-    new SteamCallback[DlcInstalled_t](call_got_dlc)
-
-def install_dlc(appid, callback):
+def install_dlc(appid): # , callback):
     """
     :doc: steam_apps
 
-    Requests the DLC with `appid` be installed. If not None, `callback`
+    Requests the DLC with `appid` be installed.
+    """
+
+    """
+    If not None, `callback`
     will be called with `appid` when the install finishes. Only one
     callback can be registered at a time.
     """
 
-    global got_dlc
-    got_dlc = callback
+#     global got_dlc
+#     got_dlc = callback
 
     SteamApps().InstallDLC(appid)
 

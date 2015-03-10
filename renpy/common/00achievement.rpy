@@ -108,10 +108,11 @@ init -1500 python in achievement:
             # A map from achievement name to steam name.
             self.names = { }
 
-            steam.retrieve_stats(self.got_stats)
+            steam.retrieve_stats()
+#             steam.retrieve_stats(self.got_stats)
 
-        def got_stats(self):
-            renpy.restart_interaction()
+#         def got_stats(self):
+#             renpy.restart_interaction()
 
         def register(self, name, steam=None, **kwargs):
             if steam is not None:
