@@ -218,7 +218,7 @@ class SubFile(object):
         self.length = length
         self.start = start
 
-        if start is None:
+        if not self.start:
             self.name = self.f.name
         else:
             self.name = None
@@ -346,6 +346,17 @@ class SubFile(object):
     def write(self, s):
         raise Exception("Write not supported by SubFile")
 
+open_file = open
+
+if "RENPY_FORCE_SUBFILE" in os.environ:
+    def open_file(name, mode):
+        f = open(name, mode)
+
+        f.seek(0, 2)
+        length = f.tell()
+        f.seek(0, 0)
+
+        return SubFile(f, 0, length, '')
 
 def load_core(name):
     """
@@ -372,7 +383,7 @@ def load_core(name):
     if not renpy.config.force_archives:
         try:
             fn = transfn(name)
-            return file(fn, "rb")
+            return open_file(fn, "rb")
         except:
             pass
 
