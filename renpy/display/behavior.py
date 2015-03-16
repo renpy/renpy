@@ -81,6 +81,12 @@ def compile_event(key, keydown):
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
 
+    if part[0] == "repeat":
+        part.pop(0)
+        rv += " and (ev.repeat)"
+    else:
+        rv += " and (not ev.repeat)"
+
     if part[0] == "alt":
         part.pop(0)
         rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
