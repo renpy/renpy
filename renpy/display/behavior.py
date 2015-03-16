@@ -81,30 +81,37 @@ def compile_event(key, keydown):
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
 
-    if part[0] == "repeat":
-        part.pop(0)
+
+    MODIFIERS = { "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
+    modifiers = set()
+
+    while part[0] in MODIFIERS:
+        modifiers.add(part.pop(0))
+
+    if "repeat" in modifiers:
         rv += " and (ev.repeat)"
     else:
         rv += " and (not ev.repeat)"
 
-    if part[0] == "alt":
-        part.pop(0)
+    if "alt" in modifiers:
         rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
     else:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
-    if part[0] == "meta":
-        part.pop(0)
+    if "meta" in modifiers:
         rv += " and (ev.mod & %d)" % pygame.KMOD_META
     else:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
-    if part[0] == "shift":
-        part.pop(0)
+    if "ctrl" in modifiers:
+        rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+    else:
+        rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+
+    if "shift" in modifiers:
         rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT
 
-    if part[0] == "noshift":
-        part.pop(0)
+    if "noshift" in modifiers:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
     if len(part) == 1:

@@ -34,11 +34,31 @@ the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
 
-Keyboard keysyms may be preceded by the prefixes "alt\_", "meta\_", "shift\_",
-, "noshift\_", and "repeat\_" The first three of these require the corresponding modifier
-key to be pressed. (Meta is present on Linux keyboards, and corresponds to the
-Command key on a Mac.) "noshift\_" requires that the shift key not be pressed, and
-"repeat\_" is true if the key is a repeat.
+Keyboard keysyms may be preceded by the following prefixes, separated by
+underscores:
+
+alt
+    Matches if the alt key is pressed. Keysyms without this prefix match
+    when the alt key is not pressed.
+meta
+    Matches if the meta, command, or windows key is pressed. Keysyms without
+    this prefix match when the meta key is not pressed.
+ctrl
+    Matches if the ctrl key is pressed. Keysyms without this prefix match
+    when the ctrl key is not pressed. (Ctrl is not very useful, as it
+    usually triggers skipping.)
+shift
+    Matches when the shift key is pressed.
+noshift
+    Matches when the shift key is not pressed. A K_ keysym ignores the state
+    of the shift key when matching.
+repeat
+    Matches when the key is a repeat due to the key being held down. Keysyms
+    without this prefix do not match repeats.
+
+For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
+while shift and alt are held down.
+
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
 following code adds the 't' key to the list of keys that dismiss a say
