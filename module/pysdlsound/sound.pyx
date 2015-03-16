@@ -65,7 +65,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
     rw = RWopsFromPython(file)
 
     if rw == NULL:
-        raise Exception, "Could not create RWops."
+        raise Exception("Could not create RWops.")
 
     if paused:
         pause = 1
@@ -85,6 +85,9 @@ def queue(channel, file, name, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPython(file)
+
+    if rw == NULL:
+        raise Exception("Could not create RWops.")
 
     if tight:
         tight = 1
