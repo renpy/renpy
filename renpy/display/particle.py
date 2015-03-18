@@ -444,7 +444,7 @@ class SnowBlossomFactory(renpy.python.NoRollback):
             else:
                 return n
 
-        if not particles and self.fast:
+        if (st == 0) and not particles and self.fast:
             rv = [ ]
 
             for _i in xrange(0, self.count):
