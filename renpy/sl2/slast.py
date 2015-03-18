@@ -121,6 +121,11 @@ class SLContext(renpy.ui.Addable):
         # block, or None if we're not in a showif block.
         self.showif = None
 
+        # True if there was a failure in this statement or any of its children.
+        # Fails can only occur when predicting, as otherwise an exception
+        # would be thrown.
+        self.fail = False
+
     def get_style_group(self):
         style_prefix = self.style_prefix
 
@@ -731,6 +736,8 @@ class SLDisplayable(SLBlock):
             for i in ctx.children:
                 predict_displayable(i)
 
+            context.fail = True
+
             return
 
         if ctx.children != cache.children:
@@ -818,7 +825,7 @@ class SLDisplayable(SLBlock):
             cache.transform = None
             cache.raw_transform = None
 
-        if self.constant:
+        if self.constant and not ctx.fail:
             cache.constant = d
 
             if self.scope and main.uses_scope:
@@ -1104,6 +1111,9 @@ class SLShowIf(SLNode):
             for i in block.children:
                 i.execute(ctx)
 
+            if ctx.fail:
+                context.fail = True
+
     def copy_on_change(self, cache):
         for _cond, block in self.entries:
             block.copy_on_change(cache)
@@ -1196,6 +1206,9 @@ class SLFor(SLBlock):
                         raise
 
         context.cache[self.serial] = newcaches
+
+        if ctx.fail:
+            context.fail = True
 
     def keywords(self, context):
         return
@@ -1415,6 +1428,9 @@ class SLUse(SLNode):
             ctx.updating = True
 
         ast.execute(ctx)
+
+        if ctx.fail:
+            context.fail = True
 
     def copy_on_change(self, cache):
 
