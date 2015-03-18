@@ -496,6 +496,12 @@ properties:
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
+
 `hovered`
     An action to run when the button gains focus.
 
@@ -809,6 +815,12 @@ following properties:
 `action`
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
+
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.
@@ -1153,6 +1165,12 @@ also takes the following properties:
 `action`
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
+
+`alternate`
+    An action that is run if the hotspot is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the hotspot
+    on a mouse-based platform, or when the player long presses the hotspot
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.
