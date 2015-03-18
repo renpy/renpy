@@ -118,6 +118,8 @@ name_blacklist = {
     "renpy.loadsave.autosave_not_running",
     "renpy.python.unicode_re",
     "renpy.python.string_re",
+    "renpy.python.store_dicts",
+    "renpy.python.store_modules",
     "renpy.text.text.VERT_FORWARD",
     "renpy.text.text.VERT_REVERSE",
     "renpy.savelocation.scan_thread_condition",

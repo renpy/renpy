@@ -135,7 +135,15 @@ class StoreDict(dict):
 
 
 # A map from the name of a store dict to the corresponding StoreDict object.
+# This isn't reset during a reload, so store objects stay the same in modules.
 store_dicts = { }
+
+# Same, for module objects.
+store_modules = { }
+
+# The store dicts that have been cleared and initialized during the current
+# run.
+initialized_store_dicts = set()
 
 def create_store(name):
     """
@@ -144,12 +152,14 @@ def create_store(name):
 
     name = str(name)
 
-    if name in store_dicts:
+    if name in initialized_store_dicts:
         return
 
+    initialized_store_dicts.add(name)
+
     # Create the dict.
-    d = StoreDict()
-    store_dicts[name] = d
+    d = store_dicts.setdefault(name, StoreDict())
+    d.reset()
 
     # Set the name.
     d["__name__"] = name
@@ -162,8 +172,11 @@ def create_store(name):
         if k not in d:
             d[k] = v
 
-    # Create the corresponding module.
-    sys.modules[name] = StoreModule(d)
+    # Create or reuse the corresponding module.
+    if name in store_modules:
+        sys.modules[name] = store_modules[name]
+    else:
+        store_modules[name] = sys.modules[name] = StoreModule(d)
 
     # If we're a module in the store, add us to the store.
     if name.startswith("store."):
