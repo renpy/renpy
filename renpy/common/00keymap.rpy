@@ -112,6 +112,8 @@ init -1600 python:
 
         )
 
+    config.default_keymap = { k : list(v) for k, v in config.keymap.items() }
+
     # Should we use the autoreload system?
     config.autoreload = True
 

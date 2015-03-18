@@ -175,6 +175,9 @@ load_before_transition = True
 # The keymap that is used to change keypresses and mouse events.
 keymap = { }
 
+# The default keymap, used when a binding isn't found in keymap.
+default_keymap = [ ]
+
 # Should we try to support joysticks?
 joystick = True
 

@@ -50,6 +50,9 @@ def compile_event(key, keydown):
     if key in renpy.config.keymap:
         return compile_event(renpy.config.keymap[key], keydown)
 
+    if key in renpy.config.default_keymap:
+        return compile_event(renpy.config.default_keymap[key], keydown)
+
     if key is None:
         return "(False)"
 
