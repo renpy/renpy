@@ -90,6 +90,12 @@
         of the drags relative to each other, they are not relative
         to the corner of this drag.
     
+    `drag_offscreen`
+        If true, this draggable can be moved offscreen. This can be
+        dangerous to use with drag_joined or drags that can change
+        size, as the drags can leave the screen entirely, with no
+        way to get them back on the screen.
+    
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
     been rendered, the following fields become available:

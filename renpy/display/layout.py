@@ -1058,7 +1058,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
                  if tooltip:
                      return tooltip, .1
                  else:
-                     return Null()
+                     return Null(), .1
 
         image tooltipper = DynamicDisplayable(show_tooltip)
 

@@ -226,6 +226,10 @@
         The filename the name is munged into. If None, the name is munged
         into the filename containing the call to this function.
 
+.. function:: renpy.not_infinite_loop(delay)
+    
+    Resets the infinite loop detection timer to `delay` seconds.
+
 .. function:: renpy.notify(message)
     
     Causes Ren'Py to display the `message` using the notify screen. By
