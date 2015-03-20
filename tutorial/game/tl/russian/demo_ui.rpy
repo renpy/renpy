@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/demo_ui.rpy:219
 translate russian demo_ui_e1d49b5e:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/tutorial_atl.rpy:187
 translate russian tutorial_positions_a09a3fd1:
 

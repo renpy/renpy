@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # game/translations.rpy:10

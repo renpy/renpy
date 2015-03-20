@@ -1,4 +1,4 @@
-
+﻿
 translate traditional_chinese strings:
 
     # game/navigation.rpy:150

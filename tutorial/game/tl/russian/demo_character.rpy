@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/demo_character.rpy:45
 translate russian demo_character_16897d85:
 

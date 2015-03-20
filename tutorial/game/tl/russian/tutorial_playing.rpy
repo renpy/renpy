@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/tutorial_playing.rpy:16
 translate russian tutorial_playing_2985ab86:
 

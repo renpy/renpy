@@ -1,4 +1,4 @@
-## Este archivo contiene algunas de las opciones que pueden cambiarse para
+﻿## Este archivo contiene algunas de las opciones que pueden cambiarse para
 ## personalizar el juego Ren'Py. Solo figuran las opciones más comunes.
 ## Es posible añadir muchas más personalizaciones.
 ##

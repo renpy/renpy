@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/demo_dynamic.rpy:27
 translate russian demo_dynamic_b72548ea:
 

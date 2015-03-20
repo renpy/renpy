@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/demo_text.rpy:65
 translate russian demo_text_ff47a1f2:
 

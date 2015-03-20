@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 translate russian strings:
 
     # renpy/common/00action_file.rpy:142

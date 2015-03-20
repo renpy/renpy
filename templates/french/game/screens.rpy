@@ -1,4 +1,4 @@
-# Ce fichier est dans le domaine public. N'hésitez pas à la modifier pour vos
+﻿# Ce fichier est dans le domaine public. N'hésitez pas à la modifier pour vos
 # propres écrans
 
 ##############################################################################

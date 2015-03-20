@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/tutorial_sprite.rpy:63
 translate russian tutorial_sprite_d2ca6a0c:
 

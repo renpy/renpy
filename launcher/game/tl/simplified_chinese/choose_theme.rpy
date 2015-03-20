@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # game/choose_theme.rpy:274

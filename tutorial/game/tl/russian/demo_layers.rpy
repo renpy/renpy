@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/demo_layers.rpy:15
 translate russian demo_layers_c4715eb5:
 

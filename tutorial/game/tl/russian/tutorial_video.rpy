@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/tutorial_video.rpy:11
 translate russian tutorial_video_f34a17f5:
 

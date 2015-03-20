@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/demo_minigame.rpy:204
 translate russian demo_minigame_03fc91ef:
 

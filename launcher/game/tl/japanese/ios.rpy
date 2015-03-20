@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-01-25 08:59
-
+﻿
 translate japanese strings:
 
     # game/ios.rpy:28

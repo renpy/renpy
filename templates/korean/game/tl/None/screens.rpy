@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-05-03 00:31
-
+﻿
 translate None strings:
 
     # game/screens.rpy:194

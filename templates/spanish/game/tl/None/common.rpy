@@ -1,4 +1,4 @@
-translate None strings:
+﻿translate None strings:
 
     # renpy/common/_layout/classic_load_save.rpym:152
     old "a"

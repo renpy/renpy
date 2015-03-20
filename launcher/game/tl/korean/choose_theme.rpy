@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-05-02 21:49
-
+﻿
 translate korean strings:
 
     # game/choose_theme.rpy:292

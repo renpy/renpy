@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import os.path
+import codecs
 
 ENDINGS = [
     ".rpy",
@@ -24,13 +25,15 @@ def process_file(fn):
     with open(fn, "rb") as f:
         for l in f:
 
+            l = l.replace(codecs.BOM_UTF8, "")
+
             if l.startswith("# TODO: Translation updated"):
                 continue
 
             lines.append(l)
 
     with open(fn, "wb") as f:
-        f.write("".join(lines))
+        f.write(codecs.BOM_UTF8 + "".join(lines))
 
 def process(root):
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-11-25 03:16
-
+﻿
 # game/script.rpy:85
 translate russian start_0e6a5bb4:
 

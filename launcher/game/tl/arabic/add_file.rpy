@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # game/add_file.rpy:7

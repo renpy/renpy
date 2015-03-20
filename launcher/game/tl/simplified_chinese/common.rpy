@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # renpy/common/00action_file.rpy:118
