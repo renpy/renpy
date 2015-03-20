@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,7 @@ from cStringIO import StringIO
 import sys
 import types
 import threading
+import zlib
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
@@ -217,7 +218,7 @@ class SubFile(object):
         self.length = length
         self.start = start
 
-        if start is None:
+        if not self.start:
             self.name = self.f.name
         else:
             self.name = None
@@ -345,6 +346,17 @@ class SubFile(object):
     def write(self, s):
         raise Exception("Write not supported by SubFile")
 
+open_file = open
+
+if "RENPY_FORCE_SUBFILE" in os.environ:
+    def open_file(name, mode):
+        f = open(name, mode)
+
+        f.seek(0, 2)
+        length = f.tell()
+        f.seek(0, 0)
+
+        return SubFile(f, 0, length, '')
 
 def load_core(name):
     """
@@ -371,7 +383,7 @@ def load_core(name):
     if not renpy.config.force_archives:
         try:
             fn = transfn(name)
-            return file(fn, "rb")
+            return open_file(fn, "rb")
         except:
             pass
 
@@ -504,20 +516,38 @@ def transfn(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 
-def get_mtime(name):
+hash_cache = dict()
+
+def get_hash(name):
     """
     Returns the time the file m was last modified, or 0 if it
     doesn't exist or is archived.
     """
 
-    for p in get_prefixes():
-        try:
-            fn = transfn(p + name)
-            return os.path.getmtime(fn)
-        except:
-            pass
+    rv = hash_cache.get(name, None)
+    if rv is not None:
+        return rv
 
-    return 0
+    rv = 0
+
+    try:
+        f = load(name)
+
+        while True:
+            data = f.read(1024 * 1024)
+
+            if not data:
+                break
+
+            rv = zlib.adler32(data, rv)
+
+    except:
+        pass
+
+    hash_cache[name] = rv
+
+    return rv
+
 
 ################################################################# Module Loading
 

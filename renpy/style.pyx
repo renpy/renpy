@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -189,10 +189,12 @@ class StyleManager(object):
         if not isinstance(value, StyleCore):
             raise Exception("Value is not a style.")
 
+        cdef StyleCore style = value
+
         name = (name,)
 
-        if value.name is None:
-            value.name = name
+        if style.name is None:
+            style.name = name
 
         styles[name] = value
 
@@ -288,6 +290,13 @@ cdef class StyleCore:
         self.name = name
         self.help = help
 
+    def copy(self):
+        cdef StyleCore rv
+
+        rv = Style(self.parent)
+        rv.properties = list(self.properties)
+        return rv
+
     def __richcmp__(self, o, int op):
         if self is o:
             eq = True
@@ -358,6 +367,14 @@ cdef class StyleCore:
         for d in self.properties:
             if property in d:
                 del d[property]
+
+    def __setattr__(self, name, value):
+        if name not in prefixed_all_properties:
+            raise Exception("Style property {} is not known.".format(name))
+        self.properties.append({ name : value })
+
+    def __delattr__(self, name):
+        self.delattr(name)
 
     def set_parent(self, parent):
         self.parent = get_tuple_name(parent)
@@ -593,7 +610,10 @@ cdef class StyleCore:
         return rv
 
 
-from renpy.styleclass import Style, all_properties, prefix_priority, prefix_alts
+# This will be replaced when renpy.styledata.import_style_functions is called.
+Style = StyleCore
+
+from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {
@@ -601,7 +621,6 @@ prefixed_all_properties = {
     for prefix in prefix_priority
     for propname in all_properties
     }
-
 
 ################################################################################
 # Building
@@ -762,6 +781,8 @@ def restore(o):
     """
     Restores a style backup.
     """
+
+    cdef StyleCore s
 
     for k, v in o.iteritems():
         s = get_full_style(k)

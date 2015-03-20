@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-05-03 00:31
-
+﻿
 translate None strings:
 
     # renpy/common/00action_file.rpy:142

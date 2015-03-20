@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -64,7 +64,7 @@ from renpy.curry import curry, partial
 from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 
-from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, copy_save, unlink_save, scan_saved_game
 from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot, force_autosave
 
 from renpy.python import py_eval as eval
@@ -85,6 +85,10 @@ from renpy.statements import register as register_statement
 from renpy.text.extras import check_text_tags
 
 from renpy.memory import profile_memory, diff_memory, profile_rollback
+
+from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH as TEXT_PARAGRAPH, DISPLAYABLE as TEXT_DISPLAYABLE
+
+from renpy.execution import not_infinite_loop
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
@@ -115,7 +119,7 @@ def public_api():
     curry, partial
     play
     movie_start_fullscreen, movie_start_displayable, movie_stop
-    load, save, list_saved_games, can_load, rename_save, unlink_save, scan_saved_game
+    load, save, list_saved_games, can_load, rename_save, copy_save, unlink_save, scan_saved_game
     list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot, force_autosave
     eval
     random
@@ -138,7 +142,12 @@ def public_api():
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
     image_exists
-    profile_memory, diff_memory
+    profile_memory, diff_memory, profile_rollback
+    TEXT_TAG
+    TEXT_TEXT
+    TEXT_PARAGRAPH
+    TEXT_DISPLAYABLE
+    not_infinite_loop
 
 del public_api
 
@@ -238,6 +247,22 @@ def block_rollback():
     """
 
     renpy.game.log.block()
+
+
+def suspend_rollback(flag):
+    """
+    :doc: rollback
+    :args: (flag)
+
+    Rollback will skip sections of the game where rollback has been
+    suspended.
+
+    `flag`:
+        When `flag` is true, rollback is suspended. When false,
+        rollback is resumed.
+    """
+
+    renpy.game.log.suspend_checkpointing(flag)
 
 
 def fix_rollback():
@@ -2063,8 +2088,7 @@ def pop_call():
     to its caller.
     """
 
-    renpy.game.context().pop_dynamic()
-    renpy.game.context().lookup_return(pop=True)
+    renpy.game.context().pop_call()
 
 pop_return = pop_call
 
@@ -2280,7 +2304,7 @@ def stop_predict_screen(name):
     """
 
     new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
-    new_predict.pop(name)
+    new_predict.pop(name, None)
     renpy.store._predict_screen = new_predict
 
 
@@ -2410,8 +2434,24 @@ def mode(mode):
 
     if mode in modes:
         modes.remove(mode)
+
     modes.insert(0, mode)
 
+def get_mode():
+    """
+    :doc: modes
+
+    Returns the current mode, or None if it is not defined.
+    """
+
+    ctx = renpy.game.context()
+
+    if not ctx.use_modes:
+        return None
+
+    modes = ctx.modes
+
+    return modes[0]
 
 def notify(message):
     """
@@ -2816,3 +2856,12 @@ def invoke_in_thread(fn, *args, **kwargs):
     t.daemon = True
     t.start()
 
+def cancel_gesture():
+    """
+    :doc: gesture
+
+    Cancels the current gesture, preventing the gesture from being recognized.
+    This should be called by displayables that have gesture-like behavior.
+    """
+
+    renpy.display.gesture.recognizer.cancel() # @UndefinedVariable

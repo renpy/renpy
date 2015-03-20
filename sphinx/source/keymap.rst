@@ -34,10 +34,31 @@ the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
 
-Keyboard keysyms may be preceded by the prefixes "alt\_", "meta\_", "shift\_",
-or "noshift\_". The first three of these require the corresponding modifier
-key to be pressed. (Meta is present on Linux keyboards, and corresponds to the
-Command key on a Mac.) "noshift\_" requires that the shift key not be pressed.
+Keyboard keysyms may be preceded by the following prefixes, separated by
+underscores:
+
+alt
+    Matches if the alt key is pressed. Keysyms without this prefix match
+    when the alt key is not pressed.
+meta
+    Matches if the meta, command, or windows key is pressed. Keysyms without
+    this prefix match when the meta key is not pressed.
+ctrl
+    Matches if the ctrl key is pressed. Keysyms without this prefix match
+    when the ctrl key is not pressed. (Ctrl is not very useful, as it
+    usually triggers skipping.)
+shift
+    Matches when the shift key is pressed.
+noshift
+    Matches when the shift key is not pressed. A K_ keysym ignores the state
+    of the shift key when matching.
+repeat
+    Matches when the key is a repeat due to the key being held down. Keysyms
+    without this prefix do not match repeats.
+
+For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
+while shift and alt are held down.
+
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
 following code adds the 't' key to the list of keys that dismiss a say
@@ -47,40 +68,46 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].append('t')
         $ config.keymap['dismiss'].remove('K_SPACE')
 
-The default keymap is contained inside the python code implementing Ren'Py, and
-as of version 6.17 is as follows::
+The default keymap is contained inside renpy/common/00keymap.rpy, and
+as of version 6.99 is as follows::
 
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
+        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4', 'joy_rollback' ],
         screenshot = [ 's' ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
+        full_inspector = [ 'alt_I' ],
         developer = [ 'D' ],
-        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-        iconify = [ 'meta_m', 'alt_m' ],
+        quit = [ ],
+        iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
+        progress_screen = [ 'alt_P' ],
+
+        # Accessibility.
+        self_voicing = [ 'v', 'V' ],
+        clipboard_voicing = [ 'C' ],
 
         # Say.
-        rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
+        rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
         dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
         # Pause.
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT', 'repeat_K_LEFT', 'joy_left' ],
+        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT', 'joy_right' ],
+        focus_up = [ 'K_UP', 'repeat_K_UP', 'joy_up' ],
+        focus_down = [ 'K_DOWN', 'repeat_K_DOWN', 'joy_down' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
@@ -89,11 +116,11 @@ as of version 6.17 is as follows::
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'K_BACKSPACE' ],
+        input_backspace = [ 'K_BACKSPACE', 'repeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-        input_left = [ 'K_LEFT' ],
-        input_right = [ 'K_RIGHT' ],
-        input_delete = [ 'K_DELETE' ],
+        input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
 
         # Viewport.
         viewport_up = [ 'mousedown_4' ],
@@ -109,10 +136,10 @@ as of version 6.17 is as follows::
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_left = [ 'K_LEFT', 'joy_left' ],
-        bar_right = [ 'K_RIGHT', 'joy_right' ],
-        bar_up = [ 'K_UP', 'joy_up' ],
-        bar_down = [ 'K_DOWN', 'joy_down' ],
+        bar_left = [ 'K_LEFT', 'repeat_K_LEFT', 'joy_left' ],
+        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT', 'joy_right' ],
+        bar_up = [ 'K_UP', 'repeat_K_UP', 'joy_up' ],
+        bar_down = [ 'K_DOWN', 'repeat_K_DOWN', 'joy_down' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE' ],
@@ -123,10 +150,14 @@ as of version 6.17 is as follows::
 
         # Debug console.
         console = [ 'shift_O' ],
-        console_older = [ 'K_UP' ],
-        console_newer = [ 'K_DOWN' ],
+        console_older = [ 'K_UP', 'repeat_K_UP' ],
+        console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
+
+        # Profile commands.
+        profile_once = [ 'K_F8' ],
+        memory_profile = [ 'K_F7' ],
 
         )

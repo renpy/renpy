@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -150,11 +150,15 @@ class Control(object):
 
     `loop`
         True if this corresponds to a loop.
+
+    `imagemap`
+        True if this control is in a non-constant imagemap.
     """
 
-    def __init__(self, const, loop):
+    def __init__(self, const, loop, imagemap):
         self.const = const
         self.loop = loop
+        self.imagemap = imagemap
 
 # Three levels of constness.
 GLOBAL_CONST = 2 # Expressions that are const everywhere.
@@ -187,19 +191,29 @@ class Analysis(object):
         self.old_pure_functions = set()
 
         # Represents what we know about the current control.
-        self.control = Control(True, False)
+        self.control = Control(True, False, False)
 
         # The stack of const_flow values.
         self.control_stack = [ self.control ]
 
-    def push_control(self, const=True, loop=False):
-        self.control = Control(self.control.const and const, loop)
+    def push_control(self, const=True, loop=False, imagemap=False):
+        self.control = Control(self.control.const and const, loop, self.imagemap or imagemap)
         self.control_stack.append(self.control)
 
     def pop_control(self):
         rv = self.control_stack.pop()
         self.control = self.control_stack[-1]
         return rv
+
+    def imagemap(self):
+        """
+        Returns NOT_CONST if we're in a non-constant imagemap.
+        """
+
+        if self.control.imagemap:
+            return NOT_CONST
+        else:
+            return GLOBAL_CONST
 
     def exit_loop(self):
         """

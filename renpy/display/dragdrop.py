@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,7 @@ from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
 
-import pygame
+import pygame_sdl2 as pygame
 
 def default_drag_group():
     """
@@ -124,7 +124,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
     `clicked`
         A callback this is called, with no arguments, when the Drag is
         clicked without being moved. A droppable can also be focused
-        and clicked.  If the callback returns a value othe than None,
+        and clicked.  If the callback returns a value other than None,
         that value is returned as the result of the interaction.
 
     `drag_handle`
@@ -139,6 +139,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         the draggables to drag as a unit. `x` and `y` are the offsets
         of the drags relative to each other, they are not relative
         to the corner of this drag.
+
+    `drag_offscreen`
+        If true, this draggable can be moved offscreen. This can be
+        dangerous to use with drag_joined or drags that can change
+        size, as the drags can leave the screen entirely, with no
+        way to get them back on the screen.
 
     Except for `d`, all of the parameters are available as fields (with
     the same name) on the Drag object. In addition, after the drag has
@@ -155,6 +161,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
     drag_group = None
     old_position = None
+    drag_offscreen = False
 
     def __init__(self,
                  d=None,
@@ -170,9 +177,11 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                  hovered=None,
                  unhovered=None,
                  replaces=None,
+                 drag_offscreen=False,
+                 style="drag",
                  **properties):
 
-        super(Drag, self).__init__(**properties)
+        super(Drag, self).__init__(style=style, **properties)
 
         self.drag_name = drag_name
         self.draggable = draggable
@@ -185,6 +194,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
+        self.drag_offscreen = drag_offscreen
 
         # We're focusable if we can be dragged.
         self.focusable = draggable
@@ -284,10 +294,11 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         redraw(self, 0)
 
     def set_style_prefix(self, prefix, root):
-        super(Drag, self).set_style_prefix(prefix, root)
+        if root:
+            super(Drag, self).set_style_prefix(prefix, root)
 
-        if self.child is not None:
-            self.child.set_style_prefix(prefix, False)
+            if self.child is not None:
+                self.child.set_style_prefix(prefix, False)
 
     def add(self, d):
         if self.child is not None:
@@ -398,7 +409,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.target_at = at
 
         # Determine if we need to do the snap animation.
-        if at >= self.target_at:
+        if at >= (self.target_at - self.at):
             self.x = self.target_x
             self.y = self.target_y
         else:
@@ -423,7 +434,27 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if isinstance(fh, float):
                 fh = int(fh * ch)
 
-            rv.add_focus(self, None, fx, fy, fw, fh, fx, fy, cr.subsurface((fx, fy, fw, fh)))
+            mask = self.style.focus_mask
+
+            if mask is True:
+                mask = cr.subsurface((fx, fy, fw, fh))
+            elif mask is not None:
+                try:
+                    mask = renpy.display.render.render(mask, fw, fh, st, at)
+                except:
+                    if callable(mask):
+                        mask = mask
+                    else:
+                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+
+            if mask is not None:
+                fmx = 0
+                fmy = 0
+            else:
+                fmx = None
+                fmy = None
+
+            rv.add_focus(self, None, fx, fy, fw, fh, fmx, fmy, mask)
 
         self.last_x = self.x
         self.last_y = self.y
@@ -435,9 +466,6 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if not self.is_focused():
             return self.child.event(ev, x, y, st)
-
-        # if not self.draggable:
-        #    return self.child.event(ev, x, y, st)
 
         # Mouse, in parent-relative coordinates.
         par_x = int(self.last_x + x)
@@ -490,6 +518,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # Handle moves by moving things relative to the grab point.
         if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
+            handled = True
+
             if not self.drag_moved and (self.start_x != par_x or self.start_y != par_y):
                 self.drag_moved = True
 
@@ -509,10 +539,12 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
                     new_x = int(par_x - self.grab_x + xo)
                     new_y = int(par_y - self.grab_y + yo)
-                    new_x = max(new_x, 0)
-                    new_x = min(new_x, int(i.parent_width - i.w))
-                    new_y = max(new_y, 0)
-                    new_y = min(new_y, int(i.parent_height - i.h))
+
+                    if not self.drag_offscreen:
+                        new_x = max(new_x, 0)
+                        new_x = min(new_x, int(i.parent_width - i.w))
+                        new_y = max(new_y, 0)
+                        new_y = min(new_y, int(i.parent_height - i.h))
 
                     if i.drag_group is not None and i.drag_name is not None:
                         i.drag_group.positions[i.drag_name] = (new_x, new_y, self.old_position)
@@ -523,6 +555,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                     i.target_y = new_y
                     i.target_at = self.at
                     redraw(i, 0)
+
+        else:
+            handled = False
 
         if (self.drag_group is not None) and self.drag_moved:
             drop = self.drag_group.get_best_drop(joined)
@@ -577,7 +612,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                     if rv is not None:
                         return rv
 
-        raise renpy.display.core.IgnoreEvent()
+        if handled:
+            raise renpy.display.core.IgnoreEvent()
 
 
     def get_placement(self):
@@ -608,6 +644,9 @@ class DragGroup(renpy.display.layout.MultiBox):
     """
 
     _list_type = renpy.python.RevertableList
+
+    def __unicode__(self):
+        return "DragGroup"
 
     def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")

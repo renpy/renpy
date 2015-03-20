@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -85,6 +85,29 @@ persistent = None
 
 # The current preferences.
 preferences = None
+
+class ExceptionInfo(object):
+    """
+    Context manager that sets exception_info iff an exception occurs.
+
+    `s`
+        A percent-format string to use.
+    `args`
+        The arguments that are percent-formatted with `s`.
+    """
+
+    def __init__(self, s, args):
+        self.s = s
+        self.args = args
+
+    def __enter__(self):
+        return
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            renpy.game.exception_info = self.s % self.args
+
+        return False
 
 class RestartContext(Exception):
     """

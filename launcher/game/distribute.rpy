@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -399,13 +399,13 @@ init python in distribute:
             # Add Python (with the same name as our executables)
             self.add_python()
 
-            # Build the mac app.
+            # Build the mac app and windows exes.
             self.add_mac_files()
+            self.add_windows_files()
 
             # Add generated/special files.
             if not build['renpy']:
                 self.add_renpy_files()
-                self.add_windows_files()
 
             # Assign the x-bit as necessary.
             self.mark_executable()
@@ -630,6 +630,9 @@ init python in distribute:
                     ],
                 )
 
+            if self.build.get('allow_integrated_gpu', False):
+                plist["NSSupportsAutomaticGraphicsSwitching"] = True
+
             rv = self.temp_filename("Info.plist")
             plistlib.writePlist(plist, rv)
             return rv
@@ -663,10 +666,10 @@ init python in distribute:
                 os.path.join(config.renpy_base, "lib/darwin-x86_64/pythonw"),
                 True)
 
-            self.add_file(
-                windows,
-                "lib/windows-i686/" + self.executable_name + ".exe",
-                os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe"))
+#             self.add_file(
+#                 windows,
+#                 "lib/windows-i686/" + self.executable_name + ".exe",
+#                 os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe"))
 
         def add_mac_files(self):
             """
@@ -700,19 +703,31 @@ init python in distribute:
             Adds windows-specific files.
             """
 
+            if self.build['renpy']:
+                windows = 'binary'
+            else:
+                windows = 'windows'
+
             icon_fn = os.path.join(self.project.path, "icon.ico")
             old_exe_fn = os.path.join(config.renpy_base, "renpy.exe")
+            old_main_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
 
             if os.path.exists(icon_fn):
                 exe_fn = self.temp_filename("renpy.exe")
+                main_fn = self.temp_filename("main.exe")
 
                 with open(exe_fn, "wb") as f:
                     f.write(change_icons(old_exe_fn, icon_fn))
 
+                with open(main_fn, "wb") as f:
+                    f.write(change_icons(old_main_fn, icon_fn))
+
             else:
                 exe_fn = old_exe_fn
+                main_fn = old_main_fn
 
-            self.add_file("windows", "renpy.exe", exe_fn)
+            self.add_file(windows, self.exe, exe_fn)
+            self.add_file(windows, "lib/windows-i686/" + self.exe, main_fn)
 
         def mark_executable(self):
             """
@@ -737,9 +752,7 @@ init python in distribute:
                 parts = fn.split('/')
                 p = parts[0]
 
-                if p == "renpy.exe":
-                    p = self.exe
-                elif p == "renpy.sh":
+                if p == "renpy.sh":
                     p = self.sh
                 elif p == "renpy.py":
                     p = self.py
@@ -866,7 +879,7 @@ init python in distribute:
                             if not data:
                                 break
 
-                            sums.write(struct.pack("I", zlib.adler32(data) & 0xffffffff))
+                            sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
 
             if self.include_update and not self.build_update and not dlc:
                 os.unlink(update_fn)
@@ -888,12 +901,15 @@ init python in distribute:
                 with open(fn, "rb") as f:
                     digest = hashlib.sha256(f.read()).hexdigest()
 
+                sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
+
                 index[variant] = {
                     "version" : self.update_version,
                     "pretty_version" : self.pretty_version,
                     "digest" : digest,
                     "zsync_url" : self.base_name + "-" + variant + ".zsync",
                     "sums_url" : self.base_name + "-" + variant + ".sums",
+                    "sums_size" : sums_size,
                     "json_url" : self.base_name + "-" + variant + ".update.json",
                     }
 

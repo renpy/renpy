@@ -10,6 +10,7 @@
 saves
 tmp
 cache
+env
 
 log.txt
 /errors.txt

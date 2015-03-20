@@ -85,6 +85,7 @@ Other Functionality
    sprites
    keymap
    developer_tools
+   achievement
 
 Python and Ren'Py
 -----------------
@@ -100,6 +101,7 @@ Python and Ren'Py
    modes
    udd
    cds
+   custom_text_tags
    character_callbacks
    file_python
    other
@@ -113,7 +115,9 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   ios
    iap
+   gesture
 
 End-User Documentation
 ----------------------

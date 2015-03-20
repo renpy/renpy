@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # renpy/common/00action_file.rpy:124

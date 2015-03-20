@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # game/choose_theme.rpy:274

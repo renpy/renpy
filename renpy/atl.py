@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -227,6 +227,9 @@ class ATLTransformBase(renpy.object.Object):
     parent_transform = None
     atl_st_offset = 0
 
+    # The block, as first compiled for prediction.
+    predict_block = None
+
     nosave = [ 'parent_transform' ]
 
     def __init__(self, atl, context, parameters):
@@ -247,6 +250,10 @@ class ATLTransformBase(renpy.object.Object):
 
         # The code after it has been compiled into a block.
         self.block = None
+
+        # The same thing, but only if the code was compiled into a block
+        # for prediction purposes only.
+        self.predict_block = None
 
         # The properties of the block, if it contains only an
         # Interpolation.
@@ -280,6 +287,18 @@ class ATLTransformBase(renpy.object.Object):
 
         if renpy.game.context().init_phase:
             compile_queue.append(self)
+
+    def get_block(self):
+        """
+        Returns the compiled block to use.
+        """
+
+        if self.block:
+            return self.block
+        elif self.predict_block and renpy.display.predict.predicting:
+            return self.predict_block
+        else:
+            return None
 
     def take_execution_state(self, t):
         """
@@ -321,7 +340,6 @@ class ATLTransformBase(renpy.object.Object):
         if self.child is renpy.display.motion.null:
             self.child = t.child
             self.raw_child = t.raw_child
-
 
     def __call__(self, *args, **kwargs):
 
@@ -409,19 +427,24 @@ class ATLTransformBase(renpy.object.Object):
                 self.block = self.parent_transform.block
                 self.properties = self.parent_transform.properties
                 self.parent_transform = None
-                return
+                return self.block
 
         old_exception_info = renpy.game.exception_info
 
-        self.block = self.atl.compile(self.context)
+        block = self.atl.compile(self.context)
 
-        if len(self.block.statements) == 1 \
-                and isinstance(self.block.statements[0], Interpolation):
+        if len(block.statements) == 1 and isinstance(block.statements[0], Interpolation):
 
-            interp = self.block.statements[0]
+            interp = block.statements[0]
 
             if interp.duration == 0 and interp.properties:
                 self.properties = interp.properties[:]
+
+        if not constant and renpy.display.predict.predicting:
+            self.predict_block = block
+        else:
+            self.block = block
+            self.predict_block = None
 
         renpy.game.exception_info = old_exception_info
 
@@ -430,14 +453,17 @@ class ATLTransformBase(renpy.object.Object):
             self.parent_transform.properties = self.properties
             self.parent_transform = None
 
+        return block
+
 
     def execute(self, trans, st, at):
 
         if self.done:
             return None
 
-        if not self.block:
-            self.compile()
+        block = self.get_block()
+        if block is None:
+            block = self.compile()
 
         # Propagate transform_events from children.
         if self.child:
@@ -469,11 +495,11 @@ class ATLTransformBase(renpy.object.Object):
         else:
             timebase = st - self.atl_st_offset
 
-        action, arg, pause = self.block.execute(trans, timebase, self.atl_state, event)
+        action, arg, pause = block.execute(trans, timebase, self.atl_state, event)
 
         renpy.game.exception_info = old_exception_info
 
-        if action == "continue":
+        if action == "continue" and not renpy.display.predict.predicting:
             self.atl_state = arg
         else:
             self.done = True
@@ -484,10 +510,12 @@ class ATLTransformBase(renpy.object.Object):
         self.atl.predict(self.context)
 
     def visit(self):
-        if not self.block:
-            self.compile()
+        block = self.get_block()
 
-        return self.children + self.block.visit()
+        if block is None:
+            block = self.compile()
+
+        return self.children + block.visit()
 
 # This is used in mark_constant to analyze expressions for constness.
 is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
@@ -788,10 +816,11 @@ class RawMultipurpose(RawStatement):
             if isinstance(child, (int, float)):
                 return Interpolation(self.loc, "pause", child, [ ], None, 0, [ ])
 
+            child = renpy.easy.displayable(child)
+
             if isinstance(child, ATLTransformBase):
                 child.compile()
-                return child.block
-
+                return child.get_block()
             else:
                 return Child(self.loc, child, transition)
 
@@ -905,7 +934,7 @@ class RawContainsExpr(RawStatement):
         self.constant = is_constant_expr(self.expression)
 
 
-# This allows us to have multiple children, inside a Fixed.
+# This allows us to have multiple ATL transforms as children.
 class RawChild(RawStatement):
 
     def __init__(self, loc, child):
@@ -915,12 +944,23 @@ class RawChild(RawStatement):
         self.children = [ child ]
 
     def compile(self, ctx): #@ReservedAssignment
-        box = renpy.display.layout.MultiBox(layout='fixed')
+
+        children = [ ]
 
         for i in self.children:
-            box.add(renpy.display.motion.ATLTransform(i, context=ctx.context))
+            children.append(renpy.display.motion.ATLTransform(i, context=ctx.context))
 
-        return Child(self.loc, box, None)
+        if len(children) != 1:
+
+            box = renpy.display.layout.MultiBox(layout='fixed')
+
+            for i in children:
+                box.add(i)
+
+            return Child(self.loc, box, None)
+
+        else:
+            return Child(self.loc, children[0], None)
 
     def mark_constant(self):
 
@@ -940,7 +980,7 @@ class Child(Statement):
 
         super(Child, self).__init__(loc)
 
-        self.child = renpy.easy.displayable(child)
+        self.child = child
         self.transition = transition
 
     def execute(self, trans, st, state, event):
@@ -948,12 +988,13 @@ class Child(Statement):
         executing(self.loc)
 
         old_child = trans.raw_child
+        child = self.child.parameterize('displayable', [ ])
 
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child,
-                                    new_widget=self.child)
+                                    new_widget=child)
         else:
-            child = self.child
+            child = child
 
         trans.set_child(child)
         trans.raw_child = self.child

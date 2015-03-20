@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,45 @@
 # renpy object, as well as the context object.
 
 import sys
+import time
+
 import renpy.display
+
+
+# The number of statements that have been run since the last infinite loop
+# check.
+il_statements = 0
+
+# The deadline for reporting we're not in an infinite loop.
+il_time = 0
+
+def check_infinite_loop():
+    global il_statements
+
+    il_statements += 1
+
+    if il_statements <= 1000:
+        return
+
+    il_statements = 0
+
+    global il_time
+
+    if time.time() > il_time:
+        il_time = time.time() + 60
+        raise Exception("Possible infinite loop.")
+
+    return
+
+def not_infinite_loop(delay):
+    """
+    :doc: other
+
+    Resets the infinite loop detection timer to `delay` seconds.
+    """
+
+    global il_time
+    il_time = time.time() + delay
 
 class Delete(object):
     pass
@@ -213,6 +251,9 @@ class Context(renpy.object.Object):
         statement is run.
         """
 
+        if not self.dynamic_stack:
+            return
+
         store = renpy.store.__dict__
 
         dynamic = self.dynamic_stack.pop()
@@ -240,6 +281,23 @@ class Context(renpy.object.Object):
         """
 
         self.current = node_name
+
+    def check_stacks(self):
+        """
+        Check and fix stack corruption.
+        """
+
+        if len(self.dynamic_stack) != len(self.return_stack) + 2:
+
+            e = Exception("Potential return stack corruption: dynamic={} return={}".format(len(self.dynamic_stack), len(self.return_stack)))
+
+            while len(self.dynamic_stack) < len(self.return_stack) + 2:
+                self.dynamic_stack.append({})
+
+            while len(self.dynamic_stack) > len(self.return_stack) + 2:
+                self.pop_dynamic()
+
+            raise e
 
     def report_traceback(self, name):
 
@@ -276,6 +334,8 @@ class Context(renpy.object.Object):
         if node is None:
             node = renpy.game.script.lookup(self.current)
 
+        developer = renpy.config.developer
+
         while node:
 
             self.current = node.name
@@ -290,8 +350,15 @@ class Context(renpy.object.Object):
 
             try:
                 try:
+                    check_infinite_loop()
+
+                    renpy.game.exception_info = "While running game code:"
+
                     self.next_node = None
                     node.execute()
+
+                    if developer and self.next_node:
+                        self.check_stacks()
 
                 except renpy.game.CONTROL_EXCEPTIONS, e:
 
@@ -369,6 +436,21 @@ class Context(renpy.object.Object):
         renpy.store._kwargs = None
 
         return renpy.game.script.lookup(label)
+
+    def pop_call(self):
+        """
+        Blindly pops the top call record from the stack.
+        """
+
+        if not self.return_stack:
+            if renpy.config.developer:
+                raise Exception("No call on call stack.")
+
+            return
+
+        self.return_stack.pop()
+        self.call_location_stack.pop()
+        self.pop_dynamic()
 
     def lookup_return(self, pop=True):
         """

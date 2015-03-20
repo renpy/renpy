@@ -1,4 +1,4 @@
-
+﻿
 translate traditional_chinese strings:
 
     # game/editor.rpy:120

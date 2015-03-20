@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,11 +45,7 @@ init -1200 python:
         if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = True
-            try:
-                _voice.ignore_interaction = True
-                renpy.with_statement(trans)
-            finally:
-                _voice.ignore_interaction = False
+            renpy.with_statement(trans)
         else:
             store._window = True
 
@@ -63,11 +59,7 @@ init -1200 python:
         if _preferences.show_empty_window:
             renpy.with_statement(None)
             store._window = False
-            try:
-                _voice.ignore_interaction = True
-                renpy.with_statement(trans)
-            finally:
-                _voice.ignore_interaction = False
+            renpy.with_statement(trans)
         else:
             store._window = False
 

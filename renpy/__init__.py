@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,10 +40,10 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 18, 3, vc_version)
+version_tuple = (6, 99, 0, vc_version)
 
 # The name of this version.
-version_name = "... through shared popular culture."
+version_name = "Here's to the crazy ones."
 
 # A verbose string giving the version.
 version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
@@ -52,6 +52,41 @@ version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
 script_version = 5003000
 savegame_suffix = "-LT1.save"
 bytecode_version = 1
+
+
+################################################################################
+# Platform Information
+################################################################################
+
+# Information about the platform we're running on. We break the platforms
+# up into 5 groups - windows-like, mac-like, linux-like, android-like,
+# and ios-like.
+windows = False
+macintosh = False
+linux = False
+android = False
+ios = False
+
+import platform
+
+if platform.win32_ver()[0]:
+    windows = True
+elif "RENPY_IOS" in os.environ:
+    ios = True
+elif platform.mac_ver()[0]:
+    macintosh = True
+elif "ANDROID_PRIVATE" in os.environ:
+    android = True
+else:
+    linux = True
+
+# A flag that's true if we're on a smartphone or tablet-like platform.
+mobile = android or ios
+
+
+################################################################################
+# Backup Data for Reload
+################################################################################
 
 # True if this is the first time we've started - even including
 # utter restarts.
@@ -83,6 +118,8 @@ name_blacklist = {
     "renpy.loadsave.autosave_not_running",
     "renpy.python.unicode_re",
     "renpy.python.string_re",
+    "renpy.python.store_dicts",
+    "renpy.python.store_modules",
     "renpy.text.text.VERT_FORWARD",
     "renpy.text.text.VERT_REVERSE",
     "renpy.savelocation.scan_thread_condition",
@@ -117,11 +154,8 @@ class Backup():
         # A map from module to the set of names in that module.
         self.names = { }
 
-        try:
-            import android # @UnresolvedImport
+        if mobile:
             return
-        except:
-            pass
 
         for m in sys.modules.values():
             if m is None:
@@ -145,6 +179,9 @@ class Backup():
             return
 
         if name in backup_blacklist:
+            return
+
+        if name.startswith("renpy.styledata"):
             return
 
         self.names[mod] = set(vars(mod).keys())
@@ -197,6 +234,9 @@ class Backup():
 # A backup of the Ren'Py modules after initial import.
 backup = None
 
+################################################################################
+# Import
+################################################################################
 
 def update_path(package):
     """
@@ -214,7 +254,6 @@ def update_path(package):
     import encodings
     libexec = os.path.dirname(encodings.__path__[0])
     package.__path__.append(os.path.join(libexec, *name))
-
 
 def import_all():
 
@@ -254,7 +293,15 @@ def import_all():
     import renpy.python
     import renpy.script
     import renpy.statements
+
+    import renpy.styledata # @UnresolvedImport
+    update_path(renpy.styledata)
+
     import renpy.style
+    renpy.styledata.import_style_functions()
+
+    sys.modules['renpy.styleclass'] = renpy.style
+
     import renpy.substitutions
     import renpy.translation
 
@@ -306,8 +353,9 @@ def import_all():
     import renpy.display.dragdrop
     import renpy.display.imagemap
     import renpy.display.predict
-    import renpy.display.emulator # @UnresolvedImport
-    import renpy.display.tts # @UnresolvedImport
+    import renpy.display.emulator
+    import renpy.display.tts
+    import renpy.display.gesture
 
     import renpy.display.error
 
@@ -337,6 +385,7 @@ def import_all():
     import renpy.exports
     import renpy.character # depends on exports. @UnresolvedImport
 
+    import renpy.add_from
     import renpy.dump
 
     import renpy.config # depends on lots. @UnresolvedImport
@@ -448,7 +497,7 @@ def setup_modulefinder(modulefinder):
 
     libexec = os.path.dirname(_renpy.__file__)
 
-    for i in [ "display", "gl", "angle", "text" ]:
+    for i in [ "display", "gl", "angle", "text", "styledata" ]:
 
         displaypath = os.path.join(libexec, "renpy", i)
 
@@ -467,6 +516,8 @@ def import_cython():
     import renpy.display.accelerator
     import renpy.display.render
 
+    import renpy.gl.gl
+    import renpy.gl.gl1
     import renpy.gl.gldraw
     import renpy.gl.glenviron_fixed
     import renpy.gl.glenviron_limited
@@ -475,37 +526,16 @@ def import_cython():
     import renpy.gl.glrtt_fbo
     import renpy.gl.gltexture
 
+    import renpy.angle.gl
     import renpy.angle.gldraw
     import renpy.angle.glenviron_shader
     import renpy.angle.glrtt_copy
     import renpy.angle.glrtt_fbo
     import renpy.angle.gltexture
 
-    import renpy.styleclass # @UnresolvedImport
 
 
 if False:
     import renpy.defaultstore as store
 
 
-################################################################################
-# Platform Information
-################################################################################
-
-# Information about the platform we're running on. We break the platforms
-# up into 4 groups - windows-like, mac-like, linux-like, and android-like.
-windows = False
-macintosh = False
-linux = False
-android = False
-
-import platform
-
-if platform.win32_ver()[0]:
-    windows = True
-elif platform.mac_ver()[0]:
-    macintosh = True
-else:
-    linux = True
-
-# The android init code in renpy.py will set linux=False and android=True.

@@ -1,15 +1,27 @@
 .. Automatically generated file - do not modify.
 
+.. function:: iap.get_price(product)
+    
+    Returns a string giving the price of the `product` in the user's
+    local currency. Returns None if the price of the product is unknown -
+    which indicates the product cannot be purchased.
+
 .. function:: iap.get_store_name()
     
     Returns the name of the enabled store for in-app purchase. This
-    currently returns one of "amazon", "google", or None if no store
-    is configured.
+    currently returns one of "amazon", "google", "ios" or None if no store
+    is available.
 
 .. function:: iap.has_purchased(product)
     
     Returns True if the user has purchased `product` in the past, and
     False otherwise.
+
+.. function:: iap.is_deferred(product)
+    
+    Returns True if the user has asked to purchase `product`, but that
+    request has to be approved by a third party, such as a parent or
+    guardian.
 
 .. function:: iap.purchase(product, interact=True)
     
@@ -18,7 +30,7 @@
     It returns true if the purchase succeded, now or at any time in the past,
     and false otherwise.
 
-.. function:: iap.register(product, identifier=None, amazon=None, google=None)
+.. function:: iap.register(product, identifier=None, amazon=None, google=None, ios=None)
     
     Registers a product with the in-app purchase system.
     
@@ -41,6 +53,10 @@
     `google`
         A string that identifies the product in the Google Play store.
         If not given, defaults to `identifier`.
+    
+    `ios`
+        A string that identifies the product in the Apple App store for
+        iOS. If not given, defaults to `identifier`.
 
 .. function:: iap.restore(interact=True)
     

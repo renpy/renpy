@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -878,6 +878,9 @@ class Image(Node):
 
         renpy.exports.image(self.imgname, img)
 
+    def analyze(self):
+        if getattr(self, 'atl', None) is not None:
+            self.atl.mark_constant()
 
 
 class Transform(Node):
@@ -1040,6 +1043,10 @@ class Show(Node):
         predict_imspec(self.imspec, atl=getattr(self, "atl", None))
         return [ self.next ]
 
+    def analyze(self):
+        if getattr(self, 'atl', None) is not None:
+            self.atl.mark_constant()
+
 
 class ShowLayer(Node):
 
@@ -1127,7 +1134,7 @@ class Scene(Node):
         return [ self.next ]
 
     def analyze(self):
-        if self.atl is not None:
+        if getattr(self, 'atl', None) is not None:
             self.atl.mark_constant()
 
 
@@ -1326,9 +1333,8 @@ class Return(Node):
         else:
             renpy.store._return = None
 
-        renpy.game.context().pop_dynamic()
-
         next_node(renpy.game.context().lookup_return(pop=True))
+        renpy.game.context().pop_dynamic()
 
     def predict(self):
 

@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,10 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import collections
-import pygame
+import pygame_sdl2 as pygame
 import threading
 import renpy
 import gc
+import math
 
 # We grab the blit lock each time it is necessary to blit
 # something. This allows call to the pygame.transform functions to
@@ -551,6 +552,9 @@ cdef class Render:
 
         # Are we modal?
         self.modal = False
+
+        # Are we a text input?
+        self.text_input = False
 
         live_renders.append(self)
 
@@ -1088,6 +1092,49 @@ cdef class Render:
         self.blit(surf, (0, 0))
 
         return Canvas(surf)
+
+    def screen_rect(self, double sx, double sy, Matrix2D transform):
+        """
+        Returns the rectangle, in screen-space coordinates, that will be covered
+        by this render when it's drawn to the screen at sx, sy, with the transform
+        `transform`.
+        """
+
+        if transform is None:
+            transform = IDENTITY
+
+        cdef double w = self.width
+        cdef double h = self.height
+
+        cdef double xdx = transform.xdx
+        cdef double xdy = transform.xdy
+        cdef double ydx = transform.ydx
+        cdef double ydy = transform.ydy
+
+        # Transform the vertex coordinates to screen-space.
+        cdef double x0 = sx
+        cdef double y0 = sy
+
+        cdef double x1 = w * xdx + sx
+        cdef double y1 = w * ydx + sy
+
+        cdef double x2 = h * xdy + sx
+        cdef double y2 = h * ydy + sy
+
+        cdef double x3 = w * xdx + h * xdy + sx
+        cdef double y3 = w * ydx + h * ydy + sy
+
+        cdef double minx = min(x0, x1, x2, x3)
+        cdef double maxx = max(x0, x1, x2, x3)
+        cdef double miny = min(y0, y1, y2, y3)
+        cdef double maxy = max(y0, y1, y2, y3)
+
+        return (
+            int(minx),
+            int(miny),
+            int(math.ceil(maxx - minx)),
+            int(math.ceil(maxy - miny)),
+            )
 
 
 class Canvas(object):

@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # game/front_page.rpy:67

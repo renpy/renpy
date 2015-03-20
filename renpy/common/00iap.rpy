@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,11 +31,16 @@ init -1500 python in iap:
         A data object representing a product.
         """
 
-        def __init__(self, product, identifier, google, amazon):
+        def __init__(self, product, identifier, google, amazon, ios):
             self.product = product
             self.identifier = identifier
             self.google = google
             self.amazon = amazon
+            self.ios = ios
+
+            # None if the item is not purchasable. Otherwise, a string that
+            # gives the price in the local language.
+            self.price = None
 
     class NoneBackend(object):
         """
@@ -74,14 +79,34 @@ init -1500 python in iap:
 
             return False
 
+        def is_deferred(self, p):
+            """
+            Returns True if the purchase of `p` has been deferred, and False otherwise.
+            """
+
+            return False
+
+        def get_price(self, p):
+            """
+            Returns the price of the item, or None if the item is not
+            purchasable.
+            """
+
+            return None
+
     class AndroidBackend(object):
         """
         The IAP backend that is used when IAP is supported.
         """
 
-        def __init__(self, devicePurchase, store_name):
-            self.devicePurchase = devicePurchase
+        def __init__(self, store, store_name):
+            self.store = store
             self.store_name = store_name
+
+            self.store.clearSKUs()
+
+            for p in products.values():
+                self.store.addSKU(self.identifier(p))
 
         def get_store_name(self):
             return self.store_name
@@ -105,35 +130,110 @@ init -1500 python in iap:
                 renpy.pause.
             """
 
-            while True:
-                rv = self.devicePurchase.checkPurchaseResult()
-
-                if rv:
-                    break
-
+            while not self.store.getFinished():
                 if interact:
                     renpy.pause(.1)
                 else:
                     time.sleep(.1)
 
-            if rv == 1:
-                return True
-            else:
-                return False
-
-
         def purchase(self, p, interact=True):
             identifier = self.identifier(p)
-            self.devicePurchase.beginPurchase(identifier)
-            return self.wait_for_result(interact=interact)
+            self.store.beginPurchase(identifier)
+            self.wait_for_result(interact=interact)
 
         def restore_purchases(self, interact=True):
-            self.devicePurchase.restorePurchases()
+            self.store.updatePrices();
+            self.wait_for_result(interact)
+
+            self.store.restorePurchases();
             self.wait_for_result(interact)
 
         def has_purchased(self, p):
             identifier = self.identifier(p)
-            return self.devicePurchase.isPurchaseOwned(identifier)
+            return self.store.hasPurchased(identifier)
+
+        def is_deferred(self, p):
+            return False
+
+        def get_price(self, p):
+            identifier = self.identifier(p)
+            return self.store.getPrice(identifier)
+
+    if renpy.ios:
+        import pyobjus
+        IAPHelper = pyobjus.autoclass("IAPHelper")
+        NSMutableArray = pyobjus.autoclass("NSMutableArray")
+
+        from pyobjus import objc_str, objc_arr
+
+    class IOSBackend(object):
+
+        def __init__(self):
+            self.helper = IAPHelper.alloc().init()
+
+            identifiers = NSMutableArray.alloc().init()
+
+            for p in products.values():
+                identifiers.addObject_(objc_str(p.ios))
+
+            self.helper.productIdentifiers = identifiers
+
+        def get_store_name(self):
+            if self.helper.canMakePayments():
+                return "ios"
+            else:
+                return None
+
+        def identifier(self, p):
+            """
+            Returns the identifier for a store purchase.
+            """
+
+            return p.ios
+
+        def wait_for_result(self, interact=True):
+            """
+            Waits for a result.
+
+            `interact`
+                If true, waits interactively. If false, waits using
+                renpy.pause.
+            """
+
+            while not self.helper.finished:
+                if interact:
+                    renpy.pause(.1)
+                else:
+                    import pygame
+                    pygame.event.pump()
+                    time.sleep(.1)
+
+        def purchase(self, p, interact=True):
+            identifier = objc_str(self.identifier(p))
+            self.helper.beginPurchase_(identifier)
+            self.wait_for_result(interact=interact)
+
+        def restore_purchases(self, interact=True):
+            self.helper.validateProductIdentifiers()
+            self.helper.restorePurchases()
+            self.wait_for_result(interact)
+
+        def has_purchased(self, p):
+            identifier = objc_str(self.identifier(p))
+            return self.helper.hasPurchased_(identifier)
+
+        def is_deferred(self, p):
+            identifier = objc_str(self.identifier(p))
+            return self.helper.isDeferred_(identifier)
+
+        def get_price(self, p):
+            identifier = objc_str(self.identifier(p))
+            rv = self.helper.formatPrice_(identifier)
+
+            if rv is not None:
+                rv = rv.UTF8String().decode("utf-8")
+
+            return rv
 
     # The backend we're using.
     backend = NoneBackend()
@@ -141,7 +241,7 @@ init -1500 python in iap:
     # A map from product identifier to the product object.
     products = { }
 
-    def register(product, identifier=None, amazon=None, google=None):
+    def register(product, identifier=None, amazon=None, google=None, ios=None):
         """
         :doc: iap
 
@@ -166,6 +266,10 @@ init -1500 python in iap:
         `google`
             A string that identifies the product in the Google Play store.
             If not given, defaults to `identifier`.
+
+        `ios`
+            A string that identifies the product in the Apple App store for
+            iOS. If not given, defaults to `identifier`.
         """
 
         if product in products:
@@ -174,8 +278,9 @@ init -1500 python in iap:
         identifier = identifier or product
         amazon = amazon or identifier
         google = google or identifier
+        ios = ios or identifier
 
-        p = Product(product, identifier, google, amazon)
+        p = Product(product, identifier, google, amazon, ios)
         products[product] = p
 
     def with_background(f, *args, **kwargs):
@@ -185,6 +290,8 @@ init -1500 python in iap:
 
         renpy.scene()
         renpy.show(background)
+        renpy.pause(0)
+
         return f(*args, **kwargs)
 
     def restore(interact=True):
@@ -238,12 +345,13 @@ init -1500 python in iap:
         if persistent._iap_purchases[p.identifier]:
             return True
 
-        rv = backend.purchase(p, interact)
+        backend.purchase(p, interact)
 
-        if rv:
+        if backend.has_purchased(p):
             persistent._iap_purchases[p.identifier] = True
-
-        return rv
+            return True
+        else:
+            return False
 
     class Purchase(Action):
         """
@@ -256,13 +364,34 @@ init -1500 python in iap:
 
         def __init__(self, product):
             self.product = product
+            self.sensitive = True
 
         def __call__(self):
             renpy.invoke_in_new_context(with_background, purchase, self.product)
             renpy.restart_interaction()
 
+        def should_be_sensitive(self):
+
+            if not get_store_name():
+                return False
+
+            if has_purchased(self.product):
+                return False
+
+            if is_deferred(self.product):
+                return False
+
+            return True
+
         def get_sensitive(self):
-            return get_store_name() and not has_purchased(self.product)
+            self.sensitive = self.should_be_sensitive()
+            return self.sensitive
+
+        def periodic(self, st):
+            if self.should_be_sensitive() != self.sensitive:
+                renpy.restart_interaction()
+
+            return 5.0
 
     def has_purchased(product):
         """
@@ -274,15 +403,53 @@ init -1500 python in iap:
 
         p = get_product(product)
 
-        return persistent._iap_purchases[p.identifier]
+        # Check the cache first, since we might be off line.
+        if persistent._iap_purchases.get(p.identifier, False):
+            return True
+
+        # Then ask the backend, in case we bought the product
+        # recently.
+        return backend.has_purchased(p)
+
+
+    def is_deferred(product):
+        """
+        :doc: iap
+
+        Returns True if the user has asked to purchase `product`, but that
+        request has to be approved by a third party, such as a parent or
+        guardian.
+        """
+
+        p = get_product(product)
+
+        # Then ask the backend, in case we bought the product
+        # recently.
+        return backend.is_deferred(p)
+
+    def get_price(product):
+        """
+        :doc: iap
+
+        Returns a string giving the price of the `product` in the user's
+        local currency. Returns None if the price of the product is unknown -
+        which indicates the product cannot be purchased.
+        """
+
+        p = get_product(product)
+
+        if p.price is None:
+            p.price = backend.get_price(p)
+
+        return p.price
 
     def get_store_name():
         """
         :doc: iap
 
         Returns the name of the enabled store for in-app purchase. This
-        currently returns one of "amazon", "google", or None if no store
-        is configured.
+        currently returns one of "amazon", "google", "ios" or None if no store
+        is available.
         """
 
         return backend.get_store_name()
@@ -304,13 +471,15 @@ init -1500 python in iap:
         """
 
         from jnius import autoclass
-        devicePurchase = autoclass('com.puzzlebrothers.renpurchase.devicePurchase')
+        Store = autoclass('org.renpy.iap.Store')
+        store = Store.getStore()
 
-        store_name = devicePurchase.getStoreName()
+        store_name = store.getStoreName()
+
         if store_name == "none":
             return NoneBackend()
 
-        return AndroidBackend(devicePurchase, store_name)
+        return AndroidBackend(store, store_name)
 
     def init():
         """
@@ -329,6 +498,12 @@ init -1500 python in iap:
         # Set up the back end.
         if renpy.android:
             backend = init_android()
+        elif renpy.ios:
+            backend = IOSBackend()
+
+            if backend.get_store_name() is None:
+                backend = NoneBackend()
+
         else:
             backend = NoneBackend()
 

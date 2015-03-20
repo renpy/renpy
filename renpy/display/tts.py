@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,6 +23,7 @@ import sys
 import os
 import renpy.audio
 import subprocess
+import pygame
 
 class TTSRoot(Exception):
     """
@@ -68,6 +69,14 @@ def default_tts_function(s):
     s = s.strip()
 
     if not s:
+        return
+
+    if renpy.game.preferences.self_voicing == "clipboard":
+        try:
+            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
+        except:
+            pass
+
         return
 
     if renpy.linux:
@@ -138,8 +147,11 @@ def displayable(d):
 
     if not old_self_voicing:
         old_self_voicing = self_voicing
-        prefix = renpy.translation.translate_string("Self-voicing enabled. ")
 
+        if self_voicing == "clipboard":
+            prefix = renpy.translation.translate_string("Clipboard voicing enabled. ")
+        else:
+            prefix = renpy.translation.translate_string("Self-voicing enabled. ")
 
     for i in renpy.config.tts_voice_channels:
         if not prefix and renpy.audio.music.get_playing(i):

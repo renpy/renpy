@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -107,7 +107,28 @@ init python in distribute:
         """
 
         def __init__(self, filename):
-            self.zipfile = ZipFile(filename, "w", zipfile.ZIP_DEFLATED)
+            self.zipfile = ZipFile(filename, "w", zipfile.ZIP_DEFLATED, True)
+
+        def get_date_time(self, path):
+            """
+            Gets the datetime for a file. If the time doesn't exist or is
+            weird, use the current time instead.
+            """
+
+            try:
+                s = os.stat(path)
+                rv = time.gmtime(s.st_mtime)[:6]
+
+                # Check that the time is sensible.
+                if rv[0] < 2000:
+                    rv = None
+            except:
+                rv = None
+
+            if rv is None:
+                rv = time.gmtime()[:6]
+
+            return rv
 
         def add_file(self, name, path, xbit):
 
@@ -115,13 +136,7 @@ init python in distribute:
                 raise Exception("path for " + name + " must not be None.")
 
             zi = zipfile.ZipInfo(name)
-
-            try:
-                s = os.stat(path)
-                zi.date_time = time.gmtime(s.st_mtime)[:6]
-            except:
-                zi.date_time = time.gmtime()[:6]
-
+            zi.date_time = self.get_date_time(path)
             zi.compress_type = zipfile.ZIP_DEFLATED
             zi.create_system = 3
 
@@ -137,9 +152,7 @@ init python in distribute:
                 return
 
             zi = zipfile.ZipInfo(name + "/")
-
-            s = os.stat(path)
-            zi.date_time = time.gmtime(s.st_mtime)[:6]
+            zi.date_time = self.get_date_time(path)
             zi.compress_type = zipfile.ZIP_STORED
             zi.create_system = 3
             zi.external_attr = (long(0040755) << 16) | 0x10

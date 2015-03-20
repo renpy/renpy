@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,7 +65,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
     rw = RWopsFromPython(file)
 
     if rw == NULL:
-        raise Exception, "Could not create RWops."
+        raise Exception("Could not create RWops.")
 
     if paused:
         pause = 1
@@ -85,6 +85,9 @@ def queue(channel, file, name, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPython(file)
+
+    if rw == NULL:
+        raise Exception("Could not create RWops.")
 
     if tight:
         tight = 1

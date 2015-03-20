@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -333,7 +333,7 @@ class DisplayableParser(Parser):
     """
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None,
-        pass_context=False, imagemap=False, replaces=False, default_keywords={}):
+        pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False):
         """
         `name`
             The name of the statement that creates the displayable.
@@ -369,7 +369,7 @@ class DisplayableParser(Parser):
 
         `imagemap`
             If true, the displayable is treated as defining an imagemap. (The imagemap
-            is added to and removed from renpy.ui.imagemap_stack as appropraite.)
+            is added to and removed from renpy.ui.imagemap_stack as appropriate.)
 
         `replaces`
             If true, and the displayable replaces a prior displayable, that displayable
@@ -377,6 +377,10 @@ class DisplayableParser(Parser):
 
         `default_keywords`
             The default set of keyword arguments to supply to the displayable.
+
+        `hotspot`
+            If true, the displayable is treated as a hotspot. (It needs to be
+            re-created if the imagemap it belongs to has changed.)
         """
 
         super(DisplayableParser, self).__init__(name)
@@ -395,6 +399,7 @@ class DisplayableParser(Parser):
         self.text_style = text_style
         self.pass_context = pass_context
         self.imagemap = imagemap
+        self.hotspot = hotspot
         self.replaces = replaces
         self.default_keywords = default_keywords
 
@@ -414,6 +419,7 @@ class DisplayableParser(Parser):
             imagemap=self.imagemap,
             replaces=self.replaces,
             default_keywords=self.default_keywords,
+            hotspot=self.hotspot,
             )
 
         for _i in self.positional:

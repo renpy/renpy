@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -104,9 +104,9 @@ init 1 python:
 
     def checkbox(full, color):
         if full:
-            return im.Twocolor("images/checkbox_full.png", color, color, yalign=0.5)
+            return im.Twocolor("images/checkbox_full.png", color, color, style="l_checkbox_box")
         else:
-            return im.Twocolor("images/checkbox_empty.png", color, color, yalign=0.5)
+            return im.Twocolor("images/checkbox_empty.png", color, color, style="l_checkbox_box")
 
 init 1:
 
@@ -321,6 +321,10 @@ init 1:
         selected_idle_background checkbox(True, IDLE)
         selected_hover_background checkbox(True, HOVER)
         insensitive_background checkbox(False, DISABLED)
+
+    style l_checkbox_box:
+        yanchor 0.5
+        ypos 11
 
     style l_checkbox_text is l_button_text:
         selected_font LIGHT

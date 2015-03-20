@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -85,6 +85,7 @@ init -1800:
     style ruby_text is default
 
     style viewport is default
+    style drag is default
 
     style motion is default
     style transform is motion
@@ -331,6 +332,9 @@ init -1800:
         clipping True
         xfill True
         yfill True
+
+    style drag:
+        focus_mask True
 
     # Out-of-game menu root windows
 

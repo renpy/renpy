@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -131,8 +131,14 @@ label _start:
 
     call _start_store
 
-    $ _init_language()
-    $ renpy.block_rollback()
+    python:
+        # Predict the main menu. When a load occurs, the loaded data will
+        # overwrite the prediction requests.
+        if renpy.has_screen("main_menu"):
+            renpy.start_predict_screen("main_menu")
+
+        _init_language()
+        renpy.block_rollback()
 
     call _gl_test
     call _load_reload_game from _call__load_reload_game_1
@@ -177,6 +183,10 @@ label _start:
     else:
         scene
 
+    # Stop predicting the main menu, now that we're ready to show it.
+    python:
+        if renpy.has_screen("main_menu"):
+            renpy.stop_predict_screen("main_menu")
 
     # This has to be python, to deal with a case where _restart may
     # change across a shift-reload.

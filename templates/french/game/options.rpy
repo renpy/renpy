@@ -1,4 +1,4 @@
-## Ce fichier contient certaines des options qui peuvent être changées pour
+﻿## Ce fichier contient certaines des options qui peuvent être changées pour
 ## personnaliser votre jeu Ren'Py. Il s'agit uniquement des options les plus
 ## communes, d'autres réglages sont possibles.
 ##

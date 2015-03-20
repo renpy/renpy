@@ -34,22 +34,34 @@ else:
     tag = False
 
 
-def check_dirty():
-    if args.no_tag:
-        return
+SOURCE = [
+    "/home/tom/ab/renpy",
+    "/home/tom/ab/android/",
+    "/home/tom/ab/android/python-for-android",
+    "/home/tom/ab/ripe/renios",
+    "/home/tom/ab/renpy-deps",
+    "/home/tom/ab/pygame_sdl2",
+    ]
 
-    if subprocess.check_call([ "git", "diff", "--quiet", "HEAD" ]):
-        print "Directory not checked in: {}".format(os.getcwd())
-        sys.exit(1)
+if tag:
+    for i in SOURCE:
+        os.chdir(i)
 
-os.chdir("/home/tom/ab/renpy")
-check_dirty()
+        if subprocess.call([ "git", "diff", "--quiet", "HEAD" ]):
+            print "Directory not checked in: {}".format(os.getcwd())
+            sys.exit(1)
 
-os.chdir("/home/tom/ab/renpy/android")
-check_dirty()
+    for i in SOURCE:
 
-if not args.no_tag:
-    subprocess.check_call([ "git", "tag", "-a", "rapt-" + version, "-m", "Tagging RAPT release." ])
+        os.chdir(i)
+
+        if i == SOURCE[0]:
+            tag = version
+        else:
+            tag = "renpy-" + version
+
+        subprocess.check_call([ "git", "tag", "-a", tag, "-m", "Tagging Ren'Py + " + version + " release." ])
+
 
 os.chdir("/home/tom/ab/renpy/dl")
 
@@ -57,12 +69,6 @@ for i in links:
     if os.path.exists(i):
         os.unlink(i)
     os.symlink(short_version, i)
-
-os.chdir("/home/tom/ab/renpy")
-
-if tag and not args.no_tag:
-    cmd = [ "git", "tag", "-a", version, "-m", "Ren'Py " + version ]
-    subprocess.check_call(cmd)
 
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")

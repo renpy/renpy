@@ -1,4 +1,4 @@
-# Este archivo se encuentra en el dominio público. Puede ser modificado
+﻿# Este archivo se encuentra en el dominio público. Puede ser modificado
 # libremente como base para tus propias pantallas.
 
 # Muchas de estas pantallas pueden recibir argumentos adicionales en el

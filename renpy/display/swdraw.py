@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
-import pygame
+import pygame_sdl2 as pygame
 import math
 import weakref
 import time
@@ -378,6 +378,9 @@ def draw(dest, clip, what, xo, yo, screen):
 
         return
 
+    if what.text_input:
+        renpy.display.interface.text_rect = what.screen_rect(xo, yo, None)
+
     # Deal with draw functions.
     if what.operation != BLIT:
 
@@ -558,6 +561,9 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
         return
 
+    if what.text_input:
+        renpy.display.interface.text_rect = what.screen_rect(xo, yo, reverse)
+
     if what.clipping:
 
         if reverse.xdy or reverse.ydx:
@@ -687,9 +693,6 @@ class SWDraw(object):
 
         # Is the mouse currently visible?
         self.mouse_old_visible = None
-
-        # This is used to cache the surface->texture operation.
-        self.texture_cache = weakref.WeakKeyDictionary()
 
         # This is used to display video to the screen.
         self.fullscreen_surface = None
@@ -862,6 +865,17 @@ class SWDraw(object):
 
         return updates
 
+    def translate_point(self, x, y):
+        x /= self.scale_factor
+        y /= self.scale_factor
+        return (x, y)
+
+    def untranslate_point(self, x, y):
+        x *= self.scale_factor
+        y *= self.scale_factor
+        return (x, y)
+
+
     def update_mouse(self):
         """
         Draws the mouse, and then updates the screen.
@@ -1031,7 +1045,6 @@ class SWDraw(object):
         if surf in rle_cache:
             del rle_cache[surf]
 
-
     def load_texture(self, surf, transient=False):
         """
         Creates a texture from the surface. In the software implementation,
@@ -1039,23 +1052,18 @@ class SWDraw(object):
         is in the RLE cache.
         """
 
-        surf = copy_surface(surf)
-        self.mutated_surface(surf)
+        if surf in rle_cache:
+            return rle_cache[surf]
 
-        if transient:
-            return surf
+        rle_surf = copy_surface(surf)
 
-        if renpy.game.less_memory:
-            return surf
-
-        if surf not in rle_cache:
-            rle_surf = copy_surface(surf)
+        if not transient:
             rle_surf.set_alpha(255, pygame.RLEACCEL)
-            self.mutated_surface(rle_surf)
 
-            rle_cache[surf] = rle_surf
+        self.mutated_surface(rle_surf)
+        rle_cache[surf] = rle_surf
 
-        return surf
+        return rle_surf
 
     def solid_texture(self, w, h, color):
         """

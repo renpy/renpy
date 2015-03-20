@@ -4,7 +4,7 @@
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,12 +65,34 @@ def path_to_saves(gamedir):
             if os.path.isdir(rv) and test_writable(rv):
                 break
 
-        print "Using savedir", rv
+        print "Saving to", rv
 
         # We return the last path as the default.
 
         return rv
 
+    if renpy.ios:
+        from pyobjus import autoclass
+        from pyobjus.objc_py_types import enum
+
+        NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
+        NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
+
+        NSFileManager = autoclass('NSFileManager')
+        manager = NSFileManager.defaultManager()
+        url = manager.URLsForDirectory_inDomains_(
+            NSSearchPathDirectory.NSDocumentDirectory,
+            NSSearchPathDomainMask.NSUserDomainMask,
+            ).lastObject()
+
+        # url.path seems to change type based on iOS version, for some reason.
+        try:
+            rv = url.path().UTF8String().decode("utf-8")
+        except:
+            rv = url.path.UTF8String().decode("utf-8")
+
+        print "Saving to", rv
+        return rv
 
     # No save directory given.
     if not renpy.config.save_directory:
@@ -164,10 +186,6 @@ def main():
         print >>sys.stderr, "Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py"
         print >>sys.stderr, "correctly, preserving the directory structure."
         raise
-
-    if android:
-        renpy.linux = False
-        renpy.android = True
 
     renpy.bootstrap.bootstrap(renpy_base)
 

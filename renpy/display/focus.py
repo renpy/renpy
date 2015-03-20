@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,7 +21,7 @@
 
 # This file contains code to manage focus on the display.
 
-import pygame
+import pygame_sdl2 as pygame
 import renpy.display
 
 class Focus(object):
@@ -86,6 +86,8 @@ def get_mouse():
 def set_grab(widget):
     global grab
     grab = widget
+
+    renpy.exports.cancel_gesture()
 
 def get_grab():
     return grab

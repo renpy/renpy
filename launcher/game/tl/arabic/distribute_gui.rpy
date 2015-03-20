@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # game/distribute_gui.rpy:139

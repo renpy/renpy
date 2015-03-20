@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,7 @@ import weakref
 import types
 import sys
 import collections
-import pygame
+import pygame_sdl2 as pygame
 import gc
 
 import renpy
@@ -92,10 +92,6 @@ def walk_memory(roots, seen=None):
             continue
 
         size[name] += getsizeof(o)
-
-        if isinstance(o, Surface):
-            w, h = o.get_size()
-            size[name] += w * h * o.get_bytesize()
 
         for v in get_referents(o):
             id_v = id(v)
@@ -168,6 +164,11 @@ def profile_memory(fraction=1.0, minimum=0):
     long time to complete.
     """
 
+    write("=" * 78)
+    write("")
+    write("Memory profile at " + time.ctime() + ":")
+    write("")
+
     usage = [ (v, k) for (k, v) in profile_memory_common()[0].items() ]
     usage.sort()
 
@@ -176,11 +177,6 @@ def profile_memory(fraction=1.0, minimum=0):
 
     # The number of bytes we have yet to process.
     remaining = total
-
-    write("=" * 78)
-    write("")
-    write("Memory profile at " + time.ctime() + ":")
-    write("")
 
     for size, name in usage:
 
@@ -217,6 +213,11 @@ def diff_memory(update=True):
     global old_usage
     global old_total
 
+    write("=" * 78)
+    write("")
+    write("Memory diff at " + time.ctime() + ":")
+    write("")
+
     usage = profile_memory_common()[0]
     total = sum(usage.values())
 
@@ -228,11 +229,6 @@ def diff_memory(update=True):
             k))
 
     diff.sort()
-
-    write("=" * 78)
-    write("")
-    write("Memory diff at " + time.ctime() + ":")
-    write("")
 
     for change, name in diff:
         if name == "renpy.memory.old_usage":
@@ -259,6 +255,11 @@ def profile_rollback():
     for rollback memory used by various store variables, as well as by
     internal aspects of the rollback system.
     """
+
+    write("=" * 78)
+    write("")
+    write("Rollback profile at " + time.ctime() + ":")
+    write("")
 
     # Profile live memory.
     seen = profile_memory_common([ "store", "renpy.display" ])[1]
@@ -298,11 +299,6 @@ def profile_rollback():
         roots.append(("<context>", rb.context))
 
     sizes = walk_memory(roots, seen)[0]
-
-    write("=" * 78)
-    write("")
-    write("Rollback profile at " + time.ctime() + ":")
-    write("")
 
     usage = [ (v, k) for (k, v) in sizes.iteritems() ]
     usage.sort()

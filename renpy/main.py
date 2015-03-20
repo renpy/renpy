@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -100,7 +100,7 @@ def choose_variants():
 
         import android #@UnresolvedImport
         import math
-        import pygame
+        import pygame_sdl2 as pygame
 
         from jnius import autoclass  # @UnresolvedImport
 
@@ -133,9 +133,7 @@ def choose_variants():
 
 
         # Are we running on OUYA or Google TV or something similar?
-        PythonActivity = autoclass('org.renpy.android.PythonActivity')
-        mActivity = PythonActivity.mActivity
-        package_manager = mActivity.getPackageManager()
+        package_manager = android.activity.getPackageManager()
 
         if package_manager.hasSystemFeature("android.hardware.type.television"):
             print "Running on a television."
@@ -153,6 +151,26 @@ def choose_variants():
         print "Screen diagonal is", diag, "inches."
 
         if diag >= 6:
+            renpy.config.variants.insert(0, 'tablet')
+            renpy.config.variants.insert(0, 'medium')
+        else:
+            renpy.config.variants.insert(0, 'phone')
+            renpy.config.variants.insert(0, 'small')
+
+    elif renpy.ios:
+        renpy.config.variants.insert(0, 'ios')
+        renpy.config.variants.insert(0, 'touch')
+
+        from pyobjus import autoclass # @UnresolvedImport @Reimport
+        UIDevice = autoclass("UIDevice")
+
+        idiom = UIDevice.currentDevice().userInterfaceIdiom
+
+        print "iOS device idiom", idiom
+
+        # idiom 0 is iPhone, 1 is iPad. We assume any bigger idiom will
+        # be tablet-like.
+        if idiom >= 1:
             renpy.config.variants.insert(0, 'tablet')
             renpy.config.variants.insert(0, 'medium')
         else:
@@ -235,6 +253,8 @@ def main():
     # Run init code in its own context. (Don't log.)
     game.contexts = [ renpy.execution.Context(False) ]
     game.contexts[0].init_phase = True
+
+    renpy.execution.not_infinite_loop(60)
 
     # Load the script.
     renpy.game.exception_info = 'While loading the script.'
@@ -343,9 +363,7 @@ def main():
         # Start things running.
         restart = None
 
-        renpy.game.exception_info = 'While running game code:'
         renpy.first_utter_start = False
-
 
         while True:
 

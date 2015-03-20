@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -121,7 +121,7 @@ init -1500 python:
          the current interaction completes.
          """
 
-        return Show(screen, _transient=True, *args, **kwargs)
+        return Show(screen, None, _transient=True, *args, **kwargs)
 
     @renpy.pure
     class Hide(Action, DictEquality):

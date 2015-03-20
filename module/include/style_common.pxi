@@ -19,69 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from style cimport register_property_function, StyleCore, assign
-from cpython.ref cimport PyObject
-from collections import OrderedDict
-
-# Utility functions used by the various property functions:
-
 import renpy
 
-def none_is_null(o):
-    if o is None:
-        return renpy.display.layout.Null()
-    else:
-        return renpy.easy.displayable(o)
+from renpy.style cimport register_property_function, assign
+from cpython.ref cimport PyObject
 
-def expand_focus_mask(v):
-    if v is None:
-        return v
-    elif v is False:
-        return v
-    elif v is True:
-        return v
-    else:
-        return renpy.easy.displayable(v)
-
-def expand_outlines(l):
-    rv = [ ]
-
-    for i in l:
-        if len(i) == 2:
-            rv.append((i[0], renpy.easy.color(i[1]), 0, 0))
-        else:
-            rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
-
-    return rv
-
-# Names for anchors.
-ANCHORS = dict(
-    left=0.0,
-    right=1.0,
-    center=0.5,
-    top=0.0,
-    bottom=1.0,
-    )
-
-def expand_anchor(v):
-    """
-    Turns an anchor into a number.
-    """
-
-    try:
-        return ANCHORS.get(v, v)
-    except:
-        # This fixes some bugs in very old Ren'Pys.
-
-        for n in ANCHORS:
-            o = getattr(renpy.store, n, None)
-            if o is None:
-                continue
-
-            if v is o:
-                return ANCHORS[n]
-
-        raise
+from renpy.styledata.styleutil import none_is_null, expand_focus_mask, expand_outlines, expand_anchor
 
 cdef inline object index_0(object v):
     return v[0]
@@ -94,7 +37,3 @@ cdef inline object index_2(object v):
 
 cdef inline object index_3(object v):
     return v[3]
-
-include "stylepropertyfunctions.pxi"
-include "styleproperties.pxi"
-include "stylesets.pxi"

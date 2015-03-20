@@ -1,0 +1,56 @@
+.. Automatically generated file - do not modify.
+
+.. function:: achievement.clear(name)
+    
+    Clears the achievement with `name`.
+
+.. function:: achievement.clear_all()
+    
+    Clears all achievements.
+
+.. function:: achievement.grant(name)
+    
+    Grants the achievement with `name`, if it has not already been
+    granted.
+
+.. function:: achievement.grant_progress(name, complete, total)
+    
+    If `complete` is less than `total`, reports progress towards the
+    achievement with `name`, if that achievement has not been
+    granted.
+    
+    Otherwise, grants the achievement with `name`, if that achievement
+    has not been granted.
+
+.. function:: achievement.has(name)
+    
+    Returne true if the plater has been grnted the achievement with
+    `name`.
+
+.. function:: achievement.progress(name, complete, total)
+    
+    Reports progress towards the achievement with `name`, if that
+    achievement has not been granted.
+    
+    `complete`
+        An integer giving the number of units completed towards the
+        achievement.
+    
+    `total`
+        An integer giving the total number of units required to consider
+        the achievement complete.
+
+.. function:: achievement.register(name, **kwargs)
+    
+    Registers an achievement. Achievements are not required to be
+    registered, but doing so allows one to pass information to the
+    backends.
+    
+    `name`
+        The name of the achievement to register.
+    
+    The following keyword parameters are optional.
+    
+    `steam`
+        The name to use on steam. If not given, defaults to `name`.
+

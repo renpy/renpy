@@ -1,4 +1,4 @@
-translate korean python:
+﻿translate korean python:
     
     NANUM = "tl/korean/NanumGothic.ttf"
     

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -245,12 +245,21 @@ init python:
 
     ## Now, add the Ren'Py distribution in using classify_renpy.
 
-    build.classify_renpy("rapt/**", "rapt")
 
     build.classify_renpy("**~", None)
     build.classify_renpy("**/#*", None)
     build.classify_renpy("**/thumbs.db", None)
     build.classify_renpy("**/.*", None)
+
+    build.classify_renpy("rapt/**", "rapt")
+
+    build.classify_renpy("renios/prototype/base/", None)
+    build.classify_renpy("renios/prototype/prototype.xcodeproj/*.xcworkspace/", None)
+    build.classify_renpy("renios/prototype/prototype.xcodeproj/xcuserdata/", None)
+    build.classify_renpy("renios/prototype/**", "renios")
+    build.classify_renpy("renios/buildlib/**", "renios")
+    build.classify_renpy("renios/ios.py", "renios")
+    build.classify_renpy("renios/", "renios")
 
     build.classify_renpy("**.old", None)
     build.classify_renpy("**.new", None)
@@ -310,11 +319,12 @@ init python:
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
 
     # all-platforms binary.
+    build.classify_renpy("lib/**/_renpysteam*", None)
+    build.classify_renpy("lib/**/*steam_api*", None)
     build.classify_renpy("lib/*/renpy", None)
     build.classify_renpy("lib/*/renpy.exe", None)
     build.classify_renpy("lib/**", "binary")
     build.classify_renpy("renpy.sh", "binary")
-    build.classify_renpy("renpy.exe", "binary")
     # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.
@@ -343,4 +353,4 @@ init python:
     build.package("editra-mac", "zip", "editra-all editra-mac", dlc=True)
     build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
     build.package("rapt", "zip", "rapt", dlc=True)
-
+    build.package("renios", "zip", "renios", dlc=True)

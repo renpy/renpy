@@ -462,6 +462,13 @@ Occasionally Used
     If true, the game will autosave. If false, no autosaving will
     occur.
 
+.. var:: config.hw_video = False
+
+    If true, hardware video playback will be used on mobile platforms. This
+    is faster, but only some formats are supported and only fullscreen video
+    is available. If false, software playback will be used, but it may be
+    too slow to be useful.
+
 .. var:: config.image_cache_size = 8
 
     This is used to set the size of the :ref:`image cache <images>`, as a
@@ -904,6 +911,13 @@ Rarely or Internally Used
     image fails. It may return None, or it may return an image
     manipulator. If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
+
+.. var:: config.missing_label_callback = None
+
+    If not None, this function is called when Ren'Py attempts to access
+    a label that does not exist in the game. It should return the name of
+    a label to use as a replacement for the missing label, or None to cause
+    Ren'Py to raise an exception.
 
 .. var:: config.mouse_hide_time = 30
 

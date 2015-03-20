@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -411,7 +411,7 @@ class Transform(Container):
     additive = Proxy("additive")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("anchor")
+    transform_anchor = Proxy("transform_anchor")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
@@ -921,6 +921,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         Transform.__init__(self, child=child, function=self.execute, **properties)
 
         self.raw_child = self.child
+
+    def __repr__(self):
+        return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
 
     def _show(self):
         super(ATLTransform, self)._show()

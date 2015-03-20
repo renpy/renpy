@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # game/about.rpy:21

@@ -47,3 +47,12 @@
     `label`
         If not None, a label that is called when rollback completes.
 
+.. function:: renpy.suspend_rollback(flag)
+    
+    Rollback will skip sections of the game where rollback has been
+    suspended.
+    
+    `flag`:
+        When `flag` is true, rollback is suspended. When false,
+        rollback is resumed.
+

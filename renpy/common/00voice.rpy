@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -245,6 +245,9 @@ init -1500 python hide:
         if _voice.ignore_interaction:
             return
 
+        if renpy.get_mode() == "with":
+            return
+
         _voice.auto_file = None
 
         # Auto-voice.
@@ -353,7 +356,10 @@ python early hide:
         if not isinstance(fn, basestring):
             return
 
-        fn = config.voice_filename_format.format(filename=fn)
+        try:
+            fn = config.voice_filename_format.format(filename=fn)
+        except:
+            return
 
         if not renpy.loadable(fn):
             renpy.error('voice file %r is not loadable' % fn)

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -64,6 +64,7 @@ class LogFile(object):
         # Should we emulate file's write method? We do so if this is True.
         self.raw_write = False
 
+
     def open(self): #@ReservedAssignment
 
         if self.file:
@@ -81,7 +82,6 @@ class LogFile(object):
 
             altfn = os.path.join(tempfile.gettempdir(), "renpy-" + self.name + ".txt")
 
-
             if renpy.android:
                 print "Logging to", fn
 
@@ -90,10 +90,17 @@ class LogFile(object):
             else:
                 mode = "w"
 
-            try:
-                self.file = codecs.open(fn, mode, "utf-8")
-            except:
-                self.file = codecs.open(altfn, mode, "utf-8")
+            if renpy.config.log_to_stdout:
+
+                import sys
+                self.file = sys.stdout
+
+            else:
+
+                try:
+                    self.file = codecs.open(fn, mode, "utf-8")
+                except:
+                    self.file = codecs.open(altfn, mode, "utf-8")
 
             if self.append:
                 self.write('')

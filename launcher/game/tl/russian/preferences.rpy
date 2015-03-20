@@ -1,4 +1,4 @@
-
+﻿
 translate russian strings:
 
     # game/preferences.rpy:40

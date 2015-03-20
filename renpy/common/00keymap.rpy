@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,34 +25,39 @@ init -1600 python:
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'mousedown_4', 'joy_rollback' ],
+        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4', 'joy_rollback' ],
         screenshot = [ 's' ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'mouseup_3', 'joy_menu' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3', 'joy_menu' ],
         hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
         reload_game = [ 'R' ],
         inspector = [ 'I' ],
+        full_inspector = [ 'alt_I' ],
         developer = [ 'D' ],
-        quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
-        iconify = [ 'meta_m', 'alt_m' ],
+        quit = [ ],
+        iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
+        progress_screen = [ 'alt_P' ],
+
+        # Accessibility.
         self_voicing = [ 'v', 'V' ],
+        clipboard_voicing = [ 'C' ],
 
         # Say.
-        rollforward = [ 'mousedown_5', 'K_PAGEDOWN' ],
+        rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
         dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
 
         # Pause.
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT', 'repeat_K_LEFT', 'joy_left' ],
+        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT', 'joy_right' ],
+        focus_up = [ 'K_UP', 'repeat_K_UP', 'joy_up' ],
+        focus_down = [ 'K_DOWN', 'repeat_K_DOWN', 'joy_down' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
@@ -61,11 +66,11 @@ init -1600 python:
         button_alternate_ignore = [ 'mousedown_3' ],
 
         # Input.
-        input_backspace = [ 'K_BACKSPACE' ],
+        input_backspace = [ 'K_BACKSPACE', 'repeat_K_BACKSPACE' ],
         input_enter = [ 'K_RETURN', 'K_KP_ENTER' ],
-        input_left = [ 'K_LEFT' ],
-        input_right = [ 'K_RIGHT' ],
-        input_delete = [ 'K_DELETE' ],
+        input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
 
         # Viewport.
         viewport_up = [ 'mousedown_4' ],
@@ -81,10 +86,10 @@ init -1600 python:
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
         bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_left = [ 'K_LEFT', 'joy_left' ],
-        bar_right = [ 'K_RIGHT', 'joy_right' ],
-        bar_up = [ 'K_UP', 'joy_up' ],
-        bar_down = [ 'K_DOWN', 'joy_down' ],
+        bar_left = [ 'K_LEFT', 'repeat_K_LEFT', 'joy_left' ],
+        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT', 'joy_right' ],
+        bar_up = [ 'K_UP', 'repeat_K_UP', 'joy_up' ],
+        bar_down = [ 'K_DOWN', 'repeat_K_DOWN', 'joy_down' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE' ],
@@ -95,17 +100,19 @@ init -1600 python:
 
         # Debug console.
         console = [ 'shift_O' ],
-        console_older = [ 'K_UP' ],
-        console_newer = [ 'K_DOWN' ],
+        console_older = [ 'K_UP', 'repeat_K_UP' ],
+        console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
 
-        # Profile one frame
+        # Profile commands.
         profile_once = [ 'K_F8' ],
-
+        memory_profile = [ 'K_F7' ],
 
         )
+
+    config.default_keymap = { k : list(v) for k, v in config.keymap.items() }
 
     # Should we use the autoreload system?
     config.autoreload = True
@@ -240,6 +247,35 @@ init -1600 python:
         renpy.display.interface.profile_once = True
         renpy.restart_interaction()
 
+    def _memory_profile():
+        renpy.memory.diff_memory()
+
+    def _progress_screen():
+        if renpy.context_nesting_level():
+            return
+
+        if renpy.get_screen("_progress"):
+            renpy.hide_screen("_progress")
+        else:
+            renpy.show_screen("_progress")
+
+        renpy.restart_interaction()
+
+screen _progress:
+    $ seen = renpy.count_seen_dialogue_blocks()
+    $ total = renpy.count_dialogue_blocks()
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0
+        ypos 0
+
+        text "[seen]/[total]":
+            size 14
+            color "#fff"
+            outlines [ (1, "#000", 0, 0) ]
+
 init -1100 python:
 
     # The default keymap. We might also want to put some of this into
@@ -261,7 +297,10 @@ init -1100 python:
         choose_renderer = renpy.curried_call_in_new_context("_choose_renderer"),
         console = _console.enter,
         profile_once = _profile_once,
+        memory_profile = _memory_profile,
         self_voicing = Preference("self voicing", "toggle"),
+        clipboard_voicing = Preference("clipboard voicing", "toggle"),
+        progress_screen = _progress_screen,
         )
 
     config.underlay = [ km ]

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 
 from renpy.display.render import render, Render
 import renpy.display
-import pygame
+import pygame_sdl2 as pygame
 
 
 def scale(num, base):
@@ -240,8 +240,7 @@ def LiveComposite(size, *args, **properties):
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
-        rv.add(Position(renpy.easy.displayable(widget),
-                        xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
+        rv.add(renpy.display.motion.Transform(widget, xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
 
     return rv
 
@@ -454,6 +453,15 @@ class MultiBox(Container):
 
         # The scene list for this widget.
         self.scene_list = None
+
+    def parameterize(self, name, parameters):
+        rv = MultiBox(layout=self.default_layout)
+        rv.style = self.style.copy()
+
+        rv.children = self._list_type(i.parameterize('displayable', [ ]) for i in self.children)
+        rv.offsets = self._list_type()
+
+        return rv
 
     def _clear(self):
         super(MultiBox, self)._clear()
@@ -1050,7 +1058,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
                  if tooltip:
                      return tooltip, .1
                  else:
-                     return Null()
+                     return Null(), .1
 
         image tooltipper = DynamicDisplayable(show_tooltip)
 
@@ -1431,6 +1439,9 @@ class Viewport(Container):
         if not self.style.yfill:
             height = min(ch, height)
 
+        width = max(width, self.style.xminimum)
+        height = max(height, self.style.yminimum)
+
         if self.set_adjustments:
             self.xadjustment.range = max(cw - width, 0)
             self.xadjustment.page = width
@@ -1593,9 +1604,7 @@ def LiveCrop(rect, child, **properties):
         image eileen cropped = LiveCrop((0, 0, 300, 300), "eileen happy")
     """
 
-    x, y, w, h = rect
-
-    return Viewport(child, offsets=(x, y), xmaximum=w, ymaximum=h, **properties)
+    return renpy.display.motion.Transform(child, crop=rect, **properties)
 
 class Side(Container):
 

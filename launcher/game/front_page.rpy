@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -197,18 +197,19 @@ screen front_page_project:
                     textbutton _("base") action OpenDirectory(".")
                     # textbutton _("images") action OpenDirectory("game/images") style "l_list"
                     # textbutton _("save") action None style "l_list"
-
+                
             vbox:
+                if persistent.show_edit_funcs:
 
-                label _("Edit File") style "l_label_small"
+                    label _("Edit File") style "l_label_small"
 
-                frame style "l_indent":
-                    has vbox
+                    frame style "l_indent":
+                        has vbox
 
-                    textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
-                    textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
-                    textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
-                    textbutton _("All script files") action editor.EditAll()
+                        textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
+                        textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                        textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
+                        textbutton _("All script files") action editor.EditAll()
 
         add SPACER
         add SEPARATOR
@@ -242,6 +243,7 @@ screen front_page_project:
                     textbutton _("Build Distributions") action Jump("build_distributions")
 
                 textbutton _("Android") action Jump("android")
+                textbutton _("iOS") action Jump("ios")
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 

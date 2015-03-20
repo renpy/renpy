@@ -496,6 +496,12 @@ properties:
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
+
 `hovered`
     An action to run when the button gains focus.
 
@@ -528,7 +534,10 @@ Input
 
 Creates a text input area, which allows the user to enter text. When
 the user presses return, the text will be returned by the
-interaction. This takes no parameters, and the following properties:
+interaction. (When the screen is invoked through ``call screen``, the result
+will be placed in the ``_return`` variable.)
+
+The input statement takes no parameters, and the following properties:
 
 `default`
     The default text in this input.
@@ -806,6 +815,12 @@ following properties:
 `action`
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
+
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.
@@ -1151,6 +1166,12 @@ also takes the following properties:
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
+`alternate`
+    An action that is run if the hotspot is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the hotspot
+    on a mouse-based platform, or when the player long presses the hotspot
+    on a touch-based platform.
+
 `hovered`
     An action to run when the button gains focus.
 
@@ -1217,7 +1238,8 @@ The advanced displayable statements are:
 ``drag``
     Creates a :class:`Drag`. A drag can be given an optional child,
     or the :propref:`child` style property can be used to supply the child,
-    and its focused variants.
+    and its focused variants. Drags also take the :propref:`focus_mask`
+    style property.
 
 ``draggroup``
     Creates a :class:`DragGroup`. A drag group may have zero or more
@@ -1671,6 +1693,14 @@ and choosing the entries that apply to the current platform.
 
 ``"firetv"``
    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+
+``"android"``
+   Defined on all Android devices.
+
+``"ios"``
+   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+   also defined).
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have

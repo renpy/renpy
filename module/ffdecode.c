@@ -22,6 +22,7 @@
 #include <math.h>
 #include <limits.h>
 #include <libavutil/avstring.h>
+#include <libavutil/time.h>
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
 #include <libswscale/swscale.h>
@@ -175,6 +176,12 @@ typedef struct VideoState {
 
     // The PTS of the first frame.
     double first_frame_pts;
+
+    // Is the is the first audio?
+    int first_audio;
+
+    // The PTS of the first audio.
+    double first_audio_clock;
 
 #ifdef HAS_RESAMPLE
     // The audio frame, and the audio resample context.
@@ -489,7 +496,7 @@ static double get_audio_clock(VideoState *is, int adjust)
     double altpts;
     double offset;
     int hw_buf_size, bytes_per_sec;
-    pts = is->audio_clock;
+    pts = is->audio_clock - is->first_audio_clock;
     hw_buf_size = audio_write_get_buf_size(is);
     bytes_per_sec = 0;
     if (is->audio_st) {
@@ -519,7 +526,6 @@ static double get_audio_clock(VideoState *is, int adjust)
     }
 
     if (adjust) {
-
     	if (offset > 0) {
 			is->start_time += .00025;
 		} else {
@@ -559,14 +565,12 @@ static int video_refresh(void *opaque)
 			is->first_frame_pts = vp->pts;
 		}
 
-		delay = get_audio_clock(is, 0) - vp->pts;
-		delay += is->first_frame_pts;
+		delay = get_audio_clock(is, 0) - (vp->pts - is->first_frame_pts);
 
 		/* The video is ahead of the audio. */
 		if (delay < 0 && !is->first_frame) {
 			return 0;
 		}
-
 		// Adjust the audio clock.
 		get_audio_clock(is, 1);
 
@@ -574,10 +578,10 @@ static int video_refresh(void *opaque)
 			video_display(is);
 		}
 
+		is->first_frame = 0;
+
 		av_free(vp->frame);
 		vp->frame = NULL;
-
-		is->first_frame = 0;
 
 		/* update queue size and signal for next picture */
 		if (++is->pictq_rindex == VIDEO_PICTURE_QUEUE_SIZE)
@@ -968,6 +972,11 @@ static int audio_decode_frame(VideoState *is, double *pts_ptr)
         /* if update the audio clock with the pts */
         if (pkt->pts != AV_NOPTS_VALUE) {
             is->audio_clock = av_q2d(is->audio_st->time_base)*pkt->pts;
+
+            if (is->first_audio) {
+            	is->first_audio_clock = is->audio_clock;
+            	is->first_audio = 0;
+            }
         }
     }
 }
@@ -1481,9 +1490,9 @@ static int decode_thread(void *arg)
         is->show_audio = 0;
     }
 
-    if (is->video_stream < 0 && is->audio_stream < 0) {
-        fprintf(stderr, "could not open codecs\n");
-        ret = -1;
+    if (is->audio_stream < 0) {
+    	printf("%s audio stream could not be opened.\n", is->filename);
+    	ret = -1;
         goto fail;
     }
 
@@ -1610,6 +1619,7 @@ VideoState *ffpy_stream_open(SDL_RWops *rwops, const char *filename)
     is->parse_tid = SDL_CreateThread(decode_thread, "decode_thread", is);
 
     is->first_frame = 1;
+    is->first_audio = 1;
 
     if (!is->parse_tid) {
         av_free(is);

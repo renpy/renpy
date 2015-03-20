@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,6 +59,9 @@ class Solid(renpy.display.core.Displayable):
         return [ ]
 
     def render(self, width, height, st, at):
+
+        width = max(self.style.xminimum, width)
+        height = max(self.style.yminimum, height)
 
         color = self.color or self.style.color
 
@@ -171,6 +174,9 @@ class Frame(renpy.display.core.Displayable):
             return False
 
     def render(self, width, height, st, at):
+
+        width = max(self.style.xminimum, width)
+        height = max(self.style.yminimum, height)
 
         crend = render(self.image, width, height, st, at)
 

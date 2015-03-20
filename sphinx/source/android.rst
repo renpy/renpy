@@ -10,6 +10,19 @@ and ported to these devices.
 RAPT - the Ren'Py Android Packaging Tool - is a program, downloaded separately
 from Ren'Py, that creates an Android package for testing or release purposes.
 
+Required Language
+=================
+
+Some of the libraries used by Ren'Py on iOS are licensed under the terms
+of the GNU Lesser/Library General Public License. You'll need to comply
+with the terms of that license to distribute Ren'Py. We believe including
+the following language in your app's description will suffice, but check
+with a lawyer to be sure.
+
+    This program contains free software licensed under a number of licenses,
+    including the GNU Lesser General Public License. A complete list of
+    software is available at http://www.renpy.org/doc/html/license.html.
+
 
 User Instructions
 =================
@@ -33,6 +46,8 @@ keybindings work:
      Controls Android's media volume.
 
 
+.. _android-platform-differences:
+
 Platform Differences
 ====================
 
@@ -42,8 +57,7 @@ due to the Android software and hardware are:
 
 * The touchscreen is treated as if it was a mouse. However, it will
   only produce mouse events when the user is actively touching the
-  screen. When the user is not touching the screen, the virtual
-  pointer will move to the upper-left corner of the screen.
+  screen.
 
 * Movie playback is only supported in fullscreen mode, and only with
   media formats that are supported by Android devices. See

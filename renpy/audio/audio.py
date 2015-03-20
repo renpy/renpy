@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,7 +28,7 @@ import renpy.audio  # @UnusedImport
 import renpy.display  # @UnusedImport
 
 import time
-import pygame  # @UnusedImport
+import pygame_sdl2  # @UnusedImport
 import os
 import atexit
 
@@ -36,9 +36,8 @@ import atexit
 
 disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 
-pss = None
-
 if 'pss' not in disable:
+
     try:
         import pysdlsound as pss
         pss.check_version(4)  # @UndefinedVariable
@@ -46,15 +45,7 @@ if 'pss' not in disable:
     except:
         import traceback
         traceback.print_exc()
-        pass
-
-    if pss is None:
-        try:
-            import android.sound as pss #@UnresolvedImport @Reimport
-            print "Imported android.sound."
-        except:
-            pass
-
+        pss = None
 
 # Save the mixer, and restore it at exit.
 
@@ -513,178 +504,29 @@ class Channel(object):
             self.secondary_volume_time = self.context.secondary_volume_time
             pss.set_secondary_volume(self.number, self.context.secondary_volume, delay)
 
+    def pause(self):
+        pss.pause(self.number)
+
+    def unpause(self):
+        pss.unpause(self.number)
+
 
 ################################################################################
 # Android VideoPlayer Channel
 ################################################################################
 
-if renpy.android:
+# Use unconditional imports so these files get compiled during the build
+# process.
 
-    import jnius  # @UnresolvedImport
+try:
+    from renpy.audio.androidhw import AndroidVideoChannel
+except:
+    pass
 
-    VideoPlayer = jnius.autoclass("org.renpy.android.VideoPlayer")
-
-    class AndroidVideoChannel(object):
-
-        def __init__(self, name, file_prefix="", file_suffix="", default_loop=None):
-
-            # A list of queued filenames.
-            self.queue = [ ]
-
-            # The filename that's currently playing.
-            self.filename = None
-
-            # The videoplayer that's currently playing.
-            self.player = None
-
-            # The name assigned to this channel. This is used to look up
-            # information about the channel in the MusicContext object.
-            self.name = name
-
-            # The name of the mixer this channel uses. Set below, as there's
-            # no good default.
-            self.mixer = None
-
-            # The time the music in this channel was last changed.
-            self.last_changed = 0
-
-            # The callback that is called if the queue becomes empty.
-            self.callback = None
-
-            # Ignored.
-            self.synchro_start = False
-            self.wait_stop = False
-            self.loop = [ ]
-
-            # A prefix and suffix that are used to create the full filenames.
-            self.file_prefix = file_prefix
-            self.file_suffix = file_suffix
-
-            if default_loop is None:
-                # By default, should we loop the music?
-                self.default_loop = True
-                # Was this set explicitly?
-                self.default_loop_set = False
-
-            else:
-                self.default_loop = default_loop
-                self.default_loop_set = True
-
-
-        def get_context(self):
-            """
-            Returns the MusicContext corresponding to this channel, taken from
-            the context object. Allocates a MusicContext if none exists.
-            """
-
-            mcd = renpy.game.context().music
-
-            rv = mcd.get(self.name)
-            if rv is None:
-                rv = mcd[self.name] = MusicContext()
-
-            return rv
-
-        context = property(get_context)
-
-
-        def start(self):
-            """
-            Starts playing the first video in the queue.
-            """
-
-            if not self.queue:
-                return
-
-            filename = self.queue.pop(0)
-
-            f = renpy.loader.load(filename)
-
-            real_fn = f.name
-            base = getattr(f, "base", -1)
-            length = getattr(f, "length", -1)
-
-            self.filename = filename
-            self.player = VideoPlayer(real_fn, base, length)
-
-        def stop(self):
-
-            if self.player is not None:
-                self.player.stop()
-                self.player = None
-
-            self.filename = None
-
-        def get_playing(self):
-
-            if self.player is None:
-                return None
-
-            if self.player.isPlaying():
-                return self.filename
-
-        def periodic(self):
-
-            # This should be set from something that checks to see if our
-            # mixer is muted.
-            force_stop = self.context.force_stop
-
-            if force_stop:
-                self.dequeue()
-                self.stop()
-                return
-
-            if self.get_playing():
-                return
-
-            if self.queue:
-                self.start()
-
-
-        def dequeue(self, even_tight=False):
-            """
-            Clears the queued music, except for a first item that has
-            not been started.
-            """
-
-            if self.get_playing():
-                self.queue = [ ]
-            else:
-                self.queue = self.queue[:1]
-
-
-        def interact(self):
-            """
-            Called (mostly) once per interaction.
-            """
-
-            self.periodic()
-
-
-        def fadeout(self, secs):
-            """
-            Causes the playing music to be faded out for the given number
-            of seconds. Also clears any queued music.
-            """
-
-            self.stop()
-            self.queue = [ ]
-
-        def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
-            self.queue.extend(filenames)
-
-        def set_volume(self, volume):
-            pass
-
-        def get_pos(self):
-            pass
-
-        def set_pan(self, pan, delay):
-            pass
-
-        def set_secondary_volume(self, volume, delay):
-            pass
-
+try:
+    from renpy.audio.ioshw import IOSVideoChannel
+except:
+    pass
 
 # A list of channels we know about.
 all_channels = [ ]
@@ -734,8 +576,10 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     if not renpy.game.context().init_phase:
         raise Exception("Can't register channel outside of init phase.")
 
-    if renpy.android and name == "movie":
+    if renpy.android and renpy.config.hw_video and name == "movie":
         c = AndroidVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
+    elif renpy.ios and renpy.config.hw_video and name == "movie":
+        c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
     else:
         c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue)
 
@@ -955,3 +799,19 @@ def rollback():
     for c in all_channels:
         if not c.loop:
             c.fadeout(0)
+
+def pause_all():
+    """
+    Pause all playback channels.
+    """
+
+    for c in channels.values():
+        c.pause()
+
+def unpause_all():
+    """
+    Unpause all playback channels.
+    """
+
+    for c in channels.values():
+        c.unpause()

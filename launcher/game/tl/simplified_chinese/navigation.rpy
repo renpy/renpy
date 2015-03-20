@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # game/navigation.rpy:150

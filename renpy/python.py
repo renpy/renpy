@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -135,7 +135,15 @@ class StoreDict(dict):
 
 
 # A map from the name of a store dict to the corresponding StoreDict object.
+# This isn't reset during a reload, so store objects stay the same in modules.
 store_dicts = { }
+
+# Same, for module objects.
+store_modules = { }
+
+# The store dicts that have been cleared and initialized during the current
+# run.
+initialized_store_dicts = set()
 
 def create_store(name):
     """
@@ -144,12 +152,14 @@ def create_store(name):
 
     name = str(name)
 
-    if name in store_dicts:
+    if name in initialized_store_dicts:
         return
 
+    initialized_store_dicts.add(name)
+
     # Create the dict.
-    d = StoreDict()
-    store_dicts[name] = d
+    d = store_dicts.setdefault(name, StoreDict())
+    d.reset()
 
     # Set the name.
     d["__name__"] = name
@@ -162,8 +172,11 @@ def create_store(name):
         if k not in d:
             d[k] = v
 
-    # Create the corresponding module.
-    sys.modules[name] = StoreModule(d)
+    # Create or reuse the corresponding module.
+    if name in store_modules:
+        sys.modules[name] = store_modules[name]
+    else:
+        store_modules[name] = sys.modules[name] = StoreModule(d)
 
     # If we're a module in the store, add us to the store.
     if name.startswith("store."):
@@ -328,6 +341,17 @@ def reached_vars(store, reachable, wait):
 
 class WrapNode(ast.NodeTransformer):
 
+    def visit_SetComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__set__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
+
     def visit_ListComp(self, n):
         return ast.Call(
             func = ast.Name(
@@ -346,6 +370,17 @@ class WrapNode(ast.NodeTransformer):
         return ast.Call(
             func = ast.Name(
                 id="__renpy__list__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
+
+    def visit_DictComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
             args = [ self.generic_visit(n) ],
@@ -913,6 +948,7 @@ class RollbackLog(renpy.object.Object):
         self.mutated = { }
         self.rollback_limit = 0
         self.rollback_is_fixed = False
+        self.checkpointing_suspended = False
         self.fixed_rollback_boundary = None
         self.forward = [ ]
         self.old_store = { }
@@ -1103,6 +1139,9 @@ class RollbackLog(renpy.object.Object):
         node.
         """
 
+        if self.checkpointing_suspended:
+            return
+
         self.retain_after_load_flag = False
 
         if self.current.checkpoint:
@@ -1142,6 +1181,14 @@ class RollbackLog(renpy.object.Object):
 
             # Log the data in case we roll back again.
             self.current.forward = data
+
+    def suspend_checkpointing(self, flag):
+        """
+        Called to temporarily suspend checkpointing, so any rollback
+        will jump to prior to this statement
+        """
+
+        self.checkpointing_suspended = flag
 
     def block(self):
         """
@@ -1201,6 +1248,9 @@ class RollbackLog(renpy.object.Object):
         # give up.
         if checkpoints and not self.rollback_limit > 0 and not force:
             return
+
+        self.suspend_checkpointing(False)
+            # will always rollback to before suspension
 
         self.purge_unreachable(self.get_roots())
 

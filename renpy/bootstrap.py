@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,9 +57,6 @@ def extra_imports():
     import tarfile; tarfile
     import bz2; bz2  # @UnresolvedImport
     import webbrowser; webbrowser
-    import pygame.locals; pygame.locals
-    import pygame.color; pygame.color
-    import pygame.colordict; pygame.colordict
     import posixpath; posixpath
     import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
@@ -74,6 +71,7 @@ def extra_imports():
     import rsa; rsa
     import decimal; decimal
     import plistlib; plistlib
+    import _renpysteam; _renpysteam
 
 class NullFile(io.IOBase):
     """
@@ -134,6 +132,10 @@ def bootstrap(renpy_base):
     import renpy.log #@UnusedImport
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
+
+    # Remove a legacy environment setting.
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
 
     renpy_base = unicode(renpy_base, FSENCODING, "replace")
 
@@ -221,19 +223,17 @@ def bootstrap(renpy_base):
     if renpy.macintosh:
         os.startfile = mac_start
 
-    import pygame_sdl2
-    pygame_sdl2.import_as_pygame()
-
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
     # directory, we won't get the libraries in the PATH, and hence pygame
     # won't import.)
     try:
-        import pygame; pygame
+        import pygame_sdl2
+        pygame_sdl2.import_as_pygame()
     except:
         print >>sys.stderr, """\
-Could not import pygame. Please ensure that this program has been built
+Could not import pygame_sdl2. Please ensure that this program has been built
 and unpacked properly. Also, make sure that the directories containing
 this program do not contain : or ; in their names.
 
@@ -302,7 +302,10 @@ You may be using a system install of python. Please run {0}.sh,
                 exit_status = e.status
 
                 if e.relaunch:
-                    subprocess.Popen([sys.executable, "-EO"] + sys.argv)
+                    if hasattr(sys, "renpy_executable"):
+                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])
+                    else:
+                        subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
             except renpy.game.ParseErrorException:
                 pass

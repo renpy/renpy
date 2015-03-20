@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -216,7 +216,7 @@ class SaveRecord(object):
 
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copy(self.first_filename, filename_new)
+            shutil.copyfile(self.first_filename, filename_new)
             safe_rename(filename_new, filename)
             return
 
@@ -453,11 +453,12 @@ def list_saved_games(regexp=r'.', fast=False):
 
         c = get_cache(s)
 
-        extra_info = c.get_json().get("_save_name", "")
-        screenshot = c.get_screenshot()
-        mtime = c.get_mtime()
+        if c is not None:
+            extra_info = c.get_json().get("_save_name", "")
+            screenshot = c.get_screenshot()
+            mtime = c.get_mtime()
 
-        rv.append((s, extra_info, screenshot, mtime))
+            rv.append((s, extra_info, screenshot, mtime))
 
     return rv
 
@@ -595,6 +596,17 @@ def rename_save(old, new):
     location.rename(old, new)
 
     clear_slot(old)
+    clear_slot(new)
+
+def copy_save(old, new):
+    """
+    :doc: loadsave
+
+    Copies the save at `old` to `new`. (Does nothing if `old` does not
+    exist.)
+    """
+
+    location.copy(old, new)
     clear_slot(new)
 
 

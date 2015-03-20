@@ -1,6 +1,7 @@
 * ADVCharacter
 * ADVSpeaker
 * Action
+* AddToSet
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
@@ -101,6 +102,7 @@
 * :func:`QuickLoad`
 * :func:`QuickSave`
 * :func:`Quit`
+* RemoveFromSet
 * :func:`Replay`
 * :func:`Return`
 * Revolve
@@ -143,6 +145,7 @@
 * :func:`ToggleDict`
 * :func:`ToggleField`
 * :func:`ToggleScreenVariable`
+* ToggleSetMembership
 * :func:`ToggleVariable`
 * :func:`ToggleVoiceMute`
 * :class:`Tooltip`
@@ -158,6 +161,7 @@
 * Zoom
 * ZoomInOut
 * absolute
+* achievement
 * :var:`adv`
 * anim
 * :var:`blinds`

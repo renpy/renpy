@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,7 @@ import renpy.audio
 
 from renpy.display.render import render, Render
 
-import pygame
+import pygame_sdl2 as pygame
 
 import math
 
@@ -49,6 +49,9 @@ def compile_event(key, keydown):
     # If it's in config.keymap, compile what's in config.keymap.
     if key in renpy.config.keymap:
         return compile_event(renpy.config.keymap[key], keydown)
+
+    if key in renpy.config.default_keymap:
+        return compile_event(renpy.config.default_keymap[key], keydown)
 
     if key is None:
         return "(False)"
@@ -81,24 +84,37 @@ def compile_event(key, keydown):
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
 
-    if part[0] == "alt":
-        part.pop(0)
+
+    MODIFIERS = { "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
+    modifiers = set()
+
+    while part[0] in MODIFIERS:
+        modifiers.add(part.pop(0))
+
+    if "repeat" in modifiers:
+        rv += " and (ev.repeat)"
+    else:
+        rv += " and (not ev.repeat)"
+
+    if "alt" in modifiers:
         rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
     else:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
 
-    if part[0] == "meta":
-        part.pop(0)
+    if "meta" in modifiers:
         rv += " and (ev.mod & %d)" % pygame.KMOD_META
     else:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
-    if part[0] == "shift":
-        part.pop(0)
+    if "ctrl" in modifiers:
+        rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+    else:
+        rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+
+    if "shift" in modifiers:
         rv += " and (ev.mod & %d)" % pygame.KMOD_SHIFT
 
-    if part[0] == "noshift":
-        part.pop(0)
+    if "noshift" in modifiers:
         rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
     if len(part) == 1:
@@ -527,7 +543,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         if renpy.config.allow_skipping and renpy.config.skipping:
 
-            if st >= skip_delay:
+            if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
                 if renpy.game.preferences.skip_unseen:
                     return True
                 elif renpy.config.skipping == "fast":
@@ -925,9 +941,11 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
     def update_text(self, new_content, editable, check_size=False):
 
+        edit = renpy.display.interface.text_editing
+
         old_content = self.content
 
-        if new_content != self.content or editable != self.editable:
+        if new_content != self.content or editable != self.editable or edit:
             renpy.display.render.redraw(self, 0)
 
         self.editable = editable
@@ -937,6 +955,27 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         if caret is None:
             caret = self.caret
 
+        # Format text being edited by the IME.
+        if edit:
+
+            edit_text_0 = edit.text[:edit.start]
+            edit_text_1 = edit.text[edit.start:edit.start + edit.length]
+            edit_text_2 = edit.text[edit.start + edit.length:]
+
+            edit_text = ""
+
+            if edit_text_0:
+                edit_text += "{u=1}" + edit_text_0.replace("{", "{{") + "{/u}"
+
+            if edit_text_1:
+                edit_text += "{u=2}" + edit_text_1.replace("{", "{{") + "{/u}"
+
+            if edit_text_2:
+                edit_text += "{u=1}" + edit_text_2.replace("{", "{{") + "{/u}"
+
+        else:
+            edit_text = ""
+
         def set_content(content):
 
             if content == "":
@@ -944,7 +983,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
             if editable:
                 l = len(content)
-                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), caret,
+                self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), edit_text, caret,
                                             content[self.caret_pos:l].replace("{", "{{"), self.suffix])
             else:
                 self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
@@ -986,6 +1025,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
         l = len(self.content)
 
+        raw_text = None
+
         if map_event(ev, "input_backspace"):
 
             if self.content and self.caret_pos > 0:
@@ -1024,25 +1065,53 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif ev.type == pygame.KEYDOWN and ev.unicode:
-            if ord(ev.unicode[0]) < 32:
-                return None
-
-            if self.length and len(self.content) >= self.length:
-                raise renpy.display.core.IgnoreEvent()
-
-            if self.allow and ev.unicode not in self.allow:
-                raise renpy.display.core.IgnoreEvent()
-
-            if self.exclude and ev.unicode in self.exclude:
-                raise renpy.display.core.IgnoreEvent()
-
-            content = self.content[0:self.caret_pos] + ev.unicode + self.content[self.caret_pos:l]
-            self.caret_pos += 1
-
-            self.update_text(content, self.editable, check_size=True)
+        elif ev.type == pygame.TEXTEDITING:
+            self.update_text(self.content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
+
+        elif ev.type == pygame.TEXTINPUT:
+            raw_text = ev.text
+
+        elif ev.type == pygame.KEYDOWN:
+            if ev.unicode and ord(ev.unicode[0]) >= 32:
+                raw_text = ev.unicode
+            elif renpy.display.interface.text_event_in_queue():
+                raw_text = ''
+
+        if raw_text is not None:
+
+            text = ""
+
+            for c in raw_text:
+
+                if self.allow and c not in self.allow:
+                    continue
+                if self.exclude and c in self.exclude:
+                    continue
+
+                text += c
+
+            if self.length:
+                remaining = self.length - len(self.content)
+                text = text[:remaining]
+
+            if text:
+
+                content = self.content[0:self.caret_pos] + text + self.content[self.caret_pos:l]
+                self.caret_pos += len(text)
+
+                self.update_text(content, self.editable, check_size=True)
+
+            raise renpy.display.core.IgnoreEvent()
+
+    def render(self, width, height, st, at):
+        rv = super(Input, self).render(width, height, st, at)
+
+        if self.editable:
+            rv.text_input = True
+
+        return rv
 
 # A map from adjustment to lists of displayables that want to be redrawn
 # if the adjustment changes.
@@ -1520,6 +1589,10 @@ class Bar(renpy.display.core.Displayable):
 
         return None
 
+    def set_style_prefix(self, prefix, root):
+        if root:
+            super(Bar, self).set_style_prefix(prefix, root)
+
     def _tts(self):
         return ""
 
@@ -1680,6 +1753,10 @@ class MouseArea(renpy.display.core.Displayable):
         return Render(width, height)
 
     def event(self, ev, x, y, st):
+
+        # Mouseareas should not handle events when something else is grabbing.
+        if renpy.display.focus.get_grab():
+            return
 
         if self.style.focus_mask is not None:
             crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)

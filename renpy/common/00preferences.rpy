@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -135,6 +135,10 @@ init -1500 python:
          * Preference("self voicing", "enable") - Enables self-voicing.
          * Preference("self voicing", "disable") - Disable self-voicing.
          * Preference("self voicing", "toggle") - Toggles self-voicing.
+
+         * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
+         * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
+         * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
          Values that can be used with bars are:
 
@@ -334,6 +338,15 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing")
 
+            elif name == "clipboard voicing":
+
+                if value == "enable":
+                    return SetField(_preferences, "self_voicing", "clipboard")
+                elif value == "disable":
+                    return SetField(_preferences, "self_voicing", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "self_voicing", true_value="clipboard")
+
             elif name == "emphasize audio":
 
                 if value == "enable":
@@ -370,7 +383,12 @@ init -1500:
     screen _self_voicing():
         zorder 1500
 
-        text _("Self-voicing enabled. Press 'v' to disable."):
+        if _preferences.self_voicing == "clipboard":
+            $ message = _("Clipboard voicing enabled. Press 'shift+C' to disable.")
+        else:
+            $ message = _("Self-voicing enabled. Press 'v' to disable.")
+
+        text message:
             alt ""
 
             xpos 10

@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,7 +31,7 @@ from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
 import renpy
-import pygame
+import pygame_sdl2 as pygame
 import os
 import os.path
 import weakref
@@ -58,14 +58,6 @@ cdef extern from "eglsupport.h":
     void egl_swap()
     void egl_quit()
 
-
-# This is used by gl_error_check in gl.pxd.
-class GLError(Exception):
-    """
-    This is used to report OpenGL errors.
-    """
-
-    pass
 
 # EGL is a flag we check to see if we have EGL on this platform.
 cdef bint EGL
@@ -147,6 +139,9 @@ cdef class GLDraw:
         # Should we allow the fixed-function environment?
         self.allow_fixed = allow_fixed
 
+        # Did we do the texture test at least once?
+        self.did_texture_test = False
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it
@@ -188,17 +183,19 @@ cdef class GLDraw:
 
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
+
+        if pwidth is None:
+            pwidth = vwidth
+            pheight = vheight
+
         virtual_ar = 1.0 * vwidth / vheight
 
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
-        if renpy.android:
-            pheight = self.display_info.current_h
-            pwidth = self.display_info.current_w
-        else:
-            pheight = min(self.display_info.current_h - 102, pheight)
+        if not renpy.mobile:
             pwidth = min(self.display_info.current_w - 102, pwidth)
+            pheight = min(self.display_info.current_h - 102, pheight)
 
             # The first time through.
             if not self.did_init:
@@ -213,26 +210,47 @@ cdef class GLDraw:
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
 
-        if EGL:
+        if ANGLE:
+            opengl = 0
+            resizable = pygame.RESIZABLE
+
+        elif EGL:
             opengl = 0
             resizable = 0
+
         elif renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
+
+            pwidth = 0
+            pheight = 0
+
+        elif renpy.ios:
+            opengl = pygame.OPENGL
+            resizable = pygame.RESIZABLE
+
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+
+            pwidth = 0
+            pheight = 0
+
         else:
             opengl = pygame.OPENGL
-            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
-            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
             if renpy.config.gl_resize:
                 resizable = pygame.RESIZABLE
             else:
                 resizable = 0
 
+        if opengl:
+            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
+            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
         try:
             if fullscreen:
                 renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
@@ -303,6 +321,9 @@ cdef class GLDraw:
             if not self.init():
                 return False
 
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            return False
+
         self.did_init = True
 
         # Set some default settings.
@@ -314,8 +335,6 @@ cdef class GLDraw:
 
         self.environ.init()
         self.rtt.init()
-
-        gl_check("set_mode")
 
         return True
 
@@ -392,7 +411,7 @@ cdef class GLDraw:
         if EGL:
             gltexture.use_gles()
 
-        elif renpy.android:
+        elif renpy.android or renpy.ios:
             self.redraw_period = 1.0
             self.always_opaque = True
             gltexture.use_gles()
@@ -442,7 +461,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
 
-        if EGL or renpy.android or (allow_shader and use_subsystem(
+        if EGL or renpy.android or renpy.ios or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
@@ -502,26 +521,28 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture method.
 
-        if glrtt_copy and os.environ.get("RENPY_GL_RTT", "copy") == "copy":
-            renpy.display.log.write("Using copy RTT.")
-            self.rtt = glrtt_copy.CopyRtt()
-            self.info["rtt"] = "copy"
-            self.rtt.init()
+        # 2015-3-3 - had a problem with 2012-era Nvidia drivers that prevented
+        # ANGLE from working with fbo on Windows.
 
-        elif (use_subsystem(
-                glrtt_fbo,
-                "RENPY_GL_RTT",
-                "fbo",
-                "GL_OES_framebuffer_object") or
+        use_fbo = (
+            renpy.ios or renpy.android or (EGL and not ANGLE) or
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
-                "GL_ARB_framebuffer_object")):
+                # "GL_ARB_framebuffer_object"
+                "RENPY_bogus_extension"))
 
+        if use_fbo:
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
+            self.rtt.init()
+
+        elif glrtt_copy:
+            renpy.display.log.write("Using copy RTT.")
+            self.rtt = glrtt_copy.CopyRtt()
+            self.info["rtt"] = "copy"
             self.rtt.init()
 
         else:
@@ -532,13 +553,18 @@ cdef class GLDraw:
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
         # Figure out the sizes of texture that render properly.
-        rv = gltexture.test_texture_sizes(self.environ, self)
+        if not self.did_texture_test:
+            rv = gltexture.test_texture_sizes(self.environ, self)
+        else:
+            rv = True
 
         self.rtt.deinit()
         self.environ.deinit()
 
         if not rv:
             return False
+
+        self.did_texture_test = True
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
@@ -679,9 +705,7 @@ cdef class GLDraw:
 
         gltexture.cleanup()
 
-        gl_check("draw_screen")
-
-    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
+    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned) except 1:
         """
         This is responsible for rendering things to textures,
         as necessary.
@@ -740,7 +764,7 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse,
-        bint nearest):
+        bint nearest) except 1:
 
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
@@ -773,6 +797,10 @@ cdef class GLDraw:
             raise Exception("Unknown drawing type. " + repr(what))
 
         rend = what
+
+        if rend.text_input:
+            renpy.display.interface.text_rect = rend.screen_rect(xo, yo, reverse)
+
 
         # Other draw modes.
 
@@ -1003,13 +1031,10 @@ cdef class GLDraw:
 
         return rv
 
-    def update_mouse(self):
-        # The draw routine updates the mouse. There's no need to
-        # redraw it event-by-event.
-
-        return
-
-    def translate_mouse(self, x, y):
+    def translate_point(self, x, y):
+        """
+        Translates (x, y) from physical to virtual coordinates.
+        """
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1034,7 +1059,10 @@ cdef class GLDraw:
 
         return x, y
 
-    def untranslate_mouse(self, x, y):
+    def untranslate_point(self, x, y):
+        """
+        Untranslates (x, y) from virtual to physical coordinates.
+        """
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1053,18 +1081,23 @@ cdef class GLDraw:
 
         return x, y
 
+    def update_mouse(self):
+        # The draw routine updates the mouse. There's no need to
+        # redraw it event-by-event.
+
+        return
+
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-        return self.translate_mouse(x, y)
+        return self.translate_point(x, y)
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
-        return self.translate_mouse(x, y)
+        return self.translate_point(x, y)
 
     def set_mouse_pos(self, x, y):
-        x, y = self.untranslate_mouse(x, y)
+        x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
-
 
     # Private.
     def draw_mouse(self):
@@ -1261,6 +1294,10 @@ cdef class Environ(object):
 try:
     import glrtt_copy
 except:
+    glrtt_copy = None
+
+# Copy doesn't work on iOS.
+if renpy.ios:
     glrtt_copy = None
 
 try:

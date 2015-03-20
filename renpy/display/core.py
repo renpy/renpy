@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,7 +26,7 @@ import renpy.display
 import renpy.audio
 import renpy.text
 
-import pygame #@UnusedImport
+import pygame_sdl2 as pygame
 
 import sys
 import os
@@ -35,8 +35,7 @@ import cStringIO
 import threading
 
 try:
-    import android #@UnresolvedImport @UnusedImport
-    import android.sound #@UnresolvedImport
+    import android # @UnresolvedImport
 except:
     android = None
 
@@ -48,7 +47,11 @@ REDRAW = pygame.USEREVENT + 3
 EVENTNAME = pygame.USEREVENT + 4
 
 # All events except for TIMEEVENT and REDRAW
-ALL_EVENTS = [ i for i in range(0, REDRAW + 1) if i != TIMEEVENT and i != REDRAW ]
+ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
+ALL_EVENTS.add(PERIODIC)
+ALL_EVENTS.add(JOYEVENT)
+ALL_EVENTS.add(EVENTNAME)
+
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
@@ -1357,8 +1360,7 @@ class Interface(object):
         # Should we reset the display?
         self.display_reset = False
 
-        # The last size we were resized to. This lets us debounce the
-        # VIDEORESIZE event.
+        # The last size we were resized to.
         self.last_resize = None
 
         # The thread that can do display operations.
@@ -1370,17 +1372,6 @@ class Interface(object):
         # Initialize pygame.
         if pygame.version.vernum < (1, 8, 1):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
-
-        try:
-            import pygame.macosx as macosx
-            macosx.init() #@UndefinedVariable
-        except:
-            pass
-
-        try:
-            macosx.Video_AutoInit() #@UndefinedVariable
-        except:
-            pass
 
         # pygame.font.init()
         renpy.audio.audio.init()
@@ -1411,11 +1402,6 @@ class Interface(object):
         # Load the image fonts.
         renpy.text.font.load_image_fonts()
 
-        # Setup the android keymap.
-        if android is not None:
-            android.map_key(android.KEYCODE_BACK, pygame.K_PAGEUP)
-            android.map_key(android.KEYCODE_MENU, pygame.K_ESCAPE)
-
         # Setup periodic event.
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
@@ -1435,6 +1421,22 @@ class Interface(object):
         # move.
         self.mouse_move = None
 
+        # If in text editing mode, the current text editing event.
+        self.text_editing = None
+
+        # The text rectangle after the current draw.
+        self.text_rect = None
+
+        # The text rectangle after the previous draw.
+        self.old_text_rect = None
+
+        # Are we a touchscreen?
+        self.touch = renpy.exports.variant("touch")
+
+        # For compatibility with older code.
+        if renpy.config.periodic_callback:
+            renpy.config.periodic_callbacks.append(renpy.config.periodic_callback)
+
         renpy.display.emulator.init_emulator()
 
 
@@ -1451,6 +1453,10 @@ class Interface(object):
         if renpy.config.key_repeat is not None:
             delay, repeat_delay = renpy.config.key_repeat
             pygame.key.set_repeat(int(1000 * delay), int(1000 * repeat_delay))
+
+        if android:
+            android.wakelock(True)
+
 
     def set_icon(self):
         """
@@ -1585,6 +1591,11 @@ class Interface(object):
             renpy.display.video.movie_stop(clear=False)
 
         if self.display_reset:
+
+            pygame.key.stop_text_input() # @UndefinedVariable
+            pygame.key.set_text_input_rect(None) # @UndefinedVariable
+            self.text_rect = None
+
             renpy.display.draw.deinit()
 
             if renpy.display.draw.info["renderer"] == "angle":
@@ -1602,24 +1613,19 @@ class Interface(object):
 
             self.kill_textures_and_surfaces()
 
+        self.old_text_rect = None
         self.display_reset = False
 
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if physical_size is None:
-            if renpy.android or renpy.game.preferences.physical_size is None: #@UndefinedVariable
-                physical_size = (renpy.config.screen_width, renpy.config.screen_height)
+            if renpy.mobile or renpy.game.preferences.physical_size is None: #@UndefinedVariable
+                physical_size = (None, None)
             else:
                 physical_size = renpy.game.preferences.physical_size
 
         # Setup screen.
         fullscreen = renpy.game.preferences.fullscreen
-
-        # If we're in fullscreen mode, and changing to another mode, go to
-        # windowed mode first.
-        s = pygame.display.get_surface()
-        if s and (s.get_flags() & pygame.FULLSCREEN):
-            fullscreen = False
 
         old_fullscreen = self.fullscreen
         self.fullscreen = fullscreen
@@ -2026,31 +2032,66 @@ class Interface(object):
 
         return (get_time() - self.frame_time) <= seconds_ago
 
-    def android_check_suspend(self):
+    def check_suspend(self, ev):
+        """
+        Handles the SDL2 suspend process.
+        """
 
-        if android.check_pause():
-
-            android.sound.pause_all()
-
-            pygame.time.set_timer(PERIODIC, 0)
-            pygame.time.set_timer(REDRAW, 0)
-            pygame.time.set_timer(TIMEEVENT, 0)
-
-            # The game has to be saved.
+        def save():
             renpy.loadsave.save("_reload-1")
-
-            # So does the persistent data.
             renpy.persistent.update(True)
 
-            android.wait_for_resume()
+        if ev.type == pygame.APP_TERMINATING:
+            save()
+            sys.exit(0)
 
-            # Since we came back to life, we can get rid of the
-            # auto-reload.
-            renpy.loadsave.unlink_save("_reload-1")
+        if ev.type != pygame.APP_WILLENTERBACKGROUND:
+            return False
 
-            pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+        # At this point, we're about to enter the background.
 
-            android.sound.unpause_all()
+        renpy.audio.audio.pause_all()
+
+        if android:
+            android.wakelock(False)
+
+        pygame.time.set_timer(PERIODIC, 0)
+        pygame.time.set_timer(REDRAW, 0)
+        pygame.time.set_timer(TIMEEVENT, 0)
+
+        save()
+
+        renpy.exports.free_memory()
+
+        print "Entered background."
+
+        while True:
+            ev = pygame.event.wait()
+
+            if ev.type == pygame.APP_DIDENTERFOREGROUND:
+                break
+
+            if ev.type == pygame.APP_TERMINATING:
+                sys.exit(0)
+
+        print "Entering foreground."
+
+        # Since we came back to life, we can get rid of the
+        # auto-reload.
+        renpy.loadsave.unlink_save("_reload-1")
+
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+        renpy.audio.audio.unpause_all()
+
+        if android:
+            android.wakelock(True)
+
+        # Reset the display so we get the GL context back.
+        self.display_reset = True
+        self.restart_interaction = True
+
+        return True
 
     def iconified(self):
         """
@@ -2111,6 +2152,48 @@ class Interface(object):
 
         self.ignore_touch = True
         renpy.display.focus.mouse_handler(None, -1, -1, default=False)
+
+
+    def text_event_in_queue(self):
+        """
+        Returns true if the next event in the queue is a text editing event.
+        """
+
+        ev = self.event_peek()
+        if ev is None:
+            return False
+        else:
+            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING)
+
+    def update_text_rect(self):
+        """
+        Updates the text input state and text rectangle.
+        """
+
+        if renpy.store._text_rect is not None: # @UndefinedVariable
+            self.text_rect = renpy.store._text_rect # @UndefinedVariable
+
+        if self.text_rect is not None:
+
+            not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown() # @UndefinedVariable
+
+            if not self.old_text_rect or not_shown:
+                pygame.key.start_text_input() # @UndefinedVariable
+
+            if self.old_text_rect != self.text_rect:
+                x, y, w, h = self.text_rect
+                x0, y0 = renpy.display.draw.untranslate_point(x, y)
+                x1, y1 = renpy.display.draw.untranslate_point(x + w, y + h)
+                rect = (x0, y0, x1 - x0, y1 - y0)
+
+                pygame.key.set_text_input_rect(rect) # @UndefinedVariable
+
+        else:
+            if self.old_text_rect:
+                pygame.key.stop_text_input() # @UndefinedVariable
+                pygame.key.set_text_input_rect(None) # @UndefinedVariable
+
+        self.old_text_rect = self.text_rect
 
 
     def interact(self, clear=True, suppress_window=False, **kwargs):
@@ -2442,14 +2525,12 @@ class Interface(object):
 
             while rv is None:
 
+                renpy.execution.not_infinite_loop(10)
+
                 # Check for a change in fullscreen preference.
                 if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
                     self.set_mode()
                     needs_redraw = True
-
-                # Check for suspend.
-                if android:
-                    self.android_check_suspend()
 
                 # Check for autoreload.
                 if renpy.loader.needs_autoreload:
@@ -2468,6 +2549,8 @@ class Interface(object):
 
                     # Clean out the redraws, if we have to.
                     # renpy.display.render.kill_redraws()
+
+                    self.text_rect = None
 
                     # Draw the screen.
                     self.frame_time = get_time()
@@ -2516,6 +2599,8 @@ class Interface(object):
                     pygame.time.set_timer(REDRAW, 0)
                     pygame.event.clear([REDRAW])
                     old_redraw_time = None
+
+                    self.update_text_rect()
 
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
@@ -2620,6 +2705,11 @@ class Interface(object):
 
                 self.profile_time = get_time()
 
+                # Check to see if the OS is asking us to suspend (on Android
+                # and iOS.)
+                if self.check_suspend(ev):
+                    continue
+
                 # Try to merge an TIMEEVENT with other timeevents.
                 if ev.type == TIMEEVENT:
                     old_timeout_time = None
@@ -2644,17 +2734,30 @@ class Interface(object):
                     events = 1 + len(pygame.event.get([PERIODIC]))
                     self.ticks += events
 
-                    if renpy.config.periodic_callback:
-                        renpy.config.periodic_callback()
+                    for i in renpy.config.periodic_callbacks:
+                        i()
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()
                     continue
 
-
                 # Handle quit specially for now.
                 if ev.type == pygame.QUIT:
                     self.quit_event()
+                    continue
+
+                # Ignore KEY-events while text is being edited (usually with an IME).
+                if ev.type == pygame.TEXTEDITING:
+                    if ev.text:
+                        self.text_editing = ev
+                    else:
+                        self.text_editing = None
+                elif ev.type == pygame.TEXTINPUT:
+                    self.text_editing = None
+                elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:
+                    continue
+
+                if ev.type == pygame.VIDEOEXPOSE:
                     continue
 
                 # Handle videoresize.
@@ -2664,12 +2767,16 @@ class Interface(object):
                     if len(evs):
                         ev = evs[-1]
 
-                    if self.last_resize is None and renpy.windows:
-                        self.last_resize = ev.size
+                    # We seem to get a spurious event like this when leaving
+                    # fullscreen mode on windows.
+                    if ev.w == 1 and ev.h == 1:
+                        continue
 
-                    if self.last_resize != ev.size:
-                        self.last_resize = ev.size
+                    if pygame.display.get_surface().get_size() != ev.size:
                         self.set_mode((ev.w, ev.h))
+
+                    if not self.fullscreen:
+                        self.last_resize = ev.size
 
                     continue
 
@@ -2743,6 +2850,9 @@ class Interface(object):
 
                 try:
 
+                    if self.touch:
+                        renpy.display.gesture.recognizer.event(ev, x, y) # @UndefinedVariable
+
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
 
@@ -2756,15 +2866,22 @@ class Interface(object):
                         break
 
                     # Handle displayable inspector.
-                    if renpy.config.inspector and renpy.display.behavior.inspector(ev):
-                        l = self.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.context_clear_layers + renpy.config.overlay_layers)
-                        renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                    if renpy.config.inspector:
+                        if renpy.display.behavior.map_event(ev, "inspector"):
+                            l = self.surftree.main_displayables_at_point(x, y, renpy.config.transient_layers + renpy.config.context_clear_layers + renpy.config.overlay_layers)
+                            renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+                        elif renpy.display.behavior.map_event(ev, "full_inspector"):
+                            l = self.surftree.main_displayables_at_point(x, y, renpy.config.layers)
+                            renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+
 
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to
                     # process an TIMEEVENT to ensure that the timeout is
-                    # set correctly.
-                    self.post_time_event()
+                    # set correctly
+
+                    if ev.type != TIMEEVENT:
+                        self.post_time_event()
 
 
                 # Check again after handling the event.

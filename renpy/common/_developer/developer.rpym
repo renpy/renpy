@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -350,6 +350,32 @@ init python:
             self.point1 = None
             self.point2 = None
 
+            self.size = (0, 0)
+
+            self.clipboard = None
+
+        def rectangle(self):
+            x1, y1 = self.point1
+            x2, y2 = self.point2
+
+            width = self.size[0]
+            height = self.size[1]
+
+            x1 = min(x1, width)
+            x2 = min(x2, width)
+            y1 = min(y1, height)
+            y2 = min(y2, height)
+
+            minx = min(x1, x2)
+            miny = min(y1, y2)
+            maxx = max(x1, x2)
+            maxy = max(y1, y2)
+
+            w = maxx - minx
+            h = maxy - miny
+
+            return (minx, miny, w, h)
+
         def render(self, width, height, st, at):
             rv = renpy.Render(width, height)
 
@@ -358,36 +384,26 @@ init python:
 
             text = [ ]
 
+            self.size = (cr.width, cr.height)
 
             if self.point1 and self.point2 and not self.point1 == self.point2:
-                x1, y1 = self.point1
-                x2, y2 = self.point2
-
-                x1 = min(x1, cr.width)
-                x2 = min(x2, cr.width)
-                y1 = min(y1, cr.height)
-                y2 = min(y2, cr.height)
-
-                minx = min(x1, x2)
-                miny = min(y1, y2)
-                maxx = max(x1, x2)
-                maxy = max(y1, y2)
-
-                w = maxx - minx
-                h = maxy - miny
+                x, y, w, h = self.rectangle()
 
                 if w and h:
 
                     sr = renpy.render(Solid("#0ff4"), w, h, st, at)
-                    rv.blit(sr, (minx, miny))
+                    rv.blit(sr, (x, y))
 
                     # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
-                    text.append(__("Rectangle: %r") % ((minx, miny, w, h),))
+                    text.append(__("Rectangle: %r") % ((x, y, w, h),))
 
             if self.mouse:
                 mx, my = self.mouse
                 if mx < cr.width and my < cr.height:
                     text.append(__("Mouse position: %r") % (self.mouse,))
+
+            if self.clipboard:
+                text.append(self.clipboard)
 
             text.append(__("Right-click or escape to quit."))
 
@@ -399,7 +415,7 @@ init python:
             return rv
 
         def event(self, ev, x, y, st):
-            import pygame
+            import pygame_sdl2 as pygame
 
             self.mouse = (x, y)
             renpy.redraw(self, 0)
@@ -413,6 +429,18 @@ init python:
 
             elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
                 self.point2 = (x, y)
+
+                x, y, w, h = self.rectangle()
+
+                if w or h:
+                    text = repr((x, y, w, h))
+                    self.clipboard = __("Rectangle copied to clipboard.")
+                else:
+                    text = repr((x, y))
+                    self.clipboard = __("Position copied to clipboard.")
+
+                import pygame.scrap
+                pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
 
 
 label _image_location_picker:

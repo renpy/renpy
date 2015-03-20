@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -114,7 +114,7 @@ fast_skipping = False
 skipping = None
 
 # The delay while we are skipping say statements.
-skip_delay = 25
+skip_delay = 5
 
 # basic: Archive files that are searched for images.
 archives = [ ]
@@ -174,6 +174,9 @@ load_before_transition = True
 
 # The keymap that is used to change keypresses and mouse events.
 keymap = { }
+
+# The default keymap, used when a binding isn't found in keymap.
+default_keymap = { }
 
 # Should we try to support joysticks?
 joystick = True
@@ -264,6 +267,7 @@ text_layout = None
 
 # A callback that is called 20 times a second.
 periodic_callback = None
+periodic_callbacks = [ ]
 
 # Should we check that all style properties are in style_properties? (Internal)
 check_properties = True
@@ -537,6 +541,30 @@ transition_screens = True
 # A function that given the current statement identifier, returns a list
 # of statement identifiers that should be predicted.
 predict_statements_callback = None
+
+# Should we use hardware video on platforms that support it?
+hw_video = True
+
+# A function to use to dispatch gestures.
+dispatch_gesture = None
+
+# The table mapping gestures to events used by the default function.
+gestures = {
+    "n_s_w_e_w_e" : "progress_screen",
+    }
+
+# Sizes of gesture components and strokes, as a fraction of screen_width.
+gesture_component_size = .05
+gesture_stroke_size = .2
+
+# Should we log to stdout rather than files?
+log_to_stdout = False
+
+# new-style custom text tags.
+custom_text_tags = { }
+
+# A function that is called when a label is missing.
+missing_label_callback = None
 
 del renpy
 del os

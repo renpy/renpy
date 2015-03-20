@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-12-08 21:52
-
+﻿
 translate russian strings:
 
     # renpy/common/_layout/classic_load_save.rpym:120

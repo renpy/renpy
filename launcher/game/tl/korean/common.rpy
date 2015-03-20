@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-05-02 21:49
-
+﻿
 translate korean strings:
 
     # renpy/common/00action_file.rpy:142

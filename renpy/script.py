@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -465,7 +465,7 @@ class Script(object):
                     f.close()
 
                     if rpydigest == rpycdigest and \
-                        not (renpy.game.args.command == "compile" or renpy.game.args.compile): #@UndefinedVariable
+                        not (renpy.game.args.command in [ "compile", "add_from" ] or renpy.game.args.compile): #@UndefinedVariable
 
                         data, stmts = self.load_file(dir, fn + compiled)
 
@@ -590,9 +590,16 @@ class Script(object):
         """
 
         label = renpy.config.label_overrides.get(label, label)
+        original = label
 
-        if label not in self.namemap:
-            raise ScriptError("could not find label '%s'." % str(label))
+        rv = self.namemap.get(label, None)
+
+        if (rv is None) and (renpy.config.missing_label_callback is not None):
+            label = renpy.config.missing_label_callback(label)
+            rv = self.namemap.get(label, None)
+
+        if rv is None:
+            raise ScriptError("could not find label '%s'." % str(original))
 
         return self.namemap[label]
 

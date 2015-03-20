@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # game/new_project.rpy:22

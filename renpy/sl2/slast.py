@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -120,6 +120,11 @@ class SLContext(renpy.ui.Addable):
         # True if we're in a true showif block, False if we're in a false showif
         # block, or None if we're not in a showif block.
         self.showif = None
+
+        # True if there was a failure in this statement or any of its children.
+        # Fails can only occur when predicting, as otherwise an exception
+        # would be thrown.
+        self.fail = False
 
     def get_style_group(self):
         style_prefix = self.style_prefix
@@ -243,7 +248,6 @@ class SLBlock(SLNode):
 
         # A list of child SLNodes.
         self.children = [ ]
-
 
     def analyze(self, analysis):
 
@@ -395,7 +399,9 @@ class SLDisplayable(SLBlock):
     added to the tree.
     """
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}):
+    hotspot = False
+
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -419,6 +425,10 @@ class SLDisplayable(SLBlock):
         `imagemap`
             True if this is an imagemap, and should be handled as one.
 
+        `hotspot`
+            True if this is a hotspot that depends on the imagemap it was
+            first displayed with.
+
         `replaces`
             True if the object this displayable replaces should be
             passed to it.
@@ -436,11 +446,31 @@ class SLDisplayable(SLBlock):
         self.style = style
         self.pass_context = pass_context
         self.imagemap = imagemap
+        self.hotspot = hotspot
         self.replaces = replaces
         self.default_keywords = default_keywords
 
         # Positional argument expressions.
         self.positional = [ ]
+
+    def analyze(self, analysis):
+
+        if self.imagemap:
+
+            const = GLOBAL_CONST
+
+            for _k, expr in self.keyword:
+                const = min(const, analysis.is_constant_expr(expr))
+
+            analysis.push_control(imagemap=(const != GLOBAL_CONST))
+
+        if self.hotspot:
+            self.constant = min(analysis.imagemap(), self.constant)
+
+        SLBlock.analyze(self, analysis)
+
+        if self.imagemap:
+            analysis.pop_control()
 
     def prepare(self, analysis):
 
@@ -547,7 +577,7 @@ class SLDisplayable(SLBlock):
         # The main displayable we're predicting.
         main = None
 
-        # True if we're using an imagemap.
+        # True if we've pushed something onto the imagemap stack.
         imagemap = False
 
         try:
@@ -595,7 +625,19 @@ class SLDisplayable(SLBlock):
             if debug:
                 self.report_arguments(cache, positional, keywords, transform)
 
-            if old_d and (positional == cache.positional) and (keywords == cache.keywords):
+            can_reuse = (old_d is not None) and (positional == cache.positional) and (keywords == cache.keywords)
+
+            # A hotspot can only be reused if the imagemap it belongs to has
+            # not changed.
+            if self.hotspot:
+
+                imc = renpy.ui.imagemap_stack[-1]
+                if cache.imagemap is not imc:
+                    can_reuse = False
+
+                cache.imagemap = imc
+
+            if can_reuse:
                 reused = True
                 d = old_d
 
@@ -613,7 +655,7 @@ class SLDisplayable(SLBlock):
                     else:
                         main._scope(ctx.scope, True)
 
-            if reused and cache.imagemap:
+            if reused and self.imagemap:
                 imagemap = True
                 cache.imagemap.reuse()
                 renpy.ui.imagemap_stack.append(cache.imagemap)
@@ -693,6 +735,8 @@ class SLDisplayable(SLBlock):
 
             for i in ctx.children:
                 predict_displayable(i)
+
+            context.fail = True
 
             return
 
@@ -781,7 +825,7 @@ class SLDisplayable(SLBlock):
             cache.transform = None
             cache.raw_transform = None
 
-        if self.constant:
+        if self.constant and not ctx.fail:
             cache.constant = d
 
             if self.scope and main.uses_scope:
@@ -820,7 +864,7 @@ class SLDisplayable(SLBlock):
                     report.append("const")
                 elif cache.positional is None:
                     report.append("new")
-                elif cache.positiona[i] == positional[i]:
+                elif cache.positional[i] == positional[i]:
                     report.append("equal")
                 else:
                     report.append("not-equal")
@@ -1067,6 +1111,9 @@ class SLShowIf(SLNode):
             for i in block.children:
                 i.execute(ctx)
 
+            if ctx.fail:
+                context.fail = True
+
     def copy_on_change(self, cache):
         for _cond, block in self.entries:
             block.copy_on_change(cache)
@@ -1159,6 +1206,9 @@ class SLFor(SLBlock):
                         raise
 
         context.cache[self.serial] = newcaches
+
+        if ctx.fail:
+            context.fail = True
 
     def keywords(self, context):
         return
@@ -1378,6 +1428,9 @@ class SLUse(SLNode):
             ctx.updating = True
 
         ast.execute(ctx)
+
+        if ctx.fail:
+            context.fail = True
 
     def copy_on_change(self, cache):
 

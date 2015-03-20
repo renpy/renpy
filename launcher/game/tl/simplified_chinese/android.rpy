@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # game/android.rpy:13

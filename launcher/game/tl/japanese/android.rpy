@@ -3,11 +3,11 @@ translate japanese strings:
 
     # game/android.rpy:12
     old "To build Android packages, please download RAPT (from {a=http://www.renpy.org/dl/android}here{/a}), unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Androidパッケージをビルドするためには{a=http://www.renpy.org/dl/android}RAPT{/a}をダウンロードして解凍し、Ren'Py ディレクトリーに配置してからランチャーを再起動してください。"
+    new "Androidパッケージをビルドするためには{a=http://www.renpy.org/dl/android}RAPT{/a}をダウンロードして解凍し、Ren'Py ディレクトリーに配置してランチャーを再起動してください。"
 
     # game/android.rpy:13
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT はインストールされましたが、Androidパッケージをビルドする前に Android SDK もインストールする必要があります。このためにSDKをインストールしてください。"
+    new "RAPT はインストールされましたが、Androidパッケージをビルドする前に Android SDK もインストールする必要があります。SDKをインストールしてください。"
 
     # game/android.rpy:14
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
@@ -15,7 +15,7 @@ translate japanese strings:
 
     # game/android.rpy:15
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
-    new "現在のプロジェクトは設定されていません。「設定」を利用してビルド前に設定してください。"
+    new "現在のプロジェクトは設定がされていません。「設定」を使用してビルド前に設定してください。"
 
     # game/android.rpy:16
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
@@ -23,23 +23,23 @@ translate japanese strings:
 
     # game/android.rpy:18
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Android Phoneをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみです。Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
+    new "Android Phoneをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみ反応します。Escapeはメニューボタン、PageUpはバックボタンに割り当てられています。"
 
     # game/android.rpy:19
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Android tabletをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみです。Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
+    new "Android tabletをエミュレートします。\n\nタッチ入力はマウスを利用してエミュレートされますが、ボタン押下時のみ反応します。Escapeはメニューボタン、PageUpはバックボタンに割り当てられています。"
 
     # game/android.rpy:20
     old "Attempts to emulate an OUYA console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Android OUYAをエミュレートします。\n\nコントローラーの入力は矢印キー、Enterはセレクトボタン、Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
+    new "Android OUYAをエミュレートします。\n\nコントローラーの入力は矢印キー、Enterはセレクトボタン、Escapeはメニューボタン、PageUpはバックボタンに割り当てられています。"
 
     # game/android.rpy:22
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "Android SDKをダウンロード後インストールします。任意でサインに必要なキーを生成します。"
+    new "Android SDKをダウンロード後インストールします。サインに必要なキーを任意で生成します。"
 
     # game/android.rpy:23
     old "Configures the package name, version, and other information about this project."
-    new "このプロジェクトについてパッケージ名、バージョン、その他の情報を設定してください。"
+    new "このプロジェクトについてパッケージ名とバージョン、その他の情報を設定してください。"
 
     # game/android.rpy:24
     old "Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details."
@@ -115,7 +115,7 @@ translate japanese strings:
 
     # game/android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "OUYAやFire TVのようなテレビで動作する Android デバイスをエミュレートします。\n\nコントローラーの入力は矢印キー、Enterはセレクトボタン、Escapeはメニューボタン、PageUpはバックボタンにマップされています。"
+    new "OUYAやFire TVのようなテレビで動作する Android デバイスをエミュレートします。\n\nコントローラーの入力は矢印キー、Enterはセレクトボタン、Escapeはメニューボタン、PageUpはバックボタンに割り当てられています。"
 
     # game/android.rpy:47
     old "Connects to an Android device running ADB in TCP/IP mode."
@@ -160,4 +160,16 @@ translate japanese strings:
     # game/android.rpy:629
     old "The port must be a number."
     new "ポートは数字でなければなりません。"
+
+    # game/android.rpy:46
+    old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
+    new "Android パッケージをビルドして、接続された Android にインストール、 そのデバイスでアプリを起動します。"
+
+    # game/android.rpy:288
+    old "Television"
+    new "Television"
+
+    # game/android.rpy:324
+    old "Build, Install & Launch"
+    new "ビルドとインストール、起動"
 
