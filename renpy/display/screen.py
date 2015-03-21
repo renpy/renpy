@@ -633,6 +633,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if self.modal:
             raise renpy.display.layout.IgnoreLayers()
 
+    def get_phase_name(self):
+        return phase_name[self.phase]
 
 # The name of the screen that is currently being displayed, or
 # None if no screen is being currently displayed.
@@ -823,7 +825,9 @@ def show_screen(_screen_name, *_args, **kwargs):
         d.cache = cache_get(screen, _args, kwargs)
         d.phase = SHOW
 
-    renpy.exports.show(name, tag=_tag, what=d, layer=_layer, zorder=d.zorder, transient=_transient, munge_name=False)
+    sls = renpy.display.core.scene_lists()
+
+    sls.add(_layer, d, _tag, zorder=d.zorder, transient=_transient, keep_st=True)
 
 
 def predict_screen(_screen_name, *_args, **kwargs):

@@ -759,7 +759,8 @@ class SceneLists(renpy.object.Object):
             name=None,
             atl=None,
             default_transform=None,
-            transient=False):
+            transient=False,
+            keep_st=False):
         """
         Adds something to this scene list. Some of these names are quite a bit
         out of date.
@@ -785,6 +786,9 @@ class SceneLists(renpy.object.Object):
 
         `default_transform` - The default transform that is used to initialized
         the values in the other transforms.
+
+        `keep_st`
+            If true, we preserve the shown time of a replaced displayable.
         """
 
         if not isinstance(thing, Displayable):
@@ -815,8 +819,12 @@ class SceneLists(renpy.object.Object):
 
         if remove_index is not None:
             sle = l[remove_index]
-            at = sle.animation_time
             old = sle.displayable
+
+            at = sle.animation_time
+
+            if keep_st:
+                st = sle.show_time
 
             if (not atl and
                 not at_list and
