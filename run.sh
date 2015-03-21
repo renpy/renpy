@@ -16,15 +16,25 @@ if [ -z "$PYTHONPATH" -a -z "$VIRTUAL_ENV" ] ; then
     exit 1
 fi
 
-if [ -n "$PYTHONPATH" ]; then
-    try python module/setup.py --quiet \
-        build -b build/lib.renpy-run -t build/tmp.renpy-run \
-        $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
-else
-    try python module/setup.py --quiet \
-        build -b build/lib.renpy-run -t build/tmp.renpy-run \
-        $RENPY_BUILD_ARGS install
+setup () {
+    if [ -n "$PYTHONPATH" ]; then
+        try python $1 --quiet \
+            build -b build/lib.renpy-run -t build/tmp.renpy-run \
+            $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
+    else
+        try python $1 --quiet \
+            build -b build/lib.renpy-run -t build/tmp.renpy-run \
+            $RENPY_BUILD_ARGS install
+    fi
+}
+
+ROOT="$(dirname $(realpath $0))"
+
+if [ -e "$ROOT/pygame_sdl2" ]; then
+    setup "$ROOT/pygame_sdl2/setup.py"
 fi
+
+setup "$ROOT/module/setup.py"
 
 if  [ "$1" = "--build" ] ; then
     echo "Ren'Py build complete."
