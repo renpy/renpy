@@ -74,7 +74,7 @@ include("libavformat/avformat.h")
 include("libavcodec/avcodec.h")
 include("libswscale/swscale.h")
 include("GL/glew.h")
-include("python{}.{}/pygame_sdl2/pygame_sdl2.h".format(sys.version_info.major, sys.version_info.minor))
+include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
 
 library("SDL2")
 library("png")
