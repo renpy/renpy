@@ -825,14 +825,18 @@ class SLDisplayable(SLBlock):
             cache.transform = None
             cache.raw_transform = None
 
-        if self.constant and not ctx.fail:
-            cache.constant = d
+        if ctx.fail:
+            context.fail = True
 
-            if self.scope and main.uses_scope:
-                ctx.uses_scope.append(main)
+        else:
+            if self.constant:
+                cache.constant = d
 
-            if context.uses_scope is None:
-                cache.constant_uses_scope = ctx.uses_scope
+                if self.scope and main.uses_scope:
+                    ctx.uses_scope.append(main)
+
+                if context.uses_scope is None:
+                    cache.constant_uses_scope = ctx.uses_scope
 
         if context.showif is not None:
             d = self.wrap_in_showif(d, context, cache)
