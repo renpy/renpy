@@ -47,6 +47,10 @@ if not android or ios:
     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
     install = install.split("::")
     install = [ os.path.abspath(i) for i in install ]
+
+    if "VIRTUAL_ENV" in os.environ:
+        install.insert(0, os.environ["VIRTUAL_ENV"])
+
 else:
     install = [ ]
 
