@@ -1501,6 +1501,12 @@ static int decode_thread(void *arg)
         long long duration = ((long long) is->ic->duration) * audio_sample_rate;
         is->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
 
+        // Check that the duration is reasonable (between 0s and 3600s). If not,
+        // reject it.
+        if (is->audio_duration < 0 || is->audio_duration > 3600 * audio_sample_rate) {
+        	is->audio_duration = 0;
+        }
+
         if (show_status) {
             printf("Duration of '%s' is %d samples.\n", is->filename, is->audio_duration);
         }
