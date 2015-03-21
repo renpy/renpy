@@ -246,9 +246,12 @@ static int rwops_write(void *opaque, uint8_t *buf, int buf_size) {
 static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
     SDL_RWops *rw = (SDL_RWops *) opaque;
 
-    if (whence == 65536) {
-        return -1;
+    if (whence == AVSEEK_SIZE) {
+    	return rw->size(rw);
     }
+
+    // Ignore flags like AVSEEK_FORCE.
+    whence &= (SEEK_SET | SEEK_CUR | SEEK_END);
 
     int64_t rv = rw->seek(rw, (int) offset, whence);
     return rv;
