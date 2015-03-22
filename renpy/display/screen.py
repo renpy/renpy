@@ -827,7 +827,7 @@ def show_screen(_screen_name, *_args, **kwargs):
 
     sls = renpy.display.core.scene_lists()
 
-    sls.add(_layer, d, _tag, zorder=d.zorder, transient=_transient, keep_st=True)
+    sls.add(_layer, d, _tag, zorder=d.zorder, transient=_transient, keep_st=True, name=name)
 
 
 def predict_screen(_screen_name, *_args, **kwargs):
