@@ -50,7 +50,7 @@ translate arabic strings:
 
     # game/distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "إضافة بند "مِن" إلى أمر الجلب, مرة واحدة"
+    new "إضافة بند 'مِن' إلى أمر الجلب, مرة واحدة"
 
     # game/distribute_gui.rpy:231
     old "Options:"
@@ -58,9 +58,9 @@ translate arabic strings:
 
     # game/distribute_gui.rpy:238
     old "Add from clauses to calls"
-    new "إضافة بنود "مِن" إلى أمر الجلب"
+    new "إضافة بنود 'مِن' إلى أمر الجلب"
 
     # game/distribute_gui.rpy:246
     old "Adding from clauses to call statements that do not have them."
-    new "إضافة بنود "مِن" إلى أوامر الجلب التي لا تحتوي عليها."
+    new "إضافة بنود 'مِن' إلى أوامر الجلب التي لا تحتوي عليها."
 
