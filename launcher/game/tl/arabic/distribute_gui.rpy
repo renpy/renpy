@@ -1,4 +1,4 @@
-﻿
+
 translate arabic strings:
 
     # game/distribute_gui.rpy:139
@@ -44,4 +44,23 @@ translate arabic strings:
     # game/distribute_gui.rpy:236
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "مشروعك يخلو من معلومات النشر, هل ترغب في إضافة هذه المعلومات في نهاية ملف options.rpy؟"
+
+
+translate arabic strings:
+
+    # game/distribute_gui.rpy:194
+    old "Add from clauses to calls, once"
+    new "إضافة بند "مِن" إلى أمر الجلب, مرة واحدة"
+
+    # game/distribute_gui.rpy:231
+    old "Options:"
+    new "خيارات:"
+
+    # game/distribute_gui.rpy:238
+    old "Add from clauses to calls"
+    new "إضافة بنود "مِن" إلى أمر الجلب"
+
+    # game/distribute_gui.rpy:246
+    old "Adding from clauses to call statements that do not have them."
+    new "إضافة بنود "مِن" إلى أوامر الجلب التي لا تحتوي عليها."
 
