@@ -127,15 +127,22 @@ class SpriteManager(renpy.display.core.Displayable):
     them at the fastest speed possible.
     """
 
-    def __init__(self, update=None, event=None, predict=None, ignore_time=False, **properties):
+    def __init__(self, update=None, update_args={}, event=None, predict=None, ignore_time=False, **properties):
         """
         `update`
             If not None, a function that is called each time a sprite
-            is rendered by this sprite manager. It is called with one
-            argument, the time in seconds since this sprite manager
-            was first displayed.  It is expected to return the number
-            of seconds until the function is called again, and the
-            SpriteManager is rendered again.
+            is rendered by this sprite manager. It is called with first
+            argument being the time in seconds since this sprite manager
+            was first displayed and named arguments from update_args.
+            It is expected to return the number of seconds until the
+            function is called again, and the SpriteManager is rendered
+            again.
+
+        `update_args`
+            This dictionary is passed to update function as kwargs.
+            This allows to use single universal update function instead
+            of creating a function per SpriteManager which clutters
+            global namespace (since lambdas break saving)
 
         `event`
             If not None, a function that is called when an event occurs.
@@ -174,6 +181,7 @@ class SpriteManager(renpy.display.core.Displayable):
         super(SpriteManager, self).__init__(self, **properties)
 
         self.update_function = update
+        self.update_args = update_args
         self.event_function = event
         self.predict_function = predict
         self.ignore_time = ignore_time
@@ -240,7 +248,7 @@ class SpriteManager(renpy.display.core.Displayable):
 
         if self.update_function is not None:
 
-            redraw = self.update_function(st)
+            redraw = self.update_function(st, **self.update_args)
 
             if redraw is not None:
                 renpy.display.render.redraw(self, redraw)
