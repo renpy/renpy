@@ -1,4 +1,4 @@
-﻿# : Translation updated at 2013-04-30 07:54
+# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -113,4 +113,11 @@ translate arabic strings:
     # game/front_page.rpy:285
     old "Recompiling all rpy files into rpyc files..."
     new "يتم إعادة حزم الملفات من صيغة rpy إلى rpyc..."
+
+
+translate arabic strings:
+
+    # game/front_page.rpy:246
+    old "iOS"
+    new "iOS نظام تشغيل"
 
