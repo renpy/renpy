@@ -544,9 +544,6 @@ class SLDisplayable(SLBlock):
         if debug:
             self.debug_line()
 
-            if cache.constant:
-                profile_log.write("    reused constant displayable")
-
         if cache.constant:
 
             for i in cache.constant_uses_scope:
@@ -565,6 +562,13 @@ class SLDisplayable(SLBlock):
                     d = self.wrap_in_showif(d, context, cache)
 
                 context.children.append(d)
+
+                if context.uses_scope is not None:
+                    context.uses_scope.extend(cache.constant_uses_scope)
+
+                if debug:
+                    profile_log.write("    reused constant displayable")
+
                 return
 
         # Create the context.
@@ -598,8 +602,7 @@ class SLDisplayable(SLBlock):
             keywords = ctx.keywords = self.default_keywords.copy()
 
             if self.constant:
-                if ctx.uses_scope is None:
-                    ctx.uses_scope = [ ]
+                ctx.uses_scope = [ ]
 
             SLBlock.keywords(self, ctx)
 
@@ -835,8 +838,10 @@ class SLDisplayable(SLBlock):
                 if self.scope and main.uses_scope:
                     ctx.uses_scope.append(main)
 
-                if context.uses_scope is None:
-                    cache.constant_uses_scope = ctx.uses_scope
+                cache.constant_uses_scope = ctx.uses_scope
+
+                if context.uses_scope is not None:
+                    context.uses_scope.extend(ctx.uses_scope)
 
         if context.showif is not None:
             d = self.wrap_in_showif(d, context, cache)
