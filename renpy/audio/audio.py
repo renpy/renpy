@@ -776,7 +776,7 @@ def interact():
             filenames = ctx.last_filenames
             tight = ctx.last_tight
 
-            if c.default_loop:
+            if c.loop:
                 if not filenames or c.get_playing() not in filenames:
                     c.fadeout(renpy.config.fade_music)
 
