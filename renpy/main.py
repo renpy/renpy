@@ -272,7 +272,8 @@ def main():
         for (fn, dir) in renpy.game.script.script_files:
             if not os.path.isfile(os.path.join(dir, fn+".rpy")):
                 try:
-                    os.unlink(os.path.join(dir, fn+".rpyc"))
+                    name = os.path.join(dir, fn+".rpyc")
+                    os.rename(name, name+".bak")
                 except OSError:
                     # This perhaps shouldn't happen since either .rpy or .rpyc should exist
                     pass
