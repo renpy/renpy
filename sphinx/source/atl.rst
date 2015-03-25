@@ -465,7 +465,7 @@ contain, rather than include, a second ATL transform.
 
 
 The contains block allows one to define an ATL block that is used for the
-child of this ATL transform. Multiple contains block statements will be
+child of this ATL transform. One or more contains block statements will be
 greedily grouped together, wrapped inside a :func:`Fixed`, and set as the
 child of this transform.
 
