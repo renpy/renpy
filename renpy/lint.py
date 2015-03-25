@@ -331,7 +331,12 @@ def text_checks(s):
 def check_say(node):
 
     if node.who:
-        try_eval("the who part of a say statement", node.who, "Perhaps you forgot to declare a character?")
+        try:
+            char = renpy.ast.eval_who(node.who)
+        except:
+            report("Could not evaluate '%s' in the who part of a say statement.", node.who)
+            add("Perhaps you forgot to define a character?")
+            char = None
 
     if node.with_:
         try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
@@ -344,8 +349,6 @@ def check_say(node):
     # Code to check image attributes. (If we're lucky.)
     if node.who is None:
         return
-
-    char = getattr(renpy.store, node.who, None)
 
     if not isinstance(char, renpy.character.ADVCharacter):
         return
@@ -365,7 +368,6 @@ def check_say(node):
         return
 
     report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
-
 
 
 def check_menu(node):
