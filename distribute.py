@@ -185,6 +185,14 @@ def main():
             os.path.join(destination, "updates.json"),
             ])
 
+    # Package pygame_sdl2.
+    if not args.fast:
+        subprocess.check_call([
+            "pygame_sdl2/distribute.py",
+            "for-" + args.version,
+            "--dest",
+            os.path.abspath(destination)
+            ])
 
     # Write 7z.exe.
     sdk = "renpy-{}-sdk".format(zip_version)
@@ -239,6 +247,9 @@ def main():
             os.unlink(sdk + ".7z.exe")
 
     print
+
+
+
 
 if __name__ == "__main__":
     main()
