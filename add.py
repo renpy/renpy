@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import argparse
 import os
@@ -6,6 +6,15 @@ import subprocess
 import sys
 
 from renpy import version_tuple #@UnresolvedImport
+
+SOURCE = [
+    "/home/tom/ab/renpy",
+    "/home/tom/ab/android/",
+    "/home/tom/ab/android/python-for-android",
+    "/home/tom/ab/ripe/renios",
+    "/home/tom/ab/renpy-deps",
+    "/home/tom/ab/pygame_sdl2",
+    ]
 
 version = ".".join(str(i) for i in version_tuple)
 short_version = ".".join(str(i) for i in version_tuple[:3])
@@ -17,8 +26,20 @@ ap.add_argument("--release", action="store_true")
 ap.add_argument("--prerelease", action="store_true")
 ap.add_argument("--experimental", action="store_true")
 ap.add_argument("--no-tag", "-n", action="store_true")
+ap.add_argument("--push-tags", action="store_true")
 
 args = ap.parse_args()
+
+if args.push_tags:
+    for i in SOURCE:
+        os.chdir(i)
+
+        if subprocess.call([ "git", "push", "--tags" ]):
+            print "Tags not pushed: {}".format(os.getcwd())
+            sys.exit(1)
+
+    print "Pushed tags."
+    sys.exit(0)
 
 if args.release:
     links = [ "release", "prerelease", "experimental" ]
@@ -32,16 +53,6 @@ elif args.experimental:
 else:
     links = [ ]
     tag = False
-
-
-SOURCE = [
-    "/home/tom/ab/renpy",
-    "/home/tom/ab/android/",
-    "/home/tom/ab/android/python-for-android",
-    "/home/tom/ab/ripe/renios",
-    "/home/tom/ab/renpy-deps",
-    "/home/tom/ab/pygame_sdl2",
-    ]
 
 if tag:
     for i in SOURCE:
