@@ -189,7 +189,7 @@ def main():
     if not args.fast:
         subprocess.check_call([
             "pygame_sdl2/distribute.py",
-            "for-" + args.version,
+            "for-renpy-" + args.version,
             "--dest",
             os.path.abspath(destination)
             ])
