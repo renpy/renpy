@@ -110,7 +110,8 @@ that smaller zip files.
 Languages and Translations
 --------------------------
 
-There is now a Russian translation of the tutorial game.
+There is now a Russian translation of the tutorial game, and a Finnish
+translation of the launcher.
 
 Ren'Py supports input methods (IMEs) on platforms where SDL2 makes that
 support available. (All platforms except for Linux.) Input methods make
