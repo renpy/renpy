@@ -147,6 +147,9 @@ def main():
         else:
             print "RAPT build succeeded."
 
+        compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", force=1, quiet=1)
+        compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", force=1, quiet=1)
+
     if not os.path.exists(destination):
         os.makedirs(destination)
 
