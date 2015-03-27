@@ -50,7 +50,7 @@ ctrl
 shift
     Matches when the shift key is pressed.
 noshift
-    Matches when the shift key is not pressed. A K_ keysym ignores the state
+    Matches when the shift key is not pressed. A K\_ keysym ignores the state
     of the shift key when matching.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms

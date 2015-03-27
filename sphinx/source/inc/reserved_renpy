@@ -90,7 +90,7 @@
 * OldMoveTransition
 * :func:`OpenURL`
 * Pan
-* ParameterizedText
+* :func:`ParameterizedText`
 * Particles
 * :func:`Pause`
 * :func:`Pixellate`

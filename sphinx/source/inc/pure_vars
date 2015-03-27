@@ -60,7 +60,7 @@
 * OldMoveTransition
 * :func:`OpenURL`
 * Pan
-* ParameterizedText
+* :func:`ParameterizedText`
 * Particles
 * :func:`Pause`
 * :func:`Pixellate`
@@ -177,7 +177,7 @@
 * range
 * reduce
 * renpy.Keymap
-* renpy.ParameterizedText
+* :func:`renpy.ParameterizedText`
 * :func:`renpy.check_text_tags`
 * renpy.curried_call_in_new_context
 * renpy.curried_invoke_in_new_context

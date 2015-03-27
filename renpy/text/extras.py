@@ -113,8 +113,24 @@ def check_text_tags(s):
 
 class ParameterizedText(object):
     """
-    This can be used as an image. When used, this image is expected to
-    have a single parameter, a string which is rendered as the image.
+    :doc: text
+
+    This is a displayable that can be shown with an additional string
+    parameter, which then shows that string as if it was an image.
+    This is usually used as part of the pre-defined ``text`` image.
+
+    For example, one can do::
+
+        show text "Hello, World" at truecenter
+        with dissolve
+        pause 1
+        hide text
+        with dissolve
+
+    You can use ParameterizedText directly to define similar images with
+    different style properties. For example, one can write::
+
+        image top_text = ParameterizedText(xalign=0.5, yalign=0.0)
     """
 
     def __init__(self, style='default', **properties):

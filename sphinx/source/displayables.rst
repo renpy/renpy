@@ -90,6 +90,11 @@ Image-like displayables take :ref:`position-style-properties`.
 
 .. include:: inc/disp_imagelike
 
+Text Displayables
+-----------------
+
+See :ref:`text-displayables`.
+
 
 Dynamic Displayables
 --------------------

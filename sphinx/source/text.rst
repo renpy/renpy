@@ -566,8 +566,10 @@ For example::
 .. include:: inc/font_group
 
 
-Text Displayable
-================
+.. _text-displayables:
+
+Text Displayables
+=================
 
 Text can also be used as a :ref:`displayable <displayables>`, which
 allows you to apply transforms to text, displaying it as if it was an
