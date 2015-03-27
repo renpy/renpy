@@ -49,7 +49,13 @@ def init():
         pygame.joystick.init()
 
         for i in range(0, pygame.joystick.get_count()):
-            pygame.joystick.Joystick(i).init()
+            js = pygame.joystick.Joystick(i)
+            js.init()
+
+            if "accelerometer" in js.get_name().lower():
+                js.quit()
+                continue
+
             enabled = True
     except:
         if renpy.config.debug:
