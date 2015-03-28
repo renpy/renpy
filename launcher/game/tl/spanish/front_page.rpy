@@ -108,3 +108,7 @@
     old "Recompiling all rpy files into rpyc files..."
     new "Recompilando todos los archivos rpy en archivos rpyc..."
 
+    # game/front_page.rpy:246
+    old "iOS"
+    new "iOS"
+

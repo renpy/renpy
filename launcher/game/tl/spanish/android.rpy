@@ -160,3 +160,15 @@
     old "The port must be a number."
     new "El puerto debe ser un número."
 
+    # game/android.rpy:46
+    old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
+    new "Construye un paquete para Android, lo instala en un dispositivo conectado a su ordenador, y luego ejecuta la aplicación en su dispositivo."
+
+    # game/android.rpy:290
+    old "Television"
+    new "Televisión"
+
+    # game/android.rpy:326
+    old "Build, Install & Launch"
+    new "Construir, instalar & Ejecutar"
+

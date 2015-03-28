@@ -72,3 +72,11 @@
     old "Large fonts"
     new "Fuentes grandes"
 
+    # game/preferences.rpy:174
+    old "Show edit file section"
+    new "Mostrar la sección Editar Archivo"
+
+    # game/preferences.rpy:176
+    old "Generate empty strings for translations"
+    new "Generar cadenas vacías para las traducciones"
+
