@@ -545,3 +545,11 @@ translate spanish strings:
     old "While unpacking {}, unknown type {}."
     new "Tipo desconocido {1} al desempaquetar {0}."
 
+    # renpy/common/_developer/developer.rpym:437
+    old "Rectangle copied to clipboard."
+    new "Rectángulo cpiado al portapapeles."
+
+    # renpy/common/_developer/developer.rpym:440
+    old "Position copied to clipboard."
+    new "Posición copiada al portapapeles."
+
