@@ -1578,13 +1578,25 @@ def image(arg, loose=False, **properties):
         raise Exception("Could not construct image from argument.")
 
 
-def load_image(fn):
+def load_image(im):
     """
-    This loads an image from the given filename, using the cache.
+    :doc: udd_utility
+
+    Loads the image manipulator `im` using the image cache, and returns a texture.
     """
 
-    surf = cache.get(image(fn))
+    surf = cache.get(image(im))
     return renpy.display.draw.load_texture(surf)
+
+def load_surface(im):
+    """
+    :doc: udd_utility
+
+    Loads the image manipulator `im` using the image cache, and returns a pygame Surface.
+    """
+
+    return cache.get(image(im))
+
 
 def reset_module():
     print "Resetting cache."

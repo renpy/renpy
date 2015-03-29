@@ -59,6 +59,7 @@ from renpy.display.screen import has_screen, get_screen, get_widget, ScreenProfi
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
 from renpy.display.image import image_exists
+from renpy.display.im import load_surface, load_image
 
 from renpy.curry import curry, partial
 from renpy.audio.sound import play
@@ -108,8 +109,7 @@ def public_api():
     """
     :undocumented:
 
-    This does nothing, except to make the pyflakes warnings about
-    unused imports go away.
+    This does nothing, except to make warnings about unused imports go away.
     """
     ParameterizedText
     register_sfont, register_mudgefont, register_bmfont
@@ -142,6 +142,7 @@ def public_api():
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
     image_exists
+    load_image, load_surface
     profile_memory, diff_memory, profile_rollback
     TEXT_TAG
     TEXT_TEXT
