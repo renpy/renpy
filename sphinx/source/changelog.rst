@@ -2,6 +2,12 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.1
+=============
+
+Added :func:`renpy.load_image` and :func:`renpy.load_surface`.
+
+
 Ren'Py 6.99
 ===========
 
