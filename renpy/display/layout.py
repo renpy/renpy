@@ -455,6 +455,9 @@ class MultiBox(Container):
         self.scene_list = None
 
     def parameterize(self, name, parameters):
+        if not type(self) is MultiBox:
+            return self
+
         rv = MultiBox(layout=self.default_layout)
         rv.style = self.style.copy()
 
