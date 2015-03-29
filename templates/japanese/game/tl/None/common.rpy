@@ -486,6 +486,14 @@ translate None strings:
     old "While unpacking {}, unknown type {}."
     new "{} を解凍中に、未知のタイプ {} を検出しました。"
 
+    # renpy/common/_developer/developer.rpym:437
+    old "Rectangle copied to clipboard."
+    new "クリップボードに矩形領域がコピーされました"
+
+    # renpy/common/_developer/developer.rpym:440
+    old "Position copied to clipboard."
+    new "クリップボードに座標がコピーされました"
+
 ##Lancherでのみ必要###########################################
     # # renpy/common/00gltest.rpy:95
     # old "Quit"

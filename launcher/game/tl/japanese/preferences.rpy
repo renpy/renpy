@@ -73,3 +73,11 @@ translate japanese strings:
     old "Text editor: [text]"
     new "テキストエディター: [text]"
 
+    # game/preferences.rpy:174
+    old "Show edit file section"
+    new "ファイル編集を表示する"
+
+    # game/preferences.rpy:176
+    old "Generate empty strings for translations"
+    new "空の文字列でも翻訳を生成する"
+
