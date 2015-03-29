@@ -547,7 +547,7 @@ translate spanish strings:
 
     # renpy/common/_developer/developer.rpym:437
     old "Rectangle copied to clipboard."
-    new "Rectángulo cpiado al portapapeles."
+    new "Rectángulo copiado al portapapeles."
 
     # renpy/common/_developer/developer.rpym:440
     old "Position copied to clipboard."
