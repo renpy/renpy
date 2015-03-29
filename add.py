@@ -54,6 +54,9 @@ else:
     links = [ ]
     tag = False
 
+if args.no_tag:
+    tag = False
+
 if tag:
     for i in SOURCE:
         os.chdir(i)
