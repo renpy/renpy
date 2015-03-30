@@ -48,6 +48,10 @@
         * yoffset
         * subpixel
 
+.. function:: renpy.get_shown_tags(layer='master')
+    
+    Returns the set of image tags that are currently being shown on `layer`
+
 .. function:: renpy.image_exists(name)
     
     Return true if an image with `name` exists, and false if no such image

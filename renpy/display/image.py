@@ -314,6 +314,13 @@ class ShownImageInfo(renpy.object.Object):
 
         return True
 
+    def get_shown_tags(self, layer):
+        """
+        Returns the set of tags being shown on `layer`.
+        """
+
+        return { t for l, t in self.shown if l == layer }
+
     def predict_scene(self, layer):
         """
         Predicts the scene statement being called on layer.

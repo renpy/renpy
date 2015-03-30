@@ -386,6 +386,14 @@ def showing(name, layer='master'):
 
     return renpy.game.context().images.showing(layer, name)
 
+def get_shown_tags(layer='master'):
+    """
+    :doc: image_func
+
+    Returns the set of image tags that are currently being shown on `layer`
+    """
+
+    return renpy.game.context().images.get_shown_tags(layer)
 
 def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
     """
