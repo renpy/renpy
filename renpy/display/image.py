@@ -314,7 +314,7 @@ class ShownImageInfo(renpy.object.Object):
 
         return True
 
-    def get_shown_tags(self, layer):
+    def get_showing_tags(self, layer):
         """
         Returns the set of tags being shown on `layer`.
         """

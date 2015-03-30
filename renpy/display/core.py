@@ -1001,8 +1001,8 @@ class SceneLists(renpy.object.Object):
 
         return self.shown.showing(layer, name)
 
-    def get_shown_tags(self, layer):
-        return self.shown.get_shown_tags(layer)
+    def get_showinh_tags(self, layer):
+        return self.shown.get_showing_tags(layer)
 
     def make_layer(self, layer, properties):
         """

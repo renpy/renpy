@@ -6,7 +6,7 @@ Ren'Py 6.99.1
 =============
 
 Added the :func:`renpy.load_image`, :func:`renpy.load_surface`, and
-:func:`renpy.get_shown_tags` functions.
+:func:`renpy.get_showing_tags` functions.
 
 
 Ren'Py 6.99
