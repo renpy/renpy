@@ -220,8 +220,8 @@ init python:
     ## this is 'mygame-1.0', the windows distribution will be in the
     ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
 
-    if 'RENPY_NIGHTLY' in os.environ:
-        build.directory_name = os.environ['RENPY_NIGHTLY']
+    if 'RENPY_BUILD_VERSION' in os.environ:
+        build.directory_name = "renpy-" + os.environ['RENPY_BUILD_VERSION']
     else:
         build.directory_name = "renpy-" + config.version.rsplit('.', 1)[0]
 

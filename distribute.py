@@ -57,7 +57,6 @@ def main():
     import renpy
 
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) #@UndefinedVariable
-    zip_version = ".".join(str(i) for i in renpy.version_tuple[:3]) #@UndefinedVariable
 
     s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", match_version ])
     parts = s.strip().split("-")
@@ -83,10 +82,10 @@ def main():
     # Check that the versions match.
     full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
     if "-" not in args.version \
-        and not args.version.startswith("renpy-nightly-") \
         and not full_version.startswith(args.version):
-
         raise Exception("The command-line and Ren'Py versions do not match.")
+
+    os.environ['RENPY_BUILD_VERSION'] = args.version
 
     # The destination directory.
     destination = os.path.join("dl", args.version)
@@ -198,10 +197,7 @@ def main():
             ])
 
     # Write 7z.exe.
-    sdk = "renpy-{}-sdk".format(zip_version)
-
-    if args.version.startswith("renpy-nightly-"):
-        sdk = args.version + "-sdk"
+    sdk = "renpy-{}-sdk".format(args.version)
 
     if not args.fast:
 
