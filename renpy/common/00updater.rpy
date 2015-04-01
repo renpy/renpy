@@ -358,7 +358,7 @@ init -1500 python in updater:
             Performs the update.
             """
 
-            if renpy.mobile:
+            if getattr(renpy, "mobile", False):
                 raise UpdateError(_("The Ren'Py Updater is not supported on mobile devices."))
 
             self.load_state()
@@ -419,7 +419,10 @@ init -1500 python in updater:
             renpy.restart_interaction()
 
             for i in self.modules:
-                self.download(i)
+                try:
+                    self.download(i)
+                except:
+                    self.download(i, standalone=True)
 
             self.clean_old()
 
@@ -819,7 +822,7 @@ init -1500 python in updater:
 
             tf.close()
 
-        def download(self, module):
+        def download(self, module, standalone=False):
             """
             Uses zsync to download the module.
             """
@@ -827,7 +830,6 @@ init -1500 python in updater:
             start_progress = None
 
             new_fn = self.update_filename(module, True)
-
 
             # Download the sums file.
             sums = [ ]
@@ -853,20 +855,32 @@ init -1500 python in updater:
             except:
                 pass
 
+            try:
+                os.unlink(new_fn)
+            except:
+                pass
+
             cmd = [
                 zsync_path("zsync"),
                 "-o", new_fn,
-                "-k", zsync_fn,
                 ]
+
+            if not standalone:
+                cmd.extend([
+                    "-k", zsync_fn,
+                ])
 
             if os.path.exists(new_fn + ".part"):
                 self.rename(new_fn + ".part", new_fn + ".part.old")
-                cmd.append("-i")
-                cmd.append(new_fn + ".part.old")
 
-            for i in self.modules:
-                cmd.append("-i")
-                cmd.append(self.update_filename(module, False))
+                if not standalone:
+                    cmd.append("-i")
+                    cmd.append(new_fn + ".part.old")
+
+            if not standalone:
+                for i in self.modules:
+                    cmd.append("-i")
+                    cmd.append(self.update_filename(module, False))
 
             cmd.append(urlparse.urljoin(self.url, self.updates[module]["zsync_url"]))
 
@@ -1198,7 +1212,8 @@ init -1500 python in updater:
         To do that, use :func:`updater.UpdateVersion`.
         """
 
-        if renpy.mobile:
+        # Written this way so we can use this code with 6.18 and earlier.
+        if getattr(renpy, "mobile", False):
             return False
 
         if rsa is None:
