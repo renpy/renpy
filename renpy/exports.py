@@ -58,7 +58,7 @@ from renpy.display.screen import define_screen, show_screen, hide_screen, use_sc
 from renpy.display.screen import has_screen, get_screen, get_widget, ScreenProfile as profile_screen
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
-from renpy.display.image import image_exists
+from renpy.display.image import image_exists, image_exists as has_image
 from renpy.display.im import load_surface, load_image
 
 from renpy.curry import curry, partial
@@ -141,7 +141,7 @@ def public_api():
     check_text_tags
     map_event, queue_event, clear_keymap_cache
     const, pure, not_const
-    image_exists
+    image_exists, has_image
     load_image, load_surface
     profile_memory, diff_memory, profile_rollback
     TEXT_TAG
