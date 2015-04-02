@@ -104,6 +104,9 @@ init -1900 python:
             config.predict_screen_statements = False
             config.transition_screens = False
 
+        if version <= (6, 99, 1):
+            config.images_directory = None
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
@@ -170,4 +173,3 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
-
