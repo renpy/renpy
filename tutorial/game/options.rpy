@@ -300,7 +300,7 @@ image main_menu:
         "#000"
 
     contains:
-        "concert2.jpg"
+        "concert2"
         size (800, 509)
 
     contains:

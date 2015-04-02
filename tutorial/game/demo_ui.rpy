@@ -15,7 +15,7 @@ screen viewport_screen:
         draggable True
         mousewheel True
 
-        add "concert2.jpg"
+        add "concert2"
 
     textbutton _("Dismiss"):
         xpos 300
@@ -29,7 +29,7 @@ screen edgescroll_screen:
 
     viewport:
         edgescroll (150, 500)
-        add "concert2.jpg"
+        add "concert2"
 
 screen demo_imagemap:
     imagemap:

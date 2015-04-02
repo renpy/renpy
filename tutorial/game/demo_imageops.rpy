@@ -32,9 +32,9 @@ init:
                                       (255, 0, 0, 255))
 
 
-    image eileen alpha = im.Alpha("eileen_happy.png", 0.5)
+    image eileen alpha = im.Alpha("images/eileen_happy.png", 0.5)
 
-    image eileen flip = im.Flip("eileen_happy.png", vertical=True)
+    image eileen flip = im.Flip("images/eileen_happy.png", vertical=True)
 
 
     image logo halfsat = im.MatrixColor("logo.png",
