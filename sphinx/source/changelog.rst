@@ -2,6 +2,14 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.2
+=============
+
+Ren'Py now supports an images directory underneath the game directory.
+Images found inside this directory - or in subdirectories of this directory - will
+be automatically defined as images in Ren'Py. This will likey render the use of
+the image statement obsolete in simple games.
+
 Ren'Py 6.99.1
 =============
 

@@ -85,10 +85,40 @@ the various other layer-related config variables. Using
 :func:`renpy.layer_at_list`, one or more transforms can be applied to
 a layer.
 
+Defining Images
+===============
+
+There are two ways to define images. You can either place an image file
+in the image directory, or an image can be defined using the image statement.
+The former is simple, as it involves placing properly named files in a directory,
+while the latter a allows more control over how the image is defined, and allows
+images that are not image files.
+
+Images defined using the image statement take precedence over those defined
+by the image directory.
+
+.. _image-directory:
+
+Image Directory
+---------------
+
+The image directory is named "images", and is placed under the game directory.
+When a file with the .jpg or .png extension is placed underneath this directory,
+the extension is stripped, the rest of the filename is forced to lower case,
+and the resulting filename is use as the image name if an image with that
+name has not been previously defined.
+
+This process place in all directories underneath the image directory. For
+example, all of these files will define the image ``eileen happy``::
+
+    game/images/eileen happy.png
+    game/images/Eileen Happy.jpg
+    game/images/eileen/eileen happy.png
+
 .. _image-statement:
 
 Image Statement
-===============
+---------------
 
 An image statement is used to define an image. An image statement
 consists of a single logical line beginning with the keyword ``image``,

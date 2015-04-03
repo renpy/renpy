@@ -10,6 +10,19 @@ these changes to be reverted, at the cost of losing access to recent
 features.
 
 
+.. _incompatible-6.99:
+
+6.99.2
+------
+
+Ren'Py will now scan the an image directory (the directory named images
+underneath the game directory) for images, and define them based on their
+filename. To disable this behavior, use the code::
+
+    init python:
+        config.image_directory = None
+
+
 .. _incompatible-6.18:
 
 6.18
