@@ -725,6 +725,17 @@ class SceneLists(renpy.object.Object):
         add_index = None
         remove_index = None
 
+        for i, sle in enumerate(self.layers[layer]):
+
+            if remove_index is None:
+                if (sle.tag and sle.tag == tag) or sle.displayable == tag:
+                    remove_index = i
+
+                    if zorder is None:
+                        zorder = sle.zorder
+
+        if zorder is None:
+            zorder = 0
 
         for i, sle in enumerate(self.layers[layer]):
 
@@ -737,16 +748,10 @@ class SceneLists(renpy.object.Object):
                 elif sle.zorder > zorder:
                     add_index = i
 
-
-            if remove_index is None:
-                if (sle.tag and sle.tag == tag) or sle.displayable == tag:
-                    remove_index = i
-
-
         if add_index is None:
             add_index = len(self.layers[layer])
 
-        return add_index, remove_index
+        return add_index, remove_index, zorder
 
 
     def add(self,
@@ -812,7 +817,7 @@ class SceneLists(renpy.object.Object):
         if atl:
             thing = renpy.display.motion.ATLTransform(atl, child=thing)
 
-        add_index, remove_index = self.find_index(layer, key, zorder, behind)
+        add_index, remove_index, zorder = self.find_index(layer, key, zorder, behind)
 
         at = None
         st = None
@@ -942,7 +947,7 @@ class SceneLists(renpy.object.Object):
         if layer not in self.layers:
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
 
-        _add_index, remove_index = self.find_index(layer, thing, 0, [ ])
+        _add_index, remove_index, zorder = self.find_index(layer, thing, 0, [ ])
 
         if remove_index is not None:
             tag = self.layers[layer][remove_index].tag

@@ -994,7 +994,7 @@ def show_imspec(imspec, atl=None):
     if zorder is not None:
         zorder = renpy.python.py_eval(zorder)
     else:
-        zorder = 0
+        zorder = None
 
     if expression is not None:
         expression = renpy.python.py_eval(expression)

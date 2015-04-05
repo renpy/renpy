@@ -106,6 +106,7 @@ init -1900 python:
 
         if version <= (6, 99, 1):
             config.images_directory = None
+            config.preserve_zorder = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

@@ -450,7 +450,7 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
     renpy.display.predict.displayable(img)
 
 
-def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
+def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
     :args: (name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ])
@@ -476,7 +476,8 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
         associate a tag with the image.
 
     `zorder`
-        An integer, the equivalent of the ``zorder`` property.
+        An integer, the equivalent of the ``zorder`` property. If None, the
+        zorder is preserved if it exists, and is otherwise set to 0.
 
     `tag`
         A string, used to specify the the image tag of the shown image. The
@@ -492,6 +493,9 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behin
 
     if not isinstance(name, tuple):
         name = tuple(name.split())
+
+    if zorder is None and not renpy.config.preserve_zorder:
+        zorder = 0
 
     sls = scene_lists()
     key = tag or name[0]

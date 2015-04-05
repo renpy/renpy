@@ -566,6 +566,9 @@ custom_text_tags = { }
 # A function that is called when a label is missing.
 missing_label_callback = None
 
+# Should show preserve zorder when not explicitly set?
+preserve_zorder = True
+
 del renpy
 del os
 
