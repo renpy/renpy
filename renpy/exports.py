@@ -1289,8 +1289,8 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None):
         executed.
 
     `greedy`
-        If true, rollback will occur just before the previous checkpoint.
-        If false, rollback occurs to just before the current checkpoint.
+        If true, rollback will finish just after the previous checkpoint.
+        If false, rollback finish just before the current checkpoint.
 
     `label`
         If not None, a label that is called when rollback completes.
@@ -1846,9 +1846,11 @@ def image_size(im):
 
 def get_at_list(name, layer='master'):
     """
-    :undocumented:
+    :doc: se_images
 
-    Returns the list of transforms being applied to a layer.
+    Returns the list of transforms being applied to the image with tag `name`
+    on `layer`. Returns an empty list if no transofrms are being applied, or
+    None if the image is not shown.
     """
 
     if isinstance(name, basestring):
