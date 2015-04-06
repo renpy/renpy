@@ -198,6 +198,23 @@ init -1500 python:
             return renpy.can_rollback()
 
     @renpy.pure
+    class RestartStatement(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This action causes Ren'Py to rollback to before the current
+        statement, and then re-run the current statement. This may be used
+        when changing a persistent variable that affects how the statement
+        is displayed.
+
+        If run in a menu context, this waits until the player exits to a
+        top-level context before performing the rollback.
+        """
+
+        def __call__(self):
+            renpy.rollback(force=True, checkpoints=0, defer=True)
+
+    @renpy.pure
     class RollForward(Action, DictEquality):
         """
         :doc: other_action
