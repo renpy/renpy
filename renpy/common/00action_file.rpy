@@ -377,7 +377,7 @@ init -1500 python:
             return __newest_slot() == __slotname(self.name, self.page)
 
 
-    def FileAction(name, page=None):
+    def FileAction(name, page=None, **kwargs):
         """
          :doc: file_action
 
@@ -394,9 +394,9 @@ init -1500 python:
          """
 
         if renpy.current_screen().screen_name[0] == "load":
-            return FileLoad(name, page=page)
+            return FileLoad(name, page=page, **kwargs)
         else:
-            return FileSave(name, page=page)
+            return FileSave(name, page=page, **kwargs)
 
     @renpy.pure
     class FilePage(Action, DictEquality):
