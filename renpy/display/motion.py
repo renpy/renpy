@@ -1007,19 +1007,7 @@ class Motion(Container):
         self.position = None
 
 
-    def get_placement(self):
-
-        if self.position is None:
-            return super(Motion, self).get_placement()
-        else:
-            return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
-
-    def render(self, width, height, st, at):
-
-        if self.anim_timebase:
-            t = at
-        else:
-            t = st
+    def update_position(self, t, sizes):
 
         if renpy.game.less_updates:
             if self.delay:
@@ -1054,11 +1042,8 @@ class Motion(Container):
             if t > 1.0:
                 t = 2.0 - t
 
-        child = render(self.child, width, height, st, at)
-        cw, ch = child.get_size()
-
         if self.add_sizes:
-            res = self.function(t, (width, height, cw, ch))
+            res = self.function(t, sizes)
         else:
             res = self.function(t)
 
@@ -1068,6 +1053,30 @@ class Motion(Container):
             self.position = res + (self.style.xanchor, self.style.yanchor)
         else:
             self.position = res
+
+    def get_placement(self):
+
+        if self.position is None:
+            if self.add_sizes:
+                # Almost certainly gives the wrong placement, but there's nothing
+                # we can do.
+                return super(Motion, self).get_placement()
+            else:
+                self.update_position(0.0, None)
+
+        return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
+
+    def render(self, width, height, st, at):
+
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+
+        child = render(self.child, width, height, st, at)
+        cw, ch = child.get_size()
+
+        self.update_position(t, (width, height, cw, ch))
 
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))
@@ -1097,19 +1106,8 @@ class Interpolate(object):
 
     def __call__(self, t, sizes=(None, None, None, None)):
 
-        def interp(a, b, c):
-
-            if c is not None:
-                if type(a) is float:
-                    a = a * c
-                if type(b) is float:
-                    b = b * c
-
-            rv = a + t * (b - a)
-
-            return renpy.display.core.absolute(rv)
-
-        return [ interp(a, b, c) for a, b, c in zip(self.start, self.end, sizes) ]
+        types = (renpy.atl.position,) * len(self.start)
+        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), types)
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -1158,7 +1156,6 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   style=style,
                   anim_timebase=anim_timebase,
                   time_warp=time_warp,
-                  add_sizes=True,
                   **properties)
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -1202,7 +1199,6 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   anim_timebase=anim_timebase,
                   style=style,
                   time_warp=time_warp,
-                  add_sizes=True,
                   **properties)
 
 
