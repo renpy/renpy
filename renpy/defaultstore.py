@@ -48,9 +48,6 @@ _rollback = True
 # config.
 _config = renpy.config
 
-# The special character used for name-only dialogue.
-name_only = None
-
 # Used by the ui functions.
 _widget_by_id = None
 _widget_properties = { }
@@ -350,15 +347,18 @@ adv = ADVCharacter(None,
 
                    kind=False)
 
+# predict_say and who are defined in 00library.rpy, but we add default
+# versions here in case there is a problem with initialization. (And
+# for pickling purposes.)
 def predict_say(who, what):
-    who = Character(who, kind=name_only)
+    who = Character(who, kind=adv)
     try:
         who.predict(what)
     except:
         pass
 
 def say(who, what, interact=True):
-    who = Character(who, kind=name_only)
+    who = Character(who, kind=adv)
     who(what, interact=interact)
 
 # Used by renpy.reshow_say.

@@ -224,6 +224,22 @@ init -1700 python:
         else:
             return ImageReference(name)
 
+    ##########################################################################
+    # Name-only say statements.
+
+    # This character is copied when a name-only say statement is called.
+    name_only = adv
+
+    def predict_say(who, what):
+        who = Character(who, kind=name_only)
+        try:
+            who.predict(what)
+        except:
+            pass
+
+    def say(who, what, interact=True):
+        who = Character(who, kind=name_only)
+        who(what, interact=interact)
 
 init -1000:
     # Lock the library object.

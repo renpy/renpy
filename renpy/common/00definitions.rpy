@@ -375,10 +375,6 @@ init 1400 python:
         narrator = _narrator
 
     renpy.pure('narrator')
-
-    if not hasattr(store, 'name_only'):
-        name_only = adv
-
     renpy.pure('name_only')
 
     if not hasattr(store, 'centered'):
