@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-01 10:51
-
+﻿
 translate simplified_chinese strings:
 
     # game/translations.rpy:34

@@ -1,4 +1,4 @@
-#  Translation updated at 2015-03-22 20:50
+﻿#  Translation updated at 2015-03-22 20:50
 
 translate arabic strings:
 

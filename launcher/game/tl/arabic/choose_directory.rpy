@@ -1,4 +1,4 @@
-
+﻿
 translate arabic strings:
 
     # game/choose_directory.rpy:73

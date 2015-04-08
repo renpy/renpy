@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-01 10:51
-
+﻿
 translate simplified_chinese strings:
 
     # renpy/common/00action_file.rpy:142
@@ -10,11 +9,9 @@ translate simplified_chinese strings:
     old "Quick save complete."
     new "快速保存完成。"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 ### Due the font issue, console, gltest and developer menu can't show chinese, so it is useless to translate.
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 
@@ -22,7 +19,6 @@ translate simplified_chinese strings:
     old "Saved screenshot as %s."
     new "截图已保存为 %s。"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 
@@ -62,7 +58,6 @@ translate simplified_chinese strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "您确定要直接跳过未读对话或下个选择支吗？"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 
@@ -74,7 +69,6 @@ translate simplified_chinese strings:
     old "Fast Skip Mode"
     new "跃进模式"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 
@@ -86,7 +80,6 @@ translate simplified_chinese strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "自动朗读已开启。按 V 来关闭。"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 
@@ -162,7 +155,6 @@ translate simplified_chinese strings:
     old "The updates were cancelled."
     new "更新已取消。"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 
@@ -178,7 +170,6 @@ translate simplified_chinese strings:
     old "Next"
     new "下一页"
 
-# TODO: Translation updated at 2015-04-01 10:51
 
 translate simplified_chinese strings:
 

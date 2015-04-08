@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-06 21:17
-
+﻿
 translate Korean strings:
 
     # game/ios.rpy:28
