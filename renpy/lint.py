@@ -200,8 +200,11 @@ def check_displayable(what, d):
 
     files = [ ]
 
-    if isinstance(d, renpy.display.core.Displayable):
-        d.visit_all(lambda a : a.predict_one())
+    try:
+        if isinstance(d, renpy.display.core.Displayable):
+            d.visit_all(lambda a : a.predict_one())
+    except:
+        pass
 
     for fn in files:
         check_file(what, fn)
