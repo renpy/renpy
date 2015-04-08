@@ -297,6 +297,9 @@ init -1500 python:
 
          `newest`
              If true, the button is selected if this is the newest file.
+
+         `cycle`
+             Ignored.
          """
 
         alt = "Load slot [text]"
@@ -382,7 +385,8 @@ init -1500 python:
          :doc: file_action
 
          "Does the right thing" with the file. This means loading it if the
-         load screen is showing, and saving to it otherwise.
+         load screen is showing (current screen is named "load"), and saving
+         otherwise.
 
          `name`
              The name of the slot to save to or load from. If None, an unused slot
@@ -391,6 +395,8 @@ init -1500 python:
          `page`
              The page that the file will be saved to or loaded from. If None, the
              current page is used.
+
+         Other keyword arguments are passed to FileLoad or FileSave.
          """
 
         if renpy.current_screen().screen_name[0] == "load":
