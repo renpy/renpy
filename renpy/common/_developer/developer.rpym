@@ -258,19 +258,11 @@ init 1050 python:
 
     if config.developer:
 
-        # This is used to indicate that a scene has just occured,
-        # and so if the next thing is a missing_show, we should
-        # blank the screen.
-        __missing_scene = False
-
         def __missing_show_callback(name, what, layer):
-            global __missing_scene
-
             if layer != 'master':
                 return False
 
-            if __missing_scene:
-                __missing_scene = False
+            if not renpy.count_displayables_in_layer(layer):
                 return Placeholder("bg").parameterize((), what)
             else:
                 return Placeholder().parameterize((), what)
@@ -282,13 +274,9 @@ init 1050 python:
             return True
 
         def __missing_scene_callback(layer):
-
-            global __missing_scene
-
             if layer != 'master':
                 return False
 
-            __missing_scene = True
             return True
 
         config.missing_scene = __missing_scene_callback
