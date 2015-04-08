@@ -265,6 +265,21 @@ def main():
     renpy.style.build_styles() # @UndefinedVariable
     renpy.display.screen.prepare_screens()
 
+    # If recompiling everything, remove orphan .rpyc files.
+    # Otherwise, will fail in case orphan .rpyc have same
+    # labels as in other scripts (usually happens on script rename).
+    if renpy.game.args.command == 'compile':
+        for (fn, dir) in renpy.game.script.script_files:
+            if not os.path.isfile(os.path.join(dir, fn+".rpy")):
+                try:
+                    name = os.path.join(dir, fn+".rpyc")
+                    os.rename(name, name+".bak")
+                except OSError:
+                    # This perhaps shouldn't happen since either .rpy or .rpyc should exist
+                    pass
+        # Update script files list, so that it doesn't contain removed .rpyc's
+        renpy.game.script.scan_script_files()
+
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
 
