@@ -40,7 +40,7 @@ translate simplified_chinese strings:
 
     # game/updater.rpy:135
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "Ren'Py 的尖端开发版。这个版本可能包含最新的功能，也可能连运行都无法运行。"
+    new "Ren'Py 的尖端开发版。这个版本可能包含最新的功能，也可能甚至根本无法运行。"
 
     # game/updater.rpy:155
     old "An error has occured:"
