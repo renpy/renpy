@@ -50,6 +50,9 @@ def touch_emulator(ev, x, y):
     This emulates an android touch-screen device, like a tablet or smartphone.
     """
 
+    if renpy.display.interface.text_rect:
+        return ev, x, y
+
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if ev.button != 1:
             return None, x, y
