@@ -203,6 +203,7 @@ screen common:
 
     if continue_:
         textbutton _("Continue") action continue_ style "l_right_button"
+        key "input_enter" action continue_
 
 
 screen launcher_input:
