@@ -102,6 +102,27 @@ def tv_emulator(ev, x, y):
 
     return ev, x, y
 
+keyboard = None
+null = None
+
+def dynamic_keyboard(st, at):
+    global keyboard
+    global null
+
+    if keyboard is None:
+        keyboard = renpy.store.Fixed(
+            renpy.store.Solid("#000", yalign=1.0, ymaximum=.625),
+            renpy.store.Text("On-Screen Keyboard", xalign=.5, yalign=.75),
+            )
+        null = renpy.store.Null()
+
+    if renpy.display.interface.old_text_rect:
+        rv = keyboard
+    else:
+        rv = null
+
+    return rv, .33
+
 
 def init_emulator():
     """
@@ -116,10 +137,10 @@ def init_emulator():
 
     if name == "touch":
         emulator = touch_emulator
-        overlay = [ ]
+        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
     elif name == "ios-touch":
         emulator = touch_emulator
-        overlay = [ ]
+        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
         ios = True
     elif name == "tv":
         emulator = tv_emulator
