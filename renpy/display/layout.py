@@ -1920,4 +1920,71 @@ class Flatten(Container):
         rv.blit(tex, (0, 0))
         rv.depends_on(cr, focus=True)
 
+        self.offsets.append((0, 0))
+
         return rv
+
+
+class AlphaMask(Container):
+    """
+    :doc: disp_imagelike
+
+    This displayable takes its colors from `child`, and its alpha channel
+    from the multiplication of the alpha channels of `child` and `mask`.
+    The result is a displayable that has the same colors as `child`, is
+    transparent where either `child` or `mask` is transparent, and is
+    opaque where `child` and `mask` are both opaque.
+
+    The `child` and `mask` parameters may be arbitrary displayables. The
+    size of the AlphaMask is the size of the overlap between `child` and
+    `mask`.
+
+    Note that this takes different arguments from :func:`im.AlphaMask`,
+    which uses the mask's color channel.
+    """
+
+    def __init__(self, child, mask, **properties):
+        super(AlphaMask, self).__init__(**properties)
+
+        self.add(child)
+        self.mask = renpy.easy.displayable(mask)
+        self.null = None
+        self.size = None
+
+    def render(self, width, height, st, at):
+
+        cr = renpy.display.render.render(self.child, width, height, st, at)
+        mr = renpy.display.render.render(self.mask, width, height, st, at)
+
+        cw, ch = cr.get_size()
+        mw, mh = mr.get_size()
+
+        w = min(cw, mw)
+        h = min(ch, mh)
+        size = (w, h)
+
+        if self.size != size:
+            self.null = Null(w, h)
+
+        nr = renpy.display.render.render(self.null, width, height, st, at)
+
+        rv = renpy.display.render.Render(w, h, opaque=False)
+
+        rv.operation = renpy.display.render.IMAGEDISSOLVE
+        rv.operation_alpha = 1.0
+        rv.operation_complete = 256.0 / (256.0 + 256.0)
+        rv.operation_parameter = 256
+
+        rv.blit(mr, (0, 0), focus=False, main=False)
+        rv.blit(nr, (0, 0), focus=False, main=False)
+        rv.blit(cr, (0, 0))
+
+        return rv
+
+
+
+
+
+
+
+
