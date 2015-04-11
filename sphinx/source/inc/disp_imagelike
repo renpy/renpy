@@ -1,5 +1,20 @@
 .. Automatically generated file - do not modify.
 
+.. function:: AlphaMask(child, mask, **properties)
+    
+    This displayable takes its colors from `child`, and its alpha channel
+    from the multiplication of the alpha channels of `child` and `mask`.
+    The result is a displayable that has the same colors as `child`, is
+    transparent where either `child` or `mask` is transparent, and is
+    opaque where `child` and `mask` are both opaque.
+    
+    The `child` and `mask` parameters may be arbitrary displayables. The
+    size of the AlphaMask is the size of the overlap between `child` and
+    `mask`.
+    
+    Note that this takes different arguments from :func:`im.AlphaMask`,
+    which uses the mask's color channel.
+
 .. function:: Flatten(child, **properties)
     
     This flattens `child`, which may be made up of multiple textures, into

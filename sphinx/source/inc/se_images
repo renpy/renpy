@@ -1,5 +1,11 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.get_at_list(name, layer='master')
+    
+    Returns the list of transforms being applied to the image with tag `name`
+    on `layer`. Returns an empty list if no transofrms are being applied, or
+    None if the image is not shown.
+
 .. function:: renpy.hide(name, layer='master')
     
     Hides an image from a layer. The python equivalent of the hide statement.
@@ -68,7 +74,8 @@
         associate a tag with the image.
     
     `zorder`
-        An integer, the equivalent of the ``zorder`` property.
+        An integer, the equivalent of the ``zorder`` property. If None, the
+        zorder is preserved if it exists, and is otherwise set to 0.
     
     `tag`
         A string, used to specify the the image tag of the shown image. The

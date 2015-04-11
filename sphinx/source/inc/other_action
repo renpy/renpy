@@ -55,6 +55,16 @@
     
     Causes `url` to be opened in a web browser.
 
+.. function:: RestartStatement()
+    
+    This action causes Ren'Py to rollback to before the current
+    statement, and then re-run the current statement. This may be used
+    when changing a persistent variable that affects how the statement
+    is displayed.
+    
+    If run in a menu context, this waits until the player exits to a
+    top-level context before performing the rollback.
+
 .. function:: RollForward()
     
     This action causes a rollforward to occur, if a roll forward is

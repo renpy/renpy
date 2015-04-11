@@ -73,6 +73,7 @@
 * :func:`Quit`
 * RemoveFromSet
 * :func:`Replay`
+* :func:`RestartStatement`
 * :func:`Return`
 * Revolve
 * RevolveInOut
@@ -189,7 +190,7 @@
 * :func:`renpy.get_all_labels`
 * :func:`renpy.has_label`
 * renpy.has_screen
-* :func:`renpy.image_exists`
+* renpy.image_exists
 * :func:`renpy.image_size`
 * :func:`renpy.known_languages`
 * :func:`renpy.list_files`

@@ -229,7 +229,37 @@ def reset():
 renpy.game.post_init.append(reset)
 
 def interact(type='misc', roll_forward=None, **kwargs): #@ReservedAssignment
-    # Docs in wiki.
+    """
+    :doc: ui
+    :args: (roll_forward=None, mouse='default')
+
+    Causes an interaction with the user, and returns the result of that
+    interaction. This causes Ren'Py to to redraw the screen and begin
+    processing input events. When a displayable returns a value in
+    response to an event, that value is returned from ui.interact,
+    and the interaction ends.
+
+    This function is rarely called directly. It is usually called by other
+    parts of Ren'Py, including the say statement, menu statement, with statement,
+    pause statement, call screen, :func:`renpy.input`, among many other
+    functions. However, it can be called directly if necessary.
+
+    When an interaction ends, the transient layer and all screens shown with
+    transient=True are cleared from the scene lists.
+
+    The following arguments are documented. As other, undocumented arguments
+    exist for Ren'Py's internal use, please pass all arguments as keyword
+    arguments.
+
+    `roll_forward`
+        The information that will be returned by this function when a
+        roll forward occurs. (If None, the roll forward is ignored.) This
+        should usually be passed the result of the :func:`renpy.roll_forward_info`
+        function.
+
+    `mouse`
+        The style of mouse cursor to use during this function.
+    """
 
     if stack is None:
         raise Exception("Interaction not allowed during init phase.")

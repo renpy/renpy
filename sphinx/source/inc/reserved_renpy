@@ -5,6 +5,7 @@
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
+* :func:`AlphaMask`
 * :func:`AnimatedValue`
 * Animation
 * :func:`At`
@@ -104,6 +105,7 @@
 * :func:`Quit`
 * RemoveFromSet
 * :func:`Replay`
+* :func:`RestartStatement`
 * :func:`Return`
 * Revolve
 * RevolveInOut
