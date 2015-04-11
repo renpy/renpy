@@ -55,3 +55,8 @@ It should be used instead of the standard Python random module. ::
 
     # return a random element from a list
     $ randfruit = renpy.random.choice(['apple', 'orange', 'plum'])
+
+* ``renpy.random.Random(seed=None)``
+
+Returns a new random number generator object separate from the main one, seeded
+with the specified value if provided.

@@ -763,6 +763,15 @@ class DetRandom(random.Random):
 
         self.stack = [ ]
 
+    def Random(self,seed=None):
+        """
+        Returns a new RNG object separate from the main one.
+        """
+
+        new = DetRandom()
+        new.seed(seed)
+        return new
+
 rng = DetRandom()
 
 ##### This is the code that actually handles the logging and managing
