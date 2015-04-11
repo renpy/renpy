@@ -110,8 +110,8 @@ label _start_store:
     return
 
 
-# Starts up a memory. This is called by renpy.game.call_memory, and
-# is expected to be called with _in_memory set.
+# Starts up a memory. This is called by renpy.game.call_replay, and
+# is expected to be called with _in_replay set.
 label _start_replay:
 
     call _start_store
