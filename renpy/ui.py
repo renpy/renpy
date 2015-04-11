@@ -1308,6 +1308,21 @@ def gamemenus(*args):
 on = Wrapper(renpy.display.behavior.OnEvent)
 
 ##############################################################################
+# A utility function so CDD components can be given an id.
+def screen_id(id_, d):
+    """
+    :doc: ui
+
+    Assigns the displayable `d` the screen widget id `id_`, as if it had
+    been created by a screen statement with that id.
+    """
+
+    if screen is None:
+        raise Exception("ui.screen_id must be called from within a screen.")
+
+    screen.widget_id[id_] = d
+
+##############################################################################
 # Postamble
 
 # Update the wrappers to have names.
