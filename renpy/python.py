@@ -759,7 +759,7 @@ class DetRandom(random.Random):
 
         self.stack = [ ]
 
-    def Pool(self,seed=None):
+    def Random(self,seed=None):
         """
         Returns a new RNG object separate from the main one.
         """
