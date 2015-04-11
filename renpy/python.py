@@ -738,7 +738,11 @@ class DetRandom(random.Random):
         else:
             rv = super(DetRandom, self).random()
 
-        renpy.game.log.current.random.append(rv)
+        log = renpy.game.log
+
+        if log.current is not None:
+            log.current.random.append(rv)
+
         return rv
 
     def pushback(self, l):
@@ -963,7 +967,6 @@ class RollbackLog(renpy.object.Object):
         # on load.
         self.retain_after_load_flag = False
 
-
     def after_setstate(self):
         self.mutated = { }
         self.rolled_forward = False
@@ -984,6 +987,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         context = renpy.game.context()
+
         if not context.rollback:
             return
 
