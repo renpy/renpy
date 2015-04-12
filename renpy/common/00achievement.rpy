@@ -20,12 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1500 python in achievement:
-    from store import persistent, renpy
-
+    from store import persistent, renpy, config
 
     # A list of backends that have been registered.
     backends = [ ]
-
 
     class Backend(object):
         """
@@ -55,7 +53,7 @@ init -1500 python in achievement:
             Clears all achievements.
             """
 
-        def progress(self, name, complete, total):
+        def progress(self, name, complete):
             """
             Reports progress towards the achievement with `name`.
             """
@@ -107,16 +105,19 @@ init -1500 python in achievement:
         def __init__(self):
             # A map from achievement name to steam name.
             self.names = { }
+            self.stats = { }
 
             steam.retrieve_stats()
-#             steam.retrieve_stats(self.got_stats)
 
-#         def got_stats(self):
-#             renpy.restart_interaction()
-
-        def register(self, name, steam=None, **kwargs):
+        def register(self, name, steam=None, steam_stat=None, stat_max=None, stat_modulo=1, **kwargs):
             if steam is not None:
                 self.names[name] = steam
+
+            if steam_stat is not None:
+                if stat_max is None:
+                    raise Exception("If an achievement has a steam_stat, it must also have a stat_max.")
+
+                self.stats[name] = (steam_stat, stat_max, stat_modulo)
 
         def grant(self, name):
             name = self.names.get(name, name)
@@ -136,10 +137,31 @@ init -1500 python in achievement:
 
             steam.store_stats()
 
-        def progress(self, name, completed, total):
+        def progress(self, name, completed):
+
+            completed = int(completed)
+
+            if name not in self.stats:
+                if config.developer:
+                    raise Exception("To report progress, you must register {} with a steam_stat and stat_max.".format(name))
+                else:
+                    return
+
+            steam_stat, stat_max, stat_modulo = self.stats[name]
+
             name = self.names.get(name, name)
 
-            steam.indicate_achievement_progress(name, completed, total)
+            if steam.get_int_stat(steam_stat) >= completed:
+                return
+
+            steam.set_int_stat(steam_stat, completed)
+
+            if completed >= stat_max:
+                steam.grant_achievement(name)
+            else:
+                if (stat_modulo is None) or (completed % stat_modulo) == 0:
+                    steam.indicate_achievement_progress(name, completed, stat_max)
+
             steam.store_stats()
 
         def has(self, name):
@@ -152,6 +174,7 @@ init -1500 python in achievement:
 
         if steam.init():
             backends.append(SteamBackend())
+
     except:
         pass
 
@@ -171,6 +194,18 @@ init -1500 python in achievement:
 
         `steam`
             The name to use on steam. If not given, defaults to `name`.
+
+        `steam_stat`
+            The name of the progress stat to use on steam.
+
+        `stat_max`
+            The integer value of the stat at which the achievement unlocks.
+
+        `stat_modulo`
+            If the progress modulo `stat_max` is 0, progress is displayed
+            to the user. For example, if stat_modulo is 10, progress will
+            be displayed to the user when it reaches 10, 20, 30, etc. If
+            not given, this defaults to 0.
         """
 
         for i in backends:
@@ -209,44 +244,32 @@ init -1500 python in achievement:
         for i in backends:
             i.clear_all()
 
-    def progress(name, complete, total):
+    def progress(name, complete, total=None):
         """
         :doc: achievement
+        :args: (name, complete)
 
         Reports progress towards the achievement with `name`, if that
-        achievement has not been granted.
+        achievement has not been granted. The achievement must be defined
+        with a completion amount.
+
+        `name`
+            The name of the achievement. This should be the name of the
+            achievement, and not the stat.
 
         `complete`
             An integer giving the number of units completed towards the
             achievement.
-
-        `total`
-            An integer giving the total number of units required to consider
-            the achievement complete.
         """
 
         if has(name):
             return
 
         for i in backends:
-            i.progress(name, complete, total)
+            i.progress(name, complete)
 
-    def grant_progress(name, complete, total):
-        """
-        :doc: achievement
-
-        If `complete` is less than `total`, reports progress towards the
-        achievement with `name`, if that achievement has not been
-        granted.
-
-        Otherwise, grants the achievement with `name`, if that achievement
-        has not been granted.
-        """
-
-        if complete < total:
-            progress(name, complete, total)
-        else:
-            grant(name)
+    def grant_progress(name, complete, total=None):
+        progress(name, complete)
 
     def has(name):
         """
