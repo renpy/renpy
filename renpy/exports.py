@@ -1683,17 +1683,22 @@ def log(msg):
     if msg is None:
         return
 
-    if not logfile:
-        import codecs
+    try:
 
-        logfile = _file(renpy.config.log, "a")
-        if not logfile.tell():
-            logfile.write(codecs.BOM_UTF8)
+        if not logfile:
+            import codecs
+            logfile = _file(renpy.config.log, "a")
 
-    import textwrap
+            if not logfile.tell():
+                logfile.write(codecs.BOM_UTF8)
 
-    print >>logfile, textwrap.fill(msg).encode("utf-8")
-    logfile.flush()
+        import textwrap
+
+        print >>logfile, textwrap.fill(msg).encode("utf-8")
+        logfile.flush()
+
+    except:
+        renpy.config.log = None
 
 
 def force_full_redraw():
