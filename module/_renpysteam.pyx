@@ -275,7 +275,7 @@ def set_int_stat(name, value):
     server.
     """
 
-    cdef int32 v
+    cdef int32 v = value
 
     return SteamUserStats().SetStat(<char *> name, v)
 
