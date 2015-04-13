@@ -171,12 +171,16 @@ init -1500 python in achievement:
 
     try:
         import _renpysteam as steam
+    except:
+        steam = None
+
+    if steam is not None:
+
+        if steam.version < 1:
+            raise Exception("_renpysteam module is too old.")
 
         if steam.init():
             backends.append(SteamBackend())
-
-    except:
-        pass
 
 
     def register(name, **kwargs):
