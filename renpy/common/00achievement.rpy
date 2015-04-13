@@ -75,6 +75,8 @@ init -1500 python in achievement:
             if persistent._achievements is None:
                 persistent._achievements = _set()
 
+            if persistent._achievement_progress is None:
+                persistent._achievement_progress = _dict()
 
         def grant(self, name):
             persistent._achievements.add(name)
@@ -88,10 +90,27 @@ init -1500 python in achievement:
         def has(self, name):
             return name in persistent._achievements
 
+        def progress(self, name, complete):
+            old = persistent._achievement_progress.get(name, 0)
+            persistent._achievement_progress[name] = max(complete, old)
+
     def merge(old, new, current):
         return old | new
 
+    def merge_progress(old, new, current):
+        rv = _dict()
+        rv.update(old)
+
+        for k in new:
+            if k not in rv:
+                rv[k] = new[k]
+            else:
+                rv[k] = max(new[k], rv[k])
+
+        return rv
+
     renpy.register_persistent("_achievements", merge)
+    renpy.register_persistent("_achievement_progress", merge_progress)
 
     backends.append(PersistentBackend())
 
@@ -113,11 +132,7 @@ init -1500 python in achievement:
             if steam is not None:
                 self.names[name] = steam
 
-            if steam_stat is not None:
-                if stat_max is None:
-                    raise Exception("If an achievement has a steam_stat, it must also have a stat_max.")
-
-                self.stats[name] = (steam_stat, stat_max, stat_modulo)
+            self.stats[name] = (steam_stat, stat_max, stat_modulo)
 
         def grant(self, name):
             name = self.names.get(name, name)
@@ -139,22 +154,24 @@ init -1500 python in achievement:
 
         def progress(self, name, completed):
 
+            orig_name = name
+
             completed = int(completed)
 
             if name not in self.stats:
                 if config.developer:
-                    raise Exception("To report progress, you must register {} with a steam_stat and stat_max.".format(name))
+                    raise Exception("To report progress, you must register {} with a stat_max.".format(name))
                 else:
                     return
+
+            current = persistent._achievement_progress.get(name, 0)
 
             steam_stat, stat_max, stat_modulo = self.stats[name]
 
             name = self.names.get(name, name)
 
-            if steam.get_int_stat(steam_stat) >= completed:
+            if (current is not None) and (current >= completed):
                 return
-
-            steam.set_int_stat(steam_stat, completed)
 
             if completed >= stat_max:
                 steam.grant_achievement(name)
@@ -180,7 +197,7 @@ init -1500 python in achievement:
             raise Exception("_renpysteam module is too old.")
 
         if steam.init():
-            backends.append(SteamBackend())
+            backends.insert(0, SteamBackend())
 
 
     def register(name, **kwargs):
@@ -198,9 +215,6 @@ init -1500 python in achievement:
 
         `steam`
             The name to use on steam. If not given, defaults to `name`.
-
-        `steam_stat`
-            The name of the progress stat to use on steam.
 
         `stat_max`
             The integer value of the stat at which the achievement unlocks.
@@ -279,7 +293,7 @@ init -1500 python in achievement:
         """
         :doc: achievement
 
-        Returne true if the plater has been grnted the achievement with
+        Returns true if the plater has been grnted the achievement with
         `name`.
         """
 
