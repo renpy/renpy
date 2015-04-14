@@ -381,13 +381,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def visit_all(self, callback):
         callback(self)
 
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
-
-        self.child.visit_all(callback)
-
-        _current_screen = old_screen
+        try:
+            push_current_screen(self)
+            self.child.visit_all(callback)
+        finally:
+            pop_current_screen()
 
     def per_interact(self):
         renpy.display.render.redraw(self, 0)
@@ -401,8 +399,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
 
-        if self.child and not hiding:
-            self.child.find_focusable(callback, focus_name)
+        try:
+            push_current_screen(self)
+
+            if self.child and not hiding:
+                self.child.find_focusable(callback, focus_name)
+        finally:
+            pop_current_screen()
 
     def copy(self):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
@@ -534,16 +537,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.widgets = { }
         self.transforms = { }
 
-        # Update _current_screen and renpy.ui.screen.
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
+        push_current_screen(self)
 
         old_ui_screen = renpy.ui.screen
         renpy.ui.screen = self
 
         # Evaluate the screen.
         try:
+
             renpy.ui.detached()
             self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
             self.children = [ self.child ]
@@ -558,7 +559,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         finally:
             renpy.ui.screen = old_ui_screen
-            _current_screen = old_screen
+            pop_current_screen()
 
         # Finish up.
         self.old_widgets = None
@@ -591,15 +592,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if not self.child:
             self.update()
 
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
-
-        child = renpy.display.render.render(self.child, w, h, st, at)
-
-        _current_screen = old_screen
+        try:
+            push_current_screen(self)
+            child = renpy.display.render.render(self.child, w, h, st, at)
+        finally:
+            pop_current_screen()
 
         rv = renpy.display.render.Render(w, h)
+        rv.focus_screen = self
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
 
@@ -619,13 +619,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if (self.phase == OLD) or (self.phase == HIDE):
             return
 
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
+        try:
+            push_current_screen(self)
 
-        rv = self.child.event(ev, x, y, st)
-
-        _current_screen = old_screen
+            rv = self.child.event(ev, x, y, st)
+        finally:
+            pop_current_screen()
 
         if rv is not None:
             return rv
@@ -639,6 +638,17 @@ class ScreenDisplayable(renpy.display.layout.Container):
 # The name of the screen that is currently being displayed, or
 # None if no screen is being currently displayed.
 _current_screen = None
+
+# The stack of old current screens.
+current_screen_stack = [ ]
+
+def push_current_screen(screen):
+    global _current_screen
+    current_screen_stack.append(_current_screen)
+    _current_screen = screen
+
+def pop_current_screen():
+    _current_screen = current_screen_stack.pop()
 
 # A map from (screen_name, variant) tuples to screen.
 screens = { }
