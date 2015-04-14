@@ -26,7 +26,7 @@ import renpy.display
 
 class Focus(object):
 
-    def __init__(self, widget, arg, x, y, w, h):
+    def __init__(self, widget, arg, x, y, w, h, screen):
 
         self.widget = widget
         self.arg = arg
@@ -34,6 +34,7 @@ class Focus(object):
         self.y = y
         self.w = w
         self.h = h
+        self.screen = screen
 
     def copy(self):
         return Focus(
@@ -42,20 +43,25 @@ class Focus(object):
             self.x,
             self.y,
             self.w,
-            self.h)
+            self.h,
+            self.screen)
 
     def __repr__(self):
-        return "<Focus: %r %r (%r, %r, %r, %r)>" % (
+        return "<Focus: %r %r (%r, %r, %r, %r) %r>" % (
             self.widget,
             self.arg,
             self.x,
             self.y,
             self.w,
-            self.h)
+            self.h,
+            self.screen)
 
 
 # The current focus argument.
 argument = None
+
+# The screen of the currently focused widget.
+screen_of_focused = None
 
 # The widget currently grabbing the input, if any.
 grab = None
@@ -64,9 +70,13 @@ grab = None
 default_focus = None
 
 # Sets the currently focused widget.
-def set_focused(widget, arg):
+def set_focused(widget, arg, screen):
     global argument
     argument = arg
+
+    global screen_of_focused
+    screen_of_focused = screen
+
     renpy.game.context().scene_lists.focused = widget
 
     renpy.display.tts.displayable(widget)
@@ -143,11 +153,11 @@ def before_interact(roots):
     global new_grab
     global grab
 
-    # a list of focusable, name tuples.
+    # a list of focusable, name, screen tuples.
     fwn = [ ]
 
     def callback(f, n):
-        fwn.append((f, n))
+        fwn.append((f, n, renpy.display.screen._current_screen))
 
     for root in roots:
         root.find_focusable(callback, None)
@@ -156,14 +166,13 @@ def before_interact(roots):
 
     namecount = { }
 
-    for f, n in fwn:
+    for f, n, screen in fwn:
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
 
         f.full_focus_name = n, serial
 
         replaced_by[id(f)] = f
-
 
     # We assume id(None) is not in replaced_by.
     replaced_by.pop(None, None)
@@ -177,10 +186,10 @@ def before_interact(roots):
     if current is not None:
         current_name = current.full_focus_name
 
-        for f, n in fwn:
+        for f, n, screen in fwn:
             if f.full_focus_name == current_name:
                 current = f
-                set_focused(f, None)
+                set_focused(f, None, screen)
                 break
         else:
             current = None
@@ -188,22 +197,30 @@ def before_interact(roots):
     # Otherwise, focus the default widget, or nothing.
     if current is None:
 
-        for f, n in fwn:
+        for f, n, screen in fwn:
             if f.default:
                 current = f
-                set_focused(f, None)
+                set_focused(f, None, screen)
                 break
         else:
-            set_focused(None, None)
+            set_focused(None, None, None)
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
-    for f, n in fwn:
+    for f, n, screen in fwn:
         if f is not current:
-            f.unfocus(default=True)
+            renpy.display.screen.push_current_screen(screen)
+            try:
+                f.unfocus(default=True)
+            finally:
+                renpy.display.screen.pop_current_screen()
 
     if current:
-        current.focus(default=True)
+        renpy.display.screen.push_current_screen(screen_of_focused)
+        try:
+            current.focus(default=True)
+        finally:
+            renpy.display.screen.pop_current_screen()
 
     # Update the grab.
     grab = replaced_by.get(id(grab), None)
@@ -231,19 +248,25 @@ def change_focus(newfocus, default=False):
         return rv
 
     if current is not None:
-        current.unfocus(default=default)
+        try:
+            renpy.display.screen.push_current_screen(screen_of_focused)
+            current.unfocus(default=default)
+        finally:
+            renpy.display.screen.pop_current_screen()
 
     current = widget
 
     if newfocus is not None:
-        arg = newfocus.arg
+        set_focused(current, newfocus.arg, newfocus.screen)
     else:
-        arg = None
-
-    set_focused(current, arg)
+        set_focused(None, None, None)
 
     if widget is not None:
-        rv = widget.focus(default=default)
+        try:
+            renpy.display.screen.push_current_screen(screen_of_focused)
+            rv = widget.focus(default=default)
+        finally:
+            renpy.display.screen.pop_current_screen()
 
     return rv
 
