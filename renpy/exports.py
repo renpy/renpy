@@ -2387,6 +2387,9 @@ def list_files(common=False):
     rv = [ ]
 
     for dir, fn in renpy.loader.listdirfiles(common): #@ReservedAssignment
+        if fn.startswith("saves/"):
+            continue
+
         rv.append(fn)
 
     return rv
