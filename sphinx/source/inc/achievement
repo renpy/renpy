@@ -13,32 +13,24 @@
     Grants the achievement with `name`, if it has not already been
     granted.
 
-.. function:: achievement.grant_progress(name, complete, total)
-    
-    If `complete` is less than `total`, reports progress towards the
-    achievement with `name`, if that achievement has not been
-    granted.
-    
-    Otherwise, grants the achievement with `name`, if that achievement
-    has not been granted.
-
 .. function:: achievement.has(name)
     
-    Returne true if the plater has been grnted the achievement with
+    Returns true if the plater has been grnted the achievement with
     `name`.
 
-.. function:: achievement.progress(name, complete, total)
+.. function:: achievement.progress(name, complete)
     
     Reports progress towards the achievement with `name`, if that
-    achievement has not been granted.
+    achievement has not been granted. The achievement must be defined
+    with a completion amount.
+    
+    `name`
+        The name of the achievement. This should be the name of the
+        achievement, and not the stat.
     
     `complete`
         An integer giving the number of units completed towards the
         achievement.
-    
-    `total`
-        An integer giving the total number of units required to consider
-        the achievement complete.
 
 .. function:: achievement.register(name, **kwargs)
     
@@ -53,4 +45,13 @@
     
     `steam`
         The name to use on steam. If not given, defaults to `name`.
+    
+    `stat_max`
+        The integer value of the stat at which the achievement unlocks.
+    
+    `stat_modulo`
+        If the progress modulo `stat_max` is 0, progress is displayed
+        to the user. For example, if stat_modulo is 10, progress will
+        be displayed to the user when it reaches 10, 20, 30, etc. If
+        not given, this defaults to 0.
 
