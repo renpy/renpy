@@ -7,8 +7,31 @@ Ren'Py 6.99.2
 
 Ren'Py now supports an images directory underneath the game directory.
 Images found inside this directory - or in subdirectories of this directory - will
-be automatically defined as images in Ren'Py. This will likey render the use of
+be automatically defined as images in Ren'Py. This will likely render the use of
 the image statement obsolete in simple games.
+
+The new :func:`AlphaMask` displayable allows one displayable to be masked by the alpha
+channel of another.
+
+The android and iOS emulators now emulate the onscreen keyboard.
+
+The achievement API has been changed somewhat, but only with respect for
+progress functions. (Which were broken in the previous releases.)
+
+Actions that care about the current screen (like SetScreenVariable) now work
+when used with the hovered and unhovered properties.
+
+The updater has improved. If an incremental download fails, Ren'Py will try
+downloading the complete file before giving up.
+
+Added the :func:`RestartStatement` action.
+
+Added the :func:`renpy.reset_physical_size` and :func:`ui.screen_id` functions.
+
+Documented :func:`ui.interact`.
+
+Updated the Simplified Chinese and Korean translations, and the Italian template.
+
 
 Ren'Py 6.99.1
 =============
