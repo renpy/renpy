@@ -297,6 +297,7 @@ for name in [ "window", "frame" ]:
 DisplayableParser("key", renpy.ui._key, None, 0)
 Positional("key")
 Keyword("action")
+Keyword("activate_sound")
 
 DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=True)
 Positional("delay")

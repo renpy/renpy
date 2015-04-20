@@ -380,14 +380,21 @@ class Keymap(renpy.display.layout.Null):
     k_constant from pygame.constants, or the unicode for the key.
     """
 
-    def __init__(self, replaces=None, **keymap):
-        super(Keymap, self).__init__(style='default')
+    def __init__(self, replaces=None, activate_sound=None, **keymap):
+        if activate_sound is not None:
+            super(Keymap, self).__init__(style='default', activate_sound=activate_sound)
+        else:
+            super(Keymap, self).__init__(style='default')
+
         self.keymap = keymap
 
     def event(self, ev, x, y, st):
 
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
+
+                if self.style.activate_sound:
+                    renpy.audio.music.play(self.style.activate_sound, channel="sound")
 
                 rv = run(action)
 

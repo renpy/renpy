@@ -28,6 +28,9 @@ Added the :func:`RestartStatement` action.
 
 Added the :func:`renpy.reset_physical_size` and :func:`ui.screen_id` functions.
 
+Allowed the screen language key statement to take the activate_sound style
+property. This makes it easier to play a sound when a key is pressed.
+
 Documented :func:`ui.interact`.
 
 Updated the Simplified Chinese and Korean translations, and the Italian template.

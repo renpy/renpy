@@ -620,12 +620,12 @@ saybehavior = Wrapper(renpy.display.behavior.SayBehavior)
 pausebehavior = Wrapper(renpy.display.behavior.PauseBehavior)
 soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
-def _key(key, action=None):
+def _key(key, action=None, activate_sound=None):
 
     if action is None:
         raise Exception("Action is required in ui.key.")
 
-    return renpy.display.behavior.Keymap(**{ key : action})
+    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **{ key : action})
 
 key = Wrapper(_key)
 
