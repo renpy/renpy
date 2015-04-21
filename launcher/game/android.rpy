@@ -53,6 +53,7 @@ init python:
     import re
     import os
     import json
+    import glob
 
     def find_rapt():
 
@@ -180,7 +181,7 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
-    def android_build(command, p=None, gui=True, launch=False):
+    def android_build(command, p=None, gui=True, launch=False, destination=None):
         """
         This actually builds the package.
         """
@@ -214,6 +215,40 @@ init python:
         with interface.nolinks():
             rapt.build.build(rapt_interface, dist, command, launch=launch)
 
+        # Use default destination if not configured
+        if destination is None:
+            build = p.dump['build']
+            destination = build["destination"]
+            parent = os.path.dirname(p.path)
+            destination_dir = os.path.join(parent, destination)
+
+        # os.path.join - empty string because we need directory separator at the end.
+        source_dir = os.path.join(rapt.plat.path(""), "bin", "")
+            
+        #reporter.info(_("Source directory is: {}\nDestination directory is: {}".format(source_dir, destination_dir)), pause=True)
+
+        reporter.info(_("Copying Android files to distributions directory."), pause=False)
+        
+        try:
+            os.makedirs(destination_dir)
+        except:
+            pass
+
+        try:
+            for file in glob.glob(r"{}*.apk".format(source_dir)):
+                shutil.copy(file, destination_dir)
+
+            for file in glob.glob(r"{}*.obb".format(source_dir)):
+                shutil.copy(file, destination_dir)
+        except:
+            store.OpenDirectory(source_dir)()
+            reporter.info(_("Copying Android files to distributions directory failed."), pause=True)
+
+        else:
+            store.OpenDirectory(destination_dir)()
+            reporter.info(_("Copying Android files to distributions directory successful."), pause=True)
+            
+            
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
     for k, v in list(os.environ.items()):
@@ -482,12 +517,13 @@ init python:
         ap.add_argument("project", help="The path to the project directory.")
         ap.add_argument("command", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
         ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
+        ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
 
         p = project.Project(args.project)
 
-        android_build(args.command, p=p, gui=False, launch=args.launch)
+        android_build(args.command, p=p, gui=False, launch=args.launch, destination=args.destination)
 
         return False
 
