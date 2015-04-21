@@ -604,25 +604,6 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def watch(expression, style='default', **properties):
-    """
-    :doc: debug
-
-    This watches the given python expression, by displaying it in the
-    upper-left corner of the screen (although position properties
-    can change that). The expression should always be
-    defined, never throwing an exception.
-
-    A watch will not persist through a save or restart.
-    """
-
-    def overlay_func():
-        renpy.ui.text(unicode(renpy.python.py_eval(expression)),
-                      style=style, **properties)
-
-    renpy.config.overlay_functions.append(overlay_func)
-
-
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None): #@ReservedAssignment
     """
     :doc: input
@@ -2612,7 +2593,7 @@ def reset_physical_size():
     """
     :doc: other
 
-    Attempts to set the size of the physical window to the specified values 
+    Attempts to set the size of the physical window to the specified values
     in renpy.config. (That is, screen_width and screen_height.) This has the
     side effect of taking the screen out of fullscreen mode.
     """

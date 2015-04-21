@@ -467,6 +467,23 @@ init -1500 python in _console:
         traced_expressions.append(expr)
         renpy.show_screen("_trace_screen")
 
+    def renpy_watch(expr):
+        """
+        :name: renpy.watch
+        :doc: debug
+
+        This watches the given python expression, by displaying it in the
+        upper-right corner of the screen.
+        """
+
+        block = [ ( "<console>", 1, expr, [ ]) ]
+
+        l = renpy.parser.Lexer(block)
+        l.advance()
+        watch(l)
+
+    renpy.watch = renpy_watch
+
     @command(_("unwatch <expression>: stop watching an expression"))
     def unwatch(l):
         expr = l.rest()
@@ -475,11 +492,40 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
+
+    def renpy_unwatch(expr):
+        """
+        :name: renpy.unwatch
+        :doc: debug
+
+        Stops watching the given python expression.
+        """
+
+        block = [ ( "<console>", 1, expr, [ ]) ]
+
+        l = renpy.parser.Lexer(block)
+        l.advance()
+        unwatch(l)
+
+    renpy.unwatch = renpy_unwatch
+
+
     @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
         traced_expressions[:] = [ ]
         renpy.hide_screen("_trace_screen")
 
+    def renpy_unwatchall():
+        """
+        :name: renpy.unwatch
+        :doc: debug
+
+        Stops watching all python expressions.
+        """
+
+        unwatchall(None)
+
+    renpy.unwatchall = renpy_unwatchall
 
     @command(_("jump <label>: jumps to label"))
     def jump(l):
