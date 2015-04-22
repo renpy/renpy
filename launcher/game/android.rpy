@@ -181,7 +181,7 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
-    def android_build(command, p=None, gui=True, launch=False, destination=None):
+    def android_build(command, p=None, gui=True, launch=False, destination=None, opendir=False):
         """
         This actually builds the package.
         """
@@ -212,43 +212,58 @@ init python:
             report_success=False,
             )
 
+        def finished(files, destination=destination):
+
+            source_dir = rapt.plat.path("bin")
+
+            try:
+
+                destination_dir = destination
+
+                # Use default destination if not configured
+                if gui and destination is None:
+                    build = p.dump['build']
+                    destination = build["destination"]
+
+                    if destination != "-dists":
+                        parent = os.path.dirname(p.path)
+                        destination_dir = os.path.join(parent, destination)
+
+            except:
+                destination_dir = None
+
+            dir_to_open = source_dir
+
+            if destination_dir is not None:
+
+                reporter.info(_("Copying Android files to distributions directory."))
+
+                try:
+                    os.makedirs(destination_dir)
+                except:
+                    pass
+
+                try:
+
+                    for i in files:
+                        shutil.copy(i, renpy.fsencode(destination_dir))
+
+                    dir_to_open = destination_dir
+
+                except:
+                    import traceback
+                    traceback.print_exc()
+                    pass
+
+            if opendir:
+                store.OpenDirectory(dir_to_open)()
+
+
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, command, launch=launch)
+            rapt.build.build(rapt_interface, dist, command, launch=launch, finished=finished)
 
-        # Use default destination if not configured
-        if destination is None:
-            build = p.dump['build']
-            destination = build["destination"]
-            parent = os.path.dirname(p.path)
-            destination_dir = os.path.join(parent, destination)
 
-        # os.path.join - empty string because we need directory separator at the end.
-        source_dir = os.path.join(rapt.plat.path(""), "bin", "")
-            
-        #reporter.info(_("Source directory is: {}\nDestination directory is: {}".format(source_dir, destination_dir)), pause=True)
 
-        reporter.info(_("Copying Android files to distributions directory."), pause=False)
-        
-        try:
-            os.makedirs(destination_dir)
-        except:
-            pass
-
-        try:
-            for file in glob.glob(r"{}*.apk".format(source_dir)):
-                shutil.copy(file, destination_dir)
-
-            for file in glob.glob(r"{}*.obb".format(source_dir)):
-                shutil.copy(file, destination_dir)
-        except:
-            store.OpenDirectory(source_dir)()
-            reporter.info(_("Copying Android files to distributions directory failed."), pause=True)
-
-        else:
-            store.OpenDirectory(destination_dir)()
-            reporter.info(_("Copying Android files to distributions directory successful."), pause=True)
-            
-            
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
     for k, v in list(os.environ.items()):
@@ -439,7 +454,7 @@ label android_configure:
 
 label android_build:
 
-    $ android_build([ 'release' ])
+    $ android_build([ 'release' ], opendir=True)
 
     jump android
 
