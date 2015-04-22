@@ -121,7 +121,7 @@ init -1500 python:
          the current interaction completes.
          """
 
-        return Show(screen, None, _transient=True, *args, **kwargs)
+        return Show(screen, _transient=True, *args, **kwargs)
 
     @renpy.pure
     class Hide(Action, DictEquality):
