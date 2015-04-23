@@ -24,6 +24,9 @@ when used with the hovered and unhovered properties.
 The updater has improved. If an incremental download fails, Ren'Py will try
 downloading the complete file before giving up.
 
+When building for Android, Ren'Py will copy the apk files in to the dists
+directory used by the desktop platforms.
+
 Added the :func:`RestartStatement` action.
 
 Added the :func:`renpy.reset_physical_size` and :func:`ui.screen_id` functions.
