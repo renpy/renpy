@@ -1,4 +1,4 @@
-#!/home/tom/bin/renpython -O
+#!/home/tom/ab/renpy/lib/linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
 
@@ -9,6 +9,9 @@ import shutil
 import subprocess
 import argparse
 import glob
+
+if not sys.flags.optimize:
+    raise Exception("Optimization disabled.")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
