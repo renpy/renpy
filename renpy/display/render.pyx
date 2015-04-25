@@ -947,6 +947,10 @@ cdef class Render:
             if x < 0 or x >= self.width or y < 0 or y >= self.height:
                 return None
 
+        if self.operation == IMAGEDISSOLVE:
+            if not self.visible_children[0][0].is_pixel_opaque(x, y):
+                return None
+
         rv = None
 
         if self.focuses:
