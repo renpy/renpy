@@ -289,7 +289,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.x = x
             self.y = y
 
-        self.drag_group.positions[self.drag_name] = (x, y, self.old_position)
+        if self.drag_group is not None:
+            self.drag_group.positions[self.drag_name] = (x, y, self.old_position)
 
         redraw(self, 0)
 
