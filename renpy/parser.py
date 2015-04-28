@@ -1803,6 +1803,40 @@ def define_statement(l, loc):
     return rv
 
 
+@statement("default")
+def default_statement(l, loc):
+
+    priority = l.integer()
+    if priority:
+        priority = int(priority)
+    else:
+        priority = 0
+
+    store = 'store'
+    name = l.require(l.name)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.name)
+
+    l.require('=')
+    expr = l.rest()
+
+    if not expr:
+        l.error("expected expression")
+
+    l.expect_noblock('default statement')
+
+    rv = ast.Default(loc, store, name, expr)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], priority)
+
+    l.advance()
+
+    return rv
+
+
 @statement("transform")
 def transform_statement(l, loc):
 

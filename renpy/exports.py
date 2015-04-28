@@ -2884,3 +2884,13 @@ def cancel_gesture():
     """
 
     renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
+
+def execute_default_statement():
+    """
+    :undocumented:
+
+    Executes the default statement.
+    """
+
+    for i in renpy.ast.default_statements:
+        i.set_default()

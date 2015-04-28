@@ -72,6 +72,8 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
+        renpy.execute_default_statement()
+
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
 
@@ -96,7 +98,7 @@ label _after_warp:
 
 
 
-# Common code for _start and _start_memory.
+# Common code for _start and _start_replay.
 label _start_store:
 
     python hide:
@@ -104,13 +106,15 @@ label _start_store:
         renpy.context()._menu = False
         renpy.context()._main_menu = False
 
+        renpy.execute_default_statement()
+
         for i in config.start_callbacks:
             i()
 
     return
 
 
-# Starts up a memory. This is called by renpy.game.call_replay, and
+# Starts up a replay. This is called by renpy.game.call_replay, and
 # is expected to be called with _in_replay set.
 label _start_replay:
 

@@ -1696,13 +1696,6 @@ class Define(Node):
         Node.__setstate__(self, state)
 
     def __init__(self, loc, store, name, expr):
-        """
-        @param name: The name of the image being defined.
-
-        @param expr: An expression yielding a Displayable that is
-        assigned to the image.
-        """
-
         super(Define, self).__init__(loc)
 
         self.store = store
@@ -1729,6 +1722,54 @@ class Define(Node):
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
         renpy.python.store_dicts[self.store][self.varname] = value
+
+
+# All the default statements, in the order they were registered.
+default_statements = [ ]
+
+class Default(Node):
+
+    __slots__ = [
+        'varname',
+        'code',
+        'store',
+        ]
+
+    def __setstate__(self, state):
+        self.store = 'store'
+        Node.__setstate__(self, state)
+
+    def __init__(self, loc, store, name, expr):
+
+        super(Default, self).__init__(loc)
+
+        self.store = store
+        self.varname = name
+        self.code = PyCode(expr, loc=loc, mode='eval')
+
+    def diff_info(self):
+        return (Default, self.store, self.varname)
+
+    def early_execute(self):
+        renpy.python.create_store(self.store)
+
+    def execute(self):
+
+        next_node(self.next)
+        statement_name("default")
+
+        default_statements.append(self)
+
+        if self.store == 'store':
+            renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
+        else:
+            renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
+
+    def set_default(self):
+        d = renpy.python.store_dicts[self.store]
+
+        if self.varname not in d:
+            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
 
 
 class Screen(Node):
