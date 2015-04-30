@@ -123,8 +123,8 @@ the variable refers to is changed.
 Define Statement
 ----------------
 
-The define statement sets a single variable in the default store
-to a value at init time. For example::
+The define statement sets a single variable to a value at init time.
+For example::
 
     define e = Character("Eileen")
 
@@ -141,6 +141,35 @@ prepending it to the variable name with a dot. For example::
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
+
+
+.. _default-statement:
+
+Default Statement
+-----------------
+
+The default statement sets a single variable to a value if that variable
+is not defined when the game starts, or after a new game is loaded. For
+example::
+
+    default points = 0
+
+When the variable ``points`` is not defined at game start, this statement is
+equivalent to:
+
+    label start:
+        $ points = 0
+
+When the variable ``points`` is not defined at game load, it's equivalent to::
+
+    label after_load:
+        $ points = 0
+
+The define statement can take an optional named store (see below), by
+prepending it to the variable name with a dot. For example::
+
+    default schedule.day = 0
+
 
 Names in the Store
 ------------------
