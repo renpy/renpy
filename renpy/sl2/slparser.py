@@ -662,10 +662,20 @@ class UseParser(Parser):
         else:
             id_expr = None
 
-        l.expect_eol()
-        l.expect_noblock("use statement")
+        if l.match(':'):
+            l.expect_eol()
+            l.expect_block("use statement")
 
-        return slast.SLUse(loc, target, args, id_expr)
+            block = slast.SLBlock(loc)
+            self.parse_contents(l, block, block_only=True)
+
+        else:
+            l.expect_eol()
+            l.expect_noblock("use statement")
+
+            block = None
+
+        return slast.SLUse(loc, target, args, id_expr, block)
 
 UseParser("use")
 

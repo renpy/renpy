@@ -1286,8 +1286,9 @@ class SLDefault(SLNode):
 class SLUse(SLNode):
 
     id = None
+    block = None
 
-    def __init__(self, loc, target, args, id_expr):
+    def __init__(self, loc, target, args, id_expr, block):
 
         SLNode.__init__(self, loc)
 
@@ -1303,6 +1304,10 @@ class SLUse(SLNode):
 
         # An expression, if the id property is given.
         self.id = id_expr
+
+        # A block for transclusion, or None if the statement does not have a
+        # block.
+        self.block = block
 
     def prepare(self, analysis):
 
