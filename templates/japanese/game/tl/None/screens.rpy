@@ -176,4 +176,4 @@ translate None strings:
 
     # game/screens.rpy:453
     old "Voice Sustain"
-    new "改行後もボイス継続"
+    new "改頁後もボイス継続"
