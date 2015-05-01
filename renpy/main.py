@@ -263,7 +263,6 @@ def main():
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles() # @UndefinedVariable
-    renpy.display.screen.prepare_screens()
 
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
@@ -332,18 +331,9 @@ def main():
         for i in renpy.game.post_init:
             i()
 
-        # Init translation.
-        renpy.translation.init_translation()
-
-        # Rebuild the various style caches.
-        renpy.style.build_styles() # @UndefinedVariable
-
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
         renpy.atl.compile_all()
-
-        # Prepare the screens.
-        renpy.display.screen.prepare_screens()
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
@@ -374,6 +364,21 @@ def main():
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
+            need_start = True
+        else:
+            need_start = False
+
+        # Init translation.
+        renpy.translation.init_translation()
+
+        # Prepare the screens.
+        renpy.display.screen.prepare_screens()
+
+        # Rebuild the various style caches.
+        renpy.style.build_styles() # @UndefinedVariable
+
+        if need_start:
+            game.interface.start()
 
         # Start things running.
         restart = None

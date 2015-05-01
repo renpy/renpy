@@ -53,7 +53,7 @@ def init_display():
     """
 
     if not renpy.game.interface:
-        renpy.display.core.Interface()
+        renpy.display.core.Interface().start()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
 

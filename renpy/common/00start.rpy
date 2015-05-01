@@ -50,6 +50,10 @@ init -1600 python hide:
 init -1600 python:
 
     def _init_language():
+        """
+        Changes the default language. This is called automatically by
+        Ren'Py as it starts up.
+        """
 
         import os
 
@@ -141,7 +145,6 @@ label _start:
         if renpy.has_screen("main_menu"):
             renpy.start_predict_screen("main_menu")
 
-        _init_language()
         renpy.block_rollback()
 
     call _gl_test

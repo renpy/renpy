@@ -668,10 +668,18 @@ def get_screen_variant(name):
 
     return None
 
+
+prepared = False
+
 def prepare_screens():
     """
     Prepares all screens for use.
     """
+
+    global prepared
+
+    if prepared:
+        return
 
     predict_cache.clear()
 
@@ -686,6 +694,8 @@ def prepare_screens():
             continue
 
         s.ast.prepare()
+
+    prepared = True
 
 def define_screen(*args, **kwargs):
     """

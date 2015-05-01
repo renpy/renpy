@@ -1406,23 +1406,7 @@ class Interface(object):
         renpy.display.interface = self
 
         # Are we in safe mode, from holding down shift at start?
-        self.safe_mode = get_safe_mode()
-
-        # Setup the video mode.
-        self.set_mode()
-
-        # Double check, since at least on Linux, we can't set safe_mode until
-        # the window maps.
-        self.safe_mode = get_safe_mode()
-
-        # Load the image fonts.
-        renpy.text.font.load_image_fonts()
-
-        # Setup periodic event.
-        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
-
-        # Don't grab the screen.
-        pygame.event.set_grab(False)
+        self.safe_mode = False
 
         # Do we need a background screenshot?
         self.bgscreenshot_needed = False
@@ -1449,11 +1433,32 @@ class Interface(object):
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
 
+        # Should we restart the interaction?
+        self.restart_interaction = True
+
         # For compatibility with older code.
         if renpy.config.periodic_callback:
             renpy.config.periodic_callbacks.append(renpy.config.periodic_callback)
 
         renpy.display.emulator.init_emulator()
+
+    def start(self):
+        """
+        Starts the interface, by opening a window and setting the mode.
+        """
+
+        self.safe_mode = get_safe_mode()
+        self.set_mode()
+        self.safe_mode = get_safe_mode()
+
+        # Load the image fonts.
+        renpy.text.font.load_image_fonts()
+
+        # Setup periodic event.
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+        # Don't grab the screen.
+        pygame.event.set_grab(False)
 
 
     def post_init(self):
@@ -2289,6 +2294,9 @@ class Interface(object):
         @param suppress_overlay: This suppresses the display of the overlay.
         @param suppress_underlay: This suppresses the display of the underlay.
         """
+
+        # Prepare screens, if need be.
+        renpy.display.screen.prepare_screens()
 
         self.roll_forward = roll_forward
         self.show_mouse = show_mouse

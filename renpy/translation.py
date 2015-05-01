@@ -454,6 +454,8 @@ def init_translation():
 
     load_all_rpts()
 
+    renpy.store._init_language() # @UndefinedVariable
+
 def change_language(language):
     """
     :doc: translation_functions
