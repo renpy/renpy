@@ -63,15 +63,15 @@ translate japanese strings:
 
     # game/ios.rpy:255
     old "Select Xcode Projects Directory"
-    new "Xcode プロジェクトディレクトリーを選択してください。"
+    new "Xcode プロジェクトディレクトリー選択"
 
     # game/ios.rpy:259
     old "Create Xcode Project"
-    new "Xcode プロジェクトを作成してください。"
+    new "Xcode プロジェクト作成"
 
     # game/ios.rpy:263
     old "Update Xcode Project"
-    new "Xcode プロジェクトを更新してください。"
+    new "Xcode プロジェクト更新"
 
     # game/ios.rpy:268
     old "Launch Xcode"
@@ -79,7 +79,7 @@ translate japanese strings:
 
     # game/ios.rpy:303
     old "Open Xcode Projects Directory"
-    new "Xcode プロジェクトディレクトリーを開いてください。"
+    new "Xcode プロジェクトディレクトリー開く"
 
     # game/ios.rpy:336
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
