@@ -19,6 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+#########################################################################
+# WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+#
+# When adding fields to a class in an __init__ method, we need to ensure that
+# field is copied in the copy() method.
+
+
 import ast
 import collections
 import linecache
@@ -142,6 +150,7 @@ class SLContext(renpy.ui.Addable):
     def close(self, d):
         raise Exception("Spurious ui.close().")
 
+
 class SLNode(object):
     """
     The base class for screen language nodes.
@@ -157,7 +166,6 @@ class SLNode(object):
     # True if this node should be the last keyword parsed.
     last_keyword = False
 
-
     def __init__(self, loc):
         global serial
         serial += 1
@@ -167,6 +175,31 @@ class SLNode(object):
 
         # The location of this node, a (file, line) tuple.
         self.location = loc
+
+    def instantiate(self, transclude):
+        """
+        Instantiates a new instance of this class, copying the global
+        attributes of this class onto the new instance.
+        """
+
+        cls = type(self)
+
+        rv = cls.__new__(cls)
+        rv.serial = self.serial
+        rv.location = self.location
+
+        return rv
+
+    def copy(self, transclude):
+        """
+        Makes a copy of this node.
+
+        `transclude`
+            A SLBlock to be transcluded in place of a SLTransclude.
+        """
+
+        raise Exception("copy not implemented by " + type(self).__name__)
+
 
     def report_traceback(self, name):
         filename, line = self.location
@@ -248,6 +281,16 @@ class SLBlock(SLNode):
 
         # A list of child SLNodes.
         self.children = [ ]
+
+    def instantiate(self, transclude):
+        rv = SLNode.instantiate(self, transclude)
+        rv.keyword = self.keyword
+        rv.children = [ i.copy(transclude) for i in self.children ]
+
+        return rv
+
+    def copy(self, transclude):
+        return self.instantiate(self, transclude)
 
     def analyze(self, analysis):
 
@@ -452,6 +495,22 @@ class SLDisplayable(SLBlock):
 
         # Positional argument expressions.
         self.positional = [ ]
+
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.displayable = self.displayable
+        rv.scope = self.scope
+        rv.child_or_fixed = self.child_or_fixed
+        rv.style = self.style
+        rv.pass_context = self.pass_context
+        rv.imagemap = self.imagemap
+        rv.hotspot = self.hotspot
+        rv.replaces = self.replaces
+        rv.default_keywords = self.default_keywords
+        rv.positional = self.positional
+
+        return rv
 
     def analyze(self, analysis):
 
@@ -952,6 +1011,12 @@ class SLIf(SLNode):
         # None, for the else block) and a SLBlock.
         self.entries = [ ]
 
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.entries = [ (expr, block.copy(transclude)) for expr, block in self.entries ]
+
+        return rv
 
     def analyze(self, analysis):
 
@@ -1075,6 +1140,13 @@ class SLShowIf(SLNode):
         # None, for the else block) and a SLBlock.
         self.entries = [ ]
 
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.entries = [ (expr, block.copy(transclude)) for expr, block in self.entries ]
+
+        return rv
+
     def analyze(self, analysis):
 
         for _cond, block in self.entries:
@@ -1139,6 +1211,14 @@ class SLFor(SLBlock):
 
         self.variable = variable
         self.expression = expression
+
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.variable = self.variable
+        rv.expression = self.expression
+
+        return rv
 
     def analyze(self, analysis):
 
@@ -1240,6 +1320,13 @@ class SLPython(SLNode):
         # A pycode object.
         self.code = code
 
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.code = self.code
+
+        return rv
+
     def analyze(self, analysis):
         analysis.python(self.code.source)
 
@@ -1256,6 +1343,10 @@ class SLPass(SLNode):
     def execute(self, context):
         return
 
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        return rv
 
 class SLDefault(SLNode):
 
@@ -1264,6 +1355,14 @@ class SLDefault(SLNode):
 
         self.variable = variable
         self.expression = expression
+
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.variable = self.variable
+        rv.expression = self.expression
+
+        return rv
 
     def analyze(self, analysis):
         analysis.mark_not_constant(self.variable)
@@ -1309,9 +1408,15 @@ class SLUse(SLNode):
         # block.
         self.block = block
 
-    def prepare(self, analysis):
+    def get_ast(self):
+        """
+        Gets the ast, if this is an SL2 screen, and sets
+        """
 
         ts = renpy.display.screen.get_screen_variant(self.target)
+
+        if self.ast is not None:
+            return
 
         if ts is None:
             self.constant = NOT_CONST
@@ -1322,13 +1427,55 @@ class SLUse(SLNode):
             return
 
         self.ast = ts.ast
-        self.ast.prepare(analysis)
 
-        self.constant = self.ast.constant
+        if self.block:
+            self.ast = self.ast.copy(self.block)
+
+    def copy(self, transclude):
+
+        self.get_ast()
+
+        rv = self.instantiate(transclude)
+
+        rv.target = self.target
+        rv.args = self.args
+        rv.id = self.id
+        rv.block = self.block
+
+        if not self.ast:
+            rv.ast = None
+            return rv
+
+        if not self.block:
+            rv.ast = self.ast.copy(None)
+            return rv
+
+        block = self.block.copy(transclude)
+        rv.ast = self.ast.copy(block)
+
+        return rv
+
+    def analyze(self, analysis):
+
+        self.get_ast()
+
+        if not self.ast:
+            self.constant = NOT_CONST
+            return
+
+        self.ast.analyze(analysis.get_child(self.serial))
+
         self.last_keyword = True
+        self.constant = self.ast.constant
 
         if self.id:
             self.constant = NOT_CONST
+
+    def prepare(self, analysis):
+        if self.ast is None:
+            return
+
+        self.ast.prepare(analysis.get_child(self.serial))
 
     def execute_use_screen(self, context):
 
@@ -1490,6 +1637,20 @@ class SLScreen(SLBlock):
         # True if this screen has been prepared.
         self.prepared = False
 
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        rv.name = self.name
+        rv.modal = self.modal
+        rv.zorder = self.zorder
+        rv.tag = self.tag
+        rv.variant = self.variant
+        rv.predict = self.predict
+        rv.parameters = self.parameters
+        rv.prepared = False
+
+        return rv
+
     def define(self, location):
         """
         Defines a screen.
@@ -1518,7 +1679,7 @@ class SLScreen(SLBlock):
             # version of the screen.
             self.version += 1
 
-            analysis = Analysis()
+            analysis = Analysis(analysis)
 
             if self.parameters:
                 analysis.parameters(self.parameters)

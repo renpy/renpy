@@ -171,7 +171,15 @@ class Analysis(object):
     code analysis.
     """
 
-    def __init__(self):
+    def __init__(self, parent=None):
+
+        # The parent context transcludes run in, or None if there is no parent
+        # context.
+        self.parent = parent
+
+        # Analyses of children, such a screens we use.
+        self.children = { }
+
         # The variables we consider to be not-constant.
         self.not_constant = set(not_constants)
 
@@ -195,6 +203,15 @@ class Analysis(object):
 
         # The stack of const_flow values.
         self.control_stack = [ self.control ]
+
+    def get_child(self, identifier):
+        if identifier in self.children:
+            return self.children[identifier]
+
+        rv = Analysis(self)
+        self.children[identifier] = rv
+
+        return rv
 
     def push_control(self, const=True, loop=False, imagemap=False):
         self.control = Control(self.control.const and const, loop, self.imagemap or imagemap)
@@ -235,6 +252,10 @@ class Analysis(object):
         Returns True if we've reached a fixed point, where the analysis has
         not changed since the last time we called this function.
         """
+
+        for i in self.children.values():
+            if not i.at_fixed_point():
+                return False
 
         if ((self.old_not_constant == self.not_constant) and
             (self.old_global_constant == self.global_constant) and
