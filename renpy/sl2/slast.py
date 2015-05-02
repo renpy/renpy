@@ -134,6 +134,9 @@ class SLContext(renpy.ui.Addable):
         # would be thrown.
         self.fail = False
 
+        # The parent context of a use statement with a block.
+        self.parent = None
+
     def get_style_group(self):
         style_prefix = self.style_prefix
 
@@ -1584,6 +1587,7 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.scope = scope
         ctx.cache = cache
+        ctx.parent = context
 
         if update:
             ctx.updating = True
@@ -1601,6 +1605,71 @@ class SLUse(SLNode):
 
         if self.ast is not None:
             self.ast.copy_on_change(c)
+
+
+class SLTransclude(SLNode):
+
+    def __init__(self, loc):
+        SLNode.__init__(self, loc)
+
+        self.child = None
+
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+        rv.child = transclude
+        return rv
+
+    def analyze(self, analysis):
+
+        if self.child is None:
+            self.constant = GLOBAL_CONST
+            return
+
+        self.child.analyze(analysis.parent)
+        self.constant = self.child.constant
+
+    def prepare(self, analysis):
+
+        if self.child is None:
+            self.constant = GLOBAL_CONST
+            return
+
+        self.child.prepare(analysis.parent)
+
+    def execute(self, context):
+
+        if not self.child:
+            return
+
+        cache = context.cache.get(self.serial, None)
+
+        if cache is None:
+            context.cache[self.serial] = cache = { }
+
+        ctx = SLContext(context.parent)
+
+        ctx.cache = cache
+
+        ctx.children = context.children
+        ctx.showif = context.showif
+        ctx.uses_scope = context.uses_scope
+
+        self.child.execute(ctx)
+
+        if ctx.fail:
+            context.fail = True
+
+    def copy_on_change(self, cache):
+
+        if self.child is None:
+            return
+
+        c = cache.get(self.serial, None)
+        if c is None:
+            return
+
+        self.child.copy_on_change(c)
+
 
 class SLScreen(SLBlock):
     """

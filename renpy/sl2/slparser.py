@@ -680,6 +680,15 @@ class UseParser(Parser):
 UseParser("use")
 
 
+class TranscludeParser(Parser):
+
+    def parse(self, loc, l, parent):
+        l.expect_eol()
+        return slast.SLTransclude(loc)
+
+TranscludeParser("transclude")
+
+
 class ScreenParser(Parser):
 
     def __init__(self):
