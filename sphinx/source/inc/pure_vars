@@ -1,6 +1,6 @@
 * ADVCharacter
 * ADVSpeaker
-* AddToSet
+* :func:`AddToSet`
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
@@ -71,7 +71,7 @@
 * :func:`QuickLoad`
 * :func:`QuickSave`
 * :func:`Quit`
-* RemoveFromSet
+* :func:`RemoveFromSet`
 * :func:`Replay`
 * :func:`RestartStatement`
 * :func:`Return`
@@ -108,7 +108,7 @@
 * :func:`ToggleDict`
 * :func:`ToggleField`
 * :func:`ToggleScreenVariable`
-* ToggleSetMembership
+* :func:`ToggleSetMembership`
 * :func:`ToggleVariable`
 * :func:`ToggleVoiceMute`
 * :class:`Transform`
