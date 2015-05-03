@@ -584,3 +584,6 @@ add(position_properties)
 DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
+
+# Ensure that Parsers are no longer added automatically.
+renpy.sl2.slparser.parser = None

@@ -423,7 +423,8 @@ class DisplayableParser(Parser):
             )
 
         for _i in self.positional:
-            rv.positional.append(l.simple_expression())
+            expr = l.require(l.simple_expression)
+            rv.positional.append(expr)
 
         can_has = (self.nchildren == 1)
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
@@ -687,6 +688,88 @@ class TranscludeParser(Parser):
         return slast.SLTransclude(loc)
 
 TranscludeParser("transclude")
+
+
+class CustomParser(Parser):
+
+    def __init__(self, name, positional=0, children=many, screen=None):
+        """
+        :doc: custom_sl
+        :name: renpy.register_sl_statement
+
+        Registers a custom screen language statement with Ren'Py.
+
+        `name`
+            This must be a word. It's the name of the custom screen language
+            statement.
+
+        `positional`
+            The number of positional parameters this statement takes.
+
+        `children`
+            The number of children this custom statement takes. This should
+            be 0, 1, or the default (which is "many").
+
+        `screen`
+            The screen to use. If not given, defaults to `name`.
+        """
+
+        Parser.__init__(self, name)
+
+        for i in childbearing_statements:
+            i.add(self)
+
+        screen_parser.add(self)
+
+        self.nchildren = children
+
+        if self.nchildren != 0:
+            childbearing_statements.add(self)
+
+            for i in all_statements:
+                self.add(i)
+
+        global parser
+        parser = None
+
+        # The screen to use.
+        if screen is not None:
+            self.screen = screen
+        else:
+            self.screen = name
+
+        # The number of positional parameters required.
+        self.positional = positional
+
+    def add_property(self, name):
+        self.add(Keyword(name))
+
+    def parse(self, loc, l, parent):
+
+        arguments = [ ]
+
+        # Parse positional arguments.
+        for _i in range(self.positional):
+            expr = l.require(l.simple_expression)
+            arguments.append((None, expr))
+
+        # Parser keyword arguments and children.
+        block = slast.SLBlock(loc)
+        can_has = (self.nchildren == 1)
+        self.parse_contents(l, block, can_has=can_has, can_tag=False)
+
+        # Add the keyword arguments, and create an ArgumentInfo object.
+        arguments.extend(block.keyword)
+        block.keyword = [ ]
+
+        args = renpy.ast.ArgumentInfo(arguments, None, None)
+
+        # We only need a SLBlock if we have children.
+        if not block.children:
+            block = None
+
+        # Create the Use statement.
+        return slast.SLUse(loc, self.screen, args, None, block)
 
 
 class ScreenParser(Parser):
