@@ -22,7 +22,19 @@
 # This file contains mobile build things that are shared by the android
 # and iOS builds.
 
-init python:
+init -1 python:
+
+    def check_version_txt(path):
+        if not updater.can_update():
+            return True
+
+        try:
+            with open(os.path.join(path, "version.txt")) as f:
+                version = f.read()
+
+            return version.strip() == renpy.version_only
+        except:
+            return False
 
     class LaunchEmulator(Action):
 

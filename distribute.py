@@ -83,7 +83,7 @@ def main():
     reload(sys.modules['renpy'])
 
     # Check that the versions match.
-    full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
+    full_version = renpy.version_only #@UndefinedVariable
     if "-" not in args.version \
         and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
@@ -148,6 +148,13 @@ def main():
             sys.exit(1)
         else:
             print "RAPT build succeeded."
+
+        def write_version_txt(path):
+            with open(path + "/version.txt", "w") as f:
+                f.write(full_version)
+
+        write_version_txt("rapt")
+        write_version_txt("renios")
 
         compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", force=1, quiet=1)
         compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", force=1, quiet=1)

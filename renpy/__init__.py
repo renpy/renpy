@@ -45,8 +45,11 @@ version_tuple = (6, 99, 4, vc_version)
 # The name of this version.
 version_name = "Here's to the crazy ones."
 
+# A string giving the version number only (7.0.1.123).
+version_only = ".".join(str(i) for i in version_tuple)
+
 # A verbose string giving the version.
-version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
+version = "Ren'Py " + version_only
 
 # Other versions.
 script_version = 5003000
