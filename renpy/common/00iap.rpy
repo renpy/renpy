@@ -508,7 +508,7 @@ init -1500 python in iap:
             backend = NoneBackend()
 
         # Restore purchases.
-        if products:
+        if products and renpy.android:
             restore(False)
 
 init 1500 python in iap:
