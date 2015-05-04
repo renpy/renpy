@@ -55,9 +55,6 @@ init python:
         Returns True if the DLC is installed, False otherwise.
         """
 
-        if check_dlc(name):
-            return True
-
         if persistent.update_channel == "Nightly":
             dlc_url = UPDATE_URLS["Nightly"]
         else:
