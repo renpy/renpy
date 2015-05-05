@@ -259,6 +259,7 @@ init python:
     build.classify_renpy("renios/prototype/**", "renios")
     build.classify_renpy("renios/buildlib/**", "renios")
     build.classify_renpy("renios/ios.py", "renios")
+    build.classify_renpy("renios/version.txt", "renios")
     build.classify_renpy("renios/", "renios")
 
     build.classify_renpy("**.old", None)
