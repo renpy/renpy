@@ -168,14 +168,25 @@ init python:
             report_success=False,
             )
 
+        main_fn = os.path.join(dist, "main.py")
+
         for fn in os.listdir(dist):
             if fn.endswith(".py"):
-                os.rename(
-                    os.path.join(dist, fn),
-                    os.path.join(dist, "main.py"),
-                    )
-
+                py_fn = os.path.join(dist, fn)
                 break
+        else:
+            raise Exception("Could not find a .py file.")
+
+        with open(py_fn, "r") as py_f:
+            with open(main_fn, "w") as main_f:
+                for l in py_f:
+                    if l.startswith("#!"):
+                        continue
+
+                    main_f.write(l)
+
+        os.unlink(py_fn)
+
 
     def launch_xcode():
         dist = xcode_project(None)
