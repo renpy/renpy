@@ -2897,3 +2897,12 @@ def execute_default_statement():
 
     for i in renpy.ast.default_statements:
         i.set_default()
+
+def write_log(s, *args):
+    """
+    :undocumented:
+
+    Writes to log.txt.
+    """
+
+    renpy.display.log.write(s, *args)
