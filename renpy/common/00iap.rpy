@@ -495,6 +495,10 @@ init -1500 python in iap:
         if not products:
             return
 
+        for p in products.values():
+            if p.identifier not in persistent._iap_purchases:
+                persistent._iap_purchases[p.identifier] = False
+
         # Set up the back end.
         if renpy.android:
             backend = init_android()
