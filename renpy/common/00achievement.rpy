@@ -188,16 +188,23 @@ init -1500 python in achievement:
 
     try:
         import _renpysteam as steam
-    except:
+        renpy.write_log("Imported steam.")
+    except Exception as e:
         steam = None
+        renpy.write_log("Importing _renpysteam: %r", e)
 
     if steam is not None:
 
-        if steam.version < 1:
-            raise Exception("_renpysteam module is too old.")
+        want_version = 2
+
+        if steam.version < want_version:
+            raise Exception("_renpysteam module is too old. (want version %d, got %d)" % (steam.version, want_version))
 
         if steam.init():
+            renpy.write_log("Initialized steam.")
             backends.insert(0, SteamBackend())
+        else:
+            renpy.write_log("Failed to initialize steam.")
 
 
     def register(name, **kwargs):
