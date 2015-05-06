@@ -19,12 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-version = 1
+version = 2
 
 cdef extern from "steam/steam_api.h":
     ctypedef bint bool
     ctypedef int int32
     ctypedef unsigned int uint32
+    ctypedef unsigned long long uint64
 
     # Init.
 
@@ -79,6 +80,8 @@ cdef extern from "steam/steam_api.h":
         bool BIsDlcInstalled(AppId_t nAppID)
         void InstallDLC(AppId_t nAppID)
         void UninstallDLC(AppId_t nAppID)
+
+        bool GetDlcDownloadProgress(AppId_t nAppID, uint64 *punBytesDownloaded, uint64 *punBytesTotal)
 
     ctypedef struct DlcInstalled_t:
         AppId_t m_nAppID
@@ -325,16 +328,6 @@ def dlc_installed(appid):
 
     return SteamApps().BIsDlcInstalled(appid)
 
-# # A callable that is called when the stats are available.
-# got_dlc = None
-#
-# cdef void call_got_dlc(DlcInstalled_t *s):
-#     if got_dlc is not None:
-#         got_dlc(s.m_nAppID)
-#
-# cdef SteamCallback[DlcInstalled_t] *dlc_callback = \
-#     new SteamCallback[DlcInstalled_t](call_got_dlc)
-
 def install_dlc(appid): # , callback):
     """
     :doc: steam_apps
@@ -348,9 +341,6 @@ def install_dlc(appid): # , callback):
     callback can be registered at a time.
     """
 
-#     global got_dlc
-#     got_dlc = callback
-
     SteamApps().InstallDLC(appid)
 
 def uninstall_dlc(appid):
@@ -361,6 +351,23 @@ def uninstall_dlc(appid):
     """
 
     SteamApps().UninstallDLC(appid)
+
+def dlc_progress(appid):
+    """
+    :doc: steam_apps
+
+    Reports the progress towards DLC download completion.
+
+    """
+
+    cdef uint64 done = 0
+    cdef uint64 total = 0
+
+    if SteamApps().GetDlcDownloadProgress(appid, &done, &total):
+        return done, total
+    else:
+        return None
+
 
 ######################################################################## Overlay
 
