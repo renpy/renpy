@@ -1576,11 +1576,13 @@ class Text(renpy.display.core.Displayable):
                     continue
 
                 # Expand the blits and offset them as necessary.
-                if b_x + b_w == w:
+                if b_x + b_w >= w - 2:
                     b_w += layout.add_right
+                    b_w += o
 
-                if b_y + b_h == h:
+                if b_y + b_h >= h - 2:
                     b_h += layout.add_bottom
+                    b_h += o
 
                 if b_x == 0:
                     b_w += layout.add_left
