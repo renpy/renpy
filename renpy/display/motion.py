@@ -838,6 +838,8 @@ class Transform(Container):
         # If we don't have a child for some reason, set it to null.
         if child is None:
             child = get_null()
+        else:
+            child = child.parameterize('displayable', [ ])
 
         rv = Transform(
             child=child,
