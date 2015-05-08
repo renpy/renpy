@@ -155,7 +155,7 @@ example::
     default points = 0
 
 When the variable ``points`` is not defined at game start, this statement is
-equivalent to:
+equivalent to::
 
     label start:
         $ points = 0
