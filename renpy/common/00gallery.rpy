@@ -564,7 +564,7 @@ init -1500:
                 add d
 
         if gallery.slideshow:
-            timer gallery.slideshow_delay action Return("next")
+            timer gallery.slideshow_delay action Return("next") repeat True
 
         key "game_menu" action gallery.Return()
 
