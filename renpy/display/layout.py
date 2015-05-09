@@ -240,7 +240,7 @@ def LiveComposite(size, *args, **properties):
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
-        rv.add(renpy.display.motion.Transform(widget, xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
+        rv.add(Position(widget, xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
 
     return rv
 
@@ -264,6 +264,13 @@ class Position(Container):
 
         super(Position, self).__init__(style=style, **properties)
         self.add(child)
+
+    def parameterize(self, name, parameters):
+
+        rv = Position(self.child.parameterize('displayable', [ ]))
+        rv.style = self.style.copy()
+
+        return rv
 
     def render(self, width, height, st, at):
 
