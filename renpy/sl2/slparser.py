@@ -691,30 +691,41 @@ TranscludeParser("transclude")
 
 
 class CustomParser(Parser):
+    """
+    :doc: custom_sl class
+    :name: renpy.register_sl_statement
 
-    def __init__(self, name, positional=0, children=many, screen=None):
-        """
-        :doc: custom_sl
-        :name: renpy.register_sl_statement
+    Registers a custom screen language statement with Ren'Py.
 
-        Registers a custom screen language statement with Ren'Py.
+    `name`
+        This must be a word. It's the name of the custom screen language
+        statement.
 
-        `name`
-            This must be a word. It's the name of the custom screen language
-            statement.
+    `positional`
+        The number of positional parameters this statement takes.
 
-        `positional`
-            The number of positional parameters this statement takes.
+    `children`
+        The number of children this custom statement takes. This should
+        be 0, 1, or "many", which means zero or more.
 
-        `children`
-            The number of children this custom statement takes. This should
-            be 0, 1, or the default (which is "many").
+    `screen`
+        The screen to use. If not given, defaults to `name`.
 
-        `screen`
-            The screen to use. If not given, defaults to `name`.
-        """
+    This returns an object that can have properties added to it. Properties
+    are added using the method:
 
+
+    .. method:: add_property(name)
+
+        Registers a property with the creator-defined screen language statement. This
+        returns the object it is called on, so calls can be chained.
+    """
+
+    def __init__(self, name, positional=0, children="many", screen=None):
         Parser.__init__(self, name)
+
+        if children == "many":
+            children = many
 
         for i in childbearing_statements:
             i.add(self)

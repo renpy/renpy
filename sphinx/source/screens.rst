@@ -1455,6 +1455,41 @@ is transfered from old to new.
         pause
         return
 
+Use and Transclude
+^^^^^^^^^^^^^^^^^^
+
+A use statement may also take a block containing screen language statements.
+When a block is given, the screen that is used may contain the ``transclude``
+statement. The ``transclude`` statement is replaces with the statements
+contained within the use statement's block.
+
+This makes it possible to define reusable layouts using screens. For example,
+the screen::
+
+    screen movable_frame(pos):
+        drag:
+            pos pos
+
+            frame:
+                background Frame("movable_frame.png", 10, 10)
+                top_padding 20
+
+                transclude
+
+is meant to be a reusable component that wraps other components. Here's
+an example of how it can be used::
+
+    screen test:
+        use movable_frame((0, 0)):
+            text "You can drag me."
+
+        use movable_frame((0, 100)):
+            vbox:
+                text "You can drag me too."
+                textbutton "Got it!" action Return(True)
+
+The use and transclude constructs form the basis of
+:ref:`creator-defined screen language statements <creator-defined-sl>`.
 
 .. _sl-python:
 
