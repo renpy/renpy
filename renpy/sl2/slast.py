@@ -293,7 +293,7 @@ class SLBlock(SLNode):
         return rv
 
     def copy(self, transclude):
-        return self.instantiate(self, transclude)
+        return self.instantiate(transclude)
 
     def analyze(self, analysis):
 

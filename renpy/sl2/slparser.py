@@ -743,6 +743,7 @@ class CustomParser(Parser):
 
     def add_property(self, name):
         self.add(Keyword(name))
+        return self
 
     def parse(self, loc, l, parent):
 
