@@ -2,6 +2,61 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.4
+=============
+
+The Ren'Py script language now includes a new :ref:`default statement<default-statement>`.
+This statement sets a variable to a value a default value at game start or load,
+if the variable is not defined. This makes it possible to initialize saved
+variables near the relevant code, rather than all at once at label start.
+
+The screen language :ref:`use statement <sl-use>` now takes a block, which
+can be transcluded into a screen using the ``transclude`` statement. This makes
+it possible to use statements to "wrap" a block of screen language code.
+
+The screen language also supports :ref:`creator-defined statements <creator-defined-sl>`,
+which are transformd into use statements. These make it possible to extend the
+screen language syntax.
+
+Ren'Py now logs errors importing the steam module to log.txt.
+
+There are a number of improvements to iOS support, to support passing Apple's
+package verification process.
+
+The launcher now checks that the version of rapt and renios match the version
+of Ren'Py proper.
+
+Fixes
+-----
+
+Fixed a performance problem caused by failing to release the Global Interpreter
+Lock while waiting for event input. This could cause problems running various
+background threads, like the image preloader and autosave.
+
+Ensured that screens are only analyzed once as the game starts. Previously,
+screens could be analyzed multiple times as the styles and languages were
+set, leading to excessive startup times, especially on mobile platforms.
+
+The volume curve has been changed to be more correct and perceptually
+accurate. The previous curve had serveral problems, most notably that
+is sharply jumped from 0 to 10%. This may require players to adjust their
+volume settings.
+
+The gallery slideshow timer now repeats through multiple images.
+
+Text blits are now expanded to include an outline on a descender on the
+bottom row of text.
+
+Drags outside of a draggroup can now be snapped into place.
+
+
+Ren'Py 6.99.3
+=============
+
+Removed debugging code that could cause problems by writing an unnecessary
+zipfile.txt file.
+
+
 Ren'Py 6.99.2
 =============
 
