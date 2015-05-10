@@ -136,7 +136,7 @@ def set_volume(channel, volume):
     if volume == 0:
         PSS_set_volume(channel, 0)
     else:
-        PSS_set_volume(channel, 10 ** volume / 10 )
+        PSS_set_volume(channel, volume ** 2)
 
     check_error()
 
