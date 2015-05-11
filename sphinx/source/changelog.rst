@@ -5,7 +5,7 @@ Full Changelog
 Ren'Py 6.99.4
 =============
 
-The Ren'Py script language now includes a new :ref:`default statement<default-statement>`.
+The Ren'Py script language now includes a new :ref:`default statement <default-statement>`.
 This statement sets a variable to a value a default value at game start or load,
 if the variable is not defined. This makes it possible to initialize saved
 variables near the relevant code, rather than all at once at label start.
@@ -15,7 +15,7 @@ can be transcluded into a screen using the ``transclude`` statement. This makes
 it possible to use statements to "wrap" a block of screen language code.
 
 The screen language also supports :ref:`creator-defined statements <creator-defined-sl>`,
-which are transformd into use statements. These make it possible to extend the
+which are transformed into use statements. These make it possible to extend the
 screen language syntax.
 
 Ren'Py now logs errors importing the steam module to log.txt.

@@ -76,8 +76,6 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
-        renpy.execute_default_statement()
-
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
 
