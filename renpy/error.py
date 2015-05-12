@@ -77,12 +77,17 @@ def traceback_list(tb):
 
         tb = tb.tb_next
 
-        if (tb is not None) and ('self' in frame.f_locals) and (not renpy.config.raw_tracebacks):
+        if ('self' in frame.f_locals) and (not renpy.config.raw_tracebacks):
             obj = frame.f_locals['self']
 
+            last = (tb is None)
+
             try:
-                l.extend(obj.report_traceback(name))
-                continue
+                report = obj.report_traceback(name, last)
+
+                if report is not None:
+                    l.extend(report)
+                    continue
             except:
                 pass
 

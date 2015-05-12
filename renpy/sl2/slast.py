@@ -204,7 +204,10 @@ class SLNode(object):
         raise Exception("copy not implemented by " + type(self).__name__)
 
 
-    def report_traceback(self, name):
+    def report_traceback(self, name, last):
+        if last:
+            return None
+
         filename, line = self.location
 
         return [ (filename, line, name, None) ]
@@ -1775,11 +1778,14 @@ class SLScreen(SLBlock):
                 not_constants.sort()
                 profile_log.write('    not_const: %s', " ".join(not_constants))
 
-    def report_traceback(self, name):
+    def report_traceback(self, name, last):
+        if last:
+            return None
+
         if name == "__call__":
             return [ ]
 
-        return SLBlock.report_traceback(self, name)
+        return SLBlock.report_traceback(self, name, last)
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]

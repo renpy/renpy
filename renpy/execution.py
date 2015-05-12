@@ -299,7 +299,10 @@ class Context(renpy.object.Object):
 
             raise e
 
-    def report_traceback(self, name):
+    def report_traceback(self, name, last):
+
+        if last:
+            return
 
         rv = [ ]
 
