@@ -1765,11 +1765,22 @@ class Default(Node):
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-    def set_default(self):
+    def set_default(self, start):
         d = renpy.python.store_dicts[self.store]
 
-        if self.varname not in d:
+        defaults_set = d.get("_defaults_set", None)
+        if defaults_set is None:
+            d["_defaults_set"] = defaults_set = renpy.python.RevertableSet()
+
+        if self.varname not in defaults_set:
             d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+            defaults_set.add(self.varname)
+        else:
+            if start and renpy.config.developer:
+                raise Exception("{}.{} is being given a default a second time.".format(self.store, self.varname))
+
+    def report_traceback(self, name, last):
+        return [ (self.filename, self.linenumber, name, None) ]
 
 
 class Screen(Node):

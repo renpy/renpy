@@ -2888,7 +2888,7 @@ def cancel_gesture():
 
     renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
 
-def execute_default_statement():
+def execute_default_statement(start=False):
     """
     :undocumented:
 
@@ -2896,7 +2896,7 @@ def execute_default_statement():
     """
 
     for i in renpy.ast.default_statements:
-        i.set_default()
+        i.set_default(start)
 
 def write_log(s, *args):
     """

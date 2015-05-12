@@ -108,7 +108,7 @@ label _start_store:
         renpy.context()._menu = False
         renpy.context()._main_menu = False
 
-        renpy.execute_default_statement()
+        renpy.execute_default_statement(True)
 
         for i in config.start_callbacks:
             i()
