@@ -39,6 +39,18 @@ def run(restart):
     # Reset the store to a clean version of itself.
     renpy.python.clean_stores()
 
+    # Init translation.
+    renpy.translation.init_translation()
+
+    # Prepare the screens.
+    renpy.display.screen.prepare_screens()
+
+    # Rebuild the various style caches.
+    renpy.style.build_styles() # @UndefinedVariable
+
+    # Start the interface, if it hasn't been started already.
+    renpy.game.interface.start()
+
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
 
@@ -355,30 +367,16 @@ def main():
         # Remove the list of all statements from the script.
         game.script.all_stmts = None
 
-        # Make a clean copy of the store.
-        renpy.python.make_clean_stores()
-
         # Initialize image cache.
         renpy.display.im.cache.init()
+
+        # Make a clean copy of the store.
+        renpy.python.make_clean_stores()
 
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
-            need_start = True
-        else:
-            need_start = False
 
-        # Init translation.
-        renpy.translation.init_translation()
-
-        # Prepare the screens.
-        renpy.display.screen.prepare_screens()
-
-        # Rebuild the various style caches.
-        renpy.style.build_styles() # @UndefinedVariable
-
-        if need_start:
-            game.interface.start()
 
         # Start things running.
         restart = None

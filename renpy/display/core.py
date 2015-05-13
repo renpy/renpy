@@ -1442,10 +1442,18 @@ class Interface(object):
 
         renpy.display.emulator.init_emulator()
 
+        # Has start been called?
+        self.started = False
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
         """
+
+        if self.started:
+            return
+
+        self.started = True
 
         self.safe_mode = get_safe_mode()
         self.set_mode()
