@@ -1,5 +1,5 @@
 # Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
-# Copyright 2013 Koichi Akabe <vbkaisetsu@gmail.com>
+# Copyright 2013-2015 Koichi Akabe <vbkaisetsu@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -161,6 +161,52 @@ init -1500 python:
 
     @renpy.pure
     class MultiCharacter(ADVCharacter):
+        """
+        :doc: multi_character
+        :args: (name, col=0, group=None, **args)
+        :name: MultiCharacter
+
+        Shows two or more dialogues in one window.
+
+        `col`
+            The index of the column. This MultiCharacter's dialogues are
+            printed in this column. The left side is 0.
+
+        `group`
+            The name of the group of this MultiCharacter. Dialogues of
+            characters that belong in the same group are shown in the same
+            window. If it is set to None, it will be 'dual'.
+
+        **Styles.**
+        If you define a MultiCharacter, the folloing three styles are
+        automatically created with the specified group name.
+
+        `multi_child_label_{group}`
+            A window that contains character's names.
+
+        `multi_child_dialogue_{group}`
+            A window that contains character's dialogues.
+
+        `multi_child_window_{group}`
+            A window that contains above two windows.
+
+        **Parallel speaking.**
+        If a MultiCharacter is used with ``showlater=True``, the dialogue will be
+        started with the next dialogue. The following example shows 2 character's
+        dialogues at the same time::
+
+            define yuka = MultiCharacter('Yuka', col=0, color='#c8ffc8')
+            define maria = MultiCharacter('Maria', col=1, color='#ffc8c8')
+
+            init python:
+                style.multi_child_window_dual.xminimum = int(config.screen_width / 2) - 5
+                style.multi_child_window_dual.xmaximum = int(config.screen_width / 2) - 5
+
+            label start:
+                $ yuka('Left!', showlater=True)
+                maria 'Right!'
+
+        """
 
         def __init__(self,
                      who=renpy.character.NotSet,
