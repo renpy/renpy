@@ -59,6 +59,37 @@ screen say(who, what, side_image=None, two_window=False):
 
 
 ##############################################################################
+# Multi
+#
+# Screen that's used to display multi character dialogue.
+# http://www.renpy.org/doc/html/screen_special.html#multi
+screen multi(dialogue):
+
+    window:
+        style "multi_window"
+
+        has hbox:
+            style "multi_hbox"
+
+        for who, what, who_id, what_id, window_id in dialogue:
+
+            # The one window variant.
+            window:
+                id window_id
+
+                has vbox:
+                    style "say_vbox"
+
+                if who:
+                    text who id who_id
+
+                text what id what_id
+
+    # Use the quick menu.
+    use quick_menu
+
+
+##############################################################################
 # Choice
 #
 # Screen that's used to display in-game menus.

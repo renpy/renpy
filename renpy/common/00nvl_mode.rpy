@@ -393,11 +393,11 @@ init -1500 python:
 
         if config.adv_nvl_transition:
             if mode == "nvl" or mode == "nvl_menu":
-                if old == "say" or old == "menu":
+                if old == "say" or old == "multi" or old == "menu":
                     nvl_show(config.adv_nvl_transition)
 
         if config.nvl_adv_transition:
-            if mode == "say" or mode == "menu":
+            if mode == "say" or mode == "multi" or mode == "menu":
                 if old == "nvl" or old == "nvl_menu":
                     nvl_hide(config.nvl_adv_transition)
 
