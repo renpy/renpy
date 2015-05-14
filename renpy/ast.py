@@ -1863,6 +1863,7 @@ class Translate(Node):
         next_node(renpy.game.script.translator.lookup_translate(self.identifier))
 
         renpy.game.context().translate_identifier = self.identifier
+        renpy.game.context().translate_block_language = self.language
 
     def predict(self):
         node = renpy.game.script.translator.lookup_translate(self.identifier)
@@ -1897,6 +1898,7 @@ class EndTranslate(Node):
         statement_name("end translate")
 
         renpy.game.context().translate_identifier = None
+        renpy.game.context().translate_block_language = None
 
 
 class TranslateString(Node):

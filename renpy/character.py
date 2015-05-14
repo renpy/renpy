@@ -807,7 +807,7 @@ class ADVCharacter(object):
 
             ctx = renpy.game.context()
 
-            if (ctx.translate_language is not None) and (ctx.translate_identifier is not None):
+            if ctx.translate_block_language is not None:
                 translate = False
             else:
                 translate = True
