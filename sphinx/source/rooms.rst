@@ -36,7 +36,7 @@ Creating an image gallery consists of the following four steps.
    2. Optionally, add one or more unlock conditions to the button by
       calling :meth:`Gallery.unlock` or :meth:`Gallery.condition`.
 
-   3. Declare an image by calling :meth:`Gallery.image` with one or
+   3. Declare an image by calling :meth:`Gallery.image` with one or more
       displayables as arguments. Or call the convenience method
       :meth:`Gallery.unlock_image` instead.
 
