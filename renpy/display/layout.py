@@ -287,6 +287,11 @@ class Position(Container):
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.child.get_placement()
 
+        if xoffset is None:
+            xoffset = 0
+        if yoffset is None:
+            yoffset = 0
+
         v = self.style.xpos
         if v is not None:
             xpos = v
@@ -305,14 +310,14 @@ class Position(Container):
 
         v = self.style.xoffset
         if v is not None:
-            xoffset = v
+            xoffset += v
 
         v = self.style.yoffset
         if v is not None:
-            yoffset = v
+            yoffset += v
 
         v = self.style.subpixel
-        if v is not None:
+        if (not subpixel) and (v is not None):
             subpixel = v
 
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
