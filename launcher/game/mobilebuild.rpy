@@ -57,7 +57,7 @@ init -1 python:
         This is used to interface between the launcher and RAPT/RENIOS.
         """
 
-        def __init__(self, platform, edit=True):
+        def __init__(self, platform, edit=True, filename=None):
             """
             `platform`
                 The name of the platform we're using for. Used for libraries,
@@ -71,7 +71,11 @@ init -1 python:
             self.edit = edit
 
             self.process = None
-            self.filename = project.current.temp_filename(platform + ".txt")
+
+            if filename is None:
+                filename = platform + ".txt"
+
+            self.filename = project.current.temp_filename(filename)
 
             self.info_msg = ""
 
@@ -125,9 +129,12 @@ init -1 python:
 
             # Open android.txt in the editor.
             if edit and self.edit:
-                editor.EditAbsolute(self.filename)()
+                self.open_editor()
 
             interface.error(prompt, label="android")
+
+        def open_editor(self):
+            editor.EditAbsolute(self.filename)()
 
         def success(self, prompt):
             self.log(prompt)

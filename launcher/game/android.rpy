@@ -47,6 +47,7 @@ init python:
 
     CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
     DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
+    LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
 
 
     import subprocess
@@ -400,6 +401,10 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
                                 hovered tt.Action(DISCONNECT_TEXT)
 
+                            textbutton _("Logcat"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
+                                hovered tt.Action(LOGCAT_TEXT)
+
 
                 # Right side.
                 frame:
@@ -522,6 +527,17 @@ label android_disconnect:
 
         rapt_interface = MobileInterface("android")
         rapt.build.disconnect(rapt_interface)
+
+    jump android
+
+label logcat:
+
+    python hide:
+
+        interface = MobileInterface("android", filename="logcat.txt")
+        interface.info(_("Retrieving logcat information from device."))
+        interface.call([ rapt.plat.adb, "logcat", "-d" ], cancel=True)
+        interface.open_editor()
 
     jump android
 
