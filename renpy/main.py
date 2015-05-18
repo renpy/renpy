@@ -48,9 +48,6 @@ def run(restart):
     # Rebuild the various style caches.
     renpy.style.build_styles() # @UndefinedVariable
 
-    # Start the interface, if it hasn't been started already.
-    renpy.game.interface.start()
-
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
 

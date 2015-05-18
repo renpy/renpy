@@ -159,8 +159,7 @@ label _start:
         scene
 
     if not _restart:
-        $ ui.pausebehavior(0)
-        $ ui.interact(suppress_underlay=True, suppress_overlay=True)
+        with None
 
     $ renpy.block_rollback()
 

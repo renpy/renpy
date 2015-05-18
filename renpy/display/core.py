@@ -1445,6 +1445,9 @@ class Interface(object):
         # Has start been called?
         self.started = False
 
+        # Are we in fullscreen video mode?
+        self.fullscreen_video = False
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -1732,6 +1735,10 @@ class Interface(object):
            until it can be handled by the main thread.
         """
 
+        # Do nothing before the first interaction.
+        if not self.started:
+            return
+
         if background:
             self.bgscreenshot_event.clear()
             self.bgscreenshot_needed = True
@@ -1773,6 +1780,9 @@ class Interface(object):
         Gets the current screenshot, as a string. Returns None if there isn't
         a current screenshot.
         """
+
+        if not self.started:
+            self.start()
 
         rv = self.screenshot
 
@@ -2230,6 +2240,9 @@ class Interface(object):
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
         """
+
+        if not self.started:
+            self.start()
 
         # Cancel magic error reporting.
         renpy.bootstrap.report_error = None
