@@ -1456,6 +1456,8 @@ class Interface(object):
         if self.started:
             return
 
+        renpy.main.log_clock("Interface start")
+
         self.started = True
 
         self.safe_mode = get_safe_mode()

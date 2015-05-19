@@ -30,23 +30,41 @@ import zipfile
 import __main__
 
 
+last_clock = time.time()
+
+def log_clock(s):
+    global last_clock
+    now = time.time()
+    renpy.display.log.write("{} took {:.2f}s".format(s, now - last_clock))
+    last_clock = now
+
+def reset_clock():
+    global last_clock
+    last_clock = time.time()
+
 def run(restart):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
     """
 
+    reset_clock()
+
     # Reset the store to a clean version of itself.
     renpy.python.clean_stores()
+    log_clock("Cleaning stores")
 
     # Init translation.
     renpy.translation.init_translation()
-
-    # Prepare the screens.
-    renpy.display.screen.prepare_screens()
+    log_clock("Init translation")
 
     # Rebuild the various style caches.
     renpy.style.build_styles() # @UndefinedVariable
+    log_clock("Build styles")
+
+    # Prepare the screens.
+    renpy.display.screen.prepare_screens()
+    log_clock("Prepare screens")
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -83,6 +101,9 @@ def run(restart):
 
     # We run until we get an exception.
     renpy.display.interface.enter_context()
+
+    log_clock("Running {}".format(start_label))
+
     renpy.execution.run_context(True)
 
 
@@ -193,6 +214,8 @@ def choose_variants():
 
 def main():
 
+    log_clock("Bootstrap to the start of init.init")
+
     renpy.game.exception_info = 'Before loading the script.'
 
     # Get ready to accept new arguments.
@@ -207,6 +230,8 @@ def main():
     # Set up variants.
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
+
+    log_clock("Early init")
 
     # Note the game directory.
     game.basepath = renpy.config.gamedir
@@ -249,6 +274,8 @@ def main():
     # Start auto-loading.
     renpy.loader.auto_init()
 
+    log_clock("Loader init")
+
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 
@@ -273,6 +300,8 @@ def main():
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles() # @UndefinedVariable
 
+    log_clock("Loading error handling")
+
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
     # labels as in other scripts (usually happens on script rename).
@@ -290,6 +319,7 @@ def main():
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
+    log_clock("Loading script")
 
     renpy.game.exception_info = 'After loading the script.'
 
@@ -312,6 +342,7 @@ def main():
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
+        log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
@@ -340,15 +371,19 @@ def main():
         for i in renpy.game.post_init:
             i()
 
+        log_clock("Running init code")
+
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
         renpy.atl.compile_all()
+        log_clock("Analyze and compile ATL")
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
         # We need to do this again because the list of known archives
         # may have changed.
         renpy.loader.index_archives()
+        log_clock("Index archives")
 
         # Check some environment variables.
         renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
@@ -366,13 +401,16 @@ def main():
 
         # Initialize image cache.
         renpy.display.im.cache.init()
+        log_clock("Cleaning cache")
 
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
+        log_clock("Making clean stores")
 
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
+            log_clock("Creating interface object")
 
 
         # Start things running.
