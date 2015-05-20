@@ -569,6 +569,9 @@ missing_label_callback = None
 # Should show preserve zorder when not explicitly set?
 preserve_zorder = True
 
+# The set of names to ignore.
+lint_ignore_replaces = [ 'help', 'quit' ]
+
 del renpy
 del os
 
