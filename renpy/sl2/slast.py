@@ -1472,7 +1472,6 @@ class SLUse(SLNode):
         self.ast.analyze(analysis.get_child(self.serial))
 
         self.last_keyword = True
-        self.constant = self.ast.constant
 
         if self.id:
             self.constant = NOT_CONST
@@ -1482,6 +1481,8 @@ class SLUse(SLNode):
             return
 
         self.ast.prepare(analysis.get_child(self.serial))
+
+        self.constant = min(self.constant, self.ast.constant)
 
     def execute_use_screen(self, context):
 
