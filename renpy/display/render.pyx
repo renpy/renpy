@@ -96,6 +96,10 @@ def check_at_shutdown():
 cdef int rendering
 rendering = 0
 
+# The st and at of the current call to render.
+render_st = 0.0
+render_at = 0.0
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
@@ -118,6 +122,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     """
 
     global rendering
+    global render_st
+    global render_at
 
     cdef float width, height
     cdef float orig_width, orig_height
@@ -172,9 +178,15 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     try:
         rendering += 1
+        old_st = render_st
+        old_at = render_at
+        render_st = st
+        render_at = at
         rv = d.render(widtho, heighto, st, at)
     finally:
         rendering -= 1
+        render_st = old_st
+        render_at = old_at
 
     rv.render_of.append(d)
 
@@ -1163,6 +1175,26 @@ cdef class Render:
             int(math.ceil(maxx - minx)),
             int(math.ceil(maxy - miny)),
             )
+
+    def place(self, d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True):
+        """
+        Documented in udd.rst.
+        """
+
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+
+        if render is None:
+            if st is None:
+                st = render_st
+            if at is None:
+                at = render_at
+
+            render = renpy.display.render.render(d, width, height, st, at)
+
+        d.place(self, x, y, width, height, render, main=main)
 
 
 class Canvas(object):

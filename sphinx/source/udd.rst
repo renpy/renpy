@@ -226,7 +226,7 @@ the implicit `self` parameter.
     `width`, `height`
         The width and height of the render object, in pixels.
 
-    .. method:: blit(source, pos)
+    .. method:: blit(source, pos, main=True)
 
         Draws another render object into this render object.
 
@@ -237,6 +237,29 @@ the implicit `self` parameter.
             The location to draw into. This is an (x, y) tuple
             with the coordinates being pixels relative to the
             upper-left corner of the target render.
+
+        `main`
+            A keyword-only parameter. If true, `source` will be displayed
+            in the style inspector.
+
+    .. method:: place(d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True)
+
+        Renders `d` and places it into the rectangle defined by the `x`, `y`,
+        `width`, and `height`, using Ren'Py's standard placement algorithm.
+
+        `x`, `y`, `width`, `height`
+            The rectangle to place in. If `width` or `height`, when None,
+            are the width and height of this render, respectively.
+
+        `st`, `at`
+            The times passed to Render. If None, defaults to the times
+            passed to the render method calling this method.
+
+        `render`
+            If not None, this is used instead of rendering `d`.
+
+        `main`
+            As for .blit().
 
     .. method:: canvas()
 
