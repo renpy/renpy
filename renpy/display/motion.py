@@ -780,22 +780,6 @@ class Transform(Container):
 
         self.active = True
 
-        # Use non-None elements of the child placement as defaults.
-        child = self.child
-        if child is not None and renpy.config.transform_uses_child_position:
-
-            pos = child.get_placement()
-
-            if pos[0] is not None:
-                state.inherited_xpos = pos[0]
-            if pos[2] is not None:
-                state.inherited_xanchor = pos[2]
-            if pos[1] is not None:
-                state.inherited_ypos = pos[1]
-            if pos[3] is not None:
-                state.inherited_yanchor = pos[3]
-
-            state.subpixel |= pos[6]
 
     # The render method is now defined in accelerator.pyx.
 
@@ -857,7 +841,24 @@ class Transform(Container):
             self.update_state()
 
         if self.child is not None:
-            _cxpos, _cypos, _cxanchor, _cyanchor, cxoffset, cyoffset, _csubpixel = self.child.get_placement()
+            cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+
+            # Use non-None elements of the child placement as defaults.
+            state = self.state
+
+            if renpy.config.transform_uses_child_position:
+
+                if cxpos is not None:
+                    state.inherited_xpos = cxpos
+                if cxanchor is not None:
+                    state.inherited_xanchor = cxanchor
+                if cypos is not None:
+                    state.inherited_ypos = cypos
+                if cyanchor is not None:
+                    state.inherited_yanchor = cyanchor
+
+                state.subpixel |= csubpixel
+
         else:
             cxoffset = 0
             cyoffset = 0
