@@ -478,7 +478,7 @@ cdef class TextureCore:
         texnums[0] = self.number
         glDeleteTextures(1, texnums)
 
-        texture_numbers.remove(self.number)
+        texture_numbers.discard(self.number)
         total_texture_size -= self.width * self.height * 4
 
 class Texture(TextureCore):
