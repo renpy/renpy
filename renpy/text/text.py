@@ -663,7 +663,7 @@ class Layout(object):
                 continue
 
             # Create the texture.
-            surf = renpy.display.pgrender.surface((sw, sh), True)
+            surf = renpy.display.pgrender.surface((sw + o, sh + o), True)
 
             di.surface = surf
             di.override_color = color
@@ -1593,6 +1593,7 @@ class Text(renpy.display.core.Displayable):
                     b_h += layout.add_top
                 else:
                     b_y += layout.add_top
+
 
                 # Blit.
                 rv.blit(
