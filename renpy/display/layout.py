@@ -470,6 +470,9 @@ class MultiBox(Container):
         if not type(self) is MultiBox:
             return self
 
+        if self.layers or self.scene_list:
+            return self
+
         rv = MultiBox(layout=self.default_layout)
         rv.style = self.style.copy()
 
