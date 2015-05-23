@@ -175,6 +175,11 @@ class Container(renpy.display.core.Displayable):
         children = self.children
         offsets = self.offsets
 
+        # In #641, these went out of sync. Since they should resync on a
+        # render, ignore the event for a short while rather than crashing.
+        if len(offsets) != len(children):
+            return None
+
         for i in xrange(len(offsets) - 1, -1, -1):
 
             d = children[i]
