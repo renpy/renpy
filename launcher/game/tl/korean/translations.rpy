@@ -7,7 +7,7 @@ translate korean strings:
 
     # game/translations.rpy:31
     old "Please enter the name of the language for which you want to create or update translations."
-    new "만들거나 수정하려는 번역 파일의 언어 이름을 입력해주세요."
+    new "만들거나 수정하려는 번역 파일의 언어 이름을 입력하세요."
 
     # game/translations.rpy:36
     old "The language name can not be the empty string."

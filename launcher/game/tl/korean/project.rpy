@@ -1,6 +1,10 @@
 ﻿
 translate korean strings:
 
+    # game/project.rpy:47
+    old "Have you backed up your projects recently?"
+    new "프로젝트는 자주 백업합시다!"
+
     # game/project.rpy:48
     old "After making changes to the script, press shift+R to reload your game."
     new "스크립트를 변경한 다음에는 Shift+R를 눌러 게임을 다시 불러오세요."
@@ -15,7 +19,7 @@ translate korean strings:
 
     # game/project.rpy:219
     old "Launching the project failed."
-    new "프로젝트 실행에 실패했습니다."
+    new "프로젝트를 실행하지 못했습니다."
 
     # game/project.rpy:219
     old "Please ensure that your project launches normally before running this command."
@@ -35,17 +39,16 @@ translate korean strings:
 
     # game/project.rpy:545
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
-    new "디렉토리 선택창을 이용하여 프로젝트가 저장된 디렉토리를 선택하세요.\n{b}디렉토리 선택창이 이 창 뒤에서 열렸을 수도 있습니다."
+    new "경로 선택창을 이용하여 프로젝트가 저장된 경로를 선택하세요.\n{b}경로 선택창이 런처 창 뒤에서 열렸을 수도 있습니다."
 
     # game/project.rpy:545
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
-    new "런처가 이 디렉토리를 살펴보고 이 디렉토리에서 새 프로젝트를 생성하며 프로젝트 배포판을 만듭니다."
+    new "런처가 이 경로를 살펴보고 이 경로에서 새 프로젝트를 생성하며 프로젝트 배포판을 만듭니다."
 
     # game/project.rpy:585
     old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
-    new "프로젝트 경로를 선택하는 tkinter를 파이썬으로 구동하지 못했습니다. python-tk나 tkinter 패키지를 설치하세요."
+    new "프로젝트 경로를 선택하는 tkinter를 구동하지 못했습니다. python-tk나 tkinter 패키지를 설치하세요."
 
     # game/project.rpy:595
     old "Ren'Py has set the projects directory to:"
     new "렌파이가 프로젝트 경로를 다음과 같이 설정했습니다."
-

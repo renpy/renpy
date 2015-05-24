@@ -11,7 +11,7 @@ translate korean strings:
 
     # game/editor.rpy:167
     old "This may have occured because wxPython is not installed on this system."
-    new "wxPython이 설치되지 않아 문제가 발생했을 수도 있습니다."
+    new "wxPython이 설치되지 않아 문제가 발생했을 가능성이 있습니다."
 
     # game/editor.rpy:174
     old "Up to 22 MB download required."
@@ -31,11 +31,11 @@ translate korean strings:
 
     # game/editor.rpy:194
     old "Invokes the editor your operating system has associated with .rpy files."
-    new "OS에서 .rpy 파일을 열 때 사용하는 에디터를 실행한다."
+    new "OS에서 .rpy 파일을 열 때 사용하는 에디터를 실행합니다."
 
     # game/editor.rpy:210
     old "Prevents Ren'Py from opening a text editor."
-    new "렌파이가 스크립트 에디터를 실행하지 못하도록 합니다다."
+    new "렌파이가 스크립트 에디터를 실행하지 못하도록 합니다."
 
     # game/editor.rpy:357
     old "An exception occured while launching the text editor:\n[exception!q]"

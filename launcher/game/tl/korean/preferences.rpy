@@ -61,3 +61,25 @@ translate korean strings:
     old "Language:"
     new "언어:"
 
+translate korean strings:
+
+    # game/preferences.rpy:94
+    old "Projects directory: [text]"
+    new "프로젝트 경로: [text]"
+
+    # game/preferences.rpy:117
+    old "Text editor: [text]"
+    new "텍스트 에디터: [text]"
+
+    # game/preferences.rpy:174
+    old "Show edit file section"
+    new "파일 수정하기 영역 표시하기"
+
+    # game/preferences.rpy:175
+    old "Large fonts"
+    new "글자 크게 표시하기"
+
+    # game/preferences.rpy:176
+    old "Generate empty strings for translations"
+    new "번역 파일 생성 시 빈 문자열 만들기"
+
