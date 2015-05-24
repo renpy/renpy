@@ -1924,7 +1924,6 @@ class Flatten(Container):
     when absolutely required.
     """
 
-
     def __init__(self, child, **properties):
         super(Flatten, self).__init__(**properties)
 
@@ -1940,7 +1939,7 @@ class Flatten(Container):
         rv.blit(tex, (0, 0))
         rv.depends_on(cr, focus=True)
 
-        self.offsets.append((0, 0))
+        self.offsets = [ (0, 0) ]
 
         return rv
 
