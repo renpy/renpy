@@ -7,8 +7,12 @@ Ren'Py 6.99.4
 
 The Ren'Py script language now includes a new :ref:`default statement <default-statement>`.
 This statement sets a variable to a value a default value at game start or load,
-if the variable is not defined. This makes it possible to initialize saved
-variables near the relevant code, rather than all at once at label start.
+if a default statement has not set the value of the variable in the current
+game. This makes it possible to initialize saved variables near the relevant
+code, rather than all at once at label start.
+
+Lint will now warn if a ``define`` or ``default`` statement redefines a
+Ren'Py or Python built-in name.
 
 The screen language :ref:`use statement <sl-use>` now takes a block, which
 can be transcluded into a screen using the ``transclude`` statement. This makes
@@ -18,10 +22,23 @@ The screen language also supports :ref:`creator-defined statements <creator-defi
 which are transformed into use statements. These make it possible to extend the
 screen language syntax.
 
+The new Render.place() is available for use in :ref:`creator-defined displayables <cdd>`.
+This method renders a displayable, then applies Ren'Py's layout algorthing to place
+that displayable within a containing rectangle.
+
 Ren'Py now logs errors importing the steam module to log.txt.
+
+Ren'Py now logs the duration of various parts of the init process to log.txt.
+
+On mobile, Ren'Py will wait until the start of the first interaction
+before creating the main window. This prevents a black screen from being
+displayed for some time as Ren'Py starts.
 
 There are a number of improvements to iOS support, to support passing Apple's
 package verification process.
+
+The launcher now includes a button to retrieve logcat information from an
+Android device.
 
 The launcher now checks that the version of rapt and renios match the version
 of Ren'Py proper.
@@ -48,6 +65,18 @@ Text blits are now expanded to include an outline on a descender on the
 bottom row of text.
 
 Drags outside of a draggroup can now be snapped into place.
+
+The Gallery now properly advances through locked and unlocked images.
+Previously, this advancing was reversed, so next_unlocked would advance
+through locked and unlocked images.
+
+Text accounts for the size of outlines when allocating textures, preventing
+the bottom line of outlines from being cut off.
+
+Position information (xpos, ypos, etc.) are now passed from an inner transform
+to an outer transform during as single frame. Previously, this information
+would lag by a single frame, which could lead to nested transforms lagging
+or failing to complete.
 
 
 Ren'Py 6.99.3
