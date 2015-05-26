@@ -234,6 +234,9 @@ init python:
     ## allows the updater to run.
     build.include_update = True
 
+    ## Allow empty directories, so we can distribute the images directory.
+    build.exclude_empty_directories = False
+
     ## Clear out various file patterns.
     build.renpy_patterns = [ ]
     build.early_base_patterns = [ ]
