@@ -1909,7 +1909,7 @@ def python_statement(l, loc):
 
 
 @statement("label")
-def label_statement(l, loc):
+def label_statement(l, loc, init=False):
     name = l.require(l.name)
 
     parameters = parse_parameters(l)
@@ -1924,11 +1924,14 @@ def label_statement(l, loc):
 
     # Optional block here. It's empty if no block is associated with
     # this statement.
-    block = parse_block(l.subblock_lexer())
+    block = parse_block(l.subblock_lexer(init))
 
     l.advance()
     return ast.Label(loc, name, block, parameters, hide=hide)
 
+@statement("init label")
+def init_label_statement(l, loc):
+    return label_statement(l, loc, init=True)
 
 @statement("init")
 def init_statement(l, loc):
