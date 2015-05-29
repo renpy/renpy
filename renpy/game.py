@@ -266,7 +266,7 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
 
@@ -314,7 +314,7 @@ def call_in_new_context(label, *args, **kwargs):
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
 def call_replay(label, scope={}):
@@ -361,7 +361,7 @@ def call_replay(label, scope={}):
         renpy.game.log = old_log
         sb.restore()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
 
