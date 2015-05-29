@@ -26,6 +26,7 @@ init -1500 python:
     # File functions
 
     config.linear_saves_page_size = None
+    config.quicksave_slots = 10
 
     if persistent._file_page is None:
         persistent._file_page = "1"
@@ -172,6 +173,8 @@ init -1500 python:
         Otherwise, this returns json[key] if `key` is defined on the json object of the save,
         `missing` if there is a save with the given name, but it does not contain `key`, or
         `empty` if the save slot is empty.
+
+        Json is added to a save slot by callbacks registered using :var:`config.save_json_callbacks`.
         """
 
         json = renpy.slot_json(__slotname(name, page))
@@ -229,7 +232,8 @@ init -1500 python:
 
          `cycle`
              If true, then saves on the supplied page will be cycled before
-             being shown to the user.
+             being shown to the user. :var:`config.quicksave_slots` slots are
+             used in the cycle.
          """
 
         alt = "Save slot [text]"
@@ -256,7 +260,7 @@ init -1500 python:
                     return
 
             if self.cycle:
-                renpy.renpy.loadsave.cycle_saves(self.page + "-", 10)
+                renpy.renpy.loadsave.cycle_saves(self.page + "-", config.quicksave_slots)
 
             renpy.save(fn, extra_info=save_name)
 

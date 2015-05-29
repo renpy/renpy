@@ -326,6 +326,10 @@ Occasionally Used
     defining automatic images. This can be used to remove directory
     names, when directories contain images.
 
+.. var:: config.autosave_slots = 10
+
+    The number of slots used by autosaves.
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
@@ -579,6 +583,10 @@ Occasionally Used
     function depends on are initialized. The functions are required to deal
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
+
+.. var:: config.quicksave_slots = 10
+
+    The number of slots used by quicksaves.
 
 .. var:: config.quit_action = ...
 
