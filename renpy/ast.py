@@ -247,7 +247,7 @@ class PyCode(object):
         if renpy.game.script.record_pycode:
             renpy.game.script.all_pycode.append(self)
 
-        self.hash = None
+        self.hash = self.get_hash()
 
     def get_hash(self):
         try:
