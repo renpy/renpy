@@ -319,15 +319,6 @@ class Node(object):
     # the class or the instance.)
     translatable = False
 
-    # Called to set the state of a Node, when necessary.
-    def __setstate__(self, state):
-        for k, v in state[1].iteritems():
-            try:
-                setattr(self, k, v)
-            except AttributeError:
-                pass
-
-
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -509,10 +500,11 @@ class Say(Node):
     def diff_info(self):
         return (Say, self.who, self.what)
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.attributes = None
         self.interact = True
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, who, what, with_, interact=True, attributes=None):
 
@@ -689,10 +681,11 @@ class Label(Node):
         'hide',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.parameters = None
         self.hide = False
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, name, block, parameters, hide=False):
         """
@@ -754,9 +747,10 @@ class Python(Node):
         'store',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.store = "store"
-        super(Python, self).__setstate__(state)
+        return self
 
     def __init__(self, loc, python_code, hide=False, store="store"):
         """
@@ -803,9 +797,10 @@ class EarlyPython(Node):
         'store',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.store = "store"
-        super(EarlyPython, self).__setstate__(state)
+        return self
 
     def __init__(self, loc, python_code, hide=False, store="store"):
         """
@@ -1206,9 +1201,10 @@ class With(Node):
         'paired',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.paired = None
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, expr, paired=None):
         """
@@ -1259,9 +1255,10 @@ class Call(Node):
         'expression',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.arguments = None
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, label, expression, arguments):
 
@@ -1309,9 +1306,10 @@ class Return(Node):
 
     __slots__ = [ 'expression']
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.expression = None
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, expression):
         super(Return, self).__init__(loc)
@@ -1617,10 +1615,11 @@ class UserStatement(Node):
         'block',
         'translatable' ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.block = [ ]
         self.translatable = False
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, line, block):
 
@@ -1692,9 +1691,10 @@ class Define(Node):
         'store',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.store = 'store'
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, store, name, expr):
         super(Define, self).__init__(loc)
@@ -1736,9 +1736,10 @@ class Default(Node):
         'store',
         ]
 
-    def __setstate__(self, state):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
         self.store = 'store'
-        Node.__setstate__(self, state)
+        return self
 
     def __init__(self, loc, store, name, expr):
 
