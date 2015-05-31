@@ -30,6 +30,7 @@ import difflib
 import md5
 import time
 import marshal
+import struct
 
 from cPickle import loads, dumps
 
@@ -41,6 +42,9 @@ BYTECODE_VERSION = 1
 
 # The python magic code.
 MAGIC = imp.get_magic()
+
+# A string at the start of each rpycv2 file.
+RPYC2_HEADER = "RENPY RPC2"
 
 class ScriptError(Exception):
     """
@@ -61,11 +65,9 @@ def collapse_stmts(stmts):
             all_stmts.append(i)
             extend_all(i.get_children())
 
-
     extend_all(stmts)
 
     return all_stmts
-
 
 class Script(object):
     """
@@ -348,7 +350,6 @@ class Script(object):
             if init:
                 initcode.append(init)
 
-        # Compile bytecode from the file.
         self.update_bytecode()
 
         # Exec early python.
@@ -362,6 +363,79 @@ class Script(object):
 
         return stmts
 
+    def write_rpyc_header(self, f):
+        """
+        Writes an empty version 2 .rpyc header to the open binary file `f`.
+        """
+
+        f.write(RPYC2_HEADER)
+
+        for _i in range(3):
+            f.write(struct.pack("III", 0, 0, 0))
+
+
+    def write_rpyc_data(self, f, slot, data):
+        """
+        Writes data into `slot` of a .rpyc file. The data should be a binary
+        string, and is compressed before being written.
+        """
+
+        start = f.tell()
+        data = data.encode("zlib")
+
+
+        f.seek(0, 2)
+        f.write(data)
+
+        f.seek(len(RPYC2_HEADER) + 12 * (slot - 1), 0)
+        f.write(struct.pack("III", slot, start, len(data)))
+
+    def write_rpyc_md5(self, f, digest):
+        """
+        Writes the md5 to the end of a .rpyc file.
+        """
+
+        f.seek(0, 2)
+        f.write(digest)
+
+    def read_rpyc_data(self, fn, slot):
+        """
+        Reads the binary data from `slot` in a .rpyc (v1 or v2) file. Returns
+        the data if the slot exists, or None if the slot does not exist.
+        """
+
+        f = renpy.loader.load(fn)
+
+        header = f.read(len(RPYC2_HEADER))
+
+        # Legacy path.
+        if header != RPYC2_HEADER:
+            if slot != 1:
+                f.close()
+                return None
+
+            data = header + f.read()
+            f.close()
+
+            return data.decode("zlib")
+
+        # RPYC2 path.
+        while True:
+            header_slot, start, length = struct.unpack("III", f.read(12))
+
+            if slot == header_slot:
+                break
+
+            if header_slot == 0:
+                return None
+
+        f.seek(start)
+        data = f.read(length)
+        f.close()
+
+        return data.decode("zlib")
+
+
     def load_file(self, dir, fn): #@ReservedAssignment
 
         if fn.endswith(".rpy") or fn.endswith(".rpym"):
@@ -370,6 +444,7 @@ class Script(object):
                 raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn)
 
             fullfn = dir + "/" + fn
+            rpycfn = fullfn + "c"
 
             stmts = renpy.parser.parse(fullfn)
 
@@ -384,8 +459,12 @@ class Script(object):
             # we want to try to upgrade our .rpy file with it.
             try:
                 self.record_pycode = False
-                old_data, old_stmts = self.load_file(dir, fn + "c")
+
+                bindata = self.read_rpyc_data(rpycfn, 1)
+                old_data, old_stmts = loads(bindata)
+
                 self.merge_names(old_stmts, stmts)
+
                 del old_data
                 del old_stmts
             except:
@@ -396,21 +475,48 @@ class Script(object):
             self.assign_names(stmts, fullfn)
 
             try:
-                rpydigest = md5.md5(file(fullfn, "rU").read()).digest()
-                f = file(dir + "/" + fn + "c", "wb")
-                f.write(dumps((data, stmts), 2).encode('zlib'))
-                f.write(rpydigest)
+                f = file(rpycfn, "wb")
+
+                self.write_rpyc_header(f)
+                self.write_rpyc_data(f, 1, dumps((data, stmts), 2))
+            except:
+                pass
+
+            # TODO: transform.
+
+            try:
+
+                with open(fullfn, "rU") as fullf:
+                    rpydigest = md5.md5(fullf.read()).digest()
+
+                self.write_rpyc_md5(f, rpydigest)
+
                 f.close()
             except:
                 pass
 
+            print "Loaded from rpy", fn
+
         elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
 
-            f = renpy.loader.load(fn)
+            data = None
+            stmts = None
 
-            try:
-                data, stmts = loads(f.read().decode('zlib'))
-            except:
+            for slot in [ 2, 1 ]:
+                try:
+                    bindata = self.read_rpyc_data(fn, slot)
+                    if bindata:
+                        data, stmts = loads(bindata)
+                        break
+                except:
+                    pass
+            else:
+                return None, None
+
+            # TODO: If slot < 2, transform.
+
+            if data is None:
+                print "Failed to load", fn
                 return None, None
 
             if not isinstance(data, dict):
@@ -422,7 +528,6 @@ class Script(object):
             if data['version'] != script_version:
                 return None, None
 
-            f.close()
         else:
             return None, None
 
@@ -451,6 +556,9 @@ class Script(object):
 
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
+                # Are we forcing a compile?
+                force_compile = renpy.game.args.command in [ "compile", "add_from" ] or renpy.game.args.compile # @UndefinedVariable
+
                 # Use the source file here since it'll be loaded if it exists.
                 lastfn = rpyfn
 
@@ -458,14 +566,14 @@ class Script(object):
 
                 data, stmts = None, None
 
+
                 try:
                     f = file(rpycfn, "rb")
                     f.seek(-md5.digest_size, 2)
                     rpycdigest = f.read(md5.digest_size)
                     f.close()
 
-                    if rpydigest == rpycdigest and \
-                        not (renpy.game.args.command in [ "compile", "add_from" ] or renpy.game.args.compile): #@UndefinedVariable
+                    if rpydigest == rpycdigest and not force_compile:
 
                         data, stmts = self.load_file(dir, fn + compiled)
 
