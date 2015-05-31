@@ -321,16 +321,16 @@ def main():
     renpy.game.script.load_script() # sets renpy.game.script.
     log_clock("Loading script")
 
-    if not renpy.game.args.command == 'compile':
-        start = time.time()
-
-        for i in range(5):
-            print(i)
-            renpy.game.script = renpy.script.Script()
-            renpy.game.script.load_script()
-
-        print time.time() - start
-        sys.exit(0)
+#     if not renpy.game.args.command == 'compile':
+#         start = time.time()
+#
+#         for i in range(5):
+#             print(i)
+#             renpy.game.script = renpy.script.Script()
+#             renpy.game.script.load_script()
+#
+#         print time.time() - start
+#         sys.exit(0)
 
     renpy.game.exception_info = 'After loading the script.'
 
