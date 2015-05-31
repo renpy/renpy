@@ -203,6 +203,7 @@ class PyExpr(unicode):
         self = unicode.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
+
         return self
 
     def __getnewargs__(self):

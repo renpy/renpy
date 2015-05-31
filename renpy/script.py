@@ -31,6 +31,7 @@ import md5
 import time
 import marshal
 import struct
+import zlib
 
 from cPickle import loads, dumps
 
@@ -264,8 +265,10 @@ class Script(object):
             return None, None
 
         self.assign_names(stmts, filename)
+        self.static_transforms(stmts)
 
         initcode = [ ]
+
         stmts = self.finish_load(stmts, initcode, False)
 
         return stmts, initcode
@@ -274,8 +277,7 @@ class Script(object):
     def finish_load(self, stmts, initcode, check_names=True, filename=None):
         """
         Given `stmts`, a list of AST nodes comprising the root block,
-        finishes loading it (this includes chaining statements and
-        adding them to the name map.)
+        finishes loading it.
 
         `initcode`
             A list we append init statements to.
@@ -294,8 +296,8 @@ class Script(object):
         if not stmts:
             return
 
-        # Generate translate nodes.
-        renpy.translation.restructure(stmts)
+        # Chain together the statements in the file.
+        renpy.ast.chain_block(stmts, None)
 
         # All of the statements found in file, regardless of nesting
         # depth.
@@ -303,9 +305,6 @@ class Script(object):
 
         # Take the translations.
         self.translator.take_translates(all_stmts)
-
-        # Chain together the statements in the file.
-        renpy.ast.chain_block(stmts, None)
 
         # Fix the filename for a renamed .rpyc file.
         if filename is not None:
@@ -380,15 +379,16 @@ class Script(object):
         string, and is compressed before being written.
         """
 
-        start = f.tell()
-        data = data.encode("zlib")
-
-
         f.seek(0, 2)
+
+        start = f.tell()
+        data = zlib.compress(data, 9)
         f.write(data)
 
         f.seek(len(RPYC2_HEADER) + 12 * (slot - 1), 0)
         f.write(struct.pack("III", slot, start, len(data)))
+
+        f.seek(0, 2)
 
     def write_rpyc_md5(self, f, digest):
         """
@@ -398,30 +398,32 @@ class Script(object):
         f.seek(0, 2)
         f.write(digest)
 
-    def read_rpyc_data(self, fn, slot):
+    def read_rpyc_data(self, f, slot):
         """
         Reads the binary data from `slot` in a .rpyc (v1 or v2) file. Returns
         the data if the slot exists, or None if the slot does not exist.
         """
 
-        f = renpy.loader.load(fn)
+        # f.seek(0)
+        header_data = f.read(1024)
 
-        header = f.read(len(RPYC2_HEADER))
+        # header = f.read(len(RPYC2_HEADER))
 
         # Legacy path.
-        if header != RPYC2_HEADER:
+        if header_data[:len(RPYC2_HEADER)] != RPYC2_HEADER:
             if slot != 1:
-                f.close()
                 return None
 
-            data = header + f.read()
-            f.close()
+            f.seek(0)
+            data = f.read()
 
             return data.decode("zlib")
 
         # RPYC2 path.
+        pos = len(RPYC2_HEADER)
+
         while True:
-            header_slot, start, length = struct.unpack("III", f.read(12))
+            header_slot, start, length = struct.unpack("III", header_data[pos:pos+12])
 
             if slot == header_slot:
                 break
@@ -429,11 +431,22 @@ class Script(object):
             if header_slot == 0:
                 return None
 
+            pos += 12
+
         f.seek(start)
         data = f.read(length)
-        f.close()
 
-        return data.decode("zlib")
+        return zlib.decompress(data)
+
+    def static_transforms(self, stmts):
+        """
+        This performs transformations on the script that can be performed
+        statically. When possible, these transforms are stored in slot 2
+        of the rpyc file.
+        """
+
+        # Generate translate nodes.
+        renpy.translation.restructure(stmts)
 
 
     def load_file(self, dir, fn): #@ReservedAssignment
@@ -460,7 +473,9 @@ class Script(object):
             try:
                 self.record_pycode = False
 
-                bindata = self.read_rpyc_data(rpycfn, 1)
+                with open(rpycfn, "rb") as rpycf:
+                    bindata = self.read_rpyc_data(rpycf, 1)
+
                 old_data, old_stmts = loads(bindata)
 
                 self.merge_names(old_stmts, stmts)
@@ -482,9 +497,10 @@ class Script(object):
             except:
                 pass
 
-            # TODO: transform.
+            self.static_transforms(stmts)
 
             try:
+                self.write_rpyc_data(f, 2, dumps((data, stmts), 2))
 
                 with open(fullfn, "rU") as fullf:
                     rpydigest = md5.md5(fullf.read()).digest()
@@ -495,38 +511,48 @@ class Script(object):
             except:
                 pass
 
-            print "Loaded from rpy", fn
-
         elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
 
             data = None
             stmts = None
 
-            for slot in [ 2, 1 ]:
-                try:
-                    bindata = self.read_rpyc_data(fn, slot)
-                    if bindata:
-                        data, stmts = loads(bindata)
-                        break
-                except:
-                    pass
-            else:
-                return None, None
+            f = renpy.loader.load(fn)
 
-            # TODO: If slot < 2, transform.
+            try:
 
-            if data is None:
-                print "Failed to load", fn
-                return None, None
+                for slot in [ 2, 1 ]:
+                    try:
+                        bindata = self.read_rpyc_data(f, slot)
 
-            if not isinstance(data, dict):
-                return None, None
+                        if bindata:
+                            data, stmts = loads(bindata)
+                            break
+                    except:
+                        pass
 
-            if self.key and data.get('key', 'unlocked') != self.key:
-                return None, None
+                    f.seek(0)
 
-            if data['version'] != script_version:
-                return None, None
+                else:
+                    return None, None
+
+                if data is None:
+                    print "Failed to load", fn
+                    return None, None
+
+                if not isinstance(data, dict):
+                    return None, None
+
+                if self.key and data.get('key', 'unlocked') != self.key:
+                    return None, None
+
+                if data['version'] != script_version:
+                    return None, None
+
+                if slot < 2:
+                    self.static_transforms(stmts)
+
+            finally:
+                f.close()
 
         else:
             return None, None
@@ -566,7 +592,6 @@ class Script(object):
 
                 data, stmts = None, None
 
-
                 try:
                     f = file(rpycfn, "rb")
                     f.seek(-md5.digest_size, 2)
@@ -581,6 +606,7 @@ class Script(object):
                             print "Could not load " + rpycfn
 
                 except:
+                    raise
                     pass
 
                 if data is None:
