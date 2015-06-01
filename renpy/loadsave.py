@@ -23,6 +23,7 @@
 
 import pickle
 import cPickle
+import dill
 
 from cStringIO import StringIO
 
