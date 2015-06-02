@@ -522,7 +522,7 @@ is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
 GLOBAL_CONST = renpy.pyanalysis.GLOBAL_CONST
 
 # The base class for raw ATL statements.
-class RawStatement(renpy.object.Object):
+class RawStatement(object):
 
     constant = None
 
