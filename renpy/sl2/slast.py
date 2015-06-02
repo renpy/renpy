@@ -39,8 +39,8 @@ from renpy.display.motion import Transform
 from renpy.display.layout import Fixed
 from renpy.display.predict import displayable as predict_displayable
 
-from renpy.python import py_compile, py_eval_bytecode
-from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
+from renpy.python import py_eval_bytecode
+from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST, ccache
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
@@ -317,7 +317,7 @@ class SLBlock(SLNode):
 
         for k, expr in self.keyword:
 
-            node = py_compile(expr, 'eval', ast_node=True)
+            node = ccache.ast_eval(expr)
 
             const = analysis.is_constant(node)
 
@@ -549,7 +549,7 @@ class SLDisplayable(SLBlock):
         has_values = False
 
         for a in self.positional:
-            node = py_compile(a, 'eval', ast_node=True)
+            node = ccache.ast_eval(a)
 
             const = analysis.is_constant(node)
 
@@ -1047,7 +1047,7 @@ class SLIf(SLNode):
 
         for cond, block in self.entries:
             if cond is not None:
-                node = py_compile(cond, 'eval', ast_node=True)
+                node = ccache.ast_eval(cond)
 
                 self.constant = min(self.constant, analysis.is_constant(node))
 
@@ -1166,7 +1166,7 @@ class SLShowIf(SLNode):
 
         for cond, block in self.entries:
             if cond is not None:
-                node = py_compile(cond, 'eval', ast_node=True)
+                node = ccache.ast_eval(cond)
 
                 self.constant = min(self.constant, analysis.is_constant(node))
 
@@ -1241,7 +1241,7 @@ class SLFor(SLBlock):
 
 
     def prepare(self, analysis):
-        node = py_compile(self.expression, 'eval', ast_node=True)
+        node = ccache.ast_eval(self.expression)
 
         const = analysis.is_constant(node)
 
@@ -1374,7 +1374,7 @@ class SLDefault(SLNode):
         analysis.mark_not_constant(self.variable)
 
     def prepare(self, analysis):
-        self.expr = py_compile(self.expression, 'eval')
+        self.expr = compile_expr(ccache.ast_eval(self.expression))
         self.constant = NOT_CONST
         self.last_keyword = True
 

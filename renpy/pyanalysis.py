@@ -457,7 +457,7 @@ class Analysis(object):
         self.is_constant called on that node.
         """
 
-        node = py_compile(expr, 'eval', ast_node=True)
+        node = ccache.ast_eval(expr)
         return self.is_constant(node)
 
     def python(self, code):
@@ -465,7 +465,7 @@ class Analysis(object):
         Performs analysis on a block of python code.
         """
 
-        nodes = py_compile(code, 'exec', ast_node=True)
+        nodes = ccache.ast_exec(code)
 
         a = PyAnalysis(self)
 
@@ -574,4 +574,53 @@ class PyAnalysis(ast.NodeVisitor):
     def visit_Continue(self, node):
         self.analysis.exit_loop()
 
+class CompilerCache(object):
+    """
+    Objects of this class are used to cache the compiliation of Python code.
+    """
 
+    def __init__(self):
+        self.ast_eval_cache = { }
+        self.ast_exec_cache = { }
+
+    def ast_eval(self, expr):
+        """
+        Compiles an expression into an AST.
+        """
+
+        if isinstance(expr, renpy.ast.PyExpr):
+            filename = expr.filename
+            linenumber = expr.linenumber
+        else:
+            filename = None
+            linenumber = None
+
+        key = (expr, filename, linenumber)
+
+        rv = self.ast_eval_cache.get(key, None)
+
+        if rv is None:
+            rv = py_compile(expr, 'eval', ast_node=True)
+            self.ast_eval_cache[key] = rv
+
+        return rv
+
+    def ast_exec(self, code):
+        """
+        Compiles a block into an AST.
+        """
+
+        if isinstance(code, renpy.ast.PyExpr):
+            key = (code, code.filename, code.linenumber)
+        else:
+            key = (code, None, None)
+
+        rv = self.ast_exec_cache.get(key, None)
+
+        if rv is None:
+            rv = py_compile(code, 'exec', ast_node=True)
+            self.ast_exec_cache[key] = rv
+
+        return rv
+
+ccache = CompilerCache()

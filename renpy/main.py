@@ -66,6 +66,16 @@ def run(restart):
     renpy.display.screen.prepare_screens()
     log_clock("Prepare screens")
 
+#     start = time.time()
+#
+#     for i in range(0, 5):
+#         print i
+#         renpy.display.screen.prepared = False
+#         renpy.display.screen.prepare_screens()
+#
+#     print "5x prepare took", time.time() - start
+#     sys.exit(0)
+
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
 
