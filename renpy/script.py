@@ -606,7 +606,10 @@ class Script(object):
                             print "Could not load " + rpycfn
 
                 except:
-                    raise
+                    if "RENPY_RPYC_EXCEPTIONS" in os.environ:
+                        print "While loading", rpycfn
+                        raise
+
                     pass
 
                 if data is None:
