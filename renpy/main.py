@@ -42,6 +42,7 @@ def reset_clock():
     global last_clock
     last_clock = time.time()
 
+
 def run(restart):
     """
     This is called during a single run of the script. Restarting the script

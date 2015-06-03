@@ -32,6 +32,28 @@ import zlib
 # to look up filenames.
 u"".encode("utf-8")
 
+
+################################################################# Physical Paths
+
+def get_path(fn):
+    """
+    Returns the path to `fn` relative to the gamedir. If any of the directories
+    leading to `fn` do not exist, tries to create them.
+
+    This always returns a path, but the path may or may not be writable.
+    """
+
+    fn = os.path.join(renpy.config.gamedir, fn)
+    dn = os.path.dirname(fn)
+
+    try:
+        if not os.path.exists(dn):
+            os.makedirs(dn)
+    except:
+        pass
+
+    return fn
+
 ################################################################## Asset Loading
 
 try:

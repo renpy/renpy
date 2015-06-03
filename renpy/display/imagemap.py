@@ -166,11 +166,7 @@ class ImageMapCache(renpy.object.Object):
         if renpy.loader.loadable(filename):
             return
 
-        fn = os.path.join(renpy.config.gamedir, filename)
-        dir = os.path.dirname(fn) #@ReservedAssignment
-
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+        fn = renpy.loader.get_path(filename)
 
         cache = pygame.Surface((self.cache_width, self.cache_height), pygame.SRCALPHA, 32)
 

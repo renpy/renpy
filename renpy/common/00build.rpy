@@ -133,6 +133,7 @@ init -1500 python in build:
 
         ("tmp/", None),
         ("game/saves/", None),
+        ("game/bytecode.rpyb", None),
 
         ("archived/", None),
         ("launcherinfo.py", None),

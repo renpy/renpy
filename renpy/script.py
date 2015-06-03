@@ -47,6 +47,9 @@ MAGIC = imp.get_magic()
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = "RENPY RPC2"
 
+# A string
+BYTECODE_FILE = "cache/bytecode.rpyb"
+
 class ScriptError(Exception):
     """
     Exception that is raised if the script is somehow inconsistent,
@@ -643,7 +646,7 @@ class Script(object):
 
         # Load the oldcache.
         try:
-            version, cache = loads(renpy.loader.load("bytecode.rpyb").read().decode("zlib"))
+            version, cache = loads(renpy.loader.load(BYTECODE_FILE).read().decode("zlib"))
             if version == BYTECODE_VERSION:
                 self.bytecode_oldcache = cache
         except:
@@ -712,10 +715,11 @@ class Script(object):
 
         if self.bytecode_dirty:
             try:
-                data = (BYTECODE_VERSION, self.bytecode_newcache)
-                f = file(os.path.join(renpy.config.searchpath[0], "bytecode.rpyb"), "wb")
-                f.write(dumps(data, 2).encode("zlib"))
-                f.close()
+                fn = renpy.loader.get_path(BYTECODE_FILE)
+
+                with open(fn, "wb") as f:
+                    data = (BYTECODE_VERSION, self.bytecode_newcache)
+                    f.write(dumps(data, 2).encode("zlib"))
             except:
                 pass
 
