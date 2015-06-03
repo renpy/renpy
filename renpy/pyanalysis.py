@@ -30,6 +30,9 @@ from renpy.python import py_compile
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
+import zlib
+from cPickle import loads, dumps
+
 # The set of names that should be treated as constants.
 always_constants = { 'True', 'False', 'None' }
 
@@ -583,6 +586,9 @@ class CompilerCache(object):
         self.ast_eval_cache = { }
         self.ast_exec_cache = { }
 
+        # True if we've changed the caches.
+        self.updated = False
+
     def ast_eval(self, expr):
         """
         Compiles an expression into an AST.
@@ -602,6 +608,7 @@ class CompilerCache(object):
         if rv is None:
             rv = py_compile(expr, 'eval', ast_node=True)
             self.ast_eval_cache[key] = rv
+            self.updated = True
 
         return rv
 
@@ -620,7 +627,33 @@ class CompilerCache(object):
         if rv is None:
             rv = py_compile(code, 'exec', ast_node=True)
             self.ast_exec_cache[key] = rv
+            self.updated = True
 
         return rv
 
 ccache = CompilerCache()
+
+CACHE_FILENAME = "cache/analysis.rpyb"
+
+def load_cache():
+    try:
+        f = renpy.loader.load(CACHE_FILENAME)
+        c = loads(zlib.decompress(f.read()))
+        f.close()
+
+        ccache.ast_eval_cache.update(c.ast_eval_cache)
+        ccache.ast_exec_cache.update(c.ast_exec_cache)
+    except:
+        pass
+
+def save_cache():
+    if not ccache.updated:
+        return
+
+    try:
+        data = zlib.compress(dumps(ccache, 2), 9)
+
+        with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
+            f.write(data)
+    except:
+        pass

@@ -65,6 +65,7 @@ def run(restart):
 
     # Prepare the screens.
     renpy.display.screen.prepare_screens()
+    renpy.pyanalysis.save_cache()
     log_clock("Prepare screens")
 
 #     start = time.time()
@@ -394,6 +395,9 @@ def main():
             i()
 
         log_clock("Running init code")
+
+        renpy.pyanalysis.load_cache()
+        log_clock("Loading analysis data")
 
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
