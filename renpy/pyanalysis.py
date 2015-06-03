@@ -667,8 +667,6 @@ def load_cache():
         pass
 
 def save_cache():
-    print(len(ccache.ast_eval_cache))
-
     if not ccache.updated:
         return
 
