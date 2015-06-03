@@ -460,8 +460,12 @@ class Analysis(object):
         self.is_constant called on that node.
         """
 
-        node = ccache.ast_eval(expr)
-        return self.is_constant(node)
+        node, literal = ccache.ast_eval_literal(expr)
+
+        if literal:
+            return GLOBAL_CONST
+        else:
+            return self.is_constant(node)
 
     def python(self, code):
         """
@@ -589,7 +593,10 @@ class CompilerCache(object):
         # True if we've changed the caches.
         self.updated = False
 
-    def ast_eval(self, expr):
+        # The version of this object.
+        self.version = 1
+
+    def ast_eval_literal(self, expr):
         """
         Compiles an expression into an AST.
         """
@@ -606,11 +613,23 @@ class CompilerCache(object):
         rv = self.ast_eval_cache.get(key, None)
 
         if rv is None:
-            rv = py_compile(expr, 'eval', ast_node=True)
+            expr = py_compile(expr, 'eval', ast_node=True)
+
+            try:
+                ast.literal_eval(expr)
+                literal = True
+            except:
+                literal = False
+
+            rv = (expr, literal)
+
             self.ast_eval_cache[key] = rv
             self.updated = True
 
         return rv
+
+    def ast_eval(self, expr):
+        return self.ast_eval_literal(expr)[0]
 
     def ast_exec(self, code):
         """
@@ -641,12 +660,15 @@ def load_cache():
         c = loads(zlib.decompress(f.read()))
         f.close()
 
-        ccache.ast_eval_cache.update(c.ast_eval_cache)
-        ccache.ast_exec_cache.update(c.ast_exec_cache)
+        if c.version == ccache.version:
+            ccache.ast_eval_cache.update(c.ast_eval_cache)
+            ccache.ast_exec_cache.update(c.ast_exec_cache)
     except:
         pass
 
 def save_cache():
+    print(len(ccache.ast_eval_cache))
+
     if not ccache.updated:
         return
 
