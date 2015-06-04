@@ -340,14 +340,12 @@ class Node(object):
 
         return ( id(self), )
 
-    def get_children(self):
+    def get_children(self, f):
         """
-        Returns a list of all of the nodes that are children of this
-        node. (That is, all of the nodes in any block associated with
-        this node.)
+        Calls `f` with this node and its children.
         """
 
-        return [ ]
+        f(self)
 
     def get_init(self):
         """
@@ -650,8 +648,11 @@ class Init(Node):
         self.priority = priority
 
 
-    def get_children(self):
-        return self.block
+    def get_children(self, f):
+        f(self)
+
+        for i in self.block:
+            i.get_children(f)
 
     def get_init(self):
         return self.priority, self.block[0]
@@ -706,8 +707,11 @@ class Label(Node):
     def diff_info(self):
         return (Label, self.name)
 
-    def get_children(self):
-        return self.block
+    def get_children(self, f):
+        f(self)
+
+        for i in self.block:
+            i.get_children(f)
 
     def chain(self, next): #@ReservedAssignment
 
@@ -1363,14 +1367,13 @@ class Menu(Node):
     def diff_info(self):
         return (Menu,)
 
-    def get_children(self):
-        rv = [ ]
+    def get_children(self, f):
+        f(self)
 
         for _label, _condition, block in self.items:
             if block:
-                rv.extend(block)
-
-        return rv
+                for i in block:
+                    i.get_children(f)
 
     # Blocks of statements in a choice continue after the menu.
     def chain(self, next): #@ReservedAssignment
@@ -1527,8 +1530,11 @@ class While(Node):
     def diff_info(self):
         return (While, self.condition)
 
-    def get_children(self):
-        return self.block
+    def get_children(self, f):
+        f(self)
+
+        for i in self.block:
+            i.get_children(f)
 
     def chain(self, next): #@ReservedAssignment
         self.next = next
@@ -1569,13 +1575,12 @@ class If(Node):
     def diff_info(self):
         return (If,)
 
-    def get_children(self):
-        rv = [ ]
+    def get_children(self, f):
+        f(self)
 
         for _condition, block in self.entries:
-            rv.extend(block)
-
-        return rv
+            for i in block:
+                i.get_children(f)
 
     def chain(self, next): #@ReservedAssignment
         self.next = next
@@ -1876,8 +1881,11 @@ class Translate(Node):
         rv._next = renpy.game.script.translator.lookup_translate(self.identifier)
         return rv
 
-    def get_children(self):
-        return self.block
+    def get_children(self, f):
+        f(self)
+
+        for i in self.block:
+            i.get_children(f)
 
     def restructure(self, callback):
         return callback(self.block)
@@ -1982,8 +1990,11 @@ class TranslateBlock(Node):
         self.language = language
         self.block = block
 
-    def get_children(self):
-        return self.block
+    def get_children(self, f):
+        f(self)
+
+        for i in self.block:
+            i.get_children(f)
 
     # We handle chaining specially. We want to chain together the nodes in
     # the block, but we want that chain to end in None, and we also want

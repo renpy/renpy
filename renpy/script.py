@@ -62,16 +62,12 @@ def collapse_stmts(stmts):
     stmts.
     """
 
-    all_stmts = [ ]
+    rv = [ ]
 
-    def extend_all(block_list):
-        for i in block_list:
-            all_stmts.append(i)
-            extend_all(i.get_children())
+    for i in stmts:
+        i.get_children(rv.append)
 
-    extend_all(stmts)
-
-    return all_stmts
+    return rv
 
 class Script(object):
     """
@@ -297,14 +293,17 @@ class Script(object):
         """
 
         if not stmts:
-            return
+            return stmts
 
         # Chain together the statements in the file.
         renpy.ast.chain_block(stmts, None)
 
         # All of the statements found in file, regardless of nesting
         # depth.
-        all_stmts = collapse_stmts(stmts)
+
+        all_stmts = [ ]
+        for i in stmts:
+            i.get_children(all_stmts.append)
 
         # Take the translations.
         self.translator.take_translates(all_stmts)
@@ -319,7 +318,7 @@ class Script(object):
                     i.filename = filename
 
         # Check for duplicate names.
-        if check_names:
+        if check_names and not renpy.mobile:
             bad_name = None
             bad_node = None
             old_node = None
