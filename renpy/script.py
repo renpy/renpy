@@ -339,6 +339,8 @@ class Script(object):
                                    bad_node.filename, bad_node.linenumber))
 
 
+        self.update_bytecode()
+
         for node in all_stmts:
 
             name = node.name
@@ -351,10 +353,6 @@ class Script(object):
             if init:
                 initcode.append(init)
 
-        self.update_bytecode()
-
-        # Exec early python.
-        for node in all_stmts:
             node.early_execute()
 
         if self.all_stmts is not None:
