@@ -35,7 +35,12 @@ last_clock = time.time()
 def log_clock(s):
     global last_clock
     now = time.time()
-    renpy.display.log.write("{} took {:.2f}s".format(s, now - last_clock))
+    s = "{} took {:.2f}s".format(s, now - last_clock)
+
+    renpy.display.log.write(s)
+    if renpy.mobile and not renpy.config.log_to_stdout:
+        print s
+
     last_clock = now
 
 def reset_clock():

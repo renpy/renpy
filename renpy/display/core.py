@@ -34,6 +34,8 @@ import time
 import cStringIO
 import threading
 
+import_time = time.time()
+
 try:
     import android # @UnresolvedImport
 except:
@@ -1473,6 +1475,12 @@ class Interface(object):
         # Don't grab the screen.
         pygame.event.set_grab(False)
 
+        s = "Total time until interface ready: {}s".format(time.time() - import_time)
+
+        renpy.display.log.write(s)
+
+        if renpy.mobile and not renpy.config.log_to_stdout:
+            print s
 
     def post_init(self):
         # Setup.
