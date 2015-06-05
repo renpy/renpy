@@ -81,6 +81,9 @@ constants = { "config", "style" } | always_constants | pure_functions
 # A set of names that should not be treated as global constants.
 not_constants = set()
 
+# The base set for the local constants.
+local_constants = set()
+
 def const(name):
     """
     :doc: const
@@ -168,6 +171,50 @@ GLOBAL_CONST = 2 # Expressions that are const everywhere.
 LOCAL_CONST = 1  # Expressions that are const with regard to a screen + parameters.
 NOT_CONST = 0    # Expressions that are not const.
 
+
+class DeltaSet(object):
+    def __init__(self, base, copy=None):
+        """
+        Represents a set that stores its contents as differences from a base
+        set.
+        """
+
+        self.base = base
+
+        if copy is not None:
+            self.added = set(copy.added)
+            self.removed = set(copy.removed)
+        else:
+            self.added = set()
+            self.removed = set()
+
+        self.changed = False
+
+    def add(self, v):
+
+        if v in self.removed:
+            self.removed.discard(v)
+            self.changed = True
+        elif v not in self.base and v not in self.added:
+            self.added.add(v)
+            self.changed = True
+
+    def discard(self, v):
+
+        if v in self.added:
+            self.added.discard(v)
+            self.changed = True
+        elif v in self.base and v not in self.removed:
+            self.removed.add(v)
+            self.changed = True
+
+    def __contains__(self, v):
+        return (v in self.added) or (v in self.base and v not in self.removed)
+
+    def copy(self):
+        return DeltaSet(self.base, self)
+
+
 class Analysis(object):
     """
     Represents the result of code analysis, and provides tools to perform
@@ -184,22 +231,16 @@ class Analysis(object):
         self.children = { }
 
         # The variables we consider to be not-constant.
-        self.not_constant = set(not_constants)
+        self.not_constant = DeltaSet(not_constants)
 
         # Variables we consider to be locally constant.
-        self.local_constant = set()
+        self.local_constant = DeltaSet(local_constants)
 
-        # Veriables we consider to be globally constant.
-        self.global_constant = set(always_constants)
+        # Variables we consider to be globally constant.
+        self.global_constant = DeltaSet(always_constants)
 
         # The functions we consider to be pure.
-        self.pure_functions = set(pure_functions)
-
-        # Old versions of the analysis.
-        self.old_not_constant = set()
-        self.old_local_constant = set()
-        self.old_global_constant = set()
-        self.old_pure_functions = set()
+        self.pure_functions = DeltaSet(pure_functions)
 
         # Represents what we know about the current control.
         self.control = Control(True, False, False)
@@ -260,18 +301,20 @@ class Analysis(object):
             if not i.at_fixed_point():
                 return False
 
-        if ((self.old_not_constant == self.not_constant) and
-            (self.old_global_constant == self.global_constant) and
-            (self.old_local_constant == self.local_constant) and
-            (self.old_pure_functions == self.pure_functions)):
-            return True
 
-        self.old_not_constant = set(self.not_constant)
-        self.old_global_constant = set(self.global_constant)
-        self.old_local_constant = set(self.local_constant)
-        self.old_pure_functions = set(self.pure_functions)
+        if (self.not_constant.changed or
+            self.global_constant.changed or
+            self.local_constant.changed or
+            self.pure_functions.changed):
 
-        return False
+            self.not_constant.changed = False
+            self.global_constant.changed = False
+            self.local_constant.changed = False
+            self.pure_functions.changed = False
+
+            return False
+
+        return True
 
     def mark_constant(self, name):
         """
@@ -484,7 +527,7 @@ class Analysis(object):
         Analyzes the parameters to the screen.
         """
 
-        self.global_constant.update(constants)
+        self.global_constant = DeltaSet(constants)
 
         # As we have parameters, analyze with those parameters.
 
