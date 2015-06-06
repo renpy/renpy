@@ -40,6 +40,9 @@ except:
 # function will parse command line arguments, and false otherwise.
 commands = { }
 
+# Commands that force compile to be set.
+compile_commands = { "compile", "add_from" }
+
 class ArgumentParser(argparse.ArgumentParser):
     """
     Creates an argument parser that is capable of parsing the standard Ren'Py
@@ -113,6 +116,24 @@ class ArgumentParser(argparse.ArgumentParser):
             argparse.ArgumentParser.add_argument(self, *args, **kwargs)
         else:
             self.group.add_argument(*args, **kwargs)
+
+    def parse_args(self, *args, **kwargs):
+        rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
+
+        if rv.command in compile_commands:
+            rv.compile = True
+
+        return rv
+
+    def parse_known_args(self, *args, **kwargs):
+        args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
+
+        if args.command in compile_commands:
+            args.compile = True
+
+        return args, rest
+
+
 
 def run():
     """
@@ -202,6 +223,7 @@ def bootstrap():
 
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
+
     return args
 
 def pre_init():

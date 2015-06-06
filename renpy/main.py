@@ -73,6 +73,10 @@ def run(restart):
     renpy.pyanalysis.save_cache()
     log_clock("Prepare screens")
 
+    # Handle arguments and commands.
+    if not renpy.arguments.post_init():
+        return
+
 #     start = time.time()
 #
 #     for i in range(0, 5):
@@ -422,10 +426,6 @@ def main():
         renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
 
         renpy.dump.dump(False)
-
-        # Handle arguments and commands.
-        if not renpy.arguments.post_init():
-            return
 
         # Remove the list of all statements from the script.
         game.script.all_stmts = None
