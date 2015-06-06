@@ -1757,6 +1757,9 @@ class SLScreen(SLBlock):
             if self.parameters:
                 analysis.parameters(self.parameters)
 
+            # Ensure each screen is analyzed at least once.
+            SLBlock.analyze(self, analysis)
+
             while not analysis.at_fixed_point():
                 SLBlock.analyze(self, analysis)
 

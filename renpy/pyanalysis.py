@@ -209,7 +209,7 @@ class DeltaSet(object):
             self.changed = True
 
     def __contains__(self, v):
-        return (v in self.added) or (v in self.base and v not in self.removed)
+        return (v in self.added) or ((v in self.base) and (v not in self.removed))
 
     def copy(self):
         return DeltaSet(self.base, self)
