@@ -75,7 +75,7 @@ def run(restart):
 
     # Handle arguments and commands.
     if not renpy.arguments.post_init():
-        return
+        renpy.exports.quit()
 
 #     start = time.time()
 #

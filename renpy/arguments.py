@@ -68,17 +68,14 @@ class ArgumentParser(argparse.ArgumentParser):
 
         self.add_argument(
             "basedir", default=None,
-            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
-            nargs=1 if require_command else '?'
-            )
+            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
 
         command_names = ", ".join(sorted(commands))
 
         self.add_argument(
             "command",
             help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
-            default="run",
-            nargs=1 if require_command else '?')
+            default="run")
 
         self.add_argument(
             "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
@@ -132,8 +129,6 @@ class ArgumentParser(argparse.ArgumentParser):
             args.compile = True
 
         return args, rest
-
-
 
 def run():
     """
