@@ -67,7 +67,9 @@ class ArgumentParser(argparse.ArgumentParser):
         argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
 
         self.add_argument(
-            "basedir", default=None,
+            "basedir",
+            default='',
+            nargs='?',
             help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
 
         command_names = ", ".join(sorted(commands))
@@ -75,6 +77,7 @@ class ArgumentParser(argparse.ArgumentParser):
         self.add_argument(
             "command",
             help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
+            nargs='?',
             default="run")
 
         self.add_argument(
