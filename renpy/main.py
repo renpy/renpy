@@ -77,6 +77,9 @@ def run(restart):
     if not renpy.arguments.post_init():
         renpy.exports.quit()
 
+    # Remove the list of all statements from the script.
+    game.script.all_stmts = None
+
 #     start = time.time()
 #
 #     for i in range(0, 5):
@@ -426,9 +429,6 @@ def main():
         renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
 
         renpy.dump.dump(False)
-
-        # Remove the list of all statements from the script.
-        game.script.all_stmts = None
 
         # Initialize image cache.
         renpy.display.im.cache.init()
