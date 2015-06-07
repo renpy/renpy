@@ -114,9 +114,6 @@ def index_archives():
 
     cleardirfiles()
 
-    for dir, fn in listdirfiles(): #@ReservedAssignment
-        lower_map[fn.lower()] = fn
-
     global archives
     archives = [ ]
 
@@ -165,6 +162,9 @@ def index_archives():
             archives.append((prefix, index))
         except:
             raise
+
+    for dir, fn in listdirfiles(): #@ReservedAssignment
+        lower_map[fn.lower()] = fn
 
 def walkdir(dir): #@ReservedAssignment
     rv = [ ]
