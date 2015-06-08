@@ -656,12 +656,18 @@ screens = { }
 # The screens that were updated during the current interaction.
 updated_screens = set()
 
-def get_screen_variant(name):
+def get_screen_variant(name, candidates=None):
     """
     Get a variant screen object for `name`.
+
+    `candidates`
+        A list of candidate variants.
     """
 
-    for i in renpy.config.variants:
+    if candidates is None:
+        candidates = renpy.config.variants
+
+    for i in candidates:
         rv = screens.get((name, i), None)
         if rv is not None:
             return rv
@@ -687,13 +693,8 @@ def prepare_screens():
         if s.ast is None:
             continue
 
-        s.ast.unprepare()
-
-    for s in screens.values():
-        if s.ast is None:
-            continue
-
-        s.ast.prepare()
+        s.ast.unprepare_screen()
+        s.ast.prepare_screen()
 
     prepared = True
 

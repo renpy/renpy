@@ -1414,32 +1414,9 @@ class SLUse(SLNode):
         # block.
         self.block = block
 
-    def get_ast(self):
-        """
-        Gets the ast, if this is an SL2 screen, and sets
-        """
-
-        ts = renpy.display.screen.get_screen_variant(self.target)
-
-        if self.ast is not None:
-            return
-
-        if ts is None:
-            self.constant = NOT_CONST
-            return
-
-        if ts.ast is None:
-            self.constant = NOT_CONST
-            return
-
-        self.ast = ts.ast
-
-        if self.block:
-            self.ast = self.ast.copy(self.block)
-
     def copy(self, transclude):
 
-        self.get_ast()
+        ts = renpy.display.screen.get_screen_variant(self.target)
 
         rv = self.instantiate(transclude)
 
@@ -1448,22 +1425,21 @@ class SLUse(SLNode):
         rv.id = self.id
         rv.block = self.block
 
-        if not self.ast:
+        if ts and ts.ast:
+
+            if self.block:
+                block = self.block.copy(transclude)
+            else:
+                block = None
+
+            rv.ast = ts.ast.copy(block)
+
+        else:
             rv.ast = None
-            return rv
-
-        if not self.block:
-            rv.ast = self.ast.copy(None)
-            return rv
-
-        block = self.block.copy(transclude)
-        rv.ast = self.ast.copy(block)
 
         return rv
 
     def analyze(self, analysis):
-
-        self.get_ast()
 
         if not self.ast:
             self.constant = NOT_CONST
@@ -1681,6 +1657,8 @@ class SLScreen(SLBlock):
     """
 
     version = 0
+    analysis = None
+    ast = None
 
     def __init__(self, loc):
 
@@ -1707,8 +1685,15 @@ class SLScreen(SLBlock):
         # The parameters this screen takes.
         self.parameters = None
 
+        # The analysis object used for this screen, if the screen has
+        # already been analyzed.
+        self.analysis = None
+
         # True if this screen has been prepared.
         self.prepared = False
+
+        # The AST after being copied (w/ transclusions) and analyzed.
+        self.ast = None
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -1720,7 +1705,10 @@ class SLScreen(SLBlock):
         rv.variant = self.variant
         rv.predict = self.predict
         rv.parameters = self.parameters
+
         rv.prepared = False
+        rv.analysis = None
+        rv.ast = None
 
         return rv
 
@@ -1741,46 +1729,55 @@ class SLScreen(SLBlock):
             location=self.location,
             )
 
-    def unprepare(self):
+    def analyze(self, analysis):
+
+        if self.parameters:
+            analysis.parameters(self.parameters)
+
+        SLBlock.analyze(self, analysis)
+
+    def unprepare_screen(self):
         self.prepared = False
 
-    def prepare(self, analysis=None):
+    def prepare_screen(self):
 
-        if not self.prepared:
+        if self.prepared:
+            return
 
-            # This version ensures we're not using the cache from an old
-            # version of the screen.
-            self.version += 1
+        # Analyze the screen, if it hasn't already been analyzed,
+        if not self.ast:
 
-            analysis = Analysis(analysis)
+            self.ast = self.copy(None)
 
-            if self.parameters:
-                analysis.parameters(self.parameters)
+            analysis = self.ast.analysis = Analysis(None)
 
-            # Ensure each screen is analyzed at least once.
-            SLBlock.analyze(self, analysis)
+            self.ast.analyze(analysis)
 
             while not analysis.at_fixed_point():
-                SLBlock.analyze(self, analysis)
+                self.ast.analyze(analysis)
 
-            self.constant = NOT_CONST
-            SLBlock.prepare(self, analysis)
-            self.prepared = True
+        # This version ensures we're not using the cache from an old
+        # version of the screen.
+        self.version += 1
 
-            if renpy.display.screen.get_profile(self.name).const:
-                profile_log.write("CONST ANALYSIS %s", self.name)
+        self.ast.constant = NOT_CONST
+        self.ast.prepare(self.ast.analysis)
+        self.prepared = True
 
-                new_constants = [ i for i in analysis.global_constant if i not in renpy.pyanalysis.constants ]
-                new_constants.sort()
-                profile_log.write('    global_const: %s', " ".join(new_constants))
+        if renpy.display.screen.get_profile(self.name).const:
+            profile_log.write("CONST ANALYSIS %s", self.name)
 
-                local_constants = list(analysis.local_constant)
-                local_constants.sort()
-                profile_log.write('    local_const: %s', " ".join(local_constants))
+            new_constants = [ i for i in self.ast.analysis.global_constant if i not in renpy.pyanalysis.constants ]
+            new_constants.sort()
+            profile_log.write('    global_const: %s', " ".join(new_constants))
 
-                not_constants = list(analysis.not_constant)
-                not_constants.sort()
-                profile_log.write('    not_const: %s', " ".join(not_constants))
+            local_constants = list(self.ast.analysis.local_constant)
+            local_constants.sort()
+            profile_log.write('    local_const: %s', " ".join(local_constants))
+
+            not_constants = list(self.ast.analysis.not_constant)
+            not_constants.sort()
+            profile_log.write('    not_const: %s', " ".join(not_constants))
 
     def report_traceback(self, name, last):
         if last:
@@ -1804,7 +1801,7 @@ class SLScreen(SLBlock):
             scope.update(values)
 
         if not self.prepared:
-            self.prepare()
+            self.prepare_screen()
 
         current_screen = renpy.display.screen.current_screen()
 
@@ -1825,7 +1822,7 @@ class SLScreen(SLBlock):
 
         context.cache = cache
 
-        self.execute(context)
+        self.ast.execute(context)
 
         for i in context.children:
             renpy.ui.implicit_add(i)
