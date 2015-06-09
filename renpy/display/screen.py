@@ -242,7 +242,10 @@ class Screen(renpy.object.Object):
         self.location = location
 
         global prepared
+        global analyzed
+
         prepared = False
+        analyzed = False
 
 
 # Phases we can be in.
@@ -694,8 +697,13 @@ def get_all_screen_variants(name):
 
     return rv
 
+# Have all screens been analyzed?
+analyzed = False
+
+# Have the screens been prepared?
 prepared = False
 
+# Caches for sort_screens.
 sorted_screens = [ ]
 screens_at_sort = { }
 
@@ -771,17 +779,23 @@ def sorted_variants():
 
     return rv
 
-
 def analyze_screens():
     """
     Analyzes all screens.
     """
+
+    global analyzed
+
+    if analyzed:
+        return
 
     for s in sorted_variants():
         if s.ast is None:
             continue
 
         s.ast.analyze_screen()
+
+    analyzed = True
 
 def prepare_screens():
     """
@@ -794,6 +808,9 @@ def prepare_screens():
         return
 
     predict_cache.clear()
+
+    if not analyzed:
+        analyze_screens()
 
     for s in sorted_variants():
         if s.ast is None:
