@@ -1754,6 +1754,20 @@ class SLScreen(SLBlock):
 
         SLBlock.analyze(self, analysis)
 
+    def analyze_screen(self):
+
+        if self.ast:
+            return
+
+        self.ast = self.copy(None)
+
+        analysis = self.ast.analysis = Analysis(None)
+
+        self.ast.analyze(analysis)
+
+        while not analysis.at_fixed_point():
+            self.ast.analyze(analysis)
+
     def unprepare_screen(self):
         self.prepared = False
 
@@ -1762,17 +1776,7 @@ class SLScreen(SLBlock):
         if self.prepared:
             return
 
-        # Analyze the screen, if it hasn't already been analyzed,
-        if not self.ast:
-
-            self.ast = self.copy(None)
-
-            analysis = self.ast.analysis = Analysis(None)
-
-            self.ast.analyze(analysis)
-
-            while not analysis.at_fixed_point():
-                self.ast.analyze(analysis)
+        self.analyze_screen()
 
         # This version ensures we're not using the cache from an old
         # version of the screen.

@@ -692,6 +692,17 @@ def get_all_screen_variants(name):
 
 prepared = False
 
+def analyze_screens():
+    """
+    Analyzes all screens.
+    """
+
+    for s in screens.values():
+        if s.ast is None:
+            continue
+
+        s.ast.analyze_screen()
+
 def prepare_screens():
     """
     Prepares all screens for use.

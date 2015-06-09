@@ -68,9 +68,16 @@ def run(restart):
     renpy.style.build_styles() # @UndefinedVariable
     log_clock("Build styles")
 
+    # Analyze the screens.
+    renpy.display.screen.analyze_screens()
+    log_clock("Analyze screens.")
+
     # Prepare the screens.
     renpy.display.screen.prepare_screens()
-    renpy.pyanalysis.save_cache()
+
+    if not restart:
+        renpy.pyanalysis.save_cache()
+
     log_clock("Prepare screens")
 
     # Handle arguments and commands.
