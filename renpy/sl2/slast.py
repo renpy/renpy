@@ -1416,49 +1416,67 @@ class SLUse(SLNode):
 
     def copy(self, transclude):
 
-        ts = renpy.display.screen.get_screen_variant(self.target)
-
         rv = self.instantiate(transclude)
 
         rv.target = self.target
         rv.args = self.args
         rv.id = self.id
         rv.block = self.block
+        rv.ast = None
 
-        if ts and ts.ast:
+        rv.asts = { }
 
-            if self.block:
-                block = self.block.copy(transclude)
+        for variant, ts in renpy.display.screen.get_all_screen_variants(self.target):
+
+            if ts and ts.ast:
+
+                if self.block:
+                    block = self.block.copy(transclude)
+                else:
+                    block = None
+
+                rv.asts[variant] = ts.ast.copy(block)
+
             else:
-                block = None
-
-            rv.ast = ts.ast.copy(block)
-
-        else:
-            rv.ast = None
+                rv.asts[variant] = None
 
         return rv
 
     def analyze(self, analysis):
-
-        if not self.ast:
-            self.constant = NOT_CONST
-            return
-
-        self.ast.analyze(analysis.get_child(self.serial))
 
         self.last_keyword = True
 
         if self.id:
             self.constant = NOT_CONST
 
+        for variant, ast in self.asts.items():
+
+            if not ast:
+                continue
+
+            ast.analyze(analysis.get_child((self.serial, variant)))
+
     def prepare(self, analysis):
-        if self.ast is None:
-            return
 
-        self.ast.prepare(analysis.get_child(self.serial))
+        self.ast = None
 
-        self.constant = min(self.constant, self.ast.constant)
+        # Find the first matching variant.
+        for variant in renpy.config.variants:
+            if variant in self.asts:
+                self.ast = self.asts[variant]
+
+                break
+
+        # Compile the first matching variant, or all variants if the compile
+        # flag is set.
+        for variant, a in self.asts.items():
+            if a is not None and ((a is self.ast) or (renpy.game.args.compile)): # @UndefinedVariable
+                a.prepare(analysis.get_child((self.serial, variant)))
+
+        if self.ast is not None:
+            self.constant = min(self.constant, self.ast.constant)
+        else:
+            self.constant = NOT_CONST
 
     def execute_use_screen(self, context):
 

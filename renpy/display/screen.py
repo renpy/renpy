@@ -674,6 +674,21 @@ def get_screen_variant(name, candidates=None):
 
     return None
 
+def get_all_screen_variants(name):
+    """
+    Gets all variants of the screen with `name`.
+
+    Returns a list of (`variant`, `screen`) tuples, in no particular
+    order.
+    """
+
+    rv = [ ]
+
+    for k, v in screens.iteritems():
+        if k[0] == name:
+            rv.append((k[1], v))
+
+    return rv
 
 prepared = False
 
