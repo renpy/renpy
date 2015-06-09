@@ -66,19 +66,33 @@ class ArgumentParser(argparse.ArgumentParser):
 
         argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
 
-        self.add_argument(
-            "basedir",
-            default='',
-            nargs='?',
-            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
-
         command_names = ", ".join(sorted(commands))
 
-        self.add_argument(
-            "command",
-            help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
-            nargs='?',
-            default="run")
+        if require_command:
+
+            self.add_argument(
+                "basedir",
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.")
+
+        else:
+
+            self.add_argument(
+                "basedir",
+                default='',
+                nargs='?',
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
+                nargs='?',
+                default="run")
 
         self.add_argument(
             "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
@@ -100,7 +114,7 @@ class ArgumentParser(argparse.ArgumentParser):
             "--lint", action="store_true", dest="lint",
             help=argparse.SUPPRESS)
 
-        dump = self.add_argument_group("JSON Dump Arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
+        dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
         dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
         dump.add_argument("--json-dump-common", action="store_true", default=False, help="Include names defined in the common directory.")
@@ -109,7 +123,7 @@ class ArgumentParser(argparse.ArgumentParser):
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
             command = renpy.game.args.command #@UndefinedVariable
-            self.group = self.add_argument_group("{0} command".format(command), description)
+            self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
         if self.group is self:
