@@ -68,17 +68,26 @@ def run(restart):
     renpy.style.build_styles() # @UndefinedVariable
     log_clock("Build styles")
 
+    renpy.sl2.slast.load_cache()
+    log_clock("Load screen analysis")
+
     # Analyze the screens.
     renpy.display.screen.analyze_screens()
-    log_clock("Analyze screens.")
+    log_clock("Analyze screens")
+
+    if not restart:
+        renpy.sl2.slast.save_cache()
+        log_clock("Save screen analysis")
 
     # Prepare the screens.
     renpy.display.screen.prepare_screens()
 
+    log_clock("Prepare screens")
+
     if not restart:
         renpy.pyanalysis.save_cache()
-
-    log_clock("Prepare screens")
+        renpy.game.script.save_bytecode()
+        log_clock("Save caches.")
 
     # Handle arguments and commands.
     if not renpy.arguments.post_init():
@@ -402,9 +411,6 @@ def main():
             game.context().run(node)
 
         renpy.game.exception_info = 'After initialization, but before game start.'
-
-        # Save the bytecode in a cache.
-        renpy.game.script.save_bytecode()
 
         # Check if we should simulate android.
         renpy.android = renpy.android or renpy.config.simulate_android #@UndefinedVariable

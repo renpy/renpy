@@ -695,7 +695,7 @@ class CompilerCache(object):
 
 ccache = CompilerCache()
 
-CACHE_FILENAME = "cache/analysis.rpyb"
+CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
 def load_cache():
     try:

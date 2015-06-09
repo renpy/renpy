@@ -30,6 +30,8 @@
 import ast
 import collections
 import linecache
+from cPickle import loads, dumps
+import zlib
 
 import renpy.display
 import renpy.pyanalysis
@@ -1759,6 +1761,12 @@ class SLScreen(SLBlock):
         if self.ast:
             return
 
+        key = (self.name, self.variant)
+
+        if key in scache.analyzed:
+            self.ast = scache.analyzed[key]
+            return
+
         self.ast = self.copy(None)
 
         analysis = self.ast.analysis = Analysis(None)
@@ -1767,6 +1775,9 @@ class SLScreen(SLBlock):
 
         while not analysis.at_fixed_point():
             self.ast.analyze(analysis)
+
+        scache.analyzed[key] = self.ast
+        scache.updated = True
 
     def unprepare_screen(self):
         self.prepared = False
@@ -1848,3 +1859,41 @@ class SLScreen(SLBlock):
 
         for i in context.children:
             renpy.ui.implicit_add(i)
+
+class ScreenCache(object):
+
+    def __init__(self):
+        self.version = 1
+        self.analyzed = { }
+        self.updated = False
+
+scache = ScreenCache()
+
+CACHE_FILENAME = "cache/screens.rpyb"
+
+def load_cache():
+    try:
+        f = renpy.loader.load(CACHE_FILENAME)
+        s = loads(zlib.decompress(f.read()))
+        f.close()
+
+        if s.version == scache.version:
+            renpy.game.script.update_bytecode()
+            scache.analyzed.update(s.analyzed)
+    except:
+        pass
+
+def save_cache():
+    if not scache.updated:
+        print "Did not update scache."
+        return
+
+    try:
+        data = zlib.compress(dumps(scache, 2), 9)
+
+        with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
+            f.write(data)
+    except:
+        pass
+
+
