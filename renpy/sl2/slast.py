@@ -272,6 +272,21 @@ class SLNode(object):
         if self.constant:
             profile_log.write("    potentially constant")
 
+    def used_screens(self, callback):
+        """
+        Calls callback with the name of each screen this node and its
+        children use.
+        """
+
+        return
+
+    def has_transclude(self):
+        """
+        Returns true if this node is a transclude or has a transclude as a child.
+        """
+
+        return False
+
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
 
@@ -394,6 +409,17 @@ class SLBlock(SLNode):
     def copy_on_change(self, cache):
         for i in self.children:
             i.copy_on_change(cache)
+
+    def used_screens(self, callback):
+        for i in self.children:
+            i.used_screens(callback)
+
+    def has_transclude(self):
+        for i in self.children:
+            if i.has_transclude():
+                return True
+
+        return False
 
 
 list_or_tuple = (list, tuple)
@@ -1132,6 +1158,16 @@ class SLIf(SLNode):
         for _cond, block in self.entries:
             block.copy_on_change(cache)
 
+    def used_screens(self, callback):
+        for _cond, block in self.entries:
+            block.used_screens(callback)
+
+    def has_transclude(self):
+        for _cond, block in self.entries:
+            if block.has_transclude():
+                return True
+
+        return False
 
 class SLShowIf(SLNode):
     """
@@ -1206,6 +1242,17 @@ class SLShowIf(SLNode):
     def copy_on_change(self, cache):
         for _cond, block in self.entries:
             block.copy_on_change(cache)
+
+    def used_screens(self, callback):
+        for _cond, block in self.entries:
+            block.used_screens(callback)
+
+    def has_transclude(self):
+        for _cond, block in self.entries:
+            if block.has_transclude():
+                return True
+
+        return False
 
 
 class SLFor(SLBlock):
@@ -1606,6 +1653,9 @@ class SLUse(SLNode):
         if self.ast is not None:
             self.ast.copy_on_change(c)
 
+    def used_screens(self, callback):
+        callback(self.target)
+
 
 class SLTransclude(SLNode):
 
@@ -1669,6 +1719,9 @@ class SLTransclude(SLNode):
             return
 
         self.child.copy_on_change(c)
+
+    def has_transclude(self):
+        return True
 
 
 class SLScreen(SLBlock):

@@ -184,9 +184,6 @@ def cache_get(screen, args, kwargs):
 
 # Screens #####################################################################
 
-
-
-
 class Screen(renpy.object.Object):
     """
     A screen is a collection of widgets that are displayed together.
@@ -211,6 +208,7 @@ class Screen(renpy.object.Object):
         self.name = name
 
         screens[name[0], variant] = self
+        screens_by_name[name[0]][variant] = self
 
         # A function that can be called to display the screen.
         self.function = function
@@ -242,6 +240,9 @@ class Screen(renpy.object.Object):
 
         # The location (filename, linenumber) of this screen.
         self.location = location
+
+        global prepared
+        prepared = False
 
 
 # Phases we can be in.
@@ -653,6 +654,9 @@ def pop_current_screen():
 # A map from (screen_name, variant) tuples to screen.
 screens = { }
 
+# A map from screen name to map from variant to screen.
+screens_by_name = collections.defaultdict(dict)
+
 # The screens that were updated during the current interaction.
 updated_screens = set()
 
@@ -692,12 +696,88 @@ def get_all_screen_variants(name):
 
 prepared = False
 
+sorted_screens = [ ]
+screens_at_sort = { }
+
+def sort_screens():
+    """
+    Produces a list of SL2 screens in topologically sorted order.
+    """
+
+    global sorted_screens
+    global screens_at_sort
+
+    if screens_at_sort == screens:
+        return sorted_screens
+
+    # For each screen, the set of screens it uses.
+    depends = collections.defaultdict(set)
+
+    # For each screen, the set of screens that use it.
+    reverse = collections.defaultdict(set)
+
+    for k, v in screens.items():
+
+        name = k[0]
+
+        # Ensure name exists.
+        depends[name]
+
+        if not v.ast:
+            continue
+
+        def callback(uses):
+            depends[name].add(uses)
+            reverse[uses].add(name)
+
+        v.ast.used_screens(callback)
+
+    rv = [ ]
+
+    workset = { k for k, v in depends.items() if not len(v) }
+
+    print depends
+
+    while workset:
+        name = workset.pop()
+        rv.append(name)
+
+        for i in reverse[name]:
+            d = depends[i]
+            d.remove(name)
+
+            if not d:
+                workset.add(i)
+
+        del reverse[name]
+
+    # A use-cycle is possible, but we live with it - we need to return something
+    # from this in order to be able to show error messages.
+
+    sorted_screens = rv
+    screens_at_sort = dict(screens)
+
+    return rv
+
+def sorted_variants():
+    """
+    Produces a list of screen variants in topological order.
+    """
+
+    rv = [ ]
+
+    for name in sorted_screens:
+        rv.extend(screens_by_name[name].values())
+
+    return rv
+
+
 def analyze_screens():
     """
     Analyzes all screens.
     """
 
-    for s in screens.values():
+    for s in sorted_variants():
         if s.ast is None:
             continue
 
@@ -715,7 +795,7 @@ def prepare_screens():
 
     predict_cache.clear()
 
-    for s in screens.values():
+    for s in sorted_variants():
         if s.ast is None:
             continue
 
