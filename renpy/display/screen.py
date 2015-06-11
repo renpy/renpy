@@ -744,8 +744,6 @@ def sort_screens():
 
     workset = { k for k, v in depends.items() if not len(v) }
 
-    print depends
-
     while workset:
         name = workset.pop()
         rv.append(name)
@@ -774,7 +772,7 @@ def sorted_variants():
 
     rv = [ ]
 
-    for name in sorted_screens:
+    for name in sort_screens():
         rv.extend(screens_by_name[name].values())
 
     return rv
