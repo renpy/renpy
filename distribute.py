@@ -106,11 +106,6 @@ def main():
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
 
-    # Generate launcher/game/script_version.rpy
-    with open("launcher/game/script_version.rpy", "w") as f:
-        f.write("init -999 python:\n")
-        f.write("    config.script_version = {!r}\n".format(renpy.version_tuple[:3]))  # @UndefinedVariable
-
     # Compile the various games.
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ] + glob.glob("templates/*"):

@@ -581,20 +581,20 @@ init python in distribute:
             Add Ren'Py-generic files to the project.
             """
 
-            SCRIPT_VERSION_RPY = os.path.join(config.gamedir, "script_version.rpy")
-            SCRIPT_VERSION_RPYC = os.path.join(config.gamedir, "script_version.rpyc")
             LICENSE_TXT = os.path.join(config.renpy_base, "LICENSE.txt")
-
-            if os.path.exists(SCRIPT_VERSION_RPY):
-                if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy")):
-                    self.add_file("all", "game/script_version.rpy", SCRIPT_VERSION_RPY)
-
-            if os.path.exists(SCRIPT_VERSION_RPYC):
-                if not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc")):
-                    self.add_file("all", "game/script_version.rpyc", SCRIPT_VERSION_RPYC)
 
             if os.path.exists(LICENSE_TXT):
                 self.add_file("renpy", "renpy/LICENSE.txt", LICENSE_TXT)
+
+            if (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpy"))) and \
+                (not os.path.exists(os.path.join(self.project.path, "game", "script_version.rpyc"))):
+
+                script_version_txt = self.temp_filename("script_version.txt")
+
+                with open(script_version_txt, "w") as f:
+                    f.write(repr(renpy.renpy.version_tuple[:-1]))
+
+                self.add_file("all", "game/script_version.txt", script_version_txt)
 
 
         def write_plist(self):

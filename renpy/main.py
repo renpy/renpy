@@ -86,8 +86,10 @@ def run(restart):
 
     if not restart:
         renpy.pyanalysis.save_cache()
+        log_clock("Save pyanalysis.")
+
         renpy.game.script.save_bytecode()
-        log_clock("Save caches.")
+        log_clock("Save bytecode.")
 
     # Handle arguments and commands.
     if not renpy.arguments.post_init():
