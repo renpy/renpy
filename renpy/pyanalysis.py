@@ -698,6 +698,9 @@ ccache = CompilerCache()
 CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
 def load_cache():
+    if renpy.game.args.compile: # @UndefinedVariable
+        return
+
     try:
         f = renpy.loader.load(CACHE_FILENAME)
         c = loads(zlib.decompress(f.read()))

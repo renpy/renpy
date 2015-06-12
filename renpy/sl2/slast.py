@@ -43,6 +43,7 @@ from renpy.display.predict import displayable as predict_displayable
 
 from renpy.python import py_eval_bytecode
 from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST, ccache
+import md5
 
 # This file contains the abstract syntax tree for a screen language
 # screen.
@@ -1939,6 +1940,11 @@ def load_cache():
 
     try:
         f = renpy.loader.load(CACHE_FILENAME)
+
+        digest = f.read(md5.digest_size)
+        if digest != renpy.game.script.digest.digest():
+            return
+
         s = loads(zlib.decompress(f.read()))
         f.close()
 
@@ -1946,18 +1952,19 @@ def load_cache():
             renpy.game.script.update_bytecode()
             scache.const_analyzed.update(s.const_analyzed)
             scache.not_const_analyzed.update(s.not_const_analyzed)
+
     except:
         pass
 
 def save_cache():
     if not scache.updated:
-        print "Did not update scache."
         return
 
     try:
         data = zlib.compress(dumps(scache, 2), 9)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
+            f.write(renpy.game.script.digest.digest())
             f.write(data)
     except:
         pass

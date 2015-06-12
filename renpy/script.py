@@ -129,6 +129,8 @@ class Script(object):
 
         self.serial = 0
 
+        self.digest = md5.md5(renpy.version_only)
+
     def scan_script_files(self):
         """
         Scan the directories for script files.
@@ -571,6 +573,11 @@ class Script(object):
             if data is None:
                 raise Exception("Could not load from archive %s." % (lastfn,))
 
+            f = renpy.loader.load(fn + compiled)
+            f.seek(-md5.digest_size, 2)
+            digest = f.read(md5.digest_size)
+            f.close()
+
         else:
 
             # Otherwise, we're loading from disk. So we need to decide if
@@ -580,23 +587,33 @@ class Script(object):
 
             renpy.loader.add_auto(rpyfn)
 
+            if os.path.exists(rpyfn):
+                with open(rpyfn, "rU") as f:
+                    rpydigest = md5.md5(f.read()).digest()
+            else:
+                rpydigest = None
+
+            try:
+                if os.path.exists(rpycfn):
+                    with open(rpycfn, "rb") as f:
+                        f.seek(-md5.digest_size, 2)
+                        rpycdigest = f.read(md5.digest_size)
+                else:
+                    rpycdigest = None
+            except:
+                rpycdigest = None
+
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
                 # Are we forcing a compile?
-                force_compile = renpy.game.args.command in [ "compile", "add_from" ] or renpy.game.args.compile # @UndefinedVariable
+                force_compile = renpy.game.args.compile # @UndefinedVariable
 
                 # Use the source file here since it'll be loaded if it exists.
                 lastfn = rpyfn
 
-                rpydigest = md5.md5(file(rpyfn, "rU").read()).digest()
-
                 data, stmts = None, None
 
                 try:
-                    f = file(rpycfn, "rb")
-                    f.seek(-md5.digest_size, 2)
-                    rpycdigest = f.read(md5.digest_size)
-                    f.close()
 
                     if rpydigest == rpycdigest and not force_compile:
 
@@ -615,13 +632,19 @@ class Script(object):
                 if data is None:
                     data, stmts = self.load_file(dir, fn + source)
 
+                digest = rpydigest
+
             elif os.path.exists(rpycfn):
                 lastfn = rpycfn
                 data, stmts = self.load_file(dir, fn + compiled)
 
+                digest = rpycdigest
+
             elif os.path.exists(rpyfn):
                 lastfn = rpyfn
                 data, stmts = self.load_file(dir, fn + source)
+
+                digest = rpydigest
 
         if data is None:
             raise Exception("Could not load file %s." % lastfn)
@@ -633,6 +656,8 @@ class Script(object):
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
         self.finish_load(stmts, initcode, filename=rpyfn)
+
+        self.digest.update(digest)
 
 
 
