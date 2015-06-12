@@ -41,7 +41,18 @@ if 'pss' not in disable:
     try:
         import pysdlsound as pss
         pss.check_version(4)  # @UndefinedVariable
-        atexit.register(pss.quit)  # @UndefinedVariable
+        import platform
+        if platform.system()=='Linux':
+            def audio_atexit():
+                import signal
+                handler = signal.signal(signal.SIGALRM,signal.SIG_DFL)
+                alrm = signal.alarm(10)
+                pss.quit()
+                signal.signal(signal.SIGALRM,handler)
+                signal.alarm(alrm)
+            atexit.register(audio_atexit)
+        else:
+            atexit.register(pss.quit)
     except:
         import traceback
         traceback.print_exc()
