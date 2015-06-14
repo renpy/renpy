@@ -273,7 +273,7 @@ init -1500 python:
               that label is called in a new context when the button is
               chosen. Otherwise, it should be a string giving a file
               that is opened in a web browser. If None, the value of
-              config.help is used in the same wayt.
+              config.help is used in the same way.
          """
 
         def __init__(self, help=None):
