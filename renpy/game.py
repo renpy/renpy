@@ -186,6 +186,9 @@ class CallException(Exception):
         self.args = args
         self.kwargs = kwargs
 
+    def __reduce__(self):
+        return (CallException, (self.label, self.args, self.kwargs))
+
 class EndReplay(Exception):
     """
     Raise this exception to end the current replay (the current call to
