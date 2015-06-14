@@ -96,6 +96,10 @@ class Context(renpy.object.Object):
 
     __version__ = 12
 
+    nosave = [ 'next_node' ]
+
+    next_node = None
+
     def after_upgrade(self, version):
         if version < 1:
             self.scene_lists.image_predict_info = self.predict_info.images
