@@ -30,7 +30,6 @@ import renpy.display  # @UnusedImport
 import time
 import pygame_sdl2  # @UnusedImport
 import os
-import atexit
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -41,7 +40,6 @@ if 'pss' not in disable:
     try:
         import pysdlsound as pss
         pss.check_version(4)  # @UndefinedVariable
-        atexit.register(pss.quit)  # @UndefinedVariable
     except:
         import traceback
         traceback.print_exc()
