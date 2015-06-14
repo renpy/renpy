@@ -43,7 +43,7 @@ cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The install variable is a list of directories that have Ren'Py
 # dependencies installed in them.
-if not android or ios:
+if not (android or ios):
     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
     install = install.split("::")
     install = [ os.path.abspath(i) for i in install ]
