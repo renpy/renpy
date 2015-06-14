@@ -1817,7 +1817,7 @@ class SLScreen(SLBlock):
         self.const_ast = self
 
         if self.has_transclude():
-            self.not_const_ast = self.copy()
+            self.not_const_ast = self.copy(NOT_CONST)
             targets = [ self.const_ast, self.not_const_ast ]
         else:
             self.not_const_ast = self.const_ast
