@@ -319,6 +319,10 @@ class Node(object):
     # the class or the instance.)
     translatable = False
 
+    # True if the node is releveant to translation, and has to be processed by
+    # take_translations.
+    translation_relevant = False
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -358,6 +362,9 @@ class Node(object):
 
         return None
 
+    # get_init is only present on statements that define it.
+    get_init = None
+
     def chain(self, next): #@ReservedAssignment
         """
         This is called with the Node node that should be followed after
@@ -382,6 +389,9 @@ class Node(object):
         """
         Called when the module is loaded.
         """
+
+    # early_execute is only present on statements that define it.
+    early_execute = None
 
     def predict(self):
         """
@@ -674,6 +684,9 @@ class Init(Node):
 
 
 class Label(Node):
+
+
+    translation_relevant = True
 
     __slots__ = [
         'name',
@@ -1351,6 +1364,8 @@ class Return(Node):
 
 class Menu(Node):
 
+    translation_relevant = True
+
     __slots__ = [
         'items',
         'set',
@@ -1837,6 +1852,8 @@ class Translate(Node):
     goes to the end of the translate statement in the None language.
     """
 
+    translation_relevant = True
+
     __slots__ = [
         "identifier",
         "language",
@@ -1916,6 +1933,8 @@ class TranslateString(Node):
     A node used for translated strings.
     """
 
+    translation_relevant = True
+
     __slots__ = [
         "language",
         "old",
@@ -1943,6 +1962,8 @@ class TranslatePython(Node):
 
     This is no longer generated, but is still run when encountered.
     """
+
+    translation_relevant = True
 
     __slots__ = [
         'language',
@@ -1978,6 +1999,8 @@ class TranslateBlock(Node):
     """
     Runs a block of code when changing the language.
     """
+
+    translation_relevant = True
 
     __slots__ = [
         'block',

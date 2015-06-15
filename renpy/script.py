@@ -274,7 +274,6 @@ class Script(object):
 
         return stmts, initcode
 
-
     def finish_load(self, stmts, initcode, check_names=True, filename=None):
         """
         Given `stmts`, a list of AST nodes comprising the root block,
@@ -314,7 +313,7 @@ class Script(object):
         if filename is not None:
             filename = renpy.parser.elide_filename(filename)
 
-            if all_stmts[0].filename.lower() != filename.lower():
+            if not all_stmts[0].filename.lower().endswith(filename.lower()):
                 filename += "c"
                 for i in all_stmts:
                     i.filename = filename
@@ -340,7 +339,6 @@ class Script(object):
                                    old_node.filename, old_node.linenumber,
                                    bad_node.filename, bad_node.linenumber))
 
-
         self.update_bytecode()
 
         for node in all_stmts:
@@ -351,11 +349,13 @@ class Script(object):
             self.namemap[name] = node
 
             # Add any init nodes to self.initcode.
-            init = node.get_init()
-            if init:
-                initcode.append(init)
+            if node.get_init:
+                init = node.get_init()
+                if init:
+                    initcode.append(init)
 
-            node.early_execute()
+            if node.early_execute:
+                node.early_execute()
 
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
@@ -529,6 +529,7 @@ class Script(object):
                         if bindata:
                             data, stmts = loads(bindata)
                             break
+
                     except:
                         pass
 
@@ -564,6 +565,7 @@ class Script(object):
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
+
         if dir is None:
 
             rpyfn = fn + source
@@ -655,11 +657,9 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode, filename=rpyfn)
+        self.finish_load(stmts, initcode, filename=fn + source)
 
         self.digest.update(digest)
-
-
 
     def init_bytecode(self):
         """
@@ -734,7 +734,6 @@ class Script(object):
 
 
     def save_bytecode(self):
-
         if self.bytecode_dirty:
             try:
                 fn = renpy.loader.get_path(BYTECODE_FILE)

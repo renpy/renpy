@@ -97,6 +97,9 @@ class ScriptTranslator(object):
 
         for n in nodes:
 
+            if not n.translation_relevant:
+                continue
+
             if n.name.__class__ is not tuple:
                 if isinstance(n.name, basestring):
                     label = n.name
