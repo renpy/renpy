@@ -300,6 +300,9 @@ init python in distribute:
                 If true, we report that the build succeeded.
             """
 
+            # Status reporter.
+            self.reporter = reporter
+
             if packagedest is not None:
                 if packages is None or len(packages) != 1:
                     raise Exception("Packagedest requires a single package be given.")
@@ -318,7 +321,9 @@ init python in distribute:
             # dictionaries.
             data = project.data
 
-            project.update_dump(force=True, gui=False)
+            self.reporter.info(_("Scanning project files..."))
+            project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
+
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
 
@@ -352,9 +357,6 @@ init python in distribute:
 
             self.packagedest = packagedest
 
-            # Status reporter.
-            self.reporter = reporter
-
             self.include_update = build['include_update']
             self.build_update = self.include_update and build_update
 
@@ -381,9 +383,6 @@ init python in distribute:
                 self.reporter.info(_("No packages are selected, so there's nothing to do."), pause=True)
                 self.log.close()
                 return
-
-            # add the game.
-            self.reporter.info(_("Scanning project files..."))
 
             self.scan_and_classify(project.path, build["base_patterns"])
 

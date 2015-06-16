@@ -122,6 +122,7 @@ init python in project:
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "all" ])
             data.setdefault("add_from", True)
+            data.setdefault("force_recompile", True)
 
         def make_tmp(self):
             """
@@ -223,7 +224,7 @@ init python in project:
                 if p.wait():
                     interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
-        def update_dump(self, force=False, gui=True):
+        def update_dump(self, force=False, gui=True, compile=False):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise,
             loads it in iff it's newer than the one that's already loaded.
@@ -236,7 +237,10 @@ init python in project:
                 if gui:
                     interface.processing(_("Ren'Py is scanning the project..."))
 
-                self.launch(["quit"], wait=True)
+                if compile:
+                    self.launch(["compile"], wait=True)
+                else:
+                    self.launch(["quit"], wait=True)
 
             if not os.path.exists(dump_filename):
                 self.dump["error"] = True
