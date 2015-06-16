@@ -34,7 +34,7 @@ Examples are::
         jump best_ending
     elif points >= 5:
         jump good_ending
-    elif points >= 1
+    elif points >= 1:
         jump bad_ending
     else:
         jump worst_ending
