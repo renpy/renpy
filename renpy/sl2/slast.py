@@ -1796,9 +1796,6 @@ class SLScreen(SLBlock):
 
     def analyze(self, analysis):
 
-        if self.parameters:
-            analysis.parameters(self.parameters)
-
         SLBlock.analyze(self, analysis)
 
     def analyze_screen(self):
@@ -1826,6 +1823,9 @@ class SLScreen(SLBlock):
 
         for ast in targets:
             analysis = ast.analysis = Analysis(None)
+
+            if ast.parameters:
+                analysis.parameters(ast.parameters)
 
             ast.analyze(analysis)
 
