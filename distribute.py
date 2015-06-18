@@ -49,6 +49,7 @@ def main():
     ap.add_argument("version")
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--pygame", action="store", default=None)
+    ap.add_argument("--no-rapt", action="store_true")
 
     args = ap.parse_args()
 
@@ -114,7 +115,7 @@ def main():
 
 
     # Kick off the rapt build.
-    if not args.fast:
+    if not args.fast and not args.no_rapt:
         out = open("/tmp/rapt_build.txt", "wb")
 
         print("Building RAPT.")
