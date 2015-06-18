@@ -354,11 +354,11 @@ init python:
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2", "source binary")
-    build.package("source", "tar.bz2", "source", update=False)
-
-    build.package("jedit", "zip", "jedit", dlc=True)
+#     build.package("source", "tar.bz2", "source", update=False)
+#
+#     build.package("jedit", "zip", "jedit", dlc=True)
     build.package("editra-linux", "tar.bz2", "editra-all editra-linux", dlc=True)
-    build.package("editra-mac", "zip", "editra-all editra-mac", dlc=True)
-    build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
-    build.package("rapt", "zip", "rapt", dlc=True)
-    build.package("renios", "zip", "renios", dlc=True)
+#     build.package("editra-mac", "zip", "editra-all editra-mac", dlc=True)
+#     build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
+#     build.package("rapt", "zip", "rapt", dlc=True)
+#     build.package("renios", "zip", "renios", dlc=True)

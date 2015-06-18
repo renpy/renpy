@@ -111,6 +111,25 @@ init python in distribute:
 
         return False
 
+    def hash_file(fn):
+        """
+        Returns the hash of `fn`.
+        """
+
+        sha = hashlib.sha256()
+
+        with open(renpy.fsencode(fn), "rb") as f:
+            while True:
+
+                data = f.read(8 * 1024 * 1024)
+
+                if not data:
+                    break
+
+                sha.update(data)
+
+        return sha.hexdigest()
+
     class File(object):
         """
         Represents a file that we can distribute.
@@ -149,6 +168,28 @@ init python in distribute:
         def copy(self):
             return File(self.name, self.path, self.directory, self.executable)
 
+        def hash(self, hash, distributor):
+            """
+            Update hash with information about this entry.
+            """
+
+            key = (self.name, self.path, self.directory, self.executable)
+
+            hash.update(repr(key))
+
+            if self.path is None:
+                return
+
+            if self.directory:
+                return
+
+            if self.path in distributor.hash_cache:
+                digest = distributor.hash_cache[self.path]
+            else:
+                digest = hash_file(self.path)
+                distributor.hash_cache[self.path] = digest
+
+            hash.update(digest)
 
     class FileList(list):
         """
@@ -261,6 +302,18 @@ init python in distribute:
 
             return rv
 
+        def hash(self, distributor):
+            """
+            Returns a hex digest representing this file list.
+            """
+
+            sha = hashlib.sha256()
+
+            for f in self:
+                f.hash(sha, distributor)
+
+            return sha.hexdigest()
+
 
     class Distributor(object):
         """
@@ -299,6 +352,10 @@ init python in distribute:
             `report_success`
                 If true, we report that the build succeeded.
             """
+
+            # Map from destination file with extension to (that file's hash,
+            # hash of the file list)
+            self.build_cache = { }
 
             # Status reporter.
             self.reporter = reporter
@@ -354,6 +411,8 @@ init python in distribute:
                     os.makedirs(self.destination)
                 except:
                     pass
+
+                self.load_build_cache()
 
             self.packagedest = packagedest
 
@@ -416,6 +475,9 @@ init python in distribute:
             # The time of the update version.
             self.update_version = int(time.time())
 
+            # A map from file to its hash.
+            self.hash_cache = { }
+
             for p in build_packages:
 
                 for f in p["formats"]:
@@ -435,6 +497,9 @@ init python in distribute:
 
             if self.build_update:
                 self.finish_updates(build_packages)
+
+            if not packagedest:
+                self.save_build_cache()
 
             # Finish up.
             self.log.close()
@@ -828,61 +893,84 @@ init python in distribute:
             if (not dlc) and format != "update" and format != "directory":
                 fl.prepend_directory(filename)
 
+            print path, fl.hash(self)
+
             if format == "tar.bz2":
-                path += ".tar.bz2"
-                pkg = TarPackage(path, "w:bz2")
+                ext = ".tar.bz2"
             elif format == "update":
-                path += ".update"
-                pkg = TarPackage(path, "w", notime=True)
+                ext = ".update"
             elif format == "zip" or format == "app-zip":
-                path += ".zip"
-                pkg = ZipPackage(path)
+                ext = ".zip"
             elif format == "directory":
-                pkg = DirectoryPackage(path)
+                ext = ""
 
-            for i, f in enumerate(fl):
-                self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
+            full_filename = filename + ext
+            path += ext
 
-                if f.directory:
-                    pkg.add_directory(f.name, f.path)
+            fl_hash = fl.hash(self)
+            file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
+
+            if format != "directory" or old_fl_hash != fl_hash:
+
+                if format == "tar.bz2":
+                    pkg = TarPackage(path, "w:bz2")
+                elif format == "update":
+                    pkg = TarPackage(path, "w", notime=True)
+                elif format == "zip" or format == "app-zip":
+                    pkg = ZipPackage(path)
+                elif format == "directory":
+                    pkg = DirectoryPackage(path)
+
+                for i, f in enumerate(fl):
+                    self.reporter.progress(_("Writing the [variant] [format] package."), i, len(fl), variant=variant, format=format)
+
+                    if f.directory:
+                        pkg.add_directory(f.name, f.path)
+                    else:
+                        pkg.add_file(f.name, f.path, f.executable)
+
+                self.reporter.progress_done()
+                pkg.close()
+
+                if format == "update":
+                    # Build the zsync file.
+
+                    self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
+
+                    cmd = [
+                        updater.zsync_path("zsyncmake"),
+                        "-z",
+                        # -u url to gzipped data - not a local filename!
+                        "-u", filename + ".update.gz",
+                        "-o", os.path.join(self.destination, filename + ".zsync"),
+                        os.path.abspath(path),
+                        ]
+
+                    subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
+
+                    # Build the sums file. This is a file with an adler32 hash of each 64k block
+                    # of the zsync file. It's used to help us determine how much of the file is
+                    # downloaded.
+                    with open(path, "rb") as src:
+                        with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
+                            while True:
+                                data = src.read(65536)
+
+                                if not data:
+                                    break
+
+                                sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
+
+                if self.include_update and not self.build_update and not dlc:
+                    os.unlink(update_fn)
+
+                if format != "directory":
+                    file_hash = hash_file(path)
                 else:
-                    pkg.add_file(f.name, f.path, f.executable)
+                    file_hash = ""
 
-            self.reporter.progress_done()
-            pkg.close()
-
-            if format == "update":
-                # Build the zsync file.
-
-                self.reporter.info(_("Making the [variant] update zsync file."), variant=variant)
-
-                cmd = [
-                    updater.zsync_path("zsyncmake"),
-                    "-z",
-                    # -u url to gzipped data - not a local filename!
-                    "-u", filename + ".update.gz",
-                    "-o", os.path.join(self.destination, filename + ".zsync"),
-                    os.path.abspath(path),
-                    ]
-
-                subprocess.check_call([ renpy.fsencode(i) for i in cmd ])
-
-                # Build the sums file. This is a file with an adler32 hash of each 64k block
-                # of the zsync file. It's used to help us determine how much of the file is
-                # downloaded.
-                with open(path, "rb") as src:
-                    with open(renpy.fsencode(os.path.join(self.destination, filename + ".sums")), "wb") as sums:
-                        while True:
-                            data = src.read(65536)
-
-                            if not data:
-                                break
-
-                            sums.write(struct.pack("<I", zlib.adler32(data) & 0xffffffff))
-
-            if self.include_update and not self.build_update and not dlc:
-                os.unlink(update_fn)
-
+            if file_hash:
+                self.build_cache[full_filename] = (file_hash, fl_hash)
 
         def finish_updates(self, packages):
             """
@@ -895,10 +983,11 @@ init python in distribute:
             index = { }
 
             def add_variant(variant):
-                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
 
-                with open(fn, "rb") as f:
-                    digest = hashlib.sha256(f.read()).hexdigest()
+#                 with open(fn, "rb") as f:
+#                     digest = hashlib.sha256(f.read()).hexdigest()
+
+                digest = self.build_cache[self.base_name + "-" + variant + ".update"][0]
 
                 sums_size = os.path.getsize(self.destination + "/" + self.base_name + "-" + variant + ".sums")
 
@@ -912,7 +1001,10 @@ init python in distribute:
                     "json_url" : self.base_name + "-" + variant + ".update.json",
                     }
 
-                os.unlink(fn)
+                fn = renpy.fsencode(os.path.join(self.destination, self.base_name + "-" + variant + ".update"))
+
+                if os.path.exists(fn):
+                    os.unlink(fn)
 
             for p in packages:
                 if p["update"]:
@@ -922,6 +1014,33 @@ init python in distribute:
             with open(fn, "wb") as f:
                 json.dump(index, f)
 
+
+        def save_build_cache(self):
+            fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
+
+            with open(fn, "wb") as f:
+                for k, v in self.build_cache.items():
+                    l = "\t".join([k, v[0], v[1]]) + "\n"
+                    f.write(l.encode("utf-8"))
+
+        def load_build_cache(self):
+
+            fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
+
+            if not os.path.exists(fn):
+                return
+
+            with open(fn, "rb") as f:
+                for l in f:
+                    if not l:
+                        continue
+
+                    l = l.decode("utf-8").rstrip()
+                    l = l.split("\t")
+
+                    self.build_cache[l[0]] = (l[1], l[2])
+
+            os.unlink(fn)
 
         def dump(self):
             for k, v in sorted(self.file_lists.items()):
