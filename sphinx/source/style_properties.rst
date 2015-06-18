@@ -542,6 +542,18 @@ Text Style Properties
 
     If true, the text will be rendered vertically.
 
+.. style-property:: hinting str
+
+    Controls how the font will be hinted. This should be one of the following
+    strings:
+
+    "auto"
+        The default, forces use of the Freetype auto hinter.
+    "bytecode"
+        Uses bytecode hinting information found in the font.
+    "none"
+        Does not hint the font.
+
 .. _window-style-properties:
 
 Window Style Properties

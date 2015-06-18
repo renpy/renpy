@@ -177,6 +177,7 @@ class TextSegment(object):
             self.cps = source.cps
             self.ruby_top = source.ruby_top
             self.ruby_bottom = source.ruby_bottom
+            self.hinting = source.hinting
 
         else:
             self.hyperlink = 0
@@ -198,6 +199,7 @@ class TextSegment(object):
         self.size = style.size
         self.bold = style.bold
         self.italic = style.italic
+        self.hinting = style.hinting
 
         underline = style.underline
 
@@ -226,7 +228,7 @@ class TextSegment(object):
         Return the list of glyphs corresponding to unicode string s.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -256,7 +258,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -307,7 +309,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting)
         return fo.bounds(glyphs, bounds)
 
 class SpaceSegment(object):

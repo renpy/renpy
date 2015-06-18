@@ -201,6 +201,9 @@ cdef class FTFont:
         # Have we been setup at least once?
         bint has_setup
 
+        # The hinting flag to use.
+        int hinting
+
     def __cinit__(self):
         for i from 0 <= i < 256:
             self.cache[i].index = -1
@@ -218,7 +221,7 @@ cdef class FTFont:
         free_gsubtable(&self.gsubtable)
 
 
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting):
 
         if size < 1:
             size = 1
@@ -245,6 +248,13 @@ cdef class FTFont:
             self.expand = outline * 2
 
         self.has_setup = False
+
+        if hinting == "bytecode":
+            self.hinting = FT_LOAD_NO_AUTOHINT
+        elif hinting == "none" or hinting is None:
+            self.hinting = FT_LOAD_NO_HINTING
+        else:
+            self.hinting = FT_LOAD_FORCE_AUTOHINT
 
     cdef setup(self):
         """
@@ -336,7 +346,7 @@ cdef class FTFont:
 
         rv.index = index
 
-        error = FT_Load_Glyph(face, index, FT_LOAD_FORCE_AUTOHINT)
+        error = FT_Load_Glyph(face, index, self.hinting)
         if error:
             raise FreetypeError(error)
 

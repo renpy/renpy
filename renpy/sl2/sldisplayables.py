@@ -164,6 +164,7 @@ text_property_names = [
         "minimum",
         "xminimum",
         "yminimum",
+        "hinting",
         ]
 
 text_properties = [ Style(i) for i in text_property_names ]
