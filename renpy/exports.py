@@ -2084,6 +2084,7 @@ def load_string(s, filename="<string>"):
 def pop_call():
     """
     :doc: other
+    :name: renpy.pop_call
 
     Pops the current call from the call stack, without returning to
     the location.
