@@ -206,6 +206,7 @@ def rmpersistent():
     takes_no_arguments("Deletes the persistent data.")
 
     renpy.loadsave.location.unlink_persistent()
+    renpy.persistent.should_save_persistent = False
 
     return False
 

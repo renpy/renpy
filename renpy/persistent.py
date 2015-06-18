@@ -358,11 +358,15 @@ def update(force_save=False):
     if need_save:
         save()
 
+should_save_persistent = True
 
 def save():
     """
     Saves the persistent data to disk.
     """
+
+    if not should_save_persistent:
+        return
 
     try:
         data = dumps(renpy.game.persistent).encode("zlib")
