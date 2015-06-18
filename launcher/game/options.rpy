@@ -293,7 +293,7 @@ init python:
 
         build.classify_renpy(pattern + "**/.rpyb", None)
 
-        build.classify_renpy(pattern + "**", source)
+        build.classify_renpy(pattern + "/**", source)
 
     build.classify_renpy("renpy.py", "source")
     source_and_binary("renpy/**")
