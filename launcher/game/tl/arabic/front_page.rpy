@@ -121,7 +121,7 @@ translate arabic strings:
     old "iOS"
     new "iOS نظام تشغيل"
 
-Translation updated at 2015-06-19 08:55
+# Translation updated at 2015-06-19 08:55
 
 translate arabic strings:
 
