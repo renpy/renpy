@@ -296,7 +296,7 @@ init python:
         build.classify_renpy(pattern + "/**", source)
 
     build.classify_renpy("renpy.py", "source")
-    source_and_binary("renpy/**")
+    source_and_binary("renpy")
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
