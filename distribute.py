@@ -145,15 +145,8 @@ def main():
         else:
             print "RAPT build succeeded."
 
-        def write_version_txt(path):
-            with open(path + "/version.txt", "w") as f:
-                f.write(full_version)
-
-        write_version_txt("rapt")
-        write_version_txt("renios")
-
-        compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", force=1, quiet=1)
-        compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", force=1, quiet=1)
+        compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", quiet=1)
+        compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", quiet=1)
 
     if not os.path.exists(destination):
         os.makedirs(destination)

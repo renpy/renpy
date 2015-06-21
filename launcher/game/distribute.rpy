@@ -309,7 +309,7 @@ init python in distribute:
 
             sha = hashlib.sha256()
 
-            for f in self:
+            for f in sorted(self, key=lambda a : a.name):
                 f.hash(sha, distributor)
 
             return sha.hexdigest()
@@ -356,6 +356,9 @@ init python in distribute:
             # Map from destination file with extension to (that file's hash,
             # hash of the file list)
             self.build_cache = { }
+
+            # A map from file to its hash.
+            self.hash_cache = { }
 
             # Status reporter.
             self.reporter = reporter
@@ -462,8 +465,10 @@ init python in distribute:
             self.add_windows_files()
 
             # Add generated/special files.
-            if not build['renpy']:
-                self.add_renpy_files()
+            if build['renpy']:
+                self.add_renpy_distro_files()
+            else:
+                self.add_renpy_game_files()
 
             # Assign the x-bit as necessary.
             self.mark_executable()
@@ -474,9 +479,6 @@ init python in distribute:
 
             # The time of the update version.
             self.update_version = int(time.time())
-
-            # A map from file to its hash.
-            self.hash_cache = { }
 
             for p in build_packages:
 
@@ -492,8 +494,7 @@ init python in distribute:
                         p["name"],
                         "update",
                         p["file_lists"],
-                        dlc=False)
-
+                        dlc=p["dlc"])
 
             if self.build_update:
                 self.finish_updates(build_packages)
@@ -640,9 +641,9 @@ init python in distribute:
 
                 self.add_file(file_list, "game/" + arcfn, arcpath)
 
-        def add_renpy_files(self):
+        def add_renpy_game_files(self):
             """
-            Add Ren'Py-generic files to the project.
+            Add Ren'Py file to the game.
             """
 
             LICENSE_TXT = os.path.join(config.renpy_base, "LICENSE.txt")
@@ -660,6 +661,26 @@ init python in distribute:
 
                 self.add_file("all", "game/script_version.txt", script_version_txt)
 
+        def add_file_list_hash(self, list_name):
+            """
+            Hashes a file list, then adds that file to the Ren'Py distribution.
+            """
+
+            tfn = self.temp_filename(list_name + "_hash.txt")
+
+            with open(tfn, "w") as tf:
+                tf.write(self.file_lists[list_name].hash(self))
+
+            self.add_file("binary", "launcher/game/" + list_name + "_hash.txt", tfn)
+            self.add_file(list_name, list_name + "/hash.txt", tfn)
+
+        def add_renpy_distro_files(self):
+            """
+            Add additional files to Ren'Py.
+            """
+
+            self.add_file_list_hash("rapt")
+            self.add_file_list_hash("renios")
 
         def write_plist(self):
 
@@ -877,6 +898,7 @@ init python in distribute:
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
             if self.include_update and not dlc:
+
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
                 with open(update_fn, "wb") as f:
@@ -893,8 +915,6 @@ init python in distribute:
             if (not dlc) and format != "update" and format != "directory":
                 fl.prepend_directory(filename)
 
-            print path, fl.hash(self)
-
             if format == "tar.bz2":
                 ext = ".tar.bz2"
             elif format == "update":
@@ -910,7 +930,7 @@ init python in distribute:
             fl_hash = fl.hash(self)
             file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
 
-            if format != "directory" or old_fl_hash != fl_hash:
+            if format == "directory" or old_fl_hash != fl_hash:
 
                 if format == "tar.bz2":
                     pkg = TarPackage(path, "w:bz2")
