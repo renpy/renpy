@@ -927,7 +927,11 @@ init python in distribute:
             full_filename = filename + ext
             path += ext
 
-            fl_hash = fl.hash(self)
+            if self.build['renpy']:
+                fl_hash = fl.hash(self)
+            else:
+                fl_hash = '<not building renpy>'
+
             file_hash, old_fl_hash = self.build_cache.get(full_filename, ("", ""))
 
             if format == "directory" or old_fl_hash != fl_hash:
@@ -1036,6 +1040,9 @@ init python in distribute:
 
 
         def save_build_cache(self):
+            if not self.build['renpy']:
+                return
+
             fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
 
             with open(fn, "wb") as f:
@@ -1044,6 +1051,8 @@ init python in distribute:
                     f.write(l.encode("utf-8"))
 
         def load_build_cache(self):
+            if not self.build['renpy']:
+                return
 
             fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
 
