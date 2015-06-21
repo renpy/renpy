@@ -64,7 +64,7 @@ init python:
 
         RAPT_PATH = os.path.join(config.renpy_base, "rapt")
 
-        if os.path.isdir(RAPT_PATH) and check_version_txt(RAPT_PATH):
+        if os.path.isdir(RAPT_PATH) and check_hash_txt("rapt"):
             import sys
             sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
         else:

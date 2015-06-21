@@ -48,7 +48,7 @@ init python:
 
         RENIOS_PATH = os.path.join(config.renpy_base, "renios")
 
-        if os.path.isdir(RENIOS_PATH) and check_version_txt(RENIOS_PATH):
+        if os.path.isdir(RENIOS_PATH) and check_hash_txt("renios"):
             import sys
             sys.path.insert(0, os.path.join(RENIOS_PATH, "buildlib"))
         else:
