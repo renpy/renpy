@@ -22,9 +22,9 @@
 # Code that manages projects.
 
 init python:
-    try:
+    if renpy.windows:
         import EasyDialogsWin as EasyDialogs
-    except:
+    else:
         EasyDialogs = None
 
     import os

@@ -60,7 +60,6 @@ def extra_imports():
     import posixpath; posixpath
     import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
-    import EasyDialogs; EasyDialogs #@UnresolvedImport
     import argparse; argparse
     import compiler; compiler
     import textwrap; textwrap
