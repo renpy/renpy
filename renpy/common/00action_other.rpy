@@ -410,14 +410,29 @@ init -1500 python:
             position arguments to be passed to `callable`.
         `kwargs`
             keyword arguments to be passed to `callable`.
+
+        This Action takes an optional _update_screens keyword argument, which
+        defaults to true. When it is true, the interaction restarts and
+        the screens are updated after the function returns.
         """
+
+        update_screens = True
+
         def __init__(self, callable, *args, **kwargs):
             self.callable = callable
             self.args = args
+
+            self.update_screens = kwargs.pop("_update_screens", True)
+
             self.kwargs = kwargs
 
         def __call__(self):
-            self.callable(*self.args, **self.kwargs)
+            rv = self.callable(*self.args, **self.kwargs)
+
+            if self.update_screens:
+                renpy.restart_interaction()
+
+            return rv
 
 
 transform _notify_transform:
