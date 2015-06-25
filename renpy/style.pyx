@@ -71,6 +71,7 @@ cpdef get_style(name):
     nametuple = (name,)
 
     rv = styles.get(nametuple, None)
+
     if rv is not None:
         return rv
 
@@ -122,6 +123,7 @@ cpdef get_full_style(name):
     """
     Gets the style with `name`, which must be a tuple.
     """
+
 
     rv = styles.get(name, None)
     if rv is not None:
@@ -631,8 +633,6 @@ cpdef build_style(StyleCore s):
     if s.built:
         return
 
-    s.built = True
-
     # Find our parents.
     if s.parent is not None:
         s.down_parent = get_full_style(s.parent)
@@ -672,6 +672,7 @@ cpdef build_style(StyleCore s):
 
         priority += PRIORITY_LEVELS
 
+    s.built = True
 
 cpdef unbuild_style(StyleCore s):
     cdef int i
