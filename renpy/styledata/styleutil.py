@@ -36,6 +36,8 @@ def expand_focus_mask(v):
         return v
     elif v is True:
         return v
+    elif callable(v):
+        return v
     else:
         return renpy.easy.displayable(v)
 
