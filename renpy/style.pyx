@@ -629,50 +629,59 @@ prefixed_all_properties = {
 ################################################################################
 
 cpdef build_style(StyleCore s):
-
-    if s.built:
-        return
-
-    # Find our parents.
-    if s.parent is not None:
-        s.down_parent = get_full_style(s.parent)
-        build_style(s.down_parent)
-
-    if s.name is not None and len(s.name) > 1:
-        s.left_parent = get_full_style(s.name[:-1])
-        build_style(s.left_parent)
-
-    # Build the properties cache.
-    if not s.properties:
-        s.cache = NULL
-        return
-
     cdef int cache_priorities[PREFIX_COUNT * STYLE_PROPERTY_COUNT]
     cdef dict d
     cdef PropertyFunctionWrapper pfw
 
-    memset(cache_priorities, 0, sizeof(int) * PREFIX_COUNT * STYLE_PROPERTY_COUNT)
+    if s.built:
+        return
 
-    s.cache = <PyObject **> calloc(PREFIX_COUNT * STYLE_PROPERTY_COUNT, sizeof(PyObject *))
+    if s.building and s.name:
+        raise Exception("{} is part of a loop of recursive styles (is one of its own parents).".format(style_name_to_string(s.name)))
 
-    priority = 1
+    s.building = True
 
-    for d in s.properties:
-        for k, v in d.items():
-            pfw = property_functions.get(k, None)
+    try:
 
-            if pfw is None:
-                continue
+        # Find our parents.
+        if s.parent is not None:
+            s.down_parent = get_full_style(s.parent)
+            build_style(s.down_parent)
 
-            try:
-                pfw.function(s.cache, cache_priorities, priority, v)
-            except:
-                renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
-                raise
+        if s.name is not None and len(s.name) > 1:
+            s.left_parent = get_full_style(s.name[:-1])
+            build_style(s.left_parent)
 
-        priority += PRIORITY_LEVELS
+        # Build the properties cache.
+        if not s.properties:
+            s.cache = NULL
+            return
 
-    s.built = True
+        memset(cache_priorities, 0, sizeof(int) * PREFIX_COUNT * STYLE_PROPERTY_COUNT)
+
+        s.cache = <PyObject **> calloc(PREFIX_COUNT * STYLE_PROPERTY_COUNT, sizeof(PyObject *))
+
+        priority = 1
+
+        for d in s.properties:
+            for k, v in d.items():
+                pfw = property_functions.get(k, None)
+
+                if pfw is None:
+                    continue
+
+                try:
+                    pfw.function(s.cache, cache_priorities, priority, v)
+                except:
+                    renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
+                    raise
+
+            priority += PRIORITY_LEVELS
+
+        s.built = True
+
+    finally:
+        s.building = False
 
 cpdef unbuild_style(StyleCore s):
     cdef int i
@@ -692,6 +701,7 @@ cpdef unbuild_style(StyleCore s):
     s.down_parent = None
 
     s.built = False
+    s.building = False
 
 ################################################################################
 # Inspect support
