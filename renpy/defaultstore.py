@@ -45,6 +45,9 @@ _window_subtitle = ''
 # Should rollback be allowed?
 _rollback = True
 
+# Should skipping be allowed?
+_skipping = True
+
 # config.
 _config = renpy.config
 

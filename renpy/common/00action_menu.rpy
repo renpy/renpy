@@ -250,6 +250,9 @@ init -1500 python:
             if not config.allow_skipping:
                 return False
 
+            if not _skipping:
+                return False
+
             if store.main_menu:
                 return False
 

@@ -85,6 +85,10 @@ and rolled-back when rollback occurs.
 
     A save name that is included with saves.
 
+.. var:: _skipping = True
+
+    Controls of if skipping is allowed.
+
 .. var:: _window = False
 
     This set by the ``window show`` and ``window hide`` statements, and indirectly

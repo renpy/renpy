@@ -234,6 +234,9 @@ def skipping(ev):
     if not renpy.config.allow_skipping:
         return
 
+    if not renpy.store._skipping:
+        return
+
     if map_event(ev, "skip"):
         renpy.config.skipping = "slow"
         renpy.exports.restart_interaction()
@@ -548,7 +551,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         skip_delay = renpy.config.skip_delay / 1000.0
 
-        if renpy.config.allow_skipping and renpy.config.skipping:
+        if renpy.config.skipping and renpy.config.allow_skipping and renpy.store._skipping:
 
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
                 if renpy.game.preferences.skip_unseen:
