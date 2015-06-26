@@ -513,6 +513,14 @@ Occasionally Used
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
 
+.. var:: config.minimum_presplash_time = 0.0
+
+    The minimum amount of time, in seconds, a presplash, Android presplash,
+    or iOS LaunchImage is displayed for. If Ren'Py initializes before this
+    amount of time has been reached, it will sleep to ensure the image is
+    shown for at least this amount of time. The image may be shown longer
+    if Ren'Py takes longer to start up.
+
 .. var:: config.missing_background = "black"
 
     This is the background that is used when :var:`config.developer` is True

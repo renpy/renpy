@@ -27,12 +27,18 @@ import threading
 import pygame_sdl2
 import os.path
 import sys
+import time
+
+import renpy
 
 # The window.
 window = None
 
 # Should the event thread keep running?
 keep_running = False
+
+# The start time.
+start_time = time.time()
 
 def run_event_thread():
     """
@@ -46,11 +52,12 @@ def run_event_thread():
 
     pygame_sdl2.time.set_timer(pygame_sdl2.USEREVENT, 0)
 
-# Called from the main process. This determines if
-# we're even doing presplash, and if so what will be shown to the
-# user. If it decides to show something to the user, uses subprocess
-# to actually handle the showing.
+
 def start(basedir, gamedir):
+    """
+    Called to display the presplash when necessary.
+    """
+
 
     if "RENPY_LESS_UPDATES" in os.environ:
         return
@@ -84,9 +91,14 @@ def start(basedir, gamedir):
     event_thread.daemon = True
     event_thread.start()
 
-# Called just before we initialize the display for real, to
-# hide the splash, and terminate window centering.
+    global start_time
+    start_time = time.time()
+
+
 def end():
+    """
+    Called just before we initialize the display to hide the presplash.
+    """
 
     global keep_running
     global event_thread
@@ -101,3 +113,17 @@ def end():
 
     window.destroy()
     window = None
+
+
+def sleep():
+    """
+    Sleep to the end of config.minimum_presplash_time.
+    """
+
+    if not (window or renpy.mobile):
+        return
+
+    remaining = start_time + renpy.config.minimum_presplash_time - time.time()
+
+    if remaining > 0:
+        time.sleep(remaining)

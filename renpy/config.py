@@ -572,6 +572,9 @@ preserve_zorder = True
 # The set of names to ignore.
 lint_ignore_replaces = [ 'help', 'quit' ]
 
+# How long should the presplash be kept up for?
+minimum_presplash_time = 0.0
+
 del renpy
 del os
 

@@ -98,15 +98,8 @@ def run(restart):
     # Remove the list of all statements from the script.
     game.script.all_stmts = None
 
-#     start = time.time()
-#
-#     for i in range(0, 5):
-#         print i
-#         renpy.display.screen.prepared = False
-#         renpy.display.screen.prepare_screens()
-#
-#     print "5x prepare took", time.time() - start
-#     sys.exit(0)
+    # Sleep to finish the presplash.
+    renpy.display.presplash.sleep()
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -457,7 +450,6 @@ def main():
         if not game.interface:
             renpy.display.core.Interface()
             log_clock("Creating interface object")
-
 
         # Start things running.
         restart = None
