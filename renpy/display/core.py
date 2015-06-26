@@ -1384,9 +1384,6 @@ class Interface(object):
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 
-        # Ensure that we kill off the presplash.
-        renpy.display.presplash.end()
-
         # Initialize pygame.
         if pygame.version.vernum < (1, 8, 1):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
@@ -1457,6 +1454,9 @@ class Interface(object):
 
         if self.started:
             return
+
+        # Kill off the presplash.
+        renpy.display.presplash.end()
 
         renpy.main.log_clock("Interface start")
 
