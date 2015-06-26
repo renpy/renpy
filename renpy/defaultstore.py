@@ -48,6 +48,9 @@ _rollback = True
 # Should skipping be allowed?
 _skipping = True
 
+# Should dismissing pauses and transitions be allowed?
+_dismiss_pause = True
+
 # config.
 _config = renpy.config
 

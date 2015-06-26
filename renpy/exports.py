@@ -1137,7 +1137,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     if renpy.game.after_rollback and roll_forward is None:
         delay = 0
 
-    if hard:
+    if hard or not renpy.store._dismiss_pause:
         renpy.ui.saybehavior(dismiss='dismiss_hard_pause')
     else:
         renpy.ui.saybehavior()

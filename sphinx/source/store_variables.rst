@@ -11,6 +11,10 @@ and rolled-back when rollback occurs.
     This is a template ADV-mode character, and the default character kind
     that is used when :func:`Character` is called.
 
+.. var:: _dismiss_pause = True
+
+    If True, the player can dismiss pauses and transitions.
+
 .. var:: _game_menu_screen = "save"
 
     This is the screen that is displayed when entering the game menu with no

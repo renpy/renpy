@@ -2502,7 +2502,12 @@ class Interface(object):
             root_widget.add(trans, transition_time, transition_time)
 
             if trans_pause:
-                sb = renpy.display.behavior.SayBehavior()
+
+                if renpy.store._dismiss_pause:
+                    sb = renpy.display.behavior.SayBehavior()
+                else:
+                    sb = renpy.display.behavior.SayBehavior(dismiss='dismiss_hard_pause')
+
                 root_widget.add(sb)
                 focus_roots.append(sb)
 
