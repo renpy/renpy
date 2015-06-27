@@ -1,4 +1,4 @@
-# TODO: Translation updated at 2015-04-14 18:15
+ï»¿# TODO: Translation updated at 2015-04-14 18:15
 
 
 # game/demo_layers.rpy:15
@@ -6,7 +6,7 @@ translate korean demo_layers_c4715eb5:
 
 
     # e "Ren'Py lets you define layers, and show images on specific layers."
-    e "·»'ÆÄÀÌ´Â ¿©·¯ºĞÀÌ ·¹ÀÌ¾î¸¦ Á¤ÀÇÇÑ ÈÄ, Æ¯Á¤ ·¹ÀÌ¾î À§¿¡ ÀÌ¹ÌÁö¸¦ Ç¥½ÃÇÒ ¼ö ÀÖµµ·Ï Áö¿øÀ» ÇØ Áİ´Ï´Ù."
+    e "ë Œ'íŒŒì´ëŠ” ì—¬ëŸ¬ë¶„ì´ ë ˆì´ì–´ë¥¼ ì •ì˜í•œ í›„, íŠ¹ì • ë ˆì´ì–´ ìœ„ì— ì´ë¯¸ì§€ë¥¼ í‘œì‹œí•  ìˆ˜ ìˆë„ë¡ ì§€ì›ì„ í•´ ì¤ë‹ˆë‹¤."
 
 
 # game/demo_layers.rpy:26
@@ -14,7 +14,7 @@ translate korean demo_layers_c385f69e:
 
 
     # e "The \"onlayer\" clause of the scene, show, and hide statements lets us pick which layers the commands affect."
-    e "scene, show, hide ¹®ÀÇ \"onlayer\" ÀıÀº ÀÌ·¯ÇÑ ¸í·ÉµéÀÌ ¿µÇâÀ» ¹ÌÄ¥ ·¹ÀÌ¾î¸¦ ¼±ÅÃÇÒ ¼ö ÀÖ°Ô ÇØ Áİ´Ï´Ù."
+    e "scene, show, hide ë¬¸ì˜ \"onlayer\" ì ˆì€ ì´ëŸ¬í•œ ëª…ë ¹ë“¤ì´ ì˜í–¥ì„ ë¯¸ì¹  ë ˆì´ì–´ë¥¼ ì„ íƒí•  ìˆ˜ ìˆê²Œ í•´ ì¤ë‹ˆë‹¤."
 
 
 # game/demo_layers.rpy:28
@@ -22,7 +22,7 @@ translate korean demo_layers_89a87205:
 
 
     # e "As you can see, layers do not have to take up the entire screen. When a layer doesn't, images are clipped to the layer."
-    e "Áö±İ º¸½Ç ¼ö ÀÖµí, ·¹ÀÌ¾î´Â È­¸é ÀüÃ¼ °ø°£À» Â÷ÁöÇÏÁö ¾Ê¾Æ¿ä. ±×·¸±â ¶§¹®¿¡ ÀÌ¹ÌÁöµéÀº ·¹ÀÌ¾î¿¡ ¸ÂÃç¼­ Àß¸³´Ï´Ù."
+    e "ì§€ê¸ˆ ë³´ì‹¤ ìˆ˜ ìˆë“¯, ë ˆì´ì–´ëŠ” í™”ë©´ ì „ì²´ ê³µê°„ì„ ì°¨ì§€í•˜ì§€ ì•Šì•„ìš”. ê·¸ë ‡ê¸° ë•Œë¬¸ì— ì´ë¯¸ì§€ë“¤ì€ ë ˆì´ì–´ì— ë§ì¶°ì„œ ì˜ë¦½ë‹ˆë‹¤."
 
 
 # game/demo_layers.rpy:34
@@ -30,7 +30,7 @@ translate korean demo_layers_72b6169a:
 
 
     # e "The \"as\" clause lets you change the tag of an image."
-    e "\"as\" ÀıÀº ÀÌ¹ÌÁöÀÇ ÅÂ±×¸¦ ¹Ù²Ü ¼ö ÀÖµµ·Ï ÇØ ÁÖÁö¿ä."
+    e "\"as\" ì ˆì€ ì´ë¯¸ì§€ì˜ íƒœê·¸ë¥¼ ë°”ê¿€ ìˆ˜ ìˆë„ë¡ í•´ ì£¼ì§€ìš”."
 
 
 # game/demo_layers.rpy:43
@@ -38,7 +38,7 @@ translate korean demo_layers_31adea8e:
 
 
     # e "This is useful when you want to show two copies of the same image."
-    e "ÀÌ ÀıÀº °°Àº ÀÌ¹ÌÁö¸¦ µÎ Àå º¸ÀÌ°í ½ÍÀ» ¶§ À¯¿ëÇÕ´Ï´Ù."
+    e "ì´ ì ˆì€ ê°™ì€ ì´ë¯¸ì§€ë¥¼ ë‘ ì¥ ë³´ì´ê³  ì‹¶ì„ ë•Œ ìœ ìš©í•©ë‹ˆë‹¤."
 
 
 # game/demo_layers.rpy:45
@@ -46,7 +46,7 @@ translate korean demo_layers_2659ae91:
 
 
     # e "Or if a character has a twin."
-    e "¾Æ´Ï¸é Ä³¸¯ÅÍ°¡ ½ÖµÕÀÌÀÏ¶§¿ä."
+    e "ì•„ë‹ˆë©´ ìºë¦­í„°ê°€ ìŒë‘¥ì´ì¼ë•Œìš”."
 
 
 # game/demo_layers.rpy:56
@@ -54,7 +54,7 @@ translate korean demo_layers_fa599d50:
 
 
     # e "You can use \"show expression\" to show things that aren't just images, like text."
-    e "\"show expression\"À» »ç¿ëÇÏ¸é ÅØ½ºÆ®¿Í °°Àº ÀÌ¹ÌÁö°¡ ¾Æ´Ñ °ÍµéÀ» Ç¥½ÃÇÒ ¼ö ÀÖ½À´Ï´Ù."
+    e "\"show expression\"ì„ ì‚¬ìš©í•˜ë©´ í…ìŠ¤íŠ¸ì™€ ê°™ì€ ì´ë¯¸ì§€ê°€ ì•„ë‹Œ ê²ƒë“¤ì„ í‘œì‹œí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 
 
 # game/demo_layers.rpy:64
@@ -62,7 +62,7 @@ translate korean demo_layers_91559c86:
 
 
     # e "The \"behind\" clause lets you place an image behind another."
-    e "\"behind\" ÀıÀº ¾î¶² ÀÌ¹ÌÁö¸¦ ´Ù¸¥ ÀÌ¹ÌÁöÀÇ µÚ¿¡ Ç¥½ÃÇÒ ¼ö ÀÖ°Ô ÇÏÁÒ."
+    e "\"behind\" ì ˆì€ ì–´ë–¤ ì´ë¯¸ì§€ë¥¼ ë‹¤ë¥¸ ì´ë¯¸ì§€ì˜ ë’¤ì— í‘œì‹œí•  ìˆ˜ ìˆê²Œ í•˜ì£ ."
 
 
 # game/demo_layers.rpy:77
@@ -70,7 +70,7 @@ translate korean demo_layers_a983efbd:
 
 
     # e "Finally, the \"show layer\" statement allows you to apply a transform to an entire layer."
-    e "¸¶Áö¸·À¸·Î, \"show layer\" ¹®Àº Æ®·£½ºÆûÀº ±× ·¹ÀÌ¾î ÀüÃ¼¿¡ Àû¿ë½ÃÅ³ ¼ö ÀÖ°Ô ÇÕ´Ï´Ù."
+    e "ë§ˆì§€ë§‰ìœ¼ë¡œ, \"show layer\" ë¬¸ì€ íŠ¸ëœìŠ¤í¼ì€ ê·¸ ë ˆì´ì–´ ì „ì²´ì— ì ìš©ì‹œí‚¬ ìˆ˜ ìˆê²Œ í•©ë‹ˆë‹¤."
 
 
 # game/demo_layers.rpy:90
@@ -78,7 +78,7 @@ translate korean demo_layers_1185c462:
 
 
     # e "And that's it for layers and advanced show."
-    e "·¹ÀÌ¾î¿Í °í±Ş Ç¥½Ã¿¡ °üÇÑ °ÍÀº ÀÌ°Ô ´Ù¿¹¿ä."
+    e "ë ˆì´ì–´ì™€ ê³ ê¸‰ í‘œì‹œì— ê´€í•œ ê²ƒì€ ì´ê²Œ ë‹¤ì˜ˆìš”."
 
 
 translate korean strings:
@@ -86,4 +86,4 @@ translate korean strings:
 
     # game/demo_layers.rpy:53
     old "This is text."
-    new "ÀÌ°Ç ÅØ½ºÆ®ÀÓ ¤·¤·"
+    new "ì´ê±´ í…ìŠ¤íŠ¸ì„ ã…‡ã…‡"
