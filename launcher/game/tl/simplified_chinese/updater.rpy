@@ -35,7 +35,7 @@ translate simplified_chinese strings:
 
     # game/updater.rpy:129
     old "Nightly"
-    new "暗黑版"
+    new "每夜版"
 
     # game/updater.rpy:135
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
