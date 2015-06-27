@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_ui.rpy:219
 translate korean demo_ui_e1d49b5e:

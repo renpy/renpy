@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 translate korean strings:
 
@@ -14,7 +13,6 @@ translate korean strings:
     new "퀵 세이브했습니다."
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -105,7 +103,6 @@ translate korean strings:
     new "jump <label>: 주어진 레이블으로 점프합니다."
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -136,7 +133,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -247,7 +243,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -258,7 +253,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -309,7 +303,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -325,7 +318,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -341,7 +333,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -462,7 +453,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -473,7 +463,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -564,7 +553,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -620,7 +608,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:
@@ -691,7 +678,6 @@ translate korean strings:
     new ""
 
 
-# TODO: Translation updated at 2015-04-14 18:15
 
 
 translate korean strings:

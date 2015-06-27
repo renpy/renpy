@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_layers.rpy:15
 translate korean demo_layers_c4715eb5:

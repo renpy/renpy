@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/script.rpy:85
 translate korean start_0e6a5bb4:

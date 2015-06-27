@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/tutorial_quickstart.rpy:20
 translate korean tutorial_dialogue_f6d3ddd3:

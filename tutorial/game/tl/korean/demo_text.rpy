@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_text.rpy:65
 translate korean demo_text_ff47a1f2:

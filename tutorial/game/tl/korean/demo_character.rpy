@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_character.rpy:45
 translate korean demo_character_16897d85:

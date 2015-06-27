@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/tutorial_atl.rpy:187
 translate korean tutorial_positions_a09a3fd1:

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_dynamic.rpy:27
 translate korean demo_dynamic_b72548ea:

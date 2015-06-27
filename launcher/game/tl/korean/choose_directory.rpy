@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-05-23 21:49
-
+﻿
 translate korean strings:
 
     # game/choose_directory.rpy:73

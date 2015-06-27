@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/tutorial_playing.rpy:16
 translate korean tutorial_playing_2985ab86:
