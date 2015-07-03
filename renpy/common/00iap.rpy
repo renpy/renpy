@@ -94,6 +94,13 @@ init -1500 python in iap:
 
             return None
 
+        def init(self):
+            """
+            Called at init time to do any initialization required.
+            """
+
+            return
+
     class AndroidBackend(object):
         """
         The IAP backend that is used when IAP is supported.
@@ -159,6 +166,9 @@ init -1500 python in iap:
             identifier = self.identifier(p)
             return self.store.getPrice(identifier)
 
+        def init(self):
+            restore(False)
+
     if renpy.ios:
         import pyobjus
         IAPHelper = pyobjus.autoclass("IAPHelper")
@@ -178,7 +188,12 @@ init -1500 python in iap:
 
             self.helper.productIdentifiers = identifiers
 
+            self.validated_products = False
+
         def get_store_name(self):
+            if renpy.predicting():
+                return "ios"
+
             if self.helper.canMakePayments():
                 return "ios"
             else:
@@ -208,13 +223,26 @@ init -1500 python in iap:
                     pygame.event.pump()
                     time.sleep(.1)
 
+        def validate_products(self, interact):
+            if self.validated_products:
+                return False
+
+            self.helper.validateProductIdentifiers()
+            self.wait_for_result(interact)
+
+            self.validated_products = True
+
+
         def purchase(self, p, interact=True):
+            self.validate_products(interact)
+
             identifier = objc_str(self.identifier(p))
             self.helper.beginPurchase_(identifier)
             self.wait_for_result(interact=interact)
 
         def restore_purchases(self, interact=True):
-            self.helper.validateProductIdentifiers()
+            self.validate_products(interact)
+
             self.helper.restorePurchases()
             self.wait_for_result(interact)
 
@@ -227,6 +255,12 @@ init -1500 python in iap:
             return self.helper.isDeferred_(identifier)
 
         def get_price(self, p):
+
+            if renpy.predicting():
+                return None
+
+            self.validate_products(False)
+
             identifier = objc_str(self.identifier(p))
             rv = self.helper.formatPrice_(identifier)
 
@@ -234,6 +268,10 @@ init -1500 python in iap:
                 rv = rv.UTF8String().decode("utf-8")
 
             return rv
+
+        def init(self):
+            return
+
 
     # The backend we're using.
     backend = NoneBackend()
@@ -504,16 +542,12 @@ init -1500 python in iap:
             backend = init_android()
         elif renpy.ios:
             backend = IOSBackend()
-
-            if backend.get_store_name() is None:
-                backend = NoneBackend()
-
         else:
             backend = NoneBackend()
 
         # Restore purchases.
-        if products and renpy.android:
-            restore(False)
+        if products:
+            backend.init()
 
 init 1500 python in iap:
     init()
