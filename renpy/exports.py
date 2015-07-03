@@ -2916,3 +2916,12 @@ def write_log(s, *args):
     """
 
     renpy.display.log.write(s, *args)
+
+def predicting():
+    """
+    :doc: screens
+
+    Returns true if Ren'Py is currently predicting the screen.
+    """
+
+    return renpy.display.predict.predicting
