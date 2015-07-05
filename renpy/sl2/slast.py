@@ -1485,7 +1485,12 @@ class SLUse(SLNode):
         rv.target = self.target
         rv.args = self.args
         rv.id = self.id
-        rv.block = self.block.copy(transclude)
+
+        if self.block is not None:
+            rv.block = self.block.copy(transclude)
+        else:
+            rv.block = None
+
         rv.ast = None
 
         return rv
@@ -1498,7 +1503,7 @@ class SLUse(SLNode):
             self.constant = NOT_CONST
 
         if self.block:
-            self.block.analyze(self.analysis)
+            self.block.analyze(analysis)
 
     def prepare(self, analysis):
 
@@ -1679,10 +1684,11 @@ class SLTransclude(SLNode):
             return
 
         cache = context.cache.get(self.serial, None)
-        cache.transclude = context.transclude
 
         if cache is None:
             context.cache[self.serial] = cache = { }
+
+        cache["transclude"] = context.transclude
 
         ctx = SLContext(context.parent)
 
@@ -1699,14 +1705,12 @@ class SLTransclude(SLNode):
 
     def copy_on_change(self, cache):
 
-        if self.child is None:
-            return
-
         c = cache.get(self.serial, None)
-        if c is None:
+
+        if c is None or "transclude" not in c:
             return
 
-        SLBlock.copy_on_change(cache.transclude, c)
+        SLBlock.copy_on_change(c["transclude"], c)
 
     def has_transclude(self):
         return True
