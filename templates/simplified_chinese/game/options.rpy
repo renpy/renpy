@@ -1,136 +1,149 @@
-﻿## This file contains some of the options that can be changed to customize
-## your Ren'Py game. It only contains the most common options... there
-## is quite a bit more customization you can do.
+﻿## 本文件包含部分可用于修改与定制的选项代码，
+## 它将会起作用于您的游戏之中。但这只是很多选项中的一部分，
+## 您还可以对它进行很多自由的添加与修改。
 ##
-## Lines beginning with two '#' marks are comments, and you shouldn't
-## uncomment them. Lines beginning with a single '#' mark are
-## commented-out code, and you may want to uncomment them when
-## appropriate.
+## 以两个“#”号开头的行是注释行，您不应该清除这些注释。
+## 而以单个“#”号开头的行是反注释或备用参数，您可以在有必要的时候
+## 选择清除掉这些行
+##
+## 译注：Ren'py引擎对空格等符号有着严格的要求，并且不能识别Tab制表符，
+## 无论是在此输入参数，还是今后编辑游戏脚本时，请务必小心空格的数量，
+## 同时不能存在Tab制表符，否则将会导致整个工程无法启动！
 
 init -1 python hide:
 
-    ## Should we enable the use of developer tools? This should be
-    ## set to False before the game is released, so the user can't
-    ## cheat using developer tools.
+    ## 此选项可供调整开发者工具的开关，
+    ## 在游戏正式发布之前，应设置为False，
+    ## 以避免用户使用开发者工具进行游戏作弊。
 
     config.developer = True
 
-    ## These control the width and height of the screen.
+    ## 此选项控制游戏窗口的分辨率。
 
     config.screen_width = 800
     config.screen_height = 600
 
-    ## This controls the title of the window, when Ren'Py is
-    ## running in a window.
+    ## 当Ren'py项目以窗口化运行时，
+    ## 此选项控制窗口的标题名称。
+    ## 译注：需要命名为非英文字符时，需要在双引号前加“u”以表示Unicode字符，
+    ## 但即使命名为英文名称也不一定需要将“u”去掉。
 
     config.window_title = u"PROJECT_NAME"
 
-    # These control the name and version of the game, that are reported
-    # with tracebacks and other debugging logs.
+    # 此选项控制游戏的名称与版本号，
+    # 并将它们反馈至debug工具与日志中。
+    #
+    # 译注：此选项通常针对开发者，SDK主界面的项目名称、开发过程中的traceback.txt、
+    # 编译时的可执行程序名称、以及压缩包名称中会有所体现，但与上述窗口标题无关。
     config.name = "PROJECT_NAME"
     config.version = "0.0"
 
     #########################################
-    # Themes
+    # 主题
 
-    ## We then want to call a theme function. theme.roundrect is
-    ## a theme that features the use of rounded rectangles. 
+    ## 接着，我们就希望使用到主题功能。theme.roundrect
+    ## 代表着使用圆角矩形特性的主题。
     ##
-    ## The theme function takes a number of parameters that can
-    ## customize the color scheme.
+    ## 主题功能拥有几个参数
+    ## 可使您对主题进行一定的自定义。
 
     theme.roundrect(
 
-        ## The color of an idle widget face.
+        ## 空闲控件的颜色。
+        ## 译注：控件通常体现在按钮上，此处为鼠标指针未指向时的颜色。
         widget = "#003c78",
 
-        ## The color of a focused widget face.
+        ## 被指向控件的颜色。
         widget_hover = "#0050a0",
 
-        ## The color of the text in a widget.
+        ## 控件内文本颜色。
         widget_text = "#c8ffff",
 
-        ## The color of the text in a selected widget. (For
-        ## example, the current value of a preference.)
+        ## 被选中控件内的文本颜色。
+        ## 例：当前使用的参数。
         widget_selected = "#ffffc8",
 
-        ## The color of a disabled widget face.
+        ## 被屏蔽控件的颜色。
         disabled = "#404040",
 
-        ## The color of disabled widget text.
+        ## 被屏蔽控件内文本的颜色。
         disabled_text = "#c8c8c8",
 
-        ## The color of informational labels.
+        ## 信息框内的文本颜色。
         label = "#ffffff",
 
-        ## The color of a frame containing widgets.
+        ## 含框架的控件颜色。
         frame = "#6496c8",
 
-        ## If this is True, the in-game window is rounded. If False,
-        ## the in-game window is square.
+        ## 若设置为True，则游戏内窗口显示为圆角。
+        ## 若为False，则游戏内窗口显示为矩形。
         rounded_window = False,
 
-        ## The background of the main menu. This can be a color
-        ## beginning with '#', or an image filename. The latter
-        ## should take up the full height and width of the screen.
+        ## 主菜单的背景。
+        ## 此处可以以“#”开头代表一个颜色，或引用一个文件。
+        ## 切记，图片文件的分辨率要与实际窗口的分辨率相同。
         mm_root = "#dcebff",
 
-        ## The background of the game menu. This can be a color
-        ## beginning with '#', or an image filename. The latter
-        ## should take up the full height and width of the screen.
+        ## 游戏内菜单的背景。
+        ## 使用方法与注意事项同上。
         gm_root = "#dcebff",
 
-        ## And we're done with the theme. The theme will customize
-        ## various styles, so if we want to change them, we should
-        ## do so below.
+        ## 主题的设置到此结束。
+        ## 主题控制着多个可视性效果，若需要修改，
+        ## 请参见下方参数。
         )
 
 
     #########################################
-    ## These settings let you customize the window containing the
-    ## dialogue and narration, by replacing it with an image.
+    ## 此处的设定可允许您修改含有对话或旁白的文本框背景。
+    ## 通过引用一个文件来修改它。
 
-    ## The background of the window. In a Frame, the two numbers
-    ## are the size of the left/right and top/bottom borders,
-    ## respectively.
+    ## 文本框的背景。在Frame后的括号中，两个数字分别代表
+    ## 左右边距和上下边距。
 
     # style.window.background = Frame("frame.png", 12, 12)
 
-    ## Margin is space surrounding the window, where the background
-    ## is not drawn.
+    ## 留边参数是环绕在游戏窗口周围的区域，
+    ## 这些部分是不会显示背景的。
 
     # style.window.left_margin = 6
     # style.window.right_margin = 6
     # style.window.top_margin = 6
     # style.window.bottom_margin = 6
 
-    ## Padding is space inside the window, where the background is
-    ## drawn.
+    ## 填充参数是游戏窗口内的区域，
+    ## 这些部分会显示背景。
+    ##
+    ## 译注：留边与填充参数极少使用，参数后的数字指的是厚度。
 
     # style.window.left_padding = 6
     # style.window.right_padding = 6
     # style.window.top_padding = 6
     # style.window.bottom_padding = 6
 
-    ## This is the minimum height of the window, including the margins
-    ## and padding.
+    ## 此参数控制窗口最低高度，并包含留边与填充参数。
 
     # style.window.yminimum = 250
 
 
     #########################################
-    ## This lets you change the placement of the main menu.
+    ## 此处参数可使您修改主菜单放置的位置。
 
-    ## The way placement works is that we find an anchor point
-    ## inside a displayable, and a position (pos) point on the
-    ## screen. We then place the displayable so the two points are
-    ## at the same place.
+    ## 此参数的原理是在可视化元素内寻找一个定位点(anchor)，
+    ## 以及在游戏屏幕上寻找一个位置点(pos)。
+    ## 接着我们会将两个点进行重合。
+    ## 
+    ## 译注：可视化元素内的定位点可假想为一个图片中指定的点，
+    ## 当pos参数指定一个游戏窗口内的位置（点）后，
+    ## 引擎便会将图片中指定的点与窗口中指定好的点进行重合放置。
+    ## 默认情况下，两轴的anchor都为0.5时，定位点位于可视化元素中心。
 
-    ## An anchor/pos can be given as an integer or a floating point
-    ## number. If an integer, the number is interpreted as a number
-    ## of pixels from the upper-left corner. If a floating point,
-    ## the number is interpreted as a fraction of the size of the
-    ## displayable or screen.
+    ## 定位点与位置点均可使用整数或小数表达。
+    ## 如果设置为整数，则会被理解为距离左上角的像素数量。
+    ## 如果设置为小数，则会被理解为游戏窗口分数化的位置。
+    ## 
+    ## 译注：分数化位置不难理解，如0.5，则代表游戏窗口的二分之一处，
+    ## 此时xy两轴依旧有效。
 
     # style.mm_menu_frame.xpos = 0.5
     # style.mm_menu_frame.xanchor = 0.5
@@ -139,149 +152,156 @@ init -1 python hide:
 
 
     #########################################
-    ## These let you customize the default font used for text in Ren'Py.
+    ## 此处可修改Ren'py游戏内的默认字体。
 
-    ## The file containing the default font.
+    ## 引用一个字体文件。
 
     style.default.font = "tl/None/DroidSansFallback.ttf"
     style._default.font = "tl/None/DroidSansFallback.ttf"
 
-    ## The default size of text.
+    ## 修改字体大小。
 
     # style.default.size = 22
 
-    ## Note that these only change the size of some of the text. Other
-    ## buttons have their own styles.
+    ## 注意此参数仅能修改部分字体的大小，
+    ## 一些按钮拥有它们自己的风格参数。
 
 
     #########################################
-    ## These settings let you change some of the sounds that are used by
-    ## Ren'Py.
+    ## 此参数可使您修改Ren'py游戏内使用的一些声音。
 
-    ## Set this to False if the game does not have any sound effects.
+    ## 若为False，您的游戏内将不会包含任何声音效果。
 
     config.has_sound = True
 
-    ## Set this to False if the game does not have any music.
+    ## 若您的游戏内不包含任何音乐，请设置为False。
 
     config.has_music = True
 
-    ## Set this to True if the game has voicing.
+    ## 若您的游戏含有人物语音，请设置为True。
 
     config.has_voice = False
 
-    ## Sounds that are used when button and imagemaps are clicked.
+    ## 设置在您点击按钮和图片映射时的效果音。
 
     # style.button.activate_sound = "click.wav"
     # style.imagemap.activate_sound = "click.wav"
 
-    ## Sounds that are used when entering and exiting the game menu.
+    ## 设置在您进入和退出游戏内菜单时的声音效果。
 
     # config.enter_sound = "click.wav"
     # config.exit_sound = "click.wav"
 
-    ## A sample sound that can be played to check the sound volume.
+    ## 设置一个声音用于测试音量大小。
 
     # config.sample_sound = "click.wav"
 
-    ## Music that is played while the user is at the main menu.
+    ## 设置用户位于主菜单时的音乐。
 
     # config.main_menu_music = "main_menu_theme.ogg"
 
 
     #########################################
-    ## Help.
+    ## 帮助
 
-    ## This lets you configure the help option on the Ren'Py menus.
-    ## It may be:
-    ## - A label in the script, in which case that label is called to
-    ##   show help to the user.
-    ## - A file name relative to the base directory, which is opened in a
-    ##   web browser.
-    ## - None, to disable help.
+    ## 此参数可让您控制Ren'py游戏内的“帮助”选项。
+    ## 它可以是：
+    ## - 脚本中的一个label，用于在点击后向用户显示一段帮助。
+    ## - 游戏根目录下的一个文件，点击后将会打开网页浏览器。
+    ## - 若为None，则关闭此功能。
+    ##
+    ## 译注：label通常用于游戏剧情脚本，如script.rpy中，label start:
+    ## 指的就是点击开始游戏时指向的label。label中可包含对话、旁白、
+    ## 选项、背景、声音等参数。
     config.help = "README.html"
 
 
     #########################################
-    ## Transitions.
+    ## 转场特效
 
-    ## Used when entering the game menu from the game.
+    ## 从游戏中进入游戏内菜单时的转场特效。
     config.enter_transition = None
 
-    ## Used when exiting the game menu to the game.
+    ## 退出菜单回到游戏时的转场特效。
     config.exit_transition = None
 
-    ## Used between screens of the game menu.
+    ## 在游戏菜单内进行切换时的转场特效。
     config.intra_transition = None
 
-    ## Used when entering the game menu from the main menu.
+    ## 从主菜单进入游戏内菜单时的转场特效。
     config.main_game_transition = None
 
-    ## Used when returning to the main menu from the game.
+    ## 退出菜单回到主菜单时的转场特效。
     config.game_main_transition = None
 
-    ## Used when entering the main menu from the splashscreen.
+    ## 从封面进入主菜单时的转场特效。
+    ## 译注：封面(splashscreen)指的是打开游戏时
+    ## 先看到的一些发行商图片或游戏宣传视频等。
+    ## 封面需要另外添加代码实现，请参见官方文档。
     config.end_splash_transition = None
 
-    ## Used when entering the main menu after the game has ended.
+    ## 当游戏结束时返回主菜单的转场特效。
     config.end_game_transition = None
 
-    ## Used when a game is loaded.
+    ## 当一个进度被加载时的转场特效。
     config.after_load_transition = None
 
-    ## Used when the window is shown.
+    ## 当一个游戏内窗口显示时的转场特效。
+    ## 译注：游戏内窗口多指文本框。
     config.window_show_transition = None
 
-    ## Used when the window is hidden.
+    ## 当一个游戏内窗口被隐藏时的转场特效。
     config.window_hide_transition = None
 
-    ## Used when showing NVL-mode text directly after ADV-mode text.
+    ## 当显示完ADV模式下的文本后直接转为NVL模式文本时的转场特效。
+    ## 译注：ADV模式是指文本位于屏幕底部文本框中的游戏模式，
+    ## NVL模式是指文本全屏显示的游戏模式。
     config.adv_nvl_transition = dissolve
 
-    ## Used when showing ADV-mode text directly after NVL-mode text.
+    ## 当显示完NVL模式的文本后直接转为ADV模式文本时的转场特效。
     config.nvl_adv_transition = dissolve
 
-    ## Used when yesno is shown.
+    ## 当确认取消按钮出现时的转场特效。
     config.enter_yesno_transition = None
 
-    ## Used when the yesno is hidden.
+    ## 当确认取消按钮隐藏时的转场特效
     config.exit_yesno_transition = None
 
-    ## Used when entering a replay
+    ## 当进入回放时的转场特效。
     config.enter_replay_transition = None
 
-    ## Used when exiting a replay
+    ## 当退出回放时的转场特效。
     config.exit_replay_transition = None
 
-    ## Used when the image is changed by a say statement with image attributes.
+    ## 当图像被say参数附带属性进行修改时的转场特效。
     config.say_attribute_transition = None
 
     #########################################
-    ## This is the name of the directory where the game's data is
-    ## stored. (It needs to be set early, before any other init code
-    ## is run, so the persistent information can be found by the init code.)
+    ## 此处可使您修改游戏存档数据存放的目录。
+    ## 这需要在游戏开发之初，在任何init代码都未被运行之前就进行设置，
+    ## 以便在init中找到正确的永久性数据信息。
 python early:
     config.save_directory = "PROJECT_NAME-UNIQUE"
 
 init -1 python hide:
     #########################################
-    ## Default values of Preferences.
+    ## 环境设置中的默认选项。
 
-    ## Note: These options are only evaluated the first time a
-    ## game is run. To have them run a second time, delete
+    ## 注意：这些选项仅会在第一次运行游戏时生效。
+    ## 若需要再生效一次，请删除：
     ## game/saves/persistent
 
-    ## Should we start in fullscreen mode?
+    ## 是否开启全屏幕模式？
 
     config.default_fullscreen = False
 
-    ## The default text speed in characters per second. 0 is infinite.
+    ## 默认的每秒显示文字数量，0为无限。
 
     config.default_text_cps = 0
 
-    ## The default auto-forward time setting.
+    ## 默认的自动阅读模式等待时间。
 
     config.default_afm_time = 10
 
     #########################################
-    ## More customizations can go here.
+    ## 您可以从此处开始进行更多的自定义设置。
