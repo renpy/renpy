@@ -153,3 +153,81 @@ init -1500 python:
         def get_selected(self):
             return _preferences.get_volume(self.mixer) == self.volume
 
+    @renpy.pure
+    class SetMute(Action, DictEquality):
+        """
+        :doc: audio_action
+
+        Sets the mute status of one or more mixers. When a mixer is muted,
+        audio channels associates with
+
+        `mixer`
+            Either a single string giving a mixer name, or a list of strings
+            giving a list of mixers. The strings should be mixer names, usually
+            "music", "sfx", or "voice".
+
+        `mute`
+            True to mute the mixer, False to ummute it.
+        """
+
+
+        def __init__(self, mixer, mute):
+            if isinstance(mixer, basestring):
+                mixer = [ mixer ]
+
+            self.mixers = mixer
+            self.mute = mute
+
+        def __call__(self):
+            for i in self.mixers:
+                _preferences.set_mute(i, self.mute)
+
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            for i in self.mixers:
+                if not _preferences.get_mute(i):
+                    return False
+
+            return True
+
+    @renpy.pure
+    class ToggleMute(Action, DictEquality):
+        """
+        :doc: audio_action
+
+        Toggles the mute status of one or more mixers.
+
+        `mixer`
+            Either a single string giving a mixer name, or a list of strings
+            giving a list of mixers. The strings should be mixer names, usually
+            "music", "sfx", or "voice".
+        """
+
+
+        def __init__(self, mixer):
+            if isinstance(mixer, basestring):
+                mixer = [ mixer ]
+
+            self.mixers = mixer
+
+        def __call__(self):
+            mute = not self.get_selected()
+
+            for i in self.mixers:
+                _preferences.set_mute(i, mute)
+
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            for i in self.mixers:
+                if not _preferences.get_mute(i):
+                    return False
+
+            return True
+
+
+
+
+
+
