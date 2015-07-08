@@ -303,5 +303,192 @@ init -1 python hide:
 
     config.default_afm_time = 10
 
+    # 默认开启换行后保持语音播放功能。
+
+    config.default_voice_sustain = True
+
     #########################################
     ## 您可以从此处开始进行更多的自定义设置。
+    ## 译注：以下为模板原文的追加代码。
+
+    ## 此选项可让您使用鼠标滚轮阅读剧情。
+    # config.keymap['dismiss'].append('mousedown_5')
+
+    ## Windows 用标题栏图标设定。
+    ## 图像尺寸必须为 32x32 。
+    # config.windows_icon = "image/head.png"
+
+    ## 图像缓存最高值设定。
+    ## 数量过高有可能导致游戏崩溃。
+    # config.image_cache_size = 8
+
+    ## 设定跳过文本功能。
+    ## 无法停止暂时性跳过时，请设置为None。
+    # config.allow_skipping = True
+
+    ## 设置跳过文本的延迟时间。
+    # config.skip_delay = 25
+
+    ## 是否允许非开发者通过>键使用高速快进模式。
+    ## 译注：高速快进模式非常快，所有未读文本也将被跳过。
+    # config.fast_skipping = False
+
+    ## 设置文本回滚功能。
+    ## 若需要持续回滚剧情，请使用renpy.block_rollback()。
+    ## hard_rollback_limit 参数记录回滚的行数。
+    # config.rollback_enabled = True
+    # config.hard_rollback_limit = 500
+
+    ## 修改存档位的缩略图分辨率。
+    # config.thumbnail_height = 75
+    # config.thumbnail_width = 100
+
+    ## 若角色图片文件使用image命令显示时，
+    ## 若此参数设置为True，则角色图像仅以侧边图(side image)
+    ## 形式呈现。
+    # config.side_image_only_not_showing = False
+
+    ## 默认图层。
+    # config.layers = [ 'master',  'transient', 'screens', 'overlay' ]
+
+    ## 添加最上方图层。
+    ## 此图层不受转场特效影响。
+    # config.top_layers = [ ]
+
+    ## 回滚剧情时使用NVL模式。
+    # config.nvl_paged_rollback = True
+
+    ## 选项出现时使用NVL模式。
+    # menu = nvl_menu
+
+    ## 设定是否允许通过鼠标拖拽改变窗口大小。
+    # config.gl_resize = False
+
+    ## 游戏启动时窗口居中。
+    # import os
+    # os.environ['SDL_VIDEO_CENTERED'] = '1'
+
+    ## 设定音乐默认的淡化(fade)时间。
+    # config.fade_music = 0.0
+
+    ## 以下参数若设置为"{filename}.ogg"的形式，
+    ## 则只需要输入test即可回放test.ogg。
+    # config.voice_filename_format = "{filename}"
+
+    ## 默认声音通道。
+    ## file_prefix中填入路径，file_suffix中填入后缀名，
+    ## 即可实现仅需输入文件名就能回放声音。
+    # renpy.music.register_channel("music", mixer="music" loop = True, file_prefix="", file_suffix="")
+    # renpy.music.register_channel("sound", mixer="sfx", loop = False, file_prefix="", file_suffix="")
+    # renpy.music.register_channel("voice", mixer="voice", loop = False, file_prefix="", file_suffix="")
+
+    ## 按键连按参数。
+    ## (.3,.03)的情况下，按住按键.3秒后，将会以.03秒为间隔自动连按。
+    # config.key_repeat = (.3, .03)
+
+
+## 此区域控制您将如何生成一个发行版程序。
+
+init python:
+
+    ## 此参数用于修改发行版压缩包与文件夹的名称。
+    ## 假如设置为“mygame-1.0”，则将会在生成Windows发行版时自动将游戏放置在
+    ## “mygame-1.0-win”文件夹下，并生成mygame-1.0-win.zip的压缩包。
+    ## 生成其他平台的发行版时除“win”字符以外其他依旧沿用此处设置。
+    build.directory_name = "HANA-Build-1.0"
+
+    ## 游戏可执行程序的文件名。
+    ## 例如设置为“mygame”时，则生成发行版后，
+    ## 其游戏目录下可执行文件的文件名将会为“mygame.exe”，
+    build.executable_name = "SHIRAYUKI"
+
+    ## 如果设置为True，则此Ren'py游戏将包含升级信息，
+    ## 使其允许升级程序运行。
+    build.include_update = False
+
+    ## 文件模式：
+
+    ## 以下功能称作文件模式，文件模式对大小写并不敏感，
+    ## 并且将“/”用于表示目录的分层。
+    ## 若存在多个文件模式，则优先使用第一个。
+
+    ## 在文件模式中：
+
+    ## /
+    ##     这是一个目录的分隔符。
+
+    ## *
+    ##     代表所有字符，除目录分隔符以外。
+
+    ## **
+    ##     代表所有字符，包括目录分隔符。
+
+    ## 例如：
+
+    ## *.txt
+    ##     代表游戏根目录下的所有txt文件。
+
+    ## game/**.ogg
+    ##     代表game文件夹下及其所有子文件夹中的ogg文件。
+
+    ## **.psd
+    ##     代表工程中所有地方的psd文件。
+
+    ## 定义为None的文件将不会被包含在分发版中。
+
+    build.classify('**~', None)
+    # build.classify('**.bak', None)
+    # build.classify('**/.**', None)
+    build.classify('**/#**', None)
+    build.classify('**/thumbs.db', None)
+
+    ## 此处用于定义游戏资源封包的名称。
+    ## 译注：您需要预先在此处预先定义封包的名称后，
+    ## 才能在下一个参数中设定使用对应名称的封包。
+    # build.archive('script', 'all')
+    # build.archive('image', 'all')
+    # build.archive('bg', 'all')
+    # build.archive('voice', 'all')
+    # build.archive('char', 'all')
+    # build.archive('sound', 'all')
+    # build.archive('data', 'all')
+
+    ## 若要将游戏资源文件封包，
+    ## 请将它们定义为“archive”。
+    ## 译注：此处用于定义需要放进封包的游戏资源文件列表，需要事先定义。
+    ## 同时，在上方定义好archive的名称后，可以在下方直接使用自定义名称。
+    # build.classify('game/*.rpy', 'script')
+    # build.classify('game/*.rpyc', 'script')
+    # build.classify('game/*.rpyb', 'script')
+    # build.classify('game/bg/*.png', 'image')
+    # build.classify('game/char/*.png', 'image')
+    # build.classify('game/image/*.png', 'image')
+    # build.classify('game/voice/*.ogg', 'voice')
+    # build.classify('game/sound/*.ogg', 'sound')
+    # build.classify('game/data/**.*', 'data')
+    # build.classify('game/data/mask/**.*', 'data')
+
+    ## 符合documentation样式的文件，
+    ## 在mac用分发版中同时包含在app与zip中。
+
+    build.documentation('*.html')
+    build.documentation('*.txt')
+
+init python:
+
+    ## 定义一整个文件夹的图像，在脚本中可直接使用文件名进行调用，
+    ## 避免单个文件定义的繁琐步骤。
+    ## 译注：详细使用方法请参阅官方文档。
+    # config.automatic_images = [ '/' ]
+    # config.automatic_images_strip = [ '/' ]
+
+    ## 定义一个角色语音存放的文件夹，在脚本中可以直接进行调用。
+    # config.auto_voice = "voice/{filename}.ogg"
+    # config.voice_filename_format = "voice/{filename}.ogg"
+
+    ## 打开移动平台上的视频硬件加速，提升视频播放性能。
+    ## 理论上绝大多数平台支持硬件加速功能。
+    # config.hw_video = True
+
+    ## 打开选择肢自动存档功能，存档将会放到Q.Save位置。
+    # config.autosave_on_choice = True
