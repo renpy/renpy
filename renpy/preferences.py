@@ -113,16 +113,39 @@ class Preferences(renpy.object.Object):
         self.emphasize_audio = False
 
     def set_volume(self, mixer, volume):
+        if volume != 0:
+            self.mute[mixer] = False
+
         self.volumes[mixer] = volume
 
     def get_volume(self, mixer):
-        return self.volumes.get(mixer, 0)
+        if mixer not in self.volumes:
+            return 0.0
+
+        if self.mute.get(mixer, False):
+            return 0.0
+
+        return self.volumes[mixer]
 
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute
 
+        if (not mute) and (self.volumes.get(mixer, 1.0) == 0.0):
+            self.volumes[mixer] = 1.0
+
     def get_mute(self, mixer):
+        if mixer not in self.volumes:
+            return False
+
         return self.mute[mixer]
+
+    def init_mixers(self):
+        for i in renpy.audio.music.get_all_mixers():
+            self.volumes.setdefault(i, 1.0)
+            self.mute.setdefault(i, False)
+
+    def get_all_mixers(self):
+        return renpy.audio.music.get_all_mixers()
 
     def __eq__(self, other):
         return True
