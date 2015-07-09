@@ -371,9 +371,10 @@ init -1 python hide:
     ## 设定音乐默认的淡化(fade)时间。
     # config.fade_music = 0.0
 
-    ## 以下参数若设置为"{filename}.ogg"的形式，
-    ## 则只需要输入test即可回放test.ogg。
-    # config.voice_filename_format = "{filename}"
+    ## 定义一个角色语音存放的文件夹，在脚本中可以直接进行调用。
+    ## 定义以后，您只需输入音频的文件名即可播放音频。
+    # config.auto_voice = "voice/{filename}.ogg"
+    # config.voice_filename_format = "{filename}.ogg"
 
     ## 默认声音通道。
     ## file_prefix中填入路径，file_suffix中填入后缀名，
@@ -474,17 +475,11 @@ init python:
     build.documentation('*.html')
     build.documentation('*.txt')
 
-init python:
-
     ## 定义一整个文件夹的图像，在脚本中可直接使用文件名进行调用，
     ## 避免单个文件定义的繁琐步骤。
     ## 译注：详细使用方法请参阅官方文档。
     # config.automatic_images = [ '/' ]
     # config.automatic_images_strip = [ '/' ]
-
-    ## 定义一个角色语音存放的文件夹，在脚本中可以直接进行调用。
-    # config.auto_voice = "voice/{filename}.ogg"
-    # config.voice_filename_format = "voice/{filename}.ogg"
 
     ## 打开移动平台上的视频硬件加速，提升视频播放性能。
     ## 理论上绝大多数平台支持硬件加速功能。
