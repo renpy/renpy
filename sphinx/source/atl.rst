@@ -753,10 +753,12 @@ both horizontal and vertical positions.
 .. transform-property:: nearest
 
     :type: boolean
-    :default: False
+    :default: None
 
     If true, the displayable and its children are drawn using nearest-neighbor
-    filtering.
+    filtering. If False, the displayable and its children are drawn using
+    bilinear filtering. If None, this is inherited from the parent, or
+    :var:`config.nearest_neighbor`, which defaults to False.
 
 .. transform-property:: alpha
 

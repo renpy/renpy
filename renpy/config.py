@@ -575,6 +575,9 @@ lint_ignore_replaces = [ 'help', 'quit' ]
 # How long should the presplash be kept up for?
 minimum_presplash_time = 0.0
 
+# Should Ren'Py use nearest-neighbor filtering by default.
+nearest_neighbor = False
+
 del renpy
 del os
 
