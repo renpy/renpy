@@ -1303,3 +1303,7 @@ class Canvas(object):
                                 blend)
         finally:
             blit_lock.release()
+
+    def get_surface(self):
+        return self.get_surf
+

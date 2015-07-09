@@ -268,6 +268,9 @@ the implicit `self` parameter.
        `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_
        functions, with the first parameter (the surface) omitted.
 
+       Canvas objects also have a get_surface() method that returns the
+       pygame Surface underlying the canvas.
+
     .. method:: get_size()
 
         Returns a (width, height) tuple giving the size of
