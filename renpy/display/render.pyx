@@ -1305,5 +1305,5 @@ class Canvas(object):
             blit_lock.release()
 
     def get_surface(self):
-        return self.get_surf
+        return self.surf
 
