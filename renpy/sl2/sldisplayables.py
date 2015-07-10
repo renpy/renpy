@@ -530,6 +530,10 @@ for i in renpy.atl.PROPERTIES:
     Style(i)
 
 def sl2add(d, replaces=None, **kwargs):
+
+    if d is None:
+        return renpy.sl2.slast.NO_DISPLAYABLE
+
     d = renpy.easy.displayable(d)
     d = d.parameterize('displayable', [ ])
 

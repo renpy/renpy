@@ -68,7 +68,6 @@ class LogFile(object):
         if renpy.ios:
             self.file = sys.stdout
 
-
     def open(self): #@ReservedAssignment
 
         if self.file:

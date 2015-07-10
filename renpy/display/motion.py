@@ -86,7 +86,7 @@ def first_not_none(*args):
 
 class TransformState(renpy.object.Object):
 
-    nearest = False
+    nearest = None
     xoffset = None
     yoffset = None
     inherited_xpos = None
@@ -99,9 +99,9 @@ class TransformState(renpy.object.Object):
     events = True
     crop_relative = False
 
-    def __init__(self): # W0231
+    def __init__(self):
         self.alpha = 1
-        self.nearest = False
+        self.nearest = None
         self.additive = 0.0
         self.rotate = None
         self.rotate_pad = True

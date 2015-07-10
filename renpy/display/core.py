@@ -1479,7 +1479,7 @@ class Interface(object):
 
         renpy.display.log.write(s)
 
-        if renpy.mobile and not renpy.config.log_to_stdout:
+        if renpy.android and not renpy.config.log_to_stdout:
             print s
 
     def post_init(self):

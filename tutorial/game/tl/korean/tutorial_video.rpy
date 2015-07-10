@@ -13,7 +13,7 @@ translate korean tutorial_video_4aefd413:
 
 
     # e "The first way allows you to show a movie as an image, along with every other image that's displayed on the screen."
-    e "첫번째 방법은 동영상을 이미지의 형식으로 보여주는 방법으로, 스크린 위에 표시되는 다른 이미지와 함께 표시하는 방법입니다.
+    e "첫번째 방법은 동영상을 이미지의 형식으로 보여주는 방법으로, 스크린 위에 표시되는 다른 이미지와 함께 표시하는 방법입니다."
 
 
 # game/tutorial_video.rpy:17

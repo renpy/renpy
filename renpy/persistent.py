@@ -35,13 +35,16 @@ class Persistent(object):
         self._update()
 
     def __setstate__(self, data):
-        vars(self).update(data)
+        self.__dict__.update(data)
 
     def __getstate__(self):
-        return vars(self)
+        return self.__dict__
 
     # Undefined attributes return None.
     def __getattr__(self, attr):
+        if attr.startswith("__") and attr.endswith("__"):
+            raise AttributeError("Persistent object has no attribute %r", attr)
+
         return None
 
     def _clear(self, progress=False):
@@ -51,7 +54,6 @@ class Persistent(object):
         `progress`
             If true, also resets progress data that Ren'Py keeps.
         """
-
 
         keys = list(self.__dict__)
 
@@ -99,8 +101,6 @@ class Persistent(object):
         # changed at.
         if self._changed is None:
             self._changed = { }
-
-
 
 
 renpy.game.Persistent = Persistent

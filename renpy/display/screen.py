@@ -546,6 +546,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         old_ui_screen = renpy.ui.screen
         renpy.ui.screen = self
 
+        # The name of the root screen of this screen.
+        NAME = 0
+
+        old_cache = self.cache.get(NAME, None)
+
         # Evaluate the screen.
         try:
 
@@ -554,7 +559,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.children = [ self.child ]
 
             self.scope["_scope"] = self.scope
-            self.scope["_name"] = 0
+            self.scope["_name"] = NAME
             self.scope["_debug"] = debug
 
             self.screen.function(**self.scope)
@@ -569,6 +574,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = None
         self.old_transforms = None
         self.old_transfers = True
+
+        # Deal with the case where the screen version changes.
+        if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == UPDATE):
+            self.current_transform_event = "update"
 
         if self.current_transform_event:
 

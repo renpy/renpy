@@ -528,8 +528,8 @@ cdef class Render:
         self.over = 1.0
 
         # If true, children of this render use nearest-neighbor texture
-        # lookup.
-        self.nearest = False
+        # lookup. If false, bilinear, if None, from the parent.
+        self.nearest = None
 
         # A list of focus regions in this displayable.
         self.focuses = None
@@ -1303,3 +1303,7 @@ class Canvas(object):
                                 blend)
         finally:
             blit_lock.release()
+
+    def get_surface(self):
+        return self.surf
+

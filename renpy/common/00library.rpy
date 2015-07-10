@@ -260,6 +260,10 @@ init 1700 python hide:
         renpy.load_module("_developer/developer")
         renpy.load_module("_developer/inspector")
 
+# Used by renpy.return() to return.
+label _renpy_return:
+    return
+
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym
 label _developer:

@@ -483,6 +483,7 @@ class MultiBox(Container):
 
         rv.children = self._list_type(i.parameterize('displayable', [ ]) for i in self.children)
         rv.offsets = self._list_type()
+        rv.start_times = self._list_type(self.start_times)
 
         return rv
 
@@ -858,7 +859,6 @@ class MultiBox(Container):
 
 
     def event(self, ev, x, y, st):
-
 
         children_offsets = zip(self.children, self.offsets, self.start_times)
 

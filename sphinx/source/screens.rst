@@ -232,6 +232,8 @@ takes :ref:`transform properties <transform-properties>`. If at least
 one transform property is given, a Transform is created to wrap the
 image, and the properties are given to the transform.
 
+If the displayable is None, nothing is added to the screen.
+
 This does not take any children.
 
 ::

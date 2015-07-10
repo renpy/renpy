@@ -572,6 +572,11 @@ Occasionally Used
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
+.. var:: config.nearest_neighbor = False
+
+    Uses nearest-neighbor filtering by default, to support pixel art or
+    melting players' eyes.
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to

@@ -478,6 +478,10 @@ class SLCache(object):
         # The SLUse that was transcluded by this SLCache statement.
         self.transclude = None
 
+# A magic value that, if returned by a displayable function, is not added to
+# the parent.
+NO_DISPLAYABLE = renpy.display.layout.Null()
+
 class SLDisplayable(SLBlock):
     """
     A screen language AST node that corresponds to a displayable being
@@ -659,10 +663,11 @@ class SLDisplayable(SLBlock):
 
                 d = cache.constant
 
-                if context.showif is not None:
-                    d = self.wrap_in_showif(d, context, cache)
+                if d is not NO_DISPLAYABLE:
+                    if context.showif is not None:
+                        d = self.wrap_in_showif(d, context, cache)
 
-                context.children.append(d)
+                    context.children.append(d)
 
                 if context.uses_scope is not None:
                     context.uses_scope.extend(cache.constant_uses_scope)
@@ -897,7 +902,7 @@ class SLDisplayable(SLBlock):
         cache.displayable = d
         cache.children = ctx.children
 
-        if transform is not None:
+        if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
                 d = cache.transform
             else:
@@ -944,10 +949,12 @@ class SLDisplayable(SLBlock):
                 if context.uses_scope is not None:
                     context.uses_scope.extend(ctx.uses_scope)
 
-        if context.showif is not None:
-            d = self.wrap_in_showif(d, context, cache)
+        if d is not NO_DISPLAYABLE:
 
-        context.children.append(d)
+            if context.showif is not None:
+                d = self.wrap_in_showif(d, context, cache)
+
+            context.children.append(d)
 
     def wrap_in_showif(self, d, context, cache):
         """
@@ -1478,7 +1485,12 @@ class SLUse(SLNode):
         rv.target = self.target
         rv.args = self.args
         rv.id = self.id
-        rv.block = self.block.copy(transclude)
+
+        if self.block is not None:
+            rv.block = self.block.copy(transclude)
+        else:
+            rv.block = None
+
         rv.ast = None
 
         return rv
@@ -1491,7 +1503,7 @@ class SLUse(SLNode):
             self.constant = NOT_CONST
 
         if self.block:
-            self.block.analyze(self.analysis)
+            self.block.analyze(analysis)
 
     def prepare(self, analysis):
 
@@ -1672,10 +1684,11 @@ class SLTransclude(SLNode):
             return
 
         cache = context.cache.get(self.serial, None)
-        cache.transclude = context.transclude
 
         if cache is None:
             context.cache[self.serial] = cache = { }
+
+        cache["transclude"] = context.transclude
 
         ctx = SLContext(context.parent)
 
@@ -1692,14 +1705,12 @@ class SLTransclude(SLNode):
 
     def copy_on_change(self, cache):
 
-        if self.child is None:
-            return
-
         c = cache.get(self.serial, None)
-        if c is None:
+
+        if c is None or "transclude" not in c:
             return
 
-        SLBlock.copy_on_change(cache.transclude, c)
+        SLBlock.copy_on_change(c["transclude"], c)
 
     def has_transclude(self):
         return True

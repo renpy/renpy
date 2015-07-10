@@ -753,10 +753,12 @@ both horizontal and vertical positions.
 .. transform-property:: nearest
 
     :type: boolean
-    :default: False
+    :default: None
 
     If true, the displayable and its children are drawn using nearest-neighbor
-    filtering.
+    filtering. If False, the displayable and its children are drawn using
+    bilinear filtering. If None, this is inherited from the parent, or
+    :var:`config.nearest_neighbor`, which defaults to False.
 
 .. transform-property:: alpha
 
@@ -950,6 +952,11 @@ The following events can be triggered automatically:
 ``replaced``
     Triggered when the transform is replaced by another. The image will
     not actually hide until the ATL block finishes.
+
+``update``
+    Triggered when a screen is updated without being shown or replacing
+    another screen. This happens in rare but possible cases, such as when
+    the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained

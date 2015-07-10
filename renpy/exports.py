@@ -1449,6 +1449,15 @@ def call(label, *args, **kwargs):
 
     raise renpy.game.CallException(label, args, kwargs)
 
+def return_statement():
+    """
+    :doc: se_call
+
+    Causes Ren'Py to return from the current Ren'Py-level call.
+    """
+
+    jump("_renpy_return")
+
 
 def screenshot(filename):
     """
@@ -2907,3 +2916,12 @@ def write_log(s, *args):
     """
 
     renpy.display.log.write(s, *args)
+
+def predicting():
+    """
+    :doc: screens
+
+    Returns true if Ren'Py is currently predicting the screen.
+    """
+
+    return renpy.display.predict.predicting
