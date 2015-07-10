@@ -103,18 +103,19 @@ init -1 python hide:
 
     # style.window.background = Frame("frame.png", 12, 12)
 
-    ## 留边参数是环绕在游戏窗口周围的区域，
-    ## 这些部分是不会显示背景的。
+    ## 留边参数用于设定文本框窗口周围的空白部分。
+    ## 这些部分将不会覆盖背景图。
+    ## 译注：如数值越大，则文本框周围的空白越多，文本框本身越小，
+    ## 但这仅限于文本框图形本身，文字不受此参数影响。
 
     # style.window.left_margin = 6
     # style.window.right_margin = 6
     # style.window.top_margin = 6
     # style.window.bottom_margin = 6
 
-    ## 填充参数是游戏窗口内的区域，
-    ## 这些部分会显示背景。
-    ##
-    ## 译注：留边与填充参数极少使用，参数后的数字指的是厚度。
+    ## 填充参数是文本框窗口内的空白部分。
+    ## 译注：与上一个参数作用正好相反，
+    ## 它会影响文本框内文字的显示范围。
 
     # style.window.left_padding = 6
     # style.window.right_padding = 6
