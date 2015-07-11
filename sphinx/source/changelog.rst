@@ -2,6 +2,78 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.5
+=============
+
+Startup
+-------
+
+Much work has been done to reduce Ren'Py's startup time, especially on mobile
+platforms such as Android and iOS. This was largely accomplished by caching the
+results of transforms, analyses, and code compilation so less work is done
+when the game is unchanged. To take full advantage of this, perform a
+'Full Recompile' of your project from the front screen of the Ren'Py
+launcher.
+
+The desktop presplash code has been rewritten to use pygame_sdl2, and is now
+also faster.
+
+A new :var:`config.minimum_presplash_time` has been added. This ensures that
+the desktop presplash, android presplash, and iOS launchscreen are displayed
+for at least a certain amount of time, making them more useful for branding
+purposes.
+
+As part of this work, script_version.rpy and script_version.rpyc will no
+longer be added to packages. Instead, script_version.txt will be added.
+(This ensures that the script does not change as part of packaging.)
+In addition, bytecode.rpyb has been moved to the game/cache directory,
+where addditional cache files now join it.
+
+
+iOS
+---
+
+There have been a number of improvements to renios, some necessary to get
+Ren'Py games accepted on the Apple App Store. Nightly builds of 6.99.5 have
+been used to get multiple games accepted.
+
+Renios has been upgraded to use SDL 2.0.4 rc1. This improves compatibility
+with iOS 8, and makes it possible to keep the launchscreen displayed until
+Ren'Py fully stars. As a result, support for the ios-presplash image is no
+longer necessary, and has been dropped.
+
+
+Other Improvements
+------------------
+
+ATL has had an update event added. This event is called in rare (but possible)
+cases when a screen is re-created from scratch, such as after a load or when
+styles or translations are changed.
+
+:func:`SetMute` and :func:`ToggleMute` actions have been added, along with
+a new "all mute" :func:`Preferences` that mutes all mixers.
+
+Font hinting is now controllable using the :prop:`hinting` style property.
+
+The :var:`config.nearest_neighbor` variable configures Ren'Py to draw all
+images using nearest-neighbor interpolation by default, helping ensure that
+pixel art stays sharp when scaled up.
+
+The new :func:`renpy.predicting` function returns true if Ren'Py is running
+a screen for prediction purposes.
+
+The new :func:`renpy.return_statement` function is a python equivalent to
+the Ren'Py return statement.
+
+The new `_dismiss_pause` and `_skipping` variables make it possible to
+control pauses and skipping on a line-by-line basis.
+
+Canvas objects (returned by the Render.canvas() method) now have a
+get_surface() method that returns a pygame_sdl2 Surface that is in a format
+that can be used by Ren'Py. This surface can be manipulated by Pygame
+drawing operations.
+
+
 Ren'Py 6.99.4
 =============
 
