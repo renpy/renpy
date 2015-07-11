@@ -10,6 +10,10 @@
         position arguments to be passed to `callable`.
     `kwargs`
         keyword arguments to be passed to `callable`.
+    
+    This Action takes an optional _update_screens keyword argument, which
+    defaults to true. When it is true, the interaction restarts and
+    the screens are updated after the function returns.
 
 .. function:: Help(help=None)
     
@@ -20,7 +24,7 @@
          that label is called in a new context when the button is
          chosen. Otherwise, it should be a string giving a file
          that is opened in a web browser. If None, the value of
-         config.help is used in the same wayt.
+         config.help is used in the same way.
 
 .. function:: HideInterface()
     

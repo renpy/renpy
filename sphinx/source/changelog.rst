@@ -53,7 +53,7 @@ styles or translations are changed.
 :func:`SetMute` and :func:`ToggleMute` actions have been added, along with
 a new "all mute" :func:`Preferences` that mutes all mixers.
 
-Font hinting is now controllable using the :prop:`hinting` style property.
+Font hinting is now controllable using the :propref:`hinting` style property.
 
 The :var:`config.nearest_neighbor` variable configures Ren'Py to draw all
 images using nearest-neighbor interpolation by default, helping ensure that

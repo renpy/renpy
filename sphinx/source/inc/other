@@ -273,14 +273,6 @@
     This can be used if a label that is called decides not to return
     to its caller.
 
-.. function:: renpy.pop_return()
-    
-    Pops the current call from the call stack, without returning to
-    the location.
-    
-    This can be used if a label that is called decides not to return
-    to its caller.
-
 .. function:: renpy.queue_event(name, up=False)
     
     Queues an event with the given name. `Name` should be one of the event

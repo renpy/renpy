@@ -95,7 +95,8 @@
     
     `cycle`
         If true, then saves on the supplied page will be cycled before
-        being shown to the user.
+        being shown to the user. :var:`config.quicksave_slots` slots are
+        used in the cycle.
 
 .. function:: FileTakeScreenshot()
     

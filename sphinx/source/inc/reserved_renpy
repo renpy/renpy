@@ -121,6 +121,7 @@
 * :func:`SetDict`
 * :func:`SetField`
 * :func:`SetMixer`
+* :func:`SetMute`
 * :func:`SetScreenVariable`
 * :func:`SetVariable`
 * :func:`SetVoiceMute`
@@ -146,6 +147,7 @@
 * :func:`Text`
 * :func:`ToggleDict`
 * :func:`ToggleField`
+* :func:`ToggleMute`
 * :func:`ToggleScreenVariable`
 * :func:`ToggleSetMembership`
 * :func:`ToggleVariable`
