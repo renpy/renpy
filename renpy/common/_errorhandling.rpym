@@ -483,7 +483,7 @@ screen _exception:
                         action ignore_action
                         hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
 
-                if config.developer:
+                if config.developer and not renpy.mobile:
                     textbutton _("Reload"):
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))

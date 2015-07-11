@@ -399,8 +399,11 @@ def import_all():
 
 
     # Back up the Ren'Py modules.
+
     global backup
-    backup = Backup()
+
+    if not mobile:
+        backup = Backup()
 
     post_import()
 
@@ -439,6 +442,9 @@ def reload_all():
     Resets all modules to the state they were in right after import_all
     returned.
     """
+
+    if mobile:
+        raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy.style
     import renpy.display
