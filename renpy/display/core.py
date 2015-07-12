@@ -1881,10 +1881,11 @@ class Interface(object):
         scene_lists = renpy.game.context().scene_lists
 
         # Compute the scene.
-        self.old_scene = self.compute_scene(scene_lists)
+        for layer, d in self.compute_scene(scene_lists).iteritems():
+            if layer not in self.transition:
+                self.old_scene[layer] = d
 
         # Get rid of transient things.
-
         for i in renpy.config.overlay_layers:
             scene_lists.clear(i)
 
