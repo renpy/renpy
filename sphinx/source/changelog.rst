@@ -46,6 +46,10 @@ longer necessary, and has been dropped.
 Other Improvements
 ------------------
 
+A Simplified Chinese translation of the template game has been added, and
+the Korean and Arabic translations have been updated.
+
+
 ATL has had an update event added. This event is called in rare (but possible)
 cases when a screen is re-created from scratch, such as after a load or when
 styles or translations are changed.
