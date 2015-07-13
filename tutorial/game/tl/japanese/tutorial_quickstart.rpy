@@ -37,7 +37,7 @@ translate japanese tutorial_dialogue_15734bf9:
     e "次にプロジェクト名を聞かれ、同様にインターフェイスのテーマも聞かれます。"
 
 # game/tutorial_quickstart.rpy:38
-translate japanese tutorial_dialogue_a12675cc:
+translate japanese tutorial_dialogue_46edb91d:
 
     # e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
     e "それらが終わると、Ren'Pyはプロジェクトの作成に必要なファイルが入ったディレクトリを自動的に作成します。"

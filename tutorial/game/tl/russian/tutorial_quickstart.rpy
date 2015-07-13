@@ -36,7 +36,7 @@ translate russian tutorial_dialogue_15734bf9:
     e "После этого у вас спросят имя проекта и тему интерфейса."
 
 # game/tutorial_quickstart.rpy:38
-translate russian tutorial_dialogue_a12675cc:
+translate russian tutorial_dialogue_46edb91d:
 
     # e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
     e "После этого, Ren'Py создаст папку и заполнит ее необходимыми проекту файлами."

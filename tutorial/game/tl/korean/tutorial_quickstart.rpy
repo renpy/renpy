@@ -1,7 +1,7 @@
 ﻿
 
 # game/tutorial_quickstart.rpy:20
-translate korean tutorial_dialogue_f6d3ddd3:
+translate korean tutorial_dialogue_46edb91d:
 
 
     # e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
