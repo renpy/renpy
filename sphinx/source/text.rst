@@ -195,7 +195,7 @@ Tags that apply to all text are:
     tag in the specified color. The color should be in #rgb, #rgba,
     #rrggbb, or #rrggbbaa format. ::
 
-        "{color=#f00}Red{/color}, {color=#00ff00}Green{color}, {color=#0000ffff}Blue{/color}"
+        "{color=#f00}Red{/color}, {color=#00ff00}Green{/color}, {color=#0000ffff}Blue{/color}"
 
 .. text-tag:: cps
 

@@ -74,6 +74,10 @@
     * Preference("voice mute", "disable") - Un-mute the voice mixer.
     * Preference("voice mute", "toggle") - Toggle voice mute.
     
+    * Preference("all mute", "enable") - Mute all mixers.
+    * Preference("all mute", "disable") - Unmute all mixers.
+    * Preference("all mute", "toggle") - Toggle mute of all mixers.
+    
     * Preference("music volume", 0.5) - Set the music volume.
     * Preference("sound volume", 0.5) - Set the sound volume.
     * Preference("voice volume", 0.5) - Set the voice volume.

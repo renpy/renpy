@@ -1,4 +1,4 @@
-#!/home/tom/bin/renpython -O
+#!/home/tom/ab/renpy/lib/linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
 
@@ -9,6 +9,9 @@ import shutil
 import subprocess
 import argparse
 import glob
+
+if not sys.flags.optimize:
+    raise Exception("Optimization disabled.")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -46,6 +49,7 @@ def main():
     ap.add_argument("version")
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--pygame", action="store", default=None)
+    ap.add_argument("--no-rapt", action="store_true")
 
     args = ap.parse_args()
 
@@ -80,7 +84,7 @@ def main():
     reload(sys.modules['renpy'])
 
     # Check that the versions match.
-    full_version = ".".join(str(i) for i in renpy.version_tuple) #@UndefinedVariable
+    full_version = renpy.version_only #@UndefinedVariable
     if "-" not in args.version \
         and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
@@ -103,51 +107,29 @@ def main():
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
 
-    # Generate launcher/game/script_version.rpy
-    with open("launcher/game/script_version.rpy", "w") as f:
-        f.write("init -999 python:\n")
-        f.write("    config.script_version = {!r}\n".format(renpy.version_tuple[:3]))  # @UndefinedVariable
-
     # Compile the various games.
     if not args.fast:
-        for i in [ 'tutorial', 'launcher', 'the_question' ] + glob.glob("templates/*"):
+        for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print "Compiling", i
             subprocess.check_call(["./renpy.sh", i, "quit" ])
 
-
     # Kick off the rapt build.
     if not args.fast:
-        out = open("/tmp/rapt_build.txt", "wb")
 
-        print("Building RAPT.")
+        print "Cleaning RAPT."
 
-        android = os.path.abspath("android")
+        sys.path.insert(0, os.path.join(ROOT, "rapt", "buildlib"))
 
-        rapt_cmd = [
-            os.path.join(android, "build_renpy.sh"),
-            "renpy",
-            ROOT,
-            ]
+        import rapt.interface # @UnresolvedImport
+        import rapt.build # @UnresolvedImport
 
-        if args.pygame:
-            rapt_cmd.append(args.pygame)
+        interface = rapt.interface.Interface()
+        rapt.build.distclean(interface)
 
-        rapt_build = subprocess.Popen(
-            rapt_cmd,
-            cwd = android,
-            stdout=out,
-            stderr=out)
+        print "Compiling RAPT and renios."
 
-        code = rapt_build.wait()
-
-        if code:
-            print "RAPT build failed. The output is in /tmp/rapt_build.txt."
-            sys.exit(1)
-        else:
-            print "RAPT build succeeded."
-
-        compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", force=1, quiet=1)
-        compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", force=1, quiet=1)
+        compileall.compile_dir("rapt/buildlib/", ddir="rapt/buildlib/", quiet=1)
+        compileall.compile_dir("renios/buildlib/", ddir="renios/buildlib/", quiet=1)
 
     if not os.path.exists(destination):
         os.makedirs(destination)

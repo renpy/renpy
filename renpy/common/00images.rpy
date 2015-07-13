@@ -46,7 +46,7 @@ init 1900 python hide:
 
             base = base.lower()
 
-            if renpy.has_image(base):
+            if renpy.has_image(base, exact=True):
                 continue
 
             renpy.image(base, fn)

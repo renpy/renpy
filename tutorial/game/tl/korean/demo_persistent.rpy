@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_persistent.rpy:6
 translate korean demo_persistent_abef5d83:

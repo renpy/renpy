@@ -32,6 +32,28 @@ import zlib
 # to look up filenames.
 u"".encode("utf-8")
 
+
+################################################################# Physical Paths
+
+def get_path(fn):
+    """
+    Returns the path to `fn` relative to the gamedir. If any of the directories
+    leading to `fn` do not exist, tries to create them.
+
+    This always returns a path, but the path may or may not be writable.
+    """
+
+    fn = os.path.join(renpy.config.gamedir, fn)
+    dn = os.path.dirname(fn)
+
+    try:
+        if not os.path.exists(dn):
+            os.makedirs(dn)
+    except:
+        pass
+
+    return fn
+
 ################################################################## Asset Loading
 
 try:
@@ -78,12 +100,6 @@ def index_archives():
     Loads in the indexes for the archive files. Also updates the lower_map.
     """
 
-    # Update lower_map.
-    lower_map.clear()
-
-    for dir, fn in listdirfiles(): #@ReservedAssignment
-        lower_map[fn.lower()] = fn
-
     # Index the archives.
 
     global old_config_archives
@@ -92,6 +108,11 @@ def index_archives():
         return
 
     old_config_archives = renpy.config.archives[:]
+
+    # Update lower_map.
+    lower_map.clear()
+
+    cleardirfiles()
 
     global archives
     archives = [ ]
@@ -142,6 +163,9 @@ def index_archives():
         except:
             raise
 
+    for dir, fn in listdirfiles(): #@ReservedAssignment
+        lower_map[fn.lower()] = fn
+
 def walkdir(dir): #@ReservedAssignment
     rv = [ ]
 
@@ -161,22 +185,52 @@ def walkdir(dir): #@ReservedAssignment
     return rv
 
 
-def listdirfiles(common=True):
+# A list of files that make up the game.
+game_files = [ ]
+
+# A list of files that are in the common directory.
+common_files = [ ]
+
+def cleardirfiles():
     """
-    Returns a list of directory, file tuples known to the system. If
-    the file is in an archive, the directory is None.
+    Clears the lists above when the game has changed.
     """
 
-    rv = [ ]
+    global game_files
+    global common_files
+
+    game_files = [ ]
+    common_files = [ ]
+
+def scandirfiles():
+    """
+    Scans directories, archives, and apks and fills out game_files and
+    common_files.
+    """
 
     seen = set()
 
-    if common:
-        list_apks = apks
-    else:
-        list_apks = game_apks
+    def add(dn, fn):
+        if fn in seen:
+            return
 
-    for apk in list_apks:
+        if fn.startswith("cache/"):
+            return
+
+        if fn.startswith("saves/"):
+            return
+
+        files.append((dn, fn))
+
+        seen.add(fn)
+
+
+    for apk in apks:
+
+        if apk not in game_apks:
+            files = common_files
+        else:
+            files = game_files
 
         for f in apk.list():
 
@@ -184,29 +238,37 @@ def listdirfiles(common=True):
             # to ensure that aapt actually includes every file.
             f = "/".join(i[2:] for i in f.split("/"))
 
-            if f not in seen:
-                rv.append((None, f))
-                seen.add(f)
+            add(None, f)
 
     for i in renpy.config.searchpath:
 
-        if (not common) and (renpy.config.commondir) and (i == renpy.config.commondir):
-            continue
+        if (renpy.config.commondir) and (i == renpy.config.commondir):
+            files = common_files
+        else:
+            files = game_files
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
-            if j not in seen:
-                rv.append((i, j))
-                seen.add(j)
+            add(i, j)
 
     for _prefix, index in archives:
         for j in index.iterkeys():
-            if j not in seen:
-                rv.append((None, j))
-                seen.add(j)
+            add(None, j)
 
 
-    return rv
+def listdirfiles(common=True):
+    """
+    Returns a list of directory, file tuples known to the system. If
+    the file is in an archive, the directory is None.
+    """
+
+    if (not game_files) and (not common_files):
+        scandirfiles()
+
+    if common:
+        return game_files + common_files
+    else:
+        return list(game_files)
 
 
 class SubFile(object):

@@ -96,6 +96,10 @@ def check_at_shutdown():
 cdef int rendering
 rendering = 0
 
+# The st and at of the current call to render.
+render_st = 0.0
+render_at = 0.0
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
@@ -118,6 +122,8 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     """
 
     global rendering
+    global render_st
+    global render_at
 
     cdef float width, height
     cdef float orig_width, orig_height
@@ -172,9 +178,15 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     try:
         rendering += 1
+        old_st = render_st
+        old_at = render_at
+        render_st = st
+        render_at = at
         rv = d.render(widtho, heighto, st, at)
     finally:
         rendering -= 1
+        render_st = old_st
+        render_at = old_at
 
     rv.render_of.append(d)
 
@@ -318,7 +330,10 @@ def take_focuses(focuses):
 
     screen_render.take_focuses(
         0, 0, screen_render.width, screen_render.height,
-        IDENTITY, 0, 0, focuses)
+        IDENTITY,
+        0, 0,
+        None,
+        focuses)
 
 # The result of focus_at_point for a modal render. This overrides any
 # specific focus from below us.
@@ -333,12 +348,12 @@ def focus_at_point(x, y):
     if screen_render is None:
         return None
 
-    cf = screen_render.focus_at_point(x, y)
+    cf = screen_render.focus_at_point(x, y, None)
     if cf is None or cf is Modal:
         return None
     else:
-        d, arg = cf
-        return renpy.display.focus.Focus(d, arg, None, None, None, None)
+        d, arg, screen = cf
+        return renpy.display.focus.Focus(d, arg, None, None, None, None, screen)
 
 
 def mutated_surface(surf):
@@ -513,14 +528,17 @@ cdef class Render:
         self.over = 1.0
 
         # If true, children of this render use nearest-neighbor texture
-        # lookup.
-        self.nearest = False
+        # lookup. If false, bilinear, if None, from the parent.
+        self.nearest = None
 
         # A list of focus regions in this displayable.
         self.focuses = None
 
         # Other renders that we should pass focus onto.
         self.pass_focuses = None
+
+        # The ScreenDisplayable this is a render of.
+        self.focus_screen = None
 
         # The displayable(s) that this is a render of. (Set by render)
         self.render_of = [ ]
@@ -853,17 +871,32 @@ cdef class Render:
         else:
             self.focuses.append(t)
 
-    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses): #@DuplicatedSignature
+    def take_focuses(self, cminx, cminy, cmaxx, cmaxy, reverse, x, y, screen, focuses): #@DuplicatedSignature
         """
         This adds to focuses Focus objects corresponding to the focuses
         added to this object and its children, transformed into screen
         coordinates.
 
-        `cminx`, `cminy`, `cmaxx`, `cmaxy` - The clipping rectangle.
-        `reverse` - The transform from render to screen coordinates.
-        `x`, `y` - The offset of the upper-left corner of the render.
-        `focuses` - The list of focuses to add to.
+        `cminx`, `cminy`, `cmaxx`, `cmaxy`
+            The clipping rectangle.
+
+        `reverse`
+            The transform from render to screen coordinates.
+
+        `x`, `y`
+            The offset of the upper-left corner of the render.
+
+        `screen`
+            The screen this is a render of, or None if this is not part of
+            a screen.
+
+        `focuses`
+            The list of focuses to add to.
+
         """
+
+        if self.focus_screen is not None:
+            screen = self.focus_screen
 
         if self.modal:
             focuses[:] = [ ]
@@ -876,7 +909,7 @@ cdef class Render:
             for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
 
                 if xo is None:
-                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None))
+                    focuses.append(renpy.display.focus.Focus(d, arg, None, None, None, None, screen))
                     continue
 
                 x1, y1 = reverse.transform(xo, yo)
@@ -895,7 +928,7 @@ cdef class Render:
                 if minx >= maxx or miny >= maxy:
                     continue
 
-                focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny))
+                focuses.append(renpy.display.focus.Focus(d, arg, minx, miny, maxx - minx, maxy - miny, screen))
 
         if self.clipping:
             cminx = max(cminx, x)
@@ -908,19 +941,26 @@ cdef class Render:
                 continue
 
             xo, yo = reverse.transform(xo, yo)
-            child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x + xo, y + yo, focuses)
+            child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x + xo, y + yo, screen, focuses)
 
         if self.pass_focuses:
             for child in self.pass_focuses:
-                child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, focuses)
+                child.take_focuses(cminx, cminy, cmaxx, cmaxy, reverse, x, y, screen, focuses)
 
-    def focus_at_point(self, x, y): #@DuplicatedSignature
+    def focus_at_point(self, x, y, screen): #@DuplicatedSignature
         """
         This returns the focus of this object at the given point.
         """
 
+        if self.focus_screen is not None:
+            screen = self.focus_screen
+
         if self.clipping:
             if x < 0 or x >= self.width or y < 0 or y >= self.height:
+                return None
+
+        if self.operation == IMAGEDISSOLVE:
+            if not self.visible_children[0][0].is_pixel_opaque(x, y):
                 return None
 
         rv = None
@@ -940,13 +980,13 @@ cdef class Render:
 
                     if isinstance(mask, Render):
                         if mask.is_pixel_opaque(cx, cy):
-                            rv = d, arg
+                            rv = d, arg, screen
                     else:
                         if mask(cx, cy):
-                            rv = d, arg
+                            rv = d, arg, screen
 
                 elif xo <= x < xo + w and yo <= y < yo + h:
-                    rv = d, arg
+                    rv = d, arg, screen
 
         for child, xo, yo, focus, main in self.children:
 
@@ -959,13 +999,13 @@ cdef class Render:
             if self.forward:
                 cx, cy = self.forward.transform(cx, cy)
 
-            cf = child.focus_at_point(cx, cy)
+            cf = child.focus_at_point(cx, cy, screen)
             if cf is not None:
                 rv = cf
 
         if self.pass_focuses:
             for child in self.pass_focuses:
-                cf = child.focus_at_point(x, y)
+                cf = child.focus_at_point(x, y, screen)
                 if cf is not None:
                     rv = cf
 
@@ -1136,6 +1176,26 @@ cdef class Render:
             int(math.ceil(maxy - miny)),
             )
 
+    def place(self, d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True):
+        """
+        Documented in udd.rst.
+        """
+
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+
+        if render is None:
+            if st is None:
+                st = render_st
+            if at is None:
+                at = render_at
+
+            render = renpy.display.render.render(d, width, height, st, at)
+
+        d.place(self, x, y, width, height, render, main=main)
+
 
 class Canvas(object):
 
@@ -1243,3 +1303,7 @@ class Canvas(object):
                                 blend)
         finally:
             blit_lock.release()
+
+    def get_surface(self):
+        return self.surf
+

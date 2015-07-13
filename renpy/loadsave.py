@@ -454,7 +454,12 @@ def list_saved_games(regexp=r'.', fast=False):
         c = get_cache(s)
 
         if c is not None:
-            extra_info = c.get_json().get("_save_name", "")
+            json = c.get_json()
+            if json is not None:
+                extra_info = json.get("_save_name", "")
+            else:
+                extra_info = ""
+
             screenshot = c.get_screenshot()
             mtime = c.get_mtime()
 

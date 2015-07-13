@@ -140,6 +140,7 @@ style_properties = sorted_dict(
     fore_bar = 'none_is_null',
     fore_gutter = None,
     foreground = 'renpy.easy.displayable_or_none',
+    hinting = None,
     hover_sound = None,
     hyperlink_functions=None,
     italic = None,

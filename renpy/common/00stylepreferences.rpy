@@ -116,7 +116,7 @@ init -1500 python:
 
     def __change_language():
         __spdirty.flag = True
-
+        __update()
 
     def __set_style_preference(preference, alternative):
         """
@@ -189,5 +189,4 @@ init -1500 python:
     config.change_language_callbacks.append(__change_language)
 
 init 1500 python:
-
     __init()

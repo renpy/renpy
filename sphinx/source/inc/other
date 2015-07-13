@@ -273,14 +273,6 @@
     This can be used if a label that is called decides not to return
     to its caller.
 
-.. function:: renpy.pop_return()
-    
-    Pops the current call from the call stack, without returning to
-    the location.
-    
-    This can be used if a label that is called decides not to return
-    to its caller.
-
 .. function:: renpy.queue_event(name, up=False)
     
     Queues an event with the given name. `Name` should be one of the event
@@ -317,6 +309,12 @@
     
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
+
+.. function:: renpy.reset_physical_size()
+    
+    Attempts to set the size of the physical window to the specified values
+    in renpy.config. (That is, screen_width and screen_height.) This has the
+    side effect of taking the screen out of fullscreen mode.
 
 .. function:: renpy.restart_interaction()
     

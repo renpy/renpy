@@ -1,10 +1,11 @@
 * ADVCharacter
 * ADVSpeaker
 * Action
-* AddToSet
+* :func:`AddToSet`
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
+* :func:`AlphaMask`
 * :func:`AnimatedValue`
 * Animation
 * :func:`At`
@@ -102,8 +103,9 @@
 * :func:`QuickLoad`
 * :func:`QuickSave`
 * :func:`Quit`
-* RemoveFromSet
+* :func:`RemoveFromSet`
 * :func:`Replay`
+* :func:`RestartStatement`
 * :func:`Return`
 * Revolve
 * RevolveInOut
@@ -119,6 +121,7 @@
 * :func:`SetDict`
 * :func:`SetField`
 * :func:`SetMixer`
+* :func:`SetMute`
 * :func:`SetScreenVariable`
 * :func:`SetVariable`
 * :func:`SetVoiceMute`
@@ -144,8 +147,9 @@
 * :func:`Text`
 * :func:`ToggleDict`
 * :func:`ToggleField`
+* :func:`ToggleMute`
 * :func:`ToggleScreenVariable`
-* ToggleSetMembership
+* :func:`ToggleSetMembership`
 * :func:`ToggleVariable`
 * :func:`ToggleVoiceMute`
 * :class:`Tooltip`

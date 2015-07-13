@@ -110,8 +110,8 @@ tries to display a side image, it will be displayed on top of the text. To
 fix this, one should include margin or padding on the appropriate side of
 the text window, using code like::
 
-    init python:
-         style.window.padding_left = 150
+    style window:
+        left_padding 150
 
 The position of the side image can be changed by customizing the ``say``
 or ``nvl`` screens. Both include the line::

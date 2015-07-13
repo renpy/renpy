@@ -50,6 +50,10 @@ init -1600 python hide:
 init -1600 python:
 
     def _init_language():
+        """
+        Changes the default language. This is called automatically by
+        Ren'Py as it starts up.
+        """
 
         import os
 
@@ -96,7 +100,7 @@ label _after_warp:
 
 
 
-# Common code for _start and _start_memory.
+# Common code for _start and _start_replay.
 label _start_store:
 
     python hide:
@@ -110,8 +114,9 @@ label _start_store:
     return
 
 
-# Starts up a memory. This is called by renpy.game.call_memory, and
-# is expected to be called with _in_memory set.
+# Starts up a replay. This is called by renpy.game.call_replay, and
+# is expected to be called with _in_replay True and
+# renpy.execute_default_statement already called.
 label _start_replay:
 
     call _start_store
@@ -125,6 +130,7 @@ label _start_replay:
 
     jump expression _in_replay
 
+
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -132,12 +138,13 @@ label _start:
     call _start_store
 
     python:
+        renpy.execute_default_statement(True)
+
         # Predict the main menu. When a load occurs, the loaded data will
         # overwrite the prediction requests.
         if renpy.has_screen("main_menu"):
             renpy.start_predict_screen("main_menu")
 
-        _init_language()
         renpy.block_rollback()
 
     call _gl_test
@@ -154,8 +161,7 @@ label _start:
         scene
 
     if not _restart:
-        $ ui.pausebehavior(0)
-        $ ui.interact(suppress_underlay=True, suppress_overlay=True)
+        with None
 
     $ renpy.block_rollback()
 

@@ -30,14 +30,76 @@ import zipfile
 import __main__
 
 
+last_clock = time.time()
+
+def log_clock(s):
+    global last_clock
+    now = time.time()
+    s = "{} took {:.2f}s".format(s, now - last_clock)
+
+    renpy.display.log.write(s)
+    if renpy.android and not renpy.config.log_to_stdout:
+        print s
+
+    last_clock = now
+
+def reset_clock():
+    global last_clock
+    last_clock = time.time()
+
+
 def run(restart):
     """
     This is called during a single run of the script. Restarting the script
     will cause this to change.
     """
 
+    reset_clock()
+
     # Reset the store to a clean version of itself.
     renpy.python.clean_stores()
+    log_clock("Cleaning stores")
+
+    # Init translation.
+    renpy.translation.init_translation()
+    log_clock("Init translation")
+
+    # Rebuild the various style caches.
+    renpy.style.build_styles() # @UndefinedVariable
+    log_clock("Build styles")
+
+    renpy.sl2.slast.load_cache()
+    log_clock("Load screen analysis")
+
+    # Analyze the screens.
+    renpy.display.screen.analyze_screens()
+    log_clock("Analyze screens")
+
+    if not restart:
+        renpy.sl2.slast.save_cache()
+        log_clock("Save screen analysis")
+
+    # Prepare the screens.
+    renpy.display.screen.prepare_screens()
+
+    log_clock("Prepare screens")
+
+    if not restart:
+        renpy.pyanalysis.save_cache()
+        log_clock("Save pyanalysis.")
+
+        renpy.game.script.save_bytecode()
+        log_clock("Save bytecode.")
+
+    # Handle arguments and commands.
+    if not renpy.arguments.post_init():
+        renpy.exports.quit()
+
+    # Remove the list of all statements from the script.
+    game.script.all_stmts = None
+
+    # Sleep to finish the presplash.
+    renpy.display.presplash.sleep()
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -74,6 +136,9 @@ def run(restart):
 
     # We run until we get an exception.
     renpy.display.interface.enter_context()
+
+    log_clock("Running {}".format(start_label))
+
     renpy.execution.run_context(True)
 
 
@@ -184,6 +249,8 @@ def choose_variants():
 
 def main():
 
+    log_clock("Bootstrap to the start of init.init")
+
     renpy.game.exception_info = 'Before loading the script.'
 
     # Get ready to accept new arguments.
@@ -198,6 +265,8 @@ def main():
     # Set up variants.
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
+
+    log_clock("Early init")
 
     # Note the game directory.
     game.basepath = renpy.config.gamedir
@@ -240,6 +309,8 @@ def main():
     # Start auto-loading.
     renpy.loader.auto_init()
 
+    log_clock("Loader init")
+
     # Initialize the log.
     game.log = renpy.python.RollbackLog()
 
@@ -263,7 +334,8 @@ def main():
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles() # @UndefinedVariable
-    renpy.display.screen.prepare_screens()
+
+    log_clock("Loading error handling")
 
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
@@ -282,6 +354,18 @@ def main():
 
     # Load all .rpy files.
     renpy.game.script.load_script() # sets renpy.game.script.
+    log_clock("Loading script")
+
+    if renpy.game.args.command == 'load-test':
+        start = time.time()
+
+        for i in range(5):
+            print(i)
+            renpy.game.script = renpy.script.Script()
+            renpy.game.script.load_script()
+
+        print time.time() - start
+        sys.exit(0)
 
     renpy.game.exception_info = 'After loading the script.'
 
@@ -304,6 +388,7 @@ def main():
 
         # Load persistent data from all save locations.
         renpy.persistent.update()
+        log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.
         game.seen_session = { }
@@ -322,9 +407,6 @@ def main():
 
         renpy.game.exception_info = 'After initialization, but before game start.'
 
-        # Save the bytecode in a cache.
-        renpy.game.script.save_bytecode()
-
         # Check if we should simulate android.
         renpy.android = renpy.android or renpy.config.simulate_android #@UndefinedVariable
 
@@ -332,24 +414,22 @@ def main():
         for i in renpy.game.post_init:
             i()
 
-        # Init translation.
-        renpy.translation.init_translation()
+        log_clock("Running init code")
 
-        # Rebuild the various style caches.
-        renpy.style.build_styles() # @UndefinedVariable
+        renpy.pyanalysis.load_cache()
+        log_clock("Loading analysis data")
 
         # Analyze the script and compile ATL.
         renpy.game.script.analyze()
         renpy.atl.compile_all()
-
-        # Prepare the screens.
-        renpy.display.screen.prepare_screens()
+        log_clock("Analyze and compile ATL")
 
         # Index the archive files. We should not have loaded an image
         # before this point. (As pygame will not have been initialized.)
         # We need to do this again because the list of known archives
         # may have changed.
         renpy.loader.index_archives()
+        log_clock("Index archives")
 
         # Check some environment variables.
         renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
@@ -358,22 +438,18 @@ def main():
 
         renpy.dump.dump(False)
 
-        # Handle arguments and commands.
-        if not renpy.arguments.post_init():
-            return
-
-        # Remove the list of all statements from the script.
-        game.script.all_stmts = None
+        # Initialize image cache.
+        renpy.display.im.cache.init()
+        log_clock("Cleaning cache")
 
         # Make a clean copy of the store.
         renpy.python.make_clean_stores()
-
-        # Initialize image cache.
-        renpy.display.im.cache.init()
+        log_clock("Making clean stores")
 
         # (Perhaps) Initialize graphics.
         if not game.interface:
             renpy.display.core.Interface()
+            log_clock("Creating interface object")
 
         # Start things running.
         restart = None

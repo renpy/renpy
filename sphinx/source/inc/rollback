@@ -41,8 +41,8 @@
         executed.
     
     `greedy`
-        If true, rollback will occur just before the previous checkpoint.
-        If false, rollback occurs to just before the current checkpoint.
+        If true, rollback will finish just after the previous checkpoint.
+        If false, rollback finish just before the current checkpoint.
     
     `label`
         If not None, a label that is called when rollback completes.

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_transitions.rpy:44
 translate korean demo_transitions_5bbc72fe:

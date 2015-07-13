@@ -1,0 +1,29 @@
+.. Automatically generated file - do not modify.
+
+.. class:: renpy.register_sl_statement(name, positional=0, children='many', screen=None)
+    
+    Registers a custom screen language statement with Ren'Py.
+    
+    `name`
+        This must be a word. It's the name of the custom screen language
+        statement.
+    
+    `positional`
+        The number of positional parameters this statement takes.
+    
+    `children`
+        The number of children this custom statement takes. This should
+        be 0, 1, or "many", which means zero or more.
+    
+    `screen`
+        The screen to use. If not given, defaults to `name`.
+    
+    This returns an object that can have properties added to it. Properties
+    are added using the method:
+    
+    
+    .. method:: add_property(name)
+    
+        Registers a property with the creator-defined screen language statement. This
+        returns the object it is called on, so calls can be chained.
+

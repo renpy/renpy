@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/tutorial_sprite.rpy:63
 translate korean tutorial_sprite_d2ca6a0c:

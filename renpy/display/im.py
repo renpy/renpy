@@ -1499,6 +1499,9 @@ class AlphaMask(ImageBase):
     image, like having one jpeg for color data, and a second one
     for alpha. In some cases, two jpegs can be smaller than a
     single png file.
+
+    Note that this takes different arguments from :func:`AlphaMask`,
+    which uses the mask's alpha channel.
     """
 
     def __init__(self, base, mask, **properties):

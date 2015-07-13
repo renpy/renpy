@@ -304,7 +304,7 @@ init -1600 python:
     @renpy.pure
     class AddToSet(Action, FieldEquality):
         """
-        :data: data_action
+        :doc: data_action
 
         Adds `value` to `set`.
 
@@ -335,7 +335,7 @@ init -1600 python:
     @renpy.pure
     class RemoveFromSet(Action, FieldEquality):
         """
-        :data: data_action
+        :doc: data_action
 
         Removes `value` from `set`.
 
@@ -363,7 +363,7 @@ init -1600 python:
     @renpy.pure
     class ToggleSetMembership(Action, FieldEquality):
         """
-        :data: data_action
+        :doc: data_action
 
         Toggles the membership of `value` in `set`. If the value is not
         in the set, it's added. Otherwise, it is removed.

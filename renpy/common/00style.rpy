@@ -164,6 +164,7 @@ init -1800:
         slow_abortable False
         ruby_style style.ruby_text
         # hyperlink_functions is set in 00defaults.rpy
+        hinting "auto"
 
         # Window properties
         background None

@@ -47,12 +47,14 @@ init python:
 
     CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
     DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
+    LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
 
 
     import subprocess
     import re
     import os
     import json
+    import glob
 
     def find_rapt():
 
@@ -62,7 +64,7 @@ init python:
 
         RAPT_PATH = os.path.join(config.renpy_base, "rapt")
 
-        if os.path.isdir(RAPT_PATH):
+        if os.path.isdir(RAPT_PATH) and check_hash_txt("rapt"):
             import sys
             sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
         else:
@@ -180,7 +182,7 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
-    def android_build(command, p=None, gui=True, launch=False):
+    def android_build(command, p=None, gui=True, launch=False, destination=None, opendir=False):
         """
         This actually builds the package.
         """
@@ -211,8 +213,57 @@ init python:
             report_success=False,
             )
 
+        def finished(files, destination=destination):
+
+            source_dir = rapt.plat.path("bin")
+
+            try:
+
+                destination_dir = destination
+
+                # Use default destination if not configured
+                if gui and destination is None:
+                    build = p.dump['build']
+                    destination = build["destination"]
+
+                    if destination != "-dists":
+                        parent = os.path.dirname(p.path)
+                        destination_dir = os.path.join(parent, destination)
+
+            except:
+                destination_dir = None
+
+            dir_to_open = source_dir
+
+            if destination_dir is not None:
+
+                reporter.info(_("Copying Android files to distributions directory."))
+
+                try:
+                    os.makedirs(destination_dir)
+                except:
+                    pass
+
+                try:
+
+                    for i in files:
+                        shutil.copy(i, renpy.fsencode(destination_dir))
+
+                    dir_to_open = destination_dir
+
+                except:
+                    import traceback
+                    traceback.print_exc()
+                    pass
+
+            if opendir:
+                store.OpenDirectory(dir_to_open)()
+
+
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, command, launch=launch)
+            rapt.build.build(rapt_interface, dist, command, launch=launch, finished=finished)
+
+
 
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
@@ -350,6 +401,10 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
                                 hovered tt.Action(DISCONNECT_TEXT)
 
+                            textbutton _("Logcat"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
+                                hovered tt.Action(LOGCAT_TEXT)
+
 
                 # Right side.
                 frame:
@@ -404,7 +459,7 @@ label android_configure:
 
 label android_build:
 
-    $ android_build([ 'release' ])
+    $ android_build([ 'release' ], opendir=True)
 
     jump android
 
@@ -475,19 +530,31 @@ label android_disconnect:
 
     jump android
 
+label logcat:
+
+    python hide:
+
+        interface = MobileInterface("android", filename="logcat.txt")
+        interface.info(_("Retrieving logcat information from device."))
+        interface.call([ rapt.plat.adb, "logcat", "-d" ], cancel=True)
+        interface.open_editor()
+
+    jump android
+
 init python:
 
     def android_build_command():
         ap = renpy.arguments.ArgumentParser()
-        ap.add_argument("project", help="The path to the project directory.")
-        ap.add_argument("command", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+        ap.add_argument("android_project", help="The path to the project directory.")
+        ap.add_argument("ant_commands", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
         ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
+        ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
 
-        p = project.Project(args.project)
+        p = project.Project(args.android_project)
 
-        android_build(args.command, p=p, gui=False, launch=args.launch)
+        android_build(args.ant_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
 
         return False
 

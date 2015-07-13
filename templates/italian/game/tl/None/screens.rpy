@@ -66,7 +66,7 @@
 
     # game/screens.rpy:392
     old "Skip"
-    new "Salta"
+    new "Salva"
 
     # game/screens.rpy:393
     old "Seen Messages"

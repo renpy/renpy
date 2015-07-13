@@ -57,6 +57,11 @@ position = renpy.object.Sentinel("position")
 def any_object(x):
     return x
 
+def bool_or_none(x):
+    if x is None:
+        return x
+    return bool(x)
+
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
@@ -79,7 +84,7 @@ PROPERTIES = {
         "xzoom" : float,
         "yzoom" : float,
         "zoom" : float,
-        "nearest" : bool,
+        "nearest" : bool_or_none,
         "alpha" : float,
         "additive" : float,
         "around" : (position, position),
@@ -522,7 +527,7 @@ is_constant_expr = renpy.pyanalysis.Analysis().is_constant_expr
 GLOBAL_CONST = renpy.pyanalysis.GLOBAL_CONST
 
 # The base class for raw ATL statements.
-class RawStatement(renpy.object.Object):
+class RawStatement(object):
 
     constant = None
 

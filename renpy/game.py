@@ -186,6 +186,9 @@ class CallException(Exception):
         self.args = args
         self.kwargs = kwargs
 
+    def __reduce__(self):
+        return (CallException, (self.label, self.args, self.kwargs))
+
 class EndReplay(Exception):
     """
     Raise this exception to end the current replay (the current call to
@@ -266,7 +269,7 @@ def invoke_in_new_context(callable, *args, **kwargs): #@ReservedAssignment
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
 
@@ -314,7 +317,7 @@ def call_in_new_context(label, *args, **kwargs):
         contexts.pop()
         contexts[-1].do_deferred_rollback()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
 def call_replay(label, scope={}):
@@ -341,6 +344,8 @@ def call_replay(label, scope={}):
     if renpy.display.interface is not None:
         renpy.display.interface.enter_context()
 
+    renpy.exports.execute_default_statement(True)
+
     for k, v in scope.iteritems():
         setattr(renpy.store, k, v)
 
@@ -359,7 +364,7 @@ def call_replay(label, scope={}):
         renpy.game.log = old_log
         sb.restore()
 
-        if interface.restart_interaction and contexts:
+        if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
 

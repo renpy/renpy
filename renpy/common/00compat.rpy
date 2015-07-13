@@ -112,7 +112,14 @@ init -1900 python:
     # None if it's intended for the current version.
     config.script_version = None
 
-
+init -1000 python hide:
+    try:
+        import ast
+        script_version = renpy.file("script_version.txt").read()
+        config.script_version = ast.literal_eval(script_version)
+        renpy.write_log("Set script version to: %r", config.script_version)
+    except:
+        pass
 
 init 1900 python hide::
 

@@ -280,7 +280,7 @@ label demo_ui:
 
     e "Anyway..."
 
-    e "We also support viewports, that allow us to display things that are bigger then the screen."
+    e "We also support viewports, that allow us to display things that are bigger than the screen."
 
     e "This viewport can be adjusted by dragging, by the mouse wheel, and by the scrollbars."
 

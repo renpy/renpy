@@ -6,7 +6,7 @@
 
     # game/updater.rpy:65
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "Choisissez une version."
+    new "Le canal de mise à jour détermine la version de Ren'Py qui sera téléchargée. S'il vous plaît, sélectionnez un canal de mise à jour."
 
     # game/updater.rpy:70
     old "Release"
@@ -74,7 +74,7 @@
 
     # game/updater.rpy:139
     old "The update was cancelled."
-    new "La mise à jour a été annullée."
+    new "La mise à jour a été annulée."
 
     # game/updater.rpy:156
     old "Ren'Py Update"

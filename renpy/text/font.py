@@ -571,7 +571,7 @@ def load_face(fn):
 image_fonts = { }
 font_cache = { }
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical):
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting):
 
     t = (fn, bold, italics)
     fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
@@ -580,10 +580,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical):
     if rv is not None:
         return rv
 
-    if vertical:
-        key = (fn, size, bold, italics, outline, antialias, True)
-    else:
-        key = (fn, size, bold, italics, outline, antialias)
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting)
 
     rv = font_cache.get(key, None)
     if rv is not None:
@@ -592,7 +589,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical):
     # If we made it here, we need to load a ttf.
     face = load_face(fn)
 
-    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias, vertical) #@UndefinedVariable
+    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias, vertical, hinting) #@UndefinedVariable
 
     font_cache[key] = rv
 

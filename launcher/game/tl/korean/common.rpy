@@ -9,7 +9,6 @@ translate korean strings:
     old "Quick save complete."
     new "퀵세이브했습니다."
 
-
 translate korean strings:
 
     # renpy/common/00console.rpy:179
@@ -491,4 +490,68 @@ translate korean strings:
     # renpy/common/_layout/classic_load_save.rpym:179
     old "q"
     new "q"
+
+translate korean strings:
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "대사 복사하기 기능을 실행했습니다. 'Shift+C'로 종료합니다."
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "대사 읽기 기능을 실행했습니다. 'v' 키를 눌러 종료합니다."
+
+translate korean strings:
+
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "렌파이 업데이터는 모바일 기기에서 작동하지 않습니다."
+
+    # renpy/common/00updater.rpy:481
+    old "An error is being simulated."
+    new "오류가 발생했습니다."
+
+    # renpy/common/00updater.rpy:657
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "이 프로젝트는 업데이트 기능을 지원하지 않거나, 이 프로젝트의 업데이트 상태 파일이 제거되었습니다."
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to perform an update."
+    new "이 계정은 업데이트를 실행할 권한이 없습니다."
+
+    # renpy/common/00updater.rpy:674
+    old "This account does not have permission to write the update log."
+    new "이 계정은 업데이트 로그를 작성할 권한이 없습니다."
+
+    # renpy/common/00updater.rpy:699
+    old "Could not verify update signature."
+    new "업데이트 서명을 확인할 수 없습니다."
+
+    # renpy/common/00updater.rpy:970
+    old "The update file was not downloaded."
+    new "업데이트 파일이 다운로드되지 않았습니다."
+
+    # renpy/common/00updater.rpy:988
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "업데이트 파일에 올바른 개요가 없습니다. 파일이 손상되었을 수 있습니다."
+
+    # renpy/common/00updater.rpy:1044
+    old "While unpacking {}, unknown type {}."
+    new "{} 압축 해제 중, {}는 알 수 없는 타입입니다."
+
+translate korean strings:
+
+    # renpy/common/_developer/developer.rpym:425
+    old "Rectangle copied to clipboard."
+    new "선택 영역 좌표가 복사되었습니다."
+
+    # renpy/common/_developer/developer.rpym:428
+    old "Position copied to clipboard."
+    new "좌표가 복사되었습니다."
+
+translate korean strings:
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "위치"
 

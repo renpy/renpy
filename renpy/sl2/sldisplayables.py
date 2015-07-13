@@ -164,6 +164,7 @@ text_property_names = [
         "minimum",
         "xminimum",
         "yminimum",
+        "hinting",
         ]
 
 text_properties = [ Style(i) for i in text_property_names ]
@@ -297,6 +298,7 @@ for name in [ "window", "frame" ]:
 DisplayableParser("key", renpy.ui._key, None, 0)
 Positional("key")
 Keyword("action")
+Keyword("activate_sound")
 
 DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=True)
 Positional("delay")
@@ -528,6 +530,10 @@ for i in renpy.atl.PROPERTIES:
     Style(i)
 
 def sl2add(d, replaces=None, **kwargs):
+
+    if d is None:
+        return renpy.sl2.slast.NO_DISPLAYABLE
+
     d = renpy.easy.displayable(d)
     d = d.parameterize('displayable', [ ])
 
@@ -583,3 +589,6 @@ add(position_properties)
 DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
+
+# Ensure that Parsers are no longer added automatically.
+renpy.sl2.slparser.parser = None

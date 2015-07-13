@@ -94,7 +94,11 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 11
+    __version__ = 12
+
+    nosave = [ 'next_node' ]
+
+    next_node = None
 
     def after_upgrade(self, version):
         if version < 1:
@@ -133,6 +137,9 @@ class Context(renpy.object.Object):
 
         if version < 11:
             self.say_attributes = None
+
+        if version < 12:
+            self.translate_block_language = None
 
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -217,8 +224,14 @@ class Context(renpy.object.Object):
         self.modes = renpy.python.RevertableList([ "start" ])
         self.use_modes = True
 
+        # The language we started with.
         self.translate_language = None
+
+        # The identifier of the current translate block.
         self.translate_identifier = None
+
+        # The language of the current translate block.
+        self.translate_block_language = None
 
 
     def make_dynamic(self, names, context=False):
@@ -299,7 +312,10 @@ class Context(renpy.object.Object):
 
             raise e
 
-    def report_traceback(self, name):
+    def report_traceback(self, name, last):
+
+        if last:
+            return
 
         rv = [ ]
 

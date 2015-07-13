@@ -1,6 +1,6 @@
 * ADVCharacter
 * ADVSpeaker
-* AddToSet
+* :func:`AddToSet`
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
@@ -71,8 +71,9 @@
 * :func:`QuickLoad`
 * :func:`QuickSave`
 * :func:`Quit`
-* RemoveFromSet
+* :func:`RemoveFromSet`
 * :func:`Replay`
+* :func:`RestartStatement`
 * :func:`Return`
 * Revolve
 * RevolveInOut
@@ -86,6 +87,7 @@
 * :func:`SetDict`
 * :func:`SetField`
 * :func:`SetMixer`
+* :func:`SetMute`
 * :func:`SetScreenVariable`
 * :func:`SetVariable`
 * :func:`SetVoiceMute`
@@ -106,8 +108,9 @@
 * :func:`Text`
 * :func:`ToggleDict`
 * :func:`ToggleField`
+* :func:`ToggleMute`
 * :func:`ToggleScreenVariable`
-* ToggleSetMembership
+* :func:`ToggleSetMembership`
 * :func:`ToggleVariable`
 * :func:`ToggleVoiceMute`
 * :class:`Transform`
@@ -189,7 +192,7 @@
 * :func:`renpy.get_all_labels`
 * :func:`renpy.has_label`
 * renpy.has_screen
-* :func:`renpy.image_exists`
+* renpy.image_exists
 * :func:`renpy.image_size`
 * :func:`renpy.known_languages`
 * :func:`renpy.list_files`

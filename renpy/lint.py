@@ -28,6 +28,11 @@ import sys
 import collections
 import textwrap
 
+import __builtin__
+
+python_builtins = set(dir(__builtin__))
+renpy_builtins = set()
+
 image_prefixes = None
 
 # Things to check in lint.
@@ -411,6 +416,20 @@ def check_if(node):
     for condition, _block in node.entries:
         try_compile("in a condition of the if statement", condition)
 
+def check_define(node, kind):
+    if node.store != 'store':
+        return
+
+    if node.varname in renpy.config.lint_ignore_replaces:
+        return
+
+    if node.varname in python_builtins:
+        report("'%s %s' replaces a python built-in name, which may cause problems.", kind, node.varname)
+
+    if node.varname in renpy_builtins:
+        report("'%s %s' replaces a Ren'Py built-in name, which may cause problems.", kind, node.varname)
+
+
 def check_style(name, s):
 
     for p in s.properties:
@@ -620,6 +639,14 @@ def lint():
 
         elif isinstance(node, renpy.ast.Screen):
             screen_count += 1
+
+        elif isinstance(node, renpy.ast.Define):
+            check_define(node, "define")
+
+        elif isinstance(node, renpy.ast.Default):
+            check_define(node, "default")
+
+
 
     report_node = None
 

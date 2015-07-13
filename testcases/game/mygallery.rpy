@@ -39,6 +39,9 @@ label gallery:
     show b0 blue
     hide b0
 
+    show b1 green
+    hide b1
+
     call screen gallery
 
     return

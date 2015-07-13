@@ -80,6 +80,9 @@ cdef class StyleCore:
     # True if this style has been built, False otherwise.
     cdef bint built
 
+    # True if this style is in the process of building.
+    cdef bint building
+
     # References to the down and left parents, or None if we do nothave one.
     #
     # The down parent uses inheritance, while the left parent uses less style

@@ -89,3 +89,29 @@ translate korean strings:
     old "Deleting persistent data..."
     new "지속 데이터를 삭제하고 있습니다... "
 
+translate korean strings:
+
+    # game/front_page.rpy:35
+    old "Open [text] directory."
+    new "[text] 경로를 엽니다."
+
+    # game/front_page.rpy:150
+    old "Select project [text]."
+    new "[text] 프로젝트를 선택합니다."
+
+    # game/front_page.rpy:198
+    old "images"
+    new "images"
+
+    # game/front_page.rpy:235
+    old "Force Recompile"
+    new "강제 재컴파일"
+
+    # game/front_page.rpy:246
+    old "iOS"
+    new "iOS"
+
+    # game/front_page.rpy:287
+    old "Recompiling all rpy files into rpyc files..."
+    new "모든 rpy 파일을 rpyc 파일로 재컴파일하는 중..."
+

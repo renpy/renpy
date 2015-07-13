@@ -175,6 +175,11 @@ class Container(renpy.display.core.Displayable):
         children = self.children
         offsets = self.offsets
 
+        # In #641, these went out of sync. Since they should resync on a
+        # render, ignore the event for a short while rather than crashing.
+        if len(offsets) != len(children):
+            return None
+
         for i in xrange(len(offsets) - 1, -1, -1):
 
             d = children[i]
@@ -240,7 +245,7 @@ def LiveComposite(size, *args, **properties):
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
-        rv.add(renpy.display.motion.Transform(widget, xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
+        rv.add(Position(widget, xpos=xpos, xanchor=0, ypos=ypos, yanchor=0))
 
     return rv
 
@@ -265,6 +270,13 @@ class Position(Container):
         super(Position, self).__init__(style=style, **properties)
         self.add(child)
 
+    def parameterize(self, name, parameters):
+
+        rv = Position(self.child.parameterize('displayable', [ ]))
+        rv.style = self.style.copy()
+
+        return rv
+
     def render(self, width, height, st, at):
 
         surf = render(self.child, width, height, st, at)
@@ -279,6 +291,11 @@ class Position(Container):
     def get_placement(self):
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = self.child.get_placement()
+
+        if xoffset is None:
+            xoffset = 0
+        if yoffset is None:
+            yoffset = 0
 
         v = self.style.xpos
         if v is not None:
@@ -298,14 +315,14 @@ class Position(Container):
 
         v = self.style.xoffset
         if v is not None:
-            xoffset = v
+            xoffset += v
 
         v = self.style.yoffset
         if v is not None:
-            yoffset = v
+            yoffset += v
 
         v = self.style.subpixel
-        if v is not None:
+        if (not subpixel) and (v is not None):
             subpixel = v
 
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
@@ -458,11 +475,15 @@ class MultiBox(Container):
         if not type(self) is MultiBox:
             return self
 
+        if self.layers or self.scene_list:
+            return self
+
         rv = MultiBox(layout=self.default_layout)
         rv.style = self.style.copy()
 
         rv.children = self._list_type(i.parameterize('displayable', [ ]) for i in self.children)
         rv.offsets = self._list_type()
+        rv.start_times = self._list_type(self.start_times)
 
         return rv
 
@@ -838,7 +859,6 @@ class MultiBox(Container):
 
 
     def event(self, ev, x, y, st):
-
 
         children_offsets = zip(self.children, self.offsets, self.start_times)
 
@@ -1904,7 +1924,6 @@ class Flatten(Container):
     when absolutely required.
     """
 
-
     def __init__(self, child, **properties):
         super(Flatten, self).__init__(**properties)
 
@@ -1920,4 +1939,71 @@ class Flatten(Container):
         rv.blit(tex, (0, 0))
         rv.depends_on(cr, focus=True)
 
+        self.offsets = [ (0, 0) ]
+
         return rv
+
+
+class AlphaMask(Container):
+    """
+    :doc: disp_imagelike
+
+    This displayable takes its colors from `child`, and its alpha channel
+    from the multiplication of the alpha channels of `child` and `mask`.
+    The result is a displayable that has the same colors as `child`, is
+    transparent where either `child` or `mask` is transparent, and is
+    opaque where `child` and `mask` are both opaque.
+
+    The `child` and `mask` parameters may be arbitrary displayables. The
+    size of the AlphaMask is the size of the overlap between `child` and
+    `mask`.
+
+    Note that this takes different arguments from :func:`im.AlphaMask`,
+    which uses the mask's color channel.
+    """
+
+    def __init__(self, child, mask, **properties):
+        super(AlphaMask, self).__init__(**properties)
+
+        self.add(child)
+        self.mask = renpy.easy.displayable(mask)
+        self.null = None
+        self.size = None
+
+    def render(self, width, height, st, at):
+
+        cr = renpy.display.render.render(self.child, width, height, st, at)
+        mr = renpy.display.render.render(self.mask, width, height, st, at)
+
+        cw, ch = cr.get_size()
+        mw, mh = mr.get_size()
+
+        w = min(cw, mw)
+        h = min(ch, mh)
+        size = (w, h)
+
+        if self.size != size:
+            self.null = Null(w, h)
+
+        nr = renpy.display.render.render(self.null, width, height, st, at)
+
+        rv = renpy.display.render.Render(w, h, opaque=False)
+
+        rv.operation = renpy.display.render.IMAGEDISSOLVE
+        rv.operation_alpha = 1.0
+        rv.operation_complete = 256.0 / (256.0 + 256.0)
+        rv.operation_parameter = 256
+
+        rv.blit(mr, (0, 0), focus=False, main=False)
+        rv.blit(nr, (0, 0), focus=False, main=False)
+        rv.blit(cr, (0, 0))
+
+        return rv
+
+
+
+
+
+
+
+

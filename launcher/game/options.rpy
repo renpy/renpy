@@ -234,6 +234,9 @@ init python:
     ## allows the updater to run.
     build.include_update = True
 
+    ## Allow empty directories, so we can distribute the images directory.
+    build.exclude_empty_directories = False
+
     ## Clear out various file patterns.
     build.renpy_patterns = [ ]
     build.early_base_patterns = [ ]
@@ -259,6 +262,7 @@ init python:
     build.classify_renpy("renios/prototype/**", "renios")
     build.classify_renpy("renios/buildlib/**", "renios")
     build.classify_renpy("renios/ios.py", "renios")
+    build.classify_renpy("renios/version.txt", "renios")
     build.classify_renpy("renios/", "renios")
 
     build.classify_renpy("**.old", None)
@@ -275,28 +279,31 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern):
+    def source_and_binary(pattern, source="source", binary="binary"):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
         else goes into source.
         """
 
-        build.classify_renpy(pattern + ".pyo", "binary")
-        build.classify_renpy(pattern + ".rpyc", "binary")
-        build.classify_renpy(pattern + ".rpymc", "binary")
-        build.classify_renpy(pattern + ".rpyb", "binary")
-        build.classify_renpy(pattern, "source")
+        build.classify_renpy(pattern + "/**.pyo", binary)
+        build.classify_renpy(pattern + "/**.rpyc", binary)
+        build.classify_renpy(pattern + "/**.rpymc", binary)
+        build.classify_renpy(pattern + "/game/cache/*", binary)
+
+        build.classify_renpy(pattern + "**/.rpyb", None)
+
+        build.classify_renpy(pattern + "/**", source)
 
     build.classify_renpy("renpy.py", "source")
-    source_and_binary("renpy/**")
+    source_and_binary("renpy")
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
-    source_and_binary("launcher/**")
-    source_and_binary("templates/**")
-    source_and_binary("the_question/**")
-    source_and_binary("tutorial/**")
+    source_and_binary("launcher")
+    source_and_binary("templates/*", binary=None)
+    source_and_binary("the_question")
+    source_and_binary("tutorial")
 
     # docs.
     build.classify_renpy("doc/", "source")

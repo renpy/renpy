@@ -241,9 +241,12 @@ init -1700 python:
         who = Character(who, kind=name_only)
         who(what, interact=interact)
 
-init -1000:
+init -1000 python:
     # Lock the library object.
-    $ config.locked = True
+    config.locked = True
+
+    # Record the builtins.
+    renpy.lint.renpy_builtins = set(globals())
 
 
 # After init, make some changes based on if config.developer is True.
@@ -256,6 +259,10 @@ init 1700 python hide:
 
         renpy.load_module("_developer/developer")
         renpy.load_module("_developer/inspector")
+
+# Used by renpy.return() to return.
+label _renpy_return:
+    return
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym

@@ -91,6 +91,8 @@ from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH
 
 from renpy.execution import not_infinite_loop
 
+from renpy.sl2.slparser import CustomParser as register_sl_statement
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -149,6 +151,7 @@ def public_api():
     TEXT_PARAGRAPH
     TEXT_DISPLAYABLE
     not_infinite_loop
+    register_sl_statement
 
 del public_api
 
@@ -602,25 +605,6 @@ def scene(layer='master'):
 
     if renpy.config.missing_scene:
         renpy.config.missing_scene(layer)
-
-
-def watch(expression, style='default', **properties):
-    """
-    :doc: debug
-
-    This watches the given python expression, by displaying it in the
-    upper-left corner of the screen (although position properties
-    can change that). The expression should always be
-    defined, never throwing an exception.
-
-    A watch will not persist through a save or restart.
-    """
-
-    def overlay_func():
-        renpy.ui.text(unicode(renpy.python.py_eval(expression)),
-                      style=style, **properties)
-
-    renpy.config.overlay_functions.append(overlay_func)
 
 
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None): #@ReservedAssignment
@@ -1153,7 +1137,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     if renpy.game.after_rollback and roll_forward is None:
         delay = 0
 
-    if hard:
+    if hard or not renpy.store._dismiss_pause:
         renpy.ui.saybehavior(dismiss='dismiss_hard_pause')
     else:
         renpy.ui.saybehavior()
@@ -1465,6 +1449,15 @@ def call(label, *args, **kwargs):
 
     raise renpy.game.CallException(label, args, kwargs)
 
+def return_statement():
+    """
+    :doc: se_call
+
+    Causes Ren'Py to return from the current Ren'Py-level call.
+    """
+
+    jump("_renpy_return")
+
 
 def screenshot(filename):
     """
@@ -1683,17 +1676,22 @@ def log(msg):
     if msg is None:
         return
 
-    if not logfile:
-        import codecs
+    try:
 
-        logfile = _file(renpy.config.log, "a")
-        if not logfile.tell():
-            logfile.write(codecs.BOM_UTF8)
+        if not logfile:
+            import codecs
+            logfile = _file(renpy.config.log, "a")
 
-    import textwrap
+            if not logfile.tell():
+                logfile.write(codecs.BOM_UTF8)
 
-    print >>logfile, textwrap.fill(msg).encode("utf-8")
-    logfile.flush()
+        import textwrap
+
+        print >>logfile, textwrap.fill(msg).encode("utf-8")
+        logfile.flush()
+
+    except:
+        renpy.config.log = None
 
 
 def force_full_redraw():
@@ -2095,6 +2093,7 @@ def load_string(s, filename="<string>"):
 def pop_call():
     """
     :doc: other
+    :name: renpy.pop_call
 
     Pops the current call from the call stack, without returning to
     the location.
@@ -2382,6 +2381,9 @@ def list_files(common=False):
     rv = [ ]
 
     for dir, fn in renpy.loader.listdirfiles(common): #@ReservedAssignment
+        if fn.startswith("saves/"):
+            continue
+
         rv.append(fn)
 
     return rv
@@ -2599,6 +2601,21 @@ def set_physical_size(size):
     if get_renderer_info()["resizable"]:
         renpy.display.draw.quit()
         renpy.display.interface.set_mode(size)
+
+def reset_physical_size():
+    """
+    :doc: other
+
+    Attempts to set the size of the physical window to the specified values
+    in renpy.config. (That is, screen_width and screen_height.) This has the
+    side effect of taking the screen out of fullscreen mode.
+    """
+
+    renpy.game.preferences.fullscreen = False
+
+    if get_renderer_info()["resizable"]:
+        renpy.display.draw.quit()
+        renpy.display.interface.set_mode((renpy.config.screen_width, renpy.config.screen_height))
 
 
 @renpy_pure
@@ -2880,3 +2897,31 @@ def cancel_gesture():
     """
 
     renpy.display.gesture.recognizer.cancel() # @UndefinedVariable
+
+def execute_default_statement(start=False):
+    """
+    :undocumented:
+
+    Executes the default statement.
+    """
+
+    for i in renpy.ast.default_statements:
+        i.set_default(start)
+
+def write_log(s, *args):
+    """
+    :undocumented:
+
+    Writes to log.txt.
+    """
+
+    renpy.display.log.write(s, *args)
+
+def predicting():
+    """
+    :doc: screens
+
+    Returns true if Ren'Py is currently predicting the screen.
+    """
+
+    return renpy.display.predict.predicting

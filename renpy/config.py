@@ -569,6 +569,15 @@ missing_label_callback = None
 # Should show preserve zorder when not explicitly set?
 preserve_zorder = True
 
+# The set of names to ignore.
+lint_ignore_replaces = [ 'help', 'quit' ]
+
+# How long should the presplash be kept up for?
+minimum_presplash_time = 0.0
+
+# Should Ren'Py use nearest-neighbor filtering by default.
+nearest_neighbor = False
+
 del renpy
 del os
 

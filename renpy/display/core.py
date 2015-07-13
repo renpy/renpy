@@ -34,6 +34,8 @@ import time
 import cStringIO
 import threading
 
+import_time = time.time()
+
 try:
     import android # @UnresolvedImport
 except:
@@ -1382,9 +1384,6 @@ class Interface(object):
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 
-        # Ensure that we kill off the presplash.
-        renpy.display.presplash.end()
-
         # Initialize pygame.
         if pygame.version.vernum < (1, 8, 1):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
@@ -1406,23 +1405,7 @@ class Interface(object):
         renpy.display.interface = self
 
         # Are we in safe mode, from holding down shift at start?
-        self.safe_mode = get_safe_mode()
-
-        # Setup the video mode.
-        self.set_mode()
-
-        # Double check, since at least on Linux, we can't set safe_mode until
-        # the window maps.
-        self.safe_mode = get_safe_mode()
-
-        # Load the image fonts.
-        renpy.text.font.load_image_fonts()
-
-        # Setup periodic event.
-        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
-
-        # Don't grab the screen.
-        pygame.event.set_grab(False)
+        self.safe_mode = False
 
         # Do we need a background screenshot?
         self.bgscreenshot_needed = False
@@ -1449,12 +1432,55 @@ class Interface(object):
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
 
+        # Should we restart the interaction?
+        self.restart_interaction = True
+
         # For compatibility with older code.
         if renpy.config.periodic_callback:
             renpy.config.periodic_callbacks.append(renpy.config.periodic_callback)
 
         renpy.display.emulator.init_emulator()
 
+        # Has start been called?
+        self.started = False
+
+        # Are we in fullscreen video mode?
+        self.fullscreen_video = False
+
+    def start(self):
+        """
+        Starts the interface, by opening a window and setting the mode.
+        """
+
+        if self.started:
+            return
+
+        # Kill off the presplash.
+        renpy.display.presplash.end()
+
+        renpy.main.log_clock("Interface start")
+
+        self.started = True
+
+        self.safe_mode = get_safe_mode()
+        self.set_mode()
+        self.safe_mode = get_safe_mode()
+
+        # Load the image fonts.
+        renpy.text.font.load_image_fonts()
+
+        # Setup periodic event.
+        pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
+
+        # Don't grab the screen.
+        pygame.event.set_grab(False)
+
+        s = "Total time until interface ready: {}s".format(time.time() - import_time)
+
+        renpy.display.log.write(s)
+
+        if renpy.android and not renpy.config.log_to_stdout:
+            print s
 
     def post_init(self):
         # Setup.
@@ -1719,6 +1745,10 @@ class Interface(object):
            until it can be handled by the main thread.
         """
 
+        # Do nothing before the first interaction.
+        if not self.started:
+            return
+
         if background:
             self.bgscreenshot_event.clear()
             self.bgscreenshot_needed = True
@@ -1760,6 +1790,9 @@ class Interface(object):
         Gets the current screenshot, as a string. Returns None if there isn't
         a current screenshot.
         """
+
+        if not self.started:
+            self.start()
 
         rv = self.screenshot
 
@@ -1848,10 +1881,11 @@ class Interface(object):
         scene_lists = renpy.game.context().scene_lists
 
         # Compute the scene.
-        self.old_scene = self.compute_scene(scene_lists)
+        for layer, d in self.compute_scene(scene_lists).iteritems():
+            if layer not in self.transition:
+                self.old_scene[layer] = d
 
         # Get rid of transient things.
-
         for i in renpy.config.overlay_layers:
             scene_lists.clear(i)
 
@@ -2218,6 +2252,9 @@ class Interface(object):
         keyword arguments are passed off to interact_core.
         """
 
+        if not self.started:
+            self.start()
+
         # Cancel magic error reporting.
         renpy.bootstrap.report_error = None
 
@@ -2289,6 +2326,9 @@ class Interface(object):
         @param suppress_overlay: This suppresses the display of the overlay.
         @param suppress_underlay: This suppresses the display of the underlay.
         """
+
+        # Prepare screens, if need be.
+        renpy.display.screen.prepare_screens()
 
         self.roll_forward = roll_forward
         self.show_mouse = show_mouse
@@ -2463,7 +2503,12 @@ class Interface(object):
             root_widget.add(trans, transition_time, transition_time)
 
             if trans_pause:
-                sb = renpy.display.behavior.SayBehavior()
+
+                if renpy.store._dismiss_pause:
+                    sb = renpy.display.behavior.SayBehavior()
+                else:
+                    sb = renpy.display.behavior.SayBehavior(dismiss='dismiss_hard_pause')
+
                 root_widget.add(sb)
                 focus_roots.append(sb)
 

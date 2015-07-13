@@ -39,7 +39,7 @@ translate korean strings:
 
     # game/updater.rpy:135
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
-    new "렌파이 개발의 최첨단. 최신 기능이 포함되어있을 수 있으나 아예 실행되지 않을 수도 있습니다."
+    new "검증되지 않은 렌파이 최신 버전. 최신 기능이 포함되어 있거나 전혀 실행되지 않을 수도 있습니다."
 
     # game/updater.rpy:155
     old "An error has occured:"
@@ -67,7 +67,7 @@ translate korean strings:
 
     # game/updater.rpy:167
     old "Unpacking the update."
-    new "업데이트 파일 압축해제."
+    new "업데이트 파일 압축해제 중."
 
     # game/updater.rpy:169
     old "Finishing up."

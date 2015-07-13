@@ -54,7 +54,7 @@ def register_image(name, d):
     image_attributes[tag].append(rest)
 
 
-def image_exists(name):
+def image_exists(name, exact=False):
     """
     :doc: image_func
     :name: renpy.has_image
@@ -65,6 +65,10 @@ def image_exists(name):
     `name`
         Either a string giving an image name, or a tuple of strings giving
         the name components.
+
+    `exact`
+        Returns true if and only if an image with the exact name exists -
+        parameterized matches are not included.
     """
 
     if not isinstance(name, tuple):
@@ -73,6 +77,9 @@ def image_exists(name):
     while name:
         if name in images:
             return True
+
+        if exact:
+            return False
 
         name = name[:-1]
 

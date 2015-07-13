@@ -689,10 +689,10 @@ cdef class GLDraw:
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
             if surf is not None:
-                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, False)
+                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
 
         else:
-            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, False)
+            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
 
         if flip:
 
@@ -904,7 +904,9 @@ cdef class GLDraw:
 
         alpha = alpha * rend.alpha
         over = over * rend.over
-        nearest = nearest or rend.nearest
+
+        if rend.nearest is not None:
+            nearest = rend.nearest
 
         # If our alpha has hit 0, don't do anything.
         if alpha <= 0.003: # (1 / 256)
@@ -943,7 +945,7 @@ cdef class GLDraw:
             self.default_clip = (0, 0, what.width, what.height)
             clip = self.default_clip
 
-            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, False)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
 
         if isinstance(what, render.Render):
             what.is_opaque()
@@ -959,6 +961,13 @@ cdef class GLDraw:
         """
         Returns true if the pixel is not 100% transparent.
         """
+
+        # Special case ImageDissolve/AlphaMask for speed and correctness
+        # reasons.
+        if what.operation == IMAGEDISSOLVE:
+            a0 = self.is_pixel_opaque(what.visible_children[0][0], x, y)
+            a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
+            return a0 * a2
 
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
@@ -981,7 +990,7 @@ cdef class GLDraw:
 
         clip = (0, 0, 1, 1)
 
-        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, False)
+        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
 
         cdef unsigned char pixel[4]
 
@@ -1020,7 +1029,7 @@ cdef class GLDraw:
 
             clip = (0, 0, width, height)
 
-            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, False)
+            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
 
         if isinstance(what, render.Render):
             what.is_opaque()

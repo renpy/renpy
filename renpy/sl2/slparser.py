@@ -423,7 +423,8 @@ class DisplayableParser(Parser):
             )
 
         for _i in self.positional:
-            rv.positional.append(l.simple_expression())
+            expr = l.require(l.simple_expression)
+            rv.positional.append(expr)
 
         can_has = (self.nchildren == 1)
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
@@ -662,12 +663,125 @@ class UseParser(Parser):
         else:
             id_expr = None
 
-        l.expect_eol()
-        l.expect_noblock("use statement")
+        if l.match(':'):
+            l.expect_eol()
+            l.expect_block("use statement")
 
-        return slast.SLUse(loc, target, args, id_expr)
+            block = slast.SLBlock(loc)
+            self.parse_contents(l, block, block_only=True)
+
+        else:
+            l.expect_eol()
+            l.expect_noblock("use statement")
+
+            block = None
+
+        return slast.SLUse(loc, target, args, id_expr, block)
 
 UseParser("use")
+
+
+class TranscludeParser(Parser):
+
+    def parse(self, loc, l, parent):
+        l.expect_eol()
+        return slast.SLTransclude(loc)
+
+TranscludeParser("transclude")
+
+
+class CustomParser(Parser):
+    """
+    :doc: custom_sl class
+    :name: renpy.register_sl_statement
+
+    Registers a custom screen language statement with Ren'Py.
+
+    `name`
+        This must be a word. It's the name of the custom screen language
+        statement.
+
+    `positional`
+        The number of positional parameters this statement takes.
+
+    `children`
+        The number of children this custom statement takes. This should
+        be 0, 1, or "many", which means zero or more.
+
+    `screen`
+        The screen to use. If not given, defaults to `name`.
+
+    This returns an object that can have properties added to it. Properties
+    are added using the method:
+
+
+    .. method:: add_property(name)
+
+        Registers a property with the creator-defined screen language statement. This
+        returns the object it is called on, so calls can be chained.
+    """
+
+    def __init__(self, name, positional=0, children="many", screen=None):
+        Parser.__init__(self, name)
+
+        if children == "many":
+            children = many
+
+        for i in childbearing_statements:
+            i.add(self)
+
+        screen_parser.add(self)
+
+        self.nchildren = children
+
+        if self.nchildren != 0:
+            childbearing_statements.add(self)
+
+            for i in all_statements:
+                self.add(i)
+
+        global parser
+        parser = None
+
+        # The screen to use.
+        if screen is not None:
+            self.screen = screen
+        else:
+            self.screen = name
+
+        # The number of positional parameters required.
+        self.positional = positional
+
+    def add_property(self, name):
+        self.add(Keyword(name))
+        return self
+
+    def parse(self, loc, l, parent):
+
+        arguments = [ ]
+
+        # Parse positional arguments.
+        for _i in range(self.positional):
+            expr = l.require(l.simple_expression)
+            arguments.append((None, expr))
+
+        # Parser keyword arguments and children.
+        block = slast.SLBlock(loc)
+        can_has = (self.nchildren == 1)
+        self.parse_contents(l, block, can_has=can_has, can_tag=False)
+
+        # Add the keyword arguments, and create an ArgumentInfo object.
+        arguments.extend(block.keyword)
+        block.keyword = [ ]
+
+        args = renpy.ast.ArgumentInfo(arguments, None, None)
+
+        # We only need a SLBlock if we have children.
+        if not block.children:
+            block = None
+
+        # Create the Use statement.
+        return slast.SLUse(loc, self.screen, args, None, block)
 
 
 class ScreenParser(Parser):

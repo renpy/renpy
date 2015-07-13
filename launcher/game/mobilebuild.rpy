@@ -22,7 +22,24 @@
 # This file contains mobile build things that are shared by the android
 # and iOS builds.
 
-init python:
+init -1 python:
+
+    def check_hash_txt(module):
+        fn1 = module + "_hash.txt"
+        fn2 = renpy.fsencode(os.path.join(config.renpy_base, module, "hash.txt"))
+
+        # No hash file? We're in dev mode - ignore.
+        if not renpy.loadable(fn1):
+            return True
+
+        hash1 = renpy.file(fn1).read()
+
+        if not os.path.exists(fn2):
+            return False
+
+        hash2 = open(fn2).read()
+
+        return hash1.strip() == hash2.strip()
 
     class LaunchEmulator(Action):
 
@@ -45,7 +62,7 @@ init python:
         This is used to interface between the launcher and RAPT/RENIOS.
         """
 
-        def __init__(self, platform, edit=True):
+        def __init__(self, platform, edit=True, filename=None):
             """
             `platform`
                 The name of the platform we're using for. Used for libraries,
@@ -59,7 +76,11 @@ init python:
             self.edit = edit
 
             self.process = None
-            self.filename = project.current.temp_filename(platform + ".txt")
+
+            if filename is None:
+                filename = platform + ".txt"
+
+            self.filename = project.current.temp_filename(filename)
 
             self.info_msg = ""
 
@@ -113,9 +134,12 @@ init python:
 
             # Open android.txt in the editor.
             if edit and self.edit:
-                editor.EditAbsolute(self.filename)()
+                self.open_editor()
 
             interface.error(prompt, label="android")
+
+        def open_editor(self):
+            editor.EditAbsolute(self.filename)()
 
         def success(self, prompt):
             self.log(prompt)

@@ -184,9 +184,6 @@ def cache_get(screen, args, kwargs):
 
 # Screens #####################################################################
 
-
-
-
 class Screen(renpy.object.Object):
     """
     A screen is a collection of widgets that are displayed together.
@@ -211,6 +208,7 @@ class Screen(renpy.object.Object):
         self.name = name
 
         screens[name[0], variant] = self
+        screens_by_name[name[0]][variant] = self
 
         # A function that can be called to display the screen.
         self.function = function
@@ -242,6 +240,12 @@ class Screen(renpy.object.Object):
 
         # The location (filename, linenumber) of this screen.
         self.location = location
+
+        global prepared
+        global analyzed
+
+        prepared = False
+        analyzed = False
 
 
 # Phases we can be in.
@@ -381,13 +385,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def visit_all(self, callback):
         callback(self)
 
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
-
-        self.child.visit_all(callback)
-
-        _current_screen = old_screen
+        try:
+            push_current_screen(self)
+            self.child.visit_all(callback)
+        finally:
+            pop_current_screen()
 
     def per_interact(self):
         renpy.display.render.redraw(self, 0)
@@ -401,8 +403,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
 
-        if self.child and not hiding:
-            self.child.find_focusable(callback, focus_name)
+        try:
+            push_current_screen(self)
+
+            if self.child and not hiding:
+                self.child.find_focusable(callback, focus_name)
+        finally:
+            pop_current_screen()
 
     def copy(self):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
@@ -534,22 +541,25 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.widgets = { }
         self.transforms = { }
 
-        # Update _current_screen and renpy.ui.screen.
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
+        push_current_screen(self)
 
         old_ui_screen = renpy.ui.screen
         renpy.ui.screen = self
 
+        # The name of the root screen of this screen.
+        NAME = 0
+
+        old_cache = self.cache.get(NAME, None)
+
         # Evaluate the screen.
         try:
+
             renpy.ui.detached()
             self.child = renpy.ui.fixed(focus="_screen_" + "_".join(self.screen_name))
             self.children = [ self.child ]
 
             self.scope["_scope"] = self.scope
-            self.scope["_name"] = 0
+            self.scope["_name"] = NAME
             self.scope["_debug"] = debug
 
             self.screen.function(**self.scope)
@@ -558,12 +568,16 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         finally:
             renpy.ui.screen = old_ui_screen
-            _current_screen = old_screen
+            pop_current_screen()
 
         # Finish up.
         self.old_widgets = None
         self.old_transforms = None
         self.old_transfers = True
+
+        # Deal with the case where the screen version changes.
+        if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == UPDATE):
+            self.current_transform_event = "update"
 
         if self.current_transform_event:
 
@@ -591,15 +605,14 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if not self.child:
             self.update()
 
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
-
-        child = renpy.display.render.render(self.child, w, h, st, at)
-
-        _current_screen = old_screen
+        try:
+            push_current_screen(self)
+            child = renpy.display.render.render(self.child, w, h, st, at)
+        finally:
+            pop_current_screen()
 
         rv = renpy.display.render.Render(w, h)
+        rv.focus_screen = self
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
 
@@ -619,13 +632,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if (self.phase == OLD) or (self.phase == HIDE):
             return
 
-        global _current_screen
-        old_screen = _current_screen
-        _current_screen = self
+        try:
+            push_current_screen(self)
 
-        rv = self.child.event(ev, x, y, st)
-
-        _current_screen = old_screen
+            rv = self.child.event(ev, x, y, st)
+        finally:
+            pop_current_screen()
 
         if rv is not None:
             return rv
@@ -640,42 +652,181 @@ class ScreenDisplayable(renpy.display.layout.Container):
 # None if no screen is being currently displayed.
 _current_screen = None
 
+# The stack of old current screens.
+current_screen_stack = [ ]
+
+def push_current_screen(screen):
+    global _current_screen
+    current_screen_stack.append(_current_screen)
+    _current_screen = screen
+
+def pop_current_screen():
+    _current_screen = current_screen_stack.pop()
+
 # A map from (screen_name, variant) tuples to screen.
 screens = { }
+
+# A map from screen name to map from variant to screen.
+screens_by_name = collections.defaultdict(dict)
 
 # The screens that were updated during the current interaction.
 updated_screens = set()
 
-def get_screen_variant(name):
+def get_screen_variant(name, candidates=None):
     """
     Get a variant screen object for `name`.
+
+    `candidates`
+        A list of candidate variants.
     """
 
-    for i in renpy.config.variants:
+    if candidates is None:
+        candidates = renpy.config.variants
+
+    for i in candidates:
         rv = screens.get((name, i), None)
         if rv is not None:
             return rv
 
     return None
 
+def get_all_screen_variants(name):
+    """
+    Gets all variants of the screen with `name`.
+
+    Returns a list of (`variant`, `screen`) tuples, in no particular
+    order.
+    """
+
+    rv = [ ]
+
+    for k, v in screens.iteritems():
+        if k[0] == name:
+            rv.append((k[1], v))
+
+    return rv
+
+# Have all screens been analyzed?
+analyzed = False
+
+# Have the screens been prepared?
+prepared = False
+
+# Caches for sort_screens.
+sorted_screens = [ ]
+screens_at_sort = { }
+
+def sort_screens():
+    """
+    Produces a list of SL2 screens in topologically sorted order.
+    """
+
+    global sorted_screens
+    global screens_at_sort
+
+    if screens_at_sort == screens:
+        return sorted_screens
+
+    # For each screen, the set of screens it uses.
+    depends = collections.defaultdict(set)
+
+    # For each screen, the set of screens that use it.
+    reverse = collections.defaultdict(set)
+
+    for k, v in screens.items():
+
+        name = k[0]
+
+        # Ensure name exists.
+        depends[name]
+
+        if not v.ast:
+            continue
+
+        def callback(uses):
+            depends[name].add(uses)
+            reverse[uses].add(name)
+
+        v.ast.used_screens(callback)
+
+    rv = [ ]
+
+    workset = { k for k, v in depends.items() if not len(v) }
+
+    while workset:
+        name = workset.pop()
+        rv.append(name)
+
+        for i in reverse[name]:
+            d = depends[i]
+            d.remove(name)
+
+            if not d:
+                workset.add(i)
+
+        del reverse[name]
+
+    # A use-cycle is possible, but we live with it - we need to return something
+    # from this in order to be able to show error messages.
+
+    sorted_screens = rv
+    screens_at_sort = dict(screens)
+
+    return rv
+
+def sorted_variants():
+    """
+    Produces a list of screen variants in topological order.
+    """
+
+    rv = [ ]
+
+    for name in sort_screens():
+        rv.extend(screens_by_name[name].values())
+
+    return rv
+
+def analyze_screens():
+    """
+    Analyzes all screens.
+    """
+
+    global analyzed
+
+    if analyzed:
+        return
+
+    for s in sorted_variants():
+        if s.ast is None:
+            continue
+
+        s.ast.analyze_screen()
+
+    analyzed = True
+
 def prepare_screens():
     """
     Prepares all screens for use.
     """
 
+    global prepared
+
+    if prepared:
+        return
+
     predict_cache.clear()
 
-    for s in screens.values():
+    if not analyzed:
+        analyze_screens()
+
+    for s in sorted_variants():
         if s.ast is None:
             continue
 
-        s.ast.unprepare()
+        s.ast.unprepare_screen()
+        s.ast.prepare_screen()
 
-    for s in screens.values():
-        if s.ast is None:
-            continue
-
-        s.ast.prepare()
+    prepared = True
 
 def define_screen(*args, **kwargs):
     """

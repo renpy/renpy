@@ -28,6 +28,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <strings.h>
 
+#define MAXVOLUME 16384
+
 /* Declarations of ffdecode functions. */
 struct VideoState;
 
@@ -286,7 +288,7 @@ static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
     short *ssrc = (short *) src;
 
     for (i = 0; i < length / 2; i++) {
-        int sound = *sdst + (volume * *ssrc) / SDL_MIX_MAXVOLUME;
+        int sound = *sdst + (volume * *ssrc) / MAXVOLUME;
         if (sound > MAX_SHORT) {
             sound = MAX_SHORT;
         }
@@ -517,7 +519,7 @@ static int check_channel(int c) {
             channels[i].queued = NULL;
             channels[i].playing_name = NULL;
             channels[i].queued_name = NULL;
-            channels[i].volume = SDL_MIX_MAXVOLUME;
+            channels[i].volume = MAXVOLUME;
             channels[i].paused = 1;
             channels[i].event = 0;
             channels[i].pan_start = 0.0;
@@ -963,7 +965,7 @@ void PSS_set_volume(int channel, float volume) {
 
     ENTER();
 
-    c->volume = (int) (volume * SDL_MIX_MAXVOLUME);
+    c->volume = (int) (volume * MAXVOLUME);
 
     EXIT();
 
@@ -987,7 +989,7 @@ float PSS_get_volume(int channel) {
 
     ENTER();
 
-    rv = 1.0 * c->volume / SDL_MIX_MAXVOLUME;
+    rv = 1.0 * c->volume / MAXVOLUME;
 
     EXIT();
 

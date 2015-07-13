@@ -68,6 +68,10 @@
     
     Hides the screen with `tag` on `layer`.
 
+.. function:: renpy.predicting()
+    
+    Returns true if Ren'Py is currently predicting the screen.
+
 .. function:: renpy.show_screen(_screen_name, *_args, **kwargs)
     
     The programmatic equivalent of the show screen statement.

@@ -40,13 +40,16 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 99, 2, vc_version)
+version_tuple = (6, 99, 5, vc_version)
 
 # The name of this version.
 version_name = "Here's to the crazy ones."
 
+# A string giving the version number only (7.0.1.123).
+version_only = ".".join(str(i) for i in version_tuple)
+
 # A verbose string giving the version.
-version = "Ren'Py " + ".".join(str(i) for i in version_tuple)
+version = "Ren'Py " + version_only
 
 # Other versions.
 script_version = 5003000
@@ -164,7 +167,7 @@ class Backup():
             self.backup_module(m)
 
         # A pickled version of self.objects.
-        self.objects_pickle = cPickle.dumps(self.objects)
+        self.objects_pickle = cPickle.dumps(self.objects, cPickle.HIGHEST_PROTOCOL)
 
         self.objects = None
 
@@ -204,10 +207,11 @@ class Backup():
 
             # If we have a problem pickling things, uncomment the next block.
 
-#             try:
-#                 cPickle.dumps(v)
-#             except:
-#                 print "Cannot pickle", name + "." + k
+            try:
+                cPickle.dumps(v, cPickle.HIGHEST_PROTOCOL)
+            except:
+                print "Cannot pickle", name + "." + k, "=", repr(v)
+                print "Reduce Ex is:", repr(v.__reduce_ex__(cPickle.HIGHEST_PROTOCOL))
 
     def restore(self):
         """
@@ -395,8 +399,11 @@ def import_all():
 
 
     # Back up the Ren'Py modules.
+
     global backup
-    backup = Backup()
+
+    if not mobile:
+        backup = Backup()
 
     post_import()
 
@@ -435,6 +442,9 @@ def reload_all():
     Resets all modules to the state they were in right after import_all
     returned.
     """
+
+    if mobile:
+        raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy.style
     import renpy.display

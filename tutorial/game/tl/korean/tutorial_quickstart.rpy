@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/tutorial_quickstart.rpy:20
 translate korean tutorial_dialogue_f6d3ddd3:
@@ -614,7 +613,7 @@ translate korean tutorial_music_53910317:
 
 
     # e "Ren'Py breaks sound up into channels. The channel a sound is played on determines if the sound loops, and if it is saved and restored with the game."
-    e "렌'파이는 소리를 채널 단위로 나눕니다. "[a]
+    e "렌'파이는 소리를 채널 단위로 나눕니다."
 
 
 # game/tutorial_quickstart.rpy:308
@@ -862,7 +861,7 @@ translate korean choice1_done_c2efd260:
 
 
     # e "We look forward to seeing what you make with it."
-    e ""당신의 비주얼 노벨, 기대하고 있어요!
+    e "당신의 비주얼 노벨, 기대하고 있어요!"
 
 
 translate korean strings:
@@ -881,8 +880,3 @@ translate korean strings:
     # game/tutorial_quickstart.rpy:5
     old "Lucy"
     new "Lucy"
-
-
-
-
-[a]미완성 문장

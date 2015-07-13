@@ -234,6 +234,9 @@ def skipping(ev):
     if not renpy.config.allow_skipping:
         return
 
+    if not renpy.store._skipping:
+        return
+
     if map_event(ev, "skip"):
         renpy.config.skipping = "slow"
         renpy.exports.restart_interaction()
@@ -380,14 +383,21 @@ class Keymap(renpy.display.layout.Null):
     k_constant from pygame.constants, or the unicode for the key.
     """
 
-    def __init__(self, replaces=None, **keymap):
-        super(Keymap, self).__init__(style='default')
+    def __init__(self, replaces=None, activate_sound=None, **keymap):
+        if activate_sound is not None:
+            super(Keymap, self).__init__(style='default', activate_sound=activate_sound)
+        else:
+            super(Keymap, self).__init__(style='default')
+
         self.keymap = keymap
 
     def event(self, ev, x, y, st):
 
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
+
+                if self.style.activate_sound:
+                    renpy.audio.music.play(self.style.activate_sound, channel="sound")
 
                 rv = run(action)
 
@@ -541,7 +551,7 @@ class SayBehavior(renpy.display.layout.Null):
 
         skip_delay = renpy.config.skip_delay / 1000.0
 
-        if renpy.config.allow_skipping and renpy.config.skipping:
+        if renpy.config.skipping and renpy.config.allow_skipping and renpy.store._skipping:
 
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
                 if renpy.game.preferences.skip_unseen:

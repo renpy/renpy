@@ -45,6 +45,12 @@ _window_subtitle = ''
 # Should rollback be allowed?
 _rollback = True
 
+# Should skipping be allowed?
+_skipping = True
+
+# Should dismissing pauses and transitions be allowed?
+_dismiss_pause = True
+
 # config.
 _config = renpy.config
 
@@ -123,6 +129,7 @@ Viewport = renpy.display.layout.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
+AlphaMask = renpy.display.layout.AlphaMask
 
 Transform = renpy.display.motion.Transform
 

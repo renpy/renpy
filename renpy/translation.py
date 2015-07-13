@@ -83,24 +83,36 @@ class ScriptTranslator(object):
         """
 
         label = None
-        filename = None
+
+        if not nodes:
+            return
+
+        TranslatePython = renpy.ast.TranslatePython
+        TranslateBlock = renpy.ast.TranslateBlock
+        Menu = renpy.ast.Menu
+        Translate = renpy.ast.Translate
+
+        filename = renpy.exports.unelide_filename(nodes[0].filename)
+        filename = os.path.normpath(os.path.abspath(filename))
 
         for n in nodes:
 
-            if filename is None:
-                filename = renpy.exports.unelide_filename(n.filename)
-                filename = os.path.normpath(os.path.abspath(filename))
+            if not n.translation_relevant:
+                continue
 
-            if isinstance(n.name, basestring):
-                label = n.name
+            if n.name.__class__ is not tuple:
+                if isinstance(n.name, basestring):
+                    label = n.name
 
-            if isinstance(n, renpy.ast.TranslatePython):
+            type_n = n.__class__
+
+            if type_n is TranslatePython:
                 self.python[n.language].append(n)
 
-            if isinstance(n, renpy.ast.TranslateBlock):
+            elif type_n is TranslateBlock:
                 self.block[n.language].append(n)
 
-            elif isinstance(n, renpy.ast.Menu):
+            elif type_n is Menu:
 
                 for i in n.items:
                     s = i[0]
@@ -110,8 +122,7 @@ class ScriptTranslator(object):
 
                     self.additional_strings[filename].append((n.linenumber, s))
 
-            elif isinstance(n, renpy.ast.Translate):
-
+            elif type_n is Translate:
 
                 if n.language is None:
                     self.default_translates[n.identifier] = n
@@ -453,6 +464,8 @@ def init_translation():
     style_backup = renpy.style.backup() # @UndefinedVariable
 
     load_all_rpts()
+
+    renpy.store._init_language() # @UndefinedVariable
 
 def change_language(language):
     """

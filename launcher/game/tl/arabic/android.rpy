@@ -176,4 +176,25 @@ translate arabic strings:
     # game/android.rpy:326
     old "Build, Install & Launch"
     new "بناء,تنصيب و إقلاع."
+    
+# : Translation updated at 2015-06-19 08:55
+
+translate arabic strings:
+
+    # game/android.rpy:50
+    old "Retrieves the log from the Android device and writes it to a file."
+    new "يجلب قائمة المهام من جعاز الأندرويد و يكتبها في ملف."
+
+    # game/android.rpy:240
+    old "Copying Android files to distributions directory."
+    new "يتم الآن نسخ ملفات الأندرويد إلى المجلد الخاص بالنشر"
+
+    # game/android.rpy:404
+    old "Logcat"
+    new "Logcat"
+
+    # game/android.rpy:538
+    old "Retrieving logcat information from device."
+    new "يتم النسخ من الجهاز لمعلومات Logcat"
+
 

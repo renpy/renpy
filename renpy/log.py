@@ -29,6 +29,7 @@ import time
 import tempfile
 
 import renpy
+import sys
 
 # The file events are logged to.
 log_file = None
@@ -64,6 +65,8 @@ class LogFile(object):
         # Should we emulate file's write method? We do so if this is True.
         self.raw_write = False
 
+        if renpy.ios:
+            self.file = sys.stdout
 
     def open(self): #@ReservedAssignment
 

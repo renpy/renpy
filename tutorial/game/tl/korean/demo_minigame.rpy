@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_minigame.rpy:204
 translate korean demo_minigame_03fc91ef:

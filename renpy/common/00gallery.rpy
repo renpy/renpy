@@ -464,9 +464,9 @@ init -1500 python:
                 # Go through the common advance code.
 
                 if self.locked and result.endswith("_unlocked"):
-                    images = all_images
-                else:
                     images = unlocked_images
+                else:
+                    images = all_images
 
                 if (button, image) in images:
                     index = images.index((button, image))
@@ -564,7 +564,7 @@ init -1500:
                 add d
 
         if gallery.slideshow:
-            timer gallery.slideshow_delay action Return("next")
+            timer gallery.slideshow_delay action Return("next") repeat True
 
         key "game_menu" action gallery.Return()
 

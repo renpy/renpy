@@ -1003,6 +1003,18 @@ class SWDraw(object):
 
     def is_pixel_opaque(self, what, x, y):
 
+        # Special case ImageDissolve/AlphaMask for speed and correctness
+        # reasons.
+        #
+        # This doesn't work perfectly, but this should be a rare case and
+        # swdraw is going away.
+        if what.operation == IMAGEDISSOLVE:
+            print what.visible_children
+            a0 = self.is_pixel_opaque(what.visible_children[0][0], x, y)
+            a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
+
+            return a0 * a2
+
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
 
@@ -1025,8 +1037,6 @@ class SWDraw(object):
                 cw, ch = child.get_size()
                 if cx >= cw or cy >= ch:
                     return False
-
-
 
                 if not child.get_masks()[3] or child.get_at((cx, cy))[3]:
                     return True

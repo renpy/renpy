@@ -30,6 +30,9 @@ from renpy.python import py_compile
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
+import zlib
+from cPickle import loads, dumps
+
 # The set of names that should be treated as constants.
 always_constants = { 'True', 'False', 'None' }
 
@@ -77,6 +80,9 @@ constants = { "config", "style" } | always_constants | pure_functions
 
 # A set of names that should not be treated as global constants.
 not_constants = set()
+
+# The base set for the local constants.
+local_constants = set()
 
 def const(name):
     """
@@ -165,36 +171,91 @@ GLOBAL_CONST = 2 # Expressions that are const everywhere.
 LOCAL_CONST = 1  # Expressions that are const with regard to a screen + parameters.
 NOT_CONST = 0    # Expressions that are not const.
 
+
+class DeltaSet(object):
+    def __init__(self, base, copy=None):
+        """
+        Represents a set that stores its contents as differences from a base
+        set.
+        """
+
+        self.base = base
+
+        if copy is not None:
+            self.added = set(copy.added)
+            self.removed = set(copy.removed)
+        else:
+            self.added = set()
+            self.removed = set()
+
+        self.changed = False
+
+    def add(self, v):
+
+        if v in self.removed:
+            self.removed.discard(v)
+            self.changed = True
+        elif v not in self.base and v not in self.added:
+            self.added.add(v)
+            self.changed = True
+
+    def discard(self, v):
+
+        if v in self.added:
+            self.added.discard(v)
+            self.changed = True
+        elif v in self.base and v not in self.removed:
+            self.removed.add(v)
+            self.changed = True
+
+    def __contains__(self, v):
+        return (v in self.added) or ((v in self.base) and (v not in self.removed))
+
+    def copy(self):
+        return DeltaSet(self.base, self)
+
+
 class Analysis(object):
     """
     Represents the result of code analysis, and provides tools to perform
     code analysis.
     """
 
-    def __init__(self):
+    def __init__(self, parent=None):
+
+        # The parent context transcludes run in, or None if there is no parent
+        # context.
+        self.parent = parent
+
+        # Analyses of children, such a screens we use.
+        self.children = { }
+
         # The variables we consider to be not-constant.
-        self.not_constant = set(not_constants)
+        self.not_constant = DeltaSet(not_constants)
 
         # Variables we consider to be locally constant.
-        self.local_constant = set()
+        self.local_constant = DeltaSet(local_constants)
 
-        # Veriables we consider to be globally constant.
-        self.global_constant = set(always_constants)
+        # Variables we consider to be globally constant.
+        self.global_constant = DeltaSet(always_constants)
 
         # The functions we consider to be pure.
-        self.pure_functions = set(pure_functions)
-
-        # Old versions of the analysis.
-        self.old_not_constant = set()
-        self.old_local_constant = set()
-        self.old_global_constant = set()
-        self.old_pure_functions = set()
+        self.pure_functions = DeltaSet(pure_functions)
 
         # Represents what we know about the current control.
         self.control = Control(True, False, False)
 
         # The stack of const_flow values.
         self.control_stack = [ self.control ]
+
+    def get_child(self, identifier):
+        if identifier in self.children:
+            return self.children[identifier]
+
+        rv = Analysis(self)
+        self.children[identifier] = rv
+
+        return rv
 
     def push_control(self, const=True, loop=False, imagemap=False):
         self.control = Control(self.control.const and const, loop, self.imagemap or imagemap)
@@ -236,18 +297,24 @@ class Analysis(object):
         not changed since the last time we called this function.
         """
 
-        if ((self.old_not_constant == self.not_constant) and
-            (self.old_global_constant == self.global_constant) and
-            (self.old_local_constant == self.local_constant) and
-            (self.old_pure_functions == self.pure_functions)):
-            return True
+        for i in self.children.values():
+            if not i.at_fixed_point():
+                return False
 
-        self.old_not_constant = set(self.not_constant)
-        self.old_global_constant = set(self.global_constant)
-        self.old_local_constant = set(self.local_constant)
-        self.old_pure_functions = set(self.pure_functions)
 
-        return False
+        if (self.not_constant.changed or
+            self.global_constant.changed or
+            self.local_constant.changed or
+            self.pure_functions.changed):
+
+            self.not_constant.changed = False
+            self.global_constant.changed = False
+            self.local_constant.changed = False
+            self.pure_functions.changed = False
+
+            return False
+
+        return True
 
     def mark_constant(self, name):
         """
@@ -436,15 +503,19 @@ class Analysis(object):
         self.is_constant called on that node.
         """
 
-        node = py_compile(expr, 'eval', ast_node=True)
-        return self.is_constant(node)
+        node, literal = ccache.ast_eval_literal(expr)
+
+        if literal:
+            return GLOBAL_CONST
+        else:
+            return self.is_constant(node)
 
     def python(self, code):
         """
         Performs analysis on a block of python code.
         """
 
-        nodes = py_compile(code, 'exec', ast_node=True)
+        nodes = ccache.ast_exec(code)
 
         a = PyAnalysis(self)
 
@@ -456,7 +527,7 @@ class Analysis(object):
         Analyzes the parameters to the screen.
         """
 
-        self.global_constant.update(constants)
+        self.global_constant = DeltaSet(constants)
 
         # As we have parameters, analyze with those parameters.
 
@@ -553,4 +624,102 @@ class PyAnalysis(ast.NodeVisitor):
     def visit_Continue(self, node):
         self.analysis.exit_loop()
 
+class CompilerCache(object):
+    """
+    Objects of this class are used to cache the compiliation of Python code.
+    """
 
+    def __init__(self):
+        self.ast_eval_cache = { }
+        self.ast_exec_cache = { }
+
+        # True if we've changed the caches.
+        self.updated = False
+
+        # The version of this object.
+        self.version = 1
+
+    def ast_eval_literal(self, expr):
+        """
+        Compiles an expression into an AST.
+        """
+
+        if isinstance(expr, renpy.ast.PyExpr):
+            filename = expr.filename
+            linenumber = expr.linenumber
+        else:
+            filename = None
+            linenumber = None
+
+        key = (expr, filename, linenumber)
+
+        rv = self.ast_eval_cache.get(key, None)
+
+        if rv is None:
+            expr = py_compile(expr, 'eval', ast_node=True)
+
+            try:
+                ast.literal_eval(expr)
+                literal = True
+            except:
+                literal = False
+
+            rv = (expr, literal)
+
+            self.ast_eval_cache[key] = rv
+            self.updated = True
+
+        return rv
+
+    def ast_eval(self, expr):
+        return self.ast_eval_literal(expr)[0]
+
+    def ast_exec(self, code):
+        """
+        Compiles a block into an AST.
+        """
+
+        if isinstance(code, renpy.ast.PyExpr):
+            key = (code, code.filename, code.linenumber)
+        else:
+            key = (code, None, None)
+
+        rv = self.ast_exec_cache.get(key, None)
+
+        if rv is None:
+            rv = py_compile(code, 'exec', ast_node=True)
+            self.ast_exec_cache[key] = rv
+            self.updated = True
+
+        return rv
+
+ccache = CompilerCache()
+
+CACHE_FILENAME = "cache/pyanalysis.rpyb"
+
+def load_cache():
+    if renpy.game.args.compile: # @UndefinedVariable
+        return
+
+    try:
+        f = renpy.loader.load(CACHE_FILENAME)
+        c = loads(zlib.decompress(f.read()))
+        f.close()
+
+        if c.version == ccache.version:
+            ccache.ast_eval_cache.update(c.ast_eval_cache)
+            ccache.ast_exec_cache.update(c.ast_exec_cache)
+    except:
+        pass
+
+def save_cache():
+    if not ccache.updated:
+        return
+
+    try:
+        data = zlib.compress(dumps(ccache, 2), 9)
+
+        with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
+            f.write(data)
+    except:
+        pass

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-04-14 18:15
-
+﻿
 
 # game/demo_nvlmode.rpy:14
 translate korean demo_nvlmode_76b2fe88:

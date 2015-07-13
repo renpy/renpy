@@ -326,6 +326,10 @@ Occasionally Used
     defining automatic images. This can be used to remove directory
     names, when directories contain images.
 
+.. var:: config.autosave_slots = 10
+
+    The number of slots used by autosaves.
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
@@ -509,6 +513,14 @@ Occasionally Used
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
 
+.. var:: config.minimum_presplash_time = 0.0
+
+    The minimum amount of time, in seconds, a presplash, Android presplash,
+    or iOS LaunchImage is displayed for. If Ren'Py initializes before this
+    amount of time has been reached, it will sleep to ensure the image is
+    shown for at least this amount of time. The image may be shown longer
+    if Ren'Py takes longer to start up.
+
 .. var:: config.missing_background = "black"
 
     This is the background that is used when :var:`config.developer` is True
@@ -560,6 +572,11 @@ Occasionally Used
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
+.. var:: config.nearest_neighbor = False
+
+    Uses nearest-neighbor filtering by default, to support pixel art or
+    melting players' eyes.
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
@@ -579,6 +596,10 @@ Occasionally Used
     function depends on are initialized. The functions are required to deal
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
+
+.. var:: config.quicksave_slots = 10
+
+    The number of slots used by quicksaves.
 
 .. var:: config.quit_action = ...
 
