@@ -52,7 +52,7 @@ translate korean tutorial_dialogue_15734bf9:
 translate korean tutorial_dialogue_a12675cc:
 
 
-    # e "Once that's done, Ren'Py will automatically create a directory an fill it with the files needed to make a project."
+    # e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
     e "이 작업이 완료되면, 렌'파이는 자동적으로 새로 폴더를 만들고, 새 프로젝트를 만드는데 필요한 파일들로 폴더를 채워 넣기 시작합니다."
 
 
