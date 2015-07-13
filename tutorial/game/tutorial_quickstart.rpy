@@ -35,7 +35,7 @@ label tutorial_dialogue:
 
     e "You'll then be asked for the name of the project, and also to choose a theme for the interface."
 
-    e "Once that's done, Ren'Py will automatically create a directory an fill it with the files needed to make a project."
+    e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
 
     e "If you have Java installed, you'll be able to click Edit Script to open your project's script."
 
