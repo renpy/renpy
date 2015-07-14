@@ -669,7 +669,17 @@ Rarely or Internally Used
     screen that Ren'Py wil draw pictures to.
 
     This can be used to configure Ren'Py to only allow certain sizes of
-    screen, such as integer multiples of the screen size.
+    screen. For example, the following code allows only integer multiples
+    of the original screen size::
+
+        init python:
+
+            def force_integer_multiplier(width, height):
+                multiplier = min(width / config.screen_width, height / config.screen_height)
+                multiplier = max(int(multiplier), 1)
+                return (multiplier * config.screen_width, multiplier * config.screen_height)
+
+            config.adjust_view_size = force_integer_multiplier
 
 .. var:: config.afm_bonus = 25
 
