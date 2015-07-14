@@ -49,6 +49,7 @@ init -1500 python:
     _voice.tag = None
     _voice.tlid = None
     _voice.auto_file = None
+    _voice.info = None
 
     # If true, the voice system ignores the interaction.
     _voice.ignore_interaction = False
@@ -91,6 +92,7 @@ init -1500 python:
 
         fn = config.voice_filename_format.format(filename=filename)
         _voice.play = fn
+
 
     # Call this to specify that the currently playing voice file
     # should be sustained through the current interaction.
@@ -222,6 +224,72 @@ init -1500 python:
             return voice_can_replay()
 
 
+    class VoiceInfo(_object):
+        """
+        An object returned by VoiceInfo and get_voice_info().
+        """
+
+        def __init__(self):
+
+            self.filename = _voice.play
+            self.auto_filename = None
+            self.tlid = None
+            self.sustain = _voice.sustain
+            self.tag = _voice.tag
+
+            if not self.filename and config.auto_voice:
+                tlid = renpy.game.context().translate_identifier
+
+                if tlid is not None:
+
+                    if isinstance(config.auto_voice, (str, unicode)):
+                        fn = config.auto_voice.format(id=tlid)
+                    else:
+                        fn = config.auto_voice(tlid)
+
+                    _voice.auto_filename = fn
+
+                    if fn and renpy.loadable(fn):
+
+                        if _voice.tlid == tlid:
+                            self.sustain = True
+                        else:
+                            self.filename = fn
+
+                self.tlid = tlid
+
+    def _get_voice_info():
+        """
+        :doc: voice
+
+        Returns information about the voice being played by the current
+        say statement. This function may only be called while a say statement
+        is executing.
+
+        The object returned has the following fields:
+
+        .. field:: filename
+            The filename of the voice to be played, or None if no files
+            should be played.
+
+        .. field:: auto_filename
+            The filename that Ren'Py looked in for automatic-voicing
+            purposes, or None if one could not be found.
+
+        .. field:: tag
+            The voice_tag parameter supplied to the speaking Character.
+        """
+
+        vi = VoiceInfo()
+
+        if _voice.info is None:
+            return vi
+        elif _voice.info.tlid == vi.tlid:
+            return _voice.info
+        else:
+            return vi
+
+
 init -1500 python hide:
 
     # basics: True if the game will have voice.
@@ -248,30 +316,14 @@ init -1500 python hide:
         if renpy.get_mode() == "with":
             return
 
-        _voice.auto_file = None
+        vi = VoiceInfo()
+        if not _voice.sustain:
+            _voice.info = vi
 
-        # Auto-voice.
-        if not _voice.play and config.auto_voice:
-            tlid = renpy.game.context().translate_identifier
-
-            if tlid is not None:
-
-                if isinstance(config.auto_voice, (str, unicode)):
-                    fn = config.auto_voice.format(id=tlid)
-                else:
-                    fn = config.auto_voice(tlid)
-
-                _voice.auto_file = fn
-
-                if fn and renpy.loadable(fn):
-
-                    if _voice.tlid == tlid:
-                        _voice.sustain = True
-                    else:
-                        _voice.play = fn
-
-            _voice.tlid = tlid
-
+        _voice.play = vi.filename
+        _voice.auto_file = vi.auto_filename
+        _voice.sustain = vi.sustain
+        _voice.tlid = vi.tlid
 
         volume = persistent._character_volume.get(_voice.tag, 1.0)
         renpy.music.get_channel("voice").set_volume(volume)
