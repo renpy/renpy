@@ -831,7 +831,8 @@ cdef class GLDraw:
                     alpha,
                     over,
                     rend.operation_complete,
-                    self.environ)
+                    self.environ,
+                    nearest)
 
             return 0
 
@@ -850,7 +851,8 @@ cdef class GLDraw:
                 over,
                 rend.operation_complete,
                 rend.operation_parameter,
-                self.environ)
+                self.environ,
+                nearest)
 
             return 0
 
