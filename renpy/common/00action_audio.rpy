@@ -186,7 +186,7 @@ init -1500 python:
 
         def get_selected(self):
             for i in self.mixers:
-                if not _preferences.get_mute(i):
+                if _preferences.get_mute(i) != self.mute:
                     return False
 
             return True
