@@ -1,5 +1,27 @@
 .. Automatically generated file - do not modify.
 
+.. function:: _get_voice_info()
+    
+    Returns information about the voice being played by the current
+    say statement. This function may only be called while a say statement
+    is executing.
+    
+    The object returned has the following fields:
+    
+    .. attribute:: VoiceInfo.filename
+    
+        The filename of the voice to be played, or None if no files
+        should be played.
+    
+    .. attribute:: VoiceInfo.auto_filename
+    
+        The filename that Ren'Py looked in for automatic-voicing
+        purposes, or None if one could not be found.
+    
+    .. attribute:: VoiceInfo.tag
+    
+        The voice_tag parameter supplied to the speaking Character.
+
 .. function:: voice(filename, tag=None)
     
     Plays `filename` on the voice channel. The equivalent of the voice

@@ -268,15 +268,18 @@ init -1500 python:
 
         The object returned has the following fields:
 
-        .. field:: filename
+        .. attribute:: VoiceInfo.filename
+
             The filename of the voice to be played, or None if no files
             should be played.
 
-        .. field:: auto_filename
+        .. attribute:: VoiceInfo.auto_filename
+
             The filename that Ren'Py looked in for automatic-voicing
             purposes, or None if one could not be found.
 
-        .. field:: tag
+        .. attribute:: VoiceInfo.tag
+
             The voice_tag parameter supplied to the speaking Character.
         """
 

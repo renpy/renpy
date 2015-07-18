@@ -157,6 +157,7 @@
 * :func:`VBox`
 * :func:`VariableValue`
 * Viewport
+* VoiceInfo
 * :func:`VoiceReplay`
 * Window
 * :func:`With`
