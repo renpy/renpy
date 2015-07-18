@@ -39,7 +39,7 @@ been used to get multiple games accepted.
 
 Renios has been upgraded to use SDL 2.0.4 rc1. This improves compatibility
 with iOS 8, and makes it possible to keep the launchscreen displayed until
-Ren'Py fully stars. As a result, support for the ios-presplash image is no
+Ren'Py fully starts. As a result, support for the ios-presplash image is no
 longer necessary, and has been dropped.
 
 
