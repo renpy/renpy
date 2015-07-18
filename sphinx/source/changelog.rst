@@ -69,7 +69,7 @@ a screen for prediction purposes.
 The new :func:`renpy.return_statement` function is a python equivalent to
 the Ren'Py return statement.
 
-The new `_dismiss_pause` and `_skipping` variables make it possible to
+The new :var:`_dismiss_pause` and :var:`_skipping` variables make it possible to
 control pauses and skipping on a line-by-line basis.
 
 Canvas objects (returned by the Render.canvas() method) now have a
@@ -77,7 +77,7 @@ get_surface() method that returns a pygame_sdl2 Surface that is in a format
 that can be used by Ren'Py. This surface can be manipulated by Pygame
 drawing operations.
 
-The new `_get_voice_info()` returns an object that contains information
+The new :func:`_get_voice_info()` function returns an object that contains information
 about the voicing associated with the currently-running say statement.
 
 
