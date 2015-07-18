@@ -77,6 +77,9 @@ get_surface() method that returns a pygame_sdl2 Surface that is in a format
 that can be used by Ren'Py. This surface can be manipulated by Pygame
 drawing operations.
 
+The new `_get_voice_info()` returns an object that contains information
+about the voicing associated with the currently-running say statement.
+
 
 Ren'Py 6.99.4
 =============
