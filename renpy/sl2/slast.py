@@ -716,6 +716,15 @@ class SLDisplayable(SLBlock):
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
 
+            arguments = keywords.pop("arguments", None)
+            properties = keywords.pop("properties", None)
+
+            if arguments:
+                positional += arguments
+
+            if properties:
+                keywords.update(properties)
+
             # If we don't know the style, figure it out.
             if ("style" not in keywords) and self.style:
                 keywords["style"] = ctx.style_prefix + self.style

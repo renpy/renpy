@@ -403,6 +403,9 @@ class DisplayableParser(Parser):
         self.replaces = replaces
         self.default_keywords = default_keywords
 
+        Keyword("arguments")
+        Keyword("properties")
+
     def parse_layout(self, loc, l, parent):
         return self.parse(loc, l, parent, True)
 
@@ -423,11 +426,22 @@ class DisplayableParser(Parser):
             )
 
         for _i in self.positional:
-            expr = l.require(l.simple_expression)
+            expr = l.simple_expression()
+
+            if expr is None:
+                break
+
             rv.positional.append(expr)
 
         can_has = (self.nchildren == 1)
         self.parse_contents(l, rv, layout_mode=layout_mode, can_has=can_has, can_tag=False)
+
+        if len(rv.positional) != len(self.positional):
+            for i in rv.keyword:
+                if i[0] == 'arguments':
+                    break
+            else:
+                l.error("{} statement expects {} positional arguments, got {}.".format(self.name, len(self.positional), len(rv.positional)))
 
         return rv
 
