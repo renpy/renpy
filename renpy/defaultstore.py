@@ -300,6 +300,7 @@ def At(d, *args):
 
 
 # The color function. (Moved, since text needs it, too.)
+Color = renpy.easy.Color
 color = renpy.easy.color
 
 # Conveniently get rid of all the packages we had imported before.

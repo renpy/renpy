@@ -24,49 +24,128 @@
 import renpy.display
 import contextlib
 import time
+import colorsys
 
-def color(c):
+class Color(tuple):
     """
-    This function returns a color tuple, from a hexcode string or a
-    color tuple.
     """
 
-    if isinstance(c, tuple) and len(c) == 4:
-        return c
+    _rgb = None
+    _hls = None
+    _hsv = None
+    _alpha = None
 
-    if c is None:
-        return c
+    def __new__(cls, color=None, hls=None, hsv=None, rgb=None, alpha=1.0):
 
-    if isinstance(c, basestring):
-        if c[0] == '#':
-            c = c[1:]
+        if color is not None:
+            c = color
 
-        if len(c) == 6:
-            r = int(c[0]+c[1], 16)
-            g = int(c[2]+c[3], 16)
-            b = int(c[4]+c[5], 16)
-            a = 255
-        elif len(c) == 8:
-            r = int(c[0]+c[1], 16)
-            g = int(c[2]+c[3], 16)
-            b = int(c[4]+c[5], 16)
-            a = int(c[6]+c[7], 16)
-        elif len(c) == 3:
-            r = int(c[0], 16) * 0x11
-            g = int(c[1], 16) * 0x11
-            b = int(c[2], 16) * 0x11
-            a = 255
-        elif len(c) == 4:
-            r = int(c[0], 16) * 0x11
-            g = int(c[1], 16) * 0x11
-            b = int(c[2], 16) * 0x11
-            a = int(c[3], 16) * 0x11
-        else:
-            raise Exception("Color string must be 3, 4, 6, or 8 hex digits long.")
+            if isinstance(c, tuple) and len(c) == 4:
+                if isinstance(c, Color):
+                    return c
 
-        return (r, g, b, a)
+                return tuple.__new__(cls, c)
 
-    raise Exception("Not a color: %r" % (c,))
+            if c is None:
+                return None
+
+            if isinstance(c, basestring):
+                if c[0] == '#':
+                    c = c[1:]
+
+                if len(c) == 6:
+                    r = int(c[0]+c[1], 16)
+                    g = int(c[2]+c[3], 16)
+                    b = int(c[4]+c[5], 16)
+                    a = int(alpha * 255)
+                elif len(c) == 8:
+                    r = int(c[0]+c[1], 16)
+                    g = int(c[2]+c[3], 16)
+                    b = int(c[4]+c[5], 16)
+                    a = int(c[6]+c[7], 16)
+                elif len(c) == 3:
+                    r = int(c[0], 16) * 0x11
+                    g = int(c[1], 16) * 0x11
+                    b = int(c[2], 16) * 0x11
+                    a = int(alpha * 255)
+                elif len(c) == 4:
+                    r = int(c[0], 16) * 0x11
+                    g = int(c[1], 16) * 0x11
+                    b = int(c[2], 16) * 0x11
+                    a = int(c[3], 16) * 0x11
+                else:
+                    raise Exception("Color string must be 3, 4, 6, or 8 hex digits long.")
+
+                return tuple.__new__(cls, (r, g, b, a))
+
+        if hsv is not None:
+            rgb = colorsys.hsv_to_rgb(*hsv)
+
+        if hls is not None:
+            hsv = None
+            rgb = colorsys.hls_to_rgb(*hsv)
+
+        if rgb:
+            r = int(rgb[0] * 255)
+            g = int(rgb[0] * 255)
+            b = int(rgb[0] * 255)
+            a = int(alpha * 255)
+
+            rv = tuple.__new__(cls, (r, g, b, a))
+            rv._rgb = rgb
+            rv._hls = hls
+            rv._hsv = hsv
+            rv._alpha = alpha
+
+            return rv
+
+        raise Exception("Not a color: %r" % (c,))
+
+    def __repr__(self):
+        return "<Color #{:02x}{:02x}{:02x}{:02x}>".format(
+            self[0],
+            self[1],
+            self[2],
+            self[3],
+            )
+
+    def __getnewargs__(self):
+        return (tuple(self), )
+
+    @property
+    def rgb(self):
+        if self._rgb is None:
+            self._rgb = (
+                self[0] / 255.0,
+                self[1] / 255.0,
+                self[2] / 255.0,
+                )
+
+        return self._rgb
+
+    @property
+    def hls(self):
+        if self._hls is None:
+            self._hls = colorsys.rgb_to_hls(*self.rgb)
+
+        return self._hls
+
+    @property
+    def hsv(self):
+        if self._hsv is None:
+            self._hsv = colorsys.rgb_to_hsv(*self.rgb)
+
+        return self._hsv
+
+    @property
+    def alpha(self):
+        if self._alpha is None:
+            self._alpha = self[3] / 255.0
+
+        return self._alpha
+
+
+color = Color
 
 def displayable_or_none(d):
 
