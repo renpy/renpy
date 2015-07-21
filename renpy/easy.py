@@ -386,6 +386,101 @@ class Color(tuple):
             self[2],
             int(self[3] * opacity)))
 
+    def rotate_hue(self, rotation):
+        """
+        :doc: color_method method
+
+        Rotates the hue by `rotation` degrees, and returns the new Color.
+        """
+
+        h, l, s = self.hls
+        h = (h + rotation / 360.0) % 1.0
+        return Color(hls=(h, l, s), alpha=self.alpha)
+
+
+    def hls_multiply_saturation(self, saturation):
+        """
+        :doc: color_method method
+
+        Multiplies this color's saturation by `saturation`, and returns
+        the result as a new Color. This is performed in the HLS color space.
+        """
+
+        h, l, s = self.hls
+        s = min(s * saturation, 1.0)
+        return Color(hls=(h, l, s), alpha=self.alpha)
+
+    def hsv_multiply_saturation(self, saturation):
+        """
+        :doc: color_method method
+
+        Multiplies this color's saturation by `saturation`, and returns
+        the result as a new Color. This is performed in the HSV color space.
+        """
+
+        h, s, v = self.hsv
+        s = min(s * saturation, 1.0)
+        return Color(hsv=(h, s, v), alpha=self.alpha)
+
+    def multiply_value(self, value):
+        """
+        :doc: color_method method
+
+        Multiples this color's value by `value` and returns the result as a
+        new Color. This is performed in the HSV color space.
+        """
+
+        h, s, v = self.hsv
+        v = min(v * value, 1.0)
+        return Color(hsv=(h, s, v), alpha=self.alpha)
+
+    def hls_replace_saturation(self, saturation):
+        """
+        :doc: color_method method
+
+        Replaces this color's saturation with `saturation`, and returns
+        the result as a new Color. This is performed in the HLS color space.
+        """
+
+        h, l, _ = self.hls
+        s = saturation
+        return Color(hls=(h, l, s), alpha=self.alpha)
+
+    def hsv_replace_saturation(self, saturation):
+        """
+        :doc: color_method method
+
+        Replace this color's saturation with `saturation`, and returns
+        the result as a new Color. This is performed in the HSV color space.
+        """
+
+        h, _, v = self.hsv
+        s = saturation
+        return Color(hsv=(h, s, v), alpha=self.alpha)
+
+    def replace_value(self, value):
+        """
+        :doc: color_method method
+
+        Replaces this color's value with `value` and returns the result as a
+        new Color. This is performed in the HSV color space.
+        """
+
+        h, s, _ = self.hsv
+        v = value
+        return Color(hsv=(h, s, v), alpha=self.alpha)
+
+    def replace_lightness(self, lightness):
+        """
+        :doc: color_method method
+
+        Replaces this color's lightness with `lightness`, and returns
+        the result as a new Color. This is performed in the HLS color space.
+        """
+
+        h, _, s = self.hls
+        l = lightness
+        return Color(hls=(h, l, s), alpha=self.alpha)
 
 color = Color
 
