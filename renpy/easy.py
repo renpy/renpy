@@ -266,6 +266,10 @@ class Color(tuple):
         return other - self
 
     def __mul__(self, other):
+
+        if isinstance(other, renpy.display.im.matrix):
+            return Color(tuple(int(i) for i in other.vector_mul(self)[:4]))
+
         other = Color(other)
 
         return Color((
