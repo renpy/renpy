@@ -28,6 +28,84 @@ import colorsys
 
 class Color(tuple):
     """
+    :doc: color class
+    :args: (color=None, hls=None, hsv=None, rgb=None, alpha=1.0)
+
+    The Color class is used to represent and manipulate colors and convert
+    between various color spaces. It also represents opacity in the form
+    of an alpha.
+
+    When creating a Color, at one of the `color`, `hls`, `hsv`, or `rgb`
+    arguments should be supplied. (If all are None, None is returned.)
+
+    `color`
+        The color, in one of the standard formats Ren'Py understands. These
+        are:
+
+        * A Color object.
+        * An (r, g, b) or (r, g, b, a) tuple, in which all the numbers are
+          between 0 and 255.
+        * A string giving a hexadecimal color, in the form "#rgb", "#rgba",
+          "#rrggbb", or "#rrggbbaa".
+
+    `hls`
+        A color in the hue-lightness-saturation color space. This should
+        be supplied a three-component tuple, where each component is between
+        0.0 and 1.0.
+
+    `hsv`
+        A color in the hue-saturation-value color space. This should
+        be supplied a three-component tuple, where each component is between
+        0.0 and 1.0.
+
+    `rgb`
+        A color in the red-green-blue color space. This should
+        be supplied a three-component tuple, where each component is between
+        0.0 and 1.0.
+
+    If the supplied color does not contain an alpha value, `alpha` is used.
+    `alpha` must be between 0.0 and 1.0.
+
+    Color objects can be used as 4-component tuples, where the components
+    are (red, green, blue, and alpha). When used as a tuple, the value
+    of each component is between 0 and 255.
+
+    Color objects support the +, -, and * operators, representing
+    component-wise addition, subtraction, and multiplication. Some uses
+    of these operators can cause the creation of colors with components
+    that are not in the supported range. Such colors should not be passed
+    to other parts of Ren'Py. (The normalize method can be called to return
+    a new color with the components limited to the proper range.)
+
+    A Color object has the following properties:
+
+    .. attribute:: hls
+
+        Returns the color as a tuple of three floating point numbers giving
+        hue, lightness, and saturation. Each component ranges between 0.0 and 1.0.
+
+    .. attribute:: hsv
+
+        Returns the color as a tuple of three floating point numbers giving
+        hue, saturation, and value. Each component ranges between 0.0 and 1.0.
+
+    .. attribute:: rgb
+
+        Returns the color as a tuple of three floating point numbers giving
+        the red, green, and blue components. Each component ranges between 0.0
+        and 1.0.
+
+    .. attribute:: alpha
+
+        Returns the alpha (opacity) of this Color as a number between 0.0 and
+        1.0, where 0.0 is transparent and 1.0 is opaque.
+
+
+    Color objects have the following methods. Since Colors are immutable,
+    these methods always return a new Color object.
+
+    .. include:: color/methods
+
     """
 
     _rgb = None
@@ -40,14 +118,15 @@ class Color(tuple):
         if color is not None:
             c = color
 
-            if isinstance(c, tuple) and len(c) == 4:
+            if isinstance(c, tuple):
                 if isinstance(c, Color):
                     return c
 
-                return tuple.__new__(cls, c)
+                if len(c) == 4:
+                    return tuple.__new__(cls, c)
 
-            if c is None:
-                return None
+                if len(c) == 3:
+                    return tuple.__new__(cls, c + (int(255 * alpha),))
 
             if isinstance(c, basestring):
                 if c[0] == '#':
@@ -85,7 +164,7 @@ class Color(tuple):
             hsv = None
             rgb = colorsys.hls_to_rgb(*hsv)
 
-        if rgb:
+        if rgb is not None:
             r = int(rgb[0] * 255)
             g = int(rgb[0] * 255)
             b = int(rgb[0] * 255)
@@ -99,7 +178,10 @@ class Color(tuple):
 
             return rv
 
-        raise Exception("Not a color: %r" % (c,))
+        if color is None:
+            return None
+
+        raise Exception("Not a color: %r" % (color,))
 
     def __repr__(self):
         return "<Color #{:02x}{:02x}{:02x}{:02x}>".format(
@@ -143,6 +225,162 @@ class Color(tuple):
             self._alpha = self[3] / 255.0
 
         return self._alpha
+
+    def normalize(self):
+        """
+        :doc: color method
+
+        Returns a normalized version of this Color where all components fall
+        between 0 and 255.
+        """
+
+        r = max(min(self[0], 255), 0)
+        g = max(min(self[1], 255), 0)
+        b = max(min(self[2], 255), 0)
+        a = max(min(self[3], 255), 0)
+
+        return Color((r, g, b, a))
+
+    def __add__(self, other):
+        other = Color(other)
+
+        return Color((
+            self[0] + other[0],
+            self[1] + other[1],
+            self[2] + other[2],
+            self[3] + other[3]))
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        other = Color(other)
+
+        return Color((
+            self[0] - other[0],
+            self[1] - other[1],
+            self[2] - other[2],
+            self[3] - other[3]))
+
+    def __rsub__(self, other):
+        other = Color(other)
+        return other - self
+
+    def __mul__(self, other):
+        other = Color(other)
+
+        return Color((
+            self[0] * other[0],
+            self[1] * other[1],
+            self[2] * other[2],
+            self[3] * other[3]))
+
+    __rmul__ = __mul__
+
+    def interpolate_core(self, a, b, fraction):
+
+        if isinstance(a, tuple):
+            rv = (self.interpolate_core(ac, bc, fraction) for ac, bc in zip(a, b))
+        else:
+            rv = a + (b - a) * fraction
+
+        return type(a)(rv)
+
+    def interpolate(self, other, fraction):
+        """
+        :doc: color_method method
+
+        Interpolates between this Color and `other` in the RGB color
+        space, returning a new Color as the result. If `fraction` is 0.0, the
+        result is the same as this color, if 1.0, it is the same as `other`.
+        """
+
+        other = Color(other)
+
+        return self.interpolate_core(self, other, fraction)
+
+    def interpolate_hsv(self, other, fraction):
+        """
+        :doc: color_method method
+
+        Interpolates between this Color and `other` in the HSV color
+        space, returning a new Color as the result. If `fraction` is 0.0, the
+        result is the same as this color, if 1.0, it is the same as `other`.
+
+        `other` may be a string, Color or an HSV tuple.
+        """
+
+        if isinstance(other, basestring):
+            other = Color(other, alpha=self.alpha)
+        elif not isinstance(other, Color):
+            other = Color(hsv=other, alpha=self.alpha)
+
+
+        hsv = self.interpolate_core(self.hsv, other.hsv, fraction)
+        alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
+
+        return Color(hsv=hsv, alpha=alpha)
+
+    def interpolate_hls(self, other, fraction):
+        """
+        :doc: color_method method
+
+        Interpolates between this Color and `other` in the HLS color
+        space, returning a new Color as the result. If `fraction` is 0.0, the
+        result is the same as this color, if 1.0, it is the same as `other`.
+
+        `other` may be a string, Color or an HLS tuple.
+        """
+
+        if isinstance(other, basestring):
+            other = Color(other, alpha=self.alpha)
+        elif not isinstance(other, Color):
+            other = Color(hls=other, alpha=self.alpha)
+
+
+        hls = self.interpolate_core(self.hls, other.hls, fraction)
+        alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
+
+        return Color(hls=hls, alpha=alpha)
+
+    def tint(self, fraction):
+        """
+        :doc: color_method method
+
+        Creates a tint of this color by mixing it with white. `fraction` is
+        the fraction of this color that is in the new color. If `fraction` is
+        1.0, the color is unchanged, if 0.0, white is returned.
+
+        The alpha channel is unchanged.
+        """
+
+        return self.interpolate_core(self, (255, 255, 255, self[3]), (1.0 - fraction))
+
+    def shade(self, fraction):
+        """
+        :doc: color_method method
+
+        Creates a shade of this color by mixing it with black. `fraction` is
+        the fraction of this color that is in the new color. If `fraction` is
+        1.0, the color is unchanged, if 0.0, black is returned.
+
+        The alpha channel is unchanged.
+        """
+
+        return self.interpolate_core(self, (0, 0, 0, self[3]), (1.0 - fraction))
+
+    def opacity(self, opacity):
+        """
+        :doc: color_method method
+
+        Multiplies the alpha channel of this color by `opacity`, and returns
+        the new color.
+        """
+
+        return Color((
+            self[0],
+            self[1],
+            self[2],
+            int(self[3] * opacity)))
 
 
 color = Color
