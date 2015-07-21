@@ -390,15 +390,27 @@ class Color(tuple):
         """
         :doc: color_method method
 
-        Rotates the hue by `rotation` degrees, and returns the new Color.
+        Rotates this color's hue by `rotation`, and returns the new Color. `rotation`
+        is a fraction of a full rotation, to convert degrees divide by 360.0.
         """
 
         h, l, s = self.hls
-        h = (h + rotation / 360.0) % 1.0
+        h = (h + rotation) % 1.0
         return Color(hls=(h, l, s), alpha=self.alpha)
 
+    def replace_hue(self, hue):
+        """
+        :doc: color_method method
 
-    def hls_multiply_saturation(self, saturation):
+        Replaces this color's hue with `hue`, which should be between 0.0 and
+        1.0. Returns the new Color.
+        """
+
+        _, l, s = self.hls
+        h = hue
+        return Color(hls=(h, l, s), alpha=self.alpha)
+
+    def multiply_hls_saturation(self, saturation):
         """
         :doc: color_method method
 
@@ -410,7 +422,7 @@ class Color(tuple):
         s = min(s * saturation, 1.0)
         return Color(hls=(h, l, s), alpha=self.alpha)
 
-    def hsv_multiply_saturation(self, saturation):
+    def multiply_hsv_saturation(self, saturation):
         """
         :doc: color_method method
 
@@ -434,7 +446,7 @@ class Color(tuple):
         v = min(v * value, 1.0)
         return Color(hsv=(h, s, v), alpha=self.alpha)
 
-    def hls_replace_saturation(self, saturation):
+    def replace_hls_saturation(self, saturation):
         """
         :doc: color_method method
 
@@ -446,7 +458,7 @@ class Color(tuple):
         s = saturation
         return Color(hls=(h, l, s), alpha=self.alpha)
 
-    def hsv_replace_saturation(self, saturation):
+    def replace_hsv_saturation(self, saturation):
         """
         :doc: color_method method
 
