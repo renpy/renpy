@@ -1471,15 +1471,10 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): #@ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
-def py_eval(source, globals=None, locals=None): #@ReservedAssignment
-
-    if globals is None:
-        globals = store_dicts["store"] #@ReservedAssignment
-
-    if locals is None:
-        locals = globals #@ReservedAssignment
-
-    return eval(py_compile(source, 'eval'), globals, locals)
+def py_eval(code, globals=None, locals=None): #@ReservedAssignment
+    if isinstance(code, basestring):
+        code = py_compile(code, 'eval')
+    return py_eval_bytecode(code, globals, locals)
 
 
 def raise_at_location(e, loc):
