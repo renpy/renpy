@@ -818,7 +818,7 @@ class ImageButton(Button):
 
     def __init__(self,
                  idle_image,
-                 hover_image,
+                 hover_image = None,
                  insensitive_image = None,
                  activate_image = None,
                  selected_idle_image = None,
@@ -830,6 +830,7 @@ class ImageButton(Button):
                  hovered=None,
                  **properties):
 
+        hover_image = hover_image or idle_image
         insensitive_image = insensitive_image or idle_image
         activate_image = activate_image or hover_image
 
