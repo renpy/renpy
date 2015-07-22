@@ -13,6 +13,7 @@
 * :class:`BarValue`
 * Button
 * :func:`Character`
+* :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`

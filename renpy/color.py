@@ -27,6 +27,7 @@ class Color(tuple):
     """
     :doc: color class
     :args: (color=None, hls=None, hsv=None, rgb=None, alpha=1.0)
+    :name: Color
 
     The Color class is used to represent and manipulate colors and convert
     between various color spaces. It also represents opacity in the form
@@ -100,9 +101,6 @@ class Color(tuple):
 
     Color objects have the following methods. Since Colors are immutable,
     these methods always return a new Color object.
-
-    .. include:: color/methods
-
     """
 
     _rgb = None
@@ -288,7 +286,7 @@ class Color(tuple):
 
     def interpolate(self, other, fraction):
         """
-        :doc: color_method method
+        :doc: color method
 
         Interpolates between this Color and `other` in the RGB color
         space, returning a new Color as the result. If `fraction` is 0.0, the
@@ -301,7 +299,7 @@ class Color(tuple):
 
     def interpolate_hsv(self, other, fraction):
         """
-        :doc: color_method method
+        :doc: color method
 
         Interpolates between this Color and `other` in the HSV color
         space, returning a new Color as the result. If `fraction` is 0.0, the
@@ -323,7 +321,7 @@ class Color(tuple):
 
     def interpolate_hls(self, other, fraction):
         """
-        :doc: color_method method
+        :doc: color method
 
         Interpolates between this Color and `other` in the HLS color
         space, returning a new Color as the result. If `fraction` is 0.0, the
@@ -345,7 +343,7 @@ class Color(tuple):
 
     def tint(self, fraction):
         """
-        :doc: color_method method
+        :doc: color method
 
         Creates a tint of this color by mixing it with white. `fraction` is
         the fraction of this color that is in the new color. If `fraction` is
@@ -358,7 +356,7 @@ class Color(tuple):
 
     def shade(self, fraction):
         """
-        :doc: color_method method
+        :doc: color method
 
         Creates a shade of this color by mixing it with black. `fraction` is
         the fraction of this color that is in the new color. If `fraction` is
@@ -371,7 +369,7 @@ class Color(tuple):
 
     def opacity(self, opacity):
         """
-        :doc: color_method method
+        :doc: color method
 
         Multiplies the alpha channel of this color by `opacity`, and returns
         the new color.
@@ -385,7 +383,7 @@ class Color(tuple):
 
     def rotate_hue(self, rotation):
         """
-        :doc: color_method method
+        :doc: color method
 
         Rotates this color's hue by `rotation`, and returns the new Color. `rotation`
         is a fraction of a full rotation, to convert degrees divide by 360.0.
@@ -397,7 +395,7 @@ class Color(tuple):
 
     def replace_hue(self, hue):
         """
-        :doc: color_method method
+        :doc: color method
 
         Replaces this color's hue with `hue`, which should be between 0.0 and
         1.0. Returns the new Color.
@@ -409,7 +407,7 @@ class Color(tuple):
 
     def multiply_hls_saturation(self, saturation):
         """
-        :doc: color_method method
+        :doc: color method
 
         Multiplies this color's saturation by `saturation`, and returns
         the result as a new Color. This is performed in the HLS color space.
@@ -421,7 +419,7 @@ class Color(tuple):
 
     def multiply_hsv_saturation(self, saturation):
         """
-        :doc: color_method method
+        :doc: color method
 
         Multiplies this color's saturation by `saturation`, and returns
         the result as a new Color. This is performed in the HSV color space.
@@ -433,7 +431,7 @@ class Color(tuple):
 
     def multiply_value(self, value):
         """
-        :doc: color_method method
+        :doc: color method
 
         Multiples this color's value by `value` and returns the result as a
         new Color. This is performed in the HSV color space.
@@ -445,7 +443,7 @@ class Color(tuple):
 
     def replace_hls_saturation(self, saturation):
         """
-        :doc: color_method method
+        :doc: color method
 
         Replaces this color's saturation with `saturation`, and returns
         the result as a new Color. This is performed in the HLS color space.
@@ -457,7 +455,7 @@ class Color(tuple):
 
     def replace_hsv_saturation(self, saturation):
         """
-        :doc: color_method method
+        :doc: color method
 
         Replace this color's saturation with `saturation`, and returns
         the result as a new Color. This is performed in the HSV color space.
@@ -469,7 +467,7 @@ class Color(tuple):
 
     def replace_value(self, value):
         """
-        :doc: color_method method
+        :doc: color method
 
         Replaces this color's value with `value` and returns the result as a
         new Color. This is performed in the HSV color space.
@@ -481,7 +479,7 @@ class Color(tuple):
 
     def replace_lightness(self, lightness):
         """
-        :doc: color_method method
+        :doc: color method
 
         Replaces this color's lightness with `lightness`, and returns
         the result as a new Color. This is performed in the HLS color space.

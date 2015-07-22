@@ -104,6 +104,7 @@ Python and Ren'Py
    custom_text_tags
    character_callbacks
    file_python
+   color_class
    other
 
 Building, Updating, and Other Platforms
