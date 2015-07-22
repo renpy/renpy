@@ -299,9 +299,9 @@ def At(d, *args):
     return rv
 
 
-# The color function. (Moved, since text needs it, too.)
-Color = renpy.easy.Color
-color = renpy.easy.color
+# The color class/function.
+Color = renpy.color.Color
+color = renpy.color.Color
 
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy #@Reimport

@@ -288,6 +288,7 @@ def import_all():
     import renpy.ast
     import renpy.atl
     import renpy.curry
+    import renpy.color
     import renpy.easy
     import renpy.execution
     import renpy.loadsave
