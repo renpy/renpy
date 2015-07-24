@@ -826,6 +826,7 @@ Keyword("modal")
 Keyword("zorder")
 Keyword("variant")
 Keyword("predict")
+Keyword("style_group")
 
 def init():
     screen_parser.add(all_statements)

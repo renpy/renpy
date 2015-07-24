@@ -1778,8 +1778,6 @@ class SLScreen(SLBlock):
         # True if this screen has been prepared.
         self.prepared = False
 
-
-
     def copy(self, transclude):
         rv = self.instantiate(transclude)
 
@@ -1891,6 +1889,10 @@ class SLScreen(SLBlock):
             not_constants = list(self.const_ast.analysis.not_constant)
             not_constants.sort()
             profile_log.write('    not_const: %s', " ".join(not_constants))
+
+    def execute(self, context):
+        self.keywords(context)
+        SLBlock.execute(self, context)
 
     def report_traceback(self, name, last):
         if last:

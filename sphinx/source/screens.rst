@@ -133,6 +133,10 @@ expression. It takes the following properties:
     If present, this should be a string giving the variant of screen
     to be defined. See :ref:`screen-variants`.
 
+`style_group`
+    A string that's used to provide a prefix for the style for the
+    children of this screen, as :ref:`described below <style-group>`.
+
 ::
 
    screen hello_world():
