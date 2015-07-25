@@ -321,6 +321,23 @@ class Parser(object):
                     parse_keyword(l, "expected a keyword argument or end of line.")
 
 
+    def add_positional(self, name):
+        self.add(Positional(name))
+        return self
+
+    def add_property(self, name):
+        self.add(Keyword(name))
+        return self
+
+    def add_style_property(self, name):
+        self.add(Style(name))
+        return self
+
+    def add_prefix_style_property(self, prefix, name):
+        self.add(PrefixStyle(prefix, name))
+        return self
+
+
 def add(thing):
     parser.add(thing)
 
@@ -329,39 +346,89 @@ many = renpy.object.Sentinel("many")
 
 class DisplayableParser(Parser):
     """
-    This is responsible for parsing statements that create displayables.
+    :doc: custom_sl class
+    :name: renpy.register_sl_displayable
+    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={})
+
+    Registers a screen language statement that creates a displayable.
+
+    `name`
+        The name of the screen language statement, a string containing a Ren'Py
+        keyword. This keyword is used to introduce the new statement.
+
+    `displayable`
+        This is a function that, when called, returns a displayable
+        object. All position arguments, properties, and style properties
+        are passed as arguments to this function. Other keyword arguments
+        are also given to this function, a described below.
+
+        This must return a Displayable. If it returns multiple displayables,
+        the _main attribute of the outermost displayable should be set to
+        the "main" displayable - the one that children should be added
+        to.
+
+    `style`
+        The base name of the style of this displayable. If the style property
+        is not given, this will have the style prefix added to it. The
+        computed style is passed to the `displayable` function as the
+        ``style`` keyword argument.
+
+    `nchildren`
+        The number of children of this displayable. One of:
+
+        0
+            The displayable takes no children.
+        1
+            The displayable takes 1 child. If more than one child is given,
+            the children are placed in a Fixed.
+        "many"
+            The displayable takes more than one child.
+
+
+    The following arguments should be passed in using keyword arguments:
+
+    `replaces`
+        If true, and the displayable replaces a prior displayable, that displayable
+        is passed as a parameter to the new displayable.
+
+    `default_keywords`
+        The default set of keyword arguments to supply to the displayable.
+
+    Returns an object that can have positional arguments and properties
+    added to it by calling the following methods. Each of these methods
+    returns the object it is called on, allowing methods to be chained
+    together.
+
+    .. method:: add_positional(name)
+
+        Adds a positional argment with `name`
+
+    .. method:: add_property(name):
+
+        Adds a property with `name`. Properties are passed as keyword
+        arguments.
+
+    .. method:: add_style_property(name):
+
+        Adds a family of properties, ending with `name` and prefixed with
+        the various style property prefixes. For example, if called with
+        ("size"), this will define size, idle_size, hover_size, etc.
+
+    .. method:: add_style_property(prefix, name):
+
+        Adds a family of properties with names consisting of `prefix`,
+        a style property prefix, and `name`. For example, if called
+        with a prefix of `text_` and a name of `size`, this will
+        create text_size, text_idle_size, text_hover_size, etc.
     """
 
-    def __init__(self, name, displayable, style, nchildren=0, scope=False, text_style=None,
+    def __init__(self, name, displayable, style, nchildren=0, scope=False,
         pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False):
+
         """
-        `name`
-            The name of the statement that creates the displayable.
-
-        `displayable`
-            A function that creates the displayable.
-
-        `style`
-            The name of the style that is applied to this displayable.
-
-        `nchildren`
-            The number of children of this displayable. One of:
-
-            0
-                The displayable takes no children.
-            1
-                The displayable takes 1 child. If more than one child is given,
-                the children are placed in a Fixed.
-            many
-                The displayable takes more than one child.
-
         `scope`
-            If true, the scope is passed into the displayable as a keyword
+            If true, the scope is passed into the displayable functionas a keyword
             argument named "scope".
-
-        `text_style`
-            The name of the text style that is applied to this displayable. This
-            also enables the whole text style handling mechanism.
 
         `pass_context`
             If true, the context is passed as the first positional argument of the
@@ -370,13 +437,6 @@ class DisplayableParser(Parser):
         `imagemap`
             If true, the displayable is treated as defining an imagemap. (The imagemap
             is added to and removed from renpy.ui.imagemap_stack as appropriate.)
-
-        `replaces`
-            If true, and the displayable replaces a prior displayable, that displayable
-            is passed as a parameter to the new displayable.
-
-        `default_keywords`
-            The default set of keyword arguments to supply to the displayable.
 
         `hotspot`
             If true, the displayable is treated as a hotspot. (It needs to be
@@ -388,6 +448,9 @@ class DisplayableParser(Parser):
         # The displayable that is called when this statement runs.
         self.displayable = displayable
 
+        if nchildren == "many":
+            nchildren = many
+
         # The number of children we have.
         self.nchildren = nchildren
 
@@ -396,7 +459,6 @@ class DisplayableParser(Parser):
 
         self.style = style
         self.scope = scope
-        self.text_style = text_style
         self.pass_context = pass_context
         self.imagemap = imagemap
         self.hotspot = hotspot
@@ -417,7 +479,6 @@ class DisplayableParser(Parser):
             scope=self.scope,
             child_or_fixed=(self.nchildren == 1),
             style=self.style,
-            text_style=self.text_style,
             pass_context=self.pass_context,
             imagemap=self.imagemap,
             replaces=self.replaces,
@@ -725,14 +786,32 @@ class CustomParser(Parser):
     `screen`
         The screen to use. If not given, defaults to `name`.
 
-    This returns an object that can have properties added to it. Properties
-    are added using the method:
+    Returns an object that can have positional arguments and properties
+    added to it by calling the following methods. Each of these methods
+    returns the object it is called on, allowing methods to be chained
+    together.
 
+    .. method:: add_positional(name)
 
-    .. method:: add_property(name)
+        Adds a positional argment with `name`
 
-        Registers a property with the creator-defined screen language statement. This
-        returns the object it is called on, so calls can be chained.
+    .. method:: add_property(name):
+
+        Adds a property with `name`. Properties are passed as keyword
+        arguments.
+
+    .. method:: add_style_property(name):
+
+        Adds a family of properties, ending with `name` and prefixed with
+        the various style property prefixes. For example, if called with
+        ("size"), this will define size, idle_size, hover_size, etc.
+
+    .. method:: add_style_property(prefix, name):
+
+        Adds a family of properties with names consisting of `prefix`,
+        a style property prefix, and `name`. For example, if called
+        with a prefix of `text_` and a name of `size`, this will
+        create text_size, text_idle_size, text_hover_size, etc.
     """
 
     def __init__(self, name, positional=0, children="many", screen=None):
@@ -765,10 +844,6 @@ class CustomParser(Parser):
 
         # The number of positional parameters required.
         self.positional = positional
-
-    def add_property(self, name):
-        self.add(Keyword(name))
-        return self
 
     def parse(self, loc, l, parent):
 

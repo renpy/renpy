@@ -92,6 +92,7 @@ from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH
 from renpy.execution import not_infinite_loop
 
 from renpy.sl2.slparser import CustomParser as register_sl_statement
+from renpy.sl2.slparser import DisplayableParser as register_sl_displayable
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
@@ -151,7 +152,7 @@ def public_api():
     TEXT_PARAGRAPH
     TEXT_DISPLAYABLE
     not_infinite_loop
-    register_sl_statement
+    register_sl_statement, register_sl_displayable
 
 del public_api
 
