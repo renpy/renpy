@@ -478,6 +478,9 @@ class SLCache(object):
         # The SLUse that was transcluded by this SLCache statement.
         self.transclude = None
 
+        # The style prefix used when this statement was first created.
+        self.style_prefix = None
+
 # A magic value that, if returned by a displayable function, is not added to
 # the parent.
 NO_DISPLAYABLE = renpy.display.layout.Null()
@@ -649,7 +652,7 @@ class SLDisplayable(SLBlock):
         if debug:
             self.debug_line()
 
-        if cache.constant:
+        if cache.constant and (cache.style_prefix == context.style_prefix):
 
             for i in cache.constant_uses_scope:
                 if copy_on_change:
@@ -743,7 +746,7 @@ class SLDisplayable(SLBlock):
             if debug:
                 self.report_arguments(cache, positional, keywords, transform)
 
-            can_reuse = (old_d is not None) and (positional == cache.positional) and (keywords == cache.keywords)
+            can_reuse = (old_d is not None) and (positional == cache.positional) and (keywords == cache.keywords) and (context.style_prefix == cache.style_prefix)
 
             # A hotspot can only be reused if the imagemap it belongs to has
             # not changed.
@@ -910,6 +913,7 @@ class SLDisplayable(SLBlock):
 
         cache.displayable = d
         cache.children = ctx.children
+        cache.style_prefix = context.style_prefix
 
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
