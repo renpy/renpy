@@ -524,7 +524,6 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-
     def _predict_bar(self, pd):
         """
         Predicts properties for a window.
@@ -539,6 +538,19 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
+    def _predict_frame(self, pd):
+        """
+        Predicts properties for a Frame.
+
+        `pd`
+            The function that should be called to predict a displayable.
+        """
+
+        for i in [ INSENSITIVE_PREFIX, IDLE_PREFIX, HOVER_PREFIX, SELECTED_INSENSITIVE_PREFIX, SELECTED_IDLE_PREFIX, SELECTED_HOVER_PREFIX ]:
+            for j in [ CHILD_INDEX ]:
+                v = self._get_unoffset(i + j)
+                if v is not None:
+                    pd(v)
 
     def inspect(StyleCore self):
         """
