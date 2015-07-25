@@ -361,7 +361,10 @@ class Analysis(object):
                 if slice.step:
                     consts.append(check_node(slice.step))
 
-                return min(consts)
+                if not consts:
+                    return GLOBAL_CONST
+                else:
+                    return min(consts)
 
             return NOT_CONST
 
