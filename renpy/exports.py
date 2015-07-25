@@ -71,7 +71,7 @@ from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
-from renpy.easy import predict, displayable
+from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
 
@@ -134,7 +134,7 @@ def public_api():
     current_screen, get_screen, get_widget, profile_screen
     focus_coordinates
     predict, predict_screen
-    displayable
+    displayable, split_properties
     unelide_filename, get_parse_errors
     change_language, known_languages
     language_tailor

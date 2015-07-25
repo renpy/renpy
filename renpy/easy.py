@@ -100,3 +100,40 @@ def timed(name):
     yield
     print "{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0)
 
+def split_properties(properties, *prefixes):
+    """
+    :doc: other
+
+    Splits up `properties` into multiple dictionaries, one per `prefix`. This
+    function checks each key in properties against each prefix, in turn.
+    When a prefix matches, the prefix is stripped from the key, and the
+    resulting key is mapped to the value in the corresponding dictionary.
+
+    If no prefix matches, an exception is thrown. (The empty string, "",
+    can be used as the last prefix to create a catch-all dictionary.)
+
+    For example, this code splits properties beginning with text from
+    those that do not::
+
+        text_properties, button_properties = renpy.split_properties("text_", "")
+    """
+
+    rv = [ ]
+
+    for _i in prefixes:
+        rv.append({})
+
+    if not properties:
+        return rv
+
+    prefix_d = list(zip(prefixes, rv))
+
+    for k, v in properties.iteritems():
+        for prefix, d in prefix_d:
+            if k.startswith(prefix):
+                d[k[len(prefix):]] = v
+                break
+        else:
+            raise Exception("Property {} begins with an unknown prefix.".format(k))
+
+    return rv
