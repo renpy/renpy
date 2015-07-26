@@ -31,7 +31,7 @@ translate russian strings:
 
     # game/editor.rpy:164
     old "Invokes the editor your operating system has associated with .rpy files."
-    new "Включает текстовый редактор, ассоциированный на вашей системе с файлами.rpy."
+    new "Включает текстовый редактор, ассоциированный на вашей системе с файлами .rpy."
 
     # game/editor.rpy:180
     old "Prevents Ren'Py from opening a text editor."
