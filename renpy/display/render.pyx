@@ -1196,6 +1196,20 @@ cdef class Render:
 
         d.place(self, x, y, width, height, render, main=main)
 
+    def zoom(self, xzoom, yzoom):
+        """
+        Sets the zoom factor applied to this displayable's children.
+        """
+        if self.reverse is None:
+            self.reverse = IDENTITY
+            self.forward = IDENTITY
+
+        self.reverse *= Matrix2D(xzoom, 0, 0, yzoom)
+
+        if xzoom and yzoom:
+            self.forward *= Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
+        else:
+            self.forward *= Matrix2D(0, 0, 0, 0)
 
 class Canvas(object):
 

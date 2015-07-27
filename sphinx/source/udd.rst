@@ -284,6 +284,13 @@ the implicit `self` parameter.
         `rect`
             A (x, y, width, height) tuple.
 
+    .. method:: zoom(xzoom, yzoom)
+
+        Sets the zoom level of the children of this displayable in the
+        horitzontal and vertical axes. Only the children of the displayable
+        are zoomed - the width, height, and blit coordinates are not zoomed.
+
+
 
 Utility Functions
 =================
