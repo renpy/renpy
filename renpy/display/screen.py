@@ -1011,6 +1011,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
     screen = get_screen_variant(name[0])
 
+    if screen is None:
+        return
+
     scope = { }
     scope["_scope"] = scope
 

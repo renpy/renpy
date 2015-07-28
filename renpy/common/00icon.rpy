@@ -65,8 +65,18 @@ python early in icon:
 
             return rv
 
+        STATES = [
+            "insensitive_",
+            "idle_",
+            "hover_",
+            "selected_idle_",
+            "selected_hover_",
+            ]
+
+        def visit(self):
+            return [ self.find_image(p) for p in Icon.STATES ]
+
     # Register the icon with screen language.
-    print "SL!"
     renpy.register_sl_displayable("icon", Icon, 0, "icon") \
         .add_positional("name") \
         .add_style_property("color")
