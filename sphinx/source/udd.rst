@@ -211,7 +211,7 @@ class, we'll present them with the `self` parameter.
 renpy.Render
 ============
 
-creator-defined displayables work with renpy.Render objects. Render
+Creator-defined displayables work with renpy.Render objects. Render
 objects are returned by calling the :func:`renpy.render` function on a
 displayable. A creator-defined displayable should create a Render object
 by calling :class:`renpy.Render` from its render method.
