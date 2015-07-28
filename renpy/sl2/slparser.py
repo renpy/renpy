@@ -322,19 +322,46 @@ class Parser(object):
 
 
     def add_positional(self, name):
-        self.add(Positional(name))
+        global parser
+        parser = self
+
+        Positional(name)
         return self
 
     def add_property(self, name):
-        self.add(Keyword(name))
+        global parser
+        parser = self
+
+        Keyword(name)
         return self
 
     def add_style_property(self, name):
-        self.add(Style(name))
+        global parser
+        parser = self
+
+        Style(name)
         return self
 
     def add_prefix_style_property(self, prefix, name):
-        self.add(PrefixStyle(prefix, name))
+        global parser
+        parser = self
+
+        PrefixStyle(prefix, name)
+        return self
+
+    def add_property_group(self, group, prefix=''):
+        global parser
+        parser = self
+
+        if group not in renpy.sl2.slproperties.property_groups:
+            raise Exception("{!r} is not a known property group.".format(group))
+
+        for prop in renpy.sl2.slproperties.property_groups[group]:
+            if isinstance(prop, Keyword):
+                Keyword(prefix + prop.name)
+            else:
+                PrefixStyle(prefix, prop.name)
+
         return self
 
 
@@ -343,6 +370,7 @@ def add(thing):
 
 # A singleton value.
 many = renpy.object.Sentinel("many")
+
 
 class DisplayableParser(Parser):
     """
@@ -420,6 +448,21 @@ class DisplayableParser(Parser):
         a style property prefix, and `name`. For example, if called
         with a prefix of `text_` and a name of `size`, this will
         create text_size, text_idle_size, text_hover_size, etc.
+
+    .. method:: add_property_group(group, prefix=''):
+
+        Adds a group of properties, prefixed with `prefix`. `Group` may
+        be one of the strings:
+
+        * "bar"
+        * "box"
+        * "button"
+        * "position"
+        * "text"
+        * "window"
+
+        These correspond to groups of :ref:`style-properties`. Group can
+        also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
     """
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
@@ -796,31 +839,8 @@ class CustomParser(Parser):
         The screen to use. If not given, defaults to `name`.
 
     Returns an object that can have positional arguments and properties
-    added to it by calling the following methods. Each of these methods
-    returns the object it is called on, allowing methods to be chained
-    together.
-
-    .. method:: add_positional(name)
-
-        Adds a positional argment with `name`
-
-    .. method:: add_property(name):
-
-        Adds a property with `name`. Properties are passed as keyword
-        arguments.
-
-    .. method:: add_style_property(name):
-
-        Adds a family of properties, ending with `name` and prefixed with
-        the various style property prefixes. For example, if called with
-        ("size"), this will define size, idle_size, hover_size, etc.
-
-    .. method:: add_style_property(prefix, name):
-
-        Adds a family of properties with names consisting of `prefix`,
-        a style property prefix, and `name`. For example, if called
-        with a prefix of `text_` and a name of `size`, this will
-        create text_size, text_idle_size, text_hover_size, etc.
+    added to it. This object has the same .add_ methods as the objects
+    returned by :class:`renpy.register_sl_displayable`.
     """
 
     def __init__(self, name, positional=0, children="many", screen=None):

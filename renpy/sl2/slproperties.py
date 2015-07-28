@@ -165,3 +165,13 @@ ui_properties = [
     Keyword("focus"),
     Keyword("default"),
     ]
+
+property_groups = {
+    "bar" : bar_properties,
+    "box" : box_properties,
+    "button" : button_properties,
+    "position" : position_properties,
+    "text" : text_properties,
+    "window" : window_properties,
+    "ui" : ui_properties,
+    }
