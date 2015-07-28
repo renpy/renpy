@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1500 python in icon:
+python early in icon:
 
     from store import im, Image, Color
 
@@ -64,3 +64,9 @@ init -1500 python in icon:
             rv.blit(cr, (0, 0))
 
             return rv
+
+    # Register the icon with screen language.
+    print "SL!"
+    renpy.register_sl_displayable("icon", Icon, 0, "icon") \
+        .add_positional("name") \
+        .add_style_property("color")

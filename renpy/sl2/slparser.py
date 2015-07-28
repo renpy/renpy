@@ -372,10 +372,9 @@ def add(thing):
 many = renpy.object.Sentinel("many")
 
 
-class DisplayableParser(Parser):
+def register_sl_displayable(*args, **kwargs):
     """
     :doc: custom_sl class
-    :name: renpy.register_sl_displayable
     :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={})
 
     Registers a screen language statement that creates a displayable.
@@ -464,6 +463,24 @@ class DisplayableParser(Parser):
         These correspond to groups of :ref:`style-properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
     """
+
+    rv = DisplayableParser(*args, **kwargs)
+
+    for i in childbearing_statements:
+        i.add(rv)
+
+    screen_parser.add(rv)
+
+    if rv.nchildren != 0:
+        childbearing_statements.add(rv)
+
+        for i in all_statements:
+            rv.add(i)
+
+    return rv
+
+
+class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
         pass_context=False, imagemap=False, replaces=False, default_keywords={},
