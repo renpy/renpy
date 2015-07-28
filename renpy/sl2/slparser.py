@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy
+import renpy.sl2
 import renpy.sl2.slast as slast
 
 # A list of style prefixes that we know of.
@@ -401,7 +401,7 @@ class DisplayableParser(Parser):
 
     .. method:: add_positional(name)
 
-        Adds a positional argment with `name`
+        Adds a positional argument with `name`
 
     .. method:: add_property(name):
 
@@ -423,7 +423,8 @@ class DisplayableParser(Parser):
     """
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
-        pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False):
+        pass_context=False, imagemap=False, replaces=False, default_keywords={},
+        hotspot=False, default_properties=True):
 
         """
         `scope`
@@ -441,6 +442,9 @@ class DisplayableParser(Parser):
         `hotspot`
             If true, the displayable is treated as a hotspot. (It needs to be
             re-created if the imagemap it belongs to has changed.)
+
+        `default_properties`
+            If true, the ui and positional properties are added by default.
         """
 
         super(DisplayableParser, self).__init__(name)
@@ -467,6 +471,11 @@ class DisplayableParser(Parser):
 
         Keyword("arguments")
         Keyword("properties")
+
+        if default_properties:
+            add(renpy.sl2.slproperties.ui_properties)
+            add(renpy.sl2.slproperties.position_properties)
+
 
     def parse_layout(self, loc, l, parent):
         return self.parse(loc, l, parent, True)

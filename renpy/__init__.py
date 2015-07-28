@@ -378,6 +378,7 @@ def import_all():
 
     import renpy.sl2.slast
     import renpy.sl2.slparser
+    import renpy.sl2.slproperties
     import renpy.sl2.sldisplayables
 
     import renpy.lint
