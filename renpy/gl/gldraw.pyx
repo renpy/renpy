@@ -1171,7 +1171,7 @@ cdef class GLDraw:
         cdef int x, y, pitch
 
         # A surface the size of the framebuffer.
-        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        full = renpy.display.pgrender.surface_unscaled(self.drawable_size, False)
         surf = PySurface_AsSurface(full)
 
         # Create an array that can hold densely-packed pixels.
@@ -1206,8 +1206,12 @@ cdef class GLDraw:
 
         free(raw_pixels)
 
+        px, py, pw, ph = self.physical_box
+        xmul = self.drawable_size[0] / self.physical_size[0]
+        ymul = self.drawable_size[1] / self.physical_size[1]
+
         # Crop and flip it, since it's upside down.
-        rv = full.subsurface(self.physical_box)
+        rv = full.subsurface((px * xmul, py * ymul, pw * xmul, ph * ymul))
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
 
         return rv
