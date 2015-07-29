@@ -58,7 +58,6 @@ cdef extern from "eglsupport.h":
     void egl_swap()
     void egl_quit()
 
-
 # EGL is a flag we check to see if we have EGL on this platform.
 cdef bint EGL
 EGL = egl_available()
@@ -71,6 +70,8 @@ PIXELLATE = renpy.display.render.PIXELLATE
 
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
+
+FAKE_HIGHDPI = int(os.environ.get("RENPY_FAKE_HIGHDPI", "1"))
 
 cdef class GLDraw:
 
@@ -253,7 +254,7 @@ cdef class GLDraw:
                 self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((pwidth * FAKE_HIGHDPI, pheight * FAKE_HIGHDPI), resizable | opengl | pygame.DOUBLEBUF)
 
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
@@ -273,6 +274,9 @@ cdef class GLDraw:
 
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
+
+        pwidth /= FAKE_HIGHDPI
+        pheight /= FAKE_HIGHDPI
 
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
@@ -1050,6 +1054,9 @@ cdef class GLDraw:
         """
         Translates (x, y) from physical to virtual coordinates.
         """
+
+        x /= FAKE_HIGHDPI
+        y /= FAKE_HIGHDPI
 
         # Screen sizes.
         pw, ph = self.physical_size
