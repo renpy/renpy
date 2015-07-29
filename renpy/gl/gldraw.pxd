@@ -32,6 +32,7 @@ cdef class GLDraw:
     cdef object window
     cdef tuple virtual_size
     cdef public tuple physical_size
+    cdef public tuple drawable_size
     cdef public tuple virtual_box
     cdef public tuple physical_box
     cdef object mouse_old_visible

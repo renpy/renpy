@@ -226,7 +226,7 @@ cdef class GLDraw:
             pheight = 0
 
         elif renpy.ios:
-            opengl = pygame.OPENGL
+            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
             resizable = pygame.RESIZABLE
 
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
@@ -273,10 +273,11 @@ cdef class GLDraw:
 
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
+
         self.physical_size = (pwidth, pheight)
+        self.drawable_size = pygame.display.get_drawable_size()
 
-        renpy.display.log.write("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
-
+        renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
 
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
@@ -673,7 +674,10 @@ cdef class GLDraw:
 
         self.draw_render_textures(surftree, 0)
 
-        self.environ.viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
+        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
+        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
+
+        self.environ.viewport(xmul * self.physical_box[0], ymul * self.physical_box[1], xmul * self.physical_box[2], ymul * self.physical_box[3])
         self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
         self.clip_mode_screen()
@@ -1132,7 +1136,10 @@ cdef class GLDraw:
         pw, ph = self.physical_size
         pbx, pby, pbw, pbh = self.physical_box
 
-        self.environ.viewport(0, 0, pw, ph)
+        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
+        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
+
+        self.environ.viewport(0, 0, xmul * pw, ymul * ph)
         self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
