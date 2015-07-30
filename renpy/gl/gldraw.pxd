@@ -53,6 +53,13 @@ cdef class GLDraw:
 
     cdef public tuple clip_rtt_box
 
+    # The number of drawable pixels per virtual pixel.
+    cdef float draw_per_virt
+
+    # Matrices that transform drawable to virtual, and vice versa.
+    cdef public render.Matrix2D virt_to_draw
+    cdef public render.Matrix2D draw_to_virt
+
     cpdef set_clip(GLDraw self, tuple clip)
 
     cpdef int draw_render_textures(

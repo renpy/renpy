@@ -323,7 +323,7 @@ def draw_special(what, dest, x, y):
 
     elif what.operation == PIXELLATE:
 
-        surf = what.children[0][0].render_to_texture(False)
+        surf = what.children[0][0].render_to_texture(dest.get_masks()[3])
 
         px = what.operation_parameter
 
@@ -770,6 +770,11 @@ class SWDraw(object):
             self.window = self.screen
 
         renpy.display.pgrender.set_rgba_masks()
+
+        # Scale from the rtt size to the virtual size.
+        self.draw_per_virt = 1.0
+        self.virt_to_draw = renpy.display.render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = renpy.display.render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
         # Should we redraw the screen from scratch?
         self.full_redraw = True

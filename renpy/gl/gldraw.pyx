@@ -322,6 +322,15 @@ cdef class GLDraw:
             pheight - int(py_padding),
             )
 
+        # Scale from the rtt size to the virtual size.
+        if renpy.config.use_drawable_resolution:
+            self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
+        else:
+            self.draw_per_virt = 1.0
+
+        self.virt_to_draw = render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+
         if not self.did_init:
             if not self.init():
                 return False
@@ -835,7 +844,7 @@ cdef class GLDraw:
                     rend.children[1][0].render_to_texture(what.operation_alpha),
                     xo,
                     yo,
-                    reverse,
+                    reverse * self.draw_to_virt,
                     alpha,
                     over,
                     rend.operation_complete,
@@ -854,7 +863,7 @@ cdef class GLDraw:
                 rend.children[2][0].render_to_texture(what.operation_alpha),
                 xo,
                 yo,
-                reverse,
+                reverse * self.draw_to_virt,
                 alpha,
                 over,
                 rend.operation_complete,
@@ -935,11 +944,10 @@ cdef class GLDraw:
 
         return 0
 
-    def render_to_texture(self_, what, alpha):
+    def render_to_texture(self, what, alpha):
 
-        cdef GLDraw self = self_
-
-        forward = reverse = IDENTITY
+        width = int(what.width * self.draw_per_virt)
+        height = int(what.height * self.draw_per_virt)
 
         def draw_func(x, y, w, h):
 
@@ -952,17 +960,17 @@ cdef class GLDraw:
 
             glClear(GL_COLOR_BUFFER_BIT)
 
-            self.default_clip = (0, 0, what.width, what.height)
+            self.default_clip = (0, 0, width, height)
             clip = self.default_clip
 
-            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor)
 
         if isinstance(what, render.Render):
             what.is_opaque()
 
         self.upscale_factor = 1.0
 
-        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt, self.environ)
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         return rv
 
@@ -1025,7 +1033,6 @@ cdef class GLDraw:
             return what.half_cache
 
         reverse = renpy.display.render.Matrix2D(0.5, 0, 0, .5)
-        forward = renpy.display.render.Matrix2D(2.0, 0, 0, 2.0)
 
         width = max(what.width / 2, 1)
         height = max(what.height / 2, 1)
