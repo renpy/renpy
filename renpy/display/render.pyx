@@ -671,30 +671,7 @@ cdef class Render:
             if self.surface is not None:
                 return self.surface
 
-        rv = None
-
-        opaque = self.is_opaque()
-
-        # If we can, reuse a child's texture.
-        if opaque or alpha:
-
-            if not self.forward and len(self.children) == 1:
-                child, x, y, focus, main = self.children[0]
-                cw, ch = child.get_size()
-                if x <= 0 and y <= 0 and cw + x >= self.width and ch + y >= self.height:
-                    # Our single child overlaps us.
-                    if isinstance(child, Render):
-                        child = child.render_to_texture(alpha)
-
-                    if x != 0 or y != 0 or cw != self.width or ch != self.height:
-                        rv = child.subsurface((-x, -y, self.width, self.height))
-                    else:
-                        rv = child
-
-        # Otherwise, render to a texture.
-        if rv is None:
-            # is_opaque has already been called.
-            rv = renpy.display.draw.render_to_texture(self, alpha)
+        rv = renpy.display.draw.render_to_texture(self, alpha)
 
         # Stash and return the surface.
         if alpha:
