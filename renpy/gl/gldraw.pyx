@@ -128,9 +128,6 @@ cdef class GLDraw:
         # The display info, from pygame.
         self.display_info = None
 
-        # The amount we're upscaling by.
-        self.upscale_factor = 1.0
-
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
@@ -681,7 +678,7 @@ cdef class GLDraw:
         Draws the screen.
         """
 
-        forward = reverse = IDENTITY
+        reverse = IDENTITY
 
         surftree.is_opaque()
 
@@ -700,8 +697,6 @@ cdef class GLDraw:
 
         self.default_clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
         clip = self.default_clip
-
-        self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
@@ -968,8 +963,6 @@ cdef class GLDraw:
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        self.upscale_factor = 1.0
-
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         return rv
@@ -995,7 +988,7 @@ cdef class GLDraw:
 
         what = what.subsurface((x, y, 1, 1))
 
-        forward = reverse = IDENTITY
+        reverse = IDENTITY
 
         self.environ.viewport(0, 0, 1, 1)
         glClearColor(0.0, 0.0, 0.0, 0.0)

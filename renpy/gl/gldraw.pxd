@@ -44,7 +44,6 @@ cdef class GLDraw:
     cdef object old_fullscreen
     cdef public object fullscreen_surface
     cdef object display_info
-    cdef double upscale_factor
     cdef tuple clip_cache
     cdef bint fast_dissolve
     cdef bint always_opaque
