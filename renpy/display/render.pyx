@@ -662,6 +662,11 @@ cdef class Render:
 
         `alpha` is a hint that controls if the surface should have
         alpha or not.
+
+        This returns a texture that's at the drawable resolultion, which
+        may be bigger than the virtual resolution. Use renpy.display.draw.draw_to_virt
+        and draw.virt_to_draw to convert between the two resolutions. (For example,
+        multiply reverse by draw_to_virt to scale this down for blitting.)
         """
 
         if alpha:
