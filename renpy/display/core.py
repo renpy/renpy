@@ -1864,7 +1864,7 @@ class Interface(object):
                                  mouse='with',
                                  clear=clear)
 
-    def with_none(self):
+    def with_none(self, overlay=True):
         """
         Implements the with None command, which sets the scene we will
         be transitioning from.
@@ -1876,7 +1876,8 @@ class Interface(object):
         self.show_window()
 
         # Compute the overlay.
-        self.compute_overlay()
+        if overlay:
+            self.compute_overlay()
 
         scene_lists = renpy.game.context().scene_lists
 
