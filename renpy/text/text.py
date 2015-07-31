@@ -196,7 +196,7 @@ class TextSegment(object):
         self.antialias = style.antialias
         self.vertical = style.vertical
         self.font = style.font
-        self.size = layout.scale(style.size)
+        self.size = style.size
         self.bold = style.bold
         self.italic = style.italic
         self.hinting = style.hinting
@@ -223,12 +223,12 @@ class TextSegment(object):
 
     # From here down is the public glyph API.
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -246,7 +246,7 @@ class TextSegment(object):
 
         return rv
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         """
         Draws the glyphs to surf.
         """
@@ -258,7 +258,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -299,7 +299,7 @@ class TextSegment(object):
 
             yield seg, ss
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         """
         Given an x, y, w, h bounding box, returns the union of the given
         bounding box and the bounding box the glyphs will actually be drawn
@@ -309,7 +309,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         return fo.bounds(glyphs, bounds)
 
 class SpaceSegment(object):
@@ -336,13 +336,13 @@ class SpaceSegment(object):
 
         self.cps = ts.cps
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         return [ self.glyph ]
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         return bounds
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         # Does nothing - since there's nothing to draw.
         return
 
@@ -383,10 +383,10 @@ class DisplayableSegment(object):
 
         self.cps = ts.cps
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         return [ self.glyph ]
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         if di.displayable_blits is not None:
             di.displayable_blits.append((self.d, self.glyph.x, self.glyph.y, self.glyph.time))
 
@@ -397,7 +397,7 @@ class DisplayableSegment(object):
         self.glyph.time = gt
         return gt
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         return bounds
 
 class FlagSegment(object):
@@ -406,16 +406,16 @@ class FlagSegment(object):
     of a run of text.
     """
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         return [ ]
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         return
 
     def assign_times(self, gt, glyphs):
         return gt
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         return bounds
 
 class Layout(object):
@@ -532,7 +532,7 @@ class Layout(object):
             seg_glyphs = [ ]
 
             for ts, s in p:
-                glyphs = ts.glyphs(s)
+                glyphs = ts.glyphs(s, self)
 
                 t = (ts, glyphs)
                 seg_glyphs.append(t)
@@ -651,12 +651,11 @@ class Layout(object):
 
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
-        # we have them, grow the b
+        # we have them, grow the bounding box.
 
         bounds = (0, 0, maxx, y)
         for ts, glyphs in par_seg_glyphs:
-            bounds = ts.bounds(glyphs, bounds)
-
+            bounds = ts.bounds(glyphs, bounds, self)
 
         self.add_left = max(-bounds[0], 0)
         self.add_top = max(-bounds[1], 0)
@@ -694,7 +693,7 @@ class Layout(object):
                 if ts is self.end_segment:
                     break
 
-                ts.draw(glyphs, di, self.add_left, self.add_top)
+                ts.draw(glyphs, di, self.add_left, self.add_top, self)
 
 
             renpy.display.draw.mutated_surface(surf)
