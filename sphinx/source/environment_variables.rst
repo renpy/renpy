@@ -17,6 +17,9 @@ The following environment variables control the behavior of Ren'Py:
     This prevents sound playback from occurring. If this variable contains
     "pss", sound playback will be disabled.
 
+``RENPY_DRAWABLE_RESOLUTION_TEXT``
+    If set to 0, Ren'Py will not use draw text at the screen's resolution.
+
 ``RENPY_EDIT_PY``
     The path to an .edit.py file telling Ren'Py how to invoke a text editor.
     See :ref:`text-editor-integration` for more information.
@@ -69,6 +72,11 @@ The following environment variables control the behavior of Ren'Py:
     This can be set to make time run faster or slower. For example, setting
     a timewarp of 0.5 makes things run at half-speed, while a timewarp of
     2.0 makes everything run at twice normal speed.
+
+``RENPY_USE_DRAWABLE_RESOLUTION``
+    If set to 0, Ren'Py will perform certain operations (including dissolve
+    transforms and text rendering) at the game's virtual resolution rather
+    than the screen's native resolution.
 
 ``RENPY_VARIANT``
     This should be set to a space-separated list of screen variants that

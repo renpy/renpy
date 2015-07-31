@@ -440,12 +440,21 @@ class Layout(object):
             will be missing the textures required to render it.
         """
 
-        # How much do we want to oversample the text by?
-        self.oversample = renpy.display.draw.draw_per_virt
 
-        # Matrices to go from oversampled to virtual and vice versa.
-        self.reverse = renpy.display.draw.draw_to_virt
-        self.forward = renpy.display.draw.virt_to_draw
+        if renpy.config.drawable_resolution_text:
+            # How much do we want to oversample the text by, compared to the
+            # virtual resolution.
+            self.oversample = renpy.display.draw.draw_per_virt
+
+            # Matrices to go from oversampled to virtual and vice versa.
+            self.reverse = renpy.display.draw.draw_to_virt
+            self.forward = renpy.display.draw.virt_to_draw
+
+        else:
+
+            self.oversample = 1.0
+            self.reverse = renpy.display.render.IDENTITY
+            self.forward = renpy.display.render.IDENTITY
 
         style = text.style
 

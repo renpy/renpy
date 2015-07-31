@@ -578,9 +578,11 @@ minimum_presplash_time = 0.0
 # Should Ren'Py use nearest-neighbor filtering by default.
 nearest_neighbor = False
 
-# Should rtt occur at the drawable resolution? If false, it occurs at the
-# virtual resolution.
-use_drawable_resolution = True
+# Should Ren'Py use the drawable resolution at all? (For RTT, Text, etc?)
+use_drawable_resolution = bool(int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION", "1")))
+
+# Should text layout occur at drawable resolution?
+drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1")))
 
 del renpy
 del os
