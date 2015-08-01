@@ -838,13 +838,13 @@ class Layout(object):
                 line = [ ]
 
             elif tag == "space":
-                width = int(value)
+                width = self.scale_int(int(value))
                 line.append((SpaceSegment(tss[-1], width=width), u""))
 
             elif tag == "vspace":
                 # Duplicates from the newline tag.
 
-                height = int(value)
+                height = self.scale_int(int(value))
 
                 if line:
                     paragraphs.append(line)
@@ -900,9 +900,9 @@ class Layout(object):
 
             elif tag == "u":
                 if value:
-                    push().underline = int(value)
+                    push().underline = self.scale_int(int(value))
                 else:
-                    push().underline = 1
+                    push().underline = self.scale_int(1)
 
             elif tag == "s":
                 push().strikethrough = True
@@ -931,7 +931,7 @@ class Layout(object):
                 push().color = renpy.easy.color(value)
 
             elif tag == "k":
-                push().kerning = float(value)
+                push().kerning = self.scale(float(value))
 
             elif tag == "rt":
                 ts = push()
