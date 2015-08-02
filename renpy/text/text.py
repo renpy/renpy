@@ -368,9 +368,17 @@ class DisplayableSegment(object):
         self.d = d
         rend = renders[d]
 
-        w, h = rend.get_size()
+        self.width, self.height = rend.get_size()
 
-        self.glyph = glyph = textsupport.Glyph()
+        self.hyperlink = ts.hyperlink
+        self.cps = ts.cps
+
+    def glyphs(self, s, layout):
+
+        glyph = textsupport.Glyph()
+
+        w = layout.scale_int(self.width)
+        h = layout.scale_int(self.height)
 
         glyph.character = 0
         glyph.ascent = 0
@@ -378,23 +386,22 @@ class DisplayableSegment(object):
         glyph.advance = w
         glyph.width = w
 
-        if ts.hyperlink:
-            glyph.hyperlink = ts.hyperlink
+        if self.hyperlink:
+            glyph.hyperlink = self.hyperlink
 
-        self.cps = ts.cps
-
-    def glyphs(self, s, layout):
-        return [ self.glyph ]
+        return [ glyph ]
 
     def draw(self, glyphs, di, xo, yo, layout):
+        glyph = glyphs[0] 
+                
         if di.displayable_blits is not None:
-            di.displayable_blits.append((self.d, self.glyph.x, self.glyph.y, self.glyph.time))
+            di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.time))
 
     def assign_times(self, gt, glyphs):
         if self.cps != 0:
             gt += 1.0 / self.cps
 
-        self.glyph.time = gt
+        glyphs[0].time = gt
         return gt
 
     def bounds(self, glyphs, bounds, layout):
@@ -1455,6 +1462,8 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus:
             return hyperlink_focus(target)
+        rend_w, rend_h = layout.unscale_pair(w, h)
+
 
     def set_style_prefix(self, prefix, root):
         if prefix != self.style.prefix:
@@ -1643,12 +1652,20 @@ class Text(renpy.display.core.Displayable):
                      )
 
         # Blit displayables.
-        for d, xo, yo, t in layout.displayable_blits:
+        if layout.displayable_blits:
+        
+            drend = renpy.display.render.Render(w, h)
+            drend.forward = layout.reverse
+            drend.reverse = layout.forward
+        
+            for d, xo, yo, t in layout.displayable_blits:
+    
+                if self.slow and t > st:
+                    continue
+    
+                drend.subpixel_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
 
-            if self.slow and t > st:
-                continue
-
-            rv.subpixel_blit(renders[d], layout.unscale_pair(xo + layout.xoffset, yo + layout.yoffset))
+            rv.blit(drend, (0, 0))
 
         # Add in the focus areas.
         for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
