@@ -64,7 +64,7 @@ pure_functions = {
     "RevolveInOut", "MultipleTransition", "ComposeTransition", "Pause",
     "SubTransition", "ADVSpeaker", "ADVCharacter", "Speaker", "Character",
     "DynamicCharacter", "Fixed", "HBox", "VBox", "Grid", "AlphaBlend", "At",
-    "color", "NoTransition", "Color",
+    "color", "Color",
 
     # ui.py
 
