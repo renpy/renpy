@@ -179,6 +179,7 @@ RevolveInOut = renpy.curry.curry(renpy.display.movetransition.RevolveInOut)
 MultipleTransition = renpy.curry.curry(renpy.display.transition.MultipleTransition)
 ComposeTransition = renpy.curry.curry(renpy.display.transition.ComposeTransition)
 Pause = renpy.curry.curry(renpy.display.transition.NoTransition)
+NoTransition = renpy.curry.curry(renpy.display.transition.NoTransition)
 SubTransition = renpy.curry.curry(renpy.display.transition.SubTransition)
 # Misc.
 ADVSpeaker = ADVCharacter = renpy.character.ADVCharacter
