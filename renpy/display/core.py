@@ -41,19 +41,17 @@ try:
 except:
     android = None
 
-# Need to be +4, so we don't interfere with FFMPEG's events.
-TIMEEVENT = pygame.USEREVENT
-PERIODIC = pygame.USEREVENT + 1
-JOYEVENT = pygame.USEREVENT + 2
-REDRAW = pygame.USEREVENT + 3
-EVENTNAME = pygame.USEREVENT + 4
+TIMEEVENT = pygame.event.register("TIMEEVENT")
+PERIODIC =  pygame.event.register("PERIODIC")
+JOYEVENT = pygame.event.register("JOYEVENT")
+REDRAW = pygame.event.register("REDRAW")
+EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
 ALL_EVENTS.add(PERIODIC)
 ALL_EVENTS.add(JOYEVENT)
 ALL_EVENTS.add(EVENTNAME)
-
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50

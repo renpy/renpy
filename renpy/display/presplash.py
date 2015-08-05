@@ -40,17 +40,19 @@ keep_running = False
 # The start time.
 start_time = time.time()
 
+PRESPLASHEVENT = pygame_sdl2.event.register("PRESPLASHEVENT")
+
 def run_event_thread():
     """
     Disposes of events while the window is running.
     """
 
-    pygame_sdl2.time.set_timer(pygame_sdl2.USEREVENT, 20)
+    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 20)
 
     while keep_running:
         pygame_sdl2.event.wait()
 
-    pygame_sdl2.time.set_timer(pygame_sdl2.USEREVENT, 0)
+    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 0)
 
 
 def start(basedir, gamedir):
