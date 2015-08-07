@@ -153,12 +153,12 @@ def clear_keymap_cache():
     keyup_cache.clear()
 
 
-def queue_event(name, up=False):
+def queue_event(name, up=False, **kwargs):
     """
     :doc: other
 
     Queues an event with the given name. `Name` should be one of the event
-    names in :var:`config.keymap`.
+    names in :var:`config.keymap`, or a list of such names.
 
     `up`
         This should be false when the event begins (for example, when a keyboard
@@ -176,7 +176,13 @@ def queue_event(name, up=False):
     if not renpy.display.interface:
         return
 
-    ev = pygame.event.Event(renpy.display.core.EVENTNAME, { "eventname" : name, "up" : up })
+    if not isinstance(name, (list, tuple)):
+        name = [ name ]
+
+    data = { "eventnames" : name, "up" : up }
+    data.update(kwargs)
+
+    ev = pygame.event.Event(renpy.display.core.EVENTNAME, data)
     pygame.event.post(ev)
 
 def map_event(ev, keysym):
@@ -194,7 +200,7 @@ def map_event(ev, keysym):
     """
 
     if ev.type == renpy.display.core.EVENTNAME:
-        if ev.eventname == keysym and not ev.up:
+        if (keysym in ev.eventnames) and not ev.up:
             return True
 
         return False
@@ -210,7 +216,7 @@ def map_keyup(ev, name):
     """Returns true if the event matches the named keycode being released."""
 
     if ev.type == renpy.display.core.EVENTNAME:
-        if ev.eventname == name and ev.up:
+        if (name in ev.eventnames) and ev.up:
             return True
 
     check_code = keyup_cache.get(name, None)
