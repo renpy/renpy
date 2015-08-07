@@ -43,14 +43,12 @@ except:
 
 TIMEEVENT = pygame.event.register("TIMEEVENT")
 PERIODIC =  pygame.event.register("PERIODIC")
-JOYEVENT = pygame.event.register("JOYEVENT")
 REDRAW = pygame.event.register("REDRAW")
 EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
 ALL_EVENTS.add(PERIODIC)
-ALL_EVENTS.add(JOYEVENT)
 ALL_EVENTS.add(EVENTNAME)
 
 # The number of msec between periodic events.
@@ -1388,7 +1386,6 @@ class Interface(object):
 
         # pygame.font.init()
         renpy.audio.audio.init()
-        renpy.display.joystick.init()
         pygame.display.init()
 
         # Init timing.
@@ -2899,9 +2896,9 @@ class Interface(object):
                     y = -1
 
                 # This can set the event to None, to ignore it.
-                ev = renpy.display.joystick.event(ev)
-                if not ev:
-                    continue
+#                 ev = renpy.display.joystick.event(ev)
+#                 if not ev:
+#                     continue
 
                 # Handle skipping.
                 renpy.display.behavior.skipping(ev)

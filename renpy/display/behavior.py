@@ -73,17 +73,13 @@ def compile_event(key, keydown):
 
     # Deal with the Joystick.
     if part[0] == "joy":
-        if keydown:
-            return "(ev.type == %d and ev.press and ev.press == renpy.game.preferences.joymap.get(%r, None))" % (renpy.display.core.JOYEVENT, key)
-        else:
-            return "(ev.type == %d and ev.release and ev.release == renpy.game.preferences.joymap.get(%r, None))" % (renpy.display.core.JOYEVENT, key)
+        return "(False)"
 
     # Otherwise, deal with it as a key.
     if keydown:
         rv = "(ev.type == %d" % pygame.KEYDOWN
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
-
 
     MODIFIERS = { "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
     modifiers = set()
