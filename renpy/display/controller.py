@@ -31,7 +31,8 @@ def init():
     Initialize gamepad support.
     """
 
-    # TODO: Make controller support based on a preference set in safe mode.
+    if not renpy.game.preferences.pad_enabled:
+        return
 
     pygame_sdl2.controller.init()
 
@@ -100,7 +101,6 @@ def event(ev):
 
         name = "pad_{}_{}".format(get_string_for_axis(ev.axis), pos)
         ev = make_event(name)
-        print ev
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
 
@@ -111,6 +111,5 @@ def event(ev):
 
         name = "pad_{}_{}".format(get_string_for_button(ev.button), pr)
         ev = make_event(name)
-        print ev
 
     return ev
