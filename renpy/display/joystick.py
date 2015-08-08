@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # This file was responsible for joystick support in Ren'Py, which has
-# been removed.
+# been removed, save for a few compatibility functions.
 
 import renpy.display
 

@@ -1459,7 +1459,9 @@ class Interface(object):
 
         self.safe_mode = get_safe_mode()
         self.set_mode()
-        self.safe_mode = get_safe_mode()
+
+        if not self.safe_mode:
+            self.safe_mode = get_safe_mode()
 
         # Load the image fonts.
         renpy.text.font.load_image_fonts()
@@ -1493,6 +1495,9 @@ class Interface(object):
 
         if android:
             android.wakelock(True)
+
+        if not self.safe_mode:
+            renpy.display.controller.init()
 
 
     def set_icon(self):
@@ -2896,9 +2901,9 @@ class Interface(object):
                     y = -1
 
                 # This can set the event to None, to ignore it.
-#                 ev = renpy.display.joystick.event(ev)
-#                 if not ev:
-#                     continue
+                ev = renpy.display.controller.event(ev)
+                if not ev:
+                    continue
 
                 # Handle skipping.
                 renpy.display.behavior.skipping(ev)

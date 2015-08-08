@@ -353,6 +353,7 @@ def import_all():
     import renpy.display.anim
     import renpy.display.particle
     import renpy.display.joystick
+    import renpy.display.controller
     import renpy.display.minigame
     import renpy.display.screen
     import renpy.display.dragdrop
