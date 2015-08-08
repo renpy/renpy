@@ -50,9 +50,12 @@ def make_event(name):
     """
 
     names = [ name ]
+
+    names.extend(renpy.config.pad_bindings.get(name, ()))
+
     return pygame_sdl2.event.Event(
         renpy.display.core.EVENTNAME,
-        { "eventnames" : names, "joystick" : name })
+        { "eventnames" : names, "controller" : name, "up" : False })
 
 
 def event(ev):
@@ -97,6 +100,7 @@ def event(ev):
 
         name = "pad_{}_{}".format(get_string_for_axis(ev.axis), pos)
         ev = make_event(name)
+        print ev
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
 
@@ -107,6 +111,6 @@ def event(ev):
 
         name = "pad_{}_{}".format(get_string_for_button(ev.button), pr)
         ev = make_event(name)
+        print ev
 
-    print ev
     return ev

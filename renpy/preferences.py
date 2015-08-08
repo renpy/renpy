@@ -21,11 +21,44 @@
 
 import renpy
 
+pad_bindings = {
+    "pad_leftshoulder_press" : [ "rollback", ],
+    "pad_lefttrigger_pos" : [ "rollback", ],
+    "pad_back_press" : [ "rollback", ],
+
+    "pad_guide_press" : [ "game_menu", ],
+    "pad_start_press" : [ "game_menu", ],
+
+    "pad_y_press" : [ "hide_windows", ],
+
+    "pad_rightshoulder_press" : [ "rollforward", ],
+
+    "pad_righttrigger_press" : [ "dismiss", "button_select" ],
+    "pad_a_press" : [ "dismiss", "button_select" ],
+    "pad_b_press" : [ "button_alternate" ],
+
+    "pad_dleft_press" : [ "focus_left", "bar_left" ],
+    "pad_leftx_neg" : [ "focus_left", "bar_left" ],
+    "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+
+    "pad_dpright_press" : [ "focus_right", "bar_right" ],
+    "pad_leftx_pos" : [ "focus_right", "bar_right" ],
+    "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+
+    "pad_dpup_press" : [ "focus_up", "bar_up" ],
+    "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+    "pad_righty_neg" : [ "focus_up", "bar_up" ],
+
+    "pad_dpdown_press" : [ "focus_down", "bar_down" ],
+    "pad_lefty_pos" : [ "focus_down", "bar_down" ],
+    "pad_righty_pos" : [ "focus_down", "bar_down" ],
+}
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 14
+    __version__ = 15
 
     def after_upgrade(self, version):
         if version < 1:
@@ -53,6 +86,8 @@ class Preferences(renpy.object.Object):
             self.self_voicing = False
         if version < 14:
             self.emphasize_audio = False
+        if version < 15:
+            self.pad_enabled = True
 
     def __init__(self):
         self.fullscreen = False
@@ -106,6 +141,10 @@ class Preferences(renpy.object.Object):
 
         # Should we emphasize audio?
         self.emphasize_audio = False
+
+        # Is the gamepad enabled?
+        self.pad_enabled = True
+
 
     def set_volume(self, mixer, volume):
         if volume != 0:
