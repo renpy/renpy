@@ -4,10 +4,12 @@
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
+* :func:`AlphaMask`
 * :func:`AnimatedValue`
 * Animation
 * :func:`At`
 * :func:`Character`
+* :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`

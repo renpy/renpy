@@ -25,48 +25,8 @@ import renpy.display
 import contextlib
 import time
 
-def color(c):
-    """
-    This function returns a color tuple, from a hexcode string or a
-    color tuple.
-    """
-
-    if isinstance(c, tuple) and len(c) == 4:
-        return c
-
-    if c is None:
-        return c
-
-    if isinstance(c, basestring):
-        if c[0] == '#':
-            c = c[1:]
-
-        if len(c) == 6:
-            r = int(c[0]+c[1], 16)
-            g = int(c[2]+c[3], 16)
-            b = int(c[4]+c[5], 16)
-            a = 255
-        elif len(c) == 8:
-            r = int(c[0]+c[1], 16)
-            g = int(c[2]+c[3], 16)
-            b = int(c[4]+c[5], 16)
-            a = int(c[6]+c[7], 16)
-        elif len(c) == 3:
-            r = int(c[0], 16) * 0x11
-            g = int(c[1], 16) * 0x11
-            b = int(c[2], 16) * 0x11
-            a = 255
-        elif len(c) == 4:
-            r = int(c[0], 16) * 0x11
-            g = int(c[1], 16) * 0x11
-            b = int(c[2], 16) * 0x11
-            a = int(c[3], 16) * 0x11
-        else:
-            raise Exception("Color string must be 3, 4, 6, or 8 hex digits long.")
-
-        return (r, g, b, a)
-
-    raise Exception("Not a color: %r" % (c,))
+Color = renpy.color.Color
+color = renpy.color.Color
 
 def displayable_or_none(d):
 
@@ -140,3 +100,40 @@ def timed(name):
     yield
     print "{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0)
 
+def split_properties(properties, *prefixes):
+    """
+    :doc: other
+
+    Splits up `properties` into multiple dictionaries, one per `prefix`. This
+    function checks each key in properties against each prefix, in turn.
+    When a prefix matches, the prefix is stripped from the key, and the
+    resulting key is mapped to the value in the corresponding dictionary.
+
+    If no prefix matches, an exception is thrown. (The empty string, "",
+    can be used as the last prefix to create a catch-all dictionary.)
+
+    For example, this code splits properties beginning with text from
+    those that do not::
+
+        text_properties, button_properties = renpy.split_properties("text_", "")
+    """
+
+    rv = [ ]
+
+    for _i in prefixes:
+        rv.append({})
+
+    if not properties:
+        return rv
+
+    prefix_d = list(zip(prefixes, rv))
+
+    for k, v in properties.iteritems():
+        for prefix, d in prefix_d:
+            if k.startswith(prefix):
+                d[k[len(prefix):]] = v
+                break
+        else:
+            raise Exception("Property {} begins with an unknown prefix.".format(k))
+
+    return rv

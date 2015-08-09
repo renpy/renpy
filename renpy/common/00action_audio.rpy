@@ -159,7 +159,7 @@ init -1500 python:
         :doc: audio_action
 
         Sets the mute status of one or more mixers. When a mixer is muted,
-        audio channels associates with
+        audio channels associated with that mixer will stop playing audio.
 
         `mixer`
             Either a single string giving a mixer name, or a list of strings
@@ -186,7 +186,7 @@ init -1500 python:
 
         def get_selected(self):
             for i in self.mixers:
-                if not _preferences.get_mute(i):
+                if _preferences.get_mute(i) != self.mute:
                     return False
 
             return True

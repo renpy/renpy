@@ -40,7 +40,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 99, 5, vc_version)
+version_tuple = (6, 99, 6, vc_version)
 
 # The name of this version.
 version_name = "Here's to the crazy ones."
@@ -288,6 +288,7 @@ def import_all():
     import renpy.ast
     import renpy.atl
     import renpy.curry
+    import renpy.color
     import renpy.easy
     import renpy.execution
     import renpy.loadsave
@@ -352,6 +353,7 @@ def import_all():
     import renpy.display.anim
     import renpy.display.particle
     import renpy.display.joystick
+    import renpy.display.controller
     import renpy.display.minigame
     import renpy.display.screen
     import renpy.display.dragdrop
@@ -377,6 +379,7 @@ def import_all():
 
     import renpy.sl2.slast
     import renpy.sl2.slparser
+    import renpy.sl2.slproperties
     import renpy.sl2.sldisplayables
 
     import renpy.lint

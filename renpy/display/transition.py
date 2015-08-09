@@ -66,6 +66,7 @@ def null_render(d, width, height, st, at):
 class NoTransition(Transition):
     """
     :doc: transition function
+    :name: Pause
     :args: (delay)
 
     Returns a transition that only displays the new screen for `delay` seconds.
@@ -108,7 +109,7 @@ class MultipleTransition(Transition):
 
         define logodissolve = MultipleTransition([
             False, Dissolve(0.5)
-            "logo.jpg", NoTransition(1.0),
+            "logo.jpg", Pause(1.0),
             "logo.jpg", dissolve,
             True])
 

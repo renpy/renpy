@@ -368,6 +368,21 @@
     with the "window show" statement, which shows an empty window whenever
     this functions has not been called during an interaction.
 
+.. function:: renpy.split_properties(properties, *prefixes)
+    
+    Splits up `properties` into multiple dictionaries, one per `prefix`. This
+    function checks each key in properties against each prefix, in turn.
+    When a prefix matches, the prefix is stripped from the key, and the
+    resulting key is mapped to the value in the corresponding dictionary.
+    
+    If no prefix matches, an exception is thrown. (The empty string, "",
+    can be used as the last prefix to create a catch-all dictionary.)
+    
+    For example, this code splits properties beginning with text from
+    those that do not::
+    
+        text_properties, button_properties = renpy.split_properties("text_", "")
+
 .. function:: renpy.substitute(s, scope=None, translate=True)
     
     Applies translation and new-style formatting to the string `s`.

@@ -327,7 +327,7 @@ init -1500 python:
                 if value is None:
                     return MixerValue(mixer)
                 else:
-                    return SetMixer(mixer, 0)
+                    return SetMixer(mixer, value)
 
             if len(n) == 2 and n[1] == "mute":
                 mixer = mixer_names.get(n[0], n[0])

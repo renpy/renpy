@@ -125,6 +125,8 @@ class Frame(renpy.display.core.Displayable):
 
     __version__ = 1
 
+    properties = { }
+
     def after_upgrade(self, version):
         if version < 2:
             self.left = self.xborder
@@ -173,12 +175,15 @@ class Frame(renpy.display.core.Displayable):
         if self.tile != o.tile:
             return False
 
+        return True
+
     def render(self, width, height, st, at):
 
         width = max(self.style.xminimum, width)
         height = max(self.style.yminimum, height)
 
-        crend = render(self.image, width, height, st, at)
+        image = self.style.child or self.image
+        crend = render(image, width, height, st, at)
 
         sw, sh = crend.get_size()
         sw = int(sw)
@@ -417,8 +422,12 @@ class Frame(renpy.display.core.Displayable):
         return rrv
 
     def visit(self):
-        return [ self.image ]
+        return [ ]
 
+    def predict_one(self):
+        pd = renpy.display.predict.displayable
+        self.style._predict_frame(pd)
+        pd(self.image)
 
 class FileCurrentScreenshot(renpy.display.core.Displayable):
     """

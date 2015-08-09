@@ -578,6 +578,23 @@ minimum_presplash_time = 0.0
 # Should Ren'Py use nearest-neighbor filtering by default.
 nearest_neighbor = False
 
+# Should Ren'Py use the drawable resolution at all? (For RTT, Text, etc?)
+use_drawable_resolution = bool(int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION", "1")))
+
+# Should text layout occur at drawable resolution?
+drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1")))
+
+# Bindings of gamepad buttons.
+pad_bindings = { }
+
+# A list of pygame events that should be enabled in addition to the standard
+# events.
+pygame_events = [ ]
+
+# A list of all of the pygame events Ren'Py cares about. Events not in this list
+# are dropped for performance reasons.
+
+
 del renpy
 del os
 

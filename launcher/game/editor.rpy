@@ -297,7 +297,7 @@ init 1 python in editor:
         if not set_editor:
             return True
 
-        if persistent.editor:
+        if persistent.editor and persistent.editor != "None":
             return True
 
         return renpy.invoke_in_new_context(renpy.call_screen, "editor")

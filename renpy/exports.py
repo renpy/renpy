@@ -71,7 +71,7 @@ from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
-from renpy.easy import predict, displayable
+from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
 
@@ -91,7 +91,7 @@ from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH
 
 from renpy.execution import not_infinite_loop
 
-from renpy.sl2.slparser import CustomParser as register_sl_statement
+from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
@@ -134,7 +134,7 @@ def public_api():
     current_screen, get_screen, get_widget, profile_screen
     focus_coordinates
     predict, predict_screen
-    displayable
+    displayable, split_properties
     unelide_filename, get_parse_errors
     change_language, known_languages
     language_tailor
@@ -151,7 +151,7 @@ def public_api():
     TEXT_PARAGRAPH
     TEXT_DISPLAYABLE
     not_infinite_loop
-    register_sl_statement
+    register_sl_statement, register_sl_displayable
 
 del public_api
 
@@ -2326,7 +2326,7 @@ def call_screen(_screen_name, *args, **kwargs):
     """
     :doc: screens
 
-    The programmatic equivalent of the show screen statement.
+    The programmatic equivalent of the call screen statement.
 
     This shows `_screen_name` as a screen, then causes an interaction
     to occur. The screen is hidden at the end of the interaction, and

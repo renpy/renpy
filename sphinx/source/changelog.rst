@@ -39,7 +39,7 @@ been used to get multiple games accepted.
 
 Renios has been upgraded to use SDL 2.0.4 rc1. This improves compatibility
 with iOS 8, and makes it possible to keep the launchscreen displayed until
-Ren'Py fully stars. As a result, support for the ios-presplash image is no
+Ren'Py fully starts. As a result, support for the ios-presplash image is no
 longer necessary, and has been dropped.
 
 
@@ -69,13 +69,16 @@ a screen for prediction purposes.
 The new :func:`renpy.return_statement` function is a python equivalent to
 the Ren'Py return statement.
 
-The new `_dismiss_pause` and `_skipping` variables make it possible to
+The new :var:`_dismiss_pause` and :var:`_skipping` variables make it possible to
 control pauses and skipping on a line-by-line basis.
 
 Canvas objects (returned by the Render.canvas() method) now have a
 get_surface() method that returns a pygame_sdl2 Surface that is in a format
 that can be used by Ren'Py. This surface can be manipulated by Pygame
 drawing operations.
+
+The new :func:`_get_voice_info()` function returns an object that contains information
+about the voicing associated with the currently-running say statement.
 
 
 Ren'Py 6.99.4

@@ -1939,6 +1939,9 @@ class Flatten(Container):
         rv.blit(tex, (0, 0))
         rv.depends_on(cr, focus=True)
 
+        rv.reverse = renpy.display.draw.draw_to_virt
+        rv.forward = renpy.display.render.IDENTITY
+
         self.offsets = [ (0, 0) ]
 
         return rv

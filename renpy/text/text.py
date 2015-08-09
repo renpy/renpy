@@ -188,9 +188,9 @@ class TextSegment(object):
     def __repr__(self):
         return "<TextSegment font={font}, size={size}, bold={bold}, italic={italic}, underline={underline}, color={color}, black_color={black_color}, hyperlink={hyperlink}, vertical={vertical}>".format(**self.__dict__)
 
-    def take_style(self, style):
+    def take_style(self, style, layout):
         """
-        Takes the style of this text segement from the named style object.
+        Takes the style of this text segment from the named style object.
         """
 
         self.antialias = style.antialias
@@ -204,17 +204,17 @@ class TextSegment(object):
         underline = style.underline
 
         if isinstance(underline, int):
-            self.underline = underline
+            self.underline = layout.scale_int(underline)
         elif style.underline:
             self.underline = 1
         else:
             self.underline = 0
 
-        self.strikethrough = style.strikethrough
+        self.strikethrough = layout.scale_int(style.strikethrough)
         self.color = style.color
         self.black_color = style.black_color
         self.hyperlink = None
-        self.kerning = style.kerning
+        self.kerning = layout.scale(style.kerning)
 
         if style.slow_cps is True:
             self.cps = renpy.game.preferences.text_cps
@@ -223,12 +223,12 @@ class TextSegment(object):
 
     # From here down is the public glyph API.
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         """
         Return the list of glyphs corresponding to unicode string s.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         rv = fo.glyphs(s)
 
         # Apply kerning to the glyphs.
@@ -246,7 +246,7 @@ class TextSegment(object):
 
         return rv
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         """
         Draws the glyphs to surf.
         """
@@ -258,7 +258,7 @@ class TextSegment(object):
             color = self.color
             black_color = self.black_color
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, di.outline, self.antialias, self.vertical, self.hinting, layout.oversample)
         fo.draw(di.surface, xo, yo, color, glyphs, self.underline, self.strikethrough, black_color)
 
     def assign_times(self, gt, glyphs):
@@ -299,7 +299,7 @@ class TextSegment(object):
 
             yield seg, ss
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         """
         Given an x, y, w, h bounding box, returns the union of the given
         bounding box and the bounding box the glyphs will actually be drawn
@@ -309,7 +309,7 @@ class TextSegment(object):
         origin point.
         """
 
-        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting)
+        fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         return fo.bounds(glyphs, bounds)
 
 class SpaceSegment(object):
@@ -336,13 +336,13 @@ class SpaceSegment(object):
 
         self.cps = ts.cps
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         return [ self.glyph ]
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         return bounds
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         # Does nothing - since there's nothing to draw.
         return
 
@@ -368,9 +368,17 @@ class DisplayableSegment(object):
         self.d = d
         rend = renders[d]
 
-        w, h = rend.get_size()
+        self.width, self.height = rend.get_size()
 
-        self.glyph = glyph = textsupport.Glyph()
+        self.hyperlink = ts.hyperlink
+        self.cps = ts.cps
+
+    def glyphs(self, s, layout):
+
+        glyph = textsupport.Glyph()
+
+        w = layout.scale_int(self.width)
+        h = layout.scale_int(self.height)
 
         glyph.character = 0
         glyph.ascent = 0
@@ -378,26 +386,25 @@ class DisplayableSegment(object):
         glyph.advance = w
         glyph.width = w
 
-        if ts.hyperlink:
-            glyph.hyperlink = ts.hyperlink
+        if self.hyperlink:
+            glyph.hyperlink = self.hyperlink
 
-        self.cps = ts.cps
+        return [ glyph ]
 
-    def glyphs(self, s):
-        return [ self.glyph ]
-
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
+        glyph = glyphs[0] 
+                
         if di.displayable_blits is not None:
-            di.displayable_blits.append((self.d, self.glyph.x, self.glyph.y, self.glyph.time))
+            di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.time))
 
     def assign_times(self, gt, glyphs):
         if self.cps != 0:
             gt += 1.0 / self.cps
 
-        self.glyph.time = gt
+        glyphs[0].time = gt
         return gt
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         return bounds
 
 class FlagSegment(object):
@@ -406,16 +413,16 @@ class FlagSegment(object):
     of a run of text.
     """
 
-    def glyphs(self, s):
+    def glyphs(self, s, layout):
         return [ ]
 
-    def draw(self, glyphs, di, xo, yo):
+    def draw(self, glyphs, di, xo, yo, layout):
         return
 
     def assign_times(self, gt, glyphs):
         return gt
 
-    def bounds(self, glyphs, bounds):
+    def bounds(self, glyphs, bounds, layout):
         return bounds
 
 class Layout(object):
@@ -440,9 +447,25 @@ class Layout(object):
             will be missing the textures required to render it.
         """
 
+
+        if renpy.config.drawable_resolution_text:
+            # How much do we want to oversample the text by, compared to the
+            # virtual resolution.
+            self.oversample = renpy.display.draw.draw_per_virt
+
+            # Matrices to go from oversampled to virtual and vice versa.
+            self.reverse = renpy.display.draw.draw_to_virt
+            self.forward = renpy.display.draw.virt_to_draw
+
+        else:
+
+            self.oversample = 1.0
+            self.reverse = renpy.display.render.IDENTITY
+            self.forward = renpy.display.render.IDENTITY
+
         style = text.style
 
-        self.line_overlap_split = style.line_overlap_split
+        self.line_overlap_split = self.scale_int(style.line_overlap_split)
 
         # Do we have any hyperlinks in this text? Set by segment.
         self.has_hyperlinks = False
@@ -455,6 +478,9 @@ class Layout(object):
         # at all. These are controlled by the {_start} and {_end} tags.
         self.start_segment = None
         self.end_segment = None
+
+        width = self.scale_int(width)
+        height = self.scale_int(height)
 
         self.width = width
         self.height = height
@@ -500,8 +526,8 @@ class Layout(object):
         # and so needs to be redone when the style of the text changes.
         self.paragraphs = self.segment(text.tokens, style, renders)
 
-        first_indent = style.first_indent
-        rest_indent = style.rest_indent
+        first_indent = self.scale_int(style.first_indent)
+        rest_indent = self.scale_int(style.rest_indent)
 
         for p in self.paragraphs:
 
@@ -522,7 +548,7 @@ class Layout(object):
             seg_glyphs = [ ]
 
             for ts, s in p:
-                glyphs = ts.glyphs(s)
+                glyphs = ts.glyphs(s, self)
 
                 t = (ts, glyphs)
                 seg_glyphs.append(t)
@@ -600,23 +626,26 @@ class Layout(object):
 
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph.
-            l, y = textsupport.place_vertical(line_glyphs, y, style.line_spacing, style.line_leading)
+            l, y = textsupport.place_vertical(line_glyphs, y, self.scale_int(style.line_spacing), self.scale_int(style.line_leading))
             lines.extend(l)
 
             # Figure out the indent of the next paragraph.
             if not style.newline_indent:
                 first_indent = rest_indent
 
+        line_spacing = self.scale_int(style.line_spacing)
+
         if style.line_spacing < 0:
             if renpy.config.broken_line_spacing:
-                y += -style.line_spacing * len(lines)
+                y += -line_spacing * len(lines)
             else:
-                y += -style.line_spacing
+                y += -line_spacing
 
             lines[-1].height = y - lines[-1].y
 
-        if style.min_width > maxx + self.xborder:
-            maxx = style.min_width - self.xborder
+        min_width = self.scale_int(style.min_width)
+        if min_width > maxx + self.xborder:
+            maxx = min_width - self.xborder
 
         maxx = math.ceil(maxx)
 
@@ -634,16 +663,15 @@ class Layout(object):
 
         # Place ruby.
         if self.has_ruby:
-            textsupport.place_ruby(all_glyphs, style.ruby_style.yoffset, sw, sh)
+            textsupport.place_ruby(all_glyphs, self.scale_int(style.ruby_style.yoffset), sw, sh)
 
         # Check for glyphs that are being drawn out of bounds, because the font
         # or anti-aliasing or whatever makes them bigger than the bounding box. If
-        # we have them, grow the b
+        # we have them, grow the bounding box.
 
         bounds = (0, 0, maxx, y)
         for ts, glyphs in par_seg_glyphs:
-            bounds = ts.bounds(glyphs, bounds)
-
+            bounds = ts.bounds(glyphs, bounds, self)
 
         self.add_left = max(-bounds[0], 0)
         self.add_top = max(-bounds[1], 0)
@@ -681,7 +709,7 @@ class Layout(object):
                 if ts is self.end_segment:
                     break
 
-                ts.draw(glyphs, di, self.add_left, self.add_top)
+                ts.draw(glyphs, di, self.add_left, self.add_top, self)
 
 
             renpy.display.draw.mutated_surface(surf)
@@ -714,6 +742,21 @@ class Layout(object):
                 renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
                 renpy.display.to_log.write("     Text: %r", text.text)
 
+    def scale_int(self, n):
+        if n is None:
+            return n
+
+        return int(round(n * self.oversample))
+
+    def scale(self, n):
+        if n is None:
+            return n
+
+        return n * self.oversample
+
+    def unscale_pair(self, x, y):
+        return x / self.oversample, y / self.oversample
+
     def segment(self, tokens, style, renders):
         """
         Breaks the text up into segments. This creates a list of paragraphs,
@@ -734,7 +777,7 @@ class Layout(object):
         if ts.cps is None or ts.cps is True:
             ts.cps = renpy.game.preferences.text_cps
 
-        ts.take_style(style)
+        ts.take_style(style, self)
 
         # The text segement stack.
         tss = [ ts ]
@@ -802,13 +845,13 @@ class Layout(object):
                 line = [ ]
 
             elif tag == "space":
-                width = int(value)
+                width = self.scale_int(int(value))
                 line.append((SpaceSegment(tss[-1], width=width), u""))
 
             elif tag == "vspace":
                 # Duplicates from the newline tag.
 
-                height = int(value)
+                height = self.scale_int(int(value))
 
                 if line:
                     paragraphs.append(line)
@@ -850,7 +893,7 @@ class Layout(object):
                 ts = push()
                 # inherit vertical style
                 vert_style = ts.vertical
-                ts.take_style(hls)
+                ts.take_style(hls, self)
                 ts.vertical = vert_style
                 ts.hyperlink = link
 
@@ -864,9 +907,9 @@ class Layout(object):
 
             elif tag == "u":
                 if value:
-                    push().underline = int(value)
+                    push().underline = self.scale_int(int(value))
                 else:
-                    push().underline = 1
+                    push().underline = self.scale_int(1)
 
             elif tag == "s":
                 push().strikethrough = True
@@ -880,7 +923,7 @@ class Layout(object):
 
             elif tag == "":
                 style = getattr(renpy.store.style, value)
-                push().take_style(style)
+                push().take_style(style, self)
 
             elif tag == "font":
                 push().font = value
@@ -895,13 +938,13 @@ class Layout(object):
                 push().color = renpy.easy.color(value)
 
             elif tag == "k":
-                push().kerning = float(value)
+                push().kerning = self.scale(float(value))
 
             elif tag == "rt":
                 ts = push()
                 # inherit vertical style
                 vert_style = ts.vertical
-                ts.take_style(style.ruby_style)
+                ts.take_style(style.ruby_style, self)
                 ts.vertical = vert_style
                 ts.ruby_top = True
                 self.has_ruby = True
@@ -981,9 +1024,11 @@ class Layout(object):
                 dslist = [ dslist ]
 
             for dsx, dsy in dslist:
-                outlines.append((0, style.drop_shadow_color, dsx, dsy))
+                outlines.append((0, style.drop_shadow_color, self.scale_int(dsx), self.scale_int(dsy)))
 
-        outlines.extend(style_outlines)
+
+        for size, color, xo, yo in style_outlines:
+            outlines.append((self.scale_int(size), color, self.scale_int(xo), self.scale_int(yo)))
 
         # The outline borders we reserve.
         left = 0
@@ -1417,6 +1462,8 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus:
             return hyperlink_focus(target)
+        rend_w, rend_h = layout.unscale_pair(w, h)
+
 
     def set_style_prefix(self, prefix, root):
         if prefix != self.style.prefix:
@@ -1496,7 +1543,7 @@ class Text(renpy.display.core.Displayable):
 
         layout = Layout(self, width, height, renders, size_only=True)
 
-        return layout.size
+        return layout.unscale(layout.size)
 
     def render(self, width, height, st, at):
 
@@ -1543,7 +1590,7 @@ class Text(renpy.display.core.Displayable):
             redraw = layout.redraw_typewriter(st)
 
         # Blit text layers.
-        rv = renpy.display.render.Render(w, h)
+        rv = renpy.display.render.Render(*layout.unscale_pair(w, h))
 
         for o, color, xo, yo in layout.outlines:
             tex = layout.textures[o, color]
@@ -1598,19 +1645,27 @@ class Text(renpy.display.core.Displayable):
 
 
                 # Blit.
-                rv.blit(
+                rv.subpixel_blit(
                     tex.subsurface((b_x, b_y, b_w, b_h)),
-                    (b_x + xo + layout.xoffset - o - layout.add_left,
+                    layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
                      b_y + yo + layout.yoffset - o - layout.add_top)
                      )
 
         # Blit displayables.
-        for d, xo, yo, t in layout.displayable_blits:
+        if layout.displayable_blits:
+        
+            drend = renpy.display.render.Render(w, h)
+            drend.forward = layout.reverse
+            drend.reverse = layout.forward
+        
+            for d, xo, yo, t in layout.displayable_blits:
+    
+                if self.slow and t > st:
+                    continue
+    
+                drend.subpixel_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
 
-            if self.slow and t > st:
-                continue
-
-            rv.blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
+            rv.blit(drend, (0, 0))
 
         # Add in the focus areas.
         for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
@@ -1622,6 +1677,9 @@ class Text(renpy.display.core.Displayable):
                 renpy.display.render.redraw(self, redraw)
             else:
                 self.call_slow_done(st)
+
+        rv.forward = layout.forward
+        rv.reverse = layout.reverse
 
         if self.style.vertical:
             vrv = renpy.display.render.Render(rv.height, rv.width)

@@ -13,6 +13,7 @@
 * :class:`BarValue`
 * Button
 * :func:`Character`
+* :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`
@@ -157,6 +158,7 @@
 * :func:`VBox`
 * :func:`VariableValue`
 * Viewport
+* VoiceInfo
 * :func:`VoiceReplay`
 * Window
 * :func:`With`
@@ -193,6 +195,7 @@
 * hyperlink_function
 * hyperlink_styler
 * iap
+* icon
 * im
 * :var:`irisin`
 * irisout

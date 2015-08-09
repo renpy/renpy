@@ -41,19 +41,52 @@ try:
 except:
     android = None
 
-# Need to be +4, so we don't interfere with FFMPEG's events.
-TIMEEVENT = pygame.USEREVENT
-PERIODIC = pygame.USEREVENT + 1
-JOYEVENT = pygame.USEREVENT + 2
-REDRAW = pygame.USEREVENT + 3
-EVENTNAME = pygame.USEREVENT + 4
+TIMEEVENT = pygame.event.register("TIMEEVENT")
+PERIODIC =  pygame.event.register("PERIODIC")
+REDRAW = pygame.event.register("REDRAW")
+EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
 ALL_EVENTS.add(PERIODIC)
-ALL_EVENTS.add(JOYEVENT)
 ALL_EVENTS.add(EVENTNAME)
 
+enabled_events = {
+    pygame.QUIT,
+    
+    pygame.APP_TERMINATING,
+    pygame.APP_LOWMEMORY,
+    pygame.APP_WILLENTERBACKGROUND,
+    pygame.APP_DIDENTERBACKGROUND,
+    pygame.APP_WILLENTERFOREGROUND,
+    pygame.APP_DIDENTERFOREGROUND,
+    
+    pygame.WINDOWEVENT,
+    pygame.SYSWMEVENT,
+    
+    pygame.KEYDOWN,
+    pygame.KEYUP,
+    
+    pygame.TEXTEDITING,
+    pygame.TEXTINPUT,
+    
+    pygame.MOUSEMOTION,
+    pygame.MOUSEBUTTONDOWN,
+    pygame.MOUSEBUTTONUP,
+    
+    pygame.CONTROLLERAXISMOTION,
+    pygame.CONTROLLERBUTTONDOWN,
+    pygame.CONTROLLERBUTTONUP,
+    pygame.CONTROLLERDEVICEADDED,
+    pygame.CONTROLLERDEVICEREMOVED,
+    
+    pygame.RENDER_TARGETS_RESET,
+
+    TIMEEVENT,
+    PERIODIC,
+    REDRAW,
+    EVENTNAME,
+    }
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
@@ -1390,7 +1423,6 @@ class Interface(object):
 
         # pygame.font.init()
         renpy.audio.audio.init()
-        renpy.display.joystick.init()
         pygame.display.init()
 
         # Init timing.
@@ -1464,7 +1496,9 @@ class Interface(object):
 
         self.safe_mode = get_safe_mode()
         self.set_mode()
-        self.safe_mode = get_safe_mode()
+
+        if not self.safe_mode:
+            self.safe_mode = get_safe_mode()
 
         # Load the image fonts.
         renpy.text.font.load_image_fonts()
@@ -1499,6 +1533,21 @@ class Interface(object):
         if android:
             android.wakelock(True)
 
+        if not self.safe_mode:
+            renpy.display.controller.init()
+
+        # Block events we don't use.
+        for i in pygame.event.get_standard_events():
+
+            if i in enabled_events:
+                continue
+            
+            if i in renpy.config.pygame_events:
+                continue
+            
+            pygame.event.set_blocked(i)
+        
+            
 
     def set_icon(self):
         """
@@ -1864,7 +1913,7 @@ class Interface(object):
                                  mouse='with',
                                  clear=clear)
 
-    def with_none(self):
+    def with_none(self, overlay=True):
         """
         Implements the with None command, which sets the scene we will
         be transitioning from.
@@ -1876,7 +1925,8 @@ class Interface(object):
         self.show_window()
 
         # Compute the overlay.
-        self.compute_overlay()
+        if overlay:
+            self.compute_overlay()
 
         scene_lists = renpy.game.context().scene_lists
 
@@ -2900,7 +2950,7 @@ class Interface(object):
                     y = -1
 
                 # This can set the event to None, to ignore it.
-                ev = renpy.display.joystick.event(ev)
+                ev = renpy.display.controller.event(ev)
                 if not ev:
                     continue
 

@@ -58,7 +58,6 @@ cdef extern from "eglsupport.h":
     void egl_swap()
     void egl_quit()
 
-
 # EGL is a flag we check to see if we have EGL on this platform.
 cdef bint EGL
 EGL = egl_available()
@@ -71,6 +70,8 @@ PIXELLATE = renpy.display.render.PIXELLATE
 
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
+
+FAKE_HIGHDPI = int(os.environ.get("RENPY_FAKE_HIGHDPI", "1"))
 
 cdef class GLDraw:
 
@@ -126,9 +127,6 @@ cdef class GLDraw:
 
         # The display info, from pygame.
         self.display_info = None
-
-        # The amount we're upscaling by.
-        self.upscale_factor = 1.0
 
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
@@ -226,7 +224,7 @@ cdef class GLDraw:
             pheight = 0
 
         elif renpy.ios:
-            opengl = pygame.OPENGL
+            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
             resizable = pygame.RESIZABLE
 
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
@@ -236,7 +234,7 @@ cdef class GLDraw:
             pheight = 0
 
         else:
-            opengl = pygame.OPENGL
+            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
 
             if renpy.config.gl_resize:
                 resizable = pygame.RESIZABLE
@@ -253,7 +251,7 @@ cdef class GLDraw:
                 self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
             else:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((pwidth * FAKE_HIGHDPI, pheight * FAKE_HIGHDPI), resizable | opengl | pygame.DOUBLEBUF)
 
         except pygame.error, e:
             renpy.display.log.write("Could not get pygame screen: %r", e)
@@ -273,10 +271,14 @@ cdef class GLDraw:
 
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
+
+        pwidth /= FAKE_HIGHDPI
+        pheight /= FAKE_HIGHDPI
+
         self.physical_size = (pwidth, pheight)
+        self.drawable_size = pygame.display.get_drawable_size()
 
-        renpy.display.log.write("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
-
+        renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
 
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
@@ -316,6 +318,15 @@ cdef class GLDraw:
             pwidth - int(px_padding),
             pheight - int(py_padding),
             )
+
+        # Scale from the rtt size to the virtual size.
+        if renpy.config.use_drawable_resolution:
+            self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
+        else:
+            self.draw_per_virt = 1.0
+
+        self.virt_to_draw = render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
 
         if not self.did_init:
             if not self.init():
@@ -667,13 +678,16 @@ cdef class GLDraw:
         Draws the screen.
         """
 
-        forward = reverse = IDENTITY
+        reverse = IDENTITY
 
         surftree.is_opaque()
 
         self.draw_render_textures(surftree, 0)
 
-        self.environ.viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
+        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
+        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
+
+        self.environ.viewport(xmul * self.physical_box[0], ymul * self.physical_box[1], xmul * self.physical_box[2], ymul * self.physical_box[3])
         self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
 
         self.clip_mode_screen()
@@ -683,8 +697,6 @@ cdef class GLDraw:
 
         self.default_clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
         clip = self.default_clip
-
-        self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
@@ -827,11 +839,12 @@ cdef class GLDraw:
                     rend.children[1][0].render_to_texture(what.operation_alpha),
                     xo,
                     yo,
-                    reverse,
+                    reverse * self.draw_to_virt,
                     alpha,
                     over,
                     rend.operation_complete,
-                    self.environ)
+                    self.environ,
+                    nearest)
 
             return 0
 
@@ -845,12 +858,13 @@ cdef class GLDraw:
                 rend.children[2][0].render_to_texture(what.operation_alpha),
                 xo,
                 yo,
-                reverse,
+                reverse * self.draw_to_virt,
                 alpha,
                 over,
                 rend.operation_complete,
                 rend.operation_parameter,
-                self.environ)
+                self.environ,
+                nearest)
 
             return 0
 
@@ -925,11 +939,10 @@ cdef class GLDraw:
 
         return 0
 
-    def render_to_texture(self_, what, alpha):
+    def render_to_texture(self, what, alpha):
 
-        cdef GLDraw self = self_
-
-        forward = reverse = IDENTITY
+        width = int(what.width * self.draw_per_virt)
+        height = int(what.height * self.draw_per_virt)
 
         def draw_func(x, y, w, h):
 
@@ -942,17 +955,15 @@ cdef class GLDraw:
 
             glClear(GL_COLOR_BUFFER_BIT)
 
-            self.default_clip = (0, 0, what.width, what.height)
+            self.default_clip = (0, 0, width, height)
             clip = self.default_clip
 
-            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor)
 
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        self.upscale_factor = 1.0
-
-        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt, self.environ)
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         return rv
 
@@ -977,7 +988,7 @@ cdef class GLDraw:
 
         what = what.subsurface((x, y, 1, 1))
 
-        forward = reverse = IDENTITY
+        reverse = IDENTITY
 
         self.environ.viewport(0, 0, 1, 1)
         glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -1015,7 +1026,6 @@ cdef class GLDraw:
             return what.half_cache
 
         reverse = renpy.display.render.Matrix2D(0.5, 0, 0, .5)
-        forward = renpy.display.render.Matrix2D(2.0, 0, 0, 2.0)
 
         width = max(what.width / 2, 1)
         height = max(what.height / 2, 1)
@@ -1044,6 +1054,9 @@ cdef class GLDraw:
         """
         Translates (x, y) from physical to virtual coordinates.
         """
+
+        x /= FAKE_HIGHDPI
+        y /= FAKE_HIGHDPI
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1130,7 +1143,10 @@ cdef class GLDraw:
         pw, ph = self.physical_size
         pbx, pby, pbw, pbh = self.physical_box
 
-        self.environ.viewport(0, 0, pw, ph)
+        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
+        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
+
+        self.environ.viewport(0, 0, xmul * pw, ymul * ph)
         self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
@@ -1155,7 +1171,7 @@ cdef class GLDraw:
         cdef int x, y, pitch
 
         # A surface the size of the framebuffer.
-        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        full = renpy.display.pgrender.surface_unscaled(self.drawable_size, False)
         surf = PySurface_AsSurface(full)
 
         # Create an array that can hold densely-packed pixels.
@@ -1190,8 +1206,12 @@ cdef class GLDraw:
 
         free(raw_pixels)
 
+        px, py, pw, ph = self.physical_box
+        xmul = self.drawable_size[0] / self.physical_size[0]
+        ymul = self.drawable_size[1] / self.physical_size[1]
+
         # Crop and flip it, since it's upside down.
-        rv = full.subsurface(self.physical_box)
+        rv = full.subsurface((px * xmul, py * ymul, pw * xmul, ph * ymul))
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
 
         return rv

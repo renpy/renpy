@@ -147,6 +147,8 @@ novel kinds of value a style property can expect.
 
     * ``(0, 0, 255, 255)`` represents an opaque blue color.
 
+    Finally, colors can be an instance of :class:`Color`.
+
 List of All Style Properties
 ============================
 

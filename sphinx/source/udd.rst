@@ -211,7 +211,7 @@ class, we'll present them with the `self` parameter.
 renpy.Render
 ============
 
-creator-defined displayables work with renpy.Render objects. Render
+Creator-defined displayables work with renpy.Render objects. Render
 objects are returned by calling the :func:`renpy.render` function on a
 displayable. A creator-defined displayable should create a Render object
 by calling :class:`renpy.Render` from its render method.
@@ -283,6 +283,13 @@ the implicit `self` parameter.
 
         `rect`
             A (x, y, width, height) tuple.
+
+    .. method:: zoom(xzoom, yzoom)
+
+        Sets the zoom level of the children of this displayable in the
+        horitzontal and vertical axes. Only the children of the displayable
+        are zoomed - the width, height, and blit coordinates are not zoomed.
+
 
 
 Utility Functions

@@ -289,9 +289,7 @@ init python:
         build.classify_renpy(pattern + "/**.pyo", binary)
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
-        build.classify_renpy(pattern + "/game/cache/*", binary)
-
-        build.classify_renpy(pattern + "**/.rpyb", None)
+        build.classify_renpy(pattern + "/**/cache/*", binary)
 
         build.classify_renpy(pattern + "/**", source)
 
@@ -301,7 +299,7 @@ init python:
     # games.
     build.classify_renpy("launcher/game/theme/", None)
     source_and_binary("launcher")
-    source_and_binary("templates/*", binary=None)
+    source_and_binary("templates", binary=None)
     source_and_binary("the_question")
     source_and_binary("tutorial")
 

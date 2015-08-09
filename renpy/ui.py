@@ -917,14 +917,7 @@ imagebutton = Wrapper(_imagebutton, style="image_button")
 
 def _textbutton(label, clicked=None, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
-    button_kwargs = { }
-    text_kwargs = { }
-
-    for k, v in kwargs.iteritems():
-        if k.startswith("text_"):
-            text_kwargs[k[5:]] = v
-        else:
-            button_kwargs[k] = v
+    text_kwargs, button_kwargs = renpy.easy.split_properties(kwargs, "text_", "")
 
     # Deal with potentially bad keyword arguments. (We'd get these if the user
     # writes text_align instead of text_text_align.)
@@ -950,14 +943,7 @@ textbutton = Wrapper(_textbutton)
 
 def _label(label, style=None, text_style=None, substitute=True, scope=None, **kwargs):
 
-    label_kwargs = { }
-    text_kwargs = { }
-
-    for k, v in kwargs.iteritems():
-        if k.startswith("text_"):
-            text_kwargs[k[5:]] = v
-        else:
-            label_kwargs[k] = v
+    text_kwargs, label_kwargs = renpy.easy.split_properties(kwargs, "text_", "")
 
     if style is None:
         style = style_group_style('label', NoStyleGroupGiven)

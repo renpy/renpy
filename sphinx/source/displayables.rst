@@ -19,7 +19,7 @@ four things that can be provided:
 * A string with a dot (.) in it. Such a string is interpreted as
   a filename by :func:`Image`.
 * A color. A color may either be given as a hexadecimal color string in "#rgb",
-  "#rgba", "#rrggbb", or "#rrggbbaa" form, or an (r, g, b, a) tuple,
+  "#rgba", "#rrggbb", or "#rrggbbaa" form, a :class:`Color`, or an (r, g, b, a) tuple,
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an

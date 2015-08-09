@@ -226,14 +226,14 @@ init python:
         choose_renderer = [ 'G' ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT' ],
+        focus_right = [ 'K_RIGHT' ],
+        focus_up = [ 'K_UP' ],
+        focus_down = [ 'K_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
 
         # Viewport.
         viewport_up = [ 'mousedown_4' ],
@@ -242,12 +242,44 @@ init python:
         viewport_drag_end = [ 'mouseup_1' ],
 
         # These control the bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_decrease = [ 'K_LEFT', 'joy_left' ],
-        bar_increase = [ 'K_RIGHT', 'joy_right' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+        bar_decrease = [ 'K_LEFT' ],
+        bar_increase = [ 'K_RIGHT' ],
         )
 
+    config.pad_bindings = {
+        "pad_leftshoulder_press" : [ "rollback", ],
+        "pad_lefttrigger_pos" : [ "rollback", ],
+        "pad_back_press" : [ "rollback", ],
+
+        "pad_guide_press" : [ "game_menu", ],
+        "pad_start_press" : [ "game_menu", ],
+
+        "pad_y_press" : [ "hide_windows", ],
+
+        "pad_rightshoulder_press" : [ "rollforward", ],
+
+        "pad_righttrigger_pos" : [ "dismiss", "button_select" ],
+        "pad_a_press" : [ "dismiss", "button_select" ],
+        "pad_b_press" : [ "button_alternate" ],
+
+        "pad_dleft_press" : [ "focus_left", "bar_left" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+
+        "pad_dpright_press" : [ "focus_right", "bar_right" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+
+        "pad_dpup_press" : [ "focus_up", "bar_up" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+
+        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+    }
 
 # Early hyperlink support.
 init python hide:

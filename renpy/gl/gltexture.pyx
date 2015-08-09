@@ -961,7 +961,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
 
         y += texh
 
-cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, Environ environ):
+cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, Environ environ, bint nearest):
     """
     Blends two textures to the screen.
 
@@ -979,8 +979,8 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
     `fraction` is the fraction of the second texture to show.
     """
 
-    tg0.make_ready(False)
-    tg1.make_ready(False)
+    tg0.make_ready(nearest)
+    tg1.make_ready(nearest)
 
     environ.blend(fraction)
     environ.set_color(alpha, alpha, alpha, over * alpha)
@@ -1018,7 +1018,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
         y += t0h
 
 
-cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, int ramp, Environ environ):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, int ramp, Environ environ, bint nearest):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -1041,9 +1041,9 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
 
     """
 
-    tg0.make_ready(False)
-    tg1.make_ready(False)
-    tg2.make_ready(False)
+    tg0.make_ready(nearest)
+    tg1.make_ready(nearest)
+    tg2.make_ready(nearest)
 
     environ.imageblend(fraction, ramp)
     environ.set_color(alpha, alpha, alpha, over * alpha)

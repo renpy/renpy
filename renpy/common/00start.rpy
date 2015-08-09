@@ -161,7 +161,7 @@ label _start:
         scene
 
     if not _restart:
-        with None
+        $ renpy.display.interface.with_none(overlay=False)
 
     $ renpy.block_rollback()
 
