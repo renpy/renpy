@@ -51,6 +51,43 @@ ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
 ALL_EVENTS.add(PERIODIC)
 ALL_EVENTS.add(EVENTNAME)
 
+enabled_events = {
+    pygame.QUIT,
+    
+    pygame.APP_TERMINATING,
+    pygame.APP_LOWMEMORY,
+    pygame.APP_WILLENTERBACKGROUND,
+    pygame.APP_DIDENTERBACKGROUND,
+    pygame.APP_WILLENTERFOREGROUND,
+    pygame.APP_DIDENTERFOREGROUND,
+    
+    pygame.WINDOWEVENT,
+    pygame.SYSWMEVENT,
+    
+    pygame.KEYDOWN,
+    pygame.KEYUP,
+    
+    pygame.TEXTEDITING,
+    pygame.TEXTINPUT,
+    
+    pygame.MOUSEMOTION,
+    pygame.MOUSEBUTTONDOWN,
+    pygame.MOUSEBUTTONUP,
+    
+    pygame.CONTROLLERAXISMOTION,
+    pygame.CONTROLLERBUTTONDOWN,
+    pygame.CONTROLLERBUTTONUP,
+    pygame.CONTROLLERDEVICEADDED,
+    pygame.CONTROLLERDEVICEREMOVED,
+    
+    pygame.RENDER_TARGETS_RESET,
+
+    TIMEEVENT,
+    PERIODIC,
+    REDRAW,
+    EVENTNAME,
+    }
+
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
@@ -1499,6 +1536,18 @@ class Interface(object):
         if not self.safe_mode:
             renpy.display.controller.init()
 
+        # Block events we don't use.
+        for i in pygame.event.get_standard_events():
+
+            if i in enabled_events:
+                continue
+            
+            if i in renpy.config.pygame_events:
+                continue
+            
+            pygame.event.set_blocked(i)
+        
+            
 
     def set_icon(self):
         """

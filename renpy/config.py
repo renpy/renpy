@@ -587,6 +587,14 @@ drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TE
 # Bindings of gamepad buttons.
 pad_bindings = { }
 
+# A list of pygame events that should be enabled in addition to the standard
+# events.
+pygame_events = [ ]
+
+# A list of all of the pygame events Ren'Py cares about. Events not in this list
+# are dropped for performance reasons.
+
+
 del renpy
 del os
 
