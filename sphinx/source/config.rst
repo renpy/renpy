@@ -275,6 +275,11 @@ cleared.
 Occasionally Used
 -----------------
 
+.. var:: config.after_replay_callback = None
+
+    If not None, a function that is called with no arguments after a
+    replay completes.
+
 .. var:: config.auto_load = None
 
     If not None, the name of a save file to automatically load when

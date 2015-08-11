@@ -367,6 +367,8 @@ def call_replay(label, scope={}):
         if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
+    if renpy.config.after_replay_callback:
+        renpy.config.after_replay_callback()
 
 # Type information.
 if False:

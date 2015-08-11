@@ -591,9 +591,8 @@ pad_bindings = { }
 # events.
 pygame_events = [ ]
 
-# A list of all of the pygame events Ren'Py cares about. Events not in this list
-# are dropped for performance reasons.
-
+# This is called when a replay finishes.
+after_replay_callback = None
 
 del renpy
 del os
