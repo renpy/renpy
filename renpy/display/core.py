@@ -53,33 +53,34 @@ ALL_EVENTS.add(EVENTNAME)
 
 enabled_events = {
     pygame.QUIT,
-    
+
     pygame.APP_TERMINATING,
     pygame.APP_LOWMEMORY,
     pygame.APP_WILLENTERBACKGROUND,
     pygame.APP_DIDENTERBACKGROUND,
     pygame.APP_WILLENTERFOREGROUND,
     pygame.APP_DIDENTERFOREGROUND,
-    
+
     pygame.WINDOWEVENT,
     pygame.SYSWMEVENT,
-    
+
     pygame.KEYDOWN,
     pygame.KEYUP,
-    
+
     pygame.TEXTEDITING,
     pygame.TEXTINPUT,
-    
+
     pygame.MOUSEMOTION,
     pygame.MOUSEBUTTONDOWN,
     pygame.MOUSEBUTTONUP,
-    
+    pygame.MOUSEWHEEL,
+
     pygame.CONTROLLERAXISMOTION,
     pygame.CONTROLLERBUTTONDOWN,
     pygame.CONTROLLERBUTTONUP,
     pygame.CONTROLLERDEVICEADDED,
     pygame.CONTROLLERDEVICEREMOVED,
-    
+
     pygame.RENDER_TARGETS_RESET,
 
     TIMEEVENT,
@@ -1541,13 +1542,13 @@ class Interface(object):
 
             if i in enabled_events:
                 continue
-            
+
             if i in renpy.config.pygame_events:
                 continue
-            
+
             pygame.event.set_blocked(i)
-        
-            
+
+
 
     def set_icon(self):
         """
