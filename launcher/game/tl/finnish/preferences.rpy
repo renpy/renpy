@@ -19,7 +19,7 @@ translate finnish strings:
 
     # game/preferences.rpy:93
     old "Not Set"
-    new "Ei asetettu"
+    new "Ei valittu"
 
     # game/preferences.rpy:108
     old "Text Editor:"
@@ -72,4 +72,16 @@ translate finnish strings:
     # game/preferences.rpy:209
     old "Language:"
     new "Kieli:"
+
+# TODO: Translation updated at 2015-08-04 16:46
+
+translate finnish strings:
+
+    # game/preferences.rpy:174
+    old "Show edit file section"
+    new "Näytä tiedostojen muokkausvalikko"
+
+    # game/preferences.rpy:176
+    old "Generate empty strings for translations"
+    new "Luo tyhjiä merkkijonoja käännöksiä varten"
 

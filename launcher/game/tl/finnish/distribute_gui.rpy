@@ -45,3 +45,23 @@ translate finnish strings:
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "Projektisi ei sisällä kokoamisinformaatiota. Haluatko lisätä kokoamisinormaation options.rpy-tiedoston loppuun?"
 
+# TODO: Translation updated at 2015-08-04 16:46
+
+translate finnish strings:
+
+    # game/distribute_gui.rpy:194
+    old "Add from clauses to calls, once"
+    new ""
+
+    # game/distribute_gui.rpy:231
+    old "Options:"
+    new "Valinnat:"
+
+    # game/distribute_gui.rpy:238
+    old "Add from clauses to calls"
+    new ""
+
+    # game/distribute_gui.rpy:247
+    old "Adding from clauses to call statements that do not have them."
+    new ""
+
