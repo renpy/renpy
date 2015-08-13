@@ -130,7 +130,7 @@ init -1600 python:
         "pad_a_press" : [ "dismiss", "button_select" ],
         "pad_b_press" : [ "button_alternate" ],
 
-        "pad_dleft_press" : [ "focus_left", "bar_left" ],
+        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
         "pad_leftx_neg" : [ "focus_left", "bar_left" ],
         "pad_rightx_neg" : [ "focus_left", "bar_left" ],
 
