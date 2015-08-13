@@ -26,6 +26,8 @@ from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
 from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
 from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
 
+import pygame_sdl2 as pygame
+
 def init():
     """
     Initialize gamepad support.
@@ -111,5 +113,17 @@ def event(ev):
 
         name = "pad_{}_{}".format(get_string_for_button(ev.button), pr)
         ev = make_event(name)
+
+    elif ev.type in (
+        pygame.JOYAXISMOTION,
+        pygame.JOYHATMOTION,
+        pygame.JOYBALLMOTION,
+        pygame.JOYBUTTONDOWN,
+        pygame.JOYBUTTONUP,
+        pygame.JOYDEVICEADDED,
+        pygame.JOYDEVICEREMOVED,
+        ):
+
+        return None
 
     return ev

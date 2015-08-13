@@ -75,6 +75,14 @@ enabled_events = {
     pygame.MOUSEBUTTONUP,
     pygame.MOUSEWHEEL,
 
+    pygame.JOYAXISMOTION,
+    pygame.JOYHATMOTION,
+    pygame.JOYBALLMOTION,
+    pygame.JOYBUTTONDOWN,
+    pygame.JOYBUTTONUP,
+    pygame.JOYDEVICEADDED,
+    pygame.JOYDEVICEREMOVED,
+
     pygame.CONTROLLERAXISMOTION,
     pygame.CONTROLLERBUTTONDOWN,
     pygame.CONTROLLERBUTTONUP,
