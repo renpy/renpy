@@ -162,6 +162,9 @@ class Script(object):
         backup_list = self.backup_list
         self.backup_list = [ ]
 
+        if os.environ.get("RENPY_DISABLE_BACKUPS", "") == "I take responsibility for this.":
+            return
+
         if not self.loaded_rpy:
             return
 
