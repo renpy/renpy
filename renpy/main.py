@@ -437,6 +437,8 @@ def main():
         renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
 
         renpy.dump.dump(False)
+        renpy.game.script.make_backups()
+        log_clock("Dump and make backups.")
 
         # Initialize image cache.
         renpy.display.im.cache.init()

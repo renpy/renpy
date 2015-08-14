@@ -34,6 +34,7 @@ import struct
 import zlib
 
 from cPickle import loads, dumps
+import shutil
 
 # The version of the dumped script.
 script_version = renpy.script_version
@@ -130,6 +131,72 @@ class Script(object):
         self.serial = 0
 
         self.digest = md5.md5(renpy.version_only)
+
+        self.loaded_rpy = False
+        self.backup_list = [ ]
+
+    def choose_backupdir(self):
+
+        if renpy.mobile:
+            return None
+
+        for i in [ "script_version.txt", "script_version.rpy", "script_version.rpyc" ]:
+            if renpy.loader.loadable(i):
+                return None
+
+        import __main__
+        backups = __main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
+
+        if backups is None:
+            return
+
+        basename = os.path.basename(renpy.config.basedir)
+        backupdir = os.path.join(backups, basename)
+
+        renpy.exports.write_log("Backing up script files to %r:", backupdir)
+
+        return backupdir
+
+    def make_backups(self):
+
+        backup_list = self.backup_list
+        self.backup_list = [ ]
+
+        if not self.loaded_rpy:
+            return
+
+        if renpy.mobile:
+            return
+
+        backupdir = self.choose_backupdir()
+        if backupdir is None:
+            return
+
+        for fn, checksum in backup_list:
+            if not fn.startswith(renpy.config.gamedir):
+                continue
+
+            short_fn = fn[len(renpy.config.gamedir)+1:]
+
+            base, ext = os.path.splitext(short_fn)
+            target_fn = os.path.join(
+                backupdir,
+                base + "." + checksum[:8].encode("hex") + ext,
+                )
+
+            if os.path.exists(target_fn):
+                continue
+
+            try:
+                os.makedirs(os.path.dirname(target_fn), 0700)
+            except:
+                pass
+
+            try:
+                shutil.copy(fn, target_fn)
+            except:
+                pass
+
 
     def scan_script_files(self):
         """
@@ -513,6 +580,8 @@ class Script(object):
             except:
                 pass
 
+            self.loaded_rpy = True
+
         elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
 
             data = None
@@ -660,6 +729,8 @@ class Script(object):
         self.finish_load(stmts, initcode, filename=fn + source)
 
         self.digest.update(digest)
+
+        self.backup_list.append((rpyfn, rpydigest))
 
     def init_bytecode(self):
         """
