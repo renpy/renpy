@@ -392,8 +392,8 @@ class DisplayableSegment(object):
         return [ glyph ]
 
     def draw(self, glyphs, di, xo, yo, layout):
-        glyph = glyphs[0] 
-                
+        glyph = glyphs[0]
+
         if di.displayable_blits is not None:
             di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.time))
 
@@ -1462,7 +1462,6 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus:
             return hyperlink_focus(target)
-        rend_w, rend_h = layout.unscale_pair(w, h)
 
 
     def set_style_prefix(self, prefix, root):
@@ -1653,16 +1652,16 @@ class Text(renpy.display.core.Displayable):
 
         # Blit displayables.
         if layout.displayable_blits:
-        
+
             drend = renpy.display.render.Render(w, h)
             drend.forward = layout.reverse
             drend.reverse = layout.forward
-        
+
             for d, xo, yo, t in layout.displayable_blits:
-    
+
                 if self.slow and t > st:
                     continue
-    
+
                 drend.subpixel_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
 
             rv.blit(drend, (0, 0))
