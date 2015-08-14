@@ -176,7 +176,11 @@ class Script(object):
             return
 
         for fn, checksum in backup_list:
+
             if not fn.startswith(renpy.config.gamedir):
+                continue
+
+            if not os.path.exists(fn):
                 continue
 
             short_fn = fn[len(renpy.config.gamedir)+1:]
@@ -720,6 +724,8 @@ class Script(object):
 
                 digest = rpydigest
 
+            self.backup_list.append((rpyfn, digest))
+
         if data is None:
             raise Exception("Could not load file %s." % lastfn)
 
@@ -733,7 +739,6 @@ class Script(object):
 
         self.digest.update(digest)
 
-        self.backup_list.append((rpyfn, rpydigest))
 
     def init_bytecode(self):
         """
