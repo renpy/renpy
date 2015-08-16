@@ -294,7 +294,11 @@ def At(d, *args):
     rv = renpy.easy.displayable(d)
 
     for i in args:
-        rv = i(rv)
+
+        if isinstance(i, renpy.display.motion.Transform):
+            rv = i(child=rv)
+        else:
+            rv = i(rv)
 
     return rv
 
