@@ -11,7 +11,7 @@ translate russian strings:
 
     # game/editor.rpy:137
     old "This may have occured because wxPython is not installed on this system."
-    new "Это могло случится, ибо wxPython не установлен на этой системе."
+    new "Это могло случиться из-за того, что wxPython не установлен на этой системе."
 
     # game/editor.rpy:144
     old "Up to 22 MB download required."
@@ -27,15 +27,15 @@ translate russian strings:
 
     # game/editor.rpy:158
     old "This may have occured because Java is not installed on this system."
-    new "Это могло случится, ибо Java не установлена на данной системе."
+    new "Это могло случиться из-за того, что Java не установлена на данной системе."
 
     # game/editor.rpy:164
     old "Invokes the editor your operating system has associated with .rpy files."
-    new "Включает тектсовый редактор, ассоциированный на вашей системе с фалйами .rpy."
+    new "Включает текстовый редактор, ассоциированный на вашей системе с файлами .rpy."
 
     # game/editor.rpy:180
     old "Prevents Ren'Py from opening a text editor."
-    new "Не позволяет Ren'Py запускать тектсовый редактор."
+    new "Не позволяет Ren'Py запускать текстовый редактор."
 
     # game/editor.rpy:327
     old "An exception occured while launching the text editor:\n[exception!q]"
@@ -47,7 +47,7 @@ translate russian strings:
 
     # game/editor.rpy:438
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "Тектсовый редактор - программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который Ren'Py будет использовать. Если такового нет, редактор будет автоматически загружен и установлен."
+    new "Текстовый редактор - программа, необходимая для редактирования сценариев Ren'Py. Здесь, вы можете выбрать редактор, который Ren'Py будет использовать. Если такового нет, редактор будет автоматически загружен и установлен."
 
     # game/editor.rpy:460
     old "Cancel"
