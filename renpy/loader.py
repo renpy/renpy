@@ -408,6 +408,7 @@ class SubFile(object):
     def write(self, s):
         raise Exception("Write not supported by SubFile")
 
+
 open_file = open
 
 if "RENPY_FORCE_SUBFILE" in os.environ:

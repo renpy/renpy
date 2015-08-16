@@ -491,6 +491,8 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
         The equivalent of the ``behind`` property.
     """
 
+    default_transform = renpy.config.default_transform
+
     if renpy.game.context().init_phase:
         raise Exception("Show may not run while in init phase.")
 
@@ -513,7 +515,16 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
         what = tuple(what.split())
 
     if isinstance(what, renpy.display.core.Displayable):
-        base = img = what
+
+        if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
+            base = img = renpy.display.image.ImageReference(what, style='image_placement')
+
+            # Semi-principled, but mimics pre-6.99.6 behavior - if `what` is
+            # already a transform, do not apply the default transform to it.
+            default_transform = None
+
+        else:
+            base = img = what
 
     else:
 
@@ -548,7 +559,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
 
-    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=renpy.config.default_transform, transient=transient)
+    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient)
 
 
 def hide(name, layer='master'):

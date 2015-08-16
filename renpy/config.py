@@ -594,6 +594,9 @@ pygame_events = [ ]
 # This is called when a replay finishes.
 after_replay_callback = None
 
+# Should Ren'Py wrap shown transforms in an ImageReference?
+wrap_shown_transforms = True
+
 del renpy
 del os
 
