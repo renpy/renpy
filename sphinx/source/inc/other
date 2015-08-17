@@ -273,10 +273,10 @@
     This can be used if a label that is called decides not to return
     to its caller.
 
-.. function:: renpy.queue_event(name, up=False)
+.. function:: renpy.queue_event(name, up=False, **kwargs)
     
     Queues an event with the given name. `Name` should be one of the event
-    names in :var:`config.keymap`.
+    names in :var:`config.keymap`, or a list of such names.
     
     `up`
         This should be false when the event begins (for example, when a keyboard
