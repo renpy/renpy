@@ -22,9 +22,6 @@ For example, "mousedown_1" is generally a press of the left mouse button,
 "mouseup_1" is a release of that button, and "mousedown_4" is a turn of the
 scroll wheel to the top.
 
-Joystick keysyms begin with joy\_. They are defined in :var:`config.joystick_keys`,
-and mapped to actual joystick events by the user.
-
 There are two kinds of keyboard keysyms. The first is a string containing a
 character that is generated when a key is pressed. This is useful for
 binding alphabetic keys and numbers. Examples of these keysyms include "a", "A", and "7".
@@ -75,11 +72,11 @@ as of version 6.99 is as follows::
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4', 'joy_rollback' ],
+        rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
         screenshot = [ 's' ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3', 'joy_menu' ],
-        hide_windows = [ 'mouseup_2', 'h', 'joy_hide' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
+        hide_windows = [ 'mouseup_2', 'h' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
         reload_game = [ 'R' ],
@@ -98,20 +95,20 @@ as of version 6.99 is as follows::
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
-        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'joy_dismiss' ],
+        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
 
         # Pause.
         dismiss_hard_pause = [ ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'repeat_K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'repeat_K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'repeat_K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        focus_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        focus_up = [ 'K_UP', 'repeat_K_UP' ],
+        focus_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
         button_alternate = [ 'mouseup_3' ],
         button_alternate_ignore = [ 'mousedown_3' ],
 
@@ -129,17 +126,17 @@ as of version 6.99 is as follows::
         viewport_drag_end = [ 'mouseup_1' ],
 
         # These keys control skipping.
-        skip = [ 'K_LCTRL', 'K_RCTRL', 'joy_holdskip' ],
-        toggle_skip = [ 'K_TAB', 'joy_toggleskip' ],
+        skip = [ 'K_LCTRL', 'K_RCTRL' ],
+        toggle_skip = [ 'K_TAB' ],
         fast_skip = [ '>' ],
 
         # Bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_left = [ 'K_LEFT', 'repeat_K_LEFT', 'joy_left' ],
-        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT', 'joy_right' ],
-        bar_up = [ 'K_UP', 'repeat_K_UP', 'joy_up' ],
-        bar_down = [ 'K_DOWN', 'repeat_K_DOWN', 'joy_down' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+        bar_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
+        bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
+        bar_up = [ 'K_UP', 'repeat_K_UP' ],
+        bar_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
 
         # Delete a save.
         save_delete = [ 'K_DELETE' ],
@@ -161,3 +158,40 @@ as of version 6.99 is as follows::
         memory_profile = [ 'K_F7' ],
 
         )
+
+Gamepad bindings work a little differently. Gamepad bindings work by mapping
+a gamepad event to one or more Ren'Py event names. The default set of
+gamepad bindings is given below::
+
+    config.pad_bindings = {
+        "pad_leftshoulder_press" : [ "rollback", ],
+        "pad_lefttrigger_pos" : [ "rollback", ],
+        "pad_back_press" : [ "rollback", ],
+
+        "pad_guide_press" : [ "game_menu", ],
+        "pad_start_press" : [ "game_menu", ],
+
+        "pad_y_press" : [ "hide_windows", ],
+
+        "pad_rightshoulder_press" : [ "rollforward", ],
+
+        "pad_righttrigger_pos" : [ "dismiss", "button_select" ],
+        "pad_a_press" : [ "dismiss", "button_select" ],
+        "pad_b_press" : [ "button_alternate" ],
+
+        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+
+        "pad_dpright_press" : [ "focus_right", "bar_right" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+
+        "pad_dpup_press" : [ "focus_up", "bar_up" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+
+        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+    }

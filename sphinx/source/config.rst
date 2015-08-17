@@ -858,10 +858,6 @@ Rarely or Internally Used
     A list of functions that are called (without any arguments) when
     an interaction is started or restarted.
 
-.. var:: config.joystick = True
-
-    If True, joystick support is enabled.
-
 .. var:: config.keep_running_transform = True
 
     If true, showing an image without supplying a transform or ATL
