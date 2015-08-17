@@ -2,6 +2,54 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.6
+==============
+
+HighDPI/Retina
+--------------
+
+Support for HighDPI/Retina displays has been added to Ren'Py. This support
+is automatically used when running on iOS or Mac OS X systems that have a
+retina display.
+
+On all platforms, Ren'Py now renders text at the display resolution, rather
+than the resolution the game was set to. The result is that text remains
+sharp even when upscaled significantly. Creators should be aware that due
+to variability in character size and kerning, this can cause changes in
+text layout and word wrap as the window is scaled.
+
+Gamepad
+-------
+
+Ren'Py now uses the SDL2 controller API to support gamepads. This API
+provides a standardized mapping of controller buttons to something
+similar to an Xbox controller.
+
+Backups
+-------
+
+Ren'Py will now automatically back up .rpy files that are part of
+changed games. These backups will be placed in the same system-specific
+location that save files are placed.
+
+Other Improvements
+------------------
+
+Screens now take the `style_group` property, which was previously only
+allowed on displayable statements.
+
+Screen language statements now take `arguments` and `properties` properties,
+which allows statement to be passed a list of additional positional arguments and
+a dict of additional properties, respectively.
+
+The new :class:`Color` class allows conversion between color spaces and other
+color-theory operations.
+
+Renios now supports compiling for 32-bit simulators (for the iPhone 4 and 5).
+
+The Korean and Russian translations have been improved.
+
+
 Ren'Py 6.99.5
 =============
 
