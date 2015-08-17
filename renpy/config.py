@@ -591,6 +591,10 @@ pad_bindings = { }
 # events.
 pygame_events = [ ]
 
+# A function that is used to map a gamepad event into a list of Ren'Py
+# events.
+map_pad_event = None
+
 # This is called when a replay finishes.
 after_replay_callback = None
 

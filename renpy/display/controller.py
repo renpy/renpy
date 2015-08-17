@@ -54,7 +54,10 @@ def make_event(name):
 
     names = [ name ]
 
-    names.extend(renpy.config.pad_bindings.get(name, ()))
+    if renpy.config.map_pad_event:
+        names.extend(renpy.config.map_pad_event(name))
+    else:
+        names.extend(renpy.config.pad_bindings.get(name, ()))
 
     return pygame_sdl2.event.Event(
         renpy.display.core.EVENTNAME,
