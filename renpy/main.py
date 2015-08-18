@@ -456,8 +456,6 @@ def main():
         # Start things running.
         restart = None
 
-        renpy.first_utter_start = False
-
         while True:
 
             if restart:

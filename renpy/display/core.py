@@ -1246,17 +1246,10 @@ def get_safe_mode():
     Returns true if we should go into safe mode.
     """
 
-    if not renpy.first_utter_start:
+    if renpy.safe_mode_checked:
         return False
 
-
     try:
-        if renpy.linux:
-            if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-                return True
-            else:
-                return False
-
         if renpy.windows:
             import ctypes
 
@@ -1268,8 +1261,7 @@ def get_safe_mode():
             else:
                 return False
 
-        # We don't need safe mode on mac or android, as those platforms
-        # should always have OpenGL 2 or OpenGL ES 2.
+        # Safe mode doesn't work on other platforms.
         return False
 
     except:
@@ -1488,6 +1480,10 @@ class Interface(object):
         # Are we in fullscreen video mode?
         self.fullscreen_video = False
 
+        self.safe_mode = get_safe_mode()
+        renpy.safe_mode_checked = True
+
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -1503,11 +1499,7 @@ class Interface(object):
 
         self.started = True
 
-        self.safe_mode = get_safe_mode()
         self.set_mode()
-
-        if not self.safe_mode:
-            self.safe_mode = get_safe_mode()
 
         # Load the image fonts.
         renpy.text.font.load_image_fonts()

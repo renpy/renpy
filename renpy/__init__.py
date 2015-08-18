@@ -91,9 +91,8 @@ mobile = android or ios
 # Backup Data for Reload
 ################################################################################
 
-# True if this is the first time we've started - even including
-# utter restarts.
-first_utter_start = True
+# True if we're done with safe mode checks.
+safe_mode_checked = False
 
 # True if autoreload mode is enabled. This has to live here, because it
 # needs to survive through an utter restart.
