@@ -601,6 +601,9 @@ after_replay_callback = None
 # Should Ren'Py wrap shown transforms in an ImageReference?
 wrap_shown_transforms = True
 
+# A list of prefixes Ren'Py will search for assets.
+search_prefixes = [ "", "images/" ]
+
 del renpy
 del os
 

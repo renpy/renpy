@@ -35,6 +35,10 @@ location that save files are placed.
 Other Improvements
 ------------------
 
+If a file is not found in the game directory, Ren'Py will search the
+images/ directory for that file. This behavior is controlled by
+the :var:`config.search_path` variable.
+
 Screens now take the `style_group` property, which was previously only
 allowed on displayable statements.
 

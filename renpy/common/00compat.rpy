@@ -110,6 +110,7 @@ init -1900 python:
 
         if version <= (6, 99, 6):
             config.wrap_shown_transforms = False
+            config.search_prefixes = [ "" ]
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

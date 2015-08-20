@@ -1098,6 +1098,11 @@ Rarely or Internally Used
     archives, and other media, but not scripts. This is initialized to
     a list containing "common" and the name of the game directory.
 
+.. var:: config.search_prefixes = [ "", "images/" ]
+
+    A list of prefixes that are prepended to filenames that are searched
+    for.
+
 .. var:: config.show = renpy.show
 
     A function that is used in place of renpy.show by the :ref:`show
