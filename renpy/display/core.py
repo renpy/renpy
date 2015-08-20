@@ -1483,7 +1483,6 @@ class Interface(object):
         self.safe_mode = get_safe_mode()
         renpy.safe_mode_checked = True
 
-
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -1510,6 +1509,9 @@ class Interface(object):
         # Don't grab the screen.
         pygame.event.set_grab(False)
 
+        if not self.safe_mode:
+            renpy.display.controller.init()
+
         s = "Total time until interface ready: {}s".format(time.time() - import_time)
 
         renpy.display.log.write(s)
@@ -1518,7 +1520,9 @@ class Interface(object):
             print s
 
     def post_init(self):
-        # Setup.
+        """
+        This is called after display init, but before the window is created.
+        """
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
@@ -1533,9 +1537,6 @@ class Interface(object):
 
         if android:
             android.wakelock(True)
-
-        if not self.safe_mode:
-            renpy.display.controller.init()
 
         # Block events we don't use.
         for i in pygame.event.get_standard_events():

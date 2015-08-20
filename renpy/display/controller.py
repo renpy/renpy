@@ -28,6 +28,8 @@ from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_f
 
 import pygame_sdl2 as pygame
 
+import os
+
 def init():
     """
     Initialize gamepad support.
@@ -37,6 +39,22 @@ def init():
         return
 
     pygame_sdl2.controller.init()
+
+    try:
+        with renpy.loader.load("gamecontrollerdb.txt") as f:
+            pygame_sdl2.controller.add_mappings(f)
+    except:
+        pass
+
+    try:
+        with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
+            pygame_sdl2.controller.add_mappings(f)
+    except:
+        pass
+
+    for i in range(pygame_sdl2.controller.get_count()):
+        c = Controller(i)
+        renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
 
 # A map from controller index to controller object.
 controllers = { }
