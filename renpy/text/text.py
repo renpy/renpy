@@ -1263,7 +1263,7 @@ class Text(renpy.display.core.Displayable):
         s = ""
 
         for i in self.text:
-            if isinstance(s, basestring):
+            if isinstance(i, basestring):
                 s += i
 
             if len(s) > 25:
