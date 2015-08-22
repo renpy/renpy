@@ -241,13 +241,20 @@ init -1700 python:
         who = Character(who, kind=name_only)
         who(what, interact=interact)
 
+    ##########################################################################
+    # Misc.
+
+    # Should we display tiles in places of transparency while in developer
+    # mode?
+    config.transparent_tile = True
+
+
 init -1000 python:
     # Lock the library object.
     config.locked = True
 
     # Record the builtins.
     renpy.lint.renpy_builtins = set(globals())
-
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
