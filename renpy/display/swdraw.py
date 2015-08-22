@@ -880,6 +880,8 @@ class SWDraw(object):
         y *= self.scale_factor
         return (x, y)
 
+    def align_to_drawable(self, x, y):
+        return (x, y)
 
     def update_mouse(self):
         """
@@ -913,7 +915,6 @@ class SWDraw(object):
         y *= self.scale_factor
 
         return pygame.mouse.set_pos([x, y])
-
 
     def screenshot(self, surftree, fullscreen_video):
         """

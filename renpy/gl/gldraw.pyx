@@ -1090,11 +1090,11 @@ cdef class GLDraw:
         pw, ph = self.physical_size
         vx, vy, vbw, vbh = self.virtual_box
 
-        # Translate from virtual size.
+        # Translate from virtual to fractional screen.
         x = ( x - vx ) / vbw
         y = ( y - vy ) / vbh
 
-        # Translate from fractional screen.
+        # Translate from fractional screen to physical.
         x = x * pw
         y = y * ph
 
@@ -1102,6 +1102,20 @@ cdef class GLDraw:
         y = int(y)
 
         return x, y
+
+    def align_to_drawable(self, x, y):
+        """
+        Given that (x, y) is a point in virtual coordinates, returns
+        (x', y'), which are the nearest virtual coordinates that are
+        aligned to the grid.
+        """
+
+        vx, vy = self.virt_to_draw.transform(x, y)
+
+        vx = round(vx)
+        vy = round(vy)
+
+        return self.draw_to_virt.transform(vx, vy)
 
     def update_mouse(self):
         # The draw routine updates the mouse. There's no need to
