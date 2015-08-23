@@ -380,6 +380,22 @@ init python:
             except:
                 pass
 
+    class _CopyFile(Action):
+        def __init__(self, filename):
+            self.filename = filename
+
+        def __call__(self):
+            import pygame.scrap
+
+            with open(self.filename, "rb") as f:
+                f.read(3) # skip the BOM.
+                s = u"[code]\n{}[/code]\n".format(f.read().decode("utf-8"))
+
+            s = s.replace("\n", "\r\n")
+            s = s.replace("\r\r", "\r")
+
+            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
+
     def __can_open_traceback():
         return True
 
@@ -524,6 +540,11 @@ screen _exception:
                     action _EditFile(traceback_fn)
                     hovered tt.action(_("Opens the traceback.txt file in a text editor."))
 
+                if renpy.windows or renpy.macintosh:
+                    textbutton _("Copy to Clipboard"):
+                        action _CopyFile(traceback_fn)
+                        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
+
                 null width 30
 
                 textbutton _("Quit"):
@@ -585,6 +606,11 @@ screen _parse_errors:
                 textbutton _("Open Parse Errors"):
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
+
+                if renpy.windows or renpy.macintosh:
+                    textbutton _("Copy to Clipboard"):
+                        action _CopyFile(error_fn)
+                        hovered tt.action(_("Copies the errors.txt file to the clipboard."))
 
                 null width 30
 
