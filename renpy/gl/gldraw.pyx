@@ -1117,44 +1117,6 @@ cdef class GLDraw:
 
         return x, y
 
-    def align_to_drawable(self, x, y):
-        """
-        Given that (x, y) is a point in virtual coordinates, returns
-        (x', y'), which are the nearest virtual coordinates that are
-        aligned to the grid.
-        """
-
-        dw, dh = self.drawable_size
-        vw, vh = self.virtual_size
-        vx, vy, vbw, vbh = self.virtual_box
-
-        fx = ( x - vx ) / vbw
-        fy = ( y - vy ) / vbh
-
-        dx = fx * dw
-        dy = fy * dh
-
-        print "POINT", dx, dy
-
-        dx = round(dx)
-        dy = round(dy)
-
-        fx = dx / dw
-        fy = dy / dh
-
-        x = vx + vbw * fx
-        y = vy + vbh * fy
-
-        return x, y
-
-
-#         vx, vy = self.virt_to_draw.transform(x, y)
-#
-#         vx = round(vx)
-#         vy = round(vy)
-#
-#         return self.draw_to_virt.transform(vx, vy)
-
     def update_mouse(self):
         # The draw routine updates the mouse. There's no need to
         # redraw it event-by-event.

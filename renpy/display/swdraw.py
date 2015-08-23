@@ -880,9 +880,6 @@ class SWDraw(object):
         y *= self.scale_factor
         return (x, y)
 
-    def align_to_drawable(self, x, y):
-        return (x, y)
-
     def update_mouse(self):
         """
         Draws the mouse, and then updates the screen.
