@@ -701,10 +701,10 @@ cdef class GLDraw:
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
             if surf is not None:
-                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
+                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         else:
-            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
+            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         if flip:
 
@@ -776,7 +776,8 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse,
-        bint nearest) except 1:
+        bint nearest,
+        bint subpixel) except 1:
 
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
@@ -785,6 +786,9 @@ cdef class GLDraw:
         if not isinstance(what, render.Render):
 
             if isinstance(what, gltexture.TextureGrid):
+
+                if reverse == self.draw_to_virt:
+                    nearest = True
 
                 self.set_clip(clip)
 
@@ -803,7 +807,7 @@ cdef class GLDraw:
             if isinstance(what, pygame.Surface):
 
                 tex = self.load_texture(what)
-                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest, subpixel)
                 return 0
 
             raise Exception("Unknown drawing type. " + repr(what))
@@ -813,6 +817,10 @@ cdef class GLDraw:
         if rend.text_input:
             renpy.display.interface.text_rect = rend.screen_rect(xo, yo, reverse)
 
+#         if rend.drawable_align and not subpixel:
+#             print "OLD", xo, yo
+#             xo, yo = self.align_to_drawable(xo, yo)
+#             print "NEW", xo, yo
 
         # Other draw modes.
 
@@ -824,11 +832,9 @@ cdef class GLDraw:
                 # GLES systems. The semantics are different than that
                 # of dissolve on Ren'Py proper.
 
-                self.draw_transformed(rend.children[0][0],
-                                      clip, xo, yo, alpha, over, reverse, nearest)
+                self.draw_transformed(rend.children[0][0], clip, xo, yo, alpha, over, reverse, nearest, subpixel)
 
-                self.draw_transformed(rend.children[1][0],
-                                      clip, xo, yo, alpha * what.operation_complete, over, reverse, nearest)
+                self.draw_transformed(rend.children[1][0], clip, xo, yo, alpha * what.operation_complete, over, reverse, nearest, subpixel)
 
             else:
 
@@ -900,7 +906,7 @@ cdef class GLDraw:
             # Non-aligned clipping uses RTT.
             if reverse.ydx != 0 or reverse.xdy != 0:
                 tex = what.render_to_texture(True)
-                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest, subpixel)
                 return 0
 
             minx, miny, maxx, maxy = clip
@@ -931,11 +937,19 @@ cdef class GLDraw:
         else:
             child_reverse = reverse
 
-        for child, cxo, cyo, focus, main in rend.visible_children:
+        for child, cx, cy, focus, main in rend.visible_children:
+
+            # The type of cx and cy depends on if this is a subpixel blit or not.
+            if type(cx) is float:
+                subpixel = True
+
+            cxo = cx
+            cyo = cy
+
             tcxo = reverse.xdx * cxo + reverse.xdy * cyo
             tcyo = reverse.ydx * cxo + reverse.ydy * cyo
 
-            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, over, child_reverse, nearest)
+            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, over, child_reverse, nearest, subpixel)
 
         return 0
 
@@ -958,7 +972,7 @@ cdef class GLDraw:
             self.default_clip = (0, 0, width, height)
             clip = self.default_clip
 
-            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor, False)
 
         if isinstance(what, render.Render):
             what.is_opaque()
@@ -1001,7 +1015,7 @@ cdef class GLDraw:
 
         clip = (0, 0, 1, 1)
 
-        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
+        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         cdef unsigned char pixel[4]
 
@@ -1039,7 +1053,7 @@ cdef class GLDraw:
 
             clip = (0, 0, width, height)
 
-            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor)
+            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         if isinstance(what, render.Render):
             what.is_opaque()
@@ -1110,12 +1124,36 @@ cdef class GLDraw:
         aligned to the grid.
         """
 
-        vx, vy = self.virt_to_draw.transform(x, y)
+        dw, dh = self.drawable_size
+        vw, vh = self.virtual_size
+        vx, vy, vbw, vbh = self.virtual_box
 
-        vx = round(vx)
-        vy = round(vy)
+        fx = ( x - vx ) / vbw
+        fy = ( y - vy ) / vbh
 
-        return self.draw_to_virt.transform(vx, vy)
+        dx = fx * dw
+        dy = fy * dh
+
+        print "POINT", dx, dy
+
+        dx = round(dx)
+        dy = round(dy)
+
+        fx = dx / dw
+        fy = dy / dh
+
+        x = vx + vbw * fx
+        y = vy + vbh * fy
+
+        return x, y
+
+
+#         vx, vy = self.virt_to_draw.transform(x, y)
+#
+#         vx = round(vx)
+#         vy = round(vy)
+#
+#         return self.draw_to_virt.transform(vx, vy)
 
     def update_mouse(self):
         # The draw routine updates the mouse. There's no need to

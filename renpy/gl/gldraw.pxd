@@ -75,7 +75,8 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse,
-        bint nearest) except 1
+        bint nearest,
+        bint subpixel) except 1
 
 cdef class Environ:
     cdef void blit(self)

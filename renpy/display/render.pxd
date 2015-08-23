@@ -68,6 +68,7 @@ cdef class Render:
 
     cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
+    cpdef int absolute_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
 
 
 cpdef render(object d, object widtho, object heighto, double st, double at)

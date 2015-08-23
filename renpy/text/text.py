@@ -1644,7 +1644,7 @@ class Text(renpy.display.core.Displayable):
 
 
                 # Blit.
-                rv.subpixel_blit(
+                rv.absolute_blit(
                     tex.subsurface((b_x, b_y, b_w, b_h)),
                     layout.unscale_pair(b_x + xo + layout.xoffset - o - layout.add_left,
                      b_y + yo + layout.yoffset - o - layout.add_top)
@@ -1662,7 +1662,7 @@ class Text(renpy.display.core.Displayable):
                 if self.slow and t > st:
                     continue
 
-                drend.subpixel_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
+                drend.absolute_blit(renders[d], (xo + layout.xoffset, yo + layout.yoffset))
 
             rv.blit(drend, (0, 0))
 

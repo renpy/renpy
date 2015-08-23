@@ -321,6 +321,21 @@ cdef class Matrix2D:
     def __repr__(self):
         return "Matrix2D(xdx=%f, xdy=%f, ydx=%f, ydy=%f)" % (self.xdx, self.xdy, self.ydx, self.ydy)
 
+    def __richcmp__(self, other, op):
+
+        if op != 2:
+            return NotImplemented
+
+        if self is other:
+            return True
+
+        return (
+            self.xdx == other.xdx and
+            self.xdy == other.xdy and
+            self.ydx == other.ydx and
+            self.ydy == other.ydy)
+
+
 IDENTITY = Matrix2D(1, 0, 0, 1)
 
 def take_focuses(focuses):
@@ -644,6 +659,34 @@ cdef class Render:
             source.parents.add(self)
 
         return 0
+
+    cpdef int absolute_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
+        """
+        Blits `source` (a Render or Surface) to this Render, offset by
+        xo and yo.
+
+        If `focus` is true, then focuses are added from the child to the
+        parent.
+
+        This blits at fractional pixel boundaries.
+        """
+
+        (xo, yo) = pos
+
+        xo = renpy.display.core.absolute(xo)
+        yo = renpy.display.core.absolute(yo)
+
+        if index is None:
+            self.children.append((source, xo, yo, focus, main))
+        else:
+            self.children.insert(index, (source, xo, yo, focus, main))
+
+        if isinstance(source, Render):
+            self.depends_on_list.append(source)
+            source.parents.add(self)
+
+        return 0
+
 
     def get_size(self):
         """
