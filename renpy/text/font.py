@@ -645,7 +645,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
 
     # Load a TTF.
     face = load_face(fn)
-    rv = ftfont.FTFont(face, size * scale, bold, italics, outline, antialias, vertical, hinting) #@UndefinedVariable
+    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) #@UndefinedVariable
 
     font_cache[key] = rv
 
