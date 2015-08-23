@@ -226,6 +226,9 @@ cdef class FTFont:
         if size < 1:
             size = 1
 
+        if bold:
+            antialias = True
+
         self.face_object = face
         self.face = self.face_object.face
 
