@@ -986,8 +986,19 @@ cdef class GLDraw:
         # reasons.
         if what.operation == IMAGEDISSOLVE:
             a0 = self.is_pixel_opaque(what.visible_children[0][0], x, y)
-            a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
-            return a0 * a2
+
+            if a0 > 0:
+                a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
+                if a2:
+                    return a2
+
+            elif a0 < 255:
+
+                a1 = self.is_pixel_opaque(what.visible_children[1][0], x, y)
+                if a1:
+                    return a1
+
+            return 0
 
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
