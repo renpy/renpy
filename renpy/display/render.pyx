@@ -985,7 +985,7 @@ cdef class Render:
                 return None
 
         if self.operation == IMAGEDISSOLVE:
-            if not self.visible_children[0][0].is_pixel_opaque(x, y):
+            if not self.children[0][0].is_pixel_opaque(x, y):
                 return None
 
         rv = None

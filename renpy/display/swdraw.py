@@ -1012,7 +1012,6 @@ class SWDraw(object):
         # This doesn't work perfectly, but this should be a rare case and
         # swdraw is going away.
         if what.operation == IMAGEDISSOLVE:
-            print what.visible_children
             a0 = self.is_pixel_opaque(what.visible_children[0][0], x, y)
             a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
 

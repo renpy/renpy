@@ -140,6 +140,10 @@ cdef class GLDraw:
         # Did we do the texture test at least once?
         self.did_texture_test = False
 
+        # Did we do a render_to_texture?
+        self.did_render_to_texture = False
+
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it
@@ -974,6 +978,8 @@ cdef class GLDraw:
 
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
+        self.did_render_to_texture = True
+
         return rv
 
 
@@ -981,24 +987,6 @@ cdef class GLDraw:
         """
         Returns true if the pixel is not 100% transparent.
         """
-
-        # Special case ImageDissolve/AlphaMask for speed and correctness
-        # reasons.
-        if what.operation == IMAGEDISSOLVE:
-            a0 = self.is_pixel_opaque(what.visible_children[0][0], x, y)
-
-            if a0 > 0:
-                a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
-                if a2:
-                    return a2
-
-            elif a0 < 255:
-
-                a1 = self.is_pixel_opaque(what.visible_children[1][0], x, y)
-                if a1:
-                    return a1
-
-            return 0
 
         if x < 0 or y < 0 or x >= what.width or y >= what.height:
             return 0
@@ -1010,18 +998,24 @@ cdef class GLDraw:
 
         reverse = IDENTITY
 
-        self.environ.viewport(0, 0, 1, 1)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
+        self.did_render_to_texture = False
 
-        glClear(GL_COLOR_BUFFER_BIT)
+        # We need to render a second time if a render-to-texture occurs, as it
+        # has overwritten the buffer we're drawing to.
+        for _i in range(2):
+            self.environ.viewport(0, 0, 1, 1)
+            glClearColor(0.0, 0.0, 0.0, 0.0)
 
-        self.environ.ortho(0, 1, 0, 1, -1, 1)
+            glClear(GL_COLOR_BUFFER_BIT)
 
-        self.clip_mode_rtt(0, 0, 1, 1)
+            self.environ.ortho(0, 1, 0, 1, -1, 1)
+            self.clip_mode_rtt(0, 0, 1, 1)
+            clip = (0, 0, 1, 1)
 
-        clip = (0, 0, 1, 1)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
-        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
+            if not self.did_render_to_texture:
+                break
 
         cdef unsigned char pixel[4]
 

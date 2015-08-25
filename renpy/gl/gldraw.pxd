@@ -49,6 +49,7 @@ cdef class GLDraw:
     cdef bint always_opaque
     cdef bint allow_fixed
     cdef tuple default_clip
+    cdef bint did_render_to_texture
 
     cdef public tuple clip_rtt_box
 
