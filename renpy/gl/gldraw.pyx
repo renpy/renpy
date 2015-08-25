@@ -817,11 +817,6 @@ cdef class GLDraw:
         if rend.text_input:
             renpy.display.interface.text_rect = rend.screen_rect(xo, yo, reverse)
 
-#         if rend.drawable_align and not subpixel:
-#             print "OLD", xo, yo
-#             xo, yo = self.align_to_drawable(xo, yo)
-#             print "NEW", xo, yo
-
         # Other draw modes.
 
         if rend.operation == DISSOLVE:
