@@ -691,19 +691,21 @@ cdef class GLDraw:
         xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
         ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
 
+        xsize, ysize = reverse.transform(self.virtual_size[0], self.virtual_size[1])
+
         self.environ.viewport(xmul * self.physical_box[0], ymul * self.physical_box[1], xmul * self.physical_box[2], ymul * self.physical_box[3])
-        self.environ.ortho(0, self.drawable_size[0], self.drawable_size[1], 0, -1.0, 1.0)
+        self.environ.ortho(0, xsize, ysize, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
 
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        self.default_clip = (0, 0, self.drawable_size[0], self.drawable_size[1])
+        self.default_clip = (0, 0, xsize, ysize)
         clip = self.default_clip
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
-            surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
+            surf = renpy.display.video.render_movie(xsize, ysize)
             if surf is not None:
                 self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
