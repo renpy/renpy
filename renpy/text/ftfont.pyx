@@ -585,7 +585,7 @@ cdef class FTFont:
         cdef FT_GlyphSlot g
         cdef FT_UInt index
         cdef int error
-        cdef int bmx, bmy, px, py,
+        cdef int bmx, bmy, px, py, pxstart
         cdef int ly, lh, rows, width
 
         cdef unsigned char *pixels
@@ -625,6 +625,12 @@ cdef class FTFont:
             bmx = <int> (x + .5) + cache.bitmap_left
             bmy = y - cache.bitmap_top
 
+            if bmx < 0:
+                pxstart = -bmx
+                bmx = 0
+            else:
+                pxstart = 0
+
             rows = min(cache.bitmap.rows, surf.h - bmy)
             width = min(cache.bitmap.width, surf.w - bmx)
 
@@ -635,7 +641,7 @@ cdef class FTFont:
                     continue
 
                 line = pixels + bmy * pitch + bmx * 4
-                gline = cache.bitmap.buffer + py * cache.bitmap.pitch
+                gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
                 for px from 0 <= px < width:
 

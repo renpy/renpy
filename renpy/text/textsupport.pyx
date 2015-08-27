@@ -740,19 +740,6 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
             g.x = <int> (x + .5)
             g.y = y + ruby_offset
 
-            # Try to ensure the glyph stays contained within the surface.
-            if g.x < 0:
-                raise Exception("Ruby glyph out of bounds.")
-
-            if g.x + g.width > surf_width:
-                raise Exception("Ruby glyph out of bounds.")
-
-            if g.y - g.ascent < 0:
-                raise Exception("Ruby glyph out of bounds.")
-
-            if g.y - g.ascent + g.line_spacing > surf_height:
-                raise Exception("Ruby glyph out of bounds.")
-
             x += g.advance
 
         last_ruby = RUBY_TOP
