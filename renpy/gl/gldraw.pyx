@@ -682,7 +682,7 @@ cdef class GLDraw:
         Draws the screen.
         """
 
-        reverse = IDENTITY
+        reverse = self.virt_to_draw
 
         surftree.is_opaque()
 
@@ -692,14 +692,14 @@ cdef class GLDraw:
         ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
 
         self.environ.viewport(xmul * self.physical_box[0], ymul * self.physical_box[1], xmul * self.physical_box[2], ymul * self.physical_box[3])
-        self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
+        self.environ.ortho(0, self.drawable_size[0], self.drawable_size[1], 0, -1.0, 1.0)
 
         self.clip_mode_screen()
 
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        self.default_clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
+        self.default_clip = (0, 0, self.drawable_size[0], self.drawable_size[1])
         clip = self.default_clip
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
@@ -791,7 +791,7 @@ cdef class GLDraw:
 
             if isinstance(what, gltexture.TextureGrid):
 
-                if reverse == self.draw_to_virt:
+                if reverse == IDENTITY:
                     nearest = True
 
                 self.set_clip(clip)
