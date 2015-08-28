@@ -330,10 +330,10 @@ cdef class Matrix2D:
             return True
 
         return (
-            self.xdx == other.xdx and
-            self.xdy == other.xdy and
-            self.ydx == other.ydx and
-            self.ydy == other.ydy)
+            abs(self.xdx - other.xdx) +
+            abs(self.xdy - other.xdy) +
+            abs(self.ydx - other.ydx) +
+            abs(self.ydy - other.ydy)) < .00001
 
 
 IDENTITY = Matrix2D(1, 0, 0, 1)
