@@ -798,7 +798,7 @@ cdef class GLDraw:
 
             if isinstance(what, gltexture.TextureGrid):
 
-                if reverse == IDENTITY:
+                if (not subpixel) and (reverse == IDENTITY):
                     xo = round(xo)
                     yo = round(yo)
 
