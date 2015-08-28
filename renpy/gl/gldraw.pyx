@@ -691,7 +691,12 @@ cdef class GLDraw:
         xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
         ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
 
-        xsize, ysize = reverse.transform(self.virtual_size[0], self.virtual_size[1])
+        if reverse != IDENTITY:
+            xsize = xmul * self.physical_box[2]
+            ysize = ymul * self.physical_box[3]
+        else:
+            xsize = self.virtual_size[0]
+            ysize = self.virtual_size[1]
 
         self.environ.viewport(xmul * self.physical_box[0], ymul * self.physical_box[1], xmul * self.physical_box[2], ymul * self.physical_box[3])
         self.environ.ortho(0, xsize, ysize, 0, -1.0, 1.0)
@@ -794,7 +799,8 @@ cdef class GLDraw:
             if isinstance(what, gltexture.TextureGrid):
 
                 if reverse == IDENTITY:
-                    nearest = True
+                    xo = round(xo)
+                    yo = round(yo)
 
                 self.set_clip(clip)
 
