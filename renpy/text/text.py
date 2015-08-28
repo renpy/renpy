@@ -746,7 +746,7 @@ class Layout(object):
         if n is None:
             return n
 
-        return int(n * self.oversample)
+        return int(round(n * self.oversample))
 
     def scale(self, n):
         if n is None:
