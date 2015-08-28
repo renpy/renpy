@@ -216,8 +216,15 @@ class Displayable(renpy.object.Object):
     # get_placement can be called at any time, so can't
     # assume anything.
 
-    focusable = False
+    # If True this displayable can accept focus.
+    # If False, it can't, but it keeps its place in the focus order.
+    # If None, it does not have a place in the focus order.
+    focusable = None
+
+    # This is the focus named assigned by the focus code.
     full_focus_name = None
+
+    # A role ('selected_' or '' that prefixes the style).
     role = ''
 
     # The event we'll pass on to our parent transform.
@@ -275,6 +282,8 @@ class Displayable(renpy.object.Object):
 
         if self.focusable:
             callback(self, focus_name)
+        elif self.focusable is not None:
+            callback(None, focus_name)
 
         for i in self.visit():
             if i is None:
