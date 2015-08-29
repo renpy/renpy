@@ -248,6 +248,9 @@ init -1700 python:
     # mode?
     config.transparent_tile = True
 
+    # Use DejaVuSans-Bold when appropriate.
+    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("DejaVuSans-Bold.ttf", False, False)
+
 
 init -1000 python:
     # Lock the library object.
