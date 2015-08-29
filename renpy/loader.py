@@ -224,13 +224,12 @@ def scandirfiles():
 
         seen.add(fn)
 
-
     for apk in apks:
 
         if apk not in game_apks:
-            files = common_files
+            files = common_files # @UnusedVariable
         else:
-            files = game_files
+            files = game_files # @UnusedVariable
 
         for f in apk.list():
 
@@ -243,17 +242,20 @@ def scandirfiles():
     for i in renpy.config.searchpath:
 
         if (renpy.config.commondir) and (i == renpy.config.commondir):
-            files = common_files
+            files = common_files # @UnusedVariable
         else:
-            files = game_files
+            files = game_files # @UnusedVariable
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
             add(i, j)
 
+    files = game_files
+
     for _prefix, index in archives:
         for j in index.iterkeys():
             add(None, j)
+
 
 
 def listdirfiles(common=True):
