@@ -18,6 +18,11 @@ sharp even when upscaled significantly. Creators should be aware that due
 to variability in character size and kerning, this can cause changes in
 text layout and word wrap as the window is scaled.
 
+To get the greatest benefit from these changes, the included copy of
+DejaVuSans has been updated to version 2.35, and the DejaVuSans-Bold
+font has been added. The bold font will automatically be used when
+a bold version of DejaVuSans.ttf is requested.
+
 Gamepad
 -------
 
@@ -34,6 +39,11 @@ location that save files are placed.
 
 Other Improvements
 ------------------
+
+A major bug in scanning archive files has been fixed. This bug often
+manifested as an archived images/ directory not being scanned some,
+but potentially not all, of the time. We strongly recommend upgrading from
+6.99.5 if your game uses and archives the images/ directory.
 
 If a file is not found in the game directory, Ren'Py will search the
 images/ directory for that file. This behavior is controlled by
