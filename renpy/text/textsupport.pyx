@@ -837,3 +837,19 @@ def reverse_lines(list glyphs):
     rv.extend(block)
 
     return rv
+
+def copy_splits(list source, list dest):
+    """
+    Copies break and timing information from one list of glyphs
+    to another.
+    """
+
+    cdef Glyph s
+    cdef Glyph d
+    cdef int i
+
+    for 0 <= i < len(dest):
+        s = source[i]
+        d = dest[i]
+
+        d.split = s.split

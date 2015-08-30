@@ -430,7 +430,7 @@ class Layout(object):
     Represents the layout of text.
     """
 
-    def __init__(self, text, width, height, renders, size_only=False):
+    def __init__(self, text, width, height, renders, size_only=False, splits_from=None, drawable_res=True):
         """
         `text`
             The text object this layout is associated with.
@@ -445,10 +445,13 @@ class Layout(object):
             If true, layout will stop once the size field is filled
             out. The object will only be suitable for sizing, as it
             will be missing the textures required to render it.
+
+        `splits_from`
+            If true, line-split information will be copied from this
+            Layout (which must be another Layout of the same text).
         """
 
-
-        if renpy.config.drawable_resolution_text:
+        if False and drawable_res and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
             self.oversample = renpy.display.draw.draw_per_virt
@@ -478,6 +481,11 @@ class Layout(object):
         # at all. These are controlled by the {_start} and {_end} tags.
         self.start_segment = None
         self.end_segment = None
+
+        # A list of paragraphs, represented as lists of the glyphs that
+        # make up the paragraphs. This is used to copy break and timing
+        # data from one Layout to another.
+        self.paragraph_glyphs = [ ]
 
         width = self.scale_int(width)
         height = self.scale_int(height)
@@ -529,7 +537,7 @@ class Layout(object):
         first_indent = self.scale_int(style.first_indent)
         rest_indent = self.scale_int(style.rest_indent)
 
-        for p in self.paragraphs:
+        for p_num, p in enumerate(self.paragraphs):
 
             # RTL - apply RTL to the text of each segment, then
             # reverse the order of the segments in each paragraph.
@@ -541,8 +549,8 @@ class Layout(object):
             # 3. Convert each paragraph into a Segment, glyph list. (Store this
             # to use when we draw things.)
 
-            # A list of glyphs in the line.
-            line_glyphs = [ ]
+            # A list of glyphs in the paragraph.
+            par_glyphs = [ ]
 
             # A list of (segment, list of glyph) pairs.
             seg_glyphs = [ ]
@@ -553,48 +561,55 @@ class Layout(object):
                 t = (ts, glyphs)
                 seg_glyphs.append(t)
                 par_seg_glyphs.append(t)
-                line_glyphs.extend(glyphs)
+                par_glyphs.extend(glyphs)
                 all_glyphs.extend(glyphs)
 
             # RTL - Reverse each line, segment, so that we can use LTR
             # linebreaking algorithms.
             if rtl:
-                line_glyphs.reverse()
+                par_glyphs.reverse()
                 for ts, glyphs in seg_glyphs:
                     glyphs.reverse()
 
-            # Tag the glyphs that are eligible for line breaking, and if
-            # they should be included or excluded from the end of a line.
-            language = style.language
+            self.paragraph_glyphs.append(list(par_glyphs))
 
-            if language == "unicode" or language == "eastasian":
-                textsupport.annotate_unicode(line_glyphs, False, 0)
-            elif language == "korean-with-spaces":
-                textsupport.annotate_unicode(line_glyphs, True, 0)
-            elif language == "western":
-                textsupport.annotate_western(line_glyphs)
-            elif language == "japanese-loose":
-                textsupport.annotate_unicode(line_glyphs, False, 1)
-            elif language == "japanese-normal":
-                textsupport.annotate_unicode(line_glyphs, False, 2)
-            elif language == "japanese-strict":
-                textsupport.annotate_unicode(line_glyphs, False, 3)
+            if splits_from:
+                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)
+
             else:
-                raise Exception("Unknown language: {0}".format(language))
 
-            # Break the paragraph up into lines.
-            layout = style.layout
+                # Tag the glyphs that are eligible for line breaking, and if
+                # they should be included or excluded from the end of a line.
+                language = style.language
 
-            if layout == "tex":
-                texwrap.linebreak_tex(line_glyphs, width - first_indent, width - rest_indent, False)
-            elif layout == "subtitle" or layout == "tex-subtitle":
-                texwrap.linebreak_tex(line_glyphs, width - first_indent, width - rest_indent, True)
-            elif layout == "greedy":
-                textsupport.linebreak_greedy(line_glyphs, width - first_indent, width - rest_indent)
-            elif layout == "nobreak":
-                textsupport.linebreak_nobreak(line_glyphs)
-            else:
-                raise Exception("Unknown layout: {0}".format(layout))
+                if language == "unicode" or language == "eastasian":
+                    textsupport.annotate_unicode(par_glyphs, False, 0)
+                elif language == "korean-with-spaces":
+                    textsupport.annotate_unicode(par_glyphs, True, 0)
+                elif language == "western":
+                    textsupport.annotate_western(par_glyphs)
+                elif language == "japanese-loose":
+                    textsupport.annotate_unicode(par_glyphs, False, 1)
+                elif language == "japanese-normal":
+                    textsupport.annotate_unicode(par_glyphs, False, 2)
+                elif language == "japanese-strict":
+                    textsupport.annotate_unicode(par_glyphs, False, 3)
+                else:
+                    raise Exception("Unknown language: {0}".format(language))
+
+                # Break the paragraph up into lines.
+                layout = style.layout
+
+                if layout == "tex":
+                    texwrap.linebreak_tex(par_glyphs, width - first_indent, width - rest_indent, False)
+                elif layout == "subtitle" or layout == "tex-subtitle":
+                    texwrap.linebreak_tex(par_glyphs, width - first_indent, width - rest_indent, True)
+                elif layout == "greedy":
+                    textsupport.linebreak_greedy(par_glyphs, width - first_indent, width - rest_indent)
+                elif layout == "nobreak":
+                    textsupport.linebreak_nobreak(par_glyphs)
+                else:
+                    raise Exception("Unknown layout: {0}".format(layout))
 
             for ts, glyphs in seg_glyphs:
                 # Only assign a time if we're past the start segment.
@@ -615,18 +630,18 @@ class Layout(object):
             # RTL - Reverse the glyphs in each line, back to RTL order,
             # now that we have lines.
             if rtl:
-                line_glyphs = textsupport.reverse_lines(line_glyphs)
+                par_glyphs = textsupport.reverse_lines(par_glyphs)
 
             # Taking into account indentation, kerning, justification, and text_align,
             # lay out the X coordinate of each glyph.
 
-            w = textsupport.place_horizontal(line_glyphs, 0, first_indent, rest_indent)
+            w = textsupport.place_horizontal(par_glyphs, 0, first_indent, rest_indent)
             if w > maxx:
                 maxx = w
 
             # Figure out the line height, line spacing, and the y coordinate of each
             # glyph.
-            l, y = textsupport.place_vertical(line_glyphs, y, self.scale_int(style.line_spacing), self.scale_int(style.line_leading))
+            l, y = textsupport.place_vertical(par_glyphs, y, self.scale_int(style.line_spacing), self.scale_int(style.line_leading))
             lines.extend(l)
 
             # Figure out the indent of the next paragraph.
@@ -1136,6 +1151,12 @@ LAYOUT_CACHE_SIZE = 50
 layout_cache_old = { }
 layout_cache_new = { }
 
+# Ditto, but for the text size-only, at the virtual resolution.
+virtual_layout_cache_old = { }
+virtual_layout_cache_new = { }
+
+
+
 def layout_cache_clear():
     """
     Clears the old and new layout caches.
@@ -1145,6 +1166,11 @@ def layout_cache_clear():
     layout_cache_old = { }
     layout_cache_new = { }
 
+    global virtual_layout_cache_old, virtual_layout_cache_new
+    virtual_layout_cache_old = { }
+    virtual_layout_cache_new = { }
+
+
 def layout_cache_tick():
     """
     Called once per interaction, to merge the old and new layout caches.
@@ -1153,6 +1179,10 @@ def layout_cache_tick():
     global layout_cache_old, layout_cache_new
     layout_cache_old = layout_cache_new
     layout_cache_new = { }
+
+    global virtual_layout_cache_old, virtual_layout_cache_new
+    virtual_layout_cache_old = layout_cache_new
+    virtual_layout_cache_new = { }
 
 VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
 VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
@@ -1429,10 +1459,13 @@ class Text(renpy.display.core.Displayable):
         layout_cache_old.pop(key, None)
         layout_cache_new.pop(key, None)
 
+        virtual_layout_cache_old.pop(key, None)
+        virtual_layout_cache_new.pop(key, None)
+
+
     def get_layout(self):
         """
-        Gets the layout of this Text, creating a new layout object if
-        none exists.
+        Gets the layout of this text, if one exists.
         """
 
         key = id(self)
@@ -1441,6 +1474,20 @@ class Text(renpy.display.core.Displayable):
 
         if rv is None:
             rv = layout_cache_old.get(key, None)
+
+        return rv
+
+    def get_virtual_layout(self):
+        """
+        Gets the layout of this text, if one exists.
+        """
+
+        key = id(self)
+
+        rv = virtual_layout_cache_new.get(key, None)
+
+        if rv is None:
+            rv = virtual_layout_cache_old.get(key, None)
 
         return rv
 
@@ -1565,11 +1612,24 @@ class Text(renpy.display.core.Displayable):
         for i in self.displayables:
             renders[i] = renpy.display.render.render(i, width, self.style.size, st, at)
 
-        # Find the layout, and update to the new size and width if necessary.
+        # Find the virtual-resolution layout.
+        virtual_layout = self.get_virtual_layout()
+
+        if virtual_layout is None or virtual_layout.width != width or virtual_layout.height != height:
+
+            virtual_layout = Layout(self, width, height, renders, drawable_res=False, size_only=True)
+
+            if len(virtual_layout_cache_new) > LAYOUT_CACHE_SIZE:
+                virtual_layout_cache_new.clear()
+
+            virtual_layout_cache_new[id(self)] = virtual_layout
+
+        # Find the drawable-resolution layout.
         layout = self.get_layout()
 
         if layout is None or layout.width != width or layout.height != height:
-            layout = Layout(self, width, height, renders)
+
+            layout = Layout(self, width, height, renders, splits_from=virtual_layout)
 
             if len(layout_cache_new) > LAYOUT_CACHE_SIZE:
                 layout_cache_new.clear()
@@ -1577,6 +1637,7 @@ class Text(renpy.display.core.Displayable):
             layout_cache_new[id(self)] = layout
 
         # The laid-out size of this Text.
+        vw, vh = virtual_layout.size
         w, h = layout.size
 
         # Get the list of blits we want to undertake.
@@ -1589,7 +1650,8 @@ class Text(renpy.display.core.Displayable):
             redraw = layout.redraw_typewriter(st)
 
         # Blit text layers.
-        rv = renpy.display.render.Render(*layout.unscale_pair(w, h))
+        rv = renpy.display.render.Render(vw, vh)
+        # rv = renpy.display.render.Render(*layout.unscale_pair(w, h))
 
         for o, color, xo, yo in layout.outlines:
             tex = layout.textures[o, color]

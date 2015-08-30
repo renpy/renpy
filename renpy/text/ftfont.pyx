@@ -330,6 +330,8 @@ cdef class FTFont:
         cdef int overhang
         cdef FT_Glyph_Metrics metrics
 
+        cdef int x, y
+
         face = self.face
 
         if self.vertical:

@@ -611,10 +611,9 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     # If the scale changed, invalidate caches of scaled fonts.
     global last_scale
 
-    if scale != last_scale:
+    if (scale != 1.0) and (scale != last_scale):
         scaled_image_fonts.clear()
         font_cache.clear()
-
         last_scale = scale
 
     # Perform replacement.
@@ -622,7 +621,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
     # Image fonts.
-    key = (fn, size, bold, italics)
+    key = (fn, size, bold, italics, scale)
 
     rv = image_fonts.get(key, None)
     if rv is not None:
@@ -637,7 +636,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
         return rv
 
     # Check for a cached TTF.
-    key = (fn, size, bold, italics, outline, antialias, vertical, hinting)
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale)
 
     rv = font_cache.get(key, None)
     if rv is not None:
