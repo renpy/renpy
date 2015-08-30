@@ -265,12 +265,17 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
             else:
                 lang_args = [ ]
 
+            if "RENPY_ANNOTATE_CYTHON" in os.environ:
+                annotate = [ "-a" ]
+            else:
+                annotate = [ ]
+
             subprocess.check_call([
                 cython_command,
                 "-Iinclude",
                 "-Igen",
                 "-I..",
-                ] + lang_args + [
+                ] + annotate + lang_args + [
                 fn,
                 "-o",
                 c_fn])
