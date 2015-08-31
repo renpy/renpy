@@ -451,7 +451,7 @@ class Layout(object):
             Layout (which must be another Layout of the same text).
         """
 
-        if False and drawable_res and renpy.config.drawable_resolution_text:
+        if drawable_res and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
             self.oversample = renpy.display.draw.draw_per_virt
