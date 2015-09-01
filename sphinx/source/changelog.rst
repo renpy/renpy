@@ -40,6 +40,10 @@ location that save files are placed.
 Other Improvements
 ------------------
 
+A new :func:`achievement.sync` function and :class:`achievement.Sync` action
+have been added to Ren'Py. These synchronize achivements between local
+storage and other backends, such as Steam.
+
 A major bug in scanning archive files has been fixed. This bug often
 manifested as an archived images/ directory not being scanned some,
 but potentially not all, of the time. We strongly recommend upgrading from

@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1500 python in achievement:
-    from store import persistent, renpy, config
+    from store import persistent, renpy, config, Action
 
     # A list of backends that have been registered.
     backends = [ ]
@@ -64,7 +64,6 @@ init -1500 python in achievement:
             """
 
             return False
-
 
     class PersistentBackend(Backend):
         """
@@ -186,6 +185,7 @@ init -1500 python in achievement:
 
             return steam.get_achievement(name)
 
+
     try:
         import _renpysteam as steam
         renpy.write_log("Imported steam.")
@@ -300,7 +300,7 @@ init -1500 python in achievement:
         """
         :doc: achievement
 
-        Returns true if the plater has been grnted the achievement with
+        Returns true if the player has been granted the achievement with
         `name`.
         """
 
@@ -309,3 +309,34 @@ init -1500 python in achievement:
                 return True
 
         return False
+
+    def sync():
+        """
+        :doc: achievement
+
+        Synchronizes registered achievements between local storage and
+        other backends. (For example, Steam.)
+        """
+
+        for a in persistent._achievements:
+            for i in backends:
+                if not i.has(a):
+                    i.grant(a)
+
+    class Sync(Action):
+        """
+        :doc: achievement
+
+        An action that calls achievement.sync(). This is only sensitive if
+        achievements are out of sync.
+        """
+
+        def __call__(self):
+            sync()
+
+        def get_sensitive(self):
+            for a in persistent._achievements:
+                for i in backends:
+                    if not i.has(a):
+                        return True
+            return False

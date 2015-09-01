@@ -1,5 +1,10 @@
 .. Automatically generated file - do not modify.
 
+.. function:: achievement.Sync()
+    
+    An action that calls achievement.sync(). This is only sensitive if
+    achievements are out of sync.
+
 .. function:: achievement.clear(name)
     
     Clears the achievement with `name`.
@@ -15,7 +20,7 @@
 
 .. function:: achievement.has(name)
     
-    Returns true if the plater has been grnted the achievement with
+    Returns true if the player has been granted the achievement with
     `name`.
 
 .. function:: achievement.progress(name, complete)
@@ -54,4 +59,9 @@
         to the user. For example, if stat_modulo is 10, progress will
         be displayed to the user when it reaches 10, 20, 30, etc. If
         not given, this defaults to 0.
+
+.. function:: achievement.sync()
+    
+    Synchronizes registered achievements between local storage and
+    other backends. (For example, Steam.)
 
