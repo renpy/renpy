@@ -710,7 +710,7 @@ cdef class GLDraw:
         clip = self.default_clip
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
-            surf = renpy.display.video.render_movie(xsize, ysize)
+            surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
             if surf is not None:
                 self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
