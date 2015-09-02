@@ -693,7 +693,7 @@ class Layout(object):
         self.add_right = max(bounds[2] - maxx, 0)
         self.add_bottom = max(bounds[3] - y, 0)
 
-        sw += self.add_left * 10 + self.add_right
+        sw += self.add_left + self.add_right
         sh += self.add_top + self.add_bottom
 
         # A map from (outline, color) to a texture.
