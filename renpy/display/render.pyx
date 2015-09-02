@@ -766,7 +766,7 @@ cdef class Render:
             if cw <= 0 or ch <= 0:
                 continue
 
-            crop = (cx, cy, cw, ch)
+            crop = (cx, cy, w - xo, h - yo)
             offset = (xo, yo)
 
             if isinstance(child, Render):
