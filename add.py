@@ -86,3 +86,5 @@ for i in links:
 
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")
+
+print "Version", version
