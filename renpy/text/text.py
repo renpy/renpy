@@ -757,17 +757,28 @@ class Layout(object):
                 renpy.display.to_log.write("     Available: (%d, %d) Laid-out: (%d, %d)", width, height, sw, sh)
                 renpy.display.to_log.write("     Text: %r", text.text)
 
-    def scale_int(self, n):
-        if n is None:
-            return n
-
-        return int(round(n * self.oversample))
 
     def scale(self, n):
         if n is None:
             return n
 
         return n * self.oversample
+
+    def scale_int(self, n):
+        if n is None:
+            return n
+
+        return int(round(n * self.oversample))
+
+    def scale_outline(self, n):
+        if n is None:
+            return n
+
+        if self.oversample < 1:
+            return n
+
+        return n * int(round(self.oversample))
+
 
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
@@ -1039,11 +1050,11 @@ class Layout(object):
                 dslist = [ dslist ]
 
             for dsx, dsy in dslist:
-                outlines.append((0, style.drop_shadow_color, self.scale_int(dsx), self.scale_int(dsy)))
+                outlines.append((0, style.drop_shadow_color, self.scale_outline(dsx), self.scale_outline(dsy)))
 
 
         for size, color, xo, yo in style_outlines:
-            outlines.append((self.scale_int(size), color, self.scale_int(xo), self.scale_int(yo)))
+            outlines.append((self.scale_outline(size), color, self.scale_outline(xo), self.scale_outline(yo)))
 
         # The outline borders we reserve.
         left = 0
