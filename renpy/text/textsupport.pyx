@@ -853,3 +853,11 @@ def copy_splits(list source, list dest):
         d = dest[i]
 
         d.split = s.split
+
+def tweak_glyph_spacing(list glyphs, double dx, double dy, double w, double h):
+    cdef Glyph g
+
+    for g in glyphs:
+        g.x += int(dx * g.x / w)
+        g.y += int(dy * g.y / h)
+

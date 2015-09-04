@@ -666,6 +666,15 @@ class Layout(object):
 
         textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
 
+        if splits_from:
+            target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
+            target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
+
+            textsupport.tweak_glyph_spacing(all_glyphs, target_x - maxx, target_y - y, maxx, y)
+
+            maxx = target_x
+            y = target_y
+
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
         # per-outline basis.)
