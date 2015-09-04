@@ -584,6 +584,10 @@ use_drawable_resolution = bool(int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION
 # Should text layout occur at drawable resolution?
 drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1")))
 
+# Should we fill the virtual-resolution text box?
+draw_virtual_text_box = bool(int(os.environ.get("RENPY_DRAW_VIRTUAL_TEXT_BOX", "0")))
+
+
 # Bindings of gamepad buttons.
 pad_bindings = { }
 

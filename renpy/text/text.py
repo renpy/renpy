@@ -1664,6 +1664,14 @@ class Text(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(vw, vh)
         # rv = renpy.display.render.Render(*layout.unscale_pair(w, h))
 
+        if renpy.config.draw_virtual_text_box:
+            fill = renpy.display.render.Render(vw, vh)
+            fill.fill((255, 0, 0, 32))
+            fill.forward = layout.reverse
+            fill.reverse = layout.forward
+
+            rv.blit(fill, (0, 0))
+
         for o, color, xo, yo in layout.outlines:
             tex = layout.textures[o, color]
 
