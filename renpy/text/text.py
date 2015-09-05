@@ -789,7 +789,7 @@ class Layout(object):
         if self.oversample < 1:
             return n
 
-        return n * int(round(self.oversample))
+        return n * int(self.oversample)
 
 
     def unscale_pair(self, x, y):
