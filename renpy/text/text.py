@@ -783,6 +783,9 @@ class Layout(object):
         if n is None:
             return n
 
+        if isinstance(n, renpy.display.core.absolute):
+            return n
+
         if self.oversample < 1:
             return n
 
