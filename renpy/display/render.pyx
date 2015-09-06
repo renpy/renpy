@@ -769,14 +769,16 @@ cdef class Render:
             if cx < 0 or cx >= childw or cy < 0 or cy >= childh:
                 continue
 
-            crop = (cx, cy, w - xo, h - yo)
             offset = (xo, yo)
+            crop = None
 
             try:
                 if isinstance(child, Render):
+                    crop = (cx, cy, w - xo, h - yo)
                     newchild = child.subsurface(crop, focus=focus)
                     newchild.render_of = child.render_of[:]
                 else:
+                    crop = (cx, cy, cw, ch)
                     newchild = child.subsurface(crop)
                     renpy.display.draw.mutated_surface(newchild)
             except:
