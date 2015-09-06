@@ -63,9 +63,14 @@ a dict of additional properties, respectively.
 The new :class:`Color` class allows conversion between color spaces and other
 color-theory operations.
 
+Ren'Py now supports a game/python-packages directory, which can be used
+with pure-python packages installed via pip. See the new :ref:`python-modules`
+documentation for more details.
+
 Renios now supports compiling for 32-bit simulators (for the iPhone 4 and 5).
 
 The Korean and Russian translations have been improved.
+
 
 
 Ren'Py 6.99.5

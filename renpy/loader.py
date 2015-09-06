@@ -625,9 +625,12 @@ class RenpyImporter(object):
     """
 
     def __init__(self, prefix=""):
-        self.prefix = ""
+        self.prefix = prefix
 
-    def translate(self, fullname, prefix=""):
+    def translate(self, fullname, prefix=None):
+
+        if prefix is None:
+            prefix = self.prefix
 
         try:
             fn = (prefix + fullname.replace(".", "/")).decode("utf8")
@@ -678,10 +681,12 @@ class RenpyImporter(object):
         return load(filename).read()
 
 def init_importer():
-    sys.meta_path.append(RenpyImporter())
+    sys.meta_path.insert(0, RenpyImporter("python-packages/"))
+    sys.meta_path.insert(0, RenpyImporter())
 
 def quit_importer():
-    sys.meta_path.pop()
+    sys.meta_path.pop(0)
+    sys.meta_path.pop(0)
 
 #################################################################### Auto-Reload
 
