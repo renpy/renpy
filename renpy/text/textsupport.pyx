@@ -857,6 +857,9 @@ def copy_splits(list source, list dest):
 def tweak_glyph_spacing(list glyphs, double dx, double dy, double w, double h):
     cdef Glyph g
 
+    if w <= 0 or h <= 0:
+        return
+
     for g in glyphs:
         g.x += int(dx * g.x / w)
         g.y += int(dy * g.y / h)
