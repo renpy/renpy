@@ -759,22 +759,28 @@ cdef class Render:
 
         for child, cx, cy, cfocus, cmain in self.children:
 
-            cw, ch = child.get_size()
-            xo, cx, cw = compute_subline(cx, cw, x, w)
-            yo, cy, ch = compute_subline(cy, ch, y, h)
+            childw, childh = child.get_size()
+            xo, cx, cw = compute_subline(cx, childw, x, w)
+            yo, cy, ch = compute_subline(cy, childh, y, h)
 
-            if cw <= 0 or ch <= 0:
+            if cw <= 0 or ch <= 0 or w - xo <= 0 or h - yo <= 0:
+                continue
+
+            if cx < 0 or cx >= childw or cy < 0 or cy >= childh:
                 continue
 
             crop = (cx, cy, w - xo, h - yo)
             offset = (xo, yo)
 
-            if isinstance(child, Render):
-                newchild = child.subsurface(crop, focus=focus)
-                newchild.render_of = child.render_of[:]
-            else:
-                newchild = child.subsurface(crop)
-                renpy.display.draw.mutated_surface(newchild)
+            try:
+                if isinstance(child, Render):
+                    newchild = child.subsurface(crop, focus=focus)
+                    newchild.render_of = child.render_of[:]
+                else:
+                    newchild = child.subsurface(crop)
+                    renpy.display.draw.mutated_surface(newchild)
+            except:
+                raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
             rv.blit(newchild, offset, focus=cfocus, main=cmain)
 
