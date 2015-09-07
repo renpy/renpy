@@ -608,6 +608,9 @@ wrap_shown_transforms = True
 # A list of prefixes Ren'Py will search for assets.
 search_prefixes = [ "", "images/" ]
 
+# Should Ren'Py clear the database of code lines?
+clear_lines = True
+
 del renpy
 del os
 

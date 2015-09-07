@@ -414,6 +414,9 @@ def main():
         for i in renpy.game.post_init:
             i()
 
+        if renpy.config.clear_lines:
+            renpy.parser.lines.clear()
+
         log_clock("Running init code")
 
         renpy.pyanalysis.load_cache()
