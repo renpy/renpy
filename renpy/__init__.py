@@ -98,6 +98,11 @@ safe_mode_checked = False
 # needs to survive through an utter restart.
 autoreload = False
 
+
+# A dict that persists through utter restarts. Accessible to all code as
+# renpy.session.
+session = { }
+
 # A list of modules beginning with "renpy" that we don't want
 # to backup.
 backup_blacklist = {
