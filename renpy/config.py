@@ -611,6 +611,10 @@ search_prefixes = [ "", "images/" ]
 # Should Ren'Py clear the database of code lines?
 clear_lines = True
 
+# Special namespaces for define and default.
+special_namespaces = { }
+
+
 del renpy
 del os
 

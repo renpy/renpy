@@ -1702,6 +1702,27 @@ class UserStatement(Node):
     def get_code(self, dialogue_filter=None):
         return self.line
 
+def create_store(name):
+    if name not in renpy.config.special_namespaces:
+        renpy.python.create_store(name)
+
+class StoreNamespace(object):
+    def __init__(self, store):
+        self.store = store
+
+    def set(self, name, value):
+        renpy.python.store_dicts[self.store][name] = value
+
+def get_namespace(store):
+    """
+    Returns the namespace object for `store`, and a flag that is true if the
+    namespace is special, and false if it is a normal store.
+    """
+
+    if store in renpy.config.special_namespaces:
+        return renpy.config.special_namespaces[store], True
+
+    return StoreNamespace(store), False
 
 class Define(Node):
 
@@ -1727,7 +1748,7 @@ class Define(Node):
         return (Define, self.store, self.varname)
 
     def early_execute(self):
-        renpy.python.create_store(self.store)
+        create_store(self.store)
 
     def execute(self):
 
@@ -1742,7 +1763,8 @@ class Define(Node):
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-        renpy.python.store_dicts[self.store][self.varname] = value
+        ns, _special = get_namespace(self.store)
+        ns.set(self.varname, value)
 
 
 # All the default statements, in the order they were registered.
@@ -1773,7 +1795,7 @@ class Default(Node):
         return (Default, self.store, self.varname)
 
     def early_execute(self):
-        renpy.python.create_store(self.store)
+        create_store(self.store)
 
     def execute(self):
 
@@ -1781,6 +1803,11 @@ class Default(Node):
         statement_name("default")
 
         default_statements.append(self)
+
+        _ns, special = get_namespace(self.store)
+
+        if special:
+            raise Exception("The default statement can't be used with the special namespace %r." % self.store)
 
         if self.store == 'store':
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
