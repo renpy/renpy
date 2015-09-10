@@ -670,7 +670,7 @@ class Layout(object):
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 
-            textsupport.tweak_glyph_spacing(all_glyphs, target_x - maxx, target_y - y, maxx, y)
+            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x - maxx, target_y - y, maxx, y)
 
             maxx = target_x
             y = target_y
