@@ -349,7 +349,9 @@ def main():
                 except OSError:
                     # This perhaps shouldn't happen since either .rpy or .rpyc should exist
                     pass
+
         # Update script files list, so that it doesn't contain removed .rpyc's
+        renpy.loader.cleardirfiles()
         renpy.game.script.scan_script_files()
 
     # Load all .rpy files.

@@ -117,7 +117,7 @@ translate korean demo_text_362f67bb:
 
 
     # e "You can define your own text tags, {=pink}that use a style you define.{/=pink}"
-    e "여러분이 직접 텍스트 태그를 정의해서 사용할 수도 있는데요, {=pink}여러분이 직접 정의한 스타일을 사용하게 됩니다."
+    e "여러분이 직접 텍스트 태그를 정의해서 사용할 수도 있는데요, {=pink}여러분이 직접 정의한 스타일을 사용하게 됩니다.{/=pink}"
 
 
 # game/demo_text.rpy:98
