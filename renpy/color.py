@@ -278,7 +278,7 @@ class Color(tuple):
     def interpolate_core(self, a, b, fraction):
 
         if isinstance(a, tuple):
-            rv = (self.interpolate_core(ac, bc, fraction) for ac, bc in zip(a, b))
+            rv = tuple(self.interpolate_core(ac, bc, fraction) for ac, bc in zip(a, b))
         else:
             rv = a + (b - a) * fraction
 
