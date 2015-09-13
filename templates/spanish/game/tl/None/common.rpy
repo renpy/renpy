@@ -526,7 +526,7 @@
 
     # renpy/common/00gltest.rpy:91
     old "Gamepad"
-    new "Gamepad"
+    new "Mando"
 
     # renpy/common/00gltest.rpy:95
     old "Enable"
