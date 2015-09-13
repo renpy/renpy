@@ -40,12 +40,20 @@ class Blit(object):
     render. This is a rectangle with an associated alpha.
     """
 
-    def __init__(self, x, y, w, h, alpha=1.0):
+    def __init__(self, x, y, w, h, alpha=1.0, left=False, right=False, top=False, bottom=False):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
         self.alpha = alpha
+
+        # True when the blit contains the left or right side of its row.
+        self.left = left
+        self.right = right
+
+        # True when the blit is in the top or bottom row.
+        self.top = top
+        self.bottom = bottom
 
     def __repr__(self):
         return "<Blit ({0}, {1}, {2}, {3}) {4}>".format(self.x, self.y, self.w, self.h, self.alpha)
@@ -121,7 +129,7 @@ def outline_blits(blits, outline):
 
         max_x = x1
 
-        rv.append(Blit(x0, y0, x1 - x0, y1 - y0, b.alpha))
+        rv.append(Blit(x0, y0, x1 - x0, y1 - y0, b.alpha, left=b.left, right=b.right, top=b.top, bottom=b.bottom))
 
     return rv
 
@@ -1102,13 +1110,20 @@ class Layout(object):
         """
         Given a st and an outline, returns a list of blit objects that
         can be used to blit those objects.
+
+        This also sets the extreme points when creating a Blit.
+
         """
 
         width, max_height = self.size
 
         rv = [ ]
 
+        if not self.lines:
+            return rv
+
         max_y = 0
+        top = True
 
         for l in self.lines:
 
@@ -1121,7 +1136,8 @@ class Layout(object):
             l = None
 
         if max_y:
-            rv.append(Blit(0, 0, width, max_y))
+            rv.append(Blit(0, 0, width, max_y, top=top, left=True, right=True, bottom=(l is None)))
+            top = False
 
         if l is None:
             return rv
@@ -1132,10 +1148,19 @@ class Layout(object):
         min_x = width
         max_x = 0
 
+
+        left = False
+        right = False
+
         for g in l.glyphs:
 
             if g.time > st:
                 continue
+
+            if g is l.glyphs[0]:
+                left = True
+            if g is l.glyphs[-1]:
+                right = True
 
             if g.x + g.advance > max_x:
                 max_x = g.x + g.advance
@@ -1146,7 +1171,7 @@ class Layout(object):
         ly = min(l.y + l.height + self.line_overlap_split, max_height)
 
         if min_x < max_x:
-            rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y))
+            rv.append(Blit(min_x, max_y, max_x - min_x, ly - max_y, left=left, right=right, top=top, bottom=(l is self.lines[-1]) ))
 
         return rv
 
@@ -1665,7 +1690,7 @@ class Text(renpy.display.core.Displayable):
 
         # Get the list of blits we want to undertake.
         if not self.slow:
-            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder) ]
+            blits = [ Blit(0, 0, w - layout.xborder, h - layout.yborder, left=True, right=True, top=True, bottom=True) ]
             redraw = None
         else:
             # TODO: Make this changeable.
@@ -1717,20 +1742,20 @@ class Text(renpy.display.core.Displayable):
                     continue
 
                 # Expand the blits and offset them as necessary.
-                if b_x + b_w >= w - 2:
+                if b.right:
                     b_w += layout.add_right
                     b_w += o
 
-                if b_y + b_h >= h - 2:
+                if b.bottom:
                     b_h += layout.add_bottom
                     b_h += o
 
-                if b_x == 0:
+                if b.left:
                     b_w += layout.add_left
                 else:
                     b_x += layout.add_left
 
-                if b_y == 0:
+                if b.top:
                     b_h += layout.add_top
                 else:
                     b_y += layout.add_top
