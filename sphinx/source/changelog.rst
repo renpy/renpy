@@ -71,6 +71,7 @@ Renios now supports compiling for 32-bit simulators (for the iPhone 4 and 5).
 
 The Korean and Russian translations have been improved.
 
+A pause will now automatically end when auto-forward mode is enabled.
 
 
 Ren'Py 6.99.5
