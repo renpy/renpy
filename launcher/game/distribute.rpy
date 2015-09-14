@@ -897,15 +897,17 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update and not dlc:
+            if self.include_update:
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
                 with open(update_fn, "wb") as f:
                     json.dump(update, f)
 
-                fl.append(File("update", None, True, False))
-                fl.append(File("update/current.json", update_fn, False, False))
+                if not dlc:
+
+                    fl.append(File("update", None, True, False))
+                    fl.append(File("update/current.json", update_fn, False, False))
 
             # The mac transform.
             if format == "app-zip":
