@@ -71,8 +71,8 @@ def compile_event(key, keydown):
         else:
             return "(False)"
 
-    # Deal with the Joystick.
-    if part[0] == "joy":
+    # Deal with the Joystick / Gamepad.
+    if part[0] == "joy" or part[0] == "pad":
         return "(False)"
 
     # Otherwise, deal with it as a key.
