@@ -419,6 +419,10 @@ def main():
         if renpy.config.clear_lines:
             renpy.parser.lines.clear()
 
+        for i in renpy.game.persistent._seen_translates:
+            if i in renpy.game.script.translator.default_translates:
+                renpy.game.seen_translates_count += 1
+
         log_clock("Running init code")
 
         renpy.pyanalysis.load_cache()

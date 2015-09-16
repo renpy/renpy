@@ -2808,7 +2808,7 @@ def count_seen_dialogue_blocks():
     when the script has changed and older dialogue blocks are no longer accessible.
     """
 
-    return len(renpy.game.persistent._seen_translates) # @UndefinedVariable
+    return renpy.game.seen_translates_count
 
 
 def substitute(s, scope=None, translate=True):

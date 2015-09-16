@@ -61,6 +61,10 @@ style = None
 # The set of statements we've seen in this session.
 seen_session = { }
 
+# The number of entries in persistent._seen_translates that are also in
+# the current game.
+seen_translates_count = 0
+
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
