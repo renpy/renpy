@@ -126,8 +126,8 @@ init -1600 python:
 
         "pad_rightshoulder_press" : [ "rollforward", ],
 
-        "pad_righttrigger_pos" : [ "dismiss", "button_select" ],
-        "pad_a_press" : [ "dismiss", "button_select" ],
+        "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
+        "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
         "pad_b_press" : [ "button_alternate" ],
 
         "pad_dpleft_press" : [ "focus_left", "bar_left" ],
