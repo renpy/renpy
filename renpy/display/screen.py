@@ -1124,6 +1124,35 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
     rv = screen.widgets.get(id, None)
     return rv
 
+def get_widget_properties(id, screen=None, layer='screens'): # @ReservedAssignment
+    """
+    :doc: screen
+
+    Returns the properties for the widget with `id` in the `screen`
+    on `layer`. If `screen` is None, returns the properties for the
+    current screen.
+
+    This can be used inside screen code.
+
+    Note that this returns a dictionary containing the widget properties,
+    and so to get an individual property
+    """
+
+    if screen is None:
+        s = current_screen()
+    else:
+        s = get_screen(screen, layer)
+
+    if s is None:
+        return { }
+
+    rv = s.widget_properties.get(id, None)
+
+    if rv is None:
+        rv = { }
+
+    return rv
+
 def before_restart():
     """
     This is called before Ren'Py restarts to put the screens into restart
