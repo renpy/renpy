@@ -651,8 +651,18 @@ class MultiBox(Container):
 
                 if rv is None:
 
-                    if self.style.fit_first:
-                        width, height = surf.get_size()
+                    ff = self.style.fit_first
+
+                    if ff:
+                        w, h = surf.get_size()
+
+                        if ff == "width":
+                            width = w
+                        elif ff == "height":
+                            height = h
+                        else:
+                            width = w
+                            height = h
 
                     rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 

@@ -858,7 +858,9 @@ Fixed Style Properties
 
 These are used with the fixed layout.
 
-.. style-property:: fit_first bool
+.. style-property:: fit_first bool or "width" or "height"
 
    If true, then the size of the fixed layout is shrunk to be equal with
-   the size of the first item in the layout.
+   the size of the first item in the layout. If "width", only the width is changed
+   (the fixed will fill the screen vertically). Similarly, "height" only changes
+   the height.
