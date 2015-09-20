@@ -122,7 +122,13 @@ button_properties = [ Style(i) for i in [
         "focus_mask",
         "child",
         "keyboard_focus",
-        ] ]
+    ] ] + [
+        Keyword("action"),
+        Keyword("clicked"),
+        Keyword("hovered"),
+        Keyword("unhovered"),
+        Keyword("alternate"),
+    ]
 
 bar_properties = [ Style(i) for i in [
         "bar_vertical",

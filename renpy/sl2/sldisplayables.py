@@ -170,11 +170,6 @@ Positional("im")
 # Omit imagemap_compat for being too high level (and obsolete).
 
 DisplayableParser("button", renpy.display.behavior.Button, "button", 1)
-Keyword("action")
-Keyword("clicked")
-Keyword("hovered")
-Keyword("unhovered")
-Keyword("alternate")
 add(window_properties)
 add(button_properties)
 
