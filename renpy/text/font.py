@@ -621,7 +621,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
     # Image fonts.
-    key = (fn, size, bold, italics, scale)
+    key = (fn, size, bold, italics)
 
     rv = image_fonts.get(key, None)
     if rv is not None:
