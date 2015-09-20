@@ -21,10 +21,10 @@
 
 python early in icon:
 
-    from store import im, Image, Color
+    from store import im, Image, Color, Text
 
     # The path to the icons.
-    path = [ '' ]
+    path = [ '', 'icons/' ]
 
     class Icon(renpy.Displayable):
 
@@ -59,8 +59,10 @@ python early in icon:
             cr = renpy.render(d, width, height, st, at)
             cw, ch = cr.get_size()
 
-            rv = renpy.Render(width, height)
-            rv.zoom(1.0 * width / cw, 1.0 * height / ch)
+            scale = min(1.0 * width / cw, 1.0 * height / ch)
+
+            rv = renpy.Render(cw * scale, ch * scale)
+            rv.zoom(scale, scale)
             rv.blit(cr, (0, 0))
 
             return rv
