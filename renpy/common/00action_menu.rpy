@@ -103,11 +103,21 @@ init -1500 python:
                 renpy.call_in_new_context("_game_menu", *self.args, _game_menu_screen=screen, **self.kwargs)
 
         def get_selected(self):
-            return renpy.get_screen(self.screen)
+            screen = self.screen or store._game_menu_screen
+
+            if screen is None:
+                return False
+
+            return renpy.get_screen(screen)
 
         def get_sensitive(self):
-            if self.screen in config.show_menu_enable:
-                return eval(config.show_menu_enable[self.screen])
+            screen = self.screen or store._game_menu_screen
+
+            if screen is None:
+                return False
+
+            if screen in config.show_menu_enable:
+                return eval(config.show_menu_enable[screen])
             else:
                 return True
 
