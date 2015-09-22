@@ -398,10 +398,12 @@ def import_all():
 
     import renpy.add_from
     import renpy.dump
+    import renpy.scriptedit
 
     import renpy.config # depends on lots. @UnresolvedImport
     import renpy.minstore # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
+
     import renpy.main
 
 

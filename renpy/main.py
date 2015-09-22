@@ -95,9 +95,6 @@ def run(restart):
     if not renpy.arguments.post_init():
         renpy.exports.quit()
 
-    # Remove the list of all statements from the script.
-    game.script.all_stmts = None
-
     # Sleep to finish the presplash.
     renpy.display.presplash.sleep()
 

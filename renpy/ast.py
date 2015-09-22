@@ -376,6 +376,15 @@ class Node(object):
 
         self.next = next
 
+    def replace_next(self, old, new):
+        """
+        Replaces instances of the `old` node with `new` when it is the next
+        node.
+        """
+
+        if self.next is old:
+            self.next = new
+
     def execute(self):
         """
         Causes this node to execute, and any action it entails to be
@@ -684,7 +693,6 @@ class Init(Node):
 
 
 class Label(Node):
-
 
     translation_relevant = True
 
@@ -1399,6 +1407,13 @@ class Menu(Node):
             if block:
                 chain_block(block, next)
 
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        for _label, _condition, block in self.items:
+            if block and (block[0] is old):
+                block.insert(0, new)
+
     def execute(self):
 
         next_node(self.next)
@@ -1555,6 +1570,12 @@ class While(Node):
         self.next = next
         chain_block(self.block, self)
 
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        if self.block and (self.block[0] is old):
+            self.block.insert(0, new)
+
     def execute(self):
 
         next_node(self.next)
@@ -1602,6 +1623,13 @@ class If(Node):
 
         for _condition, block in self.entries:
             chain_block(block, next)
+
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        for _condition, block in self.entries:
+            if (block) and (block[0] is old):
+                block.insert(0, new)
 
     def execute(self):
 
@@ -1901,6 +1929,12 @@ class Translate(Node):
         self.next = next
         chain_block(self.block, next)
 
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        if self.block and (self.block[0] is old):
+            self.block.insert(0, new)
+
     def execute(self):
 
         statement_name("translate")
@@ -1909,7 +1943,7 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
-        if self.identifier not in renpy.game.persistent._seen_translates:
+        if self.identifier not in renpy.game.persistent._seen_translates: # @UndefinedVariable
             renpy.game.persistent._seen_translates.add(self.identifier) # @UndefinedVariable
             renpy.game.seen_translates_count += 1
 
