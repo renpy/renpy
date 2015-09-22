@@ -320,7 +320,7 @@ class Script(object):
                 if new.name is None:
                     new.name = old.name
 
-    def load_string(self, filename, filedata):
+    def load_string(self, filename, filedata, linenumber=1):
         """
         Loads Ren'Py script from a string.
 
@@ -334,7 +334,7 @@ class Script(object):
         list of init statements that need to be run.
         """
 
-        stmts = renpy.parser.parse(filename, filedata)
+        stmts = renpy.parser.parse(filename, filedata, linenumber=linenumber)
 
         if stmts is None:
             return None, None

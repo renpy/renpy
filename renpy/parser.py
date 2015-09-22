@@ -201,7 +201,7 @@ class Line(object):
     def __repr__(self):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
-def list_logical_lines(filename, filedata=None):
+def list_logical_lines(filename, filedata=None, linenumber=1):
     """
     Reads `filename`, and divides it into logical lines.
 
@@ -232,7 +232,7 @@ def list_logical_lines(filename, filedata=None):
     rv = []
 
     # The line number in the physical file.
-    number = 1
+    number = linenumber
 
     # The current position we're looking at in the buffer.
     pos = 0
@@ -2357,7 +2357,7 @@ def parse_block(l):
 
     return rv
 
-def parse(fn, filedata=None):
+def parse(fn, filedata=None, linenumber=1):
     """
     Parses a Ren'Py script contained within the file `fn`.
 
@@ -2366,12 +2366,14 @@ def parse(fn, filedata=None):
 
     If `filedata` is given, it should be a unicode string giving the file
     contents.
+
+    If `linenumber` is given, the parse starts at `linenumber`.
     """
 
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
     try:
-        lines = list_logical_lines(fn, filedata)
+        lines = list_logical_lines(fn, filedata, linenumber)
         nested = group_logical_lines(lines)
     except ParseError, e:
         parse_errors.append(e.message)

@@ -24,6 +24,25 @@
 
 import renpy
 
+def adjust_ast_linenumbers(filename, linenumber, offset):
+    """
+    This adjusts the line numbers in the the ast.
+
+    `filename`
+        The filename to adjust.
+
+    `linenumber`
+        The first line to adjust.
+
+    `offset`
+        The amount to adjust by. Positive numbers increase the line
+    """
+
+    for i in renpy.game.script.all_stmts:
+        if (i.filename == filename) and (i.linenumber >= linenumber):
+            i.linenumber += offset
+
+
 def add_to_ast_before(line, statement):
     """
     Adds `line`, which must be a textual line of Ren'Py code, to the AST
@@ -34,8 +53,11 @@ def add_to_ast_before(line, statement):
 
     old = renpy.game.script.lookup(statement)
 
-    print line
-    block, _init = renpy.game.script.load_string(old.filename, line)
+    linenumber = old.linenumber
+
+    adjust_ast_linenumbers(old.filename, linenumber, 1)
+
+    block, _init = renpy.game.script.load_string(old.filename, line, linenumber=linenumber)
 
     # Remove the return statement at the end of the block.
     block = block[:-1]
@@ -47,8 +69,6 @@ def add_to_ast_before(line, statement):
         i.replace_next(old, block[0])
 
     renpy.ast.chain_block(block, old)
-
-    block[-1].next = old
 
 def test():
 
