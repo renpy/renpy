@@ -151,7 +151,7 @@ class Script(object):
             return
 
         basename = os.path.basename(renpy.config.basedir)
-        backupdir = os.path.join(backups, basename)
+        backupdir = os.path.join(backups, renpy.exports.fsencode(basename))
 
         renpy.exports.write_log("Backing up script files to %r:", backupdir)
 
@@ -183,7 +183,7 @@ class Script(object):
             if not os.path.exists(fn):
                 continue
 
-            short_fn = fn[len(renpy.config.gamedir)+1:]
+            short_fn = renpy.exports.fsencode(fn[len(renpy.config.gamedir)+1:])
 
             base, ext = os.path.splitext(short_fn)
             target_fn = os.path.join(
