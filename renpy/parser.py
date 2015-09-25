@@ -163,7 +163,6 @@ def unelide_filename(fn):
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
-
 def list_logical_lines(filename, filedata=None, linenumber=1):
     """
     Reads `filename`, and divides it into logical lines.
@@ -204,7 +203,10 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
     if len(data) and data[0] == u'\ufeff':
         pos += 1
 
-    lines = renpy.scriptedit.lines
+    if renpy.game.context().init_phase:
+        lines = renpy.scriptedit.lines
+    else:
+        lines = { }
 
     # Looping over the lines in the file.
     while pos < len(data):
