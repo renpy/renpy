@@ -23,12 +23,13 @@
 # and the textual representation of Ren'Py code.
 
 import renpy
+import re
+import codecs
 
 
 # A map from line loc (elided filename, line) to the Line object representing
 # that line.
 lines = { }
-
 
 class Line(object):
     """
@@ -56,6 +57,75 @@ class Line(object):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
 
+def adjust_line_locations(filename, linenumber, char_offset, line_offset):
+    """
+    Adjusts the locations in the line data structure.
+
+    `filename`, `linenumber`
+        The filename and first line number to adjust.
+
+    `char_offset`
+        The number of characters in the file to offset the code by,.
+
+    `line_offset`
+        The number of line in the file to offset the code by.
+    """
+
+    global lines
+
+    new_lines = { }
+
+    for key, line in lines.iteritems():
+
+        (fn, ln) = key
+
+        if (fn == filename) and (linenumber <= ln):
+            ln += line_offset
+            line.number += line_offset
+            line.start += char_offset
+            line.end += char_offset
+
+        new_lines[fn, ln] = line
+
+    lines = new_lines
+
+
+def insert_line_before(code, filename, linenumber):
+    """
+    Adds `code` immediately before `filename` and `linenumber`. Those must
+    correspond to an existing line, and the code is inserted with the same
+    indentation as that line.
+    """
+
+    if renpy.config.clear_lines:
+        raise Exception("config.clear_lines must be False for script editing to work.")
+
+    if not renpy.game.args.compile: # @UndefinedVariable
+        raise Exception("The compile flag must have been given for script editing to work.")
+
+    old_line = lines[filename, linenumber]
+
+    m = re.match(r' *', old_line.text)
+    indent = m.group(0)
+
+    raw_code = indent + code
+    code = indent + code + "\r\n"
+
+    new_line = Line(old_line.filename, old_line.number, old_line.start)
+    new_line.text = raw_code
+    new_line.end = new_line.start + len(raw_code)
+
+    with codecs.open(old_line.filename, "r", "utf-8") as f:
+        data = f.read()
+
+    data = data[:old_line.start] + code + data[old_line.start:]
+
+    adjust_line_locations(filename, linenumber, len(code), code.count("\n"))
+
+    with codecs.open(old_line.filename, "w", "utf-8") as f:
+        f.write(data)
+
+    lines[filename, linenumber] = new_line
 
 
 def adjust_ast_linenumbers(filename, linenumber, offset):
@@ -77,21 +147,18 @@ def adjust_ast_linenumbers(filename, linenumber, offset):
             i.linenumber += offset
 
 
-def add_to_ast_before(line, statement):
+def add_to_ast_before(code, statement):
     """
-    Adds `line`, which must be a textual line of Ren'Py code, to the AST
+    Adds `code`, which must be a textual line of Ren'Py code, to the AST
     immediately before `statement`, which should be an AST node.
     """
 
-    # TODO: We probably want to deal with the file name and line number.
-
-    old = renpy.game.script.lookup(statement)
-
+    old = statement
     linenumber = old.linenumber
 
     adjust_ast_linenumbers(old.filename, linenumber, 1)
 
-    block, _init = renpy.game.script.load_string(old.filename, line, linenumber=linenumber)
+    block, _init = renpy.game.script.load_string(old.filename, code, linenumber=linenumber)
 
     # Remove the return statement at the end of the block.
     block = block[:-1]
@@ -104,9 +171,18 @@ def add_to_ast_before(line, statement):
 
     renpy.ast.chain_block(block, old)
 
+serial = 1
+
 def test():
 
-    import time
-    s = "'Hello world %f'\n" % time.time()
+    global serial
+    s = "'Hello world %f'" % serial
+    serial += 1
 
-    add_to_ast_before(s, renpy.game.context().current)
+    node = renpy.game.script.lookup(renpy.game.context().current)
+    filename = node.filename
+    linenumber = node.linenumber
+
+    add_to_ast_before(s, node)
+    insert_line_before(s, filename, linenumber)
+    renpy.exports.restart_interaction()
