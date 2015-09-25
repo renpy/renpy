@@ -298,6 +298,7 @@ def import_all():
     import renpy.loadsave
     import renpy.savelocation  # @UnresolvedImport
     import renpy.persistent
+    import renpy.scriptedit
     import renpy.parser
     import renpy.python
     import renpy.script
@@ -398,7 +399,6 @@ def import_all():
 
     import renpy.add_from
     import renpy.dump
-    import renpy.scriptedit
 
     import renpy.config # depends on lots. @UnresolvedImport
     import renpy.minstore # depends on lots. @UnresolvedImport

@@ -163,43 +163,6 @@ def unelide_filename(fn):
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
-# A map from line loc (elide filename, line) to the position (offset in unicode characters) of
-# the start of the logical line in the file.
-line_startpos = { }
-
-# A map from the line loc to the postion (offset in unicode characters) of the end of the logical
-# line in the file.
-line_endpos = { }
-
-# A map from line loc (elided filename, line) to the Line object representing
-# that line.
-lines = { }
-
-
-class Line(object):
-    """
-    Represents a logical line in a file.
-    """
-
-    def __init__(self, filename, number, start):
-
-        # The full path to the file with the line in it.
-        self.filename = filename
-
-        # The line number.
-        self.number = number
-
-        # The offset inside the file at which the line starts.
-        self.start = start
-
-        # The offset inside the file at which the line ends.
-        self.end = start
-
-        # The text of the line.
-        self.text = ''
-
-    def __repr__(self):
-        return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
 def list_logical_lines(filename, filedata=None, linenumber=1):
     """
@@ -241,6 +204,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
     if len(data) and data[0] == u'\ufeff':
         pos += 1
 
+    lines = renpy.scriptedit.lines
+
     # Looping over the lines in the file.
     while pos < len(data):
 
@@ -254,7 +219,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
         parendepth = 0
 
         loc = (filename, start_number)
-        lines[loc] = Line(original_filename, start_number, pos)
+        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
 
         endpos = None
 
@@ -1669,9 +1634,9 @@ def call_statement(l, loc):
         rv.append(ast.Label(loc, name, [], None))
     else:
         if expression:
-            renpy.add_from.report_missing("expression", original_filename, lines[loc].end)
+            renpy.add_from.report_missing("expression", original_filename, renpy.scriptedit.lines[loc].end)
         else:
-            renpy.add_from.report_missing(target, original_filename, lines[loc].end)
+            renpy.add_from.report_missing(target, original_filename, renpy.scriptedit.lines[loc].end)
 
     rv.append(ast.Pass(loc))
 

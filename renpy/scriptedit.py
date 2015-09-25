@@ -24,6 +24,40 @@
 
 import renpy
 
+
+# A map from line loc (elided filename, line) to the Line object representing
+# that line.
+lines = { }
+
+
+class Line(object):
+    """
+    Represents a logical line in a file.
+    """
+
+    def __init__(self, filename, number, start):
+
+        # The full path to the file with the line in it.
+        self.filename = filename
+
+        # The line number.
+        self.number = number
+
+        # The offset inside the file at which the line starts.
+        self.start = start
+
+        # The offset inside the file at which the line ends.
+        self.end = start
+
+        # The text of the line.
+        self.text = ''
+
+    def __repr__(self):
+        return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
+
+
+
+
 def adjust_ast_linenumbers(filename, linenumber, offset):
     """
     This adjusts the line numbers in the the ast.

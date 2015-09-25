@@ -414,7 +414,7 @@ def main():
             i()
 
         if renpy.config.clear_lines:
-            renpy.parser.lines.clear()
+            renpy.scriptedit.lines.clear()
 
         for i in renpy.game.persistent._seen_translates:
             if i in renpy.game.script.translator.default_translates:
