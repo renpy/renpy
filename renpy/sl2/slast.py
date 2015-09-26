@@ -143,6 +143,10 @@ class SLContext(renpy.ui.Addable):
         # The use statement containing the transcluded block.
         self.transclude = None
 
+        # True if it's unlikely this node will run. This is used in prediction
+        # to speed things up.
+        self.unlikely = False
+
 
     def get_style_group(self):
         style_prefix = self.style_prefix
@@ -1164,6 +1168,7 @@ class SLIf(SLNode):
 
                 ctx = SLContext(context)
                 ctx.children = [ ]
+                ctx.unlikely = True
 
                 for i in block.children:
                     try:
@@ -1173,7 +1178,6 @@ class SLIf(SLNode):
 
                 for i in ctx.children:
                     predict_displayable(i)
-
 
     def keywords(self, context):
 
@@ -1337,6 +1341,7 @@ class SLFor(SLBlock):
 
     def execute(self, context):
 
+
         variable = self.variable
         expr = self.expression_expr
 
@@ -1376,6 +1381,9 @@ class SLFor(SLBlock):
                 except:
                     if not context.predicting:
                         raise
+
+            if context.unlikely:
+                break
 
         context.cache[self.serial] = newcaches
 
