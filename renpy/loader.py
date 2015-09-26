@@ -275,18 +275,23 @@ def listdirfiles(common=True):
 
 class SubFile(object):
 
-    def __init__(self, f, base, length, start):
-        self.f = f
+    def __init__(self, fn, base, length, start):
+        self.fn = fn
+
+        self.f = None
+
         self.base = base
         self.offset = 0
         self.length = length
         self.start = start
 
         if not self.start:
-            self.name = self.f.name
+            self.name = fn
         else:
             self.name = None
 
+    def open(self):
+        self.f = open(self.fn, "rb")
         self.f.seek(self.base)
 
     def __enter__(self):
@@ -297,6 +302,9 @@ class SubFile(object):
         return False
 
     def read(self, length=None):
+
+        if self.f is None:
+            self.open()
 
         maxlength = self.length - self.offset
 
@@ -318,6 +326,9 @@ class SubFile(object):
         return (rv1 + rv2)
 
     def readline(self, length=None):
+
+        if self.f is None:
+            self.open()
 
         maxlength = self.length - self.offset
         if length is not None:
@@ -380,8 +391,10 @@ class SubFile(object):
     def flush(self):
         return
 
-
     def seek(self, offset, whence=0):
+
+        if self.f is None:
+            self.open()
 
         if whence == 0:
             offset = offset
@@ -405,11 +418,12 @@ class SubFile(object):
         return self.offset
 
     def close(self):
-        self.f.close()
+        if self.f is not None:
+            self.f.close()
+            self.f = None
 
     def write(self, s):
         raise Exception("Write not supported by SubFile")
-
 
 open_file = open
 
@@ -457,7 +471,7 @@ def load_core(name):
         if not name in index:
             continue
 
-        f = file(transfn(prefix + ".rpa"), "rb")
+        afn = transfn(prefix + ".rpa")
 
         data = [ ]
 
@@ -471,10 +485,12 @@ def load_core(name):
             else:
                 offset, dlen, start = t
 
-            rv = SubFile(f, offset, dlen, start)
+            rv = SubFile(afn, offset, dlen, start)
 
         # Compatibility path.
         else:
+            f = file(afn, "rb")
+
             for offset, dlen in index[name]:
                 f.seek(offset)
                 data.append(f.read(dlen))
