@@ -165,8 +165,6 @@ def first_and_last_nodes(nodes):
         else:
             lasts.append(i)
 
-    print firsts
-
     if len(firsts) != 1:
         raise Exception("Could not find unique first AST node.")
 
@@ -209,7 +207,8 @@ def add_to_ast_before(code, filename, linenumber):
     block, _init = renpy.game.script.load_string(old.filename, code, linenumber=linenumber)
 
     # Remove the return statement at the end of the block.
-    block = block[:-1]
+    ret_stmt = block.pop()
+    renpy.game.script.all_stmts.remove(ret_stmt)
 
     if not block:
         return
