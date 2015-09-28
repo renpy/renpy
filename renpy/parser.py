@@ -242,6 +242,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1):
                     if endpos is None:
                         endpos = pos
 
+                    lines[loc].end_delim = endpos + 1
+
                     while data[endpos-1] in ' \r':
                         endpos -= 1
 

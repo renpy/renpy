@@ -50,6 +50,9 @@ class Line(object):
         # The offset inside the file at which the line ends.
         self.end = start
 
+        # The offset inside the lime where the line delimiter ends.
+        self.end_delim = start
+
         # The text of the line.
         self.text = ''
 
@@ -84,6 +87,7 @@ def adjust_line_locations(filename, linenumber, char_offset, line_offset):
             line.number += line_offset
             line.start += char_offset
             line.end += char_offset
+            line.end_delim += char_offset
 
         new_lines[fn, ln] = line
 
@@ -114,6 +118,7 @@ def insert_line_before(code, filename, linenumber):
     new_line = Line(old_line.filename, old_line.number, old_line.start)
     new_line.text = raw_code
     new_line.end = new_line.start + len(raw_code)
+    new_line.end_delim = new_line.start + len(code)
 
     with codecs.open(old_line.filename, "r", "utf-8") as f:
         data = f.read()
@@ -127,6 +132,32 @@ def insert_line_before(code, filename, linenumber):
 
     lines[filename, linenumber] = new_line
 
+def remove_line(filename, linenumber):
+    """
+    Removes `linenumber` from `filename`. The line must exist and correspond
+    to a logical line.
+    """
+
+    if renpy.config.clear_lines:
+        raise Exception("config.clear_lines must be False for script editing to work.")
+
+    if not renpy.game.args.compile: # @UndefinedVariable
+        raise Exception("The compile flag must have been given for script editing to work.")
+
+
+    line = lines[filename, linenumber]
+
+    with codecs.open(line.filename, "r", "utf-8") as f:
+        data = f.read()
+
+    code = data[line.start:line.end_delim]
+    data = data[:line.start] + data[line.end_delim:]
+
+    del lines[filename, linenumber]
+    adjust_line_locations(filename, linenumber, -len(code), -code.count("\n"))
+
+    with codecs.open(line.filename, "w", "utf-8") as f:
+        f.write(data)
 
 def nodes_on_line(filename, linenumber):
     """
@@ -270,4 +301,5 @@ def test_remove():
     linenumber = node.linenumber
 
     remove_from_ast(filename, linenumber)
+    remove_line(filename, linenumber)
     renpy.exports.rollback(checkpoints=0, force=True, greedy=True)
