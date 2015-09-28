@@ -1926,8 +1926,11 @@ class Translate(Node):
         return (Translate, self.identifier, self.language)
 
     def chain(self, next): #@ReservedAssignment
-        self.next = next
-        chain_block(self.block, next)
+        if self.block:
+            self.next = self.block[0]
+            chain_block(self.block, next)
+        else:
+            self.next = next
 
     def replace_next(self, old, new):
         Node.replace_next(self, old, new)

@@ -128,6 +128,54 @@ def insert_line_before(code, filename, linenumber):
     lines[filename, linenumber] = new_line
 
 
+def nodes_on_line(filename, linenumber):
+    """
+    Returns a list of nodes that are found on the given line.
+    """
+
+    rv = [ ]
+
+    for i in renpy.game.script.all_stmts:
+        if (i.filename == filename) and (i.linenumber == linenumber):
+            rv.append(i)
+
+    return rv
+
+def first_and_last_nodes(nodes):
+    """
+    Finds the first and last nodes in `nodes`, a list of nodes. This assumes
+    that all the nodes are "simple", with no control flow, and that all of
+    the relevant nodes are in `nodes`.
+    """
+
+    firsts = [ ]
+    lasts = [ ]
+
+    for i in nodes:
+        for j in nodes:
+            if j.next is i:
+                break
+        else:
+            firsts.append(i)
+
+        for j in nodes:
+            if i.next is j:
+                break
+
+        else:
+            lasts.append(i)
+
+    print firsts
+
+    if len(firsts) != 1:
+        raise Exception("Could not find unique first AST node.")
+
+    if len(lasts) != 1:
+        raise Exception("Could not find unique last AST node.")
+
+    return firsts[0], lasts[0]
+
+
 def adjust_ast_linenumbers(filename, linenumber, offset):
     """
     This adjusts the line numbers in the the ast.
@@ -147,14 +195,14 @@ def adjust_ast_linenumbers(filename, linenumber, offset):
             i.linenumber += offset
 
 
-def add_to_ast_before(code, statement):
+def add_to_ast_before(code, filename, linenumber):
     """
     Adds `code`, which must be a textual line of Ren'Py code, to the AST
     immediately before `statement`, which should be an AST node.
     """
 
-    old = statement
-    linenumber = old.linenumber
+    nodes = nodes_on_line(filename, linenumber)
+    old, _ = first_and_last_nodes(nodes)
 
     adjust_ast_linenumbers(old.filename, linenumber, 1)
 
@@ -171,9 +219,38 @@ def add_to_ast_before(code, statement):
 
     renpy.ast.chain_block(block, old)
 
+def remove_from_ast(filename, linenumber):
+    """
+    Removes from the AST all statements that happen to be at `filename`
+    and `linenumber`, then adjusts the line numbers appropriately.
+
+    There's an assumption that the statement(s) on the line are "simple",
+    not involving control flow.
+    """
+
+    nodes = nodes_on_line(filename, linenumber)
+
+    first, last = first_and_last_nodes(nodes)
+
+    new_stmts = [ ]
+
+    for i in renpy.game.script.all_stmts:
+        if i in nodes:
+            continue
+
+        i.replace_next(first, last.next)
+
+        new_stmts.append(i)
+
+    renpy.game.script.all_stmts = new_stmts
+
+    adjust_ast_linenumbers(filename, linenumber, -1)
+
+
+
 serial = 1
 
-def test():
+def test_add():
 
     global serial
     s = "'Hello world %f'" % serial
@@ -183,6 +260,15 @@ def test():
     filename = node.filename
     linenumber = node.linenumber
 
-    add_to_ast_before(s, node)
+    add_to_ast_before(s, filename, linenumber)
     insert_line_before(s, filename, linenumber)
     renpy.exports.restart_interaction()
+
+def test_remove():
+
+    node = renpy.game.script.lookup(renpy.game.context().current)
+    filename = node.filename
+    linenumber = node.linenumber
+
+    remove_from_ast(filename, linenumber)
+    renpy.exports.rollback(checkpoints=0, force=True, greedy=True)
