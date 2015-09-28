@@ -734,7 +734,7 @@ def auto_mtime(fn):
     except:
         return None
 
-def add_auto(fn):
+def add_auto(fn, force=False):
     """
     Adds fn as a file we watch for changes. If it's mtime changes or the file
     starts/stops existing, we trigger a reload.
@@ -743,7 +743,7 @@ def add_auto(fn):
     if not renpy.autoreload:
         return
 
-    if fn in auto_mtimes:
+    if (fn in auto_mtimes) and (not force):
         return
 
     for e in renpy.config.autoreload_blacklist:
@@ -781,7 +781,10 @@ def auto_thread_function():
                 continue
 
             if auto_mtime(fn) != mtime:
-                needs_autoreload = True
+
+                with auto_lock:
+                    if auto_mtime(fn) != auto_mtimes[fn]:
+                        needs_autoreload = True
 
 def auto_init():
     """

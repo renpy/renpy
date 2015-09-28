@@ -127,8 +127,12 @@ def insert_line_before(code, filename, linenumber):
 
     adjust_line_locations(filename, linenumber, len(code), code.count("\n"))
 
-    with codecs.open(old_line.filename, "w", "utf-8") as f:
-        f.write(data)
+    with renpy.loader.auto_lock:
+
+        with codecs.open(old_line.filename, "w", "utf-8") as f:
+            f.write(data)
+
+        renpy.loader.add_auto(old_line.filename, force=True)
 
     lines[filename, linenumber] = new_line
 
@@ -156,8 +160,12 @@ def remove_line(filename, linenumber):
     del lines[filename, linenumber]
     adjust_line_locations(filename, linenumber, -len(code), -code.count("\n"))
 
-    with codecs.open(line.filename, "w", "utf-8") as f:
-        f.write(data)
+    with renpy.loader.auto_lock:
+
+        with codecs.open(line.filename, "w", "utf-8") as f:
+            f.write(data)
+
+        renpy.loader.add_auto(line.filename, force=True)
 
 def nodes_on_line(filename, linenumber):
     """
