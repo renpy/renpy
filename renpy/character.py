@@ -120,7 +120,7 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
     if screen:
         props = compute_widget_properties(who_args, what_args, window_args)
 
-        renpy.display.screen.predict_screen(
+        renpy.display.predict.screen(
             screen,
             _widget_properties=props,
             who=who,
