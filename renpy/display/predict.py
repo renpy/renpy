@@ -103,15 +103,6 @@ def prediction_coroutine(root_widget):
         yield True
         predicting = True
 
-    # Predict screens given with renpy.start_predict_screen.
-    for name, value in renpy.store._predict_screen.items():
-        args, kwargs = value
-
-        renpy.display.screen.predict_screen(name, *args, **kwargs)
-
-        predicting = False
-        yield True
-        predicting = True
 
     # Predict images that are going to be reached in the next few
     # clicks.
@@ -145,10 +136,20 @@ def prediction_coroutine(root_widget):
     while not (yield True):
         continue
 
+
+    # Predict screens given with renpy.start_predict_screen.
+    for name, value in renpy.store._predict_screen.items():
+        args, kwargs = value
+
+        renpy.display.screen.predict_screen(name, *args, **kwargs)
+
+        predicting = False
+        yield True
+        predicting = True
+
     # Predict things (especially screens) that are reachable through
     # an action.
     predicting = True
-
 
     try:
         root_widget.visit_all(lambda i : i.predict_one_action())
