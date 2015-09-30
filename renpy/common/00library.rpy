@@ -140,6 +140,15 @@ init -1700 python:
 
     def _skip_indicator():
 
+        if renpy.has_screen("skip_indicator"):
+
+            if config.skipping and not renpy.get_screen("skip_indicator"):
+                renpy.show_screen("skip_indicator")
+            elif not config.skipping and renpy.get_screen("skip_indicator"):
+                renpy.hide_screen("skip_indicator")
+
+            return
+
         ### skip_indicator default
         # (text) The style and placement of the skip indicator.
 
