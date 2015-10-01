@@ -60,6 +60,18 @@ class Line(object):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
 
+def get_line_text(filename, linenumber):
+    """
+    Gets the text of the line with `filename` and `linenumber`, or the empty
+    string if the line does not exist.
+    """
+
+    if (filename, linenumber) in lines:
+        return lines[filename, linenumber].text
+    else:
+        return ""
+
+
 def adjust_line_locations(filename, linenumber, char_offset, line_offset):
     """
     Adjusts the locations in the line data structure.
