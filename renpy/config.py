@@ -614,6 +614,8 @@ clear_lines = True
 # Special namespaces for define and default.
 special_namespaces = { }
 
+# Should Ren'Py log lines?
+line_log = False
 
 del renpy
 del os

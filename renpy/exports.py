@@ -2943,3 +2943,23 @@ def predicting():
     """
 
     return renpy.display.predict.predicting
+
+def get_line_log():
+    """
+    :undocumented:
+
+    Returns the list of lines that have been shown since the last time
+    :func:`renpy.clear_line_log` was called.
+    """
+
+    return renpy.game.context().line_log[:]
+
+def clear_line_log():
+    """
+    :undocumented:
+
+    Clears the line log.
+    """
+
+    renpy.game.context().line_log = [ ]
+
