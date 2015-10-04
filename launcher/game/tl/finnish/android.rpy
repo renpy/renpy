@@ -153,7 +153,6 @@ translate finnish strings:
     old "The port must be a number."
     new "Portin on oltava numero."
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 

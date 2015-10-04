@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2015-08-04 16:46
-
+﻿
 translate finnish strings:
 
     # game/choose_directory.rpy:73

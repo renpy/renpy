@@ -1,2 +1,2 @@
-translate finnish python:
+﻿translate finnish python:
     make_style_backup()

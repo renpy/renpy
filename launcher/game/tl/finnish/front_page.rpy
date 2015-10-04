@@ -105,7 +105,6 @@ translate finnish strings:
     old "Recompiling all rpy files into rpyc files..."
     new "Kasataan kaikista .rpy-tiedostoista .rpyc-tiedostoja..."
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 

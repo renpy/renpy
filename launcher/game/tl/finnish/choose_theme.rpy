@@ -41,7 +41,6 @@ translate finnish strings:
     old "Continue"
     new "Jatka"
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 

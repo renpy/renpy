@@ -45,7 +45,6 @@ translate finnish strings:
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "Projektisi ei sisällä kokoamisinformaatiota. Haluatko lisätä kokoamisinormaation options.rpy-tiedoston loppuun?"
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 

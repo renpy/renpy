@@ -495,7 +495,6 @@ translate finnish strings:
     old "q"
     new "q"
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 
@@ -503,7 +502,6 @@ translate finnish strings:
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "Leikepöydän teksti luetaan nyt ääneen. Paina 'shift+c' lopettaaksesi toimnnon käytön."
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 
@@ -543,7 +541,6 @@ translate finnish strings:
     old "While unpacking {}, unknown type {}."
     new "Purettaessa {}, tuntematon tyyppi {}."
 
-# TODO: Translation updated at 2015-08-04 16:46
 
 translate finnish strings:
 
