@@ -71,7 +71,7 @@ translate finnish strings:
 
     # game/interface.rpy:448
     old "PROCESSING"
-    new "PROSESSOIDAAN"
+    new "KÄSITELLÄÄN"
 
     # game/interface.rpy:478
     old "CHOICE"

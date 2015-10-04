@@ -495,3 +495,63 @@ translate finnish strings:
     old "q"
     new "q"
 
+# TODO: Translation updated at 2015-08-04 16:46
+
+translate finnish strings:
+
+    # renpy/common/00preferences.rpy:370
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "Leikepöydän teksti luetaan nyt ääneen. Paina 'shift+c' lopettaaksesi toimnnon käytön."
+
+# TODO: Translation updated at 2015-08-04 16:46
+
+translate finnish strings:
+
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "Mobiililaitteet eivät tue Ren'Py Updater -toimintoa."
+
+    # renpy/common/00updater.rpy:481
+    old "An error is being simulated."
+    new "Stimuloidaan havaittua ongelmaa."
+
+    # renpy/common/00updater.rpy:657
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "Tämä projekti ei tue päivittämistä tai päivityksen statustiedosto poistettiin."
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to perform an update."
+    new "Tällä käyttäjällä ei ole oikeutta päivityksen suorittamiseen."
+
+    # renpy/common/00updater.rpy:674
+    old "This account does not have permission to write the update log."
+    new "Tällä käyttäjällä ei ole oikeutta kirjoittaa dataa päivityslokiin."
+
+    # renpy/common/00updater.rpy:699
+    old "Could not verify update signature."
+    new "Päivityksen allekirjoitusta ei voitu vahvistaa."
+
+    # renpy/common/00updater.rpy:970
+    old "The update file was not downloaded."
+    new "Päivitystiedostoa ei ladattu."
+
+    # renpy/common/00updater.rpy:988
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "Päivitystiedosto ei sisällä oikeaa tiivistelmää - se on saattanut korruptoitua."
+
+    # renpy/common/00updater.rpy:1044
+    old "While unpacking {}, unknown type {}."
+    new "Purettaessa {}, tuntematon tyyppi {}."
+
+# TODO: Translation updated at 2015-08-04 16:46
+
+translate finnish strings:
+
+    # renpy/common/_developer/developer.rpym:425
+    old "Rectangle copied to clipboard."
+    new "Suorakulmio kopioitu leikepöydälle."
+
+    # renpy/common/_developer/developer.rpym:428
+    old "Position copied to clipboard."
+    new "Sijainti kopioitu leikepöydälle."
+
