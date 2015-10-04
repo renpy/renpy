@@ -135,7 +135,7 @@ class ArgumentParser(argparse.ArgumentParser):
         rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
 
         if renpy.session.get("compile", False):
-            args.compile = True
+            rv.compile = True
 
         if rv.command in compile_commands:
             rv.compile = True
