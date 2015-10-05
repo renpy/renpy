@@ -1637,7 +1637,7 @@ class Text(renpy.display.core.Displayable):
 
         layout = Layout(self, width, height, renders, size_only=True)
 
-        return layout.unscale(layout.size)
+        return layout.unscale_pair(*layout.size)
 
     def render(self, width, height, st, at):
 
