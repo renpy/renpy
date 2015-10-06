@@ -589,6 +589,7 @@ cdef class FTFont:
         cdef int error
         cdef int bmx, bmy, px, py, pxstart
         cdef int ly, lh, rows, width
+        cdef int underline_x
 
         cdef unsigned char *pixels
         cdef unsigned char *line
@@ -620,6 +621,8 @@ cdef class FTFont:
 
             x = glyph.x + xo
             y = glyph.y + yo
+
+            underline_x = x - glyph.delta_x_offset
 
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             cache = self.get_glyph(index)
@@ -675,7 +678,7 @@ cdef class FTFont:
                 lh = self.underline_height * underline
 
                 for py from ly <= py < min(ly + lh, surf.h):
-                    for px from x <= px < (x + glyph.advance):
+                    for px from underline_x <= px < (x + glyph.advance):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr
@@ -691,7 +694,7 @@ cdef class FTFont:
                     lh = 1
 
                 for py from ly <= py < (ly + lh):
-                    for px from x <= px < (x + glyph.advance):
+                    for px from underline_x <= px < (x + glyph.advance):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr

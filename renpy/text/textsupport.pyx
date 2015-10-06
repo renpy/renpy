@@ -23,6 +23,9 @@ include "linebreak.pxi"
 
 cdef class Glyph:
 
+    def __init__(self):
+        self.delta_x_offset = 0
+
     def __repr__(self):
         return "<Glyph {0!r} time={1}>".format(self.character, self.time)
 
@@ -860,9 +863,20 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
     if w <= 0 or h <= 0:
         return
 
+
+    old_x_offset = 0
+
     for g in glyphs:
-        g.x += int(dx * g.x / w)
+
+        x_offset = int(dx * g.x / w)
+
+        g.x += x_offset
         g.y += int(dy * g.y / h)
+
+        if x_offset > old_x_offset:
+            g.delta_x_offset = x_offset - old_x_offset
+
+        old_x_offset = x_offset
 
     for l in lines:
         end = l.y + l.height
