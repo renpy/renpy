@@ -674,7 +674,7 @@ class Layout(object):
 
         textsupport.align_and_justify(lines, maxx, style.text_align, style.justify)
 
-        if splits_from:
+        if splits_from and text.style.adjust_spacing:
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 

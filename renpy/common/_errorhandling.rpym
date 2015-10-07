@@ -59,6 +59,7 @@ style _default:
     slow_cps_multiplier 1.0
     slow_abortable False
     hinting "auto"
+    adjust_spacing True
 
     # Window properties
     background None

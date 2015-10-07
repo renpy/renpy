@@ -165,6 +165,7 @@ init -1800:
         ruby_style style.ruby_text
         # hyperlink_functions is set in 00defaults.rpy
         hinting "auto"
+        adjust_spacing True
 
         # Window properties
         background None
@@ -282,6 +283,7 @@ init -1800:
 
     style input:
         color "#ff0"
+        adjust_spacing False
 
     # Centered text and dialogue
 

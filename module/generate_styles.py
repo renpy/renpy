@@ -107,6 +107,7 @@ Prefix(-1, 'selected_activate_', 0, [ ])
 # is needed.
 style_properties = sorted_dict(
     activate_sound = None,
+    adjust_spacing = None,
     aft_bar = 'none_is_null',
     aft_gutter = None,
     alt = None,

@@ -324,6 +324,19 @@ Text Style Properties
     If True, the default, truetype font text will be rendered
     anti-aliased.
 
+.. style-property:: adjust_spacing boolean
+
+    If True, Ren'Py will adjust the spacing of drawable-resolution text
+    to match the spacing of the text rendered at virtual resolution, to
+    ensure the size of frames and other containers holding text does not
+    change.
+
+    When set to False, text will not change in size, but it is the creator's
+    responsiblity to ensure there is enough space to layout text at any
+    window size.
+
+    Defaults to True for most text, but False for text in an ``input``.
+
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this
