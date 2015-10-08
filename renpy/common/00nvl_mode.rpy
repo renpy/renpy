@@ -408,7 +408,7 @@ python early hide:
     def parse_nvl_show_hide(l):
         rv = l.simple_expression()
         if rv is None:
-            renpy.error('expected simple expression')
+            rv = "None"
 
         if not l.eol():
             renpy.error('expected end of line')
