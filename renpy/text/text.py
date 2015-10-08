@@ -839,14 +839,22 @@ class Layout(object):
 
             return ts
 
+        def fill_empty_line():
+            for i in line:
+                if isinstance(i, (TextSegment, SpaceSegment, DisplayableSegment)):
+                    return
+
+            line.extend(tss[-1].subsegment(u" "))
+
+
+
         for type, text in tokens: #@ReservedAssignment
 
             if type == PARAGRAPH:
 
                 # Note that this code is duplicated for the p tag, and for
                 # the empty line case, below.
-                if not line:
-                    line.extend(tss[-1].subsegment(u" "))
+                fill_empty_line()
 
                 paragraphs.append(line)
                 line = [ ]
@@ -883,9 +891,7 @@ class Layout(object):
 
             elif tag == "p":
                 # Duplicated from the newline tag.
-
-                if not line:
-                    line.extend(tss[-1].subsegment(u" "))
+                fill_empty_line()
 
                 paragraphs.append(line)
                 line = [ ]
@@ -1020,8 +1026,8 @@ class Layout(object):
             else:
                 raise Exception("Unknown text tag %r" % text)
 
-        if not line:
-            line.extend(tss[-1].subsegment(u" "))
+        # If the line is empty, fill it with a space.
+        fill_empty_line()
 
         paragraphs.append(line)
 
