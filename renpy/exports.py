@@ -95,6 +95,8 @@ from renpy.execution import not_infinite_loop
 
 from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
 
+from renpy.ast import eval_who
+
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
@@ -154,6 +156,7 @@ def public_api():
     TEXT_DISPLAYABLE
     not_infinite_loop
     register_sl_statement, register_sl_displayable
+    eval_who
 
 del public_api
 

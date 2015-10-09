@@ -78,15 +78,15 @@ init -1700 python:
     def _default_empty_window():
 
         who = _last_say_who
-
-        if who is not None:
-            who = eval(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
+        elif not isinstance(store.narrator, NVLCharacter):
+            store.narrator("", interact=False)
         else:
             store._narrator("", interact=False)
 
@@ -100,8 +100,7 @@ init -1700 python:
 
     def extend(what, interact=True):
         who = _last_say_who
-
-        who = renpy.ast.eval_who(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
