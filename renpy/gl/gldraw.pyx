@@ -249,17 +249,25 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
-        try:
-            if fullscreen:
+
+        self.window = None
+
+        if fullscreen:
+            try:
                 renpy.display.log.write("Fullscreen mode.")
                 self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
-            else:
-                renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth * FAKE_HIGHDPI, pheight * FAKE_HIGHDPI), resizable | opengl | pygame.DOUBLEBUF)
+            except pygame.error as e:
+                renpy.display.log.write("Opening in fullscreen failed: %r", e)
+                self.window = None
 
-        except pygame.error, e:
-            renpy.display.log.write("Could not get pygame screen: %r", e)
-            return False
+        if self.window is None:
+            try:
+                    renpy.display.log.write("Windowed mode.")
+                    self.window = pygame.display.set_mode((pwidth * FAKE_HIGHDPI, pheight * FAKE_HIGHDPI), resizable | opengl | pygame.DOUBLEBUF)
+
+            except pygame.error, e:
+                renpy.display.log.write("Could not get pygame screen: %r", e)
+                return False
 
         # Use EGL to get the OpenGL ES 2 context, if necessary.
         if EGL:
