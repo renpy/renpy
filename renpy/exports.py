@@ -240,11 +240,10 @@ def checkpoint(data=None, keep_rollback=None):
         game is being rolled back.
     """
 
-    if renpy.store._rollback:
-        if keep_rollback is None:
-            keep_rollback = renpy.config.keep_rollback_data
+    if keep_rollback is None:
+        keep_rollback = renpy.config.keep_rollback_data
 
-        renpy.game.log.checkpoint(data, keep_rollback=keep_rollback)
+    renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback)
 
 
 def block_rollback():

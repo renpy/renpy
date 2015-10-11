@@ -806,7 +806,7 @@ class Rollback(renpy.object.Object):
     execution of this element.
     """
 
-    __version__ = 3
+    __version__ = 4
 
     def __init__(self):
 
@@ -814,7 +814,6 @@ class Rollback(renpy.object.Object):
 
         self.context = renpy.game.context().rollback_copy()
         self.objects = [ ]
-        self.checkpoint = False
         self.purged = False
         self.random = [ ]
         self.forward = None
@@ -824,6 +823,14 @@ class Rollback(renpy.object.Object):
 
         # If true, we retain the data in this rollback when a load occurs.
         self.retain_after_load = False
+
+        # True if this is a checkpoint we can roll back to.
+        self.checkpoint = False
+
+        # True if this is a hard checkpoint, where the rollback counter
+        # decreases.
+        self.hard_checkpoint = False
+
 
     def after_upgrade(self, version):
 
@@ -840,6 +847,9 @@ class Rollback(renpy.object.Object):
 
         if version < 3:
             self.retain_after_load = False
+
+        if version < 4:
+            self.hard_checkpoint = self.checkpoint
 
 
     def purge_unreachable(self, reachable, wait):
@@ -948,7 +958,6 @@ class RollbackLog(renpy.object.Object):
     """
 
     __version__ = 4
-
 
     nosave = [ 'old_store', 'mutated' ]
 
@@ -1145,7 +1154,7 @@ class RollbackLog(renpy.object.Object):
 
         return None
 
-    def checkpoint(self, data=None, keep_rollback=False):
+    def checkpoint(self, data=None, keep_rollback=False, hard=True):
         """
         Called to indicate that this is a checkpoint, which means
         that the user may want to rollback to just before this
@@ -1153,7 +1162,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         if self.checkpointing_suspended:
-            return
+            hard = False
 
         self.retain_after_load_flag = False
 
@@ -1167,6 +1176,7 @@ class RollbackLog(renpy.object.Object):
             self.rollback_limit += 1
 
         self.current.checkpoint = True
+        self.current.hard_checkpoint = hard
 
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
@@ -1275,8 +1285,10 @@ class RollbackLog(renpy.object.Object):
             revlog.append(rb)
 
             if rb.checkpoint:
-                checkpoints -= 1
                 self.rollback_limit -= 1
+
+            if rb.hard_checkpoint or (on_load and rb.checkpoint):
+                checkpoints -= 1
 
             if checkpoints <= 0:
                 if renpy.game.script.has_label(rb.context.current):
