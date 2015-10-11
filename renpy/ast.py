@@ -1704,7 +1704,7 @@ class UserStatement(Node):
             parsed = renpy.statements.parse(self, self.line, self.block)
             self.parsed = parsed
 
-        renpy.statements.call(method, parsed, *args, **kwargs)
+        return renpy.statements.call(method, parsed, *args, **kwargs)
 
     def get_name(self):
         parsed = self.parsed
