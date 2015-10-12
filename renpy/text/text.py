@@ -1792,7 +1792,11 @@ class Text(renpy.display.core.Displayable):
 
         # Add in the focus areas.
         for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
-            rv.add_focus(self, hyperlink, hx + layout.xoffset, hy + layout.yoffset, hw, hh)
+
+            h_x, h_y = layout.unscale_pair(hx + layout.xoffset, hy + layout.yoffset)
+            h_w, h_h = layout.unscale_pair(hw, hh)
+
+            rv.add_focus(self, hyperlink, h_x, h_y, h_w, h_h)
 
         # Figure out if we need to redraw or call slow_done.
         if self.slow:
