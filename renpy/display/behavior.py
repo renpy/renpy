@@ -890,6 +890,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     old_caret_pos = 0
     pixel_width = None
     default = u""
+    edit_text = u""
 
     def __init__(self,
                  default="",
@@ -971,6 +972,8 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         # Format text being edited by the IME.
         if edit:
 
+            self.edit_text = edit.text
+
             edit_text_0 = edit.text[:edit.start]
             edit_text_1 = edit.text[edit.start:edit.start + edit.length]
             edit_text_2 = edit.text[edit.start + edit.length:]
@@ -987,6 +990,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                 edit_text += "{u=1}" + edit_text_2.replace("{", "{{") + "{/u}"
 
         else:
+            self.edit_text = ""
             edit_text = ""
 
         def set_content(content):
@@ -1051,8 +1055,14 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif map_event(ev, "input_enter"):
+
+            content = self.content
+
+            if self.edit_text:
+                content = content[0:self.caret_pos] + self.edit_text + self.content[self.caret_pos:]
+
             if not self.changed:
-                return self.content
+                return content
 
         elif map_event(ev, "input_left"):
             if self.caret_pos > 0:
@@ -1084,6 +1094,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif ev.type == pygame.TEXTINPUT:
+            self.edit_text = ""
             raw_text = ev.text
 
         elif ev.type == pygame.KEYDOWN:
