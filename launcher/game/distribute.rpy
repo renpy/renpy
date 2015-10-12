@@ -897,7 +897,7 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update:
+            if self.include_update and (variant not in [ 'ios', 'android']):
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 
