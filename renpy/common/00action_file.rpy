@@ -44,7 +44,7 @@ init -1500 python:
 
         try:
             page = int(page)
-            page = persistent._file_folder * config.file_pages_per_folder
+            page = page + persistent._file_folder * config.file_pages_per_folder
         except ValueError:
             pass
 
