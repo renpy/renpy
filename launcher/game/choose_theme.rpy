@@ -398,8 +398,22 @@ init -2 python:
 
     style.soundtest_button.xalign = 1.0
 
-
 screen choose_theme:
+
+    default scheme_yadjustment = ui.adjustment()
+    default theme_yadjustment = ui.adjustment()
+
+    default first = True
+
+    python:
+        if first:
+            theme_yinitial_value = theme_yinitial()
+            scheme_yinitial_value = scheme_yinitial()
+        else:
+            theme_yinitial_value = None
+            scheme_yinitial_value = None
+
+        first = False
 
     frame:
         style_group "l"
@@ -426,8 +440,9 @@ screen choose_theme:
 
                     viewport:
                         scrollbars "vertical"
-                        yinitial theme_yinitial()
                         mousewheel True
+                        yadjustment theme_yadjustment
+                        yinitial theme_yinitial_value
 
                         has vbox
 
@@ -451,7 +466,8 @@ screen choose_theme:
                     viewport:
                         scrollbars "vertical"
                         mousewheel True
-                        yinitial scheme_yinitial()
+                        yadjustment scheme_yadjustment
+                        yinitial scheme_yinitial_value
 
                         has vbox
 
