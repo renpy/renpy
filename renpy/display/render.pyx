@@ -773,7 +773,7 @@ cdef class Render:
             crop = None
 
             try:
-                if isinstance(child, Render):
+                if isinstance(child, Render) and not child.clipping:
                     crop = (cx, cy, w - xo, h - yo)
                     newchild = child.subsurface(crop, focus=focus)
                     newchild.render_of = child.render_of[:]
