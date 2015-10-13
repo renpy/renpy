@@ -779,6 +779,7 @@ def rebuild(prepare_screens=True):
     build_styles()
 
     renpy.display.screen.prepared = False
+    renpy.exports.restart_interaction()
 
 def copy_properties(p):
     """
