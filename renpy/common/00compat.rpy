@@ -108,9 +108,12 @@ init -1900 python:
             config.images_directory = None
             config.preserve_zorder = False
 
-        if version <= (6, 99, 6):
+        if version <= (6, 99, 5):
             config.wrap_shown_transforms = False
             config.search_prefixes = [ "" ]
+
+        if version <= (6, 99, 6):
+            config.dynamic_images = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
