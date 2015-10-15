@@ -112,6 +112,8 @@ Button = renpy.display.behavior.Button
 Input = renpy.display.behavior.Input
 
 ImageReference = renpy.display.image.ImageReference
+DynamicImage = renpy.display.image.DynamicImage
+
 Image = renpy.display.im.image
 
 Frame = renpy.display.imagelike.Frame
