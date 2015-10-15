@@ -384,8 +384,8 @@ class Displayable(renpy.object.Object):
 
     def visit_all(self, callback):
         """
-        Calls the callback on this displayable and all children of this
-        displayable.
+        Calls the callback on this displayable, and then on all children
+        of this displayable.
         """
 
         for d in self.visit():

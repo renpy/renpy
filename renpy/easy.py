@@ -39,6 +39,8 @@ def displayable_or_none(d):
     if isinstance(d, basestring):
         if d[0] == '#':
             return renpy.store.Solid(d)
+        elif "[" in d:
+            return renpy.display.image.DynamicImage(d)
         elif "." in d:
             return renpy.store.Image(d)
         elif not d:
@@ -72,6 +74,8 @@ def displayable(d):
     if isinstance(d, basestring):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
+        elif "[" in d:
+            return renpy.display.image.DynamicImage(d)
         elif d[0] == '#':
             return renpy.store.Solid(d)
         elif "." in d:
@@ -88,17 +92,31 @@ def displayable(d):
 
     raise Exception("Not a displayable: %r" % (d,))
 
+
+def dynamic_image(d, scope=None):
+    """
+    Substitutes a scope into `d`, then returns a displayable.
+    """
+
+    if isinstance(d, basestring):
+        d = renpy.substitutions.substitute(d, scope=scope, force=True, translate=False)[0]
+
+    return displayable_or_none(d)
+
+
 def predict(d):
     d = renpy.easy.displayable_or_none(d)
 
     if d is not None:
         renpy.display.predict.displayable(d)
 
+
 @contextlib.contextmanager
 def timed(name):
     start = time.time()
     yield
     print "{0}: {1:.2f} ms".format(name, (time.time() - start) * 1000.0)
+
 
 def split_properties(properties, *prefixes):
     """
