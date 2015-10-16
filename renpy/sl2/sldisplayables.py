@@ -164,9 +164,6 @@ Keyword("changed")
 Keyword("pixel_width")
 add(text_properties)
 
-DisplayableParser("image", renpy.display.im.image, "default", 0)
-Positional("im")
-
 # Omit imagemap_compat for being too high level (and obsolete).
 
 DisplayableParser("button", renpy.display.behavior.Button, "button", 1)
@@ -368,12 +365,13 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     return rv
 
-DisplayableParser("add", sl2add, None, 0, replaces=True, default_properties=False, scope=True)
-Positional("im")
-Keyword("at")
-Keyword("id")
-for i in renpy.atl.PROPERTIES:
-    Style(i)
+for name in [ "add", "image" ]:
+    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True)
+    Positional("im")
+    Keyword("at")
+    Keyword("id")
+    for i in renpy.atl.PROPERTIES:
+        Style(i)
 
 DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
 Keyword("drag_name")
