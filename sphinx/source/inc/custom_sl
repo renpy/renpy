@@ -66,7 +66,7 @@
         the various style property prefixes. For example, if called with
         ("size"), this will define size, idle_size, hover_size, etc.
     
-    .. method:: add_style_property(prefix, name):
+    .. method:: add_prefix_style_property(prefix, name):
     
         Adds a family of properties with names consisting of `prefix`,
         a style property prefix, and `name`. For example, if called

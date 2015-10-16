@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: renpy.displayable(d)
+.. function:: renpy.displayable(d, scope=None)
     
     This takes `d`, which may be a displayable object or a string. If it's
     a string, it converts that string into a displayable using the usual

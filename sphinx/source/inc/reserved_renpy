@@ -24,6 +24,7 @@
 * :class:`DragGroup`
 * DynamicCharacter
 * :func:`DynamicDisplayable`
+* :func:`DynamicImage`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
