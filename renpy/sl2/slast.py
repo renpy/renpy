@@ -773,7 +773,7 @@ class SLDisplayable(SLBlock):
                 if widget_id:
                     screen.widgets[widget_id] = main
 
-                if self.scope and main.uses_scope:
+                if self.scope and main._uses_scope:
                     if copy_on_change:
                         if main._scope(ctx.scope, False):
                             reused = False
@@ -958,7 +958,7 @@ class SLDisplayable(SLBlock):
             if self.constant:
                 cache.constant = d
 
-                if self.scope and main.uses_scope:
+                if self.scope and main._uses_scope:
                     ctx.uses_scope.append(main)
 
                 cache.constant_uses_scope = ctx.uses_scope

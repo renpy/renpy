@@ -264,10 +264,19 @@ class DynamicImage(renpy.display.core.Displayable):
     # The raw target that the image resolves to, before it has been parameterized.
     raw_target = None
 
-    def __init__(self, name, **properties):
+    def __init__(self, name, scope=None, **properties):
         super(DynamicImage, self).__init__(**properties)
 
         self.name = name
+
+        if scope is not None:
+            self.find_target(scope)
+            self._uses_scope = True
+        else:
+            self._uses_scope = False
+
+    def _scope(self, scope, update):
+        return self.find_target(scope, update)
 
     def __unicode__(self):
         return u"DynamicImage {!r}".format(self.name)
@@ -293,16 +302,20 @@ class DynamicImage(renpy.display.core.Displayable):
         else:
             return self
 
-    def find_target(self):
+    def find_target(self, scope=None, update=True):
 
         try:
-            target = renpy.easy.dynamic_image(self.name)
+            target = renpy.easy.dynamic_image(self.name, scope)
         except Exception as e:
             raise Exception("In DynamicImage %r: %r" % (self.name, e))
 
         if self.raw_target == target:
-            return
+            return False
 
+        if not update:
+            return True
+
+        renpy.display.render.redraw(self, 0)
         self.raw_target = target
 
         target = target.parameterize('displayable', ())
@@ -310,15 +323,17 @@ class DynamicImage(renpy.display.core.Displayable):
         self.target = target
 
         if not old_target:
-            return
+            return True
 
         if isinstance(old_target, renpy.display.motion.Transform):
-            return
+            return True
 
         if not isinstance(target, renpy.display.motion.Transform):
             self.target = target = renpy.display.motion.Transform(child=target)
 
         target.take_state(old_target)
+
+        return True
 
     def _hide(self, st, at, kind):
         if not self.target:
@@ -359,11 +374,11 @@ class DynamicImage(renpy.display.core.Displayable):
     def per_interact(self):
         old_target = self.target
 
-        self.find_target()
+        if not self._uses_scope:
+            self.find_target()
 
         if old_target is not self.target:
             self.target.visit_all(lambda i : i.per_interact())
-            renpy.display.render.redraw(self, 0)
 
 
 class ShownImageInfo(renpy.object.Object):

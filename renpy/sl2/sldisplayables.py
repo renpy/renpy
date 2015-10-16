@@ -347,12 +347,12 @@ Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-def sl2add(d, replaces=None, **kwargs):
+def sl2add(d, replaces=None, scope=None, **kwargs):
 
     if d is None:
         return renpy.sl2.slast.NO_DISPLAYABLE
 
-    d = renpy.easy.displayable(d)
+    d = renpy.easy.displayable(d, scope=scope)
     d = d.parameterize('displayable', [ ])
 
     rv = d
@@ -368,7 +368,7 @@ def sl2add(d, replaces=None, **kwargs):
 
     return rv
 
-DisplayableParser("add", sl2add, None, 0, replaces=True, default_properties=False)
+DisplayableParser("add", sl2add, None, 0, replaces=True, default_properties=False, scope=True)
 Positional("im")
 Keyword("at")
 Keyword("id")

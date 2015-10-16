@@ -28,7 +28,7 @@ import time
 Color = renpy.color.Color
 color = renpy.color.Color
 
-def displayable_or_none(d):
+def displayable_or_none(d, scope=None):
 
     if isinstance(d, renpy.display.core.Displayable):
         return d
@@ -40,7 +40,7 @@ def displayable_or_none(d):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
         elif ("[" in d) and renpy.config.dynamic_images:
-            return renpy.display.image.DynamicImage(d)
+            return renpy.display.image.DynamicImage(d, scope=scope)
         elif d[0] == '#':
             return renpy.store.Solid(d)
         elif "." in d:
@@ -57,7 +57,7 @@ def displayable_or_none(d):
 
     raise Exception("Not a displayable: %r" % (d,))
 
-def displayable(d):
+def displayable(d, scope=None):
     """
     :doc: udd_utility
     :name: renpy.displayable
@@ -67,7 +67,6 @@ def displayable(d):
     rules.
     """
 
-
     if isinstance(d, renpy.display.core.Displayable):
         return d
 
@@ -75,7 +74,7 @@ def displayable(d):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
         elif ("[" in d) and renpy.config.dynamic_images:
-            return renpy.display.image.DynamicImage(d)
+            return renpy.display.image.DynamicImage(d, scope=scope)
         elif d[0] == '#':
             return renpy.store.Solid(d)
         elif "." in d:

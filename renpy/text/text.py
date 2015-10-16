@@ -1269,7 +1269,7 @@ class Text(renpy.display.core.Displayable):
 
     __version__ = 4
 
-    uses_scope = True
+    _uses_scope = True
 
     def after_upgrade(self, version):
 
@@ -1388,7 +1388,7 @@ class Text(renpy.display.core.Displayable):
 
             new_text.append(i)
 
-        self.uses_scope = uses_scope
+        self._uses_scope = uses_scope
 
         if new_text == old_text:
             return False
