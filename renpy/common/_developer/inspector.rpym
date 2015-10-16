@@ -64,18 +64,20 @@ screen _inspector:
 
                 hbox:
                     text " ":
-                        min_width 350
-                        xmaximum 350
+                        min_width 325
+                        xmaximum 325
 
                     text _("Size"):
                         min_width 85
                         underline True
 
                     text _("Style"):
-                        min_width 125
+                        min_width 85
                         underline True
 
-                    null width 5
+                    text _("Abs x/y"):
+                        min_width 85
+                        underline True
 
                     text _("Location"):
                         underline True
@@ -92,17 +94,18 @@ screen _inspector:
                     hbox:
 
                         text "[t!q]":
-                            min_width 350
+                            min_width 325
 
                         text "[width:.0f]x[height:.0f]":
                             min_width 85
 
                         textbutton "[s!q]":
                             style "_hyperlink_button"
-                            text_min_width 125
+                            text_min_width 85
                             action Show("_style_inspector", d=d)
 
-                        null width 5
+                        text "([d.abs_x:.0f],[d.abs_y:.0f])":
+                            min_width 85
 
                         if d._location:
                             $ l = __format_location(d._location)
