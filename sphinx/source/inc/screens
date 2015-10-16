@@ -62,6 +62,17 @@
     `id`. Returns None if the screen doesn't exist, or there is no
     widget with that id on the screen.
 
+.. function:: renpy.get_widget_properties(id, screen=None, layer='screens')
+    
+    Returns the properties for the widget with `id` in the `screen`
+    on `layer`. If `screen` is None, returns the properties for the
+    current screen.
+    
+    This can be used inside screen code.
+    
+    Note that this returns a dictionary containing the widget properties,
+    and so to get an individual property
+
 .. function:: renpy.hide_screen(tag, layer='screens')
     
     The programmatic equivalent of the hide screen statement.

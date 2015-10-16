@@ -1126,7 +1126,7 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
 
 def get_widget_properties(id, screen=None, layer='screens'): # @ReservedAssignment
     """
-    :doc: screen
+    :doc: screens
 
     Returns the properties for the widget with `id` in the `screen`
     on `layer`. If `screen` is None, returns the properties for the

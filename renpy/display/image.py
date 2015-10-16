@@ -250,10 +250,12 @@ class ImageReference(renpy.display.core.Displayable):
 
 class DynamicImage(renpy.display.core.Displayable):
     """
-    :doc: displayable
+    :doc: disp_imagelike
+    :args: (name)
 
-    A DynamicImage is an image that has bracket substitution performed on
-    it to yield another image.
+    A DynamicImage is a displayable that has text interpolation performed
+    on it to yield a string giving a new displayable. Such interpolation is
+    performed at the start of each iteraction.
     """
 
     nosave = [ 'target', 'raw_target' ]
