@@ -251,6 +251,8 @@ class Displayable(renpy.object.Object):
         self.style = renpy.style.Style(style, properties) # @UndefinedVariable
         self.focus_name = focus
         self.default = default
+        self.abs_x = 0
+        self.abs_y = 0
 
     def _equals(self, o):
         """
@@ -457,6 +459,9 @@ class Displayable(renpy.object.Object):
 
         xpos += x
         ypos += y
+
+        self.abs_x = xpos
+        self.abs_y = ypos
 
         pos = (xpos, ypos)
 
