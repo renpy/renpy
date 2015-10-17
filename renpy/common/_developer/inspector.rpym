@@ -85,11 +85,33 @@ screen _inspector:
 
                 null height 5
 
+                $ lastdepth = 0
+                $ totalxoffset = [0]
+                $ totalyoffset = [0]
+
                 for depth, width, height, d in tree:
 
                     $ t = "  " * depth + u"\u2022 " + unicode(d)
                     $ s = __format_style(d.style.parent)
 
+                    if lastdepth < depth:
+                        $ lastdepth = depth
+                    else:
+                        python:
+                            while lastdepth >= depth:
+                                lastdepth -= 1
+                                totalxoffset.pop()
+                                totalyoffset.pop()
+
+                    $ totalxoffset.append(d.abs_x)
+                    $ totalyoffset.append(d.abs_y)
+
+                    $ abs_x, abs_y = 0, 0
+
+                    for xoff in totalxoffset:
+                        $ abs_x += xoff
+                    for yoff in totalyoffset:
+                        $ abs_y += yoff
 
                     hbox:
 
@@ -104,7 +126,7 @@ screen _inspector:
                             text_min_width 85
                             action Show("_style_inspector", d=d)
 
-                        text "([d.abs_x:.0f],[d.abs_y:.0f])":
+                        text "([abs_x:.0f],[abs_y:.0f])":
                             min_width 85
 
                         if d._location:
