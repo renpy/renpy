@@ -619,6 +619,12 @@ line_log = False
 # Should Ren'Py process dynamic images?
 dynamic_images = True
 
+# Should Ren'Py save when the mobile app may terminate?
+save_on_mobile_background = True
+
+# Should Ren'Py quit on mobile background?
+quit_on_mobile_background = False
+
 del renpy
 del os
 

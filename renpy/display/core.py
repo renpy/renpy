@@ -2152,7 +2152,9 @@ class Interface(object):
         """
 
         def save():
-            renpy.loadsave.save("_reload-1")
+            if renpy.config.save_on_mobile_background:
+                renpy.loadsave.save("_reload-1")
+
             renpy.persistent.update(True)
 
         if ev.type == pygame.APP_TERMINATING:
@@ -2174,6 +2176,9 @@ class Interface(object):
         pygame.time.set_timer(TIMEEVENT, 0)
 
         save()
+
+        if renpy.config.quit_on_mobile_background:
+            sys.exit(0)
 
         renpy.exports.free_memory()
 
