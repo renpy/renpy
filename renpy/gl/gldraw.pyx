@@ -73,6 +73,15 @@ IDENTITY = renpy.display.render.IDENTITY
 
 FAKE_HIGHDPI = int(os.environ.get("RENPY_FAKE_HIGHDPI", "1"))
 
+# Should we try to vsync?
+vsync = True
+
+# A list of flip times, which we used to detect if vsync is failing.
+flip_times = [ ]
+
+# A list of frame end times, used for the same purpose.
+frame_times = [ ]
+
 cdef class GLDraw:
 
     def __init__(self, allow_fixed=True):
@@ -150,6 +159,8 @@ cdef class GLDraw:
         can. It returns True if it was succesful, or False if OpenGL isn't
         working for some reason.
         """
+
+        global vsync
 
         cdef char *egl_error
 
@@ -729,10 +740,29 @@ cdef class GLDraw:
 
             self.draw_mouse()
 
+            start = time.time()
+
             if EGL:
                 egl_swap()
             else:
                 pygame.display.flip()
+
+            end = time.time()
+
+            if vsync:
+
+                # When the window is covered or
+
+                flip_times.append(end - start)
+                frame_times.append(end)
+
+                if len(flip_times) > 10:
+                    flip_times.pop(0)
+                    frame_times.pop(0)
+
+                    # If we're running at over 1000 fps, vsync is broken.
+                    if (frame_times[-1] - frame_times[0] < .06 * 10) and (sum(flip_times) / len(flip_times) < .001):
+                        time.sleep(1.0 / 60.0)
 
         gltexture.cleanup()
 
