@@ -45,8 +45,8 @@ The parse method takes a Lexer object:
 
     .. method:: word()
 
-        Matches any word, including keywords. Returns the
-
+        Matches any word, including keywords. Returns the text of the
+        matched word.
 
     .. method:: string()
 
@@ -111,7 +111,7 @@ without quotes. ::
 
         def execute_smartline(o):
             who, what = o
-            renpy.say(who, what)
+            renpy.say(eval(who), what)
 
         def lint_smartline(o):
             who, what = o
