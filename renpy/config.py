@@ -563,6 +563,9 @@ log_to_stdout = False
 # new-style custom text tags.
 custom_text_tags = { }
 
+# A function that given the text from a TEXT token, returns a replacement text.
+replace_text = None
+
 # A function that is called when a label is missing.
 missing_label_callback = None
 

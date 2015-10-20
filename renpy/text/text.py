@@ -1854,9 +1854,11 @@ class Text(renpy.display.core.Displayable):
             t = tokens.pop(0)
             kind, text = t
 
-            if kind != TAG:
+            if kind == TEXT and renpy.config.replace_text:
+                rv.append((TEXT, unicode(renpy.config.replace_text(text))))
+
+            elif kind != TAG:
                 rv.append(t)
-                continue
 
             else:
 
