@@ -70,6 +70,9 @@ def make_event(name):
     Creates an EVENTNAME event with `name`, and returns it.
     """
 
+    if not renpy.display.interface.keyboard_focused:
+        return None
+
     names = [ name ]
 
     if renpy.config.map_pad_event:
