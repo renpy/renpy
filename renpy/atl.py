@@ -311,6 +311,9 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
+        if self is t:
+            return
+
         super(ATLTransformBase, self).take_execution_state(t)
 
         self.atl_st_offset = None

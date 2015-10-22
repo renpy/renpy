@@ -644,6 +644,9 @@ class Transform(Container):
         Takes the transformation state from object t into this object.
         """
 
+        if self is t:
+            return
+
         if not isinstance(t, Transform):
             return
 
@@ -658,6 +661,9 @@ class Transform(Container):
         Takes the execution state from object t into this object. This is
         overridden by renpy.atl.TransformBase.
         """
+
+        if self is t:
+            return
 
         if not isinstance(t, Transform):
             return
