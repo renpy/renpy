@@ -48,7 +48,7 @@ init -1600 python:
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
-        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER' ],
+        dismiss = [ 'mouseup_1', 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT' ],
 
         # Pause.
         dismiss_hard_pause = [ ],
@@ -61,7 +61,7 @@ init -1600 python:
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         button_alternate = [ 'mouseup_3' ],
         button_alternate_ignore = [ 'mousedown_3' ],
 
@@ -84,8 +84,8 @@ init -1600 python:
         fast_skip = [ '>' ],
 
         # Bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
         bar_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
         bar_up = [ 'K_UP', 'repeat_K_UP' ],

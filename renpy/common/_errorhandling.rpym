@@ -234,7 +234,7 @@ init python:
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
 
         # Viewport.
         viewport_up = [ 'mousedown_4' ],
@@ -243,8 +243,8 @@ init python:
         viewport_drag_end = [ 'mouseup_1' ],
 
         # These control the bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
         bar_decrease = [ 'K_LEFT' ],
         bar_increase = [ 'K_RIGHT' ],
         )
