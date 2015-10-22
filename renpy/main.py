@@ -182,18 +182,6 @@ def choose_variants():
         except:
             pass
 
-        # Are we running on an OUYA?
-        try:
-            OuyaFacade = autoclass("tv.ouya.console.api.OuyaFacade")
-            of = OuyaFacade.getInstance()
-
-            if of.isRunningOnOUYAHardware():
-                print "Running on an OUYA."
-                renpy.config.variants.insert(0, "ouya")
-        except:
-            pass
-
-
         # Are we running on OUYA or Google TV or something similar?
         package_manager = android.activity.getPackageManager()
 
