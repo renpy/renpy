@@ -625,6 +625,9 @@ save_on_mobile_background = True
 # Should Ren'Py quit on mobile background?
 quit_on_mobile_background = False
 
+# Should Ren'Py pass the raw joystick (not controller) events.?
+pass_joystick_events = False
+
 del renpy
 del os
 

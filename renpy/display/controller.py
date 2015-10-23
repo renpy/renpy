@@ -148,6 +148,7 @@ def event(ev):
         pygame.JOYDEVICEREMOVED,
         ):
 
-        return None
+        if not renpy.config.pass_joystick_events:
+            return None
 
     return ev

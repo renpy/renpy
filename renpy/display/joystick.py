@@ -23,6 +23,7 @@
 # been removed, save for a few compatibility functions.
 
 import renpy.display
+import pygame_sdl2
 
 # Do we have a joystick enabled?
 enabled = False
@@ -34,3 +35,20 @@ class JoyBehavior(renpy.display.layout.Null):
     """
 
     pass
+
+joysticks = { }
+
+def count():
+    return pygame_sdl2.joystick.get_count()
+
+def get(n):
+
+    if n in joysticks:
+        return joysticks[n]
+
+    try:
+        joysticks[n] = pygame_sdl2.joystick.Joystick(n)
+        return joysticks[n]
+    except:
+        return None
+
