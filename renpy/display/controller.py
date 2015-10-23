@@ -30,15 +30,13 @@ import pygame_sdl2 as pygame
 
 import os
 
-def init():
-    """
-    Initialize gamepad support.
-    """
+def load_mappings():
 
-    if not renpy.game.preferences.pad_enabled:
-        return
-
-    pygame_sdl2.controller.init()
+    try:
+        with renpy.loader.load("renpycontrollerdb.txt") as f:
+            pygame_sdl2.controller.add_mappings(f)
+    except:
+        pass
 
     try:
         with renpy.loader.load("gamecontrollerdb.txt") as f:
@@ -50,7 +48,19 @@ def init():
         with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
     except:
+        raise
         pass
+
+def init():
+    """
+    Initialize gamepad support.
+    """
+
+    if not renpy.game.preferences.pad_enabled:
+        return
+
+    pygame_sdl2.controller.init()
+    load_mappings()
 
     for i in range(pygame_sdl2.controller.get_count()):
         c = Controller(i)
@@ -65,12 +75,19 @@ axis_positions = {}
 # The axis threshold.
 THRESHOLD = (32768 // 2)
 
+
+# Should we ignore events?
+ignore = False
+
 def make_event(name):
     """
     Creates an EVENTNAME event with `name`, and returns it.
     """
 
     if not renpy.display.interface.keyboard_focused:
+        return None
+
+    if ignore:
         return None
 
     names = [ name ]
@@ -85,6 +102,25 @@ def make_event(name):
         { "eventnames" : names, "controller" : name, "up" : False })
 
 
+def quit(index): # @ReservedAssignment
+
+    """
+    Quits the controller at index.
+    """
+
+    if index in controllers:
+        controllers[index] = c = Controller(index)
+        c.quit()
+
+def start(index):
+    """
+    Starts the controller at index.
+    """
+
+    quit(index)
+    controllers[index] = c = Controller(index)
+    c.init()
+
 def event(ev):
     """
     Processes an event and returns the same event, a new event, or None if
@@ -92,18 +128,11 @@ def event(ev):
     """
 
     if ev.type == CONTROLLERDEVICEADDED:
-        if ev.which not in controllers:
-            controllers[ev.which] = c = Controller(ev.which)
-            c.init()
-
+        start(ev.which)
         return None
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
-
-        if ev.which in controllers:
-            c = controllers.pop(ev.which)
-            c.quit()
-
+        quit(ev.which)
         return None
 
     elif ev.type == CONTROLLERAXISMOTION:
