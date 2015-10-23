@@ -1348,6 +1348,7 @@ class Viewport(Container):
 
         if version < 5:
             self.focusable = self.draggable
+            self.arrowkeys = False
 
 
     def __init__(self,
@@ -1358,6 +1359,7 @@ class Viewport(Container):
                  yadjustment=None,
                  set_adjustments=True,
                  mousewheel=False,
+                 arrowkeys=False,
                  draggable=False,
                  edgescroll=None,
                  style='viewport',
@@ -1393,6 +1395,7 @@ class Viewport(Container):
         self.child_width, self.child_height = child_size
 
         self.mousewheel = mousewheel
+        self.arrowkeys = arrowkeys
         self.draggable = draggable
 
         # Layout participates in the focus system so drags get migrated.
@@ -1564,14 +1567,44 @@ class Viewport(Container):
 
         if self.mousewheel:
 
-            if renpy.display.behavior.map_event(ev, 'viewport_up'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheelup'):
                 rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
                 if rv is not None:
                     return rv
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-            if renpy.display.behavior.map_event(ev, 'viewport_down'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheeldown'):
+                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+        if self.arrowkeys:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_leftarrow'):
+                rv = self.xadjustment.change(self.xadjustment.value - self.xadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_rightarrow'):
+                rv = self.xadjustment.change(self.xadjustment.value + self.xadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_uparrow'):
+                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
+                if rv is not None:
+                    return rv
+                else:
+                    raise renpy.display.core.IgnoreEvent()
+
+            if renpy.display.behavior.map_event(ev, 'viewport_downarrow'):
                 rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
                 if rv is not None:
                     return rv

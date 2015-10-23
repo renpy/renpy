@@ -296,6 +296,7 @@ def sl2viewport(**kwargs):
 DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True)
 Keyword("child_size")
 Keyword("mousewheel")
+Keyword("arrowkeys")
 Keyword("draggable")
 Keyword("edgescroll")
 Keyword("xadjustment")
