@@ -100,6 +100,12 @@ init -1500:
                 action SetField(_preferences, "pad_enabled", False)
                 xfill True
 
+            null height 5
+
+            textbutton _("Calibrate"):
+                action ui.invokesinnewcontext(_gamepad.calibrate)
+                xfill True
+
             null height 10
 
             text _("Changes will take effect the next time this program is run.") substitute True

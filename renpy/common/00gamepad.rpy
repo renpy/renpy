@@ -68,7 +68,7 @@ screen _gamepad_control(name, control, kind, mappings, back, i, total):
     add _gamepad.EventWatcher(mappings)
 
 
-init -1100 python in _gamepad:
+init -1200 python in _gamepad:
     from pygame_sdl2 import JOYHATMOTION, JOYAXISMOTION, JOYBUTTONDOWN
     import pygame_sdl2
     import os
@@ -99,6 +99,10 @@ init -1100 python in _gamepad:
             return None
 
     def calibrate():
+        """
+        A function that can be called to calibrate an unknown gamepad by
+        writing out an updated gamecontrollerdb.txt file.
+        """
 
         joysticks = [ ]
 
@@ -198,7 +202,6 @@ init -1100 python in _gamepad:
 
             else:
                 mappings[control] = result
-                print mappings
                 i += 1
 
 
