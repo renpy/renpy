@@ -612,6 +612,27 @@ Occasionally Used
     a window. The default action prompts the user to see if he wants
     to quit the game.
 
+.. var:: config.replace_text = None
+
+    If not None, a function that is called with a single argument, a text to
+    be displayed to the user. The function can return the same text it was
+    passed, or a replacement text that will be displayed instead.
+
+    The function is called after substitutions have been performed and after
+    the text has been split on tags, so its argument contains nothing but
+    actual text. All displayed text passes through the function: not only
+    dialogue text, but also user interface text.
+
+    This can be used to replace specific ASCII sequences with corresponding
+    Unicode characters, as demonstrated by the following code::
+
+        def replace_text(s):
+            s = s.replace("'", u'\u2019') # apostrophe
+            s = s.replace('--', u'\u2014') # em dash
+            s = s.replace('...', u'\u2026') # ellipsis
+            return s
+        config.replace_text = replace_text
+
 .. var:: config.save_json_callbacks = [ ]
 
     A list of callback functions that are used to create the json object
