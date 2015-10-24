@@ -48,7 +48,6 @@ def load_mappings():
         with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
     except:
-        raise
         pass
 
 def init():
