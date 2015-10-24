@@ -169,7 +169,7 @@ def prediction_coroutine(root_widget):
         if t in predicted_screens:
             continue
 
-        predicted_screens.add(t)
+        predicted_screens.append(t)
 
         name, args, kwargs = t
 

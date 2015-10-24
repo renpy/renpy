@@ -339,7 +339,7 @@ screen android:
                                 hovered tt.Action(TABLET_TEXT)
 
                             textbutton _("Television"):
-                                action LaunchEmulator("tv", "small tv ouya android")
+                                action LaunchEmulator("tv", "small tv android")
                                 hovered tt.Action(OUYA_TEXT)
 
 
