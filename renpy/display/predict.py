@@ -158,17 +158,20 @@ def prediction_coroutine(root_widget):
 
     predicting = False
 
-    predicted_screens = set()
+    predicted_screens = [ ]
 
     # Predict the screens themselves.
-    for name, args, kwargs in screens:
+    for t in screens:
+
         while not (yield True):
             continue
 
-        if name in predicted_screens:
+        if t in predicted_screens:
             continue
 
-        predicted_screens.add(name)
+        predicted_screens.add(t)
+
+        name, args, kwargs = t
 
         predicting = True
 
