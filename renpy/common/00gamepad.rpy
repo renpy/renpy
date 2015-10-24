@@ -62,8 +62,11 @@ screen _gamepad_control(name, control, kind, mappings, back, i, total):
 
         hbox:
             textbutton _("Cancel") action Return("cancel")
-            textbutton _("Back") action Return(back)
-            textbutton _("Skip") action Return("skip")
+            if len(mappings) >= 2:
+                textbutton _("Skip (A)") action Return("skip")
+
+            if back and len(mappings) >= 3:
+                textbutton _("Back (B)") action Return(back)
 
     add _gamepad.EventWatcher(mappings)
 
@@ -78,6 +81,7 @@ init -1200 python in _gamepad:
         def __init__(self, mappings):
             renpy.Displayable.__init__(self)
             self.bound = set(mappings.values())
+            self.mappings = mappings
 
         def render(self, width, height, st, at):
             return renpy.Render(0, 0)
@@ -96,39 +100,49 @@ init -1200 python in _gamepad:
             if binding not in self.bound:
                 return binding
 
+            if len(self.mappings) >= 2:
+                if self.mappings['a'] == binding:
+                    return "skip"
+
+            if len(self.mappings) >= 3:
+                if self.mappings['b'] == binding:
+                    return "back"
+
             return None
 
-    def calibrate():
+    def calibrate(index=None):
         """
         A function that can be called to calibrate an unknown gamepad by
         writing out an updated gamecontrollerdb.txt file.
         """
 
-        joysticks = [ ]
+        if index is None:
 
-        # Choose a controller to calibrate.
-        for i in range(renpy.display.joystick.count()):
-            j = renpy.display.joystick.get(i)
+            joysticks = [ ]
 
-            try:
-                j.init()
-                name = j.get_name()
-                j.quit()
+            # Choose a controller to calibrate.
+            for i in range(renpy.display.joystick.count()):
 
-            except:
-                continue
+                try:
+                    j = pygame_sdl2.joystick.Joystick(i)
+                    j.init()
+                    name = j.get_name()
+                    j.quit()
+                except:
+                    continue
 
-            if name is None:
-                continue
+                if name is None:
+                    continue
 
-            joysticks.append((i, name))
+                joysticks.append((i, name))
 
-        index = renpy.call_screen("_gamepad_select", joysticks)
+            index = renpy.call_screen("_gamepad_select", joysticks)
 
-        if index == "cancel":
-            return
+            if index == "cancel":
+                return
 
-        renpy.display.controller.ignore = True
+#         renpy.display.controller.ignore = True
+        renpy.display.controller.quit(index)
 
         platform = pygame_sdl2.get_platform()
 
@@ -207,9 +221,9 @@ init -1200 python in _gamepad:
 
         joy.quit()
         renpy.config.pass_joystick_events = False
-        renpy.display.controller.ignore = False
 
         if fail:
+            renpy.display.controller.start(index)
             return
 
         mapping = guid + "," + name + ",platform:" + platform

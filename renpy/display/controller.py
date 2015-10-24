@@ -33,20 +33,24 @@ import os
 def load_mappings():
 
     try:
-        with renpy.loader.load("renpycontrollerdb.txt") as f:
-            pygame_sdl2.controller.add_mappings(f)
+        f = renpy.loader.load("renpycontrollerdb.txt")
+        pygame_sdl2.controller.add_mappings(f)
+        f.close()
+    except:
+        raise
+        pass
+
+    try:
+        f = renpy.loader.load("gamecontrollerdb.txt")
+        pygame_sdl2.controller.add_mappings(f)
+        f.close()
     except:
         pass
 
     try:
-        with renpy.loader.load("gamecontrollerdb.txt") as f:
-            pygame_sdl2.controller.add_mappings(f)
-    except:
-        pass
-
-    try:
-        with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
-            pygame_sdl2.controller.add_mappings(f)
+        f = open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb")
+        pygame_sdl2.controller.add_mappings(f)
+        f.close()
     except:
         pass
 
@@ -108,8 +112,8 @@ def quit(index): # @ReservedAssignment
     """
 
     if index in controllers:
-        controllers[index] = c = Controller(index)
-        c.quit()
+        controllers[index].quit()
+        del controllers[index]
 
 def start(index):
     """
