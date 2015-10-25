@@ -1022,6 +1022,10 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.quit_on_mobile_background = False
+
+    If true, the mobile app will quit when it loses focus.
+
 .. var:: config.rollback_enabled = True
 
     Should the user be allowed to rollback the game? If set to False,
@@ -1063,6 +1067,12 @@ Rarely or Internally Used
    in the save file. Each line consists of a relative size estimate, the path
    to the object, information about if the object is an alias, and a
    representation of the object.
+
+.. var:: config.save_on_mobile_background = True
+
+    If true, the mobile app will save its state when it loses focus. The state
+    is saved in a way that allows it to be automatically loaded (and the game
+    to resume its place) when the app starts again.
 
 .. var:: config.save_physical_size = True
 

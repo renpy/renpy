@@ -2,6 +2,119 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.7
+=============
+
+Dynamic Images
+--------------
+
+Dynamic images have been added to Ren'Py. It's now possible to write
+code like::
+
+    image eileen happy = "eileen [outfit] happy"
+
+This code creates a displayable that interpolates the value of the
+``output`` variable at least once per interaction. The interpolated
+string is then used to find another displayable to use.
+
+Dynamic images can be used anywhere a displayable is expected, and the
+string can be an string that resolves to a displayable. One possible use
+might be to replace boring and repetitive condition switches in dress-up
+games with code like::
+
+    image eileen dressup = LiveComposite(
+        (300, 600),
+        (0, 0), "eileen_base.png",
+        (0, 0), "eileen_top_[top].png",
+        (0, 0), "eileen_bottom_[bottom].png",
+        (0, 0), "eileen_accessory_[accessory].png",
+        )
+
+Dynamic image can be used in a screen language add statement::
+
+    for item in inventory:
+        add "store_[item].png"
+
+When so used, the variables are looked up in both the screen and global
+scopes.
+
+Define Improvements
+-------------------
+
+The define statement can now be used to define config and persistent
+variables. The code::
+
+    define config.screen_width = 1280
+    define config.screen_height = 720
+
+Now works as expected. Persistent variables work in an idiosyncratic way,
+as the code::
+
+    define persistent.unlocked_endings = [ ]
+
+Will only set the unlocked_endings variable if it has not already been
+set.
+
+Android/iOS
+-----------
+
+The android SELECT key - present on remote controls - is now supported
+for advancing text and selecting buttons, bars, etc. This means most
+TV-based android consoles should be supported.
+
+Direct support for the OUYA console has been dropped. The console should
+still be supported as a general TV-based android console.
+
+The new :var:`config.save_on_mobile_background` and :var:`config.quit_on_mobile_background`
+make it possible to adopt various strategies to deal with an Android or
+iOS app losing focus.
+
+Other
+-----
+
+Unknown gamepads can be calibrated from the shift+G menu.
+
+The new :var:`config.replace_text` callback makes it possible to replace
+text with other text. For example, one can replace multiple dashes with
+en-dash or em-dash characters.
+
+If a screen named ``skip_indicator`` is present, it will be displayed
+instead of the default skip indicator.
+
+In the launcher, pressing F5 will launch the current project.
+
+Skipping is now disabled when leaving a Replay.
+
+Creator-defined statements can now return statements to be predicted.
+
+The Finnish translation has been updated.
+
+The new :propref:`adjust_spacing` style property has been added. It
+controls if the spacing of drawable-resolution text is adjusted to match
+the spacing of viewable-resolution text. Setting this to False can prevent
+kerning from changing after extend, but requires the GUI be designed
+to adjust to the changing text size. To prevent obvious artifacts, this
+is set to False for input text.
+
+The following bugs have been fixed:
+
+* If a screen was predicted with multiple arguments, that screen would only
+  be predicted once for the purpose of image prediction.
+* On Mac OS X, if the Ren'Py window was covered or offscreen, VSYNC would
+  fail and CPU usage would rise to 100%. (Ren'Py now detects failed VSYNC
+  and limits its own framerate.)
+* Subsurfacing a clipped surface would not work, manifesting in incorrect
+  rendering of scrollbars in several of the default themes.
+* It was hard to pick a theme in the launcher.
+* When a window was scaled, hyperlinks would react to the mouse in incorrect
+  positions.
+* Window show now used narrator to render the empty window. It also had problems
+  with characters defined in the character namespace.
+* Newlines surrounding certain text tags would not be rendered.
+* Underlines could have small spaces in them when the window was scaled.
+* Various documentation problems.
+
+
 Ren'Py 6.99.6
 ==============
 
