@@ -930,7 +930,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             if i.endswith("color"):
                 caretprops[i] = properties[i]
 
-        self.caret = renpy.display.image.Solid(xmaximum=2, style=style, **caretprops)
+        self.caret = renpy.display.image.Solid(xmaximum=1, style=style, **caretprops)
         self.caret_pos = len(self.content)
         self.old_caret_pos = self.caret_pos
 
@@ -1098,7 +1098,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
             self.caret_pos = l
             self.update_text(self.content, self.editable)
             renpy.display.render.redraw(self, 0)
-            raise renpy.display.core.IrgcnoreEvent()
+            raise renpy.display.core.IgnoreEvent()
 
         elif ev.type == pygame.TEXTEDITING:
             self.update_text(self.content, self.editable, check_size=True)

@@ -2892,7 +2892,10 @@ class Interface(object):
                     # the software renderer.
                     renpy.game.interface.full_redraw = True
                     renpy.game.interface.force_redraw = True
-                    renpy.display.draw.full_redraw = True
+
+                    if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
+                        renpy.display.draw.full_redraw = True
+
                     continue
 
                 # Handle videoresize.
