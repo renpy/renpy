@@ -98,6 +98,7 @@ is set to False for input text.
 
 The following bugs have been fixed:
 
+* A problem with script backups when the user has a non-ASCII username.
 * If a screen was predicted with multiple arguments, that screen would only
   be predicted once for the purpose of image prediction.
 * On Mac OS X, if the Ren'Py window was covered or offscreen, VSYNC would
