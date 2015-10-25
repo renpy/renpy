@@ -2888,6 +2888,11 @@ class Interface(object):
                     continue
 
                 if ev.type == pygame.VIDEOEXPOSE:
+                    # Needed to force the display to redraw after expose in
+                    # the software renderer.
+                    renpy.game.interface.full_redraw = True
+                    renpy.game.interface.force_redraw = True
+                    renpy.display.draw.full_redraw = True
                     continue
 
                 # Handle videoresize.
