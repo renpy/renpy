@@ -39,5 +39,5 @@ screen iconbutton(icon, caption=None, **properties):
         if caption:
            text caption style "iconbutton_text" properties text_properties
 
-        icon style "iconbutton_icon" properties icon_properties
+        icon icon style "iconbutton_icon" properties icon_properties
 
