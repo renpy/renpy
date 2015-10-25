@@ -71,6 +71,8 @@ init -1600 python:
         input_left = [ 'K_LEFT', 'repeat_K_LEFT' ],
         input_right = [ 'K_RIGHT', 'repeat_K_RIGHT' ],
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
+        input_home = [ 'K_HOME' ],
+        input_end = [ 'K_END' ],
 
         # Viewport.
         viewport_up = [ 'mousedown_4' ],
