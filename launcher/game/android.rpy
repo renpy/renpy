@@ -64,7 +64,7 @@ init python:
 
         RAPT_PATH = os.path.join(config.renpy_base, "rapt")
 
-        if os.path.isdir(RAPT_PATH) and check_version_txt(RAPT_PATH):
+        if os.path.isdir(RAPT_PATH) and check_hash_txt("rapt"):
             import sys
             sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
         else:
@@ -339,7 +339,7 @@ screen android:
                                 hovered tt.Action(TABLET_TEXT)
 
                             textbutton _("Television"):
-                                action LaunchEmulator("tv", "small tv ouya android")
+                                action LaunchEmulator("tv", "small tv android")
                                 hovered tt.Action(OUYA_TEXT)
 
 

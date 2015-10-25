@@ -275,6 +275,11 @@ cleared.
 Occasionally Used
 -----------------
 
+.. var:: config.after_replay_callback = None
+
+    If not None, a function that is called with no arguments after a
+    replay completes.
+
 .. var:: config.auto_load = None
 
     If not None, the name of a save file to automatically load when
@@ -513,6 +518,14 @@ Occasionally Used
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
 
+.. var:: config.minimum_presplash_time = 0.0
+
+    The minimum amount of time, in seconds, a presplash, Android presplash,
+    or iOS LaunchImage is displayed for. If Ren'Py initializes before this
+    amount of time has been reached, it will sleep to ensure the image is
+    shown for at least this amount of time. The image may be shown longer
+    if Ren'Py takes longer to start up.
+
 .. var:: config.missing_background = "black"
 
     This is the background that is used when :var:`config.developer` is True
@@ -564,6 +577,11 @@ Occasionally Used
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
+.. var:: config.nearest_neighbor = False
+
+    Uses nearest-neighbor filtering by default, to support pixel art or
+    melting players' eyes.
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
@@ -593,6 +611,27 @@ Occasionally Used
     The action that is called when the user clicks the quit button on
     a window. The default action prompts the user to see if he wants
     to quit the game.
+
+.. var:: config.replace_text = None
+
+    If not None, a function that is called with a single argument, a text to
+    be displayed to the user. The function can return the same text it was
+    passed, or a replacement text that will be displayed instead.
+
+    The function is called after substitutions have been performed and after
+    the text has been split on tags, so its argument contains nothing but
+    actual text. All displayed text passes through the function: not only
+    dialogue text, but also user interface text.
+
+    This can be used to replace specific ASCII sequences with corresponding
+    Unicode characters, as demonstrated by the following code::
+
+        def replace_text(s):
+            s = s.replace("'", u'\u2019') # apostrophe
+            s = s.replace('--', u'\u2014') # em dash
+            s = s.replace('...', u'\u2026') # ellipsis
+            return s
+        config.replace_text = replace_text
 
 .. var:: config.save_json_callbacks = [ ]
 
@@ -656,7 +695,17 @@ Rarely or Internally Used
     screen that Ren'Py wil draw pictures to.
 
     This can be used to configure Ren'Py to only allow certain sizes of
-    screen, such as integer multiples of the screen size.
+    screen. For example, the following code allows only integer multiples
+    of the original screen size::
+
+        init python:
+
+            def force_integer_multiplier(width, height):
+                multiplier = min(width / config.screen_width, height / config.screen_height)
+                multiplier = max(int(multiplier), 1)
+                return (multiplier * config.screen_width, multiplier * config.screen_height)
+
+            config.adjust_view_size = force_integer_multiplier
 
 .. var:: config.afm_bonus = 25
 
@@ -830,10 +879,6 @@ Rarely or Internally Used
     A list of functions that are called (without any arguments) when
     an interaction is started or restarted.
 
-.. var:: config.joystick = True
-
-    If True, joystick support is enabled.
-
 .. var:: config.keep_running_transform = True
 
     If true, showing an image without supplying a transform or ATL
@@ -977,6 +1022,10 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.quit_on_mobile_background = False
+
+    If true, the mobile app will quit when it loses focus.
+
 .. var:: config.rollback_enabled = True
 
     Should the user be allowed to rollback the game? If set to False,
@@ -1018,6 +1067,12 @@ Rarely or Internally Used
    in the save file. Each line consists of a relative size estimate, the path
    to the object, information about if the object is an alias, and a
    representation of the object.
+
+.. var:: config.save_on_mobile_background = True
+
+    If true, the mobile app will save its state when it loses focus. The state
+    is saved in a way that allows it to be automatically loaded (and the game
+    to resume its place) when the app starts again.
 
 .. var:: config.save_physical_size = True
 
@@ -1073,6 +1128,11 @@ Rarely or Internally Used
     A list of directories that are searched for images, music,
     archives, and other media, but not scripts. This is initialized to
     a list containing "common" and the name of the game directory.
+
+.. var:: config.search_prefixes = [ "", "images/" ]
+
+    A list of prefixes that are prepended to filenames that are searched
+    for.
 
 .. var:: config.show = renpy.show
 

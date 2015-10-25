@@ -224,13 +224,12 @@ def scandirfiles():
 
         seen.add(fn)
 
-
     for apk in apks:
 
         if apk not in game_apks:
-            files = common_files
+            files = common_files # @UnusedVariable
         else:
-            files = game_files
+            files = game_files # @UnusedVariable
 
         for f in apk.list():
 
@@ -243,17 +242,20 @@ def scandirfiles():
     for i in renpy.config.searchpath:
 
         if (renpy.config.commondir) and (i == renpy.config.commondir):
-            files = common_files
+            files = common_files # @UnusedVariable
         else:
-            files = game_files
+            files = game_files # @UnusedVariable
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
             add(i, j)
 
+    files = game_files
+
     for _prefix, index in archives:
         for j in index.iterkeys():
             add(None, j)
+
 
 
 def listdirfiles(common=True):
@@ -273,18 +275,23 @@ def listdirfiles(common=True):
 
 class SubFile(object):
 
-    def __init__(self, f, base, length, start):
-        self.f = f
+    def __init__(self, fn, base, length, start):
+        self.fn = fn
+
+        self.f = None
+
         self.base = base
         self.offset = 0
         self.length = length
         self.start = start
 
         if not self.start:
-            self.name = self.f.name
+            self.name = fn
         else:
             self.name = None
 
+    def open(self):
+        self.f = open(self.fn, "rb")
         self.f.seek(self.base)
 
     def __enter__(self):
@@ -295,6 +302,9 @@ class SubFile(object):
         return False
 
     def read(self, length=None):
+
+        if self.f is None:
+            self.open()
 
         maxlength = self.length - self.offset
 
@@ -316,6 +326,9 @@ class SubFile(object):
         return (rv1 + rv2)
 
     def readline(self, length=None):
+
+        if self.f is None:
+            self.open()
 
         maxlength = self.length - self.offset
         if length is not None:
@@ -378,8 +391,10 @@ class SubFile(object):
     def flush(self):
         return
 
-
     def seek(self, offset, whence=0):
+
+        if self.f is None:
+            self.open()
 
         if whence == 0:
             offset = offset
@@ -403,7 +418,9 @@ class SubFile(object):
         return self.offset
 
     def close(self):
-        self.f.close()
+        if self.f is not None:
+            self.f.close()
+            self.f = None
 
     def write(self, s):
         raise Exception("Write not supported by SubFile")
@@ -454,7 +471,7 @@ def load_core(name):
         if not name in index:
             continue
 
-        f = file(transfn(prefix + ".rpa"), "rb")
+        afn = transfn(prefix + ".rpa")
 
         data = [ ]
 
@@ -468,10 +485,12 @@ def load_core(name):
             else:
                 offset, dlen, start = t
 
-            rv = SubFile(f, offset, dlen, start)
+            rv = SubFile(afn, offset, dlen, start)
 
         # Compatibility path.
         else:
+            f = file(afn, "rb")
+
             for offset, dlen in index[name]:
                 f.seek(offset)
                 data.append(f.read(dlen))
@@ -492,10 +511,12 @@ def get_prefixes():
 
     language = renpy.game.preferences.language
 
-    if language is not None:
-        rv.append(renpy.config.tl_directory + "/" + language + "/")
+    for prefix in renpy.config.search_prefixes:
 
-    rv.append("")
+        if language is not None:
+            rv.append(renpy.config.tl_directory + "/" + language + "/" + prefix)
+
+        rv.append(prefix)
 
     return rv
 
@@ -620,9 +641,12 @@ class RenpyImporter(object):
     """
 
     def __init__(self, prefix=""):
-        self.prefix = ""
+        self.prefix = prefix
 
-    def translate(self, fullname, prefix=""):
+    def translate(self, fullname, prefix=None):
+
+        if prefix is None:
+            prefix = self.prefix
 
         try:
             fn = (prefix + fullname.replace(".", "/")).decode("utf8")
@@ -673,10 +697,12 @@ class RenpyImporter(object):
         return load(filename).read()
 
 def init_importer():
-    sys.meta_path.append(RenpyImporter())
+    sys.meta_path.insert(0, RenpyImporter("python-packages/"))
+    sys.meta_path.insert(0, RenpyImporter())
 
 def quit_importer():
-    sys.meta_path.pop()
+    sys.meta_path.pop(0)
+    sys.meta_path.pop(0)
 
 #################################################################### Auto-Reload
 
@@ -708,7 +734,7 @@ def auto_mtime(fn):
     except:
         return None
 
-def add_auto(fn):
+def add_auto(fn, force=False):
     """
     Adds fn as a file we watch for changes. If it's mtime changes or the file
     starts/stops existing, we trigger a reload.
@@ -717,7 +743,7 @@ def add_auto(fn):
     if not renpy.autoreload:
         return
 
-    if fn in auto_mtimes:
+    if (fn in auto_mtimes) and (not force):
         return
 
     for e in renpy.config.autoreload_blacklist:
@@ -755,7 +781,10 @@ def auto_thread_function():
                 continue
 
             if auto_mtime(fn) != mtime:
-                needs_autoreload = True
+
+                with auto_lock:
+                    if auto_mtime(fn) != auto_mtimes[fn]:
+                        needs_autoreload = True
 
 def auto_init():
     """

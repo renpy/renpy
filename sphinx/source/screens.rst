@@ -133,6 +133,10 @@ expression. It takes the following properties:
     If present, this should be a string giving the variant of screen
     to be defined. See :ref:`screen-variants`.
 
+`style_group`
+    A string that's used to provide a prefix for the style for the
+    children of this screen, as :ref:`described below <style-group>`.
+
 ::
 
    screen hello_world():
@@ -231,6 +235,8 @@ Adds an image or other displayable to the screen. This optionally
 takes :ref:`transform properties <transform-properties>`. If at least
 one transform property is given, a Transform is created to wrap the
 image, and the properties are given to the transform.
+
+If the displayable is None, nothing is added to the screen.
 
 This does not take any children.
 

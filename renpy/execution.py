@@ -94,7 +94,11 @@ class Context(renpy.object.Object):
     does participates in rollback.
     """
 
-    __version__ = 12
+    __version__ = 13
+
+    nosave = [ 'next_node' ]
+
+    next_node = None
 
     def after_upgrade(self, version):
         if version < 1:
@@ -136,6 +140,10 @@ class Context(renpy.object.Object):
 
         if version < 12:
             self.translate_block_language = None
+
+        if version < 13:
+            self.line_log = [ ]
+
 
     def __init__(self, rollback, context=None, clear=False):
         """
@@ -191,6 +199,10 @@ class Context(renpy.object.Object):
 
         # The attributes that are used by the current say statement.
         self.say_attributes = None
+
+        # A list of lines that were run since the last time this log was
+        # cleared.
+        self.line_log = [ ]
 
         if context:
             oldsl = context.scene_lists
@@ -354,6 +366,12 @@ class Context(renpy.object.Object):
             self.last_abnormal = self.abnormal
             self.abnormal = False
             self.defer_rollback = None
+
+            if renpy.config.line_log:
+                ll_entry = (node.filename, node.linenumber)
+
+                if ll_entry not in self.line_log:
+                    self.line_log.append(ll_entry)
 
             if self.rollback and renpy.game.log:
                 renpy.game.log.begin()

@@ -61,6 +61,10 @@ style = None
 # The set of statements we've seen in this session.
 seen_session = { }
 
+# The number of entries in persistent._seen_translates that are also in
+# the current game.
+seen_translates_count = 0
+
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
@@ -185,6 +189,9 @@ class CallException(Exception):
         self.label = label
         self.args = args
         self.kwargs = kwargs
+
+    def __reduce__(self):
+        return (CallException, (self.label, self.args, self.kwargs))
 
 class EndReplay(Exception):
     """
@@ -364,6 +371,10 @@ def call_replay(label, scope={}):
         if interface and interface.restart_interaction and contexts:
             contexts[-1].scene_lists.focused = None
 
+        renpy.config.skipping = None
+
+    if renpy.config.after_replay_callback:
+        renpy.config.after_replay_callback()
 
 # Type information.
 if False:

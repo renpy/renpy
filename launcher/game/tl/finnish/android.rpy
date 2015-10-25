@@ -27,15 +27,15 @@ translate finnish strings:
 
     # game/android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Pyrkii emuloimaan Android-puhelinta.\n\nKosketus valintaa emuloidaan hiirellä, mutta vain kun nappia pidetään pohjassa. Esc toimii Menu-näppäimenä ja Pg Up toimii peruutusnappina."
+    new "Ren'Py pyrkii emuloimaan Android-puhelinta.\n\nKosketus valintaa emuloidaan hiirellä, mutta vain kun nappia pidetään pohjassa. Esc toimii Menu-näppäimenä ja Pg Up toimii peruutusnappina."
 
     # game/android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Pyrkii emuloimaan Android-tablettia.\n\nKosketus valintaa emuloidaan hiirellä, mutta vain kun nappia pidetään pohjassa. Esc toimii Menu-näppäimenä ja Pg Up toimii peruutusnappina."
+    new "Ren'Py pyrkii emuloimaan Android-tablettia.\n\nKosketusta emuloidaan hiirellä, mutta vain kun nappia pidetään pohjassa. Esc toimii Menu-näppäimenä ja Pg Up toimii peruutusnappina."
 
     # game/android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Pyrkii emuloimaan televisiopohjaista Android-konsolia, kuten OUYA tai Fire TV.\n\nOhjainnäppäimet ovat nuolinäppäimet, Enter toimii valitsijana, Esc toimii Menu-näppäimenä ja Pg Up toimii peruutusnappina."
+    new "Ren'Py pyrkii emuloimaan televisiopohjaista Android-konsolia, kuten OUYA tai Fire TV.\n\nOhjainnäppäimet ovat nuolinäppäimet, Enter toimii valitsijana, Esc toimii Menu-näppäimenä ja Pg Up toimii peruutusnappina."
 
     # game/android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
@@ -152,4 +152,35 @@ translate finnish strings:
     # game/android.rpy:637
     old "The port must be a number."
     new "Portin on oltava numero."
+
+
+translate finnish strings:
+
+    # game/android.rpy:46
+    old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
+    new "Kokoaa Android-paketin, asentaa sen tietokoneeseen kytkettyyn Android-laitteeseen ja käynnistää sovelluksen laitteessa."
+
+    # game/android.rpy:50
+    old "Retrieves the log from the Android device and writes it to a file."
+    new "Noutaa lokin Android-laitteesta ja kirjoittaa sen tiedostoon."
+
+    # game/android.rpy:240
+    old "Copying Android files to distributions directory."
+    new "Kopioidaan Android-tiedostoja jakelukansioon."
+
+    # game/android.rpy:341
+    old "Television"
+    new "Televisio"
+
+    # game/android.rpy:377
+    old "Build, Install & Launch"
+    new "Kokoa, Asenna & Suorita"
+
+    # game/android.rpy:404
+    old "Logcat"
+    new "Logcat"
+
+    # game/android.rpy:538
+    old "Retrieving logcat information from device."
+    new "Noudetaan logcat-informaatiota laitteesta."
 

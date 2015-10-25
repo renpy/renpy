@@ -57,6 +57,11 @@ position = renpy.object.Sentinel("position")
 def any_object(x):
     return x
 
+def bool_or_none(x):
+    if x is None:
+        return x
+    return bool(x)
+
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
@@ -79,7 +84,7 @@ PROPERTIES = {
         "xzoom" : float,
         "yzoom" : float,
         "zoom" : float,
-        "nearest" : bool,
+        "nearest" : bool_or_none,
         "alpha" : float,
         "additive" : float,
         "around" : (position, position),
@@ -305,6 +310,9 @@ class ATLTransformBase(renpy.object.Object):
         Updates self to begin executing from the same point as t. This
         requires that t.atl is self.atl.
         """
+
+        if self is t:
+            return
 
         super(ATLTransformBase, self).take_execution_state(t)
 

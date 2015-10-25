@@ -563,6 +563,9 @@ log_to_stdout = False
 # new-style custom text tags.
 custom_text_tags = { }
 
+# A function that given the text from a TEXT token, returns a replacement text.
+replace_text = None
+
 # A function that is called when a label is missing.
 missing_label_callback = None
 
@@ -571,6 +574,62 @@ preserve_zorder = True
 
 # The set of names to ignore.
 lint_ignore_replaces = [ 'help', 'quit' ]
+
+# How long should the presplash be kept up for?
+minimum_presplash_time = 0.0
+
+# Should Ren'Py use nearest-neighbor filtering by default.
+nearest_neighbor = False
+
+# Should Ren'Py use the drawable resolution at all? (For RTT, Text, etc?)
+use_drawable_resolution = bool(int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION", "1")))
+
+# Should text layout occur at drawable resolution?
+drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1")))
+
+# Should we fill the virtual-resolution text box?
+draw_virtual_text_box = bool(int(os.environ.get("RENPY_DRAW_VIRTUAL_TEXT_BOX", "0")))
+
+# Bindings of gamepad buttons.
+pad_bindings = { }
+
+# A list of pygame events that should be enabled in addition to the standard
+# events.
+pygame_events = [ ]
+
+# A function that is used to map a gamepad event into a list of Ren'Py
+# events.
+map_pad_event = None
+
+# This is called when a replay finishes.
+after_replay_callback = None
+
+# Should Ren'Py wrap shown transforms in an ImageReference?
+wrap_shown_transforms = True
+
+# A list of prefixes Ren'Py will search for assets.
+search_prefixes = [ "", "images/" ]
+
+# Should Ren'Py clear the database of code lines?
+clear_lines = True
+
+# Special namespaces for define and default.
+special_namespaces = { }
+
+# Should Ren'Py log lines?
+line_log = False
+
+# Should Ren'Py process dynamic images?
+dynamic_images = True
+
+# Should Ren'Py save when the mobile app may terminate?
+save_on_mobile_background = True
+
+# Should Ren'Py quit on mobile background?
+quit_on_mobile_background = False
+
+# Should Ren'Py pass the raw joystick (not controller) events.?
+pass_joystick_events = False
 
 del renpy
 del os

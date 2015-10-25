@@ -32,3 +32,6 @@ translate simplified_chinese style l_nonbox_text:
 
 translate simplified_chinese style hyperlink_text:
     font CNL
+
+translate simplified_chinese python:
+    make_style_backup()

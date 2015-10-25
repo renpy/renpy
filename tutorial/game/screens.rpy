@@ -392,6 +392,7 @@ screen preferences():
                 textbutton "English" action Language(None)
                 textbutton u"日本語" text_font "tl/japanese/MTLc3m.ttf" action Language("japanese")
                 textbutton "Русский" action Language("russian")
+                textbutton u"한국어" text_font "tl/korean/NanumGothic.ttf" action Language("korean")
                 
             # end-tutorial-only
 

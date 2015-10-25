@@ -546,6 +546,11 @@ class ScreenDisplayable(renpy.display.layout.Container):
         old_ui_screen = renpy.ui.screen
         renpy.ui.screen = self
 
+        # The name of the root screen of this screen.
+        NAME = 0
+
+        old_cache = self.cache.get(NAME, None)
+
         # Evaluate the screen.
         try:
 
@@ -554,7 +559,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             self.children = [ self.child ]
 
             self.scope["_scope"] = self.scope
-            self.scope["_name"] = 0
+            self.scope["_name"] = NAME
             self.scope["_debug"] = debug
 
             self.screen.function(**self.scope)
@@ -569,6 +574,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = None
         self.old_transforms = None
         self.old_transfers = True
+
+        # Deal with the case where the screen version changes.
+        if (self.cache.get(NAME, None) is not old_cache) and (self.current_transform_event is None) and (self.phase == UPDATE):
+            self.current_transform_event = "update"
 
         if self.current_transform_event:
 
@@ -1002,6 +1011,9 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
     screen = get_screen_variant(name[0])
 
+    if screen is None:
+        return
+
     scope = { }
     scope["_scope"] = scope
 
@@ -1110,6 +1122,35 @@ def get_widget(screen, id, layer='screens'): #@ReservedAssignment
         screen.update()
 
     rv = screen.widgets.get(id, None)
+    return rv
+
+def get_widget_properties(id, screen=None, layer='screens'): # @ReservedAssignment
+    """
+    :doc: screens
+
+    Returns the properties for the widget with `id` in the `screen`
+    on `layer`. If `screen` is None, returns the properties for the
+    current screen.
+
+    This can be used inside screen code.
+
+    Note that this returns a dictionary containing the widget properties,
+    and so to get an individual property
+    """
+
+    if screen is None:
+        s = current_screen()
+    else:
+        s = get_screen(screen, layer)
+
+    if s is None:
+        return { }
+
+    rv = s.widget_properties.get(id, None)
+
+    if rv is None:
+        rv = { }
+
     return rv
 
 def before_restart():

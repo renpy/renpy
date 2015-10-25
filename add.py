@@ -27,8 +27,23 @@ ap.add_argument("--prerelease", action="store_true")
 ap.add_argument("--experimental", action="store_true")
 ap.add_argument("--no-tag", "-n", action="store_true")
 ap.add_argument("--push-tags", action="store_true")
+ap.add_argument("--delete-tag")
 
 args = ap.parse_args()
+
+if args.delete_tag:
+    for i in SOURCE:
+
+        os.chdir(i)
+
+        if i == SOURCE[0]:
+            tag = args.delete_tag
+        else:
+            tag = "renpy-" + args.delete_tag
+
+        subprocess.call([ "git", "tag", "-d", tag, ])
+
+    sys.exit(0)
 
 if args.push_tags:
     for i in SOURCE:
@@ -86,3 +101,5 @@ for i in links:
 
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")
+
+print "Version", version

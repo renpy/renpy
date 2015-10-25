@@ -166,13 +166,25 @@ def before_interact(roots):
 
     namecount = { }
 
-    for f, n, screen in fwn:
+    fwn2 = [ ]
+
+    for fwn_tuple in fwn:
+
+        f, n, screen = fwn_tuple
+
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
+
+        if f is None:
+            continue
 
         f.full_focus_name = n, serial
 
         replaced_by[id(f)] = f
+
+        fwn2.append(fwn_tuple)
+
+    fwn = fwn2
 
     # We assume id(None) is not in replaced_by.
     replaced_by.pop(None, None)

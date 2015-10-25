@@ -92,6 +92,7 @@ def wrap_render(child, w, h, st, at):
     rv.blit(rend, (0, 0))
     return rv
 
+
 class ImageReference(renpy.display.core.Displayable):
     """
     ImageReference objects are used to reference images by their name,
@@ -99,7 +100,7 @@ class ImageReference(renpy.display.core.Displayable):
     the image in an image statment.
     """
 
-    nosave = [ 'target' ]
+    nosave = [ 'target', 'param_target' ]
     target = None
     param_target = None
 
@@ -246,6 +247,140 @@ class ImageReference(renpy.display.core.Displayable):
 
         return [ self.target ]
 
+
+class DynamicImage(renpy.display.core.Displayable):
+    """
+    :doc: disp_imagelike
+    :args: (name)
+
+    A DynamicImage is a displayable that has text interpolation performed
+    on it to yield a string giving a new displayable. Such interpolation is
+    performed at the start of each iteraction.
+    """
+
+    nosave = [ 'target', 'raw_target' ]
+
+    # The target that this image currently resolves to.
+    target = None
+
+    # The raw target that the image resolves to, before it has been parameterized.
+    raw_target = None
+
+    def __init__(self, name, scope=None, **properties):
+        super(DynamicImage, self).__init__(**properties)
+
+        self.name = name
+
+        if scope is not None:
+            self.find_target(scope)
+            self._uses_scope = True
+        else:
+            self._uses_scope = False
+
+    def _scope(self, scope, update):
+        return self.find_target(scope, update)
+
+    def __unicode__(self):
+        return u"DynamicImage {!r}".format(self.name)
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, o):
+        if self is o:
+            return True
+
+        if not self._equals(o):
+            return False
+
+        if self.name != o.name:
+            return False
+
+        return True
+
+    def _get_parameterized(self):
+        if self.target:
+            return self.target._get_parameterized()
+        else:
+            return self
+
+    def find_target(self, scope=None, update=True):
+
+        try:
+            target = renpy.easy.dynamic_image(self.name, scope)
+        except Exception as e:
+            raise Exception("In DynamicImage %r: %r" % (self.name, e))
+
+        if self.raw_target == target:
+            return False
+
+        if not update:
+            return True
+
+        renpy.display.render.redraw(self, 0)
+        self.raw_target = target
+
+        target = target.parameterize('displayable', ())
+        old_target = self.target
+        self.target = target
+
+        if not old_target:
+            return True
+
+        if isinstance(old_target, renpy.display.motion.Transform):
+            return True
+
+        if not isinstance(target, renpy.display.motion.Transform):
+            self.target = target = renpy.display.motion.Transform(child=target)
+
+        target.take_state(old_target)
+
+        return True
+
+    def _hide(self, st, at, kind):
+        if not self.target:
+            self.find_target()
+
+        return self.target._hide(st, at, kind)
+
+    def set_transform_event(self, event):
+        if not self.target:
+            self.find_target()
+
+        return self.target.set_transform_event(event)
+
+    def event(self, ev, x, y, st):
+        if not self.target:
+            self.find_target()
+
+        return self.target.event(ev, x, y, st)
+
+    def render(self, width, height, st, at):
+        if not self.target:
+            self.find_target()
+
+        return wrap_render(self.target, width, height, st, at)
+
+    def get_placement(self):
+        if not self.target:
+            self.find_target()
+
+        return self.target.get_placement()
+
+    def visit(self):
+        if not self.target:
+            self.find_target()
+
+        return [ self.target ]
+
+    def per_interact(self):
+        old_target = self.target
+
+        if not self._uses_scope:
+            self.find_target()
+
+        if old_target is not self.target:
+            self.target.visit_all(lambda i : i.per_interact())
 
 
 class ShownImageInfo(renpy.object.Object):

@@ -512,3 +512,26 @@
     old "Position copied to clipboard."
     new "Posición copiada al portapapeles."
 
+    # renpy/common/_errorhandling.rpym:544
+    old "Copy to Clipboard"
+    new "Copiar al portapapeles"
+
+    # renpy/common/_errorhandling.rpym:546
+    old "Copies the traceback.txt file to the clipboard."
+    new "Copia el archivo traceback.txt al portapapeles."
+
+    # renpy/common/_errorhandling.rpym:613
+    old "Copies the errors.txt file to the clipboard."
+    new "Copia el archivo errors.txt al portapapeles."
+
+    # renpy/common/00gltest.rpy:91
+    old "Gamepad"
+    new "Mando"
+
+    # renpy/common/00gltest.rpy:95
+    old "Enable"
+    new "Activar"
+
+    # renpy/common/00gltest.rpy:99
+    old "Disable"
+    new "Desactivar"

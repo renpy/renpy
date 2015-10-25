@@ -23,20 +23,46 @@
 # screen up as soon as possible, to let the user know something is
 # going on.
 
-# The presplash process, if any.
-proc = None
+import threading
+import pygame_sdl2
+import os.path
+import sys
+import time
 
-# Called from the main process. This determines if
-# we're even doing presplash, and if so what will be shown to the
-# user. If it decides to show something to the user, uses subprocess
-# to actually handle the showing.
+import renpy
+
+# The window.
+window = None
+
+# Should the event thread keep running?
+keep_running = False
+
+# The start time.
+start_time = time.time()
+
+PRESPLASHEVENT = pygame_sdl2.event.register("PRESPLASHEVENT")
+
+def run_event_thread():
+    """
+    Disposes of events while the window is running.
+    """
+
+    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 20)
+
+    while keep_running:
+        pygame_sdl2.event.wait()
+
+    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 0)
+
+
 def start(basedir, gamedir):
-    import os.path
+    """
+    Called to display the presplash when necessary.
+    """
+
 
     if "RENPY_LESS_UPDATES" in os.environ:
         return
-
-    global proc
 
     filenames = [ "/presplash.png", "/presplash.jpg" ]
     for fn in filenames:
@@ -46,55 +72,60 @@ def start(basedir, gamedir):
     else:
         return
 
-    try:
-        import subprocess
-        import sys
+    pygame_sdl2.display.init()
 
-        cmd = [sys.executable, "-EO", sys.argv[0], "show", "presplash", fn]
+    img = pygame_sdl2.image.load(fn, fn)
 
-        def fsencode(s):
-            if isinstance(s, str):
-                return s
+    global window
 
-            return s.encode(sys.getfilesystemencoding() or "utf-8", "replace")
+    window = pygame_sdl2.display.Window(
+        sys.argv[0],
+        img.get_size(),
+        flags=pygame_sdl2.WINDOW_BORDERLESS,
+        pos=(pygame_sdl2.WINDOWPOS_CENTERED, pygame_sdl2.WINDOWPOS_CENTERED))
 
-        proc = subprocess.Popen([ fsencode(i) for i in cmd ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    except:
-        pass
+    window.get_surface().blit(img, (0, 0))
+    window.update()
+
+    global event_thread
+
+    event_thread = threading.Thread(target=run_event_thread)
+    event_thread.daemon = True
+    event_thread.start()
+
+    global start_time
+    start_time = time.time()
 
 
-# Called just before we initialize the display for real, to
-# hide the splash, and terminate window centering.
 def end():
+    """
+    Called just before we initialize the display to hide the presplash.
+    """
 
-    global proc
+    global keep_running
+    global event_thread
+    global window
 
-    if not proc:
+    if window is None:
         return
 
-    proc.stdin.close()
-    proc.wait()
+    keep_running = False
 
-    proc = None
+    event_thread.join()
 
-# Called in the presplash process, to actually display the presplash.
-def show(fn):
+    window.destroy()
+    window = None
 
-    import pygame_sdl2 as pygame
-    import sys
-    import os
 
-    os.environ['SDL_VIDEO_CENTERED'] = "1"
+def sleep():
+    """
+    Sleep to the end of config.minimum_presplash_time.
+    """
 
-    pygame.display.init()
+    if not (window or renpy.mobile):
+        return
 
-    img = pygame.image.load(fn, fn)
-    screen = pygame.display.set_mode(img.get_size(), pygame.constants.NOFRAME)
-    screen.blit(img, (0, 0))
-    pygame.display.update()
+    remaining = start_time + renpy.config.minimum_presplash_time - time.time()
 
-    sys.stdout.write("READY\r\n")
-    sys.stdout.flush()
-    sys.stdin.read()
-
-    sys.exit(0)
+    if remaining > 0:
+        time.sleep(remaining)

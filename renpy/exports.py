@@ -56,6 +56,8 @@ from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
 from renpy.display.screen import has_screen, get_screen, get_widget, ScreenProfile as profile_screen
+from renpy.display.screen import get_widget_properties
+
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
 from renpy.display.image import image_exists, image_exists as has_image
@@ -71,7 +73,7 @@ from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_
 from renpy.python import py_eval as eval
 from renpy.python import rng as random
 from renpy.atl import atl_warper
-from renpy.easy import predict, displayable
+from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
 from renpy.translation import change_language, known_languages
 
@@ -91,7 +93,9 @@ from renpy.text.textsupport import TAG as TEXT_TAG, TEXT as TEXT_TEXT, PARAGRAPH
 
 from renpy.execution import not_infinite_loop
 
-from renpy.sl2.slparser import CustomParser as register_sl_statement
+from renpy.sl2.slparser import CustomParser as register_sl_statement, register_sl_displayable
+
+from renpy.ast import eval_who
 
 renpy_pure("ParameterizedText")
 renpy_pure("Keymap")
@@ -131,10 +135,10 @@ def public_api():
     music
     time
     define_screen, show_screen, hide_screen, use_screen, has_screen
-    current_screen, get_screen, get_widget, profile_screen
+    current_screen, get_screen, get_widget, profile_screen, get_widget_properties
     focus_coordinates
     predict, predict_screen
-    displayable
+    displayable, split_properties
     unelide_filename, get_parse_errors
     change_language, known_languages
     language_tailor
@@ -151,7 +155,8 @@ def public_api():
     TEXT_PARAGRAPH
     TEXT_DISPLAYABLE
     not_infinite_loop
-    register_sl_statement
+    register_sl_statement, register_sl_displayable
+    eval_who
 
 del public_api
 
@@ -235,11 +240,10 @@ def checkpoint(data=None, keep_rollback=None):
         game is being rolled back.
     """
 
-    if renpy.store._rollback:
-        if keep_rollback is None:
-            keep_rollback = renpy.config.keep_rollback_data
+    if keep_rollback is None:
+        keep_rollback = renpy.config.keep_rollback_data
 
-        renpy.game.log.checkpoint(data, keep_rollback=keep_rollback)
+    renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback)
 
 
 def block_rollback():
@@ -491,6 +495,8 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
         The equivalent of the ``behind`` property.
     """
 
+    default_transform = renpy.config.default_transform
+
     if renpy.game.context().init_phase:
         raise Exception("Show may not run while in init phase.")
 
@@ -513,7 +519,16 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
         what = tuple(what.split())
 
     if isinstance(what, renpy.display.core.Displayable):
-        base = img = what
+
+        if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
+            base = img = renpy.display.image.ImageReference(what, style='image_placement')
+
+            # Semi-principled, but mimics pre-6.99.6 behavior - if `what` is
+            # already a transform, do not apply the default transform to it.
+            default_transform = None
+
+        else:
+            base = img = what
 
     else:
 
@@ -548,7 +563,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
 
-    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=renpy.config.default_transform, transient=transient)
+    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient)
 
 
 def hide(name, layer='master'):
@@ -1137,10 +1152,15 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     if renpy.game.after_rollback and roll_forward is None:
         delay = 0
 
-    if hard:
-        renpy.ui.saybehavior(dismiss='dismiss_hard_pause')
+    if delay is None:
+        afm = " "
     else:
-        renpy.ui.saybehavior()
+        afm = None
+
+    if hard or not renpy.store._dismiss_pause:
+        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause')
+    else:
+        renpy.ui.saybehavior(afm=afm)
 
     if delay is not None:
         renpy.ui.pausebehavior(delay, False)
@@ -1448,6 +1468,15 @@ def call(label, *args, **kwargs):
     """
 
     raise renpy.game.CallException(label, args, kwargs)
+
+def return_statement():
+    """
+    :doc: se_call
+
+    Causes Ren'Py to return from the current Ren'Py-level call.
+    """
+
+    jump("_renpy_return")
 
 
 def screenshot(filename):
@@ -2084,6 +2113,7 @@ def load_string(s, filename="<string>"):
 def pop_call():
     """
     :doc: other
+    :name: renpy.pop_call
 
     Pops the current call from the call stack, without returning to
     the location.
@@ -2316,7 +2346,7 @@ def call_screen(_screen_name, *args, **kwargs):
     """
     :doc: screens
 
-    The programmatic equivalent of the show screen statement.
+    The programmatic equivalent of the call screen statement.
 
     This shows `_screen_name` as a screen, then causes an interaction
     to occur. The screen is hidden at the end of the interaction, and
@@ -2782,7 +2812,7 @@ def count_seen_dialogue_blocks():
     when the script has changed and older dialogue blocks are no longer accessible.
     """
 
-    return len(renpy.game.persistent._seen_translates) # @UndefinedVariable
+    return renpy.game.seen_translates_count
 
 
 def substitute(s, scope=None, translate=True):
@@ -2906,3 +2936,32 @@ def write_log(s, *args):
     """
 
     renpy.display.log.write(s, *args)
+
+def predicting():
+    """
+    :doc: screens
+
+    Returns true if Ren'Py is currently predicting the screen.
+    """
+
+    return renpy.display.predict.predicting
+
+def get_line_log():
+    """
+    :undocumented:
+
+    Returns the list of lines that have been shown since the last time
+    :func:`renpy.clear_line_log` was called.
+    """
+
+    return renpy.game.context().line_log[:]
+
+def clear_line_log():
+    """
+    :undocumented:
+
+    Clears the line log.
+    """
+
+    renpy.game.context().line_log = [ ]
+

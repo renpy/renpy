@@ -64,6 +64,8 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     brace in your text, double it - write ``{{``.
 
 
+.. _text-interpolation:
+
 Interpolating Data
 ==================
 

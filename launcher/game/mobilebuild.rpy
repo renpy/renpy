@@ -24,17 +24,22 @@
 
 init -1 python:
 
-    def check_version_txt(path):
-        if not updater.can_update():
+    def check_hash_txt(module):
+        fn1 = module + "_hash.txt"
+        fn2 = renpy.fsencode(os.path.join(config.renpy_base, module, "hash.txt"))
+
+        # No hash file? We're in dev mode - ignore.
+        if not renpy.loadable(fn1):
             return True
 
-        try:
-            with open(os.path.join(path, "version.txt")) as f:
-                version = f.read()
+        hash1 = renpy.file(fn1).read()
 
-            return version.strip() == renpy.version_only
-        except:
+        if not os.path.exists(fn2):
             return False
+
+        hash2 = open(fn2).read()
+
+        return hash1.strip() == hash2.strip()
 
     class LaunchEmulator(Action):
 

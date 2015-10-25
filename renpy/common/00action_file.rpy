@@ -28,13 +28,25 @@ init -1500 python:
     config.linear_saves_page_size = None
     config.quicksave_slots = 10
 
+    # The number of file pages per
+    config.file_pages_per_folder = 100
+
     if persistent._file_page is None:
         persistent._file_page = "1"
+
+    if persistent._file_folder is None:
+        persistent._file_folder = 0
 
     def __slotname(name, page=None):
 
         if page is None:
             page = persistent._file_page
+
+        try:
+            page = int(page)
+            page = page + persistent._file_folder * config.file_pages_per_folder
+        except ValueError:
+            pass
 
         if config.linear_saves_page_size is not None:
             try:
@@ -48,7 +60,7 @@ init -1500 python:
 
     def __newest_slot():
         """
-        Returns the name of the newest slot on a page.
+        Returns the name of the newest slot.
         """
 
         return renpy.newest_slot(r'\d+')

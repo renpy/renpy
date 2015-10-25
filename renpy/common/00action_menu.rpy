@@ -25,7 +25,10 @@ init -1500 python:
     ##########################################################################
     # Menu-related actions.
 
-    config.show_menu_enable = { "save" : "(not main_menu) and (not _in_replay)" }
+    config.show_menu_enable = {
+        "save" : "(not main_menu) and (not _in_replay)",
+        "load" : "(not _in_replay)",
+        }
 
     @renpy.pure
     class ShowMenu(Action, DictEquality):
@@ -100,11 +103,21 @@ init -1500 python:
                 renpy.call_in_new_context("_game_menu", *self.args, _game_menu_screen=screen, **self.kwargs)
 
         def get_selected(self):
-            return renpy.get_screen(self.screen)
+            screen = self.screen or store._game_menu_screen
+
+            if screen is None:
+                return False
+
+            return renpy.get_screen(screen)
 
         def get_sensitive(self):
-            if self.screen in config.show_menu_enable:
-                return eval(config.show_menu_enable[self.screen])
+            screen = self.screen or store._game_menu_screen
+
+            if screen is None:
+                return False
+
+            if screen in config.show_menu_enable:
+                return eval(config.show_menu_enable[screen])
             else:
                 return True
 
@@ -250,6 +263,9 @@ init -1500 python:
             if not config.allow_skipping:
                 return False
 
+            if not _skipping:
+                return False
+
             if store.main_menu:
                 return False
 
@@ -273,7 +289,7 @@ init -1500 python:
               that label is called in a new context when the button is
               chosen. Otherwise, it should be a string giving a file
               that is opened in a web browser. If None, the value of
-              config.help is used in the same wayt.
+              config.help is used in the same way.
          """
 
         def __init__(self, help=None):

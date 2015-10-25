@@ -323,7 +323,7 @@ def draw_special(what, dest, x, y):
 
     elif what.operation == PIXELLATE:
 
-        surf = what.children[0][0].render_to_texture(False)
+        surf = what.children[0][0].render_to_texture(dest.get_masks()[3])
 
         px = what.operation_parameter
 
@@ -771,6 +771,11 @@ class SWDraw(object):
 
         renpy.display.pgrender.set_rgba_masks()
 
+        # Scale from the rtt size to the virtual size.
+        self.draw_per_virt = 1.0
+        self.virt_to_draw = renpy.display.render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = renpy.display.render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+
         # Should we redraw the screen from scratch?
         self.full_redraw = True
 
@@ -875,7 +880,6 @@ class SWDraw(object):
         y *= self.scale_factor
         return (x, y)
 
-
     def update_mouse(self):
         """
         Draws the mouse, and then updates the screen.
@@ -908,7 +912,6 @@ class SWDraw(object):
         y *= self.scale_factor
 
         return pygame.mouse.set_pos([x, y])
-
 
     def screenshot(self, surftree, fullscreen_video):
         """
@@ -1009,7 +1012,6 @@ class SWDraw(object):
         # This doesn't work perfectly, but this should be a rare case and
         # swdraw is going away.
         if what.operation == IMAGEDISSOLVE:
-            print what.visible_children
             a0 = self.is_pixel_opaque(what.visible_children[0][0], x, y)
             a2 = self.is_pixel_opaque(what.visible_children[2][0], x, y)
 

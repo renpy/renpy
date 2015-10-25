@@ -41,19 +41,61 @@ try:
 except:
     android = None
 
-# Need to be +4, so we don't interfere with FFMPEG's events.
-TIMEEVENT = pygame.USEREVENT
-PERIODIC = pygame.USEREVENT + 1
-JOYEVENT = pygame.USEREVENT + 2
-REDRAW = pygame.USEREVENT + 3
-EVENTNAME = pygame.USEREVENT + 4
+TIMEEVENT = pygame.event.register("TIMEEVENT")
+PERIODIC =  pygame.event.register("PERIODIC")
+REDRAW = pygame.event.register("REDRAW")
+EVENTNAME = pygame.event.register("EVENTNAME")
 
 # All events except for TIMEEVENT and REDRAW
 ALL_EVENTS = set(pygame.event.get_standard_events()) # @UndefinedVariable
 ALL_EVENTS.add(PERIODIC)
-ALL_EVENTS.add(JOYEVENT)
 ALL_EVENTS.add(EVENTNAME)
 
+enabled_events = {
+    pygame.QUIT,
+
+    pygame.APP_TERMINATING,
+    pygame.APP_LOWMEMORY,
+    pygame.APP_WILLENTERBACKGROUND,
+    pygame.APP_DIDENTERBACKGROUND,
+    pygame.APP_WILLENTERFOREGROUND,
+    pygame.APP_DIDENTERFOREGROUND,
+
+    pygame.WINDOWEVENT,
+    pygame.SYSWMEVENT,
+
+    pygame.KEYDOWN,
+    pygame.KEYUP,
+
+    pygame.TEXTEDITING,
+    pygame.TEXTINPUT,
+
+    pygame.MOUSEMOTION,
+    pygame.MOUSEBUTTONDOWN,
+    pygame.MOUSEBUTTONUP,
+    pygame.MOUSEWHEEL,
+
+    pygame.JOYAXISMOTION,
+    pygame.JOYHATMOTION,
+    pygame.JOYBALLMOTION,
+    pygame.JOYBUTTONDOWN,
+    pygame.JOYBUTTONUP,
+    pygame.JOYDEVICEADDED,
+    pygame.JOYDEVICEREMOVED,
+
+    pygame.CONTROLLERAXISMOTION,
+    pygame.CONTROLLERBUTTONDOWN,
+    pygame.CONTROLLERBUTTONUP,
+    pygame.CONTROLLERDEVICEADDED,
+    pygame.CONTROLLERDEVICEREMOVED,
+
+    pygame.RENDER_TARGETS_RESET,
+
+    TIMEEVENT,
+    PERIODIC,
+    REDRAW,
+    EVENTNAME,
+    }
 
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
@@ -174,8 +216,15 @@ class Displayable(renpy.object.Object):
     # get_placement can be called at any time, so can't
     # assume anything.
 
-    focusable = False
+    # If True this displayable can accept focus.
+    # If False, it can't, but it keeps its place in the focus order.
+    # If None, it does not have a place in the focus order.
+    focusable = None
+
+    # This is the focus named assigned by the focus code.
     full_focus_name = None
+
+    # A role ('selected_' or '' that prefixes the style).
     role = ''
 
     # The event we'll pass on to our parent transform.
@@ -194,6 +243,9 @@ class Displayable(renpy.object.Object):
 
     # The location the displayable was created at, if known.
     _location = None
+
+    # Does this displayable use the scope?
+    _uses_scope = False
 
     def __init__(self, focus=None, default=False, style='default', **properties):
         self.style = renpy.style.Style(style, properties) # @UndefinedVariable
@@ -233,6 +285,8 @@ class Displayable(renpy.object.Object):
 
         if self.focusable:
             callback(self, focus_name)
+        elif self.focusable is not None:
+            callback(None, focus_name)
 
         for i in self.visit():
             if i is None:
@@ -333,8 +387,8 @@ class Displayable(renpy.object.Object):
 
     def visit_all(self, callback):
         """
-        Calls the callback on this displayable and all children of this
-        displayable.
+        Calls the callback on this displayable, and then on all children
+        of this displayable.
         """
 
         for d in self.visit():
@@ -1008,7 +1062,7 @@ class SceneLists(renpy.object.Object):
 
         return self.shown.showing(layer, name)
 
-    def get_showinh_tags(self, layer):
+    def get_showing_tags(self, layer):
         return self.shown.get_showing_tags(layer)
 
     def make_layer(self, layer, properties):
@@ -1204,17 +1258,10 @@ def get_safe_mode():
     Returns true if we should go into safe mode.
     """
 
-    if not renpy.first_utter_start:
+    if renpy.safe_mode_checked:
         return False
 
-
     try:
-        if renpy.linux:
-            if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-                return True
-            else:
-                return False
-
         if renpy.windows:
             import ctypes
 
@@ -1226,8 +1273,7 @@ def get_safe_mode():
             else:
                 return False
 
-        # We don't need safe mode on mac or android, as those platforms
-        # should always have OpenGL 2 or OpenGL ES 2.
+        # Safe mode doesn't work on other platforms.
         return False
 
     except:
@@ -1384,16 +1430,12 @@ class Interface(object):
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 
-        # Ensure that we kill off the presplash.
-        renpy.display.presplash.end()
-
         # Initialize pygame.
         if pygame.version.vernum < (1, 8, 1):
             raise Exception("Ren'Py requires pygame 1.8.1 to run.")
 
         # pygame.font.init()
         renpy.audio.audio.init()
-        renpy.display.joystick.init()
         pygame.display.init()
 
         # Init timing.
@@ -1450,6 +1492,9 @@ class Interface(object):
         # Are we in fullscreen video mode?
         self.fullscreen_video = False
 
+        self.safe_mode = get_safe_mode()
+        renpy.safe_mode_checked = True
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -1458,13 +1503,14 @@ class Interface(object):
         if self.started:
             return
 
+        # Kill off the presplash.
+        renpy.display.presplash.end()
+
         renpy.main.log_clock("Interface start")
 
         self.started = True
 
-        self.safe_mode = get_safe_mode()
         self.set_mode()
-        self.safe_mode = get_safe_mode()
 
         # Load the image fonts.
         renpy.text.font.load_image_fonts()
@@ -1475,15 +1521,20 @@ class Interface(object):
         # Don't grab the screen.
         pygame.event.set_grab(False)
 
+        if not self.safe_mode:
+            renpy.display.controller.init()
+
         s = "Total time until interface ready: {}s".format(time.time() - import_time)
 
         renpy.display.log.write(s)
 
-        if renpy.mobile and not renpy.config.log_to_stdout:
+        if renpy.android and not renpy.config.log_to_stdout:
             print s
 
     def post_init(self):
-        # Setup.
+        """
+        This is called after display init, but before the window is created.
+        """
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
@@ -1498,6 +1549,18 @@ class Interface(object):
 
         if android:
             android.wakelock(True)
+
+        # Block events we don't use.
+        for i in pygame.event.get_standard_events():
+
+            if i in enabled_events:
+                continue
+
+            if i in renpy.config.pygame_events:
+                continue
+
+            pygame.event.set_blocked(i)
+
 
 
     def set_icon(self):
@@ -1864,7 +1927,7 @@ class Interface(object):
                                  mouse='with',
                                  clear=clear)
 
-    def with_none(self):
+    def with_none(self, overlay=True):
         """
         Implements the with None command, which sets the scene we will
         be transitioning from.
@@ -1876,15 +1939,17 @@ class Interface(object):
         self.show_window()
 
         # Compute the overlay.
-        self.compute_overlay()
+        if overlay:
+            self.compute_overlay()
 
         scene_lists = renpy.game.context().scene_lists
 
         # Compute the scene.
-        self.old_scene = self.compute_scene(scene_lists)
+        for layer, d in self.compute_scene(scene_lists).iteritems():
+            if layer not in self.transition:
+                self.old_scene[layer] = d
 
         # Get rid of transient things.
-
         for i in renpy.config.overlay_layers:
             scene_lists.clear(i)
 
@@ -2087,7 +2152,9 @@ class Interface(object):
         """
 
         def save():
-            renpy.loadsave.save("_reload-1")
+            if renpy.config.save_on_mobile_background:
+                renpy.loadsave.save("_reload-1")
+
             renpy.persistent.update(True)
 
         if ev.type == pygame.APP_TERMINATING:
@@ -2109,6 +2176,9 @@ class Interface(object):
         pygame.time.set_timer(TIMEEVENT, 0)
 
         save()
+
+        if renpy.config.quit_on_mobile_background:
+            sys.exit(0)
 
         renpy.exports.free_memory()
 
@@ -2502,7 +2572,12 @@ class Interface(object):
             root_widget.add(trans, transition_time, transition_time)
 
             if trans_pause:
-                sb = renpy.display.behavior.SayBehavior()
+
+                if renpy.store._dismiss_pause:
+                    sb = renpy.display.behavior.SayBehavior()
+                else:
+                    sb = renpy.display.behavior.SayBehavior(dismiss='dismiss_hard_pause')
+
                 root_widget.add(sb)
                 focus_roots.append(sb)
 
@@ -2894,7 +2969,7 @@ class Interface(object):
                     y = -1
 
                 # This can set the event to None, to ignore it.
-                ev = renpy.display.joystick.event(ev)
+                ev = renpy.display.controller.event(ev)
                 if not ev:
                     continue
 

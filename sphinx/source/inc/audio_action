@@ -39,6 +39,19 @@
         The value to set the volume to. A number between 0.0 and 1.0,
         inclusive.
 
+.. function:: SetMute(mixer, mute)
+    
+    Sets the mute status of one or more mixers. When a mixer is muted,
+    audio channels associated with that mixer will stop playing audio.
+    
+    `mixer`
+        Either a single string giving a mixer name, or a list of strings
+        giving a list of mixers. The strings should be mixer names, usually
+        "music", "sfx", or "voice".
+    
+    `mute`
+        True to mute the mixer, False to ummute it.
+
 .. function:: Stop(channel, **kwargs)
     
     Causes an audio channel to be stopped.
@@ -47,4 +60,13 @@
         The channel to stop the sound on.
     
     Any keyword arguments are passed to :func:`renpy.music.stop`
+
+.. function:: ToggleMute(mixer)
+    
+    Toggles the mute status of one or more mixers.
+    
+    `mixer`
+        Either a single string giving a mixer name, or a list of strings
+        giving a list of mixers. The strings should be mixer names, usually
+        "music", "sfx", or "voice".
 

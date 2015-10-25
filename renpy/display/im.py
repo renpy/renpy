@@ -1132,7 +1132,13 @@ class matrix(tuple):
         if not isinstance(a, matrix):
             a = matrix(a)
 
+
+
         if not isinstance(b, matrix):
+
+            if isinstance(b, renpy.easy.Color):
+                return NotImplemented
+
             b = matrix(b)
 
         result = [ 0 ] * 25

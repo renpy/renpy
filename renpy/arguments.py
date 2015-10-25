@@ -134,6 +134,9 @@ class ArgumentParser(argparse.ArgumentParser):
     def parse_args(self, *args, **kwargs):
         rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
 
+        if renpy.session.get("compile", False):
+            rv.compile = True
+
         if rv.command in compile_commands:
             rv.compile = True
 
@@ -141,6 +144,9 @@ class ArgumentParser(argparse.ArgumentParser):
 
     def parse_known_args(self, *args, **kwargs):
         args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
+
+        if renpy.session.get("compile", False):
+            args.compile = True
 
         if args.command in compile_commands:
             args.compile = True
@@ -206,6 +212,7 @@ def rmpersistent():
     takes_no_arguments("Deletes the persistent data.")
 
     renpy.loadsave.location.unlink_persistent()
+    renpy.persistent.should_save_persistent = False
 
     return False
 

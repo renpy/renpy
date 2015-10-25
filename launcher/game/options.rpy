@@ -279,28 +279,29 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern):
+    def source_and_binary(pattern, source="source", binary="binary"):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
         else goes into source.
         """
 
-        build.classify_renpy(pattern + ".pyo", "binary")
-        build.classify_renpy(pattern + ".rpyc", "binary")
-        build.classify_renpy(pattern + ".rpymc", "binary")
-        build.classify_renpy(pattern + ".rpyb", "binary")
-        build.classify_renpy(pattern, "source")
+        build.classify_renpy(pattern + "/**.pyo", binary)
+        build.classify_renpy(pattern + "/**.rpyc", binary)
+        build.classify_renpy(pattern + "/**.rpymc", binary)
+        build.classify_renpy(pattern + "/**/cache/*", binary)
+
+        build.classify_renpy(pattern + "/**", source)
 
     build.classify_renpy("renpy.py", "source")
-    source_and_binary("renpy/**")
+    source_and_binary("renpy")
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
-    source_and_binary("launcher/**")
-    source_and_binary("templates/**")
-    source_and_binary("the_question/**")
-    source_and_binary("tutorial/**")
+    source_and_binary("launcher")
+    source_and_binary("templates", binary=None)
+    source_and_binary("the_question")
+    source_and_binary("tutorial")
 
     # docs.
     build.classify_renpy("doc/", "source")

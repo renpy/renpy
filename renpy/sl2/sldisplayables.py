@@ -24,6 +24,15 @@
 
 import renpy.display
 import renpy.text.text
+import renpy.sl2
+
+from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
+from renpy.sl2.slparser import DisplayableParser, many
+
+from renpy.sl2.slproperties import text_properties, box_properties, window_properties
+from renpy.sl2.slproperties import bar_properties, button_properties
+from renpy.sl2.slproperties import text_position_properties, text_text_properties
+from renpy.sl2.slproperties import side_position_properties
 
 class ShowIf(renpy.display.layout.Container):
     """
@@ -93,159 +102,10 @@ class ShowIf(renpy.display.layout.Container):
         return self.child.get_placement()
 
 
-from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
-from renpy.sl2.slparser import DisplayableParser, many
-
-position_property_names = [
-        "anchor",
-        "xanchor",
-        "yanchor",
-        "pos",
-        "xpos",
-        "ypos",
-        "align",
-        "xalign",
-        "yalign",
-        "xoffset",
-        "yoffset",
-        "maximum",
-        "xmaximum",
-        "ymaximum",
-        "area",
-        "clipping",
-        "xfill",
-        "yfill",
-        # no center, since it can conflict with the center transform.
-        "xcenter",
-        "ycenter",
-        "xsize",
-        "ysize",
-        "xysize",
-        "alt",
-        "debug",
-        ]
-
-position_properties = [ Style(i) for i in position_property_names ]
-text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
-side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
-
-text_property_names = [
-        "antialias",
-        "vertical",
-        "black_color",
-        "bold",
-        "color",
-        "drop_shadow",
-        "drop_shadow_color",
-        "first_indent",
-        "font",
-        "size",
-        "hyperlink_functions",
-        "italic",
-        "justify",
-        "kerning",
-        "language",
-        "layout",
-        "line_leading",
-        "line_spacing",
-        "minwidth",
-        "min_width",
-        "newline_indent",
-        "outlines",
-        "rest_indent",
-        "ruby_style",
-        "slow_cps",
-        "slow_cps_multiplier",
-        "slow_abortable",
-        "strikethrough",
-        "text_align",
-        "text_y_fudge",
-        "underline",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ]
-
-text_properties = [ Style(i) for i in text_property_names ]
-text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
-
-window_properties = [ Style(i) for i in [
-        "background",
-        "foreground",
-        "left_margin",
-        "right_margin",
-        "bottom_margin",
-        "top_margin",
-        "xmargin",
-        "ymargin",
-        "left_padding",
-        "right_padding",
-        "top_padding",
-        "bottom_padding",
-        "xpadding",
-        "ypadding",
-        "size_group",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
-
-button_properties = [ Style(i) for i in [
-        "sound",
-        "mouse",
-        "focus_mask",
-        "child",
-        "keyboard_focus",
-        ] ]
-
-bar_properties = [ Style(i) for i in [
-        "bar_vertical",
-        "bar_invert",
-        "bar_resizing",
-        "left_gutter",
-        "right_gutter",
-        "top_gutter",
-        "bottom_gutter",
-        "left_bar",
-        "right_bar",
-        "top_bar",
-        "bottom_bar",
-        "thumb",
-        "thumb_shadow",
-        "thumb_offset",
-        "mouse",
-        "unscrollable",
-        "keyboard_focus",
-        ] ]
-
-box_properties = [ Style(i) for i in [
-        "box_layout",
-        "box_wrap",
-        "box_reverse",
-        "order_reverse",
-        "spacing",
-        "first_spacing",
-        "fit_first",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
-
-ui_properties = [
-    Keyword("at"),
-    Keyword("id"),
-    Keyword("style"),
-    Keyword("style_group"),
-    Keyword("focus"),
-    Keyword("default"),
-    ]
-
 
 DisplayableParser("null", renpy.display.layout.Null, "default", 0)
 Keyword("width")
 Keyword("height")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("text", renpy.text.text.Text, "text", 0, scope=True, replaces=True)
 Positional("text")
@@ -253,23 +113,15 @@ Keyword("slow")
 Keyword("slow_done")
 Keyword("substitute")
 Keyword("scope")
-add(ui_properties)
-add(position_properties)
 add(text_properties)
 
 DisplayableParser("hbox", renpy.display.layout.MultiBox, "hbox", many, default_keywords={ 'layout' : 'horizontal' })
-add(ui_properties)
-add(position_properties)
 add(box_properties)
 
 DisplayableParser("vbox", renpy.display.layout.MultiBox, "vbox", many, default_keywords={ 'layout' : 'vertical' })
-add(ui_properties)
-add(position_properties)
 add(box_properties)
 
 DisplayableParser("fixed", renpy.display.layout.MultiBox, "fixed", many, default_keywords={ 'layout' : 'fixed' })
-add(ui_properties)
-add(position_properties)
 add(box_properties)
 
 DisplayableParser("grid", renpy.display.layout.Grid, "grid", many)
@@ -277,21 +129,15 @@ Positional("cols")
 Positional("rows")
 Keyword("transpose")
 Style("spacing")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("side", renpy.display.layout.Side, "side", many)
 Positional("positions")
 Style("spacing")
-add(ui_properties)
-add(position_properties)
 
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
 for name in [ "window", "frame" ]:
     DisplayableParser(name, renpy.display.layout.Window, name, 1)
-    add(ui_properties)
-    add(position_properties)
     add(window_properties)
 
 DisplayableParser("key", renpy.ui._key, None, 0)
@@ -316,23 +162,11 @@ Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
-add(ui_properties)
-add(position_properties)
 add(text_properties)
-
-DisplayableParser("image", renpy.display.im.image, "default", 0)
-Positional("im")
 
 # Omit imagemap_compat for being too high level (and obsolete).
 
 DisplayableParser("button", renpy.display.behavior.Button, "button", 1)
-Keyword("action")
-Keyword("clicked")
-Keyword("hovered")
-Keyword("unhovered")
-Keyword("alternate")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 
@@ -350,8 +184,6 @@ Keyword("hovered")
 Keyword("unhovered")
 Keyword("alternate")
 Keyword("image_style")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 
@@ -365,8 +197,6 @@ Keyword("alternate")
 Keyword("text_style")
 Keyword("substitute")
 Keyword("scope")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 add(text_position_properties)
@@ -375,8 +205,6 @@ add(text_text_properties)
 DisplayableParser("label", renpy.ui._label, "label", 0, scope=True)
 Positional("label")
 Keyword("text_style")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(text_position_properties)
 add(text_text_properties)
@@ -410,8 +238,6 @@ Keyword("value")
 Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
-add(ui_properties)
-add(position_properties)
 add(bar_properties)
 
 
@@ -444,8 +270,6 @@ Keyword("value")
 Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
-add(ui_properties)
-add(position_properties)
 add(bar_properties)
 
 
@@ -482,8 +306,6 @@ Keyword("scrollbars")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")
-add(ui_properties)
-add(position_properties)
 add(side_position_properties)
 
 DisplayableParser("imagemap", renpy.ui._imagemap, "imagemap", many, imagemap=True)
@@ -497,8 +319,6 @@ Keyword("selected_insensitive")
 Keyword("auto")
 Keyword("alpha")
 Keyword("cache")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("hotspot", renpy.ui._hotspot, "hotspot", 1, hotspot=True)
 Positional("spot")
@@ -507,8 +327,6 @@ Keyword("alternate")
 Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
-add(ui_properties)
-add(position_properties)
 add(window_properties)
 add(button_properties)
 
@@ -517,19 +335,21 @@ Positional("spot")
 Keyword("adjustment")
 Keyword("range")
 Keyword("value")
-add(ui_properties)
-add(position_properties)
 add(bar_properties)
 
 
-DisplayableParser("transform", renpy.display.motion.Transform, "transform", 1)
+DisplayableParser("transform", renpy.display.motion.Transform, "transform", 1, default_properties=False)
 Keyword("at")
 Keyword("id")
 for i in renpy.atl.PROPERTIES:
     Style(i)
 
-def sl2add(d, replaces=None, **kwargs):
-    d = renpy.easy.displayable(d)
+def sl2add(d, replaces=None, scope=None, **kwargs):
+
+    if d is None:
+        return renpy.sl2.slast.NO_DISPLAYABLE
+
+    d = renpy.easy.displayable(d, scope=scope)
     d = d.parameterize('displayable', [ ])
 
     rv = d
@@ -545,12 +365,13 @@ def sl2add(d, replaces=None, **kwargs):
 
     return rv
 
-DisplayableParser("add", sl2add, None, 0, replaces=True)
-Positional("im")
-Keyword("at")
-Keyword("id")
-for i in renpy.atl.PROPERTIES:
-    Style(i)
+for name in [ "add", "image" ]:
+    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True)
+    Positional("im")
+    Keyword("at")
+    Keyword("id")
+    for i in renpy.atl.PROPERTIES:
+        Style(i)
 
 DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
 Keyword("drag_name")
@@ -567,19 +388,13 @@ Keyword("hovered")
 Keyword("unhovered")
 Keyword("focus_mask")
 Style("child")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")
 Keyword("unhovered")
 Style("focus_mask")
-add(ui_properties)
-add(position_properties)
 
 DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")

@@ -88,6 +88,26 @@ init -1500:
 
             null height 10
 
+            label _("Gamepad")
+
+            null height 10
+
+            textbutton _("Enable"):
+                action SetField(_preferences, "pad_enabled", True)
+                xfill True
+
+            textbutton _("Disable"):
+                action SetField(_preferences, "pad_enabled", False)
+                xfill True
+
+            null height 5
+
+            textbutton _("Calibrate"):
+                action ui.invokesinnewcontext(_gamepad.calibrate)
+                xfill True
+
+            null height 10
+
             text _("Changes will take effect the next time this program is run.") substitute True
 
             null height 10

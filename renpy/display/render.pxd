@@ -46,7 +46,7 @@ cdef class Render:
     cdef public Matrix2D forward, reverse
     cdef public double alpha
     cdef public double over
-    cdef public bint nearest
+    cdef public object nearest
 
     cdef public list focuses
     cdef public list pass_focuses
@@ -68,6 +68,7 @@ cdef class Render:
 
     cpdef int blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
+    cpdef int absolute_blit(Render self, source, tuple pos, object focus=*, object main=*, object index=*)
 
 
 cpdef render(object d, object widtho, object heighto, double st, double at)

@@ -38,7 +38,7 @@ def log_clock(s):
     s = "{} took {:.2f}s".format(s, now - last_clock)
 
     renpy.display.log.write(s)
-    if renpy.mobile and not renpy.config.log_to_stdout:
+    if renpy.android and not renpy.config.log_to_stdout:
         print s
 
     last_clock = now
@@ -95,18 +95,8 @@ def run(restart):
     if not renpy.arguments.post_init():
         renpy.exports.quit()
 
-    # Remove the list of all statements from the script.
-    game.script.all_stmts = None
-
-#     start = time.time()
-#
-#     for i in range(0, 5):
-#         print i
-#         renpy.display.screen.prepared = False
-#         renpy.display.screen.prepare_screens()
-#
-#     print "5x prepare took", time.time() - start
-#     sys.exit(0)
+    # Sleep to finish the presplash.
+    renpy.display.presplash.sleep()
 
     # Re-Initialize the log.
     game.log = renpy.python.RollbackLog()
@@ -191,18 +181,6 @@ def choose_variants():
                 renpy.config.variants.insert(0, "firetv")
         except:
             pass
-
-        # Are we running on an OUYA?
-        try:
-            OuyaFacade = autoclass("tv.ouya.console.api.OuyaFacade")
-            of = OuyaFacade.getInstance()
-
-            if of.isRunningOnOUYAHardware():
-                print "Running on an OUYA."
-                renpy.config.variants.insert(0, "ouya")
-        except:
-            pass
-
 
         # Are we running on OUYA or Google TV or something similar?
         package_manager = android.activity.getPackageManager()
@@ -356,7 +334,9 @@ def main():
                 except OSError:
                     # This perhaps shouldn't happen since either .rpy or .rpyc should exist
                     pass
+
         # Update script files list, so that it doesn't contain removed .rpyc's
+        renpy.loader.cleardirfiles()
         renpy.game.script.scan_script_files()
 
     # Load all .rpy files.
@@ -421,6 +401,13 @@ def main():
         for i in renpy.game.post_init:
             i()
 
+        if renpy.config.clear_lines:
+            renpy.scriptedit.lines.clear()
+
+        for i in renpy.game.persistent._seen_translates:
+            if i in renpy.game.script.translator.default_translates:
+                renpy.game.seen_translates_count += 1
+
         log_clock("Running init code")
 
         renpy.pyanalysis.load_cache()
@@ -444,6 +431,8 @@ def main():
         renpy.game.less_updates = "RENPY_LESS_UPDATES" in os.environ
 
         renpy.dump.dump(False)
+        renpy.game.script.make_backups()
+        log_clock("Dump and make backups.")
 
         # Initialize image cache.
         renpy.display.im.cache.init()
@@ -458,11 +447,8 @@ def main():
             renpy.display.core.Interface()
             log_clock("Creating interface object")
 
-
         # Start things running.
         restart = None
-
-        renpy.first_utter_start = False
 
         while True:
 

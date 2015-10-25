@@ -60,7 +60,6 @@ def extra_imports():
     import posixpath; posixpath
     import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
-    import EasyDialogs; EasyDialogs #@UnresolvedImport
     import argparse; argparse
     import compiler; compiler
     import textwrap; textwrap
@@ -171,12 +170,6 @@ def bootstrap(renpy_base):
     import renpy.arguments
     args = renpy.arguments.bootstrap()
 
-    # Since we don't have time to fully initialize before running the presplash
-    # command, handle it specially.
-    if args.command == "presplash":
-        import renpy.display.presplash
-        renpy.display.presplash.show(sys.argv[3])
-
     if args.trace:
         enable_trace(args.trace)
 
@@ -216,7 +209,7 @@ def bootstrap(renpy_base):
     sys.path.insert(0, basedir)
 
     # If we're not given a command, show the presplash.
-    if args.command == "run":
+    if args.command == "run" and not renpy.mobile:
         import renpy.display.presplash #@Reimport
         renpy.display.presplash.start(basedir, gamedir)
 

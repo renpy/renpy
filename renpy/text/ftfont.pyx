@@ -201,6 +201,9 @@ cdef class FTFont:
         # Have we been setup at least once?
         bint has_setup
 
+        # The hinting flag to use.
+        int hinting
+
     def __cinit__(self):
         for i from 0 <= i < 256:
             self.cache[i].index = -1
@@ -218,10 +221,13 @@ cdef class FTFont:
         free_gsubtable(&self.gsubtable)
 
 
-    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical):
+    def __init__(self, face, float size, float bold, bint italic, int outline, bint antialias, bint vertical, hinting):
 
         if size < 1:
             size = 1
+
+        if bold:
+            antialias = True
 
         self.face_object = face
         self.face = self.face_object.face
@@ -245,6 +251,13 @@ cdef class FTFont:
             self.expand = outline * 2
 
         self.has_setup = False
+
+        if hinting == "bytecode":
+            self.hinting = FT_LOAD_NO_AUTOHINT
+        elif hinting == "none" or hinting is None:
+            self.hinting = FT_LOAD_NO_HINTING
+        else:
+            self.hinting = FT_LOAD_FORCE_AUTOHINT
 
     cdef setup(self):
         """
@@ -317,6 +330,8 @@ cdef class FTFont:
         cdef int overhang
         cdef FT_Glyph_Metrics metrics
 
+        cdef int x, y
+
         face = self.face
 
         if self.vertical:
@@ -336,7 +351,7 @@ cdef class FTFont:
 
         rv.index = index
 
-        error = FT_Load_Glyph(face, index, FT_LOAD_FORCE_AUTOHINT)
+        error = FT_Load_Glyph(face, index, self.hinting)
         if error:
             raise FreetypeError(error)
 
@@ -572,8 +587,9 @@ cdef class FTFont:
         cdef FT_GlyphSlot g
         cdef FT_UInt index
         cdef int error
-        cdef int bmx, bmy, px, py,
+        cdef int bmx, bmy, px, py, pxstart
         cdef int ly, lh, rows, width
+        cdef int underline_x
 
         cdef unsigned char *pixels
         cdef unsigned char *line
@@ -606,11 +622,19 @@ cdef class FTFont:
             x = glyph.x + xo
             y = glyph.y + yo
 
+            underline_x = x - glyph.delta_x_offset
+
             index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
             cache = self.get_glyph(index)
 
             bmx = <int> (x + .5) + cache.bitmap_left
             bmy = y - cache.bitmap_top
+
+            if bmx < 0:
+                pxstart = -bmx
+                bmx = 0
+            else:
+                pxstart = 0
 
             rows = min(cache.bitmap.rows, surf.h - bmy)
             width = min(cache.bitmap.width, surf.w - bmx)
@@ -622,7 +646,7 @@ cdef class FTFont:
                     continue
 
                 line = pixels + bmy * pitch + bmx * 4
-                gline = cache.bitmap.buffer + py * cache.bitmap.pitch
+                gline = cache.bitmap.buffer + py * cache.bitmap.pitch + pxstart
 
                 for px from 0 <= px < width:
 
@@ -654,7 +678,7 @@ cdef class FTFont:
                 lh = self.underline_height * underline
 
                 for py from ly <= py < min(ly + lh, surf.h):
-                    for px from x <= px < (x + glyph.advance):
+                    for px from underline_x <= px < (x + glyph.advance):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr
@@ -670,7 +694,7 @@ cdef class FTFont:
                     lh = 1
 
                 for py from ly <= py < (ly + lh):
-                    for px from x <= px < (x + glyph.advance):
+                    for px from underline_x <= px < (x + glyph.advance):
                         line = pixels + py * pitch + px * 4
 
                         line[0] = Sr

@@ -105,3 +105,14 @@ translate finnish strings:
     old "Recompiling all rpy files into rpyc files..."
     new "Kasataan kaikista .rpy-tiedostoista .rpyc-tiedostoja..."
 
+
+translate finnish strings:
+
+    # game/front_page.rpy:198
+    old "images"
+    new "kuvat"
+
+    # game/front_page.rpy:246
+    old "iOS"
+    new "iOS"
+

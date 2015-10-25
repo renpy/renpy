@@ -242,3 +242,30 @@ that the default store does. The defined statement can be used to
 define names in a named store.
 
 
+.. _python-modules:
+
+First and Third Party Python Modules and Packages
+-------------------------------------------------
+
+Ren'Py can import pure-python modules and packages. First-party modules
+and packages - ones with code written for the game - can be placed directly
+into the game directory. Third party packages can be placed into the
+game/python-packages directory.
+
+For example, to install the requests package, one can change into the
+game's base directory, and run the command::
+
+    pip install --target game/python-packages requests
+
+In either case, the module or package can be imported from an init python
+block::
+
+    init python:
+        import requests
+
+.. warning::
+
+    Python code defined in .rpy files is transformed to allow rollback
+    to work. Python code imported from .py files is not. As a result,
+    objects created in python code will not work with rollback, and
+    probably should not be changed after creation.

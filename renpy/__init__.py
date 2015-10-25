@@ -40,7 +40,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 99, 5, vc_version)
+version_tuple = (6, 99, 7, vc_version)
 
 # The name of this version.
 version_name = "Here's to the crazy ones."
@@ -91,13 +91,17 @@ mobile = android or ios
 # Backup Data for Reload
 ################################################################################
 
-# True if this is the first time we've started - even including
-# utter restarts.
-first_utter_start = True
+# True if we're done with safe mode checks.
+safe_mode_checked = False
 
 # True if autoreload mode is enabled. This has to live here, because it
 # needs to survive through an utter restart.
 autoreload = False
+
+
+# A dict that persists through utter restarts. Accessible to all code as
+# renpy.session.
+session = { }
 
 # A list of modules beginning with "renpy" that we don't want
 # to backup.
@@ -167,7 +171,7 @@ class Backup():
             self.backup_module(m)
 
         # A pickled version of self.objects.
-        self.objects_pickle = cPickle.dumps(self.objects)
+        self.objects_pickle = cPickle.dumps(self.objects, cPickle.HIGHEST_PROTOCOL)
 
         self.objects = None
 
@@ -207,10 +211,11 @@ class Backup():
 
             # If we have a problem pickling things, uncomment the next block.
 
-#             try:
-#                 cPickle.dumps(v)
-#             except:
-#                 print "Cannot pickle", name + "." + k
+            try:
+                cPickle.dumps(v, cPickle.HIGHEST_PROTOCOL)
+            except:
+                print "Cannot pickle", name + "." + k, "=", repr(v)
+                print "Reduce Ex is:", repr(v.__reduce_ex__(cPickle.HIGHEST_PROTOCOL))
 
     def restore(self):
         """
@@ -287,11 +292,13 @@ def import_all():
     import renpy.ast
     import renpy.atl
     import renpy.curry
+    import renpy.color
     import renpy.easy
     import renpy.execution
     import renpy.loadsave
     import renpy.savelocation  # @UnresolvedImport
     import renpy.persistent
+    import renpy.scriptedit
     import renpy.parser
     import renpy.python
     import renpy.script
@@ -351,6 +358,7 @@ def import_all():
     import renpy.display.anim
     import renpy.display.particle
     import renpy.display.joystick
+    import renpy.display.controller
     import renpy.display.minigame
     import renpy.display.screen
     import renpy.display.dragdrop
@@ -376,6 +384,7 @@ def import_all():
 
     import renpy.sl2.slast
     import renpy.sl2.slparser
+    import renpy.sl2.slproperties
     import renpy.sl2.sldisplayables
 
     import renpy.lint
@@ -394,12 +403,16 @@ def import_all():
     import renpy.config # depends on lots. @UnresolvedImport
     import renpy.minstore # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
+
     import renpy.main
 
 
     # Back up the Ren'Py modules.
+
     global backup
-    backup = Backup()
+
+    if not mobile:
+        backup = Backup()
 
     post_import()
 
@@ -438,6 +451,9 @@ def reload_all():
     Resets all modules to the state they were in right after import_all
     returned.
     """
+
+    if mobile:
+        raise Exception("Reloading is not supported on mobile platforms.")
 
     import renpy.style
     import renpy.display

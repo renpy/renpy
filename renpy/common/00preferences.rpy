@@ -124,6 +124,10 @@ init -1500 python:
          * Preference("voice mute", "disable") - Un-mute the voice mixer.
          * Preference("voice mute", "toggle") - Toggle voice mute.
 
+         * Preference("all mute", "enable") - Mute all mixers.
+         * Preference("all mute", "disable") - Unmute all mixers.
+         * Preference("all mute", "toggle") - Toggle mute of all mixers.
+
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
@@ -272,54 +276,6 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "wait_voice")
 
-            elif name == "music volume":
-
-                if value is None:
-                    return MixerValue('music')
-                else:
-                    return SetMixer('music', value)
-
-            elif name == "sound volume":
-
-                if value is None:
-                    return MixerValue('sfx')
-                else:
-                    return SetMixer('sfx', value)
-
-            elif name == "voice volume":
-
-                if value is None:
-                    return MixerValue('voice')
-                else:
-                    return SetMixer('voice', value)
-
-            elif name == "music mute":
-
-                if value == "enable":
-                    return SetDict(_preferences.mute, "music", True)
-                elif value == "disable":
-                    return SetDict(_preferences.mute, "music", False)
-                elif value == "toggle":
-                    return ToggleDict(_preferences.mute, "music")
-
-            elif name == "sound mute":
-
-                if value == "enable":
-                    return SetDict(_preferences.mute, "sfx", True)
-                elif value == "disable":
-                    return SetDict(_preferences.mute, "sfx", False)
-                elif value == "toggle":
-                    return ToggleDict(_preferences.mute, "sfx")
-
-            elif name == "voice mute":
-
-                if value == "enable":
-                    return SetDict(_preferences.mute, "voice", True)
-                elif value == "disable":
-                    return SetDict(_preferences.mute, "voice", False)
-                elif value == "toggle":
-                    return ToggleDict(_preferences.mute, "voice")
-
             elif name == "voice sustain":
 
                 if value == "enable":
@@ -355,6 +311,33 @@ init -1500 python:
                     return SetField(_preferences, "emphasize_audio", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "emphasize_audio")
+
+            mixer_names = {
+                "music" : "music",
+                "sound" : "sfx",
+                "voice" : "voice",
+                "all" : _preferences.get_all_mixers(),
+            }
+
+            n = name.split()
+
+            if len(n) == 2 and n[1] == "volume":
+                mixer = mixer_names.get(n[0], n[0])
+
+                if value is None:
+                    return MixerValue(mixer)
+                else:
+                    return SetMixer(mixer, value)
+
+            if len(n) == 2 and n[1] == "mute":
+                mixer = mixer_names.get(n[0], n[0])
+
+                if value == "enable":
+                    return SetMute(mixer, True)
+                elif value == "disable":
+                    return SetMute(mixer, False)
+                elif value == "toggle":
+                    return ToggleMute(mixer)
 
             else:
                 raise Exception("Preference(%r, %r) is unknown." % (name , value))

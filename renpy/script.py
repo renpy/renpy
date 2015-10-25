@@ -34,6 +34,7 @@ import struct
 import zlib
 
 from cPickle import loads, dumps
+import shutil
 
 # The version of the dumped script.
 script_version = renpy.script_version
@@ -130,6 +131,79 @@ class Script(object):
         self.serial = 0
 
         self.digest = md5.md5(renpy.version_only)
+
+        self.loaded_rpy = False
+        self.backup_list = [ ]
+
+    def choose_backupdir(self):
+
+        if renpy.mobile:
+            return None
+
+        for i in [ "script_version.txt", "script_version.rpy", "script_version.rpyc" ]:
+            if renpy.loader.loadable(i):
+                return None
+
+        import __main__
+        backups = __main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
+
+        if backups is None:
+            return
+
+        basename = os.path.basename(renpy.config.basedir)
+        backupdir = os.path.join(backups, renpy.exports.fsencode(basename))
+
+        renpy.exports.write_log("Backing up script files to %r:", backupdir)
+
+        return backupdir
+
+    def make_backups(self):
+
+        backup_list = self.backup_list
+        self.backup_list = [ ]
+
+        if os.environ.get("RENPY_DISABLE_BACKUPS", "") == "I take responsibility for this.":
+            return
+
+        if not self.loaded_rpy:
+            return
+
+        if renpy.mobile:
+            return
+
+        backupdir = self.choose_backupdir()
+        if backupdir is None:
+            return
+
+        for fn, checksum in backup_list:
+
+            if not fn.startswith(renpy.config.gamedir):
+                continue
+
+            if not os.path.exists(fn):
+                continue
+
+            short_fn = renpy.exports.fsencode(fn[len(renpy.config.gamedir)+1:])
+
+            base, ext = os.path.splitext(short_fn)
+            target_fn = os.path.join(
+                backupdir,
+                base + "." + checksum[:8].encode("hex") + ext,
+                )
+
+            if os.path.exists(target_fn):
+                continue
+
+            try:
+                os.makedirs(os.path.dirname(target_fn), 0700)
+            except:
+                pass
+
+            try:
+                shutil.copy(fn, target_fn)
+            except:
+                pass
+
 
     def scan_script_files(self):
         """
@@ -246,7 +320,7 @@ class Script(object):
                 if new.name is None:
                     new.name = old.name
 
-    def load_string(self, filename, filedata):
+    def load_string(self, filename, filedata, linenumber=1):
         """
         Loads Ren'Py script from a string.
 
@@ -260,7 +334,7 @@ class Script(object):
         list of init statements that need to be run.
         """
 
-        stmts = renpy.parser.parse(filename, filedata)
+        stmts = renpy.parser.parse(filename, filedata, linenumber=linenumber)
 
         if stmts is None:
             return None, None
@@ -273,7 +347,6 @@ class Script(object):
         stmts = self.finish_load(stmts, initcode, False)
 
         return stmts, initcode
-
 
     def finish_load(self, stmts, initcode, check_names=True, filename=None):
         """
@@ -314,7 +387,7 @@ class Script(object):
         if filename is not None:
             filename = renpy.parser.elide_filename(filename)
 
-            if all_stmts[0].filename.lower() != filename.lower():
+            if not all_stmts[0].filename.lower().endswith(filename.lower()):
                 filename += "c"
                 for i in all_stmts:
                     i.filename = filename
@@ -340,7 +413,6 @@ class Script(object):
                                    old_node.filename, old_node.linenumber,
                                    bad_node.filename, bad_node.linenumber))
 
-
         self.update_bytecode()
 
         for node in all_stmts:
@@ -351,11 +423,13 @@ class Script(object):
             self.namemap[name] = node
 
             # Add any init nodes to self.initcode.
-            init = node.get_init()
-            if init:
-                initcode.append(init)
+            if node.get_init:
+                init = node.get_init()
+                if init:
+                    initcode.append(init)
 
-            node.early_execute()
+            if node.early_execute:
+                node.early_execute()
 
         if self.all_stmts is not None:
             self.all_stmts.extend(all_stmts)
@@ -513,6 +587,8 @@ class Script(object):
             except:
                 pass
 
+            self.loaded_rpy = True
+
         elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
 
             data = None
@@ -529,6 +605,7 @@ class Script(object):
                         if bindata:
                             data, stmts = loads(bindata)
                             break
+
                     except:
                         pass
 
@@ -564,6 +641,7 @@ class Script(object):
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): #@ReservedAssignment
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
+
         if dir is None:
 
             rpyfn = fn + source
@@ -646,6 +724,8 @@ class Script(object):
 
                 digest = rpydigest
 
+            self.backup_list.append((rpyfn, digest))
+
         if data is None:
             raise Exception("Could not load file %s." % lastfn)
 
@@ -655,10 +735,9 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception( fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode, filename=rpyfn)
+        self.finish_load(stmts, initcode, filename=fn + source)
 
         self.digest.update(digest)
-
 
 
     def init_bytecode(self):
@@ -734,7 +813,6 @@ class Script(object):
 
 
     def save_bytecode(self):
-
         if self.bytecode_dirty:
             try:
                 fn = renpy.loader.get_path(BYTECODE_FILE)

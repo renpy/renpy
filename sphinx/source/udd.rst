@@ -211,7 +211,7 @@ class, we'll present them with the `self` parameter.
 renpy.Render
 ============
 
-creator-defined displayables work with renpy.Render objects. Render
+Creator-defined displayables work with renpy.Render objects. Render
 objects are returned by calling the :func:`renpy.render` function on a
 displayable. A creator-defined displayable should create a Render object
 by calling :class:`renpy.Render` from its render method.
@@ -268,6 +268,9 @@ the implicit `self` parameter.
        `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_
        functions, with the first parameter (the surface) omitted.
 
+       Canvas objects also have a get_surface() method that returns the
+       pygame Surface underlying the canvas.
+
     .. method:: get_size()
 
         Returns a (width, height) tuple giving the size of
@@ -280,6 +283,13 @@ the implicit `self` parameter.
 
         `rect`
             A (x, y, width, height) tuple.
+
+    .. method:: zoom(xzoom, yzoom)
+
+        Sets the zoom level of the children of this displayable in the
+        horitzontal and vertical axes. Only the children of the displayable
+        are zoomed - the width, height, and blit coordinates are not zoomed.
+
 
 
 Utility Functions

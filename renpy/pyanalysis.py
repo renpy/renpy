@@ -57,14 +57,14 @@ pure_functions = {
     "LiveTile", "Flatten", "Null", "Window", "Viewport", "DynamicDisplayable",
     "ConditionSwitch", "ShowingSwitch", "Transform", "Animation", "Movie",
     "Particles", "SnowBlossom", "Text", "ParameterizedText", "FontGroup",
-    "Drag", "Alpha", "Position", "Pan", "Move", "Motion", "Revolve", "Zoom",
+    "Drag", "Alpha", "AlphaMask", "Position", "Pan", "Move", "Motion", "Revolve", "Zoom",
     "RotoZoom", "FactorZoom", "SizeZoom", "Fade", "Dissolve", "ImageDissolve",
     "AlphaDissolve", "CropMove", "Pixellate", "OldMoveTransition",
     "MoveTransition", "MoveFactory", "MoveIn", "MoveOut", "ZoomInOut",
     "RevolveInOut", "MultipleTransition", "ComposeTransition", "Pause",
     "SubTransition", "ADVSpeaker", "ADVCharacter", "Speaker", "Character",
     "DynamicCharacter", "Fixed", "HBox", "VBox", "Grid", "AlphaBlend", "At",
-    "color",
+    "color", "Color",
 
     # ui.py
 
@@ -361,7 +361,10 @@ class Analysis(object):
                 if slice.step:
                     consts.append(check_node(slice.step))
 
-                return min(consts)
+                if not consts:
+                    return GLOBAL_CONST
+                else:
+                    return min(consts)
 
             return NOT_CONST
 

@@ -143,6 +143,10 @@ class SLContext(renpy.ui.Addable):
         # The use statement containing the transcluded block.
         self.transclude = None
 
+        # True if it's unlikely this node will run. This is used in prediction
+        # to speed things up.
+        self.unlikely = False
+
 
     def get_style_group(self):
         style_prefix = self.style_prefix
@@ -478,6 +482,13 @@ class SLCache(object):
         # The SLUse that was transcluded by this SLCache statement.
         self.transclude = None
 
+        # The style prefix used when this statement was first created.
+        self.style_prefix = None
+
+# A magic value that, if returned by a displayable function, is not added to
+# the parent.
+NO_DISPLAYABLE = renpy.display.layout.Null()
+
 class SLDisplayable(SLBlock):
     """
     A screen language AST node that corresponds to a displayable being
@@ -645,7 +656,7 @@ class SLDisplayable(SLBlock):
         if debug:
             self.debug_line()
 
-        if cache.constant:
+        if cache.constant and (cache.style_prefix == context.style_prefix):
 
             for i in cache.constant_uses_scope:
                 if copy_on_change:
@@ -659,10 +670,11 @@ class SLDisplayable(SLBlock):
 
                 d = cache.constant
 
-                if context.showif is not None:
-                    d = self.wrap_in_showif(d, context, cache)
+                if d is not NO_DISPLAYABLE:
+                    if context.showif is not None:
+                        d = self.wrap_in_showif(d, context, cache)
 
-                context.children.append(d)
+                    context.children.append(d)
 
                 if context.uses_scope is not None:
                     context.uses_scope.extend(cache.constant_uses_scope)
@@ -711,6 +723,15 @@ class SLDisplayable(SLBlock):
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
 
+            arguments = keywords.pop("arguments", None)
+            properties = keywords.pop("properties", None)
+
+            if arguments:
+                positional += arguments
+
+            if properties:
+                keywords.update(properties)
+
             # If we don't know the style, figure it out.
             if ("style" not in keywords) and self.style:
                 keywords["style"] = ctx.style_prefix + self.style
@@ -729,7 +750,7 @@ class SLDisplayable(SLBlock):
             if debug:
                 self.report_arguments(cache, positional, keywords, transform)
 
-            can_reuse = (old_d is not None) and (positional == cache.positional) and (keywords == cache.keywords)
+            can_reuse = (old_d is not None) and (positional == cache.positional) and (keywords == cache.keywords) and (context.style_prefix == cache.style_prefix)
 
             # A hotspot can only be reused if the imagemap it belongs to has
             # not changed.
@@ -752,7 +773,7 @@ class SLDisplayable(SLBlock):
                 if widget_id:
                     screen.widgets[widget_id] = main
 
-                if self.scope and main.uses_scope:
+                if self.scope and main._uses_scope:
                     if copy_on_change:
                         if main._scope(ctx.scope, False):
                             reused = False
@@ -896,8 +917,9 @@ class SLDisplayable(SLBlock):
 
         cache.displayable = d
         cache.children = ctx.children
+        cache.style_prefix = context.style_prefix
 
-        if transform is not None:
+        if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
                 d = cache.transform
             else:
@@ -936,7 +958,7 @@ class SLDisplayable(SLBlock):
             if self.constant:
                 cache.constant = d
 
-                if self.scope and main.uses_scope:
+                if self.scope and main._uses_scope:
                     ctx.uses_scope.append(main)
 
                 cache.constant_uses_scope = ctx.uses_scope
@@ -944,10 +966,12 @@ class SLDisplayable(SLBlock):
                 if context.uses_scope is not None:
                     context.uses_scope.extend(ctx.uses_scope)
 
-        if context.showif is not None:
-            d = self.wrap_in_showif(d, context, cache)
+        if d is not NO_DISPLAYABLE:
 
-        context.children.append(d)
+            if context.showif is not None:
+                d = self.wrap_in_showif(d, context, cache)
+
+            context.children.append(d)
 
     def wrap_in_showif(self, d, context, cache):
         """
@@ -1144,6 +1168,7 @@ class SLIf(SLNode):
 
                 ctx = SLContext(context)
                 ctx.children = [ ]
+                ctx.unlikely = True
 
                 for i in block.children:
                     try:
@@ -1153,7 +1178,6 @@ class SLIf(SLNode):
 
                 for i in ctx.children:
                     predict_displayable(i)
-
 
     def keywords(self, context):
 
@@ -1317,6 +1341,7 @@ class SLFor(SLBlock):
 
     def execute(self, context):
 
+
         variable = self.variable
         expr = self.expression_expr
 
@@ -1356,6 +1381,9 @@ class SLFor(SLBlock):
                 except:
                     if not context.predicting:
                         raise
+
+            if context.unlikely:
+                break
 
         context.cache[self.serial] = newcaches
 
@@ -1478,7 +1506,12 @@ class SLUse(SLNode):
         rv.target = self.target
         rv.args = self.args
         rv.id = self.id
-        rv.block = self.block.copy(transclude)
+
+        if self.block is not None:
+            rv.block = self.block.copy(transclude)
+        else:
+            rv.block = None
+
         rv.ast = None
 
         return rv
@@ -1491,7 +1524,7 @@ class SLUse(SLNode):
             self.constant = NOT_CONST
 
         if self.block:
-            self.block.analyze(self.analysis)
+            self.block.analyze(analysis)
 
     def prepare(self, analysis):
 
@@ -1672,10 +1705,11 @@ class SLTransclude(SLNode):
             return
 
         cache = context.cache.get(self.serial, None)
-        cache.transclude = context.transclude
 
         if cache is None:
             context.cache[self.serial] = cache = { }
+
+        cache["transclude"] = context.transclude
 
         ctx = SLContext(context.parent)
 
@@ -1692,14 +1726,12 @@ class SLTransclude(SLNode):
 
     def copy_on_change(self, cache):
 
-        if self.child is None:
-            return
-
         c = cache.get(self.serial, None)
-        if c is None:
+
+        if c is None or "transclude" not in c:
             return
 
-        SLBlock.copy_on_change(cache.transclude, c)
+        SLBlock.copy_on_change(c["transclude"], c)
 
     def has_transclude(self):
         return True
@@ -1758,8 +1790,6 @@ class SLScreen(SLBlock):
         # True if this screen has been prepared.
         self.prepared = False
 
-
-
     def copy(self, transclude):
         rv = self.instantiate(transclude)
 
@@ -1796,9 +1826,6 @@ class SLScreen(SLBlock):
 
     def analyze(self, analysis):
 
-        if self.parameters:
-            analysis.parameters(self.parameters)
-
         SLBlock.analyze(self, analysis)
 
     def analyze_screen(self):
@@ -1817,7 +1844,7 @@ class SLScreen(SLBlock):
         self.const_ast = self
 
         if self.has_transclude():
-            self.not_const_ast = self.copy()
+            self.not_const_ast = self.copy(NOT_CONST)
             targets = [ self.const_ast, self.not_const_ast ]
         else:
             self.not_const_ast = self.const_ast
@@ -1826,6 +1853,9 @@ class SLScreen(SLBlock):
 
         for ast in targets:
             analysis = ast.analysis = Analysis(None)
+
+            if ast.parameters:
+                analysis.parameters(ast.parameters)
 
             ast.analyze(analysis)
 
@@ -1871,6 +1901,10 @@ class SLScreen(SLBlock):
             not_constants = list(self.const_ast.analysis.not_constant)
             not_constants.sort()
             profile_log.write('    not_const: %s', " ".join(not_constants))
+
+    def execute(self, context):
+        self.keywords(context)
+        SLBlock.execute(self, context)
 
     def report_traceback(self, name, last):
         if last:

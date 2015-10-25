@@ -45,6 +45,12 @@ _window_subtitle = ''
 # Should rollback be allowed?
 _rollback = True
 
+# Should skipping be allowed?
+_skipping = True
+
+# Should dismissing pauses and transitions be allowed?
+_dismiss_pause = True
+
 # config.
 _config = renpy.config
 
@@ -106,6 +112,8 @@ Button = renpy.display.behavior.Button
 Input = renpy.display.behavior.Input
 
 ImageReference = renpy.display.image.ImageReference
+DynamicImage = renpy.display.image.DynamicImage
+
 Image = renpy.display.im.image
 
 Frame = renpy.display.imagelike.Frame
@@ -288,13 +296,18 @@ def At(d, *args):
     rv = renpy.easy.displayable(d)
 
     for i in args:
-        rv = i(rv)
+
+        if isinstance(i, renpy.display.motion.Transform):
+            rv = i(child=rv)
+        else:
+            rv = i(rv)
 
     return rv
 
 
-# The color function. (Moved, since text needs it, too.)
-color = renpy.easy.color
+# The color class/function.
+Color = renpy.color.Color
+color = renpy.color.Color
 
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy #@Reimport

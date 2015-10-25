@@ -38,8 +38,11 @@ def path_to_common(renpy_base):
 
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
-def path_to_saves(gamedir):
+def path_to_saves(gamedir, save_directory=None):
     import renpy #@UnresolvedImport
+
+    if save_directory is None:
+        save_directory = renpy.config.save_directory
 
     # Makes sure the permissions are right on the save directory.
     def test_writable(d):
@@ -95,7 +98,7 @@ def path_to_saves(gamedir):
         return rv
 
     # No save directory given.
-    if not renpy.config.save_directory:
+    if not save_directory:
         return gamedir + "/saves"
 
     # Search the path above Ren'Py for a directory named "Ren'Py Data".
@@ -104,7 +107,7 @@ def path_to_saves(gamedir):
 
     while True:
         if os.path.isdir(path + "/Ren'Py Data"):
-            return path + "/Ren'Py Data/" + renpy.config.save_directory
+            return path + "/Ren'Py Data/" + save_directory
 
         newpath = os.path.dirname(path)
         if path == newpath:
@@ -113,18 +116,18 @@ def path_to_saves(gamedir):
 
     # Otherwise, put the saves in a platform-specific location.
     if renpy.macintosh:
-        rv = "~/Library/RenPy/" + renpy.config.save_directory
+        rv = "~/Library/RenPy/" + save_directory
         return os.path.expanduser(rv)
 
     elif renpy.windows:
         if 'APPDATA' in os.environ:
-            return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
+            return os.environ['APPDATA'] + "/RenPy/" + save_directory
         else:
             rv = "~/RenPy/" + renpy.config.save_directory
             return os.path.expanduser(rv)
 
     else:
-        rv = "~/.renpy/" + renpy.config.save_directory
+        rv = "~/.renpy/" + save_directory
         return os.path.expanduser(rv)
 
 

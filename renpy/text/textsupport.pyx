@@ -23,6 +23,9 @@ include "linebreak.pxi"
 
 cdef class Glyph:
 
+    def __init__(self):
+        self.delta_x_offset = 0
+
     def __repr__(self):
         return "<Glyph {0!r} time={1}>".format(self.character, self.time)
 
@@ -740,19 +743,6 @@ def place_ruby(list glyphs, int ruby_offset, int surf_width, int surf_height):
             g.x = <int> (x + .5)
             g.y = y + ruby_offset
 
-            # Try to ensure the glyph stays contained within the surface.
-            if g.x < 0:
-                raise Exception("Ruby glyph out of bounds.")
-
-            if g.x + g.width > surf_width:
-                raise Exception("Ruby glyph out of bounds.")
-
-            if g.y - g.ascent < 0:
-                raise Exception("Ruby glyph out of bounds.")
-
-            if g.y - g.ascent + g.line_spacing > surf_height:
-                raise Exception("Ruby glyph out of bounds.")
-
             x += g.advance
 
         last_ruby = RUBY_TOP
@@ -850,3 +840,48 @@ def reverse_lines(list glyphs):
     rv.extend(block)
 
     return rv
+
+def copy_splits(list source, list dest):
+    """
+    Copies break and timing information from one list of glyphs
+    to another.
+    """
+
+    cdef Glyph s
+    cdef Glyph d
+    cdef int i
+
+    for 0 <= i < len(dest):
+        s = source[i]
+        d = dest[i]
+
+        d.split = s.split
+
+def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w, double h):
+    cdef Glyph g
+
+    if w <= 0 or h <= 0:
+        return
+
+
+    old_x_offset = 0
+
+    for g in glyphs:
+
+        x_offset = int(dx * g.x / w)
+
+        g.x += x_offset
+        g.y += int(dy * g.y / h)
+
+        if x_offset > old_x_offset:
+            g.delta_x_offset = x_offset - old_x_offset
+
+        old_x_offset = x_offset
+
+    for l in lines:
+        end = l.y + l.height
+
+        l.y += int(dy * l.y / h)
+        end += int(dy * end / h)
+
+        l.height = end - l.y

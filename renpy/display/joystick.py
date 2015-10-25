@@ -19,106 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file is responsible for joystick support in Ren'Py.
-
-import os
-import pygame_sdl2 as pygame
+# This file was responsible for joystick support in Ren'Py, which has
+# been removed, save for a few compatibility functions.
 
 import renpy.display
+import pygame_sdl2
 
 # Do we have a joystick enabled?
 enabled = False
-
-# The old states for each axis.
-old_axis_states = { }
-
-def init():
-    """
-    Initialize the joystick system.
-    """
-
-    global enabled
-
-    if not renpy.config.joystick:
-        return
-
-    if 'RENPY_DISABLE_JOYSTICK' in os.environ:
-        return
-
-    try:
-        pygame.joystick.init()
-
-        for i in range(0, pygame.joystick.get_count()):
-            js = pygame.joystick.Joystick(i)
-            js.init()
-
-            if "accelerometer" in js.get_name().lower():
-                js.quit()
-                continue
-
-            enabled = True
-    except:
-        if renpy.config.debug:
-            raise
-
-def event(ev):
-
-    if not enabled:
-        return ev
-
-    if ev.type == pygame.JOYAXISMOTION:
-
-        if not renpy.display.interface.keyboard_focused:
-            return None
-
-        if ev.value >= 0.5:
-            state = "Positive"
-        elif ev.value <= -0.5:
-            state = "Negative"
-        else:
-            state = None
-
-        oldstate = old_axis_states.get((ev.joy, ev.axis), None)
-
-        if state == oldstate:
-            return None
-
-        if oldstate:
-            release = "Axis %d.%d %s" % (ev.joy, ev.axis, oldstate)
-        else:
-            release = None
-
-        old_axis_states[ev.joy, ev.axis] = state
-
-        if state:
-            press = "Axis %d.%d %s" % (ev.joy, ev.axis, state)
-        else:
-            press = None
-
-        if not press and not release:
-            return None
-
-        return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  press=press, release=release)
-
-    if ev.type == pygame.JOYBUTTONDOWN:
-
-        if not renpy.display.interface.keyboard_focused:
-            return None
-
-        return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  press="Button %d.%d" % (ev.joy, ev.button),
-                                  release=None)
-    if ev.type == pygame.JOYBUTTONUP:
-
-        if not renpy.display.interface.keyboard_focused:
-            return None
-
-        return pygame.event.Event(renpy.display.core.JOYEVENT,
-                                  press=None,
-                                  release="Button %d.%d" % (ev.joy, ev.button))
-
-    return ev
 
 class JoyBehavior(renpy.display.layout.Null):
     """
@@ -126,7 +34,21 @@ class JoyBehavior(renpy.display.layout.Null):
     event occurs, this returns it as a string.
     """
 
-    def event(self, ev, x, y, st):
-        if ev.type == renpy.display.core.JOYEVENT:
-            return ev.press
+    pass
+
+joysticks = { }
+
+def count():
+    return pygame_sdl2.joystick.get_count()
+
+def get(n):
+
+    if n in joysticks:
+        return joysticks[n]
+
+    try:
+        joysticks[n] = pygame_sdl2.joystick.Joystick(n)
+        return joysticks[n]
+    except:
+        return None
 

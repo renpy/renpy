@@ -108,8 +108,6 @@ label _start_store:
         renpy.context()._menu = False
         renpy.context()._main_menu = False
 
-        renpy.execute_default_statement(True)
-
         for i in config.start_callbacks:
             i()
 
@@ -117,7 +115,8 @@ label _start_store:
 
 
 # Starts up a replay. This is called by renpy.game.call_replay, and
-# is expected to be called with _in_replay set.
+# is expected to be called with _in_replay True and
+# renpy.execute_default_statement already called.
 label _start_replay:
 
     call _start_store
@@ -131,6 +130,7 @@ label _start_replay:
 
     jump expression _in_replay
 
+
 # This is the true starting point of the program. Sssh... Don't
 # tell anyone.
 label _start:
@@ -138,6 +138,8 @@ label _start:
     call _start_store
 
     python:
+        renpy.execute_default_statement(True)
+
         # Predict the main menu. When a load occurs, the loaded data will
         # overwrite the prediction requests.
         if renpy.has_screen("main_menu"):
@@ -159,7 +161,7 @@ label _start:
         scene
 
     if not _restart:
-        with None
+        $ renpy.display.interface.with_none(overlay=False)
 
     $ renpy.block_rollback()
 

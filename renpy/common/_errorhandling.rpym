@@ -58,6 +58,8 @@ style _default:
     slow_cps None
     slow_cps_multiplier 1.0
     slow_abortable False
+    hinting "auto"
+    adjust_spacing True
 
     # Window properties
     background None
@@ -225,14 +227,14 @@ init python:
         choose_renderer = [ 'G' ],
 
         # Focus.
-        focus_left = [ 'K_LEFT', 'joy_left' ],
-        focus_right = [ 'K_RIGHT', 'joy_right' ],
-        focus_up = [ 'K_UP', 'joy_up' ],
-        focus_down = [ 'K_DOWN', 'joy_down' ],
+        focus_left = [ 'K_LEFT' ],
+        focus_right = [ 'K_RIGHT' ],
+        focus_up = [ 'K_UP' ],
+        focus_down = [ 'K_DOWN' ],
 
         # Button.
         button_ignore = [ 'mousedown_1' ],
-        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
+        button_select = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
 
         # Viewport.
         viewport_up = [ 'mousedown_4' ],
@@ -241,12 +243,44 @@ init python:
         viewport_drag_end = [ 'mouseup_1' ],
 
         # These control the bar.
-        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'joy_dismiss' ],
-        bar_decrease = [ 'K_LEFT', 'joy_left' ],
-        bar_increase = [ 'K_RIGHT', 'joy_right' ],
+        bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_deactivate = [ 'mouseup_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
+        bar_decrease = [ 'K_LEFT' ],
+        bar_increase = [ 'K_RIGHT' ],
         )
 
+    config.pad_bindings = {
+        "pad_leftshoulder_press" : [ "rollback", ],
+        "pad_lefttrigger_pos" : [ "rollback", ],
+        "pad_back_press" : [ "rollback", ],
+
+        "pad_guide_press" : [ "game_menu", ],
+        "pad_start_press" : [ "game_menu", ],
+
+        "pad_y_press" : [ "hide_windows", ],
+
+        "pad_rightshoulder_press" : [ "rollforward", ],
+
+        "pad_righttrigger_pos" : [ "dismiss", "button_select" ],
+        "pad_a_press" : [ "dismiss", "button_select" ],
+        "pad_b_press" : [ "button_alternate" ],
+
+        "pad_dpleft_press" : [ "focus_left", "bar_left" ],
+        "pad_leftx_neg" : [ "focus_left", "bar_left" ],
+        "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+
+        "pad_dpright_press" : [ "focus_right", "bar_right" ],
+        "pad_leftx_pos" : [ "focus_right", "bar_right" ],
+        "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+
+        "pad_dpup_press" : [ "focus_up", "bar_up" ],
+        "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+        "pad_righty_neg" : [ "focus_up", "bar_up" ],
+
+        "pad_dpdown_press" : [ "focus_down", "bar_down" ],
+        "pad_lefty_pos" : [ "focus_down", "bar_down" ],
+        "pad_righty_pos" : [ "focus_down", "bar_down" ],
+    }
 
 # Early hyperlink support.
 init python hide:
@@ -346,6 +380,22 @@ init python:
                 renpy.launch_editor([ self.filename ], self.line, transient=1)
             except:
                 pass
+
+    class _CopyFile(Action):
+        def __init__(self, filename):
+            self.filename = filename
+
+        def __call__(self):
+            import pygame.scrap
+
+            with open(self.filename, "rb") as f:
+                f.read(3) # skip the BOM.
+                s = u"[code]\n{}[/code]\n".format(f.read().decode("utf-8"))
+
+            s = s.replace("\n", "\r\n")
+            s = s.replace("\r\r", "\r")
+
+            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
 
     def __can_open_traceback():
         return True
@@ -482,7 +532,7 @@ screen _exception:
                         action ignore_action
                         hovered tt.action(_("Ignores the exception, allowing you to continue. This often leads to additional errors."))
 
-                if config.developer:
+                if config.developer and not renpy.mobile:
                     textbutton _("Reload"):
                         action reload_action
                         hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
@@ -490,6 +540,11 @@ screen _exception:
                 textbutton _("Open Traceback"):
                     action _EditFile(traceback_fn)
                     hovered tt.action(_("Opens the traceback.txt file in a text editor."))
+
+                if renpy.windows or renpy.macintosh:
+                    textbutton _("Copy to Clipboard"):
+                        action _CopyFile(traceback_fn)
+                        hovered tt.action(_("Copies the traceback.txt file to the clipboard."))
 
                 null width 30
 
@@ -552,6 +607,11 @@ screen _parse_errors:
                 textbutton _("Open Parse Errors"):
                     action _EditFile(error_fn)
                     hovered tt.action(_("Opens the errors.txt file in a text editor."))
+
+                if renpy.windows or renpy.macintosh:
+                    textbutton _("Copy to Clipboard"):
+                        action _CopyFile(error_fn)
+                        hovered tt.action(_("Copies the errors.txt file to the clipboard."))
 
                 null width 30
 

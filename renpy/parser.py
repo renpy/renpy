@@ -163,16 +163,7 @@ def unelide_filename(fn):
 # The filename that the start and end positions are relative to.
 original_filename = ""
 
-# A map from line loc (elide filename, line) to the position (offset in unicode characters) of
-# the start of the logical line in the file.
-line_startpos = { }
-
-# A map from the line loc to the postion (offset in unicode characters) of the end of the logical
-# line in the file.
-line_endpos = { }
-
-
-def list_logical_lines(filename, filedata=None):
+def list_logical_lines(filename, filedata=None, linenumber=1):
     """
     Reads `filename`, and divides it into logical lines.
 
@@ -203,7 +194,7 @@ def list_logical_lines(filename, filedata=None):
     rv = []
 
     # The line number in the physical file.
-    number = 1
+    number = linenumber
 
     # The current position we're looking at in the buffer.
     pos = 0
@@ -211,6 +202,11 @@ def list_logical_lines(filename, filedata=None):
     # Skip the BOM, if any.
     if len(data) and data[0] == u'\ufeff':
         pos += 1
+
+    if renpy.game.context().init_phase:
+        lines = renpy.scriptedit.lines
+    else:
+        lines = { }
 
     # Looping over the lines in the file.
     while pos < len(data):
@@ -225,7 +221,7 @@ def list_logical_lines(filename, filedata=None):
         parendepth = 0
 
         loc = (filename, start_number)
-        line_startpos[loc] = pos
+        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
 
         endpos = None
 
@@ -246,10 +242,13 @@ def list_logical_lines(filename, filedata=None):
                     if endpos is None:
                         endpos = pos
 
+                    lines[loc].end_delim = endpos + 1
+
                     while data[endpos-1] in ' \r':
                         endpos -= 1
 
-                    line_endpos[loc] = endpos
+                    lines[loc].end = endpos
+                    lines[loc].text = data[lines[loc].start:lines[loc].end]
 
                 pos += 1
                 number += 1
@@ -1639,9 +1638,9 @@ def call_statement(l, loc):
         rv.append(ast.Label(loc, name, [], None))
     else:
         if expression:
-            renpy.add_from.report_missing("expression", original_filename, line_endpos[loc])
+            renpy.add_from.report_missing("expression", original_filename, renpy.scriptedit.lines[loc].end)
         else:
-            renpy.add_from.report_missing(target, original_filename, line_endpos[loc])
+            renpy.add_from.report_missing(target, original_filename, renpy.scriptedit.lines[loc].end)
 
     rv.append(ast.Pass(loc))
 
@@ -2327,7 +2326,7 @@ def parse_block(l):
 
     return rv
 
-def parse(fn, filedata=None):
+def parse(fn, filedata=None, linenumber=1):
     """
     Parses a Ren'Py script contained within the file `fn`.
 
@@ -2336,35 +2335,30 @@ def parse(fn, filedata=None):
 
     If `filedata` is given, it should be a unicode string giving the file
     contents.
+
+    If `linenumber` is given, the parse starts at `linenumber`.
     """
 
+    renpy.game.exception_info = 'While parsing ' + fn + '.'
+
     try:
+        lines = list_logical_lines(fn, filedata, linenumber)
+        nested = group_logical_lines(lines)
+    except ParseError, e:
+        parse_errors.append(e.message)
+        return None
 
-        renpy.game.exception_info = 'While parsing ' + fn + '.'
+    l = Lexer(nested)
 
-        try:
-            lines = list_logical_lines(fn, filedata)
-            nested = group_logical_lines(lines)
-        except ParseError, e:
-            parse_errors.append(e.message)
-            return None
+    rv = parse_block(l)
 
-        l = Lexer(nested)
+    if parse_errors:
+        return None
 
-        rv = parse_block(l)
+    if rv:
+        rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
 
-        if parse_errors:
-            return None
-
-        if rv:
-            rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
-
-        return rv
-
-    finally:
-
-        line_startpos.clear()
-        line_endpos.clear()
+    return rv
 
 def get_parse_errors():
     global parse_errors

@@ -68,7 +68,7 @@ distribute, and linking to this license from your project's README file or
 App Store description. We suggest using the wording:
 
     This program contains free software licensed under a number of licenses,
-    including the GNU Lesser Public License. A complete list of software
+    including the GNU Lesser General Public License. A complete list of software
     is available at http://www.renpy.org/doc/html/license.html.
 
 Ren'Py may be distributed alongside the jEdit or Editra text

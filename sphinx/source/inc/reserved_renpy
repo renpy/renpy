@@ -13,6 +13,7 @@
 * :class:`BarValue`
 * Button
 * :func:`Character`
+* :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`
@@ -23,6 +24,7 @@
 * :class:`DragGroup`
 * DynamicCharacter
 * :func:`DynamicDisplayable`
+* :func:`DynamicImage`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
@@ -121,6 +123,7 @@
 * :func:`SetDict`
 * :func:`SetField`
 * :func:`SetMixer`
+* :func:`SetMute`
 * :func:`SetScreenVariable`
 * :func:`SetVariable`
 * :func:`SetVoiceMute`
@@ -146,6 +149,7 @@
 * :func:`Text`
 * :func:`ToggleDict`
 * :func:`ToggleField`
+* :func:`ToggleMute`
 * :func:`ToggleScreenVariable`
 * :func:`ToggleSetMembership`
 * :func:`ToggleVariable`
@@ -155,6 +159,7 @@
 * :func:`VBox`
 * :func:`VariableValue`
 * Viewport
+* VoiceInfo
 * :func:`VoiceReplay`
 * Window
 * :func:`With`
@@ -191,6 +196,7 @@
 * hyperlink_function
 * hyperlink_styler
 * iap
+* icon
 * im
 * :var:`irisin`
 * irisout

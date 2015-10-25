@@ -542,4 +542,5 @@ screen _image_load_log:
 
 
 init python:
-    config.underlay.append(im.Tile("_transparent_tile.png"))
+    if config.transparent_tile:
+        config.underlay.append(im.Tile("_transparent_tile.png"))

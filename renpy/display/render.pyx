@@ -321,6 +321,21 @@ cdef class Matrix2D:
     def __repr__(self):
         return "Matrix2D(xdx=%f, xdy=%f, ydx=%f, ydy=%f)" % (self.xdx, self.xdy, self.ydx, self.ydy)
 
+    def __richcmp__(self, other, op):
+
+        if op != 2:
+            return NotImplemented
+
+        if self is other:
+            return True
+
+        return (
+            abs(self.xdx - other.xdx) +
+            abs(self.xdy - other.xdy) +
+            abs(self.ydx - other.ydx) +
+            abs(self.ydy - other.ydy)) < .00001
+
+
 IDENTITY = Matrix2D(1, 0, 0, 1)
 
 def take_focuses(focuses):
@@ -528,8 +543,8 @@ cdef class Render:
         self.over = 1.0
 
         # If true, children of this render use nearest-neighbor texture
-        # lookup.
-        self.nearest = False
+        # lookup. If false, bilinear, if None, from the parent.
+        self.nearest = None
 
         # A list of focus regions in this displayable.
         self.focuses = None
@@ -645,6 +660,34 @@ cdef class Render:
 
         return 0
 
+    cpdef int absolute_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
+        """
+        Blits `source` (a Render or Surface) to this Render, offset by
+        xo and yo.
+
+        If `focus` is true, then focuses are added from the child to the
+        parent.
+
+        This blits at fractional pixel boundaries.
+        """
+
+        (xo, yo) = pos
+
+        xo = renpy.display.core.absolute(xo)
+        yo = renpy.display.core.absolute(yo)
+
+        if index is None:
+            self.children.append((source, xo, yo, focus, main))
+        else:
+            self.children.insert(index, (source, xo, yo, focus, main))
+
+        if isinstance(source, Render):
+            self.depends_on_list.append(source)
+            source.parents.add(self)
+
+        return 0
+
+
     def get_size(self):
         """
         Returns the size of this Render, a mostly ficticious value
@@ -662,6 +705,11 @@ cdef class Render:
 
         `alpha` is a hint that controls if the surface should have
         alpha or not.
+
+        This returns a texture that's at the drawable resolultion, which
+        may be bigger than the virtual resolution. Use renpy.display.draw.draw_to_virt
+        and draw.virt_to_draw to convert between the two resolutions. (For example,
+        multiply reverse by draw_to_virt to scale this down for blitting.)
         """
 
         if alpha:
@@ -671,30 +719,7 @@ cdef class Render:
             if self.surface is not None:
                 return self.surface
 
-        rv = None
-
-        opaque = self.is_opaque()
-
-        # If we can, reuse a child's texture.
-        if opaque or alpha:
-
-            if not self.forward and len(self.children) == 1:
-                child, x, y, focus, main = self.children[0]
-                cw, ch = child.get_size()
-                if x <= 0 and y <= 0 and cw + x >= self.width and ch + y >= self.height:
-                    # Our single child overlaps us.
-                    if isinstance(child, Render):
-                        child = child.render_to_texture(alpha)
-
-                    if x != 0 or y != 0 or cw != self.width or ch != self.height:
-                        rv = child.subsurface((-x, -y, self.width, self.height))
-                    else:
-                        rv = child
-
-        # Otherwise, render to a texture.
-        if rv is None:
-            # is_opaque has already been called.
-            rv = renpy.display.draw.render_to_texture(self, alpha)
+        rv = renpy.display.draw.render_to_texture(self, alpha)
 
         # Stash and return the surface.
         if alpha:
@@ -734,22 +759,30 @@ cdef class Render:
 
         for child, cx, cy, cfocus, cmain in self.children:
 
-            cw, ch = child.get_size()
-            xo, cx, cw = compute_subline(cx, cw, x, w)
-            yo, cy, ch = compute_subline(cy, ch, y, h)
+            childw, childh = child.get_size()
+            xo, cx, cw = compute_subline(cx, childw, x, w)
+            yo, cy, ch = compute_subline(cy, childh, y, h)
 
-            if cw <= 0 or ch <= 0:
+            if cw <= 0 or ch <= 0 or w - xo <= 0 or h - yo <= 0:
                 continue
 
-            crop = (cx, cy, cw, ch)
-            offset = (xo, yo)
+            if cx < 0 or cx >= childw or cy < 0 or cy >= childh:
+                continue
 
-            if isinstance(child, Render):
-                newchild = child.subsurface(crop, focus=focus)
-                newchild.render_of = child.render_of[:]
-            else:
-                newchild = child.subsurface(crop)
-                renpy.display.draw.mutated_surface(newchild)
+            offset = (xo, yo)
+            crop = None
+
+            try:
+                if isinstance(child, Render) and not child.clipping:
+                    crop = (cx, cy, w - xo, h - yo)
+                    newchild = child.subsurface(crop, focus=focus)
+                    newchild.render_of = child.render_of[:]
+                else:
+                    crop = (cx, cy, cw, ch)
+                    newchild = child.subsurface(crop)
+                    renpy.display.draw.mutated_surface(newchild)
+            except:
+                raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
             rv.blit(newchild, offset, focus=cfocus, main=cmain)
 
@@ -960,7 +993,7 @@ cdef class Render:
                 return None
 
         if self.operation == IMAGEDISSOLVE:
-            if not self.visible_children[0][0].is_pixel_opaque(x, y):
+            if not self.children[0][0].is_pixel_opaque(x, y):
                 return None
 
         rv = None
@@ -1196,6 +1229,20 @@ cdef class Render:
 
         d.place(self, x, y, width, height, render, main=main)
 
+    def zoom(self, xzoom, yzoom):
+        """
+        Sets the zoom factor applied to this displayable's children.
+        """
+        if self.reverse is None:
+            self.reverse = IDENTITY
+            self.forward = IDENTITY
+
+        self.reverse *= Matrix2D(xzoom, 0, 0, yzoom)
+
+        if xzoom and yzoom:
+            self.forward *= Matrix2D(1.0 / xzoom, 0, 0, 1.0 / yzoom)
+        else:
+            self.forward *= Matrix2D(0, 0, 0, 0)
 
 class Canvas(object):
 
@@ -1303,3 +1350,7 @@ class Canvas(object):
                                 blend)
         finally:
             blit_lock.release()
+
+    def get_surface(self):
+        return self.surf
+

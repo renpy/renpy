@@ -15,6 +15,12 @@
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's color channel.
 
+.. function:: DynamicImage(name)
+    
+    A DynamicImage is a displayable that has text interpolation performed
+    on it to yield a string giving a new displayable. Such interpolation is
+    performed at the start of each iteraction.
+
 .. function:: Flatten(child, **properties)
     
     This flattens `child`, which may be made up of multiple textures, into

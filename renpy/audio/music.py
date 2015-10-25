@@ -407,6 +407,18 @@ def set_mixer(channel, mixer, default=False):
         if renpy.config.debug_sound:
             raise
 
+def get_all_mixers():
+    """
+    This gets all mixers in use.
+    """
+
+    rv = set()
+
+    for i in renpy.audio.audio.all_channels:
+        rv.add(i.mixer)
+
+    return list(rv)
+
 def channel_defined(channel):
     """
     Returns True if the channel exists, or False otherwise.

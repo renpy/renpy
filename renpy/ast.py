@@ -319,6 +319,10 @@ class Node(object):
     # the class or the instance.)
     translatable = False
 
+    # True if the node is releveant to translation, and has to be processed by
+    # take_translations.
+    translation_relevant = False
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -358,6 +362,9 @@ class Node(object):
 
         return None
 
+    # get_init is only present on statements that define it.
+    get_init = None
+
     def chain(self, next): #@ReservedAssignment
         """
         This is called with the Node node that should be followed after
@@ -368,6 +375,15 @@ class Node(object):
         """
 
         self.next = next
+
+    def replace_next(self, old, new):
+        """
+        Replaces instances of the `old` node with `new` when it is the next
+        node.
+        """
+
+        if self.next is old:
+            self.next = new
 
     def execute(self):
         """
@@ -382,6 +398,9 @@ class Node(object):
         """
         Called when the module is loaded.
         """
+
+    # early_execute is only present on statements that define it.
+    early_execute = None
 
     def predict(self):
         """
@@ -674,6 +693,8 @@ class Init(Node):
 
 
 class Label(Node):
+
+    translation_relevant = True
 
     __slots__ = [
         'name',
@@ -1351,6 +1372,8 @@ class Return(Node):
 
 class Menu(Node):
 
+    translation_relevant = True
+
     __slots__ = [
         'items',
         'set',
@@ -1383,6 +1406,13 @@ class Menu(Node):
         for (_label, _condition, block) in self.items:
             if block:
                 chain_block(block, next)
+
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        for _label, _condition, block in self.items:
+            if block and (block[0] is old):
+                block.insert(0, new)
 
     def execute(self):
 
@@ -1540,6 +1570,12 @@ class While(Node):
         self.next = next
         chain_block(self.block, self)
 
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        if self.block and (self.block[0] is old):
+            self.block.insert(0, new)
+
     def execute(self):
 
         next_node(self.next)
@@ -1587,6 +1623,13 @@ class If(Node):
 
         for _condition, block in self.entries:
             chain_block(block, next)
+
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        for _condition, block in self.entries:
+            if (block) and (block[0] is old):
+                block.insert(0, new)
 
     def execute(self):
 
@@ -1661,7 +1704,7 @@ class UserStatement(Node):
             parsed = renpy.statements.parse(self, self.line, self.block)
             self.parsed = parsed
 
-        renpy.statements.call(method, parsed, *args, **kwargs)
+        return renpy.statements.call(method, parsed, *args, **kwargs)
 
     def get_name(self):
         parsed = self.parsed
@@ -1687,6 +1730,27 @@ class UserStatement(Node):
     def get_code(self, dialogue_filter=None):
         return self.line
 
+def create_store(name):
+    if name not in renpy.config.special_namespaces:
+        renpy.python.create_store(name)
+
+class StoreNamespace(object):
+    def __init__(self, store):
+        self.store = store
+
+    def set(self, name, value):
+        renpy.python.store_dicts[self.store][name] = value
+
+def get_namespace(store):
+    """
+    Returns the namespace object for `store`, and a flag that is true if the
+    namespace is special, and false if it is a normal store.
+    """
+
+    if store in renpy.config.special_namespaces:
+        return renpy.config.special_namespaces[store], True
+
+    return StoreNamespace(store), False
 
 class Define(Node):
 
@@ -1712,7 +1776,7 @@ class Define(Node):
         return (Define, self.store, self.varname)
 
     def early_execute(self):
-        renpy.python.create_store(self.store)
+        create_store(self.store)
 
     def execute(self):
 
@@ -1727,7 +1791,8 @@ class Define(Node):
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-        renpy.python.store_dicts[self.store][self.varname] = value
+        ns, _special = get_namespace(self.store)
+        ns.set(self.varname, value)
 
 
 # All the default statements, in the order they were registered.
@@ -1758,7 +1823,7 @@ class Default(Node):
         return (Default, self.store, self.varname)
 
     def early_execute(self):
-        renpy.python.create_store(self.store)
+        create_store(self.store)
 
     def execute(self):
 
@@ -1766,6 +1831,11 @@ class Default(Node):
         statement_name("default")
 
         default_statements.append(self)
+
+        _ns, special = get_namespace(self.store)
+
+        if special:
+            raise Exception("The default statement can't be used with the special namespace %r." % self.store)
 
         if self.store == 'store':
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))
@@ -1837,6 +1907,8 @@ class Translate(Node):
     goes to the end of the translate statement in the None language.
     """
 
+    translation_relevant = True
+
     __slots__ = [
         "identifier",
         "language",
@@ -1854,8 +1926,17 @@ class Translate(Node):
         return (Translate, self.identifier, self.language)
 
     def chain(self, next): #@ReservedAssignment
-        self.next = next
-        chain_block(self.block, next)
+        if self.block:
+            self.next = self.block[0]
+            chain_block(self.block, next)
+        else:
+            self.next = next
+
+    def replace_next(self, old, new):
+        Node.replace_next(self, old, new)
+
+        if self.block and (self.block[0] is old):
+            self.block.insert(0, new)
 
     def execute(self):
 
@@ -1865,7 +1946,9 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
-        renpy.game.persistent._seen_translates.add(self.identifier) # @UndefinedVariable
+        if self.identifier not in renpy.game.persistent._seen_translates: # @UndefinedVariable
+            renpy.game.persistent._seen_translates.add(self.identifier) # @UndefinedVariable
+            renpy.game.seen_translates_count += 1
 
         next_node(renpy.game.script.translator.lookup_translate(self.identifier))
 
@@ -1916,6 +1999,8 @@ class TranslateString(Node):
     A node used for translated strings.
     """
 
+    translation_relevant = True
+
     __slots__ = [
         "language",
         "old",
@@ -1943,6 +2028,8 @@ class TranslatePython(Node):
 
     This is no longer generated, but is still run when encountered.
     """
+
+    translation_relevant = True
 
     __slots__ = [
         'language',
@@ -1978,6 +2065,8 @@ class TranslateBlock(Node):
     """
     Runs a block of code when changing the language.
     """
+
+    translation_relevant = True
 
     __slots__ = [
         'block',

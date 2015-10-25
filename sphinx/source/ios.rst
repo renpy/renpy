@@ -9,7 +9,6 @@ iOS apps can only be created on Macintosh computers.
 Required Language
 =================
 
-
 Some of the libraries used by Ren'Py on iOS are licensed under the terms
 of the GNU Lesser/Library General Public License. You'll need to comply
 with the terms of that license to distribute Ren'Py. We believe including
@@ -23,11 +22,9 @@ with a lawyer to be sure.
 Work in Progress
 ================
 
-The current Ren'Py iOS support is a work in progress. While we believe it
-is suitable to release games with, such games will require customization
-before they can be released on the Apple App Store. Most importantly,
-the default Ren'Py interface does not comply with Apple's guidelines,
-and will need to be changed.
+The current Ren'Py iOS support is a work in progress. While it has been
+used to release games to the Apple App Store, the default Ren'Py interface
+does not comply with Apple's guidelines and will need to be changed.
 
 Please let us know the results of getting your game through the App Store
 approval process.
@@ -121,16 +118,12 @@ Customization
 Most customization is performed in the Xcode project. For example, the
 icon, launch images, and orientations are all customized in Xcode.
 
-Launch and Presplash Images
----------------------------
+Launch Images
+-------------
 
-When the application is first run, the Launch Image will be displayed for a short
-amount of time, as the application is loaded into memory and begins running.
-
-The first thing the application does when running is to load the presplash
-file, ``ios-presplash.png``. (This file should be placed in the base directory
-of the Ren'Py project.) The presplash will be displayed centered, with the
-rest of the background filled with the color top-left pixel of the image.
+When the application is run, the Launch Image (configure as part of the
+Xcode project, outside of Ren'Py) will be displayed until Ren'Py is ready
+to display the game's user interface.
 
 Once Ren'Py finishes initializing, it will either resume the current game,
 or run the splashscreen and main menu.

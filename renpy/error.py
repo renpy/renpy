@@ -126,8 +126,9 @@ def open_error_file(fn, mode):
     """
 
     try:
-        f = file(os.path.join(renpy.config.logdir, fn), mode)
-        return f, fn
+        new_fn = os.path.join(renpy.config.logdir, fn)
+        f = file(new_fn, mode)
+        return f, new_fn
     except:
         pass
 
@@ -139,8 +140,8 @@ def open_error_file(fn, mode):
 
     import tempfile
 
-    fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
-    return file(fn, mode), fn
+    new_fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
+    return file(new_fn, mode), new_fn
 
 def report_exception(e, editor=True):
     """

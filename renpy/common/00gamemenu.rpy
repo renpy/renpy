@@ -127,9 +127,7 @@ init -1700 python:
 # choices.
 init 1700 python:
 
-    if config.has_autosave:
-        config.autosave_slots = 10
-    else:
+    if not config.has_autosave:
         config.autosave_frequency = None
 
 # Factored this all into one place, to make our lives a bit easier.

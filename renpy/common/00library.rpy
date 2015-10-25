@@ -78,15 +78,15 @@ init -1700 python:
     def _default_empty_window():
 
         who = _last_say_who
-
-        if who is not None:
-            who = eval(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
+        elif not isinstance(store.narrator, NVLCharacter):
+            store.narrator("", interact=False)
         else:
             store._narrator("", interact=False)
 
@@ -100,8 +100,7 @@ init -1700 python:
 
     def extend(what, interact=True):
         who = _last_say_who
-
-        who = renpy.ast.eval_who(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
@@ -139,6 +138,15 @@ init -1700 python:
     style.skip_indicator.ypos = 10
 
     def _skip_indicator():
+
+        if renpy.has_screen("skip_indicator"):
+
+            if config.skipping and not renpy.get_screen("skip_indicator"):
+                renpy.show_screen("skip_indicator")
+            elif not config.skipping and renpy.get_screen("skip_indicator"):
+                renpy.hide_screen("skip_indicator")
+
+            return
 
         ### skip_indicator default
         # (text) The style and placement of the skip indicator.
@@ -241,13 +249,23 @@ init -1700 python:
         who = Character(who, kind=name_only)
         who(what, interact=interact)
 
+    ##########################################################################
+    # Misc.
+
+    # Should we display tiles in places of transparency while in developer
+    # mode?
+    config.transparent_tile = True
+
+    # Use DejaVuSans-Bold when appropriate.
+    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("DejaVuSans-Bold.ttf", False, False)
+
+
 init -1000 python:
     # Lock the library object.
     config.locked = True
 
     # Record the builtins.
     renpy.lint.renpy_builtins = set(globals())
-
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
@@ -259,6 +277,10 @@ init 1700 python hide:
 
         renpy.load_module("_developer/developer")
         renpy.load_module("_developer/inspector")
+
+# Used by renpy.return() to return.
+label _renpy_return:
+    return
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym

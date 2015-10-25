@@ -121,3 +121,11 @@ translate arabic strings:
     old "iOS"
     new "iOS نظام تشغيل"
 
+# Translation updated at 2015-06-19 08:55
+
+translate arabic strings:
+
+    # game/front_page.rpy:198
+    old "images"
+    new "الصور"
+

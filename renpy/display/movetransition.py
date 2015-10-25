@@ -351,7 +351,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
         self.new = new
 
         # Should we display the old displayable?
-        self.use_old = False
+        self.use_old = use_old
 
         # Time warp function or None.
         self.time_warp = time_warp

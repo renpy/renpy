@@ -130,6 +130,7 @@ screen front_page:
 
     if project.current is not None:
         textbutton _("Launch Project") action project.Launch() style "l_right_button"
+        key "K_F5" action project.Launch()
 
 
 

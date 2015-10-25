@@ -483,6 +483,7 @@ class MultiBox(Container):
 
         rv.children = self._list_type(i.parameterize('displayable', [ ]) for i in self.children)
         rv.offsets = self._list_type()
+        rv.start_times = self._list_type(self.start_times)
 
         return rv
 
@@ -650,8 +651,18 @@ class MultiBox(Container):
 
                 if rv is None:
 
-                    if self.style.fit_first:
-                        width, height = surf.get_size()
+                    ff = self.style.fit_first
+
+                    if ff:
+                        w, h = surf.get_size()
+
+                        if ff == "width":
+                            width = w
+                        elif ff == "height":
+                            height = h
+                        else:
+                            width = w
+                            height = h
 
                     rv = renpy.display.render.Render(width, height, layer_name=self.layer_name)
 
@@ -858,7 +869,6 @@ class MultiBox(Container):
 
 
     def event(self, ev, x, y, st):
-
 
         children_offsets = zip(self.children, self.offsets, self.start_times)
 
@@ -1938,6 +1948,9 @@ class Flatten(Container):
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(tex, (0, 0))
         rv.depends_on(cr, focus=True)
+
+        rv.reverse = renpy.display.draw.draw_to_virt
+        rv.forward = renpy.display.render.IDENTITY
 
         self.offsets = [ (0, 0) ]
 

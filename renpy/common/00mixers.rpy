@@ -84,3 +84,4 @@ init 1600:
                 else:
                     renpy.music.set_music(i, False, default=True)
 
+        _preferences.init_mixers()

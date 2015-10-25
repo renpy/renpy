@@ -37,6 +37,10 @@ cdef class Glyph:
         # The x and y coordinates of the placed character.
         public short x, y
 
+        # The change in the amount this character was shifted to the right
+        # when adjusting placement.
+        public short delta_x_offset
+
         # The character we use.
         public unsigned int character
 
