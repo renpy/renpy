@@ -81,7 +81,7 @@ init -1500 python in iap:
 
             return False
 
-        def consume(self, p)
+        def consume(self, p):
             """
             Attempts to consume a `p`. Returns True if a `p` has been purchased
             and consumed, or False if not.
@@ -262,7 +262,7 @@ init -1500 python in iap:
             identifier = objc_str(self.identifier(p))
             return self.helper.hasPurchased_(identifier)
 
-        def consume(self, p)
+        def consume(self, p):
             identifier = objc_str(self.identifier(p))
             return self.helper.hasPurchasedConsumable_(identifier)
 
