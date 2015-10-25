@@ -37,7 +37,6 @@ def load_mappings():
         pygame_sdl2.controller.add_mappings(f)
         f.close()
     except:
-        raise
         pass
 
     try:
