@@ -316,6 +316,9 @@ def main():
     renpy.game.exception_info = 'While loading the script.'
     renpy.game.script = renpy.script.Script()
 
+    if renpy.session.get("compile", False):
+        renpy.game.args.compile = True
+
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
     renpy.style.build_styles() # @UndefinedVariable
