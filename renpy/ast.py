@@ -1913,6 +1913,7 @@ class Translate(Node):
         "identifier",
         "language",
         "block",
+        "after",
         ]
 
     def __init__(self, loc, identifier, language, block):
@@ -1932,11 +1933,16 @@ class Translate(Node):
         else:
             self.next = next
 
+        self.after = next
+
     def replace_next(self, old, new):
         Node.replace_next(self, old, new)
 
         if self.block and (self.block[0] is old):
             self.block.insert(0, new)
+
+        if self.after is old:
+            self.after = new
 
     def execute(self):
 

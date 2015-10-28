@@ -146,7 +146,7 @@ class ScriptTranslator(object):
                 continue
 
             translate = self.language_translates[identifier, language]
-            next_node = self.default_translates[identifier].next
+            next_node = self.default_translates[identifier].after
 
             renpy.ast.chain_block(translate.block, next_node)
 
