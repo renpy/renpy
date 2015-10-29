@@ -31,7 +31,7 @@
     # game/new_project.rpy:40
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "Bitte wählen Sie eine Vorlage für Ihr neues Projekt. Die Vorlage legt die Standard-Schriftart fest und die Sprache der Benutzeroberfläche. Wenn Ihre Sprache nicht verfügbar ist, wählen Sie bitte 'english'."
-    
+
     # game/new_project.rpy:71
     old "The projects directory could not be set. Giving up."
     new "Das Projektverzeichnis konnte nicht festgelegt werden."

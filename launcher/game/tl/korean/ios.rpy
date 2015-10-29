@@ -75,7 +75,7 @@
     # game/ios.rpy:266
     old "Launch Xcode"
     new "Xcode 실행하기"
-    
+
     # game/ios.rpy:301
     old "Open Xcode Projects Directory"
     new "Xcode 프로젝트 경로 열기"

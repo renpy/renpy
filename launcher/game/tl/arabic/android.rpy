@@ -176,7 +176,7 @@ translate arabic strings:
     # game/android.rpy:326
     old "Build, Install & Launch"
     new "بناء,تنصيب و إقلاع."
-    
+
 # : Translation updated at 2015-06-19 08:55
 
 translate arabic strings:

@@ -7,7 +7,7 @@
 # eg. image eileen happy = "eileen_happy.png"
 
 # Declare characters used by this game.
-# - Declara los personajes usados en el juego como en el 
+# - Declara los personajes usados en el juego como en el
 #   ejemplo.
 define e = Character('Eileen', color="#c8ffc8")
 

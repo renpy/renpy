@@ -1,4 +1,4 @@
-
+﻿
 translate traditional_chinese strings:
 
     # game/front_page.rpy:79
@@ -75,7 +75,7 @@ translate traditional_chinese strings:
 
 
 translate traditional_chinese strings:
-    
+
     # game/front_page.rpy:69
     old "PROJECTS:"
     new "專案列表："

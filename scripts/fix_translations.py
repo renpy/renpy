@@ -9,8 +9,6 @@ ENDINGS = [
     ".rpy",
     ]
 
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
-
 def process_file(fn):
 
     for i in ENDINGS:
@@ -30,6 +28,9 @@ def process_file(fn):
             if l.startswith("# TODO: Translation updated"):
                 continue
 
+            l = l.rstrip()
+            l = l + "\n"
+
             lines.append(l)
 
     with open(fn, "wb") as f:
@@ -41,6 +42,9 @@ def process(root):
         for fn in files:
             fn = os.path.join(dirname, fn)
             process_file(fn)
+
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 process("launcher/game/tl")
 process("templates")

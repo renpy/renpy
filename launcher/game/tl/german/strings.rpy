@@ -98,7 +98,7 @@ translate german strings:
 
     old "Generate Translations"
     new "Übersetzungen generieren"
-    
+
 translate german strings:
 
     old "Editra"

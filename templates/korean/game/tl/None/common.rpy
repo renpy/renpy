@@ -207,7 +207,7 @@ translate None strings:
     # renpy/common/00layout.rpy:439
     old "Are you sure?"
     new "정말입니까?"
-    
+
     # renpy/common/00layout.rpy:440
     old "Are you sure you want to delete this save?"
     new "이 세이브 파일을 지우겠습니까?"

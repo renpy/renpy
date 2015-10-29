@@ -7,4 +7,4 @@
     # game/about.rpy:25
     old "View license"
     new "Voir la licence"
-    
+

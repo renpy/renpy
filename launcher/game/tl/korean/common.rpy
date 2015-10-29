@@ -188,7 +188,7 @@ translate korean strings:
     # renpy/common/00gltest.rpy:197
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
     new "{b}* 주의{/b}/n 마이크로소프트의 다이렉트X 웹 설치 프로그램은 기본적으로 Bing 툴바를 설치합니다. 이 툴바를 설치하고 싶지 않다면 체크 박스의 체크 표시를 해제하세요."
-    
+
     # renpy/common/00gltest.rpy:201
     old "When setup finishes, please click below to restart this program."
     new "설치가 완료되면 아래 버튼을 눌러 프로그램을 다시 시작하세요."
@@ -214,7 +214,7 @@ translate korean strings:
     # renpy/common/00layout.rpy:439
     old "Are you sure?"
     new "정말입니까?"
-    
+
     # renpy/common/00layout.rpy:440
     old "Are you sure you want to delete this save?"
     new "이 세이브 파일을 지우겠습니까?"
@@ -479,7 +479,7 @@ translate korean strings:
     # renpy/common/_errorhandling.rpym:553
     old "Opens the errors.txt file in a text editor."
     new "errors.txt 파일을 스크립트 에디터로 엽니다."
-    
+
 
 translate korean strings:
 

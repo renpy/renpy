@@ -38,7 +38,7 @@ init -1 python hide:
     # 主題
 
     ## We then want to call a theme function. theme.roundrect is
-    ## a theme that features the use of rounded rectangles. 
+    ## a theme that features the use of rounded rectangles.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
@@ -163,7 +163,7 @@ init -1 python hide:
     ## buttons have their own styles.
     ## 以上設定，可以變更某些文本的大小。
     ## 對其他都設定為他們自己的按鈕的文本樣式。
-    
+
 
 
     #########################################
@@ -306,9 +306,9 @@ init -1 python hide:
     ## game is run. To have them run a second time, delete
     ## game/saves/persistent
     ## 注釋：僅當運行的遊戲第一次來計算的值時，此選項才可用。
-    ## 如果你想要應用的修改後的遊戲值請返回到 
+    ## 如果你想要應用的修改後的遊戲值請返回到
     ## game/saves/persistent 請刪除該檔。
-   
+
     ## Should we start in fullscreen mode?
     ## 全螢幕模式嗎？
 

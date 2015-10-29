@@ -126,7 +126,7 @@ translate None strings:
      # renpy/common/00layout.rpy:440
     old "Are you sure you want to delete this save?"
     new "您确定您要删掉这份存档吗？"
-    
+
 
 translate None strings:
 
@@ -222,7 +222,7 @@ translate None strings:
     # renpy/common/_errorhandling.rpym:450
     old "Opens the traceback.txt file in a text editor."
     new "在文本编辑器中打开日志（traceback.txt）。"
-    
+
     # renpy/common/_errorhandling.rpym:456
     old "Quits the game."
     new "离开游戏。"
