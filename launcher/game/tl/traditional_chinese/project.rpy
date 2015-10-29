@@ -1,4 +1,4 @@
-﻿
+
 translate traditional_chinese strings:
 
     # game/project.rpy:196
@@ -55,12 +55,4 @@ translate traditional_chinese strings:
     # game/project.rpy:585
     old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
     new "Ren'Py 無法運行 python 的 tkinter 來選擇專案目錄。請安裝 python-tk 或 tkinter。"
-
-# Translation updated at 2014-10-18 06:00
-
-translate traditional_chinese strings:
-
-    # game/project.rpy:47
-    old "Have you backed up your projects recently?"
-    new "您最近有備份您的專案嗎？"
 

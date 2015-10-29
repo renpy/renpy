@@ -1,4 +1,4 @@
-﻿
+
 translate traditional_chinese strings:
 
     # game/editor.rpy:120
@@ -35,7 +35,7 @@ translate traditional_chinese strings:
 
     # game/editor.rpy:393
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
-    new "文字編輯器是您用於編輯 Ren'py 腳本的程式。在這裡您可以選擇 Ren'py 會使用到編輯器。如果選定則編輯器將會自動下載並安裝。"
+    new "文字編輯器就是您用於編輯 Ren'py 腳本的程式。這裡您可以選擇 Ren'py 會使用的編輯器。如果選定則編輯器將會自動下載並安裝。"
 
     # game/editor.rpy:415
     old "Cancel"
@@ -55,12 +55,4 @@ translate traditional_chinese strings:
     # game/editor.rpy:180
     old "Prevents Ren'Py from opening a text editor."
     new "防止 Ren'Py 開啟文字編輯器。"
-
-# Translation updated at 2014-10-18 06:00
-
-translate traditional_chinese strings:
-
-    # game/editor.rpy:167
-    old "This may have occured because wxPython is not installed on this system."
-    new "這可能是因為 wxPython 沒有被安裝在當前系統中而發生的。"
 

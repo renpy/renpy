@@ -1,4 +1,4 @@
-﻿
+
 translate traditional_chinese strings:
 
     # game/distribute_gui.rpy:139

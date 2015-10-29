@@ -496,15 +496,3 @@ translate traditional_chinese strings:
 
 
 
-# Translation updated at 2014-10-18 06:00
-
-translate traditional_chinese strings:
-
-    # renpy/common/_developer/inspector.rpym:80
-    old "Location"
-    new "位置"
-
-    # renpy/common/00preferences.rpy:373
-    old "Self-voicing enabled. Press 'v' to disable."
-    new "Self-voicing 啟用。可按下 'v' 來禁用。"
-

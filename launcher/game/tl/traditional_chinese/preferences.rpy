@@ -1,4 +1,4 @@
-﻿
+
 translate traditional_chinese strings:
 
     # game/preferences.rpy:40
@@ -63,20 +63,4 @@ translate traditional_chinese strings:
     # game/preferences.rpy:146
     old "Show templates"
     new "顯示模版"
-
-    # game/preferences.rpy:165
-    old "Large fonts"
-    new "大字體"
-
-# Translation updated at 2014-10-18 06:00
-
-translate traditional_chinese strings:
-
-    # game/preferences.rpy:91
-    old "Projects directory: [text]"
-    new "專案資料夾： [text]"
-
-    # game/preferences.rpy:114
-    old "Text editor: [text]"
-    new "文字編輯器： [text]"
 

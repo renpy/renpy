@@ -1,4 +1,4 @@
-﻿
+
 translate traditional_chinese strings:
 
     # game/front_page.rpy:79
@@ -75,7 +75,7 @@ translate traditional_chinese strings:
 
 
 translate traditional_chinese strings:
-
+    
     # game/front_page.rpy:69
     old "PROJECTS:"
     new "專案列表："
@@ -90,24 +90,4 @@ translate traditional_chinese strings:
     # game/front_page.rpy:217
     old "Extract Dialogue"
     new "產生對話框"
-
-# Translation updated at 2014-10-18 06:00
-
-translate traditional_chinese strings:
-
-    # game/front_page.rpy:35
-    old "Open [text] directory."
-    new "開啟 [text] 目錄。"
-
-    # game/front_page.rpy:150
-    old "Select project [text]."
-    new "選擇專案 [text]。"
-
-    # game/front_page.rpy:234
-    old "Force Recompile"
-    new "強制重編譯"
-
-    # game/front_page.rpy:285
-    old "Recompiling all rpy files into rpyc files..."
-    new "重編譯所有 rpy 檔案為 rpyc 檔案……"
 
