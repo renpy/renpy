@@ -746,23 +746,13 @@ class SWDraw(object):
         else:
             fsflag = 0
 
-        # If a window exists of the right size and flags, use it. Otherwise,
-        # make our own window.
-        old_screen = pygame.display.get_surface()
+        # Don't reuse the old screen, because doing so fails to update
+        # properly on Xorg.
 
         scaled_width = int(width * scale_factor)
         scaled_height = int(height * scale_factor)
 
-        if ((old_screen is not None) and
-            (old_screen.get_size() == (scaled_width, scaled_height)) and
-            (old_screen.get_flags() & pygame.FULLSCREEN == fsflag) and
-            not (old_screen.get_flags() & pygame.OPENGL)
-            ):
-
-            self.screen = old_screen
-
-        else:
-            self.screen = pygame.display.set_mode((scaled_width, scaled_height), fsflag, 32)
+        self.screen = pygame.display.set_mode((scaled_width, scaled_height), fsflag, 32)
 
         if scale_factor != 1.0:
             self.window = surface(width, height, True)
