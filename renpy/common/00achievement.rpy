@@ -94,9 +94,21 @@ init -1500 python in achievement:
             persistent._achievement_progress[name] = max(complete, old)
 
     def merge(old, new, current):
+        if old is None:
+            old = set()
+
+        if new is None:
+            new = set()
+
         return old | new
 
     def merge_progress(old, new, current):
+
+        if old is None:
+            old = { }
+        if new is None:
+            new = { }
+
         rv = _dict()
         rv.update(old)
 
