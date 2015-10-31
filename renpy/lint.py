@@ -109,9 +109,14 @@ def try_compile(where, expr, additional=None):
 # The sets of names + attributes that we know are valid.
 imprecise_cache = set()
 
-# Determines if the name is a plausible image. (That is, there is a at least
-# one image with that tag and those attributes.)
 def image_exists_imprecise(name):
+    """
+    Returns true if the image is a plausible image that can be used in a show
+    statement. This returns true if at least one image exists with the same
+    tag and containing all of the attributes (and none of the removed attributes).
+    """
+
+
     if name in imprecise_cache:
         return True
 
@@ -145,6 +150,35 @@ def image_exists_imprecise(name):
     return False
 
 
+precise_cache = set()
+
+def image_exists_precise(name):
+    """
+    Returns true if an image exists with the same tag and attributes as
+    `name`. (The attributes are allowed to occur in any order.)
+    """
+
+    if name in precise_cache:
+        return True
+
+    nametag = name[0]
+
+    required = set(name[1:])
+
+    for im in renpy.display.image.images:
+
+        if im[0] != nametag:
+            continue
+
+        attrs = set(im[1:])
+
+        if attrs == required:
+            precise_cache.add(name)
+            return True
+
+    return False
+
+
 # This reports an error if we're sure that the image with the given name
 # does not exist.
 def image_exists(name, expression, tag, precise=True):
@@ -171,8 +205,12 @@ def image_exists(name, expression, tag, precise=True):
 
     # If we're not precise, then we have to start looking for images
     # that we can possibly match.
-    if not precise and image_exists_imprecise(name):
-        return
+    if precise:
+        if image_exists_precise(name):
+            return
+    else:
+        if image_exists_imprecise(name):
+            return
 
     report("The image named '%s' was not declared.", names)
 
