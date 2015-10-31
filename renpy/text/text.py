@@ -540,7 +540,7 @@ class Layout(object):
         #
         # This takes information from the various styles that apply to the text,
         # and so needs to be redone when the style of the text changes.
-        self.paragraphs = self.segment(text.tokens, style, renders)
+        self.paragraphs = self.segment(text.tokens, style, renders, text)
 
         first_indent = self.scale_int(style.first_indent)
         rest_indent = self.scale_int(style.rest_indent)
@@ -803,7 +803,7 @@ class Layout(object):
     def unscale_pair(self, x, y):
         return x / self.oversample, y / self.oversample
 
-    def segment(self, tokens, style, renders):
+    def segment(self, tokens, style, renders, text_displayable):
         """
         Breaks the text up into segments. This creates a list of paragraphs,
         which each paragraph being represented as a list of TextSegment, glyph
@@ -937,7 +937,7 @@ class Layout(object):
                 link = len(self.hyperlink_targets) + 1
                 self.hyperlink_targets[link] = value
 
-                if renpy.display.focus.argument == link:
+                if (renpy.display.focus.get_focused() is text_displayable) and (renpy.display.focus.argument == link):
                     hls.set_prefix("hover_")
                 else:
                     hls.set_prefix("idle_")
@@ -1510,6 +1510,7 @@ class Text(renpy.display.core.Displayable):
         """
 
         key = id(self)
+
         layout_cache_old.pop(key, None)
         layout_cache_new.pop(key, None)
 
