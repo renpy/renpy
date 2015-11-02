@@ -69,6 +69,9 @@ The new :var:`config.save_on_mobile_background` and :var:`config.quit_on_mobile_
 make it possible to adopt various strategies to deal with an Android or
 iOS app losing focus.
 
+To help apps comply with an Apple policy on the purchase of money cheats,
+consumable in-app purchases have been added for iOS only.
+
 Other
 -----
 
@@ -87,7 +90,7 @@ Skipping is now disabled when leaving a Replay.
 
 Creator-defined statements can now return statements to be predicted.
 
-The Finnish translation has been updated.
+The Finnish and Traditional Chinese translations have been updated.
 
 The new :propref:`adjust_spacing` style property has been added. It
 controls if the spacing of drawable-resolution text is adjusted to match
@@ -113,6 +116,12 @@ The following bugs have been fixed:
   with characters defined in the character namespace.
 * Newlines surrounding certain text tags would not be rendered.
 * Underlines could have small spaces in them when the window was scaled.
+* Problems with the software renderer on various hardware.
+* A problem where lint would not recognize an image name with reordered
+  attributes in the scene statement.
+* A crash when merging achievements from multiple instances of a game.
+* Having multiple text blocks, all with at least one hyperlink,
+  could cause hyperlinks to be higlighted incorrectly.
 * Various documentation problems.
 
 
