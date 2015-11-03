@@ -38,6 +38,40 @@ images = { }
 image_attributes = collections.defaultdict(list)
 
 
+def get_available_image_tags():
+    """
+    :doc: image_func
+
+    Returns a list of image tags that have been defined.
+    """
+
+    return [ k for k, v in image_attributes.keys() if v ]
+
+def get_available_image_attributes(tag, attributes=()):
+    """
+    :doc: image_func
+
+    Returns a list of tuples, with each tuple representing a possible
+    combination of image attributes that can be associated with `tag`.
+    If `attributes` is given, only images that contain all the attributes
+    in that iterable are returned.
+    """
+
+    rv = [ ]
+
+    if tag not in image_attributes:
+        return rv
+
+    for at in image_attributes[tag]:
+        for a in attributes:
+            if a not in at:
+                break
+        else:
+            rv.append(at)
+
+    return rv
+
+
 def register_image(name, d):
     """
     Registers the existence of an image with `name`, and that the image
@@ -530,8 +564,6 @@ class ShownImageInfo(renpy.object.Object):
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
-        """
-        """
 
         # The longest length of an image that matches.
         max_len = 0
