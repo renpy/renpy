@@ -379,6 +379,33 @@ def copy_images(old, new):
             renpy.display.image.register_image(new + k[lenold:], v)
 
 
+def can_show(name, layer='master', tag=None):
+    """
+    :doc: image_func
+
+    Determines if `name` can be used to show an image. This interprets `name`
+    as a tag and attributes. This is combined with the attributes of the
+    currently-showing image with `tag` on `layer` to try to determine a unique image
+    to show. If a unique image can be show, returns the name of that image as
+    a tuple. Otherwise, returns None.
+
+    `tag`
+        The image tag to get attributes from. If not given, defaults to the first
+        component of `name`.
+    """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    if tag is None:
+        tag = name[0]
+
+    try:
+        return renpy.game.context().images.apply_attributes(layer, tag, name)
+    except:
+        return None
+
+
 def showing(name, layer='master'):
     """
     :doc: image_func
