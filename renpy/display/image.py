@@ -45,7 +45,7 @@ def get_available_image_tags():
     Returns a list of image tags that have been defined.
     """
 
-    return [ k for k, v in image_attributes.keys() if v ]
+    return [ k for k, v in image_attributes.items() if v ]
 
 def get_available_image_attributes(tag, attributes=()):
     """
