@@ -841,12 +841,10 @@ class Layout(object):
 
         def fill_empty_line():
             for i in line:
-                if isinstance(i, (TextSegment, SpaceSegment, DisplayableSegment)):
+                if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
                     return
 
             line.extend(tss[-1].subsegment(u" "))
-
-
 
         for type, text in tokens: #@ReservedAssignment
 
