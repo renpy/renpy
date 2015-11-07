@@ -127,9 +127,6 @@ def interpolate(t, a, b, type): #@ReservedAssignment
     Linearly interpolate the arguments.
     """
 
-    if t >= 1.0:
-        return b
-
     # Recurse into tuples.
     if isinstance(b, tuple):
         if a is None:
