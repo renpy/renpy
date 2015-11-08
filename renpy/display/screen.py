@@ -1189,7 +1189,16 @@ def show_overlay_screens(suppress_overlay):
     Called from interact to show or hide the overlay screens.
     """
 
-    if renpy.store._overlay_screens and not suppress_overlay:
+    show = not suppress_overlay
+
+    if renpy.store._overlay_screens is None:
+        show = show
+    if renpy.store._overlay_screens is True:
+        show = True
+    else:
+        show = False
+
+    if show:
 
         for i in renpy.config.overlay_screens:
             if get_screen(i) is None:
