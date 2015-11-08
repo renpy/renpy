@@ -875,24 +875,39 @@ def get_screen(name, layer="screens"):
     """
     :doc: screens
 
-    Returns the ScreenDisplayable with the given `tag`, on
-    `layer`. If no displayable with the tag is not found, it is
-    interpreted as screen name. If it's still not found, None is returned.
-     """
+    Returns the ScreenDisplayable with the given `name` on layer. `name`
+    is first interpreted as a tag name, and then a screen name. If the
+    screen is not showing, returns None.
+
+    This can also take a list of names, in which case the first screen
+    that is showing is returned.
+
+    This function can be used to check if a screen is showing, using code
+    like::
+
+        if renpy.get_screen("say"):
+            text "The say screen is showing."
+        else:
+            text "The say screen is hidden."
+
+    """
 
     if isinstance(name, basestring):
-        name = tuple(name.split())
-
-    tag = name[0]
+        name = (name, )
 
     sl = renpy.exports.scene_lists()
 
-    sd = sl.get_displayable_by_tag(layer, tag)
+    for tag in name:
 
-    if sd is None:
+        sd = sl.get_displayable_by_tag(layer, tag)
+        if sd is not None:
+            return sd
+
         sd = sl.get_displayable_by_name(layer, name)
+        if sd is not None:
+            return sd
 
-    return sd
+    return None
 
 
 def has_screen(name):
