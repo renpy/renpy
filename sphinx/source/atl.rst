@@ -542,8 +542,9 @@ Warpers
 A warper is a function that can change the amount of time an interpolation
 statement considers to have elapsed. The following warpers are defined by
 default. They are defined as functions from t to t', where t and t' are
-floating point numbers between 0.0 and 1.0. (If the statement has 0 duration,
-than t is 1.0 when it runs.)
+floating point numbers, with t ranging from 0.0 to 1.0 over the given
+amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
+t' should start at 0.0 and end at 1.0, but can be greater or less.
 
 ``pause``
     Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t'
