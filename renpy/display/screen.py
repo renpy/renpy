@@ -1183,3 +1183,20 @@ def before_restart():
             if isinstance(i, ScreenDisplayable):
                 i.restarting = True
 
+
+def show_overlay_screens(suppress_overlay):
+    """
+    Called from interact to show or hide the overlay screens.
+    """
+
+    if renpy.store._overlay_screens and not suppress_overlay:
+
+        for i in renpy.config.overlay_screens:
+            if get_screen(i) is None:
+                show_screen(i)
+
+    else:
+
+        for i in renpy.config.overlay_screens:
+            if get_screen(i) is not None:
+                hide_screen(i)

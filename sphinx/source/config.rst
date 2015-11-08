@@ -587,6 +587,12 @@ Occasionally Used
     A list of functions. When called, each function is expected to
     use ui functions to add displayables to the overlay layer.
 
+.. var:: config.overlay_screens = [ ... ]
+
+    A list of screens that are displayed when the overlay is enabled,
+    and hidden when the overlay is supressed. (The screens are shown
+    on the screens layer, not the overlay layer.)
+
 .. var:: config.python_callbacks = [ ]
 
     A list of functions. The functions in this list are called, without

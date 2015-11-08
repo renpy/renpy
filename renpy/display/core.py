@@ -2396,6 +2396,9 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
+        # Show default screens.
+        renpy.display.screen.show_overlay_screens(suppress_overlay)
+
         # Prepare screens, if need be.
         renpy.display.screen.prepare_screens()
 
