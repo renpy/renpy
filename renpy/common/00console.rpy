@@ -53,6 +53,7 @@ init -1500:
 
     style _console_input_text is _console_text:
         color "#fafafa"
+        adjust_spacing False
 
     style _console_history is _default:
         background "#00000000"
