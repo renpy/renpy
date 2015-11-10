@@ -179,6 +179,32 @@ init -1500 python:
             return SetDict(persistent._character_volume, voice_tag, volume)
 
     @renpy.pure
+    class PlayCharacterVoice(Action):
+        """
+        :doc: voice_action
+
+        This plays `sample` on the voice channel, as if said by a
+        character with `voice_tag`.
+
+        `sample`
+            The full path to a sound file. No voice-related handling
+            of this file is done.
+        """
+
+        def __init__(self, voice_tag, sample):
+            self.voice_tag = voice_tag
+            self.sample = sample
+
+        def __call__(self):
+            if self.voice_tag in persistent._voice_mute:
+                return
+
+            volume = persistent._character_volume.get(self.voice_tag, 1.0)
+            renpy.music.get_channel("voice").set_volume(volume)
+
+            renpy.sound.play(self.sample, channel="voice")
+
+    @renpy.pure
     class ToggleVoiceMute(Action, DictEquality):
         """
         :doc: voice_action
