@@ -379,7 +379,30 @@ def copy_images(old, new):
             renpy.display.image.register_image(new + k[lenold:], v)
 
 
-def can_show(name, layer='master', tag=None):
+def default_layer(layer, tag, expression=False):
+    """
+    :undocumented:
+
+    If layer is not None, returns it. Otherwise, interprets `tag` as a name
+    or tag, then looks up what the default layer for that tag is, and returns
+    the result.
+    """
+
+    if layer is not None:
+        return layer
+
+    if expression:
+        return 'master'
+
+    if isinstance(tag, tuple):
+        tag = tag[0]
+    elif " " in tag:
+        tag = tag.split()[0]
+
+    return renpy.config.tag_layer.get(tag, renpy.config.default_tag_layer)
+
+
+def can_show(name, layer=None, tag=None):
     """
     :doc: image_func
 
@@ -392,6 +415,9 @@ def can_show(name, layer='master', tag=None):
     `tag`
         The image tag to get attributes from. If not given, defaults to the first
         component of `name`.
+
+    `layer`
+        The layer to check. If None, uses the default layer for `tag`.
     """
 
     if not isinstance(name, tuple):
@@ -399,6 +425,8 @@ def can_show(name, layer='master', tag=None):
 
     if tag is None:
         tag = name[0]
+
+    layer = default_layer(layer, None)
 
     try:
         return renpy.game.context().images.apply_attributes(layer, tag, name)
@@ -417,10 +445,16 @@ def showing(name, layer='master'):
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
         only the image tag.
+
+
+    `layer`
+        The layer to check. If None, uses the default layer for `tag`.
     """
 
     if not isinstance(name, tuple):
         name = tuple(name.split())
+
+    layer = default_layer(layer, name)
 
     return renpy.game.context().images.showing(layer, name)
 
@@ -433,7 +467,7 @@ def get_showing_tags(layer='master'):
 
     return renpy.game.context().images.get_showing_tags(layer)
 
-def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
+def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
     """
     :undocumented:
 
@@ -443,7 +477,7 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
         The name of the image to show, a string.
 
     `layer`
-        The layer the image is being show non.
+        The layer the image is being shown on.
 
     `what`
         What is being show - if given, overrides `name`.
@@ -456,6 +490,8 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
     """
 
     key = tag or name[0]
+
+    layer = default_layer(key, layer)
 
     if what is None:
         what = name
@@ -488,7 +524,7 @@ def predict_show(name, layer='master', what=None, tag=None, at_list=[ ]):
     renpy.display.predict.displayable(img)
 
 
-def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
+def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
     :args: (name, at_list=[ ], layer='master', what=None, zorder=0, tag=None, behind=[ ])
@@ -505,7 +541,8 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
 
     `layer`
         A string, giving the name of the layer on which the image will be shown.
-        The equivalent of the ``onlayer`` property.
+        The equivalent of the ``onlayer`` property. If None, uses the default
+        layer associated with the tag.
 
     `what`
         If not None, this is a displayable that will be shown in lieu of
@@ -539,6 +576,8 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
 
     sls = scene_lists()
     key = tag or name[0]
+
+    layer = default_layer(layer, key)
 
     if renpy.config.sticky_positions:
         if not at_list and key in sls.at_list[layer]:
@@ -597,7 +636,7 @@ def show(name, at_list=[ ], layer='master', what=None, zorder=None, tag=None, be
     sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient)
 
 
-def hide(name, layer='master'):
+def hide(name, layer=None):
     """
     :doc: se_images
 
@@ -608,7 +647,8 @@ def hide(name, layer='master'):
          any image with the tag is hidden (the precise name does not matter).
 
     `layer`
-         The layer on which this function operates.
+         The layer on which this function operates. If None, uses the default
+         layer associated with the tag.
     """
 
     if renpy.game.context().init_phase:
@@ -619,6 +659,9 @@ def hide(name, layer='master'):
 
     sls = scene_lists()
     key = name[0]
+
+    layer = default_layer(layer, key)
+
     sls.remove(layer, key)
 
     if renpy.config.missing_hide:
@@ -642,6 +685,9 @@ def scene(layer='master'):
         $ renpy.scene()
         $ renpy.show("bg beach")
     """
+
+    if layer is None:
+        layer = 'master'
 
     if renpy.game.context().init_phase:
         raise Exception("Scene may not run while in init phase.")
@@ -1893,19 +1939,22 @@ def image_size(im):
     return surf.get_size()
 
 
-def get_at_list(name, layer='master'):
+def get_at_list(name, layer=None):
     """
     :doc: se_images
 
     Returns the list of transforms being applied to the image with tag `name`
     on `layer`. Returns an empty list if no transofrms are being applied, or
     None if the image is not shown.
+
+    If `layer` is None, uses the default layer for the given tag.
     """
 
     if isinstance(name, basestring):
         name = tuple(name.split())
 
     tag = name[0]
+    layer = default_layer(layer, tag)
 
     return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
 
@@ -2243,9 +2292,13 @@ def get_image_bounds(tag, width=None, height=None, layer='master'):
     `width`, `height`
         The width and height of the area that contains the image. If None,
         defaults the width and height of the screen, respectively.
+
+    `layer`
+        If None, uses the default layer for `tag`.
     """
 
     tag = tag.split()[0]
+    layer = default_layer(layer, tag)
 
     if width is None:
         width = renpy.config.screen_width
@@ -2608,19 +2661,25 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer='master')
 
     If not_showing is True, this only returns a side image if the image the
     attributes are taken from is not on the screen.
+
+    If `layer` is None, uses the default layer for the currently showing
+    tag.
     """
 
     images = renpy.game.context().images
 
     if image_tag is not None:
-        attrs = (image_tag,) + images.get_attributes(layer, image_tag)
+        image_layer = default_layer(layer, image_tag)
+        attrs = (image_tag,) + images.get_attributes(image_layer, image_tag)
     else:
         attrs = renpy.store._side_image_attributes
 
     if not attrs:
         return None
 
-    if not_showing and images.showing(layer, (attrs[0], )):
+    attr_layer = default_layer(layer, attrs)
+
+    if not_showing and images.showing(attr_layer, (attrs[0], )):
         return None
 
     required = set()

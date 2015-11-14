@@ -503,6 +503,9 @@ class ShownImageInfo(renpy.object.Object):
         Predicts the scene statement being called on layer.
         """
 
+        if layer is None:
+            layer = 'master'
+
         for l, t in self.attributes.keys():
             if l == layer:
                 del self.attributes[l, t]

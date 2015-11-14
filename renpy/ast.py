@@ -983,12 +983,13 @@ def predict_imspec(imspec, scene=False, atl=None):
         except:
             pass
 
-
     if atl is not None:
         try:
             at_list.append(renpy.display.motion.ATLTransform(atl))
         except:
             pass
+
+    layer = renpy.exports.default_layer(layer, tag or name, expression)
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
@@ -1022,6 +1023,8 @@ def show_imspec(imspec, atl=None):
         expression = renpy.easy.displayable(expression)
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
+
+    layer = renpy.exports.default_layer(layer, tag or name, expression)
 
     renpy.config.show(name,
                       at_list=at_list,
@@ -1197,6 +1200,8 @@ class Hide(Node):
         if tag is None:
             tag = name[0]
 
+        layer = renpy.exports.default_layer(layer, tag)
+
         renpy.game.context().images.predict_hide(tag, layer)
 
         return [ self.next ]
@@ -1215,6 +1220,8 @@ class Hide(Node):
             name, _expression, tag, _at_list, layer, _zorder = self.imspec
         elif len(self.imspec) == 7:
             name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
+
+        layer = renpy.exports.default_layer(layer, tag or name)
 
         renpy.config.hide(tag or name, layer)
 

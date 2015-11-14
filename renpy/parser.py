@@ -1165,11 +1165,6 @@ def parse_image_specifier(l):
 
         break
 
-    if layer is None:
-        layer = 'master'
-
-
-
     return image_name, expression, tag, at_list, layer, zorder, behind
 
 def parse_with(l, node):

@@ -634,6 +634,12 @@ pass_joystick_events = False
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
 
+# A map from tag to the default layer that tag should be displayed on.
+tag_layer = { }
+
+# The default layer for tags not in in tag_layer.
+default_tag_layer = 'master'
+
 del renpy
 del os
 

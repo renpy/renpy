@@ -278,13 +278,15 @@ def check_show(node, precise):
 
     name, expression, tag, at_list, layer, _zorder, _behind = imspec(node.imspec)
 
+    layer = renpy.exports.default_layer(layer, tag or name)
+
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report("Uses layer '%s', which is not in config.layers.", layer)
 
     image_exists(name, expression, tag, precise=precise)
 
     for i in at_list:
-        try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
+        try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to define or misspelled a transform.")
 
 
 def precheck_show(node):
@@ -304,14 +306,14 @@ def check_hide(node):
 
     tag = tag or name[0]
 
+    layer = renpy.exports.default_layer(layer, tag)
+
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report("Uses layer '%s', which is not in config.layers.", layer)
 
     if tag not in image_prefixes:
         report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
 
-    # for i in at_list:
-    #    try_eval(node, "at list of hide statment", i)
 
 def check_with(node):
     try_eval("a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
