@@ -3055,3 +3055,56 @@ def clear_line_log():
 
     renpy.game.context().line_log = [ ]
 
+def add_layer(layer, above=None, below=None, menu_clear=True):
+    """
+    :doc: other
+
+    Adds a new layer to the screen. If the layer already exists, this
+    function does nothing.
+
+    One of `behind` or `above` must be given.
+
+    `layer`
+        A string giving the name of the new layer to add.
+
+    `above`
+        If not None, a string giving the name of a layer the new layer will
+        be placed above.
+
+    `below`
+        If not None, a string giving the name of a layer the new layer will
+        be placed below.
+
+    `menu_clear`
+        If true, this layer will be cleared when entering the game menu
+        context, and restored when leaving the
+    """
+
+    layers = renpy.config.layers
+
+    if layer in renpy.config.layers:
+        return
+
+    if (above is not None) and (below is not None):
+        raise Exception("The above and below arguments to renpy.add_layer are mutually exclusive.")
+
+    elif above is not None:
+        try:
+            index = layers.index(above) + 1
+        except ValueError:
+            raise Exception("Layer '%s' does not exist." % above)
+
+    elif below is not None:
+        try:
+            index = layers.index(below)
+        except ValueError:
+            raise Exception("Layer '%s' does not exist." % below)
+
+    else:
+        raise Exception("The renpy.add_layer function requires either the above or below argument.")
+
+    layers.insert(index, layer)
+
+    if menu_clear:
+        renpy.config.menu_clear_layers.append(layer) # @UndefinedVariable
+

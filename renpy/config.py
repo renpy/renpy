@@ -149,7 +149,7 @@ transient_layers = [ 'transient' ]
 # overlays.
 overlay_layers = [ 'overlay' ]
 
-# A list of layers that should be cleared whe we enter a
+# A list of layers that should be cleared when we enter a
 # new context.
 context_clear_layers = [ 'screens' ]
 
