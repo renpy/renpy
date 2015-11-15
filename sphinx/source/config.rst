@@ -363,6 +363,10 @@ Occasionally Used
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
 
+.. var:: config.default_tag_layer = "master:
+
+    The layer an image is show on if its tag is not found in config.tag_layer.
+
 .. var:: config.default_transform = ...
 
     When a displayable is shown using the show or scene statements,
@@ -653,6 +657,13 @@ Occasionally Used
     The dictionary passed to the callbacks may have already have keys
     beginning with an underscore (_). These keys are used by Ren'Py,
     and should not be changed.
+
+.. var:: config.tag_layer = { }
+
+    A dictionary mapping image tag strings to layer name strings. When
+    an image is shown without a specific layer name, the image's tag is
+    looked up in this dictionary to get the layer to show it on. If the
+    tag is not found here, :var:`config.default_tag_name` is used.
 
 .. var:: config.thumbnail_height = 75
 
