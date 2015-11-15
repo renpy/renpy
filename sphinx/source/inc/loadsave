@@ -4,6 +4,11 @@
     
     Returns true if `filename` exists as a save slot, and False otherwise.
 
+.. function:: renpy.copy_save(old, new)
+    
+    Copies the save at `old` to `new`. (Does nothing if `old` does not
+    exist.)
+
 .. function:: renpy.list_saved_games(regexp='.', fast=False)
     
     Lists the save games. For each save game, returns a tuple containing:

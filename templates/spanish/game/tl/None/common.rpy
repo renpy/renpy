@@ -1,4 +1,4 @@
-translate None strings:
+﻿translate None strings:
 
     # renpy/common/_layout/classic_load_save.rpym:152
     old "a"
@@ -330,7 +330,7 @@ translate None strings:
 
     # renpy/common/_developer/developer.rpym:58
     old "Image Location Picker"
-    new "Image Location Picker"
+    new "Selector de posición en imágenes"
 
     # renpy/common/_developer/developer.rpym:61
     old "Filename List"
@@ -452,3 +452,86 @@ translate None strings:
     old "{b}Missing Images{/b}"
     new "{b}Imágenes ausentes{/b}"
 
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "Autorecarga"
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "Ubicación"
+
+    # renpy/common/00preferences.rpy:373
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "Self-voicing activado. Presiona 'v' para desactivarlo."
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "'Portapapeles a voz' activado. Pulsa 'Mayús.+C' para desactivarlo."
+
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "El Actualizador de Ren'Py no es compatible con dispositivos móviles."
+
+    # renpy/common/00updater.rpy:478
+    old "An error is being simulated."
+    new "Se simula un error."
+
+    # renpy/common/00updater.rpy:654
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "O bien este proyecto no es compatible con la actualización o el archivo de estado de la actualización se ha eliminado."
+
+    # renpy/common/00updater.rpy:668
+    old "This account does not have permission to perform an update."
+    new "Esta cuenta no tiene permiso para realizar una actualización."
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to write the update log."
+    new "Esta cuenta no tiene permiso para escribir en el registro de actualización."
+
+    # renpy/common/00updater.rpy:696
+    old "Could not verify update signature."
+    new "No se pudo verificar la actualización de firmas."
+
+    # renpy/common/00updater.rpy:956
+    old "The update file was not downloaded."
+    new "El archivo de actualización no se ha descargado."
+
+    # renpy/common/00updater.rpy:974
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "El archivo de actualización no tiene el 'digest' correcto - es posible que esté dañado."
+
+    # renpy/common/00updater.rpy:1030
+    old "While unpacking {}, unknown type {}."
+    new "Tipo desconocido {1} al desempaquetar {0}."
+
+    # renpy/common/_developer/developer.rpym:437
+    old "Rectangle copied to clipboard."
+    new "Rectángulo copiado al portapapeles."
+
+    # renpy/common/_developer/developer.rpym:440
+    old "Position copied to clipboard."
+    new "Posición copiada al portapapeles."
+
+    # renpy/common/_errorhandling.rpym:544
+    old "Copy to Clipboard"
+    new "Copiar al portapapeles"
+
+    # renpy/common/_errorhandling.rpym:546
+    old "Copies the traceback.txt file to the clipboard."
+    new "Copia el archivo traceback.txt al portapapeles."
+
+    # renpy/common/_errorhandling.rpym:613
+    old "Copies the errors.txt file to the clipboard."
+    new "Copia el archivo errors.txt al portapapeles."
+
+    # renpy/common/00gltest.rpy:91
+    old "Gamepad"
+    new "Mando"
+
+    # renpy/common/00gltest.rpy:95
+    old "Enable"
+    new "Activar"
+
+    # renpy/common/00gltest.rpy:99
+    old "Disable"
+    new "Desactivar"

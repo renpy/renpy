@@ -196,9 +196,10 @@ Ren'Py statements are made of a few basic parts.
     contains some sequence of characters, and ends with the same quote
     character.
 
-    The backslash character (\) is used to escape quotes, special
-    characters such as % (written as \%) and { (written as \{). It's
-    also used to include newlines, using the \n sequence.
+    The backslash character (\\) is used to escape quotes, special
+    characters such as % (written as \\%), [ (written as \\[), and
+    { (written as \\{). It's also used to include newlines, using the \\n
+    sequence.
 
     Inside a Ren'Py string, consecutive whitespace is compressed into
     a single whitespace character, unless a space is preceded by a
@@ -287,8 +288,7 @@ Here's a synopsis of python expressions.
 
 :dfn:`True, False, None`
     There are three special values. ``True`` is a true value, ``False`` is
-    a false value. ``None`` represents the absence of a value. For
-    example,
+    a false value. ``None`` represents the absence of a value.
 
 :dfn:`Tuple`
     Tuples are used to represent containers where the number of items
@@ -299,7 +299,7 @@ Here's a synopsis of python expressions.
     Tuples begin with a left-parenthesis ``(``, consist of zero or
     more comma-separated python expressions, and end with a
     right-parenthesis ``)``. As a special case, the one-item tuple
-    must have a parenthesis following the item. For example::
+    must have a comma following the item. For example::
 
         ()
         (1,)

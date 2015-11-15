@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -86,23 +86,22 @@ def first_not_none(*args):
 
 class TransformState(renpy.object.Object):
 
-    nearest = False
+    nearest = None
     xoffset = None
     yoffset = None
-    default_xpos = None
-    default_ypos = None
-    default_xanchor = None
-    default_yanchor = None
-    default_xoffset = None
-    default_yoffset = None
+    inherited_xpos = None
+    inherited_ypos = None
+    inherited_xanchor = None
+    inherited_yanchor = None
     transform_anchor = False
     additive = 0.0
     debug = None
     events = True
+    crop_relative = False
 
-    def __init__(self): # W0231
+    def __init__(self):
         self.alpha = 1
-        self.nearest = False
+        self.nearest = None
         self.additive = 0.0
         self.rotate = None
         self.rotate_pad = True
@@ -126,6 +125,7 @@ class TransformState(renpy.object.Object):
         self.subpixel = False
 
         self.crop = None
+        self.crop_relative = False
         self.corner1 = None
         self.corner2 = None
         self.size = None
@@ -141,12 +141,16 @@ class TransformState(renpy.object.Object):
         # - renpy.atl.PROPERTIES
         # - Proxies in Transform
 
-        # Default values for various properties, taken from our
-        # parent.
-        self.default_xpos = None
-        self.default_ypos = None
-        self.default_xanchor = None
-        self.default_yanchor = None
+
+        # An xpos (etc) inherited from our child overrides an xpos inherited
+        # from an old transform, but not an xpos set in the current transform.
+        #
+        # inherited_xpos stores the inherited_xpos, which is overridden by the
+        # xpos, if not None.
+        self.inherited_xpos = None
+        self.inherited_ypos = None
+        self.inherited_xanchor = None
+        self.inherited_yanchor = None
 
     def take_state(self, ts):
 
@@ -165,9 +169,8 @@ class TransformState(renpy.object.Object):
         self.xanchoraround = ts.xanchoraround
         self.yanchoraround = ts.yanchoraround
 
-        self.subpixel = ts.subpixel
-
         self.crop = ts.crop
+        self.crop_relative = ts.crop_relative
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
         self.size = ts.size
@@ -177,13 +180,17 @@ class TransformState(renpy.object.Object):
 
         # Take the computed position properties, not the
         # raw ones.
-        (self.default_xpos,
-         self.default_ypos,
-         self.default_xanchor,
-         self.default_yanchor,
-         self.xoffset,
-         self.yoffset,
-         self.subpixel) = ts.get_placement()
+        (self.inherited_xpos,
+         self.inherited_ypos,
+         self.inherited_xanchor,
+         self.inherited_yanchor,
+         _,
+         _,
+         _) = ts.get_placement()
+
+        self.xoffset = ts.xoffset
+        self.yoffset = ts.yoffset
+        self.subpixel = ts.subpixel
 
     # Returns a dict, with p -> (old, new) where p is a property that
     # has changed between this object and the new object.
@@ -195,14 +202,14 @@ class TransformState(renpy.object.Object):
             if new != old:
                 rv[prop] = (old, new)
 
-        def diff4(prop, new, default_new, old, default_old):
+        def diff4(prop, new, inherited_new, old, inherited_old):
             if new is None:
-                new_value = default_new
+                new_value = inherited_new
             else:
                 new_value = new
 
             if old is None:
-                old_value = default_old
+                old_value = inherited_old
             else:
                 old_value = old
 
@@ -227,17 +234,18 @@ class TransformState(renpy.object.Object):
         diff2("subpixel", newts.subpixel, self.subpixel)
 
         diff2("crop", newts.crop, self.crop)
+        diff2("crop_relative", newts.crop_relative, self.crop_relative)
         diff2("corner1", newts.corner1, self.corner1)
         diff2("corner2", newts.corner2, self.corner2)
         diff2("size", newts.size, self.size)
 
-        diff4("xpos", newts.xpos, newts.default_xpos, self.xpos, self.default_xpos)
+        diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
 
-        diff4("xanchor", newts.xanchor, newts.default_xanchor, self.xanchor, self.default_xanchor)
+        diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
         diff2("xoffset", newts.xoffset, self.xoffset)
 
-        diff4("ypos", newts.ypos, newts.default_ypos, self.ypos, self.default_ypos)
-        diff4("yanchor", newts.yanchor, newts.default_yanchor, self.yanchor, self.default_yanchor)
+        diff4("ypos", newts.ypos, newts.inherited_ypos, self.ypos, self.inherited_ypos)
+        diff4("yanchor", newts.yanchor, newts.inherited_yanchor, self.yanchor, self.inherited_yanchor)
         diff2("yoffset", newts.yoffset, self.yoffset)
 
         diff2("debug", newts.debug, self.debug)
@@ -248,10 +256,10 @@ class TransformState(renpy.object.Object):
     def get_placement(self, cxoffset=0, cyoffset=0):
 
         return (
-            first_not_none(self.xpos, self.default_xpos),
-            first_not_none(self.ypos, self.default_ypos),
-            first_not_none(self.xanchor, self.default_xanchor),
-            first_not_none(self.yanchor, self.default_yanchor),
+            first_not_none(self.xpos, self.inherited_xpos),
+            first_not_none(self.ypos, self.inherited_ypos),
+            first_not_none(self.xanchor, self.inherited_xanchor),
+            first_not_none(self.yanchor, self.inherited_yanchor),
             self.xoffset + cxoffset,
             self.yoffset + cyoffset,
             self.subpixel,
@@ -291,20 +299,20 @@ class TransformState(renpy.object.Object):
     alignaround = property(get_around, set_alignaround)
 
     def get_angle(self):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return angle
 
     def get_radius(self):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         return radius
 
     def set_angle(self, value):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         angle = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
@@ -313,8 +321,8 @@ class TransformState(renpy.object.Object):
             self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
 
     def set_radius(self, value):
-        xpos = first_not_none(self.xpos, self.default_xpos, 0)
-        ypos = first_not_none(self.ypos, self.default_ypos, 0)
+        xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
+        ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
         angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
         radius = value
         self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
@@ -403,7 +411,7 @@ class Transform(Container):
     additive = Proxy("additive")
     rotate = Proxy("rotate")
     rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("anchor")
+    transform_anchor = Proxy("transform_anchor")
     zoom = Proxy("zoom")
     xzoom = Proxy("xzoom")
     yzoom = Proxy("yzoom")
@@ -431,6 +439,7 @@ class Transform(Container):
     align = Proxy("align")
 
     crop = Proxy("crop")
+    crop_relative = Proxy("crop_relative")
     corner1 = Proxy("corner1")
     corner2 = Proxy("corner2")
     size = Proxy("size")
@@ -527,54 +536,43 @@ class Transform(Container):
 
         self.state = TransformState()
 
-        self.arguments = None
-
         if kwargs:
 
-            if function is None:
+            # A map from prefix -> (prop -> value)
+            self.arguments = { }
 
-                # We are complex if we have arguments with non-empty prefixes.
-                has_prefixes = False
+            # Fill self.arguments with a
+            for k, v in kwargs.iteritems():
 
-                # A map from prefix -> (prop -> value)
-                self.arguments = { }
+                prefix = ""
+                prop = k
 
-                # Fill self.arguments with a
-                for k, v in kwargs.iteritems():
+                while True:
 
-                    prefix = ""
-                    prop = k
+                    if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
 
-                    while True:
+                        if prefix not in self.arguments:
+                            self.arguments[prefix] = { }
 
-                        if prop in renpy.atl.PROPERTIES and (not prefix or prefix in Transform.DEFAULT_ARGUMENTS):
+                        self.arguments[prefix][prop] = v
+                        break
 
-                            if prefix not in self.arguments:
-                                self.arguments[prefix] = { }
+                    new_prefix, _, prop = prop.partition("_")
 
-                            self.arguments[prefix][prop] = v
+                    if not prop:
+                        raise Exception("Unknown transform property: %r" % k)
 
-                            if prefix:
-                                has_prefixes = True
+                    if prefix:
+                        prefix = prefix + "_" + new_prefix
+                    else:
+                        prefix = new_prefix
 
-                            break
+            if "" in self.arguments:
+                for k, v in self.arguments[""].iteritems():
+                    setattr(self.state, k, v)
 
-                        new_prefix, _, prop = prop.partition("_")
-
-                        if not prop:
-                            raise Exception("Unknown transform property: %r" % k)
-
-                        if prefix:
-                            prefix = prefix + "_" + new_prefix
-                        else:
-                            prefix = new_prefix
-
-                if not has_prefixes:
-                    self.arguments = None
-
-            # Apply keyword arguments to self.state.
-            for prop, value in kwargs.iteritems():
-                setattr(self.state, prop, value)
+        else:
+            self.arguments = None
 
         # This is the matrix transforming our coordinates into child coordinates.
         self.forward = None
@@ -646,6 +644,12 @@ class Transform(Container):
         Takes the transformation state from object t into this object.
         """
 
+        if self is t:
+            return
+
+        if not isinstance(t, Transform):
+            return
+
         self.state.take_state(t.state)
 
         # The arguments will be applied when the default function is
@@ -657,6 +661,12 @@ class Transform(Container):
         Takes the execution state from object t into this object. This is
         overridden by renpy.atl.TransformBase.
         """
+
+        if self is t:
+            return
+
+        if not isinstance(t, Transform):
+            return
 
         self.hide_request = t.hide_request
         self.replaced_request = t.replaced_request
@@ -698,6 +708,16 @@ class Transform(Container):
 
         if not self.child:
             return None
+
+        # Prevent time from ticking backwards, as can happen if we replace a
+        # transform but keep its state.
+        if st + self.st_offset <= self.st:
+            self.st_offset = self.st - st
+        if at + self.at_offset <= self.at:
+            self.at_offset = self.at - at
+
+        self.st = st = st + self.st_offset
+        self.at = at = at + self.at_offset
 
         if not (self.hide_request or self.replaced_request):
             d = self.copy()
@@ -748,36 +768,24 @@ class Transform(Container):
         This updates the state to that at self.st, self.at.
         """
 
+        self.hide_response = True
+        self.replaced_response = True
+
         # If we have to, call the function that updates this transform.
+        if self.arguments is not None:
+            self.default_function(self, self.st, self.at)
+
         if self.function is not None:
             fr = self.function(self, self.st, self.at)
-        else:
-            fr = self.default_function(self, self.st, self.at)
 
-        # Order a redraw, if necessary.
-        if fr is not None:
-            renpy.display.render.redraw(self, fr)
+            # Order a redraw, if necessary.
+            if fr is not None:
+                renpy.display.render.redraw(self, fr)
 
         state = self.state
 
         self.active = True
 
-        # Use non-None elements of the child placement as defaults.
-        child = self.child
-        if child is not None and renpy.config.transform_uses_child_position:
-
-            pos = child.get_placement()
-
-            if pos[0] is not None:
-                state.default_xpos = pos[0]
-            if pos[2] is not None:
-                state.default_xanchor = pos[2]
-            if pos[1] is not None:
-                state.default_ypos = pos[1]
-            if pos[3] is not None:
-                state.default_yanchor = pos[3]
-
-            state.subpixel |= pos[6]
 
     # The render method is now defined in accelerator.pyx.
 
@@ -820,6 +828,8 @@ class Transform(Container):
         # If we don't have a child for some reason, set it to null.
         if child is None:
             child = get_null()
+        else:
+            child = child.parameterize('displayable', [ ])
 
         rv = Transform(
             child=child,
@@ -837,7 +847,24 @@ class Transform(Container):
             self.update_state()
 
         if self.child is not None:
-            _cxpos, _cypos, _cxanchor, _cyanchor, cxoffset, cyoffset, _csubpixel = self.child.get_placement()
+            cxpos, cypos, cxanchor, cyanchor, cxoffset, cyoffset, csubpixel = self.child.get_placement()
+
+            # Use non-None elements of the child placement as defaults.
+            state = self.state
+
+            if renpy.config.transform_uses_child_position:
+
+                if cxpos is not None:
+                    state.inherited_xpos = cxpos
+                if cxanchor is not None:
+                    state.inherited_xanchor = cxanchor
+                if cypos is not None:
+                    state.inherited_ypos = cypos
+                if cyanchor is not None:
+                    state.inherited_yanchor = cyanchor
+
+                state.subpixel |= csubpixel
+
         else:
             cxoffset = 0
             cyoffset = 0
@@ -903,6 +930,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         Transform.__init__(self, child=child, function=self.execute, **properties)
 
         self.raw_child = self.child
+
+    def __repr__(self):
+        return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
 
     def _show(self):
         super(ATLTransform, self)._show()
@@ -986,19 +1016,7 @@ class Motion(Container):
         self.position = None
 
 
-    def get_placement(self):
-
-        if self.position is None:
-            return super(Motion, self).get_placement()
-        else:
-            return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
-
-    def render(self, width, height, st, at):
-
-        if self.anim_timebase:
-            t = at
-        else:
-            t = st
+    def update_position(self, t, sizes):
 
         if renpy.game.less_updates:
             if self.delay:
@@ -1033,11 +1051,8 @@ class Motion(Container):
             if t > 1.0:
                 t = 2.0 - t
 
-        child = render(self.child, width, height, st, at)
-        cw, ch = child.get_size()
-
         if self.add_sizes:
-            res = self.function(t, (width, height, cw, ch))
+            res = self.function(t, sizes)
         else:
             res = self.function(t)
 
@@ -1047,6 +1062,30 @@ class Motion(Container):
             self.position = res + (self.style.xanchor, self.style.yanchor)
         else:
             self.position = res
+
+    def get_placement(self):
+
+        if self.position is None:
+            if self.add_sizes:
+                # Almost certainly gives the wrong placement, but there's nothing
+                # we can do.
+                return super(Motion, self).get_placement()
+            else:
+                self.update_position(0.0, None)
+
+        return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
+
+    def render(self, width, height, st, at):
+
+        if self.anim_timebase:
+            t = at
+        else:
+            t = st
+
+        child = render(self.child, width, height, st, at)
+        cw, ch = child.get_size()
+
+        self.update_position(t, (width, height, cw, ch))
 
         rv = renpy.display.render.Render(cw, ch)
         rv.blit(child, (0, 0))
@@ -1076,19 +1115,8 @@ class Interpolate(object):
 
     def __call__(self, t, sizes=(None, None, None, None)):
 
-        def interp(a, b, c):
-
-            if c is not None:
-                if type(a) is float:
-                    a = a * c
-                if type(b) is float:
-                    b = b * c
-
-            rv = a + t * (b - a)
-
-            return renpy.display.core.absolute(rv)
-
-        return [ interp(a, b, c) for a, b, c in zip(self.start, self.end, sizes) ]
+        types = (renpy.atl.position,) * len(self.start)
+        return renpy.atl.interpolate(t, tuple(self.start), tuple(self.end), types)
 
 
 def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -1137,7 +1165,6 @@ def Pan(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   style=style,
                   anim_timebase=anim_timebase,
                   time_warp=time_warp,
-                  add_sizes=True,
                   **properties)
 
 def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
@@ -1181,7 +1208,6 @@ def Move(startpos, endpos, time, child=None, repeat=False, bounce=False,
                   anim_timebase=anim_timebase,
                   style=style,
                   time_warp=time_warp,
-                  add_sizes=True,
                   **properties)
 
 

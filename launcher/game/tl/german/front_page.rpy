@@ -19,7 +19,7 @@
     # game/front_page.rpy:206
     old "Extract Dialogue"
     new "Dialoge extrahieren"
-    
+
     # game/front_page.rpy:144
     old "[p.name!q] (template)"
     new "[p.name!q] (Vorlage)"

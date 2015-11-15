@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,13 +57,9 @@ def extra_imports():
     import tarfile; tarfile
     import bz2; bz2  # @UnresolvedImport
     import webbrowser; webbrowser
-    import pygame.locals; pygame.locals
-    import pygame.color; pygame.color
-    import pygame.colordict; pygame.colordict
     import posixpath; posixpath
     import ctypes; ctypes
     import ctypes.wintypes; ctypes.wintypes
-    import EasyDialogs; EasyDialogs #@UnresolvedImport
     import argparse; argparse
     import compiler; compiler
     import textwrap; textwrap
@@ -74,6 +70,8 @@ def extra_imports():
     import rsa; rsa
     import decimal; decimal
     import plistlib; plistlib
+    import _renpysteam; _renpysteam
+    import compileall; compileall
 
 class NullFile(io.IOBase):
     """
@@ -135,6 +133,10 @@ def bootstrap(renpy_base):
 
     os.environ["RENPY_BASE"] = os.path.abspath(renpy_base)
 
+    # Remove a legacy environment setting.
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
+
     renpy_base = unicode(renpy_base, FSENCODING, "replace")
 
     # If environment.txt exists, load it into the os.environ dictionary.
@@ -168,12 +170,6 @@ def bootstrap(renpy_base):
     import renpy.arguments
     args = renpy.arguments.bootstrap()
 
-    # Since we don't have time to fully initialize before running the presplash
-    # command, handle it specially.
-    if args.command == "presplash":
-        import renpy.display.presplash
-        renpy.display.presplash.show(sys.argv[3])
-
     if args.trace:
         enable_trace(args.trace)
 
@@ -181,6 +177,10 @@ def bootstrap(renpy_base):
         basedir = os.path.abspath(args.basedir).decode(FSENCODING)
     else:
         basedir = renpy_base
+
+    if not os.path.exists(basedir):
+        sys.stderr.write("Base directory %r does not exist. Giving up.\n" % (basedir,))
+        sys.exit(1)
 
 
     gamedirs = [ name ]
@@ -208,12 +208,8 @@ def bootstrap(renpy_base):
 
     sys.path.insert(0, basedir)
 
-    # Force windib on windows, unless the user explicitly overrides.
-    if renpy.windows and not 'SDL_VIDEODRIVER' in os.environ:
-        os.environ['SDL_VIDEODRIVER'] = 'windib'
-
     # If we're not given a command, show the presplash.
-    if args.command == "run":
+    if args.command == "run" and not renpy.mobile:
         import renpy.display.presplash #@Reimport
         renpy.display.presplash.start(basedir, gamedir)
 
@@ -221,17 +217,17 @@ def bootstrap(renpy_base):
     if renpy.macintosh:
         os.startfile = mac_start
 
-
     # Check that we have installed pygame properly. This also deals with
     # weird cases on Windows and Linux where we can't import modules. (On
     # windows ";" is a directory separator in PATH, so if it's in a parent
     # directory, we won't get the libraries in the PATH, and hence pygame
     # won't import.)
     try:
-        import pygame; pygame
+        import pygame_sdl2
+        pygame_sdl2.import_as_pygame()
     except:
         print >>sys.stderr, """\
-Could not import pygame. Please ensure that this program has been built
+Could not import pygame_sdl2. Please ensure that this program has been built
 and unpacked properly. Also, make sure that the directories containing
 this program do not contain : or ; in their names.
 
@@ -300,7 +296,10 @@ You may be using a system install of python. Please run {0}.sh,
                 exit_status = e.status
 
                 if e.relaunch:
-                    subprocess.Popen([sys.executable, "-EO"] + sys.argv)
+                    if hasattr(sys, "renpy_executable"):
+                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])
+                    else:
+                        subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
             except renpy.game.ParseErrorException:
                 pass

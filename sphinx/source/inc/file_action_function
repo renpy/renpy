@@ -23,6 +23,8 @@
     Otherwise, this returns json[key] if `key` is defined on the json object of the save,
     `missing` if there is a save with the given name, but it does not contain `key`, or
     `empty` if the save slot is empty.
+    
+    Json is added to a save slot by callbacks registered using :var:`config.save_json_callbacks`.
 
 .. function:: FileLoadable(name, page=None)
     

@@ -98,7 +98,7 @@ translate german strings:
 
     old "Generate Translations"
     new "Übersetzungen generieren"
-    
+
 translate german strings:
 
     old "Editra"
@@ -166,7 +166,6 @@ translate german strings:
     old "It looks like you're ready to start packaging games."
     new "Es sieht aus, als wären Sie bereit, Spiele zu erstellen."
 
-# TODO: Translation updated at 2014-05-02 13:54
 
 translate german strings:
 
@@ -179,7 +178,6 @@ translate german strings:
     old "Japanese"
     new "Japanese"
 
-# TODO: Translation updated at 2014-05-02 14:07
 
 translate german strings:
 

@@ -1,5 +1,5 @@
 
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -160,7 +160,10 @@ def unelide_filename(fn):
 
     return fn
 
-def list_logical_lines(filename, filedata=None):
+# The filename that the start and end positions are relative to.
+original_filename = ""
+
+def list_logical_lines(filename, filedata=None, linenumber=1):
     """
     Reads `filename`, and divides it into logical lines.
 
@@ -170,15 +173,16 @@ def list_logical_lines(filename, filedata=None):
     contents. In that case, `filename` need not exist.
     """
 
+    global original_filename
+
+    original_filename = filename
+
     if filedata:
         data = filedata
     else:
         f = codecs.open(filename, "r", "utf-8")
         data = f.read()
         f.close()
-
-    data = data.replace("\r\n", "\n")
-    data = data.replace("\r", "\n")
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
@@ -190,7 +194,7 @@ def list_logical_lines(filename, filedata=None):
     rv = []
 
     # The line number in the physical file.
-    number = 1
+    number = linenumber
 
     # The current position we're looking at in the buffer.
     pos = 0
@@ -198,6 +202,11 @@ def list_logical_lines(filename, filedata=None):
     # Skip the BOM, if any.
     if len(data) and data[0] == u'\ufeff':
         pos += 1
+
+    if renpy.game.context().init_phase:
+        lines = renpy.scriptedit.lines
+    else:
+        lines = { }
 
     # Looping over the lines in the file.
     while pos < len(data):
@@ -211,16 +220,17 @@ def list_logical_lines(filename, filedata=None):
         # The number of open parenthesis there are right now.
         parendepth = 0
 
-        # Looping over the characters in a single logical line.
+        loc = (filename, start_number)
+        lines[loc] = renpy.scriptedit.Line(original_filename, start_number, pos)
+
+        endpos = None
+
         while pos < len(data):
 
             c = data[pos]
 
             if c == '\t':
                 raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
-
-            if c == '\n':
-                number += 1
 
             if c == '\n' and not parendepth:
                 # If not blank...
@@ -229,10 +239,31 @@ def list_logical_lines(filename, filedata=None):
                     # Add to the results.
                     rv.append((filename, start_number, line))
 
+                    if endpos is None:
+                        endpos = pos
+
+                    lines[loc].end_delim = endpos + 1
+
+                    while data[endpos-1] in ' \r':
+                        endpos -= 1
+
+                    lines[loc].end = endpos
+                    lines[loc].text = data[lines[loc].start:lines[loc].end]
+
                 pos += 1
+                number += 1
+                endpos = None
                 # This helps out error checking.
                 line = ""
                 break
+
+            if c == '\n':
+                number += 1
+                endpos = None
+
+            if c == "\r":
+                pos += 1
+                continue
 
             # Backslash/newline.
             if c == "\\" and data[pos+1] == "\n":
@@ -250,6 +281,8 @@ def list_logical_lines(filename, filedata=None):
 
             # Comments.
             if c == '#':
+                endpos = pos
+
                 while data[pos] != '\n':
                     pos += 1
 
@@ -269,6 +302,10 @@ def list_logical_lines(filename, filedata=None):
 
                     if c == '\n':
                         number += 1
+
+                    if c == '\r':
+                        pos += 1
+                        continue
 
                     if escape:
                         escape = False
@@ -305,8 +342,6 @@ def list_logical_lines(filename, filedata=None):
                 raise ParseError(filename, start_number, "Overly long logical line. (Check strings and parenthesis.)", line=line, first=True)
 
             pos = m.end(0)
-
-            # print repr(data[pos:])
 
 
     if not line == "":
@@ -413,11 +448,6 @@ KEYWORDS = set([
             ])
 
 OPERATORS = [
-        'or\b',
-        'and\b',
-        'not\b',
-        'in\b',
-        'is\b',
         '<',
         '<=',
         '>',
@@ -440,7 +470,15 @@ OPERATORS = [
         '**',
         ]
 
-operator_regexp = "|".join(re.escape(i) for i in OPERATORS)
+ESCAPED_OPERATORS = [
+        r'\bor\b',
+        r'\band\b',
+        r'\bnot\b',
+        r'\bin\b',
+        r'\bis\b',
+    ]
+
+operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
 
 word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
 
@@ -648,6 +686,7 @@ class Lexer(object):
 
             s = s.replace("\\n", "\n")
             s = s.replace("\\{", "{{")
+            s = s.replace("\\[", "[[")
             s = s.replace("\\%", "%%")
             s = re.sub(r'\\u([0-9a-fA-F]{1,4})',
                        lambda m : unichr(int(m.group(1), 16)), s)
@@ -1126,11 +1165,6 @@ def parse_image_specifier(l):
 
         break
 
-    if layer is None:
-        layer = 'master'
-
-
-
     return image_name, expression, tag, at_list, layer, zorder, behind
 
 def parse_with(l, node):
@@ -1598,7 +1632,12 @@ def call_statement(l, loc):
         name = l.require(l.name)
         rv.append(ast.Label(loc, name, [], None))
     else:
-        rv.append(ast.Pass(loc))
+        if expression:
+            renpy.add_from.report_missing("expression", original_filename, renpy.scriptedit.lines[loc].end)
+        else:
+            renpy.add_from.report_missing(target, original_filename, renpy.scriptedit.lines[loc].end)
+
+    rv.append(ast.Pass(loc))
 
     l.expect_eol()
     l.advance()
@@ -1705,7 +1744,12 @@ def image_statement(l, loc):
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         l.require('=')
+
         expr = l.rest()
+
+        if not expr:
+            l.error('expected expression')
+
         atl = None
         l.expect_noblock('image statement')
 
@@ -1728,13 +1772,56 @@ def define_statement(l, loc):
     else:
         priority = 0
 
+    store = 'store'
     name = l.require(l.name)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.name)
+
     l.require('=')
     expr = l.rest()
 
+    if not expr:
+        l.error("expected expression")
+
     l.expect_noblock('define statement')
 
-    rv = ast.Define(loc, name, expr)
+    rv = ast.Define(loc, store, name, expr)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], priority)
+
+    l.advance()
+
+    return rv
+
+
+@statement("default")
+def default_statement(l, loc):
+
+    priority = l.integer()
+    if priority:
+        priority = int(priority)
+    else:
+        priority = 0
+
+    store = 'store'
+    name = l.require(l.name)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.name)
+
+    l.require('=')
+    expr = l.rest()
+
+    if not expr:
+        l.error("expected expression")
+
+    l.expect_noblock('default statement')
+
+    rv = ast.Default(loc, store, name, expr)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority)
@@ -1777,6 +1864,10 @@ def transform_statement(l, loc):
 @statement("$")
 def one_line_python(l, loc):
     python_code = l.rest()
+
+    if not python_code:
+        l.error('expected python code')
+
     l.expect_noblock('one-line python statement')
     l.advance()
 
@@ -1812,7 +1903,7 @@ def python_statement(l, loc):
 
 
 @statement("label")
-def label_statement(l, loc):
+def label_statement(l, loc, init=False):
     name = l.require(l.name)
 
     parameters = parse_parameters(l)
@@ -1827,11 +1918,14 @@ def label_statement(l, loc):
 
     # Optional block here. It's empty if no block is associated with
     # this statement.
-    block = parse_block(l.subblock_lexer())
+    block = parse_block(l.subblock_lexer(init))
 
     l.advance()
     return ast.Label(loc, name, block, parameters, hide=hide)
 
+@statement("init label")
+def init_label_statement(l, loc):
+    return label_statement(l, loc, init=True)
 
 @statement("init")
 def init_statement(l, loc):
@@ -1866,7 +1960,6 @@ def init_statement(l, loc):
     return ast.Init(loc, block, priority)
 
 
-@statement("screen1")
 def screen1_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
@@ -1886,7 +1979,6 @@ def screen1_statement(l, loc):
     return rv
 
 
-@statement("screen2")
 def screen2_statement(l, loc):
 
     # The guts of screen language parsing is in screenlang.py. It
@@ -1903,10 +1995,17 @@ def screen2_statement(l, loc):
     return rv
 
 # The version of screen language to use by default.
-screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
+default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
 
 @statement("screen")
 def screen_statement(l, loc):
+
+    screen_language = default_screen_language
+
+    slver = l.integer()
+    if slver is not None:
+        screen_language = int(slver)
+
     if screen_language == 1:
         return screen1_statement(l, loc)
     elif screen_language == 2:
@@ -2222,7 +2321,7 @@ def parse_block(l):
 
     return rv
 
-def parse(fn, filedata=None):
+def parse(fn, filedata=None, linenumber=1):
     """
     Parses a Ren'Py script contained within the file `fn`.
 
@@ -2231,12 +2330,14 @@ def parse(fn, filedata=None):
 
     If `filedata` is given, it should be a unicode string giving the file
     contents.
+
+    If `linenumber` is given, the parse starts at `linenumber`.
     """
 
     renpy.game.exception_info = 'While parsing ' + fn + '.'
 
     try:
-        lines = list_logical_lines(fn, filedata)
+        lines = list_logical_lines(fn, filedata, linenumber)
         nested = group_logical_lines(lines)
     except ParseError, e:
         parse_errors.append(e.message)
@@ -2248,6 +2349,9 @@ def parse(fn, filedata=None):
 
     if parse_errors:
         return None
+
+    if rv:
+        rv.append(ast.Return( (rv[-1].filename, rv[-1].linenumber), None ))
 
     return rv
 

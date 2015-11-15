@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -96,7 +96,6 @@ init -1500 python in build:
         ( "renpy.sh", "linux mac"),
     ])
 
-
     def classify_renpy(pattern, groups):
         """
         Classifies files in the Ren'Py base directory according to pattern.
@@ -134,6 +133,7 @@ init -1500 python in build:
 
         ("tmp/", None),
         ("game/saves/", None),
+        ("game/bytecode.rpyb", None),
 
         ("archived/", None),
         ("launcherinfo.py", None),
@@ -141,11 +141,12 @@ init -1500 python in build:
 
         (".android.json", "android"),
         ("android-icon.png", "android"),
-        ("android-presplash.jpg", "android"),
+        ("android-presplash.*", "android"),
         ("android-*-icon.png", "android"),
-        ("android-*-presplash.jpg", "android"),
-        ("ouya-icon.png", "android"),
+        ("android-*-presplash.*", "android"),
         ("ouya_icon.png", "android"),
+
+        ("ios-presplash.*", "ios"),
         ])
 
     base_patterns = [ ]
@@ -308,6 +309,7 @@ init -1500 python in build:
     package("mac", "app-zip", "mac renpy all", "Macintosh x86")
     package("win", "zip", "windows renpy all", "Windows x86")
     package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
+    package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 
@@ -341,9 +343,14 @@ init -1500 python in build:
     # The destination things are built in.
     destination = "{directory_name}-dists"
 
+    # Should we allow the use of an integrated GPU on platforms that support
+    # both discrete and integrated GPUs?
+    allow_integrated_gpu = True
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
+
         rv = { }
 
         rv["directory_name"] = directory_name
@@ -361,7 +368,10 @@ init -1500 python in build:
 
         rv["exclude_empty_directories"] = exclude_empty_directories
 
+        rv["allow_integrated_gpu"] = allow_integrated_gpu
+
         rv["renpy"] = renpy
+
 
         rv["destination"] = destination.format(
             directory_name=directory_name,

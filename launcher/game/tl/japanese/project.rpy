@@ -53,3 +53,7 @@ translate japanese strings:
     old "Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."
     new "Ren'Pyはプロジェクトディレクトリー選択のためのtkinterをPythonの実行時に読み込めませんでした。python-tkもしくはtkinterパッケージをインストールして下さい。"
 
+    # game/project.rpy:47
+    old "Have you backed up your projects recently?"
+    new "最近ゲームのバックアップはしましたか？"
+

@@ -92,7 +92,7 @@ translate traditional_chinese strings:
     # game/android.rpy:431
     old "Configure"
     new "設定"
-    
+
     # game/android.rpy:516
     old "Other:"
     new "其他："
@@ -104,8 +104,8 @@ translate traditional_chinese strings:
     # game/android.rpy:439
     old "Build & Install"
     new "建立並安裝"
-    
-translate traditional_chinese strings:   
+
+translate traditional_chinese strings:
 
     # game/android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
@@ -118,11 +118,11 @@ translate traditional_chinese strings:
     # game/android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
     new "模擬一臺基於 Android 的電視，例如 OUYA 或 Fire TV。\n\n控制器的按鍵映射為 OUYA 的方向鍵，確認鍵映射為 OUYA 的 select 按鍵，Esc 按鍵映射為 OUYA 的選單鍵，PageUp 按鍵被映射到 OUYA 的返回鍵。"
- 
+
     # game/android.rpy:524
     old "Remote ADB Connect"
     new "遠端 ADB 連接"
-    
+
     # game/android.rpy:528
     old "Remote ADB Disconnect"
     new "斷開遠端 ADB 連接"
@@ -150,7 +150,7 @@ translate traditional_chinese strings:
     # game/android.rpy:629
     old "The port must be a number."
     new "埠必須是數位。"
-    
+
     # game/android.rpy:47
     old "Connects to an Android device running ADB in TCP/IP mode."
     new "在 TCP/IP 模式下運行 ADB Android 裝置。"
@@ -158,4 +158,4 @@ translate traditional_chinese strings:
     # game/android.rpy:48
     old "Disconnects from an Android device running ADB in TCP/IP mode."
     new "在 TCP/IP 模式下運行 ADB Android 裝置，並斷開連接。"
-   
+

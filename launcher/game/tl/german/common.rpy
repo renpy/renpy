@@ -3,7 +3,7 @@
     # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"
     new "%d. %b,  %H:%M"
-    
+
     # renpy/common/00action_file.rpy:587
     old "Quick save complete."
     new "Schnellspeicherung erfolgreich."
@@ -151,7 +151,7 @@ translate german strings:
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Sind Sie sicher, dass Sie zurück zum Hauptmenü möchten?\nUngespeicherter Fortschritt geht dabei verloren."
-    
+
     # renpy/common/00layout.rpy:427
     old "Are you sure you want to begin skipping?"
     new "Sind Sie sicher, dass Sie vorspulen möchten?"

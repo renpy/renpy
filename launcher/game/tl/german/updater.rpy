@@ -83,7 +83,7 @@
     # game/updater.rpy:162
     old "Proceed"
     new "Fortsetzen"
-    
+
     # game/updater.rpy:129
     old "Nightly"
     new "Nightly"

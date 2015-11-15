@@ -211,7 +211,7 @@ class, we'll present them with the `self` parameter.
 renpy.Render
 ============
 
-creator-defined displayables work with renpy.Render objects. Render
+Creator-defined displayables work with renpy.Render objects. Render
 objects are returned by calling the :func:`renpy.render` function on a
 displayable. A creator-defined displayable should create a Render object
 by calling :class:`renpy.Render` from its render method.
@@ -226,7 +226,7 @@ the implicit `self` parameter.
     `width`, `height`
         The width and height of the render object, in pixels.
 
-    .. method:: blit(source, pos)
+    .. method:: blit(source, pos, main=True)
 
         Draws another render object into this render object.
 
@@ -238,12 +238,38 @@ the implicit `self` parameter.
             with the coordinates being pixels relative to the
             upper-left corner of the target render.
 
+        `main`
+            A keyword-only parameter. If true, `source` will be displayed
+            in the style inspector.
+
+    .. method:: place(d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True)
+
+        Renders `d` and places it into the rectangle defined by the `x`, `y`,
+        `width`, and `height`, using Ren'Py's standard placement algorithm.
+
+        `x`, `y`, `width`, `height`
+            The rectangle to place in. If `width` or `height`, when None,
+            are the width and height of this render, respectively.
+
+        `st`, `at`
+            The times passed to Render. If None, defaults to the times
+            passed to the render method calling this method.
+
+        `render`
+            If not None, this is used instead of rendering `d`.
+
+        `main`
+            As for .blit().
+
     .. method:: canvas()
 
        Returns a canvas object. A canvas object has methods
        corresponding to the
        `pygame.draw <http://www.pygame.org/docs/ref/draw.html>`_
        functions, with the first parameter (the surface) omitted.
+
+       Canvas objects also have a get_surface() method that returns the
+       pygame Surface underlying the canvas.
 
     .. method:: get_size()
 
@@ -257,6 +283,13 @@ the implicit `self` parameter.
 
         `rect`
             A (x, y, width, height) tuple.
+
+    .. method:: zoom(xzoom, yzoom)
+
+        Sets the zoom level of the children of this displayable in the
+        horitzontal and vertical axes. Only the children of the displayable
+        are zoomed - the width, height, and blit coordinates are not zoomed.
+
 
 
 Utility Functions

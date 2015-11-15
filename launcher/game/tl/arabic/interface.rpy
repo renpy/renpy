@@ -1,5 +1,4 @@
-# TODO: Translation updated at 2013-04-30 07:54
-
+﻿
 translate arabic strings:
 
     # game/interface.rpy:89
@@ -82,7 +81,6 @@ translate arabic strings:
     old "QUESTION"
     new "سؤال"
 
-# TODO: Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 

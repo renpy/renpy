@@ -12,18 +12,26 @@ displayables can be used in many ways.
 * Assignment to certain style properties.
 
 When a Ren'Py function or variable expects a displayable, there are
-four things that can be provided:
+five things that can be provided:
 
 * An object of type Displayable, created by calling one of the
   functions given below.
 * A string with a dot (.) in it. Such a string is interpreted as
   a filename by :func:`Image`.
 * A color. A color may either be given as a hexadecimal color string in "#rgb",
-  "#rgba", "#rrggbb", or "#rrggbbaa" form, or an (r, g, b, a) tuple,
+  "#rgba", "#rrggbb", or "#rrggbbaa" form, a :class:`Color`, or an (r, g, b, a) tuple,
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
   image defined with the image statement.
+
+
+Strings may have one or more square-bracket substitutions in them,
+such as "eileen [mood]" or "eileen_[outfit]_[mood].png". When such a
+string is given, a dynamic image is created. A dynamic image has
+:ref:`text interpolation <text-interpolation>` performed at the start
+of each interaction (such as say statements and menus). The resulting
+string is processed according to the rules above.
 
 .. _images:
 
@@ -89,6 +97,11 @@ size (LiveComposite, LiveCrop, Null). They are not image manipulators.
 Image-like displayables take :ref:`position-style-properties`.
 
 .. include:: inc/disp_imagelike
+
+Text Displayables
+-----------------
+
+See :ref:`text-displayables`.
 
 
 Dynamic Displayables
@@ -204,3 +217,20 @@ more efficient, in both time and image cache space, than using
 two im.MatrixColors.
 
 .. include:: inc/im_matrixcolor
+
+Placeholders
+------------
+
+The Placeholder displayable is used to display background or character
+images as appropriate. Placeholders are used automatically when an undefined
+image is used in developer mode. Placeholder displayables can also be used
+manually when the defaults are inappropriate. ::
+
+    # By default, the girl placeholer will be used.
+    image sue = Placeholder("boy")
+
+    label start:
+         show sue angry
+         "Sue" "How do you do? Now you gonna die!"
+
+.. include:: inc/placeholder

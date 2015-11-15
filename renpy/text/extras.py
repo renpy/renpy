@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,6 +65,14 @@ def check_text_tags(s):
     an error, or None if there is no error.
     """
 
+    custom_tags = renpy.config.custom_text_tags
+
+    if custom_tags:
+        all_tags = dict(text_tags)
+        all_tags.update(renpy.config.custom_text_tags)
+    else:
+        all_tags = text_tags
+
     tokens = textsupport.tokenize(unicode(s))
 
     tag_stack = [ ]
@@ -91,10 +99,10 @@ def check_text_tags(s):
             tag_stack.pop()
             continue
 
-        if text not in text_tags:
+        if text not in all_tags:
             return "Text tag '%s' is not known." % text
 
-        if text_tags[text]:
+        if all_tags[text]:
             tag_stack.append(text)
 
     if tag_stack:
@@ -105,8 +113,24 @@ def check_text_tags(s):
 
 class ParameterizedText(object):
     """
-    This can be used as an image. When used, this image is expected to
-    have a single parameter, a string which is rendered as the image.
+    :doc: text
+
+    This is a displayable that can be shown with an additional string
+    parameter, which then shows that string as if it was an image.
+    This is usually used as part of the pre-defined ``text`` image.
+
+    For example, one can do::
+
+        show text "Hello, World" at truecenter
+        with dissolve
+        pause 1
+        hide text
+        with dissolve
+
+    You can use ParameterizedText directly to define similar images with
+    different style properties. For example, one can write::
+
+        image top_text = ParameterizedText(xalign=0.5, yalign=0.0)
     """
 
     def __init__(self, style='default', **properties):

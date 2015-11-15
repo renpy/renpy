@@ -1,9 +1,11 @@
 * ADVCharacter
 * ADVSpeaker
 * Action
+* :func:`AddToSet`
 * Alpha
 * :func:`AlphaBlend`
 * :func:`AlphaDissolve`
+* :func:`AlphaMask`
 * :func:`AnimatedValue`
 * Animation
 * :func:`At`
@@ -11,6 +13,7 @@
 * :class:`BarValue`
 * Button
 * :func:`Character`
+* :class:`Color`
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`
@@ -21,6 +24,7 @@
 * :class:`DragGroup`
 * DynamicCharacter
 * :func:`DynamicDisplayable`
+* :func:`DynamicImage`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
@@ -55,7 +59,7 @@
 * :func:`HBox`
 * :func:`Help`
 * :func:`Hide`
-* HideInterface
+* :func:`HideInterface`
 * :func:`If`
 * :func:`Image`
 * :func:`ImageDissolve`
@@ -89,10 +93,11 @@
 * OldMoveTransition
 * :func:`OpenURL`
 * Pan
-* ParameterizedText
+* :func:`ParameterizedText`
 * Particles
 * :func:`Pause`
 * :func:`Pixellate`
+* :func:`Placeholder`
 * Play
 * Position
 * :func:`Preference`
@@ -100,7 +105,9 @@
 * :func:`QuickLoad`
 * :func:`QuickSave`
 * :func:`Quit`
+* :func:`RemoveFromSet`
 * :func:`Replay`
+* :func:`RestartStatement`
 * :func:`Return`
 * Revolve
 * RevolveInOut
@@ -110,10 +117,13 @@
 * RoundRect
 * :func:`Screenshot`
 * :func:`SelectedIf`
+* :func:`SensitiveIf`
 * Set
+* :func:`SetCharacterVolume`
 * :func:`SetDict`
 * :func:`SetField`
 * :func:`SetMixer`
+* :func:`SetMute`
 * :func:`SetScreenVariable`
 * :func:`SetVariable`
 * :func:`SetVoiceMute`
@@ -139,7 +149,9 @@
 * :func:`Text`
 * :func:`ToggleDict`
 * :func:`ToggleField`
+* :func:`ToggleMute`
 * :func:`ToggleScreenVariable`
+* :func:`ToggleSetMembership`
 * :func:`ToggleVariable`
 * :func:`ToggleVoiceMute`
 * :class:`Tooltip`
@@ -147,6 +159,7 @@
 * :func:`VBox`
 * :func:`VariableValue`
 * Viewport
+* VoiceInfo
 * :func:`VoiceReplay`
 * Window
 * :func:`With`
@@ -155,6 +168,7 @@
 * Zoom
 * ZoomInOut
 * absolute
+* achievement
 * :var:`adv`
 * anim
 * :var:`blinds`
@@ -181,6 +195,8 @@
 * :var:`hpunch`
 * hyperlink_function
 * hyperlink_styler
+* iap
+* icon
 * im
 * :var:`irisin`
 * irisout
@@ -216,7 +232,6 @@
 * :var:`offscreenright`
 * persistent
 * :var:`pixellate`
-* predict
 * predict_menu
 * predict_say
 * python_dict
@@ -228,7 +243,6 @@
 * :var:`right`
 * :var:`save_name`
 * :var:`say`
-* skip_indicator
 * slideawaydown
 * :var:`slideawayleft`
 * slideawayright
@@ -241,6 +255,7 @@
 * store
 * style
 * suppress_overlay
+* :var:`sv`
 * sys
 * theme
 * toggle_skipping

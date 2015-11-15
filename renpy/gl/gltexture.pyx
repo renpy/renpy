@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,7 +25,10 @@ DEF ANGLE = False
 
 from gl cimport *
 from gldraw cimport *
-from pygame cimport *
+
+from sdl2 cimport *
+from pygame_sdl2 cimport *
+import_pygame_sdl2()
 
 from cpython.string cimport PyString_FromStringAndSize
 from libc.stdlib cimport calloc, free
@@ -113,10 +116,9 @@ def test_texture_sizes(Environ environ, draw):
 
     # There could be an error queued up from an ANGLE reset. Purge it before we do the
     # texture testing.
-    error = glGetError()
+    error = realGlGetError()
     if error != GL_NO_ERROR:
         renpy.display.log.write("- Ignored error at start of testing: {0:x}".format(error))
-
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &hw_max_size)
 
@@ -162,7 +164,7 @@ def test_texture_sizes(Environ environ, draw):
         # Free the bitmap.
         free(bitmap)
 
-        error = glGetError()
+        error = realGlGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error loading {0}px bitmap: {1:x}".format(size, error))
             glDeleteTextures(1, &tex)
@@ -202,7 +204,7 @@ def test_texture_sizes(Environ environ, draw):
         # Delete the texture.
         glDeleteTextures(1, &tex)
 
-        error = glGetError()
+        error = realGlGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error drawing {0}px texture: {1:x}".format(size, error))
             break
@@ -210,7 +212,7 @@ def test_texture_sizes(Environ environ, draw):
         # Check the pixel color.
         glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
 
-        error = glGetError()
+        error = realGlGetError()
         if error != GL_NO_ERROR:
             renpy.display.log.write("- Error reading {0}px texture: {1:x}".format(size, error))
             break
@@ -476,7 +478,7 @@ cdef class TextureCore:
         texnums[0] = self.number
         glDeleteTextures(1, texnums)
 
-        texture_numbers.remove(self.number)
+        texture_numbers.discard(self.number)
         total_texture_size -= self.width * self.height * 4
 
 class Texture(TextureCore):
@@ -484,6 +486,9 @@ class Texture(TextureCore):
     We need to be a real python class, not a C extension, to ensure that
     the __del__ method is called.
     """
+
+    def __sizeof__(self):
+        return TextureCore.__sizeof__(self) + self.width * self.height * 4
 
     def __getstate__(self):
         if renpy.config.developer:
@@ -833,8 +838,8 @@ def texture_grid_from_drawing(width, height, draw_func, rtt, environ):
     gldraw = renpy.display.draw
     pwidth, pheight = gldraw.physical_size
 
-    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), 0.0)
-    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), 0.0)
+    rv.columns, texcolumns = compute_tiling(width, rtt.get_size_limit(pwidth), 0.5)
+    rv.rows, texrows = compute_tiling(height, rtt.get_size_limit(pheight), 0.5)
 
     for y, height, texheight in texrows:
         row = [ ]
@@ -956,7 +961,7 @@ cpdef blit(TextureGrid tg, double sx, double sy, render.Matrix2D transform, doub
 
         y += texh
 
-cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, Environ environ):
+cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, Environ environ, bint nearest):
     """
     Blends two textures to the screen.
 
@@ -974,8 +979,8 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
     `fraction` is the fraction of the second texture to show.
     """
 
-    tg0.make_ready(False)
-    tg1.make_ready(False)
+    tg0.make_ready(nearest)
+    tg1.make_ready(nearest)
 
     environ.blend(fraction)
     environ.set_color(alpha, alpha, alpha, over * alpha)
@@ -1013,7 +1018,7 @@ cpdef blend(TextureGrid tg0, TextureGrid tg1, double sx, double sy, render.Matri
         y += t0h
 
 
-cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, int ramp, Environ environ):
+cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, double sy, render.Matrix2D transform, double alpha, double over, double fraction, int ramp, Environ environ, bint nearest):
     """
     This uses texture 0 to control the blending of tetures 1 and 2 to
     the screen.
@@ -1036,9 +1041,9 @@ cpdef imageblend(TextureGrid tg0, TextureGrid tg1, TextureGrid tg2, double sx, d
 
     """
 
-    tg0.make_ready(False)
-    tg1.make_ready(False)
-    tg2.make_ready(False)
+    tg0.make_ready(nearest)
+    tg1.make_ready(nearest)
+    tg2.make_ready(nearest)
 
     environ.imageblend(fraction, ramp)
     environ.set_color(alpha, alpha, alpha, over * alpha)
@@ -1109,7 +1114,9 @@ def premultiply(
     cdef unsigned char *out = rv
 
     # The pixels in the source image.
-    cdef unsigned char *pixels, *pixels_end
+    cdef unsigned char *pixels
+    cdef unsigned char *pixels_end
+
     cdef SDL_Surface *surf
 
     # Pointer to the current pixel.
@@ -1306,12 +1313,8 @@ cdef void draw_rectangle(
     ):
 
     """
-    This draws a rectangle (textured with up to four textures) to the
+    This draws a rectangle (textured with up to three textures) to the
     screen.
-
-    Note that this is usually implemented in C code in the Ren'Py
-    module, and that this version is for debugging.
-
 
     `sx`, `sy`
         The location in the untransformed screen coordinate of the

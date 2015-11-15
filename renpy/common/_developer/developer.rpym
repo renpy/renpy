@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -90,6 +90,7 @@ screen _developer:
             action Hide("_developer")
             size_group "developer"
 
+style _developer_default is _default
 style _developer_frame is _frame
 style _developer_vbox is _vbox
 
@@ -244,95 +245,43 @@ label _theme_test:
     return
 
 
+# Not used any more, but may be in save files.
 init -1050 python:
     config.missing_background = "black"
 
-style _missing_frame is _frame:
-    xalign 0.5
-    yalign 0.0
-    background "#0004"
-    xpadding 5
-    ypadding 5
 
-style _missing_text is _text:
-    color "#fff"
-    xalign 0.5
-
+# Not used any more, but may be in save files.
 screen _missing_images:
-    zorder -1050
-    $ missing = renpy.context().__missing
-
-    if missing:
-
-        frame:
-            style "_missing_frame"
-
-            has vbox
-
-            text _("{b}Missing Images{/b}"):
-                style "_missing_text"
-
-            for what in sorted(missing.values()):
-
-                text "[what!q]":
-                    style "_missing_text"
+    pass
 
 init 1050 python:
 
     if config.developer:
 
-        # This is used to indicate that a scene has just occured,
-        # and so if the next thing is a missing_show, we should
-        # blank the screen.
-        __missing_scene = False
-
-        # This returns the __missing dictionary from the current
-        # context object.
-        def __missing():
-            try:
-                return renpy.context().__missing
-            except AttributeError:
-                rv = dict()
-                renpy.context().__missing = rv
-                return rv
-
         def __missing_show_callback(name, what, layer):
             if layer != 'master':
                 return False
 
-            global __missing_scene
-            if __missing_scene:
-                renpy.show(name, what=config.missing_background)
-            __missing_scene = False
-
-            what = " ".join(what)
-            __missing()[name[0]] = what
-            return True
+            if not renpy.count_displayables_in_layer(layer):
+                return Placeholder("bg").parameterize((), what)
+            else:
+                return Placeholder().parameterize((), what)
 
         def __missing_hide_callback(name, layer):
             if layer != 'master':
                 return False
 
-            global __missing_scene
-            __missing_scene = False
-            __missing().pop(name[0], None)
             return True
 
         def __missing_scene_callback(layer):
             if layer != 'master':
                 return False
 
-            global __missing_scene
-            __missing_scene = True
-            __missing().clear()
-
             return True
 
         config.missing_scene = __missing_scene_callback
         config.missing_show = __missing_show_callback
         config.missing_hide = __missing_hide_callback
-
-        config.start_callbacks.append(Show("_missing_images"))
 
 
 init -1050 python:
@@ -389,6 +338,32 @@ init python:
             self.point1 = None
             self.point2 = None
 
+            self.size = (0, 0)
+
+            self.clipboard = None
+
+        def rectangle(self):
+            x1, y1 = self.point1
+            x2, y2 = self.point2
+
+            width = self.size[0]
+            height = self.size[1]
+
+            x1 = min(x1, width)
+            x2 = min(x2, width)
+            y1 = min(y1, height)
+            y2 = min(y2, height)
+
+            minx = min(x1, x2)
+            miny = min(y1, y2)
+            maxx = max(x1, x2)
+            maxy = max(y1, y2)
+
+            w = maxx - minx
+            h = maxy - miny
+
+            return (minx, miny, w, h)
+
         def render(self, width, height, st, at):
             rv = renpy.Render(width, height)
 
@@ -397,36 +372,26 @@ init python:
 
             text = [ ]
 
+            self.size = (cr.width, cr.height)
 
             if self.point1 and self.point2 and not self.point1 == self.point2:
-                x1, y1 = self.point1
-                x2, y2 = self.point2
-
-                x1 = min(x1, cr.width)
-                x2 = min(x2, cr.width)
-                y1 = min(y1, cr.height)
-                y2 = min(y2, cr.height)
-
-                minx = min(x1, x2)
-                miny = min(y1, y2)
-                maxx = max(x1, x2)
-                maxy = max(y1, y2)
-
-                w = maxx - minx
-                h = maxy - miny
+                x, y, w, h = self.rectangle()
 
                 if w and h:
 
                     sr = renpy.render(Solid("#0ff4"), w, h, st, at)
-                    rv.blit(sr, (minx, miny))
+                    rv.blit(sr, (x, y))
 
                     # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
-                    text.append(__("Rectangle: %r") % ((minx, miny, w, h),))
+                    text.append(__("Rectangle: %r") % ((x, y, w, h),))
 
             if self.mouse:
                 mx, my = self.mouse
                 if mx < cr.width and my < cr.height:
                     text.append(__("Mouse position: %r") % (self.mouse,))
+
+            if self.clipboard:
+                text.append(self.clipboard)
 
             text.append(__("Right-click or escape to quit."))
 
@@ -438,7 +403,7 @@ init python:
             return rv
 
         def event(self, ev, x, y, st):
-            import pygame
+            import pygame_sdl2 as pygame
 
             self.mouse = (x, y)
             renpy.redraw(self, 0)
@@ -452,6 +417,18 @@ init python:
 
             elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
                 self.point2 = (x, y)
+
+                x, y, w, h = self.rectangle()
+
+                if w or h:
+                    text = repr((x, y, w, h))
+                    self.clipboard = __("Rectangle copied to clipboard.")
+                else:
+                    text = repr((x, y))
+                    self.clipboard = __("Position copied to clipboard.")
+
+                import pygame.scrap
+                pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
 
 
 label _image_location_picker:
@@ -565,4 +542,5 @@ screen _image_load_log:
 
 
 init python:
-    config.underlay.append(im.Tile("_transparent_tile.png"))
+    if config.transparent_tile:
+        config.underlay.append(im.Tile("_transparent_tile.png"))

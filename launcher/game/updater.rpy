@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -54,9 +54,6 @@ init python:
 
         Returns True if the DLC is installed, False otherwise.
         """
-
-        if check_dlc(name):
-            return True
 
         if persistent.update_channel == "Nightly":
             dlc_url = UPDATE_URLS["Nightly"]

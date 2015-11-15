@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,11 +24,14 @@
 DEF ANGLE = False
 
 from libc.stdlib cimport malloc, free
-from pygame cimport *
+from sdl2 cimport *
 from gl cimport *
 
+from pygame_sdl2 cimport *
+import_pygame_sdl2()
+
 import renpy
-import pygame
+import pygame_sdl2 as pygame
 import os
 import os.path
 import weakref
@@ -39,6 +42,7 @@ cimport renpy.display.render as render
 cimport gltexture
 import gltexture
 import glblacklist
+
 
 cdef extern from "glcompat.h":
     GLenum glewInit()
@@ -54,15 +58,6 @@ cdef extern from "eglsupport.h":
     void egl_swap()
     void egl_quit()
 
-
-# This is used by gl_error_check in gl.pxd.
-class GLError(Exception):
-    """
-    This is used to report OpenGL errors.
-    """
-
-    pass
-
 # EGL is a flag we check to see if we have EGL on this platform.
 cdef bint EGL
 EGL = egl_available()
@@ -75,6 +70,17 @@ PIXELLATE = renpy.display.render.PIXELLATE
 
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
+
+FAKE_HIGHDPI = int(os.environ.get("RENPY_FAKE_HIGHDPI", "1"))
+
+# Should we try to vsync?
+vsync = True
+
+# A list of flip times, which we used to detect if vsync is failing.
+flip_times = [ ]
+
+# A list of frame end times, used for the same purpose.
+frame_times = [ ]
 
 cdef class GLDraw:
 
@@ -131,9 +137,6 @@ cdef class GLDraw:
         # The display info, from pygame.
         self.display_info = None
 
-        # The amount we're upscaling by.
-        self.upscale_factor = 1.0
-
         # Should we use the fast (but incorrect) dissolve mode?
         self.fast_dissolve = False # renpy.android
 
@@ -143,12 +146,21 @@ cdef class GLDraw:
         # Should we allow the fixed-function environment?
         self.allow_fixed = allow_fixed
 
+        # Did we do the texture test at least once?
+        self.did_texture_test = False
+
+        # Did we do a render_to_texture?
+        self.did_render_to_texture = False
+
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it
         can. It returns True if it was succesful, or False if OpenGL isn't
         working for some reason.
         """
+
+        global vsync
 
         cdef char *egl_error
 
@@ -184,17 +196,19 @@ cdef class GLDraw:
 
         vwidth, vheight = virtual_size
         pwidth, pheight = physical_size
+
+        if pwidth is None:
+            pwidth = vwidth
+            pheight = vheight
+
         virtual_ar = 1.0 * vwidth / vheight
 
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
-        if renpy.android:
-            pheight = self.display_info.current_h
-            pwidth = self.display_info.current_w
-        else:
-            pheight = min(self.display_info.current_h - 102, pheight)
+        if not renpy.mobile:
             pwidth = min(self.display_info.current_w - 102, pwidth)
+            pheight = min(self.display_info.current_h - 102, pheight)
 
             # The first time through.
             if not self.did_init:
@@ -209,33 +223,62 @@ cdef class GLDraw:
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
 
-        if EGL:
+        if ANGLE:
+            opengl = 0
+            resizable = pygame.RESIZABLE
+
+        elif EGL:
             opengl = 0
             resizable = 0
+
         elif renpy.android:
             opengl = pygame.OPENGL
             resizable = 0
+
+            pwidth = 0
+            pheight = 0
+
+        elif renpy.ios:
+            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
+            resizable = pygame.RESIZABLE
+
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
+
+            pwidth = 0
+            pheight = 0
+
         else:
-            opengl = pygame.OPENGL
-            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
-            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
 
             if renpy.config.gl_resize:
                 resizable = pygame.RESIZABLE
             else:
                 resizable = 0
 
-        try:
-            if fullscreen:
-                renpy.display.log.write("Fullscreen mode.")
-                self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | opengl | pygame.DOUBLEBUF)
-            else:
-                renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
+        if opengl:
+            pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
+            pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
-        except pygame.error, e:
-            renpy.display.log.write("Could not get pygame screen: %r", e)
-            return False
+
+        self.window = None
+
+        if fullscreen:
+            try:
+                renpy.display.log.write("Fullscreen mode.")
+                self.window = pygame.display.set_mode((0, 0), pygame.WINDOW_FULLSCREEN_DESKTOP | opengl | pygame.DOUBLEBUF)
+            except pygame.error as e:
+                renpy.display.log.write("Opening in fullscreen failed: %r", e)
+                self.window = None
+
+        if self.window is None:
+            try:
+                    renpy.display.log.write("Windowed mode.")
+                    self.window = pygame.display.set_mode((pwidth * FAKE_HIGHDPI, pheight * FAKE_HIGHDPI), resizable | opengl | pygame.DOUBLEBUF)
+
+            except pygame.error, e:
+                renpy.display.log.write("Could not get pygame screen: %r", e)
+                return False
 
         # Use EGL to get the OpenGL ES 2 context, if necessary.
         if EGL:
@@ -251,10 +294,14 @@ cdef class GLDraw:
 
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
+
+        pwidth /= FAKE_HIGHDPI
+        pheight /= FAKE_HIGHDPI
+
         self.physical_size = (pwidth, pheight)
+        self.drawable_size = pygame.display.get_drawable_size()
 
-        renpy.display.log.write("Screen sizes: virtual=%r physical=%r" % (self.virtual_size, self.physical_size))
-
+        renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
 
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
@@ -295,9 +342,21 @@ cdef class GLDraw:
             pheight - int(py_padding),
             )
 
+        # Scale from the rtt size to the virtual size.
+        if renpy.config.use_drawable_resolution:
+            self.draw_per_virt = (1.0 * self.drawable_size[0] / pwidth) * (1.0 * view_width / vwidth)
+        else:
+            self.draw_per_virt = 1.0
+
+        self.virt_to_draw = render.Matrix2D(self.draw_per_virt, 0, 0, self.draw_per_virt)
+        self.draw_to_virt = render.Matrix2D(1.0 / self.draw_per_virt, 0, 0, 1.0 / self.draw_per_virt)
+
         if not self.did_init:
             if not self.init():
                 return False
+
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            return False
 
         self.did_init = True
 
@@ -310,8 +369,6 @@ cdef class GLDraw:
 
         self.environ.init()
         self.rtt.init()
-
-        gl_check("set_mode")
 
         return True
 
@@ -388,7 +445,7 @@ cdef class GLDraw:
         if EGL:
             gltexture.use_gles()
 
-        elif renpy.android:
+        elif renpy.android or renpy.ios:
             self.redraw_period = 1.0
             self.always_opaque = True
             gltexture.use_gles()
@@ -438,7 +495,7 @@ cdef class GLDraw:
 
         # Pick a texture environment subsystem.
 
-        if EGL or renpy.android or (allow_shader and use_subsystem(
+        if EGL or renpy.android or renpy.ios or (allow_shader and use_subsystem(
             glenviron_shader,
             "RENPY_GL_ENVIRON",
             "shader",
@@ -498,26 +555,28 @@ cdef class GLDraw:
 
         # Pick a Render-to-texture method.
 
-        if glrtt_copy and os.environ.get("RENPY_GL_RTT", "copy") == "copy":
-            renpy.display.log.write("Using copy RTT.")
-            self.rtt = glrtt_copy.CopyRtt()
-            self.info["rtt"] = "copy"
-            self.rtt.init()
+        # 2015-3-3 - had a problem with 2012-era Nvidia drivers that prevented
+        # ANGLE from working with fbo on Windows.
 
-        elif (use_subsystem(
-                glrtt_fbo,
-                "RENPY_GL_RTT",
-                "fbo",
-                "GL_OES_framebuffer_object") or
+        use_fbo = (
+            renpy.ios or renpy.android or (EGL and not ANGLE) or
             use_subsystem(
                 glrtt_fbo,
                 "RENPY_GL_RTT",
                 "fbo",
-                "GL_ARB_framebuffer_object")):
+                # "GL_ARB_framebuffer_object"
+                "RENPY_bogus_extension"))
 
+        if use_fbo:
             renpy.display.log.write("Using FBO RTT.")
             self.rtt = glrtt_fbo.FboRtt()
             self.info["rtt"] = "fbo"
+            self.rtt.init()
+
+        elif glrtt_copy:
+            renpy.display.log.write("Using copy RTT.")
+            self.rtt = glrtt_copy.CopyRtt()
+            self.info["rtt"] = "copy"
             self.rtt.init()
 
         else:
@@ -528,13 +587,18 @@ cdef class GLDraw:
         renpy.display.log.write("Using {0} renderer.".format(self.info["renderer"]))
 
         # Figure out the sizes of texture that render properly.
-        rv = gltexture.test_texture_sizes(self.environ, self)
+        if not self.did_texture_test:
+            rv = gltexture.test_texture_sizes(self.environ, self)
+        else:
+            rv = True
 
         self.rtt.deinit()
         self.environ.deinit()
 
         if not rv:
             return False
+
+        self.did_texture_test = True
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()
@@ -637,47 +701,72 @@ cdef class GLDraw:
         Draws the screen.
         """
 
-        forward = reverse = IDENTITY
+        reverse = self.virt_to_draw
 
         surftree.is_opaque()
 
         self.draw_render_textures(surftree, 0)
 
-        self.environ.viewport(self.physical_box[0], self.physical_box[1], self.physical_box[2], self.physical_box[3])
-        self.environ.ortho(0, self.virtual_size[0], self.virtual_size[1], 0, -1.0, 1.0)
+        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
+        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
+
+        if reverse != IDENTITY:
+            xsize = xmul * self.physical_box[2]
+            ysize = ymul * self.physical_box[3]
+        else:
+            xsize = self.virtual_size[0]
+            ysize = self.virtual_size[1]
+
+        self.environ.viewport(xmul * self.physical_box[0], ymul * self.physical_box[1], xmul * self.physical_box[2], ymul * self.physical_box[3])
+        self.environ.ortho(0, xsize, ysize, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
 
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        self.default_clip = (0, 0, self.virtual_size[0], self.virtual_size[1])
+        self.default_clip = (0, 0, xsize, ysize)
         clip = self.default_clip
-
-        self.upscale_factor = 1.0 * self.physical_size[0] / self.virtual_size[0]
 
         if renpy.audio.music.get_playing("movie") and renpy.display.video.fullscreen:
             surf = renpy.display.video.render_movie(self.virtual_size[0], self.virtual_size[1])
             if surf is not None:
-                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, False)
+                self.draw_transformed(surf, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         else:
-            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, False)
+            self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         if flip:
 
             self.draw_mouse()
+
+            start = time.time()
 
             if EGL:
                 egl_swap()
             else:
                 pygame.display.flip()
 
+            end = time.time()
+
+            if vsync:
+
+                # When the window is covered or
+
+                flip_times.append(end - start)
+                frame_times.append(end)
+
+                if len(flip_times) > 10:
+                    flip_times.pop(0)
+                    frame_times.pop(0)
+
+                    # If we're running at over 1000 fps, vsync is broken.
+                    if (frame_times[-1] - frame_times[0] < .06 * 10) and (sum(flip_times) / len(flip_times) < .001):
+                        time.sleep(1.0 / 60.0)
+
         gltexture.cleanup()
 
-        gl_check("draw_screen")
-
-    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned):
+    cpdef int draw_render_textures(GLDraw self, what, bint non_aligned) except 1:
         """
         This is responsible for rendering things to textures,
         as necessary.
@@ -736,7 +825,8 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse,
-        bint nearest):
+        bint nearest,
+        bint subpixel) except 1:
 
         cdef render.Render rend
         cdef double cxo, cyo, tcxo, tcyo
@@ -745,6 +835,10 @@ cdef class GLDraw:
         if not isinstance(what, render.Render):
 
             if isinstance(what, gltexture.TextureGrid):
+
+                if (not subpixel) and (reverse == IDENTITY):
+                    xo = round(xo)
+                    yo = round(yo)
 
                 self.set_clip(clip)
 
@@ -763,12 +857,15 @@ cdef class GLDraw:
             if isinstance(what, pygame.Surface):
 
                 tex = self.load_texture(what)
-                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest, subpixel)
                 return 0
 
             raise Exception("Unknown drawing type. " + repr(what))
 
         rend = what
+
+        if rend.text_input:
+            renpy.display.interface.text_rect = rend.screen_rect(xo, yo, reverse)
 
         # Other draw modes.
 
@@ -780,11 +877,9 @@ cdef class GLDraw:
                 # GLES systems. The semantics are different than that
                 # of dissolve on Ren'Py proper.
 
-                self.draw_transformed(rend.children[0][0],
-                                      clip, xo, yo, alpha, over, reverse, nearest)
+                self.draw_transformed(rend.children[0][0], clip, xo, yo, alpha, over, reverse, nearest, subpixel)
 
-                self.draw_transformed(rend.children[1][0],
-                                      clip, xo, yo, alpha * what.operation_complete, over, reverse, nearest)
+                self.draw_transformed(rend.children[1][0], clip, xo, yo, alpha * what.operation_complete, over, reverse, nearest, subpixel)
 
             else:
 
@@ -795,11 +890,12 @@ cdef class GLDraw:
                     rend.children[1][0].render_to_texture(what.operation_alpha),
                     xo,
                     yo,
-                    reverse,
+                    reverse * self.draw_to_virt,
                     alpha,
                     over,
                     rend.operation_complete,
-                    self.environ)
+                    self.environ,
+                    nearest)
 
             return 0
 
@@ -813,12 +909,13 @@ cdef class GLDraw:
                 rend.children[2][0].render_to_texture(what.operation_alpha),
                 xo,
                 yo,
-                reverse,
+                reverse * self.draw_to_virt,
                 alpha,
                 over,
                 rend.operation_complete,
                 rend.operation_parameter,
-                self.environ)
+                self.environ,
+                nearest)
 
             return 0
 
@@ -854,7 +951,7 @@ cdef class GLDraw:
             # Non-aligned clipping uses RTT.
             if reverse.ydx != 0 or reverse.xdy != 0:
                 tex = what.render_to_texture(True)
-                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest)
+                self.draw_transformed(tex, clip, xo, yo, alpha, over, reverse, nearest, subpixel)
                 return 0
 
             minx, miny, maxx, maxy = clip
@@ -872,7 +969,9 @@ cdef class GLDraw:
 
         alpha = alpha * rend.alpha
         over = over * rend.over
-        nearest = nearest or rend.nearest
+
+        if rend.nearest is not None:
+            nearest = rend.nearest
 
         # If our alpha has hit 0, don't do anything.
         if alpha <= 0.003: # (1 / 256)
@@ -883,19 +982,26 @@ cdef class GLDraw:
         else:
             child_reverse = reverse
 
-        for child, cxo, cyo, focus, main in rend.visible_children:
+        for child, cx, cy, focus, main in rend.visible_children:
+
+            # The type of cx and cy depends on if this is a subpixel blit or not.
+            if type(cx) is float:
+                subpixel = True
+
+            cxo = cx
+            cyo = cy
+
             tcxo = reverse.xdx * cxo + reverse.xdy * cyo
             tcyo = reverse.ydx * cxo + reverse.ydy * cyo
 
-            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, over, child_reverse, nearest)
+            self.draw_transformed(child, clip, xo + tcxo, yo + tcyo, alpha, over, child_reverse, nearest, subpixel)
 
         return 0
 
-    def render_to_texture(self_, what, alpha):
+    def render_to_texture(self, what, alpha):
 
-        cdef GLDraw self = self_
-
-        forward = reverse = IDENTITY
+        width = int(what.width * self.draw_per_virt)
+        height = int(what.height * self.draw_per_virt)
 
         def draw_func(x, y, w, h):
 
@@ -908,17 +1014,17 @@ cdef class GLDraw:
 
             glClear(GL_COLOR_BUFFER_BIT)
 
-            self.default_clip = (0, 0, what.width, what.height)
+            self.default_clip = (0, 0, width, height)
             clip = self.default_clip
 
-            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, False)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor, False)
 
         if isinstance(what, render.Render):
             what.is_opaque()
 
-        self.upscale_factor = 1.0
+        rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
-        rv = gltexture.texture_grid_from_drawing(what.width, what.height, draw_func, self.rtt, self.environ)
+        self.did_render_to_texture = True
 
         return rv
 
@@ -936,20 +1042,26 @@ cdef class GLDraw:
 
         what = what.subsurface((x, y, 1, 1))
 
-        forward = reverse = IDENTITY
+        reverse = IDENTITY
 
-        self.environ.viewport(0, 0, 1, 1)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
+        self.did_render_to_texture = False
 
-        glClear(GL_COLOR_BUFFER_BIT)
+        # We need to render a second time if a render-to-texture occurs, as it
+        # has overwritten the buffer we're drawing to.
+        for _i in range(2):
+            self.environ.viewport(0, 0, 1, 1)
+            glClearColor(0.0, 0.0, 0.0, 0.0)
 
-        self.environ.ortho(0, 1, 0, 1, -1, 1)
+            glClear(GL_COLOR_BUFFER_BIT)
 
-        self.clip_mode_rtt(0, 0, 1, 1)
+            self.environ.ortho(0, 1, 0, 1, -1, 1)
+            self.clip_mode_rtt(0, 0, 1, 1)
+            clip = (0, 0, 1, 1)
 
-        clip = (0, 0, 1, 1)
+            self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
-        self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, False)
+            if not self.did_render_to_texture:
+                break
 
         cdef unsigned char pixel[4]
 
@@ -974,7 +1086,6 @@ cdef class GLDraw:
             return what.half_cache
 
         reverse = renpy.display.render.Matrix2D(0.5, 0, 0, .5)
-        forward = renpy.display.render.Matrix2D(2.0, 0, 0, 2.0)
 
         width = max(what.width / 2, 1)
         height = max(what.height / 2, 1)
@@ -988,7 +1099,7 @@ cdef class GLDraw:
 
             clip = (0, 0, width, height)
 
-            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, False)
+            draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         if isinstance(what, render.Render):
             what.is_opaque()
@@ -999,13 +1110,13 @@ cdef class GLDraw:
 
         return rv
 
-    def update_mouse(self):
-        # The draw routine updates the mouse. There's no need to
-        # redraw it event-by-event.
+    def translate_point(self, x, y):
+        """
+        Translates (x, y) from physical to virtual coordinates.
+        """
 
-        return
-
-    def translate_mouse(self, x, y):
+        x /= FAKE_HIGHDPI
+        y /= FAKE_HIGHDPI
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1030,17 +1141,20 @@ cdef class GLDraw:
 
         return x, y
 
-    def untranslate_mouse(self, x, y):
+    def untranslate_point(self, x, y):
+        """
+        Untranslates (x, y) from virtual to physical coordinates.
+        """
 
         # Screen sizes.
         pw, ph = self.physical_size
         vx, vy, vbw, vbh = self.virtual_box
 
-        # Translate from virtual size.
+        # Translate from virtual to fractional screen.
         x = ( x - vx ) / vbw
         y = ( y - vy ) / vbh
 
-        # Translate from fractional screen.
+        # Translate from fractional screen to physical.
         x = x * pw
         y = y * ph
 
@@ -1049,18 +1163,23 @@ cdef class GLDraw:
 
         return x, y
 
+    def update_mouse(self):
+        # The draw routine updates the mouse. There's no need to
+        # redraw it event-by-event.
+
+        return
+
     def mouse_event(self, ev):
         x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
-        return self.translate_mouse(x, y)
+        return self.translate_point(x, y)
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
-        return self.translate_mouse(x, y)
+        return self.translate_point(x, y)
 
     def set_mouse_pos(self, x, y):
-        x, y = self.untranslate_mouse(x, y)
+        x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
-
 
     # Private.
     def draw_mouse(self):
@@ -1084,7 +1203,10 @@ cdef class GLDraw:
         pw, ph = self.physical_size
         pbx, pby, pbw, pbh = self.physical_box
 
-        self.environ.viewport(0, 0, pw, ph)
+        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
+        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
+
+        self.environ.viewport(0, 0, xmul * pw, ymul * ph)
         self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
 
         self.clip_mode_screen()
@@ -1109,7 +1231,7 @@ cdef class GLDraw:
         cdef int x, y, pitch
 
         # A surface the size of the framebuffer.
-        full = renpy.display.pgrender.surface_unscaled(self.physical_size, False)
+        full = renpy.display.pgrender.surface_unscaled(self.drawable_size, False)
         surf = PySurface_AsSurface(full)
 
         # Create an array that can hold densely-packed pixels.
@@ -1144,8 +1266,12 @@ cdef class GLDraw:
 
         free(raw_pixels)
 
+        px, py, pw, ph = self.physical_box
+        xmul = self.drawable_size[0] / self.physical_size[0]
+        ymul = self.drawable_size[1] / self.physical_size[1]
+
         # Crop and flip it, since it's upside down.
-        rv = full.subsurface(self.physical_box)
+        rv = full.subsurface((px * xmul, py * ymul, pw * xmul, ph * ymul))
         rv = renpy.display.pgrender.flip_unscaled(rv, False, True)
 
         return rv
@@ -1257,6 +1383,10 @@ cdef class Environ(object):
 try:
     import glrtt_copy
 except:
+    glrtt_copy = None
+
+# Copy doesn't work on iOS.
+if renpy.ios:
     glrtt_copy = None
 
 try:

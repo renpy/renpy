@@ -1,4 +1,4 @@
-# : Translation updated at 2013-11-17 23:18
+﻿# : Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 
@@ -80,7 +80,7 @@ translate arabic strings:
 
     # game/android.rpy:409
     old "Build:"
-    new ""
+    new "بناء"
 
     # game/android.rpy:417
     old "Install SDK & Create Keys"
@@ -161,4 +161,40 @@ translate arabic strings:
     # game/android.rpy:629
     old "The port must be a number."
     new "يجب ان يكون العنوان مكون من أرقام فقط"
+
+
+translate arabic strings:
+
+    # game/android.rpy:46
+    old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
+    new "يبني الحزمة الخاصة بالأندرويد و يقوم بتنصيبها على جهاز أندرويد متصل بجهازك, ثم يقوم بإقلاع البرنامج على جهاز الأندرويد."
+
+    # game/android.rpy:290
+    old "Television"
+    new "تلفاز"
+
+    # game/android.rpy:326
+    old "Build, Install & Launch"
+    new "بناء,تنصيب و إقلاع."
+
+# : Translation updated at 2015-06-19 08:55
+
+translate arabic strings:
+
+    # game/android.rpy:50
+    old "Retrieves the log from the Android device and writes it to a file."
+    new "يجلب قائمة المهام من جعاز الأندرويد و يكتبها في ملف."
+
+    # game/android.rpy:240
+    old "Copying Android files to distributions directory."
+    new "يتم الآن نسخ ملفات الأندرويد إلى المجلد الخاص بالنشر"
+
+    # game/android.rpy:404
+    old "Logcat"
+    new "Logcat"
+
+    # game/android.rpy:538
+    old "Retrieving logcat information from device."
+    new "يتم النسخ من الجهاز لمعلومات Logcat"
+
 

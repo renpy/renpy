@@ -35,6 +35,18 @@
     
         $ renpy.context_dynamic("x", "y", "z")
 
+.. function:: renpy.count_dialogue_blocks()
+    
+    Returns the number of dialogue blocks in the game's original language.
+
+.. function:: renpy.count_seen_dialogue_blocks()
+    
+    Returns the number of dialogue blocks the user has seen in any play-through
+    of the current game.
+    
+    This number may be larger than the result of :func:`renpy.count_dialogue_blocks`
+    when the script has changed and older dialogue blocks are no longer accessible.
+
 .. function:: renpy.dynamic(*vars)
     
     This can be given one or more variable names as arguments. This makes
@@ -50,6 +62,14 @@
     This attempts to find the coordinates of the currently-focused
     displayable. If it can, it will return them as a (x, y, w, h)
     tuple. If not, it will return a (None, None, None, None) tuple.
+
+.. function:: renpy.force_autosave(take_screenshot=False)
+    
+    Forces a background autosave to occur.
+    
+    `take_screenshot`
+        If True, a new screenshot will be taken. If False, the existing
+        screenshot will be used.
 
 .. function:: renpy.force_full_redraw()
     
@@ -160,6 +180,15 @@
     
     Iconifies the game.
 
+.. function:: renpy.invoke_in_thread(fn, *args, **kwargs)
+    
+    Invokes the function `fn` in a background thread, passing it the
+    provided arguments and keyword arguments. Restarts the interaction
+    once the thread returns.
+    
+    This function creates a daemon thread, which will be automatically
+    stopped when Ren'Py is shutting down.
+
 .. function:: renpy.is_seen(ever=True)
     
     Returns true if the current line has been seen by the player.
@@ -188,6 +217,18 @@
     
     `filename` is the name of the filename that statements in the string will
     appear to be from.
+
+.. function:: renpy.munge(name, filename=None)
+    
+    Munges `name`, which must begin with __.
+    
+    `filename`
+        The filename the name is munged into. If None, the name is munged
+        into the filename containing the call to this function.
+
+.. function:: renpy.not_infinite_loop(delay)
+    
+    Resets the infinite loop detection timer to `delay` seconds.
 
 .. function:: renpy.notify(message)
     
@@ -232,18 +273,10 @@
     This can be used if a label that is called decides not to return
     to its caller.
 
-.. function:: renpy.pop_return()
-    
-    Pops the current call from the call stack, without returning to
-    the location.
-    
-    This can be used if a label that is called decides not to return
-    to its caller.
-
-.. function:: renpy.queue_event(name, up=False)
+.. function:: renpy.queue_event(name, up=False, **kwargs)
     
     Queues an event with the given name. `Name` should be one of the event
-    names in :var:`config.keymap`.
+    names in :var:`config.keymap`, or a list of such names.
     
     `up`
         This should be false when the event begins (for example, when a keyboard
@@ -276,6 +309,12 @@
     
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
+
+.. function:: renpy.reset_physical_size()
+    
+    Attempts to set the size of the physical window to the specified values
+    in renpy.config. (That is, screen_width and screen_height.) This has the
+    side effect of taking the screen out of fullscreen mode.
 
 .. function:: renpy.restart_interaction()
     
@@ -328,6 +367,34 @@
     Call this to indicate that the window has been shown. This interacts
     with the "window show" statement, which shows an empty window whenever
     this functions has not been called during an interaction.
+
+.. function:: renpy.split_properties(properties, *prefixes)
+    
+    Splits up `properties` into multiple dictionaries, one per `prefix`. This
+    function checks each key in properties against each prefix, in turn.
+    When a prefix matches, the prefix is stripped from the key, and the
+    resulting key is mapped to the value in the corresponding dictionary.
+    
+    If no prefix matches, an exception is thrown. (The empty string, "",
+    can be used as the last prefix to create a catch-all dictionary.)
+    
+    For example, this code splits properties beginning with text from
+    those that do not::
+    
+        text_properties, button_properties = renpy.split_properties("text_", "")
+
+.. function:: renpy.substitute(s, scope=None, translate=True)
+    
+    Applies translation and new-style formatting to the string `s`.
+    
+    `scope`
+        If not None, a scope which is used in formatting, in addition to the
+        default store.
+    
+    `translate`
+        Determines if translation occurs.
+    
+    Returns the translated and formatted string.
 
 .. function:: renpy.transition(trans, layer=None, always=False)
     

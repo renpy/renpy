@@ -36,28 +36,40 @@ holders, under the same terms.
 Ren'Py binaries include code from the following projects:
 
 * Python (Python License)
-* Pygame (LGPL)
-* SDL (LGPL)
-* SDL_image (LGPL)
-* SDL_ttf (LGPL)
-* Freetype (LGPL)
-* Fribidi (LGPL)
-* libav (LGPL)
-* libjpeg-turbo (LGPL)
-* libpng (PNG license)
+* Pygame_SDL2 (MIT License, GNU LGPL)
+* SDL2 (Zlib License)
+* SDL2_image (Zlib License)
+* SDL2_ttf (Zlib License)
+* Freetype (Zlib License)
+* Fribidi (GNU LGPL)
+* libav (GNU LGPL)
+* libjpeg-turbo (GNU LGPL)
+* libpng (PNG License)
 * zlib (Zlib License)
 * bzip2 (Bzip2 License)
 * pyobjc (MIT License)
 * py2exe (MIT License)
-* GLEW (Modified BSD, MIT)
+* GLEW (Modified BSD, MIT License)
 * zsync (Artistic License)
 
-For the purpose of LGPL compliance, the source code to all LGPL
-software we depend on is either in the Ren'Py package (available from
-http://www.renpy.org/), or in the renpy-deps package
-(http://www.renpy.org/dl/lgpl/). We believe compliance can be achieved
-by including a copy of this license with every copy of Ren'Py you
-distribute, and referring to it in your project's README file.
+For the purposes of LGPL compliance, all source code that Ren'Py depends
+on is located in one of the following repositories:
+
+* https://github.com/renpy/renpy (Ren'Py)
+* https://github.com/renpy/pygame_sdl2 (Pygame_SDL2)
+* https://github.com/renpy/renpy-deps (Desktop dependencies)
+* https://github.com/renpy/python-for-android (Android)
+* https://github.com/renpy/rapt (Android Build Tools)
+* https://github.com/renpy/renios (iOS)
+
+Although we are unable to provide legal advice, we believe compliance can be
+achieved by including a copy of this license with every copy of Ren'Py you
+distribute, and linking to this license from your project's README file or
+App Store description. We suggest using the wording:
+
+    This program contains free software licensed under a number of licenses,
+    including the GNU Lesser General Public License. A complete list of software
+    is available at http://www.renpy.org/doc/html/license.html.
 
 Ren'Py may be distributed alongside the jEdit or Editra text
 editors. Editra is licensed under the wxWindows license, while

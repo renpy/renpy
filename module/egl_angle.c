@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
+#include "pygame_sdl2/pygame_sdl2.h"
 #include "EGL/egl.h"
 #include "GLES2/gl2.h"
 
@@ -13,6 +14,7 @@ EGLSurface surface;
 EGLConfig config;
 EGLContext context;
 
+int imported_pygame = 0;
 int initialized = 0;
 
 char error_message[100];
@@ -45,6 +47,7 @@ char *egl_init(int interval) {
     SDL_SysWMinfo wminfo;
     EGLint major, minor;
     EGLint num_config;
+    HWND new_window;
 
     const EGLint attrs[] = {
          EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
@@ -57,12 +60,21 @@ char *egl_init(int interval) {
         EGL_NONE
     };
 
+    if (!imported_pygame) {
+    	import_pygame_sdl2();
+    	imported_pygame = 1;
+    }
+
+    SDL_Window *sdl_window = PyWindow_AsWindow(Py_None);
+
     SDL_VERSION(&wminfo.version);
-    SDL_GetWMInfo(&wminfo);
+    SDL_GetWindowWMInfo(sdl_window, &wminfo);
+
+    new_window = wminfo.info.win.window;
 
     if (! initialized) {
 
-    	display = eglGetDisplay(GetDC(wminfo.window));
+    	display = eglGetDisplay(GetDC(new_window));
 		egl_check("getting display");
 
 		eglInitialize(display, &major, &minor);
@@ -77,16 +89,16 @@ char *egl_init(int interval) {
 		context = eglCreateContext(display, config, EGL_NO_CONTEXT, context_attrs);
 		egl_check("creating EGL context");
 
-    	surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
+    	surface = eglCreateWindowSurface(display, config, new_window, NULL);
     	egl_check("creating EGL surface");
 
 
-    } else if (window != wminfo.window) {
+    } else if (window != wminfo.info.win.window) {
 
     	eglDestroySurface(display, surface);
     	egl_check("destroying existing EGL surface")
 
-    	surface = eglCreateWindowSurface(display, config, wminfo.window, NULL);
+    	surface = eglCreateWindowSurface(display, config, new_window, NULL);
     	egl_check("creating EGL surface");
 
     }
@@ -98,7 +110,7 @@ char *egl_init(int interval) {
     egl_check("setting swap interval")
 
 	initialized = 1;
-	window = wminfo.window;
+	window = new_window;
 
     return NULL;
 }

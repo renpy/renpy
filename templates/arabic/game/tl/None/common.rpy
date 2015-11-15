@@ -1,5 +1,4 @@
-# TODO: Translation updated at 2013-11-18 00:39
-
+﻿
 translate arabic strings:
 
     # renpy/common/00action_file.rpy:124
@@ -10,7 +9,6 @@ translate arabic strings:
     old "Quick save complete."
     new "تم الحفظ السريع"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -34,7 +32,6 @@ translate arabic strings:
     old "return"
     new "العودة"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -122,7 +119,6 @@ translate arabic strings:
     old "Restart"
     new "إعادة تشغيل"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -130,7 +126,6 @@ translate arabic strings:
     old "Saved screenshot as %s."
     new "تم حفظ الصورة كـ %s"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -170,7 +165,6 @@ translate arabic strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "هل انت متأكد من رغبتك في تسريع الخيارات و الحوار الذي لم يسبق لك قرائته؟"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -182,7 +176,6 @@ translate arabic strings:
     old "Fast Skip Mode"
     new "وضع التسريع السريع"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -242,7 +235,6 @@ translate arabic strings:
     old "Cancel"
     new "إلغاء الأمر"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -250,7 +242,6 @@ translate arabic strings:
     old "Joystick Mapping"
     new "خيارات عصى التحكم"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 
@@ -306,7 +297,6 @@ translate arabic strings:
     old "Opens the errors.txt file in a text editor."
     new "يفتح ملف errors.txt في برنامج الملفات النصية"
 
-# TODO: Translation updated at 2013-11-18 00:39
 
 translate arabic strings:
 

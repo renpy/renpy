@@ -10,21 +10,9 @@ translate japanese strings:
     old "Fast Skip Mode"
     new "高速スキップモード"
 
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
-
     # renpy/common/00updater.rpy:1255
     old "Updater"
     new "アップデーター"
-
-    # renpy/common/00updater.rpy:1260
-    old "An error has occured:"
-    new "エラーが発生しました:"
-
-    # renpy/common/00updater.rpy:1262
-    old "Checking for updates."
-    new "アップデートを確認しています。"
 
     # renpy/common/00updater.rpy:1264
     old "This program is up to date."
@@ -46,10 +34,6 @@ translate japanese strings:
     old "Unpacking the updates."
     new "アップデートを展開しています。"
 
-    # renpy/common/00updater.rpy:1274
-    old "Finishing up."
-    new "最終処理中です。"
-
     # renpy/common/00updater.rpy:1276
     old "The updates have been installed. The program will restart."
     new "アップデートがインストールされました。プログラムを再起動します。"
@@ -62,29 +46,13 @@ translate japanese strings:
     old "The updates were cancelled."
     new "アップデートがキャンセルされました。"
 
-    # renpy/common/00updater.rpy:1294
-    old "Proceed"
-    new "続行"
-
-    # renpy/common/00updater.rpy:1297
-    old "Cancel"
-    new "中止"
-
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
-
     # renpy/common/_compat/preferences.rpym:411
     old "Joystick Mapping"
     new "ジョイスティックの割り当て"
 
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
-
     # renpy/common/00layout.rpy:421
     old "Are you sure?"
-    new "よろしいですか？"
+    new "続けますか？"
 
     # renpy/common/00layout.rpy:422
     old "Are you sure you want to delete this save?"
@@ -96,7 +64,7 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:424
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    new "現在の状況を破棄してロードしますか？"
+    new "セーブされていないデータは失われます\n続けますか？"
 
     # renpy/common/00layout.rpy:425
     old "Are you sure you want to quit?"
@@ -104,11 +72,7 @@ translate japanese strings:
 
     # renpy/common/00layout.rpy:426
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
-    new "現在の状況を破棄してメインメニューに戻りますか？"
-
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
+    new "メインメニューに戻りますか？\nセーブされていないデータは破棄されます"
 
     # renpy/common/_errorhandling.rpym:408
     old "An exception has occurred."
@@ -162,17 +126,9 @@ translate japanese strings:
     old "Opens the errors.txt file in a text editor."
     new "テキストエディターで errors.txt を開きます。"
 
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
-
     # renpy/common/00keymap.rpy:167
     old "Saved screenshot as %s."
     new "スクリーンショットを %s に保存しました。"
-
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
 
     # renpy/common/00gltest.rpy:50
     old "Graphics Acceleration"
@@ -258,10 +214,6 @@ translate japanese strings:
     old "Restart"
     new "再起動"
 
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
-
     # renpy/common/_layout/imagemap_load_save.rpym:115
     old "a"
     new "a"
@@ -270,17 +222,9 @@ translate japanese strings:
     old "q"
     new "q"
 
-# Translation updated at 2013-02-18 11:40
-
-translate japanese strings:
-
     # renpy/common/00action_file.rpy:118
     old "%b %d, %H:%M"
     new "%m月%d日, %H:%M"
-
-# Translation updated at 2013-10-20 13:16
-
-translate japanese strings:
 
     # renpy/common/00layout.rpy:427
     old "Are you sure you want to begin skipping?"
@@ -293,10 +237,6 @@ translate japanese strings:
     # renpy/common/00layout.rpy:429
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "次の選択肢または未読までスキップしますか？"
-
-# Translation updated at 2013-10-20 13:16
-
-translate japanese strings:
 
     # renpy/common/00gallery.rpy:521
     old "Image [index] of [count] locked."
@@ -318,16 +258,45 @@ translate japanese strings:
     old "return"
     new "戻る"
 
-# Translation updated at 2013-10-20 13:16
-
-translate japanese strings:
-
     # renpy/common/00action_file.rpy:587
     old "Quick save complete."
     new "クイックセーブ完了。"
 
+    # renpy/common/_developer/inspector.rpym:43
+    old "Displayable Inspector"
+    new "Displayable インスペクター"
 
-translate japanese strings:
+    # renpy/common/_developer/inspector.rpym:49
+    old "Nothing to inspect."
+    new "インスペクトするものがありません"
+
+    # renpy/common/_developer/inspector.rpym:58
+    old "Size"
+    new "サイズ"
+
+    # renpy/common/_developer/inspector.rpym:63
+    old "Style"
+    new "スタイル"
+
+    # renpy/common/_developer/inspector.rpym:123
+    old "Inspecting Styles of [displayable_name!q]"
+    new "[displayable_name!q] のスタイルをインスペクト中"
+
+    # renpy/common/_developer/inspector.rpym:135
+    old "displayable:"
+    new "Displayable:"
+
+    # renpy/common/_developer/inspector.rpym:142
+    old "        (no properties affect the displayable)"
+    new "        (Displayable に影響しているプロパティーはありません)"
+
+    # renpy/common/_developer/inspector.rpym:144
+    old "        (default properties omitted)"
+    new "        (デフォルトのプロパティーは省略します)"
+
+    # renpy/common/_developer/inspector.rpym:174
+    old "<repr() failed>"
+    new "<repr() 失敗>"
 
     # renpy/common/_developer/developer.rpym:65
     old "Developer Menu"
@@ -392,50 +361,6 @@ translate japanese strings:
     # renpy/common/_developer/developer.rpym:467
     old "Done"
     new "完了"
-
-# Translation updated at 2014-02-23 11:23
-
-translate japanese strings:
-
-    # renpy/common/_developer/inspector.rpym:43
-    old "Displayable Inspector"
-    new "Displayable インスペクター"
-
-    # renpy/common/_developer/inspector.rpym:49
-    old "Nothing to inspect."
-    new "インスペクトするものがありません"
-
-    # renpy/common/_developer/inspector.rpym:58
-    old "Size"
-    new "サイズ"
-
-    # renpy/common/_developer/inspector.rpym:63
-    old "Style"
-    new "スタイル"
-
-    # renpy/common/_developer/inspector.rpym:123
-    old "Inspecting Styles of [displayable_name!q]"
-    new "[displayable_name!q] のスタイルをインスペクト中"
-
-    # renpy/common/_developer/inspector.rpym:135
-    old "displayable:"
-    new "Displayable:"
-
-    # renpy/common/_developer/inspector.rpym:142
-    old "        (no properties affect the displayable)"
-    new "        (Displayable に影響しているプロパティーはありません)"
-
-    # renpy/common/_developer/inspector.rpym:144
-    old "        (default properties omitted)"
-    new "        (デフォルトのプロパティーは省略します)"
-
-    # renpy/common/_developer/inspector.rpym:174
-    old "<repr() failed>"
-    new "<repr() 失敗>"
-
-# Translation updated at 2014-02-24 16:15
-
-translate japanese strings:
 
     # renpy/common/00console.rpy:179
     old "%(version)s console, originally by Shiz, C, and delta.\n"
@@ -505,3 +430,64 @@ translate japanese strings:
     old "jump <label>: jumps to label"
     new "jump <ラベル>: ラベルにジャンプ"
 
+    # renpy/common/00keymap.rpy:332
+    old "Autoreload"
+    new "オートリロード"
+
+    # renpy/common/_developer/developer.rpym:272
+    old "{b}Missing Images{/b}"
+    new "{b}M画像が見付かりません{/b}"
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "ファイル"
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "クリップボードボイシングが有効化しました。 'shift+C'で無効化します。"
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "セルフボイシングが有効化しました。 'v' で無効化します。"
+
+##Lancherでのみ必要###########################################
+    # # renpy/common/00gltest.rpy:95
+    # old "Quit"
+    # new "終了"
+    #
+    # # renpy/common/00gltest.rpy:100
+    # old "Return"
+    # new "戻る"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:198
+    # old "Empty Slot."
+    # new "空のスロット"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:355
+    # old "Previous"
+    # new "前へ"
+    #
+    # # renpy/common/_compat/gamemenu.rpym:362
+    # old "Next"
+    # new "次へ"
+##templateでのみ必要############################################
+    #
+    # # renpy/common/00updater.rpy:1385
+    # old "An error has occured:"
+    # new "エラーが派生しました。"
+    #
+    # # renpy/common/00updater.rpy:1387
+    # old "Checking for updates."
+    # new "更新をチェックしています。"
+    #
+    # # renpy/common/00updater.rpy:1399
+    # old "Finishing up."
+    # new "更新を完了しました。"
+    #
+    # # renpy/common/00updater.rpy:1419
+    # old "Proceed"
+    # new "処理中"
+    #
+    # # renpy/common/00updater.rpy:1422
+    # old "Cancel"
+    # new "キャンセル"

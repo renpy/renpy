@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -175,7 +175,7 @@ class Cache(object):
     # image. It also takes care of updating the age of images in the
     # cache to be current, and maintaining the size of the current
     # generation of images.
-    def get(self, image, predict=False):
+    def get(self, image, predict=False, texture=False):
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
@@ -195,7 +195,11 @@ class Cache(object):
                 if image in self.pin_cache:
                     surf = self.pin_cache[image]
                 else:
-                    surf = image.load()
+                    if not predict:
+                        with renpy.game.ExceptionInfo("While loading %r:", image):
+                            surf = image.load()
+                    else:
+                        surf = image.load()
 
             except:
                 raise
@@ -218,8 +222,6 @@ class Cache(object):
                     else:
                         renpy.display.ic_log.write("Total Miss %r", ce.what)
 
-                renpy.display.draw.load_texture(ce.surf)
-
 
         # Move it into the current generation. This isn't protected by
         # a lock, so in certain circumstances we could have an
@@ -240,6 +242,9 @@ class Cache(object):
         # Should never happen... but...
         if ce.time == self.time:
             self.size_of_current_generation -= ce.size
+
+        # Let the texture cache know we're not needed.
+        renpy.display.draw.mutated_surface(ce.surf)
 
         self.total_cache_size -= ce.size
         del self.cache[ce.what]
@@ -277,6 +282,14 @@ class Cache(object):
 
         return True
 
+    def preload_texture(self, im):
+        """
+        Preloads `im` into the cache, and loads the corresponding texture
+        into the GPU.
+        """
+
+        surf = self.get(im, predict=True)
+        renpy.display.draw.load_texture(surf)
 
     # Called to report that a given image would like to be preloaded.
     def preload_image(self, im):
@@ -292,7 +305,7 @@ class Cache(object):
             self.added.add(im)
 
             if im in self.cache:
-                self.get(im)
+                self.preload_texture(im)
                 in_cache = True
             else:
                 self.preloads.append(im)
@@ -346,7 +359,7 @@ class Cache(object):
 
                     if image not in self.preload_blacklist:
                         try:
-                            self.get(image, True)
+                            self.preload_texture(image)
                         except:
                             self.preload_blacklist.add(image)
                 except:
@@ -494,8 +507,15 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
-    def get_mtime(self):
-        return renpy.loader.get_mtime(self.filename)
+    def __unicode__(self):
+        if len(self.filename) < 20:
+            return u"Image %r" % self.filename
+        else:
+            return u"Image \u2026%s" % self.filename[-20:]
+
+
+    def get_hash(self):
+        return renpy.loader.get_hash(self.filename)
 
     def load(self, unscaled=False):
 
@@ -597,8 +617,13 @@ class Composite(ImageBase):
         self.positions = args[0::2]
         self.images = [ image(i) for i in args[1::2] ]
 
-    def get_mtime(self):
-        return min(i.get_mtime() for i in self.images)
+    def get_hash(self):
+        rv = 0
+
+        for i in self.images:
+            rv += i.get_hash()
+
+        return rv
 
     def load(self):
 
@@ -648,8 +673,8 @@ class Scale(ImageBase):
         self.height = int(height)
         self.bilinear = bilinear
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -703,8 +728,8 @@ class FactorScale(ImageBase):
         self.height = height
         self.bilinear = bilinear
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -760,8 +785,8 @@ class Flip(ImageBase):
         self.vertical = vertical
 
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -804,8 +829,8 @@ class Rotozoom(ImageBase):
         self.angle = angle
         self.zoom = zoom
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -852,8 +877,8 @@ class Crop(ImageBase):
         self.w = w
         self.h = h
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
         return cache.get(self.image).subsurface((self.x, self.y,
@@ -912,8 +937,8 @@ class Map(ImageBase):
 
         self.force_alpha = force_alpha
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -954,8 +979,8 @@ class Twocolor(ImageBase):
 
         self.force_alpha = force_alpha
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -994,8 +1019,8 @@ class Recolor(ImageBase):
 
         self.force_alpha = force_alpha
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -1056,8 +1081,8 @@ class MatrixColor(ImageBase):
         self.image = im
         self.matrix = matrix
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -1107,7 +1132,13 @@ class matrix(tuple):
         if not isinstance(a, matrix):
             a = matrix(a)
 
+
+
         if not isinstance(b, matrix):
+
+            if isinstance(b, renpy.easy.Color):
+                return NotImplemented
+
             b = matrix(b)
 
         result = [ 0 ] * 25
@@ -1436,8 +1467,8 @@ class Tile(ImageBase):
         self.image = im
         self.size = size
 
-    def get_mtime(self):
-        return self.image.get_mtime()
+    def get_hash(self):
+        return self.image.get_hash()
 
     def load(self):
 
@@ -1474,6 +1505,9 @@ class AlphaMask(ImageBase):
     image, like having one jpeg for color data, and a second one
     for alpha. In some cases, two jpegs can be smaller than a
     single png file.
+
+    Note that this takes different arguments from :func:`AlphaMask`,
+    which uses the mask's alpha channel.
     """
 
     def __init__(self, base, mask, **properties):
@@ -1482,8 +1516,8 @@ class AlphaMask(ImageBase):
         self.base = image(base)
         self.mask = image(mask)
 
-    def get_mtime(self):
-        return max(self.base.get_mtime(), self.image.get_mtime())
+    def get_hash(self):
+        return self.base.get_hash() + self.image.get_hash()
 
     def load(self):
 
@@ -1553,13 +1587,25 @@ def image(arg, loose=False, **properties):
         raise Exception("Could not construct image from argument.")
 
 
-def load_image(fn):
+def load_image(im):
     """
-    This loads an image from the given filename, using the cache.
+    :doc: udd_utility
+
+    Loads the image manipulator `im` using the image cache, and returns a texture.
     """
 
-    surf = cache.get(image(fn))
+    surf = cache.get(image(im))
     return renpy.display.draw.load_texture(surf)
+
+def load_surface(im):
+    """
+    :doc: udd_utility
+
+    Loads the image manipulator `im` using the image cache, and returns a pygame Surface.
+    """
+
+    return cache.get(image(im))
+
 
 def reset_module():
     print "Resetting cache."

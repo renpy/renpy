@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -350,10 +350,9 @@ init -1500 python:
 
         def __init__(self, viewport):
             self.viewport = viewport
-            self.screen = renpy.current_screen()
 
         def get_adjustment(self):
-            w = renpy.get_widget(self.screen, self.viewport)
+            w = renpy.get_widget(None, self.viewport)
             if not isinstance(w, Viewport):
                 raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 
@@ -375,10 +374,10 @@ init -1500 python:
 
         def __init__(self, viewport):
             self.viewport = viewport
-            self.screen = renpy.current_screen()
 
         def get_adjustment(self):
-            w = renpy.get_widget(self.screen, self.viewport)
+
+            w = renpy.get_widget(None, self.viewport)
             if not isinstance(w, Viewport):
                 raise Exception("The displayable with id %r is not declared, or not a viewport." % self.viewport)
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,7 +34,7 @@ init -1700 python:
             if self is o:
                 return True
 
-            if type(self) is type(o):
+            if _type(self) is _type(o):
                 return (self.__dict__ == o.__dict__)
 
             return False
@@ -53,7 +53,7 @@ init -1700 python:
             if self is o:
                 return True
 
-            if type(self) is not type(o):
+            if _type(self) is not _type(o):
                 return False
 
             for k in self.equality_fields:
@@ -78,33 +78,29 @@ init -1700 python:
     def _default_empty_window():
 
         who = _last_say_who
-
-        if who is not None:
-            who = eval(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
-        else:
+        elif not isinstance(store.narrator, NVLCharacter):
             store.narrator("", interact=False)
+        else:
+            store._narrator("", interact=False)
 
     config.empty_window = _default_empty_window
 
-    style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
-    style.skip_indicator.xpos = 10
-    style.skip_indicator.ypos = 10
 
-
-init -1700 python:
+    ##########################################################################
+    # Extend
 
     config.extend_interjection = "{fast}"
 
     def extend(what, interact=True):
         who = _last_say_who
-
-        who = renpy.ast.eval_who(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
@@ -122,9 +118,35 @@ init -1700 python:
     extend.record_say = False
 
 
-init -1700 python:
+    ##########################################################################
+    # Self-voicing
 
-    def skip_indicator():
+    def sv(what, interact=True):
+        """
+        Uses the narrator to speak `what` iff self-voicing is enabled.
+        """
+
+        if _preferences.self_voicing:
+            return narrator(what, interact=interact)
+
+
+    ##########################################################################
+    # Skip indicator
+
+    style.skip_indicator = Style(style.default, heavy=True, help='The skip indicator.')
+    style.skip_indicator.xpos = 10
+    style.skip_indicator.ypos = 10
+
+    def _skip_indicator():
+
+        if renpy.has_screen("skip_indicator"):
+
+            if config.skipping and not renpy.get_screen("skip_indicator"):
+                renpy.show_screen("skip_indicator")
+            elif not config.skipping and renpy.get_screen("skip_indicator"):
+                renpy.hide_screen("skip_indicator")
+
+            return
 
         ### skip_indicator default
         # (text) The style and placement of the skip indicator.
@@ -147,10 +169,30 @@ init -1700 python:
 
         ui.add(renpy.easy.displayable(config.skip_indicator))
 
-    config.overlay_functions.append(skip_indicator)
+    config.overlay_functions.append(_skip_indicator)
+
+
+    ##########################################################################
+    # Predictions
+
+    # A list of labels we predict at start time.
+    config.predict_start_labels = [ "start" ]
+
+    # Prediction of statements.
+    def _predict_statements(current):
+
+        if main_menu:
+            rv = list(config.predict_start_labels)
+            rv.append(current)
+            return rv
+
+        return [ current ]
+
+    config.predict_statements_callback = _predict_statements
+
 
     # Prediction of screens.
-    def predict():
+    def _predict_screens():
 
         s = _game_menu_screen
 
@@ -167,10 +209,8 @@ init -1700 python:
                 renpy.predict_screen(s)
                 return
 
+    config.predict_callbacks.append(_predict_screens)
 
-    config.predict_callbacks.append(predict)
-
-init -1700 python:
 
     ##########################################################################
     # Side Images
@@ -192,11 +232,40 @@ init -1700 python:
         else:
             return ImageReference(name)
 
+    ##########################################################################
+    # Name-only say statements.
 
-init -1000:
+    # This character is copied when a name-only say statement is called.
+    name_only = adv
+
+    def predict_say(who, what):
+        who = Character(who, kind=name_only)
+        try:
+            who.predict(what)
+        except:
+            pass
+
+    def say(who, what, interact=True):
+        who = Character(who, kind=name_only)
+        who(what, interact=interact)
+
+    ##########################################################################
+    # Misc.
+
+    # Should we display tiles in places of transparency while in developer
+    # mode?
+    config.transparent_tile = True
+
+    # Use DejaVuSans-Bold when appropriate.
+    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("DejaVuSans-Bold.ttf", False, False)
+
+
+init -1000 python:
     # Lock the library object.
-    $ config.locked = True
+    config.locked = True
 
+    # Record the builtins.
+    renpy.lint.renpy_builtins = set(globals())
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
@@ -208,6 +277,10 @@ init 1700 python hide:
 
         renpy.load_module("_developer/developer")
         renpy.load_module("_developer/inspector")
+
+# Used by renpy.return() to return.
+label _renpy_return:
+    return
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym

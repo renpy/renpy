@@ -10,6 +10,19 @@ these changes to be reverted, at the cost of losing access to recent
 features.
 
 
+.. _incompatible-6.99:
+
+6.99.2
+------
+
+Ren'Py will now scan the an image directory (the directory named images
+underneath the game directory) for images, and define them based on their
+filename. To disable this behavior, use the code::
+
+    init python:
+        config.image_directory = None
+
+
 .. _incompatible-6.18:
 
 6.18
@@ -20,6 +33,15 @@ arguments as part of the screen prediction process. If evaluating the
 arguments to a screen causes side effects to occur, the ``show screen``
 or ``call screen`` statements should be given the new ``nopredict``
 clause, which prevents prediction.
+
+Screens now participate in transitions - transitions now go from the old
+state of the screen to the new state. To disable this, set
+:var:`config.transition_screens` to false.
+
+Ren'Py no longer uses structural equality to transfer state (for example,
+the state of a transform) when a screen replaces a screen with the same
+tag. Instead, the :ref:`use statement <sl-use>` now supports an ``id``
+property, which can be used to explicitly transfer state.
 
 .. _incompatible-6.16:
 

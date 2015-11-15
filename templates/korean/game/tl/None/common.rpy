@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2014-05-03 00:31
-
+﻿
 translate None strings:
 
     # renpy/common/00action_file.rpy:142
@@ -10,7 +9,6 @@ translate None strings:
     old "Quick save complete."
     new "퀵세이브 완료."
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -82,7 +80,6 @@ translate None strings:
     old "jump <label>: jumps to label"
     new "jump <label>: label로 점프한다"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -106,7 +103,6 @@ translate None strings:
     old "return"
     new "돌아가기"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -194,7 +190,6 @@ translate None strings:
     old "Restart"
     new "다시 시작"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -206,14 +201,13 @@ translate None strings:
     old "Autoreload"
     new "자동 다시 불러오기"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
     # renpy/common/00layout.rpy:439
     old "Are you sure?"
     new "정말입니까?"
-    
+
     # renpy/common/00layout.rpy:440
     old "Are you sure you want to delete this save?"
     new "이 세이브 파일을 지우겠습니까?"
@@ -246,7 +240,6 @@ translate None strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "읽지 않은 대사나 다음 선택지가 나타날 때까지 스킵하겠습니까?"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -258,7 +251,6 @@ translate None strings:
     old "Fast Skip Mode"
     new "고속 스킵 모드"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -310,7 +302,6 @@ translate None strings:
     old "Cancel"
     new "취소"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -318,7 +309,6 @@ translate None strings:
     old "Joystick Mapping"
     new "조이스틱 설정"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -385,7 +375,6 @@ translate None strings:
     old "Done"
     new "완료"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -425,7 +414,6 @@ translate None strings:
     old "<repr() failed>"
     new "<repr() 실패>"
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 
@@ -481,7 +469,6 @@ translate None strings:
     old "Opens the errors.txt file in a text editor."
     new "errors.txt 파일을 스크립트 에디터로 엽니다."
 
-# TODO: Translation updated at 2014-05-03 00:31
 
 translate None strings:
 

@@ -1,93 +1,91 @@
-
+﻿
 translate simplified_chinese strings:
 
-    # game/front_page.rpy:79
+    # game/front_page.rpy:35
+    old "Open [text] directory."
+    new "打开 [text] 目录。"
+
+    # game/front_page.rpy:93
+    old "refresh"
+    new "刷新"
+
+    # game/front_page.rpy:120
     old "+ Create New Project"
-    new "+ 创建新的工程"
+    new "+ 创建新工程"
 
-    # game/front_page.rpy:90
+    # game/front_page.rpy:132
     old "Launch Project"
-    new "运行工程"
+    new "启动工程"
 
-    # game/front_page.rpy:111
+    # game/front_page.rpy:150
+    old "Select project [text]."
+    new "选择工程 [text]。"
+
+    # game/front_page.rpy:166
     old "Tutorial"
     new "教程"
 
-    # game/front_page.rpy:112
-    old "The Question"
-    new "The Question"
-
-    # game/front_page.rpy:128
+    # game/front_page.rpy:183
     old "Active Project"
-    new "当前工程"
+    new "活跃工程"
 
-    # game/front_page.rpy:136
+    # game/front_page.rpy:191
     old "Open Directory"
     new "打开目录"
 
-    # game/front_page.rpy:141
-    old "game"
-    new "game"
-
-    # game/front_page.rpy:142
-    old "base"
-    new "base"
-
-    # game/front_page.rpy:148
+    # game/front_page.rpy:204
     old "Edit File"
     new "编辑文件"
 
-    # game/front_page.rpy:156
+    # game/front_page.rpy:212
     old "All script files"
-    new "所有脚本文件"
+    new "全部脚本文件"
 
-    # game/front_page.rpy:165
+    # game/front_page.rpy:221
     old "Navigate Script"
     new "定位脚本"
 
-    # game/front_page.rpy:176
+    # game/front_page.rpy:232
     old "Check Script (Lint)"
-    new "检查脚本（Lint）"
+    new "检查脚本并分析统计"
 
-    # game/front_page.rpy:177
+    # game/front_page.rpy:233
     old "Change Theme"
-    new "改变主题"
+    new "更改主题"
 
-    # game/front_page.rpy:178
+    # game/front_page.rpy:234
     old "Delete Persistent"
-    new "删除固实"
+    new "删除永久性数据"
 
-    # game/front_page.rpy:186
+    # game/front_page.rpy:235
+    old "Force Recompile"
+    new "强制重新编译"
+
+    # game/front_page.rpy:243
     old "Build Distributions"
-    new "构建固实"
+    new "生成分发版"
 
-    # game/front_page.rpy:188
-    old "Generate Translations"
-    new "生成翻译"
-
-    # game/front_page.rpy:204
-    old "Checking script for potential problems..."
-    new "检查脚本中的潜在错误..."
-
-    # game/front_page.rpy:219
-    old "Deleting persistent data..."
-    new "删除固实数据..."
-
-
-translate simplified_chinese strings:
-    
-    # game/front_page.rpy:69
-    old "PROJECTS:"
-    new "工程："
-    # game/front_page.rpy:122
-    old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
-
-    # game/front_page.rpy:215
+    # game/front_page.rpy:245
     old "Android"
     new "安卓"
 
-    # game/front_page.rpy:217
+    # game/front_page.rpy:247
+    old "Generate Translations"
+    new "生成翻译文件"
+
+    # game/front_page.rpy:248
     old "Extract Dialogue"
-    new "提取对话"
+    new "导出对话"
+
+    # game/front_page.rpy:264
+    old "Checking script for potential problems..."
+    new "正在检查脚本中的潜在问题……"
+
+    # game/front_page.rpy:279
+    old "Deleting persistent data..."
+    new "正在删除永久性数据……"
+
+    # game/front_page.rpy:287
+    old "Recompiling all rpy files into rpyc files..."
+    new "正在将全部的 rpy 文件重新编译至 rpyc 文件……"
 

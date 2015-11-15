@@ -3,7 +3,7 @@
     # game/android.rpy:12
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
     new "Para construir un paquete para Android, por favor descarga RAPT, descomprimelo y colocalo dentro de la carpeta de Ren'Py. Despues reinicia el launcher de Ren'Py."
-    
+
     # game/android.rpy:13
     old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
     new "Se necesita Java Development Kit de 32-bit para construir paquetes de Android en Windows. El JDK es diferente al JRE, es posible que tenga Java sin tener el JDK.\n\nPor favor {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}descarga e instala el JDK{/a}, después, reinicia Ren'Py."
@@ -159,4 +159,16 @@
     # game/android.rpy:629
     old "The port must be a number."
     new "El puerto debe ser un número."
+
+    # game/android.rpy:46
+    old "Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device."
+    new "Construye un paquete para Android, lo instala en un dispositivo conectado a su ordenador, y luego ejecuta la aplicación en su dispositivo."
+
+    # game/android.rpy:290
+    old "Television"
+    new "Televisión"
+
+    # game/android.rpy:326
+    old "Build, Install & Launch"
+    new "Construir, instalar & Ejecutar"
 

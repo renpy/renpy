@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,9 +22,9 @@
 # Code that manages projects.
 
 init python:
-    try:
+    if renpy.windows:
         import EasyDialogsWin as EasyDialogs
-    except:
+    else:
         EasyDialogs = None
 
     import os
@@ -62,7 +62,10 @@ init python in project:
                 raise Exception("{} does not exist.".format(path))
 
             # The name of the project.
-            self.name = os.path.basename(path)
+            if path.endswith(".app/Contents/Resources/autorun"):
+                self.name = os.path.basename(path[:-len(".app/Contents/Resources/autorun")])
+            else:
+                self.name = os.path.basename(path)
 
             # The path to the project.
             self.path = path
@@ -118,6 +121,8 @@ init python in project:
 
             data.setdefault("build_update", False)
             data.setdefault("packages", [ "all" ])
+            data.setdefault("add_from", True)
+            data.setdefault("force_recompile", True)
 
         def make_tmp(self):
             """
@@ -219,7 +224,7 @@ init python in project:
                 if p.wait():
                     interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
-        def update_dump(self, force=False, gui=True):
+        def update_dump(self, force=False, gui=True, compile=False):
             """
             If the dumpfile does not exist, runs Ren'Py to create it. Otherwise,
             loads it in iff it's newer than the one that's already loaded.
@@ -232,7 +237,10 @@ init python in project:
                 if gui:
                     interface.processing(_("Ren'Py is scanning the project..."))
 
-                self.launch(["quit"], wait=True)
+                if compile:
+                    self.launch(["compile"], wait=True)
+                else:
+                    self.launch(["quit"], wait=True)
 
             if not os.path.exists(dump_filename):
                 self.dump["error"] = True
@@ -390,6 +398,10 @@ init python in project:
                 if not os.path.isdir(ppath):
                     continue
 
+                autorun = os.path.join(ppath, "Contents", "Resources", "autorun")
+                if os.path.exists(autorun):
+                    ppath = autorun
+
                 # A project has either a game/ directory, or a project.json
                 # file.
                 if (not os.path.isdir(os.path.join(ppath, "game"))) and (not os.path.exists(os.path.join(ppath, "project.json"))):
@@ -546,62 +558,12 @@ label choose_projects_directory:
 
         interface.interaction(_("PROJECTS DIRECTORY"), _("Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"), _("This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."),)
 
-        path = persistent.projects_directory
+        path, is_default = choose_directory(persistent.projects_directory)
 
-        if path:
-            default_path = path
-        else:
-            try:
-                default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except:
-                default_path = os.path.abspath(config.renpy_base)
-
-
-        if EasyDialogs:
-
-            choice = EasyDialogs.AskFolder(defaultLocation=default_path, wanted=unicode)
-
-            if choice is not None:
-                path = choice
-            else:
-                path = None
-
-        else:
-
-            try:
-
-                cmd = [ "/usr/bin/python", os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
-
-                p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                choice = p.stdout.read()
-                code = p.wait()
-
-            except:
-                import traceback
-                traceback.print_exc()
-
-                code = 0
-                choice = ""
-                path = None
-
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
-
-            if code:
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the projects directory. Please install the python-tk or tkinter package."), label=None)
-
-            elif choice:
-                path = choice.decode("utf-8")
-
-        if path is None:
-            path = default_path
+        if is_default:
             interface.info(_("Ren'Py has set the projects directory to:"), "[path!q]", path=path)
 
-        path = renpy.fsdecode(path)
-
-        if os.path.isdir(path):
-            persistent.projects_directory = path
-        else:
-            path = os.path.abspath(config.renpy_base)
+        persistent.projects_directory = path
 
         project.manager.scan()
 

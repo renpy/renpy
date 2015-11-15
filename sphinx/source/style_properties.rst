@@ -79,8 +79,6 @@ text inside the button. The :propref:`background` style property sets the
 background of a button, while the :propref:`color` property sets the color of
 text.::
 
-    init python:
-
      # The button background is gray when insensitive, light
      # blue when hovered, and dark blue otherwise.
      style button:
@@ -91,7 +89,7 @@ text.::
      # The button text is yellow when selected, and white
      # otherwise.
      style button_text:
-         color = "#fff"
+         color "#fff"
          selected_color = "#ff0"
 
 Style Property Values
@@ -148,6 +146,8 @@ novel kinds of value a style property can expect.
     red, green, blue, and alpha, in that order.
 
     * ``(0, 0, 255, 255)`` represents an opaque blue color.
+
+    Finally, colors can be an instance of :class:`Color`.
 
 List of All Style Properties
 ============================
@@ -324,6 +324,19 @@ Text Style Properties
     If True, the default, truetype font text will be rendered
     anti-aliased.
 
+.. style-property:: adjust_spacing boolean
+
+    If True, Ren'Py will adjust the spacing of drawable-resolution text
+    to match the spacing of the text rendered at virtual resolution, to
+    ensure the size of frames and other containers holding text does not
+    change.
+
+    When set to False, text will not change in size, but it is the creator's
+    responsiblity to ensure there is enough space to layout text at any
+    window size.
+
+    Defaults to True for most text, but False for text in an ``input``.
+
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this
@@ -481,6 +494,14 @@ Text Style Properties
     The outline functionality can also be used to give drop-shadows to
     fonts, by specifying a size of 0 and non-zero offsets.
 
+    By default, `size`, `xoffset` and `yoffset` are scaled with the text.
+    When given as the absolute type, they are not scaled. Code like::
+
+        style default:
+            outlines [ (absolute(1), "#000", absolute(0), absolute(0)) ]
+
+    will always produce a 1 pixel-wide border.
+
     Outlines only work with truetype fonts.
 
 .. style-property:: rest_indent int
@@ -543,6 +564,18 @@ Text Style Properties
 .. style-property:: vertical boolean
 
     If true, the text will be rendered vertically.
+
+.. style-property:: hinting str
+
+    Controls how the font will be hinted. This should be one of the following
+    strings:
+
+    "auto"
+        The default, forces use of the Freetype auto hinter.
+    "bytecode"
+        Uses bytecode hinting information found in the font.
+    "none"
+        Does not hint the font.
 
 .. _window-style-properties:
 
@@ -676,6 +709,13 @@ Button Style Properties
     None
         If none is given, the entire button can be focused.
 
+.. style-property:: keyboard_focus
+
+   If true, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If false, the keyboard focus
+   mechanism will skip this button. (The keyboard focus mechanism is used
+   by keyboards and keyboard-like devices, such as joypads.)
+
 
 .. _bar-style-properties:
 
@@ -781,6 +821,13 @@ left and right sides are used.
        Prevents the bar from rendering at all. Space will be allocated
        for the bar, but nothing will be drawn in that space.
 
+.. style-property:: keyboard_focus
+
+   If true, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If false, the keyboard focus
+   mechanism will skip this button. (The keyboard focus mechanism is used
+   by keyboards and keyboard-like devices, such as joypads.)
+
 
 .. _box-style-properties:
 
@@ -824,7 +871,9 @@ Fixed Style Properties
 
 These are used with the fixed layout.
 
-.. style-property:: fit_first bool
+.. style-property:: fit_first bool or "width" or "height"
 
    If true, then the size of the fixed layout is shrunk to be equal with
-   the size of the first item in the layout.
+   the size of the first item in the layout. If "width", only the width is changed
+   (the fixed will fill the screen vertically). Similarly, "height" only changes
+   the height.

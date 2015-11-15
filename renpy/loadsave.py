@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -216,7 +216,7 @@ class SaveRecord(object):
 
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copy(self.first_filename, filename_new)
+            shutil.copyfile(self.first_filename, filename_new)
             safe_rename(filename_new, filename)
             return
 
@@ -268,14 +268,14 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     roots = renpy.game.log.freeze(None)
 
+    if renpy.config.save_dump:
+        save_dump(roots, renpy.game.log)
+
     logf = StringIO()
     dump((roots, renpy.game.log), logf)
 
     if mutate_flag and renpy.python.mutate_flag:
         raise SaveAbort()
-
-    if renpy.config.save_dump:
-        save_dump(roots, renpy.game.log)
 
     screenshot = renpy.game.interface.get_screenshot()
 
@@ -359,6 +359,16 @@ def autosave():
 
 # This assumes a screenshot has already been taken.
 def force_autosave(take_screenshot=False):
+    """
+    :doc: other
+
+    Forces a background autosave to occur.
+
+    `take_screenshot`
+        If True, a new screenshot will be taken. If False, the existing
+        screenshot will be used.
+    """
+
 
     # That is, autosave is running.
     if not autosave_not_running.isSet():
@@ -443,11 +453,17 @@ def list_saved_games(regexp=r'.', fast=False):
 
         c = get_cache(s)
 
-        extra_info = c.get_json().get("_save_name", "")
-        screenshot = c.get_screenshot()
-        mtime = c.get_mtime()
+        if c is not None:
+            json = c.get_json()
+            if json is not None:
+                extra_info = json.get("_save_name", "")
+            else:
+                extra_info = ""
 
-        rv.append((s, extra_info, screenshot, mtime))
+            screenshot = c.get_screenshot()
+            mtime = c.get_mtime()
+
+            rv.append((s, extra_info, screenshot, mtime))
 
     return rv
 
@@ -585,6 +601,17 @@ def rename_save(old, new):
     location.rename(old, new)
 
     clear_slot(old)
+    clear_slot(new)
+
+def copy_save(old, new):
+    """
+    :doc: loadsave
+
+    Copies the save at `old` to `new`. (Does nothing if `old` does not
+    exist.)
+    """
+
+    location.copy(old, new)
     clear_slot(new)
 
 

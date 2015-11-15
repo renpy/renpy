@@ -1,4 +1,4 @@
-
+﻿
 translate None strings:
 
     # game/screens.rpy:192

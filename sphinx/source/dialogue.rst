@@ -264,3 +264,35 @@ For example::
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
 have no effect.
+
+Python Equivalents
+------------------
+
+.. note::
+
+   This may only make sense if you've read the :ref:`python` section.
+
+When the first parameter to a say statement is present and an expression,
+the say statement is equivalent to calling that expressing with the dialogue
+and an `interact` argument of True. For example::
+
+    e "Hello, world."
+
+is equivalent to::
+
+    $ e("Hello, world.", interact=True)
+
+The say statement will search the ``character`` named store before the default
+store. If you want to have a character with the same name as a variable in
+the default store, it can be defined using::
+
+    define character.e = Character("Eileen")
+
+This character can then be used alongside a variable in the default store::
+
+    label start:
+
+        # This is a terrible variable name.
+        e = 100
+
+        e "Our starting energy is [e] units."

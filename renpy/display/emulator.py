@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 import renpy.display
 
 import os
-import pygame
+import pygame_sdl2 as pygame
 
 # The function that's called to perform the emulation. This function has
 # the signature of null_emulator.
@@ -32,6 +32,9 @@ emulator = None
 
 # An overlay that is placed over the screen to support the emulator.
 overlay = [ ]
+
+# True if we're in ios mode, where we don't allow keys.
+ios = False
 
 def null_emulator(ev, x, y):
     """
@@ -41,10 +44,14 @@ def null_emulator(ev, x, y):
 
 TOUCH_KEYS = [ pygame.K_ESCAPE, pygame.K_PAGEUP ]
 
+
 def touch_emulator(ev, x, y):
     """
-    This emulates a touch-screen device, like a tablet or smartphone.
+    This emulates an android touch-screen device, like a tablet or smartphone.
     """
+
+    if renpy.display.interface.text_rect:
+        return ev, x, y
 
     if ev.type == pygame.MOUSEBUTTONDOWN:
         if ev.button != 1:
@@ -62,11 +69,11 @@ def touch_emulator(ev, x, y):
             x = 0
             y = 0
 
-    elif ev.type == pygame.KEYDOWN:
+    elif ev.type == pygame.KEYDOWN and not ios:
         if not ev.key in TOUCH_KEYS:
             return None, x, y
 
-    elif ev.type == pygame.KEYUP:
+    elif ev.type == pygame.KEYUP and not ios:
         if not ev.key in TOUCH_KEYS:
             return None, x, y
 
@@ -95,6 +102,27 @@ def tv_emulator(ev, x, y):
 
     return ev, x, y
 
+keyboard = None
+null = None
+
+def dynamic_keyboard(st, at):
+    global keyboard
+    global null
+
+    if keyboard is None:
+        keyboard = renpy.store.Fixed(
+            renpy.store.Solid("#000", yalign=1.0, ymaximum=.625),
+            renpy.store.Text("On-Screen Keyboard", xalign=.5, yalign=.75),
+            )
+        null = renpy.store.Null()
+
+    if renpy.display.interface.old_text_rect:
+        rv = keyboard
+    else:
+        rv = null
+
+    return rv, .33
+
 
 def init_emulator():
     """
@@ -103,12 +131,17 @@ def init_emulator():
 
     global emulator
     global overlay
+    global ios
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
     if name == "touch":
         emulator = touch_emulator
-        overlay = [ ]
+        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+    elif name == "ios-touch":
+        emulator = touch_emulator
+        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+        ios = True
     elif name == "tv":
         emulator = tv_emulator
         overlay = [ renpy.display.motion.Transform(

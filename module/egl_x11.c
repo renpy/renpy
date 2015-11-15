@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
 #include "EGL/egl.h"
 #include "GLES2/gl2.h"
 

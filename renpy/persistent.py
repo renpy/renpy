@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,13 +35,16 @@ class Persistent(object):
         self._update()
 
     def __setstate__(self, data):
-        vars(self).update(data)
+        self.__dict__.update(data)
 
     def __getstate__(self):
-        return vars(self)
+        return self.__dict__
 
     # Undefined attributes return None.
     def __getattr__(self, attr):
+        if attr.startswith("__") and attr.endswith("__"):
+            raise AttributeError("Persistent object has no attribute %r", attr)
+
         return None
 
     def _clear(self, progress=False):
@@ -51,7 +54,6 @@ class Persistent(object):
         `progress`
             If true, also resets progress data that Ren'Py keeps.
         """
-
 
         keys = list(self.__dict__)
 
@@ -99,8 +101,6 @@ class Persistent(object):
         # changed at.
         if self._changed is None:
             self._changed = { }
-
-
 
 
 renpy.game.Persistent = Persistent
@@ -358,11 +358,15 @@ def update(force_save=False):
     if need_save:
         save()
 
+should_save_persistent = True
 
 def save():
     """
     Saves the persistent data to disk.
     """
+
+    if not should_save_persistent:
+        return
 
     try:
         data = dumps(renpy.game.persistent).encode("zlib")
@@ -413,7 +417,13 @@ def MultiPersistent(name):
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
 
-    if renpy.windows:
+    if renpy.android:
+        files = [ os.path.join(os.environ['ANDROID_OLD_PUBLIC'], '../RenPy/Persistent') ]
+
+    elif renpy.ios:
+        raise Exception("MultiPersistent is not supported on iOS.")
+
+    elif renpy.windows:
         files = [ os.path.expanduser("~/RenPy/Persistent") ]
 
         if 'APPDATA' in os.environ:

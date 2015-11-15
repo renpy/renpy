@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,9 @@ init python:
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
+    if persistent.generate_empty_strings is None:
+        persistent.generate_empty_strings = True
+
 label translate:
 
     python:
@@ -41,7 +44,7 @@ label translate:
 
         if language == "rot13":
             args.append("--rot13")
-        else:
+        elif persistent.generate_empty_strings:
             args.append("--empty")
 
         interface.processing(_("Ren'Py is generating translations...."))

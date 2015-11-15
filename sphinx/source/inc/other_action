@@ -10,6 +10,10 @@
         position arguments to be passed to `callable`.
     `kwargs`
         keyword arguments to be passed to `callable`.
+    
+    This Action takes an optional _update_screens keyword argument, which
+    defaults to true. When it is true, the interaction restarts and
+    the screens are updated after the function returns.
 
 .. function:: Help(help=None)
     
@@ -20,7 +24,11 @@
          that label is called in a new context when the button is
          chosen. Otherwise, it should be a string giving a file
          that is opened in a web browser. If None, the value of
-         config.help is used in the same wayt.
+         config.help is used in the same way.
+
+.. function:: HideInterface()
+    
+    Causes the interface to be hidden until the user clicks.
 
 .. function:: If(expression, true=None, false=None)
     
@@ -51,6 +59,16 @@
     
     Causes `url` to be opened in a web browser.
 
+.. function:: RestartStatement()
+    
+    This action causes Ren'Py to rollback to before the current
+    statement, and then re-run the current statement. This may be used
+    when changing a persistent variable that affects how the statement
+    is displayed.
+    
+    If run in a menu context, this waits until the player exits to a
+    top-level context before performing the rollback.
+
 .. function:: RollForward()
     
     This action causes a rollforward to occur, if a roll forward is
@@ -74,6 +92,16 @@
         # The button is selected if mars_flag is True
         textbutton "Marsopolis":
             action [ Jump("mars"), SelectedIf(mars_flag) ]
+
+.. function:: SensitiveIf(expression)
+    
+    This allows an expression to control if a button should be marked
+    as sensitive. It should be used as part of a list with one or more
+    actions. For example::
+    
+        # The button is sensitive if mars_flag is True
+        textbutton "Marsopolis":
+            action [ Jump("mars"), SensitiveIf(mars_flag) ]
 
 .. function:: Skip(fast=False, confirm=False)
     

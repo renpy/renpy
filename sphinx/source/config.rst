@@ -230,6 +230,10 @@ cleared.
     default. If None, the afm_enable preferences is ignored. (Auto-forward
     will occur when the auto-forward speed is non-zero.)
 
+.. var:: config.default_emphasize_audio = False
+
+    Controls the default state of the "emphasize audio" preference.
+
 .. var:: config.default_fullscreen = None
 
     This sets the default value of the fullscreen preference. This
@@ -271,6 +275,11 @@ cleared.
 Occasionally Used
 -----------------
 
+.. var:: config.after_replay_callback = None
+
+    If not None, a function that is called with no arguments after a
+    replay completes.
+
 .. var:: config.auto_load = None
 
     If not None, the name of a save file to automatically load when
@@ -293,20 +302,6 @@ Occasionally Used
     voice audio.
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
-
-.. var:: config.reduce_volume_in_voice = True
-
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-
-.. var:: config.volume_in_voice = .5
-
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-
-.. var:: config.reduce_volume_time = .5
-
-    # It takes this seconds to reduce and return the volume when voice is played.
 
 .. var:: config.automatic_images = None
 
@@ -336,6 +331,10 @@ Occasionally Used
     defining automatic images. This can be used to remove directory
     names, when directories contain images.
 
+.. var:: config.autosave_slots = 10
+
+    The number of slots used by autosaves.
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
@@ -364,6 +363,10 @@ Occasionally Used
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
 
+.. var:: config.default_tag_layer = "master:
+
+    The layer an image is show on if its tag is not found in config.tag_layer.
+
 .. var:: config.default_transform = ...
 
     When a displayable is shown using the show or scene statements,
@@ -371,6 +374,31 @@ Occasionally Used
     initialize the values of the displayable's transform.
 
     The default default transform is :var:`center`.
+
+.. var:: config.emphasize_audio_channels = [ 'voice' ]
+
+    A list of strings giving audio channel names.
+
+    If the "emphasize audio" preference is enabled, when one of the audio
+    channels listed starts playing a sound, all channels that are not
+    listed in this variable have their secondary audio volume reduced
+    to :var:`config.emphasize_audio_volume` over :var:`config.emphasize_audio_time`
+    seconds.
+
+    When no channels listed in this variable are playing audio, all channels
+    that are not listed have their secondary audio volume raised to 1.0 over
+    :var:`config.emphasize_audio_time` seconds.
+
+    For example, setting this to ``[ 'voice' ]]`` will lower the volume of all
+    non-voice channels when a voice is played.
+
+.. var:: config.emphasize_audio_time = 0.5
+
+    See above.
+
+.. var:: config.emphasize_audio_volume = 0.5
+
+    See above.
 
 .. var:: config.empty_window = ...
 
@@ -447,6 +475,13 @@ Occasionally Used
     If true, the game will autosave. If false, no autosaving will
     occur.
 
+.. var:: config.hw_video = False
+
+    If true, hardware video playback will be used on mobile platforms. This
+    is faster, but only some formats are supported and only fullscreen video
+    is available. If false, software playback will be used, but it may be
+    too slow to be useful.
+
 .. var:: config.image_cache_size = 8
 
     This is used to set the size of the :ref:`image cache <images>`, as a
@@ -486,6 +521,14 @@ Occasionally Used
 
     The :var:`_window_subtitle` variable is set to this value when entering
     the main or game menus.
+
+.. var:: config.minimum_presplash_time = 0.0
+
+    The minimum amount of time, in seconds, a presplash, Android presplash,
+    or iOS LaunchImage is displayed for. If Ren'Py initializes before this
+    amount of time has been reached, it will sleep to ensure the image is
+    shown for at least this amount of time. The image may be shown longer
+    if Ren'Py takes longer to start up.
 
 .. var:: config.missing_background = "black"
 
@@ -538,10 +581,21 @@ Occasionally Used
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
+.. var:: config.nearest_neighbor = False
+
+    Uses nearest-neighbor filtering by default, to support pixel art or
+    melting players' eyes.
+
 .. var:: config.overlay_functions = [ ]
 
     A list of functions. When called, each function is expected to
     use ui functions to add displayables to the overlay layer.
+
+.. var:: config.overlay_screens = [ ... ]
+
+    A list of screens that are displayed when the overlay is enabled,
+    and hidden when the overlay is supressed. (The screens are shown
+    on the screens layer, not the overlay layer.)
 
 .. var:: config.python_callbacks = [ ]
 
@@ -558,11 +612,36 @@ Occasionally Used
     with this, perhaps by using ``hasattr(store, 'varname')`` to check if
     a variable is defined.
 
+.. var:: config.quicksave_slots = 10
+
+    The number of slots used by quicksaves.
+
 .. var:: config.quit_action = ...
 
     The action that is called when the user clicks the quit button on
     a window. The default action prompts the user to see if he wants
     to quit the game.
+
+.. var:: config.replace_text = None
+
+    If not None, a function that is called with a single argument, a text to
+    be displayed to the user. The function can return the same text it was
+    passed, or a replacement text that will be displayed instead.
+
+    The function is called after substitutions have been performed and after
+    the text has been split on tags, so its argument contains nothing but
+    actual text. All displayed text passes through the function: not only
+    dialogue text, but also user interface text.
+
+    This can be used to replace specific ASCII sequences with corresponding
+    Unicode characters, as demonstrated by the following code::
+
+        def replace_text(s):
+            s = s.replace("'", u'\u2019') # apostrophe
+            s = s.replace('--', u'\u2014') # em dash
+            s = s.replace('...', u'\u2026') # ellipsis
+            return s
+        config.replace_text = replace_text
 
 .. var:: config.save_json_callbacks = [ ]
 
@@ -578,6 +657,13 @@ Occasionally Used
     The dictionary passed to the callbacks may have already have keys
     beginning with an underscore (_). These keys are used by Ren'Py,
     and should not be changed.
+
+.. var:: config.tag_layer = { }
+
+    A dictionary mapping image tag strings to layer name strings. When
+    an image is shown without a specific layer name, the image's tag is
+    looked up in this dictionary to get the layer to show it on. If the
+    tag is not found here, :var:`config.default_tag_name` is used.
 
 .. var:: config.thumbnail_height = 75
 
@@ -626,7 +712,17 @@ Rarely or Internally Used
     screen that Ren'Py wil draw pictures to.
 
     This can be used to configure Ren'Py to only allow certain sizes of
-    screen, such as integer multiples of the screen size.
+    screen. For example, the following code allows only integer multiples
+    of the original screen size::
+
+        init python:
+
+            def force_integer_multiplier(width, height):
+                multiplier = min(width / config.screen_width, height / config.screen_height)
+                multiplier = max(int(multiplier), 1)
+                return (multiplier * config.screen_width, multiplier * config.screen_height)
+
+            config.adjust_view_size = force_integer_multiplier
 
 .. var:: config.afm_bonus = 25
 
@@ -691,6 +787,19 @@ Rarely or Internally Used
     Roughly, the number of interactions that will occur before an
     autosave occurs. To disable autosaving, set :var:`config.has_autosave` to
     False, don't change this variable.
+
+.. var:: config.autosave_on_choice = True
+
+    If true, Ren'Py will autosave upon encountering an in-game choice.
+    (When :func:`renpy.choice_for_skipping` is called.)
+
+.. var:: config.autosave_on_quit = True
+
+    If true, Ren'Py will attempt to autosave when the user attempts to quit,
+    return to the main menu, or load a game over the existing game. (To
+    save time, the autosave occurs while the user is being prompted to confirm
+    his or her decision.)
+
 
 .. var:: config.character_callback = None
 
@@ -787,10 +896,6 @@ Rarely or Internally Used
     A list of functions that are called (without any arguments) when
     an interaction is started or restarted.
 
-.. var:: config.joystick = True
-
-    If True, joystick support is enabled.
-
 .. var:: config.keep_running_transform = True
 
     If true, showing an image without supplying a transform or ATL
@@ -877,6 +982,13 @@ Rarely or Internally Used
     manipulator. If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
 
+.. var:: config.missing_label_callback = None
+
+    If not None, this function is called when Ren'Py attempts to access
+    a label that does not exist in the game. It should return the name of
+    a label to use as a replacement for the missing label, or None to cause
+    Ren'Py to raise an exception.
+
 .. var:: config.mouse_hide_time = 30
 
     The mouse is hidden after this number of seconds has elapsed
@@ -927,6 +1039,10 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.quit_on_mobile_background = False
+
+    If true, the mobile app will quit when it loses focus.
+
 .. var:: config.rollback_enabled = True
 
     Should the user be allowed to rollback the game? If set to False,
@@ -968,6 +1084,12 @@ Rarely or Internally Used
    in the save file. Each line consists of a relative size estimate, the path
    to the object, information about if the object is an alias, and a
    representation of the object.
+
+.. var:: config.save_on_mobile_background = True
+
+    If true, the mobile app will save its state when it loses focus. The state
+    is saved in a way that allows it to be automatically loaded (and the game
+    to resume its place) when the app starts again.
 
 .. var:: config.save_physical_size = True
 
@@ -1023,6 +1145,11 @@ Rarely or Internally Used
     A list of directories that are searched for images, music,
     archives, and other media, but not scripts. This is initialized to
     a list containing "common" and the name of the game directory.
+
+.. var:: config.search_prefixes = [ "", "images/" ]
+
+    A list of prefixes that are prepended to filenames that are searched
+    for.
 
 .. var:: config.show = renpy.show
 
@@ -1087,6 +1214,12 @@ Rarely or Internally Used
 
     If True, transforms will inherit :ref:`position properties
     <position-style-properties>` from their child. If not, they won't.
+
+.. var:: config.transition_screens = True
+
+    If true, screens will participate in transitions, dissolving from the
+    old state of the screen to the new state of the screen. If False, only
+    the latest state of the screen will be shown.
 
 .. var:: config.variants = [ ... ]
 

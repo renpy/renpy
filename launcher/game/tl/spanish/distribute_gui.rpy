@@ -43,3 +43,20 @@
     # game/distribute_gui.rpy:236
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "Tu proyecto no tiene información de construcción. ¿Te gustaría añadir la información de construcción al final del archivo options.rpy?"
+
+    # game/distribute_gui.rpy:194
+    old "Add from clauses to calls, once"
+    new "Añadir desde cláusulas a las llamadas, una vez"
+
+    # game/distribute_gui.rpy:231
+    old "Options:"
+    new "Opciones:"
+
+    # game/distribute_gui.rpy:238
+    old "Add from clauses to calls"
+    new "Añadir desde cláusula a las llamadas"
+
+    # game/distribute_gui.rpy:246
+    old "Adding from clauses to call statements that do not have them."
+    new "Añadiendo desde cláusulas para llamar a las declaraciones que no las tienen."
+

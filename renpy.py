@@ -4,7 +4,7 @@
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,8 +38,23 @@ def path_to_common(renpy_base):
 
 # Given a directory holding a Ren'Py game, this is expected to return
 # the path to a directory that will hold save files.
-def path_to_saves(gamedir):
+def path_to_saves(gamedir, save_directory=None):
     import renpy #@UnresolvedImport
+
+    if save_directory is None:
+        save_directory = renpy.config.save_directory
+
+    # Makes sure the permissions are right on the save directory.
+    def test_writable(d):
+        try:
+            fn = os.path.join(d, "test.txt")
+            open(fn, "w").close()
+            open(fn, "r").close()
+            os.unlink(fn)
+            return True
+        except:
+            return False
+
 
     # Android.
     if renpy.android:
@@ -50,18 +65,40 @@ def path_to_saves(gamedir):
             ]
 
         for rv in paths:
-            if os.path.isdir(rv):
+            if os.path.isdir(rv) and test_writable(rv):
                 break
 
-        print "Using savedir", rv
+        print "Saving to", rv
 
         # We return the last path as the default.
 
         return rv
 
+    if renpy.ios:
+        from pyobjus import autoclass
+        from pyobjus.objc_py_types import enum
+
+        NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
+        NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
+
+        NSFileManager = autoclass('NSFileManager')
+        manager = NSFileManager.defaultManager()
+        url = manager.URLsForDirectory_inDomains_(
+            NSSearchPathDirectory.NSDocumentDirectory,
+            NSSearchPathDomainMask.NSUserDomainMask,
+            ).lastObject()
+
+        # url.path seems to change type based on iOS version, for some reason.
+        try:
+            rv = url.path().UTF8String().decode("utf-8")
+        except:
+            rv = url.path.UTF8String().decode("utf-8")
+
+        print "Saving to", rv
+        return rv
 
     # No save directory given.
-    if not renpy.config.save_directory:
+    if not save_directory:
         return gamedir + "/saves"
 
     # Search the path above Ren'Py for a directory named "Ren'Py Data".
@@ -70,7 +107,7 @@ def path_to_saves(gamedir):
 
     while True:
         if os.path.isdir(path + "/Ren'Py Data"):
-            return path + "/Ren'Py Data/" + renpy.config.save_directory
+            return path + "/Ren'Py Data/" + save_directory
 
         newpath = os.path.dirname(path)
         if path == newpath:
@@ -79,18 +116,18 @@ def path_to_saves(gamedir):
 
     # Otherwise, put the saves in a platform-specific location.
     if renpy.macintosh:
-        rv = "~/Library/RenPy/" + renpy.config.save_directory
+        rv = "~/Library/RenPy/" + save_directory
         return os.path.expanduser(rv)
 
     elif renpy.windows:
         if 'APPDATA' in os.environ:
-            return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
+            return os.environ['APPDATA'] + "/RenPy/" + save_directory
         else:
             rv = "~/RenPy/" + renpy.config.save_directory
             return os.path.expanduser(rv)
 
     else:
-        rv = "~/.renpy/" + renpy.config.save_directory
+        rv = "~/.renpy/" + save_directory
         return os.path.expanduser(rv)
 
 
@@ -98,7 +135,6 @@ def path_to_saves(gamedir):
 # the launcher, usually.)
 def path_to_renpy_base():
     renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
-    renpy_base = os.environ.get('RENPY_BASE', renpy_base)
     renpy_base = os.path.abspath(renpy_base)
 
     return renpy_base
@@ -153,10 +189,6 @@ def main():
         print >>sys.stderr, "Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py"
         print >>sys.stderr, "correctly, preserving the directory structure."
         raise
-
-    if android:
-        renpy.linux = False
-        renpy.android = True
 
     renpy.bootstrap.bootstrap(renpy_base)
 

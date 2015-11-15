@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,6 +31,9 @@ import distutils.core
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
 
+# True if we're building on ios.
+ios = "RENPY_IOS" in os.environ
+
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
@@ -40,10 +43,14 @@ cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
 # The install variable is a list of directories that have Ren'Py
 # dependencies installed in them.
-if not android:
+if not (android or ios):
     install = os.environ.get("RENPY_DEPS_INSTALL", "/usr")
     install = install.split("::")
     install = [ os.path.abspath(i) for i in install ]
+
+    if "VIRTUAL_ENV" in os.environ:
+        install.insert(0, os.environ["VIRTUAL_ENV"])
+
 else:
     install = [ ]
 
@@ -66,7 +73,7 @@ def include(header, directory=None, optional=True):
         If given, returns False rather than abandoning the process.
     """
 
-    if android:
+    if android or ios:
         return True
 
     for i in install:
@@ -105,7 +112,7 @@ def library(name, optional=False):
         rather than reporting an error.
     """
 
-    if android:
+    if android or ios:
         return True
 
     for i in install:
@@ -135,7 +142,7 @@ extensions = [ ]
 # A list of macros that are defined for all modules.
 global_macros = [ ]
 
-def cmodule(name, source, libs=[], define_macros=[]):
+def cmodule(name, source, libs=[], define_macros=[], language="c"):
     """
     Compiles the python module `name` from the files given in
     `source`, and the libraries in `libs`.
@@ -150,12 +157,13 @@ def cmodule(name, source, libs=[], define_macros=[]):
         extra_link_args=extra_link_args,
         libraries=libs,
         define_macros=define_macros + global_macros,
+        language=language,
         ))
 
 
 necessary_gen = [ ]
 
-def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
+def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None, language="c"):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -164,7 +172,10 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     # Find the pyx file.
     split_name = name.split(".")
 
-    fn = "/".join(split_name) + ".pyx"
+    if pyx is not None:
+        fn = pyx
+    else:
+        fn = "/".join(split_name) + ".pyx"
 
     if os.path.exists(os.path.join("..", fn)):
         fn = os.path.join("..", fn)
@@ -202,8 +213,13 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
     deps = [ i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) ]
 
     # Determine if any of the dependencies are newer than the c file.
-    c_fn = os.path.join("gen", name + ".c")
-    necessary_gen.append(name + ".c")
+
+    if language == "c++":
+        c_fn = os.path.join("gen", name + ".cc")
+        necessary_gen.append(name + ".cc")
+    else:
+        c_fn = os.path.join("gen", name + ".c")
+        necessary_gen.append(name + ".c")
 
     if os.path.exists(c_fn):
         c_mtime = os.path.getmtime(c_fn)
@@ -243,11 +259,23 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
 
         try:
             import subprocess
+
+            if language == "c++":
+                lang_args = [ "--cplus" ]
+            else:
+                lang_args = [ ]
+
+            if "RENPY_ANNOTATE_CYTHON" in os.environ:
+                annotate = [ "-a" ]
+            else:
+                annotate = [ ]
+
             subprocess.check_call([
                 cython_command,
                 "-Iinclude",
                 "-Igen",
-                "-a",
+                "-I..",
+                ] + annotate + lang_args + [
                 fn,
                 "-o",
                 c_fn])
@@ -260,7 +288,7 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[]):
 
     # Build the module normally once we have the c file.
     if compile_if:
-        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros)
+        cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros, language=language)
 
 def find_unnecessary_gen():
 
@@ -293,6 +321,10 @@ def copyfile(source, dest, replace=None, replace_with=None):
 
     sfn = os.path.join("..", source)
     dfn = os.path.join("..", dest)
+
+    if os.path.exists(dfn):
+        if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
+            return
 
     sf = file(sfn, "rb")
     data = sf.read()

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -107,6 +107,7 @@ Prefix(-1, 'selected_activate_', 0, [ ])
 # is needed.
 style_properties = sorted_dict(
     activate_sound = None,
+    adjust_spacing = None,
     aft_bar = 'none_is_null',
     aft_gutter = None,
     alt = None,
@@ -128,22 +129,25 @@ style_properties = sorted_dict(
     child = 'renpy.easy.displayable_or_none',
     clipping = None,
     color = 'renpy.easy.color',
+    debug = None,
     drop_shadow = None,
     drop_shadow_color = 'renpy.easy.color',
     first_indent = None,
     first_spacing = None,
     fit_first = None,
-    focus_mask = None,
+    focus_mask = 'expand_focus_mask',
     focus_rect = None,
     font = None,
     fore_bar = 'none_is_null',
     fore_gutter = None,
     foreground = 'renpy.easy.displayable_or_none',
+    hinting = None,
     hover_sound = None,
     hyperlink_functions=None,
     italic = None,
     justify = None,
     kerning = None,
+    keyboard_focus = None,
     language = None,
     layout = None,
     line_leading = None,
@@ -411,6 +415,7 @@ def generate_constants():
     g.close()
 
 def generate_property_function(g, prefix, propname, properties):
+
     name = prefix.name + propname
 
     g.write("cdef int {name}_property(PyObject **cache, int *cache_priorities, int priority, object value) except -1:", name=name)
@@ -455,41 +460,41 @@ def generate_property_functions():
     This generates code that defines the property functions.
     """
 
-    g = CodeGen("module/gen/stylepropertyfunctions.pxi")
+    for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+        g = CodeGen("module/gen/style_{}functions.pyx".format(prefix.name))
 
-    for propname, proplist in all_properties.items():
-        for prefix in sorted(prefixes.values(), key=lambda p : p.index):
+        g.write('include "style_common.pxi"')
+        g.write('')
+
+        for propname, proplist in all_properties.items():
             generate_property_function(g, prefix, propname, proplist)
 
-    g.close()
+        g.close()
 
-def generate_property(g, propname, prefix):
+def generate_property(g, propname):
     """
     This generates the code for a single property on the style object.
     """
 
-    name = prefix.name + propname
-
-    g.write("property {}:", name)
+    g.write("property {}:", propname)
     g.indent()
 
-    if name in style_properties:
-        # __get__
-        g.write("def __get__(self):")
-        g.indent()
-        g.write("return self._get({})", style_property_index[propname])
-        g.dedent()
+    # __get__
+    g.write("def __get__(self):")
+    g.indent()
+    g.write("return self._get({})", style_property_index[propname])
+    g.dedent()
 
     # __set__
     g.write("def __set__(self, value):")
     g.indent()
-    g.write("self.properties.append({{ '{}' : value }})", name)
+    g.write("self.properties.append({{ '{}' : value }})", propname)
     g.dedent()
 
     # __del__
     g.write("def __del__(self):")
     g.indent()
-    g.write("self.delattr('{}')", name)
+    g.write("self.delattr('{}')", propname)
     g.dedent()
 
     g.dedent()
@@ -497,16 +502,15 @@ def generate_property(g, propname, prefix):
 
 def generate_properties():
 
-    g = CodeGen("module/gen/styleproperties.pxi")
+    g = CodeGen("module/gen/styleclass.pxi")
 
     g.write("cdef class Style(StyleCore):")
     g.write("")
 
     g.indent()
 
-    for propname in all_properties:
-        for prefix in sorted(prefixes.values(), key=lambda p : p.index):
-            generate_property(g, propname, prefix)
+    for propname in style_properties:
+        generate_property(g, propname)
 
     g.dedent()
     g.close()

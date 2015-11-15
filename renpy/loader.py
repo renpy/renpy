@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,10 +26,33 @@ from cStringIO import StringIO
 import sys
 import types
 import threading
+import zlib
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
 u"".encode("utf-8")
+
+
+################################################################# Physical Paths
+
+def get_path(fn):
+    """
+    Returns the path to `fn` relative to the gamedir. If any of the directories
+    leading to `fn` do not exist, tries to create them.
+
+    This always returns a path, but the path may or may not be writable.
+    """
+
+    fn = os.path.join(renpy.config.gamedir, fn)
+    dn = os.path.dirname(fn)
+
+    try:
+        if not os.path.exists(dn):
+            os.makedirs(dn)
+    except:
+        pass
+
+    return fn
 
 ################################################################## Asset Loading
 
@@ -77,12 +100,6 @@ def index_archives():
     Loads in the indexes for the archive files. Also updates the lower_map.
     """
 
-    # Update lower_map.
-    lower_map.clear()
-
-    for dir, fn in listdirfiles(): #@ReservedAssignment
-        lower_map[fn.lower()] = fn
-
     # Index the archives.
 
     global old_config_archives
@@ -91,6 +108,11 @@ def index_archives():
         return
 
     old_config_archives = renpy.config.archives[:]
+
+    # Update lower_map.
+    lower_map.clear()
+
+    cleardirfiles()
 
     global archives
     archives = [ ]
@@ -141,6 +163,9 @@ def index_archives():
         except:
             raise
 
+    for dir, fn in listdirfiles(): #@ReservedAssignment
+        lower_map[fn.lower()] = fn
+
 def walkdir(dir): #@ReservedAssignment
     rv = [ ]
 
@@ -160,22 +185,51 @@ def walkdir(dir): #@ReservedAssignment
     return rv
 
 
-def listdirfiles(common=True):
+# A list of files that make up the game.
+game_files = [ ]
+
+# A list of files that are in the common directory.
+common_files = [ ]
+
+def cleardirfiles():
     """
-    Returns a list of directory, file tuples known to the system. If
-    the file is in an archive, the directory is None.
+    Clears the lists above when the game has changed.
     """
 
-    rv = [ ]
+    global game_files
+    global common_files
+
+    game_files = [ ]
+    common_files = [ ]
+
+def scandirfiles():
+    """
+    Scans directories, archives, and apks and fills out game_files and
+    common_files.
+    """
 
     seen = set()
 
-    if common:
-        list_apks = apks
-    else:
-        list_apks = game_apks
+    def add(dn, fn):
+        if fn in seen:
+            return
 
-    for apk in list_apks:
+        if fn.startswith("cache/"):
+            return
+
+        if fn.startswith("saves/"):
+            return
+
+        files.append((dn, fn))
+
+        seen.add(fn)
+
+    for apk in apks:
+
+        if apk not in game_apks:
+            files = common_files # @UnusedVariable
+        else:
+            files = game_files # @UnusedVariable
 
         for f in apk.list():
 
@@ -183,48 +237,74 @@ def listdirfiles(common=True):
             # to ensure that aapt actually includes every file.
             f = "/".join(i[2:] for i in f.split("/"))
 
-            if f not in seen:
-                rv.append((None, f))
-                seen.add(f)
+            add(None, f)
 
     for i in renpy.config.searchpath:
 
-        if (not common) and (renpy.config.commondir) and (i == renpy.config.commondir):
-            continue
+        if (renpy.config.commondir) and (i == renpy.config.commondir):
+            files = common_files # @UnusedVariable
+        else:
+            files = game_files # @UnusedVariable
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
-            if j not in seen:
-                rv.append((i, j))
-                seen.add(j)
+            add(i, j)
+
+    files = game_files
 
     for _prefix, index in archives:
         for j in index.iterkeys():
-            if j not in seen:
-                rv.append((None, j))
-                seen.add(j)
+            add(None, j)
 
 
-    return rv
+
+def listdirfiles(common=True):
+    """
+    Returns a list of directory, file tuples known to the system. If
+    the file is in an archive, the directory is None.
+    """
+
+    if (not game_files) and (not common_files):
+        scandirfiles()
+
+    if common:
+        return game_files + common_files
+    else:
+        return list(game_files)
 
 
 class SubFile(object):
 
-    def __init__(self, f, base, length, start):
-        self.f = f
+    def __init__(self, fn, base, length, start):
+        self.fn = fn
+
+        self.f = None
+
         self.base = base
         self.offset = 0
         self.length = length
         self.start = start
 
-        if start is None:
-            self.name = self.f.name
+        if not self.start:
+            self.name = fn
         else:
             self.name = None
 
+    def open(self):
+        self.f = open(self.fn, "rb")
         self.f.seek(self.base)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _type, value, tb):
+        self.close()
+        return False
+
     def read(self, length=None):
+
+        if self.f is None:
+            self.open()
 
         maxlength = self.length - self.offset
 
@@ -246,6 +326,9 @@ class SubFile(object):
         return (rv1 + rv2)
 
     def readline(self, length=None):
+
+        if self.f is None:
+            self.open()
 
         maxlength = self.length - self.offset
         if length is not None:
@@ -308,8 +391,10 @@ class SubFile(object):
     def flush(self):
         return
 
-
     def seek(self, offset, whence=0):
+
+        if self.f is None:
+            self.open()
 
         if whence == 0:
             offset = offset
@@ -333,11 +418,24 @@ class SubFile(object):
         return self.offset
 
     def close(self):
-        self.f.close()
+        if self.f is not None:
+            self.f.close()
+            self.f = None
 
     def write(self, s):
         raise Exception("Write not supported by SubFile")
 
+open_file = open
+
+if "RENPY_FORCE_SUBFILE" in os.environ:
+    def open_file(name, mode):
+        f = open(name, mode)
+
+        f.seek(0, 2)
+        length = f.tell()
+        f.seek(0, 0)
+
+        return SubFile(f, 0, length, '')
 
 def load_core(name):
     """
@@ -364,7 +462,7 @@ def load_core(name):
     if not renpy.config.force_archives:
         try:
             fn = transfn(name)
-            return file(fn, "rb")
+            return open_file(fn, "rb")
         except:
             pass
 
@@ -373,7 +471,7 @@ def load_core(name):
         if not name in index:
             continue
 
-        f = file(transfn(prefix + ".rpa"), "rb")
+        afn = transfn(prefix + ".rpa")
 
         data = [ ]
 
@@ -387,10 +485,12 @@ def load_core(name):
             else:
                 offset, dlen, start = t
 
-            rv = SubFile(f, offset, dlen, start)
+            rv = SubFile(afn, offset, dlen, start)
 
         # Compatibility path.
         else:
+            f = file(afn, "rb")
+
             for offset, dlen in index[name]:
                 f.seek(offset)
                 data.append(f.read(dlen))
@@ -411,10 +511,12 @@ def get_prefixes():
 
     language = renpy.game.preferences.language
 
-    if language is not None:
-        rv.append(renpy.config.tl_directory + "/" + language + "/")
+    for prefix in renpy.config.search_prefixes:
 
-    rv.append("")
+        if language is not None:
+            rv.append(renpy.config.tl_directory + "/" + language + "/" + prefix)
+
+        rv.append(prefix)
 
     return rv
 
@@ -497,20 +599,38 @@ def transfn(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 
-def get_mtime(name):
+hash_cache = dict()
+
+def get_hash(name):
     """
     Returns the time the file m was last modified, or 0 if it
     doesn't exist or is archived.
     """
 
-    for p in get_prefixes():
-        try:
-            fn = transfn(p + name)
-            return os.path.getmtime(fn)
-        except:
-            pass
+    rv = hash_cache.get(name, None)
+    if rv is not None:
+        return rv
 
-    return 0
+    rv = 0
+
+    try:
+        f = load(name)
+
+        while True:
+            data = f.read(1024 * 1024)
+
+            if not data:
+                break
+
+            rv = zlib.adler32(data, rv)
+
+    except:
+        pass
+
+    hash_cache[name] = rv
+
+    return rv
+
 
 ################################################################# Module Loading
 
@@ -521,9 +641,12 @@ class RenpyImporter(object):
     """
 
     def __init__(self, prefix=""):
-        self.prefix = ""
+        self.prefix = prefix
 
-    def translate(self, fullname, prefix=""):
+    def translate(self, fullname, prefix=None):
+
+        if prefix is None:
+            prefix = self.prefix
 
         try:
             fn = (prefix + fullname.replace(".", "/")).decode("utf8")
@@ -574,10 +697,12 @@ class RenpyImporter(object):
         return load(filename).read()
 
 def init_importer():
-    sys.meta_path.append(RenpyImporter())
+    sys.meta_path.insert(0, RenpyImporter("python-packages/"))
+    sys.meta_path.insert(0, RenpyImporter())
 
 def quit_importer():
-    sys.meta_path.pop()
+    sys.meta_path.pop(0)
+    sys.meta_path.pop(0)
 
 #################################################################### Auto-Reload
 
@@ -609,7 +734,7 @@ def auto_mtime(fn):
     except:
         return None
 
-def add_auto(fn):
+def add_auto(fn, force=False):
     """
     Adds fn as a file we watch for changes. If it's mtime changes or the file
     starts/stops existing, we trigger a reload.
@@ -618,7 +743,7 @@ def add_auto(fn):
     if not renpy.autoreload:
         return
 
-    if fn in auto_mtimes:
+    if (fn in auto_mtimes) and (not force):
         return
 
     for e in renpy.config.autoreload_blacklist:
@@ -656,7 +781,10 @@ def auto_thread_function():
                 continue
 
             if auto_mtime(fn) != mtime:
-                needs_autoreload = True
+
+                with auto_lock:
+                    if auto_mtime(fn) != auto_mtimes[fn]:
+                        needs_autoreload = True
 
 def auto_init():
     """

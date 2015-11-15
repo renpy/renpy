@@ -1,4 +1,4 @@
-
+﻿
 translate traditional_chinese strings:
 
     # game/editor.rpy:120
@@ -12,7 +12,7 @@ translate traditional_chinese strings:
     # game/editor.rpy:137
     old "The may have occured because wxPython is not installed on this system."
     new "這可能是由於 wxPython 未安裝在此系統中而出現的。"
-   
+
     # game/editor.rpy:144
     old "Up to 22 MB download required."
     new "22 MB 需要下載。"

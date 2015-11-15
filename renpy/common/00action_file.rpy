@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,14 +26,27 @@ init -1500 python:
     # File functions
 
     config.linear_saves_page_size = None
+    config.quicksave_slots = 10
+
+    # The number of file pages per
+    config.file_pages_per_folder = 100
 
     if persistent._file_page is None:
         persistent._file_page = "1"
+
+    if persistent._file_folder is None:
+        persistent._file_folder = 0
 
     def __slotname(name, page=None):
 
         if page is None:
             page = persistent._file_page
+
+        try:
+            page = int(page)
+            page = page + persistent._file_folder * config.file_pages_per_folder
+        except ValueError:
+            pass
 
         if config.linear_saves_page_size is not None:
             try:
@@ -47,7 +60,7 @@ init -1500 python:
 
     def __newest_slot():
         """
-        Returns the name of the newest slot on a page.
+        Returns the name of the newest slot.
         """
 
         return renpy.newest_slot(r'\d+')
@@ -172,6 +185,8 @@ init -1500 python:
         Otherwise, this returns json[key] if `key` is defined on the json object of the save,
         `missing` if there is a save with the given name, but it does not contain `key`, or
         `empty` if the save slot is empty.
+
+        Json is added to a save slot by callbacks registered using :var:`config.save_json_callbacks`.
         """
 
         json = renpy.slot_json(__slotname(name, page))
@@ -229,7 +244,8 @@ init -1500 python:
 
          `cycle`
              If true, then saves on the supplied page will be cycled before
-             being shown to the user.
+             being shown to the user. :var:`config.quicksave_slots` slots are
+             used in the cycle.
          """
 
         alt = "Save slot [text]"
@@ -256,7 +272,7 @@ init -1500 python:
                     return
 
             if self.cycle:
-                renpy.renpy.loadsave.cycle_saves(self.page + "-", 10)
+                renpy.renpy.loadsave.cycle_saves(self.page + "-", config.quicksave_slots)
 
             renpy.save(fn, extra_info=save_name)
 
@@ -297,6 +313,9 @@ init -1500 python:
 
          `newest`
              If true, the button is selected if this is the newest file.
+
+         `cycle`
+             Ignored.
          """
 
         alt = "Load slot [text]"
@@ -320,6 +339,8 @@ init -1500 python:
 
             if not main_menu:
                 if self.confirm:
+                    if config.autosave_on_quit and not fn.startswith("auto-"):
+                        renpy.loadsave.force_autosave()
                     layout.yesno_screen(layout.LOADING, FileLoad(self.name, False, self.page))
                     return
 
@@ -375,12 +396,13 @@ init -1500 python:
             return __newest_slot() == __slotname(self.name, self.page)
 
 
-    def FileAction(name, page=None):
+    def FileAction(name, page=None, **kwargs):
         """
          :doc: file_action
 
          "Does the right thing" with the file. This means loading it if the
-         load screen is showing, and saving to it otherwise.
+         load screen is showing (current screen is named "load"), and saving
+         otherwise.
 
          `name`
              The name of the slot to save to or load from. If None, an unused slot
@@ -389,12 +411,14 @@ init -1500 python:
          `page`
              The page that the file will be saved to or loaded from. If None, the
              current page is used.
+
+         Other keyword arguments are passed to FileLoad or FileSave.
          """
 
         if renpy.current_screen().screen_name[0] == "load":
-            return FileLoad(name, page=page)
+            return FileLoad(name, page=page, **kwargs)
         else:
-            return FileSave(name, page=page)
+            return FileSave(name, page=page, **kwargs)
 
     @renpy.pure
     class FilePage(Action, DictEquality):

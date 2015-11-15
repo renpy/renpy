@@ -1,4 +1,4 @@
-## This file contains some of the options that can be changed to customize
+﻿## This file contains some of the options that can be changed to customize
 ## your Ren'Py game. It only contains the most common options... there
 ## is quite a bit more customization you can do.
 ## ゲームをカスタマイズするオプションを記述したファイルです。
@@ -53,7 +53,7 @@ init -1 python hide:
     ## スクリーンで行われます。そのため、本項目は未翻訳です。
 
     ## We then want to call a theme function. theme.roundrect is
-    ## a theme that features the use of rounded rectangles. 
+    ## a theme that features the use of rounded rectangles.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
@@ -319,22 +319,6 @@ init -1 python hide:
 
     config.has_voice = False
 
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-    # True ならボイス再生中は "voice" チャンネル以外のすべてのチャンネル
-    # の音量を減らします。
-    config.reduce_volume_in_voice = True
-    
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-    # reduce_volume_in_voice が True なら、ボイス再生中の "voice" チャンネル以外のチャンネル
-    # の音量の割合です。
-    config.volume_in_voice = .5
-    
-    # It takes this seconds to reduce and return the volume when voice is played.
-    # この秒数をかけて音量を変更します。
-    config.reduce_volume_time = .5
-
     ## Sounds that are used when button and imagemaps are clicked.
     ## ボタンやイメージボタンをクリックした時に鳴らす効果音。
 
@@ -492,7 +476,7 @@ init -1 python hide:
     config.default_fullscreen = False
 
     ## The default text speed in characters per second. 0 is infinite.
-    ## デフォルト文字表示速度。０だと瞬間表示します。
+    ## デフォルト文字表示速度。０だと無限に時間がかかります。
 
     config.default_text_cps = 0
 
@@ -673,11 +657,6 @@ init python:
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
-
-    build.classify('log.txt', None)
-    build.classify('errors.txt', None)
-    build.classify('text_overflow.txt', None)
-    build.classify('traceback.txt', None)
 
     ## To archive files, classify them as 'archive'.
     ## アーカイブに含めるには、'archive' に分類します。

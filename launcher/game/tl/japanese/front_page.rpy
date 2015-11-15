@@ -89,3 +89,23 @@ translate japanese strings:
     old "[p.name!q] (template)"
     new "[p.name!q] (テンプレート)"
 
+    # game/front_page.rpy:35
+    old "Open [text] directory."
+    new "[text] ディレクトリーを開きます。"
+
+    # game/front_page.rpy:150
+    old "Select project [text]."
+    new "プロジェクト [text] を選択します。"
+
+    # game/front_page.rpy:234
+    old "Force Recompile"
+    new "強制再コンパイル"
+
+    # game/front_page.rpy:285
+    old "Recompiling all rpy files into rpyc files..."
+    new "すべての rpy ファイルを rpyc ファイルにコンパイルしています。"
+
+    # game/front_page.rpy:245
+    old "iOS"
+    new "iOS"
+

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -220,8 +220,8 @@ init python:
     ## this is 'mygame-1.0', the windows distribution will be in the
     ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
 
-    if 'RENPY_NIGHTLY' in os.environ:
-        build.directory_name = os.environ['RENPY_NIGHTLY']
+    if 'RENPY_BUILD_VERSION' in os.environ:
+        build.directory_name = "renpy-" + os.environ['RENPY_BUILD_VERSION']
     else:
         build.directory_name = "renpy-" + config.version.rsplit('.', 1)[0]
 
@@ -234,6 +234,9 @@ init python:
     ## allows the updater to run.
     build.include_update = True
 
+    ## Allow empty directories, so we can distribute the images directory.
+    build.exclude_empty_directories = False
+
     ## Clear out various file patterns.
     build.renpy_patterns = [ ]
     build.early_base_patterns = [ ]
@@ -245,12 +248,22 @@ init python:
 
     ## Now, add the Ren'Py distribution in using classify_renpy.
 
-    build.classify_renpy("rapt/**", "rapt")
 
     build.classify_renpy("**~", None)
     build.classify_renpy("**/#*", None)
     build.classify_renpy("**/thumbs.db", None)
     build.classify_renpy("**/.*", None)
+
+    build.classify_renpy("rapt/**", "rapt")
+
+    build.classify_renpy("renios/prototype/base/", None)
+    build.classify_renpy("renios/prototype/prototype.xcodeproj/*.xcworkspace/", None)
+    build.classify_renpy("renios/prototype/prototype.xcodeproj/xcuserdata/", None)
+    build.classify_renpy("renios/prototype/**", "renios")
+    build.classify_renpy("renios/buildlib/**", "renios")
+    build.classify_renpy("renios/ios.py", "renios")
+    build.classify_renpy("renios/version.txt", "renios")
+    build.classify_renpy("renios/", "renios")
 
     build.classify_renpy("**.old", None)
     build.classify_renpy("**.new", None)
@@ -266,28 +279,29 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern):
+    def source_and_binary(pattern, source="source", binary="binary"):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
         else goes into source.
         """
 
-        build.classify_renpy(pattern + ".pyo", "binary")
-        build.classify_renpy(pattern + ".rpyc", "binary")
-        build.classify_renpy(pattern + ".rpymc", "binary")
-        build.classify_renpy(pattern + ".rpyb", "binary")
-        build.classify_renpy(pattern, "source")
+        build.classify_renpy(pattern + "/**.pyo", binary)
+        build.classify_renpy(pattern + "/**.rpyc", binary)
+        build.classify_renpy(pattern + "/**.rpymc", binary)
+        build.classify_renpy(pattern + "/**/cache/*", binary)
+
+        build.classify_renpy(pattern + "/**", source)
 
     build.classify_renpy("renpy.py", "source")
-    source_and_binary("renpy/**")
+    source_and_binary("renpy")
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
-    source_and_binary("launcher/**")
-    source_and_binary("templates/**")
-    source_and_binary("the_question/**")
-    source_and_binary("tutorial/**")
+    source_and_binary("launcher")
+    source_and_binary("templates", binary=None)
+    source_and_binary("the_question")
+    source_and_binary("tutorial")
 
     # docs.
     build.classify_renpy("doc/", "source")
@@ -305,16 +319,18 @@ init python:
     build.classify_renpy("module/*.py*", "source")
     build.classify_renpy("module/include/", "source")
     build.classify_renpy("module/include/*.pxd", "source")
+    build.classify_renpy("module/include/*.pxi", "source")
     build.classify_renpy("module/pysdlsound/", "source")
     build.classify_renpy("module/pysdlsound/*.py", "source")
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
 
     # all-platforms binary.
+    build.classify_renpy("lib/**/_renpysteam*", None)
+    build.classify_renpy("lib/**/*steam_api*", None)
     build.classify_renpy("lib/*/renpy", None)
     build.classify_renpy("lib/*/renpy.exe", None)
     build.classify_renpy("lib/**", "binary")
     build.classify_renpy("renpy.sh", "binary")
-    build.classify_renpy("renpy.exe", "binary")
     # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.
@@ -343,4 +359,4 @@ init python:
     build.package("editra-mac", "zip", "editra-all editra-mac", dlc=True)
     build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
     build.package("rapt", "zip", "rapt", dlc=True)
-
+    build.package("renios", "zip", "renios", dlc=True)

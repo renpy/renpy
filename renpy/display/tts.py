@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,8 +21,9 @@
 
 import sys
 import os
-import renpy
+import renpy.audio
 import subprocess
+import pygame
 
 class TTSRoot(Exception):
     """
@@ -70,12 +71,21 @@ def default_tts_function(s):
     if not s:
         return
 
+    if renpy.game.preferences.self_voicing == "clipboard":
+        try:
+            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
+        except:
+            pass
+
+        return
+
     if renpy.linux:
         process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
     elif renpy.macintosh:
         process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
     elif renpy.windows:
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
+        s = s.replace('"', "")
         process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
 
 
@@ -86,7 +96,10 @@ def tts(s):
 
     global queue
 
-    renpy.config.tts_function(s)
+    try:
+        renpy.config.tts_function(s)
+    except:
+        pass
 
     queue = [ ]
 
@@ -134,7 +147,15 @@ def displayable(d):
 
     if not old_self_voicing:
         old_self_voicing = self_voicing
-        prefix = renpy.translation.translate_string("Self-voicing enabled. ")
+
+        if self_voicing == "clipboard":
+            prefix = renpy.translation.translate_string("Clipboard voicing enabled. ")
+        else:
+            prefix = renpy.translation.translate_string("Self-voicing enabled. ")
+
+    for i in renpy.config.tts_voice_channels:
+        if not prefix and renpy.audio.music.get_playing(i):
+            return
 
     if d is None:
         d = root

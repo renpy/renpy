@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,12 +20,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-cdef extern from "pygame/pygame.h":
-    cdef struct SDL_RWops:
-        pass
-
-    void import_pygame_rwobject()
-    SDL_RWops* RWopsFromPythonThreaded(object obj)
+from pygame_sdl2 cimport *
+import_pygame_sdl2()
 
 cdef extern from "pss.h":
 
@@ -66,10 +62,10 @@ def check_error():
 def play(channel, file, name, paused=False, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
-    rw = RWopsFromPythonThreaded(file)
+    rw = RWopsFromPython(file)
 
     if rw == NULL:
-        raise Exception, "Could not create RWops."
+        raise Exception("Could not create RWops.")
 
     if paused:
         pause = 1
@@ -88,7 +84,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
 def queue(channel, file, name, fadein=0, tight=False):
     cdef SDL_RWops *rw
 
-    rw = RWopsFromPythonThreaded(file)
+    rw = RWopsFromPython(file)
+
+    if rw == NULL:
+        raise Exception("Could not create RWops.")
 
     if tight:
         tight = 1
@@ -137,7 +136,7 @@ def set_volume(channel, volume):
     if volume == 0:
         PSS_set_volume(channel, 0)
     else:
-        PSS_set_volume(channel, 10 ** volume / 10 )
+        PSS_set_volume(channel, volume ** 2)
 
     check_error()
 
@@ -186,5 +185,3 @@ def movie_size():
 def check_version(version):
     if version < 2 or version > 4:
         raise Exception("pysdlsound version mismatch.")
-
-import_pygame_rwobject()

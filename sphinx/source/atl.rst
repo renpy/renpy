@@ -403,10 +403,11 @@ On Statement
 ------------
 
 The On statement is a complex statement that defines an event handler. On
-statements are greedily grouped into a single statement.
+statements are greedily grouped into a single statement. On statement can
+handle a single event name, or a comma-separated list of event names.
 
 .. productionlist:: atl
-   atl_on : "on" `name` ":"
+   atl_on : "on" `name` [ "," `name` ] * ":"
           :      `atl_block`
 
 The on statement is used to handle events. When an event is handled, handling
@@ -425,6 +426,11 @@ by the time statement, or an enclosing event handler.)
             linear .5 alpha 1.0
         on hide:
             linear .5 alpha 0.0
+
+    transform pulse_button:
+        on hover, idle:
+            linear .25 zoom 1.25
+            linear .25 zoom 1.0
 
 Contains Statement
 ------------------
@@ -536,8 +542,9 @@ Warpers
 A warper is a function that can change the amount of time an interpolation
 statement considers to have elapsed. The following warpers are defined by
 default. They are defined as functions from t to t', where t and t' are
-floating point numbers between 0.0 and 1.0. (If the statement has 0 duration,
-than t is 1.0 when it runs.)
+floating point numbers, with t ranging from 0.0 to 1.0 over the given
+amount of time. (If the statement has 0 duration, then t is 1.0 when it runs.)
+t' should start at 0.0 and end at 1.0, but can be greater or less.
 
 ``pause``
     Pause, then jump to the new value. If t == 1.0, t = 1.0. Otherwise, t'
@@ -747,10 +754,12 @@ both horizontal and vertical positions.
 .. transform-property:: nearest
 
     :type: boolean
-    :default: False
+    :default: None
 
     If true, the displayable and its children are drawn using nearest-neighbor
-    filtering.
+    filtering. If False, the displayable and its children are drawn using
+    bilinear filtering. If None, this is inherited from the parent, or
+    :var:`config.nearest_neighbor`, which defaults to False.
 
 .. transform-property:: alpha
 
@@ -824,11 +833,23 @@ both horizontal and vertical positions.
 
 .. transform-property:: crop
 
-    :type: None or (int, int, int, int)
+    :type: None or (int, int, int, int) or (float, float, float, float)
     :default: None
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
+    If floats are given and crop_relative is true, the components are
+    taken as a fraction of the width and hight of the source image.
+    Otherwise, the components are considered to be an absolute number
+    of pixels.
+
+.. transform-property:: crop_relative
+
+    :type: boolean
+    :default: False
+
+    If True, float components of crop are take as a fraction of the width
+    and height of the source image.
 
 .. transform-property:: corner1
 
@@ -932,6 +953,11 @@ The following events can be triggered automatically:
 ``replaced``
     Triggered when the transform is replaced by another. The image will
     not actually hide until the ATL block finishes.
+
+``update``
+    Triggered when a screen is updated without being shown or replacing
+    another screen. This happens in rare but possible cases, such as when
+    the game is loaded and when styles or translations change.
 
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained

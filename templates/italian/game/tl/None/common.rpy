@@ -520,3 +520,59 @@ translate None strings:
     # renpy/common/00keymap.rpy:332
     old "Autoreload"
     new "Autoricarica"
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "Clipboard voicing abilitato. Premi 'shift+C' per disabilitarlo."
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "Self-voicing abilitato. Premi 'v' per disabilitarlo."
+
+    # renpy/common/_developer/developer.rpym:437
+    old "Rectangle copied to clipboard."
+    new "Rettangolo copiato nella clipboard."
+
+    # renpy/common/_developer/developer.rpym:440
+    old "Position copied to clipboard."
+    new "Posizione copiata nella clipboard."
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "Posizione"
+
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "L'aggiornamento di Ren'Py non è supportato nei dispositivi mobili."
+
+    # renpy/common/00updater.rpy:478
+    old "An error is being simulated."
+    new "Un errore viene simulato."
+
+    # renpy/common/00updater.rpy:654
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "O questo progetto non supporta l'aggiornamento, o è stato cancellato il file col suo stato."
+
+    # renpy/common/00updater.rpy:668
+    old "This account does not have permission to perform an update."
+    new "Questo account non ha i permessi per effettuare un aggiornamento."
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to write the update log."
+    new "Questo account non ha i permessi per scrivere il log degli aggiornamenti."
+
+    # renpy/common/00updater.rpy:696
+    old "Could not verify update signature."
+    new "La firma per l'aggiornamento non può essere verificata."
+
+    # renpy/common/00updater.rpy:956
+    old "The update file was not downloaded."
+    new "Il file di aggiornamento non è stato scaricato."
+
+    # renpy/common/00updater.rpy:974
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "Il file di aggiornamento non ha il digest corretto - potrebbe essere corrotto."
+
+    # renpy/common/00updater.rpy:1030
+    old "While unpacking {}, unknown type {}."
+    new "Durante lo spacchettamento {}, tipo sconosciuto {}."

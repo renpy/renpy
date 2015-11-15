@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-12-08 21:52
-
+﻿
 translate russian strings:
 
     # game/front_page.rpy:67
@@ -89,4 +88,23 @@ translate russian strings:
     # game/front_page.rpy:248
     old "Deleting persistent data..."
     new "Удаление постоянных данных..."
+
+
+translate russian strings:
+
+    # game/front_page.rpy:35
+    old "Open [text] directory."
+    new "Открыть папку [text]."
+
+    # game/front_page.rpy:150
+    old "Select project [text]."
+    new "Выбрать проект [text]."
+
+    # game/front_page.rpy:234
+    old "Force Recompile"
+    new "Перекомпилировать проект"
+
+    # game/front_page.rpy:285
+    old "Recompiling all rpy files into rpyc files..."
+    new "Перекомпиляция всех файлов rpy в файлы rpyc..."
 

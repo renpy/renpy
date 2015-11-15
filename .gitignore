@@ -10,10 +10,11 @@
 saves
 tmp
 cache
+env
 
 log.txt
-/errors.txt
-/traceback.txt
+errors.txt
+traceback.txt
 
 styles.txt
 
@@ -48,7 +49,12 @@ styles.txt
 /launcher/game/theme
 /launcher/game/script_version.rpy
 
-dl
+/dl
 renpy/vc_version.py
 .externalToolBuilders
-rapt
+/rapt
+/evil
+/iaptest
+/pygame_sdl2
+/renios
+/steam_appid.txt

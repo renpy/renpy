@@ -2,19 +2,869 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.7
+=============
+
+Dynamic Images
+--------------
+
+Dynamic images have been added to Ren'Py. It's now possible to write
+code like::
+
+    image eileen happy = "eileen [outfit] happy"
+
+This code creates a displayable that interpolates the value of the
+``output`` variable at least once per interaction. The interpolated
+string is then used to find another displayable to use.
+
+Dynamic images can be used anywhere a displayable is expected, and the
+string can be an string that resolves to a displayable. One possible use
+might be to replace boring and repetitive condition switches in dress-up
+games with code like::
+
+    image eileen dressup = LiveComposite(
+        (300, 600),
+        (0, 0), "eileen_base.png",
+        (0, 0), "eileen_top_[top].png",
+        (0, 0), "eileen_bottom_[bottom].png",
+        (0, 0), "eileen_accessory_[accessory].png",
+        )
+
+Dynamic image can be used in a screen language add statement::
+
+    for item in inventory:
+        add "store_[item].png"
+
+When so used, the variables are looked up in both the screen and global
+scopes.
+
+Define Improvements
+-------------------
+
+The define statement can now be used to define config and persistent
+variables. The code::
+
+    define config.screen_width = 1280
+    define config.screen_height = 720
+
+Now works as expected. Persistent variables work in an idiosyncratic way,
+as the code::
+
+    define persistent.unlocked_endings = [ ]
+
+Will only set the unlocked_endings variable if it has not already been
+set.
+
+Android/iOS
+-----------
+
+The android SELECT key - present on remote controls - is now supported
+for advancing text and selecting buttons, bars, etc. This means most
+TV-based android consoles should be supported.
+
+Direct support for the OUYA console has been dropped. The console should
+still be supported as a general TV-based android console.
+
+The new :var:`config.save_on_mobile_background` and :var:`config.quit_on_mobile_background`
+make it possible to adopt various strategies to deal with an Android or
+iOS app losing focus.
+
+To help apps comply with an Apple policy on the purchase of money cheats,
+consumable in-app purchases have been added for iOS only.
+
+Other
+-----
+
+Unknown gamepads can be calibrated from the shift+G menu.
+
+The new :var:`config.replace_text` callback makes it possible to replace
+text with other text. For example, one can replace multiple dashes with
+en-dash or em-dash characters.
+
+If a screen named ``skip_indicator`` is present, it will be displayed
+instead of the default skip indicator.
+
+In the launcher, pressing F5 will launch the current project.
+
+Skipping is now disabled when leaving a Replay.
+
+Creator-defined statements can now return statements to be predicted.
+
+The Finnish and Traditional Chinese translations have been updated.
+
+The new :propref:`adjust_spacing` style property has been added. It
+controls if the spacing of drawable-resolution text is adjusted to match
+the spacing of viewable-resolution text. Setting this to False can prevent
+kerning from changing after extend, but requires the GUI be designed
+to adjust to the changing text size. To prevent obvious artifacts, this
+is set to False for input text.
+
+The following bugs have been fixed:
+
+* A problem with script backups when the user has a non-ASCII username.
+* If a screen was predicted with multiple arguments, that screen would only
+  be predicted once for the purpose of image prediction.
+* On Mac OS X, if the Ren'Py window was covered or offscreen, VSYNC would
+  fail and CPU usage would rise to 100%. (Ren'Py now detects failed VSYNC
+  and limits its own framerate.)
+* Subsurfacing a clipped surface would not work, manifesting in incorrect
+  rendering of scrollbars in several of the default themes.
+* It was hard to pick a theme in the launcher.
+* When a window was scaled, hyperlinks would react to the mouse in incorrect
+  positions.
+* Window show now used narrator to render the empty window. It also had problems
+  with characters defined in the character namespace.
+* Newlines surrounding certain text tags would not be rendered.
+* Underlines could have small spaces in them when the window was scaled.
+* Problems with the software renderer on various hardware.
+* A problem where lint would not recognize an image name with reordered
+  attributes in the scene statement.
+* A crash when merging achievements from multiple instances of a game.
+* Having multiple text blocks, all with at least one hyperlink,
+  could cause hyperlinks to be higlighted incorrectly.
+* Various documentation problems.
+
+
+Ren'Py 6.99.6
+==============
+
+HighDPI/Retina
+--------------
+
+Support for HighDPI/Retina displays has been added to Ren'Py. This support
+is automatically used when running on iOS or Mac OS X systems that have a
+retina display.
+
+On all platforms, Ren'Py now renders text at the display resolution, rather
+than the resolution the game was set to. The result is that text remains
+sharp even when upscaled significantly. Creators should be aware that due
+to variability in character size and kerning, this can cause changes in
+text layout and word wrap as the window is scaled.
+
+To get the greatest benefit from these changes, the included copy of
+DejaVuSans has been updated to version 2.35, and the DejaVuSans-Bold
+font has been added. The bold font will automatically be used when
+a bold version of DejaVuSans.ttf is requested.
+
+Gamepad
+-------
+
+Ren'Py now uses the SDL2 controller API to support gamepads. This API
+provides a standardized mapping of controller buttons to something
+similar to an Xbox controller.
+
+Backups
+-------
+
+Ren'Py will now automatically back up .rpy files that are part of
+changed games. These backups will be placed in the same system-specific
+location that save files are placed.
+
+Other Improvements
+------------------
+
+A new :func:`achievement.sync` function and :class:`achievement.Sync` action
+have been added to Ren'Py. These synchronize achivements between local
+storage and other backends, such as Steam.
+
+A major bug in scanning archive files has been fixed. This bug often
+manifested as an archived images/ directory not being scanned some,
+but potentially not all, of the time. We strongly recommend upgrading from
+6.99.5 if your game uses and archives the images/ directory.
+
+If a file is not found in the game directory, Ren'Py will search the
+images/ directory for that file. This behavior is controlled by
+the :var:`config.search_path` variable.
+
+Screens now take the `style_group` property, which was previously only
+allowed on displayable statements.
+
+Screen language statements now take `arguments` and `properties` properties,
+which allows statement to be passed a list of additional positional arguments and
+a dict of additional properties, respectively.
+
+The new :class:`Color` class allows conversion between color spaces and other
+color-theory operations.
+
+Ren'Py now supports a game/python-packages directory, which can be used
+with pure-python packages installed via pip. See the new :ref:`python-modules`
+documentation for more details.
+
+Renios now supports compiling for 32-bit simulators (for the iPhone 4 and 5).
+
+The Korean and Russian translations have been improved.
+
+A pause will now automatically end when auto-forward mode is enabled.
+
+
+Ren'Py 6.99.5
+=============
+
+Startup
+-------
+
+Much work has been done to reduce Ren'Py's startup time, especially on mobile
+platforms such as Android and iOS. This was largely accomplished by caching the
+results of transforms, analyses, and code compilation so less work is done
+when the game is unchanged. To take full advantage of this, perform a
+'Full Recompile' of your project from the front screen of the Ren'Py
+launcher.
+
+The desktop presplash code has been rewritten to use pygame_sdl2, and is now
+also faster.
+
+A new :var:`config.minimum_presplash_time` has been added. This ensures that
+the desktop presplash, android presplash, and iOS launchscreen are displayed
+for at least a certain amount of time, making them more useful for branding
+purposes.
+
+As part of this work, script_version.rpy and script_version.rpyc will no
+longer be added to packages. Instead, script_version.txt will be added.
+(This ensures that the script does not change as part of packaging.)
+In addition, bytecode.rpyb has been moved to the game/cache directory,
+where addditional cache files now join it.
+
+
+iOS
+---
+
+There have been a number of improvements to renios, some necessary to get
+Ren'Py games accepted on the Apple App Store. Nightly builds of 6.99.5 have
+been used to get multiple games accepted.
+
+Renios has been upgraded to use SDL 2.0.4 rc1. This improves compatibility
+with iOS 8, and makes it possible to keep the launchscreen displayed until
+Ren'Py fully starts. As a result, support for the ios-presplash image is no
+longer necessary, and has been dropped.
+
+
+Other Improvements
+------------------
+
+A Simplified Chinese translation of the template game has been added, and
+the Korean and Arabic translations have been updated.
+
+
+ATL has had an update event added. This event is called in rare (but possible)
+cases when a screen is re-created from scratch, such as after a load or when
+styles or translations are changed.
+
+:func:`SetMute` and :func:`ToggleMute` actions have been added, along with
+a new "all mute" :func:`Preferences` that mutes all mixers.
+
+Font hinting is now controllable using the :propref:`hinting` style property.
+
+The :var:`config.nearest_neighbor` variable configures Ren'Py to draw all
+images using nearest-neighbor interpolation by default, helping ensure that
+pixel art stays sharp when scaled up.
+
+The new :func:`renpy.predicting` function returns true if Ren'Py is running
+a screen for prediction purposes.
+
+The new :func:`renpy.return_statement` function is a python equivalent to
+the Ren'Py return statement.
+
+The new :var:`_dismiss_pause` and :var:`_skipping` variables make it possible to
+control pauses and skipping on a line-by-line basis.
+
+Canvas objects (returned by the Render.canvas() method) now have a
+get_surface() method that returns a pygame_sdl2 Surface that is in a format
+that can be used by Ren'Py. This surface can be manipulated by Pygame
+drawing operations.
+
+The new :func:`_get_voice_info()` function returns an object that contains information
+about the voicing associated with the currently-running say statement.
+
+
+Ren'Py 6.99.4
+=============
+
+The Ren'Py script language now includes a new :ref:`default statement <default-statement>`.
+This statement sets a variable to a value a default value at game start or load,
+if a default statement has not set the value of the variable in the current
+game. This makes it possible to initialize saved variables near the relevant
+code, rather than all at once at label start.
+
+Lint will now warn if a ``define`` or ``default`` statement redefines a
+Ren'Py or Python built-in name.
+
+The screen language :ref:`use statement <sl-use>` now takes a block, which
+can be transcluded into a screen using the ``transclude`` statement. This makes
+it possible to use statements to "wrap" a block of screen language code.
+
+The screen language also supports :ref:`creator-defined statements <creator-defined-sl>`,
+which are transformed into use statements. These make it possible to extend the
+screen language syntax.
+
+The new Render.place() is available for use in :ref:`creator-defined displayables <cdd>`.
+This method renders a displayable, then applies Ren'Py's layout algorthing to place
+that displayable within a containing rectangle.
+
+Ren'Py now logs errors importing the steam module to log.txt.
+
+Ren'Py now logs the duration of various parts of the init process to log.txt.
+
+On mobile, Ren'Py will wait until the start of the first interaction
+before creating the main window. This prevents a black screen from being
+displayed for some time as Ren'Py starts.
+
+There are a number of improvements to iOS support, to support passing Apple's
+package verification process.
+
+The launcher now includes a button to retrieve logcat information from an
+Android device.
+
+The launcher now checks that the version of rapt and renios match the version
+of Ren'Py proper.
+
+Fixes
+-----
+
+Fixed a performance problem caused by failing to release the Global Interpreter
+Lock while waiting for event input. This could cause problems running various
+background threads, like the image preloader and autosave.
+
+Ensured that screens are only analyzed once as the game starts. Previously,
+screens could be analyzed multiple times as the styles and languages were
+set, leading to excessive startup times, especially on mobile platforms.
+
+The volume curve has been changed to be more correct and perceptually
+accurate. The previous curve had serveral problems, most notably that
+is sharply jumped from 0 to 10%. This may require players to adjust their
+volume settings.
+
+The gallery slideshow timer now repeats through multiple images.
+
+Text blits are now expanded to include an outline on a descender on the
+bottom row of text.
+
+Drags outside of a draggroup can now be snapped into place.
+
+The Gallery now properly advances through locked and unlocked images.
+Previously, this advancing was reversed, so next_unlocked would advance
+through locked and unlocked images.
+
+Text accounts for the size of outlines when allocating textures, preventing
+the bottom line of outlines from being cut off.
+
+Position information (xpos, ypos, etc.) are now passed from an inner transform
+to an outer transform during as single frame. Previously, this information
+would lag by a single frame, which could lead to nested transforms lagging
+or failing to complete.
+
+
+Ren'Py 6.99.3
+=============
+
+Removed debugging code that could cause problems by writing an unnecessary
+zipfile.txt file.
+
+
+Ren'Py 6.99.2
+=============
+
+Ren'Py now supports an images directory underneath the game directory.
+Images found inside this directory - or in subdirectories of this directory - will
+be automatically defined as images in Ren'Py. This will likely render the use of
+the image statement obsolete in simple games.
+
+The new :func:`AlphaMask` displayable allows one displayable to be masked by the alpha
+channel of another.
+
+The android and iOS emulators now emulate the onscreen keyboard.
+
+The achievement API has been changed somewhat, but only with respect for
+progress functions. (Which were broken in the previous releases.)
+
+Actions that care about the current screen (like SetScreenVariable) now work
+when used with the hovered and unhovered properties.
+
+The updater has improved. If an incremental download fails, Ren'Py will try
+downloading the complete file before giving up.
+
+When building for Android, Ren'Py will copy the apk files in to the dists
+directory used by the desktop platforms.
+
+Added the :func:`RestartStatement` action.
+
+Added the :func:`renpy.reset_physical_size` and :func:`ui.screen_id` functions.
+
+Allowed the screen language key statement to take the activate_sound style
+property. This makes it easier to play a sound when a key is pressed.
+
+Documented :func:`ui.interact`.
+
+Updated the Simplified Chinese and Korean translations, and the Italian template.
+
+
+Ren'Py 6.99.1
+=============
+
+Added the :func:`renpy.load_image`, :func:`renpy.load_surface`, and
+:func:`renpy.get_showing_tags` functions.
+
+
+Ren'Py 6.99
+===========
+
+SDL2
+----
+
+Ren'Py is now based on Pygame_SDL2, a reimplementation of the Pygame API
+based on the SDL2 library. One of the largest changes in Ren'Py's history,
+switching to SDL2 lays the groundwork for many improvements, in this
+and future releases.
+
+
+iOS Support
+-----------
+
+Ren'Py now supports the iOS platform. To develop for iOS, you will need a
+Macintosh computer, Xcode, and a paid membership in the iOS developer
+program. (An iPad or iPhone to test with is highly recommended.)
+
+Ren'Py's iOS support includes the ability to create Xcode projects, and
+to update those projects with the latest version of a Ren'Py game. Xcode
+can be used to change project settings, and to create debug and release
+builds.
+
+The iOS port supports iOS 7 and higher. Almost all of Ren'Py is supported,
+with the exception being that video playback is limited to fullscreen video
+in formats the iOS device supports.
+
+For now, the default set of Ren'Py screens are not particularly compatible
+with iOS. You will need to customize your game to make it touch friendly and
+compliant with Apple's guidelines before submitting it to the iOS app store.
+
+Please see the iOS documentation for more information and a copyright
+notice you must include as part of your app description on iOS.
+
+
+Android Support
+---------------
+
+Android support has been rewritten, and is now based in SDL2. This release
+brings Android support to parity with desktop platforms. Improvements
+include:
+
+* Support for rotating the screen to match the user's preferred orientation.
+* Improved in-app purchase support, with the ability to retrieve prices and
+  create a single .apk that supports the Google and Amazon stores.
+* Android audio playback is now based on the same code that's used on
+  the desktop and iOS platforms. This enables support for features like
+  panning and fading volume. It also means the same sound files can be
+  used on Android, iOS, and desktop platforms.
+* Keyboard input is now supported on Android.
+* Languages requiring bidirectional text (like Arabic and Hebrew) are supported
+  on Android.
+
+A number of issues with Android support have been fixed, including one that
+prevented Ren'Py from unzipping the android SDK automatically when the path
+to the Ren'Py install was too long.
+
+Please see the Android documentation for more information and a copyright
+notice that should be included as part of your app description.
+
+
+Steam
+-----
+
+Ren'Py now ships with Python bindings for the steam API. These bindings
+are built as part of the Ren'Py build process, which means they will be
+maintained alongside Ren'Py going forwards.
+
+For an explanation of how to use the Steam API, please contact the Ren'Py
+developers directly. The bindings make available:
+
+* Initialization.
+* User statistics and achievements.
+* Retrieving other apps by the same developer that have been installed.
+* DLC support.
+* The in-game overlay, including the ability to launch a purchase flow.
+* Session tickets.
+
+The steam bindings will be integrated with Ren'Py as appropriate. For now,
+this integration consists of binding the steam achievement system to the new
+Ren'Py achievement API.
+
+
+Distribution Improvements
+-------------------------
+
+The launcher now has the ability to add from clauses to call statements,
+automatically turning::
+
+    call dayplanner
+
+into::
+
+    call dayplanner from __call_dayplanner
+
+From clauses, which are really labels, help Ren'Py to find the return
+site to use when a game is changed. This should help fix problem with games
+that may change greatly between releases.
+
+When asked to package a game that is more than about 2GB in size, Ren'Py
+will produce a ZIP64-format archive. These archives may be less compatible
+that smaller zip files.
+
+
+Languages and Translations
+--------------------------
+
+There is now a Russian translation of the tutorial game, and a Finnish
+translation of the launcher.
+
+Ren'Py supports input methods (IMEs) on platforms where SDL2 makes that
+support available. (All platforms except for Linux.) Input methods make
+it possible to input complex non-ASCII text, such as Chinese, Japanese,
+and Korean.
+
+
+Clipboard Voicing
+-----------------
+
+Ren'Py now supports clipboard voicing, which is accessed by shift+C.
+
+Clipboard voicing is a form of self-voicing that works by copying the
+text to the clipboard, where a screenreader program is likely to read
+it using settings preferred by the player.
+
+
+Custom Text Tags
+----------------
+
+Ren'Py snow supports a new form of :ref:`custom text tags <custom-text-tags>`.
+
+Custom text tags are applied after the text has been tokenized into tags and
+text. This makes it easier to write a custom text tag that manipulates text
+or applies multiple existing text tags to text.
+
+The previously-existing form of custom text tag has been renamed to
+style text tag, and is still supported.
+
+
+Other Improvements
+------------------
+
+A high-level achievement API has been added to Ren'Py.
+
+Ren'Py now includes support for recognizing touch gestures on Android and
+iOS.
+
+It is possible to hide the editing buttons in the launcher, so they can't
+be used to open an absurd number of editor windows.
+
+The developer can choose if strings should be empty when generating
+translations.
+
+Three new set manipulation actions :func:`AddToSet`, :func:`RemoveFromSet`,
+and :func:`ToggleSetMembership` manipulate sets and lists-as-sets. (Such
+as inventory lists.)
+
+Drags (as in, drag-and-drop) now support the focus_mask style property.
+
+The complexity of the style system has been reduced, decreasing memory
+usage and startup time.
+
+The new :func:`renpy.suspend_rollback` suspends the recording of rollback
+checkpoints, while still allowing rollback to occur.
+
+The RENPY_GL_CHECK_ERRORS controlls the logging of OpenGL/ANGLE function
+calls and errors.
+
+A completion progress indicator can be toggled by typing shift-alt-P or
+swiping up-down-left-right-left-right.
+
+As of this release, dictionary and set comprehensions are wrapped to
+support rollback.
+
+
+Ren'Py 6.18.3
+=============
+
+This release adds the :ref:`showif statement <sl-showif>` to screen language.
+The showif statement shows and hides its children based on a condition. When
+its children are ATL transforms, showif delivers ATL events to manage the
+show and hide process.
+
+Ren'Py's image prediction mechanism now models the return stack, and can
+predict images through a call and return pair. Previously, a call followed
+by a return would block image prediction.
+
+Ren'Py now predicts that the start label will be called from the main menu.
+This will help to avoid unpredicted image loads at the very start of a game.
+
+The ATL on statement now can take a comma-separated list of event names.
+
+The new :func:`updater.UpdateVersion` function contacts an update server and
+determines if an update is available.
+
+The new :func:`renpy.invoke_in_thread` function runs a function in a background
+thread, and restarts the interaction when that thread finishes.
+
+While in self-voicing mode, the {w} and {p} tags are ignored.
+
+The Traditional Chinese and Russian translations have been updated.
+
+Bug Fixes
+---------
+
+Fixed a regression that could cause hiding transforms to skip time.
+
+Fixed a bug that would cause the screen language if statement to show
+children from blocks with a false condition, if those child blocks were
+run during prediction.
+
+Fixed an issue where SetScreenVariable and ToggleScreenVariable were
+declared as pure functions, but weren't. They now have been reimplemented
+as pure functions.
+
+Fixed an issue where a grab could fail to transfer between interactions,
+leaving Ren'Py unresponsive.
+
+
+Ren'Py 6.18.2
+=============
+
+The define statement can now take a store name, and the say statement
+will search the ``character`` store before searching the default store.
+This means that if one uses::
+
+    define character.e = Character("Eileen")
+
+Say statements like::
+
+    e "Hello, world."
+
+will continue to work, even though ``e`` has been freed up for other
+purposes.
+
+The default image cache size (set in :var:`config.image_cache_size`) has
+been increased from 8 to 16 screens worth of images.
+
+When set to True, the new :tpref:`crop_relative` transform property tells
+a Transform to interpret float components of its :tpref:`crop` property
+relative to the width or height of its transformed child, as appropriate.
+For example, (0.5, 0.0, 0.5, 1.0) will cropout the lower-right quadrant
+of the child.
+
+When set to false, the new :propref:`keyboard_focus` style property hides
+buttons, bars, and imagemap hotspots from the keyboard focus mechanism.
+
+The :ref:`mousearea` screen language statement now respects the
+:propref:`focus_mask` style property, making it possible to have
+non-rectangular mouseareas.
+
+Ren'Py now includes functions that can be used to profile
+the memory consumption of a game, including the memory consumption of
+Ren'Py itself. These functions are :func:`renpy.profile_memory` and
+:func:`renpy.diff_memory`. The new :func:`renpy.profile_rollback`
+lets one more specifically see the memory consumption of the internal
+rollback log.
+
+When self-voicing mode is enabled, Ren'Py displays a notification that
+explains how to disable self-voicing mode.
+
+This release fixes a subtle bug caused by incorrect analysis of for
+loops in screen language screens, when the iteration variable is a
+constant. (For example, when the iteration variable is ``define``\ed
+somewhere else in the game.)
+
+This release adds Traditional Chinese translations of the launcher and
+template game, contributed by Civalin.
+
+Ren'Py 6.18.1
+=============
+
+This release includes a new :func:`Placeholder` displayable, which can be
+used to display placeholder characters. Placeholders are now used when
+displaying images that are not defined.
+
+The new :var:`sv` Character-like object can be used when self-voicing is
+enabled to display (and hence speak) descriptive text.
+
+ATL transforms in screens now begin executing when first shown. Previously, ATL transforms
+began executing when the screen containing the ATL transform was first shown,
+which meant that if the transform changed over the course of screen display,
+a portion of the new transform would be skipped.
+
+This release includes a German template contributed by NoJoker.
+
+
 Ren'Py 6.18
 ===========
 
-Self-Voicing
-------------
+Screen Language Improvements
+----------------------------
+
+This release includes a new implementation of screen language that has the
+potential to be much faster than the original implementation of screen language.
+Where the original screen language evaluated screens from scratch at the start
+of each interaction, this new implementation can incrementally reuse large
+portions of a screen between interactions. Please see the new
+:ref:`Screen Language Optimization <screen-optimization>` documentation for
+information on how to maximize screen language performance.
+
+Of special note is that screens now perform better when defined with a parameter
+list. Screens that do not expect parameters should be defined with an empty
+parameter list.
+
+To support improved optimization, when the screen language use statement
+calls a screen with a parameter list, only variables in that parameter list
+are updated. (This is a change in previously-undocumented behavior.)
+
+Screens now support passing properties to a displayable from within an if
+statement, provided the if statement is the first thing inside the
+displayable. For example::
+
+    text "Eileen":
+         if eileen_mad:
+             color "#fcc"
+         else:
+             color "#cfc"
+
+now works.
+
+As there is now a larger benefit from predicting screens, screen prediction
+has been improved in several ways:
+
+* By default, Ren'Py will now use the arguments supplied to a screen in
+  the ``show screen`` and ``call screen`` statements to predict the
+  screen. This is potentially dangers, as it means that if either statement
+  has side effects, those side effects will occur as part of screen prediction.
+  To mitigate this problem, both statements now take a ``nopredict`` clause
+  that prevents screen prediction.
+
+* Ren'Py will now attempt to predict images inside if clauses that would
+  not be taken, and will ignore errors that occur during statement prediction.
+
+* A pair of functions, :func:`renpy.start_predict_screen` and
+  :func:`renpy.stop_predict_screen` allows for manual prediction of time
+  images that will be used by screens, including parameterized screens.
+
+Ren'Py now supports profiling of screens, via the :func:`renpy.profile_screen`
+function.
+
+Ren'Py has been changed to make a copy of the screens being displayed before
+a transition occurs. This makes it possible to use a transition to show
+screen updates. For example, one could increase the value displayed
+by a bar, and then use the dissolve transition to dissolve in the new
+segment of bar.
+
+Image Prediction
+----------------
+
+Ren'Py now has a supported mechanism for manually predicting images in
+cases where automatic image prediction fails. This mechanism consists
+of two functions: :func:`renpy.start_predict` starts prediction of images,
+while :func:`renpy.stop_predict` stops prediction.
+
+Accessibility
+-------------
 
 Ren'Py now includes support for self-voicing, a mode in which Ren'Py will
 read on-screen text to vision impaired players. To activate self-voicing,
-press the ``v`` key.
+press the ``v`` key.  For more information, please read the :ref:`self-voicing <self-voicing>`
+documentation.
 
 The new :propref:`alt` style property allows one to supply alternative
-text that allows Ren'Py to voice imagemap components, and buttons with
+text that allows Ren'Py to voice imagemap components and buttons with
 incomplete names.
+
+The Ren'Py launcher now includes a large-text mode that can be accessed from
+the preferences page. This mode increases text size and contrast.
+
+Android In-App Purchasing
+-------------------------
+
+This version of Ren'Py includes a high-level interface that supports
+in-app purchasing on the Android platform. This interface currently
+support Google Play and the Amazon App Store.
+
+Pixel Art
+---------
+
+Ren'Py supports nearest-neighbor filtering of images. This ensures that
+screen pixels correspond to a single texture pixel, which is the scaling
+mode preferred for use with pixel art. Nearest-neighbor mode is enabled
+with the new :tpref:`nearest` transform property.
+
+The new :func:`config.adjust_view_size` callback makes it possible to
+set the size of the Ren'Py viewport to something other than the size of
+the window (or screen, in fullscreen mode). For example, a game can use
+this callback to limit its viewport size to integer multiples of its
+native size.
+
+Voice Improvements
+------------------
+
+Voice volume is now adjustable on a per-character basis, using the
+voice_tag argument to :func:`Character` and the new :func:`VoiceVolume`
+value.
+
+Using the new :var:`config.emphasize_audio_channels` variable, Ren'Py
+can emphasize audio on some channels. This is doen by lowering the
+volume of non-emphasized channels when a emphasized channel is playing,
+and returning the volumes to normal when no emphasized chanels are
+playing. By setting this variable to ``[ 'voice' ]``, the voice
+channel can be emphasized over music and other sounds,
+
+
+OS X Bug Workaround
+-------------------
+
+To workaround a bug in Mac OS X 10.9, Ren'Py will now always open on the
+the primary monitor of a Macintosh.
+
+Other
+-----
+
+With some limitations, non-ASCII characters can now be used as character
+names. Since Python code does not allow non-ASCII identifiers, such character
+names must be defined by the define statement, and used outside Python code.
+
+The `auto` property of imagebuttons and imagemaps now can take image names
+as well as image filenames.
+
+The new :func:`renpy.image_exists` function returns true if an image has
+been defined.
+
+Gallery navigation can now be customized by customizing the ``gallery_nav``
+screen.
+
+The new :func:`renpy.count_dialogue_blocks` and :func:`renpy.count_seen_dialogue_blocks`
+return the total number of dialogue blocks and the number of dialogue blocks that have
+been seen by the current user in any game. With some caveats, these can provide an
+indication of how much of the game the user has seen.
+
+The :var:`config.autosave_on_choice` variable determines if Ren'Py will
+autosave on choice, while the :var:`config.autosave_on_quit` variable
+determines if Ren'Py will autosave when the game is about to end (by quit,
+return, or loading a save slot).
+
+The new :tpref:`events` transform property determines if events are
+passed to a transform's children. This is useful for ATL transforms,
+when some children should not receive events.
+
+Save dumps (enabled by :var:`config.save_dump`) are performed before the
+save occurs, making them far more useful for debugging pickling problems.
+
+When show\_ arguments are past to an :func:`NVLCharacter`, the show\_ prefix
+is stripped and those arguments are passed to the ``nvl`` screen.
+
+Translations
+------------
+
+This release add an Italian translation of the launcher and template game,
+contributed by Oshi-Shinobu.
+
+This release adds a Portuguese translation of the template game, contributed
+by Mrstalker.
+
+This release adds a Simplified Chinese translation of the launcher, contributed by
+Huanxuantian.
+
 
 
 Ren'Py 6.17.7

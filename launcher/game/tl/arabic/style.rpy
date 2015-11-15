@@ -1,4 +1,4 @@
-translate arabic python:
+﻿translate arabic python:
     al = "DejaVuSans.ttf"
     style.l_default.font = al
     style.l_default.size = 16

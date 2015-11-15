@@ -1,10 +1,9 @@
-﻿# TODO: Translation updated at 2014-05-02 21:49
-
+﻿
 translate korean strings:
 
     # game/choose_theme.rpy:292
     old "Could not change the theme. Perhaps options.rpy was changed too much."
-    new "테마를 바꿀 수 없습니다. options.rpy를 너무 많이 수정했을 수도 있습니다."
+    new "테마를 바꿀 수 없습니다. options.rpy의 내용이 크게 변경되었을 가능성이 있습니다."
 
     # game/choose_theme.rpy:357
     old "Display"

@@ -160,6 +160,7 @@ def scan(name, o, prefix=""):
 
         lines.append(l)
 
+
     if section is None:
         return
 
@@ -320,8 +321,8 @@ def write_pure_const():
         for i in l:
             f.write("* " + format_name(i) + "\n")
 
-    pure = renpy.sl2.pyutil.pure_functions
-    constants = renpy.sl2.pyutil.constants - pure
+    pure = renpy.pyanalysis.pure_functions # @UndefinedVariable
+    constants = renpy.pyanalysis.constants - pure # @UndefinedVariable
 
     with open("source/inc/pure_vars", "w") as f:
         write_set(f, pure)

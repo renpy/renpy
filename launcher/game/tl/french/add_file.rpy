@@ -19,4 +19,4 @@
     # game/add_file.rpy:21
     old "# Ren'Py automatically loads all script files ending with .rpy. To use this\n# file, define a label and jump to it from another file.\n"
     new "Ren'Py charge automatiquement tous les fichiers de script finissant par .rpy. Pour utiliser ce ficher\n#, définissez un label et faites un «jump» vers lui depuis un autre fichier.\n"
-    
+

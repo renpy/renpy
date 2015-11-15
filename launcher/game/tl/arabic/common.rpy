@@ -1,4 +1,4 @@
-# : Translation updated at 2013-04-30 07:54
+﻿# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -517,4 +517,73 @@ translate arabic strings:
     # renpy/common/_developer/inspector.rpym:174
     old "<repr() failed>"
     new "<repr() failed>"
+
+# Translation updated at 2014-09-30 23:01
+
+translate arabic strings:
+
+    # renpy/common/_developer/inspector.rpym:80
+    old "Location"
+    new "الموقع"
+
+
+translate arabic strings:
+
+    # renpy/common/00preferences.rpy:387
+    old "Clipboard voicing enabled. Press 'shift+C' to disable."
+    new "تشغيل الأصوات من  الحافظة مفعّل. إضغط لإيقافه زريّ: Shift+C"
+
+    # renpy/common/00preferences.rpy:389
+    old "Self-voicing enabled. Press 'v' to disable."
+    new "التكلّم التلقائي مفعَل. لإيقافه إضغط زر V"
+
+
+translate arabic strings:
+
+    # renpy/common/00updater.rpy:362
+    old "The Ren'Py Updater is not supported on mobile devices."
+    new "تحديث برنامج رينباي غير مدعوم على الأجهزة المحمولة."
+
+    # renpy/common/00updater.rpy:478
+    old "An error is being simulated."
+    new "يتم محاكاة خطأ الآن."
+
+    # renpy/common/00updater.rpy:654
+    old "Either this project does not support updating, or the update status file was deleted."
+    new "هذا المشروع لا يدعم التحديث، أو أن ملف حالة نسخة البرنامج محذوفة."
+
+    # renpy/common/00updater.rpy:668
+    old "This account does not have permission to perform an update."
+    new "هذا الحساب ليست لديه الصلاحية ليقوم بالتحديث."
+
+    # renpy/common/00updater.rpy:671
+    old "This account does not have permission to write the update log."
+    new " هذا الحساب ليست لديه الصلاحية ليكتب ملف التحديث."
+
+    # renpy/common/00updater.rpy:696
+    old "Could not verify update signature."
+    new "لم نتمكن من التحقق من توقيع التحديث update signature."
+
+    # renpy/common/00updater.rpy:956
+    old "The update file was not downloaded."
+    new "لم يتم تحميل ملف التحديث."
+
+    # renpy/common/00updater.rpy:974
+    old "The update file does not have the correct digest - it may have been corrupted."
+    new "ملف التحديث لا يحتوي على المختصرات الصحيحة - قد يكون معطوباً."
+
+    # renpy/common/00updater.rpy:1030
+    old "While unpacking {}, unknown type {}."
+    new "عند فك الحزمة {}، نوع مجهول {}."
+
+
+translate arabic strings:
+
+    # renpy/common/_developer/developer.rpym:437
+    old "Rectangle copied to clipboard."
+    new "تم نسخ المربع إلى الحافظة."
+
+    # renpy/common/_developer/developer.rpym:440
+    old "Position copied to clipboard."
+    new "تم نسخ الموضع إلى الحافظة."
 

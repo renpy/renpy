@@ -1,5 +1,4 @@
-# TODO: Translation updated at 2013-04-30 07:54
-
+﻿
 translate arabic strings:
 
     # game/translations.rpy:10
@@ -22,7 +21,6 @@ translate arabic strings:
     old "Ren'Py has finished generating [language] translations."
     new "انتهى رينباي من صناعة ملفات الترجمة إلى [language]"
 
-# TODO: Translation updated at 2013-11-17 23:18
 
 translate arabic strings:
 

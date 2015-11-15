@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -297,7 +297,7 @@ init 1 python in editor:
         if not set_editor:
             return True
 
-        if persistent.editor:
+        if persistent.editor and persistent.editor != "None":
             return True
 
         return renpy.invoke_in_new_context(renpy.call_screen, "editor")

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-12-08 21:52
-
+﻿
 translate russian strings:
 
     # renpy/common/_layout/classic_load_save.rpym:120
@@ -14,7 +13,6 @@ translate russian strings:
     old "q"
     new "q"
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -22,7 +20,6 @@ translate russian strings:
     old "Joystick Mapping"
     new "Назначение джойстика"
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -34,7 +31,6 @@ translate russian strings:
     old "Quick save complete."
     new "Быстрое сохранение завершено."
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -74,7 +70,6 @@ translate russian strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "Вы уверены, что хотите пропустить все до невиданного диалога или следующего выбора?"
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -86,7 +81,6 @@ translate russian strings:
     old "Next"
     new "Следующий"
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -94,7 +88,6 @@ translate russian strings:
     old "Saved screenshot as %s."
     new "Скришнот сохранен как %s."
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -134,7 +127,6 @@ translate russian strings:
     old "The updates were cancelled."
     new "Обновления были отменены."
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -230,7 +222,6 @@ translate russian strings:
     old "Restart"
     new "Перезапустить"
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -254,7 +245,6 @@ translate russian strings:
     old "return"
     new "вернуться"
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 
@@ -310,7 +300,6 @@ translate russian strings:
     old "Opens the errors.txt file in a text editor."
     new "Открывает файл errors.txt в текстовом редакторе."
 
-# TODO: Translation updated at 2013-12-08 21:52
 
 translate russian strings:
 

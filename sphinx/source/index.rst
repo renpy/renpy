@@ -67,6 +67,7 @@ Customizing Ren'Py
    screens
    screen_actions
    screen_special
+   screen_optimization
    config
    store_variables
 
@@ -84,6 +85,7 @@ Other Functionality
    sprites
    keymap
    developer_tools
+   achievement
 
 Python and Ren'Py
 -----------------
@@ -99,8 +101,10 @@ Python and Ren'Py
    modes
    udd
    cds
+   custom_text_tags
    character_callbacks
    file_python
+   color_class
    other
 
 Building, Updating, and Other Platforms
@@ -112,6 +116,9 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   ios
+   iap
+   gesture
 
 End-User Documentation
 ----------------------

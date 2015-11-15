@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,14 +24,17 @@ python_dict = _dict = dict
 python_object = _object = object
 python_set = _set = set
 
+_type = type
+
 from renpy.python import RevertableList as __renpy__list__
 list = __renpy__list__ #@ReservedAssignment
 
 from renpy.python import RevertableDict as __renpy__dict__
 dict = __renpy__dict__ #@ReservedAssignment
 
-from renpy.python import RevertableSet as set
-Set = set
+from renpy.python import RevertableSet as __renpy__set__
+set = __renpy__set__ # @ReservedAssignment
+Set = __renpy__set__
 
 from renpy.python import RevertableObject as object #@UnusedImport
 

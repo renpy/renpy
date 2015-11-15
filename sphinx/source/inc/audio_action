@@ -1,6 +1,6 @@
 .. Automatically generated file - do not modify.
 
-.. function:: Play(channel, file, **kwargs)
+.. function:: Play(channel, file, selected=None, **kwargs)
     
     Causes an audio file to be played on a given channel.
     
@@ -8,8 +8,14 @@
         The channel to play the sound on.
     `file`
         The file to play.
+    `selected`
+        If True, buttons using this action will be marked as selected
+        if the file is playing on the channel. If False, this action
+        will not cause the button to start playing. If None, the button
+        is marked selected if the channel is a music channel, and not
+        otherwise.
     
-    Any keyword arguments are passed to :func:`renpy.music.play`
+    Any other keyword arguments are passed to :func:`renpy.music.play`.
 
 .. function:: Queue(channel, file, **kwargs)
     
@@ -33,6 +39,19 @@
         The value to set the volume to. A number between 0.0 and 1.0,
         inclusive.
 
+.. function:: SetMute(mixer, mute)
+    
+    Sets the mute status of one or more mixers. When a mixer is muted,
+    audio channels associated with that mixer will stop playing audio.
+    
+    `mixer`
+        Either a single string giving a mixer name, or a list of strings
+        giving a list of mixers. The strings should be mixer names, usually
+        "music", "sfx", or "voice".
+    
+    `mute`
+        True to mute the mixer, False to ummute it.
+
 .. function:: Stop(channel, **kwargs)
     
     Causes an audio channel to be stopped.
@@ -41,4 +60,13 @@
         The channel to stop the sound on.
     
     Any keyword arguments are passed to :func:`renpy.music.stop`
+
+.. function:: ToggleMute(mixer)
+    
+    Toggles the mute status of one or more mixers.
+    
+    `mixer`
+        Either a single string giving a mixer name, or a list of strings
+        giving a list of mixers. The strings should be mixer names, usually
+        "music", "sfx", or "voice".
 

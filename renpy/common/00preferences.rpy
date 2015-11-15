@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -124,9 +124,25 @@ init -1500 python:
          * Preference("voice mute", "disable") - Un-mute the voice mixer.
          * Preference("voice mute", "toggle") - Toggle voice mute.
 
+         * Preference("all mute", "enable") - Mute all mixers.
+         * Preference("all mute", "disable") - Unmute all mixers.
+         * Preference("all mute", "toggle") - Toggle mute of all mixers.
+
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
+
+         * Preference("emphasize audio", "enable") - Emphasize the audio channels found in :var:`config.emphasize_audio_channels`.
+         * Preference("emphasize audio", "disable") - Do not emphasize audio channels.
+         * Preference("emphasize audio", "toggle") - Toggle emphasize audio.
+
+         * Preference("self voicing", "enable") - Enables self-voicing.
+         * Preference("self voicing", "disable") - Disable self-voicing.
+         * Preference("self voicing", "toggle") - Toggles self-voicing.
+
+         * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
+         * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
+         * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
          Values that can be used with bars are:
 
@@ -260,54 +276,6 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "wait_voice")
 
-            elif name == "music volume":
-
-                if value is None:
-                    return MixerValue('music')
-                else:
-                    return SetMixer('music', value)
-
-            elif name == "sound volume":
-
-                if value is None:
-                    return MixerValue('sfx')
-                else:
-                    return SetMixer('sfx', value)
-
-            elif name == "voice volume":
-
-                if value is None:
-                    return MixerValue('voice')
-                else:
-                    return SetMixer('voice', value)
-
-            elif name == "music mute":
-
-                if value == "enable":
-                    return SetDict(_preferences.mute, "music", True)
-                elif value == "disable":
-                    return SetDict(_preferences.mute, "music", False)
-                elif value == "toggle":
-                    return ToggleDict(_preferences.mute, "music")
-
-            elif name == "sound mute":
-
-                if value == "enable":
-                    return SetDict(_preferences.mute, "sfx", True)
-                elif value == "disable":
-                    return SetDict(_preferences.mute, "sfx", False)
-                elif value == "toggle":
-                    return ToggleDict(_preferences.mute, "sfx")
-
-            elif name == "voice mute":
-
-                if value == "enable":
-                    return SetDict(_preferences.mute, "voice", True)
-                elif value == "disable":
-                    return SetDict(_preferences.mute, "voice", False)
-                elif value == "toggle":
-                    return ToggleDict(_preferences.mute, "voice")
-
             elif name == "voice sustain":
 
                 if value == "enable":
@@ -326,6 +294,51 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing")
 
+            elif name == "clipboard voicing":
+
+                if value == "enable":
+                    return SetField(_preferences, "self_voicing", "clipboard")
+                elif value == "disable":
+                    return SetField(_preferences, "self_voicing", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "self_voicing", true_value="clipboard")
+
+            elif name == "emphasize audio":
+
+                if value == "enable":
+                    return SetField(_preferences, "emphasize_audio", True)
+                elif value == "disable":
+                    return SetField(_preferences, "emphasize_audio", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "emphasize_audio")
+
+            mixer_names = {
+                "music" : "music",
+                "sound" : "sfx",
+                "voice" : "voice",
+                "all" : _preferences.get_all_mixers(),
+            }
+
+            n = name.split()
+
+            if len(n) == 2 and n[1] == "volume":
+                mixer = mixer_names.get(n[0], n[0])
+
+                if value is None:
+                    return MixerValue(mixer)
+                else:
+                    return SetMixer(mixer, value)
+
+            if len(n) == 2 and n[1] == "mute":
+                mixer = mixer_names.get(n[0], n[0])
+
+                if value == "enable":
+                    return SetMute(mixer, True)
+                elif value == "disable":
+                    return SetMute(mixer, False)
+                elif value == "toggle":
+                    return ToggleMute(mixer)
+
             else:
                 raise Exception("Preference(%r, %r) is unknown." % (name , value))
 
@@ -335,3 +348,33 @@ init -1500 python:
             rv.alt = name + " [text]"
 
         return rv
+
+
+    def __show_self_voicing():
+        has_screen = renpy.get_screen("_self_voicing")
+
+        if _preferences.self_voicing and not has_screen:
+            renpy.show_screen("_self_voicing")
+        elif not _preferences.self_voicing and has_screen:
+            renpy.hide_screen("_self_voicing")
+
+    config.interact_callbacks.append(__show_self_voicing)
+
+init -1500:
+
+    # The screen that we use to indicate that self-voicing is enabled.
+    screen _self_voicing():
+        zorder 1500
+
+        if _preferences.self_voicing == "clipboard":
+            $ message = _("Clipboard voicing enabled. Press 'shift+C' to disable.")
+        else:
+            $ message = _("Self-voicing enabled. Press 'v' to disable.")
+
+        text message:
+            alt ""
+
+            xpos 10
+            ypos 35
+            color "#fff"
+            outlines [ (1, "#0008", 0, 0)]

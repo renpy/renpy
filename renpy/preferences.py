@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,11 +21,44 @@
 
 import renpy
 
+pad_bindings = {
+    "pad_leftshoulder_press" : [ "rollback", ],
+    "pad_lefttrigger_pos" : [ "rollback", ],
+    "pad_back_press" : [ "rollback", ],
+
+    "pad_guide_press" : [ "game_menu", ],
+    "pad_start_press" : [ "game_menu", ],
+
+    "pad_y_press" : [ "hide_windows", ],
+
+    "pad_rightshoulder_press" : [ "rollforward", ],
+
+    "pad_righttrigger_press" : [ "dismiss", "button_select" ],
+    "pad_a_press" : [ "dismiss", "button_select" ],
+    "pad_b_press" : [ "button_alternate" ],
+
+    "pad_dleft_press" : [ "focus_left", "bar_left" ],
+    "pad_leftx_neg" : [ "focus_left", "bar_left" ],
+    "pad_rightx_neg" : [ "focus_left", "bar_left" ],
+
+    "pad_dpright_press" : [ "focus_right", "bar_right" ],
+    "pad_leftx_pos" : [ "focus_right", "bar_right" ],
+    "pad_rightx_pos" : [ "focus_right", "bar_right" ],
+
+    "pad_dpup_press" : [ "focus_up", "bar_up" ],
+    "pad_lefty_neg" :  [ "focus_up", "bar_up" ],
+    "pad_righty_neg" : [ "focus_up", "bar_up" ],
+
+    "pad_dpdown_press" : [ "focus_down", "bar_down" ],
+    "pad_lefty_pos" : [ "focus_down", "bar_down" ],
+    "pad_righty_pos" : [ "focus_down", "bar_down" ],
+}
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 13
+    __version__ = 15
 
     def after_upgrade(self, version):
         if version < 1:
@@ -51,6 +84,10 @@ class Preferences(renpy.object.Object):
             self.show_empty_window = True
         if version < 13:
             self.self_voicing = False
+        if version < 14:
+            self.emphasize_audio = False
+        if version < 15:
+            self.pad_enabled = True
 
     def __init__(self):
         self.fullscreen = False
@@ -85,12 +122,7 @@ class Preferences(renpy.object.Object):
         self.mute = { }
 
         # Joystick mappings.
-        self.joymap = dict(
-            joy_left="Axis 0.0 Negative",
-            joy_right="Axis 0.0 Positive",
-            joy_up="Axis 0.1 Negative",
-            joy_down="Axis 0.1 Positive",
-            joy_dismiss="Button 0.0")
+        self.joymap = dict()
 
         # The size of the window, or None if we don't know it yet.
         self.physical_size = None
@@ -107,17 +139,47 @@ class Preferences(renpy.object.Object):
         # Should we self-voice?
         self.self_voicing = False
 
+        # Should we emphasize audio?
+        self.emphasize_audio = False
+
+        # Is the gamepad enabled?
+        self.pad_enabled = True
+
+
     def set_volume(self, mixer, volume):
+        if volume != 0:
+            self.mute[mixer] = False
+
         self.volumes[mixer] = volume
 
     def get_volume(self, mixer):
-        return self.volumes.get(mixer, 0)
+        if mixer not in self.volumes:
+            return 0.0
+
+        if self.mute.get(mixer, False):
+            return 0.0
+
+        return self.volumes[mixer]
 
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute
 
+        if (not mute) and (self.volumes.get(mixer, 1.0) == 0.0):
+            self.volumes[mixer] = 1.0
+
     def get_mute(self, mixer):
+        if mixer not in self.volumes:
+            return False
+
         return self.mute[mixer]
+
+    def init_mixers(self):
+        for i in renpy.audio.music.get_all_mixers():
+            self.volumes.setdefault(i, 1.0)
+            self.mute.setdefault(i, False)
+
+    def get_all_mixers(self):
+        return renpy.audio.music.get_all_mixers()
 
     def __eq__(self, other):
         return True

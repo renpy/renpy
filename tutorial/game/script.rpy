@@ -1,16 +1,7 @@
 ﻿# This file contains the script for the Ren'Py demo game. Execution starts at
 # the start label.
 
-# Here we define the backgrounds that are used.
-image bg washington = "washington.jpg"
-image bg whitehouse = "whitehouse.jpg"
-
-# And this is the character art we use.
-image eileen happy = "eileen_happy.png"
-image eileen vhappy = "eileen_vhappy.png"
-image eileen concerned = "eileen_concerned.png"
-
-# Now, we declare the characters.
+# Declare the characters.
 define e = Character(_('Eileen'), color="#c8ffc8")
 
 init python:

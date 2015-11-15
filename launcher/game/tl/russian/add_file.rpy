@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2013-12-08 21:52
-
+﻿
 translate russian strings:
 
     # game/add_file.rpy:7

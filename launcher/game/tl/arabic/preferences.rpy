@@ -1,4 +1,4 @@
-# : Translation updated at 2013-04-30 07:54
+﻿# : Translation updated at 2013-04-30 07:54
 
 translate arabic strings:
 
@@ -58,11 +58,38 @@ translate arabic strings:
     old "Language:"
     new "اللغة:"
 
-# : Translation updated at 2014-04-17 13:01
+#  Translation updated at 2014-04-17 13:01
 
 translate arabic strings:
 
     # game/preferences.rpy:164
     old "Show templates"
     new "عرض القوالب"
+
+#  Translation updated at 2014-09-30 23:01
+
+translate arabic strings:
+
+    # game/preferences.rpy:91
+    old "Projects directory: [text]"
+    new "مجلد المشاريع [text]"
+
+    # game/preferences.rpy:114
+    old "Text editor: [text]"
+    new "محرر النصوص [text]"
+
+    # game/preferences.rpy:171
+    old "Large fonts"
+    new "خط كبير"
+
+
+translate arabic strings:
+
+    # game/preferences.rpy:174
+    old "Show edit file section"
+    new "عرض قسم تعديل الملف"
+
+    # game/preferences.rpy:176
+    old "Generate empty strings for translations"
+    new "صنع خانات فارغة للترجمات"
 

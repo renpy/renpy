@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -519,6 +519,7 @@ position_property_names = [
         "ysize",
         "xysize",
         "alt",
+        "debug",
         ]
 
 position_properties = [ Style(i) for i in position_property_names ]
@@ -591,6 +592,7 @@ button_properties = [ Style(i) for i in [
         "mouse",
         "focus_mask",
         "child",
+        "keyboard_focus",
         ] ]
 
 bar_properties = [ Style(i) for i in [
@@ -610,6 +612,7 @@ bar_properties = [ Style(i) for i in [
         "thumb_offset",
         "mouse",
         "unscrollable",
+        "keyboard_focus",
         ] ]
 
 box_properties = [ Style(i) for i in [
@@ -888,6 +891,7 @@ add(position_properties)
 FunctionStatementParser("mousearea", "ui.mousearea", 0)
 Keyword("hovered")
 Keyword("unhovered")
+Style("focus_mask")
 add(ui_properties)
 add(position_properties)
 
@@ -1183,6 +1187,7 @@ class ScreenLangScreen(renpy.object.Object):
     predict = "False"
 
     parameters = None
+    location = None
 
     def __init__(self):
 
@@ -1215,7 +1220,7 @@ class ScreenLangScreen(renpy.object.Object):
             self.modal = "False"
             self.zorder = "0"
 
-    def define(self):
+    def define(self, location):
         """
         Defines a screen.
         """
@@ -1229,6 +1234,7 @@ class ScreenLangScreen(renpy.object.Object):
             variant=renpy.python.py_eval(self.variant),
             predict=renpy.python.py_eval(self.predict),
             parameters=self.parameters,
+            location=self.location,
             )
 
     def __call__(self, *args, **kwargs):

@@ -1,8 +1,8 @@
-## Ce fichier contient certaines des options qui peuvent être changées pour
-## personnaliser votre jeu Ren'Py. Il s'agit uniquement des options les plus 
+﻿## Ce fichier contient certaines des options qui peuvent être changées pour
+## personnaliser votre jeu Ren'Py. Il s'agit uniquement des options les plus
 ## communes, d'autres réglages sont possibles.
 ##
-## Les lignes commençant par deux '#' sont des commentaires, et vous ne devriez 
+## Les lignes commençant par deux '#' sont des commentaires, et vous ne devriez
 ## pas les décommenter. Les lignes commençant par un seul '#' sont du code
 ## commenté, vous pouvez les décommenter pour les utiliser.
 
@@ -23,8 +23,8 @@ init -1 python hide:
 
     config.window_title = u"PROJECT_NAME"
 
-    ## Contrôle le nom et la version du jeu; qui apparaîtront dans les 
-    ## fichiers de débogage. 
+    ## Contrôle le nom et la version du jeu; qui apparaîtront dans les
+    ## fichiers de débogage.
     config.name = "PROJECT_NAME"
     config.version = "0.0"
 
@@ -70,12 +70,12 @@ init -1 python hide:
         rounded_window = False,
 
         ## Fond du menu principal. Il peut s'agir d'une couleur commençant
-        ## par un '#' ou bien le nom d'une image. Dans le second cas, 
+        ## par un '#' ou bien le nom d'une image. Dans le second cas,
         ## l'image devrait correspondre aux dimensions de la fenêtre.
         mm_root = "#dcebff",
 
         ## Fond du menu de jeu. Il peut s'agir d'une couleur commançant
-        ## par un '#' ou bien le nom d'une image. Dans le second cas, 
+        ## par un '#' ou bien le nom d'une image. Dans le second cas,
         ## l'image devrait correspondre aux dimensions de la fenêtre.
         gm_root = "#dcebff",
 
@@ -122,7 +122,7 @@ init -1 python hide:
     ## (anchor) au sein de l'élément puis un point sur l'écran (pos).
     ## Finalement, ces deux points se trouverons au même endroit.
 
-    ## Ces deux points peuvent être indiqués via des nombres entiers ou 
+    ## Ces deux points peuvent être indiqués via des nombres entiers ou
     ## décimaux. Un nombre entier sera interprété comme le nombre de pixel
     ## depuis le coin en haut à gauche. Un nombre décimal sera interprété
     ## comme le pourcentage de la taille de l'élément ou de l'écran.
@@ -162,17 +162,6 @@ init -1 python hide:
     ## Mettez cette option à True si le jeu contient des voix.
 
     config.has_voice = False
-
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-    config.reduce_volume_in_voice = True
-    
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-    config.volume_in_voice = .5
-    
-    # It takes this seconds to reduce and return the volume when voice is played.
-    config.reduce_volume_time = .5
 
     ## Sons utilisés lorsque les boutons et les imagemaps sont cliqués
 
@@ -264,7 +253,7 @@ init -1 python hide:
 
     #########################################
     ## Nom du répertoire où les données du jeu sont stockées. (Il est
-    ## nécessaire que cela soit indiqué tôt, avant tout autre code 
+    ## nécessaire que cela soit indiqué tôt, avant tout autre code
     ## d'initiation.)
 python early:
     config.save_directory = "PROJECT_NAME-UNIQUE"
@@ -281,7 +270,7 @@ init -1 python hide:
 
     config.default_fullscreen = False
 
-    ## Vitesse par défaut en nombre de caractères par seconde. 
+    ## Vitesse par défaut en nombre de caractères par seconde.
     ## Mettez 0 pour l'infini.
 
     config.default_text_cps = 0

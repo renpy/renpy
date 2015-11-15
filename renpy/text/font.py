@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pygame
+import pygame_sdl2 as pygame
 
 try:
     import xml.etree.ElementTree as etree
@@ -362,6 +362,33 @@ class BMFont(ImageFont):
         self.advance[u'\u200b'] = 0
         self.offsets[u'\u200b'] = (0, 0)
 
+class ScaledImageFont(ImageFont):
+    """
+    Represents an imagefont scaled by a given factor.
+    """
+
+    def __init__(self, parent, factor):
+
+        def scale(n):
+            return int(round(n * factor))
+
+        self.height = scale(parent.height)
+        self.baseline = scale(parent.baseline)
+        self.default_kern = scale(parent.default_kern)
+
+        self.width = { k : scale(v) for k, v in parent.width.iteritems() }
+        self.advance = { k : scale(v) for k, v in parent.advance.iteritems() }
+        self.offsets = { k : (scale(v[0]), scale(v[1])) for k, v in parent.offsets.iteritems() }
+        self.kerns = { k : scale(v) for k, v in parent.kerns.iteritems() }
+
+        self.chars = { }
+
+        for k, v in parent.chars.iteritems():
+            w, h = v.get_size()
+            nw = scale(w)
+            nh = scale(h)
+            self.chars[k] = renpy.display.scale.smoothscale(v, (nw, nh))
+
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,
                    filename=None, spacewidth=10, default_kern=0, kerns={},
@@ -569,30 +596,55 @@ def load_face(fn):
 
 # Caches of fonts.
 image_fonts = { }
+
+# A cache of scaled image fonts.
+scaled_image_fonts = { }
+
+# A cache of scaled faces.
 font_cache = { }
 
-def get_font(fn, size, bold, italics, outline, antialias, vertical):
+# The last_scale we last accessed fonts at. (Used to clear caches.)
+last_scale = 1.0
 
+def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, scale):
+
+    # If the scale changed, invalidate caches of scaled fonts.
+    global last_scale
+
+    if (scale != 1.0) and (scale != last_scale):
+        scaled_image_fonts.clear()
+        font_cache.clear()
+        last_scale = scale
+
+    # Perform replacement.
     t = (fn, bold, italics)
     fn, bold, italics = renpy.config.font_replacement_map.get(t, t)
 
-    rv = image_fonts.get((fn, size, bold, italics), None)
+    # Image fonts.
+    key = (fn, size, bold, italics)
+
+    rv = image_fonts.get(key, None)
     if rv is not None:
+
+        if scale != 1.0:
+            if key in scaled_image_fonts:
+                rv = scaled_image_fonts[key]
+            else:
+                rv = ScaledImageFont(rv, scale)
+                scaled_image_fonts[key] = rv
+
         return rv
 
-    if vertical:
-        key = (fn, size, bold, italics, outline, antialias, True)
-    else:
-        key = (fn, size, bold, italics, outline, antialias)
+    # Check for a cached TTF.
+    key = (fn, size, bold, italics, outline, antialias, vertical, hinting, scale)
 
     rv = font_cache.get(key, None)
     if rv is not None:
         return rv
 
-    # If we made it here, we need to load a ttf.
+    # Load a TTF.
     face = load_face(fn)
-
-    rv = ftfont.FTFont(face, size, bold, italics, outline, antialias, vertical) #@UndefinedVariable
+    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) #@UndefinedVariable
 
     font_cache[key] = rv
 
@@ -603,8 +655,10 @@ def free_memory():
     Clears the font cache.
     """
 
+    scaled_image_fonts.clear()
     font_cache.clear()
     face_cache.clear()
+
 
 def load_image_fonts():
     for i in image_fonts.itervalues():

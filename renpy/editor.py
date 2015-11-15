@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -127,8 +127,8 @@ def launch_editor(filenames, line=1, transient=False):
     Causes the editor to be launched.
     """
 
-    # On android, we will never be able to launch the editor.
-    if renpy.android:
+    # On mobile devices, we will never be able to launch the editor.
+    if renpy.mobile:
         return True
 
     if editor is None:

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -351,7 +351,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
         self.new = new
 
         # Should we display the old displayable?
-        self.use_old = False
+        self.use_old = use_old
 
         # Time warp function or None.
         self.time_warp = time_warp

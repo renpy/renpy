@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -43,15 +43,18 @@ init python:
     PLAY_KEYS_TEXT = _("Opens the file containing the Google Play keys in the editor.\n\nThis is only needed if the application is using an expansion APK. Read the documentation for more details.")
     BUILD_TEXT = _("Builds the Android package.")
     BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
+    BUILD_INSTALL_AND_LAUNCH_TEXT = _("Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device.")
 
     CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
     DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
+    LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
 
 
     import subprocess
     import re
     import os
     import json
+    import glob
 
     def find_rapt():
 
@@ -61,12 +64,11 @@ init python:
 
         RAPT_PATH = os.path.join(config.renpy_base, "rapt")
 
-        if os.path.isdir(RAPT_PATH):
+        if os.path.isdir(RAPT_PATH) and check_hash_txt("rapt"):
             import sys
             sys.path.insert(0, os.path.join(RAPT_PATH, "buildlib"))
         else:
             RAPT_PATH = None
-            RAPT_PATH is None
 
     find_rapt()
 
@@ -79,6 +81,8 @@ init python:
         import rapt.install_sdk
         import rapt.plat
         import rapt.interface
+
+        rapt.plat.renpy = True
     else:
         rapt = None
 
@@ -131,176 +135,6 @@ init python:
         else:
             return None
 
-    class AndroidInterface(object):
-
-        def __init__(self):
-            self.process = None
-            self.filename = project.current.temp_filename("android.txt")
-
-            self.info_msg = ""
-
-            with open(self.filename, "w"):
-                pass
-
-        def log(self, msg):
-            with open(self.filename, "a") as f:
-                f.write("\n")
-                f.write(msg)
-                f.write("\n")
-
-        def info(self, prompt):
-            self.info_msg = prompt
-            interface.processing(prompt, pause=False)
-            self.log(prompt)
-
-        def yesno(self, prompt, submessage=None):
-            return interface.yesno(prompt, submessage=submessage)
-
-        def yesno_choice(self, prompt, default=None):
-            choices = [ (True, "Yes"), (False, "No") ]
-            return interface.choice(prompt, choices, default)
-
-        def terms(self, url, prompt):
-            submessage = _("{a=%s}%s{/a}") % (url, url)
-
-            if not interface.yesno(prompt, submessage=submessage):
-                self.fail("You must accept the terms and conditions to proceed.", edit=False)
-
-
-        def input(self, prompt, empty=None):
-
-            if empty is None:
-                empty = ''
-
-            while True:
-                rv = interface.input(_("QUESTION"), prompt, default=empty, cancel=Jump("android"))
-
-                rv = rv.strip()
-
-                if rv:
-                    return rv
-
-        def choice(self, prompt, choices, default):
-            return interface.choice(prompt, choices, default, cancel=Jump("android"))
-
-        def fail(self, prompt, edit=True):
-            self.log(prompt)
-            prompt = re.sub(r'(http://\S+)', r'{a=\1}\1{/a}', prompt)
-
-            # Open android.txt in the editor.
-            if edit:
-                editor.EditAbsolute(self.filename)()
-
-            interface.error(prompt, label="android")
-
-        def success(self, prompt):
-            self.log(prompt)
-            interface.info(prompt, pause=False)
-
-        def final_success(self, prompt):
-            self.log(prompt)
-            interface.info(prompt, label="android")
-
-        def run_yes_thread(self):
-            import time
-
-            try:
-                while self.run_yes:
-                    self.process.stdin.write('y\n')
-                    self.process.stdin.flush()
-                    time.sleep(.2)
-            except:
-                import traceback
-                traceback.print_exc()
-
-        def call(self, cmd, cancel=False, use_path=False, yes=False):
-
-            print
-            print " ".join(cmd)
-
-            self.cmd = cmd
-
-            f = open(self.filename, "a")
-
-            f.write("\n\n\n")
-
-            if cancel:
-                cancel_action = self.cancel
-            else:
-                cancel_action = None
-
-            startupinfo = None
-            if renpy.windows:
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
-            try:
-                interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
-
-                kwargs = { }
-                if yes:
-                    kwargs["stdin"] = subprocess.PIPE
-
-                self.process = subprocess.Popen(cmd, cwd=RAPT_PATH, stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
-
-                if yes:
-                    import threading
-                    self.run_yes = True
-                    self.yes_thread = threading.Thread(target=self.run_yes_thread)
-                    self.yes_thread.daemon = True
-                    self.yes_thread.start()
-
-                renpy.call_screen("android_process", interface=self)
-            finally:
-                f.close()
-                interface.hide_screen()
-
-                if yes and self.yes_thread:
-                    self.run_yes = False
-                    self.yes_thread.join()
-
-                self.process = None
-
-        def check_process(self):
-            rv = self.process.poll()
-
-            if rv is not None:
-                if rv:
-                    raise subprocess.CalledProcessError(rv, self.cmd)
-                else:
-                    return True
-
-        def download(self, url, dest):
-            try:
-                d = Downloader(url, dest)
-                cancel_action = [ d.cancel, Jump("android") ]
-                interface.processing(self.info_msg, show_screen=True, cancel=cancel_action, bar_value=DownloaderValue(d))
-                ui.timer(.1, action=d.check, repeat=True)
-                ui.interact()
-            finally:
-                interface.hide_screen()
-
-        def background(self, f):
-            try:
-                t = threading.Thread(target=f)
-                t.start()
-
-                interface.processing(self.info_msg, show_screen=True)
-
-                while t.is_alive():
-                    renpy.pause(0)
-                    t.join(0.25)
-
-            finally:
-                interface.hide_screen()
-
-
-        def cancel(self):
-            if self.process:
-                self.process.terminate()
-
-            renpy.jump("android")
-
 
     class AndroidBuild(Action):
         """
@@ -312,22 +146,6 @@ init python:
 
         def __call__(self):
             renpy.jump(self.label)
-
-    class LaunchEmulator(Action):
-
-        def __init__(self, emulator, variants):
-            self.emulator = emulator
-            self.variants = variants
-
-        def __call__(self):
-
-            env = {
-                "RENPY_EMULATOR" : self.emulator,
-                "RENPY_VARIANT" : self.variants,
-                }
-
-            p = project.current
-            p.launch(env=env)
 
     def update_android_json(p, gui):
         """
@@ -364,7 +182,7 @@ init python:
         with open(filename, "w") as f:
             json.dump(android_json, f)
 
-    def android_build(command, p=None, gui=True):
+    def android_build(command, p=None, gui=True, launch=False, destination=None, opendir=False):
         """
         This actually builds the package.
         """
@@ -381,7 +199,7 @@ init python:
 
         if gui:
             reporter = distribute.GuiReporter()
-            rapt_interface = AndroidInterface()
+            rapt_interface = MobileInterface("android")
         else:
             reporter = distribute.TextReporter()
             rapt_interface = rapt.interface.Interface()
@@ -395,8 +213,57 @@ init python:
             report_success=False,
             )
 
+        def finished(files, destination=destination):
+
+            source_dir = rapt.plat.path("bin")
+
+            try:
+
+                destination_dir = destination
+
+                # Use default destination if not configured
+                if gui and destination is None:
+                    build = p.dump['build']
+                    destination = build["destination"]
+
+                    if destination != "-dists":
+                        parent = os.path.dirname(p.path)
+                        destination_dir = os.path.join(parent, destination)
+
+            except:
+                destination_dir = None
+
+            dir_to_open = source_dir
+
+            if destination_dir is not None:
+
+                reporter.info(_("Copying Android files to distributions directory."))
+
+                try:
+                    os.makedirs(destination_dir)
+                except:
+                    pass
+
+                try:
+
+                    for i in files:
+                        shutil.copy(i, renpy.fsencode(destination_dir))
+
+                    dir_to_open = destination_dir
+
+                except:
+                    import traceback
+                    traceback.print_exc()
+                    pass
+
+            if opendir:
+                store.OpenDirectory(dir_to_open)()
+
+
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, command)
+            rapt.build.build(rapt_interface, dist, command, launch=launch, finished=finished)
+
+
 
 # The android support can stick unicode into os.environ. Fix that.
 init 100 python:
@@ -460,7 +327,8 @@ screen android:
 
                         frame style "l_indent":
 
-                            has vbox
+                            has hbox:
+                                spacing 15
 
                             textbutton _("Phone"):
                                 action LaunchEmulator("touch", "small phone touch android")
@@ -470,8 +338,8 @@ screen android:
                                 action LaunchEmulator("touch", "medium tablet touch android")
                                 hovered tt.Action(TABLET_TEXT)
 
-                            textbutton _("Television / OUYA"):
-                                action LaunchEmulator("tv", "small tv ouya android")
+                            textbutton _("Television"):
+                                action LaunchEmulator("tv", "small tv android")
                                 hovered tt.Action(OUYA_TEXT)
 
 
@@ -506,6 +374,10 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
                                 hovered tt.Action(BUILD_AND_INSTALL_TEXT)
 
+                            textbutton _("Build, Install & Launch"):
+                                action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
+                                hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
+
                     add SPACER
                     add SEPARATOR2
 
@@ -528,6 +400,10 @@ screen android:
                             textbutton _("Remote ADB Disconnect"):
                                 action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
                                 hovered tt.Action(DISCONNECT_TEXT)
+
+                            textbutton _("Logcat"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
+                                hovered tt.Action(LOGCAT_TEXT)
 
 
                 # Right side.
@@ -568,7 +444,7 @@ label android_installsdk:
 
     python:
         with interface.nolinks():
-            rapt.install_sdk.install_sdk(AndroidInterface())
+            rapt.install_sdk.install_sdk(MobileInterface("android"))
 
     jump android
 
@@ -576,14 +452,14 @@ label android_installsdk:
 label android_configure:
 
     python:
-        rapt.configure.configure(AndroidInterface(), project.current.path)
+        rapt.configure.configure(MobileInterface("android", edit=False), project.current.path)
 
     jump android
 
 
 label android_build:
 
-    $ android_build([ 'release' ])
+    $ android_build([ 'release' ], opendir=True)
 
     jump android
 
@@ -593,6 +469,13 @@ label android_build_and_install:
     $ android_build([ 'release', 'install' ])
 
     jump android
+
+label android_build_install_and_launch:
+
+    $ android_build([ 'release', 'install' ], launch=True)
+
+    jump android
+
 
 label android_connect:
 
@@ -633,7 +516,7 @@ label android_connect:
 
         persistent.connect_address = address
 
-        rapt_interface = AndroidInterface()
+        rapt_interface = MobileInterface("android")
         rapt.build.connect(rapt_interface, address)
 
     jump android
@@ -642,8 +525,19 @@ label android_disconnect:
 
     python hide:
 
-        rapt_interface = AndroidInterface()
+        rapt_interface = MobileInterface("android")
         rapt.build.disconnect(rapt_interface)
+
+    jump android
+
+label logcat:
+
+    python hide:
+
+        interface = MobileInterface("android", filename="logcat.txt")
+        interface.info(_("Retrieving logcat information from device."))
+        interface.call([ rapt.plat.adb, "logcat", "-d" ], cancel=True)
+        interface.open_editor()
 
     jump android
 
@@ -651,14 +545,16 @@ init python:
 
     def android_build_command():
         ap = renpy.arguments.ArgumentParser()
-        ap.add_argument("project", help="The path to the project directory.")
-        ap.add_argument("command", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+        ap.add_argument("android_project", help="The path to the project directory.")
+        ap.add_argument("ant_commands", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
+        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
+        ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
 
-        p = project.Project(args.project)
+        p = project.Project(args.android_project)
 
-        android_build(args.command, p=p, gui=False)
+        android_build(args.ant_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
 
         return False
 

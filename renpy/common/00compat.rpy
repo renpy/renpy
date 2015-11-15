@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -102,12 +102,31 @@ init -1900 python:
 
         if version <= (6, 18, 0):
             config.predict_screen_statements = False
+            config.transition_screens = False
+
+        if version <= (6, 99, 1):
+            config.images_directory = None
+            config.preserve_zorder = False
+
+        if version <= (6, 99, 5):
+            config.wrap_shown_transforms = False
+            config.search_prefixes = [ "" ]
+
+        if version <= (6, 99, 6):
+            config.dynamic_images = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
 
-
+init -1000 python hide:
+    try:
+        import ast
+        script_version = renpy.file("script_version.txt").read()
+        config.script_version = ast.literal_eval(script_version)
+        renpy.write_log("Set script version to: %r", config.script_version)
+    except:
+        pass
 
 init 1900 python hide::
 
@@ -169,6 +188,3 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
-
-    if compat(6, 17, 6):
-        config.reduce_volume_in_voice = False

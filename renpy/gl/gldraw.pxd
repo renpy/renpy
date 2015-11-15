@@ -26,11 +26,13 @@ cdef class Environ
 cdef class GLDraw:
 
     cdef bint did_init
+    cdef bint did_texture_test
     cdef Environ environ
     cdef public object rtt
     cdef object window
     cdef tuple virtual_size
     cdef public tuple physical_size
+    cdef public tuple drawable_size
     cdef public tuple virtual_box
     cdef public tuple physical_box
     cdef object mouse_old_visible
@@ -42,21 +44,28 @@ cdef class GLDraw:
     cdef object old_fullscreen
     cdef public object fullscreen_surface
     cdef object display_info
-    cdef double upscale_factor
     cdef tuple clip_cache
     cdef bint fast_dissolve
     cdef bint always_opaque
     cdef bint allow_fixed
     cdef tuple default_clip
+    cdef bint did_render_to_texture
 
     cdef public tuple clip_rtt_box
+
+    # The number of drawable pixels per virtual pixel.
+    cdef public object draw_per_virt
+
+    # Matrices that transform drawable to virtual, and vice versa.
+    cdef public render.Matrix2D virt_to_draw
+    cdef public render.Matrix2D draw_to_virt
 
     cpdef set_clip(GLDraw self, tuple clip)
 
     cpdef int draw_render_textures(
         GLDraw self,
         object what,
-        bint non_aligned)
+        bint non_aligned) except 1
 
     cpdef int draw_transformed(
         GLDraw self,
@@ -67,7 +76,8 @@ cdef class GLDraw:
         double alpha,
         double over,
         render.Matrix2D reverse,
-        bint nearest)
+        bint nearest,
+        bint subpixel) except 1
 
 cdef class Environ:
     cdef void blit(self)

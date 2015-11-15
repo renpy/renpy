@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -91,17 +91,17 @@ savedir = None
 
 # The number of screens worth of images that are allowed to
 # live in the image cache at once.
-image_cache_size = 8
+image_cache_size = 16
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
 # BFS along all paths, rather than the depth along any particular
 # path. The current node is counted in this number.
-predict_statements = 16
+predict_statements = 32
 
 # Causes the contents of the image cache to be printed to stdout when
 # it changes.
-debug_image_cache = False
+debug_image_cache = ("RENPY_DEBUG_IMAGE_CACHE" in os.environ)
 
 # Should we allow skipping at all?
 allow_skipping = True
@@ -114,7 +114,7 @@ fast_skipping = False
 skipping = None
 
 # The delay while we are skipping say statements.
-skip_delay = 25
+skip_delay = 5
 
 # basic: Archive files that are searched for images.
 archives = [ ]
@@ -149,7 +149,7 @@ transient_layers = [ 'transient' ]
 # overlays.
 overlay_layers = [ 'overlay' ]
 
-# A list of layers that should be cleared whe we enter a
+# A list of layers that should be cleared when we enter a
 # new context.
 context_clear_layers = [ 'screens' ]
 
@@ -174,6 +174,9 @@ load_before_transition = True
 
 # The keymap that is used to change keypresses and mouse events.
 keymap = { }
+
+# The default keymap, used when a binding isn't found in keymap.
+default_keymap = { }
 
 # Should we try to support joysticks?
 joystick = True
@@ -264,6 +267,7 @@ text_layout = None
 
 # A callback that is called 20 times a second.
 periodic_callback = None
+periodic_callbacks = [ ]
 
 # Should we check that all style properties are in style_properties? (Internal)
 check_properties = True
@@ -477,17 +481,6 @@ key_repeat = (.3, .03)
 # A callback that is called with the character's voice_tag.
 voice_tag_callback = None
 
-# If True, reduce the volumes of all the channels other than the "voice" channel
-# during voice playing.
-reduce_volume_in_voice = True
-
-# If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-# than "voice" mixer during voice playing.
-volume_in_voice = .5
-
-# It takes this seconds to reduce and return the volume when voice is played.
-reduce_volume_time = .5
-
 # A list of callbacks that can be used to add JSON to save files.
 save_json_callbacks = [ ]
 
@@ -520,11 +513,132 @@ raw_tracebacks = ("RENPY_RAW_TRACEBACKS" in os.environ)
 # A function to process texts which should be spoken
 tts_function = renpy.display.tts.default_tts_function
 
+# Channels that stop voice playback.
+tts_voice_channels = [ "voice" ]
+
 # The number of copies of each screen to keep in the screen cache.
 screen_cache_size = 4
 
 # A callback that adjusts the physical size of the screen.
 adjust_view_size = None
+
+# True if we should autosave when a choice occurs.
+autosave_on_choice = True
+
+# A list of channels we should emphasize the audio on.
+emphasize_audio_channels = [ 'voice' ]
+
+# What we should lower the volume of non-emphasized channels to.
+emphasize_audio_volume = 0.5
+
+# How long we should take to raise and lower the volume when emphasizing
+# audio.
+emphasize_audio_time = 0.5
+
+# Should we transition screens, or always use their new states.
+transition_screens = True
+
+# A function that given the current statement identifier, returns a list
+# of statement identifiers that should be predicted.
+predict_statements_callback = None
+
+# Should we use hardware video on platforms that support it?
+hw_video = True
+
+# A function to use to dispatch gestures.
+dispatch_gesture = None
+
+# The table mapping gestures to events used by the default function.
+gestures = {
+    "n_s_w_e_w_e" : "progress_screen",
+    }
+
+# Sizes of gesture components and strokes, as a fraction of screen_width.
+gesture_component_size = .05
+gesture_stroke_size = .2
+
+# Should we log to stdout rather than files?
+log_to_stdout = False
+
+# new-style custom text tags.
+custom_text_tags = { }
+
+# A function that given the text from a TEXT token, returns a replacement text.
+replace_text = None
+
+# A function that is called when a label is missing.
+missing_label_callback = None
+
+# Should show preserve zorder when not explicitly set?
+preserve_zorder = True
+
+# The set of names to ignore.
+lint_ignore_replaces = [ 'help', 'quit' ]
+
+# How long should the presplash be kept up for?
+minimum_presplash_time = 0.0
+
+# Should Ren'Py use nearest-neighbor filtering by default.
+nearest_neighbor = False
+
+# Should Ren'Py use the drawable resolution at all? (For RTT, Text, etc?)
+use_drawable_resolution = bool(int(os.environ.get("RENPY_USE_DRAWABLE_RESOLUTION", "1")))
+
+# Should text layout occur at drawable resolution?
+drawable_resolution_text = bool(int(os.environ.get("RENPY_DRAWABLE_RESOLUTION_TEXT", "1")))
+
+# Should we fill the virtual-resolution text box?
+draw_virtual_text_box = bool(int(os.environ.get("RENPY_DRAW_VIRTUAL_TEXT_BOX", "0")))
+
+# Bindings of gamepad buttons.
+pad_bindings = { }
+
+# A list of pygame events that should be enabled in addition to the standard
+# events.
+pygame_events = [ ]
+
+# A function that is used to map a gamepad event into a list of Ren'Py
+# events.
+map_pad_event = None
+
+# This is called when a replay finishes.
+after_replay_callback = None
+
+# Should Ren'Py wrap shown transforms in an ImageReference?
+wrap_shown_transforms = True
+
+# A list of prefixes Ren'Py will search for assets.
+search_prefixes = [ "", "images/" ]
+
+# Should Ren'Py clear the database of code lines?
+clear_lines = True
+
+# Special namespaces for define and default.
+special_namespaces = { }
+
+# Should Ren'Py log lines?
+line_log = False
+
+# Should Ren'Py process dynamic images?
+dynamic_images = True
+
+# Should Ren'Py save when the mobile app may terminate?
+save_on_mobile_background = True
+
+# Should Ren'Py quit on mobile background?
+quit_on_mobile_background = False
+
+# Should Ren'Py pass the raw joystick (not controller) events.?
+pass_joystick_events = False
+
+# A list of screens that should be shown when the overlay is enabled.
+overlay_screens = [ ]
+
+# A map from tag to the default layer that tag should be displayed on.
+tag_layer = { }
+
+# The default layer for tags not in in tag_layer.
+default_tag_layer = 'master'
 
 del renpy
 del os

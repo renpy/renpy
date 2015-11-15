@@ -27,6 +27,10 @@
         If true, the gallery will display navigation and slideshow
         buttons on top of the images.
     
+        To customize the look of the navigation, you may override the
+        gallery_navigation screen. The default screen is defined in
+        common/00gallery.rpy
+    
     .. attribute:: span_buttons
     
         If true, the gallery will advance between buttons.

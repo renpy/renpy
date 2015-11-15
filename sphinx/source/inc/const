@@ -4,13 +4,22 @@
     
     Declares a variable in the store to be constant.
     
-    
     A variable is constant if nothing can change its value, or any value
     reached by indexing it or accessing its attributes. Variables must
     remain constant out of define, init, and translate python blocks.
     
     `name`
         A string giving the name of the variable to declare constant.
+
+.. function:: renpy.not_const(name)
+    
+    Declares a name in the store to be not constant.
+    
+    This undoes the effect of calls to :func:`renpy.const` and
+    :func:`renpy.pure`.
+    
+    `name`
+        The name to declare not constant.
 
 .. function:: renpy.pure(fn)
     

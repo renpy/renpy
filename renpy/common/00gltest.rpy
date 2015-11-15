@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -84,6 +84,26 @@ init -1500:
 
             textbutton _("Force Software Renderer"):
                 action _SetRenderer("sw")
+                xfill True
+
+            null height 10
+
+            label _("Gamepad")
+
+            null height 10
+
+            textbutton _("Enable"):
+                action SetField(_preferences, "pad_enabled", True)
+                xfill True
+
+            textbutton _("Disable"):
+                action SetField(_preferences, "pad_enabled", False)
+                xfill True
+
+            null height 5
+
+            textbutton _("Calibrate"):
+                action ui.invokesinnewcontext(_gamepad.calibrate)
                 xfill True
 
             null height 10
@@ -290,8 +310,8 @@ init -1500 python:
         if not _preferences.performance_test and "RENPY_PERFORMANCE_TEST" not in os.environ:
             return
 
-        # Don't bother on androuid - there's nothing the user can do.
-        if renpy.renpy.android:
+        # Don't bother on android or ios - there's nothing the user can do.
+        if renpy.mobile:
             return
 
         renpy.renpy.display.log.write("Performance test:")

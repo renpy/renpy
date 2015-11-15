@@ -133,6 +133,10 @@ expression. It takes the following properties:
     If present, this should be a string giving the variant of screen
     to be defined. See :ref:`screen-variants`.
 
+`style_group`
+    A string that's used to provide a prefix for the style for the
+    children of this screen, as :ref:`described below <style-group>`.
+
 ::
 
    screen hello_world():
@@ -231,6 +235,8 @@ Adds an image or other displayable to the screen. This optionally
 takes :ref:`transform properties <transform-properties>`. If at least
 one transform property is given, a Transform is created to wrap the
 image, and the properties are given to the transform.
+
+If the displayable is None, nothing is added to the screen.
 
 This does not take any children.
 
@@ -496,6 +502,12 @@ properties:
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
+
 `hovered`
     An action to run when the button gains focus.
 
@@ -528,7 +540,10 @@ Input
 
 Creates a text input area, which allows the user to enter text. When
 the user presses return, the text will be returned by the
-interaction. This takes no parameters, and the following properties:
+interaction. (When the screen is invoked through ``call screen``, the result
+will be placed in the ``_return`` variable.)
+
+The input statement takes no parameters, and the following properties:
 
 `default`
     The default text in this input.
@@ -683,13 +698,19 @@ Mousearea
 A mouse area is an area of the screen that can react to the mouse
 entering or leaving it. Unlike a button, a mouse area does not take
 focus, so it's possible to have a mouse area with buttons inside it.
-The mousearea statement takes not parameters, and the following properties:
+The mousearea statement takes no parameters, and the following properties:
 
 `hovered`
     An action to run when the mouse enters the mouse area.
 
 `unhovered`
     An action to run when the mouse leaves the mouse area.
+
+`focus_mask`
+    The :propref:`focus_mask` style property, which may be a Displayable
+    or None. If a displayable, the mousearea will only be hovered if the
+    mouse is over an opaque portion of the displayable. (The displayable
+    is not shown to the user.)
 
 It also takes:
 
@@ -800,6 +821,12 @@ following properties:
 `action`
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
+
+`alternate`
+    An action that is run if the button is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the button
+    on a mouse-based platform, or when the player long presses the button
+    on a touch-based platform.
 
 `hovered`
     An action to run when the button gains focus.
@@ -949,11 +976,11 @@ following properties:
 
     * If present, the third element is a function that adjusts the
       scrolling speed, based on how close to the pointer is to an
-      edge. The function should take a number between 0.0 and 1.0, and
+      edge. The function should take a number between -1.0 and 1.0, and
       return a number in the same range. The default function returns
       its input, and implements proportional scrolling.  A function
-      that always returns 1.0 would implement constant-speed
-      scrolling.
+      that returned -1.0 or 1.0 based on the sign of its input would
+      implement constant-speed scrolling.
 
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
@@ -1145,6 +1172,12 @@ also takes the following properties:
     The action to run when the button is activated. This also controls
     if the button is sensitive, and if the button is selected.
 
+`alternate`
+    An action that is run if the hotspot is activated in an alternate manner.
+    Alternate activation occurs when the player right-clicks on the hotspot
+    on a mouse-based platform, or when the player long presses the hotspot
+    on a touch-based platform.
+
 `hovered`
     An action to run when the button gains focus.
 
@@ -1211,7 +1244,8 @@ The advanced displayable statements are:
 ``drag``
     Creates a :class:`Drag`. A drag can be given an optional child,
     or the :propref:`child` style property can be used to supply the child,
-    and its focused variants.
+    and its focused variants. Drags also take the :propref:`focus_mask`
+    style property.
 
 ``draggroup``
     Creates a :class:`DragGroup`. A drag group may have zero or more
@@ -1372,11 +1406,8 @@ followed by an argument list, in parenthesis.
 
 If the used screen include parameters, its scope is initialized to the
 result of assigning the arguments to those parameters. Otherwise, it
-is passed the scope of the current screen, updated with any
-
-The scope of the included code includes the scope of the current
-statement's code, updated by assinging the parameters their new
-values.
+is passed the scope of the current screen, updated with any keyword
+arguments passed to the screen.
 
 ::
 
@@ -1396,6 +1427,75 @@ values.
          grid 2 5:
              for i in range(1, 11):
                   use file_slot(i)
+
+
+The use statement may take one property, ``id``, which must be placed
+after the parameter list if present. This screen is only useful when
+two screens with the same tag use the same screen. In this case,
+when one screen replaces the other, the state of the used screen
+is transfered from old to new.
+
+::
+
+    transform t1():
+        xpos 150
+        linear 1.0 xpos 0
+
+    screen common():
+        text "Test" at t1
+
+    screen s1():
+        tag s
+        use common id "common"
+        text "s1" ypos 100
+
+    screen s2():
+        tag s
+        use common id "common"
+        text "s2" ypos 100
+
+    label start:
+        show screen s1
+        pause
+        show screen s2
+        pause
+        return
+
+Use and Transclude
+^^^^^^^^^^^^^^^^^^
+
+A use statement may also take a block containing screen language statements.
+When a block is given, the screen that is used may contain the ``transclude``
+statement. The ``transclude`` statement is replaces with the statements
+contained within the use statement's block.
+
+This makes it possible to define reusable layouts using screens. For example,
+the screen::
+
+    screen movable_frame(pos):
+        drag:
+            pos pos
+
+            frame:
+                background Frame("movable_frame.png", 10, 10)
+                top_padding 20
+
+                transclude
+
+is meant to be a reusable component that wraps other components. Here's
+an example of how it can be used::
+
+    screen test:
+        use movable_frame((0, 0)):
+            text "You can drag me."
+
+        use movable_frame((0, 100)):
+            vbox:
+                text "You can drag me too."
+                textbutton "Got it!" action Return(True)
+
+The use and transclude constructs form the basis of
+:ref:`creator-defined screen language statements <creator-defined-sl>`.
 
 .. _sl-python:
 
@@ -1423,6 +1523,73 @@ has side effects, those side effects may occur at unpredictable times.
         $ test_label = "test_%d" % test_label
 
         textbutton "Run Test" action Jump(test_label)
+
+
+.. _sl-showif:
+
+Showif Statement
+================
+
+The showif statement takes a condition. It shows its children when the
+condition is true, and hides the children when the condition is false.
+When showif's children have transforms, it will supply them with ATL
+events to manage the show and hide process, so that Ren'Py can animate
+the show and hide process.
+
+Multiple showif statements can be grouped together into a single
+showif/elif/else construct, similiar to an if statement.
+**Unlike the if statement, showif executes all of its blocks, including python code, even if the condition is false.**
+This is because the showif statement needs to create the children that it is
+hiding.
+
+Showif delivers three events to its children:
+
+``appear``
+    Is delivered if the condition is true when the screen is first shown,
+    to instantly show the child.
+``show``
+    Is delivered when the condition changes from false to true.
+``hide``
+    Is delivered when the condition changes from true to false.
+
+For these purposes, the condition of an elif clause is always false if any
+prior condition is true, while the condition of an else clause is only true
+when all prior conditions are false.
+
+For example::
+
+    transform cd_transform:
+        # This is run before appear, show, or hide.
+        xalign 0.5 yalign 0.5 alpha 0.0
+
+        on appear:
+            alpha 1.0
+        on show:
+            zoom .75
+            linear .25 zoom 1.0 alpha 1.0
+        on hide:
+            linear .25 zoom 1.25 alpha 0.0
+
+    screen countdown():
+        default n = 3
+
+        vbox:
+            textbutton "3" action SetScreenVariable("n", 3)
+            textbutton "2" action SetScreenVariable("n", 2)
+            textbutton "1" action SetScreenVariable("n", 1)
+            textbutton "0" action SetScreenVariable("n", 0)
+
+        showif n == 3:
+            text "Three" size 100 at cd_transform
+        elif n == 2:
+            text "Two" size 100 at cd_transform
+        elif n == 1:
+            text "One" size 100 at cd_transform
+        else:
+            text "Liftoff!" size 100 at cd_transform
+
+    label start:
+        call screen countdown
 
 
 Screen Statements
@@ -1567,6 +1734,14 @@ and choosing the entries that apply to the current platform.
 
 ``"firetv"``
    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+
+``"android"``
+   Defined on all Android devices.
+
+``"ios"``
+   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+   also defined).
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have

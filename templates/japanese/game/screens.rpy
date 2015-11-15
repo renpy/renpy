@@ -1,27 +1,20 @@
-﻿# This file is in the public domain. Feel free to modify it as a basis
-# for your own screens.
-# 本ファイルはパブリックドメインです。
+﻿# 本ファイルはパブリックドメインです。
 # これを基にして、独自のスクリーンを作成してください。
+
+# 将来、これらのスクリーンに追加の引数が与えられる可能性があることに注意してください。
+# 引数で **kwargs を使用するとそのような場合でもコードは動作するでしょう。
+
 
 ##############################################################################
 # Say
 #
-# Screen that's used to display adv-mode dialogue.
-# http://www.renpy.org/doc/html/screen_special.html#say
 # アドベンチャーモードのダイアログを表示するスクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#say
+screen say(who, what, side_image=None, two_window=False):
 
-screen say:
-
-    # Defaults for side_image and two_window
-    # side_image と two_window の初期値。
-    default side_image = None
-    default two_window = False
-
-    # Decide if we want to use the one-window or two-window variant.
     # １ウィンドウ形式か２ウィンドウ形式か決めます。
     if not two_window:
 
-        # The one window variant.
         # １ウィンドウ形式
         window:
             id "window"
@@ -36,7 +29,6 @@ screen say:
 
     else:
 
-        # The two window variant.
         # ２ウィンドウ形式
         vbox:
             style "say_two_window_vbox"
@@ -56,14 +48,12 @@ screen say:
 
                 text what id "what"
 
-    # If there's a side image, display it above the text.
     # サイドイメージがあれば、テキストの上に表示します。
     if side_image:
         add side_image
     else:
         add SideImage() xalign 0.0 yalign 1.0
 
-    # Use the quick menu.
     # クイックメニューを使用。
     use quick_menu
 
@@ -71,11 +61,10 @@ screen say:
 ##############################################################################
 # Choice
 #
-# Screen that's used to display in-game menus.
-# http://www.renpy.org/doc/html/screen_special.html#choice
 # ゲーム中の選択肢を表示するスクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#choice
 
-screen choice:
+screen choice(items):
 
     window:
         style "menu_window"
@@ -115,11 +104,10 @@ init -2:
 ##############################################################################
 # Input
 #
-# Screen that's used to display renpy.input()
-# http://www.renpy.org/doc/html/screen_special.html#input
 # renpy.input() を表示するスクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#input
 
-screen input:
+screen input(prompt):
 
     window style "input_window":
         has vbox
@@ -132,11 +120,10 @@ screen input:
 ##############################################################################
 # Nvl
 #
-# Screen used for nvl-mode dialogue and menus.
-# http://www.renpy.org/doc/html/screen_special.html#nvl
 # ノベルモードのダイアログと選択肢を表示するスクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#nvl
 
-screen nvl:
+screen nvl(dialogue, items=None):
 
     window:
         style "nvl_window"
@@ -144,7 +131,6 @@ screen nvl:
         has vbox:
             style "nvl_vbox"
 
-        # Display dialogue.
         # ダイアログを表示。
         for who, what, who_id, what_id, window_id in dialogue:
             window:
@@ -158,7 +144,6 @@ screen nvl:
 
                 text what id what_id
 
-        # Display a menu, if given.
         # 選択肢があれば表示。
         if items:
 
@@ -186,22 +171,18 @@ screen nvl:
 ##############################################################################
 # Main Menu
 #
-# Screen that's used to display the main menu, when Ren'Py first starts
-# http://www.renpy.org/doc/html/screen_special.html#main-menu
 # ゲーム起動時に表示される、メインメニュー用スクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#main-menu
 
-screen main_menu:
+screen main_menu():
 
-    # This ensures that any other menu screen is replaced.
-    # 他のメニュースクリーンが表示される時に置き換えます。
+    # 他のメニュースクリーンが表示されていたら置き換えます。
     tag menu
 
-    # The background of the main menu.
     # メインメニューの背景。
     window:
         style "mm_root"
 
-    # The main menu buttons.
     # メインメニューのボタン。
     frame:
         style_group "mm"
@@ -218,29 +199,24 @@ screen main_menu:
 
 init -2:
 
-    # Make all the main menu buttons be the same size.
     # メインメニューの全てのボタンを同じサイズにします。
     style mm_button:
         size_group "mm"
 
 
+
 ##############################################################################
 # Navigation
 #
-# Screen that's included in other screens to display the game menu
-# navigation and background.
+# ゲームメニューの背景とナビゲーションを表示するスクリーンで
+# 他のゲームメニュー用スクリーンと内で使われます。
 # http://www.renpy.org/doc/html/screen_special.html#navigation
-# ゲームメニューの背景とナビゲーションを表示するスクリーン。
-# 他のゲームメニュー用スクリーンと一緒に使われます。
+screen navigation():
 
-screen navigation:
-
-    # The background of the game menu.
     # ゲームメニューの背景。
     window:
         style "gm_root"
 
-    # The various buttons.
     # 各ボタン。
     frame:
         style_group "gm_nav"
@@ -259,7 +235,6 @@ screen navigation:
 
 init -2:
 
-    # Make all game menu navigation buttons the same size.
     # すべてのゲームメニューのナビゲーションボタンを同サイズにします。
     style gm_nav_button:
         size_group "gm_nav"
@@ -268,27 +243,23 @@ init -2:
 ##############################################################################
 # Save, Load
 #
-# Screens that allow the user to save and load the game.
+# ゲームをセーブ・ロードする場合に使用するスクリーン。
 # http://www.renpy.org/doc/html/screen_special.html#save
 # http://www.renpy.org/doc/html/screen_special.html#load
-# ゲームをセーブ・ロードする場合に使用するスクリーン。
 
-# Since saving and loading are so similar, we combine them into
-# a single screen, file_picker. We then use the file_picker screen
-# from simple load and save screens.
-# セーブとロードは似ているため、両者を組み合わせてファイルピッカー
-# というスクリーンを作り、実際のセーブ・ロードスクリーンで使用します。
+# セーブとロードは似ているため、両者を組み合わせて file_picker
+# という一つのスクリーンを作りました。
+# 実際のセーブ・ロードスクリーンで使用します。
 
-screen file_picker:
+screen file_picker():
 
     frame:
         style "file_picker_frame"
 
         has vbox
 
-        # The buttons at the top allow the user to pick a
-        # page of files.
         # ファイルのページを切り替える画面上部のボタン。
+
         hbox:
             style_group "file_picker_nav"
 
@@ -311,18 +282,15 @@ screen file_picker:
         $ columns = 2
         $ rows = 5
 
-        # Display a grid of file slots.
         # ファイルスロットのグリッドを表示。
         grid columns rows:
             transpose True
             xfill True
             style_group "file_picker"
 
-            # Display ten file slots, numbered 1 - 10.
-            # １０個のファイルスロットを表示。
+            # 1-10 番のファイルスロットを表示。
             for i in range(1, columns * rows + 1):
 
-                # Each file slot is a button.
                 # 各ファイルスロットにボタンを設置。
                 button:
                     action FileAction(i)
@@ -330,7 +298,6 @@ screen file_picker:
 
                     has hbox
 
-                    # Add the screenshot.
                     # スクリーンショットを含めます。
                     add FileScreenshot(i)
 
@@ -343,19 +310,17 @@ screen file_picker:
                     key "save_delete" action FileDelete(i)
 
 
-screen save:
+screen save():
 
-    # This ensures that any other menu screen is replaced.
-    # 他のメニュースクリーンが表示される時に置き換えます。
+    # 他のメニュースクリーンが表示されていたら置き換えます。
     tag menu
 
     use navigation
     use file_picker
 
-screen load:
+screen load():
 
-    # This ensures that any other menu screen is replaced.
-    # 他のメニュースクリーンが表示される時に置き換えます。
+    # 他のメニュースクリーンが表示されていたら置き換えます。
     tag menu
 
     use navigation
@@ -372,25 +337,21 @@ init -2:
 ##############################################################################
 # Preferences
 #
-# Screen that allows the user to change the preferences.
-# http://www.renpy.org/doc/html/screen_special.html#prefereces
 # 環境設定を変更する時に使用するスクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#prefereces
 
-screen preferences:
+screen preferences():
 
     tag menu
 
-    # Include the navigation.
     # ナビゲーションを使用。
     use navigation
 
-    # Put the navigation columns in a three-wide grid.
     # 三列のグリッドに各要素を配列。
     grid 3 1:
         style_group "prefs"
         xfill True
 
-        # The left column.
         # 左の列。
         vbox:
             frame:
@@ -514,11 +475,10 @@ init -2:
 ##############################################################################
 # Yes/No Prompt
 #
-# Screen that asks the user a yes or no question.
-# http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 # はい／いいえを尋ねるスクリーン。
+# http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 
-screen yesno_prompt:
+screen yesno_prompt(message, yes_action, no_action):
 
     modal True
 
@@ -549,7 +509,6 @@ screen yesno_prompt:
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
-    # Right-click and escape answer "no".
     # 右クリックで"no"を選択したことにする。
     key "game_menu" action no_action
 
@@ -565,13 +524,10 @@ init -2:
 ##############################################################################
 # Quick Menu
 #
-# A screen that's included by the default say screen, and adds quick access to
-# several useful functions.
-# say スクリーンに含まれ、クイックメニュー用スクリーン。
+# デフォルトの say スクリーンに含まれる、クイックメニュー用スクリーン。
 
-screen quick_menu:
+screen quick_menu():
 
-    # Add an in-game quick menu.
     # クイックメニューを追加。
     hbox:
         style_group "quick"

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -127,9 +127,7 @@ init -1700 python:
 # choices.
 init 1700 python:
 
-    if config.has_autosave:
-        config.autosave_slots = 10
-    else:
+    if not config.has_autosave:
         config.autosave_frequency = None
 
 # Factored this all into one place, to make our lives a bit easier.

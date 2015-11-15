@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,6 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # The displayable and style inspectors.
+
+style _hyperlink_button is _default
+style _hyperlink_button_text is _hyperlink
 
 screen _inspector:
     zorder 1010
@@ -50,51 +53,67 @@ screen _inspector:
 
         else:
 
-            hbox:
-                text " ":
-                    min_width 400
-                    xmaximum 400
+            viewport:
+                scrollbars "both"
+                child_size (1200, 0)
+                yfill False
+                xfill False
+                mousewheel True
 
-                text _("Size"):
-                    min_width 100
-                    xmaximum 100
-                    underline True
+                has vbox
 
-                text _("Style"):
-                    underline True
+                hbox:
+                    text " ":
+                        min_width 350
+                        xmaximum 350
 
-            null height 5
+                    text _("Size"):
+                        min_width 85
+                        underline True
 
-            for depth, width, height, d in tree:
+                    text _("Style"):
+                        min_width 125
+                        underline True
 
-                $ t = "  " * depth + u"\u2022 " + unicode(d)
-                $ s = __format_style(d.style.parent)
+                    null width 5
 
-                button:
-                    xfill True
-                    xmargin 0
-                    ymargin 0
-                    xpadding 0
-                    ypadding 0
-                    xoffset 0
+                    text _("Location"):
+                        underline True
+                        min_width 100
 
-                    background None
-                    hover_background "#fff4"
+                null height 5
 
-                    action Show("_style_inspector", d=d)
+                for depth, width, height, d in tree:
+
+                    $ t = "  " * depth + u"\u2022 " + unicode(d)
+                    $ s = __format_style(d.style.parent)
+
 
                     hbox:
 
                         text "[t!q]":
-                            min_width 400
-                            xmaximum 400
+                            min_width 350
 
                         text "[width:.0f]x[height:.0f]":
-                            min_width 100
-                            xmaximum 100
+                            min_width 85
 
-                        text "[s!q]":
-                            style "_hyperlink"
+                        textbutton "[s!q]":
+                            style "_hyperlink_button"
+                            text_min_width 125
+                            action Show("_style_inspector", d=d)
+
+                        null width 5
+
+                        if d._location:
+                            $ l = __format_location(d._location)
+
+                            textbutton "[l!q]":
+                                style "_hyperlink_button"
+                                text_min_width 100
+                                action _EditFile(d._location[0], d._location[1])
+
+
+                null height 5
 
         null height 20
 
@@ -126,6 +145,7 @@ screen _style_inspector:
 
         viewport:
             yfill False
+            xfill False
             mousewheel True
 
             vbox:
@@ -162,6 +182,18 @@ init python:
 
     def __format_style(name):
         return name[0] + "".join([ "[%r]" % i for i in name[1:] ])
+
+    def __format_location(l):
+        if l is None:
+            return ""
+        else:
+            fn = l[0]
+            if fn.startswith("game/"):
+                fn = fn[5:]
+            elif fn.startswith("renpy/common"):
+                fn = fn[6:]
+
+            return "%s:%d" % (fn, l[1])
 
     def __safe_repr(name):
         try:

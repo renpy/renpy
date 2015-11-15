@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,6 +38,40 @@ images = { }
 image_attributes = collections.defaultdict(list)
 
 
+def get_available_image_tags():
+    """
+    :doc: image_func
+
+    Returns a list of image tags that have been defined.
+    """
+
+    return [ k for k, v in image_attributes.items() if v ]
+
+def get_available_image_attributes(tag, attributes=()):
+    """
+    :doc: image_func
+
+    Returns a list of tuples, with each tuple representing a possible
+    combination of image attributes that can be associated with `tag`.
+    If `attributes` is given, only images that contain all the attributes
+    in that iterable are returned.
+    """
+
+    rv = [ ]
+
+    if tag not in image_attributes:
+        return rv
+
+    for at in image_attributes[tag]:
+        for a in attributes:
+            if a not in at:
+                break
+        else:
+            rv.append(at)
+
+    return rv
+
+
 def register_image(name, d):
     """
     Registers the existence of an image with `name`, and that the image
@@ -54,9 +88,10 @@ def register_image(name, d):
     image_attributes[tag].append(rest)
 
 
-def image_exists(name):
+def image_exists(name, exact=False):
     """
-    :doc: image
+    :doc: image_func
+    :name: renpy.has_image
 
     Return true if an image with `name` exists, and false if no such image
     exists.
@@ -64,6 +99,10 @@ def image_exists(name):
     `name`
         Either a string giving an image name, or a tuple of strings giving
         the name components.
+
+    `exact`
+        Returns true if and only if an image with the exact name exists -
+        parameterized matches are not included.
     """
 
     if not isinstance(name, tuple):
@@ -72,6 +111,9 @@ def image_exists(name):
     while name:
         if name in images:
             return True
+
+        if exact:
+            return False
 
         name = name[:-1]
 
@@ -84,6 +126,7 @@ def wrap_render(child, w, h, st, at):
     rv.blit(rend, (0, 0))
     return rv
 
+
 class ImageReference(renpy.display.core.Displayable):
     """
     ImageReference objects are used to reference images by their name,
@@ -91,7 +134,7 @@ class ImageReference(renpy.display.core.Displayable):
     the image in an image statment.
     """
 
-    nosave = [ 'target' ]
+    nosave = [ 'target', 'param_target' ]
     target = None
     param_target = None
 
@@ -104,6 +147,9 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
+
+    def __unicode__(self):
+        return u"<ImageReference {!r}>".format(self.name)
 
     def __hash__(self):
         return hash(self.name)
@@ -236,6 +282,140 @@ class ImageReference(renpy.display.core.Displayable):
         return [ self.target ]
 
 
+class DynamicImage(renpy.display.core.Displayable):
+    """
+    :doc: disp_imagelike
+    :args: (name)
+
+    A DynamicImage is a displayable that has text interpolation performed
+    on it to yield a string giving a new displayable. Such interpolation is
+    performed at the start of each iteraction.
+    """
+
+    nosave = [ 'target', 'raw_target' ]
+
+    # The target that this image currently resolves to.
+    target = None
+
+    # The raw target that the image resolves to, before it has been parameterized.
+    raw_target = None
+
+    def __init__(self, name, scope=None, **properties):
+        super(DynamicImage, self).__init__(**properties)
+
+        self.name = name
+
+        if scope is not None:
+            self.find_target(scope)
+            self._uses_scope = True
+        else:
+            self._uses_scope = False
+
+    def _scope(self, scope, update):
+        return self.find_target(scope, update)
+
+    def __unicode__(self):
+        return u"DynamicImage {!r}".format(self.name)
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, o):
+        if self is o:
+            return True
+
+        if not self._equals(o):
+            return False
+
+        if self.name != o.name:
+            return False
+
+        return True
+
+    def _get_parameterized(self):
+        if self.target:
+            return self.target._get_parameterized()
+        else:
+            return self
+
+    def find_target(self, scope=None, update=True):
+
+        try:
+            target = renpy.easy.dynamic_image(self.name, scope)
+        except Exception as e:
+            raise Exception("In DynamicImage %r: %r" % (self.name, e))
+
+        if self.raw_target == target:
+            return False
+
+        if not update:
+            return True
+
+        renpy.display.render.redraw(self, 0)
+        self.raw_target = target
+
+        target = target.parameterize('displayable', ())
+        old_target = self.target
+        self.target = target
+
+        if not old_target:
+            return True
+
+        if isinstance(old_target, renpy.display.motion.Transform):
+            return True
+
+        if not isinstance(target, renpy.display.motion.Transform):
+            self.target = target = renpy.display.motion.Transform(child=target)
+
+        target.take_state(old_target)
+
+        return True
+
+    def _hide(self, st, at, kind):
+        if not self.target:
+            self.find_target()
+
+        return self.target._hide(st, at, kind)
+
+    def set_transform_event(self, event):
+        if not self.target:
+            self.find_target()
+
+        return self.target.set_transform_event(event)
+
+    def event(self, ev, x, y, st):
+        if not self.target:
+            self.find_target()
+
+        return self.target.event(ev, x, y, st)
+
+    def render(self, width, height, st, at):
+        if not self.target:
+            self.find_target()
+
+        return wrap_render(self.target, width, height, st, at)
+
+    def get_placement(self):
+        if not self.target:
+            self.find_target()
+
+        return self.target.get_placement()
+
+    def visit(self):
+        if not self.target:
+            self.find_target()
+
+        return [ self.target ]
+
+    def per_interact(self):
+        old_target = self.target
+
+        if not self._uses_scope:
+            self.find_target()
+
+        if old_target is not self.target:
+            self.target.visit_all(lambda i : i.per_interact())
+
 
 class ShownImageInfo(renpy.object.Object):
     """
@@ -311,10 +491,20 @@ class ShownImageInfo(renpy.object.Object):
 
         return True
 
+    def get_showing_tags(self, layer):
+        """
+        Returns the set of tags being shown on `layer`.
+        """
+
+        return { t for l, t in self.shown if l == layer }
+
     def predict_scene(self, layer):
         """
         Predicts the scene statement being called on layer.
         """
+
+        if layer is None:
+            layer = 'master'
 
         for l, t in self.attributes.keys():
             if l == layer:
@@ -377,8 +567,6 @@ class ShownImageInfo(renpy.object.Object):
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
-        """
-        """
 
         # The longest length of an image that matches.
         max_len = 0

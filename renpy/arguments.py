@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,6 +40,9 @@ except:
 # function will parse command line arguments, and false otherwise.
 commands = { }
 
+# Commands that force compile to be set.
+compile_commands = { "compile", "add_from" }
+
 class ArgumentParser(argparse.ArgumentParser):
     """
     Creates an argument parser that is capable of parsing the standard Ren'Py
@@ -63,19 +66,33 @@ class ArgumentParser(argparse.ArgumentParser):
 
         argparse.ArgumentParser.__init__(self, description="The Ren'Py visual novel engine.", add_help=False)
 
-        self.add_argument(
-            "basedir", default=None,
-            help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.",
-            nargs=1 if require_command else '?'
-            )
-
         command_names = ", ".join(sorted(commands))
 
-        self.add_argument(
-            "command",
-            help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
-            default="run",
-            nargs=1 if require_command else '?')
+        if require_command:
+
+            self.add_argument(
+                "basedir",
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.")
+
+        else:
+
+            self.add_argument(
+                "basedir",
+                default='',
+                nargs='?',
+                help="The base directory containing of the project to run. This defaults to the directory containing the Ren'Py executable.")
+
+
+            self.add_argument(
+                "command",
+                help="The command to execute. Available commands are: " + command_names + ". Defaults to 'run'.",
+                nargs='?',
+                default="run")
 
         self.add_argument(
             "--savedir", dest='savedir', default=None, metavar="DIRECTORY",
@@ -97,7 +114,7 @@ class ArgumentParser(argparse.ArgumentParser):
             "--lint", action="store_true", dest="lint",
             help=argparse.SUPPRESS)
 
-        dump = self.add_argument_group("JSON Dump Arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
+        dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
         dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
         dump.add_argument("--json-dump-common", action="store_true", default=False, help="Include names defined in the common directory.")
@@ -106,13 +123,29 @@ class ArgumentParser(argparse.ArgumentParser):
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
             command = renpy.game.args.command #@UndefinedVariable
-            self.group = self.add_argument_group("{0} command".format(command), description)
+            self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
         if self.group is self:
             argparse.ArgumentParser.add_argument(self, *args, **kwargs)
         else:
             self.group.add_argument(*args, **kwargs)
+
+    def parse_args(self, *args, **kwargs):
+        rv = argparse.ArgumentParser.parse_args(self, *args, **kwargs)
+
+        if rv.command in compile_commands:
+            rv.compile = True
+
+        return rv
+
+    def parse_known_args(self, *args, **kwargs):
+        args, rest = argparse.ArgumentParser.parse_known_args(self, *args, **kwargs)
+
+        if args.command in compile_commands:
+            args.compile = True
+
+        return args, rest
 
 def run():
     """
@@ -173,6 +206,7 @@ def rmpersistent():
     takes_no_arguments("Deletes the persistent data.")
 
     renpy.loadsave.location.unlink_persistent()
+    renpy.persistent.should_save_persistent = False
 
     return False
 
@@ -202,6 +236,7 @@ def bootstrap():
 
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
+
     return args
 
 def pre_init():

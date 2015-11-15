@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -99,6 +99,7 @@ class Sprite(renpy.object.Object):
             sc.render = None
             sc.child = d
             sc.st = None
+            sc.child_copy = d.parameterize('displayable', [ ])
 
             self.manager.displayable_map[id_d] = sc
 
@@ -203,26 +204,15 @@ class SpriteManager(renpy.display.core.Displayable):
         SpriteManager.
         """
 
-        id_d = id(d)
-
-        sc = self.displayable_map.get(id_d, None)
-        if sc is None:
-            d = renpy.easy.displayable(d)
-
-            sc = SpriteCache()
-            sc.render = None
-            sc.child = d
-            sc.st = None
-            self.displayable_map[id_d] = sc
-
         s = Sprite()
         s.x = 0
         s.y = 0
         s.zorder = 0
-        s.cache = sc
         s.live = True
         s.manager = self
         s.events = False
+
+        s.set_child(d)
 
         self.children.append(s)
 
@@ -281,7 +271,7 @@ class SpriteManager(renpy.display.core.Displayable):
 
                 cst = st - cache.st
 
-                cache.render = r = render(cache.child, width, height, cst, cst)
+                cache.render = r = render(cache.child_copy, width, height, cst, cst)
                 cache.fast = (r.operation == BLIT) and (r.forward is None) and (r.alpha == 1.0) and (r.over == 1.0)
                 rv.depends_on(r)
 
@@ -454,7 +444,7 @@ class SnowBlossomFactory(renpy.python.NoRollback):
             else:
                 return n
 
-        if not particles and self.fast:
+        if (st == 0) and not particles and self.fast:
             rv = [ ]
 
             for _i in xrange(0, self.count):

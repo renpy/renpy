@@ -10,17 +10,28 @@
 // identifier. So get rid of it here.
 #undef environ
 
+#if defined __APPLE__
+#include "TargetConditionals.h"
+#if TARGET_OS_IPHONE
+#define IOS
+#endif
+#endif
+
 #if defined ANDROID
 
-#define RENPY_GLES_2
+	#define RENPY_GLES_2
 
 #elif defined ANGLE
 
-#define RENPY_GLES_2
+	#define RENPY_GLES_2
+
+#elif defined IOS
+
+	#define RENPY_GLES_2
 
 #else
 
-#define RENPY_OPENGL
+	#define RENPY_OPENGL
 
 #endif
 
@@ -54,11 +65,15 @@
 
 #if defined RENPY_GLES_2
 
-#ifndef ANDROID
+#ifdef ANGLE
 #include <EGL/egl.h>
 #endif
 
+#ifdef IOS
+#include <OpenGLES/ES2/gl.h>
+#else
 #include <GLES2/gl2.h>
+#endif
 
 typedef GLuint GLhandleARB;
 typedef GLchar GLcharARB;
@@ -66,6 +81,7 @@ typedef GLchar GLcharARB;
 #define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
+#define GL_FRAMEBUFFER_BINDING_EXT GL_FRAMEBUFFER_BINDING
 #define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
 #define glBindFramebufferEXT glBindFramebuffer
 #define glFramebufferTexture2DEXT glFramebufferTexture2D
@@ -113,7 +129,7 @@ typedef GLfloat GLdouble;
 #define glClipPlane glClipPlanef
 
 // This isn't defined on GL ES, but that's okay, since we'll disable
-// screenshots on Android.
+// screenshots on Android/iOS.
 #define GL_PACK_ROW_LENGTH 0
 
 #define glClientActiveTextureARB glClientActiveTexture
@@ -121,6 +137,7 @@ typedef GLfloat GLdouble;
 
 #define GL_BGRA GL_RGBA
 #define GL_UNSIGNED_INT_8_8_8_8_REV GL_UNSIGNED_BYTE
+#define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_IMAGE_UNITS
 
 #endif
 

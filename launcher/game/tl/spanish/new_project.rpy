@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/new_project.rpy:22
     old "Choose Project Template"

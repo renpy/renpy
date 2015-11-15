@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -135,7 +135,15 @@ class StoreDict(dict):
 
 
 # A map from the name of a store dict to the corresponding StoreDict object.
+# This isn't reset during a reload, so store objects stay the same in modules.
 store_dicts = { }
+
+# Same, for module objects.
+store_modules = { }
+
+# The store dicts that have been cleared and initialized during the current
+# run.
+initialized_store_dicts = set()
 
 def create_store(name):
     """
@@ -144,12 +152,14 @@ def create_store(name):
 
     name = str(name)
 
-    if name in store_dicts:
+    if name in initialized_store_dicts:
         return
 
+    initialized_store_dicts.add(name)
+
     # Create the dict.
-    d = StoreDict()
-    store_dicts[name] = d
+    d = store_dicts.setdefault(name, StoreDict())
+    d.reset()
 
     # Set the name.
     d["__name__"] = name
@@ -162,8 +172,11 @@ def create_store(name):
         if k not in d:
             d[k] = v
 
-    # Create the corresponding module.
-    sys.modules[name] = StoreModule(d)
+    # Create or reuse the corresponding module.
+    if name in store_modules:
+        sys.modules[name] = store_modules[name]
+    else:
+        store_modules[name] = sys.modules[name] = StoreModule(d)
 
     # If we're a module in the store, add us to the store.
     if name.startswith("store."):
@@ -328,6 +341,17 @@ def reached_vars(store, reachable, wait):
 
 class WrapNode(ast.NodeTransformer):
 
+    def visit_SetComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__set__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
+
     def visit_ListComp(self, n):
         return ast.Call(
             func = ast.Name(
@@ -346,6 +370,17 @@ class WrapNode(ast.NodeTransformer):
         return ast.Call(
             func = ast.Name(
                 id="__renpy__list__",
+                ctx=ast.Load()
+                ),
+            args = [ self.generic_visit(n) ],
+            keywords = [ ],
+            starargs = None,
+            kwargs = None)
+
+    def visit_DictComp(self, n):
+        return ast.Call(
+            func = ast.Name(
+                id="__renpy__dict__",
                 ctx=ast.Load()
                 ),
             args = [ self.generic_visit(n) ],
@@ -703,7 +738,11 @@ class DetRandom(random.Random):
         else:
             rv = super(DetRandom, self).random()
 
-        renpy.game.log.current.random.append(rv)
+        log = renpy.game.log
+
+        if log.current is not None:
+            log.current.random.append(rv)
+
         return rv
 
     def pushback(self, l):
@@ -723,6 +762,15 @@ class DetRandom(random.Random):
         """
 
         self.stack = [ ]
+
+    def Random(self,seed=None):
+        """
+        Returns a new RNG object separate from the main one.
+        """
+
+        new = DetRandom()
+        new.seed(seed)
+        return new
 
 rng = DetRandom()
 
@@ -758,7 +806,7 @@ class Rollback(renpy.object.Object):
     execution of this element.
     """
 
-    __version__ = 3
+    __version__ = 4
 
     def __init__(self):
 
@@ -766,7 +814,6 @@ class Rollback(renpy.object.Object):
 
         self.context = renpy.game.context().rollback_copy()
         self.objects = [ ]
-        self.checkpoint = False
         self.purged = False
         self.random = [ ]
         self.forward = None
@@ -776,6 +823,14 @@ class Rollback(renpy.object.Object):
 
         # If true, we retain the data in this rollback when a load occurs.
         self.retain_after_load = False
+
+        # True if this is a checkpoint we can roll back to.
+        self.checkpoint = False
+
+        # True if this is a hard checkpoint, where the rollback counter
+        # decreases.
+        self.hard_checkpoint = False
+
 
     def after_upgrade(self, version):
 
@@ -792,6 +847,9 @@ class Rollback(renpy.object.Object):
 
         if version < 3:
             self.retain_after_load = False
+
+        if version < 4:
+            self.hard_checkpoint = self.checkpoint
 
 
     def purge_unreachable(self, reachable, wait):
@@ -901,7 +959,6 @@ class RollbackLog(renpy.object.Object):
 
     __version__ = 4
 
-
     nosave = [ 'old_store', 'mutated' ]
 
     def __init__(self):
@@ -913,6 +970,7 @@ class RollbackLog(renpy.object.Object):
         self.mutated = { }
         self.rollback_limit = 0
         self.rollback_is_fixed = False
+        self.checkpointing_suspended = False
         self.fixed_rollback_boundary = None
         self.forward = [ ]
         self.old_store = { }
@@ -926,7 +984,6 @@ class RollbackLog(renpy.object.Object):
         # True if we should retain data from here to the next checkpoint
         # on load.
         self.retain_after_load_flag = False
-
 
     def after_setstate(self):
         self.mutated = { }
@@ -948,6 +1005,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         context = renpy.game.context()
+
         if not context.rollback:
             return
 
@@ -1096,12 +1154,15 @@ class RollbackLog(renpy.object.Object):
 
         return None
 
-    def checkpoint(self, data=None, keep_rollback=False):
+    def checkpoint(self, data=None, keep_rollback=False, hard=True):
         """
         Called to indicate that this is a checkpoint, which means
         that the user may want to rollback to just before this
         node.
         """
+
+        if self.checkpointing_suspended:
+            hard = False
 
         self.retain_after_load_flag = False
 
@@ -1115,6 +1176,7 @@ class RollbackLog(renpy.object.Object):
             self.rollback_limit += 1
 
         self.current.checkpoint = True
+        self.current.hard_checkpoint = hard
 
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
@@ -1142,6 +1204,14 @@ class RollbackLog(renpy.object.Object):
 
             # Log the data in case we roll back again.
             self.current.forward = data
+
+    def suspend_checkpointing(self, flag):
+        """
+        Called to temporarily suspend checkpointing, so any rollback
+        will jump to prior to this statement
+        """
+
+        self.checkpointing_suspended = flag
 
     def block(self):
         """
@@ -1202,6 +1272,9 @@ class RollbackLog(renpy.object.Object):
         if checkpoints and not self.rollback_limit > 0 and not force:
             return
 
+        self.suspend_checkpointing(False)
+            # will always rollback to before suspension
+
         self.purge_unreachable(self.get_roots())
 
         revlog = [ ]
@@ -1212,8 +1285,10 @@ class RollbackLog(renpy.object.Object):
             revlog.append(rb)
 
             if rb.checkpoint:
-                checkpoints -= 1
                 self.rollback_limit -= 1
+
+            if rb.hard_checkpoint or (on_load and rb.checkpoint):
+                checkpoints -= 1
 
             if checkpoints <= 0:
                 if renpy.game.script.has_label(rb.context.current):
@@ -1289,6 +1364,9 @@ class RollbackLog(renpy.object.Object):
 
         # Stop the sounds.
         renpy.audio.audio.rollback()
+
+        # Apply defaults.
+        renpy.exports.execute_default_statement()
 
         renpy.game.contexts.extend(other_contexts)
 
@@ -1405,15 +1483,10 @@ def py_eval_bytecode(bytecode, globals=None, locals=None): #@ReservedAssignment
 
     return eval(bytecode, globals, locals)
 
-def py_eval(source, globals=None, locals=None): #@ReservedAssignment
-
-    if globals is None:
-        globals = store_dicts["store"] #@ReservedAssignment
-
-    if locals is None:
-        locals = globals #@ReservedAssignment
-
-    return eval(py_compile(source, 'eval'), globals, locals)
+def py_eval(code, globals=None, locals=None): #@ReservedAssignment
+    if isinstance(code, basestring):
+        code = py_compile(code, 'eval')
+    return py_eval_bytecode(code, globals, locals)
 
 
 def raise_at_location(e, loc):

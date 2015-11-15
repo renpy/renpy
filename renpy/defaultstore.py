@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,15 +45,21 @@ _window_subtitle = ''
 # Should rollback be allowed?
 _rollback = True
 
+# Should skipping be allowed?
+_skipping = True
+
+# Should dismissing pauses and transitions be allowed?
+_dismiss_pause = True
+
 # config.
 _config = renpy.config
-
-# The special character used for name-only dialogue.
-name_only = None
 
 # Used by the ui functions.
 _widget_by_id = None
 _widget_properties = { }
+
+# The text rectangle, or None to use the automatic code.
+_text_rect = None
 
 class _Config(object):
 
@@ -106,6 +112,8 @@ Button = renpy.display.behavior.Button
 Input = renpy.display.behavior.Input
 
 ImageReference = renpy.display.image.ImageReference
+DynamicImage = renpy.display.image.DynamicImage
+
 Image = renpy.display.im.image
 
 Frame = renpy.display.imagelike.Frame
@@ -123,6 +131,7 @@ Viewport = renpy.display.layout.Viewport
 DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
+AlphaMask = renpy.display.layout.AlphaMask
 
 Transform = renpy.display.motion.Transform
 
@@ -183,7 +192,7 @@ Action = renpy.ui.Action
 BarValue = renpy.ui.BarValue
 
 # NOTE: When exporting something from here, decide if we need to add it to
-# renpy.sl2.pyutil.pure_functions.
+# renpy.pyanalysis.pure_functions.
 
 Style = renpy.style.Style # @UndefinedVariable
 
@@ -287,13 +296,18 @@ def At(d, *args):
     rv = renpy.easy.displayable(d)
 
     for i in args:
-        rv = i(rv)
+
+        if isinstance(i, renpy.display.motion.Transform):
+            rv = i(child=rv)
+        else:
+            rv = i(rv)
 
     return rv
 
 
-# The color function. (Moved, since text needs it, too.)
-color = renpy.easy.color
+# The color class/function.
+Color = renpy.color.Color
+color = renpy.color.Color
 
 # Conveniently get rid of all the packages we had imported before.
 import renpy.exports as renpy #@Reimport
@@ -347,15 +361,18 @@ adv = ADVCharacter(None,
 
                    kind=False)
 
+# predict_say and who are defined in 00library.rpy, but we add default
+# versions here in case there is a problem with initialization. (And
+# for pickling purposes.)
 def predict_say(who, what):
-    who = Character(who, kind=name_only)
+    who = Character(who, kind=adv)
     try:
         who.predict(what)
     except:
         pass
 
 def say(who, what, interact=True):
-    who = Character(who, kind=name_only)
+    who = Character(who, kind=adv)
     who(what, interact=interact)
 
 # Used by renpy.reshow_say.
@@ -371,6 +388,9 @@ _predict_set = set()
 # A map from a screen name to an (args, kwargs) tuple. The arguments and
 # keyword arguments can be
 _predict_screen = dict()
+
+# Should the default screens be shown?
+_overlay_screens = True
 
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None

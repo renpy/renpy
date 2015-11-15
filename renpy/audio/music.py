@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,12 +22,6 @@
 # The public API for music in games.
 
 import renpy.audio
-
-# A list of music channels.
-music_channels = [ ]
-
-# A list of channels for which set_music has been called, either way.
-music_set = [ ]
 
 from renpy.audio.audio import get_channel, get_serial
 
@@ -256,6 +250,16 @@ def set_music(channel, flag, default=False):
     c.default_loop = flag
     c.default_loop_set = True
 
+
+def is_music(channel):
+    """
+    Returns true if "channel" will loop by default.
+    """
+
+    c = get_channel(channel)
+    return c.default_loop
+
+
 def get_delay(time, channel="music"):
     """
     Returns the number of seconds left until the given time in the
@@ -306,7 +310,6 @@ def is_playing(channel="music"):
     """
 
     return (get_playing(channel=channel) is not None)
-
 
 def set_volume(volume, delay=0, channel="music"):
     """
@@ -403,6 +406,18 @@ def set_mixer(channel, mixer, default=False):
     except:
         if renpy.config.debug_sound:
             raise
+
+def get_all_mixers():
+    """
+    This gets all mixers in use.
+    """
+
+    rv = set()
+
+    for i in renpy.audio.audio.all_channels:
+        rv.add(i.mixer)
+
+    return list(rv)
 
 def channel_defined(channel):
     """

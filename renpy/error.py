@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,12 +77,17 @@ def traceback_list(tb):
 
         tb = tb.tb_next
 
-        if (tb is not None) and ('self' in frame.f_locals) and (not renpy.config.raw_tracebacks):
+        if ('self' in frame.f_locals) and (not renpy.config.raw_tracebacks):
             obj = frame.f_locals['self']
 
+            last = (tb is None)
+
             try:
-                l.extend(obj.report_traceback(name))
-                continue
+                report = obj.report_traceback(name, last)
+
+                if report is not None:
+                    l.extend(report)
+                    continue
             except:
                 pass
 
@@ -121,8 +126,9 @@ def open_error_file(fn, mode):
     """
 
     try:
-        f = file(os.path.join(renpy.config.logdir, fn), mode)
-        return f, fn
+        new_fn = os.path.join(renpy.config.logdir, fn)
+        f = file(new_fn, mode)
+        return f, new_fn
     except:
         pass
 
@@ -134,8 +140,8 @@ def open_error_file(fn, mode):
 
     import tempfile
 
-    fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
-    return file(fn, mode), fn
+    new_fn = os.path.join(tempfile.gettempdir(), "renpy-" + fn)
+    return file(new_fn, mode), new_fn
 
 def report_exception(e, editor=True):
     """

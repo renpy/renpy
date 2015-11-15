@@ -34,7 +34,7 @@ init -1 python hide:
     # Themes
 
     ## We then want to call a theme function. theme.roundrect is
-    ## a theme that features the use of rounded rectangles. 
+    ## a theme that features the use of rounded rectangles.
     ##
     ## The theme function takes a number of parameters that can
     ## customize the color scheme.
@@ -168,17 +168,6 @@ init -1 python hide:
     ## Set this to True if the game has voicing.
 
     config.has_voice = False
-
-    # If True, reduce the volumes of all the channels other than the "voice" channel
-    # during voice playing.
-    config.reduce_volume_in_voice = True
-    
-    # If reduce_volume_in_voice is True, fraction of the volumes of the mixers other
-    # than "voice" mixer during voice playing.
-    config.volume_in_voice = .5
-    
-    # It takes this seconds to reduce and return the volume when voice is played.
-    config.reduce_volume_time = .5
 
     ## Sounds that are used when button and imagemaps are clicked.
 

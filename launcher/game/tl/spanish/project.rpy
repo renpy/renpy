@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/project.rpy:201
     old "Launching the project failed."

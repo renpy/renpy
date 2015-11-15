@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,6 +27,11 @@ import re
 import sys
 import collections
 import textwrap
+
+import __builtin__
+
+python_builtins = set(dir(__builtin__))
+renpy_builtins = set()
 
 image_prefixes = None
 
@@ -101,10 +106,17 @@ def try_compile(where, expr, additional=None):
             add(additional)
 
 
-# The sets of names + attributes that
+# The sets of names + attributes that we know are valid.
 imprecise_cache = set()
 
 def image_exists_imprecise(name):
+    """
+    Returns true if the image is a plausible image that can be used in a show
+    statement. This returns true if at least one image exists with the same
+    tag and containing all of the attributes (and none of the removed attributes).
+    """
+
+
     if name in imprecise_cache:
         return True
 
@@ -138,6 +150,34 @@ def image_exists_imprecise(name):
     return False
 
 
+precise_cache = set()
+
+def image_exists_precise(name):
+    """
+    Returns true if an image exists with the same tag and attributes as
+    `name`. (The attributes are allowed to occur in any order.)
+    """
+
+    if name in precise_cache:
+        return True
+
+    nametag = name[0]
+
+    required = set(name[1:])
+
+    for im in renpy.display.image.images:
+
+        if im[0] != nametag:
+            continue
+
+        attrs = set(im[1:])
+
+        if attrs == required:
+            precise_cache.add(name)
+            return True
+
+    return False
+
 
 # This reports an error if we're sure that the image with the given name
 # does not exist.
@@ -145,7 +185,6 @@ def image_exists(name, expression, tag, precise=True):
     """
     Checks a scene or show statement for image existence.
     """
-
 
     # Add the tag to the set of known tags.
     tag = tag or name[0]
@@ -166,13 +205,14 @@ def image_exists(name, expression, tag, precise=True):
 
     # If we're not precise, then we have to start looking for images
     # that we can possibly match.
-    if not precise and image_exists_imprecise(name):
-        return
+    if precise:
+        if image_exists_precise(name):
+            return
+    else:
+        if image_exists_imprecise(name):
+            return
 
     report("The image named '%s' was not declared.", names)
-
-
-
 
 # Only check each file once.
 check_file_cache = { }
@@ -203,8 +243,11 @@ def check_displayable(what, d):
 
     files = [ ]
 
-    if isinstance(d, renpy.display.core.Displayable):
-        d.visit_all(lambda a : a.predict_one())
+    try:
+        if isinstance(d, renpy.display.core.Displayable):
+            d.visit_all(lambda a : a.predict_one())
+    except:
+        pass
 
     for fn in files:
         check_file(what, fn)
@@ -226,7 +269,7 @@ def imspec(t):
         return t
 
 
-# Lints ast.Show and ast.Scene nodets.
+# Lints ast.Show and ast.Scene nodes.
 def check_show(node, precise):
 
     # A Scene may have an empty imspec.
@@ -235,13 +278,24 @@ def check_show(node, precise):
 
     name, expression, tag, at_list, layer, _zorder, _behind = imspec(node.imspec)
 
+    layer = renpy.exports.default_layer(layer, tag or name)
+
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report("Uses layer '%s', which is not in config.layers.", layer)
 
     image_exists(name, expression, tag, precise=precise)
 
     for i in at_list:
-        try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to declare, or misspelled, a position?")
+        try_eval("the at list of a scene or show statment", i, "Perhaps you forgot to define or misspelled a transform.")
+
+
+def precheck_show(node):
+    # A Scene may have an empty imspec.
+    if not node.imspec:
+        return
+
+    tag = imspec(node.imspec)[2]
+    image_prefixes[tag] = True
 
 
 # Lints ast.Hide.
@@ -252,14 +306,14 @@ def check_hide(node):
 
     tag = tag or name[0]
 
+    layer = renpy.exports.default_layer(layer, tag)
+
     if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
         report("Uses layer '%s', which is not in config.layers.", layer)
 
     if tag not in image_prefixes:
         report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
 
-    # for i in at_list:
-    #    try_eval(node, "at list of hide statment", i)
 
 def check_with(node):
     try_eval("a with statement or clause", node.expr, "Perhaps you forgot to declare, or misspelled, a transition?")
@@ -325,7 +379,12 @@ def text_checks(s):
 def check_say(node):
 
     if node.who:
-        try_eval("the who part of a say statement", node.who, "Perhaps you forgot to declare a character?")
+        try:
+            char = renpy.ast.eval_who(node.who)
+        except:
+            report("Could not evaluate '%s' in the who part of a say statement.", node.who)
+            add("Perhaps you forgot to define a character?")
+            char = None
 
     if node.with_:
         try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
@@ -339,8 +398,6 @@ def check_say(node):
     if node.who is None:
         return
 
-    char = getattr(renpy.store, node.who, None)
-
     if not isinstance(char, renpy.character.ADVCharacter):
         return
 
@@ -352,9 +409,13 @@ def check_say(node):
 
     name = (char.image_tag,) + node.attributes
 
-    if not image_exists_imprecise(name):
-        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+    if image_exists_imprecise(name):
+        return
 
+    if image_exists_imprecise(('side', ) + name):
+        return
+
+    report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
 
 
 def check_menu(node):
@@ -394,6 +455,20 @@ def check_if(node):
 
     for condition, _block in node.entries:
         try_compile("in a condition of the if statement", condition)
+
+def check_define(node, kind):
+    if node.store != 'store':
+        return
+
+    if node.varname in renpy.config.lint_ignore_replaces:
+        return
+
+    if node.varname in python_builtins:
+        report("'%s %s' replaces a python built-in name, which may cause problems.", kind, node.varname)
+
+    if node.varname in renpy_builtins:
+        report("'%s %s' replaces a Ren'Py built-in name, which may cause problems.", kind, node.varname)
+
 
 def check_style(name, s):
 
@@ -542,6 +617,10 @@ def lint():
     global report_node
 
     for _fn, _ln, node in all_stmts:
+        if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
+            precheck_show(node)
+
+    for _fn, _ln, node in all_stmts:
 
         if common(node):
             continue
@@ -600,6 +679,14 @@ def lint():
 
         elif isinstance(node, renpy.ast.Screen):
             screen_count += 1
+
+        elif isinstance(node, renpy.ast.Define):
+            check_define(node, "define")
+
+        elif isinstance(node, renpy.ast.Default):
+            check_define(node, "default")
+
+
 
     report_node = None
 

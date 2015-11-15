@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -124,7 +124,7 @@ init -1500 python:
     @renpy.pure
     class HideInterface(Action, DictEquality):
         """
-         :doc other_action
+         :doc: other_action
 
          Causes the interface to be hidden until the user clicks.
          """
@@ -198,6 +198,23 @@ init -1500 python:
             return renpy.can_rollback()
 
     @renpy.pure
+    class RestartStatement(Action, DictEquality):
+        """
+        :doc: other_action
+
+        This action causes Ren'Py to rollback to before the current
+        statement, and then re-run the current statement. This may be used
+        when changing a persistent variable that affects how the statement
+        is displayed.
+
+        If run in a menu context, this waits until the player exits to a
+        top-level context before performing the rollback.
+        """
+
+        def __call__(self):
+            renpy.rollback(force=True, checkpoints=0, defer=True)
+
+    @renpy.pure
     class RollForward(Action, DictEquality):
         """
         :doc: other_action
@@ -207,7 +224,7 @@ init -1500 python:
         """
 
         def __call__(self):
-            return renpy.roll_forward_info()
+            return renpy.exports.roll_forward_core()
 
         def get_sensitive(self):
             return renpy.roll_forward_info() is not None
@@ -342,7 +359,7 @@ init -1500 python:
 
         def get_sensitive(self):
             if self.locked is not None:
-                return self.locked
+                return not self.locked
 
             return renpy.seen_label(self.label)
 
@@ -393,14 +410,29 @@ init -1500 python:
             position arguments to be passed to `callable`.
         `kwargs`
             keyword arguments to be passed to `callable`.
+
+        This Action takes an optional _update_screens keyword argument, which
+        defaults to true. When it is true, the interaction restarts and
+        the screens are updated after the function returns.
         """
+
+        update_screens = True
+
         def __init__(self, callable, *args, **kwargs):
             self.callable = callable
             self.args = args
+
+            self.update_screens = kwargs.pop("_update_screens", True)
+
             self.kwargs = kwargs
 
         def __call__(self):
-            self.callable(*self.args, **self.kwargs)
+            rv = self.callable(*self.args, **self.kwargs)
+
+            if self.update_screens:
+                renpy.restart_interaction()
+
+            return rv
 
 
 transform _notify_transform:

@@ -1,4 +1,4 @@
-# Copyright 2004-2014 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -71,6 +71,7 @@ cpdef get_style(name):
     nametuple = (name,)
 
     rv = styles.get(nametuple, None)
+
     if rv is not None:
         return rv
 
@@ -122,6 +123,7 @@ cpdef get_full_style(name):
     """
     Gets the style with `name`, which must be a tuple.
     """
+
 
     rv = styles.get(name, None)
     if rv is not None:
@@ -189,10 +191,12 @@ class StyleManager(object):
         if not isinstance(value, StyleCore):
             raise Exception("Value is not a style.")
 
+        cdef StyleCore style = value
+
         name = (name,)
 
-        if value.name is None:
-            value.name = name
+        if style.name is None:
+            style.name = name
 
         styles[name] = value
 
@@ -288,6 +292,13 @@ cdef class StyleCore:
         self.name = name
         self.help = help
 
+    def copy(self):
+        cdef StyleCore rv
+
+        rv = Style(self.parent)
+        rv.properties = list(self.properties)
+        return rv
+
     def __richcmp__(self, o, int op):
         if self is o:
             eq = True
@@ -358,6 +369,14 @@ cdef class StyleCore:
         for d in self.properties:
             if property in d:
                 del d[property]
+
+    def __setattr__(self, name, value):
+        if name not in prefixed_all_properties:
+            raise Exception("Style property {} is not known.".format(name))
+        self.properties.append({ name : value })
+
+    def __delattr__(self, name):
+        self.delattr(name)
 
     def set_parent(self, parent):
         self.parent = get_tuple_name(parent)
@@ -505,7 +524,6 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-
     def _predict_bar(self, pd):
         """
         Predicts properties for a window.
@@ -520,6 +538,19 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
+    def _predict_frame(self, pd):
+        """
+        Predicts properties for a Frame.
+
+        `pd`
+            The function that should be called to predict a displayable.
+        """
+
+        for i in [ INSENSITIVE_PREFIX, IDLE_PREFIX, HOVER_PREFIX, SELECTED_INSENSITIVE_PREFIX, SELECTED_IDLE_PREFIX, SELECTED_HOVER_PREFIX ]:
+            for j in [ CHILD_INDEX ]:
+                v = self._get_unoffset(i + j)
+                if v is not None:
+                    pd(v)
 
     def inspect(StyleCore self):
         """
@@ -593,7 +624,10 @@ cdef class StyleCore:
         return rv
 
 
-from renpy.styleclass import Style, all_properties, prefix_priority, prefix_alts
+# This will be replaced when renpy.styledata.import_style_functions is called.
+Style = StyleCore
+
+from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {
@@ -602,57 +636,64 @@ prefixed_all_properties = {
     for propname in all_properties
     }
 
-
 ################################################################################
 # Building
 ################################################################################
 
 cpdef build_style(StyleCore s):
-
-    if s.built:
-        return
-
-    s.built = True
-
-    # Find our parents.
-    if s.parent is not None:
-        s.down_parent = get_full_style(s.parent)
-        build_style(s.down_parent)
-
-    if s.name is not None and len(s.name) > 1:
-        s.left_parent = get_full_style(s.name[:-1])
-        build_style(s.left_parent)
-
-    # Build the properties cache.
-    if not s.properties:
-        s.cache = NULL
-        return
-
     cdef int cache_priorities[PREFIX_COUNT * STYLE_PROPERTY_COUNT]
     cdef dict d
     cdef PropertyFunctionWrapper pfw
 
-    memset(cache_priorities, 0, sizeof(int) * PREFIX_COUNT * STYLE_PROPERTY_COUNT)
+    if s.built:
+        return
 
-    s.cache = <PyObject **> calloc(PREFIX_COUNT * STYLE_PROPERTY_COUNT, sizeof(PyObject *))
+    if s.building and s.name:
+        raise Exception("{} is part of a loop of recursive styles (is one of its own parents).".format(style_name_to_string(s.name)))
 
-    priority = 1
+    s.building = True
 
-    for d in s.properties:
-        for k, v in d.items():
-            pfw = property_functions.get(k, None)
+    try:
 
-            if pfw is None:
-                continue
+        # Find our parents.
+        if s.parent is not None:
+            s.down_parent = get_full_style(s.parent)
+            build_style(s.down_parent)
 
-            try:
-                pfw.function(s.cache, cache_priorities, priority, v)
-            except:
-                renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
-                raise
+        if s.name is not None and len(s.name) > 1:
+            s.left_parent = get_full_style(s.name[:-1])
+            build_style(s.left_parent)
 
-        priority += PRIORITY_LEVELS
+        # Build the properties cache.
+        if not s.properties:
+            s.cache = NULL
+            return
 
+        memset(cache_priorities, 0, sizeof(int) * PREFIX_COUNT * STYLE_PROPERTY_COUNT)
+
+        s.cache = <PyObject **> calloc(PREFIX_COUNT * STYLE_PROPERTY_COUNT, sizeof(PyObject *))
+
+        priority = 1
+
+        for d in s.properties:
+            for k, v in d.items():
+                pfw = property_functions.get(k, None)
+
+                if pfw is None:
+                    continue
+
+                try:
+                    pfw.function(s.cache, cache_priorities, priority, v)
+                except:
+                    renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
+                    raise
+
+            priority += PRIORITY_LEVELS
+
+        s.built = True
+
+    finally:
+        s.building = False
 
 cpdef unbuild_style(StyleCore s):
     cdef int i
@@ -672,6 +713,7 @@ cpdef unbuild_style(StyleCore s):
     s.down_parent = None
 
     s.built = False
+    s.building = False
 
 ################################################################################
 # Inspect support
@@ -729,13 +771,15 @@ def build_styles():
     for s in styles.values():
         build_style(s)
 
-def rebuild():
+def rebuild(prepare_screens=True):
     """
     Rebuilds all styles.
     """
 
     build_styles()
-    renpy.display.screen.prepare_screens()
+
+    renpy.display.screen.prepared = False
+    renpy.exports.restart_interaction()
 
 def copy_properties(p):
     """
@@ -760,6 +804,8 @@ def restore(o):
     """
     Restores a style backup.
     """
+
+    cdef StyleCore s
 
     for k, v in o.iteritems():
         s = get_full_style(k)

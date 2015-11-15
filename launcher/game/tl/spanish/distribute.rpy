@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # game/distribute.rpy:358
     old "No packages are selected, so there's nothing to do."

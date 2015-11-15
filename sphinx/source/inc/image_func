@@ -48,6 +48,23 @@
         * yoffset
         * subpixel
 
+.. function:: renpy.get_showing_tags(layer='master')
+    
+    Returns the set of image tags that are currently being shown on `layer`
+
+.. function:: renpy.has_image(name, exact=False)
+    
+    Return true if an image with `name` exists, and false if no such image
+    exists.
+    
+    `name`
+        Either a string giving an image name, or a tuple of strings giving
+        the name components.
+    
+    `exact`
+        Returns true if and only if an image with the exact name exists -
+        parameterized matches are not included.
+
 .. function:: renpy.seen_image(name)
     
     Returns True if the named image has been seen at least once on the user's
@@ -65,4 +82,15 @@
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
         only the image tag.
+
+.. function:: renpy.start_predict(*args)
+    
+    This function takes one or more displayables as arguments. It causes
+    Ren'Py to predict those displayables during every interaction until
+    the displayables are removed by :func:`renpy.stop_predict`.
+
+.. function:: renpy.stop_predict(*args)
+    
+    This function takes one or more displayables as arguments. It causes
+    Ren'Py to stop predicting those displayables during every interaction.
 
