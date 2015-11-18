@@ -69,6 +69,15 @@ grab = None
 # The default focus for the current screen.
 default_focus = None
 
+# The type of input that caused the focus to change last. One of
+# "keyboard" (for keyboard-like focus devices) or "mouse" (for mouse-like)
+# focus devices.)
+focus_type = "mouse"
+
+# The same, but for the most recent input that might potentially cause
+# the focus to change.
+pending_focus_type = "mouse"
+
 # Sets the currently focused widget.
 def set_focused(widget, arg, screen):
     global argument
@@ -259,6 +268,10 @@ def change_focus(newfocus, default=False):
     if current is widget and (newfocus is None or newfocus.arg == argument):
         return rv
 
+    global focus_type
+    focus_type = pending_focus_type
+    print "Focus type:", focus_type
+
     if current is not None:
         try:
             renpy.display.screen.push_current_screen(screen_of_focused)
@@ -291,9 +304,14 @@ def mouse_handler(ev, x, y, default=False):
         If ev is not None, this function checks to see if it is a mouse event.
     """
 
+    global pending_focus_type
+
     if ev is not None:
         if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
             return
+        else:
+            pending_focus_type = "mouse"
+
 
     new_focus = renpy.display.render.focus_at_point(x, y)
 
@@ -397,6 +415,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
                   condition,
                   xmul, ymul, wmul, hmul):
 
+    global pending_focus_type
+    pending_focus_type = "keyboard"
+
     if not focus_list:
         return
 
@@ -471,6 +492,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
 
 def focus_ordered(delta):
+
+    global pending_focus_type
+    pending_focus_type = "keyboard"
 
     placeless = None
 
