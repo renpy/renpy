@@ -270,7 +270,6 @@ def change_focus(newfocus, default=False):
 
     global focus_type
     focus_type = pending_focus_type
-    print "Focus type:", focus_type
 
     if current is not None:
         try:
@@ -294,6 +293,13 @@ def change_focus(newfocus, default=False):
             renpy.display.screen.pop_current_screen()
 
     return rv
+
+def clear_focus():
+    """
+    Clears the focus when the window loses mouse focus.
+    """
+
+    change_focus(None)
 
 # This handles mouse events, to see if they change the focus.
 def mouse_handler(ev, x, y, default=False):
