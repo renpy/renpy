@@ -2,6 +2,59 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.8
+=============
+
+Layers
+------
+
+The new :var:`config.tag_layer` variable makes it possible to specify the
+default layer used by an image on a per image tag basis. This makes it
+possible to place an image (such as a side sprite) above the screens
+layer, and manipulate it without having to use onlayer. The new
+:var:`config.default_tag_layer` variable specifies the default layer
+for unknown tags.
+
+The new :func:`renpy.add_layer` function provides as way to add a new
+layer above or below the existing layers, if and only if the layer
+does not already exist.
+
+Easing Functions
+----------------
+
+Thanks to Nyaatrap, Ren'Py now supports Robert Penner's easing functions
+in ATL. These functions speed up and slow down interpolations (and in some
+cases, can cause interpolations to overshoot their targets), in order to
+provide more pleasing and natural motion.
+
+Other
+-----
+
+Fixed a major bug where Ren'Py would put an extra space at the end of each
+text block. This could change the layout of text (and hence other portions of
+the interface.) The fix reverts the change that added the space, causing it
+to be smaller than in 6.99.7 (but the same size as 6.99.6 and before.)
+
+The new :var:`config.overlay_screens` variable takes a list of screens
+that are displayed whenever a pre-screens overlay would be displayed,
+and hidden otherwise. This makes it easy to have a screen as a permanent
+part of the in-game interface, even if the game can be entered from
+multiple places (like a Replay).
+
+Ren'Py now clears focus (causing unhover events to trigger) when the mouse
+leaves the game window.
+
+The hbox and vbox displayables now support the :propref:`xminimum` and
+:propref:`yminimum` style properties (and hence, :propref:`xsize`,
+:propref`ysize`, :propref:`xysize`, and :propref`area` properties.)
+
+The new :func:`PlayCharacterVoice` action makes it possible to play
+a sample of a character's voice at that character's voice volume level.
+
+
+
+
+
 Ren'Py 6.99.7
 =============
 
