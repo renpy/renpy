@@ -583,6 +583,14 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if not at_list and key in sls.at_list[layer]:
             at_list = sls.at_list[layer][key]
 
+    if not at_list:
+        tt = renpy.config.tag_transform.get(key, None)
+        if tt is not None:
+            if not isinstance(tt, list):
+                at_list = [ tt ]
+            else:
+                at_list = list(tt)
+
     if what is None:
         what = name
     elif isinstance(what, basestring):

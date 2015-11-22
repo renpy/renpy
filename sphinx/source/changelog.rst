@@ -5,8 +5,8 @@ Full Changelog
 Ren'Py 6.99.8
 =============
 
-Layers
-------
+Tags, Layers, and Transforms
+----------------------------
 
 The new :var:`config.tag_layer` variable makes it possible to specify the
 default layer used by an image on a per image tag basis. This makes it
@@ -18,6 +18,10 @@ for unknown tags.
 The new :func:`renpy.add_layer` function provides as way to add a new
 layer above or below the existing layers, if and only if the layer
 does not already exist.
+
+The new :var:`config.tag_transform` variable makes it possible to specify a
+default transform (or list of transforms) to use when a transform is not
+provided as part of a show or scene statement.
 
 Easing Functions
 ----------------
