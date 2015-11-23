@@ -1495,6 +1495,52 @@ class Interface(object):
         self.safe_mode = get_safe_mode()
         renpy.safe_mode_checked = True
 
+        # A scale factor used to compensate for the system DPI.
+        self.dpi_scale = self.setup_dpi_scaling()
+
+        renpy.display.log.write("DPI scale factor: %f", self.dpi_scale)
+
+
+    def setup_dpi_scaling(self):
+
+        if "RENPY_HIGHDPI" in os.environ:
+            return float(os.environ["RENPY_HIGHDPI"])
+
+        if not renpy.windows:
+            return 1.0
+
+        try:
+            import ctypes
+            from ctypes import c_void_p, c_int
+
+            ctypes.windll.user32.SetProcessDPIAware()
+
+            GetDC = ctypes.windll.user32.GetDC
+            GetDC.restype = c_void_p
+            GetDC.argtypes = [ c_void_p ]
+
+            ReleaseDC = ctypes.windll.user32.ReleaseDC
+            ReleaseDC.argtypes = [ c_void_p, c_void_p ]
+
+            GetDeviceCaps = ctypes.windll.gdi32.GetDeviceCaps
+            GetDeviceCaps.restype = c_int
+            GetDeviceCaps.argtypes = [ c_void_p, c_int ]
+
+            LOGPIXELSX = 88
+
+            dc = GetDC(None)
+            rv = GetDeviceCaps(dc, LOGPIXELSX) / 96.0
+            ReleaseDC(None, dc)
+
+            return rv
+
+        except:
+            renpy.display.log.write("Could not determine DPI scale factor:")
+            renpy.display.log.exception()
+            return 1.0
+
+
+
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
@@ -2913,11 +2959,13 @@ class Interface(object):
                     if ev.w == 1 and ev.h == 1:
                         continue
 
+                    size = (ev.w // self.dpi_scale, ev.h // self.dpi_scale)
+
                     if pygame.display.get_surface().get_size() != ev.size:
-                        self.set_mode((ev.w, ev.h))
+                        self.set_mode(size)
 
                     if not self.fullscreen:
-                        self.last_resize = ev.size
+                        self.last_resize = size
 
                     continue
 

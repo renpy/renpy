@@ -71,8 +71,6 @@ PIXELLATE = renpy.display.render.PIXELLATE
 cdef object IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
-FAKE_HIGHDPI = int(os.environ.get("RENPY_FAKE_HIGHDPI", "1"))
-
 # Should we try to vsync?
 vsync = True
 
@@ -152,6 +150,9 @@ cdef class GLDraw:
         # Did we do a render_to_texture?
         self.did_render_to_texture = False
 
+        # The DPI scale factor.
+        self.dpi_scale = renpy.display.interface.dpi_scale
+
 
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
@@ -203,12 +204,24 @@ cdef class GLDraw:
 
         virtual_ar = 1.0 * vwidth / vheight
 
+        pwidth *= self.dpi_scale
+        pheight *= self.dpi_scale
+
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
         if not renpy.mobile:
-            pwidth = min(self.display_info.current_w - 102, pwidth)
-            pheight = min(self.display_info.current_h - 102, pheight)
+            info = renpy.display.get_info()
+
+            visible_w = info.current_w - 102
+            visible_h = info.current_h - 102
+
+            if renpy.windows:
+                visible_w *= self.dpi_scale
+                visible_h *= self.dpi_scale
+
+            pwidth = min(visible_w, pwidth)
+            pheight = min(visible_h, pheight)
 
             # The first time through.
             if not self.did_init:
@@ -273,8 +286,8 @@ cdef class GLDraw:
 
         if self.window is None:
             try:
-                    renpy.display.log.write("Windowed mode.")
-                    self.window = pygame.display.set_mode((pwidth * FAKE_HIGHDPI, pheight * FAKE_HIGHDPI), resizable | opengl | pygame.DOUBLEBUF)
+                renpy.display.log.write("Windowed mode.")
+                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
 
             except pygame.error, e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
@@ -295,8 +308,8 @@ cdef class GLDraw:
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
 
-        pwidth /= FAKE_HIGHDPI
-        pheight /= FAKE_HIGHDPI
+        pwidth //= self.dpi_scale
+        pheight //= self.dpi_scale
 
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
@@ -1113,13 +1126,14 @@ cdef class GLDraw:
 
         return rv
 
+
     def translate_point(self, x, y):
         """
         Translates (x, y) from physical to virtual coordinates.
         """
 
-        x /= FAKE_HIGHDPI
-        y /= FAKE_HIGHDPI
+        x /= self.dpi_scale
+        y /= self.dpi_scale
 
         # Screen sizes.
         pw, ph = self.physical_size
@@ -1160,6 +1174,9 @@ cdef class GLDraw:
         # Translate from fractional screen to physical.
         x = x * pw
         y = y * ph
+
+        x *= self.dpi_scale
+        y *= self.dpi_scale
 
         x = int(x)
         y = int(y)

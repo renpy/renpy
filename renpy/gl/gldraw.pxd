@@ -50,6 +50,7 @@ cdef class GLDraw:
     cdef bint allow_fixed
     cdef tuple default_clip
     cdef bint did_render_to_texture
+    cdef float dpi_scale
 
     cdef public tuple clip_rtt_box
 
