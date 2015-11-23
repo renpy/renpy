@@ -308,9 +308,6 @@ cdef class GLDraw:
         # Get the size of the created screen.
         pwidth, pheight = self.window.get_size()
 
-        pwidth //= self.dpi_scale
-        pheight //= self.dpi_scale
-
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
 
@@ -1132,9 +1129,6 @@ cdef class GLDraw:
         Translates (x, y) from physical to virtual coordinates.
         """
 
-        x /= self.dpi_scale
-        y /= self.dpi_scale
-
         # Screen sizes.
         pw, ph = self.physical_size
         vw, vh = self.virtual_size
@@ -1174,9 +1168,6 @@ cdef class GLDraw:
         # Translate from fractional screen to physical.
         x = x * pw
         y = y * ph
-
-        x *= self.dpi_scale
-        y *= self.dpi_scale
 
         x = int(x)
         y = int(y)
@@ -1304,7 +1295,12 @@ cdef class GLDraw:
         pass
 
     def get_physical_size(self):
-        return self.physical_size
+        x, y = self.physical_size
+
+        x = int(x / self.dpi_scale)
+        y = int(y / self.dpi_scale)
+
+        return (x, y)
 
 
 class Rtt(object):
