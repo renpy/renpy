@@ -210,6 +210,8 @@ cdef class GLDraw:
         pwidth = max(vwidth / 2, pwidth)
         pheight = max(vheight / 2, pheight)
 
+        window_args = { }
+
         if not renpy.mobile:
             info = renpy.display.get_info()
 
@@ -232,6 +234,14 @@ cdef class GLDraw:
 
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
+
+        # If we don't set the place manually when dpi_scale is not 1.0,
+        # SDL2 can place the window titlebar off the screen.
+        if renpy.windows and (self.dpi_scale != 1.0):
+            window_args["pos"] = (
+                max((visible_w - pwidth) // 2, 0),
+                max((visible_h - pheight) // 2, 10),
+                )
 
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
@@ -287,7 +297,7 @@ cdef class GLDraw:
         if self.window is None:
             try:
                 renpy.display.log.write("Windowed mode.")
-                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF)
+                self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF, **window_args)
 
             except pygame.error, e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
