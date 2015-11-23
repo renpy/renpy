@@ -701,7 +701,10 @@ cdef class GLDraw:
         Draws the screen.
         """
 
-        reverse = self.virt_to_draw
+        if renpy.config.use_drawable_resolution:
+            reverse = self.virt_to_draw
+        else:
+            reverse = IDENTITY
 
         surftree.is_opaque()
 
