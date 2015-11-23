@@ -272,7 +272,10 @@ cdef class GLDraw:
             pheight = 0
 
         else:
-            opengl = pygame.OPENGL | pygame.WINDOW_ALLOW_HIGHDPI
+            opengl = pygame.OPENGL
+
+            if self.dpi_scale == 1.0:
+                opengl |= pygame.WINDOW_ALLOW_HIGHDPI
 
             if renpy.config.gl_resize:
                 resizable = pygame.RESIZABLE
