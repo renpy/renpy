@@ -2954,6 +2954,9 @@ class Interface(object):
                 if ev.type == pygame.ACTIVEEVENT:
 
                     if ev.state & 1:
+                        if not ev.gain:
+                            renpy.display.focus.clear_focus()
+
                         self.mouse_focused = ev.gain
 
                     if ev.state & 2:
