@@ -95,7 +95,7 @@ translate traditional_chinese strings:
 
     # game/front_page.rpy:247
     old "Generate Translations"
-    new "產生翻譯"
+    new "產生翻譯檔"
 
     # game/front_page.rpy:248
     old "Extract Dialogue"
