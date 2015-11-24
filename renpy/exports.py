@@ -583,6 +583,14 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if not at_list and key in sls.at_list[layer]:
             at_list = sls.at_list[layer][key]
 
+    if not at_list:
+        tt = renpy.config.tag_transform.get(key, None)
+        if tt is not None:
+            if not isinstance(tt, list):
+                at_list = [ tt ]
+            else:
+                at_list = list(tt)
+
     if what is None:
         what = name
     elif isinstance(what, basestring):
@@ -1761,7 +1769,7 @@ def log(msg):
     :doc: debug
 
     If :var:`config.log` is not set, this does nothing. Otherwise, it opens
-    the logfile (if not already open), formats the message to 70
+    the logfile (if not already open), formats the message to :var:`config.log_width`
     columns, and prints it to the logfile.
     """
 
@@ -1784,7 +1792,7 @@ def log(msg):
 
         import textwrap
 
-        print >>logfile, textwrap.fill(msg).encode("utf-8")
+        print >>logfile, textwrap.fill(msg, renpy.config.log_width).encode("utf-8")
         logfile.flush()
 
     except:

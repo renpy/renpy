@@ -665,6 +665,13 @@ Occasionally Used
     looked up in this dictionary to get the layer to show it on. If the
     tag is not found here, :var:`config.default_tag_name` is used.
 
+.. var:: config.tag_layer = { }
+
+    A dictionary mapping image tag strings to transforms or lists of
+    transforms. When an image is newly-shown without an at clause,
+    the image's tag is looked up in ths dictionary to find a transform
+    or list of transforms to use.
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
@@ -954,6 +961,10 @@ Rarely or Internally Used
     If True, the start of an interaction will be delayed until all
     images used by that interaction have loaded. (Yeah, it's a lousy
     name.)
+
+.. var:: config.log_width = 78
+
+    The width of lines logged when :var:`config.log` is used.
 
 .. var:: config.longpress_duration = 0.5
 
