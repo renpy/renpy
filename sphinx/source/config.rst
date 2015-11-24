@@ -962,6 +962,10 @@ Rarely or Internally Used
     images used by that interaction have loaded. (Yeah, it's a lousy
     name.)
 
+.. var:: config.log_width = 78
+
+    The width of lines logged when :var:`config.log` is used.
+
 .. var:: config.longpress_duration = 0.5
 
     The amount of time the player must press the screen for for a longpress

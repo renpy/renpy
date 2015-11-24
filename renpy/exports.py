@@ -1769,7 +1769,7 @@ def log(msg):
     :doc: debug
 
     If :var:`config.log` is not set, this does nothing. Otherwise, it opens
-    the logfile (if not already open), formats the message to 70
+    the logfile (if not already open), formats the message to :var:`config.log_width`
     columns, and prints it to the logfile.
     """
 
@@ -1792,7 +1792,7 @@ def log(msg):
 
         import textwrap
 
-        print >>logfile, textwrap.fill(msg).encode("utf-8")
+        print >>logfile, textwrap.fill(msg, renpy.config.log_width).encode("utf-8")
         logfile.flush()
 
     except:

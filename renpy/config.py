@@ -643,6 +643,9 @@ default_tag_layer = 'master'
 # A map from tag to the default transform that's used for that tag.
 tag_transform = { }
 
+# The width of lines logged with renpy.log.
+log_width = 78
+
 del renpy
 del os
 
