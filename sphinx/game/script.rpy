@@ -25,5 +25,7 @@ init 1000000 python:
 
     doc.write_pure_const()
 
+    doc.write_easings(_warper)
+
     raise SystemExit
 

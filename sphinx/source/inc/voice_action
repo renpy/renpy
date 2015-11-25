@@ -1,5 +1,14 @@
 .. Automatically generated file - do not modify.
 
+.. function:: PlayCharacterVoice(voice_tag, sample)
+    
+    This plays `sample` on the voice channel, as if said by a
+    character with `voice_tag`.
+    
+    `sample`
+        The full path to a sound file. No voice-related handling
+        of this file is done.
+
 .. function:: SetCharacterVolume(voice_tag, volume=None)
     
     This allows the volume of each characters to be adjusted.

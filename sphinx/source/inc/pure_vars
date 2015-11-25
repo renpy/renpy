@@ -67,6 +67,7 @@
 * :func:`Pause`
 * :func:`Pixellate`
 * Play
+* :func:`PlayCharacterVoice`
 * Position
 * :func:`Preference`
 * :func:`Queue`

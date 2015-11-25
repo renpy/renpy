@@ -1,5 +1,27 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.add_layer(layer, above=None, below=None, menu_clear=True)
+    
+    Adds a new layer to the screen. If the layer already exists, this
+    function does nothing.
+    
+    One of `behind` or `above` must be given.
+    
+    `layer`
+        A string giving the name of the new layer to add.
+    
+    `above`
+        If not None, a string giving the name of a layer the new layer will
+        be placed above.
+    
+    `below`
+        If not None, a string giving the name of a layer the new layer will
+        be placed below.
+    
+    `menu_clear`
+        If true, this layer will be cleared when entering the game menu
+        context, and restored when leaving the
+
 .. function:: renpy.call_stack_depth()
     
     Returns the depth of the call stack of the current context - the number
@@ -168,6 +190,9 @@
     
     If not_showing is True, this only returns a side image if the image the
     attributes are taken from is not on the screen.
+    
+    If `layer` is None, uses the default layer for the currently showing
+    tag.
 
 .. function:: renpy.get_transition(layer=None)
     

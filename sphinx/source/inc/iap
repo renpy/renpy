@@ -27,10 +27,11 @@
     
     This function requests the purchase of `product`.
     
-    It returns true if the purchase succeded, now or at any time in the past,
-    and false otherwise.
+    It returns true if the purchase succeeds, or false if the purchase
+    fails. If the product has been registered as consumable, the purchase
+    is consumed before this call returns.
 
-.. function:: iap.register(product, identifier=None, amazon=None, google=None, ios=None)
+.. function:: iap.register(product, identifier=None, amazon=None, google=None, ios=None, consumable=True)
     
     Registers a product with the in-app purchase system.
     
@@ -57,6 +58,10 @@
     `ios`
         A string that identifies the product in the Apple App store for
         iOS. If not given, defaults to `identifier`.
+    
+    `consumable`
+        True if this is a consumable purchase. Right now, consumable purchases
+        are only supported on iOS.
 
 .. function:: iap.restore(interact=True)
     

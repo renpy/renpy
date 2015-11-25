@@ -99,6 +99,7 @@
 * :func:`Pixellate`
 * :func:`Placeholder`
 * Play
+* :func:`PlayCharacterVoice`
 * Position
 * :func:`Preference`
 * :func:`Queue`

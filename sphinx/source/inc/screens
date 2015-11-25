@@ -51,10 +51,20 @@
 
 .. function:: renpy.get_screen(name, layer='screens')
     
-    Returns the ScreenDisplayable with the given `tag`, on
-    `layer`. If no displayable with the tag is not found, it is
-    interpreted as screen name. If it's still not found, None is returned.
-     
+    Returns the ScreenDisplayable with the given `name` on layer. `name`
+    is first interpreted as a tag name, and then a screen name. If the
+    screen is not showing, returns None.
+    
+    This can also take a list of names, in which case the first screen
+    that is showing is returned.
+    
+    This function can be used to check if a screen is showing, using code
+    like::
+    
+        if renpy.get_screen("say"):
+            text "The say screen is showing."
+        else:
+            text "The say screen is hidden."
 
 .. function:: renpy.get_widget(screen, id, layer='screens')
     

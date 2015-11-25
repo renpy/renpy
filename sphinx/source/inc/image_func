@@ -1,5 +1,20 @@
 .. Automatically generated file - do not modify.
 
+.. function:: renpy.can_show(name, layer=None, tag=None)
+    
+    Determines if `name` can be used to show an image. This interprets `name`
+    as a tag and attributes. This is combined with the attributes of the
+    currently-showing image with `tag` on `layer` to try to determine a unique image
+    to show. If a unique image can be show, returns the name of that image as
+    a tuple. Otherwise, returns None.
+    
+    `tag`
+        The image tag to get attributes from. If not given, defaults to the first
+        component of `name`.
+    
+    `layer`
+        The layer to check. If None, uses the default layer for `tag`.
+
 .. function:: renpy.copy_images(old, new)
     
     Copies images beginning with one prefix to images beginning with
@@ -19,6 +34,17 @@
         A space-separated string giving the components of the new image
         name.
 
+.. function:: renpy.get_available_image_attributes(tag, attributes=())
+    
+    Returns a list of tuples, with each tuple representing a possible
+    combination of image attributes that can be associated with `tag`.
+    If `attributes` is given, only images that contain all the attributes
+    in that iterable are returned.
+
+.. function:: renpy.get_available_image_tags()
+    
+    Returns a list of image tags that have been defined.
+
 .. function:: renpy.get_image_bounds(tag, width=None, height=None, layer='master')
     
     If an image with `tag` exists on `layer`, returns the bounding box of
@@ -30,6 +56,9 @@
     `width`, `height`
         The width and height of the area that contains the image. If None,
         defaults the width and height of the screen, respectively.
+    
+    `layer`
+        If None, uses the default layer for `tag`.
 
 .. function:: renpy.get_placement(d)
     
@@ -82,6 +111,10 @@
         May be a string giving the image name or a tuple giving each
         component of the image name. It may also be a string giving
         only the image tag.
+    
+    
+    `layer`
+        The layer to check. If None, uses the default layer for `tag`.
 
 .. function:: renpy.start_predict(*args)
     

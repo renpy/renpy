@@ -331,3 +331,18 @@ def write_pure_const():
         write_set(f, constants)
 
 
+def write_easings(ns):
+
+    with open("source/inc/easings", "w") as f:
+        f.write(".. csv-table::\n")
+        f.write('    :header: "Ren\'Py Name", "easings.net Name"\n')
+        f.write('\n')
+
+        for name in sorted(dir(ns)):
+            if not name.startswith("ease"):
+                continue
+            if not "_" in name:
+                continue
+
+            stdname = name.replace("ease_", "easeInOut_").replace("easein_", "easeOut_").replace("easeout_", "easeIn_")
+            f.write('    "{}", "{}"\n'.format(name, stdname))

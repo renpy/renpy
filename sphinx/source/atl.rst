@@ -563,6 +563,13 @@ t' should start at 0.0 and end at 1.0, but can be greater or less.
 ``easeout``
     Start slow, then speed up. t' = 1.0 - math.cos(t * math.pi / 2.0)
 
+In addition, most of Robert Penner's easing functions are supported. To
+make the names match those above, the functions have been renamed
+somewhat. Graphs of these standard functions can be found at
+http://www.easings.net/.
+
+.. include:: inc/easings
+
 New warpers can be defined using the renpy.atl_warper decorator, in a python
 early block. It should be placed in a file that is parsed before any file
 that uses the warper. The code looks like:

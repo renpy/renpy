@@ -665,7 +665,7 @@ Occasionally Used
     looked up in this dictionary to get the layer to show it on. If the
     tag is not found here, :var:`config.default_tag_name` is used.
 
-.. var:: config.tag_layer = { }
+.. var:: config.tag_transform = { }
 
     A dictionary mapping image tag strings to transforms or lists of
     transforms. When an image is newly-shown without an at clause,
