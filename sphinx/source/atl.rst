@@ -536,6 +536,8 @@ The functions have the same signature as those used with :func:`Transform`:
             repeat
 
 
+.. _warpers:
+
 Warpers
 =======
 

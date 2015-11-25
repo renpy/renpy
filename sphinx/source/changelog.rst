@@ -31,6 +31,8 @@ in ATL. These functions speed up and slow down interpolations (and in some
 cases, can cause interpolations to overshoot their targets), in order to
 provide more pleasing and natural motion.
 
+The new easing functions are documented int the :ref:`warpers` section.
+
 Other
 -----
 
@@ -38,6 +40,9 @@ Fixed a major bug where Ren'Py would put an extra space at the end of each
 text block. This could change the layout of text (and hence other portions of
 the interface.) The fix reverts the change that added the space, causing it
 to be smaller than in 6.99.7 (but the same size as 6.99.6 and before.)
+
+Ren'Py now supports HighDPI ("retina") displays on the Windows platform,
+displaying text at the native screen resolution.
 
 The new :var:`config.overlay_screens` variable takes a list of screens
 that are displayed whenever a pre-screens overlay would be displayed,
@@ -54,9 +59,6 @@ The hbox and vbox displayables now support the :propref:`xminimum` and
 
 The new :func:`PlayCharacterVoice` action makes it possible to play
 a sample of a character's voice at that character's voice volume level.
-
-
-
 
 
 Ren'Py 6.99.7
