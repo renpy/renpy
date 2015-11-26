@@ -1,21 +1,17 @@
-﻿# You can place the script of your game in this file.
-# 此檔包含遊戲腳本。
+﻿# 您可以在此編寫遊戲的腳本。
 
-# Declare images below this line, using the image statement.
-# image 定義圖像使用門。
+# image命令可用於定義一個圖像。
 # eg. image eileen happy = "eileen_happy.png"
 
-# Declare characters used by this game.
-# 定義在遊戲中使用的字元。
-define e = Character('艾琳', color="#c8ffc8")
+# define命令可定義遊戲中出現的角色名稱與對應文本顏色。
+define e = Character('Eileen', color="#c8ffc8")
 
 
-# The game starts here.
 # 遊戲從這裡開始。
 label start:
 
     e "您已經創建了一個新的 Ren'Py 遊戲。"
 
-    e "一旦您添加了一個故事、 圖片和音樂，您可以將它發佈給全世界 ！"
+    e "當您添加一段故事, 圖片和音樂, 您就可以將它發佈給全世界！"
 
     return

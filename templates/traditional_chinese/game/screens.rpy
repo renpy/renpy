@@ -1,21 +1,21 @@
-﻿# This file is in the public domain. Feel free to modify it as a basis
-# for your own screens.
+﻿# 此檔屬於公共領域，
+# 請為屬於您的遊戲螢幕內容自由地定制。
 
 ##############################################################################
 # Say
 #
-# Screen that's used to display adv-mode dialogue.
+# 用於顯示adv-mode對話的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#say
 screen say:
 
-    # Defaults for side_image and two_window
+    # 側邊圖(side_image)與雙文字方塊的預設值。
     default side_image = None
     default two_window = False
 
-    # Decide if we want to use the one-window or two-window variant.
+    # 決定單文字方塊或雙文字方塊的變數：
     if not two_window:
 
-        # The one window variant.
+        # 單文字方塊。
         window:
             id "window"
 
@@ -29,7 +29,7 @@ screen say:
 
     else:
 
-        # The two window variant.
+        # 雙文字方塊。
         vbox:
             style "say_two_window_vbox"
 
@@ -48,20 +48,20 @@ screen say:
 
                 text what id "what"
 
-    # If there's a side image, display it above the text.
+    # 如果存在側邊圖，將其顯示于文字上方。
     if side_image:
         add side_image
     else:
         add SideImage() xalign 0.0 yalign 1.0
 
-    # Use the quick menu.
+    # 使用快速選單。
     use quick_menu
 
 
 ##############################################################################
 # Choice
 #
-# Screen that's used to display in-game menus.
+# 顯示遊戲內選項的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#choice
 
 screen choice:
@@ -104,7 +104,7 @@ init -2:
 ##############################################################################
 # Input
 #
-# Screen that's used to display renpy.input()
+# 用於顯示renpy.input()對應效果的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#input
 
 screen input:
@@ -120,7 +120,7 @@ screen input:
 ##############################################################################
 # Nvl
 #
-# Screen used for nvl-mode dialogue and menus.
+# 用於顯示nvl-mode對話與選項的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#nvl
 
 screen nvl:
@@ -131,7 +131,7 @@ screen nvl:
         has vbox:
             style "nvl_vbox"
 
-        # Display dialogue.
+        # 顯示對話。
         for who, what, who_id, what_id, window_id in dialogue:
             window:
                 id window_id
@@ -144,7 +144,7 @@ screen nvl:
 
                 text what id what_id
 
-        # Display a menu, if given.
+        # 顯示選項，如果有。
         if items:
 
             vbox:
@@ -171,19 +171,19 @@ screen nvl:
 ##############################################################################
 # Main Menu
 #
-# Screen that's used to display the main menu, when Ren'Py first starts
+# 用於初次啟動時顯示Ren'py遊戲主選單的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#main-menu
 
 screen main_menu:
 
-    # This ensures that any other menu screen is replaced.
+    # 確保其他的選單螢幕被替換。
     tag menu
 
-    # The background of the main menu.
+    # 主選單背景。
     window:
         style "mm_root"
 
-    # The main menu buttons.
+    # 主選單按鈕。
     frame:
         style_group "mm"
         xalign .98
@@ -199,7 +199,7 @@ screen main_menu:
 
 init -2:
 
-    # Make all the main menu buttons be the same size.
+    # 使所有選單按鈕的大小一致。
     style mm_button:
         size_group "mm"
 
@@ -208,16 +208,17 @@ init -2:
 ##############################################################################
 # Navigation
 #
-# Screen that's included in other screens to display the game menu
-# navigation and background.
+# 遊戲螢幕內的另一個螢幕，用於顯示
+# 遊戲選項的導航與背景。
+# 注釋：參見Ren'py引擎SDK附帶的tutorial。
 # http://www.renpy.org/doc/html/screen_special.html#navigation
 screen navigation:
 
-    # The background of the game menu.
+    # 遊戲選單的背景。
     window:
         style "gm_root"
 
-    # The various buttons.
+    # 不同的按鈕。
     frame:
         style_group "gm_nav"
         xalign .98
@@ -235,7 +236,7 @@ screen navigation:
 
 init -2:
 
-    # Make all game menu navigation buttons the same size.
+    # 使所有導航選項按鈕大小相同。
     style gm_nav_button:
         size_group "gm_nav"
 
@@ -243,13 +244,13 @@ init -2:
 ##############################################################################
 # Save, Load
 #
-# Screens that allow the user to save and load the game.
+# 使用者能夠存檔與讀檔的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#save
 # http://www.renpy.org/doc/html/screen_special.html#load
 
-# Since saving and loading are so similar, we combine them into
-# a single screen, file_picker. We then use the file_picker screen
-# from simple load and save screens.
+# 因為存檔與讀檔都非常相似，
+# 因此我們將它們混合到一個螢幕中，file_picker。
+# 於是我們就用file_picker螢幕來實現簡單的存檔與讀檔。
 
 screen file_picker:
 
@@ -258,8 +259,8 @@ screen file_picker:
 
         has vbox
 
-        # The buttons at the top allow the user to pick a
-        # page of files.
+        # 頂部的按鈕可允許使用者選擇
+        # 存檔的頁數。
         hbox:
             style_group "file_picker_nav"
 
@@ -282,23 +283,23 @@ screen file_picker:
         $ columns = 2
         $ rows = 5
 
-        # Display a grid of file slots.
+        # 顯示存檔位網格。
         grid columns rows:
             transpose True
             xfill True
             style_group "file_picker"
 
-            # Display ten file slots, numbered 1 - 10.
+            # 顯示十個存檔位，編號為1-10。
             for i in range(1, columns * rows + 1):
 
-                # Each file slot is a button.
+                # 每個存檔位都是一個按鈕。
                 button:
                     action FileAction(i)
                     xfill True
 
                     has hbox
 
-                    # Add the screenshot.
+                    # 添加螢幕截圖。
                     add FileScreenshot(i)
 
                     $ file_name = FileSlotName(i, columns * rows)
@@ -312,7 +313,7 @@ screen file_picker:
 
 screen save:
 
-    # This ensures that any other menu screen is replaced.
+    # 確保其他任何選單都被覆蓋。
     tag menu
 
     use navigation
@@ -320,7 +321,7 @@ screen save:
 
 screen load:
 
-    # This ensures that any other menu screen is replaced.
+    # 確保其他任何選單都被覆蓋。
     tag menu
 
     use navigation
@@ -337,22 +338,22 @@ init -2:
 ##############################################################################
 # Preferences
 #
-# Screen that allows the user to change the preferences.
+# 允許使用者更改偏好設置的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#prefereces
 
 screen preferences:
 
     tag menu
 
-    # Include the navigation.
+    # 包含導航選項。
     use navigation
 
-    # Put the navigation columns in a three-wide grid.
+    # 縱向放置導航選項于三個寬列中。
     grid 3 1:
         style_group "prefs"
         xfill True
 
-        # The left column.
+        # 左側縱欄。
         vbox:
             frame:
                 style_group "pref"
@@ -383,7 +384,7 @@ screen preferences:
 
                 textbutton _("Joystick...") action Preference("joystick")
 
-
+        # 中間縱欄
         vbox:
             frame:
                 style_group "pref"
@@ -416,7 +417,7 @@ screen preferences:
 
                 if config.has_voice:
                     textbutton _("Wait for Voice") action Preference("wait for voice", "toggle")
-
+        # 右側縱欄
         vbox:
             frame:
                 style_group "pref"
@@ -475,7 +476,7 @@ init -2:
 ##############################################################################
 # Yes/No Prompt
 #
-# Screen that asks the user a yes or no question.
+# 用於詢問使用者確定與否的螢幕。
 # http://www.renpy.org/doc/html/screen_special.html#yesno-prompt
 
 screen yesno_prompt:
@@ -509,7 +510,7 @@ screen yesno_prompt:
             textbutton _("Yes") action yes_action
             textbutton _("No") action no_action
 
-    # Right-click and escape answer "no".
+    # 按右鍵進行回避並回答「否」。
     key "game_menu" action no_action
 
 init -2:
@@ -524,11 +525,12 @@ init -2:
 ##############################################################################
 # Quick Menu
 #
-# A screen that's included by the default say screen, and adds quick access to
-# several useful functions.
+# 包含在預設的say螢幕中的螢幕，
+# 用於快速訪問某些實用功能。
+# 注釋：也就是文字方塊下方的存檔、讀檔等按鈕。
 screen quick_menu:
 
-    # Add an in-game quick menu.
+    # 添加一個遊戲內快速訪問的選單。
     hbox:
         style_group "quick"
 
