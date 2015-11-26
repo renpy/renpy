@@ -60,6 +60,8 @@ The hbox and vbox displayables now support the :propref:`xminimum` and
 The new :func:`PlayCharacterVoice` action makes it possible to play
 a sample of a character's voice at that character's voice volume level.
 
+The Traditonal Chinese translation has been updated.
+
 
 Ren'Py 6.99.7
 =============
