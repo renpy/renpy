@@ -135,7 +135,7 @@ def interpolate(t, a, b, type): #@ReservedAssignment
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
     # Deal with booleans, nones, etc.
-    elif b is None or isinstance(b, bool):
+    elif b is None or isinstance(b, (bool, basestring)):
         if t >= 1.0:
             return b
         else:
