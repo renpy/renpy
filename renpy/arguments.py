@@ -111,6 +111,10 @@ class ArgumentParser(argparse.ArgumentParser):
             help='Forces all .rpy scripts to be recompiled before proceeding.')
 
         self.add_argument(
+            "--keep-orphan-rpyc", action="store_true",
+            help="Prevents the compile command from deleting orphan rpyc files.")
+
+        self.add_argument(
             "--lint", action="store_true", dest="lint",
             help=argparse.SUPPRESS)
 

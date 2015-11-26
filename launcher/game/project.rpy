@@ -238,7 +238,7 @@ init python in project:
                     interface.processing(_("Ren'Py is scanning the project..."))
 
                 if compile:
-                    self.launch(["compile"], wait=True)
+                    self.launch(["compile", "--keep-orphan-rpyc" ], wait=True)
                 else:
                     self.launch(["quit"], wait=True)
 

@@ -328,8 +328,13 @@ def main():
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
     # labels as in other scripts (usually happens on script rename).
-    if renpy.game.args.command == 'compile':
+    if (renpy.game.args.command == 'compile') and not (renpy.game.args.keep_orphan_rpyc): # @UndefinedVariable
+
         for (fn, dir) in renpy.game.script.script_files:
+
+            if dir is None:
+                continue
+
             if not os.path.isfile(os.path.join(dir, fn+".rpy")):
                 try:
                     name = os.path.join(dir, fn+".rpyc")
