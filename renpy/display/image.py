@@ -134,7 +134,7 @@ class ImageReference(renpy.display.core.Displayable):
     the image in an image statment.
     """
 
-    nosave = [ 'target', 'param_target' ]
+    nosave = [ 'target' ]
     target = None
     param_target = None
 
@@ -204,7 +204,15 @@ class ImageReference(renpy.display.core.Displayable):
 
                 try:
                     self.target = target.parameterize(name, parameters)
+
                     if self.target is not target:
+
+                        if self.param_target is not None:
+                            npt = self.target._get_parameterized()
+                            if isinstance(npt, renpy.display.motion.Transform):
+                                opt = self.param_target._get_parameterized()
+                                npt.take_state(opt)
+
                         self.param_target = self.target
 
                 except Exception, e:
@@ -292,7 +300,7 @@ class DynamicImage(renpy.display.core.Displayable):
     performed at the start of each iteraction.
     """
 
-    nosave = [ 'target', 'raw_target' ]
+    nosave = [ 'raw_target' ]
 
     # The target that this image currently resolves to.
     target = None
@@ -361,7 +369,7 @@ class DynamicImage(renpy.display.core.Displayable):
         if not old_target:
             return True
 
-        if isinstance(old_target, renpy.display.motion.Transform):
+        if not isinstance(old_target, renpy.display.motion.Transform):
             return True
 
         if not isinstance(target, renpy.display.motion.Transform):
