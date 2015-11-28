@@ -213,26 +213,6 @@ init -1700 python:
 
 
     ##########################################################################
-    # Side Images
-
-    config.side_image_tag = None
-    config.side_image_only_not_showing = False
-
-    def SideImage(prefix_tag="side"):
-        """
-        :doc: side_image_function
-
-        Returns the side image associated with the currently speaking character,
-        or a Null displayable if no such side image exists.
-        """
-
-        name = renpy.get_side_image(prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
-        if name is None:
-            return Null()
-        else:
-            return ImageReference(name)
-
-    ##########################################################################
     # Name-only say statements.
 
     # This character is copied when a name-only say statement is called.
