@@ -10,9 +10,8 @@ Tags, Layers, and Transforms
 
 The new :var:`config.tag_layer` variable makes it possible to specify the
 default layer used by an image on a per image tag basis. This makes it
-possible to place an image (such as a side sprite) above the screens
-layer, and manipulate it without having to use onlayer. The new
-:var:`config.default_tag_layer` variable specifies the default layer
+possible to place an image on its own layer without having to use onlayer.
+The new :var:`config.default_tag_layer` variable specifies the default layer
 for unknown tags.
 
 The new :func:`renpy.add_layer` function provides as way to add a new
@@ -32,6 +31,16 @@ cases, can cause interpolations to overshoot their targets), in order to
 provide more pleasing and natural motion.
 
 The new easing functions are documented int the :ref:`warpers` section.
+
+Side Images
+-----------
+
+New-style side image functionality (using images with the side tag) has been
+overhauled. It's now possible to apply an ATL transform, and hence a t
+ransition, whenever the side image changes. Different transforms can be used
+in the case where the character changes and the case where it stays the same.
+
+See the :ref:`side-images` section for complete documentation.
 
 Other
 -----
@@ -60,7 +69,7 @@ The hbox and vbox displayables now support the :propref:`xminimum` and
 The new :func:`PlayCharacterVoice` action makes it possible to play
 a sample of a character's voice at that character's voice volume level.
 
-The Traditonal Chinese translation has been updated.
+The Traditional Chinese translation has been updated.
 
 
 Ren'Py 6.99.7
