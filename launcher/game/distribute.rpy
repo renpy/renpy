@@ -529,6 +529,11 @@ init python in distribute:
             """
 
             def walk(name, path):
+
+                # Ignore ASCII control characters, like (Icon\r on the mac).
+                if re.search('[\x00-\x19]', name):
+                    return
+
                 is_dir = os.path.isdir(path)
 
                 if is_dir:
