@@ -78,8 +78,8 @@ For example::
 Variations
 ----------
 
-There are two variants of side image support that can be selected - either alone
-or together - using config variables:
+There are a number of attributes of side images that can be controlled
+using config variables.
 
 .. var:: config.side_image_tag = None
 
@@ -100,6 +100,66 @@ or together - using config variables:
 
     When set to true, the side image will only show if an image with that tag
     is not already being shown on the screen.
+
+.. var:: config.side_image_prefix_tag = 'side'
+
+    The prefix that is used when searching for a side image.
+
+.. var:: config.side_image_null = Null()
+
+    The Null displayable to use when not displaying a side image. This
+    be changed, but only to other Null objects. One reason for doing so
+    would be to set the side of the Null (eg. Null(width=200, height=150))
+    to prevent dissolves from being cut off.
+
+.. var:: config.side_image_same_transform = None
+
+    If not None, a transform that is used when the new side image shares the
+    same image tag as the previous side image.
+
+.. var:: config.side_image_change_transform = None
+
+    If not None, a transform that is used when the new side image does not
+    share the name image tag (or one of the new or old side images does not
+    exist).
+
+
+Transforms and Transitions
+--------------------------
+
+The :var:`config.side_image_same_transform` and
+:var:`config.side_image_change_transform` transforms are called with two
+arguments - old and new side image displayables - each time the side
+image is displayed. These can be used to move around side images, or
+use a transition to go between side images.
+
+This code causes the side image to slide in and out when the character
+associated with that image changes::
+
+    transform change_transform(old, new):
+        contains:
+            old
+            yalign 1.0
+            xpos 0.0 xanchor 0.0
+            linear 0.2 xanchor 1.0
+        contains:
+            new
+            yalign 1.0
+            xpos 0.0 xanchor 1.0
+            linear 0.2 xanchor 0.0
+
+    define config.side_image_change_transform = change_transform
+
+This code is used to dissolve between old and new side images when the
+character remains the same. (For example, when the character changes
+emotion.) For the Dissolve to work correctly, both side images must
+be the same size. ::
+
+    transform same_transform(old, new):
+        old
+        new with Dissolve(0.2, alpha=True)
+
+    define config.side_image_same_transform = same_transform
 
 
 Leaving Room / Customization
