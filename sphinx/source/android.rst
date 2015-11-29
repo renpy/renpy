@@ -67,6 +67,11 @@ due to the Android software and hardware are:
 * Ren'Py cannot change the device volume. However, the android volume
   buttons work normally.
 
+* Ren'Py can't handle transparency in buttons and imagemaps.
+  (This is due to performance problems on some devices with the
+  display modes needed to support deciding which pixels are
+  transparent.)
+
 In addition, there are a few changes that may be necessary due to
 human factors:
 
