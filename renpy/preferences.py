@@ -58,7 +58,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 15
+    __version__ = 16
 
     def after_upgrade(self, version):
         if version < 1:
@@ -88,6 +88,8 @@ class Preferences(renpy.object.Object):
             self.emphasize_audio = False
         if version < 15:
             self.pad_enabled = True
+        if version < 16:
+            self.init_rollback_side()
 
     def __init__(self):
         self.fullscreen = False
@@ -144,6 +146,14 @@ class Preferences(renpy.object.Object):
 
         # Is the gamepad enabled?
         self.pad_enabled = True
+
+        self.init_rollback_side()
+
+    def init_rollback_side(self):
+        if renpy.mobile:
+            self.rollback_side = "left"
+        else:
+            self.rollback_side = None
 
 
     def set_volume(self, mixer, volume):
