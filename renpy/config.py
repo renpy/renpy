@@ -646,6 +646,13 @@ tag_transform = { }
 # The width of lines logged with renpy.log.
 log_width = 78
 
+# If dpi_scale is less than this, make it 1.0.
+de_minimus_dpi_scale = 1.0
+
+# How big must dpi_scale be to deal with it on windows?
+windows_dpi_scale_head = 1.0
+
+
 del renpy
 del os
 
