@@ -646,6 +646,9 @@ tag_transform = { }
 # The width of lines logged with renpy.log.
 log_width = 78
 
+# The size of the rollback side, as a fraction of the screen.
+rollback_side_size = .2
+
 del renpy
 del os
 

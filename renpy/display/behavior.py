@@ -537,6 +537,25 @@ class SayBehavior(renpy.display.layout.Null):
                     renpy.exports.restart_interaction()
                     raise renpy.display.core.IgnoreEvent()
 
+                if renpy.mobile:
+                    rollback_side = renpy.game.preferences.mobile_rollback_side
+                else:
+                    rollback_side = renpy.game.preferences.desktop_rollback_side
+
+                percent = 1.0 * x / renpy.config.screen_width
+
+                if rollback_side == "left":
+
+                    if percent < renpy.config.rollback_side_size:
+                        renpy.exports.rollback()
+                        raise renpy.display.core.IgnoreEvent()
+
+                elif rollback_side == "right":
+
+                    if (1.0 - percent) < renpy.config.rollback_side_size:
+                        renpy.exports.rollback()
+                        raise renpy.display.core.IgnoreEvent()
+
                 if renpy.game.preferences.using_afm_enable and \
                     renpy.game.preferences.afm_enable and \
                     not renpy.game.preferences.afm_after_click:
