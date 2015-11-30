@@ -649,6 +649,12 @@ log_width = 78
 # The size of the rollback side, as a fraction of the screen.
 rollback_side_size = .2
 
+# If dpi_scale is less than this, make it 1.0.
+de_minimus_dpi_scale = 1.0
+
+# How big must dpi_scale be to deal with it on windows?
+windows_dpi_scale_head = 1.0
+
 del renpy
 del os
 

@@ -1532,6 +1532,10 @@ class Interface(object):
             rv = GetDeviceCaps(dc, LOGPIXELSX) / 96.0
             ReleaseDC(None, dc)
 
+            if rv < renpy.config.de_minimus_dpi_scale:
+                renpy.display.log.write("De minimus DPI scale, was %r", rv)
+                rv = 1.0
+
             return rv
 
         except:

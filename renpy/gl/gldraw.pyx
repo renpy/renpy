@@ -218,15 +218,31 @@ cdef class GLDraw:
             visible_w = info.current_w - 102
             visible_h = info.current_h - 102
 
-            if renpy.windows:
+            bounds = pygame.display.get_display_bounds(0)
+
+            renpy.display.log.write("primary display bounds: %r", bounds)
+
+            head_full_w = bounds[2]
+            head_w = bounds[2] - 102
+            head_h = bounds[3] - 102
+
+            if renpy.windows and self.dpi_scale > renpy.config.windows_dpi_scale_head:
                 visible_w *= self.dpi_scale
                 visible_h *= self.dpi_scale
+
+                head_full_w *= self.dpi_scale
+                head_w *= self.dpi_scale
+                head_h *= self.dpi_scale
 
             pwidth = min(visible_w, pwidth)
             pheight = min(visible_h, pheight)
 
             # The first time through.
             if not self.did_init:
+
+                pwidth = min(pwidth, head_w)
+                pheight = min(pheight, head_h)
+
                 pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         pwidth = int(pwidth)
@@ -238,9 +254,10 @@ cdef class GLDraw:
         # If we don't set the place manually when dpi_scale is not 1.0,
         # SDL2 can place the window titlebar off the screen.
         if renpy.windows and (self.dpi_scale != 1.0):
+
             window_args["pos"] = (
-                max((visible_w - pwidth) // 2, 0),
-                max((visible_h - pheight) // 2, 10),
+                max((head_full_w - pwidth) // 2, 0),
+                max((head_h - pheight) // 2, 0) + 32 * self.dpi_scale,
                 )
 
         # Handle swap control.
