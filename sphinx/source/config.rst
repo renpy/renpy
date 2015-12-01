@@ -1064,6 +1064,12 @@ Rarely or Internally Used
     When there are more than this many statements in the rollback log,
     Ren'Py will consider trimming the log.
 
+.. var:: config.rollback_side_size = .2
+
+	If the rollback side is enabled, the fraction of of the screen on the
+	rollback side that, when clicked or touched, causes a rollback to
+	occur.
+
 .. var:: config.say_allow_dismiss = None
 
     If not None, this should be a function. The function is called
