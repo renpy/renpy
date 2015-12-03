@@ -215,8 +215,11 @@ cdef class GLDraw:
         if not renpy.mobile:
             info = renpy.display.get_info()
 
-            visible_w = info.current_w - 102
-            visible_h = info.current_h - 102
+            visible_w = info.current_w
+            visible_h = info.current_h
+
+            if renpy.windows and renpy.windows <= (6, 1):
+                visible_h -= 102
 
             bounds = pygame.display.get_display_bounds(0)
 
@@ -239,7 +242,6 @@ cdef class GLDraw:
 
             # The first time through.
             if not self.did_init:
-
                 pwidth = min(pwidth, head_w)
                 pheight = min(pheight, head_h)
 
