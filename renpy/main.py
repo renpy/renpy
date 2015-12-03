@@ -232,6 +232,42 @@ def choose_variants():
         renpy.config.variants.insert(0, 'large')
 
 
+def detect_windows_config():
+
+    import ctypes
+
+    class OSVERSIONINFOEXW(ctypes.Structure):
+        _fields_ = [('dwOSVersionInfoSize', ctypes.c_ulong),
+                    ('dwMajorVersion', ctypes.c_ulong),
+                    ('dwMinorVersion', ctypes.c_ulong),
+                    ('dwBuildNumber', ctypes.c_ulong),
+                    ('dwPlatformId', ctypes.c_ulong),
+                    ('szCSDVersion', ctypes.c_wchar*128),
+                    ('wServicePackMajor', ctypes.c_ushort),
+                    ('wServicePackMinor', ctypes.c_ushort),
+                    ('wSuiteMask', ctypes.c_ushort),
+                    ('wProductType', ctypes.c_byte),
+                    ('wReserved', ctypes.c_byte)]
+
+    """
+    Get's the OS major and minor versions.  Returns a tuple of
+    (OS_MAJOR, OS_MINOR).
+    """
+    os_version = OSVERSIONINFOEXW()
+    os_version.dwOSVersionInfoSize = ctypes.sizeof(os_version)
+    retcode = ctypes.windll.Ntdll.RtlGetVersion(ctypes.byref(os_version))
+
+    if retcode != 0:
+        return
+
+    version = os_version.dwMajorVersion, os_version.dwMinorVersion
+
+    # Change the default config on pre windows 8.
+    if version <= (6, 3):
+
+        # Bigger than 1.25, anyway.
+        renpy.config.windows_dpi_scale_head = 1.28
+
 def main():
 
     log_clock("Bootstrap to the start of init.init")
@@ -246,6 +282,9 @@ def main():
 
     # Init the config after load.
     renpy.config.init()
+
+    if renpy.windows:
+        detect_windows_config()
 
     # Set up variants.
     choose_variants()
