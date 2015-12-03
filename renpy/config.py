@@ -653,7 +653,10 @@ rollback_side_size = .2
 de_minimus_dpi_scale = 1.0
 
 # How big must dpi_scale be to deal with it on windows?
-windows_dpi_scale_head = 1.0
+if renpy.windows and renpy.windows <= (6, 3):
+    windows_dpi_scale_head = 1.3
+else:
+    windows_dpi_scale_head = 1.0
 
 del renpy
 del os
