@@ -117,7 +117,6 @@ def get_time():
     t = time.time()
     return time_base + (t - time_base) * time_mult
 
-
 def displayable_by_tag(layer, tag):
     """
     Get the displayable on the given layer with the given tag.
@@ -1279,6 +1278,11 @@ def get_safe_mode():
     except:
         return False
 
+
+# How long should we be in maximum framerate mode at the start of the game?
+initial_maximum_framerate = 0.0
+
+
 class Interface(object):
     """
     This represents the user interface that interacts with the user.
@@ -1502,6 +1506,7 @@ class Interface(object):
 
         # A time until which we should draw at maximum framerate.
         self.maximum_framerate_time = 0.0
+        self.maximum_framerate(initial_maximum_framerate)
 
     def setup_dpi_scaling(self):
 
@@ -2372,7 +2377,7 @@ class Interface(object):
         Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
         """
 
-        self.maximum_framerate_time = get_time() + t
+        self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
 
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
