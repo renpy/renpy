@@ -1500,6 +1500,8 @@ class Interface(object):
 
         renpy.display.log.write("DPI scale factor: %f", self.dpi_scale)
 
+        # A time until which we should draw at maximum framerate.
+        self.maximum_framerate_time = 0.0
 
     def setup_dpi_scaling(self):
 
@@ -2365,6 +2367,13 @@ class Interface(object):
         self.old_text_rect = self.text_rect
 
 
+    def maximum_framerate(self, t):
+        """
+        Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+        """
+
+        self.maximum_framerate_time = get_time() + t
+
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -2805,6 +2814,9 @@ class Interface(object):
                     video_frame_drawn = True
 
                 if renpy.display.render.process_redraws():
+                    needs_redraw = True
+
+                if self.maximum_framerate_time > get_time():
                     needs_redraw = True
 
                 # How many seconds until we timeout.
