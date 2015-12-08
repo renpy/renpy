@@ -305,7 +305,7 @@ init -1500 python:
              the file will not be loadable.
 
          `confirm`
-             If true, prompt if loading the file will end the game.
+             If true and not at the main menu, prompt for confirmation before loading the file.
 
          `page`
              The page that the file will be loaded from. If None, the
@@ -666,14 +666,17 @@ init -1500 python:
         return rv
 
     @renpy.pure
-    def QuickLoad(showprompt=True):
+    def QuickLoad(confirm=True):
         """
         :doc: file_action
-
+        
         Performs a quick load.
+        
+        `confirm`
+            If true, prompt for confirmation before loading the file.
         """
 
-        rv = FileLoad(1, page="quick", confirm=showprompt, newest=False)
+        rv = FileLoad(1, page="quick", confirm=confirm, newest=False)
         rv.alt = "Quick load."
         return rv
 
