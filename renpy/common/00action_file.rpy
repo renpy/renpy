@@ -673,7 +673,7 @@ init -1500 python:
         Performs a quick load.
         
         `confirm`
-            If true, prompt for confirmation before loading the file.
+            If true and not at the main menu, prompt for confirmation before loading the file.
         """
 
         rv = FileLoad(1, page="quick", confirm=confirm, newest=False)
