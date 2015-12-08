@@ -666,14 +666,14 @@ init -1500 python:
         return rv
 
     @renpy.pure
-    def QuickLoad():
+    def QuickLoad(showprompt=True):
         """
         :doc: file_action
 
         Performs a quick load.
         """
 
-        rv = FileLoad(1, page="quick", confirm=True, newest=False)
+        rv = FileLoad(1, page="quick", confirm=showprompt, newest=False)
         rv.alt = "Quick load."
         return rv
 
