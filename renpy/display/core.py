@@ -790,7 +790,7 @@ class SceneLists(renpy.object.Object):
                         zorder = sle.zorder
 
         if zorder is None:
-            zorder = 0
+            zorder = renpy.config.tag_zorder.get(tag, 0)
 
         for i, sle in enumerate(self.layers[layer]):
 

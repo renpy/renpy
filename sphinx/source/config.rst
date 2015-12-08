@@ -672,6 +672,13 @@ Occasionally Used
     the image's tag is looked up in ths dictionary to find a transform
     or list of transforms to use.
 
+.. var:: config.tag_zorder = { }
+
+    A dictionary mapping image tag strings to zorders. When an image is
+    newly-shown without a zorder clause, the image's tag is looked up
+    in this dictionary to find a zorder to use. If no zorder is found,
+    0 is used.
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is

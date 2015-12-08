@@ -643,6 +643,9 @@ default_tag_layer = 'master'
 # A map from tag to the default transform that's used for that tag.
 tag_transform = { }
 
+# A map from the tag to the default zorder that's used for that tag.
+tag_zorder = { }
+
 # The width of lines logged with renpy.log.
 log_width = 78
 
