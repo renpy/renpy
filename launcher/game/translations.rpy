@@ -55,33 +55,88 @@ label translate:
 
     jump front_page
 
+screen extract_dialogue:
+
+    frame:
+        style_group "l"
+        style "l_root"
+
+        window:
+
+            has vbox
+
+            label _("Extract Dialogue: [project.current.name!q]")
+
+            add HALF_SPACER
+            
+            frame:
+                style "l_indent"
+                xfill True
+
+                has vbox
+
+                add SEPARATOR2
+
+                frame:
+                    style "l_indent"
+                    has vbox
+                
+                    text _("Format:")
+                    
+                    add HALF_SPACER
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+                    
+                        textbutton _("Tab-delimited Spreadsheet (dialogue.tab)") action SetField(persistent, "dialogue_format", "tab")
+                        textbutton _("Dialogue Text Only (dialogue.txt)") action SetField(persistent, "dialogue_format", "txt")
+                
+                add SPACER
+                add SEPARATOR2
+
+                frame:
+                    style "l_indent"
+                    has vbox
+                
+                    text _("Options:")
+                    
+                    add HALF_SPACER
+                    
+                    textbutton _("Strip text tags from the dialogue.") action ToggleField(persistent, "dialogue_notags") style "l_checkbox"
+                    textbutton _("Escape quotes and other special characters.") action ToggleField(persistent, "dialogue_escape") style "l_checkbox"
+                    textbutton _("Extract all translatable strings, not just dialogue.") action ToggleField(persistent, "dialogue_strings") style "l_checkbox"
+
+
+    textbutton _("Cancel") action Jump("front_page") style "l_left_button"
+    textbutton _("Continue") action Jump("start_extract_dialogue") style "l_right_button"
+
 label extract_dialogue:
+    
+    call screen extract_dialogue
+
+label start_extract_dialogue:
 
     python:
-
-        CHOICES = [
-            ("tab", "Tab-delimited Spreadsheet (dialogue.tab)"),
-            ("txt", "Dialogue Text Only (dialogue.txt)"),
-            ]
-
-        format = interface.choice(
-            _("What format would you like for the extracted dialogue?"),
-            CHOICES,
-            persistent.dialogue_format,
-            cancel=Jump("front_page"))
-
-        persistent.dialogue_format = format
-
+        
         args = [ "dialogue" ]
-
-        if format == "txt":
+        
+        if persistent.dialogue_format == "txt":
             args.append("--text")
+        
+        if persistent.dialogue_strings:
+            args.append("--strings")
+        
+        if persistent.dialogue_notags:
+            args.append("--notags")
+        
+        if persistent.dialogue_escape:
+            args.append("--escape")
 
         interface.processing(_("Ren'Py is extracting dialogue...."))
         project.current.launch(args, wait=True)
         project.current.update_dump(force=True)
 
-        interface.info(_("Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[format] in the base directory."))
-
+        interface.info(_("Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."))
 
     jump front_page
