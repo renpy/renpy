@@ -167,6 +167,7 @@ Dissolve = renpy.curry.curry(renpy.display.transition.Dissolve)
 ImageDissolve = renpy.curry.curry(renpy.display.transition.ImageDissolve)
 AlphaDissolve = renpy.curry.curry(renpy.display.transition.AlphaDissolve)
 CropMove = renpy.curry.curry(renpy.display.transition.CropMove)
+PushMove = renpy.curry.curry(renpy.display.transition.PushMove)
 Pixellate = renpy.curry.curry(renpy.display.transition.Pixellate)
 
 

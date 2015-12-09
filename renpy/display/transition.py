@@ -872,6 +872,131 @@ class CropMove(Transition):
         return rv
 
 
+class PushMove(Transition):
+    """
+    :doc: transition function
+    :args: (time, mode="pushright")
+    :name: PushMove
+
+    Returns a transition that works by taking the new scene and using it to
+    "push" the old scene off the screen. 
+
+    `time`
+        The time the transition takes.
+
+    `mode`
+        There are four possible modes: "pushright", "pushleft", "pushup",
+        and "pushdown", which push the old scene off the screen in the
+        direction indicated.
+
+    ::
+
+        define pushright = PushMove(1.0, "pushright")
+        define pushleft = PushMove(1.0, "pushleft")
+        define pushup = PushMove(1.0, "pushup")
+        define pushdown = PushMove(1.0, "pushdown")
+    """
+
+    def __init__(self, time,
+                 mode="pushright",
+                 old_widget=None,
+                 new_widget=None,
+                 **properties):
+
+        super(PushMove, self).__init__(time, **properties)
+        self.time = time
+
+        if mode == "pushright":
+            self.new_startpos = (0.0, 0.0)
+            self.new_startcrop = (1.0, 0.0, 0.0, 1.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (1.0, 0.0)
+            self.old_endcrop = (0.0, 0.0, 0.0, 1.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+            
+        elif mode == "pushleft":
+            self.new_startpos = (1.0, 0.0)
+            self.new_startcrop = (0.0, 0.0, 0.0, 1.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (0.0, 0.0)
+            self.old_endcrop = (1.0, 0.0, 0.0, 1.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+            
+        elif mode == "pushup":
+            self.new_startpos = (0.0, 1.0)
+            self.new_startcrop = (0.0, 0.0, 1.0, 0.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (0.0, 0.0)
+            self.old_endcrop = (0.0, 1.0, 1.0, 0.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+            
+        elif mode == "pushdown":
+            self.new_startpos = (0.0, 0.0)
+            self.new_startcrop = (0.0, 1.0, 1.0, 0.0)
+            self.new_endpos = (0.0, 0.0)
+            self.new_endcrop = (0.0, 0.0, 1.0, 1.0)
+            self.old_endpos = (0.0, 1.0)
+            self.old_endcrop = (0.0, 0.0, 1.0, 0.0)
+            self.old_startpos = (0.0, 0.0)
+            self.old_startcrop = (0.0, 0.0, 1.0, 1.0)
+            
+        else:
+            raise Exception("Invalid mode %s passed into PushMove." % mode)
+
+        self.delay = time
+        self.time = time
+
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+
+        self.events = False
+
+    def render(self, width, height, st, at):
+
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+
+        time = 1.0 * st / self.time
+
+        # Done rendering.
+        if time >= 1.0:
+            self.events = True
+            return render(self.new_widget, width, height, st, at)
+
+        # How we scale each element of a tuple.
+        scales = (width, height, width, height)
+
+        def interpolate_tuple(t0, t1):
+            return tuple([ int(s * (a * (1.0 - time) + b * time))
+                           for a, b, s in zip(t0, t1, scales) ])
+
+        new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop)
+        new_pos = interpolate_tuple(self.new_startpos, self.new_endpos)
+        
+        old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop)
+        old_pos = interpolate_tuple(self.old_startpos, self.old_endpos)
+
+
+        new = render(self.new_widget, width, height, st, at)
+        old = render(self.old_widget, width, height, st, at)
+
+        rv = renpy.display.render.Render(width, height)
+
+        old_ss = old.subsurface(old_crop, focus = True)
+        rv.blit(old_ss, old_pos, focus = True)
+
+        new_ss = new.subsurface(new_crop, focus = True)
+        rv.blit(new_ss, new_pos, focus = True)
+
+        renpy.display.render.redraw(self, 0)
+        return rv
+
 def ComposeTransition(trans, before=None, after=None, new_widget=None, old_widget=None):
     """
     :doc: transition function
