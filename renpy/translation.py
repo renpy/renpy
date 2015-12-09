@@ -107,11 +107,13 @@ class ScriptTranslator(object):
             type_n = n.__class__
 
             if type_n is TranslatePython:
-                self.languages.add(n.language)
+                if n.language is not None:
+                    self.languages.add(n.language)
                 self.python[n.language].append(n)
 
             elif type_n is TranslateBlock:
-                self.languages.add(n.language)
+                if n.language is not None:
+                    self.languages.add(n.language)
                 self.block[n.language].append(n)
 
             elif type_n is Menu:
