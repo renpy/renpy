@@ -942,7 +942,7 @@ def notags_filter(s):
 
 class DialogueFile(object):
 
-    def __init__(self, filename, output, tdf=True): # @ReservedAssignment
+    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True): # @ReservedAssignment
         """
         `filename`
             The file we're extracting dialogue from.
@@ -950,6 +950,15 @@ class DialogueFile(object):
         `tdf`
             If true, dialogue is extracted in tab-delimited format. If false,
             dialogue is extracted by itself.
+        
+        `strings`
+            If true, extract all translatable strings, not just dialogue.
+        
+        `notags`
+            If true, strip text tags from the extracted dialogue.
+        
+        `escape`
+            If true, escape special characters in the dialogue.
         """
 
         self.filename = filename
@@ -960,17 +969,22 @@ class DialogueFile(object):
             return
 
         self.tdf = tdf
+        self.notags = notags
+        self.escape = escape
+        self.strings = strings
 
         self.f = open(output, "a")
 
-        self.write_translates()
+        self.write_dialogue()
 
         self.f.close()
 
-    def write_translates(self):
+    def write_dialogue(self):
         """
-        Writes the translates to the file.
+        Writes the dialogue to the file.
         """
+        
+        lines = []
 
         translator = renpy.game.script.translator
 
@@ -988,24 +1002,69 @@ class DialogueFile(object):
                     else:
                         who = n.who
 
-                    what = notags_filter(n.what)
+                    what = n.what
+                    
+                    if self.notags:
+                        what = notags_filter(what)
+                    
+                    if self.escape:
+                        what = quote_unicode(what)
 
                     if self.tdf:
 
-                        line = [
+                        lines.append([
                             t.identifier,
                             who,
                             what,
                             n.filename,
                             str(n.linenumber),
-                            ]
+                            ])
 
                     else:
-                        line = [
-                            what
-                            ]
+                        lines.append([what])
+        
+        if self.strings:
+            lines.extend(self.get_strings())
+            
+            # If we're tab-delimited, we have line number info, which means we
+            # can sort the list so everything's in order, for menus and stuff.
+            if self.tdf:
+                lines.sort(key = lambda x: int(x[4]))
+        
+        for line in lines:
+            self.f.write("\t".join(line).encode("utf-8") + "\n")
 
-                    self.f.write("\t".join(line).encode("utf-8") + "\n")
+    def get_strings(self):
+        """
+        Finds the strings in the file.
+        """
+        
+        lines = []
+
+        filename = renpy.parser.elide_filename(self.filename)
+
+        for line, s in scan_strings(self.filename):
+
+            stl = renpy.game.script.translator.strings[None]
+
+            if s in stl.translations:
+                continue
+
+            stl.translations[s] = s
+            
+            if self.notags:
+                s = notags_filter(s)
+            
+            if self.escape:
+                s = quote_unicode(s)
+            
+            if self.tdf:
+                lines.append(["", "", s, filename, str(line)])
+            
+            else:
+                lines.append([s])
+        
+        return lines
 
 
 def dialogue_command():
@@ -1015,7 +1074,10 @@ def dialogue_command():
     """
 
     ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
-    ap.add_argument("--text", help="Apply rot13 while generating translations.", dest="text", action="store_true")
+    ap.add_argument("--text", help="Output the dialogue as plain text, instead of a tab-delimited file.", dest="text", action="store_true")
+    ap.add_argument("--strings", help="Output all translatable strings, not just dialogue.", dest="strings", action="store_true")
+    ap.add_argument("--notags", help="Strip text tags from the dialogue.", dest="notags", action="store_true")
+    ap.add_argument("--escape", help="Escape quotes and other special characters.", dest="escape", action="store_true")
     args = ap.parse_args()
 
     tdf = not args.text
@@ -1046,7 +1108,7 @@ def dialogue_command():
             continue
 
         filename = os.path.normpath(filename)
-        DialogueFile(filename, output, tdf=tdf)
+        DialogueFile(filename, output, tdf=tdf, strings=args.strings, notags=args.notags, escape=args.escape)
 
     return False
 
