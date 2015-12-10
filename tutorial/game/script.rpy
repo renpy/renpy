@@ -10,7 +10,7 @@ init python:
         ("tutorial_playing", _("User Experience"), "6.10.0"),
         ("tutorial_dialogue", _("Writing Dialogue"), "6.10.0"),
         ("tutorial_images", _("Adding Images"), "6.10.0"),
-        ("tutorial_transitions", _("Transitions"), "6.10.0"),
+        ("tutorial_transitions", _("Transitions"), "6.99.8"),
         ("tutorial_music", _("Music and Sound Effects"), "6.10.0"),
         ("tutorial_menus", _("In-Game Menus and Python"), "6.10.0"),
         ("tutorial_positions", _("Screen Positions"), "6.10.0"),
