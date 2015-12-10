@@ -352,6 +352,12 @@ init -1400:
 
     define irisout = CropMove(1.0, "irisout")
     define irisin = CropMove(1.0, "irisin")
+    
+    # Various uses of PushMove.
+    define pushright = PushMove(1.0, "pushright")
+    define pushleft = PushMove(1.0, "pushleft")
+    define pushup = PushMove(1.0, "pushup")
+    define pushdown = PushMove(1.0, "pushdown")
 
     # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
     define zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))

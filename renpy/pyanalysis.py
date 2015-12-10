@@ -59,7 +59,7 @@ pure_functions = {
     "Particles", "SnowBlossom", "Text", "ParameterizedText", "FontGroup",
     "Drag", "Alpha", "AlphaMask", "Position", "Pan", "Move", "Motion", "Revolve", "Zoom",
     "RotoZoom", "FactorZoom", "SizeZoom", "Fade", "Dissolve", "ImageDissolve",
-    "AlphaDissolve", "CropMove", "Pixellate", "OldMoveTransition",
+    "AlphaDissolve", "CropMove", "PushMove", "Pixellate", "OldMoveTransition",
     "MoveTransition", "MoveFactory", "MoveIn", "MoveOut", "ZoomInOut",
     "RevolveInOut", "MultipleTransition", "ComposeTransition", "Pause",
     "SubTransition", "ADVSpeaker", "ADVCharacter", "Speaker", "Character",
