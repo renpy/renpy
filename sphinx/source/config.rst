@@ -271,6 +271,23 @@ cleared.
     determines if Ren'Py should wait for voice to finish before
     auto-forward takes place.
 
+.. var:: config.default_music_vol = None
+
+    If not None, this sets the default volume for "music" audio channel. If
+    not None, this is a number between 0.0 and 1.0, and is interpreted as a
+    fraction of the mixer volume for the channel.
+
+.. var:: config.default_sfx_vol = None
+
+    If not None, this sets the default volume for "sound" audio channel. If
+    not None, this is a number between 0.0 and 1.0, and is interpreted as a
+    fraction of the mixer volume for the channel.
+
+.. var:: config.default_voice_vol = None
+
+    If not None, this sets the default volume for "voice" audio channel. If
+    not None, this is a number between 0.0 and 1.0, and is interpreted as a
+    fraction of the mixer volume for the channel.
 
 Occasionally Used
 -----------------
