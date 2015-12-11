@@ -661,6 +661,9 @@ if renpy.windows and renpy.windows <= (6, 3):
 else:
     windows_dpi_scale_head = 1.0
 
+# Should rollback_side be enabled?
+enable_rollback_side = True
+
 del renpy
 del os
 
