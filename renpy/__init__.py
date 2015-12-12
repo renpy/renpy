@@ -40,7 +40,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (6, 99, 8, vc_version)
+version_tuple = (6, 99, 9, vc_version)
 
 # The name of this version.
 version_name = "Here's to the crazy ones."
@@ -72,8 +72,44 @@ ios = False
 
 import platform
 
+def get_windows_version():
+    """
+    When called on windows, returns the windows version.
+    """
+
+    import ctypes
+
+    class OSVERSIONINFOEXW(ctypes.Structure):
+        _fields_ = [('dwOSVersionInfoSize', ctypes.c_ulong),
+                    ('dwMajorVersion', ctypes.c_ulong),
+                    ('dwMinorVersion', ctypes.c_ulong),
+                    ('dwBuildNumber', ctypes.c_ulong),
+                    ('dwPlatformId', ctypes.c_ulong),
+                    ('szCSDVersion', ctypes.c_wchar*128),
+                    ('wServicePackMajor', ctypes.c_ushort),
+                    ('wServicePackMinor', ctypes.c_ushort),
+                    ('wSuiteMask', ctypes.c_ushort),
+                    ('wProductType', ctypes.c_byte),
+                    ('wReserved', ctypes.c_byte)]
+
+    try:
+
+        os_version = OSVERSIONINFOEXW()
+        os_version.dwOSVersionInfoSize = ctypes.sizeof(os_version)
+        retcode = ctypes.windll.Ntdll.RtlGetVersion(ctypes.byref(os_version))
+
+        # Om failure, assume we have a newer version of windows
+        if retcode != 0:
+            return (10, 0)
+
+        return (os_version.dwMajorVersion, os_version.dwMinorVersion)
+
+    except:
+        return (10, 0)
+
+
 if platform.win32_ver()[0]:
-    windows = True
+    windows = get_windows_version()
 elif "RENPY_IOS" in os.environ:
     ios = True
 elif platform.mac_ver()[0]:

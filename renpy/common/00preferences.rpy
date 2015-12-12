@@ -144,6 +144,10 @@ init -1500 python:
          * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
          * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
+         * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
+         * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
+         * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -311,6 +315,16 @@ init -1500 python:
                     return SetField(_preferences, "emphasize_audio", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "emphasize_audio")
+
+            elif name == "rollback side":
+
+                if value in [ "left", "right", "disable" ]:
+                    if renpy.mobile:
+                        field = "mobile_rollback_side"
+                    else:
+                        field = "desktop_rollback_side"
+
+                    return SetField(_preferences, field, value)
 
             mixer_names = {
                 "music" : "music",

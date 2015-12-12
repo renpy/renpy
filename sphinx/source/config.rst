@@ -271,6 +271,23 @@ cleared.
     determines if Ren'Py should wait for voice to finish before
     auto-forward takes place.
 
+.. var:: config.default_music_volume = 1.0
+
+    The default volume of the music mixer, which is used for the music and
+    movie audio channels. This should be a number between 0.0 and 1.0,
+    with 1.0 being full volume.
+
+.. var:: config.default_sfx_volume = 1.0
+
+    The default volume of the sfx mixer, which is used for the sound
+    audio channel. This should be a number between 0.0 and 1.0,
+    with 1.0 being full volume.
+
+.. var:: config.default_voice_volume = 1.0
+
+    The default volume of the voice mixer, which is used for the voice
+    audio channel (And hence the voice statement, auto-voice, etc.).
+    This should be a number between 0.0 and 1.0, with 1.0 being full volume.
 
 Occasionally Used
 -----------------
@@ -672,6 +689,13 @@ Occasionally Used
     the image's tag is looked up in ths dictionary to find a transform
     or list of transforms to use.
 
+.. var:: config.tag_zorder = { }
+
+    A dictionary mapping image tag strings to zorders. When an image is
+    newly-shown without a zorder clause, the image's tag is looked up
+    in this dictionary to find a zorder to use. If no zorder is found,
+    0 is used.
+
 .. var:: config.thumbnail_height = 75
 
     The height of the thumbnails that are taken when the game is
@@ -1063,6 +1087,12 @@ Rarely or Internally Used
 
     When there are more than this many statements in the rollback log,
     Ren'Py will consider trimming the log.
+
+.. var:: config.rollback_side_size = .2
+
+	If the rollback side is enabled, the fraction of of the screen on the
+	rollback side that, when clicked or touched, causes a rollback to
+	occur.
 
 .. var:: config.say_allow_dismiss = None
 

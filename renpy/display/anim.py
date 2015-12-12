@@ -22,6 +22,9 @@
 # This file contains support for state-machine controlled animations.
 
 import renpy.display
+import renpy.game
+import renpy.easy
+
 import random
 
 class State(object):

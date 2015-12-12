@@ -117,7 +117,6 @@ def get_time():
     t = time.time()
     return time_base + (t - time_base) * time_mult
 
-
 def displayable_by_tag(layer, tag):
     """
     Get the displayable on the given layer with the given tag.
@@ -791,7 +790,7 @@ class SceneLists(renpy.object.Object):
                         zorder = sle.zorder
 
         if zorder is None:
-            zorder = 0
+            zorder = renpy.config.tag_zorder.get(tag, 0)
 
         for i, sle in enumerate(self.layers[layer]):
 
@@ -1279,6 +1278,11 @@ def get_safe_mode():
     except:
         return False
 
+
+# How long should we be in maximum framerate mode at the start of the game?
+initial_maximum_framerate = 0.0
+
+
 class Interface(object):
     """
     This represents the user interface that interacts with the user.
@@ -1500,6 +1504,9 @@ class Interface(object):
 
         renpy.display.log.write("DPI scale factor: %f", self.dpi_scale)
 
+        # A time until which we should draw at maximum framerate.
+        self.maximum_framerate_time = 0.0
+        self.maximum_framerate(initial_maximum_framerate)
 
     def setup_dpi_scaling(self):
 
@@ -2365,6 +2372,13 @@ class Interface(object):
         self.old_text_rect = self.text_rect
 
 
+    def maximum_framerate(self, t):
+        """
+        Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+        """
+
+        self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
+
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
@@ -2805,6 +2819,9 @@ class Interface(object):
                     video_frame_drawn = True
 
                 if renpy.display.render.process_redraws():
+                    needs_redraw = True
+
+                if self.maximum_framerate_time > get_time():
                     needs_redraw = True
 
                 # How many seconds until we timeout.

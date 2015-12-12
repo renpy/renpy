@@ -1420,6 +1420,7 @@ class RollbackLog(renpy.object.Object):
         renpy.game.log = self
 
         clean_stores()
+        renpy.translation.init_translation()
 
         for name, value in roots.iteritems():
 

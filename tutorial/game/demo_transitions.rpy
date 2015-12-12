@@ -63,6 +63,10 @@ label demo_transitions:
 
             call demo_cropmove_transitions from _call_demo_cropmove_transitions_1
 
+        "PushMove Transitions":
+
+            call demo_pushmove_transitions from _call_demo_pushmove_transitions_1
+
         "AlphaDissolve Transitions":
 
             call demo_alphadissolve
@@ -349,6 +353,34 @@ label demo_cropmove_transitions:
     e "... and irisin."
 
     e "It's enough to make you feel a bit dizzy."
+
+    return
+
+label demo_pushmove_transitions:
+
+    e "The PushMove transitions use the new scene to push the old one out. Let's take a look."
+
+    show bg whitehouse
+    hide eileen
+    with pushright
+
+    "There's pushright..."
+
+    show bg washington
+    with pushleft
+
+    "...pushleft..."
+
+    show bg whitehouse
+    with pushdown
+
+    "...pushdown..."
+
+    show bg washington
+    show eileen happy
+    with pushup
+
+    "... and pushup. And that's it the for the PushMove-based transitions."
 
     return
 

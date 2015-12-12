@@ -643,15 +643,26 @@ default_tag_layer = 'master'
 # A map from tag to the default transform that's used for that tag.
 tag_transform = { }
 
+# A map from the tag to the default zorder that's used for that tag.
+tag_zorder = { }
+
 # The width of lines logged with renpy.log.
 log_width = 78
+
+# The size of the rollback side, as a fraction of the screen.
+rollback_side_size = .2
 
 # If dpi_scale is less than this, make it 1.0.
 de_minimus_dpi_scale = 1.0
 
 # How big must dpi_scale be to deal with it on windows?
-windows_dpi_scale_head = 1.0
+if renpy.windows and renpy.windows <= (6, 3):
+    windows_dpi_scale_head = 1.3
+else:
+    windows_dpi_scale_head = 1.0
 
+# Should rollback_side be enabled?
+enable_rollback_side = True
 
 del renpy
 del os

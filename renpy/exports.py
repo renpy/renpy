@@ -3116,3 +3116,14 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
     if menu_clear:
         renpy.config.menu_clear_layers.append(layer) # @UndefinedVariable
 
+def maximum_framerate(t):
+    """
+    :doc: other
+
+    Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+    """
+
+    if renpy.display.interface is not None:
+        renpy.display.interface.maximum_framerate(t)
+    else:
+        renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)

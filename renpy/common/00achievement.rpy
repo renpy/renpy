@@ -125,6 +125,7 @@ init -1500 python in achievement:
 
     backends.append(PersistentBackend())
 
+    steam_maximum_framerate = 15
 
     class SteamBackend(Backend):
         """
@@ -138,6 +139,7 @@ init -1500 python in achievement:
             self.stats = { }
 
             steam.retrieve_stats()
+            renpy.maximum_framerate(steam_maximum_framerate)
 
         def register(self, name, steam=None, steam_stat=None, stat_max=None, stat_modulo=1, **kwargs):
             if steam is not None:
@@ -148,6 +150,7 @@ init -1500 python in achievement:
         def grant(self, name):
             name = self.names.get(name, name)
 
+            renpy.maximum_framerate(steam_maximum_framerate)
             steam.grant_achievement(name)
             steam.store_stats()
 
@@ -183,6 +186,8 @@ init -1500 python in achievement:
 
             if (current is not None) and (current >= completed):
                 return
+
+            renpy.maximum_framerate(steam_maximum_framerate)
 
             if completed >= stat_max:
                 steam.grant_achievement(name)
