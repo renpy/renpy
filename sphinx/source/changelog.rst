@@ -22,6 +22,9 @@ The new :var:`config.tag_transform` variable makes it possible to specify a
 default transform (or list of transforms) to use when a transform is not
 provided as part of a show or scene statement.
 
+The new :var:`config.tag_zorder` makes it possible to specify a default
+zorder that's used for a tag when no other zorder is used.
+
 Easing Functions
 ----------------
 
@@ -30,7 +33,7 @@ in ATL. These functions speed up and slow down interpolations (and in some
 cases, can cause interpolations to overshoot their targets), in order to
 provide more pleasing and natural motion.
 
-The new easing functions are documented int the :ref:`warpers` section.
+The new easing functions are documented in the :ref:`warpers` section.
 
 Side Images
 -----------
@@ -42,6 +45,12 @@ in the case where the character changes and the case where it stays the same.
 
 See the :ref:`side-images` section for complete documentation.
 
+PushMove Transitions
+--------------------
+
+A new type of transition - :func:`PushMove` - has been added to Ren'Py, along
+with the :var:`pushright` (or pushleft, pushtop, pushbottom)
+
 Other
 -----
 
@@ -52,6 +61,17 @@ to be smaller than in 6.99.7 (but the same size as 6.99.6 and before.)
 
 Ren'Py now supports HighDPI ("retina") displays on the Windows platform,
 displaying text at the native screen resolution.
+
+Ren'Py properly maximizes on most desktop platforms. (Everything Windows 7
+and below, which have a start orb that can overlap the Ren'Py window.)
+
+The new :func:`renpy.maximum_framerate` function increases the framerate
+Ren'Py draws at for a given period of time. Ren'Py's Steam support
+uses this to ensure the Steam overlay animates smoothly.
+
+It's now possible to use the :var:`config.default_music_volume`,
+:var:`config.default_sfx_volume`, and :var:`config.default_voice_volume`
+variables to set the default values of the various mixers.
 
 The new :var:`config.overlay_screens` variable takes a list of screens
 that are displayed whenever a pre-screens overlay would be displayed,
@@ -68,6 +88,8 @@ The hbox and vbox displayables now support the :propref:`xminimum` and
 
 The new :func:`PlayCharacterVoice` action makes it possible to play
 a sample of a character's voice at that character's voice volume level.
+
+The Extract Dialogue screen now includes a number of additional options.
 
 The Traditional Chinese translation has been updated.
 
