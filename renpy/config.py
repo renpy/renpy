@@ -662,7 +662,7 @@ else:
     windows_dpi_scale_head = 1.0
 
 # Should rollback_side be enabled?
-enable_rollback_side = True
+enable_rollback_side = False
 
 del renpy
 del os
