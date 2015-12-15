@@ -701,15 +701,15 @@ def periodic():
             if c.get_playing():
                 emphasized = True
 
+        if not renpy.game.preferences.emphasize_audio:
+            emphasized = False
+
         if emphasized and not old_emphasized:
             vol = renpy.config.emphasize_audio_volume
         elif not emphasized and old_emphasized:
             vol = 1.0
         else:
             vol = None
-
-        if not renpy.game.preferences.emphasize_audio:
-            emphasized = False
 
         old_emphasized = emphasized
 
