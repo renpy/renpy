@@ -1508,6 +1508,10 @@ class Interface(object):
         self.maximum_framerate_time = 0.0
         self.maximum_framerate(initial_maximum_framerate)
 
+        # True if this is the first interact.
+        self.start_interact = True
+
+
     def setup_dpi_scaling(self):
 
         if "RENPY_HIGHDPI" in os.environ:
@@ -2414,8 +2418,11 @@ class Interface(object):
 
             repeat = True
 
+            self.start_interact = True
+
             while repeat:
                 repeat, rv = self.interact_core(preloads=preloads, **kwargs)
+                self.start_interact = False
 
             return rv
 

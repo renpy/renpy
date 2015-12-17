@@ -3127,3 +3127,16 @@ def maximum_framerate(t):
         renpy.display.interface.maximum_framerate(t)
     else:
         renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)
+
+
+def is_start_interact():
+    """
+    :doc: other
+
+    Returns true if restart_interaction has not been called during the current
+    interaction. This can be used to determine if the interaction is just being
+    started, or has been restarted.
+    """
+
+    return renpy.display.interface.start_interact
+

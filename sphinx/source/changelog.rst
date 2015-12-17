@@ -65,6 +65,10 @@ displaying text at the native screen resolution.
 Ren'Py properly maximizes on most desktop platforms. (Everything Windows 7
 and below, which have a start orb that can overlap the Ren'Py window.)
 
+Added the :func:`renpy.is_start_interact`, which can be called in a
+per_interact method to determine if this is the first pass through an
+interaction (as opposed to a restarted interaction).
+
 The new :func:`renpy.maximum_framerate` function increases the framerate
 Ren'Py draws at for a given period of time. Ren'Py's Steam support
 uses this to ensure the Steam overlay animates smoothly.
