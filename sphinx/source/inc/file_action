@@ -32,7 +32,7 @@
         the file will not be loadable.
     
     `confirm`
-        If true, prompt if loading the file will end the game.
+        If true and not at the main menu, prompt for confirmation before loading the file.
     
     `page`
         The page that the file will be loaded from. If None, the
@@ -104,9 +104,12 @@
     be used to ensure that the screenshot is accurate, by taking
     a picture of the screen before a file save screen is shown.
 
-.. function:: QuickLoad()
+.. function:: QuickLoad(confirm=True)
     
     Performs a quick load.
+    
+    `confirm`
+        If true and not at the main menu, prompt for confirmation before loading the file.
 
 .. function:: QuickSave(message='Quick save complete.', newest=False)
     

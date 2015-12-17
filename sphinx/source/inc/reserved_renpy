@@ -102,6 +102,7 @@
 * :func:`PlayCharacterVoice`
 * Position
 * :func:`Preference`
+* :func:`PushMove`
 * :func:`Queue`
 * :func:`QuickLoad`
 * :func:`QuickSave`
@@ -235,6 +236,10 @@
 * :var:`pixellate`
 * predict_menu
 * predict_say
+* pushdown
+* pushleft
+* :var:`pushright`
+* pushup
 * python_dict
 * python_list
 * python_object
