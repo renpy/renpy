@@ -92,6 +92,7 @@ init -1500 python:
 
         fn = config.voice_filename_format.format(filename=filename)
         _voice.play = fn
+        _voice.tag = tag
 
 
     # Call this to specify that the currently playing voice file
