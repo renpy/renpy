@@ -92,6 +92,7 @@ init -1500 python:
 
         fn = config.voice_filename_format.format(filename=filename)
         _voice.play = fn
+        _voice.tag = tag
 
 
     # Call this to specify that the currently playing voice file
@@ -355,7 +356,6 @@ init -1500 python hide:
         _voice.tlid = vi.tlid
 
         volume = persistent._character_volume.get(_voice.tag, 1.0)
-        renpy.music.get_channel("voice").set_volume(volume)
 
         if (not volume) or (_voice.tag in persistent._voice_mute):
             renpy.sound.stop(channel="voice")
@@ -363,6 +363,7 @@ init -1500 python hide:
 
         elif _voice.play:
             if not config.skipping:
+                renpy.music.get_channel("voice").set_volume(volume)
                 renpy.sound.play(_voice.play, channel="voice")
 
             store._last_voice_play = _voice.play
@@ -373,6 +374,7 @@ init -1500 python hide:
 
         _voice.play = None
         _voice.sustain = False
+        _voice.tag = None
 
         if _preferences.voice_sustain:
             _voice.sustain = True
@@ -389,7 +391,9 @@ init -1500 python hide:
     config.afm_callback = voice_afm_callback
 
     def voice_tag_callback(voice_tag):
-        _voice.tag = voice_tag
+
+        if _voice.tag is None:
+            _voice.tag = voice_tag
 
     config.voice_tag_callback = voice_tag_callback
 
