@@ -22,11 +22,9 @@ with the same id. Ids are generated automatically by the screen
 language, but when doing things by hand, they must be manually
 specified.
 
-Warning: UI Functions are deprecated and not recommended::
+Warning: UI Functions are deprecated and not recommended.
 
-Here's an example python screen:
-
-::
+Here's an example python screen::
 
     init python:
         def say_screen(who, what, **kwargs):
@@ -53,7 +51,7 @@ screens.
 UI Functions
 ============
 
-With the advent of SL2, UI Functions are deprecated and not recommended::
+With the advent of SL2, UI Functions are deprecated and not recommended.
 
 The UI functions are python equivalents of the screen language
 statements. For each screen language statement, there is a ui function

@@ -31,7 +31,7 @@
     fails. If the product has been registered as consumable, the purchase
     is consumed before this call returns.
 
-.. function:: iap.register(product, identifier=None, amazon=None, google=None, ios=None, consumable=True)
+.. function:: iap.register(product, identifier=None, amazon=None, google=None, ios=None, consumable=False)
     
     Registers a product with the in-app purchase system.
     
