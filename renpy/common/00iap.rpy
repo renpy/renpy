@@ -295,7 +295,7 @@ init -1500 python in iap:
     # A map from product identifier to the product object.
     products = { }
 
-    def register(product, identifier=None, amazon=None, google=None, ios=None, consumable=True):
+    def register(product, identifier=None, amazon=None, google=None, ios=None, consumable=False):
         """
         :doc: iap
 
