@@ -70,6 +70,7 @@
 * :func:`PlayCharacterVoice`
 * Position
 * :func:`Preference`
+* :func:`PushMove`
 * :func:`Queue`
 * :func:`QuickLoad`
 * :func:`QuickSave`
@@ -180,6 +181,10 @@
 * ord
 * :var:`pixellate`
 * pow
+* pushdown
+* pushleft
+* :var:`pushright`
+* pushup
 * range
 * reduce
 * renpy.Keymap

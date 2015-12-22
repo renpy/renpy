@@ -267,3 +267,23 @@
         creates pixels about twice the size of those in the previous step,
         so a 5-step pixellation will create 32x32 pixels.
 
+.. function:: PushMove(time, mode="pushright")
+    
+    Returns a transition that works by taking the new scene and using it to
+    "push" the old scene off the screen. 
+    
+    `time`
+        The time the transition takes.
+    
+    `mode`
+        There are four possible modes: "pushright", "pushleft", "pushup",
+        and "pushdown", which push the old scene off the screen in the
+        direction indicated.
+    
+    ::
+    
+        define pushright = PushMove(1.0, "pushright")
+        define pushleft = PushMove(1.0, "pushleft")
+        define pushup = PushMove(1.0, "pushup")
+        define pushdown = PushMove(1.0, "pushdown")
+

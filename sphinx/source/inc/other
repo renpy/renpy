@@ -222,6 +222,12 @@
     player. If false, we check if the line has been seen in the current
     play-through.
 
+.. function:: renpy.is_start_interact()
+    
+    Returns true if restart_interaction has not been called during the current
+    interaction. This can be used to determine if the interaction is just being
+    started, or has been restarted.
+
 .. function:: renpy.load_module(name, **kwargs)
     
     This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py code
@@ -242,6 +248,10 @@
     
     `filename` is the name of the filename that statements in the string will
     appear to be from.
+
+.. function:: renpy.maximum_framerate(t)
+    
+    Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
 
 .. function:: renpy.munge(name, filename=None)
     
