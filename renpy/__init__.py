@@ -150,6 +150,7 @@ backup_blacklist = {
     "renpy.display.pgrender",
     "renpy.display.scale",
     "renpy.display.presplash",
+    "renpy.display.test",
     "renpy.text.ftfont",
     }
 
@@ -403,6 +404,7 @@ def import_all():
     import renpy.display.emulator
     import renpy.display.tts
     import renpy.display.gesture
+    import renpy.display.test
 
     import renpy.display.error
 

@@ -2946,6 +2946,7 @@ class Interface(object):
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()
+                    renpy.display.test.periodic()
                     continue
 
                 # Handle quit specially for now.
@@ -3049,6 +3050,7 @@ class Interface(object):
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
                 x, y = renpy.display.draw.mouse_event(ev)
+                x, y = renpy.display.test.get_mouse_pos(x, y)
 
                 ev, x, y = renpy.display.emulator.emulator(ev, x, y)
                 if ev is None:
