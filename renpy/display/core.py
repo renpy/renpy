@@ -2714,6 +2714,9 @@ class Interface(object):
         # Start sound.
         renpy.audio.audio.interact()
 
+        # Start test.
+        renpy.display.test.per_interact()
+
         # How long until we redraw.
         _redraw_in = 3600
 
