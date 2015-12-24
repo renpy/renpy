@@ -395,12 +395,14 @@ def display_say(
     after_rollback = renpy.game.after_rollback
     if after_rollback:
         slow = False
+        all_at_once = True
 
     # If we're committed to skipping this statement, disable slow.
     elif (renpy.config.skipping and
           (renpy.game.preferences.skip_unseen or
            renpy.game.context().seen_current(True))):
         slow = False
+        all_at_once = True
 
     # Figure out which pause we're on. (Or set the pause to None in
     # order to put us in all-at-once mode.)
