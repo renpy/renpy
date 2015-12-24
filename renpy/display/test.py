@@ -33,7 +33,75 @@ def get_mouse_pos(x, y):
 
     return
 
+
+class TestNode(object):
+    """
+    An AST node for a test script.
+    """
+
+    def start(self):
+        """
+        Called once when the node starts execution.
+
+        This is expected to return a state, or None to advance to the next
+        node.
+        """
+
+    def per_interact(self, state, t):
+        """
+        Called at the start or restart of an interaction.
+
+        `state`
+            The last state that was returned from this node.
+
+        `t`
+            The time since start was called.
+        """
+
+        return True
+
+    def periodic(self, state, t):
+        """
+        Called periodically over the course of each interaction.
+
+        `state`
+            The last state that was returned from this node.
+
+        `t`
+            The time since start was called.
+        """
+
+        return state
+
+    def ready(self):
+        """
+        Returns True if this node is ready to execute, or False otherwise.
+        """
+
+        return True
+
+class Click(object):
+
+    def __init__(self, target):
+        self.target = target
+
+
+    def per_interact(self, state, t):
+        """
+        Called once per interact,
+        """
+
+# The root node.
+node = None
+
+# The state of the root node.
+status = None
+
+# The time the root node started executing.
+start_time = None
+
 def periodic():
     """
     Called periodically by the test code to generate events, if desired.
     """
+
