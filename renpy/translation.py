@@ -471,6 +471,8 @@ def init_translation():
 
     renpy.store._init_language() # @UndefinedVariable
 
+old_language = "language never set"
+
 def change_language(language):
     """
     :doc: translation_functions
@@ -478,6 +480,8 @@ def change_language(language):
     Changes the current language to `language`, which can be a string or
     None to use the default language.
     """
+
+    global old_language
 
     renpy.game.preferences.language = language
 
@@ -498,12 +502,16 @@ def change_language(language):
     for i in renpy.config.change_language_callbacks:
         i()
 
-    # Reset various parts of the system. Most notably, this clears the image
-    # cache, letting us load translated images.
-    renpy.exports.free_memory()
+    if old_language != language:
 
-    # Rebuild the styles.
-    renpy.style.rebuild() # @UndefinedVariable
+        # Reset various parts of the system. Most notably, this clears the image
+        # cache, letting us load translated images.
+        renpy.exports.free_memory()
+
+        # Rebuild the styles.
+        renpy.style.rebuild() # @UndefinedVariable
+
+        old_language = language
 
     # Restart the interaction.
     renpy.exports.restart_interaction()
@@ -950,13 +958,13 @@ class DialogueFile(object):
         `tdf`
             If true, dialogue is extracted in tab-delimited format. If false,
             dialogue is extracted by itself.
-        
+
         `strings`
             If true, extract all translatable strings, not just dialogue.
-        
+
         `notags`
             If true, strip text tags from the extracted dialogue.
-        
+
         `escape`
             If true, escape special characters in the dialogue.
         """
@@ -983,7 +991,7 @@ class DialogueFile(object):
         """
         Writes the dialogue to the file.
         """
-        
+
         lines = []
 
         translator = renpy.game.script.translator
@@ -1003,10 +1011,10 @@ class DialogueFile(object):
                         who = n.who
 
                     what = n.what
-                    
+
                     if self.notags:
                         what = notags_filter(what)
-                    
+
                     if self.escape:
                         what = quote_unicode(what)
 
@@ -1022,15 +1030,15 @@ class DialogueFile(object):
 
                     else:
                         lines.append([what])
-        
+
         if self.strings:
             lines.extend(self.get_strings())
-            
+
             # If we're tab-delimited, we have line number info, which means we
             # can sort the list so everything's in order, for menus and stuff.
             if self.tdf:
                 lines.sort(key = lambda x: int(x[4]))
-        
+
         for line in lines:
             self.f.write("\t".join(line).encode("utf-8") + "\n")
 
@@ -1038,7 +1046,7 @@ class DialogueFile(object):
         """
         Finds the strings in the file.
         """
-        
+
         lines = []
 
         filename = renpy.parser.elide_filename(self.filename)
@@ -1051,19 +1059,19 @@ class DialogueFile(object):
                 continue
 
             stl.translations[s] = s
-            
+
             if self.notags:
                 s = notags_filter(s)
-            
+
             if self.escape:
                 s = quote_unicode(s)
-            
+
             if self.tdf:
                 lines.append(["", "", s, filename, str(line)])
-            
+
             else:
                 lines.append([s])
-        
+
         return lines
 
 
