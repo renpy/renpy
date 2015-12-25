@@ -39,8 +39,8 @@ Side Images
 -----------
 
 New-style side image functionality (using images with the side tag) has been
-overhauled. It's now possible to apply an ATL transform, and hence a t
-ransition, whenever the side image changes. Different transforms can be used
+overhauled. It's now possible to apply an ATL transform, and hence a transition,
+whenever the side image changes. Different transforms can be used
 in the case where the character changes and the case where it stays the same.
 
 See the :ref:`side-images` section for complete documentation.
