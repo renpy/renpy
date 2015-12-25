@@ -770,7 +770,7 @@ class SLDisplayable(SLBlock):
                 # the one that gets the scope, and gets children added to it.)
                 main = old_main
 
-                if widget_id:
+                if widget_id and not ctx.unlikely:
                     screen.widgets[widget_id] = main
 
                 if self.scope and main._uses_scope:
@@ -806,7 +806,7 @@ class SLDisplayable(SLBlock):
 
                 main._location = self.location
 
-                if widget_id:
+                if widget_id and not ctx.unlikely:
                     screen.widgets[widget_id] = main
                 # End child creation code.
 
