@@ -62,13 +62,13 @@ def main():
 
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) #@UndefinedVariable
 
-    s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", match_version ])
+    s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
     parts = s.strip().split("-")
 
-    if len(parts) <= 2:
+    if len(parts) <= 3:
         vc_version = 0
     else:
-        vc_version = int(parts[1])
+        vc_version = int(parts[2])
 
     if parts[-1] == "dirty":
         vc_version += 1
