@@ -182,15 +182,21 @@ init -1500 python:
 
          `confirm`
               If true, prompts the user if he wants to quit, rather
-              than quitting directly.
+              than quitting directly. If None, asks if and only if
+              the user is not at the main menu.
          """
 
-        def __init__(self, confirm=True):
+        def __init__(self, confirm=None):
             self.confirm = confirm
 
         def __call__(self):
 
-            if self.confirm:
+            confirm = self.confirm
+
+            if confirm is None:
+                confirm = not main_menu
+
+            if confirm:
                 if config.autosave_on_quit:
                     renpy.force_autosave()
 
