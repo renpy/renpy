@@ -97,22 +97,9 @@ class TestNode(object):
         node.
         """
 
-    def per_interact(self, state, t):
+    def execute(self, state, t):
         """
-        Called at the start or restart of an interaction.
-
-        `state`
-            The last state that was returned from this node.
-
-        `t`
-            The time since start was called.
-        """
-
-        return True
-
-    def periodic(self, state, t):
-        """
-        Called periodically over the course of each interaction.
+        Called once each time the screen is drawn.
 
         `state`
             The last state that was returned from this node.
@@ -138,16 +125,30 @@ class Click(object):
     def start(self):
         return 0
 
-    def per_interact(self, state, t):
-        return t
+    def execute(self, state, t):
+        print t
+        if t < 1.0:
+            return True
+        else:
+            click_mouse(1, 100, 100)
+            return None
 
-    def periodic(self, state, t):
+class Block(object):
+    def __init__(self, block):
+        self.block = block
 
-        if t - state < .5:
-            return state
+    def start(self):
+        return (0, None, None)
 
-        click_mouse(1, 100, 100)
-        return t
+    def per_interact(self,  state, t):
+        i, start, s = state
+
+        if s is None:
+            s = self.block[i].start()
+            start = t
+
+        if
+
 
 # The root node.
 node = None # Click()
@@ -158,7 +159,7 @@ status = None
 # The time the root node started executing.
 start_time = None
 
-def periodic(per_interact=False):
+def execute():
     """
     Called periodically by the test code to generate events, if desired.
     """
@@ -180,19 +181,8 @@ def periodic(per_interact=False):
         node = None
         return
 
-    if per_interact:
-        status = node.per_interact(status, now - start_time)
-
-        if status is None:
-            node = None
-            return
-
-    status = node.periodic(status, now - start_time)
+    status = node.execute(status, now - start_time)
 
     if status is None:
         node = None
         return
-
-def per_interact():
-    periodic(True)
-

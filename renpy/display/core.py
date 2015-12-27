@@ -2714,9 +2714,6 @@ class Interface(object):
         # Start sound.
         renpy.audio.audio.interact()
 
-        # Start test.
-        renpy.display.test.per_interact()
-
         # How long until we redraw.
         _redraw_in = 3600
 
@@ -2808,6 +2805,8 @@ class Interface(object):
                     old_redraw_time = None
 
                     self.update_text_rect()
+
+                    renpy.display.test.execute()
 
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
@@ -2949,7 +2948,6 @@ class Interface(object):
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()
-                    renpy.display.test.periodic()
                     continue
 
                 # Handle quit specially for now.
