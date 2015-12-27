@@ -140,18 +140,27 @@ class Block(object):
     def start(self):
         return (0, None, None)
 
-    def per_interact(self,  state, t):
+    def execute(self,  state, t):
         i, start, s = state
+
+        if i >= len(self.block):
+            return None
 
         if s is None:
             s = self.block[i].start()
             start = t
 
-        if
+        if s is not None:
+            s = self.block[i].execute(s, t - start)
+
+        if s is None:
+            i += 1
+
+        return i, start, s
 
 
 # The root node.
-node = None # Click()
+node = None # Block([ Click(), Click() ])
 
 # The state of the root node.
 status = None
