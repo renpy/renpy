@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import pygame_sdl2
 import renpy.display
 import pygame
 
@@ -123,15 +124,14 @@ class Click(object):
 #         self.target = target
 
     def start(self):
-        return 0
+        return True
 
     def execute(self, state, t):
-        print t
-        if t < 1.0:
-            return True
-        else:
-            click_mouse(1, 100, 100)
-            return None
+        if renpy.display.interface.trans_pause:
+            return state
+
+        click_mouse(1, 100, 100)
+        return None
 
 class Block(object):
     def __init__(self, block):
@@ -179,6 +179,14 @@ def execute():
 
     if node is None:
         return
+
+    if renpy.display.interface.suppress_underlay:
+        return
+
+    # Make sure there are no test events in the event queue.
+    for e in pygame_sdl2.event.copy_event_queue():
+        if getattr(e, "test", False):
+            return
 
     now = renpy.display.core.get_time()
 

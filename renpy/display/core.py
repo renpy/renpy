@@ -2467,6 +2467,12 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
+
+        # Store the various parameters.
+        self.suppress_overlay = suppress_overlay
+        self.suppress_underlay = suppress_underlay
+        self.trans_pause = trans_pause
+
         # Show default screens.
         renpy.display.screen.show_overlay_screens(suppress_overlay)
 
