@@ -90,6 +90,7 @@ text_property_names = [
         "xminimum",
         "yminimum",
         "hinting",
+        "adjust_spacing",
         ]
 
 text_properties = [ Style(i) for i in text_property_names ]
