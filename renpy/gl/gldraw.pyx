@@ -881,7 +881,8 @@ cdef class GLDraw:
 
             if isinstance(what, gltexture.TextureGrid):
 
-                if (not subpixel) and (reverse == IDENTITY):
+                if (not subpixel) and reverse.is_unit_aligned():
+                    print reverse
                     xo = round(xo)
                     yo = round(yo)
 

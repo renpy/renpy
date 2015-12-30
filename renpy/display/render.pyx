@@ -335,8 +335,27 @@ cdef class Matrix2D:
             abs(self.ydx - other.ydx) +
             abs(self.ydy - other.ydy)) < .00001
 
+    cpdef bint is_unit_aligned(Matrix2D self):
+        """
+        Returns true if exactly one of abs(xdx) or abs(xdy) is 1.0, and
+        the same for xdy and ydy. This is intended to report if a matrix
+        is aligned to the axes.
+
+        (It will also return true for something like xdx=1, xdy=0, ydx=1, xdy=1,
+        but that should never happen.)
+        """
+
+        cdef bint unit_xdx = .99999 < abs(self.xdx) < 1.00001
+        cdef bint unit_xdy = .99999 < abs(self.xdy) < 1.00001
+        cdef bint unit_ydx = .99999 < abs(self.ydx) < 1.00001
+        cdef bint unit_ydy = .99999 < abs(self.ydy) < 1.00001
+
+        return (unit_xdx ^ unit_xdy) and (unit_ydx ^ unit_ydy)
+
 
 IDENTITY = Matrix2D(1, 0, 0, 1)
+
+
 
 def take_focuses(focuses):
     """
