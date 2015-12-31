@@ -166,7 +166,7 @@ class Block(object):
 
 
 # The root node.
-node = Block([ Click(), Click(), Click("Yes.") ])
+node = None # Block([ Click(), Click(), Click("Yes.") ])
 
 # The state of the root node.
 status = None
