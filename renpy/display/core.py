@@ -2812,7 +2812,7 @@ class Interface(object):
 
                     self.update_text_rect()
 
-                    renpy.display.test.execute()
+                    renpy.test.testexecution.execute()
 
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
@@ -3057,7 +3057,7 @@ class Interface(object):
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
                 x, y = renpy.display.draw.mouse_event(ev)
-                x, y = renpy.display.test.get_mouse_pos(x, y)
+                x, y = renpy.test.testmouse.get_mouse_pos(x, y)
 
                 ev, x, y = renpy.display.emulator.emulator(ev, x, y)
                 if ev is None:

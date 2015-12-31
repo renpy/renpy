@@ -404,7 +404,6 @@ def import_all():
     import renpy.display.emulator
     import renpy.display.tts
     import renpy.display.gesture
-    import renpy.display.test
 
     import renpy.display.error
 
@@ -441,6 +440,12 @@ def import_all():
     import renpy.config # depends on lots. @UnresolvedImport
     import renpy.minstore # depends on lots. @UnresolvedImport
     import renpy.defaultstore  # depends on everything. @UnresolvedImport
+
+    import renpy.test
+    import renpy.test.testmouse
+    import renpy.test.testast
+    import renpy.test.testparser
+    import renpy.test.testexecution
 
     import renpy.main
 

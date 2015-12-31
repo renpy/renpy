@@ -19,71 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pygame_sdl2
 import renpy.display
-import pygame
-
-# The overridden positioning of the mouse.
-mouse_pos = None
-
-# The mouse buttons.
-mouse_buttons = [ 0, 0, 0 ]
-
-def get_mouse_pos(x, y):
-    """
-    Called to get the overridden mouse position.
-    """
-
-    if mouse_pos is None:
-        return x, y
-
-    return mouse_pos
-
-def post(event_type, **kwargs):
-    pygame.event.post(pygame.event.Event(event_type, test=True, **kwargs))
-
-def move_mouse(x, y):
-    """
-    Moves the mouse to x, y.
-    """
-
-    global mouse_pos
-
-    pos = (x, y)
-
-    if mouse_pos != pos:
-        if mouse_pos:
-            rel = (pos[0] - mouse_pos[0], pos[1] - mouse_pos[1])
-        else:
-            rel = (0, 0)
-
-        post(pygame.MOUSEMOTION, pos=pos, rel=rel, buttons=tuple(mouse_buttons))
-
-    mouse_pos = pos
-
-def press_mouse(button):
-    """
-    Presses mouse button `button`.
-    """
-
-    post(pygame.MOUSEBUTTONDOWN, pos=mouse_pos, button=button)
-    mouse_buttons[button - 1] = 1
-
-def release_mouse(button):
-    """
-    Releases mouse button `button`.
-    """
-    post(pygame.MOUSEBUTTONUP, pos=mouse_pos, button=button)
-    mouse_buttons[button - 1] = 0
-
-def click_mouse(button, x, y):
-    """
-    Clicks the mouse at x, y
-    """
-
-    move_mouse(x, y)
-    press_mouse(button)
-    release_mouse(button)
+from renpy.test.testmouse import click_mouse
 
 class TestNode(object):
     """
@@ -163,49 +100,3 @@ class Block(object):
             i += 1
 
         return i, start, s
-
-
-# The root node.
-node = None # Block([ Click(), Click(), Click("Yes.") ])
-
-# The state of the root node.
-status = None
-
-# The time the root node started executing.
-start_time = None
-
-def execute():
-    """
-    Called periodically by the test code to generate events, if desired.
-    """
-
-    global node
-    global status
-    global start_time
-
-    if node is None:
-        return
-
-    if renpy.display.interface.suppress_underlay:
-        return
-
-    # Make sure there are no test events in the event queue.
-    for e in pygame_sdl2.event.copy_event_queue():
-        if getattr(e, "test", False):
-            return
-
-    now = renpy.display.core.get_time()
-
-    if status is None:
-        status = node.start()
-        start_time = now
-
-    if status is None:
-        node = None
-        return
-
-    status = node.execute(status, now - start_time)
-
-    if status is None:
-        node = None
-        return

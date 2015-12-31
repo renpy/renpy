@@ -342,8 +342,8 @@ def matching_focus_coordinates(pattern):
         return pattern in t
 
     # Avoid moving the mouse when unnecessary.
-    if renpy.display.test.mouse_pos is not None:
-        x, y = renpy.display.test.mouse_pos
+    if renpy.test.testmouse.mouse_pos is not None:
+        x, y = renpy.test.testmouse.mouse_pos
     else:
         x = random.randrange(renpy.config.screen_width)
         y = random.randrange(renpy.config.screen_height)
