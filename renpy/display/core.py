@@ -551,7 +551,7 @@ class Displayable(renpy.object.Object):
         """
         Returns the self-voicing text of this displayable and all of its
         children that cannot take focus. If the displayable can take focus,
-        retuns the empty string.
+        returns the empty string.
         """
 
         return self._tts_common()

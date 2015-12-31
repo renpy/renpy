@@ -120,8 +120,8 @@ class TestNode(object):
 
 class Click(object):
 
-#     def __init__(self, target):
-#         self.target = target
+    def __init__(self, pattern=None):
+        self.pattern = pattern
 
     def start(self):
         return True
@@ -130,8 +130,14 @@ class Click(object):
         if renpy.display.interface.trans_pause:
             return state
 
-        click_mouse(1, 100, 100)
+        x, y = renpy.display.focus.matching_focus_coordinates(self.pattern)
+
+        if x is None:
+            return state
+
+        click_mouse(1, x, y)
         return None
+
 
 class Block(object):
     def __init__(self, block):
@@ -160,7 +166,7 @@ class Block(object):
 
 
 # The root node.
-node = None # Block([ Click(), Click() ])
+node = Block([ Click(), Click(), Click("Yes.") ])
 
 # The state of the root node.
 status = None

@@ -23,6 +23,7 @@
 
 import pygame_sdl2 as pygame
 import renpy.display
+import random
 
 class Focus(object):
 
@@ -326,6 +327,77 @@ def mouse_handler(ev, x, y, default=False):
 
     return change_focus(new_focus, default=default)
 
+def matching_focus_coordinates(pattern):
+    """
+    Trues to find the focus with the shortest alt text containing `pattern`.
+    If found, returns a random coordinate within that displayable.
+
+    If `pattern` is None, returns a random coordinate that will trigger the
+    default focus.
+
+    If `pattern` could not be found, returns None, None.
+    """
+
+    def match(t):
+        return pattern in t
+
+    # Avoid moving the mouse when unnecessary.
+    if renpy.display.test.mouse_pos is not None:
+        x, y = renpy.display.test.mouse_pos
+    else:
+        x = random.randrange(renpy.config.screen_width)
+        y = random.randrange(renpy.config.screen_height)
+
+    # If alt is None, find coordinates that focus the default_focus.
+    if pattern is None:
+
+        if default_focus is None:
+            return None, None
+
+        for _i in range(1000):
+
+            if renpy.display.render.focus_at_point(x, y) is None:
+                return x, y
+
+            x = random.randrange(renpy.config.screen_width)
+            y = random.randrange(renpy.config.screen_height)
+
+        else:
+            raise Exception("Could not locate the default displayable.")
+
+    # A list of alt_text_length, focus pairs.
+    matching = [ ]
+
+    for f in focus_list:
+
+        if f.x is None:
+            continue
+
+        alt = f.widget._tts_all()
+
+        if match(alt):
+            matching.append((len(alt), f))
+
+    if not matching:
+        return None, None
+
+    # This gets the matching displayable with the shortest alt text, which
+    # is likely what we want.
+    matching.sort()
+    f = matching[0][1]
+
+    for _i in range(100):
+
+        nf = renpy.display.render.focus_at_point(x, y)
+
+        if (nf is not None) and (nf.widget == f.widget) and (nf.arg == f.arg):
+            return x, y
+
+        x = random.randrange(f.x, f.x + f.w)
+        y = random.randrange(f.y, f.y + f.h)
+
+    else:
+        raise Exception("Could not locate the displayable.")
 
 # This focuses an extreme widget, which is one of the widgets that's
 # at an edge. To do this, we multiply the x, y, width, and height by
