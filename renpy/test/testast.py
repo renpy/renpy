@@ -80,6 +80,23 @@ class Click(Node):
         return None
 
 
+class Action(Node):
+
+    def __init__(self, loc, expr):
+        Node.__init__(self, loc)
+        self.expr = expr
+
+    def start(self):
+        renpy.test.testexecution.action = renpy.python.py_eval(self.expr)
+        return True
+
+    def execute(self, state, t):
+        if renpy.test.testexecution.action:
+            return True
+        else:
+            return None
+
+
 class Block(Node):
 
     def __init__(self, loc, block):

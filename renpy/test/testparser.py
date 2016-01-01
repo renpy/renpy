@@ -21,20 +21,32 @@
 
 import renpy.test.testast as testast
 
-def parse_click(l, loc):
-    if l.keyword("click"):
-        target = None
+
+def parse_click(l, loc, target):
+    return testast.Click(loc, target)
+
+
+def parse_clause(l, loc):
+    if l.keyword("run"):
+
+        expr = l.require(l.simple_expression)
+        return testast.Action(loc, expr)
+
+    elif l.keyword("click"):
+        return parse_click(l, loc, None)
+
     else:
         target = l.string()
-        if target is None:
-            l.error("Expected a testcase statement.")
+        if target:
+            return parse_click(l, loc, target)
 
+    l.error("Expected a test language statement or clause.")
     return testast.Click(loc, target)
 
 
 def parse_statement(l, loc):
 
-    rv = parse_click(l, loc)
+    rv = parse_clause(l, loc)
 
     return rv
 

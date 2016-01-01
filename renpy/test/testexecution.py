@@ -34,6 +34,9 @@ status = None
 # The time the root node started executing.
 start_time = None
 
+# An action to run before executing another command.
+action = None
+
 def execute():
     """
     Called periodically by the test code to generate events, if desired.
@@ -42,6 +45,7 @@ def execute():
     global node
     global status
     global start_time
+    global action
 
     if node is None:
         return
@@ -53,6 +57,11 @@ def execute():
     for e in pygame_sdl2.event.copy_event_queue():
         if getattr(e, "test", False):
             return
+
+    if action:
+        old_action = action
+        action = None
+        renpy.display.behavior.run(old_action)
 
     now = renpy.display.core.get_time()
 
