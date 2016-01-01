@@ -2184,3 +2184,24 @@ class Style(Node):
                 properties[name] = renpy.python.py_eval(expr)
 
             s.add_properties(properties)
+
+
+class Testcase(Node):
+
+    __slots__ = [
+        'label',
+        'test',
+        ]
+
+    def __init__(self, loc, label, test):
+        super(Testcase, self).__init__(loc)
+
+        self.label = label
+        self.test = test
+
+    def diff_info(self):
+        return (Testcase, self.label)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("testcase")

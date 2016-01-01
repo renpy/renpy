@@ -2014,6 +2014,25 @@ def screen_statement(l, loc):
         l.error("Bad screen language version.")
 
 
+@statement("testcase")
+def testcase(l, loc):
+    name = l.require(l.name)
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('testcase statement')
+
+    test = renpy.test.testparser.parse(l.subblock_lexer())
+
+    l.advance()
+
+    rv = ast.Testcase(loc, name, test)
+
+    if not l.init:
+        rv = ast.Init(loc, [ rv ], 500)
+
+    return rv
+
+
 def translate_strings(init_loc, language, l):
     l.require(':')
     l.expect_eol()

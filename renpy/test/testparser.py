@@ -19,3 +19,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+def parse(l):
+    """
+    Parses a named block of testcase statements.
+    """
+
+    while l.advance():
+        print "TP", l.rest()
