@@ -272,19 +272,26 @@ def predict_action(var):
         for i in var:
             predict_action(i)
 
-def run(var, *args, **kwargs):
+def run(action, *args, **kwargs):
     """
-    Runs a variable. This is done by calling all the functions, and
-    iterating over the lists and tuples.
+    :doc: run
+    :name: renpy.run
+    :args: (action)
+
+    Run an action or list of actions. A single action is called with no
+    arguments, a list of actions is run in order using this function, and
+    None is ignored.
+
+    Returns the result of the first action to return a value.
     """
 
-    if var is None:
+    if action is None:
         return None
 
-    if isinstance(var, (list, tuple)):
+    if isinstance(action, (list, tuple)):
         rv = None
 
-        for i in var:
+        for i in action:
             new_rv = run(i, *args, **kwargs)
 
             if new_rv is not None:
@@ -292,7 +299,7 @@ def run(var, *args, **kwargs):
 
         return rv
 
-    return var(*args, **kwargs)
+    return action(*args, **kwargs)
 
 def run_unhovered(var):
     """

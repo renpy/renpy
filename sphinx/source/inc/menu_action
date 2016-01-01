@@ -9,13 +9,14 @@
          return to the main menu, rather than returning
          directly.
 
-.. function:: Quit(confirm=True)
+.. function:: Quit(confirm=None)
     
     Quits the game.
     
     `confirm`
          If true, prompts the user if he wants to quit, rather
-         than quitting directly.
+         than quitting directly. If None, asks if and only if
+         the user is not at the main menu.
 
 .. function:: ShowMenu(screen=None, *args, **kwargs)
     

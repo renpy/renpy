@@ -189,6 +189,10 @@ sensitive, and when it is selected.
        When the action is used as the `hovered` parameter to a button (or
        similar object), this method is called when the object loses focus.
 
+To run an action from python, use renpy.run.
+
+.. include:: inc/run
+
 BarValues
 =========
 

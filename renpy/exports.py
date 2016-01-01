@@ -50,7 +50,7 @@ from renpy.text.extras import ParameterizedText
 from renpy.text.font import register_sfont, register_mudgefont, register_bmfont
 from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
-from renpy.display.behavior import run as run_action, run_unhovered, run_periodic
+from renpy.display.behavior import run, run as run_action, run_unhovered, run_periodic
 from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
 
 from renpy.display.minigame import Minigame
@@ -123,7 +123,7 @@ def public_api():
     ParameterizedText
     register_sfont, register_mudgefont, register_bmfont
     Keymap
-    run_action, run_unhovered, run_periodic, map_event
+    run, run_action, run_unhovered, run_periodic, map_event
     Minigame
     curry, partial
     play
