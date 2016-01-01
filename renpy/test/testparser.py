@@ -19,10 +19,36 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-def parse(l):
+import renpy.test.testast as testast
+
+def parse_click(l, loc):
+    if l.keyword("click"):
+        target = None
+    else:
+        target = l.string()
+        if target is None:
+            l.error("Expected a testcase statement.")
+
+    return testast.Click(loc, target)
+
+
+def parse_statement(l, loc):
+
+    rv = parse_click(l, loc)
+
+    return rv
+
+def parse_block(l, loc):
     """
     Parses a named block of testcase statements.
     """
 
+    block = [ ]
+
     while l.advance():
-        print "TP", l.rest()
+        stmt = parse_statement(l, l.get_location())
+        block.append(stmt)
+
+        l.expect_eol()
+
+    return testast.Block(loc, block)

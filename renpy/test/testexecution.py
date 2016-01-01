@@ -22,12 +22,11 @@
 import renpy.display
 import pygame_sdl2
 
-from renpy.test.testast import Block, Click
+# A map from the name of a testcase to the testcase.
+testcases = { }
 
 # The root node.
-# node = None
-node = Block([ Click(), Click(), Click("Yes.") ])
-
+node = None
 
 # The state of the root node.
 status = None
@@ -70,3 +69,25 @@ def execute():
     if status is None:
         node = None
         return
+
+
+def test_command():
+    """
+    The dialogue command. This updates dialogue.txt, a file giving all the dialogue
+    in the game.
+    """
+
+    ap = renpy.arguments.ArgumentParser(description="Runs a testcase.")
+    ap.add_argument("testcase", help="The name of a testcase to run.", nargs='?', default="default")
+
+    args = ap.parse_args()
+
+    if args.testcase not in testcases:
+        raise Exception("Testcase {} was not found.".format(args.testcase))
+
+    global node
+    node = testcases[args.testcase]
+
+    return True
+
+renpy.arguments.register_command("test", test_command)

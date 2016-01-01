@@ -331,7 +331,7 @@ class Node(object):
         logical line on which this Node node starts.
         """
 
-        self.filename, self.linenumber  = loc
+        self.filename, self.linenumber = loc
         self.name = None
         self.next = None
 
@@ -2205,3 +2205,5 @@ class Testcase(Node):
     def execute(self):
         next_node(self.next)
         statement_name("testcase")
+
+        renpy.test.testexecution.testcases[self.label] = self.test

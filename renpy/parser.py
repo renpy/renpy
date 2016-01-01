@@ -2015,13 +2015,13 @@ def screen_statement(l, loc):
 
 
 @statement("testcase")
-def testcase(l, loc):
+def testcase_statement(l, loc):
     name = l.require(l.name)
     l.require(':')
     l.expect_eol()
     l.expect_block('testcase statement')
 
-    test = renpy.test.testparser.parse(l.subblock_lexer())
+    test = renpy.test.testparser.parse_block(l.subblock_lexer(), loc)
 
     l.advance()
 

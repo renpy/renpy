@@ -22,10 +22,13 @@
 import renpy.display
 from renpy.test.testmouse import click_mouse
 
-class TestNode(object):
+class Node(object):
     """
     An AST node for a test script.
     """
+
+    def __init__(self, loc):
+        self.filename, self.linenumber = loc
 
     def start(self):
         """
@@ -55,9 +58,10 @@ class TestNode(object):
 
         return True
 
-class Click(object):
+class Click(Node):
 
-    def __init__(self, pattern=None):
+    def __init__(self, loc, pattern=None):
+        Node.__init__(self, loc)
         self.pattern = pattern
 
     def start(self):
@@ -76,8 +80,10 @@ class Click(object):
         return None
 
 
-class Block(object):
-    def __init__(self, block):
+class Block(Node):
+
+    def __init__(self, loc, block):
+        Node.__init__(self, loc)
         self.block = block
 
     def start(self):
