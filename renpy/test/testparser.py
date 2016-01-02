@@ -48,6 +48,10 @@ def parse_statement(l, loc):
 
     rv = parse_clause(l, loc)
 
+    if l.keyword("until"):
+        right = parse_clause(l, loc)
+        rv = testast.Until(rv, right)
+
     return rv
 
 def parse_block(l, loc):

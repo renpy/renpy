@@ -79,6 +79,14 @@ class Click(Node):
         click_mouse(1, x, y)
         return None
 
+    def ready(self):
+
+        x, y = renpy.display.focus.matching_focus_coordinates(self.pattern)
+
+        if x is not None:
+            return True
+        else:
+            return False
 
 class Action(Node):
 
@@ -96,6 +104,9 @@ class Action(Node):
         else:
             return None
 
+    def ready(self):
+        action = renpy.python.py_eval(self.expr)
+        return renpy.display.behavior.is_sensitive(action)
 
 class Block(Node):
 
@@ -106,7 +117,7 @@ class Block(Node):
     def start(self):
         return (0, None, None)
 
-    def execute(self,  state, t):
+    def execute(self, state, t):
         i, start, s = state
 
         if i >= len(self.block):
@@ -123,3 +134,37 @@ class Block(Node):
             i += 1
 
         return i, start, s
+
+class Until(Node):
+    """
+    Executes `left` repeatedly until `right` is ready, then executes `right`
+    once before quitting.
+    """
+
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+
+    def start(self):
+        return (None, None, 0)
+
+    def execute(self, state, t):
+        child, child_state, start = state
+
+        if child_state is None:
+            if self.right.ready():
+                child = self.right
+            else:
+                child = self.left
+
+            child_state = child.start()
+            start = t
+
+        if child_state is not None:
+            child_state = child.execute(child_state, t - start)
+
+        if (child_state is None) and (child is self.right):
+            return None
+
+        return child, child_state, start
