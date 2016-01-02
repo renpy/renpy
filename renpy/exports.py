@@ -3121,12 +3121,17 @@ def maximum_framerate(t):
     :doc: other
 
     Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+    If `t` is None, cancels the maximum framerate request.
     """
 
     if renpy.display.interface is not None:
         renpy.display.interface.maximum_framerate(t)
     else:
-        renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)
+        if t is None:
+            renpy.display.core.initial_maximum_framerate = 0
+        else:
+            renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)
+
 
 
 def is_start_interact():

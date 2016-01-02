@@ -22,6 +22,10 @@
 import renpy.display
 from renpy.test.testmouse import click_mouse
 
+# This is an object that is used to configure test settings.
+_test = object()
+
+
 class Node(object):
     """
     An AST node for a test script.

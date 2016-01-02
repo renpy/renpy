@@ -2381,7 +2381,10 @@ class Interface(object):
         Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
         """
 
-        self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
+        if t is None:
+            self.maximum_framerate_time = 0
+        else:
+            self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
 
     def interact(self, clear=True, suppress_window=False, **kwargs):
         """
