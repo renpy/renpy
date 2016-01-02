@@ -32,6 +32,11 @@ def parse_clause(l, loc):
         expr = l.require(l.simple_expression)
         return testast.Action(loc, expr)
 
+    elif l.keyword("pause"):
+
+        expr = l.require(l.simple_expression)
+        return testast.Pause(loc, expr)
+
     elif l.keyword("click"):
         return parse_click(l, loc, None)
 
