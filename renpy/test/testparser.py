@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.test.testast as testast
+import renpy
 
 
 def parse_click(l, loc, target):
@@ -48,8 +49,33 @@ def parse_clause(l, loc):
     l.error("Expected a test language statement or clause.")
     return testast.Click(loc, target)
 
-
 def parse_statement(l, loc):
+
+    if l.keyword('python'):
+
+        l.require(':')
+
+        l.expect_eol()
+        l.expect_block("python block")
+
+        source = l.python_block()
+
+        code = renpy.ast.PyCode(source, loc)
+        return testast.Python(loc, code)
+
+    # Single-line statements only below here.
+
+    l.expect_noblock('statement')
+
+    if l.match(r'\$'):
+
+        source = l.require(l.rest)
+
+        l.expect_eol()
+        l.expect_noblock("one-line python")
+
+        code = renpy.ast.PyCode(source, loc)
+        return testast.Python(loc, code)
 
     rv = parse_clause(l, loc)
 

@@ -137,6 +137,28 @@ class Action(Node):
         return renpy.display.behavior.is_sensitive(action)
 
 
+class Python(Node):
+    def __init__(self, loc, code):
+        Node.__init__(self, loc)
+        self.code = code
+
+    def start(self):
+        renpy.test.testexecution.action = self
+        return True
+
+    def execute(self, state, t):
+
+        self.report()
+
+        if renpy.test.testexecution.action:
+            return True
+        else:
+            return None
+
+    def __call__(self):
+        renpy.python.py_exec_bytecode(self.code.bytecode)
+
+
 class Pause(Node):
 
     def __init__(self, loc, expr):
