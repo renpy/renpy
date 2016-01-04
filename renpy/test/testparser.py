@@ -55,7 +55,6 @@ def parse_statement(l, loc):
 
         l.require(':')
 
-        l.expect_eol()
         l.expect_block("python block")
 
         source = l.python_block()
@@ -71,11 +70,12 @@ def parse_statement(l, loc):
 
         source = l.require(l.rest)
 
-        l.expect_eol()
-        l.expect_noblock("one-line python")
-
         code = renpy.ast.PyCode(source, loc)
         return testast.Python(loc, code)
+
+    elif l.keyword('assert'):
+        source = l.require(l.rest)
+        return testast.Assert(loc, source)
 
     rv = parse_clause(l, loc)
 

@@ -138,6 +138,7 @@ class Action(Node):
 
 
 class Python(Node):
+
     def __init__(self, loc, code):
         Node.__init__(self, loc)
         self.code = code
@@ -157,6 +158,30 @@ class Python(Node):
 
     def __call__(self):
         renpy.python.py_exec_bytecode(self.code.bytecode)
+
+
+class Assert(Node):
+
+    def __init__(self, loc, expr):
+        Node.__init__(self, loc)
+        self.expr = expr
+
+    def start(self):
+        renpy.test.testexecution.action = self
+        return True
+
+    def execute(self, state, t):
+
+        self.report()
+
+        if renpy.test.testexecution.action:
+            return True
+        else:
+            return None
+
+    def __call__(self):
+        if not renpy.python.py_eval(self.expr):
+            raise Exception("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
 
 
 class Pause(Node):
