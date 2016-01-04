@@ -23,8 +23,10 @@ import renpy.display
 from renpy.test.testmouse import click_mouse
 
 # This is an object that is used to configure test settings.
-_test = object()
+_test = renpy.object.Object()
 
+# Should we use maximum framerate mode?
+_test.maximum_framerate = True
 
 class Node(object):
     """

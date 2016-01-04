@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-#@PydevCodeAnalysisIgnore
+#!/usr/bin/env python #@PydevCodeAnalysisIgnore
 
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.

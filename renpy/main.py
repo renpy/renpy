@@ -392,6 +392,7 @@ def main():
         # Initialize persistent variables.
         renpy.store.persistent = game.persistent
         renpy.store._preferences = game.preferences
+        renpy.store._test = renpy.test.testast._test
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()

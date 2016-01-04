@@ -29,7 +29,7 @@ testcases = { }
 node = None
 
 # The state of the root node.
-status = None
+state = None
 
 # The time the root node started executing.
 start_time = None
@@ -43,7 +43,7 @@ def execute():
     """
 
     global node
-    global status
+    global state
     global start_time
     global action
 
@@ -52,6 +52,13 @@ def execute():
 
     if renpy.display.interface.suppress_underlay:
         return
+
+    _test = renpy.test.testast._test
+
+    if _test.maximum_framerate:
+        renpy.exports.maximum_framerate(10.0)
+    else:
+        renpy.exports.maximum_framerate(None)
 
     # Make sure there are no test events in the event queue.
     for e in pygame_sdl2.event.copy_event_queue():
@@ -65,17 +72,17 @@ def execute():
 
     now = renpy.display.core.get_time()
 
-    if status is None:
-        status = node.start()
+    if state is None:
+        state = node.start()
         start_time = now
 
-    if status is None:
+    if state is None:
         node = None
         return
 
-    status = node.execute(status, now - start_time)
+    state = node.execute(state, now - start_time)
 
-    if status is None:
+    if state is None:
         node = None
         return
 
