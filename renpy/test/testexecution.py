@@ -28,8 +28,18 @@ testcases = { }
 # The root node.
 node = None
 
+# The location of the currently execution TL node.
+node_loc = None
+
 # The state of the root node.
 state = None
+
+# The previous state and location in the game script.
+old_state = None
+old_loc = None
+
+# The last time the state changed.
+last_state_change = 0
 
 # The time the root node started executing.
 start_time = None
@@ -46,6 +56,9 @@ def execute():
     global state
     global start_time
     global action
+    global old_state
+    global old_loc
+    global last_state_change
 
     if node is None:
         return
@@ -85,6 +98,17 @@ def execute():
     if state is None:
         node = None
         return
+
+    loc = renpy.exports.get_filename_line()
+
+    if (old_state != state) or (old_loc != loc):
+        last_state_change = now
+
+    old_state = state
+    old_loc = loc
+
+    if (now - last_state_change) > _test.timeout:
+        raise Exception("Testcase stuck at {}:{}.".format(node_loc[0], node_loc[1]))
 
 
 def test_command():

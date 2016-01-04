@@ -28,6 +28,9 @@ _test = renpy.object.Object()
 # Should we use maximum framerate mode?
 _test.maximum_framerate = True
 
+# How long should we wait before declaring the test stuck?
+_test.timeout = 3.0
+
 class Node(object):
     """
     An AST node for a test script.
@@ -64,6 +67,15 @@ class Node(object):
 
         return True
 
+    def report(self):
+        """
+        Reports the location of this statement. This should only be called
+        in the execute method of leaf nodes of the test tree.
+        """
+
+        renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
+
+
 class Click(Node):
 
     def __init__(self, loc, pattern=None):
@@ -74,6 +86,9 @@ class Click(Node):
         return True
 
     def execute(self, state, t):
+
+        self.report()
+
         if renpy.display.interface.trans_pause:
             return state
 
@@ -106,12 +121,18 @@ class Action(Node):
         return True
 
     def execute(self, state, t):
+
+        self.report()
+
         if renpy.test.testexecution.action:
             return True
         else:
             return None
 
     def ready(self):
+
+        self.report()
+
         action = renpy.python.py_eval(self.expr)
         return renpy.display.behavior.is_sensitive(action)
 
@@ -126,6 +147,9 @@ class Pause(Node):
         return float(renpy.python.py_eval(self.expr))
 
     def execute(self, state, t):
+
+        self.report()
+
         if t < state:
             return state
         else:
