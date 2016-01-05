@@ -378,6 +378,8 @@ class Context(renpy.object.Object):
 
             self.seen = False
 
+            renpy.test.testexecution.take_name(self.current)
+
             try:
                 try:
                     check_infinite_loop()

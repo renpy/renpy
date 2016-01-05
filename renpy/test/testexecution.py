@@ -47,6 +47,22 @@ start_time = None
 # An action to run before executing another command.
 action = None
 
+# The set of labels that have been reached since the last time execute
+# has been called.
+labels = set()
+
+def take_name(name):
+    """
+    Takes the name of a statement that is about to run.
+    """
+
+    if node is None:
+        return
+
+    if isinstance(name, basestring):
+        labels.add(name)
+
+
 def execute():
     """
     Called periodically by the test code to generate events, if desired.
@@ -94,6 +110,8 @@ def execute():
         return
 
     state = node.execute(state, now - start_time)
+
+    labels.clear()
 
     if state is None:
         node = None

@@ -137,6 +137,83 @@ class Action(Node):
         return renpy.display.behavior.is_sensitive(action)
 
 
+class Pause(Node):
+
+    def __init__(self, loc, expr):
+        Node.__init__(self, loc)
+        self.expr = expr
+
+    def start(self):
+        return float(renpy.python.py_eval(self.expr))
+
+    def execute(self, state, t):
+
+        self.report()
+
+        if t < state:
+            return state
+        else:
+            return None
+
+class Label(Node):
+
+    def __init__(self, loc, name):
+        Node.__init__(self, loc)
+        self.name = name
+
+    def start(self):
+        return True
+
+    def execute(self, state, t):
+        if self.name in renpy.test.testexecution.labels:
+            return None
+        else:
+            return state
+
+    def ready(self):
+        return self.name in renpy.test.testexecution.labels
+
+
+
+################################################################################
+# Non-clause statements.
+
+class Until(Node):
+    """
+    Executes `left` repeatedly until `right` is ready, then executes `right`
+    once before quitting.
+    """
+
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    def start(self):
+        return (None, None, 0)
+
+    def execute(self, state, t):
+        child, child_state, start = state
+
+        if self.right.ready() and not (child is self.right):
+            child = self.right
+            child_state = None
+
+        elif child is None:
+            child = self.left
+
+        if child_state is None:
+            child_state = child.start()
+            start = t
+
+        if child_state is not None:
+            child_state = child.execute(child_state, t - start)
+
+        if (child_state is None) and (child is self.right):
+            return None
+
+        return child, child_state, start
+
+
 class Python(Node):
 
     def __init__(self, loc, code):
@@ -182,62 +259,6 @@ class Assert(Node):
     def __call__(self):
         if not renpy.python.py_eval(self.expr):
             raise Exception("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
-
-
-class Pause(Node):
-
-    def __init__(self, loc, expr):
-        Node.__init__(self, loc)
-        self.expr = expr
-
-    def start(self):
-        return float(renpy.python.py_eval(self.expr))
-
-    def execute(self, state, t):
-
-        self.report()
-
-        if t < state:
-            return state
-        else:
-            return None
-
-
-################################################################################
-# Non-clause statements.
-
-class Until(Node):
-    """
-    Executes `left` repeatedly until `right` is ready, then executes `right`
-    once before quitting.
-    """
-
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-
-    def start(self):
-        return (None, None, 0)
-
-    def execute(self, state, t):
-        child, child_state, start = state
-
-        if child_state is None:
-            if self.right.ready():
-                child = self.right
-            else:
-                child = self.left
-
-            child_state = child.start()
-            start = t
-
-        if child_state is not None:
-            child_state = child.execute(child_state, t - start)
-
-        if (child_state is None) and (child is self.right):
-            return None
-
-        return child, child_state, start
 
 
 ################################################################################
