@@ -34,6 +34,14 @@ android = "RENPY_ANDROID" in os.environ
 # True if we're building on ios.
 ios = "RENPY_IOS" in os.environ
 
+# Is coverage enabled?
+coverage = "RENPY_COVERAGE" in os.environ
+
+if coverage:
+    gen = "gen.coverage"
+else:
+    gen = "gen"
+
 # The cython command.
 cython_command = os.environ.get("RENPY_CYTHON", "cython")
 
@@ -61,6 +69,7 @@ library_dirs = [ ]
 # Extra arguments that will be given to the compiler.
 extra_compile_args = [ ]
 extra_link_args = [ ]
+
 
 def include(header, directory=None, optional=True):
     """
@@ -169,6 +178,8 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
     when it, or any of the files it depends on, changes.
     """
 
+    mod_coverage = coverage
+
     # Find the pyx file.
     split_name = name.split(".")
 
@@ -215,10 +226,10 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
     # Determine if any of the dependencies are newer than the c file.
 
     if language == "c++":
-        c_fn = os.path.join("gen", name + ".cc")
+        c_fn = os.path.join(gen, name + ".cc")
         necessary_gen.append(name + ".cc")
     else:
-        c_fn = os.path.join("gen", name + ".c")
+        c_fn = os.path.join(gen, name + ".c")
         necessary_gen.append(name + ".c")
 
     if os.path.exists(c_fn):
@@ -238,8 +249,8 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
             dep_fn = os.path.join("..", dep_fn)
         elif os.path.exists(os.path.join("include", dep_fn)):
             dep_fn = os.path.join("include", dep_fn)
-        elif os.path.exists(os.path.join("gen", dep_fn)):
-            dep_fn = os.path.join("gen", dep_fn)
+        elif os.path.exists(os.path.join(gen, dep_fn)):
+            dep_fn = os.path.join(gen, dep_fn)
         elif os.path.exists(dep_fn):
             pass
         else:
@@ -270,12 +281,17 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
             else:
                 annotate = [ ]
 
+            if mod_coverage:
+                coverage_args = [ "-X", "linetrace=true" ]
+            else:
+                coverage_args = [ ]
+
             subprocess.check_call([
                 cython_command,
                 "-Iinclude",
-                "-Igen",
+                "-I" + gen,
                 "-I..",
-                ] + annotate + lang_args + [
+                ] + annotate + lang_args + coverage_args + [
                 fn,
                 "-o",
                 c_fn])
@@ -288,18 +304,22 @@ def cython(name, source=[], libs=[], compile_if=True, define_macros=[], pyx=None
 
     # Build the module normally once we have the c file.
     if compile_if:
+
+        if mod_coverage:
+            define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
+
         cmodule(name, [ c_fn ] + source, libs=libs, define_macros=define_macros, language=language)
 
 def find_unnecessary_gen():
 
-    for i in os.listdir("gen"):
+    for i in os.listdir(gen):
         if not i.endswith(".c"):
             continue
 
         if i in necessary_gen:
             continue
 
-        print "Unnecessary file", os.path.join("gen", i)
+        print "Unnecessary file", os.path.join(gen, i)
 
 
 py_modules = [ ]
@@ -355,5 +375,5 @@ def setup(name, version):
         )
 
 # Ensure the gen directory exists.
-if not os.path.exists("gen"):
-    os.mkdir("gen")
+if not os.path.exists(gen):
+    os.mkdir(gen)
