@@ -44,7 +44,7 @@ styles.txt
 /renpy/angle/*.pxd
 /renpy-ppc.zip
 /module/build
-/module/gen
+/module/gen*
 /editra
 /launcher/game/theme
 /launcher/game/script_version.rpy
@@ -58,3 +58,6 @@ renpy/vc_version.py
 /pygame_sdl2
 /renios
 /steam_appid.txt
+/.coverage
+/id
+/interface_7

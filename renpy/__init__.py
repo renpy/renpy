@@ -217,7 +217,10 @@ class Backup():
         Makes a backup of `mod`, which must be a Python module.
         """
 
-        name = mod.__name__
+        try:
+            name = mod.__name__
+        except:
+            return
 
         if not name.startswith("renpy"):
             return
