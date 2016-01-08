@@ -152,6 +152,7 @@ backup_blacklist = {
     "renpy.display.presplash",
     "renpy.display.test",
     "renpy.text.ftfont",
+    "renpycoverage",
     }
 
 type_blacklist = (
