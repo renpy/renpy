@@ -7,3 +7,7 @@ omit =
     style.pxd
     *pygame_sdl2*
     *.rpyc
+    */game/*
+    *style_*_functions.pyx
+    renpy/gl/gl.pyx
+    renpy/gl/gl1.pyx
