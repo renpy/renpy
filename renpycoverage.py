@@ -147,6 +147,7 @@ class PycodeVisitor(ast.NodeVisitor):
     visit_ClassDef = statement
     visit_Return = statement
     visit_Delete = statement
+    visit_Assign = statement
     visit_AugAssign = statement
 
     visit_Print = statement
