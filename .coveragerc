@@ -1,3 +1,8 @@
 [run]
 plugins = renpycoverage
 
+[report]
+omit =
+    keywords.py
+    style.pxd
+    *pygame_sdl2*
