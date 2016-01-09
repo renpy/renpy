@@ -218,7 +218,8 @@ class RenpyReporter(coverage.FileReporter):
 
         self._lines = set()
         for i in all_stmts:
-            self._lines.add(i.linenumber)
+            if not isinstance(i, renpy.ast.Init):
+                self._lines.add(i.linenumber)
 
         for i in renpy.game.script.all_pycode:
             self.pycode_lines(i)
