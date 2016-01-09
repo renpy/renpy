@@ -137,21 +137,23 @@ def test_texture_sizes(Environ environ, draw):
             renpy.display.log.write("- Could not allocate {0}px bitmap.".format(size))
             break
 
-        if tex_format == GL_RGBA:
 
-            for i from 0 <= i < size * size:
-                bitmap[i * 4 + 0] = 0xff # r
-                bitmap[i * 4 + 1] = 0x00 # g
-                bitmap[i * 4 + 2] = 0x00 # b
-                bitmap[i * 4 + 3] = 0xff # a
+        with nogil:
+            if tex_format == GL_RGBA:
 
-        else:
+                for i from 0 <= i < size * size:
+                    bitmap[i * 4 + 0] = 0xff # r
+                    bitmap[i * 4 + 1] = 0x00 # g
+                    bitmap[i * 4 + 2] = 0x00 # b
+                    bitmap[i * 4 + 3] = 0xff # a
 
-            for i from 0 <= i < size * size:
-                bitmap[i * 4 + 0] = 0x00 # b
-                bitmap[i * 4 + 1] = 0x00 # g
-                bitmap[i * 4 + 2] = 0xff # r
-                bitmap[i * 4 + 3] = 0xff # a
+            else:
+
+                for i from 0 <= i < size * size:
+                    bitmap[i * 4 + 0] = 0x00 # b
+                    bitmap[i * 4 + 1] = 0x00 # g
+                    bitmap[i * 4 + 2] = 0xff # r
+                    bitmap[i * 4 + 3] = 0xff # a
 
         # Create a texture of the given size.
         glActiveTextureARB(GL_TEXTURE0)
@@ -1090,7 +1092,7 @@ def premultiply(
     int y,
     int w,
     int h,
-    border_left, border_top, border_right, border_bottom):
+    bint border_left, bint border_top, bint border_right, bint border_bottom):
 
     """
     Creates a string containing the premultiplied image data for
@@ -1150,106 +1152,108 @@ def premultiply(
     # A pointer to the output byte to write.
     op = out
 
-    while pixels < pixels_end:
+    with nogil:
 
-        # The start and end of the current row.
-        p = pixels
-        pend = p + w * 4
+        while pixels < pixels_end:
 
-        # Advance to the next row.
-        pixels += surf.pitch
+            # The start and end of the current row.
+            p = pixels
+            pend = p + w * 4
 
-        if tex_format == GL_RGBA:
+            # Advance to the next row.
+            pixels += surf.pitch
 
-            # RGBA path.
+            if tex_format == GL_RGBA:
 
-            if alpha:
+                # RGBA path.
 
-                while p < pend:
+                if alpha:
 
-                    a = p[3]
+                    while p < pend:
 
-                    op[0] = (p[0] * a + a) >> 8
-                    op[1] = (p[1] * a + a) >> 8
-                    op[2] = (p[2] * a + a) >> 8
-                    op[3] = a
+                        a = p[3]
 
-                    p += 4
-                    op += 4
+                        op[0] = (p[0] * a + a) >> 8
+                        op[1] = (p[1] * a + a) >> 8
+                        op[2] = (p[2] * a + a) >> 8
+                        op[3] = a
 
-            else:
+                        p += 4
+                        op += 4
 
-                while p < pend:
+                else:
 
-                    (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
-                    op[3] = 255
+                    while p < pend:
 
-                    p += 4
-                    op += 4
+                        (<unsigned int *> op)[0] = (<unsigned int *> p)[0]
+                        op[3] = 255
 
-        else:
-
-            # BGRA Path.
-
-            if alpha:
-
-                while p < pend:
-
-                    a = p[3]
-
-                    op[0] = (p[2] * a + a) >> 8 # b
-                    op[1] = (p[1] * a + a) >> 8 # g
-                    op[2] = (p[0] * a + a) >> 8 # r
-                    op[3] = a
-
-                    p += 4
-                    op += 4
+                        p += 4
+                        op += 4
 
             else:
 
-                while p < pend:
+                # BGRA Path.
 
-                    op[0] = p[2] # b
-                    op[1] = p[1] # g
-                    op[2] = p[0] # r
-                    op[3] = 0xff # a
+                if alpha:
 
-                    p += 4
-                    op += 4
+                    while p < pend:
 
-    if border_left:
-        pp = <unsigned int *> (out)
-        ppend = pp + w * h
+                        a = p[3]
 
-        while pp < ppend:
-            pp[0] = pp[1]
-            pp += w
+                        op[0] = (p[2] * a + a) >> 8 # b
+                        op[1] = (p[1] * a + a) >> 8 # g
+                        op[2] = (p[0] * a + a) >> 8 # r
+                        op[3] = a
 
-    if border_right:
-        pp = <unsigned int *> (out)
-        pp += w - 2
-        ppend = pp + w * h
+                        p += 4
+                        op += 4
 
-        while pp < ppend:
-            pp[1] = pp[0]
-            pp += w
+                else:
 
-    if border_top:
-        pp = <unsigned int *> (out)
-        ppend = pp + w
+                    while p < pend:
 
-        while pp < ppend:
-            pp[0] = pp[w]
-            pp += 1
+                        op[0] = p[2] # b
+                        op[1] = p[1] # g
+                        op[2] = p[0] # r
+                        op[3] = 0xff # a
 
-    if border_bottom:
-        pp = <unsigned int *> (out)
-        pp += (h - 2) * w
-        ppend = pp + w
+                        p += 4
+                        op += 4
 
-        while pp < ppend:
-            pp[w] = pp[0]
-            pp += 1
+        if border_left:
+            pp = <unsigned int *> (out)
+            ppend = pp + w * h
+
+            while pp < ppend:
+                pp[0] = pp[1]
+                pp += w
+
+        if border_right:
+            pp = <unsigned int *> (out)
+            pp += w - 2
+            ppend = pp + w * h
+
+            while pp < ppend:
+                pp[1] = pp[0]
+                pp += w
+
+        if border_top:
+            pp = <unsigned int *> (out)
+            ppend = pp + w
+
+            while pp < ppend:
+                pp[0] = pp[w]
+                pp += 1
+
+        if border_bottom:
+            pp = <unsigned int *> (out)
+            pp += (h - 2) * w
+            ppend = pp + w
+
+            while pp < ppend:
+                pp[w] = pp[0]
+                pp += 1
 
     return rv
 

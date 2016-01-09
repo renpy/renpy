@@ -6,3 +6,4 @@ omit =
     keywords.py
     style.pxd
     *pygame_sdl2*
+    *.rpyc

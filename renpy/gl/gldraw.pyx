@@ -1300,12 +1300,13 @@ cdef class GLDraw:
         pitch = surf.pitch
         rpp = raw_pixels
 
-        for y from 0 <= y < surf.h:
-            for x from 0 <= x < (surf.w * 4):
-                pixels[x] = rpp[x]
+        with nogil:
+            for y from 0 <= y < surf.h:
+                for x from 0 <= x < (surf.w * 4):
+                    pixels[x] = rpp[x]
 
-            pixels += pitch
-            rpp += surf.w * 4
+                pixels += pitch
+                rpp += surf.w * 4
 
         free(raw_pixels)
 

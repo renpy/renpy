@@ -1840,7 +1840,6 @@ class Interface(object):
         # True if we're doing a one-time profile.
         self.profile_once = False
 
-
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
         surftree = renpy.display.render.render_screen(
@@ -1857,7 +1856,6 @@ class Interface(object):
 
         self.surftree = surftree
         self.fullscreen_video = fullscreen_video
-
 
     def take_screenshot(self, scale, background=False):
         """
