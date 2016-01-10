@@ -2,6 +2,9 @@ testcase default:
     "Start Game"
     click until label tutorials
     call user_experience
+    call dialogue
+    call images
+    call transitions
 
 
 testcase user_experience:
@@ -28,3 +31,17 @@ testcase user_experience:
     click button 4
 
     "No."
+
+    click until label tutorials
+
+testcase dialogue:
+    "Writing Dialogue"
+    click until label tutorials
+
+testcase images:
+    "Adding Images"
+    click until label tutorials
+
+testcase transitions:
+    "Transitions"
+    click until label tutorials
