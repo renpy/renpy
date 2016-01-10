@@ -24,7 +24,16 @@ import renpy
 
 
 def parse_click(l, loc, target):
-    return testast.Click(loc, target)
+
+    rv = testast.Click(loc, target)
+
+    while True:
+        if l.keyword('button'):
+            rv.button = int(l.require(l.integer))
+        else:
+            break
+
+    return rv
 
 
 def parse_clause(l, loc):

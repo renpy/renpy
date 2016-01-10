@@ -65,14 +65,18 @@ def press_mouse(button):
     """
 
     post(pygame.MOUSEBUTTONDOWN, pos=mouse_pos, button=button)
-    mouse_buttons[button - 1] = 1
+
+    if button < 3:
+        mouse_buttons[button - 1] = 1
 
 def release_mouse(button):
     """
     Releases mouse button `button`.
     """
     post(pygame.MOUSEBUTTONUP, pos=mouse_pos, button=button)
-    mouse_buttons[button - 1] = 0
+
+    if button < 3:
+        mouse_buttons[button - 1] = 0
 
 def click_mouse(button, x, y):
     """

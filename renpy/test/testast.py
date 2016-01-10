@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import renpy.test
 from renpy.test.testmouse import click_mouse
 
 # This is an object that is used to configure test settings.
@@ -78,6 +79,9 @@ class Node(object):
 
 class Click(Node):
 
+    # The number of the button to click.
+    button = 1
+
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
         self.pattern = pattern
@@ -95,9 +99,12 @@ class Click(Node):
         x, y = renpy.display.focus.matching_focus_coordinates(self.pattern)
 
         if x is None:
-            return state
+            if self.pattern:
+                return state
+            else:
+                x, y = renpy.test.testmouse.mouse_pos
 
-        click_mouse(1, x, y)
+        click_mouse(self.button, x, y)
         return None
 
     def ready(self):

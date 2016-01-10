@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy.display
+import renpy.test
 import pygame_sdl2
 
 # A map from the name of a testcase to the testcase.
