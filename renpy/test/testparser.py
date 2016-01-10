@@ -82,6 +82,10 @@ def parse_statement(l, loc):
         source = l.require(l.rest)
         return testast.Assert(loc, source)
 
+    elif l.keyword('jump'):
+        target = l.require(l.name)
+        return testast.Jump(target)
+
     rv = parse_clause(l, loc)
 
     if l.keyword("until"):

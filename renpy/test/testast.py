@@ -261,6 +261,16 @@ class Assert(Node):
             raise Exception("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
 
 
+class Jump(Node):
+
+    def __init__(self, target):
+        self.target = target
+
+    def start(self):
+        node = renpy.test.testexecution.lookup(self.target, self)
+        raise renpy.test.testexecution.TestJump(node)
+
+
 ################################################################################
 # Control structures.
 

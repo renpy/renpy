@@ -62,6 +62,63 @@ def take_name(name):
     if isinstance(name, basestring):
         labels.add(name)
 
+class TestJump(Exception):
+    """
+    An exception that is raised in order to jump to `node`.
+    """
+
+    def __init__(self, node):
+        self.node = node
+
+def lookup(name, from_node):
+    """
+    Tries to look up the name with `target`. If found, returns it, otherwise
+    raises an exception.
+    """
+
+    if name in testcases:
+        return testcases[name]
+
+    raise Exception("Testcase {} not found at {}:{}.".format(name, from_node.filename, from_node.linenumber))
+
+def execute_node(now, node, state, start):
+    """
+    Performs one execution cycle of a node.
+    """
+
+    while True:
+
+        print node
+
+        try:
+            if state is None:
+                state = node.start()
+                start = now
+
+            if state is None:
+                break
+
+            print node, state
+
+            state = node.execute(state, now - start)
+
+
+            print node, state
+
+            break
+
+        except TestJump as e:
+            node = e.node
+            print "XXX", e.node
+            state = None
+
+    if state is None:
+        node = None
+
+    print node, state, start
+
+    return node, state, start
+
 
 def execute():
     """
@@ -101,20 +158,11 @@ def execute():
 
     now = renpy.display.core.get_time()
 
-    if state is None:
-        state = node.start()
-        start_time = now
-
-    if state is None:
-        node = None
-        return
-
-    state = node.execute(state, now - start_time)
+    node, state, start_time = execute_node(now, node, state, start_time)
 
     labels.clear()
 
     if state is None:
-        node = None
         return
 
     loc = renpy.exports.get_filename_line()
