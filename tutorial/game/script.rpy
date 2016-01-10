@@ -82,27 +82,29 @@ label start:
     $ tutorials_adjustment = ui.adjustment()
     $ tutorials_first_time = True
 
-    while True:
-        show eileen happy at left
-        with move
+label tutorials:
 
-        if tutorials_first_time:
-            $ e(_("What would you like to see?"), interact=False)
-        else:
-            $ e(_("Is there anything else you'd like to see?"), interact=False)
+    show eileen happy at left
+    with move
 
-        $ tutorials_first_time = False
+    if tutorials_first_time:
+        $ e(_("What would you like to see?"), interact=False)
+    else:
+        $ e(_("Is there anything else you'd like to see?"), interact=False)
 
-        call screen tutorials(adj=tutorials_adjustment)
+    $ tutorials_first_time = False
 
-        show eileen happy at center
-        with move
+    call screen tutorials(adj=tutorials_adjustment)
 
-        if _return is False:
-            jump end
+    show eileen happy at center
+    with move
 
-        call expression _return
+    if _return is False:
+        jump end
 
+    call expression _return
+
+    jump tutorials
 
 label end:
 
