@@ -86,3 +86,11 @@ def click_mouse(button, x, y):
     move_mouse(x, y)
     press_mouse(button)
     release_mouse(button)
+
+def reset():
+    """
+    Resets mouse handling once the test has ended.
+    """
+
+    global mouse_pos
+    mouse_pos = None

@@ -153,7 +153,8 @@ def execute():
 
     labels.clear()
 
-    if state is None:
+    if node is None:
+        renpy.test.testmouse.reset()
         return
 
     loc = renpy.exports.get_filename_line()
