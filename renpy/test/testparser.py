@@ -86,6 +86,10 @@ def parse_statement(l, loc):
         target = l.require(l.name)
         return testast.Jump(target)
 
+    elif l.keyword('call'):
+        target = l.require(l.name)
+        return testast.Call(target)
+
     rv = parse_clause(l, loc)
 
     if l.keyword("until"):

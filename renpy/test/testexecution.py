@@ -88,8 +88,6 @@ def execute_node(now, node, state, start):
 
     while True:
 
-        print node
-
         try:
             if state is None:
                 state = node.start()
@@ -98,24 +96,16 @@ def execute_node(now, node, state, start):
             if state is None:
                 break
 
-            print node, state
-
             state = node.execute(state, now - start)
-
-
-            print node, state
 
             break
 
         except TestJump as e:
             node = e.node
-            print "XXX", e.node
             state = None
 
     if state is None:
         node = None
-
-    print node, state, start
 
     return node, state, start
 

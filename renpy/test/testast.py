@@ -271,6 +271,27 @@ class Jump(Node):
         raise renpy.test.testexecution.TestJump(node)
 
 
+class Call(Node):
+
+    def __init__(self, target):
+        self.target = target
+
+    def start(self):
+        node = renpy.test.testexecution.lookup(self.target, self)
+        return (node, None, 0)
+
+    def execute(self, state, t):
+        node, child_state, start = state
+
+        node, child_state, start = renpy.test.testexecution.execute_node(t, node, child_state, start)
+
+        if node is None:
+            return None
+
+        return (node, child_state, start)
+
+
+
 ################################################################################
 # Control structures.
 
