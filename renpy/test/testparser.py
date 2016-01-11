@@ -35,6 +35,10 @@ def parse_click(l, loc, target):
 
     return rv
 
+def parse_type(l, loc, keys):
+    rv = testast.Type(loc, keys)
+
+    return rv
 
 def parse_clause(l, loc):
     if l.keyword("run"):
@@ -51,6 +55,16 @@ def parse_clause(l, loc):
 
         name = l.require(l.name)
         return testast.Label(loc, name)
+
+    elif l.keyword("type"):
+
+        name = l.name()
+        if name is not None:
+            return parse_type(l, loc, [ name ])
+
+        string = l.require(l.string)
+
+        return parse_type(l, loc, list(string))
 
     elif l.keyword("click"):
         return parse_click(l, loc, None)

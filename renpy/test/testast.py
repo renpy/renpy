@@ -77,10 +77,7 @@ class Node(object):
         renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
 
 
-class Click(Node):
-
-    # The number of the button to click.
-    button = 1
+class Pattern(Node):
 
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
@@ -102,10 +99,9 @@ class Click(Node):
             if self.pattern:
                 return state
             else:
-                x, y = renpy.test.testmouse.mouse_pos
+                x, y = renpy.exports.get_mouse_pos()
 
-        click_mouse(self.button, x, y)
-        return None
+        return self.perform(x, y, state, t)
 
     def ready(self):
 
@@ -116,6 +112,37 @@ class Click(Node):
         else:
             return False
 
+
+class Click(Pattern):
+
+    # The number of the button to click.
+    button = 1
+
+    def perform(self, x, y, state):
+        click_mouse(self.button, x, y)
+        return None
+
+class Type(Pattern):
+
+    interval = .05
+
+    def __init__(self, loc, keys):
+        Pattern.__init__(self, loc)
+        self.keys = keys
+
+    def start(self):
+        return 0
+
+    def perform(self, x, y, state, t):
+
+        if state >= len(self.keys):
+            return None
+
+        keysym = self.keys[state]
+        renpy.test.testkey.down(self, keysym)
+        renpy.test.testkey.up(self, keysym)
+
+        return state + 1
 
 class Action(Node):
 

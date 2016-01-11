@@ -152,6 +152,12 @@ backup_blacklist = {
     "renpy.display.presplash",
     "renpy.display.test",
     "renpy.text.ftfont",
+    "renpy.test",
+    "renpy.test.testast",
+    "renpy.test.testexecution",
+    "renpy.test.testkey",
+    "renpy.test.testmouse",
+    "renpy.test.testparser",
     "renpycoverage",
     }
 
@@ -447,6 +453,7 @@ def import_all():
 
     import renpy.test
     import renpy.test.testmouse
+    import renpy.test.testkey
     import renpy.test.testast
     import renpy.test.testparser
     import renpy.test.testexecution
