@@ -118,7 +118,7 @@ class Click(Pattern):
     # The number of the button to click.
     button = 1
 
-    def perform(self, x, y, state):
+    def perform(self, x, y, state, t):
         click_mouse(self.button, x, y)
         return None
 
