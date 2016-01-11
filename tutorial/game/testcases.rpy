@@ -5,7 +5,12 @@ testcase default:
     call dialogue
     call images
     call transitions
-
+    call music_and_sound
+    call menus
+    call positions
+    call atl
+    call video
+    run Quit(confirm=False)
 
 testcase user_experience:
     "User Experience"
@@ -30,6 +35,14 @@ testcase user_experience:
     click button 4
     click button 4
 
+    # Roll forward.
+    type PAGEDOWN
+    type PAGEDOWN
+
+    # Back again.
+    type PAGEUP
+    type PAGEUP
+
     "No."
 
     click until label tutorials
@@ -44,4 +57,26 @@ testcase images:
 
 testcase transitions:
     "Transitions"
+    click until label tutorials
+
+testcase music_and_sound:
+    "Music and Sound Effects"
+    click until label tutorials
+
+testcase menus:
+    "In-Game Menus and Python"
+    click until "Yes, I do."
+    click until label tutorials
+
+testcase positions:
+    "Screen Positions"
+    click until "xpos .75 ypos .25"
+    click until label tutorials
+
+testcase atl:
+    "Animation and Transformation"
+    click until label tutorials
+
+testcase video:
+    "Video Playback"
     click until label tutorials
