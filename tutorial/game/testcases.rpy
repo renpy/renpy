@@ -11,7 +11,20 @@ testcase default:
     call atl
     call video
     call transition_gallery
+    call image_operations
+    call fonts
     run Quit(confirm=False)
+
+testcase quick:
+    "Start Game"
+    click until label tutorials
+
+    # Won't work until we can scroll the bar.
+
+    call character_objects
+    call layers
+    call nvl_mode
+    call dynamic
 
 testcase user_experience:
     "User Experience"
@@ -93,3 +106,29 @@ testcase transition_gallery:
     click until "something else"
     click until label tutorials
 
+testcase image_operations:
+    "Image Operations"
+    click until label tutorials
+
+# User Interaction
+
+testcase fonts:
+    "Fonts and Text Tags"
+    click until label tutorials
+
+testcase character_objects:
+    "Character Objects"
+    click until label tutorials
+
+testcase layers:
+    "Layers & Advanced Show"
+    click until label tutorials
+
+testcase nvl_mode:
+    "NVL Mode"
+    click until "Yes."
+    click until label tutorials
+
+testcase dynamic:
+    "Dynamic Displayables"
+    click until label tutorials
