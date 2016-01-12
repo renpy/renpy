@@ -30,7 +30,7 @@ _test = renpy.object.Object()
 _test.maximum_framerate = True
 
 # How long should we wait before declaring the test stuck?
-_test.timeout = 3.0
+_test.timeout = 5.0
 
 class Node(object):
     """

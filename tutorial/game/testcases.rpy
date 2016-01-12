@@ -10,6 +10,7 @@ testcase default:
     call positions
     call atl
     call video
+    call transition_gallery
     run Quit(confirm=False)
 
 testcase user_experience:
@@ -80,3 +81,15 @@ testcase atl:
 testcase video:
     "Video Playback"
     click until label tutorials
+
+testcase transition_gallery:
+    "Transition Gallery"
+    click until "Simple"
+    click until "ImageDissolve"
+    click until "MoveTransition"
+    click until "CropMove"
+    click until "PushMove"
+    click until "AlphaDissolve"
+    click until "something else"
+    click until label tutorials
+
