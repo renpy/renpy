@@ -327,7 +327,7 @@ def mouse_handler(ev, x, y, default=False):
 
     return change_focus(new_focus, default=default)
 
-def matching_focus_coordinates(pattern):
+def matching_focus_coordinates(pattern, position):
     """
     Trues to find the focus with the shortest alt text containing `pattern`.
     If found, returns a random coordinate within that displayable.
@@ -339,7 +339,7 @@ def matching_focus_coordinates(pattern):
     """
 
     def match(t):
-        return pattern in t
+        return pattern.lower() in t.lower()
 
     # Avoid moving the mouse when unnecessary.
     if renpy.test.testmouse.mouse_pos is not None:
@@ -348,11 +348,25 @@ def matching_focus_coordinates(pattern):
         x = random.randrange(renpy.config.screen_width)
         y = random.randrange(renpy.config.screen_height)
 
+    posx, posy = position
+
+    def find_position(x, posx, width):
+        if posx is not None:
+            if isinstance(posx, float):
+                x = int(posx * width)
+            else:
+                x = posx
+
+        return x
+
     # If alt is None, find coordinates that focus the default_focus.
     if pattern is None:
 
         if default_focus is None:
             return None, None
+
+        x = find_position(x, posx, renpy.config.screen_width)
+        y = find_position(y, posy, renpy.config.screen_height)
 
         for _i in range(1000):
 
@@ -385,6 +399,9 @@ def matching_focus_coordinates(pattern):
     # is likely what we want.
     matching.sort()
     f = matching[0][1]
+
+    x = find_position(x, posx, f.w) + f.x
+    y = find_position(y, posy, f.h) + f.y
 
     for _i in range(100):
 

@@ -30,6 +30,10 @@ def parse_click(l, loc, target):
     while True:
         if l.keyword('button'):
             rv.button = int(l.require(l.integer))
+
+        elif l.keyword('pos'):
+            rv.position = l.require(l.simple_expression)
+
         else:
             break
 
@@ -37,6 +41,14 @@ def parse_click(l, loc, target):
 
 def parse_type(l, loc, keys):
     rv = testast.Type(loc, keys)
+
+    while True:
+
+        if l.keyword('pos'):
+            rv.position = l.require(l.simple_expression)
+
+        else:
+            break
 
     return rv
 

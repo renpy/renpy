@@ -21,7 +21,7 @@
 
 import renpy.display
 import renpy.test
-from renpy.test.testmouse import click_mouse
+from renpy.test.testmouse import click_mouse, move_mouse
 
 # This is an object that is used to configure test settings.
 _test = renpy.object.Object()
@@ -79,6 +79,8 @@ class Node(object):
 
 class Pattern(Node):
 
+    position = None
+
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
         self.pattern = pattern
@@ -93,7 +95,12 @@ class Pattern(Node):
         if renpy.display.interface.trans_pause:
             return state
 
-        x, y = renpy.display.focus.matching_focus_coordinates(self.pattern)
+        if self.position is not None:
+            position = renpy.python.py_eval(self.position)
+        else:
+            position = (None, None)
+
+        x, y = renpy.display.focus.matching_focus_coordinates(self.pattern, position)
 
         if x is None:
             if self.pattern:
@@ -105,7 +112,7 @@ class Pattern(Node):
 
     def ready(self):
 
-        x, _y = renpy.display.focus.matching_focus_coordinates(self.pattern)
+        x, _y = renpy.display.focus.matching_focus_coordinates(self.pattern, (None, None))
 
         if x is not None:
             return True
@@ -137,6 +144,8 @@ class Type(Pattern):
 
         if state >= len(self.keys):
             return None
+
+        move_mouse(x, y)
 
         keysym = self.keys[state]
         renpy.test.testkey.down(self, keysym)
