@@ -353,7 +353,7 @@ def matching_focus_coordinates(pattern, position):
     def find_position(x, posx, width):
         if posx is not None:
             if isinstance(posx, float):
-                x = int(posx * width)
+                x = int(posx * (width - 1))
             else:
                 x = posx
 
