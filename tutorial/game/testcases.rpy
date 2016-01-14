@@ -1,6 +1,7 @@
 testcase default:
     "Start Game"
     click until label tutorials
+
     call user_experience
     call dialogue
     call images
@@ -13,7 +14,20 @@ testcase default:
     call transition_gallery
     call image_operations
     call fonts
-    run Quit(confirm=False)
+
+    # Scroll the bar down.
+    "Bar" pos (5, 1.0)
+
+    call character_objects
+    call layers
+    call nvl_mode
+    call dynamic
+
+    "That's enough for now."
+    click until "Quit"
+
+    pause .6 # Wait out the main menut transition.
+    "Quit"
 
 testcase quick:
     "Start Game"
@@ -21,10 +35,6 @@ testcase quick:
 
     # Won't work until we can scroll the bar.
 
-    call character_objects
-    call layers
-    call nvl_mode
-    call dynamic
 
 testcase user_experience:
     "User Experience"
