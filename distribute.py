@@ -8,7 +8,6 @@ import compileall
 import shutil
 import subprocess
 import argparse
-import glob
 
 if not sys.flags.optimize:
     raise Exception("Optimization disabled.")

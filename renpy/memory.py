@@ -27,7 +27,6 @@ import weakref
 import types
 import sys
 import collections
-import pygame_sdl2 as pygame
 import gc
 
 import renpy
@@ -78,7 +77,6 @@ def walk_memory(roots, seen=None):
         worklist.append((name, o))
 
     # For speed, cache name lookups.
-    Surface = pygame.Surface
     getsizeof = sys.getsizeof
     get_referents = gc.get_referents
     worklist_append = worklist.append

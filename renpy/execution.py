@@ -26,6 +26,7 @@ import sys
 import time
 
 import renpy.display
+import renpy.test
 
 pyast = __import__("ast", { })
 

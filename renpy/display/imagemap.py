@@ -27,7 +27,6 @@ import renpy.display
 from renpy.display.render import render
 
 import hashlib
-import os
 
 # A list of cache images we've already written.
 cached = set()

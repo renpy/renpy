@@ -23,6 +23,7 @@
 
 import pygame_sdl2 as pygame
 import renpy.display
+import renpy.test
 import random
 
 class Focus(object):

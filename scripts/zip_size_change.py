@@ -27,7 +27,7 @@ def main():
     old = size_zip(args.old)
     new = size_zip(args.new)
 
-    all = list(set(old) | set(new))
+    all = list(set(old) | set(new)) # @ReservedAssignment
     all.sort()
 
     for fn in all:

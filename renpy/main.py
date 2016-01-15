@@ -22,7 +22,10 @@
 import renpy.display
 import renpy.style
 import renpy.sl2
+import renpy.test
+
 import renpy.game as game
+
 import os
 import sys
 import time
@@ -331,7 +334,7 @@ def main():
     # labels as in other scripts (usually happens on script rename).
     if (renpy.game.args.command == 'compile') and not (renpy.game.args.keep_orphan_rpyc): # @UndefinedVariable
 
-        for (fn, dir) in renpy.game.script.script_files:
+        for (fn, _dir) in renpy.game.script.script_files:
 
             if dir is None:
                 continue
@@ -352,7 +355,7 @@ def main():
     renpy.game.script.load_script() # sets renpy.game.script.
     log_clock("Loading script")
 
-    if renpy.game.args.command == 'load-test':
+    if renpy.game.args.command == 'load-test': # @UndefinedVariable
         start = time.time()
 
         for i in range(5):
@@ -414,7 +417,7 @@ def main():
         if renpy.config.clear_lines:
             renpy.scriptedit.lines.clear()
 
-        for i in renpy.game.persistent._seen_translates:
+        for i in renpy.game.persistent._seen_translates: # @UndefinedVariable
             if i in renpy.game.script.translator.default_translates:
                 renpy.game.seen_translates_count += 1
 

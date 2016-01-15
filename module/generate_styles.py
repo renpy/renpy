@@ -27,9 +27,9 @@ import collections
 import os
 
 try:
-    from io import StringIO
+    from io import StringIO # @UnusedImport
 except:
-    from StringIO import StringIO
+    from StringIO import StringIO # @Reimport
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))

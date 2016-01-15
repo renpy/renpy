@@ -32,7 +32,6 @@ from __future__ import print_function
 
 VERSION = "0.1"
 
-import sys
 import os
 import re
 
@@ -2583,8 +2582,8 @@ def exception_return(t):
 
 class GLFunction(object):
 
-    def __init__(self, type, name, args):
-        self.type = type
+    def __init__(self, _type, name, args):
+        self.type = _type
         self.name = name
         self.args = args
 

@@ -30,7 +30,7 @@ import renpy.text.font as font
 import renpy.text.extras as extras
 
 try:
-    from _renpybidi import log2vis, WRTL, RTL, ON
+    from _renpybidi import log2vis, WRTL, RTL, ON # @UnresolvedImport
 except:
     pass
 
@@ -582,7 +582,7 @@ class Layout(object):
             self.paragraph_glyphs.append(list(par_glyphs))
 
             if splits_from:
-                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs)
+                textsupport.copy_splits(splits_from.paragraph_glyphs[p_num], par_glyphs) # @UndefinedVariable
 
             else:
 
@@ -678,7 +678,7 @@ class Layout(object):
             target_x = self.scale_int(splits_from.size[0] - splits_from.xborder)
             target_y = self.scale_int(splits_from.size[1] - splits_from.yborder)
 
-            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x - maxx, target_y - y, maxx, y)
+            textsupport.tweak_glyph_spacing(all_glyphs, lines, target_x - maxx, target_y - y, maxx, y) # @UndefinedVariable
 
             maxx = target_x
             y = target_y

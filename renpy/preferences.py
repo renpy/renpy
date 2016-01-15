@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE
 
-import renpy
+import renpy.audio
 
 pad_bindings = {
     "pad_leftshoulder_press" : [ "rollback", ],

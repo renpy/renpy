@@ -27,6 +27,8 @@ import re
 import os
 
 import renpy.display
+import renpy.test
+
 import renpy.ast as ast
 import renpy.sl2
 

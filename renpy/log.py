@@ -94,8 +94,6 @@ class LogFile(object):
                 mode = "w"
 
             if renpy.config.log_to_stdout:
-
-                import sys
                 self.file = sys.stdout
 
             else:

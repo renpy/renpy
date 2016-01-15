@@ -61,3 +61,9 @@ renpy/vc_version.py
 /.coverage
 /id
 /interface_7
+/htmlcov
+/the_question/.android.json
+/WINDOWS.rst
+
+/*-all/
+/*-dists/

@@ -27,6 +27,7 @@
 # updating.
 
 import renpy.display
+import renpy.test
 
 import re
 import time

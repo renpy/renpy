@@ -25,6 +25,7 @@
 import renpy.display
 import renpy.audio
 import renpy.text
+import renpy.test
 
 import pygame_sdl2 as pygame
 
@@ -1002,7 +1003,7 @@ class SceneLists(renpy.object.Object):
         if layer not in self.layers:
             raise Exception("Trying to remove something from non-existent layer '%s'." % layer)
 
-        _add_index, remove_index, zorder = self.find_index(layer, thing, 0, [ ])
+        _add_index, remove_index, _zorder = self.find_index(layer, thing, 0, [ ])
 
         if remove_index is not None:
             tag = self.layers[layer][remove_index].tag
