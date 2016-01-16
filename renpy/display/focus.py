@@ -339,8 +339,23 @@ def matching_focus_coordinates(pattern, position):
     If `pattern` could not be found, returns None, None.
     """
 
-    def match(t):
-        return pattern.lower() in t.lower()
+    def match(f):
+
+        if pattern is None:
+            if f.x is None:
+                return "default"
+            else:
+                return None
+
+        if f.x is None:
+            t = renpy.display.tts.root._tts_all() # @UndefinedVariable
+        else:
+            t = f.widget._tts_all()
+
+        if pattern.lower() in t.lower():
+            return t
+        else:
+            return None
 
     # Avoid moving the mouse when unnecessary.
     if renpy.test.testmouse.mouse_pos is not None:
@@ -360,26 +375,6 @@ def matching_focus_coordinates(pattern, position):
 
         return x
 
-    # If alt is None, find coordinates that focus the default_focus.
-    if pattern is None:
-
-        if default_focus is None:
-            return None, None
-
-        x = find_position(x, posx, renpy.config.screen_width)
-        y = find_position(y, posy, renpy.config.screen_height)
-
-        for _i in range(1000):
-
-            if renpy.display.render.focus_at_point(x, y) is None:
-                return x, y
-
-            x = random.randrange(renpy.config.screen_width)
-            y = random.randrange(renpy.config.screen_height)
-
-        else:
-            raise Exception("Could not locate the default displayable.")
-
     # A list of alt_text_length, focus pairs.
     matching = [ ]
 
@@ -388,9 +383,10 @@ def matching_focus_coordinates(pattern, position):
         if f.x is None:
             continue
 
-        alt = f.widget._tts_all()
+        alt = match(f)
 
-        if match(alt):
+        if alt is not None:
+
             matching.append((len(alt), f))
 
     if not matching:
@@ -400,6 +396,14 @@ def matching_focus_coordinates(pattern, position):
     # is likely what we want.
     matching.sort()
     f = matching[0][1]
+
+    # Check for the default widget.
+    if f.x is None:
+        f = f.copy()
+        f.x = 0
+        f.y = 0
+        f.w = renpy.config.screen_width
+        f.h = renpy.config.screen_height
 
     x = find_position(x, posx, f.w) + f.x
     y = find_position(y, posy, f.h) + f.y
