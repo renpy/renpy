@@ -1,9 +1,8 @@
 from __future__ import print_function, unicode_literals, division, absolute_import
 
 import Cython.Coverage
-# import coverage
 import os
-import coverage
+import coverage # @UnresolvedImport
 import cPickle
 import ast
 
