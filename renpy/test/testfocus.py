@@ -61,9 +61,6 @@ def find_focus(pattern):
 
     for f in renpy.display.focus.focus_list:
 
-        if f.x is None:
-            continue
-
         alt = match(f)
 
         if alt is not None:
@@ -94,6 +91,8 @@ def find_position(f, position):
     Returns the virtual position of a coordinate located within focus `f`.
     If position is (None, None) returns the current mouse position (if in
     the focus), or a random position.
+
+    If `f` is None, returns a position relative to the screen as a whole.
     """
 
     posx, posy = position
@@ -105,6 +104,13 @@ def find_position(f, position):
         x = random.randrange(renpy.config.screen_width)
         y = random.randrange(renpy.config.screen_height)
 
+    if f is None:
+        return (
+            relative_position(x, posx, renpy.config.screen_width),
+            relative_position(y, posy, renpy.config.screen_height),
+            )
+
+    orig_f = f
 
     # Check for the default widget.
     if f.x is None:
@@ -119,13 +125,24 @@ def find_position(f, position):
 
     for _i in range(100):
 
+        x = f.x + 10
+        y = f.y + 10
+
         nf = renpy.display.render.focus_at_point(x, y)
 
-        if (nf is not None) and (nf.widget == f.widget) and (nf.arg == f.arg):
-            return x, y
+        if nf is None:
+            if orig_f.x is None:
+                return x, y
+        else:
+            if (nf.widget == f.widget) and (nf.arg == f.arg):
+                return x, y
 
         x = random.randrange(f.x, f.x + f.w)
         y = random.randrange(f.y, f.y + f.h)
 
     else:
+        print
+
         raise Exception("Could not locate the displayable.")
+
+
