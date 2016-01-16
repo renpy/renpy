@@ -453,6 +453,7 @@ def import_all():
 
     import renpy.test
     import renpy.test.testmouse
+    import renpy.test.testfocus
     import renpy.test.testkey
     import renpy.test.testast
     import renpy.test.testparser

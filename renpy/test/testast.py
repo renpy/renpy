@@ -100,7 +100,12 @@ class Pattern(Node):
         else:
             position = (None, None)
 
-        x, y = renpy.display.focus.matching_focus_coordinates(self.pattern, position)
+        f = renpy.test.testfocus.find_focus(self.pattern)
+
+        if f is None:
+            x, y = None, None
+        else:
+            x, y = renpy.test.testfocus.find_position(f, position)
 
         if x is None:
             if self.pattern:
@@ -112,9 +117,9 @@ class Pattern(Node):
 
     def ready(self):
 
-        x, _y = renpy.display.focus.matching_focus_coordinates(self.pattern, (None, None))
+        f = renpy.test.testfocus.find_focus(self.pattern)
 
-        if x is not None:
+        if f is not None:
             return True
         else:
             return False
