@@ -134,6 +134,94 @@ class Click(Pattern):
         click_mouse(self.button, x, y)
         return None
 
+class Drag(Node):
+
+    def __init__(self, loc, points):
+        Node.__init__(self, loc)
+        self.points = points
+
+        self.pattern = None
+        self.button = 1
+        self.steps = 10
+
+    def start(self):
+        return True
+
+    def execute(self, state, t):
+
+        self.report()
+
+        if renpy.display.interface.trans_pause:
+            return state
+
+        if self.pattern:
+
+            pattern = renpy.python.py_eval(self.pattern)
+            f = renpy.test.testfocus.find_focus(pattern)
+            if f is None:
+                return state
+
+        else:
+            f = None
+
+        if state is True:
+
+            points = renpy.python.py_eval(self.points)
+            points = [ renpy.test.testfocus.find_position(f, i) for i in points ]
+
+            if len(points) < 2:
+                raise Exception("A drag requires at least two points.")
+
+            interpoints = [ ]
+
+            xa, ya = points[0]
+
+            interpoints.append((xa, ya))
+
+            for xb, yb in points[1:]:
+                for i in range(1, self.steps + 1):
+                    done = 1.0 * i / self.steps
+
+                    interpoints.append((
+                        int(xa + done * (xb - xa)),
+                        int(ya + done * (yb - ya)),
+                        ))
+
+            x, y = interpoints.pop(0)
+
+            renpy.test.testmouse.move_mouse(x, y)
+            renpy.test.testmouse.press_mouse(self.button)
+
+        else:
+
+            interpoints = state
+
+            x, y = interpoints.pop(0)
+            renpy.test.testmouse.move_mouse(x, y)
+
+
+        if not interpoints:
+            renpy.test.testmouse.release_mouse(self.button)
+            return None
+
+        else:
+            return interpoints
+
+
+    def ready(self):
+
+        if self.pattern is None:
+            return True
+
+        f = renpy.test.testfocus.find_focus(self.pattern)
+
+        if f is not None:
+            return True
+        else:
+            return False
+
+
+
 class Type(Pattern):
 
     interval = .05

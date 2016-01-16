@@ -39,6 +39,7 @@ def parse_click(l, loc, target):
 
     return rv
 
+
 def parse_type(l, loc, keys):
     rv = testast.Type(loc, keys)
 
@@ -51,6 +52,29 @@ def parse_type(l, loc, keys):
             break
 
     return rv
+
+
+def parse_drag(l, loc):
+
+    points = l.require(l.simple_expression)
+
+    rv = testast.Drag(loc, points)
+
+    while True:
+        if l.keyword('button'):
+            rv.button = int(l.require(l.integer))
+
+        elif l.keyword('pattern'):
+            rv.position = l.require(l.string)
+
+        elif l.keyword('steps'):
+            rv.position = int(l.require(l.integer))
+
+        else:
+            break
+
+    return rv
+
 
 def parse_clause(l, loc):
     if l.keyword("run"):
@@ -77,6 +101,10 @@ def parse_clause(l, loc):
         string = l.require(l.string)
 
         return parse_type(l, loc, list(string))
+
+    elif l.keyword("drag"):
+
+        return parse_drag(l, loc)
 
     elif l.keyword("click"):
         return parse_click(l, loc, None)
