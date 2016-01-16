@@ -1044,13 +1044,15 @@ def viewport(scrollbars=None, **properties):
         else:
             viewport_properties[k] = v
 
+    alt = viewport_properties.get("alt", "viewport")
+
     if scrollbars == "vertical":
         side("c r", **side_properties)
 
         rv = _viewport(**viewport_properties)
         addable = stack.pop()
 
-        vscrollbar(adjustment=rv.yadjustment)
+        vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar")
         close()
 
         stack.append(addable)
@@ -1063,7 +1065,7 @@ def viewport(scrollbars=None, **properties):
         rv = _viewport(**viewport_properties)
         addable = stack.pop()
 
-        scrollbar(adjustment=rv.xadjustment)
+        scrollbar(adjustment=rv.xadjustment, alt=alt + " horizontal scrollbar")
         close()
 
         stack.append(addable)
@@ -1077,8 +1079,8 @@ def viewport(scrollbars=None, **properties):
         rv = _viewport(**viewport_properties)
         addable = stack.pop()
 
-        vscrollbar(adjustment=rv.yadjustment)
-        scrollbar(adjustment=rv.xadjustment)
+        vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar")
+        scrollbar(adjustment=rv.xadjustment, alt=alt +" horizontal scrollbar")
         close()
 
         stack.append(addable)
