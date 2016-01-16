@@ -33,7 +33,7 @@ testcase quick:
     "Start Game"
     click until label tutorials
 
-    # Won't work until we can scroll the bar.
+    call user_interaction
 
 
 testcase user_experience:
@@ -120,7 +120,22 @@ testcase image_operations:
     "Image Operations"
     click until label tutorials
 
-# User Interaction
+testcase user_interaction:
+    "User Interaction"
+    click until "Yes."
+    click
+    click
+    type "Tom"
+    type BACKSPACE
+    type "m"
+    type LEFT
+    type RIGHT
+    type "\n"
+    click until "art"
+    click until "We also support viewports"
+    click
+    drag [ (400, 400), (200, 200) ]
+
 
 testcase fonts:
     "Fonts and Text Tags"
