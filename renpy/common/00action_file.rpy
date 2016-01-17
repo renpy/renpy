@@ -20,6 +20,81 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1500 python:
+    ##########################################################################
+    # File contstants.
+
+    _weekday_name_long = [
+        _("{#weekday}Monday"),
+        _("{#weekday}Tuesday"),
+        _("{#weekday}Wednesday"),
+        _("{#weekday}Thursday"),
+        _("{#weekday}Friday"),
+        _("{#weekday}Saturday"),
+        _("{#weekday}Sunday"),
+    ]
+
+
+    _weekday_name_short = [
+        _("{#weekday_short}Mon"),
+        _("{#weekday_short}Tue"),
+        _("{#weekday_short}Wed"),
+        _("{#weekday_short}Thu"),
+        _("{#weekday_short}Fri"),
+        _("{#weekday_short}Sat"),
+        _("{#weekday_short}Sun"),
+    ]
+
+    _month_name_long = [
+        _("{#month}January"),
+        _("{#month}February"),
+        _("{#month}March"),
+        _("{#month}April"),
+        _("{#month}May"),
+        _("{#month}June"),
+        _("{#month}July"),
+        _("{#month}August"),
+        _("{#month}September"),
+        _("{#month}October"),
+        _("{#month}November"),
+        _("{#month}December"),
+    ]
+
+
+    _month_name_short = [
+        _("{#month_short}Jan"),
+        _("{#month_short}Feb"),
+        _("{#month_short}Mar"),
+        _("{#month_short}Apr"),
+        _("{#month_short}May"),
+        _("{#month_short}Jun"),
+        _("{#month_short}Jul"),
+        _("{#month_short}Aug"),
+        _("{#month_short}Sep"),
+        _("{#month_short}Oct"),
+        _("{#month_short}Nov"),
+        _("{#month_short}Dec"),
+    ]
+
+    def _strftime(format, t):
+        """
+        A version of strftime that's meant to work with Ren'Py's translation
+        system.
+        """
+        rv = format
+
+        month = t[1] - 1
+        wday = t[6]
+
+        rv.replace("%a", __(_weekday_name_short[wday]))
+        rv.replace("%A", __(_weekday_name_long[wday]))
+        rv.replace("%b", __(_month_name_short[month]))
+        rv.replace("%B", __(_month_name_long[month]))
+
+        if "%" in rv:
+            import time
+            rv = time.strftime(rv.encode("utf-8"), t).decode("utf-8")
+
+        return rv
 
 
     ##########################################################################
@@ -171,7 +246,7 @@ init -1500 python:
         import time
 
         format = renpy.translation.translate_string(format)
-        return time.strftime(format.encode("utf-8"), time.localtime(mtime)).decode("utf-8")
+        return _strftime(format, time.localtime(mtime))
 
     def FileJson(name, key=None, empty=None, missing=None, page=None):
         """
@@ -669,9 +744,9 @@ init -1500 python:
     def QuickLoad(confirm=True):
         """
         :doc: file_action
-        
+
         Performs a quick load.
-        
+
         `confirm`
             If true and not at the main menu, prompt for confirmation before loading the file.
         """
