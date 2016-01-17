@@ -13,6 +13,7 @@ testcase default:
     call video
     call transition_gallery
     call image_operations
+    call user_interaction
     call fonts
 
     # Scroll the bar down.
@@ -33,7 +34,6 @@ testcase quick:
     "Start Game"
     click until label tutorials
 
-    call user_interaction
 
 
 testcase user_experience:
@@ -134,8 +134,33 @@ testcase user_interaction:
     click until "art"
     click until "We also support viewports"
     click
-    drag [ (400, 400), (200, 200) ]
 
+    # At the viewport screen.
+    drag [ (400, 400), (200, 200) ]
+    drag [ (400, 400), (200, 200) ]
+    drag [ (400, 400), (200, 200) ]
+    drag [ (400, 400), (200, 200) ]
+    drag [ (200, 200), (400, 400) ]
+    drag [ (200, 200), (400, 400) ]
+    drag [ (200, 200), (400, 400) ]
+    drag [ (200, 200), (400, 400) ]
+
+
+    drag [ (0.0, 0.5), (1.0, 0.5), (0.0, 0.5) ] pattern "viewport horizontal scrollbar"
+    drag [ (0.5, 0.0), (0.5, 1.0), (0.5, 0.0) ] pattern "viewport vertical scrollbar"
+
+    "Dismiss"
+
+    # Keep out of the corners so we don't hit the quick menu buttons.
+    move (.95, .95)
+    pause 1.0
+    move (0.05, 0.05)
+    pause 1.0
+    move (0.5, 0.5)
+    pause .1
+
+    click until "Continue"
+    click until label tutorials
 
 testcase fonts:
     "Fonts and Text Tags"
