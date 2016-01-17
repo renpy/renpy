@@ -1,8 +1,13 @@
 .. Automatically generated file - do not modify.
 
-.. function:: EndReplay()
+.. function:: EndReplay(confirm=True)
     
     An action that ends the current memory.
+
+    `confirm`
+         If true, causes Ren'Py to ask the user if he wishes to
+         return to the replay menu, rather than returning
+         directly.
 
 .. function:: Replay(label, scope={}, locked=None)
     
