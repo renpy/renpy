@@ -134,6 +134,12 @@ class Click(Pattern):
         click_mouse(self.button, x, y)
         return None
 
+class Move(Pattern):
+
+    def perform(self, x, y, state, t):
+        move_mouse(x, y)
+        return None
+
 class Drag(Node):
 
     def __init__(self, loc, points):

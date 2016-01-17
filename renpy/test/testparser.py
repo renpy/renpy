@@ -45,13 +45,33 @@ def parse_type(l, loc, keys):
 
     while True:
 
-        if l.keyword('pos'):
+        if l.keyword('pattern'):
+            rv.pattern = l.require(l.string)
+
+        elif l.keyword('pos'):
             rv.position = l.require(l.simple_expression)
 
         else:
             break
 
     return rv
+
+
+def parse_move(l, loc):
+    rv = testast.Move(loc)
+
+    rv.position = l.require(l.simple_expression)
+
+    while True:
+
+        if l.keyword('pattern'):
+            rv.pattern = l.require(l.string)
+
+        else:
+            break
+
+    return rv
+
 
 
 def parse_drag(l, loc):
@@ -105,6 +125,9 @@ def parse_clause(l, loc):
     elif l.keyword("drag"):
 
         return parse_drag(l, loc)
+
+    elif l.keyword("move"):
+        return parse_move(l, loc)
 
     elif l.keyword("click"):
         return parse_click(l, loc, None)

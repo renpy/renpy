@@ -83,7 +83,7 @@ def relative_position(x, posx, width):
         else:
             x = posx
 
-    return x
+    return int(x)
 
 
 def find_position(f, position):
@@ -124,6 +124,9 @@ def find_position(f, position):
     y = relative_position(y, posy, f.h) + f.y
 
     for _i in range(100):
+
+        x = int(x)
+        y = int(y)
 
         nf = renpy.display.render.focus_at_point(x, y)
 
