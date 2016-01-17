@@ -253,7 +253,7 @@ init -1600 python:
             return
 
         if not config.autoreload:
-            renpy.call_in_new_context("_save_reload_game")
+            renpy.exports.reload_script()
             return
 
         if renpy.get_autoreload():
@@ -261,7 +261,7 @@ init -1600 python:
             renpy.restart_interaction()
         else:
             renpy.set_autoreload(True)
-            renpy.call_in_new_context("_save_reload_game")
+            renpy.exports.reload_script()
 
     def _launch_editor():
         if not config.developer:

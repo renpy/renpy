@@ -47,6 +47,9 @@ init -1600 python hide:
     # choice of language, and defaults to the game's native language.
     config.language = None
 
+    # Should we attempt to return to the menu we were on after a reload?
+    config.reload_menu = True
+
 init -1600 python:
 
     def _init_language():
@@ -78,6 +81,12 @@ label _after_load:
 
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
+
+    python hide:
+        menu = renpy.session.pop("_reload_screen", None)
+
+        if config.reload_menu and (menu is not None):
+            renpy.run(ShowMenu(menu))
 
     if renpy.has_label("after_load"):
         jump expression "after_load"

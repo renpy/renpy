@@ -1501,6 +1501,11 @@ def reload_script():
     save.
     """
 
+    s = get_screen("menu")
+
+    if s is not None:
+        session["_reload_screen"] = s.screen_name[0]
+
     renpy.game.call_in_new_context("_save_reload_game")
 
 
