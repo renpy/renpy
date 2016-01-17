@@ -156,8 +156,7 @@ class Drag(Node):
 
         if self.pattern:
 
-            pattern = renpy.python.py_eval(self.pattern)
-            f = renpy.test.testfocus.find_focus(pattern)
+            f = renpy.test.testfocus.find_focus(self.pattern)
             if f is None:
                 return state
 
@@ -186,6 +185,9 @@ class Drag(Node):
                         int(xa + done * (xb - xa)),
                         int(ya + done * (yb - ya)),
                         ))
+
+                xa = xb
+                ya = yb
 
             x, y = interpoints.pop(0)
 

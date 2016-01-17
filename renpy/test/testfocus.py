@@ -125,9 +125,6 @@ def find_position(f, position):
 
     for _i in range(100):
 
-        x = f.x + 10
-        y = f.y + 10
-
         nf = renpy.display.render.focus_at_point(x, y)
 
         if nf is None:

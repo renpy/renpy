@@ -65,10 +65,10 @@ def parse_drag(l, loc):
             rv.button = int(l.require(l.integer))
 
         elif l.keyword('pattern'):
-            rv.position = l.require(l.string)
+            rv.pattern = l.require(l.string)
 
         elif l.keyword('steps'):
-            rv.position = int(l.require(l.integer))
+            rv.steps = int(l.require(l.integer))
 
         else:
             break
