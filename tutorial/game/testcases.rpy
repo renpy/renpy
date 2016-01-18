@@ -23,6 +23,7 @@ testcase default:
     call layers
     call nvl_mode
     call dynamic
+    call minigames
 
     "That's enough for now."
     click until "Quit"
@@ -33,6 +34,9 @@ testcase default:
 testcase quick:
     "Start Game"
     click until label tutorials
+
+    # Scroll the bar down.
+    "Bar" pos (5, 1.0)
 
 
 
@@ -182,3 +186,14 @@ testcase nvl_mode:
 testcase dynamic:
     "Dynamic Displayables"
     click until label tutorials
+
+testcase minigames:
+    "Minigames"
+    $ _test.timeout = 60.0
+    $ _test.force = True
+    click always until "No thanks."
+    $ _test.timeout = 5.0
+    $ _test.force = False
+
+    click until label tutorials
+

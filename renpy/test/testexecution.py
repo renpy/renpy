@@ -124,13 +124,13 @@ def execute():
     global old_loc
     global last_state_change
 
+    _test = renpy.test.testast._test
+
     if node is None:
         return
 
-    if renpy.display.interface.suppress_underlay:
+    if renpy.display.interface.suppress_underlay and (not _test.force):
         return
-
-    _test = renpy.test.testast._test
 
     if _test.maximum_framerate:
         renpy.exports.maximum_framerate(10.0)

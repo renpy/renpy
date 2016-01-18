@@ -32,6 +32,9 @@ _test.maximum_framerate = True
 # How long should we wait before declaring the test stuck?
 _test.timeout = 5.0
 
+# Should we force the test to proceed despite suppress_underlay?
+_test.force = False
+
 class Node(object):
     """
     An AST node for a test script.
@@ -80,6 +83,7 @@ class Node(object):
 class Pattern(Node):
 
     position = None
+    always = False
 
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
@@ -116,6 +120,9 @@ class Pattern(Node):
         return self.perform(x, y, state, t)
 
     def ready(self):
+
+        if self.always:
+            return True
 
         f = renpy.test.testfocus.find_focus(self.pattern)
 
