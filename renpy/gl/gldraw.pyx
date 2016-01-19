@@ -229,14 +229,6 @@ cdef class GLDraw:
             head_w = bounds[2] - 102
             head_h = bounds[3] - 102
 
-            if renpy.windows and self.dpi_scale > renpy.config.windows_dpi_scale_head:
-                visible_w *= self.dpi_scale
-                visible_h *= self.dpi_scale
-
-                head_full_w *= self.dpi_scale
-                head_w *= self.dpi_scale
-                head_h *= self.dpi_scale
-
             pwidth = min(visible_w, pwidth)
             pheight = min(visible_h, pheight)
 
@@ -252,15 +244,6 @@ cdef class GLDraw:
 
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
-
-        # If we don't set the place manually when dpi_scale is not 1.0,
-        # SDL2 can place the window titlebar off the screen.
-        if renpy.windows and (self.dpi_scale != 1.0):
-
-            window_args["pos"] = (
-                max((head_full_w - pwidth) // 2, 0),
-                max((head_h - pheight) // 2, 0) + 32 * self.dpi_scale,
-                )
 
         # Handle swap control.
         vsync = int(os.environ.get("RENPY_GL_VSYNC", "1"))
