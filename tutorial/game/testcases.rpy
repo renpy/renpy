@@ -24,6 +24,9 @@ testcase default:
     call nvl_mode
     call dynamic
     call minigames
+    call persistent
+    call transforms
+    call sprites
 
     "That's enough for now."
     click until "Quit"
@@ -37,7 +40,6 @@ testcase quick:
 
     # Scroll the bar down.
     "Bar" pos (5, 1.0)
-
 
 
 testcase user_experience:
@@ -197,3 +199,15 @@ testcase minigames:
 
     click until label tutorials
 
+testcase persistent:
+    "Persistent Data"
+    click until label tutorials
+
+testcase transforms:
+    "Transform"
+    click until "A Working Button"
+    click until label tutorials
+
+testcase sprites:
+    "Sprites"
+    click until label tutorials
