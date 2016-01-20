@@ -332,7 +332,10 @@ There is one store variable used by replay mode:
 
 In addition, :var:`config.enter_replay_transition` and
 :var:`config.exit_replay_transition` are used when entering and exiting
-replay mode, respectively.
+replay mode, respectively. :var:`config.replay_scope` adds variables
+to the cleaned store when entering a replay, and by default sets
+:var:`_game_menu_screen` to cause right-clicking in a replay to
+default to showing the preferences screen.
 
 The following variables and actions are used in replay mode:
 

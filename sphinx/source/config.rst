@@ -660,6 +660,11 @@ Occasionally Used
             return s
         config.replace_text = replace_text
 
+.. var:: config.replay_scope = { "_game_menu_screen" : "preferences" }
+
+    A dictionary mapping variables in the default store to the values
+    the variables will be given when entering a replay.
+
 .. var:: config.save_json_callbacks = [ ]
 
     A list of callback functions that are used to create the json object

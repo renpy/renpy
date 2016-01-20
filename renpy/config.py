@@ -661,6 +661,9 @@ windows_dpi_scale_head = 1.0
 # Should rollback_side be enabled?
 enable_rollback_side = True
 
+# The default contents of the replay scope.
+replay_scope = { "_game_menu_screen" : "preferences" }
+
 del renpy
 del os
 
