@@ -182,10 +182,11 @@ Ren'Py statements are made of a few basic parts.
     letters.
 
 :dfn:`Image Name`
-    An :dfn:`image name` consists of one or more names, separated by
+    An :dfn:`image name` consists of one or more components, separated by
     spaces. The first component of the image name is called the
     :dfn:`image tag`. The second and later components of the name are
-    the :dfn:`image attributes`.
+    the :dfn:`image attributes`. An image component consists of a
+    string of letters, numbers, and underscores.
 
     For example, take the image name ``mary beach night happy``. The
     image tag is ``mary``, while the image attributes are ``mary``,

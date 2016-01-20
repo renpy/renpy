@@ -482,6 +482,7 @@ ESCAPED_OPERATORS = [
 operator_regexp = "|".join([ re.escape(i) for i in OPERATORS ] + ESCAPED_OPERATORS)
 
 word_regexp = ur'[a-zA-Z_\u00a0-\ufffd][0-9a-zA-Z_\u00a0-\ufffd]*'
+image_word_regexp = ur'[0-9a-zA-Z_\u00a0-\ufffd]+'
 
 class Lexer(object):
     """
@@ -748,6 +749,22 @@ class Lexer(object):
             return None
 
         return rv
+
+    def image_name_component(self):
+        """
+        Matches a word that is a component of an image name. (These are
+        strings of numbers, letters, and underscores.)
+        """
+
+        oldpos = self.pos
+        rv = self.match(image_word_regexp)
+
+        if rv in KEYWORDS:
+            self.pos = oldpos
+            return None
+
+        return rv
+
 
     def python_string(self):
         """
@@ -1063,10 +1080,10 @@ def parse_image_name(l):
     that the image name be present.
     """
 
-    rv = [ l.require(l.name) ]
+    rv = [ l.require(l.image_name_component) ]
 
     while True:
-        n = l.simple_expression()
+        n = l.image_name_component()
         if not n:
             break
 
@@ -2257,7 +2274,7 @@ def say_statement(l, loc):
         if not prefix:
             prefix = ""
 
-        component = l.word()
+        component = l.image_name_component()
 
         if component is None:
             break
