@@ -367,11 +367,12 @@ init -1500 python:
     class EndReplay(Action, DictEquality):
         """
         :doc: replay
-        An action that ends the current memory.
+
+        Ends the current replay.
+
         `confirm`
-             If true, causes Ren'Py to ask the user if he wishes to
-             return to the replay menu, rather than returning
-             directly.
+            If true, prompts the user for confirmation before ending the
+            replay.
         """
         def __init__(self, confirm=True):
             self.confirm = confirm
@@ -382,7 +383,7 @@ init -1500 python:
                 return
 
             if self.confirm:
-                layout.yesno_screen(layout.REPLAY_MENU, EndReplay(False))
+                layout.yesno_screen(layout.END_REPLAY, EndReplay(False))
             else:
                 renpy.end_replay()
 

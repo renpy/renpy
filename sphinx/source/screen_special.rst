@@ -590,6 +590,7 @@ user. It takes the following parameters:
     * layout.LOADING - "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     * layout.QUIT - "Are you sure you want to quit?"
     * layout.MAIN_MENU - "Are you sure you want to return to the main\nmenu? This will lose unsaved progress."
+    * layout.END_REPLAY - "Are you sure you want to end the replay?"
 
     The values of the variables are strings, which means they can be
     displayed using a text displayable.
