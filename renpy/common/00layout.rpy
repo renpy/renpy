@@ -447,6 +447,7 @@ init -1400 python hide:
     layout.LOADING = _("Loading will lose unsaved progress.\nAre you sure you want to do this?")
     layout.QUIT = _("Are you sure you want to quit?")
     layout.MAIN_MENU = _("Are you sure you want to return to the main menu?\nThis will lose unsaved progress.")
+    layout.REPLAY_MENU = _("Are you sure you want to return to the scene select?")
     layout.SLOW_SKIP = _("Are you sure you want to begin skipping?")
     layout.FAST_SKIP_UNSEEN = _("Are you sure you want to skip to the next choice?")
     layout.FAST_SKIP_SEEN = _("Are you sure you want to skip to unseen dialogue or the next choice?")
