@@ -996,7 +996,7 @@ class Layout(object):
                 else:
                     value = float(value)
 
-                ts.color = ts.color.replace_alpha(value)
+                ts.color = ts.color.replace_opacity(value)
 
             elif tag == "k":
                 push().kerning = self.scale(float(value))
