@@ -987,6 +987,15 @@ class Layout(object):
             elif tag == "color":
                 push().color = renpy.easy.color(value)
 
+            elif tag == "alpha":
+                ts = push()
+                if value[0] in "+-":
+                    value = ts.color.alpha + float(value)
+                else:
+                    value = float(value)
+                value = min(max(value, 0.0), 1.0)
+                ts.color = ts.color.replace_opacity(value)
+
             elif tag == "k":
                 push().kerning = self.scale(float(value))
 
