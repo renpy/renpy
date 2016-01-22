@@ -991,10 +991,12 @@ class Layout(object):
                 ts = push()
                 if value[0] in "+-":
                     value = ts.color.alpha + float(value)
+                elif value[0] == "*":
+                    value = ts.color.alpha * float(value[1:])
                 else:
                     value = float(value)
-                value = min(max(value, 0.0), 1.0)
-                ts.color = ts.color.replace_opacity(value)
+
+                ts.color = ts.color.replace_alpha(value)
 
             elif tag == "k":
                 push().kerning = self.scale(float(value))

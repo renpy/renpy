@@ -190,9 +190,13 @@ Tags that apply to all text are:
     tag in the specified opacity. The opacity should be a value between
     0.0 and 1.0, corresponding to fully invisible and fully opaque,
     respectively. If the value is prefixed by + or -, the opacity will
-    be changed by that amount instead of completely replaced. ::
+    be changed by that amount instead of completely replaced. If
+    the value is prefixed by *, the opacity will be multiplied by
+    that amount. ::
 
         "{alpha=0.1}This text is barely readable!{/alpha}"
+        "{alpha=-0.1}This text is 10 percent more transparent than the default.{/alpha}"
+        "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
 
 .. text-tag:: b
 

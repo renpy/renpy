@@ -152,6 +152,9 @@ screen text1:
 label text:
 
     # Text tag tests.
+    "{alpha=0.1}This text is barely readable!{/alpha}"
+    "{alpha=-0.1}This text is 10%% more transparent than the default.{/alpha}"
+    "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
 
     show screen text1
     "..."

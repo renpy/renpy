@@ -489,11 +489,13 @@ class Color(tuple):
         l = lightness
         return Color(hls=(h, l, s), alpha=self.alpha)
 
-    def replace_opacity(self, opacity):
+    def replace_alpha(self, alpha):
         """
         :doc: color method
 
-        Replaces this color's opacity with `opacity`, and returns the result
-        as a new Color.
+        Replaces this color's alpha channel (opacity) with `alpha`, and
+        returns the result as a new Color.
         """
-        return Color((self[0], self[1], self[2]), alpha=opacity)
+
+        alpha = min(max(alpha, 0.0), 1.0)
+        return Color((self[0], self[1], self[2]), alpha=alpha)
