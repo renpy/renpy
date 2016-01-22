@@ -284,7 +284,12 @@ label build_missing:
 
         interface.yesno(_("Your project does not contain build information. Would you like to add build information to the end of options.rpy?"), yes=Return(True), no=Jump("front_page"))
 
-        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project.current.name)
+        project_name = project.current.name
+        project_name = project_name.replace(" ", "_")
+        project_name = project_name.replace(":", "")
+        project_name = project_name.replace(";", "")
+
+        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project_name)
 
         with open(os.path.join(project.current.path, "game", "options.rpy"), "a") as f:
             f.write(build_info)
