@@ -124,6 +124,10 @@ init -1500 python:
          * Preference("voice mute", "disable") - Un-mute the voice mixer.
          * Preference("voice mute", "toggle") - Toggle voice mute.
 
+         * Preference("mixer <mixer> mute", "enable") - Mute the specified mixer.
+         * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
+         * Preference("mixer <mixer> mute", "toggle") - Toggle mute of specified mixer.
+
          * Preference("all mute", "enable") - Mute all mixers.
          * Preference("all mute", "disable") - Unmute all mixers.
          * Preference("all mute", "toggle") - Toggle mute of all mixers.
@@ -131,6 +135,7 @@ init -1500 python:
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
+         * Preference("mixer <mixer> volume", 0.5) - Set the specified mixer volume.
 
          * Preference("emphasize audio", "enable") - Emphasize the audio channels found in :var:`config.emphasize_audio_channels`.
          * Preference("emphasize audio", "disable") - Do not emphasize audio channels.
@@ -155,6 +160,7 @@ init -1500 python:
          * Preference("music volume")
          * Preference("sound volume")
          * Preference("voice volume")
+         * Preference("mixer <mixer> volume")
          """
 
         name = name.lower()
@@ -335,16 +341,22 @@ init -1500 python:
 
             n = name.split()
 
-            if len(n) == 2 and n[1] == "volume":
-                mixer = mixer_names.get(n[0], n[0])
+            if n[-1] == "volume":
+                if len(n) == 3 and n[0] == "mixer":
+                    mixer = n[1]
+                elif len(n) == 2:
+                    mixer = mixer_names.get(n[0], n[0])
 
                 if value is None:
                     return MixerValue(mixer)
                 else:
                     return SetMixer(mixer, value)
 
-            if len(n) == 2 and n[1] == "mute":
-                mixer = mixer_names.get(n[0], n[0])
+            if n[-1] == "mute":
+                if len(n) == 3 and n[0] == "mixer":
+                    mixer = n[1]
+                elif len(n) == 2:
+                    mixer = mixer_names.get(n[0], n[0])
 
                 if value == "enable":
                     return SetMute(mixer, True)
