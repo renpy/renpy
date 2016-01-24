@@ -171,9 +171,12 @@ def main():
     # Package pygame_sdl2.
     if not args.fast:
         subprocess.check_call([
-            "pygame_sdl2/distribute.py",
-            "for-renpy-" + args.version,
-            "--dest",
+            "pygame_sdl2/setup.py"
+            "egg_info",
+            "--tag-build"
+            "-for-renpy-" + args.version,
+            "sdist",
+            "-d",
             os.path.abspath(destination)
             ])
 
