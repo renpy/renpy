@@ -137,7 +137,7 @@ def displayable(d):
     if not self_voicing:
         if old_self_voicing:
             old_self_voicing = self_voicing
-            speak("Self-voicing disabled.", force=True)
+            speak(renpy.translation.translate_string("Self-voicing disabled."), force=True)
 
         last = None
 

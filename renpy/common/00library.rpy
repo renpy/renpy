@@ -121,6 +121,11 @@ init -1700 python:
     ##########################################################################
     # Self-voicing
 
+    # Strings used internally in Ren'Py.
+    _("Self-voicing disabled.")
+    _("Clipboard voicing enabled. ")
+    _("Self-voicing enabled. ")
+
     def sv(what, interact=True):
         """
         Uses the narrator to speak `what` iff self-voicing is enabled.
