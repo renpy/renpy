@@ -157,7 +157,7 @@ cdef class GLDraw:
     def set_mode(self, virtual_size, physical_size, fullscreen):
         """
         This changes the video mode. It also initializes OpenGL, if it
-        can. It returns True if it was succesful, or False if OpenGL isn't
+        can. It returns True if it was successful, or False if OpenGL isn't
         working for some reason.
         """
 
