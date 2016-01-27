@@ -1,4 +1,4 @@
-python early hide:
+﻿python early hide:
 
     class _ObjectNamespace(object):
         def __init__(self, nso):

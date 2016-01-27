@@ -54,7 +54,7 @@ def process_file(fn):
         for l in f:
             l = re.sub(
                 r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-2015 Tom Rothamel",
+                r"Copyright \1-2016 Tom Rothamel",
                 l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):
