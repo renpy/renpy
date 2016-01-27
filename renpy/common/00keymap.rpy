@@ -40,11 +40,12 @@ init -1600 python:
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
         choose_renderer = [ 'G' ],
-        progress_screen = [ 'alt_P' ],
+        progress_screen = [ 'alt_P', 'meta_P' ],
 
         # Accessibility.
         self_voicing = [ 'v', 'V' ],
         clipboard_voicing = [ 'C' ],
+        debug_voicing = [ 'alt_V', 'meta_V' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
@@ -335,6 +336,7 @@ init -1100 python:
         memory_profile = _memory_profile,
         self_voicing = Preference("self voicing", "toggle"),
         clipboard_voicing = Preference("clipboard voicing", "toggle"),
+        debug_voicing = Preference("debug voicing", "toggle"),
         progress_screen = _progress_screen,
         )
 

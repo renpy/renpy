@@ -149,6 +149,10 @@ init -1500 python:
          * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
          * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
+         * Preference("debug voicing", "enable") - Enables self.-voicing debug
+         * Preference("debug voicing", "disable") - Disable self-voicing debug.
+         * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
+
          * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
          * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
          * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
@@ -313,6 +317,15 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="clipboard")
 
+            elif name == "debug voicing":
+
+                if value == "enable":
+                    return SetField(_preferences, "self_voicing", "debug")
+                elif value == "disable":
+                    return SetField(_preferences, "self_voicing", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "self_voicing", true_value="debug")
+
             elif name == "emphasize audio":
 
                 if value == "enable":
@@ -394,6 +407,8 @@ init -1500:
 
         if _preferences.self_voicing == "clipboard":
             $ message = _("Clipboard voicing enabled. Press 'shift+C' to disable.")
+        elif _preferences.self_voicing == "debug":
+            $ message = _("Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable.")
         else:
             $ message = _("Self-voicing enabled. Press 'v' to disable.")
 

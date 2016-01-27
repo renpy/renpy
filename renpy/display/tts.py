@@ -79,6 +79,10 @@ def default_tts_function(s):
 
         return
 
+    if renpy.game.preferences.self_voicing == "debug":
+        renpy.exports.restart_interaction()
+        return
+
     if renpy.linux:
         process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
     elif renpy.macintosh:
@@ -139,7 +143,7 @@ def displayable(d):
             old_self_voicing = self_voicing
             speak(renpy.translation.translate_string("Self-voicing disabled."), force=True)
 
-        last = None
+        last = ""
 
         return
 

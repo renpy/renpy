@@ -95,3 +95,7 @@ Descriptive Text
         # A complex and exciting cut scene.
         show event sun_exploding
         pause 10
+
+A self-voicing debug mode can be enabled by typing shift+alt+V. This will
+display the text that would be voiced on the screen for development
+purposes.
