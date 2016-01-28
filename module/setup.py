@@ -82,6 +82,7 @@ library("avformat")
 library("avcodec")
 library("avutil")
 has_avresample = library("avresample", optional=True)
+has_swresample = library("swresample", optional=True)
 has_swscale = library("swscale", optional=True)
 library("freetype")
 has_fribidi = library("fribidi", optional=True)
@@ -134,6 +135,9 @@ pymodule("pysdlsound.__init__")
 
 sound = [ "avformat", "avcodec", "avutil", "z" ]
 macros = [ ]
+
+if has_swresample:
+    sound.insert(3, "swresample")
 
 if has_avresample:
     sound.insert(0, "avresample")
