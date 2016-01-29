@@ -148,7 +148,7 @@ if has_swscale:
 
 cython(
     "pysdlsound.sound",
-    [ "pss.c", "ffdecode.c" ],
+    [ "pss.c", "ffpy2.c" ],
     libs = sdl + sound,
     define_macros=macros)
 
