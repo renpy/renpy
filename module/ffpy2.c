@@ -63,6 +63,11 @@ static void rwops_close(SDL_RWops *rw) {
 //}
 
 
+typedef struct PacketQueue {
+	AVPacketList *first;
+	AVPacketList *last;
+} PacketQueue;
+
 typedef struct MediaState {
 
 	SDL_RWops *rwops;
@@ -80,7 +85,83 @@ typedef struct MediaState {
 	 */
 	int ready;
 
+	/* Indexes of video and audio streams. */
+	int video_stream;
+	int audio_stream;
+
+	/* The main context. */
+	AVFormatContext *ctx;
+
+	/* Contexts for decoding audio and video streams. */
+	AVCodecContext *video_context;
+	AVCodecContext *audio_context;
+
+	PacketQueue video_queue;
+	PacketQueue audio_queue;
+
 } MediaState;
+
+
+static void push_back(PacketQueue *pq, AVPacket *pkt) {
+	AVPacketList *pl = av_malloc(sizeof(AVPacketList));
+
+	pl->pkt = *pkt;
+	pl->next = NULL;
+
+	if (!pq->first) {
+		pq->first = pq->last = pl;
+	}
+}
+
+static int pop_front(PacketQueue *pq, AVPacket *pkt) {
+	if (! pq->first ) {
+		return 0;
+	}
+
+
+	AVPacketList *pl = pq->first;
+
+	*pkt = pl->pkt;
+
+	pq->first = pl->next;
+
+	if (!pq->first) {
+		pq->last = NULL;
+	}
+
+	return 1;
+
+}
+
+/**
+ * Reads a packet from one of the queues, filling the other queue if
+ * necessary.
+ */
+int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
+	AVPacket scratch;
+
+	while (1) {
+		if (pop_front(pq, pkt)) {
+			return 1;
+		}
+
+		if (av_read_frame(ms->ctx, &scratch)) {
+			return 0;
+		}
+
+		av_dup_packet(&scratch);
+
+		if (scratch.stream_index == ms->video_stream) {
+			push_back(&ms->video_queue, &scratch);
+		} else if (scratch.stream_index == ms->audio_stream) {
+			push_back(&ms->audio_queue, &scratch);
+		} else {
+			av_free_packet(&scratch);
+		}
+	}
+
+
+}
 
 static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 
@@ -115,15 +196,33 @@ fail:
 	return NULL;
 }
 
+
+static void setup_audio(MediaState *ms) {
+
+}
+
+static void finish_audio(MediaState *ms) {
+
+}
+
+static void decode_audio(MediaState *ms, AVPacket *p) {
+
+}
+
+
 static int decode_thread(void *arg) {
 	MediaState *ms = (MediaState *) arg;
+
 	int err;
 
 	SDL_LockMutex(ms->lock);
 	ms->ready = 1;
 
 	AVIOContext *io_context = rwops_open(ms->rwops);
+
 	AVFormatContext *ctx = avformat_alloc_context();
+	ms->ctx = ctx;
+
 	ctx->pb = io_context;
 
 	err = avformat_open_input(&ctx, ms->filename, NULL, NULL);
@@ -136,26 +235,33 @@ static int decode_thread(void *arg) {
 		goto finish;
 	}
 
-	int video_stream = -1;
-	int audio_stream = -1;
+	ms->video_stream = -1;
+	ms->audio_stream = -1;
 
 	for (int i = 0; i < ctx->nb_streams; i++) {
 		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-			if (video_stream == -1) {
-				video_stream = i;
+			if (ms->video_stream == -1) {
+				ms->video_stream = i;
 			}
 		}
 
 		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-			if (audio_stream == -1) {
-				audio_stream = i;
+			if (ms->audio_stream == -1) {
+				ms->audio_stream = i;
 			}
 		}
 	}
 
+	ms->video_context = find_context(ctx, ms->video_stream);
+	ms->audio_context = find_context(ctx, ms->audio_stream);
 
-	AVCodecContext *video_context = find_context(ctx, video_stream);
-	AVCodecContext *audio_context = find_context(ctx, audio_stream);
+
+	while (1) {
+
+	}
+
+
+
 
 
 finish:
