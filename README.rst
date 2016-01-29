@@ -50,7 +50,7 @@ your system. On Ubuntu and Debian, these dependencies can be installed with
 the command::
 
     apt-get install virtualenvwrapper python-dev libavcodec-dev libavformat-dev \
-        libavresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
+        libavresample-dev libswresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
         libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-gfx-dev \
         libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-turbo8-dev
 
