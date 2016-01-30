@@ -5,9 +5,12 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
-
 /* The output audio sample rate. */
 static int audio_sample_rate = 44100;
+
+const int CHANNELS = 2;
+const int BPC = 2; // Bytes per channel.
+const int BPS = 4; // Bytes per sample.
 
 // http://dranger.com/ffmpeg/
 
@@ -118,18 +121,30 @@ typedef struct MediaPlayer {
 	PacketQueue video_packet_queue;
 	PacketQueue audio_packet_queue;
 
-
-	/**
-	 * The queue of converted audio frames.
-	 */
+	/* The queue of converted audio frames. */
 	FrameQueue audio_queue;
+
+	/* The size of the audio queue, and the target size in seconds. */
 	int audio_queue_samples;
 	int audio_queue_target_seconds;
+
+	/* A frame used for decoding. */
 	AVFrame *audio_decode_frame;
+
+	/* The audio frame being read from, and the index into the audio frame. */
 	AVFrame *audio_out_frame;
 	int audio_out_index;
 
 	SwrContext *swr;
+
+	/* The duration of the audio stream, in samples.
+	 * 0 means to play until we run out of data.
+	 */
+	unsigned int audio_duration;
+
+	/* The number of samples that have been read so far. */
+	unsigned int audio_read_samples;
+
 
 
 } MediaPlayer;
@@ -281,12 +296,11 @@ static void decode_audio(MediaPlayer *ms) {
 		if (!read_packet(ms, &ms->audio_packet_queue, &pkt)) {
 			pkt.data = NULL;
 			pkt.size = 0;
-			break;
 		}
 
 		pkt_temp = pkt;
 
-		while (pkt_temp.size) {
+		do {
 			int got_frame;
 			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
@@ -322,7 +336,7 @@ static void decode_audio(MediaPlayer *ms) {
 				av_frame_free(&converted_frame);
 			}
 
-		}
+		} while (pkt_temp.size);
 
 	}
 
@@ -378,9 +392,20 @@ static int decode_thread(void *arg) {
 
 	ms->swr = swr_alloc();
 
+	// Compute the number of samples we need to play back.
 
-	// TODO: Audio duration stuff from line 1503 of ffdecode.c
 
+	if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
+
+		long long duration = ((long long) ctx->duration) * audio_sample_rate;
+		ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
+
+		// Check that the duration is reasonable (between 0s and 3600s). If not,
+		// reject it.
+		if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
+			ms->audio_duration = 0;
+		}
+	}
 
 	while (!(ms->audio_finished)) {
 
@@ -421,6 +446,20 @@ int media_read_audio(struct MediaPlayer *ms, Uint8 *stream, int len) {
 
 	int rv = 0;
 
+	ms->audio_duration = 0;
+
+	if (ms->audio_duration) {
+		unsigned int remaining = (ms->audio_duration - ms->audio_read_samples) * BPS;
+		if (len > remaining) {
+			len = remaining;
+		}
+
+		if (!remaining) {
+			ms->audio_finished = 1;
+		}
+
+	}
+
 	while (len) {
 
 		if (!ms->audio_out_frame) {
@@ -434,8 +473,8 @@ int media_read_audio(struct MediaPlayer *ms, Uint8 *stream, int len) {
 
 		AVFrame *f = ms->audio_out_frame;
 
+		int avail = f->nb_samples * BPS - ms->audio_out_index;
 		int count;
-		int avail = f->nb_samples * 4 - ms->audio_out_index;
 
 		if (len > avail) {
 			count = avail;
@@ -445,21 +484,26 @@ int media_read_audio(struct MediaPlayer *ms, Uint8 *stream, int len) {
 
 		memcpy(stream, &f->data[0][ms->audio_out_index], count);
 
-		ms->audio_queue_samples -= count / 4;
 		ms->audio_out_index += count;
+
+		ms->audio_read_samples += count / BPS;
+		ms->audio_queue_samples -= count / BPS;
+
 		rv += count;
 		len -= count;
 		stream += count;
 
-		if (ms->audio_out_index >= f->nb_samples * 4) {
+		if (ms->audio_out_index >= f->nb_samples * BPS) {
 			av_frame_free(&ms->audio_out_frame);
 			ms->audio_out_index = 0;
 		}
-
-
 	}
 
-	SDL_CondBroadcast(ms->cond);
+	/* Only signal if we've consumed something. */
+	if (rv) {
+		SDL_CondBroadcast(ms->cond);
+	}
+
 	SDL_UnlockMutex(ms->lock);
 
 	return rv;
