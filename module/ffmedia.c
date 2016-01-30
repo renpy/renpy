@@ -1,6 +1,7 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswresample/swresample.h>
+#include <libavutil/time.h>
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -68,9 +69,9 @@ static void rwops_close(SDL_RWops *rw) {
 	rw->close(rw);
 }
 
-//static double get_time(void) {
-//	return av_gettime() * 1e-6;
-//}
+static double get_time(void) {
+	return av_gettime() * 1e-6;
+}
 
 
 typedef struct PacketQueue {
@@ -145,6 +146,8 @@ typedef struct MediaState {
 	/* The number of samples that have been read so far. */
 	unsigned int audio_read_samples;
 
+	/* The number of seconds to skip at the start. */
+	double skip;
 
 
 } MediaState;
@@ -273,6 +276,7 @@ fail:
 	return NULL;
 }
 
+
 /**
  * Decodes audio. Returns 0 if no audio was decoded, or 1 if some audio was
  * decoded.
@@ -290,6 +294,8 @@ static void decode_audio(MediaState *ms) {
 	if (ms->audio_decode_frame == NULL) {
 		ms->audio_decode_frame = av_frame_alloc();
 	}
+
+	double timebase = 1.0 * ms->audio_context->time_base.num / ms->audio_context->time_base.den;
 
 	while (ms->audio_queue_samples < ms->audio_queue_target_seconds * audio_sample_rate ) {
 
@@ -329,12 +335,32 @@ static void decode_audio(MediaState *ms) {
 			converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
 			converted_frame->format = AV_SAMPLE_FMT_S16;
 
-			if(swr_convert_frame(ms->swr, converted_frame, ms->audio_decode_frame) == 0) {
+			if(swr_convert_frame(ms->swr, converted_frame, ms->audio_decode_frame)) {
+				av_frame_free(&converted_frame);
+				continue;
+			}
+
+
+			double start = av_frame_get_best_effort_timestamp(ms->audio_decode_frame) * timebase;
+			double end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
+
+			if (start >= ms->skip) {
+				// Normal case, queue the frame.
 				ms->audio_queue_samples += converted_frame->nb_samples;
 				enqueue_frame(&ms->audio_queue, converted_frame);
-			} else {
+
+			} else if (end < ms->skip) {
+				// Totally before, drop the frame.
 				av_frame_free(&converted_frame);
+
+			} else {
+				// The frame straddles skip, so we queue the (necessarily single)
+				// frame and set the index into the frame.
+				ms->audio_out_frame = converted_frame;
+				ms->audio_out_index = BPS * (int) ((ms->skip - start) * audio_sample_rate);
+
 			}
+
 
 		} while (pkt_temp.size);
 
@@ -394,7 +420,6 @@ static int decode_thread(void *arg) {
 
 	// Compute the number of samples we need to play back.
 
-
 	if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
 
 		long long duration = ((long long) ctx->duration) * audio_sample_rate;
@@ -406,6 +431,8 @@ static int decode_thread(void *arg) {
 			ms->audio_duration = 0;
 		}
 	}
+
+	av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
 
 	while (!(ms->audio_finished)) {
 
@@ -526,9 +553,27 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->cond = SDL_CreateCond();
 	ms->lock = SDL_CreateMutex();
 
-	ms->audio_queue_target_seconds = 3;
+	ms->audio_queue_target_seconds = 2;
 
 	return ms;
+}
+
+/**
+ * Sets the start and end of the stream. This must be called before
+ * media_start.
+ *
+ * start
+ *    The time in the stream at which the media starts playing.
+ * end
+ *    If not 0, the time at which the stream is forced to end if it has not
+ *    already. If 0, the stream plays until its natural end.
+ */
+void media_start_end(MediaState *ms, double start, double end) {
+	ms->skip = start;
+
+	if (end != 0) {
+		ms->audio_duration = (int) ((end - start) * audio_sample_rate);
+	}
 }
 
 
