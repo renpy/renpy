@@ -210,14 +210,22 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 	av_free(pl);
 
 	return 1;
-
 }
+
+static void free_packet_queue(PacketQueue *pq) {
+	AVPacket scratch;
+
+	while (dequeue_packet(pq, &scratch)) {
+		av_free_packet(&scratch);
+	}
+}
+
 
 /**
  * Reads a packet from one of the queues, filling the other queue if
  * necessary.
  */
-int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
+static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 	AVPacket scratch;
 
 	while (1) {
@@ -447,16 +455,21 @@ static int decode_thread(void *arg) {
 
 
 finish:
+	/* Data used by the decoder should be freed here, while data shared with
+	 * the readers should be freed in media_close.
+	 */
+
+	av_frame_free(&ms->audio_decode_frame);
+
+	free_packet_queue(&ms->audio_packet_queue);
+	free_packet_queue(&ms->video_packet_queue);
+
+	swr_free(&ms->swr);
 
 	avcodec_free_context(&ms->video_context);
 	avcodec_free_context(&ms->audio_context);
 
-	if (ctx) {
-		avformat_free_context(ctx);
-	}
-
-	av_free(io_context->buffer);
-	av_free(io_context);
+	avformat_close_input(&ms->ctx);
 
 	SDL_UnlockMutex(ms->lock);
 
@@ -540,7 +553,7 @@ void media_start(MediaState *ms) {
 	char buf[1024];
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
-	SDL_CreateThread(decode_thread, buf, (void *) ms);
+	ms->decode_thread = SDL_CreateThread(decode_thread, buf, (void *) ms);
 }
 
 
@@ -577,7 +590,42 @@ void media_start_end(MediaState *ms, double start, double end) {
 }
 
 
-void media_close(MediaState *is) {
+void media_close(MediaState *ms) {
+
+	/* Tell the decoder to terminate. */
+	SDL_LockMutex(ms->lock);
+	ms->audio_finished = 1;
+	ms->video_finished = 1;
+	SDL_CondBroadcast(ms->cond);
+	SDL_UnlockMutex(ms->lock);
+
+	/* Wait for the decoder to terminate. */
+	if (ms->decode_thread) {
+		SDL_WaitThread(ms->decode_thread, NULL);
+	}
+
+	/* Destroy audio stuff. */
+	av_frame_free(&ms->audio_out_frame);
+
+
+	while (1) {
+		AVFrame *f = dequeue_frame(&ms->audio_queue);
+
+		if (!f) {
+			break;
+		}
+
+		av_frame_free(&f);
+	}
+
+	/* Destroy alloc stuff. */
+	SDL_DestroyCond(ms->cond);
+	SDL_DestroyMutex(ms->lock);
+
+	rwops_close(ms->rwops);
+
+	av_free(ms->filename);
+	av_free(ms);
 }
 
 
