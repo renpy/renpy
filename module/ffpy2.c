@@ -1,13 +1,20 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libswresample/swresample.h>
 
 #include <SDL.h>
 #include <SDL_thread.h>
 
+
+/* The output audio sample rate. */
+static int audio_sample_rate = 44100;
+
+// http://dranger.com/ffmpeg/
+
+
 /*******************************************************************************
  * SDL_RWops <-> AVIOContext
  * */
-
 
 static int rwops_read(void *opaque, uint8_t *buf, int buf_size) {
     SDL_RWops *rw = (SDL_RWops *) opaque;
@@ -68,6 +75,11 @@ typedef struct PacketQueue {
 	AVPacketList *last;
 } PacketQueue;
 
+typedef struct FrameQueue {
+	AVFrame *first;
+	AVFrame *last;
+} FrameQueue;
+
 typedef struct MediaState {
 
 	SDL_RWops *rwops;
@@ -85,6 +97,10 @@ typedef struct MediaState {
 	 */
 	int ready;
 
+	/* These become true when the audio and video finish. */
+	int audio_finished;
+	int video_finished;
+
 	/* Indexes of video and audio streams. */
 	int video_stream;
 	int audio_stream;
@@ -96,13 +112,57 @@ typedef struct MediaState {
 	AVCodecContext *video_context;
 	AVCodecContext *audio_context;
 
-	PacketQueue video_queue;
-	PacketQueue audio_queue;
+	/* Queues of packets going to the audio and video
+	 * streams.
+	 */
+	PacketQueue video_packet_queue;
+	PacketQueue audio_packet_queue;
+
+
+	/**
+	 * The queue of converted audio frames.
+	 */
+	FrameQueue audio_queue;
+	int audio_queue_samples;
+	int audio_queue_target_seconds;
+
+	AVFrame *audio_out_frame;
+	int audio_out_index;
+
+	SwrContext *swr;
+
 
 } MediaState;
 
 
-static void push_back(PacketQueue *pq, AVPacket *pkt) {
+static void enqueue_frame(FrameQueue *fq, AVFrame *frame) {
+	frame->opaque = NULL;
+
+	if (fq->first) {
+		fq->last->opaque = frame;
+		fq->last = frame;
+	} else {
+		fq->first = fq->last = frame;
+	}
+}
+
+static AVFrame *dequeue_frame(FrameQueue *fq) {
+	if (!fq->first) {
+		return NULL;
+	}
+
+	AVFrame *rv = fq->first;
+	fq->first = (AVFrame *) rv->opaque;
+
+	if (!fq->first) {
+		fq->last = NULL;
+	}
+
+	return rv;
+}
+
+
+static void enqueue_packet(PacketQueue *pq, AVPacket *pkt) {
 	AVPacketList *pl = av_malloc(sizeof(AVPacketList));
 
 	pl->pkt = *pkt;
@@ -113,7 +173,7 @@ static void push_back(PacketQueue *pq, AVPacket *pkt) {
 	}
 }
 
-static int pop_front(PacketQueue *pq, AVPacket *pkt) {
+static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 	if (! pq->first ) {
 		return 0;
 	}
@@ -129,6 +189,8 @@ static int pop_front(PacketQueue *pq, AVPacket *pkt) {
 		pq->last = NULL;
 	}
 
+	av_free(pl);
+
 	return 1;
 
 }
@@ -141,7 +203,7 @@ int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 	AVPacket scratch;
 
 	while (1) {
-		if (pop_front(pq, pkt)) {
+		if (dequeue_packet(pq, pkt)) {
 			return 1;
 		}
 
@@ -152,9 +214,9 @@ int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 		av_dup_packet(&scratch);
 
 		if (scratch.stream_index == ms->video_stream) {
-			push_back(&ms->video_queue, &scratch);
+			enqueue_packet(&ms->video_packet_queue, &scratch);
 		} else if (scratch.stream_index == ms->audio_stream) {
-			push_back(&ms->audio_queue, &scratch);
+			enqueue_packet(&ms->audio_packet_queue, &scratch);
 		} else {
 			av_free_packet(&scratch);
 		}
@@ -196,16 +258,69 @@ fail:
 	return NULL;
 }
 
+/**
+ * Decodes audio. Returns 0 if no audio was decoded, or 1 if some audio was
+ * decoded.
+ */
+static void decode_audio(MediaState *ms) {
+	AVPacket pkt;
+	AVPacket pkt_temp;
+	AVFrame frame;
+	AVFrame *converted_frame;
 
-static void setup_audio(MediaState *ms) {
+	if (!ms->audio_context) {
+		ms->audio_finished = 1;
+		return;
+	}
 
-}
+	while (ms->audio_queue_samples < ms->audio_queue_target_seconds * audio_sample_rate ) {
 
-static void finish_audio(MediaState *ms) {
+		if (!read_packet(ms, &ms->audio_packet_queue, &pkt)) {
+			pkt.data = NULL;
+			pkt.size = 0;
+			break;
+		}
 
-}
+		pkt_temp = pkt;
 
-static void decode_audio(MediaState *ms, AVPacket *p) {
+		while (pkt_temp.size) {
+			int got_frame;
+			int read_size = avcodec_decode_audio4(ms->audio_context, &frame, &got_frame, &pkt_temp);
+
+			if (read_size < 0) {
+				break;
+			}
+
+			pkt_temp.data += read_size;
+			pkt_temp.size -= read_size;
+
+			if (!got_frame) {
+				if (pkt.data == NULL) {
+					ms->audio_finished = 1;
+					return;
+				}
+
+				break;
+			}
+
+			converted_frame = av_frame_alloc();
+			converted_frame->sample_rate = audio_sample_rate;
+			converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
+			converted_frame->format = AV_SAMPLE_FMT_S16;
+
+			if(swr_convert_frame(ms->swr, converted_frame, &frame) == 0) {
+				ms->audio_queue_samples += converted_frame->nb_samples;
+				enqueue_frame(&ms->audio_queue, converted_frame);
+			} else {
+				av_frame_free(&converted_frame);
+			}
+
+			av_frame_unref(&frame);
+		}
+
+	}
+
+	return;
 
 }
 
@@ -254,6 +369,11 @@ static int decode_thread(void *arg) {
 
 	ms->video_context = find_context(ctx, ms->video_stream);
 	ms->audio_context = find_context(ctx, ms->audio_stream);
+
+	ms->swr = swr_alloc();
+
+
+	// TODO: Audio duration stuff from line 1503 of ffdecode.c
 
 
 	while (1) {
@@ -308,6 +428,7 @@ MediaState *ffpy2_allocate(SDL_RWops *rwops, const char *filename) {
 	ms->cond = SDL_CreateCond();
 	ms->lock = SDL_CreateMutex();
 
+	ms->audio_queue_target_seconds = 3;
 
 	return ms;
 }
@@ -318,6 +439,8 @@ void ffpy2_close(MediaState *is) {
 
 
 void ffpy2_init(int rate, int status) {
+
+	audio_sample_rate = rate;
 
     av_register_all();
 
