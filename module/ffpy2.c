@@ -306,6 +306,10 @@ static void decode_audio(MediaState *ms) {
 				break;
 			}
 
+			if (!ms->audio_decode_frame->channel_layout) {
+				ms->audio_decode_frame->channel_layout = av_get_default_channel_layout(ms->audio_decode_frame->channels);
+			}
+
 			converted_frame = av_frame_alloc();
 			converted_frame->sample_rate = audio_sample_rate;
 			converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
