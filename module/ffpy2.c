@@ -125,7 +125,7 @@ typedef struct MediaState {
 	FrameQueue audio_queue;
 	int audio_queue_samples;
 	int audio_queue_target_seconds;
-
+	AVFrame *audio_decode_frame;
 	AVFrame *audio_out_frame;
 	int audio_out_index;
 
@@ -265,12 +265,15 @@ fail:
 static void decode_audio(MediaState *ms) {
 	AVPacket pkt;
 	AVPacket pkt_temp;
-	AVFrame frame;
 	AVFrame *converted_frame;
 
 	if (!ms->audio_context) {
 		ms->audio_finished = 1;
 		return;
+	}
+
+	if (ms->audio_decode_frame == NULL) {
+		ms->audio_decode_frame = av_frame_alloc();
 	}
 
 	while (ms->audio_queue_samples < ms->audio_queue_target_seconds * audio_sample_rate ) {
@@ -285,7 +288,7 @@ static void decode_audio(MediaState *ms) {
 
 		while (pkt_temp.size) {
 			int got_frame;
-			int read_size = avcodec_decode_audio4(ms->audio_context, &frame, &got_frame, &pkt_temp);
+			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
 				break;
@@ -308,14 +311,13 @@ static void decode_audio(MediaState *ms) {
 			converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
 			converted_frame->format = AV_SAMPLE_FMT_S16;
 
-			if(swr_convert_frame(ms->swr, converted_frame, &frame) == 0) {
+			if(swr_convert_frame(ms->swr, converted_frame, ms->audio_decode_frame) == 0) {
 				ms->audio_queue_samples += converted_frame->nb_samples;
 				enqueue_frame(&ms->audio_queue, converted_frame);
 			} else {
 				av_frame_free(&converted_frame);
 			}
 
-			av_frame_unref(&frame);
 		}
 
 	}
@@ -376,7 +378,14 @@ static int decode_thread(void *arg) {
 	// TODO: Audio duration stuff from line 1503 of ffdecode.c
 
 
-	while (1) {
+	while (!(ms->audio_finished)) {
+
+		if (! ms->audio_finished) {
+			decode_audio(ms);
+		}
+
+		SDL_CondBroadcast(ms->cond);
+		SDL_CondWait(ms->cond, ms->lock);
 
 	}
 
@@ -385,6 +394,9 @@ static int decode_thread(void *arg) {
 
 
 finish:
+
+	avcodec_free_context(&ms->video_context);
+	avcodec_free_context(&ms->audio_context);
 
 	if (ctx) {
 		avformat_free_context(ctx);
@@ -406,9 +418,51 @@ int ffpy2_audio_decode(struct MediaState *ms, Uint8 *stream, int len) {
 		SDL_CondWait(ms->cond, ms->lock);
 	}
 
+
+	int rv = 0;
+
+	while (len) {
+
+		if (!ms->audio_out_frame) {
+			ms->audio_out_frame = dequeue_frame(&ms->audio_queue);
+			ms->audio_out_index = 0;
+		}
+
+		if (!ms->audio_out_frame) {
+			break;
+		}
+
+		AVFrame *f = ms->audio_out_frame;
+
+		int count;
+		int avail = f->nb_samples * 4 - ms->audio_out_index;
+
+		if (len > avail) {
+			count = avail;
+		} else {
+			count = len;
+		}
+
+		memcpy(stream, &f->data[0][ms->audio_out_index], count);
+
+		ms->audio_queue_samples -= count / 4;
+		ms->audio_out_index += count;
+		rv += count;
+		len -= count;
+		stream += count;
+
+		if (ms->audio_out_index >= f->nb_samples * 4) {
+			av_frame_free(&ms->audio_out_frame);
+			ms->audio_out_index = 0;
+		}
+
+
+	}
+
+	SDL_CondBroadcast(ms->cond);
 	SDL_UnlockMutex(ms->lock);
 
-	return 0;
+	return rv;
 }
 
 void ffpy2_start(MediaState *ms) {
@@ -419,7 +473,7 @@ void ffpy2_start(MediaState *ms) {
 }
 
 
-MediaState *ffpy2_allocate(SDL_RWops *rwops, const char *filename) {
+MediaState *ffpy2_alloc(SDL_RWops *rwops, const char *filename) {
 	MediaState *ms = av_calloc(1, sizeof(MediaState));
 
 	ms->filename = av_strdup(filename);
