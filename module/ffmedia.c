@@ -80,7 +80,7 @@ typedef struct FrameQueue {
 	AVFrame *last;
 } FrameQueue;
 
-typedef struct MediaState {
+typedef struct MediaPlayer {
 
 	SDL_RWops *rwops;
 	char *filename;
@@ -132,7 +132,7 @@ typedef struct MediaState {
 	SwrContext *swr;
 
 
-} MediaState;
+} MediaPlayer;
 
 
 static void enqueue_frame(FrameQueue *fq, AVFrame *frame) {
@@ -199,7 +199,7 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
  * Reads a packet from one of the queues, filling the other queue if
  * necessary.
  */
-int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
+int read_packet(MediaPlayer *ms, PacketQueue *pq, AVPacket *pkt) {
 	AVPacket scratch;
 
 	while (1) {
@@ -262,7 +262,7 @@ fail:
  * Decodes audio. Returns 0 if no audio was decoded, or 1 if some audio was
  * decoded.
  */
-static void decode_audio(MediaState *ms) {
+static void decode_audio(MediaPlayer *ms) {
 	AVPacket pkt;
 	AVPacket pkt_temp;
 	AVFrame *converted_frame;
@@ -332,7 +332,7 @@ static void decode_audio(MediaState *ms) {
 
 
 static int decode_thread(void *arg) {
-	MediaState *ms = (MediaState *) arg;
+	MediaPlayer *ms = (MediaPlayer *) arg;
 
 	int err;
 
@@ -394,9 +394,6 @@ static int decode_thread(void *arg) {
 	}
 
 
-
-
-
 finish:
 
 	avcodec_free_context(&ms->video_context);
@@ -415,13 +412,12 @@ finish:
 }
 
 
-int ffpy2_audio_decode(struct MediaState *ms, Uint8 *stream, int len) {
+int media_read_audio(struct MediaPlayer *ms, Uint8 *stream, int len) {
 	SDL_LockMutex(ms->lock);
 
 	while (!ms->ready) {
 		SDL_CondWait(ms->cond, ms->lock);
 	}
-
 
 	int rv = 0;
 
@@ -469,7 +465,7 @@ int ffpy2_audio_decode(struct MediaState *ms, Uint8 *stream, int len) {
 	return rv;
 }
 
-void ffpy2_start(MediaState *ms) {
+void media_start(MediaPlayer *ms) {
 	char buf[1024];
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
@@ -477,8 +473,8 @@ void ffpy2_start(MediaState *ms) {
 }
 
 
-MediaState *ffpy2_alloc(SDL_RWops *rwops, const char *filename) {
-	MediaState *ms = av_calloc(1, sizeof(MediaState));
+MediaPlayer *media_open(SDL_RWops *rwops, const char *filename) {
+	MediaPlayer *ms = av_calloc(1, sizeof(MediaPlayer));
 
 	ms->filename = av_strdup(filename);
 	ms->rwops = rwops;
@@ -492,11 +488,11 @@ MediaState *ffpy2_alloc(SDL_RWops *rwops, const char *filename) {
 }
 
 
-void ffpy2_close(MediaState *is) {
+void media_close(MediaPlayer *is) {
 }
 
 
-void ffpy2_init(int rate, int status) {
+void media_init(int rate, int status) {
 
 	audio_sample_rate = rate;
 

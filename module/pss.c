@@ -31,18 +31,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define MAXVOLUME 16384
 
 /* Declarations of ffdecode functions. */
-struct MediaState;
+struct MediaPlayer;
+typedef struct MediaPlayer MediaPlayer;
 
-struct MediaState *ffpy2_alloc(SDL_RWops *, const char *);
-void ffpy2_start(struct MediaState *);
-struct MediaState *ffpy2_close(struct MediaState *);
+void media_init(int rate, int status);
 
-// void ffpy_alloc_event(struct MediaState *vs, PyObject *surface);
-// int ffpy_refresh_event(struct MediaState *vs);
+MediaPlayer *media_open(SDL_RWops *, const char *);
+void media_start(MediaPlayer *);
+void media_close(MediaPlayer *);
 
-void ffpy2_init(int rate, int status);
-int ffpy2_audio_decode(struct MediaState *is, Uint8 *stream, int len);
-
+int media_read_audio(struct MediaPlayer *is, Uint8 *stream, int len);
 
 /* The current Python. */
 PyInterpreterState* interp;
@@ -112,7 +110,7 @@ struct Channel {
 
     /* The currently playing sample, NULL if this sample isn't playing
        anything. */
-    struct MediaState *playing;
+    struct MediaPlayer *playing;
 
     /* The name of the playing music. */
     PyObject *playing_name;
@@ -124,7 +122,7 @@ struct Channel {
     int playing_tight;
 
     /* The queued up sample. */
-    struct MediaState *queued;
+    struct MediaPlayer *queued;
 
     /* The name of the queued up sample. */
     PyObject *queued_name;
@@ -185,7 +183,7 @@ struct Channel {
 };
 
 struct Dying {
-    struct MediaState *stream;
+    struct MediaPlayer *stream;
     struct Dying *next;
 };
 
@@ -277,8 +275,8 @@ static void start_sample(struct Channel* c, int reset_fade) {
     }
 }
 
-static void free_sample(struct MediaState *ss) {
-    ffpy2_close(ss);
+static void free_sample(struct MediaPlayer *ss) {
+    media_close(ss);
 }
 
 #define MAX_SHORT (32767)
@@ -436,7 +434,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
             // Decode some amount of data.
 
-            bytes = ffpy2_audio_decode(c->playing, buffer, mixleft);
+            bytes = media_read_audio(c->playing, buffer, mixleft);
 
             // We have some data in the buffer.
             if (c->stop_bytes && bytes) {
@@ -546,10 +544,10 @@ static int check_channel(int c) {
  * Loads the provided sample. Returns the sample on success, NULL on
  * failure.
  */
-struct MediaState *load_sample(SDL_RWops *rw, const char *ext) {
-    struct MediaState *rv;
-    rv = ffpy2_alloc(rw, ext);
-    ffpy2_start(rv);
+struct MediaPlayer *load_sample(SDL_RWops *rw, const char *ext) {
+    struct MediaPlayer *rv;
+    rv = media_open(rw, ext);
+    media_start(rv);
     return rv;
 }
 
@@ -1095,7 +1093,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
         return;
     }
 
-    ffpy2_init(audio_spec.freq, status);
+    media_init(audio_spec.freq, status);
 
     SDL_PauseAudio(0);
 
@@ -1141,7 +1139,7 @@ void PSS_periodic() {
 
     while (dying) {
         struct Dying *d = dying;
-        ffpy2_close(d->stream);
+        media_close(d->stream);
         dying = d->next;
         free(d);
     }
