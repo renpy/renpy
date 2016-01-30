@@ -31,16 +31,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define MAXVOLUME 16384
 
 /* Declarations of ffdecode functions. */
-struct MediaPlayer;
-typedef struct MediaPlayer MediaPlayer;
+struct MediaState;
+typedef struct MediaState MediaState;
 
 void media_init(int rate, int status);
 
-MediaPlayer *media_open(SDL_RWops *, const char *);
-void media_start(MediaPlayer *);
-void media_close(MediaPlayer *);
+MediaState *media_open(SDL_RWops *, const char *);
+void media_start(MediaState *);
+void media_close(MediaState *);
 
-int media_read_audio(struct MediaPlayer *is, Uint8 *stream, int len);
+int media_read_audio(struct MediaState *is, Uint8 *stream, int len);
 
 /* The current Python. */
 PyInterpreterState* interp;
@@ -110,7 +110,7 @@ struct Channel {
 
     /* The currently playing sample, NULL if this sample isn't playing
        anything. */
-    struct MediaPlayer *playing;
+    struct MediaState *playing;
 
     /* The name of the playing music. */
     PyObject *playing_name;
@@ -122,7 +122,7 @@ struct Channel {
     int playing_tight;
 
     /* The queued up sample. */
-    struct MediaPlayer *queued;
+    struct MediaState *queued;
 
     /* The name of the queued up sample. */
     PyObject *queued_name;
@@ -183,7 +183,7 @@ struct Channel {
 };
 
 struct Dying {
-    struct MediaPlayer *stream;
+    struct MediaState *stream;
     struct Dying *next;
 };
 
@@ -275,7 +275,7 @@ static void start_sample(struct Channel* c, int reset_fade) {
     }
 }
 
-static void free_sample(struct MediaPlayer *ss) {
+static void free_sample(struct MediaState *ss) {
     media_close(ss);
 }
 
@@ -544,8 +544,8 @@ static int check_channel(int c) {
  * Loads the provided sample. Returns the sample on success, NULL on
  * failure.
  */
-struct MediaPlayer *load_sample(SDL_RWops *rw, const char *ext) {
-    struct MediaPlayer *rv;
+struct MediaState *load_sample(SDL_RWops *rw, const char *ext) {
+    struct MediaState *rv;
     rv = media_open(rw, ext);
     media_start(rv);
     return rv;

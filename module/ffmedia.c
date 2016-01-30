@@ -83,7 +83,7 @@ typedef struct FrameQueue {
 	AVFrame *last;
 } FrameQueue;
 
-typedef struct MediaPlayer {
+typedef struct MediaState {
 
 	SDL_RWops *rwops;
 	char *filename;
@@ -147,7 +147,7 @@ typedef struct MediaPlayer {
 
 
 
-} MediaPlayer;
+} MediaState;
 
 
 static void enqueue_frame(FrameQueue *fq, AVFrame *frame) {
@@ -214,7 +214,7 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
  * Reads a packet from one of the queues, filling the other queue if
  * necessary.
  */
-int read_packet(MediaPlayer *ms, PacketQueue *pq, AVPacket *pkt) {
+int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 	AVPacket scratch;
 
 	while (1) {
@@ -277,7 +277,7 @@ fail:
  * Decodes audio. Returns 0 if no audio was decoded, or 1 if some audio was
  * decoded.
  */
-static void decode_audio(MediaPlayer *ms) {
+static void decode_audio(MediaState *ms) {
 	AVPacket pkt;
 	AVPacket pkt_temp;
 	AVFrame *converted_frame;
@@ -346,7 +346,7 @@ static void decode_audio(MediaPlayer *ms) {
 
 
 static int decode_thread(void *arg) {
-	MediaPlayer *ms = (MediaPlayer *) arg;
+	MediaState *ms = (MediaState *) arg;
 
 	int err;
 
@@ -437,7 +437,7 @@ finish:
 }
 
 
-int media_read_audio(struct MediaPlayer *ms, Uint8 *stream, int len) {
+int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	SDL_LockMutex(ms->lock);
 
 	while (!ms->ready) {
@@ -509,7 +509,7 @@ int media_read_audio(struct MediaPlayer *ms, Uint8 *stream, int len) {
 	return rv;
 }
 
-void media_start(MediaPlayer *ms) {
+void media_start(MediaState *ms) {
 	char buf[1024];
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
@@ -517,8 +517,8 @@ void media_start(MediaPlayer *ms) {
 }
 
 
-MediaPlayer *media_open(SDL_RWops *rwops, const char *filename) {
-	MediaPlayer *ms = av_calloc(1, sizeof(MediaPlayer));
+MediaState *media_open(SDL_RWops *rwops, const char *filename) {
+	MediaState *ms = av_calloc(1, sizeof(MediaState));
 
 	ms->filename = av_strdup(filename);
 	ms->rwops = rwops;
@@ -532,7 +532,7 @@ MediaPlayer *media_open(SDL_RWops *rwops, const char *filename) {
 }
 
 
-void media_close(MediaPlayer *is) {
+void media_close(MediaState *is) {
 }
 
 
