@@ -42,6 +42,7 @@ void PSS_set_volume(int channel, float volume);
 float PSS_get_volume(int channel);
 void PSS_set_pan(int channel, float pan, float delay);
 void PSS_set_secondary_volume(int channel, float vol2, float delay);
+void PSS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void PSS_init(int freq, int stereo, int samples, int status);
 void PSS_quit(void);
 

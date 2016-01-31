@@ -27,6 +27,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <SDL_thread.h>
 #include <stdio.h>
 #include <strings.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 
 #define MAXVOLUME 16384
 
@@ -35,6 +36,7 @@ struct MediaState;
 typedef struct MediaState MediaState;
 
 void media_init(int rate, int status);
+void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
 
 MediaState *media_open(SDL_RWops *, const char *);
 void media_start(MediaState *);
@@ -1145,6 +1147,14 @@ void PSS_periodic() {
     }
 
     EXIT();
+}
+
+void PSS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
+	media_sample_surfaces(
+			PySurface_AsSurface(rgb),
+			PySurface_AsSurface(rgba)
+		);
+
 }
 
 /* This should be called in response to an FF_ALLOC_EVENT, with a pygame

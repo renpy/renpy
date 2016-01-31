@@ -628,6 +628,10 @@ void media_close(MediaState *ms) {
 	av_free(ms);
 }
 
+void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
+
+}
+
 
 void media_init(int rate, int status) {
 

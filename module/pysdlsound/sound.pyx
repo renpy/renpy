@@ -40,6 +40,8 @@ cdef extern from "pss.h":
     float PSS_get_volume(int channel)
     void PSS_set_pan(int channel, float pan, float delay)
     void PSS_set_secondary_volume(int channel, float vol2, float delay)
+
+    void PSS_sample_surfaces(object, object)
     void PSS_init(int freq, int stereo, int samples, int status)
     void PSS_quit()
 
@@ -166,6 +168,19 @@ def quit(): # @ReservedAssignment
 
 def periodic():
     PSS_periodic()
+
+# Store the sample surfaces so they stay alive.
+rgb_surface = None
+rgba_surface = None
+
+def sample_surfaces(rgb, rgba):
+    global rgb_surface
+    global rgba_surface
+
+    rgb_surface = rgb
+    rgba_surface = rgb
+
+    PSS_sample_surfaces(rgb, rgba)
 
 def alloc_event(surf):
     PSS_alloc_event(surf)
