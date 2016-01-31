@@ -26,6 +26,7 @@ import sys
 import pygame_sdl2 as pygame
 import threading
 import renpy.display
+import renpy.audio
 
 
 # Sample surfaces, with and without alpha.
@@ -62,6 +63,7 @@ def set_rgba_masks():
     sample_alpha = pygame.Surface((10, 10), 0, 32, masks)
     sample_noalpha = pygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
 
+    renpy.audio.audio.sample_surfaces(sample_noalpha, sample_alpha)
 
 class Surface(pygame.Surface):
     """

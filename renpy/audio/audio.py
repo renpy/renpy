@@ -803,3 +803,10 @@ def unpause_all():
 
     for c in channels.values():
         c.unpause()
+
+def sample_surfaces(rgb, rgba):
+    if not renpysound:
+        return
+
+    renpysound.sample_surfaces(rgb, rgba)
+

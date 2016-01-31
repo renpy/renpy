@@ -1066,6 +1066,7 @@ void RPS_init(int freq, int stereo, int samples, int status) {
     name_mutex = SDL_CreateMutex();
 
     PyEval_InitThreads();
+    import_pygame_sdl2();
 
     if (!thread) {
         thread = PyThreadState_Get();
@@ -1150,7 +1151,9 @@ void RPS_periodic() {
 }
 
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
-	media_sample_surfaces(
+    import_pygame_sdl2();
+
+    media_sample_surfaces(
 			PySurface_AsSurface(rgb),
 			PySurface_AsSurface(rgba)
 		);

@@ -629,7 +629,7 @@ void media_close(MediaState *ms) {
 }
 
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
-
+	printf("Got sample surfaces!\n");
 }
 
 
