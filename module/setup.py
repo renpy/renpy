@@ -131,7 +131,6 @@ if has_fribidi:
 cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
 # Sound.
-pymodule("pysdlsound.__init__")
 
 sound = [ "avformat", "avcodec", "avutil", "z" ]
 macros = [ ]
@@ -147,8 +146,8 @@ if has_swscale:
     sound.insert(0, "swscale")
 
 cython(
-    "pysdlsound.sound",
-    [ "pss.c", "ffmedia.c" ],
+    "renpy.audio.renpysound",
+    [ "renpysound_core.c", "ffmedia.c" ],
     libs = sdl + sound,
     define_macros=macros)
 
