@@ -13,8 +13,9 @@ const int CHANNELS = 2;
 const int BPC = 2; // Bytes per channel.
 const int BPS = 4; // Bytes per sample.
 
-// http://dranger.com/ffmpeg/
+const int FRAMES = 3;
 
+// http://dranger.com/ffmpeg/
 
 /*******************************************************************************
  * SDL_RWops <-> AVIOContext
@@ -84,22 +85,48 @@ typedef struct FrameQueue {
 	AVFrame *last;
 } FrameQueue;
 
+
+typedef struct SurfaceQueueEntry {
+	struct SurfaceQueueEntry *next;
+
+	SDL_Surface *surf;
+
+	/* The pts, converted to seconds. */
+	double pts;
+} SurfaceQueueEntry;
+
 typedef struct MediaState {
 
-	SDL_RWops *rwops;
-	char *filename;
 
 	/* The condition and lock. */
 	SDL_cond* cond;
 	SDL_mutex* lock;
 
-	/* The decode thread. */
-	SDL_Thread *decode_thread;
+
+	SDL_RWops *rwops;
+	char *filename;
+
+	/*
+	 * This becomes true when the decode thread starts, when
+	 * it is the decode thread's job to deallocate this object.
+	 */
+	int started;
 
 	/* This becomes true once the decode thread has finished initializing
 	 * and the readers and writers can do their thing.
 	 */
-	int ready;
+	int ready; // Lock.
+
+	/* This is set to true when data has been read, in order to ask the
+	 * decode thread to produce more data.
+	 */
+	int needs_decode; // Lock.
+
+	/*
+	 * This is set to true when data has been read, in order to ask the
+	 * decode thread to shut down and deallocate all resources.
+	 */
+	int quit; // Lock
 
 	/* These become true when the audio and video finish. */
 	int audio_finished;
@@ -123,7 +150,7 @@ typedef struct MediaState {
 	PacketQueue audio_packet_queue;
 
 	/* The queue of converted audio frames. */
-	FrameQueue audio_queue;
+	FrameQueue audio_queue; // Lock
 
 	/* The size of the audio queue, and the target size in seconds. */
 	int audio_queue_samples;
@@ -133,8 +160,8 @@ typedef struct MediaState {
 	AVFrame *audio_decode_frame;
 
 	/* The audio frame being read from, and the index into the audio frame. */
-	AVFrame *audio_out_frame;
-	int audio_out_index;
+	AVFrame *audio_out_frame; // Lock
+	int audio_out_index; // Lock
 
 	SwrContext *swr;
 
@@ -144,14 +171,52 @@ typedef struct MediaState {
 	unsigned int audio_duration;
 
 	/* The number of samples that have been read so far. */
-	unsigned int audio_read_samples;
+	unsigned int audio_read_samples; // Lock
 
 	/* The number of seconds to skip at the start. */
 	double skip;
 
-
 } MediaState;
 
+static AVFrame *dequeue_frame(FrameQueue *fq);
+static void free_packet_queue(PacketQueue *pq);
+
+static void deallocate(MediaState *ms) {
+
+	/* Destroy audio stuff. */
+	swr_free(&ms->swr);
+
+	av_frame_free(&ms->audio_decode_frame);
+	av_frame_free(&ms->audio_out_frame);
+
+	while (1) {
+		AVFrame *f = dequeue_frame(&ms->audio_queue);
+
+		if (!f) {
+			break;
+		}
+
+		av_frame_free(&f);
+	}
+
+	/* Destroy/Close core stuff. */
+	free_packet_queue(&ms->audio_packet_queue);
+	free_packet_queue(&ms->video_packet_queue);
+
+	avcodec_free_context(&ms->video_context);
+	avcodec_free_context(&ms->audio_context);
+
+	avformat_close_input(&ms->ctx);
+
+	/* Destroy alloc stuff. */
+	SDL_DestroyCond(ms->cond);
+	SDL_DestroyMutex(ms->lock);
+
+	rwops_close(ms->rwops);
+
+	av_free(ms->filename);
+	av_free(ms);
+}
 
 static void enqueue_frame(FrameQueue *fq, AVFrame *frame) {
 	frame->opaque = NULL;
@@ -352,7 +417,10 @@ static void decode_audio(MediaState *ms) {
 			double start = av_frame_get_best_effort_timestamp(ms->audio_decode_frame) * timebase;
 			double end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
 
+			SDL_LockMutex(ms->lock);
+
 			if (start >= ms->skip) {
+
 				// Normal case, queue the frame.
 				ms->audio_queue_samples += converted_frame->nb_samples;
 				enqueue_frame(&ms->audio_queue, converted_frame);
@@ -369,6 +437,7 @@ static void decode_audio(MediaState *ms) {
 
 			}
 
+			SDL_UnlockMutex(ms->lock);
 
 		} while (pkt_temp.size);
 
@@ -379,13 +448,15 @@ static void decode_audio(MediaState *ms) {
 }
 
 
+static void decode_video(MediaState *ms) {
+
+}
+
+
 static int decode_thread(void *arg) {
 	MediaState *ms = (MediaState *) arg;
 
 	int err;
-
-	SDL_LockMutex(ms->lock);
-	ms->ready = 1;
 
 	AVIOContext *io_context = rwops_open(ms->rwops);
 
@@ -442,15 +513,26 @@ static int decode_thread(void *arg) {
 
 	av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
 
-	while (!(ms->audio_finished)) {
+	while (!ms->quit) {
 
 		if (! ms->audio_finished) {
 			decode_audio(ms);
 		}
 
-		SDL_CondBroadcast(ms->cond);
-		SDL_CondWait(ms->cond, ms->lock);
+		SDL_LockMutex(ms->lock);
 
+		if (!ms->ready) {
+			ms->ready = 1;
+			SDL_CondBroadcast(ms->cond);
+		}
+
+		if (!(ms->needs_decode || ms->quit)) {
+			SDL_CondWait(ms->cond, ms->lock);
+		}
+
+		ms->needs_decode = 0;
+
+		SDL_UnlockMutex(ms->lock);
 	}
 
 
@@ -459,19 +541,21 @@ finish:
 	 * the readers should be freed in media_close.
 	 */
 
-	av_frame_free(&ms->audio_decode_frame);
+	SDL_LockMutex(ms->lock);
 
-	free_packet_queue(&ms->audio_packet_queue);
-	free_packet_queue(&ms->video_packet_queue);
+	/* Ensures that every stream becomes ready. */
+	if (!ms->ready) {
+		ms->ready = 1;
+		SDL_CondBroadcast(ms->cond);
+	}
 
-	swr_free(&ms->swr);
-
-	avcodec_free_context(&ms->video_context);
-	avcodec_free_context(&ms->audio_context);
-
-	avformat_close_input(&ms->ctx);
+	while (!ms->quit) {
+		SDL_CondWait(ms->cond, ms->lock);
+	}
 
 	SDL_UnlockMutex(ms->lock);
+
+	deallocate(ms);
 
 	return 0;
 }
@@ -541,6 +625,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 
 	/* Only signal if we've consumed something. */
 	if (rv) {
+		ms->needs_decode = 1;
 		SDL_CondBroadcast(ms->cond);
 	}
 
@@ -553,7 +638,12 @@ void media_start(MediaState *ms) {
 	char buf[1024];
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
-	ms->decode_thread = SDL_CreateThread(decode_thread, buf, (void *) ms);
+	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms);
+
+	if (t) {
+		ms->started = 1;
+		SDL_DetachThread(t);
+	}
 }
 
 
@@ -592,40 +682,17 @@ void media_start_end(MediaState *ms, double start, double end) {
 
 void media_close(MediaState *ms) {
 
-	/* Tell the decoder to terminate. */
+	if (!ms->started) {
+		deallocate(ms);
+		return;
+	}
+
+	/* Tell the decoder to terminate. It will deallocate everything for us. */
 	SDL_LockMutex(ms->lock);
-	ms->audio_finished = 1;
-	ms->video_finished = 1;
+	ms->quit = 1;
 	SDL_CondBroadcast(ms->cond);
 	SDL_UnlockMutex(ms->lock);
 
-	/* Wait for the decoder to terminate. */
-	if (ms->decode_thread) {
-		SDL_WaitThread(ms->decode_thread, NULL);
-	}
-
-	/* Destroy audio stuff. */
-	av_frame_free(&ms->audio_out_frame);
-
-
-	while (1) {
-		AVFrame *f = dequeue_frame(&ms->audio_queue);
-
-		if (!f) {
-			break;
-		}
-
-		av_frame_free(&f);
-	}
-
-	/* Destroy alloc stuff. */
-	SDL_DestroyCond(ms->cond);
-	SDL_DestroyMutex(ms->lock);
-
-	rwops_close(ms->rwops);
-
-	av_free(ms->filename);
-	av_free(ms);
 }
 
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
