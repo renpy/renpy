@@ -759,6 +759,9 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.match(image_word_regexp)
 
+        if rv is None:
+            rv = self.simple_expression()
+
         if rv in KEYWORDS:
             self.pos = oldpos
             return None
