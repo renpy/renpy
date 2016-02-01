@@ -14,6 +14,10 @@ const int BPC = 2; // Bytes per channel.
 const int BPS = 4; // Bytes per sample.
 
 const int FRAMES = 3;
+const int FRAME_PADDING = 2; // Pixels on each side.
+
+static SDL_Surface *rgb_surface = NULL;
+static SDL_Surface *rgba_surface = NULL;
 
 // http://dranger.com/ffmpeg/
 
@@ -128,6 +132,9 @@ typedef struct MediaState {
 	 */
 	int quit; // Lock
 
+	/* The number of seconds to skip at the start. */
+	double skip;
+
 	/* These become true when the audio and video finish. */
 	int audio_finished;
 	int video_finished;
@@ -173,8 +180,13 @@ typedef struct MediaState {
 	/* The number of samples that have been read so far. */
 	unsigned int audio_read_samples; // Lock
 
-	/* The number of seconds to skip at the start. */
-	double skip;
+	/* A frame that video is decoded into. */
+	AVFrame *video_decode_frame;
+
+	/* The video packet we're decoding, and the partial packet. */
+	AVPacket video_pkt;
+	AVPacket video_pkt_tmp;
+
 
 } MediaState;
 
@@ -182,6 +194,11 @@ static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
 
 static void deallocate(MediaState *ms) {
+
+	/* Destroy video stuff. */
+	av_frame_free(&ms->video_decode_frame);
+
+	av_free_packet(&ms->video_pkt);
 
 	/* Destroy audio stuff. */
 	swr_free(&ms->swr);
@@ -253,6 +270,9 @@ static void enqueue_packet(PacketQueue *pq, AVPacket *pkt) {
 
 	if (!pq->first) {
 		pq->first = pq->last = pl;
+	} else {
+		pq->last->next = pl;
+		pq->last = pl;
 	}
 }
 
@@ -260,7 +280,6 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 	if (! pq->first ) {
 		return 0;
 	}
-
 
 	AVPacketList *pl = pq->first;
 
@@ -299,6 +318,8 @@ static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 		}
 
 		if (av_read_frame(ms->ctx, &scratch)) {
+			pkt->data = NULL;
+			pkt->size = 0;
 			return 0;
 		}
 
@@ -368,14 +389,11 @@ static void decode_audio(MediaState *ms) {
 		ms->audio_decode_frame = av_frame_alloc();
 	}
 
-	double timebase = 1.0 * ms->audio_context->time_base.num / ms->audio_context->time_base.den;
+	double timebase = av_q2d(ms->ctx->streams[ms->audio_stream]->time_base);
 
 	while (ms->audio_queue_samples < ms->audio_queue_target_seconds * audio_sample_rate ) {
 
-		if (!read_packet(ms, &ms->audio_packet_queue, &pkt)) {
-			pkt.data = NULL;
-			pkt.size = 0;
-		}
+		read_packet(ms, &ms->audio_packet_queue, &pkt);
 
 		pkt_temp = pkt;
 
@@ -384,7 +402,8 @@ static void decode_audio(MediaState *ms) {
 			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
-				break;
+				ms->audio_finished = 1;
+				return;
 			}
 
 			pkt_temp.data += read_size;
@@ -393,6 +412,7 @@ static void decode_audio(MediaState *ms) {
 			if (!got_frame) {
 				if (pkt.data == NULL) {
 					ms->audio_finished = 1;
+					av_free_packet(&pkt);
 					return;
 				}
 
@@ -441,14 +461,73 @@ static void decode_audio(MediaState *ms) {
 
 		} while (pkt_temp.size);
 
+		av_free_packet(&pkt);
 	}
 
 	return;
 
 }
 
+static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
+
+	while (1) {
+
+		if (! ms->video_pkt_tmp.size) {
+			av_free_packet(&ms->video_pkt);
+			read_packet(ms, &ms->video_packet_queue, &ms->video_pkt);
+			ms->video_pkt_tmp = ms->video_pkt;
+		}
+
+		int got_frame = 0;
+		int read_size = avcodec_decode_video2(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
+
+		if (read_size < 0) {
+			printf("Bad exit.\n");
+			ms->video_finished = 1;
+			return NULL;
+		}
+
+		ms->video_pkt_tmp.data += read_size;
+		ms->video_pkt_tmp.size -= read_size;
+
+		if (got_frame) {
+			break;
+		}
+
+		if (!got_frame && !ms->video_pkt.size) {
+			printf("Good exit.\n");
+			ms->video_finished = 1;
+			return NULL;
+		}
+
+	}
+
+//	double timebase = 1.0 * ms->video_context->time_base.num / ms->video_context->time_base.den;
+
+	double pts = 1.0 * av_frame_get_best_effort_timestamp(ms->video_decode_frame) \
+			* av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
+
+//	printf("%f %f\n", pts, timebase);
+
+	printf("%f\n", pts);
+
+	return NULL;
+}
+
 
 static void decode_video(MediaState *ms) {
+	if (!ms->video_context) {
+		ms->video_finished = 1;
+		return;
+	}
+
+	if (!ms->video_decode_frame) {
+		ms->video_decode_frame = av_frame_alloc();
+	}
+
+	while (!ms->video_finished) {
+		decode_video_frame(ms);
+	}
 
 }
 
@@ -511,12 +590,18 @@ static int decode_thread(void *arg) {
 		}
 	}
 
-	av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
+	if (ms->skip != 0.0) {
+		av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
+	}
 
 	while (!ms->quit) {
 
 		if (! ms->audio_finished) {
 			decode_audio(ms);
+		}
+
+		if (! ms->video_finished) {
+			decode_video(ms);
 		}
 
 		SDL_LockMutex(ms->lock);
@@ -696,7 +781,8 @@ void media_close(MediaState *ms) {
 }
 
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
-	printf("Got sample surfaces!\n");
+	rgb_surface = rgb;
+	rgba_surface = rgba;
 }
 
 

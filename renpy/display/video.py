@@ -115,9 +115,11 @@ def get_movie_texture():
     global surface
     global surface_file
 
+    return None
+
     playing = renpy.audio.music.get_playing("movie")
 
-    pss = renpy.audio.audio.pss
+    # pss = renpy.audio.audio.pss
 
     if pss:
         size = pss.movie_size()
@@ -227,6 +229,8 @@ def frequent():
 
     if not playing():
         return False
+
+    return False
 
     pss = renpy.audio.audio.pss
 
