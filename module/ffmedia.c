@@ -198,15 +198,31 @@ typedef struct MediaState {
 	/* Software rescaling context. */
 	struct SwsContext *sws;
 
+	/* A queue of decoded video frames. */
+	SurfaceQueueEntry *surface_queue; // Lock
+	int surface_queue_size; // Lock
+
 
 } MediaState;
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
+static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
 
 static void deallocate(MediaState *ms) {
 
 	/* Destroy video stuff. */
+
+	while (1) {
+		SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
+
+		if (! sqe) {
+			break;
+		}
+
+		SDL_FreeSurface(sqe->surf);
+		av_free(sqe);
+	}
 
 	sws_freeContext(ms->sws);
 
@@ -309,6 +325,27 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 
 	return 1;
 }
+
+static void enqueue_surface(SurfaceQueueEntry **queue, SurfaceQueueEntry *sqe) {
+	while (*queue) {
+		queue = &(*queue)->next;
+	}
+
+	*queue = sqe;
+}
+
+
+static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue) {
+	SurfaceQueueEntry *rv = *queue;
+
+	if (rv) {
+		*queue = rv->next;
+	}
+
+	return rv;
+}
+
+
 
 static void free_packet_queue(PacketQueue *pq) {
 	AVPacket scratch;
@@ -594,7 +631,13 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		surf_linesize
 		);
 
-	return NULL;
+	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
+
+	rv->next = NULL;
+	rv->pts = pts;
+	rv->surf = surf;
+
+	return rv;
 }
 
 
@@ -608,10 +651,21 @@ static void decode_video(MediaState *ms) {
 		ms->video_decode_frame = av_frame_alloc();
 	}
 
-	while (!ms->video_finished) {
-		decode_video_frame(ms);
+	SDL_LockMutex(ms->lock);
+
+	while (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
+
+		SDL_UnlockMutex(ms->lock);
+
+		SurfaceQueueEntry *sqe = decode_video_frame(ms);
+
+		SDL_LockMutex(ms->lock);
+
+		enqueue_surface(&ms->surface_queue, sqe);
+		ms->surface_queue_size++;
 	}
 
+	SDL_UnlockMutex(ms->lock);
 }
 
 
