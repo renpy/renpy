@@ -2,6 +2,8 @@
 #include <libavformat/avformat.h>
 #include <libswresample/swresample.h>
 #include <libavutil/time.h>
+#include <libavutil/pixfmt.h>
+#include <libswscale/swscale.h>
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -156,6 +158,9 @@ typedef struct MediaState {
 	PacketQueue video_packet_queue;
 	PacketQueue audio_packet_queue;
 
+
+	/* Audio Stuff ***********************************************************/
+
 	/* The queue of converted audio frames. */
 	FrameQueue audio_queue; // Lock
 
@@ -188,6 +193,12 @@ typedef struct MediaState {
 	AVPacket video_pkt_tmp;
 
 
+	/* Video Stuff ***********************************************************/
+
+	/* Software rescaling context. */
+	struct SwsContext *sws;
+
+
 } MediaState;
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
@@ -196,6 +207,9 @@ static void free_packet_queue(PacketQueue *pq);
 static void deallocate(MediaState *ms) {
 
 	/* Destroy video stuff. */
+
+	sws_freeContext(ms->sws);
+
 	av_frame_free(&ms->video_decode_frame);
 
 	av_free_packet(&ms->video_pkt);
@@ -468,6 +482,29 @@ static void decode_audio(MediaState *ms) {
 
 }
 
+static enum AVPixelFormat get_pixel_format(SDL_Surface *surf) {
+    uint32_t pixel;
+    uint8_t *bytes = (uint8_t *) &pixel;
+
+	pixel = SDL_MapRGBA(surf->format, 1, 2, 3, 4);
+
+	enum AVPixelFormat fmt;
+
+    if ((bytes[0] == 4 || bytes[0] == 0) && bytes[1] == 1) {
+        fmt = AV_PIX_FMT_ARGB;
+    } else if ((bytes[0] == 4  || bytes[0] == 0) && bytes[1] == 3) {
+        fmt = AV_PIX_FMT_ABGR;
+    } else if (bytes[0] == 1) {
+        fmt = AV_PIX_FMT_RGBA;
+    } else {
+        fmt = AV_PIX_FMT_BGRA;
+    }
+
+    return fmt;
+}
+
+
+
 static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 	while (1) {
@@ -482,7 +519,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		int read_size = avcodec_decode_video2(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
 
 		if (read_size < 0) {
-			printf("Bad exit.\n");
 			ms->video_finished = 1;
 			return NULL;
 		}
@@ -495,21 +531,68 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 
 		if (!got_frame && !ms->video_pkt.size) {
-			printf("Good exit.\n");
 			ms->video_finished = 1;
 			return NULL;
 		}
 
 	}
 
-//	double timebase = 1.0 * ms->video_context->time_base.num / ms->video_context->time_base.den;
-
-	double pts = 1.0 * av_frame_get_best_effort_timestamp(ms->video_decode_frame) \
+	double pts = av_frame_get_best_effort_timestamp(ms->video_decode_frame) \
 			* av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
 
-//	printf("%f %f\n", pts, timebase);
+	SDL_Surface *sample = rgba_surface;
 
-	printf("%f\n", pts);
+	ms->sws = sws_getCachedContext(
+		ms->sws,
+
+		ms->video_decode_frame->width,
+		ms->video_decode_frame->height,
+		ms->video_decode_frame->format,
+
+		ms->video_decode_frame->width,
+		ms->video_decode_frame->height,
+		get_pixel_format(rgba_surface),
+
+		SWS_POINT,
+
+		NULL,
+		NULL,
+		NULL
+		);
+
+	if (!ms->sws) {
+		ms->video_finished = 1;
+		return NULL;
+	}
+
+	SDL_Surface *surf = SDL_CreateRGBSurface(
+		0,
+		ms->video_decode_frame->width + FRAME_PADDING * 2,
+		ms->video_decode_frame->height + FRAME_PADDING * 2,
+		32,
+		sample->format->Rmask,
+		sample->format->Gmask,
+		sample->format->Bmask,
+		sample->format->Amask
+		);
+
+
+	uint8_t *surf_pixels = (uint8_t *) surf->pixels;
+	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * surf->pitch + FRAME_PADDING * 4] };
+	int surf_linesize[] = { surf->pitch };
+
+	sws_scale(
+		ms->sws,
+
+		(const uint8_t * const *) ms->video_decode_frame->data,
+		ms->video_decode_frame->linesize,
+
+		0,
+		ms->video_decode_frame->height,
+
+		surf_data,
+		surf_linesize
+		);
 
 	return NULL;
 }
