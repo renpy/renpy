@@ -75,73 +75,67 @@ def movie_start(filename, size=None, loops=0):
 movie_start_fullscreen = movie_start
 movie_start_displayable = movie_start
 
+
+# A map from a channel name to the movie texture that is being displayed
+# on that channel.
+texture = { }
+
+# The set of channels that are being displayed in Movie objects.
+displayable_channels = set()
+
+# Is there a video being displayed fullscreen?
+fullscreen = False
+
 def early_interact():
     """
     Called early in the interact process, to clear out the fullscreen
     flag.
     """
 
-    global fullscreen
-    global current_movie
-
-    fullscreen = True
-    current_movie = None
+    displayable_channels.clear()
 
 
 def interact():
     """
-    This is called each time the screen is redrawn. It helps us decide if
-    the movie should be displayed fullscreen or not.
+    This is called each time the screen is drawn, and should return True
+    if the movie should display fulscreen.
     """
 
-    global surface
-    global surface_file
+    global fullscreen
 
-    if not renpy.audio.music.get_playing("movie"):
-        surface = None
-        surface_file = None
-        return False
+    for i in list(texture.keys()):
+        if not renpy.audio.music.get_playing(i):
+            del texture[i]
 
-    if fullscreen:
-        return True
+    if renpy.audio.music.get_playing("movie"):
+        fullscreen = ("movie" not in displayable_channels)
     else:
-        return False
+        fullscreen = False
 
-def get_movie_texture():
-    """
-    Gets a movie texture we can draw to the screen.
-    """
+    return fullscreen
 
-    global surface
-    global surface_file
 
-    return None
+def get_movie_texture(channel):
 
-    playing = renpy.audio.music.get_playing("movie")
+    if not renpy.audio.music.get_playing(channel):
+        return None, False
 
-    # pss = renpy.audio.audio.pss
+    c = renpy.audio.music.get_channel(channel)
+    surf = c.read_video()
 
-    if pss:
-        size = pss.movie_size()
+    if surf is not None:
+        renpy.display.render.mutated_surface(surf)
+        tex = renpy.display.draw.load_texture(surf, True)
+        texture[channel] = tex
+        new = True
     else:
-        size = (64, 64)
+        tex = texture.get(channel, None)
+        new = False
 
-    if (surface is None) or (surface.get_size() != size) or (surface_file != playing):
-        surface = renpy.display.pgrender.surface(size, False)
-        surface_file = playing
-        surface.fill((0, 0, 0, 255))
+    return tex, new
 
-    tex = None
-
-    if playing is not None:
-        renpy.display.render.mutated_surface(surface)
-        tex = renpy.display.draw.load_texture(surface, True)
-
-    return tex
-
-
-def render_movie(width, height):
-    tex = get_movie_texture()
+def render_movie(channel, width, height):
+    tex, _new = get_movie_texture(channel)
 
     if tex is None:
         return None
@@ -159,6 +153,7 @@ def render_movie(width, height):
     rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
+
 
 class Movie(renpy.display.core.Displayable):
     """
@@ -224,29 +219,38 @@ def frequent():
     needed, false otherwise.
     """
 
-    if renpy.android:
+    # TODO: Use this to redraw Movies.
+
+
+    if renpy.mobile:
         return False
 
     if not playing():
         return False
 
-    return False
+    if fullscreen:
+        _, new = get_movie_texture("movie")
+        return new
 
-    pss = renpy.audio.audio.pss
+    else:
+        return False
 
-    if pss.needs_alloc():
 
-        if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
-            surf = renpy.display.draw.fullscreen_surface
-        else:
-            get_movie_texture()
-            surf = renpy.display.scale.real(surface)
-
-        pss.alloc_event(surf)
-
-    rv = pss.refresh_event()
-
-    if rv and current_movie is not None:
-        renpy.display.render.redraw(current_movie, 0)
-
-    return rv
+#     pss = renpy.audio.audio.pss
+#
+#     if pss.needs_alloc():
+#
+#         if renpy.display.video.fullscreen and renpy.display.draw.fullscreen_surface:
+#             surf = renpy.display.draw.fullscreen_surface
+#         else:
+#             get_movie_texture()
+#             surf = renpy.display.scale.real(surface)
+#
+#         pss.alloc_event(surf)
+#
+#     rv = pss.refresh_event()
+#
+#     if rv and current_movie is not None:
+#         renpy.display.render.redraw(current_movie, 0)
+#
+#     return rv

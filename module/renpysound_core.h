@@ -42,13 +42,12 @@ void RPS_set_volume(int channel, float volume);
 float RPS_get_volume(int channel);
 void RPS_set_pan(int channel, float pan, float delay);
 void RPS_set_secondary_volume(int channel, float vol2, float delay);
+PyObject *RPS_read_video(int channel);
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void RPS_init(int freq, int stereo, int samples, int status);
 void RPS_quit(void);
 
 void RPS_periodic(void);
-void RPS_alloc_event(PyObject *surface);
-int RPS_refresh_event(void);
 
 char *RPS_get_error(void);
 

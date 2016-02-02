@@ -39,15 +39,13 @@ cdef extern from "renpysound_core.h":
     float RPS_get_volume(int channel)
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
+    object RPS_read_video(int channel)
 
     void RPS_sample_surfaces(object, object)
     void RPS_init(int freq, int stereo, int samples, int status)
     void RPS_quit()
 
     void RPS_periodic()
-    void RPS_alloc_event(object)
-    int RPS_refresh_event()
-
     char *RPS_get_error()
 
 
@@ -153,6 +151,18 @@ def set_end_event(channel, event):
 def get_volume(channel):
     return RPS_get_volume(channel)
 
+def read_video(channel):
+    rv = RPS_read_video(channel)
+
+    if rv is None:
+        return rv
+
+    # Remove padding from the edges of the surface.
+    w, h = rv.get_size()
+    return rv.subsurface((2, 2, w-4, h-4))
+
+    return
+
 def init(freq, stereo, samples, status=False):
     if status:
         status = 1
@@ -181,19 +191,6 @@ def sample_surfaces(rgb, rgba):
 
     RPS_sample_surfaces(rgb, rgba)
 
-def alloc_event(surf):
-    RPS_alloc_event(surf)
-
-def refresh_event():
-    return RPS_refresh_event()
-
-def needs_alloc():
-    # return ffpy_needs_alloc
-    return False
-
-def movie_size():
-    return 0, 0
-    # return ffpy_movie_width, ffpy_movie_height
 
 def check_version(version):
     if version < 2 or version > 4:

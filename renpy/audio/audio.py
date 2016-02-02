@@ -498,6 +498,11 @@ class Channel(object):
     def unpause(self):
         renpysound.unpause(self.number)
 
+    def read_video(self):
+        if pcm_ok:
+            return renpysound.read_video(self.number)
+        return None
+
 
 ################################################################################
 # Android VideoPlayer Channel

@@ -43,6 +43,7 @@ void media_start(MediaState *);
 void media_close(MediaState *);
 
 int media_read_audio(struct MediaState *is, Uint8 *stream, int len);
+SDL_Surface *media_read_video(struct MediaState *ms);
 
 /* The current Python. */
 PyInterpreterState* interp;
@@ -1052,6 +1053,37 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay) {
     error(SUCCESS);
 }
 
+PyObject *RPS_read_video(int channel) {
+    struct Channel *c;
+    SDL_Surface *surf = NULL;
+
+    BEGIN();
+
+    if (check_channel(channel)) {
+        Py_INCREF(Py_None);
+    	return Py_None;
+    }
+
+    c = &channels[channel];
+
+    ENTER();
+
+    if (c->playing) {
+    	surf = media_read_video(c->playing);
+    }
+
+    EXIT();
+
+    error(SUCCESS);
+
+    if (surf) {
+    	return PySurface_New(surf);
+    } else {
+        Py_INCREF(Py_None);
+    	return Py_None;
+    }
+
+}
 
 /*
  * Initializes the sound to the given frequencies, channels, and
@@ -1158,31 +1190,6 @@ void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
 			PySurface_AsSurface(rgba)
 		);
 
-}
-
-/* This should be called in response to an FF_ALLOC_EVENT, with a pygame
- * surface to display the movie on. */
-void RPS_alloc_event(PyObject *surface) {
-    int i;
-
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing) {
-            // ffpy_alloc_event(channels[i].playing, surface);
-        }
-    }
-}
-
-/* This should be called in response to a FF_REFRESH_EVENT */
-int RPS_refresh_event(void) {
-    int i;
-    int rv = 0;
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing) {
-        	// rv = rv | ffpy_refresh_event(channels[i].playing);
-        }
-    }
-
-    return rv;
 }
 
 /*

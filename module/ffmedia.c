@@ -202,6 +202,8 @@ typedef struct MediaState {
 	SurfaceQueueEntry *surface_queue; // Lock
 	int surface_queue_size; // Lock
 
+	/* The offset between a pts timestamp and realtime. */
+	double video_pts_offset;
 
 } MediaState;
 
@@ -210,7 +212,6 @@ static void free_packet_queue(PacketQueue *pq);
 static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
 
 static void deallocate(MediaState *ms) {
-
 	/* Destroy video stuff. */
 
 	while (1) {
@@ -326,6 +327,14 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 	return 1;
 }
 
+static void free_packet_queue(PacketQueue *pq) {
+	AVPacket scratch;
+
+	while (dequeue_packet(pq, &scratch)) {
+		av_free_packet(&scratch);
+	}
+}
+
 static void enqueue_surface(SurfaceQueueEntry **queue, SurfaceQueueEntry *sqe) {
 	while (*queue) {
 		queue = &(*queue)->next;
@@ -346,14 +355,24 @@ static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue) {
 }
 
 
+#if 0
+static void check_surface_queue(MediaState *ms) {
 
-static void free_packet_queue(PacketQueue *pq) {
-	AVPacket scratch;
+	SurfaceQueueEntry **queue = &ms->surface_queue;
 
-	while (dequeue_packet(pq, &scratch)) {
-		av_free_packet(&scratch);
+	int count = 0;
+
+	while (*queue) {
+		count += 1;
+		queue = &(*queue)->next;
 	}
+
+	if (count != ms->surface_queue_size) {
+		abort();
+	}
+
 }
+#endif
 
 
 /**
@@ -661,11 +680,60 @@ static void decode_video(MediaState *ms) {
 
 		SDL_LockMutex(ms->lock);
 
-		enqueue_surface(&ms->surface_queue, sqe);
-		ms->surface_queue_size++;
+		if (sqe) {
+			enqueue_surface(&ms->surface_queue, sqe);
+			ms->surface_queue_size += 1;
+		}
 	}
 
 	SDL_UnlockMutex(ms->lock);
+}
+
+SDL_Surface *media_read_video(MediaState *ms) {
+	SDL_Surface *rv = NULL;
+	SurfaceQueueEntry *sqe;
+
+	SDL_LockMutex(ms->lock);
+
+	if (!ms->surface_queue_size) {
+		goto done;
+	}
+
+	double now = get_time();
+
+	if (ms->video_pts_offset == 0.0) {
+		ms->video_pts_offset = now - ms->surface_queue->pts;
+	}
+
+	while (ms->surface_queue_size) {
+
+		if (ms->surface_queue->pts + ms->video_pts_offset > now) {
+			break;
+		}
+
+		if (rv) {
+			SDL_FreeSurface(rv);
+		}
+
+		sqe = dequeue_surface(&ms->surface_queue);
+		ms->surface_queue_size -= 1;
+
+		rv = sqe->surf;
+
+		av_free(sqe);
+
+	}
+
+done:
+
+	/* Only signal if we've consumed something. */
+	if (rv) {
+		ms->needs_decode = 1;
+		SDL_CondBroadcast(ms->cond);
+	}
+
+	SDL_UnlockMutex(ms->lock);
+	return rv;
 }
 
 
