@@ -188,6 +188,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         render_st = old_st
         render_at = old_at
 
+    if rv.__class__ is not Render:
+        raise Exception("{!r}.render() must return a Render.".format(d))
+
     rv.render_of.append(d)
 
     if style.clipping:
