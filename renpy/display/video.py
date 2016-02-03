@@ -200,10 +200,9 @@ class Movie(renpy.display.core.Displayable):
                 width, height = tex.get_size()
 
                 rv = renpy.display.render.Render(width, height)
-                # rv.blit(tex, (0, 0))
+                rv.blit(tex, (0, 0))
 
             else:
-
                 rv = renpy.display.render.Render(0, 0)
 
         else:
