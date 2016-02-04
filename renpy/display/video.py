@@ -84,6 +84,13 @@ texture = { }
 # The set of channels that are being displayed in Movie objects.
 displayable_channels = collections.defaultdict(list)
 
+# A map from a channel to the topmost Movie being displayed on
+# that channel. (Or None if no such movie exists.)
+channel_movie = { }
+
+# Same thing, but for the last time the screen was rendered.
+old_channel_movie = { }
+
 # Is there a video being displayed fullscreen?
 fullscreen = False
 
@@ -94,7 +101,7 @@ def early_interact():
     """
 
     displayable_channels.clear()
-
+    channel_movie.clear()
 
 def interact():
     """
@@ -174,21 +181,31 @@ class Movie(renpy.display.core.Displayable):
         when the movie is not playing.)
 
     `channel`
-        The channel the movie should be played on.
+        The audio channel associated with this movie. When a movie file
+        is played on that channel, it wil be displayed in this Movie
+        displayable.
 
-    The contents of this displayable when a movie is not playing are undefined.
-    (And may change when a rollback occurs.)
+    `play`
+        If given, this should be the path to a movie file. The movie
+        file will be automatically played on `channel` when the movie is shown, and
+        automatically stopped when the movie is hidden.
+
+    This displayable will be transparent when the movie is not playing.
     """
 
     fullscreen = False
     channel = "movie"
+    _play = None
 
-    def __init__(self, fps=24, size=None, channel="movie", **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, **properties):
         super(Movie, self).__init__(**properties)
         self.size = size
         self.channel = channel
+        self._play = play
 
     def render(self, width, height, st, at):
+
+        channel_movie[self.channel] = self
 
         playing = renpy.audio.music.get_playing(self.channel)
 
@@ -224,13 +241,53 @@ class Movie(renpy.display.core.Displayable):
 
         return rv
 
+    def play(self, old):
+        if old is None:
+            old_play = None
+        else:
+            old_play = old._play
+
+        if self._play != old_play:
+            if self._play:
+                renpy.audio.music.play(self._play, channel=self.channel, loop=True)
+            else:
+                renpy.audio.music.stop(channel=self.channel)
+
+    def stop(self):
+        if self._play:
+            renpy.audio.music.stop(channel=self.channel)
 
     def per_interact(self):
         displayable_channels[self.channel].append(self)
+        renpy.display.render.redraw(self, 0)
 
 
 def playing():
-    return renpy.audio.music.get_playing("movie")
+    if renpy.audio.music.get_playing("movie"):
+        return True
+
+    for i in displayable_channels:
+        if renpy.audio.music.get_playing(i):
+            return True
+
+def update_playing():
+    """
+    Calls play/stop on Movie displayables.
+    """
+
+    global old_channel_movie
+
+    for c, m in channel_movie.items():
+        old = old_channel_movie.get(c, None)
+
+        if old is not m:
+            m.play(old)
+
+    for c, m in old_channel_movie.items():
+        if c not in channel_movie:
+            m.stop()
+
+    old_channel_movie = dict(channel_movie)
 
 def frequent():
     """
@@ -241,6 +298,8 @@ def frequent():
     if renpy.mobile:
         return False
 
+    update_playing()
+
     rv = False
 
     for i, v in displayable_channels.items():
@@ -248,8 +307,6 @@ def frequent():
         if new:
             for j in v:
                 renpy.display.render.redraw(j, 0.0)
-
-            rv = True
 
     if fullscreen:
         _, new = get_movie_texture("movie")
