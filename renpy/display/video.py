@@ -123,13 +123,17 @@ def interact():
     return fullscreen
 
 
-def get_movie_texture(channel):
+def get_movie_texture(channel, mask_channel=None):
 
     if not renpy.audio.music.get_playing(channel):
         return None, False
 
     c = renpy.audio.music.get_channel(channel)
     surf = c.read_video()
+
+    if mask_channel:
+        mc = renpy.audio.music.get_channel(mask_channel)
+        surf = mc.read_video()
 
     if surf is not None:
         renpy.display.render.mutated_surface(surf)
@@ -187,8 +191,19 @@ class Movie(renpy.display.core.Displayable):
 
     `play`
         If given, this should be the path to a movie file. The movie
-        file will be automatically played on `channel` when the movie is shown, and
-        automatically stopped when the movie is hidden.
+        file will be automatically played on `channel` when the Movie is
+        shown, and automatically stopped when the movie is hidden.
+
+    `mask`
+        If given, this should be the path to a movie file that is used as
+        the alpha channel of this displayable. The movie file will be
+        automatically played on `movie_channel` when the Movie is shown,
+        and automatically stopped when the movie is hidden.
+
+    `mask_channel`
+        The channel the alpha mask video is played on. If not given,
+        defaults to `channel`_mask. (For example, if `channel` is "sprite",
+        `mask_channel` defaults to "sprite_mask".)
 
     This displayable will be transparent when the movie is not playing.
     """
@@ -197,11 +212,23 @@ class Movie(renpy.display.core.Displayable):
     channel = "movie"
     _play = None
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, **properties):
+    mask = None
+    mask_channel = None
+
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, **properties):
         super(Movie, self).__init__(**properties)
         self.size = size
         self.channel = channel
         self._play = play
+
+        self.mask = mask
+
+        if mask is None:
+            self.mask_channel = None
+        elif mask_channel is None:
+            self.mask_channel = channel + "_mask"
+        else:
+            self.mask_channel = mask_channel
 
     def render(self, width, height, st, at):
 
@@ -211,7 +238,7 @@ class Movie(renpy.display.core.Displayable):
 
         if self.size is None:
 
-            tex, _ = get_movie_texture(self.channel)
+            tex, _ = get_movie_texture(self.channel, self.mask_channel)
 
             if playing and (tex is not None):
                 width, height = tex.get_size()
@@ -249,13 +276,24 @@ class Movie(renpy.display.core.Displayable):
 
         if self._play != old_play:
             if self._play:
-                renpy.audio.music.play(self._play, channel=self.channel, loop=True)
+                renpy.audio.music.play(self._play, channel=self.channel, loop=True, synchro_start=True)
+
+                if self.mask:
+                    renpy.audio.music.play(self.mask, channel=self.mask_channel, loop=True, synchro_start=True)
+
             else:
                 renpy.audio.music.stop(channel=self.channel)
+
+                if self.mask:
+                    renpy.audio.music.stop(channel=self.mask_channel)
 
     def stop(self):
         if self._play:
             renpy.audio.music.stop(channel=self.channel)
+
+            if self.mask:
+                renpy.audio.music.stop(channel=self.mask_channel)
+
 
     def per_interact(self):
         displayable_channels[self.channel].append(self)
