@@ -1074,7 +1074,7 @@ class Lexer(object):
         process(self.subblock, '')
         return ''.join(rv)
 
-def parse_image_name(l):
+def parse_image_name(l, string=False):
     """
     This parses an image name, and returns it as a tuple. It requires
     that the image name be present.
@@ -1088,6 +1088,12 @@ def parse_image_name(l):
             break
 
         rv.append(n.strip())
+
+    if string:
+        s = l.simple_expression()
+
+        if s is not None:
+            rv.append(s)
 
     return tuple(rv)
 
@@ -1128,7 +1134,7 @@ def parse_image_specifier(l):
         expression = l.require(l.simple_expression)
         image_name = ( expression.strip(), )
     else:
-        image_name = parse_image_name(l)
+        image_name = parse_image_name(l, True)
         expression = None
 
     while True:
