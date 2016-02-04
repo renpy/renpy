@@ -131,9 +131,15 @@ def get_movie_texture(channel, mask_channel=None):
     c = renpy.audio.music.get_channel(channel)
     surf = c.read_video()
 
-    if mask_channel:
+    if surf and mask_channel:
         mc = renpy.audio.music.get_channel(mask_channel)
-        surf = mc.read_video()
+        mask_surf = mc.read_video()
+
+        # Something went wrong with the mask video.
+        if not mask_surf:
+            return None, False
+
+        renpy.display.module.alpha_munge(mask_surf, surf, renpy.display.im.identity)
 
     if surf is not None:
         renpy.display.render.mutated_surface(surf)
