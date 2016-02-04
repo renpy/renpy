@@ -103,6 +103,7 @@ def early_interact():
     displayable_channels.clear()
     channel_movie.clear()
 
+
 def interact():
     """
     This is called each time the screen is drawn, and should return True
@@ -131,15 +132,19 @@ def get_movie_texture(channel, mask_channel=None):
     c = renpy.audio.music.get_channel(channel)
     surf = c.read_video()
 
-    if surf and mask_channel:
+    if mask_channel:
         mc = renpy.audio.music.get_channel(mask_channel)
         mask_surf = mc.read_video()
+    else:
+        mask_surf = None
+
+    if mask_channel:
 
         # Something went wrong with the mask video.
-        if not mask_surf:
-            return None, False
-
-        renpy.display.module.alpha_munge(mask_surf, surf, renpy.display.im.identity)
+        if surf and mask_surf:
+            renpy.display.module.alpha_munge(mask_surf, surf, renpy.display.im.identity)
+        else:
+            surf = None
 
     if surf is not None:
         renpy.display.render.mutated_surface(surf)
@@ -302,7 +307,7 @@ class Movie(renpy.display.core.Displayable):
 
 
     def per_interact(self):
-        displayable_channels[self.channel].append(self)
+        displayable_channels[(self.channel, self.mask_channel)].append(self)
         renpy.display.render.redraw(self, 0)
 
 
@@ -311,7 +316,9 @@ def playing():
         return True
 
     for i in displayable_channels:
-        if renpy.audio.music.get_playing(i):
+        channel, _mask_channel = i
+
+        if renpy.audio.music.get_playing(channel):
             return True
 
 def update_playing():
@@ -346,11 +353,17 @@ def frequent():
 
     rv = False
 
+    # Better-synchronizes the frame times.
+    renpy.audio.audio.per_frame()
+
     for i, v in displayable_channels.items():
-        _, new = get_movie_texture(i)
+        channel, mask_channel = i
+
+        _, new = get_movie_texture(channel, mask_channel)
         if new:
             for j in v:
                 renpy.display.render.redraw(j, 0.0)
+
 
     if fullscreen:
         _, new = get_movie_texture("movie")

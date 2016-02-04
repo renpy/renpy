@@ -696,7 +696,15 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	SDL_Surface *rv = NULL;
 	SurfaceQueueEntry *sqe;
 
+	if (ms->video_stream == -1) {
+		return NULL;
+	}
+
 	SDL_LockMutex(ms->lock);
+
+	while (!ms->ready) {
+		SDL_CondWait(ms->cond, ms->lock);
+	}
 
 	if (!ms->surface_queue_size) {
 		goto done;
