@@ -860,8 +860,6 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 
 	int rv = 0;
 
-	ms->audio_duration = 0;
-
 	if (ms->audio_duration) {
 		unsigned int remaining = (ms->audio_duration - ms->audio_read_samples) * BPS;
 		if (len > remaining) {
@@ -920,6 +918,16 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	}
 
 	SDL_UnlockMutex(ms->lock);
+
+	if (ms->audio_duration) {
+		if ((ms->audio_duration - ms->audio_read_samples) * BPS < len) {
+			len = (ms->audio_duration - ms->audio_read_samples) * BPS;
+		}
+
+		memset(stream, 0, len);
+		ms->audio_read_samples += len / BPS;
+		rv += len;
+	}
 
 	return rv;
 }
