@@ -76,8 +76,11 @@ static void rwops_close(SDL_RWops *rw) {
 	rw->close(rw);
 }
 
+
+static double current_time = 0;
+
 static double get_time(void) {
-	return av_gettime() * 1e-6;
+	return current_time;
 }
 
 
@@ -993,11 +996,14 @@ void media_close(MediaState *ms) {
 
 }
 
+void media_per_frame(void) {
+	current_time = av_gettime() * 1e-6;
+}
+
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
 	rgb_surface = rgb;
 	rgba_surface = rgba;
 }
-
 
 void media_init(int rate, int status) {
 

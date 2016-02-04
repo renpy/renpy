@@ -35,10 +35,11 @@ import os
 
 disable = os.environ.get("RENPY_DISABLE_SOUND", "")
 
-renpysound = None
-
 if not disable:
     import renpy.audio.renpysound as renpysound
+else:
+    renpysound = None
+
 
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
@@ -814,4 +815,10 @@ def sample_surfaces(rgb, rgba):
         return
 
     renpysound.sample_surfaces(rgb, rgba)
+
+def per_frame():
+    if not renpysound:
+        return
+
+    renpysound.per_frame()
 

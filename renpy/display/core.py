@@ -2770,6 +2770,8 @@ class Interface(object):
                     if not self.interact_time:
                         self.interact_time = self.frame_time
 
+                    renpy.audio.audio.per_frame() # Sets the time of all video frames.
+
                     self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
 
                     if first_pass:

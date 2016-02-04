@@ -36,6 +36,8 @@ struct MediaState;
 typedef struct MediaState MediaState;
 
 void media_init(int rate, int status);
+
+void media_per_frame(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
 
 MediaState *media_open(SDL_RWops *, const char *);
@@ -1180,6 +1182,10 @@ void RPS_periodic() {
     }
 
     EXIT();
+}
+
+void RPS_per_frame(void) {
+	media_per_frame();
 }
 
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
