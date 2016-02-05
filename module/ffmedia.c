@@ -257,6 +257,12 @@ static void deallocate(MediaState *ms) {
 	avcodec_free_context(&ms->video_context);
 	avcodec_free_context(&ms->audio_context);
 
+	if (ms->ctx) {
+		for (int i = 0; i < ms->ctx->nb_streams; i++) {
+			avcodec_close(ms->ctx->streams[i]->codec);
+		}
+	}
+
 	avformat_close_input(&ms->ctx);
 
 	/* Destroy alloc stuff. */
