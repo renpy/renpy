@@ -263,6 +263,11 @@ static void deallocate(MediaState *ms) {
 		}
 	}
 
+	if (ms->ctx->pb) {
+		av_freep(&ms->ctx->pb->buffer);
+		av_freep(&ms->ctx->pb);
+	}
+
 	avformat_close_input(&ms->ctx);
 
 	/* Destroy alloc stuff. */
@@ -759,11 +764,10 @@ static int decode_thread(void *arg) {
 
 	int err;
 
-	AVIOContext *io_context = rwops_open(ms->rwops);
-
 	AVFormatContext *ctx = avformat_alloc_context();
 	ms->ctx = ctx;
 
+	AVIOContext *io_context = rwops_open(ms->rwops);
 	ctx->pb = io_context;
 
 	err = avformat_open_input(&ctx, ms->filename, NULL, NULL);
@@ -775,6 +779,7 @@ static int decode_thread(void *arg) {
 	if (err) {
 		goto finish;
 	}
+
 
 	ms->video_stream = -1;
 	ms->audio_stream = -1;
