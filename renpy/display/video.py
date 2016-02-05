@@ -243,7 +243,8 @@ class Movie(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        channel_movie[self.channel] = self
+        if self._play:
+            channel_movie[self.channel] = self
 
         playing = renpy.audio.music.get_playing(self.channel)
 
