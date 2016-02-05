@@ -2920,6 +2920,10 @@ class Interface(object):
                     ev = self.event_wait()
 
                 if ev.type == pygame.NOEVENT:
+
+                    if not needs_redraw or self.mouse_move:
+                        pygame.time.wait(1)
+
                     continue
 
                 self.profile_time = get_time()
