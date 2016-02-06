@@ -610,6 +610,10 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	double pts = av_frame_get_best_effort_timestamp(ms->video_decode_frame) \
 			* av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
 
+	if (pts < ms->skip) {
+		return NULL;
+	}
+
 	SDL_Surface *sample = rgba_surface;
 
 	ms->sws = sws_getCachedContext(
@@ -977,6 +981,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->lock = SDL_CreateMutex();
 
 	ms->audio_queue_target_seconds = 2;
+	ms->skip = 313.0;
 
 	return ms;
 }
