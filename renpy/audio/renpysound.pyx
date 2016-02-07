@@ -24,8 +24,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, int paused)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, int paused, double start, double end)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, object name, int fadein, int tight, double start, double end)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -56,7 +56,7 @@ def check_error():
     if str(e):
         raise Exception(e)
 
-def play(channel, file, name, paused=False, fadein=0, tight=False):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPython(file)
@@ -75,10 +75,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False):
         tight = 0
 
     extension = name.encode("utf-8")
-    RPS_play(channel, rw, extension, name, fadein, tight, pause)
+    RPS_play(channel, rw, extension, name, fadein, tight, pause, start, end)
     check_error()
 
-def queue(channel, file, name, fadein=0, tight=False):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     cdef SDL_RWops *rw
 
     rw = RWopsFromPython(file)
@@ -92,7 +92,7 @@ def queue(channel, file, name, fadein=0, tight=False):
         tight = 0
 
     extension = name.encode("utf-8")
-    RPS_queue(channel, rw, extension, name, fadein, tight)
+    RPS_queue(channel, rw, extension, name, fadein, tight, start, end)
     check_error()
 
 def stop(channel):

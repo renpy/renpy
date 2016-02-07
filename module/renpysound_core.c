@@ -41,6 +41,7 @@ void media_per_frame(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
 
 MediaState *media_open(SDL_RWops *, const char *);
+void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
 void media_close(MediaState *);
 
@@ -549,15 +550,16 @@ static int check_channel(int c) {
  * Loads the provided sample. Returns the sample on success, NULL on
  * failure.
  */
-struct MediaState *load_sample(SDL_RWops *rw, const char *ext) {
+struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, double end) {
     struct MediaState *rv;
     rv = media_open(rw, ext);
+    media_start_end(rv, start, end);
     media_start(rv);
     return rv;
 }
 
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, int paused) {
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, int paused, double start, double end) {
 
     BEGIN();
 
@@ -591,7 +593,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
 
     /* Allocate playing sample. */
 
-    c->playing = load_sample(rw, ext);
+    c->playing = load_sample(rw, ext, start, end);
 
     if (! c->playing) {
     	UNLOCK_NAME();
@@ -616,7 +618,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     error(SUCCESS);
 }
 
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight) {
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, double start, double end) {
 
     BEGIN();
 
@@ -633,7 +635,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
         EXIT();
-        RPS_play(channel, rw, ext, name, fadein, tight, 0);
+        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end);
         return;
     }
 
@@ -648,7 +650,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     }
 
     /* Allocate queued sample. */
-    c->queued = load_sample(rw, ext);
+    c->queued = load_sample(rw, ext, start, end);
 
     if (! c->queued) {
         EXIT();
