@@ -808,16 +808,17 @@ static int decode_thread(void *arg) {
 	ms->swr = swr_alloc();
 
 	// Compute the number of samples we need to play back.
+	if (! ms->audio_duration) {
+		if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
 
-	if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
+			long long duration = ((long long) ctx->duration) * audio_sample_rate;
+			ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
 
-		long long duration = ((long long) ctx->duration) * audio_sample_rate;
-		ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
-
-		// Check that the duration is reasonable (between 0s and 3600s). If not,
-		// reject it.
-		if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
-			ms->audio_duration = 0;
+			// Check that the duration is reasonable (between 0s and 3600s). If not,
+			// reject it.
+			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
+				ms->audio_duration = 0;
+			}
 		}
 	}
 
@@ -981,7 +982,6 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->lock = SDL_CreateMutex();
 
 	ms->audio_queue_target_seconds = 2;
-	ms->skip = 313.0;
 
 	return ms;
 }

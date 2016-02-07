@@ -30,6 +30,7 @@ import renpy.display  # @UnusedImport
 import time
 import pygame_sdl2  # @UnusedImport
 import os
+import re
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -246,6 +247,33 @@ class Channel(object):
 
     context = property(get_context)
 
+    def split_filename(self, filename):
+        """
+        Splits a filename into a filename, start time, and end time.
+        """
+
+        m = re.match(r'<(.*)-(.*)>(.*)', filename)
+        if not m:
+            return filename, 0, 0
+
+        try:
+            if m.group(1).strip():
+                start = float(m.group(1))
+            else:
+                start = 0
+
+
+            if m.group(2).strip():
+                end = float(m.group(2))
+            else:
+                end = 0
+
+            return m.group(3), start, end
+
+        except:
+
+            return filename, 0, 0
+
 
     def periodic(self):
         """
@@ -328,12 +356,13 @@ class Channel(object):
                 continue
 
             try:
-                topf = load(self.file_prefix + topq.filename + self.file_suffix)
+                filename, start, end = self.split_filename(topq.filename)
+                topf = load(self.file_prefix + filename + self.file_suffix)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight)
+                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight)
+                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
 
                 self.playing = True
 
