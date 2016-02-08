@@ -18,6 +18,8 @@ const int BPS = 4; // Bytes per sample.
 const int FRAMES = 3;
 const int FRAME_PADDING = 2; // Pixels on each side.
 
+const int SPEED = 4;
+
 static SDL_Surface *rgb_surface = NULL;
 static SDL_Surface *rgba_surface = NULL;
 
@@ -339,6 +341,18 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 	av_free(pl);
 
 	return 1;
+}
+static int count_packet_queue(PacketQueue *pq) {
+       AVPacketList *pl = pq->first;
+
+       int rv = 0;
+
+       while (pl) {
+               rv += 1;
+               pl = pl->next;
+       }
+
+       return rv;
 }
 
 static void free_packet_queue(PacketQueue *pq) {
@@ -751,8 +765,11 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	}
 
 done:
+	printf("%s %d %d\n", ms->filename,
+			count_packet_queue(&ms->audio_packet_queue),
+            count_packet_queue(&ms->video_packet_queue));
 
-	/* Only signal if we've consumed something. */
+    /* Only signal if we've consumed something. */
 	if (rv) {
 		ms->needs_decode = 1;
 		SDL_CondBroadcast(ms->cond);
@@ -1021,7 +1038,7 @@ void media_close(MediaState *ms) {
 }
 
 void media_per_frame(void) {
-	current_time = av_gettime() * 1e-6;
+	current_time = SPEED * av_gettime() * 1e-6;
 }
 
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
@@ -1031,7 +1048,7 @@ void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
 
 void media_init(int rate, int status) {
 
-	audio_sample_rate = rate;
+	audio_sample_rate = rate / SPEED;
 
     av_register_all();
 
