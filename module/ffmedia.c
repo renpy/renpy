@@ -423,9 +423,9 @@ static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 
 		av_dup_packet(&scratch);
 
-		if (scratch.stream_index == ms->video_stream) {
+		if (scratch.stream_index == ms->video_stream && ! ms->video_finished) {
 			enqueue_packet(&ms->video_packet_queue, &scratch);
-		} else if (scratch.stream_index == ms->audio_stream) {
+		} else if (scratch.stream_index == ms->audio_stream && ! ms->audio_finished) {
 			enqueue_packet(&ms->audio_packet_queue, &scratch);
 		} else {
 			av_free_packet(&scratch);
@@ -630,6 +630,13 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 	// If we're behind on decoding the frame, skip it.
 	if (ms->video_pts_offset && (ms->video_pts_offset + pts < current_time)) {
+
+		// If we're 5s behind, give up on video for the time being, so we don't
+		// blow out memory.
+		if (ms->video_pts_offset + pts < current_time - 5.0) {
+			ms->video_finished = 1;
+		}
+
 		return NULL;
 	}
 
