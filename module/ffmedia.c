@@ -628,6 +628,11 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		return NULL;
 	}
 
+	// If we're behind on decoding the frame, skip it.
+	if (ms->video_pts_offset && (ms->video_pts_offset + pts < current_time)) {
+		return NULL;
+	}
+
 	SDL_Surface *sample = rgba_surface;
 
 	ms->sws = sws_getCachedContext(
@@ -765,9 +770,6 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	}
 
 done:
-	printf("%s %d %d\n", ms->filename,
-			count_packet_queue(&ms->audio_packet_queue),
-            count_packet_queue(&ms->video_packet_queue));
 
     /* Only signal if we've consumed something. */
 	if (rv) {
