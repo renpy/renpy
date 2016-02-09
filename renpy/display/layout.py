@@ -1579,6 +1579,9 @@ class Viewport(Container):
                 raise renpy.display.core.IgnoreEvent()
 
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
+            self.edge_xspeed = 0
+            self.edge_yspeed = 0
+
             return
 
         if self.mousewheel:
@@ -1616,6 +1619,7 @@ class Viewport(Container):
                 """
 
                 n = 1.0 * (n - zero) / (one - zero)
+
                 if n < 0.0:
                     return 0.0
                 if n > 1.0:
