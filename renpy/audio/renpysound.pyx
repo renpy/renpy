@@ -39,9 +39,11 @@ cdef extern from "renpysound_core.h":
     float RPS_get_volume(int channel)
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
-    object RPS_read_video(int channel)
 
     void RPS_per_frame()
+    int RPS_video_ready(int channel)
+    object RPS_read_video(int channel)
+
     void RPS_sample_surfaces(object, object)
     void RPS_init(int freq, int stereo, int samples, int status)
     void RPS_quit()
@@ -152,6 +154,9 @@ def set_end_event(channel, event):
 def get_volume(channel):
     return RPS_get_volume(channel)
 
+def video_ready(channel):
+    return RPS_video_ready(channel)
+
 def read_video(channel):
     rv = RPS_read_video(channel)
 
@@ -161,8 +166,6 @@ def read_video(channel):
     # Remove padding from the edges of the surface.
     w, h = rv.get_size()
     return rv.subsurface((2, 2, w-4, h-4))
-
-    return
 
 def init(freq, stereo, samples, status=False):
     if status:

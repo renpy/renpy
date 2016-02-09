@@ -733,6 +733,16 @@ static void decode_video(MediaState *ms) {
 	SDL_UnlockMutex(ms->lock);
 }
 
+
+/**
+ * Returns 1 if there is a video frame ready on this channel or the channel
+ * is not playing video, and 0 otherwise.
+ */
+int media_video_ready(struct MediaState *ms) {
+	return 1;
+}
+
+
 SDL_Surface *media_read_video(MediaState *ms) {
 	SDL_Surface *rv = NULL;
 	SurfaceQueueEntry *sqe;

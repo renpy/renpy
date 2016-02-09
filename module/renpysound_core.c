@@ -46,7 +46,10 @@ void media_start(MediaState *);
 void media_close(MediaState *);
 
 int media_read_audio(struct MediaState *is, Uint8 *stream, int len);
+
+int media_video_ready(struct MediaState *ms);
 SDL_Surface *media_read_video(struct MediaState *ms);
+
 
 /* The current Python. */
 PyInterpreterState* interp;
@@ -1070,13 +1073,13 @@ PyObject *RPS_read_video(int channel) {
 
     c = &channels[channel];
 
-    ENTER();
+    ALTENTER();
 
     if (c->playing) {
     	surf = media_read_video(c->playing);
     }
 
-    EXIT();
+    ALTEXIT();
 
     error(SUCCESS);
 
@@ -1088,6 +1091,37 @@ PyObject *RPS_read_video(int channel) {
     }
 
 }
+
+int RPS_video_ready(int channel) {
+    struct Channel *c;
+    int rv;
+
+    BEGIN();
+
+    if (check_channel(channel)) {
+    	return 1;
+    }
+
+    c = &channels[channel];
+
+    ALTENTER();
+
+    if (c->playing) {
+    	rv = media_video_ready(c->playing);
+    } else {
+    	rv = 1;
+    }
+
+    ALTEXIT();
+
+    error(SUCCESS);
+
+    return rv;
+
+}
+
+
+
 
 /*
  * Initializes the sound to the given frequencies, channels, and

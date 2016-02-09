@@ -533,6 +533,11 @@ class Channel(object):
             return renpysound.read_video(self.number)
         return None
 
+    def video_ready(self):
+        if not pcm_ok:
+            return 1
+        return renpysound.read_video(self.number)
+
 
 ################################################################################
 # Android VideoPlayer Channel
