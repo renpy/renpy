@@ -484,7 +484,7 @@ def display_say(
             c("show_done", interact=interact, type=type, **cb_args)
 
         if behavior and afm:
-            behavior.set_afm_length(end - start)
+            behavior.set_text(what_text)
 
         if not slow:
             slow_done()

@@ -1655,6 +1655,18 @@ class Text(renpy.display.core.Displayable):
 
         return layout.unscale_pair(*layout.size)
 
+    def get_time(self):
+        """
+        Returns the amount of time, in seconds, it will take to display this
+        text.
+        """
+
+        layout = self.get_layout()
+        if layout is None:
+            return
+
+        return layout.max_time
+
     def render(self, width, height, st, at):
 
         if self.style.vertical:

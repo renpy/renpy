@@ -492,6 +492,7 @@ class SayBehavior(renpy.display.layout.Null):
     """
 
     focusable = True
+    text = None
 
     def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
@@ -512,8 +513,9 @@ class SayBehavior(renpy.display.layout.Null):
     def _tts_all(self):
         raise renpy.display.tts.TTSRoot()
 
-    def set_afm_length(self, afm_length):
-        self.afm_length = max(afm_length, 1)
+    def set_text(self, text):
+        self.text = text
+        self.afm_length = max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
 
@@ -521,8 +523,8 @@ class SayBehavior(renpy.display.layout.Null):
 
             afm_delay = ( 1.0 * ( renpy.config.afm_bonus + self.afm_length ) / renpy.config.afm_characters ) * renpy.game.preferences.afm_time
 
-            if renpy.game.preferences.text_cps:
-                afm_delay += 1.0 / renpy.game.preferences.text_cps * self.afm_length
+            if self.text is not None:
+                afm_delay += self.text.get_time()
 
             if st > afm_delay:
                 if renpy.config.afm_callback:
