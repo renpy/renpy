@@ -536,7 +536,8 @@ class Channel(object):
     def video_ready(self):
         if not pcm_ok:
             return 1
-        return renpysound.read_video(self.number)
+
+        return renpysound.video_ready(self.number)
 
 
 ################################################################################
@@ -850,9 +851,9 @@ def sample_surfaces(rgb, rgba):
 
     renpysound.sample_surfaces(rgb, rgba)
 
-def per_frame():
+def advance_time():
     if not renpysound:
         return
 
-    renpysound.per_frame()
+    renpysound.advance_time()
 

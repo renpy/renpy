@@ -352,23 +352,40 @@ def frequent():
 
     update_playing()
 
-    rv = False
+    renpy.audio.audio.advance_time()
 
-    # Better-synchronizes the frame times.
-    renpy.audio.audio.per_frame()
+    if displayable_channels:
 
-    for i, v in displayable_channels.items():
-        channel, mask_channel = i
+        update = True
 
-        _, new = get_movie_texture(channel, mask_channel)
-        if new:
-            for j in v:
-                renpy.display.render.redraw(j, 0.0)
+        for i in displayable_channels:
+            channel, mask_channel = i
 
+            c = renpy.audio.audio.get_channel(channel)
+            if not c.video_ready():
+                update = False
+                break
 
-    if fullscreen:
-        _, new = get_movie_texture("movie")
+            if mask_channel:
+                c = renpy.audio.audio.get_channel(mask_channel)
+                if not c.video_ready():
+                    update = False
+                    break
 
-        rv = rv or new
+        if update:
+            for v in displayable_channels.values():
+                for j in v:
+                    renpy.display.render.redraw(j, 0.0)
 
-    return rv
+        return False
+
+    elif fullscreen:
+
+        c = renpy.audio.audio.get_channel("movie")
+
+        if c.video_ready():
+            return True
+        else:
+            return False
+
+    return False

@@ -18,7 +18,7 @@ const int BPS = 4; // Bytes per sample.
 const int FRAMES = 3;
 const int FRAME_PADDING = 2; // Pixels on each side.
 
-const int SPEED = 4;
+const int SPEED = 1;
 
 static SDL_Surface *rgb_surface = NULL;
 static SDL_Surface *rgba_surface = NULL;
@@ -78,13 +78,7 @@ static void rwops_close(SDL_RWops *rw) {
 	rw->close(rw);
 }
 
-
 static double current_time = 0;
-
-static double get_time(void) {
-	return current_time;
-}
-
 
 typedef struct PacketQueue {
 	AVPacketList *first;
@@ -209,6 +203,9 @@ typedef struct MediaState {
 
 	/* The offset between a pts timestamp and realtime. */
 	double video_pts_offset;
+
+	/* The wall time the last video frame was read. */
+	double video_read_time;
 
 } MediaState;
 
@@ -629,11 +626,11 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	}
 
 	// If we're behind on decoding the frame, skip it.
-	if (ms->video_pts_offset && (ms->video_pts_offset + pts < current_time)) {
+	if (ms->video_pts_offset && (ms->video_pts_offset + pts < ms->video_read_time)) {
 
 		// If we're 5s behind, give up on video for the time being, so we don't
 		// blow out memory.
-		if (ms->video_pts_offset + pts < current_time - 5.0) {
+		if (ms->video_pts_offset + pts < ms->video_read_time - 5.0) {
 			ms->video_finished = 1;
 		}
 
@@ -735,11 +732,70 @@ static void decode_video(MediaState *ms) {
 
 
 /**
- * Returns 1 if there is a video frame ready on this channel or the channel
- * is not playing video, and 0 otherwise.
+ * Returns 1 if there is a video frame ready on this channel, or 0 otherwise.
  */
 int media_video_ready(struct MediaState *ms) {
-	return 1;
+	int consumed = 0;
+	int rv = 0;
+
+	if (ms->video_stream == -1) {
+		return 1;
+	}
+
+	SDL_LockMutex(ms->lock);
+
+	if (!ms->ready) {
+		goto done;
+	}
+
+	/*
+	 * If we have an obsolete frame, drop it.
+	 */
+	if (ms->video_pts_offset) {
+		while (ms->surface_queue) {
+
+			/* The PTS is greater that the last frame read, so we're good. */
+			if (ms->surface_queue->pts + ms->video_pts_offset >= ms->video_read_time) {
+				break;
+			}
+
+			/* Otherwise, drop it without display. */
+			SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
+			ms->surface_queue_size -= 1;
+
+			SDL_FreeSurface(sqe->surf);
+			av_free(sqe);
+
+			consumed = 1;
+		}
+	}
+
+
+	/*
+	 * Otherwise, check to see if we have a frame with a PTS that has passed.
+	 */
+
+	if (ms->surface_queue) {
+		if (ms->video_pts_offset) {
+			if (ms->surface_queue->pts + ms->video_pts_offset <= current_time) {
+				rv = 1;
+			}
+		} else {
+			rv = 1;
+		}
+	}
+
+done:
+
+	/* Only signal if we've consumed something. */
+	if (consumed) {
+		ms->needs_decode = 1;
+		SDL_CondBroadcast(ms->cond);
+	}
+
+	SDL_UnlockMutex(ms->lock);
+
+	return rv;
 }
 
 
@@ -761,29 +817,17 @@ SDL_Surface *media_read_video(MediaState *ms) {
 		goto done;
 	}
 
-	double now = get_time();
-
 	if (ms->video_pts_offset == 0.0) {
-		ms->video_pts_offset = now - ms->surface_queue->pts;
+		ms->video_pts_offset = current_time - ms->surface_queue->pts;
 	}
 
-	while (ms->surface_queue_size) {
-
-		if (ms->surface_queue->pts + ms->video_pts_offset > now) {
-			break;
-		}
-
-		if (rv) {
-			SDL_FreeSurface(rv);
-		}
-
+	if (ms->surface_queue->pts + ms->video_pts_offset <= current_time) {
 		sqe = dequeue_surface(&ms->surface_queue);
 		ms->surface_queue_size -= 1;
 
 		rv = sqe->surf;
 
 		av_free(sqe);
-
 	}
 
 done:
@@ -791,6 +835,7 @@ done:
     /* Only signal if we've consumed something. */
 	if (rv) {
 		ms->needs_decode = 1;
+		ms->video_read_time = current_time;
 		SDL_CondBroadcast(ms->cond);
 	}
 
@@ -1056,7 +1101,7 @@ void media_close(MediaState *ms) {
 
 }
 
-void media_per_frame(void) {
+void media_advance_time(void) {
 	current_time = SPEED * av_gettime() * 1e-6;
 }
 

@@ -40,7 +40,7 @@ cdef extern from "renpysound_core.h":
     void RPS_set_pan(int channel, float pan, float delay)
     void RPS_set_secondary_volume(int channel, float vol2, float delay)
 
-    void RPS_per_frame()
+    void RPS_advance_time()
     int RPS_video_ready(int channel)
     object RPS_read_video(int channel)
 
@@ -182,8 +182,8 @@ def quit(): # @ReservedAssignment
 def periodic():
     RPS_periodic()
 
-def per_frame():
-    RPS_per_frame()
+def advance_time():
+    RPS_advance_time()
 
 # Store the sample surfaces so they stay alive.
 rgb_surface = None

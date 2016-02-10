@@ -51,7 +51,7 @@ void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void RPS_init(int freq, int stereo, int samples, int status);
 void RPS_quit(void);
 
-void RPS_per_frame(void);
+void RPS_advance_time(void);
 void RPS_periodic(void);
 
 char *RPS_get_error(void);
