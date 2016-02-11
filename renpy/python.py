@@ -279,7 +279,7 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, NoRollback):
+    if isinstance(obj, (NoRollback, file)):
         reachable[idobj] = 0
         return
 
