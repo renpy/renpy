@@ -226,6 +226,16 @@ class Movie(renpy.display.core.Displayable):
     mask = None
     mask_channel = None
 
+    def ensure_channel(self, name):
+
+        if name is None:
+            return
+
+        if renpy.audio.music.channel_defined(name):
+            return
+
+        renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False)
+
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, **properties):
         super(Movie, self).__init__(**properties)
         self.size = size
@@ -240,6 +250,9 @@ class Movie(renpy.display.core.Displayable):
             self.mask_channel = channel + "_mask"
         else:
             self.mask_channel = mask_channel
+
+        self.ensure_channel(self.channel)
+        self.ensure_channel(self.mask_channel)
 
     def render(self, width, height, st, at):
 
