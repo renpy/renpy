@@ -98,6 +98,16 @@ typedef struct SurfaceQueueEntry {
 
 	/* The pts, converted to seconds. */
 	double pts;
+
+	/* The format. This is not refcounted, but it's kept alive by being
+	 * the format of one of the sampel surfaces.
+	 */
+	SDL_PixelFormat *format;
+
+	/* As with SDL_Surface. */
+	int w, h, pitch;
+	void *pixels;
+
 } SurfaceQueueEntry;
 
 typedef struct MediaState {
@@ -223,7 +233,7 @@ static void deallocate(MediaState *ms) {
 			break;
 		}
 
-		SDL_FreeSurface(sqe->surf);
+		SDL_free(sqe->pixels);
 		av_free(sqe);
 	}
 
@@ -497,6 +507,7 @@ static void decode_audio(MediaState *ms) {
 			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
+				printf("Read size <zero.\n");
 				ms->audio_finished = 1;
 				return;
 			}
@@ -507,6 +518,7 @@ static void decode_audio(MediaState *ms) {
 			if (!got_frame) {
 				if (pkt.data == NULL) {
 					ms->audio_finished = 1;
+					printf("Read size zero data null.\n");
 					av_free_packet(&pkt);
 					return;
 				}
@@ -662,21 +674,18 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		return NULL;
 	}
 
-	SDL_Surface *surf = SDL_CreateRGBSurface(
-		0,
-		ms->video_decode_frame->width + FRAME_PADDING * 2,
-		ms->video_decode_frame->height + FRAME_PADDING * 2,
-		32,
-		sample->format->Rmask,
-		sample->format->Gmask,
-		sample->format->Bmask,
-		sample->format->Amask
-		);
+	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
+	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
+	rv->pitch = rv->w * sample->format->BytesPerPixel;
+	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
+	rv->pixels = SDL_calloc(1, rv->pitch * rv->h);
+	rv->format = sample->format;
+	rv->next = NULL;
+	rv->pts = pts;
 
-
-	uint8_t *surf_pixels = (uint8_t *) surf->pixels;
-	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * surf->pitch + FRAME_PADDING * 4] };
-	int surf_linesize[] = { surf->pitch };
+	uint8_t *surf_pixels = (uint8_t *) rv->pixels;
+	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample->format->BytesPerPixel] };
+	int surf_linesize[] = { rv->pitch };
 
 	sws_scale(
 		ms->sws,
@@ -690,12 +699,6 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		surf_data,
 		surf_linesize
 		);
-
-	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
-
-	rv->next = NULL;
-	rv->pts = pts;
-	rv->surf = surf;
 
 	return rv;
 }
@@ -713,7 +716,7 @@ static void decode_video(MediaState *ms) {
 
 	SDL_LockMutex(ms->lock);
 
-	while (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
+	if (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
 
 		SDL_UnlockMutex(ms->lock);
 
@@ -763,7 +766,7 @@ int media_video_ready(struct MediaState *ms) {
 			SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
 			ms->surface_queue_size -= 1;
 
-			SDL_FreeSurface(sqe->surf);
+			SDL_free(sqe->pixels);
 			av_free(sqe);
 
 			consumed = 1;
@@ -801,7 +804,7 @@ done:
 
 SDL_Surface *media_read_video(MediaState *ms) {
 	SDL_Surface *rv = NULL;
-	SurfaceQueueEntry *sqe;
+	SurfaceQueueEntry *sqe = NULL;
 
 	if (ms->video_stream == -1) {
 		return NULL;
@@ -825,21 +828,37 @@ SDL_Surface *media_read_video(MediaState *ms) {
 		sqe = dequeue_surface(&ms->surface_queue);
 		ms->surface_queue_size -= 1;
 
-		rv = sqe->surf;
-
-		av_free(sqe);
 	}
 
 done:
 
     /* Only signal if we've consumed something. */
-	if (rv) {
+	if (sqe) {
 		ms->needs_decode = 1;
 		ms->video_read_time = current_time;
 		SDL_CondBroadcast(ms->cond);
 	}
 
 	SDL_UnlockMutex(ms->lock);
+
+	if (sqe) {
+		rv = SDL_CreateRGBSurfaceFrom(
+			sqe->pixels,
+			sqe->w,
+			sqe->h,
+			sqe->format->BitsPerPixel,
+			sqe->pitch,
+			sqe->format->Rmask,
+			sqe->format->Gmask,
+			sqe->format->Bmask,
+			sqe->format->Amask
+		);
+
+		/* Force SDL to take over management of pixels. */
+		rv->flags &= ~SDL_PREALLOC;
+		av_free(sqe);
+	}
+
 	return rv;
 }
 
