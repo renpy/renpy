@@ -716,12 +716,7 @@ static void decode_video(MediaState *ms) {
 
 	SDL_LockMutex(ms->lock);
 
-	/* This ensures we eventually leave here and decode some audio, even if
-	 * we're really lagged.
-	 */
-	int limit = FRAMES;
-
-	if (!ms->video_finished && (ms->surface_queue_size < FRAMES) && (limit--)) {
+	if (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
 
 		SDL_UnlockMutex(ms->lock);
 
@@ -733,6 +728,10 @@ static void decode_video(MediaState *ms) {
 			enqueue_surface(&ms->surface_queue, sqe);
 			ms->surface_queue_size += 1;
 		}
+	}
+
+	if (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
+		ms->needs_decode = 1;
 	}
 
 	SDL_UnlockMutex(ms->lock);
