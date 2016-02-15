@@ -515,7 +515,9 @@ def change_language(language):
 
     # Restart the interaction.
     renpy.exports.restart_interaction()
-    renpy.exports.block_rollback()
+
+    if language != old_language:
+        renpy.exports.block_rollback()
 
 def check_language():
     """
