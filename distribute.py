@@ -49,6 +49,7 @@ def main():
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--pygame", action="store", default=None)
     ap.add_argument("--no-rapt", action="store_true")
+    ap.add_argument("--variant", action="store")
 
     args = ap.parse_args()
 
@@ -92,6 +93,9 @@ def main():
 
     # The destination directory.
     destination = os.path.join("dl", args.version)
+
+    if args.variant:
+        destination += "-" + args.variant
 
     print "Version {} ({})".format(args.version, full_version)
 

@@ -32,7 +32,6 @@ import time
 import zipfile
 import __main__
 
-
 last_clock = time.time()
 
 def log_clock(s):
