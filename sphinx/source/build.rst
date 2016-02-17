@@ -179,6 +179,10 @@ containing bonus material. We could classify the bonus files in to a
 
     build.package("all-premium", "zip", "windows mac linux all bonus")
 
+Supported package types are "zip" and "tar.bz2" to generate files in
+those formats, and "directory" to create a directory filled with
+files.
+
 Archives
 --------
 
