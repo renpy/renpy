@@ -54,7 +54,7 @@ import setuplib
 from setuplib import android, ios, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
-setuplib.extra_compile_args = [ "-std=gnu99", "-Wno-unused-function" ]
+setuplib.extra_compile_args = [ "-Wno-unused-function" ]
 setuplib.extra_link_args = [ ]
 
 # Detect win32.

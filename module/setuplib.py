@@ -157,12 +157,17 @@ def cmodule(name, source, libs=[], define_macros=[], language="c"):
     `source`, and the libraries in `libs`.
     """
 
+    eca = list(extra_compile_args)
+
+    if language == "c":
+        eca.insert(0, "-std=gnu99")
+
     extensions.append(distutils.core.Extension(
         name,
         source,
         include_dirs=include_dirs,
         library_dirs=library_dirs,
-        extra_compile_args=extra_compile_args,
+        extra_compile_args=eca,
         extra_link_args=extra_link_args,
         libraries=libs,
         define_macros=define_macros + global_macros,
