@@ -48,10 +48,6 @@ def extra_imports():
     import math; math
     import glob; glob
     import pickle; pickle
-    import pysdlsound; pysdlsound #@UnresolvedImport
-    import pysdlsound.sound; pysdlsound.sound #@UnresolvedImport
-    import pysdlsound.winmixer; pysdlsound.winmixer #@UnresolvedImport
-    import pysdlsound.linmixer; pysdlsound.linmixer #@UnresolvedImport
     import difflib; difflib
     import shutil; shutil
     import tarfile; tarfile

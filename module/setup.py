@@ -54,7 +54,7 @@ import setuplib
 from setuplib import android, ios, include, library, cython, pymodule, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
-setuplib.extra_compile_args = [ "-Wno-unused-function" ]
+setuplib.extra_compile_args = [ "-std=gnu99", "-Wno-unused-function" ]
 setuplib.extra_link_args = [ ]
 
 # Detect win32.
@@ -131,7 +131,6 @@ if has_fribidi:
 cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
 # Sound.
-pymodule("pysdlsound.__init__")
 
 sound = [ "avformat", "avcodec", "avutil", "z" ]
 macros = [ ]
@@ -147,8 +146,8 @@ if has_swscale:
     sound.insert(0, "swscale")
 
 cython(
-    "pysdlsound.sound",
-    [ "pss.c", "ffdecode.c" ],
+    "renpy.audio.renpysound",
+    [ "renpysound_core.c", "ffmedia.c" ],
     libs = sdl + sound,
     define_macros=macros)
 

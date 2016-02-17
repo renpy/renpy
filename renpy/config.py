@@ -664,6 +664,9 @@ enable_rollback_side = True
 # The default contents of the replay scope.
 replay_scope = { "_game_menu_screen" : "preferences" }
 
+# The mixer to use for auto-defined movie channels.
+movie_mixer = "music"
+
 del renpy
 del os
 

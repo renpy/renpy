@@ -719,6 +719,9 @@ class SWDraw(object):
         # 1px border around it iff we're scaling.
         self.window = None
 
+        # Did we show fullscreen video in the last frame?
+        self.showing_video = False
+
     def set_mode(self, virtual_size, physical_size, fullscreen):
 
         # Reset before resize.
@@ -952,39 +955,52 @@ class SWDraw(object):
         Draws the screen.
         """
 
-        if not fullscreen_video:
+        if fullscreen_video:
 
-            updates = [ ]
+            if not self.showing_video:
+                self.window.fill((0, 0, 0, 255))
 
-            updates.extend(self.draw_mouse(False))
+            w, h = self.window.get_size()
+            frame = renpy.display.video.render_movie("movie", w, h)
 
-            damage = do_draw_screen(surftree, self.full_redraw, self)
+            if frame is not None:
+                surftree = frame
 
-            if damage:
-                updates.extend(damage)
-
-            self.full_redraw = False
-
-            if self.window is self.screen:
-
-                updates.extend(self.draw_mouse(True))
-                pygame.display.update(updates)
-
-            else:
-
-                if self.scale_fast:
-                    pygame.transform.scale(self.window, self.screen.get_size(), self.screen)
-                else:
-                    renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
-
-                self.draw_mouse(True)
-                pygame.display.flip()
+            self.full_redraw = True
+            self.showing_video = True
 
         else:
-            pygame.display.flip()
-            self.full_redraw = True
+            self.showing_video = False
 
-        self.suppressed_blit = fullscreen_video
+        updates = [ ]
+
+        updates.extend(self.draw_mouse(False))
+
+        damage = do_draw_screen(surftree, self.full_redraw, self)
+
+        if damage:
+            updates.extend(damage)
+
+        self.full_redraw = False
+
+        if self.window is self.screen:
+
+            updates.extend(self.draw_mouse(True))
+            pygame.display.update(updates)
+
+        else:
+
+            if self.scale_fast:
+                pygame.transform.scale(self.window, self.screen.get_size(), self.screen)
+            else:
+                renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
+
+            self.draw_mouse(True)
+            pygame.display.flip()
+
+
+        if fullscreen_video:
+            self.full_redraw = True
 
 
     def render_to_texture(self, render, alpha):

@@ -2770,6 +2770,8 @@ class Interface(object):
                     if not self.interact_time:
                         self.interact_time = self.frame_time
 
+                    renpy.audio.audio.advance_time() # Sets the time of all video frames.
+
                     self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
 
                     if first_pass:
@@ -2918,6 +2920,10 @@ class Interface(object):
                     ev = self.event_wait()
 
                 if ev.type == pygame.NOEVENT:
+
+                    if not needs_redraw or self.mouse_move:
+                        pygame.time.wait(1)
+
                     continue
 
                 self.profile_time = get_time()

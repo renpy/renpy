@@ -419,6 +419,10 @@ def import_all():
 
     # Note: For windows to work, renpy.audio.audio needs to be after
     # renpy.display.module.
+
+    import renpy.audio
+    update_path(renpy.audio)
+
     import renpy.audio.audio
     import renpy.audio.music
     import renpy.audio.sound

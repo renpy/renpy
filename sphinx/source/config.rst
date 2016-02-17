@@ -1037,6 +1037,11 @@ Rarely or Internally Used
     will not experience the mouse appearing then disappearing between
     clicks.
 
+.. var:: config.movie_mixer = "music"
+
+    The mixer that is used when a :func:`Movie` automatically defines
+    a channel for video playback.
+
 .. var:: config.new_substitutions = True
 
     If true, Ren'Py will apply new-style (square-bracket)

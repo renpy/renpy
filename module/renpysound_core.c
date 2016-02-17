@@ -21,24 +21,34 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "pss.h"
+#include "renpysound_core.h"
 #include <Python.h>
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <stdio.h>
 #include <strings.h>
+#include <pygame_sdl2/pygame_sdl2.h>
 
 #define MAXVOLUME 16384
 
 /* Declarations of ffdecode functions. */
-struct VideoState;
+struct MediaState;
+typedef struct MediaState MediaState;
 
-struct VideoState *ffpy_stream_open(SDL_RWops *, const char *);
-void ffpy_stream_close(struct VideoState *is);
-void ffpy_alloc_event(struct VideoState *vs, PyObject *surface);
-int ffpy_refresh_event(struct VideoState *vs);
-void ffpy_init(int rate, int status);
-int ffpy_audio_decode(struct VideoState *is, Uint8 *stream, int len);
+void media_init(int rate, int status);
+
+void media_advance_time(void);
+void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
+
+MediaState *media_open(SDL_RWops *, const char *);
+void media_start_end(MediaState *, double, double);
+void media_start(MediaState *);
+void media_close(MediaState *);
+
+int media_read_audio(struct MediaState *is, Uint8 *stream, int len);
+
+int media_video_ready(struct MediaState *ms);
+SDL_Surface *media_read_video(struct MediaState *ms);
 
 
 /* The current Python. */
@@ -90,12 +100,12 @@ SDL_mutex *name_mutex;
 #define SUCCESS 0
 #define SDL_ERROR -1
 #define SOUND_ERROR -2
-#define PSS_ERROR -3
+#define RPS_ERROR -3
 
 /* This is called with the appropriate error code at the end of a
  * function. */
-#define error(err) PSS_error = err
-int PSS_error = SUCCESS;
+#define error(err) RPS_error = err
+int RPS_error = SUCCESS;
 static const char *error_msg = NULL;
 
 /* Have we been initialized? */
@@ -109,7 +119,7 @@ struct Channel {
 
     /* The currently playing sample, NULL if this sample isn't playing
        anything. */
-    struct VideoState *playing;
+    struct MediaState *playing;
 
     /* The name of the playing music. */
     PyObject *playing_name;
@@ -121,7 +131,7 @@ struct Channel {
     int playing_tight;
 
     /* The queued up sample. */
-    struct VideoState *queued;
+    struct MediaState *queued;
 
     /* The name of the queued up sample. */
     PyObject *queued_name;
@@ -182,7 +192,7 @@ struct Channel {
 };
 
 struct Dying {
-    struct VideoState *stream;
+    struct MediaState *stream;
     struct Dying *next;
 };
 
@@ -274,8 +284,8 @@ static void start_sample(struct Channel* c, int reset_fade) {
     }
 }
 
-static void free_sample(struct VideoState *ss) {
-    ffpy_stream_close(ss);
+static void free_sample(struct MediaState *ss) {
+    media_close(ss);
 }
 
 #define MAX_SHORT (32767)
@@ -433,7 +443,7 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
             // Decode some amount of data.
 
-            bytes = ffpy_audio_decode(c->playing, buffer, mixleft);
+            bytes = media_read_audio(c->playing, buffer, mixleft);
 
             // We have some data in the buffer.
             if (c->stop_bytes && bytes) {
@@ -505,7 +515,7 @@ static int check_channel(int c) {
     int i;
 
     if (c < 0) {
-        error(PSS_ERROR);
+        error(RPS_ERROR);
         error_msg = "Channel number out of range.";
         return -1;
     }
@@ -543,14 +553,16 @@ static int check_channel(int c) {
  * Loads the provided sample. Returns the sample on success, NULL on
  * failure.
  */
-struct VideoState *load_sample(SDL_RWops *rw, const char *ext) {
-    struct VideoState *rv;
-    rv = ffpy_stream_open(rw, ext);
+struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, double end) {
+    struct MediaState *rv;
+    rv = media_open(rw, ext);
+    media_start_end(rv, start, end);
+    media_start(rv);
     return rv;
 }
 
 
-void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, int paused) {
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, int paused, double start, double end) {
 
     BEGIN();
 
@@ -584,7 +596,7 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
 
     /* Allocate playing sample. */
 
-    c->playing = load_sample(rw, ext);
+    c->playing = load_sample(rw, ext, start, end);
 
     if (! c->playing) {
     	UNLOCK_NAME();
@@ -609,7 +621,7 @@ void PSS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     error(SUCCESS);
 }
 
-void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight) {
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadein, int tight, double start, double end) {
 
     BEGIN();
 
@@ -626,7 +638,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     /* If we're not playing, then we should play instead of queue. */
     if (!c->playing) {
         EXIT();
-        PSS_play(channel, rw, ext, name, fadein, tight, 0);
+        RPS_play(channel, rw, ext, name, fadein, tight, 0, start, end);
         return;
     }
 
@@ -641,7 +653,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     }
 
     /* Allocate queued sample. */
-    c->queued = load_sample(rw, ext);
+    c->queued = load_sample(rw, ext, start, end);
 
     if (! c->queued) {
         EXIT();
@@ -663,7 +675,7 @@ void PSS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
  * Stops all music from playing, freeing the data used by the
  * music.
  */
-void PSS_stop(int channel) {
+void RPS_stop(int channel) {
     BEGIN();
 
     struct Channel *c;
@@ -712,7 +724,7 @@ void PSS_stop(int channel) {
  * This does nothing if the playing sound is tight, ever_tight is
  * false.
  */
-void PSS_dequeue(int channel, int even_tight) {
+void RPS_dequeue(int channel, int even_tight) {
     BEGIN();
 
     struct Channel *c;
@@ -745,7 +757,7 @@ void PSS_dequeue(int channel, int even_tight) {
  * stopped, 1 if there's something playing but nothing queued, and 2
  * if there's both something playing and something queued.
  */
-int PSS_queue_depth(int channel) {
+int RPS_queue_depth(int channel) {
     int rv = 0;
     BEGIN();
 
@@ -768,7 +780,7 @@ int PSS_queue_depth(int channel) {
     return rv;
 }
 
-PyObject *PSS_playing_name(int channel) {
+PyObject *RPS_playing_name(int channel) {
 	BEGIN();
 	PyObject *rv;
 
@@ -808,7 +820,7 @@ PyObject *PSS_playing_name(int channel) {
  * number of milliseconds. The playing sound stops once the
  * fadeout finishes (a queued sound may then start at full volume).
  */
-void PSS_fadeout(int channel, int ms) {
+void RPS_fadeout(int channel, int ms) {
     BEGIN();
     int fade_steps;
     struct Channel *c;
@@ -858,7 +870,7 @@ void PSS_fadeout(int channel, int ms) {
 /*
  * Sets the pause flag on the given channel 0 = unpaused, 1 = paused.
  */
-void PSS_pause(int channel, int pause) {
+void RPS_pause(int channel, int pause) {
     BEGIN();
 
     struct Channel *c;
@@ -879,7 +891,7 @@ void PSS_pause(int channel, int pause) {
 
 }
 
-void PSS_unpause_all(void) {
+void RPS_unpause_all(void) {
 
     int i;
 
@@ -900,7 +912,7 @@ void PSS_unpause_all(void) {
 /*
  * Returns the position of the given channel, in ms.
  */
-int PSS_get_pos(int channel) {
+int RPS_get_pos(int channel) {
     int rv;
     struct Channel *c;
 
@@ -930,7 +942,7 @@ int PSS_get_pos(int channel) {
  * Sets an event that is queued up when the track on the given channel
  * ends due to natural termination or a forced stop.
  */
-void PSS_set_endevent(int channel, int event) {
+void RPS_set_endevent(int channel, int event) {
     struct Channel *c;
     BEGIN();
 
@@ -953,7 +965,7 @@ void PSS_set_endevent(int channel, int event) {
  * This sets the natural volume of the channel. (This may not take
  * effect immediately if a fade is going on.)
  */
-void PSS_set_volume(int channel, float volume) {
+void RPS_set_volume(int channel, float volume) {
     struct Channel *c;
     BEGIN();
 
@@ -974,7 +986,7 @@ void PSS_set_volume(int channel, float volume) {
 
 
 
-float PSS_get_volume(int channel) {
+float RPS_get_volume(int channel) {
 
     float rv;
 
@@ -1001,7 +1013,7 @@ float PSS_get_volume(int channel) {
  * This sets the pan of the channel... independent volumes for the
  * left and right channels.
  */
-void PSS_set_pan(int channel, float pan, float delay) {
+void RPS_set_pan(int channel, float pan, float delay) {
     struct Channel *c;
     BEGIN();
 
@@ -1026,7 +1038,7 @@ void PSS_set_pan(int channel, float pan, float delay) {
 /*
  * This sets the secondary volume of the channel.
  */
-void PSS_set_secondary_volume(int channel, float vol2, float delay) {
+void RPS_set_secondary_volume(int channel, float vol2, float delay) {
     struct Channel *c;
     BEGIN();
 
@@ -1048,12 +1060,74 @@ void PSS_set_secondary_volume(int channel, float vol2, float delay) {
     error(SUCCESS);
 }
 
+PyObject *RPS_read_video(int channel) {
+    struct Channel *c;
+    SDL_Surface *surf = NULL;
+
+    BEGIN();
+
+    if (check_channel(channel)) {
+        Py_INCREF(Py_None);
+    	return Py_None;
+    }
+
+    c = &channels[channel];
+
+    ALTENTER();
+
+    if (c->playing) {
+    	surf = media_read_video(c->playing);
+    }
+
+    ALTEXIT();
+
+    error(SUCCESS);
+
+    if (surf) {
+    	return PySurface_New(surf);
+    } else {
+        Py_INCREF(Py_None);
+    	return Py_None;
+    }
+
+}
+
+int RPS_video_ready(int channel) {
+    struct Channel *c;
+    int rv;
+
+    BEGIN();
+
+    if (check_channel(channel)) {
+    	return 1;
+    }
+
+    c = &channels[channel];
+
+    ALTENTER();
+
+    if (c->playing) {
+    	rv = media_video_ready(c->playing);
+    } else {
+    	rv = 1;
+    }
+
+    ALTEXIT();
+
+    error(SUCCESS);
+
+    return rv;
+
+}
+
+
+
 
 /*
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
  */
-void PSS_init(int freq, int stereo, int samples, int status) {
+void RPS_init(int freq, int stereo, int samples, int status) {
 
     if (initialized) {
         return;
@@ -1062,6 +1136,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
     name_mutex = SDL_CreateMutex();
 
     PyEval_InitThreads();
+    import_pygame_sdl2();
 
     if (!thread) {
         thread = PyThreadState_Get();
@@ -1091,7 +1166,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
         return;
     }
 
-    ffpy_init(audio_spec.freq, status);
+    media_init(audio_spec.freq, status);
 
     SDL_PauseAudio(0);
 
@@ -1100,7 +1175,7 @@ void PSS_init(int freq, int stereo, int samples, int status) {
     error(SUCCESS);
 }
 
-void PSS_quit() {
+void RPS_quit() {
     BEGIN();
 
     if (! initialized) {
@@ -1114,7 +1189,7 @@ void PSS_quit() {
     EXIT();
 
     for (i = 0; i < num_channels; i++) {
-        PSS_stop(i);
+        RPS_stop(i);
     }
 
     SDL_CloseAudio();
@@ -1126,7 +1201,7 @@ void PSS_quit() {
 
 /* This must be called frequently, to take care of deallocating dead
  * streams. */
-void PSS_periodic() {
+void RPS_periodic() {
     BEGIN();
 
     if (!dying) {
@@ -1137,7 +1212,7 @@ void PSS_periodic() {
 
     while (dying) {
         struct Dying *d = dying;
-        ffpy_stream_close(d->stream);
+        media_close(d->stream);
         dying = d->next;
         free(d);
     }
@@ -1145,44 +1220,33 @@ void PSS_periodic() {
     EXIT();
 }
 
-/* This should be called in response to an FF_ALLOC_EVENT, with a pygame
- * surface to display the movie on. */
-void PSS_alloc_event(PyObject *surface) {
-    int i;
-
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing) {
-            ffpy_alloc_event(channels[i].playing, surface);
-        }
-    }
+void RPS_advance_time(void) {
+	media_advance_time();
 }
 
-/* This should be called in response to a FF_REFRESH_EVENT */
-int PSS_refresh_event(void) {
-    int i;
-    int rv = 0;
-    for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing) {
-        	rv = rv | ffpy_refresh_event(channels[i].playing);
-        }
-    }
+void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba) {
+    import_pygame_sdl2();
 
-    return rv;
+    media_sample_surfaces(
+			PySurface_AsSurface(rgb),
+			PySurface_AsSurface(rgba)
+		);
+
 }
 
 /*
  * Returns the error message string if an error has occured, or
  * NULL if no error has happened.
  */
-char *PSS_get_error() {
-    switch(PSS_error) {
+char *RPS_get_error() {
+    switch(RPS_error) {
     case 0:
         return (char *) "";
     case SDL_ERROR:
         return (char *) SDL_GetError();
     case SOUND_ERROR:
         return (char *) "Some sort of codec error.";
-    case PSS_ERROR:
+    case RPS_ERROR:
         return (char *) error_msg;
     default:
         return (char *) "Error getting error.";
