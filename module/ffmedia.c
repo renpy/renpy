@@ -507,7 +507,6 @@ static void decode_audio(MediaState *ms) {
 			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
-				printf("Read size <zero.\n");
 				ms->audio_finished = 1;
 				return;
 			}
@@ -518,7 +517,6 @@ static void decode_audio(MediaState *ms) {
 			if (!got_frame) {
 				if (pkt.data == NULL) {
 					ms->audio_finished = 1;
-					printf("Read size zero data null.\n");
 					av_free_packet(&pkt);
 					return;
 				}
