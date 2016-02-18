@@ -27,6 +27,8 @@
 # Remember the real file.
 _file = file
 
+import re
+
 import renpy.display
 import renpy.audio
 
@@ -1894,6 +1896,9 @@ def seen_audio(filename):
     Returns True if the given filename has been played at least once on the current
     user's system.
     """
+
+    filename = re.sub(r'^<.*?>', '', filename)
+
     return filename in renpy.game.persistent._seen_audio  # @UndefinedVariable
 
 

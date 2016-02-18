@@ -454,6 +454,7 @@ class Channel(object):
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
 
         for filename in filenames:
+            filename, _, _ = self.split_filename(filename)
             renpy.game.persistent._seen_audio[filename] = True  # @UndefinedVariable
 
         if not pcm_ok:
