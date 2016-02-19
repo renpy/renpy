@@ -44,6 +44,12 @@ def dump(o, f):
     else:
         pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
 
+def dumps(o):
+    if renpy.config.use_cpickle:
+        return cPickle.dumps(o, cPickle.HIGHEST_PROTOCOL)
+    else:
+        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
+
 def loads(s):
     if renpy.config.use_cpickle:
         return cPickle.loads(s)

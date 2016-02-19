@@ -25,8 +25,7 @@ import time
 
 import renpy
 
-from renpy.loadsave import dump, loads
-from cPickle import dumps
+from renpy.loadsave import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
 class Persistent(object):
