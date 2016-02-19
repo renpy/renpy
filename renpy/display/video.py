@@ -216,6 +216,10 @@ class Movie(renpy.display.core.Displayable):
         defaults to `channel`_mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
+    `image`
+        An image that is displayed on platforms where the movie is not
+        supported.
+
     This displayable will be transparent when the movie is not playing.
     """
 
@@ -225,6 +229,8 @@ class Movie(renpy.display.core.Displayable):
 
     mask = None
     mask_channel = None
+
+    image = None
 
     def ensure_channel(self, name):
 
@@ -236,7 +242,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, **properties):
         super(Movie, self).__init__(**properties)
         self.size = size
         self.channel = channel
@@ -254,7 +260,19 @@ class Movie(renpy.display.core.Displayable):
         self.ensure_channel(self.channel)
         self.ensure_channel(self.mask_channel)
 
+        self.image = renpy.easy.displayable_or_none(image)
+
     def render(self, width, height, st, at):
+
+        if renpy.mobile and (self.image is not None):
+            surf = renpy.display.render.render(self.image, width, height, st, at)
+
+            w, h = surf.get_size()
+
+            rv = renpy.display.render.Render(w, h)
+            rv.blit(surf, (0, 0))
+
+            return rv
 
         if self._play:
             channel_movie[self.channel] = self
