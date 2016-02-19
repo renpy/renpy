@@ -1093,7 +1093,7 @@ def parse_image_name(l, string=False):
         s = l.simple_expression()
 
         if s is not None:
-            rv.append(s)
+            rv.append(unicode(s))
 
     return tuple(rv)
 
