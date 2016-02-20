@@ -24,15 +24,6 @@ Configuration variables are often changed in init python blocks::
 Commonly Used
 -------------
 
-.. var:: config.developer = False
-
-    If set to True, developer mode is enabled. Developer mode gives
-    access to the shift+D developer menu, shift+R reloading, and
-    various other features that are not intended for end users.
-
-    The default game template sets this to True. We suggest setting it
-    to False before releasing a game.
-
 .. var:: config.help = "README.html"
 
     This controls the functionality of the help system invoked by the
@@ -342,7 +333,7 @@ Occasionally Used
     * lucy/mad.png, Ren'Py will define the image "lucy mad".
     * mary.png, Ren'Py will do nothing. (As the image does not have two components.)
 
-.. var:: config.automatic_images_strip = []
+.. var:: config.automatic_images_strip = [ ]
 
     A list of strings giving prefixes that are stripped out when
     defining automatic images. This can be used to remove directory
@@ -380,7 +371,7 @@ Occasionally Used
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
 
-.. var:: config.default_tag_layer = "master:
+.. var:: config.default_tag_layer = "master"
 
     The layer an image is show on if its tag is not found in config.tag_layer.
 
@@ -391,6 +382,16 @@ Occasionally Used
     initialize the values of the displayable's transform.
 
     The default default transform is :var:`center`.
+
+.. var:: config.developer = "auto"
+
+    If set to True, developer mode is enabled. Developer mode gives
+    access to the shift+D developer menu, shift+R reloading, and
+    various other features that are not intended for end users.
+
+    This can be True, False, or "auto". If "auto", Ren'Py will
+    detect if the game has been packaged into a distribution, and
+    set config.developer as appropriate.
 
 .. var:: config.emphasize_audio_channels = [ 'voice' ]
 

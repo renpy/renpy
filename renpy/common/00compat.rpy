@@ -115,6 +115,10 @@ init -1900 python:
         if version <= (6, 99, 6):
             config.dynamic_images = False
 
+        if version <= (6, 99, 8):
+            if config.developer == "auto":
+                config.developer = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

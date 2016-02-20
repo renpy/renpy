@@ -242,7 +242,7 @@ editor_transient = None # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 editor_file_separator = None # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False
+developer = "auto" # Changed to True or False in the init code.
 
 # A logfile that logging messages are sent to.
 log = None

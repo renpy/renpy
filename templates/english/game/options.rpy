@@ -9,12 +9,6 @@
 
 init -1 python hide:
 
-    ## Should we enable the use of developer tools? This should be
-    ## set to False before the game is released, so the user can't
-    ## cheat using developer tools.
-
-    config.developer = True
-
     ## These control the width and height of the screen.
 
     config.screen_width = 800

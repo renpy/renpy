@@ -743,7 +743,7 @@ characters per block. """.format(
         print
 
     print
-    if renpy.config.developer:
+    if renpy.config.developer and (renpy.config.developer != "auto"):
         print "Remember to set config.developer to False before releasing."
         print
 
