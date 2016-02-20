@@ -72,10 +72,11 @@ class QueueEntry(object):
     A queue entry object.
     """
 
-    def __init__(self, filename, fadein, tight):
+    def __init__(self, filename, fadein, tight, loop):
         self.filename = filename
         self.fadein = fadein
         self.tight = tight
+        self.loop = loop
 
 
 class MusicContext(renpy.python.RevertableObject):
@@ -255,31 +256,48 @@ class Channel(object):
 
     context = property(get_context)
 
-    def split_filename(self, filename):
+    def split_filename(self, filename, looped):
         """
         Splits a filename into a filename, start time, and end time.
         """
 
-        m = re.match(r'<(.*)-(.*)>(.*)', filename)
+        m = re.match(r'<(.*)>(.*)', filename)
         if not m:
             return filename, 0, 0
 
         try:
-            if m.group(1).strip():
-                start = float(m.group(1))
+
+            spec = m.group(1)
+            new_filename = m.group(2)
+
+            if "," in spec:
+                noloop, _, loop = spec.partition(',')
+
+                if looped:
+                    spec = loop
+                else:
+                    spec = noloop
+
+            if spec:
+                start_spec, _, end_spec = spec.partition('-')
+
+                if start_spec.strip():
+                    start = float(start_spec)
+                else:
+                    start = 0
+
+                if end_spec.strip():
+                    end = float(end_spec)
+                else:
+                    end = 0
+
             else:
                 start = 0
-
-
-            if m.group(2).strip():
-                end = float(m.group(2))
-            else:
                 end = 0
 
-            return m.group(3), start, end
+            return new_filename, start, end
 
         except:
-
             return filename, 0, 0
 
 
@@ -364,7 +382,7 @@ class Channel(object):
                 continue
 
             try:
-                filename, start, end = self.split_filename(topq.filename)
+                filename, start, end = self.split_filename(topq.filename, topq.loop)
                 topf = load(self.file_prefix + filename + self.file_suffix)
 
                 if depth == 0:
@@ -390,7 +408,7 @@ class Channel(object):
 
         if self.loop and not self.queue:
             for i in self.loop:
-                newq = QueueEntry(i, 0, topq.tight)
+                newq = QueueEntry(i, 0, topq.tight, True)
                 self.queue.append(newq)
         else:
             do_callback = True
@@ -474,7 +492,7 @@ class Channel(object):
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
 
         for filename in filenames:
-            filename, _, _ = self.split_filename(filename)
+            filename, _, _ = self.split_filename(filename, False)
             renpy.game.persistent._seen_audio[filename] = True  # @UndefinedVariable
 
         if not pcm_ok:
@@ -486,7 +504,7 @@ class Channel(object):
         self.keep_queue += 1
 
         for filename in filenames:
-            qe = QueueEntry(filename, int(fadein * 1000), tight)
+            qe = QueueEntry(filename, int(fadein * 1000), tight, False)
             self.queue.append(qe)
 
             # Only fade the first thing in.
