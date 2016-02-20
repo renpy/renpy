@@ -68,6 +68,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         then it will not be stopped/faded out and faded back in again, but
         instead will be kept playing. (This will always queue up an additional
         loop of the music.)
+
+    This clears the pause flag for `channel`.
     """
 
     if renpy.game.context().init_phase:
@@ -109,6 +111,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             ctx.last_filenames = [ ]
             ctx.last_tight = False
 
+        ctx.pause = False
+
     except:
         if renpy.config.debug_sound:
             raise
@@ -142,6 +146,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 
     `tight`
         If this is True, then fadeouts will span into the next-queued sound.
+
+    This clears the pause flag for `channel`.
     """
 
     if renpy.game.context().init_phase:
@@ -177,6 +183,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         else:
             ctx.last_filenames = [ ]
             ctx.last_tight = False
+
+        ctx.pause = False
 
     except:
         if renpy.config.debug_sound:
@@ -384,6 +392,34 @@ def set_queue_empty_callback(callback, channel="music"):
     except:
         if renpy.config.debug_sound:
             raise
+
+def set_pause(value, channel="music"):
+    """
+    :doc: audio
+
+    Sets the pause flag for `channel` to `value`. If True, the channel
+    will pause, otherwise it will play normally.
+    """
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        c.context.pause = value
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+def get_pause(channel="music"):
+    """
+    :doc: audio
+
+    Returns the pause flag for `channel`.
+    """
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        return c.context.pause
+    except:
+
+        return False
+
 
 def set_mixer(channel, mixer, default=False):
     """

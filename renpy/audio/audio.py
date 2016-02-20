@@ -87,6 +87,8 @@ class MusicContext(renpy.python.RevertableObject):
 
     __version__ = 0
 
+    pause = False
+
     def __init__(self):
 
         super(MusicContext, self).__init__()
@@ -114,6 +116,9 @@ class MusicContext(renpy.python.RevertableObject):
 
         # Should we force stop this channel?
         self.force_stop = False
+
+        # Should we pause this channel?
+        self.pause = False
 
     def copy(self):
         """
@@ -203,6 +208,9 @@ class Channel(object):
 
         # Should we buffer upcoming music/video in the queue?
         self.buffer_queue = buffer_queue
+
+        # Are we paused?
+        self.paused = False
 
         if default_loop is None:
             # By default, should we loop the music?
@@ -390,6 +398,18 @@ class Channel(object):
         # Queue empty callback.
         if do_callback and self.callback:
             self.callback() # E1102
+
+        want_pause = self.context.pause or global_pause
+
+        if self.paused != want_pause:
+
+            if want_pause:
+                self.pause()
+            else:
+                self.unpause()
+
+            self.paused = want_pause
+
 
     def dequeue(self, even_tight=False):
         """
@@ -830,21 +850,27 @@ def rollback():
         if not c.loop:
             c.fadeout(0)
 
+global_pause = False
+
 def pause_all():
     """
     Pause all playback channels.
     """
 
-    for c in channels.values():
-        c.pause()
+    global global_pause
+    global_pause = True
+
+    periodic()
 
 def unpause_all():
     """
     Unpause all playback channels.
     """
 
-    for c in channels.values():
-        c.unpause()
+    global global_pause
+    global_pause = False
+
+    periodic()
 
 def sample_surfaces(rgb, rgba):
     if not renpysound:
