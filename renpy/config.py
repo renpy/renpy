@@ -130,7 +130,7 @@ force_archives = False
 mouse = None
 
 # The default sound playback sample rate.
-sound_sample_rate = 44100
+sound_sample_rate = 48000
 
 # The amount of time music is faded out between tracks.
 fade_music = 0.0

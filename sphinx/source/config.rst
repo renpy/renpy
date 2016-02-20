@@ -1225,7 +1225,7 @@ Rarely or Internally Used
     If True, sound works. If False, the sound/mixer subsystem is
     completely disabled.
 
-.. var:: config.sound_sample_rate = 44100
+.. var:: config.sound_sample_rate = 48000
 
     The sample rate that the sound card will be run at. If all of your
     wav files are of a lower rate, changing this to that rate may make
