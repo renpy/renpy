@@ -375,7 +375,8 @@ label _save_reload_game:
         ui.text("Saving game...",
                 size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
 
-        renpy.pause(0)
+        ui.pausebehavior(0)
+        ui.interact(suppress_overlay=True, suppress_underlay=True)
 
         renpy.save("_reload-1", "reload save game")
 
@@ -383,7 +384,8 @@ label _save_reload_game:
         ui.text("Reloading script...",
                 size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
 
-        renpy.pause(0)
+        ui.pausebehavior(0)
+        ui.interact(suppress_overlay=True, suppress_underlay=True)
 
         renpy.utter_restart()
 
