@@ -527,9 +527,7 @@ static void decode_audio(MediaState *ms) {
 			if (!got_frame) {
 				if (pkt.data == NULL) {
 					ms->audio_finished = 1;
-					printf("B2\n");
 					av_packet_unref(&pkt);
-					printf("B3\n");
 					return;
 				}
 
