@@ -228,7 +228,7 @@ init -1500 python:
 
 
     @renpy.pure
-    class Pause(Action, DictEquality):
+    class PauseAudio(Action, DictEquality):
         """
         :doc: audio_action
 
