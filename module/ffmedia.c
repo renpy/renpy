@@ -241,7 +241,7 @@ static void deallocate(MediaState *ms) {
 
 	av_frame_free(&ms->video_decode_frame);
 
-	av_free_packet(&ms->video_pkt);
+	av_packet_unref(&ms->video_pkt);
 
 	/* Destroy audio stuff. */
 	swr_free(&ms->swr);
@@ -319,7 +319,9 @@ static AVFrame *dequeue_frame(FrameQueue *fq) {
 static void enqueue_packet(PacketQueue *pq, AVPacket *pkt) {
 	AVPacketList *pl = av_malloc(sizeof(AVPacketList));
 
-	pl->pkt = *pkt;
+	av_init_packet(&pl->pkt);
+	av_packet_ref(&pl->pkt, pkt);
+
 	pl->next = NULL;
 
 	if (!pq->first) {
@@ -337,7 +339,7 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 
 	AVPacketList *pl = pq->first;
 
-	*pkt = pl->pkt;
+	av_packet_move_ref(pkt, &pl->pkt);
 
 	pq->first = pl->next;
 
@@ -365,8 +367,10 @@ static int count_packet_queue(PacketQueue *pq) {
 static void free_packet_queue(PacketQueue *pq) {
 	AVPacket scratch;
 
+	av_init_packet(&scratch);
+
 	while (dequeue_packet(pq, &scratch)) {
-		av_free_packet(&scratch);
+		av_packet_unref(&scratch);
 	}
 }
 
@@ -417,6 +421,8 @@ static void check_surface_queue(MediaState *ms) {
 static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 	AVPacket scratch;
 
+	av_init_packet(&scratch);
+
 	while (1) {
 		if (dequeue_packet(pq, pkt)) {
 			return 1;
@@ -428,19 +434,16 @@ static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 			return 0;
 		}
 
-		av_dup_packet(&scratch);
-
 		if (scratch.stream_index == ms->video_stream && ! ms->video_finished) {
 			enqueue_packet(&ms->video_packet_queue, &scratch);
 		} else if (scratch.stream_index == ms->audio_stream && ! ms->audio_finished) {
 			enqueue_packet(&ms->audio_packet_queue, &scratch);
-		} else {
-			av_free_packet(&scratch);
 		}
+
+		av_packet_unref(&scratch);
 	}
-
-
 }
+
 
 static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 
@@ -494,6 +497,8 @@ static void decode_audio(MediaState *ms) {
 		ms->audio_decode_frame = av_frame_alloc();
 	}
 
+	av_init_packet(&pkt);
+
 	double timebase = av_q2d(ms->ctx->streams[ms->audio_stream]->time_base);
 
 	while (ms->audio_queue_samples < ms->audio_queue_target_seconds * audio_sample_rate ) {
@@ -507,6 +512,11 @@ static void decode_audio(MediaState *ms) {
 			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
+
+				if (pkt.data) {
+					av_packet_unref(&pkt);
+				}
+
 				ms->audio_finished = 1;
 				return;
 			}
@@ -517,7 +527,9 @@ static void decode_audio(MediaState *ms) {
 			if (!got_frame) {
 				if (pkt.data == NULL) {
 					ms->audio_finished = 1;
-					av_free_packet(&pkt);
+					printf("B2\n");
+					av_packet_unref(&pkt);
+					printf("B3\n");
 					return;
 				}
 
@@ -537,7 +549,6 @@ static void decode_audio(MediaState *ms) {
 				av_frame_free(&converted_frame);
 				continue;
 			}
-
 
 			double start = av_frame_get_best_effort_timestamp(ms->audio_decode_frame) * timebase;
 			double end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
@@ -566,7 +577,9 @@ static void decode_audio(MediaState *ms) {
 
 		} while (pkt_temp.size);
 
-		av_free_packet(&pkt);
+		if (pkt.data) {
+			av_packet_unref(&pkt);
+		}
 	}
 
 	return;
@@ -601,7 +614,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	while (1) {
 
 		if (! ms->video_pkt_tmp.size) {
-			av_free_packet(&ms->video_pkt);
+			av_packet_unref(&ms->video_pkt);
 			read_packet(ms, &ms->video_packet_queue, &ms->video_pkt);
 			ms->video_pkt_tmp = ms->video_pkt;
 		}
@@ -909,6 +922,8 @@ static int decode_thread(void *arg) {
 
 	ms->swr = swr_alloc();
 
+	av_init_packet(&ms->video_pkt);
+
 	// Compute the number of samples we need to play back.
 	if (! ms->audio_duration) {
 		if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
@@ -981,6 +996,7 @@ finish:
 
 
 int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
+
 	SDL_LockMutex(ms->lock);
 
 	while (!ms->ready) {
