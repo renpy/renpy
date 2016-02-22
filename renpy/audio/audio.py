@@ -298,7 +298,9 @@ class Channel(object):
             elif clause == "loop":
                 loop = expect_float()
             elif clause == "silence":
+                end = expect_float()
                 fn = "_silence.ogg"
+
             else:
                 raise exception("expected keyword, got {!r}.".format(clause))
 
