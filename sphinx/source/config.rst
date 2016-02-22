@@ -288,6 +288,15 @@ Occasionally Used
     If not None, a function that is called with no arguments after a
     replay completes.
 
+.. var:: auto_channels = { "audio" : ( "sfx", "", ""  ) }
+
+    This is used to define automatic audio channels. It's a map the
+    channel name to a tuple containing 3 components:
+
+    * The mixer the channel uses.
+    * A prefix that is given to files played on the channel.
+    * A suffix that is given to files played on the channel.
+
 .. var:: config.auto_load = None
 
     If not None, the name of a save file to automatically load when

@@ -647,7 +647,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
         be True for audio, and False for movie playback.
     """
 
-    if not renpy.game.context().init_phase:
+    if not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
     if renpy.android and renpy.config.hw_video and name == "movie":
@@ -673,9 +673,40 @@ def alias_channel(name, newname):
 
 def get_channel(name):
 
-    rv = channels.get(name)
+    rv = channels.get(name, None)
+
     if rv is None:
-        raise Exception("Audio channel %r is unknown." % name)
+
+        # Do we want to auto-define a new channel?
+        if name in renpy.config.auto_channels:
+
+            i = 0
+
+            while True:
+                c = get_channel("{} {}".format(name, i))
+                if not c.get_playing():
+                    return c
+
+                i += 1
+
+        # One of the channels that was just defined.
+        elif " " in name:
+
+            base = name.split()[0]
+            mixer, file_prefix, file_suffix = renpy.config.auto_channels[base]
+
+            register_channel(
+                name,
+                loop=False,
+                mixer=mixer,
+                file_prefix=file_prefix,
+                file_suffix=file_suffix,
+                )
+
+            return channels[name]
+
+        else:
+            raise Exception("Audio channel %r is unknown." % name)
 
     return rv
 

@@ -667,6 +667,13 @@ replay_scope = { "_game_menu_screen" : "preferences" }
 # The mixer to use for auto-defined movie channels.
 movie_mixer = "music"
 
+# Auto audio channels. A map from base name to:
+# * mixer
+# * file prefix
+# * file suffix
+auto_channels = { "audio" : ( "sfx", "", ""  ) }
+
+
 del renpy
 del os
 
