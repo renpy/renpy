@@ -1118,8 +1118,6 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 void media_start_end(MediaState *ms, double start, double end) {
 	ms->skip = start;
 
-	printf("%s %f %f\n", ms->filename, start, end);
-
 	if (end >= 0) {
 		if (end < start) {
 			ms->audio_duration = 0;
