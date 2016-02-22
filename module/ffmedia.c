@@ -187,12 +187,12 @@ typedef struct MediaState {
 	SwrContext *swr;
 
 	/* The duration of the audio stream, in samples.
-	 * 0 means to play until we run out of data.
+	 * -1 means to play until we run out of data.
 	 */
-	unsigned int audio_duration;
+	int audio_duration;
 
 	/* The number of samples that have been read so far. */
-	unsigned int audio_read_samples; // Lock
+	int audio_read_samples; // Lock
 
 	/* A frame that video is decoded into. */
 	AVFrame *video_decode_frame;
@@ -923,7 +923,7 @@ static int decode_thread(void *arg) {
 	av_init_packet(&ms->video_pkt);
 
 	// Compute the number of samples we need to play back.
-	if (! ms->audio_duration) {
+	if (ms->audio_duration < 0) {
 		if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
 
 			long long duration = ((long long) ctx->duration) * audio_sample_rate;
@@ -932,8 +932,10 @@ static int decode_thread(void *arg) {
 			// Check that the duration is reasonable (between 0s and 3600s). If not,
 			// reject it.
 			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
-				ms->audio_duration = 0;
+				ms->audio_duration = -1;
 			}
+		} else {
+			ms->audio_duration = -1;
 		}
 	}
 
@@ -1003,7 +1005,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 
 	int rv = 0;
 
-	if (ms->audio_duration) {
+	if (ms->audio_duration >= 0) {
 		unsigned int remaining = (ms->audio_duration - ms->audio_read_samples) * BPS;
 		if (len > remaining) {
 			len = remaining;
@@ -1062,7 +1064,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 
 	SDL_UnlockMutex(ms->lock);
 
-	if (ms->audio_duration) {
+	if (ms->audio_duration >= 0) {
 		if ((ms->audio_duration - ms->audio_read_samples) * BPS < len) {
 			len = (ms->audio_duration - ms->audio_read_samples) * BPS;
 		}
@@ -1097,6 +1099,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	ms->cond = SDL_CreateCond();
 	ms->lock = SDL_CreateMutex();
 
+	ms->audio_duration = -1;
 	ms->audio_queue_target_seconds = 2;
 
 	return ms;
@@ -1115,8 +1118,14 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 void media_start_end(MediaState *ms, double start, double end) {
 	ms->skip = start;
 
-	if (end != 0) {
-		ms->audio_duration = (int) ((end - start) * audio_sample_rate);
+	printf("%s %f %f\n", ms->filename, start, end);
+
+	if (end >= 0) {
+		if (end < start) {
+			ms->audio_duration = 0;
+		} else {
+			ms->audio_duration = (int) ((end - start) * audio_sample_rate);
+		}
 	}
 }
 

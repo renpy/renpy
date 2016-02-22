@@ -277,7 +277,7 @@ class Channel(object):
 
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
-            return filename, 0, 0
+            return filename, 0, -1
 
         spec = m.group(1)
         fn = m.group(2)
@@ -286,7 +286,7 @@ class Channel(object):
 
         start = 0
         loop = None
-        end = 0
+        end = -1
 
         while spec:
             clause = spec.pop(0)
