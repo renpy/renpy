@@ -389,6 +389,10 @@ class Channel(object):
 
             try:
                 filename, start, end = self.split_filename(topq.filename, topq.loop)
+
+                if (end >= 0) and ((end - start) <= 0) and self.queue:
+                    continue
+
                 topf = load(self.file_prefix + filename + self.file_suffix)
 
                 if depth == 0:
