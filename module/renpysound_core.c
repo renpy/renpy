@@ -26,7 +26,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 #include <pygame_sdl2/pygame_sdl2.h>
 
 #define MAXVOLUME 16384
@@ -421,7 +421,7 @@ static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
 static void callback(void *userdata, Uint8 *stream, int length) {
     int channel = 0;
 
-    bzero(stream, length);
+    memset(stream, 0, length);
 
     for (channel = 0; channel < num_channels; channel++) {
 
