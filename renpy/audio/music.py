@@ -292,6 +292,32 @@ def get_delay(time, channel="music"):
 
         return None
 
+
+def get_pos(channel="music"):
+    """
+    :doc: audio
+
+    Returns the amount of time that has elapsed since the audio on
+    `channel` started playing, in seconds. Returns None if no audio is playing
+    on `channel`.
+    """
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        t = c.get_pos()
+
+        if not t or t < 0:
+            return None
+
+        return t / 1000.0
+
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+        return None
+
+
 def get_playing(channel="music"):
     """
     :doc: audio
