@@ -261,45 +261,51 @@ class Channel(object):
         Splits a filename into a filename, start time, and end time.
         """
 
+        def exception(msg):
+            return Exception("Parsing audio spec {!r}: {}.".format(filename, msg))
+
+        def expect_float():
+            if not spec:
+                raise exception("expected float at end.")
+
+            v = spec.pop(0)
+
+            try:
+                return float(v)
+            except:
+                raise exception("expected float, got {!r}.".format(v))
+
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
             return filename, 0, 0
 
-        try:
+        spec = m.group(1)
+        fn = m.group(2)
 
-            spec = m.group(1)
-            new_filename = m.group(2)
+        spec = spec.split()
 
-            if "," in spec:
-                noloop, _, loop = spec.partition(',')
+        start = 0
+        loop = None
+        end = 0
 
-                if looped:
-                    spec = loop
-                else:
-                    spec = noloop
+        while spec:
+            clause = spec.pop(0)
 
-            if spec:
-                start_spec, _, end_spec = spec.partition('-')
-
-                if start_spec.strip():
-                    start = float(start_spec)
-                else:
-                    start = 0
-
-                if end_spec.strip():
-                    end = float(end_spec)
-                else:
-                    end = 0
-
+            if clause == "from":
+                start = expect_float()
+            elif clause == "to":
+                end = expect_float()
+            elif clause == "loop":
+                loop = expect_float()
+            elif clause == "silence":
+                fn = "_silence.ogg"
             else:
-                start = 0
-                end = 0
+                raise exception("expected keyword, got {!r}.".format(clause))
 
-            return new_filename, start, end
+        if (loop is not None) and looped:
+            start = loop
 
-        except:
-            return filename, 0, 0
-
+        return fn, start, end
 
     def periodic(self):
         """
