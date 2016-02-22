@@ -7,6 +7,8 @@ try () {
     "$@" || exit -1
 }
 
+QUIET=${RENPY_QUIET- --quiet}
+
 if [ -n "$RENPY_COVERAGE" ]; then
     variant="renpy-coverage"
 else
@@ -24,11 +26,11 @@ fi
 
 setup () {
     if [ -n "$PYTHONPATH" ]; then
-        try python $1 --quiet \
+        try python $1 $QUIET \
             build -b build/lib.$variant -t build/tmp.$variant \
             $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
     else
-        try python $1 --quiet \
+        try python $1 $QUIET \
             build -b build/lib.$variant -t build/tmp.$variant \
             $RENPY_BUILD_ARGS install
     fi
