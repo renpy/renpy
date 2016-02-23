@@ -119,6 +119,8 @@ init -1900 python:
             if config.developer == "auto":
                 config.developer = False
 
+            config.play_channel = "sound"
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

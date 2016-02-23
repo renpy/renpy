@@ -1080,6 +1080,11 @@ Rarely or Internally Used
     If not None, this should be a function. The function is called,
     with no arguments, at around 20hz.
 
+.. var:: config.play_channel = "audio"
+
+    The name of the audio channel used by :func:`renpy.play`,
+    :propref:`hover_sound`, and :propref:`activate_sound`.
+
 .. var:: config.predict_statements = 10
 
     This is the number of statements, including the current one, to

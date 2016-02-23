@@ -673,6 +673,8 @@ movie_mixer = "music"
 # * file suffix
 auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
+# The channel used by renpy.play.
+play_channel = "audio"
 
 del renpy
 del os

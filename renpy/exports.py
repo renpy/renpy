@@ -69,7 +69,6 @@ from renpy.display.image import get_available_image_tags, get_available_image_at
 from renpy.display.im import load_surface, load_image
 
 from renpy.curry import curry, partial
-from renpy.audio.sound import play
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
 
 from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, copy_save, unlink_save, scan_saved_game
@@ -3154,4 +3153,22 @@ def is_start_interact():
     """
 
     return renpy.display.interface.start_interact
+
+
+def play(filename, channel=None, **kwargs):
+    """
+    :doc: audio
+
+    Plays a sound effect. If `channel` is None, it defaults to
+    :var:`config.play_channel`. This is used to play sounds defined in
+    styles, :propref:`hover_sound` and :propref:`activate_sound`.
+    """
+
+    if filename is None:
+        return
+
+    if channel is None:
+        channel = renpy.config.play_channel
+
+    renpy.audio.music.play(filename, channel=channel, **kwargs)
 

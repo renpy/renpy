@@ -405,8 +405,7 @@ class Keymap(renpy.display.layout.Null):
         for name, action in self.keymap.iteritems():
             if map_event(ev, name):
 
-                if self.style.activate_sound:
-                    renpy.audio.music.play(self.style.activate_sound, channel="sound")
+                renpy.exports.play(self.style.activate_sound)
 
                 rv = run(action)
 
@@ -757,8 +756,7 @@ class Button(renpy.display.layout.Window):
     def event(self, ev, x, y, st):
 
         def handle_click(action):
-            if self.style.activate_sound:
-                renpy.audio.music.play(self.style.activate_sound, channel="sound")
+            renpy.exports.play(self.style.activate_sound)
 
             rv = run(action)
 
