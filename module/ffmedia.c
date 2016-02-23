@@ -122,6 +122,11 @@ typedef struct MediaState {
 	char *filename;
 
 	/*
+	 * True if we this stream should have video.
+	 */
+	int want_video;
+
+	/*
 	 * This becomes true when the decode thread starts, when
 	 * it is the decode thread's job to deallocate this object.
 	 */
@@ -903,7 +908,7 @@ static int decode_thread(void *arg) {
 
 	for (int i = 0; i < ctx->nb_streams; i++) {
 		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-			if (ms->video_stream == -1) {
+			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
 			}
 		}
@@ -1127,6 +1132,13 @@ void media_start_end(MediaState *ms, double start, double end) {
 	}
 }
 
+
+/**
+ * Marks the channel as having video.
+ */
+void media_want_video(MediaState *ms) {
+	ms->want_video = 1;
+}
 
 void media_close(MediaState *ms) {
 

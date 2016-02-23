@@ -43,6 +43,7 @@ cdef extern from "renpysound_core.h":
     void RPS_advance_time()
     int RPS_video_ready(int channel)
     object RPS_read_video(int channel)
+    void RPS_set_video(int channel, int video)
 
     void RPS_sample_surfaces(object, object)
     void RPS_init(int freq, int stereo, int samples, int status)
@@ -166,6 +167,16 @@ def read_video(channel):
     # Remove padding from the edges of the surface.
     w, h = rv.get_size()
     return rv.subsurface((2, 2, w-4, h-4))
+
+def set_video(channel, video):
+    """
+    Sets a flag that determines if this channel will attempt to decode video.
+    """
+
+    if video:
+        RPS_set_video(channel, 1)
+    else:
+        RPS_set_video(channel, 0)
 
 def init(freq, stereo, samples, status=False):
     if status:

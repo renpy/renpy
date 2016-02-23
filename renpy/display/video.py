@@ -240,7 +240,7 @@ class Movie(renpy.display.core.Displayable):
         if renpy.audio.music.channel_defined(name):
             return
 
-        renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False)
+        renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True)
 
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, **properties):
         super(Movie, self).__init__(**properties)

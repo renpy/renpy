@@ -47,6 +47,7 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay);
 int RPS_video_ready(int channel);
 PyObject *RPS_read_video(int channel);
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
+void RPS_set_video(int channel, int video);
 
 void RPS_init(int freq, int stereo, int samples, int status);
 void RPS_quit(void);

@@ -139,7 +139,7 @@ class Channel(object):
     This stores information about the currently-playing music.
     """
 
-    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue):
+    def __init__(self, name, default_loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie):
 
         # The name assigned to this channel. This is used to look up
         # information about the channel in the MusicContext object.
@@ -223,6 +223,8 @@ class Channel(object):
             self.default_loop = default_loop
             self.default_loop_set = True
 
+        # Is this a movie channel?
+        self.movie = movie
 
     def get_number(self):
         """
@@ -396,6 +398,8 @@ class Channel(object):
                     continue
 
                 topf = load(self.file_prefix + filename + self.file_suffix)
+
+                renpysound.set_video(self.number, self.movie)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
@@ -615,7 +619,7 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True):
+def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False):
     """
     :doc: audio
 
@@ -651,6 +655,9 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     `buffer_queue`
         Should we buffer the first second or so of a queued file? This should
         be True for audio, and False for movie playback.
+
+    `movie`
+        If true, this channel will be set up to play back videos.
     """
 
     if not renpy.game.context().init_phase and (" " not in name):
@@ -661,7 +668,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     elif renpy.ios and renpy.config.hw_video and name == "movie":
         c = IOSVideoChannel(name, default_loop=loop, file_prefix=file_prefix, file_suffix=file_suffix)
     else:
-        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue)
+        c = Channel(name, loop, stop_on_mute, tight, file_prefix, file_suffix, buffer_queue, movie=movie)
 
     c.mixer = mixer
 

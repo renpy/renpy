@@ -41,6 +41,7 @@ void media_advance_time(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
 
 MediaState *media_open(SDL_RWops *, const char *);
+void media_want_video(MediaState *);
 void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
 void media_close(MediaState *);
@@ -189,6 +190,10 @@ struct Channel {
     float vol2_end;
     unsigned int vol2_length;
     unsigned int vol2_done;
+
+    /* This is set to true if this is a movie channel. */
+    int video;
+
 };
 
 struct Dying {
@@ -525,21 +530,13 @@ static int check_channel(int c) {
 
         for (i = num_channels; i <= c; i++) {
 
-            channels[i].playing = NULL;
-            channels[i].queued = NULL;
-            channels[i].playing_name = NULL;
-            channels[i].queued_name = NULL;
+        	memset(&channels[i], 0, sizeof(struct Channel));
+
             channels[i].volume = MAXVOLUME;
             channels[i].paused = 1;
             channels[i].event = 0;
-            channels[i].pan_start = 0.0;
-            channels[i].pan_end = 0.0;
-            channels[i].pan_length = 0;
-            channels[i].pan_done = 0;
             channels[i].vol2_start = 1.0;
             channels[i].vol2_end = 1.0;
-            channels[i].vol2_length = 0;
-            channels[i].vol2_done = 0;
         }
 
         num_channels = c + 1;
@@ -553,10 +550,15 @@ static int check_channel(int c) {
  * Loads the provided sample. Returns the sample on success, NULL on
  * failure.
  */
-struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, double end) {
+struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, double end, int video) {
     struct MediaState *rv;
     rv = media_open(rw, ext);
     media_start_end(rv, start, end);
+
+    if (video) {
+    	media_want_video(rv);
+    }
+
     media_start(rv);
     return rv;
 }
@@ -596,7 +598,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
 
     /* Allocate playing sample. */
 
-    c->playing = load_sample(rw, ext, start, end);
+    c->playing = load_sample(rw, ext, start, end, c->video);
 
     if (! c->playing) {
     	UNLOCK_NAME();
@@ -653,7 +655,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     }
 
     /* Allocate queued sample. */
-    c->queued = load_sample(rw, ext, start, end);
+    c->queued = load_sample(rw, ext, start, end, c->video);
 
     if (! c->queued) {
         EXIT();
@@ -1117,10 +1119,22 @@ int RPS_video_ready(int channel) {
     error(SUCCESS);
 
     return rv;
-
 }
 
+/**
+ * Marks channel as a video channel.
+ */
+void RPS_set_video(int channel, int video) {
+	struct Channel *c;
 
+	if (check_channel(channel)) {
+    	return;
+    }
+
+    c = &channels[channel];
+
+    c->video = video;
+}
 
 
 /*
