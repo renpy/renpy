@@ -2739,7 +2739,9 @@ class Interface(object):
                 renpy.execution.not_infinite_loop(10)
 
                 # Check for a change in fullscreen preference.
-                if self.fullscreen != renpy.game.preferences.fullscreen or self.display_reset:
+                if ((self.fullscreen != renpy.game.preferences.fullscreen) or
+                        self.display_reset or (renpy.display.draw is None)):
+
                     self.set_mode()
                     needs_redraw = True
 
