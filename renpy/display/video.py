@@ -217,8 +217,10 @@ class Movie(renpy.display.core.Displayable):
         `mask_channel` defaults to "sprite_mask".)
 
     `image`
-        An image that is displayed on platforms where the movie is not
-        supported.
+        An image that is displayed when `play` has been given, but the
+        file it refers to does not exist. (For example, this can be used
+        to create a slimmed-down mobile version that does not use movie
+        sprites.)
 
     This displayable will be transparent when the movie is not playing.
     """
@@ -264,7 +266,7 @@ class Movie(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        if renpy.mobile and (self.image is not None):
+        if (self.image is not None) and (self._play is not None) and (not renpy.loader.loadable(self._play)):
             surf = renpy.display.render.render(self.image, width, height, st, at)
 
             w, h = surf.get_size()
@@ -378,9 +380,6 @@ def frequent():
     needed, false otherwise.
     """
 
-    if renpy.mobile:
-        return False
-
     update_playing()
 
     renpy.audio.audio.advance_time()
@@ -410,7 +409,7 @@ def frequent():
 
         return False
 
-    elif fullscreen:
+    elif fullscreen and not renpy.config.hw_video:
 
         c = renpy.audio.audio.get_channel("movie")
 

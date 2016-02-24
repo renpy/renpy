@@ -595,10 +595,6 @@ class Channel(object):
         return renpysound.video_ready(self.number)
 
 
-################################################################################
-# Android VideoPlayer Channel
-################################################################################
-
 # Use unconditional imports so these files get compiled during the build
 # process.
 
