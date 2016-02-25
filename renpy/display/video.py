@@ -116,8 +116,17 @@ def interact():
         if not renpy.audio.music.get_playing(i):
             del texture[i]
 
+
+
     if renpy.audio.music.get_playing("movie"):
-        fullscreen = ("movie" not in displayable_channels)
+
+        for i in displayable_channels.keys():
+            if i[0] == "movie":
+                fullscreen = False
+                break
+        else:
+            fullscreen = True
+
     else:
         fullscreen = False
 
