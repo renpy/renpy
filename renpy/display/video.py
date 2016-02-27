@@ -273,6 +273,9 @@ class Movie(renpy.display.core.Displayable):
 
         self.image = renpy.easy.displayable_or_none(image)
 
+        if (self.channel == "movie") and (renpy.config.hw_video) and renpy.mobile:
+            raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
+
     def render(self, width, height, st, at):
 
         if (self.image is not None) and (self._play is not None) and (not renpy.loader.loadable(self._play)):
