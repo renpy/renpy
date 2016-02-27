@@ -110,6 +110,11 @@ during the init phase (for example, as part of an image statement.) ::
         add "main_menu"
         textbutton "Start" action Start() xalign 0.5 yalign 0.5
 
+Multiple movie displayables or sprites can be displayed on the screen at once,
+subject to system performance, and provided all share the same framerate. The
+behavior of Ren'Py when displaying movies with different framerates is
+undefined, but will likely include a significant amount of frame drop.
+
 
 Python Functions
 ----------------
