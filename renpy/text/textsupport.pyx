@@ -500,6 +500,7 @@ def place_vertical(list glyphs, int y, int spacing, int leading):
                     # Glyphs without ascents are displayables, which get
                     # aligned to the top of the line.
                     gg.y = y
+                    gg.ascent = ascent
 
             l = Line(y - leading, leading + line_spacing + spacing, glyphs[sol:pos])
             rv.append(l)

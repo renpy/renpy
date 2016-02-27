@@ -403,7 +403,15 @@ class DisplayableSegment(object):
         glyph = glyphs[0]
 
         if di.displayable_blits is not None:
-            di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.time))
+
+            xo, yo = renpy.display.core.place(
+                glyph.width,
+                glyph.ascent,
+                glyph.width,
+                glyph.line_spacing,
+                self.d.get_placement())
+
+            di.displayable_blits.append((self.d, glyph.x + xo, glyph.y + yo, glyph.time))
 
     def assign_times(self, gt, glyphs):
         if self.cps != 0:
