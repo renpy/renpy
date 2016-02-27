@@ -193,10 +193,13 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 def playable(filename, channel="music"):
     """
     Return true if the given filename is playable on the channel. This
-    takes into account the prefix and suffix.
+    takes into account the prefix and suffix, and ignores a preceding
+    specifier.
     """
 
     c = get_channel(channel)
+
+    filename, _, _ = c.split_filename(filename, False)
 
     return renpy.loader.loadable(c.file_prefix + filename + c.file_suffix)
 
