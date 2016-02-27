@@ -62,7 +62,7 @@ a sprite that is backed by two movies. The primary movie provides the
 color of the sprite. A second movie, the mask movie, provides the alpha
 channel, with white being full opacity and black being full transparency.
 
-Movies defined with the Movie displayable loop automatically.
+Movies played by the Movie displayable loop automatically.
 
 There are three very important parameters to the Movie displayable, two of
 which should always be provided.

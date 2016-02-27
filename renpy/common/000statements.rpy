@@ -21,6 +21,20 @@
 
 # This file contains code that creates a few new statements.
 
+init -1200 python in audio:
+    pass
+
+init -1200 python:
+
+    def _audio_eval(expr):
+        return eval(expr, locals=store.audio.__dict__)
+
+    def _try_eval(e, what):
+        try:
+            return _audio_eval(e)
+        except:
+            renpy.error('unable to evaluate %s %r' % (what, e))
+
 python early hide:
 
     # Music play - The example of a full statement.
@@ -91,7 +105,7 @@ python early hide:
         else:
             channel = "music"
 
-        renpy.music.play(eval(p["file"]),
+        renpy.music.play(_audio_eval(p["file"]),
                          fadeout=eval(p["fadeout"]),
                          fadein=eval(p["fadein"]),
                          channel=channel,
@@ -163,7 +177,7 @@ python early hide:
             channel = "music"
 
         renpy.music.queue(
-            eval(p["file"]),
+            _audio_eval(p["file"]),
             channel=channel,
             loop=p.get("loop", None))
 
@@ -221,7 +235,7 @@ python early hide:
 
         loop = p.get("loop", False)
 
-        renpy.sound.play(eval(p["file"]),
+        renpy.sound.play(_audio_eval(p["file"]),
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
                          loop=loop,
@@ -243,7 +257,7 @@ python early hide:
 
         loop = p.get("loop", False)
 
-        renpy.sound.queue(eval(p["file"]), channel=channel, loop=loop)
+        renpy.sound.queue(_audio_eval(p["file"]), channel=channel, loop=loop)
 
 
     renpy.register_statement('queue sound',
@@ -368,14 +382,6 @@ python early hide:
                               lint=lint_pause,
                               execute=execute_pause)
 
-
-init -1200 python:
-
-    def _try_eval(e, what):
-        try:
-            return eval(e)
-        except:
-            renpy.error('unable to evaluate %s %r' % (what, e))
 
 ##############################################################################
 # Screen-related statements.
