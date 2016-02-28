@@ -99,6 +99,10 @@
     * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
     * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
     
+    * Preference("debug voicing", "enable") - Enables self.-voicing debug
+    * Preference("debug voicing", "disable") - Disable self-voicing debug.
+    * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
+    
     * Preference("rollback side", "left") - Touching the left side of the screen causes rollback.
     * Preference("rollback side", "right") - Touching the right side of the screen causes rollback.
     * Preference("rollback side", "disable") - Touching the screen will not cause rollback.
@@ -111,3 +115,4 @@
     * Preference("sound volume")
     * Preference("voice volume")
     * Preference("mixer <mixer> volume")
+

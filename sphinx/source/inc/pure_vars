@@ -65,6 +65,7 @@
 * :func:`ParameterizedText`
 * Particles
 * :func:`Pause`
+* :func:`PauseAudio`
 * :func:`Pixellate`
 * Play
 * :func:`PlayCharacterVoice`

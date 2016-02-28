@@ -164,6 +164,7 @@ documentation, call::
     build.documentation("*.txt")
     build.documentation("*.html")
 
+.. _packages:
 
 Packages
 --------

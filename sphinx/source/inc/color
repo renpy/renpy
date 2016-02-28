@@ -142,6 +142,11 @@
         Replaces this color's lightness with `lightness`, and returns
         the result as a new Color. This is performed in the HLS color space.
     
+    .. method:: replace_opacity(opacity)
+        
+        Replaces this color's alpha channel with `opacity`, and
+        returns the result as a new Color.
+    
     .. method:: replace_value(value)
         
         Replaces this color's value with `value` and returns the result as a

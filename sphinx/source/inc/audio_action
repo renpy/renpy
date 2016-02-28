@@ -1,5 +1,12 @@
 .. Automatically generated file - do not modify.
 
+.. function:: PauseAudio(channel, value=True)
+    
+    Sets the pause flag for `channel`.
+    
+    If `value` is True, the channel is paused. If False, the channel is
+    unpaused. If "toggle", the pause flag will be toggled.
+
 .. function:: Play(channel, file, selected=None, **kwargs)
     
     Causes an audio file to be played on a given channel.

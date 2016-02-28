@@ -5,6 +5,107 @@ Full Changelog
 Ren'Py 6.99.9
 =============
 
+Ren'Py's audio and movie playback support has been completely rewritten,
+allowing for the addition of many features that would not have been possible
+without this rewrite. These include:
+
+* :ref:`Partial playback <partial-playback>` of audio files, using a concise
+  notation. This allows the creator to specify start and end points, and
+  a loop point at which playback continues on the second and later
+  iterations. A similar notation can be used to queue silence.
+
+* A new default channel named ``audio`` has been added. Unlike the ``sound``
+  channel, the audio channel supports playing back multiple audio files
+  simultaneously (limited by system performance).
+
+* The new :func:`PauseAudio` action can pause and unpause audio playback
+  as required.
+
+* :ref:`Movie <movie>` playback now supports playing multiple movies at the
+  same time, provided all movies share the same framreate, and limited
+  by system performance.
+
+* Movies now loop seamlessly at the end of playback.
+
+* Ren'Py now supports movie sprites, which are sprites backed by two movies,
+  one containing color information and the other containing the alpha channel.
+  Movie sprites are a superior alternative to animated gifs, as modern movie
+  formats provided greater color depth and far superior compression. Movie
+  sprites are supported on all platforms, including mobile platforms,
+  subject to system performance.
+
+* Movies are no longer required to contain an audio track for synchonization.
+
+* It is now possible to play back a movie file on an audio channel, in which
+  case only the audio track is played.
+
+The ``play`` and ``queue`` statements now evaluate filename expressions
+in the :ref:`audio namespace <audio-namespace>`, which makes it possible
+to alias a short name to an audio file.
+
+The default audio sample rate has been increased to 48 kilohertz,
+which should produce a slight increase in audio quality.
+
+Audio and movie playback support now uses ffmpeg 3.0, and support
+for the VP9 video and Opus audio codecs has been added to the default
+distributions. The Opus codec can automatically adjust to speech and music,
+and should be considered by all creators.
+
+
+Bug Fixes
+---------
+
+A bug has been fixed that caused fullscreen windows to be displayed at
+the wrong side on the Microsoft Windows platform when system-wide DPI
+scaling is enabled.
+
+The Drag.snap animation has been fixed.
+
+
+Other
+-----
+
+This release includes experimental support for having an Android
+package be converted into a Chrome application using the ARC welder
+tool.
+
+Unarchived directories are now a documented format that can be used
+when building :ref:`packages <packages>`.
+
+Edgescrolling stops when the mouse leaves a viewport.
+
+It is now possible to translate the prompts that occur when self-voicing
+is enabled. A self-voicing debug mode can be accessed by typing
+shift+alt+D.
+
+The :func:`Preference` action can now adjust the volume of non-standard
+mixers.
+
+There is now a new {alpha} text tag, which can control the alpha channel
+of text on a character-by-character basis.
+
+Images that are included using the {image} text tag are now aligned
+using the usual placement rules. (That is, ypos, yoffset, and yanchor
+now work if given when defining the image.)
+
+The :func:`EndReplay` action now takes a `confirm` argument, which asks
+the player if they want to end the replay.
+
+The new :func:`renpy.run` function provides a documented way to run an
+action or list of actions.
+
+The sharpness of vertically-oriented text has been improved.
+
+The :propref:`adjust_spacing` style property is now avialable through
+screen language.
+
+The `confirm` argument of the :func:`Quit` action now defaults to None,
+which prompts the player to confirm a quit if and only if the player is
+not at the main menu.
+
+A new "rollback side" :func:`Preference` allows Ren'Py to roll back when
+the user touches a side of the screen. By default, this is the left side
+on mobile platforms, and disabled on the dektop.
 
 
 

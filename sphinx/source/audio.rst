@@ -141,8 +141,7 @@ Will play 10.5 seconds of waves.opus, starting at the 5 second mark. The code::
 Will play song.opus all the way through once, then loop back to the 6.333
 second mark before playing it again all the way through to the end.
 
-
-.. _silence::
+.. _silence:
 
 Playing Silence
 ---------------
@@ -155,6 +154,8 @@ desired. This can be used to delay the start of a sound file. For example::
 
 Will play silence for half a second, and then an explosion sound.
 
+
+.. _audio-namespace:
 
 Audio Namespace
 ---------------

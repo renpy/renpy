@@ -191,7 +191,7 @@ Tags that apply to all text are:
     0.0 and 1.0, corresponding to fully invisible and fully opaque,
     respectively. If the value is prefixed by + or -, the opacity will
     be changed by that amount instead of completely replaced. If
-    the value is prefixed by *, the opacity will be multiplied by
+    the value is prefixed by \*, the opacity will be multiplied by
     that amount. ::
 
         "{alpha=0.1}This text is barely readable!{/alpha}"

@@ -252,6 +252,7 @@
 .. function:: renpy.maximum_framerate(t)
     
     Forces Ren'Py to draw the screen at the maximum framerate for `t` seconds.
+    If `t` is None, cancels the maximum framerate request.
 
 .. function:: renpy.munge(name, filename=None)
     
