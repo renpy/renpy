@@ -28,9 +28,10 @@ init -1 python hide:
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
     config.name = "Ren'Py Tutorial"
-    config.version = '{}.{} "{}"'.format(
+    config.version = '{}.{}.{} "{}"'.format(
         renpy.renpy.version_tuple[0],
         renpy.renpy.version_tuple[1],
+        renpy.renpy.version_tuple[2],
         renpy.renpy.version_name)
 
     ## We then want to call a theme function. themes.roundrect is
