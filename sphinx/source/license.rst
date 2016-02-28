@@ -42,7 +42,7 @@ Ren'Py binaries include code from the following projects:
 * SDL2_ttf (Zlib License)
 * Freetype (Zlib License)
 * Fribidi (GNU LGPL)
-* libav (GNU LGPL)
+* ffmpeg (GNU LGPL) (libav in some older versions, also GNU LGPL)
 * libjpeg-turbo (GNU LGPL)
 * libpng (PNG License)
 * zlib (Zlib License)
