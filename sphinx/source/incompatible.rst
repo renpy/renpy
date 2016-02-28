@@ -12,6 +12,18 @@ features.
 
 .. _incompatible-6.99:
 
+6.99.9
+------
+
+Ren'Py now plays interface sounds on a channel named "audio", that
+supports multiple sound playback at once. This channel might not have
+the same settings as a customized sound channel. The audio channel
+settings can be changed by adjusting :var:`config.auto_channels`,
+or the sound channel can be used by adding the code::
+
+    define config.play_channel = "sound"
+
+
 6.99.2
 ------
 

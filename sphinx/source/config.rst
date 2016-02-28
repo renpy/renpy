@@ -288,7 +288,7 @@ Occasionally Used
     If not None, a function that is called with no arguments after a
     replay completes.
 
-.. var:: auto_channels = { "audio" : ( "sfx", "", ""  ) }
+.. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
     This is used to define automatic audio channels. It's a map the
     channel name to a tuple containing 3 components:

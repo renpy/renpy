@@ -107,6 +107,9 @@ A new "rollback side" :func:`Preference` allows Ren'Py to roll back when
 the user touches a side of the screen. By default, this is the left side
 on mobile platforms, and disabled on the dektop.
 
+The :var:`config.developer` now defaults to "auto". When set to auto,
+config.developer will be true during development, and false once the game
+is being distributed.
 
 
 Ren'Py 6.99.8
