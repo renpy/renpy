@@ -3,7 +3,7 @@
 # Ren'Py does support movies, and we'll add them sometime later.
 
 #begin movie_image
-image movie = Movie(size=(320, 240), xpos=475, ypos=50, xanchor=0, yanchor=0)
+image shuttle = Movie(channel="shuttle", play="shuttle.ogv", pos=(475, 50), anchor=(0, 0))
 #end movie_image
 
 label tutorial_video:
@@ -21,20 +21,18 @@ label tutorial_video:
     pause .25
 
     #begin movie_play
-    show movie behind eileen
-    play movie "shuttle.ogv"
+    show shuttle behind eileen
     #end movie_play
 
-    e "Then, we can show the movie displayable, and start the movie playing with a play statement."
+    e "Then, we can show the movie displayable, which starts the movie playing."
 
     #begin movie_stop
-    stop movie
-    hide movie
+    hide shuttle
     #end movie_stop
 
     show example movie_stop
 
-    e "When we no longer want to play the movie, we can stop it, and then hide it."
+    e "When we no longer want to play the movie, we can hide it."
 
     show example movie_cutscene
 
