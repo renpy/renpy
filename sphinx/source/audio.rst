@@ -156,6 +156,22 @@ desired. This can be used to delay the start of a sound file. For example::
 Will play silence for half a second, and then an explosion sound.
 
 
+Audio Namespace
+---------------
+
+The ``play`` and ``queue`` statements evaluate their arguments in the
+audio namespace. This means it is possible to use the define statement
+to provide an alias for an audio file.
+
+For example, one can write::
+
+    define audio.sunflower = "music/sun-flower-slow-jam.ogg"
+
+and then use::
+
+    play music sunflower
+
+
 Functions
 ---------
 
