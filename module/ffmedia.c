@@ -939,6 +939,10 @@ static int decode_thread(void *arg) {
 			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
 				ms->audio_duration = -1;
 			}
+
+			ms->audio_duration -= (unsigned int) (ms->skip * audio_sample_rate);
+
+
 		} else {
 			ms->audio_duration = -1;
 		}
