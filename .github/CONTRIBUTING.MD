@@ -14,7 +14,7 @@ Using Markdown [code block](https://help.github.com/articles/creating-and-highli
 ```
 </code></pre>
 
-## Showing errors and trackbacks
+## Showing errors and tracebacks
 
 Using code block again, set the language to `python-traceback`.
 
