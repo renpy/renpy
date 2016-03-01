@@ -246,6 +246,9 @@ init -1700 python:
 
 
 init -1000 python:
+    # Set developer to the auto default.
+    config.developer = "auto"
+
     # Lock the library object.
     config.locked = True
 
