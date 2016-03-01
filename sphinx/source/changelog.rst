@@ -21,6 +21,11 @@ without this rewrite. These include:
 * The new :func:`PauseAudio` action can pause and unpause audio playback
   as required.
 
+* The new :func:`renpy.music.get_pos` and :func:`renpy.music.get_duration`
+  functions return the curent playback position and total duration of
+  an audio channel, respectively. :func:`AudioPositionValue` can be
+  used to display these as the value of an animated bar.
+
 * :ref:`Movie <movie>` playback now supports playing multiple movies at the
   same time, provided all movies share the same framreate, and limited
   by system performance.
