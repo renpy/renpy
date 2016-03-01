@@ -385,3 +385,41 @@ init -1500 python:
 
         def get_style(self):
             return "scrollbar", "vscrollbar"
+
+
+    @renpy.pure
+    class AudioPositionValue(BarValue, DictEquality):
+        """
+        :doc: value
+
+        A value that shows the playback position of the audio file playing
+        in `channel`.
+
+        `update_interval`
+            How often the value updates, in seconds.
+        """
+
+        def __init__(self, channel='music', update_interval=0.1):
+            self.channel = channel
+            self.update_interval = update_interval
+
+            self.adjustment = None
+
+        def get_pos_duration(self):
+            pos = renpy.music.get_pos(self.channel) or 0.0
+            duration = renpy.music.get_duration(self.channel) or 1.0
+
+            return pos, duration
+
+        def get_adjustment(self):
+            pos, duration = self.get_pos_duration()
+            self.adjustment = ui.adjustment(value=pos, range=duration, adjustable=False)
+            return self.adjustment
+
+        def periodic(self, st):
+
+            pos, duration = self.get_pos_duration()
+            self.adjustment.set_range(duration)
+            self.adjustment.change(pos)
+
+            return self.update_interval
