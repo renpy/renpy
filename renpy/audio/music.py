@@ -300,9 +300,12 @@ def get_pos(channel="music"):
     """
     :doc: audio
 
-    Returns the amount of time that has elapsed since the audio on
-    `channel` started playing, in seconds. Returns None if no audio is playing
-    on `channel`.
+    Returns the current position of the audio or video file on `channel`, in
+    seconds. Returns None if no audio is playing on `channel`.
+
+    As this may return None before a channel starts playing, or if the audio
+    channel involved has been muted, code that calls this function should
+    always handle a None value.
     """
 
     try:

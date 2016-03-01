@@ -131,6 +131,9 @@ struct Channel {
     /* Is the playing sample tight? */
     int playing_tight;
 
+    /* The start time of the playing sample, in ms. */
+    int playing_start_ms;
+
     /* The queued up sample. */
     struct MediaState *queued;
 
@@ -142,6 +145,9 @@ struct Channel {
 
     /* Is the queued sample tight? */
     int queued_tight;
+
+    /* The start time of the queued sample, in ms. */
+    int queued_start_ms;
 
     /* Is this channel paused? */
     int paused;
@@ -493,11 +499,13 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->playing_name = c->queued_name;
                 c->playing_fadein = c->queued_fadein;
                 c->playing_tight = c->queued_tight;
+                c->playing_start_ms = c->queued_start_ms;
 
                 c->queued = NULL;
                 c->queued_name = NULL;
                 c->queued_fadein = 0;
                 c->queued_tight = 0;
+                c->queued_start_ms = 0;
 
                 UNLOCK_NAME();
 
@@ -586,6 +594,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
         decref(c->playing_name);
         c->playing_name = NULL;
         c->playing_tight = 0;
+        c->playing_start_ms = 0;
     }
 
     if (c->queued) {
@@ -594,6 +603,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
         decref(c->queued_name);
         c->queued_name = NULL;
         c->queued_tight = 0;
+        c->queued_start_ms = 0;
     }
 
     /* Allocate playing sample. */
@@ -613,7 +623,10 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int f
     c->playing_fadein = fadein;
     c->playing_tight = tight;
 
+    c->playing_start_ms = (int) (start * 1000);
+
     c->paused = paused;
+
     start_sample(c, 1);
 /*     update_pause(); */
 
@@ -668,6 +681,9 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int 
     c->queued_fadein = fadein;
     c->queued_tight = tight;
 
+    c->queued_start_ms = (int) (start * 1000);
+
+
     EXIT();
     error(SUCCESS);
 }
@@ -701,6 +717,7 @@ void RPS_stop(int channel) {
         c->playing = NULL;
         decref(c->playing_name);
         c->playing_name = NULL;
+        c->playing_start_ms = 0;
     }
 
     if (c->queued) {
@@ -708,6 +725,7 @@ void RPS_stop(int channel) {
         c->queued = NULL;
         decref(c->queued_name);
         c->queued_name = NULL;
+        c->queued_start_ms = 0;
     }
 
 /*     update_pause(); */
@@ -748,7 +766,7 @@ void RPS_dequeue(int channel, int even_tight) {
         c->queued_tight = 0;
     }
 
-
+    c->queued_start_ms = 0;
 
     EXIT();
     error(SUCCESS);
@@ -929,7 +947,7 @@ int RPS_get_pos(int channel) {
     ENTER();
 
     if (c->playing) {
-        rv = bytes_to_ms(c->pos);
+        rv = bytes_to_ms(c->pos) + c->playing_start_ms;
     } else {
         rv = -1;
     }
