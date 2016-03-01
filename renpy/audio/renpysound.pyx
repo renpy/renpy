@@ -34,6 +34,7 @@ cdef extern from "renpysound_core.h":
     void RPS_pause(int channel, int pause)
     void RPS_unpause_all()
     int RPS_get_pos(int channel)
+    double RPS_get_duration(int channel)
     void RPS_set_endevent(int channel, int event)
     void RPS_set_volume(int channel, float volume)
     float RPS_get_volume(int channel)
@@ -131,6 +132,9 @@ def busy(channel):
 
 def get_pos(channel):
     return RPS_get_pos(channel)
+
+def get_duration(channel):
+    return RPS_get_duration(channel)
 
 def set_volume(channel, volume):
     if volume == 0:

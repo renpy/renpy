@@ -559,6 +559,13 @@ class Channel(object):
 
         return renpysound.get_pos(self.number)
 
+    def get_duration(self):
+
+        if not pcm_ok:
+            return 0.0
+
+        return renpysound.get_duration(self.number)
+
     def set_pan(self, pan, delay):
         now = get_serial()
         self.context.pan_time = now

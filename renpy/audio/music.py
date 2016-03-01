@@ -323,6 +323,24 @@ def get_pos(channel="music"):
 
         return None
 
+def get_duration(channel="music"):
+    """
+    :doc: audio
+
+    Returns the duration of the audio or video file on `channel`. Returns
+    0.0 if no file is playing on `channel`.
+    """
+
+    try:
+        c = renpy.audio.audio.get_channel(channel)
+        return c.get_duration()
+
+    except:
+        if renpy.config.debug_sound:
+            raise
+
+        return None
+
 
 def get_playing(channel="music"):
     """

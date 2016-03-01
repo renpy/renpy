@@ -173,6 +173,9 @@ typedef struct MediaState {
 	PacketQueue audio_packet_queue;
 
 
+	/* The total duration of the video. Only used for information purposes. */
+	double total_duration;
+
 	/* Audio Stuff ***********************************************************/
 
 	/* The queue of converted audio frames. */
@@ -934,6 +937,8 @@ static int decode_thread(void *arg) {
 			long long duration = ((long long) ctx->duration) * audio_sample_rate;
 			ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
 
+			ms->total_duration = 1.0 * ctx->duration / AV_TIME_BASE;
+
 			// Check that the duration is reasonable (between 0s and 3600s). If not,
 			// reject it.
 			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
@@ -1084,6 +1089,10 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	}
 
 	return rv;
+}
+
+double media_duration(MediaState *ms) {
+	return ms->total_duration;
 }
 
 void media_start(MediaState *ms) {

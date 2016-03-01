@@ -51,6 +51,7 @@ int media_read_audio(struct MediaState *is, Uint8 *stream, int len);
 int media_video_ready(struct MediaState *ms);
 SDL_Surface *media_read_video(struct MediaState *ms);
 
+double media_duration(struct MediaState *ms);
 
 /* The current Python. */
 PyInterpreterState* interp;
@@ -950,6 +951,36 @@ int RPS_get_pos(int channel) {
         rv = bytes_to_ms(c->pos) + c->playing_start_ms;
     } else {
         rv = -1;
+    }
+
+    EXIT();
+
+    error(SUCCESS);
+    return rv;
+}
+
+/*
+ * Returns the duration of the file playing on the given channel, in
+ * seconds.
+ */
+double RPS_get_duration(int channel) {
+    double rv;
+    struct Channel *c;
+
+    BEGIN();
+
+    if (check_channel(channel)) {
+        return 0.0;
+    }
+
+    c = &channels[channel];
+
+    ENTER();
+
+    if (c->playing) {
+        rv = media_duration(c->playing);
+    } else {
+        rv = 0.0;
     }
 
     EXIT();

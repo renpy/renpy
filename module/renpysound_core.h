@@ -38,6 +38,7 @@ void RPS_pause(int channel, int pause);
 void RPS_unpause_all(void);
 void RPS_set_endevent(int channel, int event);
 int RPS_get_pos(int channel);
+double RPS_get_duration(int channel);
 void RPS_set_volume(int channel, float volume);
 float RPS_get_volume(int channel);
 void RPS_set_pan(int channel, float pan, float delay);
