@@ -46,6 +46,10 @@ init -1650 python:
     # The null to use.
     config.side_image_null = Null()
 
+    _side_image_old = config.side_image_null
+    _side_image_raw = config.side_image_null
+    _side_image = config.side_image_null
+
     def _side_per_interact():
         """
         Called once per interaction to update the side image.
