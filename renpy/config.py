@@ -676,6 +676,11 @@ auto_channels = { "audio" : ( "sfx", "", ""  ) }
 # The channel used by renpy.play.
 play_channel = "audio"
 
+# An image attribute that is added when the character is speaking, and
+# removed when the character is not.
+speaking_attribute = None
+
+
 del renpy
 del os
 

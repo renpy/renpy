@@ -690,6 +690,12 @@ Occasionally Used
     beginning with an underscore (_). These keys are used by Ren'Py,
     and should not be changed.
 
+.. var:: config.speaking_attribute = None
+
+    If not None, this should be a string giving the name of an image
+    attribute. The image attribute is added to the image when the
+    character is speaking, and removed when the character stops.
+
 .. var:: config.tag_layer = { }
 
     A dictionary mapping image tag strings to layer name strings. When

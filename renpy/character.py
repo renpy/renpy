@@ -702,7 +702,7 @@ class ADVCharacter(object):
             screen=self.screen,
             **self.show_args)
 
-    def resolve_say_attributes(self, predict):
+    def resolve_say_attributes(self, predict, wanted=[], remove=[]):
         """
         Deals with image attributes associated with the current say
         statement.
@@ -710,25 +710,33 @@ class ADVCharacter(object):
 
         attrs = renpy.exports.get_say_attributes()
 
-        if not attrs:
+        if not (attrs or wanted or remove):
             return
 
         if not self.image_tag:
-            if not predict:
+            if attrs and not predict:
                 raise Exception("Say has image attributes %r, but there's no image tag associated with the speaking character." % (attrs,))
             else:
                 return
 
+        if attrs is None:
+            attrs = ()
+
         tagged_attrs = (self.image_tag,) + attrs
         images = renpy.game.context().images
 
-        # If image is showing already, resolve it, then show or predict it.
-        if images.showing("master", (self.image_tag,)):
+        layer = renpy.config.tag_layer.get(self.image_tag, "master")
 
-            new_image = images.apply_attributes("master", self.image_tag, tagged_attrs)
+        # If image is showing already, resolve it, then show or predict it.
+        if images.showing(layer, (self.image_tag,)):
+
+            new_image = images.apply_attributes(layer, self.image_tag, tagged_attrs, wanted, remove)
 
             if new_image is None:
                 new_image = tagged_attrs
+
+            if images.showing(layer, new_image, exact=True):
+                return
 
             if predict:
                 images.predict_show(new_image)
@@ -767,7 +775,12 @@ class ADVCharacter(object):
         if not isinstance(what, basestring):
             raise Exception("Character expects its what argument to be a string, got %r." % (what,))
 
-        self.resolve_say_attributes(False)
+        if interact and (renpy.config.speaking_attribute is not None):
+            speaking = [ renpy.config.speaking_attribute ]
+        else:
+            speaking = [ ]
+
+        self.resolve_say_attributes(False, wanted=speaking)
 
         old_side_image_attributes = renpy.store._side_image_attributes
 
@@ -841,10 +854,15 @@ class ADVCharacter(object):
             if interact:
                 renpy.store._side_image_attributes = old_side_image_attributes
 
+                self.resolve_say_attributes(False, remove=speaking)
+
 
     def predict(self, what):
 
         self.resolve_say_attributes(True)
+
+        if renpy.config.speaking_attribute is not None:
+            self.resolve_say_attributes(True, wanted=[ renpy.config.speaking_attribute ])
 
         old_side_image_attributes = renpy.store._side_image_attributes
 
