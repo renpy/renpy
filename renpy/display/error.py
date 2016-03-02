@@ -107,20 +107,33 @@ def report_exception(short, full, traceback_fn):
 
             reload_action = renpy.exports.curried_call_in_new_context("_save_reload_game")
 
+        else:
+            reload_action = renpy.exports.utter_restart
+
         if renpy.game.context(-1).next_node is not None:
             ignore_action = renpy.ui.returns(False)
     except:
         pass
 
-    renpy.game.invoke_in_new_context(
-        call_exception_screen,
-        "_exception",
-        short=short, full=full,
-        rollback_action=rollback_action,
-        reload_action=reload_action,
-        ignore_action=ignore_action,
-        traceback_fn=traceback_fn,
-        )
+    try:
+
+        renpy.game.invoke_in_new_context(
+            call_exception_screen,
+            "_exception",
+            short=short, full=full,
+            rollback_action=rollback_action,
+            reload_action=reload_action,
+            ignore_action=ignore_action,
+            traceback_fn=traceback_fn,
+            )
+
+    except renpy.game.CONTROL_EXCEPTIONS:
+        raise
+
+    except:
+        renpy.display.log.write("While handling exception:")
+        renpy.display.log.exception()
+        raise
 
 
 def report_parse_errors(errors, error_fn):
@@ -148,11 +161,20 @@ def report_parse_errors(errors, error_fn):
 
     reload_action = renpy.exports.utter_restart
 
-    renpy.game.invoke_in_new_context(
-        call_exception_screen,
-        "_parse_errors",
-        reload_action=reload_action,
-        errors=errors,
-        error_fn = error_fn,
-        )
+    try:
 
+        renpy.game.invoke_in_new_context(
+            call_exception_screen,
+            "_parse_errors",
+            reload_action=reload_action,
+            errors=errors,
+            error_fn = error_fn,
+            )
+
+    except renpy.game.CONTROL_EXCEPTIONS:
+        raise
+
+    except:
+        renpy.display.log.write("While handling exception:")
+        renpy.display.log.exception()
+        raise
