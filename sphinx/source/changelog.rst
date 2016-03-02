@@ -70,6 +70,12 @@ The Drag.snap animation has been fixed.
 Other
 -----
 
+The new :var:`config.speaking_attribute` variable can be used to
+automatically apply an attribute to an image when a character
+starts speaking, and to remove that attribute when the
+
+Say statements with image attributes now respect :var:`config.tag_layer`.
+
 This release includes experimental support for having an Android
 package be converted into a Chrome application using the ARC welder
 tool.
