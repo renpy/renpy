@@ -81,6 +81,10 @@ def register_image(name, d):
         A tuple of strings.
     """
 
+    for i in name:
+        if i and i[0] == '-':
+            raise Exception("Image name components may not begin with a -.")
+
     tag = name[0]
     rest = name[1:]
 
@@ -546,7 +550,7 @@ class ShownImageInfo(renpy.object.Object):
         self.shown.discard((layer, tag))
 
 
-    def apply_attributes(self, layer, tag, name):
+    def apply_attributes(self, layer, tag, name, optional=[], remove=[]):
         """
         Given a layer, tag, and an image name (with attributes),
         returns the canonical name of an image, if one exists. Raises
@@ -564,7 +568,7 @@ class ShownImageInfo(renpy.object.Object):
         required = set(name[1:])
 
         # The set of attributes a matching image may have.
-        optional = set(self.attributes.get((layer, tag), [ ]))
+        optional = set(optional) | set(self.attributes.get((layer, tag), [ ]))
 
         # Deal with banned attributes..
         for i in name[1:]:
@@ -572,12 +576,16 @@ class ShownImageInfo(renpy.object.Object):
                 optional.discard(i[1:])
                 required.discard(i)
 
+        for i in remove:
+            optional.discard(i)
+
+
         return self.choose_image(nametag, required, optional, name)
 
     def choose_image(self, tag, required, optional, exception_name):
 
         # The longest length of an image that matches.
-        max_len = 0
+        max_len = -1
 
         # The list of matching images.
         matches = None
