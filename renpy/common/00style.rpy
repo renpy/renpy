@@ -207,6 +207,8 @@ init -1800:
         focus_mask None
         focus_rect None
         keyboard_focus True
+        key_events False
+        hover_key_events True
 
         # Bar properties
         fore_bar Null()

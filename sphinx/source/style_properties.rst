@@ -716,6 +716,15 @@ Button Style Properties
    mechanism will skip this button. (The keyboard focus mechanism is used
    by keyboards and keyboard-like devices, such as joypads.)
 
+.. style-property:: key_events
+
+    If true, keyboard-generated events are passed to the children of this
+    button. If false, those events are not propagated. In this default style,
+    this is set to true while the button is hovered, and false otherwise.
+
+    Setting this to true can be used to propagate keyboard events to an input
+    inside a button, even when the button isn't focused.
+
 
 .. _bar-style-properties:
 

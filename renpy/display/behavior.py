@@ -780,7 +780,7 @@ class Button(renpy.display.layout.Window):
 
         # If we have a child, try passing the event to it. (For keyboard
         # events, this only happens if we're focused.)
-        if self.is_focused() or not (ev.type in KEY_EVENTS):
+        if (not (ev.type in KEY_EVENTS)) or self.style.key_events:
             rv = super(Button, self).event(ev, x, y, st)
             if rv is not None:
                 return rv
