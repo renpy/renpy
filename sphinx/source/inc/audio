@@ -11,6 +11,11 @@
     Returns True if the given filename has been played at least once on the current
     user's system.
 
+.. function:: renpy.music.get_duration(channel='music')
+    
+    Returns the duration of the audio or video file on `channel`. Returns
+    0.0 if no file is playing on `channel`.
+
 .. function:: renpy.music.get_pause(channel='music')
     
     Returns the pause flag for `channel`.
@@ -22,9 +27,12 @@
 
 .. function:: renpy.music.get_pos(channel='music')
     
-    Returns the amount of time that has elapsed since the audio on
-    `channel` started playing, in seconds. Returns None if no audio is playing
-    on `channel`.
+    Returns the current position of the audio or video file on `channel`, in
+    seconds. Returns None if no audio is playing on `channel`.
+    
+    As this may return None before a channel starts playing, or if the audio
+    channel involved has been muted, code that calls this function should
+    always handle a None value.
 
 .. function:: renpy.music.is_playing(channel='music')
     

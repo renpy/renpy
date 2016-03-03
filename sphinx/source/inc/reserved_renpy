@@ -9,6 +9,7 @@
 * :func:`AnimatedValue`
 * Animation
 * :func:`At`
+* :func:`AudioPositionValue`
 * Bar
 * :class:`BarValue`
 * Button
@@ -25,6 +26,7 @@
 * DynamicCharacter
 * :func:`DynamicDisplayable`
 * :func:`DynamicImage`
+* :class:`Editor`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
@@ -65,6 +67,7 @@
 * :func:`ImageDissolve`
 * ImageReference
 * Input
+* :class:`InputValue`
 * :func:`InvertSelected`
 * :func:`Jump`
 * :func:`Language`
@@ -160,6 +163,8 @@
 * :class:`Tooltip`
 * :class:`Transform`
 * :func:`VBox`
+* VariableEditor
+* VariableInputValue
 * :func:`VariableValue`
 * Viewport
 * VoiceInfo

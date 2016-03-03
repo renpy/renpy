@@ -20,6 +20,14 @@
         AnimatedValue we replaced, if any. Otherwise, it is initialized
         to `value`.
 
+.. function:: AudioPositionValue(channel='music', update_interval=0.1)
+    
+    A value that shows the playback position of the audio file playing
+    in `channel`.
+    
+    `update_interval`
+        How often the value updates, in seconds.
+
 .. function:: DictValue(dict, key, range, max_is_zero=False, style='bar', offset=0, step=None)
     
     A value that allows the user to adjust the value of a key

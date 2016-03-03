@@ -926,6 +926,7 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     pixel_width = None
     default = u""
     edit_text = u""
+    value = None
 
     def __init__(self,
                  default="",
@@ -940,9 +941,15 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
                  replaces=None,
                  editable=True,
                  pixel_width=None,
+                 value=None,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
+
+        if value:
+            self.value = value
+            changed = value.set_text
+            default = value.get_text()
 
         self.default = unicode(default)
         self.content = self.default
@@ -1068,6 +1075,13 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
     def disable(self):
         self.update_text(self.content, False)
 
+    def per_interact(self):
+        if self.value:
+            editable = self.value.get_editable()
+
+            if editable != self.editable:
+                self.update_text(self.content, editable)
+
     def event(self, ev, x, y, st):
 
         self.old_caret_pos = self.caret_pos
@@ -1095,6 +1109,9 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
 
             if self.edit_text:
                 content = content[0:self.caret_pos] + self.edit_text + self.content[self.caret_pos:]
+
+            if self.value:
+                return self.value.enter()
 
             if not self.changed:
                 return content

@@ -197,7 +197,7 @@ BarValues
 =========
 
 When creating a bar, vbar, or hotbar, a BarValue object can be supplied as
-the `value` argument. Methods on the BarValue object are called to get
+the `value` property. Methods on the BarValue object are called to get
 the adjustment and styles.
 
 
@@ -245,6 +245,55 @@ the adjustment and styles.
        :func:`AnimatedValue` does. To do this, get_adjustment should
        store the adjustment, and periodic should call the
        adjustment's changed method.
+
+InputValue
+==========
+
+When creating an input, an InputValue object can be supplied as the
+`value` property. Methods on the InputValue object are called to
+get and set the text, determine if the input is editable, and handle
+the enter key being pressed.
+
+.. class:: InputValue
+
+    To define a new InputValue, inherit from this class, and override
+    some or all of the methods.
+
+    .. method:: get_text(self)
+
+        Returns the default text of the input. This must be implemented.
+
+    .. method:: set_text(self, s)
+
+        Called when the text of the input is changed, with the new text.
+        This must be implemented.
+
+    .. method:: enter(self)
+
+        Called when the user presses enter. If this returns a non-None
+        value, that value is returned from the interacton. This may also
+        raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
+        enter-press is propagated to other displayables.
+
+    .. method:: get_editable(self)
+
+        Called to determine if the input should display a caret and be
+        editable. This should return true or false.
+
+    If the default implementation of get_editable is left alone, the
+    following actions are avalable as methods on the object.
+
+    .. method:: Enable()
+
+        Returns an action that enables text editing on the input.
+
+    .. method:: Disable()
+
+        Returns an action that disables text editing on the input.
+
+    .. method:: Toggle()
+
+        Returns an action that toggles text editing on the input.
 
 
 .. _creator-defined-sl:

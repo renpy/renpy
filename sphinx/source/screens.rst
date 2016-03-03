@@ -255,8 +255,8 @@ Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a BarValue object,
-    or a number.
+    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    object, or a number.
 
 `range`
     The maximum value of the bar. This is required if `value` is a
@@ -544,6 +544,14 @@ interaction. (When the screen is invoked through ``call screen``, the result
 will be placed in the ``_return`` variable.)
 
 The input statement takes no parameters, and the following properties:
+
+`value`
+    An :ref:`input value <input-values>` object that this input uses.
+    InputValue objects determine where the default value is taken from,
+    what happens when the text is changed, what happens when enter is
+    pressed, and if the text is editable.
+
+    This should not be given at the same time as `default` and `changed`.
 
 `default`
     The default text in this input.
@@ -1207,8 +1215,8 @@ tuple giving the area of the imagemap that makes up the button. It
 also takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a Value object,
-    or a number.
+    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    object, or a number.
 
 `range`
     The maximum value of the bar. This is required if `value` is a

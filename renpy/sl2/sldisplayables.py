@@ -162,6 +162,7 @@ Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
+Keyword("value")
 add(text_properties)
 
 # Omit imagemap_compat for being too high level (and obsolete).

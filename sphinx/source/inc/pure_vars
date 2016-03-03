@@ -8,6 +8,7 @@
 * :func:`AnimatedValue`
 * Animation
 * :func:`At`
+* :func:`AudioPositionValue`
 * :func:`Character`
 * :class:`Color`
 * :func:`ComposeTransition`
@@ -18,6 +19,7 @@
 * :class:`Drag`
 * DynamicCharacter
 * :func:`DynamicDisplayable`
+* :class:`Editor`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
@@ -38,6 +40,7 @@
 * :func:`Image`
 * :func:`ImageDissolve`
 * ImageReference
+* :class:`InputValue`
 * :func:`InvertSelected`
 * :func:`Jump`
 * :func:`Language`
@@ -121,6 +124,8 @@
 * :class:`Transform`
 * Update
 * :func:`VBox`
+* VariableEditor
+* VariableInputValue
 * :func:`VariableValue`
 * Viewport
 * :func:`VoiceReplay`
@@ -128,6 +133,8 @@
 * Zoom
 * ZoomInOut
 * :func:`_`
+* _EditorAction
+* _InputValueAction
 * _m1_00gallery__GalleryAction
 * _m1_00gallery__GalleryToggleSlideshow
 * _m1_00musicroom__MusicRoomPlay
