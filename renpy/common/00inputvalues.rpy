@@ -89,15 +89,21 @@ init -1510 python:
 init -1500 python:
 
     @renpy.pure
-    class VariableInputValue(InputValue, DictEquality):
+    class VariableInputValue(InputValue, FieldEquality):
         """
         :doc: input_value
 
-        An input value that updates variable.
+        An input value that updates `variable`.
+
+        `variable`
+            A string giving the name of the variable to update.
 
         `default`
             If true, this input can be editable by default.
         """
+
+        identity_fields = [ ]
+        equality_fields = [ "variable", "value" ]
 
         def __init__(self, variable, default=True):
             self.variable = variable
@@ -108,4 +114,91 @@ init -1500 python:
 
         def set_text(self, s):
             globals()[self.variable] = s
+            renpy.restart_interaction()
+
+    @renpy.pure
+    class ScreenVariableInputValue(InputValue, FieldEquality):
+        """
+        :doc: input_value
+
+        An input value that updates variable.
+
+        `variable`
+            A string giving the name of the variable to update.
+
+        `default`
+            If true, this input can be editable by default.
+        """
+
+        identity_fields = [ ]
+        equality_fields = [ "variable", "value" ]
+
+        def __init__(self, variable, default=True):
+            self.variable = variable
+            self.default = default
+
+        def get_text(self):
+            cs = renpy.current_screen()
+            return cs.scope[self.variable]
+
+        def set_text(self, s):
+            cs = renpy.current_screen()
+            cs.scope[self.variable] = s
+            renpy.restart_interaction()
+
+    @renpy.pure
+    class FieldInputValue(InputValue, FieldEquality):
+        """
+        :doc: input_value
+
+        An input value that updates `field` on `object`.
+
+        `field`
+            A string giving the name of the field.
+
+        `default`
+            If true, this input can be editable by default.
+        """
+
+        identity_fields = [ "object"]
+        equality_fields = [ "field" ]
+
+        def __init__(self, object, field, default=True):
+            self.object = object
+            self.field = field
+
+            self.default = default
+
+        def get_text(self):
+            return getattr(self.object, self.field)
+
+        def set_text(self, s):
+            setattr(self.object, self.field, s)
+            renpy.restart_interaction()
+
+    @renpy.pure
+    class DictInputValue(InputValue, FieldEquality):
+        """
+        :doc: input_value
+
+        An input value that updates `key` in `dict`.
+
+        `default`
+            If true, this input can be editable by default.
+        """
+
+        identity_fields = [ "dict", "key" ]
+        equality_fields = [ ]
+
+        def __init__(self, dict, key, default=True):
+            self.dict = dict
+            self.key = key
+
+            self.default = default
+
+        def get_text(self):
+            return self.dict[self.key]
+
+        def set_text(self, s):
+            self.dict[self.key] = s
             renpy.restart_interaction()
