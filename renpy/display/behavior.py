@@ -913,6 +913,56 @@ class HoveredProxy(object):
             return self.b()
 
 
+# The currently editable input value.
+current_input_value = None
+
+# Is the current input value active?
+input_value_active = False
+
+# The default input value to use if the currently editable value doesn't
+# exist.
+default_input_value = None
+
+# A list of input values that exist.
+input_values = [ ]
+
+# A list of inputs that exist in the current interaction.
+inputs = [ ]
+
+# A list of all the input objects we know about.
+
+def input_pre_per_interact():
+    global input_values
+    global inputs
+    global default_value
+
+    input_values = [ ]
+    inputs = [ ]
+    default_value = None
+
+def input_post_per_interact():
+
+    global current_input_value
+    global input_value_active
+
+    for i in input_values:
+        if i is current_input_value:
+            break
+
+    else:
+
+        current_input_value = default_input_value
+        input_value_active = True
+
+    for i in inputs:
+
+        editable = (i.value is current_input_value) and input_value_active
+
+        if i.editable != editable:
+            i.update_text(i.content, editable)
+
+
+
 class Input(renpy.text.text.Text): #@UndefinedVariable
     """
     This is a Displayable that takes text as input.
@@ -1076,11 +1126,16 @@ class Input(renpy.text.text.Text): #@UndefinedVariable
         self.update_text(self.content, False)
 
     def per_interact(self):
-        if self.value:
-            editable = self.value.get_editable()
 
-            if editable != self.editable:
-                self.update_text(self.content, editable)
+        global default_input_value
+
+        if self.value is not None:
+
+            inputs.append(self)
+            input_values.append(self.value)
+
+            if self.value.default and (default_input_value is None):
+                default_input_value = self.value
 
     def event(self, ev, x, y, st):
 

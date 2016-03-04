@@ -549,7 +549,7 @@ The input statement takes no parameters, and the following properties:
     An :ref:`input value <input-values>` object that this input uses.
     InputValue objects determine where the default value is taken from,
     what happens when the text is changed, what happens when enter is
-    pressed, and if the text is editable.
+    pressed, and if the text is editable by default.
 
     This should not be given at the same time as `default` and `changed`.
 

@@ -3172,3 +3172,23 @@ def play(filename, channel=None, **kwargs):
 
     renpy.audio.music.play(filename, channel=channel, **kwargs)
 
+def get_editable_input_value():
+    """
+    :undocumented:
+
+    Returns the current input value, and a flag that is true if it is editable.
+    and false otherwise.
+    """
+
+    return renpy.display.behavior.current_input_value, renpy.display.behavior.input_value_active
+
+def set_editable_input_value(input_value, editable):
+    """
+    :undocumented:
+
+    Sets the currently active input value, and if it should be marked as
+    editable.
+    """
+
+    renpy.display.behavior.current_input_value = input_value
+    renpy.display.behavior.input_value_active = editable

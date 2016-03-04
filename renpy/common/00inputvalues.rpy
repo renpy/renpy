@@ -31,25 +31,42 @@ init -1510 python:
             self.action = action
 
         def __call__(self):
+
+            current, editable = renpy.get_editable_input_value()
+
             if self.action == "enable":
-                self.input_value.editable = True
+
+                renpy.set_editable_input_value(self.input_value, True)
+
             elif self.action == "disable":
-                self.input_value.editable = False
+
+                if current is self.input_value:
+                    renpy.set_editable_input_value(self.input_value, False)
+
             elif self.action == "toggle":
-                self.input_value.editable = not self.input_value.editable
+
+                if current is self.input_value and editable:
+                    renpy.set_editable_input_value(self.input_value, False)
+                else:
+                    renpy.set_editable_input_value(self.input_value, True)
 
             renpy.restart_interaction()
 
         def get_selected(self):
+
+            current, editable = renpy.get_editable_input_value()
+
+            rv = (current is self.input_value) and editable
+
             if self.action == "disable":
-                return not self.input_value.editable
-            else:
-                return self.input_value.editable
+                rv = not rv
+
+            return rv
 
     @renpy.pure
     class InputValue(renpy.object.Object):
 
-        editable = True
+        default = True
 
         def get_text(self):
             raise Exception("Not implemented.")
@@ -59,9 +76,6 @@ init -1510 python:
 
         def enter(self):
             return None
-
-        def get_editable(self):
-            return self.editable
 
         def Enable(self):
             return _InputValueAction(self, "enable")
@@ -76,9 +90,18 @@ init -1500 python:
 
     @renpy.pure
     class VariableInputValue(InputValue, DictEquality):
+        """
+        :doc: input_value
 
-        def __init__(self, variable):
+        An input value that updates variable.
+
+        `default`
+            If true, this input can be editable by default.
+        """
+
+        def __init__(self, variable, default=True):
             self.variable = variable
+            self.default = default
 
         def get_text(self):
             return globals()[self.variable]

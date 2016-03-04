@@ -94,7 +94,7 @@ Input Values
 
 Input values are used with text inputs, to set the default text, to accept
 changed text, to respond to the enter key, and to determine if the text is
-editable. To create a new input value, subclass the :class:`InputValue`
+editable by default. To create a new input value, subclass the :class:`InputValue`
 class.
 
 Ren'Py-defined input values inherit from InputValue, which means that

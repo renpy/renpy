@@ -256,8 +256,13 @@ the enter key being pressed.
 
 .. class:: InputValue
 
-    To define a new InputValue, inherit from this class, and override
-    some or all of the methods.
+    To define a new InputValue, inherit from this class, override
+    some or all of the methods, and set the value of the default
+    field.
+
+    .. field:: default
+
+        If true, this method is eligible to be editable by default.
 
     .. method:: get_text(self)
 
@@ -275,13 +280,7 @@ the enter key being pressed.
         raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
         enter-press is propagated to other displayables.
 
-    .. method:: get_editable(self)
-
-        Called to determine if the input should display a caret and be
-        editable. This should return true or false.
-
-    If the default implementation of get_editable is left alone, the
-    following actions are avalable as methods on the object.
+    The following actions are available as methods on InputValue:
 
     .. method:: Enable()
 
