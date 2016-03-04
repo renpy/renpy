@@ -929,7 +929,6 @@ input_values = [ ]
 # A list of inputs that exist in the current interaction.
 inputs = [ ]
 
-# A list of all the input objects we know about.
 
 def input_pre_per_interact():
     global input_values
@@ -963,6 +962,7 @@ def input_post_per_interact():
 
         if (i.editable != editable) or (content != i.content):
             i.update_text(content, editable)
+            i.caret_pos = len(content)
 
 
 class Input(renpy.text.text.Text): #@UndefinedVariable
