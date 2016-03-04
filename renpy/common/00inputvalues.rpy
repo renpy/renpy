@@ -67,6 +67,7 @@ init -1510 python:
     class InputValue(renpy.object.Object):
 
         default = True
+        editable = True
 
         def get_text(self):
             raise Exception("Not implemented.")
@@ -78,15 +79,22 @@ init -1510 python:
             return None
 
         def Enable(self):
-            return _InputValueAction(self, "enable")
+            if self.editable:
+                return _InputValueAction(self, "enable")
+            else:
+                return None
 
         def Disable(self):
-            return _InputValueAction(self, "disable")
+            if self.editable:
+                return _InputValueAction(self, "disable")
+            else:
+                return None
 
         def Toggle(self):
-            return _InputValueAction(self, "toggle")
-
-init -1500 python:
+            if self.editable:
+                return _InputValueAction(self, "toggle")
+            else:
+                return None
 
     @renpy.pure
     class VariableInputValue(InputValue, FieldEquality):

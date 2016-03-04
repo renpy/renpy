@@ -3125,6 +3125,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
     if menu_clear:
         renpy.config.menu_clear_layers.append(layer) # @UndefinedVariable
 
+
 def maximum_framerate(t):
     """
     :doc: other
@@ -3140,7 +3141,6 @@ def maximum_framerate(t):
             renpy.display.core.initial_maximum_framerate = 0
         else:
             renpy.display.core.initial_maximum_framerate = max(renpy.display.core.initial_maximum_framerate, t)
-
 
 
 def is_start_interact():

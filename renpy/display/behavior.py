@@ -952,15 +952,17 @@ def input_post_per_interact():
     else:
 
         current_input_value = default_input_value
+
         input_value_active = True
 
     for i in inputs:
 
-        editable = (i.value is current_input_value) and input_value_active
+        editable = (i.value is current_input_value) and input_value_active and i.value.editable
 
-        if i.editable != editable:
-            i.update_text(i.content, editable)
+        content = i.value.get_text()
 
+        if (i.editable != editable) or (content != i.content):
+            i.update_text(content, editable)
 
 
 class Input(renpy.text.text.Text): #@UndefinedVariable

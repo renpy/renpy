@@ -260,9 +260,14 @@ the enter key being pressed.
     some or all of the methods, and set the value of the default
     field.
 
+    .. field:: editable
+
+        If true, this field is editable at all.
+
     .. field:: default
 
-        If true, this method is eligible to be editable by default.
+        If true, the input is eligible to be editable by default. (That
+        is, it may be given the caret when the screen is shown.)
 
     .. method:: get_text(self)
 
