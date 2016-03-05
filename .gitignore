@@ -35,6 +35,7 @@ styles.txt
 /.pydevproject
 /.pydevproject.bak
 /.project
+/.cproject
 /.settings
 /LICENSE.txt
 /templates/english/README.html
@@ -66,4 +67,7 @@ renpy/vc_version.py
 /WINDOWS.rst
 
 /*-all/
+/*-win/
+/*-mac/
+/*-linux*/
 /*-dists/
