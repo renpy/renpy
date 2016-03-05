@@ -583,7 +583,16 @@ init -1500 python:
 
                 page = int(page)
                 default = self.pattern.format(page)
-                return persistent._file_page_name.get(page, default)
+                rv = persistent._file_page_name.get(page, default)
+
+                if not rv.strip():
+
+                    current, active = renpy.get_editable_input_value()
+
+                    if not ((current is self) and active):
+                        rv = default
+
+                return rv
 
         def set_text(self, s):
 
