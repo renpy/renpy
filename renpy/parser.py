@@ -1074,26 +1074,43 @@ class Lexer(object):
         process(self.subblock, '')
         return ''.join(rv)
 
-def parse_image_name(l, string=False):
+def parse_image_name(l, string=False, nodash=False):
     """
     This parses an image name, and returns it as a tuple. It requires
     that the image name be present.
     """
 
+    points = [ l.checkpoint() ]
     rv = [ l.require(l.image_name_component) ]
 
     while True:
+
+        points.append(l.checkpoint())
+
         n = l.image_name_component()
+
         if not n:
+            points.pop()
             break
 
         rv.append(n.strip())
 
     if string:
+        points.append(l.checkpoint())
+
         s = l.simple_expression()
 
         if s is not None:
             rv.append(unicode(s))
+        else:
+            points.pop()
+
+    if nodash:
+        for i, p in zip(rv, points):
+            if i and i[0] == '-':
+                l.revert(p)
+                l.skip_whitespace()
+                l.error("image name components may not begin with a '-'.")
 
     return tuple(rv)
 
@@ -1760,7 +1777,7 @@ def with_statement(l, loc):
 
 @statement("image")
 def image_statement(l, loc):
-    name = parse_image_name(l)
+    name = parse_image_name(l, nodash=True)
 
     if l.match(':'):
         l.expect_eol()
