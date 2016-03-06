@@ -115,6 +115,8 @@ init -1500 python:
     if persistent._file_page_name is None:
         persistent._file_page_name = { }
 
+    config.file_page_names = [ ]
+
     def __slotname(name, page=None):
 
         if page is None:
@@ -830,10 +832,14 @@ init -1500 python:
 
 init 1050 python hide:
 
-    if not config.has_quicksave and persistent._file_page == "quick":
-        persistent._file_page = "1"
+    if config.has_quicksave:
+        config.file_page_names.append("quick")
+    if config.has_autosave:
+        config.file_page_names.append("auto")
 
-    if not config.has_autosave and persistent._file_page == "auto":
-        persistent._file_page = "1"
-
+    if persistent._file_page not in config.file_page_names:
+        try:
+            int(persistent._file_page)
+        except:
+            persistent._file_page = "1"
 
