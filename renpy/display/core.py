@@ -2468,6 +2468,7 @@ class Interface(object):
         @param suppress_underlay: This suppresses the display of the underlay.
         """
 
+        suppress_overlay = suppress_overlay or renpy.store.suppress_overlay
 
         # Store the various parameters.
         self.suppress_overlay = suppress_overlay
