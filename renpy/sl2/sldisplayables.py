@@ -227,7 +227,7 @@ def sl2bar(context=None, **properties):
 
     if "style" not in properties:
         if isinstance(value, renpy.ui.BarValue):
-            style = context.style_prefix + value.get_style()[0]
+            style = renpy.ui.combine_style(context.style_prefix, value.get_style()[0])
             properties["style"] = style
 
     return renpy.display.behavior.Bar(range, value, width, height, vertical=False, **properties)
@@ -259,7 +259,7 @@ def sl2vbar(context=None, **properties):
 
     if "style" not in properties:
         if isinstance(value, renpy.ui.BarValue):
-            style = context.style_prefix + value.get_style()[1]
+            style = renpy.ui.combine_style(context.style_prefix, value.get_style()[1])
             properties["style"] = style
 
     return renpy.display.behavior.Bar(range, value, width, height, vertical=True, **properties)

@@ -948,6 +948,7 @@ Keyword("zorder")
 Keyword("variant")
 Keyword("predict")
 Keyword("style_group")
+Keyword("style_prefix")
 
 def init():
     screen_parser.add(all_statements)

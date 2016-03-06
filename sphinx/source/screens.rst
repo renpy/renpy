@@ -133,9 +133,9 @@ expression. It takes the following properties:
     If present, this should be a string giving the variant of screen
     to be defined. See :ref:`screen-variants`.
 
-`style_group`
+`style_prefix`
     A string that's used to provide a prefix for the style for the
-    children of this screen, as :ref:`described below <style-group>`.
+    children of this screen, as :ref:`described below <style-prefix>`.
 
 ::
 
@@ -192,23 +192,38 @@ All user interface statements take the following common properties:
     string name, or a style object. The style gives default
     values for style properties.
 
+`style_prefix`
+    .. _style-prefix:
+
+    Provides a prefix to the style of this displayable and all of its
+    children, unless those children have a more specific style or
+    style prefix set.
+
+    The style name is created by concatenating a style prefix, underscore,
+    and a style suffix. The style suffix is either specified using
+    `style_suffix`, or determined by the displayable.
+
+    For example, if a vbox has a style prefix of ``"pref"``, the vbox
+    will be given the style ``"pref_vbox"``. Unless a more specific style
+    or style prefix is set, a button inside the vbox will have the style
+    ``"pref_button"``.
+
+    Styles accessed in this way are automatically created, if the style
+    does not exist. Setting a prefix of ``None`` removes the prefix from
+    this displayable and its children.
+
 `style_group`
-    .. _style-group:
+    An alias for `style_prefix`, used in older code.
 
-    Style_group is used to provide a prefix to the style of a displayable,
-    for this displayable and all of its children (unless they have a
-    more specific group set).
+`style_suffix`
+    Specifies the suffix that is combined with the `style_prefix` to
+    generate a style name. If this is ``"small_button"`` and the
+    style prefix is ``"pref"``, the style ``"pref_small_button"`` is
+    used.
 
-    For example, if a vbox has a group of ``"pref"``, then the vbox will
-    have the style ``"pref_vbox"``, unless a more specific style is
-    supplied to it. A button inside that vbox would default to the
-    style ``"pref_button"``.
-
-    Styles accessed in this way are automatically created, if they do
-    not exist. This prevents an error from being signalled.
-
-    Setting a group of ``None`` disables this behavior for a
-    displayable and all of its children.
+    If no style prefix is in use, this is used directly as the name of
+    the style. A style suffix applies to a single displayable only, not
+    a displayable and all children.
 
 `focus`
     Takes a string or integer, and gives a name to the displayable

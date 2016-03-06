@@ -96,7 +96,7 @@ class SLContext(renpy.ui.Addable):
         self.keywords = { }
 
         # The style prefix that is given to children of this displayable.
-        self.style_prefix = ""
+        self.style_prefix = None
 
         # A cache associated with this context. The cache maps from
         # statement serial to information associated with the statement.
@@ -146,17 +146,6 @@ class SLContext(renpy.ui.Addable):
         # True if it's unlikely this node will run. This is used in prediction
         # to speed things up.
         self.unlikely = False
-
-
-    def get_style_group(self):
-        style_prefix = self.style_prefix
-
-        if style_prefix:
-            return style_prefix[:-1]
-        else:
-            return None
-
-    style_group = property(get_style_group)
 
     def add(self, d, key):
         self.children.append(d)
@@ -408,12 +397,13 @@ class SLBlock(SLNode):
         for i in self.keyword_children:
             i.keywords(context)
 
-        style_group = context.keywords.pop("style_group", NotGiven)
-        if style_group is not NotGiven:
-            if style_group is not None:
-                context.style_prefix = style_group + "_"
-            else:
-                context.style_prefix = ""
+        style_prefix = context.keywords.pop("style_prefix", NotGiven)
+
+        if style_prefix is NotGiven:
+            style_prefix = context.keywords.pop("style_group", NotGiven)
+
+        if style_prefix is not NotGiven:
+            context.style_prefix = style_prefix
 
     def copy_on_change(self, cache):
         for i in self.children:
@@ -725,6 +715,7 @@ class SLDisplayable(SLBlock):
 
             arguments = keywords.pop("arguments", None)
             properties = keywords.pop("properties", None)
+            style_suffix = keywords.pop("style_suffix", None) or self.style
 
             if arguments:
                 positional += arguments
@@ -733,8 +724,11 @@ class SLDisplayable(SLBlock):
                 keywords.update(properties)
 
             # If we don't know the style, figure it out.
-            if ("style" not in keywords) and self.style:
-                keywords["style"] = ctx.style_prefix + self.style
+            if ("style" not in keywords) and style_suffix:
+                if ctx.style_prefix is None:
+                    keywords["style"] = style_suffix
+                else:
+                    keywords["style"] = ctx.style_prefix + "_" + style_suffix
 
             if widget_id and (widget_id in screen.widget_properties):
                 keywords.update(screen.widget_properties[widget_id])

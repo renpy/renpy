@@ -170,6 +170,8 @@ ui_properties = [
     Keyword("id"),
     Keyword("style"),
     Keyword("style_group"),
+    Keyword("style_prefix"),
+    Keyword("style_suffix"),
     Keyword("focus"),
     Keyword("default"),
     ]

@@ -2,6 +2,14 @@
 Full Changelog
 ==============
 
+Ren'Py 6.99.10
+==============
+
+The `style_group` ui property has been renamed to `style_prefix`, to make
+its function more apparent. (The old name still works, for compatibility with
+older code.) A new `style_suffix` ui property has been added, allowing
+the same screen code to be reused with multiple style prefixes.
+
 Ren'Py 6.99.9
 =============
 

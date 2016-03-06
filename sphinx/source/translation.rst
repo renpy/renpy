@@ -369,7 +369,7 @@ The Language action can be used to add a language preference to the
 preferences screen, using code like::
 
             frame:
-                style_group "pref"
+                style_prefix "pref"
                 has vbox
 
                 label _("Language")

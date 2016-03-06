@@ -85,8 +85,8 @@ class BarValue(renpy.object.Object):
 # closed.
 
 class Addable(object):
-    # A style_group associates with this addable.
-    style_group = None
+    # A style_prefix associates with this addable.
+    style_prefix = None
 
     def get_layer(self):
         return Exception("Operation can only be performed on a layer.")
@@ -116,10 +116,10 @@ class Many(Addable):
     A widget that takes many children.
     """
 
-    def __init__(self, displayable, imagemap, style_group):
+    def __init__(self, displayable, imagemap, style_prefix):
         self.displayable = displayable
         self.imagemap = imagemap
-        self.style_group = style_group
+        self.style_prefix = style_prefix
 
     def add(self, d, key):
         self.displayable.add(d)
@@ -143,9 +143,9 @@ class One(Addable):
     A widget that expects exactly one child.
     """
 
-    def __init__(self, displayable, style_group):
+    def __init__(self, displayable, style_prefix):
         self.displayable = displayable
-        self.style_group = style_group
+        self.style_prefix = style_prefix
 
     def add(self, d, key):
         self.displayable.add(d)
@@ -162,8 +162,8 @@ class Detached(Addable):
     Used to indicate a widget is detached from the stack.
     """
 
-    def __init__(self, style_group):
-        self.style_group = style_group
+    def __init__(self, style_prefix):
+        self.style_prefix = style_prefix
 
     def add(self, d, key):
         self.child = d
@@ -179,9 +179,9 @@ class ChildOrFixed(Addable):
     the widgets are added to that.
     """
 
-    def __init__(self, style_group):
+    def __init__(self, style_prefix):
         self.queue = [ ]
-        self.style_group = style_group
+        self.style_prefix = style_prefix
 
     def add(self, d, key):
         self.queue.append(d)
@@ -295,7 +295,7 @@ def child_or_fixed():
     a fixed will be created, and the children will be added to that.
     """
 
-    stack.append(ChildOrFixed(stack[-1].style_group))
+    stack.append(ChildOrFixed(stack[-1].style_prefix))
 
 def remove(d):
     layer = stack[-1].get_layer()
@@ -328,7 +328,7 @@ def detached():
     you want to assign the result of a ui function to a variable.
     """
 
-    rv = Detached(stack[-1].style_group)
+    rv = Detached(stack[-1].style_prefix)
     stack.append(rv)
     return rv
 
@@ -373,23 +373,28 @@ def context_enter(w):
 def context_exit(w):
     close(w)
 
-NoStyleGroupGiven = renpy.object.Sentinel("NoStyleGroupGiven")
+NoStylePrefixGiven = renpy.object.Sentinel("NoStylePrefixGiven")
 
-def style_group_style(s, style_group):
+def combine_style(style_prefix, style_suffix):
     """
-    Given a style name s, combine it with the style_group to create a new
-    style. If the style doesn't exist, create a new lightweight style.
+    Combines a style prefix and style suffix to create a style name, then
+    returns the style object corresoinding to that name.
     """
 
-    if style_group is NoStyleGroupGiven:
-        style_group = stack[-1].style_group
-
-    if style_group is None:
-        new_style = s
+    if style_prefix is None:
+        new_style = style_suffix
     else:
-        new_style = style_group + "_" + s
+        new_style = style_prefix + "_" + style_suffix
 
     return renpy.style.get_style(new_style) # @UndefinedVariable
+
+def prefixed_style(style_suffix):
+    """
+    Combines the default style prefix with a style suffix.
+    """
+
+    return combine_style(stack[-1].style_prefix, style_suffix)
+
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
@@ -430,7 +435,7 @@ class Wrapper(renpy.object.Object):
         if not stack:
             raise Exception("Can't add displayable during init phase.")
 
-        # Pull out the special kwargs, widget_id, at, and style_group.
+        # Pull out the special kwargs, widget_id, at, and style_prefix.
 
         widget_id = kwargs.pop("id", None) #@ReservedAssignment
 
@@ -438,11 +443,13 @@ class Wrapper(renpy.object.Object):
         if not isinstance(at_list, (list, tuple)):
             at_list = [ at_list ]
 
-        style_group = kwargs.pop("style_group", NoStyleGroupGiven)
+        style_prefix = stack[-1].style_prefix
 
-        # Figure out our style_group.
-        if style_group is NoStyleGroupGiven:
-            style_group = stack[-1].style_group
+        if "style_group" in kwargs:
+            style_prefix = kwargs.pop("style_group")
+
+        if "style_prefix" in kwargs:
+            style_prefix = kwargs.pop("style_prefix")
 
         # Figure out the keyword arguments, based on the parameters.
         if self.kwargs:
@@ -472,8 +479,10 @@ class Wrapper(renpy.object.Object):
         else:
             old_main = None
 
-        if self.style and "style" not in keyword:
-            keyword["style"] = style_group_style(self.style, style_group)
+        style_suffix = keyword.pop("style_suffix", None) or self.style
+
+        if style_suffix and ("style" not in keyword):
+            keyword["style"] = combine_style(style_prefix, style_suffix)
 
         try:
             w = self.function(*args, **keyword)
@@ -510,9 +519,9 @@ class Wrapper(renpy.object.Object):
 
         # Update the stack, as necessary.
         if self.one:
-            stack.append(One(w, style_group))
+            stack.append(One(w, style_prefix))
         elif self.many:
-            stack.append(Many(w, self.imagemap, style_group))
+            stack.append(Many(w, self.imagemap, style_prefix))
 
         # If we have an widget_id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
@@ -927,10 +936,10 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     text_kwargs.pop("y_fudge", None)
 
     if style is None:
-        style = style_group_style('button', NoStyleGroupGiven)
+        style = prefixed_style("button")
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, style_group_style('button_text', NoStyleGroupGiven)) # @UndefinedVariable
+        text_style = renpy.style.get_text_style(style, prefixed_style('button_text')) # @UndefinedVariable
 
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -946,10 +955,10 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
     text_kwargs, label_kwargs = renpy.easy.split_properties(kwargs, "text_", "")
 
     if style is None:
-        style = style_group_style('label', NoStyleGroupGiven)
+        style = prefixed_style('label')
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, style_group_style('label_text', NoStyleGroupGiven)) # @UndefinedVariable
+        text_style = renpy.style.get_text_style(style, prefixed_style('label_text')) # @UndefinedVariable
 
     rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -996,7 +1005,7 @@ def _bar(*args, **properties):
                 style = value.get_style()[0]
 
             if isinstance(style, basestring):
-                style = style_group_style(style, NoStyleGroupGiven)
+                style = prefixed_style(style)
 
             properties["style"] = style
 
