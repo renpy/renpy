@@ -391,7 +391,7 @@ _predict_set = set()
 _predict_screen = dict()
 
 # Should the default screens be shown?
-_overlay_screens = True
+_overlay_screens = None
 
 # If we're in a replay, the label of the start of the replay.
 _in_replay = None

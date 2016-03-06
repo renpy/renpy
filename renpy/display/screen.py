@@ -1193,7 +1193,7 @@ def show_overlay_screens(suppress_overlay):
 
     if renpy.store._overlay_screens is None:
         show = show
-    if renpy.store._overlay_screens is True:
+    elif renpy.store._overlay_screens is True:
         show = True
     else:
         show = False
