@@ -28,13 +28,13 @@
           {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
         {%- endfor %}
 
-        <li> <img src="_static/logo.png" width=19 height=21 align=center> 
+        <li> <img src="_static/logo.png" width=19 height=21 align=center>
         <li> <a href="http://www.renpy.org/">Ren'Py Home</a> |
 
         {%- block rootrellink %}
         <li><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a></li>
         {%- endblock %}
-            
+
         {%- for parent in parents %}
           <li><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
         {%- endfor %}
@@ -172,8 +172,8 @@
     {{ sidebar() }}
   {% endblock %}
   </div>
-  
-    
+
+
     <div class="document span20 last">
   {%- block document %}
       <div class="documentwrapper">
@@ -193,7 +193,7 @@
     </div>
 {%- endblock %}
 
-    
+
 {%- block footer %}
 {%- endblock %}
     </div>
@@ -201,14 +201,14 @@
 {%- block relbar2 %}{{ relbar() }}
 {% endblock %}
 
-	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-	<script type="text/javascript"> 
+	<script src="https://www.google.com/jsapi" type="text/javascript"></script>
+	<script type="text/javascript">
 	  google.load('search', '1', {language : 'en' });
 	  google.setOnLoadCallback(function() {
 	    var customSearchControl = new google.search.CustomSearchControl('012476843541036121001:gx3sqkoaxkm');
 	    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
 	    var options = new google.search.DrawOptions();
-	    options.enableSearchboxOnly("http://www.google.com/cse?cx=012476843541036121001:gx3sqkoaxkm");
+	    options.enableSearchboxOnly("https://www.google.com/cse?cx=012476843541036121001:gx3sqkoaxkm");
 	    customSearchControl.draw('cse-search-form', options);
 	  }, true);
 	</script>
