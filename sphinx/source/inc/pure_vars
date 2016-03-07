@@ -14,6 +14,7 @@
 * :func:`ComposeTransition`
 * :func:`ConditionSwitch`
 * :func:`CropMove`
+* :func:`DictInputValue`
 * :func:`DictValue`
 * :func:`Dissolve`
 * :class:`Drag`
@@ -23,9 +24,11 @@
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
+* :func:`FieldInputValue`
 * :func:`FieldValue`
 * :func:`FileDelete`
 * :func:`FilePage`
+* :func:`FilePageNameInputValue`
 * :func:`FileTakeScreenshot`
 * :func:`Fixed`
 * :func:`Flatten`
@@ -88,6 +91,7 @@
 * :func:`RollForward`
 * :func:`Rollback`
 * RotoZoom
+* :func:`ScreenVariableInputValue`
 * :func:`Screenshot`
 * :func:`SelectedIf`
 * :func:`SensitiveIf`
@@ -125,7 +129,7 @@
 * Update
 * :func:`VBox`
 * VariableEditor
-* VariableInputValue
+* :func:`VariableInputValue`
 * :func:`VariableValue`
 * Viewport
 * :func:`VoiceReplay`

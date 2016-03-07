@@ -1,0 +1,41 @@
+.. Automatically generated file - do not modify.
+
+.. function:: DictInputValue(dict, key, default=True)
+    
+    An input value that updates `key` in `dict`.
+    
+    `default`
+        If true, this input can be editable by default.
+
+.. function:: FieldInputValue(object, field, default=True)
+    
+    An input value that updates `field` on `object`.
+    
+    `field`
+        A string giving the name of the field.
+    
+    `default`
+        If true, this input can be editable by default.
+
+.. function:: FilePageNameInputValue(pattern='Page {}', auto='Automatic saves', quick='Quick saves', page=None, default=False)
+
+.. function:: ScreenVariableInputValue(variable, default=True)
+    
+    An input value that updates variable.
+    
+    `variable`
+        A string giving the name of the variable to update.
+    
+    `default`
+        If true, this input can be editable by default.
+
+.. function:: VariableInputValue(variable, default=True)
+    
+    An input value that updates `variable`.
+    
+    `variable`
+        A string giving the name of the variable to update.
+    
+    `default`
+        If true, this input can be editable by default.
+

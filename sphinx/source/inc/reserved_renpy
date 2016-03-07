@@ -19,6 +19,7 @@
 * :func:`ConditionSwitch`
 * :func:`CropMove`
 * DictEquality
+* :func:`DictInputValue`
 * :func:`DictValue`
 * :func:`Dissolve`
 * :class:`Drag`
@@ -31,6 +32,7 @@
 * FactorZoom
 * :func:`Fade`
 * FieldEquality
+* :func:`FieldInputValue`
 * :func:`FieldValue`
 * :func:`FileAction`
 * :func:`FileCurrentPage`
@@ -42,6 +44,7 @@
 * :func:`FileNewest`
 * :func:`FilePage`
 * :func:`FilePageName`
+* :func:`FilePageNameInputValue`
 * :func:`FilePageNext`
 * :func:`FilePagePrevious`
 * :func:`FileSave`
@@ -121,6 +124,7 @@
 * :func:`Rollback`
 * RotoZoom
 * RoundRect
+* :func:`ScreenVariableInputValue`
 * :func:`Screenshot`
 * :func:`SelectedIf`
 * :func:`SensitiveIf`
@@ -164,7 +168,7 @@
 * :class:`Transform`
 * :func:`VBox`
 * VariableEditor
-* VariableInputValue
+* :func:`VariableInputValue`
 * :func:`VariableValue`
 * Viewport
 * VoiceInfo
@@ -186,7 +190,7 @@
 * centered
 * color
 * config
-* :var:`default`
+* default
 * default_transition
 * define
 * :var:`dissolve`
