@@ -5,6 +5,11 @@ Full Changelog
 Ren'Py 6.99.10
 ==============
 
+The new :ref:`init offset <init-offset-statement>` statement makes it
+possible to apply a priority offset to statements that run at init
+time, including ``init``, ``init python``, ``define``, ``default``,
+``style``, and ``transform``.
+
 The `style_group` ui property has been renamed to `style_prefix`, to make
 its function more apparent. (The old name still works, for compatibility with
 older code.) A new `style_suffix` ui property has been added, allowing
