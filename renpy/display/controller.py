@@ -61,12 +61,20 @@ def init():
     if not renpy.game.preferences.pad_enabled:
         return
 
-    pygame_sdl2.controller.init()
-    load_mappings()
+    try:
+        pygame_sdl2.controller.init()
+        load_mappings()
+    except:
+        renpy.display.log.exception()
 
     for i in range(pygame_sdl2.controller.get_count()):
-        c = Controller(i)
-        renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
+
+        try:
+            c = Controller(i)
+            renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
+        except:
+            renpy.display.log.exception()
+
 
 # A map from controller index to controller object.
 controllers = { }
