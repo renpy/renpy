@@ -1801,7 +1801,7 @@ def image_statement(l, loc):
     rv = ast.Image(loc, name, expr, atl)
 
     if not l.init:
-        rv = ast.Init(loc, [ rv ], 500 + l.init_offset)
+        rv = ast.Init(loc, [ rv ], 990 + l.init_offset)
 
     l.advance()
 
