@@ -74,6 +74,14 @@ pure_functions = {
     "ui.callsinnewcontext",
     "ui.invokesinnewcontext",
     "ui.gamemenus",
+
+    # renpy.py
+
+    "renpy.version_string",
+    "renpy.version_only",
+    "renpy.version_tuple",
+    "renpy.version_name",
+    "renpy.license",
     }
 
 constants = { "config", "style" } | always_constants | pure_functions

@@ -1582,7 +1582,7 @@ def screenshot(filename):
 @renpy_pure
 def version(tuple=False): #@ReservedAssignment
     """
-    :doc: other
+    :doc: renpy_version
 
     If `tuple` is false, returns a string containing "Ren'Py ", followed by
     the current version of Ren'Py.
@@ -1596,6 +1596,11 @@ def version(tuple=False): #@ReservedAssignment
 
     return renpy.version
 
+version_string = renpy.version
+version_only = renpy.version_only
+version_name = renpy.version_name
+version_tuple = renpy.version_tuple
+license = "" # @ReservedAssignment
 
 def transition(trans, layer=None, always=False, force=False):
     """
