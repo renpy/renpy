@@ -242,6 +242,27 @@ init -1200 python in _gamepad:
             renpy.display.controller.start(index)
 
 
+init -1200 python:
+
+    def GamepadExists():
+        """
+        :doc: gamepad
+
+        A function that returns true if a gamepad is present, and false otherwise.
+        """
+
+        return renpy.display.controller.exists()
 
 
+    def GamepadCalibrate():
+        """
+        :doc: gamepad
+
+        An action that invokes the gamepad calibration routine.
+        """
+
+        if GamepadExists():
+            return ui.invokesinnewcontext(_gamepad.calibrate)
+        else:
+            return None
 

@@ -120,6 +120,12 @@ names used in the default preferences screen.
 
 .. include:: inc/preference_action
 
+Gamepad
+-------
+
+These functions and actions work with the gamepad.
+
+.. include:: inc/gamepad
 
 File Functions
 --------------
