@@ -121,6 +121,9 @@ init -1900 python:
 
             config.play_channel = "sound"
 
+        if version <= (6, 99, 8):
+            config.allow_help_screen = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

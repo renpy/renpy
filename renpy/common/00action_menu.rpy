@@ -291,11 +291,17 @@ init -1500 python:
          Displays help.
 
          `help`
-              If this is a string giving a label in the program, then
-              that label is called in a new context when the button is
-              chosen. Otherwise, it should be a string giving a file
-              that is opened in a web browser. If None, the value of
-              config.help is used in the same way.
+            A string that is used to find help. This is used in the
+            following way:
+
+            * If a screen with this name exists, that screen is shown
+              using :func:`ShowMenu`.
+            * If a label with this name exists, the label is called in
+              a new context.
+            * Otherwise, this is interpreted as giving the name of a file
+              that should be opened in a web browser.
+
+            If None, :var:`config.help` is used to find this.
          """
 
         def __init__(self, help=None):
