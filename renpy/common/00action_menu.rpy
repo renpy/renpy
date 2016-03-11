@@ -286,22 +286,24 @@ init -1500 python:
     @renpy.pure
     class Help(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Displays help.
+        Displays help.
 
-         `help`
+        If a screen named ``help`` is defined, that screen is displayed
+        using :func:`ShowMenu` and `help` is ignored.
+
+        `help`
             A string that is used to find help. This is used in the
             following way:
 
-            * If a screen with this name exists, that screen is shown
-              using :func:`ShowMenu`.
             * If a label with this name exists, the label is called in
               a new context.
             * Otherwise, this is interpreted as giving the name of a file
               that should be opened in a web browser.
 
-            If None, :var:`config.help` is used to find this.
+            If `help` is None, :var:`config.help` is used as the default
+            value.
          """
 
         def __init__(self, help=None):
