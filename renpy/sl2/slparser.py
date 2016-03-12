@@ -823,7 +823,7 @@ class UseParser(Parser):
         return slast.SLUse(loc, target, args, id_expr, block)
 
 UseParser("use")
-
+Keyword("style_prefix")
 
 class TranscludeParser(Parser):
 

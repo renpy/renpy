@@ -1713,7 +1713,12 @@ class SLTransclude(SLNode):
         ctx.showif = context.showif
         ctx.uses_scope = context.uses_scope
 
-        context.transclude.execute(ctx)
+        try:
+            renpy.ui.stack.append(ctx)
+            context.transclude.keywords(ctx)
+            context.transclude.execute(ctx)
+        finally:
+            renpy.ui.stack.pop()
 
         if ctx.fail:
             context.fail = True
@@ -1737,7 +1742,6 @@ class SLScreen(SLBlock):
     """
 
     version = 0
-
 
     # This screen's AST when the transcluded block is entirely
     # constant (or there is no transcluded block at all). This may be
