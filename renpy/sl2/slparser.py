@@ -824,6 +824,7 @@ class UseParser(Parser):
 
 UseParser("use")
 Keyword("style_prefix")
+Keyword("style_group")
 
 class TranscludeParser(Parser):
 
