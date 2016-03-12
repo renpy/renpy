@@ -540,7 +540,7 @@ def mutator(method):
         mutated = renpy.game.log.mutated #@UndefinedVariable
 
         if id(self) not in mutated:
-            mutated[id(self)] = ( weakref.ref(self), self.get_rollback())
+            mutated[id(self)] = ( weakref.ref(self), self._clean())
             mutate_flag = True
 
         return method(self, *args, **kwargs)
@@ -583,11 +583,30 @@ class RevertableList(list):
 
     del wrapper
 
-    def get_rollback(self):
+    def _clean(self):
+        """
+        Gets a clean copy of this object before any mutation occurs.
+        """
+
         return self[:]
 
-    def rollback(self, old):
-        self[:] = old
+    def _compress(self, clean):
+        """
+        Takes a clean copy of this object, compresses it, and returns compressed
+        information that can be passed to rollback.
+        """
+
+        return clean
+
+    def _rollback(self, compressed):
+        """
+        Rolls this object back, using the information created by _compress.
+
+        Since compressed can come from a save file, this method also has to
+        recognize and deal with old data.
+        """
+
+        self[:] = compressed
 
 def revertable_range(*args):
     return RevertableList(range(*args))
@@ -629,14 +648,18 @@ class RevertableDict(dict):
         rv.update(self)
         return rv
 
-    def get_rollback(self):
+    def _clean(self):
         return self.items()
 
-    def rollback(self, old):
+    def _compress(self, clean):
+        return clean
+
+    def _rollback(self, compressed):
         self.clear()
 
-        for k, v in old:
+        for k, v in compressed:
             self[k] = v
+
 
 class RevertableSet(sets.Set):
 
@@ -687,12 +710,15 @@ class RevertableSet(sets.Set):
 
     del wrapper
 
-    def get_rollback(self):
+    def _clean(self):
         return list(self)
 
-    def rollback(self, old):
+    def _compress(self, clean):
+        return clean
+
+    def _rollback(self, compressed):
         sets.Set.clear(self)
-        sets.Set.update(self, old)
+        sets.Set.update(self, compressed)
 
 
 class RevertableObject(object):
@@ -715,12 +741,15 @@ class RevertableObject(object):
     __setattr__ = mutator(__setattr__)
     __delattr__ = mutator(__delattr__)
 
-    def get_rollback(self):
+    def _clean(self):
         return self.__dict__.copy()
 
-    def rollback(self, old):
+    def _compress(self, clean):
+        return clean
+
+    def _rollback(self, compressed):
         self.__dict__.clear()
-        self.__dict__.update(old)
+        self.__dict__.update(compressed)
 
 
 ##### An object that handles deterministic randomness, or something.
@@ -909,7 +938,7 @@ class Rollback(renpy.object.Object):
 
         for obj, roll in reversed(self.objects):
             if roll is not None:
-                obj.rollback(roll)
+                obj._rollback(roll)
 
         for name, changes in self.stores.iteritems():
             store = store_dicts.get(name, None)
@@ -1075,13 +1104,14 @@ class RollbackLog(renpy.object.Object):
                     if v is None:
                         continue
 
-                    (ref, roll) = v
+                    (ref, clean) = v
 
                     obj = ref()
                     if obj is None:
                         continue
 
-                    self.current.objects.append((obj, roll))
+                    compressed = obj._compress(clean)
+                    self.current.objects.append((obj, compressed))
 
                 break
 
