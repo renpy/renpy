@@ -547,6 +547,80 @@ def mutator(method):
 
     return do_mutation
 
+
+class CompressedList(object):
+    """
+    Compresses the changes in a queue-like list. What this does is to try
+    to find a central sub-list for which has objects in both lists. It
+    stores the location of that in the new list, and then elements before
+    and after in the sub-list.
+
+    This only really works if the objects in the list are unique, but the
+    results are efficient even if this doesn't work.
+    """
+
+    def __init__(self, old, new):
+
+        # Pick out a pivot element near the center of the list.
+        new_center = (len(new) - 1) // 2
+        new_pivot = new[new_center]
+
+        # Find an element in the old list corresponding to the pivot.
+        old_half = (len(old) - 1) // 2
+
+        for i in range(0, old_half + 1):
+
+            if old[old_half - i] is new_pivot:
+                old_center = old_half - i
+                break
+
+            if old[old_half + i] is new_pivot:
+                old_center = old_half + i
+                break
+        else:
+            # If we couldn't, give up.
+            self.pre = old
+            self.start = 0
+            self.end = 0
+            self.post = [ ]
+
+            return
+
+        # Figure out the position of the overlap in the center of the two lists.
+        new_start = new_center
+        new_end = new_center + 1
+
+        old_start = old_center
+        old_end = old_center + 1
+
+        len_new = len(new)
+        len_old = len(old)
+
+        while new_start and old_start and (new[new_start - 1] is old[old_start - 1]):
+            new_start -= 1
+            old_start -= 1
+
+        while (new_end < len_new) and (old_end < len_old) and (new[new_end] is old[old_end]):
+            new_end += 1
+            old_end += 1
+
+        # Now that we have this, we can put together the object.
+        self.pre = old[0:old_start]
+        self.start = new_start
+        self.end = new_end
+        self.post = old[old_end:]
+
+    def decompress(self, new):
+        return self.pre + new[self.start:self.end] + self.post
+
+    def __repr__(self):
+        return "<CompressedList {} [{}:{}] {}>".format(
+            self.pre,
+            self.start,
+            self.end,
+            self.post)
+
+
 class RevertableList(list):
 
     def __init__(self, *args):
@@ -596,7 +670,13 @@ class RevertableList(list):
         information that can be passed to rollback.
         """
 
-        return clean
+        if not self or not clean:
+            return clean
+
+        if len(self) < renpy.config.list_compression_length or len(clean) < renpy.config.list_compression_length:
+            return clean
+
+        return CompressedList(clean, self)
 
     def _rollback(self, compressed):
         """
@@ -606,7 +686,10 @@ class RevertableList(list):
         recognize and deal with old data.
         """
 
-        self[:] = compressed
+        if isinstance(compressed, CompressedList):
+            self[:] = compressed.decompress(self)
+        else:
+            self[:] = compressed
 
 def revertable_range(*args):
     return RevertableList(range(*args))
