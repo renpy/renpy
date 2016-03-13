@@ -1037,7 +1037,7 @@ def _autobar(range, start, end, time, **properties): #@ReservedAssignment
 
 autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
-_viewport = Wrapper(renpy.display.layout.Viewport, one=True, replaces=True, style='viewport')
+_viewport = Wrapper(renpy.display.viewport.Viewport, one=True, replaces=True, style='viewport')
 
 def viewport(scrollbars=None, **properties):
 

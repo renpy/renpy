@@ -393,6 +393,7 @@ def import_all():
     update_path(renpy.angle)
 
     import renpy.display.layout
+    import renpy.display.viewport
     import renpy.display.motion # layout @UnresolvedImport
     import renpy.display.behavior # layout @UnresolvedImport
     import renpy.display.transition # core, layout @UnresolvedImport
