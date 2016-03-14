@@ -174,17 +174,21 @@ class Viewport(renpy.display.layout.Container):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
 
-    def render(self, width, height, st, at):
 
-        self.width = width
-        self.height = height
 
-        child_width = self.child_width or width
-        child_height = self.child_height or height
+    def update_offsets(self, cw, ch, st):
+        """
+        This is called by render once we know the width (`cw`) and height (`ch`)
+        of all the children. It returns a pair of offsets that should be applied
+        to all children.
 
-        surf = renpy.display.render.render(self.child, child_width, child_height, st, at)
+        It also requires `st`, since hit handles edge scrolling.
 
-        cw, ch = surf.get_size()
+        The returned offsets will be negative or zero.
+        """
+
+        width = self.width
+        height = self.height
 
         if not self.style.xfill:
             width = min(cw, width)
@@ -228,6 +232,22 @@ class Viewport(renpy.display.layout.Container):
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
+        return cxo, cyo
+
+
+    def render(self, width, height, st, at):
+
+        self.width = width
+        self.height = height
+
+        child_width = self.child_width or width
+        child_height = self.child_height or height
+
+        surf = renpy.display.render.render(self.child, child_width, child_height, st, at)
+
+        cw, ch = surf.get_size()
+        cxo, cyo = self.update_offsets(cw, ch, st)
+
         self.offsets = [ (cxo, cyo) ]
 
         rv = renpy.display.render.Render(width, height)
@@ -254,13 +274,13 @@ class Viewport(renpy.display.layout.Container):
         else:
             self.edge_last_st = None
 
-
     def event(self, ev, x, y, st):
 
         self.xoffset = None
         self.yoffset = None
 
         rv = super(Viewport, self).event(ev, x, y, st)
+
         if rv is not None:
             return rv
 
