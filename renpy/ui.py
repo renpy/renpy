@@ -1037,12 +1037,14 @@ def _autobar(range, start, end, time, **properties): #@ReservedAssignment
 
 autobar = Wrapper(_autobar)
 transform = Wrapper(renpy.display.motion.Transform, one=True, style='transform')
-_viewport = Wrapper(renpy.display.viewport.Viewport, one=True, replaces=True, style='viewport')
 
-def viewport(scrollbars=None, **properties):
+_viewport = Wrapper(renpy.display.viewport.Viewport, one=True, replaces=True, style='viewport')
+_vpgrid = Wrapper(renpy.display.viewport.VPGrid, many=True, replaces=True, style='viewport')
+
+def viewport_common(vpfunc, scrollbars=None, **properties):
 
     if scrollbars is None:
-        return _viewport(**properties)
+        return vpfunc(**properties)
 
     viewport_properties = { }
     side_properties = { }
@@ -1058,7 +1060,7 @@ def viewport(scrollbars=None, **properties):
     if scrollbars == "vertical":
         side("c r", **side_properties)
 
-        rv = _viewport(**viewport_properties)
+        rv = vpfunc(**viewport_properties)
         addable = stack.pop()
 
         vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar")
@@ -1071,7 +1073,7 @@ def viewport(scrollbars=None, **properties):
     elif scrollbars == "horizontal":
         side("c b", **side_properties)
 
-        rv = _viewport(**viewport_properties)
+        rv = vpfunc(**viewport_properties)
         addable = stack.pop()
 
         scrollbar(adjustment=rv.xadjustment, alt=alt + " horizontal scrollbar")
@@ -1085,7 +1087,7 @@ def viewport(scrollbars=None, **properties):
 
         side("c r b", **side_properties)
 
-        rv = _viewport(**viewport_properties)
+        rv = vpfunc(**viewport_properties)
         addable = stack.pop()
 
         vscrollbar(adjustment=rv.yadjustment, alt=alt + " vertical scrollbar")
@@ -1095,6 +1097,12 @@ def viewport(scrollbars=None, **properties):
         stack.append(addable)
 
         return rv
+
+def viewport(**properties):
+    return viewport_common(_viewport, **properties)
+
+def vpgrid(**properties):
+    return viewport_common(_vpgrid, **properties)
 
 conditional = Wrapper(renpy.display.behavior.Conditional, one=True)
 timer = Wrapper(renpy.display.behavior.Timer, replaces=True)

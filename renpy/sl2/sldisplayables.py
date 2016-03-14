@@ -294,6 +294,23 @@ def sl2viewport(**kwargs):
 
     return rv
 
+def sl2vpgrid(**kwargs):
+    """
+    This converts the output of renpy.ui.viewport into something that
+    sl.displayable can use.
+    """
+
+    d = renpy.ui.detached()
+    vp = renpy.ui.vpgrid(**kwargs)
+
+    renpy.ui.stack.pop()
+
+    rv = d.child
+    rv._main = vp
+    rv._composite_parts = list(rv.children)
+
+    return rv
+
 DisplayableParser("viewport", sl2viewport, "viewport", 1, replaces=True)
 Keyword("child_size")
 Keyword("mousewheel")
@@ -304,6 +321,24 @@ Keyword("yadjustment")
 Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
+Style("xminimum")
+Style("yminimum")
+PrefixStyle("side_", "spacing")
+add(side_position_properties)
+
+DisplayableParser("vpgrid", sl2vpgrid, "viewport", many, replaces=True)
+Keyword("rows")
+Keyword("cols")
+Keyword("child_size")
+Keyword("mousewheel")
+Keyword("draggable")
+Keyword("edgescroll")
+Keyword("xadjustment")
+Keyword("yadjustment")
+Keyword("xinitial")
+Keyword("yinitial")
+Keyword("scrollbars")
+Style("spacing")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")

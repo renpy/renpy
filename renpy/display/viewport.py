@@ -174,8 +174,6 @@ class Viewport(renpy.display.layout.Container):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
 
-
-
     def update_offsets(self, cw, ch, st):
         """
         This is called by render once we know the width (`cw`) and height (`ch`)
@@ -371,5 +369,89 @@ class Viewport(renpy.display.layout.Container):
         self.yoffset = offset
         renpy.display.render.redraw(self, 0)
 
-
+# For compatibility with old saves.
 renpy.display.layout.Viewport = Viewport
+
+
+class VPGrid(Viewport):
+
+    __version__ = Viewport.__version__
+
+    def __init__(self, cols=None, rows=None, transpose=None, **properties):
+
+        super(VPGrid, self).__init__(**properties)
+
+        if (rows is None) and (cols is None):
+            raise Exception("A VPGrid must be given the rows or cols property.")
+
+        if (rows is not None) and (cols is None) and (transpose is None):
+            transpose = True
+
+        self.grid_cols = cols
+        self.grid_rows = rows
+        self.grid_transpose = transpose
+
+
+    def render(self, width, height, st, at):
+
+        self.width = width
+        self.height = height
+
+        child_width = self.child_width or width
+        child_height = self.child_height or height
+
+        if not self.children:
+            self.offsets = [ ]
+            return renpy.display.render.Render(0, 0)
+
+        # The number of children.
+        lc = len(self.children)
+
+        # Figure out the number of columns and rows.
+        cols = self.grid_cols
+        rows = self.grid_rows
+
+        if cols is None:
+            cols = lc // rows
+            if rows * cols < lc:
+                cols += 1
+
+        if rows is None:
+            rows = lc // cols
+            if rows * cols < lc:
+                rows += 1
+
+        # Determine the total size.
+        spacing = self.style.spacing
+        rend = renpy.display.render.render(self.children[0], child_width, child_height, st, at)
+        cw, ch = rend.get_size()
+
+        tw = (cw + spacing) * cols - spacing
+        th = (ch + spacing) * rows - spacing
+
+        cxo, cyo = self.update_offsets(tw, th, st)
+
+        self.offsets = [ ]
+
+        # Render everything.
+        rv = renpy.display.render.Render(tw, th)
+
+        for index, c in enumerate(self.children):
+
+            if self.grid_transpose:
+                x = index // rows
+                y = index % rows
+            else:
+                x = index % cols
+                y = index // cols
+
+            x = x * (cw + spacing) + cxo
+            y = y * (ch + spacing) + cyo
+
+            self.offsets.append((x, y))
+
+            # TODO: See if we're on screen.
+            surf = renpy.display.render.render(c, child_width, child_height, st, at)
+            rv.blit(surf, (x, y))
+
+        return rv
