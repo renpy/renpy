@@ -230,7 +230,7 @@ class Viewport(renpy.display.layout.Container):
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
-        return cxo, cyo
+        return cxo, cyo, width, height
 
 
     def render(self, width, height, st, at):
@@ -244,7 +244,7 @@ class Viewport(renpy.display.layout.Container):
         surf = renpy.display.render.render(self.child, child_width, child_height, st, at)
 
         cw, ch = surf.get_size()
-        cxo, cyo = self.update_offsets(cw, ch, st)
+        cxo, cyo, width, height = self.update_offsets(cw, ch, st)
 
         self.offsets = [ (cxo, cyo) ]
 
@@ -429,12 +429,12 @@ class VPGrid(Viewport):
         tw = (cw + spacing) * cols - spacing
         th = (ch + spacing) * rows - spacing
 
-        cxo, cyo = self.update_offsets(tw, th, st)
+        cxo, cyo, width, height = self.update_offsets(tw, th, st)
 
         self.offsets = [ ]
 
         # Render everything.
-        rv = renpy.display.render.Render(tw, th)
+        rv = renpy.display.render.Render(width, height)
 
         for index, c in enumerate(self.children):
 
@@ -450,8 +450,21 @@ class VPGrid(Viewport):
 
             self.offsets.append((x, y))
 
-            # TODO: See if we're on screen.
+            if x + cw < 0:
+                continue
+
+            if y + ch < 0:
+                continue
+
+            if x >= width:
+                continue
+
+            if y >= height:
+                continue
+
             surf = renpy.display.render.render(c, child_width, child_height, st, at)
             rv.blit(surf, (x, y))
+
+            # TODO: xfill, yfill, place, not blit.
 
         return rv
