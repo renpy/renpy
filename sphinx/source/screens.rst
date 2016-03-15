@@ -1058,6 +1058,48 @@ id.
              bar value XScrollValue("vp")
              vbar value YScrollValue("vp")
 
+
+.. _sl-vpgrid:
+
+Vpgrid
+------
+
+A vpgrid (viewport grid) combines a viewport and grid into a single
+displayable. The vpgrid takes multiple children, like a grid, and
+rendering of those children is optimized so that only children
+being displayed within the viewport are rendered.
+
+A vpgrid assumes all the cells are the same size, and the size of
+the first child. If a vpgrid appears to be rendering incorrectly,
+please check that all children have of the same side.
+
+A vpgrid must be given at least one of the `cols` and `rows` properties,
+but may be given both. If one is omitted or None, it is automatically
+determind from the other and the number of children.
+
+Vpgrids take the the following properties:
+
+`cols`
+    The number of columns in the grid.
+
+`rows`
+    The number of rows in the grid.
+
+`transpose`
+    If true, columns are filled before rows. The default of this depends
+    on the `cols` ans `rows` properties. If `cols` is given, columns
+    are filled before rows, otherwise rows are filled before columns.
+
+`spacing`
+
+    The spacing between columns in pixes.
+
+In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can.
+It takes multiple children, up to the size of the grid. If there are not
+enough children to fill all cells, some cells are not rendered.
+
+
+
 .. _sl-window:
 
 Window
