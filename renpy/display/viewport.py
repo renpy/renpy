@@ -377,9 +377,9 @@ class VPGrid(Viewport):
 
     __version__ = Viewport.__version__
 
-    def __init__(self, cols=None, rows=None, transpose=None, **properties):
+    def __init__(self, cols=None, rows=None, transpose=None, style="vpgrid", **properties):
 
-        super(VPGrid, self).__init__(**properties)
+        super(VPGrid, self).__init__(style=style, **properties)
 
         if (rows is None) and (cols is None):
             raise Exception("A VPGrid must be given the rows or cols property.")
@@ -429,6 +429,15 @@ class VPGrid(Viewport):
         tw = (cw + spacing) * cols - spacing
         th = (ch + spacing) * rows - spacing
 
+
+        if self.style.xfill:
+            tw = child_width
+            cw = (tw - (cols - 1) * spacing) / cols
+
+        if self.style.yfill:
+            th = child_height
+            ch = (th - (rows - 1) * spacing) / rows
+
         cxo, cyo, width, height = self.update_offsets(tw, th, st)
 
         self.offsets = [ ]
@@ -448,23 +457,25 @@ class VPGrid(Viewport):
             x = x * (cw + spacing) + cxo
             y = y * (ch + spacing) + cyo
 
-            self.offsets.append((x, y))
-
             if x + cw < 0:
+                self.offsets.append((x, y))
                 continue
 
             if y + ch < 0:
+                self.offsets.append((x, y))
                 continue
 
             if x >= width:
+                self.offsets.append((x, y))
                 continue
 
             if y >= height:
+                self.offsets.append((x, y))
                 continue
 
-            surf = renpy.display.render.render(c, child_width, child_height, st, at)
-            rv.blit(surf, (x, y))
+            surf = renpy.display.render.render(c, cw, ch, st, at)
+            pos = c.place(rv, x, y, cw, ch, surf)
 
-            # TODO: xfill, yfill, place, not blit.
+            self.offsets.append(pos)
 
         return rv

@@ -326,7 +326,7 @@ Style("yminimum")
 PrefixStyle("side_", "spacing")
 add(side_position_properties)
 
-DisplayableParser("vpgrid", sl2vpgrid, "viewport", many, replaces=True)
+DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True)
 Keyword("rows")
 Keyword("cols")
 Keyword("child_size")

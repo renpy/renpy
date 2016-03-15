@@ -85,6 +85,7 @@ init -1800:
     style ruby_text is default
 
     style viewport is default
+    style vpgrid is viewport
     style drag is default
 
     style motion is default
@@ -337,6 +338,10 @@ init -1800:
         clipping True
         xfill True
         yfill True
+
+    style vpgrid:
+        xfill False
+        yfill False
 
     style drag:
         focus_mask True
