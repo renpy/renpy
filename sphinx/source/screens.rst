@@ -1098,6 +1098,29 @@ In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can.
 It takes multiple children, up to the size of the grid. If there are not
 enough children to fill all cells, some cells are not rendered.
 
+::
+
+    screen vpgrid_test():
+
+        vpgrid:
+
+            cols 2
+            spacing 5
+            draggable True
+            mousewheel True
+
+            scrollbars "vertical"
+
+            # Since we have scrollbars, we have to position the side, rather
+            # than the vpgrid proper.
+            side_xalign 0.5
+
+            for i in range(1, 100):
+
+                textbutton "Button [i]":
+                    xysize (200, 50)
+                    action Return(i)
+
 
 
 .. _sl-window:
