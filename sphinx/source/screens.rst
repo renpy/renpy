@@ -1092,7 +1092,7 @@ Vpgrids take the the following properties:
 
 `spacing`
 
-    The spacing between columns in pixes.
+    The spacing between columns in pixels.
 
 In addition, a vpgrid takes all properties a :ref:`viewport <sl-viewport>` can.
 It takes multiple children, up to the size of the grid. If there are not
