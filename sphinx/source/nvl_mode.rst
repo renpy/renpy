@@ -167,31 +167,6 @@ you to pick the one that is most appropriate to the game you are creating.
 
     define s = Character(None, kind=nvl)
 
-Customizing Menus
------------------
-
-There are a few styles that control the look of the menus. Here's some
-code showing how to customize them. See :doc:`style` for more information
-about styles. ::
-
-    init python:
-
-        # The color of a menu choice when it isn't hovered.
-        style.nvl_menu_choice.idle_color = "#ccccccff"
-
-        # The color of a menu choice when it is hovered.
-        style.nvl_menu_choice.hover_color = "#ffffffff"
-
-        # The color of the background of a menu choice, when it isn't
-        # hovered.
-        style.nvl_menu_choice_button.idle_background = "#00000000"
-
-        # The color of the background of a menu choice, when it is
-        # hovered.
-        style.nvl_menu_choice_button.hover_background = "#ff000044"
-
-        # How far from the left menu choices should be indented.
-        style.nvl_menu_choice_button.left_margin = 20
 
 Config Variables
 ----------------
@@ -226,32 +201,6 @@ The following config variables control nvl-related functionality.
 .. var:: config.nvl_paged_rollback = False
 
     If true, NVL-mode rollback will occur a full page at a time.
-
-
-Customizing the NVL window
---------------------------
-
-There are a few styles that control the NVL window; here's some code showing
-how to customize them.  See :doc:`style` for more information
-about styles. ::
-
-    init python:
-
-        # Set the background of the NVL window; this image should be the
-        # same size as the screen.
-        style.nvl_window.background = "nvl_window.png"
-
-        # Add some additional padding around the contents of the NVL window.
-        # This keeps the text inside the borders of our image.
-        style.nvl_window.xpadding = 55
-        style.nvl_window.ypadding = 55
-
-        # Set the spacing between each block of text on the page.
-        # The default is 10 pixels.
-        style.nvl_vbox.box_spacing = 10
-
-You can also completely customize the screen used to display NVL text, which
-is named ``nvl``; see :ref:`nvl-screen`.
 
 
 Paged Rollback
