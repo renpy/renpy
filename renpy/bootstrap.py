@@ -204,11 +204,6 @@ def bootstrap(renpy_base):
 
     sys.path.insert(0, basedir)
 
-    # If we're not given a command, show the presplash.
-    if args.command == "run" and not renpy.mobile:
-        import renpy.display.presplash #@Reimport
-        renpy.display.presplash.start(basedir, gamedir)
-
     # If we're on a mac, install our own os.start.
     if renpy.macintosh:
         os.startfile = mac_start
@@ -232,6 +227,11 @@ You may be using a system install of python. Please run {0}.sh,
 """.format(name)
 
         raise
+
+    # If we're not given a command, show the presplash.
+    if args.command == "run" and not renpy.mobile:
+        import renpy.display.presplash #@Reimport
+        renpy.display.presplash.start(basedir, gamedir)
 
     # Ditto for the Ren'Py module.
     try:
