@@ -687,6 +687,18 @@ init python in distribute:
             self.add_file_list_hash("rapt")
             self.add_file_list_hash("renios")
 
+            tmp_fn = self.temp_filename("renpy.py")
+
+            with open(os.path.join(config.renpy_base, "renpy.py"), "rb") as f:
+                data = f.read()
+
+            with open(tmp_fn, "wb") as f:
+                f.write("#!/usr/bin/env python2\n")
+                f.write(data)
+
+            self.add_file("source_only", "renpy.py", tmp_fn, True)
+
+
         def write_plist(self):
 
             display_name = self.build['display_name']
@@ -902,7 +914,7 @@ init python in distribute:
 
             update = { variant : { "version" : self.update_version, "pretty_version" : self.pretty_version, "files" : update_files, "directories" : update_directories, "xbit" : update_xbit } }
 
-            if self.include_update and (variant not in [ 'ios', 'android']):
+            if self.include_update and (variant not in [ 'ios', 'android', 'source' ]):
 
                 update_fn = os.path.join(self.destination, filename + ".update.json")
 

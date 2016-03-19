@@ -293,7 +293,7 @@ init python:
 
         build.classify_renpy(pattern + "/**", source)
 
-    build.classify_renpy("renpy.py", "source")
+    build.classify_renpy("renpy.py", "binary")
     source_and_binary("renpy")
 
     # games.
@@ -352,7 +352,7 @@ init python:
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2", "source binary")
-    build.package("source", "tar.bz2", "source", update=False)
+    build.package("source", "tar.bz2", "source source_only", update=False)
 
     build.package("jedit", "zip", "jedit", dlc=True)
     build.package("editra-linux", "tar.bz2", "editra-all editra-linux", dlc=True)
