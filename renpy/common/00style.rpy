@@ -27,6 +27,7 @@ init -1800 python:
     # The style hierarchy root has to be initialized through python
     # code.
     style.default = Style(None)
+    style.empty = Style(None)
 
     # Fix up some styles originally defined in _errorhandling.rpym.
     style.image = Style(style.default)
@@ -226,6 +227,9 @@ init -1800:
 
         # Viewport properties
         clipping False
+
+    style empty:
+        take default
 
     # Boxes
 
