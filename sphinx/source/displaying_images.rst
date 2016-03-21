@@ -137,7 +137,7 @@ displayable. For example::
 The image statement must be run at init-time, before game code
 runs. When not contained inside an init block, image statements are
 run at init-time, as if they were placed inside an init block of
-priority 0.
+priority 500.
 
 See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
 

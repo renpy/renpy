@@ -10,6 +10,10 @@ possible to apply a priority offset to statements that run at init
 time, including ``init``, ``init python``, ``define``, ``default``,
 ``style``, and ``transform``.
 
+The default init priority of ``image`` statements has been changed from 990
+to 500, so that larger offsets can be used with :ref:`init offset <init-offset-statement>`
+without sending their init priority out of the range -999 to 999.
+
 The `style_group` ui property has been renamed to `style_prefix`, to make
 its function more apparent. (The old name still works, for compatibility with
 older code.) A new `style_suffix` ui property has been added, allowing
