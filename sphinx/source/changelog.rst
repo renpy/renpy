@@ -5,6 +5,50 @@ Full Changelog
 Ren'Py 6.99.10
 ==============
 
+Fixes
+-----
+
+This release contains multiple fixes to regressions that affected some, but not
+all, players and creators. Upgrading from Ren'Py 6.99.9 is strongly recommended.
+
+* Problems opening a DirectInput gamepad or joystick in exclusive mode could
+  prevent Ren'Py from starting.
+
+* A failure to preload a library prevented Ren'Py from starting on some
+  Android devices.
+
+Translation
+-----------
+
+
+Other Changes
+-------------
+
+The :ref:`input <sl-input>` widget now accepts
+:ref:`input values <input-values>` Input values allow an input to
+directly update a variable, field, or dict, and also make it possible
+to have multiple inputs displayed at the same time.
+
+The new :propref:`key_event` style property controls when events are
+passed to the children of a button. This may need to be set to true
+when a button controls the focus of an input value.
+
+The new :ref:`vpgrid <sl-vpgrid>` widget combines aspects of a viewport
+and a grid with more efficient rendering. Given the requirement that all
+elements of the grid are the same size, only elements that are visible to
+the player will be rendered.
+
+The ``yesno_prompt`` screen has been renamed to ``confirm``, with the old
+name being retained as an alias when a :ref:`confirm screen <confirm-screen>`
+is not present.
+
+A screen named ``help`` will now be used by the :func:`Help` action if
+it exists.
+
+The ``audio`` channel has been changed to play only one sound at a time
+while skipping through the game, to prevent a cacophony of sound while
+the player skips.
+
 The new :ref:`init offset <init-offset-statement>` statement makes it
 possible to apply a priority offset to statements that run at init
 time, including ``init``, ``init python``, ``define``, ``default``,
@@ -18,6 +62,15 @@ The `style_group` ui property has been renamed to `style_prefix`, to make
 its function more apparent. (The old name still works, for compatibility with
 older code.) A new `style_suffix` ui property has been added, allowing
 the same screen code to be reused with multiple style prefixes.
+
+The `style_prefix` ui property may now be applied to transcluded blocks.
+
+The new :func:`GamepadExists` function and :func:`GamepadCalibrate`
+action expose gamepad detection and calibration to screen language.
+
+The time required to take a screenshot has been reduced by decreasing the
+compression level used.
+
 
 Ren'Py 6.99.9
 =============

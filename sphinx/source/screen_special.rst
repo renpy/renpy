@@ -573,11 +573,12 @@ display of the game.
         style.soundtest_button.xalign = 1.0
 
 .. _yesno-prompt-screen:
+.. _confirm-screem:
 
-Yesno_Prompt
-------------
+Confirm
+-------
 
-The ``yesno_prompt`` message is used to ask yes/no choices of the
+The ``confirm`` screen is used to ask yes/no choices of the
 user. It takes the following parameters:
 
 `message`
@@ -601,9 +602,12 @@ user. It takes the following parameters:
 `no_action`
     The action to run when the user picks "No".
 
+Until Ren'Py 6.99.10, this screen was known as the ``yesno_prompt`` screen.
+If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
+
 ::
 
-    screen yesno_prompt(message, yes_action, no_action):
+    screen confirm(message, yes_action, no_action):
 
         modal True
 
@@ -611,7 +615,7 @@ user. It takes the following parameters:
             style "gm_root"
 
         frame:
-            style_prefix "yesno_prompt"
+            style_prefix "confirm"
 
             xfill True
             xmargin 50
