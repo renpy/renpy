@@ -20,6 +20,9 @@ all, players and creators. Upgrading from Ren'Py 6.99.9 is strongly recommended.
 Translation
 -----------
 
+This release features a new Greek translation of the launcher, contributed by
+George Economidis.
+
 
 Other Changes
 -------------

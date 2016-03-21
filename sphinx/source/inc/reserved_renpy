@@ -27,7 +27,6 @@
 * DynamicCharacter
 * :func:`DynamicDisplayable`
 * :func:`DynamicImage`
-* :class:`Editor`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
@@ -60,6 +59,8 @@
 * :func:`Frame`
 * :func:`Function`
 * :class:`Gallery`
+* :func:`GamepadCalibrate`
+* :func:`GamepadExists`
 * :func:`Grid`
 * :func:`HBox`
 * :func:`Help`
@@ -167,7 +168,6 @@
 * :class:`Tooltip`
 * :class:`Transform`
 * :func:`VBox`
-* VariableEditor
 * :func:`VariableInputValue`
 * :func:`VariableValue`
 * Viewport

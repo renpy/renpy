@@ -19,12 +19,21 @@
     
     Displays help.
     
+    If a screen named ``help`` is defined, that screen is displayed
+    using :func:`ShowMenu` and `help` is ignored.
+    
     `help`
-         If this is a string giving a label in the program, then
-         that label is called in a new context when the button is
-         chosen. Otherwise, it should be a string giving a file
-         that is opened in a web browser. If None, the value of
-         config.help is used in the same way.
+        A string that is used to find help. This is used in the
+        following way:
+    
+        * If a label with this name exists, the label is called in
+          a new context.
+        * Otherwise, this is interpreted as giving the name of a file
+          that should be opened in a web browser.
+    
+        If `help` is None, :var:`config.help` is used as the default
+        value.
+     
 
 .. function:: HideInterface()
     

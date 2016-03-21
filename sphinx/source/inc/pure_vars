@@ -20,7 +20,6 @@
 * :class:`Drag`
 * DynamicCharacter
 * :func:`DynamicDisplayable`
-* :class:`Editor`
 * :func:`EndReplay`
 * FactorZoom
 * :func:`Fade`
@@ -128,7 +127,6 @@
 * :class:`Transform`
 * Update
 * :func:`VBox`
-* VariableEditor
 * :func:`VariableInputValue`
 * :func:`VariableValue`
 * Viewport
@@ -137,7 +135,6 @@
 * Zoom
 * ZoomInOut
 * :func:`_`
-* _EditorAction
 * _InputValueAction
 * _m1_00gallery__GalleryAction
 * _m1_00gallery__GalleryToggleSlideshow
@@ -215,6 +212,7 @@
 * renpy.image_exists
 * :func:`renpy.image_size`
 * :func:`renpy.known_languages`
+* :var:`renpy.license`
 * :func:`renpy.list_files`
 * :func:`renpy.loadable`
 * renpy.munged_filename
@@ -222,6 +220,10 @@
 * renpy.unelide_filename
 * :func:`renpy.variant`
 * :func:`renpy.version`
+* :var:`renpy.version_name`
+* :var:`renpy.version_only`
+* :var:`renpy.version_string`
+* :var:`renpy.version_tuple`
 * repr
 * round
 * set
