@@ -9,7 +9,6 @@ translate None strings:
     old "Quick save complete."
     new "快速儲存。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -81,7 +80,6 @@ translate None strings:
     old "jump <label>: jumps to label"
     new "jump <標籤>: 跳移至標籤"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -105,7 +103,6 @@ translate None strings:
     old "return"
     new "返回"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -193,7 +190,6 @@ translate None strings:
     old "Restart"
     new "重新啟動"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -201,7 +197,6 @@ translate None strings:
     old "Saved screenshot as %s."
     new "儲存螢幕截圖為 %s。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -241,7 +236,6 @@ translate None strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "是否確定略過未看過的訊息或下一選項？"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -253,7 +247,6 @@ translate None strings:
     old "Fast Skip Mode"
     new "快速略過對話模式"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -265,7 +258,6 @@ translate None strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Self-voicing 已啟用。按 'v' 禁用"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -361,7 +353,6 @@ translate None strings:
     old "Cancel"
     new "取消"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -369,7 +360,6 @@ translate None strings:
     old "Joystick Mapping"
     new "遊戲桿映射"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -441,7 +431,6 @@ translate None strings:
     old "Done"
     new "完成"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -485,7 +474,6 @@ translate None strings:
     old "<repr() failed>"
     new "<repr() 失敗>"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 
@@ -541,7 +529,6 @@ translate None strings:
     old "Opens the errors.txt file in a text editor."
     new "在編輯器中開啟解析錯誤檔案。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate None strings:
 

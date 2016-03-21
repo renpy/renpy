@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-09 18:30
-
+﻿
 translate greek strings:
 
     # game/distribute.rpy:384

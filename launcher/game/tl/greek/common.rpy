@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-09 18:30
-
+﻿
 translate greek strings:
 
     # renpy/common/00action_file.rpy:26
@@ -162,7 +161,6 @@ translate greek strings:
     old "Quick save complete."
     new "Η ταχεία αποθήκευση παιχνιδιού ολοκληρώθηκε."
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -234,7 +232,6 @@ translate greek strings:
     old "jump <label>: jumps to label"
     new "jump <label>: μεταπηδάει την εκτέλεση κώδικα στην ετικέτα label"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -258,7 +255,6 @@ translate greek strings:
     old "return"
     new "επιστροφή"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -286,7 +282,6 @@ translate greek strings:
     old "Back (B)"
     new "Πίσω(B)"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -398,7 +393,6 @@ translate greek strings:
     old "Restart"
     new "Επανέναρξη"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -406,7 +400,6 @@ translate greek strings:
     old "Saved screenshot as %s."
     new "Αποθηκευμένα στιγμιότυπα οθόνης ως  %s."
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -450,7 +443,6 @@ translate greek strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "Σίγουρα θέλετε να παραλείψετε τα πάντα έως το μέρος με διάλογο που δεν έχετε δει ή την επόμενη επιλογή;"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -474,7 +466,6 @@ translate greek strings:
     old "Fast Skip Mode"
     new "Κατάσταση γρήγορης παράλειψης"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -490,7 +481,6 @@ translate greek strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Η λειτουργία αυτοαπαγγελίας ενεργοποιήθηκε. Πατήστε το 'v' για απενεργοποίηση."
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -566,7 +556,6 @@ translate greek strings:
     old "The updates were cancelled."
     new "Οι ενημερώσεις ματαιώθηκαν."
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -582,7 +571,6 @@ translate greek strings:
     old "Next"
     new "Επόμενο"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -590,7 +578,6 @@ translate greek strings:
     old "Joystick Mapping"
     new "Ρύθμισης χειριστηρίου joystick"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -662,7 +649,6 @@ translate greek strings:
     old "Done"
     new "Ολοκληρώθηκε."
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -706,7 +692,6 @@ translate greek strings:
     old "<repr() failed>"
     new "το <repr() απέτυχε>"
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 
@@ -774,7 +759,6 @@ translate greek strings:
     old "Copies the errors.txt file to the clipboard."
     new "Αντιγράφει το errors.txt στο clipboard."
 
-# TODO: Translation updated at 2016-03-09 18:30
 
 translate greek strings:
 

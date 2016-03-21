@@ -9,7 +9,6 @@ translate traditional_chinese strings:
     old "Quick save complete."
     new "快速儲存。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -81,7 +80,6 @@ translate traditional_chinese strings:
     old "jump <label>: jumps to label"
     new "jump <標籤>: 跳移至標籤"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -105,7 +103,6 @@ translate traditional_chinese strings:
     old "return"
     new "返回"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -201,7 +198,6 @@ translate traditional_chinese strings:
     old "Restart"
     new "重新啟動"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -209,7 +205,6 @@ translate traditional_chinese strings:
     old "Saved screenshot as %s."
     new "儲存螢幕截圖為 %s。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -249,7 +244,6 @@ translate traditional_chinese strings:
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "是否確定略過未看過的訊息或下一選項？"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -261,7 +255,6 @@ translate traditional_chinese strings:
     old "Fast Skip Mode"
     new "快速略過對話模式"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -273,7 +266,6 @@ translate traditional_chinese strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Self-voicing 已啟用。按 'v' 禁用"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -349,7 +341,6 @@ translate traditional_chinese strings:
     old "The updates were cancelled."
     new "已取消更新。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -365,7 +356,6 @@ translate traditional_chinese strings:
     old "Next"
     new "下一頁"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -373,7 +363,6 @@ translate traditional_chinese strings:
     old "Joystick Mapping"
     new "遊戲桿映射"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -445,7 +434,6 @@ translate traditional_chinese strings:
     old "Done"
     new "完成"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -489,7 +477,6 @@ translate traditional_chinese strings:
     old "<repr() failed>"
     new "<repr() 失敗>"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
@@ -545,7 +532,6 @@ translate traditional_chinese strings:
     old "Opens the errors.txt file in a text editor."
     new "在編輯器中開啟解析錯誤檔案。"
 
-# TODO: Translation updated at 2015-03-26 20:17
 
 translate traditional_chinese strings:
 
