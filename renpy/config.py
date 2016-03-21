@@ -681,7 +681,7 @@ play_channel = "audio"
 speaking_attribute = None
 
 # How many elements need to be in a list before we compress it for rollback.
-list_compression_length = 25
+list_compression_length = None # 25
 
 del renpy
 del os

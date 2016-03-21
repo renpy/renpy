@@ -673,6 +673,9 @@ class RevertableList(list):
         if not self or not clean:
             return clean
 
+        if renpy.config.list_compression_length is None:
+            return clean
+
         if len(self) < renpy.config.list_compression_length or len(clean) < renpy.config.list_compression_length:
             return clean
 
