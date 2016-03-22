@@ -23,7 +23,6 @@ Translation
 This release features a new Greek translation of the launcher, contributed by
 George Economidis.
 
-
 Other Changes
 -------------
 
@@ -73,6 +72,8 @@ action expose gamepad detection and calibration to screen language.
 
 The time required to take a screenshot has been reduced by decreasing the
 compression level used.
+
+The Android SDK downloaded by Ren'Py has been updated to r24.4.1.
 
 
 Ren'Py 6.99.9
