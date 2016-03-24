@@ -132,7 +132,6 @@ def predict_show_display_say(who, what, who_args, what_args, window_args, image=
         return
 
 
-
 def compute_widget_properties(who_args, what_args, window_args, variant=None):
     """
     Computes and returns the widget properties.
@@ -520,6 +519,17 @@ def display_say(
         c("end", interact=interact, type=type, **cb_args)
 
 
+class History(renpy.object.Object):
+    """
+    Instances of this object are used to represent history entries in
+    _history_list.
+    """
+
+    # See ADVCharacter.add_history for the fields.
+
+    def __repr__(self):
+        return "<History {!r} {!r}>".format(self.who, self.what)
+
 # This is used to flag values that haven't been set by the user.
 NotSet = renpy.object.Sentinel("NotSet")
 
@@ -675,12 +685,13 @@ class ADVCharacter(object):
 
     # This is called after the last interaction is done.
     def do_done(self, who, what):
-        return
+        self.add_history("adv", who, what)
+
 
     # This is called when an extend occurs, before the usual add/show
     # cycel.
     def do_extend(self):
-        return
+        self.pop_history()
 
     # This is called to actually do the displaying.
     def do_display(self, who, what, **display_args):
@@ -891,6 +902,63 @@ class ADVCharacter(object):
             return False
 
         return self.display_args['interact']
+
+    def add_history(self, kind, who, what, **kwargs):
+        """
+        This is intended to be called by subclasses of ADVCharacter to add
+        History entries to _history_list.
+        """
+
+        history_length = renpy.config.history_length
+
+        if history_length is None:
+            return
+
+        if not renpy.store._history: # @UndefinedVariable
+            return
+
+        history = renpy.store._history_list # @UndefinedVariable
+
+        h = History()
+
+        h.kind = kind
+
+        h.who = who
+        h.what = what
+
+        h.who_args = self.who_args
+        h.what_args = self.what_args
+        h.window_args = self.window_args
+        h.show_args = self.show_args
+
+        h.image_tag = self.image_tag
+
+        for k, v in kwargs.items():
+            setattr(h, k, v)
+
+        for i in renpy.config.history_callbacks:
+            i(h)
+
+        history.append(h)
+
+        while len(history) > history_length:
+            history.pop(0)
+
+    def pop_history(self):
+        """
+        This is intended to be called by do_extend to remove entries from
+        _history_list.
+        """
+
+        history_length = renpy.config.history_length
+
+        if history_length is None:
+            return
+
+        if not renpy.store._history: # @UndefinedVariable
+            return
+
+        renpy.store._history_list.pop() # @UndefinedVariable
 
 
 def Character(name=NotSet, kind=None, **properties):

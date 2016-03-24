@@ -1928,7 +1928,6 @@ class Interface(object):
 
         return rv
 
-
     def lose_screenshot(self):
         """
         This deallocates the saved screenshot.
@@ -1936,7 +1935,6 @@ class Interface(object):
 
         self.screenshot = None
         self.screenshot_surface = None
-
 
     def save_screenshot(self, filename):
         """
@@ -1955,8 +1953,6 @@ class Interface(object):
                 raise
             pass
 
-
-
     def show_window(self):
 
         if not renpy.store._window:
@@ -1969,7 +1965,14 @@ class Interface(object):
             return
 
         if renpy.config.empty_window:
-            renpy.config.empty_window()
+
+            old_history = renpy.store._history # @UndefinedVariable
+            renpy.store._history = False
+
+            try:
+                renpy.config.empty_window()
+            finally:
+                renpy.store._history = old_history
 
     def do_with(self, trans, paired, clear=False):
 

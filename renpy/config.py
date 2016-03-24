@@ -683,6 +683,13 @@ speaking_attribute = None
 # How many elements need to be in a list before we compress it for rollback.
 list_compression_length = 25
 
+# How many elements of history are kept. None to disable history.
+history_length = None
+
+# History callbacks that annotate additional information onto the History
+# object.
+history_callbacks = [ ]
+
 
 del renpy
 del os

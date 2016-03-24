@@ -247,7 +247,6 @@ init -1700 python:
     # License text.
     renpy.license = _("This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license/}here{/a}.")
 
-
 init -1000 python:
     # Set developer to the auto default.
     config.developer = "auto"
@@ -295,3 +294,8 @@ label _developer:
 # its own layer.
 screen _ctc:
     add ctc
+
+
+# Creates the data structure that history is stored in.
+default _history = True
+default _history_list = [ ]

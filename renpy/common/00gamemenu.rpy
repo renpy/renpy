@@ -99,9 +99,11 @@ init -1700 python:
         renpy.context_dynamic("main_menu")
         renpy.context_dynamic("_window_subtitle")
         renpy.context_dynamic("_window")
+        renpy.context_dynamic("_history")
 
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
+        store._history = False
 
         store.mouse_visible = True
         store.suppress_overlay = True

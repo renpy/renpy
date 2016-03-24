@@ -319,6 +319,11 @@ init -1500 python:
         else:
             return vi
 
+    def _voice_history_callback(h):
+        h.voice = _get_voice_info()
+
+    config.history_callbacks.append(_voice_history_callback)
+
 
 init -1500 python hide:
 

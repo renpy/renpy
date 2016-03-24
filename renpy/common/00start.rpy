@@ -176,12 +176,16 @@ label _start:
 
     $ _old_game_menu_screen = _game_menu_screen
     $ _game_menu_screen = None
+    $ _old_history = _history
+    $ _history = False
 
     if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
         call expression "splashscreen" from _call_splashscreen_1
 
     $ _game_menu_screen = _old_game_menu_screen
     $ del _old_game_menu_screen
+    $ _history = _old_history
+    $ del _old_history
 
     $ renpy.block_rollback()
 

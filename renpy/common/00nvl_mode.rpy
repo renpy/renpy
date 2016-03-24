@@ -298,9 +298,14 @@ init -1500 python:
             if self.clear:
                 nvl_clear()
 
+            self.add_history("adv", who, what)
+
         def do_extend(self):
             renpy.mode(self.mode)
             store.nvl_list = store.nvl_list[:-1]
+
+            self.pop_history()
+
 
     # The default NVLCharacter.
     nvl = NVLCharacter(
