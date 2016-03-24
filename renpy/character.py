@@ -519,7 +519,7 @@ def display_say(
         c("end", interact=interact, type=type, **cb_args)
 
 
-class History(renpy.object.Object):
+class HistoryEntry(renpy.object.Object):
     """
     Instances of this object are used to represent history entries in
     _history_list.
@@ -919,7 +919,7 @@ class ADVCharacter(object):
 
         history = renpy.store._history_list # @UndefinedVariable
 
-        h = History()
+        h = HistoryEntry()
 
         h.kind = kind
 

@@ -506,7 +506,7 @@ Occasionally Used
 
     This contains a list of callbacks that are called before Ren'Py adds
     a new object to _history_list. The callbacks are called with the
-    new history object as the first argument, and can add new fields
+    new HistoryEntry object as the first argument, and can add new fields
     to that object.
 
     Ren'Py uses history callbacks internally, so creators should append
