@@ -502,6 +502,21 @@ Occasionally Used
     If true, the game will autosave. If false, no autosaving will
     occur.
 
+.. var:: config.history_callbacks = [ ... ]
+
+    This contains a list of callbacks that are called before Ren'Py adds
+    a new object to _history_list. The callbacks are called with the
+    new history object as the first argument, and can add new fields
+    to that object.
+
+    Ren'Py uses history callbacks internally, so creators should append
+    their own callbacks to this list, rather than replacing it entirely.
+
+.. var:: config.history_length = None
+
+    The number of entries of dialogue history Ren'Py keeps. This is
+    set to 250 by the default gui.
+
 .. var:: config.hw_video = False
 
     If true, hardware video playback will be used on mobile platforms. This
