@@ -25,6 +25,17 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _history = True
+
+    If true, Ren'Py will record dialogue history when a line is shown. (Note
+    that :var:`config.history_list_length` must be set as well.)
+
+.. var:: _history_list = [ ]
+
+    This is a list of history objects, corresponding to each line of history
+    from oldest to newest. See the :ref:`History <history>` section for more
+    information.
+
 .. var:: main_menu = False
 
     Ren'Py sets this variable to True while in the main menu. This can be used
