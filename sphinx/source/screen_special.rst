@@ -84,12 +84,24 @@ The ``choice`` screen is used to display the in-game choices created
 with the menu statement. It is given the following parameter:
 
 `items`
-    This is a list of (`caption`, `action`, `chosen`)
-    tuples. For each choice, `caption` is the name of the choice, and
-    `action` is the action to invoke for the choice, or None if this
-    is a choice label. `Chosen` if a choice with this label has been
-    chosen by the user before. (It doesn't have to be in the current
-    game.)
+    This is a list of menu entry objects, representing each of the
+    choices in the menu. Each of the objects has the following
+    fields on it:
+
+    .. attribute:: caption
+
+        A string giving the caption of the menu choice.
+
+    .. attribute:: action
+
+        An action that should be invoked when the menu choice is
+        chosen. This many be None if this is a menu cation, and
+        :var:`config.narrator_menu` is false.
+
+    .. attribute:: chosen
+
+        This is true if this choice has been chosen at least once
+        in any playthrough of the game.
 
 ::
 
@@ -101,18 +113,18 @@ with the menu statement. It is given the following parameter:
             vbox:
                 style "menu"
 
-                for caption, action, chosen in items:
+                for i in items:
 
-                    if action:
+                    if i.action:
 
                         button:
-                            action action
+                            action i.action
                             style "menu_choice_button"
 
-                            text caption style "menu_choice"
+                            text i.caption style "menu_choice"
 
                     else:
-                        text caption style "menu_caption"
+                        text i.caption style "menu_caption"
 
 
 .. _input-screen:
@@ -183,14 +195,9 @@ the following parameter:
         made available separately.
 
 `items`
-    This is a list of (`caption`, `action`, `chosen`)
-    tuples. For each choice, `caption` is the name of the choice, and
-    `action` is the action to invoke for the choice, or None if this
-    is a choice label. `Chosen` if a choice with this label has been
-    chosen by the user before. (It doesn't have to be in the current
-    game.)
-
-    If items is empty, the menu should not be shown.
+    This is the same list of items that would be supplied to the
+    :ref:`choice screen <choice-screen>`. If this is empty,
+    the menu should not be shown.
 
 When `items` is not present, the NVL screen is expected to always
 give a text widget an id of "what". Ren'Py uses it to calculate
@@ -230,19 +237,19 @@ an in-game choice is presented to the user, if it exists.
                 vbox:
                     id "menu"
 
-                    for caption, action, chosen in items:
+                    for i in items:
 
                         if action:
 
                             button:
                                 style "nvl_menu_choice_button"
-                                action action
+                                action i.action
 
-                                text caption style "nvl_menu_choice"
+                                text i.caption style "nvl_menu_choice"
 
                         else:
 
-                            text caption style "nvl_dialogue"
+                            text i.caption style "nvl_dialogue"
 
 
 .. _notify-screen:

@@ -888,6 +888,12 @@ def predict_menu():
         )
 
 
+class MenuEntry(tuple):
+    """
+    The object passed into the choice screen.
+    """
+
+
 def display_menu(items,
                  window_style='menu_window',
                  interact=True,
@@ -968,16 +974,21 @@ def display_menu(items,
 
             if value is not None:
                 action = renpy.ui.ChoiceReturn(label, value, location)
+                chosen = action.get_chosen()
             else:
                 action = None
+                chosen = False
 
             if renpy.config.choice_screen_chosen:
-                if action is not None:
-                    item_actions.append((label, action, action.get_chosen()))
-                else:
-                    item_actions.append((label, action, False))
+                me = MenuEntry((label, action, chosen))
             else:
-                item_actions.append((label, action))
+                me = MenuEntry((label, action))
+
+            me.caption = label
+            me.action = action
+            me.chosen = chosen
+
+            item_actions.append(me)
 
             show_screen(screen, items=item_actions, _widget_properties=props, _transient=True, _layer=renpy.config.choice_layer, **scope)
 
