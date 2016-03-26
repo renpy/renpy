@@ -86,6 +86,7 @@ Other Functionality
    keymap
    developer_tools
    achievement
+   history
 
 Python and Ren'Py
 -----------------
