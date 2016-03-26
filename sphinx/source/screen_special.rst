@@ -152,12 +152,35 @@ The ``nvl`` screen is used to display NVL-mode dialogue. It is given
 the following parameter:
 
 `dialogue`
-    This is a list of ( `who`, `what`, `who_id`, `what_id`,
-    `window_id`) tuples, each of which corresponds to a line of
-    dialogue on the screen. `Who` and `what` are strings containing
-    the speaking character and the line of dialogue, respectively. The
-    ids should be assigned to the who and what text displayables, and
-    a window containing each unit of dialogue.
+    A list of NVL Entry objects, each of which corresponds to a line
+    of dialogue to be displayed. Each entry has the following
+    fields:
+
+    .. attribute:: current
+
+        True if this is the current line of dialogue. The current
+        line of dialogue must have its what text displayed with an
+        id of "what".
+
+    .. attribute:: who
+
+        The name of the speaking character, or None of there is no
+        such name.
+
+    .. attribute:: what
+
+        The text being spoken.
+
+    .. attribute:: who_id, what_id, window_id
+
+        Preferred ids for the speaker, dialogue, and window associated with an
+        entry.
+
+    .. attribute:: who_args, what_args, window_args
+
+        Properties associated with the speaker, dialogue, and window. These
+        are automatically applied if the id is set as above, but are also
+        made available separately.
 
 `items`
     This is a list of (`caption`, `action`, `chosen`)
@@ -168,6 +191,11 @@ the following parameter:
     game.)
 
     If items is empty, the menu should not be shown.
+
+When `items` is not present, the NVL screen is expected to always
+give a text widget an id of "what". Ren'Py uses it to calculate
+auto-forward-mode time, click-to-continue, and other things. (This is
+satisfied automatically if the default what_id is used.)
 
 Ren'Py also supports an ``nvl_choice`` screen, which takes the same
 parameters as ``nvl``, and is used in preference to ``nvl`` when
@@ -184,17 +212,17 @@ an in-game choice is presented to the user, if it exists.
                 style "nvl_vbox"
 
             # Display dialogue.
-            for who, what, who_id, what_id, window_id in dialogue:
+            for d in dialogue:
                 window:
-                    id window_id
+                    id d.window_id
 
                     has hbox:
                         spacing 10
 
-                    if who is not None:
-                        text who id who_id
+                    if d.who is not None:
+                        text d.who id d.who_id
 
-                    text what id what_id
+                    text d.what id d.what_id
 
             # Display a menu, if given.
             if items:

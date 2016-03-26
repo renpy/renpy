@@ -105,6 +105,12 @@ init -1500 python:
         else:
             return s
 
+    class _NVLEntry(tuple):
+        """
+        NVLEntry objects are added to the list of dialogue that's
+        shown on the screen.
+        """
+
     def __nvl_screen_dialogue():
         """
          Returns widget_properties and dialogue for the current NVL
@@ -135,7 +141,22 @@ init -1500 python:
             widget_properties[what_id] = kwargs["what_args"]
             widget_properties[window_id] = kwargs["window_args"]
 
-            dialogue.append((who, what, who_id, what_id, window_id))
+            e = _NVLEntry((who, what, who_id, what_id, window_id))
+
+            e.current = (i == (len(nvl_list) - 1))
+
+            e.who = who
+            e.what = what
+
+            e.who_id = who_id
+            e.what_id = what_id
+            e.window_id = window_id
+
+            e.who_args = kwargs["who_args"]
+            e.what_args = kwargs["what_args"]
+            e.window_args = kwargs["window_args"]
+
+            dialogue.append(e)
 
         show_args = dict(kwargs)
         if show_args:

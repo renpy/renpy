@@ -213,6 +213,7 @@ including the following code in your script. ::
     init python:
         config.nvl_paged_rollback = True
 
+
 Script of The Question (NVL-mode Edition)
 -----------------------------------------
 
