@@ -100,13 +100,16 @@ init -1700 python:
         renpy.context_dynamic("_window_subtitle")
         renpy.context_dynamic("_window")
         renpy.context_dynamic("_history")
+        renpy.context_dynamic("_menu")
 
         store._window_subtitle = config.menu_window_subtitle
         store._window = False
         store._history = False
+        store._menu = True
 
         store.mouse_visible = True
         store.suppress_overlay = True
+
         ui.clear()
 
         for i in config.clear_layers:
@@ -124,6 +127,7 @@ init -1700 python:
             else:
                 renpy.call_in_new_context('_game_menu')
 
+default _menu = False
 
 # Run at the end of init, to set up autosaving based on the user's
 # choices.

@@ -30,6 +30,11 @@ and rolled-back when rollback occurs.
     Ren'Py sets this variable to True while in the main menu. This can be used
     to have screens display differently while in the main menu.
 
+.. var:: _menu = False
+
+    Ren'Py sets this variable to True when entering a main menu or game menu
+    context.
+
 .. var:: menu = renpy.display_menu
 
     The function that's called to display the in-gamemenu. It should take the same
