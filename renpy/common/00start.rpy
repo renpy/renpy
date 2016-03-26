@@ -50,6 +50,9 @@ init -1600 python hide:
     # Should we attempt to return to the menu we were on after a reload?
     config.reload_menu = True
 
+    # Callbacks to run after load.
+    config.after_load_callbacks = [ ]
+
 init -1600 python:
 
     def _init_language():
@@ -79,10 +82,15 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
+
+    python hide:
+
+        for i in config.after_load_callbacks:
+            i()
+
         if config.after_load_transition:
             renpy.transition(config.after_load_transition, force=True)
 
-    python hide:
         menu = renpy.session.pop("_reload_screen", None)
 
         if config.reload_menu and (menu is not None):

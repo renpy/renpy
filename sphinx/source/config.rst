@@ -283,6 +283,11 @@ cleared.
 Occasionally Used
 -----------------
 
+.. var:: config.after_load_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) when a load
+    occurs.
+
 .. var:: config.after_replay_callback = None
 
     If not None, a function that is called with no arguments after a
