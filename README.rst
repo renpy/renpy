@@ -73,6 +73,7 @@ Then, install pygame_sdl2 by running the following commands::
     pushd pygame_sdl2
     python fix_virtualenv.py $VIRTUAL_ENV
     python setup.py install
+    python setup.py install_headers
     popd
 
 Next, set RENPY_DEPS_INSTALL To a \::-separated list of paths containing the
