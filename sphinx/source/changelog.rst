@@ -2,6 +2,15 @@
 Full Changelog
 ==============
 
+
+Ren'Py 6.99.11
+==============
+
+Ren'Py now supports immersive mode on Android's 4.4+. Immersive mode hides
+the system UI, including the navigation bar, allowing Ren'Py to take up the
+entire screen.
+
+
 Ren'Py 6.99.10
 ==============
 
