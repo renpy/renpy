@@ -207,8 +207,12 @@ class Screen(renpy.object.Object):
 
         self.name = name
 
-        screens[name[0], variant] = self
-        screens_by_name[name[0]][variant] = self
+        if (variant is None) or isinstance(variant, basestring):
+            variant = [ variant ]
+
+        for v in variant:
+            screens[name[0], v] = self
+            screens_by_name[name[0]][v] = self
 
         # A function that can be called to display the screen.
         self.function = function
