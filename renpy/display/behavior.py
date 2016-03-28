@@ -1519,6 +1519,13 @@ class Bar(renpy.display.core.Displayable):
             if redraw is not None:
                 renpy.display.render.redraw(self, redraw)
 
+        xminimum = self.style.xminimum
+        yminimum = self.style.yminimum
+
+        if xminimum is not None:
+            width = max(width, xminimum)
+            height = max(height, yminimum)
+
         # Store the width and height for the event function to use.
         self.width = width
         self.height = height
