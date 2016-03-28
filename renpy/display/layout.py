@@ -795,7 +795,7 @@ class MultiBox(Container):
                 surf = render(d, rw, height - y, cst, cat)
                 sw, sh = surf.get_size()
 
-                if box_wrap and remwidth - sw - padding <= 0 and line:
+                if box_wrap and remwidth - sw - padding < 0 and line:
                     maxx, maxy = layout_line(line, target_width - x, 0)
 
                     y += line_height
@@ -839,7 +839,7 @@ class MultiBox(Container):
                 surf = render(d, width - x, rh, cst, cat)
                 sw, sh = surf.get_size()
 
-                if box_wrap and remheight - sh - padding <= 0:
+                if box_wrap and remheight - sh - padding < 0:
                     maxx, maxy = layout_line(line, 0, target_height - y)
 
                     x += line_width
