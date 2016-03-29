@@ -1387,6 +1387,9 @@ class Side(Container):
         # Figure out the size of each widget (and hence where the
         # widget needs to be placed).
 
+        old_width = width
+        old_height = height
+
         if not self.sized:
             self.sized = True
 
@@ -1449,6 +1452,9 @@ class Side(Container):
             right = self.right
 
         # Now, place everything onto the render.
+
+        width = old_width
+        height = old_height
 
         self.offsets = [ None ] * len(self.children)
 
