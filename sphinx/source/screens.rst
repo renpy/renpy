@@ -130,8 +130,8 @@ expression. It takes the following properties:
     user. It defaults to 0.
 
 `variant`
-    If present, this should be a string giving the variant of screen
-    to be defined. See :ref:`screen-variants`.
+    If present, this should be a string or list of strings giving the
+    variant of screen to be defined. See :ref:`screen-variants`.
 
 `style_prefix`
     A string that's used to provide a prefix for the style for the
@@ -1830,6 +1830,9 @@ and choosing the entries that apply to the current platform.
    Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
    are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
    also defined).
+
+``"mobile"``
+   Defined on mobile platforms, such as Android and iOS.
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have

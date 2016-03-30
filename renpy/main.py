@@ -160,6 +160,7 @@ def choose_variants():
 
     if renpy.android: #@UndefinedVariable
 
+        renpy.config.variants.insert(0, 'mobile')
         renpy.config.variants.insert(0, 'android')
 
         import android #@UnresolvedImport

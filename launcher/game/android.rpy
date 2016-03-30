@@ -331,15 +331,15 @@ screen android:
                                 spacing 15
 
                             textbutton _("Phone"):
-                                action LaunchEmulator("touch", "small phone touch android")
+                                action LaunchEmulator("touch", "small phone touch android mobile")
                                 hovered tt.Action(PHONE_TEXT)
 
                             textbutton _("Tablet"):
-                                action LaunchEmulator("touch", "medium tablet touch android")
+                                action LaunchEmulator("touch", "medium tablet touch android mobile")
                                 hovered tt.Action(TABLET_TEXT)
 
                             textbutton _("Television"):
-                                action LaunchEmulator("tv", "small tv android")
+                                action LaunchEmulator("tv", "small tv android mobile")
                                 hovered tt.Action(OUYA_TEXT)
 
 

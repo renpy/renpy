@@ -238,11 +238,11 @@ screen ios:
                                 spacing 15
 
                             textbutton _("iPhone"):
-                                action LaunchEmulator("ios-touch", "small phone touch ios")
+                                action LaunchEmulator("ios-touch", "small phone touch ios mobile")
                                 hovered tt.Action(IPHONE_TEXT)
 
                             textbutton _("iPad"):
-                                action LaunchEmulator("ios-touch", "medium tablet touch ios")
+                                action LaunchEmulator("ios-touch", "medium tablet touch ios mobile")
                                 hovered tt.Action(IPAD_TEXT)
 
 
