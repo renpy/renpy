@@ -182,6 +182,10 @@ init 1900 python hide::
     if compat(6, 9, 0):
         style.motion.clear()
 
+    if compat(6, 10, 2):
+        if 'screens' not in config.layers:
+            config.layers.append('screens')
+
     if "Fullscreen" in config.translations:
         fs = _("Fullscreen")
         config.translations.setdefault("Fullscreen 4:3", fs + " 4:3")
