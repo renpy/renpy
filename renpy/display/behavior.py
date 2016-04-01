@@ -1674,12 +1674,15 @@ class Bar(renpy.display.core.Displayable):
         grabbed = (renpy.display.focus.get_grab() is self)
         just_grabbed = False
 
+        ignore_event = False
+
         if not grabbed and map_event(ev, "bar_activate"):
             renpy.display.tts.speak("activate")
             renpy.display.focus.set_grab(self)
             self.set_style_prefix("selected_hover_", True)
             just_grabbed = True
             grabbed = True
+            ignore_event = True
 
         if grabbed:
 
@@ -1693,10 +1696,12 @@ class Bar(renpy.display.core.Displayable):
             if map_event(ev, decrease):
                 renpy.display.tts.speak("decrease")
                 value -= self.adjustment.step
+                ignore_event = True
 
             if map_event(ev, increase):
                 renpy.display.tts.speak("increase")
                 value += self.adjustment.step
+                ignore_event = True
 
             if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
 
@@ -1719,6 +1724,8 @@ class Bar(renpy.display.core.Displayable):
                     else:
                         value = 0
 
+                ignore_event = True
+
             if isinstance(range, int):
                 value = int(value)
 
@@ -1735,11 +1742,17 @@ class Bar(renpy.display.core.Displayable):
             renpy.display.tts.speak("deactivate")
             self.set_style_prefix("hover_", True)
             renpy.display.focus.set_grab(None)
+            ignore_event = True
 
         if value != old_value:
-            return self.adjustment.change(value)
+            rv = self.adjustment.change(value)
+            if rv is not None:
+                return rv
 
-        return None
+        if ignore_event:
+            raise renpy.display.core.IgnoreEvent()
+        else:
+            return None
 
     def set_style_prefix(self, prefix, root):
         if root:
