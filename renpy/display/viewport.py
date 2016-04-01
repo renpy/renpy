@@ -322,9 +322,14 @@ class Viewport(renpy.display.layout.Container):
         if self.draggable:
 
             if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
-                self.drag_position = (x, y)
-                renpy.display.focus.set_grab(self)
-                raise renpy.display.core.IgnoreEvent()
+
+                focused = renpy.display.focus.get_focused()
+
+                if (focused is None) or (focused is self):
+
+                    self.drag_position = (x, y)
+                    renpy.display.focus.set_grab(self)
+                    raise renpy.display.core.IgnoreEvent()
 
         if self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
