@@ -189,8 +189,8 @@ Ren'Py statements are made of a few basic parts.
     string of letters, numbers, and underscores.
 
     For example, take the image name ``mary beach night happy``. The
-    image tag is ``mary``, while the image attributes are ``mary``,
-    ``beach``, and ``night``.
+    image tag is ``mary``, while the image attributes are,
+    ``beach``, ``night``, and ``happy``.
 
 :dfn:`String`
     A string begins with a quote character (one of ", ', or \`),
