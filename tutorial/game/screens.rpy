@@ -390,10 +390,11 @@ screen preferences():
 
                 label _("Language")
                 textbutton "English" action Language(None)
-                textbutton u"日本語" text_font "tl/japanese/MTLc3m.ttf" action Language("japanese")
+                textbutton "日本語" text_font "tl/japanese/MTLc3m.ttf" action Language("japanese")
+                textbutton "한국어" text_font "tl/korean/NanumGothic.ttf" action Language("korean")
                 textbutton "Русский" action Language("russian")
-                textbutton u"한국어" text_font "tl/korean/NanumGothic.ttf" action Language("korean")
-                
+                textbutton "Tiếng Việt" action Language("vietnamese")
+
             # end-tutorial-only
 
         vbox:
