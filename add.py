@@ -31,6 +31,9 @@ ap.add_argument("--delete-tag")
 
 args = ap.parse_args()
 
+if args.release:
+    subprocess.check_call([ "/home/tom/ab/renpy/scripts/checksums.py", "/home/tom/ab/renpy/dl/" + short_version ])
+
 if args.delete_tag:
     for i in SOURCE:
 
