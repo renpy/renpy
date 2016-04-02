@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/script.rpy:76
 translate vietnamese start_0e6a5bb4:
 

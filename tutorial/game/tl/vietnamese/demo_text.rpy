@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_text.rpy:65
 translate vietnamese demo_text_ff47a1f2:
 

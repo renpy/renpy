@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # ../tutorial_quickstart.rpyc:20
 translate vietnamese tutorial_dialogue_f6d3ddd3:
 

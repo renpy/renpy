@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 15:36
-
+﻿
 translate vietnamese strings:
 
     # renpy/common/00action_file.rpy:155
@@ -10,7 +9,6 @@ translate vietnamese strings:
     old "Quick save complete."
     new "Đã lưu nhanh."
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -82,7 +80,6 @@ translate vietnamese strings:
     old "jump <label>: jumps to label"
     new "jump <label>: nhảy đến nhãn"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -106,7 +103,6 @@ translate vietnamese strings:
     old "return"
     new "trở lại"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -138,7 +134,6 @@ translate vietnamese strings:
     old "Back (B)"
     new "Trở về (B)"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -242,7 +237,6 @@ translate vietnamese strings:
     old "Restart"
     new "Khởi động lại"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -250,7 +244,6 @@ translate vietnamese strings:
     old "Saved screenshot as %s."
     new "Đã lưu ảnh chụp màn hình là %s."
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -289,7 +282,6 @@ translate vietnamese strings:
     # renpy/common/00layout.rpy:452
     old "Are you sure you want to skip to unseen dialogue or the next choice?"
     new "Bạn có chắc chắn muốn lướt bỏ qua tới đoạn hội thoại hoặc lựa chọn tiếp theo không?"
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -301,7 +293,6 @@ translate vietnamese strings:
     old "Fast Skip Mode"
     new "Chế độ lướt nhanh"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -313,7 +304,6 @@ translate vietnamese strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Tự lồng tiếng được kích hoạt. Nhấn 'v' để vô hiệu hóa."
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -405,7 +395,6 @@ translate vietnamese strings:
     old "Proceed"
     new "Tiếp tục"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -421,7 +410,6 @@ translate vietnamese strings:
     old "Next"
     new "Về sau"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -429,7 +417,6 @@ translate vietnamese strings:
     old "Joystick Mapping"
     new "Hệ thống nút tay cầm"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -501,7 +488,6 @@ translate vietnamese strings:
     old "Done"
     new "Hoàn tất"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -545,7 +531,6 @@ translate vietnamese strings:
     old "<repr() failed>"
     new "<repr() failed>"
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 
@@ -613,7 +598,6 @@ translate vietnamese strings:
     old "Copies the errors.txt file to the clipboard."
     new "Lưu các tập tin ERRORS.TXT vào bản ghi."
 
-# TODO: Translation updated at 2016-03-01 15:36
 
 translate vietnamese strings:
 

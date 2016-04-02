@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_ui.rpy:219
 translate vietnamese demo_ui_e1d49b5e:
 

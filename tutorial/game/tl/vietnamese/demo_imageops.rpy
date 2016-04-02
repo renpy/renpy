@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_imageops.rpy:69
 translate vietnamese demo_imageops_0e0e59e0:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-29 10:15
-
+﻿
 translate Vietnamese strings:
 
     # game/distribute.rpy:384

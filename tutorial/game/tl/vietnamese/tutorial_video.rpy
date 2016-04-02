@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # ../tutorial_video.rpyc:11
 translate vietnamese tutorial_video_f34a17f5:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 15:36
-
+﻿
 translate vietnamese strings:
 
     # game/project.rpy:47

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_dynamic.rpy:27
 translate vietnamese demo_dynamic_b72548ea:
 

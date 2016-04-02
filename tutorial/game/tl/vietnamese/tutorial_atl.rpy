@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # ../tutorial_atl.rpyc:187
 translate vietnamese tutorial_positions_a09a3fd1:
 

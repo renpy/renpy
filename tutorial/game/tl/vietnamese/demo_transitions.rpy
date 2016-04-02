@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_transitions.rpy:44
 translate vietnamese demo_transitions_5bbc72fe:
 
@@ -292,7 +291,7 @@ translate vietnamese demo_imagedissolve_transitions_e16f8d3a:
 translate vietnamese demo_imagedissolve_transitions_b6dbf68b:
 
     # e "It shows how a clever game-maker can use ImageDissolve to create all sorts of effects."
-    e "Nó sẽ cho chúng ta biết một nhà làm game có thể sử dụng ImageDissolve để tạo ra đủ loại hiệu ứng." 
+    e "Nó sẽ cho chúng ta biết một nhà làm game có thể sử dụng ImageDissolve để tạo ra đủ loại hiệu ứng."
 
 # game/demo_transitions.rpy:269
 translate vietnamese demo_cropmove_transitions_1711a91e:

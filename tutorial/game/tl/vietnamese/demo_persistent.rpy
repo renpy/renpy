@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_persistent.rpy:6
 translate vietnamese demo_persistent_abef5d83:
 

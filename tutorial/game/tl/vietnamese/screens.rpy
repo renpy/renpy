@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 translate vietnamese strings:
 
     # game/screens.rpy:194

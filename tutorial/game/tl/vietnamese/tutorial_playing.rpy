@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # ../tutorial_playing.rpyc:16
 translate vietnamese tutorial_playing_2985ab86:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_character.rpy:45
 translate vietnamese demo_character_16897d85:
 

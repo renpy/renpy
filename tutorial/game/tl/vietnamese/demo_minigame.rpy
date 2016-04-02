@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2016-03-01 13:58
-
+﻿
 # game/demo_minigame.rpy:204
 translate vietnamese demo_minigame_03fc91ef:
 
