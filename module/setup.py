@@ -51,7 +51,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, include, library, cython, pymodule, copyfile, find_unnecessary_gen
+from setuplib import android, ios, include, library, cython, copyfile, find_unnecessary_gen
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -232,7 +232,7 @@ sys.path.insert(0, '..')
 
 import renpy
 
-setuplib.setup("Ren'Py", renpy.version[7:])
+setuplib.setup("Ren'Py", renpy.version[7:]) # @UndefinedVariable
 
 if not has_fribidi:
     print "Warning: Did not include fribidi."

@@ -782,8 +782,6 @@ class Transform(Container):
             if fr is not None:
                 renpy.display.render.redraw(self, fr)
 
-        state = self.state
-
         self.active = True
 
 
