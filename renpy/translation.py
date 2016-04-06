@@ -494,9 +494,6 @@ def old_change_language(tl, language):
 
 def new_change_language(tl, language):
 
-    for i in tl.python[None]:
-        renpy.python.py_exec_bytecode(i.code.bytecode)
-
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
 
@@ -504,9 +501,6 @@ def new_change_language(tl, language):
         i.apply()
 
     def run_blocks():
-        for i in tl.block[None]:
-            renpy.game.context().run(i.block[0])
-
         for i in tl.block[language]:
             renpy.game.context().run(i.block[0])
 

@@ -23,11 +23,9 @@ statements has been changed. When the game starts (after all statements
 have run), or when the language changes, the following steps occur.
 
 #. [ TODO: Restore gui namespace from a backup. ]
-#. All ``translate None python`` statements are run.
 #. All ``translate`` `language` ``python`` statements are run, where `language`
-   is the current language. (If not None.)
+   is the current language.
 #. All deferred ``style`` statements are run.
-#. All ``translate None style`` statements are run.
 #. All ``translate`` `language` ``style`` statement are run, where `language`
    is the current language. (If not None.)
 #. The callbacks in :var:`config.change_language_callbacks` are called.
