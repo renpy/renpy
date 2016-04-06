@@ -2156,10 +2156,7 @@ class Style(Node):
     def diff_info(self):
         return (Style, self.style_name)
 
-    def execute(self):
-        next_node(self.next)
-        statement_name("style")
-
+    def apply(self):
         if self.variant is not None:
             variant = renpy.python.py_eval(self.variant)
             if not renpy.exports.variant(variant):
@@ -2185,6 +2182,16 @@ class Style(Node):
                 properties[name] = renpy.python.py_eval(expr)
 
             s.add_properties(properties)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("style")
+
+        if renpy.config.defer_styles and renpy.game.context().init_phase:
+            renpy.translation.deferred_styles.append(self)
+            return
+
+        self.apply()
 
 
 class Testcase(Node):

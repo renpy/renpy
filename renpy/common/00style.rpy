@@ -370,3 +370,8 @@ init -1800:
     # Labels
     style pref_label:
         alt "" # We expect the labelled buttons/bars to read themselves out.
+
+# Older init code doesn't necessarily like defer styles.
+init 1001 python:
+    config.defer_styles = False
+

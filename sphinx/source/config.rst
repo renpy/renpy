@@ -24,19 +24,6 @@ Configuration variables are often changed in init python blocks::
 Commonly Used
 -------------
 
-.. var:: config.help = "README.html"
-
-    This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing f1 or
-    command-?.
-
-    If None, the help system is disabled and does not show up on
-    menus.  If a string corresponding to a label found in the script,
-    that label is invoked in a new context. This allows you to define
-    an in-game help-screen.  Otherwise, this is interpreted as a
-    filename relative to the base directory, that is opened in a web
-    browser.
-
 .. var:: config.name = ""
 
     This should be a string giving the name of the game. This is included
@@ -396,6 +383,16 @@ Occasionally Used
     initialize the values of the displayable's transform.
 
     The default default transform is :var:`center`.
+
+.. var:: config.defer_styles = False
+
+    When true, the execution of style statements is deferred until after
+    all "translate python" blocks have executed. This lets a translate
+    python block update variables that are then used in style (not
+    translate style) statements.
+
+    While this defaults to False, it's set to True when :func:`gui.init`
+    is called.
 
 .. var:: config.developer = "auto"
 
@@ -933,6 +930,19 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
+.. var:: config.help = "README.html"
+
+    This controls the functionality of the help system invoked by the
+    help button on the main and game menus, or by pressing f1 or
+    command-?.
+
+    If None, the help system is disabled and does not show up on
+    menus.  If a string corresponding to a label found in the script,
+    that label is invoked in a new context. This allows you to define
+    an in-game help-screen.  Otherwise, this is interpreted as a
+    filename relative to the base directory, that is opened in a web
+    browser.
+
 .. var:: config.hide = renpy.hide
 
     A function that is called when the :ref:`hide statement <hide-statement>`
@@ -1077,6 +1087,11 @@ Rarely or Internally Used
 
     The mixer that is used when a :func:`Movie` automatically defines
     a channel for video playback.
+
+.. var:: config.new_translate_order = True
+
+    Enables the new order of style and translate statements introduced in
+    :ref:`Ren'Py 6.99.11 <renpy-6.99.11>`.
 
 .. var:: config.new_substitutions = True
 

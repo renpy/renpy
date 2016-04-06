@@ -12,6 +12,17 @@ features.
 
 .. _incompatible-6.99:
 
+6.99.11
+-------
+
+The order of exection of ``style`` and ``translate`` statements has
+changed, as documented in :ref:`the changelog <renpy-6.99.11>`. To
+revent this change, add the code::
+
+    define config.new_translate_order = False
+
+Note that reverting this change may prevent the new GUI from working.
+
 6.99.9
 ------
 

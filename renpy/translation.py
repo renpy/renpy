@@ -473,6 +473,45 @@ def init_translation():
 
 old_language = "language never set"
 
+# A list of styles that have beend deferred to right before translate
+# styles are run.
+deferred_styles = [ ]
+
+def old_change_language(tl, language):
+
+    for i in deferred_styles:
+        i.apply()
+
+    def run_blocks():
+        for i in tl.block[language]:
+            renpy.game.context().run(i.block[0])
+
+    renpy.game.invoke_in_new_context(run_blocks)
+
+    for i in tl.python[language]:
+        renpy.python.py_exec_bytecode(i.code.bytecode)
+
+
+def new_change_language(tl, language):
+
+    for i in tl.python[None]:
+        renpy.python.py_exec_bytecode(i.code.bytecode)
+
+    for i in tl.python[language]:
+        renpy.python.py_exec_bytecode(i.code.bytecode)
+
+    for i in deferred_styles:
+        i.apply()
+
+    def run_blocks():
+        for i in tl.block[None]:
+            renpy.game.context().run(i.block[0])
+
+        for i in tl.block[language]:
+            renpy.game.context().run(i.block[0])
+
+    renpy.game.invoke_in_new_context(run_blocks)
+
 def change_language(language):
     """
     :doc: translation_functions
@@ -490,14 +529,10 @@ def change_language(language):
     renpy.style.restore(style_backup) # @UndefinedVariable
     renpy.style.rebuild() # @UndefinedVariable
 
-    def run_blocks():
-        for i in tl.block[language]:
-            renpy.game.context().run(i.block[0])
-
-    renpy.game.invoke_in_new_context(run_blocks)
-
-    for i in tl.python[language]:
-        renpy.python.py_exec_bytecode(i.code.bytecode)
+    if renpy.config.new_translate_order:
+        new_change_language(tl, language)
+    else:
+        old_change_language(tl, language)
 
     for i in renpy.config.change_language_callbacks:
         i()

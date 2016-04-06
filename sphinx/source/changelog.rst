@@ -3,8 +3,41 @@ Full Changelog
 ==============
 
 
+.. _renpy-6.99.11:
+
 Ren'Py 6.99.11
 ==============
+
+Translate and Style Statement Order Changes
+-------------------------------------------
+
+The :var:`config.defer_styles` variable has been added to determine if
+style execution should be deferred, as described below. If
+config.defer_styles is true when style evaluation would have
+occurred, that style is put on a deferred list. The :func:`gui.init`
+function called by the new GUI sets this variable to true.
+
+To facilitate translations customizing the fonts of the new GUI, the order of
+execution of ``translate python``, ``style`` and ``translate style``
+statements has been changed. When the game starts (after all statements
+have run), or when the language changes, the following steps occur.
+
+#. [ TODO: Restore gui namespace from a backup. ]
+#. All ``translate None python`` statements are run.
+#. All ``translate`` `language` ``python`` statements are run, where `language`
+   is the current language. (If not None.)
+#. All deferred ``style`` statements are run.
+#. All ``translate None style`` statements are run.
+#. All ``translate`` `language` ``style`` statement are run, where `language`
+   is the current language. (If not None.)
+#. The callbacks in :var:`config.change_language_callbacks` are called.
+
+Ren'Py can be made to return to the old behavior (in which only ``translate``
+`language` ``style``, ``translate`` `language` ``python``, and callbacks
+are executed) by setting :var:`config.new_translate_order` to False.
+
+Other
+-----
 
 Ren'Py now supports immersive mode on Android's 4.4+. Immersive mode hides
 the system UI, including the navigation bar, allowing Ren'Py to take up the

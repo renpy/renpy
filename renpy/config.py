@@ -690,6 +690,11 @@ history_length = None
 # object.
 history_callbacks = [ ]
 
+# Should we use the new order for translate blocks?
+new_translate_order = True
+
+# Should we defer style execution until translate block time?
+defer_styles = False
 
 del renpy
 del os
