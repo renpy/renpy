@@ -20,6 +20,30 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1100 python in gui:
-    from store import config
+    from store import config, layout
 
     config.translate_clean_stores.append("gui")
+
+    def init(width, height):
+        """
+        :doc: function
+
+        Initializes the gui.
+
+        `width`
+            The width of the default window.
+
+        `height`
+            The height of the default window.
+        """
+
+        config.screen_width = width
+        config.screen_height = height
+
+        layout.defaults()
+
+        renpy.call_in_new_context("_style_reset")
+
+        # Defer styles until after translation code runs.
+        config.defer_styles = True
+

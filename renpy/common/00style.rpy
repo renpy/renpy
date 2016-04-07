@@ -371,6 +371,48 @@ init -1800:
     style pref_label:
         alt "" # We expect the labelled buttons/bars to read themselves out.
 
+
+################################################################################
+# Style reset.
+#
+# Resets styles that are changed above to their defaults.
+
+init label _style_reset:
+
+    $ print "Style Reset"
+
+    style say_label:
+        clear
+
+    style window:
+        clear
+
+    style say_vbox:
+        clear
+
+    style say_who_window:
+        clear
+
+    style say_two_window_vbox:
+        clear
+
+    style menu_choice:
+        clear
+
+    style input:
+        clear
+
+    style hyperlink_text:
+        clear
+
+    style button:
+        clear
+
+    style button_text:
+        clear
+
+    return
+
 # Older init code doesn't necessarily like defer styles.
 init 1001 python:
     config.defer_styles = False
