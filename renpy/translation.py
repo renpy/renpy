@@ -523,6 +523,9 @@ def change_language(language):
     renpy.style.restore(style_backup) # @UndefinedVariable
     renpy.style.rebuild() # @UndefinedVariable
 
+    for i in renpy.config.translate_clean_stores:
+        renpy.python.clean_store(i)
+
     if renpy.config.new_translate_order:
         new_change_language(tl, language)
     else:

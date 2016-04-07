@@ -22,7 +22,8 @@ execution of ``translate python``, ``style`` and ``translate style``
 statements has been changed. When the game starts (after all statements
 have run), or when the language changes, the following steps occur.
 
-#. [ TODO: Restore gui namespace from a backup. ]
+#. The ``gui`` named store is cleaned to its state at the end if init.
+   (This is the store that all variables defined with gui.`name` live in.)
 #. All ``translate`` `language` ``python`` statements are run, where `language`
    is the current language.
 #. All deferred ``style`` statements are run.

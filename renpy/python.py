@@ -205,19 +205,22 @@ class StoreBackup():
             self.old[k] = dict(v.old)
             self.ever_been_changed[k] = set(v.ever_been_changed)
 
+    def restore_one(self, name):
+        sd = store_dicts[name]
+
+        sd.clear()
+        sd.update(self.store[name])
+
+        sd.old.clear()
+        sd.old.update(self.old[name])
+
+        sd.ever_been_changed.clear()
+        sd.ever_been_changed.update(self.ever_been_changed[name])
+
     def restore(self):
 
-        for k, sd in store_dicts.iteritems():
-
-            sd.clear()
-            sd.update(self.store[k])
-
-            sd.old.clear()
-            sd.old.update(self.old[k])
-
-            sd.ever_been_changed.clear()
-            sd.ever_been_changed.update(self.ever_been_changed[k])
-
+        for k in store_dicts:
+            self.restore_one(k)
 
 
 clean_store_backup = None
@@ -242,6 +245,17 @@ def clean_stores():
     """
 
     clean_store_backup.restore()
+
+def clean_store(name):
+    """
+    Reverts the named store to its clean copy.
+    """
+
+    if not name.startswith("store."):
+        name = "store." + name
+
+    clean_store_backup.restore_one(name)
+
 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.

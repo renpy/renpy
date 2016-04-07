@@ -869,7 +869,6 @@ Rarely or Internally Used
     save time, the autosave occurs while the user is being prompted to confirm
     his or her decision.)
 
-
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.
@@ -1327,6 +1326,11 @@ Rarely or Internally Used
     If true, screens will participate in transitions, dissolving from the
     old state of the screen to the new state of the screen. If False, only
     the latest state of the screen will be shown.
+
+.. var:: config.translate_clean_stores = [ "gui" ]
+
+    A list of named stores that are cleaned to their state at the end of
+    the init phase when the translation language changes.
 
 .. var:: config.variants = [ ... ]
 

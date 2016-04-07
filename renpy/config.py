@@ -696,6 +696,9 @@ new_translate_order = True
 # Should we defer style execution until translate block time?
 defer_styles = False
 
+# A list of stores that should be cleaned on translate.
+translate_clean_stores = [ ]
+
 del renpy
 del os
 
