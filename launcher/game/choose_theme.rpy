@@ -345,8 +345,7 @@ init python:
         global style_backup
         style_backup = renpy.style.backup()
 
-translate None python:
-    make_style_backup()
+    config.change_language_callbacks.append(make_style_backup)
 
 screen theme_demo:
 

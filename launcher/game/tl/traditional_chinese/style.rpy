@@ -28,4 +28,4 @@
     style.l_alternate_text.font = DSF
     style.l_nonbox_text.font = DSF
     style.hyperlink_text.font = DSF
-    make_style_backup()
+

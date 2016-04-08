@@ -30,6 +30,3 @@ translate japanese style l_nonbox_text:
 
 translate japanese style hyperlink_text:
     font MTLC
-
-translate japanese python:
-    make_style_backup()

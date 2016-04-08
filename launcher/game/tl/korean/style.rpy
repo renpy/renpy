@@ -23,5 +23,5 @@
 
     style.l_alternate_text.font = NANUM
     style.l_nonbox_text.font = NANUM
-    make_style_backup()
+
 

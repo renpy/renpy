@@ -12,6 +12,5 @@
     style.l_checkbox_text.selected_font = al
     style.l_nonbox_text.selected_font = al
     style.hyperlink_text.font = al
-    make_style_backup()
 
     config.rtl = True
