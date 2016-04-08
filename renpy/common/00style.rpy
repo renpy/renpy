@@ -379,8 +379,6 @@ init -1800:
 
 init label _style_reset:
 
-    $ print "Style Reset"
-
     style say_label:
         clear
 
@@ -409,6 +407,24 @@ init label _style_reset:
         clear
 
     style button_text:
+        clear
+
+    style nvl_window:
+        clear
+
+    style nvl_entry:
+        clear
+
+    style nvl_label:
+        clear
+
+    style nvl_dialogue:
+        clear
+
+    style nvl_menu_button:
+        clear
+
+    style nvl_menu_button_text:
         clear
 
     return
