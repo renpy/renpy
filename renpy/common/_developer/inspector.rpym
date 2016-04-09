@@ -143,13 +143,17 @@ screen _style_inspector:
 
         null height 10
 
+        $ styles = d.style.inspect()
+
         viewport:
             yfill False
             xfill False
             mousewheel True
 
             vbox:
-                for name, properties in d.style.inspect():
+                for i, j in enumerate(styles):
+
+                    $ name, properties = j
 
                     if name is None:
                         text _("displayable:")
@@ -157,10 +161,9 @@ screen _style_inspector:
                         $ style_name = __format_style(name)
                         text "style [style_name!q]:"
 
-
                     if not properties:
                         text _("        (no properties affect the displayable)")
-                    elif name in [ ("default",), ("_default",) ]:
+                    elif i == (len(styles) - 1):
                         text _("        (default properties omitted)")
                     else:
                         for propname in sorted(properties):
