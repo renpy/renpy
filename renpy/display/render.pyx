@@ -1105,9 +1105,6 @@ cdef class Render:
             if self.forward:
                 cx, cy = self.forward.transform(cx, cy)
 
-            if depth is not None:
-                print "  "*depth, child.render_of, cx, cy, child.width, child.height, cx+child.width, cy + child.height
-
             if is_screen:
                 # Ignore the fixed at the root of every screen.
                 cf = child.main_displayables_at_point(cx, cy, layers, depth - 1)
