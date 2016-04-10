@@ -1352,7 +1352,7 @@ init -1500 python in updater:
             print "State:", state
 
             if u.progress:
-                print "Progress: {:.1f}%".format(u.progress * 100.0)
+                print "Progress: {:.1%}".format(u.progress)
 
             if u.message:
                 print "Message:", u.message
