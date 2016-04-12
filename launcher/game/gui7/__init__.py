@@ -39,6 +39,7 @@ def generate_gui_command():
     ap.add_argument("--light", default=False, action="store_true", help="True if this is considered a light theme.")
     ap.add_argument("--overwrite-images", default=False, action="store_true", help="True if existing images should be overwritten.")
     ap.add_argument("--overwrite-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
+    ap.add_argument("--source", default="interface_7/game/gui.rpy", action="store", help="The source code for the gui file.")
 
     args = ap.parse_args()
 
@@ -56,6 +57,7 @@ def generate_gui_command():
         args.light)
 
     ImageGenerator(p, args.overwrite_images).generate_all()
+    CodeGenerator(p, args.source, args.overwrite_code).generate()
 
 
 renpy.arguments.register_command("generate_gui", generate_gui_command)

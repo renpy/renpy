@@ -19,12 +19,76 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import os
+import codecs
+import re
+import math
+
 class CodeGenerator(object):
     """
     This is used to generate and update the GUI code.
     """
 
-    def __init__(self, template, width, height, color):
+    def __init__(self, parameters, template, overwrite):
+        """
+        Generates or updates gui.rpy.
         """
 
-        """
+        self.p = parameters
+        self.template = template
+        self.overwrite = overwrite
+
+        self.target = os.path.join(self.p.prefix, "gui.rpy")
+
+    def load_template(self):
+
+        if os.path.exists(self.target) and not self.overwrite:
+            template = self.target
+        else:
+            template = self.template
+
+        with codecs.open(template, "r", "utf-8") as f:
+            self.lines = [ i.rstrip() for i in f ]
+
+    def remove_scale(self):
+
+        def scale(m):
+            original = int(m.group(1))
+            scaled = int(math.ceil(original * self.p.scale))
+            return str(scaled)
+
+
+        lines = [ ]
+
+        for l in self.lines:
+            l = re.sub(r'gui.scale\((.*?)\)', scale, l)
+            lines.append(l)
+
+        self.lines = lines
+
+    def write_target(self):
+
+        if os.path.exists(self.target):
+            backup = 1
+
+            while True:
+
+                bfn = "{}.{}.bak".format(self.target, backup)
+
+                if not os.path.exists(bfn):
+                    break
+
+                backup += 1
+
+            os.rename(self.target, bfn)
+
+
+        with codecs.open(self.target, "w", "utf-8") as f:
+            for l in self.lines:
+                f.write(l + "\r\n")
+
+
+    def generate(self):
+        self.load_template()
+        self.remove_scale()
+        self.write_target()
