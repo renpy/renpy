@@ -66,6 +66,18 @@ class CodeGenerator(object):
 
         self.lines = lines
 
+    def update_size(self):
+
+        gui_init = "gui.init({}, {})".format(self.p.width, self.p.height)
+
+        lines = [ ]
+
+        for l in self.lines:
+            l = re.sub(r'gui.init\(.*?\)', gui_init, l)
+            lines.append(l)
+
+        self.lines = lines
+
     def write_target(self):
 
         if os.path.exists(self.target):
@@ -87,8 +99,8 @@ class CodeGenerator(object):
             for l in self.lines:
                 f.write(l + "\r\n")
 
-
     def generate(self):
         self.load_template()
         self.remove_scale()
+        self.update_size()
         self.write_target()
