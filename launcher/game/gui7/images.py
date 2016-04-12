@@ -22,40 +22,37 @@
 import pygame_sdl2
 import os
 
-from renpy.store import Color
-
-# The target width used in templates.
-WIDTH = 1280
-HEIGHT = 720
-
 class ImageGenerator(object):
 
-    def __init__(self, prefix, width, height, color, overwrite=False):
+    def __init__(self, parameters, overwrite=False):
+
         pygame_sdl2.image.init()
 
-        self.prefix = prefix
+        p = parameters
+
+        self.width = p.width
+        self.height = p.height
+
+        self.scale = p.scale
+
+        self.accent_color = p.accent_color
+        self.boring_color = p.boring_color
+
+        self.hover_color = p.hover_color
+        self.muted_color = p.accent_color
+        self.hover_muted_color = p.hover_muted_color
+
+        self.menu_color = p.menu_color
+
+        self.prefix = os.path.join(p.prefix, "gui", "")
 
         try:
-            os.mkdir(prefix, 0o777)
+            os.mkdir(self.prefix, 0o777)
         except:
             pass
 
-        self.width = width
-        self.height = height
-
-        self.scale = min(1.0 * width / WIDTH, 1.0 * height / HEIGHT)
-
         self.full_width = self.width / self.scale
         self.full_height = self.height / self.scale
-
-        self.accent_color = Color(color)
-        self.boring_color = Color("#000000")
-
-        self.hover_color = self.accent_color.tint(.6)
-        self.muted_color = self.accent_color.shade(.4)
-        self.hover_muted_color = self.accent_color.shade(.6)
-
-        self.menu_color = self.accent_color.replace_hsv_saturation(.1).replace_value(.5)
 
         self.overwrite = overwrite
 
