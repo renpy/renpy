@@ -98,6 +98,10 @@ class Color(tuple):
         Returns the alpha (opacity) of this Color as a number between 0.0 and
         1.0, where 0.0 is transparent and 1.0 is opaque.
 
+    .. attribute:: hexcode
+
+        Returns a string containing a hex color code of the form #rrggbbaa
+        or #rrggbb.
 
     Color objects have the following methods. Since Colors are immutable,
     these methods always return a new Color object.
@@ -178,13 +182,16 @@ class Color(tuple):
 
         raise Exception("Not a color: %r" % (color,))
 
+    @property
+    def hexcode(self):
+        if self.alpha != 1.0:
+            return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}{self[3]:02x}".format(self=self)
+        else:
+            return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}".format(self=self)
+
+
     def __repr__(self):
-        return "<Color #{:02x}{:02x}{:02x}{:02x}>".format(
-            self[0],
-            self[1],
-            self[2],
-            self[3],
-            )
+        return "<Color {}>".format(self.hexcode)
 
     def __getnewargs__(self):
         return (tuple(self), )
