@@ -88,6 +88,7 @@ class CodeGenerator(object):
 
         replacements = {
             'gui.ACCENT_COLOR' : repr(self.p.accent_color.hexcode),
+            'gui.HOVER_COLOR' : repr(self.p.hover_color.hexcode),
             }
 
 
