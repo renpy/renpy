@@ -662,8 +662,14 @@ class TranslateFile(object):
                 return
 
             self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "common.rpy")
+
         elif filename.startswith(gamedir):
             fn = os.path.relpath(filename, gamedir)
+            self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
+
+        else:
+
+            fn = os.path.basename(filename)
             self.tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
 
         if self.tl_filename.endswith(".rpym"):
@@ -873,6 +879,7 @@ def translate_command():
     ap.add_argument("language", help="The language to generate translations for.")
     ap.add_argument("--rot13", help="Apply rot13 while generating translations.", dest="rot13", action="store_true")
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
+
     args = ap.parse_args()
 
     if args.rot13:
@@ -881,6 +888,8 @@ def translate_command():
         filter = empty_filter # @ReservedAssignment
     else:
         filter = null_filter #@ReservedAssignment
+
+    filenames = list(renpy.config.translate_files)
 
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:
@@ -891,7 +900,14 @@ def translate_command():
         if not (filename.endswith(".rpy") or filename.endswith(".rpym")):
             continue
 
+        filenames.append(filename)
+
+    for filename in filenames:
         filename = os.path.normpath(filename)
+
+        if not os.path.exists(filename):
+            continue
+
         TranslateFile(filename, args.language, filter)
 
     return False

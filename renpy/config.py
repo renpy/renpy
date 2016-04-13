@@ -699,6 +699,9 @@ defer_styles = False
 # A list of stores that should be cleaned on translate.
 translate_clean_stores = [ ]
 
+# A list of additional script files that should be translated.
+translate_files = [ ]
+
 del renpy
 del os
 
