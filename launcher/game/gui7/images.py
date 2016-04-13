@@ -39,7 +39,7 @@ class ImageGenerator(object):
         self.boring_color = p.boring_color
 
         self.hover_color = p.hover_color
-        self.muted_color = p.accent_color
+        self.muted_color = p.muted_color
         self.hover_muted_color = p.hover_muted_color
 
         self.menu_color = p.menu_color
