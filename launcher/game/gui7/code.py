@@ -78,6 +78,34 @@ class CodeGenerator(object):
 
         self.lines = lines
 
+
+    def update_defines(self):
+        """
+        Replaces define statements in gui.rpy.
+        """
+
+        lines = [ ]
+
+        replacements = {
+            'gui.ACCENT_COLOR' : repr(self.p.accent_color.hexcode),
+            }
+
+
+        for l in self.lines:
+
+            m = re.match('^(\s*)define (.*?) =', l)
+
+            if m:
+                indent = m.group(1)
+                variable = m.group(2)
+
+                if variable in replacements:
+                    l = "{}define {} = {}".format(indent, variable, replacements[variable])
+
+            lines.append(l)
+
+        self.lines = lines
+
     def write_target(self):
 
         if os.path.exists(self.target):
@@ -103,4 +131,5 @@ class CodeGenerator(object):
         self.load_template()
         self.remove_scale()
         self.update_size()
+        self.update_defines()
         self.write_target()
