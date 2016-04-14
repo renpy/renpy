@@ -27,6 +27,7 @@ import collections
 import os
 import time
 import io
+import codecs
 
 ################################################################################
 # Script
@@ -604,8 +605,11 @@ def scan_strings(filename):
     Generates a list of (line, string) tuples.
     """
 
+
+    rv = [ ]
+
     for line, s in renpy.game.script.translator.additional_strings[filename]:
-        yield line, s
+        rv.append((line, s))
 
     line = 1
 
@@ -618,7 +622,38 @@ def scan_strings(filename):
                 s = s.strip()
                 s = "u" + s
                 s = eval(s)
-                yield lineno, s
+                rv.append((lineno, s))
+
+    return rv
+
+def scan_comments(filename):
+
+    rv = [ ]
+
+    if filename not in renpy.config.translate_comments:
+        return rv
+
+    comment = [ ]
+    start = 0
+
+    with codecs.open(filename, "r", "utf-8") as f:
+        lines = [ i.rstrip() for i in f.read().split('\n') ]
+
+    for i, l in enumerate(lines):
+
+        if not comment:
+            start = i + 1
+
+        m = re.match(r'\s*(## .*)', l)
+        if m:
+            comment.append(m.group(1))
+        elif comment:
+            s = "\n".join(comment)
+            comment = [ ]
+
+            rv.append((start, s))
+
+    return rv
 
 
 def open_tl_file(fn):
@@ -743,7 +778,15 @@ class TranslateFile(object):
         started = False
         filename = renpy.parser.elide_filename(self.filename)
 
-        for line, s in scan_strings(self.filename):
+        strings = scan_strings(self.filename)
+
+        if renpy.config.translate_comments:
+            strings.extend(scan_comments(self.filename))
+
+        # Sort by line number.
+        strings.sort(key=lambda a : a[0])
+
+        for line, s in strings:
 
             stl = renpy.game.script.translator.strings[self.language]
 

@@ -702,6 +702,10 @@ translate_clean_stores = [ ]
 # A list of additional script files that should be translated.
 translate_files = [ ]
 
+# A list of files for which ##<space> comment sequences should also be
+# translated.
+translate_comments = [ ]
+
 del renpy
 del os
 
