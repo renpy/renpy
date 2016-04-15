@@ -573,7 +573,6 @@ translate vietnamese strings:
     old "How about something else?"
     new "Ta chuyển sang cái khác nhé?"
 
-# TODO: Translation updated at 2016-04-04 20:46
 
 # game/demo_transitions.rpy:244
 translate vietnamese demo_imagedissolve_transitions_3a401ee7:

@@ -41,7 +41,6 @@ translate vietnamese tutorial_video_7b2dc95f:
     # e "And that's all there is when it comes to movie playback in Ren'Py."
     e "Và đó là tất cả cho trình chạy phim của Ren'Py."
 
-# TODO: Translation updated at 2016-04-04 20:46
 
 # ../tutorial_video.rpyc:27
 translate vietnamese tutorial_video_fbaa71e4:

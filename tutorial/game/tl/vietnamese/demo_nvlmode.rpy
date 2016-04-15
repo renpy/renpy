@@ -120,7 +120,6 @@ translate vietnamese strings:
     old "No."
     new "Không."
 
-# TODO: Translation updated at 2016-04-04 20:46
 
 # game/demo_nvlmode.rpy:19
 translate vietnamese demo_nvlmode_37fd9ceb:

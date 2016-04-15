@@ -59,7 +59,6 @@ translate Vietnamese strings:
     old "A Working Button"
     new "Nút bấm"
 
-# TODO: Translation updated at 2016-04-04 20:46
 
 # game/demo_transform.rpy:156
 translate vietnamese demo_transform_f10e08f5:
