@@ -41,3 +41,17 @@ translate vietnamese tutorial_video_7b2dc95f:
     # e "And that's all there is when it comes to movie playback in Ren'Py."
     e "Và đó là tất cả cho trình chạy phim của Ren'Py."
 
+# TODO: Translation updated at 2016-04-04 20:46
+
+# ../tutorial_video.rpyc:27
+translate vietnamese tutorial_video_fbaa71e4:
+
+    # e "Then, we can show the movie displayable, which starts the movie playing."
+    e "Như thế chúng ta có thể cho hiện lên phần hiển thị phim giúp chạy bộ phim đó."
+
+# ../tutorial_video.rpyc:35
+translate vietnamese tutorial_video_bbbb242d:
+
+    # e "When we no longer want to play the movie, we can hide it."
+    e "Khi chúng ta không muốn chạy bộ phim đó nữa, chúng ta có thể giấu nó đi."
+

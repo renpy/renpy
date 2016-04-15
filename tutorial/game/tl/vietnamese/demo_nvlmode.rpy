@@ -120,3 +120,11 @@ translate vietnamese strings:
     old "No."
     new "Không."
 
+# TODO: Translation updated at 2016-04-04 20:46
+
+# game/demo_nvlmode.rpy:19
+translate vietnamese demo_nvlmode_37fd9ceb:
+
+    # nvle "Ren'Py ships with a file, nvl_mode.rpy, that implements NVL-style games. You're seeing an example of NVL-mode at work."
+    nvle "Ren'Py có đi kèm với một file nvl_mode.rpy, là một mẫu theo phong cách trò chơi NVL. Bạn đang thấy mẫu chế độ NVL đang hoạt động."
+
