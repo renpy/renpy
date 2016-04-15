@@ -546,6 +546,9 @@ def change_language(language):
 
         old_language = language
 
+    for i in renpy.config.translate_clean_stores:
+        renpy.python.reset_store_changes(i)
+
     # Restart the interaction.
     renpy.exports.restart_interaction()
 

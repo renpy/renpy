@@ -256,6 +256,13 @@ def clean_store(name):
 
     clean_store_backup.restore_one(name)
 
+def reset_store_changes(name):
+
+    if not name.startswith("store."):
+        name = "store." + name
+
+    sd = store_dicts[name]
+    sd.begin()
 
 ##### Code that computes reachable objects, which is used to filter
 ##### the rollback list before rollback or serialization.
