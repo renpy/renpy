@@ -257,13 +257,17 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         if image:
             kwargs["image"] = image
 
+        if (side_image is not None) or renpy.config.old_say_args:
+            kwargs["side_image"] = side_image
+
+        if two_window or renpy.config.old_say_args:
+            kwargs["two_window"] = two_window
+
         renpy.display.screen.show_screen(
             screen,
             _widget_properties=props,
             _transient = True,
             _tag = tag,
-            side_image=side_image,
-            two_window=two_window,
             who=who,
             what=what,
             _layer=layer,

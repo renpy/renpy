@@ -706,6 +706,9 @@ translate_files = [ ]
 # translated.
 translate_comments = [ ]
 
+# Should we pass the full argument list to the say screen?
+old_say_args = False
+
 del renpy
 del os
 
