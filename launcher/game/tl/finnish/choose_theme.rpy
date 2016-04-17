@@ -2,8 +2,8 @@
 translate finnish strings:
 
     # game/choose_theme.rpy:303
-    old "Teemaa ei voitu vaihtaa. Kenties options.rpy:tä muutettiin liikaa."
-    new ""
+    old "Could not change the theme. Perhaps options.rpy was changed too much."
+    new "Teemaa ei voitu vaihtaa. Kenties options.rpy:tä muutettiin liikaa."
 
     # game/choose_theme.rpy:368
     old "Display"
