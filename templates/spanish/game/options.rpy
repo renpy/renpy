@@ -9,12 +9,6 @@
 
 init -1 python hide:
 
-    ## Esta variable habilita las herramientas de desarrollo. Debe ser
-    ## ajustada a False antes del lanzamiento del juego, así el usuario
-    ## no puede hacer trampas usando las herramientas de desarrollo.
-
-    config.developer = True
-
     ## Control de la anchura y altura de la pantalla.
 
     config.screen_width = 800
