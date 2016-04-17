@@ -52,4 +52,3 @@ translate finnish strings:
     # game/project.rpy:604
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py on valinnut projektikansioksi:"
-

@@ -64,4 +64,3 @@ translate finnish strings:
     # game/navigation.rpy:256
     old "The list of names is empty."
     new "Nimilista on tyhjä."
-

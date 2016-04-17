@@ -11,7 +11,7 @@ translate finnish strings:
 
     # game/updater.rpy:94
     old "Release"
-    new "Versio"
+    new "Vakaat versiot"
 
     # game/updater.rpy:100
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -92,4 +92,3 @@ translate finnish strings:
     # game/updater.rpy:198
     old "Proceed"
     new "Jatka"
-
