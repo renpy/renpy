@@ -39,25 +39,38 @@ def generate_gui_command():
     ap.add_argument("--light", default=False, action="store_true", help="True if this is considered a light theme.")
     ap.add_argument("--overwrite-images", default=False, action="store_true", help="True if existing images should be overwritten.")
     ap.add_argument("--overwrite-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
-    ap.add_argument("--source", default="interface_7/game/gui.rpy", action="store", help="The source code for the gui file.")
+    ap.add_argument("--template", default="interface_7", action="store", help="The template directory containing source code.")
+    ap.add_argument("--language", default=None, action="store", help="The language to translate strings and comments to.")
+    ap.add_argument("--start", default=False, action="store_true", help="Starts a new project.")
 
     args = ap.parse_args()
 
+    if args.start:
+        args.overwrite_images = True
+        args.overwrite_code = True
     prefix = os.path.join(args.target, "game")
 
     if not os.path.isdir(prefix):
         ap.error("{} does not appear to be a Ren'Py game.".format(prefix))
 
+    template = os.path.join(args.template, "game")
+
+    if not os.path.isdir(template):
+        ap.error("{} does not appear to be a Ren'Py game.".format(template))
+
     p = GuiParameters(
         prefix,
+        template,
         args.width,
         args.height,
         args.accent,
         args.boring,
-        args.light)
+        args.light,
+        args.language,
+        )
 
     ImageGenerator(p, args.overwrite_images).generate_all()
-    CodeGenerator(p, args.source, args.overwrite_code).generate()
+    CodeGenerator(p, args.overwrite_code).generate_gui()
 
 
 renpy.arguments.register_command("generate_gui", generate_gui_command)

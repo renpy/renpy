@@ -33,9 +33,10 @@ class GuiParameters(object):
     parameters.
     """
 
-    def __init__(self, prefix, width, height, accent, boring, light):
+    def __init__(self, prefix, template, width, height, accent, boring, light, language):
 
         self.prefix = prefix
+        self.template = template
 
         self.width = width
         self.height = height
@@ -50,3 +51,5 @@ class GuiParameters(object):
         self.hover_muted_color = self.accent_color.shade(.6)
 
         self.menu_color = self.accent_color.replace_hsv_saturation(.1).replace_value(.5)
+
+        self.language = language

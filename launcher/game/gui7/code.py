@@ -24,28 +24,29 @@ import codecs
 import re
 import math
 
+
 class CodeGenerator(object):
     """
     This is used to generate and update the GUI code.
     """
 
-    def __init__(self, parameters, template, overwrite):
+    def __init__(self, parameters, overwrite):
         """
         Generates or updates gui.rpy.
         """
 
         self.p = parameters
-        self.template = template
         self.overwrite = overwrite
 
-        self.target = os.path.join(self.p.prefix, "gui.rpy")
 
-    def load_template(self):
+    def load_template(self, filename):
 
-        if os.path.exists(self.target) and not self.overwrite:
+        target = os.path.join(self.p.prefix, filename)
+
+        if os.path.exists(target) and not self.overwrite:
             template = self.target
         else:
-            template = self.template
+            template = os.path.join(self.p.template, filename)
 
         with codecs.open(template, "r", "utf-8") as f:
             self.lines = [ i.rstrip() for i in f ]
@@ -107,30 +108,45 @@ class CodeGenerator(object):
 
         self.lines = lines
 
-    def write_target(self):
+    def write_target(self, filename):
 
-        if os.path.exists(self.target):
+        target = os.path.join(self.p.prefix, filename)
+
+        if os.path.exists(target):
             backup = 1
 
             while True:
 
-                bfn = "{}.{}.bak".format(self.target, backup)
+                bfn = "{}.{}.bak".format(target, backup)
 
                 if not os.path.exists(bfn):
                     break
 
                 backup += 1
 
-            os.rename(self.target, bfn)
+            os.rename(target, bfn)
 
-
-        with codecs.open(self.target, "w", "utf-8") as f:
+        with codecs.open(target, "w", "utf-8") as f:
             for l in self.lines:
                 f.write(l + "\r\n")
 
-    def generate(self):
-        self.load_template()
+    def translate_strings(self):
+
+        lines = [ ]
+
+        for l in self.lines:
+            lines.append(l)
+
+        self.lines = lines
+
+    def generate_gui(self):
+        self.load_template("gui.rpy")
+
         self.remove_scale()
         self.update_size()
         self.update_defines()
-        self.write_target()
+
+        if self.overwrite:
+            self.translate_strings()
+
+        self.write_target("gui.rpy")
