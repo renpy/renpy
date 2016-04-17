@@ -18,7 +18,7 @@ translate finnish strings:
 
     # renpy/common/00console.rpy:180
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Paina <esc> poistuaksesi konsolista. Käytä komentoa help saadaksesi apua."
+    new "Paina <esc> poistuaksesi konsolista. Käytä komentoa help saadaksesi apua.\n"
 
     # renpy/common/00console.rpy:184
     old "Ren'Py script enabled."
@@ -85,7 +85,7 @@ translate finnish strings:
 
     # renpy/common/00gallery.rpy:561
     old "Image [index] of [count] locked."
-    new ""
+    new "[index]. kuva [count]:stä on lukittu"
 
     # renpy/common/00gallery.rpy:581
     old "prev"
