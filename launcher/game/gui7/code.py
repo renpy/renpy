@@ -24,6 +24,7 @@ import codecs
 import re
 import math
 
+import renpy
 
 class CodeGenerator(object):
     """
@@ -132,9 +133,24 @@ class CodeGenerator(object):
 
     def translate_strings(self):
 
+        def replace(m):
+            s = eval(m.group(1))
+            s = renpy.translation.translate_string(s, language=self.p.language)
+            s = renpy.translation.quote_unicode(s)
+
+            quote = m.group(1)[0]
+
+            s = u"_({}{}{})".format(quote, s, quote)
+
+            return s
+
         lines = [ ]
 
         for l in self.lines:
+
+            l = re.sub(ur'_\((\".*?\")\)', replace, l)
+            l = re.sub(ur'_\((\'.*?\')\)', replace, l)
+
             lines.append(l)
 
         self.lines = lines
