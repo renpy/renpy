@@ -380,12 +380,18 @@ def add_string_translation(language, old, new):
     tl.languages.add(language)
     stl.add(old, new)
 
-def translate_string(s):
+Default = renpy.object.Sentinel("default")
+
+def translate_string(s, language=Default):
     """
-    Translates interface string `s`.
+    Translates interface string `s` to `language`. If `languages` is Default,
+    uses the language set in the preferences.
     """
 
-    stl = renpy.game.script.translator.strings[renpy.game.preferences.language]
+    if language is Default:
+        language = renpy.game.preferences.language
+
+    stl = renpy.game.script.translator.strings[language]
     return stl.translate(s)
 
 def write_updated_strings():
