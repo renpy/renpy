@@ -3,7 +3,7 @@ translate finnish strings:
 
     # game/interface.rpy:107
     old "Documentation"
-    new "Dokumentit"
+    new "Dokumentaatio"
 
     # game/interface.rpy:108
     old "Ren'Py Website"
@@ -59,7 +59,7 @@ translate finnish strings:
 
     # game/interface.rpy:374
     old "File and directory names may not contain / or \\."
-    new "Tiedostot ja kansioiden nimet eivät voi sisältää / tai \\-merkkejä."
+    new "Tiedostojen ja kansioiden nimet eivät saa sisältää / tai \\-merkkejä."
 
     # game/interface.rpy:380
     old "File and directory names must consist of ASCII characters."
@@ -71,9 +71,9 @@ translate finnish strings:
 
     # game/interface.rpy:448
     old "PROCESSING"
-    new "PROSESSOIDAAN"
+    new "KÄSITELLÄÄN"
 
     # game/interface.rpy:478
     old "CHOICE"
-    new "VALITSE"
+    new "VALINTA"
 
