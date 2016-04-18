@@ -1135,7 +1135,6 @@ translate Finnish strings:
     old "Joystick Mapping"
     new "Peliohjaimen näppäinten asetus"
 
-# TODO: Translation updated at 2016-04-17 13:39
 
 translate Finnish strings:
 
@@ -1315,7 +1314,6 @@ translate Finnish strings:
     old "Copies the errors.txt file to the clipboard."
     new "Kopioi errors.txt-tiedoston leikepöydälle."
 
-# TODO: Translation updated at 2016-04-17 13:39
 
 translate Finnish strings:
 
