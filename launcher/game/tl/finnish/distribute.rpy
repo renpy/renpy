@@ -36,4 +36,3 @@ translate finnish strings:
     # game/distribute.rpy:941
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "Käsitelty {b}[complete]{/b}/{b}[total]{/b}:sta tiedostosta."
-

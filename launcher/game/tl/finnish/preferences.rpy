@@ -83,4 +83,3 @@ translate finnish strings:
     # game/preferences.rpy:176
     old "Generate empty strings for translations"
     new "Luo tyhjiä merkkijonoja käännöksiä varten"
-

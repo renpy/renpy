@@ -96,4 +96,3 @@ translate finnish strings:
     # game/ios.rpy:359
     old "Ren'Py has set the Xcode Projects Directory to:"
     new "Ren'Py on asettanut Xcode-projektikansioksi:"
-

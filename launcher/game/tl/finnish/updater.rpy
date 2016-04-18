@@ -92,4 +92,3 @@ translate finnish strings:
     # game/updater.rpy:198
     old "Proceed"
     new "Jatka"
-
