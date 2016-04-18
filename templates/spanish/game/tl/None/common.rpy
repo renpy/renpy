@@ -535,3 +535,219 @@
     # renpy/common/00gltest.rpy:99
     old "Disable"
     new "Desactivar"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Monday"
+    new "Lunes"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Tuesday"
+    new "Martes"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Wednesday"
+    new "Miércoles"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Thursday"
+    new "Jueves"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Friday"
+    new "Viernes"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Saturday"
+    new "Sábado"
+
+    # renpy/common/00action_file.rpy:26
+    old "{#weekday}Sunday"
+    new "Domingo"
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Mon"
+    new "Lun."
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Tue"
+    new "Mar."
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Wed"
+    new "Mié."
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Thu"
+    new "Jue."
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Fri"
+    new "Vie."
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Sat"
+    new "Sab."
+
+    # renpy/common/00action_file.rpy:37
+    old "{#weekday_short}Sun"
+    new "Dom."
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}January"
+    new "Enero"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}February"
+    new "Febrero"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}March"
+    new "Marzo"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}April"
+    new "Abril"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}May"
+    new "Mayo"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}June"
+    new "Junio"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}July"
+    new "Julio"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}August"
+    new "Agosto"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}September"
+    new "Septiembre"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}October"
+    new "Octubre"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}November"
+    new "Noviembre"
+
+    # renpy/common/00action_file.rpy:47
+    old "{#month}December"
+    new "Diciembre"
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Jan"
+    new "Ene."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Feb"
+    new "Feb."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Mar"
+    new "Mar."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Apr"
+    new "Abr."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}May"
+    new "May."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Jun"
+    new "Jun."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Jul"
+    new "Jul."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Aug"
+    new "Ago."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Sep"
+    new "Sep."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Oct"
+    new "Oct."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Nov"
+    new "Nov."
+
+    # renpy/common/00action_file.rpy:63
+    old "{#month_short}Dec"
+    new "Dic."
+
+    # renpy/common/00action_file.rpy:550
+    old "Page {}"
+    new "Página {}"
+
+    # renpy/common/00action_file.rpy:550
+    old "Automatic saves"
+    new "Grabación automática"
+
+    # renpy/common/00action_file.rpy:550
+    old "Quick saves"
+    new "Grabación rápida"
+
+    # renpy/common/00gamepad.rpy:32
+    old "Select Gamepad to Calibrate"
+    new "Selecciona mando para calibrar"
+
+    # renpy/common/00gamepad.rpy:35
+    old "No Gamepads Available"
+    new "No hay mandos disponibles"
+
+    # renpy/common/00gamepad.rpy:54
+    old "Calibrating [name] ([i]/[total])"
+    new "Calibrando [name] ([i]/[total])"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the [control!r] [kind]."
+    new "Pulsa o mueve: [control!r] [kind]."
+
+    # renpy/common/00gamepad.rpy:66
+    old "Skip (A)"
+    new "Salto (A)"
+
+    # renpy/common/00gamepad.rpy:69
+    old "Back (B)"
+    new "Atrás (B)"
+
+    # renpy/common/00gltest.rpy:105
+    old "Calibrate"
+    new "Calibrar"
+
+    # renpy/common/00layout.rpy:456
+    old "Are you sure you want to end the replay?"
+    new "¿Seguro que quieres finalizar la repetición?"
+
+    # renpy/common/00library.rpy:125
+    old "Self-voicing disabled."
+    new "Auto-voz desactivada."
+
+    # renpy/common/00library.rpy:126
+    old "Clipboard voicing enabled. "
+    new "'Portapapeles a voz' activado. "
+
+    # renpy/common/00library.rpy:127
+    old "Self-voicing enabled. "
+    new "Auto-voz activada. "
+
+    # renpy/common/00library.rpy:248
+    old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license/}here{/a}."
+    new "Este programa contiene software libre bajo diversas licencias, incluyendo la licencia MIT y Licencia Pública General Reducida de GNU. La lista completa de software, incluyendo enlaces al código fuente completo, se puede encontrar {a=https://www.renpy.org/l/license/}aquí{/a} (página en inglés)."
+
+    # renpy/common/00preferences.rpy:411
+    old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
+    new "Auto-voz dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
