@@ -1,5 +1,5 @@
 ﻿
-translate Finnish strings:
+translate finnish strings:
 
     # game/mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
