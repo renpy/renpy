@@ -653,11 +653,16 @@ def scan_comments(filename):
         if not comment:
             start = i + 1
 
-        m = re.match(r'\s*(## .*)', l)
+        m = re.match(r'\s*## (.*)', l)
         if m:
-            comment.append(m.group(1))
+            c = m.group(1)
+
+            if comment:
+                c = c.strip()
+
+            comment.append(c)
         elif comment:
-            s = "\n".join(comment)
+            s = "## " + " ".join(comment)
             comment = [ ]
 
             rv.append((start, s))
