@@ -123,7 +123,8 @@ init -1500 python in updater:
     def zsync_path(command):
         """
         Returns the full platform-specific path to command, which is one
-        of zsync or zsyncmake.
+        of zsync or zsyncmake. If the file doesn't exists, returns the
+        command so the system-wide copy is used.
         """
 
         if renpy.windows:
@@ -131,8 +132,12 @@ init -1500 python in updater:
         else:
             suffix = ""
 
-        return os.path.join(os.path.dirname(sys.executable), command + suffix)
+        rv = os.path.join(os.path.dirname(sys.executable), command + suffix)
 
+        if os.path.exists(rv):
+            return rv
+
+        return command + suffix
 
     class UpdateError(Exception):
         """
