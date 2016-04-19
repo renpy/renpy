@@ -824,58 +824,10 @@ def null_filter(s):
 def empty_filter(s):
     return ""
 
-ROT13 = { }
+def generic_filter(s, transform):
 
-for i, j in zip("ABCDEFGHIJKLM", "NMOPQRSTUVWYZ"):
-    ROT13[i] = j
-    ROT13[j] = i
-
-    i = i.lower()
-    j = j.lower()
-
-    ROT13[i] = j
-    ROT13[j] = i
-
-def rot13_filter(s):
-
-    def tag_pass(s):
-
-        brace = False
-        first = False
-        rv = ""
-
-        for i in s:
-
-            if i == '{':
-
-                if first:
-                    brace = False
-                else:
-                    brace = True
-                    first = True
-
-                rv += "{"
-
-            elif i == "}":
-                first = False
-
-                if brace:
-                    brace = False
-
-                rv += "}"
-
-            else:
-                first = False
-
-                if brace:
-                    rv += i
-                else:
-                    rv += ROT13.get(i, i)
-
-        return rv
-
-    def square_pass(s):
-        squares = 0
+    def remove_special(s, start, end, process):
+        specials = 0
         first = False
 
         rv = ""
@@ -883,43 +835,89 @@ def rot13_filter(s):
 
         for i in s:
 
-            if i == "[":
+            if i == start:
                 if first:
-                    squares = 0
+                    specials = 0
                 else:
-                    rv += tag_pass(buf)
+                    rv += process(buf)
                     buf = ""
 
-                    if squares == 0:
+                    if specials == 0:
                         first = True
 
-                    squares += 1
+                    specials += 1
 
-                rv += "["
+                rv += start
 
-            elif i == "]":
+            elif i == end:
 
                 first = False
 
-                squares -= 1
-                if squares < 0:
-                    squares += 1
+                specials -= 1
+                if specials < 0:
+                    specials += 1
 
-                rv += "]"
+                rv += end
 
             else:
-                if squares:
+                if specials:
                     rv += i
                 else:
                     buf += i
 
         if buf:
-            rv += tag_pass(buf)
+            rv += process(buf)
 
         return rv
 
+    def remove_braces(s):
+        return remove_special(s, "{", "}", transform)
 
-    return square_pass(s)
+    return remove_special(s, "[", "]", remove_braces)
+
+def rot13_transform(s):
+
+    ROT13 = { }
+
+    for i, j in zip("ABCDEFGHIJKLM", "NMOPQRSTUVWYZ"):
+        ROT13[i] = j
+        ROT13[j] = i
+
+        i = i.lower()
+        j = j.lower()
+
+        ROT13[i] = j
+        ROT13[j] = i
+
+    return "".join(ROT13.get(i, i) for i in s)
+
+def rot13_filter(s):
+    return generic_filter(s, rot13_transform)
+
+def piglatin_transform(s):
+    # Based on http://stackoverflow.com/a/23177629/3549890
+
+    lst = ['sh', 'gl', 'ch', 'ph', 'tr', 'br', 'fr', 'bl', 'gr', 'st', 'sl', 'cl', 'pl', 'fl']
+
+    def replace(m):
+        i = m.group(0)
+
+        if i[0] in ['a', 'e', 'i', 'o', 'u']:
+            rv = i + 'ay'
+        elif i[:2] in lst:
+            rv = i[2:] + i[:2] + 'ay'
+        else:
+            rv = i[1:] + i[0] + 'ay'
+
+        if i[0].isupper():
+            rv = rv.capitalize()
+
+        return rv
+
+    return re.sub(r'\w+', replace, s)
+
+def piglatin_filter(s):
+    return generic_filter(s, piglatin_transform)
 
 def translate_command():
     """
@@ -930,12 +928,15 @@ def translate_command():
     ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
     ap.add_argument("language", help="The language to generate translations for.")
     ap.add_argument("--rot13", help="Apply rot13 while generating translations.", dest="rot13", action="store_true")
+    ap.add_argument("--piglatin", help="Apply pig latin while generating translations.", dest="piglatin", action="store_true")
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
 
     args = ap.parse_args()
 
     if args.rot13:
         filter = rot13_filter #@ReservedAssignment
+    elif args.piglatin:
+        filter = piglatin_filter #@ReservedAssignment
     elif args.empty:
         filter = empty_filter # @ReservedAssignment
     else:
