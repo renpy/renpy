@@ -21,3 +21,13 @@
 
 init python:
     import gui7
+    import os
+
+    from store import config
+
+    for fn in [ "gui.rpy" ]:
+        fn = os.path.join(config.renpy_base, "interface_7", "game", fn)
+        if os.path.exists(fn):
+            config.translate_files.append(fn)
+
+    config.translate_comments = config.translate_files
