@@ -764,10 +764,13 @@ class Lexer(object):
         if label and label[0] != '.':
             self.global_label = label.split('.')[0]
 
-    def label_name(self):
+    def label_name(self, declare=False):
         """
         Try to parse label name. Returns name in form of "global.local" if local
         is present, "global" otherwise; or None if it doesn't parse.
+        
+        If declare is True, allow only such names that are valid for declaration
+        (e.g. forbid global name mismatch)
         """
 
         old_pos = self.pos
@@ -787,6 +790,10 @@ class Lexer(object):
         else:
             if self.match('\.'):
                 # full global.local name
+                if declare and global_name != self.global_label:
+                    self.pos = old_pos
+                    return None
+
                 local_name = self.name()
                 if not local_name:
                     self.pos = old_pos
@@ -796,6 +803,12 @@ class Lexer(object):
             return global_name
 
         return global_name+'.'+local_name
+
+    def label_name_declare(self):
+        """
+        Same as label_name, but set declare to True.
+        """
+        return self.label_name(declare=True)
 
     def image_name_component(self):
         """
@@ -1647,7 +1660,7 @@ def pass_statement(l, loc):
 @statement("menu")
 def menu_statement(l, loc):
     l.expect_block('menu statement')
-    label = l.label_name()
+    label = l.label_name_declare()
     l.set_global_label(label)
     l.require(':')
     l.expect_eol()
@@ -1718,7 +1731,7 @@ def call_statement(l, loc):
     rv = [ ast.Call(loc, target, expression, arguments) ]
 
     if l.keyword('from'):
-        name = l.require(l.label_name)
+        name = l.require(l.label_name_declare)
         l.set_global_label(name)
         rv.append(ast.Label(loc, name, [], None))
     else:
@@ -1995,7 +2008,7 @@ def python_statement(l, loc):
 @statement("label")
 def label_statement(l, loc, init=False):
 
-    name = l.require(l.label_name)
+    name = l.require(l.label_name_declare)
     l.set_global_label(name)
     parameters = parse_parameters(l)
 
