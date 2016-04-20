@@ -25,6 +25,7 @@ import re
 import math
 
 import renpy
+import textwrap
 
 class CodeGenerator(object):
     """
@@ -155,6 +156,58 @@ class CodeGenerator(object):
 
         self.lines = lines
 
+    def translate_comments(self):
+
+        lines = [ ]
+
+        comment = [ ]
+        indent = ""
+
+        for l in self.lines:
+
+            m = re.match(r'^(\s*## )(.*)', l.rstrip())
+
+            if m:
+                print(l)
+
+                indent = m.group(1)
+                c = m.group(2)
+
+                if comment:
+                    c = c.strip()
+
+                comment.append(c)
+
+            else:
+
+                if comment:
+                    s = "## " + ' '.join(comment)
+
+                    s = renpy.translation.translate_string(s, language=self.p.language)
+                    m = re.match(r'## ([ *]*)(.*)', s)
+
+                    prefix = m.group(1)
+                    empty = ' ' * len(prefix)
+                    rest = m.group(2)
+
+                    len_prefix = len(indent) + len(prefix)
+                    len_wrap = 78 - len_prefix
+
+                    for i, s in enumerate(textwrap.wrap(rest, width=len_wrap)):
+
+                        if i == 0:
+                            s = indent + prefix + s
+                        else:
+                            s = indent + empty + s
+
+                        lines.append(s)
+
+                    comment = [ ]
+
+                lines.append(l)
+
+        self.lines = lines
+
     def generate_gui(self):
         self.load_template("gui.rpy")
 
@@ -164,5 +217,6 @@ class CodeGenerator(object):
 
         if self.overwrite:
             self.translate_strings()
+            self.translate_comments()
 
         self.write_target("gui.rpy")
