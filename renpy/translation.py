@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import renpy
 
 import hashlib
@@ -694,7 +696,7 @@ def open_tl_file(fn):
 
 class TranslateFile(object):
 
-    def __init__(self, filename, language, filter): # @ReservedAssignment
+    def __init__(self, filename, language, filter, count=False): # @ReservedAssignment
         self.filename = filename
         self.filter = filter
 
@@ -730,10 +732,16 @@ class TranslateFile(object):
         self.language = language
         self.f = None
 
-        if language is not None:
-            self.write_translates()
+        if count:
 
-        self.write_strings()
+            self.count_missing()
+
+        else:
+
+            if language is not None:
+                self.write_translates()
+
+            self.write_strings()
 
         self.close()
 
@@ -789,6 +797,9 @@ class TranslateFile(object):
         Writes strings to the file.
         """
 
+        # If this function changes, count_missing may also need to
+        # change.
+
         started = False
         filename = renpy.parser.elide_filename(self.filename)
 
@@ -822,6 +833,45 @@ class TranslateFile(object):
             self.f.write(u"    old \"{}\"\n".format(quote_unicode(s)))
             self.f.write(u"    new \"{}\"\n".format(quote_unicode(fs)))
             self.f.write(u"\n")
+
+    def count_missing(self):
+        """
+        Counts the number of missing translations.
+        """
+
+        # Translates.
+
+        missing_translates = 0
+
+        translator = renpy.game.script.translator
+
+        for _, t in translator.file_translates[self.filename]:
+
+            if (t.identifier, self.language) in translator.language_translates:
+                continue
+
+            missing_translates += 1
+
+        # Strings.
+
+        missing_strings = 0
+
+        strings = scan_strings(self.filename)
+
+        if renpy.config.translate_comments:
+            strings.extend(scan_comments(self.filename))
+
+        for _, s in strings:
+
+            stl = renpy.game.script.translator.strings[self.language]
+
+            if s in stl.translations:
+                continue
+
+            missing_strings += 1
+
+        self.missing_translates = missing_translates
+        self.missing_strings = missing_strings
 
 def null_filter(s):
     return s
@@ -935,6 +985,7 @@ def translate_command():
     ap.add_argument("--rot13", help="Apply rot13 while generating translations.", dest="rot13", action="store_true")
     ap.add_argument("--piglatin", help="Apply pig latin while generating translations.", dest="piglatin", action="store_true")
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
+    ap.add_argument("--count", help="Instead of generating files, print a count of missing translations.", dest="count", action="store_true")
 
     args = ap.parse_args()
 
@@ -960,13 +1011,28 @@ def translate_command():
 
         filenames.append(filename)
 
+
+    missing_translates = 0
+    missing_strings = 0
+
+
     for filename in filenames:
         filename = os.path.normpath(filename)
 
         if not os.path.exists(filename):
             continue
 
-        TranslateFile(filename, args.language, filter)
+        tf = TranslateFile(filename, args.language, filter, args.count)
+
+        if args.count:
+            missing_translates += tf.missing_translates
+            missing_strings += tf.missing_strings
+
+    print("{}: {} missing dialogue translations, {} missing string translations.".format(
+        args.language,
+        missing_translates,
+        missing_strings
+        ))
 
     return False
 
@@ -1182,7 +1248,6 @@ class DialogueFile(object):
                 lines.append([s])
 
         return lines
-
 
 def dialogue_command():
     """
