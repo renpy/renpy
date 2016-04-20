@@ -320,8 +320,9 @@ action. A button takes no parameters, and the following properties.
 `action`
     The action to run when the button is activated. A button is activated
     when it is clicked, or when the player selects it and hits enter on the
-    keyboard. This also controls if the button is sensitive, and if the button
-    is selected.
+    keyboard. This also controls if the button is sensitive if `sensitive`
+    is not provided, and if the button is selected if `selected` is not
+    provided.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -334,6 +335,16 @@ action. A button takes no parameters, and the following properties.
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
 
 It also takes:
 
@@ -514,8 +525,9 @@ properties:
     The image used when the button is selected and hovered.
 
 `action`
-    The action to run when the button is activated. This also controls
-    if the button is sensitive, and if the button is selected.
+    The action to run when the button is activated. This also controls if
+    the button is sensitive if `sensitive` is not provided, and if the button
+    is selected if `selected` is not provided.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -528,6 +540,16 @@ properties:
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity.
 
 It also takes:
 
@@ -842,8 +864,9 @@ parameter, the text to include as part of the button. It takes the
 following properties:
 
 `action`
-    The action to run when the button is activated. This also controls
-    if the button is sensitive, and if the button is selected.
+    The action to run when the button is activated. This also controls if
+    the button is sensitive if `sensitive` is not provided, and if the button
+    is selected if `selected` is not provided.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -856,6 +879,16 @@ following properties:
 
 `unhovered`
     An action to run when the button loses focus.
+
+`selected`
+    An expression that determines whether the button is selected or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine selectedness.
+
+`sensitive`
+    An expression that determines whether the button is sensitive or not.
+    This expression is evaluated at least once per interaction.
+    If not provided, the action will be used to determine sensitivity. 
 
 `text_style`
     The name of the style to use for the button text. If not supplied,

@@ -623,6 +623,7 @@ class Button(renpy.display.layout.Window):
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
                  time_policy=None, keymap={}, alternate=None,
+                 selected=None, sensitive=None,
                  **properties):
 
         if isinstance(clicked, renpy.ui.Action):
@@ -631,6 +632,8 @@ class Button(renpy.display.layout.Window):
         super(Button, self).__init__(child, style=style, **properties)
 
         self.action = action
+        self.selected = selected
+        self.sensitive = sensitive
         self.clicked = clicked
         self.hovered = hovered
         self.unhovered = unhovered
@@ -725,16 +728,25 @@ class Button(renpy.display.layout.Window):
         if self.child is not None:
             self.child.set_transform_event(self.role + "idle")
 
+    def is_selected(self):
+        if self.selected is not None:
+            return self.selected
+        return is_selected(self.action)
+
+    def is_sensitive(self):
+        if self.sensitive is not None:
+            return self.sensitive
+        return is_sensitive(self.action)
 
     def per_interact(self):
 
         if self.action is not None:
-            if is_selected(self.action):
+            if self.is_selected():
                 role = 'selected_'
             else:
                 role = ''
 
-            if is_sensitive(self.action):
+            if self.is_sensitive():
                 clicked = self.action
             else:
                 clicked = None
