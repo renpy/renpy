@@ -98,7 +98,7 @@ distance of the mouse pointer from the center of the child. ::
                 return self.child.event(ev, x, y, st)
 
            def visit(self):
-               return [ self.child ]
+                return [ self.child ]
 
 To use the creator-defined displayable, we can create an instance of it,
 and add that instance to the screen. ::
