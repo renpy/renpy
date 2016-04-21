@@ -447,6 +447,48 @@ init -1500 python:
 
             return rv
 
+    @renpy.pure
+    class Confirm(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Prompts the user for confirmation of an action. If the user
+        clicks yes, the yes action is performed. Otherwise, the `no`
+        action is performed.
+
+        `prompt`
+            The prompt to display to the user.
+
+        `confirm_selected`
+            If true, the prompt will be displayed even if the `yes` action
+            is already selected. If false (the default), the prompt
+            will not be displayed if the `yes` action is selected.
+
+        The sensitivity and selectedness of this action match those
+        of the `yes` action.
+        """
+
+
+        def __init__(self, prompt, yes, no=None, confirm_selected=False):
+            self.prompt = prompt
+            self.yes = yes
+            self.no = no
+            self.confirm_selected = confirm_selected
+
+        def __call__(self):
+            if self.get_selected() and not self.confirm_selected:
+                return renpy.run(self.yes)
+
+            return layout.yesno_screen(self.prompt, self.yes, self.no)
+
+        def get_sensitive(self):
+            if self.yes is None:
+                return False
+
+            return renpy.is_sensitive(self.yes)
+
+        def get_selected(self):
+            return renpy.is_selected(self.yes)
 
 init -1500:
 
