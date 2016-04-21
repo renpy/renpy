@@ -30,6 +30,8 @@ import sys
 import renpy.display
 import renpy.text
 
+from renpy.display.behavior import is_selected, is_sensitive
+
 ##############################################################################
 # Special classes that can be subclassed from the outside.
 
@@ -543,37 +545,6 @@ class Wrapper(renpy.object.Object):
         add_tag = None
 
         return main
-
-##############################################################################
-# Button support functions
-def is_selected(clicked):
-
-    if isinstance(clicked, (list, tuple)):
-        for i in clicked:
-            if isinstance(i, renpy.store.SelectedIf): # @UndefinedVariable
-                return i.get_selected()
-        return any(is_selected(i) for i in clicked)
-
-    elif isinstance(clicked, Action):
-        return clicked.get_selected()
-
-    else:
-        return False
-
-def is_sensitive(clicked):
-
-    if isinstance(clicked, (list, tuple)):
-        for i in clicked:
-            if isinstance(i, renpy.store.SensitiveIf): # @UndefinedVariable
-                return i.get_sensitive()
-        return all(is_sensitive(i) for i in clicked)
-
-    elif isinstance(clicked, Action):
-        return clicked.get_sensitive()
-
-    else:
-        return True
-
 
 
 ##############################################################################

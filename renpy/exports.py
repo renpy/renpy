@@ -54,6 +54,7 @@ from renpy.text.text import language_tailor
 from renpy.display.behavior import Keymap
 from renpy.display.behavior import run, run as run_action, run_unhovered, run_periodic
 from renpy.display.behavior import map_event, queue_event, clear_keymap_cache
+from renpy.display.behavior import is_selected, is_sensitive
 
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
@@ -162,6 +163,7 @@ def public_api():
     not_infinite_loop
     register_sl_statement, register_sl_displayable
     eval_who
+    is_selected, is_sensitive
 
 del public_api
 

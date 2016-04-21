@@ -335,30 +335,40 @@ def run_periodic(var, st):
     if isinstance(var, renpy.ui.Action):
         return var.periodic(st)
 
-def is_selected(clicked):
+def is_selected(action):
+    """
+    :doc: run
 
-    if isinstance(clicked, (list, tuple)):
-        for i in clicked:
+    Returns true if `action` indicates it is selected, or false otherwise.
+    """
+
+    if isinstance(action, (list, tuple)):
+        for i in action:
             if isinstance(i, renpy.store.SelectedIf): # @UndefinedVariable
                 return i.get_selected()
-        return any(is_selected(i) for i in clicked)
+        return any(is_selected(i) for i in action)
 
-    elif isinstance(clicked, renpy.ui.Action):
-        return clicked.get_selected()
+    elif isinstance(action, renpy.ui.Action):
+        return action.get_selected()
     else:
         return False
 
 
-def is_sensitive(clicked):
+def is_sensitive(action):
+    """
+    :doc: run
 
-    if isinstance(clicked, (list, tuple)):
-        for i in clicked:
+    Returns true if `action` indicates it is sensitive, or False otherwise.
+    """
+
+    if isinstance(action, (list, tuple)):
+        for i in action:
             if isinstance(i, renpy.store.SensitiveIf): # @UndefinedVariable
                 return i.get_sensitive()
-        return all(is_sensitive(i) for i in clicked)
+        return all(is_sensitive(i) for i in action)
 
-    elif isinstance(clicked, renpy.ui.Action):
-        return clicked.get_sensitive()
+    elif isinstance(action, renpy.ui.Action):
+        return action.get_sensitive()
     else:
         return True
 
