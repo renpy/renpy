@@ -130,6 +130,8 @@ button_properties = [ Style(i) for i in [
         Keyword("hovered"),
         Keyword("unhovered"),
         Keyword("alternate"),
+        Keyword("selected"),
+        Keyword("sensitive"),
     ]
 
 bar_properties = [ Style(i) for i in [
