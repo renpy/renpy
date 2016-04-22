@@ -25,8 +25,8 @@ init python:
 
     from store import config
 
-    for fn in [ "gui.rpy" ]:
-        fn = os.path.join(config.renpy_base, "interface_7", "game", fn)
+    for fn in [ "gui.rpy", "options.rpy", "script.rpy" ]:
+        fn = os.path.join(config.renpy_base, "gui", "game", fn)
         if os.path.exists(fn):
             config.translate_files.append(fn)
 
