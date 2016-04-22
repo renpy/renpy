@@ -24,7 +24,7 @@ import os
 
 class ImageGenerator(object):
 
-    def __init__(self, parameters, overwrite=False):
+    def __init__(self, parameters):
 
         pygame_sdl2.image.init()
 
@@ -54,7 +54,7 @@ class ImageGenerator(object):
         self.full_width = self.width / self.scale
         self.full_height = self.height / self.scale
 
-        self.overwrite = overwrite
+        self.overwrite = p.replace_images
 
     def scale_int(self, n):
         rv = int(n * self.scale)

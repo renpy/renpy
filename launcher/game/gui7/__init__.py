@@ -26,6 +26,12 @@ from gui7.parameters import GuiParameters
 import renpy.arguments
 import os
 
+def generate_gui(p):
+
+    ImageGenerator(p).generate_all()
+    CodeGenerator(p).generate_gui("gui.rpy")
+    CodeGenerator(p).generate_code("options.rpy")
+    CodeGenerator(p).generate_code("template.rpy")
 
 def generate_gui_command():
 
@@ -37,17 +43,21 @@ def generate_gui_command():
     ap.add_argument("--accent", default="#00b8c3", action="store", help="The accent color used throughout the gui.")
     ap.add_argument("--boring", default="#000000", action="store", help="The boring color used for the gui background.")
     ap.add_argument("--light", default=False, action="store_true", help="True if this is considered a light theme.")
-    ap.add_argument("--overwrite-images", default=False, action="store_true", help="True if existing images should be overwritten.")
-    ap.add_argument("--overwrite-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
     ap.add_argument("--template", default="interface_7", action="store", help="The template directory containing source code.")
     ap.add_argument("--language", default=None, action="store", help="The language to translate strings and comments to.")
-    ap.add_argument("--start", default=False, action="store_true", help="Starts a new project.")
+
+    ap.add_argument("--start", default=False, action="store_true", help="Starts a new project, replacing images and code.")
+    ap.add_argument("--replace-images", default=False, action="store_true", help="True if existing images should be overwritten.")
+    ap.add_argument("--replace-code", default=False, action="store_true", help="True if an existing gui.rpy file should be overwritten.")
+    ap.add_argument("--update-code", default=False, action="store_true", help="True if an existing gui.rpy file should be update.")
 
     args = ap.parse_args()
 
     if args.start:
-        args.overwrite_images = True
-        args.overwrite_code = True
+        args.replace_images = True
+        args.replace_code = True
+        args.update_code = True
+
     prefix = os.path.join(args.target, "game")
 
     if not os.path.isdir(prefix):
@@ -67,11 +77,12 @@ def generate_gui_command():
         args.boring,
         args.light,
         args.language,
+        args.replace_images,
+        args.replace_code,
+        args.update_code,
         )
 
-    ImageGenerator(p, args.overwrite_images).generate_all()
-    CodeGenerator(p, args.overwrite_code).generate_gui()
-
+    generate_gui(p)
 
 renpy.arguments.register_command("generate_gui", generate_gui_command)
 

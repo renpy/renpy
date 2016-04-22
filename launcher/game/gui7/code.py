@@ -32,21 +32,19 @@ class CodeGenerator(object):
     This is used to generate and update the GUI code.
     """
 
-    def __init__(self, parameters, overwrite):
+    def __init__(self, parameters):
         """
         Generates or updates gui.rpy.
         """
 
         self.p = parameters
-        self.overwrite = overwrite
-
 
     def load_template(self, filename):
 
         target = os.path.join(self.p.prefix, filename)
 
-        if os.path.exists(target) and not self.overwrite:
-            template = self.target
+        if os.path.exists(target) and not self.p.replace_code:
+            template = target
         else:
             template = os.path.join(self.p.template, filename)
 
@@ -115,6 +113,7 @@ class CodeGenerator(object):
         target = os.path.join(self.p.prefix, filename)
 
         if os.path.exists(target):
+
             backup = 1
 
             while True:
@@ -208,15 +207,29 @@ class CodeGenerator(object):
 
         self.lines = lines
 
-    def generate_gui(self):
-        self.load_template("gui.rpy")
+    def generate_gui(self, fn):
+        if not self.p.update_code:
+            return
+
+        self.load_template(fn)
 
         self.remove_scale()
         self.update_size()
         self.update_defines()
 
-        if self.overwrite:
+        if self.replace_code:
             self.translate_strings()
             self.translate_comments()
 
-        self.write_target("gui.rpy")
+        self.write_target(fn)
+
+    def generate_code(self, fn):
+        if not self.p.replace_code:
+            return
+
+        self.load_template(fn)
+
+        self.translate_strings()
+        self.translate_comments()
+
+        self.write_target(fn)

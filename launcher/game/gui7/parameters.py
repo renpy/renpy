@@ -20,7 +20,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from renpy.store import Color
-import os
 
 # The target width used in templates.
 WIDTH = 1280
@@ -33,7 +32,7 @@ class GuiParameters(object):
     parameters.
     """
 
-    def __init__(self, prefix, template, width, height, accent, boring, light, language):
+    def __init__(self, prefix, template, width, height, accent, boring, light, language, replace_images, replace_code, update_code):
 
         self.prefix = prefix
         self.template = template
@@ -53,3 +52,10 @@ class GuiParameters(object):
         self.menu_color = self.accent_color.replace_hsv_saturation(.1).replace_value(.5)
 
         self.language = language
+
+        if replace_code:
+            update_code = True
+
+        self.replace_images = replace_images
+        self.replace_code = replace_code
+        self.update_code = update_code
