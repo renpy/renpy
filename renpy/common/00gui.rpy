@@ -47,3 +47,15 @@ init -1100 python in gui:
         # Defer styles until after translation code runs.
         config.defer_styles = True
 
+    ARE_YOU_SURE = layout.ARE_YOU_SURE
+    DELETE_SAVE = layout.DELETE_SAVE
+    OVERWRITE_SAVE = layout.OVERWRITE_SAVE
+    LOADING = layout.LOADING
+    QUIT = layout.QUIT
+    MAIN_MENU = layout.MAIN_MENU
+    END_REPLAY = layout.END_REPLAY
+    SLOW_SKIP = layout.SLOW_SKIP
+    FAST_SKIP_UNSEEN = layout.FAST_SKIP_UNSEEN
+    FAST_SKIP_SEEN = layout.FAST_SKIP_SEEN
+
+
