@@ -58,15 +58,16 @@ init python:
 ## distribution files.
 init python:
 
-    ## The name that's used for directories and archive files. For example, if
-    ## this is 'mygame-1.0', the windows distribution will be in the
-    ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
-    build.directory_name = "PROJECTNAME-"+config.version
-
     ## The name that's uses for executables - the program that users will run
     ## to start the game. For example, if this is 'mygame', then on Windows,
     ## users can click 'mygame.exe' to start the game.
     build.executable_name = "PROJECTNAME"
+
+    ## The name that's used for directories and archive files. For example, if
+    ## this is 'mygame-1.0', the windows distribution will be in the
+    ## directory 'mygame-1.0-win', in the 'mygame-1.0-win.zip' file.
+    ## By default, this combines executable_name and current version.
+    build.directory_name = build.executable_name+"-"+config.version
 
     ## If True, Ren'Py will include update information into packages. This
     ## allows the updater to run.
