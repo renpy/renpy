@@ -45,11 +45,22 @@ class GuiParameters(object):
         self.accent_color = Color(accent)
         self.boring_color = Color(boring)
 
-        self.hover_color = self.accent_color.tint(.6)
-        self.muted_color = self.accent_color.shade(.4)
-        self.hover_muted_color = self.accent_color.shade(.6)
+        # tint = n * color + (1-n) * white
+        # shade = n * color + (1-n) * black
+
+        if light:
+            self.accent_color = self.accent_color.tint(1.0)
+            self.hover_color = self.accent_color.tint(.8)
+            self.muted_color = self.accent_color.tint(.6)
+            self.hover_muted_color = self.accent_color.tint(.4)
+
+        else:
+            self.hover_color = self.accent_color.tint(.6)
+            self.muted_color = self.accent_color.shade(.4)
+            self.hover_muted_color = self.accent_color.shade(.6)
 
         self.menu_color = self.accent_color.replace_hsv_saturation(.1).replace_value(.5)
+        self.title_color = self.accent_color.replace_hsv_saturation(.5).replace_value(1.0)
 
         self.language = language
 
