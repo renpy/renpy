@@ -19,6 +19,25 @@ A label statement may have a block associated with it. In that case, control
 enters the block whenever the label statement is reached, and proceeds with the
 statement after the label statement whenever the end of the block is reached.
 
+There are two kinds of labels: *global* and *local* labels. Global labels live
+in one global scope shared across all project files and thus should have unique
+names per game. Local labels logically reside inside scope of the global label
+they are declared in. To declare a local label, prefix its name with `.`. For
+example: ::
+
+    label global_label:
+        "Inside a global label.."
+    label .local_name:
+        "..resides a local one."
+        jump .local_name
+
+Local labels can be referenced directly inside the same global label they are
+declared in or by their full name, consisting of global and local name parts: ::
+
+    label another_global:
+        "Now lets jump inside local label located somewhere else."
+        jump global_label.local_name
+
 The label statement may take an optional list of parameters. These parameters
 are processed as described in PEP 3102, with two exceptions:
 
@@ -77,7 +96,7 @@ stacks can return to the proper place when loaded on a changed script. ::
 
     label subroutine(count=1):
 
-        e "I camed here [count] time(s)."
+        e "I came here [count] time(s)."
         e "Next, we will return from the subroutine."
 
         return
