@@ -89,7 +89,14 @@ class CodeGenerator(object):
 
         replacements = {
             'gui.ACCENT_COLOR' : repr(self.p.accent_color.hexcode),
+            'gui.SELECTED_COLOR' : repr(self.p.selected_color.hexcode),
             'gui.HOVER_COLOR' : repr(self.p.hover_color.hexcode),
+            'gui.TITLE_COLOR' : repr(self.p.title_color.hexcode),
+            'gui.IDLE_COLOR' : repr(self.p.idle_color.hexcode),
+            'gui.IDLE_SMALL_COLOR' : repr(self.p.idle_small_color.hexcode),
+            'gui.INSENSITIVE_COLOR' : repr(self.p.insensitive_color.hexcode),
+            'gui.TEXT_COLOR' : repr(self.p.text_color.hexcode),
+            'gui.CHOICE_COLOR' : repr(self.p.choice_color.hexcode),
             }
 
 

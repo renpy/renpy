@@ -55,12 +55,35 @@ class GuiParameters(object):
             self.hover_muted_color = self.accent_color.tint(.4)
 
         else:
+
+            # Do not change!
             self.hover_color = self.accent_color.tint(.6)
             self.muted_color = self.accent_color.shade(.4)
             self.hover_muted_color = self.accent_color.shade(.6)
 
         self.menu_color = self.accent_color.replace_hsv_saturation(.1).replace_value(.5)
+
         self.title_color = self.accent_color.replace_hsv_saturation(.5).replace_value(1.0)
+
+        if light:
+
+            self.selected_color = Color("#808080")
+            self.idle_color = Color("#a9a9a9")
+            self.idle_small_color = Color("#aaaaaa")
+            self.text_color = Color("#404040")
+            self.choice_color = Color("#cccccc")
+
+        else:
+
+            # Do not change!
+            self.selected_color = Color("#ffffff")
+            self.idle_color = Color("#555555")
+            self.idle_small_color = Color("#aaaaaa")
+            self.text_color = Color("#ffffff")
+            self.choice_color = Color("#cccccc")
+
+
+        self.insensitive_color = self.idle_color.replace_opacity(.5)
 
         self.language = language
 
