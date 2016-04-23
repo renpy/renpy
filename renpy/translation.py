@@ -161,6 +161,7 @@ class ScriptTranslator(object):
 
     def lookup_translate(self, identifier):
 
+        identifier = identifier.replace('.', '_')
         language = renpy.game.preferences.language
 
         if language is not None:
@@ -214,7 +215,7 @@ class Restructurer(object):
             md5.update(code.encode("utf-8") + "\r\n")
 
         if self.label:
-            base = self.label + "_" + md5.hexdigest()[:8]
+            base = self.label.replace('.', '_') + "_" + md5.hexdigest()[:8]
         else:
             base = md5.hexdigest()[:8]
 
@@ -781,7 +782,7 @@ class TranslateFile(object):
                 label = ""
 
             self.f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
-            self.f.write(u"translate {} {}:\n".format(self.language, t.identifier))
+            self.f.write(u"translate {} {}:\n".format(self.language, t.identifier.replace('.', '_')))
             self.f.write(u"\n")
 
             for n in t.block:
