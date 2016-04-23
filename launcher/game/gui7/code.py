@@ -167,7 +167,6 @@ class CodeGenerator(object):
             m = re.match(r'^(\s*## )(.*)', l.rstrip())
 
             if m:
-                print(l)
 
                 indent = m.group(1)
                 c = m.group(2)
@@ -217,7 +216,7 @@ class CodeGenerator(object):
         self.update_size()
         self.update_defines()
 
-        if self.replace_code:
+        if self.p.replace_code:
             self.translate_strings()
             self.translate_comments()
 

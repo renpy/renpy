@@ -31,7 +31,7 @@ def generate_gui(p):
     ImageGenerator(p).generate_all()
     CodeGenerator(p).generate_gui("gui.rpy")
     CodeGenerator(p).generate_code("options.rpy")
-    CodeGenerator(p).generate_code("template.rpy")
+    CodeGenerator(p).generate_code("script.rpy")
 
 def generate_gui_command():
 
@@ -43,7 +43,7 @@ def generate_gui_command():
     ap.add_argument("--accent", default="#00b8c3", action="store", help="The accent color used throughout the gui.")
     ap.add_argument("--boring", default="#000000", action="store", help="The boring color used for the gui background.")
     ap.add_argument("--light", default=False, action="store_true", help="True if this is considered a light theme.")
-    ap.add_argument("--template", default="interface_7", action="store", help="The template directory containing source code.")
+    ap.add_argument("--template", default="gui", action="store", help="The template directory containing source code.")
     ap.add_argument("--language", default=None, action="store", help="The language to translate strings and comments to.")
 
     ap.add_argument("--start", default=False, action="store_true", help="Starts a new project, replacing images and code.")
