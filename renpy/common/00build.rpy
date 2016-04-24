@@ -24,6 +24,9 @@
 
 init -1500 python in build:
 
+    from store import config
+
+
     def make_file_lists(s):
         """
         Turns `s` into a (perhaps empty) list of file_lists.
@@ -313,6 +316,9 @@ init -1500 python in build:
 
     # Data that we expect the user to set.
 
+    # A base name that's used to create the other names.
+    name = None
+
     # The name of directories in the archives.
     directory_name = ""
 
@@ -347,6 +353,9 @@ init -1500 python in build:
     # both discrete and integrated GPUs?
     allow_integrated_gpu = True
 
+    # The itch.io project name.
+    itch_project = None
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -372,7 +381,6 @@ init -1500 python in build:
 
         rv["renpy"] = renpy
 
-
         rv["destination"] = destination.format(
             directory_name=directory_name,
             executable_name=executable_name,
@@ -386,4 +394,26 @@ init -1500 python in build:
         if google_play_salt:
             rv["google_play_salt"] = google_play_salt
 
+        if itch_project:
+            rv["itch_project"] = itch_project
+
         return rv
+
+init 1500 python in build:
+
+    if version is not None:
+
+        version = config.version
+
+    if name is not None:
+
+        if not directory_name:
+
+            directory_name = name
+
+            if config.version:
+                directory_name += "-" + version
+
+        if not executable_name:
+
+            executable_name = name

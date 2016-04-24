@@ -48,6 +48,12 @@ inside an init python block.
 There are a few basic variables and functions that many games will
 use.
 
+.. var:: build.name = "..."
+
+    This is used to automatically generate build.directory_name
+    and build.executable_name, if neither is set. This should not
+    contain spaces, colons, or semicolons.
+
 .. var:: build.directory_name = "..."
 
    This is used to create the names of directories in the archive
@@ -60,10 +66,17 @@ use.
    be placed in mygame-1.0-dists in the directory above the base
    directory.
 
+   This variable should not contain special characters like spaces,
+   colons, and semicolons. If not set, it defaults to :var:`build.name`
+   a dash, and :var:`config.version`.
+
 .. var:: build.executable_name = "..."
 
    This variable controls the name of the executables that the user
    clicks on to start the game.
+
+   This variable should not contain special characters like spaces,
+   colons, and semicolons. If not set, it defaults to :var:`build.name`.
 
    For example, if this is set to "mygame", the user will be able
    to run mygame.exe on Windows, mygame.app on Macintosh, and
