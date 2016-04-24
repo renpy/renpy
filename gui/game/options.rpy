@@ -1,205 +1,85 @@
-﻿## This file contains some of the options that can be changed to customize
-## your Ren'Py game. It only contains the most common options... there
-## is quite a bit more customization you can do.
+﻿## This file contains options that can be changed to customize your
+## game.
 ##
 ## Lines beginning with two '#' marks are comments, and you shouldn't
 ## uncomment them. Lines beginning with a single '#' mark are
 ## commented-out code, and you may want to uncomment them when
 ## appropriate.
 
-init -1 python hide:
 
-    ## Should we enable the use of developer tools? This should be
-    ## set to False before the game is released, so the user can't
-    ## cheat using developer tools.
+## A human-readable name of the game. This is used to set the default
+## window title, and shows up in the interface and error reports.
 
-    config.developer = True
+define config.name = "Ren'Py 7 Default GUI"
 
-    ## This controls the title of the window, when Ren'Py is
-    ## running in a window.
 
-    config.window_title = u"Interface 7"
+## A short name for the game used for executables and directories in the
+## built distribution. This must be ASCII-only, and must not contain
+## spaces, colons, or semicolons.
 
-    # These control the name and version of the game, that are reported
-    # with tracebacks and other debugging logs.
-    config.name = "New Ren'Py GUI"
-    config.version = "6.99.11"
+define build.name = "gui"
 
-    #########################################
-    ## These settings let you customize the window containing the
-    ## dialogue and narration, by replacing it with an image.
 
-    ## The background of the window. In a Frame, the two numbers
-    ## are the size of the left/right and top/bottom borders,
-    ## respectively.
+## The version of the game.
 
-    # style.window.background = Frame("frame.png", 12, 12)
+define config.version = "1.0"
 
-    ## Margin is space surrounding the window, where the background
-    ## is not drawn.
 
-    # style.window.left_margin = 6
-    # style.window.right_margin = 6
-    # style.window.top_margin = 6
-    # style.window.bottom_margin = 6
+###############################################################################
+## Sounds & Music
 
-    ## Padding is space inside the window, where the background is
-    ## drawn.
 
-    # style.window.left_padding = 6
-    # style.window.right_padding = 6
-    # style.window.top_padding = 6
-    # style.window.bottom_padding = 6
+## These three variables control which mixers are shown to the player
+## by default. Setting one of these to False will hide the appropriate
+## mixer.
 
-    ## This is the minimum height of the window, including the margins
-    ## and padding.
+define config.has_sound = True
+define config.has_music = True
+define config.has_voice = True
 
-    # style.window.yminimum = 250
+## To allow the user to play a test sound on the sound or voice channel,
+## uncomment a line below and use it to set a sample sound to play.
 
+# define config.sample_sound = "sample-sound.ogg"
+# define config.sample_voice = "sample-voice.ogg"
 
-    #########################################
-    ## This lets you change the placement of the main menu.
 
-    ## The way placement works is that we find an anchor point
-    ## inside a displayable, and a position (pos) point on the
-    ## screen. We then place the displayable so the two points are
-    ## at the same place.
+## Uncomment the following line to set an audio file that will be played
+## while the player is at the main menu. This file will continue playing
+## into the game, until it is stopped or another file is played.
 
-    ## An anchor/pos can be given as an integer or a floating point
-    ## number. If an integer, the number is interpreted as a number
-    ## of pixels from the upper-left corner. If a floating point,
-    ## the number is interpreted as a fraction of the size of the
-    ## displayable or screen.
+# define config.main_menu_music = "main-menu-theme.ogg"
 
-    # style.mm_menu_frame.xpos = 0.5
-    # style.mm_menu_frame.xanchor = 0.5
-    # style.mm_menu_frame.ypos = 0.75
-    # style.mm_menu_frame.yanchor = 0.5
 
+###############################################################################
+## Transitions
+##
+## These variables set transitions that are used when certain events occur.
+## Each variable should be set to a transition, or None to indicate that
+## no transition should be used.
 
-    #########################################
-    ## These let you customize the default font used for text in Ren'Py.
+## Entering or exiting the game menu.
 
-    ## The file containing the default font.
+define config.enter_transition = dissolve
+define config.exit_transition = dissolve
 
-    # style.default.font = "DejaVuSans.ttf"
 
-    ## The default size of text.
+## A transition that is used after a game has been loaded.
 
-    # style.default.size = 22
+define config.after_load_transition = None
 
-    ## Note that these only change the size of some of the text. Other
-    ## buttons have their own styles.
 
+## Used when entering the main menu after the game has ended.
 
-    #########################################
-    ## These settings let you change some of the sounds that are used by
-    ## Ren'Py.
+define config.end_game_transition = None
 
-    ## Set this to False if the game does not have any sound effects.
 
-    config.has_sound = True
+## A variable to set the transition used when the game starts
+## does not exist. Instead, use a with statement after showing
+## the initial scene.
 
-    ## Set this to False if the game does not have any music.
 
-    config.has_music = True
 
-    ## Set this to True if the game has voicing.
-
-    config.has_voice = True
-
-    ## Sounds that are used when button and imagemaps are clicked.
-
-    # style.button.activate_sound = "click.wav"
-    # style.imagemap.activate_sound = "click.wav"
-
-    ## Sounds that are used when entering and exiting the game menu.
-
-    # config.enter_sound = "click.wav"
-    # config.exit_sound = "click.wav"
-
-    ## A sample sound that can be played to check the sound volume.
-
-    # config.sample_sound = "click.wav"
-
-    ## Music that is played while the user is at the main menu.
-
-    # config.main_menu_music = "main_menu_theme.ogg"
-
-
-    #########################################
-    ## Help.
-
-    ## This lets you configure the help option on the Ren'Py menus.
-    ## It may be:
-    ## - A label in the script, in which case that label is called to
-    ##   show help to the user.
-    ## - A file name relative to the base directory, which is opened in a
-    ##   web browser.
-    ## - None, to disable help.
-    config.help = "README.html"
-
-
-    #########################################
-    ## Transitions.
-
-    ## Used when entering the game menu from the game.
-    config.enter_transition = None
-
-    ## Used when exiting the game menu to the game.
-    config.exit_transition = None
-
-    ## Used between screens of the game menu.
-    config.intra_transition = None
-
-    ## Used when entering the game menu from the main menu.
-    config.main_game_transition = None
-
-    ## Used when returning to the main menu from the game.
-    config.game_main_transition = None
-
-    ## Used when entering the main menu from the splashscreen.
-    config.end_splash_transition = None
-
-    ## Used when entering the main menu after the game has ended.
-    config.end_game_transition = None
-
-    ## Used when a game is loaded.
-    config.after_load_transition = None
-
-    ## Used when the window is shown.
-    config.window_show_transition = None
-
-    ## Used when the window is hidden.
-    config.window_hide_transition = None
-
-    ## Used when showing NVL-mode text directly after ADV-mode text.
-    config.adv_nvl_transition = dissolve
-
-    ## Used when showing ADV-mode text directly after NVL-mode text.
-    config.nvl_adv_transition = dissolve
-
-    ## Used when yesno is shown.
-    config.enter_yesno_transition = None
-
-    ## Used when the yesno is hidden.
-    config.exit_yesno_transition = None
-
-    ## Used when entering a replay
-    config.enter_replay_transition = None
-
-    ## Used when exiting a replay
-    config.exit_replay_transition = None
-
-    ## Used when the image is changed by a say statement with image attributes.
-    config.say_attribute_transition = None
-
-    #########################################
-    ## This is the name of the directory where the game's data is
-    ## stored. (It needs to be set early, before any other init code
-    ## is run, so the persistent information can be found by the init code.)
-python early:
-    config.save_directory = "interface-7"
 
 init -1 python hide:
     #########################################
@@ -224,4 +104,21 @@ init -1 python hide:
     #########################################
     ## More customizations can go here.
 
-    build.classify("0_old/", None)
+
+###############################################################################
+## Save directory
+
+## This controls the platform-specific place Ren'Py will place the save
+## files for this game. The save files will be placed in:
+##
+## Windows: %APPDATA\RenPy\<config.save_directory>
+##
+## Macintosh: $HOME/Library/RenPy/<config.save_directory>
+##
+## Linux: $HOME/.renpy/<config.save_directory>
+##
+## This generally should not be changed, and if it is, should always be a
+## literal string, not an expression.
+
+define config.save_directory = "gui-7"
+
