@@ -1672,7 +1672,7 @@ class Text(renpy.display.core.Displayable):
         layout = self.get_layout()
 
         if layout is None:
-            return 60.0
+            return 0.0
 
         return layout.max_time
 
