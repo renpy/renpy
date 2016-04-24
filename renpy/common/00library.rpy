@@ -274,6 +274,10 @@ init 1700 python hide:
         renpy.load_module("_developer/developer")
         renpy.load_module("_developer/inspector")
 
+    if config.window_title is None:
+        config.window_title = config.name or _("A Ren'Py Game")
+
+
 # Used by renpy.return() to return.
 label _renpy_return:
     return

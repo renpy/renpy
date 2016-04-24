@@ -1657,7 +1657,13 @@ class Interface(object):
 
 
     def set_window_caption(self, force=False):
-        caption = renpy.translation.translate_string(renpy.config.window_title) + renpy.store._window_subtitle
+
+        window_title = renpy.config.window_title
+
+        if window_title is None:
+            window_title = "A Ren'Py Game"
+
+        caption = renpy.translation.translate_string(window_title) + renpy.store._window_subtitle
 
         if renpy.exports.get_autoreload():
             caption += " - autoreload"

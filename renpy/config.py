@@ -34,7 +34,7 @@ locked = False
 help = [ ] #@ReservedAssignment
 
 # The title of the game window.
-window_title = "A Ren'Py Game"
+window_title = None
 
 # An image file containing the window icon image.
 window_icon = None
