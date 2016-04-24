@@ -401,8 +401,7 @@ init -1500 python in build:
 
 init 1500 python in build:
 
-    if version is not None:
-
+    if version is None:
         version = config.version
 
     if name is not None:
