@@ -1760,6 +1760,10 @@ def get_namespace(store):
 
     return StoreNamespace(store), False
 
+# Config variables that are set twice - once when the rpy is first loaded,
+# and then again at init time.
+EARLY_CONFIG = { "save_directory" }
+
 class Define(Node):
 
     __slots__ = [
@@ -1785,6 +1789,10 @@ class Define(Node):
 
     def early_execute(self):
         create_store(self.store)
+
+        if self.store == "store.config" and self.varname in EARLY_CONFIG:
+            value = renpy.python.py_eval_bytecode(self.code.bytecode)
+            setattr(renpy.config, self.varname, value)
 
     def execute(self):
 
