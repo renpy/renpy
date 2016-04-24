@@ -58,7 +58,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = 17
+    __version__ = 18
 
     def after_upgrade(self, version):
         if version < 1:
@@ -90,6 +90,8 @@ class Preferences(renpy.object.Object):
             self.pad_enabled = True
         if version < 17:
             self.init_rollback_side()
+        if version < 18:
+            self.virtual_size = None
 
     def __init__(self):
         self.fullscreen = False
@@ -128,6 +130,9 @@ class Preferences(renpy.object.Object):
 
         # The size of the window, or None if we don't know it yet.
         self.physical_size = None
+
+        # The virtual size at the time self.physical_size was set.
+        self.virtual_size = None
 
         # The graphics renderer we use.
         self.renderer = "auto"

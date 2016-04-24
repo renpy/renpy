@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init -1100 python in gui:
-    from store import config, layout
+    from store import config, layout, _preferences
 
     config.translate_clean_stores.append("gui")
 
@@ -47,6 +47,14 @@ init -1100 python in gui:
         # Defer styles until after translation code runs.
         config.defer_styles = True
 
+        size = (width, height)
+
+        if (_preferences.virtual_size is not None) and (_preferences.virtual_size != size):
+            _preferences.physical_size = None
+
+        _preferences.virtual_size = size
+
+
     ARE_YOU_SURE = layout.ARE_YOU_SURE
     DELETE_SAVE = layout.DELETE_SAVE
     OVERWRITE_SAVE = layout.OVERWRITE_SAVE
@@ -57,5 +65,4 @@ init -1100 python in gui:
     SLOW_SKIP = layout.SLOW_SKIP
     FAST_SKIP_UNSEEN = layout.FAST_SKIP_UNSEEN
     FAST_SKIP_SEEN = layout.FAST_SKIP_SEEN
-
 
