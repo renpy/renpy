@@ -1671,6 +1671,8 @@ class Text(renpy.display.core.Displayable):
 
         layout = self.get_layout()
 
+        # If we haven't been laid out, either the text isn't being shown,
+        # or it's not animated
         if layout is None:
             return 0.0
 
