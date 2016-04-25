@@ -648,7 +648,7 @@ def scan_comments(filename):
     start = 0
 
     with codecs.open(filename, "r", "utf-8") as f:
-        lines = [ i.rstrip() for i in f.read().split('\n') ]
+        lines = [ i.rstrip() for i in f.read().replace(u"\ufeff", "").split('\n') ]
 
     for i, l in enumerate(lines):
 
@@ -656,6 +656,7 @@ def scan_comments(filename):
             start = i + 1
 
         m = re.match(r'\s*## (.*)', l)
+
         if m:
             c = m.group(1)
 
@@ -663,6 +664,7 @@ def scan_comments(filename):
                 c = c.strip()
 
             comment.append(c)
+
         elif comment:
             s = "## " + " ".join(comment)
             comment = [ ]
@@ -1028,11 +1030,13 @@ def translate_command():
             missing_translates += tf.missing_translates
             missing_strings += tf.missing_strings
 
-    print("{}: {} missing dialogue translations, {} missing string translations.".format(
-        args.language,
-        missing_translates,
-        missing_strings
-        ))
+    if args.count:
+
+        print("{}: {} missing dialogue translations, {} missing string translations.".format(
+            args.language,
+            missing_translates,
+            missing_strings
+            ))
 
     return False
 

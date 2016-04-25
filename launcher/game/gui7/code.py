@@ -49,7 +49,7 @@ class CodeGenerator(object):
             template = os.path.join(self.p.template, filename)
 
         with codecs.open(template, "r", "utf-8") as f:
-            self.lines = [ i.rstrip() for i in f ]
+            self.lines = [ i.rstrip().replace(u"\ufeff", "") for i in f ]
 
     def remove_scale(self):
 
@@ -135,6 +135,8 @@ class CodeGenerator(object):
             os.rename(target, bfn)
 
         with codecs.open(target, "w", "utf-8") as f:
+            f.write(u"\ufeff")
+
             for l in self.lines:
                 f.write(l + "\r\n")
 
