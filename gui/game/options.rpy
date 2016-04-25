@@ -9,8 +9,10 @@
 
 ## A human-readable name of the game. This is used to set the default
 ## window title, and shows up in the interface and error reports.
+##
+## The _() surrounding the string marks it for translation.
 
-define config.name = "Ren'Py 7 Default GUI"
+define config.name = _("Ren'Py 7 Default GUI")
 
 
 ## A short name for the game used for executables and directories in the
