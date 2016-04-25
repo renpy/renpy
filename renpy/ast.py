@@ -1846,12 +1846,15 @@ class Default(Node):
         next_node(self.next)
         statement_name("default")
 
-        default_statements.append(self)
-
-        _ns, special = get_namespace(self.store)
+        ns, special = get_namespace(self.store)
 
         if special:
-            raise Exception("The default statement can't be used with the special namespace %r." % self.store)
+
+            value = renpy.python.py_eval_bytecode(self.code.bytecode)
+            ns.set_default(self.varname, value)
+            return
+
+        default_statements.append(self)
 
         if self.store == 'store':
             renpy.dump.definitions.append((self.varname, self.filename, self.linenumber))

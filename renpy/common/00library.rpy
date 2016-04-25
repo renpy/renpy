@@ -75,6 +75,15 @@ init -1700 python:
     # taking place.
     save_name = ''
 
+    ##########################################################################
+    # Alias the preferences object.
+
+    # This is for compatibility with default preferences.foo = True.
+    preferences = _preferences
+
+    ##########################################################################
+    # Empty window
+
     def _default_empty_window():
 
         who = _last_say_who
