@@ -58,42 +58,6 @@ Commonly Used
    directory should read :var:`config.savedir` instead of this
    variable.
 
-.. var:: config.screen_height = 600
-
-    The height of the screen.
-
-.. var:: config.screen_width = 800
-
-    The width of the screen.
-
-.. var:: config.translations = dict(...)
-
-    This is a map used to translate text in the game menu into your
-    language. See Localizing Ren'Py for how to use it, and here for a
-    list of available translations.
-
-.. var:: config.window_icon = None
-
-    If not None, this is expected to be the filename of an image
-    giving an icon that is used for the window on Linux and Mac OS
-    X. This should be a large image, with 8-bit alpha.
-
-    This should generally be a PNG format file.
-
-.. var:: config.windows_icon = None
-
-    If not None, this is expected to be the filename of an image
-    giving an icon that is used for the window on Windows. This should
-    be a 32x32 image with 1-bit alpha. (Opaque images work the best.)
-
-    This should be a PNG format file.
-
-.. var:: config.window_title = "A Ren'Py Game"
-
-    The static portion of the title of the window containing the
-    Ren'Py game. :var:`_window_subtitle` is appended to this to get
-    the full title of the window.
-
 .. var:: config.version = ""
 
     This should be a string giving the version of the game. This is included
@@ -707,6 +671,14 @@ Occasionally Used
     beginning with an underscore (_). These keys are used by Ren'Py,
     and should not be changed.
 
+.. var:: config.screen_height = 600
+
+    The height of the screen. Usually set by :func:`gui.init`.
+
+.. var:: config.screen_width = 800
+
+    The width of the screen. Usually set by :func:`gui.init`.
+
 .. var:: config.speaking_attribute = None
 
     If not None, this should be a string giving the name of an image
@@ -764,10 +736,26 @@ Occasionally Used
     A list of statements that cause ``window auto`` to show the empty
     dialogue window.
 
+.. var:: config.window_icon = None
+
+    If not None, this is expected to be the filename of an image
+    giving an icon that is used for the game's main window. This does
+    not set the icon used by windows executables and mac apps, as
+    those are controlled by :ref:`special-files`.
+
 .. var:: config.window_overlay_functions = []
 
     A list of overlay functions that are only called when the window
     is shown.
+
+.. var:: config.window_title = None
+
+    The static portion of the title of the window containing the
+    Ren'Py game. :var:`_window_subtitle` is appended to this to get
+    the full title of the window.
+
+    If None, the default, this defaults to the value of :var:`config.name`.
+
 
 
 Rarely or Internally Used

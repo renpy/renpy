@@ -1632,9 +1632,6 @@ class Interface(object):
         # Window icon.
         icon = renpy.config.window_icon
 
-        if renpy.windows and renpy.config.windows_icon:
-            icon = renpy.config.windows_icon
-
         if icon:
 
             im = renpy.display.scale.image_load_unscaled(
@@ -1649,9 +1646,6 @@ class Interface(object):
             square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
             square_im.blit(im, ( (imax-iw)/2, (imax-ih)/2 ))
             im = square_im
-
-            if renpy.windows and im.get_size() != (32, 32):
-                im = renpy.display.scale.real_smoothscale(im, (32, 32))
 
             pygame.display.set_icon(im)
 
