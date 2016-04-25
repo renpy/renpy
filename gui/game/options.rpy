@@ -26,7 +26,7 @@ define config.version = "1.0"
 
 
 ###############################################################################
-## Sounds & Music
+## Sounds and music
 
 
 ## These three variables control which mixers are shown to the player
@@ -80,35 +80,25 @@ define config.end_game_transition = None
 
 
 
+###############################################################################
+## Preference defaults
 
-init -1 python hide:
-    #########################################
-    ## Default values of Preferences.
+## Controls the default text speed. The default, 0, is infinite, while any
+## other number is the number of characters per second to type out.
 
-    ## Note: These options are only evaluated the first time a
-    ## game is run. To have them run a second time, delete
-    ## game/saves/persistent
+default preferences.text_cps = 0
 
-    ## Should we start in fullscreen mode?
 
-    config.default_fullscreen = False
+## The default auto-forward delay. Larger numbers lead to longer waits,
+## with 0 to 30 being the valid range.
 
-    ## The default text speed in characters per second. 0 is infinite.
-
-    config.default_text_cps = 0
-
-    ## The default auto-forward time setting.
-
-    config.default_afm_time = 10
-
-    #########################################
-    ## More customizations can go here.
+default preferences.afm_time = 15
 
 
 ###############################################################################
 ## Save directory
 
-## This controls the platform-specific place Ren'Py will place the save
+## Controls the platform-specific place Ren'Py will place the save
 ## files for this game. The save files will be placed in:
 ##
 ## Windows: %APPDATA\RenPy\<config.save_directory>
