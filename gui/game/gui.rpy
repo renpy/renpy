@@ -58,6 +58,12 @@ define gui.TITLE_SIZE = gui.scale(50)
 
 
 ################################################################################
+## Window icon.
+
+## This is the icon displayer on the taskbar or dock.
+define config.window_icon = "gui/window_icon.png"
+
+################################################################################
 ## Basic in-game styles.
 
 style default:

@@ -419,6 +419,36 @@ class ImageGenerator(object):
         self.generate_image("notify", X, Y, self.boring_color.opacity(.8))
 
 
+    def generate_icon(self):
+
+        icon_fn = os.path.join(os.path.dirname(__file__), "icon.png")
+        icon = pygame_sdl2.image.load(icon_fn)
+
+        width, height = icon.get_size()
+        surf =  pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)
+
+        ro, go, bo, _ao = tuple(self.accent_color)
+
+        ro -= 23
+        go -= 23
+        bo -= 23
+
+
+        for y in range(height):
+            for x in range(width):
+                r, g, b, a = icon.get_at((x, y))
+
+                r = max(0, min(r + ro, 255))
+                g = max(0, min(g + go, 255))
+                b = max(0, min(b + bo, 255))
+
+
+
+                surf.set_at((x, y), (r, g, b, a))
+
+        self.save(surf, "window_icon")
+
+
     def generate_menus(self):
         s = self.make_surface(self.width, self.height)
         s.fill(self.menu_color)
@@ -440,6 +470,7 @@ class ImageGenerator(object):
         self.generate_skip()
         self.generate_notify()
         self.generate_menus()
+        self.generate_icon()
 
 if __name__ == "__main__":
     import argparse
