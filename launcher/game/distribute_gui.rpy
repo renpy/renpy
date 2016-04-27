@@ -194,6 +194,9 @@ screen build_distributions:
                             textbutton _("Add from clauses to calls, once") action Jump("add_from")
                             textbutton _("Refresh") action Jump("build_distributions")
 
+                            add HALF_SPACER
+
+                            textbutton _("Upload to itch.io") action Jump("itch")
 
                 # Right side.
                 frame:
