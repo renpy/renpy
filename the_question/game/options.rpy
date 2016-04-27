@@ -305,3 +305,4 @@ init python:
     build.documentation('*.html')
     build.documentation('*.txt')
 
+define build.itch_project = 'renpytom/the-question'

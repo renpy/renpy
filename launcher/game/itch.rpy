@@ -55,4 +55,17 @@ label itch:
                 label="build_distributions"
                 )
 
+        itch_project = project.current.dump["build"].get("itch_project", None)
+
+        if itch_project is None or ("/" not in itch_project):
+            interface.error(
+                _("The name of the itch project has not been set."),
+                _("Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."),
+                label="build_distributions"
+                )
+
+
+
+
+
     jump build_distributions
