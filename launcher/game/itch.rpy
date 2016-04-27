@@ -38,13 +38,55 @@ init python:
         return rv
 
 
-
 label itch:
 
     call build_update_dump
 
 
     python hide:
+
+        build = project.current.dump["build"]
+
+        destination = build["destination"]
+        parent = os.path.dirname(project.current.path)
+        destination = os.path.join(parent, destination)
+
+        version = build["version"]
+
+        if not os.path.exists(destination):
+            interface.error(
+                _("The built distributions could not be found. Please choose 'Build' and try again."),
+                label="build_distributions"
+                )
+
+        # A list of full filename, channel tuples.
+        files = [ ]
+
+        for fn in os.listdir(destination):
+            fn = os.path.join(destination, fn)
+
+            if fn.endswith("-all.zip"):
+                channel = "all"
+
+            elif fn.endswith("-win.zip"):
+                channel = "win"
+
+            elif fn.endswith("-mac.zip"):
+                channel = "mac"
+
+            elif fn.endswith("-linux.tar.bz2"):
+                channel = "linux"
+
+            else:
+                continue
+
+            files.append((fn, channel))
+
+        if not os.path.exists(destination):
+            interface.error(
+                _("No uploadable files were found. Please choose 'Build' and try again."),
+                label="build_distributions"
+                )
 
         butler = find_itch_butler()
 
@@ -63,6 +105,44 @@ label itch:
                 _("Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."),
                 label="build_distributions"
                 )
+
+        if renpy.windows:
+            script = "itch.bat"
+            prefix = ""
+            nl = "\r\n"
+
+        elif renpy.macintosh:
+            script = "itch.command"
+            prefix = "#!/usr/bin/env bash"
+            nl = "\n"
+
+        else:
+            script = "itch.sh"
+            prefix = "#!/usr/bin/env bash"
+            nl = "\n"
+
+
+        script = project.current.temp_filename(script)
+
+        with open(script, "wb") as f:
+            f.write(prefix + nl)
+
+            for filename, channel in files:
+
+                f.write('"{}" push "{}" "{}:{}"{}'.format(
+                    renpy.fsencode(butler),
+                    renpy.fsencode(filename),
+                    renpy.fsencode(itch_project),
+                    renpy.fsencode(build["version"] + "-" + channel),
+                    nl,
+                    ))
+
+        try:
+            os.chmod(script, 0o755)
+        except:
+            pass
+
+        print script
 
 
 
