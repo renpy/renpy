@@ -128,6 +128,7 @@ init -1900 python:
         if version <= (6, 99, 10):
             config.new_translate_order = False
             config.old_say_args = True
+            config.window_auto_hide.remove("call screen")
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

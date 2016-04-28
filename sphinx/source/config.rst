@@ -745,7 +745,7 @@ Occasionally Used
 
     When using a load_save layout, a different default may be used.
 
-.. var:: config.window_auto_hide = [ 'scene' ]
+.. var:: config.window_auto_hide = [ 'scene', 'call screen' ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.

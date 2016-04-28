@@ -235,7 +235,8 @@ used.
 This enables automatic management of the window. The window is shown
 before statements listed in :var:`config.window_auto_show` - by default,
 say statements. The window is hidden before statements listed in
-:var:`config.window_auto_hide` - by default, scene statements.
+:var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
+statements.
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,

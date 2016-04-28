@@ -32,7 +32,7 @@ init -1200 python:
     config.window_auto_show = [ "say" ]
 
     # A list of statements that cause the window to be auto-hidden.
-    config.window_auto_hide = [ "scene" ]
+    config.window_auto_hide = [ "scene", "call screen" ]
 
     _window_auto = False
 
