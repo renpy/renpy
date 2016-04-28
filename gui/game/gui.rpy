@@ -249,6 +249,7 @@ style window:
     background "gui/textbox.png"
 
 style say_label:
+    color gui.ACCENT_COLOR
     size gui.LABEL_SIZE
 
 ###############################################################################
