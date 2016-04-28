@@ -28,7 +28,7 @@ class ImageGenerator(object):
 
         pygame_sdl2.image.init()
 
-        p = parameters
+        self.p = p = parameters
 
         self.width = p.width
         self.height = p.height
@@ -128,7 +128,8 @@ class ImageGenerator(object):
 
                 index += 1
 
-            os.rename(fn, bfn)
+            if not self.p.skip_backup:
+                os.rename(fn, bfn)
 
         pygame_sdl2.image.save(s, fn)
 

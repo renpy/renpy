@@ -132,7 +132,8 @@ class CodeGenerator(object):
 
                 backup += 1
 
-            os.rename(target, bfn)
+            if not self.p.skip_backup:
+                os.rename(target, bfn)
 
         with codecs.open(target, "w", "utf-8") as f:
             f.write(u"\ufeff")

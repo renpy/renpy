@@ -93,3 +93,5 @@ class GuiParameters(object):
         self.replace_images = replace_images
         self.replace_code = replace_code
         self.update_code = update_code
+
+        self.skip_backup = False

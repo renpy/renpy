@@ -21,4 +21,7 @@ init 100 python in gui:
             config.screen_width, config.screen_height,
             ACCENT_COLOR, "#000000", False, None,
             True, False, False)
+
+        p.skip_backup = True
+
         generate_gui(p)
