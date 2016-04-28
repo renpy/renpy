@@ -206,6 +206,7 @@ For example::
     show eileen happy
     extend " But I usually quickly get over it!"
 
+.. _dialogue-window-management:
 
 Dialogue Window Management
 --------------------------

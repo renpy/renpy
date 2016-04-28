@@ -210,10 +210,13 @@ label _start:
     else:
         scene
 
-    # Stop predicting the main menu, now that we're ready to show it.
     python:
+        # Stop predicting the main menu, now that we're ready to show it.
         if renpy.has_screen("main_menu"):
             renpy.stop_predict_screen("main_menu")
+
+        # Implement config.window
+        _init_window()
 
     # This has to be python, to deal with a case where _restart may
     # change across a shift-reload.

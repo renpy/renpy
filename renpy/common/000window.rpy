@@ -26,6 +26,7 @@ init -1200 python:
 
     config.window_show_transition = None
     config.window_hide_transition = None
+    config.window = None
 
     # A list of statements that cause the window to be auto-shown.
     config.window_auto_show = [ "say" ]
@@ -75,6 +76,24 @@ init -1200 python:
             _window_show()
 
     config.statement_callbacks.append(_window_auto_callback)
+
+    def _init_window():
+
+        global _window
+        global _window_auto
+
+        if config.window == "auto":
+            _window_auto = True
+            _window = False
+
+        elif config.window == "show":
+            _window_auto = False
+            _window = True
+
+        elif config.window == "hide":
+            _window_auto = False
+            _window = False
+
 
 python early hide:
     ##########################################################################

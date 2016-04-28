@@ -81,6 +81,25 @@ define config.end_game_transition = None
 ## the initial scene.
 
 
+###############################################################################
+## Window management.
+
+## This controls when the dialogue window is displayed. If "show", it is always
+## displayed. If "hide", it is only displayed when dialogue is present. If
+## "auto", the window is hidden before scene statements and shown again
+## once dialogue is displayed.
+##
+## After the game has started, this can be changed with the "window show",
+## "window hide", and "window auto" statements.
+
+define config.window = "auto"
+
+
+## Transitions used to show and hide the dialogue window
+
+define config.window_show_transition = Dissolve(.2)
+define config.window_hide_transition = Dissolve(.2)
+
 
 ###############################################################################
 ## Preference defaults
