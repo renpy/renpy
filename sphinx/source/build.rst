@@ -275,3 +275,11 @@ The following variables provide further control of the build process:
     integrated and discrete GPUs. Right now, this is only supported on Mac
     OS X.
 
+.. var:: build.include_old_themes = True
+
+    When true, files required to support themes that existed before Ren'Py
+    6.99.9 will be included in the build. When false, such files are excluded.
+
+    This is set to False when :func:`gui.init` is called.
+
+

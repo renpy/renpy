@@ -54,6 +54,9 @@ init -1100 python in gui:
 
         _preferences.virtual_size = size
 
+        from store import build
+        build.include_old_themes = False
+
 
     ARE_YOU_SURE = layout.ARE_YOU_SURE
     DELETE_SAVE = layout.DELETE_SAVE
