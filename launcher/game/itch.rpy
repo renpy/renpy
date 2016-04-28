@@ -37,7 +37,6 @@ init python:
 
         return rv
 
-
 label itch:
 
     call build_update_dump
@@ -74,8 +73,10 @@ label itch:
             elif fn.endswith("-mac.zip"):
                 channel = "mac"
 
-            elif fn.endswith("-linux.tar.bz2"):
-                channel = "linux"
+# Butler doesn't seem to support .bz2s yet.
+
+#             elif fn.endswith("-linux.tar.bz2"):
+#                 channel = "linux"
 
             else:
                 continue
@@ -106,44 +107,18 @@ label itch:
                 label="build_distributions"
                 )
 
-        if renpy.windows:
-            script = "itch.bat"
-            prefix = ""
-            nl = "\r\n"
+        cc = ConsoleCommand()
 
-        elif renpy.macintosh:
-            script = "itch.command"
-            prefix = "#!/usr/bin/env bash"
-            nl = "\n"
+        for filename, channel in files:
 
-        else:
-            script = "itch.sh"
-            prefix = "#!/usr/bin/env bash"
-            nl = "\n"
+            cc.add(
+                butler,
+                "push",
+                filename,
+                itch_project + ":" + build["version"] + "-" + channel,
+                )
 
-
-        script = project.current.temp_filename(script)
-
-        with open(script, "wb") as f:
-            f.write(prefix + nl)
-
-            for filename, channel in files:
-
-                f.write('"{}" push "{}" "{}:{}"{}'.format(
-                    renpy.fsencode(butler),
-                    renpy.fsencode(filename),
-                    renpy.fsencode(itch_project),
-                    renpy.fsencode(build["version"] + "-" + channel),
-                    nl,
-                    ))
-
-        try:
-            os.chmod(script, 0o755)
-        except:
-            pass
-
-        print script
-
+        cc.run()
 
 
 
