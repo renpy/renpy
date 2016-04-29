@@ -56,6 +56,13 @@ define gui.INTERFACE_SIZE = gui.scale(24)
 define gui.LABEL_SIZE = gui.scale(30)
 define gui.TITLE_SIZE = gui.scale(50)
 
+################################################################################
+## Window icon.
+
+## The amount of padding used in images.
+define gui.PADDING = gui.scale(4)
+
+
 
 ################################################################################
 ## Window icon.
@@ -100,10 +107,10 @@ style gui_text:
 
 ## Used for full-sized buttons, like navigation buttons.
 style button:
-    ypadding gui.scale(4)
-    xpadding gui.scale(4)
-    background Frame("gui/button.png", gui.scale(4), gui.scale(4))
-    hover_background Frame("gui/button_hover.png", gui.scale(4), gui.scale(4))
+    ypadding gui.PADDING
+    xpadding gui.PADDING
+    background Frame("gui/button.png", gui.PADDING, gui.PADDING)
+    hover_background Frame("gui/button_hover.png", gui.PADDING, gui.PADDING)
 
 style button_text:
     size gui.INTERFACE_SIZE
@@ -116,23 +123,23 @@ style button_text:
 ## Used for checkbox-like buttons
 style check_button:
     left_padding gui.scale(25)
-    foreground Frame("gui/button_unchecked.png", gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-    selected_foreground Frame("gui/button_checked.png", gui.scale(25), gui.scale(4), gui.scale(4))
+    foreground Frame("gui/button_unchecked.png", gui.scale(21) + gui.PADDING, gui.PADDING, gui.PADDING, gui.PADDING)
+    selected_foreground Frame("gui/button_checked.png", gui.scale(21) + gui.PADDING, gui.PADDING, gui.PADDING)
 
 style radio_button is check_button
 
 ## Used for medium-sized buttons, like sound test and mute buttons.
 style medium_button:
-    background Frame("gui/medium_button.png", gui.scale(4), gui.scale(4))
-    hover_background Frame("gui/medium_button_hover.png", gui.scale(4), gui.scale(4))
+    background Frame("gui/medium_button.png", gui.PADDING, gui.PADDING)
+    hover_background Frame("gui/medium_button_hover.png", gui.PADDING, gui.PADDING)
 
 style medium_button_text is button_text
 
 ## Used for small-sized buttons, like file picker page navigation.
 style small_button:
     xpadding gui.scale(10)
-    background Frame("gui/small_button.png", gui.scale(4), gui.scale(4))
-    hover_background Frame("gui/small_button_hover.png", gui.scale(4), gui.scale(4))
+    background Frame("gui/small_button.png", gui.PADDING, gui.PADDING)
+    hover_background Frame("gui/small_button_hover.png", gui.PADDING, gui.PADDING)
 
 style small_button_text is button_text
 
@@ -354,12 +361,12 @@ style choice_vbox:
     spacing gui.scale(22)
 
 style choice_button is default:
-    background Frame("gui/choice_button.png", 0, gui.scale(5))
-    hover_background Frame("gui/hover_choice_button.png", 0, gui.scale(5))
+    background Frame("gui/choice_button.png", 0, gui.PADDING)
+    hover_background Frame("gui/hover_choice_button.png", 0, gui.PADDING)
 
     xsize gui.scale(790)
     xpadding gui.scale(100)
-    ypadding gui.scale(5)
+    ypadding gui.PADDING
 
 style choice_button_text is default:
     color gui.CHOICE_COLOR
@@ -514,7 +521,7 @@ screen navigation():
         xmaximum gui.scale(227)
         yalign 0.5
 
-        spacing gui.scale(4)
+        spacing gui.PADDING
 
         if main_menu:
 
