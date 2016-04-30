@@ -104,6 +104,8 @@ style _developer_label_text is _label_text
 
 label _debugger_screen:
 
+    call _enter_game_menu
+
     python hide:
 
         ui.window(style=style.gm_root)
@@ -159,6 +161,8 @@ label _debugger_screen:
     return
 
 label _theme_test:
+
+    call _enter_game_menu
 
     python hide:
 
@@ -432,6 +436,8 @@ init python:
 
 
 label _image_location_picker:
+
+    call _enter_game_menu
 
     scene black
 
