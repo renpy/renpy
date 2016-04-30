@@ -22,6 +22,8 @@
 import pygame_sdl2
 import os
 
+from renpy.store import config
+
 class ImageGenerator(object):
 
     def __init__(self, parameters):
@@ -422,7 +424,7 @@ class ImageGenerator(object):
 
     def generate_icon(self):
 
-        icon_fn = os.path.join(os.path.dirname(__file__), "icon.png")
+        icon_fn = os.path.join(config.renpy_base, "launcher", "game", "gui7", "icon.png")
         icon = pygame_sdl2.image.load(icon_fn)
 
         width, height = icon.get_size()
