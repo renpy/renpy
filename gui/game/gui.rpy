@@ -42,6 +42,7 @@ define gui.CHOICE_COLOR = "#cccccc"
 define gui.MAIN_MENU_BACKGROUND = "gui/main_menu.png"
 define gui.GAME_MENU_BACKGROUND = "gui/game_menu.png"
 
+
 ################################################################################
 ## Fonts and Font Sizes
 
@@ -56,19 +57,43 @@ define gui.INTERFACE_SIZE = gui.scale(24)
 define gui.LABEL_SIZE = gui.scale(30)
 define gui.TITLE_SIZE = gui.scale(50)
 
-################################################################################
-## Window icon.
-
-## The amount of padding used in images.
-define gui.PADDING = gui.scale(4)
-
-
 
 ################################################################################
 ## Window icon.
 
 ## This is the icon displayer on the taskbar or dock.
 define config.window_icon = "gui/window_icon.png"
+
+
+################################################################################
+## Padding
+
+## This is the default amout of padding that is used by gui.Frame, and
+## styles that use gui.Frame.
+
+define gui.LEFT_PADDING = gui.scale(4)
+define gui.RIGHT_PADDING = gui.scale(4)
+define gui.TOP_PADDING = gui.scale(4)
+define gui.BOTTOM_PADDING = gui.scale(4)
+
+## These override the horizontal padding for check and radio buttons.
+
+define gui.CHECKBOX_LEFT_PADDING = gui.scale(25)
+define gui.CHECKBOX_RIGHT_PADDING = gui.scale(4)
+
+## If True, gui.Frames will use tiling, rather than scaling.
+
+define gui.TILE_FRAME = False
+
+
+
+define gui.BAR_SIZE = gui.scale(30)
+
+define gui.SLIDER_SIZE = gui.scale(30)
+define gui.THUMB_SIZE = gui.scale(10)
+
+define gui.SCROLLBAR_SIZE = gui.scale(10)
+
 
 ################################################################################
 ## Basic in-game styles.
@@ -85,14 +110,34 @@ style hyperlink_text:
     hover_color gui.HOVER_COLOR
     hover_underline True
 
+
+################################################################################
+## Padding style mix-ins.
+
+## These can be taken by other styles to add appropriate amount of padding
+## to frames and other components.
+
+style padding:
+    left_padding gui.LEFT_PADDING
+    right_padding gui.RIGHT_PADDING
+    top_padding gui.TOP_PADDING
+    bottom_padding gui.BOTTOM_PADDING
+
+style checkbox_padding:
+    left_padding gui.CHECKBOX_LEFT_PADDING
+    right_padding gui.CHECKBOX_RIGHT_PADDING
+    top_padding gui.TOP_PADDING
+    bottom_padding gui.BOTTOM_PADDING
+
+
 ################################################################################
 ## Style common user interface components.
 
 style button_text is gui_text
 style check_button is button
 style check_button_text is button_text
-style radio_button is button
-style radio_button_text is button_text
+style radio_button is check_button
+style radio_button_text is check_button_text
 style medium_button is button
 style medium_button_text is button_text
 style small_button is button
@@ -107,10 +152,9 @@ style gui_text:
 
 ## Used for full-sized buttons, like navigation buttons.
 style button:
-    ypadding gui.PADDING
-    xpadding gui.PADDING
-    background Frame("gui/button.png", gui.PADDING, gui.PADDING)
-    hover_background Frame("gui/button_hover.png", gui.PADDING, gui.PADDING)
+    take padding
+    background gui.Frame("gui/button.png")
+    hover_background gui.Frame("gui/button_hover.png")
 
 style button_text:
     size gui.INTERFACE_SIZE
@@ -122,26 +166,14 @@ style button_text:
 
 ## Used for checkbox-like buttons
 style check_button:
-    left_padding gui.scale(25)
-    foreground Frame("gui/button_unchecked.png", gui.scale(21) + gui.PADDING, gui.PADDING, gui.PADDING, gui.PADDING)
-    selected_foreground Frame("gui/button_checked.png", gui.scale(21) + gui.PADDING, gui.PADDING, gui.PADDING)
+    take checkbox_padding
 
-style radio_button is check_button
+    background gui.Frame("gui/button_unchecked.png", checkbox=True)
+    selected_background gui.Frame("gui/button_checked.png", chebox=True)
 
-## Used for medium-sized buttons, like sound test and mute buttons.
-style medium_button:
-    background Frame("gui/medium_button.png", gui.PADDING, gui.PADDING)
-    hover_background Frame("gui/medium_button_hover.png", gui.PADDING, gui.PADDING)
-
-style medium_button_text is button_text
-
-## Used for small-sized buttons, like file picker page navigation.
 style small_button:
-    xpadding gui.scale(10)
-    background Frame("gui/small_button.png", gui.PADDING, gui.PADDING)
-    hover_background Frame("gui/small_button_hover.png", gui.PADDING, gui.PADDING)
-
-style small_button_text is button_text
+    left_padding gui.scale(10) + gui.LEFT_PADDING
+    right_padding gui.scale(10) + gui.RIGHT_PADDING
 
 style label_text:
     color gui.ACCENT_COLOR
@@ -152,64 +184,64 @@ style prompt_text:
     size gui.INTERFACE_SIZE
 
 style bar:
-    ysize gui.scale(30)
+    ysize gui.BAR_SIZE
 
-    left_bar Frame("gui/bar_left.png")
-    right_bar Frame("gui/bar_right.png")
+    left_bar gui.Frame("gui/bar_left.png")
+    right_bar gui.Frame("gui/bar_right.png")
 
 style scrollbar:
-    ysize gui.scale(10)
+    ysize gui.SCROLLBAR_SIZE
 
-    left_bar Frame("gui/scrollbar.png")
-    thumb Frame("gui/scrollbar_thumb.png")
-    right_bar Frame("gui/scrollbar.png")
+    left_bar gui.Frame("gui/scrollbar.png")
+    thumb gui.Frame("gui/scrollbar_thumb.png")
+    right_bar gui.Frame("gui/scrollbar.png")
 
-    hover_left_bar Frame("gui/scrollbar_hover.png")
-    hover_thumb Frame("gui/scrollbar_hover_thumb.png")
-    hover_right_bar Frame("gui/scrollbar_hover.png")
+    hover_left_bar gui.Frame("gui/scrollbar_hover.png")
+    hover_thumb gui.Frame("gui/scrollbar_hover_thumb.png")
+    hover_right_bar gui.Frame("gui/scrollbar_hover.png")
 
 style slider:
-    ysize gui.scale(30)
+    ysize gui.SLIDER_SIZE
 
-    left_bar Frame("gui/slider.png")
-    thumb Frame("gui/slider_thumb.png", xsize=gui.scale(10))
-    right_bar Frame("gui/slider.png")
+    left_bar gui.Frame("gui/slider.png")
+    thumb gui.Frame("gui/slider_thumb.png", xsize=gui.THUMB_SIZE)
+    right_bar gui.Frame("gui/slider.png")
 
-    hover_left_bar Frame("gui/slider_hover.png")
-    hover_thumb Frame("gui/slider_hover_thumb.png", xsize=gui.scale(10))
-    hover_right_bar Frame("gui/slider_hover.png")
+    hover_left_bar gui.Frame("gui/slider_hover.png")
+    hover_thumb gui.Frame("gui/slider_hover_thumb.png", xsize=gui.THUMB_SIZE)
+    hover_right_bar gui.Frame("gui/slider_hover.png")
 
 style vbar:
-    xsize gui.scale(30)
+    xsize gui.BAR_SIZE
 
     bar_vertical True
-    top_bar Frame("gui/bar_top.png")
-    bottom_bar Frame("gui/bar_bottom.png")
+    top_bar gui.Frame("gui/bar_top.png")
+    bottom_bar gui.Frame("gui/bar_bottom.png")
 
 style vscrollbar:
-    xsize gui.scale(10)
+    xsize gui.SCROLLBAR_SIZE
     bar_vertical True
     bar_invert True
 
-    top_bar Frame("gui/vscrollbar.png")
-    thumb Frame("gui/vscrollbar_thumb.png")
-    bottom_bar Frame("gui/vscrollbar.png")
+    top_bar gui.Frame("gui/vscrollbar.png")
+    thumb gui.Frame("gui/vscrollbar_thumb.png")
+    bottom_bar gui.Frame("gui/vscrollbar.png")
 
-    hover_top_bar Frame("gui/vscrollbar_hover.png")
-    hover_thumb Frame("gui/vscrollbar_hover_thumb.png")
-    hover_bottom_bar Frame("gui/vscrollbar_hover.png")
+    hover_top_bar gui.Frame("gui/vscrollbar_hover.png")
+    hover_thumb gui.Frame("gui/vscrollbar_hover_thumb.png")
+    hover_bottom_bar gui.Frame("gui/vscrollbar_hover.png")
 
 style vslider:
-    xsize gui.scale(30)
+    xsize gui.SLIDER_SIZE
     bar_vertical True
 
-    top_bar Frame("gui/vslider.png")
-    thumb Frame("gui/vslider_thumb.png", ysize=gui.scale(10))
-    bottom_bar Frame("gui/vslider.png")
+    top_bar gui.Frame("gui/vslider.png")
+    thumb gui.Frame("gui/vslider_thumb.png", ysize=gui.THUMB_SIZE)
+    bottom_bar gui.Frame("gui/vslider.png")
 
-    hover_top_bar Frame("gui/vslider_hover.png")
-    hover_thumb Frame("gui/vslider_hover_thumb.png", ysize=gui.scale(10))
-    hover_bottom_bar Frame("gui/vslider_hover.png")
+    hover_top_bar gui.Frame("gui/vslider_hover.png")
+    hover_thumb gui.Frame("gui/vslider_hover_thumb.png", ysize=gui.THUMB_SIZE)
+    hover_bottom_bar gui.Frame("gui/vslider_hover.png")
 
 style frame:
     background "#000000"
@@ -361,12 +393,12 @@ style choice_vbox:
     spacing gui.scale(22)
 
 style choice_button is default:
-    background Frame("gui/choice_button.png", 0, gui.PADDING)
-    hover_background Frame("gui/hover_choice_button.png", 0, gui.PADDING)
+    background gui.Frame("gui/choice_button.png")
+    hover_background gui.Frame("gui/hover_choice_button.png")
 
     xsize gui.scale(790)
     xpadding gui.scale(100)
-    ypadding gui.PADDING
+    ypadding gui.scale(5)
 
 style choice_button_text is default:
     color gui.CHOICE_COLOR
@@ -521,7 +553,7 @@ screen navigation():
         xmaximum gui.scale(227)
         yalign 0.5
 
-        spacing gui.PADDING
+        spacing gui.scale(4)
 
         if main_menu:
 
@@ -609,7 +641,7 @@ style main_menu_frame:
     xsize gui.scale(280)
     yfill True
 
-    background Frame("gui/main_menu_darken.png", gui.scale(5), gui.scale(5))
+    background "gui/main_menu_darken.png"
 
 style main_menu_vbox:
     xalign 1.0
@@ -1146,7 +1178,7 @@ style confirm_frame:
     ysize gui.scale(250)
     ypadding gui.scale(50)
 
-    background Frame("gui/confirm_background.png", gui.scale(5), gui.scale(5))
+    background gui.Frame("gui/confirm_background.png")
 
 style confirm_prompt_text:
     text_align 0.5
