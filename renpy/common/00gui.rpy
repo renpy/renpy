@@ -26,7 +26,7 @@ init -1100 python in gui:
 
     def init(width, height):
         """
-        :doc: function
+        :doc: gui
 
         Initializes the gui.
 
@@ -58,6 +58,9 @@ init -1100 python in gui:
         build.include_old_themes = False
 
 
+    ############################################################################
+    # Strings used by the confirm screen.
+
     ARE_YOU_SURE = layout.ARE_YOU_SURE
     DELETE_SAVE = layout.DELETE_SAVE
     OVERWRITE_SAVE = layout.OVERWRITE_SAVE
@@ -68,4 +71,59 @@ init -1100 python in gui:
     SLOW_SKIP = layout.SLOW_SKIP
     FAST_SKIP_UNSEEN = layout.FAST_SKIP_UNSEEN
     FAST_SKIP_SEEN = layout.FAST_SKIP_SEEN
+
+
+    ############################################################################
+    # gui.Frame
+
+    # This is a wrapper around Frame that allows us to apply standard amounts
+    # of padding to each side of a frame.
+
+    from store import Frame as _Frame
+
+    LEFT_PADDING = 0
+    RIGHT_PADDING = 0
+    TOP_PADDING = 0
+    BOTTOM_PADDING = 0
+
+    # And different amounts to check/radio boxes.
+    CHECKBOX_LEFT_PADDING = 0
+    CHECKBOX_RIGHT_PADDING = 0
+
+    # And decide if things are scaled or tiled.
+    TILE_FRAME = False
+
+    def Frame(d, left=None, right=None, top=None, bottom=None, checkbox=False, tile=None, **properties):
+
+        if left is None:
+            if checkbox:
+                left = CHECKBOX_LEFT_PADDING
+            else:
+                left = LEFT_PADDING
+
+        if right is None:
+
+            if checkbox:
+                right = CHECKBOX_RIGHT_PADDING
+            else:
+                right = RIGHT_PADDING
+
+        if top is None:
+            top = TOP_PADDING
+
+        if bottom is None:
+            bottom = BOTTOM_PADDING
+
+        if tile is None:
+            tile = TILE_FRAME
+
+        return _Frame(d, left=left, right=right, top=top, bottom=bottom, tile=TILE_FRAME, **properties)
+
+
+
+
+
+
+
+
 
