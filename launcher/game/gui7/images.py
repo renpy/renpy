@@ -201,7 +201,7 @@ class ImageGenerator(object):
             (YSIZE, 1.0),
             ]
 
-        self.generate_image("phone_textbox", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("phone/textbox", X, Y, self.boring_color.opacity(.8))
 
     def generate_nvl(self):
         XSIZE = self.full_width
@@ -234,7 +234,7 @@ class ImageGenerator(object):
             (YSIZE, 1.0),
             ]
 
-        self.generate_image("phone_nvl", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("phone/nvl", X, Y, self.boring_color.opacity(.8))
 
 
 
@@ -259,8 +259,8 @@ class ImageGenerator(object):
             (YSIZE, 0.0),
             ]
 
-        self.generate_image("choice_button", X, Y, self.boring_color.opacity(.8))
-        self.generate_image("hover_choice_button", X, Y, self.accent_color.opacity(.95))
+        self.generate_image("choice/idle", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("choice/hover", X, Y, self.accent_color.opacity(.95))
 
     def generate_overlay(self):
 
@@ -322,7 +322,7 @@ class ImageGenerator(object):
         self.save(s, "hover_file_slot")
 
 
-    def generate_confirm_background(self):
+    def generate_frame(self):
         width = self.scale_int(600)
         height = self.scale_int(250)
 
@@ -331,7 +331,7 @@ class ImageGenerator(object):
         s = self.make_surface(width, height)
         s.fill(self.accent_color)
         s.subsurface((border, border, width - 2 * border, height - 2 * border)).fill(self.boring_color)
-        self.save(s, "confirm_background")
+        self.save(s, "frame")
 
     def generate_bars(self):
 
@@ -372,8 +372,9 @@ class ImageGenerator(object):
             height = self.scale_int(height) + padding * 2
 
             s = self.make_surface(width, height)
+            s.fill((255, 255, 255, 32))
 
-            if fill_width:
+            if fill_width is not None:
                 fill_width = self.scale_int(fill_width)
                 ss = s.subsurface((padding, padding, fill_width, height - padding * 2))
             else:
@@ -384,17 +385,19 @@ class ImageGenerator(object):
 
             self.save(s, name)
 
-        fill("button", 250, 40)
-        fill("button_hover", 250, 40)
+        def button_family(prefix, width, height, fill_width=None):
 
-        fill("button_checked", 250, 40, self.accent_color, fill_width=5)
-        fill("button_unchecked", 250, 40)
+            fill(prefix + "/idle", width, height)
+            fill(prefix + "/hover", width, height)
+            fill(prefix + "/selected_idle", width, height, self.accent_color, fill_width=fill_width)
+            fill(prefix + "/selected_hover", width, height, self.accent_color, fill_width=fill_width)
 
-        fill("medium_button", 30, 40)
-        fill("medium_button_hover", 30, 40)
+        button_family("button", 280, 37)
+        button_family("button/medium", 106, 37)
+        button_family("button/small", 50, 37)
+        button_family("button/check", 280, 37, self.scale_int(5))
+        button_family("button/radio", 280, 37,  self.scale_int(5))
 
-        fill("small_button", 30, 40)
-        fill("small_button_hover", 30, 40)
 
     def generate_skip(self):
         XSIZE = 240
@@ -413,7 +416,7 @@ class ImageGenerator(object):
             (YSIZE, 1.0),
             ]
 
-        self.generate_image("skip_indicator", X, Y, self.boring_color.opacity(.8))
+        self.generate_image("skip", X, Y, self.boring_color.opacity(.8))
 
     def generate_notify(self):
         XSIZE = 922
@@ -478,7 +481,7 @@ class ImageGenerator(object):
         self.generate_choice_button()
         self.generate_overlay()
         self.generate_file_slot()
-        self.generate_confirm_background()
+        self.generate_frame()
         self.generate_nvl()
         self.generate_bars()
         self.generate_buttons()

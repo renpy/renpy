@@ -66,7 +66,7 @@ define config.window_icon = "gui/window_icon.png"
 
 
 ################################################################################
-## Padding
+## Padding and Spacing
 
 ## This is the default amout of padding that is used by gui.Frame, and
 ## styles that use gui.Frame.
@@ -85,6 +85,11 @@ define gui.CHECKBOX_RIGHT_PADDING = gui.scale(4)
 
 define gui.TILE_FRAME = False
 
+## The spacing between groups of buttons and labels.
+
+define gui.NAVIGATION_SPACING = gui.scale(4)
+define gui.PREF_SPACING = gui.scale(0)
+define gui.PAGE_SPACING = gui.scale(0)
 
 
 define gui.BAR_SIZE = gui.scale(30)
@@ -136,8 +141,8 @@ style checkbox_padding:
 style button_text is gui_text
 style check_button is button
 style check_button_text is button_text
-style radio_button is check_button
-style radio_button_text is check_button_text
+style radio_button is button
+style radio_button_text is button_text
 style medium_button is button
 style medium_button_text is button_text
 style small_button is button
@@ -153,8 +158,11 @@ style gui_text:
 ## Used for full-sized buttons, like navigation buttons.
 style button:
     take padding
-    background gui.Frame("gui/button.png")
-    hover_background gui.Frame("gui/button_hover.png")
+
+    background gui.Frame("gui/button/idle.png")
+    hover_background gui.Frame("gui/button/hover.png")
+    selected_background gui.Frame("gui/button/selected_idle.png")
+    selected_hover_background gui.Frame("gui/button/selected_hover.png")
 
 style button_text:
     size gui.INTERFACE_SIZE
@@ -168,12 +176,37 @@ style button_text:
 style check_button:
     take checkbox_padding
 
-    background gui.Frame("gui/button_unchecked.png", checkbox=True)
-    selected_background gui.Frame("gui/button_checked.png", chebox=True)
+    background gui.Frame("gui/button/check/idle.png")
+    hover_background gui.Frame("gui/button/check/hover.png")
+    selected_background gui.Frame("gui/button/check/selected_idle.png")
+    selected_hover_background gui.Frame("gui/button/check/selected_hover.png")
+
+style radio_button:
+    take checkbox_padding
+
+    background gui.Frame("gui/button/radio/idle.png")
+    hover_background gui.Frame("gui/button/radio/hover.png")
+    selected_background gui.Frame("gui/button/radio/selected_idle.png")
+    selected_hover_background gui.Frame("gui/button/radio/selected_hover.png")
+
+
+style medium_button:
+    left_padding gui.scale(10) + gui.LEFT_PADDING
+    right_padding gui.scale(10) + gui.RIGHT_PADDING
+
+    background gui.Frame("gui/button/medium/idle.png")
+    hover_background gui.Frame("gui/button/medium/hover.png")
+    selected_background gui.Frame("gui/button/medium/selected_idle.png")
+    selected_hover_background gui.Frame("gui/button/medium/selected_hover.png")
 
 style small_button:
     left_padding gui.scale(10) + gui.LEFT_PADDING
     right_padding gui.scale(10) + gui.RIGHT_PADDING
+
+    background gui.Frame("gui/button/medium/idle.png")
+    hover_background gui.Frame("gui/button/medium/hover.png")
+    selected_background gui.Frame("gui/button/medium/selected_idle.png")
+    selected_hover_background gui.Frame("gui/button/medium/selected_hover.png")
 
 style label_text:
     color gui.ACCENT_COLOR
@@ -244,7 +277,8 @@ style vslider:
     hover_bottom_bar gui.Frame("gui/vslider_hover.png")
 
 style frame:
-    background "#000000"
+    take padding
+    background gui.Frame("gui/frame.png")
 
 
 ################################################################################
@@ -393,8 +427,8 @@ style choice_vbox:
     spacing gui.scale(22)
 
 style choice_button is default:
-    background gui.Frame("gui/choice_button.png")
-    hover_background gui.Frame("gui/hover_choice_button.png")
+    background gui.Frame("gui/choice/idle.png")
+    hover_background gui.Frame("gui/choice/hover.png")
 
     xsize gui.scale(790)
     xpadding gui.scale(100)
@@ -553,7 +587,7 @@ screen navigation():
         xmaximum gui.scale(227)
         yalign 0.5
 
-        spacing gui.scale(4)
+        spacing gui.NAVIGATION_SPACING
 
         if main_menu:
 
@@ -835,6 +869,8 @@ screen file_slots(title):
                 xalign 0.5
                 yalign 1.0
 
+                spacing gui.PAGE_SPACING
+
                 textbutton _("<") action FilePagePrevious()
 
                 textbutton _("{#auto_page}A") action FilePage("auto")
@@ -1034,8 +1070,14 @@ style pref_label_text:
 style pref_vbox:
     xsize gui.scale(230)
 
+style radio_pref_vbox:
+    spacing gui.PREF_SPACING
+
 style radio_pref_button:
     size_group "preferences"
+
+style check_pref_vbox:
+    spacing gui.PREF_SPACING
 
 style check_pref_button:
     size_group "preferences"
@@ -1161,7 +1203,7 @@ screen confirm(message, yes_action, no_action):
 
 define config.quit_action = Quit()
 
-style confirm_frame is empty
+style confirm_frame is gui_frame
 style confirm_prompt is gui_prompt
 style confirm_prompt_text is gui_prompt_text
 style confirm_button is gui_medium_button
@@ -1176,7 +1218,6 @@ style confirm_frame:
     ysize gui.scale(250)
     ypadding gui.scale(50)
 
-    background gui.Frame("gui/confirm_background.png")
 
 style confirm_prompt_text:
     text_align 0.5
@@ -1399,7 +1440,7 @@ style skip_frame:
     left_padding gui.scale(16)
     right_padding gui.scale(40)
 
-    background Frame("gui/skip_indicator.png", gui.scale(16), gui.scale(5), gui.scale(50), gui.scale(5))
+    background Frame("gui/skip.png", gui.scale(16), gui.scale(5), gui.scale(50), gui.scale(5))
 
 style skip_text:
     size gui.NOTIFY_SIZE
@@ -1499,7 +1540,7 @@ style window:
     variant "small"
     xpadding gui.scale(90)
     ysize gui.scale(240)
-    background "gui/phone_textbox.png"
+    background "gui/phone/textbox.png"
 
 style choice_button:
     variant "small"
@@ -1509,7 +1550,7 @@ style choice_button:
 
 style nvl_window:
     variant "small"
-    background "gui/phone_nvl.png"
+    background "gui/phone/nvl.png"
     xpadding gui.scale(120)
 
 style nvl_entry:
