@@ -335,7 +335,7 @@ class ImageGenerator(object):
 
     def generate_bars(self):
 
-        def fill(name, color, width, height, vname=None):
+        def fill(name, color, width, height, vname):
             width = self.scale_int(width)
             height = self.scale_int(height)
 
@@ -343,25 +343,24 @@ class ImageGenerator(object):
             s.fill(color)
             self.save(s, name)
 
-            if vname is None:
-                vname = "v" + name
+            print(vname)
 
             s = self.make_surface(height, width)
             s.fill(color)
             self.save(s, vname)
 
-        fill("bar_left", self.accent_color, 350, 30, "bar_bottom")
-        fill("bar_right", self.muted_color, 350, 30, "bar_top")
+        fill("bar/left", self.accent_color, 350, 30, "bar/bottom")
+        fill("bar/right", self.muted_color, 350, 30, "bar/top")
 
-        fill("slider", self.muted_color, 350, 30)
-        fill("slider_hover", self.hover_muted_color, 350, 30)
-        fill("slider_thumb", self.accent_color, 10, 30)
-        fill("slider_hover_thumb", self.hover_color, 10, 30)
+        fill("slider/horizontal_idle", self.muted_color, 350, 30, "slider/vertical_idle")
+        fill("slider/horizontal_hover", self.hover_muted_color, 350, 30, "slider/vertical_hover")
+        fill("slider/horizontal_idle_thumb", self.accent_color, 10, 30, "slider/vertical_idle_thumb")
+        fill("slider/horizontal_hover_thumb", self.hover_color, 10, 30, "slider/vertical_hover_thumb")
 
-        fill("scrollbar", self.muted_color, 350, 10)
-        fill("scrollbar_hover", self.hover_muted_color, 350, 10)
-        fill("scrollbar_thumb", self.accent_color, 350, 10)
-        fill("scrollbar_hover_thumb", self.hover_color, 350, 10)
+        fill("scrollbar/horizontal_idle", self.muted_color, 350, 10, "scrollbar/vertical_idle")
+        fill("scrollbar/horizontal_hover", self.hover_muted_color, 350, 10, "scrollbar/vertical_hover")
+        fill("scrollbar/horizontal_idle_thumb", self.accent_color, 350, 10, "scrollbar/vertical_idle_thumb")
+        fill("scrollbar/horizontal_hover_thumb", self.hover_color, 350, 10, "scrollbar/vertical_hover_thumb")
 
     def generate_buttons(self):
 

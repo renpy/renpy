@@ -93,10 +93,8 @@ define gui.PAGE_SPACING = gui.scale(0)
 
 
 define gui.BAR_SIZE = gui.scale(30)
-
 define gui.SLIDER_SIZE = gui.scale(30)
-define gui.THUMB_SIZE = gui.scale(10)
-
+define gui.SLIDER_THUMB_SIZE = gui.scale(10)
 define gui.SCROLLBAR_SIZE = gui.scale(10)
 
 
@@ -189,10 +187,7 @@ style radio_button:
     selected_background gui.Frame("gui/button/radio/selected_idle.png")
     selected_hover_background gui.Frame("gui/button/radio/selected_hover.png")
 
-
 style medium_button:
-    left_padding gui.scale(10) + gui.LEFT_PADDING
-    right_padding gui.scale(10) + gui.RIGHT_PADDING
 
     background gui.Frame("gui/button/medium/idle.png")
     hover_background gui.Frame("gui/button/medium/hover.png")
@@ -219,62 +214,63 @@ style prompt_text:
 style bar:
     ysize gui.BAR_SIZE
 
-    left_bar gui.Frame("gui/bar_left.png")
-    right_bar gui.Frame("gui/bar_right.png")
+    left_bar gui.Frame("gui/bar/left.png")
+    right_bar gui.Frame("gui/bar/right.png")
 
 style scrollbar:
     ysize gui.SCROLLBAR_SIZE
 
-    left_bar gui.Frame("gui/scrollbar.png")
-    thumb gui.Frame("gui/scrollbar_thumb.png")
-    right_bar gui.Frame("gui/scrollbar.png")
+    left_bar gui.Frame("gui/scrollbar/horizontal_idle.png")
+    thumb gui.Frame("gui/scrollbar/horizontal_idle_thumb.png", xsize=gui.SLIDER_THUMB_SIZE)
+    right_bar gui.Frame("gui/scrollbar/horizontal_idle.png")
 
-    hover_left_bar gui.Frame("gui/scrollbar_hover.png")
-    hover_thumb gui.Frame("gui/scrollbar_hover_thumb.png")
-    hover_right_bar gui.Frame("gui/scrollbar_hover.png")
+    hover_left_bar gui.Frame("gui/scrollbar/horizontal_hover.png")
+    hover_thumb gui.Frame("gui/scrollbar/horizontal_hover_thumb.png", xsize=gui.SLIDER_THUMB_SIZE)
+    hover_right_bar gui.Frame("gui/scrollbar/horizontal_hover.png")
+
 
 style slider:
     ysize gui.SLIDER_SIZE
 
-    left_bar gui.Frame("gui/slider.png")
-    thumb gui.Frame("gui/slider_thumb.png", xsize=gui.THUMB_SIZE)
-    right_bar gui.Frame("gui/slider.png")
+    left_bar gui.Frame("gui/slider/horizontal_idle.png")
+    thumb gui.Frame("gui/slider/horizontal_idle_thumb.png")
+    right_bar gui.Frame("gui/slider/horizontal_idle.png")
 
-    hover_left_bar gui.Frame("gui/slider_hover.png")
-    hover_thumb gui.Frame("gui/slider_hover_thumb.png", xsize=gui.THUMB_SIZE)
-    hover_right_bar gui.Frame("gui/slider_hover.png")
+    hover_left_bar gui.Frame("gui/slider/horizontal_hover.png")
+    hover_thumb gui.Frame("gui/slider/horizontal_hover_thumb.png")
+    hover_right_bar gui.Frame("gui/slider/horizontal_hover.png")
 
 style vbar:
     xsize gui.BAR_SIZE
 
     bar_vertical True
-    top_bar gui.Frame("gui/bar_top.png")
-    bottom_bar gui.Frame("gui/bar_bottom.png")
+    left_bar gui.Frame("gui/bar/top.png")
+    right_bar gui.Frame("gui/bar/bottom.png")
 
 style vscrollbar:
     xsize gui.SCROLLBAR_SIZE
     bar_vertical True
     bar_invert True
 
-    top_bar gui.Frame("gui/vscrollbar.png")
-    thumb gui.Frame("gui/vscrollbar_thumb.png")
-    bottom_bar gui.Frame("gui/vscrollbar.png")
+    left_bar gui.Frame("gui/scrollbar/vertical_idle.png")
+    thumb gui.Frame("gui/scrollbar/vertical_idle_thumb.png")
+    right_bar gui.Frame("gui/scrollbar/vertical_idle.png")
 
-    hover_top_bar gui.Frame("gui/vscrollbar_hover.png")
-    hover_thumb gui.Frame("gui/vscrollbar_hover_thumb.png")
-    hover_bottom_bar gui.Frame("gui/vscrollbar_hover.png")
+    hover_left_bar gui.Frame("gui/scrollbar/vertical_hover.png")
+    hover_thumb gui.Frame("gui/scrollbar/vertical_hover_thumb.png")
+    hover_right_bar gui.Frame("gui/scrollbar/vertical_hover.png")
 
 style vslider:
     xsize gui.SLIDER_SIZE
     bar_vertical True
 
-    top_bar gui.Frame("gui/vslider.png")
-    thumb gui.Frame("gui/vslider_thumb.png", ysize=gui.THUMB_SIZE)
-    bottom_bar gui.Frame("gui/vslider.png")
+    left_bar gui.Frame("gui/slider/vertical_idle.png")
+    thumb gui.Frame("gui/slider/vertical_idle_thumb.png", ysize=gui.SLIDER_THUMB_SIZE)
+    right_bar gui.Frame("gui/slider/vertical_idle.png")
 
-    hover_top_bar gui.Frame("gui/vslider_hover.png")
-    hover_thumb gui.Frame("gui/vslider_hover_thumb.png", ysize=gui.THUMB_SIZE)
-    hover_bottom_bar gui.Frame("gui/vslider_hover.png")
+    hover_left_bar gui.Frame("gui/slider/vertical_hover.png")
+    hover_thumb gui.Frame("gui/slider/vertical_hover_thumb.png", ysize=gui.SLIDER_THUMB_SIZE)
+    hover_right_bar gui.Frame("gui/slider/vertical_hover.png")
 
 style frame:
     take padding
