@@ -115,6 +115,12 @@ class ImageGenerator(object):
     def save(self, s, filename):
 
         fn = self.prefix + filename + ".png"
+        dn = os.path.dirname(fn)
+
+        try:
+            os.makedirs(dn, 0o777)
+        except:
+            pass
 
         if os.path.exists(fn):
             if not self.overwrite:
@@ -256,35 +262,42 @@ class ImageGenerator(object):
         self.generate_image("choice_button", X, Y, self.boring_color.opacity(.8))
         self.generate_image("hover_choice_button", X, Y, self.accent_color.opacity(.95))
 
-    def generate_darken(self):
+    def generate_overlay(self):
 
         width = self.scale_int(280)
+        phone_width = self.scale_int(340)
+
+        game_y = self.scale_int(120)
+        game_height = self.scale_int(570)
+
         line_width = self.scale_int(3)
 
         # Main menu.
-        mm = self.make_surface(width, self.height)
-        mm.fill(self.boring_color.opacity(.8))
+        mm = self.make_surface(self.width, self.height)
+        mm.subsurface((0, 0, width, self.height)).fill(self.boring_color.opacity(.8))
         mm.subsurface((width - line_width, 0, line_width, self.height)).fill(self.accent_color)
-        self.save(mm, "main_menu_darken")
+        self.save(mm, "overlay/main")
+
+        mm = self.make_surface(self.width, self.height)
+        mm.subsurface((0, 0, phone_width, self.height)).fill(self.boring_color.opacity(.8))
+        mm.subsurface((phone_width - line_width, 0, line_width, self.height)).fill(self.accent_color)
+        self.save(mm, "phone/overlay/main")
 
         # Game menu.
         gm = self.make_surface(self.width, self.height)
         gm.fill(self.boring_color.opacity(.8))
-        self.save(gm, "game_menu_darken")
+        gm.subsurface((width - line_width, game_y, line_width, game_height)).fill(self.accent_color)
+        self.save(gm, "overlay/game")
+
+        gm = self.make_surface(self.width, self.height)
+        gm.fill(self.boring_color.opacity(.8))
+        gm.subsurface((phone_width - line_width, game_y, line_width, game_height)).fill(self.accent_color)
+        self.save(gm, "phone/overlay/game")
 
         # Confirm.
         gm = self.make_surface(self.width, self.height)
         gm.fill(self.boring_color.opacity(.6))
-        self.save(gm, "confirm_darken")
-
-    def generate_separator(self):
-
-        vwidth = self.scale_int(3)
-        vheight = self.scale_int(self.full_height - 150)
-
-        v = self.make_surface(vwidth, vheight)
-        v.fill(self.accent_color)
-        self.save(v, "vertical_separator")
+        self.save(gm, "overlay/confirm")
 
     def generate_file_slot(self):
 
@@ -463,8 +476,7 @@ class ImageGenerator(object):
     def generate_all(self):
         self.generate_textbox()
         self.generate_choice_button()
-        self.generate_darken()
-        self.generate_separator()
+        self.generate_overlay()
         self.generate_file_slot()
         self.generate_confirm_background()
         self.generate_nvl()

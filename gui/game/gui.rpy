@@ -641,7 +641,7 @@ style main_menu_frame:
     xsize gui.scale(280)
     yfill True
 
-    background "gui/main_menu_darken.png"
+    background "gui/overlay/main.png"
 
 style main_menu_vbox:
     xalign 1.0
@@ -677,8 +677,6 @@ screen game_menu(title, scroll=None):
     else:
         add gui.GAME_MENU_BACKGROUND
 
-    add "gui/game_menu_darken.png"
-
     style_prefix "game_menu"
 
     frame:
@@ -689,8 +687,6 @@ screen game_menu(title, scroll=None):
             # Reserve space for the navigation section.
             frame:
                 style "game_menu_navigation_frame"
-
-            add "gui/vertical_separator.png"
 
             frame:
                 style "game_menu_content_frame"
@@ -746,11 +742,13 @@ style return_button is navigation_button
 style return_button_text is navigation_button_text
 
 style game_menu_outer_frame:
-    bottom_margin gui.scale(30)
-    top_margin gui.scale(120)
+    bottom_padding gui.scale(30)
+    top_padding gui.scale(120)
+
+    background "gui/overlay/game.png"
 
 style game_menu_navigation_frame:
-    xsize gui.scale(277)
+    xsize gui.scale(280)
     yfill True
 
 style game_menu_content_frame:
@@ -1137,7 +1135,7 @@ screen confirm(message, yes_action, no_action):
 
     style_prefix "confirm"
 
-    add "gui/confirm_darken.png"
+    add "gui/overlay/confirm.png"
 
     frame:
 
@@ -1528,11 +1526,15 @@ style quick_button_text:
 
 style main_menu_frame:
     variant "small"
-    xsize gui.scale(387)
+    background "gui/phone/overlay/main.png"
+
+style game_menu_outer_frame:
+    variant "small"
+    background "gui/phone/overlay/game.png"
 
 style game_menu_navigation_frame:
     variant "small"
-    xsize gui.scale(384)
+    xsize gui.scale(340)
 
 style game_menu_content_frame:
     variant "small"
