@@ -1494,19 +1494,8 @@ init python:
         gui.file_slot_cols = 2
         gui.file_slot_rows = 2
 
-style slider:
-    variant "small"
-    ysize gui.scale(44)
-
-    thumb Frame("gui/slider_thumb.png", xsize=gui.scale(15))
-    hover_thumb Frame("gui/slider_hover_thumb.png", xsize=gui.scale(15))
-
-style vslider:
-    variant "small"
-    xsize gui.scale(44)
-
-    thumb Frame("gui/vslider_thumb.png", ysize=gui.scale(15))
-    hover_thumb Frame("gui/vslider_hover_thumb.png", ysize=gui.scale(15))
+        gui.SLIDER_SIZE = gui.scale(44)
+        gui.THUMB_SIZE = gui.scale(15)
 
 style window:
     variant "small"
