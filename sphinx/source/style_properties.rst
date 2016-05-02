@@ -626,6 +626,13 @@ Window properties are used to specify the look of windows, frames, and buttons.
     Equivalent to setting top_margin and bottom_margin to the same
     value.
 
+.. style-property:: margin tuple
+
+    When given a two-item tuple, equivalent to setting xmargin and
+    ymargin to the two items. When given a four-item tuple, equivalent
+    to setting left_margin, top_margin, right_margin, and bottom_margin
+    to the four items.
+
 .. style-property:: left_padding int
 
     The amount of space between the background and the left side of
@@ -655,6 +662,13 @@ Window properties are used to specify the look of windows, frames, and buttons.
 
     Equivalent to setting top_padding and bottom_padding to the same
     value.
+
+.. style-property:: padding tuple
+
+    When given a two-item tuple, equivalent to setting xpadding and
+    ypadding to the two items. When given a four-item tuple, equivalent
+    to setting left_padding, top_padding, right_padding, and bottom_padding
+    to the four items.
 
 .. style-property:: size_group string or None
 

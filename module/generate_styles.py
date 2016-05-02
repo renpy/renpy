@@ -219,6 +219,14 @@ style_property_count = len(style_properties)
 # * A string giving the name of a functon to call to get the value to assign, a constant
 #   numeric value, or None to not change the argument.
 synthetic_properties = sorted_dict(
+
+    margin = [
+        ('left_margin', 'index_0'),
+        ('top_margin', 'index_1'),
+        ('right_margin', 'index_2_or_0'),
+        ('bottom_margin', 'index_3_or_1'),
+        ],
+
     xmargin = [
         ('left_margin', None),
         ('right_margin', None)
@@ -237,6 +245,13 @@ synthetic_properties = sorted_dict(
     yalign = [
         ('ypos', None),
         ('yanchor', None),
+        ],
+
+    padding = [
+        ('left_padding', 'index_0'),
+        ('top_padding', 'index_1'),
+        ('right_padding', 'index_2_or_0'),
+        ('bottom_padding', 'index_3_or_1'),
         ],
 
     xpadding = [

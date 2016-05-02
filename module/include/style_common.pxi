@@ -37,3 +37,15 @@ cdef inline object index_2(object v):
 
 cdef inline object index_3(object v):
     return v[3]
+
+cdef inline object index_2_or_0(object v):
+    if len(v) >= 3:
+        return v[2]
+    else:
+        return v[0]
+
+cdef inline object index_3_or_1(object v):
+    if len(v) >= 4:
+        return v[3]
+    else:
+        return v[1]
