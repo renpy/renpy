@@ -81,43 +81,45 @@ init -1100 python in gui:
 
     from store import Frame as _Frame
 
-    LEFT_PADDING = 0
-    RIGHT_PADDING = 0
-    TOP_PADDING = 0
-    BOTTOM_PADDING = 0
+    class Insets(object):
 
-    # And different amounts to check/radio boxes.
-    CHECKBOX_LEFT_PADDING = 0
-    CHECKBOX_RIGHT_PADDING = 0
+        def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0, tile=False):
 
-    # And decide if things are scaled or tiled.
-    TILE_FRAME = False
+            self.left = left
+            self.top = top
+            self.right = right
+            self.bottom = bottom
 
-    def Frame(d, left=None, right=None, top=None, bottom=None, checkbox=False, tile=None, **properties):
+            self.pad_left = pad_left
+            self.pad_top = pad_top
+            self.pad_right = pad_right
+            self.pad_bottom = pad_bottom
 
-        if left is None:
-            if checkbox:
-                left = CHECKBOX_LEFT_PADDING
-            else:
-                left = LEFT_PADDING
+            self.tile = tile
 
-        if right is None:
+        @property
+        def padding(self):
+            return (
+                self.left + self.pad_left,
+                self.top + self.pad_top,
+                self.right + self.pad_right,
+                self.bottom + self.pad_bottom,
+                )
 
-            if checkbox:
-                right = CHECKBOX_RIGHT_PADDING
-            else:
-                right = RIGHT_PADDING
+    def Frame(d, insets, **properties):
 
-        if top is None:
-            top = TOP_PADDING
+        left = insets.left
+        top = insets.top
+        right = insets.right
+        bottom = insets.bottom
 
-        if bottom is None:
-            bottom = BOTTOM_PADDING
-
-        if tile is None:
-            tile = TILE_FRAME
-
-        return _Frame(d, left=left, right=right, top=top, bottom=bottom, tile=TILE_FRAME, **properties)
+        return _Frame(d,
+            left=insets.left,
+            top=insets.top,
+            right=insets.right,
+            bottom=insets.bottom,
+            tile=insets.tile,
+            **properties)
 
 
 
