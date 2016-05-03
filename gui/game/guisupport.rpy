@@ -19,7 +19,7 @@ init 100 python in gui:
         p = GuiParameters(
             config.gamedir, config.gamedir,
             config.screen_width, config.screen_height,
-            ACCENT_COLOR, "#000000", False, None,
+            accent_color, "#000000", False, None,
             True, False, False)
 
         p.skip_backup = True
