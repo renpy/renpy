@@ -1088,6 +1088,7 @@ style mute_all_pref_button:
 style slider_pref_vbox:
     xsize gui.scale(460)
 
+
 ##############################################################################
 ## History
 
@@ -1159,7 +1160,11 @@ style history_label_text:
 
 screen confirm(message, yes_action, no_action):
 
+    ## Ensure other screens do not get input while the confirm screen is
+    ## being displayed.
     modal True
+
+    zorder 200
 
     style_prefix "confirm"
 
@@ -1183,7 +1188,7 @@ screen confirm(message, yes_action, no_action):
                 textbutton _("Yes") action yes_action
                 textbutton _("No") action no_action
 
-    # Right-click and escape answer "no".
+    ## Right-click and escape answer "no".
     key "game_menu" action no_action
 
 
