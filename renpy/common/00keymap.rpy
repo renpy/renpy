@@ -318,6 +318,7 @@ screen _progress:
             size 14
             color "#fff"
             outlines [ (1, "#000", 0, 0) ]
+            alt ""
 
 init -1100 python:
 
