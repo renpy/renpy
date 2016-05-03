@@ -15,47 +15,47 @@ init python:
 ## The colors of various aspects of the interface.
 
 ## An accent color used throughout the interface.
-define gui.ACCENT_COLOR = "#00b8c3"
+define gui.accent_color = "#00b8c3"
 
 ## A version of the accent color that's used when buttons are hovered.
-define gui.HOVER_COLOR = Color(gui.ACCENT_COLOR).tint(.6)
+define gui.hover_color = Color(gui.accent_color).tint(.6)
 
 ## The color used for a text button when it is selected but not focused.
 ## A button is selected if it is the current screen or preference value
-define gui.SELECTED_COLOR = "#ffffff"
+define gui.selected_color = "#ffffff"
 
 ## The color used for a text button when it is neither selected nor hovered.
-define gui.IDLE_COLOR = "#555555"
+define gui.idle_color = "#555555"
 
 ## The small color is used for small buttons, which need to be brighter/darker
 ## to achieve the same effect.
-define gui.IDLE_SMALL_COLOR = "#aaaaaa"
+define gui.idle_small_color = "#aaaaaa"
 
 ## The color used for a text button when it cannot be selected.
-define gui.INSENSITIVE_COLOR = "#55555580"
+define gui.insensitive_color = "#55555580"
 
 ## The color used for dialogue and menu choice text.
-define gui.TEXT_COLOR = "#ffffff"
-define gui.CHOICE_COLOR = "#cccccc"
+define gui.text_color = "#ffffff"
+define gui.choice_color = "#cccccc"
 
 ## The images used for the main and game menus.
-define gui.MAIN_MENU_BACKGROUND = "gui/main_menu.png"
-define gui.GAME_MENU_BACKGROUND = "gui/game_menu.png"
+define gui.main_menu_background = "gui/main_menu.png"
+define gui.game_menu_background = "gui/game_menu.png"
 
 
 ################################################################################
 ## Fonts and Font Sizes
 
-define gui.DEFAULT_FONT = "DejaVuSans.ttf"
-define gui.INTERFACE_FONT = "DejaVuSans.ttf"
-define gui.GLYPH_FONT = "DejaVuSans.ttf"
+define gui.default_font = "DejaVuSans.ttf"
+define gui.interface_font = "DejaVuSans.ttf"
+define gui.glyph_font = "DejaVuSans.ttf"
 
-define gui.TINY_SIZE = gui.scale(14)
-define gui.NOTIFY_SIZE = gui.scale(16)
-define gui.TEXT_SIZE = gui.scale(22)
-define gui.INTERFACE_SIZE = gui.scale(24)
-define gui.LABEL_SIZE = gui.scale(30)
-define gui.TITLE_SIZE = gui.scale(50)
+define gui.tiny_size = gui.scale(14)
+define gui.notify_size = gui.scale(16)
+define gui.text_size = gui.scale(22)
+define gui.interface_size = gui.scale(24)
+define gui.label_size = gui.scale(30)
+define gui.title_size = gui.scale(50)
 
 
 ################################################################################
@@ -71,51 +71,51 @@ define config.window_icon = "gui/window_icon.png"
 ## This is the default amout of padding that is used by Frame, and
 ## styles that use Frame.
 
-define gui.BUTTON_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.MEDIUM_BUTTON_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.SMALL_BUTTON_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
-define gui.CHECK_BUTTON_BORDERS = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.RADIO_BUTTON_BORDERS = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.medium_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.small_button_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
+define gui.check_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.radio_button_borders = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.BAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.SCROLLBAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.SLIDER_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.VBAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.VSCROLLBAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.VSLIDER_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.bar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.scrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.slider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.vbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.vscrollbar_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.vslider_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.FRAME_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.frame_borders = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.CHOICE_BORDERS = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
+define gui.choice_borders = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
 
 
 ## The spacing between groups of buttons and labels.
 
-define gui.NAVIGATION_SPACING = gui.scale(4)
-define gui.PREF_SPACING = gui.scale(0)
-define gui.PAGE_SPACING = gui.scale(0)
-define gui.CHOICE_SPACING = gui.scale(22)
+define gui.navigation_spacing = gui.scale(4)
+define gui.pref_spacing = gui.scale(0)
+define gui.page_spacing = gui.scale(0)
+define gui.choice_spacing = gui.scale(22)
 
 
-define gui.BAR_SIZE = gui.scale(30)
-define gui.SLIDER_SIZE = gui.scale(30)
-define gui.SLIDER_THUMB_SIZE = gui.scale(10)
-define gui.SCROLLBAR_SIZE = gui.scale(10)
+define gui.bar_size = gui.scale(30)
+define gui.slider_size = gui.scale(30)
+define gui.slider_thumb_size = gui.scale(10)
+define gui.scrollbar_size = gui.scale(10)
 
 
 ################################################################################
 ## Basic in-game styles.
 
 style default:
-    font gui.DEFAULT_FONT
-    size gui.TEXT_SIZE
+    font gui.default_font
+    size gui.text_size
 
 style input:
-    color gui.ACCENT_COLOR
+    color gui.accent_color
 
 style hyperlink_text:
-    color gui.ACCENT_COLOR
-    hover_color gui.HOVER_COLOR
+    color gui.accent_color
+    hover_color gui.hover_color
     hover_underline True
 
 
@@ -136,136 +136,136 @@ style prompt_text is gui_text
 
 ## Used for text inside the gui.
 style gui_text:
-    font gui.INTERFACE_FONT
-    size gui.TEXT_SIZE
+    font gui.interface_font
+    size gui.text_size
 
 ## Used for full-sized buttons, like navigation buttons.
 style button:
-    padding gui.BUTTON_BORDERS.padding
+    padding gui.button_borders.padding
 
-    background Frame("gui/button/idle.png", gui.BUTTON_BORDERS)
-    hover_background Frame("gui/button/hover.png", gui.BUTTON_BORDERS)
-    selected_background Frame("gui/button/selected_idle.png", gui.BUTTON_BORDERS)
-    selected_hover_background Frame("gui/button/selected_hover.png", gui.BUTTON_BORDERS)
+    background Frame("gui/button/idle.png", gui.button_borders)
+    hover_background Frame("gui/button/hover.png", gui.button_borders)
+    selected_background Frame("gui/button/selected_idle.png", gui.button_borders)
+    selected_hover_background Frame("gui/button/selected_hover.png", gui.button_borders)
 
 style button_text:
-    size gui.INTERFACE_SIZE
+    size gui.interface_size
 
-    color gui.IDLE_COLOR
-    insensitive_color gui.INSENSITIVE_COLOR
-    selected_color gui.SELECTED_COLOR
-    hover_color gui.HOVER_COLOR
-    selected_hover_color gui.HOVER_COLOR
+    color gui.idle_color
+    insensitive_color gui.insensitive_color
+    selected_color gui.selected_color
+    hover_color gui.hover_color
+    selected_hover_color gui.hover_color
 
 ## Used for checkbox-like buttons
 style check_button:
-    padding gui.CHECK_BUTTON_BORDERS.padding
+    padding gui.check_button_borders.padding
 
-    background Frame("gui/button/check/idle.png", gui.CHECK_BUTTON_BORDERS)
-    hover_background Frame("gui/button/check/hover.png", gui.CHECK_BUTTON_BORDERS)
-    selected_background Frame("gui/button/check/selected_idle.png", gui.CHECK_BUTTON_BORDERS)
-    selected_hover_background Frame("gui/button/check/selected_hover.png", gui.CHECK_BUTTON_BORDERS)
+    background Frame("gui/button/check/idle.png", gui.check_button_borders)
+    hover_background Frame("gui/button/check/hover.png", gui.check_button_borders)
+    selected_background Frame("gui/button/check/selected_idle.png", gui.check_button_borders)
+    selected_hover_background Frame("gui/button/check/selected_hover.png", gui.check_button_borders)
 
 style radio_button:
-    padding gui.RADIO_BUTTON_BORDERS.padding
+    padding gui.radio_button_borders.padding
 
-    background Frame("gui/button/radio/idle.png", gui.RADIO_BUTTON_BORDERS)
-    hover_background Frame("gui/button/radio/hover.png", gui.RADIO_BUTTON_BORDERS)
-    selected_background Frame("gui/button/radio/selected_idle.png", gui.RADIO_BUTTON_BORDERS)
-    selected_hover_background Frame("gui/button/radio/selected_hover.png", gui.RADIO_BUTTON_BORDERS)
+    background Frame("gui/button/radio/idle.png", gui.radio_button_borders)
+    hover_background Frame("gui/button/radio/hover.png", gui.radio_button_borders)
+    selected_background Frame("gui/button/radio/selected_idle.png", gui.radio_button_borders)
+    selected_hover_background Frame("gui/button/radio/selected_hover.png", gui.radio_button_borders)
 
 style medium_button:
-    padding gui.MEDIUM_BUTTON_BORDERS.padding
+    padding gui.medium_button_borders.padding
 
-    background Frame("gui/button/medium/idle.png", gui.MEDIUM_BUTTON_BORDERS)
-    hover_background Frame("gui/button/medium/hover.png", gui.MEDIUM_BUTTON_BORDERS)
-    selected_background Frame("gui/button/medium/selected_idle.png", gui.MEDIUM_BUTTON_BORDERS)
-    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.MEDIUM_BUTTON_BORDERS)
+    background Frame("gui/button/medium/idle.png", gui.medium_button_borders)
+    hover_background Frame("gui/button/medium/hover.png", gui.medium_button_borders)
+    selected_background Frame("gui/button/medium/selected_idle.png", gui.medium_button_borders)
+    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.medium_button_borders)
 
 style small_button:
-    padding gui.SMALL_BUTTON_BORDERS.padding
+    padding gui.small_button_borders.padding
 
-    background Frame("gui/button/medium/idle.png", gui.SMALL_BUTTON_BORDERS)
-    hover_background Frame("gui/button/medium/hover.png", gui.SMALL_BUTTON_BORDERS)
-    selected_background Frame("gui/button/medium/selected_idle.png", gui.SMALL_BUTTON_BORDERS)
-    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.SMALL_BUTTON_BORDERS)
+    background Frame("gui/button/medium/idle.png", gui.small_button_borders)
+    hover_background Frame("gui/button/medium/hover.png", gui.small_button_borders)
+    selected_background Frame("gui/button/medium/selected_idle.png", gui.small_button_borders)
+    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.small_button_borders)
 
 style label_text:
-    color gui.ACCENT_COLOR
-    size gui.INTERFACE_SIZE
+    color gui.accent_color
+    size gui.interface_size
 
 style prompt_text:
-    color gui.TEXT_COLOR
-    size gui.INTERFACE_SIZE
+    color gui.text_color
+    size gui.interface_size
 
 style bar:
-    ysize gui.BAR_SIZE
+    ysize gui.bar_size
 
-    left_bar Frame("gui/bar/left.png", gui.BAR_BORDERS)
-    right_bar Frame("gui/bar/right.png", gui.BAR_BORDERS)
+    left_bar Frame("gui/bar/left.png", gui.bar_borders)
+    right_bar Frame("gui/bar/right.png", gui.bar_borders)
 
 style scrollbar:
-    ysize gui.SCROLLBAR_SIZE
+    ysize gui.scrollbar_size
 
-    left_bar Frame("gui/scrollbar/horizontal_idle.png", gui.SCROLLBAR_BORDERS)
-    thumb Frame("gui/scrollbar/horizontal_idle_thumb.png", gui.SCROLLBAR_BORDERS)
-    right_bar Frame("gui/scrollbar/horizontal_idle.png", gui.SCROLLBAR_BORDERS)
+    left_bar Frame("gui/scrollbar/horizontal_idle.png", gui.scrollbar_borders)
+    thumb Frame("gui/scrollbar/horizontal_idle_thumb.png", gui.scrollbar_borders)
+    right_bar Frame("gui/scrollbar/horizontal_idle.png", gui.scrollbar_borders)
 
-    hover_left_bar Frame("gui/scrollbar/horizontal_hover.png", gui.SCROLLBAR_BORDERS)
-    hover_thumb Frame("gui/scrollbar/horizontal_hover_thumb.png", gui.SCROLLBAR_BORDERS)
-    hover_right_bar Frame("gui/scrollbar/horizontal_hover.png", gui.SCROLLBAR_BORDERS)
+    hover_left_bar Frame("gui/scrollbar/horizontal_hover.png", gui.scrollbar_borders)
+    hover_thumb Frame("gui/scrollbar/horizontal_hover_thumb.png", gui.scrollbar_borders)
+    hover_right_bar Frame("gui/scrollbar/horizontal_hover.png", gui.scrollbar_borders)
 
 
 style slider:
-    ysize gui.SLIDER_SIZE
+    ysize gui.slider_size
 
-    left_bar Frame("gui/slider/horizontal_idle.png", gui.SLIDER_BORDERS)
-    thumb Frame("gui/slider/horizontal_idle_thumb.png", gui.SLIDER_BORDERS, xsize=gui.SLIDER_THUMB_SIZE)
-    right_bar Frame("gui/slider/horizontal_idle.png", gui.SLIDER_BORDERS)
+    left_bar Frame("gui/slider/horizontal_idle.png", gui.slider_borders)
+    thumb Frame("gui/slider/horizontal_idle_thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
+    right_bar Frame("gui/slider/horizontal_idle.png", gui.slider_borders)
 
-    hover_left_bar Frame("gui/slider/horizontal_hover.png", gui.SLIDER_BORDERS)
-    hover_thumb Frame("gui/slider/horizontal_hover_thumb.png", gui.SLIDER_BORDERS, xsize=gui.SLIDER_THUMB_SIZE)
-    hover_right_bar Frame("gui/slider/horizontal_hover.png", gui.SLIDER_BORDERS)
+    hover_left_bar Frame("gui/slider/horizontal_hover.png", gui.slider_borders)
+    hover_thumb Frame("gui/slider/horizontal_hover_thumb.png", gui.slider_borders, xsize=gui.slider_thumb_size)
+    hover_right_bar Frame("gui/slider/horizontal_hover.png", gui.slider_borders)
 
 style vbar:
-    xsize gui.BAR_SIZE
+    xsize gui.bar_size
 
     bar_vertical True
 
-    left_bar Frame("gui/bar/top.png", gui.VBAR_BORDERS)
-    right_bar Frame("gui/bar/bottom.png", gui.VBAR_BORDERS)
+    left_bar Frame("gui/bar/top.png", gui.vbar_borders)
+    right_bar Frame("gui/bar/bottom.png", gui.vbar_borders)
 
 style vscrollbar:
-    xsize gui.SCROLLBAR_SIZE
+    xsize gui.scrollbar_size
 
     bar_vertical True
     bar_invert True
 
-    left_bar Frame("gui/scrollbar/vertical_idle.png", gui.VSCROLLBAR_BORDERS)
-    thumb Frame("gui/scrollbar/vertical_idle_thumb.png", gui.VSCROLLBAR_BORDERS)
-    right_bar Frame("gui/scrollbar/vertical_idle.png", gui.VSCROLLBAR_BORDERS)
+    left_bar Frame("gui/scrollbar/vertical_idle.png", gui.vscrollbar_borders)
+    thumb Frame("gui/scrollbar/vertical_idle_thumb.png", gui.vscrollbar_borders)
+    right_bar Frame("gui/scrollbar/vertical_idle.png", gui.vscrollbar_borders)
 
-    hover_left_bar Frame("gui/scrollbar/vertical_hover.png", gui.VSCROLLBAR_BORDERS)
-    hover_thumb Frame("gui/scrollbar/vertical_hover_thumb.png", gui.VSCROLLBAR_BORDERS)
-    hover_right_bar Frame("gui/scrollbar/vertical_hover.png", gui.VSCROLLBAR_BORDERS)
+    hover_left_bar Frame("gui/scrollbar/vertical_hover.png", gui.vscrollbar_borders)
+    hover_thumb Frame("gui/scrollbar/vertical_hover_thumb.png", gui.vscrollbar_borders)
+    hover_right_bar Frame("gui/scrollbar/vertical_hover.png", gui.vscrollbar_borders)
 
 style vslider:
-    xsize gui.SLIDER_SIZE
+    xsize gui.slider_size
 
     bar_vertical True
 
-    left_bar Frame("gui/slider/vertical_idle.png", gui.VSLIDER_BORDERS)
-    thumb Frame("gui/slider/vertical_idle_thumb.png", gui.VSLIDER_BORDERS, ysize=gui.SLIDER_THUMB_SIZE)
-    right_bar Frame("gui/slider/vertical_idle.png", gui.VSLIDER_BORDERS)
+    left_bar Frame("gui/slider/vertical_idle.png", gui.vslider_borders)
+    thumb Frame("gui/slider/vertical_idle_thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
+    right_bar Frame("gui/slider/vertical_idle.png", gui.vslider_borders)
 
-    hover_left_bar Frame("gui/slider/vertical_hover.png", gui.VSLIDER_BORDERS)
-    hover_thumb Frame("gui/slider/vertical_hover_thumb.png", gui.VSLIDER_BORDERS, ysize=gui.SLIDER_THUMB_SIZE)
-    hover_right_bar Frame("gui/slider/vertical_hover.png", gui.VSLIDER_BORDERS)
+    hover_left_bar Frame("gui/slider/vertical_hover.png", gui.vslider_borders)
+    hover_thumb Frame("gui/slider/vertical_hover_thumb.png", gui.vslider_borders, ysize=gui.slider_thumb_size)
+    hover_right_bar Frame("gui/slider/vertical_hover.png", gui.vslider_borders)
 
 style frame:
-    padding gui.FRAME_BORDERS.padding
+    padding gui.frame_borders.padding
 
-    background Frame("gui/frame.png", gui.FRAME_BORDERS)
+    background Frame("gui/frame.png", gui.frame_borders)
 
 
 ################################################################################
@@ -309,8 +309,8 @@ style window:
     background "gui/textbox.png"
 
 style say_label:
-    color gui.ACCENT_COLOR
-    size gui.LABEL_SIZE
+    color gui.accent_color
+    size gui.label_size
 
 ###############################################################################
 ## CTC
@@ -350,8 +350,8 @@ screen ctc():
 style ctc_triangle:
     # We have to use a font that has the BLACK RIGHT-POINTING TRIANGLE glyph
     # in it.
-    color gui.ACCENT_COLOR
-    font gui.GLYPH_FONT
+    color gui.accent_color
+    font gui.glyph_font
 
 
 
@@ -411,18 +411,18 @@ style choice_vbox:
     yanchor 0.5
 
     # Add some space between choices.
-    spacing gui.CHOICE_SPACING
+    spacing gui.choice_spacing
 
 style choice_button is default:
     xsize gui.scale(790)
-    padding gui.CHOICE_BORDERS.padding
+    padding gui.choice_borders.padding
 
-    background Frame("gui/choice/idle.png", gui.CHOICE_BORDERS)
-    hover_background Frame("gui/choice/hover.png", gui.CHOICE_BORDERS)
+    background Frame("gui/choice/idle.png", gui.choice_borders)
+    hover_background Frame("gui/choice/hover.png", gui.choice_borders)
 
 style choice_button_text is default:
-    color gui.CHOICE_COLOR
-    hover_color gui.TEXT_COLOR
+    color gui.choice_color
+    hover_color gui.text_color
 
     # Center the text.
     xalign 0.5
@@ -518,7 +518,7 @@ style nvl_menu_button:
     left_padding gui.scale(170)
 
 style nvl_menu_button_text:
-    insensitive_color gui.TEXT_COLOR
+    insensitive_color gui.text_color
 
 
 
@@ -553,7 +553,7 @@ style quick_button:
     xpadding gui.scale(10)
 
 style quick_button_text:
-    size gui.TINY_SIZE
+    size gui.tiny_size
 
 init python:
     config.overlay_screens.append("quick_menu")
@@ -573,7 +573,7 @@ screen navigation():
         xmaximum gui.scale(227)
         yalign 0.5
 
-        spacing gui.NAVIGATION_SPACING
+        spacing gui.navigation_spacing
 
         if main_menu:
 
@@ -630,7 +630,7 @@ screen main_menu():
 
     style_prefix "main_menu"
 
-    add gui.MAIN_MENU_BACKGROUND
+    add gui.main_menu_background
 
     # This empty frame darkens the main menu.
     frame:
@@ -675,10 +675,10 @@ style main_menu_text:
 
     layout "subtitle"
     text_align 1.0
-    color gui.ACCENT_COLOR
+    color gui.accent_color
 
 style main_menu_title:
-    size gui.TITLE_SIZE
+    size gui.title_size
 
 
 ##############################################################################
@@ -693,9 +693,9 @@ screen game_menu(title, scroll=None):
 
     # Add the backgrounds.
     if main_menu:
-        add gui.MAIN_MENU_BACKGROUND
+        add gui.main_menu_background
     else:
-        add gui.GAME_MENU_BACKGROUND
+        add gui.game_menu_background
 
     style_prefix "game_menu"
 
@@ -790,8 +790,8 @@ style game_menu_label:
     ysize gui.scale(120)
 
 style game_menu_label_text:
-    size gui.TITLE_SIZE
-    color gui.ACCENT_COLOR
+    size gui.title_size
+    color gui.accent_color
     yalign 0.5
 
 style return_button:
@@ -855,7 +855,7 @@ screen file_slots(title):
                 xalign 0.5
                 yalign 1.0
 
-                spacing gui.PAGE_SPACING
+                spacing gui.page_spacing
 
                 textbutton _("<") action FilePagePrevious()
 
@@ -921,9 +921,9 @@ style slot_button:
 style slot_text:
     xalign 0.5
 
-    color gui.IDLE_SMALL_COLOR
+    color gui.idle_small_color
     layout "subtitle"
-    size gui.TINY_SIZE
+    size gui.tiny_size
     text_align 0.5
 
 style slot_time_text:
@@ -1057,13 +1057,13 @@ style pref_vbox:
     xsize gui.scale(230)
 
 style radio_pref_vbox:
-    spacing gui.PREF_SPACING
+    spacing gui.pref_spacing
 
 style radio_pref_button:
     size_group "preferences"
 
 style check_pref_vbox:
-    spacing gui.PREF_SPACING
+    spacing gui.pref_spacing
 
 style check_pref_button:
     size_group "preferences"
@@ -1246,7 +1246,7 @@ style about_label_text is gui_label_text
 style about_text is gui_text
 
 style about_label_text:
-    size gui.LABEL_SIZE
+    size gui.label_size
 
 
 ##############################################################################
@@ -1392,7 +1392,7 @@ style help_label:
     right_padding gui.scale(20)
 
 style help_label_text:
-    size gui.TEXT_SIZE
+    size gui.text_size
     xalign 1.0
     text_align 1.0
 
@@ -1429,12 +1429,12 @@ style skip_frame:
     background Frame("gui/skip.png", gui.scale(16), gui.scale(5), gui.scale(50), gui.scale(5))
 
 style skip_text:
-    size gui.NOTIFY_SIZE
+    size gui.notify_size
 
 style skip_triangle:
     # We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE
     # glyph in it.
-    font gui.GLYPH_FONT
+    font gui.glyph_font
 
 
 ################################################################################
@@ -1473,7 +1473,7 @@ style notify_frame:
         ypadding gui.scale(5)
 
 style notify_text:
-    size gui.NOTIFY_SIZE
+    size gui.notify_size
 
 ################################################################################
 ## Tablet variants.
@@ -1511,16 +1511,16 @@ style quick_button:
 init python:
 
     if renpy.variant("small"):
-        gui.TEXT_SIZE = gui.scale(30)
-        gui.NOTIFY_SIZE = gui.scale(25)
-        gui.INTERFACE_SIZE = gui.scale(36)
-        gui.LABEL_SIZE = gui.scale(36)
+        gui.text_size = gui.scale(30)
+        gui.notify_size = gui.scale(25)
+        gui.interface_size = gui.scale(36)
+        gui.label_size = gui.scale(36)
 
         gui.file_slot_cols = 2
         gui.file_slot_rows = 2
 
-        gui.SLIDER_SIZE = gui.scale(44)
-        gui.THUMB_SIZE = gui.scale(15)
+        gui.slider_size = gui.scale(44)
+        gui.thumb_size = gui.scale(15)
 
 style window:
     variant "small"
@@ -1592,7 +1592,7 @@ style history_who:
     xmaximum gui.scale(150)
     min_width gui.scale(150)
     text_align 1.0
-    size gui.TEXT_SIZE
+    size gui.text_size
 
 style history_text:
     variant "small"
