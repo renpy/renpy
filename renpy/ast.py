@@ -1973,6 +1973,7 @@ class Translate(Node):
         if self.identifier not in renpy.game.persistent._seen_translates: # @UndefinedVariable
             renpy.game.persistent._seen_translates.add(self.identifier) # @UndefinedVariable
             renpy.game.seen_translates_count += 1
+            renpy.game.new_translates_count += 1
 
         next_node(renpy.game.script.translator.lookup_translate(self.identifier))
 

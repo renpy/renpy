@@ -2932,12 +2932,20 @@ def count_seen_dialogue_blocks():
 
     Returns the number of dialogue blocks the user has seen in any play-through
     of the current game.
-
-    This number may be larger than the result of :func:`renpy.count_dialogue_blocks`
-    when the script has changed and older dialogue blocks are no longer accessible.
     """
 
     return renpy.game.seen_translates_count
+
+def count_newly_seen_dialogue_blocks():
+    """
+    :doc: other
+
+    Returns the number of dialogue blocks the user has seen for the first time
+    during this session.
+    """
+
+    return renpy.game.new_translates_count
+
 
 
 def substitute(s, scope=None, translate=True):

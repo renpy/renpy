@@ -304,6 +304,7 @@ init -1600 python:
         renpy.restart_interaction()
 
 screen _progress:
+    $ new = renpy.count_newly_seen_dialogue_blocks()
     $ seen = renpy.count_seen_dialogue_blocks()
     $ total = renpy.count_dialogue_blocks()
 
@@ -313,7 +314,7 @@ screen _progress:
         xpos 0
         ypos 0
 
-        text "[seen]/[total]":
+        text "[new] [seen]/[total]":
             size 14
             color "#fff"
             outlines [ (1, "#000", 0, 0) ]

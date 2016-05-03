@@ -65,6 +65,9 @@ seen_session = { }
 # the current game.
 seen_translates_count = 0
 
+# The number of new translates we've seen today.
+new_translates_count = 0
+
 # True if we're in the first interaction after a rollback or rollforward.
 after_rollback = False
 
