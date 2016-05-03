@@ -117,6 +117,7 @@ DynamicImage = renpy.display.image.DynamicImage
 Image = renpy.display.im.image
 
 Frame = renpy.display.imagelike.Frame
+Borders = renpy.display.imagelike.Borders
 Solid = renpy.display.imagelike.Solid
 FileCurrentScreenshot = renpy.display.imagelike.FileCurrentScreenshot
 

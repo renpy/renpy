@@ -68,25 +68,25 @@ define config.window_icon = "gui/window_icon.png"
 ################################################################################
 ## Padding and Spacing
 
-## This is the default amout of padding that is used by gui.Frame, and
-## styles that use gui.Frame.
+## This is the default amout of padding that is used by Frame, and
+## styles that use Frame.
 
-define gui.BUTTON_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.MEDIUM_BUTTON_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.SMALL_BUTTON_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
-define gui.CHECK_BUTTON_INSETS = gui.Insets(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.RADIO_BUTTON_INSETS = gui.Insets(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.BUTTON_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.MEDIUM_BUTTON_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.SMALL_BUTTON_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4), pad_left=gui.scale(10), pad_right=gui.scale(10))
+define gui.CHECK_BUTTON_BORDERS = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.RADIO_BUTTON_BORDERS = Borders(gui.scale(25), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.BAR_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.SCROLLBAR_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.SLIDER_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.VBAR_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.VSCROLLBAR_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
-define gui.VSLIDER_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.BAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.SCROLLBAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.SLIDER_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.VBAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.VSCROLLBAR_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.VSLIDER_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.FRAME_INSETS = gui.Insets(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
+define gui.FRAME_BORDERS = Borders(gui.scale(4), gui.scale(4), gui.scale(4), gui.scale(4))
 
-define gui.CHOICE_INSETS = gui.Insets(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
+define gui.CHOICE_BORDERS = Borders(gui.scale(100), gui.scale(5), gui.scale(100), gui.scale(5))
 
 
 ## The spacing between groups of buttons and labels.
@@ -141,12 +141,12 @@ style gui_text:
 
 ## Used for full-sized buttons, like navigation buttons.
 style button:
-    padding gui.BUTTON_INSETS.padding
+    padding gui.BUTTON_BORDERS.padding
 
-    background gui.Frame("gui/button/idle.png", gui.BUTTON_INSETS)
-    hover_background gui.Frame("gui/button/hover.png", gui.BUTTON_INSETS)
-    selected_background gui.Frame("gui/button/selected_idle.png", gui.BUTTON_INSETS)
-    selected_hover_background gui.Frame("gui/button/selected_hover.png", gui.BUTTON_INSETS)
+    background Frame("gui/button/idle.png", gui.BUTTON_BORDERS)
+    hover_background Frame("gui/button/hover.png", gui.BUTTON_BORDERS)
+    selected_background Frame("gui/button/selected_idle.png", gui.BUTTON_BORDERS)
+    selected_hover_background Frame("gui/button/selected_hover.png", gui.BUTTON_BORDERS)
 
 style button_text:
     size gui.INTERFACE_SIZE
@@ -159,36 +159,36 @@ style button_text:
 
 ## Used for checkbox-like buttons
 style check_button:
-    padding gui.CHECK_BUTTON_INSETS.padding
+    padding gui.CHECK_BUTTON_BORDERS.padding
 
-    background gui.Frame("gui/button/check/idle.png", gui.CHECK_BUTTON_INSETS)
-    hover_background gui.Frame("gui/button/check/hover.png", gui.CHECK_BUTTON_INSETS)
-    selected_background gui.Frame("gui/button/check/selected_idle.png", gui.CHECK_BUTTON_INSETS)
-    selected_hover_background gui.Frame("gui/button/check/selected_hover.png", gui.CHECK_BUTTON_INSETS)
+    background Frame("gui/button/check/idle.png", gui.CHECK_BUTTON_BORDERS)
+    hover_background Frame("gui/button/check/hover.png", gui.CHECK_BUTTON_BORDERS)
+    selected_background Frame("gui/button/check/selected_idle.png", gui.CHECK_BUTTON_BORDERS)
+    selected_hover_background Frame("gui/button/check/selected_hover.png", gui.CHECK_BUTTON_BORDERS)
 
 style radio_button:
-    padding gui.RADIO_BUTTON_INSETS.padding
+    padding gui.RADIO_BUTTON_BORDERS.padding
 
-    background gui.Frame("gui/button/radio/idle.png", gui.RADIO_BUTTON_INSETS)
-    hover_background gui.Frame("gui/button/radio/hover.png", gui.RADIO_BUTTON_INSETS)
-    selected_background gui.Frame("gui/button/radio/selected_idle.png", gui.RADIO_BUTTON_INSETS)
-    selected_hover_background gui.Frame("gui/button/radio/selected_hover.png", gui.RADIO_BUTTON_INSETS)
+    background Frame("gui/button/radio/idle.png", gui.RADIO_BUTTON_BORDERS)
+    hover_background Frame("gui/button/radio/hover.png", gui.RADIO_BUTTON_BORDERS)
+    selected_background Frame("gui/button/radio/selected_idle.png", gui.RADIO_BUTTON_BORDERS)
+    selected_hover_background Frame("gui/button/radio/selected_hover.png", gui.RADIO_BUTTON_BORDERS)
 
 style medium_button:
-    padding gui.MEDIUM_BUTTON_INSETS.padding
+    padding gui.MEDIUM_BUTTON_BORDERS.padding
 
-    background gui.Frame("gui/button/medium/idle.png", gui.MEDIUM_BUTTON_INSETS)
-    hover_background gui.Frame("gui/button/medium/hover.png", gui.MEDIUM_BUTTON_INSETS)
-    selected_background gui.Frame("gui/button/medium/selected_idle.png", gui.MEDIUM_BUTTON_INSETS)
-    selected_hover_background gui.Frame("gui/button/medium/selected_hover.png", gui.MEDIUM_BUTTON_INSETS)
+    background Frame("gui/button/medium/idle.png", gui.MEDIUM_BUTTON_BORDERS)
+    hover_background Frame("gui/button/medium/hover.png", gui.MEDIUM_BUTTON_BORDERS)
+    selected_background Frame("gui/button/medium/selected_idle.png", gui.MEDIUM_BUTTON_BORDERS)
+    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.MEDIUM_BUTTON_BORDERS)
 
 style small_button:
-    padding gui.SMALL_BUTTON_INSETS.padding
+    padding gui.SMALL_BUTTON_BORDERS.padding
 
-    background gui.Frame("gui/button/medium/idle.png", gui.SMALL_BUTTON_INSETS)
-    hover_background gui.Frame("gui/button/medium/hover.png", gui.SMALL_BUTTON_INSETS)
-    selected_background gui.Frame("gui/button/medium/selected_idle.png", gui.SMALL_BUTTON_INSETS)
-    selected_hover_background gui.Frame("gui/button/medium/selected_hover.png", gui.SMALL_BUTTON_INSETS)
+    background Frame("gui/button/medium/idle.png", gui.SMALL_BUTTON_BORDERS)
+    hover_background Frame("gui/button/medium/hover.png", gui.SMALL_BUTTON_BORDERS)
+    selected_background Frame("gui/button/medium/selected_idle.png", gui.SMALL_BUTTON_BORDERS)
+    selected_hover_background Frame("gui/button/medium/selected_hover.png", gui.SMALL_BUTTON_BORDERS)
 
 style label_text:
     color gui.ACCENT_COLOR
@@ -201,39 +201,39 @@ style prompt_text:
 style bar:
     ysize gui.BAR_SIZE
 
-    left_bar gui.Frame("gui/bar/left.png", gui.BAR_INSETS)
-    right_bar gui.Frame("gui/bar/right.png", gui.BAR_INSETS)
+    left_bar Frame("gui/bar/left.png", gui.BAR_BORDERS)
+    right_bar Frame("gui/bar/right.png", gui.BAR_BORDERS)
 
 style scrollbar:
     ysize gui.SCROLLBAR_SIZE
 
-    left_bar gui.Frame("gui/scrollbar/horizontal_idle.png", gui.SCROLLBAR_INSETS)
-    thumb gui.Frame("gui/scrollbar/horizontal_idle_thumb.png", gui.SCROLLBAR_INSETS)
-    right_bar gui.Frame("gui/scrollbar/horizontal_idle.png", gui.SCROLLBAR_INSETS)
+    left_bar Frame("gui/scrollbar/horizontal_idle.png", gui.SCROLLBAR_BORDERS)
+    thumb Frame("gui/scrollbar/horizontal_idle_thumb.png", gui.SCROLLBAR_BORDERS)
+    right_bar Frame("gui/scrollbar/horizontal_idle.png", gui.SCROLLBAR_BORDERS)
 
-    hover_left_bar gui.Frame("gui/scrollbar/horizontal_hover.png", gui.SCROLLBAR_INSETS)
-    hover_thumb gui.Frame("gui/scrollbar/horizontal_hover_thumb.png", gui.SCROLLBAR_INSETS)
-    hover_right_bar gui.Frame("gui/scrollbar/horizontal_hover.png", gui.SCROLLBAR_INSETS)
+    hover_left_bar Frame("gui/scrollbar/horizontal_hover.png", gui.SCROLLBAR_BORDERS)
+    hover_thumb Frame("gui/scrollbar/horizontal_hover_thumb.png", gui.SCROLLBAR_BORDERS)
+    hover_right_bar Frame("gui/scrollbar/horizontal_hover.png", gui.SCROLLBAR_BORDERS)
 
 
 style slider:
     ysize gui.SLIDER_SIZE
 
-    left_bar gui.Frame("gui/slider/horizontal_idle.png", gui.SLIDER_INSETS)
-    thumb gui.Frame("gui/slider/horizontal_idle_thumb.png", gui.SLIDER_INSETS, xsize=gui.SLIDER_THUMB_SIZE)
-    right_bar gui.Frame("gui/slider/horizontal_idle.png", gui.SLIDER_INSETS)
+    left_bar Frame("gui/slider/horizontal_idle.png", gui.SLIDER_BORDERS)
+    thumb Frame("gui/slider/horizontal_idle_thumb.png", gui.SLIDER_BORDERS, xsize=gui.SLIDER_THUMB_SIZE)
+    right_bar Frame("gui/slider/horizontal_idle.png", gui.SLIDER_BORDERS)
 
-    hover_left_bar gui.Frame("gui/slider/horizontal_hover.png", gui.SLIDER_INSETS)
-    hover_thumb gui.Frame("gui/slider/horizontal_hover_thumb.png", gui.SLIDER_INSETS, xsize=gui.SLIDER_THUMB_SIZE)
-    hover_right_bar gui.Frame("gui/slider/horizontal_hover.png", gui.SLIDER_INSETS)
+    hover_left_bar Frame("gui/slider/horizontal_hover.png", gui.SLIDER_BORDERS)
+    hover_thumb Frame("gui/slider/horizontal_hover_thumb.png", gui.SLIDER_BORDERS, xsize=gui.SLIDER_THUMB_SIZE)
+    hover_right_bar Frame("gui/slider/horizontal_hover.png", gui.SLIDER_BORDERS)
 
 style vbar:
     xsize gui.BAR_SIZE
 
     bar_vertical True
 
-    left_bar gui.Frame("gui/bar/top.png", gui.VBAR_INSETS)
-    right_bar gui.Frame("gui/bar/bottom.png", gui.VBAR_INSETS)
+    left_bar Frame("gui/bar/top.png", gui.VBAR_BORDERS)
+    right_bar Frame("gui/bar/bottom.png", gui.VBAR_BORDERS)
 
 style vscrollbar:
     xsize gui.SCROLLBAR_SIZE
@@ -241,31 +241,31 @@ style vscrollbar:
     bar_vertical True
     bar_invert True
 
-    left_bar gui.Frame("gui/scrollbar/vertical_idle.png", gui.VSCROLLBAR_INSETS)
-    thumb gui.Frame("gui/scrollbar/vertical_idle_thumb.png", gui.VSCROLLBAR_INSETS)
-    right_bar gui.Frame("gui/scrollbar/vertical_idle.png", gui.VSCROLLBAR_INSETS)
+    left_bar Frame("gui/scrollbar/vertical_idle.png", gui.VSCROLLBAR_BORDERS)
+    thumb Frame("gui/scrollbar/vertical_idle_thumb.png", gui.VSCROLLBAR_BORDERS)
+    right_bar Frame("gui/scrollbar/vertical_idle.png", gui.VSCROLLBAR_BORDERS)
 
-    hover_left_bar gui.Frame("gui/scrollbar/vertical_hover.png", gui.VSCROLLBAR_INSETS)
-    hover_thumb gui.Frame("gui/scrollbar/vertical_hover_thumb.png", gui.VSCROLLBAR_INSETS)
-    hover_right_bar gui.Frame("gui/scrollbar/vertical_hover.png", gui.VSCROLLBAR_INSETS)
+    hover_left_bar Frame("gui/scrollbar/vertical_hover.png", gui.VSCROLLBAR_BORDERS)
+    hover_thumb Frame("gui/scrollbar/vertical_hover_thumb.png", gui.VSCROLLBAR_BORDERS)
+    hover_right_bar Frame("gui/scrollbar/vertical_hover.png", gui.VSCROLLBAR_BORDERS)
 
 style vslider:
     xsize gui.SLIDER_SIZE
 
     bar_vertical True
 
-    left_bar gui.Frame("gui/slider/vertical_idle.png", gui.VSLIDER_INSETS)
-    thumb gui.Frame("gui/slider/vertical_idle_thumb.png", gui.VSLIDER_INSETS, ysize=gui.SLIDER_THUMB_SIZE)
-    right_bar gui.Frame("gui/slider/vertical_idle.png", gui.VSLIDER_INSETS)
+    left_bar Frame("gui/slider/vertical_idle.png", gui.VSLIDER_BORDERS)
+    thumb Frame("gui/slider/vertical_idle_thumb.png", gui.VSLIDER_BORDERS, ysize=gui.SLIDER_THUMB_SIZE)
+    right_bar Frame("gui/slider/vertical_idle.png", gui.VSLIDER_BORDERS)
 
-    hover_left_bar gui.Frame("gui/slider/vertical_hover.png", gui.VSLIDER_INSETS)
-    hover_thumb gui.Frame("gui/slider/vertical_hover_thumb.png", gui.VSLIDER_INSETS, ysize=gui.SLIDER_THUMB_SIZE)
-    hover_right_bar gui.Frame("gui/slider/vertical_hover.png", gui.VSLIDER_INSETS)
+    hover_left_bar Frame("gui/slider/vertical_hover.png", gui.VSLIDER_BORDERS)
+    hover_thumb Frame("gui/slider/vertical_hover_thumb.png", gui.VSLIDER_BORDERS, ysize=gui.SLIDER_THUMB_SIZE)
+    hover_right_bar Frame("gui/slider/vertical_hover.png", gui.VSLIDER_BORDERS)
 
 style frame:
-    padding gui.FRAME_INSETS.padding
+    padding gui.FRAME_BORDERS.padding
 
-    background gui.Frame("gui/frame.png", gui.FRAME_INSETS)
+    background Frame("gui/frame.png", gui.FRAME_BORDERS)
 
 
 ################################################################################
@@ -415,10 +415,10 @@ style choice_vbox:
 
 style choice_button is default:
     xsize gui.scale(790)
-    padding gui.CHOICE_INSETS.padding
+    padding gui.CHOICE_BORDERS.padding
 
-    background gui.Frame("gui/choice/idle.png", gui.CHOICE_INSETS)
-    hover_background gui.Frame("gui/choice/hover.png", gui.CHOICE_INSETS)
+    background Frame("gui/choice/idle.png", gui.CHOICE_BORDERS)
+    hover_background Frame("gui/choice/hover.png", gui.CHOICE_BORDERS)
 
 style choice_button_text is default:
     color gui.CHOICE_COLOR

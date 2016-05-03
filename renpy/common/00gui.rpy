@@ -73,54 +73,6 @@ init -1100 python in gui:
     FAST_SKIP_SEEN = layout.FAST_SKIP_SEEN
 
 
-    ############################################################################
-    # gui.Frame
-
-    # This is a wrapper around Frame that allows us to apply standard amounts
-    # of padding to each side of a frame.
-
-    from store import Frame as _Frame
-
-    class Insets(object):
-
-        def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0, tile=False):
-
-            self.left = left
-            self.top = top
-            self.right = right
-            self.bottom = bottom
-
-            self.pad_left = pad_left
-            self.pad_top = pad_top
-            self.pad_right = pad_right
-            self.pad_bottom = pad_bottom
-
-            self.tile = tile
-
-        @property
-        def padding(self):
-            return (
-                self.left + self.pad_left,
-                self.top + self.pad_top,
-                self.right + self.pad_right,
-                self.bottom + self.pad_bottom,
-                )
-
-    def Frame(d, insets, **properties):
-
-        left = insets.left
-        top = insets.top
-        right = insets.right
-        bottom = insets.bottom
-
-        return _Frame(d,
-            left=insets.left,
-            top=insets.top,
-            right=insets.right,
-            bottom=insets.bottom,
-            tile=insets.tile,
-            **properties)
-
 
 
 

@@ -83,6 +83,64 @@ class Solid(renpy.display.core.Displayable):
 
         return rv
 
+class Borders(object):
+    """
+    :doc: disp_imagelike
+
+    This object provides border size and tiling information to a :func:`Frame`.
+    It can also provide padding information that can be supplied to the
+    :propref:`padding` style property of a window or frame.
+
+    `left`
+    `top`
+    `right`
+    `bottom`
+        These provide the size of the insets used by a frame, and are added
+        to the padding on each side. They should zero or a positive integer.
+
+    `pad_left`
+    `pad_top`
+    `pad_right`
+    `pad_bottom`
+        These are added to the padding on each side, and may be positive or
+        negative. (For example, if `left` is 5 and `pad_left` is -3, the final
+        padding is 2.)
+
+    `tile`
+        If True, the Frame is tiled rather than scaled.
+
+    The padding information is supplied via a field:
+
+    .. attribute:: padding
+
+        This is a four-element tuple containing the padding on each of the
+        four sides.
+    """
+
+
+    def __init__(self, left, top, right, bottom, pad_left=0, pad_top=0, pad_right=0, pad_bottom=0, tile=False):
+
+        self.left = left
+        self.top = top
+        self.right = right
+        self.bottom = bottom
+
+        self.pad_left = pad_left
+        self.pad_top = pad_top
+        self.pad_right = pad_right
+        self.pad_bottom = pad_bottom
+
+        self.tile = tile
+
+    @property
+    def padding(self):
+        return (
+            self.left + self.pad_left,
+            self.top + self.pad_top,
+            self.right + self.pad_right,
+            self.bottom + self.pad_bottom,
+            )
+
 class Frame(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
@@ -100,7 +158,9 @@ class Frame(renpy.display.core.Displayable):
         An image manipulator that will be resized by this frame.
 
     `left`
-        The size of the border on the left side.
+        The size of the border on the left side. This can also be an
+        :func:`Borders` object, in which case that object is use in place
+        of the other parameters.
 
     `top`
         The size of the border on the top.
@@ -138,6 +198,17 @@ class Frame(renpy.display.core.Displayable):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
+
+        if isinstance(left, Borders):
+            insets = left
+
+            left = insets.left
+            top = insets.top
+            right = insets.right
+            bottom = insets.bottom
+
+            tile = insets.tile
+
         self.tile = tile
 
         # Compat for old argument names.
