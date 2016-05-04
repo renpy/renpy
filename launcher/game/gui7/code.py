@@ -96,7 +96,8 @@ class CodeGenerator(object):
             'gui.idle_small_color' : repr(self.p.idle_small_color.hexcode),
             'gui.insensitive_color' : repr(self.p.insensitive_color.hexcode),
             'gui.text_color' : repr(self.p.text_color.hexcode),
-            'gui.choice_color' : repr(self.p.choice_color.hexcode),
+            'gui.interface_text_color' : repr(self.p.text_color.hexcode),
+            'gui.choice_text_color' : repr(self.p.choice_color.hexcode),
             }
 
 

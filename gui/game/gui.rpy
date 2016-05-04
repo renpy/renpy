@@ -34,9 +34,10 @@ define gui.idle_small_color = "#aaaaaa"
 ## The color used for a text button when it cannot be selected.
 define gui.insensitive_color = "#55555580"
 
-## The color used for dialogue and menu choice text.
+## The colors used for dialogue and menu choice text.
 define gui.text_color = "#ffffff"
-define gui.choice_color = "#cccccc"
+define gui.interface_text_color = "#ffffff"
+define gui.choice_text_color = "#cccccc"
 
 ## The images used for the main and game menus.
 define gui.main_menu_background = "gui/main_menu.png"
@@ -63,7 +64,6 @@ define gui.title_size = gui.scale(50)
 
 ## This is the icon displayer on the taskbar or dock.
 define config.window_icon = "gui/window_icon.png"
-
 
 ################################################################################
 ## Padding and Spacing
@@ -137,6 +137,7 @@ style prompt_text is gui_text
 ## Used for text inside the gui.
 style gui_text:
     font gui.interface_font
+    color gui.interface_text_color
     size gui.text_size
 
 ## Used for full-sized buttons, like navigation buttons.
@@ -421,7 +422,7 @@ style choice_button is default:
     hover_background Frame("gui/choice/hover.png", gui.choice_borders)
 
 style choice_button_text is default:
-    color gui.choice_color
+    color gui.choice_text_color
     hover_color gui.text_color
 
     # Center the text.

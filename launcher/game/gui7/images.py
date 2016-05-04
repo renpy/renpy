@@ -369,7 +369,6 @@ class ImageGenerator(object):
             height = self.scale_int(height) + padding * 2
 
             s = self.make_surface(width, height)
-            s.fill((255, 255, 255, 32))
 
             if fill_width is not None:
                 fill_width = self.scale_int(fill_width)
