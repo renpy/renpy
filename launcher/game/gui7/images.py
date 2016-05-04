@@ -343,8 +343,6 @@ class ImageGenerator(object):
             s.fill(color)
             self.save(s, name)
 
-            print(vname)
-
             s = self.make_surface(height, width)
             s.fill(color)
             self.save(s, vname)
