@@ -305,15 +305,21 @@ class Viewport(renpy.display.layout.Container):
 
         if self.mousewheel:
 
+            if self.mousewheel == "horizontal":
+                adjustment = self.xadjustment
+            else:
+                adjustment = self.yadjustment
+
+
             if renpy.display.behavior.map_event(ev, 'viewport_up'):
-                rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
+                rv = adjustment.change(adjustment.value - adjustment.step)
                 if rv is not None:
                     return rv
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_down'):
-                rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
+                rv = adjustment.change(adjustment.value + adjustment.step)
                 if rv is not None:
                     return rv
                 else:

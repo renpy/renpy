@@ -888,7 +888,7 @@ following properties:
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity. 
+    If not provided, the action will be used to determine sensitivity.
 
 `text_style`
     The name of the style to use for the button text. If not supplied,
@@ -1015,7 +1015,9 @@ following properties:
     compute it's own size. If either component is None, the child's
     size is used.
 `mousewheel`
-    If True, the mouse wheel can be used to scroll the viewport.
+    If True, the mouse wheel can be used to scroll the viewport vertically.
+    If "horizontal", the mouse wheel can be used to scroll the viewport
+    horizontally.
 `draggable`
     If True, dragging the mouse will scroll the viewport.
 `edgescroll`
