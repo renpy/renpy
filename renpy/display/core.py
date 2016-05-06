@@ -1435,8 +1435,6 @@ class Interface(object):
         self.thread = threading.current_thread()
 
         # Initialize pygame.
-        if pygame.version.vernum < (1, 8, 1):
-            raise Exception("Ren'Py requires pygame 1.8.1 to run.")
 
         # pygame.font.init()
         renpy.audio.audio.init()
