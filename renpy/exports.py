@@ -3198,6 +3198,7 @@ def play(filename, channel=None, **kwargs):
 
     renpy.audio.music.play(filename, channel=channel, **kwargs)
 
+
 def get_editable_input_value():
     """
     :undocumented:
@@ -3207,6 +3208,7 @@ def get_editable_input_value():
     """
 
     return renpy.display.behavior.current_input_value, renpy.display.behavior.input_value_active
+
 
 def set_editable_input_value(input_value, editable):
     """
@@ -3218,3 +3220,31 @@ def set_editable_input_value(input_value, editable):
 
     renpy.display.behavior.current_input_value = input_value
     renpy.display.behavior.input_value_active = editable
+
+
+def get_refresh_rate(precision=5):
+    """
+    :doc: other
+
+    Returns the refresh rate of the current screen, as a floating-point
+    number of frames per second.
+
+    `precision`
+        The raw data Ren'Py gets is numbe of frames per second, rounded down.
+        This means that a monitor that runs at 59.95 frames per second will
+        be reported at 59 fps. The precision argument reduces the precision
+        of this reading, such that the only valid readings are multiples of
+        the precision.
+
+        Since all monitor framerates tend to be multiples of 5 (25, 30, 60,
+        75, and 120), this likely will improve accuracy. Setting precision
+        to 1 disables this.
+    """
+
+    precision *= 1.0
+
+    info = renpy.display.get_info()
+    rv = info.refresh_rate
+    rv = round(rv / precision) * precision
+
+    return rv

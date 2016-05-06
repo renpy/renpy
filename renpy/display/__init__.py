@@ -43,6 +43,7 @@ def get_info():
 
     if info is None:
         import pygame_sdl2 as pygame
+        pygame.display.init()
         info = pygame.display.Info()
 
     return info
