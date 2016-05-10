@@ -68,11 +68,15 @@ def transform_render(self, widtho, heighto, st, at):
     cdef double yo, y1, y2, y3, py
     cdef float zoom, xzoom, yzoom
     cdef double cw, ch, nw, nh
-    cdef Render rv, cr
+    cdef Render rv, cr, tcr
     cdef double angle
     cdef double alpha
     cdef double width = widtho
     cdef double height = heighto
+    cdef double cwidth
+    cdef double cheight
+    cdef int xtile, ytile
+    cdef int i, j
 
     # Should we perform clipping?
     clipping = False
@@ -103,6 +107,34 @@ def transform_render(self, widtho, heighto, st, at):
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
+    cwidth = cr.width
+    cheight = cr.height
+
+    # Tile the child to make it bigger.
+
+    xpan = state.xpan
+    ypan = state.ypan
+
+    xtile = 1
+    ytile = 1
+
+    if xpan is not None:
+        xtile = 2
+
+    if ypan is not None:
+        ytile = 2
+
+    if (xtile != 1) or (ytile != 1):
+        tcr = renpy.display.render.Render(cwidth * xtile, cheight * ytile)
+
+        for i in range(xtile):
+            for j in range(ytile):
+                tcr.blit(cr, (i * cwidth, j * cheight))
+
+        cr = tcr
+
+
+    # The width and height of the child.
     width = cr.width
     height = cr.height
 
@@ -212,6 +244,17 @@ def transform_render(self, widtho, heighto, st, at):
         # origin corrections for flipping
         if yzoom < 0:
             yo += height
+
+    # Pan.
+
+    if xpan is not None:
+        xpan = (xpan % 360) + 180
+        xo += xzoom * cwidth * -(xpan / 360.0) + widtho / 2.0
+
+    if ypan is not None:
+        ypan = (ypan % 360) + 180
+        yo += yzoom * cheight * -(ypan / 360.0) + heighto / 2.0
+
 
     # Rotation.
     rotate = state.rotate

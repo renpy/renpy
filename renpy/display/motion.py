@@ -98,6 +98,8 @@ class TransformState(renpy.object.Object):
     debug = None
     events = True
     crop_relative = False
+    xpan = None
+    ypan = None
 
     def __init__(self):
         self.alpha = 1
@@ -121,6 +123,9 @@ class TransformState(renpy.object.Object):
         self.yaround = 0.0
         self.xanchoraround = 0.0
         self.yanchoraround = 0.0
+
+        self.xpan = None
+        self.ypan = None
 
         self.subpixel = False
 
@@ -174,6 +179,9 @@ class TransformState(renpy.object.Object):
         self.corner1 = ts.corner1
         self.corner2 = ts.corner2
         self.size = ts.size
+
+        self.xpan = ts.xpan
+        self.ypan = ts.ypan
 
         self.debug = ts.debug
         self.events = ts.events
@@ -240,13 +248,15 @@ class TransformState(renpy.object.Object):
         diff2("size", newts.size, self.size)
 
         diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
-
         diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
         diff2("xoffset", newts.xoffset, self.xoffset)
 
         diff4("ypos", newts.ypos, newts.inherited_ypos, self.ypos, self.inherited_ypos)
         diff4("yanchor", newts.yanchor, newts.inherited_yanchor, self.yanchor, self.inherited_yanchor)
         diff2("yoffset", newts.yoffset, self.yoffset)
+
+        diff2("xpan", newts.xpan, self.xpan)
+        diff2("ypan", newts.ypan, self.ypan)
 
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
@@ -454,6 +464,9 @@ class Transform(Container):
 
     xcenter = Proxy("xcenter")
     ycenter = Proxy("ycenter")
+
+    xpan = Proxy("xpan")
+    ypan = Proxy("ypan")
 
     debug = Proxy("debug")
     events = Proxy("events")

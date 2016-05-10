@@ -62,6 +62,11 @@ def bool_or_none(x):
         return x
     return bool(x)
 
+def float_or_none(x):
+    if x is None:
+        return x
+    return float(x)
+
 # A dictionary giving property names and the corresponding default
 # values.
 PROPERTIES = {
@@ -105,6 +110,8 @@ PROPERTIES = {
         "ycenter" : position,
         "debug" : any_object,
         "events" : bool,
+        "xpan" : float_or_none,
+        "ypan" : float_or_none,
         }
 
 
