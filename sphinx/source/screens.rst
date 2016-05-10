@@ -5,7 +5,7 @@ Screens and Screen Language
 ===========================
 
 The things that a user sees when looking at a Ren'Py game can be
-broken divided into images and user interface. Images are displayed to
+divided into images and user interface. Images are displayed to
 the user using the scene, show, and hide statements, and are generally
 part of the story being told. Everything else the user sees is part of
 the user interface, which is customized using screens.
