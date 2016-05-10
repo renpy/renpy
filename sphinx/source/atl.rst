@@ -909,11 +909,49 @@ both horizontal and vertical positions.
     events are blocked. (This can be used in ATL transforms to prevent
     events from reaching the old_widget.)
 
+.. transform-property:: xpan
+
+    :type: None or float
+    :default: None
+
+    If not None, this interpreted as an angle that is used to pan horizontally
+    across a 360 degree panoramic image. The center of the image is used as the
+    zero angle, while the left and right edges are -180 and 180 degrees,
+    respectively.
+
+.. transform-property:: ypan
+
+    :type: None or float
+    :default: None
+
+    If not None, this interpreted as an angle that is used to pan vertically
+    across a 360 degree panoramic image. The center of the image is used as the
+    zero angle, while the top and bottom edges are -180 and 180 degrees,
+    respectively.
+
+.. transform-property:: xtile
+
+    :type: int
+    :default: 1
+
+    The number of times to tile the image horizontally. (This is ignored when
+    xpan is given.)
+
+.. transform-property:: ytile
+
+    :type: int
+    :default: 1
+
+    The number of times to tile the image vertically. (This is ignored when
+    ypan is given.)
+
 These properties are applied in the following order:
 
+#. tile
 #. crop, corner1, corner2
 #. size
 #. zoom, xzoom, yzoom
+#. pan
 #. rotate
 #. position properties
 
