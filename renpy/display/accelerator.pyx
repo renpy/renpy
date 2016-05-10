@@ -112,11 +112,11 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Tile the child to make it bigger.
 
+    xtile = state.xtile
+    ytile = state.ytile
+
     xpan = state.xpan
     ypan = state.ypan
-
-    xtile = 1
-    ytile = 1
 
     if xpan is not None:
         xtile = 2

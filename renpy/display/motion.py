@@ -100,6 +100,8 @@ class TransformState(renpy.object.Object):
     crop_relative = False
     xpan = None
     ypan = None
+    xtile = 1
+    ytile = 1
 
     def __init__(self):
         self.alpha = 1
@@ -126,6 +128,8 @@ class TransformState(renpy.object.Object):
 
         self.xpan = None
         self.ypan = None
+        self.xtile = 1
+        self.ytile = 1
 
         self.subpixel = False
 
@@ -182,6 +186,8 @@ class TransformState(renpy.object.Object):
 
         self.xpan = ts.xpan
         self.ypan = ts.ypan
+        self.xtile = ts.xtile
+        self.ytile = ts.ytile
 
         self.debug = ts.debug
         self.events = ts.events
@@ -257,6 +263,9 @@ class TransformState(renpy.object.Object):
 
         diff2("xpan", newts.xpan, self.xpan)
         diff2("ypan", newts.ypan, self.ypan)
+
+        diff2("xtile", newts.xtile, self.xtile)
+        diff2("ytile", newts.ytile, self.ytile)
 
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
@@ -467,6 +476,8 @@ class Transform(Container):
 
     xpan = Proxy("xpan")
     ypan = Proxy("ypan")
+    xtile = Proxy("xtile")
+    ytile = Proxy("ytile")
 
     debug = Proxy("debug")
     events = Proxy("events")

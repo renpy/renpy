@@ -112,6 +112,8 @@ PROPERTIES = {
         "events" : bool,
         "xpan" : float_or_none,
         "ypan" : float_or_none,
+        "xtile" : int,
+        "ytile" : int,
         }
 
 
