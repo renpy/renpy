@@ -136,7 +136,6 @@ class ImageReference(renpy.display.core.Displayable):
 
     nosave = [ 'target' ]
     target = None
-    param_target = None
 
     def __init__(self, name, **properties):
         """
@@ -166,23 +165,19 @@ class ImageReference(renpy.display.core.Displayable):
 
         return True
 
-    def _get_parameterized(self):
-        if self.param_target:
-            return self.param_target._get_parameterized()
+    def _target(self):
+        if self.target is None:
+            self.find_target()
 
-        return self
+        return self.target._target()
 
     def find_target(self):
-
-        if self.param_target:
-            self.target = self.param_target
-            return None
 
         name = self.name
 
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
-            return True
+            return
 
         if not isinstance(name, tuple):
             name = tuple(name.split())
@@ -203,17 +198,8 @@ class ImageReference(renpy.display.core.Displayable):
                 target = images[name]
 
                 try:
+
                     self.target = target.parameterize(name, parameters)
-
-                    if self.target is not target:
-
-                        if self.param_target is not None:
-                            npt = self.target._get_parameterized()
-                            if isinstance(npt, renpy.display.motion.Transform):
-                                opt = self.param_target._get_parameterized()
-                                npt.take_state(opt)
-
-                        self.param_target = self.target
 
                 except Exception, e:
                     if renpy.config.debug:
@@ -231,37 +217,37 @@ class ImageReference(renpy.display.core.Displayable):
         return False
 
     def parameterize(self, name, parameters):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target.parameterize(name, parameters)
 
     def _hide(self, st, at, kind):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target._hide(st, at, kind)
 
     def set_transform_event(self, event):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target.set_transform_event(event)
 
     def event(self, ev, x, y, st):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target.event(ev, x, y, st)
 
     def render(self, width, height, st, at):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return wrap_render(self.target, width, height, st, at)
 
     def get_placement(self):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         if not renpy.config.imagereference_respects_position:
@@ -284,7 +270,7 @@ class ImageReference(renpy.display.core.Displayable):
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
 
     def visit(self):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return [ self.target ]
@@ -297,7 +283,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
     A DynamicImage is a displayable that has text interpolation performed
     on it to yield a string giving a new displayable. Such interpolation is
-    performed at the start of each iteraction.
+    performed at the start of each interaction.
     """
 
     nosave = [ 'raw_target' ]
@@ -340,9 +326,9 @@ class DynamicImage(renpy.display.core.Displayable):
 
         return True
 
-    def _get_parameterized(self):
+    def _target(self):
         if self.target:
-            return self.target._get_parameterized()
+            return self.target._target()
         else:
             return self
 
@@ -380,37 +366,37 @@ class DynamicImage(renpy.display.core.Displayable):
         return True
 
     def _hide(self, st, at, kind):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target._hide(st, at, kind)
 
     def set_transform_event(self, event):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target.set_transform_event(event)
 
     def event(self, ev, x, y, st):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target.event(ev, x, y, st)
 
     def render(self, width, height, st, at):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return wrap_render(self.target, width, height, st, at)
 
     def get_placement(self):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return self.target.get_placement()
 
     def visit(self):
-        if not self.target:
+        if self.target is None:
             self.find_target()
 
         return [ self.target ]

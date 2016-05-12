@@ -494,11 +494,11 @@ class Displayable(renpy.object.Object):
         Called when the displayable is added to a scene list.
         """
 
-    def _get_parameterized(self):
+    def _target(self):
         """
-        If this is a ImageReference to a parameterized image, return
-        the get_parameterized() of the parameterized image. Otherwise,
-        return this displayable.
+        If this displayable is part of a chain of one or more references,
+        returns the ultimate target of those references. Otherwise, returns
+        the displayable.
         """
 
         return self
@@ -756,11 +756,11 @@ class SceneLists(renpy.object.Object):
         if isinstance(new_thing, renpy.display.screen.ScreenDisplayable):
             return new_thing
 
-        old_transform = old_thing._get_parameterized()
+        old_transform = old_thing._target()
         if not isinstance(old_transform, renpy.display.motion.Transform):
             return new_thing
 
-        new_transform = new_thing._get_parameterized()
+        new_transform = new_thing._target()
         if not isinstance(new_transform, renpy.display.motion.Transform):
             new_thing = new_transform = renpy.display.motion.Transform(child=new_thing)
 
