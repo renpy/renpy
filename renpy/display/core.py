@@ -206,7 +206,7 @@ class Parameters(renpy.object.Object):
     """
 
     # The name of the image that is being shown, if known.
-    name = ('displayable', )
+    name = ()
 
     # The parameters that were supplied to the image.
     parameters = ()

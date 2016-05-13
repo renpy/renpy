@@ -196,7 +196,8 @@ class ImageReference(renpy.display.core.Displayable):
             if target is not None:
                 break
 
-            parameters.insert(0, name.pop())
+            parameters.insert(0, name[-1])
+            name = name[:-1]
 
         if not name:
             error("Image '%s' not found." % ' '.join(self.name))
