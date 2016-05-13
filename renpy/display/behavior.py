@@ -655,6 +655,9 @@ class Button(renpy.display.layout.Window):
 
         self.time_policy_data = None
 
+    def parameterize(self, parameters):
+        return self
+
     def predict_one_action(self):
         predict_action(self.clicked)
         predict_action(self.hovered)
