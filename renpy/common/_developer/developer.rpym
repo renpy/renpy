@@ -267,9 +267,11 @@ init 1050 python:
                 return False
 
             if not renpy.count_displayables_in_layer(layer):
-                return Placeholder("bg").parameterize((), what)
+                p = Placeholder("bg")
             else:
-                return Placeholder().parameterize((), what)
+                p = Placeholder()
+
+            return p.parameterize(p._parameters.copy(parameters=what))
 
         def __missing_hide_callback(name, layer):
             if layer != 'master':

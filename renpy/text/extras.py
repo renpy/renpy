@@ -137,13 +137,12 @@ class ParameterizedText(object):
         self.style = style
         self.properties = properties
 
-    def parameterize(self, name, parameters):
+    def parameterize(self, parameters):
 
-        if len(parameters) != 1:
-            raise Exception("'%s' takes a single string parameter." %
-                            ' '.join(name))
+        if len(parameters.parameters) != 1:
+            raise Exception("'%s' takes a single string parameter." % ' '.join(parameters.name))
 
-        param = parameters[0]
+        param = parameters.parameters[0]
         string = renpy.python.py_eval(param)
 
         return renpy.text.text.Text(string, style=self.style, **self.properties)

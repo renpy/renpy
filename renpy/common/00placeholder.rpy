@@ -187,10 +187,10 @@ init -1500 python:
             self.child = rv
             return rv
 
-        def parameterize(self, name, parameters):
+        def parameterize(self, parameters):
 
             rv = Placeholder(self.base, self.full, self.flip)
-            rv.name = list(name) + list(parameters)
+            rv.name = list(parameters.name) + list(parameters.parameters)
 
             return rv
 

@@ -99,7 +99,7 @@ class Sprite(renpy.object.Object):
             sc.render = None
             sc.child = d
             sc.st = None
-            sc.child_copy = d.parameterize('displayable', [ ])
+            sc.child_copy = d.parameterize(d._parameters)
 
             self.manager.displayable_map[id_d] = sc
 

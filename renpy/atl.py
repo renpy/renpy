@@ -356,6 +356,8 @@ class ATLTransformBase(renpy.object.Object):
 
     def __call__(self, *args, **kwargs):
 
+        _parameters = kwargs.pop("_parameters", None)
+
         context = self.context.context.copy()
 
         for k, v in self.parameters.parameters:
@@ -410,7 +412,9 @@ class ATLTransformBase(renpy.object.Object):
             child=child,
             style=self.style_arg,
             context=context,
-            parameters=parameters)
+            parameters=parameters,
+            _parameters=_parameters,
+            )
 
         rv.parent_transform = self
         rv.take_state(self)
@@ -997,7 +1001,7 @@ class Child(Statement):
         executing(self.loc)
 
         old_child = trans.raw_child
-        child = self.child.parameterize('displayable', [ ])
+        child = self.child.parameterize(trans._parameters)
 
         if (old_child is not None) and (old_child is not renpy.display.motion.null) and (self.transition is not None):
             child = self.transition(old_widget=old_child,

@@ -544,13 +544,14 @@ class Transform(Container):
                  style='transform',
                  focus=None,
                  default=False,
+                 _parameters = None,
 
                  **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _parameters=_parameters)
 
         self.function = function
 

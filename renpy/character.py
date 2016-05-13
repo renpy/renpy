@@ -464,7 +464,7 @@ def display_say(
         what_ctc = renpy.easy.displayable_or_none(what_ctc)
 
         if what_ctc is not None:
-            what_ctc = what_ctc.parameterize(('ctc',), ())
+            what_ctc = what_ctc.parameterize(what_ctc._parameters)
 
         if delay == 0:
             what_ctc = None

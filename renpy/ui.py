@@ -552,7 +552,7 @@ class Wrapper(renpy.object.Object):
 
 def _add(d, **kwargs):
     d = renpy.easy.displayable(d)
-    d = d.parameterize('displayable', [ ])
+    d = d.parameterize(d._parameters)
 
     rv = d
 
@@ -575,7 +575,7 @@ implicit_add = Wrapper(_implicit_add)
 
 def _image(im, **properties):
     d = renpy.display.im.image(im, loose=True, **properties)
-    d = d.parameterize('displayable', [ ])
+    d = d.parameterize(d._parameters)
     return d
 
 image = Wrapper(_image)
