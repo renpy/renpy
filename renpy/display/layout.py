@@ -107,6 +107,11 @@ class Container(renpy.display.core.Displayable):
         for i in self.children:
             i.set_style_prefix(prefix, False)
 
+    def parameterize(self, parameters):
+        rv = self._copy(parameters)
+        rv.children = [ i.parameterize(parameters) for i in self.children ]
+        return rv
+
     def add(self, d):
         """
         Adds a child to this container.
@@ -268,13 +273,6 @@ class Position(Container):
 
         super(Position, self).__init__(style=style, **properties)
         self.add(child)
-
-    def parameterize(self, name, parameters):
-
-        rv = Position(self.child.parameterize('displayable', [ ]))
-        rv.style = self.style.copy()
-
-        return rv
 
     def render(self, width, height, st, at):
 
@@ -469,22 +467,6 @@ class MultiBox(Container):
 
         # The scene list for this widget.
         self.scene_list = None
-
-    def parameterize(self, name, parameters):
-        if not type(self) is MultiBox:
-            return self
-
-        if self.layers or self.scene_list:
-            return self
-
-        rv = MultiBox(layout=self.default_layout)
-        rv.style = self.style.copy()
-
-        rv.children = self._list_type(i.parameterize('displayable', [ ]) for i in self.children)
-        rv.offsets = self._list_type()
-        rv.start_times = self._list_type(self.start_times)
-
-        return rv
 
     def _clear(self):
         super(MultiBox, self)._clear()

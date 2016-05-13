@@ -34,6 +34,7 @@ import os
 import time
 import cStringIO
 import threading
+import copy
 
 import_time = time.time()
 
@@ -204,21 +205,29 @@ class Parameters(renpy.object.Object):
     method of objects.
     """
 
-    def __init__(self, name="displayable", parameters=None):
+    # The name of the image that is being shown, if known.
+    name = ('displayable', )
+
+    # The parameters that were supplied to the image.
+    parameters = ()
+
+    # Set to true when the parameters are consumed by something.
+    consumed_parameters = False
+
+    # The list of style prefixes in play.
+    prefixes = None
+
+    def copy(self, **kwargs):
         """
-        `name`
-            The name of the displayable being show, if known.
-
-        `parameters`
-            Parameters being passed into the displayable.
+        Returns a copy of this object with the various fields set to the
+        values they were given in kwargs.
         """
 
-        self.name = name
-        self.parameters = parameters
+        rv = Parameters()
+        rv.__dict__.update(self.__dict__)
+        rv.__dict__.update(kwargs)
 
-        # This is set to true if something consumes the parameters, so we
-        # can produce an error if that doesn't happen.
-        self.consumed_parameters = False
+        return rv
 
 
 class Displayable(renpy.object.Object):
@@ -270,10 +279,29 @@ class Displayable(renpy.object.Object):
     # Does this displayable use the scope?
     _uses_scope = False
 
-    def __init__(self, focus=None, default=False, style='default', **properties):
+    # The parameters given to this object when it was last parameterized.
+    _parameters = Parameters()
+
+    def __init__(self, focus=None, default=False, style='default', _parameters=None, **properties):
         self.style = renpy.style.Style(style, properties) # @UndefinedVariable
         self.focus_name = focus
         self.default = default
+
+        if _parameters is not None:
+            self._parameters = _parameters
+
+    def _copy(self, parameters=None):
+        """
+        Shallow-copies this displayable, perhaps with different
+        parameters.
+        """
+
+        rv = copy.copy(self)
+
+        if parameters is not None:
+            rv._parameters = parameters
+
+        return rv
 
     def _equals(self, o):
         """

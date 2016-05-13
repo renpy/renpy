@@ -778,6 +778,7 @@ class Transform(Container):
     def set_child(self, child):
 
         child = renpy.easy.displayable(child)
+        child = child.parameterize(self._parameters)
 
         self.child = child
         self.children = [ child ]
@@ -842,7 +843,10 @@ class Transform(Container):
 
         return None
 
-    def __call__(self, child=None, take_state=True):
+    def __call__(self, child=None, take_state=True, _parameters=None):
+
+        if _parameters is None:
+            _parameters = self._parameters
 
         if child is None:
             child = self.child
@@ -851,12 +855,13 @@ class Transform(Container):
         if child is None:
             child = get_null()
         else:
-            child = child.parameterize('displayable', [ ])
+            child = child.parameterize(_parameters)
 
         rv = Transform(
             child=child,
             function=self.function,
             style=self.style_arg,
+            _parameters=_parameters,
             **self.kwargs)
 
         rv.take_state(self)
@@ -932,13 +937,8 @@ class Transform(Container):
 
         renpy.display.render.invalidate(self)
 
-    def parameterize(self, name, parameters):
-        if parameters:
-            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
-                            (' '.join(name), ' '.join(parameters)))
-
-        # Note the call here.
-        return self()
+    def parameterize(self, parameters):
+        return self(_parameters=parameters)
 
     def _show(self):
         self.update_state()

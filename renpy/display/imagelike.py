@@ -492,6 +492,11 @@ class Frame(renpy.display.core.Displayable):
         # And, finish up.
         return rrv
 
+    def parameterize(self, parameters):
+        rv = self._copy(parameters)
+        rv.image = self.image.parameterize(parameters)
+        return rv
+
     def visit(self):
         return [ ]
 
