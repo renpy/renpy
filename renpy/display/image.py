@@ -177,7 +177,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         if isinstance(name, renpy.display.core.Displayable):
             self.target = name
-            return
+            return True
 
         if not isinstance(name, tuple):
             name = tuple(name.split())
@@ -200,7 +200,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         if not name:
             error("Image '%s' not found." % ' '.join(self.name))
-            return
+            return False
 
         try:
 
@@ -213,6 +213,8 @@ class ImageReference(renpy.display.core.Displayable):
                 raise
 
             error(str(e))
+
+        return True
 
     def parameterize(self, parameters):
         return self._copy(parameters)
