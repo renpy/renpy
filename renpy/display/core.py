@@ -198,6 +198,29 @@ def place(width, height, sw, sh, placement):
 
     return x, y
 
+class Parameters(renpy.object.Object):
+    """
+    Represents the set of parameters passed to the parameterize
+    method of objects.
+    """
+
+    def __init__(self, name="displayable", parameters=None):
+        """
+        `name`
+            The name of the displayable being show, if known.
+
+        `parameters`
+            Parameters being passed into the displayable.
+        """
+
+        self.name = name
+        self.parameters = parameters
+
+        # This is set to true if something consumes the parameters, so we
+        # can produce an error if that doesn't happen.
+        self.consumed_parameters = False
+
+
 class Displayable(renpy.object.Object):
     """
     The base class for every object in Ren'Py that can be
@@ -334,15 +357,10 @@ class Displayable(renpy.object.Object):
         self.style.set_prefix(prefix)
         renpy.display.render.redraw(self, 0)
 
-    def parameterize(self, name, parameters):
+    def parameterize(self, parameters):
         """
-        Called to parameterize this. By default, we don't take any
-        parameters.
+        This is called to parameterize the child
         """
-
-        if parameters:
-            raise Exception("Image '%s' can't take parameters '%s'. (Perhaps you got the name wrong?)" %
-                            (' '.join(name), ' '.join(parameters)))
 
         return self
 

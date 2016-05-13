@@ -182,45 +182,40 @@ class ImageReference(renpy.display.core.Displayable):
         if not isinstance(name, tuple):
             name = tuple(name.split())
 
-        parameters = [ ]
-
         def error(msg):
             self.target = renpy.text.text.Text(msg, color=(255, 0, 0, 255), xanchor=0, xpos=0, yanchor=0, ypos=0)
 
             if renpy.config.debug:
                 raise Exception(msg)
 
+        parameters = [ ]
 
-        # Scan through, searching for an image (defined with an
-        # input statement) that is a prefix of the given name.
         while name:
-            if name in images:
-                target = images[name]
+            target = images.get(name, None)
 
-                try:
+            if target is not None:
+                break
 
-                    self.target = target.parameterize(name, parameters)
+            parameters.insert(0, name.pop())
 
-                except Exception, e:
-                    if renpy.config.debug:
-                        raise
+        if not name:
+            error("Image '%s' not found." % ' '.join(self.name))
+            return
 
-                    error(str(e))
+        try:
 
-                return True
+            p = self._parameters.copy(name=name, parameters=parameters)
+            self.target = target.parameterize(p)
 
-            else:
-                parameters.insert(0, name[-1])
-                name = name[:-1]
+        except Exception, e:
 
-        error("Image '%s' not found." % ' '.join(self.name))
-        return False
+            if renpy.config.debug:
+                raise
 
-    def parameterize(self, name, parameters):
-        if self.target is None:
-            self.find_target()
+            error(str(e))
 
-        return self.target.parameterize(name, parameters)
+    def parameterize(self, parameters):
+        return self._copy(parameters)
 
     def _hide(self, st, at, kind):
         if self.target is None:
@@ -345,12 +340,13 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        renpy.display.render.redraw(self, 0)
         self.raw_target = target
-
-        target = target.parameterize('displayable', ())
         old_target = self.target
+
+        target = target.parameterize(self._parameters)
         self.target = target
+
+        renpy.display.render.redraw(self, 0)
 
         if not old_target:
             return True
@@ -364,6 +360,9 @@ class DynamicImage(renpy.display.core.Displayable):
         target.take_state(old_target)
 
         return True
+
+    def parameterize(self, parameters):
+        return self._copy(parameters)
 
     def _hide(self, st, at, kind):
         if self.target is None:
