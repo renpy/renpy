@@ -102,6 +102,18 @@ Prefix(-2, 'activate_', 0, [ ])
 Prefix(-1, 'selected_activate_', 0, [ ])
 
 
+# The images that are searched by a prefix.
+PREFIX_SEARCH = {
+    "idle_" : [ "idle_", "" ],
+    "hover_" : [ "hover_", "" ],
+    "insensitive_" : [ "insensitive_", "" ],
+    "selected_idle_" : [ "selected_idle_", "idle_", "selected_", "" ],
+    "selected_hover_" : [ "selected_hover_", "hover_", "selected_", "" ],
+    "selected_insensitive_" : [ "selected_insensitive_", "insensitive_", "selected_", "" ],
+    "" : [ "" ],
+    }
+
+
 ################################################################################
 # Style Properties
 ################################################################################
@@ -580,6 +592,7 @@ def generate_sets():
     g.write("all_properties = {}", ap)
     g.write("prefix_priority = {}", prefix_priority)
     g.write("prefix_alts = {}", prefix_alts)
+    g.write("prefix_search = {}", PREFIX_SEARCH)
     g.write('"""')
     g.close()
 
