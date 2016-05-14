@@ -201,6 +201,18 @@ style_properties = sorted_dict(
     ypos = None,
     )
 
+# Properties that take displayables that should be given the right set
+# of prefixes.
+displayable_properties = {
+    "background",
+    "foreground"
+    "child",
+    "fore_bar",
+    "aft_bar",
+    "thumb",
+    "thumb_shadow",
+    }
+
 # A map from a style property to its index in the order of style_properties.
 style_property_index = collections.OrderedDict()
 for i, name in enumerate(style_properties):
@@ -462,9 +474,17 @@ def generate_property_function(g, prefix, propname, properties):
             value = "v"
 
         for alt, alt_name in zip(prefix.alts, prefix.alt_names):
-            g.write("assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
-                alt * len(style_properties) + style_property_index[stylepropname],
-                value, alt_name, stylepropname)
+
+            if stylepropname in displayable_properties:
+                g.write("assign_prefixed({}, cache, cache_priorities, priority, {}, '{}') # {}{}",
+                    alt * len(style_properties) + style_property_index[stylepropname],
+                    value, alt_name, alt_name, stylepropname)
+            else:
+                g.write("assign({}, cache, cache_priorities, priority, <PyObject *> {}) # {}{}",
+                    alt * len(style_properties) + style_property_index[stylepropname],
+                    value, alt_name, stylepropname)
+
+
 
     g.write("return 0")
     g.dedent()

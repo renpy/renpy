@@ -53,6 +53,26 @@ cdef inline void assign(int index, PyObject **cache, int *cache_priorities, int 
     cache[index] = value
     cache_priorities[index] = priority
 
+cdef inline void assign_prefixed(int index, PyObject **cache, int *cache_priorities, int priority, d, prefix):
+    """
+    Like assign, but if the value can be duplicated, duplicates it and assigns
+    the given prefix.
+    """
+
+    if priority < cache_priorities[index]:
+        return
+
+    if (d is not None) and d._duplicatable:
+        d = d._duplicate(d._args.copy(prefix=prefix))
+
+    cdef PyObject *value = <PyObject *> d
+
+    Py_XDECREF(cache[index])
+    Py_XINCREF(value)
+
+    cache[index] = value
+    cache_priorities[index] = priority
+
 cdef void register_property_function(name, property_function function)
 
 cdef class StyleCore:

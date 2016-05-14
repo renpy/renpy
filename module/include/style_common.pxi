@@ -21,7 +21,7 @@
 
 import renpy
 
-from renpy.style cimport register_property_function, assign
+from renpy.style cimport register_property_function, assign, assign_prefixed
 from cpython.ref cimport PyObject
 
 from renpy.styledata.styleutil import none_is_null, expand_focus_mask, expand_outlines, expand_anchor
