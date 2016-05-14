@@ -187,11 +187,11 @@ init -1500 python:
             self.child = rv
             return rv
 
-        def parameterize(self, parameters):
+        _duplicatable = True
 
+        def _duplicate(self, args):
             rv = Placeholder(self.base, self.full, self.flip)
-            rv.name = list(parameters.name) + list(parameters.parameters)
-
+            rv.name = list(args.name) + list(args.args)
             return rv
 
         def visit(self):

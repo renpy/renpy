@@ -70,12 +70,12 @@ init python:
         def predict(self, callback):
             return
 
-        def parameterize(self, name, args):
+        def _duplicate(self, args):
 
             # Collect the examples we use.
             lines1 = [ ]
 
-            for i in args:
+            for i in args.args:
                 if i not in examples:
                     raise Exception("Unknown example %r." % i)
                 lines1.extend(examples[i])

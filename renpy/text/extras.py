@@ -137,12 +137,14 @@ class ParameterizedText(object):
         self.style = style
         self.properties = properties
 
-    def parameterize(self, parameters):
+    _duplicatable = True
 
-        if len(parameters.parameters) != 1:
-            raise Exception("'%s' takes a single string parameter." % ' '.join(parameters.name))
+    def _duplicate(self, args):
 
-        param = parameters.parameters[0]
+        if len(args.args) != 1:
+            raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))
+
+        param = args.args[0]
         string = renpy.python.py_eval(param)
 
         return renpy.text.text.Text(string, style=self.style, **self.properties)

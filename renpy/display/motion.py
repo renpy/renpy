@@ -544,14 +544,14 @@ class Transform(Container):
                  style='transform',
                  focus=None,
                  default=False,
-                 _parameters = None,
+                 _args = None,
 
                  **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _parameters=_parameters)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args)
 
         self.function = function
 
@@ -779,7 +779,9 @@ class Transform(Container):
     def set_child(self, child):
 
         child = renpy.easy.displayable(child)
-        child = child.parameterize(self._parameters)
+
+        if child._duplicatable:
+            child = child._duplicate(self._args)
 
         self.child = child
         self.children = [ child ]
@@ -844,10 +846,7 @@ class Transform(Container):
 
         return None
 
-    def __call__(self, child=None, take_state=True, _parameters=None):
-
-        if _parameters is None:
-            _parameters = self._parameters
+    def __call__(self, child=None, take_state=True, _args=None):
 
         if child is None:
             child = self.child
@@ -856,13 +855,14 @@ class Transform(Container):
         if child is None:
             child = get_null()
         else:
-            child = child.parameterize(_parameters)
+            if child._duplicatable:
+                child = child._duplicate(_args)
 
         rv = Transform(
             child=child,
             function=self.function,
             style=self.style_arg,
-            _parameters=_parameters,
+            _args=_args,
             **self.kwargs)
 
         rv.take_state(self)
@@ -938,8 +938,10 @@ class Transform(Container):
 
         renpy.display.render.invalidate(self)
 
-    def parameterize(self, parameters):
-        return self(_parameters=parameters)
+    _duplicatable = True
+
+    def _duplicate(self, args):
+        return self(_args=args)
 
     def _show(self):
         self.update_state()

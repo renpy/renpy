@@ -188,7 +188,7 @@ class ImageReference(renpy.display.core.Displayable):
             if renpy.config.debug:
                 raise Exception(msg)
 
-        parameters = [ ]
+        args = [ ]
 
         while name:
             target = images.get(name, None)
@@ -196,7 +196,7 @@ class ImageReference(renpy.display.core.Displayable):
             if target is not None:
                 break
 
-            parameters.insert(0, name[-1])
+            args.insert(0, name[-1])
             name = name[:-1]
 
         if not name:
@@ -205,8 +205,8 @@ class ImageReference(renpy.display.core.Displayable):
 
         try:
 
-            p = self._parameters.copy(name=name, parameters=parameters)
-            self.target = target.parameterize(p)
+            a = self._args.copy(name=name, args=args)
+            self.target = target._duplicate(a)
 
         except Exception, e:
 
@@ -217,8 +217,12 @@ class ImageReference(renpy.display.core.Displayable):
 
         return True
 
-    def parameterize(self, parameters):
-        return self._copy(parameters)
+    _duplicatable = True
+
+    def _duplicate(self, args):
+        rv =  self._copy(args)
+        rv.target = None
+        return rv
 
     def _hide(self, st, at, kind):
         if self.target is None:
@@ -346,7 +350,9 @@ class DynamicImage(renpy.display.core.Displayable):
         self.raw_target = target
         old_target = self.target
 
-        target = target.parameterize(self._parameters)
+        if target._duplicatable:
+            target = target._duplicate(self._args)
+
         self.target = target
 
         renpy.display.render.redraw(self, 0)
@@ -364,8 +370,12 @@ class DynamicImage(renpy.display.core.Displayable):
 
         return True
 
-    def parameterize(self, parameters):
-        return self._copy(parameters)
+    _duplicatable = True
+
+    def _duplicate(self, args):
+        rv = self._copy(args)
+        rv.target = None
+        return rv
 
     def _hide(self, st, at, kind):
         if self.target is None:
@@ -535,7 +545,6 @@ class ShownImageInfo(renpy.object.Object):
             del self.attributes[layer, tag]
 
         self.shown.discard((layer, tag))
-
 
     def apply_attributes(self, layer, tag, name, wanted=[], remove=[]):
         """

@@ -49,7 +49,7 @@ def displayable_or_none(d, scope=None):
             return renpy.store.ImageReference(tuple(d.split()))
 
     # We assume the user knows what he's doing in this case.
-    if hasattr(d, 'parameterize'):
+    if hasattr(d, '_duplicate'):
         return d
 
     if d is True or d is False:
@@ -83,7 +83,7 @@ def displayable(d, scope=None):
             return renpy.store.ImageReference(tuple(d.split()))
 
     # We assume the user knows what he's doing in this case.
-    if hasattr(d, 'parameterize'):
+    if hasattr(d, '_duplicate'):
         return d
 
     if d is True or d is False:

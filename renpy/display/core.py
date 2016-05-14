@@ -199,20 +199,20 @@ def place(width, height, sw, sh, placement):
 
     return x, y
 
-class Parameters(renpy.object.Object):
+class DisplayableArguments(renpy.object.Object):
     """
-    Represents the set of parameters passed to the parameterize
-    method of objects.
+    Represents a set of arguments that can be passed to a duplicated
+    displayable.
     """
 
-    # The name of the image that is being shown, if known.
+    # The name of the displayable without any arguments.
     name = ()
 
-    # The parameters that were supplied to the image.
-    parameters = ()
+    # Arguments supplied.
+    args = ()
 
-    # Set to true when the parameters are consumed by something.
-    consumed_parameters = False
+    # This gets set to true if the arguments are consumed.
+    consumed = False
 
     # The list of style prefixes in play.
     prefixes = None
@@ -223,7 +223,7 @@ class Parameters(renpy.object.Object):
         values they were given in kwargs.
         """
 
-        rv = Parameters()
+        rv = DisplayableArguments()
         rv.__dict__.update(self.__dict__)
         rv.__dict__.update(kwargs)
 
@@ -279,29 +279,57 @@ class Displayable(renpy.object.Object):
     # Does this displayable use the scope?
     _uses_scope = False
 
-    # The parameters given to this object when it was last parameterized.
-    _parameters = Parameters()
+    # Arguments supplied to this displayable.
+    _args = DisplayableArguments()
 
-    def __init__(self, focus=None, default=False, style='default', _parameters=None, **properties):
+    # Set to true of the displayable is duplicatable (has a non-trivial
+    # duplicate method), or one of its children is.
+    _duplicatable = False
+
+    def __init__(self, focus=None, default=False, style='default', _args=None, **properties):
         self.style = renpy.style.Style(style, properties) # @UndefinedVariable
         self.focus_name = focus
         self.default = default
 
-        if _parameters is not None:
-            self._parameters = _parameters
+        if _args is not None:
+            self._args = _args
 
-    def _copy(self, parameters=None):
+    def _copy(self, args=None):
         """
-        Shallow-copies this displayable, perhaps with different
-        parameters.
+        Makes a shallow copy of the displayable. If `args` is provided,
+        replaces the arguments with the stored copy.
         """
 
         rv = copy.copy(self)
 
-        if parameters is not None:
-            rv._parameters = parameters
+        if args is not None:
+            self._args = args
 
         return rv
+
+    def _duplicate(self, args):
+        """
+        Makes a duplicate copy of the following kids of displayables:
+
+        * Displayables that can accept arguments.
+        * Displayables that maintain state that should be reset before being
+          shown to the user.
+        * Containers that contain (including transitively) one of the other
+          kinds of displayables.
+
+        Displayables that contain state that can be manipulated by the user
+        are never copied.
+        """
+
+        return self
+
+    def parameterize(self, name, parameters):
+        """
+        Obsolete alias for _duplicate.
+        """
+
+        a = self._args.copy(name=name, args=parameters)
+        return self._duplicate(a)
 
     def _equals(self, o):
         """
@@ -384,13 +412,6 @@ class Displayable(renpy.object.Object):
 
         self.style.set_prefix(prefix)
         renpy.display.render.redraw(self, 0)
-
-    def parameterize(self, parameters):
-        """
-        This is called to parameterize the child
-        """
-
-        return self
 
     def render(self, width, height, st, at):
         """

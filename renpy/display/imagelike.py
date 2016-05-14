@@ -198,6 +198,7 @@ class Frame(renpy.display.core.Displayable):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
+        self._duplicatable = self.image._duplicatable
 
         if isinstance(left, Borders):
             insets = left
@@ -492,9 +493,14 @@ class Frame(renpy.display.core.Displayable):
         # And, finish up.
         return rrv
 
-    def parameterize(self, parameters):
-        rv = self._copy(parameters)
-        rv.image = self.image.parameterize(parameters)
+    def _duplicate(self, args):
+        image = self.image._duplicate(args)
+
+        if image is self.image:
+            return self
+
+        rv = self._copy(args)
+        rv.image = image
         return rv
 
     def visit(self):

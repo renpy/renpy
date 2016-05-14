@@ -271,7 +271,7 @@ init 1050 python:
             else:
                 p = Placeholder()
 
-            return p.parameterize(p._parameters.copy(parameters=what))
+            return p._duplicate(p._args.copy(args=what))
 
         def __missing_hide_callback(name, layer):
             if layer != 'master':

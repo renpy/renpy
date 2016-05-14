@@ -655,7 +655,9 @@ class Button(renpy.display.layout.Window):
 
         self.time_policy_data = None
 
-    def parameterize(self, parameters):
+        self._duplicatable = False
+
+    def _duplicate(self, args):
         return self
 
     def predict_one_action(self):

@@ -107,21 +107,16 @@ class Container(renpy.display.core.Displayable):
         for i in self.children:
             i.set_style_prefix(prefix, False)
 
-    def parameterize(self, parameters):
+    def _duplicate(self, args):
 
-        children = [ i.parameterize(parameters) for i in self.children ]
-
-        for a, b in zip(self.children, children):
-            if a is not b:
-                break
-        else:
+        if not self._duplicatable:
             return self
 
-        rv = self._copy(parameters)
-        rv.children = children
+        rv = self._copy(args)
+        rv.children = [ i._duplicate(args) for i in self.children ]
 
-        if children:
-            rv.child = children[-1]
+        if rv.children:
+            rv.child = rv.children[-1]
 
         return rv
 
@@ -136,6 +131,9 @@ class Container(renpy.display.core.Displayable):
 
         self.child = child
         self.offsets = self._list_type()
+
+        if child._duplicatable:
+            self._duplicatable = True
 
     def _clear(self):
         self.child = None
