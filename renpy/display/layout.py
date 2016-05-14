@@ -108,11 +108,20 @@ class Container(renpy.display.core.Displayable):
             i.set_style_prefix(prefix, False)
 
     def parameterize(self, parameters):
-        rv = self._copy(parameters)
-        rv.children = [ i.parameterize(parameters) for i in self.children ]
 
-        if rv.children:
-            rv.child = rv.children[-1]
+        children = [ i.parameterize(parameters) for i in self.children ]
+
+        for a, b in zip(self.children, children):
+            if a is not b:
+                break
+        else:
+            return self
+
+        rv = self._copy(parameters)
+        rv.children = children
+
+        if children:
+            rv.child = children[-1]
 
         return rv
 
