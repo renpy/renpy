@@ -110,6 +110,10 @@ class Container(renpy.display.core.Displayable):
     def parameterize(self, parameters):
         rv = self._copy(parameters)
         rv.children = [ i.parameterize(parameters) for i in self.children ]
+
+        if rv.children:
+            rv.child = rv.children[-1]
+
         return rv
 
     def add(self, d):
