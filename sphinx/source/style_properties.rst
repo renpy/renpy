@@ -806,6 +806,12 @@ left and right sides are used.
 
     The displayable uses for the bottom side of the bar.
 
+.. style-property:: base_bar displayable
+
+    A single displayable that is used for left_bar/right_bar or
+    top_bar/bottom_bar, as appropriate. (This can be used
+    with thumb to make a slider or scrollbar.)
+
 .. style-property:: thumb displayable or None
 
     If not None, this is a displayable that is drawn over the break

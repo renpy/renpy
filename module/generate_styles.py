@@ -292,14 +292,22 @@ synthetic_properties = sorted_dict(
     textalign = [ ('text_align', None) ],
     slow_speed = [ ('slow_cps', None) ],
     enable_hover = [ ],
+
     left_gutter = [ ('fore_gutter', None) ],
     right_gutter = [ ('aft_gutter', None) ],
     top_gutter = [ ('fore_gutter', None) ],
     bottom_gutter = [ ('aft_gutter', None) ],
+
     left_bar = [ ('fore_bar', None) ],
     right_bar = [ ('aft_bar', None) ],
     top_bar = [ ('fore_bar', None) ],
     bottom_bar = [ ('aft_bar', None) ],
+
+    base_bar = [
+        ('fore_bar', None),
+        ('aft_bar', None),
+        ],
+
     box_spacing = [ ( 'spacing', None ) ],
     box_first_spacing = [ ( 'first_spacing', None) ],
 

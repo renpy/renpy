@@ -148,6 +148,7 @@ bar_properties = [ Style(i) for i in [
         "right_bar",
         "top_bar",
         "bottom_bar",
+        "base_bar",
         "thumb",
         "thumb_shadow",
         "thumb_offset",
