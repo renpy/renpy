@@ -434,6 +434,9 @@ cdef class StyleCore:
         elif prefix == "selected_hover_":
             self.offset = SELECTED_HOVER_PREFIX
 
+    def get_offset(self):
+        return self.offset
+
     def get_placement(self):
         """
         Returns a tuple giving the placement of the object.

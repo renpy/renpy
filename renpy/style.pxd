@@ -63,9 +63,15 @@ cdef inline void assign_prefixed(int index, PyObject **cache, int *cache_priorit
         return
 
     if (d is not None) and d._duplicatable:
-        d = d._duplicate(d._args.copy(prefix=prefix))
 
-    cdef PyObject *value = <PyObject *> d
+        args = d._args.copy(prefix=prefix)
+        dd = d._duplicate(args)
+
+    else:
+
+        dd = d
+
+    cdef PyObject *value = <PyObject *> dd
 
     Py_XDECREF(cache[index])
     Py_XINCREF(value)

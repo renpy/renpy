@@ -307,6 +307,9 @@ class DynamicImage(renpy.display.core.Displayable):
         else:
             self._uses_scope = False
 
+        if isinstance(name, basestring) and ("[prefix_" in name):
+            self._duplicatable = True
+
     def _scope(self, scope, update):
         return self.find_target(scope, update)
 
@@ -336,10 +339,24 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def find_target(self, scope=None, update=True):
 
+        if self._args.prefix is None:
+            prefix = ""
+        else:
+            prefix = self._args.prefix
+
         try:
-            target = renpy.easy.dynamic_image(self.name, scope)
+            target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix)
         except Exception as e:
+            raise
             raise Exception("In DynamicImage %r: %r" % (self.name, e))
+
+        if target is None:
+            error = "DynamicImage %r: did not resolve to an image." % (self.name,)
+
+            if self._args.prefix:
+                error += " prefix=" + self._args.prefix
+
+            raise Exception(error)
 
         if self.raw_target == target:
             return False
@@ -369,8 +386,6 @@ class DynamicImage(renpy.display.core.Displayable):
         target.take_state(old_target)
 
         return True
-
-    _duplicatable = True
 
     def _duplicate(self, args):
         rv = self._copy(args)

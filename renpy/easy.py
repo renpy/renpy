@@ -22,6 +22,7 @@
 # Functions that make the user's life easier.
 
 import renpy.display
+import renpy.styledata
 import contextlib
 import time
 
@@ -92,15 +93,39 @@ def displayable(d, scope=None):
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(d, scope=None):
+def dynamic_image(d, scope=None, prefix=None):
     """
     Substitutes a scope into `d`, then returns a displayable.
+
+    If `prefix` is given, and a prefix has been given a prefix search is
+    performed until a file is found. (Only a file can be used in this case.)
     """
 
     if isinstance(d, basestring):
-        d = renpy.substitutions.substitute(d, scope=scope, force=True, translate=False)[0]
 
-    return displayable_or_none(d)
+        if (prefix is not None) and ("[prefix_" in d):
+
+            if scope:
+                scope = dict(scope)
+            else:
+                scope = { }
+
+            for p in renpy.styledata.stylesets.prefix_search[prefix]: # @UndefinedVariable
+                scope["prefix_"] = p
+
+                rv = renpy.substitutions.substitute(d, scope=scope, force=True, translate=False)[0]
+
+                if renpy.loader.loadable(rv):
+                    break
+
+            else:
+                return None
+
+        else:
+
+            rv = renpy.substitutions.substitute(d, scope=scope, force=True, translate=False)[0]
+
+    return displayable_or_none(rv)
 
 
 def predict(d):
