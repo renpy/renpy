@@ -304,7 +304,7 @@ class Displayable(renpy.object.Object):
         rv = copy.copy(self)
 
         if args is not None:
-            self._args = args
+            rv._args = args
 
         return rv
 
