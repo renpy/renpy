@@ -55,9 +55,6 @@ The implications are:
  * - (no prefix)
    - insensitive, idle, hover, selected_idle, selected_hover
 
- * - ``insensitive_``
-   - insensitive
-
  * - ``idle_``
    - idle, selected_idle
 
@@ -67,11 +64,17 @@ The implications are:
  * - ``selected_``
    - selected_idle, selected_hover
 
+ * - ``insensitive_``
+   - insensitive
+
  * - ``selected_idle_``
    - selected_idle
 
  * - ``selected_hover_``
    - selected_hover
+
+ * - ``selected_insensitive_``
+   - selected_insensitive
 
 Using a text button, we can show this in action. Text buttons use two styles
 by default: ``button`` for the button itself, and ``button_text`` for the
@@ -90,7 +93,7 @@ text.::
      # otherwise.
      style button_text:
          color "#fff"
-         selected_color = "#ff0"
+         selected_color "#ff0"
 
 Style Property Values
 =====================
@@ -123,7 +126,8 @@ novel kinds of value a style property can expect.
         rendering.
 
 `displayable`
-    Any displayable.
+    Any displayable. If a displayable contains a "[prefix_]" substitution,
+    a prefix search is performed as described below.
 
 `color`
     Colors in Ren'Py can be expressed as strings beginning with the hash
@@ -148,6 +152,77 @@ novel kinds of value a style property can expect.
     * ``(0, 0, 255, 255)`` represents an opaque blue color.
 
     Finally, colors can be an instance of :class:`Color`.
+
+
+.. _style-prefix-search:
+
+Style Prefix Search
+-------------------
+
+When a style property contains the "[prefix_]" substitution, a prefix
+search is performed. The prefix search is performed separately for
+each state, including states that are implied by the original property
+assigned.
+
+For example, if we have::
+
+    style button:
+        hover_background "[prefix_]background.png"
+
+separate searches are performed for the hover and selected_hover states. The
+prefixes searched vary based on the state.
+
+.. list-table::
+ :header-rows: 1
+
+ * - state
+   - search order
+
+ * - idle
+   - "idle", ""
+
+ * - hover
+   - "hover_", "",
+
+ * - insensitive
+   - "insensitive_", "", "idle_"
+
+ * - selected_idle
+   - "selected_idle_", "idle_", "selected_", ""
+
+ * - selected_hover
+   - "selected_hover_", "hover_", "selected_", ""
+
+ * - selected_insensitive
+   - "selected_insensitive_", "hover_", "selected_", "", "selected_idle_", "idle_"
+
+When a search is performed, each prefix is tried in the order given. The string
+has "[prefix_]" replaced with the prefix, and then Ren'Py checkes to see if
+a loadable file or image with that name exists. If the file or image exists,
+the search stops and the displayable found is used. Otherwise, it proceeds to
+the next prefix.
+
+The style prefix is passed through displayables that do not take user input,
+including containers, transforms, and frames.
+
+As an example of how this can be used, if the files "idle_button.png" and
+"hover_button.png" exist (and no other files ending in "button.png" do),
+the following code::
+
+    style button:
+        background "[prefix_]button.png"
+
+is equivalent to::
+
+    style button:
+        idle_background "idle_button.png"
+        hover_background "hover_button.png"
+        insensitive_background "idle_button.png"
+
+        selected_idle_background "idle_button.png"
+        selected_hover_background "hover_button.png"
+        selected_insensitive_background "idle_button.png"
+
 
 List of All Style Properties
 ============================
