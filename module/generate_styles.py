@@ -106,10 +106,10 @@ Prefix(-1, 'selected_activate_', 0, [ ])
 PREFIX_SEARCH = {
     "idle_" : [ "idle_", "" ],
     "hover_" : [ "hover_", "" ],
-    "insensitive_" : [ "insensitive_", "" ],
-    "selected_idle_" : [ "selected_idle_", "idle_", "selected_", "" ],
+    "insensitive_" : [ "insensitive_", "", "idle_" ],
+    "selected_idle_" : [ "selected_idle_", "selected_", "", "idle_" ],
     "selected_hover_" : [ "selected_hover_", "hover_", "selected_", "" ],
-    "selected_insensitive_" : [ "selected_insensitive_", "insensitive_", "selected_", "" ],
+    "selected_insensitive_" : [ "selected_insensitive_", "insensitive_", "selected_", "", "selected_idle_", "idle_" ],
     "" : [ "" ],
     }
 
