@@ -118,6 +118,9 @@ def dynamic_image(d, scope=None, prefix=None):
                 if renpy.loader.loadable(rv):
                     break
 
+                if renpy.exports.image_exists(rv):
+                    break
+
             else:
                 return None
 
