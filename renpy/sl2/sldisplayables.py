@@ -388,7 +388,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
     d = renpy.easy.displayable(d, scope=scope)
 
     if d._duplicatable:
-        d = d._duplicate(d._parameters)
+        d = d._duplicate(None)
 
     rv = d
 
